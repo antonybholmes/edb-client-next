@@ -194,12 +194,12 @@ export const ScatterPlotSvg = forwardRef<SVGElement, IProps>(
 
       // matching is case insensitive
       const labelSet = new Set<string>(
-        _displayProps.labels.values.map(x => x.toLowerCase())
+        _displayProps.labels.values.map((x) => x.toLowerCase())
       )
       const labelIdx = df.index.values
         .map((v, vi) => [v, vi] as [IndexData, number])
-        .filter(v => labelSet.has(v[0].toString().toLowerCase()))
-        .map(v => v[1])
+        .filter((v) => labelSet.has(v[0].toString().toLowerCase()))
+        .map((v) => v[1])
 
       return (
         <svg
@@ -242,7 +242,7 @@ export const ScatterPlotSvg = forwardRef<SVGElement, IProps>(
           </g>
 
           <g transform={`translate(${margin.left}, ${margin.top})`}>
-            {labelIdx.map(i => {
+            {labelIdx.map((i) => {
               const x1 = xax!.domainToRange(xdata[i]!)
               const y1 = yax!.domainToRange(ydata[i]!)
 
@@ -379,7 +379,7 @@ export const ScatterPlotSvg = forwardRef<SVGElement, IProps>(
     //     var myColor = d3
     //       .scaleLinear()
     //       .domain([-3, 0, 3])
-    //       // @ts-ignore
+    //       // @ts-expect-error
     //       .range(["blue", "white", "red"])
 
     //     // Three function that change the tooltip when user hover / move / leave a cell

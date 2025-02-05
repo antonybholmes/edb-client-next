@@ -88,10 +88,6 @@ export const VertBarPlotSvg = forwardRef<SVGElement, IProps>(
 
     const xcol = df.col(x)
 
-    if (!xcol) {
-      return null
-    }
-
     const xdata = x ? (xcol.values as number[]) : ones(df.shape[0])
 
     // give y a default name
@@ -298,7 +294,7 @@ export const VertBarPlotSvg = forwardRef<SVGElement, IProps>(
     //     var myColor = d3
     //       .scaleLinear()
     //       .domain([-3, 0, 3])
-    //       // @ts-ignore
+    //       // @ts-expect-error
     //       .range(["blue", "white", "red"])
 
     //     // Three function that change the tooltip when user hover / move / leave a cell

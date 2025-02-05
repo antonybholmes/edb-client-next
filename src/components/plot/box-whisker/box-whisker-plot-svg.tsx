@@ -1,4 +1,4 @@
-import { forwardRef, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { type IElementProps } from '@interfaces/element-props'
 
@@ -28,114 +28,110 @@ interface IProps extends IElementProps {
   mode?: IBoxWhiskerMode
 }
 
-export const BoxWhiskerPlotSvg = forwardRef<SVGElement, IProps>(
-  function BoxWhiskerPlotSvg(
-    {
-      data,
-      q1,
-      median,
-      q3,
-      yax,
-      width = 50,
-      height = 500,
-      stroke = { ...DEFAULT_STROKE_PROPS, width: 1.5 },
-      medianStroke = { ...DEFAULT_STROKE_PROPS, color: COLOR_RED, width: 1.5 },
-      fill = NO_FILL_PROPS,
-      mode = 'Full',
-    }: IProps,
-    _svgRef
-  ) {
-    const svg = useMemo(() => {
-      const iqr = q3 - q1
-      const iqr15 = 1.5 * iqr
-      const q0 = q1 - iqr15
-      const q4 = q3 + iqr15
+export function BoxWhiskerPlotSvg({
+  data,
+  q1,
+  median,
+  q3,
+  yax,
+  width = 50,
+  height = 500,
+  stroke = { ...DEFAULT_STROKE_PROPS, width: 1.5 },
+  medianStroke = { ...DEFAULT_STROKE_PROPS, color: COLOR_RED, width: 1.5 },
+  fill = NO_FILL_PROPS,
+  mode = 'Full',
+}: IProps) {
+  const svg = useMemo(() => {
+    const iqr = q3 - q1
+    const iqr15 = 1.5 * iqr
+    const q0 = q1 - iqr15
+    const q4 = q3 + iqr15
 
-      const w1 = data.filter(x => x >= q0)
-      // reverse copy of array
-      const w2 = data.toReversed().filter(x => x <= q4)
+    const w1 = data.filter((x) => x >= q0)
+    // reverse copy of array
+    const w2 = data.toReversed().filter((x) => x <= q4)
 
-      //console.log(maxHeightMap)
+    //console.log(maxHeightMap)
 
-      if (!yax) {
-        yax = new YAxis()
-          .autoDomain([0, Math.max(...data)])
-          //.setDomain([0, plot.dna.seq.length])
-          .setLength(height)
-      }
+    if (!yax) {
+      yax = new YAxis()
+        .autoDomain([0, Math.max(...data)])
+        //.setDomain([0, plot.dna.seq.length])
+        .setLength(height)
+    }
 
-      const x1 = mode === 'Right' ? 0 : -0.5 * width
+    const x1 = mode === 'Right' ? 0 : -0.5 * width
 
-      const x2 = mode === 'Left' ? 0 : width / 2
+    const x2 = mode === 'Left' ? 0 : width / 2
 
-      const y1 = yax.domainToRange(w1[0]!)
-      const y2 = yax.domainToRange(w2[0]!)
+    const y1 = yax.domainToRange(w1[0]!)
+    const y2 = yax.domainToRange(w2[0]!)
 
-      //console.log('med', q1, q3, median, iqr, q4, 'x', w1, w2)
-      // console.log("med", y1, y2)
+    //console.log('med', q1, q3, median, iqr, q4, 'x', w1, w2)
+    // console.log("med", y1, y2)
 
-      const yq1 = yax.domainToRange(q1)
-      const yq3 = yax.domainToRange(q3)
-      const ymed = yax.domainToRange(median)
-      // matching is case insensitive
-
-      return (
-        <>
-          <line
-            x1={0}
-            x2={0}
-            y1={y1}
-            y2={y2}
-            strokeWidth={stroke?.width ?? 0}
-            stroke={stroke?.color ?? 'none'}
-          />
-          <line
-            x1={x1}
-            x2={x2}
-            y1={y1}
-            y2={y1}
-            strokeWidth={stroke?.width ?? 0}
-            stroke={stroke?.color ?? 'none'}
-          />
-          <line
-            x1={x1}
-            x2={x2}
-            y1={y2}
-            y2={y2}
-            strokeWidth={stroke?.width ?? 0}
-            stroke={stroke?.color ?? 'none'}
-          />
-
-          {/* iqr */}
-          <rect
-            x={x1}
-            y={yq3}
-            height={yq1 - yq3}
-            width={x2 - x1}
-            strokeWidth={stroke?.width ?? 0}
-            stroke={stroke?.color ?? 'none'}
-            fill={fill?.color ?? 'none'}
-            fillOpacity={fill?.alpha ?? 0}
-          />
-
-          {/* median */}
-          <line
-            x1={x1}
-            x2={x2}
-            y1={ymed}
-            y2={ymed}
-            strokeWidth={medianStroke?.width ?? 0}
-            stroke={medianStroke?.color ?? 'none'}
-          />
-        </>
-      )
-    }, [data, yax])
+    const yq1 = yax.domainToRange(q1)
+    const yq3 = yax.domainToRange(q3)
+    const ymed = yax.domainToRange(median)
+    // matching is case insensitive
 
     return (
       <>
-        {svg}
+        <line
+          x1={0}
+          x2={0}
+          y1={y1}
+          y2={y2}
+          strokeWidth={stroke?.width ?? 0}
+          stroke={stroke?.color ?? 'none'}
+        />
+        <line
+          x1={x1}
+          x2={x2}
+          y1={y1}
+          y2={y1}
+          strokeWidth={stroke?.width ?? 0}
+          stroke={stroke?.color ?? 'none'}
+        />
+        <line
+          x1={x1}
+          x2={x2}
+          y1={y2}
+          y2={y2}
+          strokeWidth={stroke?.width ?? 0}
+          stroke={stroke?.color ?? 'none'}
+        />
 
-        {/* {toolTipInfo && (
+        {/* iqr */}
+        <rect
+          x={x1}
+          y={yq3}
+          height={yq1 - yq3}
+          width={x2 - x1}
+          strokeWidth={stroke?.width ?? 0}
+          stroke={stroke?.color ?? 'none'}
+          fill={fill?.color ?? 'none'}
+          fillOpacity={fill?.alpha ?? 0}
+        />
+
+        {/* median */}
+        <line
+          x1={x1}
+          x2={x2}
+          y1={ymed}
+          y2={ymed}
+          strokeWidth={medianStroke?.width ?? 0}
+          stroke={medianStroke?.color ?? 'none'}
+        />
+      </>
+    )
+  }, [data, yax])
+
+  return (
+    <>
+      {svg}
+
+      {/* {toolTipInfo && (
           <>
             <div
               ref={tooltipRef}
@@ -170,7 +166,6 @@ export const BoxWhiskerPlotSvg = forwardRef<SVGElement, IProps>(
             />
           </>
         )} */}
-      </>
-    )
-  }
-)
+    </>
+  )
+}

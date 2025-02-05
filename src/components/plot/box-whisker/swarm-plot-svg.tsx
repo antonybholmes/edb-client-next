@@ -1,4 +1,4 @@
-import { forwardRef, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { type IElementProps } from '@interfaces/element-props'
 
@@ -25,111 +25,107 @@ interface IProps extends IElementProps {
   mode?: IBoxWhiskerMode
 }
 
-export const SwarmPlotSvg = forwardRef<SVGElement, IProps>(
-  function SwarmPlotSvg(
-    {
-      data,
-      yax,
-      width = 50,
-      height = 500,
-      r = 5,
-      fill = { ...DEFAULT_FILL_PROPS, alpha: 1 },
-      stroke = { ...NO_STROKE_PROPS },
-      mode = 'Full',
-    }: IProps,
-    _svgRef
-  ) {
-    const svg = useMemo(() => {
-      const hist = histogram(data)
+export function SwarmPlotSvg({
+  data,
+  yax,
+  width = 50,
+  height = 500,
+  r = 5,
+  fill = { ...DEFAULT_FILL_PROPS, alpha: 1 },
+  stroke = { ...NO_STROKE_PROPS },
+  mode = 'Full',
+}: IProps) {
+  const svg = useMemo(() => {
+    const hist = histogram(data)
 
-      const d = r * 2
+    const d = r * 2
 
-      //console.log(maxHeightMap)
+    //console.log(maxHeightMap)
 
-      if (!yax) {
-        yax = new YAxis()
-          .autoDomain([0, Math.max(...data)])
-          //.setDomain([0, plot.dna.seq.length])
-          .setLength(height)
-      }
+    if (!yax) {
+      yax = new YAxis()
+        .autoDomain([0, Math.max(...data)])
+        //.setDomain([0, plot.dna.seq.length])
+        .setLength(height)
+    }
 
-      if (mode !== 'Full') {
-        // draw points in half the width
+    if (mode !== 'Full') {
+      // draw points in half the width
 
-        width *= 0.5
-      }
+      width *= 0.5
+    }
 
-      // matching is case insensitive
-
-      return (
-        <>
-          {hist
-            .filter(bin => bin.values.length > 0)
-            .map((bin, bi) => {
-              // width required for all circles in bin
-              let w = bin.values.length * d
-
-              //actual amount we need to move each circle
-              const dx = d * (width / Math.max(width, w))
-
-              w = dx * (bin.values.length - 1)
-
-              // adjust x depending on whether full or half screen
-              let x1 = 0
-
-              switch (mode) {
-                case 'Right':
-                  x1 = 0
-                  break
-                case 'Left':
-                  x1 = -(0.5 * (w + width))
-                  break
-                default:
-                  x1 = -0.5 * w
-                  break
-              }
-
-              // reverse sort as we want higher y on the outside
-              let values = bin.values.toReversed()
-
-              // take every other value for one side, then take every
-              // other value offset by 1 and reverse it to create a
-              // v shape of dots around the center of the plot
-              values = [
-                ...range(0, values.length, 2).map(i => values[i]!),
-                ...range(1, values.length, 2)
-                  .map(i => values[i]!)
-                  .toReversed(),
-              ]
-
-              return (
-                <g key={bi}>
-                  {values.map((v, vi) => {
-                    return (
-                      <circle
-                        key={`${bi}:${vi}`}
-                        cx={x1 + vi * dx}
-                        cy={yax?.domainToRange(v)}
-                        r={r}
-                        fill={fill?.color ?? 'none'}
-                        stroke={stroke?.color ?? 'none'}
-                        strokeWidth={stroke?.width ?? 0}
-                        fillOpacity={fill?.alpha ?? 0}
-                      />
-                    )
-                  })}
-                </g>
-              )
-            })}
-        </>
-      )
-    }, [data, yax])
+    // matching is case insensitive
 
     return (
       <>
-        {svg}
+        {hist
+          .filter((bin) => bin.values.length > 0)
+          .map((bin, bi) => {
+            // width required for all circles in bin
+            let w = bin.values.length * d
 
-        {/* {toolTipInfo && (
+            //actual amount we need to move each circle
+            const dx = d * (width / Math.max(width, w))
+
+            w = dx * (bin.values.length - 1)
+
+            // adjust x depending on whether full or half screen
+            let x1 = 0
+
+            switch (mode) {
+              case 'Right':
+                x1 = 0
+                break
+              case 'Left':
+                x1 = -(0.5 * (w + width))
+                break
+              default:
+                x1 = -0.5 * w
+                break
+            }
+
+            // reverse sort as we want higher y on the outside
+            let values = bin.values.toReversed()
+
+            // take every other value for one side, then take every
+            // other value offset by 1 and reverse it to create a
+            // v shape of dots around the center of the plot
+            values = [
+              ...range(0, values.length, 2).map((i) => values[i]!),
+              ...range(1, values.length, 2)
+                .map((i) => values[i]!)
+                .toReversed(),
+            ]
+
+            return (
+              <g key={bi}>
+                {values.map((v, vi) => {
+                  return (
+                    <circle
+                      key={`${bi}:${vi}`}
+                      cx={x1 + vi * dx}
+                      cy={yax?.domainToRange(v)}
+                      r={r}
+                      fill={fill?.color ?? 'none'}
+                      stroke={stroke?.color ?? 'none'}
+                      strokeWidth={stroke?.width ?? 0}
+                      fillOpacity={fill?.alpha ?? 0}
+                    />
+                  )
+                })}
+              </g>
+            )
+          })}
+      </>
+    )
+  }, [data, yax])
+
+  return (
+    <>
+      {svg}
+
+      {/* {toolTipInfo && (
           <>
             <div
               ref={tooltipRef}
@@ -164,7 +160,6 @@ export const SwarmPlotSvg = forwardRef<SVGElement, IProps>(
             />
           </>
         )} */}
-      </>
-    )
-  }
-)
+    </>
+  )
+}

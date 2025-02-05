@@ -42,6 +42,11 @@ function VerifyPage() {
 
   //const { accessToken } = useAccessTokenStore()
   //const { user } = useUserStore()
+  const jwtData = jwtDecode<ICallbackJwtPayload>(jwt)
+
+  const [isVerified, setIsVerified] = useState(
+    Boolean(Cookies.get(EDB_ACCESS_TOKEN_COOKIE))
+  )
 
   if (!jwt) {
     return (
@@ -54,12 +59,6 @@ function VerifyPage() {
       </CenteredCardContainer>
     )
   }
-
-  const jwtData = jwtDecode<ICallbackJwtPayload>(jwt)
-
-  const [isVerified, setIsVerified] = useState(
-    Boolean(Cookies.get(EDB_ACCESS_TOKEN_COOKIE))
-  )
 
   async function verify() {
     try {

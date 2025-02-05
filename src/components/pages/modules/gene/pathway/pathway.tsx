@@ -5,10 +5,10 @@ import { ToolbarFooter } from '@components/toolbar/toolbar-footer'
 import { ToolbarOpenFile } from '@components/toolbar/toolbar-open-files'
 
 import {
-    ShowOptionsMenu,
-    Toolbar,
-    ToolbarMenu,
-    ToolbarPanel,
+  ShowOptionsMenu,
+  Toolbar,
+  ToolbarMenu,
+  ToolbarPanel,
 } from '@components/toolbar/toolbar'
 import { ToolbarSeparator } from '@components/toolbar/toolbar-separator'
 import { PlayIcon } from '@icons/play-icon'
@@ -18,16 +18,16 @@ import { ZoomSlider } from '@components/toolbar/zoom-slider'
 
 import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
 import {
-    downloadDataFrame,
-    getFormattedShape,
+  downloadDataFrame,
+  getFormattedShape,
 } from '@lib/dataframe/dataframe-utils'
 
 import {
-    DEFAULT_PARSE_OPTS,
-    filesToDataFrames,
-    onTextFileChange,
-    OpenFiles,
-    type ITextFileOpen,
+  DEFAULT_PARSE_OPTS,
+  filesToDataFrames,
+  onTextFileChange,
+  OpenFiles,
+  type ITextFileOpen,
 } from '@components/pages/open-files'
 
 import { BasicAlertDialog } from '@components/dialog/basic-alert-dialog'
@@ -40,10 +40,10 @@ import { OpenIcon } from '@icons/open-icon'
 import { SaveIcon } from '@icons/save-icon'
 import { type IDataset } from '@modules/gene/pathway/pathway'
 import {
-    currentSheet,
-    currentSheetId,
-    currentSheets,
-    HistoryContext,
+  currentSheet,
+  currentSheetId,
+  currentSheets,
+  HistoryContext,
 } from '@providers/history-provider'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
@@ -51,45 +51,45 @@ import { UploadIcon } from '@components/icons/upload-icon'
 import { DropdownMenuItem } from '@components/shadcn/ui/themed/dropdown-menu'
 
 import {
-    NO_DIALOG,
-    TEXT_DOWNLOAD_AS_CSV,
-    TEXT_DOWNLOAD_AS_TXT,
-    TEXT_HELP,
-    TEXT_OPEN,
-    TEXT_OPEN_FILE,
-    TEXT_SAVE_AS,
-    type IDialogParams,
+  NO_DIALOG,
+  TEXT_DOWNLOAD_AS_CSV,
+  TEXT_DOWNLOAD_AS_TXT,
+  TEXT_HELP,
+  TEXT_OPEN,
+  TEXT_OPEN_FILE,
+  TEXT_SAVE_AS,
+  type IDialogParams,
 } from '@/consts'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
 import {
-    BaseDataFrame,
-    DEFAULT_SHEET_NAME,
+  BaseDataFrame,
+  DEFAULT_SHEET_NAME,
 } from '@lib/dataframe/base-dataframe'
 
 import {
-    API_PATHWAY_DATASET_URL,
-    API_PATHWAY_DATASETS_URL,
-    API_PATHWAY_GENES_URL,
+  API_PATHWAY_DATASET_URL,
+  API_PATHWAY_DATASETS_URL,
+  API_PATHWAY_GENES_URL,
 } from '@/lib/edb/edb'
 import { DataFrame } from '@lib/dataframe/dataframe'
 import { makeRandId, nanoid } from '@lib/utils'
 import axios from 'axios'
 
 import {
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-    ScrollAccordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  ScrollAccordion,
 } from '@components/shadcn/ui/themed/accordion'
 import { range } from '@lib/math/range'
 import { truncate } from '@lib/text/text'
 import {
-    useCallback,
-    useContext,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from 'react'
 
 import { HistoryPanel } from '@components/pages/history-panel'
@@ -97,8 +97,8 @@ import type { ITab } from '@components/tab-provider'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import {
-    AlertsContext,
-    makeErrorAlert,
+  AlertsContext,
+  makeErrorAlert,
 } from '@components/alerts/alerts-provider'
 import { Checkbox } from '@components/shadcn/ui/themed/check-box'
 import { ToolbarIconButton } from '@components/toolbar/toolbar-icon-button'
@@ -182,7 +182,7 @@ export function PathwayPage() {
     new Map<string, boolean>()
   )
 
-  const [validGeneSet, setValidGeneSet] = useState(new Set<String>())
+  const [validGeneSet, setValidGeneSet] = useState(new Set<string>())
 
   useEffect(() => {
     workerRef.current = new Worker(
@@ -314,7 +314,7 @@ export function PathwayPage() {
           skipRows: files[0]!.name.includes('gmx') ? 1 : 0,
           delimiter: files[0]!.ext === 'csv' ? ',' : '\t',
         },
-        onSuccess: tables => {
+        onSuccess: (tables) => {
           if (tables.length > 0) {
             open(tables[0]!)
           }
@@ -344,18 +344,18 @@ export function PathwayPage() {
     const genes = await getValidGenes()
 
     // only keep genes in approved list
-    const genesets: IGeneset[] = range(df.shape[1]).map(_ => {
+    const genesets: IGeneset[] = range(df.shape[1]).map((_) => {
       return {
         id: nanoid(),
         name: df.col(0).name.toString(),
         genes: df
           .col(0)
-          .strs.filter(v => v !== '' && genes.has(v.toLowerCase())),
+          .strs.filter((v) => v !== '' && genes.has(v.toLowerCase())),
         color: randomHexColor(),
       }
     })
 
-    if (sum(genesets.map(geneset => geneset.genes.length)) === 0) {
+    if (sum(genesets.map((geneset) => geneset.genes.length)) === 0) {
       // setShowDialog({
       //   name: "alert",
       //   params: {
@@ -384,8 +384,8 @@ export function PathwayPage() {
     }
 
     const queryDatasets = datasetInfos
-      .map(org =>
-        org.datasets.filter(dataset =>
+      .map((org) =>
+        org.datasets.filter((dataset) =>
           datasetsForUse.get(makeDatasetId(dataset))
         )
       )
@@ -662,7 +662,7 @@ export function PathwayPage() {
     setDatasetsForUse(
       new Map<string, boolean>(
         datasetInfos
-          .map(org =>
+          .map((org) =>
             org.datasets.map(
               (dataset: IDatasetInfo) =>
                 [makeDatasetId(dataset), true] as [string, boolean]
@@ -679,7 +679,7 @@ export function PathwayPage() {
     setDatasetsForUse(
       new Map<string, boolean>(
         datasetInfos
-          .map(org =>
+          .map((org) =>
             org.datasets.map(
               (dataset: IDatasetInfo) =>
                 [makeDatasetId(dataset), selectAllDatasets] as [string, boolean]
@@ -698,7 +698,7 @@ export function PathwayPage() {
         <>
           <ToolbarTabGroup>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: makeRandId('open'),
@@ -798,7 +798,9 @@ export function PathwayPage() {
                                   )
                                 }}
                               >
-                                {`${dataset.name} (${dataset.pathways.toLocaleString()})`}
+                                {`${
+                                  dataset.name
+                                } (${dataset.pathways.toLocaleString()})`}
                               </Checkbox>
                             </li>
                           )
@@ -908,7 +910,7 @@ export function PathwayPage() {
             side="Right"
             tabs={rightTabs}
             value={rightTab}
-            onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+            onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
             open={showSideBar}
             onOpenChange={setShowSideBar}
           >
@@ -916,13 +918,13 @@ export function PathwayPage() {
             <TabbedDataFrames
               selectedSheet={currentSheetId(history)[0]!}
               dataFrames={currentSheets(history)[0]!}
-              onTabChange={selectedTab => {
+              onTabChange={(selectedTab) => {
                 historyDispatch({
                   type: 'goto-sheet',
                   sheetId: selectedTab.index,
                 })
               }}
-              onFileDrop={files => {
+              onFileDrop={(files) => {
                 if (files.length > 0) {
                   //setDroppedFile(files[0]);
                   console.log('Dropped file:', files[0])
@@ -956,7 +958,7 @@ export function PathwayPage() {
             open={showDialog.id}
             //onOpenChange={() => setShowDialog({...NO_DIALOG})}
             onFileChange={(message, files) => {
-              onTextFileChange(message, files, files => {
+              onTextFileChange(message, files, (files) => {
                 if (files.length > 0) {
                   filesToDataFrames(queryClient, files, {
                     parseOpts: {
@@ -964,7 +966,7 @@ export function PathwayPage() {
                       colNames: files[0]!.name.includes('gmx') ? 0 : 1,
                       skipRows: files[0]!.name.includes('gmx') ? 1 : 0,
                     },
-                    onSuccess: tables => {
+                    onSuccess: (tables) => {
                       if (tables.length > 0) {
                         open(tables[0]!)
                       }

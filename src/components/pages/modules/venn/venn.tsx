@@ -4,10 +4,10 @@ import { ToolbarFooter } from '@components/toolbar/toolbar-footer'
 
 import { BaseCol } from '@/components/layout/base-col'
 import {
-    ShowOptionsMenu,
-    Toolbar,
-    ToolbarMenu,
-    ToolbarPanel,
+  ShowOptionsMenu,
+  Toolbar,
+  ToolbarMenu,
+  ToolbarPanel,
 } from '@components/toolbar/toolbar'
 
 import { ZOOM_SCALES, ZoomSlider } from '@components/toolbar/zoom-slider'
@@ -27,18 +27,18 @@ import { DataIndex } from '@lib/dataframe/data-index'
 import { DataFrame } from '@lib/dataframe/dataframe'
 
 import {
-    downloadImageAutoFormat,
-    downloadSvg,
-    downloadSvgAsPng,
+  downloadImageAutoFormat,
+  downloadSvg,
+  downloadSvgAsPng,
 } from '@lib/image-utils'
 import { makeCombinations, numSort } from '@lib/math/math'
 
 import {
-    FOCUS_RING_CLS,
-    PILL_BUTTON_CLS,
-    SM_ICON_BUTTON_CLS,
-    TOOLBAR_BUTTON_ICON_CLS,
-    XS_ICON_BUTTON_CLS,
+  FOCUS_RING_CLS,
+  PILL_BUTTON_CLS,
+  SM_ICON_BUTTON_CLS,
+  TOOLBAR_BUTTON_ICON_CLS,
+  XS_ICON_BUTTON_CLS,
 } from '@/theme'
 import * as d3 from 'd3'
 
@@ -48,39 +48,39 @@ import { sortAreas, VennDiagram } from '../../../../ext/benfred/venn/diagram'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { UploadIcon } from '@components/icons/upload-icon'
 import {
-    onTextFileChange,
-    OpenFiles,
-    type ITextFileOpen,
+  onTextFileChange,
+  OpenFiles,
+  type ITextFileOpen,
 } from '@components/pages/open-files'
 import { PropsPanel } from '@components/props-panel'
 import {
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-    ScrollAccordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  ScrollAccordion,
 } from '@components/shadcn/ui/themed/accordion'
 import { Button } from '@components/shadcn/ui/themed/button'
 import { DropdownMenuItem } from '@components/shadcn/ui/themed/dropdown-menu'
 import { Input } from '@components/shadcn/ui/themed/input'
 import { NumericalInput } from '@components/shadcn/ui/themed/numerical-input'
 import {
-    ResizablePanel,
-    ResizablePanelGroup,
+  ResizablePanel,
+  ResizablePanelGroup,
 } from '@components/shadcn/ui/themed/resizable'
 import { Textarea3 } from '@components/shadcn/ui/themed/textarea3'
 import { ThinVResizeHandle } from '@components/split-pane/thin-v-resize-handle'
 
 import {
-    COLOR_BLACK,
-    COLOR_WHITE,
-    NO_DIALOG,
-    TEXT_CLEAR,
-    TEXT_DOWNLOAD_AS_CSV,
-    TEXT_DOWNLOAD_AS_TXT,
-    TEXT_EXPORT,
-    TEXT_SAVE_AS,
-    TEXT_SETTINGS,
-    type IDialogParams,
+  COLOR_BLACK,
+  COLOR_WHITE,
+  NO_DIALOG,
+  TEXT_CLEAR,
+  TEXT_DOWNLOAD_AS_CSV,
+  TEXT_DOWNLOAD_AS_TXT,
+  TEXT_EXPORT,
+  TEXT_SAVE_AS,
+  TEXT_SETTINGS,
+  type IDialogParams,
 } from '@/consts'
 import { ToolbarOpenFile } from '@components/toolbar/toolbar-open-files'
 import { ToolbarTabButton } from '@components/toolbar/toolbar-tab-button'
@@ -93,10 +93,10 @@ import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
 import { range, rangeMap } from '@lib/math/range'
 import { makeRandId } from '@lib/utils'
 import {
-    currentSheet,
-    currentSheetId,
-    currentSheets,
-    HistoryContext,
+  currentSheet,
+  currentSheetId,
+  currentSheets,
+  HistoryContext,
 } from '@providers/history-provider'
 
 import { ColorPickerButton } from '@/components/color-picker-button'
@@ -159,16 +159,16 @@ function VennPage() {
   )
 
   const [countMap, setCountMap] = useState<Map<number, string[]>>(
-    new Map(listIds.map(i => [i, []]))
+    new Map(listIds.map((i) => [i, []]))
   )
 
   // track what is unique to each set so we get rid of repeats
   const [uniqueCountMap, setUniqueCountMap] = useState<
     Map<number, Set<string>>
-  >(new Map(listIds.map(i => [i, new Set<string>()])))
+  >(new Map(listIds.map((i) => [i, new Set<string>()])))
 
   const [listLabelMap, setListLabelMap] = useState<Map<number, string>>(
-    new Map<number, string>(listIds.map(i => [i, `List ${i + 1}`]))
+    new Map<number, string>(listIds.map((i) => [i, `List ${i + 1}`]))
   )
 
   const [labelToIndexMap, setLabelToIndexMap] = useState<Map<string, number>>(
@@ -254,12 +254,12 @@ function VennPage() {
       .t()
 
     setListLabelMap(
-      new Map(rangeMap(ci => [ci, table.index.getName(ci)], table.shape[0]))
+      new Map(rangeMap((ci) => [ci, table.index.getName(ci)], table.shape[0]))
     )
 
     setListTextMap(
       new Map(
-        table.values.map((r, ri) => [ri, r.map(c => c.toString()).join('\n')])
+        table.values.map((r, ri) => [ri, r.map((c) => c.toString()).join('\n')])
       )
     )
 
@@ -300,7 +300,7 @@ function VennPage() {
 
   useEffect(() => {
     setListLabelMap(
-      new Map(range(listIds.length).map(i => [i, `List ${i + 1}`]))
+      new Map(range(listIds.length).map((i) => [i, `List ${i + 1}`]))
     )
   }, [listIds])
 
@@ -319,15 +319,15 @@ function VennPage() {
     // count number of items
     const countMap = new Map<number, string[]>()
 
-    listIds.forEach(i => {
+    listIds.forEach((i) => {
       const items = getItems(listTextMap.get(i)!)
 
       countMap.set(
         i,
-        items.map(item => item.toLowerCase())
+        items.map((item) => item.toLowerCase())
       )
 
-      items.forEach(item => {
+      items.forEach((item) => {
         originalMap.set(item.toLowerCase(), item)
       })
     })
@@ -367,8 +367,8 @@ function VennPage() {
     // pool all items and annotate by who is in what
     const combs = new Map<string, number[]>()
 
-    usableIds.forEach(listId => {
-      ;[...uniqueCountMap.get(listId)!].map(item => {
+    usableIds.forEach((listId) => {
+      ;[...uniqueCountMap.get(listId)!].map((item) => {
         if (!combs.has(item)) {
           combs.set(item, [])
         }
@@ -396,15 +396,15 @@ function VennPage() {
         // cache the permutations we encounter
         subCombMap.set(
           id,
-          makeCombinations(listIds.map(s => listLabelMap.get(s)))
+          makeCombinations(listIds.map((s) => listLabelMap.get(s)))
             .slice(1)
-            .map(c => c.join('_'))
+            .map((c) => c.join('_'))
         )
       }
 
       const labels: string[] = subCombMap.get(id)!
 
-      labels.forEach(label => {
+      labels.forEach((label) => {
         if (!combs2.has(label)) {
           combs2.set(label, new Set())
         }
@@ -415,8 +415,8 @@ function VennPage() {
 
     //console.log(combinations)
 
-    combinations.forEach(c => {
-      const sets = c.map(s => listLabelMap.get(s)!)
+    combinations.forEach((c) => {
+      const sets = c.map((s) => listLabelMap.get(s)!)
       const label = sets.join('_')
 
       const items: Set<string> = combs2.get(label) ?? EMPTY_SET
@@ -466,10 +466,10 @@ function VennPage() {
     const index = Array.from(vennElemMap.keys()).sort()
 
     const maxRows = index
-      .map(n => vennElemMap.get(n)!.size)
+      .map((n) => vennElemMap.get(n)!.size)
       .reduce((a, b) => Math.max(a, b), 0)
 
-    const d = index.map(n =>
+    const d = index.map((n) =>
       [...vennElemMap.get(n)!]
         .sort()
         .concat(Array(maxRows - vennElemMap.get(n)!.size).fill(''))
@@ -478,7 +478,7 @@ function VennPage() {
     const df = new DataFrame({
       name: 'Venn Sets',
       data: d,
-      index: new DataIndex(index.map(n => n.split('_').join(' AND '))),
+      index: new DataIndex(index.map((n) => n.split('_').join(' AND '))),
       columns: NUM_INDEX,
     }).t()
 
@@ -497,7 +497,7 @@ function VennPage() {
     const chart = VennDiagram()
       .width(displayProps.w)
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      // @ts-expect-error
       .height(displayProps.w)
       .duration(0)
       .normalize(displayProps.normalize)
@@ -651,7 +651,7 @@ function VennPage() {
         } ${overlapSet.size.toLocaleString()} item${
           overlapSet.size !== 1 ? 's' : ''
         } in ${ids.length > 1 ? 'the intersection of' : ''} ${ids
-          .map(x => x.replace(/ \(.+/, ''))
+          .map((x) => x.replace(/ \(.+/, ''))
           .join(' AND ')}`
 
         if (overlapRef.current) {
@@ -664,7 +664,7 @@ function VennPage() {
           // doesn't know which label to pick from.
           overlapRef.current.value = [
             `#${label}`,
-            ...[...overlapSet].sort().map(s => _originalMap.get(s)),
+            ...[...overlapSet].sort().map((s) => _originalMap.get(s)),
           ].join('\n')
         }
 
@@ -762,7 +762,7 @@ function VennPage() {
         <>
           <ToolbarTabGroup>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: makeRandId('open'),
@@ -800,7 +800,7 @@ function VennPage() {
 
       content: (
         <PropsPanel>
-          <ScrollAccordion value={listIds.map(id => `List ${id + 1}`)}>
+          <ScrollAccordion value={listIds.map((id) => `List ${id + 1}`)}>
             {listIds.map((index: number) => {
               const name = `List ${index + 1}`
               return (
@@ -812,7 +812,7 @@ function VennPage() {
                         <Input
                           id={`label${index + 1}`}
                           value={listLabelMap.get(index) ?? ''}
-                          onChange={e => {
+                          onChange={(e) => {
                             //console.log(index, e.target.value)
                             setListLabelMap(
                               new Map(listLabelMap).set(index, e.target.value)
@@ -824,7 +824,7 @@ function VennPage() {
                         <VCenterRow className={cn('shrink-0 gap-x-0.5')}>
                           <ColorPickerButton
                             color={colorMap[index]!.fill}
-                            onColorChange={color =>
+                            onColorChange={(color) =>
                               setColorMap(
                                 Object.fromEntries([
                                   ...[...Object.entries(colorMap)],
@@ -843,7 +843,7 @@ function VennPage() {
                           />
                           <ColorPickerButton
                             color={colorMap[index]!.stroke}
-                            onColorChange={color =>
+                            onColorChange={(color) =>
                               setColorMap(
                                 Object.fromEntries([
                                   ...[...Object.entries(colorMap)],
@@ -863,7 +863,7 @@ function VennPage() {
 
                           <ColorPickerButton
                             color={colorMap[index]!.color}
-                            onColorChange={color =>
+                            onColorChange={(color) =>
                               setColorMap(
                                 Object.fromEntries([
                                   ...[...Object.entries(colorMap)],
@@ -888,7 +888,7 @@ function VennPage() {
                         aria-label={`Set ${index + 1}`}
                         placeholder={listLabelMap.get(index) ?? ''}
                         value={listTextMap.get(index) ?? ''}
-                        onChange={e =>
+                        onChange={(e) =>
                           setListTextMap(
                             new Map(listTextMap).set(index, e.target.value)
                           )
@@ -939,7 +939,7 @@ function VennPage() {
                     max={1000}
                     value={displayProps.w}
                     placeholder="Cell width..."
-                    onNumChanged={w => {
+                    onNumChanged={(w) => {
                       updateProps({
                         ...displayProps,
                         w,
@@ -956,7 +956,7 @@ function VennPage() {
                 <SwitchPropRow
                   title="Fill"
                   checked={displayProps.isFilled}
-                  onCheckedChange={state => {
+                  onCheckedChange={(state) => {
                     let props = {
                       ...displayProps,
                       isFilled: state,
@@ -971,7 +971,7 @@ function VennPage() {
 
                       setColorMap(
                         Object.fromEntries(
-                          Object.keys(colorMap).map(key => [
+                          Object.keys(colorMap).map((key) => [
                             key,
                             {
                               ...colorMap[key]!,
@@ -991,7 +991,7 @@ function VennPage() {
                 <SwitchPropRow
                   title="Outline"
                   checked={displayProps.isOutlined}
-                  onCheckedChange={state =>
+                  onCheckedChange={(state) =>
                     updateProps({
                       ...displayProps,
                       isOutlined: state,
@@ -1002,7 +1002,7 @@ function VennPage() {
                 <SwitchPropRow
                   title="Proportional"
                   checked={displayProps.isProportional}
-                  onCheckedChange={state =>
+                  onCheckedChange={(state) =>
                     updateProps({
                       ...displayProps,
                       isProportional: state,
@@ -1012,7 +1012,7 @@ function VennPage() {
                 <SwitchPropRow
                   title="Normalize"
                   checked={displayProps.normalize}
-                  onCheckedChange={state =>
+                  onCheckedChange={(state) =>
                     updateProps({
                       ...displayProps,
                       normalize: state,
@@ -1028,7 +1028,7 @@ function VennPage() {
                 <SwitchPropRow
                   title="Labels"
                   checked={displayProps.showLabels}
-                  onCheckedChange={state =>
+                  onCheckedChange={(state) =>
                     updateProps({
                       ...displayProps,
                       showLabels: state,
@@ -1038,7 +1038,7 @@ function VennPage() {
                 <SwitchPropRow
                   title="Counts"
                   checked={displayProps.showCounts}
-                  onCheckedChange={state =>
+                  onCheckedChange={(state) =>
                     updateProps({
                       ...displayProps,
                       showCounts: state,
@@ -1048,7 +1048,7 @@ function VennPage() {
                 <SwitchPropRow
                   title="Auto-color"
                   checked={displayProps.autoColorText}
-                  onCheckedChange={state =>
+                  onCheckedChange={(state) =>
                     updateProps({
                       ...displayProps,
                       autoColorText: state,
@@ -1058,7 +1058,7 @@ function VennPage() {
                 <PropRow title="Intersection">
                   <ColorPickerButton
                     color={displayProps.intersectionColor}
-                    onColorChange={color =>
+                    onColorChange={(color) =>
                       updateProps({
                         ...displayProps,
                         intersectionColor: color,
@@ -1146,7 +1146,7 @@ function VennPage() {
             key="tabbed-data-frames"
             selectedSheet={currentSheetId(history)[0]!}
             dataFrames={currentSheets(history)[0]!}
-            onTabChange={selectedTab => {
+            onTabChange={(selectedTab) => {
               historyDispatch({
                 type: 'goto-sheet',
                 sheetId: selectedTab.index,
@@ -1237,7 +1237,7 @@ function VennPage() {
       {showDialog.id.includes('export') && (
         <SaveImageDialog
           open="open"
-          onSave={format => {
+          onSave={(format) => {
             downloadImageAutoFormat(
               svgRef,
               canvasRef,
@@ -1281,7 +1281,7 @@ function VennPage() {
         <TabSlideBar
           side="Right"
           tabs={vennRightTabs}
-          onTabChange={selectedTab => setSelectedRightTab(selectedTab.tab.id)}
+          onTabChange={(selectedTab) => setSelectedRightTab(selectedTab.tab.id)}
           value={rightTab}
           open={showSideBar}
           onOpenChange={setShowSideBar}
@@ -1307,7 +1307,7 @@ function VennPage() {
                   id="venn"
                   onWheel={onWheel}
                   tabIndex={0}
-                  onKeyDown={e => setKeyPressed(e.key)}
+                  onKeyDown={(e) => setKeyPressed(e.key)}
                   onKeyUp={() => setKeyPressed(null)}
                 >
                   <svg
@@ -1360,7 +1360,7 @@ function VennPage() {
                     value={activeSideTab}
                     showLabels={false}
                     //defaultWidth={2}
-                    onTabChange={selectedTab =>
+                    onTabChange={(selectedTab) =>
                       setActiveSideTab(selectedTab.tab.id)
                     }
                   />
@@ -1394,7 +1394,7 @@ function VennPage() {
             open={showDialog.id}
             //onOpenChange={() => setShowDialog({...NO_DIALOG})}
             onFileChange={(message, files) =>
-              onTextFileChange(message, files, files => openFiles(files))
+              onTextFileChange(message, files, (files) => openFiles(files))
             }
           />
         )}

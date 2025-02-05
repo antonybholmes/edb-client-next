@@ -204,6 +204,7 @@ const DropdownMenuAnchorItem = forwardRef<
     </a>
   )
 })
+DropdownMenuAnchorItem.displayName = 'DropdownMenuAnchorItem'
 
 const DropdownMenuCheckboxItem = forwardRef<
   ComponentRef<typeof DropdownMenuPrimitive.CheckboxItem>,
@@ -280,7 +281,7 @@ const DropdownMenuLabel = forwardRef<
   ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label> & {
     inset?: boolean
   }
->(({ className, inset, ...props }, ref) => (
+>(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Label
     ref={ref}
     className={cn(

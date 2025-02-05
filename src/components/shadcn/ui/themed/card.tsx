@@ -17,6 +17,7 @@ export const CardContainer = forwardRef<HTMLDivElement, ICardContainerProps>(
     </ContentDiv>
   )
 )
+CardContainer.displayName = 'CardContainer'
 
 export const CenteredCardContainer = forwardRef<
   HTMLDivElement,
@@ -27,6 +28,7 @@ export const CenteredCardContainer = forwardRef<
     <CardContainer>{children}</CardContainer>
   </VCenterCol>
 ))
+CenteredCardContainer.displayName = 'CenteredCardContainer'
 
 // const BaseCard = forwardRef<
 //   HTMLDivElement,

@@ -85,15 +85,11 @@ function UpdatePasswordPage() {
       try {
         const d = jwtDecode<IResetJwtPayload>(j)
         setJwtData(d)
-      } catch (error) {
+      } catch {
         console.error('jwt parse error')
       }
     }
   }, [])
-
-  if (!jwtData) {
-    return null
-  }
 
   //const { accessToken } = useAccessTokenStore()
   //const { user } = useUserStore(queryClient)
@@ -103,10 +99,10 @@ function UpdatePasswordPage() {
   const [hasErrors, setHasErrors] = useState(false)
 
   // try to get name from either account or token
-  const userId = jwtData.uuid
+  const userId = jwtData?.uuid
 
   // try to get name from either account or token
-  const name = jwtData.data ?? 'User'
+  const name = jwtData?.data ?? 'User'
 
   const form = useForm<IFormInput>({
     defaultValues: {

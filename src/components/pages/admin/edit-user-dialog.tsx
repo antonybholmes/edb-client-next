@@ -58,10 +58,6 @@ export function EditUserDialog({
   setUser,
   roles,
 }: IEditUserDialogProps) {
-  if (!user) {
-    return null
-  }
-
   if (!title) {
     title = `Edit User`
   }
@@ -89,7 +85,7 @@ export function EditUserDialog({
     <OKCancelDialog
       open={open}
       title={title}
-      onReponse={r => {
+      onReponse={(r) => {
         if (r === TEXT_OK) {
           btnRef.current?.click()
         } else {

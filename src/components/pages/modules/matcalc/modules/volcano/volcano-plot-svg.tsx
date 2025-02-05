@@ -212,12 +212,12 @@ export const VolcanoPlotSvg = forwardRef<SVGElement, IProps>(
 
       // matching is case insensitive
       const labelSet = new Set<string>(
-        displayOptions.labels.values.map(x => x.toLowerCase())
+        displayOptions.labels.values.map((x) => x.toLowerCase())
       )
       const labelIdx = df.index.values
         .map((v, vi) => [v, vi] as [IndexData, number])
-        .filter(v => labelSet.has((v[0] as string).toLowerCase()))
-        .map(v => v[1])
+        .filter((v) => labelSet.has((v[0] as string).toLowerCase()))
+        .map((v) => v[1])
 
       return (
         <svg
@@ -268,7 +268,7 @@ export const VolcanoPlotSvg = forwardRef<SVGElement, IProps>(
           </g>
 
           <g transform={`translate(${MARGIN.left}, ${MARGIN.top})`}>
-            {labelIdx.map(i => {
+            {labelIdx.map((i) => {
               const xr = xdata[i]!
               const x1 = xax!.domainToRange(xr)
               const y1 = yax!.domainToRange(ydata[i]!)
@@ -477,7 +477,7 @@ export const VolcanoPlotSvg = forwardRef<SVGElement, IProps>(
     //     var myColor = d3
     //       .scaleLinear()
     //       .domain([-3, 0, 3])
-    //       // @ts-ignore
+    //       // @ts-expect-error
     //       .range(["blue", "white", "red"])
 
     //     // Three function that change the tooltip when user hover / move / leave a cell

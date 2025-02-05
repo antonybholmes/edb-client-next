@@ -88,7 +88,7 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
   const [highlightRow, setHighlightRow] = useState(-1)
 
   // max bases to display
-  const maxLength = Math.max(...seqFiles.map(f => f.seq.length))
+  const maxLength = Math.max(...seqFiles.map((f) => f.seq.length))
 
   const bw = BLOCK_SIZE.w * displayProps.scale
   const halfBw = 0.5 * bw
@@ -141,7 +141,7 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
             stroke={COLOR_BLACK}
           />
 
-          {range(maxLength).map(tick => {
+          {range(maxLength).map((tick) => {
             const x = tick * bw + halfBw
 
             const t = gaps % 2 == 0 ? tick + 1 : tick
@@ -216,7 +216,7 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
                   fontWeight="bold"
                   transform={`translate(${margin.left}, 0)`}
                 >
-                  {range(f.seq.length).map(si => {
+                  {range(f.seq.length).map((si) => {
                     let fill =
                       f.seq[si] !== '-'
                         ? displayProps.base.bgMode
@@ -226,7 +226,7 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
 
                     let textColor = displayProps.colorMode
                       ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        //@ts-ignore
+                        //@ts-expect-error
                         BASE_COLOR_MAP[f.seq[si]]
                       : COLOR_BLACK
                     const x = si * bw
@@ -240,7 +240,7 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
                       ) {
                         fill = displayProps.colorMode
                           ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            //@ts-ignore
+                            //@ts-expect-error
                             BASE_COLOR_MAP[f.seq[si]]
                           : COLOR_RED
                         textColor = COLOR_WHITE
@@ -258,7 +258,7 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
                           fill={fill}
                           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                           //@ts-expect-error
-                          ref={ref => baseRefs.current[fi].push(ref)}
+                          ref={(ref) => baseRefs.current[fi].push(ref)}
                         />
                         {displayProps.scale >= 0.8 && (
                           <text
@@ -285,22 +285,22 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
   }, [displayProps.scale, seqFiles, displayProps])
 
   // useMouseMoveListener((e: any) => {
-  //   // @ts-ignore
+  //   // @ts-expect-error
   //   if (!ref.current) {
   //     return
   //   }
 
   //   if (
-  //     // @ts-ignore
+  //     // @ts-expect-error
   //     e.pageX >= ref.current.getBoundingClientRect().left + margin.left &&
   //     e.pageX <
-  //       // @ts-ignore
+  //       // @ts-expect-error
   //       ref.current.getBoundingClientRect().left +
-  //         // @ts-ignore
+  //         // @ts-expect-error
   //         ref.current.getBoundingClientRect().width
   //   ) {
   //     console.log(bw)
-  //     // @ts-ignore
+  //     // @ts-expect-error
   //     setHighlightLineX(Math.round((e.pageX - margin.left - ref.current.getBoundingClientRect().left) / bw) * bw + bw2 - 1)
   //   } else {
   //     setHighlightLineX(-1)
@@ -309,7 +309,7 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
   //   setHighlightRow(
   //     Math.round(
   //       (e.pageY -
-  //         // @ts-ignore
+  //         // @ts-expect-error
   //         ref.current.getBoundingClientRect().top -
   //         PADDING -
   //         RULER_HEIGHT) /
@@ -321,7 +321,7 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function onMouseMove(e: any) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error
     if (!svgRef.current) {
       return
     }
@@ -330,7 +330,7 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
       (e.pageX -
         margin.left -
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+        // @ts-expect-error
         svgRef.current.getBoundingClientRect().left -
         window.scrollX) /
         bw
@@ -343,7 +343,7 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
     let r = Math.floor(
       (e.pageY -
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+        // @ts-expect-error
         svgRef.current.getBoundingClientRect().top -
         PADDING -
         RULER_HEIGHT -

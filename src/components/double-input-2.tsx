@@ -51,7 +51,7 @@ export const DoubleInput = forwardRef<HTMLDivElement, InputProps>(
           onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
             onKeyDown1?.(e)
           }}
-          onChange={e => setText1(e.currentTarget.value)}
+          onChange={(e) => setText1(e.currentTarget.value)}
           style={{
             width: `${Math.max(MIN_CH, _text1.toString().length + 1)}ch`,
           }}
@@ -67,7 +67,7 @@ export const DoubleInput = forwardRef<HTMLDivElement, InputProps>(
           onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
             onKeyDown2?.(e)
           }
-          onChange={e => setText2(e.currentTarget.value)}
+          onChange={(e) => setText2(e.currentTarget.value)}
           style={{
             width: `${Math.max(MIN_CH, _text2.toString().length + 1)}ch`,
           }}
@@ -76,3 +76,4 @@ export const DoubleInput = forwardRef<HTMLDivElement, InputProps>(
     )
   }
 )
+DoubleInput.displayName = 'DoubleInput'

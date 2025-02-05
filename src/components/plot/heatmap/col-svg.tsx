@@ -27,7 +27,7 @@ export function ColTreeTopSvg({
       shapeRendering={SVG_CRISP_EDGES}
     >
       {tree.coords.map((coords, ri) => {
-        const p = range(4).map(i => ({
+        const p = range(4).map((i) => ({
           x: coords[i]!.x * width,
           y: height - coords[i]!.y * height,
         }))
@@ -35,7 +35,9 @@ export function ColTreeTopSvg({
         return (
           <path
             key={ri}
-            d={`M ${p[0]!.x},${p[0]!.y} L ${p[1]!.x},${p[1]!.y} L ${p[2]!.x},${p[2]!.y} L ${p[3]!.x},${p[3]!.y}`}
+            d={`M ${p[0]!.x},${p[0]!.y} L ${p[1]!.x},${p[1]!.y} L ${p[2]!.x},${
+              p[2]!.y
+            } L ${p[3]!.x},${p[3]!.y}`}
             strokeLinecap="round"
             strokeLinejoin="round"
             fill="none"
@@ -76,7 +78,7 @@ export function ColLabelsSvg({
             transform={`translate(${x}, 0) rotate(270)`}
             fill={
               props.colLabels.isColored
-                ? colorMap?.get(col)!
+                ? colorMap?.get(col) ?? props.colLabels.color
                 : props.colLabels.color
             }
             dominantBaseline="central"

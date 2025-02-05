@@ -53,7 +53,6 @@ export function ThemeMenu() {
           variant="ghost"
           size="icon"
           aria-label="Toggle dark mode"
-          // @ts-ignore
           title="Toggle dark mode"
           selected={open}
           className="justify-center fill-foreground"

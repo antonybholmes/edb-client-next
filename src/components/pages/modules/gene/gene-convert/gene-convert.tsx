@@ -7,10 +7,10 @@ import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
 import { ToolbarFooter } from '@components/toolbar/toolbar-footer'
 
 import {
-    ShowOptionsMenu,
-    Toolbar,
-    ToolbarMenu,
-    ToolbarPanel,
+  ShowOptionsMenu,
+  Toolbar,
+  ToolbarMenu,
+  ToolbarPanel,
 } from '@components/toolbar/toolbar'
 import { ToolbarSeparator } from '@components/toolbar/toolbar-separator'
 import { PlayIcon } from '@icons/play-icon'
@@ -19,17 +19,17 @@ import { ToolbarButton } from '@components/toolbar/toolbar-button'
 
 import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
 import {
-    downloadDataFrame,
-    getFormattedShape,
+  downloadDataFrame,
+  getFormattedShape,
 } from '@lib/dataframe/dataframe-utils'
 
 import {
-    DEFAULT_PARSE_OPTS,
-    filesToDataFrames,
-    onTextFileChange,
-    OpenFiles,
-    type IParseOptions,
-    type ITextFileOpen,
+  DEFAULT_PARSE_OPTS,
+  filesToDataFrames,
+  onTextFileChange,
+  OpenFiles,
+  type IParseOptions,
+  type ITextFileOpen,
 } from '@components/pages/open-files'
 
 import { BasicAlertDialog } from '@components/dialog/basic-alert-dialog'
@@ -40,21 +40,21 @@ import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
 import { OpenIcon } from '@icons/open-icon'
 import { SaveIcon } from '@icons/save-icon'
 import {
-    currentSheet,
-    currentSheetId,
-    currentSheets,
-    HistoryContext,
+  currentSheet,
+  currentSheetId,
+  currentSheets,
+  HistoryContext,
 } from '@providers/history-provider'
 
 import { useContext, useRef, useState } from 'react'
 
 import {
-    NO_DIALOG,
-    TEXT_DOWNLOAD_AS_CSV,
-    TEXT_DOWNLOAD_AS_TXT,
-    TEXT_OPEN_FILE,
-    TEXT_SAVE_AS,
-    type IDialogParams,
+  NO_DIALOG,
+  TEXT_DOWNLOAD_AS_CSV,
+  TEXT_DOWNLOAD_AS_TXT,
+  TEXT_OPEN_FILE,
+  TEXT_SAVE_AS,
+  type IDialogParams,
 } from '@/consts'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
@@ -109,7 +109,7 @@ function GeneConvPage() {
 
     filesToDataFrames(queryClient, files, {
       parseOpts: options,
-      onSuccess: tables => {
+      onSuccess: (tables) => {
         if (tables.length > 0) {
           historyDispatch({
             type: 'open',
@@ -185,7 +185,7 @@ function GeneConvPage() {
         description: `Load Test`,
         sheets: [table.setName('Geneconv Test')],
       })
-    } catch (error) {
+    } catch {
       // do nothing
     }
   }
@@ -198,7 +198,7 @@ function GeneConvPage() {
         <>
           <ToolbarTabGroup>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: makeRandId('open'),
@@ -235,7 +235,7 @@ function GeneConvPage() {
             <ToggleButtons
               tabs={speciesTabs}
               value={fromSpecies}
-              onTabChange={selectedTab => {
+              onTabChange={(selectedTab) => {
                 setFromSpecies(selectedTab.tab.id)
               }}
             >
@@ -247,7 +247,7 @@ function GeneConvPage() {
             <ToggleButtons
               tabs={speciesTabs}
               value={toSpecies}
-              onTabChange={selectedTab => {
+              onTabChange={(selectedTab) => {
                 setToSpecies(selectedTab.tab.id)
               }}
             >
@@ -484,7 +484,7 @@ function GeneConvPage() {
           side="Right"
           tabs={rightTabs}
           value={rightTab}
-          onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
@@ -496,7 +496,7 @@ function GeneConvPage() {
           <TabbedDataFrames
             selectedSheet={currentSheetId(history)[0]!}
             dataFrames={currentSheets(history)[0]!}
-            onTabChange={selectedTab => {
+            onTabChange={(selectedTab) => {
               historyDispatch({
                 type: 'goto-sheet',
                 sheetId: selectedTab.index,
@@ -523,7 +523,7 @@ function GeneConvPage() {
             open={showDialog.id}
             //onOpenChange={() => setShowDialog({...NO_DIALOG})}
             onFileChange={(message, files) =>
-              onTextFileChange(message, files, files => openFiles(files))
+              onTextFileChange(message, files, (files) => openFiles(files))
             }
           />
         )}

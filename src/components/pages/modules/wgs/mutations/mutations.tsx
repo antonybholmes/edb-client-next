@@ -5,45 +5,45 @@ import { ToolbarFooter } from '@components/toolbar/toolbar-footer'
 import { BaseRow } from '@/components/layout/base-row'
 
 import {
-    ShowOptionsMenu,
-    Toolbar,
-    ToolbarMenu,
-    ToolbarPanel,
+  ShowOptionsMenu,
+  Toolbar,
+  ToolbarMenu,
+  ToolbarPanel,
 } from '@components/toolbar/toolbar'
 import { ToolbarIconButton } from '@components/toolbar/toolbar-icon-button'
 import { ToolbarSeparator } from '@components/toolbar/toolbar-separator'
 
 import {
-    COLOR_BLACK,
-    COLOR_RED,
-    NO_DIALOG,
-    TEXT_DOWNLOAD_AS_CSV,
-    TEXT_DOWNLOAD_AS_TXT,
-    TEXT_SAVE_AS,
-    type IDialogParams,
+  COLOR_BLACK,
+  COLOR_RED,
+  NO_DIALOG,
+  TEXT_DOWNLOAD_AS_CSV,
+  TEXT_DOWNLOAD_AS_TXT,
+  TEXT_SAVE_AS,
+  type IDialogParams,
 } from '@/consts'
 import { ToolbarTabButton } from '@components/toolbar/toolbar-tab-button'
 import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
 import { getDataFrameInfo } from '@lib/dataframe/dataframe-utils'
 import {
-    currentSheet,
-    currentSheetId,
-    currentSheets,
-    HistoryContext,
+  currentSheet,
+  currentSheetId,
+  currentSheets,
+  HistoryContext,
 } from '@providers/history-provider'
 
 import { GenomicLocation } from '@/lib/genomic/genomic'
 import { useContext, useEffect, useRef, useState } from 'react'
 
 import {
-    API_MUTATIONS_DATABASES_URL as API_MUTATIONS_DATASETS_URL,
-    API_MUTATIONS_PILEUP_URL,
+  API_MUTATIONS_DATABASES_URL as API_MUTATIONS_DATASETS_URL,
+  API_MUTATIONS_PILEUP_URL,
 } from '@/lib/edb/edb'
 import { fetchDNA, type IDNA } from '@/lib/genomic/dna'
 import { parseLocation } from '@/lib/genomic/genomic'
 import {
-    AlertsContext,
-    makeErrorAlert,
+  AlertsContext,
+  makeErrorAlert,
 } from '@components/alerts/alerts-provider'
 
 import { BaseCol } from '@/components/layout/base-col'
@@ -55,23 +55,23 @@ import { SaveIcon } from '@components/icons/save-icon'
 import { SearchIcon } from '@components/icons/search-icon'
 import { SlidersIcon } from '@components/icons/sliders-icon'
 import {
-    DEFAULT_PILEUP_PROPS,
-    PileupPlotSvg,
-    type IMotifPattern,
-    type IMutationDataset,
-    type IMutationSample,
-    type IPileupPlot,
-    type IPileupProps,
-    type IPileupResults,
+  DEFAULT_PILEUP_PROPS,
+  PileupPlotSvg,
+  type IMotifPattern,
+  type IMutationDataset,
+  type IMutationSample,
+  type IPileupPlot,
+  type IPileupProps,
+  type IPileupResults,
 } from '@components/pages/modules/wgs/mutations/pileup-plot-svg'
 import {
-    DropdownMenuItem,
-    MenuSeparator,
+  DropdownMenuItem,
+  MenuSeparator,
 } from '@components/shadcn/ui/themed/dropdown-menu'
 import { Input } from '@components/shadcn/ui/themed/input'
 import {
-    ResizablePanel,
-    ResizablePanelGroup,
+  ResizablePanel,
+  ResizablePanelGroup,
 } from '@components/shadcn/ui/themed/resizable'
 
 import { VCenterRow } from '@/components/layout/v-center-row'
@@ -94,8 +94,8 @@ import { HistoryPanel } from '@components/pages/history-panel'
 import { SaveImageDialog } from '@components/pages/save-image-dialog'
 import { SaveTxtDialog } from '@components/pages/save-txt-dialog'
 import {
-    SideToggleGroup,
-    ToggleGroupItem,
+  SideToggleGroup,
+  ToggleGroupItem,
 } from '@components/shadcn/ui/themed/side-toggle-group'
 import { type ITab } from '@components/tab-provider'
 import { V_SCROLL_CHILD_CLS, VScrollPanel } from '@components/v-scroll-panel'
@@ -213,7 +213,7 @@ export function MutationsPage() {
     setDatasets(datasets)
 
     setDatasetUseMap(
-      new Map<string, boolean>(datasets.map(dataset => [dataset.uuid, true]))
+      new Map<string, boolean>(datasets.map((dataset) => [dataset.uuid, true]))
     )
   }
 
@@ -229,9 +229,9 @@ export function MutationsPage() {
     setSampleMap(
       new Map<string, IMutationSample>(
         datasets
-          .map(dataset =>
+          .map((dataset) =>
             dataset.samples.map(
-              sample => [sample.uuid, sample] as [string, IMutationSample]
+              (sample) => [sample.uuid, sample] as [string, IMutationSample]
             )
           )
           .flat()
@@ -240,7 +240,7 @@ export function MutationsPage() {
   }, [datasets])
 
   useEffect(() => {
-    const children: ITab[] = datasets.map(dataset => {
+    const children: ITab[] = datasets.map((dataset) => {
       return {
         name: dataset.uuid,
         id: dataset.name,
@@ -268,7 +268,7 @@ export function MutationsPage() {
     }
 
     const cmap: { [key: string]: string } =
-      // @ts-ignore
+      // @ts-expect-error
       displayProps.cmaps[displayProps.cmap]
 
     // sample color map
@@ -278,9 +278,9 @@ export function MutationsPage() {
       case 'COO':
         scm = new Map<string, string>(
           datasets
-            .map(d => d.samples)
+            .map((d) => d.samples)
             .flat()
-            .map(s => [s.uuid, s.coo in cmap ? cmap[s.coo]! : COLOR_BLACK])
+            .map((s) => [s.uuid, s.coo in cmap ? cmap[s.coo]! : COLOR_BLACK])
         )
 
         console.log(scm)
@@ -290,9 +290,9 @@ export function MutationsPage() {
         scm = new Map<string, string>(
           datasets
 
-            .map(d => d.samples)
+            .map((d) => d.samples)
             .flat()
-            .map(s => [
+            .map((s) => [
               s.uuid,
               s.lymphgen in cmap ? cmap[s.lymphgen]! : COLOR_BLACK,
             ])
@@ -312,8 +312,8 @@ export function MutationsPage() {
   useEffect(() => {
     setSamples(
       datasets
-        .filter(dataset => datasetUseMap.get(dataset.uuid))
-        .map(d => d.samples)
+        .filter((dataset) => datasetUseMap.get(dataset.uuid))
+        .map((d) => d.samples)
         .flat()
         .sort((sa, sb) => sa.name.localeCompare(sb.name))
     )
@@ -354,7 +354,7 @@ export function MutationsPage() {
           return httpFetch.postJson(`${API_MUTATIONS_PILEUP_URL}/${assembly}`, {
             body: {
               locations: [location.toString()],
-              datasets: datasets.map(dataset => dataset.uuid),
+              datasets: datasets.map((dataset) => dataset.uuid),
             },
 
             headers: bearerHeaders(accessToken),
@@ -396,7 +396,7 @@ export function MutationsPage() {
     try {
       pileup = await fetchPileup(
         location,
-        datasets.filter(dataset => datasetUseMap.get(dataset.uuid))
+        datasets.filter((dataset) => datasetUseMap.get(dataset.uuid))
       )
     } catch (e) {
       console.log(e)
@@ -420,9 +420,9 @@ export function MutationsPage() {
 
     const datasetMap = new Map<string, string>(
       datasets
-        .map(dataset =>
+        .map((dataset) =>
           dataset.samples.map(
-            sample => [sample.uuid, dataset.name] as [string, string]
+            (sample) => [sample.uuid, dataset.name] as [string, string]
           )
         )
         .flat()
@@ -430,9 +430,9 @@ export function MutationsPage() {
 
     const cooMap = new Map<string, string>(
       datasets
-        .map(dataset =>
+        .map((dataset) =>
           dataset.samples.map(
-            sample => [sample.uuid, sample.coo] as [string, string]
+            (sample) => [sample.uuid, sample.coo] as [string, string]
           )
         )
         .flat()
@@ -440,9 +440,9 @@ export function MutationsPage() {
 
     const lymphgenMap = new Map<string, string>(
       datasets
-        .map(dataset =>
+        .map((dataset) =>
           dataset.samples.map(
-            sample => [sample.uuid, sample.lymphgen] as [string, string]
+            (sample) => [sample.uuid, sample.lymphgen] as [string, string]
           )
         )
         .flat()
@@ -450,7 +450,7 @@ export function MutationsPage() {
 
     const loc = parseLocation(search)
 
-    const data = pileup.pileupResults?.pileup.flat().map(mutation => {
+    const data = pileup.pileupResults?.pileup.flat().map((mutation) => {
       let chr = mutation.chr.replace('chr', '')
 
       if (displayProps.chrPrefix.show) {
@@ -600,8 +600,8 @@ export function MutationsPage() {
         <PileupPropsPanel
           displayProps={displayProps}
           motifPatterns={motifPatterns}
-          onDisplayPropsChange={props => setDisplayProps(props)}
-          onMotifPatternsChange={patterns => setMotifPatterns(patterns)}
+          onDisplayPropsChange={(props) => setDisplayProps(props)}
+          onMotifPatternsChange={(patterns) => setMotifPatterns(patterns)}
         />
       ),
     },
@@ -700,7 +700,7 @@ export function MutationsPage() {
       {showDialog.id.includes('save') && (
         <SaveTxtDialog
           open={showDialog.id}
-          onSave={format => {
+          onSave={(format) => {
             save(format.ext)
             setShowDialog({ ...NO_DIALOG })
           }}
@@ -711,7 +711,7 @@ export function MutationsPage() {
       {showDialog.id.includes('export') && (
         <SaveImageDialog
           open={showDialog.id}
-          onSave={format => {
+          onSave={(format) => {
             downloadImageAutoFormat(
               svgRef,
               canvasRef,
@@ -730,10 +730,10 @@ export function MutationsPage() {
           <Input
             value={search}
             variant="plain"
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             className="w-80 text-xs font-medium rounded-theme bg-muted pl-8  hover:bg-white/40 fill-white/50 hover:fill-white/90 text-white trans-color"
             inputCls="text-center"
-            onKeyDown={e => {
+            onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 try {
                   getPileup()
@@ -844,7 +844,7 @@ export function MutationsPage() {
               side="Right"
               tabs={rightTabs}
               value={rightTab}
-              onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+              onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
               open={showSideBar}
               onOpenChange={setShowSideBar}
             >
@@ -937,7 +937,7 @@ export function MutationsPage() {
                             key="tabbed-data-frames"
                             selectedSheet={currentSheetId(history)[0]!}
                             dataFrames={currentSheets(history)[0]!}
-                            onTabChange={selectedTab => {
+                            onTabChange={(selectedTab) => {
                               historyDispatch({
                                 type: 'goto-sheet',
                                 sheetId: selectedTab.index,
@@ -982,7 +982,7 @@ export function MutationsPage() {
                 <CollapseTree
                   tab={foldersTab}
                   value={tab!}
-                  onValueChange={t => {
+                  onValueChange={(t) => {
                     // only use tabs from the tree that have content, otherwise
                     // the ui will appear empty
                     setTab(t)

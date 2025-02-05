@@ -40,8 +40,8 @@ export const GseaSvg = forwardRef<SVGElement, IProps>(function GseaSvg(
     // keep only pathways for which we have results, i.e. with
     //suitable q values. If q == 1, unlikely GSEA generated it
     // so we cannot plot it
-    const pathways = phenotypes.map(report =>
-      reports.get(report)!.filter(pathway => resultsMap.has(pathway.name))
+    const pathways = phenotypes.map((report) =>
+      reports.get(report)!.filter((pathway) => resultsMap.has(pathway.name))
     )
 
     const rows = Math.ceil(pathways.flat().length / displayProps.page.columns)
@@ -55,7 +55,7 @@ export const GseaSvg = forwardRef<SVGElement, IProps>(function GseaSvg(
 
     const plots = phenotypes
       .map((_, phenotypei) => {
-        return pathways[phenotypei]!.map(pathway => {
+        return pathways[phenotypei]!.map((pathway) => {
           const col = ploti % displayProps.page.columns
           const row = Math.floor(ploti / displayProps.page.columns)
           const x = col * plotSize[0]!
@@ -72,15 +72,15 @@ export const GseaSvg = forwardRef<SVGElement, IProps>(function GseaSvg(
 
           xax = xax.setTicks(xax.ticks.slice(1))
 
-          let yMin = Math.min(...results.es.map(e => e.score))
-          let yMax = Math.max(...results.es.map(e => e.score))
+          let yMin = Math.min(...results.es.map((e) => e.score))
+          let yMax = Math.max(...results.es.map((e) => e.score))
 
           let yax = new YAxis()
             .autoDomain([yMin, yMax])
             //.setDomain([0, plot.dna.seq.length])
             .setLength(displayProps.es.axes.y.length)
 
-          let points = results.es.map(e => [
+          const points = results.es.map((e) => [
             xax.domainToRange(e.rank),
             yax.domainToRange(e.score),
           ])
@@ -105,9 +105,9 @@ export const GseaSvg = forwardRef<SVGElement, IProps>(function GseaSvg(
             ]
           }
 
-          const leadingEdge = results.es.filter(e => e.leading)
+          const leadingEdge = results.es.filter((e) => e.leading)
 
-          let leadingPoints = leadingEdge.map(e => [
+          let leadingPoints = leadingEdge.map((e) => [
             xax.domainToRange(e.rank),
             yax.domainToRange(e.score),
           ]) as [number, number][]
@@ -136,7 +136,7 @@ export const GseaSvg = forwardRef<SVGElement, IProps>(function GseaSvg(
             <g>
               {displayProps.es.leadingEdge.show && (
                 <polygon
-                  points={leadingPoints.map(p => `${p[0]},${p[1]}`).join(' ')}
+                  points={leadingPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
                   fill={displayProps.es.leadingEdge.fill.color}
                   stroke="none"
                   fillOpacity={displayProps.es.leadingEdge.fill.alpha}
@@ -144,7 +144,7 @@ export const GseaSvg = forwardRef<SVGElement, IProps>(function GseaSvg(
               )}
 
               <polyline
-                points={displayPoints.map(p => `${p[0]},${p[1]}`).join(' ')}
+                points={displayPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
                 fill="none"
                 stroke={displayProps.es.line.color}
                 strokeWidth={displayProps.es.line.width}
@@ -158,7 +158,9 @@ export const GseaSvg = forwardRef<SVGElement, IProps>(function GseaSvg(
               </g>
 
               <g
-                transform={`translate(${displayProps.axes.x.length + displayProps.plot.gap.x / 2}, ${yax.domainToRange(0)})`}
+                transform={`translate(${
+                  displayProps.axes.x.length + displayProps.plot.gap.x / 2
+                }, ${yax.domainToRange(0)})`}
               >
                 <text
                   fill={COLOR_BLACK}
@@ -172,7 +174,11 @@ export const GseaSvg = forwardRef<SVGElement, IProps>(function GseaSvg(
               </g>
 
               <g
-                transform={`translate(${phenotypei === 0 ? displayProps.axes.x.length - 70 : 10}, ${phenotypei === 0 ? 10 : displayProps.es.axes.y.length - 20})`}
+                transform={`translate(${
+                  phenotypei === 0 ? displayProps.axes.x.length - 70 : 10
+                }, ${
+                  phenotypei === 0 ? 10 : displayProps.es.axes.y.length - 20
+                })`}
                 fontSize="small"
               >
                 <text
@@ -200,7 +206,9 @@ export const GseaSvg = forwardRef<SVGElement, IProps>(function GseaSvg(
 
               {displayProps.es.labels.show && (
                 <g
-                  transform={`translate(0, ${displayProps.es.axes.y.length + displayProps.plot.gap.y / 2})`}
+                  transform={`translate(0, ${
+                    displayProps.es.axes.y.length + displayProps.plot.gap.y / 2
+                  })`}
                 >
                   <g>
                     <text
@@ -243,7 +251,9 @@ export const GseaSvg = forwardRef<SVGElement, IProps>(function GseaSvg(
           if (displayProps.genes.show) {
             genesSvg = (
               <g
-                transform={`translate(0, ${displayProps.es.axes.y.length + 2 * displayProps.plot.gap.y})`}
+                transform={`translate(0, ${
+                  displayProps.es.axes.y.length + 2 * displayProps.plot.gap.y
+                })`}
               >
                 {points.map((p, pointi) => {
                   //console.log(pi, results.es[pi], rankedGenes.length)
@@ -271,14 +281,14 @@ export const GseaSvg = forwardRef<SVGElement, IProps>(function GseaSvg(
           let rankingSvg: ReactNode | null = null
 
           if (displayProps.ranking.show) {
-            yMin = Math.min(...rankedGenes.map(e => e.score))
-            yMax = Math.max(...rankedGenes.map(e => e.score))
+            yMin = Math.min(...rankedGenes.map((e) => e.score))
+            yMax = Math.max(...rankedGenes.map((e) => e.score))
             yax = new YAxis()
               .autoDomain([yMin, yMax])
               //.setDomain([0, plot.dna.seq.length])
               .setLength(displayProps.ranking.axes.y.length)
 
-            let points = rankedGenes.map(e => [
+            const points = rankedGenes.map((e) => [
               xax.domainToRange(e.rank),
               yax.domainToRange(e.score),
             ])
@@ -304,13 +314,13 @@ export const GseaSvg = forwardRef<SVGElement, IProps>(function GseaSvg(
                 : 0)
 
             const crossIndex =
-              end(where(rankedGenes, gene => gene.score > 0)) + 1
+              end(where(rankedGenes, (gene) => gene.score > 0)) + 1
             const crossingX = xax.domainToRange(crossIndex)
 
             rankingSvg = (
               <g transform={`translate(0, ${y})`}>
                 <polygon
-                  points={displayPoints.map(p => `${p[0]},${p[1]}`).join(' ')}
+                  points={displayPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
                   fill={displayProps.ranking.fill.color}
                   stroke="none"
                   fillOpacity={displayProps.ranking.fill.alpha}
@@ -324,7 +334,10 @@ export const GseaSvg = forwardRef<SVGElement, IProps>(function GseaSvg(
                       strokeDasharray="8"
                     />
                     <g
-                      transform={`translate(0, ${displayProps.ranking.axes.y.length + displayProps.plot.gap.y})`}
+                      transform={`translate(0, ${
+                        displayProps.ranking.axes.y.length +
+                        displayProps.plot.gap.y
+                      })`}
                     >
                       <text
                         fill={COLOR_BLACK}

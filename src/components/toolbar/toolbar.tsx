@@ -263,7 +263,7 @@ export function ToolbarMenu({
                   className="justify-center"
    
                   aria-label={`Show ${tab.id} menu`}
-                  // @ts-ignore
+                  // @ts-expect-error
                   ref={el => (buttonsRef.current[ti] = el!)}
                   onMouseEnter={() => {
                     if (selected) {

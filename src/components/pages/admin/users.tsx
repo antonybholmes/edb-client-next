@@ -3,15 +3,15 @@
 import { AlertsContext, makeAlert } from '@components/alerts/alerts-provider'
 
 import {
-    API_ADMIN_ADD_USER_URL,
-    API_ADMIN_DELETE_USER_URL,
-    API_ADMIN_ROLES_URL,
-    API_ADMIN_UPDATE_USER_URL,
-    API_ADMIN_USER_STATS_URL,
-    API_ADMIN_USERS_URL,
-    DEFAULT_EDB_USER,
-    type IEdbUser,
-    type IRole,
+  API_ADMIN_ADD_USER_URL,
+  API_ADMIN_DELETE_USER_URL,
+  API_ADMIN_ROLES_URL,
+  API_ADMIN_UPDATE_USER_URL,
+  API_ADMIN_USER_STATS_URL,
+  API_ADMIN_USERS_URL,
+  DEFAULT_EDB_USER,
+  type IEdbUser,
+  type IRole,
 } from '@/lib/edb/edb'
 
 import { useContext, useEffect, useState } from 'react'
@@ -29,19 +29,19 @@ import { TrashIcon } from '@components/icons/trash-icon'
 import { PaginationComponent } from '@components/pagination-component'
 import { Button } from '@components/shadcn/ui/themed/button'
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@components/shadcn/ui/themed/table'
 import {
-    createColumnHelper,
-    flexRender,
-    getCoreRowModel,
-    useReactTable,
-    type ColumnDef,
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  type ColumnDef,
 } from '@tanstack/react-table'
 
 import { CenterRow } from '@/components/layout/center-row'
@@ -97,7 +97,7 @@ function AdminUsersPage() {
 
       //console.log('roles', res.data)
       setRoles(res.data)
-    } catch (err) {
+    } catch {
       console.error('could not fetch remote roles')
     }
   }
@@ -202,37 +202,37 @@ function AdminUsersPage() {
   const columnHelper = createColumnHelper<IEdbUser>()
 
   const columns: ColumnDef<IEdbUser>[] = [
-    // @ts-ignore
+    // @ts-expect-error
     columnHelper.accessor('uuid', {
       header: 'Uuid',
     }),
-    // @ts-ignore
+    // @ts-expect-error
     columnHelper.accessor('username', {
       header: 'Username',
     }),
-    // @ts-ignore
+    // @ts-expect-error
     columnHelper.accessor('email', {
       header: 'Email',
     }),
-    // @ts-ignore
+    // @ts-expect-error
     columnHelper.accessor('firstName', {
       header: 'First Name',
     }),
-    // @ts-ignore
+    // @ts-expect-error
     columnHelper.accessor('lastName', {
       header: 'Last Name',
     }),
-    // @ts-ignore
+    // @ts-expect-error
     columnHelper.accessor('roles', {
       header: 'Roles',
-      cell: props => <span>{props.getValue().join(', ')}</span>,
+      cell: (props) => <span>{props.getValue().join(', ')}</span>,
     }),
 
-    // @ts-ignore
-    columnHelper.accessor(row => row, {
+    // @ts-expect-error
+    columnHelper.accessor((row) => row, {
       id: 'edit',
       header: '',
-      cell: props => (
+      cell: (props) => (
         <VCenterRow className="gap-x-3 justify-end">
           <button
             title="Edit user"
@@ -273,7 +273,7 @@ function AdminUsersPage() {
   ]
 
   const table = useReactTable({
-    // @ts-ignore
+    // @ts-expect-error
     columns,
     data: users,
     getCoreRowModel: getCoreRowModel(),
@@ -302,7 +302,7 @@ function AdminUsersPage() {
 
       // force refresh
       await loadUsers()
-    } catch (err) {
+    } catch {
       console.error('error making new user')
     }
   }
@@ -375,14 +375,16 @@ function AdminUsersPage() {
     <>
       {showDialog.id === 'delete' && (
         <OKCancelDialog
-          onReponse={r => {
+          onReponse={(r) => {
             if (r === TEXT_OK) {
               deleteUser(showDialog.params!['user'])
             }
             setShowDialog({ ...NO_DIALOG })
           }}
         >
-          {`Are you sure you want to delete user ${showDialog.params!['user'].uuid}?`}
+          {`Are you sure you want to delete user ${
+            showDialog.params!['user'].uuid
+          }?`}
         </OKCancelDialog>
       )}
 
@@ -425,7 +427,7 @@ function AdminUsersPage() {
               <CenterRow className="col-span-2">
                 <PaginationComponent
                   currentPage={page}
-                  setCurrentPage={page => {
+                  setCurrentPage={(page) => {
                     setPage(page)
                   }}
                   itemsPerPage={itemsPerPage}
@@ -454,10 +456,10 @@ function AdminUsersPage() {
               </VCenterRow>
               <Table>
                 <TableHeader>
-                  {table.getHeaderGroups().map(headerGroup => {
+                  {table.getHeaderGroups().map((headerGroup) => {
                     return (
                       <TableRow key={headerGroup.id}>
-                        {headerGroup.headers.map(header => (
+                        {headerGroup.headers.map((header) => (
                           <TableHead key={header.id} colSpan={header.colSpan}>
                             {flexRender(
                               header.column.columnDef.header,
@@ -470,9 +472,9 @@ function AdminUsersPage() {
                   })}
                 </TableHeader>
                 <TableBody>
-                  {table.getRowModel().rows.map(row => (
+                  {table.getRowModel().rows.map((row) => (
                     <TableRow key={row.id}>
-                      {row.getVisibleCells().map(cell => (
+                      {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
                           {flexRender(
                             cell.column.columnDef.cell,
