@@ -252,7 +252,7 @@ export function GexPage() {
       })
 
       datasets = res.data
-    } catch (err) {
+    } catch {
       console.error('error loading datasets from remote')
     }
 
@@ -587,7 +587,7 @@ export function GexPage() {
       columns: searchResults.genes[0]!.datasets.map((datasetResult) =>
         datasetMap.get(datasetResult.id)!.samples.map((sample) => sample.name)
       ).flat(),
-      name: gexValueType?.name!,
+      name: gexValueType?.name,
     })
 
     //   // for heatmap

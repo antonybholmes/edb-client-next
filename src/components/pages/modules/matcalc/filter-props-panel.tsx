@@ -21,23 +21,14 @@ import { VScrollPanel } from '@components/v-scroll-panel'
 import { type BaseDataFrame } from '@lib/dataframe/base-dataframe'
 import { filterColsById, filterRowsById } from '@lib/dataframe/dataframe-utils'
 import { HistoryContext } from '@providers/history-provider'
-import {
-  forwardRef,
-  useContext,
-  useEffect,
-  useState,
-  type ForwardedRef,
-} from 'react'
+import { useContext, useEffect, useState } from 'react'
 import MODULE_INFO from './module.json'
 
 export interface IProps {
   df: BaseDataFrame | null
 }
 
-export const FilterPropsPanel = forwardRef(function FilterPropsPanel(
-  { df }: IProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+export function FilterPropsPanel({ df }: IProps) {
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
   const { historyDispatch } = useContext(HistoryContext)
   const { toast } = useToast()
@@ -165,7 +156,7 @@ export const FilterPropsPanel = forwardRef(function FilterPropsPanel(
       <OKCancelDialog
         open={confirmClear}
         title={MODULE_INFO.name}
-        onReponse={r => {
+        onReponse={(r) => {
           if (r === TEXT_OK) {
             setText('')
 
@@ -203,7 +194,7 @@ export const FilterPropsPanel = forwardRef(function FilterPropsPanel(
         <HCenterRow className="gap-x-2 shrink-0 py-2">
           <ToggleButtons
             value={filterMode}
-            onTabChange={selectedTab => {
+            onTabChange={(selectedTab) => {
               if (selectedTab) {
                 setFilterMode(selectedTab.tab.id)
               }
@@ -254,9 +245,9 @@ export const FilterPropsPanel = forwardRef(function FilterPropsPanel(
 
         <VScrollPanel innerClassName="gap-y-2">
           <FileDropPanel
-            onFileDrop={files => {
+            onFileDrop={(files) => {
               if (files.length > 0) {
-                onTextFileChange('Open filter list', files, files => {
+                onTextFileChange('Open filter list', files, (files) => {
                   if (files.length > 0) {
                     setText(files[0]!.text)
                   }
@@ -268,7 +259,7 @@ export const FilterPropsPanel = forwardRef(function FilterPropsPanel(
               id="filter"
               aria-label="Filter"
               value={text}
-              onChange={e => setText(e.target.value)}
+              onChange={(e) => setText(e.target.value)}
               //placeholder={`Filter ${filterMode}`}
               className="h-96"
             />
@@ -281,7 +272,7 @@ export const FilterPropsPanel = forwardRef(function FilterPropsPanel(
                   ? filters.rows.caseSensitive
                   : filters.cols.caseSensitive
               }
-              onCheckedChange={state => {
+              onCheckedChange={(state) => {
                 if (filterMode.includes('Rows')) {
                   updateFilters({
                     ...filters,
@@ -303,7 +294,7 @@ export const FilterPropsPanel = forwardRef(function FilterPropsPanel(
                   ? filters.rows.matchEntireCell
                   : filters.cols.matchEntireCell
               }
-              onCheckedChange={state => {
+              onCheckedChange={(state) => {
                 if (filterMode.includes('Rows')) {
                   updateFilters({
                     ...filters,
@@ -325,7 +316,7 @@ export const FilterPropsPanel = forwardRef(function FilterPropsPanel(
                   ? filters.rows.keepOrder
                   : filters.cols.keepOrder
               }
-              onCheckedChange={state => {
+              onCheckedChange={(state) => {
                 if (filterMode.includes('Rows')) {
                   updateFilters({
                     ...filters,
@@ -370,7 +361,7 @@ export const FilterPropsPanel = forwardRef(function FilterPropsPanel(
         <OpenFiles
           open={showDialog.id}
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
+            onTextFileChange(message, files, (files) => {
               if (files.length > 0) {
                 setText(files[0]!.text)
               }
@@ -380,4 +371,4 @@ export const FilterPropsPanel = forwardRef(function FilterPropsPanel(
       )}
     </>
   )
-})
+}

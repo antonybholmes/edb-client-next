@@ -2,7 +2,7 @@ import { type IChildrenProps } from '@interfaces/children-props'
 
 import { createContext, useReducer, type Dispatch } from 'react'
 
-import { useQueryClient } from '@tanstack/react-query'
+import { QueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 
 export interface IProtein {
@@ -105,11 +105,10 @@ export function ProteinProvider({ children }: IChildrenProps) {
 
 //%20AND%20(organism_id:9606)
 export async function searchProteins(
+  queryClient: QueryClient,
   gene: string,
   max: number = 5
 ): Promise<IProtein[]> {
-  const queryClient = useQueryClient()
-
   let res = await queryClient.fetchQuery({
     queryKey: ['query'],
     queryFn: () =>
@@ -123,9 +122,11 @@ export async function searchProteins(
   const ret: IProtein[] = await Promise.all(
     res.data.results.map(
       async (p: {
-        primaryAccession: any
-        proteinDescription: { recommendedName: { fullName: { value: any } } }
-        organism: { commonName: any; taxonId: any }
+        primaryAccession: unknown
+        proteinDescription: {
+          recommendedName: { fullName: { value: unknown } }
+        }
+        organism: { commonName: unknown; taxonId: unknown }
       }) => {
         //console.log(p)
 

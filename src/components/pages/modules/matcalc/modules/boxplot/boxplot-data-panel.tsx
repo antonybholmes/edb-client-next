@@ -36,7 +36,7 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
   const singlePlotDisplayOptions = plot.customProps.singlePlotDisplayOptions
 
   const xOrder: string[] = plot.customProps.xOrder
-  let hueOrder: string[] = plot.customProps.hueOrder
+  const hueOrder: string[] = plot.customProps.hueOrder
   const typeOrder = ['violin', 'box', 'swarm']
 
   //const [typeTabs, setTypeTabs] = useState(typeOrder)
@@ -49,7 +49,7 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
       <Reorder.Group
         axis="y"
         values={plot.customProps.xOrder}
-        onReorder={(order: any) => {
+        onReorder={(order) => {
           historyDispatch({
             type: 'update-custom-prop',
             addr: plotAddr,
