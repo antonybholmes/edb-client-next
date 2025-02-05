@@ -84,7 +84,7 @@ function VerifyPage() {
       if (success && visitUrl) {
         redirect(visitUrl)
       }
-    } catch (error) {
+    } catch {
       setIsVerified(false)
     }
   }

@@ -38,9 +38,9 @@ export function getYMax(
       switch (scaleMode) {
         case 'BPM':
           const bpm = locTrackBins
-            .map(ltb =>
+            .map((ltb) =>
               ltb.binCounts[si]!.bins.map(
-                b => b[2]! * ltb.binCounts[si]!.bpmScaleFactor
+                (b) => b[2]! * ltb.binCounts[si]!.bpmScaleFactor
               )
             )
             .flat()
@@ -49,11 +49,11 @@ export function getYMax(
         case 'CPM':
           return Math.max(
             ...locTrackBins.map(
-              ltb => (ltb.binCounts[si]!.ymax / seq.reads) * 1000000
+              (ltb) => (ltb.binCounts[si]!.ymax / seq.reads) * 1000000
             )
           )
         default:
-          return Math.max(...locTrackBins.map(ltb => ltb.binCounts[si]!.ymax))
+          return Math.max(...locTrackBins.map((ltb) => ltb.binCounts[si]!.ymax))
       }
     })
   )
@@ -106,7 +106,7 @@ export function SeqTrackSvg({
           locations: [location.loc],
           //scale: displayOptions.seq.applyScaling ? displayOptions.seq.scale : 0,
           binSizes: [binSize],
-          tracks: tracks.map(t => t.seqId),
+          tracks: tracks.map((t) => t.seqId),
         },
 
         headers: bearerHeaders(accessToken),
@@ -134,7 +134,7 @@ export function SeqTrackSvg({
     }
   }
 
-  let yax = new YAxis()
+  const yax = new YAxis()
     .setDomain([0, ymax])
     .setLength(tracks[0]!.displayOptions.height)
     .setTicks([0, ymax])
@@ -170,7 +170,7 @@ export function SeqTrackSvg({
     }
 
     let points: ISeqPos[] = bins
-      .map(bin => {
+      .map((bin) => {
         const s = bin[0]!
         const e = bin[1]!
         const reads = bin[2]!
@@ -243,7 +243,7 @@ export function SeqTrackSvg({
     return points
   }
 
-  let refPoints: ISeqPos[] = getPoints(yax, tracks[0]!, allBinCounts[0]!)
+  const refPoints: ISeqPos[] = getPoints(yax, tracks[0]!, allBinCounts[0]!)
 
   function findClosestSeqPos(x: number): ISeqPos {
     let left = 0
@@ -321,7 +321,15 @@ export function SeqTrackSvg({
       <g transform={`translate(0, ${titleHeight})`}>
         {settings.titles.show && (
           <g
-            transform={`translate(${settings.titles.position === 'Right' ? xax.length + settings.titles.offset : xax.length / 2}, ${settings.titles.position === 'Right' ? tracks[0]!.displayOptions.height / 2 : -settings.titles.offset})`}
+            transform={`translate(${
+              settings.titles.position === 'Right'
+                ? xax.length + settings.titles.offset
+                : xax.length / 2
+            }, ${
+              settings.titles.position === 'Right'
+                ? tracks[0]!.displayOptions.height / 2
+                : -settings.titles.offset
+            })`}
           >
             <text
               //transform={`translate(${xax.width / 2}, 0)`}
@@ -337,7 +345,7 @@ export function SeqTrackSvg({
             >
               {/* Estimate a reasonable label length as length px /10 so 800 gives 80 chars of space */}
               {truncate(
-                formattedList(tracks.map(t => `${t.name} (${t.platform})`)),
+                formattedList(tracks.map((t) => `${t.name} (${t.platform})`)),
                 {
                   length: Math.round(xax.length / 10),
                 }
@@ -353,8 +361,8 @@ export function SeqTrackSvg({
 
           let line = d3
             .line<IPos>()
-            .x(d => d.x)
-            .y(d => d.y)
+            .x((d) => d.x)
+            .y((d) => d.y)
 
           if (settings.seqs.smooth) {
             line = line.curve(d3.curveBasis)

@@ -7,40 +7,37 @@ import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
 import { ToolbarFooter } from '@components/toolbar/toolbar-footer'
 
 import {
-    ShowOptionsMenu,
-    Toolbar,
-    ToolbarMenu,
-    ToolbarPanel,
+  ShowOptionsMenu,
+  Toolbar,
+  ToolbarMenu,
+  ToolbarPanel,
 } from '@components/toolbar/toolbar'
 import { ToolbarSeparator } from '@components/toolbar/toolbar-separator'
 
 import { ToolbarButton } from '@components/toolbar/toolbar-button'
 
-import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
-
 import {
-    onTextFileChange,
-    OpenFiles,
-    type ITextFileOpen,
+  onTextFileChange,
+  OpenFiles,
+  type ITextFileOpen,
 } from '@components/pages/open-files'
 
 import { BasicAlertDialog } from '@components/dialog/basic-alert-dialog'
 import { ToolbarTabGroup } from '@components/toolbar/toolbar-tab-group'
 
-import { ToolbarTabButton } from '@components/toolbar/toolbar-tab-button'
 import { OpenIcon } from '@icons/open-icon'
 import { SaveIcon } from '@icons/save-icon'
 
 import { useContext, useRef, useState } from 'react'
 
 import {
-    NO_DIALOG,
-    TEXT_DOWNLOAD_AS_CSV,
-    TEXT_DOWNLOAD_AS_TXT,
-    TEXT_OK,
-    TEXT_OPEN_FILE,
-    TEXT_SAVE_AS,
-    type IDialogParams,
+  NO_DIALOG,
+  TEXT_DOWNLOAD_AS_CSV,
+  TEXT_DOWNLOAD_AS_TXT,
+  TEXT_OK,
+  TEXT_OPEN_FILE,
+  TEXT_SAVE_AS,
+  type IDialogParams,
 } from '@/consts'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
@@ -49,7 +46,6 @@ import { DropdownMenuItem } from '@components/shadcn/ui/themed/dropdown-menu'
 import { UndoShortcuts } from '@components/toolbar/undo-shortcuts'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
 import { makeRandId } from '@lib/utils'
-import axios from 'axios'
 
 import { OKCancelDialog } from '@/components/dialog/ok-cancel-dialog'
 import { FileIcon } from '@/components/icons/file-icon'
@@ -58,10 +54,9 @@ import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
 import { oneWayFromDataframes } from '@/lib/genomic/overlap/one-way-overlap'
 import {
-    createOverlapTableFromDataframes,
-    type OVERLAP_MODE,
+  createOverlapTableFromDataframes,
+  type OVERLAP_MODE,
 } from '@/lib/genomic/overlap/overlap'
-import { textToLines } from '@/lib/text/lines'
 import type { ITab } from '@components/tab-provider'
 import { CoreProviders } from '@providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
@@ -98,7 +93,7 @@ function OverlapPage() {
   }
 
   function overlapGenomicLocations(mode: OVERLAP_MODE = 'mcr') {
-    const dataframes = order.map(id => dfMap.get(id)!)
+    const dataframes = order.map((id) => dfMap.get(id)!)
 
     const dfOverlaps = createOverlapTableFromDataframes(dataframes, mode)
 
@@ -109,7 +104,7 @@ function OverlapPage() {
   }
 
   function overlapOneWay() {
-    const dataframes = order.map(id => dfMap.get(id)!)
+    const dataframes = order.map((id) => dfMap.get(id)!)
 
     const dfOverlaps = oneWayFromDataframes(dataframes)
 
@@ -137,27 +132,6 @@ function OverlapPage() {
   //   loadDefaultSheet(historyDispatch)
   // }, [])
 
-  async function loadTestData() {
-    const res = await queryClient.fetchQuery({
-      queryKey: ['test_data'],
-      queryFn: () => axios.get('/data/test/geneconv.txt'),
-    })
-
-    try {
-      const lines = textToLines(res.data)
-
-      const table = new DataFrameReader().indexCols(0).read(lines)
-
-      // historyDispatch({
-      //   type: 'open',
-      //   description: `Load Test`,
-      //   sheets: [table.setName('Geneconv Test')],
-      // })
-    } catch (error) {
-      // do nothing
-    }
-  }
-
   const tabs: ITab[] = [
     {
       //id: nanoid(),
@@ -166,7 +140,7 @@ function OverlapPage() {
         <>
           <ToolbarTabGroup>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: makeRandId('open'),
@@ -404,12 +378,12 @@ function OverlapPage() {
       {showDialog.id === 'delete-sheet' && (
         <OKCancelDialog
           //open={delGroup !== -1}
-          onReponse={r => {
+          onReponse={(r) => {
             if (r === TEXT_OK) {
               setDfs(
                 order
-                  .filter(order => order !== showDialog.params!.id)
-                  .map(id => dfMap.get(id)!)
+                  .filter((order) => order !== showDialog.params!.id)
+                  .map((id) => dfMap.get(id)!)
               )
             }
             setShowDialog({ ...NO_DIALOG })
@@ -426,14 +400,6 @@ function OverlapPage() {
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
             leftShortcuts={<UndoShortcuts />}
-            rightShortcuts={
-              <ToolbarTabButton
-                onClick={() => loadTestData()}
-                title="Load test data to use features."
-              >
-                Test data
-              </ToolbarTabButton>
-            }
           />
           <ToolbarPanel
             tabShortcutMenu={
@@ -451,7 +417,7 @@ function OverlapPage() {
           side="Right"
           tabs={rightTabs}
           value={rightTab}
-          onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
@@ -463,7 +429,7 @@ function OverlapPage() {
           > */}
             <TabbedDataFrames
               selectedSheet={selected}
-              dataFrames={order.map(id => dfMap.get(id)!)}
+              dataFrames={order.map((id) => dfMap.get(id)!)}
               // onTabChange={selectedTab => {
               //   historyDispatch({
               //     type: 'goto-sheet',
@@ -478,13 +444,13 @@ function OverlapPage() {
                   setShowDialog({ id: 'delete-sheet', params: { id: tab.id } })
                 }
               }}
-              onTabChange={v => {
+              onTabChange={(v) => {
                 console.log(v)
                 setSelected(v.tab.id)
               }}
               onReorder={setOrder}
               allowReorder={true}
-              onFileDrop={files => {
+              onFileDrop={(files) => {
                 if (files.length > 0) {
                   //setDroppedFile(files[0]);
                   //console.log('Dropped file:', files[0])
@@ -509,7 +475,7 @@ function OverlapPage() {
             multiple={true}
             //onOpenChange={() => setShowDialog({...NO_DIALOG})}
             onFileChange={(message, files) =>
-              onTextFileChange(message, files, files => openFiles(files))
+              onTextFileChange(message, files, (files) => openFiles(files))
             }
           />
         )}

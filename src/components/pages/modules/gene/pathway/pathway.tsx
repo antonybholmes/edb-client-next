@@ -285,7 +285,7 @@ export function PathwayPage() {
       //resolve({ ...table, name: file.name })
 
       open(table)
-    } catch (error) {
+    } catch {
       // do nothing
     }
   }
@@ -344,7 +344,7 @@ export function PathwayPage() {
     const genes = await getValidGenes()
 
     // only keep genes in approved list
-    const genesets: IGeneset[] = range(df.shape[1]).map((_) => {
+    const genesets: IGeneset[] = range(df.shape[1]).map(() => {
       return {
         id: nanoid(),
         name: df.col(0).name.toString(),

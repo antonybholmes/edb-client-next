@@ -5,10 +5,10 @@ import { ToolbarOpenFile } from '@components/toolbar/toolbar-open-files'
 import { ZoomSlider } from '@components/toolbar/zoom-slider'
 
 import {
-    ShowOptionsMenu,
-    Toolbar,
-    ToolbarMenu,
-    ToolbarPanel,
+  ShowOptionsMenu,
+  Toolbar,
+  ToolbarMenu,
+  ToolbarPanel,
 } from '@components/toolbar/toolbar'
 import { ToolbarIconButton } from '@components/toolbar/toolbar-icon-button'
 import { ToolbarSeparator } from '@components/toolbar/toolbar-separator'
@@ -20,12 +20,12 @@ import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { ChevronRightIcon } from '@/components/icons/chevron-right-icon'
 import { Axis } from '@/components/plot/axis'
 import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/shadcn/ui/themed/select'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { ToolbarOptionalDropdownButton } from '@/components/toolbar/toolbar-optional-dropdown-button'
@@ -70,9 +70,9 @@ import { Save } from 'lucide-react'
 import type { IGeneDbInfo } from '../annotate/annotate'
 import { LocationsPropsPanel } from './locations/locations-props-panel'
 import {
-    SeqBrowserSettingsContext,
-    SeqBrowserSettingsProvider,
-    type BinSize,
+  SeqBrowserSettingsContext,
+  SeqBrowserSettingsProvider,
+  type BinSize,
 } from './seq-browser-settings-provider'
 import { SettingsPlotPanel } from './settings/settings-plot-panel'
 import { SettingsTracksPanel } from './settings/settings-tracks-panel'
@@ -85,10 +85,6 @@ export function SeqBrowserPage() {
   const { locations, binSizes, setLocations, tooltip } =
     useContext(TracksContext)
   const { settings, updateSettings } = useContext(SeqBrowserSettingsContext)
-
-  if (locations.length === 0) {
-    return null
-  }
 
   // useEffect(() => {
   //   if (apiKey !== '') {
@@ -126,7 +122,7 @@ export function SeqBrowserPage() {
 
   function zoom(scale: number) {
     setLocations(
-      locations.map(location => {
+      locations.map((location) => {
         const w = Math.round(
           Math.max(100, (location.end - location.start + 1) * scale)
         )
@@ -137,7 +133,7 @@ export function SeqBrowserPage() {
     )
   }
 
-  useKeyDownListener(e => {
+  useKeyDownListener((e) => {
     if (e.ctrlKey) {
       setIsCtrlPressed(true) // Ctrl key is pressed
     }
@@ -300,7 +296,7 @@ export function SeqBrowserPage() {
   // })
 
   useEffect(() => {
-    setSearch(locations.map(l => l.loc)[0]!) //.join(','))
+    setSearch(locations.map((l) => l.loc)[0]!) //.join(','))
   }, [locations])
 
   const genomesQuery = useQuery({
@@ -411,7 +407,7 @@ export function SeqBrowserPage() {
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   // setShowDialog({
                   //   name: makeRandId("open"),
@@ -507,12 +503,11 @@ export function SeqBrowserPage() {
           <ToolbarSeparator />
 
           <ToolbarTabGroup title="move">
-           
             <ToolbarIconButton
               title="Move left"
               onClick={() => {
                 setLocations(
-                  locations.map(location => {
+                  locations.map((location) => {
                     const w = location.end - location.start + 1
                     const s =
                       location.start -
@@ -530,7 +525,7 @@ export function SeqBrowserPage() {
               title="Move right"
               onClick={() => {
                 setLocations(
-                  locations.map(location => {
+                  locations.map((location) => {
                     const w = location.end - location.start + 1
                     const s =
                       location.start +
@@ -593,7 +588,7 @@ export function SeqBrowserPage() {
       {showDialog.id.includes('save') && (
         <SaveImageDialog
           open="open"
-          onSave={format => {
+          onSave={(format) => {
             downloadImageAutoFormat(
               svgRef,
               canvasRef,
@@ -615,10 +610,10 @@ export function SeqBrowserPage() {
             variant="header"
             h="header"
             value={search}
-            onChange={e => setSearch(e.target.value)}
-            onSearch={async event => {
+            onChange={(e) => setSearch(e.target.value)}
+            onSearch={async (event) => {
               if (event === 'search') {
-                const tokens = search.split(',').map(s => s.trim())
+                const tokens = search.split(',').map((s) => s.trim())
 
                 setLocations(tokens)
               } else {
@@ -632,8 +627,8 @@ export function SeqBrowserPage() {
           <>
             <Select
               value={settings.genome}
-              onValueChange={v => {
-                const newOptions = produce(settings, draft => {
+              onValueChange={(v) => {
+                const newOptions = produce(settings, (draft) => {
                   draft.genome = v
                 })
 
@@ -741,8 +736,8 @@ export function SeqBrowserPage() {
               value={
                 settings.seqs.bins.autoSize ? 'auto' : binSizes[0]!.toString()
               }
-              onValueChange={v => {
-                const newOptions = produce(settings, draft => {
+              onValueChange={(v) => {
+                const newOptions = produce(settings, (draft) => {
                   draft.seqs.bins.autoSize = v === 'auto'
 
                   if (v !== 'auto') {

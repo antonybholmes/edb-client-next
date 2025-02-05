@@ -22,7 +22,7 @@ export interface IPileupProps {
 
   cmap: string
   cmaps: {
-    None: {}
+    None: object
     COO: {
       ABC: string
       GCB: string
@@ -207,12 +207,12 @@ export const PileupPlotSvg = forwardRef<SVGElement, IProps>(
 
       // whether to show things like AID motifs or not
 
-      motifPatterns.forEach(motifPattern => {
+      motifPatterns.forEach((motifPattern) => {
         if (motifPattern.show) {
           const matches = [...plot.dna.seq.matchAll(motifPattern.regex)]
 
-          matches.forEach(match => {
-            range(match[0].length).forEach(i => {
+          matches.forEach((match) => {
+            range(match[0].length).forEach((i) => {
               bgColors[match.index + i] = motifPattern.bgColor
               fgColors[match.index + i] = motifPattern.color
             })
@@ -382,14 +382,20 @@ export const PileupPlotSvg = forwardRef<SVGElement, IProps>(
               }}
             >
               <p className="font-semibold">
-                {`${sampleMap.get(toolTipInfo.mutation.sample)!.name} (${sampleMap.get(toolTipInfo.mutation.sample)!.coo}, ${sampleMap.get(toolTipInfo.mutation.sample)!.lymphgen})`}
+                {`${sampleMap.get(toolTipInfo.mutation.sample)!.name} (${
+                  sampleMap.get(toolTipInfo.mutation.sample)!.coo
+                }, ${sampleMap.get(toolTipInfo.mutation.sample)!.lymphgen})`}
               </p>
               <p>Type: {toolTipInfo.mutation.type.split(':')[1]}</p>
               <p>
-                {`Loc: ${toolTipInfo.mutation.chr}:${toolTipInfo.mutation.start.toLocaleString()}-${toolTipInfo.mutation.end.toLocaleString()}`}
+                {`Loc: ${
+                  toolTipInfo.mutation.chr
+                }:${toolTipInfo.mutation.start.toLocaleString()}-${toolTipInfo.mutation.end.toLocaleString()}`}
               </p>
               <p>
-                {`ref: ${toolTipInfo.mutation.ref}, tumor: ${toolTipInfo.mutation.tum.replace('^', '')}`}
+                {`ref: ${
+                  toolTipInfo.mutation.ref
+                }, tumor: ${toolTipInfo.mutation.tum.replace('^', '')}`}
               </p>
             </div>
 

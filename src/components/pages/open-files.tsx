@@ -118,10 +118,6 @@ export function OpenFiles({
   multiple = false,
   fileTypes = ['txt', 'tsv', 'vst', 'xlsx'],
 }: IProps) {
-  if (!open) {
-    return null
-  }
-
   const ref = useRef<HTMLInputElement>(null)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -148,9 +144,8 @@ export function OpenFiles({
           ref={ref}
           type="file"
           id="file"
-          // @ts-expect-error
-          webkitdirectory="true"
-          directory="true"
+          //webkitdirectory="true"
+          //directory="true"
           onChange={_onFileChange}
           //multiple
           //accept={getFileTypes(fileTypes)}

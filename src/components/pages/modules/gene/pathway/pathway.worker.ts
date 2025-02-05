@@ -15,7 +15,7 @@ self.onmessage = function (
     overlap.addDataset(dataset)
   }
 
-  let [data, columns] = overlap.test(genesets)
+  const [data, columns] = overlap.test(genesets)
 
   // let idx = where(
   //   range(data.length).map(i => data[i][10] as number),

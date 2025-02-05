@@ -267,9 +267,16 @@ export function MutationsPage() {
       return
     }
 
-    const cmap: { [key: string]: string } =
-      // @ts-expect-error
-      displayProps.cmaps[displayProps.cmap]
+    let cmap: { [key: string]: string }
+
+    switch (displayProps.cmap) {
+      case 'COO':
+        cmap = displayProps.cmaps.COO
+        break
+      default:
+        cmap = displayProps.cmaps.Lymphgen
+        break
+    }
 
     // sample color map
     let scm: Map<string, string> | null = null

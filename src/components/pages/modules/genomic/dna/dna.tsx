@@ -7,10 +7,10 @@ import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
 import { ToolbarFooter } from '@components/toolbar/toolbar-footer'
 
 import {
-    ShowOptionsMenu,
-    Toolbar,
-    ToolbarMenu,
-    ToolbarPanel,
+  ShowOptionsMenu,
+  Toolbar,
+  ToolbarMenu,
+  ToolbarPanel,
 } from '@components/toolbar/toolbar'
 import { ToolbarSeparator } from '@components/toolbar/toolbar-separator'
 import { PlayIcon } from '@icons/play-icon'
@@ -19,17 +19,17 @@ import { ToolbarButton } from '@components/toolbar/toolbar-button'
 
 import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
 import {
-    downloadDataFrame,
-    getFormattedShape,
+  downloadDataFrame,
+  getFormattedShape,
 } from '@lib/dataframe/dataframe-utils'
 
 import {
-    DEFAULT_PARSE_OPTS,
-    filesToDataFrames,
-    onTextFileChange,
-    OpenFiles,
-    type IParseOptions,
-    type ITextFileOpen,
+  DEFAULT_PARSE_OPTS,
+  filesToDataFrames,
+  onTextFileChange,
+  OpenFiles,
+  type IParseOptions,
+  type ITextFileOpen,
 } from '@components/pages/open-files'
 
 import { BasicAlertDialog } from '@components/dialog/basic-alert-dialog'
@@ -41,22 +41,22 @@ import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
 import { OpenIcon } from '@icons/open-icon'
 import { SaveIcon } from '@icons/save-icon'
 import {
-    currentSheet,
-    currentSheets,
-    HistoryContext,
+  currentSheet,
+  currentSheets,
+  HistoryContext,
 } from '@providers/history-provider'
 
 import { queryClient } from '@/query'
 import { useContext, useRef, useState } from 'react'
 
 import {
-    NO_DIALOG,
-    TEXT_DOWNLOAD_AS_CSV,
-    TEXT_DOWNLOAD_AS_TXT,
-    TEXT_OPEN_FILE,
-    TEXT_SAVE_AS,
-    TEXT_SETTINGS,
-    type IDialogParams,
+  NO_DIALOG,
+  TEXT_DOWNLOAD_AS_CSV,
+  TEXT_DOWNLOAD_AS_TXT,
+  TEXT_OPEN_FILE,
+  TEXT_SAVE_AS,
+  TEXT_SETTINGS,
+  type IDialogParams,
 } from '@/consts'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
@@ -68,8 +68,8 @@ import { PropsPanel } from '@components/props-panel'
 import { Checkbox } from '@components/shadcn/ui/themed/check-box'
 import { DropdownMenuItem } from '@components/shadcn/ui/themed/dropdown-menu'
 import {
-    RadioGroup,
-    RadioGroupItem,
+  RadioGroup,
+  RadioGroupItem,
 } from '@components/shadcn/ui/themed/radio-group'
 import { UndoShortcuts } from '@components/toolbar/undo-shortcuts'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
@@ -83,10 +83,10 @@ import { textToLines } from '@/lib/text/lines'
 import { HistoryPanel } from '@components/pages/history-panel'
 import { PropRow } from '@components/prop-row'
 import {
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-    ScrollAccordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  ScrollAccordion,
 } from '@components/shadcn/ui/themed/accordion'
 import { Label } from '@components/shadcn/ui/themed/label'
 import type { ITab } from '@components/tab-provider'
@@ -122,7 +122,7 @@ function DNAPage() {
   ) {
     filesToDataFrames(queryClient, files, {
       ...parseOpts,
-      onSuccess: tables => {
+      onSuccess: (tables) => {
         if (tables.length > 0) {
           historyDispatch({
             type: 'open',
@@ -198,7 +198,7 @@ function DNAPage() {
         description: `Load "DNA Test"`,
         sheets: [table.setName('DNA Test')],
       })
-    } catch (error) {
+    } catch {
       // do nothing
     }
   }
@@ -222,7 +222,7 @@ function DNAPage() {
         <>
           <ToolbarTabGroup>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: makeRandId('open'),
@@ -294,7 +294,7 @@ function DNAPage() {
                       { name: 'Lower', id: 'Lower' },
                     ]}
                     value={format}
-                    onTabChange={selectedTab => {
+                    onTabChange={(selectedTab) => {
                       setFormat(selectedTab.tab.id as FORMAT_TYPE)
                     }}
                   >
@@ -475,7 +475,7 @@ function DNAPage() {
           side="Right"
           tabs={rightTabs}
           value={rightTab}
-          onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
@@ -487,7 +487,7 @@ function DNAPage() {
           <TabbedDataFrames
             selectedSheet={currentSheet(history)[0]!.id}
             dataFrames={currentSheets(history)[0]!}
-            onTabChange={selectedTab => {
+            onTabChange={(selectedTab) => {
               historyDispatch({
                 type: 'goto-sheet',
                 sheetId: selectedTab.index,

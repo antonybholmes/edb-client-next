@@ -36,7 +36,7 @@ export function getGeneTrackHeight(
   track: IGeneTrack,
   features: IGenomicFeature[]
 ): number {
-  const transcripts = sum(features.map(gene => gene.children?.length ?? 0))
+  const transcripts = sum(features.map((gene) => gene.children?.length ?? 0))
 
   return (
     transcripts * track.displayOptions.transcripts.height +
@@ -71,10 +71,6 @@ export function GenesTrackSvg({
   xax,
   titleHeight,
 }: IProps) {
-  if (!db) {
-    return null
-  }
-
   const { settings } = useContext(SeqBrowserSettingsContext)
 
   // const genesQuery = useQuery({
@@ -99,7 +95,9 @@ export function GenesTrackSvg({
   let x1: number
   let x2: number
 
-  const geneHeights: number[] = features.map(gene => getGeneHeight(track, gene))
+  const geneHeights: number[] = features.map((gene) =>
+    getGeneHeight(track, gene)
+  )
 
   const geneY = cumsum([0, ...geneHeights])
 
@@ -205,7 +203,7 @@ export function GenesTrackSvg({
               textAnchor="middle"
               //fontWeight="bold"
             >
-              {track.name} ({db.genome},{db.version})
+              {track.name} ({db?.genome},{db?.version})
             </text>
           </g>
         )}
@@ -250,7 +248,9 @@ export function GenesTrackSvg({
                 return (
                   <g
                     id="transcript"
-                    transform={`translate(0, ${ti * track.displayOptions.transcripts.height})`}
+                    transform={`translate(0, ${
+                      ti * track.displayOptions.transcripts.height
+                    })`}
                     key={ti}
                   >
                     <rect
@@ -264,14 +264,18 @@ export function GenesTrackSvg({
                     </rect>
 
                     <g
-                      transform={`translate(0, ${track.displayOptions.exons.height / 2})`}
+                      transform={`translate(0, ${
+                        track.displayOptions.exons.height / 2
+                      })`}
                     >
                       {settings.genes.endArrows.show &&
                         (!settings.genes.endArrows.firstTranscriptOnly ||
                           ti === 0) && (
                           <g
                             id="end-arrow"
-                            transform={`translate(${feature.strand === '+' ? x1 : x2}, 0) scale(${feature.strand === '+' ? 1 : -1},1)`}
+                            transform={`translate(${
+                              feature.strand === '+' ? x1 : x2
+                            }, 0) scale(${feature.strand === '+' ? 1 : -1},1)`}
                           >
                             <polygon
                               points="0,0 0,-10 10,-10 10,-14 15,-10 10,-6 10,-10 0,-10"
@@ -292,7 +296,10 @@ export function GenesTrackSvg({
 
                       {track.displayOptions.labels.show && (
                         <text
-                          transform={`translate(${Math.max(-track.displayOptions.labels.offset, x1 - track.displayOptions.labels.offset)}, 0)`}
+                          transform={`translate(${Math.max(
+                            -track.displayOptions.labels.offset,
+                            x1 - track.displayOptions.labels.offset
+                          )}, 0)`}
                           fill={track.displayOptions.labels.font.color}
                           dominantBaseline="middle"
                           fontSize={track.displayOptions.labels.font.size}
@@ -312,11 +319,13 @@ export function GenesTrackSvg({
                           id="arrows"
                           //transform={`translate(0,-${track.displayOptions.arrows.size})`}
                         >
-                          {arrowXs.map(x => {
+                          {arrowXs.map((x) => {
                             return (
                               <use
                                 key={`${x}`}
-                                xlinkHref={`#${track.id}-arrow-${transcript.strand === '+' ? 'right' : 'left'}${isCanonical ? '-canonical' : ''}`}
+                                xlinkHref={`#${track.id}-arrow-${
+                                  transcript.strand === '+' ? 'right' : 'left'
+                                }${isCanonical ? '-canonical' : ''}`}
                                 transform={`translate(${x},0)`}
                               />
                             )
@@ -339,7 +348,9 @@ export function GenesTrackSvg({
                       {settings.genes.exons.show && (
                         <g
                           id="exons"
-                          transform={`translate(0, -${track.displayOptions.exons.height / 2})`}
+                          transform={`translate(0, -${
+                            track.displayOptions.exons.height / 2
+                          })`}
                         >
                           {transcript.children?.map((exon, ei) => {
                             const exonLoc = exon.loc
@@ -362,7 +373,11 @@ export function GenesTrackSvg({
                                 stroke="none"
                                 key={ei}
                               >
-                                <title>{`${exon.transcriptId}, strand ${exon.strand}, exon ${exon.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
+                                <title>{`${exon.transcriptId}, strand ${
+                                  exon.strand
+                                }, exon ${
+                                  exon.strand === '+' ? ei + 1 : exonCount - ei
+                                } of ${exonCount}`}</title>
                               </rect>
                             )
                           })}

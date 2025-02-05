@@ -126,7 +126,7 @@ function AdminUsersPage() {
       const stats: IUserStats = res.data
 
       setUserStats(stats)
-    } catch (err) {
+    } catch {
       console.error('could not load user stats')
     }
   }
@@ -160,7 +160,7 @@ function AdminUsersPage() {
       console.log('users', res.data)
 
       setUsers(res.data)
-    } catch (err) {
+    } catch {
       console.error('could not load users from remote')
     }
   }
@@ -273,7 +273,6 @@ function AdminUsersPage() {
   ]
 
   const table = useReactTable({
-    // @ts-expect-error
     columns,
     data: users,
     getCoreRowModel: getCoreRowModel(),

@@ -71,18 +71,18 @@ export type IPasswordAction =
 //   passwordless: boolean
 // }
 
-export interface IPasswordDialogProps extends IModalProps {}
-
 export function PasswordDialog({
   open = false,
   onOpenChange = () => {},
   onReponse = () => {},
-}: IPasswordDialogProps) {
+}: IModalProps) {
   // const [passwords, passwordDispatch] = useReducer(passwordReducer, {
   //   password: "",
   //   password1: "",
   //   password2: "",
   // })
+
+  const queryClient = useQueryClient()
 
   const [accessToken] = useState<string>('')
   //const [user, setUser] = useState<IUser | null>(null)
@@ -137,8 +137,6 @@ export function PasswordDialog({
   // }
 
   async function sendResetPasswordLink() {
-    const queryClient = useQueryClient()
-
     try {
       const res = await queryClient.fetchQuery({
         queryKey: ['reset_password'],
@@ -187,7 +185,7 @@ export function PasswordDialog({
       open={open}
       onOpenChange={onOpenChange}
       //buttons={[TEXT_SAVE, TEXT_CANCEL]}
-      onReponse={response => {
+      onReponse={(response) => {
         switch (response) {
           case TEXT_OK:
             //update()
