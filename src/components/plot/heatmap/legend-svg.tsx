@@ -23,7 +23,7 @@ export function LegendRightSvg({
   return (
     <g transform={`translate(${pos.x}, ${pos.y})`}>
       {groupState.order
-        .map(i => groupState.groups.get(i)!!)
+        .map((i) => groupState.groups.get(i)!)
         .map((g, gi) => {
           const y = (legendBlockSize + props.padding) * gi
 
@@ -70,7 +70,7 @@ export function LegendBottomSvg({
   return (
     <g transform={`translate(${pos.x}, ${pos.y})`}>
       {groupState.order
-        .map(i => groupState.groups.get(i)!!)
+        .map((i) => groupState.groups.get(i)!)
         .map((g, gi) => {
           const x =
             (legendBlockSize + props.legend.width * 0.4 + props.padding) * gi

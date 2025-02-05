@@ -90,3 +90,4 @@ export const Textarea5 = forwardRef<HTMLTextAreaElement, ITextAreaProps>(
     )
   }
 )
+Textarea5.displayName = 'Textarea5'

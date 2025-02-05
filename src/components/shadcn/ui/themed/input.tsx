@@ -110,7 +110,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           disabled={disabled}
           readOnly={readOnly}
-          onKeyDown={e => {
+          onKeyDown={(e) => {
             //console.log(e)
             if (e.key === 'Enter') {
               onChanged?.(e.currentTarget.value)
@@ -124,3 +124,4 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     )
   }
 )
+Input.displayName = 'Input'

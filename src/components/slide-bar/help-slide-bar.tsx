@@ -1,4 +1,4 @@
-import { forwardRef, useState, type ForwardedRef } from 'react'
+import { useState } from 'react'
 
 import type { IDivProps } from '@interfaces/div-props'
 import { useQuery } from '@tanstack/react-query'
@@ -74,18 +74,15 @@ interface IProps extends IDivProps {
   limits?: [number, number]
 }
 
-export const HelpSlideBar = forwardRef(function HelpSlideBar(
-  {
-    open = false,
-    onOpenChange = () => {},
-    helpUrl = '',
-    position = 80,
-    limits = [5, 85],
-    className,
-    children,
-  }: IProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+export function HelpSlideBar({
+  open = false,
+  onOpenChange = () => {},
+  helpUrl = '',
+  position = 80,
+  limits = [5, 85],
+  className,
+  children,
+}: IProps) {
   const [isOpen, setIsOpen] = useState(true)
 
   //const _value = value ?? tabs[0].name // getTabValue(value, tabs)
@@ -112,4 +109,4 @@ export const HelpSlideBar = forwardRef(function HelpSlideBar(
       <SlideBarContent className={className} />
     </SlideBar>
   )
-})
+}

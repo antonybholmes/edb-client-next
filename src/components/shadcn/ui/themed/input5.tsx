@@ -38,7 +38,6 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: boolean | undefined
   globalClassName?: string
   inputClassName?: string
-
   onChanged?: (v: string) => void
 }
 
@@ -120,7 +119,7 @@ export const Input5 = forwardRef<HTMLInputElement, InputProps>(
             disabled={disabled}
             data-enabled={!disabled}
             className={cn(INPUT_CLS, globalClassName, inputClassName)}
-            onKeyDown={e => {
+            onKeyDown={(e) => {
               //console.log(e)
               if (e.key === 'Enter') {
                 onChanged?.(e.currentTarget.value)
@@ -136,3 +135,4 @@ export const Input5 = forwardRef<HTMLInputElement, InputProps>(
     )
   }
 )
+Input5.displayName = 'Input5'

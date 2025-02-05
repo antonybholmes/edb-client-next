@@ -6,7 +6,7 @@ import {
   TooltipTrigger,
 } from './shadcn/ui/themed/tooltip'
 
-interface IProps extends TooltipContentProps {}
+type IProps = TooltipContentProps 
 
 export function Tooltip({ content, side = 'bottom', children }: IProps) {
   return (

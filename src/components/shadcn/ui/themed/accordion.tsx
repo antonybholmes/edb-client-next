@@ -50,6 +50,7 @@ export const ScrollAccordion = forwardRef<
     </VScrollPanel>
   )
 })
+ScrollAccordion.displayName = 'ScrollAccordion'
 
 export const SubAccordion = forwardRef<HTMLDivElement, IScrollAccordionProps>(
   ({ value, onValueChange, className, children }, ref) => {
@@ -78,6 +79,7 @@ export const SubAccordion = forwardRef<HTMLDivElement, IScrollAccordionProps>(
     )
   }
 )
+SubAccordion.displayName = 'SubAccordion'
 
 const AccordionItem = forwardRef<
   ComponentRef<typeof AccordionPrimitive.Item>,

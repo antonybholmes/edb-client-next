@@ -78,7 +78,7 @@ interface ISlideBarProps extends ISlidebarContext, IElementProps {
   limits: [number, number]
 }
 
-export const SlideBar = forwardRef(function SlideBar(
+export function SlideBar(
   {
     title = '',
     side = 'Left',
@@ -90,7 +90,6 @@ export const SlideBar = forwardRef(function SlideBar(
     sideContent,
     children,
   }: ISlideBarProps,
-  _ref: ForwardedRef<HTMLDivElement>
 ) {
   //const c = Children.toArray(children)
 
@@ -124,7 +123,7 @@ export const SlideBar = forwardRef(function SlideBar(
       {children}
     </SlidebarProvider>
   )
-})
+}
 
 interface ISlideBarContentProps extends IElementProps {
   lineClassName?: string

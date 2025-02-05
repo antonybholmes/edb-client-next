@@ -129,9 +129,11 @@ export function ScatterPlotCanvas({
 
   return (
     <canvas
-      ref={ref => {
-        setCanvas(ref)
-        ref && onCanvasChange && onCanvasChange(ref)
+      ref={(ref) => {
+        if (ref) {
+          setCanvas(ref)
+          onCanvasChange?.(ref)
+        }
       }}
       className="absolute left-0 top-0 z-20"
     />

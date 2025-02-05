@@ -10,8 +10,7 @@ const INPUT_CLS = cn(
   FOCUS_RING_CLS
 )
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+export type InputProps = React.InputHTMLAttributes<HTMLInputElement>
 
 export const Input2 = React.forwardRef<HTMLInputElement, InputProps>(
   ({ id, placeholder, value, className, type, ...props }, ref) => {
@@ -40,3 +39,4 @@ export const Input2 = React.forwardRef<HTMLInputElement, InputProps>(
     )
   }
 )
+Input2.displayName = 'Input2'

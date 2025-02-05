@@ -74,10 +74,10 @@ export function NumericalInput({
       disabled={disabled}
       className={cn(w, className)}
       inputCls="text-right"
-      onKeyDown={e => {
+      onKeyDown={(e) => {
         //console.log(e)
         if (e.key === 'Enter') {
-          let v = Number(e.currentTarget.value)
+          const v = Number(e.currentTarget.value)
 
           // default to min if garbage input
           if (!Number.isNaN(v)) {
@@ -101,8 +101,8 @@ export function NumericalInput({
           }
         }
       }}
-      onChange={e => {
-        let v = Number(e.currentTarget.value)
+      onChange={(e) => {
+        const v = Number(e.currentTarget.value)
 
         // default to min if garbage input
         if (!Number.isNaN(v)) {

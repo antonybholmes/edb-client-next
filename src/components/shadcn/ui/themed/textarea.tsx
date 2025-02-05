@@ -11,14 +11,10 @@ export const TEXTAREA_GROUP_CLS = cn(
 export const TEXT_CLS =
   'w-full h-full text-foreground disabled:cursor-not-allowed disabled:opacity-50 outline-none ring-none read-only:opacity-50'
 
-export interface TextAreaProps
-  extends TextareaHTMLAttributes<HTMLTextAreaElement> {}
+export type TextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement>
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
-  (
-    { id, className, placeholder, value, disabled, readOnly, ...props },
-    ref
-  ) => {
+  ({ id, className, value, disabled, readOnly, ...props }, ref) => {
     //const [_value, setInputValue] = useState("")
 
     //function _onChange(event: ChangeEvent<HTMLTextAreaElement>) {
@@ -46,3 +42,4 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     )
   }
 )
+Textarea.displayName = 'Textarea'

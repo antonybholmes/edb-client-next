@@ -44,9 +44,7 @@ export const TabSlideBar = forwardRef(function TabSlideBar(
 
   const selectedTab = useMemo(() => getTabFromValue(val, tabs), [val, tabs])
 
-  if (!selectedTab) {
-    return null
-  }
+ 
 
   function _onOpenChange(state: boolean) {
     setOpen(state)
@@ -67,7 +65,7 @@ export const TabSlideBar = forwardRef(function TabSlideBar(
   }
 
   const tabsElem = useMemo(() => {
-    const selectedTabId = selectedTab.tab.id // getTabId(selectedTab.tab)
+    const selectedTabId = selectedTab?.tab.id // getTabId(selectedTab.tab)
 
     //console.log('Selected tab', selectedTabId)
 

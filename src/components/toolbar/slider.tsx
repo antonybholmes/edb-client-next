@@ -49,10 +49,10 @@ export function Slider({
   }
 
   function setValue(v: number) {
-    onSliderChange && onSliderChange(v)
+    onSliderChange?.(v)
   }
 
-  function onMouseMove(event: any) {
+  function onMouseMove(event: MouseEvent|React.MouseEvent) {
     if (ref.current) {
       const { left, width } = ref.current.getBoundingClientRect()
       const x = event.clientX - left
@@ -63,20 +63,21 @@ export function Slider({
     }
   }
 
-  function onMouseUp(_event: any) {
+  function onMouseUp() {
     setIsDragging(false)
     document.removeEventListener('mousemove', onMouseMove)
     document.removeEventListener('mouseup', onMouseUp)
-    document.removeEventListener('touchmove', onMouseMove)
+    //document.removeEventListener('touchmove', onMouseMove)
     document.removeEventListener('touchend', onMouseUp)
     document.removeEventListener('touchcancel', onMouseUp)
   }
 
-  function onMouseDown(event: any) {
-    setIsDragging(true)
+  function onMouseDown(event: React.MouseEvent|MouseEvent
+  ) {
+setIsDragging(true);
     document.addEventListener('mousemove', onMouseMove)
     document.addEventListener('mouseup', onMouseUp)
-    document.addEventListener('touchmove', onMouseMove)
+    //document.addEventListener('touchmove', onMouseMove)
     document.addEventListener('touchend', onMouseUp)
     document.addEventListener('touchcancel', onMouseUp)
     onMouseMove(event)

@@ -11,7 +11,7 @@ export interface ITab {
   //tab?: ReactNode
   icon?: ReactNode
   content?: ReactNode
-  data?: any
+  data?: unknown
   size?: number
   isOpen?: boolean
   closable?: boolean
@@ -129,7 +129,7 @@ export function TabProvider({ value, onTabChange, tabs, children }: IProps) {
 
   const v = value !== undefined ? value : _value
 
-  let selectedTab: ISelectedTab | undefined = getTabFromValue(v, tabs)
+  const selectedTab: ISelectedTab | undefined = getTabFromValue(v, tabs)
 
   //console.log("eh", value.length, tabs, selectedTab)
 

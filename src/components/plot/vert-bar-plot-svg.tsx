@@ -73,7 +73,7 @@ export const VertBarPlotSvg = forwardRef<SVGElement, IProps>(
       cmap = BLUES_CMAP,
       barWidth = 2,
       displayProps = {},
-      hue_norm = x => x,
+      hue_norm = (x) => x,
     }: IProps,
     svgRef
   ) {
@@ -83,10 +83,6 @@ export const VertBarPlotSvg = forwardRef<SVGElement, IProps>(
     }
 
     const ycol = df.col(y)
-
-    if (!ycol) {
-      return null
-    }
 
     const ydata = ycol.values as string[] //getNumCol(df, findCol(df, x))
 
@@ -107,7 +103,7 @@ export const VertBarPlotSvg = forwardRef<SVGElement, IProps>(
       .setDomain([0, ydata.length])
       .setDomain(_displayProps.ydomain!)
       .setRange(_displayProps.yrange!)
-      .setTicks(range(ydata.length).map(x => x + 0.5))
+      .setTicks(range(ydata.length).map((x) => x + 0.5))
       .setTickLabels(ydata)
     //.setTitle(y)
 
@@ -128,7 +124,7 @@ export const VertBarPlotSvg = forwardRef<SVGElement, IProps>(
 
       if (hue) {
         const huecol = df.col(hue)!
-        huedata = (huecol.values as number[]).map(x =>
+        huedata = (huecol.values as number[]).map((x) =>
           cmap.getColor(hue_norm(x))
         )
       } else {
