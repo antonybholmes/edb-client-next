@@ -415,11 +415,11 @@ export function makeLollipopData(
     .map(row => {
       //console.log(mutDf.colNames, columns)
 
-      let sample = mutDf.col(columns.sample).values[row]!.toString()
+      const sample = mutDf.col(columns.sample).values[row]!.toString()
 
-      let ref = mutDf.col(columns.aa).values[row]!.toString()
+      const ref = mutDf.col(columns.aa).values[row]!.toString()
 
-      let variant = parseVariant(
+      const variant = parseVariant(
         mutDf.col(columns.variant).values[row]!.toString()
       )
 
@@ -459,7 +459,7 @@ export function makeLollipopData(
     length = Math.max(...aaChanges.map(ac => ac.position))
   }
 
-  let aaStats: LollipopStats[] = range(length).map(
+  const aaStats: LollipopStats[] = range(length).map(
     i => new LollipopStats(i + 1, protein?.seq.charAt(i) ?? '')
   )
 

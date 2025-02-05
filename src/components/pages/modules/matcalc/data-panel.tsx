@@ -12,14 +12,7 @@ import {
   currentSheets,
   HistoryContext,
 } from '@providers/history-provider'
-import {
-  forwardRef,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  type ForwardedRef,
-} from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 
 import { GroupPropsPanel } from './group-props-panel'
 
@@ -61,10 +54,7 @@ export interface IDataPanelProps {
   //setSlidebarSide: (c: ReactElement | undefined) => void
 }
 
-export const DataPanel = forwardRef(function DataPanel(
-  { panelId = DEFAULT_PANEL_ID }: IDataPanelProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+export function DataPanel({ panelId = DEFAULT_PANEL_ID }: IDataPanelProps) {
   const queryClient = useQueryClient()
 
   const { history, historyDispatch } = useContext(HistoryContext)
@@ -111,7 +101,7 @@ export const DataPanel = forwardRef(function DataPanel(
   }
 
   useEffect(() => {
-    const messages = messageState.queue.filter(m => m.target === panelId)
+    const messages = messageState.queue.filter((m) => m.target === panelId)
 
     for (const message of messages) {
       if (message.text.includes('save:')) {
@@ -165,7 +155,7 @@ export const DataPanel = forwardRef(function DataPanel(
   function openFiles(files: ITextFileOpen[], options: IParseOptions) {
     filesToDataFrames(queryClient, files, {
       parseOpts: options,
-      onSuccess: tables => {
+      onSuccess: (tables) => {
         // if (tables.length > 0) {
         //   historyDispatch({
         //     type: 'open',
@@ -222,7 +212,7 @@ export const DataPanel = forwardRef(function DataPanel(
     <>
       {showSave && (
         <SaveTxtDialog
-          onSave={format => {
+          onSave={(format) => {
             save(format.ext)
             setShowSave('')
           }}
@@ -243,7 +233,7 @@ export const DataPanel = forwardRef(function DataPanel(
         tabs={rightTabs}
         side="Right"
         limits={[50, 85]}
-        onTabChange={selectedTab => setSelectedTab(selectedTab.tab.id)}
+        onTabChange={(selectedTab) => setSelectedTab(selectedTab.tab.id)}
         open={showSideBar}
         onOpenChange={setShowSideBar}
       >
@@ -257,16 +247,16 @@ export const DataPanel = forwardRef(function DataPanel(
               sheetId: selectedTab.tab.id,
             })
           }}
-          onFileDrop={files => {
+          onFileDrop={(files) => {
             if (files.length > 0) {
-              onTextFileChange('Open from drag', files, files => {
+              onTextFileChange('Open from drag', files, (files) => {
                 setFilesToOpen(files)
               })
             }
           }}
           className="relative"
           style={{ marginBottom: '-2px' }}
-          onReorder={order => {
+          onReorder={(order) => {
             historyDispatch({
               type: 'sheet-order',
               sheetIds: order,
@@ -283,7 +273,7 @@ export const DataPanel = forwardRef(function DataPanel(
                 // sheet into the UI
                 historyDispatch({
                   type: 'add-sheets',
-                  mode: 'reset',
+
                   sheets: INF_DATAFRAME,
                 })
               }
@@ -300,4 +290,4 @@ export const DataPanel = forwardRef(function DataPanel(
       <a ref={downloadRef} className="hidden" href="#" />
     </>
   )
-})
+}

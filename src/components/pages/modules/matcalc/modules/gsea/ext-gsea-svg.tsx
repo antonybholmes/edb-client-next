@@ -74,18 +74,18 @@ export const ExtGseaSvg = forwardRef<SVGElement, IProps>(function ExtGseaSvg(
     //const is_leading_edge2 = gseaRes2.leadingEdgeIndices
 
     let y = gseaRes1.esAll //self._ranked_scores
-    let x = range(y.length)
+    const x = range(y.length)
 
     // subsample so we don't draw every point
     const ix = range(0, x.length, 100)
 
-    let x1 = ix.map(i => x[i])
-    let y1 = ix.map(i => y[i])
+    const x1 = ix.map((i) => x[i])
+    let y1 = ix.map((i) => y[i])
     y1[0] = 0
     y1[y1.length - 1] = 0
 
     const xmax = Math.max(...x)
-    let ymax = Math.max(...abs([...y, ...gseaRes2.esAll]))
+    const ymax = Math.max(...abs([...y, ...gseaRes2.esAll]))
     //ymax = round((ymax * 10) / 10, 1)
 
     let xax = new Axis()
@@ -99,8 +99,8 @@ export const ExtGseaSvg = forwardRef<SVGElement, IProps>(function ExtGseaSvg(
       .setLength(displayProps.es.axes.y.length)
       .setTitle(displayProps.es.axes.y.title)
 
-    let xlead = gseaRes1.leadingEdge.map(g => x[g.rank])
-    let ylead = gseaRes1.leadingEdge.map(g => y[g.rank])
+    let xlead = gseaRes1.leadingEdge.map((g) => x[g.rank])
+    let ylead = gseaRes1.leadingEdge.map((g) => y[g.rank])
 
     // fix ends
 
@@ -151,12 +151,12 @@ export const ExtGseaSvg = forwardRef<SVGElement, IProps>(function ExtGseaSvg(
     y = gseaRes2.esAll //self._ranked_scores
     //x = range(y.length)
 
-    y1 = ix.map(i => y[i])
+    y1 = ix.map((i) => y[i])
     y1[0] = 0
     y1[y1.length - 1] = 0
 
-    xlead = gseaRes2.leadingEdge.map(g => x[g.rank])
-    ylead = gseaRes2.leadingEdge.map(g => y[g.rank])
+    xlead = gseaRes2.leadingEdge.map((g) => x[g.rank])
+    ylead = gseaRes2.leadingEdge.map((g) => y[g.rank])
 
     // fix ends
 
@@ -203,7 +203,7 @@ export const ExtGseaSvg = forwardRef<SVGElement, IProps>(function ExtGseaSvg(
     let genesSvg: ReactNode | undefined = undefined
 
     if (displayProps.genes.line.show) {
-      let points = where(gseaRes1.hits, x => x > 0)
+      let points = where(gseaRes1.hits, (x) => x > 0)
 
       const gengseaRes1Svg = (
         <g>
@@ -227,7 +227,9 @@ export const ExtGseaSvg = forwardRef<SVGElement, IProps>(function ExtGseaSvg(
 
           {displayProps.genes.labels.show && (
             <g
-              transform={`translate(${displayProps.axes.x.length + displayProps.plot.gap.x}, ${displayProps.genes.height * 0.5})`}
+              transform={`translate(${
+                displayProps.axes.x.length + displayProps.plot.gap.x
+              }, ${displayProps.genes.height * 0.5})`}
             >
               <text
                 fill={
@@ -245,11 +247,13 @@ export const ExtGseaSvg = forwardRef<SVGElement, IProps>(function ExtGseaSvg(
         </g>
       )
 
-      points = where(gseaRes2.hits, x => x > 0)
+      points = where(gseaRes2.hits, (x) => x > 0)
 
       const gengseaRes2Svg = (
         <g
-          transform={`translate(0, ${displayProps.genes.height + 0.5 * displayProps.plot.gap.y})`}
+          transform={`translate(0, ${
+            displayProps.genes.height + 0.5 * displayProps.plot.gap.y
+          })`}
         >
           <g>
             {points.map((p, pointi) => {
@@ -271,7 +275,9 @@ export const ExtGseaSvg = forwardRef<SVGElement, IProps>(function ExtGseaSvg(
 
           {displayProps.genes.labels.show && (
             <g
-              transform={`translate(${xax.range[1]! + displayProps.plot.gap.x}, ${displayProps.genes.height / 2})`}
+              transform={`translate(${
+                xax.range[1]! + displayProps.plot.gap.x
+              }, ${displayProps.genes.height / 2})`}
             >
               <text
                 fill={
@@ -291,7 +297,9 @@ export const ExtGseaSvg = forwardRef<SVGElement, IProps>(function ExtGseaSvg(
 
       genesSvg = (
         <g
-          transform={`translate(0, ${displayProps.es.axes.y.length + 2 * displayProps.plot.gap.y})`}
+          transform={`translate(0, ${
+            displayProps.es.axes.y.length + 2 * displayProps.plot.gap.y
+          })`}
         >
           {gengseaRes1Svg}
           {gengseaRes2Svg}
@@ -304,7 +312,7 @@ export const ExtGseaSvg = forwardRef<SVGElement, IProps>(function ExtGseaSvg(
 
     if (displayProps.ranking.show) {
       //const yMin = Math.min(...rankedGenes.map(e => e.score))
-      const yMax = Math.max(...abs(rankedGenes.genes.map(e => e.score)))
+      const yMax = Math.max(...abs(rankedGenes.genes.map((e) => e.score)))
 
       const yax = new YAxis()
         .autoDomain([-yMax, yMax])
@@ -329,7 +337,7 @@ export const ExtGseaSvg = forwardRef<SVGElement, IProps>(function ExtGseaSvg(
 
       // crossing point
       const crossIndex =
-        end(where(rankedGenes.genes, gene => gene.score > 0)) + 1
+        end(where(rankedGenes.genes, (gene) => gene.score > 0)) + 1
       const crossingX = xax.domainToRange(crossIndex)
 
       const y =
@@ -342,7 +350,7 @@ export const ExtGseaSvg = forwardRef<SVGElement, IProps>(function ExtGseaSvg(
       rankingSvg = (
         <g transform={`translate(0, ${y})`}>
           <polygon
-            points={displayPoints.map(p => `${p[0]},${p[1]}`).join(' ')}
+            points={displayPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
             fill={displayProps.ranking.fill.color}
             stroke="none"
             fillOpacity={displayProps.ranking.fill.alpha}
@@ -356,7 +364,9 @@ export const ExtGseaSvg = forwardRef<SVGElement, IProps>(function ExtGseaSvg(
                 strokeDasharray="8"
               />
               <g
-                transform={`translate(0, ${displayProps.ranking.axes.y.length + displayProps.plot.gap.y})`}
+                transform={`translate(0, ${
+                  displayProps.ranking.axes.y.length + displayProps.plot.gap.y
+                })`}
               >
                 <text
                   fill={COLOR_BLACK}
@@ -431,7 +441,9 @@ export const ExtGseaSvg = forwardRef<SVGElement, IProps>(function ExtGseaSvg(
                 showTicks={displayProps.es.axes.x.showTicks}
               />
               <g
-                transform={`translate(${displayProps.axes.x.length + displayProps.plot.gap.x / 2}, 0)`}
+                transform={`translate(${
+                  displayProps.axes.x.length + displayProps.plot.gap.x / 2
+                }, 0)`}
               >
                 <text
                   fill={COLOR_BLACK}
@@ -446,7 +458,9 @@ export const ExtGseaSvg = forwardRef<SVGElement, IProps>(function ExtGseaSvg(
             </g>
 
             <g
-              transform={`translate(0, ${displayProps.es.axes.y.length + displayProps.plot.gap.y / 2})`}
+              transform={`translate(0, ${
+                displayProps.es.axes.y.length + displayProps.plot.gap.y / 2
+              })`}
             >
               <g>
                 <text

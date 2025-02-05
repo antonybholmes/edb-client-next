@@ -357,7 +357,7 @@ export function SeqTrackSvg({
         {tracks.map((track, ti) => {
           const binCounts = allBinCounts[ti]!
 
-          let points: IPos[] = getPoints(yax, track, binCounts)
+          const points: IPos[] = getPoints(yax, track, binCounts)
 
           let line = d3
             .line<IPos>()

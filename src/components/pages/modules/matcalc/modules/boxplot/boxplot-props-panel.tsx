@@ -15,17 +15,14 @@ import {
   ScrollAccordion,
 } from '@components/shadcn/ui/themed/accordion'
 import { produce } from 'immer'
-import { forwardRef, useContext, type ForwardedRef } from 'react'
+import { useContext } from 'react'
 import type { IBoxPlotDisplayOptions } from './boxplot-plot-svg'
 
 export interface IProps {
   plotAddr: IHistItemAddr
 }
 
-export const BoxPlotPropsPanel = forwardRef(function BoxPlotPropsPanel(
-  { plotAddr }: IProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+export function BoxPlotPropsPanel({ plotAddr }: IProps) {
   //const { plotsState, historyDispatch } = useContext(PlotsContext)
 
   const { history, historyDispatch } = useContext(HistoryContext)
@@ -48,22 +45,22 @@ export const BoxPlotPropsPanel = forwardRef(function BoxPlotPropsPanel(
                 inputCls="w-16 rounded-theme"
                 dp={0}
                 limit={[0, 1000]}
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayOptions, draft => {
+                    prop: produce(displayOptions, (draft) => {
                       draft.plot.width = v
                     }),
                   })
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayOptions, draft => {
+                    prop: produce(displayOptions, (draft) => {
                       draft.plot.height = v
                     }),
                   })
@@ -77,12 +74,12 @@ export const BoxPlotPropsPanel = forwardRef(function BoxPlotPropsPanel(
                 className="w-16 rounded-theme"
                 dp={0}
                 limit={[0, 1000]}
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayOptions, draft => {
+                    prop: produce(displayOptions, (draft) => {
                       draft.padding.plot = v
                     }),
                   })
@@ -95,12 +92,12 @@ export const BoxPlotPropsPanel = forwardRef(function BoxPlotPropsPanel(
                 className="w-16 rounded-theme"
                 dp={0}
                 limit={[0, 1000]}
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayOptions, draft => {
+                    prop: produce(displayOptions, (draft) => {
                       draft.padding.hue = v
                     }),
                   })
@@ -111,12 +108,12 @@ export const BoxPlotPropsPanel = forwardRef(function BoxPlotPropsPanel(
             <SwitchPropRow
               title="Split"
               checked={displayOptions.split}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayOptions, draft => {
+                  prop: produce(displayOptions, (draft) => {
                     draft.split = v
                   }),
                 })
@@ -132,7 +129,7 @@ export const BoxPlotPropsPanel = forwardRef(function BoxPlotPropsPanel(
             <SwitchPropRow
               title="Show"
               checked={displayOptions.violin.show}
-              onCheckedChange={state => {
+              onCheckedChange={(state) => {
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
@@ -150,12 +147,12 @@ export const BoxPlotPropsPanel = forwardRef(function BoxPlotPropsPanel(
                 value={displayOptions.violin.stroke.width}
                 placeholder="Stroke..."
                 className="w-14 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayOptions, draft => {
+                    prop: produce(displayOptions, (draft) => {
                       draft.violin.stroke.width = v
                     }),
                   })
@@ -172,12 +169,12 @@ export const BoxPlotPropsPanel = forwardRef(function BoxPlotPropsPanel(
             <SwitchPropRow
               title="Show"
               checked={displayOptions.box.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayOptions, draft => {
+                  prop: produce(displayOptions, (draft) => {
                     draft.box.show = v
                   }),
                 })
@@ -189,12 +186,12 @@ export const BoxPlotPropsPanel = forwardRef(function BoxPlotPropsPanel(
                 value={displayOptions.box.stroke.width}
                 placeholder="Stroke..."
                 className="w-14 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayOptions, draft => {
+                    prop: produce(displayOptions, (draft) => {
                       draft.box.stroke.width = v
                     }),
                   })
@@ -206,12 +203,12 @@ export const BoxPlotPropsPanel = forwardRef(function BoxPlotPropsPanel(
                 value={displayOptions.box.width}
                 placeholder="Width..."
                 className="w-14 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayOptions, draft => {
+                    prop: produce(displayOptions, (draft) => {
                       draft.box.width = v
                     }),
                   })
@@ -228,12 +225,12 @@ export const BoxPlotPropsPanel = forwardRef(function BoxPlotPropsPanel(
             <SwitchPropRow
               title="Show"
               checked={displayOptions.swarm.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayOptions, draft => {
+                  prop: produce(displayOptions, (draft) => {
                     draft.swarm.show = v
                   }),
                 })
@@ -312,4 +309,4 @@ export const BoxPlotPropsPanel = forwardRef(function BoxPlotPropsPanel(
       </ScrollAccordion>
     </PropsPanel>
   )
-})
+}

@@ -48,6 +48,10 @@ function VerifyPage() {
     Boolean(Cookies.get(EDB_ACCESS_TOKEN_COOKIE))
   )
 
+  useEffect(() => {
+    verify()
+  }, [])
+
   if (!jwt) {
     return (
       <CenteredCardContainer>
@@ -88,10 +92,6 @@ function VerifyPage() {
       setIsVerified(false)
     }
   }
-
-  useEffect(() => {
-    verify()
-  }, [])
 
   return (
     <HeaderLayout>

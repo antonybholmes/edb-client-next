@@ -154,15 +154,15 @@ export const BoxPlotSvg = forwardRef<SVGElement, IProps>(function BoxPlotSvg(
     const x: string = plot.customProps.x!
     const y: string = plot.customProps.y!
     const hue: string = plot.customProps.hue!
-    let xOrder: string[] = plot.customProps.xOrder
-    let hueOrder: string[] = plot.customProps.hueOrder
+    const xOrder: string[] = plot.customProps.xOrder
+    const hueOrder: string[] = plot.customProps.hueOrder
 
     const xCol = df.col(x).strs
     const yCol = df.col(y).values
     const emptyHueColName = x //df.colName(x)
     const hueCol =
       hueOrder.length > 1
-        ? df.col(hue).strs.map(v => cleanHue(v))
+        ? df.col(hue).strs.map((v) => cleanHue(v))
         : fill(emptyHueColName, df.shape[0])
 
     //console.log('hue', hueOrder)
@@ -210,8 +210,8 @@ export const BoxPlotSvg = forwardRef<SVGElement, IProps>(function BoxPlotSvg(
     // for all results calculate the max number of significant
     // comparisons. This can be used to work out how much space
     // to allocate to stats whilst keeping the plots aligned
-    let values: number[] = [...dataMap.entries()]
-      .map(x =>
+    const values: number[] = [...dataMap.entries()]
+      .map((x) =>
         [...x[1].entries()].map((hue: [string, number[]]) => hue[1]).flat()
       )
       .flat()
@@ -253,7 +253,7 @@ export const BoxPlotSvg = forwardRef<SVGElement, IProps>(function BoxPlotSvg(
 
         const kde = new KDE(values)
 
-        let xsmoothed = kde.f(ysmoothed)
+        const xsmoothed = kde.f(ysmoothed)
 
         globalXsmoothedMax = Math.max(globalXsmoothedMax, ...xsmoothed)
 
@@ -289,7 +289,9 @@ export const BoxPlotSvg = forwardRef<SVGElement, IProps>(function BoxPlotSvg(
             return (
               <g transform={`translate(${xX}, 0)`} key={x}>
                 <g
-                  transform={`translate(${blockWidth / 2}, -${displayOptions.title.offset})`}
+                  transform={`translate(${blockWidth / 2}, -${
+                    displayOptions.title.offset
+                  })`}
                 >
                   <text textAnchor="middle">{x}</text>
                 </g>
@@ -350,7 +352,9 @@ export const BoxPlotSvg = forwardRef<SVGElement, IProps>(function BoxPlotSvg(
 
                   return (
                     <g
-                      transform={`translate(${hueX + 0.5 * displayOptions.plot.width}, 0)`}
+                      transform={`translate(${
+                        hueX + 0.5 * displayOptions.plot.width
+                      }, 0)`}
                       key={`${x}:${hue}`}
                     >
                       {displayOptions.violin.show && (
@@ -417,7 +421,9 @@ export const BoxPlotSvg = forwardRef<SVGElement, IProps>(function BoxPlotSvg(
           </g>
 
           <g
-            transform={`translate(${innerWidth + displayOptions.padding.plot}, 0)`}
+            transform={`translate(${
+              innerWidth + displayOptions.padding.plot
+            }, 0)`}
           >
             {hueOrder.map((hue, huei) => (
               <g transform={`translate(0, ${huei * 25})`} key={huei}>

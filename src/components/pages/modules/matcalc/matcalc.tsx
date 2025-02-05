@@ -238,8 +238,7 @@ function MatcalcPage() {
 
   useEffect(() => {
     extGseaWorkerRef.current = new Worker(
-      new URL('./modules/gsea/ext-gsea.worker.ts', import.meta.url),
-     
+      new URL('./modules/gsea/ext-gsea.worker.ts', import.meta.url)
     )
 
     return () => {
@@ -415,8 +414,8 @@ function MatcalcPage() {
     // }))
 
     const plotChildrenFromHistory: ITab[] = step[0]!.plots
-      .map(id => step[0]!.plotMap[id]!)
-      .map(plot => ({
+      .map((id) => step[0]!.plotMap[id]!)
+      .map((plot) => ({
         id: plot.id,
         name: plot.name, //plot.name,
         icon: <ImageIcon />,
@@ -494,7 +493,7 @@ function MatcalcPage() {
   function openFiles(files: ITextFileOpen[], options: IParseOptions) {
     filesToDataFrames(queryClient, files, {
       parseOpts: options,
-      onSuccess: tables => {
+      onSuccess: (tables) => {
         if (tables.length > 0) {
           historyDispatch({
             type: 'open',
@@ -580,7 +579,7 @@ function MatcalcPage() {
   }
 
   function runExtGsea() {
-    let df = currentSheet(history)[0]!
+    const df = currentSheet(history)[0]!
 
     if (!df) {
       return
@@ -799,7 +798,7 @@ function MatcalcPage() {
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: makeRandId('open'),
@@ -830,7 +829,8 @@ function MatcalcPage() {
               onClick={() => makeClusterMap(false)}
               title="Make a heatma from the current table"
             >
-              <HeatmapChartIcon /><span>Heatmap</span>
+              <HeatmapChartIcon />
+              <span>Heatmap</span>
             </ToolbarButton>
             <ToolbarButton
               title="Make a dot plot from the current table"
@@ -1156,7 +1156,6 @@ function MatcalcPage() {
   ]
 
   const mainContent = useMemo(() => {
-
     const branch = currentBranch(history)
 
     if (branch[0] === null) {
@@ -1173,7 +1172,7 @@ function MatcalcPage() {
       step[0]!.plots,
       step[0]!.plotMap,
       selectedTab?.id,
-      step[0]!.plots.map(id => step[0]!.plotMap[id]!)
+      step[0]!.plots.map((id) => step[0]!.plotMap[id]!)
     )
 
     return (
@@ -1189,8 +1188,8 @@ function MatcalcPage() {
         )}
 
         {step[0]!.plots
-          .map(id => step[0]!.plotMap[id]!)
-          .map(plot => {
+          .map((id) => step[0]!.plotMap[id]!)
+          .map((plot) => {
             // construct an address
             const plotAddr: IHistItemAddr = [branch[1], step[1], plot.id]
             switch (plot.style) {
@@ -1253,7 +1252,7 @@ function MatcalcPage() {
             tab={treeFoldersTab}
             value={selectedTab}
             showRoot={false}
-            onValueChange={tab => {
+            onValueChange={(tab) => {
               // only change view if tab is a leaf (no children)
               // since this will be an actual table or plot
               if (
@@ -1372,7 +1371,7 @@ function MatcalcPage() {
       <ShortcutLayout info={MODULE_INFO} showSignInError={false}>
         <Toolbar
           value={toolbarTabName}
-          onTabChange={selectedTab => {
+          onTabChange={(selectedTab) => {
             if (selectedTab) {
               setToolbarTab(selectedTab.tab.id)
             }
@@ -1455,8 +1454,11 @@ function MatcalcPage() {
             open={showDialog.id}
             //onOpenChange={() => setShowDialog({...NO_DIALOG})}
             onFileChange={(message, files) =>
-              onTextFileChange(message, files, files => {
-                setShowDialog({ id: makeRandId('open-file-dialog'), params: { files } })
+              onTextFileChange(message, files, (files) => {
+                setShowDialog({
+                  id: makeRandId('open-file-dialog'),
+                  params: { files },
+                })
               })
             }
           />

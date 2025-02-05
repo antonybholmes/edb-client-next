@@ -14,7 +14,7 @@ function numberTrackSvg(
   spacing: IPos,
   displayProps: IOncoplotDisplayProps
 ): ReactNode {
-  let yax: Axis = new YAxis()
+  const yax: Axis = new YAxis()
     .setDomain([0, track.maxEvent[1]])
     .setLength(displayProps.clinical.height)
 
@@ -40,9 +40,8 @@ function numberTrackSvg(
       </g>
       <g id="sample">
         {samples.map((sample, si) => {
-          const height = yax?.domainToRange(
-            track.getEvents(sample).maxEvent[1]
-          )!
+          const height =
+            yax?.domainToRange(track.getEvents(sample).maxEvent[1]) ?? 0
           const y = displayProps.clinical.height - height
           const x = si * (blockSize.w + spacing.x)
 
@@ -173,7 +172,7 @@ function distTrackSvg(
         {samples.map((sample, si) => {
           const dist = track.getEvents(sample).normCountDist(categories)
 
-          let yax: Axis = new YAxis()
+          const yax: Axis = new YAxis()
             .setDomain([0, 1])
             .setLength(displayProps.clinical.height)
 
@@ -237,7 +236,7 @@ export function clinicalTracksSvg(
     <g>
       {clinicalTracks
         .map((track, ti) => [ti, track] as [number, ClinicalDataTrack])
-        .filter(track => displayProps.legend.clinical.tracks[track[0]!]!.show)
+        .filter((track) => displayProps.legend.clinical.tracks[track[0]!]!.show)
         .map((track, ti) => {
           let node: ReactNode = null
 
@@ -379,7 +378,7 @@ export function clinicalLegendSvgs(
       {tracks
         .map((track, ti) => [ti, track] as [number, ClinicalDataTrack])
         .filter(
-          track =>
+          (track) =>
             track[1].type === 'dist' &&
             displayProps.legend.clinical.tracks[track[0]]!.show
         )

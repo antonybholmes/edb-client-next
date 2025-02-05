@@ -16,14 +16,7 @@ import {
   currentSheets,
   HistoryContext,
 } from '@providers/history-provider'
-import {
-  forwardRef,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  type ForwardedRef,
-} from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 
 import { MessageContext } from '@/components/pages/message-provider'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
@@ -34,10 +27,7 @@ import { SaveTxtDialog } from '@components/pages/save-txt-dialog'
 import type { ITab } from '@components/tab-provider'
 import { type IDataPanelProps } from '../matcalc/data-panel'
 
-export const DataPanel = forwardRef(function DataPanel(
-  { panelId = 'Data' }: IDataPanelProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+export function DataPanel({ panelId = 'Data' }: IDataPanelProps) {
   const { history, historyDispatch } = useContext(HistoryContext)
 
   const downloadRef = useRef<HTMLAnchorElement>(null)
@@ -80,12 +70,12 @@ export const DataPanel = forwardRef(function DataPanel(
 
   useEffect(() => {
     const messages = messageState.queue.filter(
-      message => message.target === panelId
+      (message) => message.target === panelId
     )
 
     console.log(messageState.queue, panelId)
 
-    messages.forEach(message => {
+    messages.forEach((message) => {
       console.log(message)
 
       if (message.text.includes('save')) {
@@ -122,7 +112,7 @@ export const DataPanel = forwardRef(function DataPanel(
     <>
       <SaveTxtDialog
         open={showSave}
-        onSave={format => {
+        onSave={(format) => {
           save(format)
           setShowSave('')
         }}
@@ -173,7 +163,7 @@ export const DataPanel = forwardRef(function DataPanel(
       <TabSlideBar
         side="Right"
         tabs={rightTabs}
-        onTabChange={selectedTab => setSelectedTab(selectedTab.tab.id)}
+        onTabChange={(selectedTab) => setSelectedTab(selectedTab.tab.id)}
         value={selectedTab}
         open={showSideBar}
         onOpenChange={setShowSideBar}
@@ -181,7 +171,7 @@ export const DataPanel = forwardRef(function DataPanel(
         <TabbedDataFrames
           selectedSheet={currentSheetId(history)[0]!}
           dataFrames={currentSheets(history)[0]!}
-          onTabChange={selectedTab => {
+          onTabChange={(selectedTab) => {
             historyDispatch({
               type: 'goto-sheet',
               sheetId: selectedTab.index,
@@ -215,4 +205,4 @@ export const DataPanel = forwardRef(function DataPanel(
       <a ref={downloadRef} className="hidden" href="#" />
     </>
   )
-})
+}

@@ -122,7 +122,7 @@ export function makeClinicalTracks(
     // default medium seagreen
     let color: string = ''
     let params: string[] = []
-    let events: string[] = []
+    const events: string[] = []
     let type: ClinicalDataType = 'dist'
     const multi = header.toLowerCase().includes('multi=t')
 
@@ -219,8 +219,8 @@ export function makeClinicalTracks(
           }
           break
         default:
-          let s = v.toString()
-          let tokens = s.split(/[\/\|]/)
+          const s = v.toString()
+          const tokens = s.split(/[\/\|]/)
 
           if (NUMERICAL_DIST_REGEX.test(s)) {
             // if there is a mismatch in the length of the split values

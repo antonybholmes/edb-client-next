@@ -2,15 +2,7 @@ import { LollipopSvg } from './lollipop-svg'
 
 import { SlidersIcon } from '@components/icons/sliders-icon'
 
-import {
-  forwardRef,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  type ForwardedRef,
-  type RefObject,
-} from 'react'
+import { useContext, useEffect, useRef, useState, type RefObject } from 'react'
 
 import { LollipopPropsPanel } from './lollipop-props-panel'
 
@@ -44,15 +36,12 @@ interface ILollipopPanelProps {
   downloadRef: RefObject<HTMLAnchorElement | null>
 }
 
-const LollipopPanel = forwardRef(function LollipopPanel(
-  {
-    panelId,
+function LollipopPanel({
+  panelId,
 
-    canvasRef,
-    downloadRef,
-  }: ILollipopPanelProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+  canvasRef,
+  downloadRef,
+}: ILollipopPanelProps) {
   const svgRef = useRef<SVGSVGElement>(null)
 
   const [scale, setScale] = useState(3)
@@ -67,10 +56,10 @@ const LollipopPanel = forwardRef(function LollipopPanel(
 
   useEffect(() => {
     const messages = messageState.queue.filter(
-      message => message.target === panelId
+      (message) => message.target === panelId
     )
 
-    messages.forEach(message => {
+    messages.forEach((message) => {
       console.log(message)
 
       if (message.text.includes('save')) {
@@ -132,7 +121,7 @@ const LollipopPanel = forwardRef(function LollipopPanel(
       {showSave && (
         <SaveImageDialog
           open="open"
-          onSave={format => {
+          onSave={(format) => {
             downloadImageAutoFormat(
               svgRef,
               canvasRef,
@@ -185,7 +174,7 @@ const LollipopPanel = forwardRef(function LollipopPanel(
         side="Right"
         tabs={plotRightTabs}
         value={activeSideTab}
-        onTabChange={selectedTab => setActiveSideTab(selectedTab.tab.id)}
+        onTabChange={(selectedTab) => setActiveSideTab(selectedTab.tab.id)}
         open={showSideBar}
         onOpenChange={setShowSideBar}
       >
@@ -207,7 +196,7 @@ const LollipopPanel = forwardRef(function LollipopPanel(
       <canvas ref={canvasRef} width={0} height={0} className="hidden" />
     </>
   )
-})
+}
 
 interface ILollipopPanelWrapperProps extends ILollipopPanelProps {
   df: ILollipopDataFrame
@@ -220,18 +209,19 @@ interface ILollipopPanelWrapperProps extends ILollipopPanelProps {
  * complain that the ref cannot be forwarded, so we need a wrapper to
  * satify this requirement, which itself forwards to the real component.
  */
-export const LollipopPanelWrapper = forwardRef(function LollipopPanelWrapper(
-  { panelId, df, canvasRef, downloadRef }: ILollipopPanelWrapperProps,
-  ref: ForwardedRef<HTMLDivElement>
-) {
+export function LollipopPanelWrapper({
+  panelId,
+  df,
+  canvasRef,
+  downloadRef,
+}: ILollipopPanelWrapperProps) {
   return (
     <PlotProvider df={df}>
       <LollipopPanel
         panelId={panelId}
-        ref={ref}
         canvasRef={canvasRef}
         downloadRef={downloadRef}
       />
     </PlotProvider>
   )
-})
+}

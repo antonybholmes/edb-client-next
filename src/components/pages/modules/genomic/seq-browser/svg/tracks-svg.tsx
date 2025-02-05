@@ -41,10 +41,6 @@ export const TracksSvg = forwardRef<SVGElement, IProps>(function TracksSvg(
   const { state, locations, binSizes, setLocations } = useContext(TracksContext)
   const { settings } = useContext(SeqBrowserSettingsContext)
 
-  if (locations.length === 0) {
-    return null
-  }
-
   //const location = locations[0]!
 
   const { getAccessTokenAutoRefresh } = useContext(EdbAuthContext)
@@ -56,7 +52,7 @@ export const TracksSvg = forwardRef<SVGElement, IProps>(function TracksSvg(
       const res = await httpFetch.postJson(
         `${API_GENES_OVERLAP_URL}/${settings.genome}?canonical=${settings.genes.canonical.only}`,
         {
-          body: { locations: locations.map(l => l.loc) },
+          body: { locations: locations.map((l) => l.loc) },
         }
       )
 
@@ -73,10 +69,10 @@ export const TracksSvg = forwardRef<SVGElement, IProps>(function TracksSvg(
     : []
 
   const seqs = state.order
-    .map(gid => state.groups[gid]!)
-    .map(tg => tg.order.map(id => tg.tracks[id]!))
+    .map((gid) => state.groups[gid]!)
+    .map((tg) => tg.order.map((id) => tg.tracks[id]!))
     .flat()
-    .filter(t => t.type === 'Seq') as ISeqTrack[]
+    .filter((t) => t.type === 'Seq') as ISeqTrack[]
 
   // force updates when seqs, location or bin size change
   const binsQuery = useQuery({
@@ -90,10 +86,10 @@ export const TracksSvg = forwardRef<SVGElement, IProps>(function TracksSvg(
 
       const res = await httpFetch.postJson(API_SEQS_BINS_URL, {
         body: {
-          locations: locations.map(l => l.loc),
+          locations: locations.map((l) => l.loc),
           binSizes,
           //scale: displayOptions.seq.applyScaling ? displayOptions.seq.scale : 0,
-          tracks: seqs.map(t => t.seqId),
+          tracks: seqs.map((t) => t.seqId),
         },
 
         headers: bearerHeaders(accessToken),
@@ -116,8 +112,8 @@ export const TracksSvg = forwardRef<SVGElement, IProps>(function TracksSvg(
 
   const svg = useMemo(() => {
     const tracks = state.order
-      .map(gid => state.groups[gid]!)
-      .map(tg => tg.order.map(id => tg.tracks[id]!))
+      .map((gid) => state.groups[gid]!)
+      .map((tg) => tg.order.map((id) => tg.tracks[id]!))
 
     if (tracks.length === 0) {
       return null
@@ -129,7 +125,7 @@ export const TracksSvg = forwardRef<SVGElement, IProps>(function TracksSvg(
 
     // determine how much space in the svg is required by each
     // track
-    const trackHeights: number[] = tracks.map(ts => {
+    const trackHeights: number[] = tracks.map((ts) => {
       switch (ts[0]!.type) {
         case 'Seq':
           return (
@@ -150,7 +146,7 @@ export const TracksSvg = forwardRef<SVGElement, IProps>(function TracksSvg(
           return (
             (featuresSearch.length > 0
               ? Math.max(
-                  ...featuresSearch.map(featureSearch =>
+                  ...featuresSearch.map((featureSearch) =>
                     getGeneTrackHeight(
                       ts[0]! as IGeneTrack,
                       featureSearch.features
@@ -191,28 +187,26 @@ export const TracksSvg = forwardRef<SVGElement, IProps>(function TracksSvg(
         style={style}
       >
         <g
-          transform={`translate(${settings.margin.left}, ${
-            settings.margin.top
-          })`}
+          transform={`translate(${settings.margin.left}, ${settings.margin.top})`}
         >
           {locations.map((location, li) => {
             return (
               <g
                 id={`loc-col-${location.loc}`}
-                transform={`translate(${li * (innerWidth + settings.plot.gap)}, ${
-                  settings.margin.top
-                })`}
+                transform={`translate(${
+                  li * (innerWidth + settings.plot.gap)
+                }, ${settings.margin.top})`}
                 key={li}
               >
                 <LocationContext.Provider
                   value={{
                     location,
-                    setLocation: location => {
+                    setLocation: (location) => {
                       // for individual tracks, we can update their location
                       // using, for example, the ruler to propogate its
                       // changes back to here, where they can be subsequently
                       // used to update the global locations
-                      const newLocations = produce(locations, draft => {
+                      const newLocations = produce(locations, (draft) => {
                         draft[li] = location
                       })
 

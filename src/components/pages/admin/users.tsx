@@ -391,7 +391,7 @@ function AdminUsersPage() {
         <EditUserDialog
           title={showDialog.params!.title}
           user={showDialog.params!.user}
-          setUser={(user: INewUser | undefined, _response: string) => {
+          setUser={(user: INewUser | undefined) => {
             console.log('new', user)
 
             if (user) {

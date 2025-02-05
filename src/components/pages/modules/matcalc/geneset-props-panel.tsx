@@ -15,13 +15,7 @@ import { PropsPanel } from '@components/props-panel'
 import { Button } from '@components/shadcn/ui/themed/button'
 import { downloadJson } from '@lib/download-utils'
 import { makeRandId } from '@lib/utils'
-import {
-  forwardRef,
-  useContext,
-  useState,
-  type ForwardedRef,
-  type RefObject,
-} from 'react'
+import { useContext, useState, type RefObject } from 'react'
 
 import { FileDropPanel } from '@/components/file-drop-panel'
 
@@ -59,10 +53,7 @@ export interface IProps {
   onCancel?: () => void
 }
 
-export const GenesetPropsPanel = forwardRef(function GenesetPropsPanel(
-  { downloadRef }: IProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+export function GenesetPropsPanel({ downloadRef }: IProps) {
   const [open, setOpen] = useState('')
   const [confirmClear, setConfirmClear] = useState(false)
   //const [showSaveDialog, setShowSaveDialog] = useState(false)
@@ -112,7 +103,7 @@ export const GenesetPropsPanel = forwardRef(function GenesetPropsPanel(
         const name = df.colNames[i]
         const gs = makeNewGeneset(name)
 
-        gs.genes = df.col(i).strs.filter(x => x.length > 0)
+        gs.genes = df.col(i).strs.filter((x) => x.length > 0)
 
         genesets.push(gs)
       }
@@ -327,7 +318,7 @@ export const GenesetPropsPanel = forwardRef(function GenesetPropsPanel(
       {confirmClear && (
         <OKCancelDialog
           title={MODULE_INFO.name}
-          onReponse={r => {
+          onReponse={(r) => {
             if (r === TEXT_OK) {
               //onGroupsChange?.([])
               genesetDispatch({ type: 'clear' })
@@ -344,7 +335,7 @@ export const GenesetPropsPanel = forwardRef(function GenesetPropsPanel(
         <OKCancelDialog
           showClose={true}
           title={MODULE_INFO.name}
-          onReponse={r => {
+          onReponse={(r) => {
             if (r === TEXT_OK) {
               genesetDispatch({ type: 'remove', ids: [delGroup!.id] })
               // onGroupsChange &&
@@ -449,7 +440,7 @@ export const GenesetPropsPanel = forwardRef(function GenesetPropsPanel(
         </VCenterRow>
 
         <FileDropPanel
-          onFileDrop={files => {
+          onFileDrop={(files) => {
             if (files.length > 0) {
               //setDroppedFile(files[0]);
               console.log('Dropped file:', files[0])
@@ -461,7 +452,7 @@ export const GenesetPropsPanel = forwardRef(function GenesetPropsPanel(
           <VScrollPanel>
             <Reorder.Group
               values={genesetState.order}
-              onReorder={order => {
+              onReorder={(order) => {
                 //setOrder(order)
                 genesetDispatch({
                   type: 'order',
@@ -470,7 +461,7 @@ export const GenesetPropsPanel = forwardRef(function GenesetPropsPanel(
               }}
               className="gap-y-1 flex flex-col"
             >
-              {genesetState.order.map(id => {
+              {genesetState.order.map((id) => {
                 const geneset = genesetState.genesets.get(id)!
 
                 return (
@@ -552,7 +543,7 @@ export const GenesetPropsPanel = forwardRef(function GenesetPropsPanel(
           open={open}
           //onOpenChange={() => setOpen("")}
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
+            onTextFileChange(message, files, (files) => {
               openGenesetFiles(files)
             })
           }
@@ -561,4 +552,4 @@ export const GenesetPropsPanel = forwardRef(function GenesetPropsPanel(
       )}
     </>
   )
-})
+}

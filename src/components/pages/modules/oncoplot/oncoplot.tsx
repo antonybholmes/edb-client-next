@@ -252,12 +252,12 @@ function OncoplotPage() {
 
   async function loadGeneTestData() {
     try {
-      let res = await queryClient.fetchQuery({
+      const res = await queryClient.fetchQuery({
         queryKey: ['test_data'],
         queryFn: () => axios.get('/data/test/onco-plot-test.txt'),
       })
 
-      let lines = textToLines(res.data)
+      const lines = textToLines(res.data)
 
       const table = new DataFrameReader().keepDefaultNA(false).read(lines)
 
@@ -276,12 +276,12 @@ function OncoplotPage() {
 
   async function loadClinicalTestData() {
     try {
-      let res = await queryClient.fetchQuery({
+      const res = await queryClient.fetchQuery({
         queryKey: ['test_data'],
         queryFn: () => axios.get('/data/test/onco-plot-clinical-test.txt'),
       })
 
-      let lines = textToLines(res.data)
+      const lines = textToLines(res.data)
 
       const table = new DataFrameReader().keepDefaultNA(false).read(lines)
 
@@ -401,7 +401,7 @@ function OncoplotPage() {
 
     filesToDataFrames(queryClient, files, {
       parseOpts: options,
-      onSuccess: tables => {
+      onSuccess: (tables) => {
         if (tables.length > 0) {
           historyDispatch({
             type: 'open',
@@ -428,7 +428,7 @@ function OncoplotPage() {
 
     try {
       clinicalDf = findSheet('Clinical', step)
-    } catch (e) {
+    } catch {
       // ignore error
     }
 
@@ -494,7 +494,7 @@ function OncoplotPage() {
     removeEmpty: boolean = true
   ) {
     // Assume first sheet is
-    let df = findSheet('Mutations', currentStep(history)[0]!)  //.currentSheet
+    const df = findSheet('Mutations', currentStep(history)[0]!) //.currentSheet
 
     const colMap: IOncoColumns = {
       sample: findCol(df, 'Sample'),
@@ -547,7 +547,7 @@ function OncoplotPage() {
         <>
           <ToolbarTabGroup>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: makeRandId('open'),
@@ -724,7 +724,7 @@ function OncoplotPage() {
   useEffect(() => {
     const plotChildren: ITab[] = []
 
-    plotsState.plots.forEach(plot => {
+    plotsState.plots.forEach((plot) => {
       plotChildren.push({
         id: nanoid(),
         name: plot.name,
@@ -1005,7 +1005,7 @@ function OncoplotPage() {
             <CollapseTree
               tab={foldersTab}
               value={tab!}
-              onValueChange={t => {
+              onValueChange={(t) => {
                 if (t && t.content) {
                   // only use tabs from the tree that have content, otherwise
                   // the ui will appear empty
@@ -1025,7 +1025,7 @@ function OncoplotPage() {
               open={showDialog.id}
               //onOpenChange={() => setShowDialog({...NO_DIALOG})}
               onFileChange={(message, files) =>
-                onTextFileChange(message, files, files =>
+                onTextFileChange(message, files, (files) =>
                   parseFiles(message, files)
                 )
               }

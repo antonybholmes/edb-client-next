@@ -121,36 +121,42 @@ export async function searchProteins(
   console.log(res.data)
 
   const ret: IProtein[] = await Promise.all(
-    res.data.results.map(async (p: any) => {
-      //console.log(p)
+    res.data.results.map(
+      async (p: {
+        primaryAccession: any
+        proteinDescription: { recommendedName: { fullName: { value: any } } }
+        organism: { commonName: any; taxonId: any }
+      }) => {
+        //console.log(p)
 
-      //const gene = data.genes[0].geneName.value
-      const accession = p.primaryAccession
-      const name = p.proteinDescription.recommendedName.fullName.value
+        //const gene = data.genes[0].geneName.value
+        const accession = p.primaryAccession
+        const name = p.proteinDescription.recommendedName.fullName.value
 
-      const organism = p.organism.commonName
-      const taxonId = p.organism.taxonId
+        const organism = p.organism.commonName
+        const taxonId = p.organism.taxonId
 
-      //console.log(gene, accession, name)
+        //console.log(gene, accession, name)
 
-      // now get the sequence
+        // now get the sequence
 
-      res = await queryClient.fetchQuery({
-        queryKey: ['entry'],
-        queryFn: () =>
-          axios.get(`https://rest.uniprot.org/uniprotkb/${accession}.json`),
-      })
+        res = await queryClient.fetchQuery({
+          queryKey: ['entry'],
+          queryFn: () =>
+            axios.get(`https://rest.uniprot.org/uniprotkb/${accession}.json`),
+        })
 
-      return {
-        gene,
-        name,
-        accession,
-        organism,
-        taxonId,
-        seq: res.data.sequence.value,
-        length: res.data.sequence.length,
+        return {
+          gene,
+          name,
+          accession,
+          organism,
+          taxonId,
+          seq: res.data.sequence.value,
+          length: res.data.sequence.length,
+        }
       }
-    })
+    )
   )
 
   return ret.sort((a, b) => a.organism.localeCompare(b.organism))

@@ -197,7 +197,7 @@ function LollipopPage() {
       const proteins = await searchProteins(gene)
 
       const index = range(proteins.length).filter(
-        i => proteins[i]!.organism === 'Human'
+        (i) => proteins[i]!.organism === 'Human'
       )[0]!
 
       proteinDispatch({
@@ -322,7 +322,7 @@ function LollipopPage() {
   function openFiles(files: ITextFileOpen[], options: IParseOptions) {
     filesToDataFrames(queryClient, files, {
       parseOpts: options,
-      onSuccess: tables => {
+      onSuccess: (tables) => {
         if (tables.length > 0) {
           historyDispatch({
             type: 'open',
@@ -338,13 +338,13 @@ function LollipopPage() {
 
   function lollipopPlot() {
     const step = currentStep(history)[0]!
-    const mutDf = findSheet('Mutations', step)  //currentSheet(history)[0]!
+    const mutDf = findSheet('Mutations', step) //currentSheet(history)[0]!
 
     let featuresDf: BaseDataFrame | null = null
 
     try {
-      featuresDf = findSheet('Features', step) 
-    } catch (e) {
+      featuresDf = findSheet('Features', step)
+    } catch {
       // ignore error
     }
 
@@ -407,7 +407,7 @@ function LollipopPage() {
         <>
           <ToolbarTabGroup>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: makeRandId('open'),
@@ -572,7 +572,7 @@ function LollipopPage() {
   useEffect(() => {
     const plotChildren: ITab[] = []
 
-    plotsState.plots.forEach(plot => {
+    plotsState.plots.forEach((plot) => {
       plotChildren.push({
         id: nanoid(),
         name: plot.name,
@@ -993,7 +993,7 @@ function LollipopPage() {
             <CollapseTree
               tab={foldersTab}
               value={tab!}
-              onValueChange={t => {
+              onValueChange={(t) => {
                 if (t && t.content) {
                   // only use tabs from the tree that have content, otherwise
                   // the ui will appear empty
@@ -1015,7 +1015,7 @@ function LollipopPage() {
             open={showDialog.id}
             //onOpenChange={() => setShowDialog({...NO_DIALOG})}
             onFileChange={(message, files) =>
-              onTextFileChange(message, files, files =>
+              onTextFileChange(message, files, (files) =>
                 parseFiles(message, files)
               )
             }

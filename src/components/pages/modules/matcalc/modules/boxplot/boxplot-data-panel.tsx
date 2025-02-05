@@ -20,16 +20,13 @@ import {
   SubAccordion,
 } from '@components/shadcn/ui/themed/accordion'
 import { Reorder } from 'motion/react'
-import { forwardRef, useContext, type ForwardedRef } from 'react'
+import { useContext } from 'react'
 
 export interface IProps {
   plotAddr: IHistItemAddr
 }
 
-export const BoxPlotDataPanel = forwardRef(function BoxPlotDataPanel(
-  { plotAddr }: IProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+export function BoxPlotDataPanel({ plotAddr }: IProps) {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
 
   const { history, historyDispatch } = useContext(HistoryContext)
@@ -38,7 +35,7 @@ export const BoxPlotDataPanel = forwardRef(function BoxPlotDataPanel(
 
   const singlePlotDisplayOptions = plot.customProps.singlePlotDisplayOptions
 
-  let xOrder: string[] = plot.customProps.xOrder
+  const xOrder: string[] = plot.customProps.xOrder
   let hueOrder: string[] = plot.customProps.hueOrder
   const typeOrder = ['violin', 'box', 'swarm']
 
@@ -84,7 +81,7 @@ export const BoxPlotDataPanel = forwardRef(function BoxPlotDataPanel(
           <Reorder.Group
             axis="y"
             values={plot.customProps.hueOrder}
-            onReorder={(order: any) => {
+            onReorder={(order: unknown) => {
               historyDispatch({
                 type: 'update-custom-prop',
                 addr: plotAddr,
@@ -112,17 +109,17 @@ export const BoxPlotDataPanel = forwardRef(function BoxPlotDataPanel(
       )}
 
       <SubAccordion value={[]}>
-        {typeOrder.map(t => (
+        {typeOrder.map((t) => (
           <AccordionItem value={t} key={t}>
             <AccordionTrigger>{capitalCase(t)}</AccordionTrigger>
             <AccordionContent>
               <SubAccordion value={[]}>
-                {xOrder.map(x => (
+                {xOrder.map((x) => (
                   <AccordionItem value={x} key={x}>
                     <AccordionTrigger>{x}</AccordionTrigger>
                     <AccordionContent>
                       <SubAccordion value={[]}>
-                        {hueOrder.map(hue => (
+                        {hueOrder.map((hue) => (
                           <AccordionItem value={hue} key={hue}>
                             <AccordionTrigger>
                               {capitalCase(hue)}
@@ -173,7 +170,7 @@ export const BoxPlotDataPanel = forwardRef(function BoxPlotDataPanel(
                                     singlePlotDisplayOptions[x]![hue]![t]!
                                       .stroke.color
                                   }
-                                  onColorChange={color =>
+                                  onColorChange={(color) =>
                                     historyDispatch({
                                       type: 'update-custom-prop',
                                       addr: plotAddr,
@@ -214,7 +211,7 @@ export const BoxPlotDataPanel = forwardRef(function BoxPlotDataPanel(
                                     singlePlotDisplayOptions[x]![hue]![t]!.fill
                                       .color
                                   }
-                                  onColorChange={color =>
+                                  onColorChange={(color) =>
                                     historyDispatch({
                                       type: 'update-custom-prop',
                                       addr: plotAddr,
@@ -261,4 +258,4 @@ export const BoxPlotDataPanel = forwardRef(function BoxPlotDataPanel(
       </SubAccordion>
     </PropsPanel>
   )
-})
+}

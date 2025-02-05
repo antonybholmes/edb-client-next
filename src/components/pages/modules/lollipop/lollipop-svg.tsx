@@ -37,18 +37,18 @@ function colGraphs(
 
   const pileups: string[][] = []
 
-  df.aaStats.forEach(stats => {
+  df.aaStats.forEach((stats) => {
     //console.log(si, stats.countMap.keys(), displayProps.legend.mutations.types)
 
-    const mutTypes = displayProps.legend.mutations.types.filter(mutType =>
+    const mutTypes = displayProps.legend.mutations.types.filter((mutType) =>
       stats.countMap.has(mutType)
     )
 
     const pileup: string[] = []
 
     // counts per group
-    mutTypes.forEach(mutType => {
-      ;[...stats.countMap.get(mutType)!].sort().forEach(sample => {
+    mutTypes.forEach((mutType) => {
+      ;[...stats.countMap.get(mutType)!].sort().forEach((sample) => {
         pileup.push(`${mutType}:${sample}`)
       })
     })
@@ -67,7 +67,7 @@ function colGraphs(
       <g>
         {pileups.map((pileup, pi) => {
           return pileup.map((entry, ei) => {
-            const [mutType, _] = entry.split(':')
+            const [mutType] = entry.split(':')
             const y1 = yax.domainToRange(ei)
 
             return (
@@ -153,7 +153,7 @@ function labels(
   return (
     <g>
       {df.labels
-        .filter(label => label.show)
+        .filter((label) => label.show)
         .map((label, li) => {
           return (
             <g
@@ -217,7 +217,7 @@ function features(
         />
       )}
       {df.features
-        .filter(feature => feature.show)
+        .filter((feature) => feature.show)
         .map((feature, fi) => {
           const width =
             Math.abs(feature.end - feature.start) * (blockSize.w + spacing.x)
@@ -396,7 +396,7 @@ export const LollipopSvg = forwardRef<SVGElement>(function LollipopSvg(
   const svg = useMemo(() => {
     // keep things simple and use ints for the graph limits
     const maxSampleCount = Math.round(
-      Math.max(...df.aaStats.map(stats => stats.sum))
+      Math.max(...df.aaStats.map((stats) => stats.sum))
     )
 
     const graphHeight = maxSampleCount * (blockSize.w + spacing.y)

@@ -1,13 +1,11 @@
 import { SlidersIcon } from '@components/icons/sliders-icon'
 
 import {
-  forwardRef,
   useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
-  type ForwardedRef,
   type RefObject,
 } from 'react'
 
@@ -58,10 +56,11 @@ interface IExtGseaPanelProps {
   downloadRef: RefObject<HTMLAnchorElement | null>
 }
 
-export const ExtGseaPanel = forwardRef(function ExtGseaPanel(
-  { plotAddr, canvasRef, downloadRef }: IExtGseaPanelProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+export function ExtGseaPanel({
+  plotAddr,
+  canvasRef,
+  downloadRef,
+}: IExtGseaPanelProps) {
   // const { plotsState, plotsDispatch } = useContext(PlotsContext)
 
   // const plot = plotsState.plotMap[plotId]
@@ -74,11 +73,7 @@ export const ExtGseaPanel = forwardRef(function ExtGseaPanel(
 
   const plot = getPlotFromAddr(plotAddr, history)
 
-  if (plot === null) {
-    return null
-  }
-
-  const displayOptions: IExtGseaDisplayOptions = plot.customProps
+  const displayOptions: IExtGseaDisplayOptions = plot?.customProps
     .displayOptions as IExtGseaDisplayOptions
 
   //const extGsea: ExtGSEA = plot.customProps.extGsea as ExtGSEA
@@ -100,10 +95,10 @@ export const ExtGseaPanel = forwardRef(function ExtGseaPanel(
 
   useEffect(() => {
     const messages = messageState.queue.filter(
-      message => message.target === plot.id
+      (message) => message.target === plot?.id
     )
 
-    messages.forEach(message => {
+    messages.forEach((message) => {
       if (message.text.includes('save')) {
         if (message.text.includes(':')) {
           downloadImageAutoFormat(
@@ -178,7 +173,7 @@ export const ExtGseaPanel = forwardRef(function ExtGseaPanel(
       {showSave && (
         <SaveImageDialog
           open="open"
-          onSave={format => {
+          onSave={(format) => {
             downloadImageAutoFormat(
               svgRef,
               canvasRef,
@@ -252,4 +247,4 @@ export const ExtGseaPanel = forwardRef(function ExtGseaPanel(
       <canvas ref={canvasRef} width={0} height={0} className="hidden" />
     </>
   )
-})
+}

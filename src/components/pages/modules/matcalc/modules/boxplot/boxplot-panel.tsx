@@ -54,11 +54,7 @@ export const BoxPlotPanel = forwardRef(function BoxPlotPanel(
 
   const plot = getPlotFromAddr(plotAddr, history)
 
-  if (plot === null) {
-    return null
-  }
-
-  const displayOptions: IBoxPlotDisplayOptions = plot.customProps
+  const displayOptions: IBoxPlotDisplayOptions = plot?.customProps
     .displayOptions as IBoxPlotDisplayOptions
 
   const { messageState, messageDispatch } = useContext(MessageContext)
@@ -83,9 +79,9 @@ export const BoxPlotPanel = forwardRef(function BoxPlotPanel(
   const [showSideBar, setShowSideBar] = useState(true)
 
   useEffect(() => {
-    const messages = messageState.queue.filter(m => m.target === plot.id)
+    const messages = messageState.queue.filter((m) => m.target === plot?.id)
 
-    messages.forEach(message => {
+    messages.forEach((message) => {
       if (message.text.includes('save')) {
         if (message.text.includes(':')) {
           downloadImageAutoFormat(
@@ -153,7 +149,7 @@ export const BoxPlotPanel = forwardRef(function BoxPlotPanel(
       {showSave && (
         <SaveImageDialog
           open="open"
-          onSave={format => {
+          onSave={(format) => {
             downloadImageAutoFormat(
               svgRef,
               canvasRef,

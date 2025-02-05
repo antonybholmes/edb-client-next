@@ -489,7 +489,7 @@ export function MutationsPage() {
         cooMap.get(mutation.sample) ?? '',
         lymphgenMap.get(mutation.sample) ?? '',
       ]
-    })!
+    })
 
     const df = new DataFrame({
       data,

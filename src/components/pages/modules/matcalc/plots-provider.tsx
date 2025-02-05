@@ -1,14 +1,10 @@
 import { type IChildrenProps } from '@interfaces/children-props'
 
-import { DEFAULT_VOLCANO_PROPS } from '@/components/pages/modules/matcalc/modules/volcano/volcano-plot-svg'
-import { DEFAULT_HEATMAP_PROPS } from '@/components/plot/heatmap/heatmap-svg-props'
 import type { IFieldMap } from '@/interfaces/field-map'
 import { where } from '@/lib/math/math'
 import type { IPlot } from '@/providers/history-provider'
 import { nanoid } from '@lib/utils'
 import { createContext, useReducer, type Dispatch } from 'react'
-import { DEFAULT_EXT_GSEA_PROPS } from '../gene/gsea/ext-gsea-store'
-import { DEFAULT_BOX_PLOT_DISPLAY_PROPS } from './modules/boxplot/boxplot-plot-svg'
 import type { IPlotDisplayOptions } from './plot-props-store'
 
 export type PlotStyle =
@@ -41,7 +37,7 @@ export type PlotAction =
       type: 'update-custom-prop'
       id: string
       name: string
-      prop: any
+      prop: unknown
     }
   | {
       type: 'remove'
@@ -74,33 +70,11 @@ export function plotsReducer(
   state: IPlotState,
   action: PlotAction
 ): IPlotState {
-  let props: IPlotDisplayOptions = { ...DEFAULT_HEATMAP_PROPS }
   let plot: IPlot
   let idx: number[]
 
   switch (action.type) {
     case 'add':
-      switch (action.style) {
-        case 'Dot Plot':
-          props = {
-            ...DEFAULT_HEATMAP_PROPS,
-            style: 'Dot',
-          }
-          break
-        case 'Volcano':
-          props = { ...DEFAULT_VOLCANO_PROPS }
-          break
-        case 'Box Plot':
-          props = { ...DEFAULT_BOX_PLOT_DISPLAY_PROPS }
-          break
-        case 'Extended GSEA':
-          props = { ...DEFAULT_EXT_GSEA_PROPS }
-          break
-
-        default:
-          break
-      }
-
       plot = {
         id: nanoid(),
         //cf: action.cf,
@@ -121,26 +95,6 @@ export function plotsReducer(
       }
 
     case 'set':
-      switch (action.style) {
-        case 'Dot Plot':
-          props = {
-            ...DEFAULT_HEATMAP_PROPS,
-            style: 'Dot',
-          }
-          break
-        case 'Volcano':
-          props = { ...DEFAULT_VOLCANO_PROPS }
-          break
-        case 'Box Plot':
-          props = { ...DEFAULT_BOX_PLOT_DISPLAY_PROPS }
-          break
-        case 'Extended GSEA':
-          props = { ...DEFAULT_EXT_GSEA_PROPS }
-          break
-        default:
-          break
-      }
-
       plot = {
         id: nanoid(),
         //cf: action.cf,
@@ -160,13 +114,13 @@ export function plotsReducer(
     case 'remove':
       return {
         ...state,
-        plots: state.plots.filter(plot => plot.id != action.id),
+        plots: state.plots.filter((plot) => plot.id != action.id),
         plotMap: Object.fromEntries(
-          Object.entries(state.plotMap).filter(e => e[0] != action.id)
+          Object.entries(state.plotMap).filter((e) => e[0] != action.id)
         ),
       }
     case 'update-display':
-      idx = where(state.plots, plot => plot.id === action.id)
+      idx = where(state.plots, (plot) => plot.id === action.id)
 
       if (idx.length > 0) {
         const plot = {
@@ -176,14 +130,14 @@ export function plotsReducer(
 
         return {
           ...state,
-          plots: state.plots.map(p => (p.id === action.id ? plot : p)),
+          plots: state.plots.map((p) => (p.id === action.id ? plot : p)),
           plotMap: { ...state.plotMap, [plot.id]: plot },
         }
       } else {
         return state
       }
     case 'update-custom-prop':
-      idx = where(state.plots, plot => plot.id === action.id)
+      idx = where(state.plots, (plot) => plot.id === action.id)
 
       if (idx.length > 0) {
         plot = state.plots[idx[0]!]!
@@ -195,7 +149,7 @@ export function plotsReducer(
 
         return {
           ...state,
-          plots: state.plots.map(p => (p.id === action.id ? plot : p)),
+          plots: state.plots.map((p) => (p.id === action.id ? plot : p)),
           plotMap: { ...state.plotMap, [plot.id]: plot },
         }
       } else {

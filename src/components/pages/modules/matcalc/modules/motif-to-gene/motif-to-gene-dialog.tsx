@@ -76,7 +76,7 @@ export function MotifToGeneDialog({
       const table: SeriesData[][] = []
 
       for (const [ri, row] of df.values.entries()) {
-        let id = rename[ri] ?? NA
+        const id = rename[ri] ?? NA
 
         const res = await queryClient.fetchQuery({
           queryKey: ['motiftogene'],
@@ -90,9 +90,9 @@ export function MotifToGeneDialog({
             }),
         })
 
-        let data = res.data
+        const data = res.data
 
-        const genes = new Set<String>()
+        const genes = new Set<string>()
 
         // for every entry, get all the gesns and assemble into a set
         for (const motif of data.motifs) {
@@ -110,7 +110,7 @@ export function MotifToGeneDialog({
 
       const header: string[] = df.colNames.concat(['Motif to gene'])
 
-      let df_out = new DataFrame({
+      const df_out = new DataFrame({
         data: table,
         index: df.index,
         columns: header,
@@ -132,7 +132,7 @@ export function MotifToGeneDialog({
     <OKCancelDialog
       open={open}
       title="Motif To Gene"
-      onReponse={r => {
+      onReponse={(r) => {
         if (r === TEXT_CANCEL) {
           onCancel()
         } else {

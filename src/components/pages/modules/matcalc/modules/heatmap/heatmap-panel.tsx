@@ -1,13 +1,11 @@
 import { SlidersIcon } from '@components/icons/sliders-icon'
 
 import {
-  forwardRef,
   useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
-  type ForwardedRef,
   type RefObject,
 } from 'react'
 
@@ -57,10 +55,11 @@ interface IHeatMapPanelProps {
   downloadRef: RefObject<HTMLAnchorElement | null>
 }
 
-export const HeatMapPanel = forwardRef(function HeatMapPanel(
-  { plotAddr, canvasRef, downloadRef }: IHeatMapPanelProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+export function HeatMapPanel({
+  plotAddr,
+  canvasRef,
+  downloadRef,
+}: IHeatMapPanelProps) {
   // const { plotsState, plotsDispatch } = useContext(PlotsContext)
 
   // const plot = plotsState.plotMap[plotId]
@@ -73,13 +72,7 @@ export const HeatMapPanel = forwardRef(function HeatMapPanel(
 
   const plot = getPlotFromAddr(plotAddr, history)
 
-  console.log('ssss', plotAddr, plot)
-
-  if (plot === null) {
-    return null
-  }
-
-  const displayOptions: IHeatMapDisplayOptions = plot.customProps
+  const displayOptions: IHeatMapDisplayOptions = plot?.customProps
     .displayOptions as IHeatMapDisplayOptions
 
   const { groupState } = useContext(GroupsContext)
@@ -99,10 +92,10 @@ export const HeatMapPanel = forwardRef(function HeatMapPanel(
 
   useEffect(() => {
     const messages = messageState.queue.filter(
-      message => message.target === plot.id
+      (message) => message.target === plot?.id
     )
 
-    messages.forEach(message => {
+    messages.forEach((message) => {
       if (message.text.includes('save')) {
         if (message.text.includes(':')) {
           downloadImageAutoFormat(
@@ -153,7 +146,7 @@ export const HeatMapPanel = forwardRef(function HeatMapPanel(
       id: TEXT_DISPLAY,
       icon: <SlidersIcon />,
       content: (
-        <HeatmapPropsPanel plotAddr={plotAddr} cf={plot.customProps.cf} />
+        <HeatmapPropsPanel plotAddr={plotAddr} cf={plot?.customProps.cf} />
       ),
     },
   ]
@@ -164,7 +157,7 @@ export const HeatMapPanel = forwardRef(function HeatMapPanel(
         <div className={PLOT_CLS}>
           <HeatMapSvg
             ref={svgRef}
-            cf={plot.customProps.cf}
+            cf={plot?.customProps.cf}
             plotAddr={plotAddr}
           />
         </div>
@@ -178,7 +171,7 @@ export const HeatMapPanel = forwardRef(function HeatMapPanel(
       {showSave && (
         <SaveImageDialog
           open="open"
-          onSave={format => {
+          onSave={(format) => {
             downloadImageAutoFormat(
               svgRef,
               canvasRef,
@@ -252,4 +245,4 @@ export const HeatMapPanel = forwardRef(function HeatMapPanel(
       <canvas ref={canvasRef} width={0} height={0} className="hidden" />
     </>
   )
-})
+}

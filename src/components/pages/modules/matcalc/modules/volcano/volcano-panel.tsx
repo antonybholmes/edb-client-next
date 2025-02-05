@@ -113,11 +113,7 @@ export const VolcanoPanel = forwardRef(function VolcanoPanel(
 
   const plot = getPlotFromAddr(plotAddr, history)
 
-  if (plot === null) {
-    return null
-  }
-
-  const displayOptions = plot.customProps
+  const displayOptions = plot?.customProps
     .displayOptions as IVolcanoDisplayOptions
 
   const { messageState, messageDispatch } = useContext(MessageContext)
@@ -144,9 +140,9 @@ export const VolcanoPanel = forwardRef(function VolcanoPanel(
   const [showSideBar, setShowSideBar] = useState(true)
 
   useEffect(() => {
-    const messages = messageState.queue.filter(m => m.target === plot.id)
+    const messages = messageState.queue.filter((m) => m.target === plot?.id)
 
-    messages.forEach(message => {
+    messages.forEach((message) => {
       if (message.text.includes('save')) {
         if (message.text.includes(':')) {
           downloadImageAutoFormat(
@@ -207,7 +203,7 @@ export const VolcanoPanel = forwardRef(function VolcanoPanel(
       {showSave && (
         <SaveImageDialog
           open="open"
-          onSave={format => {
+          onSave={(format) => {
             downloadImageAutoFormat(
               svgRef,
               canvasRef,

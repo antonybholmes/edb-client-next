@@ -3,7 +3,7 @@ import { cn } from '@lib/class-names'
 
 export function FolderIcon({
   w = 'w-6',
-  stroke = 'stroke-2',
+
   fill = 'stroke-foreground',
   className,
   style,

@@ -30,7 +30,7 @@ export function ColorMapMenu({
 
   function _onChange(cmap: ColorMap) {
     setOpen(false)
-    onChange && onChange(cmap)
+    onChange?.(cmap)
   }
 
   return (

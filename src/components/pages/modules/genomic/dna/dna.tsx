@@ -42,6 +42,7 @@ import { OpenIcon } from '@icons/open-icon'
 import { SaveIcon } from '@icons/save-icon'
 import {
   currentSheet,
+  currentSheetId,
   currentSheets,
   HistoryContext,
 } from '@providers/history-provider'
@@ -485,7 +486,7 @@ function DNAPage() {
             style={{ marginBottom: '-2px' }}
           > */}
           <TabbedDataFrames
-            selectedSheet={currentSheet(history)[0]!.id}
+            selectedSheet={currentSheetId(history)[0]!}
             dataFrames={currentSheets(history)[0]!}
             onTabChange={(selectedTab) => {
               historyDispatch({

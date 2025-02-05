@@ -59,14 +59,11 @@ import {
 } from '@/lib/genomic/overlap/overlap'
 import type { ITab } from '@components/tab-provider'
 import { CoreProviders } from '@providers/core-providers'
-import { useQueryClient } from '@tanstack/react-query'
 import { FilesPropsPanel } from './files-props-panel'
 import MODULE_INFO from './module.json'
 import { OverlapContext, OverlapProvider } from './overlap-provider'
 
 function OverlapPage() {
-  const queryClient = useQueryClient()
-
   const downloadRef = useRef<HTMLAnchorElement>(null)
 
   const {
