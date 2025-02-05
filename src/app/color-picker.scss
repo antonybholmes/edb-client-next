@@ -1,0 +1,38 @@
+.color-picker .react-colorful {
+  width: auto;
+  height: 10rem;
+}
+
+.color-picker .react-colorful__hue,
+.react-colorful__alpha {
+  height: 0.5rem !important;
+  border-radius: 999px !important;
+}
+
+.color-picker .react-colorful__hue {
+  margin-top: 1rem;
+}
+
+.color-picker .react-colorful__alpha {
+  margin-top: 1rem;
+}
+
+.color-picker .react-colorful__pointer {
+  width: 1rem !important;
+  height: 1rem !important;
+}
+
+.color-picker .react-colorful__saturation {
+  border-radius: 0.25rem !important;
+  border: none !important;
+  box-shadow: none;
+  
+  //border-top-left-radius: 0.375rem!important;
+  //border-top-right-radius: 0.375rem!important;
+}
+
+//.color-picker .react-colorful__last-control {
+//  border-radius: 0 !important;
+  //border-bottom-left-radius: 0.375rem!important;
+  //border-bottom-right-radius: 0.375rem!important;
+//}

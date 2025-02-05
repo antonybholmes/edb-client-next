@@ -1,0 +1,35 @@
+.collapsible-content {
+  overflow: hidden;
+}
+
+.collapsible-content[data-state="open"] {
+  animation: slide-down 200ms ease-out;
+  animation-fill-mode: forwards;
+}
+
+.collapsible-content[data-state="closed"] {
+  animation: slide-up 200ms ease-out;
+  animation-fill-mode: forwards;
+}
+
+@keyframes slide-down {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(--radix-collapsible-content-height);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    height: var(--radix-collapsible-content-height);
+    opacity: 1;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}

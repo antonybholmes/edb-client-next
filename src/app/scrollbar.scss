@@ -1,0 +1,129 @@
+
+// .custom-scrollbar,
+// body {
+//   //scrollbar-color: var(--secondary) transparent;
+//   scrollbar-width: thin;
+// }
+
+// .custom-scrollbar::-webkit-scrollbar-button:horizontal:increment,
+// body::-webkit-scrollbar-button:horizontal:increment {
+//   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABlBMVEXM09b///8OmaLeAAAAAnRSTlP/AOW3MEoAAAAgSURBVHgBY2BEA+QLMGAIMGAIMGAIMBAUIGQoZU5HAwB+ZgDtGYq3fgAAAABJRU5ErkJggg==);
+// }
+
+// .custom-scrollbar::-webkit-scrollbar-button:horizontal:increment:hover,
+// body::-webkit-scrollbar-button:horizontal:increment:hover {
+//   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABlBMVEWdtMT///8YSU3FAAAAAnRSTlP/AOW3MEoAAAAgSURBVHgBY2BEA+QLMGAIMGAIMGAIMBAUIGQoZU5HAwB+ZgDtGYq3fgAAAABJRU5ErkJggg==);
+// }
+
+// .custom-scrollbar::-webkit-scrollbar-button:horizontal:decrement,
+// body::-webkit-scrollbar-button:horizontal:decrement {
+//   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABlBMVEXM09b///8OmaLeAAAAAnRSTlP/AOW3MEoAAAAiSURBVHgBY2BEAxQJMKAJMKAJMKAJMOATgIkQMBTBooZfAH56AO2yINTrAAAAAElFTkSuQmCC);
+// }
+
+// .custom-scrollbar::-webkit-scrollbar-button:horizontal:decrement:hover,
+// body::-webkit-scrollbar-button:horizontal:decrement:hover {
+//   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABlBMVEWdtMT///8YSU3FAAAAAnRSTlP/AOW3MEoAAAAiSURBVHgBY2BEAxQJMKAJMKAJMKAJMOATgIkQMBTBooZfAH56AO2yINTrAAAAAElFTkSuQmCC);
+// }
+
+// .custom-scrollbar::-webkit-scrollbar-button:vertical:increment,
+// body::-webkit-scrollbar-button:vertical:increment {
+//   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABlBMVEXM09b///8OmaLeAAAAAnRSTlP/AOW3MEoAAAAfSURBVHgBY2BEA7QTYIAChAoYH6EFxkeYwQBj0MelAH3GAO2C9+AaAAAAAElFTkSuQmCC);
+// }
+
+// .custom-scrollbar::-webkit-scrollbar-button:vertical:increment:hover,
+// body::-webkit-scrollbar-button:vertical:increment:hover {
+//   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABlBMVEWdtMT///8YSU3FAAAAAnRSTlP/AOW3MEoAAAAfSURBVHgBY2BEA7QTYIAChAoYH6EFxkeYwQBj0MelAH3GAO2C9+AaAAAAAElFTkSuQmCC);
+// }
+
+// .custom-scrollbar::-webkit-scrollbar-button:vertical:decrement,
+// body::-webkit-scrollbar-button:vertical:decrement {
+//   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABlBMVEXM09b///8OmaLeAAAAAnRSTlP/AOW3MEoAAAAgSURBVHgBY2BEAzQVYIAzYHwGGAvOZ4AyIXyECH1cCgB/GgDtpWTgqAAAAABJRU5ErkJggg==);
+// }
+
+// .custom-scrollbar::-webkit-scrollbar-button:vertical:decrement:hover,
+// body::-webkit-scrollbar-button:vertical:decrement:hover {
+//   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABlBMVEWdtMT///8YSU3FAAAAAnRSTlP/AOW3MEoAAAAgSURBVHgBY2BEAzQVYIAzYHwGGAvOZ4AyIXyECH1cCgB/GgDtpWTgqAAAAABJRU5ErkJggg==);
+// }
+
+ 
+
+.custom-scrollbar::-webkit-scrollbar {
+  height: 0.25rem;
+  width: 0.25rem;
+}
+
+// .scroll-container:hover .custom-scrollbar::-webkit-scrollbar {
+//   height: 0.25rem;
+//   width: 0.25rem;
+// }
+ 
+
+.custom-scrollbar::-webkit-scrollbar:disabled {
+  display: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar-button,
+.custom-scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
+  cursor: pointer;
+  display: none;
+}
+
+// .custom-scrollbar::-webkit-scrollbar-button:horizontal:decrement,
+// .custom-scrollbar::-webkit-scrollbar-button:horizontal:decrement:hover,
+// .custom-scrollbar::-webkit-scrollbar-button:horizontal:increment,
+// .custom-scrollbar::-webkit-scrollbar-button:horizontal:increment:hover,
+// .custom-scrollbar::-webkit-scrollbar-button:vertical:decrement,
+// .custom-scrollbar::-webkit-scrollbar-button:vertical:decrement:hover,
+// .custom-scrollbar::-webkit-scrollbar-button:vertical:increment,
+// .custom-scrollbar::-webkit-scrollbar-button:vertical:increment:hover,
+// body::-webkit-scrollbar-button:horizontal:decrement,
+// body::-webkit-scrollbar-button:horizontal:decrement:hover,
+// body::-webkit-scrollbar-button:horizontal:increment,
+// body::-webkit-scrollbar-button:horizontal:increment:hover,
+// body::-webkit-scrollbar-button:vertical:decrement,
+// body::-webkit-scrollbar-button:vertical:decrement:hover,
+// body::-webkit-scrollbar-button:vertical:increment,
+// body::-webkit-scrollbar-button:vertical:increment:hover {
+//   background-position: 50%;
+//   height: 18px;
+//   width: 18px;
+// }
+
+// .custom-scrollbar::-webkit-scrollbar-track {
+//   background-color: COLOR_RED;
+//   height: 2px;
+//   width: 2px;
+// }
+
+// .custom-scrollbar::-webkit-scrollbar-thumb,
+// .custom-scrollbar::-webkit-scrollbar-thumb:hover,
+// body::-webkit-scrollbar-thumb,
+// body::-webkit-scrollbar-thumb:hover {
+//   background-clip: content-box;
+//   border: 6px solid transparent;
+//   border-radius: 9px;
+// }
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-muted rounded-full;
+  //background-color: var(--color-muted); // rgba(0,0,0,0);
+  //border-radius: 999px;
+  //transition: background-color 0.3s ease-in-out;
+}
+
+// .custom-scrollbar::-webkit-scrollbar-thumb {
+//   background-color: var(--color-muted);
+// }
+
+// .custom-scrollbar::-webkit-scrollbar-thumb:vertical,
+// body::-webkit-scrollbar-thumb:vertical {
+//   min-height: 50px;
+// }
+
+// .custom-scrollbar::-webkit-scrollbar-thumb:horizontal,
+// body::-webkit-scrollbar-thumb:horizontal {
+//   min-width: 50px;
+// }
+
+/* end scrollbar */

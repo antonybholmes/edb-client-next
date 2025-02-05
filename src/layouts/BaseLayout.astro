@@ -1,0 +1,27 @@
+---
+import { type ILayoutProps } from '@interfaces/layout-props'
+import { cn } from '@lib/class-names'
+import BaseHead from './BaseHead.astro'
+
+interface Props extends ILayoutProps {}
+
+const BODY_CLS =
+  'margin-0 min-h-full bg-body text-foreground flex flex-col text-base font-normal grow'
+
+const { title = '', description = '', className } = Astro.props
+---
+
+<html lang="en" class={BODY_CLS}>
+  <head>
+    <BaseHead title={title} description={description} />
+  </head>
+
+  <body class={cn(BODY_CLS, className)}>
+    <slot name="header" />
+
+    <slot name="main" />
+    <slot name="footer" />
+
+    <!-- <Footer /> -->
+  </body>
+</html>

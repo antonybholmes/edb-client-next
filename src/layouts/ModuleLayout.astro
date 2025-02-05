@@ -1,0 +1,14 @@
+---
+import { type IModuleInfo } from '@interfaces/module-info'
+import BaseLayout from './BaseLayout.astro'
+
+interface Props {
+  info: IModuleInfo
+}
+
+const { info } = Astro.props
+---
+
+<BaseLayout title={info!.name} description={info!.description}>
+  <slot slot="main" name="main" />
+</BaseLayout>
