@@ -168,7 +168,7 @@ export function SeqBrowserPage() {
         .setDomain([locations[0]!.start, locations[0]!.end])
         .setLength(settings.plot.width)
         .setTicks([locations[0]!.start, locations[0]!.end]),
-    [location]
+    [locations]
   )
 
   useEffect(() => {

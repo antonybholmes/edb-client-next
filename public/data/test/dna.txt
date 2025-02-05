@@ -1,0 +1,3 @@
+Location	Genome
+chr1:100000-100100	grch38
+chr2:200000-200100	mm10

@@ -1,0 +1,32 @@
+[
+  {
+    "dataset": "MSigDB",
+    "genesets": [
+      {
+        "name": "c2.cp.biocarta.v7.5.1.symbols",
+        "url": "/data/modules/pathways/MSigDB/c2.cp.biocarta.v7.5.1.symbols.gmt"
+      },
+      {
+        "name": "c2.cp.kegg.v7.5.1.symbols",
+        "url": "/data/modules/pathways/MSigDB/c2.cp.kegg.v7.5.1.symbols.gmt"
+      },
+      {
+        "name": "c2.cp.reactome.v7.5.1.entrez",
+        "url": "/data/modules/pathways/MSigDB/c2.cp.reactome.v7.5.1.entrez.gmt"
+      },
+      {
+        "name": "h.all.v7.5.1.symbols",
+        "url": "/data/modules/pathways/MSigDB/h.all.v7.5.1.symbols.gmt"
+      }
+    ]
+  },
+  {
+    "dataset": "Staudt SignatureDB",
+    "genesets": [
+      {
+        "name": "SignatureDB_annotation_012422",
+        "url": "/data/modules/pathways/Staudt/SignatureDB_annotation_012422.gmt"
+      }
+    ]
+  }
+]

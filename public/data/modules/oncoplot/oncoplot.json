@@ -1,0 +1,88 @@
+{
+  "colormap": {
+    "SNP": {
+      "color": "#ff0000",
+      "z": 0
+    },
+    "DEL": {
+      "color": "#3CB371",
+      "z": 1
+    },
+    "INS": {
+      "color": "#0000ff",
+      "z": 2
+    },
+    "TRUNC": {
+      "color": "#000000",
+      "z": 3
+    },
+    "MISSENSE": {
+      "color": "#32CD32",
+      "z": 4
+    },
+    "OTHER": {
+      "color": "#DA70D6",
+      "z": 5
+    },
+    "CNA": {
+      "color": "#0000ff",
+      "z": 6
+    },
+    "Frame_Shift_Ins": {
+      "color": "#BA55D3",
+      "z": 6
+    },
+    "Frame_Shift_Del": {
+      "color": "#1E90FF",
+      "z": 6
+    },
+    "Missense_Mutation": {
+      "color": "#0000ff",
+      "z": 6
+    },
+    "Nonsense_Mutation": {
+      "color": "#ff0000",
+      "z": 6
+    },
+    "Splice_Site": {
+      "color": "#FFA500",
+      "z": 6
+    },
+    "Multi": {
+      "color": "#000000",
+      "z": 3
+    }
+  },
+  "plotorder": [
+    "SNP",
+    "DEL",
+    "INS",
+    "MISSENSE",
+    "OTHER",
+    "TRUNC",
+    "CNA",
+    "Frame_Shift_Ins",
+    "Frame_Shift_Del",
+    "Nonsense_Mutation",
+    "Missense_Mutation",
+    "Splice_Site",
+    "Multi"
+  ],
+  "aliases": {
+    "SNP": "SNP",
+    "INS": "INS",
+    "DEL": "DEL",
+    "DELETION": "DEL",
+    "MISSENSE": "MISSENSE",
+    "OTHER": "OTHER",
+    "TRUNC": "TRUNC",
+    "FUSION": "FUSION",
+    "CNA": "CNA",
+    "Frame_Shift_Ins": "Frame_Shift_Ins",
+    "Frame_Shift_Del":"Frame_Shift_Del",
+    "Missense_Mutation":"Missense_Mutation",
+    "Nonsense_Mutation":"Nonsense_Mutation",
+    "Splice_Site":"Splice_Site"
+
+  }
+}
