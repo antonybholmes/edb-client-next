@@ -1,10 +1,10 @@
 'use client'
 
 import {
-    ShowOptionsMenu,
-    Toolbar,
-    ToolbarMenu,
-    ToolbarPanel,
+  ShowOptionsMenu,
+  Toolbar,
+  ToolbarMenu,
+  ToolbarPanel,
 } from '@components/toolbar/toolbar'
 
 import { ToolbarOpenFile } from '@components/toolbar/toolbar-open-files'
@@ -20,18 +20,18 @@ import { OpenIcon } from '@components/icons/open-icon'
 import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
 
 import {
-    NO_DIALOG,
-    TEXT_DOWNLOAD_AS_CSV,
-    TEXT_DOWNLOAD_AS_TXT,
-    TEXT_SAVE_AS,
-    type IDialogParams,
+  NO_DIALOG,
+  TEXT_DOWNLOAD_AS_CSV,
+  TEXT_DOWNLOAD_AS_TXT,
+  TEXT_SAVE_AS,
+  type IDialogParams,
 } from '@/consts'
 import {
-    filesToDataFrames,
-    onTextFileChange,
-    OpenFiles,
-    type IParseOptions,
-    type ITextFileOpen,
+  filesToDataFrames,
+  onTextFileChange,
+  OpenFiles,
+  type IParseOptions,
+  type ITextFileOpen,
 } from '@components/pages/open-files'
 import { ToolbarTabGroup } from '@components/toolbar/toolbar-tab-group'
 
@@ -40,9 +40,9 @@ import { SaveIcon } from '@components/icons/save-icon'
 
 import { ToolbarTabButton } from '@components/toolbar/toolbar-tab-button'
 import {
-    currentStep,
-    findSheet,
-    HistoryContext,
+  currentStep,
+  findSheet,
+  HistoryContext,
 } from '@providers/history-provider'
 import { useContext, useEffect, useRef, useState } from 'react'
 
@@ -51,8 +51,8 @@ import { ShortcutLayout } from '@layouts/shortcut-layout'
 import axios from 'axios'
 
 import {
-    MessageContext,
-    MessagesProvider,
+  MessageContext,
+  MessagesProvider,
 } from '@/components/pages/message-provider'
 import { parseLocation } from '@/lib/genomic/genomic'
 import { SelectionRangeProvider } from '@components/table/use-selection-range'
@@ -62,11 +62,11 @@ import { findCol } from '@lib/dataframe/dataframe-utils'
 import { DataPanel } from './data-panel'
 
 import {
-    DEFAULT_DISPLAY_PROPS,
-    makeLocationOncoPlot,
-    makeOncoPlot,
-    type IOncoColumns,
-    type MultiMode,
+  DEFAULT_DISPLAY_PROPS,
+  makeLocationOncoPlot,
+  makeOncoPlot,
+  type IOncoColumns,
+  type MultiMode,
 } from './oncoplot-utils'
 import { PlotsContext, PlotsProvider } from './plots-provider'
 
@@ -422,17 +422,17 @@ function OncoplotPage() {
   ) {
     const step = currentStep(history)[0]!
 
-    const df = findSheet('Mutations', step)[0]! //currentSheet(history)[0]!
+    const df = findSheet('Mutations', step) //currentSheet(history)[0]!
 
     let clinicalDf: BaseDataFrame | null = null
 
     try {
-      clinicalDf = findSheet('Clinical', step)[0]!
+      clinicalDf = findSheet('Clinical', step)
     } catch (e) {
       // ignore error
     }
 
-    const locationsdf = findSheet('Locations', step)[0]!
+    const locationsdf = findSheet('Locations', step)
 
     const locations = locationsdf
       .col(0)
@@ -494,7 +494,7 @@ function OncoplotPage() {
     removeEmpty: boolean = true
   ) {
     // Assume first sheet is
-    let df = findSheet('Mutations', currentStep(history)[0]!)[0]! //.currentSheet
+    let df = findSheet('Mutations', currentStep(history)[0]!)  //.currentSheet
 
     const colMap: IOncoColumns = {
       sample: findCol(df, 'Sample'),

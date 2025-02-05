@@ -1,3 +1,5 @@
+'use client'
+
 import {
   ShowOptionsMenu,
   Toolbar,
@@ -336,12 +338,12 @@ function LollipopPage() {
 
   function lollipopPlot() {
     const step = currentStep(history)[0]!
-    const mutDf = findSheet('Mutations', step)[0]! //currentSheet(history)[0]!
+    const mutDf = findSheet('Mutations', step)  //currentSheet(history)[0]!
 
     let featuresDf: BaseDataFrame | null = null
 
     try {
-      featuresDf = findSheet('Features', step)[0]
+      featuresDf = findSheet('Features', step) 
     } catch (e) {
       // ignore error
     }
