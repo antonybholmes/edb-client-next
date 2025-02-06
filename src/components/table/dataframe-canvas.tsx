@@ -227,6 +227,21 @@ export function DataFrameCanvas({
     scaledRowIndexW: 0,
   })
 
+  const getScrollProps = useCallback(
+    (d: IScrollDirection) => {
+      //const scrollFactor = dfProps.scrollFactor
+
+      const l = d.x
+      const t = d.y
+
+      const normLeft = l / scale
+      const normTop = t / scale
+
+      return [l, t, normLeft, normTop]
+    },
+    [scale]
+  )
+
   const getSize = useCallback(
     (d: HTMLElement): [number, number] => {
       //const r = d.getBoundingClientRect()
@@ -1108,20 +1123,6 @@ export function DataFrameCanvas({
 
     ctx.restore()
     //ctx.translate(-dfProps.rowIndexW, -cellSize[1])
-  }
-
-  function getScrollProps(
-    d: IScrollDirection
-  ): [number, number, number, number] {
-    //const scrollFactor = dfProps.scrollFactor
-
-    const l = d.x
-    const t = d.y
-
-    const normLeft = l / scale
-    const normTop = t / scale
-
-    return [l, t, normLeft, normTop]
   }
 
   function select(p: ICell) {
