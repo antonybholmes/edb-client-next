@@ -108,7 +108,7 @@ export function createColorMap(props: IProps = {}): ColorMap {
    */
   const colors: IRGBA[] = []
 
-  range(indicies.length - 1).map(i => {
+  range(indicies.length - 1).map((i) => {
     const nsteps = indicies[i + 1]! - indicies[i]!
     const fromrgba = steps[i]!
     const torgba = steps[i + 1]!
@@ -127,7 +127,7 @@ export function createColorMap(props: IProps = {}): ColorMap {
   //add 1 step as last value
   colors.push(cmap[cmap.length - 1]!.rgba)
 
-  return new ColorMap(colors.map(c => rgba2hex(c))) //.map(rgb2float))
+  return new ColorMap(colors.map((c) => rgba2hex(c))) //.map(rgb2float))
 }
 
 export const BWR_CMAP = createColorMap({ cmap: COLORMAPS['bwr']! })

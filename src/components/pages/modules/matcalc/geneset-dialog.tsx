@@ -52,7 +52,7 @@ export function GenesetDialog({ geneset, callback, onReponse }: IProps) {
     <OKCancelDialog
       open={true}
       title="Gene Set Editor"
-      onReponse={r => {
+      onReponse={(r) => {
         if (r === TEXT_CANCEL) {
           onReponse?.(r)
         } else {
@@ -87,7 +87,7 @@ export function GenesetDialog({ geneset, callback, onReponse }: IProps) {
           <Input
             id="name"
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             placeholder="Name"
             h="lg"
             variant="alt"
@@ -99,7 +99,7 @@ export function GenesetDialog({ geneset, callback, onReponse }: IProps) {
           <Textarea
             id="search"
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Genes"
             className="grow h-48"
           />

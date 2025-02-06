@@ -2,121 +2,120 @@ import { VCenterRow } from '@/components/layout/v-center-row'
 import { textToLines } from '@/lib/text/lines'
 
 import {
-    DEFAULT_READER,
-    DataFrameReader,
+  DEFAULT_READER,
+  DataFrameReader,
 } from '@lib/dataframe/dataframe-reader'
 import { LoadButton } from '@modules/load-button'
 import type { IFileDispatch } from '@providers/file-reducer'
 import { useRef, type ChangeEvent } from 'react'
 
 function getFileTypes(fileTypes: string[]) {
-    return fileTypes
-        .sort()
-        .map((t) => `.${t}`)
-        .join(', ')
+  return fileTypes
+    .sort()
+    .map((t) => `.${t}`)
+    .join(', ')
 }
 
 interface IProps {
-    filesDispatch: IFileDispatch
-    reader?: DataFrameReader
-    multiple?: boolean
-    fileTypes?: string[]
-    isLoading?: boolean
+  filesDispatch: IFileDispatch
+  reader?: DataFrameReader
+  multiple?: boolean
+  fileTypes?: string[]
+  isLoading?: boolean
 }
 
 export function Files({
-    filesDispatch,
-    reader: reader = DEFAULT_READER,
-    multiple = false,
-    fileTypes = ['BED', 'csv', 'txt', 'tsv'],
-    //onClick,
-    isLoading = false,
+  filesDispatch,
+  reader: reader = DEFAULT_READER,
+  multiple = false,
+  fileTypes = ['BED', 'csv', 'txt', 'tsv'],
+  //onClick,
+  isLoading = false,
 }: IProps) {
-    const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
-    function onFileChange(e: ChangeEvent<HTMLInputElement>) {
-        //filesDispatch({ type: "clear", files: [] })
+  function onFileChange(e: ChangeEvent<HTMLInputElement>) {
+    //filesDispatch({ type: "clear", files: [] })
 
-        const { files } = e.target
+    const { files } = e.target
 
-        if (files) {
-            for (let i = 0; i < files.length; i++) {
-                const file: File = files[i]! // OR const file = files.item(i);
+    if (files) {
+      for (let i = 0; i < files.length; i++) {
+        const file: File = files[i]! // OR const file = files.item(i);
 
-                const fileReader = new FileReader()
+        const fileReader = new FileReader()
 
-                fileReader.onload = (e) => {
-                    const result = e.target?.result
+        fileReader.onload = (e) => {
+          const result = e.target?.result
 
-                    if (result) {
-                        const text: string =
-                            typeof result === 'string'
-                                ? result
-                                : Buffer.from(result).toString()
+          if (result) {
+            const text: string =
+              typeof result === 'string'
+                ? result
+                : Buffer.from(result).toString()
 
-                        const lines = textToLines(text)
-                        //.slice(0, 100)
+            const lines = textToLines(text)
+            //.slice(0, 100)
 
-                        //const locs = parseLocations(lines)
+            //const locs = parseLocations(lines)
 
-                        //console.log('j')
-                        const f = reader.read(lines).setName(file.name)
+            //console.log('j')
+            const f = reader.read(lines).setName(file.name)
 
-                        filesDispatch({ type: 'add', files: [f] })
-                    }
-                }
-
-                fileReader.readAsText(file)
-
-                //console.log(JSON.stringify(file))
-            }
+            filesDispatch({ type: 'add', files: [f] })
+          }
         }
 
-        // force clear selection so we can keep selecting file if we want.
-        e.target.value = ''
+        fileReader.readAsText(file)
+
+        //console.log(JSON.stringify(file))
+      }
     }
 
-    return (
-        <>
-            <form>
-                {multiple ? (
-                    <input
-                        ref={inputRef}
-                        className="hidden"
-                        type="file"
-                        id="file"
-                        onChange={onFileChange}
-                        multiple
-                        accept={getFileTypes(fileTypes)}
-                    />
-                ) : (
-                    <input
-                        ref={inputRef}
-                        className="hidden"
-                        type="file"
-                        id="file"
-                        onChange={onFileChange}
-                        accept={getFileTypes(fileTypes)}
-                    />
-                )}
-            </form>
+    // force clear selection so we can keep selecting file if we want.
+    e.target.value = ''
+  }
 
-            <VCenterRow className="justify-between">
-                <h2>Choose Files</h2>
-                <VCenterRow className="gap-x-4">
-                    <LoadButton
-                        onClick={() => {
- 
-                            inputRef.current?.click?.()
-                        }}
-                        isLoading={isLoading}
-                    >
-                        Select
-                    </LoadButton>
-                </VCenterRow>
-            </VCenterRow>
+  return (
+    <>
+      <form>
+        {multiple ? (
+          <input
+            ref={inputRef}
+            className="hidden"
+            type="file"
+            id="file"
+            onChange={onFileChange}
+            multiple
+            accept={getFileTypes(fileTypes)}
+          />
+        ) : (
+          <input
+            ref={inputRef}
+            className="hidden"
+            type="file"
+            id="file"
+            onChange={onFileChange}
+            accept={getFileTypes(fileTypes)}
+          />
+        )}
+      </form>
 
-            {/* <ul className="px-4 py-8 gap-y-2 text-sm">
+      <VCenterRow className="justify-between">
+        <h2>Choose Files</h2>
+        <VCenterRow className="gap-x-4">
+          <LoadButton
+            onClick={() => {
+              inputRef.current?.click?.()
+            }}
+            isLoading={isLoading}
+          >
+            Select
+          </LoadButton>
+        </VCenterRow>
+      </VCenterRow>
+
+      {/* <ul className="px-4 py-8 gap-y-2 text-sm">
         {fileStore.files.map((file: IExtFile, index: number) => {
           return (
             <li
@@ -135,6 +134,6 @@ export function Files({
           )
         })}
       </ul> */}
-        </>
-    )
+    </>
+  )
 }

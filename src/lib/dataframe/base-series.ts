@@ -23,15 +23,15 @@ export class BaseSeries extends BaseIndex {
    * Return the values as strings
    */
   get strs(): string[] {
-    return this.values.map(v => cellStr(v))
+    return this.values.map((v) => cellStr(v))
   }
 
   get nums(): number[] {
-    return this.values.map(v => cellNum(v))
+    return this.values.map((v) => cellNum(v))
   }
 
   get numsNoNA(): number[] {
-    return this.nums.filter(v => !isNaN(v))
+    return this.nums.filter((v) => !isNaN(v))
   }
 
   get uniq(): SeriesData[] {

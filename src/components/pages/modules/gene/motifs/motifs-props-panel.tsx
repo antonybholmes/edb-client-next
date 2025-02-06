@@ -79,7 +79,7 @@ export function MotifsPropsPanel() {
       {delGroup !== null && (
         <OKCancelDialog
           //open={delGroup !== -1}
-          onReponse={r => {
+          onReponse={(r) => {
             if (r === TEXT_OK) {
               dispatch({ type: 'remove', ids: [delGroup.uuid] })
             }
@@ -99,7 +99,7 @@ export function MotifsPropsPanel() {
                 <Checkbox
                   key={dbi}
                   checked={datasets.get(dataset)!}
-                  onCheckedChange={v => {
+                  onCheckedChange={(v) => {
                     setDatasets(
                       new Map<string, boolean>([
                         ...datasets.entries(),
@@ -118,7 +118,7 @@ export function MotifsPropsPanel() {
             <AccordionContent>
               <Reorder.Group
                 values={state.order}
-                onReorder={order => {
+                onReorder={(order) => {
                   //setOrder(order)
                   dispatch({
                     type: 'order',
@@ -127,7 +127,7 @@ export function MotifsPropsPanel() {
                 }}
                 className="pr-2 gap-y-1 flex flex-col"
               >
-                {state.order.map(id => {
+                {state.order.map((id) => {
                   //console.log(state.order)
                   const motif = state.motifs.get(id)!
 

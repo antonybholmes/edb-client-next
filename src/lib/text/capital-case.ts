@@ -13,8 +13,8 @@ export function capitalCase(text: string): string {
     .replaceAll('-', ' ')
     .replaceAll(/ +/g, ' ')
     .split(' ')
-    .filter(word => word.length > 0)
-    .map(word => word[0]!.toUpperCase() + word.substring(1))
+    .filter((word) => word.length > 0)
+    .map((word) => word[0]!.toUpperCase() + word.substring(1))
     .join(' ')
     .replaceAll('* ', '-')
 }

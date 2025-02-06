@@ -13,9 +13,9 @@ function ModulePage({ title = 'Index' }: { title?: string }) {
   return (
     <ContentLayout title={title}>
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 py-8">
-        {HEADER_LINKS.map(section => {
+        {HEADER_LINKS.map((section) => {
           return section.modules.filter(
-            module =>
+            (module) =>
               module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
           )
         })

@@ -1,5 +1,5 @@
-import { ModuleQueryPage } from "@/components/pages/module"
-import { makeMetaData } from "@/lib/metadata"
+import { ModuleQueryPage } from '@/components/pages/module'
+import { makeMetaData } from '@/lib/metadata'
 
 export const metadata = makeMetaData('Home')
 

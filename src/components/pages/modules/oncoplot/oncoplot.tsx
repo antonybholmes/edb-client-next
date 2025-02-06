@@ -916,7 +916,7 @@ function OncoplotPage() {
       ),
     },
   ]
- 
+
   return (
     <>
       {showDialog.id.includes('oncoplot') && (

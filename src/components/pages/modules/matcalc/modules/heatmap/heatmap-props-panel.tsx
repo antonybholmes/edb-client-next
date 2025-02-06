@@ -94,22 +94,22 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 v2={displayProps.blockSize.h}
                 inputCls="w-14 rounded-theme"
                 dp={0}
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.blockSize.w = v
                     }),
                   })
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.blockSize.h = v
                     }),
                   })
@@ -123,12 +123,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 value={displayProps.padding}
                 placeholder="Padding..."
                 className="w-14 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.padding = v
                     }),
                   })
@@ -139,12 +139,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
             <SwitchPropRow
               title="Grid"
               checked={displayProps.grid.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayProps, draft => {
+                  prop: produce(displayProps, (draft) => {
                     draft.grid.show = v
                   }),
                 })
@@ -156,12 +156,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 disabled={!displayProps.grid.show}
                 placeholder="Stroke..."
                 className="w-14 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.grid.width = v
                     }),
                   })
@@ -172,12 +172,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 align="end"
                 color={displayProps.grid.color}
                 disabled={!displayProps.grid.show}
-                onColorChange={v =>
+                onColorChange={(v) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.grid.color = v
                     }),
                   })
@@ -190,12 +190,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
             <SwitchPropRow
               title="Border"
               checked={displayProps.border.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayProps, draft => {
+                  prop: produce(displayProps, (draft) => {
                     draft.border.show = v
                   }),
                 })
@@ -207,12 +207,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 disabled={!displayProps.border.show}
                 placeholder="Stroke..."
                 className="w-14 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.border.width = v
                     }),
                   })
@@ -223,12 +223,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 align="end"
                 color={displayProps.border.color}
                 disabled={!displayProps.border.show}
-                onColorChange={v =>
+                onColorChange={(v) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.border.color = v
                     }),
                   })
@@ -246,12 +246,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
             <SwitchPropRow
               title="Show legend"
               checked={displayProps.legend.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayProps, draft => {
+                  prop: produce(displayProps, (draft) => {
                     draft.legend.show = v
                   }),
                 })
@@ -260,12 +260,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
               <RadioGroupPrimitive.Root
                 value={displayProps.legend.position}
                 disabled={!displayProps.legend.show}
-                onValueChange={v =>
+                onValueChange={(v) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.legend.position = v as LegendPos
                     }),
                   })
@@ -303,12 +303,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
               title="Border"
               checked={displayProps.legend.stroke.show}
               disabled={!displayProps.legend.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayProps, draft => {
+                  prop: produce(displayProps, (draft) => {
                     draft.legend.stroke.show = v
                   }),
                 })
@@ -322,12 +322,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 }
                 placeholder="Stroke..."
                 className="w-14 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.legend.stroke.width = v
                     }),
                   })
@@ -340,12 +340,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 disabled={
                   !displayProps.legend.show || !displayProps.legend.stroke.show
                 }
-                onColorChange={v =>
+                onColorChange={(v) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.legend.stroke.color = v
                     }),
                   })
@@ -364,7 +364,7 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
               <ColorMapMenu
                 align="end"
                 cmap={displayProps.cmap}
-                onChange={cmap =>
+                onChange={(cmap) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
@@ -384,7 +384,7 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 dp={1}
                 placeholder="Max..."
                 className="w-14 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
@@ -401,12 +401,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
             <SwitchPropRow
               title="Show color bar"
               checked={displayProps.colorbar.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayProps, draft => {
+                  prop: produce(displayProps, (draft) => {
                     draft.colorbar.show = v
                   }),
                 })
@@ -415,12 +415,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
               <RadioGroupPrimitive.Root
                 value={displayProps.colorbar.position}
                 disabled={!displayProps.colorbar.show}
-                onValueChange={v =>
+                onValueChange={(v) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.colorbar.position = v as ColorBarPos
                     }),
                   })
@@ -459,22 +459,22 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 inputCls="w-14 rounded-theme"
                 limit={[1, 1000]}
                 dp={0}
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.colorbar.size.width = v
                     }),
                   })
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.colorbar.size.height = v
                     }),
                   })
@@ -487,12 +487,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
               title="Border"
               checked={displayProps.colorbar.stroke.show}
               disabled={!displayProps.colorbar.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayProps, draft => {
+                  prop: produce(displayProps, (draft) => {
                     draft.colorbar.stroke.show = v
                   }),
                 })
@@ -507,12 +507,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 }
                 placeholder="Stroke..."
                 className="w-14 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.colorbar.stroke.width = v
                     }),
                   })
@@ -525,12 +525,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 disabled={
                   !displayProps.legend.show || !displayProps.legend.stroke.show
                 }
-                onColorChange={v =>
+                onColorChange={(v) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.colorbar.stroke.color = v
                     }),
                   })
@@ -548,12 +548,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
             <SwitchPropRow
               title="Show labels"
               checked={displayProps.rowLabels.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayProps, draft => {
+                  prop: produce(displayProps, (draft) => {
                     draft.rowLabels.show = v
                   }),
                 })
@@ -563,12 +563,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 align="end"
                 color={displayProps.rowLabels.color}
                 disabled={!displayProps.rowLabels.show}
-                onColorChange={v =>
+                onColorChange={(v) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.rowLabels.color = v
                     }),
                   })
@@ -582,12 +582,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
               <RadioGroupPrimitive.Root
                 value={displayProps.rowLabels.position}
                 disabled={!displayProps.rowLabels.show}
-                onValueChange={v =>
+                onValueChange={(v) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.rowLabels.position = v as LeftRightPos
                     }),
                   })
@@ -622,12 +622,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 limit={[1, 200]}
                 placeholder="Row label size..."
                 className="w-14 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.rowLabels.width = v
                     }),
                   })
@@ -644,12 +644,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
               <SwitchPropRow
                 title="Show tree"
                 checked={displayProps.rowTree.show}
-                onCheckedChange={v => {
+                onCheckedChange={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.rowTree.show = v
                     }),
                   })
@@ -659,12 +659,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                   align="end"
                   color={displayProps.rowTree.stroke.color}
                   disabled={!displayProps.rowTree.show}
-                  onColorChange={v =>
+                  onColorChange={(v) =>
                     historyDispatch({
                       type: 'update-custom-prop',
                       addr: plotAddr,
                       name: 'displayOptions',
-                      prop: produce(displayProps, draft => {
+                      prop: produce(displayProps, (draft) => {
                         draft.rowTree.stroke.color = v
                       }),
                     })
@@ -676,12 +676,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 <RadioGroupPrimitive.Root
                   value={displayProps.rowTree.position}
                   disabled={!displayProps.rowTree.show}
-                  onValueChange={v =>
+                  onValueChange={(v) =>
                     historyDispatch({
                       type: 'update-custom-prop',
                       addr: plotAddr,
                       name: 'displayOptions',
-                      prop: produce(displayProps, draft => {
+                      prop: produce(displayProps, (draft) => {
                         draft.rowTree.position = v as LeftRightPos
                       }),
                     })
@@ -715,12 +715,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                   disabled={!displayProps.rowTree.show}
                   placeholder="Stroke..."
                   className="w-14 rounded-theme"
-                  onNumChanged={v => {
+                  onNumChanged={(v) => {
                     historyDispatch({
                       type: 'update-custom-prop',
                       addr: plotAddr,
                       name: 'displayOptions',
-                      prop: produce(displayProps, draft => {
+                      prop: produce(displayProps, (draft) => {
                         draft.rowTree.stroke.width = v
                       }),
                     })
@@ -736,12 +736,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                   limit={[1, 200]}
                   placeholder="Tree size..."
                   className="w-14 rounded-theme"
-                  onNumChanged={v => {
+                  onNumChanged={(v) => {
                     historyDispatch({
                       type: 'update-custom-prop',
                       addr: plotAddr,
                       name: 'displayOptions',
-                      prop: produce(displayProps, draft => {
+                      prop: produce(displayProps, (draft) => {
                         draft.rowTree.width = v
                       }),
                     })
@@ -758,12 +758,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
             <SwitchPropRow
               title="Show labels"
               checked={displayProps.colLabels.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayProps, draft => {
+                  prop: produce(displayProps, (draft) => {
                     draft.colLabels.show = v
                   }),
                 })
@@ -773,12 +773,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 align="end"
                 color={displayProps.colLabels.color}
                 disabled={!displayProps.colLabels.show}
-                onColorChange={v =>
+                onColorChange={(v) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.colLabels.color = v
                     }),
                   })
@@ -792,12 +792,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
               <RadioGroupPrimitive.Root
                 value={displayProps.colLabels.position}
                 disabled={!displayProps.colLabels.show}
-                onValueChange={v =>
+                onValueChange={(v) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.colLabels.position = v as TopBottomPos
                     }),
                   })
@@ -832,12 +832,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 limit={[1, 200]}
                 placeholder="Column label size..."
                 className="w-14 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.colLabels.width = v
                     }),
                   })
@@ -850,12 +850,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
               disabled={!displayProps.colLabels.show}
               className="ml-2"
               checked={displayProps.colLabels.isColored}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayProps, draft => {
+                  prop: produce(displayProps, (draft) => {
                     draft.colLabels.isColored = v
                   }),
                 })
@@ -869,12 +869,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
             <SwitchPropRow
               title="Show groups"
               checked={displayProps.groups.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayProps, draft => {
+                  prop: produce(displayProps, (draft) => {
                     draft.groups.show = v
                   }),
                 })
@@ -886,12 +886,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
               className="ml-2"
               disabled={!displayProps.groups.show}
               checked={displayProps.groups.grid.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayProps, draft => {
+                  prop: produce(displayProps, (draft) => {
                     draft.groups.grid.show = v
                   }),
                 })
@@ -905,12 +905,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 }
                 placeholder="Stroke..."
                 className="w-14 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.groups.grid.width = v
                     }),
                   })
@@ -921,12 +921,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 align="end"
                 color={displayProps.groups.grid.color}
                 disabled={!displayProps.groups.show}
-                onColorChange={v =>
+                onColorChange={(v) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.groups.grid.color = v
                     }),
                   })
@@ -941,12 +941,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
               className="ml-2"
               disabled={!displayProps.groups.show}
               checked={displayProps.groups.border.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayProps, draft => {
+                  prop: produce(displayProps, (draft) => {
                     draft.groups.border.show = v
                   }),
                 })
@@ -960,12 +960,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 }
                 placeholder="Stroke..."
                 className="w-14 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.groups.border.width = v
                     }),
                   })
@@ -976,12 +976,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 align="end"
                 color={displayProps.groups.border.color}
                 disabled={!displayProps.groups.show}
-                onColorChange={v =>
+                onColorChange={(v) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.groups.border.color = v
                     }),
                   })
@@ -999,12 +999,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                 limit={[1, 100]}
                 placeholder="Height..."
                 className="w-14 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.groups.height = v
                     }),
                   })
@@ -1020,12 +1020,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
               <SwitchPropRow
                 title="Show tree"
                 checked={displayProps.colTree.show}
-                onCheckedChange={v => {
+                onCheckedChange={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.colTree.show = v
                     }),
                   })
@@ -1035,12 +1035,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                   align="end"
                   color={displayProps.colTree.stroke.color}
                   disabled={!displayProps.colTree.show}
-                  onColorChange={v =>
+                  onColorChange={(v) =>
                     historyDispatch({
                       type: 'update-custom-prop',
                       addr: plotAddr,
                       name: 'displayOptions',
-                      prop: produce(displayProps, draft => {
+                      prop: produce(displayProps, (draft) => {
                         draft.colTree.stroke.color = v
                       }),
                     })
@@ -1057,12 +1057,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                   disabled={!displayProps.colTree.show}
                   placeholder="Stroke..."
                   className="w-14 rounded-theme"
-                  onNumChanged={v => {
+                  onNumChanged={(v) => {
                     historyDispatch({
                       type: 'update-custom-prop',
                       addr: plotAddr,
                       name: 'displayOptions',
-                      prop: produce(displayProps, draft => {
+                      prop: produce(displayProps, (draft) => {
                         draft.colTree.stroke.width = v
                       }),
                     })
@@ -1078,12 +1078,12 @@ export const HeatmapPropsPanel = forwardRef(function HeatmapPropsPanel(
                   limit={[1, 200]}
                   placeholder="Tree size..."
                   className="w-14 rounded-theme"
-                  onNumChanged={v => {
+                  onNumChanged={(v) => {
                     historyDispatch({
                       type: 'update-custom-prop',
                       addr: plotAddr,
                       name: 'displayOptions',
-                      prop: produce(displayProps, draft => {
+                      prop: produce(displayProps, (draft) => {
                         draft.colTree.width = v
                       }),
                     })

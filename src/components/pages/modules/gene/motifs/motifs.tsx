@@ -1,10 +1,10 @@
 'use client'
 
 import {
-    DEFAULT_DISPLAY_PROPS,
-    MotifSvg,
-    type IDisplayProps,
-    type Mode,
+  DEFAULT_DISPLAY_PROPS,
+  MotifSvg,
+  type IDisplayProps,
+  type Mode,
 } from '@components/pages/modules/gene/motifs/motif-svg'
 import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
 
@@ -27,10 +27,10 @@ import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
 import { SearchIcon } from '@icons/search-icon'
 import { getDataFrameInfo } from '@lib/dataframe/dataframe-utils'
 import {
-    currentSheet,
-    currentSheetId,
-    currentSheets,
-    HistoryContext,
+  currentSheet,
+  currentSheetId,
+  currentSheets,
+  HistoryContext,
 } from '@providers/history-provider'
 
 import { useContext, useEffect, useRef, useState } from 'react'
@@ -43,11 +43,11 @@ import { FileIcon } from '@/components/icons/file-icon'
 import { Card } from '@/components/shadcn/ui/themed/card'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import {
-    NO_DIALOG,
-    TEXT_DOWNLOAD_AS_CSV,
-    TEXT_DOWNLOAD_AS_TXT,
-    TEXT_SAVE_AS,
-    type IDialogParams,
+  NO_DIALOG,
+  TEXT_DOWNLOAD_AS_CSV,
+  TEXT_DOWNLOAD_AS_TXT,
+  TEXT_SAVE_AS,
+  type IDialogParams,
 } from '@/consts'
 import { API_MOTIF_DATASETS_URL } from '@/lib/edb/edb'
 import { httpFetch } from '@/lib/http/http-fetch'
@@ -57,8 +57,8 @@ import { SaveImageDialog } from '@components/pages/save-image-dialog'
 import { SearchBox } from '@components/search-box'
 import { DropdownMenuItem } from '@components/shadcn/ui/themed/dropdown-menu'
 import {
-    ToggleGroup,
-    ToggleGroupItem,
+  ToggleGroup,
+  ToggleGroupItem,
 } from '@components/shadcn/ui/themed/toggle-group'
 import { TabContentPanel } from '@components/tab-content-panel'
 import { TabProvider, type ITab } from '@components/tab-provider'
@@ -171,7 +171,7 @@ export function MotifsPage() {
   }, [mode])
 
   useEffect(() => {
-    const dataframes: BaseDataFrame[] = state.order.map(i => {
+    const dataframes: BaseDataFrame[] = state.order.map((i) => {
       const motif = state.motifs.get(i)!
 
       const df = new DataFrame({
@@ -263,7 +263,7 @@ export function MotifsPage() {
         <>
           <BaseRow>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   // setShowDialog({
                   //   name: makeRandId("open"),
@@ -291,7 +291,7 @@ export function MotifsPage() {
           <ToggleGroup
             type="single"
             value={mode}
-            onValueChange={value => {
+            onValueChange={(value) => {
               setMode(value as Mode)
             }}
             size="toolbar"
@@ -372,7 +372,7 @@ export function MotifsPage() {
       content: (
         <DisplayPropsPanel
           displayProps={displayProps}
-          onChange={props => setDisplayProps(props)}
+          onChange={(props) => setDisplayProps(props)}
         />
       ),
     },
@@ -417,7 +417,7 @@ export function MotifsPage() {
             <TabbedDataFrames
               selectedSheet={currentSheetId(history)[0]!}
               dataFrames={currentSheets(history)[0]!}
-              onTabChange={selectedTab => {
+              onTabChange={(selectedTab) => {
                 historyDispatch({
                   type: 'goto-sheet',
                   sheetId: selectedTab.index,
@@ -456,7 +456,7 @@ export function MotifsPage() {
       {showDialog.id.includes('save') && (
         <SaveImageDialog
           open="open"
-          onSave={format => {
+          onSave={(format) => {
             downloadImageAutoFormat(
               svgRef,
               canvasRef,
@@ -476,7 +476,7 @@ export function MotifsPage() {
           <SearchBox
             variant="header"
             value={search.search}
-            onChange={e =>
+            onChange={(e) =>
               setSearch({
                 search: e.target.value,
                 reverse: revComp,
@@ -501,7 +501,7 @@ export function MotifsPage() {
           <Shortcuts
             //value={selectedTab}
             tabs={sideTabs}
-            onTabChange={selectedTab => setSelectedTab(selectedTab.tab.id)}
+            onTabChange={(selectedTab) => setSelectedTab(selectedTab.tab.id)}
           />
         }
       >

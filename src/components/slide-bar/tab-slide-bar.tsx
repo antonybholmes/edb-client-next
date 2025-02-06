@@ -44,8 +44,6 @@ export const TabSlideBar = forwardRef(function TabSlideBar(
 
   const selectedTab = useMemo(() => getTabFromValue(val, tabs), [val, tabs])
 
- 
-
   function _onOpenChange(state: boolean) {
     setOpen(state)
     onOpenChange?.(state)

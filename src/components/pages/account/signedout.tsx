@@ -1,12 +1,12 @@
 'use client'
 
 import {
-    Card,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-    CenteredCardContainer,
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  CenteredCardContainer,
 } from '@components/shadcn/ui/themed/card'
 
 import { SignInLayout } from '@/layouts/signin-layout'

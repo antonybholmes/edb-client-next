@@ -197,7 +197,7 @@ export class HCluster {
 
     // the original clusters (leaves)
     const clusters: ICluster[] = rangeMap(
-      cluster => ({
+      (cluster) => ({
         id: cluster,
         //name: _df.rowIndex[0].ids[i].toString(),
         height: 0,
@@ -488,11 +488,11 @@ export function getNodePositions(
 
   const xRet: { x: number; clusters: ICluster[] }[] = numSort([
     ...xMap.keys(),
-  ]).map(x => ({ x, clusters: xMap.get(x)! }))
+  ]).map((x) => ({ x, clusters: xMap.get(x)! }))
 
   const yRet: { x: number; clusters: ICluster[] }[] = numSort([
     ...yMap.keys(),
-  ]).map(x => ({ x, clusters: yMap.get(x)! }))
+  ]).map((x) => ({ x, clusters: yMap.get(x)! }))
 
   return [xRet, yRet]
 }
@@ -531,8 +531,16 @@ export function findClusterClosestToPos(
   yClusters: { x: number; clusters: ICluster[] }[],
   d: number = 0.05
 ): ICluster[] {
-  const foundXClusters: ICluster[] = _findClusterClosestToPos(pos.x, xClusters, d)
-  const foundYClusters: ICluster[] = _findClusterClosestToPos(pos.y, yClusters, d)
+  const foundXClusters: ICluster[] = _findClusterClosestToPos(
+    pos.x,
+    xClusters,
+    d
+  )
+  const foundYClusters: ICluster[] = _findClusterClosestToPos(
+    pos.y,
+    yClusters,
+    d
+  )
 
   const ret: ICluster[] = []
 
@@ -593,9 +601,9 @@ export function getClusterOrderedDataFrame(cf: IClusterFrame): BaseDataFrame {
   const data = df.values
 
   const ret = new DataFrame({
-    data: rowLeaves.map(r => colLeaves.map(c => data[r]![c]!)),
-    columns: colLeaves.map(c => df.colNames[c]!),
-    index: rowLeaves.map(r => df.rowNames[r]!),
+    data: rowLeaves.map((r) => colLeaves.map((c) => data[r]![c]!)),
+    columns: colLeaves.map((c) => df.colNames[c]!),
+    index: rowLeaves.map((r) => df.rowNames[r]!),
     name: df.name,
   })
 

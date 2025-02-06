@@ -39,7 +39,7 @@ export function AccountPropsPanel() {
         <Input
           id="name"
           value={key}
-          onChange={e => setKey(e.target.value)}
+          onChange={(e) => setKey(e.target.value)}
           placeholder="API key..."
           className="grow"
         />

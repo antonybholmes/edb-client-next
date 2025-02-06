@@ -126,7 +126,6 @@ function GeneConvPage() {
   async function convertGenes() {
     const df = currentSheet(history)[0]!
 
- 
     const dfa = await createGeneConvTable(
       queryClient,
       df,

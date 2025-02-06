@@ -17,7 +17,7 @@ export function histogram(data: number[], k?: number): IHistBin[] {
 
   const dx = r / (k - 1)
 
-  const bins: IHistBin[] = rangeMap(bi => {
+  const bins: IHistBin[] = rangeMap((bi) => {
     const s = data[0]! + bi * dx
     return {
       index: bi,

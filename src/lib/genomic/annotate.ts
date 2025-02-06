@@ -88,7 +88,7 @@ export async function createAnnotationTable(
       ])
       .concat(
         range(closest)
-          .map(i => [
+          .map((i) => [
             `${i + 1} Closest ID`,
             `${i + 1} Closest Gene Symbol`,
             `${i + 1} Closest Gene Strand`,
@@ -125,7 +125,7 @@ export async function createAnnotationTable(
     // }
 
     // return new DataFrame({ data: table, columns: header })
-  } catch   {
+  } catch {
     //data.push(row.concat([""]))
   }
 
@@ -268,5 +268,5 @@ export async function createAnnotationFile(
     return null
   }
 
-  return table.values.map(row => row.join('\t')).join('\n')
+  return table.values.map((row) => row.join('\t')).join('\n')
 }

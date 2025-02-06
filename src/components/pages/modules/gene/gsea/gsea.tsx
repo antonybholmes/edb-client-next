@@ -5,23 +5,23 @@ import { ToolbarOpenFile } from '@components/toolbar/toolbar-open-files'
 
 import { BaseCol } from '@/components/layout/base-col'
 import {
-    ShowOptionsMenu,
-    Toolbar,
-    ToolbarMenu,
-    ToolbarPanel,
+  ShowOptionsMenu,
+  Toolbar,
+  ToolbarMenu,
+  ToolbarPanel,
 } from '@components/toolbar/toolbar'
 
 import { ZoomSlider } from '@components/toolbar/zoom-slider'
 
 import {
-    downloadDataFrame,
-    getFormattedShape,
+  downloadDataFrame,
+  getFormattedShape,
 } from '@lib/dataframe/dataframe-utils'
 
 import {
-    onBinaryFileChange,
-    OpenFiles,
-    type IBinaryFileOpen,
+  onBinaryFileChange,
+  OpenFiles,
+  type IBinaryFileOpen,
 } from '@components/pages/open-files'
 
 import { ToolbarTabGroup } from '@components/toolbar/toolbar-tab-group'
@@ -37,25 +37,25 @@ import { UploadIcon } from '@components/icons/upload-icon'
 import { DropdownMenuItem } from '@components/shadcn/ui/themed/dropdown-menu'
 
 import {
-    NO_DIALOG,
-    TEXT_DISPLAY,
-    TEXT_DOWNLOAD_AS_CSV,
-    TEXT_DOWNLOAD_AS_TXT,
-    TEXT_HELP,
-    TEXT_OPEN,
-    TEXT_OPEN_FILE,
-    TEXT_SAVE_AS,
-    type IDialogParams,
+  NO_DIALOG,
+  TEXT_DISPLAY,
+  TEXT_DOWNLOAD_AS_CSV,
+  TEXT_DOWNLOAD_AS_TXT,
+  TEXT_HELP,
+  TEXT_OPEN,
+  TEXT_OPEN_FILE,
+  TEXT_SAVE_AS,
+  type IDialogParams,
 } from '@/consts'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
 
 import { makeRandId } from '@lib/utils'
 
 import {
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-    ScrollAccordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  ScrollAccordion,
 } from '@components/shadcn/ui/themed/accordion'
 import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -340,11 +340,11 @@ export function GseaPage() {
   useEffect(() => {
     const pathways: [string, boolean][] = [...searchReports.keys()]
       .sort()
-      .map(report =>
+      .map((report) =>
         searchReports
           .get(report)!
           .map(
-            pathway => [pathway.name, selectAllDatasets] as [string, boolean]
+            (pathway) => [pathway.name, selectAllDatasets] as [string, boolean]
           )
       )
       .flat()
@@ -366,7 +366,7 @@ export function GseaPage() {
           allReports
             .get(k)!
             .filter(
-              p =>
+              (p) =>
                 p.name.toLowerCase().includes(ls) || k.toLowerCase().includes(k)
             )
         )
@@ -384,7 +384,7 @@ export function GseaPage() {
         <>
           <ToolbarTabGroup>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: makeRandId('open'),
@@ -566,7 +566,7 @@ export function GseaPage() {
             setGeneRank(
               textToTokens(content)
                 .slice(1)
-                .filter(tokens => tokens.length > 2)
+                .filter((tokens) => tokens.length > 2)
                 .map((tokens, ti) => ({
                   gene: tokens[0]!,
                   rank: ti,
@@ -582,7 +582,7 @@ export function GseaPage() {
             // Check if the entry is a file, not a directory
             const content = await zipEntry.async('string')
 
-            const lines = textToLines(content).filter(tokens =>
+            const lines = textToLines(content).filter((tokens) =>
               tokens.includes('cls')
             )
 
@@ -636,8 +636,8 @@ export function GseaPage() {
 
           textToTokens(content)
             .slice(1)
-            .filter(tokens => tokens.length > 7)
-            .forEach(tokens => {
+            .filter((tokens) => tokens.length > 7)
+            .forEach((tokens) => {
               const name = tokens[0]!
               const phen = reportNames[pi]!
 
@@ -666,8 +666,8 @@ export function GseaPage() {
 
           const es = textToTokens(content)
             .slice(1)
-            .filter(tokens => tokens.length > 5)
-            .map(tokens => ({
+            .filter((tokens) => tokens.length > 5)
+            .map((tokens) => ({
               gene: tokens[1]!,
               rank: Number(tokens[3]!),
               score: Number(tokens[5]!),
@@ -695,7 +695,7 @@ export function GseaPage() {
       {showDialog.id.includes('export') && (
         <SaveImageDialog
           open="open"
-          onSave={format => {
+          onSave={(format) => {
             downloadImageAutoFormat(
               svgRef,
               canvasRef,
@@ -763,7 +763,7 @@ export function GseaPage() {
             side="Right"
             tabs={rightTabs}
             value={rightTab}
-            onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+            onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
             open={showSideBar}
             onOpenChange={setShowSideBar}
             className="pr-2"
@@ -782,7 +782,7 @@ export function GseaPage() {
 
             {rankedGenes.length > 0 ? (
               <FileDropPanel
-                onFileDrop={files => {
+                onFileDrop={(files) => {
                   if (files.length > 0) {
                     onBinaryFileChange('Open zip', files, openZipFiles)
                   }
@@ -796,11 +796,11 @@ export function GseaPage() {
                       new Map<string, IPathway[]>(
                         searchReports
                           .keys()
-                          .map(report => [
+                          .map((report) => [
                             report,
                             searchReports
                               .get(report)!
-                              .filter(pathway =>
+                              .filter((pathway) =>
                                 datasetsForUse.get(pathway.name)
                               ),
                           ])
@@ -813,10 +813,9 @@ export function GseaPage() {
               </FileDropPanel>
             ) : (
               <FileDropPanel
-                onFileDrop={files => {
+                onFileDrop={(files) => {
                   if (files.length > 0) {
                     //setDroppedFile(files[0]);
-             
 
                     onBinaryFileChange('Open zip', files, openZipFiles)
                   }

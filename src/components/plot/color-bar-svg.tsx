@@ -53,7 +53,7 @@ export function HColorBarSvg({
       shapeRendering={SVG_CRISP_EDGES}
     >
       <g>
-        {range(steps).map(step => {
+        {range(steps).map((step) => {
           start += inc
           colorStart += colorStep
           const x1 = xscl(start)
@@ -161,7 +161,7 @@ export function VColorBarSvg({
       shapeRendering={SVG_CRISP_EDGES}
     >
       <g>
-        {range(steps).map(step => {
+        {range(steps).map((step) => {
           start += inc
           colorStart -= colorStep
           const y1 = xscl(start)

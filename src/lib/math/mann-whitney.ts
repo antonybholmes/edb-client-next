@@ -61,7 +61,7 @@ export function mannWhitneyU(
   // end case
   rankMap.set(currentValue, mean(tied))
 
-  const r1 = sum(xs.map(x => rankMap.get(x)!))
+  const r1 = sum(xs.map((x) => rankMap.get(x)!))
   //const r2 = sum(ys.map(y => rankMap.get(y)!))
 
   //const n1n2 = n1 * n2
@@ -75,7 +75,7 @@ export function mannWhitneyU(
 
   // all ties > 1 i.e. actual tied ranks
   const tie_term = sum(
-    ties.filter(t => t.length > 1).map(t => t.length ** 3 - t.length)
+    ties.filter((t) => t.length > 1).map((t) => t.length ** 3 - t.length)
   )
 
   const sigmaTies = Math.sqrt(

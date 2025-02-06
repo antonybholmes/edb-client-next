@@ -1,21 +1,21 @@
 'use client'
 
 import {
-    APP_ACCOUNT_SIGN_IN_URL,
-    APP_ACCOUNT_SIGNED_OUT_URL,
-    CALLBACK_URL_PARAM,
+  APP_ACCOUNT_SIGN_IN_URL,
+  APP_ACCOUNT_SIGNED_OUT_URL,
+  CALLBACK_URL_PARAM,
 } from '@/lib/edb/edb'
 import { SignInLayout } from '@layouts/signin-layout'
 
 import { useAuth0 } from '@auth0/auth0-react'
 
 import {
-    Card,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-    CenteredCardContainer,
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  CenteredCardContainer,
 } from '@components/shadcn/ui/themed/card'
 
 import { TEXT_SIGN_IN, TEXT_SIGN_OUT } from '@/consts'
@@ -103,7 +103,6 @@ function SignInPage() {
   // }
 
   if (user) {
- 
     return (
       <div>
         Hello {user.name}{' '}

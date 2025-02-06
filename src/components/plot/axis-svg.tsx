@@ -31,7 +31,7 @@ export function AxisLeftSvg({
   //use tick labels to guess an appropriate offset
   const _titleOffset =
     titleOffset ??
-    2 * tickSize + 12 * Math.max(...ax.tickLabels.map(l => l.length))
+    2 * tickSize + 12 * Math.max(...ax.tickLabels.map((l) => l.length))
 
   return (
     <g

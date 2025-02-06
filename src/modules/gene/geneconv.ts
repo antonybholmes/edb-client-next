@@ -78,7 +78,7 @@ export async function createGeneConvTable(
     return new DataFrame({ data: table, columns: header })
 
     //data.push(row.concat([dj.data.dna]))
-  } catch  {
+  } catch {
     //data.push(row.concat([""]))
   }
 

@@ -104,8 +104,8 @@ export const BottomBar = forwardRef(function BottomBar(
                   0,
                   tabs
                     .map((t, ti) => [t, ti]! as [ITab, number])
-                    .filter(t => t[0]!.id === selectedTab.tab.id) //getTabId(selectedTab?.tab))
-                    .map(t => t[1])[0]! - 1
+                    .filter((t) => t[0]!.id === selectedTab.tab.id) //getTabId(selectedTab?.tab))
+                    .map((t) => t[1])[0]! - 1
                 )
 
                 _onValueChange(tabs[i]!.id)
@@ -123,8 +123,8 @@ export const BottomBar = forwardRef(function BottomBar(
                   tabs.length - 1,
                   tabs
                     .map((t, ti) => [t, ti] as [ITab, number])
-                    .filter(t => t[0]!.name === selectedTab.tab.id)
-                    .map(t => t[1]!)[0]! + 1
+                    .filter((t) => t[0]!.name === selectedTab.tab.id)
+                    .map((t) => t[1]!)[0]! + 1
                 )
 
                 _onValueChange(tabs[i]!.id)

@@ -5,9 +5,9 @@ import { cn } from '@lib/class-names'
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card'
 import { Info } from 'lucide-react'
 import {
-    forwardRef,
-    type ComponentPropsWithoutRef,
-    type ComponentRef,
+  forwardRef,
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
 } from 'react'
 
 const HoverCard = HoverCardPrimitive.Root

@@ -45,7 +45,7 @@ export const Checkbox = forwardRef(function Checkbox(
       ref={ref}
       checked={checked}
       defaultChecked={defaultChecked}
-      onCheckedChange={state =>
+      onCheckedChange={(state) =>
         onCheckedChange?.(state === 'indeterminate' ? false : state)
       }
       className={cn(CHECK_CLS, gap, className)}

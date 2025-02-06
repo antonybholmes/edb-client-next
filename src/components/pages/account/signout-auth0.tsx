@@ -1,21 +1,21 @@
 'use client'
 
 import {
-    Card,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-    CenteredCardContainer,
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  CenteredCardContainer,
 } from '@components/shadcn/ui/themed/card'
 
 import { HeaderLayout } from '@layouts/header-layout'
 
 import {
-    APP_ACCOUNT_SIGNED_OUT_URL,
-    EDB_ACCESS_TOKEN_COOKIE,
-    EDB_SESSION_COOKIE,
-    EDB_USER_COOKIE,
+  APP_ACCOUNT_SIGNED_OUT_URL,
+  EDB_ACCESS_TOKEN_COOKIE,
+  EDB_SESSION_COOKIE,
+  EDB_USER_COOKIE,
 } from '@/lib/edb/edb'
 
 import { useAuth0 } from '@auth0/auth0-react'

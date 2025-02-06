@@ -46,7 +46,7 @@ export function DeleteTrackGroupButton({ group }: { group: ITrackGroup }) {
           showClose={true}
           modalType="Warning"
           title={MODULE_INFO.name}
-          onReponse={r => {
+          onReponse={(r) => {
             if (r === TEXT_OK) {
               dispatch({
                 type: 'remove-groups',
@@ -91,7 +91,7 @@ export function DeleteTrackButton({
           modalType="Warning"
           showClose={true}
           title={MODULE_INFO.name}
-          onReponse={r => {
+          onReponse={(r) => {
             if (r === TEXT_OK) {
               dispatch({
                 type: 'remove-tracks',
@@ -156,25 +156,25 @@ export function UngroupButton({ group }: { group: ITrackGroup }) {
       <OKCancelDialog
         open={showDialog}
         title={MODULE_INFO.name}
-        onReponse={r => {
+        onReponse={(r) => {
           if (r === TEXT_OK) {
             // find current index of the group
             const idx = where(
               state.order,
-              id => state.groups[id]!.id === group.id
+              (id) => state.groups[id]!.id === group.id
             )[0]!
 
             dispatch({
               type: 'set',
               tracks: [
                 // what comes before our group is left intact
-                ...state.order.slice(0, idx).map(id => state.groups[id]!),
+                ...state.order.slice(0, idx).map((id) => state.groups[id]!),
 
                 // split each track into a separate group
-                ...group.order.map(id => newTrackGroup([group.tracks[id]!])),
+                ...group.order.map((id) => newTrackGroup([group.tracks[id]!])),
 
                 // add what comes after the group intact
-                ...state.order.slice(idx + 1).map(id => state.groups[id]!),
+                ...state.order.slice(idx + 1).map((id) => state.groups[id]!),
               ],
             })
           }
@@ -225,7 +225,7 @@ export function SeqTrackItem({
       {group.order.length > 1 && <UngroupButton group={group} />}
       <BaseCol className="grow">
         {group.order
-          .map(id => group.tracks[id]! as ISeqTrack)
+          .map((id) => group.tracks[id]! as ISeqTrack)
           .map((t, ti) => {
             const accentColor = removeHexAlpha(t.displayOptions.fill.color)
             return (

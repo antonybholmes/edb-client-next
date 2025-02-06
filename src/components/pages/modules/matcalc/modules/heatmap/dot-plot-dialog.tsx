@@ -63,7 +63,7 @@ export function DotPlotDialog({
     const means: number[][] = []
     const percents: number[][] = []
 
-    groupState.order.forEach(id => {
+    groupState.order.forEach((id) => {
       const group = groupState.groups.get(id)!
       const colIdx = getColIdxFromGroup(df, group)
 
@@ -72,14 +72,14 @@ export function DotPlotDialog({
 
       // percentage in each group
       const p: number[] = df!.rowMap(
-        row =>
-          (row as number[]).filter(x => x > minThreshold).length / row.length
+        (row) =>
+          (row as number[]).filter((x) => x > minThreshold).length / row.length
       )
 
       percents.push(p)
     })
 
-    const index = groupState.order.map(id => groupState.groups.get(id)!.name)
+    const index = groupState.order.map((id) => groupState.groups.get(id)!.name)
     // build group mean row centric then transpose
     const groupMeanDf = new DataFrame({
       name: 'Group means',
@@ -149,7 +149,7 @@ export function DotPlotDialog({
     <OKCancelDialog
       open={open}
       title="Dot Plot"
-      onReponse={r => {
+      onReponse={(r) => {
         if (r === TEXT_CANCEL) {
           _resp(r)
         } else {
@@ -166,7 +166,7 @@ export function DotPlotDialog({
         <SettingsAccordionItem title="Transform">
           <Checkbox
             checked={settings.heatmap.applyRowZscore}
-            onCheckedChange={value => {
+            onCheckedChange={(value) => {
               updateSettings({
                 ...settings,
                 heatmap: { ...settings.heatmap, applyRowZscore: value },
@@ -180,7 +180,7 @@ export function DotPlotDialog({
         <SettingsAccordionItem title="Cluster">
           <Checkbox
             checked={settings.heatmap.clusterRows}
-            onCheckedChange={value => {
+            onCheckedChange={(value) => {
               updateSettings({
                 ...settings,
                 heatmap: { ...settings.heatmap, clusterRows: value },
@@ -192,7 +192,7 @@ export function DotPlotDialog({
 
           <Checkbox
             checked={settings.heatmap.clusterCols}
-            onCheckedChange={value => {
+            onCheckedChange={(value) => {
               updateSettings({
                 ...settings,
                 heatmap: { ...settings.heatmap, clusterCols: value },

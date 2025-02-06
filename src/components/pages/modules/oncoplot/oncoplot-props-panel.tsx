@@ -46,7 +46,7 @@ export const OncoplotPropsPanel = forwardRef(function OncoplotPropsPanel(
                 id="w"
                 defaultValue={displayProps.legend.mutations.label}
                 className="w-full rounded-theme"
-                onChange={event => {
+                onChange={(event) => {
                   plotDispatch({
                     type: 'display',
                     displayProps: {
@@ -68,7 +68,7 @@ export const OncoplotPropsPanel = forwardRef(function OncoplotPropsPanel(
               <DoubleNumericalInput
                 v1={displayProps.grid.cell.w}
                 v2={displayProps.grid.cell.h}
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   plotDispatch({
                     type: 'display',
                     displayProps: {
@@ -83,7 +83,7 @@ export const OncoplotPropsPanel = forwardRef(function OncoplotPropsPanel(
                     },
                   })
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   plotDispatch({
                     type: 'display',
                     displayProps: {
@@ -105,7 +105,7 @@ export const OncoplotPropsPanel = forwardRef(function OncoplotPropsPanel(
                 v1={displayProps.grid.spacing.x}
                 v2={displayProps.grid.spacing.y}
                 inputCls="w-16 rounded-theme"
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   plotDispatch({
                     type: 'display',
                     displayProps: {
@@ -117,7 +117,7 @@ export const OncoplotPropsPanel = forwardRef(function OncoplotPropsPanel(
                     },
                   })
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   plotDispatch({
                     type: 'display',
                     displayProps: {
@@ -139,7 +139,7 @@ export const OncoplotPropsPanel = forwardRef(function OncoplotPropsPanel(
                 defaultFgColor={DEFAULT_DISPLAY_PROPS.border.color}
                 defaultBgColor={DEFAULT_DISPLAY_PROPS.grid.color}
                 allowNoColor={true}
-                onFgColorChange={color =>
+                onFgColorChange={(color) =>
                   plotDispatch({
                     type: 'display',
                     displayProps: {
@@ -152,7 +152,7 @@ export const OncoplotPropsPanel = forwardRef(function OncoplotPropsPanel(
                     },
                   })
                 }
-                onBgColorChange={color =>
+                onBgColorChange={(color) =>
                   plotDispatch({
                     type: 'display',
                     displayProps: {
@@ -176,7 +176,7 @@ export const OncoplotPropsPanel = forwardRef(function OncoplotPropsPanel(
             <SwitchPropRow
               title="TMB graph"
               checked={displayProps.samples.graphs.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 plotDispatch({
                   type: 'display',
                   displayProps: {
@@ -197,7 +197,7 @@ export const OncoplotPropsPanel = forwardRef(function OncoplotPropsPanel(
               title="Border"
               disabled={!displayProps.samples.graphs.show}
               checked={displayProps.samples.graphs.border.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 plotDispatch({
                   type: 'display',
                   displayProps: {
@@ -218,7 +218,7 @@ export const OncoplotPropsPanel = forwardRef(function OncoplotPropsPanel(
             >
               <ColorPickerButton
                 color={displayProps.samples.graphs.border.color}
-                onColorChange={color =>
+                onColorChange={(color) =>
                   plotDispatch({
                     type: 'display',
                     displayProps: {
@@ -248,7 +248,7 @@ export const OncoplotPropsPanel = forwardRef(function OncoplotPropsPanel(
             <SwitchPropRow
               title="Sample distribution graph"
               checked={displayProps.features.graphs.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 plotDispatch({
                   type: 'display',
                   displayProps: {
@@ -269,7 +269,7 @@ export const OncoplotPropsPanel = forwardRef(function OncoplotPropsPanel(
               title="Border"
               disabled={!displayProps.features.graphs.show}
               checked={displayProps.features.graphs.border.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 plotDispatch({
                   type: 'display',
                   displayProps: {
@@ -290,7 +290,7 @@ export const OncoplotPropsPanel = forwardRef(function OncoplotPropsPanel(
             >
               <ColorPickerButton
                 color={displayProps.features.graphs.border.color}
-                onColorChange={color =>
+                onColorChange={(color) =>
                   plotDispatch({
                     type: 'display',
                     displayProps: {
@@ -316,7 +316,7 @@ export const OncoplotPropsPanel = forwardRef(function OncoplotPropsPanel(
               title="Percentages"
               disabled={!displayProps.features.graphs.show}
               checked={displayProps.features.graphs.percentages.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 plotDispatch({
                   type: 'display',
                   displayProps: {
@@ -350,7 +350,7 @@ export const OncoplotPropsPanel = forwardRef(function OncoplotPropsPanel(
                         displayProps.legend.mutations.colorMap.get(mutation) ??
                         displayProps.legend.mutations.noAlterationColor
                       }
-                      onColorChange={color => {
+                      onColorChange={(color) => {
                         plotDispatch({
                           type: 'display',
                           displayProps: {
@@ -380,7 +380,7 @@ export const OncoplotPropsPanel = forwardRef(function OncoplotPropsPanel(
                 <ColorPickerButton
                   color={displayProps.legend.mutations.noAlterationColor}
                   defaultColor={NO_ALTERATION_COLOR}
-                  onColorChange={color => {
+                  onColorChange={(color) => {
                     plotDispatch({
                       type: 'display',
                       displayProps: {

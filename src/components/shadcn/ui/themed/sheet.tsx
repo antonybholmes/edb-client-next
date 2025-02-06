@@ -89,7 +89,7 @@ const SheetContent = forwardRef<
     ref
   ) => (
     <SheetPortal>
-      {overlayFill && <DialogOverlay  />}
+      {overlayFill && <DialogOverlay />}
       <SheetPrimitive.Content
         ref={ref}
         className={cn(sheetVariants({ surface, side, shadow }), className)}

@@ -52,7 +52,7 @@ export function Slider({
     onSliderChange?.(v)
   }
 
-  function onMouseMove(event: MouseEvent|React.MouseEvent) {
+  function onMouseMove(event: MouseEvent | React.MouseEvent) {
     if (ref.current) {
       const { left, width } = ref.current.getBoundingClientRect()
       const x = event.clientX - left
@@ -72,9 +72,8 @@ export function Slider({
     document.removeEventListener('touchcancel', onMouseUp)
   }
 
-  function onMouseDown(event: React.MouseEvent|MouseEvent
-  ) {
-setIsDragging(true);
+  function onMouseDown(event: React.MouseEvent | MouseEvent) {
+    setIsDragging(true)
     document.addEventListener('mousemove', onMouseMove)
     document.addEventListener('mouseup', onMouseUp)
     //document.addEventListener('touchmove', onMouseMove)
@@ -136,7 +135,7 @@ setIsDragging(true);
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
         onMouseDown={onMouseDown}
-        onKeyDown={e => {
+        onKeyDown={(e) => {
           //console.log(e)
           switch (e.code) {
             case 'ArrowUp':

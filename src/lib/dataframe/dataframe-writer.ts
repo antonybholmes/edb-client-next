@@ -58,16 +58,16 @@ export class DataFrameWriter {
     let ret: string[] = []
 
     if (this._index) {
-      ret = range(df.shape[0]).map(ri =>
+      ret = range(df.shape[0]).map((ri) =>
         [df.getRowName(ri)]
-          .concat(df.row(ri)!.values.map(v => cellStr(v, { dp: this._dp })))
+          .concat(df.row(ri)!.values.map((v) => cellStr(v, { dp: this._dp })))
           .join(this._sep)
       )
     } else {
-      ret = range(df.shape[0]).map(ri =>
+      ret = range(df.shape[0]).map((ri) =>
         df
           .row(ri)!
-          .values.map(v => cellStr(v, { dp: this._dp }))
+          .values.map((v) => cellStr(v, { dp: this._dp }))
           .join(this._sep)
       )
     }

@@ -30,8 +30,8 @@ import { DataFrameWriter, type IDataFrameWriterOpts } from './dataframe-writer'
 export type AxisDim = 0 | 1
 
 export interface ILineFile {
-    fid: string
-    lines: string[]
+  fid: string
+  lines: string[]
 }
 
 // export class TableCell {
@@ -213,7 +213,7 @@ export type IApplyFunc = (x: number) => number
 // }
 
 export function add(df: BaseDataFrame, a = 0): BaseDataFrame {
-    return df.apply((x) => (x as number) + a)
+  return df.apply((x) => (x as number) + a)
 }
 
 // export function colNames(df: IDataFrame): string[] {
@@ -254,17 +254,17 @@ export function add(df: BaseDataFrame, a = 0): BaseDataFrame {
 // }
 
 export function getNumCol(df: BaseDataFrame, col: IndexData = 0): number[] {
-    const c = df.col(col)
-    return c ? c.values.map((v: SeriesData) => cellNum(v)) : []
+  const c = df.col(col)
+  return c ? c.values.map((v: SeriesData) => cellNum(v)) : []
 }
 
 export function getStrCol(df: BaseDataFrame, col = 0): string[] {
-    const c = df.col(col)
-    return c ? c.values.map((v: SeriesData) => cellStr(v)) : []
+  const c = df.col(col)
+  return c ? c.values.map((v: SeriesData) => cellStr(v)) : []
 }
 
 export function getNumRow(df: BaseDataFrame, row: number = 0): number[] {
-    return df.cols.map((col) => cellNum(col.get(row)))
+  return df.cols.map((col) => cellNum(col.get(row)))
 }
 
 /**
@@ -273,20 +273,20 @@ export function getNumRow(df: BaseDataFrame, row: number = 0): number[] {
  * @returns
  */
 export function filterNA(data: SeriesData[]): number[] {
-    return data
-        .map((v, vi) => [v, vi] as [SeriesData, number])
-        .filter((v) => typeof v[0] !== 'number' || !isNaN(v[0] as number))
-        .map((v) => v[1])
+  return data
+    .map((v, vi) => [v, vi] as [SeriesData, number])
+    .filter((v) => typeof v[0] !== 'number' || !isNaN(v[0] as number))
+    .map((v) => v[1])
 }
 
 export function subset(data: SeriesData[], idx: number[]): SeriesData[] {
-    return idx.map((i) => data[i]!)
+  return idx.map((i) => data[i]!)
 }
 
 export function zip(...cols: SeriesData[][]): SeriesData[][] {
-    const colIdx = range(cols.length)
+  const colIdx = range(cols.length)
 
-    return range(cols[0]!.length).map((i) => colIdx.map((j) => cols[j]![i]!))
+  return range(cols[0]!.length).map((i) => colIdx.map((j) => cols[j]![i]!))
 }
 
 /**
@@ -297,32 +297,32 @@ export function zip(...cols: SeriesData[][]): SeriesData[][] {
  */
 
 export function rowSums(df: BaseDataFrame): number[] {
-    return df.rowMap((row: SeriesData[]) =>
-        row.reduce((a: number, b: SeriesData) => a + (b as number), 0)
-    )
+  return df.rowMap((row: SeriesData[]) =>
+    row.reduce((a: number, b: SeriesData) => a + (b as number), 0)
+  )
 
-    // return range(df.shape[0]).map(row =>
-    //   df.cols.map(col => cellNum(col.get(row))).reduce((a, b) => a + b),
-    // )
+  // return range(df.shape[0]).map(row =>
+  //   df.cols.map(col => cellNum(col.get(row))).reduce((a, b) => a + b),
+  // )
 }
 
 export function rowDiv(df: BaseDataFrame, values: number[]): BaseDataFrame {
-    const data = df.map(
-        (v: SeriesData, row: number) => (v as number) / values[row]!
-    )
+  const data = df.map(
+    (v: SeriesData, row: number) => (v as number) / values[row]!
+  )
 
-    return new DataFrame({
-        name: df.name,
-        data,
-        columns: df.columns,
-        index: df.index,
-    })
+  return new DataFrame({
+    name: df.name,
+    data,
+    columns: df.columns,
+    index: df.index,
+  })
 }
 
 export function colSums(df: BaseDataFrame): number[] {
-    return df.cols.map((col) =>
-        col.values.map((v) => cellNum(v)).reduce((a, b) => a + b)
-    )
+  return df.cols.map((col) =>
+    col.values.map((v) => cellNum(v)).reduce((a, b) => a + b)
+  )
 }
 
 // /**
@@ -394,200 +394,198 @@ export function colSums(df: BaseDataFrame): number[] {
 // }
 
 export function rowIdxMap(
-    df: BaseDataFrame,
-    lowercase: boolean = false
+  df: BaseDataFrame,
+  lowercase: boolean = false
 ): { [key: string]: number } {
-    const ret: { [key: string]: number } = {}
+  const ret: { [key: string]: number } = {}
 
-    df.index?.values.map((rowId, rowi) => {
-        if (rowId) {
-            const s = rowId.toString()
-            ret[lowercase ? s.toLowerCase() : s] = rowi
-        }
-    })
+  df.index?.values.map((rowId, rowi) => {
+    if (rowId) {
+      const s = rowId.toString()
+      ret[lowercase ? s.toLowerCase() : s] = rowi
+    }
+  })
 
-    return ret
+  return ret
 }
 
 interface IMatchOptions {
-    caseSensitive?: boolean
-    matchEntireCell?: boolean
-    keepOrder?: boolean
+  caseSensitive?: boolean
+  matchEntireCell?: boolean
+  keepOrder?: boolean
 }
 
 const DEFAULT_MATCH_OPTIONS: IMatchOptions = {
-    caseSensitive: false,
-    matchEntireCell: false,
-    keepOrder: false,
+  caseSensitive: false,
+  matchEntireCell: false,
+  keepOrder: false,
 }
 
 export function filterColsById(
-    df: BaseDataFrame,
-    ids: string[],
-    options: IMatchOptions
+  df: BaseDataFrame,
+  ids: string[],
+  options: IMatchOptions
 ): BaseDataFrame {
-    const {
-        caseSensitive,
-        matchEntireCell: entireCell,
-        keepOrder,
-    } = {
-        ...DEFAULT_MATCH_OPTIONS,
-        ...options,
-    }
+  const {
+    caseSensitive,
+    matchEntireCell: entireCell,
+    keepOrder,
+  } = {
+    ...DEFAULT_MATCH_OPTIONS,
+    ...options,
+  }
 
-    let idx: number[] = []
+  let idx: number[] = []
 
-    if (keepOrder) {
-        const colMap = Object.fromEntries(
-            df.colNames.map((v, i) => [
-                caseSensitive ? v.toString() : v.toString().toLowerCase(),
-                i,
-            ])
-        )
+  if (keepOrder) {
+    const colMap = Object.fromEntries(
+      df.colNames.map((v, i) => [
+        caseSensitive ? v.toString() : v.toString().toLowerCase(),
+        i,
+      ])
+    )
 
-        idx = ids
-            .map((id) => {
-                const lid = caseSensitive ? id : id.toLowerCase()
+    idx = ids
+      .map((id) => {
+        const lid = caseSensitive ? id : id.toLowerCase()
 
-                if (lid in colMap) {
-                    return colMap[lid]!
-                } else {
-                    return -1
-                }
-            })
-            .filter((x) => x !== -1)
-    } else {
-        const lids = Array.from(ids).map((id) =>
-            caseSensitive ? id : id.toLowerCase()
-        )
-
-        if (entireCell) {
-            idx = range(df.shape[1]).filter((i) => {
-                const n = caseSensitive
-                    ? df.colName(i)
-                    : df.colName(i).toLowerCase()
-                return lids.includes(n) // lids.has(df.index.get(i).toString().toLowerCase())
-            })
+        if (lid in colMap) {
+          return colMap[lid]!
         } else {
-            idx = range(df.shape[1]).filter((i) => {
-                const n = caseSensitive
-                    ? df.columns.get(i).toString()
-                    : df.columns.get(i).toString().toLowerCase()
-                return lids.filter((id) => n.includes(id)).length > 0 // lids.has(df.index.get(i).toString().toLowerCase())
-            })
+          return -1
         }
-    }
+      })
+      .filter((x) => x !== -1)
+  } else {
+    const lids = Array.from(ids).map((id) =>
+      caseSensitive ? id : id.toLowerCase()
+    )
 
-    return df.iloc(':', idx)
+    if (entireCell) {
+      idx = range(df.shape[1]).filter((i) => {
+        const n = caseSensitive ? df.colName(i) : df.colName(i).toLowerCase()
+        return lids.includes(n) // lids.has(df.index.get(i).toString().toLowerCase())
+      })
+    } else {
+      idx = range(df.shape[1]).filter((i) => {
+        const n = caseSensitive
+          ? df.columns.get(i).toString()
+          : df.columns.get(i).toString().toLowerCase()
+        return lids.filter((id) => n.includes(id)).length > 0 // lids.has(df.index.get(i).toString().toLowerCase())
+      })
+    }
+  }
+
+  return df.iloc(':', idx)
 }
 
 export function filterRowsById(
-    df: BaseDataFrame,
-    ids: string[],
-    options: IMatchOptions
+  df: BaseDataFrame,
+  ids: string[],
+  options: IMatchOptions
 ): BaseDataFrame {
-    const {
-        caseSensitive,
-        matchEntireCell: entireCell,
-        keepOrder,
-    } = {
-        ...DEFAULT_MATCH_OPTIONS,
-        ...options,
-    }
+  const {
+    caseSensitive,
+    matchEntireCell: entireCell,
+    keepOrder,
+  } = {
+    ...DEFAULT_MATCH_OPTIONS,
+    ...options,
+  }
 
-    let idx: number[] = []
+  let idx: number[] = []
 
-    const lids = ids.map((id) => (caseSensitive ? id : id.toLowerCase()))
+  const lids = ids.map((id) => (caseSensitive ? id : id.toLowerCase()))
 
-    if (keepOrder) {
-        const lindex = df.index.map((v) =>
-            caseSensitive ? v.toString() : v.toString().toLowerCase()
-        )
+  if (keepOrder) {
+    const lindex = df.index.map((v) =>
+      caseSensitive ? v.toString() : v.toString().toLowerCase()
+    )
 
-        if (entireCell) {
-            const rowMap = Object.fromEntries(lindex.map((v, i) => [v, i]))
+    if (entireCell) {
+      const rowMap = Object.fromEntries(lindex.map((v, i) => [v, i]))
 
-            idx = lids
-                .map((lid) => {
-                    if (lid in rowMap) {
-                        return rowMap[lid]!
-                    } else {
-                        return -1
-                    }
-                })
-                .filter((x) => x !== -1)
-        } else {
-            // slower partial matching
-
-            for (const lid of lids) {
-                for (const [rowi, row] of lindex.entries()) {
-                    if (row.includes(lid)) {
-                        idx.push(rowi)
-                    }
-                }
-            }
-        }
+      idx = lids
+        .map((lid) => {
+          if (lid in rowMap) {
+            return rowMap[lid]!
+          } else {
+            return -1
+          }
+        })
+        .filter((x) => x !== -1)
     } else {
-        if (entireCell) {
-            idx = range(df.shape[0]).filter((i) => {
-                const n = caseSensitive
-                    ? df.index.get(i).toString()
-                    : df.index.get(i).toString().toLowerCase()
-                return lids.includes(n) // lids.has(df.index.get(i).toString().toLowerCase())
-            })
-        } else {
-            idx = range(df.shape[0]).filter((i) => {
-                const n = caseSensitive
-                    ? df.index.get(i).toString()
-                    : df.index.get(i).toString().toLowerCase()
-                return lids.filter((id) => n.includes(id)).length > 0 // lids.has(df.index.get(i).toString().toLowerCase())
-            })
-        }
-    }
+      // slower partial matching
 
-    return df.iloc(idx, ':')
+      for (const lid of lids) {
+        for (const [rowi, row] of lindex.entries()) {
+          if (row.includes(lid)) {
+            idx.push(rowi)
+          }
+        }
+      }
+    }
+  } else {
+    if (entireCell) {
+      idx = range(df.shape[0]).filter((i) => {
+        const n = caseSensitive
+          ? df.index.get(i).toString()
+          : df.index.get(i).toString().toLowerCase()
+        return lids.includes(n) // lids.has(df.index.get(i).toString().toLowerCase())
+      })
+    } else {
+      idx = range(df.shape[0]).filter((i) => {
+        const n = caseSensitive
+          ? df.index.get(i).toString()
+          : df.index.get(i).toString().toLowerCase()
+        return lids.filter((id) => n.includes(id)).length > 0 // lids.has(df.index.get(i).toString().toLowerCase())
+      })
+    }
+  }
+
+  return df.iloc(idx, ':')
 }
 
 export function findCols(df: BaseDataFrame, id: string): number[] {
-    if (id === '') {
-        return []
-    }
+  if (id === '') {
+    return []
+  }
 
-    const s: string = id.toLowerCase()
-    return df.colNames
-        .map((c, ci) => (c && c.toLowerCase().includes(s) ? ci : -1))
-        .filter((x) => x !== -1)
+  const s: string = id.toLowerCase()
+  return df.colNames
+    .map((c, ci) => (c && c.toLowerCase().includes(s) ? ci : -1))
+    .filter((x) => x !== -1)
 }
 
 export function findCol(df: BaseDataFrame, ids: SheetId | SheetId[]): number {
-    if (ids === '') {
-        return -1
-    }
-
-    if (Number.isInteger(ids)) {
-        return ids as number
-    }
-
-    if (!Array.isArray(ids)) {
-        ids = [ids]
-    }
-
-    const ret: number[] = []
-
-    for (const id of ids) {
-        const idx = findCols(df, id.toString())
-
-        if (idx.length > 0) {
-            ret.push(idx[0]!)
-            break
-        }
-    }
-
-    if (ret.length > 0) {
-        return ret[0]!
-    }
-
+  if (ids === '') {
     return -1
+  }
+
+  if (Number.isInteger(ids)) {
+    return ids as number
+  }
+
+  if (!Array.isArray(ids)) {
+    ids = [ids]
+  }
+
+  const ret: number[] = []
+
+  for (const id of ids) {
+    const idx = findCols(df, id.toString())
+
+    if (idx.length > 0) {
+      ret.push(idx[0]!)
+      break
+    }
+  }
+
+  if (ret.length > 0) {
+    return ret[0]!
+  }
+
+  return -1
 }
 
 // /**
@@ -600,12 +598,12 @@ export function findCol(df: BaseDataFrame, ids: SheetId | SheetId[]): number {
 // }
 
 export function getFormattedShape(df: BaseDataFrame | null): string {
-    if (!df) {
-        return ''
-    }
+  if (!df) {
+    return ''
+  }
 
-    const s = df.shape
-    return `${s[0].toLocaleString()} rows x ${s[1].toLocaleString()} cols`
+  const s = df.shape
+  return `${s[0].toLocaleString()} rows x ${s[1].toLocaleString()} cols`
 }
 
 // export function getSize(df: IDataFrame): number {
@@ -613,136 +611,132 @@ export function getFormattedShape(df: BaseDataFrame | null): string {
 // }
 
 export function rowJoinDataFrames(dataFrames: DataFrame[]): DataFrame {
-    const countMap: { [key: string]: number } = {}
+  const countMap: { [key: string]: number } = {}
 
-    dataFrames.forEach((df) => {
-        const cols = range(df.shape[1])
+  dataFrames.forEach((df) => {
+    const cols = range(df.shape[1])
 
-        cols.forEach((c) => {
-            const id = df.colName(c)
-            countMap[id] = (countMap[id] ?? 0) + 1
-        })
+    cols.forEach((c) => {
+      const id = df.colName(c)
+      countMap[id] = (countMap[id] ?? 0) + 1
     })
+  })
 
-    const ids = new Set(
-        Object.entries(countMap)
-            .filter((entry) => entry[1] === dataFrames.length)
-            .map((entry) => entry[0])
+  const ids = new Set(
+    Object.entries(countMap)
+      .filter((entry) => entry[1] === dataFrames.length)
+      .map((entry) => entry[0])
+  )
+
+  // get the ids in order from first table
+  const orderedIds = dataFrames[0]!.colNames.filter((c) => ids.has(c))
+
+  // sort other tables using these ids
+  dataFrames = dataFrames.map((df) => {
+    const indexMap = Object.fromEntries(
+      df.colNames.map((colId, ci) => [colId, ci])
     )
 
-    // get the ids in order from first table
-    const orderedIds = dataFrames[0]!.colNames.filter((c) => ids.has(c))
+    const indices = orderedIds.map((id) => indexMap[id]!)
 
-    // sort other tables using these ids
-    dataFrames = dataFrames.map((df) => {
-        const indexMap = Object.fromEntries(
-            df.colNames.map((colId, ci) => [colId, ci])
-        )
+    return df.iloc(':', indices) as DataFrame
+  })
 
-        const indices = orderedIds.map((id) => indexMap[id]!)
-
-        return df.iloc(':', indices) as DataFrame
-    })
-
-    return new DataFrame({
-        data: dataFrames.map((df) => df._data).flat(),
-        columns: dataFrames[0]!.columns,
-        index: new DataIndex(dataFrames.map((df) => df._index.values).flat()),
-    })
+  return new DataFrame({
+    data: dataFrames.map((df) => df._data).flat(),
+    columns: dataFrames[0]!.columns,
+    index: new DataIndex(dataFrames.map((df) => df._index.values).flat()),
+  })
 }
 
 export function colJoinDataFrames(dataFrames: DataFrame[]): DataFrame {
-    const countMap: { [key: string]: number } = {}
+  const countMap: { [key: string]: number } = {}
 
-    dataFrames.forEach((df) => {
-        df.rowNames.forEach((id) => {
-            countMap[id] = (countMap[id] || 0) + 1
-        })
+  dataFrames.forEach((df) => {
+    df.rowNames.forEach((id) => {
+      countMap[id] = (countMap[id] || 0) + 1
     })
+  })
 
-    const ids = new Set(
-        Object.entries(countMap)
-            .filter((entry) => entry[1] === dataFrames.length)
-            .map((entry) => entry[0])
+  const ids = new Set(
+    Object.entries(countMap)
+      .filter((entry) => entry[1] === dataFrames.length)
+      .map((entry) => entry[0])
+  )
+
+  // get the ids in order from first table
+  const orderedIds = dataFrames[0]!.rowNames.filter((rowId) => ids.has(rowId))
+
+  // sort other tables using these ids
+  dataFrames = dataFrames.map((df) => {
+    const indexMap = Object.fromEntries(
+      df.rowNames.map((rowId, rowi) => [rowId, rowi])
     )
 
-    // get the ids in order from first table
-    const orderedIds = dataFrames[0]!.rowNames.filter((rowId) => ids.has(rowId))
+    const indices = orderedIds.map((id) => indexMap[id]!)
 
-    // sort other tables using these ids
-    dataFrames = dataFrames.map((df) => {
-        const indexMap = Object.fromEntries(
-            df.rowNames.map((rowId, rowi) => [rowId, rowi])
-        )
+    return df.iloc(indices, ':') as DataFrame //filterRows(df, indices)
+  })
 
-        const indices = orderedIds.map((id) => indexMap[id]!)
-
-        return df.iloc(indices, ':') as DataFrame //filterRows(df, indices)
-    })
-
-    return new DataFrame({
-        data: range(dataFrames[0]!.shape[0]).map((r) =>
-            dataFrames.map((df) => df._data[r]!).flat()
-        ),
-        index: dataFrames[0]!.index,
-        columns: new DataIndex(dataFrames.map((df) => df.colNames).flat()),
-    })
+  return new DataFrame({
+    data: range(dataFrames[0]!.shape[0]).map((r) =>
+      dataFrames.map((df) => df._data[r]!).flat()
+    ),
+    index: dataFrames[0]!.index,
+    columns: new DataIndex(dataFrames.map((df) => df.colNames).flat()),
+  })
 }
 
 export function joinDataFrames(
-    df: DataFrame[],
-    axis: AxisDim = 0
+  df: DataFrame[],
+  axis: AxisDim = 0
 ): BaseDataFrame {
-    if (axis === 0) {
-        return rowJoinDataFrames(df)
-    } else {
-        return colJoinDataFrames(df)
-    }
+  if (axis === 0) {
+    return rowJoinDataFrames(df)
+  } else {
+    return colJoinDataFrames(df)
+  }
 }
 
 export function log(
-    df: BaseDataFrame,
-    base: 2 | 10 | 'ln',
-    add: number = 0
+  df: BaseDataFrame,
+  base: 2 | 10 | 'ln',
+  add: number = 0
 ): BaseDataFrame {
-    switch (base) {
-        case 2:
-            return log2(df, add).setName(
-                add > 0 ? `Log2(x + ${add})` : `Log2(x)`
-            )
+  switch (base) {
+    case 2:
+      return log2(df, add).setName(add > 0 ? `Log2(x + ${add})` : `Log2(x)`)
 
-        case 10:
-            return log10(df, add).setName(
-                add > 0 ? `Log10(x + ${add})` : `Log10(x)`
-            )
+    case 10:
+      return log10(df, add).setName(add > 0 ? `Log10(x + ${add})` : `Log10(x)`)
 
-        default:
-            return ln(df, add).setName(add > 0 ? `Ln(x + ${add})` : `Ln(x)`)
-    }
+    default:
+      return ln(df, add).setName(add > 0 ? `Ln(x + ${add})` : `Ln(x)`)
+  }
 }
 
 export function log2(df: BaseDataFrame, a = 0): BaseDataFrame {
-    return df.apply((v) => Math.log2((v as number) + a))
+  return df.apply((v) => Math.log2((v as number) + a))
 }
 
 export function log10(df: BaseDataFrame, a = 0): BaseDataFrame {
-    return df.apply((v) => Math.log10((v as number) + a))
+  return df.apply((v) => Math.log10((v as number) + a))
 }
 
 export function ln(df: BaseDataFrame, a = 0): BaseDataFrame {
-    return df.apply((v) => Math.log((v as number) + a))
+  return df.apply((v) => Math.log((v as number) + a))
 }
 
 export function rowStdev(df: BaseDataFrame): number[] {
-    return df.rowMap((row) => std(row as number[]))
+  return df.rowMap((row) => std(row as number[]))
 }
 
 export function rowMean(df: BaseDataFrame): number[] {
-    return df.rowMap((row) => mean(row as number[]))
+  return df.rowMap((row) => mean(row as number[]))
 }
 
 export function rowMedian(df: BaseDataFrame): number[] {
-    return df.rowMap((row) => median(row as number[])[0])
+  return df.rowMap((row) => median(row as number[])[0])
 }
 
 /**
@@ -752,108 +746,108 @@ export function rowMedian(df: BaseDataFrame): number[] {
  * @returns
  */
 export function colMean(df: BaseDataFrame): number[] {
-    return df.colMap((col) => mean(col as number[]))
+  return df.colMap((col) => mean(col as number[]))
 }
 
 export function stdevFilter(df: BaseDataFrame, top = 1000) {
-    const sd = rowStdev(df)
+  const sd = rowStdev(df)
 
-    // order from greatest std to smallest
-    const idx = argsort(sd).toReversed()
+  // order from greatest std to smallest
+  const idx = argsort(sd).toReversed()
 
-    // pick the top
-    const topIdx = idx.slice(0, top)
+  // pick the top
+  const topIdx = idx.slice(0, top)
 
-    // return a filtered matrix
-    return df
-        .iloc(topIdx, ':')
-        .setName(`Filter rows using stdev, top ${top}`, true)
+  // return a filtered matrix
+  return df
+    .iloc(topIdx, ':')
+    .setName(`Filter rows using stdev, top ${top}`, true)
 }
 
 export function meanFilter(df: BaseDataFrame, top = 1000) {
-    const sd = rowMean(df)
+  const sd = rowMean(df)
 
-    // order from greatest std to smallest
-    const idx = argsort(sd).toReversed()
+  // order from greatest std to smallest
+  const idx = argsort(sd).toReversed()
 
-    // pick the top
-    const topIdx = idx.slice(0, top)
+  // pick the top
+  const topIdx = idx.slice(0, top)
 
-    // return a filtered matrix
-    return df
-        .iloc(topIdx, ':')
-        .setName(`Filter rows using mean, top ${top}`, true)
+  // return a filtered matrix
+  return df
+    .iloc(topIdx, ':')
+    .setName(`Filter rows using mean, top ${top}`, true)
 }
 
 export function medianFilter(df: BaseDataFrame, top = 1000) {
-    const sd = rowMedian(df)
+  const sd = rowMedian(df)
 
-    // order from greatest std to smallest
-    const idx = argsort(sd).toReversed()
+  // order from greatest std to smallest
+  const idx = argsort(sd).toReversed()
 
-    // pick the top
-    const topIdx = idx.slice(0, top)
+  // pick the top
+  const topIdx = idx.slice(0, top)
 
-    // return a filtered matrix
-    return df
-        .iloc(topIdx, ':')
-        .setName(`Filter rows using median, top ${top}`, true)
+  // return a filtered matrix
+  return df
+    .iloc(topIdx, ':')
+    .setName(`Filter rows using median, top ${top}`, true)
 }
 
 export function rowZScore(df: BaseDataFrame): BaseDataFrame {
-    const z = df.values.map((row) => new ZScore().fitTransform(row as number[]))
+  const z = df.values.map((row) => new ZScore().fitTransform(row as number[]))
 
-    return new DataFrame({
-        name: 'Row Z-score',
-        data: z,
-        columns: df.columns,
-        index: df.index,
-    })
+  return new DataFrame({
+    name: 'Row Z-score',
+    data: z,
+    columns: df.columns,
+    index: df.index,
+  })
 }
 
 export function colZScore(df: BaseDataFrame): BaseDataFrame {
-    // do not generate a new motif for the second transpose since
-    // me made a clone for the first
-    return rowZScore(df.t()).t()
+  // do not generate a new motif for the second transpose since
+  // me made a clone for the first
+  return rowZScore(df.t()).t()
 }
 
 export function makeGCT(df: BaseDataFrame): BaseDataFrame {
-    const s = df.shape
+  const s = df.shape
 
-    const l1 = new Array(s[1] + 2).fill('')
-    l1[0] = '#1.2'
-    const l2 = new Array(s[1] + 2).fill('')
-    l2[0] = s[0].toString()
-    l2[1] = s[1].toString()
+  const l1 = new Array(s[1] + 2).fill('')
+  l1[0] = '#1.2'
+  const l2 = new Array(s[1] + 2).fill('')
+  l2[0] = s[0].toString()
+  l2[1] = s[1].toString()
 
-    const l3 = ['Name', 'Description'].concat(df.colNames)
+  const l3 = ['Name', 'Description'].concat(df.colNames)
 
-    const d: SeriesData[][] = df.rowMap((row: SeriesData[], index: number) => {
-        const n = df.index.get(index) as SeriesData
-        return [n, n].concat(row)
-    })
+  const d: SeriesData[][] = df.rowMap((row: SeriesData[], index: number) => {
+    const n = df.index.get(index) as SeriesData
+    return [n, n].concat(row)
+  })
 
-    // const d = df.values.map((r, ri) => {
-    //   const n = df.index.get(ri)
+  // const d = df.values.map((r, ri) => {
+  //   const n = df.index.get(ri)
 
-    //   return [n, n].concat(r as )
-    // })
+  //   return [n, n].concat(r as )
+  // })
 
-    return new DataFrame({
-        name: 'GCT',
-        data: [l1, l2, l3].concat(d),
-    })
+  return new DataFrame({
+    name: 'GCT',
+    data: [l1, l2, l3].concat(d),
+  })
 }
 
 export function getDataFrameInfo(df: BaseDataFrame | null): string {
-    return df !== null ? getFormattedShape(df) : TEXT_OPEN_FILE
+  return df !== null ? getFormattedShape(df) : TEXT_OPEN_FILE
 }
 
 export interface ID3Item {
-    cell: [number, number]
-    group: string
-    variable: string
-    value: number
+  cell: [number, number]
+  group: string
+  variable: string
+  value: number
 }
 
 /**
@@ -863,97 +857,95 @@ export interface ID3Item {
  * @returns   data as an array of maps suitable for d3
  */
 export function dataframeToD3(df: BaseDataFrame): ID3Item[] {
-    const groups = df.colNames
-    const variables = df.rowNames
+  const groups = df.colNames
+  const variables = df.rowNames
 
-    return df.values
-        .map((row, ri) =>
-            row.map((value, ci) => ({
-                cell: [ri, ci] as [number, number],
-                group: groups[ci]!,
-                variable: variables[ri]!,
-                value: value as number,
-            }))
-        )
-        .flat()
+  return df.values
+    .map((row, ri) =>
+      row.map((value, ci) => ({
+        cell: [ri, ci] as [number, number],
+        group: groups[ci]!,
+        variable: variables[ri]!,
+        value: value as number,
+      }))
+    )
+    .flat()
 }
 
 interface IDownloadOptions extends IDataFrameWriterOpts {
-    file?: string
+  file?: string
 }
 
 export function downloadDataFrame(
-    df: BaseDataFrame | null | undefined,
-    downloadRef: RefObject<HTMLAnchorElement | null>,
-    options: IDownloadOptions = {}
+  df: BaseDataFrame | null | undefined,
+  downloadRef: RefObject<HTMLAnchorElement | null>,
+  options: IDownloadOptions = {}
 ) {
-    if (!df) {
-        return
-    }
+  if (!df) {
+    return
+  }
 
-    const { file, sep, hasHeader, hasIndex } = {
-        file: 'table.txt',
-        sep: '\t',
-        hasHeader: true,
-        hasIndex: true,
-        ...options,
-    }
+  const { file, sep, hasHeader, hasIndex } = {
+    file: 'table.txt',
+    sep: '\t',
+    hasHeader: true,
+    hasIndex: true,
+    ...options,
+  }
 
-    const f = new DataFrameWriter({ sep, hasHeader, hasIndex }).toString(df)
+  const f = new DataFrameWriter({ sep, hasHeader, hasIndex }).toString(df)
 
-    if (!f) {
-        return
-    }
+  if (!f) {
+    return
+  }
 
-    download(f, downloadRef, file)
+  download(f, downloadRef, file)
 }
 
 export function getColIdxFromGroup(
-    df: BaseDataFrame | null,
-    g: IClusterGroup,
-    caseSensitive = false
+  df: BaseDataFrame | null,
+  g: IClusterGroup,
+  caseSensitive = false
 ): number[] {
-    if (!df) {
-        return []
-    }
+  if (!df) {
+    return []
+  }
 
-    const lcSearch = caseSensitive
-        ? g.search
-        : g.search.map((s) => s.toLowerCase())
+  const lcSearch = caseSensitive
+    ? g.search
+    : g.search.map((s) => s.toLowerCase())
 
-    return df.columns.values
-        .map((col, ci) => ({ col: ci, name: col.toString().toLowerCase() }))
-        .filter((c) => {
-            if (g.columnNames) {
-                // search via cls so use the cls definitions of columns
-                // and check that the search, .e.g het
-                // # het cbp
-                // # het het het cpb cbp cbp
-                // In this situation, columnNames will be het het het cpb cbp cbp for
-                // every group created from the cls file. That way it uses the search
-                // param to look within columNames to see if the current position c.col
-                // matches the search. This is used in place of searching the regular
-                // column names of the dataframe and assumes that the columnNames refers
-                // to the alternative names of the columns of the current dataframe. If
-                // this is not the case, reload the groups after loading a table to ensure
-                // they are correctly synced.
-                for (const x of lcSearch) {
-                    if (
-                        g.columnNames[c.col % g.columnNames.length]?.includes(x)
-                    ) {
-                        return true
-                    }
-                }
-            } else {
-                for (const x of lcSearch) {
-                    if (c.name.includes(x)) {
-                        return true
-                    }
-                }
-            }
-            return false
-        })
-        .map((c) => c.col)
+  return df.columns.values
+    .map((col, ci) => ({ col: ci, name: col.toString().toLowerCase() }))
+    .filter((c) => {
+      if (g.columnNames) {
+        // search via cls so use the cls definitions of columns
+        // and check that the search, .e.g het
+        // # het cbp
+        // # het het het cpb cbp cbp
+        // In this situation, columnNames will be het het het cpb cbp cbp for
+        // every group created from the cls file. That way it uses the search
+        // param to look within columNames to see if the current position c.col
+        // matches the search. This is used in place of searching the regular
+        // column names of the dataframe and assumes that the columnNames refers
+        // to the alternative names of the columns of the current dataframe. If
+        // this is not the case, reload the groups after loading a table to ensure
+        // they are correctly synced.
+        for (const x of lcSearch) {
+          if (g.columnNames[c.col % g.columnNames.length]?.includes(x)) {
+            return true
+          }
+        }
+      } else {
+        for (const x of lcSearch) {
+          if (c.name.includes(x)) {
+            return true
+          }
+        }
+      }
+      return false
+    })
+    .map((c) => c.col)
 }
 
 /**
@@ -965,13 +957,13 @@ export function getColIdxFromGroup(
  * @returns
  */
 export function getColNamesFromGroup(
-    df: BaseDataFrame | null,
-    g: IClusterGroup,
-    caseSensitive = false
+  df: BaseDataFrame | null,
+  g: IClusterGroup,
+  caseSensitive = false
 ): string[] {
-    if (!df) {
-        return []
-    }
+  if (!df) {
+    return []
+  }
 
-    return getColIdxFromGroup(df, g, caseSensitive).map((i) => df.colName(i))
+  return getColIdxFromGroup(df, g, caseSensitive).map((i) => df.colName(i))
 }

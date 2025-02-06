@@ -3,7 +3,7 @@ import { listrm } from '@/lib/collections'
 import { nanoid } from '@/lib/utils'
 import { type IChildrenProps } from '@interfaces/children-props'
 import { produce } from 'immer'
-import { createContext, useReducer, Dispatch } from 'react'
+import { createContext, Dispatch, useReducer } from 'react'
 import { BaseDataFrame, type SheetId } from '../lib/dataframe/base-dataframe'
 import { INF_DATAFRAME } from '../lib/dataframe/inf-dataframe'
 
@@ -91,12 +91,12 @@ export function newHistoryStep(
   return {
     id: nanoid(),
     name: description,
-    sheets: sheets.map(s => s.id),
+    sheets: sheets.map((s) => s.id),
     currentSheet: sheets.length > 0 ? sheets[0]!.id : '',
-    sheetMap: Object.fromEntries(sheets.map(s => [s.id, s])),
-    plots: plots.map(s => s.id),
+    sheetMap: Object.fromEntries(sheets.map((s) => [s.id, s])),
+    plots: plots.map((s) => s.id),
     currentPlot: plots.length > 0 ? plots[0]!.id : '',
-    plotMap: Object.fromEntries(plots.map(s => [s.id, s])),
+    plotMap: Object.fromEntries(plots.map((s) => [s.id, s])),
   }
 }
 
@@ -131,7 +131,7 @@ export function _currentPlot(step: IHistoryStep): IPlot {
 export function currentStep(
   history: IHistoryBranchState,
   branchId: SheetId | undefined = undefined
-): [IHistoryStep  , number] {
+): [IHistoryStep, number] {
   const branch =
     branchId !== undefined
       ? findBranch(branchId, history)
@@ -241,7 +241,7 @@ export function currentSheets(
   const s = step[0]!
 
   return [
-    s.sheets.map(id => s.sheetMap[id]!),
+    s.sheets.map((id) => s.sheetMap[id]!),
     [branch[1]!, step[1]!, step[0]!.currentSheet],
   ]
 }
@@ -262,7 +262,7 @@ export function cloneHistory(
   history: IHistoryBranchState
 ): IHistoryBranchState {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  return produce(history, _ => {})
+  return produce(history, (_) => {})
 }
 
 export function newHistoryBranchState(
@@ -298,7 +298,7 @@ export function findHistoryComp<T extends IHistoryComp>(
 
   let matches = comps
     .map((step, si) => [step, si] as [T, number])
-    .filter(s => s[0].id === id)
+    .filter((s) => s[0].id === id)
 
   if (matches.length > 0) {
     return matches[0]!
@@ -308,7 +308,7 @@ export function findHistoryComp<T extends IHistoryComp>(
   id = id.toString().toLowerCase()
   matches = comps
     .map((step, si) => [step, si] as [T, number])
-    .filter(s => s[0].name.toLowerCase().includes(id as string))
+    .filter((s) => s[0].name.toLowerCase().includes(id as string))
   //.map(s => s[1])
 
   if (comps.length === 0) {
@@ -324,10 +324,7 @@ export function findHistoryComp<T extends IHistoryComp>(
  * @param dataframes
  * @returns
  */
-export function findSheet(
-  sheet: SheetId,
-  step: IHistoryStep
-): BaseDataFrame  {
+export function findSheet(sheet: SheetId, step: IHistoryStep): BaseDataFrame {
   if (typeof sheet == 'number') {
     return step.sheetMap[step.sheets[sheet]!]!
   }
@@ -335,9 +332,9 @@ export function findSheet(
   sheet = sheet.toLowerCase()
 
   const steps = step.sheets
-    .map(id => step.sheetMap[id]!)
+    .map((id) => step.sheetMap[id]!)
     .filter(
-      s => s.id === sheet || s.name.toLowerCase().includes(sheet as string)
+      (s) => s.id === sheet || s.name.toLowerCase().includes(sheet as string)
     )
   //.map(d => d[1])
 
@@ -351,7 +348,7 @@ export function findSheet(
 export function getSheetAddr(
   addr: IHistLookup,
   history: IHistoryBranchState
-): [BaseDataFrame , IHistItemAddr] {
+): [BaseDataFrame, IHistItemAddr] {
   const branch =
     addr.branch !== undefined
       ? findBranch(addr.branch, history)
@@ -406,8 +403,10 @@ export function findPlot(plot: SheetId, step: IHistoryStep): IPlot | null {
   plot = plot.toLowerCase()
 
   const steps = step.plots
-    .map(id => step.plotMap[id]!)
-    .filter(s => s.id === plot || s.name.toLowerCase().includes(plot as string))
+    .map((id) => step.plotMap[id]!)
+    .filter(
+      (s) => s.id === plot || s.name.toLowerCase().includes(plot as string)
+    )
   //.map(d => d[1])
 
   if (steps.length === 0) {
@@ -569,7 +568,7 @@ export function historyReducer(
       return state
     }
 
-    const nextState = produce(state, draft => {
+    const nextState = produce(state, (draft) => {
       draft.currentBranch = branch[1]!
     })
 
@@ -594,7 +593,7 @@ export function historyReducer(
 
     const branchIndex = branch[1]!
 
-    const nextState = produce(state, draft => {
+    const nextState = produce(state, (draft) => {
       draft.branches[branchIndex]!.steps = [
         ...branch[0]!.steps.slice(0, branch[0]!.currentStep + 1),
         newStep,
@@ -622,7 +621,7 @@ export function historyReducer(
       return state
     }
 
-    const nextState = produce(state, draft => {
+    const nextState = produce(state, (draft) => {
       draft.branches[branch[1]]!.steps = listrm(branch[0]!.steps, step[1]!)
       draft.branches[branch[1]]!.currentStep =
         step[1]! < branch[0]!.currentStep
@@ -649,7 +648,7 @@ export function historyReducer(
       return state
     }
 
-    const nextState = produce(state, draft => {
+    const nextState = produce(state, (draft) => {
       draft.branches[branch[1]!]!.currentStep = step[1]!
     })
 
@@ -675,17 +674,17 @@ export function historyReducer(
       return state
     }
 
-    const nextState = produce(state, draft => {
+    const nextState = produce(state, (draft) => {
       const b = branch[1]!
       const s = step[1]!
       draft.branches[b]!.steps[s]!.sheets = [
         ...step[0]!.sheets,
-        ...sheets.map(df => df.id),
+        ...sheets.map((df) => df.id),
       ]
 
       draft.branches[b]!.steps[s]!.sheetMap = Object.fromEntries([
         ...Object.entries(step[0]!.sheetMap),
-        ...sheets.map(sheet => [sheet.id, sheet]),
+        ...sheets.map((sheet) => [sheet.id, sheet]),
       ])
 
       draft.branches[b]!.steps[s]!.currentSheet = sheets[sheets.length - 1]!.id
@@ -718,7 +717,7 @@ export function historyReducer(
       return state
     }
 
-    const nextState = produce(state, draft => {
+    const nextState = produce(state, (draft) => {
       draft.branches[branch[1]!]!.steps[step[1]!]!.sheets = sheets
     })
 
@@ -750,9 +749,9 @@ export function historyReducer(
       return state
     }
 
-    const nextState = produce(state, draft => {
+    const nextState = produce(state, (draft) => {
       draft.branches[branch[1]!]!.steps[step[1]!]!.sheets =
-        step[0]!.sheets.filter(s => s !== sheet.id)
+        step[0]!.sheets.filter((s) => s !== sheet.id)
       delete draft.branches[branch[1]!]!.steps[step[1]!]!.sheetMap[sheet.id]
 
       draft.branches[branch[1]!]!.steps[step[1]!]!.currentSheet =
@@ -787,7 +786,7 @@ export function historyReducer(
       return state
     }
 
-    const nextState = produce(state, draft => {
+    const nextState = produce(state, (draft) => {
       draft.branches[branch[1]!]!.steps[step[1]!]!.currentSheet = sheet!.id
     })
 
@@ -813,12 +812,12 @@ export function historyReducer(
       return state
     }
 
-    const nextState = produce(state, draft => {
+    const nextState = produce(state, (draft) => {
       const b = branch[1]!
       const s = step[1]!
       draft.branches[b]!.steps[s]!.plots = [
         ...step[0]!.plots,
-        ...plots.map(p => p.id),
+        ...plots.map((p) => p.id),
       ]
 
       draft.branches[b]!.steps[s]!.plotMap = Object.fromEntries([
@@ -863,7 +862,7 @@ export function historyReducer(
       return state
     }
 
-    const nextState = produce(state, draft => {
+    const nextState = produce(state, (draft) => {
       draft.branches[branch[1]!]!.steps[step[1]!]!.plotMap[p.id] = plot
     })
 
@@ -895,9 +894,9 @@ export function historyReducer(
       return state
     }
 
-    const nextState = produce(state, draft => {
+    const nextState = produce(state, (draft) => {
       draft.branches[branch[1]!]!.steps[step[1]!]!.sheets =
-        step[0]!.sheets.filter(s => s !== plot.id)
+        step[0]!.sheets.filter((s) => s !== plot.id)
       delete draft.branches[branch[1]!]!.steps[step[1]!]!.sheetMap[plot.id]
 
       draft.branches[branch[1]!]!.steps[step[1]!]!.currentSheet =
@@ -919,7 +918,7 @@ export function historyReducer(
       customProps: { ...p.customProps, [name]: prop },
     }
 
-    const nextState = produce(state, draft => {
+    const nextState = produce(state, (draft) => {
       draft.branches[addr[0]!]!.steps[addr[1]!]!.plotMap[plot.id] = plot
     })
 
@@ -941,7 +940,7 @@ export function historyReducer(
         return state
       }
 
-      nextState = produce(state, draft => {
+      nextState = produce(state, (draft) => {
         draft.branches[branch[1]!]!.currentStep = Math.max(
           0,
           state.branches[branch[1]!]!.currentStep - 1
@@ -959,7 +958,7 @@ export function historyReducer(
         return state
       }
 
-      nextState = produce(state, draft => {
+      nextState = produce(state, (draft) => {
         draft.branches[branch[1]]!.currentStep = Math.min(
           state.branches[branch[1]]!.steps.length - 1,
           state.branches[branch[1]]!.currentStep + 1
@@ -1015,7 +1014,7 @@ export function historyReducer(
       nextState = updateCustomProp(action.addr, action.name, action.prop)
       break
     case 'open':
-      nextState = produce(state, draft => {
+      nextState = produce(state, (draft) => {
         if (action.mode !== 'Append') {
           draft.branches = []
         }
@@ -1039,7 +1038,7 @@ export function historyReducer(
     // do nothing
   }
 
-  nextState = produce(nextState, draft => {
+  nextState = produce(nextState, (draft) => {
     draft.actions.push(action.type)
 
     // stop it growing forever

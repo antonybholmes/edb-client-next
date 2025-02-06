@@ -4,7 +4,7 @@ export const EMPTY_SET = new Set()
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function intersect1d(s1: Set<any>, s2: Set<any>): Set<any> {
-  return new Set([...s1].filter(i => s2.has(i)))
+  return new Set([...s1].filter((i) => s2.has(i)))
 }
 
 export function listrm<T>(values: T[], indices: number | number[]): T[] {

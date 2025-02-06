@@ -83,7 +83,7 @@ export function plotsReducer(
     case 'remove':
       return {
         ...state,
-        plots: state.plots.filter(plot => plot.id != action.id),
+        plots: state.plots.filter((plot) => plot.id != action.id),
       }
     case 'clear':
       return { ...state, plots: [] }

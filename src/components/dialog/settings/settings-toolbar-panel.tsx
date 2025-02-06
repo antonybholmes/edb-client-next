@@ -11,8 +11,8 @@ export function SettingsToolbarPanel() {
       <SwitchPropRow
         title="Show group labels"
         checked={settings.toolbars.groups.labels.show}
-        onCheckedChange={v => {
-          const newSettings = produce(settings, draft => {
+        onCheckedChange={(v) => {
+          const newSettings = produce(settings, (draft) => {
             draft.toolbars.groups.labels.show = v
           })
 

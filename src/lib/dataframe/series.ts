@@ -72,7 +72,7 @@ export class Series extends BaseSeries {
 
   override filter(idx: number[]): BaseSeries {
     return new Series(
-      idx.map(i => this._data[i]!),
+      idx.map((i) => this._data[i]!),
       { name: this._name, index: this._index.filter(idx) }
     )
   }

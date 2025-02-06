@@ -33,7 +33,7 @@ interface IProps extends IElementProps {
 export function ToolbarOptionalDropdownButton({
   icon,
   onMainClick,
-  title ,
+  title,
   menuClassName,
   children,
   ...props

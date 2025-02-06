@@ -8,14 +8,10 @@ export async function generateStaticParams() {
   //   filename: edge?.node?._sys.breadcrumbs,
   // }))
 
-  return  []
+  return []
 }
 
-export default async function HelpPage({
- 
-}: {
-  params: { filename: string[] }
-}) {
+export default async function HelpPage({}: { params: { filename: string[] } }) {
   // const data = await client.queries.post({
   //   relativePath: `${params.filename}.md`,
   // })

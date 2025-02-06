@@ -90,7 +90,7 @@ export const TabbedDataFrames = forwardRef(function TabbedDataFrames(
       tabs={tabs}
       maxNameLength={MAX_NAME_CHARS}
       onValueChange={onValueChange}
-      onTabChange={selectedTab => {
+      onTabChange={(selectedTab) => {
         // historyDispatch({
         //   type: 'goto-sheet',
         //   sheetId: selectedTab.index,

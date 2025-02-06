@@ -82,7 +82,7 @@ export function AddLocalBedDialog({ callback, onCancel }: IProps) {
       open={true}
       //buttons={[TEXT_OK]}
       title={`Load BED file`}
-      onReponse={response => {
+      onReponse={(response) => {
         if (response === TEXT_OK) {
           if (lines.length === 0) {
             setError('This file appears to be empty')
@@ -117,7 +117,7 @@ export function AddLocalBedDialog({ callback, onCancel }: IProps) {
       <Input5
         id="name"
         value={name}
-        onChange={e => {
+        onChange={(e) => {
           setName(e.target.value)
           // const newTrack = {
           //   ...track,
@@ -130,9 +130,9 @@ export function AddLocalBedDialog({ callback, onCancel }: IProps) {
       />
 
       <FileDropPanel
-        onFileDrop={files => {
+        onFileDrop={(files) => {
           if (files.length > 0) {
-            onTextFileChange('Open filter list', files, files => {
+            onTextFileChange('Open filter list', files, (files) => {
               if (files.length > 0) {
                 setName(files[0]!.name.split('.')[0]!)
                 setLines(textToLines(files[0]!.text))

@@ -45,5 +45,5 @@ export function hypGeomPMF(k: number, N: number, K: number, n: number): number {
 export function hypGeomCDF(k: number, N: number, K: number, n: number): number {
   //console.log(k, N, K, n)
 
-  return sum(rangeMap(k1 => hypGeomPMF(k1, N, K, n), k + 1))
+  return sum(rangeMap((k1) => hypGeomPMF(k1, N, K, n), k + 1))
 }

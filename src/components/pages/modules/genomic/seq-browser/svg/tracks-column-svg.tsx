@@ -131,8 +131,8 @@ export function TracksColumnSvg({
   // )
 
   const tracks = state.order
-    .map(gid => state.groups[gid]!)
-    .map(tg => tg.order.map(id => tg.tracks[id]!))
+    .map((gid) => state.groups[gid]!)
+    .map((tg) => tg.order.map((id) => tg.tracks[id]!))
 
   if (tracks.length === 0) {
     return null
@@ -141,7 +141,7 @@ export function TracksColumnSvg({
   const titleHeightUsingPosition =
     settings.titles.position === 'Top' ? settings.titles.height : 0
 
-  const trackHeights: number[] = tracks.map(ts => {
+  const trackHeights: number[] = tracks.map((ts) => {
     switch (ts[0]!.type) {
       case 'Seq':
         return (

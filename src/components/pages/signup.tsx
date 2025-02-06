@@ -119,7 +119,6 @@ function SignUpPage({ allowPassword = true }: ISignupProps) {
         }),
       })
     } catch (error) {
-   
       alertDispatch({
         type: 'add',
         alert: makeAlertFromAxiosError(error as AxiosError),
@@ -140,7 +139,7 @@ function SignUpPage({ allowPassword = true }: ISignupProps) {
                 {allowPassword && (
                   <Switch
                     checked={settings.passwordless}
-                    onCheckedChange={state => {
+                    onCheckedChange={(state) => {
                       updateSettings({ ...settings, passwordless: state })
                     }}
                   >

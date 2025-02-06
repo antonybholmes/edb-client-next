@@ -33,12 +33,12 @@ export function LineGraph() {
     var samples = 2000
     var data = d3.range(xDomain[0], xDomain[1], xDomain[1] / samples)
 
-     svg
+    svg
       .selectAll('path')
       .data([f])
       .enter()
       .append('path')
-      .attr('stroke', function ( ) {
+      .attr('stroke', function () {
         return colours[0]
       })
       .attr('stroke-width', 2)

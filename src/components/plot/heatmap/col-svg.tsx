@@ -78,7 +78,7 @@ export function ColLabelsSvg({
             transform={`translate(${x}, 0) rotate(270)`}
             fill={
               props.colLabels.isColored
-                ? colorMap?.get(col) ?? props.colLabels.color
+                ? (colorMap?.get(col) ?? props.colLabels.color)
                 : props.colLabels.color
             }
             dominantBaseline="central"

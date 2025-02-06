@@ -34,7 +34,7 @@ export function BedTrackItem({
       {group.order.length > 1 && <UngroupButton group={group} />}
       <BaseCol className="grow">
         {group.order
-          .map(id => group.tracks[id]! as IBedTrack | ILocalBedTrack)
+          .map((id) => group.tracks[id]! as IBedTrack | ILocalBedTrack)
           .map((t, ti) => {
             return (
               <VCenterRow

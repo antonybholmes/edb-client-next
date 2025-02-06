@@ -11,7 +11,7 @@ export class Index extends BaseIndex {
    * Return the values as strings
    */
   get strs(): string[] {
-    return this.values.map(v => cellStr(v))
+    return this.values.map((v) => cellStr(v))
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

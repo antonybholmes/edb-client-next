@@ -11,7 +11,7 @@ export function capitalizeSentence(text: string): string {
     .replaceAll('-', ' ')
     .replaceAll(/ +/g, ' ')
     .split(' ')
-    .filter(word => word.length > 0)
+    .filter((word) => word.length > 0)
     .map((word, wi) =>
       wi === 0 ? word[0]!.toUpperCase() + word.substring(1) : word
     )

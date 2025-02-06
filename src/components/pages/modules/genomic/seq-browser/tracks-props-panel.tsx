@@ -311,7 +311,7 @@ export function TracksPropsPanel({
                   type: 'BED',
                   id: nanoid(),
                   displayOptions: { ...DEFAULT_BED_TRACK_DISPLAY_OPTIONS },
-                } as IBedTrack)
+                }) as IBedTrack
             )
 
             let displayTracks: ITrackGroup[] = []
@@ -557,7 +557,6 @@ export function TracksPropsPanel({
                   : []
               )
 
- 
               groupIds = state.order.filter(
                 (_, gi) => seqsByGroup[gi]!.length > 0
               )

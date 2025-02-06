@@ -51,7 +51,7 @@ export function factorialLn(x: number): number {
     return 0
   }
 
-  return sum(rangeMap(x => getNatLogOfInt(x), 1, x + 1))
+  return sum(rangeMap((x) => getNatLogOfInt(x), 1, x + 1))
 }
 
 export function factorial(x: number): number {

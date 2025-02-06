@@ -89,7 +89,6 @@ export function ClustersPanel({
   // }
 
   function addGroup() {
- 
     if (!df || name === '' || search === '') {
       return
     }

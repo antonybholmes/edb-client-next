@@ -208,7 +208,7 @@ export function HeatMapDialog({
     <OKCancelDialog
       open={open}
       title="Heatmap"
-      onReponse={r => {
+      onReponse={(r) => {
         if (r === TEXT_CANCEL) {
           onReponse?.(r)
         } else {
@@ -228,7 +228,7 @@ export function HeatMapDialog({
           <VCenterRow className="gap-x-2">
             <Checkbox
               checked={settings.heatmap.filterRows}
-              onCheckedChange={value => {
+              onCheckedChange={(value) => {
                 updateSettings({
                   ...settings,
                   heatmap: { ...settings.heatmap, filterRows: value },
@@ -239,7 +239,7 @@ export function HeatMapDialog({
             <Input
               id="top-rows"
               value={settings.heatmap.topRows.toString()}
-              onChange={e => {
+              onChange={(e) => {
                 const v = Number.parseInt(e.target.value)
 
                 if (Number.isInteger(v)) {
@@ -254,7 +254,7 @@ export function HeatMapDialog({
             <span className="shrink-0">rows using</span>
             <SelectList
               value={settings.heatmap.rowFilterMethod}
-              onValueChange={value =>
+              onValueChange={(value) =>
                 updateSettings({
                   ...settings,
                   heatmap: { ...settings.heatmap, rowFilterMethod: value },
@@ -272,7 +272,7 @@ export function HeatMapDialog({
         <SettingsAccordionItem title="Transform">
           <Checkbox
             checked={settings.heatmap.applyLog2}
-            onCheckedChange={value => {
+            onCheckedChange={(value) => {
               updateSettings({
                 ...settings,
                 heatmap: { ...settings.heatmap, applyLog2: value },
@@ -284,7 +284,7 @@ export function HeatMapDialog({
 
           <Checkbox
             checked={settings.heatmap.applyRowZscore}
-            onCheckedChange={value => {
+            onCheckedChange={(value) => {
               updateSettings({
                 ...settings,
                 heatmap: { ...settings.heatmap, applyRowZscore: value },
@@ -296,7 +296,7 @@ export function HeatMapDialog({
 
           <Checkbox
             checked={settings.heatmap.applyTranspose}
-            onCheckedChange={value => {
+            onCheckedChange={(value) => {
               updateSettings({
                 ...settings,
                 heatmap: { ...settings.heatmap, applyTranspose: value },
@@ -310,7 +310,7 @@ export function HeatMapDialog({
         <SettingsAccordionItem title="Cluster">
           <Checkbox
             checked={settings.heatmap.clusterRows}
-            onCheckedChange={value => {
+            onCheckedChange={(value) => {
               updateSettings({
                 ...settings,
                 heatmap: { ...settings.heatmap, clusterRows: value },
@@ -322,7 +322,7 @@ export function HeatMapDialog({
 
           <Checkbox
             checked={settings.heatmap.clusterCols}
-            onCheckedChange={value => {
+            onCheckedChange={(value) => {
               updateSettings({
                 ...settings,
                 heatmap: { ...settings.heatmap, clusterCols: value },
@@ -336,7 +336,7 @@ export function HeatMapDialog({
             <span className="w-24">Linkage</span>
             <SelectList
               value={settings.heatmap.linkage}
-              onValueChange={value => {
+              onValueChange={(value) => {
                 updateSettings({
                   ...settings,
                   heatmap: { ...settings.heatmap, linkage: value },
@@ -354,7 +354,7 @@ export function HeatMapDialog({
             <span className="w-24">Distance</span>
             <SelectList
               value={settings.heatmap.distance}
-              onValueChange={value => {
+              onValueChange={(value) => {
                 updateSettings({
                   ...settings,
                   heatmap: { ...settings.heatmap, distance: value },

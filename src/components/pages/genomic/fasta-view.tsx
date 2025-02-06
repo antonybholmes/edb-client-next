@@ -70,12 +70,12 @@ export function SeqViewPage() {
     const ret: ISeq[] = []
 
     for (let i = 0; i < files.length; i++) {
-      const lines: string[] = await new Promise(resolve => {
+      const lines: string[] = await new Promise((resolve) => {
         const file: File = files[i]! // OR const file = files.item(i);
 
         const fileReader = new FileReader()
 
-        fileReader.onload = e => {
+        fileReader.onload = (e) => {
           const result = e.target?.result
 
           if (result) {
@@ -140,7 +140,7 @@ export function SeqViewPage() {
             <HCenterCol className="gap-y-1">
               <BaseRow className="grow gap-x-1">
                 <ToolbarOpenFile
-                  onOpenChange={open => {
+                  onOpenChange={(open) => {
                     if (open) {
                       setShowDialog({
                         id: makeRandId('open'),

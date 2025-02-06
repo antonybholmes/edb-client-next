@@ -37,7 +37,7 @@ export class DataIndex extends Index {
 
   override filter(idx: number[]): Index {
     return new DataIndex(
-      idx.map(i => this._data[i]!),
+      idx.map((i) => this._data[i]!),
       { name: this._name }
     )
   }
@@ -45,7 +45,7 @@ export class DataIndex extends Index {
   isin(idx: IndexData[]): Index {
     const s = new Set(idx)
     return new DataIndex(
-      this._data.filter(i => s.has(i)),
+      this._data.filter((i) => s.has(i)),
       { name: this._name }
     )
   }

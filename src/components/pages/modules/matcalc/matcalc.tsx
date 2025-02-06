@@ -568,7 +568,6 @@ function MatcalcPage() {
     const dfOverlaps = oneWayFromDataframes(dataframes)
 
     if (dfOverlaps) {
- 
       historyDispatch({
         type: 'add-sheets',
 
@@ -1166,8 +1165,6 @@ function MatcalcPage() {
     if (step[0] === null) {
       return null
     }
-
-
 
     return (
       <Tabs

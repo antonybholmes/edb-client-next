@@ -24,7 +24,7 @@ export function ColorMapIcon({ cmap, steps = 7, style, className }: IProps) {
         preserveAspectRatio="none"
       >
         <g>
-          {range(steps).map(step => {
+          {range(steps).map((step) => {
             //colorStart += colorStep
 
             return (

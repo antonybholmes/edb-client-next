@@ -85,8 +85,8 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
       <SwitchPropRow
         title="Labels"
         checked={_track.displayOptions.labels.show}
-        onCheckedChange={v => {
-          const newTrack = produce(_track, draft => {
+        onCheckedChange={(v) => {
+          const newTrack = produce(_track, (draft) => {
             draft.displayOptions.labels.show = v
           })
 
@@ -98,8 +98,8 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
       <SwitchPropRow
         title="Stroke"
         checked={_track.displayOptions.stroke.show}
-        onCheckedChange={v => {
-          const newTrack = produce(_track, draft => {
+        onCheckedChange={(v) => {
+          const newTrack = produce(_track, (draft) => {
             draft.displayOptions.stroke.show = v
           })
 
@@ -110,8 +110,8 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
           <ColorPickerButton
             color={_track.displayOptions.stroke.color}
             disabled={!_track.displayOptions.stroke.show}
-            onColorChange={v => {
-              const newTrack = produce(_track, draft => {
+            onColorChange={(v) => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.stroke.color = v
               })
 
@@ -130,8 +130,8 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
             disabled={!_track.displayOptions.stroke.show}
             placeholder="Stroke..."
             className="w-16 rounded-theme"
-            onNumChange={v => {
-              const newTrack = produce(_track, draft => {
+            onNumChange={(v) => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.stroke.width = v
               })
 
@@ -160,8 +160,8 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
           <ColorPickerButton
             color={_track.displayOptions.exons.fill.color}
             disabled={!_track.displayOptions.exons.fill.show}
-            onColorChange={v => {
-              const newTrack = produce(_track, draft => {
+            onColorChange={(v) => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.exons.fill.color = v
               })
 
@@ -179,8 +179,8 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
             disabled={!_track.displayOptions.exons.show}
             placeholder="Height..."
             className="w-16 rounded-theme"
-            onNumChange={v => {
-              const newTrack = produce(_track, draft => {
+            onNumChange={(v) => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.exons.height = v
               })
 
@@ -210,8 +210,8 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
           <ColorPickerButton
             color={_track.displayOptions.arrows.stroke.color}
             disabled={!_track.displayOptions.arrows.stroke.show}
-            onColorChange={v => {
-              const newTrack = produce(_track, draft => {
+            onColorChange={(v) => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.arrows.stroke.color = v
               })
 
@@ -250,8 +250,8 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
             value={_track.displayOptions.arrows.x}
             placeholder="Width..."
             className="w-16 rounded-theme"
-            onNumChange={v => {
-              const newTrack = produce(_track, draft => {
+            onNumChange={(v) => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.arrows.x = v
               })
 
@@ -266,8 +266,8 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
             value={_track.displayOptions.arrows.y}
             placeholder="Height..."
             className="w-16 rounded-theme"
-            onNumChange={v => {
-              const newTrack = produce(_track, draft => {
+            onNumChange={(v) => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.arrows.y = v
               })
 

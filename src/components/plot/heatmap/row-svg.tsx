@@ -18,7 +18,7 @@ export function RowTreeSvg({
       shapeRendering={SVG_CRISP_EDGES}
     >
       {tree.coords.map((coords, ri) => {
-        const p = range(4).map(i => ({
+        const p = range(4).map((i) => ({
           y: coords[i]!.x * width,
           x:
             mode === 'Left'

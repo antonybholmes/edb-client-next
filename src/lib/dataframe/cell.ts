@@ -57,7 +57,7 @@ export function makeCell(
 }
 
 export function makeCells(...args: IndexData[]): SeriesData[] {
-  return args.map(arg => makeCell(arg))
+  return args.map((arg) => makeCell(arg))
 }
 
 interface ICellStrOpts {

@@ -65,7 +65,7 @@ export function makeRandId(prefix: string): string {
 export function zip(...cols: any[]): any[][] {
   const colIdx = range(cols.length)
 
-  return rangeMap(i => colIdx.map(j => cols[j][i]), cols[0].length)
+  return rangeMap((i) => colIdx.map((j) => cols[j][i]), cols[0].length)
 }
 
 /**

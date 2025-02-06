@@ -72,9 +72,8 @@ export function DataPanel({ panelId = 'Data' }: IDataPanelProps) {
     const messages = messageState.queue.filter(
       (message) => message.target === panelId
     )
- 
+
     messages.forEach((message) => {
- 
       if (message.text.includes('save')) {
         let format = 'txt'
 

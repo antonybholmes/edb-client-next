@@ -207,7 +207,6 @@ export function SignIn({ allowPassword = true, visitUrl }: ISignInProps) {
     try {
       // to activate passwordless, simply use a blank password
 
- 
       const res = await queryClient.fetchQuery({
         queryKey: ['signin'],
         queryFn: () =>
@@ -258,7 +257,7 @@ export function SignIn({ allowPassword = true, visitUrl }: ISignInProps) {
             {allowPassword && (
               <Switch
                 checked={settings.passwordless}
-                onCheckedChange={state => {
+                onCheckedChange={(state) => {
                   updateSettings({ ...settings, passwordless: state })
                 }}
               >
@@ -360,7 +359,7 @@ export function SignIn({ allowPassword = true, visitUrl }: ISignInProps) {
                         <FormControl>
                           <Switch
                             checked={field.value}
-                            onCheckedChange={state => {
+                            onCheckedChange={(state) => {
                               updateSettings({
                                 ...settings,
                                 staySignedIn: state,

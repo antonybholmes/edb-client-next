@@ -20,7 +20,7 @@ export class ZScore {
   }
 
   transform(data: number[]): number[] {
-    return data.map(v => (v - this._mean) / this._std)
+    return data.map((v) => (v - this._mean) / this._std)
   }
 
   /**

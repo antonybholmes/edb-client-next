@@ -205,9 +205,7 @@ function LollipopPage() {
         search: { text: gene, results: proteins },
         index,
       })
-    } catch  {
- 
-    }
+    } catch {}
 
     try {
       let res = await queryClient.fetchQuery({

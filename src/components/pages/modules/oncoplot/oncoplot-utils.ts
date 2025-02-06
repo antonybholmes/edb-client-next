@@ -310,7 +310,7 @@ export class EventCountMap {
 
   get sum(): number {
     return [...this._countMap.entries()]
-      .map(event => event[1])
+      .map((event) => event[1])
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
   }
 
@@ -325,7 +325,7 @@ export class EventCountMap {
    */
   countDist(ids: string[], keepZeros: boolean = true): [string, number][] {
     return ids
-      .map(id => [id, this._countMap.get(id) ?? 0] as [string, number])
+      .map((id) => [id, this._countMap.get(id) ?? 0] as [string, number])
       .filter((x: [string, number]) => keepZeros || x[1] > 0) as [
       string,
       number,
@@ -340,7 +340,7 @@ export class EventCountMap {
    */
   normCountDist(ids: string[], keepZeros: boolean = true): [string, number][] {
     const total = this.sum
-    return this.countDist(ids, keepZeros).map(x => {
+    return this.countDist(ids, keepZeros).map((x) => {
       x[1] /= total
 
       return x
@@ -430,8 +430,8 @@ export class OncoplotMutationFrame {
     )
 
     const geneOrder = genes
-      .filter(gene => originalGeneOrder.has(gene))
-      .map(gene => originalGeneOrder.get(gene)!)
+      .filter((gene) => originalGeneOrder.has(gene))
+      .map((gene) => originalGeneOrder.get(gene)!)
 
     return this.setGeneOrder(geneOrder)
   }
@@ -454,8 +454,8 @@ export class OncoplotMutationFrame {
     )
 
     const sampleOrder = samples
-      .filter(sample => originalSampleOrder.has(sample))
-      .map(sample => originalSampleOrder.get(sample)!)
+      .filter((sample) => originalSampleOrder.has(sample))
+      .map((sample) => originalSampleOrder.get(sample)!)
 
     return this.setSampleOrder(sampleOrder)
   }
@@ -498,11 +498,11 @@ export class OncoplotMutationFrame {
   }
 
   get geneStats(): OncoCellStats[] {
-    return this._geneOrder.map(i => this._geneStats[i]!)
+    return this._geneOrder.map((i) => this._geneStats[i]!)
   }
 
   get sampleStats(): OncoCellStats[] {
-    return this._sampleOrder.map(i => this._sampleStats[i]!)
+    return this._sampleOrder.map((i) => this._sampleStats[i]!)
   }
 
   // get sampleOrder(): number[] {
@@ -516,13 +516,13 @@ export class OncoplotMutationFrame {
 
 function orderEvents(events: Set<string>, oncoProps: IOncoProps): string[] {
   // first order by by what we know
-  let ordered = oncoProps.plotorder.filter(mutation => events.has(mutation))
+  let ordered = oncoProps.plotorder.filter((mutation) => events.has(mutation))
 
   const orderedEvents = new Set<string>(ordered)
 
   // order everything else alphabetically
   ordered = ordered.concat(
-    [...events].sort().filter(mutation => !orderedEvents.has(mutation))
+    [...events].sort().filter((mutation) => !orderedEvents.has(mutation))
   )
 
   return ordered
@@ -545,12 +545,12 @@ function createMarginals(
       } else if (multi === 'equalbar') {
         const f = 1 / stats.events.length
 
-        stats.events.forEach(event => {
+        stats.events.forEach((event) => {
           featureStats[geneIndex]!.set(event[0], f)
           sampleStats[sampleIndex]!.set(event[0], f)
         })
       } else {
-        stats.events.forEach(event => {
+        stats.events.forEach((event) => {
           const f = event[1] / stats.sum
           featureStats[geneIndex]!.set(event[0], f)
           sampleStats[sampleIndex]!.set(event[0], f)
@@ -598,20 +598,20 @@ export function makeLocationOncoPlot(
 
   let oncotable: OncoCellStats[][] = []
 
-  features.forEach(loc => {
+  features.forEach((loc) => {
     // each location needs a representation of each sample
     oncotable.push(
-      samples.map(sample => new OncoCellStats(loc.toString(), sample))
+      samples.map((sample) => new OncoCellStats(loc.toString(), sample))
     )
   })
 
   // we need row and column stats
   const featureStats: OncoCellStats[] = features.map(
-    loc => new OncoCellStats(loc.toString(), loc.toString())
+    (loc) => new OncoCellStats(loc.toString(), loc.toString())
   )
 
   let sampleStats: OncoCellStats[] = samples.map(
-    sample => new OncoCellStats(sample, sample)
+    (sample) => new OncoCellStats(sample, sample)
   )
 
   let sample: string
@@ -625,7 +625,7 @@ export function makeLocationOncoPlot(
   let tum: string
   let mutType: string
 
-  range(mutDf.shape[0]).forEach(row => {
+  range(mutDf.shape[0]).forEach((row) => {
     sample = mutDf.col(columns.sample).values[row]!.toString()
     sampleIndex = sampleIndexMap.get(sample)!
 
@@ -653,7 +653,7 @@ export function makeLocationOncoPlot(
 
     const overlaps = locBinMap.search(loc)
 
-    overlaps.forEach(l => {
+    overlaps.forEach((l) => {
       overlapLocId = l.toString()
       locIndex = locIndexMap.get(overlapLocId)!
 
@@ -698,7 +698,7 @@ export function makeLocationOncoPlot(
     // keep only samples that have an event i.e are associated with a region
 
     const keepSamples = new Set<number>(
-      range(samples.length).filter(si => {
+      range(samples.length).filter((si) => {
         return sampleStats[si]!.sum > 0
       })
     )
@@ -708,7 +708,9 @@ export function makeLocationOncoPlot(
     //console.log(samples.join(","))
 
     //filter table
-    oncotable = oncotable.map(row => row.filter((_, ci) => keepSamples.has(ci)))
+    oncotable = oncotable.map((row) =>
+      row.filter((_, ci) => keepSamples.has(ci))
+    )
 
     //filter colstats
     sampleStats = sampleStats.filter((_, si) => keepSamples.has(si))
@@ -728,26 +730,26 @@ export function makeLocationOncoPlot(
   // add all events from the matrix and margins to our default
   // list of mutations that are shown on the legend
 
-  range(features.length).forEach(featureIndex => {
+  range(features.length).forEach((featureIndex) => {
     stats = featureStats[featureIndex]!
 
-    Array.from(stats.countMap.keys()).forEach(event =>
+    Array.from(stats.countMap.keys()).forEach((event) =>
       allEventsInUse.add(event)
     )
 
-    range(samples.length).forEach(sampleIndex => {
+    range(samples.length).forEach((sampleIndex) => {
       stats = oncotable[featureIndex]![sampleIndex]!
 
-      Array.from(stats.countMap.keys()).forEach(event =>
+      Array.from(stats.countMap.keys()).forEach((event) =>
         allEventsInUse.add(event)
       )
     })
   })
 
-  range(samples.length).forEach(sampleIndex => {
+  range(samples.length).forEach((sampleIndex) => {
     stats = sampleStats[sampleIndex]!
 
-    Array.from(stats.countMap.keys()).forEach(event =>
+    Array.from(stats.countMap.keys()).forEach((event) =>
       allEventsInUse.add(event)
     )
   })
@@ -755,7 +757,7 @@ export function makeLocationOncoPlot(
   const ordered = orderEvents(allEventsInUse, oncoProps)
 
   const colorMap = new Map<string, string>(
-    ordered.map(event => [
+    ordered.map((event) => [
       event,
       DEFAULT_COLOR_MAP.get(event) ?? DEFAULT_COLOR_MAP.get(OTHER_MUTATION)!,
     ])
@@ -790,9 +792,8 @@ export function makeOncoPlot(
 ): [OncoplotMutationFrame, ILegend] {
   let samples: string[] = [...new Set(df.col(columns.sample)?.strs)].sort()
 
- 
   const genes: string[] = [...new Set(df.col(columns.gene)?.strs)]
-    .filter(x => x !== '')
+    .filter((x) => x !== '')
     .sort()
 
   const geneIndexMap = new Map<string, number>(
@@ -805,18 +806,18 @@ export function makeOncoPlot(
 
   let oncotable: OncoCellStats[][] = []
 
-  genes.forEach(gene => {
+  genes.forEach((gene) => {
     // each location needs a representation of each sample
-    oncotable.push(samples.map(sample => new OncoCellStats(gene, sample)))
+    oncotable.push(samples.map((sample) => new OncoCellStats(gene, sample)))
   })
 
   // we need row and column stats
   const geneStats: OncoCellStats[] = genes.map(
-    gene => new OncoCellStats(gene, gene)
+    (gene) => new OncoCellStats(gene, gene)
   )
 
   let sampleStats: OncoCellStats[] = samples.map(
-    sample => new OncoCellStats(sample, sample)
+    (sample) => new OncoCellStats(sample, sample)
   )
 
   let sample: string
@@ -825,7 +826,7 @@ export function makeOncoPlot(
   let geneIndex: number | undefined
   let mutType: string
 
-  range(df.shape[0]).forEach(row => {
+  range(df.shape[0]).forEach((row) => {
     sample = df.col(columns.sample)?.values[row]!.toString()
     sampleIndex = sampleIndexMap.get(sample)!
 
@@ -890,7 +891,7 @@ export function makeOncoPlot(
     // keep only samples that have an event i.e are associated with a region
 
     const keepSamples = new Set<number>(
-      range(samples.length).filter(si => {
+      range(samples.length).filter((si) => {
         return sampleStats[si]!.sum > 0
       })
     )
@@ -900,7 +901,9 @@ export function makeOncoPlot(
     //console.log(samples.join(","))
 
     //filter table
-    oncotable = oncotable.map(row => row.filter((_, ci) => keepSamples.has(ci)))
+    oncotable = oncotable.map((row) =>
+      row.filter((_, ci) => keepSamples.has(ci))
+    )
 
     //filter colstats
     sampleStats = sampleStats.filter((_, si) => keepSamples.has(si))
@@ -920,26 +923,26 @@ export function makeOncoPlot(
   // add all events from the matrix and margins to our default
   // list of mutations that are shown on the legend
 
-  range(genes.length).forEach(geneIndex => {
+  range(genes.length).forEach((geneIndex) => {
     stats = geneStats[geneIndex]!
 
-    Array.from(stats.countMap.keys()).forEach(event =>
+    Array.from(stats.countMap.keys()).forEach((event) =>
       allEventsInUse.add(event)
     )
 
-    range(samples.length).forEach(sampleIndex => {
+    range(samples.length).forEach((sampleIndex) => {
       stats = oncotable[geneIndex]![sampleIndex]!
 
-      Array.from(stats.countMap.keys()).forEach(event =>
+      Array.from(stats.countMap.keys()).forEach((event) =>
         allEventsInUse.add(event)
       )
     })
   })
 
-  range(samples.length).forEach(sampleIndex => {
+  range(samples.length).forEach((sampleIndex) => {
     stats = sampleStats[sampleIndex]!
 
-    Array.from(stats.countMap.keys()).forEach(event =>
+    Array.from(stats.countMap.keys()).forEach((event) =>
       allEventsInUse.add(event)
     )
   })
@@ -947,7 +950,7 @@ export function makeOncoPlot(
   const ordered = orderEvents(allEventsInUse, oncoProps)
 
   const colorMap = new Map<string, string>(
-    ordered.map(event => [
+    ordered.map((event) => [
       event,
       DEFAULT_COLOR_MAP.get(event) ?? DEFAULT_COLOR_MAP.get(OTHER_MUTATION)!,
     ])
@@ -962,7 +965,7 @@ export function memoSort(df: OncoplotMutationFrame): [number[], number[]] {
   const geneOrder = df.geneStats
     .map((stats, si) => [si, stats.sum])
     .sort((a, b) => b[1]! - a[1]!)
-    .map(x => x[0]!)
+    .map((x) => x[0]!)
 
   // sort rows first
   // let newTable: OncoplotDataframe = {
@@ -979,7 +982,7 @@ export function memoSort(df: OncoplotMutationFrame): [number[], number[]] {
   //   oncoProps.plotorder.map((event, ei) => [event, ei / 100]),
   // )
 
-  range(df.shape[1]).map(col => {
+  range(df.shape[1]).map((col) => {
     // find all non zero rows and use a bit flag to set whether
     // samples are there or not. Use bit pattern as score so that
     // cols with more genes towards the upper left of the matrix
@@ -989,8 +992,8 @@ export function memoSort(df: OncoplotMutationFrame): [number[], number[]] {
     // if multiple samples are kept together.
     const score: number = geneOrder
       .map((row, ri) => ({ originalIndex: row!, index: ri })!)
-      .filter(row => df._data[row.originalIndex]![col]!.sum > 0)
-      .map(row => {
+      .filter((row) => df._data[row.originalIndex]![col]!.sum > 0)
+      .map((row) => {
         //const stats = df._data[row][col]
 
         //const id = getEventLabel(stats, oncoProps, displayProps.multi)
@@ -1008,7 +1011,7 @@ export function memoSort(df: OncoplotMutationFrame): [number[], number[]] {
   const sampleOrder = sampleScores
     .map((score, si) => [si, score])
     .sort((a, b) => b[1]! - a[1]!)
-    .map(x => x[0]!)
+    .map((x) => x[0]!)
 
   // newTable = {
   //   data: newTable.data.map(row => sampleOrder.map(c => row[c])),

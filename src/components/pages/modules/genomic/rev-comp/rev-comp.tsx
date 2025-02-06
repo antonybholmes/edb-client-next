@@ -5,10 +5,10 @@ import { ToolbarOpenFile } from '@components/toolbar/toolbar-open-files'
 import { ToolbarFooter } from '@components/toolbar/toolbar-footer'
 
 import {
-    ShowOptionsMenu,
-    Toolbar,
-    ToolbarMenu,
-    ToolbarPanel,
+  ShowOptionsMenu,
+  Toolbar,
+  ToolbarMenu,
+  ToolbarPanel,
 } from '@components/toolbar/toolbar'
 import { ToolbarSeparator } from '@components/toolbar/toolbar-separator'
 import { PlayIcon } from '@icons/play-icon'
@@ -29,17 +29,17 @@ import { queryClient } from '@/query'
 import { useEffect, useRef, useState } from 'react'
 
 import {
-    NO_DIALOG,
-    TEXT_DOWNLOAD_AS_CSV,
-    TEXT_DOWNLOAD_AS_TXT,
-    TEXT_OPEN,
-    TEXT_OPEN_FILE,
-    TEXT_SAVE_AS,
-    type IDialogParams,
+  NO_DIALOG,
+  TEXT_DOWNLOAD_AS_CSV,
+  TEXT_DOWNLOAD_AS_TXT,
+  TEXT_OPEN,
+  TEXT_OPEN_FILE,
+  TEXT_SAVE_AS,
+  type IDialogParams,
 } from '@/consts'
 import {
-    ResizablePanel,
-    ResizablePanelGroup,
+  ResizablePanel,
+  ResizablePanelGroup,
 } from '@components/shadcn/ui/themed/resizable'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
@@ -52,10 +52,10 @@ import { ThinVResizeHandle } from '@components/split-pane/thin-v-resize-handle'
 import { textToLines } from '@/lib/text/lines'
 import { OpenIcon } from '@components/icons/open-icon'
 import {
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-    ScrollAccordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  ScrollAccordion,
 } from '@components/shadcn/ui/themed/accordion'
 import { Textarea3 } from '@components/shadcn/ui/themed/textarea3'
 import type { ITab } from '@components/tab-provider'
@@ -117,7 +117,7 @@ function RevCompPage() {
     let bases: DNABase[] = seq.seq.split('') as DNABase[]
 
     if (modeComp) {
-      bases = bases.map(c => REV_MAP[c] ?? c)
+      bases = bases.map((c) => REV_MAP[c] ?? c)
     }
 
     if (modeRev) {
@@ -134,7 +134,7 @@ function RevCompPage() {
     let buffer = ''
     const seqs: ISeq[] = []
 
-    lines.forEach(line => {
+    lines.forEach((line) => {
       line = line.trim()
       if (line.length === 0) {
         if (buffer.length > 0) {
@@ -163,7 +163,7 @@ function RevCompPage() {
       return
     }
 
-    const revSeqs = seqs.map(s => ({
+    const revSeqs = seqs.map((s) => ({
       id: s.id,
       seq: s.seq,
       rev: revComp(s),
@@ -185,7 +185,7 @@ function RevCompPage() {
         break
       default:
         download(
-          outputSeqs.map(seq => `>${seq.id}\n${seq.rev}`).join('\n'),
+          outputSeqs.map((seq) => `>${seq.id}\n${seq.rev}`).join('\n'),
           downloadRef,
           'seqs.fasta'
         )
@@ -214,7 +214,9 @@ function RevCompPage() {
           setOutput(JSON.stringify(outputSeqs))
           break
         default:
-          setOutput(outputSeqs.map(seq => `>${seq.id}\n${seq.rev}`).join('\n'))
+          setOutput(
+            outputSeqs.map((seq) => `>${seq.id}\n${seq.rev}`).join('\n')
+          )
           break
       }
     }
@@ -228,7 +230,7 @@ function RevCompPage() {
         <>
           <ToolbarTabGroup>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: makeRandId('open'),
@@ -243,7 +245,7 @@ function RevCompPage() {
               onClick={() => save()}
               title="Save sequences"
             >
-              <SaveIcon  />
+              <SaveIcon />
             </ToolbarButton>
           </ToolbarTabGroup>
 
@@ -311,14 +313,14 @@ function RevCompPage() {
               <AccordionContent>
                 <Checkbox
                   checked={modeRev}
-                  onCheckedChange={state => setModeRev(state)}
+                  onCheckedChange={(state) => setModeRev(state)}
                 >
                   Reverse
                 </Checkbox>
 
                 <Checkbox
                   checked={modeComp}
-                  onCheckedChange={state => setModeComp(state)}
+                  onCheckedChange={(state) => setModeComp(state)}
                 >
                   Compliment
                 </Checkbox>
@@ -389,7 +391,7 @@ function RevCompPage() {
                 textCls="custom-scrollbar"
                 placeholder="FASTA/DNA sequences"
                 value={text}
-                onChange={e => {
+                onChange={(e) => {
                   console.log(e.target.value)
                   setText(e.target.value)
                 }}
@@ -420,7 +422,7 @@ function RevCompPage() {
           <OpenFiles
             open={showDialog.id}
             onFileChange={(message, files) =>
-              onTextFileChange(message, files, files => {
+              onTextFileChange(message, files, (files) => {
                 setText(files[0]!.text)
               })
             }

@@ -52,9 +52,9 @@ interface IHeaderLinksProps extends IElementProps {
 
 export function HeaderLinks({ onClick, className }: IHeaderLinksProps) {
   // sort alphabetically and ignore sections
-  const items = HEADER_LINKS.map(section => {
+  const items = HEADER_LINKS.map((section) => {
     return section.modules.filter(
-      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()

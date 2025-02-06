@@ -1,21 +1,21 @@
 'use client'
 
 import {
-    Card,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-    CenteredCardContainer,
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  CenteredCardContainer,
 } from '@components/shadcn/ui/themed/card'
 
 import { HeaderLayout } from '@layouts/header-layout'
 
 import {
-    EDB_ACCESS_TOKEN_COOKIE,
-    EDB_SESSION_COOKIE,
-    EDB_USER_COOKIE,
-    SIGN_IN_ROUTE,
+  EDB_ACCESS_TOKEN_COOKIE,
+  EDB_SESSION_COOKIE,
+  EDB_USER_COOKIE,
+  SIGN_IN_ROUTE,
 } from '@/lib/edb/edb'
 
 import { ButtonLink } from '@components/link/button-link'

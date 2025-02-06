@@ -68,7 +68,7 @@ export function TopRowsDialog({ open = true, df, onFilter, onCancel }: IProps) {
     <OKCancelDialog
       open={open}
       title="Top Rows"
-      onReponse={r => {
+      onReponse={(r) => {
         if (r === TEXT_OK) {
           applyFilter()
         } else {
@@ -84,7 +84,7 @@ export function TopRowsDialog({ open = true, df, onFilter, onCancel }: IProps) {
         <Input
           id="top-rows"
           value={topRows}
-          onChange={e => setTopRows(Number.parseInt(e.target.value))}
+          onChange={(e) => setTopRows(Number.parseInt(e.target.value))}
           className="w-16 rounded-theme"
           placeholder="Top rows..."
         />

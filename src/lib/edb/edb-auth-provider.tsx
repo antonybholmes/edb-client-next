@@ -46,15 +46,15 @@ export const EdbAuthContext = createContext<IEdbAuthContext>({
   edbSession: { ...DEFAULT_EDB_SESSION },
   accessToken: '',
   apiKey: '',
-  signInWithApiKey: () => new Promise(resolve => resolve()),
-  signInWithUsernamePassword: () => new Promise(resolve => resolve()),
-  signInWithAuth0Token: () => new Promise(resolve => resolve()),
+  signInWithApiKey: () => new Promise((resolve) => resolve()),
+  signInWithUsernamePassword: () => new Promise((resolve) => resolve()),
+  signInWithAuth0Token: () => new Promise((resolve) => resolve()),
   //fetchUser: () => new Promise(resolve => resolve()),
-  refreshSession: () => new Promise(resolve => resolve()),
-  fetchSessionInfo: () => new Promise(resolve => resolve()),
+  refreshSession: () => new Promise((resolve) => resolve()),
+  fetchSessionInfo: () => new Promise((resolve) => resolve()),
   //updateUser: () => {},
-  getAccessTokenAutoRefresh: async () => new Promise(resolve => resolve('')),
-  signoutUser: () => new Promise(resolve => resolve()),
+  getAccessTokenAutoRefresh: async () => new Promise((resolve) => resolve('')),
+  signoutUser: () => new Promise((resolve) => resolve()),
 })
 
 interface IProps extends IChildrenProps {
@@ -184,7 +184,7 @@ export function EdbAuthProvider({ cacheSession = true, children }: IProps) {
 
       if (settings.users.length === 0) {
         updateSettings(
-          produce(settings, draft => {
+          produce(settings, (draft) => {
             draft.users = [
               {
                 username: s.user.username,
@@ -197,7 +197,7 @@ export function EdbAuthProvider({ cacheSession = true, children }: IProps) {
           })
         )
       }
-    } catch   {
+    } catch {
       console.log('cannot fetch user from remote')
     }
   }
@@ -279,7 +279,7 @@ export function EdbAuthProvider({ cacheSession = true, children }: IProps) {
     setAccessToken('')
     // remove user from cache
     updateSettings(
-      produce(settings, draft => {
+      produce(settings, (draft) => {
         draft.users = []
       })
     )

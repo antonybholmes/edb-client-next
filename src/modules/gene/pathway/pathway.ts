@@ -82,13 +82,12 @@ export class PathwayOverlap {
 
   addDataset(dataset: IDataset) {
     this._datasets.push(dataset)
-    this._npathways  = -1
+    this._npathways = -1
   }
 
   get pathways(): number {
- 
     if (this._npathways == -1) {
-      this._npathways = sum(this._datasets.map(gcs => gcs.pathways.length))
+      this._npathways = sum(this._datasets.map((gcs) => gcs.pathways.length))
     }
 
     return this._npathways
@@ -97,7 +96,7 @@ export class PathwayOverlap {
   test(genesets: IGeneset[]): [SeriesData[][], string[]] {
     let allData: SeriesData[][] = []
 
-    genesets.forEach(geneset => {
+    genesets.forEach((geneset) => {
       const genes = new Set<string>(geneset.genes)
       const K = genes.size
       let c = 0
@@ -105,7 +104,7 @@ export class PathwayOverlap {
 
       //console.log(tgs.name)
 
-      this._datasets.forEach(dataset => {
+      this._datasets.forEach((dataset) => {
         //console.log(gcs.name)
         dataset.pathways.forEach((pathway, pi) => {
           const pathwayGenes = new Set<string>(pathway.genes)
@@ -164,7 +163,7 @@ export class PathwayOverlap {
 
       //console.log("plo", data.length, npathways, c)
 
-      const pvalues: number[] = data.map(row => row[8] as number)
+      const pvalues: number[] = data.map((row) => row[8] as number)
       const idx = argsort(pvalues)
 
       const i0: number = idx[0]!
@@ -176,7 +175,7 @@ export class PathwayOverlap {
 
       //console.log(data)
 
-      range(1, c).forEach(i => {
+      range(1, c).forEach((i) => {
         const rank = i + 1
         const q = (pvalues[idx[i]!]! * data.length) / rank
         data[idx[i]!]![9] = Math.min(
@@ -187,15 +186,13 @@ export class PathwayOverlap {
         //data[idx[i]][12] = rank
       })
 
-      range(data.length).forEach(i => {
+      range(data.length).forEach((i) => {
         // log10 of q
         data[i]![10] = -Math.log10(<number>data[i]![9])
       })
 
       allData = allData.concat(data)
     })
-
- 
 
     return [allData, PATHWAY_TABLE_COLS]
   }

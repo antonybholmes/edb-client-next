@@ -29,7 +29,6 @@ export async function loadGMT(
 
     const lines: string[] = textToLines(res.data)
 
- 
     lines.forEach((line) => {
       const tokens = line.split('\t')
 

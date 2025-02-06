@@ -7,10 +7,10 @@ import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
 import { ToolbarFooter } from '@components/toolbar/toolbar-footer'
 
 import {
-    ShowOptionsMenu,
-    Toolbar,
-    ToolbarMenu,
-    ToolbarPanel,
+  ShowOptionsMenu,
+  Toolbar,
+  ToolbarMenu,
+  ToolbarPanel,
 } from '@components/toolbar/toolbar'
 import { ToolbarSeparator } from '@components/toolbar/toolbar-separator'
 import { PlayIcon } from '@icons/play-icon'
@@ -19,8 +19,8 @@ import { ZoomSlider } from '@components/toolbar/zoom-slider'
 
 import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
 import {
-    downloadDataFrame,
-    getFormattedShape,
+  downloadDataFrame,
+  getFormattedShape,
 } from '@lib/dataframe/dataframe-utils'
 
 import { OpenFiles } from '@components/pages/open-files'
@@ -34,10 +34,10 @@ import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
 import { OpenIcon } from '@icons/open-icon'
 import { SaveIcon } from '@icons/save-icon'
 import {
-    currentSheet,
-    currentSheetId,
-    currentSheets,
-    HistoryContext,
+  currentSheet,
+  currentSheetId,
+  currentSheets,
+  HistoryContext,
 } from '@providers/history-provider'
 
 import { createAnnotationTable } from '@/lib/genomic/annotate'
@@ -48,13 +48,13 @@ import { useContext, useRef, useState } from 'react'
 import { SlidersIcon } from '@components/icons/sliders-icon'
 
 import {
-    type IDialogParams,
-    NO_DIALOG,
-    TEXT_DOWNLOAD_AS_CSV,
-    TEXT_DOWNLOAD_AS_TXT,
-    TEXT_OPEN_FILE,
-    TEXT_SAVE_AS,
-    TEXT_SETTINGS,
+  type IDialogParams,
+  NO_DIALOG,
+  TEXT_DOWNLOAD_AS_CSV,
+  TEXT_DOWNLOAD_AS_TXT,
+  TEXT_OPEN_FILE,
+  TEXT_SAVE_AS,
+  TEXT_SETTINGS,
 } from '@/consts'
 import { API_GENES_GENOMES_URL } from '@/lib/edb/edb'
 import { ToolbarIconButton } from '@components/toolbar/toolbar-icon-button'
@@ -71,16 +71,16 @@ import { UploadIcon } from '@components/icons/upload-icon'
 import { HistoryPanel } from '@components/pages/history-panel'
 import { PropsPanel } from '@components/props-panel'
 import {
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-    ScrollAccordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  ScrollAccordion,
 } from '@components/shadcn/ui/themed/accordion'
 import { DropdownMenuItem } from '@components/shadcn/ui/themed/dropdown-menu'
 import { Label } from '@components/shadcn/ui/themed/label'
 import {
-    RadioGroup,
-    RadioGroupItem,
+  RadioGroup,
+  RadioGroupItem,
 } from '@components/shadcn/ui/themed/radio-group'
 import type { ITab } from '@components/tab-provider'
 import { truncate } from '@lib/text/text'
@@ -137,25 +137,25 @@ function AnnotationPage() {
 
     const fileReader = new FileReader()
 
-    fileReader.onload = e => {
+    fileReader.onload = (e) => {
       const result = e.target?.result
 
       if (result) {
         const text: string =
           typeof result === 'string' ? result : Buffer.from(result).toString()
 
-        const lines = text.split(/[\r\n]+/g).filter(line => line.length > 0)
+        const lines = text.split(/[\r\n]+/g).filter((line) => line.length > 0)
         //.slice(0, 100)
 
         //const locs = parseLocations(lines)
         const retMap: { [key: string]: Set<string> } = {}
         const geneSets: string[] = lines[0]!.split('\t')
 
-        lines[0]!.split('\t').forEach(gs => {
+        lines[0]!.split('\t').forEach((gs) => {
           retMap[gs] = new Set<string>()
         })
 
-        lines.slice(1).forEach(line => {
+        lines.slice(1).forEach((line) => {
           line.split('\t').forEach((gene, genei) => {
             if (gene.length > 0 && gene !== '----') {
               retMap[geneSets[genei]!]!.add(gene)
@@ -193,7 +193,6 @@ function AnnotationPage() {
   async function annotate() {
     const df = currentSheet(history)[0]!
 
- 
     const dfa = await createAnnotationTable(
       queryClient,
       df,
@@ -375,7 +374,7 @@ function AnnotationPage() {
         <>
           <ToolbarTabGroup>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: makeRandId('open'),
@@ -562,7 +561,7 @@ function AnnotationPage() {
           side="Right"
           tabs={rightTabs}
           value={rightTab}
-          onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
@@ -574,7 +573,7 @@ function AnnotationPage() {
           <TabbedDataFrames
             selectedSheet={currentSheetId(history)[0]!}
             dataFrames={currentSheets(history)[0]!}
-            onTabChange={selectedTab => {
+            onTabChange={(selectedTab) => {
               historyDispatch({
                 type: 'goto-sheet',
                 sheetId: selectedTab.index,

@@ -144,7 +144,7 @@ export async function createDNATable(
     return new DataFrame({ data: table, columns: header })
 
     //data.push(row.concat([dj.data.dna]))
-  } catch  {
+  } catch {
     //data.push(row.concat([""]))
   }
 
@@ -208,7 +208,7 @@ export async function fetchDNA(
 
 export function dnaToJson(seqs: IDNA[]): string {
   return JSON.stringify(
-    seqs.map(seq => ({
+    seqs.map((seq) => ({
       chr: seq.location.chr,
       start: seq.location.start,
       end: seq.location.end,

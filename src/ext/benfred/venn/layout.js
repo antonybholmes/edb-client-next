@@ -38,7 +38,7 @@ export function venn(areas, parameters) {
   }
 
   // optimize initial layout from our loss function
- 
+
   var solution = nelderMead(
     function (values) {
       totalFunctionCalls += 1

@@ -115,8 +115,6 @@ export const UnderlineTabs = forwardRef(function UnderlineTabs(
 
   const selectedTab = useMemo(() => getTabFromValue(value, tabs), [value, tabs])
 
- 
-
   useEffect(() => {
     if (!selectedTab) {
       return
@@ -190,7 +188,7 @@ export const UnderlineTabs = forwardRef(function UnderlineTabs(
         <BaseTabsTrigger
           value={tabId}
           key={tabId}
-          ref={el => {
+          ref={(el) => {
             buttonsRef.current[index] = el!
           }}
           aria-label={name}
@@ -211,7 +209,7 @@ export const UnderlineTabs = forwardRef(function UnderlineTabs(
         >
           <span
             data-selected={selected}
-            ref={el => {
+            ref={(el) => {
               itemsRef.current[index] = el!
             }}
             aria-label={truncatedName}

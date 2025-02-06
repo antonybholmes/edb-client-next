@@ -90,7 +90,7 @@ export const ExtGseaPropsPanel = forwardRef(function ExtGseaPropsPanel(
                 limit={[1, 1000]}
                 placeholder="Width..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
@@ -122,7 +122,7 @@ export const ExtGseaPropsPanel = forwardRef(function ExtGseaPropsPanel(
                 limit={[1, 1000]}
                 placeholder="Height..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
@@ -145,7 +145,7 @@ export const ExtGseaPropsPanel = forwardRef(function ExtGseaPropsPanel(
             <SwitchPropRow
               title="Line"
               checked={displayOptions.es.gs1.line.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
@@ -174,7 +174,7 @@ export const ExtGseaPropsPanel = forwardRef(function ExtGseaPropsPanel(
                 disabled={!displayOptions.es.gs1.line.show}
                 placeholder="Stroke..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
@@ -201,7 +201,7 @@ export const ExtGseaPropsPanel = forwardRef(function ExtGseaPropsPanel(
             <SwitchPropRow
               title="Leading edge"
               checked={displayOptions.es.gs1.leadingEdge.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
@@ -239,7 +239,7 @@ export const ExtGseaPropsPanel = forwardRef(function ExtGseaPropsPanel(
                 limit={[0, 1]}
                 placeholder="Opacity..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
@@ -388,7 +388,7 @@ export const ExtGseaPropsPanel = forwardRef(function ExtGseaPropsPanel(
             <SwitchPropRow
               title="Bars"
               checked={displayOptions.genes.line.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
@@ -409,7 +409,7 @@ export const ExtGseaPropsPanel = forwardRef(function ExtGseaPropsPanel(
                 value={displayOptions.genes.line.width}
                 placeholder="Stroke..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
@@ -431,7 +431,7 @@ export const ExtGseaPropsPanel = forwardRef(function ExtGseaPropsPanel(
               className="ml-2"
               disabled={!displayOptions.genes.line.show}
               checked={displayOptions.genes.labels.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
@@ -457,7 +457,7 @@ export const ExtGseaPropsPanel = forwardRef(function ExtGseaPropsPanel(
                 !displayOptions.genes.labels.show
               }
               checked={displayOptions.genes.labels.isColored}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
@@ -484,7 +484,7 @@ export const ExtGseaPropsPanel = forwardRef(function ExtGseaPropsPanel(
             <SwitchPropRow
               title="Show"
               checked={displayOptions.ranking.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
@@ -504,7 +504,7 @@ export const ExtGseaPropsPanel = forwardRef(function ExtGseaPropsPanel(
               <ColorPickerButton
                 color={displayOptions.ranking.fill.color}
                 disabled={!displayOptions.ranking.show}
-                onColorChange={color =>
+                onColorChange={(color) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
@@ -534,7 +534,7 @@ export const ExtGseaPropsPanel = forwardRef(function ExtGseaPropsPanel(
                 limit={[0, 1]}
                 inc={0.1}
                 dp={1}
-                onNumChanged={v =>
+                onNumChanged={(v) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
@@ -560,7 +560,7 @@ export const ExtGseaPropsPanel = forwardRef(function ExtGseaPropsPanel(
               title="Zero crossing"
               checked={displayOptions.ranking.zeroCross.show}
               disabled={!displayOptions.ranking.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,

@@ -106,7 +106,6 @@ export function EDBSignIn({
       rounded="none"
       selected={open}
       ripple={false}
- 
       title={isSignedIn ? TEXT_MY_ACCOUNT : TEXT_SIGN_IN}
     >
       <VCenterRow data-selected={open} className={SIGNED_IN_ICON_CLS}>
@@ -125,7 +124,7 @@ export function EDBSignIn({
         <OKCancelDialog
           open={showDialog.id.startsWith('signout')}
           title={APP_NAME}
-          onReponse={r => {
+          onReponse={(r) => {
             if (r === TEXT_OK) {
               //signoutUser()
               logout({ logoutParams: { returnTo: APP_ACCOUNT_SIGNED_OUT_URL } })

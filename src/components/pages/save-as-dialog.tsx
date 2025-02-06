@@ -28,14 +28,13 @@ export function SaveAsDialog({
       open={open !== ''}
       title={title}
       buttons={[]}
-      onReponse={r => {
+      onReponse={(r) => {
         if (r !== TEXT_OK) {
           onCancel()
         }
       }}
       bodyCls="gap-y-2"
     >
- 
       {types.map((type, ti) => (
         <Button
           key={ti}
@@ -47,7 +46,7 @@ export function SaveAsDialog({
           {type.name} (.{type.ext})
         </Button>
       ))}
- 
+
       {/* <Form {...form}>
         <form
           className="flex flex-col text-sm"

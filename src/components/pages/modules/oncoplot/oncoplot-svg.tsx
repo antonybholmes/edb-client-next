@@ -151,8 +151,8 @@ function makeMatrix(
             const id = stats.maxEvent[0]
             const fill: string =
               id != ''
-                ? displayProps.legend.mutations.colorMap.get(id) ??
-                  displayProps.legend.mutations.noAlterationColor
+                ? (displayProps.legend.mutations.colorMap.get(id) ??
+                  displayProps.legend.mutations.noAlterationColor)
                 : displayProps.legend.mutations.colorMap.get(OTHER_MUTATION)!
             return (
               <rect

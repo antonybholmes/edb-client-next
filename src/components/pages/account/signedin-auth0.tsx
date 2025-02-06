@@ -62,7 +62,7 @@ function SignedInPage() {
   const {
     isLoading,
     isAuthenticated,
- 
+
     getAccessTokenSilently,
     handleRedirectCallback,
   } = useAuth0()
@@ -89,7 +89,6 @@ function SignedInPage() {
   useEffect(() => {
     async function load() {
       try {
-   
         const auth0Token = await getAccessTokenSilently()
 
         //console.log('auth0Token', auth0Token)

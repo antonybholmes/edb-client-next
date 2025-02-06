@@ -117,7 +117,6 @@ export async function searchProteins(
       ),
   })
 
-
   const ret: IProtein[] = await Promise.all(
     res.data.results.map(
       async (p: {

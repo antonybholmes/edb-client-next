@@ -21,260 +21,257 @@ export type SheetId = string | number
 export const NO_SHAPE: Shape = [-1, -1]
 
 export class BaseDataFrame {
-    protected _name: string
-    private _id: string
+  protected _name: string
+  private _id: string
 
-    constructor(name: string = '') {
-        this._id = nanoid()
-        this._name = name
-    }
+  constructor(name: string = '') {
+    this._id = nanoid()
+    this._name = name
+  }
 
-    get id(): string {
-        return this._id
-    }
+  get id(): string {
+    return this._id
+  }
 
-    get name(): string {
-        return this._name
-    }
+  get name(): string {
+    return this._name
+  }
 
-    setName(_name: string, _inplace: boolean = true): BaseDataFrame {
-        return this
-    }
+  setName(_name: string, _inplace: boolean = true): BaseDataFrame {
+    return this
+  }
 
-    /**
-     * Return a transpose of the matrix
-     */
-    t(): BaseDataFrame {
-        return this
-    }
+  /**
+   * Return a transpose of the matrix
+   */
+  t(): BaseDataFrame {
+    return this
+  }
 
-    copy(): BaseDataFrame {
-        return this
-    }
+  copy(): BaseDataFrame {
+    return this
+  }
 
-    col(_col: IndexData): BaseSeries {
-        return EMPTY_SERIES
-    }
+  col(_col: IndexData): BaseSeries {
+    return EMPTY_SERIES
+  }
 
-    setCol(
-        _col: IndexData = -1,
-        _data: BaseSeries | SeriesData[]
-    ): BaseDataFrame {
-        return this
-    }
+  setCol(
+    _col: IndexData = -1,
+    _data: BaseSeries | SeriesData[]
+  ): BaseDataFrame {
+    return this
+  }
 
-    get(_row: number, _col: number): SeriesData {
-        return NaN
-    }
+  get(_row: number, _col: number): SeriesData {
+    return NaN
+  }
 
-    get values(): SeriesData[][] {
-        return []
-    }
+  get values(): SeriesData[][] {
+    return []
+  }
 
-    row(row: IndexData): BaseSeries {
-        return EMPTY_SERIES
-    }
+  row(row: IndexData): BaseSeries {
+    return EMPTY_SERIES
+  }
 
-    setRow(
-        row: IndexData = -1,
+  setRow(
+    row: IndexData = -1,
 
-        data: BaseSeries | SeriesData[],
+    data: BaseSeries | SeriesData[],
 
-        inplace = true
-    ): BaseDataFrame {
-        return this
-    }
+    inplace = true
+  ): BaseDataFrame {
+    return this
+  }
 
-    set(row: number, col: number, v: SeriesData): BaseDataFrame {
-        return this
-    }
+  set(row: number, col: number, v: SeriesData): BaseDataFrame {
+    return this
+  }
 
-    setIndex(index: IndexFromType, inplace: boolean = false): BaseDataFrame {
-        return this
-    }
+  setIndex(index: IndexFromType, inplace: boolean = false): BaseDataFrame {
+    return this
+  }
 
-    // setCols(columns: IndexFromType): BaseDataFrame {
-    //   return this
+  // setCols(columns: IndexFromType): BaseDataFrame {
+  //   return this
+  // }
+
+  get index(): Index {
+    return NUM_INDEX
+  }
+
+  getRowName(index: number): string {
+    return cellStr(this.index.get(index))
+  }
+
+  get rowNames(): string[] {
+    return rangeMap((c) => this.getRowName(c), 0, this.shape[0])
+  }
+
+  get cols(): BaseSeries[] {
+    return []
+  }
+
+  get columns(): Index {
+    return EXCEL_INDEX
+  }
+
+  colName(index: number): string {
+    return this.columns.get(index).toString()
+
+    // const idx = _findCol(this, col)
+
+    // if (idx.length === 0) {
+    //   throw new Error('invalid column')
     // }
 
-    get index(): Index {
-        return NUM_INDEX
-    }
+    // return this.columns.getName(idx[0]!)
+  }
 
-    getRowName(index: number): string {
-        return cellStr(this.index.get(index))
-    }
+  /**
+   * Get the names of the columns
+   */
+  get colNames(): string[] {
+    return range(this.shape[1]).map((c) => this.colName(c))
+  }
 
-    get rowNames(): string[] {
-        return rangeMap((c) => this.getRowName(c), 0, this.shape[0])
-    }
+  setColNames(_index: IndexFromType, _inplace: boolean = false): BaseDataFrame {
+    return this
+  }
 
-    get cols(): BaseSeries[] {
-        return []
-    }
+  get shape(): Shape {
+    return NO_SHAPE
+  }
 
-    get columns(): Index {
-        return EXCEL_INDEX
-    }
+  get size(): number {
+    const s = this.shape
+    return s[0] * s[1]
+  }
 
-    colName(index: number): string {
-        return this.columns.get(index).toString()
+  apply(
+    _f: (v: SeriesData, row: number, col: number) => SeriesData
+  ): BaseDataFrame {
+    return this
+  }
 
-        // const idx = _findCol(this, col)
+  map<T>(_f: (v: SeriesData, row: number, col: number) => T): T[][] {
+    return []
+  }
 
-        // if (idx.length === 0) {
-        //   throw new Error('invalid column')
-        // }
+  rowApply(
+    _f: (row: SeriesData[], index: number) => SeriesData
+  ): BaseDataFrame {
+    return this
+  }
 
-        // return this.columns.getName(idx[0]!)
-    }
+  /**
+   * Apply a function to each row to transform them.
+   *
+   * @param _f
+   * @returns a list of T the size of the number of rows.
+   */
+  rowMap<T>(_f: (row: SeriesData[], index: number) => T): T[] {
+    return []
+  }
 
-    /**
-     * Get the names of the columns
-     */
-    get colNames(): string[] {
-        return range(this.shape[1]).map((c) => this.colName(c))
-    }
+  /**
+   * Apply a function to each column to transform them.
+   *
+   * @param _f
+   * @returns
+   */
 
-    setColNames(
-        _index: IndexFromType,
-        _inplace: boolean = false
-    ): BaseDataFrame {
-        return this
-    }
+  colMap<T>(_f: (col: SeriesData[], index: number) => T): T[] {
+    return []
+  }
 
-    get shape(): Shape {
-        return NO_SHAPE
-    }
+  iloc(_rows: LocType = ':', _cols: LocType = ':'): BaseDataFrame {
+    return this
+  }
 
-    get size(): number {
-        const s = this.shape
-        return s[0] * s[1]
-    }
+  isin(rows: LocType = ':', cols: LocType = ':'): BaseDataFrame {
+    return this
+  }
 
-    apply(
-        _f: (v: SeriesData, row: number, col: number) => SeriesData
-    ): BaseDataFrame {
-        return this
-    }
+  toString(): string {
+    return this.toCsv()
+  }
 
-    map<T>(_f: (v: SeriesData, row: number, col: number) => T): T[][] {
-        return []
-    }
-
-    rowApply(
-        _f: (row: SeriesData[], index: number) => SeriesData
-    ): BaseDataFrame {
-        return this
-    }
-
-    /**
-     * Apply a function to each row to transform them.
-     *
-     * @param _f
-     * @returns a list of T the size of the number of rows.
-     */
-    rowMap<T>(_f: (row: SeriesData[], index: number) => T): T[] {
-        return []
-    }
-
-    /**
-     * Apply a function to each column to transform them.
-     *
-     * @param _f
-     * @returns
-     */
-
-    colMap<T>(_f: (col: SeriesData[], index: number) => T): T[] {
-        return []
-    }
-
-    iloc(_rows: LocType = ':', _cols: LocType = ':'): BaseDataFrame {
-        return this
-    }
-
-    isin(rows: LocType = ':', cols: LocType = ':'): BaseDataFrame {
-        return this
-    }
-
-    toString(): string {
-        return this.toCsv()
-    }
-
-    toCsv(options: IDataFrameToStringOpts = {}): string {
-        return toString(this, options)
-    }
+  toCsv(options: IDataFrameToStringOpts = {}): string {
+    return toString(this, options)
+  }
 }
 
 export function _findRow(
-    df: BaseDataFrame,
-    row: IndexData,
-    lc: boolean = true
+  df: BaseDataFrame,
+  row: IndexData,
+  lc: boolean = true
 ): number[] {
-    if (typeof row === 'number') {
-        return [row]
+  if (typeof row === 'number') {
+    return [row]
+  }
+
+  const ret: number[] = []
+
+  let s = row.toString()
+
+  if (lc) {
+    s = s.toLowerCase()
+
+    for (const c of range(df.shape[0])) {
+      if (df.getRowName(c).toLowerCase().startsWith(s)) {
+        ret.push(c)
+      }
     }
-
-    const ret: number[] = []
-
-    let s = row.toString()
-
-    if (lc) {
-        s = s.toLowerCase()
-
-        for (const c of range(df.shape[0])) {
-            if (df.getRowName(c).toLowerCase().startsWith(s)) {
-                ret.push(c)
-            }
-        }
-    } else {
-        for (const c of range(df.shape[1])) {
-            if (df.getRowName(c).startsWith(s)) {
-                ret.push(c)
-            }
-        }
+  } else {
+    for (const c of range(df.shape[1])) {
+      if (df.getRowName(c).startsWith(s)) {
+        ret.push(c)
+      }
     }
+  }
 
-    return ret
+  return ret
 }
 
 export function _findCol(
-    df: BaseDataFrame,
-    col: IndexData,
-    lc: boolean = true
+  df: BaseDataFrame,
+  col: IndexData,
+  lc: boolean = true
 ): number[] {
-    if (typeof col === 'number') {
-        return [col]
+  if (typeof col === 'number') {
+    return [col]
+  }
+
+  const ret: number[] = []
+
+  let s = col.toString()
+
+  if (lc) {
+    s = s.toLowerCase()
+
+    for (const c of range(df.shape[1])) {
+      if (df.colName(c).toLowerCase().startsWith(s)) {
+        ret.push(c)
+      }
     }
-
-    const ret: number[] = []
-
-    let s = col.toString()
-
-    if (lc) {
-        s = s.toLowerCase()
-
-        for (const c of range(df.shape[1])) {
-            if (df.colName(c).toLowerCase().startsWith(s)) {
-                ret.push(c)
-            }
-        }
-    } else {
-        for (const c of range(df.shape[1])) {
-            if (df.colName(c).startsWith(s)) {
-                ret.push(c)
-            }
-        }
+  } else {
+    for (const c of range(df.shape[1])) {
+      if (df.colName(c).startsWith(s)) {
+        ret.push(c)
+      }
     }
+  }
 
-    return ret
+  return ret
 }
 
 interface IDataFrameToStringOpts {
-    sep?: string
-    dp?: number
-    index?: boolean
-    header?: boolean
+  sep?: string
+  dp?: number
+  index?: boolean
+  header?: boolean
 }
 
 /**
@@ -285,36 +282,36 @@ interface IDataFrameToStringOpts {
  * @returns
  */
 function toString(
-    df: BaseDataFrame,
-    options: IDataFrameToStringOpts = {}
+  df: BaseDataFrame,
+  options: IDataFrameToStringOpts = {}
 ): string {
-    const { sep = '\t', index = true, header = true } = { ...options }
+  const { sep = '\t', index = true, header = true } = { ...options }
 
-    let ret: string[] = []
+  let ret: string[] = []
 
-    if (index) {
-        ret = rangeMap(
-            (ri) =>
-                [df.getRowName(ri)]
-                    .concat(df.row(ri)!.values.map((v) => cellStr(v)))
-                    .join(sep),
-            df.shape[0]
-        )
-    } else {
-        ret = rangeMap(
-            (ri) =>
-                df
-                    .row(ri)!
-                    .values.map((v) => cellStr(v))
-                    .join(sep),
-            df.shape[0]
-        )
-    }
+  if (index) {
+    ret = rangeMap(
+      (ri) =>
+        [df.getRowName(ri)]
+          .concat(df.row(ri)!.values.map((v) => cellStr(v)))
+          .join(sep),
+      df.shape[0]
+    )
+  } else {
+    ret = rangeMap(
+      (ri) =>
+        df
+          .row(ri)!
+          .values.map((v) => cellStr(v))
+          .join(sep),
+      df.shape[0]
+    )
+  }
 
-    // add header if required
-    if (header) {
-        ret = [df.colNames.join(sep)].concat(ret)
-    }
+  // add header if required
+  if (header) {
+    ret = [df.colNames.join(sep)].concat(ret)
+  }
 
-    return ret.join('\n')
+  return ret.join('\n')
 }

@@ -73,7 +73,7 @@ export class DataFrame extends BaseDataFrame {
     } else {
       if (d.length === 0) {
         // empty array so create array for each row
-        df._data = d.map(v => [v])
+        df._data = d.map((v) => [v])
       } else {
         // since matrix is row wise, append new values to
         // end of each row
@@ -103,7 +103,7 @@ export class DataFrame extends BaseDataFrame {
       throw new Error('invalid column')
     }
 
-    const v = this._data.map(row => row[idx[0]!]!) //this.colValues(idx)
+    const v = this._data.map((row) => row[idx[0]!]!) //this.colValues(idx)
 
     return new Series(v, {
       name: this._columns.get(idx[0]!) as string,
@@ -118,7 +118,7 @@ export class DataFrame extends BaseDataFrame {
       return []
     }
 
-    return this._data.map(row => row[idx[0]!]!)
+    return this._data.map((row) => row[idx[0]!]!)
   }
 
   // setCols(cols: Series[]): BaseDataFrame {
@@ -260,7 +260,7 @@ export class DataFrame extends BaseDataFrame {
     return range(this.shape[1]).map(
       (c: number) =>
         new Series(
-          this._data.map(row => row[c]!),
+          this._data.map((row) => row[c]!),
           {
             name: this._columns.get(c) as string,
           }
@@ -281,7 +281,7 @@ export class DataFrame extends BaseDataFrame {
 
   override get values(): SeriesData[][] {
     // return copy as we want dataframe to be immutable
-    return this._data.map(row => row.slice())
+    return this._data.map((row) => row.slice())
   }
 
   override apply(
@@ -343,7 +343,7 @@ export class DataFrame extends BaseDataFrame {
   override copy(): BaseDataFrame {
     return new DataFrame({
       name: this.name,
-      data: this._data.map(r => [...r]),
+      data: this._data.map((r) => [...r]),
       index: this._index,
       columns: this._columns,
     })
@@ -351,7 +351,7 @@ export class DataFrame extends BaseDataFrame {
 }
 
 export function _t(data: SeriesData[][]): SeriesData[][] {
-  return data[0]!.map((_, ci) => data.map(row => row[ci]!))
+  return data[0]!.map((_, ci) => data.map((row) => row[ci]!))
 }
 
 // export function apply(
@@ -395,7 +395,7 @@ function _rowApply(
 
   return new DataFrame({
     name: df.name,
-    data: d.map(r => [r]),
+    data: d.map((r) => [r]),
     columns: df._columns,
     index: df._index,
   })
@@ -432,9 +432,9 @@ function _colMap<T>(
   df: DataFrame,
   f: (col: SeriesData[], index: number) => T
 ): T[] {
-  return range(df._data[0]!.length).map(ci => {
+  return range(df._data[0]!.length).map((ci) => {
     const d = f(
-      df._data.map(rowData => rowData[ci]!),
+      df._data.map((rowData) => rowData[ci]!),
       ci
     )
 
@@ -459,7 +459,7 @@ function _iloc(
 
   let s: string
 
-  rows.forEach(row => {
+  rows.forEach((row) => {
     const t = typeof row
 
     switch (t) {
@@ -523,7 +523,7 @@ function _iloc(
     cols = [cols]
   }
 
-  cols.forEach(col => {
+  cols.forEach((col) => {
     const t = typeof col
 
     switch (t) {
@@ -593,7 +593,7 @@ function _iloc(
     }
   })
 
-  const d = rowIdx.map(r => colIdx.map(c => df._data[r]![c]!))
+  const d = rowIdx.map((r) => colIdx.map((c) => df._data[r]![c]!))
 
   const ret = new DataFrame({
     data: d,
@@ -613,9 +613,9 @@ function _isin(
   const rset = new Set(Array.isArray(rows) ? rows : [rows])
   const cset = new Set(Array.isArray(cols) ? cols : [cols])
 
-  const rowIdx = range(df.shape[0]).filter(r => rset.has(r))
+  const rowIdx = range(df.shape[0]).filter((r) => rset.has(r))
 
-  const colIdx = range(df.shape[1]).filter(c => cset.has(c))
+  const colIdx = range(df.shape[1]).filter((c) => cset.has(c))
 
   return _iloc(df, rowIdx, colIdx)
 }

@@ -136,7 +136,7 @@ export function RulerTrackSvg({ track, xax }: IProps) {
         style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
       >
         <g id="minor-ticks">
-          {range(1, ticks.length).map(ti => {
+          {range(1, ticks.length).map((ti) => {
             const previousTick = ticks[ti - 1]!
             const tick = ticks[ti]!
             const d = (tick - previousTick) / 8
@@ -144,8 +144,8 @@ export function RulerTrackSvg({ track, xax }: IProps) {
             return (
               <g id="minor-tick" key={ti}>
                 {range(1, 8)
-                  .map(tti => _xax.domainToRange(previousTick + tti * d))
-                  .filter(px2 => px2 >= minX && px2 <= maxX)
+                  .map((tti) => _xax.domainToRange(previousTick + tti * d))
+                  .filter((px2) => px2 >= minX && px2 <= maxX)
                   .map((px2, tti) => {
                     return (
                       // <circle
@@ -175,8 +175,8 @@ export function RulerTrackSvg({ track, xax }: IProps) {
 
         <g id="major-ticks">
           {ticks
-            .map(tick => _xax.domainToRange(tick))
-            .filter(px1 => px1 >= minX && px1 <= maxX)
+            .map((tick) => _xax.domainToRange(tick))
+            .filter((px1) => px1 >= minX && px1 <= maxX)
             .map((px1, pi) => {
               return (
                 <line
@@ -195,8 +195,8 @@ export function RulerTrackSvg({ track, xax }: IProps) {
 
         <g id="major-tick-labels">
           {ticks
-            .map(tick => [tick, _xax.domainToRange(tick)] as [number, number])
-            .filter(t => t[1]! >= dx1 && t[1]! <= dx2)
+            .map((tick) => [tick, _xax.domainToRange(tick)] as [number, number])
+            .filter((t) => t[1]! >= dx1 && t[1]! <= dx2)
             .map((t, pi) => {
               const [tick, px1] = t
               return (

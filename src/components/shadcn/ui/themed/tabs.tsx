@@ -93,7 +93,7 @@ export const TabsContent = forwardRef<
 TabsContent.displayName = 'TabsContent' //TabsPrimitive.Content.displayName
 
 export function TabContentPanels({ tabs }: { tabs: ITab[] }) {
-  return tabs.map(tab => (
+  return tabs.map((tab) => (
     <TabsContent value={tab.id} className="h-full overflow-hidden" key={tab.id}>
       {tab.content}
     </TabsContent>

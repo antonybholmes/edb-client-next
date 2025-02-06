@@ -1,7 +1,7 @@
 {
   "name": "Reverse Complement",
   "description": "Reverse Complement DNA",
-  "version": "2.1.6.75",
+  "version": "2.1.7.76",
   "copyright": "Copyright (C) ${START_YEAR:2024} Antony Holmes. All rights reserved.",
-  "modified": "2025-02-06T01:18:11.597Z"
+  "modified": "2025-02-06T02:18:14.653Z"
 }

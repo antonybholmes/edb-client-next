@@ -183,8 +183,7 @@ function MyAccountPage() {
           title: 'Your account information was updated',
         }),
       })
-    } catch   {
-     
+    } catch {
       // alertDispatch({
       //   type: 'add',
       //   alert: makeAlertFromAxiosError(err as AxiosError),
@@ -235,7 +234,7 @@ function MyAccountPage() {
           open={showDialog.id.startsWith('signout')}
           title={APP_NAME}
           modalType="Warning"
-          onReponse={r => {
+          onReponse={(r) => {
             if (r === TEXT_OK) {
               //signoutUser()
               logout({ logoutParams: { returnTo: APP_ACCOUNT_SIGNED_OUT_URL } })

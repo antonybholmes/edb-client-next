@@ -34,7 +34,7 @@ export function HResizeHandle({
     <PanelResizeHandle
       id={id ?? `h-resize-handle-${nanoid()}`}
       className={cn(CLS, [drag, 'bg-muted', RESIZE_DRAG_CLS])}
-      onDragging={drag => {
+      onDragging={(drag) => {
         setDrag(drag)
       }}
       {...props}

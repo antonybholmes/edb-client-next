@@ -125,7 +125,7 @@ export const HistoryPanel = forwardRef(function HistoryPanel(
           open={true}
           showClose={true}
           title={APP_NAME}
-          onReponse={r => {
+          onReponse={(r) => {
             if (r === TEXT_OK) {
               historyDispatch({
                 description: 'History',
@@ -144,7 +144,7 @@ export const HistoryPanel = forwardRef(function HistoryPanel(
         <OKCancelDialog
           open={true}
           showClose={true}
-          onReponse={r => {
+          onReponse={(r) => {
             if (r === TEXT_OK) {
               historyDispatch({
                 type: 'remove-step',
@@ -201,7 +201,6 @@ export const HistoryPanel = forwardRef(function HistoryPanel(
                   aria-label={`Goto history step ${hi + 1}`}
                   className="flex flex-col gap-y-0.5 grow px-2.5 justify-start items-start overflow-hidden"
                   onClick={() => {
-            
                     historyDispatch({
                       type: 'goto-step',
                       stepId: hi,

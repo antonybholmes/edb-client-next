@@ -133,7 +133,7 @@ export function CollapseTree({
   return (
     <SettingsProvider
       value={value}
-      onValueChange={t => {
+      onValueChange={(t) => {
         onValueChange?.(t)
       }}
       onCheckedChange={(tab: ITab, state: boolean) => {
@@ -253,7 +253,7 @@ function CollapseTreeNode({
               setHover(true)
             }}
             onMouseLeave={() => setHover(false)}
-            onKeyDown={e => {
+            onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 // Invert openings
                 if (tab.children) {
@@ -311,7 +311,7 @@ function CollapseTreeNode({
               {tab.checked !== undefined && (
                 <CheckboxSmall
                   checked={tab.checked}
-                  onCheckedChange={state => {
+                  onCheckedChange={(state) => {
                     onCheckedChange?.(tab, state)
                     //tab.onClick?.()
                     onValueChanged(tab)
