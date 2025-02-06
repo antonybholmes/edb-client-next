@@ -152,7 +152,7 @@ export function MotifsPage() {
         )
       )
     }
-  }, [datasetsQuery.data])
+  }, [datasetsQuery.data, setDatasets])
 
   // if (datasetsQuery.isPending) {
   //   return "Loading..."
@@ -164,7 +164,7 @@ export function MotifsPage() {
 
   useEffect(() => {
     setSearch({ ...search, reverse: revComp, complement: revComp })
-  }, [revComp])
+  }, [revComp, search, setSearch])
 
   useEffect(() => {
     setDisplayProps({ ...displayProps, mode })

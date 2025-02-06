@@ -35,19 +35,19 @@ export function SwarmPlotSvg({
   stroke = { ...NO_STROKE_PROPS },
   mode = 'Full',
 }: IProps) {
+  if (!yax) {
+    yax = new YAxis()
+      .autoDomain([0, Math.max(...data)])
+      //.setDomain([0, plot.dna.seq.length])
+      .setLength(height)
+  }
+
   const svg = useMemo(() => {
     const hist = histogram(data)
 
     const d = r * 2
 
     //console.log(maxHeightMap)
-
-    if (!yax) {
-      yax = new YAxis()
-        .autoDomain([0, Math.max(...data)])
-        //.setDomain([0, plot.dna.seq.length])
-        .setLength(height)
-    }
 
     if (mode !== 'Full') {
       // draw points in half the width

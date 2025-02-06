@@ -174,7 +174,6 @@ export class Axis {
    * @returns
    */
   autoDomain(lim: ILim, interval?: number): Axis {
-    // eslint-disable-next-line prefer-const
     const a = this.copy()
 
     if (isNullUndef(interval)) {

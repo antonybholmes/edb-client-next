@@ -327,7 +327,7 @@ function OncoplotPage() {
     setTab(dataTab)
     //selectionRangeDispatch({ type: 'clear' })
     //setClusterFrame(NO_CF)
-  }, [history])
+  }, [history, dataTab])
 
   // useEffect(() => {
   //   if (plotState.plots.length > 0) {
@@ -772,7 +772,7 @@ function OncoplotPage() {
     } else {
       setTab(dataTab)
     }
-  }, [plotsState])
+  }, [plotsState, dataTab])
 
   // plots.plots.forEach(plot => {
   //   switch (plot.type) {

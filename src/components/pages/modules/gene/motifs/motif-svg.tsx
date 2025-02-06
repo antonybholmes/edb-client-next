@@ -255,7 +255,7 @@ export const MotifSvg = forwardRef<SVGElement, IProps>(function MotifSvg(
         })}
       </svg>
     )
-  }, [state, _displayProps])
+  }, [state, _displayProps, svgRef, width, height])
 
   return <div className={className}>{svg}</div>
 })

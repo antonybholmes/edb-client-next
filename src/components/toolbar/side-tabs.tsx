@@ -71,7 +71,7 @@ export function SideTabsContent({
     const height = tabs[selectedTab.index]!.size ?? defaultHeight
 
     setTabPos({ y: `${x + 0.2}rem`, height: `${height - 0.4}rem` })
-  }, [selectedTab.index])
+  }, [selectedTab.index, defaultHeight,tabs, selectedTab])
 
   return (
     <div

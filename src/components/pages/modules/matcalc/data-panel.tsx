@@ -121,7 +121,7 @@ export function DataPanel({ panelId = DEFAULT_PANEL_ID }: IDataPanelProps) {
     }
 
     //downloadSvgAsPng(svgRef, canvasRef, downloadRef)
-  }, [messageState])
+  }, [messageState, messageDispatch, panelId, showSideBar, save])
 
   const rightTabs: ITab[] = [
     {

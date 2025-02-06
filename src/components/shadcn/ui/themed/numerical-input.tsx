@@ -47,16 +47,17 @@ export function NumericalInput({
   }
 
   useEffect(() => {
-    if (typeof value !== 'number') {
-      value = limit[0]
-    }
-
-    setNumValue(Math.min(limit[1], Math.max(limit[0], value)))
+    setNumValue(
+      Math.min(
+        limit[1],
+        Math.max(limit[0], typeof value === 'number' ? value : limit[0])
+      )
+    )
   }, [value])
 
   useEffect(() => {
     setValue(_numValue.toFixed(dp))
-  }, [_numValue])
+  }, [_numValue, dp])
 
   function _onNumChanged(v: number) {
     v = Math.min(limit[1], Math.max(limit[0], v))

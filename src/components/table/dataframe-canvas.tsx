@@ -270,10 +270,78 @@ export function DataFrameCanvas({
     })
   }, [df, scale, cellSize])
 
+  const resizeTable = useCallback(() => {
+    window.requestAnimationFrame(() => {
+      const d = scrollRef.current
+
+      if (!d) {
+        return
+      }
+
+      const [w, h] = getSize(d)
+
+      let canvas: HTMLCanvasElement | null
+
+      canvas = tableCanvasRef.current
+
+      if (canvas) {
+        canvas.style.width = `${w}px`
+        canvas.style.height = `${h}px`
+        setupCanvas(canvas, scale)
+      }
+
+      canvas = bgCanvasRef.current
+
+      if (!canvas) {
+        return
+      }
+
+      canvas.style.width = `${w}px`
+      canvas.style.height = `${h}px`
+      setupCanvas(canvas, scale)
+
+      const [, , normLeft, normTop] = getScrollProps(lastScroll.current)
+
+      const ctx = canvas.getContext('2d')
+
+      if (!ctx) {
+        return
+      }
+
+      drawHeaderBg(ctx, normLeft, w)
+      drawIndexBg(ctx, normTop, h)
+
+      ctx.save()
+
+      ctx.translate(dfProps.scaledRowIndexW, cellSize[1])
+
+      ctx.fillStyle = COLOR_WHITE
+      ctx.fillRect(0, 0, w, h)
+
+      draw()
+
+      ctx.restore()
+
+      // if (frameID.current) {
+      //   window.cancelAnimationFrame(frameID.current)
+      //   frameID.current = undefined
+      // }
+    })
+  }, [
+    cellSize,
+    dfProps,
+    scale,
+    draw,
+    drawHeaderBg,
+    drawIndexBg,
+    getScrollProps,
+    getSize,
+  ])
+
   useEffect(() => {
     selection.current = { start: NO_SELECTION, end: NO_SELECTION }
     resizeTable()
-  }, [dfProps])
+  }, [dfProps, resizeTable])
 
   useEffect(() => {
     const d = scrollRef.current
@@ -310,11 +378,11 @@ export function DataFrameCanvas({
     }
   }, [focusCell, dfProps.scaledCellSize])
 
-  const resizeCallBack = useCallback(() => {
-    resizeTable()
-  }, [dfProps])
+  // const resizeCallBack = useCallback(() => {
+  //   resizeTable()
+  // }, [resizeTable])
 
-  useResizeObserver<HTMLDivElement>(scrollRef, resizeCallBack)
+  useResizeObserver<HTMLDivElement>(scrollRef, resizeTable)
 
   useMouseUpListener(onMouseUp)
 
@@ -1619,7 +1687,6 @@ export function DataFrameCanvas({
 
     switch (e.code) {
       case 'Tab':
-        // eslint-disable-next-line no-case-declarations
         const s1: ICell = {
           row: selection.current.start.row,
           col: selection.current.start.col + 1,
@@ -1749,65 +1816,6 @@ export function DataFrameCanvas({
 
     //e.preventDefault()
     //e.stopPropagation()
-  }
-
-  function resizeTable() {
-    window.requestAnimationFrame(() => {
-      const d = scrollRef.current
-
-      if (!d) {
-        return
-      }
-
-      const [w, h] = getSize(d)
-
-      let canvas: HTMLCanvasElement | null
-
-      canvas = tableCanvasRef.current
-
-      if (canvas) {
-        canvas.style.width = `${w}px`
-        canvas.style.height = `${h}px`
-        setupCanvas(canvas, scale)
-      }
-
-      canvas = bgCanvasRef.current
-
-      if (!canvas) {
-        return
-      }
-
-      canvas.style.width = `${w}px`
-      canvas.style.height = `${h}px`
-      setupCanvas(canvas, scale)
-
-      const [, , normLeft, normTop] = getScrollProps(lastScroll.current)
-
-      const ctx = canvas.getContext('2d')
-
-      if (!ctx) {
-        return
-      }
-
-      drawHeaderBg(ctx, normLeft, w)
-      drawIndexBg(ctx, normTop, h)
-
-      ctx.save()
-
-      ctx.translate(dfProps.scaledRowIndexW, cellSize[1])
-
-      ctx.fillStyle = COLOR_WHITE
-      ctx.fillRect(0, 0, w, h)
-
-      draw()
-
-      ctx.restore()
-
-      // if (frameID.current) {
-      //   window.cancelAnimationFrame(frameID.current)
-      //   frameID.current = undefined
-      // }
-    })
   }
 
   function onClick(e: MouseEvent) {

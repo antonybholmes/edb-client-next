@@ -57,7 +57,7 @@ export function ShortcutContent({
     const width = tabs[selectedTab.index]!.size ?? defaultWidth
 
     setTabPos({ y: `${x + 0.25}rem`, height: `${width - 0.5}rem` })
-  }, [selectedTab.index])
+  }, [selectedTab.index,defaultWidth, selectedTab, tabs])
 
   return (
     <div

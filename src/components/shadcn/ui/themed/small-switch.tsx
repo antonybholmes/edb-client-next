@@ -11,7 +11,7 @@ import {
   useRef,
   useState,
   type ComponentPropsWithoutRef,
-  type ElementRef,
+  type ComponentRef,
 } from 'react'
 
 // const THUMB_CLS =
@@ -65,7 +65,7 @@ interface IProps
 }
 
 export const SmallSwitch = forwardRef<
-  ElementRef<typeof SwitchPrimitives.Root>,
+  ComponentRef<typeof SwitchPrimitives.Root>,
   IProps
 >(function SmallSwitch(
   {
@@ -96,7 +96,7 @@ export const SmallSwitch = forwardRef<
       },
       0
     )
-  }, [checked, hover, pressed])
+  }, [checked, hover, pressed, disabled])
 
   const button = (
     <SwitchPrimitives.Root

@@ -51,7 +51,7 @@ export const TabbedDataFrames = forwardRef(function TabbedDataFrames(
 
   useEffect(() => {
     setSelectedSheet(dataFrames[0]!.id)
-  }, [])
+  }, [dataFrames])
 
   const tabs: ITab[] = dataFrames.map((df, i) => {
     const sheetId = `Sheet ${i + 1}`

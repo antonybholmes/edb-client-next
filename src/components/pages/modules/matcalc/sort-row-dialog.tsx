@@ -54,7 +54,7 @@ export function SortRowDialog({
         },
       })
     }
-  }, [selection])
+  }, [selection, df, updateSettings, settings])
 
   function sortDataFrame() {
     if (!df) {

@@ -432,7 +432,15 @@ export const GexBoxWhiskerPlotSvg = forwardRef<SVGElement, IProps>(
           })}
         </svg>
       )
-    }, [plot, datasetMap, displayProps, gexPlotSettings, allStats])
+    }, [
+      plot,
+      datasetMap,
+      displayProps,
+      gexPlotSettings,
+      allStats,
+      gexValueType,
+      svgRef,
+    ])
 
     return (
       <>

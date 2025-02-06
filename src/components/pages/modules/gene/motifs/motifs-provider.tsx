@@ -186,7 +186,7 @@ export function MotifsProvider({ children }: IChildrenProps) {
     if (search.search !== '') {
       query()
     }
-  }, [search])
+  }, [search, dispatch, queryClient])
 
   // useEffect(() => {
   //   const rpn = toRPN(search)

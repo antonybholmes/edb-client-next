@@ -33,7 +33,7 @@ export function SamplesList({
       name: '',
       isSelected: selectAll,
     })
-  }, [selectAll])
+  }, [selectedSamplesDispatch, selectAll])
 
   return (
     <BaseRow className="col-span-4 gap-x-2">

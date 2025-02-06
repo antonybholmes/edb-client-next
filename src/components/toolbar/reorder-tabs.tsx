@@ -108,7 +108,7 @@ function UnderlineTab({
 
     // currentTab.current = tabUnderlineProps[tabId].x
     // initial.current = false
-  }, [scale])
+  }, [scale, show])
 
   return (
     <Reorder.Item

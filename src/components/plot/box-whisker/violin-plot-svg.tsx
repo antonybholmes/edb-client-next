@@ -41,57 +41,57 @@ export function ViolinPlotSvg({
   stroke = DEFAULT_STROKE_PROPS,
   mode = 'Full',
 }: IProps) {
+  if (!yax) {
+    yax = new YAxis()
+      .autoDomain([0, Math.max(...data)])
+      //.setDomain([0, plot.dna.seq.length])
+      .setLength(height)
+  }
+
+  if (!ysmooth) {
+    ysmooth = linspace(yax.domain[0], yax.domain[1])
+  }
+
+  if (!xsmooth) {
+    const kde = new KDE(data)
+
+    xsmooth = kde.f(ysmooth)
+  }
+
+  if (!globalXMax) {
+    // global x max not defined, just use the local
+    // max, i.e. scale each violin independently
+    globalXMax = Math.max(...xsmooth!)
+  }
+
+  // normalize
+  xsmooth = xsmooth!.map((x) => x / globalXMax!)
+  // so always join in the middle
+  xsmooth[0] = 0
+  xsmooth[xsmooth.length - 1] = 0
+
+  switch (mode) {
+    case 'Left':
+      // flip x so draw cdf on left side
+      xsmooth = xsmooth.map((x) => -x)
+
+      break
+    case 'Full':
+      // for the left
+      xsmooth = [...xsmooth, ...xsmooth.map((x) => -x).toReversed()]
+      // then return on the right
+      ysmooth = [...ysmooth!, ...ysmooth!.toReversed()]
+      break
+
+    default:
+      // right case, which we create by default so nothing
+      // to do
+
+      break
+  }
+
   const svg = useMemo(() => {
     // duplicate to mirror violin
-
-    if (!yax) {
-      yax = new YAxis()
-        .autoDomain([0, Math.max(...data)])
-        //.setDomain([0, plot.dna.seq.length])
-        .setLength(height)
-    }
-
-    if (!xsmooth) {
-      //let global_xsmooth_max = 0
-
-      ysmooth = linspace(yax.domain[0], yax.domain[1])
-
-      const kde = new KDE(data)
-
-      xsmooth = kde.f(ysmooth)
-    }
-
-    if (!globalXMax) {
-      // global x max not defined, just use the local
-      // max, i.e. scale each violin independently
-      globalXMax = Math.max(...xsmooth)
-    }
-
-    // normalize
-    xsmooth = xsmooth.map((x) => x / globalXMax!)
-    // so always join in the middle
-    xsmooth[0] = 0
-    xsmooth[xsmooth.length - 1] = 0
-
-    switch (mode) {
-      case 'Left':
-        // flip x so draw cdf on left side
-        xsmooth = xsmooth.map((x) => -x)
-
-        break
-      case 'Full':
-        // for the left
-        xsmooth = [...xsmooth, ...xsmooth.map((x) => -x).toReversed()]
-        // then return on the right
-        ysmooth = [...ysmooth!, ...ysmooth!.toReversed()]
-        break
-
-      default:
-        // right case, which we create by default so nothing
-        // to do
-
-        break
-    }
 
     // if (!split) {
     //   // so that the shape is mirrored, otherwise we just draw half

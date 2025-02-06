@@ -61,7 +61,7 @@ export function PaginationComponent({
     if (currentPage > pagesCount) {
       changePage(pagesCount)
     }
-  }, [pagesCount])
+  }, [pagesCount, currentPage, changePage])
 
   let isPageNumberOutOfRange: boolean
 

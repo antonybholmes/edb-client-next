@@ -220,7 +220,7 @@ function RevCompPage() {
           break
       }
     }
-  }, [outputSeqs])
+  }, [outputSeqs, outputMode])
 
   const tabs: ITab[] = [
     {

@@ -457,7 +457,7 @@ export const Button = forwardRef<HTMLButtonElement, IButtonProps>(
           ease: 'easeInOut', // Easing for a smooth effect
         }
       )
-    }, [clickProps])
+    }, [clickProps, ripple, animate, scope])
 
     function _onMouseUp(e: React.MouseEvent<HTMLButtonElement>) {
       setClickProps({ x: -1, y: -1 })

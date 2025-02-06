@@ -278,7 +278,17 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
         </g>
       </svg>
     )
-  }, [displayProps.scale, seqFiles, displayProps])
+  }, [
+    displayProps.scale,
+    seqFiles,
+    displayProps,
+    bw,
+    maxLength,
+    width,
+    height,
+    svgRef,
+    halfBw,
+  ])
 
   // useMouseMoveListener((e: any) => {
   //   // @ts-expect-error

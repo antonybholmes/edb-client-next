@@ -454,7 +454,7 @@ function VennPage() {
         Array.from(listLabelMap.entries()).map(([k, v]) => [v, k])
       )
     )
-  }, [listLabelMap, listTextMap, displayProps])
+  }, [listLabelMap, listTextMap, displayProps, listIds])
 
   useEffect(() => {
     // make a dataframe
@@ -487,7 +487,7 @@ function VennPage() {
       description: `Venn Sets`,
       sheets: [df],
     })
-  }, [vennElemMap])
+  }, [vennElemMap, historyDispatch])
 
   useEffect(() => {
     if (sets.length === 0) {

@@ -57,7 +57,7 @@ export function FilterPropsPanel({ df }: IProps) {
     } else {
       setText(filters.cols.ids.join('\n'))
     }
-  }, [filterMode])
+  }, [filterMode, filters])
 
   // function onFileChange(_message: string, files: FileList | null) {
   //   if (!files) {

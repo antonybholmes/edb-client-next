@@ -209,7 +209,7 @@ export function GexPage() {
 
   useEffect(() => {
     loadPlatforms()
-  }, [])
+  }, [loadPlatforms])
 
   useEffect(() => {
     if (!platform) {
@@ -219,7 +219,7 @@ export function GexPage() {
         setPlatform(defaultPlatforms[0]!)
       }
     }
-  }, [platforms])
+  }, [platforms, platform])
 
   useEffect(() => {
     if (!platform) {
@@ -285,7 +285,7 @@ export function GexPage() {
     loadDatasets()
 
     //loadValueTypes()
-  }, [platform])
+  }, [platform, loadDatasets])
 
   useEffect(() => {
     if (!gexValueType) {
@@ -617,7 +617,7 @@ export function GexPage() {
       description: 'Web search',
       sheets: [df],
     })
-  }, [searchResults])
+  }, [searchResults, displayProps])
 
   function save(format: string) {
     const df = currentSheet(history)[0]!

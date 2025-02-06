@@ -101,7 +101,7 @@ export function ToggleButtonTriggers({
     const width = tabs[selectedTab.index]!.size ?? defaultWidth
 
     setTabPos({ x: `${x}rem`, width: `${width}rem` })
-  }, [selectedTab])
+  }, [selectedTab, tabs, defaultWidth])
 
   function _onValueChange(value: string) {
     const tab = getTabFromValue(value, tabs)

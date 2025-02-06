@@ -41,7 +41,7 @@ export function ColorMapIcon({ cmap, steps = 7, style, className }: IProps) {
         </g>
       </svg>
     )
-  }, [cmap, steps])
+  }, [cmap, steps, style, className])
 
   return svg
 }

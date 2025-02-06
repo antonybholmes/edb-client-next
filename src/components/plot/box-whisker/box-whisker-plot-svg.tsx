@@ -41,6 +41,13 @@ export function BoxWhiskerPlotSvg({
   fill = NO_FILL_PROPS,
   mode = 'Full',
 }: IProps) {
+  if (!yax) {
+    yax = new YAxis()
+      .autoDomain([0, Math.max(...data)])
+      //.setDomain([0, plot.dna.seq.length])
+      .setLength(height)
+  }
+
   const svg = useMemo(() => {
     const iqr = q3 - q1
     const iqr15 = 1.5 * iqr
@@ -52,13 +59,6 @@ export function BoxWhiskerPlotSvg({
     const w2 = data.toReversed().filter((x) => x <= q4)
 
     //console.log(maxHeightMap)
-
-    if (!yax) {
-      yax = new YAxis()
-        .autoDomain([0, Math.max(...data)])
-        //.setDomain([0, plot.dna.seq.length])
-        .setLength(height)
-    }
 
     const x1 = mode === 'Right' ? 0 : -0.5 * width
 
@@ -125,7 +125,7 @@ export function BoxWhiskerPlotSvg({
         />
       </>
     )
-  }, [data, yax])
+  }, [data, yax, fill, median, mode, q1, q3, stroke, width, height])
 
   return (
     <>

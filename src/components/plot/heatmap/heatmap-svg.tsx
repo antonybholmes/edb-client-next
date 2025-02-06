@@ -127,7 +127,7 @@ export const HeatMapSvg = forwardRef<SVGElement, IProps>(function HeatMapSvg(
         : 0)
 
     return { top, left, bottom, right }
-  }, [displayOptions])
+  }, [displayOptions, cf, groupState, legendBlockSize])
 
   const dfMain = cf.df
 
@@ -136,6 +136,51 @@ export const HeatMapSvg = forwardRef<SVGElement, IProps>(function HeatMapSvg(
     : undefined
 
   const svg = useMemo(() => {
+    function onMouseMove(e: { pageX: number; pageY: number }) {
+      if (!innerRef.current) {
+        return
+      }
+
+      const rect = innerRef.current.getBoundingClientRect()
+
+      let c = Math.floor(
+        (e.pageX -
+          margin.left * displayOptions.scale -
+          rect.left -
+          window.scrollX) /
+          scaledBlockSize.w
+      )
+
+      if (c < 0 || c > dfMain.shape[1] - 1) {
+        c = -1
+      }
+
+      let r = Math.floor(
+        (e.pageY -
+          margin.top * displayOptions.scale -
+          rect.top -
+          window.scrollY) /
+          scaledBlockSize.h
+      )
+
+      if (r < 0 || r > dfMain.shape[0] - 1) {
+        r = -1
+      }
+
+      if (r === -1 || c === -1) {
+        setToolTipInfo(null)
+      } else {
+        setToolTipInfo({
+          ...toolTipInfo,
+          pos: {
+            x: (margin.left + c * blockSize.w) * displayOptions.scale - 1,
+            y: (margin.top + r * blockSize.h) * displayOptions.scale - 1,
+          },
+          cell: { row: r, col: c },
+        })
+      }
+    }
+
     if (!cf) {
       return null
     }
@@ -470,52 +515,16 @@ export const HeatMapSvg = forwardRef<SVGElement, IProps>(function HeatMapSvg(
           )}
       </svg>
     )
-  }, [cf, displayOptions])
-
-  function onMouseMove(e: { pageX: number; pageY: number }) {
-    if (!innerRef.current) {
-      return
-    }
-
-    const rect = innerRef.current.getBoundingClientRect()
-
-    let c = Math.floor(
-      (e.pageX -
-        margin.left * displayOptions.scale -
-        rect.left -
-        window.scrollX) /
-        scaledBlockSize.w
-    )
-
-    if (c < 0 || c > dfMain.shape[1] - 1) {
-      c = -1
-    }
-
-    let r = Math.floor(
-      (e.pageY -
-        margin.top * displayOptions.scale -
-        rect.top -
-        window.scrollY) /
-        scaledBlockSize.h
-    )
-
-    if (r < 0 || r > dfMain.shape[0] - 1) {
-      r = -1
-    }
-
-    if (r === -1 || c === -1) {
-      setToolTipInfo(null)
-    } else {
-      setToolTipInfo({
-        ...toolTipInfo,
-        pos: {
-          x: (margin.left + c * blockSize.w) * displayOptions.scale - 1,
-          y: (margin.top + r * blockSize.h) * displayOptions.scale - 1,
-        },
-        cell: { row: r, col: c },
-      })
-    }
-  }
+  }, [
+    cf,
+    displayOptions,
+    groupState,
+    blockSize,
+    margin,
+    legendBlockSize,
+    dfPercent,
+    dfMain,
+  ])
 
   //const inBlock = highlightCol[0] > -1 && highlightCol[1] > -1
 

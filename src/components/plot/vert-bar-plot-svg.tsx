@@ -170,7 +170,21 @@ export const VertBarPlotSvg = forwardRef<SVGElement, IProps>(
           </g>
         </>
       )
-    }, [df, y, displayProps])
+    }, [
+      df,
+      cmap,
+      barWidth,
+      hue,
+      hue_norm,
+      x,
+      xdata,
+      ydata,
+      yax,
+      xax,
+      _displayProps,
+      innerWidth,
+      innerHeight,
+    ])
 
     // useEffect(() => {
     //   //if (dataFiles.length > 0) {

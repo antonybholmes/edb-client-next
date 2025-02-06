@@ -158,7 +158,7 @@ function GetDNAPage() {
           break
       }
     }
-  }, [outputSeqs])
+  }, [outputSeqs, outputMode])
 
   const tabs: ITab[] = [
     {

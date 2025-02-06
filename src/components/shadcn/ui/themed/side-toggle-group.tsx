@@ -104,7 +104,7 @@ const SideToggleGroup = forwardRef<
 
       // currentStep.current = at
       // initial.current = false
-    }, [h, at])
+    }, [h, at, itemHeight, padding])
 
     useEffect(() => {
       const v = props?.value?.toString() ?? ''
@@ -114,7 +114,7 @@ const SideToggleGroup = forwardRef<
       if (idx > -1) {
         setAt(idx)
       }
-    }, [props.value])
+    }, [props.value, values])
 
     return (
       <ToggleGroupPrimitive.Root

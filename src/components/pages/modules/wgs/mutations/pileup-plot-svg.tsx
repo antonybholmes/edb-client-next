@@ -365,7 +365,7 @@ export const PileupPlotSvg = forwardRef<SVGElement, IProps>(
           </g>
         </svg>
       )
-    }, [plot, motifPatterns, _displayProps])
+    }, [plot, motifPatterns, _displayProps, colorMap, svgRef])
 
     return (
       <>

@@ -259,7 +259,7 @@ function LollipopPage() {
   useEffect(() => {
     setTab(dataTab)
     selectionRangeDispatch({ type: 'clear' })
-  }, [history])
+  }, [history, dataTab, selectionRangeDispatch])
 
   // useEffect(() => {
   //   if (plotState.plots.length > 0) {

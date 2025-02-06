@@ -20,7 +20,13 @@ import { type IChildrenProps } from '@interfaces/children-props'
 import { EdbSettingsContext } from '@/lib/edb/edb-settings-provider'
 import { useQueryClient } from '@tanstack/react-query'
 import { produce } from 'immer'
-import { createContext, useContext, useEffect, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 
 export interface IEdbAuthContext {
   edbUser: IEdbUser
@@ -81,7 +87,7 @@ export function EdbAuthProvider({ cacheSession = true, children }: IProps) {
     if (cacheSession) {
       fetchSessionInfo()
     }
-  }, [cacheSession])
+  }, [fetchSessionInfo, cacheSession])
 
   /**
    * Attempts to return cached access token, but if it determines
@@ -144,7 +150,7 @@ export function EdbAuthProvider({ cacheSession = true, children }: IProps) {
   //   }
   // }
 
-  async function fetchSessionInfo(accessToken: string = '') {
+  const fetchSessionInfo = useCallback(async (accessToken: string = '') => {
     if (!accessToken) {
       accessToken = await getAccessTokenAutoRefresh()
     }
@@ -200,7 +206,7 @@ export function EdbAuthProvider({ cacheSession = true, children }: IProps) {
     } catch {
       console.log('cannot fetch user from remote')
     }
-  }
+  }, [])
 
   async function refreshSession() {
     await queryClient.fetchQuery({

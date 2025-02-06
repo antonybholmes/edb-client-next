@@ -173,8 +173,6 @@ export function VColorBarSvg({
               y={y1}
               width={size.height}
               height={y2 - y1}
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-
               fill={cmap.getColorWithoutAlpha(colorStart)}
             />
           )

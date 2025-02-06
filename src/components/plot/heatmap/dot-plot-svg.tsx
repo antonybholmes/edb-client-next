@@ -605,7 +605,20 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
           )}
       </svg>
     )
-  }, [cf, displayProps])
+  }, [
+    cf,
+    _displayProps,
+    groups,
+    blockSize,
+    blockSize2,
+    margin,
+    innerWidth,
+    innerHeight,
+    marginLeft,
+    marginRight,
+    marginTop,
+    marginBottom,
+  ])
 
   function onMouseMove(e: { pageX: number; pageY: number }) {
     if (!svgRef) {

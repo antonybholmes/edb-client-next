@@ -1,4 +1,10 @@
-import { forwardRef, useMemo, useState, type ForwardedRef } from 'react'
+import {
+  forwardRef,
+  useCallback,
+  useMemo,
+  useState,
+  type ForwardedRef,
+} from 'react'
 
 import type { IChildrenProps } from '@interfaces/children-props'
 import { TabContentPanels, Tabs } from '../shadcn/ui/themed/tabs'
@@ -44,23 +50,29 @@ export const TabSlideBar = forwardRef(function TabSlideBar(
 
   const selectedTab = useMemo(() => getTabFromValue(val, tabs), [val, tabs])
 
-  function _onOpenChange(state: boolean) {
-    setOpen(state)
-    onOpenChange?.(state)
-  }
+  const _onOpenChange = useCallback(
+    (state: boolean) => {
+      setOpen(state)
+      onOpenChange?.(state)
+    },
+    [setOpen, onOpenChange]
+  )
 
-  function _onValueChange(value: string) {
-    const tab = getTabFromValue(value, tabs)
+  const _onValueChange = useCallback(
+    (value: string) => {
+      const tab = getTabFromValue(value, tabs)
 
-    //const [name, index] = parseTabId(value)
+      //const [name, index] = parseTabId(value)
 
-    //onValueChange?.(name)
-    if (tab) {
-      onTabChange?.(tab)
-    }
+      //onValueChange?.(name)
+      if (tab) {
+        onTabChange?.(tab)
+      }
 
-    setValue(value)
-  }
+      setValue(value)
+    },
+    [tabs, onTabChange]
+  )
 
   const tabsElem = useMemo(() => {
     const selectedTabId = selectedTab?.tab.id // getTabId(selectedTab.tab)
@@ -90,7 +102,7 @@ export const TabSlideBar = forwardRef(function TabSlideBar(
         {/* {selectedTab.tab.content}   */}
       </Tabs>
     )
-  }, [val, tabs, hover, selectedTab])
+  }, [ref, tabs, hover, selectedTab, _onOpenChange, _onValueChange])
 
   return (
     <SlideBar

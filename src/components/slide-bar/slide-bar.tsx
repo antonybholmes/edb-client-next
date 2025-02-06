@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  useCallback,
   useContext,
   useEffect,
   useImperativeHandle,
@@ -217,19 +218,22 @@ export const SlideBarContent = forwardRef(function SlideBarContent(
     setShowAnimation(true)
   }
 
-  function setNormDivPos(p: number) {
-    p = Math.max(limits[0], Math.min(limits[1], p))
-    setDivPos(p)
-  }
+  const setNormDivPos = useCallback(
+    (p: number) => {
+      p = Math.max(limits[0], Math.min(limits[1], p))
+      setDivPos(p)
+    },
+    [setDivPos, limits]
+  )
 
   // set initial position on render
   useEffect(() => {
     setNormDivPos(position)
-  }, [position])
+  }, [setNormDivPos, position])
 
   useEffect(() => {
     setFlexPos(open ? divPos : side === 'Right' ? 100 : 0)
-  }, [divPos, open])
+  }, [divPos, open, side])
 
   useEffect(() => {
     function onMouseUp() {
@@ -287,7 +291,7 @@ export const SlideBarContent = forwardRef(function SlideBarContent(
       document.removeEventListener('mouseup', onMouseUp)
       document.removeEventListener('mousemove', onMouseMove)
     }
-  }, [dragState])
+  }, [dragState, setNormDivPos, limits, side])
 
   const duration = showAnimation ? ANIMATION_DURATION_S : 0
 

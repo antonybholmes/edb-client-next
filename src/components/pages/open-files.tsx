@@ -120,7 +120,6 @@ export function OpenFiles({
 }: IProps) {
   const ref = useRef<HTMLInputElement>(null)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function _onFileChange(e: ChangeEvent<HTMLInputElement>) {
     const { files } = e.target
 

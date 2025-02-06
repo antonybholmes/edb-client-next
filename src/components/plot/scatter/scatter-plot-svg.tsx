@@ -158,6 +158,11 @@ export const ScatterPlotSvg = forwardRef<SVGElement, IProps>(
       ...displayProps,
     }
 
+    // give y a default name
+    if (!y) {
+      y = df.colName(0)
+    }
+
     const svg = useMemo(() => {
       if (!df) {
         return null
@@ -168,11 +173,6 @@ export const ScatterPlotSvg = forwardRef<SVGElement, IProps>(
       const xdata = getNumCol(df, findCol(df, x))
 
       const ydata = y ? getNumCol(df, findCol(df, y)) : range(df.shape[0])
-
-      // give y a default name
-      if (!y) {
-        y = df.colName(0)
-      }
 
       const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
       const sizedata = size ? getNumCol(df, findCol(df, size)) : []
@@ -255,7 +255,7 @@ export const ScatterPlotSvg = forwardRef<SVGElement, IProps>(
           </g>
         </svg>
       )
-    }, [df, y, displayProps, sizeFunc])
+    }, [df, y, _displayProps, sizeFunc, cmap, hue, size, svgRef, x])
 
     // useEffect(() => {
     //   //if (dataFiles.length > 0) {
