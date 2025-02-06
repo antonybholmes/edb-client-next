@@ -607,6 +607,213 @@ export function DataFrameCanvas({
       }
     }
 
+    function drawSelectionRect(
+      ctx: ICtx,
+      w: number,
+      h: number,
+      left: number,
+      top: number
+    ) {
+      // const ctx = canvas.getContext("2d", { alpha: false })
+
+      if (!ctx) {
+        return
+      }
+
+      if (selection.current.start !== NO_SELECTION) {
+        // ctx.translate(dfProps.rowIndexW, cellSize[1])
+
+        // ctx.save()
+
+        // const region = new Path2D()
+        // region.rect(0, 0, w, h)
+        // ctx.clip(region)
+
+        let x1 =
+          colPositions.current[
+            Math.min(selection.current.start.col, selection.current.end.col)
+          ]! - left
+
+        let x2 =
+          colPositions.current[
+            Math.max(selection.current.start.col, selection.current.end.col) + 1
+          ]! - left
+
+        let y1 =
+          Math.min(selection.current.start.row, selection.current.end.row) *
+            cellSize[1] -
+          top
+
+        let y2 =
+          (Math.max(selection.current.start.row, selection.current.end.row) +
+            1) *
+            cellSize[1] -
+          top
+
+        x1 = Math.max(0, Math.min(w, x1))
+        x2 = Math.max(0, Math.min(w, x2))
+
+        y1 = Math.max(0, Math.min(h, y1))
+        y2 = Math.max(0, Math.min(h, y2))
+
+        const rw = x2 - x1
+        const rh = y2 - y1
+
+        if (rw > 0 && rh > 0) {
+          ctx.lineWidth = SELECTION_STROKE_WIDTH
+          ctx.strokeStyle = SELECTION_STROKE_COLOR
+          ctx.strokeRect(
+            x1 + 0.5 * SELECTION_STROKE_WIDTH,
+            y1 + 0.5 * SELECTION_STROKE_WIDTH,
+            rw,
+            rh
+          )
+        }
+      }
+
+      // ctx.restore()
+
+      // // reset transform
+      // ctx.translate(-dfProps.rowIndexW, -cellSize[1])
+    }
+
+    function drawCells(
+      ctx: ICtx,
+      _w: number,
+      //h: number,
+      left: number,
+      top: number,
+      rowRange: Shape,
+      colRange: Shape
+    ) {
+      if (!ctx || rowRange[0] === -1 || colRange[0] === -1) {
+        return
+      }
+
+      // ctx.translate(dfProps.rowIndexW, cellSize[1])
+
+      // ctx.save()
+
+      // const region = new Path2D()
+      // region.rect(0, 0, w, h)
+      // ctx.clip(region)
+
+      // ctx.clearRect(0, 0, w, h)
+
+      //drawTableGrid(ctx, w, h, left, top, rowRange, colRange)
+      //ctx.clearRect(0, 0, w, h)
+
+      ctx.font = NORMAL_FONT
+      ctx.fillStyle = COLOR_BLACK
+
+      // initial offset of text in first visible row
+      // so we can just increment by cell size to get next
+      // row y without needing to do more multiplications
+      let cellY = rowRange[0] * cellSize[1] - top + TEXT_OFFSET
+      let py = cellY + cellSize[1] * 0.5 //(rowRange[0] + 0.5) * cellSize[1] - top + TEXT_OFFSET
+
+      range(rowRange[0], rowRange[1]).forEach((row) => {
+        range(colRange[0], colRange[1] + 1).forEach((col) => {
+          const px1 = colPositions.current[col]! - left
+          const px2 = colPositions.current[col + 1]! - left
+          const w = px2 - px1
+
+          // clip so text doesn't overlap other cells
+          ctx.save()
+          const region = new Path2D()
+          region.rect(px1, cellY, w - GAP, cellSize[1])
+          ctx.clip(region)
+
+          const v = df.get(row, col)
+
+          const isNum = typeof v === 'number'
+
+          // if (isNum) {
+          //   if (Number.isInteger(v)) {
+          //     v = (v as number).toLocaleString()
+          //   } else {
+          //     v = (v as number).toFixed(dp)
+          //   }
+          // }
+
+          ctx.textAlign = isNum ? 'right' : 'left'
+          ctx.textBaseline = 'middle'
+
+          ctx.fillText(
+            cellStr(v, { dp }),
+            px1 + GAP + (isNum ? w - GAP2 : 0),
+            py
+          )
+
+          // ctx.beginPath();
+          // ctx.strokeStyle = "black"
+          // ctx.moveTo(0, py)
+          // ctx.lineTo(100, py)
+          // ctx.stroke()
+
+          ctx.restore()
+        })
+
+        py += cellSize[1]
+        cellY += cellSize[1]
+        //ctx.restore()
+      })
+
+      //ctx.restore()
+
+      // reset transform
+      //ctx.translate(-dfProps.rowIndexW, -cellSize[1])
+    }
+
+    /**
+     * Determine which rows are in view.
+     *
+     * @param top
+     * @param h
+     * @returns
+     */
+    function getRowRange(top: number, h: number): Shape {
+      const rowStart = Math.min(
+        df.shape[0] - 1,
+        Math.max(0, Math.floor(top / dfProps.scaledCellSize[1]))
+      )
+
+      const rowEnd = Math.max(
+        0,
+        Math.min(
+          df.shape[0],
+          Math.floor((top + h) / dfProps.scaledCellSize[1]) + 1
+        )
+      )
+
+      return [rowStart, rowEnd]
+    }
+
+    function getColRange(left: number, w: number): Shape {
+      //const n = df.shape[1] - 1
+
+      const colStart = Math.max(
+        0,
+        Math.min(
+          df.shape[1] - 1,
+          Math.max(
+            0,
+            findClosest(colPositions.current, left / scale, true).index
+          )
+        )
+      )
+
+      const colEnd = Math.max(
+        0,
+        Math.min(
+          df.shape[1],
+          findClosest(colPositions.current, (left + w) / scale, true).index + 1
+        )
+      )
+
+      return [colStart, colEnd]
+    }
+
     const d = scrollRef.current
 
     if (!d) {
@@ -669,18 +876,7 @@ export function DataFrameCanvas({
 
     // reset transform
     //ctx.translate(-dfProps.rowIndexW, -cellSize[1])
-  }, [
-    dfProps,
-    cellSize,
-    df,
-    drawCells,
-    drawSelectionRect,
-    scale,
-    getColRange,
-    getRowRange,
-    getScrollProps,
-    getSize,
-  ])
+  }, [dfProps, cellSize, df, dp, scale, getScrollProps, getSize])
 
   const resizeTable = useCallback(() => {
     /**
@@ -858,159 +1054,6 @@ export function DataFrameCanvas({
 
   useMouseUpListener(onMouseUp)
 
-  function drawSelectionRect(
-    ctx: ICtx,
-    w: number,
-    h: number,
-    left: number,
-    top: number
-  ) {
-    // const ctx = canvas.getContext("2d", { alpha: false })
-
-    if (!ctx) {
-      return
-    }
-
-    if (selection.current.start !== NO_SELECTION) {
-      // ctx.translate(dfProps.rowIndexW, cellSize[1])
-
-      // ctx.save()
-
-      // const region = new Path2D()
-      // region.rect(0, 0, w, h)
-      // ctx.clip(region)
-
-      let x1 =
-        colPositions.current[
-          Math.min(selection.current.start.col, selection.current.end.col)
-        ]! - left
-
-      let x2 =
-        colPositions.current[
-          Math.max(selection.current.start.col, selection.current.end.col) + 1
-        ]! - left
-
-      let y1 =
-        Math.min(selection.current.start.row, selection.current.end.row) *
-          cellSize[1] -
-        top
-
-      let y2 =
-        (Math.max(selection.current.start.row, selection.current.end.row) + 1) *
-          cellSize[1] -
-        top
-
-      x1 = Math.max(0, Math.min(w, x1))
-      x2 = Math.max(0, Math.min(w, x2))
-
-      y1 = Math.max(0, Math.min(h, y1))
-      y2 = Math.max(0, Math.min(h, y2))
-
-      const rw = x2 - x1
-      const rh = y2 - y1
-
-      if (rw > 0 && rh > 0) {
-        ctx.lineWidth = SELECTION_STROKE_WIDTH
-        ctx.strokeStyle = SELECTION_STROKE_COLOR
-        ctx.strokeRect(
-          x1 + 0.5 * SELECTION_STROKE_WIDTH,
-          y1 + 0.5 * SELECTION_STROKE_WIDTH,
-          rw,
-          rh
-        )
-      }
-    }
-
-    // ctx.restore()
-
-    // // reset transform
-    // ctx.translate(-dfProps.rowIndexW, -cellSize[1])
-  }
-
-  function drawCells(
-    ctx: ICtx,
-    _w: number,
-    //h: number,
-    left: number,
-    top: number,
-    rowRange: Shape,
-    colRange: Shape
-  ) {
-    if (!ctx || rowRange[0] === -1 || colRange[0] === -1) {
-      return
-    }
-
-    // ctx.translate(dfProps.rowIndexW, cellSize[1])
-
-    // ctx.save()
-
-    // const region = new Path2D()
-    // region.rect(0, 0, w, h)
-    // ctx.clip(region)
-
-    // ctx.clearRect(0, 0, w, h)
-
-    //drawTableGrid(ctx, w, h, left, top, rowRange, colRange)
-    //ctx.clearRect(0, 0, w, h)
-
-    ctx.font = NORMAL_FONT
-    ctx.fillStyle = COLOR_BLACK
-
-    // initial offset of text in first visible row
-    // so we can just increment by cell size to get next
-    // row y without needing to do more multiplications
-    let cellY = rowRange[0] * cellSize[1] - top + TEXT_OFFSET
-    let py = cellY + cellSize[1] * 0.5 //(rowRange[0] + 0.5) * cellSize[1] - top + TEXT_OFFSET
-
-    range(rowRange[0], rowRange[1]).forEach((row) => {
-      range(colRange[0], colRange[1] + 1).forEach((col) => {
-        const px1 = colPositions.current[col]! - left
-        const px2 = colPositions.current[col + 1]! - left
-        const w = px2 - px1
-
-        // clip so text doesn't overlap other cells
-        ctx.save()
-        const region = new Path2D()
-        region.rect(px1, cellY, w - GAP, cellSize[1])
-        ctx.clip(region)
-
-        const v = df.get(row, col)
-
-        const isNum = typeof v === 'number'
-
-        // if (isNum) {
-        //   if (Number.isInteger(v)) {
-        //     v = (v as number).toLocaleString()
-        //   } else {
-        //     v = (v as number).toFixed(dp)
-        //   }
-        // }
-
-        ctx.textAlign = isNum ? 'right' : 'left'
-        ctx.textBaseline = 'middle'
-
-        ctx.fillText(cellStr(v, { dp }), px1 + GAP + (isNum ? w - GAP2 : 0), py)
-
-        // ctx.beginPath();
-        // ctx.strokeStyle = "black"
-        // ctx.moveTo(0, py)
-        // ctx.lineTo(100, py)
-        // ctx.stroke()
-
-        ctx.restore()
-      })
-
-      py += cellSize[1]
-      cellY += cellSize[1]
-      //ctx.restore()
-    })
-
-    //ctx.restore()
-
-    // reset transform
-    //ctx.translate(-dfProps.rowIndexW, -cellSize[1])
-  }
-
   /**
    * Only update one cell location and leave the rest of the
    * canvas cached.
@@ -1079,52 +1122,6 @@ export function DataFrameCanvas({
     const normTop = t / scale
 
     return [l, t, normLeft, normTop]
-  }
-
-  /**
-   * Determine which rows are in view.
-   *
-   * @param top
-   * @param h
-   * @returns
-   */
-  function getRowRange(top: number, h: number): Shape {
-    const rowStart = Math.min(
-      df.shape[0] - 1,
-      Math.max(0, Math.floor(top / dfProps.scaledCellSize[1]))
-    )
-
-    const rowEnd = Math.max(
-      0,
-      Math.min(
-        df.shape[0],
-        Math.floor((top + h) / dfProps.scaledCellSize[1]) + 1
-      )
-    )
-
-    return [rowStart, rowEnd]
-  }
-
-  function getColRange(left: number, w: number): Shape {
-    //const n = df.shape[1] - 1
-
-    const colStart = Math.max(
-      0,
-      Math.min(
-        df.shape[1] - 1,
-        Math.max(0, findClosest(colPositions.current, left / scale, true).index)
-      )
-    )
-
-    const colEnd = Math.max(
-      0,
-      Math.min(
-        df.shape[1],
-        findClosest(colPositions.current, (left + w) / scale, true).index + 1
-      )
-    )
-
-    return [colStart, colEnd]
   }
 
   function select(p: ICell) {
