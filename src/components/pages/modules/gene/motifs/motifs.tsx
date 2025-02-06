@@ -145,7 +145,6 @@ export function MotifsPage() {
 
   useEffect(() => {
     if (datasetsQuery.data) {
-      //console.log(datasetsQuery.data)
       setDatasets(
         new Map<string, boolean>(
           datasetsQuery.data.map((dataset: string) => [dataset, true])
@@ -154,21 +153,13 @@ export function MotifsPage() {
     }
   }, [datasetsQuery.data, setDatasets])
 
-  // if (datasetsQuery.isPending) {
-  //   return "Loading..."
-  // }
-
-  // if (datasetsQuery.error) {
-  //   return "An error has occurred: " + datasetsQuery.error.message
-  // }
-
   useEffect(() => {
     setSearch({ ...search, reverse: revComp, complement: revComp })
-  }, [revComp, search, setSearch])
+  }, [revComp, setSearch])
 
   useEffect(() => {
     setDisplayProps({ ...displayProps, mode })
-  }, [mode, displayProps, setDisplayProps])
+  }, [mode, setDisplayProps])
 
   useEffect(() => {
     const dataframes: BaseDataFrame[] = state.order.map((i) => {
@@ -321,31 +312,6 @@ export function MotifsPage() {
           >
             <ArrowRightArrowLeftIcon />
           </ToolbarIconButton>
-
-          {/* <ToolbarSeparator />
-
-          <ToggleGroup
-            type="single"
-            value={selectedTab}
-            onValueChange={setSelectedTab}
-            className="rounded-theme overflow-hidden"
-          >
-            <ToggleGroupItem
-              value="Plot"
-              className="w-14"
-              aria-label="Plot view"
-            >
-              Plot
-            </ToggleGroupItem>
-
-            <ToggleGroupItem
-              value="Table"
-              className="w-14"
-              aria-label="Table view"
-            >
-              Table
-            </ToggleGroupItem>
-          </ToggleGroup> */}
         </>
       ),
     },
@@ -427,26 +393,6 @@ export function MotifsPage() {
             />
           </Card>
         </TabSlideBar>
-
-        // <HSplitPane
-        //   panels={[
-        //     <TabbedDataFrames
-        //       key="tabbed-data-frames"
-        //       selectedSheet={history.step.sheetIndex}
-        //       dataFrames={history.step.dataframes}
-        //       onTabChange={(tab: number) => {
-        //         historyDispatch({ type: "goto-sheet", index: tab })
-        //       }}
-        //       onSelectionChange={setSelection}
-        //     />,
-        //     <SideBar side="Right"
-        //       key="sidebar-right"
-        //       tabs={rightTabs}
-        //       activeTabIndex={selectedRightTab}
-        //       onTabChange={setSelectedRightTab}
-        //     />,
-        //   ]}
-        // />
       ),
     },
   ]

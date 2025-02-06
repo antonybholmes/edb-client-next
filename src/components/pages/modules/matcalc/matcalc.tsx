@@ -159,13 +159,6 @@ export const DEFAULT_TABLE_NAME = 'Table 1'
 export const TAB_DATA_TABLES = 'Data Tables'
 export const TAB_PLOTS = 'Plots'
 
-// const DEFAULT_DATA_TABLE_TAB: ITab = {
-//   //id: nanoid(),
-//   id: DEFAULT_TABLE_NAME,
-//   icon: <TableIcon />,
-//   isOpen: true,
-// }
-
 const DEFAULT_DATA_TABLES_TAB: ITab = {
   //id: nanoid(),
   id: TAB_DATA_TABLES,
@@ -345,46 +338,6 @@ function MatcalcPage() {
     genesetDispatch({ type: 'set', genesets: res.data })
   }
 
-  // useEffect(() => {
-  //   // if file opened, reset groups. you should open groups after opening a table
-  //   if (history.steps.length <2 && currentStep(history)[0]!.type === HISTORY_STEP_TYPE_OPEN) {
-  //     groupsDispatch({ type: 'clear' })
-  //   }
-  // }, [currentStep(history)])
-
-  // useEffect(() => {
-  //   if (historyAction === 'reset') {
-  //     const tab: ITab = {
-  //       ...DEFAULT_DATA_TABLE_TAB,
-  //       id: history.steps[0]?.sheets[0]?.id ?? DEFAULT_TABLE_NAME,
-  //       children: [{ ...PLOTS_TAB }],
-  //     }
-
-  //     setDataTableTab(tab)
-
-  //     setSelectedTab(tab)
-
-  //     const tablesTabs: ITab = {
-  //       //id: nanoid(),
-  //       id: TAB_DATA_TABLES,
-  //       icon: <FolderIcon />,
-
-  //       isOpen: true,
-  //       children: [tab],
-  //     }
-
-  //     const treeTabs: ITab = {
-  //       ...treeFoldersTab,
-  //       children: [tablesTabs],
-  //     }
-
-  //     setTreeFoldersTab(treeTabs)
-
-  //     selectionRangeDispatch({ type: 'clear' })
-  //   }
-  //   //setClusterFrame(NO_CF)
-  // }, [historyAction])
-
   useEffect(() => {
     if (!treeFoldersTab) {
       return
@@ -401,17 +354,6 @@ function MatcalcPage() {
     if (step[1] === -1) {
       return
     }
-
-    // const plotChildrenFromPlotState: ITab[] = plotsState.plots.map(plot => ({
-    //   id: plot.id,
-    //   name: plot.name, //plot.name,
-    //   icon: <ImageIcon />,
-    //   onDelete: () => {
-    //     plotsDispatch({ type: 'remove', id: plot.id })
-    //   },
-
-    //   isOpen: true,
-    // }))
 
     const plotChildrenFromHistory: ITab[] = step[0]!.plots
       .map((id) => step[0]!.plotMap[id]!)
@@ -488,7 +430,7 @@ function MatcalcPage() {
     }
 
     //setSelectedTab(tableTab)
-  }, [history, treeFoldersTab, historyDispatch])
+  }, [history, historyDispatch])
 
   function openFiles(files: ITextFileOpen[], options: IParseOptions) {
     filesToDataFrames(queryClient, files, {
