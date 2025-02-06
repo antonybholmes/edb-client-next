@@ -144,8 +144,6 @@ function AdminUsersPage() {
       return
     }
 
-    console.log(accessToken)
-
     try {
       const res = await queryClient.fetchQuery({
         queryKey: ['users'],
@@ -156,8 +154,6 @@ function AdminUsersPage() {
           })
         },
       })
-
-      console.log('users', res.data)
 
       setUsers(res.data)
     } catch {
@@ -399,8 +395,6 @@ function AdminUsersPage() {
           title={showDialog.params!.title}
           user={showDialog.params!.user}
           setUser={(user: INewUser | undefined) => {
-            console.log('new', user)
-
             if (user) {
               newUser(user)
             }
@@ -416,7 +410,6 @@ function AdminUsersPage() {
           user={showDialog.params!.user}
           setUser={(user: INewUser | undefined) => {
             if (user) {
-              console.log('update', user)
               updateUser(user)
             }
 

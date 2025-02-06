@@ -568,8 +568,7 @@ function MatcalcPage() {
     const dfOverlaps = oneWayFromDataframes(dataframes)
 
     if (dfOverlaps) {
-      console.log(dfOverlaps, 'boop')
-
+ 
       historyDispatch({
         type: 'add-sheets',
 
@@ -1168,12 +1167,7 @@ function MatcalcPage() {
       return null
     }
 
-    console.log(
-      step[0]!.plots,
-      step[0]!.plotMap,
-      selectedTab?.id,
-      step[0]!.plots.map((id) => step[0]!.plotMap[id]!)
-    )
+
 
     return (
       <Tabs

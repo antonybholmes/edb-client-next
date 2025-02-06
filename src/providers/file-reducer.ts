@@ -20,8 +20,7 @@ export interface IFileAction {
 export type IFileDispatch = Dispatch<IFileAction>
 
 export function filesReducer(state: IFileStore, action: IFileAction) {
-  console.log('files', action)
-
+  
   switch (action.type) {
     case 'set':
       return { ...state, files: action.files }

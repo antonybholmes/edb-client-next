@@ -106,7 +106,7 @@ export function Files({
                 <VCenterRow className="gap-x-4">
                     <LoadButton
                         onClick={() => {
-                            console.log(inputRef.current)
+ 
                             inputRef.current?.click?.()
                         }}
                         isLoading={isLoading}

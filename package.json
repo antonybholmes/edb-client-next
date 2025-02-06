@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
- 
     "dev": "TINA_PUBLIC_IS_LOCAL=true tinacms dev --port 4001 --datalayer-port 9006 -c \"next dev --turbopack\"",
     "build": "next build",
-    
+    "format": "pnpm update-version && prettier --plugin-search-dir=. --write \"src/**/*.{ts,tsx,js,mjs,svelte,astro}\"",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "update-version": "pnpm check-version && pnpm check-module-version",
+    "check-module-version": "node scripts/check-module-version.mjs",
+    "check-version": "node scripts/check-version.mjs"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.3.0",
@@ -86,6 +88,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "postcss": "^8.5.1",
+    "prettier": "^3.4.2",
     "prettier-plugin-organize-imports": "^4.1.0",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "sass": "^1.83.4",

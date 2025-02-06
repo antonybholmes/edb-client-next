@@ -205,8 +205,8 @@ function LollipopPage() {
         search: { text: gene, results: proteins },
         index,
       })
-    } catch (e) {
-      console.log(e)
+    } catch  {
+ 
     }
 
     try {

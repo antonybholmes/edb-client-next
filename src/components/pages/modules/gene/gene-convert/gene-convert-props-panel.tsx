@@ -30,9 +30,7 @@ export const GeneConvertPropsPanel = forwardRef(function GeneConvertPropsPanel(
   ref: ForwardedRef<HTMLDivElement>
 ) {
   const tabs = [{ id: 'Human' }, { id: 'Mouse' }]
-
-  console.log(fromSpecies, toSpecies)
-
+ 
   return (
     <PropsPanel ref={ref}>
       <ScrollAccordion value={['species']}>

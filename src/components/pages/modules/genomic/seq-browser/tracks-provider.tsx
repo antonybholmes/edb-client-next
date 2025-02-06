@@ -913,9 +913,7 @@ export function TracksProvider({ children }: IChildrenProps) {
             const res = await queryClient.fetchQuery({
               queryKey: ['genes', settings.genome, loc],
               queryFn: async () => {
-                console.log(
-                  `${API_GENES_INFO_URL}/${settings.genome}?search=${loc}&level=gene`
-                )
+     
                 const res = await httpFetch.getJson(
                   `${API_GENES_INFO_URL}/${settings.genome}?search=${loc}&level=gene`
                 )

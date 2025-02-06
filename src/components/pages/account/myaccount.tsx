@@ -183,9 +183,8 @@ function MyAccountPage() {
           title: 'Your account information was updated',
         }),
       })
-    } catch (err) {
-      console.log('update err', err)
-
+    } catch   {
+     
       // alertDispatch({
       //   type: 'add',
       //   alert: makeAlertFromAxiosError(err as AxiosError),

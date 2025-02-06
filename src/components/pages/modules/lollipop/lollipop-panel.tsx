@@ -60,8 +60,7 @@ function LollipopPanel({
     )
 
     messages.forEach((message) => {
-      console.log(message)
-
+ 
       if (message.text.includes('save')) {
         if (message.text.includes(':')) {
           downloadImageAutoFormat(

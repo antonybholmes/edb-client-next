@@ -77,8 +77,6 @@ export function SortRowDialog({
           // all indices for this group from full table
           const idx = getColIdxFromGroup(df, group)
 
-          console.log(group, idx)
-
           // subset table
           sortDf = df.iloc(':', idx)
 

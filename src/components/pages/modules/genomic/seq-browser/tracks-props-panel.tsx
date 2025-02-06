@@ -557,8 +557,7 @@ export function TracksPropsPanel({
                   : []
               )
 
-              console.log(seqsByGroup)
-
+ 
               groupIds = state.order.filter(
                 (_, gi) => seqsByGroup[gi]!.length > 0
               )

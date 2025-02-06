@@ -2,9 +2,9 @@
 
 import { VCenterRow } from '@/components/layout/v-center-row'
 import {
-    CALLBACK_URL_PARAM,
-    MYACCOUNT_ROUTE,
-    TEXT_MY_ACCOUNT,
+  CALLBACK_URL_PARAM,
+  MYACCOUNT_ROUTE,
+  TEXT_MY_ACCOUNT,
 } from '@/lib/edb/edb'
 import { EdbAuthContext } from '@/lib/edb/edb-auth-provider'
 import { redirect } from '@/lib/http/urls'
@@ -12,12 +12,12 @@ import { redirect } from '@/lib/http/urls'
 import { useAuth0 } from '@auth0/auth0-react'
 import { ThemeIndexLink } from '@components/link/theme-index-link'
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-    CenteredCardContainer,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CenteredCardContainer,
 } from '@components/shadcn/ui/themed/card'
 import { FORWARD_DELAY_MS, SignInLayout } from '@layouts/signin-layout'
 import { CoreProviders } from '@providers/core-providers'
@@ -62,7 +62,7 @@ function SignedInPage() {
   const {
     isLoading,
     isAuthenticated,
-    getIdTokenClaims,
+ 
     getAccessTokenSilently,
     handleRedirectCallback,
   } = useAuth0()
@@ -89,10 +89,7 @@ function SignedInPage() {
   useEffect(() => {
     async function load() {
       try {
-        const x = await getIdTokenClaims()
-
-        console.log(x)
-
+   
         const auth0Token = await getAccessTokenSilently()
 
         //console.log('auth0Token', auth0Token)
@@ -129,7 +126,9 @@ function SignedInPage() {
           <CardHeader>
             <CardTitle>
               {edbUser.uuid !== ''
-                ? `Hi ${edbUser.firstName !== '' ? edbUser.firstName : edbUser.email},`
+                ? `Hi ${
+                    edbUser.firstName !== '' ? edbUser.firstName : edbUser.email
+                  },`
                 : 'Waiting for account data to load...'}
             </CardTitle>
 

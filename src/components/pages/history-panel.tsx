@@ -201,7 +201,7 @@ export const HistoryPanel = forwardRef(function HistoryPanel(
                   aria-label={`Goto history step ${hi + 1}`}
                   className="flex flex-col gap-y-0.5 grow px-2.5 justify-start items-start overflow-hidden"
                   onClick={() => {
-                    console.log('hh', hi)
+            
                     historyDispatch({
                       type: 'goto-step',
                       stepId: hi,

@@ -442,7 +442,7 @@ function OverlapPage() {
                 }
               }}
               onTabChange={(v) => {
-                console.log(v)
+ 
                 setSelected(v.tab.id)
               }}
               onReorder={setOrder}

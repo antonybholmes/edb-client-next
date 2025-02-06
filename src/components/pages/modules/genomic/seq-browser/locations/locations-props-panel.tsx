@@ -196,7 +196,7 @@ export function LocationsPropsPanel({
             <Reorder.Group
               values={locations.map(l => l.loc)}
               onReorder={order => {
-                console.log(order)
+      
                 setLocations(order.map(l => parseLocation(l)))
               }}
               className="flex flex-col"

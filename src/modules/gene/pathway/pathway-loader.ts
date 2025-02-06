@@ -7,8 +7,10 @@ import { QueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import type { IGeneSetFile } from './pathway'
 
-export async function loadGMT(queryClient: QueryClient, file: IGeneSetFile): Promise<IGeneset[]> {
-  
+export async function loadGMT(
+  queryClient: QueryClient,
+  file: IGeneSetFile
+): Promise<IGeneset[]> {
   const geneSets: IGeneset[] = []
 
   try {
@@ -27,9 +29,8 @@ export async function loadGMT(queryClient: QueryClient, file: IGeneSetFile): Pro
 
     const lines: string[] = textToLines(res.data)
 
-    console.log('loaded from', file.url, lines.length)
-
-    lines.forEach(line => {
+ 
+    lines.forEach((line) => {
       const tokens = line.split('\t')
 
       geneSets.push({
@@ -51,9 +52,7 @@ export async function loadGMT(queryClient: QueryClient, file: IGeneSetFile): Pro
       //   })
       // })
     })
-  } catch (error) {
-    console.log(error)
-  }
+  } catch {}
 
   return geneSets
 }

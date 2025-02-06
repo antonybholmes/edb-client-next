@@ -207,8 +207,7 @@ export function SignIn({ allowPassword = true, visitUrl }: ISignInProps) {
     try {
       // to activate passwordless, simply use a blank password
 
-      console.log(SESSION_SIGNIN_URL)
-
+ 
       const res = await queryClient.fetchQuery({
         queryKey: ['signin'],
         queryFn: () =>

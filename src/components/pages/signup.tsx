@@ -119,7 +119,7 @@ function SignUpPage({ allowPassword = true }: ISignupProps) {
         }),
       })
     } catch (error) {
-      console.log(error, 'error')
+   
       alertDispatch({
         type: 'add',
         alert: makeAlertFromAxiosError(error as AxiosError),

@@ -193,8 +193,7 @@ function AnnotationPage() {
   async function annotate() {
     const df = currentSheet(history)[0]!
 
-    console.log( genomesQuery.data)
-
+ 
     const dfa = await createAnnotationTable(
       queryClient,
       df,

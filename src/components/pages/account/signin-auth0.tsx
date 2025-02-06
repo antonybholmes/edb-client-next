@@ -103,7 +103,7 @@ function SignInPage() {
   // }
 
   if (user) {
-    console.log(user)
+ 
     return (
       <div>
         Hello {user.name}{' '}

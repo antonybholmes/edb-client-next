@@ -101,8 +101,8 @@ export function OverlapProvider({ children }: IChildrenProps) {
       } else {
         _setDfs([...order.map(id => dfMap.get(id)!), ...tables])
       }
-    } catch (err) {
-      console.log(err)
+    } catch  {
+      
     }
   }
 

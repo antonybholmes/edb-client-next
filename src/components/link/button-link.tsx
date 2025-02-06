@@ -75,7 +75,6 @@ export const ButtonLink = forwardRef(function ButtonLink(
   }
 
   function _onMouseDown(e: React.MouseEvent<HTMLAnchorElement>) {
-    console.log(e.nativeEvent.offsetX, e.nativeEvent.offsetY)
     setClickProps({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
     onMouseDown?.(e)
   }

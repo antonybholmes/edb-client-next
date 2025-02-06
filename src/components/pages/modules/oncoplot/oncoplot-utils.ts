@@ -790,10 +790,7 @@ export function makeOncoPlot(
 ): [OncoplotMutationFrame, ILegend] {
   let samples: string[] = [...new Set(df.col(columns.sample)?.strs)].sort()
 
-  console.log(columns)
-
-  console.log(df.colNames)
-
+ 
   const genes: string[] = [...new Set(df.col(columns.gene)?.strs)]
     .filter(x => x !== '')
     .sort()

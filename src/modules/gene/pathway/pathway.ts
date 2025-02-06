@@ -86,7 +86,7 @@ export class PathwayOverlap {
   }
 
   get pathways(): number {
-    console.log(this._datasets)
+ 
     if (this._npathways == -1) {
       this._npathways = sum(this._datasets.map(gcs => gcs.pathways.length))
     }
@@ -195,7 +195,7 @@ export class PathwayOverlap {
       allData = allData.concat(data)
     })
 
-    console.log(allData[0], allData[0]!.length, PATHWAY_TABLE_COLS.length)
+ 
 
     return [allData, PATHWAY_TABLE_COLS]
   }

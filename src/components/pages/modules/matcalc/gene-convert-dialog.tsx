@@ -195,7 +195,7 @@ export function GeneConvertDialog({
         const idCol = df_out
           .col(settings.geneConvert.toSpecies)!
           .values.map((v) => v.toString())
-        console.log(idCol)
+    
 
         let columns = df_out.columns.values
         if (settings.geneConvert.convertIndex) {
@@ -219,8 +219,7 @@ export function GeneConvertDialog({
             d.push(rc)
           })
         })
-        console.log(df_out.columns)
-
+ 
         df_out = new DataFrame({ data: d, columns }).setName(outName)
       }
 
