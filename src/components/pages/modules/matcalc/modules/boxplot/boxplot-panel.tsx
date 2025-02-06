@@ -105,7 +105,14 @@ export const BoxPlotPanel = forwardRef(function BoxPlotPanel(
     }
 
     //downloadSvgAsPng(svgRef, canvasRef, downloadRef)
-  }, [messageState])
+  }, [
+    messageState,
+    canvasRef,
+    downloadRef,
+    messageDispatch,
+    plot?.id,
+    showSideBar,
+  ])
 
   function adjustScale(scale: number) {
     setScale(scale)

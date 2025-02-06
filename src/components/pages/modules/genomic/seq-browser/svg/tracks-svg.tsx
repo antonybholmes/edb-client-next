@@ -62,12 +62,6 @@ export const TracksSvg = forwardRef<SVGElement, IProps>(function TracksSvg(
     },
   })
 
-  // we need this here to calculate the height of the track rather than
-  // having the query inside the svg component
-  const featuresSearch: IGenomicFeatureSearch[] = genesQuery.data
-    ? genesQuery.data
-    : []
-
   const seqs = state.order
     .map((gid) => state.groups[gid]!)
     .map((tg) => tg.order.map((id) => tg.tracks[id]!))
@@ -107,10 +101,16 @@ export const TracksSvg = forwardRef<SVGElement, IProps>(function TracksSvg(
       settings.seqs.globalY.auto && allLocTrackBins.length > 0
         ? getYMax(seqs, allLocTrackBins, settings.seqs.scale.mode)
         : settings.seqs.globalY.ymax,
-    [allLocTrackBins, settings.seqs.globalY, settings.seqs.scale]
+    [allLocTrackBins, settings.seqs.globalY, settings.seqs.scale, seqs]
   )
 
   const svg = useMemo(() => {
+    // we need this here to calculate the height of the track rather than
+    // having the query inside the svg component
+    const featuresSearch: IGenomicFeatureSearch[] = genesQuery.data
+      ? genesQuery.data
+      : []
+
     const tracks = state.order
       .map((gid) => state.groups[gid]!)
       .map((tg) => tg.order.map((id) => tg.tracks[id]!))
@@ -234,7 +234,17 @@ export const TracksSvg = forwardRef<SVGElement, IProps>(function TracksSvg(
         </g>
       </svg>
     )
-  }, [location, state, featuresSearch, settings, globalY])
+  }, [
+    state,
+    settings,
+    globalY,
+    binSizes,
+    genesMap,
+    locations,
+    setLocations,
+    style,
+    svgRef,
+  ])
 
   return <div className={className}>{svg}</div>
 })

@@ -50,57 +50,57 @@ function SignInPage() {
   const { alertDispatch } = useContext(AlertsContext)
   //const [, acountDispatch] = useContext(AccountContext)
 
-  async function signin() {
-    const queryParameters = new URLSearchParams(window.location.search)
-    const jwt = queryParameters.get(EDB_JWT_PARAM) ?? ''
-
-    if (!jwt) {
-      return
-    }
-
-    try {
-      // first validate jwt and ensure no errors
-      await queryClient.fetchQuery({
-        queryKey: ['signin'],
-        queryFn: () =>
-          axios.post(
-            SESSION_PASSWORDLESS_SIGNIN_URL,
-            {},
-
-            {
-              headers: bearerHeaders(jwt),
-              withCredentials: true,
-            }
-          ),
-      })
-
-      alertDispatch({
-        type: 'set',
-        alert: makeSignedInAlert(),
-      })
-
-      // now extract visit url from token
-
-      const jwtData = jwtDecode<ICallbackJwtPayload>(jwt)
-
-      // url encoded in jwt to make it more tamper proof
-      const visitUrl = jwtData.url
-
-      setTimeout(() => {
-        redirect(`${SIGNEDIN_ROUTE}${visitUrl ? `?url=${visitUrl}` : ''}`)
-      }, FORWARD_DELAY_MS)
-    } catch (error) {
-      // we encounted a login error
-      alertDispatch({
-        type: 'add',
-        alert: makeAlertFromAxiosError(error as AxiosError),
-      })
-    }
-  }
-
   useEffect(() => {
+    async function signin() {
+      const queryParameters = new URLSearchParams(window.location.search)
+      const jwt = queryParameters.get(EDB_JWT_PARAM) ?? ''
+
+      if (!jwt) {
+        return
+      }
+
+      try {
+        // first validate jwt and ensure no errors
+        await queryClient.fetchQuery({
+          queryKey: ['signin'],
+          queryFn: () =>
+            axios.post(
+              SESSION_PASSWORDLESS_SIGNIN_URL,
+              {},
+
+              {
+                headers: bearerHeaders(jwt),
+                withCredentials: true,
+              }
+            ),
+        })
+
+        alertDispatch({
+          type: 'set',
+          alert: makeSignedInAlert(),
+        })
+
+        // now extract visit url from token
+
+        const jwtData = jwtDecode<ICallbackJwtPayload>(jwt)
+
+        // url encoded in jwt to make it more tamper proof
+        const visitUrl = jwtData.url
+
+        setTimeout(() => {
+          redirect(`${SIGNEDIN_ROUTE}${visitUrl ? `?url=${visitUrl}` : ''}`)
+        }, FORWARD_DELAY_MS)
+      } catch (error) {
+        // we encounted a login error
+        alertDispatch({
+          type: 'add',
+          alert: makeAlertFromAxiosError(error as AxiosError),
+        })
+      }
+    }
+
     signin()
-  }, [])
+  }, [queryClient, alertDispatch])
 
   return (
     <VCenterCol className="grow">

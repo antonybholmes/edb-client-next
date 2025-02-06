@@ -219,7 +219,7 @@ export function SeqViewPage() {
         ),
       },
     ],
-    [displayProps.base, displayProps.base.bgMode, displayProps.base.mismatches]
+    [displayProps]
   )
 
   return (

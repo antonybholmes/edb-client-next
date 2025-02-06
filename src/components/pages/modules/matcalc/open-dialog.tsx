@@ -46,7 +46,7 @@ export function OpenDialog({ files, openFiles, onCancel }: IProps) {
         },
       })
     }
-  }, [files])
+  }, [files, updateSettings, settings])
 
   return (
     <OKCancelDialog

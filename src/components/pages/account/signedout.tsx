@@ -20,7 +20,7 @@ function SignedOutPage() {
 
   useEffect(() => {
     signoutUser()
-  }, [])
+  }, [signoutUser])
 
   return (
     <SignInLayout showSignInError={false} className="bg-muted">

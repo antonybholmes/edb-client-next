@@ -84,7 +84,7 @@ export function HeatMapDialog({
         heatmap: { ...settings.heatmap, clusterCols: isClusterMap },
       })
     }
-  }, [isClusterMap])
+  }, [isClusterMap, settings, updateSettings])
 
   function makeCluster() {
     if (!df) {

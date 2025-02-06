@@ -166,7 +166,14 @@ export const VolcanoPanel = forwardRef(function VolcanoPanel(
     }
 
     //downloadSvgAsPng(svgRef, canvasRef, downloadRef)
-  }, [messageState])
+  }, [
+    messageState,
+    messageDispatch,
+    plot?.id,
+    showSideBar,
+    canvasRef,
+    downloadRef,
+  ])
 
   function adjustScale(scale: number) {
     setScale(scale)

@@ -168,7 +168,7 @@ export function MotifsPage() {
 
   useEffect(() => {
     setDisplayProps({ ...displayProps, mode })
-  }, [mode])
+  }, [mode, displayProps, setDisplayProps])
 
   useEffect(() => {
     const dataframes: BaseDataFrame[] = state.order.map((i) => {
@@ -190,7 +190,7 @@ export function MotifsPage() {
         sheets: dataframes,
       })
     }
-  }, [state.order, state.motifs])
+  }, [state.order, state.motifs, historyDispatch])
 
   const fileMenuTabs: ITab[] = [
     {

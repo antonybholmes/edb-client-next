@@ -12,7 +12,7 @@ import {
   currentSheets,
   HistoryContext,
 } from '@providers/history-provider'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 
 import { GroupPropsPanel } from './group-props-panel'
 
@@ -79,26 +79,29 @@ export function DataPanel({ panelId = DEFAULT_PANEL_ID }: IDataPanelProps) {
 
   //setFooterLeft(<span>{getFormattedShape(currentSheet(history)[0]!)}</span>)
 
-  function save(format: string) {
-    const df = currentSheet(history)[0]!
+  const save = useCallback(
+    (format: string) => {
+      const df = currentSheet(history)[0]!
 
-    if (!df) {
-      return
-    }
+      if (!df) {
+        return
+      }
 
-    const sep = format === 'csv' ? ',' : '\t'
-    const hasHeader = !df.name.includes('GCT')
-    const hasIndex = !df.name.includes('GCT')
+      const sep = format === 'csv' ? ',' : '\t'
+      const hasHeader = !df.name.includes('GCT')
+      const hasIndex = !df.name.includes('GCT')
 
-    downloadDataFrame(df, downloadRef, {
-      hasHeader,
-      hasIndex,
-      file: `table.${format}`,
-      sep,
-    })
+      downloadDataFrame(df, downloadRef, {
+        hasHeader,
+        hasIndex,
+        file: `table.${format}`,
+        sep,
+      })
 
-    //setShowFileMenu(false)
-  }
+      //setShowFileMenu(false)
+    },
+    [history, currentSheet, downloadRef]
+  )
 
   useEffect(() => {
     const messages = messageState.queue.filter((m) => m.target === panelId)

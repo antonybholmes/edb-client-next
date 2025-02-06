@@ -78,7 +78,14 @@ function OncoplotPanel({
       messageDispatch({ type: 'clear' })
     }
     //downloadSvgAsPng(svgRef, canvasRef, downloadRef)
-  }, [messageState])
+  }, [
+    messageState,
+    messageDispatch,
+    panelId,
+    showSideBar,
+    canvasRef,
+    downloadRef,
+  ])
 
   function adjustScale(scale: number) {
     setScale(scale)

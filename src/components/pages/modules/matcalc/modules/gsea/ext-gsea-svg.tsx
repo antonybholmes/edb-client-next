@@ -518,7 +518,7 @@ export const ExtGseaSvg = forwardRef<SVGElement, IProps>(function ExtGseaSvg(
         </g>
       </svg>
     )
-  }, [displayProps])
+  }, [displayProps, extGseaRes, gseaRes1, gseaRes2, gs1, gs2, rankedGenes, ref])
 
   return (
     <>

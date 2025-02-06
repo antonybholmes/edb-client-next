@@ -353,7 +353,18 @@ export const VolcanoPlotSvg = forwardRef<SVGElement, IProps>(
           />
         </svg>
       )
-    }, [df, y, displayOptions, sizeFunc])
+    }, [
+      df,
+      y,
+      displayOptions,
+      sizeFunc,
+      xdata,
+      ydata,
+      svgRef,
+      toolTipInfo,
+      x,
+      size,
+    ])
 
     // useEffect(() => {
     //   //if (dataFiles.length > 0) {

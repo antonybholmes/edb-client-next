@@ -544,7 +544,7 @@ export const OncoplotSvg = forwardRef<SVGElement, IProps>(function OncoplotSvg(
 
   const blockSize: IBlock = displayProps.grid.cell
   const spacing = displayProps.grid.spacing
-  const halfBlockSize: IBlock = { w: 0.5 * blockSize.w, h: 0.5 * blockSize.h }
+
   const scaledBlockSize = {
     w: blockSize.w * displayProps.scale,
     h: blockSize.h * displayProps.scale,
@@ -597,9 +597,54 @@ export const OncoplotSvg = forwardRef<SVGElement, IProps>(function OncoplotSvg(
   const height = gridHeight + top + bottom
 
   const svg = useMemo(() => {
+    function onMouseMove(e: { pageX: number; pageY: number }) {
+      if (!innerRef.current) {
+        return
+      }
+
+      const rect = innerRef.current.getBoundingClientRect()
+
+      let c = Math.floor(
+        (e.pageX -
+          marginLeft * displayProps.scale -
+          rect.left -
+          window.scrollX) /
+          (scaledBlockSize.w + scaledPadding.x)
+      )
+
+      if (c < 0 || c > mf.shape[1] - 1) {
+        c = -1
+      }
+
+      let r = Math.floor(
+        (e.pageY - top * displayProps.scale - rect.top - window.scrollY) /
+          (scaledBlockSize.h + scaledPadding.y)
+      )
+
+      if (r < 0 || r > mf.shape[0] - 1) {
+        r = -1
+      }
+
+      if (r === -1 || c === -1) {
+        setToolTipInfo(null)
+      } else {
+        setToolTipInfo({
+          ...toolTipInfo,
+          pos: {
+            x:
+              (marginLeft + c * (blockSize.w + spacing.x)) * displayProps.scale,
+            y: (top + r * (blockSize.h + spacing.y)) * displayProps.scale,
+          },
+          cell: { row: r, col: c },
+        })
+      }
+    }
+
     if (!mf) {
       return null
     }
+
+    const halfBlockSize: IBlock = { w: 0.5 * blockSize.w, h: 0.5 * blockSize.h }
 
     const samples: string[] = mf.sampleStats.map((stats) => stats.sample)
 
@@ -737,46 +782,19 @@ export const OncoplotSvg = forwardRef<SVGElement, IProps>(function OncoplotSvg(
         )}
       </svg>
     )
-  }, [mf, clinicalTracks, displayProps])
-
-  function onMouseMove(e: { pageX: number; pageY: number }) {
-    if (!innerRef.current) {
-      return
-    }
-
-    const rect = innerRef.current.getBoundingClientRect()
-
-    let c = Math.floor(
-      (e.pageX - marginLeft * displayProps.scale - rect.left - window.scrollX) /
-        (scaledBlockSize.w + scaledPadding.x)
-    )
-
-    if (c < 0 || c > mf.shape[1] - 1) {
-      c = -1
-    }
-
-    let r = Math.floor(
-      (e.pageY - top * displayProps.scale - rect.top - window.scrollY) /
-        (scaledBlockSize.h + scaledPadding.y)
-    )
-
-    if (r < 0 || r > mf.shape[0] - 1) {
-      r = -1
-    }
-
-    if (r === -1 || c === -1) {
-      setToolTipInfo(null)
-    } else {
-      setToolTipInfo({
-        ...toolTipInfo,
-        pos: {
-          x: (marginLeft + c * (blockSize.w + spacing.x)) * displayProps.scale,
-          y: (top + r * (blockSize.h + spacing.y)) * displayProps.scale,
-        },
-        cell: { row: r, col: c },
-      })
-    }
-  }
+  }, [
+    mf,
+    clinicalTracks,
+    displayProps,
+    blockSize,
+    spacing,
+    top,
+    width,
+    height,
+    gridHeight,
+    marginLeft,
+    gridWidth,
+  ])
 
   //const inBlock = highlightCol[0] > -1 && highlightCol[1] > -1
 

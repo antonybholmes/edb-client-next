@@ -115,7 +115,7 @@ export function PeaksDialog({
         )
       )
     }
-  }, [data])
+  }, [data, genome, platform])
 
   useEffect(() => {
     if (search === '') {

@@ -105,7 +105,7 @@ function SignedInPage() {
     if (isAuthenticated) {
       load()
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, getAccessTokenSilently, signInWithAuth0Token])
 
   if (isLoading) {
     return <div>Loading... Please wait.</div>

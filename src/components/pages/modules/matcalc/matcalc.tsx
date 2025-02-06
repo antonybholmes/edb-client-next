@@ -488,7 +488,7 @@ function MatcalcPage() {
     }
 
     //setSelectedTab(tableTab)
-  }, [history])
+  }, [history, treeFoldersTab, historyDispatch])
 
   function openFiles(files: ITextFileOpen[], options: IParseOptions) {
     filesToDataFrames(queryClient, files, {
@@ -1233,7 +1233,7 @@ function MatcalcPage() {
           })}
       </Tabs>
     )
-  }, [selectedTab, history])
+  }, [selectedTab, history, dataTableTab])
 
   const sideContent = useMemo(() => {
     return (

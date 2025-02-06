@@ -93,7 +93,7 @@ export function DataPanel({ panelId = 'Data' }: IDataPanelProps) {
       messageDispatch({ type: 'clear' })
     }
     //downloadSvgAsPng(svgRef, canvasRef, downloadRef)
-  }, [messageState])
+  }, [messageState, messageDispatch, panelId, showSideBar])
 
   const rightTabs: ITab[] = [
     {

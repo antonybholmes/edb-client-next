@@ -611,13 +611,16 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
     groups,
     blockSize,
     blockSize2,
-    margin,
     innerWidth,
     innerHeight,
     marginLeft,
-    marginRight,
     marginTop,
-    marginBottom,
+    bound,
+    dfMain,
+    height,
+    onMouseMove,
+    svgRef,
+    width,
   ])
 
   function onMouseMove(e: { pageX: number; pageY: number }) {

@@ -125,7 +125,7 @@ export function BoxWhiskerPlotSvg({
         />
       </>
     )
-  }, [data, yax, fill, median, mode, q1, q3, stroke, width, height])
+  }, [data, yax, fill, median, mode, q1, q3, stroke, width, medianStroke])
 
   return (
     <>

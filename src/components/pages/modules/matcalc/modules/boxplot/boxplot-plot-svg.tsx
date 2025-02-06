@@ -459,7 +459,7 @@ export const BoxPlotSvg = forwardRef<SVGElement, IProps>(function BoxPlotSvg(
         </g>
       </svg>
     )
-  }, [displayOptions, plot.customProps])
+  }, [displayOptions, plot.customProps, singlePlotDisplayOptions, svgRef])
 
   return (
     <>

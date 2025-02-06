@@ -116,7 +116,7 @@ export const HistoryPanel = forwardRef(function HistoryPanel(
     //const width = tabs[selectedTab.index].size ?? defaultWidth
 
     setTabPos({ y: `${x}rem`, height: `${defaultWidth - 1}rem` })
-  }, [currentBranch(history)[0]!.currentStep])
+  }, [defaultWidth, history])
 
   return (
     <>

@@ -227,6 +227,20 @@ export function DataFrameCanvas({
     scaledRowIndexW: 0,
   })
 
+  const getSize = useCallback(
+    (d: HTMLElement): [number, number] => {
+      //const r = d.getBoundingClientRect()
+      //const w = r.width + dfProps.scaledRowIndexW
+      //const h = r.height + dfProps.scaledCellSize[1]
+
+      const w = d.clientWidth + dfProps.scaledRowIndexW
+      const h = d.clientHeight + dfProps.scaledCellSize[1]
+
+      return [w, h]
+    },
+    [dfProps.scaledCellSize, dfProps.scaledRowIndexW]
+  )
+
   useEffect(() => {
     colPositions.current = range(df.shape[1] + 1).map((i) => i * cellSize[0])
   }, [df, cellSize])
@@ -270,7 +284,141 @@ export function DataFrameCanvas({
     })
   }, [df, scale, cellSize])
 
+  const draw = useCallback(() => {
+    const d = scrollRef.current
+
+    if (!d) {
+      return
+    }
+
+    if (!tableCanvasRef.current) {
+      return
+    }
+
+    const ctx = tableCanvasRef.current.getContext('2d')
+
+    if (!ctx) {
+      return
+    }
+
+    const [w, h] = getSize(d)
+    const [l, t, normLeft, normTop] = getScrollProps(lastScroll.current)
+
+    //console.log("draw", l, t, normLeft, normTop, dfProps.maxScaledDim)
+
+    // const hScrollDir = l - scrollPos.current[0]
+    // const vSCrollDir = t - scrollPos.current[1]
+    // scrollPos.current = [l, t]
+
+    const rowRange = getRowRange(t, h)
+    const colRange = getColRange(l, w)
+
+    //console.log(lastScroll.current, l, t, normLeft, normTop, colRange)
+
+    //const selCtx = selectionCanvasRef.current?.getContext("2d")
+    //const intCtx = gridCanvasRef.current?.getContext("2d")
+
+    //if (scrollDirection.dx !== 0) {
+
+    drawHeader(ctx, normLeft, w, colRange)
+    //}
+
+    //if (scrollDirection.dy !== 0) {
+
+    drawIndex(ctx, normTop, h, rowRange)
+    // }
+
+    ctx.save()
+
+    ctx.translate(dfProps.rowIndexW, cellSize[1])
+
+    const region = new Path2D()
+    region.rect(0, 0, w, h)
+    ctx.clip(region)
+
+    ctx.clearRect(0, 0, w, h)
+
+    drawSelection(ctx, w, h, normLeft, normTop)
+    drawTableGrid(ctx, w, h, normLeft, normTop, rowRange, colRange)
+    drawCells(ctx, w, normLeft, normTop, rowRange, colRange)
+    drawSelectionRect(ctx, w, h, normLeft, normTop)
+
+    ctx.restore()
+
+    // reset transform
+    //ctx.translate(-dfProps.rowIndexW, -cellSize[1])
+  }, [])
+
   const resizeTable = useCallback(() => {
+    /**
+     * Draw the index (left column) background.
+     *
+     * @param ctx
+     * @param _normTop
+     * @param h
+     * @returns
+     */
+    function drawIndexBg(ctx: ICtx, _normTop: number, h: number) {
+      if (!ctx) {
+        return
+      }
+
+      //ctx.fillStyle = INDEX_BG_COLOR
+      //ctx.fillRect(0, cellSize[1], dfProps.rowIndexW, h)
+
+      ctx.save()
+
+      ctx.imageSmoothingEnabled = false
+      ctx.translate(0.5, 0)
+
+      //ctx.translate(0, cellSize[1])
+
+      //const region = new Path2D()
+
+      ctx.strokeStyle = GRID_COLOR
+      ctx.lineWidth = LINE_THICKNESS
+      ctx.beginPath()
+      ctx.moveTo(dfProps.rowIndexW - 1, 0)
+      ctx.lineTo(dfProps.rowIndexW - 1, h)
+      ctx.stroke()
+
+      ctx.restore()
+
+      // ctx.strokeStyle = GRID_COLOR
+      // ctx.lineWidth = LINE_THICKNESS
+      // ctx.beginPath()
+      // ctx.moveTo(0, 0)
+      // ctx.lineTo(0, h)
+      // ctx.moveTo(0, h)
+      // ctx.lineTo(cellSize[0], h)
+      // ctx.stroke()
+    }
+
+    function drawHeaderBg(ctx: ICtx, _normLeft: number, w: number) {
+      if (!ctx) {
+        return
+      }
+
+      //ctx.fillStyle = INDEX_BG_COLOR
+      //ctx.fillRect(0, 0, w, cellSize[1])
+
+      // draw line
+
+      ctx.save()
+
+      ctx.imageSmoothingEnabled = false
+      ctx.translate(0, 0.5)
+
+      ctx.strokeStyle = GRID_COLOR
+      ctx.lineWidth = LINE_THICKNESS
+      ctx.beginPath()
+      ctx.moveTo(0, cellSize[1] - 1)
+      ctx.lineTo(w, cellSize[1] - 1)
+      ctx.stroke()
+
+      ctx.restore()
+    }
+
     window.requestAnimationFrame(() => {
       const d = scrollRef.current
 
@@ -327,16 +475,7 @@ export function DataFrameCanvas({
       //   frameID.current = undefined
       // }
     })
-  }, [
-    cellSize,
-    dfProps,
-    scale,
-    draw,
-    drawHeaderBg,
-    drawIndexBg,
-    getScrollProps,
-    getSize,
-  ])
+  }, [cellSize, dfProps, scale, draw, getScrollProps, getSize])
 
   useEffect(() => {
     selection.current = { start: NO_SELECTION, end: NO_SELECTION }
@@ -385,50 +524,6 @@ export function DataFrameCanvas({
   useResizeObserver<HTMLDivElement>(scrollRef, resizeTable)
 
   useMouseUpListener(onMouseUp)
-
-  /**
-   * Draw the index (left column) background.
-   *
-   * @param ctx
-   * @param _normTop
-   * @param h
-   * @returns
-   */
-  function drawIndexBg(ctx: ICtx, _normTop: number, h: number) {
-    if (!ctx) {
-      return
-    }
-
-    //ctx.fillStyle = INDEX_BG_COLOR
-    //ctx.fillRect(0, cellSize[1], dfProps.rowIndexW, h)
-
-    ctx.save()
-
-    ctx.imageSmoothingEnabled = false
-    ctx.translate(0.5, 0)
-
-    //ctx.translate(0, cellSize[1])
-
-    //const region = new Path2D()
-
-    ctx.strokeStyle = GRID_COLOR
-    ctx.lineWidth = LINE_THICKNESS
-    ctx.beginPath()
-    ctx.moveTo(dfProps.rowIndexW - 1, 0)
-    ctx.lineTo(dfProps.rowIndexW - 1, h)
-    ctx.stroke()
-
-    ctx.restore()
-
-    // ctx.strokeStyle = GRID_COLOR
-    // ctx.lineWidth = LINE_THICKNESS
-    // ctx.beginPath()
-    // ctx.moveTo(0, 0)
-    // ctx.lineTo(0, h)
-    // ctx.moveTo(0, h)
-    // ctx.lineTo(cellSize[0], h)
-    // ctx.stroke()
-  }
 
   function drawIndex(ctx: ICtx, normTop: number, h: number, rowRange: Shape) {
     if (!ctx) {
@@ -517,31 +612,6 @@ export function DataFrameCanvas({
     ctx.restore()
 
     //ctx.translate(0, -cellSize[1])
-  }
-
-  function drawHeaderBg(ctx: ICtx, _normLeft: number, w: number) {
-    if (!ctx) {
-      return
-    }
-
-    //ctx.fillStyle = INDEX_BG_COLOR
-    //ctx.fillRect(0, 0, w, cellSize[1])
-
-    // draw line
-
-    ctx.save()
-
-    ctx.imageSmoothingEnabled = false
-    ctx.translate(0, 0.5)
-
-    ctx.strokeStyle = GRID_COLOR
-    ctx.lineWidth = LINE_THICKNESS
-    ctx.beginPath()
-    ctx.moveTo(0, cellSize[1] - 1)
-    ctx.lineTo(w, cellSize[1] - 1)
-    ctx.stroke()
-
-    ctx.restore()
   }
 
   function drawHeader(ctx: ICtx, normLeft: number, w: number, colRange: Shape) {
@@ -980,17 +1050,6 @@ export function DataFrameCanvas({
     //ctx.translate(-dfProps.rowIndexW, -cellSize[1])
   }
 
-  function getSize(d: HTMLElement): [number, number] {
-    //const r = d.getBoundingClientRect()
-    //const w = r.width + dfProps.scaledRowIndexW
-    //const h = r.height + dfProps.scaledCellSize[1]
-
-    const w = d.clientWidth + dfProps.scaledRowIndexW
-    const h = d.clientHeight + dfProps.scaledCellSize[1]
-
-    return [w, h]
-  }
-
   function getScrollProps(
     d: IScrollDirection
   ): [number, number, number, number] {
@@ -1060,71 +1119,6 @@ export function DataFrameCanvas({
   function selectAndFocus(p: ICell) {
     select(p)
     setFocusCell(p)
-  }
-
-  function draw() {
-    const d = scrollRef.current
-
-    if (!d) {
-      return
-    }
-
-    if (!tableCanvasRef.current) {
-      return
-    }
-
-    const ctx = tableCanvasRef.current.getContext('2d')
-
-    if (!ctx) {
-      return
-    }
-
-    const [w, h] = getSize(d)
-    const [l, t, normLeft, normTop] = getScrollProps(lastScroll.current)
-
-    //console.log("draw", l, t, normLeft, normTop, dfProps.maxScaledDim)
-
-    // const hScrollDir = l - scrollPos.current[0]
-    // const vSCrollDir = t - scrollPos.current[1]
-    // scrollPos.current = [l, t]
-
-    const rowRange = getRowRange(t, h)
-    const colRange = getColRange(l, w)
-
-    //console.log(lastScroll.current, l, t, normLeft, normTop, colRange)
-
-    //const selCtx = selectionCanvasRef.current?.getContext("2d")
-    //const intCtx = gridCanvasRef.current?.getContext("2d")
-
-    //if (scrollDirection.dx !== 0) {
-
-    drawHeader(ctx, normLeft, w, colRange)
-    //}
-
-    //if (scrollDirection.dy !== 0) {
-
-    drawIndex(ctx, normTop, h, rowRange)
-    // }
-
-    ctx.save()
-
-    ctx.translate(dfProps.rowIndexW, cellSize[1])
-
-    const region = new Path2D()
-    region.rect(0, 0, w, h)
-    ctx.clip(region)
-
-    ctx.clearRect(0, 0, w, h)
-
-    drawSelection(ctx, w, h, normLeft, normTop)
-    drawTableGrid(ctx, w, h, normLeft, normTop, rowRange, colRange)
-    drawCells(ctx, w, normLeft, normTop, rowRange, colRange)
-    drawSelectionRect(ctx, w, h, normLeft, normTop)
-
-    ctx.restore()
-
-    // reset transform
-    //ctx.translate(-dfProps.rowIndexW, -cellSize[1])
   }
 
   function onScroll(

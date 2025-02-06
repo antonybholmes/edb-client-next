@@ -225,7 +225,7 @@ export function PathwayPage() {
 
     setValidGeneSet(ret)
     return ret
-  }, [validGeneSet])
+  }, [validGeneSet, queryClient])
 
   function adjustScale(scale: number) {
     setScale(scale)
@@ -686,7 +686,7 @@ export function PathwayPage() {
           .flat()
       )
     )
-  }, [selectAllDatasets])
+  }, [selectAllDatasets, datasetInfos])
 
   const tabs: ITab[] = [
     {
@@ -819,7 +819,7 @@ export function PathwayPage() {
         content: <HistoryPanel />,
       },
     ]
-  }, [datasetsForUse, datasetInfoTabs])
+  }, [datasetsForUse, datasetInfoTabs, datasetInfos, selectAllDatasets])
 
   const fileMenuTabs: ITab[] = [
     {

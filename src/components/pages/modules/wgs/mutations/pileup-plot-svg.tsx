@@ -175,10 +175,13 @@ export const PileupPlotSvg = forwardRef<SVGElement, IProps>(
     const tooltipRef = useRef<HTMLDivElement>(null)
     const highlightRef = useRef<HTMLSpanElement>(null)
 
-    const _displayProps: IPileupProps = {
-      ...DEFAULT_PILEUP_PROPS,
-      ...displayProps,
-    }
+    const _displayProps: IPileupProps = useMemo(
+      () => ({
+        ...DEFAULT_PILEUP_PROPS,
+        ...displayProps,
+      }),
+      [displayProps]
+    )
 
     const svg = useMemo(() => {
       if (!plot) {

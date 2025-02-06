@@ -53,7 +53,7 @@ export function NumericalInput({
         Math.max(limit[0], typeof value === 'number' ? value : limit[0])
       )
     )
-  }, [value])
+  }, [value, limit])
 
   useEffect(() => {
     setValue(_numValue.toFixed(dp))

@@ -140,7 +140,7 @@ function MyAccountPage() {
     form.reset({
       ...edbSession.user,
     })
-  }, [edbSession])
+  }, [edbSession, form])
 
   async function updateRemoteUser(
     username: string,

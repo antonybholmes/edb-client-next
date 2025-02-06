@@ -153,10 +153,13 @@ export const ScatterPlotSvg = forwardRef<SVGElement, IProps>(
     }: IProps,
     svgRef
   ) {
-    const _displayProps: IScatterDisplayOptions = {
-      ...DEFAULT_SCATTER_PROPS,
-      ...displayProps,
-    }
+    const _displayProps: IScatterDisplayOptions = useMemo(
+      () => ({
+        ...DEFAULT_SCATTER_PROPS,
+        ...displayProps,
+      }),
+      [displayProps]
+    )
 
     // give y a default name
     if (!y) {

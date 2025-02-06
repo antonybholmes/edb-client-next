@@ -77,7 +77,7 @@ export function SeqsDialog({
       trackDb.filter(
         (t) => t.genome === settings.genome && t.platform === platform
       ),
-    [trackDb]
+    [trackDb, settings.genome, platform]
   )
 
   const [selectedMap, setSelectedMap] = useState<Map<string, boolean>>(

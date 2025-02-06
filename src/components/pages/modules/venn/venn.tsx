@@ -728,7 +728,15 @@ function VennPage() {
 
     //   console.log("g", g.node().getBBox())
     // }
-  }, [sets, colorMap])
+  }, [
+    sets,
+    colorMap,
+    displayProps,
+    listLabelMap,
+    vennElemMap,
+    labelToIndexMap,
+    _originalMap,
+  ])
 
   function adjustScale(scale: number) {
     setScale(scale)

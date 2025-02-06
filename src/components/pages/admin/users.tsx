@@ -78,64 +78,64 @@ function AdminUsersPage() {
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  async function loadRoles() {
-    const token = await getAccessTokenAutoRefresh()
-
-    if (!token) {
-      return
-    }
-
-    try {
-      const res = await queryClient.fetchQuery({
-        queryKey: ['admin_roles'],
-        queryFn: () => {
-          return httpFetch.getJson(API_ADMIN_ROLES_URL, {
-            headers: bearerHeaders(token),
-          })
-        },
-      })
-
-      //console.log('roles', res.data)
-      setRoles(res.data)
-    } catch {
-      console.error('could not fetch remote roles')
-    }
-  }
-
   useEffect(() => {
+    async function loadRoles() {
+      const token = await getAccessTokenAutoRefresh()
+
+      if (!token) {
+        return
+      }
+
+      try {
+        const res = await queryClient.fetchQuery({
+          queryKey: ['admin_roles'],
+          queryFn: () => {
+            return httpFetch.getJson(API_ADMIN_ROLES_URL, {
+              headers: bearerHeaders(token),
+            })
+          },
+        })
+
+        //console.log('roles', res.data)
+        setRoles(res.data)
+      } catch {
+        console.error('could not fetch remote roles')
+      }
+    }
+
     loadRoles()
-  }, [])
-
-  async function loadUserStats() {
-    const accessToken = await getAccessTokenAutoRefresh()
-
-    if (!accessToken) {
-      return
-    }
-
-    try {
-      const res = await queryClient.fetchQuery({
-        queryKey: ['user_stats'],
-        queryFn: () => {
-          return httpFetch.getJson(API_ADMIN_USER_STATS_URL, {
-            headers: bearerHeaders(accessToken),
-          })
-        },
-      })
-
-      const stats: IUserStats = res.data
-
-      setUserStats(stats)
-    } catch {
-      console.error('could not load user stats')
-    }
-  }
+  }, [getAccessTokenAutoRefresh, queryClient])
 
   useEffect(() => {
+    async function loadUserStats() {
+      const accessToken = await getAccessTokenAutoRefresh()
+
+      if (!accessToken) {
+        return
+      }
+
+      try {
+        const res = await queryClient.fetchQuery({
+          queryKey: ['user_stats'],
+          queryFn: () => {
+            return httpFetch.getJson(API_ADMIN_USER_STATS_URL, {
+              headers: bearerHeaders(accessToken),
+            })
+          },
+        })
+
+        const stats: IUserStats = res.data
+
+        setUserStats(stats)
+      } catch {
+        console.error('could not load user stats')
+      }
+    }
+
     if (roles.length > 0) {
       loadUserStats()
     }
-  }, [roles])
+  }, [roles, getAccessTokenAutoRefresh, queryClient])
 
   async function loadUsers() {
     const accessToken = await getAccessTokenAutoRefresh()
@@ -171,7 +171,7 @@ function AdminUsersPage() {
     //if (userStats.users < (page - 1) * itemsPerPage) {
     ///  setPage(1)
     //}
-  }, [page, itemsPerPage, userStats])
+  }, [page, itemsPerPage, userStats, loadUsers])
 
   //const form = useForm<IUserAdminView>({
   // defaultValues: {

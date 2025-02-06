@@ -406,7 +406,7 @@ export const GseaSvg = forwardRef<SVGElement, IProps>(function GseaSvg(
         {plots}
       </svg>
     )
-  }, [rankedGenes, reports, resultsMap, displayProps])
+  }, [rankedGenes, reports, resultsMap, displayProps, phenotypes, ref])
 
   return (
     <>

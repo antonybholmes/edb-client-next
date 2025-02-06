@@ -500,7 +500,7 @@ export function GseaPage() {
         content: <HistoryPanel />,
       },
     ]
-  }, [selectAllDatasets, datasetsForUse, searchReports, reportTabs])
+  }, [selectAllDatasets, datasetsForUse, searchReports, reportTabs, phenotypes])
 
   const fileMenuTabs: ITab[] = [
     {

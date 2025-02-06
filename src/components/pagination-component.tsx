@@ -1,6 +1,6 @@
 import type { IElementProps } from '@interfaces/element-props'
 import { range } from '@lib/math/range'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import {
   Pagination,
   PaginationContent,
@@ -38,12 +38,15 @@ export function PaginationComponent({
   const isCurrentPageFirst = currentPage === 1
   const isCurrentPageLast = currentPage === pagesCount
 
-  function changePage(page: number) {
-    if (currentPage === page) {
-      return
-    }
-    setCurrentPage?.(Math.max(1, Math.min(pagesCount, page)))
-  }
+  const changePage = useCallback(
+    (page: number) => {
+      if (currentPage === page) {
+        return
+      }
+      setCurrentPage?.(Math.max(1, Math.min(pagesCount, page)))
+    },
+    [setCurrentPage, currentPage, pagesCount]
+  )
 
   function onPageNumberClick(page: number) {
     changePage(page)

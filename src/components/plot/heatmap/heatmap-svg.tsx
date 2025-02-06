@@ -47,10 +47,13 @@ export const HeatMapSvg = forwardRef<SVGElement, IProps>(function HeatMapSvg(
 ) {
   const blockSize = displayOptions.blockSize
 
-  const scaledBlockSize = {
-    w: blockSize.w * displayOptions.scale,
-    h: blockSize.h * displayOptions.scale,
-  }
+  const scaledBlockSize = useMemo(
+    () => ({
+      w: blockSize.w * displayOptions.scale,
+      h: blockSize.h * displayOptions.scale,
+    }),
+    [blockSize, displayOptions.scale]
+  )
 
   const { groupState } = useContext(GroupsContext)
 
@@ -524,6 +527,8 @@ export const HeatMapSvg = forwardRef<SVGElement, IProps>(function HeatMapSvg(
     legendBlockSize,
     dfPercent,
     dfMain,
+    scaledBlockSize,
+    toolTipInfo,
   ])
 
   //const inBlock = highlightCol[0] > -1 && highlightCol[1] > -1

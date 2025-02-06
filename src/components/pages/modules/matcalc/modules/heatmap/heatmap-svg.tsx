@@ -146,7 +146,7 @@ export const HeatMapSvg = forwardRef<SVGElement, IProps>(function HeatMapSvg(
         : 0)
 
     return { top, left, bottom, right }
-  }, [displayOptions])
+  }, [displayOptions, groupState.groups.size, cf, legendBlockSize])
 
   const dfMain = cf.df
 
@@ -489,7 +489,7 @@ export const HeatMapSvg = forwardRef<SVGElement, IProps>(function HeatMapSvg(
           )}
       </svg>
     )
-  }, [cf, displayOptions])
+  }, [cf, displayOptions, groupState, blockSize, margin])
 
   function onMouseMove(e: { pageX: number; pageY: number }) {
     if (!innerRef.current) {

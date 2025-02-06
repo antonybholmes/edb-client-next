@@ -190,26 +190,26 @@ export function GexPage() {
 
   const { getAccessTokenAutoRefresh } = useContext(EdbAuthContext)
 
-  async function loadPlatforms() {
-    try {
-      const res = await queryClient.fetchQuery({
-        queryKey: ['platforms'],
-        queryFn: () => {
-          return httpFetch.getJson(API_GEX_PLATFORMS_URL)
-        },
-      })
-
-      const platforms: IGexPlatform[] = res.data
-
-      setPlatforms(platforms)
-    } catch {
-      console.error('error loading platforms')
-    }
-  }
-
   useEffect(() => {
+    async function loadPlatforms() {
+      try {
+        const res = await queryClient.fetchQuery({
+          queryKey: ['platforms'],
+          queryFn: () => {
+            return httpFetch.getJson(API_GEX_PLATFORMS_URL)
+          },
+        })
+
+        const platforms: IGexPlatform[] = res.data
+
+        setPlatforms(platforms)
+      } catch {
+        console.error('error loading platforms')
+      }
+    }
+
     loadPlatforms()
-  }, [loadPlatforms])
+  }, [queryClient])
 
   useEffect(() => {
     if (!platform) {
@@ -238,46 +238,46 @@ export function GexPage() {
     }
   }, [platform])
 
-  async function loadDatasets() {
-    let datasets: IGexDataset[] = []
+  useEffect(() => {
+    async function loadDatasets() {
+      let datasets: IGexDataset[] = []
 
-    try {
-      const res = await queryClient.fetchQuery({
-        queryKey: ['datasets'],
-        queryFn: () => {
-          return httpFetch.postJson(API_GEX_DATASETS_URL, {
-            body: { platform },
-          })
-        },
-      })
+      try {
+        const res = await queryClient.fetchQuery({
+          queryKey: ['datasets'],
+          queryFn: () => {
+            return httpFetch.postJson(API_GEX_DATASETS_URL, {
+              body: { platform },
+            })
+          },
+        })
 
-      datasets = res.data
-    } catch {
-      console.error('error loading datasets from remote')
+        datasets = res.data
+      } catch {
+        console.error('error loading datasets from remote')
+      }
+
+      setDatasets(datasets)
+
+      setDatasetMap(
+        new Map<number, IGexDataset>(
+          datasets.map((dataset) => [dataset.id, dataset])
+        )
+      )
+
+      setDatasetUseMap(
+        new Map<string, boolean>([
+          ...datasets.map(
+            (dataset) => [dataset.id.toString(), true] as [string, boolean]
+          ),
+          ...datasets.map(
+            (dataset) => [dataset.institution, true] as [string, boolean]
+          ),
+          ['all', true],
+        ])
+      )
     }
 
-    setDatasets(datasets)
-
-    setDatasetMap(
-      new Map<number, IGexDataset>(
-        datasets.map((dataset) => [dataset.id, dataset])
-      )
-    )
-
-    setDatasetUseMap(
-      new Map<string, boolean>([
-        ...datasets.map(
-          (dataset) => [dataset.id.toString(), true] as [string, boolean]
-        ),
-        ...datasets.map(
-          (dataset) => [dataset.institution, true] as [string, boolean]
-        ),
-        ['all', true],
-      ])
-    )
-  }
-
-  useEffect(() => {
     if (!platform) {
       return
     }
@@ -285,7 +285,7 @@ export function GexPage() {
     loadDatasets()
 
     //loadValueTypes()
-  }, [platform, loadDatasets])
+  }, [platform, queryClient])
 
   useEffect(() => {
     if (!gexValueType) {
@@ -399,148 +399,158 @@ export function GexPage() {
     })
 
     updateGexPlotSettings(gexPlotSettings)
-  }, [datasets])
-
-  async function fetchGex() {
-    if (!platform) {
-      // alertDispatch({
-      //   type: 'set',
-      //   alert: makeWarningAlert({
-      //     title: 'Gene Expression',
-      //     size: 'popup',
-      //     content: 'You must select a platform.',
-      //   }),
-      // })
-
-      toast({
-        title: 'Gene Expression',
-        description: 'You must select a platform.',
-        variant: 'destructive',
-      })
-
-      return
-    }
-
-    if (genes.length === 0) {
-      // alertDispatch({
-      //   type: 'set',
-      //   alert: makeErrorAlert({
-      //     title: 'Gene Expression',
-      //     size: 'dialog',
-      //     content:
-      //       'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
-      //   }),
-      // })
-
-      toast({
-        title: 'Gene Expression',
-        description:
-          'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
-        variant: 'destructive',
-      })
-
-      return
-    }
-
-    const selectedDatasets = datasets.filter((dataset) =>
-      datasetUseMap.get(dataset.id.toString())
-    )
-
-    if (selectedDatasets.length === 0) {
-      return
-    }
-
-    const accessToken = await getAccessTokenAutoRefresh()
-
-    if (!accessToken) {
-      // alertDispatch({
-      //   type: 'set',
-      //   alert: makeErrorAlert({
-      //     title: 'Gene Expression',
-      //     size: 'dialog',
-      //     content:
-      //       'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
-      //   }),
-      // })
-
-      toast({
-        title: 'Gene Expression',
-        description:
-          'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
-        variant: 'destructive',
-      })
-
-      return
-    }
-
-    try {
-      const res = await queryClient.fetchQuery({
-        queryKey: ['gex'],
-        queryFn: () => {
-          return httpFetch.postJson(API_GEX_EXP_URL, {
-            body: {
-              platform,
-              gexValueType,
-              genes,
-              datasets: selectedDatasets.map((dataset) => dataset.id),
-            },
-
-            headers: bearerHeaders(accessToken),
-          })
-        },
-      })
-
-      const search: IGexSearchResults = res.data
-
-      // for each dataset, make a group so the blocks can be
-      // colored
-      groupsDispatch({
-        type: 'set',
-        groups: search.genes[0]!.datasets.map((dataset, di) => {
-          const ds = datasetMap.get(dataset.id)
-
-          const cidx = di % DEFAULT_PALETTE.length
-
-          const group: IClusterGroup = {
-            id: nanoid(),
-            name: ds?.name ?? '',
-            color: DEFAULT_PALETTE[cidx]!,
-            search: ds?.samples.map((sample) => sample.name) ?? [],
-          }
-
-          return group
-        }),
-      })
-
-      // for violin
-      setSearch(search)
-    } catch {
-      // alertDispatch({
-      //   type: 'set',
-      //   alert: makeErrorAlert({
-      //     title: 'Gene Expression',
-      //     size: 'dialog',
-      //     content:
-      //       'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
-      //   }),
-      // })
-
-      toast({
-        title: 'Gene Expression',
-        description:
-          'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
-        variant: 'destructive',
-      })
-    }
-  }
+  }, [datasets, gexPlotSettings, updateGexPlotSettings])
 
   useEffect(() => {
+    async function fetchGex() {
+      if (!platform) {
+        // alertDispatch({
+        //   type: 'set',
+        //   alert: makeWarningAlert({
+        //     title: 'Gene Expression',
+        //     size: 'popup',
+        //     content: 'You must select a platform.',
+        //   }),
+        // })
+
+        toast({
+          title: 'Gene Expression',
+          description: 'You must select a platform.',
+          variant: 'destructive',
+        })
+
+        return
+      }
+
+      if (genes.length === 0) {
+        // alertDispatch({
+        //   type: 'set',
+        //   alert: makeErrorAlert({
+        //     title: 'Gene Expression',
+        //     size: 'dialog',
+        //     content:
+        //       'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
+        //   }),
+        // })
+
+        toast({
+          title: 'Gene Expression',
+          description:
+            'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
+          variant: 'destructive',
+        })
+
+        return
+      }
+
+      const selectedDatasets = datasets.filter((dataset) =>
+        datasetUseMap.get(dataset.id.toString())
+      )
+
+      if (selectedDatasets.length === 0) {
+        return
+      }
+
+      const accessToken = await getAccessTokenAutoRefresh()
+
+      if (!accessToken) {
+        // alertDispatch({
+        //   type: 'set',
+        //   alert: makeErrorAlert({
+        //     title: 'Gene Expression',
+        //     size: 'dialog',
+        //     content:
+        //       'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
+        //   }),
+        // })
+
+        toast({
+          title: 'Gene Expression',
+          description:
+            'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
+          variant: 'destructive',
+        })
+
+        return
+      }
+
+      try {
+        const res = await queryClient.fetchQuery({
+          queryKey: ['gex'],
+          queryFn: () => {
+            return httpFetch.postJson(API_GEX_EXP_URL, {
+              body: {
+                platform,
+                gexValueType,
+                genes,
+                datasets: selectedDatasets.map((dataset) => dataset.id),
+              },
+
+              headers: bearerHeaders(accessToken),
+            })
+          },
+        })
+
+        const search: IGexSearchResults = res.data
+
+        // for each dataset, make a group so the blocks can be
+        // colored
+        groupsDispatch({
+          type: 'set',
+          groups: search.genes[0]!.datasets.map((dataset, di) => {
+            const ds = datasetMap.get(dataset.id)
+
+            const cidx = di % DEFAULT_PALETTE.length
+
+            const group: IClusterGroup = {
+              id: nanoid(),
+              name: ds?.name ?? '',
+              color: DEFAULT_PALETTE[cidx]!,
+              search: ds?.samples.map((sample) => sample.name) ?? [],
+            }
+
+            return group
+          }),
+        })
+
+        // for violin
+        setSearch(search)
+      } catch {
+        // alertDispatch({
+        //   type: 'set',
+        //   alert: makeErrorAlert({
+        //     title: 'Gene Expression',
+        //     size: 'dialog',
+        //     content:
+        //       'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
+        //   }),
+        // })
+
+        toast({
+          title: 'Gene Expression',
+          description:
+            'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
+          variant: 'destructive',
+        })
+      }
+    }
+
     if (genes.length === 0) {
       return
     }
 
     fetchGex()
-  }, [genes])
+  }, [
+    genes,
+    platform,
+    gexValueType,
+    datasetUseMap,
+    queryClient,
+    getAccessTokenAutoRefresh,
+    datasetMap,
+    groupsDispatch,
+    toast,
+  ])
 
   useEffect(() => {
     if (!searchResults || searchResults.genes.length === 0) {

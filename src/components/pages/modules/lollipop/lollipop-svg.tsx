@@ -394,6 +394,49 @@ export const LollipopSvg = forwardRef<SVGElement>(function LollipopSvg(
   const height = gridHeight + top + bottom
 
   const svg = useMemo(() => {
+    function onMouseMove(e: { pageX: number; pageY: number }) {
+      if (!innerRef.current) {
+        return
+      }
+
+      const rect = innerRef.current.getBoundingClientRect()
+
+      let c = Math.floor(
+        (e.pageX -
+          marginLeft * displayProps.scale -
+          rect.left -
+          window.scrollX) /
+          (scaledBlockSize.w + scaledPadding.x)
+      )
+
+      if (c < 0 || c > df.aaStats.length - 1) {
+        c = -1
+      }
+
+      let r = Math.floor(
+        (e.pageY - top * displayProps.scale - rect.top - window.scrollY) /
+          (scaledBlockSize.h + scaledPadding.y)
+      )
+
+      if (r < 0 || r > 0) {
+        r = -1
+      }
+
+      if (r === -1 || c === -1) {
+        setToolTipInfo(null)
+      } else {
+        setToolTipInfo({
+          ...toolTipInfo,
+          pos: {
+            x:
+              (marginLeft + c * (blockSize.w + spacing.x)) * displayProps.scale,
+            y: (top + r * (blockSize.h + spacing.y)) * displayProps.scale,
+          },
+          cell: { row: r, col: c },
+        })
+      }
+    }
+
     // keep things simple and use ints for the graph limits
     const maxSampleCount = Math.round(
       Math.max(...df.aaStats.map((stats) => stats.sum))
@@ -495,46 +538,7 @@ export const LollipopSvg = forwardRef<SVGElement>(function LollipopSvg(
         )}
       </svg>
     )
-  }, [df, displayProps])
-
-  function onMouseMove(e: { pageX: number; pageY: number }) {
-    if (!innerRef.current) {
-      return
-    }
-
-    const rect = innerRef.current.getBoundingClientRect()
-
-    let c = Math.floor(
-      (e.pageX - marginLeft * displayProps.scale - rect.left - window.scrollX) /
-        (scaledBlockSize.w + scaledPadding.x)
-    )
-
-    if (c < 0 || c > df.aaStats.length - 1) {
-      c = -1
-    }
-
-    let r = Math.floor(
-      (e.pageY - top * displayProps.scale - rect.top - window.scrollY) /
-        (scaledBlockSize.h + scaledPadding.y)
-    )
-
-    if (r < 0 || r > 0) {
-      r = -1
-    }
-
-    if (r === -1 || c === -1) {
-      setToolTipInfo(null)
-    } else {
-      setToolTipInfo({
-        ...toolTipInfo,
-        pos: {
-          x: (marginLeft + c * (blockSize.w + spacing.x)) * displayProps.scale,
-          y: (top + r * (blockSize.h + spacing.y)) * displayProps.scale,
-        },
-        cell: { row: r, col: c },
-      })
-    }
-  }
+  }, [df, displayProps, blockSize, spacing, width, height, top, marginLeft])
 
   //const inBlock = highlightCol[0] > -1 && highlightCol[1] > -1
 

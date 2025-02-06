@@ -190,7 +190,7 @@ export function UMAPPage() {
         sheets: [table],
       })
     }
-  }, [data])
+  }, [data, historyDispatch])
 
   useEffect(() => {
     //setSelectedSheet(0) //currentStep(history)[0]!.df.length - 1)

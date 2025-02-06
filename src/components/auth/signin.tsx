@@ -38,7 +38,13 @@ import {
   TEXT_PASSWORD_REQUIRED,
 } from '@components/pages/account/password-dialog'
 import axios, { AxiosError } from 'axios'
-import { useContext, useEffect, useRef, type BaseSyntheticEvent } from 'react'
+import {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type BaseSyntheticEvent,
+} from 'react'
 
 import { BaseCol } from '@/components/layout/base-col'
 import { EdbSettingsContext } from '@/lib/edb/edb-settings-provider'
@@ -120,6 +126,7 @@ export interface ISignInProps extends IElementProps {
 
 export function SignIn({ allowPassword = true, visitUrl }: ISignInProps) {
   const queryClient = useQueryClient()
+  const [_url, setUrl] = useState('')
 
   const { alertDispatch } = useContext(AlertsContext)
   // some other page needs to force reload account details either
@@ -135,9 +142,9 @@ export function SignIn({ allowPassword = true, visitUrl }: ISignInProps) {
       // advantageous on the signin page itself as it may appear as though
       // user has not signed in even when they have. In this case it should
       // be manually set.
-      visitUrl = window.location.href
+      setUrl(window.location.href)
     }
-  }, [])
+  }, [visitUrl])
 
   const { settings, updateSettings } = useContext(EdbSettingsContext)
   //const passwordless = useRef<boolean>(settings.passwordless)
@@ -168,7 +175,7 @@ export function SignIn({ allowPassword = true, visitUrl }: ISignInProps) {
       //passwordless: settings.passwordless,
       staySignedIn: settings.staySignedIn,
     })
-  }, [])
+  }, [settings.staySignedIn, form])
 
   async function onSubmit(data: IFormInput, e: BaseSyntheticEvent | undefined) {
     // question if user wants to keep signing in
@@ -217,7 +224,7 @@ export function SignIn({ allowPassword = true, visitUrl }: ISignInProps) {
               password: settings.passwordless ? '' : data.password1,
               staySignedIn: data.staySignedIn,
               callbackUrl: APP_SIGNIN_URL,
-              visitUrl,
+              _url,
             },
             { withCredentials: true }
           ),

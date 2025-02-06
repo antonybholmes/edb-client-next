@@ -73,10 +73,13 @@ export const MotifSvg = forwardRef<SVGElement, IProps>(function MotifSvg(
   //   return null
   // }
 
-  const _displayProps: IDisplayProps = {
-    ...DEFAULT_DISPLAY_PROPS,
-    ...displayProps,
-  }
+  const _displayProps: IDisplayProps = useMemo(
+    () => ({
+      ...DEFAULT_DISPLAY_PROPS,
+      ...displayProps,
+    }),
+    [displayProps]
+  )
 
   const maxN = Math.max(
     ...state.order

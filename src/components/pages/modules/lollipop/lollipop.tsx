@@ -44,7 +44,7 @@ import {
   findSheet,
   HistoryContext,
 } from '@providers/history-provider'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 import { ShortcutLayout } from '@layouts/shortcut-layout'
 
@@ -101,13 +101,16 @@ function LollipopPage() {
   //const [selectedSheet, setSelectedSheet] = useState(0)
   const [, selectionRangeDispatch] = useContext(SelectionRangeContext)
 
-  const dataTab: ITab = {
-    id: nanoid(),
-    icon: <TableIcon />,
-    name: 'Table 1',
-    content: <DataPanel />,
-    isOpen: true,
-  }
+  const dataTab: ITab = useMemo(
+    () => ({
+      id: nanoid(),
+      icon: <TableIcon />,
+      name: 'Table 1',
+      content: <DataPanel />,
+      isOpen: true,
+    }),
+    []
+  )
 
   const [foldersTab, setFoldersTab] = useState<ITab>(dataTab)
   const [tab, setTab] = useState<ITab | undefined>(dataTab)
@@ -615,7 +618,7 @@ function LollipopPage() {
     } else {
       setTab(dataTab)
     }
-  }, [plotsState])
+  }, [plotsState, dataTab, canvasRef, downloadRef, plotsDispatch])
 
   // plots.plots.forEach(plot => {
   //   switch (plot.type) {

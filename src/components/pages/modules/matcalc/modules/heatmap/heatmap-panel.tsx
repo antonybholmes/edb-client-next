@@ -36,7 +36,6 @@ import {
 import { Card } from '@/components/shadcn/ui/themed/card'
 import { TEXT_DISPLAY } from '@/consts'
 import { SaveImageDialog } from '@components/pages/save-image-dialog'
-import { GroupsContext } from '../../groups-provider'
 import { HeatMapSvg } from './heatmap-svg'
 
 export const PLOT_CLS = 'relative overflow-scroll custom-scrollbar grow'
@@ -74,8 +73,6 @@ export function HeatMapPanel({
 
   const displayOptions: IHeatMapDisplayOptions = plot?.customProps
     .displayOptions as IHeatMapDisplayOptions
-
-  const { groupState } = useContext(GroupsContext)
 
   // const [displayProps, setDisplayProps] = useState<IHeatMapProps>({
   //   ...DEFAULT_DISPLAY_PROPS,
@@ -119,7 +116,14 @@ export function HeatMapPanel({
     }
 
     //downloadSvgAsPng(svgRef, canvasRef, downloadRef)
-  }, [messageState])
+  }, [
+    messageState,
+    messageDispatch,
+    plot?.id,
+    showSideBar,
+    canvasRef,
+    downloadRef,
+  ])
 
   function adjustScale(scale: number) {
     setScale(scale)
@@ -163,7 +167,7 @@ export function HeatMapPanel({
         </div>
       </Card>
     ),
-    [plot, groupState.groups, displayOptions]
+    [plot, plotAddr]
   )
 
   return (

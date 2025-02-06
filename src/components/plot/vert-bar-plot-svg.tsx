@@ -77,10 +77,13 @@ export const VertBarPlotSvg = forwardRef<SVGElement, IProps>(
     }: IProps,
     svgRef
   ) {
-    const _displayProps: IDisplayProps = {
-      ...DEFAULT_DISPLAY_PROPS,
-      ...displayProps,
-    }
+    const _displayProps: IDisplayProps = useMemo(
+      () => ({
+        ...DEFAULT_DISPLAY_PROPS,
+        ...displayProps,
+      }),
+      [displayProps]
+    )
 
     const ycol = df.col(y)
 

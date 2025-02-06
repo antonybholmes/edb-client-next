@@ -83,7 +83,14 @@ function LollipopPanel({
     }
 
     //downloadSvgAsPng(svgRef, canvasRef, downloadRef)
-  }, [messageState])
+  }, [
+    messageState,
+    messageDispatch,
+    panelId,
+    canvasRef,
+    downloadRef,
+    showSideBar,
+  ])
 
   function adjustScale(scale: number) {
     setScale(scale)

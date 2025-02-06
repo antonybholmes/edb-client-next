@@ -116,7 +116,7 @@ export function ViolinPlotSvg({
         fillOpacity={fill?.alpha ?? 0}
       />
     )
-  }, [data, globalXMax, xsmooth, ysmooth, yax])
+  }, [xsmooth, ysmooth, yax, width, fill, stroke])
 
   return (
     <>

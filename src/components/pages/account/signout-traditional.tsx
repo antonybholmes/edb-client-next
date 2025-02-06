@@ -44,7 +44,7 @@ function SignOutPage() {
     }
 
     signout()
-  }, [])
+  }, [signoutUser])
 
   return (
     <HeaderLayout>

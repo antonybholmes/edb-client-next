@@ -42,18 +42,18 @@ export function SwarmPlotSvg({
       .setLength(height)
   }
 
+  if (mode !== 'Full') {
+    // draw points in half the width
+
+    width *= 0.5
+  }
+
   const svg = useMemo(() => {
     const hist = histogram(data)
 
     const d = r * 2
 
     //console.log(maxHeightMap)
-
-    if (mode !== 'Full') {
-      // draw points in half the width
-
-      width *= 0.5
-    }
 
     // matching is case insensitive
 
@@ -119,7 +119,7 @@ export function SwarmPlotSvg({
           })}
       </>
     )
-  }, [data, yax])
+  }, [data, yax, width, r, fill, stroke, mode])
 
   return (
     <>

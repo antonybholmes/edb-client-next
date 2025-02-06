@@ -82,19 +82,12 @@ export function EdbAuthProvider({ cacheSession = true, children }: IProps) {
 
   const [apiKey, setApiKey] = useState('')
 
-  useEffect(() => {
-    // cache user on startup
-    if (cacheSession) {
-      fetchSessionInfo()
-    }
-  }, [fetchSessionInfo, cacheSession])
-
   /**
    * Attempts to return cached access token, but if it determines
    * it is expired, attempts to refresh it.
    * @returns
    */
-  async function getAccessTokenAutoRefresh() {
+  const getAccessTokenAutoRefresh = useCallback(async () => {
     //console.log(accessToken, validateToken(accessToken))
     if (validateToken(accessToken)) {
       return accessToken
@@ -105,7 +98,75 @@ export function EdbAuthProvider({ cacheSession = true, children }: IProps) {
     setAccessToken(token)
 
     return token
-  }
+  }, [fetchAccessTokenUsingSession, accessToken, queryClient])
+
+  const fetchSessionInfo = useCallback(
+    async (accessToken: string = '') => {
+      if (!accessToken) {
+        accessToken = await getAccessTokenAutoRefresh()
+      }
+
+      if (!accessToken) {
+        return
+      }
+
+      try {
+        const res = await queryClient.fetchQuery({
+          queryKey: ['session'],
+          queryFn: () =>
+            httpFetch.getJson(SESSION_INFO_URL, {
+              //headers: bearerHeaders(accessToken),
+              // the server is allowed access to the session in local
+              // storage so it knows we are logged in. Since the session
+              // is validated on the server, we don't need to provide
+              // extra credentials. If we are logged in, we will get
+              // the account info back.
+
+              withCredentials: true,
+            }),
+        })
+
+        //console.log('getting session', res.data)
+
+        const s: IEdbSessionInfo = {
+          user: res.data.user,
+          createdAt: new Date(res.data.createdAt),
+          expiresAt: new Date(res.data.expiresAt),
+        }
+
+        setEdbSession(s)
+        setEdbUser(s.user)
+
+        //console.log(settings)
+
+        if (settings.users.length === 0) {
+          updateSettings(
+            produce(settings, (draft) => {
+              draft.users = [
+                {
+                  username: s.user.username,
+                  email: s.user.email,
+                  firstName: s.user.firstName,
+                  lastName: s.user.lastName,
+                  roles: s.user.roles,
+                } as IBasicEdbUser,
+              ]
+            })
+          )
+        }
+      } catch {
+        console.log('cannot fetch user from remote')
+      }
+    },
+    [settings, updateSettings, getAccessTokenAutoRefresh, queryClient]
+  )
+
+  useEffect(() => {
+    // cache user on startup
+    if (cacheSession) {
+      fetchSessionInfo()
+    }
+  }, [fetchSessionInfo, cacheSession])
 
   /**
    * Reload the user only if it appears user
@@ -149,64 +210,6 @@ export function EdbAuthProvider({ cacheSession = true, children }: IProps) {
   //     console.log('cannot fetch user from remote')
   //   }
   // }
-
-  const fetchSessionInfo = useCallback(async (accessToken: string = '') => {
-    if (!accessToken) {
-      accessToken = await getAccessTokenAutoRefresh()
-    }
-
-    if (!accessToken) {
-      return
-    }
-
-    try {
-      const res = await queryClient.fetchQuery({
-        queryKey: ['session'],
-        queryFn: () =>
-          httpFetch.getJson(SESSION_INFO_URL, {
-            //headers: bearerHeaders(accessToken),
-            // the server is allowed access to the session in local
-            // storage so it knows we are logged in. Since the session
-            // is validated on the server, we don't need to provide
-            // extra credentials. If we are logged in, we will get
-            // the account info back.
-
-            withCredentials: true,
-          }),
-      })
-
-      //console.log('getting session', res.data)
-
-      const s: IEdbSessionInfo = {
-        user: res.data.user,
-        createdAt: new Date(res.data.createdAt),
-        expiresAt: new Date(res.data.expiresAt),
-      }
-
-      setEdbSession(s)
-      setEdbUser(s.user)
-
-      //console.log(settings)
-
-      if (settings.users.length === 0) {
-        updateSettings(
-          produce(settings, (draft) => {
-            draft.users = [
-              {
-                username: s.user.username,
-                email: s.user.email,
-                firstName: s.user.firstName,
-                lastName: s.user.lastName,
-                roles: s.user.roles,
-              } as IBasicEdbUser,
-            ]
-          })
-        )
-      }
-    } catch {
-      console.log('cannot fetch user from remote')
-    }
-  }, [])
 
   async function refreshSession() {
     await queryClient.fetchQuery({

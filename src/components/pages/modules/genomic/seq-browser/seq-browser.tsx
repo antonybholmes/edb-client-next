@@ -164,16 +164,48 @@ export function SeqBrowserPage() {
         .setDomain([locations[0]!.start, locations[0]!.end])
         .setLength(settings.plot.width)
         .setTicks([locations[0]!.start, locations[0]!.end]),
-    [locations]
+    [locations, settings]
   )
 
   useEffect(() => {
+    function handleMouseUp(e: MouseEvent) {
+      if (isSelecting.current) {
+        const { clientX, target } = e
+        const x = clientX - (target as HTMLElement).getBoundingClientRect().left
+
+        const start = isSelecting.current.x - settings.margin.left
+        const end = x - settings.margin.left
+
+        const rangeX1 = xax.rangeToDomain(start)
+        const rangeX2 = xax.rangeToDomain(end)
+
+        // user must select a region of at least 1kb before selection system
+        // works, otherwise too sensitive
+        if (Math.abs(rangeX1 - rangeX2) > 1000) {
+          setLocations([
+            new GenomicLocation(locations[0]!.chr, rangeX1, rangeX2),
+          ])
+        }
+      }
+
+      //setPosition(null)
+      isSelecting.current = null
+      //currentMousePosition.current = null
+      //isChangingLocViaDrag.current = null
+      currentLocation.current = null
+      dragStartPosition.current = null
+      //setCtrlKeyIsPressed(false)
+
+      window.removeEventListener('mousemove', handleMouseMove)
+      //window.removeEventListener('mouseup', handleMouseUp)
+    }
+
     window.addEventListener('mouseup', handleMouseUp)
 
     return () => {
       window.removeEventListener('mouseup', handleMouseUp)
     }
-  }, [xax])
+  }, [locations, settings, xax, setLocations])
 
   function handleMouseDown(e: React.MouseEvent) {
     const { clientX, currentTarget } = e
@@ -195,36 +227,6 @@ export function SeqBrowserPage() {
 
     window.addEventListener('mousemove', handleMouseMove)
     //window.addEventListener('mouseup', handleMouseUp)
-  }
-
-  function handleMouseUp(e: MouseEvent) {
-    if (isSelecting.current) {
-      const { clientX, target } = e
-      const x = clientX - (target as HTMLElement).getBoundingClientRect().left
-
-      const start = isSelecting.current.x - settings.margin.left
-      const end = x - settings.margin.left
-
-      const rangeX1 = xax.rangeToDomain(start)
-      const rangeX2 = xax.rangeToDomain(end)
-
-      // user must select a region of at least 1kb before selection system
-      // works, otherwise too sensitive
-      if (Math.abs(rangeX1 - rangeX2) > 1000) {
-        setLocations([new GenomicLocation(locations[0]!.chr, rangeX1, rangeX2)])
-      }
-    }
-
-    //setPosition(null)
-    isSelecting.current = null
-    //currentMousePosition.current = null
-    //isChangingLocViaDrag.current = null
-    currentLocation.current = null
-    dragStartPosition.current = null
-    //setCtrlKeyIsPressed(false)
-
-    window.removeEventListener('mousemove', handleMouseMove)
-    //window.removeEventListener('mouseup', handleMouseUp)
   }
 
   function handleMouseMove(e: MouseEvent) {
@@ -297,7 +299,7 @@ export function SeqBrowserPage() {
 
   useEffect(() => {
     setSearch(locations.map((l) => l.loc)[0]!) //.join(','))
-  }, [locations])
+  }, [locations, setSearch])
 
   const genomesQuery = useQuery({
     queryKey: ['genomes'],

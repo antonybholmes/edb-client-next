@@ -49,7 +49,7 @@ function SignOutPage() {
     }
 
     signout()
-  }, [])
+  }, [signoutUser, logout])
 
   return (
     <HeaderLayout>

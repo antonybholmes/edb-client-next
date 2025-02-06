@@ -44,7 +44,7 @@ import {
   findSheet,
   HistoryContext,
 } from '@providers/history-provider'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 import { ShortcutLayout } from '@layouts/shortcut-layout'
 
@@ -100,13 +100,17 @@ function OncoplotPage() {
   //const [tableH, setTableH] = useState<IReactTableCol[]>(DEFAULT_TABLE_HEADER)
   //const [selectedSheet, setSelectedSheet] = useState(0)
 
-  const dataTab: ITab = {
-    //name: nanoid(),
-    icon: <TableIcon />,
-    id: 'Table 1',
-    content: <DataPanel panelId="Table 1" />,
-    isOpen: true,
-  }
+  const dataTab: ITab = useMemo(
+    () => ({
+      //name: nanoid(),
+      icon: <TableIcon />,
+      id: 'Table 1',
+      content: <DataPanel panelId="Table 1" />,
+      isOpen: true,
+    }),
+    []
+  )
+
   const [foldersTab, setFoldersTab] = useState<ITab>(dataTab)
   const [tab, setTab] = useState<ITab | undefined>(dataTab)
   const [foldersIsOpen, setShowFolders] = useState(true)
@@ -772,7 +776,7 @@ function OncoplotPage() {
     } else {
       setTab(dataTab)
     }
-  }, [plotsState, dataTab])
+  }, [plotsState, dataTab, oncoQuery, plotsDispatch])
 
   // plots.plots.forEach(plot => {
   //   switch (plot.type) {

@@ -49,8 +49,37 @@ function VerifyPage() {
   )
 
   useEffect(() => {
+    async function verify() {
+      try {
+        const res = await queryClient.fetchQuery({
+          queryKey: ['verify'],
+          queryFn: () =>
+            httpFetch.postJson(
+              API_VERIFY_EMAIL_URL,
+
+              {
+                headers: bearerHeaders(jwt),
+              }
+            ),
+        })
+
+        const success = res.data.success
+
+        setIsVerified(success)
+
+        // url encoded in jwt to make it more tamper proof
+        const visitUrl = jwtData.url
+
+        if (success && visitUrl) {
+          redirect(visitUrl)
+        }
+      } catch {
+        setIsVerified(false)
+      }
+    }
+
     verify()
-  }, [])
+  }, [jwt, jwtData.url, queryClient])
 
   if (!jwt) {
     return (
@@ -62,35 +91,6 @@ function VerifyPage() {
         </Card>
       </CenteredCardContainer>
     )
-  }
-
-  async function verify() {
-    try {
-      const res = await queryClient.fetchQuery({
-        queryKey: ['verify'],
-        queryFn: () =>
-          httpFetch.postJson(
-            API_VERIFY_EMAIL_URL,
-
-            {
-              headers: bearerHeaders(jwt),
-            }
-          ),
-      })
-
-      const success = res.data.success
-
-      setIsVerified(success)
-
-      // url encoded in jwt to make it more tamper proof
-      const visitUrl = jwtData.url
-
-      if (success && visitUrl) {
-        redirect(visitUrl)
-      }
-    } catch {
-      setIsVerified(false)
-    }
   }
 
   return (

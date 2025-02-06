@@ -25,7 +25,7 @@ import { where } from '@/lib/math/math'
 import { cn } from '@lib/class-names'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { X } from 'lucide-react'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { getTabName, type ITab } from '../../tab-provider'
 import { SideTabs } from '../../toolbar/side-tabs'
 import type { IOKCancelDialogProps } from '../ok-cancel-dialog'
@@ -84,33 +84,37 @@ export function SettingsDialog({
   onReponse = () => {},
   className = 'w-11/12 xl:w-3/4 3xl:w-7/12 h-2/3',
 }: IProps) {
-  let _tabs: ITab[] = [
-    {
-      id: 'General',
-      icon: <GearIcon stroke="" w="w-4.5" strokeWidth={2} />,
-      children: [
-        {
-          id: 'Appearance',
-          children: [
-            {
-              id: 'Dark mode',
-              content: <SettingsDarkModePanel />,
-            },
+  const _tabs: ITab[] = useMemo(() => {
+    let _tabs: ITab[] = [
+      {
+        id: 'General',
+        icon: <GearIcon stroke="" w="w-4.5" strokeWidth={2} />,
+        children: [
+          {
+            id: 'Appearance',
+            children: [
+              {
+                id: 'Dark mode',
+                content: <SettingsDarkModePanel />,
+              },
 
-            {
-              id: 'Toolbars',
-              content: <SettingsToolbarPanel />,
-            },
-          ],
-        },
-      ],
-    },
-  ]
+              {
+                id: 'Toolbars',
+                content: <SettingsToolbarPanel />,
+              },
+            ],
+          },
+        ],
+      },
+    ]
 
-  _tabs = [
-    ..._tabs,
-    ...tabs.filter((tab) => getTabName(tab).toLowerCase() !== 'general'),
-  ]
+    _tabs = [
+      ..._tabs,
+      ...tabs.filter((tab) => getTabName(tab).toLowerCase() !== 'general'),
+    ]
+
+    return _tabs
+  }, [tabs])
 
   // update general
   for (const tab of tabs.filter(
@@ -132,7 +136,7 @@ export function SettingsDialog({
     if (idx.length > 0) {
       setSelectedTab(_tabs[idx[0]!]!)
     }
-  }, [defaultTab])
+  }, [defaultTab, _tabs])
 
   useEffect(() => {
     setSubSelectedTab(selectedTab.children![0]!)

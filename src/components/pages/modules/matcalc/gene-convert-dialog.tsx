@@ -76,7 +76,7 @@ export function GeneConvertDialog({
         useSelectedColumns: selection.start.col !== -1,
       },
     })
-  }, [df, selection])
+  }, [df, selection, settings, updateSettings])
 
   async function convert() {
     if (!df || df.size === 0) {

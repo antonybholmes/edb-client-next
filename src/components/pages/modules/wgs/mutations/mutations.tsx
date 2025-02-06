@@ -200,24 +200,26 @@ export function MutationsPage() {
   //   },
   // })
 
-  async function loadDatasets() {
-    const res = await queryClient.fetchQuery({
-      queryKey: ['datasets'],
-      queryFn: () => {
-        return httpFetch.getJson(`${API_MUTATIONS_DATASETS_URL}/${assembly}`)
-      },
-    })
-
-    const datasets: IMutationDataset[] = res.data
-
-    setDatasets(datasets)
-
-    setDatasetUseMap(
-      new Map<string, boolean>(datasets.map((dataset) => [dataset.uuid, true]))
-    )
-  }
-
   useEffect(() => {
+    async function loadDatasets() {
+      const res = await queryClient.fetchQuery({
+        queryKey: ['datasets'],
+        queryFn: () => {
+          return httpFetch.getJson(`${API_MUTATIONS_DATASETS_URL}/${assembly}`)
+        },
+      })
+
+      const datasets: IMutationDataset[] = res.data
+
+      setDatasets(datasets)
+
+      setDatasetUseMap(
+        new Map<string, boolean>(
+          datasets.map((dataset) => [dataset.uuid, true])
+        )
+      )
+    }
+
     try {
       loadDatasets()
     } catch (error) {
@@ -519,7 +521,7 @@ export function MutationsPage() {
       description: 'Mutations',
       sheets: [df.setName('Mutations')],
     })
-  }, [displayProps, pileup])
+  }, [displayProps, pileup, search, sampleMap, datasets, historyDispatch])
 
   function save(format: string) {
     const df = currentSheet(history)[0]!
