@@ -285,6 +285,328 @@ export function DataFrameCanvas({
   }, [df, scale, cellSize])
 
   const draw = useCallback(() => {
+    function drawHeader(
+      ctx: ICtx,
+      normLeft: number,
+      w: number,
+      colRange: Shape
+    ) {
+      if (!ctx) {
+        return
+      }
+
+      ctx.clearRect(0, 0, w, cellSize[1])
+
+      ctx.save()
+
+      ctx.translate(dfProps.rowIndexW, 0)
+
+      const region = new Path2D()
+      region.rect(0, 0, w - dfProps.rowIndexW, cellSize[1])
+      ctx.clip(region)
+
+      // selection
+
+      if (
+        selection.current.start.col !== -1 &&
+        selection.current.end.col !== -1
+      ) {
+        ctx.strokeStyle = SELECTION_STROKE_COLOR
+        ctx.lineWidth = LINE_THICKNESS
+
+        let x1 = colPositions.current[selection.current.start.col]! // * colPositions //cellSize[0]
+
+        const x2 = colPositions.current[selection.current.end.col + 1]! // * cellSize[0]
+        const w = Math.abs(x2 - x1) // + cellSize[0]
+
+        x1 = Math.min(x1, x2)
+
+        ctx.fillStyle = SELECTION_FILL
+        ctx.fillRect(x1 - normLeft, 0, w, cellSize[1])
+      }
+
+      // col index
+
+      ctx.font = BOLD_FONT
+      ctx.fillStyle = COLOR_BLACK
+      ctx.textAlign = 'center'
+
+      let px: number = 0
+      let px2: number
+
+      if (colRange[0] !== -1) {
+        range(colRange[0], colRange[1] + 1).forEach((col) => {
+          const v = df.shape[1] > 0 ? df.colName(col) : getExcelColName(col)
+
+          px = colPositions.current[col]! - normLeft
+          px2 = colPositions.current[col + 1]! - normLeft
+
+          // clip so text doesn't overlap other cells
+          ctx.save()
+          const w = px2 - px
+          const region = new Path2D()
+          region.rect(px + GAP, 0, w - GAP2, cellSize[1])
+          ctx.clip(region)
+
+          ctx.textAlign = 'center'
+          ctx.textBaseline = 'middle'
+          ctx.fillText(
+            v.toLocaleString(),
+            (px + px2) / 2,
+            cellSize[1] / 2 + TEXT_OFFSET
+          )
+
+          ctx.restore()
+        })
+
+        // draw lines between cols
+
+        // ctx.save()
+        // ctx.imageSmoothingEnabled = false
+        // ctx.translate(0.5, 0.5)
+
+        // const cs = Math.max(1, colRange[0])
+
+        // ctx.strokeStyle = GRID_COLOR
+        // ctx.lineWidth = LINE_THICKNESS
+        // ctx.beginPath()
+        // range(cs, colRange[1] + 2).forEach(col => {
+        //   px = colPositions.current[col] - normLeft
+        //   ctx.moveTo(px, GAP)
+        //   ctx.lineTo(px, cellSize[1] - GAP)
+        // })
+        // ctx.stroke()
+        // ctx.restore()
+      }
+
+      ctx.restore()
+
+      //ctx.translate(-dfProps.rowIndexW, 0)
+    }
+
+    function drawIndex(ctx: ICtx, normTop: number, h: number, rowRange: Shape) {
+      if (!ctx) {
+        return
+      }
+
+      ctx.save()
+
+      ctx.translate(0, cellSize[1])
+
+      const region = new Path2D()
+      region.rect(0, 0, dfProps.rowIndexW, h)
+      ctx.clip(region)
+
+      ctx.clearRect(0, 0, dfProps.rowIndexW, h)
+
+      // selection
+
+      if (selection.current.start.row !== -1) {
+        ctx.strokeStyle = SELECTION_STROKE_COLOR
+        ctx.lineWidth = LINE_THICKNESS
+
+        let y1 = selection.current.start.row * cellSize[1]
+        const y2 = selection.current.end.row * cellSize[1]
+        const h = Math.abs(y2 - y1) + cellSize[1]
+
+        y1 = Math.min(y1, y2)
+
+        ctx.fillStyle = SELECTION_FILL
+        ctx.fillRect(0, y1 - normTop, dfProps.rowIndexW, h + scale)
+      }
+
+      ctx.fillStyle = COLOR_BLACK
+      ctx.font = BOLD_FONT
+
+      // row index
+
+      ctx.textAlign = df.getRowName(0) !== '1' ? 'left' : 'center'
+      ctx.textBaseline = 'middle'
+      const x = df.getRowName(0) !== '1' ? GAP : 0.5 * dfProps.rowIndexW
+
+      let py = (rowRange[0] + 0.5) * cellSize[1] - normTop + TEXT_OFFSET
+
+      if (rowRange[0] !== -1) {
+        range(rowRange[0], rowRange[1]).forEach((row) => {
+          const v = df.getRowName(row)
+
+          //const py = cellSize[1] + row * cellSize[1] - normTop
+
+          ctx.fillText(v.toLocaleString(), x, py)
+
+          py += cellSize[1]
+        })
+      }
+
+      // render the lines
+
+      // ctx.save()
+
+      // ctx.imageSmoothingEnabled = false
+      // ctx.translate(0.5, 0.5)
+
+      // py = 0
+      // ctx.strokeStyle = GRID_COLOR
+      // ctx.lineWidth = LINE_THICKNESS
+
+      // if (rowRange[0] !== -1) {
+      //   py = (rowRange[0] + 1) * cellSize[1] - normTop
+
+      //   ctx.strokeStyle = GRID_COLOR
+      //   ctx.lineWidth = LINE_THICKNESS
+
+      //   ctx.beginPath()
+      //   range(rowRange[0] + 1, rowRange[1] + 1).forEach(() => {
+      //     ctx.moveTo(GAP, py)
+      //     ctx.lineTo(dfProps.rowIndexW - GAP, py)
+
+      //     py += cellSize[1]
+      //   })
+
+      //   ctx.stroke()
+      // }
+
+      // ctx.restore()
+
+      ctx.restore()
+
+      //ctx.translate(0, -cellSize[1])
+    }
+
+    function drawTableGrid(
+      ctx: ICtx,
+      w: number,
+      h: number,
+      left: number,
+      top: number,
+      rowRange: Shape,
+      colRange: Shape
+    ) {
+      // const ctx = canvas.getContext("2d", { alpha: false })
+
+      if (!ctx) {
+        return
+      }
+
+      ctx.save()
+
+      ctx.imageSmoothingEnabled = false
+      ctx.translate(0.5, 0.5)
+
+      // ctx.save()
+
+      // const region = new Path2D()
+      // region.rect(0, 0, w, h)
+      // ctx.clip(region)
+      //ctx.clearRect(0, 0, w, h)
+
+      ctx.strokeStyle = GRID_COLOR
+      ctx.lineWidth = LINE_THICKNESS
+
+      // vertical lines
+
+      ctx.beginPath()
+      const y2 = Math.min(dfProps.dim[1] - top, h)
+      range(colRange[0] + 1, colRange[1] + 1).forEach((x) => {
+        const px = colPositions.current[x]! - left
+        ctx.moveTo(px, 0)
+        ctx.lineTo(px, y2)
+      })
+      ctx.stroke()
+
+      ctx.beginPath()
+
+      const x2 = Math.min(colPositions.current[colRange[1]]! - left, w)
+
+      let py = (rowRange[0] + 1) * cellSize[1] - top
+
+      range(rowRange[0], rowRange[1]).forEach(() => {
+        //const py = (y + 1) * cellSize[1] - top + 0.5
+
+        ctx.moveTo(0, py)
+        ctx.lineTo(x2, py)
+
+        py += cellSize[1]
+      })
+
+      ctx.stroke()
+
+      ctx.restore()
+
+      // reset transform
+      //ctx.translate(-dfProps.rowIndexW, -cellSize[1])
+    }
+
+    function drawSelection(
+      ctx: ICtx,
+      w: number,
+      h: number,
+      left: number,
+      top: number
+    ) {
+      // const ctx = canvas.getContext("2d", { alpha: false })
+
+      if (!ctx) {
+        return
+      }
+
+      if (selection.current.start !== NO_SELECTION) {
+        let x1 =
+          colPositions.current[
+            Math.min(selection.current.start.col, selection.current.end.col)
+          ]! - left
+
+        let x2 =
+          colPositions.current[
+            Math.max(selection.current.start.col, selection.current.end.col) + 1
+          ]! - left
+
+        let x3 = colPositions.current[selection.current.start.col]! - left
+        let x4 = colPositions.current[selection.current.start.col + 1]! - left
+
+        let y1 =
+          Math.min(selection.current.start.row, selection.current.end.row) *
+            cellSize[1] -
+          top
+
+        let y2 =
+          (Math.max(selection.current.start.row, selection.current.end.row) +
+            1) *
+            cellSize[1] -
+          top
+
+        let y3 = selection.current.start.row * cellSize[1] - top
+        let y4 = y3 + cellSize[1]
+
+        x1 = Math.max(0, Math.min(w, x1))
+        x2 = Math.max(0, Math.min(w, x2))
+        x3 = Math.max(0, Math.min(w, x3))
+        x4 = Math.max(0, Math.min(w, x4))
+
+        y1 = Math.max(0, Math.min(h, y1))
+        y2 = Math.max(0, Math.min(h, y2))
+        y3 = Math.max(0, Math.min(h, y3))
+        y4 = Math.max(0, Math.min(h, y4))
+
+        let rw = x2 - x1
+        let rh = y2 - y1
+
+        if (rw > 0 && rh > 0) {
+          ctx.fillStyle = SELECTION_FILL
+          ctx.fillRect(x1, y1, rw, rh)
+        }
+
+        // draw first cell white
+        rw = x4 - x3
+        rh = y4 - y3
+
+        if (rw > 0 && rh > 0) {
+          ctx.fillStyle = COLOR_WHITE
+          ctx.fillRect(x3, y3, rw, rh)
+        }
+      }
+    }
+
     const d = scrollRef.current
 
     if (!d) {
@@ -347,7 +669,18 @@ export function DataFrameCanvas({
 
     // reset transform
     //ctx.translate(-dfProps.rowIndexW, -cellSize[1])
-  }, [])
+  }, [
+    dfProps,
+    cellSize,
+    df,
+    drawCells,
+    drawSelectionRect,
+    scale,
+    getColRange,
+    getRowRange,
+    getScrollProps,
+    getSize,
+  ])
 
   const resizeTable = useCallback(() => {
     /**
@@ -524,322 +857,6 @@ export function DataFrameCanvas({
   useResizeObserver<HTMLDivElement>(scrollRef, resizeTable)
 
   useMouseUpListener(onMouseUp)
-
-  function drawIndex(ctx: ICtx, normTop: number, h: number, rowRange: Shape) {
-    if (!ctx) {
-      return
-    }
-
-    ctx.save()
-
-    ctx.translate(0, cellSize[1])
-
-    const region = new Path2D()
-    region.rect(0, 0, dfProps.rowIndexW, h)
-    ctx.clip(region)
-
-    ctx.clearRect(0, 0, dfProps.rowIndexW, h)
-
-    // selection
-
-    if (selection.current.start.row !== -1) {
-      ctx.strokeStyle = SELECTION_STROKE_COLOR
-      ctx.lineWidth = LINE_THICKNESS
-
-      let y1 = selection.current.start.row * cellSize[1]
-      const y2 = selection.current.end.row * cellSize[1]
-      const h = Math.abs(y2 - y1) + cellSize[1]
-
-      y1 = Math.min(y1, y2)
-
-      ctx.fillStyle = SELECTION_FILL
-      ctx.fillRect(0, y1 - normTop, dfProps.rowIndexW, h + scale)
-    }
-
-    ctx.fillStyle = COLOR_BLACK
-    ctx.font = BOLD_FONT
-
-    // row index
-
-    ctx.textAlign = df.getRowName(0) !== '1' ? 'left' : 'center'
-    ctx.textBaseline = 'middle'
-    const x = df.getRowName(0) !== '1' ? GAP : 0.5 * dfProps.rowIndexW
-
-    let py = (rowRange[0] + 0.5) * cellSize[1] - normTop + TEXT_OFFSET
-
-    if (rowRange[0] !== -1) {
-      range(rowRange[0], rowRange[1]).forEach((row) => {
-        const v = df.getRowName(row)
-
-        //const py = cellSize[1] + row * cellSize[1] - normTop
-
-        ctx.fillText(v.toLocaleString(), x, py)
-
-        py += cellSize[1]
-      })
-    }
-
-    // render the lines
-
-    // ctx.save()
-
-    // ctx.imageSmoothingEnabled = false
-    // ctx.translate(0.5, 0.5)
-
-    // py = 0
-    // ctx.strokeStyle = GRID_COLOR
-    // ctx.lineWidth = LINE_THICKNESS
-
-    // if (rowRange[0] !== -1) {
-    //   py = (rowRange[0] + 1) * cellSize[1] - normTop
-
-    //   ctx.strokeStyle = GRID_COLOR
-    //   ctx.lineWidth = LINE_THICKNESS
-
-    //   ctx.beginPath()
-    //   range(rowRange[0] + 1, rowRange[1] + 1).forEach(() => {
-    //     ctx.moveTo(GAP, py)
-    //     ctx.lineTo(dfProps.rowIndexW - GAP, py)
-
-    //     py += cellSize[1]
-    //   })
-
-    //   ctx.stroke()
-    // }
-
-    // ctx.restore()
-
-    ctx.restore()
-
-    //ctx.translate(0, -cellSize[1])
-  }
-
-  function drawHeader(ctx: ICtx, normLeft: number, w: number, colRange: Shape) {
-    if (!ctx) {
-      return
-    }
-
-    ctx.clearRect(0, 0, w, cellSize[1])
-
-    ctx.save()
-
-    ctx.translate(dfProps.rowIndexW, 0)
-
-    const region = new Path2D()
-    region.rect(0, 0, w - dfProps.rowIndexW, cellSize[1])
-    ctx.clip(region)
-
-    // selection
-
-    if (
-      selection.current.start.col !== -1 &&
-      selection.current.end.col !== -1
-    ) {
-      ctx.strokeStyle = SELECTION_STROKE_COLOR
-      ctx.lineWidth = LINE_THICKNESS
-
-      let x1 = colPositions.current[selection.current.start.col]! // * colPositions //cellSize[0]
-
-      const x2 = colPositions.current[selection.current.end.col + 1]! // * cellSize[0]
-      const w = Math.abs(x2 - x1) // + cellSize[0]
-
-      x1 = Math.min(x1, x2)
-
-      ctx.fillStyle = SELECTION_FILL
-      ctx.fillRect(x1 - normLeft, 0, w, cellSize[1])
-    }
-
-    // col index
-
-    ctx.font = BOLD_FONT
-    ctx.fillStyle = COLOR_BLACK
-    ctx.textAlign = 'center'
-
-    let px: number = 0
-    let px2: number
-
-    if (colRange[0] !== -1) {
-      range(colRange[0], colRange[1] + 1).forEach((col) => {
-        const v = df.shape[1] > 0 ? df.colName(col) : getExcelColName(col)
-
-        px = colPositions.current[col]! - normLeft
-        px2 = colPositions.current[col + 1]! - normLeft
-
-        // clip so text doesn't overlap other cells
-        ctx.save()
-        const w = px2 - px
-        const region = new Path2D()
-        region.rect(px + GAP, 0, w - GAP2, cellSize[1])
-        ctx.clip(region)
-
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'middle'
-        ctx.fillText(
-          v.toLocaleString(),
-          (px + px2) / 2,
-          cellSize[1] / 2 + TEXT_OFFSET
-        )
-
-        ctx.restore()
-      })
-
-      // draw lines between cols
-
-      // ctx.save()
-      // ctx.imageSmoothingEnabled = false
-      // ctx.translate(0.5, 0.5)
-
-      // const cs = Math.max(1, colRange[0])
-
-      // ctx.strokeStyle = GRID_COLOR
-      // ctx.lineWidth = LINE_THICKNESS
-      // ctx.beginPath()
-      // range(cs, colRange[1] + 2).forEach(col => {
-      //   px = colPositions.current[col] - normLeft
-      //   ctx.moveTo(px, GAP)
-      //   ctx.lineTo(px, cellSize[1] - GAP)
-      // })
-      // ctx.stroke()
-      // ctx.restore()
-    }
-
-    ctx.restore()
-
-    //ctx.translate(-dfProps.rowIndexW, 0)
-  }
-
-  function drawTableGrid(
-    ctx: ICtx,
-    w: number,
-    h: number,
-    left: number,
-    top: number,
-    rowRange: Shape,
-    colRange: Shape
-  ) {
-    // const ctx = canvas.getContext("2d", { alpha: false })
-
-    if (!ctx) {
-      return
-    }
-
-    ctx.save()
-
-    ctx.imageSmoothingEnabled = false
-    ctx.translate(0.5, 0.5)
-
-    // ctx.save()
-
-    // const region = new Path2D()
-    // region.rect(0, 0, w, h)
-    // ctx.clip(region)
-    //ctx.clearRect(0, 0, w, h)
-
-    ctx.strokeStyle = GRID_COLOR
-    ctx.lineWidth = LINE_THICKNESS
-
-    // vertical lines
-
-    ctx.beginPath()
-    const y2 = Math.min(dfProps.dim[1] - top, h)
-    range(colRange[0] + 1, colRange[1] + 1).forEach((x) => {
-      const px = colPositions.current[x]! - left
-      ctx.moveTo(px, 0)
-      ctx.lineTo(px, y2)
-    })
-    ctx.stroke()
-
-    ctx.beginPath()
-
-    const x2 = Math.min(colPositions.current[colRange[1]]! - left, w)
-
-    let py = (rowRange[0] + 1) * cellSize[1] - top
-
-    range(rowRange[0], rowRange[1]).forEach(() => {
-      //const py = (y + 1) * cellSize[1] - top + 0.5
-
-      ctx.moveTo(0, py)
-      ctx.lineTo(x2, py)
-
-      py += cellSize[1]
-    })
-
-    ctx.stroke()
-
-    ctx.restore()
-
-    // reset transform
-    //ctx.translate(-dfProps.rowIndexW, -cellSize[1])
-  }
-
-  function drawSelection(
-    ctx: ICtx,
-    w: number,
-    h: number,
-    left: number,
-    top: number
-  ) {
-    // const ctx = canvas.getContext("2d", { alpha: false })
-
-    if (!ctx) {
-      return
-    }
-
-    if (selection.current.start !== NO_SELECTION) {
-      let x1 =
-        colPositions.current[
-          Math.min(selection.current.start.col, selection.current.end.col)
-        ]! - left
-
-      let x2 =
-        colPositions.current[
-          Math.max(selection.current.start.col, selection.current.end.col) + 1
-        ]! - left
-
-      let x3 = colPositions.current[selection.current.start.col]! - left
-      let x4 = colPositions.current[selection.current.start.col + 1]! - left
-
-      let y1 =
-        Math.min(selection.current.start.row, selection.current.end.row) *
-          cellSize[1] -
-        top
-
-      let y2 =
-        (Math.max(selection.current.start.row, selection.current.end.row) + 1) *
-          cellSize[1] -
-        top
-
-      let y3 = selection.current.start.row * cellSize[1] - top
-      let y4 = y3 + cellSize[1]
-
-      x1 = Math.max(0, Math.min(w, x1))
-      x2 = Math.max(0, Math.min(w, x2))
-      x3 = Math.max(0, Math.min(w, x3))
-      x4 = Math.max(0, Math.min(w, x4))
-
-      y1 = Math.max(0, Math.min(h, y1))
-      y2 = Math.max(0, Math.min(h, y2))
-      y3 = Math.max(0, Math.min(h, y3))
-      y4 = Math.max(0, Math.min(h, y4))
-
-      let rw = x2 - x1
-      let rh = y2 - y1
-
-      if (rw > 0 && rh > 0) {
-        ctx.fillStyle = SELECTION_FILL
-        ctx.fillRect(x1, y1, rw, rh)
-      }
-
-      // draw first cell white
-      rw = x4 - x3
-      rh = y4 - y3
-
-      if (rw > 0 && rh > 0) {
-        ctx.fillStyle = COLOR_WHITE
-        ctx.fillRect(x3, y3, rw, rh)
-      }
-    }
-  }
 
   function drawSelectionRect(
     ctx: ICtx,

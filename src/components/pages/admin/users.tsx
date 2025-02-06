@@ -14,7 +14,7 @@ import {
   type IRole,
 } from '@/lib/edb/edb'
 
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 
 import { RolesLayout } from '@layouts/roles-layout'
 
@@ -137,7 +137,7 @@ function AdminUsersPage() {
     }
   }, [roles, getAccessTokenAutoRefresh, queryClient])
 
-  async function loadUsers() {
+  const loadUsers = useCallback(async () => {
     const accessToken = await getAccessTokenAutoRefresh()
 
     if (!accessToken) {
@@ -159,7 +159,7 @@ function AdminUsersPage() {
     } catch {
       console.error('could not load users from remote')
     }
-  }
+  }, [getAccessTokenAutoRefresh, setUsers, queryClient, itemsPerPage, page])
 
   useEffect(() => {
     if (userStats) {

@@ -351,15 +351,13 @@ export const LollipopSvg = forwardRef<SVGElement>(function LollipopSvg(
   const blockSize: IBlock = displayProps.grid.cell
   const spacing = displayProps.grid.spacing
 
-  const scaledBlockSize = {
-    w: blockSize.w * displayProps.scale,
-    h: blockSize.h * displayProps.scale,
-  }
-
-  const scaledPadding = {
-    x: spacing.x * displayProps.scale,
-    y: spacing.y * displayProps.scale,
-  }
+  const scaledBlockSize = useMemo(
+    () => ({
+      w: blockSize.w * displayProps.scale,
+      h: blockSize.h * displayProps.scale,
+    }),
+    [blockSize, displayProps]
+  )
 
   const innerRef = useRef<SVGElement>(null)
   useImperativeHandle(ref, () => innerRef.current!, [])
@@ -394,6 +392,11 @@ export const LollipopSvg = forwardRef<SVGElement>(function LollipopSvg(
   const height = gridHeight + top + bottom
 
   const svg = useMemo(() => {
+    const scaledPadding = {
+      x: spacing.x * displayProps.scale,
+      y: spacing.y * displayProps.scale,
+    }
+
     function onMouseMove(e: { pageX: number; pageY: number }) {
       if (!innerRef.current) {
         return
@@ -538,7 +541,18 @@ export const LollipopSvg = forwardRef<SVGElement>(function LollipopSvg(
         )}
       </svg>
     )
-  }, [df, displayProps, blockSize, spacing, width, height, top, marginLeft])
+  }, [
+    df,
+    displayProps,
+    blockSize,
+    spacing,
+    width,
+    height,
+    top,
+    marginLeft,
+    scaledBlockSize,
+    toolTipInfo,
+  ])
 
   //const inBlock = highlightCol[0] > -1 && highlightCol[1] > -1
 

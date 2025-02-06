@@ -550,6 +550,7 @@ export function GexPage() {
     datasetMap,
     groupsDispatch,
     toast,
+    datasets,
   ])
 
   useEffect(() => {
@@ -627,7 +628,7 @@ export function GexPage() {
       description: 'Web search',
       sheets: [df],
     })
-  }, [searchResults, displayProps])
+  }, [searchResults, displayProps, datasetMap, gexValueType, historyDispatch])
 
   function save(format: string) {
     const df = currentSheet(history)[0]!

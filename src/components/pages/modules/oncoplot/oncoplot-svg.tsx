@@ -545,15 +545,21 @@ export const OncoplotSvg = forwardRef<SVGElement, IProps>(function OncoplotSvg(
   const blockSize: IBlock = displayProps.grid.cell
   const spacing = displayProps.grid.spacing
 
-  const scaledBlockSize = {
-    w: blockSize.w * displayProps.scale,
-    h: blockSize.h * displayProps.scale,
-  }
+  const scaledBlockSize = useMemo(
+    () => ({
+      w: blockSize.w * displayProps.scale,
+      h: blockSize.h * displayProps.scale,
+    }),
+    [blockSize, displayProps]
+  )
 
-  const scaledPadding = {
-    x: spacing.x * displayProps.scale,
-    y: spacing.y * displayProps.scale,
-  }
+  const scaledPadding = useMemo(
+    () => ({
+      x: spacing.x * displayProps.scale,
+      y: spacing.y * displayProps.scale,
+    }),
+    [displayProps, spacing]
+  )
 
   const innerRef = useRef<SVGElement>(null)
   useImperativeHandle(ref, () => innerRef.current!, [])
@@ -794,6 +800,9 @@ export const OncoplotSvg = forwardRef<SVGElement, IProps>(function OncoplotSvg(
     gridHeight,
     marginLeft,
     gridWidth,
+    scaledBlockSize,
+    toolTipInfo,
+    scaledPadding,
   ])
 
   //const inBlock = highlightCol[0] > -1 && highlightCol[1] > -1

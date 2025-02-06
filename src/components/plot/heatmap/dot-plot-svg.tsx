@@ -111,14 +111,6 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
   { cf, groups = [], displayProps = {} }: IProps,
   svgRef
 ) {
-  const _displayProps: IDotPlotProps = {
-    ...DEFAULT_DISPLAY_PROPS,
-    ...displayProps,
-  }
-
-  const blockSize = _displayProps.blockSize
-  const blockSize2: IBlock = { w: 0.5 * blockSize.w, h: 0.5 * blockSize.h }
-
   //const svgRef = useRef<SVGSVGElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
   //const canvasRef = useRef(null)
@@ -127,6 +119,16 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
 
   const [highlightCol, setHighlightCol] = useState(NO_SELECTION)
   //const [highlightRow, setHighlightRow] = useState(-1)
+
+  const _displayProps: IDotPlotProps = useMemo(
+    () => ({
+      ...DEFAULT_DISPLAY_PROPS,
+      ...displayProps,
+    }),
+    [displayProps]
+  )
+
+  const blockSize = _displayProps.blockSize
 
   const marginLeft =
     margin.left +
@@ -186,17 +188,70 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
     pos: -1,
   })
 
-  function bound(x: number) {
-    const r = _displayProps.range[1] - _displayProps.range[0]
-
-    return (
-      (Math.max(_displayProps.range[0], Math.min(_displayProps.range[1], x)) -
-        _displayProps.range[0]) /
-      r
-    )
-  }
-
   const svg = useMemo(() => {
+    function bound(x: number) {
+      const r = _displayProps.range[1] - _displayProps.range[0]
+
+      return (
+        (Math.max(_displayProps.range[0], Math.min(_displayProps.range[1], x)) -
+          _displayProps.range[0]) /
+        r
+      )
+    }
+
+    function onMouseMove(e: { pageX: number; pageY: number }) {
+      if (!svgRef) {
+        return
+      }
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      if (!svgRef.current) {
+        return
+      }
+
+      let c = Math.floor(
+        (e.pageX -
+          marginLeft * _displayProps.scale -
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          svgRef.current.getBoundingClientRect().left -
+          window.scrollX) /
+          (blockSize.w * _displayProps.scale)
+      )
+
+      if (c < 0 || c > dfMain.shape[1]! - 1) {
+        c = -1
+      }
+
+      let r = Math.floor(
+        (e.pageY -
+          marginTop * _displayProps.scale -
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          svgRef.current.getBoundingClientRect().top -
+          window.scrollY) /
+          (blockSize.h * _displayProps.scale)
+      )
+
+      if (r < 0 || r > dfMain.shape[0] - 1) {
+        r = -1
+      }
+
+      setHighlightCol([r, c])
+
+      if (r > -1 && c > -1) {
+        setToolTipInfo({
+          ...toolTipInfo,
+          seqIndex: r,
+          pos: c,
+          left: (marginLeft + (c + 1) * blockSize.w) * _displayProps.scale,
+          top: (marginTop + (r + 1) * blockSize.h) * _displayProps.scale,
+          visible: true,
+        })
+      }
+    }
+
     if (!cf) {
       return null
     }
@@ -226,6 +281,8 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
       _displayProps.blockSize.w,
       _displayProps.blockSize.h
     )
+
+    const blockSize2: IBlock = { w: 0.5 * blockSize.w, h: 0.5 * blockSize.h }
 
     return (
       <svg
@@ -610,71 +667,16 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
     _displayProps,
     groups,
     blockSize,
-    blockSize2,
     innerWidth,
     innerHeight,
     marginLeft,
     marginTop,
-    bound,
     dfMain,
     height,
-    onMouseMove,
     svgRef,
     width,
+    toolTipInfo,
   ])
-
-  function onMouseMove(e: { pageX: number; pageY: number }) {
-    if (!svgRef) {
-      return
-    }
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    if (!svgRef.current) {
-      return
-    }
-
-    let c = Math.floor(
-      (e.pageX -
-        marginLeft * _displayProps.scale -
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        svgRef.current.getBoundingClientRect().left -
-        window.scrollX) /
-        (blockSize.w * _displayProps.scale)
-    )
-
-    if (c < 0 || c > dfMain.shape[1]! - 1) {
-      c = -1
-    }
-
-    let r = Math.floor(
-      (e.pageY -
-        marginTop * _displayProps.scale -
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        svgRef.current.getBoundingClientRect().top -
-        window.scrollY) /
-        (blockSize.h * _displayProps.scale)
-    )
-
-    if (r < 0 || r > dfMain.shape[0] - 1) {
-      r = -1
-    }
-
-    setHighlightCol([r, c])
-
-    if (r > -1 && c > -1) {
-      setToolTipInfo({
-        ...toolTipInfo,
-        seqIndex: r,
-        pos: c,
-        left: (marginLeft + (c + 1) * blockSize.w) * _displayProps.scale,
-        top: (marginTop + (r + 1) * blockSize.h) * _displayProps.scale,
-        visible: true,
-      })
-    }
-  }
 
   const inBlock = highlightCol[0]! > -1 && highlightCol[1]! > -1
 

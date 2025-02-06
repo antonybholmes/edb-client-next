@@ -98,7 +98,7 @@ export function EdbAuthProvider({ cacheSession = true, children }: IProps) {
     setAccessToken(token)
 
     return token
-  }, [fetchAccessTokenUsingSession, accessToken, queryClient])
+  }, [accessToken, queryClient])
 
   const fetchSessionInfo = useCallback(
     async (accessToken: string = '') => {

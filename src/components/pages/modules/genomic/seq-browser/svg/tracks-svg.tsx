@@ -93,16 +93,16 @@ export const TracksSvg = forwardRef<SVGElement, IProps>(function TracksSvg(
     },
   })
 
-  const allLocTrackBins: ILocTrackBins[] = binsQuery.data ? binsQuery.data : []
-
   // use either the auto global or user fixed global
-  const globalY = useMemo(
-    () =>
-      settings.seqs.globalY.auto && allLocTrackBins.length > 0
-        ? getYMax(seqs, allLocTrackBins, settings.seqs.scale.mode)
-        : settings.seqs.globalY.ymax,
-    [allLocTrackBins, settings.seqs.globalY, settings.seqs.scale, seqs]
-  )
+  const globalY = useMemo(() => {
+    const allLocTrackBins: ILocTrackBins[] = binsQuery.data
+      ? binsQuery.data
+      : []
+
+    return settings.seqs.globalY.auto && allLocTrackBins.length > 0
+      ? getYMax(seqs, allLocTrackBins, settings.seqs.scale.mode)
+      : settings.seqs.globalY.ymax
+  }, [settings.seqs.globalY, settings.seqs.scale, seqs, binsQuery.data])
 
   const svg = useMemo(() => {
     // we need this here to calculate the height of the track rather than
@@ -244,6 +244,8 @@ export const TracksSvg = forwardRef<SVGElement, IProps>(function TracksSvg(
     setLocations,
     style,
     svgRef,
+
+    genesQuery.data,
   ])
 
   return <div className={className}>{svg}</div>

@@ -36,8 +36,6 @@ import { SaveImageDialog } from '@components/pages/save-image-dialog'
 import type { IExtGseaDisplayOptions } from '../../../gene/gsea/ext-gsea-store'
 
 import { Card } from '@/components/shadcn/ui/themed/card'
-import { GenesetsContext } from '../../genesets-provider'
-import { GroupsContext } from '../../groups-provider'
 import { PLOT_CLS } from '../heatmap/heatmap-panel'
 import { ExtGseaPropsPanel } from './ext-gsea-props-panel'
 import { ExtGseaSvg } from './ext-gsea-svg'
@@ -78,8 +76,8 @@ export function ExtGseaPanel({
 
   //const extGsea: ExtGSEA = plot.customProps.extGsea as ExtGSEA
 
-  const { groupState } = useContext(GroupsContext)
-  const { genesetState } = useContext(GenesetsContext)
+  //const { groupState } = useContext(GroupsContext)
+  //const { genesetState } = useContext(GenesetsContext)
   // const [displayOptions, setdisplayOptions] = useState<IHeatMapProps>({
   //   ...DEFAULT_DISPLAY_PROPS,
   //   style: plot.type === "Dot Plot" ? "dot" : "square",
@@ -122,7 +120,14 @@ export function ExtGseaPanel({
     }
 
     //downloadSvgAsPng(svgRef, canvasRef, downloadRef)
-  }, [messageState])
+  }, [
+    messageState,
+    canvasRef,
+    downloadRef,
+    messageDispatch,
+    plot?.id,
+    showSideBar,
+  ])
 
   function adjustScale(scale: number) {
     setScale(scale)
@@ -165,7 +170,7 @@ export function ExtGseaPanel({
         </div>
       </Card>
     ),
-    [plot, groupState.groups, genesetState.genesets, displayOptions]
+    [plotAddr]
   )
 
   return (

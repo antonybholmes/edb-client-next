@@ -100,7 +100,7 @@ export function DataPanel({ panelId = DEFAULT_PANEL_ID }: IDataPanelProps) {
 
       //setShowFileMenu(false)
     },
-    [history, currentSheet, downloadRef]
+    [history, downloadRef]
   )
 
   useEffect(() => {
