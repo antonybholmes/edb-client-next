@@ -391,8 +391,8 @@ export function MutationsPage() {
         format: 'Upper',
         assembly: 'hg19',
       })
-    } catch (e) {
-      console.log(e)
+    } catch   {
+      //console.log(e)
     }
 
     let pileup: IPileupResults = { location, pileup: [] }
@@ -405,12 +405,11 @@ export function MutationsPage() {
         location,
         datasets.filter((dataset) => datasetUseMap.get(dataset.uuid))
       )
-    } catch (e) {
-      console.log(e)
+    } catch   {
+      //console.log(e)
     }
 
-    console.log('dl', pileup)
-
+ 
     setPileup({ dna, pileupResults: pileup })
   }
 
@@ -744,8 +743,8 @@ export function MutationsPage() {
               if (e.key === 'Enter') {
                 try {
                   getPileup()
-                } catch (e) {
-                  console.log(e)
+                } catch   {
+                  //console.log(e)
                 }
               }
             }}

@@ -61,7 +61,7 @@ const sheetVariants = cva(
     defaultVariants: {
       shadow: 'lg',
       surface: 'default',
-      side: 'Right',
+      side: 'right',
     },
   }
 )
@@ -80,7 +80,7 @@ const SheetContent = forwardRef<
     {
       shadow = 'lg',
       surface = 'default',
-      side = 'Right',
+      side = 'right',
       overlayFill = 'bg-foreground/25',
       className,
       children,
@@ -89,7 +89,7 @@ const SheetContent = forwardRef<
     ref
   ) => (
     <SheetPortal>
-      {overlayFill && <DialogOverlay fill={overlayFill} />}
+      {overlayFill && <DialogOverlay  />}
       <SheetPrimitive.Content
         ref={ref}
         className={cn(sheetVariants({ surface, side, shadow }), className)}

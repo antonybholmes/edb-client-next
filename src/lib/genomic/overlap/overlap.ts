@@ -287,7 +287,7 @@ export function overlappingPeaks(
   const binToUidsMap = new Map<number, Set<string>>()
   const uids: string[] = []
 
-  console.log(fids)
+  //console.log(fids)
 
   for (const entry of fids) {
     const { fid, locations } = entry

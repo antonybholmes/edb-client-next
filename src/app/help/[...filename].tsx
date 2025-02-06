@@ -1,32 +1,29 @@
-import { BaseCol } from '@/components/layout/base-col';
-import { ThemeLink } from '@/components/link/theme-link';
-import { MarkdownContent } from '@/components/markdown-content';
-import client from '../../../tina/__generated__/client';
+import { BaseCol } from '@/components/layout/base-col'
+import { MarkdownContent } from '@/components/markdown-content'
+//import client from '../ tina/__generated__/client'
 
 export async function generateStaticParams() {
-  const pages = await client.queries.postConnection();
-  const paths = pages.data?.postConnection?.edges?.map((edge) => ({
-    filename: edge?.node?._sys.breadcrumbs,
-  }));
+  // const pages = await client.queries.postConnection()
+  // const paths = pages.data?.postConnection?.edges?.map((edge) => ({
+  //   filename: edge?.node?._sys.breadcrumbs,
+  // }))
 
-  return paths || [];
+  return  []
 }
 
 export default async function HelpPage({
-  params,
+ 
 }: {
-  params: { filename: string[] };
+  params: { filename: string[] }
 }) {
-  const data = await client.queries.post({
-    relativePath: `${params.filename}.md`,
-  });
+  // const data = await client.queries.post({
+  //   relativePath: `${params.filename}.md`,
+  // })
 
-  return <article className="flex flex-col gap-y-4">
-  <BaseCol
-    className="shrink-0 gap-y-2 rounded-theme border border-border bg-background p-4 text-xs"
-  >
-     
-    <ul className="flex flex-col gap-y-2">
+  return (
+    <article className="flex flex-col gap-y-4">
+      <BaseCol className="shrink-0 gap-y-2 rounded-theme border border-border bg-background p-4 text-xs">
+        {/* <ul className="flex flex-col gap-y-2">
       {
         data.map((h: any) => {
           return (
@@ -41,11 +38,12 @@ export default async function HelpPage({
           )
         })
       }
-    </ul>
-  </BaseCol>
+    </ul> */}
+      </BaseCol>
 
-  <MarkdownContent className="help flex flex-col gap-y-4 py-1 text-xs">
-    <Content />
-  </MarkdownContent>
-</article>
+      <MarkdownContent className="help flex flex-col gap-y-4 py-1 text-xs">
+        {/* <Content /> */}
+      </MarkdownContent>
+    </article>
+  )
 }

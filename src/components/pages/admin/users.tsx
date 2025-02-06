@@ -202,32 +202,39 @@ function AdminUsersPage() {
   const columnHelper = createColumnHelper<IEdbUser>()
 
   const columns: ColumnDef<IEdbUser>[] = [
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     columnHelper.accessor('uuid', {
       header: 'Uuid',
     }),
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     columnHelper.accessor('username', {
       header: 'Username',
     }),
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     columnHelper.accessor('email', {
       header: 'Email',
     }),
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     columnHelper.accessor('firstName', {
       header: 'First Name',
     }),
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     columnHelper.accessor('lastName', {
       header: 'Last Name',
     }),
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     columnHelper.accessor('roles', {
       header: 'Roles',
       cell: (props) => <span>{props.getValue().join(', ')}</span>,
     }),
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     columnHelper.accessor((row) => row, {
       id: 'edit',

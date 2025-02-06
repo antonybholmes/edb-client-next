@@ -225,9 +225,7 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
                         : COLOR_WHITE
 
                     let textColor = displayProps.colorMode
-                      ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        //@ts-expect-error
-                        BASE_COLOR_MAP[f.seq[si]]
+                      ? BASE_COLOR_MAP[f.seq[si]]
                       : COLOR_BLACK
                     const x = si * bw
 
@@ -239,9 +237,7 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
                           seqFiles[0]!.seq[si]!.toLowerCase()
                       ) {
                         fill = displayProps.colorMode
-                          ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            //@ts-expect-error
-                            BASE_COLOR_MAP[f.seq[si]]
+                          ? BASE_COLOR_MAP[f.seq[si]]
                           : COLOR_RED
                         textColor = COLOR_WHITE
                       }

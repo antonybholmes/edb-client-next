@@ -27,7 +27,7 @@ export class DataFrameWriter {
       ...options,
     }
 
-    console.log(options)
+    //console.log(options)
 
     this._sep = sep
     this._dp = dp

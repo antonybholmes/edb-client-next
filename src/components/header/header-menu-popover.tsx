@@ -126,6 +126,7 @@ export function HeaderMenuPopover({ tab = '' }: IFileMenu) {
       <PopoverContent
         onEscapeKeyDown={() => setOpen(false)}
         onInteractOutside={(e) => {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-expect-error
           if (e.target?.id !== 'header-menu-popover-button') {
             setOpen(false)

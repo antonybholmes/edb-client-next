@@ -916,9 +916,7 @@ function OncoplotPage() {
       ),
     },
   ]
-
-  console.log('onco refresh check')
-
+ 
   return (
     <>
       {showDialog.id.includes('oncoplot') && (

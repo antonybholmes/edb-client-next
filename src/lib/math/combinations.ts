@@ -12,9 +12,9 @@ export function* combinations(arr: any[], k: number): Generator<any, any, any> {
   }
 }
 
-const array = [1, 2, 3, 4]
-const k = 2
+// const array = [1, 2, 3, 4]
+// const k = 2
 
-for (const combo of combinations(array, k)) {
-  console.log(combo)
-}
+// for (const combo of combinations(array, k)) {
+//   console.log(combo)
+// }

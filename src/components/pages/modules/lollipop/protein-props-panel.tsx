@@ -14,6 +14,7 @@ import { Input } from '@components/shadcn/ui/themed/input'
 import { Textarea3 } from '@components/shadcn/ui/themed/textarea3'
 import { forwardRef, useContext, type ForwardedRef } from 'react'
 import { ProteinContext, searchProteins } from './protein-context'
+import { queryClient } from '@/query'
 
 export interface IMotifDBEntry {
   name: string
@@ -55,7 +56,7 @@ export const ProteinPropsPanel = forwardRef(function ProteinPropsPanel(
                   value={proteinState.protein?.name}
                   onChange={e => {
                     proteinDispatch({
-                      type: 'update-display',
+                      type: 'update',
 
                       protein: {
                         ...proteinState.protein,
@@ -73,7 +74,7 @@ export const ProteinPropsPanel = forwardRef(function ProteinPropsPanel(
                   value={proteinState.protein?.seq ?? ''}
                   onChange={e =>
                     proteinDispatch({
-                      type: 'update-display',
+                      type: 'update',
 
                       protein: {
                         ...proteinState.protein,
@@ -110,7 +111,7 @@ export const ProteinPropsPanel = forwardRef(function ProteinPropsPanel(
                   onSearch={async event => {
                     if (event === 'search') {
                       try {
-                        const proteins = await searchProteins(
+                        const proteins = await searchProteins(queryClient,
                           proteinState.search.text
                         )
                         proteinDispatch({
