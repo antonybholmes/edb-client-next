@@ -1,0 +1,28 @@
+---
+import type { ILayoutProps } from '@interfaces/layout-props'
+import { createCrumbs, type ICrumbProps } from '@lib/crumbs'
+//import { PageTitle } from "@components/page-title"
+
+import ContentLayout from './ContentLayout.astro'
+
+export interface Props extends ILayoutProps, ICrumbProps {}
+
+let { title = 'Post', tab = '', crumbs = [] } = Astro.props
+
+if (!crumbs) {
+  crumbs = createCrumbs(Astro.url.pathname)
+}
+---
+
+<ContentLayout title={title} tab={tab}>
+  <article class="flex flex-col gap-y-4" slot="main">
+    <!-- {
+      showTitle && (
+        <PageTitle title={title} subTitle={subTitle} superTitle={superTitle} />
+      )
+    } -->
+    <!-- {showCrumbs && <Breadcrumb crumbs={crumbs} />} -->
+
+    <slot name="main" />
+  </article>
+</ContentLayout>

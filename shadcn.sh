@@ -1,0 +1,1 @@
+pnpx shadcn-ui@latest add input
