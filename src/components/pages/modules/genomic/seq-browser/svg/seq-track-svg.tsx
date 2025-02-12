@@ -101,16 +101,19 @@ export function SeqTrackSvg({
 
       const accessToken = await getAccessTokenAutoRefresh()
 
-      const res = await httpFetch.postJson(API_SEQS_BINS_URL, {
-        body: {
-          locations: [location.loc],
-          //scale: displayOptions.seq.applyScaling ? displayOptions.seq.scale : 0,
-          binSizes: [binSize],
-          tracks: tracks.map((t) => t.seqId),
-        },
+      const res = await httpFetch.postJson<{ data: ILocTrackBins[] }>(
+        API_SEQS_BINS_URL,
+        {
+          body: {
+            locations: [location.loc],
+            //scale: displayOptions.seq.applyScaling ? displayOptions.seq.scale : 0,
+            binSizes: [binSize],
+            tracks: tracks.map((t) => t.seqId),
+          },
 
-        headers: bearerHeaders(accessToken),
-      })
+          headers: bearerHeaders(accessToken),
+        }
+      )
 
       return res.data
     },
@@ -353,8 +356,8 @@ export function SeqTrackSvg({
 
           let line = d3
             .line<IPos>()
-            .x((d) => d.x)
-            .y((d) => d.y)
+            .x((d: IPos) => d.x)
+            .y((d: IPos) => d.y)
 
           if (settings.seqs.smooth) {
             line = line.curve(d3.curveBasis)

@@ -210,7 +210,9 @@ function DNAPage() {
     queryFn: async () => {
       //const token = await loadAccessToken()
 
-      const res = await httpFetch.getJson(API_DNA_GENOMES_URL)
+      const res = await httpFetch.getJson<{ data: string[] }>(
+        API_DNA_GENOMES_URL
+      )
 
       return res.data
     },
@@ -412,7 +414,7 @@ function DNAPage() {
     <>
       {showDialog.id === 'alert' && (
         <BasicAlertDialog onReponse={() => setShowDialog({ ...NO_DIALOG })}>
-          {showDialog.params!.message}
+          {showDialog.params!.message as string}
         </BasicAlertDialog>
       )}
 

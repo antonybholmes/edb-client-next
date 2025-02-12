@@ -33,7 +33,8 @@ const LINKS = [
 function AboutPage({ children }: IChildrenProps) {
   const { data } = useQuery({
     queryKey: ['about'],
-    queryFn: () => httpFetch.getJson(API_ABOUT_URL),
+    queryFn: () =>
+      httpFetch.getJson<{ version: string; updated: string }>(API_ABOUT_URL),
   })
 
   //if (isPending) return "Loading..."

@@ -203,7 +203,7 @@ export function SignIn({ allowPassword = false, visitUrl }: ISignInProps) {
       const res = await queryClient.fetchQuery({
         queryKey: ['signin'],
         queryFn: () =>
-          httpFetch.postJson(SESSION_AUTH_SIGNIN_URL, {
+          httpFetch.postJson<{ message: string }>(SESSION_AUTH_SIGNIN_URL, {
             body: {
               username: data.username,
               password: settings.passwordless ? '' : data.password1,

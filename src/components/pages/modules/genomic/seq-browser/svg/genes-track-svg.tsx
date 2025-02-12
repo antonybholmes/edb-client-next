@@ -203,7 +203,7 @@ export function GenesTrackSvg({
               textAnchor="middle"
               //fontWeight="bold"
             >
-              {track.name} ({db.genome},{db.version})
+              {track.name} ({db?.genome},{db?.version})
             </text>
           </g>
         )}
