@@ -340,7 +340,7 @@ export function ToolbarPanel({ tabShortcutMenu }: IToolbarPanelProps) {
         </VCenterRow>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <ToolbarIconButton>
+            <ToolbarIconButton title="Other options">
               <EllipsisIcon />
             </ToolbarIconButton>
           </DropdownMenuTrigger>

@@ -228,7 +228,7 @@ export const UnderlineTabs = forwardRef(function UnderlineTabs(
 
         {menuActions && menuActions.length > 0 && menuCallback && (
           <DropdownMenu open={show} onOpenChange={setShow}>
-            <DropdownMenuTrigger className="pr-1">
+            <DropdownMenuTrigger className="pr-1" aria-label="Show tab options">
               <ChevronRightIcon className="rotate-90" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
