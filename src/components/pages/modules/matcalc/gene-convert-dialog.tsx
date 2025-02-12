@@ -123,7 +123,14 @@ export function GeneConvertDialog({
         queryFn: () =>
           httpFetch.postJson<{
             data:
-              | { conversions: {}[][] }
+              | {
+                  conversions: {
+                    entrez: string
+                    refseq: string[]
+                    ensembl: string[]
+                    symbol: string
+                  }[][]
+                }
               | {
                   entrez: string
                   refseq: string[]

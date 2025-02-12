@@ -202,33 +202,33 @@ function AdminUsersPage() {
   const columnHelper = createColumnHelper<IEdbUser>()
 
   const columns: ColumnDef<IEdbUser>[] = [
-    // @ts-expect-error
+    // @ts-expect-error: garbage design of tanstack table
     columnHelper.accessor('uuid', {
       header: 'Uuid',
     }),
-    // @ts-expect-error
+    // @ts-expect-error: garbage design of tanstack table
     columnHelper.accessor('username', {
       header: 'Username',
     }),
-    // @ts-expect-error
+    // @ts-expect-error: garbage design of tanstack table
     columnHelper.accessor('email', {
       header: 'Email',
     }),
-    // @ts-expect-error
+    // @ts-expect-error: garbage design of tanstack table
     columnHelper.accessor('firstName', {
       header: 'First Name',
     }),
-    // @ts-expect-error
+    // @ts-expect-error: garbage design of tanstack table
     columnHelper.accessor('lastName', {
       header: 'Last Name',
     }),
-    // @ts-expect-error
+    // @ts-expect-error: garbage design of tanstack table
     columnHelper.accessor('roles', {
       header: 'Roles',
       cell: (props) => <span>{props.getValue().join(', ')}</span>,
     }),
 
-    // @ts-expect-error
+    // @ts-expect-error: garbage design of tanstack table
     columnHelper.accessor((row) => row, {
       id: 'edit',
       header: '',
@@ -390,7 +390,7 @@ function AdminUsersPage() {
         <EditUserDialog
           title={showDialog.params!.title as string}
           user={showDialog.params!.user as INewUser}
-          setUser={(user: INewUser | undefined, _response: string) => {
+          setUser={(user: INewUser | undefined) => {
             console.log('new', user)
 
             if (user) {

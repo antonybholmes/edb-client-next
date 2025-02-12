@@ -3,6 +3,7 @@ import { cn } from '@lib/class-names'
 import { type ReactNode } from 'react'
 
 import type { IElementProps } from '@interfaces/element-props'
+import Link from 'next/link'
 import { FavIcon } from '../icons/favicon'
 import { HeaderMenu } from './header-menu'
 
@@ -28,9 +29,9 @@ export function Header({
         <HeaderMenu />
 
         <VCenterRow className="hidden md:flex gap-x-4 shrink-0">
-          <a className="hover:bg-muted trans-color" href="/">
+          <Link className="hover:bg-muted trans-color" href="/">
             <FavIcon />
-          </a>
+          </Link>
           {/* {leftHeaderChildren && (
             <span className="h-6 w-0.5 bg-foreground/50" />
           )} */}

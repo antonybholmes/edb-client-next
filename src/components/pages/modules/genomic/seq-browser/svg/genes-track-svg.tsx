@@ -71,10 +71,6 @@ export function GenesTrackSvg({
   xax,
   titleHeight,
 }: IProps) {
-  if (!db) {
-    return null
-  }
-
   const { settings } = useContext(SeqBrowserSettingsContext)
 
   // const genesQuery = useQuery({
