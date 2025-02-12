@@ -128,7 +128,7 @@ function AdminUsersPage() {
       const stats: IUserStats = res.data
 
       setUserStats(stats)
-    } catch (err) {
+    } catch {
       console.error('could not load user stats')
     }
   }
@@ -202,33 +202,33 @@ function AdminUsersPage() {
   const columnHelper = createColumnHelper<IEdbUser>()
 
   const columns: ColumnDef<IEdbUser>[] = [
-    // @ts-ignore
+    // @ts-expect-error
     columnHelper.accessor('uuid', {
       header: 'Uuid',
     }),
-    // @ts-ignore
+    // @ts-expect-error
     columnHelper.accessor('username', {
       header: 'Username',
     }),
-    // @ts-ignore
+    // @ts-expect-error
     columnHelper.accessor('email', {
       header: 'Email',
     }),
-    // @ts-ignore
+    // @ts-expect-error
     columnHelper.accessor('firstName', {
       header: 'First Name',
     }),
-    // @ts-ignore
+    // @ts-expect-error
     columnHelper.accessor('lastName', {
       header: 'Last Name',
     }),
-    // @ts-ignore
+    // @ts-expect-error
     columnHelper.accessor('roles', {
       header: 'Roles',
       cell: (props) => <span>{props.getValue().join(', ')}</span>,
     }),
 
-    // @ts-ignore
+    // @ts-expect-error
     columnHelper.accessor((row) => row, {
       id: 'edit',
       header: '',
@@ -273,7 +273,6 @@ function AdminUsersPage() {
   ]
 
   const table = useReactTable({
-    // @ts-ignore
     columns,
     data: users,
     getCoreRowModel: getCoreRowModel(),

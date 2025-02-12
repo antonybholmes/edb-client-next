@@ -14,7 +14,9 @@ export class Index extends BaseIndex {
     return this.values.map((v) => cellStr(v))
   }
 
-  get(_index: number): IndexData {
+  get(
+    _index: number // eslint-disable-line @typescript-eslint/no-unused-vars
+  ): IndexData {
     return NaN
   }
 
@@ -36,7 +38,9 @@ export class Index extends BaseIndex {
     return this.values.map((x, i) => callback(x, i))
   }
 
-  filter(_idx: number[]): Index {
+  filter(
+    _idx: number[] // eslint-disable-line @typescript-eslint/no-unused-vars
+  ): Index {
     return this
   }
 
@@ -44,7 +48,9 @@ export class Index extends BaseIndex {
     return this
   }
 
-  find(_s: IndexData): number[] {
+  find(
+    _s: IndexData // eslint-disable-line @typescript-eslint/no-unused-vars
+  ): number[] {
     return []
   }
 }

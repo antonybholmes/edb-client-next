@@ -259,7 +259,7 @@ export function GexPage() {
       })
 
       datasets = res.data
-    } catch (err) {
+    } catch {
       console.error('error loading datasets from remote')
     }
 

@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function useWindowListener(event: string, handler: unknown) {
+export function useWindowListener(
+  event: string,
+  handler: (event: Event) => void
+) {
   useEffect(() => {
     window.addEventListener(event, handler)
     return () => window.removeEventListener(event, handler)

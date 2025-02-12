@@ -878,14 +878,12 @@ export function TracksProvider({ children }: IChildrenProps) {
       //const token = await loadAccessToken()
       //console.log(API_SEQS_SEARCH_URL)
 
-      const res = await httpFetch.getJson(
+      const res = await httpFetch.getJson<{ data: IDBSeqTrack[] }>(
         `${API_SEQS_SEARCH_URL}/${settings.genome}`,
         {
           headers: bearerHeaders(accessToken),
         }
       )
-
-      //console.log('Tracks', res.data)
 
       return res.data
     },
@@ -916,7 +914,9 @@ export function TracksProvider({ children }: IChildrenProps) {
                 console.log(
                   `${API_GENES_INFO_URL}/${settings.genome}?search=${loc}&level=gene`
                 )
-                const res = await httpFetch.getJson(
+                const res = await httpFetch.getJson<{
+                  data: IGenomicFeature[]
+                }>(
                   `${API_GENES_INFO_URL}/${settings.genome}?search=${loc}&level=gene`
                 )
 

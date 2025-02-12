@@ -92,6 +92,7 @@ NelderMead1d.prototype.redraw = function () {
   this.div.select('svg').data([]).exit().remove()
   this.plot = this.graph(this.div.select('#vis'))
   createDropShadowFilter(this.plot.svg)
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   var obj = this
   this.plot.svg.on('click', function () {
     var pos = d3.mouse(this)

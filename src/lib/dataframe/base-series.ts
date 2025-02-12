@@ -10,7 +10,10 @@ export class BaseSeries extends BaseIndex {
     return NUM_INDEX
   }
 
-  setIndex(_index: IndexFromType, _inplace: boolean = false): BaseSeries {
+  setIndex(
+    _index: IndexFromType, // eslint-disable-line @typescript-eslint/no-unused-vars
+    _inplace: boolean = false // eslint-disable-line @typescript-eslint/no-unused-vars
+  ): BaseSeries {
     return this
   }
 
@@ -37,11 +40,16 @@ export class BaseSeries extends BaseIndex {
     return [...new Set(this.values)].sort()
   }
 
-  set(_index: number, _v: SeriesData): BaseSeries {
+  set(
+    _index: number, // eslint-disable-line @typescript-eslint/no-unused-vars
+    _v: SeriesData // eslint-disable-line @typescript-eslint/no-unused-vars
+  ): BaseSeries {
     return this
   }
 
-  get(_index: number): SeriesData {
+  get(
+    _index: number // eslint-disable-line @typescript-eslint/no-unused-vars
+  ): SeriesData {
     return NaN
   }
 
@@ -49,7 +57,9 @@ export class BaseSeries extends BaseIndex {
     return this.values.map((x, i) => callback(x, i))
   }
 
-  filter(_idx: number[]): BaseSeries {
+  filter(
+    _idx: number[] // eslint-disable-line @typescript-eslint/no-unused-vars
+  ): BaseSeries {
     return this
   }
 

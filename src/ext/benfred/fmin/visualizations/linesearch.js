@@ -14,7 +14,6 @@ LineSearchContour.prototype = Object.create(GradientContour.prototype)
 
 LineSearchContour.prototype.drawControls = function () {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
-
   var obj = this
   Slider(
     this.div.select('#c1'),

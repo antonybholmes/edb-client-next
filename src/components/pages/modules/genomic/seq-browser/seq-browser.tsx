@@ -86,10 +86,6 @@ export function SeqBrowserPage() {
     useContext(TracksContext)
   const { settings, updateSettings } = useContext(SeqBrowserSettingsContext)
 
-  if (locations.length === 0) {
-    return null
-  }
-
   // useEffect(() => {
   //   if (apiKey !== '') {
   //     //save key to settings for ease of use
@@ -168,7 +164,7 @@ export function SeqBrowserPage() {
         .setDomain([locations[0]!.start, locations[0]!.end])
         .setLength(settings.plot.width)
         .setTicks([locations[0]!.start, locations[0]!.end]),
-    [location]
+    [locations]
   )
 
   useEffect(() => {
@@ -308,7 +304,9 @@ export function SeqBrowserPage() {
     queryFn: async () => {
       //const token = await loadAccessToken()
 
-      const res = await httpFetch.getJson(API_GENES_GENOMES_URL)
+      const res = await httpFetch.getJson<{ data: IGeneDbInfo[] }>(
+        API_GENES_GENOMES_URL
+      )
 
       return res.data
     },

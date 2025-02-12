@@ -207,7 +207,8 @@ export function PathwayPage() {
     try {
       const res = await queryClient.fetchQuery({
         queryKey: ['genes'],
-        queryFn: () => httpFetch.getJson(API_PATHWAY_GENES_URL),
+        queryFn: () =>
+          httpFetch.getJson<{ data: string[] }>(API_PATHWAY_GENES_URL),
       })
 
       const dataset = res.data
@@ -279,7 +280,7 @@ export function PathwayPage() {
       //resolve({ ...table, name: file.name })
 
       open(table)
-    } catch (error) {
+    } catch {
       // do nothing
     }
   }
@@ -333,7 +334,7 @@ export function PathwayPage() {
     const genes = await getValidGenes()
 
     // only keep genes in approved list
-    const genesets: IGeneset[] = range(df.shape[1]).map((_) => {
+    const genesets: IGeneset[] = range(df.shape[1]).map(() => {
       return {
         id: nanoid(),
         name: df.col(0).name.toString(),
@@ -389,15 +390,13 @@ export function PathwayPage() {
         const res = await queryClient.fetchQuery({
           queryKey: ['dataset'],
           queryFn: () =>
-            httpFetch.postJson(API_PATHWAY_DATASET_URL, {
+            httpFetch.postJson<{ data: IDataset }>(API_PATHWAY_DATASET_URL, {
               body: {
                 organization: qd.organization,
                 name: qd.name,
               },
             }),
         })
-
-        console.log(res.data)
 
         const dataset = res.data
 
@@ -633,7 +632,9 @@ export function PathwayPage() {
     queryFn: async () => {
       //const token = await loadAccessToken()
 
-      const res = await httpFetch.getJson(API_PATHWAY_DATASETS_URL)
+      const res = await httpFetch.getJson<{ data: IOrgInfo[] }>(
+        API_PATHWAY_DATASETS_URL
+      )
 
       return res.data
     },
@@ -858,7 +859,7 @@ export function PathwayPage() {
     <>
       {showDialog.id === 'alert' && (
         <BasicAlertDialog onReponse={() => setShowDialog({ ...NO_DIALOG })}>
-          {showDialog.params!.message}
+          {showDialog.params!.message as string}
         </BasicAlertDialog>
       )}
 

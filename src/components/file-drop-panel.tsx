@@ -28,7 +28,6 @@ export function FileDrag({
   className,
   onFileDrop,
   onDragLeave,
-  children,
   ...props
 }: IProps & { isDragging: boolean }) {
   const [animate, setAnimate] = useState(false)

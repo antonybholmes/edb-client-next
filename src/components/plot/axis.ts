@@ -174,7 +174,6 @@ export class Axis {
    * @returns
    */
   autoDomain(lim: ILim, interval?: number): Axis {
-    // eslint-disable-next-line prefer-const
     const a = this.copy()
 
     if (isNullUndef(interval)) {
@@ -216,7 +215,7 @@ export class Axis {
 
     a._ticks = ticks
     // with fix for stupid -0 problem
-    a._ticklabels = a._ticks.map(tick =>
+    a._ticklabels = a._ticks.map((tick) =>
       Number.isInteger(tick)
         ? tick.toLocaleString()
         : tick.toFixed(this._dp).replace('-0', '0')
@@ -228,7 +227,7 @@ export class Axis {
   setTickLabels(labels: TickLabel[]): Axis {
     const a = this.copy()
 
-    a._ticklabels = labels.map(x => x.toLocaleString())
+    a._ticklabels = labels.map((x) => x.toLocaleString())
 
     return a
   }
@@ -263,7 +262,7 @@ export class Axis {
   get tickLabels(): string[] {
     return this._ticklabels
       ? this._ticklabels
-      : this.ticks.map(x => x.toLocaleString())
+      : this.ticks.map((x) => x.toLocaleString())
   }
 
   /**

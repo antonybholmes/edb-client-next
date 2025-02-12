@@ -452,39 +452,42 @@ export function MutationsPage() {
 
     const loc = parseLocation(search)
 
-    const data = pileup.pileupResults?.pileup.flat().map((mutation) => {
-      let chr = mutation.chr.replace('chr', '')
+    const data =
+      pileup && pileup.pileupResults
+        ? pileup.pileupResults.pileup.flat().map((mutation) => {
+            let chr = mutation.chr.replace('chr', '')
 
-      if (displayProps.chrPrefix.show) {
-        chr = `chr${chr}`
-      }
+            if (displayProps.chrPrefix.show) {
+              chr = `chr${chr}`
+            }
 
-      console.log(mutation.sample, sampleMap)
+            console.log(mutation.sample, sampleMap)
 
-      return [
-        sampleMap.get(mutation.sample)!.name,
-        chr,
-        mutation.start,
-        mutation.end,
-        mutation.start - loc.start + 1,
-        mutation.ref,
-        // remove leading insertion caret
-        mutation.tum.replace('^', ''),
-        mutation.type.slice(2),
-        // remove 1:, 2:, 3: ordering info
-        mutation.tDepth - mutation.tAltCount,
-        mutation.tAltCount,
-        mutation.tDepth,
+            return [
+              sampleMap.get(mutation.sample)!.name,
+              chr,
+              mutation.start,
+              mutation.end,
+              mutation.start - loc.start + 1,
+              mutation.ref,
+              // remove leading insertion caret
+              mutation.tum.replace('^', ''),
+              mutation.type.slice(2),
+              // remove 1:, 2:, 3: ordering info
+              mutation.tDepth - mutation.tAltCount,
+              mutation.tAltCount,
+              mutation.tDepth,
 
-        mutation.vaf,
-        sampleMap.get(mutation.sample)!.pairedNormalDna,
-        datasetMap.get(mutation.sample) ?? '',
-        sampleMap.get(mutation.sample)!.institution,
-        sampleMap.get(mutation.sample)!.sampleType,
-        cooMap.get(mutation.sample) ?? '',
-        lymphgenMap.get(mutation.sample) ?? '',
-      ]
-    })!
+              mutation.vaf,
+              sampleMap.get(mutation.sample)!.pairedNormalDna,
+              datasetMap.get(mutation.sample) ?? '',
+              sampleMap.get(mutation.sample)!.institution,
+              sampleMap.get(mutation.sample)!.sampleType,
+              cooMap.get(mutation.sample) ?? '',
+              lymphgenMap.get(mutation.sample) ?? '',
+            ]
+          })
+        : []
 
     const df = new DataFrame({
       data,

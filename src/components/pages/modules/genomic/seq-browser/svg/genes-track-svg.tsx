@@ -36,7 +36,7 @@ export function getGeneTrackHeight(
   track: IGeneTrack,
   features: IGenomicFeature[]
 ): number {
-  const transcripts = sum(features.map(gene => gene.children?.length ?? 0))
+  const transcripts = sum(features.map((gene) => gene.children?.length ?? 0))
 
   return (
     transcripts * track.displayOptions.transcripts.height +
@@ -99,7 +99,9 @@ export function GenesTrackSvg({
   let x1: number
   let x2: number
 
-  const geneHeights: number[] = features.map(gene => getGeneHeight(track, gene))
+  const geneHeights: number[] = features.map((gene) =>
+    getGeneHeight(track, gene)
+  )
 
   const geneY = cumsum([0, ...geneHeights])
 
@@ -312,7 +314,7 @@ export function GenesTrackSvg({
                           id="arrows"
                           //transform={`translate(0,-${track.displayOptions.arrows.size})`}
                         >
-                          {arrowXs.map(x => {
+                          {arrowXs.map((x) => {
                             return (
                               <use
                                 key={`${x}`}

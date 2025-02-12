@@ -14,7 +14,8 @@ import { useContext, useState } from 'react'
 import { useToast } from '@/hooks/use-toast'
 import { EdbAuthContext } from '@/lib/edb/edb-auth-provider'
 import { bearerHeaders } from '@/lib/http/urls'
-import { useQueryClient } from '@tanstack/react-query'
+import { queryClient } from '@/query'
+import { QueryClient } from '@tanstack/react-query'
 
 export const MIN_PASSWORD_LENGTH = 8
 export const TEXT_MIN_PASSWORD_LENGTH =
@@ -129,9 +130,7 @@ export function PasswordDialog({
   //   })
   // }
 
-  async function sendResetPasswordLink() {
-    const queryClient = useQueryClient()
-
+  async function sendResetPasswordLink(queryClient: QueryClient) {
     try {
       const res = await queryClient.fetchQuery({
         queryKey: ['reset_password'],
@@ -180,7 +179,7 @@ export function PasswordDialog({
           case TEXT_OK:
             //update()
             //btnRef.current?.click()
-            sendResetPasswordLink()
+            sendResetPasswordLink(queryClient)
             break
           default:
             _resp(response)
