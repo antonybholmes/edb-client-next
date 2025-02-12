@@ -253,10 +253,7 @@ function MatcalcPage() {
 
   useEffect(() => {
     extGseaWorkerRef.current = new Worker(
-      new URL('./modules/gsea/ext-gsea.worker.ts', import.meta.url),
-      {
-        type: 'module',
-      }
+      new URL('./modules/gsea/ext-gsea.worker.ts', import.meta.url)
     )
 
     return () => {

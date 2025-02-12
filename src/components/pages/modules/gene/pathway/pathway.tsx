@@ -460,9 +460,7 @@ export function PathwayPage() {
 
       // workerRef.current = new Worker(
       //   new URL('./pathway.worker.ts', import.meta.url),
-      //   {
-      //     type: 'module',
-      //   }
+
       // )
 
       workerRef.current.onmessage = function (e) {

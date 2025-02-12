@@ -158,7 +158,7 @@ export function ExtGseaPanel({
 
   const svg = useMemo(
     () => (
-      <Card variant="content" className="mx-2 grow">
+      <Card variant="content" className="mx-2 mb-2 grow">
         <div className={PLOT_CLS}>
           <ExtGseaSvg
             ref={svgRef}
