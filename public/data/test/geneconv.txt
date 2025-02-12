@@ -1,0 +1,3 @@
+Gene	Motif
+bcl6	ADNP_IRX_SIX_ZHX.p2
+crebbp	MA1207.1

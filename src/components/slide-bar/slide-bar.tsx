@@ -78,20 +78,17 @@ interface ISlideBarProps extends ISlidebarContext, IElementProps {
   limits: [number, number]
 }
 
-export const SlideBar = forwardRef(function SlideBar(
-  {
-    title = '',
-    side = 'Left',
-    open = true,
-    onOpenChange = () => {},
-    position = 80,
-    limits = [5, 85],
-    mainContent,
-    sideContent,
-    children,
-  }: ISlideBarProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+export function SlideBar({
+  title = '',
+  side = 'Left',
+  open = true,
+  onOpenChange = () => {},
+  position = 80,
+  limits = [5, 85],
+  mainContent,
+  sideContent,
+  children,
+}: ISlideBarProps) {
   //const c = Children.toArray(children)
 
   //let mainContent:ReactNode
@@ -124,7 +121,7 @@ export const SlideBar = forwardRef(function SlideBar(
       {children}
     </SlidebarProvider>
   )
-})
+}
 
 interface ISlideBarContentProps extends IElementProps {
   lineClassName?: string
@@ -340,7 +337,7 @@ export const SlideBarContent = forwardRef(function SlideBarContent(
                 id="divider-hitbox"
                 ref={hHitBoxRef}
                 className={H_DIV_BOX_CLS}
-                onMouseDown={e => onMouseDown(e, 'h')}
+                onMouseDown={(e) => onMouseDown(e, 'h')}
                 onClick={() => {
                   hHitBoxRef.current!.focus()
                 }}
@@ -363,7 +360,7 @@ export const SlideBarContent = forwardRef(function SlideBarContent(
                 id="divider-hitbox"
                 ref={vHitBoxRef}
                 className={V_DIV_BOX_CLS}
-                onMouseDown={e => onMouseDown(e, 'v')}
+                onMouseDown={(e) => onMouseDown(e, 'v')}
                 onClick={() => {
                   vHitBoxRef.current!.focus()
                 }}
@@ -400,7 +397,7 @@ export const SlideBarContent = forwardRef(function SlideBarContent(
                 id="divider-hitbox"
                 ref={hHitBoxRef}
                 className={H_DIV_BOX_CLS}
-                onMouseDown={e => onMouseDown(e, 'h')}
+                onMouseDown={(e) => onMouseDown(e, 'h')}
                 onClick={() => {
                   hHitBoxRef.current!.focus()
                 }}
@@ -423,7 +420,7 @@ export const SlideBarContent = forwardRef(function SlideBarContent(
                 id="divider-hitbox"
                 ref={vHitBoxRef}
                 className={V_DIV_BOX_CLS}
-                onMouseDown={e => onMouseDown(e, 'v')}
+                onMouseDown={(e) => onMouseDown(e, 'v')}
                 onClick={() => {
                   vHitBoxRef.current!.focus()
                 }}

@@ -1,0 +1,35 @@
+Chromosome	Start_Position	End_Position	Hugo_Symbol	Variant_Classification	Variant_Type	Reference_Allele	Tumor_Seq_Allele2	Sample	cDNA_change	protein_change	depth	n_alt	vaf	Center	Ref	Database
+chr12	92539245	92539245	BTG1	Missense_Mutation	SNP	A	G	LY1	c.67T>C	p.S23P	7	3	0.4286	RDF	hg19	29cl
+chr12	92539293	92539293	BTG1	Frame_Shift_Del	DEL	GGGTGTAGAA	G	LY1	c.19delTTCTACACCC	p.F7fs	6	3	0.5	RDF	hg19	29cl
+chr12	92538085	92538085	BTG1	Missense_Mutation	SNP	C	A	2206		p.R96M						20icg
+chr12	92539281	92539281	BTG1	Missense_Mutation	SNP	T	C	2209		p.M11V						20icg
+chr12	92539203	92539203	BTG1	Missense_Mutation	SNP	G	C	CRF-168		p.L37V						20icg
+chr12	92537964	92537964	BTG1	In_Frame_Del	DEL	TTTTGAGTGCTA	-	CRF-170		p.Q135_T138del						20icg
+chr12	92539196	92539196	BTG1	Missense_Mutation	SNP	G	A	CRF-170		p.T39I						20icg
+chr12	92539200	92539200	BTG1	Nonsense_Mutation	SNP	G	A	CRF-170		p.Q38X						20icg
+chr12	92539203	92539203	BTG1	Missense_Mutation	SNP	G	C	CRF-170		p.L37V						20icg
+chr12	92539304	92539304	BTG1	Missense_Mutation	SNP	G	T	CRF-170		p.P3H						20icg
+chr12	92539304	92539304	BTG1	Missense_Mutation	SNP	G	A	CRF-60		p.P3L						20icg
+chr12	92539167	92539167	BTG1	Missense_Mutation	SNP	C	T	04-24937T		p.A49T						Morin_Nat_comm_2018
+chr12	92538171	92538171	BTG1	Nonsense_Mutation	SNP	G	T	09-37629T		p.Y67*						Morin_Nat_comm_2018
+chr12	92539198	92539198	BTG1	Missense_Mutation	SNP	C	A	09-37629T		p.Q38H						Morin_Nat_comm_2018
+chr12	92539173	92539173	BTG1	Missense_Mutation	SNP	G	C	15-34472T		p.L47V						Morin_Nat_comm_2018
+chr12	92539187	92539205	BTG1	Frame_Shift_Del	DEL	TGGCTGAAGGTCTGCAGCT	-	16-18029T		p.Q36Rfs*38						Morin_Nat_comm_2018
+chr12	92538175	92538175	BTG1	Missense_Mutation	SNP	C	T	16-18029T		p.G66D						Morin_Nat_comm_2018
+chr12	92539163	92539163	BTG1	Splice_Site	SNP	C	T	14-11247T		p.X50_splice						Morin_Nat_comm_2018
+chr12	92539209	92539209	BTG1	Nonsense_Mutation	SNP	G	A	14-11247T		p.R35*						Morin_Nat_comm_2018
+chr12	92538121	92538121	BTG1	Missense_Mutation	SNP	G	A	14-27873T		p.A84V						Morin_Nat_comm_2018
+chr12	92538152	92538152	BTG1	Missense_Mutation	SNP	G	T	14-27873T		p.H74N						Morin_Nat_comm_2018
+chr12	92539304	92539304	BTG1	Missense_Mutation	SNP	G	A	14-33262T		p.P3L						Morin_Nat_comm_2018
+chr12	92539279	92539279	BTG1	Missense_Mutation	SNP	C	A	14-37722T		p.M11I						Morin_Nat_comm_2018
+chr12	92537993	92537993	BTG1	Missense_Mutation	SNP	C	T	15-13365T		p.A127T						Morin_Nat_comm_2018
+chr12	92539164	92539164	BTG1	Missense_Mutation	SNP	C	G	08-15460T		p.E50Q						Morin_Nat_comm_2018
+chr12	92539203	92539203	BTG1	Missense_Mutation	SNP	G	T	09-21480T		p.L37M						Morin_Nat_comm_2018
+chr12	92539300	92539300	BTG1	Missense_Mutation	SNP	G	C	89-62169T		p.F4L						Morin_Nat_comm_2018
+chr12	92538069	92538069	BTG1	Missense_Mutation	SNP	T	A	SP59456		p.E101D						Morin_Nat_comm_2018
+chr12	92539302	92539302	BTG1	Missense_Mutation	SNP	A	C	SP59456		p.F4V						Morin_Nat_comm_2018
+chr12	92539240	92539240	BTG1	Missense_Mutation	SNP	C	G	SP116620		p.K24N						Morin_Nat_comm_2018
+chr12	92538134	92538134	BTG1	Missense_Mutation	SNP	T	G	SP116635		p.I80L						Morin_Nat_comm_2018
+chr12	92539173	92539173	BTG1	Missense_Mutation	SNP	G	C	SP116670		p.L47V						Morin_Nat_comm_2018
+chr12	92539174	92539174	BTG1	Missense_Mutation	SNP	C	G	SP116697		p.E46D						Morin_Nat_comm_2018
+chr12	92539204	92539204	BTG1	Missense_Mutation	SNP	C	G	SP116697		p.Q36H						Morin_Nat_comm_2018

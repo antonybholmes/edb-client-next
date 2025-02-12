@@ -1,8 +1,9 @@
 import { FOCUS_INSET_RING_CLS, ROUNDED_MD_CLS, TRANS_TIME_CLS } from '@/theme'
 import { cn } from '@lib/class-names'
 
-import { forwardRef, useState, type TextareaHTMLAttributes } from 'react'
+import { forwardRef, useState } from 'react'
 import type { IPlaceholderProps } from './input'
+import { TextAreaProps } from './textarea'
 
 export const TEXTAREA_GROUP_CLS = cn(
   ROUNDED_MD_CLS,
@@ -37,9 +38,6 @@ export function Placeholder({
     </label>
   )
 }
-
-export interface TextAreaProps
-  extends TextareaHTMLAttributes<HTMLTextAreaElement> {}
 
 export const Textarea1 = forwardRef<HTMLTextAreaElement, TextAreaProps>(
   ({ id, className, placeholder, value, ...props }, ref) => {

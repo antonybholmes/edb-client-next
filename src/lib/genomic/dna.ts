@@ -125,9 +125,12 @@ export async function createDNATable(
           ['comp', complement.toString()],
         ])
 
-        return httpFetch.postJson(`${API_DNA_URL}/${assembly}?${params}`, {
-          body: { locations: locs },
-        })
+        return httpFetch.postJson<{ data: { seqs: { seq: string }[] } }>(
+          `${API_DNA_URL}/${assembly}?${params}`,
+          {
+            body: { locations: locs },
+          }
+        )
       },
     })
 
@@ -144,7 +147,7 @@ export async function createDNATable(
     return new DataFrame({ data: table, columns: header })
 
     //data.push(row.concat([dj.data.dna]))
-  } catch (error) {
+  } catch {
     //data.push(row.concat([""]))
   }
 
@@ -183,9 +186,12 @@ export async function fetchDNA(
 
         //console.log({ locations: [location.toString()] })
 
-        return httpFetch.postJson(`${API_DNA_URL}/${assembly}?${params}`, {
-          body: { locations: [location.toString()] },
-        })
+        return httpFetch.postJson<{ data: { seqs: { seq: string }[] } }>(
+          `${API_DNA_URL}/${assembly}?${params}`,
+          {
+            body: { locations: [location.toString()] },
+          }
+        )
       },
     })
 
@@ -208,7 +214,7 @@ export async function fetchDNA(
 
 export function dnaToJson(seqs: IDNA[]): string {
   return JSON.stringify(
-    seqs.map(seq => ({
+    seqs.map((seq) => ({
       chr: seq.location.chr,
       start: seq.location.start,
       end: seq.location.end,

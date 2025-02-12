@@ -19,12 +19,12 @@ type ToasterToast = ToastProps & {
   onClose?: () => void
 }
 
-const actionTypes = {
-  ADD_TOAST: 'ADD_TOAST',
-  UPDATE_TOAST: 'UPDATE_TOAST',
-  DISMISS_TOAST: 'DISMISS_TOAST',
-  REMOVE_TOAST: 'REMOVE_TOAST',
-} as const
+// const actionTypes = {
+//   ADD_TOAST: 'ADD_TOAST',
+//   UPDATE_TOAST: 'UPDATE_TOAST',
+//   DISMISS_TOAST: 'DISMISS_TOAST',
+//   REMOVE_TOAST: 'REMOVE_TOAST',
+// }
 
 //let count = 0
 
@@ -35,23 +35,23 @@ function genId() {
   return nanoid()
 }
 
-type ActionType = typeof actionTypes
+//type ActionType = typeof actionTypes
 
 type Action =
   | {
-      type: ActionType['ADD_TOAST']
+      type: 'ADD_TOAST'
       toast: ToasterToast
     }
   | {
-      type: ActionType['UPDATE_TOAST']
+      type: 'UPDATE_TOAST'
       toast: Partial<ToasterToast>
     }
   | {
-      type: ActionType['DISMISS_TOAST']
+      type: 'DISMISS_TOAST'
       toastId?: ToasterToast['id'] | undefined
     }
   | {
-      type: ActionType['REMOVE_TOAST']
+      type: 'REMOVE_TOAST'
       toastId?: ToasterToast['id'] | undefined
     }
 

@@ -2,8 +2,9 @@ import { FOCUS_INSET_RING_CLS, TRANS_TIME_CLS } from '@/theme'
 import { cn } from '@lib/class-names'
 
 import { BaseCol } from '@/components/layout/base-col'
-import { forwardRef, useState, type TextareaHTMLAttributes } from 'react'
+import { forwardRef, useState } from 'react'
 import type { IPlaceholderProps } from './input'
+import { ITextAreaProps } from './textarea3'
 
 export const TEXTAREA_GROUP_CLS = cn(
   FOCUS_INSET_RING_CLS,
@@ -40,11 +41,6 @@ export function Placeholder({
       {focus ? placeholder?.replace('...', '') : placeholder}
     </label>
   )
-}
-
-export interface ITextAreaProps
-  extends TextareaHTMLAttributes<HTMLTextAreaElement> {
-  textCls?: string
 }
 
 export const Textarea5 = forwardRef<HTMLTextAreaElement, ITextAreaProps>(

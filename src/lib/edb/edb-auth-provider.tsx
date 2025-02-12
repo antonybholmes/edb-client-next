@@ -46,15 +46,15 @@ export const EdbAuthContext = createContext<IEdbAuthContext>({
   edbSession: { ...DEFAULT_EDB_SESSION },
   accessToken: '',
   apiKey: '',
-  signInWithApiKey: () => new Promise(resolve => resolve()),
-  signInWithUsernamePassword: () => new Promise(resolve => resolve()),
-  signInWithAuth0Token: () => new Promise(resolve => resolve()),
+  signInWithApiKey: () => new Promise((resolve) => resolve()),
+  signInWithUsernamePassword: () => new Promise((resolve) => resolve()),
+  signInWithAuth0Token: () => new Promise((resolve) => resolve()),
   //fetchUser: () => new Promise(resolve => resolve()),
-  refreshSession: () => new Promise(resolve => resolve()),
-  fetchSessionInfo: () => new Promise(resolve => resolve()),
+  refreshSession: () => new Promise((resolve) => resolve()),
+  fetchSessionInfo: () => new Promise((resolve) => resolve()),
   //updateUser: () => {},
-  getAccessTokenAutoRefresh: async () => new Promise(resolve => resolve('')),
-  signoutUser: () => new Promise(resolve => resolve()),
+  getAccessTokenAutoRefresh: async () => new Promise((resolve) => resolve('')),
+  signoutUser: () => new Promise((resolve) => resolve()),
 })
 
 interface IProps extends IChildrenProps {
@@ -157,7 +157,7 @@ export function EdbAuthProvider({ cacheSession = true, children }: IProps) {
       const res = await queryClient.fetchQuery({
         queryKey: ['session'],
         queryFn: () =>
-          httpFetch.getJson(SESSION_INFO_URL, {
+          httpFetch.getJson<{ data: IEdbSessionInfo }>(SESSION_INFO_URL, {
             //headers: bearerHeaders(accessToken),
             // the server is allowed access to the session in local
             // storage so it knows we are logged in. Since the session
@@ -184,7 +184,7 @@ export function EdbAuthProvider({ cacheSession = true, children }: IProps) {
 
       if (settings.users.length === 0) {
         updateSettings(
-          produce(settings, draft => {
+          produce(settings, (draft) => {
             draft.users = [
               {
                 username: s.user.username,
@@ -197,7 +197,7 @@ export function EdbAuthProvider({ cacheSession = true, children }: IProps) {
           })
         )
       }
-    } catch (err) {
+    } catch {
       console.error('cannot fetch user from remote')
     }
   }
@@ -279,7 +279,7 @@ export function EdbAuthProvider({ cacheSession = true, children }: IProps) {
     setAccessToken('')
     // remove user from cache
     updateSettings(
-      produce(settings, draft => {
+      produce(settings, (draft) => {
         draft.users = []
       })
     )

@@ -165,13 +165,13 @@ function animatedScatterPlot(element, history, labels, duration) {
       .append('text')
       .style('text-anchor', 'middle')
       .style('font-size', w < 400 ? '10px' : '12px')
-      .attr('x', function (d, i) {
+      .attr('x', function (d) {
         return xScale(d[0])
       })
-      .attr('y', function (d, i) {
+      .attr('y', function (d) {
         return yScale(d[1]) - 2 - pointRadius
       })
-      .text(function (d, i) {
+      .text(function (_, i) {
         return labels[i]
       })
 

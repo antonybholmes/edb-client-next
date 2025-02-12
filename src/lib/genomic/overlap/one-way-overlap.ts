@@ -1,4 +1,5 @@
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { SeriesData } from '@/lib/dataframe/dataframe-types'
 import { fill } from '@/lib/fill'
 import { range } from '@/lib/math/range'
 import { NA } from '@/lib/text/text'
@@ -34,7 +35,7 @@ export function oneWayFromDataframes(
   //console.log(locs)
 
   for (const table of overlapTables) {
-    const blockSearch = new BlockSearch<any[]>()
+    const blockSearch = new BlockSearch<SeriesData[]>()
 
     const colNames = table.colNames.map((name) => `${table.name} ${name}`)
 

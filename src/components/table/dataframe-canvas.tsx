@@ -819,7 +819,7 @@ export function DataFrameCanvas({
         region.rect(px1, cellY, w - GAP, cellSize[1])
         ctx.clip(region)
 
-        let v = df.get(row, col)
+        const v = df.get(row, col)
 
         const isNum = typeof v === 'number'
 
@@ -892,7 +892,7 @@ export function DataFrameCanvas({
     ctx.font = NORMAL_FONT
     ctx.fillStyle = COLOR_BLACK
 
-    let v = df.get(row, col)
+    const v = df.get(row, col)
     const isNum = typeof v === 'number'
 
     // if (isNum) {
@@ -1871,7 +1871,7 @@ export function DataFrameCanvas({
 
         setEditCell(NO_SELECTION)
 
-        ref?.current && ref.current.focus()
+        ref.current?.focus()
 
         break
       case 'Escape':

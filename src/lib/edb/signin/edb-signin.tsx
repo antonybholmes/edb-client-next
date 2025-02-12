@@ -107,7 +107,6 @@ export function EDBSignIn({
       rounded="none"
       selected={open}
       ripple={false}
-      // @ts-ignore
       title={isSignedIn ? TEXT_MY_ACCOUNT : TEXT_SIGN_IN}
     >
       <VCenterRow data-selected={open} className={SIGNED_IN_ICON_CLS}>

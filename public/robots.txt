@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://edb.rdf-lab.org/sitemap-index.xml

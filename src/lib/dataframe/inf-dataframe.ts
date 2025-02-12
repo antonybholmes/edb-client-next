@@ -19,8 +19,7 @@ export class InfDataFrame extends BaseDataFrame {
     return [this._rows, this._cols]
   }
 
-  //@ts-ignore
-  get(row: number, col: number): IndexData {
+  override get(row: number, col: number): IndexData {
     return ''
   }
 }

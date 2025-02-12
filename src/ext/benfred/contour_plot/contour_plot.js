@@ -242,8 +242,7 @@ export function ContourPlot() {
       })
 
     var contours = getContours(f, xScale, yScale, contourCount, minima)
-    var paths = contours.paths,
-      levels = contours.levels
+    var paths = contours.paths
 
     var line = d3
       .line()

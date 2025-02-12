@@ -1,3 +1,3 @@
 import { type PropsWithoutRef, type SVGAttributes } from 'react'
 
-export interface ISVGProps extends PropsWithoutRef<SVGAttributes<SVGElement>> {}
+export type ISVGProps = PropsWithoutRef<SVGAttributes<SVGElement>>

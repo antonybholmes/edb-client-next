@@ -105,8 +105,8 @@ NelderMead1d.prototype.initialize = function (initial) {
   this.initial = initial.slice()
   this.stateIndex = 0
 
-  var states = (this.states = []),
-    graph = this.graph
+  var states = (this.states = [])
+
   this.params.history = states
 
   fmin.nelderMead((x) => this.graph.f()(x[0]), initial, this.params)
@@ -138,20 +138,6 @@ NelderMead1d.prototype.increment = function (currentCycle, duration) {
     )
 
   duration = duration || 500
-  var state = this.states[this.stateIndex].simplex
-  var lines = this.plot.svg
-    .selectAll('.simplex_line')
-    .data(state)
-    .transition()
-    .duration(this.stateIndex ? duration : 0)
-    .attr('x1', (d) => this.plot.xScale(d[0]))
-    .attr('y1', (d) => this.plot.yScale(d.fx))
-    .attr('x2', (d, i) =>
-      this.plot.xScale(state[i ? i - 1 : state.length - 1][0])
-    )
-    .attr('y2', (d, i) =>
-      this.plot.yScale(state[i ? i - 1 : state.length - 1].fx)
-    )
 
   this.stateIndex += 1
   if (this.stateIndex >= this.states.length) {

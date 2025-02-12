@@ -2,8 +2,8 @@ import { numSort } from './math/math'
 
 export const EMPTY_SET = new Set()
 
-export function intersect1d(s1: Set<any>, s2: Set<any>): Set<any> {
-  return new Set([...s1].filter(i => s2.has(i)))
+export function intersect1d<T>(s1: Set<T>, s2: Set<T>): Set<T> {
+  return new Set([...s1].filter((i) => s2.has(i)))
 }
 
 export function listrm<T>(values: T[], indices: number | number[]): T[] {

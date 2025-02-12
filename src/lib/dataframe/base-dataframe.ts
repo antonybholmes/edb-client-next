@@ -89,22 +89,19 @@ export class BaseDataFrame {
   }
 
   setRow(
-    // @ts-ignore
     row: IndexData = -1,
-    // @ts-ignore
+
     data: BaseSeries | SeriesData[],
-    // @ts-ignore
+
     inplace = true
   ): BaseDataFrame {
     return this
   }
 
-  // @ts-ignore
   set(row: number, col: number, v: SeriesData): BaseDataFrame {
     return this
   }
 
-  // @ts-ignore
   setIndex(index: IndexFromType, inplace: boolean = false): BaseDataFrame {
     return this
   }

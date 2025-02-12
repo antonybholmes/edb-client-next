@@ -1,7 +1,7 @@
-export function* combinations(
-  arr: unknown[],
+export function* combinations<T>(
+  arr: T[],
   k: number
-): Generator<any, unknown, unknown> {
+): Generator<T[], unknown, unknown> {
   if (k === 0) {
     yield []
     return
@@ -14,9 +14,9 @@ export function* combinations(
   }
 }
 
-const array = [1, 2, 3, 4]
-const k = 2
+// const array = [1, 2, 3, 4]
+// const k = 2
 
-for (let combo of combinations(array, k)) {
-  console.log(combo)
-}
+// for (const combo of combinations(array, k)) {
+//   console.log(combo)
+// }

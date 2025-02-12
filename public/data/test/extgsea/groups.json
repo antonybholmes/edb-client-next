@@ -1,0 +1,18 @@
+[
+  {
+    "id": "4duwsnlt23p0",
+    "name": "WT",
+    "search": [
+      "cbp_wt"
+    ],
+    "color": "#ff0000"
+  },
+  {
+    "id": "akhioxb1k0si",
+    "name": "CBP_KO",
+    "search": [
+      "cbp_ko"
+    ],
+    "color": "#0000ff"
+  }
+]

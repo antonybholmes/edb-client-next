@@ -523,7 +523,7 @@ export function rolesFromAccessToken(accessToken: string): string[] {
   try {
     const contents = jwtDecode<IAccessJwtPayload>(accessToken)
     return contents.roles.split(' ')
-  } catch (err) {
+  } catch {
     return []
   }
 }
@@ -556,7 +556,7 @@ export function getJwtContents<T extends IEdbJwtPayload>(
 
   try {
     return jwtDecode<T>(jwt)
-  } catch (err) {
+  } catch {
     return null
   }
 }
