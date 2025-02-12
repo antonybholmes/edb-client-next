@@ -61,6 +61,8 @@ import {
   DEFAULT_RULER_TRACK_DISPLAY_OPTIONS,
   DEFAULT_SCALE_TRACK_DISPLAY_OPTIONS,
   DEFAULT_SEQ_TRACK_DISPLAY_OPTIONS,
+  IDBBedTrack,
+  ISeqTrack,
   newTrackGroup,
   TracksContext,
   type IBedTrack,
@@ -174,8 +176,8 @@ export function TracksPropsPanel({
 
       {showDialog.id.includes('edit-seq') && (
         <SeqEditDialog
-          group={showDialog.params!.group}
-          track={showDialog.params!.track}
+          group={showDialog.params!.group as ITrackGroup}
+          track={showDialog.params!.track as ISeqTrack}
           onCancel={() => setShowDialog({ ...NO_DIALOG })}
           callback={(group, track) => {
             dispatch({ type: 'update', group, track })
@@ -305,7 +307,7 @@ export function TracksPropsPanel({
             // we make copies so user can edit each independently
             // even if they duplicate tracks
             const signals: IBedTrack[] = beds.map(
-              (b: unknown) =>
+              (b: IDBBedTrack) =>
                 ({
                   ...b,
                   type: 'BED',
@@ -355,8 +357,8 @@ export function TracksPropsPanel({
 
       {showDialog.id.includes('edit-bed') && (
         <BedEditDialog
-          group={showDialog.params!.group}
-          track={showDialog.params!.track}
+          group={showDialog.params!.group as ITrackGroup}
+          track={showDialog.params!.track as IBedTrack}
           onCancel={() => setShowDialog({ ...NO_DIALOG })}
           callback={(group, track) => {
             dispatch({ type: 'update', group, track })
@@ -368,8 +370,8 @@ export function TracksPropsPanel({
 
       {showDialog.id.includes('edit-genes') && (
         <GenesEditDialog
-          group={showDialog.params!.group}
-          track={showDialog.params!.track}
+          group={showDialog.params!.group as ITrackGroup}
+          track={showDialog.params!.track as IGeneTrack}
           onCancel={() => setShowDialog({ ...NO_DIALOG })}
           callback={(group, track) => {
             dispatch({ type: 'update', group, track })
@@ -381,8 +383,8 @@ export function TracksPropsPanel({
 
       {showDialog.id.includes('edit-scale') && (
         <ScaleEditDialog
-          group={showDialog.params!.group}
-          track={showDialog.params!.track}
+          group={showDialog.params!.group as ITrackGroup}
+          track={showDialog.params!.track as IScaleTrack}
           onCancel={() => setShowDialog({ ...NO_DIALOG })}
           callback={(group, track) => {
             dispatch({ type: 'update', group, track })
@@ -394,8 +396,8 @@ export function TracksPropsPanel({
 
       {showDialog.id.includes('edit-cytobands') && (
         <CytobandsEditDialog
-          group={showDialog.params!.group}
-          track={showDialog.params!.track}
+          group={showDialog.params!.group as ITrackGroup}
+          track={showDialog.params!.track as ICytobandsTrack}
           onCancel={() => setShowDialog({ ...NO_DIALOG })}
           callback={(group, track) => {
             dispatch({ type: 'update', group, track })
@@ -414,7 +416,7 @@ export function TracksPropsPanel({
             if (r === TEXT_OK) {
               dispatch({
                 type: 'remove-groups',
-                ids: [showDialog.params!.group.id],
+                ids: [(showDialog.params!.group as ITrackGroup).id as string],
               })
               // onGroupsChange &&
               //   onGroupsChange([
@@ -426,7 +428,7 @@ export function TracksPropsPanel({
           }}
         >
           {`Are you sure you want to remove the ${
-            showDialog.params!.group.name
+            (showDialog.params!.group as ITrackGroup).name
           } track?`}
         </OKCancelDialog>
       )}
@@ -440,8 +442,8 @@ export function TracksPropsPanel({
             if (r === TEXT_OK) {
               dispatch({
                 type: 'remove-tracks',
-                group: showDialog.params!.group,
-                ids: [showDialog.params!.track.id],
+                group: showDialog.params!.group as ITrackGroup,
+                ids: [(showDialog.params!.track as TrackPlot).id],
               })
               // onGroupsChange &&
               //   onGroupsChange([
@@ -453,7 +455,7 @@ export function TracksPropsPanel({
           }}
         >
           {`Are you sure you want to remove the ${
-            showDialog.params!.group.name
+            (showDialog.params!.group as ITrackGroup).name
           } track?`}
         </OKCancelDialog>
       )}

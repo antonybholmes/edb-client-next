@@ -1,6 +1,7 @@
 import { BaseCol } from '@/components/layout/base-col'
 import { SearchBox } from '@components/search-box'
 
+import { queryClient } from '@/query'
 import { DownloadIcon } from '@components/icons/download-icon'
 import { PropsPanel } from '@components/props-panel'
 import {
@@ -53,7 +54,7 @@ export const ProteinPropsPanel = forwardRef(function ProteinPropsPanel(
                 <Input
                   placeholder="Name"
                   value={proteinState.protein?.name}
-                  onChange={e => {
+                  onChange={(e) => {
                     proteinDispatch({
                       type: 'update',
 
@@ -71,7 +72,7 @@ export const ProteinPropsPanel = forwardRef(function ProteinPropsPanel(
                   placeholder="Sequence"
                   aria-label="Protein sequence"
                   value={proteinState.protein?.seq ?? ''}
-                  onChange={e =>
+                  onChange={(e) =>
                     proteinDispatch({
                       type: 'update',
 
@@ -98,7 +99,7 @@ export const ProteinPropsPanel = forwardRef(function ProteinPropsPanel(
                 <SearchBox
                   value={proteinState.search.text ?? ''}
                   placeholder="Search UniProt..."
-                  onChange={e => {
+                  onChange={(e) => {
                     proteinDispatch({
                       type: 'set',
                       search: {
@@ -107,10 +108,11 @@ export const ProteinPropsPanel = forwardRef(function ProteinPropsPanel(
                       },
                     })
                   }}
-                  onSearch={async event => {
+                  onSearch={async (event) => {
                     if (event === 'search') {
                       try {
                         const proteins = await searchProteins(
+                          queryClient,
                           proteinState.search.text
                         )
                         proteinDispatch({

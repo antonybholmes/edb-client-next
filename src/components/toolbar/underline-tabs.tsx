@@ -122,6 +122,10 @@ export const UnderlineTabs = forwardRef(function UnderlineTabs(
   const selectedTab = useMemo(() => getTabFromValue(value, tabs), [value, tabs])
 
   useEffect(() => {
+    if (!selectedTab) {
+      return
+    }
+
     //const x = tabUnderlineProps[tabId]!.x + (_scale === 1 ? padding : 0)
     //const width = tabUnderlineProps[tabId]!.w - (_scale === 1 ? 2 * padding : 0)
 
@@ -256,7 +260,7 @@ export const UnderlineTabs = forwardRef(function UnderlineTabs(
         {tabs.map((tab, ti) => {
           //const id = makeTabId(tab, ti)
           //const w = tab.size ?? defaultWidth
-          const selected = tab.id === selectedTab.tab.id // tab.id === selectedTab?.tab.id
+          const selected = tab.id === selectedTab?.tab.id // tab.id === selectedTab?.tab.id
 
           return (
             // <Reorder.Item key={tab.id} value={tab.id}>

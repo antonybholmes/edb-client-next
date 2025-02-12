@@ -498,8 +498,7 @@ function VennPage() {
 
     const chart = VennDiagram()
       .width(displayProps.w)
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-
+      // @ts-expect-error: poor api design
       .height(displayProps.w)
       .duration(0)
       .normalize(displayProps.normalize)
