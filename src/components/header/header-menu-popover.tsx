@@ -43,9 +43,9 @@ interface IProps extends IElementProps {
 
 export function HeaderLinks({ onClick, className }: IProps) {
   // sort alphabetically and ignore sections
-  const items = HEADER_LINKS.map(section => {
+  const items = HEADER_LINKS.map((section) => {
     return section.modules.filter(
-      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()
@@ -125,9 +125,8 @@ export function HeaderMenuPopover({ tab = '' }: IFileMenu) {
 
       <PopoverContent
         onEscapeKeyDown={() => setOpen(false)}
-        onInteractOutside={e => {
-          // @ts-ignore
-          if (e.target?.id !== 'header-menu-popover-button') {
+        onInteractOutside={(e) => {
+          if ((e.target as HTMLElement)?.id !== 'header-menu-popover-button') {
             setOpen(false)
           }
         }}

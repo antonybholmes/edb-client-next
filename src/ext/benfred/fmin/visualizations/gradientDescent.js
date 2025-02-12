@@ -9,6 +9,7 @@ export function GradientContour(div) {
 
   AnimatedContour.call(this, div)
 
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   var obj = this
   div.select('#linesearchcheck').on('change', function () {
     obj.enableLineSearch = document.getElementById('linesearchcheck').checked
@@ -19,6 +20,7 @@ export function GradientContour(div) {
 GradientContour.prototype = Object.create(AnimatedContour.prototype)
 
 GradientContour.prototype.drawControls = function () {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   var obj = this
   this.learnRate = Slider(
     this.div.select('#learningrate'),
@@ -113,8 +115,8 @@ GradientContour.prototype.displayState = function () {
 
   group
     .select('.ball')
-    .attr('cx', d => this.plot.xScale(d.x[0]))
-    .attr('cy', d => this.plot.yScale(d.x[1]))
+    .attr('cx', (d) => this.plot.xScale(d.x[0]))
+    .attr('cy', (d) => this.plot.yScale(d.x[1]))
 
   if (this.stateIndex) {
     var d = this.states[this.stateIndex - 1]

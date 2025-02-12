@@ -80,3 +80,4 @@ export const DoubleNumericalInput = forwardRef<HTMLDivElement, InputProps>(
     )
   }
 )
+DoubleNumericalInput.displayName = 'DoubleNumericalInput'

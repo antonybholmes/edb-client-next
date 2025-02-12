@@ -69,9 +69,12 @@ function VerifyPage() {
         const res = await queryClient.fetchQuery({
           queryKey: ['verify'],
           queryFn: () =>
-            httpFetch.postJson(API_EMAIL_VERIFIED_URL, {
-              headers: bearerHeaders(jwt),
-            }),
+            httpFetch.postJson<{ data: { success: boolean } }>(
+              API_EMAIL_VERIFIED_URL,
+              {
+                headers: bearerHeaders(jwt),
+              }
+            ),
         })
 
         const success: boolean = res.data.success
@@ -85,7 +88,7 @@ function VerifyPage() {
         // if (success && visitUrl) {
         //   redirect(visitUrl, 2000)
         // }
-      } catch (error) {
+      } catch {
         setIsVerified(false)
       }
     }

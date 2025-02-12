@@ -143,7 +143,7 @@ export const HeatMapSvg = forwardRef<SVGElement, IProps>(function HeatMapSvg(
     // const colorMap = d3
     //   .scaleLinear()
     //   .domain([displayOptions.range[0], 0, displayOptions.range[1]])
-    //   // @ts-ignore
+    //
     //   .range(["blue", "white", "red"])
 
     const s = dfMain.shape
@@ -157,15 +157,15 @@ export const HeatMapSvg = forwardRef<SVGElement, IProps>(function HeatMapSvg(
       // order according to group order
 
       colLeaves = groupState.order
-        .map(i => groupState.groups.get(i)!)
-        .map(group => getColIdxFromGroup(dfMain, group))
+        .map((i) => groupState.groups.get(i)!)
+        .map((group) => getColIdxFromGroup(dfMain, group))
         .flat()
 
       const used = new Set<number>(colLeaves)
 
       // add unused indices in order at end
       if (displayOptions.groups.keepUnused) {
-        colLeaves = [...colLeaves, ...range(s[1]).filter(i => !used.has(i))]
+        colLeaves = [...colLeaves, ...range(s[1]).filter((i) => !used.has(i))]
       }
     } else {
       // keep current order
@@ -174,10 +174,10 @@ export const HeatMapSvg = forwardRef<SVGElement, IProps>(function HeatMapSvg(
 
     const colColorMap = new Map<number, string>(
       groupState.order
-        .map(i => groupState.groups.get(i)!)
-        .map(group =>
+        .map((i) => groupState.groups.get(i)!)
+        .map((group) =>
           getColIdxFromGroup(dfMain, group).map(
-            c => [c, group.color] as [number, string]
+            (c) => [c, group.color] as [number, string]
           )
         )
         .flat()

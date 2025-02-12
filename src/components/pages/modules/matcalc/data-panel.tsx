@@ -12,14 +12,7 @@ import {
   currentSheets,
   HistoryContext,
 } from '@providers/history-provider'
-import {
-  forwardRef,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  type ForwardedRef,
-} from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 
 import { GroupPropsPanel } from './group-props-panel'
 
@@ -66,10 +59,7 @@ export interface IDataPanelProps {
   //setSlidebarSide: (c: ReactElement | undefined) => void
 }
 
-export const DataPanel = forwardRef(function DataPanel(
-  { panelId = DEFAULT_PANEL_ID }: IDataPanelProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+export function DataPanel({ panelId = DEFAULT_PANEL_ID }: IDataPanelProps) {
   const queryClient = useQueryClient()
 
   const { history, historyDispatch } = useContext(HistoryContext)
@@ -244,7 +234,7 @@ export const DataPanel = forwardRef(function DataPanel(
 
       {showDialog.id.startsWith('open-files') && (
         <OpenDialog
-          files={showDialog.params!.files}
+          files={showDialog.params!.files as ITextFileOpen[]}
           openFiles={openFiles}
           onCancel={() => setShowDialog({ ...NO_DIALOG })}
         />
@@ -258,7 +248,7 @@ export const DataPanel = forwardRef(function DataPanel(
               if (sheets.length > 1) {
                 historyDispatch({
                   type: 'remove-sheet',
-                  sheetId: showDialog.params!.sheetId,
+                  sheetId: showDialog.params!.sheetId as string,
                 })
               } else {
                 // if user is removing the only remaining sheet, load an empty
@@ -343,4 +333,4 @@ export const DataPanel = forwardRef(function DataPanel(
       <a ref={downloadRef} className="hidden" href="#" />
     </>
   )
-})
+}

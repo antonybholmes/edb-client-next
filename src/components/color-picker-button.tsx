@@ -120,7 +120,7 @@ export function ColorPickerButton({
     border = 'border-foreground'
   }
 
-  let button = (
+  const button = (
     <PopoverTrigger
       className={cn(
         'relative aspect-square overflow-hidden border',
@@ -146,7 +146,7 @@ export function ColorPickerButton({
   //console.log(color)
 
   return (
-    <Popover open={open} onOpenChange={open => setOpen(open)}>
+    <Popover open={open} onOpenChange={(open) => setOpen(open)}>
       {/* <Tooltip content={tooltip}>
       <DropdownMenuTrigger
         className={cn(
@@ -192,7 +192,7 @@ export function ColorPickerButton({
           </VCenterRow>
         </BaseCol>
         <VCenterRow className="gap-x-[3px]">
-          {PRESET_COLORS.map(presetColor => {
+          {PRESET_COLORS.map((presetColor) => {
             const prgb = hexToRgb(presetColor)
             const ps = prgb.r + prgb.g + prgb.b
 

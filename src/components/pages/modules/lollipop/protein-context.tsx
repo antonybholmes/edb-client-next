@@ -2,7 +2,8 @@ import { type IChildrenProps } from '@interfaces/children-props'
 
 import { createContext, useReducer, type Dispatch } from 'react'
 
-import { useQueryClient } from '@tanstack/react-query'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { QueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 
 export interface IProtein {
@@ -10,7 +11,7 @@ export interface IProtein {
   name: string
   accession: string
   seq: string
-  sample: string
+  //sample: string
   organism: string
   taxonId: number
 }
@@ -20,7 +21,7 @@ export const DEFAULT_PROTEIN: IProtein = {
   name: '',
   accession: '',
   seq: '',
-  sample: '',
+  // sample: '',
   organism: '',
   taxonId: -1,
 }
@@ -105,15 +106,25 @@ export function ProteinProvider({ children }: IChildrenProps) {
 
 //%20AND%20(organism_id:9606)
 export async function searchProteins(
+  queryClient: QueryClient,
   gene: string,
   max: number = 5
 ): Promise<IProtein[]> {
-  const queryClient = useQueryClient()
-
   let res = await queryClient.fetchQuery({
     queryKey: ['query'],
     queryFn: () =>
-      axios.get(
+      httpFetch.getJson<{
+        data: {
+          results: {
+            primaryAccession: string
+            proteinDescription: {
+              recommendedName: { fullName: { value: string } }
+            }
+            organism: { commonName: string; taxonId: number }
+          }[]
+          sequence: { value: string; length: number }
+        }
+      }>(
         `https://rest.uniprot.org/uniprotkb/search?query=(gene:${gene})%20AND%20(reviewed:true)&format=json&size=${max}&fields=accession,gene_primary,protein_name,organism_name`
       ),
   })
@@ -121,7 +132,7 @@ export async function searchProteins(
   console.log(res.data)
 
   const ret: IProtein[] = await Promise.all(
-    res.data.results.map(async (p: unknown) => {
+    res.data.results.map(async (p) => {
       //console.log(p)
 
       //const gene = data.genes[0].geneName.value

@@ -1,13 +1,11 @@
 import { SlidersIcon } from '@components/icons/sliders-icon'
 
 import {
-  forwardRef,
   useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
-  type ForwardedRef,
   type RefObject,
 } from 'react'
 
@@ -61,10 +59,11 @@ interface IExtGseaPanelProps {
   downloadRef: RefObject<HTMLAnchorElement | null>
 }
 
-export const ExtGseaPanel = forwardRef(function ExtGseaPanel(
-  { plotAddr, canvasRef, downloadRef }: IExtGseaPanelProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+export function ExtGseaPanel({
+  plotAddr,
+  canvasRef,
+  downloadRef,
+}: IExtGseaPanelProps) {
   // const { plotsState, plotsDispatch } = useContext(PlotsContext)
 
   // const plot = plotsState.plotMap[plotId]
@@ -252,4 +251,4 @@ export const ExtGseaPanel = forwardRef(function ExtGseaPanel(
       <canvas ref={canvasRef} width={0} height={0} className="hidden" />
     </>
   )
-})
+}

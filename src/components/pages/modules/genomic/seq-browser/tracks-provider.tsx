@@ -898,7 +898,7 @@ export function TracksProvider({ children }: IChildrenProps) {
   }, [tracksQuery.data])
 
   async function _setLocations(locs: (GenomicLocation | string)[]) {
-    let locations: GenomicLocation[] = []
+    const locations: GenomicLocation[] = []
 
     for (const loc of locs) {
       if (loc instanceof GenomicLocation) {
@@ -906,7 +906,7 @@ export function TracksProvider({ children }: IChildrenProps) {
       } else {
         try {
           locations.push(parseLocation(loc))
-        } catch (err) {
+        } catch {
           // see if gene symbol
 
           try {
@@ -932,7 +932,7 @@ export function TracksProvider({ children }: IChildrenProps) {
               const l = features[0]!.loc
               locations.push(new GenomicLocation(l.chr, l.start, l.end))
             }
-          } catch (err) {}
+          } catch {}
         }
       }
     }

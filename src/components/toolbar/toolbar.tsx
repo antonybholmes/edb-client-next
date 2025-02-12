@@ -271,7 +271,7 @@ export function ToolbarMenu({
                   className="justify-center"
    
                   aria-label={`Show ${tab.id} menu`}
-                  // @ts-ignore
+                  
                   ref={el => (buttonsRef.current[ti] = el!)}
                   onMouseEnter={() => {
                     if (selected) {
@@ -347,8 +347,8 @@ export function ToolbarPanel({ tabShortcutMenu }: IToolbarPanelProps) {
           <DropdownMenuContent align="end">
             <DropdownMenuCheckboxItem
               checked={settings.toolbars.groups.labels.show}
-              onCheckedChange={v => {
-                const newSettings = produce(settings, draft => {
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.toolbars.groups.labels.show = v
                 })
 

@@ -66,13 +66,11 @@ export type IPasswordAction =
 //   passwordless: boolean
 // }
 
-export interface IPasswordDialogProps extends IModalProps {}
-
 export function PasswordDialog({
   open = false,
   onOpenChange = () => {},
   onReponse = () => {},
-}: IPasswordDialogProps) {
+}: IModalProps) {
   // const [passwords, passwordDispatch] = useReducer(passwordReducer, {
   //   password: "",
   //   password1: "",
@@ -177,7 +175,7 @@ export function PasswordDialog({
       open={open}
       onOpenChange={onOpenChange}
       //buttons={[TEXT_SAVE, TEXT_CANCEL]}
-      onReponse={response => {
+      onReponse={(response) => {
         switch (response) {
           case TEXT_OK:
             //update()

@@ -283,22 +283,22 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
   }, [displayProps.scale, seqFiles, displayProps])
 
   // useMouseMoveListener((e:unknown) => {
-  //   // @ts-ignore
+  //
   //   if (!ref.current) {
   //     return
   //   }
 
   //   if (
-  //     // @ts-ignore
+  //
   //     e.pageX >= ref.current.getBoundingClientRect().left + margin.left &&
   //     e.pageX <
-  //       // @ts-ignore
+  //
   //       ref.current.getBoundingClientRect().left +
-  //         // @ts-ignore
+  //
   //         ref.current.getBoundingClientRect().width
   //   ) {
   //     console.log(bw)
-  //     // @ts-ignore
+  //
   //     setHighlightLineX(Math.round((e.pageX - margin.left - ref.current.getBoundingClientRect().left) / bw) * bw + bw2 - 1)
   //   } else {
   //     setHighlightLineX(-1)
@@ -307,7 +307,7 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
   //   setHighlightRow(
   //     Math.round(
   //       (e.pageY -
-  //         // @ts-ignore
+  //
   //         ref.current.getBoundingClientRect().top -
   //         PADDING -
   //         RULER_HEIGHT) /
@@ -319,7 +319,7 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function onMouseMove(e: MouseEvent | React.MouseEvent) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+
     if (!svgRef.current) {
       return
     }
@@ -328,7 +328,7 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
       (e.pageX -
         margin.left -
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+
         svgRef.current.getBoundingClientRect().left -
         window.scrollX) /
         bw
@@ -341,7 +341,7 @@ export const SeqViewSvg = forwardRef<SVGElement, IProps>(function SeqViewSvg(
     let r = Math.floor(
       (e.pageY -
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+
         svgRef.current.getBoundingClientRect().top -
         PADDING -
         RULER_HEIGHT -

@@ -13,6 +13,8 @@ export function LineSearchContour(div) {
 LineSearchContour.prototype = Object.create(GradientContour.prototype)
 
 LineSearchContour.prototype.drawControls = function () {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+
   var obj = this
   Slider(
     this.div.select('#c1'),
@@ -76,8 +78,8 @@ LineSearchContour.prototype.displayState = function () {
       .attr('stroke', COLOR_BLACK)
       .attr('stroke-width', 1)
       .attr('fill-opacity', 0)
-      .attr('cx', p => this.plot.xScale(p[0]))
-      .attr('cy', p => this.plot.yScale(p[1]))
+      .attr('cx', (p) => this.plot.xScale(p[0]))
+      .attr('cy', (p) => this.plot.yScale(p[1]))
       .attr('r', 3)
   } else {
     this.plot.svg.selectAll('.current .under g').data([]).exit().remove()

@@ -121,7 +121,16 @@ export function GeneConvertDialog({
       const res = await queryClient.fetchQuery({
         queryKey: ['geneconvert'],
         queryFn: () =>
-          httpFetch.postJson(
+          httpFetch.postJson<{
+            data:
+              | { conversions: {}[][] }
+              | {
+                  entrez: string
+                  refseq: string[]
+                  ensembl: string[]
+                  symbol: string
+                }[][]
+          }>(
             `${API_GENECONV_URL}/convert/${settings.geneConvert.fromSpecies.toLowerCase()}/${settings.geneConvert.toSpecies.toLowerCase()}`,
             {
               body: {
@@ -132,17 +141,38 @@ export function GeneConvertDialog({
           ),
       })
 
-      let data = res.data
+      let data: {
+        entrez: string
+        refseq: string[]
+        ensembl: string[]
+        symbol: string
+      }[][]
 
       // conversions store data in conversions entry,
       // but the entries are the same as for gene info
       // so we can just step 1 deeper into structure
       // and continue as normal
       if (settings.geneConvert.fromSpecies != settings.geneConvert.toSpecies) {
-        data = data.conversions
+        data = (
+          res.data as {
+            conversions: {
+              entrez: string
+              refseq: string[]
+              ensembl: string[]
+              symbol: string
+            }[][]
+          }
+        ).conversions
+      } else {
+        data = res.data as {
+          entrez: string
+          refseq: string[]
+          ensembl: string[]
+          symbol: string
+        }[][]
       }
 
-      let rename: string[] = []
+      const rename: string[] = []
 
       for (const [ri] of searches.entries()) {
         const conv = data[ri]
@@ -194,7 +224,7 @@ export function GeneConvertDialog({
 
         const idCol = df_out
           .col(settings.geneConvert.toSpecies)!
-          .values.map(v => v.toString())
+          .values.map((v) => v.toString())
         console.log(idCol)
 
         let columns = df_out.columns.values
@@ -202,7 +232,7 @@ export function GeneConvertDialog({
           columns = ['', ...columns]
         }
 
-        range(df_out.shape[0]).forEach(rowid => {
+        range(df_out.shape[0]).forEach((rowid) => {
           const ids = idCol[rowid]!.split(settings.geneConvert.delimiter)
 
           let origRow = df_out.row(rowid)!.values
@@ -211,7 +241,7 @@ export function GeneConvertDialog({
             origRow = [df_out.getRowName(rowid), ...origRow]
           }
 
-          ids.forEach(id => {
+          ids.forEach((id) => {
             // copy row
             const rc = origRow.slice()
             rc[rc.length - 1] = id
@@ -242,7 +272,7 @@ export function GeneConvertDialog({
     <OKCancelDialog
       open={open}
       title="Gene Conversion"
-      onReponse={r => {
+      onReponse={(r) => {
         if (r === TEXT_CANCEL) {
           onCancel?.()
         } else {
@@ -265,7 +295,7 @@ export function GeneConvertDialog({
                   className="rounded-theme overflow-hidden"
                   tabs={[{ id: 'Human' }, { id: 'Mouse' }]}
                   value={settings.geneConvert.fromSpecies}
-                  onTabChange={selectedTab => {
+                  onTabChange={(selectedTab) => {
                     updateSettings({
                       ...settings,
                       geneConvert: {
@@ -284,7 +314,7 @@ export function GeneConvertDialog({
                   className="rounded-theme overflow-hidden"
                   tabs={[{ id: 'Human' }, { id: 'Mouse' }]}
                   value={settings.geneConvert.toSpecies}
-                  onTabChange={selectedTab => {
+                  onTabChange={(selectedTab) => {
                     updateSettings({
                       ...settings,
                       geneConvert: {
@@ -315,7 +345,7 @@ export function GeneConvertDialog({
 
             <RadioGroup
               value={settings.geneConvert.outputSymbols}
-              onValueChange={value => {
+              onValueChange={(value) => {
                 updateSettings({
                   ...settings,
                   geneConvert: {
@@ -346,7 +376,7 @@ export function GeneConvertDialog({
               <span className="w-28">Delimiter</span>
               <Input
                 value={settings.geneConvert.delimiter}
-                onChange={e => {
+                onChange={(e) => {
                   //console.log(index, e.target.value)
 
                   updateSettings({
@@ -364,7 +394,7 @@ export function GeneConvertDialog({
             <BaseCol className="gap-y-1">
               <Checkbox
                 checked={settings.geneConvert.convertIndex}
-                onCheckedChange={value =>
+                onCheckedChange={(value) =>
                   updateSettings({
                     ...settings,
                     geneConvert: {
@@ -379,7 +409,7 @@ export function GeneConvertDialog({
 
               <Checkbox
                 checked={settings.geneConvert.useSelectedColumns}
-                onCheckedChange={value =>
+                onCheckedChange={(value) =>
                   updateSettings({
                     ...settings,
                     geneConvert: {
@@ -394,7 +424,7 @@ export function GeneConvertDialog({
 
               <Checkbox
                 checked={settings.geneConvert.duplicateRows}
-                onCheckedChange={value =>
+                onCheckedChange={(value) =>
                   updateSettings({
                     ...settings,
                     geneConvert: {

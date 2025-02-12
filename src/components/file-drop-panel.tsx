@@ -1,11 +1,5 @@
 import { BaseCol } from '@/components/layout/base-col'
-import {
-  Children,
-  forwardRef,
-  useEffect,
-  useState,
-  type ForwardedRef,
-} from 'react'
+import { Children, useEffect, useState } from 'react'
 
 import { TEXT_DRAG_HERE } from '@/consts'
 import { DRAG_OUTLINE_CLS } from '@/theme'
@@ -63,18 +57,18 @@ export function FileDrag({
         className
       )}
       data-drag={true}
-      onDrop={event => {
+      onDrop={(event) => {
         event.preventDefault()
 
         onFileDrop?.(Array.from(event.dataTransfer.files))
       }}
-      onDragOver={event => {
+      onDragOver={(event) => {
         event.preventDefault()
       }}
-      onDragEnter={event => {
+      onDragEnter={(event) => {
         event.preventDefault()
       }}
-      onDragLeave={event => {
+      onDragLeave={(event) => {
         event.preventDefault()
 
         onDragLeave?.(event)
@@ -143,10 +137,11 @@ export function FileDrag({
 //   )
 // }
 
-export const FileDropPanel = forwardRef(function FileDropPanel(
-  { onFileDrop = undefined, className, children }: IProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+export function FileDropPanel({
+  onFileDrop = undefined,
+  className,
+  children,
+}: IProps) {
   const [registerDragging, setRegisterDragging] = useState(false)
 
   const [isDragging, setIsDragging] = useState(false)
@@ -186,18 +181,18 @@ export const FileDropPanel = forwardRef(function FileDropPanel(
 
   return (
     <BaseCol
-      onDrop={event => {
+      onDrop={(event) => {
         event.preventDefault()
       }}
-      onDragOver={event => {
+      onDragOver={(event) => {
         event.preventDefault()
       }}
-      onDragEnter={event => {
+      onDragEnter={(event) => {
         event.preventDefault()
         setIsDragging(true)
         setRegisterDragging(true)
       }}
-      onDragLeave={event => {
+      onDragLeave={(event) => {
         event.preventDefault()
       }}
       className={cn('grow relative', className)}
@@ -209,4 +204,4 @@ export const FileDropPanel = forwardRef(function FileDropPanel(
       </>
     </BaseCol>
   )
-})
+}

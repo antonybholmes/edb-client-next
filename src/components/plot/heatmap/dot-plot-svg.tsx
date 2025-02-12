@@ -204,7 +204,7 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
     // const colorMap = d3
     //   .scaleLinear()
     //   .domain([_displayProps.range[0], 0, _displayProps.range[1]])
-    //   // @ts-ignore
+    //
     //   .range(["blue", "white", "red"])
 
     const dfPercent = cf.secondaryTables!['percent']!
@@ -216,8 +216,8 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
 
     const colColorMap = Object.fromEntries(
       groups
-        .map(group =>
-          getColIdxFromGroup(dfMain, group).map(c => [c, group.color])
+        .map((group) =>
+          getColIdxFromGroup(dfMain, group).map((c) => [c, group.color])
         )
         .flat()
     )
@@ -244,7 +244,7 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
         {cf.colTree && _displayProps.colTree.position === 'Top' && (
           <g transform={`translate(${marginLeft}, ${_displayProps.padding})`}>
             {cf.colTree.coords.map((coords, ri) =>
-              range(3).map(i => {
+              range(3).map((i) => {
                 return (
                   <line
                     key={ri * 3 + i}
@@ -272,7 +272,7 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
               marginTop - _displayProps.padding - _displayProps.groups.height
             })`}
           >
-            {colLeaves.map(ci => {
+            {colLeaves.map((ci) => {
               const fill: string = colColorMap[ci]
 
               return (
@@ -293,7 +293,7 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
         {cf.rowTree && _displayProps.rowTree.position === 'Left' && (
           <g transform={`translate(${_displayProps.padding}, ${marginTop})`}>
             {cf.rowTree.coords.map((coords, ri) =>
-              range(3).map(i => {
+              range(3).map((i) => {
                 return (
                   <line
                     key={ri * 3 + i}
@@ -327,7 +327,7 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
             }, ${marginTop})`}
           >
             {cf.rowTree.coords.map((coords, ri) =>
-              range(3).map(i => {
+              range(3).map((i) => {
                 return (
                   <line
                     key={ri * 3 + i}
@@ -376,7 +376,7 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
               marginLeft + innerWidth + _displayProps.padding
             }, ${marginTop})`}
           >
-            {rowLeaves.map(ri => {
+            {rowLeaves.map((ri) => {
               return (
                 <text
                   key={ri}
@@ -394,8 +394,8 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
         )}
 
         <g transform={`translate(${marginLeft}, ${marginTop})`}>
-          {rowLeaves.map(ri => {
-            return colLeaves.map(ci => {
+          {rowLeaves.map((ri) => {
+            return colLeaves.map((ci) => {
               const v = dfMain.get(ri, ci) as number
               const p = dfPercent.get(ri, ci) as number
 
@@ -422,7 +422,7 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
         <g transform={`translate(${marginLeft}, ${marginTop})`}>
           {_displayProps.grid.show && (
             <>
-              {range(blockSize.h, innerHeight, blockSize.h).map(y => (
+              {range(blockSize.h, innerHeight, blockSize.h).map((y) => (
                 <line
                   key={y}
                   x1={0}
@@ -432,7 +432,7 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
                   stroke={_displayProps.grid.color}
                 />
               ))}
-              {range(blockSize.w, innerWidth, blockSize.w).map(x => (
+              {range(blockSize.w, innerWidth, blockSize.w).map((x) => (
                 <line
                   key={x}
                   x1={x}
@@ -491,7 +491,7 @@ export const DotPlotSvg = forwardRef<SVGElement, IProps>(function DotPlotSvg(
               marginTop + innerHeight + _displayProps.padding
             })`}
           >
-            {colLeaves.map(ci => {
+            {colLeaves.map((ci) => {
               return (
                 <text
                   key={ci}

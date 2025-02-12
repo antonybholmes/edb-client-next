@@ -194,7 +194,7 @@ function LollipopPage() {
     const gene = 'BTG1'
 
     try {
-      const proteins = await searchProteins(gene)
+      const proteins = await searchProteins(queryClient, gene)
 
       const index = range(proteins.length).filter(
         (i) => proteins[i]!.organism === 'Human'
@@ -344,7 +344,7 @@ function LollipopPage() {
 
     try {
       featuresDf = findSheet('Features', step)
-    } catch (e) {
+    } catch {
       // ignore error
     }
 

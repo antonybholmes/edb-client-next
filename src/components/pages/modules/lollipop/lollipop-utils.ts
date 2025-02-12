@@ -296,7 +296,7 @@ export class LollipopStats {
 
   get eventCounts(): [string, number][] {
     return [...this._countMap.entries()]
-      .map(entry => [entry[0], entry[1].size] as [string, number])
+      .map((entry) => [entry[0], entry[1].size] as [string, number])
       .sort((a, b) => a[0].localeCompare(b[0]))
   }
 
@@ -310,7 +310,7 @@ export class LollipopStats {
 
   get sum(): number {
     return this.eventCounts
-      .map(event => event[1])
+      .map((event) => event[1])
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
   }
 }
@@ -393,7 +393,7 @@ export function makeLollipopData(
   const labels: IProteinLabel[] = []
 
   if (featuresDf) {
-    range(featuresDf.shape[0]).forEach(i => {
+    range(featuresDf.shape[0]).forEach((i) => {
       const name = featuresDf.get(i, 0).toString()
       const start = featuresDf.get(i, 1) as number
       const end = featuresDf.get(i, 2) as number
@@ -412,14 +412,14 @@ export function makeLollipopData(
   }
 
   const aaChanges: IAAVar[] = range(mutDf.shape[0])
-    .map(row => {
+    .map((row) => {
       //console.log(mutDf.colNames, columns)
 
-      let sample = mutDf.col(columns.sample).values[row]!.toString()
+      const sample = mutDf.col(columns.sample).values[row]!.toString()
 
-      let ref = mutDf.col(columns.aa).values[row]!.toString()
+      const ref = mutDf.col(columns.aa).values[row]!.toString()
 
-      let variant = parseVariant(
+      const variant = parseVariant(
         mutDf.col(columns.variant).values[row]!.toString()
       )
 
@@ -448,7 +448,7 @@ export function makeLollipopData(
 
       return null
     })
-    .filter(x => x !== null)
+    .filter((x) => x !== null)
 
   let length = -1
 
@@ -456,14 +456,14 @@ export function makeLollipopData(
     length = protein.seq.length
   } else {
     // determine length from data
-    length = Math.max(...aaChanges.map(ac => ac.position))
+    length = Math.max(...aaChanges.map((ac) => ac.position))
   }
 
-  let aaStats: LollipopStats[] = range(length).map(
-    i => new LollipopStats(i + 1, protein?.seq.charAt(i) ?? '')
+  const aaStats: LollipopStats[] = range(length).map(
+    (i) => new LollipopStats(i + 1, protein?.seq.charAt(i) ?? '')
   )
 
-  aaChanges.forEach(aaChange => {
+  aaChanges.forEach((aaChange) => {
     aaStats[aaChange.position - 1]!.set(aaChange.variant, aaChange.sample)
   })
 

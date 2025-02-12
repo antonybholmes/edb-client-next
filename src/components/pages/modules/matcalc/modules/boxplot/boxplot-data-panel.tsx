@@ -21,16 +21,13 @@ import {
   SubAccordion,
 } from '@components/shadcn/ui/themed/accordion'
 import { Reorder } from 'motion/react'
-import { forwardRef, useContext, type ForwardedRef } from 'react'
+import { useContext } from 'react'
 
 export interface IProps {
   plotAddr: IHistItemAddr
 }
 
-export const BoxPlotDataPanel = forwardRef(function BoxPlotDataPanel(
-  { plotAddr }: IProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+export function BoxPlotDataPanel({ plotAddr }: IProps) {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
 
   const { history, historyDispatch } = useContext(HistoryContext)
@@ -269,4 +266,4 @@ export const BoxPlotDataPanel = forwardRef(function BoxPlotDataPanel(
       </SubAccordion>
     </PropsPanel>
   )
-})
+}

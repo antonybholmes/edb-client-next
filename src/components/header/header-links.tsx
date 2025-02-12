@@ -20,7 +20,7 @@ export function HeaderLinks({ onClick, className }: IProps) {
 
   // useEffect(() => {
   //   //if (isFirstRun.current < 2) {
-  //   // @ts-ignore
+  //
   //   gsap.timeline().from(
   //     '.menu-link',
   //     {
@@ -48,14 +48,14 @@ export function HeaderLinks({ onClick, className }: IProps) {
   // useEffect(() => {
   //   if (isFirstRun.current < 2) {
   //     if (showMenu) {
-  //       // @ts-ignore
+  //
   //       tMenuLinkR.current.pause()
-  //       // @ts-ignore
+  //
   //       tMenuLinkF.current.restart()
   //     } else {
-  //       // @ts-ignore
+  //
   //       tMenuLinkF.current.pause()
-  //       // @ts-ignore
+  //
   //       tMenuLinkR.current.restart()
   //     }
   //   }
@@ -77,7 +77,7 @@ export function HeaderLinks({ onClick, className }: IProps) {
             <ul className="mt-1 grid grid-cols-2 gap-2">
               {section.modules
                 .filter(
-                  module =>
+                  (module) =>
                     module.mode !== 'dev' ||
                     process.env.NODE_ENV !== 'production'
                 )

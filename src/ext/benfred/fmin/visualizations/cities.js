@@ -1,37 +1,6 @@
 import { createDropShadowFilter } from './dropshadow'
 import { Slider } from './slider'
 
-function mdsGradient(x, distances, fxprime) {
-  var loss = 0,
-    i
-  fxprime = fxprime || fmin.zeros(x.length)
-  for (i = 0; i < fxprime.length; ++i) {
-    fxprime[i] = 0
-  }
-
-  for (i = 0; i < distances.length; ++i) {
-    var xi = x[2 * i],
-      yi = x[2 * i + 1]
-    for (var j = i + 1; j < distances.length; ++j) {
-      var xj = x[2 * j],
-        yj = x[2 * j + 1],
-        dij = distances[i][j]
-
-      var squaredDistance = (xj - xi) * (xj - xi) + (yj - yi) * (yj - yi),
-        delta = squaredDistance - dij * dij
-
-      loss += 2 * delta * delta
-
-      fxprime[2 * i] += 4 * delta * (xi - xj)
-      fxprime[2 * i + 1] += 4 * delta * (yi - yj)
-
-      fxprime[2 * j] += 4 * delta * (xj - xi)
-      fxprime[2 * j + 1] += 4 * delta * (yj - yi)
-    }
-  }
-  return loss
-}
-
 function mds(distances, params) {
   // fully normalize solution (so that initial guess is somewhat reasonable looking
   var norm = fmin.norm2(distances.map(fmin.norm2)) / distances.length

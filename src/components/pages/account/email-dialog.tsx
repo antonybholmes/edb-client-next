@@ -51,13 +51,11 @@ interface IFormInput {
   email: string
 }
 
-export interface IEmailDialogProps extends IModalProps {}
-
 export function EmailDialog({
   open = false,
   onOpenChange = () => {},
   onReponse = () => {},
-}: IEmailDialogProps) {
+}: IModalProps) {
   const queryClient = useQueryClient()
 
   //const { password, password1, password2 } = passwords
@@ -138,7 +136,7 @@ export function EmailDialog({
       onOpenChange={onOpenChange}
       contentVariant="glass"
       //buttons={[TEXT_SAVE, TEXT_CANCEL]}
-      onReponse={response => {
+      onReponse={(response) => {
         switch (response) {
           case TEXT_OK:
             //update()

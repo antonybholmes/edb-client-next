@@ -13,6 +13,7 @@ export function NelderMeadContour(div) {
 NelderMeadContour.prototype = Object.create(AnimatedContour.prototype)
 
 NelderMeadContour.prototype.drawControls = function () {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   var obj = this,
     params = this.params,
     div = this.div

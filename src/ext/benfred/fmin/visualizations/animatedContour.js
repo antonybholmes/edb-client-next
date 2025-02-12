@@ -12,6 +12,7 @@ export function AnimatedContour(div) {
   this.stateIndex = 0
   this.cycle = 0
 
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   var contour = this
   div.select('.function_flower').on('click', function () {
     contour.current = flower

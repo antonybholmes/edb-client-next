@@ -213,7 +213,7 @@ export const BoxPlotSvg = forwardRef<SVGElement, IProps>(function BoxPlotSvg(
     // for all results calculate the max number of significant
     // comparisons. This can be used to work out how much space
     // to allocate to stats whilst keeping the plots aligned
-    let values: number[] = [...dataMap.entries()]
+    const values: number[] = [...dataMap.entries()]
       .map((x) =>
         [...x[1].entries()].map((hue: [string, number[]]) => hue[1]).flat()
       )
@@ -256,7 +256,7 @@ export const BoxPlotSvg = forwardRef<SVGElement, IProps>(function BoxPlotSvg(
 
         const kde = new KDE(values)
 
-        let xsmoothed = kde.f(ysmoothed)
+        const xsmoothed = kde.f(ysmoothed)
 
         globalXsmoothedMax = Math.max(globalXsmoothedMax, ...xsmoothed)
 

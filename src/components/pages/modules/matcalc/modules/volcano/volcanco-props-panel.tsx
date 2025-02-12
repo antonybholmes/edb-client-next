@@ -32,7 +32,7 @@ import type { BaseDataFrame } from '@lib/dataframe/base-dataframe'
 import { findCol, getNumCol } from '@lib/dataframe/dataframe-utils'
 import { range } from '@lib/math/range'
 import { produce } from 'immer'
-import { forwardRef, useContext, useState, type ForwardedRef } from 'react'
+import { useContext, useState } from 'react'
 
 export interface IProps {
   plotAddr: IHistItemAddr
@@ -42,10 +42,7 @@ export interface IProps {
   //plotId: string
 }
 
-export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
-  { x, y, plotAddr }: IProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
 
   // const plot = plotsState.plotMap[plotId]
@@ -75,7 +72,7 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
       addr: plotAddr,
       name: 'displayOptions',
 
-      prop: produce(displayProps, draft => {
+      prop: produce(displayProps, (draft) => {
         draft.labels.values = values
       }),
     })
@@ -108,12 +105,12 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
     const ydata = getNumCol(df, findCol(df, y))
 
     const idx = new Set(
-      range(df.shape[0]).filter(i => getShouldLabel(xdata[i]!, ydata[i]!))
+      range(df.shape[0]).filter((i) => getShouldLabel(xdata[i]!, ydata[i]!))
     )
 
     const values = df.index.values
       .filter((_v, i) => idx.has(i))
-      .map(l => l.toString())
+      .map((l) => l.toString())
 
     setText(values.join('\n'))
 
@@ -121,7 +118,7 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
       type: 'update-custom-prop',
       addr: plotAddr,
       name: 'displayOptions',
-      prop: produce(displayProps, draft => {
+      prop: produce(displayProps, (draft) => {
         draft.labels.values = values
       }),
     })
@@ -139,23 +136,23 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
                 v2={displayProps.axes.yaxis.range[1]}
                 limit={[1, 1000]}
                 dp={0}
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   console.log(v, displayProps.axes.xaxis.range[1])
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.axes.xaxis.range = [0, v]
                     }),
                   })
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.axes.yaxis.range = [0, v]
                     }),
                   })
@@ -171,12 +168,12 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
                 dp={0}
                 limit={[1, 10000]}
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.axes.yaxis.domain = [0, v]
                     }),
                   })
@@ -191,12 +188,12 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
                 placeholder="Size..."
                 dp={0}
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.dots.size = v
                     }),
                   })
@@ -205,12 +202,12 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
 
               <ColorPickerButton
                 color={displayProps.dots.color}
-                onColorChange={v =>
+                onColorChange={(v) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.dots.color = v
                     }),
                   })
@@ -222,12 +219,12 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
             <SwitchPropRow
               title="Border"
               checked={displayProps.border.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayProps, draft => {
+                  prop: produce(displayProps, (draft) => {
                     draft.border.show = v
                   }),
                 })
@@ -235,12 +232,12 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
             >
               <ColorPickerButton
                 color={displayProps.border.color}
-                onColorChange={v =>
+                onColorChange={(v) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.border.color = v
                     }),
                   })
@@ -257,12 +254,12 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
             <SwitchPropRow
               title="Filter"
               checked={displayProps.logFc.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayProps, draft => {
+                  prop: produce(displayProps, (draft) => {
                     draft.logFc.show = v
                   }),
                 })
@@ -274,12 +271,12 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
                 dp={2}
                 placeholder="Max..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.logFc.threshold = v
                     }),
                   })
@@ -290,12 +287,12 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
             <PropRow title="Highlight">
               <ColorPickerButton
                 color={displayProps.logFc.neg.color}
-                onColorChange={v =>
+                onColorChange={(v) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.logFc.neg.color = v
                     }),
                   })
@@ -306,12 +303,12 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
 
               <ColorPickerButton
                 color={displayProps.logFc.pos.color}
-                onColorChange={v =>
+                onColorChange={(v) =>
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.logFc.pos.color = v
                     }),
                   })
@@ -329,12 +326,12 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
             <SwitchPropRow
               title="Filter"
               checked={displayProps.logP.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayProps, draft => {
+                  prop: produce(displayProps, (draft) => {
                     draft.logP.show = v
                   }),
                 })
@@ -346,12 +343,12 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
                 dp={2}
                 placeholder="Max..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   historyDispatch({
                     type: 'update-custom-prop',
                     addr: plotAddr,
                     name: 'displayOptions',
-                    prop: produce(displayProps, draft => {
+                    prop: produce(displayProps, (draft) => {
                       draft.logP.threshold = -Math.log10(v)
                     }),
                   })
@@ -362,12 +359,12 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
             <SwitchPropRow
               title="Line"
               checked={displayProps.logP.line.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 historyDispatch({
                   type: 'update-custom-prop',
                   addr: plotAddr,
                   name: 'displayOptions',
-                  prop: produce(displayProps, draft => {
+                  prop: produce(displayProps, (draft) => {
                     draft.logP.line.show = v
                   }),
                 })
@@ -384,7 +381,7 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
                 id="labels"
                 aria-label="Labels"
                 value={text}
-                onChange={e => setText(e.target.value)}
+                onChange={(e) => setText(e.target.value)}
                 placeholder="Labels to highlight"
                 className="h-48"
               />
@@ -420,7 +417,7 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
                       type: 'update-custom-prop',
                       addr: plotAddr,
                       name: 'displayOptions',
-                      prop: produce(displayProps, draft => {
+                      prop: produce(displayProps, (draft) => {
                         draft.labels.values = []
                       }),
                     })
@@ -435,4 +432,4 @@ export const VolcanoPropsPanel = forwardRef(function HeatmapPropsPanel(
       </ScrollAccordion>
     </PropsPanel>
   )
-})
+}

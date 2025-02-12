@@ -86,8 +86,9 @@ export const GexBoxWhiskerPlotSvg = forwardRef<SVGElement, IProps>(
       if (displayProps.stats.show && allStats.length > 0) {
         globalMaxStatComparisons = Math.max(
           ...allStats.map(
-            stats =>
-              stats.filter(stat => stat.p < displayProps.stats.p.cutoff).length
+            (stats) =>
+              stats.filter((stat) => stat.p < displayProps.stats.p.cutoff)
+                .length
           )
         )
       }
@@ -117,10 +118,10 @@ export const GexBoxWhiskerPlotSvg = forwardRef<SVGElement, IProps>(
 
       if (displayProps.axes.y.globalMax) {
         const allValues: number[] = plot.genes
-          .map(result =>
+          .map((result) =>
             result.datasets
-              .map(dataset =>
-                dataset.values.map(v =>
+              .map((dataset) =>
+                dataset.values.map((v) =>
                   displayProps.tpm.log2Mode ? Math.log2(v + 1) : v
                 )
               )
@@ -155,9 +156,9 @@ export const GexBoxWhiskerPlotSvg = forwardRef<SVGElement, IProps>(
             const geneStats: IGexStats[] =
               allStats.length >= ri ? allStats[ri]! : []
 
-            const allValues: number[][] = result.datasets.map(dataset =>
+            const allValues: number[][] = result.datasets.map((dataset) =>
               numSort(
-                dataset.values.map(v =>
+                dataset.values.map((v) =>
                   displayProps.tpm.log2Mode ? Math.log2(v + 1) : v
                 )
               )
@@ -177,11 +178,13 @@ export const GexBoxWhiskerPlotSvg = forwardRef<SVGElement, IProps>(
                 .setLength(displayProps.plot.height)
             }
 
-            const medians: number[] = allValues.map(values => median(values)[0])
+            const medians: number[] = allValues.map(
+              (values) => median(values)[0]
+            )
 
-            const q1s: number[] = allValues.map(values => q25(values)[0])
+            const q1s: number[] = allValues.map((values) => q25(values)[0])
 
-            const q3s: number[] = allValues.map(values => q75(values)[0])
+            const q3s: number[] = allValues.map((values) => q75(values)[0])
 
             //console.log("medians", medians, q1s, q3s)
 
@@ -191,12 +194,12 @@ export const GexBoxWhiskerPlotSvg = forwardRef<SVGElement, IProps>(
 
             let global_xsmoothed_max = 0
 
-            let ysmoothed = linspace(yax.domain[0], yax.domain[1])
+            const ysmoothed = linspace(yax.domain[0], yax.domain[1])
 
-            let xsmoothed = allValues.map(data => {
+            const xsmoothed = allValues.map((data) => {
               const kde = new KDE(data)
 
-              let xs = kde.f(ysmoothed)
+              const xs = kde.f(ysmoothed)
 
               global_xsmoothed_max = Math.max(global_xsmoothed_max, ...xs)
 
@@ -362,7 +365,7 @@ export const GexBoxWhiskerPlotSvg = forwardRef<SVGElement, IProps>(
                 {geneStats && (
                   <>
                     {geneStats
-                      .filter(stat => stat.p < displayProps.stats.p.cutoff)
+                      .filter((stat) => stat.p < displayProps.stats.p.cutoff)
                       .map((stat, si) => {
                         const x1 =
                           displayProps.plot.bar.width / 2 +

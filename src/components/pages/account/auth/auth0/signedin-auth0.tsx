@@ -1,15 +1,11 @@
-"use client";
+'use client'
 
-import { VCenterRow } from "@/components/layout/v-center-row";
-import {
-  CALLBACK_URL_PARAM,
-  MYACCOUNT_ROUTE,
-  TEXT_MY_ACCOUNT,
-} from "@/lib/edb/edb";
-import { EdbAuthContext } from "@/lib/edb/edb-auth-provider";
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { MYACCOUNT_ROUTE, TEXT_MY_ACCOUNT } from '@/lib/edb/edb'
+import { EdbAuthContext } from '@/lib/edb/edb-auth-provider'
 
-import { useAuth0 } from "@auth0/auth0-react";
-import { ThemeIndexLink } from "@components/link/theme-index-link";
+import { useAuth0 } from '@auth0/auth0-react'
+import { ThemeIndexLink } from '@components/link/theme-index-link'
 import {
   Card,
   CardContent,
@@ -17,18 +13,16 @@ import {
   CardHeader,
   CardTitle,
   CenteredCardContainer,
-} from "@components/shadcn/ui/themed/card";
-import { SignInLayout } from "@layouts/signin-layout";
-import { CoreProviders } from "@providers/core-providers";
+} from '@components/shadcn/ui/themed/card'
+import { SignInLayout } from '@layouts/signin-layout'
+import { CoreProviders } from '@providers/core-providers'
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from 'react'
 
 function SignedInPage() {
-  const { edbUser, signInWithAuth0Token } = useContext(EdbAuthContext);
+  const { edbUser, signInWithAuth0Token } = useContext(EdbAuthContext)
 
   //const [user, setUser] = useState<IUser | null>(null)
-
-  const [callbackUrl, setCallbackUrl] = useState("");
 
   // useEffect(() => {
   //   // async function fetch() {
@@ -63,50 +57,49 @@ function SignedInPage() {
     isAuthenticated,
     getAccessTokenSilently,
     handleRedirectCallback,
-  } = useAuth0();
+  } = useAuth0()
 
   useEffect(() => {
     async function processCallback() {
       try {
-        const { appState } = await handleRedirectCallback();
-
-        setCallbackUrl(appState[CALLBACK_URL_PARAM]);
+        //const { appState } = await handleRedirectCallback()
+        //setCallbackUrl(appState[CALLBACK_URL_PARAM])
       } catch (error) {
-        console.error("Error handling redirect callback:", error);
+        console.error('Error handling redirect callback:', error)
       }
     }
 
     if (
-      window.location.search.includes("code=") &&
-      window.location.search.includes("state=")
+      window.location.search.includes('code=') &&
+      window.location.search.includes('state=')
     ) {
-      processCallback();
+      processCallback()
     }
-  }, [handleRedirectCallback]);
+  }, [handleRedirectCallback])
 
   useEffect(() => {
     async function load() {
       try {
-        const auth0Token = await getAccessTokenSilently();
+        const auth0Token = await getAccessTokenSilently()
 
         //console.log('auth0Token', auth0Token)
 
-        await signInWithAuth0Token(auth0Token);
+        await signInWithAuth0Token(auth0Token)
 
         // force user to be refreshed
         //setUser(await refreshEdbUser())
       } catch (error) {
-        console.error(error);
+        console.error(error)
       }
     }
 
     if (isAuthenticated) {
-      load();
+      load()
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated])
 
   if (isLoading) {
-    return <div>Loading... Please wait.</div>;
+    return <div>Loading... Please wait.</div>
   }
 
   // if (isAuthenticated && edbUser.uuid !== '' && callbackUrl) {
@@ -121,11 +114,11 @@ function SignedInPage() {
         <Card>
           <CardHeader>
             <CardTitle>
-              {edbUser.uuid !== ""
+              {edbUser.uuid !== ''
                 ? `Hi ${
-                    edbUser.firstName !== "" ? edbUser.firstName : edbUser.email
+                    edbUser.firstName !== '' ? edbUser.firstName : edbUser.email
                   },`
-                : "Waiting for account data to load..."}
+                : 'Waiting for account data to load...'}
             </CardTitle>
 
             <CardDescription>
@@ -156,7 +149,7 @@ function SignedInPage() {
         </Card>
       </CenteredCardContainer>
     </SignInLayout>
-  );
+  )
 }
 
 export function SignedInQueryPage() {
@@ -164,5 +157,5 @@ export function SignedInQueryPage() {
     <CoreProviders>
       <SignedInPage />
     </CoreProviders>
-  );
+  )
 }
