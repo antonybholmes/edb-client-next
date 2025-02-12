@@ -147,22 +147,25 @@ export const BoxPlotSvg = forwardRef<SVGElement, IProps>(function BoxPlotSvg(
   const displayOptions: IBoxPlotDisplayOptions = plot.customProps
     .displayOptions as IBoxPlotDisplayOptions
 
-  const singlePlotDisplayOptions = plot.customProps.singlePlotDisplayOptions
+  const singlePlotDisplayOptions = plot.customProps
+    .singlePlotDisplayOptions as {
+    [key: string]: { [key: string]: IBoxPlotDisplayOptions }
+  }
 
   const svg = useMemo(() => {
-    const df: BaseDataFrame = plot.customProps.df!
-    const x: string = plot.customProps.x!
-    const y: string = plot.customProps.y!
-    const hue: string = plot.customProps.hue!
-    let xOrder: string[] = plot.customProps.xOrder
-    let hueOrder: string[] = plot.customProps.hueOrder
+    const df: BaseDataFrame = plot.customProps.df as BaseDataFrame
+    const x: string = plot.customProps.x as string
+    const y: string = plot.customProps.y as string
+    const hue: string = plot.customProps.hue as string
+    const xOrder: string[] = plot.customProps.xOrder as string[]
+    const hueOrder: string[] = plot.customProps.hueOrder as string[]
 
     const xCol = df.col(x).strs
     const yCol = df.col(y).values
     const emptyHueColName = x //df.colName(x)
     const hueCol =
       hueOrder.length > 1
-        ? df.col(hue).strs.map(v => cleanHue(v))
+        ? df.col(hue).strs.map((v) => cleanHue(v))
         : fill(emptyHueColName, df.shape[0])
 
     //console.log('hue', hueOrder)
@@ -211,7 +214,7 @@ export const BoxPlotSvg = forwardRef<SVGElement, IProps>(function BoxPlotSvg(
     // comparisons. This can be used to work out how much space
     // to allocate to stats whilst keeping the plots aligned
     let values: number[] = [...dataMap.entries()]
-      .map(x =>
+      .map((x) =>
         [...x[1].entries()].map((hue: [string, number[]]) => hue[1]).flat()
       )
       .flat()
@@ -434,7 +437,7 @@ export const BoxPlotSvg = forwardRef<SVGElement, IProps>(function BoxPlotSvg(
                   }
                   fillOpacity={
                     singlePlotDisplayOptions[xOrder[0]!]![hue]!.violin.fill
-                      .opacity
+                      .alpha
                   }
                 />
                 <g transform={`translate(40, 5)`}>

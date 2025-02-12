@@ -12,6 +12,7 @@ export function NelderMead1d(div) {
   this.cycle = 0
   this.params = { chi: 1, psi: -1, sigma: 1, rho: 1 }
 
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   var obj = this,
     params = this.params
 

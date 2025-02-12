@@ -102,7 +102,7 @@ export function ViolinPlotSvg({
     // }
 
     const points: string = zip(xsmooth, ysmooth)
-      .map((p) => `${0.5 * p[0]! * width},${yax?.domainToRange(p[1]!)!}`)
+      .map((p) => `${0.5 * p[0]! * width},${yax!.domainToRange(p[1])}`)
       .join(' ')
 
     //console.log(points)

@@ -57,7 +57,14 @@ import {
   type IHistItemAddr,
 } from '@providers/history-provider'
 
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 
 import { OpenDialog } from '@/components/pages/modules/matcalc/open-dialog'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
@@ -113,6 +120,7 @@ import {
   dfTranspose,
 } from '@/components/table/dataframe-ui'
 import { useToast } from '@/hooks/use-toast'
+import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { oneWayFromDataframes } from '@/lib/genomic/overlap/one-way-overlap'
 import {
   createOverlapTableFromDataframes,
@@ -589,7 +597,7 @@ function MatcalcPage() {
   }
 
   function runExtGsea() {
-    let df = currentSheet(history)[0]!
+    const df = currentSheet(history)[0]!
 
     if (!df) {
       return
@@ -1288,7 +1296,7 @@ function MatcalcPage() {
     <>
       {showDialog.id.startsWith('open-file-dialog') && (
         <OpenDialog
-          files={showDialog.params!.files}
+          files={showDialog.params!.files as ITextFileOpen[]}
           openFiles={(files, options) => {
             openFiles(files, options)
             setShowDialog({ ...NO_DIALOG })
@@ -1312,8 +1320,8 @@ function MatcalcPage() {
 
       {showDialog.id.startsWith('heatmap') && (
         <HeatMapDialog
-          isClusterMap={showDialog.params!.isClusterMap}
-          df={showDialog.params!.df}
+          isClusterMap={showDialog.params!.isClusterMap as boolean}
+          df={showDialog.params!.df as BaseDataFrame}
           onReponse={() => setShowDialog({ ...NO_DIALOG })}
         />
       )}
@@ -1327,7 +1335,7 @@ function MatcalcPage() {
 
       {showDialog.id.startsWith('volcano') && (
         <VolcanoDialog
-          df={showDialog.params!.df}
+          df={showDialog.params!.df as BaseDataFrame}
           onReponse={() => setShowDialog({ ...NO_DIALOG })}
         />
       )}
@@ -1374,7 +1382,7 @@ function MatcalcPage() {
 
       {showDialog.id.startsWith('alert') && (
         <BasicAlertDialog onReponse={() => setShowDialog({ ...NO_DIALOG })}>
-          {showDialog.params!.message}
+          {showDialog.params!.message as ReactNode}
         </BasicAlertDialog>
       )}
 

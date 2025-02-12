@@ -19,18 +19,6 @@ export function LineGraph() {
 
     var svg = div.select('svg').attr('width', width).attr('height', height)
 
-    var colours = d3.schemeCategory10
-    function line(f) {
-      return d3
-        .line()
-        .x(function (d) {
-          return xScale(d)
-        })
-        .y(function (d) {
-          return yScale(f(d))
-        })
-    }
-
     d3.select('body')
       .selectAll('.tooltip')
       .data([0])

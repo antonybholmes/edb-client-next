@@ -29,6 +29,7 @@ export class TrieNode<T> {
   find(key: string): T[] {
     key = key.toLowerCase()
 
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     let node: TrieNode<T> = this
 
     for (const c of key.slice()) {

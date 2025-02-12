@@ -75,6 +75,7 @@ AnimatedContour.prototype.redraw = function () {
   var svg = this.plot.svg,
     xScale = this.plot.xScale,
     yScale = this.plot.yScale,
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     contour = this
   svg.on('click', function () {
     var pos = d3.mouse(this)

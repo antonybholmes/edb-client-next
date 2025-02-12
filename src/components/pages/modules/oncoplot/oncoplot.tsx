@@ -276,7 +276,7 @@ function OncoplotPage() {
 
   async function loadClinicalTestData() {
     try {
-      let res = await queryClient.fetchQuery({
+      const res = await queryClient.fetchQuery({
         queryKey: ['test_data'],
         queryFn: () => axios.get('/data/test/onco-plot-clinical-test.txt'),
       })

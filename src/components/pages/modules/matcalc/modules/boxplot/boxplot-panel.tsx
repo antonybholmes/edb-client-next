@@ -33,7 +33,11 @@ import { SaveImageDialog } from '@components/pages/save-image-dialog'
 import type { ITab } from '@components/tab-provider'
 import { PLOT_CLS } from '../heatmap/heatmap-panel'
 import { BoxPlotDataPanel } from './boxplot-data-panel'
-import { BoxPlotSvg, type IBoxPlotDisplayOptions } from './boxplot-plot-svg'
+import {
+  BoxPlotSvg,
+  DEFAULT_BOX_PLOT_DISPLAY_PROPS,
+  type IBoxPlotDisplayOptions,
+} from './boxplot-plot-svg'
 import { BoxPlotPropsPanel } from './boxplot-props-panel'
 
 export const VOLCANO_X = 'Log2 fold change'
@@ -54,12 +58,9 @@ export const BoxPlotPanel = forwardRef(function BoxPlotPanel(
 
   const plot = getPlotFromAddr(plotAddr, history)
 
-  if (plot === null) {
-    return null
-  }
-
-  const displayOptions: IBoxPlotDisplayOptions = plot.customProps
-    .displayOptions as IBoxPlotDisplayOptions
+  const displayOptions: IBoxPlotDisplayOptions =
+    (plot?.customProps.displayOptions as IBoxPlotDisplayOptions) ??
+    DEFAULT_BOX_PLOT_DISPLAY_PROPS
 
   const { messageState, messageDispatch } = useContext(MessageContext)
 
@@ -83,9 +84,9 @@ export const BoxPlotPanel = forwardRef(function BoxPlotPanel(
   const [showSideBar, setShowSideBar] = useState(true)
 
   useEffect(() => {
-    const messages = messageState.queue.filter(m => m.target === plot.id)
+    const messages = messageState.queue.filter((m) => m.target === plot?.id)
 
-    messages.forEach(message => {
+    messages.forEach((message) => {
       if (message.text.includes('save')) {
         if (message.text.includes(':')) {
           downloadImageAutoFormat(
@@ -153,7 +154,7 @@ export const BoxPlotPanel = forwardRef(function BoxPlotPanel(
       {showSave && (
         <SaveImageDialog
           open="open"
-          onSave={format => {
+          onSave={(format) => {
             downloadImageAutoFormat(
               svgRef,
               canvasRef,

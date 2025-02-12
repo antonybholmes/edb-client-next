@@ -314,13 +314,12 @@ export function UMAPPage() {
     const indexMap = Object.fromEntries(uniqueClusters.map((x, i) => [x, i]))
     const normMap = Object.fromEntries(uniqueClusters.map((x, i) => [x, i / n]))
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cmap = uniqueClusters.map(_x => 'gray') //JET_CMAP.get(i / n))
+    const cmap = uniqueClusters.map(() => 'gray') //JET_CMAP.get(i / n))
 
     // modify palette for custom groups
 
-    groups.forEach(group => {
-      if (group.search.filter(s => s in normMap).length > 0) {
+    groups.forEach((group) => {
+      if (group.search.filter((s) => s in normMap).length > 0) {
         cmap[indexMap[group.name]] = group.color
       }
     })
@@ -332,7 +331,7 @@ export function UMAPPage() {
     df = df.copy()
     df.setCol(
       'Hue',
-      clusters.map(c => normMap[c.toString()] ?? -1)
+      clusters.map((c) => normMap[c.toString()] ?? -1)
     )
 
     historyDispatch({
@@ -550,13 +549,15 @@ export function UMAPPage() {
             key="sidebar-table"
             tabs={rightTabs}
             value={selectedPlotTab}
-            onTabChange={selectedTab => setSelectedPlotTab(selectedTab.tab.id)}
+            onTabChange={(selectedTab) =>
+              setSelectedPlotTab(selectedTab.tab.id)
+            }
           >
             <TabbedDataFrames
               key="tabbed-data-frames"
               selectedSheet={currentSheetId(history)[0]!}
               dataFrames={currentSheets(history)[0]!}
-              onTabChange={selectedTab => {
+              onTabChange={(selectedTab) => {
                 historyDispatch({
                   type: 'goto-sheet',
                   sheetId: selectedTab.index,
@@ -587,7 +588,9 @@ export function UMAPPage() {
             key="sidebar-table"
             tabs={rightTabs}
             value={selectedPlotTab}
-            onTabChange={selectedTab => setSelectedPlotTab(selectedTab.tab.id)}
+            onTabChange={(selectedTab) =>
+              setSelectedPlotTab(selectedTab.tab.id)
+            }
           >
             <Card variant="content" className="ml-2">
               <div
@@ -596,7 +599,7 @@ export function UMAPPage() {
               >
                 {clusterFrame && (
                   <ScatterPlotCanvas
-                    onCanvasChange={e => {
+                    onCanvasChange={(e) => {
                       setCanvas(e)
                     }}
                     df={clusterFrame}
@@ -767,7 +770,7 @@ export function UMAPPage() {
         shortcuts={
           <Shortcuts
             tabs={sideTabs}
-            onTabChange={selectedTab => setSelectedTab(selectedTab.tab.id)}
+            onTabChange={(selectedTab) => setSelectedTab(selectedTab.tab.id)}
           />
         }
       >
@@ -803,7 +806,7 @@ export function UMAPPage() {
             open={showDialog}
             //onOpenChange={open => setShowDialog(open ? "open" : "")}
             onFileChange={(message, files) =>
-              onTextFileChange(message, files, files => setFilesToOpen(files))
+              onTextFileChange(message, files, (files) => setFilesToOpen(files))
             }
           />
         )}

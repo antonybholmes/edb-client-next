@@ -18,13 +18,7 @@ import { SelectionRangeContext } from '@components/table/use-selection-range'
 import { download, downloadJson } from '@lib/download-utils'
 import { range } from '@lib/math/range'
 import { makeRandId, nanoid } from '@lib/utils'
-import {
-  forwardRef,
-  useContext,
-  useState,
-  type ForwardedRef,
-  type RefObject,
-} from 'react'
+import { useContext, useState, type RefObject } from 'react'
 import { GroupDialog } from './group-dialog'
 import { GroupsContext } from './groups-provider'
 
@@ -63,10 +57,7 @@ export interface IProps {
   onCancel?: () => void
 }
 
-export const GroupPropsPanel = forwardRef(function GroupPropsPanel(
-  { downloadRef }: IProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+export function GroupPropsPanel({ downloadRef }: IProps) {
   const [open, setOpen] = useState('')
   const [confirmClear, setConfirmClear] = useState(false)
   const [showSaveDialog, setShowSaveDialog] = useState(false)
@@ -122,7 +113,7 @@ export const GroupPropsPanel = forwardRef(function GroupPropsPanel(
       //const indexMap = new Map<string, number[]>()
 
       // store lowercase for case insensitive searching
-      const columnNames = lines[2]?.split(/[ \t]/).map(x => x.toLowerCase())
+      const columnNames = lines[2]?.split(/[ \t]/).map((x) => x.toLowerCase())
 
       if (!columnNames) {
         return
@@ -282,8 +273,8 @@ export const GroupPropsPanel = forwardRef(function GroupPropsPanel(
     if (selection.start.col !== -1) {
       // if a column is selected, suggest its name as what the user wants to
       // to group
-      group.search = range(selection.start.col, selection.end.col + 1).map(i =>
-        df.colName(i)
+      group.search = range(selection.start.col, selection.end.col + 1).map(
+        (i) => df.colName(i)
       )
     }
 
@@ -361,9 +352,9 @@ export const GroupPropsPanel = forwardRef(function GroupPropsPanel(
 
     const groupMap = Object.fromEntries(
       groupState.order
-        .map(id => groupState.groups.get(id)!)
-        .map(group => {
-          return getColIdxFromGroup(df, group).map(col => [col, group.name])
+        .map((id) => groupState.groups.get(id)!)
+        .map((group) => {
+          return getColIdxFromGroup(df, group).map((col) => [col, group.name])
         })
         .flat()
     )
@@ -408,7 +399,7 @@ export const GroupPropsPanel = forwardRef(function GroupPropsPanel(
       {confirmClear && (
         <OKCancelDialog
           title={MODULE_INFO.name}
-          onReponse={r => {
+          onReponse={(r) => {
             if (r === TEXT_OK) {
               //onGroupsChange?.([])
               groupsDispatch({ type: 'clear' })
@@ -425,7 +416,7 @@ export const GroupPropsPanel = forwardRef(function GroupPropsPanel(
         <OKCancelDialog
           showClose={true}
           title={MODULE_INFO.name}
-          onReponse={r => {
+          onReponse={(r) => {
             if (r === TEXT_OK) {
               groupsDispatch({ type: 'remove', ids: [delGroup!.id] })
               // onGroupsChange &&
@@ -449,7 +440,7 @@ export const GroupPropsPanel = forwardRef(function GroupPropsPanel(
           open={showSaveDialog}
           showClose={true}
           buttons={[]}
-          onReponse={r => {
+          onReponse={(r) => {
             if (r === TEXT_OK) {
               //groupsDispatch({ type: "remove", id: delGroup!.id })
               // onGroupsChange &&
@@ -466,7 +457,7 @@ export const GroupPropsPanel = forwardRef(function GroupPropsPanel(
             size="lg"
             onClick={() => {
               downloadJson(
-                groupState.order.map(id => groupState.groups.get(id)!),
+                groupState.order.map((id) => groupState.groups.get(id)!),
                 downloadRef,
                 'groups.json'
               )
@@ -555,7 +546,7 @@ export const GroupPropsPanel = forwardRef(function GroupPropsPanel(
         </VCenterRow>
 
         <FileDropPanel
-          onFileDrop={files => {
+          onFileDrop={(files) => {
             if (files.length > 0) {
               //setDroppedFile(files[0]);
               console.log('Dropped file:', files[0])
@@ -568,7 +559,7 @@ export const GroupPropsPanel = forwardRef(function GroupPropsPanel(
           <VScrollPanel>
             <Reorder.Group
               values={groupState.order}
-              onReorder={order => {
+              onReorder={(order) => {
                 //setOrder(order)
                 groupsDispatch({
                   type: 'order',
@@ -577,7 +568,7 @@ export const GroupPropsPanel = forwardRef(function GroupPropsPanel(
               }}
               className=" gap-y-1 flex flex-col"
             >
-              {groupState.order.map(id => {
+              {groupState.order.map((id) => {
                 const group = groupState.groups.get(id)!
 
                 return (
@@ -659,7 +650,7 @@ export const GroupPropsPanel = forwardRef(function GroupPropsPanel(
           open={open}
           //onOpenChange={() => setOpen("")}
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
+            onTextFileChange(message, files, (files) => {
               openGroupFiles(files)
             })
           }
@@ -668,4 +659,4 @@ export const GroupPropsPanel = forwardRef(function GroupPropsPanel(
       )}
     </>
   )
-})
+}

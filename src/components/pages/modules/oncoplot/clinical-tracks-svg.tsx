@@ -40,9 +40,7 @@ function numberTrackSvg(
       </g>
       <g id="sample">
         {samples.map((sample, si) => {
-          const height = yax?.domainToRange(
-            track.getEvents(sample).maxEvent[1]
-          )!
+          const height = yax.domainToRange(track.getEvents(sample).maxEvent[1])!
           const y = displayProps.clinical.height - height
           const x = si * (blockSize.w + spacing.x)
 

@@ -10,7 +10,6 @@ export class BaseSeries extends BaseIndex {
     return NUM_INDEX
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setIndex(_index: IndexFromType, _inplace: boolean = false): BaseSeries {
     return this
   }
@@ -23,27 +22,25 @@ export class BaseSeries extends BaseIndex {
    * Return the values as strings
    */
   get strs(): string[] {
-    return this.values.map(v => cellStr(v))
+    return this.values.map((v) => cellStr(v))
   }
 
   get nums(): number[] {
-    return this.values.map(v => cellNum(v))
+    return this.values.map((v) => cellNum(v))
   }
 
   get numsNoNA(): number[] {
-    return this.nums.filter(v => !isNaN(v))
+    return this.nums.filter((v) => !isNaN(v))
   }
 
   get uniq(): SeriesData[] {
     return [...new Set(this.values)].sort()
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   set(_index: number, _v: SeriesData): BaseSeries {
     return this
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   get(_index: number): SeriesData {
     return NaN
   }
@@ -52,7 +49,6 @@ export class BaseSeries extends BaseIndex {
     return this.values.map((x, i) => callback(x, i))
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   filter(_idx: number[]): BaseSeries {
     return this
   }

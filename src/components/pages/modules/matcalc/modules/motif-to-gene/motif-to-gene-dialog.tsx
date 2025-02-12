@@ -93,9 +93,9 @@ export function MotifToGeneDialog({
             ),
         })
 
-        let data = res.data
+        const data = res.data
 
-        const genes = new Set<String>()
+        const genes = new Set<string>()
 
         // for every entry, get all the gesns and assemble into a set
         for (const motif of data.motifs) {

@@ -164,13 +164,13 @@ export function ClustersPanel({
             <Input
               id="name"
               value={name}
-              onChange={e => setName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               className="w-full"
               placeholder="Name..."
             />
             <BaseDropDown
               open={showColor}
-              onOpenChange={open => setShowColor(open)}
+              onOpenChange={(open) => setShowColor(open)}
             >
               <ToolbarDropdownButton
                 selected={showColor}
@@ -186,7 +186,7 @@ export function ClustersPanel({
                 <HexAlphaColorPicker color={color} onChange={setColor} />
 
                 <div className="grid grid-cols-8 gap-px">
-                  {PRESET_COLORS.map(presetColor => (
+                  {PRESET_COLORS.map((presetColor) => (
                     <button
                       key={presetColor}
                       className="trans-300 transition-color h-6 w-6 border border-transparent hover:border-white"
@@ -203,7 +203,7 @@ export function ClustersPanel({
           <Input
             id="search"
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             className="col-span-3"
             placeholder="Search..."
           />
@@ -233,11 +233,10 @@ export function ClustersPanel({
               </BaseCol>
               <button
                 onClick={() => {
-                  onGroupsChange &&
-                    onGroupsChange([
-                      ...groups.slice(0, gi),
-                      ...groups.slice(gi + 1),
-                    ])
+                  onGroupsChange?.([
+                    ...groups.slice(0, gi),
+                    ...groups.slice(gi + 1),
+                  ])
                 }}
                 className="trans-300 px-2 text-gray-400 transition-colors hover:text-red-500"
               >
@@ -251,7 +250,7 @@ export function ClustersPanel({
         <OpenFiles
           open="open"
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
+            onTextFileChange(message, files, (files) => {
               if (files.length > 0) {
                 const d = JSON.parse(files[0]!.text)
 

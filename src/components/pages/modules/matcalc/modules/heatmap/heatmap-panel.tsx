@@ -73,12 +73,9 @@ export function HeatMapPanel({
 
   const plot = getPlotFromAddr(plotAddr, history)
 
-  if (plot === null) {
-    return null
-  }
-
-  const displayOptions: IHeatMapDisplayOptions = plot.customProps
-    .displayOptions as IHeatMapDisplayOptions
+  const displayOptions: IHeatMapDisplayOptions =
+    (plot?.customProps.displayOptions as IHeatMapDisplayOptions) ??
+    DEFAULT_HEATMAP_PROPS
 
   const { groupState } = useContext(GroupsContext)
 
@@ -97,7 +94,7 @@ export function HeatMapPanel({
 
   useEffect(() => {
     const messages = messageState.queue.filter(
-      (message) => message.target === plot.id
+      (message) => message.target === plot?.id
     )
 
     messages.forEach((message) => {
@@ -153,7 +150,7 @@ export function HeatMapPanel({
       content: (
         <HeatmapPropsPanel
           plotAddr={plotAddr}
-          cf={plot.customProps.cf as IClusterFrame}
+          cf={plot?.customProps.cf as IClusterFrame}
         />
       ),
     },
@@ -165,7 +162,7 @@ export function HeatMapPanel({
         <div className={PLOT_CLS}>
           <HeatMapSvg
             ref={svgRef}
-            cf={plot.customProps.cf as IClusterFrame}
+            cf={plot?.customProps.cf as IClusterFrame}
             plotAddr={plotAddr}
           />
         </div>

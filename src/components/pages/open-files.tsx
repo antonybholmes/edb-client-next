@@ -403,7 +403,15 @@ export async function filesToDataFrames(
         const res = await queryClient.fetchQuery({
           queryKey: ['convert'],
           queryFn: () =>
-            httpFetch.postJson(API_XLSX_TO_JSON_URL, {
+            httpFetch.postJson<{
+              data: {
+                table: {
+                  data: string[][]
+                  index: string[][]
+                  columns: string[][]
+                }
+              }
+            }>(API_XLSX_TO_JSON_URL, {
               body: {
                 b64xlsx: file.text,
                 indexes: indexCols,

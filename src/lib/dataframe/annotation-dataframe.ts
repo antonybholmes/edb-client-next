@@ -85,7 +85,6 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._dataframe.set(row, col, v)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   override setIndex(index: IndexFromType): BaseDataFrame {
     this._dataframe.setIndex(index, true)
     this._rowDataFrame.setIndex(index, true)
@@ -119,7 +118,6 @@ export class AnnotationDataFrame extends BaseDataFrame {
     return this._colDataFrame.getRowName(col)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   override setColNames(index: IndexFromType): BaseDataFrame {
     this._dataframe.setColNames(index, true)
     this._colDataFrame.setIndex(index, true)
@@ -196,7 +194,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
   override copy(): BaseDataFrame {
     const ret = new AnnotationDataFrame({
       name: this.name,
-      data: this._dataframe._data.map(r => [...r]),
+      data: this._dataframe._data.map((r) => [...r]),
       index: this.index,
       columns: this.columns,
     })

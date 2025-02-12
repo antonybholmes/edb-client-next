@@ -44,7 +44,7 @@ export async function createGeneConvTable(
     //  data = data.conversions
     // }
 
-    let data = res.data.conversions
+    const data = res.data.conversions
 
     const table: SeriesData[][] = []
 

@@ -78,7 +78,7 @@ export const ExtGseaSvg = forwardRef<SVGElement, IProps>(function ExtGseaSvg(
     //const is_leading_edge2 = gseaRes2.leadingEdgeIndices
 
     let y = gseaRes1.esAll //self._ranked_scores
-    let x = range(y.length)
+    const x = range(y.length)
 
     // subsample so we don't draw every point
     const ix = range(0, x.length, 100)

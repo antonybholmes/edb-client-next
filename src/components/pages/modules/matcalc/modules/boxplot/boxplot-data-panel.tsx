@@ -4,6 +4,7 @@ import {
 } from '@/components/color-picker-button'
 import { VerticalGripIcon } from '@/components/icons/vertical-grip-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
+import { IFillProps, IStrokeProps } from '@/components/plot/svg-props'
 import { PropRow } from '@/components/prop-row'
 import { MenuSeparator } from '@/components/shadcn/ui/themed/dropdown-menu'
 import { capitalCase } from '@/lib/text/capital-case'
@@ -36,10 +37,17 @@ export const BoxPlotDataPanel = forwardRef(function BoxPlotDataPanel(
 
   const plot = getPlotFromAddr(plotAddr, history)!
 
-  const singlePlotDisplayOptions = plot.customProps.singlePlotDisplayOptions
+  const singlePlotDisplayOptions = plot.customProps
+    .singlePlotDisplayOptions as {
+    [key: string]: {
+      [key: string]: {
+        [key: string]: { stroke: IStrokeProps; fill: IFillProps }
+      }
+    }
+  }
 
-  let xOrder: string[] = plot.customProps.xOrder
-  let hueOrder: string[] = plot.customProps.hueOrder
+  const xOrder: string[] = plot.customProps.xOrder as string[]
+  const hueOrder: string[] = plot.customProps.hueOrder as string[]
   const typeOrder = ['violin', 'box', 'swarm']
 
   //const [typeTabs, setTypeTabs] = useState(typeOrder)
@@ -51,7 +59,7 @@ export const BoxPlotDataPanel = forwardRef(function BoxPlotDataPanel(
       <p className="font-semibold py-1">X-Axis Order</p>
       <Reorder.Group
         axis="y"
-        values={plot.customProps.xOrder}
+        values={xOrder}
         onReorder={(order: unknown) => {
           historyDispatch({
             type: 'update-custom-prop',
@@ -61,7 +69,7 @@ export const BoxPlotDataPanel = forwardRef(function BoxPlotDataPanel(
           })
         }}
       >
-        {plot.customProps.xOrder.map((item: string) => (
+        {xOrder.map((item: string) => (
           <Reorder.Item
             key={item}
             value={item}
@@ -78,12 +86,12 @@ export const BoxPlotDataPanel = forwardRef(function BoxPlotDataPanel(
 
       <MenuSeparator />
 
-      {plot.customProps.hueOrder.length > 1 && (
+      {hueOrder.length > 1 && (
         <>
           <p className="font-semibold py-1">Hue Order</p>
           <Reorder.Group
             axis="y"
-            values={plot.customProps.hueOrder}
+            values={hueOrder}
             onReorder={(order: unknown) => {
               historyDispatch({
                 type: 'update-custom-prop',
@@ -93,7 +101,7 @@ export const BoxPlotDataPanel = forwardRef(function BoxPlotDataPanel(
               })
             }}
           >
-            {plot.customProps.hueOrder.map((item: string) => (
+            {hueOrder.map((item: string) => (
               <Reorder.Item
                 key={item}
                 value={item}

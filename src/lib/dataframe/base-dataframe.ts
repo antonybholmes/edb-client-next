@@ -52,7 +52,6 @@ export class BaseDataFrame {
     return this
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   // addRow(col: BaseSeries): BaseDataFrame {
   //   return this
   // }
@@ -61,7 +60,6 @@ export class BaseDataFrame {
   //   return this.setCol(-1, data)
   // }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   col(_col: IndexData): BaseSeries {
     return EMPTY_SERIES
   }
@@ -160,18 +158,15 @@ export class BaseDataFrame {
   }
 
   apply(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _f: (v: SeriesData, row: number, col: number) => SeriesData
   ): BaseDataFrame {
     return this
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   map<T>(_f: (v: SeriesData, row: number, col: number) => T): T[][] {
     return []
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   rowApply(
     _f: (row: SeriesData[], index: number) => SeriesData
   ): BaseDataFrame {
@@ -193,7 +188,7 @@ export class BaseDataFrame {
    * @param f
    * @returns
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   // colApply(f: (row: SeriesType[], index: number) => SeriesType): BaseDataFrame {
   //   return this
   // }
