@@ -50,9 +50,9 @@ export function motifReducer(
     case 'set':
       return {
         motifs: new Map<string, IMotif>(
-          action.motifs.map(motif => [motif.uuid, motif])
+          action.motifs.map((motif) => [motif.uuid, motif])
         ),
-        order: action.motifs.map(motif => motif.uuid),
+        order: action.motifs.map((motif) => motif.uuid),
       }
     case 'order':
       return { ...state, order: action.order }
@@ -61,9 +61,9 @@ export function motifReducer(
       return {
         ...state,
         motifs: new Map<string, IMotif>(
-          [...state.motifs.entries()].filter(e => !ids.has(e[0]!))
+          [...state.motifs.entries()].filter((e) => !ids.has(e[0]!))
         ),
-        order: state.order.filter(id => !ids.has(id)),
+        order: state.order.filter((id) => !ids.has(id)),
       }
     default:
       return state
@@ -154,13 +154,16 @@ export function MotifsProvider({ children }: IChildrenProps) {
         const res = await queryClient.fetchQuery({
           queryKey: ['motifs'],
           queryFn: () => {
-            return httpFetch.postJson(API_MOTIF_SEARCH_URL, {
-              body: {
-                search: search.search,
-                reverse: search.reverse,
-                complement: search.complement,
-              },
-            })
+            return httpFetch.postJson<{ data: { motifs: IMotif[] } }>(
+              API_MOTIF_SEARCH_URL,
+              {
+                body: {
+                  search: search.search,
+                  reverse: search.reverse,
+                  complement: search.complement,
+                },
+              }
+            )
           },
         })
 

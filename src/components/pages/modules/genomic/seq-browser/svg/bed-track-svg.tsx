@@ -34,14 +34,17 @@ export function BedTrackSvg({ tracks, xax, titleHeight }: IProps) {
     queryFn: async () => {
       const accessToken = await getAccessTokenAutoRefresh()
 
-      const res = await httpFetch.postJson(API_BEDS_REGIONS_URL, {
-        body: {
-          location: location.loc,
-          beds: tracks.map(t => t.bedId),
-        },
+      const res = await httpFetch.postJson<{ data: IBedFeature[][] }>(
+        API_BEDS_REGIONS_URL,
+        {
+          body: {
+            location: location.loc,
+            beds: tracks.map((t) => t.bedId),
+          },
 
-        headers: bearerHeaders(accessToken),
-      })
+          headers: bearerHeaders(accessToken),
+        }
+      )
 
       return res.data
     },
@@ -49,7 +52,7 @@ export function BedTrackSvg({ tracks, xax, titleHeight }: IProps) {
 
   const bedFeatures: IBedFeature[][] = data ? data : []
 
-  const allFeatures = bedFeatures.map(features => features.map(f => f.loc))
+  const allFeatures = bedFeatures.map((features) => features.map((f) => f.loc))
 
   if (allFeatures.length === 0) {
     return null

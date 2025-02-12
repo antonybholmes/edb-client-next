@@ -129,7 +129,7 @@ export const HistoryPanel = forwardRef(function HistoryPanel(
           open={true}
           showClose={true}
           title={APP_NAME}
-          onReponse={r => {
+          onReponse={(r) => {
             if (r === TEXT_OK) {
               historyDispatch({
                 description: 'History',
@@ -148,11 +148,11 @@ export const HistoryPanel = forwardRef(function HistoryPanel(
         <OKCancelDialog
           open={true}
           showClose={true}
-          onReponse={r => {
+          onReponse={(r) => {
             if (r === TEXT_OK) {
               historyDispatch({
                 type: 'remove-step',
-                stepId: showDialog.params!.step,
+                stepId: showDialog.params!.step as number,
               })
             }
 

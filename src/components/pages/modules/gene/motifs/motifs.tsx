@@ -1,150 +1,148 @@
-"use client";
+'use client'
 
 import {
   DEFAULT_DISPLAY_PROPS,
   MotifSvg,
   type IDisplayProps,
   type Mode,
-} from "@components/pages/modules/gene/motifs/motif-svg";
-import { TabbedDataFrames } from "@components/table/tabbed-dataframes";
+} from '@components/pages/modules/gene/motifs/motif-svg'
+import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
 
-import { ToolbarFooter } from "@components/toolbar/toolbar-footer";
-import { ToolbarOpenFile } from "@components/toolbar/toolbar-open-files";
-import { ZoomSlider } from "@components/toolbar/zoom-slider";
+import { ToolbarFooter } from '@components/toolbar/toolbar-footer'
+import { ToolbarOpenFile } from '@components/toolbar/toolbar-open-files'
+import { ZoomSlider } from '@components/toolbar/zoom-slider'
 
-import {
-  Toolbar,
-  ToolbarMenu,
-  ToolbarPanel,
-} from "@components/toolbar/toolbar";
-import { ToolbarIconButton } from "@components/toolbar/toolbar-icon-button";
-import { ToolbarSeparator } from "@components/toolbar/toolbar-separator";
+import { Toolbar, ToolbarMenu, ToolbarPanel } from '@components/toolbar/toolbar'
+import { ToolbarIconButton } from '@components/toolbar/toolbar-icon-button'
+import { ToolbarSeparator } from '@components/toolbar/toolbar-separator'
 
-import { ArrowRightArrowLeftIcon } from "@components/icons/arrow-right-arrow-left-icon";
-import { SlidersIcon } from "@components/icons/sliders-icon";
-import { TableIcon } from "@components/icons/table-icon";
-import { ToolbarTabButton } from "@components/toolbar/toolbar-tab-button";
-import { ChartIcon } from "@icons/chart-icon";
-import { ClockRotateLeftIcon } from "@icons/clock-rotate-left-icon";
-import { SearchIcon } from "@icons/search-icon";
-import { getDataFrameInfo } from "@lib/dataframe/dataframe-utils";
+import { ArrowRightArrowLeftIcon } from '@components/icons/arrow-right-arrow-left-icon'
+import { SlidersIcon } from '@components/icons/sliders-icon'
+import { TableIcon } from '@components/icons/table-icon'
+import { ToolbarTabButton } from '@components/toolbar/toolbar-tab-button'
+import { ChartIcon } from '@icons/chart-icon'
+import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
+import { SearchIcon } from '@icons/search-icon'
+import { getDataFrameInfo } from '@lib/dataframe/dataframe-utils'
 import {
   currentSheet,
   currentSheetId,
   currentSheets,
   HistoryContext,
-} from "@providers/history-provider";
+} from '@providers/history-provider'
 
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from 'react'
 
-import { HistoryPanel } from "@components/pages/history-panel";
+import { HistoryPanel } from '@components/pages/history-panel'
 
-import { BaseCol } from "@/components/layout/base-col";
+import { BaseCol } from '@/components/layout/base-col'
 
-import { FileIcon } from "@/components/icons/file-icon";
-import { Card } from "@/components/shadcn/ui/themed/card";
-import { TabSlideBar } from "@/components/slide-bar/tab-slide-bar";
-import { ToolbarTabGroup } from "@/components/toolbar/toolbar-tab-group";
+import { FileIcon } from '@/components/icons/file-icon'
+import { Card } from '@/components/shadcn/ui/themed/card'
+import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import {
   NO_DIALOG,
   TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_SAVE_AS,
   type IDialogParams,
-} from "@/consts";
-import { API_MOTIF_DATASETS_URL } from "@/lib/edb/edb";
-import { httpFetch } from "@/lib/http/http-fetch";
-import { FileImageIcon } from "@components/icons/file-image-icon";
-import { SaveIcon } from "@components/icons/save-icon";
-import { SaveImageDialog } from "@components/pages/save-image-dialog";
-import { SearchBox } from "@components/search-box";
-import { DropdownMenuItem } from "@components/shadcn/ui/themed/dropdown-menu";
+} from '@/consts'
+import { API_MOTIF_DATASETS_URL } from '@/lib/edb/edb'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { FileImageIcon } from '@components/icons/file-image-icon'
+import { SaveIcon } from '@components/icons/save-icon'
+import { SaveImageDialog } from '@components/pages/save-image-dialog'
+import { SearchBox } from '@components/search-box'
+import { DropdownMenuItem } from '@components/shadcn/ui/themed/dropdown-menu'
 import {
   ToggleGroup,
   ToggleGroupItem,
-} from "@components/shadcn/ui/themed/toggle-group";
-import { TabContentPanel } from "@components/tab-content-panel";
-import { TabProvider, type ITab } from "@components/tab-provider";
-import { Shortcuts } from "@components/toolbar/shortcuts";
-import { ShortcutLayout } from "@layouts/shortcut-layout";
-import type { BaseDataFrame } from "@lib/dataframe/base-dataframe";
-import { DataFrame } from "@lib/dataframe/dataframe";
-import { downloadDataFrame } from "@lib/dataframe/dataframe-utils";
-import { downloadImageAutoFormat } from "@lib/image-utils";
-import { makeRandId } from "@lib/utils";
-import { CoreProviders } from "@providers/core-providers";
-import { useQuery } from "@tanstack/react-query";
-import { PLOT_CLS } from "../../matcalc/modules/heatmap/heatmap-panel";
-import { DisplayPropsPanel } from "./display-props-panel";
-import MODULE_INFO from "./module.json";
-import { MotifsPropsPanel } from "./motifs-props-panel";
-import { MotifsContext, MotifsProvider } from "./motifs-provider";
+} from '@components/shadcn/ui/themed/toggle-group'
+import { TabContentPanel } from '@components/tab-content-panel'
+import { TabProvider, type ITab } from '@components/tab-provider'
+import { Shortcuts } from '@components/toolbar/shortcuts'
+import { ShortcutLayout } from '@layouts/shortcut-layout'
+import type { BaseDataFrame } from '@lib/dataframe/base-dataframe'
+import { DataFrame } from '@lib/dataframe/dataframe'
+import { downloadDataFrame } from '@lib/dataframe/dataframe-utils'
+import { downloadImageAutoFormat } from '@lib/image-utils'
+import { makeRandId } from '@lib/utils'
+import { CoreProviders } from '@providers/core-providers'
+import { useQuery } from '@tanstack/react-query'
+import { PLOT_CLS } from '../../matcalc/modules/heatmap/heatmap-panel'
+import { DisplayPropsPanel } from './display-props-panel'
+import MODULE_INFO from './module.json'
+import { MotifsPropsPanel } from './motifs-props-panel'
+import { MotifsContext, MotifsProvider } from './motifs-provider'
 
 export function MotifsPage() {
   //const [fileStore, filesDispatch] = useReducer(filesReducer, { files: [] })
   //const [fileData, setFileData] = useState<{ [key: string]: string[] }>({})
 
-  const { state, search, setSearch, setDatasets } = useContext(MotifsContext)!;
+  const { state, search, setSearch, setDatasets } = useContext(MotifsContext)!
   //const search = useContext(MotifSearchContext)!
 
   //const searchRef = useRef<HTMLTextAreaElement>(null)
-  const [selectedTab, setSelectedTab] = useState("Plot");
+  const [selectedTab, setSelectedTab] = useState('Plot')
 
-  const canvasRef = useRef(null);
-  const downloadRef = useRef<HTMLAnchorElement>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
-  const [revComp, setRevComp] = useState(false);
-  const [mode, setMode] = useState<Mode>("Bits");
-  const [showFileMenu, setShowFileMenu] = useState(false);
-  const [scale, setScale] = useState(1);
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG });
+  const canvasRef = useRef(null)
+  const downloadRef = useRef<HTMLAnchorElement>(null)
+  const svgRef = useRef<SVGSVGElement>(null)
+  const [revComp, setRevComp] = useState(false)
+  const [mode, setMode] = useState<Mode>('Bits')
+  const [showFileMenu, setShowFileMenu] = useState(false)
+  const [scale, setScale] = useState(1)
+  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  const { history, historyDispatch } = useContext(HistoryContext);
+  const { history, historyDispatch } = useContext(HistoryContext)
 
   //const [, setSelection] = useContext(SelectionRangeContext)
 
   const [displayProps, setDisplayProps] = useState<IDisplayProps>(
     DEFAULT_DISPLAY_PROPS
-  );
+  )
 
   function adjustScale(scale: number) {
-    setScale(scale);
-    setDisplayProps({ ...displayProps, scale });
+    setScale(scale)
+    setDisplayProps({ ...displayProps, scale })
   }
 
   function loadTestData() {
-    setSearch({ search: "BCL6", reverse: revComp, complement: revComp });
+    setSearch({ search: 'BCL6', reverse: revComp, complement: revComp })
   }
 
   function save(format: string) {
-    const df = currentSheet(history)[0]!;
+    const df = currentSheet(history)[0]!
 
     if (!df) {
-      return;
+      return
     }
 
-    const sep = format === "csv" ? "," : "\t";
+    const sep = format === 'csv' ? ',' : '\t'
 
     downloadDataFrame(df, downloadRef, {
       hasHeader: true,
       hasIndex: true,
       file: `motif.${format}`,
       sep,
-    });
+    })
 
     //setShowFileMenu(false)
   }
 
   const datasetsQuery = useQuery({
-    queryKey: ["datasets"],
+    queryKey: ['datasets'],
     queryFn: async () => {
       //const token = await loadAccessToken()
-      console.log(API_MOTIF_DATASETS_URL);
-      const res = await httpFetch.getJson(API_MOTIF_DATASETS_URL);
+      console.log(API_MOTIF_DATASETS_URL)
+      const res = await httpFetch.getJson<{ data: string[] }>(
+        API_MOTIF_DATASETS_URL
+      )
 
-      return res.data;
+      return res.data
     },
-  });
+  })
 
   useEffect(() => {
     if (datasetsQuery.data) {
@@ -153,9 +151,9 @@ export function MotifsPage() {
         new Map<string, boolean>(
           datasetsQuery.data.map((dataset: string) => [dataset, true])
         )
-      );
+      )
     }
-  }, [datasetsQuery.data]);
+  }, [datasetsQuery.data])
 
   // if (datasetsQuery.isPending) {
   //   return "Loading..."
@@ -166,34 +164,34 @@ export function MotifsPage() {
   // }
 
   useEffect(() => {
-    setSearch({ ...search, reverse: revComp, complement: revComp });
-  }, [revComp]);
+    setSearch({ ...search, reverse: revComp, complement: revComp })
+  }, [revComp])
 
   useEffect(() => {
-    setDisplayProps({ ...displayProps, mode });
-  }, [mode]);
+    setDisplayProps({ ...displayProps, mode })
+  }, [mode])
 
   useEffect(() => {
     const dataframes: BaseDataFrame[] = state.order.map((i) => {
-      const motif = state.motifs.get(i)!;
+      const motif = state.motifs.get(i)!
 
       const df = new DataFrame({
         name: motif.motifName,
         data: motif.weights,
-        columns: ["A", "C", "G", "T"],
-      }).t();
+        columns: ['A', 'C', 'G', 'T'],
+      }).t()
 
-      return df;
-    });
+      return df
+    })
 
     if (dataframes.length > 0) {
       historyDispatch({
-        type: "open",
+        type: 'open',
         description: `Load`,
         sheets: dataframes,
-      });
+      })
     }
-  }, [state.order, state.motifs]);
+  }, [state.order, state.motifs])
 
   const fileMenuTabs: ITab[] = [
     {
@@ -204,7 +202,7 @@ export function MotifsPage() {
           <DropdownMenuItem
             aria-label="Download as TXT"
             onClick={() => {
-              save("txt");
+              save('txt')
             }}
           >
             <FileIcon stroke="" />
@@ -213,7 +211,7 @@ export function MotifsPage() {
           <DropdownMenuItem
             aria-label="Download as CSV"
             onClick={() => {
-              save("csv");
+              save('csv')
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_CSV}</span>
@@ -223,7 +221,7 @@ export function MotifsPage() {
     },
     {
       //id: nanoid(),
-      id: "Export",
+      id: 'Export',
       content: (
         <>
           <DropdownMenuItem
@@ -234,7 +232,7 @@ export function MotifsPage() {
                 canvasRef,
                 downloadRef,
                 `motifs.png`
-              );
+              )
             }}
           >
             <FileImageIcon stroke="" />
@@ -248,7 +246,7 @@ export function MotifsPage() {
                 canvasRef,
                 downloadRef,
                 `motifs.svg`
-              );
+              )
             }}
           >
             <span>Download as SVG</span>
@@ -256,12 +254,12 @@ export function MotifsPage() {
         </>
       ),
     },
-  ];
+  ]
 
   const tabs: ITab[] = [
     {
       //id: nanoid(),
-      id: "Home",
+      id: 'Home',
       content: (
         <>
           <ToolbarTabGroup title="File">
@@ -281,7 +279,7 @@ export function MotifsPage() {
               title="Save mutation table"
               onClick={() =>
                 setShowDialog({
-                  id: makeRandId("save"),
+                  id: makeRandId('save'),
                 })
               }
             >
@@ -297,7 +295,7 @@ export function MotifsPage() {
               type="single"
               value={mode}
               onValueChange={(value) => {
-                setMode(value as Mode);
+                setMode(value as Mode)
               }}
               className="rounded-theme flex flex-row overflow-hidden gap-x-0.5"
             >
@@ -353,25 +351,25 @@ export function MotifsPage() {
         </>
       ),
     },
-  ];
+  ]
 
   const rightTabs: ITab[] = [
     {
       //id: nanoid(),
-      id: "History",
+      id: 'History',
       icon: <ClockRotateLeftIcon />,
       content: <HistoryPanel />,
     },
-  ];
+  ]
 
   const chartTabs: ITab[] = [
     {
-      id: "Motifs",
+      id: 'Motifs',
       icon: <SearchIcon />,
       content: <MotifsPropsPanel />,
     },
     {
-      id: "Display",
+      id: 'Display',
       icon: <SlidersIcon />,
       content: (
         <DisplayPropsPanel
@@ -380,12 +378,12 @@ export function MotifsPage() {
         />
       ),
     },
-  ];
+  ]
 
   const sideTabs: ITab[] = [
     {
       //id: nanoid(),
-      id: "Plot",
+      id: 'Plot',
       icon: (
         <ChartIcon fill="fill-theme" w="w-5" style={{ fillOpacity: 0.75 }} />
       ),
@@ -406,7 +404,7 @@ export function MotifsPage() {
     },
     {
       //id: nanoid(),
-      id: "Table",
+      id: 'Table',
       icon: (
         <TableIcon
           stroke="stroke-theme"
@@ -423,9 +421,9 @@ export function MotifsPage() {
               dataFrames={currentSheets(history)[0]!}
               onTabChange={(selectedTab) => {
                 historyDispatch({
-                  type: "goto-sheet",
+                  type: 'goto-sheet',
                   sheetId: selectedTab.index,
-                });
+                })
               }}
               className="relative"
             />
@@ -453,11 +451,11 @@ export function MotifsPage() {
         // />
       ),
     },
-  ];
+  ]
 
   return (
     <>
-      {showDialog.id.includes("save") && (
+      {showDialog.id.includes('save') && (
         <SaveImageDialog
           open="open"
           onSave={(format) => {
@@ -466,8 +464,8 @@ export function MotifsPage() {
               canvasRef,
               downloadRef,
               `motifs.${format.ext}`
-            );
-            setShowDialog({ ...NO_DIALOG });
+            )
+            setShowDialog({ ...NO_DIALOG })
           }}
           onCancel={() => setShowDialog({ ...NO_DIALOG })}
         />
@@ -488,18 +486,18 @@ export function MotifsPage() {
               })
             }
             onSearch={(event, value) => {
-              if (event === "search") {
+              if (event === 'search') {
                 setSearch({
                   search: value,
                   reverse: revComp,
                   complement: revComp,
-                });
+                })
               } else {
                 setSearch({
-                  search: "",
+                  search: '',
                   reverse: revComp,
                   complement: revComp,
-                });
+                })
               }
             }}
             className="w-80 text-xs font-medium"
@@ -551,7 +549,7 @@ export function MotifsPage() {
         <canvas ref={canvasRef} width={0} height={0} className="hidden" />
       </ShortcutLayout>
     </>
-  );
+  )
 }
 
 export function MotifsQueryPage() {
@@ -561,5 +559,5 @@ export function MotifsQueryPage() {
         <MotifsPage />
       </MotifsProvider>
     </CoreProviders>
-  );
+  )
 }

@@ -1,51 +1,51 @@
-"use client";
+'use client'
 
-import { ToolbarOpenFile } from "@components/toolbar/toolbar-open-files";
+import { ToolbarOpenFile } from '@components/toolbar/toolbar-open-files'
 
-import { TabbedDataFrames } from "@components/table/tabbed-dataframes";
+import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
 
-import { ToolbarFooter } from "@components/toolbar/toolbar-footer";
+import { ToolbarFooter } from '@components/toolbar/toolbar-footer'
 
 import {
   ShowOptionsMenu,
   Toolbar,
   ToolbarMenu,
   ToolbarPanel,
-} from "@components/toolbar/toolbar";
-import { ToolbarSeparator } from "@components/toolbar/toolbar-separator";
-import { PlayIcon } from "@icons/play-icon";
+} from '@components/toolbar/toolbar'
+import { ToolbarSeparator } from '@components/toolbar/toolbar-separator'
+import { PlayIcon } from '@icons/play-icon'
 
-import { ZoomSlider } from "@components/toolbar/zoom-slider";
+import { ZoomSlider } from '@components/toolbar/zoom-slider'
 
-import { DataFrameReader } from "@lib/dataframe/dataframe-reader";
+import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
 import {
   downloadDataFrame,
   getFormattedShape,
-} from "@lib/dataframe/dataframe-utils";
+} from '@lib/dataframe/dataframe-utils'
 
-import { OpenFiles } from "@components/pages/open-files";
+import { OpenFiles } from '@components/pages/open-files'
 
-import { BasicAlertDialog } from "@components/dialog/basic-alert-dialog";
-import { ToolbarTabGroup } from "@components/toolbar/toolbar-tab-group";
-import { Tooltip } from "@components/tooltip";
+import { BasicAlertDialog } from '@components/dialog/basic-alert-dialog'
+import { ToolbarTabGroup } from '@components/toolbar/toolbar-tab-group'
+import { Tooltip } from '@components/tooltip'
 
-import { ToolbarTabButton } from "@components/toolbar/toolbar-tab-button";
-import { ClockRotateLeftIcon } from "@icons/clock-rotate-left-icon";
-import { OpenIcon } from "@icons/open-icon";
-import { SaveIcon } from "@icons/save-icon";
+import { ToolbarTabButton } from '@components/toolbar/toolbar-tab-button'
+import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
+import { OpenIcon } from '@icons/open-icon'
+import { SaveIcon } from '@icons/save-icon'
 import {
   currentSheet,
   currentSheetId,
   currentSheets,
   HistoryContext,
-} from "@providers/history-provider";
+} from '@providers/history-provider'
 
-import { createAnnotationTable } from "@/lib/genomic/annotate";
-import { queryClient } from "@/query";
+import { createAnnotationTable } from '@/lib/genomic/annotate'
+import { queryClient } from '@/query'
 
-import { useContext, useRef, useState } from "react";
+import { useContext, useRef, useState } from 'react'
 
-import { SlidersIcon } from "@components/icons/sliders-icon";
+import { SlidersIcon } from '@components/icons/sliders-icon'
 
 import {
   type IDialogParams,
@@ -57,45 +57,45 @@ import {
   TEXT_RUN,
   TEXT_SAVE_AS,
   TEXT_SETTINGS,
-} from "@/consts";
-import { API_GENES_GENOMES_URL } from "@/lib/edb/edb";
-import { ToolbarIconButton } from "@components/toolbar/toolbar-icon-button";
-import { UndoShortcuts } from "@components/toolbar/undo-shortcuts";
-import { ShortcutLayout } from "@layouts/shortcut-layout";
-import axios from "axios";
+} from '@/consts'
+import { API_GENES_GENOMES_URL } from '@/lib/edb/edb'
+import { ToolbarIconButton } from '@components/toolbar/toolbar-icon-button'
+import { UndoShortcuts } from '@components/toolbar/undo-shortcuts'
+import { ShortcutLayout } from '@layouts/shortcut-layout'
+import axios from 'axios'
 
-import { FileIcon } from "@/components/icons/file-icon";
-import { VCenterRow } from "@/components/layout/v-center-row";
-import { TabSlideBar } from "@/components/slide-bar/tab-slide-bar";
-import { ToolbarButton } from "@/components/toolbar/toolbar-button";
-import { httpFetch } from "@/lib/http/http-fetch";
-import { textToLines } from "@/lib/text/lines";
-import { UploadIcon } from "@components/icons/upload-icon";
-import { HistoryPanel } from "@components/pages/history-panel";
-import { PropsPanel } from "@components/props-panel";
+import { FileIcon } from '@/components/icons/file-icon'
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { ToolbarButton } from '@/components/toolbar/toolbar-button'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { textToLines } from '@/lib/text/lines'
+import { UploadIcon } from '@components/icons/upload-icon'
+import { HistoryPanel } from '@components/pages/history-panel'
+import { PropsPanel } from '@components/props-panel'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from "@components/shadcn/ui/themed/accordion";
-import { DropdownMenuItem } from "@components/shadcn/ui/themed/dropdown-menu";
-import { Label } from "@components/shadcn/ui/themed/label";
+} from '@components/shadcn/ui/themed/accordion'
+import { DropdownMenuItem } from '@components/shadcn/ui/themed/dropdown-menu'
+import { Label } from '@components/shadcn/ui/themed/label'
 import {
   RadioGroup,
   RadioGroupItem,
-} from "@components/shadcn/ui/themed/radio-group";
-import type { ITab } from "@components/tab-provider";
-import { truncate } from "@lib/text/text";
-import { makeRandId } from "@lib/utils";
-import { CoreProviders } from "@providers/core-providers";
-import { useQuery } from "@tanstack/react-query";
-import MODULE_INFO from "./module.json";
+} from '@components/shadcn/ui/themed/radio-group'
+import type { ITab } from '@components/tab-provider'
+import { truncate } from '@lib/text/text'
+import { makeRandId } from '@lib/utils'
+import { CoreProviders } from '@providers/core-providers'
+import { useQuery } from '@tanstack/react-query'
+import MODULE_INFO from './module.json'
 
 export interface IGeneDbInfo {
-  name: string;
-  genome: string;
-  version: string;
+  name: string
+  genome: string
+  version: string
 }
 
 function AnnotationPage() {
@@ -103,82 +103,82 @@ function AnnotationPage() {
 
   //const [, setTestGeneCollection] = useState<IGeneSetCollection | null>(null)
 
-  const downloadRef = useRef<HTMLAnchorElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const downloadRef = useRef<HTMLAnchorElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  const [assembly, setAssembly] = useState<string | null>(null);
+  const [assembly, setAssembly] = useState<string | null>(null)
 
-  const { history, historyDispatch } = useContext(HistoryContext);
+  const { history, historyDispatch } = useContext(HistoryContext)
 
-  const [rightTab, setRightTab] = useState(TEXT_SETTINGS);
-  const [showSideBar, setShowSideBar] = useState(true);
+  const [rightTab, setRightTab] = useState(TEXT_SETTINGS)
+  const [showSideBar, setShowSideBar] = useState(true)
 
-  const [scale, setScale] = useState(3);
-  const [selectedTab] = useState(0);
+  const [scale, setScale] = useState(3)
+  const [selectedTab] = useState(0)
   const [displayProps, setDisplayProps] = useState({
     scale: 1,
     xrange: [0, 500],
     yrange: [0, 1000],
-  });
+  })
 
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG });
+  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  const [showFileMenu, setShowFileMenu] = useState(false);
+  const [showFileMenu, setShowFileMenu] = useState(false)
 
   function adjustScale(scale: number) {
-    setScale(scale);
-    setDisplayProps({ ...displayProps, scale });
+    setScale(scale)
+    setDisplayProps({ ...displayProps, scale })
   }
 
   function onFileChange(_message: string, files: FileList | null) {
     if (!files) {
-      return;
+      return
     }
 
-    const file: File = files[0]!; // OR const file = files.item(i);
-    const name = file.name;
+    const file: File = files[0]! // OR const file = files.item(i);
+    const name = file.name
 
-    const fileReader = new FileReader();
+    const fileReader = new FileReader()
 
     fileReader.onload = (e) => {
-      const result = e.target?.result;
+      const result = e.target?.result
 
       if (result) {
         const text: string =
-          typeof result === "string" ? result : Buffer.from(result).toString();
+          typeof result === 'string' ? result : Buffer.from(result).toString()
 
-        const lines = text.split(/[\r\n]+/g).filter((line) => line.length > 0);
+        const lines = text.split(/[\r\n]+/g).filter((line) => line.length > 0)
         //.slice(0, 100)
 
         //const locs = parseLocations(lines)
-        const retMap: { [key: string]: Set<string> } = {};
-        const geneSets: string[] = lines[0]!.split("\t");
+        const retMap: { [key: string]: Set<string> } = {}
+        const geneSets: string[] = lines[0]!.split('\t')
 
-        lines[0]!.split("\t").forEach((gs) => {
-          retMap[gs] = new Set<string>();
-        });
+        lines[0]!.split('\t').forEach((gs) => {
+          retMap[gs] = new Set<string>()
+        })
 
         lines.slice(1).forEach((line) => {
-          line.split("\t").forEach((gene, genei) => {
-            if (gene.length > 0 && gene !== "----") {
-              retMap[geneSets[genei]!]!.add(gene);
+          line.split('\t').forEach((gene, genei) => {
+            if (gene.length > 0 && gene !== '----') {
+              retMap[geneSets[genei]!]!.add(gene)
             }
-          });
-        });
+          })
+        })
 
         const table = new DataFrameReader()
           .indexCols(0)
-          .ignoreRows(file.name.includes("gmx") ? [1] : [])
+          .ignoreRows(file.name.includes('gmx') ? [1] : [])
           .read(lines)
-          .setName(file.name);
+          .setName(file.name)
 
         //setDataFile(table)
 
         historyDispatch({
-          type: "open",
+          type: 'open',
           description: `Load ${name}`,
           sheets: [table.setName(truncate(name, { length: 16 }))],
-        });
+        })
 
         // setTestGeneCollection({
         //   name,
@@ -188,48 +188,48 @@ function AnnotationPage() {
         //   })),
         // })
       }
-    };
+    }
 
-    fileReader.readAsText(files[0]!);
+    fileReader.readAsText(files[0]!)
   }
 
   async function annotate() {
-    const df = currentSheet(history)[0]!;
+    const df = currentSheet(history)[0]!
 
-    console.log(genomesQuery.data);
+    console.log(genomesQuery.data)
 
-    const dfa = await createAnnotationTable(
-      queryClient,
-      df,
-      assembly ?? genomesQuery.data[0].genome
-    );
+    const a =
+      assembly ??
+      (genomesQuery && genomesQuery.data ? genomesQuery.data[0].genome : '')
+
+    const dfa = await createAnnotationTable(queryClient, df, a)
 
     if (dfa) {
       historyDispatch({
-        type: "add-step",
+        type: 'add-step',
         description: `Annotated`,
         sheets: [dfa],
-      });
+      })
     }
   }
 
-  function save(format: "txt" | "csv") {
-    const df = currentSheet(history)[0]!;
+  function save(format: 'txt' | 'csv') {
+    const df = currentSheet(history)[0]!
 
     if (!df) {
-      return;
+      return
     }
 
-    const sep = format === "csv" ? "," : "\t";
+    const sep = format === 'csv' ? ',' : '\t'
 
     downloadDataFrame(df, downloadRef, {
       hasHeader: true,
       hasIndex: false,
       file: `table.${format}`,
       sep,
-    });
+    })
 
-    setShowFileMenu(false);
+    setShowFileMenu(false)
   }
 
   // useEffect(() => {
@@ -310,35 +310,37 @@ function AnnotationPage() {
 
   async function loadTestData() {
     const res = await queryClient.fetchQuery({
-      queryKey: ["test_data"],
-      queryFn: () => axios.get("/data/test/annotate.txt"),
-    });
+      queryKey: ['test_data'],
+      queryFn: () => axios.get('/data/test/annotate.txt'),
+    })
 
-    const lines = textToLines(res.data);
+    const lines = textToLines(res.data)
 
-    const table = new DataFrameReader().indexCols(0).read(lines);
+    const table = new DataFrameReader().indexCols(0).read(lines)
 
     //resolve({ ...table, name: file.name })
 
     historyDispatch({
-      type: "open",
+      type: 'open',
       description: `Load test locations`,
-      sheets: [table.setName("Test Locations")],
-    });
+      sheets: [table.setName('Test Locations')],
+    })
   }
 
   const genomesQuery = useQuery({
-    queryKey: ["genomes"],
+    queryKey: ['genomes'],
     queryFn: async () => {
       //const token = await loadAccessToken()
 
-      const res = await httpFetch.getJson(API_GENES_GENOMES_URL);
+      const res = await httpFetch.getJson<{ data: IGeneDbInfo[] }>(
+        API_GENES_GENOMES_URL
+      )
 
-      return res.data;
+      return res.data
     },
-  });
+  })
 
-  const dbs: IGeneDbInfo[] = genomesQuery.data ? genomesQuery.data : [];
+  const dbs: IGeneDbInfo[] = genomesQuery.data ? genomesQuery.data : []
 
   //
   // Load available pathways
@@ -374,7 +376,7 @@ function AnnotationPage() {
   const tabs: ITab[] = [
     {
       //id: nanoid(),
-      id: "Home",
+      id: 'Home',
       content: (
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
@@ -382,8 +384,8 @@ function AnnotationPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: makeRandId("open"),
-                  });
+                    id: makeRandId('open'),
+                  })
                 }
               }}
               multiple={true}
@@ -393,7 +395,7 @@ function AnnotationPage() {
               <Tooltip content="Save table">
                 <ToolbarIconButton
                   arial-label="Save table to local file"
-                  onClick={() => save("txt")}
+                  onClick={() => save('txt')}
                 >
                   <SaveIcon />
                 </ToolbarIconButton>
@@ -408,21 +410,21 @@ function AnnotationPage() {
                 <span>{TEXT_RUN}</span>
               </ToolbarButton>
             </ToolbarTabGroup>
-          </ToolbarTabGroup>{" "}
+          </ToolbarTabGroup>{' '}
           <ToolbarSeparator />
         </>
       ),
     },
-  ];
+  ]
 
   const rightTabs: ITab[] = [
     {
       //id: nanoid(),
       icon: <SlidersIcon />,
-      id: "Settings",
+      id: 'Settings',
       content: (
         <PropsPanel>
-          <ScrollAccordion value={["databases"]}>
+          <ScrollAccordion value={['databases']}>
             <AccordionItem value="databases">
               <AccordionTrigger>Databases</AccordionTrigger>
               <AccordionContent>
@@ -451,20 +453,20 @@ function AnnotationPage() {
     {
       //id: nanoid(),
       icon: <ClockRotateLeftIcon />,
-      id: "History",
+      id: 'History',
       content: <HistoryPanel />,
     },
-  ];
+  ]
 
   const fileMenuTabs: ITab[] = [
     {
       //id: nanoid(),
-      id: "Open",
+      id: 'Open',
       icon: <OpenIcon stroke="" w="w-5" />,
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: makeRandId("open"), params: {} })}
+          onClick={() => setShowDialog({ id: makeRandId('open'), params: {} })}
         >
           <UploadIcon stroke="" />
 
@@ -479,7 +481,7 @@ function AnnotationPage() {
         <>
           <DropdownMenuItem
             aria-label="Save text file"
-            onClick={() => save("txt")}
+            onClick={() => save('txt')}
           >
             <FileIcon />
             <span>{TEXT_DOWNLOAD_AS_TXT}</span>
@@ -487,20 +489,20 @@ function AnnotationPage() {
 
           <DropdownMenuItem
             aria-label="Save CSV file"
-            onClick={() => save("csv")}
+            onClick={() => save('csv')}
           >
             <span>{TEXT_DOWNLOAD_AS_CSV}</span>
           </DropdownMenuItem>
         </>
       ),
     },
-  ];
+  ]
 
   return (
     <>
-      {showDialog.id === "alert" && (
+      {showDialog.id === 'alert' && (
         <BasicAlertDialog onReponse={() => setShowDialog({ ...NO_DIALOG })}>
-          {showDialog.params!.message}
+          {showDialog.params!.message as string}
         </BasicAlertDialog>
       )}
 
@@ -525,7 +527,7 @@ function AnnotationPage() {
               <ShowOptionsMenu
                 show={showSideBar}
                 onClick={() => {
-                  setShowSideBar(!showSideBar);
+                  setShowSideBar(!showSideBar)
                 }}
               />
             }
@@ -575,12 +577,12 @@ function AnnotationPage() {
             dataFrames={currentSheets(history)[0]!}
             onTabChange={(selectedTab) => {
               historyDispatch({
-                type: "goto-sheet",
+                type: 'goto-sheet',
                 sheetId: selectedTab.index,
-              });
+              })
             }}
             className="mx-2"
-            style={{ marginBottom: "-2px" }}
+            style={{ marginBottom: '-2px' }}
           />
           {/* </Card> */}
         </TabSlideBar>
@@ -595,7 +597,7 @@ function AnnotationPage() {
           </>
         </ToolbarFooter>
 
-        {showDialog.id.includes("open") && (
+        {showDialog.id.includes('open') && (
           <OpenFiles
             open={showDialog.id}
             //onOpenChange={() => setShowDialog({...NO_DIALOG})}
@@ -608,7 +610,7 @@ function AnnotationPage() {
         <canvas ref={canvasRef} width={0} height={0} className="hidden" />
       </ShortcutLayout>
     </>
-  );
+  )
 }
 
 export function AnnotationQueryPage() {
@@ -616,5 +618,5 @@ export function AnnotationQueryPage() {
     <CoreProviders>
       <AnnotationPage />
     </CoreProviders>
-  );
+  )
 }

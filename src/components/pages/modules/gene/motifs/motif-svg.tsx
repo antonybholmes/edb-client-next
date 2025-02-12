@@ -4,8 +4,6 @@ import { type IElementProps } from '@interfaces/element-props'
 
 import { forwardRef, useContext, useMemo } from 'react'
 
-import { type IFieldMap } from '@interfaces/field-map'
-
 import { argsort } from '@lib/math/argsort'
 import { range } from '@lib/math/range'
 import { sum } from '@lib/math/sum'
@@ -60,7 +58,7 @@ export const DEFAULT_DISPLAY_PROPS: IDisplayProps = {
 }
 
 interface IProps extends IElementProps {
-  displayProps?: IFieldMap
+  displayProps?: IDisplayProps
 }
 
 export const MotifSvg = forwardRef<SVGElement, IProps>(function MotifSvg(
@@ -80,8 +78,8 @@ export const MotifSvg = forwardRef<SVGElement, IProps>(function MotifSvg(
 
   const maxN = Math.max(
     ...state.order
-      .map(id => state.motifs.get(id)!)
-      .map(motif => motif.weights.length)
+      .map((id) => state.motifs.get(id)!)
+      .map((motif) => motif.weights.length)
   )
 
   const innerWidth = _displayProps.letterWidth * maxN
@@ -140,7 +138,7 @@ export const MotifSvg = forwardRef<SVGElement, IProps>(function MotifSvg(
           const xax = new Axis()
             .setDomain([0, motif.weights.length])
             .setLength(w)
-            .setTicks(range(1, n + 1).map(x => x - 0.5))
+            .setTicks(range(1, n + 1).map((x) => x - 0.5))
             .setTickLabels(range(1, n + 1))
 
           // if (_displayProps.revComp) {
@@ -160,10 +158,10 @@ export const MotifSvg = forwardRef<SVGElement, IProps>(function MotifSvg(
 
           // normalize
 
-          const nweights = motif.weights.map(pw => {
-            const pw2 = pw.map(w => w + MIN_ADJ)
+          const nweights = motif.weights.map((pw) => {
+            const pw2 = pw.map((w) => w + MIN_ADJ)
             const s = sum(pw2)
-            return pw2.map(w => w / s)
+            return pw2.map((w) => w / s)
           })
 
           return (
@@ -174,7 +172,7 @@ export const MotifSvg = forwardRef<SVGElement, IProps>(function MotifSvg(
               })`}
               key={index}
             >
-              {range(n).map(r => {
+              {range(n).map((r) => {
                 const npw = nweights[r]!
                 const idx = argsort(npw) //dft.row(r)!.values)
 
@@ -183,9 +181,9 @@ export const MotifSvg = forwardRef<SVGElement, IProps>(function MotifSvg(
                 if (_displayProps.mode == 'Bits') {
                   // sum of p * log2(p)
                   const U = -idx
-                    .map(c => npw[c]!)
-                    .filter(p => p > 0)
-                    .map(p => p * Math.log2(p))
+                    .map((c) => npw[c]!)
+                    .filter((p) => p > 0)
+                    .map((p) => p * Math.log2(p))
                     .reduce((a, b) => a + b)
 
                   ic_final = IC_TOTAL - U
@@ -205,7 +203,7 @@ export const MotifSvg = forwardRef<SVGElement, IProps>(function MotifSvg(
                     }, 0)`}
                     key={r}
                   >
-                    {idx.map(c => {
+                    {idx.map((c) => {
                       const base: string = BASE_IDS[c]!
                       const color =
                         _displayProps.baseColors[base.toLowerCase() as DNABase]

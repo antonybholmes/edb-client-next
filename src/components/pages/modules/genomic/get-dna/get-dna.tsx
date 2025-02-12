@@ -102,7 +102,7 @@ function GetDNAPage() {
 
     const dnaseqs: (IDNA | null)[] = await Promise.all(
       seqs.map(
-        async loc =>
+        async (loc) =>
           await fetchDNA(queryClient, loc, {
             reverse: modeRev,
             complement: modeComp,
@@ -110,7 +110,7 @@ function GetDNAPage() {
       )
     )
 
-    setOutputSeqs(dnaseqs.filter(x => x !== null) as IDNA[])
+    setOutputSeqs(dnaseqs.filter((x) => x !== null) as IDNA[])
   }
 
   function save(format = 'fasta') {
@@ -125,7 +125,7 @@ function GetDNAPage() {
       default:
         download(
           outputSeqs
-            .map(seq => `>${seq.location.toString()}\n${seq.seq}`)
+            .map((seq) => `>${seq.location.toString()}\n${seq.seq}`)
             .join('\n'),
           downloadRef,
           'dna.fasta'
@@ -154,7 +154,7 @@ function GetDNAPage() {
         default:
           setOutput(
             outputSeqs
-              .map(seq => `>${seq.location.toString()}\n${seq.seq}`)
+              .map((seq) => `>${seq.location.toString()}\n${seq.seq}`)
               .join('\n')
           )
           break
@@ -170,7 +170,7 @@ function GetDNAPage() {
         <ToolbarTabPanel>
           <ToolbarTabGroup>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: makeRandId('open'),
@@ -318,7 +318,7 @@ function GetDNAPage() {
     <>
       {showDialog.id === 'alert' && (
         <BasicAlertDialog onReponse={() => setShowDialog({ ...NO_DIALOG })}>
-          {showDialog.params!.message}
+          {showDialog.params!.message as string}
         </BasicAlertDialog>
       )}
 
@@ -360,7 +360,7 @@ function GetDNAPage() {
                   className="grow whitespace-pre"
                   placeholder=">chr3:187453454-187454415"
                   value={text}
-                  onChange={e => {
+                  onChange={(e) => {
                     setText(e.target.value)
                   }}
                 />
@@ -404,14 +404,14 @@ function GetDNAPage() {
               <CollapseBlock name="Output">
                 <Switch
                   checked={modeRev}
-                  onCheckedChange={state => setModeRev(state)}
+                  onCheckedChange={(state) => setModeRev(state)}
                 >
                   Reverse
                 </Switch>
 
                 <Switch
                   checked={modeComp}
-                  onCheckedChange={state => setModeComp(state)}
+                  onCheckedChange={(state) => setModeComp(state)}
                 >
                   Compliment
                 </Switch>
@@ -431,7 +431,7 @@ function GetDNAPage() {
                       },
                     ]}
                     value={outputMode}
-                    onTabChange={selectedTab =>
+                    onTabChange={(selectedTab) =>
                       setOutputMode(selectedTab.tab.id)
                     }
                   >
@@ -450,7 +450,7 @@ function GetDNAPage() {
             open={showDialog.id}
             //onOpenChange={() => setShowDialog({...NO_DIALOG})}
             onFileChange={(_, files) =>
-              onTextFileChange(_, files, files => {
+              onTextFileChange(_, files, (files) => {
                 setText(files[0]!.text)
               })
             }

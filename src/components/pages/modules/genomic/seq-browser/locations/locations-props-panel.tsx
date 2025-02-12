@@ -112,10 +112,11 @@ export function LocationsPropsPanel({
           showClose={true}
           title={MODULE_INFO.name}
           modalType="Warning"
-          onReponse={r => {
+          onReponse={(r) => {
             if (r === TEXT_OK) {
               const newLocations = locations.filter(
-                l => l.loc !== showDialog.params!.location.loc
+                (l) =>
+                  l.loc !== (showDialog.params!.location as GenomicLocation).loc
               )
               setLocations(newLocations)
             }
@@ -128,8 +129,8 @@ export function LocationsPropsPanel({
 
       {showDialog.id.includes('edit-loc') && (
         <LocationDialog
-          index={showDialog.params!.index}
-          location={showDialog.params!.location}
+          index={showDialog.params!.index as number}
+          location={showDialog.params!.location as GenomicLocation}
           onCancel={() => setShowDialog({ ...NO_DIALOG })}
           callback={(index, location) => {
             if (index === -1) {
@@ -160,7 +161,7 @@ export function LocationsPropsPanel({
               <IconButton
                 onClick={() => {
                   downloadJson(
-                    locations.map(l => l.loc),
+                    locations.map((l) => l.loc),
                     downloadRef,
                     'locations.json'
                   )
@@ -186,7 +187,7 @@ export function LocationsPropsPanel({
         </VCenterRow>
 
         <FileDropPanel
-          onFileDrop={files => {
+          onFileDrop={(files) => {
             if (files.length > 0) {
               onTextFileChange('Open dropped file', files, openLocationFiles)
             }
@@ -194,14 +195,14 @@ export function LocationsPropsPanel({
         >
           <VScrollPanel>
             <Reorder.Group
-              values={locations.map(l => l.loc)}
-              onReorder={order => {
+              values={locations.map((l) => l.loc)}
+              onReorder={(order) => {
                 console.log(order)
-                setLocations(order.map(l => parseLocation(l)))
+                setLocations(order.map((l) => parseLocation(l)))
               }}
               className="flex flex-col"
             >
-              {locations.map(l => {
+              {locations.map((l) => {
                 //const ts = tg.order.map(id => tg.tracks.get(id)!)
 
                 return (
@@ -219,7 +220,7 @@ export function LocationsPropsPanel({
         <OpenFiles
           //onOpenChange={() => setOpen("")}
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
+            onTextFileChange(message, files, (files) => {
               openLocationFiles(files)
             })
           }
