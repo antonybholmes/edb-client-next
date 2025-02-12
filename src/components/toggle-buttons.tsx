@@ -90,7 +90,7 @@ export function ToggleButtonTriggers({
 
     const x = sum(
       rangeMap(
-        index => (tabs[index]?.size ?? defaultWidth) + 0.25,
+        (index) => (tabs[index]?.size ?? defaultWidth) + 0.25,
         0,
         selectedTab.index
       )
@@ -132,7 +132,7 @@ export function ToggleButtonTriggers({
       size={size}
       rounded={rounded}
     >
-      {tabs.map(tab => {
+      {tabs.map((tab) => {
         const tabId = tab.id //getTabId(tab)
         return (
           <ToggleGroupItem

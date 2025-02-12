@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Card,
@@ -7,49 +7,49 @@ import {
   CardHeader,
   CardTitle,
   CenteredCardContainer,
-} from "@components/shadcn/ui/themed/card";
+} from '@components/shadcn/ui/themed/card'
 
-import { HeaderLayout } from "@layouts/header-layout";
+import { HeaderLayout } from '@layouts/header-layout'
 
 import {
   APP_ACCOUNT_SIGNED_OUT_URL,
   EDB_ACCESS_TOKEN_COOKIE,
   EDB_SESSION_COOKIE,
   EDB_USER_COOKIE,
-} from "@/lib/edb/edb";
+} from '@/lib/edb/edb'
 
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from '@auth0/auth0-react'
 
-import { EdbAuthContext } from "@/lib/edb/edb-auth-provider";
-import { CoreProviders } from "@providers/core-providers";
-import Cookies from "js-cookie";
-import { useContext, useEffect } from "react";
-import { Auth0SignInButton } from "./auth0-signin-button";
+import { EdbAuthContext } from '@/lib/edb/edb-auth-provider'
+import { CoreProviders } from '@providers/core-providers'
+import Cookies from 'js-cookie'
+import { useContext, useEffect } from 'react'
+import { Auth0SignInButton } from './auth0-signin-button'
 
 function SignOutPage() {
-  const { signoutUser } = useContext(EdbAuthContext);
+  const { signoutUser } = useContext(EdbAuthContext)
 
-  const { logout } = useAuth0();
+  const { logout } = useAuth0()
 
   useEffect(() => {
     // call signout
     async function signout() {
       try {
-        await signoutUser();
+        await signoutUser()
 
-        Cookies.remove(EDB_SESSION_COOKIE);
-        Cookies.remove(EDB_ACCESS_TOKEN_COOKIE);
-        Cookies.remove(EDB_USER_COOKIE);
+        Cookies.remove(EDB_SESSION_COOKIE)
+        Cookies.remove(EDB_ACCESS_TOKEN_COOKIE)
+        Cookies.remove(EDB_USER_COOKIE)
       } catch (err) {
-        console.error(err);
+        console.error(err)
       }
 
       // auth0 logout
-      logout({ logoutParams: { returnTo: APP_ACCOUNT_SIGNED_OUT_URL } }); // window.location.href } })
+      logout({ logoutParams: { returnTo: APP_ACCOUNT_SIGNED_OUT_URL } }) // window.location.href } })
     }
 
-    signout();
-  }, []);
+    signout()
+  }, [])
 
   return (
     <HeaderLayout>
@@ -79,7 +79,7 @@ function SignOutPage() {
         {/* <CreateAccountLink /> */}
       </CenteredCardContainer>
     </HeaderLayout>
-  );
+  )
 }
 
 export function SignOutQueryPage() {
@@ -97,5 +97,5 @@ export function SignOutQueryPage() {
     <CoreProviders>
       <SignOutPage />
     </CoreProviders>
-  );
+  )
 }

@@ -47,7 +47,7 @@ export function OncoPlotDialog({
     <OKCancelDialog
       open={open}
       title="Oncoplot"
-      onReponse={r => {
+      onReponse={(r) => {
         if (r === TEXT_CANCEL) {
           onCancel?.()
         } else {
@@ -61,7 +61,7 @@ export function OncoPlotDialog({
           <Label>Multi-mode</Label>
           <Select
             defaultValue={multi}
-            onValueChange={value => setMulti(value as MultiMode)}
+            onValueChange={(value) => setMulti(value as MultiMode)}
           >
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Select a mode" />

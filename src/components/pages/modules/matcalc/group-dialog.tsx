@@ -42,7 +42,7 @@ export function GroupDialog({ group, callback, onReponse }: IProps) {
     callback?.({
       ...group,
       name,
-      search: search.split(',').map(x => x.trim().toLowerCase()),
+      search: search.split(',').map((x) => x.trim().toLowerCase()),
       color,
     })
   }
@@ -51,7 +51,7 @@ export function GroupDialog({ group, callback, onReponse }: IProps) {
     <OKCancelDialog
       open={true}
       title="Group Editor"
-      onReponse={r => {
+      onReponse={(r) => {
         if (r === TEXT_CANCEL) {
           onReponse?.(r)
         } else {
@@ -86,7 +86,7 @@ export function GroupDialog({ group, callback, onReponse }: IProps) {
           <Input
             id="name"
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             placeholder="Group name"
             h="lg"
             variant="alt"
@@ -98,7 +98,7 @@ export function GroupDialog({ group, callback, onReponse }: IProps) {
           <Input
             id="search"
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Matches"
             rightChildren={
               <BasicHoverCard>

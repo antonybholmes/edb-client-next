@@ -42,9 +42,9 @@ export function groupsReducer(
 
         groups: new Map<string, IClusterGroup>([
           ...[...state.groups.entries()],
-          ...action.groups.map(g => [g.id, g] as [string, IClusterGroup]),
+          ...action.groups.map((g) => [g.id, g] as [string, IClusterGroup]),
         ]),
-        order: [...state.order, ...action.groups.map(g => g.id)],
+        order: [...state.order, ...action.groups.map((g) => g.id)],
       }
 
     case 'set':
@@ -52,9 +52,9 @@ export function groupsReducer(
         ...state,
 
         groups: new Map<string, IClusterGroup>(
-          action.groups.map(g => [g.id, g] as [string, IClusterGroup])
+          action.groups.map((g) => [g.id, g] as [string, IClusterGroup])
         ),
-        order: action.groups.map(g => g.id),
+        order: action.groups.map((g) => g.id),
       }
     case 'order':
       return {
@@ -65,7 +65,7 @@ export function groupsReducer(
       return {
         ...state,
         groups: new Map<string, IClusterGroup>(
-          [...state.groups.entries()].map(e =>
+          [...state.groups.entries()].map((e) =>
             e[0] === action.group.id ? [e[0], action.group] : e
           )
         ),
@@ -75,9 +75,9 @@ export function groupsReducer(
       return {
         ...state,
         groups: new Map<string, IClusterGroup>(
-          [...state.groups.entries()].filter(e => !ids.has(e[0]!))
+          [...state.groups.entries()].filter((e) => !ids.has(e[0]!))
         ),
-        order: state.order.filter(id => !ids.has(id)),
+        order: state.order.filter((id) => !ids.has(id)),
       }
 
     case 'clear':

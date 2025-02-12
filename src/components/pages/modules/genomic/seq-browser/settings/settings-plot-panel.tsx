@@ -47,8 +47,8 @@ export function SettingsPlotPanel() {
               value={settings.plot.width}
               placeholder="Width..."
               w="w-20 rounded-theme"
-              onNumChanged={v => {
-                const newOptions = produce(settings, draft => {
+              onNumChanged={(v) => {
+                const newOptions = produce(settings, (draft) => {
                   draft.plot.width = v
                 })
 
@@ -64,8 +64,8 @@ export function SettingsPlotPanel() {
               value={settings.plot.gap}
               placeholder="Width..."
               w="w-20 rounded-theme"
-              onNumChanged={v => {
-                const newOptions = produce(settings, draft => {
+              onNumChanged={(v) => {
+                const newOptions = produce(settings, (draft) => {
                   draft.plot.gap = v
                 })
 
@@ -77,7 +77,7 @@ export function SettingsPlotPanel() {
           <SwitchPropRow
             title="Titles"
             checked={settings.titles.show}
-            onCheckedChange={state => {
+            onCheckedChange={(state) => {
               updateSettings({
                 ...settings,
                 titles: { ...settings.titles, show: state },
@@ -90,8 +90,8 @@ export function SettingsPlotPanel() {
                 value={settings.titles.offset}
                 placeholder="Offset..."
                 w="w-16 rounded-theme"
-                onNumChanged={v => {
-                  const newOptions = produce(settings, draft => {
+                onNumChanged={(v) => {
+                  const newOptions = produce(settings, (draft) => {
                     draft.titles.offset = v
                   })
 
@@ -102,8 +102,8 @@ export function SettingsPlotPanel() {
 
             <Select
               value={settings.titles.position}
-              onValueChange={v => {
-                const newOptions = produce(settings, draft => {
+              onValueChange={(v) => {
+                const newOptions = produce(settings, (draft) => {
                   draft.titles.position = v as TrackTitlePosition
                 })
 

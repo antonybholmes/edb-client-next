@@ -5,8 +5,13 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "check-module-version": "node scripts/check-module-version.mjs",
+    "check-version": "node scripts/check-version.mjs",
+    "dev-tina": "tinacms dev --port 4001 --datalayer-port 9006 -c \"astro dev\"",
+    "discover": "node scripts/discover/modules.mjs && node scripts/discover/genesets.mjs",
     "format": "pnpm update-version && prettier --plugin-search-dir=. --write \"src/**/*.{ts,tsx,js,mjs,svelte,astro}\"",
     "start": "next start",
+    "update-version": "pnpm check-version && pnpm check-module-version",
     "lint": "next lint"
   },
   "dependencies": {

@@ -75,7 +75,7 @@ export function SeqsDialog({
   const seqs = useMemo(
     () =>
       trackDb.filter(
-        t => t.genome === settings.genome && t.platform === platform
+        (t) => t.genome === settings.genome && t.platform === platform
       ),
     [trackDb]
   )
@@ -94,7 +94,7 @@ export function SeqsDialog({
 
   useEffect(() => {
     setSelectedMap(
-      new Map<string, boolean>(seqs.map(track => [track.seqId, false]))
+      new Map<string, boolean>(seqs.map((track) => [track.seqId, false]))
     )
   }, [seqs])
 
@@ -104,7 +104,7 @@ export function SeqsDialog({
     } else {
       const sq = new SearchQuery(search)
 
-      setSearchedDb(seqs.filter(track => sq.search(track.name)))
+      setSearchedDb(seqs.filter((track) => sq.search(track.name)))
     }
   }, [seqs, search])
 
@@ -123,8 +123,8 @@ export function SeqsDialog({
             id="search"
             h="2xl"
             value={search}
-            onChange={e => setSearch(e.target.value)}
-            onSearch={e => {
+            onChange={(e) => setSearch(e.target.value)}
+            onSearch={(e) => {
               if (e === 'clear') {
                 setSearch('')
               }
@@ -143,7 +143,7 @@ export function SeqsDialog({
                     new Map<string, boolean>([
                       ...[...addedMap.entries()],
                       // only add the positive ones we selected
-                      ...[...selectedMap.entries()].filter(e => e[1]),
+                      ...[...selectedMap.entries()].filter((e) => e[1]),
                     ])
                   )
                 }}
@@ -162,7 +162,7 @@ export function SeqsDialog({
                     new Map<string, boolean>([
                       ...[...selectedMap.entries()],
                       ...searchedDb.map(
-                        t => [t.seqId, !searchSelectAll] as [string, boolean]
+                        (t) => [t.seqId, !searchSelectAll] as [string, boolean]
                       ),
                     ])
                   )
@@ -297,7 +297,7 @@ export function SeqsDialog({
                     new Map<string, boolean>([
                       ...[...addedMap.entries()],
                       ...[...keys].map(
-                        key => [key, false] as [string, boolean]
+                        (key) => [key, false] as [string, boolean]
                       ),
                     ])
                   )
@@ -326,7 +326,7 @@ export function SeqsDialog({
                     new Map<string, boolean>([
                       ...[...addedSelectedMap.entries()],
                       ...searchedDb.map(
-                        t => [t.seqId, !addedSelectAll] as [string, boolean]
+                        (t) => [t.seqId, !addedSelectAll] as [string, boolean]
                       ),
                     ])
                   )
@@ -358,7 +358,7 @@ export function SeqsDialog({
                 variant="theme"
                 onClick={() => {
                   const selectedTracks = seqs.filter(
-                    track => addedMap.get(track.seqId) ?? false
+                    (track) => addedMap.get(track.seqId) ?? false
                   )
 
                   if (selectedTracks.length > 0) {
@@ -392,14 +392,14 @@ function storeItems(
   setSelectedMap: (selected: Map<string, boolean>) => void,
   reverseSort: boolean
 ) {
-  let datasets = [...new Set(searchedDb.map(t => t.dataset))].sort()
+  let datasets = [...new Set(searchedDb.map((t) => t.dataset))].sort()
 
   if (reverseSort) {
     datasets = datasets.toReversed()
   }
 
-  const allDatasets: IDBSeqTrack[][] = datasets.map(dataset => {
-    let ret = searchedDb.filter(track => track.dataset === dataset)
+  const allDatasets: IDBSeqTrack[][] = datasets.map((dataset) => {
+    let ret = searchedDb.filter((track) => track.dataset === dataset)
 
     if (reverseSort) {
       ret = ret.toReversed()
@@ -409,7 +409,7 @@ function storeItems(
   })
 
   return (
-    <ScrollAccordion value={datasets.map(dataset => getAccordionId(dataset))}>
+    <ScrollAccordion value={datasets.map((dataset) => getAccordionId(dataset))}>
       {datasets.map((dataset, dataseti) => {
         return (
           <SettingsAccordionItem title={dataset} key={dataseti}>
@@ -422,7 +422,7 @@ function storeItems(
                   >
                     <Checkbox
                       checked={selectedMap.get(seq.seqId) ?? false}
-                      onCheckedChange={state => {
+                      onCheckedChange={(state) => {
                         setSelectedMap(
                           new Map<string, boolean>([
                             ...selectedMap.entries(),
@@ -473,16 +473,16 @@ function cartItems(
   setSelectedMap: (selected: Map<string, boolean>) => void,
   reverseSort: boolean
 ) {
-  searchedDb = searchedDb.filter(t => addedMap.get(t.seqId) ?? false)
+  searchedDb = searchedDb.filter((t) => addedMap.get(t.seqId) ?? false)
 
-  let datasets = [...new Set(searchedDb.map(t => t.dataset))].sort()
+  let datasets = [...new Set(searchedDb.map((t) => t.dataset))].sort()
 
   if (reverseSort) {
     datasets = datasets.toReversed()
   }
 
-  const allDatasets: IDBSeqTrack[][] = datasets.map(dataset => {
-    let ret = searchedDb.filter(track => track.dataset === dataset)
+  const allDatasets: IDBSeqTrack[][] = datasets.map((dataset) => {
+    let ret = searchedDb.filter((track) => track.dataset === dataset)
 
     if (reverseSort) {
       ret = ret.toReversed()
@@ -492,7 +492,7 @@ function cartItems(
   })
 
   return (
-    <ScrollAccordion value={datasets.map(dataset => getAccordionId(dataset))}>
+    <ScrollAccordion value={datasets.map((dataset) => getAccordionId(dataset))}>
       {datasets.map((dataset, dataseti) => {
         return (
           <SettingsAccordionItem title={dataset} key={dataseti}>
@@ -505,7 +505,7 @@ function cartItems(
                   >
                     <Checkbox
                       checked={selectedMap.get(seq.seqId) ?? false}
-                      onCheckedChange={state => {
+                      onCheckedChange={(state) => {
                         setSelectedMap(
                           new Map<string, boolean>([
                             ...selectedMap.entries(),

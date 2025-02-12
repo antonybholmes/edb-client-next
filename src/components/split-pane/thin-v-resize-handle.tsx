@@ -22,7 +22,7 @@ export function ThinVResizeHandle({
     <PanelResizeHandle
       id={id ?? `v-resize-handle-thin-${nanoid()}`}
       className={cn(CLS, h, className)}
-      onDragging={drag => {
+      onDragging={(drag) => {
         setDrag(drag)
       }}
       {...props}

@@ -102,8 +102,8 @@ export const BottomBar = forwardRef(function BottomBar(
               onClick={() => {
                 const selectedTabIndex = tabs
                   .map((t, ti) => [t, ti] as [ITab, number])
-                  .filter(t => t[0]!.id === selectedTab.tab.id)
-                  .map(t => t[1]!)[0]!
+                  .filter((t) => t[0]!.id === selectedTab.tab.id)
+                  .map((t) => t[1]!)[0]!
 
                 const i =
                   selectedTabIndex === 0
@@ -134,8 +134,8 @@ export const BottomBar = forwardRef(function BottomBar(
 
                 const selectedTabIndex = tabs
                   .map((t, ti) => [t, ti] as [ITab, number])
-                  .filter(t => t[0]!.id === selectedTab.tab.id)
-                  .map(t => t[1]!)[0]!
+                  .filter((t) => t[0]!.id === selectedTab.tab.id)
+                  .map((t) => t[1]!)[0]!
 
                 const i = Math.max(
                   0,

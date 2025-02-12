@@ -35,7 +35,7 @@ export function DisplayPropsPanel({ displayProps, onChange }: IProps) {
                 limit={[1, 100]}
                 value={displayProps.letterWidth}
                 placeholder="Letter width..."
-                onKeyDown={event => {
+                onKeyDown={(event) => {
                   if (event.key === 'Enter') {
                     const v = parseInt(event.currentTarget.value)
                     if (Number.isInteger(v)) {
@@ -54,7 +54,7 @@ export function DisplayPropsPanel({ displayProps, onChange }: IProps) {
                 limit={[1, 200]}
                 value={displayProps.plotHeight}
                 placeholder="Plot height..."
-                onKeyDown={event => {
+                onKeyDown={(event) => {
                   if (event.key === 'Enter') {
                     const v = parseInt(event.currentTarget.value)
                     if (Number.isInteger(v)) {
@@ -73,7 +73,7 @@ export function DisplayPropsPanel({ displayProps, onChange }: IProps) {
           <AccordionTrigger>Colors</AccordionTrigger>
           <AccordionContent>
             <VCenterRow className="gap-x-3">
-              {BASE_IDS.map(base => (
+              {BASE_IDS.map((base) => (
                 <ColorPickerButton
                   key={base}
                   color={
@@ -81,7 +81,7 @@ export function DisplayPropsPanel({ displayProps, onChange }: IProps) {
                       base.toLowerCase() as DNABase
                     ] as string
                   }
-                  onColorChange={color =>
+                  onColorChange={(color) =>
                     onChange({
                       ...displayProps,
                       baseColors: {

@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Card,
@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@components/shadcn/ui/themed/card";
+} from '@components/shadcn/ui/themed/card'
 
 import {
   EMAIL_PATTERN,
@@ -17,7 +17,7 @@ import {
   TEXT_USERNAME_DESCRIPTION,
   TEXT_USERNAME_REQUIRED,
   USERNAME_PATTERN,
-} from "@layouts/signin-layout";
+} from '@layouts/signin-layout'
 
 import {
   API_UPDATE_USER_URL,
@@ -25,7 +25,7 @@ import {
   DEFAULT_EDB_USER,
   TEXT_MY_ACCOUNT,
   type IEdbUser,
-} from "@/lib/edb/edb";
+} from '@/lib/edb/edb'
 
 import {
   useContext,
@@ -33,31 +33,31 @@ import {
   useRef,
   useState,
   type BaseSyntheticEvent,
-} from "react";
+} from 'react'
 
-import { PasswordDialog } from "./password-dialog";
+import { PasswordDialog } from './password-dialog'
 
-import { VCenterRow } from "@/components/layout/v-center-row";
-import { FormInputError } from "@components/input-error";
-import { Button } from "@components/shadcn/ui/themed/button";
-import { Form, FormField, FormItem } from "@components/shadcn/ui/themed/form";
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { FormInputError } from '@components/input-error'
+import { Button } from '@components/shadcn/ui/themed/button'
+import { Form, FormField, FormItem } from '@components/shadcn/ui/themed/form'
 
-import { Input } from "@components/shadcn/ui/themed/input";
-import { Label } from "@components/shadcn/ui/themed/label";
+import { Input } from '@components/shadcn/ui/themed/input'
+import { Label } from '@components/shadcn/ui/themed/label'
 
-import { EdbAuthContext } from "@/lib/edb/edb-auth-provider";
-import { httpFetch } from "@/lib/http/http-fetch";
-import { bearerHeaders } from "@/lib/http/urls";
-import { CoreProviders } from "@providers/core-providers";
-import { useQueryClient } from "@tanstack/react-query";
+import { EdbAuthContext } from '@/lib/edb/edb-auth-provider'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { bearerHeaders } from '@/lib/http/urls'
+import { CoreProviders } from '@providers/core-providers'
+import { useQueryClient } from '@tanstack/react-query'
 
-import { useForm } from "react-hook-form";
+import { useForm } from 'react-hook-form'
 
-import { OKCancelDialog } from "@/components/dialog/ok-cancel-dialog";
-import { ReloadIcon } from "@/components/icons/reload-icon";
-import { BaseCol } from "@/components/layout/base-col";
-import { BaseGrid } from "@/components/layout/base-grid";
-import { Textarea } from "@/components/shadcn/ui/themed/textarea";
+import { OKCancelDialog } from '@/components/dialog/ok-cancel-dialog'
+import { ReloadIcon } from '@/components/icons/reload-icon'
+import { BaseCol } from '@/components/layout/base-col'
+import { BaseGrid } from '@/components/layout/base-grid'
+import { Textarea } from '@/components/shadcn/ui/themed/textarea'
 import {
   APP_NAME,
   NO_DIALOG,
@@ -65,13 +65,13 @@ import {
   TEXT_SAVE,
   TEXT_SIGN_OUT,
   type IDialogParams,
-} from "@/consts";
-import { useToast } from "@/hooks/use-toast";
-import { makeRandId } from "@/lib/utils";
-import { useAuth0 } from "@auth0/auth0-react";
-import { format } from "date-fns";
-import { formatInTimeZone } from "date-fns-tz";
-import { EmailDialog } from "./email-dialog";
+} from '@/consts'
+import { useToast } from '@/hooks/use-toast'
+import { makeRandId } from '@/lib/utils'
+import { useAuth0 } from '@auth0/auth0-react'
+import { format } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
+import { EmailDialog } from './email-dialog'
 
 // interface IFormInput {
 //   uuid: string
@@ -83,16 +83,16 @@ import { EmailDialog } from "./email-dialog";
 // }
 
 function MyAccountPage() {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG });
+  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
   //const [password, setPassword] = useState("")
-  const { toast } = useToast();
+  const { toast } = useToast()
 
   //const [account, accountDispatch] = useContext(AccountContext)
 
-  const btnRef = useRef<HTMLButtonElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null)
 
   //const [user, setUser] = useState<IUser | null>(null)
 
@@ -102,9 +102,9 @@ function MyAccountPage() {
     refreshSession,
     fetchSessionInfo,
     getAccessTokenAutoRefresh,
-  } = useContext(EdbAuthContext);
+  } = useContext(EdbAuthContext)
 
-  const { logout } = useAuth0();
+  const { logout } = useAuth0()
 
   //const [roles, setRoles] = useState<string[]>([])
   //const roles = useMemo(() => rolesFromAccessToken(accessToken), [accessToken])
@@ -113,7 +113,7 @@ function MyAccountPage() {
     defaultValues: {
       ...DEFAULT_EDB_USER,
     },
-  });
+  })
 
   // useEffect(() => {
   //   async function fetch() {
@@ -136,8 +136,8 @@ function MyAccountPage() {
   useEffect(() => {
     form.reset({
       ...edbSession.user,
-    });
-  }, [edbSession]);
+    })
+  }, [edbSession])
 
   async function updateRemoteUser(
     username: string,
@@ -146,12 +146,12 @@ function MyAccountPage() {
   ) {
     // force load of token in case it expired and needs
     // refresh
-    const accessToken = await getAccessTokenAutoRefresh();
+    const accessToken = await getAccessTokenAutoRefresh()
 
     try {
       // write update to remote
       await queryClient.fetchQuery({
-        queryKey: ["update"],
+        queryKey: ['update'],
         queryFn: () =>
           httpFetch.post(
             API_UPDATE_USER_URL, //SESSION_UPDATE_USER_URL,
@@ -166,19 +166,19 @@ function MyAccountPage() {
               //withCredentials: true,
             }
           ),
-      });
+      })
 
       // what is returned is the updated user
       //const user: IUser = res.data
 
       // force update
-      fetchSessionInfo();
+      fetchSessionInfo()
 
       toast({
-        title: "Your account information was updated",
-      });
+        title: 'Your account information was updated',
+      })
     } catch (err) {
-      console.log("update err", err);
+      console.log('update err', err)
 
       // toast({
       //   type: 'add',
@@ -188,7 +188,7 @@ function MyAccountPage() {
   }
 
   async function onSubmit(data: IEdbUser, e: BaseSyntheticEvent | undefined) {
-    e?.preventDefault();
+    e?.preventDefault()
 
     // if (password.length < 8) {
     //   toast({
@@ -202,7 +202,7 @@ function MyAccountPage() {
     //   return
     // }
 
-    updateRemoteUser(data.username, data.firstName, data.lastName);
+    updateRemoteUser(data.username, data.firstName, data.lastName)
   }
 
   // async function reloadAccount() {
@@ -215,19 +215,19 @@ function MyAccountPage() {
     <SignInLayout title={TEXT_MY_ACCOUNT} showSignInError={true}>
       <>
         <PasswordDialog
-          open={showDialog.id.startsWith("password")}
+          open={showDialog.id.startsWith('password')}
           onOpenChange={() => setShowDialog({ ...NO_DIALOG })}
           onReponse={() => setShowDialog({ ...NO_DIALOG })}
         />
 
         <EmailDialog
-          open={showDialog.id.startsWith("email")}
+          open={showDialog.id.startsWith('email')}
           onOpenChange={() => setShowDialog({ ...NO_DIALOG })}
           onReponse={() => setShowDialog({ ...NO_DIALOG })}
         />
 
         <OKCancelDialog
-          open={showDialog.id.startsWith("signout")}
+          open={showDialog.id.startsWith('signout')}
           title={APP_NAME}
           modalType="Warning"
           onReponse={(r) => {
@@ -235,10 +235,10 @@ function MyAccountPage() {
               //signoutUser()
               logout({
                 logoutParams: { returnTo: APP_ACCOUNT_SIGNED_OUT_URL },
-              });
+              })
             }
 
-            setShowDialog({ ...NO_DIALOG });
+            setShowDialog({ ...NO_DIALOG })
           }}
         >
           Are you sure you want to {TEXT_SIGN_OUT}?
@@ -252,7 +252,7 @@ function MyAccountPage() {
                   <CardTitle>{TEXT_MY_ACCOUNT}</CardTitle>
                   <Button
                     onClick={() => {
-                      refreshSession();
+                      refreshSession()
                     }}
                     variant="muted"
                     size="icon"
@@ -289,7 +289,7 @@ function MyAccountPage() {
                           },
                           pattern: {
                             value: NAME_PATTERN,
-                            message: "This does not seem like a valid name",
+                            message: 'This does not seem like a valid name',
                           },
                         }}
                         render={({ field }) => (
@@ -317,7 +317,7 @@ function MyAccountPage() {
                         rules={{
                           pattern: {
                             value: NAME_PATTERN,
-                            message: "This does not seem like a valid name",
+                            message: 'This does not seem like a valid name',
                           },
                         }}
                         render={({ field }) => (
@@ -378,7 +378,7 @@ function MyAccountPage() {
                           rules={{
                             required: {
                               value: true,
-                              message: "An email address is required",
+                              message: 'An email address is required',
                             },
                             pattern: {
                               value: EMAIL_PATTERN,
@@ -404,7 +404,7 @@ function MyAccountPage() {
                       <Button
                         multiProps="link"
                         onClick={() =>
-                          setShowDialog({ id: makeRandId("email"), params: {} })
+                          setShowDialog({ id: makeRandId('email'), params: {} })
                         }
                       >
                         Change
@@ -422,7 +422,7 @@ function MyAccountPage() {
                           <FormItem className="col-span-1">
                             <Input
                               id="roles"
-                              value={field.value.join(", ")}
+                              value={field.value.join(', ')}
                               className="w-full rounded-theme"
                               placeholder="Roles..."
                               readOnly
@@ -443,7 +443,7 @@ function MyAccountPage() {
                           <FormItem className="col-span-1">
                             <Textarea
                               id="apiKeys"
-                              value={field.value.join(", ")}
+                              value={field.value.join(', ')}
                               className="w-full rounded-theme"
                               readOnly
 
@@ -465,7 +465,7 @@ function MyAccountPage() {
                           <FormItem className="col-span-1">
                             <Input
                               id="status"
-                              value={field.value ? "Locked" : "Unlocked"}
+                              value={field.value ? 'Locked' : 'Unlocked'}
                               className="w-full rounded-theme"
                               placeholder="Account Status..."
                               readOnly
@@ -518,7 +518,7 @@ function MyAccountPage() {
                         variant="secondary"
                         onClick={() =>
                           setShowDialog({
-                            id: makeRandId("password"),
+                            id: makeRandId('password'),
                             params: {},
                           })
                         }
@@ -556,17 +556,17 @@ function MyAccountPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2 items-start">
                   <div>Created</div>
                   <div className="col-span-2">
-                    {format(edbSession.createdAt, "MMM, dd yyyy")} (Local time:{" "}
-                    {format(edbSession.createdAt, "HH:mm:ss")}, UTC:{" "}
-                    {formatInTimeZone(edbSession.createdAt, "UTC", "HH:mm:ss")})
+                    {format(edbSession.createdAt, 'MMM, dd yyyy')} (Local time:{' '}
+                    {format(edbSession.createdAt, 'HH:mm:ss')}, UTC:{' '}
+                    {formatInTimeZone(edbSession.createdAt, 'UTC', 'HH:mm:ss')})
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2 items-start">
                   <div>Expires</div>
                   <div className="col-span-2">
-                    {format(edbSession.expiresAt, "MMM, dd yyyy")} (Local time:{" "}
-                    {format(edbSession.expiresAt, "HH:mm:ss")}, UTC:{" "}
-                    {formatInTimeZone(edbSession.expiresAt, "UTC", "HH:mm:ss")})
+                    {format(edbSession.expiresAt, 'MMM, dd yyyy')} (Local time:{' '}
+                    {format(edbSession.expiresAt, 'HH:mm:ss')}, UTC:{' '}
+                    {formatInTimeZone(edbSession.expiresAt, 'UTC', 'HH:mm:ss')})
                   </div>
                 </div>
               </CardContent>
@@ -587,7 +587,7 @@ function MyAccountPage() {
               variant="destructive"
               className="text-sm"
               onClick={() =>
-                setShowDialog({ id: makeRandId("signout"), params: {} })
+                setShowDialog({ id: makeRandId('signout'), params: {} })
               }
               size="lg"
             >
@@ -597,7 +597,7 @@ function MyAccountPage() {
         </BaseGrid>
       </>
     </SignInLayout>
-  );
+  )
 }
 
 export function MyAccountQueryPage() {
@@ -605,5 +605,5 @@ export function MyAccountQueryPage() {
     <CoreProviders>
       <MyAccountPage />
     </CoreProviders>
-  );
+  )
 }

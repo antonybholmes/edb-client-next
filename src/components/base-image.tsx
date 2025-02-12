@@ -27,7 +27,7 @@ export function getSrcSet(
   sizes: [number, number][]
 ): string {
   return sizes
-    .map(s => `${dir}/opt/${name}-${s[0]}x${s[1]}.${ext} ${s[0]}w`)
+    .map((s) => `${dir}/opt/${name}-${s[0]}x${s[1]}.${ext} ${s[0]}w`)
     .join(', ')
 }
 

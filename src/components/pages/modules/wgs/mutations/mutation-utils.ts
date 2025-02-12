@@ -5,7 +5,7 @@ export function makeAssemblyMutationMap(
 ): Map<string, IMutationDataset[]> {
   const ret = new Map<string, IMutationDataset[]>()
 
-  datasets.forEach(dataset => {
+  datasets.forEach((dataset) => {
     if (!ret.has(dataset.assembly)) {
       ret.set(dataset.assembly, [])
     }

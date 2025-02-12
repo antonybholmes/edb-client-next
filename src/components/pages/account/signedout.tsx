@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Card,
@@ -7,19 +7,19 @@ import {
   CardHeader,
   CardTitle,
   CenteredCardContainer,
-} from "@components/shadcn/ui/themed/card";
+} from '@components/shadcn/ui/themed/card'
 
-import { SignInLayout } from "@/layouts/signin-layout";
-import { EdbAuthContext } from "@/lib/edb/edb-auth-provider";
-import { CoreProviders } from "@providers/core-providers";
-import { useContext, useEffect } from "react";
+import { SignInLayout } from '@/layouts/signin-layout'
+import { EdbAuthContext } from '@/lib/edb/edb-auth-provider'
+import { CoreProviders } from '@providers/core-providers'
+import { useContext, useEffect } from 'react'
 
 function SignedOutPage() {
-  const { signoutUser } = useContext(EdbAuthContext);
+  const { signoutUser } = useContext(EdbAuthContext)
 
   useEffect(() => {
-    signoutUser();
-  }, []);
+    signoutUser()
+  }, [])
 
   return (
     <SignInLayout showSignInError={false}>
@@ -50,7 +50,7 @@ function SignedOutPage() {
         {/* <CreateAccountLink /> */}
       </CenteredCardContainer>
     </SignInLayout>
-  );
+  )
 }
 
 export function SignedOutQueryPage() {
@@ -58,5 +58,5 @@ export function SignedOutQueryPage() {
     <CoreProviders cacheSession={false}>
       <SignedOutPage />
     </CoreProviders>
-  );
+  )
 }

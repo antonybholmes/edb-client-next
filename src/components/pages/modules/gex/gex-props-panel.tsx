@@ -146,7 +146,7 @@ export const GexPropsPanel = forwardRef(function GexPropsPanel(
                   placeholder="Width"
                   min={1}
                   dp={0}
-                  onNumChanged1={v =>
+                  onNumChanged1={(v) =>
                     setDisplayProps({
                       ...displayProps,
                       plot: {
@@ -159,7 +159,7 @@ export const GexPropsPanel = forwardRef(function GexPropsPanel(
                     })
                   }
                   v2={displayProps.plot.height}
-                  onNumChanged2={v =>
+                  onNumChanged2={(v) =>
                     setDisplayProps({
                       ...displayProps,
                       plot: {
@@ -177,7 +177,7 @@ export const GexPropsPanel = forwardRef(function GexPropsPanel(
                   placeholder="Gap"
                   min={1}
                   dp={0}
-                  onNumChanged={v =>
+                  onNumChanged={(v) =>
                     setDisplayProps({
                       ...displayProps,
                       plot: {
@@ -196,7 +196,7 @@ export const GexPropsPanel = forwardRef(function GexPropsPanel(
                   placeholder="Columns"
                   min={1}
                   dp={0}
-                  onNumChanged={v =>
+                  onNumChanged={(v) =>
                     setDisplayProps({
                       ...displayProps,
                       page: {
@@ -219,7 +219,7 @@ export const GexPropsPanel = forwardRef(function GexPropsPanel(
                   title="Box & whiskers"
                   labelClassName="font-medium"
                   checked={showAll['box']!}
-                  onCheckedChange={state => {
+                  onCheckedChange={(state) => {
                     updateGexPlotSettings(
                       Object.fromEntries(
                         Object.entries(gexPlotSettings).map(([id, props]) => {
@@ -242,7 +242,7 @@ export const GexPropsPanel = forwardRef(function GexPropsPanel(
                     title="Fill"
                     checked={fillAll['box']!}
                     disabled={!showAll['box']!}
-                    onCheckedChange={state => {
+                    onCheckedChange={(state) => {
                       updateGexPlotSettings(
                         Object.fromEntries(
                           Object.entries(gexPlotSettings).map(([id, props]) => {
@@ -271,7 +271,7 @@ export const GexPropsPanel = forwardRef(function GexPropsPanel(
                     title="Stroke"
                     checked={strokeAll['box']!}
                     disabled={!showAll['box']!}
-                    onCheckedChange={state => {
+                    onCheckedChange={(state) => {
                       updateGexPlotSettings(
                         Object.fromEntries(
                           Object.entries(gexPlotSettings).map(([id, props]) => {
@@ -303,7 +303,7 @@ export const GexPropsPanel = forwardRef(function GexPropsPanel(
                   title="Violins"
                   labelClassName="font-medium"
                   checked={showAll['violin']!}
-                  onCheckedChange={state => {
+                  onCheckedChange={(state) => {
                     updateGexPlotSettings(
                       Object.fromEntries(
                         Object.entries(gexPlotSettings).map(([id, props]) => {
@@ -327,7 +327,7 @@ export const GexPropsPanel = forwardRef(function GexPropsPanel(
                     title="Fill"
                     checked={fillAll['violin']!}
                     disabled={!showAll['violin']!}
-                    onCheckedChange={state => {
+                    onCheckedChange={(state) => {
                       updateGexPlotSettings(
                         Object.fromEntries(
                           Object.entries(gexPlotSettings).map(([id, props]) => {
@@ -356,7 +356,7 @@ export const GexPropsPanel = forwardRef(function GexPropsPanel(
                     title="Stroke"
                     checked={strokeAll['violin']!}
                     disabled={!showAll['violin']!}
-                    onCheckedChange={state => {
+                    onCheckedChange={(state) => {
                       updateGexPlotSettings(
                         Object.fromEntries(
                           Object.entries(gexPlotSettings).map(([id, props]) => {
@@ -388,7 +388,7 @@ export const GexPropsPanel = forwardRef(function GexPropsPanel(
                   title="Swarms"
                   labelClassName="font-medium"
                   checked={showAll['swarm']!}
-                  onCheckedChange={state => {
+                  onCheckedChange={(state) => {
                     updateGexPlotSettings(
                       Object.fromEntries(
                         Object.entries(gexPlotSettings).map(([id, props]) => {
@@ -411,7 +411,7 @@ export const GexPropsPanel = forwardRef(function GexPropsPanel(
                     title="Fill"
                     checked={fillAll['swarm']!}
                     disabled={!showAll['swarm']!}
-                    onCheckedChange={state => {
+                    onCheckedChange={(state) => {
                       updateGexPlotSettings(
                         Object.fromEntries(
                           Object.entries(gexPlotSettings).map(([id, props]) => {
@@ -440,7 +440,7 @@ export const GexPropsPanel = forwardRef(function GexPropsPanel(
                     title="Stroke"
                     checked={strokeAll['swarm']!}
                     disabled={!showAll['swarm']!}
-                    onCheckedChange={state => {
+                    onCheckedChange={(state) => {
                       updateGexPlotSettings(
                         Object.fromEntries(
                           Object.entries(gexPlotSettings).map(([id, props]) => {

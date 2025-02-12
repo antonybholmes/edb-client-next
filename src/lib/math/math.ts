@@ -35,8 +35,8 @@ export function makeCombinations<T>(items: T[]): T[][] {
 export function where<T>(data: T[], f: (x: T) => boolean): number[] {
   return data
     .map((v, vi) => [v, vi] as [T, number])
-    .filter(a => f(a[0]!))
-    .map(a => a[1]!)
+    .filter((a) => f(a[0]!))
+    .map((a) => a[1]!)
 }
 
 export function end<T>(data: T[]): T {

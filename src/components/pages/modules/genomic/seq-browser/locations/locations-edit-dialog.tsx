@@ -22,7 +22,7 @@ export function LocationDialog({
     <OKCancelDialog
       //buttons={[TEXT_OK]}
       title="Add location"
-      onReponse={e => {
+      onReponse={(e) => {
         if (e === TEXT_OK) {
           callback?.(index, text)
         } else {
@@ -35,7 +35,7 @@ export function LocationDialog({
         h="lg"
         value={text}
         placeholder="height"
-        onChange={e => setText(e.target.value)}
+        onChange={(e) => setText(e.target.value)}
         className="rounded-theme"
       />
 

@@ -65,7 +65,7 @@ export function SideTabsContent({
     }
 
     const x = sum(
-      rangeMap(index => tabs[index]!.size ?? defaultHeight, selectedTab.index)
+      rangeMap((index) => tabs[index]!.size ?? defaultHeight, selectedTab.index)
     )
 
     const height = tabs[selectedTab.index]!.size ?? defaultHeight

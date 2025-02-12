@@ -53,7 +53,7 @@ export function OpenDialog({ files, openFiles, onCancel }: IProps) {
       open={files.length > 0}
       title="Open File"
       contentVariant="glass"
-      onReponse={resp => {
+      onReponse={(resp) => {
         if (resp === TEXT_OK) {
           openFiles(files, {
             colNames: settings.openFile.firstRowIsHeader ? 1 : 0,
@@ -73,7 +73,7 @@ export function OpenDialog({ files, openFiles, onCancel }: IProps) {
       <Card>
         <Checkbox
           checked={settings.openFile.firstRowIsHeader}
-          onCheckedChange={state => {
+          onCheckedChange={(state) => {
             updateSettings({
               ...settings,
               openFile: { ...settings.openFile, firstRowIsHeader: state },
@@ -84,7 +84,7 @@ export function OpenDialog({ files, openFiles, onCancel }: IProps) {
         </Checkbox>
         <Checkbox
           checked={settings.openFile.firstColIsIndex}
-          onCheckedChange={state => {
+          onCheckedChange={(state) => {
             updateSettings({
               ...settings,
               openFile: { ...settings.openFile, firstColIsIndex: state },
@@ -114,7 +114,7 @@ export function OpenDialog({ files, openFiles, onCancel }: IProps) {
 
             <Select
               defaultValue={settings.openFile.delimiter}
-              onValueChange={value => {
+              onValueChange={(value) => {
                 updateSettings({
                   ...settings,
                   openFile: {
@@ -137,7 +137,7 @@ export function OpenDialog({ files, openFiles, onCancel }: IProps) {
         </BaseCol>
         <Switch
           checked={settings.openFile.keepDefaultNA}
-          onCheckedChange={state => {
+          onCheckedChange={(state) => {
             updateSettings({
               ...settings,
               openFile: { ...settings.openFile, keepDefaultNA: state },

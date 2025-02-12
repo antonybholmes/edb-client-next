@@ -52,7 +52,7 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
       <Input
         id="name"
         value={_track.name}
-        onChange={e => {
+        onChange={(e) => {
           const newTrack = {
             ...track,
             name: e.target.value,
@@ -85,8 +85,8 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
       <SwitchPropRow
         title="Stroke"
         checked={_track.displayOptions.stroke.show}
-        onCheckedChange={state => {
-          const newTrack = produce(_track, draft => {
+        onCheckedChange={(state) => {
+          const newTrack = produce(_track, (draft) => {
             draft.displayOptions.stroke.show = state
           })
 
@@ -98,8 +98,8 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
             color={_track.displayOptions.stroke.color}
             disabled={!_track.displayOptions.fill.show}
             allowAlpha={true}
-            onColorChange={v => {
-              const newTrack = produce(_track, draft => {
+            onColorChange={(v) => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.stroke.color = v
               })
 
@@ -118,8 +118,8 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
             disabled={!_track.displayOptions.stroke.show}
             placeholder="Stroke..."
             className="w-16 rounded-theme"
-            onNumChange={v => {
-              const newTrack = produce(_track, draft => {
+            onNumChange={(v) => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.stroke.width = v
               })
 
@@ -133,8 +133,8 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
       <SwitchPropRow
         title="Fill"
         checked={_track.displayOptions.fill.show}
-        onCheckedChange={state => {
-          const newTrack = produce(_track, draft => {
+        onCheckedChange={(state) => {
+          const newTrack = produce(_track, (draft) => {
             draft.displayOptions.fill.show = state
           })
 
@@ -150,7 +150,7 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
             disabled={!_track.displayOptions.fill.show}
             allowAlpha={true}
             onColorChange={(v, alpha) => {
-              const newTrack = produce(_track, draft => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.fill.color = v
                 draft.displayOptions.fill.alpha = alpha
               })
@@ -171,8 +171,8 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
             limit={[0, 1]}
             inc={0.1}
             dp={1}
-            onNumChange={v => {
-              const newTrack = produce(_track, draft => {
+            onNumChange={(v) => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.fill.alpha = v
               })
 

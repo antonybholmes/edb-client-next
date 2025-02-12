@@ -15,7 +15,7 @@ interface IProps extends IElementProps {
 export function LocalBedTrackSvg({ tracks, xax, titleHeight }: IProps) {
   const { location } = useContext(LocationContext)
 
-  const allFeatures: IGenomicLocation[][] = tracks.map(track =>
+  const allFeatures: IGenomicLocation[][] = tracks.map((track) =>
     track.index.getOverlappingFeatures(location)
   )
 

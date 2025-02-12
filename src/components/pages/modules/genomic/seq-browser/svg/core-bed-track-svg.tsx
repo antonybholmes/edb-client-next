@@ -23,7 +23,7 @@ export function getBedTrackHeight(
 
   return displayOptions.beds.collapsed
     ? tracks[0]!.displayOptions.height
-    : sum(tracks.map(track => track.displayOptions.height))
+    : sum(tracks.map((track) => track.displayOptions.height))
 }
 
 interface IProps extends IElementProps {
@@ -42,7 +42,7 @@ export function CoreBedTrackSvg({
 }: IProps) {
   const { settings } = useContext(SeqBrowserSettingsContext)
 
-  const trackHeights: number[] = tracks.map(track =>
+  const trackHeights: number[] = tracks.map((track) =>
     settings.beds.collapsed ? 0 : track.displayOptions.height
   )
 
@@ -65,7 +65,7 @@ export function CoreBedTrackSvg({
               settings.titles.position === 'Right' ? 'start' : 'middle'
             }
           >
-            {truncate(formattedList(tracks.map(t => t.name)), {
+            {truncate(formattedList(tracks.map((t) => t.name)), {
               length: Math.round(xax.length / 10),
             })}
           </text>

@@ -35,8 +35,8 @@ export function ScaleEditDialog({ group, track, callback, onCancel }: IProps) {
         <ColorPickerButton
           color={_track.displayOptions.stroke.color}
           disabled={!_track.displayOptions.stroke.show}
-          onColorChange={v => {
-            const newTrack = produce(_track, draft => {
+          onColorChange={(v) => {
+            const newTrack = produce(_track, (draft) => {
               draft.displayOptions.stroke.color = v
             })
 
@@ -82,8 +82,8 @@ export function ScaleEditDialog({ group, track, callback, onCancel }: IProps) {
       <SwitchPropRow
         title="Caps"
         checked={_track.displayOptions.caps.show}
-        onCheckedChange={v => {
-          const newTrack = produce(_track, draft => {
+        onCheckedChange={(v) => {
+          const newTrack = produce(_track, (draft) => {
             draft.displayOptions.caps.show = v
           })
 
@@ -96,8 +96,8 @@ export function ScaleEditDialog({ group, track, callback, onCancel }: IProps) {
             value={_track.displayOptions.caps.height}
             placeholder="height"
             limit={[1, 1000]}
-            onNumChange={v => {
-              const newTrack = produce(_track, draft => {
+            onNumChange={(v) => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.caps.height = v
               })
 

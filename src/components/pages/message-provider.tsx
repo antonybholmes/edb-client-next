@@ -63,7 +63,7 @@ export function messagesReducer(
       const ids = new Set(action.id)
       return {
         ...state,
-        queue: state.queue.filter(message => ids.has(message.id)),
+        queue: state.queue.filter((message) => ids.has(message.id)),
       }
 
     case 'clear':

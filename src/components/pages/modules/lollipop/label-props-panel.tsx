@@ -52,7 +52,7 @@ export const LabelPropsPanel = forwardRef(function LabelPropsPanel(
     <>
       <OKCancelDialog
         open={confirmClear}
-        onReponse={r => {
+        onReponse={(r) => {
           if (r === TEXT_OK) {
             //onGroupsChange?.([])
             plotDispatch({ type: 'labels', labels: [] })
@@ -67,11 +67,11 @@ export const LabelPropsPanel = forwardRef(function LabelPropsPanel(
       <OKCancelDialog
         open={delLabel !== null}
         showClose={true}
-        onReponse={r => {
+        onReponse={(r) => {
           if (r === TEXT_OK) {
             plotDispatch({
               type: 'labels',
-              labels: labels.filter(feature => feature.id !== delLabel!.id),
+              labels: labels.filter((feature) => feature.id !== delLabel!.id),
             })
           }
           setDelLabel(null)
@@ -151,7 +151,7 @@ export const LabelPropsPanel = forwardRef(function LabelPropsPanel(
         <BaseCol className="gap-y-1">
           <Switch
             checked={displayProps.labels.show}
-            onCheckedChange={state =>
+            onCheckedChange={(state) =>
               plotDispatch({
                 type: 'display',
                 displayProps: {
@@ -178,7 +178,7 @@ export const LabelPropsPanel = forwardRef(function LabelPropsPanel(
                 <VCenterRow className="gap-x-2">
                   <Switch
                     checked={label.show}
-                    onCheckedChange={state =>
+                    onCheckedChange={(state) =>
                       plotDispatch({
                         type: 'labels',
                         labels: [
@@ -194,7 +194,7 @@ export const LabelPropsPanel = forwardRef(function LabelPropsPanel(
                     placeholder="Name"
                     value={label.name}
                     className="grow rounded-theme"
-                    onChange={event => {
+                    onChange={(event) => {
                       plotDispatch({
                         type: 'labels',
                         labels: [
@@ -210,7 +210,7 @@ export const LabelPropsPanel = forwardRef(function LabelPropsPanel(
                     defaultValue={label.start}
                     placeholder="Start"
                     className="w-16 shrink-0 text-center rounded-theme"
-                    onKeyDown={event => {
+                    onKeyDown={(event) => {
                       if (event.key === 'Enter') {
                         const v = parseInt(event.currentTarget.value)
                         if (Number.isInteger(v)) {
@@ -235,7 +235,7 @@ export const LabelPropsPanel = forwardRef(function LabelPropsPanel(
 
                   <FgBgColorPicker
                     fgColor={label.color}
-                    onFgColorChange={color =>
+                    onFgColorChange={(color) =>
                       plotDispatch({
                         type: 'labels',
                         labels: [
@@ -267,12 +267,12 @@ export const LabelPropsPanel = forwardRef(function LabelPropsPanel(
             placeholder="Positions"
             className="grow shrink-0 text-center rounded-theme"
             value={positions}
-            onChange={e => setPositions(e.currentTarget.value)}
+            onChange={(e) => setPositions(e.currentTarget.value)}
           />
           <Button
             variant="theme"
             onClick={() => {
-              const used = new Set<number>(labels.map(label => label.start))
+              const used = new Set<number>(labels.map((label) => label.start))
 
               const newLabels: IProteinLabel[] = positions
                 .trim()
@@ -288,7 +288,7 @@ export const LabelPropsPanel = forwardRef(function LabelPropsPanel(
                     show: true,
                   }
                 })
-                .filter(label => !used.has(label.start))
+                .filter((label) => !used.has(label.start))
 
               if (newLabels.length > 0) {
                 plotDispatch({

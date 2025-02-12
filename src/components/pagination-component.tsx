@@ -65,7 +65,7 @@ export function PaginationComponent({
 
   let isPageNumberOutOfRange: boolean
 
-  const pageNumbers = range(pagesCount).map(index => {
+  const pageNumbers = range(pagesCount).map((index) => {
     const pageNumber = index + 1
     const isPageNumberFirst = pageNumber === 1
     const isPageNumberLast = pageNumber === pagesCount

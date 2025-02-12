@@ -60,9 +60,9 @@ export class KDE {
     }
 
     return y.map(
-      yi =>
+      (yi) =>
         this._A *
-        sum(this._x.map(xi => this._kernel((yi - xi) / this._bandwidth)))
+        sum(this._x.map((xi) => this._kernel((yi - xi) / this._bandwidth)))
     )
   }
 }

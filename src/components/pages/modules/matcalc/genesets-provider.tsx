@@ -42,9 +42,9 @@ export function groupsReducer(
 
         genesets: new Map<string, IGeneset>([
           ...[...state.genesets.entries()],
-          ...action.genesets.map(g => [g.id, g] as [string, IGeneset]),
+          ...action.genesets.map((g) => [g.id, g] as [string, IGeneset]),
         ]),
-        order: [...state.order, ...action.genesets.map(g => g.id)],
+        order: [...state.order, ...action.genesets.map((g) => g.id)],
       }
 
     case 'set':
@@ -52,9 +52,9 @@ export function groupsReducer(
         ...state,
 
         genesets: new Map<string, IGeneset>(
-          action.genesets.map(g => [g.id, g] as [string, IGeneset])
+          action.genesets.map((g) => [g.id, g] as [string, IGeneset])
         ),
-        order: action.genesets.map(g => g.id),
+        order: action.genesets.map((g) => g.id),
       }
     case 'order':
       return {
@@ -65,7 +65,7 @@ export function groupsReducer(
       return {
         ...state,
         genesets: new Map<string, IGeneset>(
-          [...state.genesets.entries()].map(e =>
+          [...state.genesets.entries()].map((e) =>
             e[0] === action.geneset.id ? [e[0], action.geneset] : e
           )
         ),
@@ -75,9 +75,9 @@ export function groupsReducer(
       return {
         ...state,
         genesets: new Map<string, IGeneset>(
-          [...state.genesets.entries()].filter(e => !ids.has(e[0]!))
+          [...state.genesets.entries()].filter((e) => !ids.has(e[0]!))
         ),
-        order: state.order.filter(id => !ids.has(id)),
+        order: state.order.filter((id) => !ids.has(id)),
       }
 
     case 'clear':

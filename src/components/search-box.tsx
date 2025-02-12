@@ -48,7 +48,7 @@ export function SearchBox({
       data-mode={variant}
       placeholder={placeholder}
       onChange={_onChange}
-      onKeyDown={e => {
+      onKeyDown={(e) => {
         if (e.key === 'Enter') {
           onSearch?.('search', v.toString())
         }

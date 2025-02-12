@@ -109,12 +109,12 @@ export function SettingsDialog({
 
   _tabs = [
     ..._tabs,
-    ...tabs.filter(tab => getTabName(tab).toLowerCase() !== 'general'),
+    ...tabs.filter((tab) => getTabName(tab).toLowerCase() !== 'general'),
   ]
 
   // update general
   for (const tab of tabs.filter(
-    tab => getTabName(tab).toLowerCase() === 'general'
+    (tab) => getTabName(tab).toLowerCase() === 'general'
   )) {
     _tabs[0]?.children?.push(tab)
   }
@@ -127,7 +127,7 @@ export function SettingsDialog({
   const [subSelectedTab, setSubSelectedTab] = useState(_tabs[0]!.children![0]!)
 
   useEffect(() => {
-    const idx = where(_tabs, tab => getTabName(tab) === defaultTab)
+    const idx = where(_tabs, (tab) => getTabName(tab) === defaultTab)
 
     if (idx.length > 0) {
       setSelectedTab(_tabs[idx[0]!]!)
@@ -194,13 +194,13 @@ export function SettingsDialog({
               <SideTabs
                 tabs={_tabs}
                 value={getTabName(selectedTab)}
-                onTabChange={t => setSelectedTab(t.tab)}
+                onTabChange={(t) => setSelectedTab(t.tab)}
               />
             </BaseCol>
             <SideTabs
               tabs={selectedTab.children!}
               value={getTabName(subSelectedTab)}
-              onTabChange={t => setSubSelectedTab(t.tab)}
+              onTabChange={(t) => setSubSelectedTab(t.tab)}
               showIcons={false}
             />
           </div>
@@ -231,7 +231,7 @@ export function SettingsDialog({
                 {/* Show sub blocks with a consistent UI */}
                 {subSelectedTab.children && (
                   <Accordion
-                    defaultValue={subSelectedTab.children.map(g =>
+                    defaultValue={subSelectedTab.children.map((g) =>
                       getAccordionId(getTabName(g))
                     )}
                     type="multiple"

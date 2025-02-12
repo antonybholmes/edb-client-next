@@ -51,7 +51,7 @@ export const PileupPropsPanel = forwardRef(function PileupPropsPanel(
             <SwitchPropRow
               title="Index"
               checked={displayProps.index.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 onDisplayPropsChange({
                   ...displayProps,
                   index: { ...displayProps.index, show: state },
@@ -62,7 +62,7 @@ export const PileupPropsPanel = forwardRef(function PileupPropsPanel(
             <SwitchPropRow
               title="Border"
               checked={displayProps.border.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 onDisplayPropsChange({
                   ...displayProps,
                   border: { ...displayProps.border, show: state },
@@ -71,7 +71,7 @@ export const PileupPropsPanel = forwardRef(function PileupPropsPanel(
             >
               <ColorPickerButton
                 color={displayProps.border.color}
-                onColorChange={color =>
+                onColorChange={(color) =>
                   onDisplayPropsChange({
                     ...displayProps,
                     border: { ...displayProps.border, color },
@@ -84,7 +84,7 @@ export const PileupPropsPanel = forwardRef(function PileupPropsPanel(
             <SwitchPropRow
               title="Add chr prefix"
               checked={displayProps.chrPrefix.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 onDisplayPropsChange({
                   ...displayProps,
                   chrPrefix: { ...displayProps.chrPrefix, show: state },
@@ -103,9 +103,9 @@ export const PileupPropsPanel = forwardRef(function PileupPropsPanel(
                   title={pattern.name}
                   key={pi}
                   checked={pattern.show}
-                  onCheckedChange={state =>
+                  onCheckedChange={(state) =>
                     onMotifPatternsChange([
-                      ...motifPatterns.filter(x => x.name !== pattern.name),
+                      ...motifPatterns.filter((x) => x.name !== pattern.name),
                       {
                         ...pattern,
                         show: state,
@@ -123,7 +123,7 @@ export const PileupPropsPanel = forwardRef(function PileupPropsPanel(
           <AccordionContent>
             <RadioGroup
               value={displayProps.cmap}
-              onValueChange={value =>
+              onValueChange={(value) =>
                 onDisplayPropsChange({
                   ...displayProps,
                   cmap: value,
@@ -138,7 +138,7 @@ export const PileupPropsPanel = forwardRef(function PileupPropsPanel(
 
               {Object.keys(displayProps.cmaps)
                 .sort()
-                .filter(cmap => cmap !== 'None')
+                .filter((cmap) => cmap !== 'None')
                 .map((cmap, pi) => {
                   return (
                     <VCenterRow className="gap-x-1" key={pi}>

@@ -57,8 +57,8 @@ export function CytobandsEditDialog({
           value={_track.displayOptions.height}
           placeholder="height"
           limit={[1, 1000]}
-          onNumChange={v => {
-            const newTrack = produce(_track, draft => {
+          onNumChange={(v) => {
+            const newTrack = produce(_track, (draft) => {
               draft.displayOptions.height = v
             })
 

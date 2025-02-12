@@ -1,13 +1,13 @@
-"use client";
+'use client'
 
 import {
   APP_ACCOUNT_SIGN_IN_URL,
   APP_ACCOUNT_SIGNED_OUT_URL,
   CALLBACK_URL_PARAM,
-} from "@/lib/edb/edb";
-import { SignInLayout } from "@layouts/signin-layout";
+} from '@/lib/edb/edb'
+import { SignInLayout } from '@layouts/signin-layout'
 
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from '@auth0/auth0-react'
 
 import {
   Card,
@@ -16,12 +16,12 @@ import {
   CardHeader,
   CardTitle,
   CenteredCardContainer,
-} from "@components/shadcn/ui/themed/card";
+} from '@components/shadcn/ui/themed/card'
 
-import { TEXT_SIGN_IN, TEXT_SIGN_OUT } from "@/consts";
-import { CoreProviders } from "@providers/core-providers";
-import { useEffect, useState } from "react";
-import { Auth0SignInButton } from "./auth0-signin-button";
+import { TEXT_SIGN_IN, TEXT_SIGN_OUT } from '@/consts'
+import { CoreProviders } from '@providers/core-providers'
+import { useEffect, useState } from 'react'
+import { Auth0SignInButton } from './auth0-signin-button'
 
 // async function signIn(jwt: string): Promise<AxiosResponse> {
 //   console.log("signin")
@@ -44,18 +44,18 @@ import { Auth0SignInButton } from "./auth0-signin-button";
 function SignInPage() {
   //const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  const [callbackUrl, setCallbackUrl] = useState("");
+  const [callbackUrl, setCallbackUrl] = useState('')
 
   useEffect(() => {
-    const queryParameters = new URLSearchParams(window.location.search);
+    const queryParameters = new URLSearchParams(window.location.search)
 
     // used to reroute once authorized
     setCallbackUrl(
       queryParameters.get(CALLBACK_URL_PARAM) ?? APP_ACCOUNT_SIGN_IN_URL
-    ); // ?? MYACCOUNT_ROUTE)
+    ) // ?? MYACCOUNT_ROUTE)
 
     //fetch()
-  }, []);
+  }, [])
 
   const {
     //isLoading,
@@ -65,7 +65,7 @@ function SignInPage() {
     //handleRedirectCallback,
 
     logout,
-  } = useAuth0();
+  } = useAuth0()
 
   // useEffect(() => {
   //   async function processCallback() {
@@ -105,7 +105,7 @@ function SignInPage() {
   if (user) {
     return (
       <div>
-        Hello {user.name}{" "}
+        Hello {user.name}{' '}
         <button
           onClick={() =>
             logout({ logoutParams: { returnTo: APP_ACCOUNT_SIGNED_OUT_URL } })
@@ -114,7 +114,7 @@ function SignInPage() {
           {TEXT_SIGN_OUT}
         </button>
       </div>
-    );
+    )
   }
 
   // Allow users to signin
@@ -137,7 +137,7 @@ function SignInPage() {
         {/* <CreateAccountLink /> */}
       </CenteredCardContainer>
     </SignInLayout>
-  );
+  )
 }
 
 export function SignInQueryPage() {
@@ -155,5 +155,5 @@ export function SignInQueryPage() {
     <CoreProviders>
       <SignInPage />
     </CoreProviders>
-  );
+  )
 }

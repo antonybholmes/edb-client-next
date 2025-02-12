@@ -31,7 +31,7 @@ export async function loadGMT(
 
     console.log('loaded from', file.url, lines.length)
 
-    lines.forEach(line => {
+    lines.forEach((line) => {
       const tokens = line.split('\t')
 
       geneSets.push({

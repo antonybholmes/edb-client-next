@@ -37,7 +37,7 @@ export const LollipopPropsPanel = forwardRef(function LollipopPropsPanel(
             id="w"
             defaultValue={displayProps.grid.cell.w}
             className="w-12 rounded-theme"
-            onKeyDown={event => {
+            onKeyDown={(event) => {
               if (event.key === 'Enter') {
                 const v = parseInt(event.currentTarget.value)
                 if (Number.isInteger(v)) {
@@ -67,7 +67,7 @@ export const LollipopPropsPanel = forwardRef(function LollipopPropsPanel(
           <DoubleInput
             text1={displayProps.grid.spacing.x}
             text2={displayProps.grid.spacing.y}
-            onKeyDown1={event => {
+            onKeyDown1={(event) => {
               if (event.key === 'Enter') {
                 const v = parseInt(event.currentTarget.value)
                 if (Number.isInteger(v)) {
@@ -84,7 +84,7 @@ export const LollipopPropsPanel = forwardRef(function LollipopPropsPanel(
                 }
               }
             }}
-            onKeyDown2={event => {
+            onKeyDown2={(event) => {
               if (event.key === 'Enter') {
                 const v = parseInt(event.currentTarget.value)
                 if (Number.isInteger(v)) {
@@ -111,7 +111,7 @@ export const LollipopPropsPanel = forwardRef(function LollipopPropsPanel(
         headerChildren={
           <Switch
             checked={displayProps.legend.show}
-            onCheckedChange={state =>
+            onCheckedChange={(state) =>
               plotDispatch({
                 type: 'display',
                 displayProps: {
@@ -133,7 +133,7 @@ export const LollipopPropsPanel = forwardRef(function LollipopPropsPanel(
             id="w"
             defaultValue={displayProps.legend.mutations.label}
             className="w-full rounded-theme"
-            onKeyDown={event => {
+            onKeyDown={(event) => {
               if (event.key === 'Enter') {
                 plotDispatch({
                   type: 'display',
@@ -213,7 +213,7 @@ export const LollipopPropsPanel = forwardRef(function LollipopPropsPanel(
           <ColorPickerButton
             color={displayProps.mutations.graph.border.color}
             allowNoColor={true}
-            onColorChange={color =>
+            onColorChange={(color) =>
               plotDispatch({
                 type: 'display',
                 displayProps: {
@@ -247,7 +247,7 @@ export const LollipopPropsPanel = forwardRef(function LollipopPropsPanel(
                   displayProps.legend.mutations.colorMap.get(mutation) ??
                   DEFAULT_MUTATION_COLOR
                 }
-                onColorChange={color => {
+                onColorChange={(color) => {
                   plotDispatch({
                     type: 'display',
                     displayProps: {

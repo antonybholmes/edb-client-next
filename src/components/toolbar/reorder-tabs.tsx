@@ -219,12 +219,12 @@ export const ReorderTabs = forwardRef(function ReorderTabs(
       <BaseTabsList className="relative text-xs">
         <Reorder.Group
           axis="x"
-          values={tabs.map(tab => tab.id)}
+          values={tabs.map((tab) => tab.id)}
           onReorder={onReorder}
           className="flex flex-row"
           ref={tabListRef}
         >
-          {tabs.map(tab => {
+          {tabs.map((tab) => {
             //const id = makeTabId(tab, ti)
             //const w = tab.size ?? defaultWidth
             const selected = tab.id === selectedTab.tab.id // tab.id === selectedTab?.tab.id

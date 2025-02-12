@@ -215,8 +215,8 @@ export function Alerts() {
     <>
       {alertState.alerts
         .toReversed()
-        .filter(alert => alert.size === 'dialog')
-        .map(alert => {
+        .filter((alert) => alert.size === 'dialog')
+        .map((alert) => {
           return <AlertDialog alert={alert} key={alert.id} />
         })}
 

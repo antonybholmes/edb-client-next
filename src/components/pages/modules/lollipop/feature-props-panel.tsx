@@ -82,7 +82,7 @@ function FeatureElem({ fi, feature, setDelFeature }: IFeatureProps) {
     <VCenterRow key={fi} className="gap-x-2">
       <Switch
         checked={feature.show}
-        onCheckedChange={state =>
+        onCheckedChange={(state) =>
           plotDispatch({
             type: 'features',
             features: [
@@ -98,7 +98,7 @@ function FeatureElem({ fi, feature, setDelFeature }: IFeatureProps) {
         fgColor={feature.color}
         bgColor={feature.bgColor}
         allowNoColor={true}
-        onFgColorChange={color =>
+        onFgColorChange={(color) =>
           plotDispatch({
             type: 'features',
             features: [
@@ -112,7 +112,7 @@ function FeatureElem({ fi, feature, setDelFeature }: IFeatureProps) {
             ],
           })
         }
-        onBgColorChange={color =>
+        onBgColorChange={(color) =>
           plotDispatch({
             type: 'features',
             features: [
@@ -133,7 +133,7 @@ function FeatureElem({ fi, feature, setDelFeature }: IFeatureProps) {
         placeholder="Name"
         value={feature.name}
         className="rounded-theme grow"
-        onChange={event => {
+        onChange={(event) => {
           plotDispatch({
             type: 'features',
             features: [
@@ -149,8 +149,8 @@ function FeatureElem({ fi, feature, setDelFeature }: IFeatureProps) {
         value={start}
         placeholder="Start"
         className="w-12 shrink-0 text-center rounded-theme"
-        onChange={e => setStart(e.currentTarget.value)}
-        onKeyDown={event => {
+        onChange={(e) => setStart(e.currentTarget.value)}
+        onKeyDown={(event) => {
           if (event.key === 'Enter') {
             setPosition()
           }
@@ -161,8 +161,8 @@ function FeatureElem({ fi, feature, setDelFeature }: IFeatureProps) {
         value={end}
         placeholder="End"
         className="w-12 shrink-0 text-center rounded-theme"
-        onChange={e => setEnd(e.currentTarget.value)}
-        onKeyDown={event => {
+        onChange={(e) => setEnd(e.currentTarget.value)}
+        onKeyDown={(event) => {
           if (event.key === 'Enter') {
             setPosition()
           }
@@ -198,7 +198,7 @@ export const FeaturePropsPanel = forwardRef(function FeaturePropsPanel(
     <>
       <OKCancelDialog
         open={confirmClear}
-        onReponse={r => {
+        onReponse={(r) => {
           if (r === TEXT_OK) {
             //onGroupsChange?.([])
             plotDispatch({ type: 'features', features: [] })
@@ -213,12 +213,12 @@ export const FeaturePropsPanel = forwardRef(function FeaturePropsPanel(
       <OKCancelDialog
         open={delFeature !== null}
         showClose={true}
-        onReponse={r => {
+        onReponse={(r) => {
           if (r === TEXT_OK) {
             plotDispatch({
               type: 'features',
               features: features.filter(
-                feature => feature.id !== delFeature!.id
+                (feature) => feature.id !== delFeature!.id
               ),
             })
           }
@@ -303,7 +303,7 @@ export const FeaturePropsPanel = forwardRef(function FeaturePropsPanel(
         <BaseCol className="gap-y-1">
           <Switch
             checked={displayProps.features.show}
-            onCheckedChange={state =>
+            onCheckedChange={(state) =>
               plotDispatch({
                 type: 'display',
                 displayProps: {
@@ -319,7 +319,7 @@ export const FeaturePropsPanel = forwardRef(function FeaturePropsPanel(
           <Switch
             disabled={!displayProps.features.show}
             checked={displayProps.features.positions.show}
-            onCheckedChange={state =>
+            onCheckedChange={(state) =>
               plotDispatch({
                 type: 'display',
                 displayProps: {
@@ -428,7 +428,7 @@ export const FeaturePropsPanel = forwardRef(function FeaturePropsPanel(
               defaultFgColor={DEFAULT_DISPLAY_PROPS.features.border.color}
               defaultBgColor={DEFAULT_DISPLAY_PROPS.features.background.color}
               allowNoColor={true}
-              onFgColorChange={color =>
+              onFgColorChange={(color) =>
                 plotDispatch({
                   type: 'display',
                   displayProps: {
@@ -445,7 +445,7 @@ export const FeaturePropsPanel = forwardRef(function FeaturePropsPanel(
                   },
                 })
               }
-              onBgColorChange={color =>
+              onBgColorChange={(color) =>
                 plotDispatch({
                   type: 'display',
                   displayProps: {

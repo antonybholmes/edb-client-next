@@ -19,7 +19,7 @@ function FileItem({ value, name, ...props }: { value: string; name: string }) {
       <VCenterRow className="gap-x-2 hover:bg-muted rounded-theme overflow-hidden p-1">
         <VCenterRow
           className="cursor-ns-resize shrink-0 pl-1"
-          onPointerDown={e => controls.start(e)}
+          onPointerDown={(e) => controls.start(e)}
         >
           <VerticalGripIcon />
         </VCenterRow>
@@ -49,13 +49,13 @@ export function FilesPropsPanel() {
           <Reorder.Group
             axis="y"
             values={order}
-            onReorder={newOrder => {
+            onReorder={(newOrder) => {
               console.log(newOrder)
               setOrder(newOrder)
             }}
             className="flex flex-col"
           >
-            {order.map(id => {
+            {order.map((id) => {
               return <FileItem value={id} name={dfs.get(id)!.name} key={id} />
             })}
           </Reorder.Group>

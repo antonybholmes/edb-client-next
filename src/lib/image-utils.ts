@@ -138,7 +138,7 @@ export async function downloadSvgAsPng(
       // Render image in Canvas
       ctx.drawImage(img, 0, 0, img.width, img.height)
 
-      canvasRef.current.toBlob(blob => {
+      canvasRef.current.toBlob((blob) => {
         if (blob && downloadRef.current) {
           const url = window.URL.createObjectURL(blob)
 

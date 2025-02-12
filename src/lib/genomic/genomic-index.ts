@@ -62,7 +62,7 @@ export class GenomicFeatureIndex<T extends GenomicLocation | IGenomicLocation> {
 
   getOverlappingFeatures(location: GenomicLocation): T[] {
     return this.getFeatures(location).filter(
-      f => f.start <= location.end && f.end >= location.start
+      (f) => f.start <= location.end && f.end >= location.start
     )
   }
 }

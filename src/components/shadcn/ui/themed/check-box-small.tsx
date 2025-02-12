@@ -32,7 +32,7 @@ export const CheckboxSmall = forwardRef(function CheckboxSmall(
     <CheckboxPrimitive.Root
       ref={ref}
       checked={checked}
-      onCheckedChange={state =>
+      onCheckedChange={(state) =>
         onCheckedChange?.(state === 'indeterminate' ? false : state)
       }
       className={cn(CHECK_CLS, gap, className)}

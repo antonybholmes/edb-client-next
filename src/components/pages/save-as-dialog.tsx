@@ -28,7 +28,7 @@ export function SaveAsDialog({
       open={open !== ''}
       title={title}
       buttons={[]}
-      onReponse={r => {
+      onReponse={(r) => {
         if (r !== TEXT_OK) {
           onCancel()
         }

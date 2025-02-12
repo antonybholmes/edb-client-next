@@ -105,7 +105,7 @@ export function BoxPlotDialog({ open = true, df, onReponse }: IProps) {
       xOrder = uniqueInOrder(df.colNames)
 
       const data = range(df.shape[0])
-        .map(col => df.col(col).numsNoNA.map(v => [df.colNames[col]!, v]))
+        .map((col) => df.col(col).numsNoNA.map((v) => [df.colNames[col]!, v]))
         .flat()
 
       df = new DataFrame({ data, columns: ['Category', 'Datum'] })
@@ -117,7 +117,7 @@ export function BoxPlotDialog({ open = true, df, onReponse }: IProps) {
       if (data.hueCol !== '<none>') {
         hueCol = data.hueCol
         if (findCol(df, hueCol) !== -1) {
-          hueOrder = uniqueInOrder(df.col(hueCol).strs).map(v => cleanHue(v))
+          hueOrder = uniqueInOrder(df.col(hueCol).strs).map((v) => cleanHue(v))
         }
       } else {
         hueCol = xCol
@@ -130,7 +130,7 @@ export function BoxPlotDialog({ open = true, df, onReponse }: IProps) {
     console.log('pp', df, xCol, yCol, hueCol, xOrder, hueOrder)
 
     const singlePlotDisplayOptions = Object.fromEntries(
-      xOrder.map(x => [
+      xOrder.map((x) => [
         x,
         Object.fromEntries(
           hueOrder.map((hue, huei) => {
@@ -203,7 +203,7 @@ export function BoxPlotDialog({ open = true, df, onReponse }: IProps) {
     <OKCancelDialog
       open={open}
       title="Box Plot"
-      onReponse={r => {
+      onReponse={(r) => {
         if (r === TEXT_OK) {
           btnRef.current?.click()
         } else {

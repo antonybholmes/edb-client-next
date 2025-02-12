@@ -42,8 +42,8 @@ export function OverlapProvider({ children }: IChildrenProps) {
       setSelected(INF_DATAFRAME.id)
     }
 
-    setDataFrames(new Map<string, BaseDataFrame>(dfs.map(df => [df.id, df])))
-    setOrder(dfs.map(df => df.id))
+    setDataFrames(new Map<string, BaseDataFrame>(dfs.map((df) => [df.id, df])))
+    setOrder(dfs.map((df) => df.id))
   }
 
   // const handleReorder = useCallback(
@@ -88,7 +88,7 @@ export function OverlapProvider({ children }: IChildrenProps) {
         if (isBed) {
           table = table.setColNames([
             ...['chr', 'start', 'end'],
-            ...range(table.shape[1] - 3).map(i => `data ${i + 1}`),
+            ...range(table.shape[1] - 3).map((i) => `data ${i + 1}`),
           ])
         }
 
@@ -99,7 +99,7 @@ export function OverlapProvider({ children }: IChildrenProps) {
         _setDfs(tables)
         setIsDefaultState(false)
       } else {
-        _setDfs([...order.map(id => dfMap.get(id)!), ...tables])
+        _setDfs([...order.map((id) => dfMap.get(id)!), ...tables])
       }
     } catch (err) {
       console.log(err)

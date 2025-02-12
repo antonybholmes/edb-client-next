@@ -81,7 +81,7 @@ export function ZoomSlider({ scale = 1, onZoomChange, className }: IProps) {
         open={open}
         onOpenChange={setOpen}
         value={scale.toString()}
-        onValueChange={value => _setValue(Number(value))}
+        onValueChange={(value) => _setValue(Number(value))}
       >
         <SelectTrigger asChild>
           <ToolbarFooterButton
@@ -98,7 +98,7 @@ export function ZoomSlider({ scale = 1, onZoomChange, className }: IProps) {
 
             {range(ZOOM_SCALES.length)
               .toReversed()
-              .map(i => (
+              .map((i) => (
                 <SelectItem value={ZOOM_SCALES[i]!.toString()} key={i}>
                   {formatZoom(ZOOM_SCALES[i]!)}
                 </SelectItem>

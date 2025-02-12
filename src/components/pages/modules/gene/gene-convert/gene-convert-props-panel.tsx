@@ -44,7 +44,7 @@ export const GeneConvertPropsPanel = forwardRef(function GeneConvertPropsPanel(
               <ToggleButtons
                 tabs={tabs}
                 value={fromSpecies}
-                onTabChange={selectedTab => {
+                onTabChange={(selectedTab) => {
                   setFromSpecies(selectedTab.tab.id)
                 }}
               >
@@ -57,7 +57,7 @@ export const GeneConvertPropsPanel = forwardRef(function GeneConvertPropsPanel(
               <ToggleButtons
                 tabs={tabs}
                 value={toSpecies}
-                onTabChange={selectedTab => {
+                onTabChange={(selectedTab) => {
                   setToSpecies(selectedTab.tab.id)
                 }}
               >

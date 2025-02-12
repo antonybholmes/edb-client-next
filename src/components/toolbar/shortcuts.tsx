@@ -51,7 +51,7 @@ export function ShortcutContent({
     }
 
     const x = sum(
-      rangeMap(index => tabs[index]!.size ?? defaultWidth, selectedTab.index)
+      rangeMap((index) => tabs[index]!.size ?? defaultWidth, selectedTab.index)
     )
 
     const width = tabs[selectedTab.index]!.size ?? defaultWidth

@@ -75,7 +75,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   placeholder="Opacity"
                   limit={[1, 100]}
                   inc={1}
-                  onNumChanged={v =>
+                  onNumChanged={(v) =>
                     setDisplayProps({
                       ...displayProps,
                       page: {
@@ -98,7 +98,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   placeholder="Opacity"
                   limit={[1, 1000]}
                   inc={1}
-                  onNumChanged={v =>
+                  onNumChanged={(v) =>
                     setDisplayProps({
                       ...displayProps,
                       plot: {
@@ -119,7 +119,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   placeholder="Opacity"
                   limit={[1, 1000]}
                   inc={1}
-                  onNumChanged={v =>
+                  onNumChanged={(v) =>
                     setDisplayProps({
                       ...displayProps,
                       plot: {
@@ -140,7 +140,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   placeholder="Opacity"
                   limit={[1, 1000]}
                   inc={1}
-                  onNumChanged={v =>
+                  onNumChanged={(v) =>
                     setDisplayProps({
                       ...displayProps,
                       plot: {
@@ -161,7 +161,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   placeholder="Opacity"
                   limit={[1, 1000]}
                   inc={1}
-                  onNumChanged={v =>
+                  onNumChanged={(v) =>
                     setDisplayProps({
                       ...displayProps,
                       plot: {
@@ -188,7 +188,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   placeholder="Width"
                   limit={[1, 1000]}
                   dp={0}
-                  onNumChanged1={v =>
+                  onNumChanged1={(v) =>
                     setDisplayProps({
                       ...displayProps,
                       axes: {
@@ -201,7 +201,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                     })
                   }
                   v2={displayProps.es.axes.y.length}
-                  onNumChanged2={v =>
+                  onNumChanged2={(v) =>
                     setDisplayProps({
                       ...displayProps,
                       es: {
@@ -221,7 +221,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
               <PropRow title="Line color">
                 <ColorPickerButton
                   color={displayProps.es.line.color}
-                  onColorChange={color =>
+                  onColorChange={(color) =>
                     setDisplayProps({
                       ...displayProps,
                       es: {
@@ -245,7 +245,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   placeholder="Stroke"
                   limit={[1, 100]}
                   inc={1}
-                  onNumChanged={v =>
+                  onNumChanged={(v) =>
                     setDisplayProps({
                       ...displayProps,
                       es: {
@@ -264,7 +264,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
               <SwitchPropRow
                 title="Leading Edge"
                 checked={displayProps.es.leadingEdge.show}
-                onCheckedChange={state =>
+                onCheckedChange={(state) =>
                   setDisplayProps({
                     ...displayProps,
                     es: {
@@ -281,7 +281,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
               <PropRow title="Color" className="ml-2">
                 <ColorPickerButton
                   color={displayProps.es.leadingEdge.fill.color}
-                  onColorChange={color =>
+                  onColorChange={(color) =>
                     setDisplayProps({
                       ...displayProps,
                       es: {
@@ -309,7 +309,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   limit={[0, 1]}
                   inc={0.1}
                   dp={1}
-                  onNumChanged={v =>
+                  onNumChanged={(v) =>
                     setDisplayProps({
                       ...displayProps,
                       es: {
@@ -335,7 +335,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
               <SwitchPropRow
                 title="Show"
                 checked={displayProps.genes.show}
-                onCheckedChange={state =>
+                onCheckedChange={(state) =>
                   setDisplayProps({
                     ...displayProps,
                     genes: {
@@ -352,7 +352,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   placeholder="Height"
                   limit={[1, 100]}
                   inc={1}
-                  onNumChanged={v =>
+                  onNumChanged={(v) =>
                     setDisplayProps({
                       ...displayProps,
                       genes: {
@@ -371,7 +371,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   placeholder="Stroke"
                   limit={[1, 100]}
                   inc={1}
-                  onNumChanged={v =>
+                  onNumChanged={(v) =>
                     setDisplayProps({
                       ...displayProps,
                       genes: {
@@ -388,7 +388,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                 <ColorPickerButton
                   disabled={!displayProps.genes.show}
                   color={displayProps.genes.pos.color}
-                  onColorChange={color =>
+                  onColorChange={(color) =>
                     setDisplayProps({
                       ...displayProps,
                       genes: {
@@ -408,7 +408,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                 <ColorPickerButton
                   disabled={!displayProps.genes.show}
                   color={displayProps.genes.neg.color}
-                  onColorChange={color =>
+                  onColorChange={(color) =>
                     setDisplayProps({
                       ...displayProps,
                       genes: {
@@ -433,7 +433,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
               <SwitchPropRow
                 title="Show"
                 checked={displayProps.ranking.show}
-                onCheckedChange={state =>
+                onCheckedChange={(state) =>
                   setDisplayProps({
                     ...displayProps,
                     ranking: {
@@ -448,7 +448,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                 <ColorPickerButton
                   color={displayProps.ranking.fill.color}
                   disabled={!displayProps.ranking.show}
-                  onColorChange={color =>
+                  onColorChange={(color) =>
                     setDisplayProps({
                       ...displayProps,
                       ranking: {
@@ -473,7 +473,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   limit={[0, 1]}
                   inc={0.1}
                   dp={1}
-                  onNumChanged={v =>
+                  onNumChanged={(v) =>
                     setDisplayProps({
                       ...displayProps,
                       ranking: {
@@ -494,7 +494,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                 title="Zero crossing"
                 checked={displayProps.ranking.zeroCross.show}
                 disabled={!displayProps.ranking.show}
-                onCheckedChange={state =>
+                onCheckedChange={(state) =>
                   setDisplayProps({
                     ...displayProps,
                     ranking: {

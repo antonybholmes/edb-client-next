@@ -6,8 +6,8 @@ export function indexBed(
   lines: string[]
 ): GenomicFeatureIndex<GenomicLocation> | null {
   const tokens = lines
-    .filter(line => !line.startsWith('track'))
-    .map(row => row.split('\t'))
+    .filter((line) => !line.startsWith('track'))
+    .map((row) => row.split('\t'))
 
   if (tokens[0]!.length < 3) {
     return null
@@ -26,7 +26,7 @@ export function indexBed(
   }
 
   const bed = tokens.map(
-    row => new GenomicLocation(row[0]!, Number(row[1]!), Number(row[2]!))
+    (row) => new GenomicLocation(row[0]!, Number(row[1]!), Number(row[2]!))
   )
 
   return new GenomicFeatureIndex(name, bed)

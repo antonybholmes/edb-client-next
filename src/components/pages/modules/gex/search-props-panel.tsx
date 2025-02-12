@@ -52,7 +52,7 @@ export const SearchPropsPanel = forwardRef(function SearchPropsPanel(
       <OKCancelDialog
         open={confirmClear}
         title={APP_NAME}
-        onReponse={r => {
+        onReponse={(r) => {
           if (r === TEXT_OK) {
             setText('')
           }
@@ -75,7 +75,7 @@ export const SearchPropsPanel = forwardRef(function SearchPropsPanel(
                 id="filter"
                 aria-label="Filter"
                 value={text}
-                onChange={e => setText(e.target.value)}
+                onChange={(e) => setText(e.target.value)}
                 placeholder="Genes..."
                 className="grow p-2 rounded-theme bg-white overflow-hidden outline-none placeholder:text-muted-foreground"
               />
@@ -132,7 +132,7 @@ export const SearchPropsPanel = forwardRef(function SearchPropsPanel(
               value={tab!}
               //asChild={true}
 
-              onValueChange={t => {
+              onValueChange={(t) => {
                 setTab(t)
               }}
               onCheckedChange={(tab: ITab, state: boolean) => {
@@ -143,7 +143,7 @@ export const SearchPropsPanel = forwardRef(function SearchPropsPanel(
                   setDatasetUseMap(
                     new Map<string, boolean>(
                       [...datasetUseMap.keys()].map(
-                        key => [key, state] as [string, boolean]
+                        (key) => [key, state] as [string, boolean]
                       )
                     )
                   )
@@ -153,9 +153,9 @@ export const SearchPropsPanel = forwardRef(function SearchPropsPanel(
                     new Map<string, boolean>([
                       ...datasetUseMap.entries(),
                       ...datasets
-                        .filter(dataset => dataset.institution === tab.id)
+                        .filter((dataset) => dataset.institution === tab.id)
                         .map(
-                          dataset =>
+                          (dataset) =>
                             [dataset.id.toString(), state] as [string, boolean]
                         ),
                       [tab.id, state],

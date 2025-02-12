@@ -23,7 +23,7 @@ export function DraggableListFramer({
     <Reorder.Group
       axis="y"
       values={order}
-      onReorder={order => {
+      onReorder={(order) => {
         onOrderChange?.(order)
       }}
       className={className}
@@ -89,7 +89,7 @@ export const DraggableListItem = ({
 
       <div
         className="reorder-handle"
-        onPointerDown={e => dragControls.start(e)}
+        onPointerDown={(e) => dragControls.start(e)}
       >
         {children}
       </div>

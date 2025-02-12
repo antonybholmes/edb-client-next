@@ -1,21 +1,21 @@
-"use client";
+'use client'
 
-import { APP_MYACCOUNT_URL } from "@/lib/edb/edb";
+import { APP_MYACCOUNT_URL } from '@/lib/edb/edb'
 
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from '@auth0/auth0-react'
 
-import { Button } from "@components/shadcn/ui/themed/button";
+import { Button } from '@components/shadcn/ui/themed/button'
 
-import { TEXT_SIGN_IN } from "@/consts";
+import { TEXT_SIGN_IN } from '@/consts'
 
 export function Auth0SignInButton({
-  callbackUrl = "",
+  callbackUrl = '',
 }: {
-  callbackUrl?: string;
+  callbackUrl?: string
 }) {
   //const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  const { loginWithRedirect } = useAuth0();
+  const { loginWithRedirect } = useAuth0()
 
   // Allow users to signin
   return (
@@ -27,13 +27,13 @@ export function Auth0SignInButton({
       onClick={() => {
         const state = {
           callbackUrl: callbackUrl ? callbackUrl : APP_MYACCOUNT_URL,
-        };
+        }
 
-        loginWithRedirect({ appState: state });
+        loginWithRedirect({ appState: state })
       }}
       aria-label={TEXT_SIGN_IN}
     >
       {TEXT_SIGN_IN}
     </Button>
-  );
+  )
 }

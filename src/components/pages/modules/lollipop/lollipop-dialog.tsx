@@ -42,7 +42,7 @@ export function LollipopDialog({ open, type, onPlot, onCancel }: IProps) {
     <OKCancelDialog
       open={open}
       title="Oncoplot"
-      onReponse={r => {
+      onReponse={(r) => {
         if (r === TEXT_CANCEL) {
           onCancel?.()
         } else {
@@ -56,7 +56,7 @@ export function LollipopDialog({ open, type, onPlot, onCancel }: IProps) {
           <span>Multi-mode</span>
           <Select
             defaultValue={multi}
-            onValueChange={value => setMulti(value as MultiMode)}
+            onValueChange={(value) => setMulti(value as MultiMode)}
           >
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Select a mode" />
