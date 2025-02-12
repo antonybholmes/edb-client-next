@@ -30,23 +30,6 @@ export function LineGraph() {
           return yScale(f(d))
         })
     }
-    var samples = 2000
-    var data = d3.range(xDomain[0], xDomain[1], xDomain[1] / samples)
-
-    var paths = svg
-      .selectAll('path')
-      .data([f])
-      .enter()
-      .append('path')
-      .attr('stroke', function () {
-        return colours[0]
-      })
-      .attr('stroke-width', 2)
-      .style('stroke-opacity', 0.8)
-      .attr('fill', 'None')
-      .attr('d', function (f) {
-        return line(f)(data)
-      })
 
     d3.select('body')
       .selectAll('.tooltip')

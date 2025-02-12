@@ -223,10 +223,10 @@ function animatedScatterPlot(element, history, labels, duration) {
 
     update
       .select('text')
-      .attr('x', function (d, i) {
+      .attr('x', function (d) {
         return xScale(d[0])
       })
-      .attr('y', function (d, i) {
+      .attr('y', function (d) {
         return yScale(d[1]) - 2 - pointRadius
       })
 

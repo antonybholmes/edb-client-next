@@ -81,10 +81,7 @@ export class BaseDataFrame {
     return []
   }
 
-  row(
-    // @ts-ignore
-    row: IndexData
-  ): BaseSeries {
+  row(row: IndexData): BaseSeries {
     return EMPTY_SERIES
   }
 

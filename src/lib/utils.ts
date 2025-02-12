@@ -61,7 +61,7 @@ export function makeRandId(prefix: string): string {
   return `${prefix}:${nanoid()}`
 }
 
-export function zip(...cols: unknown[]): unknown[][] {
+export function zip<T = unknown>(...cols: T[][]): T[][] {
   const colIdx = range(cols.length)
 
   return rangeMap((i) => colIdx.map((j) => cols[j][i]), cols[0].length)

@@ -45,10 +45,10 @@ function makeMatrix(
 ): ReactNode {
   return (
     <>
-      {range(df.shape[0]).map(ri => {
+      {range(df.shape[0]).map((ri) => {
         const y = ri * (blockSize.h + spacing.y)
 
-        return range(df.shape[1]).map(ci => {
+        return range(df.shape[1]).map((ci) => {
           const x = ci * (blockSize.w + spacing.x)
 
           const stats = df.data(ri, ci)
@@ -90,7 +90,7 @@ function makeMatrix(
                 displayProps.legend.mutations.names
               )
 
-              let yax: Axis = new YAxis()
+              const yax: Axis = new YAxis()
                 .setDomain([0, 1])
                 .setLength(blockSize.h)
 
@@ -189,7 +189,7 @@ function makeGrid(
     if (displayProps.grid.show) {
       gridElem = (
         <>
-          {range(blockSize.h, gridHeight, blockSize.h).map(y => (
+          {range(blockSize.h, gridHeight, blockSize.h).map((y) => (
             <line
               key={y}
               x1={0}
@@ -200,7 +200,7 @@ function makeGrid(
               shapeRendering={SVG_CRISP_EDGES}
             />
           ))}
-          {range(blockSize.w, gridWidth, blockSize.w).map(x => (
+          {range(blockSize.w, gridWidth, blockSize.w).map((x) => (
             <line
               key={x}
               x1={x}
@@ -231,11 +231,11 @@ function makeGrid(
 
     gridElem = (
       <>
-        {range(0, gridHeight, blockSize.h + spacing.y).map(y => (
+        {range(0, gridHeight, blockSize.h + spacing.y).map((y) => (
           <g key={y}>
             {displayProps.grid.show && (
               <>
-                {range(blockSize.w, gridWidth, blockSize.w).map(x => (
+                {range(blockSize.w, gridWidth, blockSize.w).map((x) => (
                   <line
                     key={`${x}:${y}`}
                     x1={x}
@@ -272,8 +272,8 @@ function makeGrid(
     if (displayProps.border.show) {
       gridElem = (
         <>
-          {range(0, gridWidth, blockSize.w + spacing.x).map(x => {
-            return range(0, gridHeight, blockSize.h + spacing.y).map(y => (
+          {range(0, gridWidth, blockSize.w + spacing.x).map((x) => {
+            return range(0, gridHeight, blockSize.h + spacing.y).map((y) => (
               <rect
                 key={`${x}:${y}`}
                 x={x}
@@ -315,11 +315,11 @@ function colGraphs(
         {df.sampleStats.map((stats, ci) => {
           const coords = [0]
 
-          const names = displayProps.legend.mutations.names.filter(name =>
+          const names = displayProps.legend.mutations.names.filter((name) =>
             stats.countMap.has(name)
           )
 
-          names.map(name => {
+          names.map((name) => {
             coords.push(coords[coords.length - 1]! + stats.countMap.get(name)!)
           })
 
@@ -409,13 +409,13 @@ function rowGraphs(
         {df.geneStats.map((stats, ri) => {
           const coords = [0]
 
-          const names = displayProps.legend.mutations.names.filter(name =>
+          const names = displayProps.legend.mutations.names.filter((name) =>
             stats.countMap.has(name)
           )
           // get the non zero counts
           const counts = stats.countDist(names)
 
-          counts.map(count => {
+          counts.map((count) => {
             coords.push(coords[coords.length - 1]! + count[1])
           })
 
@@ -601,11 +601,11 @@ export const OncoplotSvg = forwardRef<SVGElement, IProps>(function OncoplotSvg(
       return null
     }
 
-    const samples: string[] = mf.sampleStats.map(stats => stats.sample)
+    const samples: string[] = mf.sampleStats.map((stats) => stats.sample)
 
     // keep things simple and use ints for the graph limits
     const maxSampleCount = Math.round(
-      Math.max(...mf.sampleStats.map(stats => stats.sum))
+      Math.max(...mf.sampleStats.map((stats) => stats.sum))
     )
 
     const yax = new YAxis()
@@ -615,7 +615,7 @@ export const OncoplotSvg = forwardRef<SVGElement, IProps>(function OncoplotSvg(
       .setTicks([0, maxSampleCount])
 
     const maxGeneCount = Math.round(
-      Math.max(...mf.geneStats.map(stats => stats.sum))
+      Math.max(...mf.geneStats.map((stats) => stats.sum))
     )
 
     const xax = new Axis()

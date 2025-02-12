@@ -35,7 +35,7 @@ export const ClinicalPropsPanel = forwardRef(function ClinicalPropsPanel(
             <SwitchPropRow
               title="Show"
               checked={displayProps.clinical.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 plotDispatch({
                   type: 'display',
                   displayProps: {
@@ -52,7 +52,7 @@ export const ClinicalPropsPanel = forwardRef(function ClinicalPropsPanel(
                 id="y"
                 defaultValue={displayProps.clinical.height}
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   plotDispatch({
                     type: 'display',
                     displayProps: {
@@ -70,7 +70,7 @@ export const ClinicalPropsPanel = forwardRef(function ClinicalPropsPanel(
             <SwitchPropRow
               title="Border"
               checked={displayProps.clinical.border.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 plotDispatch({
                   type: 'display',
                   displayProps: {
@@ -88,7 +88,7 @@ export const ClinicalPropsPanel = forwardRef(function ClinicalPropsPanel(
             >
               <ColorPickerButton
                 color={displayProps.clinical.border.color}
-                onColorChange={color =>
+                onColorChange={(color) =>
                   plotDispatch({
                     type: 'display',
                     displayProps: {
@@ -107,13 +107,13 @@ export const ClinicalPropsPanel = forwardRef(function ClinicalPropsPanel(
         </AccordionItem>
 
         {tracks.map((track, ti) => (
-          <AccordionItem value={track.name}>
+          <AccordionItem value={track.name} key={ti}>
             <AccordionTrigger>{track.name}</AccordionTrigger>
             <AccordionContent>
               <SwitchPropRow
                 title="Show"
                 checked={displayProps.legend.clinical.tracks[ti]!.show}
-                onCheckedChange={state => {
+                onCheckedChange={(state) => {
                   const tracksProps = [...displayProps.legend.clinical.tracks]
                   tracksProps[ti]!.show = state
 
@@ -141,7 +141,7 @@ export const ClinicalPropsPanel = forwardRef(function ClinicalPropsPanel(
                           category
                         ) ?? displayProps.legend.mutations.noAlterationColor
                       }
-                      onColorChange={color => {
+                      onColorChange={(color) => {
                         const newColors = new Map<string, string>([
                           ...displayProps.legend.clinical.tracks[ti]!.colorMap,
                           [category, color],

@@ -85,7 +85,7 @@ export const DEFAULT_PARSE_OPTS: IParseOptions = {
 function getFileTypes(fileTypes: string[]) {
   return fileTypes
     .sort()
-    .map(t => `.${t}`)
+    .map((t) => `.${t}`)
     .join(', ')
 }
 
@@ -97,7 +97,7 @@ export function arrayBufferToBase64(buffer: ArrayBuffer): string {
   let binaryString = ''
   const bytes = new Uint8Array(buffer)
 
-  bytes.forEach(b => (binaryString += String.fromCharCode(b)))
+  bytes.forEach((b) => (binaryString += String.fromCharCode(b)))
   return btoa(binaryString)
 }
 
@@ -118,10 +118,6 @@ export function OpenFiles({
   multiple = false,
   fileTypes = ['txt', 'tsv', 'vst', 'xlsx'],
 }: IProps) {
-  if (!open) {
-    return null
-  }
-
   const ref = useRef<HTMLInputElement>(null)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -148,9 +144,6 @@ export function OpenFiles({
           ref={ref}
           type="file"
           id="file"
-          // @ts-ignore
-          webkitdirectory="true"
-          directory="true"
           onChange={_onFileChange}
           //multiple
           //accept={getFileTypes(fileTypes)}
@@ -212,13 +205,13 @@ export function readFile(file: File): Promise<string> {
     const reader = new FileReader()
 
     // Define error callback
-    reader.onerror = error => reject(error)
+    reader.onerror = (error) => reject(error)
 
     // Read the file as text (can be changed to readAsDataURL or others based on your needs)
     //reader.readAsText(file);
 
     if (file.name.includes('xlsx')) {
-      reader.onload = e => {
+      reader.onload = (e) => {
         const result = e.target?.result
 
         if (result) {
@@ -347,7 +340,7 @@ export function onBinaryFileChange(
   try {
     const fileReader = new FileReader()
 
-    fileReader.onload = e => {
+    fileReader.onload = (e) => {
       const result = e.target?.result
 
       if (result) {
@@ -407,7 +400,7 @@ export async function filesToDataFrames(
       let table: BaseDataFrame | null = null
 
       if (file.name.includes(XLSX_EXT)) {
-        let res = await queryClient.fetchQuery({
+        const res = await queryClient.fetchQuery({
           queryKey: ['convert'],
           queryFn: () =>
             httpFetch.postJson(API_XLSX_TO_JSON_URL, {
@@ -423,7 +416,7 @@ export async function filesToDataFrames(
 
         // try some type conversion on the raw data
         const data = t.data.map((row: string[]) =>
-          row.map(c => makeCell(c, keepDefaultNA))
+          row.map((c) => makeCell(c, keepDefaultNA))
         )
 
         table = new DataFrame({
@@ -453,7 +446,7 @@ export async function filesToDataFrames(
       if (isBed) {
         table = table.setColNames([
           ...['chr', 'start', 'end'],
-          ...range(table.shape[1] - 3).map(i => `data ${i + 1}`),
+          ...range(table.shape[1] - 3).map((i) => `data ${i + 1}`),
         ])
       }
 

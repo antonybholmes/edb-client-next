@@ -14,10 +14,7 @@ export const TEXT_CLS =
 export type TextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement>
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
-  (
-    { id, className, placeholder, value, disabled, readOnly, ...props },
-    ref
-  ) => {
+  ({ id, className, value, disabled, readOnly, ...props }, ref) => {
     //const [_value, setInputValue] = useState("")
 
     //function _onChange(event: ChangeEvent<HTMLTextAreaElement>) {

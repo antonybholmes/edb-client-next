@@ -35,7 +35,10 @@ import {
 } from '@/components/plot/heatmap/heatmap-svg-props'
 import { TEXT_DISPLAY } from '@/consts'
 import { SaveImageDialog } from '@components/pages/save-image-dialog'
-import type { IExtGseaDisplayOptions } from '../../../gene/gsea/ext-gsea-store'
+import {
+  DEFAULT_EXT_GSEA_PROPS,
+  type IExtGseaDisplayOptions,
+} from '../../../gene/gsea/ext-gsea-store'
 
 import { Card } from '@/components/shadcn/ui/themed/card'
 import { GenesetsContext } from '../../genesets-provider'
@@ -74,12 +77,9 @@ export const ExtGseaPanel = forwardRef(function ExtGseaPanel(
 
   const plot = getPlotFromAddr(plotAddr, history)
 
-  if (plot === null) {
-    return null
-  }
-
-  const displayOptions: IExtGseaDisplayOptions = plot.customProps
-    .displayOptions as IExtGseaDisplayOptions
+  const displayOptions: IExtGseaDisplayOptions =
+    (plot?.customProps.displayOptions as IExtGseaDisplayOptions) ??
+    DEFAULT_EXT_GSEA_PROPS
 
   //const extGsea: ExtGSEA = plot.customProps.extGsea as ExtGSEA
 
@@ -100,10 +100,10 @@ export const ExtGseaPanel = forwardRef(function ExtGseaPanel(
 
   useEffect(() => {
     const messages = messageState.queue.filter(
-      message => message.target === plot.id
+      (message) => message.target === plot?.id
     )
 
-    messages.forEach(message => {
+    messages.forEach((message) => {
       if (message.text.includes('save')) {
         if (message.text.includes(':')) {
           downloadImageAutoFormat(
@@ -178,7 +178,7 @@ export const ExtGseaPanel = forwardRef(function ExtGseaPanel(
       {showSave && (
         <SaveImageDialog
           open="open"
-          onSave={format => {
+          onSave={(format) => {
             downloadImageAutoFormat(
               svgRef,
               canvasRef,

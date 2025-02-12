@@ -38,13 +38,13 @@ export class ClinicalDataTrack {
   get events(): [string, number][] {
     return [
       ...new Set(
-        [...this._samples.entries()].map(entry => entry[1].events).flat()
+        [...this._samples.entries()].map((entry) => entry[1].events).flat()
       ),
     ].sort()
   }
 
   get eventsInUse(): [string, number][] {
-    return this.events.filter(event => event[1] > 0)
+    return this.events.filter((event) => event[1] > 0)
   }
 
   /**
@@ -54,16 +54,16 @@ export class ClinicalDataTrack {
     //console.log(this._name, this._categories.length > 0, this.events)
     return this._categories.length > 0
       ? this._categories
-      : [...new Set(this.events.map(event => event[0]))].sort()
+      : [...new Set(this.events.map((event) => event[0]))].sort()
   }
 
   /**
    * Return the ordered categories that are in use
    */
   get categoriesInUse(): string[] {
-    const events = new Set(this.eventsInUse.map(event => event[0]))
+    const events = new Set(this.eventsInUse.map((event) => event[0]))
 
-    return this.categories.filter(category => events.has(category))
+    return this.categories.filter((category) => events.has(category))
   }
 
   get type(): ClinicalDataType {
@@ -85,7 +85,7 @@ export class ClinicalDataTrack {
   get maxEvent(): [string, number] {
     // scan all samples and find highest n
     return [...this._samples.entries()]
-      .map(entry => entry[1].maxEvent)
+      .map((entry) => entry[1].maxEvent)
       .sort((a, b) => b[1]! - a[1]!)[0]!
   }
 
@@ -115,14 +115,14 @@ export function makeClinicalTracks(
 
   const tracksProps: IClinicalTrackProps[] = []
 
-  const tracks: ClinicalDataTrack[] = df.colNames.slice(1).map(header => {
+  const tracks: ClinicalDataTrack[] = df.colNames.slice(1).map((header) => {
     const matcher = header.match(/^([^\(\)]+)(?:\((.+)\))?/)
 
     let name: string = ''
     // default medium seagreen
     let color: string = ''
     let params: string[] = []
-    let events: string[] = []
+    const events: string[] = []
     let type: ClinicalDataType = 'dist'
     const multi = header.toLowerCase().includes('multi=t')
 
@@ -171,7 +171,7 @@ export function makeClinicalTracks(
 
       if (type === 'dist') {
         if (params.length > 0 && !multi) {
-          params[0]!.split(/[\/\|]/).forEach(id => {
+          params[0]!.split(/[\/\|]/).forEach((id) => {
             const tokens = id.split(':')
             const event: string = tokens[0]!
 
@@ -199,7 +199,7 @@ export function makeClinicalTracks(
 
     const categories = new Set([...track.categories])
 
-    range(df.shape[0]).forEach(row => {
+    range(df.shape[0]).forEach((row) => {
       const v: SeriesData = df.col(ti + 1).values[row]!
 
       const sample: string = df.col(0).values[row]!.toString()
@@ -219,8 +219,8 @@ export function makeClinicalTracks(
           }
           break
         default:
-          let s = v.toString()
-          let tokens = s.split(/[\/\|]/)
+          const s = v.toString()
+          const tokens = s.split(/[\/\|]/)
 
           if (NUMERICAL_DIST_REGEX.test(s)) {
             // if there is a mismatch in the length of the split values
@@ -230,7 +230,7 @@ export function makeClinicalTracks(
               tokens.push('0')
             }
 
-            const values: number[] = tokens.map(x => Number(x))
+            const values: number[] = tokens.map((x) => Number(x))
 
             if (multi && values.length > 1) {
               // ignore multiple labels and label them multi
@@ -243,7 +243,7 @@ export function makeClinicalTracks(
           } else {
             // see if token is the name of an event, in which
             // case increment event by one
-            tokens.forEach(event => {
+            tokens.forEach((event) => {
               // if some categories have already been defined for
               // this dist in the header, only match events to
               // these specific ones, if no categories have been

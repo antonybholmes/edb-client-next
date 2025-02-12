@@ -32,7 +32,6 @@ export const Tabs = TabsPrimitive.Root
 export const BaseTabsList = forwardRef<
   ComponentRef<typeof TabsPrimitive.List>,
   ComponentPropsWithoutRef<typeof TabsPrimitive.List>
-  // eslint-disable-next-line react/prop-types
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.List
     ref={ref}
@@ -45,7 +44,6 @@ BaseTabsList.displayName = 'BaseTabsList' //TabsPrimitive.List.displayName
 export const TabsList = forwardRef<
   ComponentRef<typeof BaseTabsList>,
   ComponentPropsWithoutRef<typeof BaseTabsList>
-  // eslint-disable-next-line react/prop-types
 >(({ className, ...props }, ref) => (
   <BaseTabsList ref={ref} className={cn(TABS_CLS, className)} {...props} />
 ))
@@ -59,7 +57,6 @@ interface IBaseTabsTrigger
 export const BaseTabsTrigger = forwardRef<
   ComponentRef<typeof TabsPrimitive.Trigger>,
   IBaseTabsTrigger
-  // eslint-disable-next-line react/prop-types
 >(({ selected = false, className, ...props }, ref) => (
   <TabsPrimitive.Trigger
     ref={ref}
@@ -73,7 +70,6 @@ BaseTabsTrigger.displayName = 'BaseTabsTrigger' //TabsPrimitive.Trigger.displayN
 export const TabsTrigger = forwardRef<
   ComponentRef<typeof BaseTabsTrigger>,
   ComponentPropsWithoutRef<typeof BaseTabsTrigger>
-  // eslint-disable-next-line react/prop-types
 >(({ className, ...props }, ref) => (
   <BaseTabsTrigger
     ref={ref}
@@ -86,14 +82,13 @@ TabsTrigger.displayName = 'TabsTrigger' //TabsPrimitive.Trigger.displayName
 export const TabsContent = forwardRef<
   ComponentRef<typeof TabsPrimitive.Content>,
   ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
-  // eslint-disable-next-line react/prop-types
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Content ref={ref} className={className} {...props} />
 ))
 TabsContent.displayName = 'TabsContent' //TabsPrimitive.Content.displayName
 
 export function TabContentPanels({ tabs }: { tabs: ITab[] }) {
-  return tabs.map(tab => (
+  return tabs.map((tab) => (
     <TabsContent value={tab.id} className="h-full overflow-hidden" key={tab.id}>
       {tab.content}
     </TabsContent>

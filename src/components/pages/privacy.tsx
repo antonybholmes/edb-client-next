@@ -40,8 +40,8 @@ function PrivacyPage() {
             track your activity once you are signed in. Cookies and local
             storage may be used to save your preferences within apps. This data
             is in the JSON format and can be freely inspected using your web
-            browser's tools. Session data is encrypted and is not designed for
-            you to inspect. It contains basic information such as your user
+            browser&apos;s tools. Session data is encrypted and is not designed
+            for you to inspect. It contains basic information such as your user
             identifier for the purposes of establishing and maintaining your
             identity and keeping you signed in.
           </p>

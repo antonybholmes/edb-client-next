@@ -22,7 +22,6 @@ CardContainer.displayName = 'CardContainer'
 export const CenteredCardContainer = forwardRef<
   HTMLDivElement,
   HTMLAttributes<HTMLDivElement>
-  // eslint-disable-next-line react/prop-types
 >(({ children }, ref) => (
   <VCenterCol ref={ref} className="grow">
     <CardContainer>{children}</CardContainer>
@@ -50,7 +49,6 @@ export const variants = cva('border border-border/40 rounded-xl', {
 const Card = forwardRef<
   HTMLDivElement,
   HTMLAttributes<HTMLDivElement> & VariantProps<typeof variants>
-  // eslint-disable-next-line react/prop-types
 >(({ variant, gap, className, ...props }, ref) => (
   <BaseCol
     ref={ref}
@@ -63,7 +61,6 @@ Card.displayName = 'Card'
 const SecondaryCard = forwardRef<
   HTMLDivElement,
   HTMLAttributes<HTMLDivElement>
-  // eslint-disable-next-line react/prop-types
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
@@ -73,23 +70,20 @@ const SecondaryCard = forwardRef<
 ))
 SecondaryCard.displayName = 'SecondaryCard'
 
-const CardHeader = forwardRef<
-  HTMLDivElement,
-  HTMLAttributes<HTMLDivElement>
-  // eslint-disable-next-line react/prop-types
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn('flex flex-col space-y-1.5', className)}
-    {...props}
-  />
-))
+const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn('flex flex-col space-y-1.5', className)}
+      {...props}
+    />
+  )
+)
 CardHeader.displayName = 'CardHeader'
 
 const CardTitle = forwardRef<
   HTMLParagraphElement,
   HTMLAttributes<HTMLHeadingElement>
-  // eslint-disable-next-line react/prop-types
 >(({ className, ...props }, ref) => (
   <h3
     ref={ref}
@@ -105,7 +99,6 @@ CardTitle.displayName = 'CardTitle'
 const CardDescription = forwardRef<
   HTMLParagraphElement,
   HTMLAttributes<HTMLParagraphElement>
-  // eslint-disable-next-line react/prop-types
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
@@ -115,22 +108,18 @@ const CardDescription = forwardRef<
 ))
 CardDescription.displayName = 'CardDescription'
 
-const CardContent = forwardRef<
-  HTMLDivElement,
-  HTMLAttributes<HTMLDivElement>
-  // eslint-disable-next-line react/prop-types
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn(className)} {...props} />
-))
+const CardContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cn(className)} {...props} />
+  )
+)
 CardContent.displayName = 'CardContent'
 
-const CardFooter = forwardRef<
-  HTMLDivElement,
-  HTMLAttributes<HTMLDivElement>
-  // eslint-disable-next-line react/prop-types
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn('flex', className)} {...props} />
-))
+const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cn('flex', className)} {...props} />
+  )
+)
 CardFooter.displayName = 'CardFooter'
 
 export {

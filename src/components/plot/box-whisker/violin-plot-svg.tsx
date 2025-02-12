@@ -1,4 +1,4 @@
-import { forwardRef, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { type IElementProps } from '@interfaces/element-props'
 
@@ -29,104 +29,102 @@ interface IProps extends IElementProps {
   mode?: IBoxWhiskerMode
 }
 
-export const ViolinPlotSvg = forwardRef<SVGElement, IProps>(
-  function ViolinPlotSvg(
-    {
-      data,
-      xsmooth,
-      ysmooth,
-      globalXMax,
-      yax,
-      width = 50,
-      height = 500,
-      fill = DEFAULT_FILL_PROPS,
-      stroke = DEFAULT_STROKE_PROPS,
-      mode = 'Full',
-    }: IProps,
-    _svgRef
-  ) {
-    const svg = useMemo(() => {
-      // duplicate to mirror violin
+export function ViolinPlotSvg({
+  data,
+  xsmooth,
+  ysmooth,
+  globalXMax,
+  yax,
+  width = 50,
+  height = 500,
+  fill = DEFAULT_FILL_PROPS,
+  stroke = DEFAULT_STROKE_PROPS,
+  mode = 'Full',
+}: IProps) {
+  const svg = useMemo(() => {
+    // duplicate to mirror violin
 
-      if (!yax) {
-        yax = new YAxis()
-          .autoDomain([0, Math.max(...data)])
-          //.setDomain([0, plot.dna.seq.length])
-          .setLength(height)
-      }
+    if (!yax) {
+      yax = new YAxis()
+        .autoDomain([0, Math.max(...data)])
+        //.setDomain([0, plot.dna.seq.length])
+        .setLength(height)
+    }
 
-      if (!xsmooth) {
-        //let global_xsmooth_max = 0
+    if (!ysmooth) {
+      ysmooth = linspace(yax.domain[0], yax.domain[1])
+    }
 
-        ysmooth = linspace(yax.domain[0], yax.domain[1])
+    if (!xsmooth) {
+      //let global_xsmooth_max = 0
 
-        const kde = new KDE(data)
+      const kde = new KDE(data)
 
-        xsmooth = kde.f(ysmooth)
-      }
+      xsmooth = kde.f(ysmooth)
+    }
 
-      if (!globalXMax) {
-        // global x max not defined, just use the local
-        // max, i.e. scale each violin independently
-        globalXMax = Math.max(...xsmooth)
-      }
+    if (!globalXMax) {
+      // global x max not defined, just use the local
+      // max, i.e. scale each violin independently
+      globalXMax = Math.max(...xsmooth)
+    }
 
-      // normalize
-      xsmooth = xsmooth.map(x => x / globalXMax!)
-      // so always join in the middle
-      xsmooth[0] = 0
-      xsmooth[xsmooth.length - 1] = 0
+    // normalize
+    xsmooth = xsmooth.map((x) => x / globalXMax!)
+    // so always join in the middle
+    xsmooth[0] = 0
+    xsmooth[xsmooth.length - 1] = 0
 
-      switch (mode) {
-        case 'Left':
-          // flip x so draw cdf on left side
-          xsmooth = xsmooth.map(x => -x)
+    switch (mode) {
+      case 'Left':
+        // flip x so draw cdf on left side
+        xsmooth = xsmooth.map((x) => -x)
 
-          break
-        case 'Full':
-          // for the left
-          xsmooth = [...xsmooth, ...xsmooth.map(x => -x).toReversed()]
-          // then return on the right
-          ysmooth = [...ysmooth!, ...ysmooth!.toReversed()]
-          break
+        break
+      case 'Full':
+        // for the left
+        xsmooth = [...xsmooth, ...xsmooth.map((x) => -x).toReversed()]
+        // then return on the right
+        ysmooth = [...ysmooth!, ...ysmooth!.toReversed()]
+        break
 
-        default:
-          // right case, which we create by default so nothing
-          // to do
+      default:
+        // right case, which we create by default so nothing
+        // to do
 
-          break
-      }
+        break
+    }
 
-      // if (!split) {
-      //   // so that the shape is mirrored, otherwise we just draw half
-      //   xsmooth = [...xsmooth, ...xsmooth.map(x => -x).toReversed()]
-      //   ysmooth = [...ysmooth!, ...ysmooth!.toReversed()]
-      // }
+    // if (!split) {
+    //   // so that the shape is mirrored, otherwise we just draw half
+    //   xsmooth = [...xsmooth, ...xsmooth.map(x => -x).toReversed()]
+    //   ysmooth = [...ysmooth!, ...ysmooth!.toReversed()]
+    // }
 
-      const points: string = zip(xsmooth, ysmooth)
-        .map(p => `${0.5 * p[0] * width},${yax?.domainToRange(p[1])!}`)
-        .join(' ')
+    const points: string = zip(xsmooth, ysmooth)
+      .map((p) => `${0.5 * p[0]! * width},${yax?.domainToRange(p[1]!)!}`)
+      .join(' ')
 
-      //console.log(points)
+    //console.log(points)
 
-      // matching is case insensitive
-
-      return (
-        <polygon
-          points={points}
-          fill={fill?.color ?? 'none'}
-          stroke={stroke?.color ?? 'none'}
-          strokeWidth={stroke?.width ?? 0}
-          fillOpacity={fill?.alpha ?? 0}
-        />
-      )
-    }, [data, globalXMax, xsmooth, ysmooth, yax])
+    // matching is case insensitive
 
     return (
-      <>
-        {svg}
+      <polygon
+        points={points}
+        fill={fill?.color ?? 'none'}
+        stroke={stroke?.color ?? 'none'}
+        strokeWidth={stroke?.width ?? 0}
+        fillOpacity={fill?.alpha ?? 0}
+      />
+    )
+  }, [data, globalXMax, xsmooth, ysmooth, yax])
 
-        {/* {toolTipInfo && (
+  return (
+    <>
+      {svg}
+
+      {/* {toolTipInfo && (
           <>
             <div
               ref={tooltipRef}
@@ -161,7 +159,6 @@ export const ViolinPlotSvg = forwardRef<SVGElement, IProps>(
             />
           </>
         )} */}
-      </>
-    )
-  }
-)
+    </>
+  )
+}

@@ -49,7 +49,7 @@ export function Slider({
   }
 
   function setValue(v: number) {
-    onSliderChange && onSliderChange(v)
+    onSliderChange?.(v)
   }
 
   function onMouseMove(event: MouseEvent | React.MouseEvent) {
@@ -63,7 +63,7 @@ export function Slider({
     }
   }
 
-  function onMouseUp(_event: unknown) {
+  function onMouseUp() {
     setIsDragging(false)
     document.removeEventListener('mousemove', onMouseMove)
     document.removeEventListener('mouseup', onMouseUp)

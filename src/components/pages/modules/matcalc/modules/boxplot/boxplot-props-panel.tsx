@@ -15,17 +15,14 @@ import {
   ScrollAccordion,
 } from '@components/shadcn/ui/themed/accordion'
 import { produce } from 'immer'
-import { forwardRef, useContext, type ForwardedRef } from 'react'
+import { useContext } from 'react'
 import type { IBoxPlotDisplayOptions } from './boxplot-plot-svg'
 
 export interface IProps {
   plotAddr: IHistItemAddr
 }
 
-export const BoxPlotPropsPanel = forwardRef(function BoxPlotPropsPanel(
-  { plotAddr }: IProps,
-  _ref: ForwardedRef<HTMLDivElement>
-) {
+export function BoxPlotPropsPanel({ plotAddr }: IProps) {
   //const { plotsState, historyDispatch } = useContext(PlotsContext)
 
   const { history, historyDispatch } = useContext(HistoryContext)
@@ -312,4 +309,4 @@ export const BoxPlotPropsPanel = forwardRef(function BoxPlotPropsPanel(
       </ScrollAccordion>
     </PropsPanel>
   )
-})
+}

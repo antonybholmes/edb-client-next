@@ -85,7 +85,7 @@ export function SortRowDialog({
           console.log(sortDf.shape, 'blob')
 
           // get the row ids of the gene(s) of interest
-          let rowIdx = ids.map((id) => sortDf.index.find(id)).flat()
+          const rowIdx = ids.map((id) => sortDf.index.find(id)).flat()
 
           // get col means
           sortDf = sortDf.iloc(rowIdx, ':')

@@ -606,7 +606,7 @@ export function makeLocationOncoPlot(
   })
 
   // we need row and column stats
-  let featureStats: OncoCellStats[] = features.map(
+  const featureStats: OncoCellStats[] = features.map(
     (loc) => new OncoCellStats(loc.toString(), loc.toString())
   )
 
@@ -816,7 +816,7 @@ export function makeOncoPlot(
   })
 
   // we need row and column stats
-  let geneStats: OncoCellStats[] = genes.map(
+  const geneStats: OncoCellStats[] = genes.map(
     (gene) => new OncoCellStats(gene, gene)
   )
 
@@ -994,7 +994,7 @@ export function memoSort(df: OncoplotMutationFrame): [number[], number[]] {
     // Event scores will try to push similar events together if
     // the comb sort is not granular enough since it looks nicer
     // if multiple samples are kept together.
-    let score: number = geneOrder
+    const score: number = geneOrder
       .map((row, ri) => ({ originalIndex: row!, index: ri })!)
       .filter((row) => df._data[row.originalIndex]![col]!.sum > 0)
       .map((row) => {

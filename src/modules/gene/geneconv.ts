@@ -24,18 +24,17 @@ export async function createGeneConvTable(
     const res = await queryClient.fetchQuery({
       queryKey: ['motiftogene'],
       queryFn: () =>
-        httpFetch.postJson<{ data: any }>(
-          `${API_GENECONV_URL}/convert/${fromSpecies}/${toSpecies}`,
-          {
-            body: {
-              searches: genes,
-              exact,
-            },
+        httpFetch.postJson<{
+          data: {
+            conversions: { symbol: string; entrez: string; ensembl: string }[][]
           }
-        ),
+        }>(`${API_GENECONV_URL}/convert/${fromSpecies}/${toSpecies}`, {
+          body: {
+            searches: genes,
+            exact,
+          },
+        }),
     })
-
-    let data = res.data
 
     // conversions store data in conversions entry,
     // but the entries are the same as for gene info
@@ -45,7 +44,7 @@ export async function createGeneConvTable(
     //  data = data.conversions
     // }
 
-    data = data.conversions
+    let data = res.data.conversions
 
     const table: SeriesData[][] = []
 
