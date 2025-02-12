@@ -26,14 +26,14 @@ export function isBrowser() {
 
 export function addScrollListener(
   target: HTMLElement | Document = document,
-  listener: unknown
+  listener: (event: Event) => void
 ) {
   return target.addEventListener('scroll', listener)
 }
 
 export function removeScrollListener(
   target: HTMLElement | Document = document,
-  listener: unknown
+  listener: (event: Event) => void
 ) {
   return target.removeEventListener('scroll', listener)
 }

@@ -134,7 +134,7 @@ export function SeqBrowserPage() {
   }
 
   useKeyDownListener((e) => {
-    if (e.ctrlKey) {
+    if ((e as KeyboardEvent).ctrlKey) {
       setIsCtrlPressed(true) // Ctrl key is pressed
     }
 

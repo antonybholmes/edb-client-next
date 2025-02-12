@@ -43,7 +43,7 @@ export function getUrlFriendlyImg(
 }
 
 export function getUrlFriendlyTags(tags: string[]): string[] {
-  return tags.map(tag => getUrlFriendlyTag(tag))
+  return tags.map((tag) => getUrlFriendlyTag(tag))
 }
 
 export function getSlug(path: string): string {
@@ -51,7 +51,7 @@ export function getSlug(path: string): string {
     .replace(/\.md$/, '')
     .replaceAll('\\', PATH_SEP)
     .split(PATH_SEP)
-    .map(p => getUrlFriendlyTag(p))
+    .map((p) => getUrlFriendlyTag(p))
     .join(PATH_SEP)
 }
 
@@ -80,7 +80,9 @@ export function makeGetUrl(
   if (params.length > 0) {
     return encodeURI(
       `${baseUrl}?${params
-        .map((po: IStringMap) => Object.entries(po).map(p => `${p[0]}=${p[1]}`))
+        .map((po: IFieldMap) =>
+          Object.entries(po).map((p) => `${p[0]}=${p[1]}`)
+        )
         .flat()
         .join('&')}`
     )

@@ -62,7 +62,7 @@ export function HSplitPane({
 
     //console.log(x, p, cp, dragging.current.p)
 
-    const rcp = sticky.filter(x => Math.abs(cp - x) < STICKY_SENSITIVITY)
+    const rcp = sticky.filter((x) => Math.abs(cp - x) < STICKY_SENSITIVITY)
 
     if (rcp.length > 0) {
       cp = rcp[0]!
@@ -149,7 +149,7 @@ export function HSplitPane({
     }
   }
 
-  useMouseMoveListener(onMouseMove)
+  useMouseMoveListener((e) => onMouseMove(e as MouseEvent))
   useMouseUpListener(onMouseUp)
 
   return (

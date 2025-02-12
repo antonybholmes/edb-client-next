@@ -1,4 +1,4 @@
-export function argsort(data: unknown[]): number[] {
+export function argsort(data: number[]): number[] {
   return data
     .map((v, vi) => [v, vi])
     .sort((a, b) => a[0] - b[0])
