@@ -3,7 +3,7 @@ import { MarkdownContent } from '@/components/markdown-content'
 import fs from 'fs'
 import path from 'path'
 
-export function getMarkdownFiles(dir: string): string[] {
+function getMarkdownFiles(dir: string): string[] {
   let results: string[] = []
   const list = fs.readdirSync(dir)
 

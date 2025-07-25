@@ -1,4 +1,4 @@
- 'use client'
+'use client'
 
 import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
 import { ToolbarOpenFile } from '@toolbar/toolbar-open-files'
@@ -95,55 +95,28 @@ import { SettingsTracksPanel } from './settings/settings-tracks-panel'
 import { TracksView, type GenesMap } from './svg/tracks-view'
 
 export function SeqBrowserPage() {
-  //const [fileStore, filesDispatch] = useReducer(filesReducer, { files: [] })
-  //const [fileData, setFileData] = useState<{ [key: string]: string[] }>({})
-
   const { locations, binSizes, setLocations } = useContext(TracksContext)
   const { settings, updateSettings } = useSeqBrowserSettings()
-  //const { tooltip } = useTooltip()
+
   const { zoom } = useZoom()
 
   const { setSettingsTabs, setDefaultSettingsTab } = useSettingsTabs()
 
-  // useEffect(() => {
-  //   if (apiKey !== '') {
-  //     //save key to settings for ease of use
-  //     updateSettings({ apiKey })
-  //   }
-  // }, [apiKey])
-
-  //useMouseUpListener(handleMouseUp)
-
   const { query, setQuery } = useSearch()
-
-  //const [results, setResults] = useState<IGenomicFeature[]>([])
 
   const svgRef = useRef<SVGSVGElement>(null)
 
-  //const [binWidth, setBinWidth] = useState(1000)
   const [showFileMenu, setShowFileMenu] = useState(false)
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
   const [showSideBar, setShowSideBar] = useState(true)
 
-  //console.log('bin size', binSize)
-
-  //const isSelecting = useRef<IPos | null>(null)
-  //const [isShiftPressed, setIsShiftPressed] = useState(false)
   const [isCtrlPressed, setIsCtrlPressed] = useState(false)
-  //const isChangingLocViaDrag = useRef<IPos | null>(null)
-
-  //const currentMousePosition = useRef<IPos | null>(null)
-  //const dragStartPosition = useRef<IPos | null>(null)
-  //const [dragPosition, setDragPosition] = useState<IPos | null>(null)
-  //const currentLocation = useRef<GenomicLocation | null>(null)
-
-  //const { location } = useContext(LocationContext)
 
   function setLocationZoom(scale: number) {
     setLocations(
-      locations.map(location => {
+      locations.map((location) => {
         const w = Math.round(
           Math.max(100, (location.end - location.start + 1) * scale)
         )
@@ -154,56 +127,15 @@ export function SeqBrowserPage() {
     )
   }
 
-  useKeyDownListener(e => {
+  useKeyDownListener((e) => {
     if ((e as KeyboardEvent).ctrlKey) {
       setIsCtrlPressed(true) // Ctrl key is pressed
     }
-
-    //if (e.shiftKey) {
-    //  setIsShiftPressed(true) // Ctrl key is pressed
-    //}
   })
 
   useKeyUpListener(() => {
     setIsCtrlPressed(false)
-    //setIsShiftPressed(false)
   })
-
-  // const { data: geneData } = useQuery({
-  //   queryKey: ['gene-search', settings.genome, query],
-  //   queryFn: async () => {
-  //     if (query.length < 2 || query.includes('chr:')) {
-  //       return []
-  //     }
-
-  //     try {
-  //       const res = await httpFetch.getJson<{
-  //         data: IGenomicFeature[]
-  //       }>(
-  //         `${API_GENOME_INFO_URL}/${settings.genome}?search=${query}&level=gene&mode=fuzzy`
-  //       )
-
-  //       //console.log('search genes', res.data)
-
-  //       return res.data
-  //     } catch (e) {
-  //       console.log(e)
-  //       return []
-  //     }
-  //   },
-  // })
-
-  // useEffect(() => {
-  //   if (geneData) {
-  //     // setResults(
-  //     //   geneData.sort((a, b) =>
-  //     //     (a.geneSymbol ?? '').localeCompare(b.geneSymbol ?? '')
-  //     //   )
-  //     // )
-
-  //     setResults(geneData)
-  //   }
-  // }, [geneData])
 
   useEffect(() => {
     const settingsTabs: ITab[] = [
@@ -231,148 +163,11 @@ export function SeqBrowserPage() {
     setQuery(['chr3:187441954-187466041'])
   }, [])
 
-  // const xax = useMemo(
-  //   () =>
-  //     new Axis()
-  //       .setDomain([locations[0]!.start, locations[0]!.end])
-  //       .setLength(settings.plot.width)
-  //       .setTicks([locations[0]!.start, locations[0]!.end]),
-  //   [locations]
-  // )
-
-  // useEffect(() => {
-  //   window.addEventListener('mouseup', handleMouseUp)
-
-  //   return () => {
-  //     window.removeEventListener('mouseup', handleMouseUp)
-  //   }
-  // }, [xax])
-
-  // function handleMouseDown(e: React.MouseEvent) {
-  //   const { clientX, currentTarget } = e
-  //   const x = clientX - currentTarget.getBoundingClientRect().left
-
-  //   //setPosition({ x, y: 0 })
-
-  //   if (e.ctrlKey) {
-  //     isSelecting.current = { x, y: 0 }
-  //     //setCtrlKeyIsPressed(true)
-  //   }
-
-  //   //if (e.shiftKey) {
-  //   //  isChangingLocViaDrag.current = { x, y: 0 }
-  //   //}
-
-  //   dragStartPosition.current = { x, y: 0 }
-  //   currentLocation.current = locations[0]!
-
-  //   window.addEventListener('mousemove', handleMouseMove)
-  //   //window.addEventListener('mouseup', handleMouseUp)
-  // }
-
-  // function handleMouseUp(e: MouseEvent) {
-  //   if (isSelecting.current) {
-  //     const { clientX, target } = e
-  //     const x = clientX - (target as HTMLElement).getBoundingClientRect().left
-
-  //     const start = isSelecting.current.x - settings.margin.left
-  //     const end = x - settings.margin.left
-
-  //     const rangeX1 = xax.rangeToDomain(start)
-  //     const rangeX2 = xax.rangeToDomain(end)
-
-  //     // user must select a region of at least 1kb before selection system
-  //     // works, otherwise too sensitive
-  //     if (Math.abs(rangeX1 - rangeX2) > 1000) {
-  //       setLocations([new GenomicLocation(locations[0]!.chr, rangeX1, rangeX2)])
-  //     }
-  //   }
-
-  //   //setPosition(null)
-  //   isSelecting.current = null
-  //   //currentMousePosition.current = null
-  //   //isChangingLocViaDrag.current = null
-  //   currentLocation.current = null
-  //   dragStartPosition.current = null
-  //   //setCtrlKeyIsPressed(false)
-
-  //   //window.removeEventListener('mousemove', handleMouseMove)
-  //   //window.removeEventListener('mouseup', handleMouseUp)
-  // }
-
-  // function handleMouseMove(e: MouseEvent) {
-  //   // only update when mouse down
-  //   if (dragStartPosition.current) {
-  //     const { clientX, target } = e
-  //     const x = clientX - (target as HTMLElement).getBoundingClientRect().left
-
-  //     //currentMousePosition.current = { x, y: 0 }
-
-  //     if (isSelecting.current) {
-  //       setDragPosition({ x, y: 0 })
-  //     }
-
-  //     // else if (isChangingLocViaDrag.current) {
-  //     //   const f = (xax.domain[1] - xax.domain[0] + 1) / xax.length
-
-  //     //   const pixToBp = (e.clientX - dragStartPosition.current!.x) * f
-
-  //     //   setLocation(
-  //     //     new GenomicLocation(
-  //     //       currentLocation.current!.chr,
-  //     //       currentLocation.current!.start - pixToBp,
-  //     //       currentLocation.current!.end - pixToBp
-  //     //     )
-  //     //   )
-  //     // } else {
-  //     //   // do nothing
-  //     // }
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   if (isSelecting) {
-  //     window.addEventListener('mousemove', handleMouseMove)
-  //     window.addEventListener('mouseup', handleMouseUp)
-  //   } else {
-  //     window.removeEventListener('mousemove', handleMouseMove)
-  //     window.removeEventListener('mouseup', handleMouseUp)
-  //   }
-
-  //   return () => {
-  //     window.removeEventListener('mousemove', handleMouseMove)
-  //     window.removeEventListener('mouseup', handleMouseUp)
-  //   }
-  // }, [isSelecting])
-
-  // function adjustScale(scale: number) {
-  //   setScale(scale)
-  //   updateSettings({ ...settings, zoom: scale })
-  // }
-
   useEffect(() => updateSettings({ ...settings, zoom }), [zoom])
-
-  // const tracksQuery = useQuery({
-  //   queryKey: ['tracks'],
-  //   queryFn: async () => {
-  //     const accessToken = await fetchAccessToken()
-
-  //     //const token = await loadAccessToken()
-  //     //console.log(API_SEQS_SEARCH_URL)
-
-  //     const res = await httpFetch.getJson(`${API_SEQS_SEARCH_URL}/${genome}`, {
-  //       headers: bearerHeaders(accessToken),
-  //     })
-
-  //     //console.log('Tracks', res)
-
-  //     return res.data
-  //   },
-  // })
 
   useEffect(() => {
     setQuery(
-      locations.map(location => {
+      locations.map((location) => {
         return `${location.chr}:${location.start}-${location.end}`
       })
     ) //.join(','))
@@ -402,45 +197,6 @@ export function SeqBrowserPage() {
       ),
     [genomesQuery.data]
   )
-
-  // const testQuery = useQuery({
-  //   queryKey: ['gene-info2'],
-  //   queryFn: async () => {
-  //     //const token = await loadAccessToken()
-  //     let res:unknown
-
-  //     // res = await axios.post(
-  //     //   `${SESSION_INIT_URL} `,
-
-  //     //   {
-  //     //     headers: JSON_HEADERS,
-
-  //     //     withCredentials: true,
-  //     //   }
-  //     // )
-
-  //     //  console.log('session 1' ,res)
-
-  //     // res = await axios.get(
-  //     //   SESSION_READ_URL,
-
-  //     //   {
-  //     //     headers: JSON_HEADERS,
-  //     //     withCredentials: true,
-  //     //   }
-  //     // )
-
-  //     console.log('session 2 ', res)
-
-  //     res = await fetchJsonData(SESSION_READ_URL, {
-  //       credentials: 'include',
-  //     })
-
-  //     console.log('session 3 ', res)
-
-  //     return res
-  //   },
-  // })
 
   const fileMenuTabs: ITab[] = [
     {
@@ -479,7 +235,7 @@ export function SeqBrowserPage() {
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   // setShowDialog({
                   //   name: makeRandId("open"),
@@ -581,7 +337,7 @@ export function SeqBrowserPage() {
               title="Move Left"
               onClick={() => {
                 setLocations(
-                  locations.map(location => {
+                  locations.map((location) => {
                     const w = location.end - location.start + 1
                     const s =
                       location.start -
@@ -599,7 +355,7 @@ export function SeqBrowserPage() {
               title="Move Right"
               onClick={() => {
                 setLocations(
-                  locations.map(location => {
+                  locations.map((location) => {
                     const w = location.end - location.start + 1
                     const s =
                       location.start +
@@ -619,8 +375,8 @@ export function SeqBrowserPage() {
           <ToolbarTabGroup title="Genes" className="gap-x-2 text-sm">
             <Select
               value={settings.genes.display}
-              onValueChange={v => {
-                const newSettings = produce(settings, draft => {
+              onValueChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.genes.display = v as GeneDisplay
                 })
 
@@ -642,7 +398,7 @@ export function SeqBrowserPage() {
                 //rounded="none"
                 checked={settings.genes.view === 'transcript'}
                 onClick={() => {
-                  const newSettings = produce(settings, draft => {
+                  const newSettings = produce(settings, (draft) => {
                     draft.genes.view = 'transcript'
                   })
                   updateSettings(newSettings)
@@ -655,7 +411,7 @@ export function SeqBrowserPage() {
                 //rounded="none"
                 checked={settings.genes.view === 'exon'}
                 onClick={() => {
-                  const newSettings = produce(settings, draft => {
+                  const newSettings = produce(settings, (draft) => {
                     draft.genes.view = 'exon'
                   })
                   updateSettings(newSettings)
@@ -664,26 +420,6 @@ export function SeqBrowserPage() {
               >
                 Exons
               </ToolbarButton>
-
-              {/* <Tabs
-                value={settings.genes.view}
-                onValueChange={v => {
-                  const newSettings = produce(settings, draft => {
-                    draft.genes.view = v as GeneView
-                  })
-
-                  updateSettings(newSettings)
-                }}
-              >
-                <IOSTabsList
-                  defaultWidth="80px"
-                  value={settings.genes.view}
-                  tabs={[
-                    { id: 'transcript', name: 'Transcripts' },
-                    { id: 'exon', name: 'Exons' },
-                  ]}
-                />
-              </Tabs> */}
             </ToolbarCol>
 
             <ToolbarSeparator />
@@ -692,7 +428,7 @@ export function SeqBrowserPage() {
               <ToolbarButton
                 checked={settings.genes.canonical.only}
                 onClick={() => {
-                  const newSettings = produce(settings, draft => {
+                  const newSettings = produce(settings, (draft) => {
                     draft.genes.canonical.only = !settings.genes.canonical.only
                   })
 
@@ -706,7 +442,7 @@ export function SeqBrowserPage() {
               <ToolbarButton
                 checked={settings.genes.types === 'protein-coding'}
                 onClick={() => {
-                  const newSettings = produce(settings, draft => {
+                  const newSettings = produce(settings, (draft) => {
                     draft.genes.types =
                       settings.genes.types === 'protein-coding'
                         ? 'all'
@@ -725,7 +461,7 @@ export function SeqBrowserPage() {
               title="Reverse"
               checked={settings.reverse}
               onClick={() => {
-                const newOptions = produce(settings, draft => {
+                const newOptions = produce(settings, (draft) => {
                   draft.reverse = !draft.reverse
                 })
 
@@ -774,51 +510,19 @@ export function SeqBrowserPage() {
         />
       )}
 
-      <ShortcutLayout
-        //info={MODULE_INFO}
-
-        //apiKey={settings.apiKey}
-        //signInMode="api"
-        //
-        signedRequired="never"
-      >
+      <ShortcutLayout signedRequired="never">
         <HeaderPortal>
           <ModuleInfoButton info={MODULE_INFO} />
 
           <>
-            {/* <SearchBox
-              variant="header"
-              h="header"
-              value={search.ids[0] ?? ''}
-              onTextChange={t => {
-                updateSearch(
-                  produce(search, draft => {
-                    draft.ids = [t]
-                  })
-                )
-              }}
-              onSearch={async event => {
-                if (event === 'search') {
-                  const tokens = (search.ids[0] ?? '')
-                    .split(',')
-                    .map(s => s.trim())
-
-                  setLocations(tokens)
-                } else {
-                  resetSearch()
-                }
-              }}
-              className="w-80 text-xs font-medium"
-            /> */}
-
             <LocationAutocomplete
               value={query}
               //showClear={false}
-              onTextChange={v => {
+              onTextChange={(v) => {
                 setQuery([v])
               }}
-              onTextChanged={v => {
-                const tokens = v.split(',').map(s => s.trim())
+              onTextChanged={(v) => {
+                const tokens = v.split(',').map((s) => s.trim())
 
                 setLocations(tokens)
               }}
@@ -828,8 +532,8 @@ export function SeqBrowserPage() {
 
           <Select
             value={settings.genome}
-            onValueChange={v => {
-              const newOptions = produce(settings, draft => {
+            onValueChange={(v) => {
+              const newOptions = produce(settings, (draft) => {
                 draft.genome = v
               })
 
@@ -904,42 +608,6 @@ export function SeqBrowserPage() {
                   pointerEvents: isCtrlPressed ? 'none' : 'auto',
                 }}
               />
-
-              {/* {tooltip.x !== -1 && (
-                <div
-                  className="fixed z-overlay z-(--z-overlay) pointer-events-none -translate-x-1/2"
-                  style={{
-                    top: tooltip.y,
-                    left: tooltip.x,
-                  }}
-                >
-                  <HCenterCol className="text-xs gap-y-1">
-                    <span
-                      className="border border-border shadow-md bg-white/90 p-1 w-14 text-center rounded-theme"
-                      style={{ color: 'black' }}
-                    >
-                      {tooltip.realY.toFixed(2)}
-                    </span>
-                    <span
-                      className="w-0 border-l border-black/90 border-dashed"
-                      style={{ height: '5rem' }}
-                    />
-                  </HCenterCol>
-                </div>
-              )} */}
-
-              {/* {isSelecting.current && dragPosition && (
-                <>
-                  <span
-                    className="absolute h-full bg-theme/20 border border-theme border-dashed top-0 pointer-events-none"
-                    style={{
-                      left: Math.min(isSelecting.current.x, dragPosition.x),
-                      width: Math.abs(dragPosition.x - isSelecting.current.x),
-                    }}
-                  />
-                 
-                </>
-              )} */}
             </div>
           </Card>
         </TabSlideBar>
@@ -952,8 +620,8 @@ export function SeqBrowserPage() {
               value={
                 settings.seqs.bins.autoSize ? 'auto' : binSizes[0]!.toString()
               }
-              onValueChange={v => {
-                const newOptions = produce(settings, draft => {
+              onValueChange={(v) => {
+                const newOptions = produce(settings, (draft) => {
                   draft.seqs.bins.autoSize = v === 'auto'
 
                   if (v !== 'auto') {
@@ -1012,9 +680,7 @@ export function SeqBrowserQueryPage() {
       {/* <SeqBrowserSettingsProvider> */}
       {/* <SearchProvider defaultSearch="chr3:187441954-187466041"> */}
       {/* <ZoomProvider> */}
-      <TracksProvider>
-        <SeqBrowserPage />
-      </TracksProvider>
+      <TracksProvider>{/* <SeqBrowserPage /> */}</TracksProvider>
       {/* </ZoomProvider> */}
       {/* </SearchProvider> */}
       {/* </SeqBrowserSettingsProvider> */}

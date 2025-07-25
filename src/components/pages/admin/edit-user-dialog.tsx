@@ -81,7 +81,7 @@ export function EditUserDialog({
     <OKCancelDialog
       open={open}
       title={title}
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_OK) {
           btnRef.current?.click()
         } else {
@@ -240,14 +240,14 @@ export function EditUserDialog({
 
           <FormField
             control={form.control}
-            name="uuid"
+            name="publicId"
             render={({ field }) => {
               if (field.value) {
                 return (
                   <FormItem>
                     <Input
                       h="lg"
-                      id="uuid"
+                      id="publicId"
                       className="w-full"
                       placeholder="User Id"
                       label="User Id"

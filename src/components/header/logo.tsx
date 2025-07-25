@@ -1,6 +1,7 @@
 import { SITE_NAME } from '@/consts'
 import { CENTERED_ROW_CLS, FOCUS_RING_CLS, HEADER_ICON_SIZE_CLS } from '@/theme'
 import { cn } from '@lib/shadcn-utils'
+import { BaseLink } from '../link/base-link'
 
 const LOGO_CLS = cn(FOCUS_RING_CLS, HEADER_ICON_SIZE_CLS, CENTERED_ROW_CLS)
 
@@ -9,7 +10,7 @@ export function Logo() {
   //const [down, setDown] = useState(false)
 
   return (
-    <a href="/" className={LOGO_CLS} aria-label="Home">
+    <BaseLink href="/" className={LOGO_CLS} aria-label="Home">
       <div className="flex h-6 w-6 flex-row items-center justify-center rounded-full bg-theme fill-white">
         <img
           src="/favicon.svg"
@@ -19,6 +20,6 @@ export function Logo() {
           className="w-6"
         />
       </div>
-    </a>
+    </BaseLink>
   )
 }

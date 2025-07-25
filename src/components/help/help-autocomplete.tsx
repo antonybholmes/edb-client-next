@@ -1,4 +1,3 @@
-import type { IHelpTopic } from '@/pages/api/help'
 import { QCP } from '@/query'
 import type { IClassProps } from '@interfaces/class-props'
 import { APP_HELP_API_URL } from '@lib/edb/edb'
@@ -9,6 +8,13 @@ import { useMemo, useState } from 'react'
 import { Autocomplete } from '../autocomplete'
 import { SearchIcon } from '../icons/search-icon'
 import type { ITopicTree } from './help-tree-node'
+
+export type IHelpTopic = {
+  title: string
+  description: string
+
+  slug: string
+}
 
 function HelpAutocomplete({ className }: IClassProps) {
   const [searchResults, setResults] = useState<IHelpTopic[]>([])
@@ -40,7 +46,7 @@ function HelpAutocomplete({ className }: IClassProps) {
 
     const results = searchIndex.search(query)
 
-    setResults(results.map(result => result.item))
+    setResults(results.map((result) => result.item))
   }
 
   return (

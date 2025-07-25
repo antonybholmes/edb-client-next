@@ -72,15 +72,15 @@ export function CytobandsTrackSvg({ track }: IProps) {
       /> */}
 
       {settings.cytobands.style === 'Rounded' ? (
-        <_CytobandsRoundStyleTrackSvg track={track} cytobands={cytobands} />
+        <CytobandsRoundStyleTrackSvg track={track} cytobands={cytobands} />
       ) : (
-        <_CytobandsSquareStyleTrackSvg track={track} cytobands={cytobands} />
+        <CytobandsSquareStyleTrackSvg track={track} cytobands={cytobands} />
       )}
     </>
   )
 }
 
-function _CytobandsRoundStyleTrackSvg({
+function CytobandsRoundStyleTrackSvg({
   track,
   cytobands,
 }: IProps & {
@@ -101,42 +101,42 @@ function _CytobandsRoundStyleTrackSvg({
   }
 
   const pcenters = cytobands
-    .filter(c => c.name.startsWith('p') && c.giemsaStain === 'acen')
-    .map(c => c.loc)
+    .filter((c) => c.name.startsWith('p') && c.giemsaStain === 'acen')
+    .map((c) => c.loc)
 
   const qcenters = cytobands
-    .filter(c => c.name.startsWith('q') && c.giemsaStain === 'acen')
-    .map(c => c.loc)
+    .filter((c) => c.name.startsWith('q') && c.giemsaStain === 'acen')
+    .map((c) => c.loc)
 
   const pcenterxs =
     pcenters.length > 0
-      ? cytoAx.domainToRange(Math.min(...pcenters.map(l => l.start)))
+      ? cytoAx.domainToRange(Math.min(...pcenters.map((l) => l.start)))
       : 0
 
   const pcenterxe =
     pcenters.length > 0
-      ? cytoAx.domainToRange(Math.max(...pcenters.map(l => l.end)))
+      ? cytoAx.domainToRange(Math.max(...pcenters.map((l) => l.end)))
       : 0
 
   const qcenterxs =
     qcenters.length > 0
-      ? cytoAx.domainToRange(Math.min(...qcenters.map(l => l.start)))
+      ? cytoAx.domainToRange(Math.min(...qcenters.map((l) => l.start)))
       : 0
 
   const qcentersxe =
     qcenters.length > 0
-      ? cytoAx.domainToRange(Math.max(...qcenters.map(l => l.end)))
+      ? cytoAx.domainToRange(Math.max(...qcenters.map((l) => l.end)))
       : 0
 
   const pw = Math.max(1, Math.abs(pcenterxe - cytoAx.domainToRange(l1.start)))
   const qw = Math.max(1, Math.abs(cytoAx.domainToRange(l2.end) - qcenterxs))
 
   const pbands = cytobands.filter(
-    c => c.name.startsWith('p') && c.giemsaStain !== 'acen'
+    (c) => c.name.startsWith('p') && c.giemsaStain !== 'acen'
   )
 
   const qbands = cytobands.filter(
-    c => c.name.startsWith('q') && c.giemsaStain !== 'acen'
+    (c) => c.name.startsWith('q') && c.giemsaStain !== 'acen'
   )
 
   const h = settings.cytobands.band.height
@@ -293,7 +293,7 @@ function _CytobandsRoundStyleTrackSvg({
   )
 }
 
-function _CytobandsSquareStyleTrackSvg({
+function CytobandsSquareStyleTrackSvg({
   track,
   cytobands,
 }: IProps & {
@@ -314,18 +314,20 @@ function _CytobandsSquareStyleTrackSvg({
   }
 
   const centers = cytobands
-    .filter(c => c.giemsaStain === 'acen')
-    .map(c => c.loc)
+    .filter((c) => c.giemsaStain === 'acen')
+    .map((c) => c.loc)
 
-  const centerx1 = cytoAx.domainToRange(Math.min(...centers.map(l => l.start)))
-  const centerx2 = cytoAx.domainToRange(Math.max(...centers.map(l => l.end)))
+  const centerx1 = cytoAx.domainToRange(
+    Math.min(...centers.map((l) => l.start))
+  )
+  const centerx2 = cytoAx.domainToRange(Math.max(...centers.map((l) => l.end)))
 
   const pbands = cytobands.filter(
-    c => c.name.startsWith('p') && c.giemsaStain !== 'acen'
+    (c) => c.name.startsWith('p') && c.giemsaStain !== 'acen'
   )
 
   const qbands = cytobands.filter(
-    c => c.name.startsWith('q') && c.giemsaStain !== 'acen'
+    (c) => c.name.startsWith('q') && c.giemsaStain !== 'acen'
   )
 
   const h = track.displayOptions.band.height
@@ -445,7 +447,7 @@ function LabelSvg({
 }) {
   const bands = [...pbands, ...qbands]
 
-  const labels = range(0, bands.length).map(i => {
+  const labels = range(0, bands.length).map((i) => {
     const b = bands[i]!
     const l = b.loc
 
@@ -484,7 +486,7 @@ function LabelSvg({
 
   return (
     <>
-      {displayLabels.map(label => {
+      {displayLabels.map((label) => {
         return (
           <text
             transform={`translate(${label.x}, 0)`}

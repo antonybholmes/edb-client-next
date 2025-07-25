@@ -14,7 +14,7 @@ const ToggleGroupContext = createContext<
   { value: string } & VariantProps<typeof toggleVariants>
 >({
   value: '',
-  size: 'default',
+  size: 'md',
   variant: 'default',
   rounded: 'none',
   justify: 'center',

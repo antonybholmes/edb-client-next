@@ -79,8 +79,8 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
     // subsample so we don't draw every point
     const ix = range(0, x.length, 100)
 
-    const x1 = ix.map(i => x[i]!)
-    let y1 = ix.map(i => y[i]!)
+    const x1 = ix.map((i) => x[i]!)
+    let y1 = ix.map((i) => y[i]!)
     y1[0] = 0
     y1[y1.length - 1] = 0
 
@@ -99,8 +99,8 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
       .setLength(displayProps.es.axes.y.length)
       .setTitle(displayProps.es.axes.y.title)
 
-    let xlead = gseaRes1.leadingEdge.map(g => x[g.rank]!)
-    let ylead = gseaRes1.leadingEdge.map(g => y[g.rank]!)
+    let xlead = gseaRes1.leadingEdge.map((g) => x[g.rank]!)
+    let ylead = gseaRes1.leadingEdge.map((g) => y[g.rank]!)
 
     // fix ends
 
@@ -155,12 +155,12 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
     y = gseaRes2.esAll //self._ranked_scores
     //x = range(y.length)
 
-    y1 = ix.map(i => y[i]!)
+    y1 = ix.map((i) => y[i]!)
     y1[0] = 0
     y1[y1.length - 1] = 0
 
-    xlead = gseaRes2.leadingEdge.map(g => x[g.rank]!)
-    ylead = gseaRes2.leadingEdge.map(g => y[g.rank]!)
+    xlead = gseaRes2.leadingEdge.map((g) => x[g.rank]!)
+    ylead = gseaRes2.leadingEdge.map((g) => y[g.rank]!)
 
     // fix ends
 
@@ -211,7 +211,7 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
     let genesSvg: ReactNode | undefined = undefined
 
     if (displayProps.genes.line.show) {
-      let points = where(gseaRes1.hits, x => x > 0)
+      let points = where(gseaRes1.hits, (x) => x > 0)
 
       const gengseaRes1Svg = (
         <g>
@@ -253,7 +253,7 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
         </g>
       )
 
-      points = where(gseaRes2.hits, x => x > 0)
+      points = where(gseaRes2.hits, (x) => x > 0)
 
       const gengseaRes2Svg = (
         <g
@@ -279,7 +279,7 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
 
           {displayProps.genes.labels.show && (
             <g
-              transform={`translate(${xax.range + displayProps.plot!.gap.x}, ${displayProps.genes.height / 2})`}
+              transform={`translate(${xax.length + displayProps.plot!.gap.x}, ${displayProps.genes.height / 2})`}
             >
               <text
                 fill={
@@ -312,7 +312,7 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
 
     if (displayProps.ranking.show) {
       //const yMin = Math.min(...rankedGenes.map(e => e.score))
-      const yMax = Math.max(...abs(rankedGenes.genes.map(e => e.score)))
+      const yMax = Math.max(...abs(rankedGenes.genes.map((e) => e.score)))
 
       const yax = new YAxis()
         .autoDomain([-yMax, yMax])
@@ -337,7 +337,7 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
 
       // crossing point
       const crossIndex =
-        end(where(rankedGenes.genes, gene => gene.score > 0)) + 1
+        end(where(rankedGenes.genes, (gene) => gene.score > 0)) + 1
       const crossingX = xax.domainToRange(crossIndex)
 
       const y =
@@ -350,7 +350,7 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
       rankingSvg = (
         <g transform={`translate(0, ${y})`}>
           <polygon
-            points={displayPoints.map(p => `${p[0]},${p[1]}`).join(' ')}
+            points={displayPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
             fill={displayProps.ranking.fill.color}
             stroke="none"
             fillOpacity={displayProps.ranking.fill.alpha}

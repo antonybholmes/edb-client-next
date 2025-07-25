@@ -23,7 +23,6 @@ import { TEXT_CONTINUE } from '@/consts'
 import { FormInputError } from '@components/input-error'
 import { WarningIcon } from '@icons/warning-icon'
 import { Form, FormField, FormItem } from '@themed/form'
-import { Input5 } from '@themed/input5'
 
 import {
   SignInLink,
@@ -33,6 +32,7 @@ import {
 } from '@layouts/signin-layout'
 import type { NullStr } from '@lib/text/text'
 
+import { Input } from '@/components/shadcn/ui/themed/input'
 import { Button } from '@components/shadcn/ui/button'
 import { bearerHeaders } from '@lib/http/urls'
 import { CoreProviders } from '@providers/core-providers'
@@ -296,7 +296,7 @@ function UpdatePasswordPage() {
                       }}
                       render={({ field }) => (
                         <FormItem>
-                          <Input5
+                          <Input
                             id="userId"
                             error={'userId' in form.formState.errors}
                             placeholder="User Id"
@@ -306,7 +306,7 @@ function UpdatePasswordPage() {
                             {'userId' in form.formState.errors && (
                               <WarningIcon />
                             )}
-                          </Input5>
+                          </Input>
                           <FormInputError
                             error={form.formState.errors.userId}
                           />
@@ -326,7 +326,7 @@ function UpdatePasswordPage() {
                           }}
                           render={({ field }) => (
                             <FormItem>
-                              <Input5
+                              <Input
                                 id="password1"
                                 error={'password1' in form.formState.errors}
                                 type="password"
@@ -336,7 +336,7 @@ function UpdatePasswordPage() {
                                 {'password1' in form.formState.errors && (
                                   <WarningIcon />
                                 )}
-                              </Input5>
+                              </Input>
                               <FormInputError
                                 error={form.formState.errors.password1}
                               />

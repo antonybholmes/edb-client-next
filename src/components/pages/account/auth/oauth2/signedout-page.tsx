@@ -52,7 +52,9 @@ function SignedOutPage() {
           </VCenterRow>
         </CardHeader>
 
-        <p className="py-4">It's a good idea to close all browser windows.</p>
+        <p className="py-4">
+          It&apos;s a good idea to close all browser windows.
+        </p>
 
         {/* <VCenterRow className="justify-end">
           <ThemeIndexLink href={APP_OAUTH2_SIGN_IN_ROUTE}>

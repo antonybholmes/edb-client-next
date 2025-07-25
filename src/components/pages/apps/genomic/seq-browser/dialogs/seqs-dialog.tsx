@@ -70,9 +70,9 @@ export function SeqsDialog({
   const seqs = useMemo(
     () =>
       trackDb.filter(
-        t => t.genome === settings.genome && t.platform === platform
+        (t) => t.genome === settings.genome && t.platform === platform
       ),
-    [trackDb]
+    [trackDb, settings.genome, platform]
   )
 
   const [selectedMap, setSelectedMap] = useState<Map<string, boolean>>(
@@ -89,7 +89,7 @@ export function SeqsDialog({
 
   useEffect(() => {
     setSelectedMap(
-      new Map<string, boolean>(seqs.map(track => [track.publicId, false]))
+      new Map<string, boolean>(seqs.map((track) => [track.publicId, false]))
     )
   }, [seqs])
 
@@ -99,7 +99,7 @@ export function SeqsDialog({
     } else {
       const sq = new BoolSearchQuery(search)
 
-      setSearchedDb(seqs.filter(track => sq.match(track.name)))
+      setSearchedDb(seqs.filter((track) => sq.match(track.name)))
     }
   }, [seqs, search])
 
@@ -119,7 +119,7 @@ export function SeqsDialog({
       onResponse={(response, data) => {
         if (response === TEXT_OK) {
           const selectedTracks = seqs.filter(
-            track => addedMap.get(track.publicId) ?? false
+            (track) => addedMap.get(track.publicId) ?? false
           )
 
           if (selectedTracks.length > 0) {
@@ -155,7 +155,7 @@ export function SeqsDialog({
           <SearchBox
             id="search"
             value={search}
-            onTextChange={v => setSearch(v)}
+            onTextChange={(v) => setSearch(v)}
             placeholder="Search samples..."
             className="grow"
           />
@@ -170,7 +170,7 @@ export function SeqsDialog({
                   new Map<string, boolean>([
                     ...[...addedMap.entries()],
                     // only add the positive ones we selected
-                    ...[...selectedMap.entries()].filter(e => e[1]),
+                    ...[...selectedMap.entries()].filter((e) => e[1]),
                   ])
                 )
               }}
@@ -188,7 +188,7 @@ export function SeqsDialog({
                   new Map<string, boolean>([
                     ...[...selectedMap.entries()],
                     ...searchedDb.map(
-                      t => [t.publicId, !searchSelectAll] as [string, boolean]
+                      (t) => [t.publicId, !searchSelectAll] as [string, boolean]
                     ),
                   ])
                 )
@@ -241,7 +241,7 @@ export function SeqsDialog({
           </VCenterRow>
         </VCenterRow>
 
-        {storeItems(
+        {StoreItems(
           searchedDb,
           addedMap,
           setAddedMap,
@@ -264,7 +264,7 @@ export function SeqsDialog({
               setAddedMap(
                 new Map<string, boolean>([
                   ...[...addedMap.entries()],
-                  ...[...keys].map(key => [key, false] as [string, boolean]),
+                  ...[...keys].map((key) => [key, false] as [string, boolean]),
                 ])
               )
             }}
@@ -281,7 +281,7 @@ export function SeqsDialog({
                 new Map<string, boolean>([
                   ...[...addedSelectedMap.entries()],
                   ...searchedDb.map(
-                    t => [t.publicId, !addedSelectAll] as [string, boolean]
+                    (t) => [t.publicId, !addedSelectAll] as [string, boolean]
                   ),
                 ])
               )
@@ -307,7 +307,7 @@ export function SeqsDialog({
   )
 }
 
-function storeItems(
+function StoreItems(
   searchedDb: AllDBSignalTrackTypes[],
   addedMap: Map<string, boolean>,
   setAddedMap: (selected: Map<string, boolean>) => void,
@@ -319,7 +319,7 @@ function storeItems(
   const [accordionValues, setAccordionValues] = useState<string[]>([])
 
   useEffect(() => {
-    let searchDatasets = [...new Set(searchedDb.map(t => t.dataset))].sort()
+    let searchDatasets = [...new Set(searchedDb.map((t) => t.dataset))].sort()
 
     if (reverseSort) {
       searchDatasets = searchDatasets.toReversed()
@@ -329,14 +329,14 @@ function storeItems(
 
     setAccordionValues(
       searchedDb.length < 50
-        ? searchDatasets.map(dataset => getAccordionId(dataset))
+        ? searchDatasets.map((dataset) => getAccordionId(dataset))
         : []
     )
   }, [searchedDb, reverseSort])
 
   const displayDatasets: AllDBSignalTrackTypes[][] = searchDatasetNames.map(
-    dataset => {
-      let ret = searchedDb.filter(track => track.dataset === dataset)
+    (dataset) => {
+      let ret = searchedDb.filter((track) => track.dataset === dataset)
 
       if (reverseSort) {
         ret = ret.toReversed()
@@ -364,7 +364,7 @@ function storeItems(
                   >
                     <Checkbox
                       checked={selectedMap.get(seq.publicId) ?? false}
-                      onCheckedChange={state => {
+                      onCheckedChange={(state) => {
                         setSelectedMap(
                           new Map<string, boolean>([
                             ...selectedMap.entries(),
@@ -425,16 +425,16 @@ function cartItems(
   setSelectedMap: (selected: Map<string, boolean>) => void,
   reverseSort: boolean
 ) {
-  searchedDb = searchedDb.filter(t => addedMap.get(t.publicId) ?? false)
+  searchedDb = searchedDb.filter((t) => addedMap.get(t.publicId) ?? false)
 
-  let datasets = [...new Set(searchedDb.map(t => t.dataset))].sort()
+  let datasets = [...new Set(searchedDb.map((t) => t.dataset))].sort()
 
   if (reverseSort) {
     datasets = datasets.toReversed()
   }
 
-  const allDatasets: AllDBSignalTrackTypes[][] = datasets.map(dataset => {
-    let ret = searchedDb.filter(track => track.dataset === dataset)
+  const allDatasets: AllDBSignalTrackTypes[][] = datasets.map((dataset) => {
+    let ret = searchedDb.filter((track) => track.dataset === dataset)
 
     if (reverseSort) {
       ret = ret.toReversed()
@@ -444,7 +444,7 @@ function cartItems(
   })
 
   return (
-    <ScrollAccordion value={datasets.map(dataset => getAccordionId(dataset))}>
+    <ScrollAccordion value={datasets.map((dataset) => getAccordionId(dataset))}>
       {datasets.map((dataset, dataseti) => {
         return (
           <SettingsAccordionItem title={dataset} key={dataseti}>
@@ -462,7 +462,7 @@ function cartItems(
                           'invisible group-hover:visible',
                         ])}
                         checked={selectedMap.get(seq.publicId) ?? false}
-                        onCheckedChange={state => {
+                        onCheckedChange={(state) => {
                           setSelectedMap(
                             new Map<string, boolean>([
                               ...selectedMap.entries(),

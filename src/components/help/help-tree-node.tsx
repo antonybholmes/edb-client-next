@@ -72,12 +72,18 @@ export function HelpTreeNode({
       setSelected={setSelected}
       currentNode={currentNode}
     >
-      <_HelpTreeNode level={level} node={node} />
+      <BaseHelpTreeNode level={level} node={node} />
     </HelpNodeProvider>
   )
 }
 
-function _HelpTreeNode({ level, node }: { level: number; node: ITopicTree }) {
+function BaseHelpTreeNode({
+  level,
+  node,
+}: {
+  level: number
+  node: ITopicTree
+}) {
   const { selected, setSelected, currentNode } = useContext(HelpNodeContext)
   const hasChildren = node.children && node.children.length > 0
 
@@ -156,7 +162,7 @@ function _HelpTreeNode({ level, node }: { level: number; node: ITopicTree }) {
       {hasChildren && isOpen && (
         <ul className="flex flex-col gap-y-0.5">
           {node.children.map((child, index) => (
-            <_HelpTreeNode key={index} node={child} level={level + 1} />
+            <BaseHelpTreeNode key={index} node={child} level={level + 1} />
           ))}
         </ul>
       )}

@@ -1,11 +1,11 @@
 import { create } from 'zustand'
 
-// export interface ISearch {
-//   caseSensitive: boolean
-//   matchEntireCell: boolean
-//   keepOrder: boolean
-//   ids: string[]
-// }
+export interface ISearch {
+  caseSensitive: boolean
+  matchEntireCell: boolean
+  keepOrder: boolean
+  ids: string[]
+}
 
 // export const DEFAULT_SEARCH: ISearch = {
 //   caseSensitive: false,
@@ -25,7 +25,7 @@ interface SearchState {
   //getCachedResult: (query: string) => SearchResult | undefined
 }
 
-export const useSearchStore = create<SearchState>(set => ({
+export const useSearchStore = create<SearchState>((set) => ({
   queries: [],
   caseSensitive: false,
   matchEntireCell: false,

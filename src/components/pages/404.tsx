@@ -99,10 +99,10 @@ export function Error404Page() {
         <h1 className="font-bold text-4xl">404</h1>
         <div className="flex flex-col xl:flex-row gap-8 text-foreground/70">
           <BaseCol className="gap-y-2 grow">
-            <p>Oops! We couldn't find the page you're looking for.</p>
+            <p>Oops! We couldn&apos;t find the page you&apos;re looking for.</p>
             <p>
               Check the URL or try using the app menu in the top left. In the
-              meantime, here's a scary dinosaur.
+              meantime, here&apos;s a scary dinosaur.
             </p>
 
             <ThemeIndexLink href="/">Home</ThemeIndexLink>

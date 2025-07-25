@@ -46,11 +46,15 @@ interface IProps extends IChildrenProps {
 
 export function LollipopProvider({ id, children }: IProps) {
   const key = `${APP_ID}:lollipop:${id}` // unique key for localStorage
-  const [lollipop, setLollipop] = useState<ILollipop>(
-    sessionStorage.getItem(key)
-      ? JSON.parse(sessionStorage.getItem(key)!)
-      : { ...DEFAULT_LOLLIPOP }
-  )
+  const [lollipop, setLollipop] = useState<ILollipop>({ ...DEFAULT_LOLLIPOP })
+
+  useEffect(() => {
+    setLollipop(
+      sessionStorage.getItem(key)
+        ? JSON.parse(sessionStorage.getItem(key)!)
+        : { ...DEFAULT_LOLLIPOP }
+    )
+  }, [])
 
   // Write to localStorage whenever lollipop changes
   useEffect(() => {
@@ -82,7 +86,9 @@ export function LollipopProvider({ id, children }: IProps) {
   function setFeature(feature: IProteinFeature) {
     setLollipop({
       ...lollipop,
-      features: lollipop.features.map(f => (f.id === feature.id ? feature : f)),
+      features: lollipop.features.map((f) =>
+        f.id === feature.id ? feature : f
+      ),
     })
   }
 
@@ -226,7 +232,7 @@ export function LollipopProvider({ id, children }: IProps) {
         })
       }
 
-      let length = Math.max(...aaChanges.map(ac => ac.position))
+      let length = Math.max(...aaChanges.map((ac) => ac.position))
 
       // if (protein) {
       //   length = protein.sequence.length
@@ -235,7 +241,7 @@ export function LollipopProvider({ id, children }: IProps) {
       //   length = Math.max(...aaChanges.map(ac => ac.position))
       // }
 
-      const aaStats: ILollipopStats[] = range(length).map(i =>
+      const aaStats: ILollipopStats[] = range(length).map((i) =>
         newAAStats(i + 1)
       )
 
@@ -263,7 +269,7 @@ export function LollipopProvider({ id, children }: IProps) {
         protein,
         aaStats,
         [...databases].sort(),
-        Object.fromEntries([...databases].map(db => [db, true]))
+        Object.fromEntries([...databases].map((db) => [db, true]))
       )
 
       //   const d: SeriesType[][] = df.rowMap((row: SeriesType[], index: number) => {
