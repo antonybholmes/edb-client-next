@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
 
@@ -103,7 +103,7 @@ export function MotifsPage() {
 
   useEffect(() => {
     updateSettings(
-      produce(settings, draft => {
+      produce(settings, (draft) => {
         draft.zoom = zoom
       })
     )
@@ -174,7 +174,7 @@ export function MotifsPage() {
   }, [settings.revComp])
 
   useEffect(() => {
-    const dataframes: BaseDataFrame[] = state.order.map(i => {
+    const dataframes: BaseDataFrame[] = state.order.map((i) => {
       const motif = state.motifs.get(i)!
 
       const df = new AnnotationDataFrame({
@@ -280,9 +280,9 @@ export function MotifsPage() {
           <ToolbarTabGroup title="Options" className="gap-x-1">
             <Tabs
               value={settings.mode}
-              onValueChange={v => {
+              onValueChange={(v) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.mode = v as Mode
                   })
                 )
@@ -329,7 +329,7 @@ export function MotifsPage() {
               onClick={() => {
                 console.log('revComp', settings.revComp)
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.revComp = !settings.revComp
                   })
                 )
@@ -479,7 +479,7 @@ export function MotifsPage() {
           <ModuleInfoButton info={MODULE_INFO} />
           <Autocomplete
             value={search.search}
-            onTextChange={v =>
+            onTextChange={(v) =>
               setSearch({
                 search: v,
                 reverse: settings.revComp,
@@ -580,7 +580,7 @@ export function MotifsPage() {
                 <TabbedDataFrames
                   selectedSheet={sheet?.id ?? ''}
                   dataFrames={sheets as AnnotationDataFrame[]}
-                  onTabChange={selectedTab => {
+                  onTabChange={(selectedTab) => {
                     gotoSheet(selectedTab.tab.id)
                   }}
                   className="relative grow"

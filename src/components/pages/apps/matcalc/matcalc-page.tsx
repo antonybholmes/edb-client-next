@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import {
   ShowOptionsMenu,
@@ -512,7 +512,7 @@ function MatcalcPage() {
           isOpen: true, // plotChildren.length > 0,
         }
       })
-      .filter(tab => tab.children.length > 0)
+      .filter((tab) => tab.children.length > 0)
 
     const graphsTab = {
       ...GRAPHS_TAB,
@@ -547,7 +547,7 @@ function MatcalcPage() {
   function openFiles(files: ITextFileOpen[], options: IParseOptions) {
     filesToDataFrames(queryClient, files, {
       parseOpts: options,
-      onSuccess: tables => {
+      onSuccess: (tables) => {
         if (tables.length > 0) {
           // openBranch(
           //   `Load ${tables[0]!.name}`,
@@ -779,7 +779,7 @@ function MatcalcPage() {
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -1279,7 +1279,7 @@ function MatcalcPage() {
 
         {plot && plotElem(plot)} */}
 
-        {branches.map(branch => {
+        {branches.map((branch) => {
           return (
             <TabsContent key={branch.id} value={branch.id} asChild>
               {/* lazy load */}
@@ -1288,7 +1288,7 @@ function MatcalcPage() {
           )
         })}
 
-        {allPlots.map(plot => {
+        {allPlots.map((plot) => {
           return (
             <Fragment key={plot.id}>
               <TabsContent key={plot.id} value={plot.id} asChild>
@@ -1448,7 +1448,7 @@ function MatcalcPage() {
 
         <Toolbar
           value={toolbarTabName}
-          onTabChange={selectedTab => {
+          onTabChange={(selectedTab) => {
             if (selectedTab) {
               setToolbarTab(selectedTab.tab.id)
             }
@@ -1496,7 +1496,7 @@ function MatcalcPage() {
               <ShowOptionsMenu
                 show={settings.sidebar.show}
                 onClick={() => {
-                  const newSettings = produce(settings, draft => {
+                  const newSettings = produce(settings, (draft) => {
                     draft.sidebar.show = !draft.sidebar.show
                   })
 
@@ -1539,7 +1539,7 @@ function MatcalcPage() {
             open={showDialog.id}
             //onOpenChange={() => setShowDialog({...NO_DIALOG})}
             onFileChange={(message, files) =>
-              onTextFileChange(message, files, files => {
+              onTextFileChange(message, files, (files) => {
                 setShowDialog({
                   id: randId('open-file-dialog'),
                   params: { files },

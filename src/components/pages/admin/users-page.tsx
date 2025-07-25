@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import {
   API_ADMIN_ADD_USER_URL,
@@ -211,15 +211,15 @@ function AdminUsersPage() {
       header: 'Email',
     }),
 
-    columnHelper.accessor(row => `${row.firstName} ${row.lastName}`, {
+    columnHelper.accessor((row) => `${row.firstName} ${row.lastName}`, {
       header: 'Name',
     }),
 
     columnHelper.accessor('roles', {
       header: 'Roles',
-      cell: props => (
+      cell: (props) => (
         <VCenterRow className="gap-x-0.5 text-xs font-bold text-white">
-          {props.getValue().map(role => (
+          {props.getValue().map((role) => (
             <span
               key={role}
               className="bg-theme/75 hover:bg-theme trans-color rounded-full px-2 py-0.75"
@@ -231,10 +231,10 @@ function AdminUsersPage() {
       ),
     }),
 
-    columnHelper.accessor(row => row, {
+    columnHelper.accessor((row) => row, {
       id: 'edit',
       header: '',
-      cell: props => (
+      cell: (props) => (
         <VCenterRow className="gap-x-3 justify-end">
           <button
             title="Edit user"
@@ -281,9 +281,9 @@ function AdminUsersPage() {
   })
 
   const smallColumns = [
-    columnHelper.accessor(row => row, {
+    columnHelper.accessor((row) => row, {
       header: 'User Info',
-      cell: props => (
+      cell: (props) => (
         <BaseCol className="gap-y-3 text-sm">
           <span className=" font-bold">{props.getValue().publicId}</span>
           <span>{props.getValue().username}</span>
@@ -292,7 +292,7 @@ function AdminUsersPage() {
             {props.getValue().firstName} {props.getValue().lastName}
           </span>
           <VCenterRow className="gap-x-1 text-xs font-bold">
-            {props.getValue().roles.map(role => (
+            {props.getValue().roles.map((role) => (
               <span
                 key={role}
                 className="bg-theme/75 hover:bg-theme trans-color rounded-full px-2 py-0.75"
@@ -305,10 +305,10 @@ function AdminUsersPage() {
       ),
     }),
 
-    columnHelper.accessor(row => row, {
+    columnHelper.accessor((row) => row, {
       id: 'edit',
       header: '',
-      cell: props => (
+      cell: (props) => (
         <VCenterRow className="gap-x-3 justify-end">
           <button
             title="Edit user"
@@ -448,7 +448,7 @@ function AdminUsersPage() {
     <>
       {showDialog.id === 'delete' && (
         <OKCancelDialog
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
               deleteUser(showDialog.params!.user as IEdbUser)
             }
@@ -513,10 +513,10 @@ function AdminUsersPage() {
               <Card className="hidden xl:flex">
                 <Table>
                   <TableHeader>
-                    {table.getHeaderGroups().map(headerGroup => {
+                    {table.getHeaderGroups().map((headerGroup) => {
                       return (
                         <TableRow key={headerGroup.id}>
-                          {headerGroup.headers.map(header => (
+                          {headerGroup.headers.map((header) => (
                             <TableHead key={header.id} colSpan={header.colSpan}>
                               {flexRender(
                                 header.column.columnDef.header,
@@ -529,9 +529,9 @@ function AdminUsersPage() {
                     })}
                   </TableHeader>
                   <TableBody>
-                    {table.getRowModel().rows.map(row => (
+                    {table.getRowModel().rows.map((row) => (
                       <TableRow key={row.id}>
-                        {row.getVisibleCells().map(cell => (
+                        {row.getVisibleCells().map((cell) => (
                           <TableCell key={cell.id}>
                             {flexRender(
                               cell.column.columnDef.cell,
@@ -548,10 +548,10 @@ function AdminUsersPage() {
               <Card className="xl:hidden">
                 <Table>
                   <TableHeader>
-                    {smallTable.getHeaderGroups().map(headerGroup => {
+                    {smallTable.getHeaderGroups().map((headerGroup) => {
                       return (
                         <TableRow key={headerGroup.id}>
-                          {headerGroup.headers.map(header => (
+                          {headerGroup.headers.map((header) => (
                             <TableHead key={header.id} colSpan={header.colSpan}>
                               {flexRender(
                                 header.column.columnDef.header,
@@ -564,9 +564,9 @@ function AdminUsersPage() {
                     })}
                   </TableHeader>
                   <TableBody>
-                    {smallTable.getRowModel().rows.map(row => (
+                    {smallTable.getRowModel().rows.map((row) => (
                       <TableRow key={row.id}>
-                        {row.getVisibleCells().map(cell => (
+                        {row.getVisibleCells().map((cell) => (
                           <TableCell key={cell.id}>
                             {flexRender(
                               cell.column.columnDef.cell,
@@ -585,7 +585,7 @@ function AdminUsersPage() {
               <CenterRow className="col-span-2">
                 <PaginationComponent
                   currentPage={page}
-                  setCurrentPage={page => {
+                  setCurrentPage={(page) => {
                     setPage(page)
                   }}
                   itemsPerPage={itemsPerPage}

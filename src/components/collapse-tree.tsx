@@ -151,7 +151,7 @@ export function CollapseTree({
       value={value}
       level={0}
       showRoot={showRoot}
-      onValueChange={t => {
+      onValueChange={(t) => {
         onValueChange?.(t)
       }}
       onCheckedChange={(tab: ITab, state: boolean) => {
@@ -211,7 +211,7 @@ function CollapseTreeNode({ className }: IClassProps) {
 
   //console.log(tab.name, tab.id, value?.id)
 
-  let icon: ReactNode = tab.icon
+  const icon: ReactNode = tab.icon
 
   // if (!icon) {
   //   if (tab.children) {
@@ -263,7 +263,7 @@ function CollapseTreeNode({ className }: IClassProps) {
               setHover(true)
             }}
             onMouseLeave={() => setHover(false)}
-            onKeyDown={e => {
+            onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 // Invert openings
                 if (tab.children) {
@@ -325,7 +325,7 @@ function CollapseTreeNode({ className }: IClassProps) {
               {tab.checked !== undefined && (
                 <Checkbox
                   checked={tab.checked}
-                  onCheckedChange={state => {
+                  onCheckedChange={(state) => {
                     onCheckedChange?.(tab, state)
                     //tab.onClick?.()
                     onValueChange(tab)

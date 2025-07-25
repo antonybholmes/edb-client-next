@@ -1,7 +1,7 @@
 import { UserIcon } from '@icons/user-icon'
 import { Button } from '@themed/button'
 
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 
 import { SignInIcon } from '@/components/icons/sign-in-icon'
 import {
@@ -67,16 +67,18 @@ export function EDBSignIn({
 
   const { loginWithRedirect } = useAuth0()
 
+  useEffect(() => {
+    if (!redirectUrl) {
+      redirectUrl = window.location.pathname //window.location.href
+    }
+  }, [])
+
   const cachedUserInfo: IBasicEdbUser =
     settings.users.length > 0
       ? settings.users[0]!
       : { ...DEFAULT_BASIC_EDB_USER }
 
   const roles = cachedUserInfo.roles.join(',')
-
-  if (!redirectUrl) {
-    redirectUrl = window.location.pathname //window.location.href
-  }
 
   let name: string = ''
 
@@ -326,7 +328,7 @@ export function EDBSignIn({
         //contentVariant="glass"
         //bodyVariant="card"
         modalType="Warning"
-        onResponse={r => {
+        onResponse={(r) => {
           if (r === TEXT_OK) {
             redirect(APP_OAUTH2_SIGN_OUT_ROUTE)
           }

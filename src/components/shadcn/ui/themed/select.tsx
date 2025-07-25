@@ -126,7 +126,7 @@ SelectScrollDownButton.displayName =
 
 export function SelectContent({
   ref,
-  side = 'bottom',
+
   variant = 'default',
   position = 'popper',
   className,

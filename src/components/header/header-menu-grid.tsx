@@ -1,3 +1,5 @@
+'use client'
+
 import { type IDivProps } from '@interfaces/div-props'
 import { cn } from '@lib/shadcn-utils'
 
@@ -61,14 +63,14 @@ export function HeaderLinks({
   const { settings } = useEdbSettings()
 
   // sort alphabetically and ignore sections
-  let items = HEADER_LINKS.map(section => {
+  let items = HEADER_LINKS.map((section) => {
     return section.modules.filter(
-      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()
     .filter(
-      module =>
+      (module) =>
         !search ||
         module.name.toLowerCase().includes(search.toLowerCase()) ||
         module.description.toLowerCase().includes(search.toLowerCase())

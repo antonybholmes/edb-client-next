@@ -1,4 +1,4 @@
-  'use client'
+'use client'
 
 import { ThemeLink } from '@components/link/theme-link'
 import { BaseCol } from '@layout/base-col'

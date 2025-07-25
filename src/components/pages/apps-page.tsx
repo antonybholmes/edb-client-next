@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { HEADER_LINKS } from '@/menus'
 import { FOCUS_RING_CLS } from '@/theme'
@@ -18,9 +18,9 @@ const APP_CLS = cn(
 export function Apps() {
   return (
     <ul className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6  ">
-      {HEADER_LINKS.map(section => {
+      {HEADER_LINKS.map((section) => {
         return section.modules.filter(
-          module =>
+          (module) =>
             module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
         )
       })

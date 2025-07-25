@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { ToolbarOpenFile } from '@toolbar/toolbar-open-files'
 
@@ -155,7 +155,7 @@ export function GseaPage() {
   }, [zoom])
 
   const searchIndex = useMemo(() => {
-    return new Fuse(phenotypes.map(k => allReports.get(k)!).flat(), {
+    return new Fuse(phenotypes.map((k) => allReports.get(k)!).flat(), {
       keys: ['phen', 'name'], // Fields to search
       threshold: 0.3, // Fuzzy match level
     })
@@ -181,10 +181,12 @@ export function GseaPage() {
   useEffect(() => {
     const pathways: [string, boolean][] = [...allReports.keys()]
       .sort()
-      .map(report =>
+      .map((report) =>
         allReports
           .get(report)!
-          .map(pathway => [pathway.id, selectAllDatasets] as [string, boolean])
+          .map(
+            (pathway) => [pathway.id, selectAllDatasets] as [string, boolean]
+          )
       )
       .flat()
 
@@ -229,7 +231,7 @@ export function GseaPage() {
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -429,7 +431,7 @@ export function GseaPage() {
             setGeneRank(
               textToTokens(content)
                 .slice(1)
-                .filter(tokens => tokens.length > 2)
+                .filter((tokens) => tokens.length > 2)
                 .map((tokens, ti) => ({
                   gene: tokens[0]!,
                   rank: ti,
@@ -445,7 +447,7 @@ export function GseaPage() {
             // Check if the entry is a file, not a directory
             const content = await zipEntry.async('string')
 
-            const lines = textToLines(content).filter(tokens =>
+            const lines = textToLines(content).filter((tokens) =>
               tokens.includes('cls')
             )
 
@@ -501,8 +503,8 @@ export function GseaPage() {
 
           textToTokens(content)
             .slice(1)
-            .filter(tokens => tokens.length > 7)
-            .forEach(tokens => {
+            .filter((tokens) => tokens.length > 7)
+            .forEach((tokens) => {
               const name = tokens[0]!
               const phen = reportNames[pi]!
 
@@ -548,8 +550,8 @@ export function GseaPage() {
 
           const es = textToTokens(content)
             .slice(1)
-            .filter(tokens => tokens.length > 5)
-            .map(tokens => ({
+            .filter((tokens) => tokens.length > 5)
+            .map((tokens) => ({
               gene: tokens[1]!,
               rank: Number(tokens[3]!),
               score: Number(tokens[5]!),
@@ -586,10 +588,10 @@ export function GseaPage() {
 
     setSearchResults(
       phenotypes
-        .map(k =>
+        .map((k) =>
           allReports
             .get(k)!
-            .filter(r => q.match(k) || q.match(r.phen) || q.match(r.name))
+            .filter((r) => q.match(k) || q.match(r.phen) || q.match(r.name))
         )
         .flat()
     )
@@ -627,7 +629,7 @@ export function GseaPage() {
             onTextChange={handleSearch}
             className="w-3/4 lg:w-1/2 text-sm"
           >
-            {phenotypes.map(p => {
+            {phenotypes.map((p) => {
               return (
                 // Split into each phenotype to make search cleaner
                 <Fragment key={p}>
@@ -639,8 +641,8 @@ export function GseaPage() {
                   </li>
 
                   {searchResults
-                    .filter(item => item.phen === p)
-                    .map(item => (
+                    .filter((item) => item.phen === p)
+                    .map((item) => (
                       <AutocompleteLi key={item.id}>
                         <SearchIcon />
                         <span className="grow">{item.name}</span>
@@ -707,14 +709,14 @@ export function GseaPage() {
           side="right"
           tabs={rightTabs}
           value={rightTab}
-          onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
           open={showSideBar}
           onOpenChange={setShowSideBar}
           className="pr-2"
         >
           {rankedGenes.length > 0 ? (
             <FileDropZonePanel
-              onFileDrop={files => {
+              onFileDrop={(files) => {
                 if (files.length > 0) {
                   onBinaryFileChange('Open zip', files, openZipFiles)
                 }
@@ -729,11 +731,11 @@ export function GseaPage() {
                       new Map<string, IPathway[]>(
                         allReports
                           .keys()
-                          .map(report => [
+                          .map((report) => [
                             report,
                             allReports
                               .get(report)!
-                              .filter(pathway =>
+                              .filter((pathway) =>
                                 datasetsForUse.get(pathway.id)
                               ),
                           ])
@@ -747,7 +749,7 @@ export function GseaPage() {
             </FileDropZonePanel>
           ) : (
             <FileDropZonePanel
-              onFileDrop={files => {
+              onFileDrop={(files) => {
                 if (files.length > 0) {
                   //setDroppedFile(files[0]);
                   console.log('Dropped file:', files[0])

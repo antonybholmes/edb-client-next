@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { ToolbarOpenFile } from '@toolbar/toolbar-open-files'
 
@@ -129,14 +129,14 @@ function AnnotationPage() {
 
     const fileReader = new FileReader()
 
-    fileReader.onload = e => {
+    fileReader.onload = (e) => {
       const result = e.target?.result
 
       if (result) {
         const text: string =
           typeof result === 'string' ? result : Buffer.from(result).toString()
 
-        const lines = text.split(/[\r\n]+/g).filter(line => line.length > 0)
+        const lines = text.split(/[\r\n]+/g).filter((line) => line.length > 0)
         //.slice(0, 100)
 
         //const locs = parseLocations(lines)
@@ -364,7 +364,7 @@ function AnnotationPage() {
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -541,7 +541,7 @@ function AnnotationPage() {
           side="right"
           tabs={rightTabs}
           value={rightTab}
-          onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
@@ -553,7 +553,7 @@ function AnnotationPage() {
           <TabbedDataFrames
             selectedSheet={sheet?.id ?? ''}
             dataFrames={sheets as AnnotationDataFrame[]}
-            onTabChange={selectedTab => {
+            onTabChange={(selectedTab) => {
               gotoSheet(selectedTab.tab.id)
             }}
             className="mx-2"

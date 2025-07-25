@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
 import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
@@ -304,7 +304,7 @@ export function PathwayPage() {
           skipRows: files[0]!.name.includes('gmx') ? 1 : 0,
           delimiter: files[0]!.ext === 'csv' ? ',' : '\t',
         },
-        onSuccess: tables => {
+        onSuccess: (tables) => {
           if (tables.length > 0) {
             open(tables[0]!)
           }
@@ -339,12 +339,12 @@ export function PathwayPage() {
         name: sheet.col(0).name.toString(),
         genes: sheet
           .col(0)
-          .strs.filter(v => v !== '' && genes.has(v.toLowerCase())),
+          .strs.filter((v) => v !== '' && genes.has(v.toLowerCase())),
         color: randomHexColor(),
       }
     })
 
-    if (sum(genesets.map(geneset => geneset.genes.length)) === 0) {
+    if (sum(genesets.map((geneset) => geneset.genes.length)) === 0) {
       // setShowDialog({
       //   name: "alert",
       //   params: {
@@ -373,8 +373,8 @@ export function PathwayPage() {
     }
 
     const queryDatasets = datasetInfos
-      .map(org =>
-        org.datasets.filter(dataset =>
+      .map((org) =>
+        org.datasets.filter((dataset) =>
           datasetsForUse.get(makeDatasetId(dataset))
         )
       )
@@ -519,7 +519,7 @@ export function PathwayPage() {
     setDatasetsForUse(
       new Map<string, boolean>(
         datasetInfos
-          .map(org =>
+          .map((org) =>
             org.datasets.map(
               (dataset: IDatasetInfo) =>
                 [makeDatasetId(dataset), true] as [string, boolean]
@@ -536,7 +536,7 @@ export function PathwayPage() {
     setDatasetsForUse(
       new Map<string, boolean>(
         datasetInfos
-          .map(org =>
+          .map((org) =>
             org.datasets.map(
               (dataset: IDatasetInfo) =>
                 [makeDatasetId(dataset), selectAllDatasets] as [string, boolean]
@@ -555,7 +555,7 @@ export function PathwayPage() {
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -738,7 +738,7 @@ export function PathwayPage() {
           open={showDialog.id}
           //onOpenChange={() => setShowDialog({...NO_DIALOG})}
           onFileChange={(message, files) => {
-            onTextFileChange(message, files, files => {
+            onTextFileChange(message, files, (files) => {
               if (files.length > 0) {
                 filesToDataFrames(queryClient, files, {
                   parseOpts: {
@@ -746,7 +746,7 @@ export function PathwayPage() {
                     colNames: files[0]!.name.includes('gmx') ? 0 : 1,
                     skipRows: files[0]!.name.includes('gmx') ? 1 : 0,
                   },
-                  onSuccess: tables => {
+                  onSuccess: (tables) => {
                     if (tables.length > 0) {
                       open(tables[0]!)
                     }
@@ -816,7 +816,7 @@ export function PathwayPage() {
           side="right"
           tabs={rightTabs}
           value={rightTab}
-          onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
@@ -824,10 +824,10 @@ export function PathwayPage() {
           <TabbedDataFrames
             selectedSheet={sheet?.id ?? ''}
             dataFrames={sheets as AnnotationDataFrame[]}
-            onTabChange={selectedTab => {
+            onTabChange={(selectedTab) => {
               gotoStep(selectedTab.tab.id)
             }}
-            onFileDrop={files => {
+            onFileDrop={(files) => {
               if (files.length > 0) {
                 //setDroppedFile(files[0]);
                 console.log('Dropped file:', files[0])

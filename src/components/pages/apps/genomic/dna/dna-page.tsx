@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { ToolbarOpenFile } from '@toolbar/toolbar-open-files'
 
@@ -123,7 +123,7 @@ function DNAPage() {
   ) {
     filesToDataFrames(queryClient, files, {
       ...parseOpts,
-      onSuccess: tables => {
+      onSuccess: (tables) => {
         if (tables.length > 0) {
           openBranch(`Load ${tables[0]!.name}`, tables)
         }
@@ -215,7 +215,7 @@ function DNAPage() {
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -283,7 +283,7 @@ function DNAPage() {
                 <VCenterRow className="gap-x-4">
                   <Tabs
                     value={format}
-                    onValueChange={v => {
+                    onValueChange={(v) => {
                       setFormat(v as FORMAT_TYPE)
                     }}
                   >
@@ -464,7 +464,7 @@ function DNAPage() {
           side="right"
           tabs={rightTabs}
           value={rightTab}
-          onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
@@ -476,7 +476,7 @@ function DNAPage() {
           <TabbedDataFrames
             selectedSheet={sheet?.id ?? ''}
             dataFrames={sheets as AnnotationDataFrame[]}
-            onTabChange={selectedTab => {
+            onTabChange={(selectedTab) => {
               gotoSheet(selectedTab.tab.id)
             }}
             className="mx-2"

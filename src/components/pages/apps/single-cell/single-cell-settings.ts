@@ -48,8 +48,8 @@ export interface ILegend {
   title: { show: boolean; text: string; color: string }
   showClusterId: boolean
   size: number
-  gap: any
-  height: any
+  gap: number
+  height: number
   show: boolean
   width: number
   showUndetClusters: boolean

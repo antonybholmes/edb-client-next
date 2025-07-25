@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import {
   ShowOptionsMenu,
@@ -367,7 +367,7 @@ function OncoplotPage() {
 
     filesToDataFrames(queryClient, files, {
       parseOpts: options,
-      onSuccess: tables => {
+      onSuccess: (tables) => {
         if (tables.length > 0) {
           openBranch(`Load ${tables[0]!.name}`, tables)
         }
@@ -386,7 +386,7 @@ function OncoplotPage() {
 
     console.log(df)
 
-    let clinicalDf: BaseDataFrame | undefined = findSheet(step!, 'Clinical')
+    const clinicalDf: BaseDataFrame | undefined = findSheet(step!, 'Clinical')
 
     const locationsDf: BaseDataFrame | undefined = findSheet(step!, 'Locations')
 
@@ -494,7 +494,7 @@ function OncoplotPage() {
         <>
           <ToolbarTabGroup>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -665,7 +665,7 @@ function OncoplotPage() {
   useEffect(() => {
     const plotChildren: ITab[] = []
 
-    plotsState.plots.forEach(plot => {
+    plotsState.plots.forEach((plot) => {
       plotChildren.push({
         id: nanoid(),
         name: plot.name,
@@ -929,7 +929,7 @@ function OncoplotPage() {
               <CollapseTree
                 tab={foldersTab}
                 value={tab!}
-                onValueChange={t => {
+                onValueChange={(t) => {
                   if (t && t.content) {
                     // only use tabs from the tree that have content, otherwise
                     // the ui will appear empty
@@ -948,7 +948,7 @@ function OncoplotPage() {
               open={showDialog.id}
               //onOpenChange={() => setShowDialog({...NO_DIALOG})}
               onFileChange={(message, files) =>
-                onTextFileChange(message, files, files =>
+                onTextFileChange(message, files, (files) =>
                   parseFiles(message, files)
                 )
               }

@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
 
@@ -204,7 +204,7 @@ export function MutationsPage() {
 
     setDatasetUseMap(
       new Map<string, boolean>(
-        datasets.map(dataset => [dataset.publicId, true])
+        datasets.map((dataset) => [dataset.publicId, true])
       )
     )
   }
@@ -221,9 +221,9 @@ export function MutationsPage() {
     setSampleMap(
       new Map<string, IMutationSample>(
         datasets
-          .map(dataset =>
+          .map((dataset) =>
             dataset.samples.map(
-              sample => [sample.publicId, sample] as [string, IMutationSample]
+              (sample) => [sample.publicId, sample] as [string, IMutationSample]
             )
           )
           .flat()
@@ -232,7 +232,7 @@ export function MutationsPage() {
   }, [datasets])
 
   useEffect(() => {
-    const children: ITab[] = datasets.map(dataset => {
+    const children: ITab[] = datasets.map((dataset) => {
       return {
         id: dataset.publicId,
         name: dataset.name,
@@ -286,9 +286,12 @@ export function MutationsPage() {
       case 'COO':
         scm = new Map<string, string>(
           datasets
-            .map(d => d.samples)
+            .map((d) => d.samples)
             .flat()
-            .map(s => [s.publicId, s.coo in cmap ? cmap[s.coo]! : COLOR_BLACK])
+            .map((s) => [
+              s.publicId,
+              s.coo in cmap ? cmap[s.coo]! : COLOR_BLACK,
+            ])
         )
 
         console.log(scm)
@@ -298,9 +301,9 @@ export function MutationsPage() {
         scm = new Map<string, string>(
           datasets
 
-            .map(d => d.samples)
+            .map((d) => d.samples)
             .flat()
-            .map(s => [
+            .map((s) => [
               s.publicId,
               s.lymphgen in cmap ? cmap[s.lymphgen]! : COLOR_BLACK,
             ])
@@ -323,8 +326,8 @@ export function MutationsPage() {
   useEffect(() => {
     setSamples(
       datasets
-        .filter(dataset => datasetUseMap.get(dataset.publicId))
-        .map(d => d.samples)
+        .filter((dataset) => datasetUseMap.get(dataset.publicId))
+        .map((d) => d.samples)
         .flat()
         .sort((sa, sb) => sa.name.localeCompare(sb.name))
     )
@@ -364,7 +367,7 @@ export function MutationsPage() {
             {
               body: {
                 locations: [location.toString()],
-                datasets: datasets.map(dataset => dataset.publicId),
+                datasets: datasets.map((dataset) => dataset.publicId),
               },
 
               headers: bearerHeaders(accessToken),
@@ -407,7 +410,7 @@ export function MutationsPage() {
     try {
       pileup = await fetchPileup(
         location,
-        datasets.filter(dataset => datasetUseMap.get(dataset.publicId))
+        datasets.filter((dataset) => datasetUseMap.get(dataset.publicId))
       )
     } catch (e) {
       console.log(e)
@@ -429,9 +432,9 @@ export function MutationsPage() {
 
     const datasetMap = new Map<string, string>(
       datasets
-        .map(dataset =>
+        .map((dataset) =>
           dataset.samples.map(
-            sample => [sample.publicId, dataset.name] as [string, string]
+            (sample) => [sample.publicId, dataset.name] as [string, string]
           )
         )
         .flat()
@@ -439,9 +442,9 @@ export function MutationsPage() {
 
     const cooMap = new Map<string, string>(
       datasets
-        .map(dataset =>
+        .map((dataset) =>
           dataset.samples.map(
-            sample => [sample.publicId, sample.coo] as [string, string]
+            (sample) => [sample.publicId, sample.coo] as [string, string]
           )
         )
         .flat()
@@ -449,9 +452,9 @@ export function MutationsPage() {
 
     const lymphgenMap = new Map<string, string>(
       datasets
-        .map(dataset =>
+        .map((dataset) =>
           dataset.samples.map(
-            sample => [sample.publicId, sample.lymphgen] as [string, string]
+            (sample) => [sample.publicId, sample.lymphgen] as [string, string]
           )
         )
         .flat()
@@ -461,7 +464,7 @@ export function MutationsPage() {
 
     const data =
       pileup && pileup.pileupResults
-        ? pileup.pileupResults.pileup.flat().map(mutation => {
+        ? pileup.pileupResults.pileup.flat().map((mutation) => {
             let chr = mutation.chr.replace('chr', '')
 
             if (displayProps.chrPrefix.show) {
@@ -607,8 +610,8 @@ export function MutationsPage() {
         <PileupPropsPanel
           displayProps={displayProps}
           motifPatterns={motifPatterns}
-          onDisplayPropsChange={props => setDisplayProps(props)}
-          onMotifPatternsChange={patterns => setMotifPatterns(patterns)}
+          onDisplayPropsChange={(props) => setDisplayProps(props)}
+          onMotifPatternsChange={(patterns) => setMotifPatterns(patterns)}
         />
       ),
     },
@@ -725,7 +728,7 @@ export function MutationsPage() {
         headerCenterChildren={
           <SearchBox
             value={search}
-            onTextChange={v => setSearch(v)}
+            onTextChange={(v) => setSearch(v)}
             onTextChanged={() => {
               getPileup()
             }}
@@ -843,7 +846,7 @@ export function MutationsPage() {
             side="right"
             tabs={rightTabs}
             value={rightTab}
-            onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+            onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
             open={showSideBar}
             onOpenChange={setShowSideBar}
           >
@@ -929,7 +932,7 @@ export function MutationsPage() {
                         key="tabbed-data-frames"
                         selectedSheet={sheet?.id ?? ''}
                         dataFrames={sheets as AnnotationDataFrame[]}
-                        onTabChange={selectedTab => {
+                        onTabChange={(selectedTab) => {
                           gotoSheet(selectedTab.tab.id)
                         }}
                       />
@@ -944,7 +947,7 @@ export function MutationsPage() {
             <CollapseTree
               tab={foldersTab}
               value={tab!}
-              onValueChange={t => {
+              onValueChange={(t) => {
                 // only use tabs from the tree that have content, otherwise
                 // the ui will appear empty
                 setTab(t)

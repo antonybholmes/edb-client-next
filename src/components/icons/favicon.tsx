@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { AppIcon } from './app-icon'
 import { HomeIcon } from './home-icon'

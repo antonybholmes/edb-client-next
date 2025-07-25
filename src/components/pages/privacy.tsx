@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { BaseCol } from '@layout/base-col'
 import { ContentDiv } from '@layout/content-div'

@@ -22,7 +22,6 @@ import { VCenterRow } from '../layout/v-center-row'
 import { useResizeObserver } from '@hooks/use-resize-observer'
 import { TAILWIND_MEDIA_SM, useWindowSize } from '@hooks/use-window-size'
 import { cn } from '@lib/shadcn-utils'
-import { useSessionAtom } from '@lib/storage'
 import gsap from 'gsap'
 
 import type { ILim } from '@/lib/math/math'
@@ -87,13 +86,17 @@ export function SlideBar({
   children,
   ...props
 }: ISlideBarProps) {
-  const [divOffset, setDivOffsetFromEdge] = cachePosition
-    ? useSessionAtom<ISlideBarStore>(`slidebar:${id}`, {
-        p: -1,
+  // const [divOffset, setDivOffsetFromEdge] = cachePosition
+  //   ? useSessionAtom<ISlideBarStore>(`slidebar:${id}`, {
+  //       p: -1,
+  //       mode: 'auto',
+  //     })
+  //   : useState<ISlideBarStore>({ p: -1, mode: 'auto' })
 
-        mode: 'auto',
-      })
-    : useState<ISlideBarStore>({ p: -1, mode: 'auto' })
+  const [divOffset, setDivOffsetFromEdge] = useState<ISlideBarStore>({
+    p: -1,
+    mode: 'auto',
+  })
 
   //console.log('id', id, divOffset)
 
@@ -439,7 +442,7 @@ export function SlideBar({
     return () => observer.disconnect()
   }, [divOffset.mode])
 
-  useResizeObserver<HTMLDivElement>(containerRef, target => {
+  useResizeObserver<HTMLDivElement>(containerRef, (target) => {
     if (divOffset.mode === 'fixed') {
       return
     }
@@ -477,7 +480,7 @@ export function SlideBar({
         id="divider-hitbox"
         ref={hHitBoxRef}
         className={HANDLE_CLS}
-        onMouseDown={e => onMouseDown(e)}
+        onMouseDown={(e) => onMouseDown(e)}
         onClick={() => {
           hHitBoxRef.current!.focus()
         }}

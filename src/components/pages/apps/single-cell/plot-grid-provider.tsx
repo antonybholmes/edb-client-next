@@ -143,9 +143,27 @@ export interface IPlotGridContext
   setPalette: (palette: ColorMap) => void
 }
 
-export const PlotGridContext = createContext<IPlotGridContext | undefined>(
-  undefined
-)
+export const PlotGridContext = createContext<IPlotGridContext>({
+  setMode: () => {},
+  loadGex: async () => {},
+  setupGexPlot: () => {},
+  setPalette: () => {},
+  set: () => {},
+  updatePlot: () => {},
+  setPlots: () => {},
+  setClusterInfo: () => {},
+
+  clear: () => {},
+  plots: [],
+  globalGexRange: [0, 0],
+  points: [],
+  clusterInfo: {
+    clusters: [],
+    cdata: [],
+    order: [],
+    //map: {},
+  },
+})
 
 export function PlotGridProvider({ children }: IChildrenProps) {
   const [store, setStore] = useState<IPlotGridStoreProps>({
@@ -167,8 +185,8 @@ export function PlotGridProvider({ children }: IChildrenProps) {
 
   function setMode(mode: PlotMode) {
     setStore(
-      produce(store, draft => {
-        draft.plots = draft.plots.map(p => ({ ...p, mode }))
+      produce(store, (draft) => {
+        draft.plots = draft.plots.map((p) => ({ ...p, mode }))
       })
     )
   }
@@ -176,7 +194,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
   function setPlots(plots: IUmapPlot[]) {
     console.log('setPlots', plots.length)
     setStore(
-      produce(store, draft => {
+      produce(store, (draft) => {
         draft.plots = plots
       })
     )
@@ -184,7 +202,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
 
   function setClusterInfo(clusterInfo: IClusterInfo) {
     setStore(
-      produce(store, draft => {
+      produce(store, (draft) => {
         draft.clusterInfo = clusterInfo
       })
     )
@@ -208,7 +226,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
           dataset.publicId,
           geneSets
             .flat()
-            .map(g => g.geneId)
+            .map((g) => g.geneId)
             .join(','),
         ],
         queryFn: () => {
@@ -218,7 +236,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
             {
               headers: bearerHeaders(accessToken),
               body: {
-                genes: geneSets.flat().map(g => g.geneId),
+                genes: geneSets.flat().map((g) => g.geneId),
               },
             }
           )
@@ -229,7 +247,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
 
       // make some empty arrays to store the gene data
       const gexData = Object.fromEntries(
-        geneSets.flat().map(g => [g.geneId, zeros(dataset.cells ?? 0)])
+        geneSets.flat().map((g) => [g.geneId, zeros(dataset.cells ?? 0)])
       )
 
       for (const gene of results.genes) {
@@ -266,8 +284,8 @@ export function PlotGridProvider({ children }: IChildrenProps) {
       const useMean = genes.length > 1
 
       if (genes.length > 1) {
-        avg = range(0, dataset.cells ?? 0).map(cellIdx =>
-          mean(genes.map(gene => gexData[gene.geneId]![cellIdx]!))
+        avg = range(0, dataset.cells ?? 0).map((cellIdx) =>
+          mean(genes.map((gene) => gexData[gene.geneId]![cellIdx]!))
         )
       } else {
         avg = gexData[genes[0]!.geneId]!
@@ -286,7 +304,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
       //nz = normalize(z, settings.zscore.range) //settings.zscore.range)
 
       // get max regards of min max
-      max = Math.ceil(Math.max(...avg.map(x => Math.abs(x))))
+      max = Math.ceil(Math.max(...avg.map((x) => Math.abs(x))))
 
       if (!settings.zscore && max % 2 === 1) {
         max++
@@ -301,7 +319,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
       plots.push({
         id: nanoid(),
         title: useMean
-          ? truncate(`Mean of ${genes.map(g => g.geneSymbol).join(', ')}`)
+          ? truncate(`Mean of ${genes.map((g) => g.geneSymbol).join(', ')}`)
           : genes[0]!.geneSymbol,
         genes,
         mode: 'global-gex',
@@ -332,7 +350,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
     //ydata = ordered(ydata, idx)
 
     setStore(
-      produce(store, draft => {
+      produce(store, (draft) => {
         draft.plots = plots
         draft.globalGexRange = [0, globalMax]
       })
@@ -355,8 +373,8 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         setMode,
         setPalette: (palette: ColorMap) => {
           setStore(
-            produce(store, draft => {
-              draft.plots = draft.plots.map(p => ({
+            produce(store, (draft) => {
+              draft.plots = draft.plots.map((p) => ({
                 ...p,
                 palette,
               }))
@@ -365,8 +383,8 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         },
         updatePlot: (plot: IUmapPlot) => {
           setStore(
-            produce(store, draft => {
-              const idx = draft.plots.findIndex(p => p.id === plot.id)
+            produce(store, (draft) => {
+              const idx = draft.plots.findIndex((p) => p.id === plot.id)
               if (idx !== -1) {
                 draft.plots[idx] = plot
               }

@@ -1,12 +1,10 @@
-import { ContentDiv } from '@/components/layout/content-div'
-import { HeaderLayout, type IHeaderLayoutProps } from './header-layout'
+import { ContentDiv } from '@layout/content-div'
+import { SignInLayout, type ISignInLayoutProps } from './signin-layout'
 
-export function ContentLayout({ children, ...props }: IHeaderLayoutProps) {
+export function ContentLayout({ children, ...props }: ISignInLayoutProps) {
   return (
-    <HeaderLayout {...props}>
-      <ContentDiv>
-        <> {children}</>
-      </ContentDiv>
-    </HeaderLayout>
+    <SignInLayout {...props}>
+      <ContentDiv>{children}</ContentDiv>
+    </SignInLayout>
   )
 }

@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { ToolbarOpenFile } from '@toolbar/toolbar-open-files'
 
@@ -117,7 +117,7 @@ function OverlapPage() {
   function save(format: 'txt' | 'csv') {
     const sep = format === 'csv' ? ',' : '\t'
 
-    const idx = where(dfs, df => df.id === selected)
+    const idx = where(dfs, (df) => df.id === selected)
 
     if (idx.length > 0) {
       downloadDataFrame(dfs[idx[0]!]! as AnnotationDataFrame, {
@@ -165,7 +165,7 @@ function OverlapPage() {
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -402,9 +402,9 @@ function OverlapPage() {
       {showDialog.id.startsWith('delete-sheet') && (
         <OKCancelDialog
           //open={delGroup !== -1}
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
-              setDfs(dfs.filter(df => df.id !== showDialog.params!.id))
+              setDfs(dfs.filter((df) => df.id !== showDialog.params!.id))
             }
             setShowDialog({ ...NO_DIALOG })
           }}
@@ -438,7 +438,7 @@ function OverlapPage() {
           side="right"
           tabs={rightTabs}
           value={rightTab}
-          onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
@@ -470,14 +470,14 @@ function OverlapPage() {
                   })
                 }
               }}
-              onTabChange={v => {
+              onTabChange={(v) => {
                 setSelected(v.tab.id)
               }}
-              onReorder={order => {
+              onReorder={(order) => {
                 setDfs(reorder(dfs, order, (df, id) => df.id === id))
               }}
               allowReorder={true}
-              onFileDrop={files => {
+              onFileDrop={(files) => {
                 if (files.length > 0) {
                   //setDroppedFile(files[0]);
                   //console.log('Dropped file:', files[0])
@@ -502,7 +502,7 @@ function OverlapPage() {
             multiple={true}
             //onOpenChange={() => setShowDialog({...NO_DIALOG})}
             onFileChange={(message, files) =>
-              onTextFileChange(message, files, files => openFiles(files))
+              onTextFileChange(message, files, (files) => openFiles(files))
             }
           />
         )}

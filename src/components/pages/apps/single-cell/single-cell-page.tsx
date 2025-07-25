@@ -1,3 +1,5 @@
+'use client'
+
 import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
 
 import {
@@ -346,20 +348,20 @@ export function SingleCellPage() {
 
         //const xdata = metadata.cells.map(m => m.umapX)
         //const ydata = metadata.cells.map(m => m.umapY)
-        const points = metadata.cells.map(m => m.pos)
+        const points = metadata.cells.map((m) => m.pos)
 
-        const clusters: IScrnaCluster[] = metadata.clusters.map(c => {
+        const clusters: IScrnaCluster[] = metadata.clusters.map((c) => {
           const idx = where(
             metadata.cells,
-            cell => cell.clusterId === c.clusterId
+            (cell) => cell.clusterId === c.clusterId
           )
 
           const xc = ordered(
-            points.map(p => p.x),
+            points.map((p) => p.x),
             idx
           )
           const yc = ordered(
-            points.map(p => p.y),
+            points.map((p) => p.y),
             idx
           )
           const pos = findCenter(xc, yc)
@@ -375,9 +377,9 @@ export function SingleCellPage() {
         })
 
         updateSettings(
-          produce(settings, draft => {
-            draft.axes.xaxis.domain = makeDomain(points.map(p => p.x))
-            draft.axes.yaxis.domain = makeDomain(points.map(p => p.y))
+          produce(settings, (draft) => {
+            draft.axes.xaxis.domain = makeDomain(points.map((p) => p.x))
+            draft.axes.yaxis.domain = makeDomain(points.map((p) => p.y))
           })
         )
 
@@ -385,7 +387,7 @@ export function SingleCellPage() {
         //   clusters.map((c, i) => [c.clusterId, i / (clusters.length - 1)])
         // )
 
-        let hue = metadata.cells.map(c => c.clusterId) //metadata.cells.map(c => normMap[c.clusterId]!)
+        let hue = metadata.cells.map((c) => c.clusterId) //metadata.cells.map(c => normMap[c.clusterId]!)
 
         // if we sort by hue, we are sorting by color norm and
         // therefore cluster, so all points in a cluster will
@@ -400,7 +402,7 @@ export function SingleCellPage() {
           points,
           clusterInfo: {
             clusters,
-            cdata: metadata.cells.map(c => c.clusterId),
+            cdata: metadata.cells.map((c) => c.clusterId),
             order: idx,
             //map: Object.fromEntries(clusters.map((c, ci) => [c.clusterId, ci])),
           },
@@ -510,7 +512,7 @@ export function SingleCellPage() {
           selectedDataset?.publicId,
           settings.geneSets
             .flat()
-            .map(g => g.geneId)
+            .map((g) => g.geneId)
             .join(','),
         ],
         queryFn: () => {
@@ -520,7 +522,7 @@ export function SingleCellPage() {
             {
               headers: bearerHeaders(accessToken),
               body: {
-                genes: settings.geneSets.flat().map(g => g.geneId),
+                genes: settings.geneSets.flat().map((g) => g.geneId),
               },
             }
           )
@@ -533,7 +535,7 @@ export function SingleCellPage() {
       const gexData = Object.fromEntries(
         settings.geneSets
           .flat()
-          .map(g => [g.geneId, zeros(selectedDataset?.cells ?? 0)])
+          .map((g) => [g.geneId, zeros(selectedDataset?.cells ?? 0)])
       )
 
       for (const gene of results.genes) {
@@ -735,7 +737,7 @@ export function SingleCellPage() {
 
   useEffect(() => {
     updateSettings(
-      produce(settings, draft => {
+      produce(settings, (draft) => {
         draft.scale = zoom
       })
     )
@@ -1104,7 +1106,7 @@ export function SingleCellPage() {
           //open={showDialog}
           //onOpenChange={open => setShowDialog(open ? "open" : "")}
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => setFilesToOpen(files))
+            onTextFileChange(message, files, (files) => setFilesToOpen(files))
           }
         />
       )}
@@ -1153,7 +1155,7 @@ export function SingleCellPage() {
             onTextChange={handleSearch}
             className="w-3/4 lg:w-1/2 text-sm"
           >
-            {searchGenes?.map(g => {
+            {searchGenes?.map((g) => {
               return (
                 <AutocompleteLi key={g.geneId}>
                   <Checkbox
@@ -1185,8 +1187,10 @@ export function SingleCellPage() {
 
           <Select
             value={selectedDataset?.publicId ?? ''}
-            onValueChange={v => {
-              setSelectedDataset(datasets?.find(d => d.publicId === v) ?? null)
+            onValueChange={(v) => {
+              setSelectedDataset(
+                datasets?.find((d) => d.publicId === v) ?? null
+              )
             }}
           >
             <SelectTrigger
@@ -1197,7 +1201,7 @@ export function SingleCellPage() {
               <SelectValue placeholder="Select a genome" />
             </SelectTrigger>
             <SelectContent align="end">
-              {datasets?.map(dataset => (
+              {datasets?.map((dataset) => (
                 <SelectItem
                   key={dataset.publicId}
                   value={dataset.publicId}
@@ -1252,7 +1256,7 @@ export function SingleCellPage() {
           key="sidebar-table"
           tabs={rightTabs}
           value={selectedPlotTab}
-          onTabChange={selectedTab => setSelectedPlotTab(selectedTab.tab.id)}
+          onTabChange={(selectedTab) => setSelectedPlotTab(selectedTab.tab.id)}
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
@@ -1303,7 +1307,7 @@ export function SingleCellPage() {
                 <TabbedDataFrames
                   selectedSheet={sheet?.id ?? ''}
                   dataFrames={sheets as AnnotationDataFrame[]}
-                  onTabChange={selectedTab => {
+                  onTabChange={(selectedTab) => {
                     gotoSheet(selectedTab.tab.id)
                   }}
                   className="relative grow"
