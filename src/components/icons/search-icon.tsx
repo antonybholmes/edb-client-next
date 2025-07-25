@@ -1,9 +1,9 @@
 import { type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import { Search } from 'lucide-react'
 
 export function SearchIcon({
-  w = 'w-4.5',
+  w = 'w-4 h-4',
   stroke = 'stroke-foreground',
   className,
   strokeWidth = 1.5,

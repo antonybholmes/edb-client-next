@@ -1,11 +1,13 @@
-import { VCenterRow } from '@/components/layout/v-center-row'
-import type { LeftRightPos } from '@/components/side'
+import { ANIMATION_DURATION_S } from '@/consts'
 import { FOCUS_RING_CLS } from '@/theme'
-import { cn } from '@lib/class-names'
+import type { LeftRightPos } from '@components/side'
+import { VCenterRow } from '@layout/v-center-row'
+import { cn } from '@lib/shadcn-utils'
 import * as SwitchPrimitives from '@radix-ui/react-switch'
-import { motion } from 'motion/react'
+import gsap from 'gsap'
 import {
   forwardRef,
+  useEffect,
   useRef,
   useState,
   type ComponentPropsWithoutRef,
@@ -21,7 +23,7 @@ import {
 // >(({ className, ...props }, ref) => (
 //   <SwitchPrimitives.Root
 //     className={cn(
-//       "data-[state=unchecked]:input peer flex h-[20px] w-[36px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-theme",
+//       "data-[state=unchecked]:input peer flex h-[20px] w-[36px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-theme",
 //       className,
 //     )}
 //     {...props}
@@ -36,15 +38,17 @@ import {
 
 const TOGGLE_CLS = cn(
   FOCUS_RING_CLS,
-  'relative h-5.5 shrink-0 w-8 px-0.5 rounded-full outline-none flex flex-row items-center',
-  'data-[enabled=true]:data-[state=checked]:bg-theme',
-  'data-[enabled=true]:data-[state=checked]:hover:bg-theme-alt data-[enabled=true]:data-[state=unchecked]:bg-muted',
-  'data-[enabled=true]:data-[state=unchecked]:hover:bg-muted data-[enabled=false]:bg-muted/75 trans-color'
+  'relative h-[22px] shrink-0 w-[32px] rounded-full',
+  'data-[enabled=true]:data-[state=checked]:bg-theme/90',
+  'data-[enabled=true]:data-[state=checked]:hover:bg-theme',
+  'data-[enabled=true]:data-[state=unchecked]:bg-muted',
+  'data-[enabled=true]:data-[state=unchecked]:hover:bg-muted',
+  'data-[enabled=false]:bg-muted trans-color'
 )
 
 // const TOGGLE_ENABLED_CLS = cn(
 //   "data-[state=checked]:bg-theme data-[state=checked]:hover:bg-theme-hover",
-//   "data-[state=unchecked]:bg-muted data-[state=unchecked]:hover:bg-muted/75",
+//   "data-[state=unchecked]:bg-muted data-[state=unchecked]:hover:bg-muted",
 // )
 
 // const TOGGLE_DISABLED_CLS = cn(
@@ -53,36 +57,36 @@ const TOGGLE_CLS = cn(
 // )
 
 const THUMB_CLS = cn(
-  'absolute shadow-md pointer-events-none aspect-square shrink-0 w-4.5 h-4.5 rounded-full bg-white z-30',
-  'top-0.5 data-[checked=false]:left-0.5 data-[checked=true]:right-0.5'
+  'absolute shadow-sm pointer-events-none aspect-square shrink-0',
+  'w-[18px] h-[18px] rounded-full bg-white z-30 left-[2px] shadow-md',
+  'top-1/2 -translate-y-1/2'
 )
 
 const HIGHLIGHT_THUMB_CLS = cn(
-  'absolute pointer-events-none aspect-square w-4.5',
-  'rounded-full shrink-0 z-10',
-  'data-[checked=true]:bg-theme/10 data-[checked=false]:bg-foreground/5',
-  'data-[checked=false]:left-0.5 data-[checked=true]:right-0.5'
+  'absolute pointer-events-none aspect-square w-[18px] h-[18px]',
+  'rounded-full shrink-0 z-10 left-[1px] top-1/2 -translate-y-1/2',
+  'data-[checked=true]:bg-theme/10 data-[checked=false]:bg-foreground/5'
 )
 
-const PRESSED_THUMB_CLS = cn(
-  'absolute pointer-events-none aspect-square w-4.5 rounded-full shrink-0 z-20',
-  'data-[checked=true]:bg-theme/20 data-[checked=false]:bg-foreground/10',
-  'top-0.5 data-[checked=false]:left-0.5 data-[checked=true]:right-0.5'
-)
+// const PRESSED_THUMB_CLS = cn(
+//   'absolute pointer-events-none aspect-square w-4.5 rounded-full shrink-0 z-20',
+//   'data-[checked=true]:bg-theme/20 data-[checked=false]:bg-foreground/10',
+//   'top-0.5 data-[checked=false]:left-0.5 data-[checked=true]:right-0.5'
+// )
 
-interface IProps
+export interface ISwitchProps
   extends ComponentPropsWithoutRef<typeof SwitchPrimitives.Root> {
   side?: LeftRightPos
 }
 
 export const Switch = forwardRef<
   ComponentRef<typeof SwitchPrimitives.Root>,
-  IProps
+  ISwitchProps
 >(function Switch(
   {
     checked = false,
     disabled = false,
-    side = 'Left',
+    side = 'left',
     className,
     title,
     children,
@@ -92,7 +96,7 @@ export const Switch = forwardRef<
 ) {
   const thumbRef = useRef<HTMLSpanElement>(null)
   const highlightThumbRef = useRef<HTMLSpanElement>(null)
-  const pressedThumbRef = useRef<HTMLSpanElement>(null)
+  //const pressedThumbRef = useRef<HTMLSpanElement>(null)
 
   const [hover, setHover] = useState(false)
   const [pressed, setPressed] = useState(false)
@@ -106,53 +110,51 @@ export const Switch = forwardRef<
   }
 
   // Looks nicer if animations are disabled on first render
-  //const initial = useRef(true)
+  const initial = useRef(true)
 
-  // useEffect(() => {
-  //   if (disabled) {
-  //     return
-  //   }
+  useEffect(() => {
+    const duration = initial.current ? 0 : ANIMATION_DURATION_S
 
-  //   const duration = initial.current ? 0 : ANIMATION_DURATION_S
+    const tl = gsap.timeline({ paused: true }).to(
+      thumbRef.current,
+      {
+        transform: checked ? 'translate(10px, -50%)' : 'translate(0, -50%)',
+        duration,
+        ease: 'power2.inOut',
+      },
+      0
+    )
 
-  //   gsap
-  //     .timeline()
-  //     .to(
-  //       thumbRef.current,
-  //       {
-  //         transform: checked
-  //           ? "translate(0.625rem, -50%)"
-  //           : "translate(0, -50%)",
-  //         duration,
-  //         ease: "power2.inOut",
-  //       },
-  //       0,
-  //     )
-  //     .to(
-  //       highlightThumbRef.current,
-  //       {
-  //         transform: checked
-  //           ? `translate(0.625rem, -50%) scale(${hover ? "1.8" : "1"})`
-  //           : `translate(0, -50%) scale(${hover ? "1.8" : "1"})`,
-  //         duration,
-  //         ease: "power2.inOut",
-  //       },
-  //       0,
-  //     )
-  //     .to(
-  //       pressedThumbRef.current,
-  //       {
-  //         transform: checked
-  //           ? `translate(0.625rem, -50%) scale(${pressed ? "1.8" : "1"})`
-  //           : `translate(0, -50%) scale(${pressed ? "1.8" : "1"})`,
-  //         duration,
-  //         ease: "power2.inOut",
-  //       },
-  //       0,
-  //     )
+    // if not disabled, animate the highlight ring too
+    if (highlightThumbRef.current) {
+      tl.to(
+        highlightThumbRef.current,
+        {
+          transform: checked
+            ? `translate(10px, -50%) scale(${hover ? 1.8 : 1})`
+            : `translate(0, -50%) scale(${hover ? 1.8 : 1})`,
+          duration,
+          ease: 'power2.inOut',
+        },
+        0
+      )
+    }
 
-  //   initial.current = false
-  // }, [checked, hover, pressed])
+    tl.play()
+    // .to(
+    //   pressedThumbRef.current,
+    //   {
+    //     transform: checked
+    //       ? `translate(0.625rem, -50%) scale(${pressed ? "1.8" : "1"})`
+    //       : `translate(0, -50%) scale(${pressed ? "1.8" : "1"})`,
+    //     duration,
+    //     ease: "power2.inOut",
+    //   },
+    //   0,
+    // )
+
+    initial.current = false
+  }, [checked, hover, pressed])
 
   const button = (
     <SwitchPrimitives.Root
@@ -169,9 +171,9 @@ export const Switch = forwardRef<
       title={title}
       {...props}
     >
-      <motion.span
-        layout
-        initial={false}
+      <span
+        //layout
+        //initial={false}
         data-hover={hover}
         className={THUMB_CLS}
         ref={thumbRef}
@@ -180,16 +182,16 @@ export const Switch = forwardRef<
       />
       {!disabled && (
         <>
-          <motion.span
+          <span
             data-checked={checked}
             data-hover={true}
-            layout
-            animate={{ scale: hover && !pressed ? 2 : 1 }}
-            initial={false}
+            //layout
+            //animate={{ scale: hover || pressed ? 1.8 : 1 }}
+            // initial={false}
             className={HIGHLIGHT_THUMB_CLS}
             ref={highlightThumbRef}
           />
-          <motion.span
+          {/* <motion.span
             data-checked={checked}
             data-hover={true}
             layout
@@ -197,7 +199,7 @@ export const Switch = forwardRef<
             initial={false}
             className={PRESSED_THUMB_CLS}
             ref={pressedThumbRef}
-          />
+          /> */}
         </>
       )}
     </SwitchPrimitives.Root>
@@ -205,16 +207,10 @@ export const Switch = forwardRef<
 
   if (children) {
     return (
-      <VCenterRow
-        className={cn(
-          'gap-x-1.5',
-
-          className
-        )}
-      >
-        {side === 'Left' && button}
-        <VCenterRow className="gap-x-1.5">{children}</VCenterRow>
-        {side === 'Right' && button}
+      <VCenterRow className={cn('gap-x-1', className)}>
+        {side === 'left' && button}
+        <VCenterRow className="gap-x-1">{children}</VCenterRow>
+        {side === 'right' && button}
       </VCenterRow>
     )
   } else {

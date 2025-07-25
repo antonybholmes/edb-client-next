@@ -1,8 +1,8 @@
-import { BaseCol } from '@/components/layout/base-col'
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { ANIMATION_DURATION_S } from '@/consts'
 import { FOCUS_INSET_RING_CLS } from '@/theme'
-import { cn } from '@lib/class-names'
+import { BaseCol } from '@layout/base-col'
+import { VCenterRow } from '@layout/v-center-row'
+import { cn } from '@lib/shadcn-utils'
 import gsap from 'gsap'
 import {
   forwardRef,
@@ -31,7 +31,7 @@ const PLACEHOLDER_CLS = cn(
 )
 
 const INPUT_CLS = cn(
-  'px-2.5 pb-1 min-w-0 disabled:cursor-not-allowed disabled:opacity-25 read-only:opacity-25 outline-none border-none ring-none'
+  'px-2.5 pb-1 min-w-0 disabled:cursor-not-allowed disabled:opacity-25 read-only:opacity-25 outline-hidden border-none ring-none'
 )
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -66,7 +66,7 @@ export const Input5 = forwardRef<HTMLInputElement, InputProps>(
     const [hover, setHover] = useState(false)
     const labelRef = useRef<HTMLLabelElement>(null)
     const innerRef = useRef<HTMLInputElement>(null)
-    useImperativeHandle(ref, () => innerRef.current!, [])
+    useImperativeHandle(ref, () => innerRef.current!)
 
     useEffect(() => {
       if (focus && innerRef.current) {
@@ -120,7 +120,7 @@ export const Input5 = forwardRef<HTMLInputElement, InputProps>(
             disabled={disabled}
             data-enabled={!disabled}
             className={cn(INPUT_CLS, globalClassName, inputClassName)}
-            onKeyDown={(e) => {
+            onKeyDown={e => {
               //console.log(e)
               if (e.key === 'Enter') {
                 onChanged?.(e.currentTarget.value)

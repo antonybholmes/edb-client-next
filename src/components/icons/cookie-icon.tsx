@@ -1,13 +1,20 @@
 import { type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import { Cookie } from 'lucide-react'
 
 export function CookieIcon({
   w = 'w-5 h-5',
   stroke = 'stroke-foreground',
+  fill,
   className,
   strokeWidth = 1.5,
+  iconMode,
 }: IIconProps) {
+  if (iconMode === 'bw') {
+    stroke = 'stroke-foreground'
+    fill = 'fill-background'
+  }
+
   return (
     // <svg
     //   xmlns="http://www.w3.org/2000/svg"
@@ -18,7 +25,7 @@ export function CookieIcon({
     // </svg>
 
     <Cookie
-      className={cn(stroke, w, className)}
+      className={cn(stroke, fill, w, className)}
       stroke=""
       strokeWidth={strokeWidth}
     />

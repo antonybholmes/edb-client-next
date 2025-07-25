@@ -1,5 +1,5 @@
-import MODULE_INFO from '@components/pages/modules/gene/pathway/module.json'
-import { PathwayQueryPage } from '@components/pages/modules/gene/pathway/pathway'
+import MODULE_INFO from '@components/pages/apps/gene/pathway/module.json'
+import { PathwayQueryPage } from '@components/pages/apps/gene/pathway/pathway'
 import { makeMetaData } from '@lib/metadata'
 
 export const metadata = makeMetaData(MODULE_INFO.name)

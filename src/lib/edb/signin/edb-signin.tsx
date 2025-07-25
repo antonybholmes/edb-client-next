@@ -1,25 +1,9 @@
-import { UserIcon } from '@components/icons/user-icon'
-import { Button } from '@components/shadcn/ui/themed/button'
+import { UserIcon } from '@icons/user-icon'
+import { Button } from '@themed/button'
 
-import { useContext, useState } from 'react'
+import { useState, type ReactNode } from 'react'
 
-import { OKCancelDialog } from '@/components/dialog/ok-cancel-dialog'
-import { SignOutIcon } from '@/components/icons/sign-out-icon'
-import { VCenterRow } from '@/components/layout/v-center-row'
-import { BaseLink } from '@/components/link/base-link'
-import {
-  DropdownMenuAnchorItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-  MenuSeparator,
-} from '@/components/shadcn/ui/themed/dropdown-menu'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/shadcn/ui/themed/popover'
+import { SignInIcon } from '@/components/icons/sign-in-icon'
 import {
   APP_NAME,
   NO_DIALOG,
@@ -28,48 +12,60 @@ import {
   TEXT_SIGN_OUT,
   type IDialogParams,
 } from '@/consts'
-import { EdbSettingsContext } from '@/lib/edb/edb-settings-provider'
-import { makeRandId } from '@/lib/utils'
-import { AuthProvider } from '@/providers/auth-provider'
 import { useAuth0 } from '@auth0/auth0-react'
+import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
+import { SignOutIcon } from '@icons/sign-out-icon'
+import { VCenterRow } from '@layout/v-center-row'
+import { redirect } from '@lib/http/urls'
+import { randId } from '@lib/utils'
 import { DropdownMenu } from '@radix-ui/react-dropdown-menu'
+import {
+  DropdownMenuAnchorItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+  MenuSeparator,
+} from '@themed/dropdown-menu'
+import { Popover, PopoverContent, PopoverTrigger } from '@themed/popover'
+import { UserRound } from 'lucide-react'
 import { truncate } from '../../text/text'
 import {
-  APP_ACCOUNT_SIGNED_OUT_URL,
-  APP_SIGNIN_URL,
+  APP_OAUTH2_SIGN_IN_ROUTE,
+  APP_OAUTH2_SIGN_OUT_ROUTE,
   DEFAULT_BASIC_EDB_USER,
   MYACCOUNT_ROUTE,
   TEXT_MY_ACCOUNT,
   type IBasicEdbUser,
 } from '../edb'
-import { EdbAuthContext } from '../edb-auth-provider'
+import { useEdbAuth } from '../edb-auth'
+import { useEdbSettings } from '../edb-settings'
 import { SignInWithApiKeyPopover } from './signin-with-api-key-popover'
-import { SignInWithUsernamePasswordPopover } from './signin-with-username-password-popover'
 
 const SIGNED_IN_ICON_CLS =
   'rounded-full border border-foreground/75 flex flex-row items-center justify-center w-7 h-7 aspect-square text-xs font-medium bg-background trans-color overflow-hidden'
 
-export type SignInMode = 'username-password' | 'api' | 'auth0'
+export type SignInMode = 'username-password' | 'api' | 'auth0' | 'oauth2'
 
 interface IProps {
   apiKey?: string
   signInMode?: SignInMode
-  callbackUrl?: string
+  redirectUrl?: string
 }
 
 export function EDBSignIn({
-  callbackUrl = '',
+  redirectUrl = '',
   apiKey = '',
-  signInMode = 'auth0',
+  signInMode = 'oauth2',
 }: IProps) {
   const [open, setOpen] = useState(false)
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  const { settings } = useContext(EdbSettingsContext)
+  const { settings } = useEdbSettings()
 
-  const { edbUser } = useContext(EdbAuthContext)
+  const { session } = useEdbAuth()
 
-  const { loginWithRedirect, logout } = useAuth0()
+  const { loginWithRedirect } = useAuth0()
 
   const cachedUserInfo: IBasicEdbUser =
     settings.users.length > 0
@@ -78,8 +74,8 @@ export function EDBSignIn({
 
   const roles = cachedUserInfo.roles.join(',')
 
-  if (!callbackUrl) {
-    callbackUrl = window.location.href
+  if (!redirectUrl) {
+    redirectUrl = window.location.pathname //window.location.href
   }
 
   let name: string = ''
@@ -90,7 +86,7 @@ export function EDBSignIn({
     name = cachedUserInfo.username
   }
 
-  const isSignedIn = edbUser.uuid !== '' //userIsSignedInWithSession()
+  const isSignedIn = session !== null //userIsSignedInWithSession()
 
   const initials =
     isSignedIn &&
@@ -101,15 +97,14 @@ export function EDBSignIn({
 
   const button = (
     <Button
-      variant="accent"
+      variant="muted"
       size="header"
-      pad="none"
       rounded="none"
-      selected={open}
+      checked={open}
       ripple={false}
       title={isSignedIn ? TEXT_MY_ACCOUNT : TEXT_SIGN_IN}
     >
-      <VCenterRow data-selected={open} className={SIGNED_IN_ICON_CLS}>
+      <VCenterRow data-checked={open} className={SIGNED_IN_ICON_CLS}>
         {initials ? (
           <span>{initials}</span>
         ) : (
@@ -119,117 +114,158 @@ export function EDBSignIn({
     </Button>
   )
 
+  let menu: ReactNode = null
+
   if (isSignedIn) {
-    return (
-      <>
-        <OKCancelDialog
-          open={showDialog.id.startsWith('signout')}
-          title={APP_NAME}
-          onReponse={(r) => {
-            if (r === TEXT_OK) {
-              //signoutUser()
-              logout({ logoutParams: { returnTo: APP_ACCOUNT_SIGNED_OUT_URL } })
-            }
+    menu = (
+      <DropdownMenu open={open} onOpenChange={setOpen}>
+        <DropdownMenuTrigger asChild>{button}</DropdownMenuTrigger>
 
-            setShowDialog({ ...NO_DIALOG })
-          }}
+        <DropdownMenuContent
+          onEscapeKeyDown={() => setOpen(false)}
+          onInteractOutside={() => setOpen(false)}
+          align="end"
+          className="w-64"
         >
-          Are you sure you want to {TEXT_SIGN_OUT}?
-        </OKCancelDialog>
+          <DropdownMenuLabel>
+            Hi, {truncate(name, { length: 22 })}
+          </DropdownMenuLabel>
 
-        <DropdownMenu open={open} onOpenChange={setOpen}>
-          <DropdownMenuTrigger asChild>{button}</DropdownMenuTrigger>
-
-          <DropdownMenuContent
-            onEscapeKeyDown={() => setOpen(false)}
-            onInteractOutside={() => setOpen(false)}
-            align="end"
-            className="w-64"
+          <DropdownMenuAnchorItem
+            href={MYACCOUNT_ROUTE}
+            aria-label={TEXT_MY_ACCOUNT}
           >
-            <DropdownMenuLabel>
-              Hi, {truncate(name, { length: 22 })}
-            </DropdownMenuLabel>
+            <UserRound className="w-4.5 h-4.5" />
+            <span>{TEXT_MY_ACCOUNT}</span>
+          </DropdownMenuAnchorItem>
 
-            <DropdownMenuAnchorItem
-              href={MYACCOUNT_ROUTE}
-              aria-label={TEXT_MY_ACCOUNT}
-            >
-              {TEXT_MY_ACCOUNT}
+          {(roles.includes('Super') || roles.includes('Admin')) && (
+            // <DropdownMenuItem
+            //   onClick={() => {
+            //     window.location.href = '/admin/users'
+            //   }}
+            //   aria-label="Admin users"
+            // >
+            //   Users
+            // </DropdownMenuItem>
+
+            <DropdownMenuAnchorItem href={'/admin/users'} aria-label="Users">
+              Users
             </DropdownMenuAnchorItem>
+          )}
 
-            {(roles.includes('Super') || roles.includes('Admin')) && (
-              <DropdownMenuItem
-                onClick={() => {
-                  window.location.href = '/admin/users'
-                }}
-                aria-label="Admin users"
-              >
-                Users
-              </DropdownMenuItem>
-            )}
+          <MenuSeparator />
 
-            <MenuSeparator />
+          <DropdownMenuItem
+            aria-label={TEXT_SIGN_OUT}
+            onClick={() => setShowDialog({ id: randId('signout'), params: {} })}
+          >
+            <SignOutIcon stroke="" />
 
-            <AuthProvider callbackUrl={''}>
-              <DropdownMenuItem
-                aria-label={TEXT_SIGN_OUT}
-                onClick={() =>
-                  setShowDialog({ id: makeRandId('signout'), params: {} })
-                }
-              >
-                <SignOutIcon className="w-4" />
-
-                <>{TEXT_SIGN_OUT}</>
-              </DropdownMenuItem>
-            </AuthProvider>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </>
+            {TEXT_SIGN_OUT}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     )
   } else {
     switch (signInMode) {
       case 'auth0':
-        return (
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>{button}</PopoverTrigger>
+        menu = (
+          <DropdownMenu open={open} onOpenChange={setOpen}>
+            <DropdownMenuTrigger asChild>{button}</DropdownMenuTrigger>
 
-            <PopoverContent
+            <DropdownMenuContent
               onEscapeKeyDown={() => setOpen(false)}
               onInteractOutside={() => setOpen(false)}
               align="end"
-              className="w-64 text-xs gap-y-4 flex flex-col px-3 py-4"
+              //className="w-64"
             >
-              {/* <Label className="font-semibold">{TEXT_SIGN_IN} with email</Label> */}
-              <Button
-                variant="theme"
-                //className="w-full"
-                size="lg"
+              <DropdownMenuItem
+                aria-label={TEXT_SIGN_IN}
                 onClick={() => {
                   const state = {
-                    callbackUrl,
+                    redirectUrl,
                   }
 
+                  console.log('EDBSignIn: loginWithRedirect state', state)
                   loginWithRedirect({ appState: state })
                 }}
-                aria-label={TEXT_SIGN_IN}
               >
-                {TEXT_SIGN_IN}
-              </Button>
+                <SignInIcon stroke="" />
+                <span>{TEXT_SIGN_IN}</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-              {/* <PasswordlessSignInButton /> */}
+          // <Popover open={open} onOpenChange={setOpen}>
+          //   <PopoverTrigger asChild>{button}</PopoverTrigger>
 
-              <BaseLink
-                href={APP_SIGNIN_URL}
-                aria-label="Passwordless sign in"
-                data-underline="hover"
-              >
-                Passwordless
-              </BaseLink>
-            </PopoverContent>
-          </Popover>
+          //   <PopoverContent
+          //     onEscapeKeyDown={() => setOpen(false)}
+          //     onInteractOutside={() => setOpen(false)}
+          //     align="end"
+          //     variant="content"
+          //     className="w-64 text-xs gap-y-1"
+          //     //variant="glass"
+          //   >
+          //     <Button
+          //       variant="theme"
+          //       //className="w-full"
+          //       size="lg"
+          //       onClick={() => {
+          //         const state = {
+          //           redirectUrl,
+          //         }
+
+          //         loginWithRedirect({ appState: state })
+          //       }}
+          //       aria-label={TEXT_SIGN_IN}
+          //     >
+          //       {TEXT_SIGN_IN}
+          //     </Button>
+
+          //     {/* <PasswordlessSignInButton /> */}
+
+          //     {/* <ButtonLink
+          //       href={APP_CLERK_SIGN_IN_ROUTE}
+          //       aria-label="Passwordless sign in"
+          //       //data-underline="hover"
+          //     >
+          //       {TEXT_SIGN_IN}
+          //     </ButtonLink> */}
+
+          //     <ButtonLink
+          //       variant="ghost"
+          //       href={APP_AUTH_PASSWORDLESS_SIGN_IN_ROUTE}
+          //       aria-label="Passwordless sign in"
+          //       //data-underline="hover"
+          //     >
+          //       {TEXT_PASSWORDLESS}
+          //     </ButtonLink>
+
+          //     <MenuSeparator />
+
+          //     <Button
+          //       variant="menu"
+          //       justify="start"
+          //       aria-label={TEXT_SIGN_OUT}
+          //       animation="none"
+          //       onClick={() =>
+          //         setShowDialog({ id: randId('signout'), params: {} })
+          //       }
+          //     >
+          //       <span className={DROPDOWN_MENU_ICON_CONTAINER_CLS}>
+          //         <SignOutIcon stroke="" />
+          //       </span>
+
+          //       {TEXT_SIGN_OUT}
+          //     </Button>
+          //   </PopoverContent>
+          // </Popover>
         )
+        break
       case 'api':
-        return (
+        menu = (
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>{button}</PopoverTrigger>
 
@@ -243,21 +279,65 @@ export function EDBSignIn({
             </PopoverContent>
           </Popover>
         )
+        break
       default:
-        return (
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>{button}</PopoverTrigger>
+        menu = (
+          <DropdownMenu open={open} onOpenChange={setOpen}>
+            <DropdownMenuTrigger asChild>{button}</DropdownMenuTrigger>
 
-            <PopoverContent
+            <DropdownMenuContent
               onEscapeKeyDown={() => setOpen(false)}
               onInteractOutside={() => setOpen(false)}
               align="end"
-              className="w-80 text-xs gap-y-2 flex flex-col px-3 py-4"
+              //className="w-64"
             >
-              <SignInWithUsernamePasswordPopover />
-            </PopoverContent>
-          </Popover>
+              <DropdownMenuAnchorItem
+                href={APP_OAUTH2_SIGN_IN_ROUTE}
+                aria-label={TEXT_SIGN_IN}
+              >
+                <SignInIcon stroke="" />
+                <span>{TEXT_SIGN_IN}</span>
+              </DropdownMenuAnchorItem>
+
+              {/* <MenuSeparator />
+
+              <DropdownMenuItem
+                aria-label={TEXT_SIGN_OUT}
+                onClick={() =>
+                  setShowDialog({ id: randId('signout'), params: {} })
+                }
+              >
+                  <SignOutIcon stroke="" />  
+
+                <span>{TEXT_SIGN_OUT}</span>
+              </DropdownMenuItem> */}
+            </DropdownMenuContent>
+          </DropdownMenu>
         )
+        break
     }
   }
+
+  return (
+    <>
+      <OKCancelDialog
+        open={showDialog.id.startsWith('signout')}
+        title={APP_NAME}
+        //contentVariant="glass"
+        //bodyVariant="card"
+        modalType="Warning"
+        onResponse={r => {
+          if (r === TEXT_OK) {
+            redirect(APP_OAUTH2_SIGN_OUT_ROUTE)
+          }
+
+          setShowDialog({ ...NO_DIALOG })
+        }}
+      >
+        Are you sure you want to {TEXT_SIGN_OUT}?
+      </OKCancelDialog>
+
+      {menu}
+    </>
+  )
 }

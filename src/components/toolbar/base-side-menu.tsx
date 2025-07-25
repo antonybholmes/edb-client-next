@@ -1,14 +1,14 @@
-import { type IButtonProps } from '@components/shadcn/ui/themed/button'
+import { type IButtonProps } from '@themed/button'
 
-import { Sheet, SheetContent } from '@components/shadcn/ui/themed/sheet'
-import { type IElementProps } from '@interfaces/element-props'
+import { type IDivProps } from '@interfaces/div-props'
+import { Sheet, SheetContent } from '@themed/sheet'
 import { Children } from 'react'
 
 export interface IMenuButtonProps extends IButtonProps {
   open: boolean
 }
 
-export interface IProps extends IElementProps {
+export interface IProps extends IDivProps {
   open: boolean
   onOpenChange?: (open: boolean) => void
   side?: 'top' | 'left' | 'bottom' | 'right' | null

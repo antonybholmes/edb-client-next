@@ -1,1 +1,1 @@
-export type LeftRightPos = 'Left' | 'Right'
+export type LeftRightPos = 'left' | 'right'

@@ -1,7 +1,11 @@
 import { pearson } from './stats'
 import { sum } from './sum'
 
-export function euclidean(a: number[], b: number[]): number {
+export type Point = number[]
+
+export type DistFunc = (a: Point, b: Point) => number
+
+export function euclidean(a: Point, b: Point): number {
   const size = Math.min(a.length, b.length)
 
   let sum = 0
@@ -23,10 +27,10 @@ export function euclidean(a: number[], b: number[]): number {
   // )
 }
 
-export function manhattan(a: number[], b: number[]): number {
+export function manhattan(a: Point, b: Point): number {
   return sum(a.map((x, xi) => Math.abs(x - b[xi]!)))
 }
 
-export function pearsond(a: number[], b: number[]): number {
+export function pearsond(a: Point, b: Point): number {
   return 1 - pearson(a, b)
 }

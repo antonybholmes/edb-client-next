@@ -4,7 +4,11 @@ import type { UndefNullStr } from '../text/text'
 
 export const PATH_SEP = '/'
 
+export const REDIRECT_DELAY_MS = 2000
+
 export const MIME_JSON = 'application/json'
+
+export const HEADER_X_CSRF_TOKEN = 'X-CSRF-Token'
 
 export const JSON_HEADERS = {
   Accept: MIME_JSON,
@@ -15,10 +19,36 @@ export function bearerToken(token: UndefNullStr): string {
   return `Bearer ${token}`
 }
 
-export function bearerHeaders(accessToken: UndefNullStr): IStringMap {
+export function bearerHeaders(jwt: UndefNullStr): IStringMap {
   return {
     ...JSON_HEADERS,
-    Authorization: bearerToken(accessToken),
+    Authorization: bearerToken(jwt),
+  }
+}
+
+export function csfrHeaders(csrfToken: string): IStringMap {
+  // if (!csrfToken) {
+  //   csrfToken = Cookies.get(HEADER_X_CSRF_TOKEN) ?? ''
+  // }
+
+  return {
+    ...JSON_HEADERS,
+    [HEADER_X_CSRF_TOKEN]: csrfToken,
+  }
+}
+
+export function csfrWithTokenHeaders(
+  csrfToken: string,
+  jwt: UndefNullStr
+): IStringMap {
+  // if (!csrfToken) {
+  //   csrfToken = Cookies.get(HEADER_X_CSRF_TOKEN) ?? ''
+  // }
+
+  return {
+    ...JSON_HEADERS,
+    [HEADER_X_CSRF_TOKEN]: csrfToken,
+    Authorization: bearerToken(jwt),
   }
 }
 
@@ -27,7 +57,7 @@ export function getUrlFriendlyTag(tag: string): string {
     .trim()
     .toLowerCase()
     .replaceAll('&', 'and')
-    .replaceAll(/[\ \-]+/g, '-')
+    .replaceAll(/[\ \-\_]+/g, '-')
 }
 
 export function getUrlFriendlyImg(
@@ -43,7 +73,7 @@ export function getUrlFriendlyImg(
 }
 
 export function getUrlFriendlyTags(tags: string[]): string[] {
-  return tags.map((tag) => getUrlFriendlyTag(tag))
+  return tags.map(tag => getUrlFriendlyTag(tag))
 }
 
 export function getSlug(path: string): string {
@@ -51,7 +81,7 @@ export function getSlug(path: string): string {
     .replace(/\.md$/, '')
     .replaceAll('\\', PATH_SEP)
     .split(PATH_SEP)
-    .map((p) => getUrlFriendlyTag(p))
+    .map(p => getUrlFriendlyTag(p))
     .join(PATH_SEP)
 }
 
@@ -80,9 +110,7 @@ export function makeGetUrl(
   if (params.length > 0) {
     return encodeURI(
       `${baseUrl}?${params
-        .map((po: IFieldMap) =>
-          Object.entries(po).map((p) => `${p[0]}=${p[1]}`)
-        )
+        .map((po: IFieldMap) => Object.entries(po).map(p => `${p[0]}=${p[1]}`))
         .flat()
         .join('&')}`
     )
@@ -271,12 +299,10 @@ export function makeGetUrl(
  *
  * @param url url to visit
  */
-export function redirect(url: string, delay: number = 0) {
+export function redirect(url: string, delay: number = REDIRECT_DELAY_MS) {
   if (typeof window !== 'undefined') {
-    window.location.assign(url)
-
     setTimeout(function () {
-      window.location.assign(url)
+      window.location.href = url // .assign(url)
     }, delay)
   }
 }

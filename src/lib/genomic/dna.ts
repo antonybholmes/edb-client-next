@@ -1,11 +1,10 @@
-import type { BaseDataFrame } from '@lib/dataframe/base-dataframe'
+import { findCols, type BaseDataFrame } from '@lib/dataframe/base-dataframe'
 
-import { API_DNA_URL } from '@/lib/edb/edb'
-import { DataFrame } from '@lib/dataframe/dataframe'
-import { findCol } from '@lib/dataframe/dataframe-utils'
+import { API_DNA_URL } from '@lib/edb/edb'
 
 import type { SeriesData } from '@lib/dataframe/dataframe-types'
 import { QueryClient } from '@tanstack/react-query'
+import { AnnotationDataFrame } from '../dataframe/annotation-dataframe'
 import { httpFetch } from '../http/http-fetch'
 import { GenomicLocation } from './genomic'
 
@@ -83,7 +82,7 @@ export async function createDNATable(
   queryClient: QueryClient,
   df: BaseDataFrame,
   params: IDNAOptions = {}
-): Promise<BaseDataFrame | null> {
+): Promise<AnnotationDataFrame | null> {
   const { assembly, format, mask, reverse, complement } = {
     assembly: 'grch38',
     format: 'Auto',
@@ -93,7 +92,7 @@ export async function createDNATable(
     ...params,
   }
 
-  const locCol = findCol(df, 'Location')
+  const locCol = findCols(df, 'Location')[0]!
 
   if (locCol === -1) {
     return null
@@ -136,15 +135,13 @@ export async function createDNATable(
 
     const data = res.data
 
-    //console.log(data)
-
     const table: SeriesData[][] = []
 
     for (const [ri, row] of df.values.entries()) {
-      table.push(row.concat([data.seqs[ri].seq]))
+      table.push(row.concat([data.seqs[ri]!.seq]))
     }
 
-    return new DataFrame({ data: table, columns: header })
+    return new AnnotationDataFrame({ data: table, columns: header })
 
     //data.push(row.concat([dj.data.dna]))
   } catch {
@@ -201,7 +198,7 @@ export async function fetchDNA(
 
     return {
       location,
-      seq: data.seqs[0].seq,
+      seq: data.seqs[0]!.seq,
       //rev: data.isRev,
       //comp: data.isComp,
     }
@@ -214,7 +211,7 @@ export async function fetchDNA(
 
 export function dnaToJson(seqs: IDNA[]): string {
   return JSON.stringify(
-    seqs.map((seq) => ({
+    seqs.map(seq => ({
       chr: seq.location.chr,
       start: seq.location.start,
       end: seq.location.end,

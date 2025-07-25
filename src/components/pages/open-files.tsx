@@ -1,16 +1,22 @@
-import { API_XLSX_TO_JSON_URL } from '@/lib/edb/edb'
-import { httpFetch } from '@/lib/http/http-fetch'
-import { range } from '@/lib/math/range'
-import type { BaseDataFrame } from '@lib/dataframe/base-dataframe'
+import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
+import {
+  BaseDataFrame,
+  DEFAULT_COLUMN_INDEX_NAME,
+} from '@lib/dataframe/base-dataframe'
 import { makeCell } from '@lib/dataframe/cell'
 import { DataFrame } from '@lib/dataframe/dataframe'
 import {
   DataFrameReader,
   type Delimiter,
 } from '@lib/dataframe/dataframe-reader'
+import { DEFAULT_INDEX_NAME } from '@lib/dataframe/series'
+import { API_XLSX_TO_JSON_URL } from '@lib/edb/edb'
+import { fill } from '@lib/fill'
+import { httpFetch } from '@lib/http/http-fetch'
+import { range } from '@lib/math/range'
 import { textToLines } from '@lib/text/lines'
 import type { QueryClient } from '@tanstack/react-query'
-
+import { Buffer } from 'buffer'
 import { useEffect, useRef, type ChangeEvent } from 'react'
 
 export const XLSX_EXT = 'xlsx'
@@ -72,6 +78,7 @@ export interface IParseOptions {
   skipRows?: number
   delimiter?: Delimiter
   keepDefaultNA?: boolean
+  trimWhitespace?: boolean
 }
 
 export const DEFAULT_PARSE_OPTS: IParseOptions = {
@@ -80,12 +87,13 @@ export const DEFAULT_PARSE_OPTS: IParseOptions = {
   skipRows: 0,
   delimiter: '\t',
   keepDefaultNA: false,
+  trimWhitespace: true,
 }
 
 function getFileTypes(fileTypes: string[]) {
   return fileTypes
     .sort()
-    .map((t) => `.${t}`)
+    .map(t => `.${t}`)
     .join(', ')
 }
 
@@ -94,11 +102,14 @@ export function arrayBufferToBytes(buffer: ArrayBuffer): Uint8Array {
 }
 
 export function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  let binaryString = ''
-  const bytes = new Uint8Array(buffer)
+  // let binaryString = ''
+  // const bytes = new Uint8Array(buffer)
 
-  bytes.forEach((b) => (binaryString += String.fromCharCode(b)))
-  return btoa(binaryString)
+  // for (const b of bytes) {
+  //   binaryString += String.fromCharCode(b)
+  // }
+
+  return Buffer.from(buffer).toString('base64') //btoa(binaryString)
 }
 
 interface IProps {
@@ -205,13 +216,13 @@ export function readFile(file: File): Promise<string> {
     const reader = new FileReader()
 
     // Define error callback
-    reader.onerror = (error) => reject(error)
+    reader.onerror = error => reject(error)
 
     // Read the file as text (can be changed to readAsDataURL or others based on your needs)
     //reader.readAsText(file);
 
     if (file.name.includes('xlsx')) {
-      reader.onload = (e) => {
+      reader.onload = e => {
         const result = e.target?.result
 
         if (result) {
@@ -268,11 +279,11 @@ export async function onTextFileChange(
 
   files = [...files]
 
-  const texts = await readFiles(files)
+  const textFiles = await readFiles(files)
 
   const ret = files.map((file, fi) => ({
     name: file.name,
-    text: texts[fi]!,
+    text: textFiles[fi]!,
     ext: file.name.split('.').pop() || '',
   }))
 
@@ -340,7 +351,7 @@ export function onBinaryFileChange(
   try {
     const fileReader = new FileReader()
 
-    fileReader.onload = (e) => {
+    fileReader.onload = e => {
       const result = e.target?.result
 
       if (result) {
@@ -366,7 +377,7 @@ export function onBinaryFileChange(
 
 interface IFilesToDataFrameProps {
   parseOpts?: IParseOptions
-  onSuccess?: (tables: BaseDataFrame[]) => void
+  onSuccess?: (tables: AnnotationDataFrame[]) => void
   onFailure?: (message: string, files: ITextFileOpen[]) => void
 }
 /**
@@ -387,17 +398,30 @@ export async function filesToDataFrames(
     return
   }
 
-  const { indexCols, colNames, keepDefaultNA } = {
-    ...DEFAULT_PARSE_OPTS,
+  const {
+    indexCols = 1,
+    colNames = 1,
+    keepDefaultNA = false,
+    skipRows = 0,
+    trimWhitespace = true,
+  } = {
     ...options?.parseOpts,
   }
 
-  const tables: BaseDataFrame[] = []
+  // colNames: 1,
+  // indexCols: 1,
+  // skipRows: 0,
+  // delimiter: '\t',
+  // keepDefaultNA: false,
+
+  const tables: AnnotationDataFrame[] = []
 
   try {
     for (const file of files) {
       const name = file.name
-      let table: BaseDataFrame | null = null
+      const isBed = name.endsWith('bed')
+
+      let table: AnnotationDataFrame | null = null
 
       if (file.name.includes(XLSX_EXT)) {
         const res = await queryClient.fetchQuery({
@@ -407,6 +431,7 @@ export async function filesToDataFrames(
               data: {
                 table: {
                   data: string[][]
+                  indexNames: string[]
                   index: string[][]
                   columns: string[][]
                 }
@@ -416,25 +441,56 @@ export async function filesToDataFrames(
                 b64xlsx: file.text,
                 indexes: indexCols,
                 headers: colNames,
+                skipRows,
+                trimWhitespace,
               },
             }),
         })
 
         const t = res.data.table
 
+        //console.log(t)
+
         // try some type conversion on the raw data
         const data = t.data.map((row: string[]) =>
-          row.map((c) => makeCell(c, keepDefaultNA))
+          row.map(c => makeCell(c, keepDefaultNA))
         )
 
-        table = new DataFrame({
+        let rowIndex: BaseDataFrame | undefined = undefined
+
+        if (t.index.length > 0) {
+          const columns =
+            t.indexNames.length > 0
+              ? t.indexNames
+              : range(indexCols).map(i => `${DEFAULT_INDEX_NAME} ${i + 1}`)
+
+          rowIndex = new DataFrame({
+            data: t.index.map((row: string[]) =>
+              row.map(c => makeCell(c, keepDefaultNA))
+            ),
+            columns,
+          })
+        }
+
+        let colIndex: BaseDataFrame | undefined = undefined
+
+        if (t.columns.length > 0) {
+          colIndex = new DataFrame({
+            data: t.columns.map((col: string[]) =>
+              col.map(c => makeCell(c, keepDefaultNA))
+            ),
+            columns: [DEFAULT_COLUMN_INDEX_NAME],
+          })
+        }
+
+        table = new AnnotationDataFrame({
           data,
-          index: indexCols! > 0 ? t.index[0] : null,
-          columns: colNames! > 0 ? t.columns[0] : null,
+          rowMetaData: rowIndex,
+          colMetaData: colIndex,
           name,
         })
       } else {
-        // regular text so we can do that in browser
+        // regular text so we can parse in browser
 
         const lines = textToLines(file.text)
 
@@ -442,20 +498,20 @@ export async function filesToDataFrames(
 
         table = new DataFrameReader()
           .delimiter(sep)
-          .keepDefaultNA(keepDefaultNA!)
-          .colNames(colNames!)
-          .indexCols(indexCols!)
+          .keepDefaultNA(keepDefaultNA)
+          .trimWhitespace(trimWhitespace)
+          .colNames(isBed ? 0 : colNames)
+          .indexCols(isBed ? 0 : indexCols)
           .read(lines)
-          .setName(name)
+          .setName(name) as AnnotationDataFrame
       }
-
-      const isBed = name.endsWith('bed')
 
       if (isBed) {
         table = table.setColNames([
           ...['chr', 'start', 'end'],
-          ...range(table.shape[1] - 3).map((i) => `data ${i + 1}`),
-        ])
+          //...range(table.shape[1] - 3).map(i => `data ${i + 1}`),
+          ...fill('', table.shape[1] - 3),
+        ]) as AnnotationDataFrame
       }
 
       if (table) {
@@ -465,7 +521,7 @@ export async function filesToDataFrames(
 
     options?.onSuccess?.(tables)
   } catch (err) {
-    //console.log(err)
+    console.log(err)
 
     if (err instanceof Error) {
       options?.onFailure?.(err.message, files)

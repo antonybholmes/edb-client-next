@@ -1,6 +1,6 @@
 import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/class-names'
-import { Download } from 'lucide-react'
+import { cn } from '@lib/shadcn-utils'
+import { ArrowDownToLine } from 'lucide-react'
 
 export function DownloadIcon({
   w = 'w-5 h-5',
@@ -26,7 +26,7 @@ export function DownloadIcon({
     //   <path d="M 2 20 L 22 20" />
     // </svg>
 
-    <Download
+    <ArrowDownToLine
       className={cn(ICON_CLS, stroke, w, className)}
       strokeWidth={strokeWidth}
       stroke=""

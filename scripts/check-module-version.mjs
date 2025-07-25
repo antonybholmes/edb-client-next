@@ -1,7 +1,7 @@
 import fs from "fs"
 import path from "path"
 
-const DIR = "src/components/pages/modules"
+const DIR = "src/components/pages/apps"
 
 function walk(dir) {
   //console.log("walk", dir)

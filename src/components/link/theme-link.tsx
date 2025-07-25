@@ -1,15 +1,11 @@
 import { FOCUS_RING_CLS } from '@/theme'
 import { type ILinkProps } from '@interfaces/link-props'
-import { cn } from '@lib/class-names'
-import { forwardRef, type ForwardedRef } from 'react'
+import { cn } from '@lib/shadcn-utils'
 import { BaseLink } from './base-link'
 
 export const BASE_THEME_LINK_CLS = cn(FOCUS_RING_CLS, 'text-theme inline-block')
 
-export const ThemeLink = forwardRef(function ThemeLink(
-  { className, children, ...props }: ILinkProps,
-  ref: ForwardedRef<HTMLAnchorElement>
-) {
+export function ThemeLink({ ref, className, children, ...props }: ILinkProps) {
   return (
     <BaseLink
       ref={ref}
@@ -20,4 +16,4 @@ export const ThemeLink = forwardRef(function ThemeLink(
       {children}
     </BaseLink>
   )
-})
+}

@@ -1,5 +1,5 @@
 import { FOCUS_RING_CLS, TRANS_COLOR_CLS } from '@/theme'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import * as SliderPrimitive from '@radix-ui/react-slider'
 
 import {
@@ -32,11 +32,11 @@ const Slider = forwardRef<
     >
       <SliderPrimitive.Track
         data-focus={focus}
-        className="relative h-[3px] grow overflow-hidden rounded-full bg-accent trans-color"
+        className="relative h-[3px] grow overflow-hidden rounded-full bg-muted trans-color"
       >
         <SliderPrimitive.Range
           data-focus={focus}
-          className="absolute h-full bg-accent data-[focus=true]:bg-theme group-hover:bg-theme trans-color"
+          className="absolute h-full bg-muted data-[focus=true]:bg-theme group-hover:bg-theme trans-color"
         />
       </SliderPrimitive.Track>
       <SliderPrimitive.Thumb

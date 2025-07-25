@@ -1,6 +1,7 @@
-import type { IElementProps } from '@interfaces/element-props'
+import type { IDivProps } from '@interfaces/div-props'
 import { createContext, useState, type ReactNode } from 'react'
-import type { ILim } from '../plot/axis'
+
+import type { ILim } from '@lib/math/math'
 import type { LeftRightPos } from '../side'
 
 export interface ISlidebarContext {
@@ -8,8 +9,9 @@ export interface ISlidebarContext {
   side?: LeftRightPos
   open?: boolean
   onOpenChange?: (open: boolean) => void
-  position: number
-  limits: ILim
+  position?: number
+  limits?: ILim
+  hideLimit?: number
   mainContent?: ReactNode
   sideContent?: ReactNode
 }
@@ -23,15 +25,16 @@ export const SlidebarContext = createContext<ISlidebarContext>(
   DEFAULT_SLIDEBAR_CONTEXT
 )
 
-interface IProps extends ISlidebarContext, IElementProps {}
+interface IProps extends ISlidebarContext, IDivProps {}
 
 export function SlidebarProvider({
   title = '',
-  side = 'Left',
+  side = 'left',
   open = undefined,
   onOpenChange = () => {},
   position = 80,
   limits = [5, 85],
+  hideLimit = 1,
   mainContent,
   sideContent,
   children,
@@ -55,6 +58,7 @@ export function SlidebarProvider({
         onOpenChange: _onOpenChange,
         position,
         limits,
+        hideLimit,
         mainContent,
         sideContent,
       }}

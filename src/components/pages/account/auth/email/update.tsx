@@ -1,12 +1,10 @@
-import { Alerts } from '@components/alerts/alerts'
-
 import {
   API_UPDATE_EMAIL_URL,
   EDB_TOKEN_PARAM,
   MYACCOUNT_ROUTE,
   getJwtContents,
   type IResetJwtPayload,
-} from '@/lib/edb/edb'
+} from '@lib/edb/edb'
 import {
   Card,
   CardContent,
@@ -15,29 +13,30 @@ import {
   CardHeader,
   CardTitle,
   CenteredCardContainer,
-} from '@components/shadcn/ui/themed/card'
+} from '@themed/card'
 
 import { useRef, useState, type BaseSyntheticEvent } from 'react'
 
 import { TEXT_CANCEL, TEXT_CONFIRM } from '@/consts'
 import { FormInputError } from '@components/input-error'
-import { Form, FormField, FormItem } from '@components/shadcn/ui/themed/form'
+import { Form, FormField, FormItem } from '@themed/form'
 
-import { VCenterRow } from '@/components/layout/v-center-row'
-import { useToast } from '@/hooks/use-toast'
-import { bearerHeaders, redirect } from '@/lib/http/urls'
+import { VCenterRow } from '@layout/v-center-row'
+
 import { WarningButtonLink } from '@components/link/warning-button-link'
-import { Button } from '@components/shadcn/ui/themed/button'
-import { Input } from '@components/shadcn/ui/themed/input'
-import { Label } from '@components/shadcn/ui/themed/label'
 import {
   EMAIL_PATTERN,
   FORWARD_DELAY_MS,
   SignInLayout,
   TEXT_EMAIL_ERROR,
 } from '@layouts/signin-layout'
+import { bearerHeaders, redirect } from '@lib/http/urls'
 import { CoreProviders } from '@providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
+import { Button } from '@themed/button'
+import { toast } from '@themed/crisp'
+import { Input } from '@themed/input'
+import { Label } from '@themed/label'
 import axios from 'axios'
 import { useForm } from 'react-hook-form'
 
@@ -70,8 +69,6 @@ function UpdateEmailPage() {
       email2: '',
     },
   })
-
-  const { toast } = useToast()
 
   async function update(data: IFormInput) {
     try {
@@ -117,8 +114,6 @@ function UpdateEmailPage() {
   return (
     <SignInLayout title="Change Email Address">
       <>
-        <Alerts />
-
         <CenteredCardContainer>
           <Card>
             <CardHeader>

@@ -1,85 +1,100 @@
 import { CENTERED_ROW_CLS } from '@/theme'
-import type { IInputProps } from '@interfaces/input-props'
-import { cn } from '@lib/class-names'
 
+import { cn } from '@lib/shadcn-utils'
+
+import { TEXT_SEARCH } from '@/consts'
+import { randId } from '@lib/utils'
 import type { VariantProps } from 'class-variance-authority'
-import { useState, type ChangeEvent } from 'react'
+import { useState } from 'react'
 import { CloseIcon } from './icons/close-icon'
 import { SearchIcon } from './icons/search-icon'
-import { Input, inputVariants } from './shadcn/ui/themed/input'
+import {
+  Input,
+  inputVariants,
+  type IInputProps,
+} from './shadcn/ui/themed/input'
 
 const BUTTON_CLS = cn(
   CENTERED_ROW_CLS,
-  'aspect-square trans-opacity opacity-50 hover:opacity-100',
-  'data-[variant=default]:stroke-foreground data-[variant=header]:stroke-foreground',
+  'aspect-square trans-opacity opacity-50 hover:opacity-100 focus-visible:opacity-100',
+  'stroke-foreground outline-none',
   'data-[variant=trans]:stroke-white'
 )
 
-interface IProps extends IInputProps, VariantProps<typeof inputVariants> {
-  onSearch?: (event: 'search' | 'clear', value: string) => void
+export interface ISearchBoxProps
+  extends IInputProps,
+    VariantProps<typeof inputVariants> {
+  showClear?: boolean
+  searchLabel?: string
+  deleteLabel?: string
 }
 
 export function SearchBox({
+  id,
   variant = 'default',
-  h = 'lg',
+  //h = 'dialog',
   value,
   placeholder,
-  onChange,
-  onSearch,
+  onTextChange,
+  onTextChanged,
+  showClear = true,
+  searchLabel = TEXT_SEARCH,
+  deleteLabel: deleteText = 'Clear search',
   className,
   ...props
-}: IProps) {
+}: ISearchBoxProps) {
+  const [_id] = useState(id ?? randId('searchbox'))
+
   const [_value, setValue] = useState('')
 
-  function _onChange(e: ChangeEvent<HTMLInputElement>) {
-    setValue(e.currentTarget.value)
-    onChange?.(e)
-  }
-
-  const v: string | number | readonly string[] =
-    value !== undefined ? value : _value
+  const v = value ?? _value
 
   return (
     <Input
+      id={_id}
       value={v}
       variant={variant}
-      h={h}
-      aria-label="Search"
+      gap="md"
+      type="search"
+      aria-label={TEXT_SEARCH}
+      data-variant={variant}
       data-mode={variant}
       placeholder={placeholder}
-      onChange={_onChange}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          onSearch?.('search', v.toString())
-        }
+      onTextChange={v => {
+        setValue(v)
+        onTextChange?.(v)
+      }}
+      onTextChanged={v => {
+        onTextChanged?.(v)
       }}
       leftChildren={
         <button
-          onClick={() => onSearch?.('search', v.toString())}
+          onClick={() => onTextChanged?.(v.toString())}
           data-variant={variant}
           data-value={v !== ''}
           className={BUTTON_CLS}
-          title="Search"
+          title={searchLabel}
         >
-          <SearchIcon />
+          <SearchIcon stroke="" />
         </button>
       }
       rightChildren={
-        v ? (
+        showClear && v ? (
           <button
             data-variant={variant}
             onClick={() => {
               setValue('')
-              onSearch?.('clear', '')
+              onTextChange?.('')
+              onTextChanged?.('')
             }}
             className={BUTTON_CLS}
-            title="Delete contents from search box"
+            title={deleteText}
           >
-            <CloseIcon />
+            <CloseIcon stroke="" w="w-4 h-4" />
           </button>
-        ) : undefined
+        ) : null
       }
-      className={cn('px-2.5', className)}
+      className={className}
       {...props}
     />
   )

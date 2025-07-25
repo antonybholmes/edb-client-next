@@ -1,6 +1,6 @@
-import { BaseRow } from '@/components/layout/base-row'
 import { ANIMATION_DURATION_S } from '@/consts'
-import { cn } from '@lib/class-names'
+import { BaseRow } from '@layout/base-row'
+import { cn } from '@lib/shadcn-utils'
 import gsap from 'gsap'
 import {
   forwardRef,
@@ -26,7 +26,7 @@ const PLACEHOLDER_CLS = cn(
 )
 
 const INPUT_CLS = cn(
-  'px-1 min-w-0 grow disabled:cursor-not-allowed disabled:opacity-25 read-only:opacity-25 outline-none border-none ring-none'
+  'px-1 min-w-0 grow disabled:cursor-not-allowed disabled:opacity-25 read-only:opacity-25 outline-hidden border-none ring-none'
 )
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -57,7 +57,7 @@ export const Input4 = forwardRef<HTMLInputElement, InputProps>(
     const [hover, setHover] = useState(false)
     const labelRef = useRef<HTMLLabelElement>(null)
     const innerRef = useRef<HTMLInputElement>(null)
-    useImperativeHandle(ref, () => innerRef.current!, [])
+    useImperativeHandle(ref, () => innerRef.current!)
 
     useEffect(() => {
       if (focus && innerRef.current) {

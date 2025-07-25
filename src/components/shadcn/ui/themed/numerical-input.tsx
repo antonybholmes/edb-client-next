@@ -1,18 +1,22 @@
-import type { IInputProps } from '@interfaces/input-props'
+import { BaseCol } from '@layout/base-col'
 
-import { BaseCol } from '@/components/layout/base-col'
-import { ChevronRightIcon } from '@components/icons/chevron-right-icon'
-import { useEffect, useState } from 'react'
+import { clamp } from '@/lib/math/clamp'
+import { TriangleRightIcon } from '@icons/triangle-right-icon'
+import { useEffect, useRef, useState } from 'react'
+import { Input, type IInputProps } from './input'
 
-import { cn } from '@lib/class-names'
-import { Input } from './input'
+const BUTTON_CLS = `w-4 shrink-0 h-4 flex flex-row justify-center items-center 
+  data-[enabled=true]:stroke-foreground data-[enabled=false]:stroke-foreground/50 
+  data-[enabled=true]:fill-foreground data-[enabled=false]:fill-foreground/50 
+  data-[enabled=true]:hover:fill-theme data-[enabled=true]:focus:fill-theme 
+  data-[enabled=true]:hover:stroke-theme data-[enabled=true]:focus:stroke-theme
+  outline-hidden trans-color`
 
-const BUTTON_CLS =
-  'w-5 shrink-0 h-4 flex flex-row justify-center items-center data-[enabled=true]:stroke-foreground data-[enabled=false]:stroke-foreground/50 data-[enabled=true]:hover:stroke-theme data-[enabled=true]:focus:stroke-theme outline-none trans-color'
+const UPDATE_INTERVAL_MS = 100
 
-interface IProps extends IInputProps {
+export interface INumericalInputProps extends IInputProps {
   limit?: [number, number]
-  inc?: number
+  step?: number
   dp?: number
   /**
    * Callback that is run as you type. The returned number is
@@ -28,60 +32,132 @@ interface IProps extends IInputProps {
 
 export function NumericalInput({
   value = 0,
-  limit = [1, 100],
-  inc = 1,
+  limit,
+  step = 1,
   dp = 0,
   placeholder,
-  type,
   onNumChange,
   onNumChanged,
   disabled,
-  w = 'w-16',
+  w = 'w-20',
   className,
-}: IProps) {
-  const [_value, setValue] = useState<string | number | undefined>('')
-  const [_numValue, setNumValue] = useState<number>(0)
+}: INumericalInputProps) {
+  //const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  if (dp === undefined) {
-    dp = 0
-  }
+  // the internal value is unbounded so that user can type
+  // without it auto clamping. Once use performs action that
+  // propogates the value, e.g. press enter, then it will
+  // be clamped
+  const [_value, setValue] = useState<number>(Number(value) || 0)
 
-  useEffect(() => {
-    if (typeof value !== 'number') {
-      value = limit[0]
+  function _getValue(v: number): number {
+    if (limit?.length === 2) {
+      v = clamp(v, limit[0], limit[1])
     }
 
-    setNumValue(Math.min(limit[1], Math.max(limit[0], value)))
-  }, [value])
+    return v
+  }
 
-  useEffect(() => {
-    setValue(_numValue.toFixed(dp))
-  }, [_numValue])
-
-  function _onNumChanged(v: number) {
-    v = Math.min(limit[1], Math.max(limit[0], v))
-    // update
-    onNumChanged?.(v)
+  function _onNumChange(v: number): number {
+    setValue(v)
 
     // also call more realtime update, just in case
-    onNumChange?.(v)
+    onNumChange?.(_getValue(v))
+
+    return v
   }
+
+  function _onNumChanged(v: number): number {
+    v = _getValue(v)
+
+    setValue(v)
+    // update but ensure data is clamped
+    onNumChange?.(v)
+    onNumChanged?.(v)
+
+    return v
+  }
+
+  useEffect(() => {
+    // if you set a value, it supersedes the internal value
+    const v = Number(value)
+
+    if (!Number.isNaN(v)) {
+      setValue(_getValue(v))
+    }
+  }, [value])
+
+  function updateValue(delta: number) {
+    setValue(prev => {
+      let newVal = prev + delta
+
+      if (limit?.length === 2) {
+        newVal = Math.min(limit[1], Math.max(limit[0], newVal))
+      }
+
+      return newVal
+    })
+  }
+
+  function startUpdating(delta: number) {
+    setValue(_value + delta)
+    intervalRef.current = setInterval(
+      () => updateValue(delta),
+      UPDATE_INTERVAL_MS
+    )
+  }
+
+  function stopUpdating() {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+    }
+    intervalRef.current = null
+
+    // Once we finish updating the internal state, push it
+    // so the rest of the ui can respond
+    _onNumChanged(_value)
+  }
+  const handleKeyDown = (event: React.KeyboardEvent, delta: number) => {
+    if (
+      event.key === 'Enter' ||
+      event.key === ' ' ||
+      event.key === 'ArrowUp' ||
+      event.key === 'ArrowDown'
+    ) {
+      event.preventDefault()
+      updateValue(delta)
+    }
+  }
+
+  const handleKeyUp = () => {
+    stopUpdating()
+  }
+
+  //const v = value || _value ||
 
   return (
     <Input
-      value={_value}
-      type={type}
+      value={_value.toFixed(dp)}
+      type="number"
+      min={limit?.length === 2 ? limit[0] : undefined}
+      max={limit?.length === 2 ? limit[1] : undefined}
       disabled={disabled}
-      className={cn(w, className)}
+      w={w}
+      className={className}
       inputCls="text-right"
-      onKeyDown={(e) => {
+      onKeyDown={e => {
         //console.log(e)
         if (e.key === 'Enter') {
           const v = Number(e.currentTarget.value)
 
-          // default to min if garbage input
+          // only called when user presses enter,
+          // this is for when you don't want to respond
+          // on every change, (e.g. it taxes the ui to keep
+          // redrawing quickly, so only respond once user
+          // has made a final choice
           if (!Number.isNaN(v)) {
-            _onNumChanged(v)
+            _onNumChanged(v) //onNumChanged?.(Math.min(limit[1], Math.max(limit[0], v)))
           }
         } else {
           // respond to arrow keys when ctrl pressed
@@ -89,11 +165,11 @@ export function NumericalInput({
             switch (e.key) {
               case 'ArrowUp':
               case 'ArrowRight':
-                _onNumChanged(_numValue + inc)
+                _onNumChanged(_value + step)
                 break
               case 'ArrowDown':
               case 'ArrowLeft':
-                _onNumChanged(_numValue - inc)
+                _onNumChanged(_value - step)
                 break
               default:
                 break
@@ -101,48 +177,60 @@ export function NumericalInput({
           }
         }
       }}
-      onChange={(e) => {
-        const v = Number(e.currentTarget.value)
+      onChange={e => {
+        const v = Number(e.target.value)
 
         // default to min if garbage input
         if (!Number.isNaN(v)) {
-          onNumChange?.(Math.min(limit[1], Math.max(limit[0], v)))
+          _onNumChange(v)
         }
-
-        setValue(e.currentTarget.value)
       }}
       placeholder={placeholder}
       rightChildren={
-        <BaseCol className="shrink-0 -mr-2">
+        <BaseCol className="shrink-0 -mr-1.5">
           <button
             disabled={disabled}
             data-enabled={!disabled}
             className={BUTTON_CLS}
-            onClick={() => {
-              _onNumChanged(_numValue + inc)
-            }}
+            // onClick={() => {
+            //   _onNumChanged(_value.current + inc)
+            // }}
+            onMouseDown={() => startUpdating(step)}
+            onMouseUp={stopUpdating}
+            onMouseLeave={stopUpdating}
+            onKeyDown={e => handleKeyDown(e, step)}
+            onKeyUp={handleKeyUp}
           >
-            <ChevronRightIcon
-              className="-rotate-90 -mb-1"
+            <TriangleRightIcon
+              className="-rotate-90 -mb-0.5"
               w="w-3"
               stroke=""
               fill=""
-              strokeWidth={3}
+              //strokeWidth={3}
             />
           </button>
           <button
             disabled={disabled}
             data-enabled={!disabled}
             className={BUTTON_CLS}
-            onClick={() => {
-              _onNumChanged(_numValue - inc)
-            }}
+            // onClick={() => {
+            //   _onNumChanged(_numValue - inc)
+            // }}
+
+            // onClick={() => {
+            //   _onNumChanged(_value.current - inc)
+            // }}
+            onMouseDown={() => startUpdating(-step)}
+            onMouseUp={stopUpdating}
+            onMouseLeave={stopUpdating}
+            onKeyDown={e => handleKeyDown(e, -step)}
+            onKeyUp={handleKeyUp}
           >
-            <ChevronRightIcon
-              className="rotate-90 mb-1"
+            <TriangleRightIcon
+              className="rotate-90 mb-0.5"
               w="w-3"
               stroke=""
-              strokeWidth={3}
+              strokeWidth={0}
               fill=""
             />
           </button>

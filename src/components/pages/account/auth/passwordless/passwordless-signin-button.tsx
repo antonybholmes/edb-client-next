@@ -1,15 +1,16 @@
-'use client'
+// 'use client'
 
-import { SESSION_AUTH_SIGNIN_URL } from '@/lib/edb/edb'
+import { SESSION_AUTH_SIGNIN_URL } from '@lib/edb/edb'
 
-import { Button } from '@components/shadcn/ui/themed/button'
+import { Button } from '@themed/button'
 
-import { BaseCol } from '@/components/layout/base-col'
-import { Input } from '@/components/shadcn/ui/themed/input'
 import { TEXT_SIGN_IN } from '@/consts'
-import { useToast } from '@/hooks/use-toast'
-import { httpFetch } from '@/lib/http/http-fetch'
+import { BaseCol } from '@layout/base-col'
+import { Input } from '@themed/input'
+
+import { httpFetch } from '@lib/http/http-fetch'
 import { useQueryClient } from '@tanstack/react-query'
+import { toast } from '@themed/crisp'
 import { useEffect, useState } from 'react'
 
 export function PasswordlessSignInButton({
@@ -18,8 +19,6 @@ export function PasswordlessSignInButton({
   redirectUrl?: string
 }) {
   const queryClient = useQueryClient()
-
-  const { toast } = useToast()
 
   // some other page needs to force reload account details either
   // passwordless or regular so that on refresh this page can see if
@@ -47,14 +46,13 @@ export function PasswordlessSignInButton({
         //error={"username" in form.formState.errors}
         className=" rounded-theme"
         value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        onChange={e => setUsername(e.target.value)}
       />
 
       <Button
         variant="theme"
         //className="w-full"
         size="lg"
-        pad="lg"
         onClick={async () => {
           try {
             // to activate passwordless, simply use a blank password

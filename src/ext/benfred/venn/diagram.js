@@ -55,7 +55,7 @@ export function VennDiagram() {
     // handle 0-sized sets by removing from input
     var toremove = {}
     data.forEach(function (datum) {
-      if (datum.size == 0 && datum.sets.length == 1) {
+      if (datum.size === 0 && datum.sets.length === 1) {
         toremove[datum.sets[0]] = 1
       }
     })
@@ -92,7 +92,7 @@ export function VennDiagram() {
       if (d.sets in labels) {
         return labels[d.sets]
       }
-      if (d.sets.length == 1) {
+      if (d.sets.length === 1) {
         return '' + d.sets[0]
       }
     }
@@ -113,7 +113,7 @@ export function VennDiagram() {
       hasPrevious = false
     svg.selectAll('.venn-area path').each(function (d) {
       var path = select(this).attr('d')
-      if (d.sets.length == 1 && path) {
+      if (d.sets.length === 1 && path) {
         hasPrevious = true
         previous[d.sets[0]] = circleFromPath(path)
       }
@@ -153,7 +153,7 @@ export function VennDiagram() {
       .append('g')
       .attr('class', function (d) {
         return (
-          'venn-area venn-' + (d.sets.length == 1 ? 'circle' : 'intersection')
+          'venn-area venn-' + (d.sets.length === 1 ? 'circle' : 'intersection')
         )
       })
       .attr('data-venn-sets', function (d) {
@@ -177,7 +177,7 @@ export function VennDiagram() {
       enterPath
         .style('fill-opacity', '0')
         .filter(function (d) {
-          return d.sets.length == 1
+          return d.sets.length === 1
         })
         .style('fill', function (d) {
           return colours(d.sets)
@@ -185,7 +185,7 @@ export function VennDiagram() {
         .style('fill-opacity', '.25')
 
       enterText.style('fill', function (d) {
-        return d.sets.length == 1 ? colours(d.sets) : '#444'
+        return d.sets.length === 1 ? colours(d.sets) : '#444'
       })
     }
 
@@ -470,7 +470,7 @@ export function computeTextCentre(interior, exterior) {
   }
 
   if (!valid) {
-    if (interior.length == 1) {
+    if (interior.length === 1) {
       ret = { x: interior[0].x, y: interior[0].y }
     } else {
       var areaStats = {}
@@ -478,7 +478,7 @@ export function computeTextCentre(interior, exterior) {
 
       if (areaStats.arcs.length === 0) {
         ret = { x: 0, y: -1000, disjoint: true }
-      } else if (areaStats.arcs.length == 1) {
+      } else if (areaStats.arcs.length === 1) {
         ret = { x: areaStats.arcs[0].circle.x, y: areaStats.arcs[0].circle.y }
       } else if (exterior.length) {
         // try again without other circles
@@ -574,7 +574,7 @@ export function sortAreas(div, relativeTo) {
     for (var setid in overlaps) {
       var overlap = overlaps[setid]
       for (var j = 0; j < overlap.length; ++j) {
-        if (overlap[j] == check) {
+        if (overlap[j] === check) {
           exclude[setid] = true
           break
         }
@@ -599,10 +599,10 @@ export function sortAreas(div, relativeTo) {
       return a.sets.length - b.sets.length
     }
 
-    if (a == relativeTo) {
+    if (a === relativeTo) {
       return shouldExclude(b.sets) ? -1 : 1
     }
-    if (b == relativeTo) {
+    if (b === relativeTo) {
       return shouldExclude(a.sets) ? 1 : -1
     }
 
@@ -638,7 +638,7 @@ export function intersectionAreaPath(circles) {
 
   if (arcs.length === 0) {
     return 'M 0 0'
-  } else if (arcs.length == 1) {
+  } else if (arcs.length === 1) {
     var circle = arcs[0].circle
     return circlePath(circle.x, circle.y, circle.radius)
   } else {

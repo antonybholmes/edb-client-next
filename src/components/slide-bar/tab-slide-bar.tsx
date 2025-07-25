@@ -1,39 +1,36 @@
-import { forwardRef, useMemo, useState, type ForwardedRef } from 'react'
+import { useMemo, useState } from 'react'
 
-import type { IChildrenProps } from '@interfaces/children-props'
 import { TabContentPanels, Tabs } from '../shadcn/ui/themed/tabs'
 
-import type { LeftRightPos } from '../side'
-import { getTabFromValue, type ITabProvider } from '../tab-provider'
-import { UnderlineTabs } from '../toolbar/underline-tabs'
-import { CloseButton, SlideBar, SlideBarContent } from './slide-bar'
+import { TabIndicatorProvider } from '../tabs/tab-indicator-provider'
+import { getTabFromValue, type ITabProvider } from '../tabs/tab-provider'
+import { UnderlineTabs } from '../tabs/underline-tabs'
 
-interface IProps extends ITabProvider, IChildrenProps {
+import { CloseButton, SlideBar, type ISlideBarProps } from './slide-bar'
+
+interface IProps extends ITabProvider, ISlideBarProps {
   open?: boolean
   onOpenChange?: (open: boolean) => void
-  position?: number
+  showCloseButton?: boolean
   limits?: [number, number]
-  side?: LeftRightPos
   display?: 'block' | 'flex'
 }
 
-export const TabSlideBar = forwardRef(function TabSlideBar(
-  {
-    value,
-    tabs,
-    onTabChange,
-    open,
-    //value,
-    //onValueChange,
-    onOpenChange,
-    position = 80,
-    limits = [5, 85],
-    side = 'Left',
-    className,
-    children,
-  }: IProps,
-  ref: ForwardedRef<HTMLDivElement>
-) {
+export function TabSlideBar({
+  id,
+  ref,
+  value,
+  tabs,
+  onTabChange,
+  open,
+  showCloseButton = true,
+  onOpenChange,
+  initialPosition: position = 80,
+  limits = [50, 85],
+  side = 'left',
+
+  children,
+}: IProps) {
   const [_value, setValue] = useState('')
   const [_open, setOpen] = useState(true)
   const [hover, setHover] = useState(false)
@@ -69,7 +66,7 @@ export const TabSlideBar = forwardRef(function TabSlideBar(
 
     return (
       <Tabs
-        className="flex min-h-0 flex-col relative grow gap-y-2 pr-2"
+        className="flex min-h-0 flex-col relative grow gap-y-2 pr-2 text-xs"
         value={selectedTabId} //selectedTab?.tab.id}
         //defaultValue={_value === "" ? `${tabs[0].name}:0`:undefined}
         onValueChange={_onValueChange}
@@ -78,14 +75,16 @@ export const TabSlideBar = forwardRef(function TabSlideBar(
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
       >
-        <UnderlineTabs value={selectedTabId} tabs={tabs}>
-          <CloseButton
-            onClick={() => _onOpenChange(false)}
-            data-hover={hover}
-            //className="trans-opacity data-[hover=true]:opacity-100 opacity-0"
-          />
-        </UnderlineTabs>
-
+        <TabIndicatorProvider>
+          <UnderlineTabs value={selectedTabId} tabs={tabs}>
+            {showCloseButton && (
+              <CloseButton
+                onClick={() => _onOpenChange(false)}
+                data-hover={hover}
+              />
+            )}
+          </UnderlineTabs>
+        </TabIndicatorProvider>
         <TabContentPanels tabs={tabs} />
         {/* {selectedTab.tab.content}   */}
       </Tabs>
@@ -94,15 +93,18 @@ export const TabSlideBar = forwardRef(function TabSlideBar(
 
   return (
     <SlideBar
+      id={id}
       open={isOpen}
       onOpenChange={_onOpenChange}
       side={side}
-      position={position}
+      initialPosition={position}
       limits={limits}
-      mainContent={children}
-      sideContent={tabsElem}
+      //mainContent={children}
+      //sideContent={tabsElem}
     >
-      <SlideBarContent className={className} />
+      {/* <SlideBarContent className={className} /> */}
+      <>{children}</>
+      <>{tabsElem}</>
     </SlideBar>
   )
-})
+}

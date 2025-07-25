@@ -41,7 +41,7 @@ export function venn(areas, parameters) {
 
   var solution = nelderMead(
     function (values) {
-      totalFunctionCalls += 1
+      //totalFunctionCalls += 1
       var current = {}
       for (var i = 0; i < setids.length; ++i) {
         var setid = setids[i]
@@ -104,9 +104,9 @@ function addMissingAreas(areas) {
     b
   for (i = 0; i < areas.length; ++i) {
     var area = areas[i]
-    if (area.sets.length == 1) {
+    if (area.sets.length === 1) {
       ids.push(area.sets[0])
-    } else if (area.sets.length == 2) {
+    } else if (area.sets.length === 2) {
       a = area.sets[0]
       b = area.sets[1]
       pairs[[a, b]] = true
@@ -140,7 +140,7 @@ export function getDistanceMatrices(areas, sets, setids) {
   // the areas match
   areas
     .filter(function (x) {
-      return x.sets.length == 2
+      return x.sets.length === 2
     })
     .map(function (current) {
       var left = setids[current.sets[0]],
@@ -237,7 +237,7 @@ export function constrainedMDSLayout(areas, params) {
     i
   for (i = 0; i < areas.length; ++i) {
     var area = areas[i]
-    if (area.sets.length == 1) {
+    if (area.sets.length === 1) {
       setids[area.sets[0]] = sets.length
       sets.push(area)
     }
@@ -301,7 +301,7 @@ export function greedyLayout(areas, params) {
     set
   for (var i = 0; i < areas.length; ++i) {
     var area = areas[i]
-    if (area.sets.length == 1) {
+    if (area.sets.length === 1) {
       set = area.sets[0]
       circles[set] = {
         x: 1e10,
@@ -314,7 +314,7 @@ export function greedyLayout(areas, params) {
     }
   }
   areas = areas.filter(function (a) {
-    return a.sets.length == 2
+    return a.sets.length === 2
   })
 
   // map each set to a list of all the other sets that overlap it
@@ -449,9 +449,9 @@ export function lossFunction(sets, overlaps) {
   for (var i = 0; i < overlaps.length; ++i) {
     var area = overlaps[i],
       overlap
-    if (area.sets.length == 1) {
+    if (area.sets.length === 1) {
       continue
-    } else if (area.sets.length == 2) {
+    } else if (area.sets.length === 2) {
       var left = sets[area.sets[0]],
         right = sets[area.sets[1]]
       overlap = circleOverlap(left.radius, right.radius, distance(left, right))
@@ -488,7 +488,7 @@ function orientateCircles(circles, orientation, orientationOrder) {
     }
   }
 
-  if (circles.length == 2) {
+  if (circles.length === 2) {
     // if the second circle is a subset of the first, arrange so that
     // it is off to one side. hack for https://github.com/benfred/venn.js/issues/120
     var dist = distance(circles[0], circles[1])
@@ -732,7 +732,7 @@ export function scaleSolution(solution, width, height, padding) {
     xRange = bounds.xRange,
     yRange = bounds.yRange
 
-  if (xRange.max == xRange.min || yRange.max == yRange.min) {
+  if (xRange.max === xRange.min || yRange.max === yRange.min) {
     console.log('not scaling solution: zero size detected')
     return solution
   }

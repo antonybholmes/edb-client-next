@@ -1,18 +1,16 @@
-import { Button, type IButtonProps } from '@components/shadcn/ui/themed/button'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
+import { Button, type IButtonProps } from '@themed/button'
 
-import { Children, forwardRef, type ForwardedRef } from 'react'
+import { Children } from 'react'
 
-export const BaseMenuButton = forwardRef(function BaseMenuButton(
-  {
-    variant = 'muted',
-    size = 'xxl',
-    className,
-    children,
-    ...props
-  }: IButtonProps,
-  ref: ForwardedRef<HTMLButtonElement>
-) {
+export function BaseMenuButton({
+  variant = 'muted',
+  size = '2xl',
+  ref,
+  className,
+  children,
+  ...props
+}: IButtonProps) {
   const c = Children.toArray(children)
 
   return (
@@ -20,7 +18,6 @@ export const BaseMenuButton = forwardRef(function BaseMenuButton(
       ref={ref}
       variant={variant}
       size={size}
-      pad="default"
       className={cn('grow gap-x-4 whitespace-nowrap text-left', className)}
       style={{ justifyContent: 'start' }}
       {...props}
@@ -32,4 +29,4 @@ export const BaseMenuButton = forwardRef(function BaseMenuButton(
       <span className="w-8 shrink-0" />
     </Button>
   )
-})
+}

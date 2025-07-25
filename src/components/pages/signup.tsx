@@ -1,4 +1,4 @@
-import { Switch } from '@components/shadcn/ui/themed/switch'
+import { Switch } from '@themed/switch'
 
 import {
   Card,
@@ -7,7 +7,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@components/shadcn/ui/themed/card'
+} from '@themed/card'
 
 import { HeaderLayout } from '@layouts/header-layout'
 
@@ -15,27 +15,28 @@ import {
   API_SIGNUP_URL,
   APP_VERIFY_EMAIL_URL,
   TEXT_PASSWORDLESS,
-} from '@/lib/edb/edb'
+} from '@lib/edb/edb'
 
-import { useContext, useRef, type BaseSyntheticEvent } from 'react'
+import { useRef, type BaseSyntheticEvent } from 'react'
 
-import { VCenterRow } from '@/components/layout/v-center-row'
-import { useToast } from '@/hooks/use-toast'
-import { EdbSettingsContext } from '@/lib/edb/edb-settings-provider'
-import { httpFetch } from '@/lib/http/http-fetch'
-import { Button } from '@components/shadcn/ui/themed/button'
-import { Form, FormField, FormItem } from '@components/shadcn/ui/themed/form'
-import { Input } from '@components/shadcn/ui/themed/input'
-import { Label } from '@components/shadcn/ui/themed/label'
+import { VCenterRow } from '@layout/v-center-row'
+
 import { SignInLink } from '@layouts/signin-layout'
+import { useEdbSettings } from '@lib/edb/edb-settings'
+import { httpFetch } from '@lib/http/http-fetch'
 import { CoreProviders } from '@providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
+import { Button } from '@themed/button'
+import { Form, FormField, FormItem } from '@themed/form'
+import { Input } from '@themed/input'
+import { Label } from '@themed/label'
 import { useForm } from 'react-hook-form'
 import { HCenterCol } from '../layout/h-center-col'
+import { toast } from '../shadcn/ui/themed/crisp'
 import {
   MIN_PASSWORD_LENGTH,
   TEXT_MIN_PASSWORD_LENGTH,
-} from './account/password-dialog'
+} from './account/password-email-dialog'
 
 interface IFormInput {
   firstName: string
@@ -52,11 +53,9 @@ interface ISignupProps {
 function SignUpPage({ allowPassword = false }: ISignupProps) {
   const queryClient = useQueryClient()
 
-  const { toast } = useToast()
-
   const btnRef = useRef<HTMLButtonElement>(null)
 
-  const { settings, updateSettings } = useContext(EdbSettingsContext)
+  const { settings, updateSettings } = useEdbSettings()
 
   const form = useForm<IFormInput>({
     defaultValues: {
@@ -125,7 +124,7 @@ function SignUpPage({ allowPassword = false }: ISignupProps) {
                 {allowPassword && (
                   <Switch
                     checked={settings.passwordless}
-                    onCheckedChange={(state) => {
+                    onCheckedChange={state => {
                       updateSettings({ ...settings, passwordless: state })
                     }}
                   >

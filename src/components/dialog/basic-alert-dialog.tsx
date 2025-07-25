@@ -2,7 +2,7 @@ import { APP_NAME } from '@/consts'
 import {
   OKCancelDialog,
   type IOKCancelDialogProps,
-} from '@components/dialog/ok-cancel-dialog'
+} from '@dialog/ok-cancel-dialog'
 
 export interface IProps extends IOKCancelDialogProps {
   open?: boolean
@@ -14,21 +14,17 @@ export function BasicAlertDialog({
   open = true,
   title,
   buttons = ['OK'],
-  onReponse = () => {},
+  onResponse = () => {},
   bodyCls,
   className,
   children,
   ...props
 }: IProps) {
-  // useEffect(() => {
-  //   console.log(osName)
-  // }, [])
-
   return (
     <OKCancelDialog
       open={open}
       title={title ?? APP_NAME}
-      onReponse={onReponse}
+      onResponse={onResponse}
       buttons={buttons}
       bodyCls={bodyCls}
       className={className}

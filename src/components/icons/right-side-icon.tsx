@@ -1,5 +1,5 @@
 import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 
 interface IProps extends IIconProps {
   showSide?: boolean
@@ -14,7 +14,7 @@ export function RightSideIcon({
     <div
       className={cn(
         ICON_CLS,
-        'aspect-square rounded-sm border border-foreground',
+        'aspect-square rounded-xs border border-foreground',
         [showSide, 'border-r-[5px]'],
         w,
         className

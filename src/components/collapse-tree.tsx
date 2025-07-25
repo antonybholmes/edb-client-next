@@ -1,9 +1,14 @@
-import { BaseCol } from '@/components/layout/base-col'
 import { ChevronRightIcon } from '@icons/chevron-right-icon'
 import type { IChildrenProps } from '@interfaces/children-props'
 import type { IClassProps } from '@interfaces/class-props'
-import { type IElementProps } from '@interfaces/element-props'
-import { cn } from '@lib/class-names'
+import { type IDivProps } from '@interfaces/div-props'
+import { cn } from '@lib/shadcn-utils'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@themed/dropdown-menu'
 import {
   createContext,
   useContext,
@@ -11,53 +16,54 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { FileIcon } from './icons/file-icon'
-import { FolderClosedIcon } from './icons/folder-closed-icon'
-import { FolderOpenIcon } from './icons/folder-open-icon'
 import { TrashIcon } from './icons/trash-icon'
-import { CheckboxSmall } from './shadcn/ui/themed/check-box-small'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from './shadcn/ui/themed/dropdown-menu'
 
 import { TEXT_DELETE } from '@/consts'
 import { FOCUS_INSET_RING_CLS } from '@/theme'
+import { EllipsisIcon } from './icons/ellipsis-icon'
 import { VCenterRow } from './layout/v-center-row'
-import { getTabName, type ITab } from './tab-provider'
+import { Checkbox } from './shadcn/ui/themed/check-box'
+import { getTabName, type ITab } from './tabs/tab-provider'
 
-const SettingsContext = createContext<{
-  value: ITab | undefined
+const CollapseTreeContext = createContext<{
+  tab: ITab
+  value?: ITab | undefined
+  level: number
+  showRoot: boolean
   onValueChange: (tab: ITab) => void
   onCheckedChange: (tab: ITab, state: boolean) => void
 }>({
-  value: undefined,
+  tab: { id: '', name: '' },
+  level: -1,
+  showRoot: false,
   onValueChange: () => {},
   onCheckedChange: () => {},
 })
 
-interface ISettingsProviderProps extends IChildrenProps {
-  value: ITab | undefined
+interface ICollapseTreeProviderProps extends IChildrenProps {
+  tab: ITab
+  level: number
+  value?: ITab | undefined
+  showRoot?: boolean
   onValueChange: (tab: ITab) => void
   onCheckedChange?: (tab: ITab, state: boolean) => void
 }
 
-export const SettingsProvider = ({
-  value = undefined,
+export const CollapseTreeProvider = ({
+  tab,
+  value,
+  level,
+  showRoot = true,
   onValueChange,
   onCheckedChange,
   children,
-}: ISettingsProviderProps) => {
-  const [_value, setValue] = useState<ITab | undefined>(undefined)
+}: ICollapseTreeProviderProps) => {
+  const [_value, setValue] = useState<ITab | undefined>(value)
 
   useEffect(() => {
     // sync internal value to external if it changes
     setValue(value)
   }, [value])
-
-  //console.log("context", value, _value)
 
   function _onValueChange(tab: ITab) {
     setValue(tab)
@@ -69,52 +75,61 @@ export const SettingsProvider = ({
   }
 
   return (
-    <SettingsContext.Provider
+    <CollapseTreeContext.Provider
       value={{
+        tab,
         value: _value,
+        level,
+        showRoot,
         onValueChange: _onValueChange,
         onCheckedChange: _onCheckedChange,
       }}
     >
       {children}
-    </SettingsContext.Provider>
+    </CollapseTreeContext.Provider>
   )
 }
 
-const CONTAINER_CLS = `relative h-9 rounded-theme 
-  overflow-hidden cursor-pointer outline-none
-  data-[root=true]:text-sm data-[root=true]:font-semibold 
-  data-[root=false]:data-[selected=true]:font-semibold`
-
-const CONTAINER2_CLS = `grow gap-x-1 h-full data-[selected=false]:data-[hover=true]:data-[secondary-hover=false]:bg-muted
-  data-[selected=true]:data-[secondary-hover=false]:bg-theme/30
-  data-[selected=false]:data-[menu=open]:bg-muted
-  data-[selected=true]:data-[menu=open]:bg-theme/30
-  data-[selected=false]:focus-visible:bg-muted`
-
-const EXPAND_CLS = cn(
-  'flex flex-row items-center justify-center outline-none',
-  'ring-0 aspect-square relative shrink-0 grow-0',
-  'data-[hover=true]:stroke-foreground stroke-foreground/50 trans-color'
+const OUTER_CONTAINER_CLS = cn(
+  FOCUS_INSET_RING_CLS,
+  'relative h-8.5 rounded-theme overflow-hidden cursor-pointer text-xs',
+  'data-[root=true]:font-medium',
+  'data-[root=false]:data-[checked=true]:font-medium'
 )
 
-const ICON_CLS =
-  'flex flex-row items-center justify-start outline-none ring-0 aspect-square w-6 h-6 shrink-0 grow-0'
+const INNER_CONTAINER_CLS = `grow gap-x-1 h-full rounded-l-theme
+  data-[checked=true]:data-[secondary-hover=false]:bg-muted
+  data-[checked=true]:data-[menu=open]:bg-muted
+  data-[checked=false]:focus-visible:bg-muted
+  data-[checked=false]:data-[menu=open]:bg-muted/50
+  data-[checked=false]:data-[hover=true]:data-[secondary-hover=false]:bg-muted/50`
+
+const EXPAND_CLS = `flex flex-row items-center justify-center outline-hidden
+  ring-0 aspect-square relative shrink-0 grow-0 
+  data-[hover=true]:stroke-foreground stroke-foreground/50 trans-color
+  invisible data-[has-children=true]:visible`
+
+// const ICON_CLS =
+//   'flex flex-row items-center justify-start outline-hidden ring-0 aspect-square w-5 h-5 shrink-0 grow-0'
 
 const MENU_BUTTON_CLS = cn(
   FOCUS_INSET_RING_CLS,
-  'w-9 h-9 aspect-square shrink-0 grow-0 flex flex-row items-center justify-center outline-none group',
-  'data-[selected=false]:data-[hover=true]:bg-accent/50',
-  'data-[selected=true]:bg-theme/30'
+  'w-8.5 h-8.5 aspect-square shrink-0 grow-0 flex flex-row',
+  'items-center justify-center outline-hidden group rounded-r-theme',
+  'data-[checked=false]:data-[hover=true]:bg-muted/50',
+  'data-[checked=false]:data-[menu=open]:bg-muted/50',
+  'data-[checked=true]:bg-muted'
 )
 
-interface ICollapseTreeProps extends IElementProps {
-  tab: ITab | undefined
+const LIST_CLS = 'flex flex-col'
+
+interface ICollapseTreeProps extends IDivProps {
+  tab: ITab
   value?: ITab | undefined
   onValueChange?: (tab: ITab) => void
   onCheckedChange?: (tab: ITab, state: boolean) => void
   asChild?: boolean
-  showRoot?: boolean
+  showRoot?: boolean | undefined
 }
 
 export function CollapseTree({
@@ -131,42 +146,34 @@ export function CollapseTree({
   }
 
   return (
-    <SettingsProvider
+    <CollapseTreeProvider
+      tab={tab}
       value={value}
-      onValueChange={(t) => {
+      level={0}
+      showRoot={showRoot}
+      onValueChange={t => {
         onValueChange?.(t)
       }}
       onCheckedChange={(tab: ITab, state: boolean) => {
         onCheckedChange?.(tab, state)
       }}
     >
-      <CollapseTreeNode
-        tab={tab}
-        className={cn('w-full', [!asChild, 'absolute'], className)}
-        level={0}
-        showRoot={showRoot}
-      />
-    </SettingsProvider>
+      <ul className={LIST_CLS}>
+        <CollapseTreeNode
+          className={cn('w-full', { absolute: !asChild }, className)}
+        />
+      </ul>
+    </CollapseTreeProvider>
   )
 }
 
-interface ICollapseTreeNodeProps extends IClassProps {
-  tab: ITab
-  level: number
-  showRoot?: boolean
-}
+function CollapseTreeNode({ className }: IClassProps) {
+  // showRoot is true for children since children always have a root
+  // showRoot is only really used for the true root to determine if the
+  // root should be shown or not or just the children in a list
 
-function CollapseTreeNode({
-  tab,
-  level,
-  showRoot = true,
-  className,
-}: ICollapseTreeNodeProps) {
-  const {
-    value,
-    onValueChange: onValueChanged,
-    onCheckedChange,
-  } = useContext(SettingsContext)
+  const { tab, value, level, showRoot, onValueChange, onCheckedChange } =
+    useContext(CollapseTreeContext)
 
   const [isOpen, setIsOpen] = useState<boolean>(
     (tab.children !== undefined && tab.children.length > 0) ||
@@ -186,7 +193,7 @@ function CollapseTreeNode({
 
   const selected = tabId === valueId
   const dataMenu = menuOpen ? 'open' : 'closed'
-  const closable = tab.closable ?? true
+  //const closable = tab.closable ?? true
 
   // useEffect(() => {
   //   if (!contentRef || !contentRef.current) {
@@ -206,46 +213,49 @@ function CollapseTreeNode({
 
   let icon: ReactNode = tab.icon
 
-  if (!icon) {
-    if (tab.children) {
-      if (isOpen) {
-        icon = <FolderOpenIcon />
-      } else {
-        icon = <FolderClosedIcon />
-      }
-    } else {
-      icon = <FileIcon />
-    }
-  }
+  // if (!icon) {
+  //   if (tab.children) {
+  //     if (isOpen) {
+  //       icon = <FolderOpenIcon />
+  //     } else {
+  //       icon = <FolderClosedIcon />
+  //     }
+  //   } else {
+  //     icon = <FileIcon />
+  //   }
+  // }
 
   let ret: ReactNode = null
 
-  // if there are children, show those
-  if (tab.children) {
-    ret = (
-      <BaseCol
-        data-open={isOpen}
-        className="data-[open=false]:h-0 data-[open=true]:h-auto"
+  // assume we don't show the root, in which case we just return the children
+  // as a list
+  if (tab.children !== undefined && tab.children.length > 0) {
+    ret = tab.children.map((t, ti) => (
+      <CollapseTreeProvider
+        tab={t}
+        value={value}
+        level={level + 1}
+        onValueChange={onValueChange}
+        onCheckedChange={onCheckedChange}
+        key={ti}
       >
-        {tab.children.map((t, ti) => (
-          <CollapseTreeNode tab={t} level={level + 1} key={ti} />
-        ))}
-      </BaseCol>
-    )
+        <CollapseTreeNode key={ti} />
+      </CollapseTreeProvider>
+    ))
   }
 
   if (showRoot) {
     ret = (
-      <BaseCol className={cn('w-full text-xs', className)}>
+      <li className={cn(LIST_CLS, className)} id={tab.id}>
         {tab.id !== '' && (
           <VCenterRow
-            className={CONTAINER_CLS}
+            className={OUTER_CONTAINER_CLS}
             data-root={level === 0}
-            data-selected={selected}
+            data-checked={selected}
             data-focus={focus}
-            //data-secondary-focus={secondaryFocus}
             data-hover={hover}
             data-menu={dataMenu}
+            //data-group={tab.isGroup}
             data-secondary-hover={menuHover}
             onFocus={() => setFocus(true)}
             onBlur={() => setFocus(false)}
@@ -253,7 +263,7 @@ function CollapseTreeNode({
               setHover(true)
             }}
             onMouseLeave={() => setHover(false)}
-            onKeyDown={(e) => {
+            onKeyDown={e => {
               if (e.key === 'Enter') {
                 // Invert openings
                 if (tab.children) {
@@ -262,19 +272,19 @@ function CollapseTreeNode({
 
                 tab.onClick?.()
 
-                onValueChanged(tab)
+                onValueChange(tab)
               }
             }}
             tabIndex={0}
           >
             <VCenterRow
-              className={CONTAINER2_CLS}
+              className={INNER_CONTAINER_CLS}
               style={{
-                paddingLeft: `${(level + 1) * 0.5}rem`,
+                paddingLeft: `${level * 0.5}rem`,
                 //paddingRight: `${tab.onDelete ? 2 : 0}rem`,
               }}
               data-root={level === 0}
-              data-selected={selected}
+              data-checked={selected}
               data-focus={focus}
               //data-secondary-focus={secondaryFocus}
               data-hover={hover}
@@ -282,62 +292,52 @@ function CollapseTreeNode({
               data-secondary-hover={menuHover}
               onClick={() => {
                 tab.onClick?.()
-                onValueChanged(tab)
+                onValueChange(tab)
               }}
             >
               <button
-                data-open={isOpen}
-                className={cn(EXPAND_CLS)}
+                //data-open={isOpen}
+                data-has-children={
+                  tab.showChildren === 'always' ||
+                  (tab.children !== undefined && tab.children.length > 0)
+                }
+                className={EXPAND_CLS}
                 onClick={() => {
-                  if (closable && tab.children && tab.children.length > 0) {
-                    setIsOpen(!isOpen)
-                  }
+                  setIsOpen(!isOpen)
                 }}
                 data-root={level === 0}
-                data-selected={selected}
+                data-checked={selected}
                 data-focus={focus}
                 data-hover={hover}
                 aria-label={tab.id}
               >
-                {tab.children && tab.children.length > 0 && (
-                  <ChevronRightIcon
-                    data-open={isOpen}
-                    className="trans-transform data-[open=true]:rotate-90 origin-center"
-                    aria-label="Open arrow"
-                  />
-                )}
+                <ChevronRightIcon
+                  data-open={
+                    isOpen &&
+                    tab.children !== undefined &&
+                    tab.children.length > 0
+                  }
+                  className="trans-transform data-[open=true]:rotate-90 origin-center"
+                  aria-label="Open Folder"
+                />
               </button>
 
               {tab.checked !== undefined && (
-                <CheckboxSmall
+                <Checkbox
                   checked={tab.checked}
-                  onCheckedChange={(state) => {
+                  onCheckedChange={state => {
                     onCheckedChange?.(tab, state)
                     //tab.onClick?.()
-                    onValueChanged(tab)
+                    onValueChange(tab)
                   }}
                 />
               )}
 
-              {icon && <span className={ICON_CLS}>{icon}</span>}
+              {icon && icon}
 
               <span className="grow truncate">{getTabName(tab)}</span>
             </VCenterRow>
             {tab.onDelete && (
-              // <button
-              //   className={cn(
-              //     "w-8 h-8 shrink-0 rounded-theme flex flex-row items-center justify-center fill-foreground",
-              //     [hover, "opacity-100", "opacity-0"],
-              //     [secondaryButtonHover, "bg-muted"],
-              //   )}
-              //   onMouseEnter={() => setSecondaryButtonHover(true)}
-              //   onMouseLeave={() => setSecondaryButtonHover(false)}
-              //   title={`Delete ${tab.name}`}
-              //   onClick={() => tab.onDelete!()}
-              // >
-              //   <TrashIcon w="w-3.5" />
-              // </button>
-
               <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
                 <DropdownMenuTrigger
                   className={MENU_BUTTON_CLS}
@@ -350,21 +350,21 @@ function CollapseTreeNode({
                   //   setSecondaryFocus(false)
                   // }}
                   name={`Delete ${tab.name}`}
+                  aria-label={`Delete ${tab.name}`}
                   data-focus={focus}
                   data-hover={hover}
                   data-secondary-hover={menuHover}
                   data-menu={dataMenu}
-                  data-selected={selected}
+                  data-checked={selected}
                 >
-                  <span
-                    className="text-sm invisible group-focus:visible data-[focus=true]:visible data-[hover=true]:visible data-[menu=open]:visible"
+                  <EllipsisIcon
+                    w="w-4 h-4"
+                    className="invisible group-focus:visible data-[focus=true]:visible data-[hover=true]:visible data-[menu=open]:visible"
                     data-focus={focus}
                     data-hover={hover}
                     //data-button-focus={buttonFocus}
                     data-menu={dataMenu}
-                  >
-                    ...
-                  </span>
+                  />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   side="right"
@@ -381,10 +381,10 @@ function CollapseTreeNode({
                   //className="fill-foreground"
                 >
                   <DropdownMenuItem
-                    onClick={() => tab.onDelete!()}
+                    onClick={() => tab.onDelete?.()}
                     aria-label="Set theme to light"
                   >
-                    <TrashIcon fill="" w="w-4" />
+                    <TrashIcon stroke="" w="w-4" />
 
                     <span>{TEXT_DELETE}</span>
                   </DropdownMenuItem>
@@ -394,8 +394,8 @@ function CollapseTreeNode({
           </VCenterRow>
         )}
 
-        {ret && ret}
-      </BaseCol>
+        {ret && <ul className={LIST_CLS}>{ret}</ul>}
+      </li>
     )
   }
 

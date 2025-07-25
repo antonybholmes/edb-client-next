@@ -1,13 +1,20 @@
 import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import { CircleHelp } from 'lucide-react'
 
 export function HelpIcon({
   w = 'h-5 w-5',
   stroke = 'stroke-foreground',
+  fill,
   className,
   strokeWidth = 1.5,
+  iconMode,
 }: IIconProps) {
+  if (iconMode === 'colorful') {
+    stroke = 'stroke-theme/75'
+    fill = 'fill-white'
+  }
+
   return (
     // <svg
     //   xmlns="http://www.w3.org/2000/svg"
@@ -28,7 +35,7 @@ export function HelpIcon({
     // </svg>
 
     <CircleHelp
-      className={cn(ICON_CLS, stroke, w, className)}
+      className={cn(ICON_CLS, stroke, w, fill, className)}
       stroke=""
       strokeWidth={strokeWidth}
     />

@@ -1,4 +1,4 @@
-import type { IElementProps } from '@interfaces/element-props'
+import type { IDivProps } from '@interfaces/div-props'
 import { range } from '@lib/math/range'
 import { useEffect } from 'react'
 import {
@@ -10,7 +10,7 @@ import {
   PaginationPrevious,
 } from './shadcn/ui/themed/pagination'
 
-interface IPaginationProps extends IElementProps {
+interface IPaginationProps extends IDivProps {
   itemCount?: number
   itemsPerPage?: number
   currentPage?: number
@@ -65,7 +65,7 @@ export function PaginationComponent({
 
   let isPageNumberOutOfRange: boolean
 
-  const pageNumbers = range(pagesCount).map((index) => {
+  const pageNumbers = range(pagesCount).map(index => {
     const pageNumber = index + 1
     const isPageNumberFirst = pageNumber === 1
     const isPageNumberLast = pageNumber === pagesCount

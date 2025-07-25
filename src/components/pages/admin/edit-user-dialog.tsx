@@ -1,32 +1,28 @@
-import { BaseCol } from '@/components/layout/base-col'
+import { BaseCol } from '@layout/base-col'
 
 import { TEXT_OK } from '@/consts'
-import type { IEdbUser, IRole } from '@/lib/edb/edb'
-import { OKCancelDialog } from '@components/dialog/ok-cancel-dialog'
-import { WarningIcon } from '@components/icons/warning-icon'
 import { FormInputError } from '@components/input-error'
-import { Form, FormField, FormItem } from '@components/shadcn/ui/themed/form'
-import { Input5 } from '@components/shadcn/ui/themed/input5'
-import { Label } from '@components/shadcn/ui/themed/label'
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from '@components/shadcn/ui/themed/toggle-group'
+import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
+import type { IEdbUser, IRole } from '@lib/edb/edb'
+import { Form, FormField, FormItem } from '@themed/form'
+
 import {
   EMAIL_PATTERN,
   NAME_PATTERN,
   TEXT_EMAIL_ERROR,
-  TEXT_NAME_REQUIRED,
   TEXT_USERNAME_DESCRIPTION,
   TEXT_USERNAME_REQUIRED,
   USERNAME_PATTERN,
 } from '@layouts/signin-layout'
+import { Input } from '@themed/input'
+import { Label } from '@themed/label'
+import { ToggleGroup, ToggleGroupItem } from '@themed/toggle-group'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
 import {
   PASSWORD_PATTERN,
   TEXT_PASSWORD_DESCRIPTION,
-} from '../account/password-dialog'
+} from '../account/password-email-dialog'
 
 export interface INewUser extends IEdbUser {
   password: string
@@ -85,13 +81,14 @@ export function EditUserDialog({
     <OKCancelDialog
       open={open}
       title={title}
-      onReponse={(r) => {
+      onResponse={r => {
         if (r === TEXT_OK) {
           btnRef.current?.click()
         } else {
           setUser(undefined, r)
         }
       }}
+      //contentVariant="glass"
     >
       <Form {...form}>
         <form
@@ -102,31 +99,31 @@ export function EditUserDialog({
             <FormField
               control={form.control}
               name="firstName"
-              rules={{
-                required: {
-                  value: true,
-                  message: TEXT_NAME_REQUIRED,
-                },
-                minLength: {
-                  value: 1,
-                  message: TEXT_NAME_REQUIRED,
-                },
-                pattern: {
-                  value: NAME_PATTERN,
-                  message: 'This does not seem like a valid name',
-                },
-              }}
+              // rules={{
+              //   required: {
+              //     value: true,
+              //     message: TEXT_NAME_REQUIRED,
+              //   },
+              //   minLength: {
+              //     value: 1,
+              //     message: TEXT_NAME_REQUIRED,
+              //   },
+              //   pattern: {
+              //     value: NAME_PATTERN,
+              //     message: 'This does not seem like a valid name',
+              //   },
+              // }}
               render={({ field }) => (
                 <FormItem>
-                  <Input5
+                  <Input
+                    h="lg"
                     id="firstName"
                     className="w-full"
-                    placeholder="First Name"
-                    error={'name' in form.formState.errors}
+                    label="First name"
+                    placeholder="First name"
+                    error={'firstName' in form.formState.errors}
                     {...field}
-                  >
-                    {'firstName' in form.formState.errors && <WarningIcon />}
-                  </Input5>
+                  />
 
                   <FormInputError error={form.formState.errors.firstName} />
                 </FormItem>
@@ -144,15 +141,15 @@ export function EditUserDialog({
               }}
               render={({ field }) => (
                 <FormItem>
-                  <Input5
+                  <Input
+                    h="lg"
                     id="lastName"
                     className="w-full"
-                    placeholder="Last Name"
-                    error={'name' in form.formState.errors}
+                    placeholder="Last name"
+                    label="Last name"
+                    error={'lastName' in form.formState.errors}
                     {...field}
-                  >
-                    {'lastName' in form.formState.errors && <WarningIcon />}
-                  </Input5>
+                  />
 
                   <FormInputError error={form.formState.errors.lastName} />
                 </FormItem>
@@ -174,14 +171,14 @@ export function EditUserDialog({
             }}
             render={({ field }) => (
               <FormItem className="flex flex-col gap-y-1">
-                <Input5
+                <Input
+                  h="lg"
                   id="name"
+                  label="Username"
                   placeholder="Username"
                   error={'username' in form.formState.errors}
                   {...field}
-                >
-                  {'username' in form.formState.errors && <WarningIcon />}
-                </Input5>
+                />
                 <FormInputError error={form.formState.errors.username} />
               </FormItem>
             )}
@@ -201,9 +198,11 @@ export function EditUserDialog({
               },
             }}
             render={({ field }) => (
-              <FormItem className="grow">
-                <Input5
+              <FormItem className="flex flex-col gap-y-1">
+                <Input
+                  h="lg"
                   id="email"
+                  label="Email"
                   placeholder="Email"
                   error={'email' in form.formState.errors}
                   {...field}
@@ -225,15 +224,15 @@ export function EditUserDialog({
             }}
             render={({ field }) => (
               <FormItem>
-                <Input5
+                <Input
+                  h="lg"
                   id="password"
                   error={'password' in form.formState.errors}
                   type="password"
+                  label={'Password'}
                   placeholder="Password"
                   {...field}
-                >
-                  {'password' in form.formState.errors && <WarningIcon />}
-                </Input5>
+                />
                 <FormInputError error={form.formState.errors.password} />
               </FormItem>
             )}
@@ -246,10 +245,12 @@ export function EditUserDialog({
               if (field.value) {
                 return (
                   <FormItem>
-                    <Input5
+                    <Input
+                      h="lg"
                       id="uuid"
                       className="w-full"
                       placeholder="User Id"
+                      label="User Id"
                       readOnly
                       disabled
                       {...field}
@@ -267,10 +268,9 @@ export function EditUserDialog({
             name="roles"
             render={({ field }) => (
               <BaseCol className="gap-y-2">
-                <Label>Roles</Label>
+                <Label className="font-bold">Roles</Label>
                 <ToggleGroup
                   type="multiple"
-                  rounded="base"
                   justify="start"
                   variant="outline"
                   value={field.value}

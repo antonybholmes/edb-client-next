@@ -1,9 +1,9 @@
 import { TEXT_OPEN } from '@/consts'
-import type { IElementProps } from '@interfaces/element-props'
+import type { IDivProps } from '@interfaces/div-props'
 import { OpenIcon } from '../icons/open-icon'
 import { ToolbarIconButton } from './toolbar-icon-button'
 
-interface IProps extends IElementProps {
+interface IProps extends IDivProps {
   onOpenChange?: (open: boolean) => void
   showText?: boolean
   multiple?: boolean
@@ -11,7 +11,7 @@ interface IProps extends IElementProps {
 
 export function ToolbarOpenFile({ onOpenChange, showText = false }: IProps) {
   return (
-    <ToolbarIconButton onClick={() => onOpenChange?.(true)} title="Open file">
+    <ToolbarIconButton onClick={() => onOpenChange?.(true)} title="Open File">
       <OpenIcon />
       {showText && <span>{TEXT_OPEN}</span>}
     </ToolbarIconButton>

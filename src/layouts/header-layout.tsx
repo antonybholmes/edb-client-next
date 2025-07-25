@@ -1,70 +1,74 @@
-import { Alerts } from '@/components/alerts/alerts'
-import { SettingsDialog } from '@/components/dialog/settings/settings-dialog'
-import { GearIcon } from '@/components/icons/gear-icon'
-import { Button } from '@/components/shadcn/ui/themed/button'
-import { Toaster } from '@/components/shadcn/ui/themed/toaster'
-import type { ITab } from '@/components/tab-provider'
+import { SettingsDialog } from '@dialog/settings/settings-dialog'
+import { GearIcon } from '@icons/gear-icon'
+import { Button } from '@themed/button'
+
+import { useSettingsTabs } from '@/components/dialog/settings/setting-tabs-store'
 import { TEXT_SETTINGS } from '@/consts'
 import { Header, type IHeaderChildrenProps } from '@components/header/header'
-import { cn } from '@lib/class-names'
-import { useState } from 'react'
-import { type ILayoutProps } from '../interfaces/layout-props'
-// import { Toaster } from "@components/shadcn/ui/toaster"
+import { HelpWidget } from '@help/help'
+import { type ILayoutProps } from '@interfaces/layout-props'
+import { cn } from '@lib/shadcn-utils'
+import { ToolbarFooter } from '@toolbar/toolbar-footer'
+import { Toaster as SonnerToaster } from 'sonner'
 
 export interface IHeaderLayoutProps extends IHeaderChildrenProps, ILayoutProps {
+  showHeader?: boolean
   headerClassName?: string
-  settingsTabs?: ITab[]
-  defaultSettingsTab?: string
 }
 
 export function HeaderLayout({
+  showHeader = true,
+
   leftHeaderChildren,
   headerCenterChildren,
   headerRightChildren,
   headerTrayChildren,
   headerClassName,
-  settingsTabs = [],
-  defaultSettingsTab = 'General',
   className,
   children,
 }: IHeaderLayoutProps) {
-  const [settingsVisible, setSettingsVisible] = useState(false)
+  const { visible, setSettingsVisible } = useSettingsTabs()
 
   return (
     <>
-      <SettingsDialog
-        open={settingsVisible}
-        tabs={settingsTabs}
-        defaultTab={defaultSettingsTab}
-        onOpenChange={setSettingsVisible}
-        onReponse={() => setSettingsVisible(false)}
-      />
+      {/* <Toaster /> */}
+      <SonnerToaster position="top-right" />
 
-      <Header
-        leftHeaderChildren={leftHeaderChildren}
-        headerRightChildren={headerRightChildren}
-        headerTrayChildren={
-          <>
-            <Button
-              id="header-settings-button"
-              variant="accent"
-              size="header"
-              rounded="none"
-              ripple={false}
-              title={TEXT_SETTINGS}
-              selected={settingsVisible}
-              onClick={() => setSettingsVisible(true)}
-            >
-              <GearIcon />
-            </Button>
+      {visible && (
+        <SettingsDialog
+          //open={tabStat.visible}
+          onOpenChange={setSettingsVisible}
+          onResponse={() => setSettingsVisible(false)}
+        />
+      )}
 
-            {headerTrayChildren}
-          </>
-        }
-        className={headerClassName}
-      >
-        {headerCenterChildren}
-      </Header>
+      {showHeader && (
+        <Header
+          leftHeaderChildren={leftHeaderChildren}
+          headerRightChildren={headerRightChildren}
+          headerTrayChildren={
+            <>
+              <Button
+                id="header-settings-button"
+                variant="muted"
+                size="header"
+                rounded="none"
+                ripple={false}
+                title={TEXT_SETTINGS}
+                checked={visible}
+                onClick={() => setSettingsVisible(true)}
+              >
+                <GearIcon />
+              </Button>
+
+              {headerTrayChildren}
+            </>
+          }
+          className={headerClassName}
+        >
+          {headerCenterChildren}
+        </Header>
+      )}
       <main
         className={cn('flex flex-col grow relative', className)}
         id="main-layout"
@@ -72,8 +76,11 @@ export function HeaderLayout({
         {children}
       </main>
 
-      <Alerts />
-      <Toaster />
+      <HelpWidget />
+
+      <ToolbarFooter />
+
+      {/* <Alerts /> */}
     </>
   )
 }

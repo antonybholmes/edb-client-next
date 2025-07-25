@@ -1,0 +1,208 @@
+import { DEFAULT_COLORBAR_SIZE } from '@/components/plot/heatmap/heatmap-svg-props'
+import {
+  DEFAULT_SCATTER_PROPS,
+  type IDisplayAxis,
+  type IScatterDisplayOptions,
+} from '@/components/plot/scatter/scatter-plot-svg'
+import {
+  DEFAULT_FILL_PROPS,
+  DEFAULT_MARGIN,
+  DEFAULT_STROKE_PROPS,
+  type IColorProps,
+  type IMarginProps,
+  type IStrokeProps,
+} from '@/components/plot/svg-props'
+import { APP_ID } from '@/consts'
+import type { IDim } from '@/interfaces/dim'
+import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
+import type { ILim } from '@/lib/math/math'
+import { getModuleName } from '@/lib/module-info'
+import { persistentAtom } from '@nanostores/persistent'
+import { useStore } from '@nanostores/react'
+import MODULE_INFO from './module.json'
+import type { IScrnaGene } from './plot-grid-provider'
+
+const KEY = `${APP_ID}:module:${getModuleName(MODULE_INFO.name)}:v10`
+
+// GEX - each plot use its own scale, Global GEX - all plots use the same scale, Cluster - draw clusters rather than GEX
+
+export interface IScrnaClusterRoundel {
+  show: boolean
+  stroke: IStrokeProps
+  fill: IColorProps
+  size: number
+}
+
+export const DEFAULT_ROUNDEL: IScrnaClusterRoundel = {
+  show: true,
+  stroke: { ...DEFAULT_STROKE_PROPS },
+  fill: { ...DEFAULT_FILL_PROPS, color: COLOR_WHITE, alpha: 0.75 },
+  size: 12,
+}
+
+export interface ILegend {
+  colorbar: {
+    size: IDim
+    show: boolean
+  }
+  title: { show: boolean; text: string; color: string }
+  showClusterId: boolean
+  size: number
+  gap: any
+  height: any
+  show: boolean
+  width: number
+  showUndetClusters: boolean
+}
+
+export interface ISingleCellSettings extends IScatterDisplayOptions {
+  gex: { useMean: boolean; useGlobalRange: boolean }
+  grid: {
+    titles: { show: boolean; offset: number; color: string }
+    on: boolean
+    cols: number
+
+    axes: { xaxis: { length: number }; yaxis: { length: number } }
+  }
+  umap: { clusters: { show: boolean } }
+  //mode: PlotMode
+  zscore: { on: boolean; range: ILim }
+  //globalGexRange: ILim
+  legend: ILegend
+  axes: {
+    xaxis: IDisplayAxis
+    yaxis: IDisplayAxis
+  }
+
+  padding: number
+  scale: number
+
+  autoAxes: boolean
+  geneSets: IScrnaGene[][]
+  //clusters: IScrnaCluster[]
+  margin: IMarginProps
+  roundel: IScrnaClusterRoundel
+}
+
+export const DEFAULT_RANGE: ILim = [-3, 3]
+
+export const DEFAULT_LEGEND: ILegend = {
+  show: true,
+  width: 200,
+  gap: 4,
+  size: 8,
+  height: 16,
+  showUndetClusters: false,
+  showClusterId: true,
+  title: {
+    show: true,
+    text: 'Clusters',
+    color: COLOR_BLACK,
+  },
+  colorbar: {
+    show: true,
+    size: { ...DEFAULT_COLORBAR_SIZE },
+  },
+}
+
+const DOT_GRAY = '#e0e0e0'
+
+export const DEFAULT_SETTINGS: ISingleCellSettings = {
+  ...DEFAULT_SCATTER_PROPS,
+  geneSets: [
+    [{ geneId: 'ENSG00000111732.10', geneSymbol: 'AICDA' }],
+    [{ geneId: 'ENSG00000057657.15', geneSymbol: 'PRDM1' }],
+  ],
+  autoAxes: true,
+
+  margin: { ...DEFAULT_MARGIN },
+  legend: { ...DEFAULT_LEGEND },
+  //globalGexRange: [0, 10],
+  zscore: {
+    on: false,
+    range: [-3, 3],
+  },
+  cmap: 'Gray Red',
+  //mode: 'clusters',
+  umap: {
+    clusters: {
+      show: true,
+    },
+  },
+  grid: {
+    on: false,
+    cols: 4,
+    axes: {
+      xaxis: {
+        length: 200,
+      },
+      yaxis: {
+        length: 200,
+      },
+    },
+    titles: {
+      show: true,
+      offset: 10,
+      color: COLOR_BLACK,
+    },
+  },
+  gex: {
+    useMean: true,
+    useGlobalRange: true,
+  },
+  roundel: { ...DEFAULT_ROUNDEL },
+  dots: {
+    size: 2,
+    color: DOT_GRAY,
+    opacity: 1,
+  },
+}
+
+const settingsAtom = persistentAtom<ISingleCellSettings>(
+  KEY,
+  {
+    ...DEFAULT_SETTINGS,
+  },
+  {
+    encode: JSON.stringify,
+    decode: JSON.parse,
+  }
+)
+
+function updateSettings(settings: ISingleCellSettings) {
+  settingsAtom.set(settings)
+}
+
+function resetSettings() {
+  updateSettings({ ...DEFAULT_SETTINGS })
+}
+
+export function useUmapSettings(): {
+  settings: ISingleCellSettings
+  updateSettings: (settings: ISingleCellSettings) => void
+  resetSettings: () => void
+} {
+  const settings = useStore(settingsAtom)
+
+  //console.log('use matcalc settings')
+  // // first load in the default values from the store
+  // const [settings, setSettings] = useState<ISettings>({
+  //   passwordless: localStore.passwordless === TRUE,
+  //   staySignedIn: localStore.staySignedIn === TRUE,
+  //   theme: localStore.theme as Theme,
+  // })
+
+  // // when the in memory store is updated, trigger a write to localstorage.
+  // // There may be an unnecessary write at the start where the localstorage
+  // // is overwritten with a copy of itself, but this is ok.
+  // useEffect(() => {
+  //   // Write to store when there are changes
+  //   localStorageMap.set({
+  //     passwordless: localStore.passwordless.toString(),
+  //     staySignedIn: localStore.staySignedIn.toString(),
+  //     theme: settings.theme,
+  //   })
+  // }, [settings])
+
+  return { settings, updateSettings, resetSettings }
+}

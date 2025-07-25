@@ -1,6 +1,7 @@
 import type { IPos } from '@interfaces/pos'
 import { BaseDataFrame } from '@lib/dataframe/base-dataframe'
 import { DataFrame } from '@lib/dataframe/dataframe'
+import type { AnnotationDataFrame } from '../dataframe/annotation-dataframe'
 import { pearsond } from './distance'
 import { numSort } from './math'
 import { range, rangeMap } from './range'
@@ -26,8 +27,8 @@ export interface IClusterTree {
 //export const MAIN_CLUSTER_FRAME = 'main'
 
 export interface IClusterFrame {
-  df: BaseDataFrame
-  secondaryTables?: { [key: string]: BaseDataFrame } | undefined
+  df: AnnotationDataFrame
+  //secondaryTables?: { [key: string]: BaseDataFrame } | undefined
   rowTree?: IClusterTree | undefined
   colTree?: IClusterTree | undefined
 }
@@ -174,7 +175,9 @@ export function averageLinkage(
       sum += d
     }
 
-    return sum / cardinality
+    const l = sum / cardinality
+
+    return l
   })
 }
 
@@ -197,7 +200,7 @@ export class HCluster {
 
     // the original clusters (leaves)
     const clusters: ICluster[] = rangeMap(
-      (cluster) => ({
+      cluster => ({
         id: cluster,
         //name: _df.rowIndex[0].ids[i].toString(),
         height: 0,
@@ -223,7 +226,7 @@ export class HCluster {
       //   const c2 = pair[1]!
 
       const clustersLength = clusters.length
-      let nearestPair = [-1, -1, Infinity]
+      let nearestPair = [-1, -1, Number.MAX_VALUE]
 
       for (let c1 = 0; c1 < clustersLength; c1++) {
         for (let c2 = c1 + 1; c2 < clustersLength; c2++) {
@@ -488,11 +491,11 @@ export function getNodePositions(
 
   const xRet: { x: number; clusters: ICluster[] }[] = numSort([
     ...xMap.keys(),
-  ]).map((x) => ({ x, clusters: xMap.get(x)! }))
+  ]).map(x => ({ x, clusters: xMap.get(x)! }))
 
   const yRet: { x: number; clusters: ICluster[] }[] = numSort([
     ...yMap.keys(),
-  ]).map((x) => ({ x, clusters: yMap.get(x)! }))
+  ]).map(x => ({ x, clusters: yMap.get(x)! }))
 
   return [xRet, yRet]
 }
@@ -602,9 +605,9 @@ export function getClusterOrderedDataFrame(cf: IClusterFrame): BaseDataFrame {
   const data = df.values
 
   const ret = new DataFrame({
-    data: rowLeaves.map((r) => colLeaves.map((c) => data[r]![c]!)),
-    columns: colLeaves.map((c) => df.colNames[c]!),
-    index: rowLeaves.map((r) => df.rowNames[r]!),
+    data: rowLeaves.map(r => colLeaves.map(c => data[r]![c]!)),
+    columns: colLeaves.map(c => df.colNames[c]!),
+    index: rowLeaves.map(r => df.rowNames[r]!),
     name: df.name,
   })
 

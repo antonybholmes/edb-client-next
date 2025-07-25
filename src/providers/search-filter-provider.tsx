@@ -2,7 +2,7 @@ import { type IChildrenProps } from '@interfaces/children-props'
 
 import {
   DEFAULT_FILTERS,
-  useSearchFilterStore,
+  useSearchFilters,
   type IFilters,
 } from '@/stores/search-filter-store'
 import { createContext } from 'react'
@@ -21,7 +21,7 @@ export const SearchFiltersContext = createContext<{
 
 export function SearchFilterProvider({ children }: IChildrenProps) {
   const { filters, updateFilters, resetRowFilters, resetColFilters } =
-    useSearchFilterStore()
+    useSearchFilters()
 
   // const [accountStore, setAccountStore] = useUserStore()
 

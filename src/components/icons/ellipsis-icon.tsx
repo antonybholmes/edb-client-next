@@ -1,5 +1,5 @@
 import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import { Ellipsis } from 'lucide-react'
 
 export function EllipsisIcon({
@@ -7,6 +7,7 @@ export function EllipsisIcon({
   stroke = 'stroke-foreground',
   className,
   strokeWidth = 1.5,
+  ...props
 }: IIconProps) {
   return (
     // <svg
@@ -21,6 +22,7 @@ export function EllipsisIcon({
       className={cn(ICON_CLS, stroke, w, className)}
       strokeWidth={strokeWidth}
       stroke=""
+      {...props}
     />
   )
 }

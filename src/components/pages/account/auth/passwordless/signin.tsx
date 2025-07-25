@@ -1,115 +1,405 @@
-'use client'
+import { Switch } from '@themed/switch'
 
 import {
-  EDB_TOKEN_PARAM as EDB_JWT_PARAM,
-  SESSION_AUTH_PASSWORDLESS_VALIDATE_URL,
-} from '@/lib/edb/edb'
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@themed/card'
 
-import { AuthProvider } from '@providers/auth-provider'
+import { VCenterRow } from '@layout/v-center-row'
 
-import { FORWARD_DELAY_MS, SignIn } from '@components/auth/signin'
+import {
+  APP_MYACCOUNT_URL,
+  APP_OAUTH2_SIGN_IN_ROUTE,
+  RESET_PASSWORD_ROUTE,
+  SESSION_AUTH_SIGNIN_URL,
+  SIGN_UP_ROUTE,
+  TEXT_PASSWORDLESS,
+  TEXT_SIGN_UP,
+} from '@lib/edb/edb'
+
+import {
+  MIN_PASSWORD_LENGTH,
+  PASSWORD_PATTERN,
+  TEXT_MIN_PASSWORD_LENGTH,
+  TEXT_PASSWORD_DESCRIPTION,
+  TEXT_PASSWORD_REQUIRED,
+} from '@/components/pages/account/password-email-dialog'
+import { ThemeIndexLink } from '@components/link/theme-index-link'
+import { useEffect, useRef, type BaseSyntheticEvent } from 'react'
+
+import { FormInputError } from '@components/input-error'
+import { ThemeLink } from '@components/link/theme-link'
+import { Button } from '@themed/button'
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@themed/form'
+import { Input } from '@themed/input'
+import { Label } from '@themed/label'
+
+import type { IDivProps } from '@interfaces/div-props'
+
+import { APP_NAME, TEXT_SIGN_IN } from '@/consts'
+
+import { AppIcon } from '@/components/icons/app-icon'
+import { useEdbSettings } from '@lib/edb/edb-settings'
+import { httpFetch } from '@lib/http/http-fetch'
 import { useQueryClient } from '@tanstack/react-query'
-import { jwtDecode } from 'jwt-decode'
+import { useForm } from 'react-hook-form'
+import { toast } from '../../../../shadcn/ui/themed/use-toast'
 
-import { useToast } from '@/hooks/use-toast'
-import { SignInLayout } from '@/layouts/signin-layout'
-import { httpFetch } from '@/lib/http/http-fetch'
-import { bearerHeaders, redirect } from '@/lib/http/urls'
-import { CoreProviders } from '@providers/core-providers'
-import { useEffect, useState } from 'react'
-import type { IRedirectUrlJwtPayload } from '../email/verify'
+export const FORWARD_DELAY_MS = 1000
 
-// async function signIn(jwt: string): Promise<AxiosResponse> {
-//   console.log("signin")
+//https://uibakery.io/regex-library/email
+export const EMAIL_PATTERN =
+  /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/
+export const USERNAME_PATTERN = /^[\w@.]{4,}/
 
-//   return await queryClient.fetchQuery("signin", async () => {
-//     //const callbackUrl = `${SITE_URL}/login`
+export const NAME_PATTERN = /^[\w ]*/
 
-//     return axios.post(
-//       SESSION_PASSWORDLESS_SIGNIN_URL,
-//       {},
+export const TEXT_USERNAME_REQUIRED = 'A username is required'
+export const TEXT_NAME_REQUIRED = 'A first name is required'
+export const TEXT_USERNAME_DESCRIPTION =
+  'A username must contain at least 3 characters, which can be letters, numbers, andunknown of @.-'
+export const TEXT_EMAIL_ERROR = 'This does not seem like a valid email address'
 
-//       {
-//         headers: bearerHeaders(jwt),
-//         withCredentials: true,
-//       },
-//     )
-//   })
-// }
-
-function SignInPage() {
-  //const url = queryParameters.get(EDB_URL_PARAM) ?? MYACCOUNT_ROUTE
-
-  const queryClient = useQueryClient()
-
-  const { toast } = useToast()
-  //const [, acountDispatch] = useContext(AccountContext)
-
-  useEffect(() => {
-    async function signin() {
-      const queryParameters = new URLSearchParams(window.location.search)
-      const jwt = queryParameters.get(EDB_JWT_PARAM) ?? ''
-
-      if (!jwt) {
-        return
-      }
-
-      try {
-        // first validate jwt and ensure no errors
-        await queryClient.fetchQuery({
-          queryKey: ['signin'],
-          queryFn: () =>
-            httpFetch.post(SESSION_AUTH_PASSWORDLESS_VALIDATE_URL, {
-              headers: bearerHeaders(jwt),
-              withCredentials: true,
-            }),
-        })
-
-        toast({
-          title: 'Signed in',
-          description: 'You are signed in.',
-        })
-
-        // now extract visit url from token
-
-        const jwtData = jwtDecode<IRedirectUrlJwtPayload>(jwt)
-
-        // url encoded in jwt to make it more tamper proof
-        const redirectUrl = jwtData.redirectUrl
-
-        redirect(redirectUrl, FORWARD_DELAY_MS)
-      } catch {
-        // we encounted a login error
-        toast({
-          title: 'Sign in error',
-          description: 'We were not able to sign you in.',
-          variant: 'destructive',
-        })
-      }
-    }
-    //
-    signin()
-  }, [])
-
+export function CreateAccountLink() {
   return (
-    <SignInLayout showSignInError={false}>
-      <SignIn />
-    </SignInLayout>
+    <span>
+      Don&apos;t have an account?{' '}
+      <ThemeIndexLink href={SIGN_UP_ROUTE} aria-label={TEXT_SIGN_UP}>
+        Create one
+      </ThemeIndexLink>
+    </span>
   )
 }
 
-export function SignInQueryPage() {
-  const [url, setUrl] = useState('')
+export function SignInLink() {
+  return (
+    <span className="w-full">
+      Already have an account?{' '}
+      <ThemeIndexLink href={APP_OAUTH2_SIGN_IN_ROUTE} aria-label={TEXT_SIGN_IN}>
+        {TEXT_SIGN_IN}
+      </ThemeIndexLink>
+    </span>
+  )
+}
+
+interface IFormInput {
+  username: string
+  password1: string
+  //passwordless: boolean
+  staySignedIn: boolean
+}
+
+export interface ISignInProps extends IDivProps {
+  allowPassword?: boolean
+  // if signin is success, which page of the app to jump to
+  // so that user is not left on signin page
+  visitUrl?: string
+}
+
+export function SignIn({ allowPassword = false, visitUrl }: ISignInProps) {
+  const queryClient = useQueryClient()
+
+  // some other page needs to force reload account details either
+  // passwordless or regular so that on refresh this page can see if
+  // the details have been loaded
+  //const [account, setAccount] = useState<IAccount>({...DEFAULT_ACCOUNT})
 
   useEffect(() => {
-    setUrl(window.location.href)
+    // the sign in callback includes this url so that the app can signin and
+    // then return user to the page they were signing into as a convenience
+    if (!visitUrl) {
+      // default to returning to current page if none specified. This is not
+      // advantageous on the signin page itself as it may appear as though
+      // user has not signed in even when they have. In this case it should
+      // be manually set.
+      visitUrl = window.location.href
+    }
   }, [])
 
+  const { settings, updateSettings } = useEdbSettings()
+  //const passwordless = useRef<boolean>(settings.passwordless)
+
+  const btnRef = useRef<HTMLButtonElement>(null)
+
+  const form = useForm<IFormInput>({
+    defaultValues: {
+      username: '',
+      password1: '',
+      //passwordless: settings.passwordless,
+      staySignedIn: settings.staySignedIn,
+    },
+  })
+
+  // useEffect(() => {
+  //   async function fetch() {
+  //     getCachedUser()
+  //   }
+
+  //   fetch()
+  // }, [])
+
+  useEffect(() => {
+    form.reset({
+      username: '',
+      password1: '',
+      //passwordless: settings.passwordless,
+      staySignedIn: settings.staySignedIn,
+    })
+  }, [])
+
+  async function onSubmit(data: IFormInput, e: BaseSyntheticEvent | undefined) {
+    // question if user wants to keep signing in
+
+    e?.preventDefault()
+
+    // if (!forceSignIn && signedIn) {
+    //   setCheckUserWantsToSignIn(true)
+    //   return
+    // }
+
+    if (data.username.length < 3) {
+      toast({
+        title: 'Username must be at least 3 characters',
+        description: 'Please enter a valid username or create an account.',
+        variant: 'destructive',
+      })
+
+      return
+    }
+
+    //console.log(form.formState.errors)
+
+    if (!settings.passwordless && data.password1.length < MIN_PASSWORD_LENGTH) {
+      toast({
+        title: TEXT_MIN_PASSWORD_LENGTH,
+        variant: 'destructive',
+      })
+      return
+    }
+
+    try {
+      // to activate passwordless, simply use a blank password
+
+      console.log(SESSION_AUTH_SIGNIN_URL)
+
+      const res = await queryClient.fetchQuery({
+        queryKey: ['signin'],
+        queryFn: () =>
+          httpFetch.postJson<{ message: string }>(SESSION_AUTH_SIGNIN_URL, {
+            body: {
+              username: data.username,
+              password: settings.passwordless ? '' : data.password1,
+              staySignedIn: data.staySignedIn,
+              redirectUrl: APP_MYACCOUNT_URL,
+              //visitUrl,
+            },
+          }),
+      })
+
+      if (res.message.includes('email')) {
+        toast({
+          title: 'We sent you a sign in link',
+          description:
+            'Please check your email and click on the sign in link we sent.',
+        })
+
+        return
+      }
+    } catch (error) {
+      console.error(error)
+
+      toast({
+        title: 'There was an issue signing you in',
+        description:
+          'Please check your account is still active. Do you need to create an account?',
+        variant: 'destructive',
+      })
+    }
+
+    //setForceSignIn(false)
+  }
+
   return (
-    <AuthProvider callbackUrl={url}>
-      <CoreProviders>
-        <SignInPage />
-      </CoreProviders>
-    </AuthProvider>
+    <Card className="text-sm p-8 py-12 w-110 shadow-2xl" variant="content">
+      <CardHeader className="text-xl">
+        <VCenterRow className="gap-x-2">
+          <AppIcon w="w-10" />
+          <CardTitle>Sign in to {APP_NAME}</CardTitle>
+
+          {allowPassword && (
+            <Switch
+              checked={settings.passwordless}
+              onCheckedChange={state => {
+                updateSettings({ ...settings, passwordless: state })
+              }}
+            >
+              {TEXT_PASSWORDLESS}
+            </Switch>
+          )}
+        </VCenterRow>
+        <CardDescription>
+          {settings.passwordless
+            ? 'Enter your email address to continue.'
+            : 'Enter your username and password to continue.'}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form
+            className="flex flex-col gap-y-4"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
+            <div className="grid grid-cols-1 gap-2 items-center">
+              <FormField
+                control={form.control}
+                name="username"
+                rules={{
+                  required: {
+                    value: true,
+                    message: TEXT_USERNAME_REQUIRED,
+                  },
+                  pattern: {
+                    value: USERNAME_PATTERN,
+                    message: TEXT_USERNAME_DESCRIPTION,
+                  },
+                }}
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <Input
+                      id="username"
+                      placeholder="you@example.com"
+                      h="xl"
+                      {...field}
+                    >
+                      {/* {"username" in form.formState.errors && <WarningIcon />} */}
+                    </Input>
+                    <FormInputError error={form.formState.errors.username} />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {!settings.passwordless && allowPassword && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                <Label className="font-medium">Password</Label>
+                <FormField
+                  control={form.control}
+                  name="password1"
+                  rules={{
+                    required: {
+                      value: !settings.passwordless,
+                      message: TEXT_PASSWORD_REQUIRED,
+                    },
+
+                    pattern: {
+                      value: PASSWORD_PATTERN,
+                      message: TEXT_PASSWORD_DESCRIPTION,
+                    },
+                  }}
+                  render={({ field }) => (
+                    <FormItem className="col-span-2">
+                      <Input
+                        id="password1"
+                        //disabled={settings.passwordless}
+                        //error={"password1" in form.formState.errors}
+                        type="password"
+                        placeholder="Password"
+                        {...field}
+                      >
+                        {/* {"password1" in form.formState.errors && (
+                              <WarningIcon />
+                            )} */}
+                      </Input>
+                      <FormInputError error={form.formState.errors.password1} />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
+
+            <VCenterRow className="col-span-2 justify-between gap-x-2 text-sm">
+              <FormField
+                control={form.control}
+                name="staySignedIn"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center gap-x-2">
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={state => {
+                          updateSettings({
+                            ...settings,
+                            staySignedIn: state,
+                          })
+
+                          field.onChange(state)
+                        }}
+                      ></Switch>
+                    </FormControl>
+                    <FormLabel>Keep me signed in</FormLabel>
+                  </FormItem>
+                )}
+              />
+
+              {allowPassword && (
+                <ThemeLink
+                  href={RESET_PASSWORD_ROUTE}
+                  aria-label="Forgot password"
+                >
+                  Forgot password?
+                </ThemeLink>
+              )}
+            </VCenterRow>
+
+            <button ref={btnRef} type="submit" className="hidden" />
+          </form>
+        </Form>
+      </CardContent>
+      <CardFooter className="pt-8">
+        {settings.passwordless ? (
+          <Button
+            size="xl"
+            variant="theme"
+            className="w-full"
+            onClick={() => {
+              //passwordless.current = true
+
+              btnRef.current?.click()
+            }}
+          >
+            {TEXT_SIGN_IN}
+          </Button>
+        ) : (
+          <>
+            <Button
+              size="xl"
+              className="w-full"
+              onClick={() => {
+                //passwordless.current = false
+                btnRef.current?.click()
+              }}
+            >
+              Passwordless {TEXT_SIGN_IN}
+            </Button>
+
+            <Button
+              size="xl"
+              variant="accent"
+              onClick={() => {
+                //passwordless.current = true
+
+                btnRef.current?.click()
+              }}
+            >
+              ${TEXT_SIGN_IN}
+            </Button>
+          </>
+        )}
+      </CardFooter>
+    </Card>
   )
 }

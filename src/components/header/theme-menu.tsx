@@ -1,11 +1,11 @@
 import { useState } from 'react'
 
-import { Button } from '@components/shadcn/ui/themed/button'
 import { ComputerIcon } from '@icons/computer'
 import { MoonIcon } from '@icons/moon-icon'
 import { SunIcon } from '@icons/sun'
+import { Button } from '@themed/button'
 
-import { useEdbSettingsStore, type Theme } from '@/lib/edb/edb-settings-store'
+import { useEdbSettings, type Theme } from '@lib/edb/edb-settings'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +17,7 @@ export function ThemeMenu() {
   const [open, setOpen] = useState(false)
 
   //const [theme, setTheme] = useState<string>("system")
-  const { settings, updateSettings, theme, applyTheme } = useEdbSettingsStore()
+  const { settings, updateSettings, theme, applyTheme } = useEdbSettings()
 
   // function onClose() {
   //   setOpen(false)
@@ -50,11 +50,10 @@ export function ThemeMenu() {
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="ghost"
           size="icon"
           aria-label="Toggle dark mode"
           title="Toggle dark mode"
-          selected={open}
+          checked={open}
           className="justify-center fill-foreground"
         >
           {getIcon(theme)}

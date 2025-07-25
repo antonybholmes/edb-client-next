@@ -43,3 +43,15 @@ export function normalDistributionCDF(
 
   return y
 }
+
+export function normSF(x: number, mu: number = 0, sigma: number = 1): number {
+  // if (variance !== 1) {
+  //   variance = Math.sqrt(variance)
+  // }
+
+  sigma = Math.abs(sigma)
+
+  const y = Math.min(1, 0.5 * (1 - erf((x - mu) / (sigma * SQRT2))))
+
+  return y
+}

@@ -1,31 +1,27 @@
 import { useRef, useState, type ReactNode } from 'react'
 
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { ChevronRightIcon } from '@icons/chevron-right-icon'
-import { type IElementProps } from '@interfaces/element-props'
-import { cn } from '@lib/class-names'
+import { VCenterRow } from '@layout/v-center-row'
+import { cn } from '@lib/shadcn-utils'
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-} from '@components/shadcn/ui/themed/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent } from '@themed/dropdown-menu'
 
-import { ROUNDED_CLS, TRANS_COLOR_CLS } from '@/theme'
-import { Button } from '@components/shadcn/ui/themed/button'
+import { TRANS_COLOR_CLS } from '@/theme'
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
+import { Button, type IButtonProps } from '@themed/button'
 import { BaseCol } from '../layout/base-col'
+import { DropDownButton } from '../shadcn/ui/themed/dropdown-button'
 
 const CONTAINER_CLS = cn(
   TRANS_COLOR_CLS,
-  ROUNDED_CLS,
-  //BUTTON_H_CLS,
+  //BUTTON_MD_H_CLS,
   'overflow-hidden'
   //[open, "border-border", "border-transparent hover:border-border"],
 )
 
-interface IProps extends IElementProps {
+interface IProps extends IButtonProps {
   icon: ReactNode
-  align: 'start' | 'center' | 'end'
+  align?: 'start' | 'center' | 'end'
   onMainClick: () => void
   menuClassName?: string
 }
@@ -33,8 +29,9 @@ interface IProps extends IElementProps {
 export function OptionalDropdownButton({
   icon,
   onMainClick,
-
+  size = 'icon',
   align = 'start',
+  rounded = 'theme',
   menuClassName,
   children,
   ...props
@@ -49,10 +46,12 @@ export function OptionalDropdownButton({
         <BaseCol>
           <VCenterRow>
             <Button
-              variant="accent"
+              variant="muted"
+              ripple={false}
               onClick={() => onMainClick()}
-              pad="xs"
-              selected={open}
+              size={size}
+              checked={open}
+              rounded={rounded}
               title={props['title'] ?? ''}
               aria-label={props['aria-label']}
               className="rounded-r-none"
@@ -60,10 +59,10 @@ export function OptionalDropdownButton({
               {icon}
             </Button>
 
-            <Button
-              multiProps="dropdown"
-              selected={open}
+            <DropDownButton
+              checked={open}
               ripple={false}
+              rounded={rounded}
               className="rounded-l-none"
               aria-label="Show dropdown menu"
               onClick={() => setOpen(true)}
@@ -72,7 +71,7 @@ export function OptionalDropdownButton({
                 className="rotate-90 stroke-foreground"
                 w="w-3.5"
               />
-            </Button>
+            </DropDownButton>
           </VCenterRow>
           <DropdownMenuTrigger className="invisible w-full h-0" />
         </BaseCol>

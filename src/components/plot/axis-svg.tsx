@@ -1,5 +1,6 @@
-import { COLOR_BLACK, SVG_CRISP_EDGES } from '@/consts'
+import { SVG_CRISP_EDGES } from '@/consts'
 import { ZERO_POS, type IPos } from '@interfaces/pos'
+import { COLOR_BLACK } from '@lib/color/color'
 import { Axis } from './axis'
 
 interface IAxisProps {
@@ -31,7 +32,7 @@ export function AxisLeftSvg({
   //use tick labels to guess an appropriate offset
   const _titleOffset =
     titleOffset ??
-    2 * tickSize + 12 * Math.max(...ax.tickLabels.map((l) => l.length))
+    2 * tickSize + 12 * Math.max(...ax.ticks.map(t => t.label.length))
 
   return (
     <g
@@ -40,7 +41,7 @@ export function AxisLeftSvg({
     >
       <line
         y1={-0.5 * strokeWidth}
-        y2={ax.range[1] + 0.5 * strokeWidth}
+        y2={ax.length - 0.5 * strokeWidth}
         stroke={color}
         strokeWidth={strokeWidth}
       />
@@ -48,7 +49,7 @@ export function AxisLeftSvg({
       {_title && (
         <text
           transform={`translate(-${_titleOffset}, ${
-            0.5 * ax.range.reduce((x, y) => x + y, 0)
+            0.5 * ax.length
           }) rotate(270)  `}
           textAnchor="middle"
           fontSize={fontSize}
@@ -66,7 +67,7 @@ export function AxisLeftSvg({
                   x2={tickSize}
                   stroke={color}
                   strokeWidth={strokeWidth}
-                  transform={`translate(-${tickSize}, ${ax.domainToRange(tick)})`}
+                  transform={`translate(-${tickSize}, ${ax.domainToRange(tick.v)})`}
                   key={ticki}
                 />
               )
@@ -81,13 +82,13 @@ export function AxisLeftSvg({
                   <text
                     key={ticki}
                     x={0}
-                    y={ax.domainToRange(tick)}
+                    y={ax.domainToRange(tick.v)}
                     fill={color}
                     dominantBaseline="central"
                     textAnchor="end"
                     fontSize={fontSize}
                   >
-                    {ax.tickLabels[ticki]}
+                    {tick.label}
                   </text>
                 )
               })}
@@ -119,16 +120,15 @@ export function AxisBottomSvg({
       shapeRendering={SVG_CRISP_EDGES}
     >
       <line
-        x2={ax.range[1] + 0.5 * strokeWidth}
+        x1={-0.5 * strokeWidth}
+        x2={ax.length + 0.5 * strokeWidth}
         stroke={color}
         strokeWidth={strokeWidth}
       />
 
       {title && (
         <text
-          transform={`translate(${
-            0.5 * ax.range.reduce((x, y) => x + y, 0)
-          }, ${_titleOffset})`}
+          transform={`translate(${0.5 * ax.length}, ${_titleOffset})`}
           textAnchor="middle"
           fontSize={fontSize}
         >
@@ -144,7 +144,7 @@ export function AxisBottomSvg({
                 <line
                   y2={tickSize}
                   stroke={color}
-                  transform={`translate(${ax.domainToRange(tick)}, 0)`}
+                  transform={`translate(${ax.domainToRange(tick.v)}, 0)`}
                   key={ticki}
                   strokeWidth={strokeWidth}
                 />
@@ -157,13 +157,13 @@ export function AxisBottomSvg({
               {ax.ticks.map((tick, ticki) => (
                 <text
                   key={ticki}
-                  x={ax.domainToRange(tick)}
+                  x={ax.domainToRange(tick.v)}
                   fill={color}
                   dominantBaseline="hanging"
                   textAnchor="middle"
                   fontSize={fontSize}
                 >
-                  {ax.tickLabels[ticki]}
+                  {tick.label}
                 </text>
               ))}
             </g>
@@ -192,16 +192,14 @@ export function AxisTopSvg({
       shapeRendering={SVG_CRISP_EDGES}
     >
       <line
-        x2={ax.range[1] + 0.5 * strokeWidth}
+        x2={ax.length - 0.5 * strokeWidth}
         stroke={color}
         strokeWidth={strokeWidth}
       />
 
       {_title && (
         <text
-          transform={`translate(${
-            0.5 * ax.range.reduce((x, y) => x + y, 0)
-          }, ${-_titleOffset})`}
+          transform={`translate(${0.5 * ax.length}, ${-_titleOffset})`}
           textAnchor="middle"
         >
           {_title}
@@ -215,7 +213,7 @@ export function AxisTopSvg({
               y1={-tickSize}
               y2={0.5 * strokeWidth}
               stroke={color}
-              transform={`translate(${ax.domainToRange(tick)}, 0)`}
+              transform={`translate(${ax.domainToRange(tick.v)}, 0)`}
               key={ticki}
               strokeWidth={strokeWidth}
             />
@@ -227,13 +225,13 @@ export function AxisTopSvg({
         {ax.ticks.map((tick, ticki) => (
           <text
             key={ticki}
-            x={ax.domainToRange(tick)}
+            x={ax.domainToRange(tick.v)}
             fill={color}
             dominantBaseline="hanging"
             textAnchor="middle"
             fontSize="smaller"
           >
-            {ax.tickLabels[ticki]}
+            {tick.label}
           </text>
         ))}
       </g>

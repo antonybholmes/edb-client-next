@@ -1,22 +1,22 @@
-import { type IElementProps } from '@interfaces/element-props'
-import { cn } from '@lib/class-names'
+import { type IDivProps } from '@interfaces/div-props'
+import { cn } from '@lib/shadcn-utils'
 
-import { BaseCol } from '@/components/layout/base-col'
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { HEADER_LINKS } from '@/menus'
 import { FOCUS_RING_CLS } from '@/theme'
-import { CloseIcon } from '@components/icons/close-icon'
 import { BaseLink, BLANK_TARGET } from '@components/link/base-link'
 import { ThemeLink } from '@components/link/theme-link'
-import { BASE_MUTED_CLS, Button } from '@components/shadcn/ui/themed/button'
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from '@components/shadcn/ui/themed/sheet'
+import { CloseIcon } from '@icons/close-icon'
 import type { ILinkProps } from '@interfaces/link-props'
-import { useState, type MouseEventHandler } from 'react'
-import { FavIcon } from '../icons/favicon'
+import { BaseCol } from '@layout/base-col'
+import { VCenterRow } from '@layout/v-center-row'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { BASE_MUTED_CLS, Button } from '@themed/button'
+import { Sheet, SheetContent, SheetTrigger } from '@themed/sheet'
+import { useState } from 'react'
+import { GripIcon } from '../icons/grip-icon'
+import { DialogTitle } from '../shadcn/ui/dialog'
+import { DialogDescription } from '../shadcn/ui/themed/dialog'
+import type { IHeaderLinksProps } from './header-menu'
 
 export function ModuleButtonLink({
   className,
@@ -38,16 +38,11 @@ export function ModuleButtonLink({
   )
 }
 
-interface IHeaderLinksProps extends IElementProps {
-  tab?: string
-  onClick: MouseEventHandler<HTMLAnchorElement>
-}
-
-export function HeaderLinks({ onClick, className }: IHeaderLinksProps) {
+export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
   // sort alphabetically and ignore sections
-  const items = HEADER_LINKS.map((section) => {
+  const items = HEADER_LINKS.map(section => {
     return section.modules.filter(
-      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()
@@ -65,7 +60,7 @@ export function HeaderLinks({ onClick, className }: IHeaderLinksProps) {
         <li key={moduleIndex}>
           <ModuleButtonLink
             href={module.slug}
-            onClick={onClick}
+            onClick={handleClick}
             aria-label={module.name}
             target={BLANK_TARGET}
             title={module.description}
@@ -95,7 +90,7 @@ export function HeaderLinks({ onClick, className }: IHeaderLinksProps) {
   )
 }
 
-interface IFileMenu extends IElementProps {
+interface IFileMenu extends IDivProps {
   tab?: string
 }
 
@@ -107,15 +102,15 @@ export function HeaderMenuSheet({ tab = '' }: IFileMenu) {
       <SheetTrigger asChild>
         <Button
           id="header-menu-popover-button"
-          variant="trans"
+          variant="muted"
           size="none"
           rounded="none"
           ripple={false}
-          selected={open}
-          className="h-11 w-11"
+          checked={open}
+          className="h-header w-header"
           aria-label={open ? 'Close Menu' : 'Open Menu'}
         >
-          <FavIcon />
+          <GripIcon />
         </Button>
       </SheetTrigger>
       <SheetContent
@@ -134,7 +129,7 @@ export function HeaderMenuSheet({ tab = '' }: IFileMenu) {
           </Button>
         </VCenterRow>
         <BaseCol className="overflow-y-auto custom-scrollbar">
-          <HeaderLinks tab={tab} onClick={() => setOpen(false)} />
+          <HeaderLinks tab={tab} handleClick={() => setOpen(false)} />
         </BaseCol>
         <VCenterRow className="p-4 gap-x-5 ">
           <ThemeLink
@@ -154,6 +149,13 @@ export function HeaderMenuSheet({ tab = '' }: IFileMenu) {
             Privacy
           </ThemeLink>
         </VCenterRow>
+
+        <VisuallyHidden asChild>
+          <DialogTitle>Header Menu</DialogTitle>
+        </VisuallyHidden>
+        <VisuallyHidden asChild>
+          <DialogDescription>Header Menu</DialogDescription>
+        </VisuallyHidden>
       </SheetContent>
     </Sheet>
   )

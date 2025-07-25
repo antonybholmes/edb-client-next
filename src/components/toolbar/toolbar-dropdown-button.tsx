@@ -1,21 +1,54 @@
-import { type IButtonProps } from '@components/shadcn/ui/themed/button'
 import { ChevronRightIcon } from '@icons/chevron-right-icon'
-import { cn } from '@lib/class-names'
-import { forwardRef, type ForwardedRef } from 'react'
+import { cn } from '@lib/shadcn-utils'
+import { useState, type ComponentProps, type ReactNode } from 'react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '../shadcn/ui/themed/dropdown-menu'
 import { ToolbarButton } from './toolbar-button'
 
-export const ToolbarDropdownButton = forwardRef(function ToolbarDropdownButton(
-  { className, children, ...props }: IButtonProps,
-  ref: ForwardedRef<HTMLButtonElement>
-) {
-  return (
-    <ToolbarButton ref={ref} className={cn('gap-x-2', className)} {...props}>
-      {children}
+interface IProps extends ComponentProps<'button'> {
+  icon: ReactNode
+  menuClassName?: string
+}
 
-      <ChevronRightIcon
-        className="rotate-90"
-        stroke="stroke-foreground stroke-2"
-      />
-    </ToolbarButton>
+export function ToolbarDropdownButton({
+  icon,
+  className,
+  menuClassName,
+  children,
+  ...props
+}: IProps) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger asChild>
+        <ToolbarButton
+          className={cn('gap-x-2', className)}
+          {...props}
+          //checked={open}
+          //onClick={() => setOpen(true)}
+        >
+          {icon}
+
+          <ChevronRightIcon
+            className="rotate-90 -mr-1"
+            stroke="stroke-foreground stroke-2"
+          />
+        </ToolbarButton>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
+        //onInteractOutside={() => setOpen(false)}
+        //onEscapeKeyDown={() => setOpen(false)}
+        align="start"
+        //sideOffset={20}
+        className={menuClassName}
+      >
+        {children}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
-})
+}

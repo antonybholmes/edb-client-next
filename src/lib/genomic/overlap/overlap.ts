@@ -287,7 +287,7 @@ export function overlappingPeaks(
   const binToUidsMap = new Map<number, Set<string>>()
   const uids: string[] = []
 
-  console.log(fids)
+  //console.log(fids)
 
   for (const entry of fids) {
     const { fid, locations } = entry
@@ -326,9 +326,9 @@ export function overlappingPeaks(
 export function createOverlapTableFromDataframes(
   dataFrames: BaseDataFrame[],
   mode: OVERLAP_MODE = 'mcr'
-): DataFrame | null {
+): BaseDataFrame | null {
   return createOverlapTable(
-    dataFrames.map((df) => convertDataFrameToLocationFile(df)),
+    dataFrames.map(df => convertDataFrameToLocationFile(df)),
     mode
   )
 }
@@ -336,21 +336,21 @@ export function createOverlapTableFromDataframes(
 export function createOverlapTableFromDataframe(
   df: BaseDataFrame,
   mode: OVERLAP_MODE = 'mcr'
-): DataFrame | null {
+): BaseDataFrame | null {
   return createOverlapTable(convertDataFrameToLocationFiles(df), mode)
 }
 
 export function createOverlapTable(
   locationFiles: ILocationFile[],
   mode: OVERLAP_MODE = 'mcr'
-): DataFrame | null {
+): BaseDataFrame | null {
   if (locationFiles.length === 0) {
     return null
   }
 
   const [locationCoreMap, locationMap] = overlappingPeaks(locationFiles, mode)
 
-  const fids = locationFiles.map((file) => file.fid)
+  const fids = locationFiles.map(file => file.fid)
 
   const header: string[] = ['Genomic Location', 'Width']
 
@@ -359,9 +359,9 @@ export function createOverlapTable(
 
   header.push('# Overlapping Peaks')
 
-  header.push(...fids.map((fid) => `Sample ${fid}`))
-  header.push(...fids.map((fid) => `Peak ${fid}`))
-  header.push(...fids.map((fid) => `Overlap % ${fid}`))
+  header.push(...fids.map(fid => `Sample ${fid}`))
+  header.push(...fids.map(fid => `Peak ${fid}`))
+  header.push(...fids.map(fid => `Overlap % ${fid}`))
 
   header.push('Region')
 
@@ -428,8 +428,8 @@ export function createOverlapTable(
 
     //find the spanning region of the two peaks
     // i.e. min start, max end
-    const start = Math.min(...locs.map((loc) => loc.start)) //[loc.start for loc in locs])
-    const end = Math.max(...locs.map((loc) => loc.end))
+    const start = Math.min(...locs.map(loc => loc.start)) //[loc.start for loc in locs])
+    const end = Math.max(...locs.map(loc => loc.end))
 
     const region = new GenomicLocation(locs[0]!.chr, start, end)
 

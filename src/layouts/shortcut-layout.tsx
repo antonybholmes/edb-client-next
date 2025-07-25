@@ -1,9 +1,8 @@
-import { BaseCol } from '@/components/layout/base-col'
-import { BaseRow } from '@/components/layout/base-row'
-import { ModuleLayout, type IModuleLayoutProps } from './module-layout'
+import { type IModuleLayoutProps } from './module-layout'
 
-import { cn } from '@lib/class-names'
+import { APP_NAME } from '@/consts'
 import type { ReactNode } from 'react'
+import { SignInLayout } from './signin-layout'
 
 export interface IShortcutLayoutProps extends IModuleLayoutProps {
   mainClassName?: string
@@ -14,30 +13,32 @@ export function ShortcutLayout({
   info,
   shortcuts,
   children,
-  mainClassName = 'gap-y-2 mb-6',
+  className = 'gap-y-2',
   ...props
 }: IShortcutLayoutProps) {
-  //const path = usePathname()
-
-  //const c = Children.toArray(children)
-
   return (
-    <ModuleLayout info={info} {...props}>
-      <BaseRow
-        className="min-h-0 grow overflow-hidden"
-        id="shortcuts-layout-row"
-      >
-        {shortcuts && (
-          <BaseCol className="bg-muted/50 w-11">{shortcuts}</BaseCol>
-        )}
+    <SignInLayout
+      title={info?.name ?? APP_NAME}
+      className={className}
+      {...props}
+    >
+      {children}
+    </SignInLayout>
 
-        <BaseCol
-          className={cn('min-h-0 grow overflow-hidden', mainClassName)}
-          id="shortcuts-layout-col"
-        >
-          {children}
-        </BaseCol>
-      </BaseRow>
-    </ModuleLayout>
+    // <ModuleLayout info={info} {...props}>
+    //   <BaseRow
+    //     className="min-h-0 grow overflow-hidden"
+    //     id="shortcuts-layout-row"
+    //   >
+    //     {shortcuts && <BaseCol className="w-header">{shortcuts}</BaseCol>}
+
+    //     <BaseCol
+    //       className={cn('min-h-0 grow overflow-hidden', mainClassName)}
+    //       id="shortcuts-layout-col"
+    //     >
+    //       {children}
+    //     </BaseCol>
+    //   </BaseRow>
+    // </ModuleLayout>
   )
 }

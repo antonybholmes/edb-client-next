@@ -24,11 +24,11 @@ export function textToLines(text: string, opts: IToLineOpts = {}): string[] {
   let ret = text.split(/[\r\n]+/g)
 
   if (trim) {
-    ret = ret.map((line) => line.trim())
+    ret = ret.map(line => line.trim())
   }
 
   if (rtrim) {
-    ret = ret.map((line) => line.trimEnd())
+    ret = ret.map(line => line.trimEnd())
   }
 
   if (removeEmptyLines) {
@@ -51,7 +51,7 @@ export function textToTokens(
     ...opts,
   }
 
-  return textToLines(text, { rtrim: true }).map((line) =>
+  return textToLines(text, { rtrim: true }).map(line =>
     line.replaceAll('"', '').split(sep)
   )
 }

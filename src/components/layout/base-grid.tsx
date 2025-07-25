@@ -1,15 +1,10 @@
-import { forwardRef, type ForwardedRef } from 'react'
-
 import { type IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 
-export const BaseGrid = forwardRef(function BaseGrid(
-  { className, children, ...props }: IDivProps,
-  ref: ForwardedRef<HTMLDivElement>
-) {
+export function BaseGrid({ ref, className, children, ...props }: IDivProps) {
   return (
     <div ref={ref} className={cn('grid', className)} {...props}>
       {children}
     </div>
   )
-})
+}

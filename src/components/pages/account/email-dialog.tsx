@@ -1,23 +1,20 @@
-import {
-  OKCancelDialog,
-  type IModalProps,
-} from '@components/dialog/ok-cancel-dialog'
+import { OKCancelDialog, type IModalProps } from '@dialog/ok-cancel-dialog'
 import axios from 'axios'
 
 import { STATUS_CODE_OK, TEXT_OK } from '@/consts'
-import { API_RESET_EMAIL_URL, APP_UPDATE_EMAIL_URL } from '@/lib/edb/edb'
+import { API_RESET_EMAIL_URL, APP_UPDATE_EMAIL_URL } from '@lib/edb/edb'
 
 import { FormInputError } from '@components/input-error'
-import { Form, FormField, FormItem } from '@components/shadcn/ui/themed/form'
-import { Input } from '@components/shadcn/ui/themed/input'
+import { Form, FormField, FormItem } from '@themed/form'
+import { Input } from '@themed/input'
 //import { AccountContext } from "@hooks/use-account"
 import { EMAIL_PATTERN } from '@layouts/signin-layout'
 
-import { useToast } from '@/hooks/use-toast'
-import { EdbAuthContext } from '@/lib/edb/edb-auth-provider'
-import { bearerHeaders } from '@/lib/http/urls'
+import { useEdbAuth } from '@lib/edb/edb-auth'
+import { bearerHeaders } from '@lib/http/urls'
 import { useQueryClient } from '@tanstack/react-query'
-import { useContext, useRef, type BaseSyntheticEvent } from 'react'
+import { toast } from '@themed/crisp'
+import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
 
 export const TEXT_EMAIL_DESCRIPTION =
@@ -54,7 +51,7 @@ interface IFormInput {
 export function EmailDialog({
   open = false,
   onOpenChange = () => {},
-  onReponse = () => {},
+  onResponse = () => {},
 }: IModalProps) {
   const queryClient = useQueryClient()
 
@@ -62,10 +59,9 @@ export function EmailDialog({
 
   //const [settings, settingsDispatch] = useContext(SettingsContext)
   //const [account, accountDispatch] = useContext(AccountContext)
-  const { getAccessTokenAutoRefresh } = useContext(EdbAuthContext)
+  const { fetchAccessToken } = useEdbAuth()
 
   //const [passwordless, setPasswordless] = useState(settings.passwordless)
-  const { toast } = useToast()
 
   const form = useForm<IFormInput>({
     defaultValues: {
@@ -76,11 +72,11 @@ export function EmailDialog({
   const btnRef = useRef<HTMLButtonElement>(null)
 
   function _resp(resp: string) {
-    onReponse?.(resp)
+    onResponse?.(resp)
   }
 
   async function sendResetEmailLink(email: string) {
-    const accessToken = await getAccessTokenAutoRefresh()
+    const accessToken = await fetchAccessToken()
 
     try {
       const res = await queryClient.fetchQuery({
@@ -134,9 +130,9 @@ export function EmailDialog({
       showClose={true}
       open={open}
       onOpenChange={onOpenChange}
-      contentVariant="glass"
+      //contentVariant="glass"
       //buttons={[TEXT_SAVE, TEXT_CANCEL]}
-      onReponse={(response) => {
+      onResponse={response => {
         switch (response) {
           case TEXT_OK:
             //update()

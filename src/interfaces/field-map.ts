@@ -1,3 +1,1 @@
-export interface IFieldMap {
-  [key: string]: unknown
-}
+export type IFieldMap = Record<string, unknown>

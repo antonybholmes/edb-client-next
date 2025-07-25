@@ -3,7 +3,7 @@ import { useState } from 'react'
 import type { IDivProps } from '@interfaces/div-props'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import { SlideBar, SlideBarContent } from './slide-bar'
+import { SlideBar } from './slide-bar'
 
 interface IHelpFrameProps {
   helpUrl: string
@@ -96,17 +96,21 @@ export function HelpSlideBar({
 
   return (
     <SlideBar
+      id="help"
       open={_open}
       onOpenChange={_onOpenChange}
-      side="Right"
-      position={position}
+      side="right"
+      initialPosition={position}
       limits={limits}
       //className={className}
       title="Help"
-      mainContent={children}
-      sideContent={<HelpIFrame helpUrl={helpUrl} />}
+      // mainContent={children}
+      // sideContent={<HelpIFrame helpUrl={helpUrl} />}
     >
-      <SlideBarContent className={className} />
+      {/* <SlideBarContent className={className} /> */}
+
+      <>{children}</>
+      <HelpIFrame helpUrl={helpUrl} />
     </SlideBar>
   )
 }

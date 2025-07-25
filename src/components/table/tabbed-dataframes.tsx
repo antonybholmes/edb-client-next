@@ -1,15 +1,14 @@
-import { BottomBar } from '@components/toolbar/bottom-bar'
+import { BottomBar } from '@toolbar/bottom-bar'
 
-import { BaseDataFrame } from '@lib/dataframe/base-dataframe'
-
-import { type ITab, type ITabChange } from '@components/tab-provider'
-import { cn } from '@lib/class-names'
+import { type ITab, type ITabChange } from '@components/tabs/tab-provider'
+import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
+import { cn } from '@lib/shadcn-utils'
 import type { TabsProps } from '@radix-ui/react-tabs'
-import { forwardRef, useEffect, useState, type ForwardedRef } from 'react'
+import { useState } from 'react'
 import type { IFileDropProps } from '../file-drop-panel'
-import type { ITabReorder } from '../toolbar/reorder-tabs'
-import type { ITabMenu } from '../toolbar/underline-tabs'
-import { DataFrameCanvas } from './dataframe-canvas'
+import type { ITabReorder } from '../tabs/reorder-tabs'
+import type { ITabMenu } from '../tabs/underline-tabs'
+import { VirtualizedDataFrame } from './virtualized-dataframe'
 
 const MAX_NAME_CHARS = 15
 
@@ -19,39 +18,35 @@ interface IProps
     IFileDropProps,
     ITabMenu,
     ITabReorder {
-  dataFrames: BaseDataFrame[]
-  selectedSheet?: string
-  scale?: number
+  dataFrames: AnnotationDataFrame[]
+  selectedSheet?: string | undefined
   editable?: boolean
-  contentClassName?: string
   allowReorder?: boolean
+  zoom?: number | undefined
 }
 
-export const TabbedDataFrames = forwardRef(function TabbedDataFrames(
-  {
-    selectedSheet,
-    dataFrames,
-    scale = 1,
-    editable = false,
-    onValueChange = () => {},
-    onTabChange = () => {},
-    onFileDrop = undefined,
+export function TabbedDataFrames({
+  selectedSheet,
+  dataFrames,
+  editable = false,
+  onValueChange = () => {},
+  onTabChange = () => {},
+  onFileDrop = undefined,
+  menuActions = [],
+  menuCallback = () => {},
+  onReorder = () => {},
+  allowReorder = false,
+  zoom,
+  className,
+  style,
+}: IProps) {
+  const [_selectedSheet, setSelectedSheet] = useState(
+    dataFrames && dataFrames.length > 0 ? dataFrames[0]!.id : ''
+  )
 
-    menuActions = [],
-    menuCallback = () => {},
-    onReorder = () => {},
-    allowReorder = false,
-    contentClassName,
-    className,
-    style,
-  }: IProps,
-  ref: ForwardedRef<HTMLDivElement>
-) {
-  const [_selectedSheet, setSelectedSheet] = useState('')
-
-  useEffect(() => {
+  /* useEffect(() => {
     setSelectedSheet(dataFrames[0]!.id)
-  }, [])
+  }, []) */
 
   const tabs: ITab[] = dataFrames.map((df, i) => {
     const sheetId = `Sheet ${i + 1}`
@@ -61,13 +56,15 @@ export const TabbedDataFrames = forwardRef(function TabbedDataFrames(
       id: df.id, //sheetId, //nanoid(),
       name,
       content: (
-        <DataFrameCanvas
-          df={df}
-          key={i}
-          scale={scale}
-          editable={editable}
-          className={contentClassName}
-        />
+        // <DataFrameCanvas
+        //   df={df}
+        //   key={i}
+        //   scale={scale}
+        //   editable={editable}
+        //   className={contentClassName}
+        // />
+
+        <VirtualizedDataFrame df={df} key={i} editable={editable} zoom={zoom} />
       ),
       //content: <LazyGlideUI df={df} key={i} scale={scale} />,
     }
@@ -77,20 +74,17 @@ export const TabbedDataFrames = forwardRef(function TabbedDataFrames(
     return null
   }
 
-  const sheet = selectedSheet !== undefined ? selectedSheet : _selectedSheet
-
-  //const value = tabs[sheet ?? 0]!.id
+  const sheet = selectedSheet ? selectedSheet : _selectedSheet
 
   // transition between index based tabs and value selection
   // tables, possibly move to entirely name based tabs in the future
   return (
     <BottomBar
-      ref={ref}
       value={sheet}
       tabs={tabs}
       maxNameLength={MAX_NAME_CHARS}
       onValueChange={onValueChange}
-      onTabChange={(selectedTab) => {
+      onTabChange={selectedTab => {
         // historyDispatch({
         //   type: 'goto-sheet',
         //   sheetId: selectedTab.index,
@@ -108,44 +102,5 @@ export const TabbedDataFrames = forwardRef(function TabbedDataFrames(
       allowReorder={allowReorder}
       onReorder={onReorder}
     />
-
-    // <Tabs
-    //   selected={selectedTab}
-    //   onTabChange={(tab: number) => setSelectedTab(tab)}
-    //   className="grow flex flex-col"
-    // >
-    //   <TabPanels className="grow flex flex-col">
-    //     {dataFrames.map((df, i) => (
-    //       <TabPanel className="grow flex flex-col" key={i}>
-    //         <DataFrameSimpleCanvasUI df={df} key={i} />
-    //       </TabPanel>
-    //     ))}
-    //   </TabPanels>
-    //   {dataFrames.length > 0 && (
-    //     <VCenterRow>
-    //       <ToolbarButton
-    //         className="w-6 h-6 items-center justify-center"
-    //         onClick={() => setSelectedTab(Math.max(0, selectedTab - 1))}
-    //       >
-    //         <ChevronLeftIcon />
-    //       </ToolbarButton>
-    //       <ToolbarButton
-    //         className="w-6 h-6 items-center justify-center"
-    //         onClick={() =>
-    //           setSelectedTab(Math.min(dataFrames.length - 1, selectedTab + 1))
-    //         }
-    //       >
-    //         <ChevronRightIcon />
-    //       </ToolbarButton>
-    //       <TabList className="flex flex-row px-1">
-    //         {dataFrames
-    //           .filter(df => df.name !== "")
-    //           .map((df, i) => (
-    //             <ToolbarTab key={i}>{df.name}</ToolbarTab>
-    //           ))}
-    //       </TabList>
-    //     </VCenterRow>
-    //   )}
-    // </Tabs>
   )
-})
+}

@@ -1,8 +1,8 @@
-import { type IElementProps } from '@interfaces/element-props'
-import { cn } from '@lib/class-names'
+import { type IDivProps } from '@interfaces/div-props'
+import { cn } from '@lib/shadcn-utils'
 import type { ReactNode } from 'react'
 
-import { ChevronRightIcon } from '@components/icons/chevron-right-icon'
+import { ChevronRightIcon } from '@icons/chevron-right-icon'
 
 import type { ICrumbProps } from '@lib/crumbs'
 import { BaseLink } from './link/base-link'
@@ -10,7 +10,7 @@ import { BaseLink } from './link/base-link'
 const LINK_CLS =
   'trans-color text-theme/75 group-hover:text-theme dark:text-theme dark:group-hover:text-white'
 
-interface IBreadcrumbProps extends IElementProps, ICrumbProps {}
+interface IBreadcrumbProps extends IDivProps, ICrumbProps {}
 
 export function Breadcrumb({ crumbs, className }: IBreadcrumbProps) {
   if (!crumbs) {

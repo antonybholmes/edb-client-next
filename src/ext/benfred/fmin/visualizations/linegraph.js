@@ -83,8 +83,8 @@ export function LineGraph() {
         } else {
           showtooltip()
           tooltip
-            .style('Left', d3.event.pageX + 'px')
-            .style('Top', d3.event.pageY - 44 + 'px')
+            .style('left', d3.event.pageX + 'px')
+            .style('op', d3.event.pageY - 44 + 'px')
           tooltip.html('x = ' + x.toFixed(2) + '<br>f(x) = ' + fx.toFixed(2))
 
           linetip

@@ -1,22 +1,29 @@
-import { SaveAsDialog, type ISaveAsFormat } from './save-as-dialog'
+import {
+  SaveAsDialog,
+  type ISaveAsDialogProps,
+  type ISaveAsFormat,
+} from './save-as-dialog'
 
-export interface IProps {
-  open: string
-  onSave: (format: ISaveAsFormat) => void
-  onCancel: () => void
-}
+export const PNG_FILE_FORMAT: ISaveAsFormat = { name: 'PNG', ext: 'png' }
 
-export function SaveImageDialog({ open, onSave, onCancel }: IProps) {
+export const IMAGE_FILE_FORMATS: ISaveAsFormat[] = [
+  { name: 'PNG', ext: 'png' },
+  { name: 'SVG', ext: 'svg' },
+]
+
+export function SaveImageDialog({
+  open = true,
+  name = 'plot',
+  formats = IMAGE_FILE_FORMATS,
+  onResponse = () => {},
+}: ISaveAsDialogProps) {
   return (
     <SaveAsDialog
       open={open}
-      title="Save image as"
-      onSave={onSave}
-      onCancel={onCancel}
-      formats={[
-        { name: 'PNG', ext: 'png' },
-        { name: 'SVG', ext: 'svg' },
-      ]}
+      title="Save Image As"
+      name={name}
+      onResponse={onResponse}
+      formats={formats}
     />
   )
 }

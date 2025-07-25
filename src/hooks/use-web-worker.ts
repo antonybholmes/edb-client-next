@@ -5,7 +5,9 @@ export function useWebWorker(url: string): RefObject<Worker | null> {
 
   useEffect(() => {
     console.log(url)
-    workerRef.current = new Worker(new URL(url, import.meta.url))
+    workerRef.current = new Worker(new URL(url, import.meta.url), {
+      type: 'module',
+    })
 
     return () => {
       // Terminate the worker when component unmounts

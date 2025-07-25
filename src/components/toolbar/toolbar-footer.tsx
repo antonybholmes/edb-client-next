@@ -1,85 +1,23 @@
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 
 import { CENTERED_ROW_CLS } from '@/theme'
 import type { IChildrenProps } from '@interfaces/children-props'
-import { Children } from 'react'
 import { VCenterRow } from '../layout/v-center-row'
-
-// export const FooterContext = createContext<{
-//   left: ReactNode
-//   center: ReactNode
-//   right: ReactNode
-//   setFooterLeft: Dispatch<SetStateAction<ReactNode>>
-//   setFooterCenter: Dispatch<SetStateAction<ReactNode>>
-//   setFooterRight: Dispatch<SetStateAction<ReactNode>>
-// }>({
-//   left: undefined,
-//   center: undefined,
-//   right: undefined,
-//   setFooterLeft: function (value: SetStateAction<ReactNode>): void {},
-//   setFooterCenter: function (value: SetStateAction<ReactNode>): void {},
-//   setFooterRight: function (value: SetStateAction<ReactNode>): void {},
-// })
-
-// interface IFooterProviderProps extends IChildrenProps {
-//   left?: ReactNode
-//   center?: ReactNode
-//   right?: ReactNode
-// }
-
-// export const FooterProvider = ({
-//   left = undefined,
-//   center = undefined,
-//   right = undefined,
-//   children,
-// }: IFooterProviderProps) => {
-//   const [_left, setFooterLeft] = useState<ReactNode>(undefined)
-//   const [_center, setFooterCenter] = useState<ReactNode>(undefined)
-//   const [_right, setFooterRight] = useState<ReactNode>(undefined)
-
-//   useEffect(() => {
-//     setFooterLeft(left)
-//   }, [left])
-
-//   useEffect(() => {
-//     setFooterCenter(center)
-//   }, [center])
-
-//   useEffect(() => {
-//     setFooterRight(right)
-//   }, [right])
-
-//   const c = Children.toArray(children)
-
-//   return (
-//     <FooterContext.Provider
-//       value={{
-//         left: _left,
-//         center: _center,
-//         right: _right,
-//         setFooterLeft,
-//         setFooterCenter,
-//         setFooterRight,
-//       }}
-//     >
-//       {children}
-//     </FooterContext.Provider>
-//   )
-// }
 
 export const TOOLBAR_FOOTER_CLS = cn(
   CENTERED_ROW_CLS,
-  'h-6 px-2 text-xs text-foreground/50 overflow-hidden justify-between grid grid-cols-3 shrink-0 fixed left-0 right-0 bottom-0 w-full bg-body z-10 border-t  border-border  '
+  'h-6 text-xs text-foreground/50 overflow-hidden justify-between grid grid-cols-4 shrink-0 w-full bg-body border-t border-transparent hover:border-border/75 trans-color'
 )
 
-export function ToolbarFooter({ className, children }: IChildrenProps) {
-  const c = Children.toArray(children)
-
+export function ToolbarFooter({ className }: IChildrenProps) {
   return (
-    <footer className={cn(TOOLBAR_FOOTER_CLS, className)}>
-      <VCenterRow>{c.length > 0 && c[0]}</VCenterRow>
-      <VCenterRow className="justify-center">{c.length > 0 && c[1]}</VCenterRow>
-      <VCenterRow className="justify-end">{c.length > 1 && c[2]}</VCenterRow>
+    <footer className={cn(TOOLBAR_FOOTER_CLS, className)} id="toolbar-footer">
+      <VCenterRow id="toolbar-footer-left" />
+      <VCenterRow
+        id="toolbar-footer-center"
+        className="justify-center col-span-2"
+      />
+      <VCenterRow id="toolbar-footer-right" className="justify-end" />
     </footer>
   )
 }

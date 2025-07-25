@@ -1,20 +1,20 @@
 import { useMemo } from 'react'
 
-import { type IElementProps } from '@interfaces/element-props'
+import { type IDivProps } from '@interfaces/div-props'
 
+import { Axis, YAxis } from '@/components/plot/axis'
 import {
   DEFAULT_FILL_PROPS,
   DEFAULT_STROKE_PROPS,
-  type IFillProps,
+  type IColorProps,
   type IStrokeProps,
-} from '@/components/plot/svg-props'
-import { Axis, YAxis } from '@components/plot/axis'
+} from '@components/plot/svg-props'
 import { KDE } from '@lib/math/kde'
 import { linspace } from '@lib/math/linspace'
 import { zip } from '@lib/utils'
 import type { IBoxWhiskerMode } from './box-whisker-plot-svg'
 
-interface IProps extends IElementProps {
+interface IProps extends IDivProps {
   data: number[]
   xsmooth?: number[]
   ysmooth?: number[]
@@ -23,7 +23,7 @@ interface IProps extends IElementProps {
   width?: number
   height?: number
   r?: number
-  fill?: IFillProps
+  fill?: IColorProps
   stroke?: IStrokeProps
   // whether to only draw half of the violin
   mode?: IBoxWhiskerMode
@@ -39,7 +39,7 @@ export function ViolinPlotSvg({
   height = 500,
   fill = DEFAULT_FILL_PROPS,
   stroke = DEFAULT_STROKE_PROPS,
-  mode = 'Full',
+  mode = 'full',
 }: IProps) {
   const svg = useMemo(() => {
     // duplicate to mirror violin
@@ -70,20 +70,20 @@ export function ViolinPlotSvg({
     }
 
     // normalize
-    xsmooth = xsmooth.map((x) => x / globalXMax!)
+    xsmooth = xsmooth.map(x => x / globalXMax!)
     // so always join in the middle
     xsmooth[0] = 0
     xsmooth[xsmooth.length - 1] = 0
 
     switch (mode) {
-      case 'Left':
+      case 'left':
         // flip x so draw cdf on left side
-        xsmooth = xsmooth.map((x) => -x)
+        xsmooth = xsmooth.map(x => -x)
 
         break
-      case 'Full':
+      case 'full':
         // for the left
-        xsmooth = [...xsmooth, ...xsmooth.map((x) => -x).toReversed()]
+        xsmooth = [...xsmooth, ...xsmooth.map(x => -x).toReversed()]
         // then return on the right
         ysmooth = [...ysmooth!, ...ysmooth!.toReversed()]
         break
@@ -102,7 +102,7 @@ export function ViolinPlotSvg({
     // }
 
     const points: string = zip(xsmooth, ysmooth)
-      .map((p) => `${0.5 * p[0]! * width},${yax!.domainToRange(p[1])}`)
+      .map(p => `${0.5 * p[0]! * width},${yax!.domainToRange(p[1]!)}`)
       .join(' ')
 
     //console.log(points)

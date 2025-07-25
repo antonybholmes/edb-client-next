@@ -1,4 +1,4 @@
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import * as SheetPrimitive from '@radix-ui/react-dialog'
 import { cva, type VariantProps } from 'class-variance-authority'
 
@@ -25,7 +25,7 @@ const SheetPortal = SheetPrimitive.Portal
 // >(({ ...props }, ref) => (
 //   // <SheetPrimitive.Overlay
 //   //   className={cn(
-//   //     "fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+//   //     "fixed inset-0 z-50 bg-background/80 backdrop-blur-xs data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
 //   //     className
 //   //   )}
 //   //   {...props}
@@ -37,7 +37,7 @@ const SheetPortal = SheetPrimitive.Portal
 // SheetOverlay.displayName = SheetPrimitive.Overlay.displayName
 
 const sheetVariants = cva(
-  'fixed z-modal z-(--z-modal) outline-none transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in data-[state=closed]:fade-out data-[state=closed]:duration-300 data-[state=open]:duration-300',
+  'fixed z-(--z-modal) outline-hidden transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in data-[state=closed]:fade-out data-[state=closed]:duration-300 data-[state=open]:duration-300',
   {
     variants: {
       surface: {
@@ -96,7 +96,7 @@ const SheetContent = forwardRef<
         {...props}
       >
         {children}
-        {/* <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+        {/* <SheetPrimitive.Close className="absolute right-4 top-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
         <Cross2Icon className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </SheetPrimitive.Close> */}

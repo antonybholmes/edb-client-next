@@ -1,5 +1,6 @@
-import { SeqBrowserQueryPage } from '@/components/pages/modules/genomic/seq-browser/seq-browser'
-import MODULE_INFO from '@components/pages/modules/genomic/seq-browser/module.json'
+
+import { SeqBrowserQueryPage } from '@/components/pages/apps/genomic/seq-browser/seq-browser-page'
+import MODULE_INFO from '@components/pages/apps/genomic/seq-browser/module.json'
 import { makeMetaData } from '@lib/metadata'
 
 export const metadata = makeMetaData(MODULE_INFO.name)

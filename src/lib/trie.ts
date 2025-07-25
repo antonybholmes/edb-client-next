@@ -63,13 +63,13 @@ export class TrieNode<T> {
     const words = key
       .replaceAll(/[^A-Za-z0-9]/g, ' ')
       .split(' ')
-      .filter((word) => word.length > MIN_DEPTH_STORE_VARIABLES)
+      .filter(word => word.length > MIN_DEPTH_STORE_VARIABLES)
 
     //if (key.includes("BCL6")) {
     // console.log(words)
     //}
 
-    words.forEach((word) => {
+    words.forEach(word => {
       //console.log("add", key.slice(i))
       TrieNode._addNodesRec(parent, word, value)
     })

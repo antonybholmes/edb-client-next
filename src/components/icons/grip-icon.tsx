@@ -1,9 +1,9 @@
 import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import { Grip } from 'lucide-react'
 
 export function GripIcon({
-  w = 'h-5.5 w-5.5',
+  w = 'h-5 w-5',
   stroke = 'fill-foreground',
   className,
 }: IIconProps) {

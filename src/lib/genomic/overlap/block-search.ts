@@ -1,4 +1,4 @@
-import { range } from '@/lib/math/range'
+import { range } from '@lib/math/range'
 import { overlaps, type GenomicLocation } from '../genomic'
 
 export class BlockSearch<T> {

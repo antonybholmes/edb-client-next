@@ -1,40 +1,25 @@
-import { cn } from '@lib/class-names'
 import { nanoid } from 'nanoid'
-import { type ComponentProps, useState } from 'react'
+import { type ComponentProps } from 'react'
 import { PanelResizeHandle } from 'react-resizable-panels'
 
 const CLS =
-  'group flex shrink-0 grow-0 cursor-ns-resize flex-row items-center justify-center outline-none'
+  'group flex shrink-0 grow-0 flex-row items-center justify-center outline-hidden py-2 group'
 
 export function ThinVResizeHandle({
   id,
-  h = 'py-4',
-  lineClassName,
-  className,
-  ...props
-}: ComponentProps<typeof PanelResizeHandle> & {
-  h?: string
-  lineClassName?: string
-}) {
-  const [drag, setDrag] = useState(false)
 
+  className,
+  onDragging,
+  ...props
+}: ComponentProps<typeof PanelResizeHandle>) {
+  //console.log(props.data['data-resize-handle-state'])
   return (
     <PanelResizeHandle
       id={id ?? `v-resize-handle-thin-${nanoid()}`}
-      className={cn(CLS, h, className)}
-      onDragging={(drag) => {
-        setDrag(drag)
-      }}
+      className={CLS}
       {...props}
     >
-      <span
-        className={cn(
-          'trans-color w-full',
-          [drag, 'bg-ring', 'group-hover:bg-ring'],
-          lineClassName
-        )}
-        style={{ height: '2px' }}
-      />
+      <span className="trans-color w-full h-[2px] trans-color group-data-[resize-handle-state=hover]:bg-ring group-data-[resize-handle-state=drag]:bg-ring" />
     </PanelResizeHandle>
   )
 }

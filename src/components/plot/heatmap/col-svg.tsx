@@ -1,9 +1,10 @@
-import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import type { IClusterTree } from '@/lib/math/hcluster'
 import { ZERO_POS, type IPos } from '@interfaces/pos'
+import type { IClusterTree } from '@lib/math/hcluster'
 
-import { COLOR_WHITE, SVG_CRISP_EDGES } from '@/consts'
-import { range } from '@/lib/math/range'
+import { SVG_CRISP_EDGES } from '@/consts'
+import { COLOR_WHITE } from '@lib/color/color'
+import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
+import { range } from '@lib/math/range'
 import type { IHeatMapDisplayOptions } from './heatmap-svg-props'
 
 export interface ITreeSvgProps {
@@ -27,7 +28,7 @@ export function ColTreeTopSvg({
       shapeRendering={SVG_CRISP_EDGES}
     >
       {tree.coords.map((coords, ri) => {
-        const p = range(4).map((i) => ({
+        const p = range(4).map(i => ({
           x: coords[i]!.x * width,
           y: height - coords[i]!.y * height,
         }))
@@ -49,7 +50,7 @@ export function ColTreeTopSvg({
 }
 
 export interface IColLabelsSvgProps {
-  df: BaseDataFrame
+  df: AnnotationDataFrame
   leaves: number[]
   props: IHeatMapDisplayOptions
   colorMap?: Map<number, string>
@@ -80,7 +81,7 @@ export function ColLabelsSvg({
                 : props.colLabels.color
             }
             dominantBaseline="central"
-            textAnchor={props.colLabels.position === 'Top' ? 'start' : 'end'}
+            textAnchor={props.colLabels.position === 'top' ? 'start' : 'end'}
             fontSize="smaller"
           >
             {df.colName(col)}

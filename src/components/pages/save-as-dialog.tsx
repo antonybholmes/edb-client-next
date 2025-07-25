@@ -1,51 +1,71 @@
-import { TEXT_OK } from '@/consts'
-import { OKCancelDialog } from '@components/dialog/ok-cancel-dialog'
+import { TEXT_CANCEL, TEXT_NAME, TEXT_SAVE_AS } from '@/consts'
+import { OKCancelDialog, type IModalProps } from '@dialog/ok-cancel-dialog'
 
-import { Button } from '@components/shadcn/ui/themed/button'
-import type { IElementProps } from '@interfaces/element-props'
+import { useState } from 'react'
+import { Input } from '../shadcn/ui/themed/input'
 
 export interface ISaveAsFormat {
   name: string
   ext: string
 }
 
-export interface IProps extends IElementProps {
-  open: string
-  formats: ISaveAsFormat[]
-  onSave: (format: ISaveAsFormat) => void
-  onCancel: () => void
+export interface ISaveAsDialogProps extends IModalProps {
+  name?: string
+  formats?: ISaveAsFormat[]
 }
 
 export function SaveAsDialog({
-  open = '',
-  title = '',
-  formats: types,
-  onSave = () => {},
-  onCancel = () => {},
-}: IProps) {
+  open = true,
+  title = TEXT_SAVE_AS,
+  name = 'file',
+  formats = [],
+  onResponse = () => {},
+}: ISaveAsDialogProps) {
+  const [text, setText] = useState(name)
+
   return (
     <OKCancelDialog
-      open={open !== ''}
+      open={open}
       title={title}
-      buttons={[]}
-      onReponse={(r) => {
-        if (r !== TEXT_OK) {
-          onCancel()
+      //buttons={[...formats.map(format => format.ext), TEXT_CANCEL]}
+      buttons={formats.map(format => format.ext.toUpperCase())}
+      onResponse={response => {
+        if (response !== TEXT_CANCEL) {
+          const format = formats.filter(
+            f => f.ext.toUpperCase() === response
+          )[0]!
+          onResponse?.(response, {
+            name: `${text.split('.')[0]}.${response.toLowerCase()}`,
+            format,
+          })
+        } else {
+          onResponse?.(response)
         }
       }}
-      bodyCls="gap-y-2"
+      //contentVariant="glass"
+      //bodyVariant="card"
+      //bodyCls="gap-y-2"
     >
-      {types.map((type, ti) => (
+      {/* {formats.map((format, fi) => (
         <Button
-          key={ti}
-          variant={ti === 0 ? 'theme' : 'secondary'}
+          key={fi}
+          variant={fi === 0 ? 'theme' : 'secondary'}
           size="lg"
-          onClick={() => onSave?.(type)}
+          onClick={() => onSave?.(format)}
           aria-label="Open groups"
         >
-          {type.name} (.{type.ext})
+          {format.name} (.{format.ext})
         </Button>
-      ))}
+      ))} */}
+
+      <Input
+        value={text}
+        label={TEXT_NAME}
+        labelPos="left"
+        placeholder="Save as..."
+        onChange={e => setText(e.target.value)}
+        className="rounded-theme grow"
+      />
 
       {/* <Form {...form}>
         <form

@@ -66,3 +66,14 @@ export function iqr(values: number[]): number {
 
   return q3[0] - q1[0]
 }
+
+/**
+ * Cumulative steps (e.g., quartiles, deciles, or any number of divisions)
+ *
+ * @param total
+ * @param steps
+ * @returns
+ */
+export function cumulativeSteps(total: number, steps: number) {
+  return Array.from({ length: steps }, (_, i) => ((i + 1) * total) / steps)
+}

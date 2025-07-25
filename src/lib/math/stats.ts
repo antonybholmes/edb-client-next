@@ -4,8 +4,19 @@ export function covariance(
   a: number[],
   b: number[],
   meanA: number | null = null,
-  meanB: number | null = null
-) {
+  meanB: number | null = null,
+  ddof: number = 0
+): number {
+  if (a.length !== b.length) {
+    return 0
+  }
+
+  const n = a.length - ddof
+
+  if (n < 1) {
+    return 0
+  }
+
   const _ma = meanA ?? mean(a)
   const _mb = meanB ?? mean(b)
 
@@ -15,67 +26,58 @@ export function covariance(
     s += (x - _ma) * (b[xi]! - _mb)
   }
 
-  s /= a.length - 1
+  s /= n
 
   return s
+}
 
-  // return (
-  //   sum(
-  //     a.map((x, xi) => {
-  //       return (x - _ma) * (b[xi]! - _mb)
-  //     })
-  //   ) /
-  //   (a.length - 1)
-  // )
+export function populationCovariance(
+  a: number[],
+  b: number[],
+  meanA: number | null = null,
+  meanB: number | null = null
+) {
+  return covariance(a, b, meanA, meanB, 0)
+}
+
+/**
+ *
+ * @param values
+ * @param meanA
+ * @param ddof Delta Degrees of Freedom (0, population, 1 sample)
+ * @returns
+ */
+export function variance(
+  values: number[],
+  meanA: number | null,
+  ddof: number = 0
+) {
+  const n = values.length - ddof
+
+  if (n < 1) {
+    return 0
+  }
+
+  const _ma = meanA ?? mean(values)
+
+  let s = 0
+
+  for (const x of values) {
+    const d = x - _ma
+    s += d * d
+  }
+
+  s /= n
+
+  return s
 }
 
 export function populationVariance(a: number[], meanA: number | null = null) {
-  const _ma = meanA ?? mean(a)
-
-  let s = 0
-
-  for (const x of a) {
-    const d = x - _ma
-    s += d * d
-  }
-
-  s /= a.length
-
-  return s
-
-  // return (
-  //   sum(
-  //     a.map(x => {
-  //       const d = x - _ma
-  //       return d * d
-  //     })
-  //   ) / a.length
-  // )
+  return variance(a, meanA, 0)
 }
 
 export function sampleVariance(a: number[], meanA: number | null = null) {
-  const _ma = meanA ?? mean(a)
-
-  let s = 0
-
-  for (const x of a) {
-    const d = x - _ma
-    s += d * d
-  }
-
-  s /= a.length - 1
-
-  return s
-
-  // return (
-  //   sum(
-  //     a.map(x => {
-  //       const d = x - _ma
-  //       return d * d
-  //     })
-  //   ) /
-  //   (a.length - 1)
-  // )
+  return variance(a, meanA, 1)
 }
 
 export function populationStd(a: number[], meanA: number | null = null) {
@@ -86,15 +88,21 @@ export function sampleStd(a: number[], meanA: number | null = null) {
   return Math.sqrt(sampleVariance(a, meanA))
 }
 
-export function std(a: number[], meanA: number | null = null) {
-  return sampleStd(a, meanA)
-}
+// export function std(a: number[], meanA: number | null = null) {
+//   return sampleStd(a, meanA)
+// }
 
 export function pearson(a: number[], b: number[]) {
   const ma = mean(a)
   const mb = mean(b)
 
-  return covariance(a, b, ma, mb) / (std(a, ma) * std(b, mb))
+  const denominator = populationStd(a, ma) * populationStd(b, mb)
+
+  if (denominator === 0) {
+    return 0
+  }
+
+  return populationCovariance(a, b, ma, mb) / denominator
 }
 
 // // https://en.wikipedia.org/wiki/Normal_distribution

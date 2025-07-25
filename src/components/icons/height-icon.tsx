@@ -1,6 +1,6 @@
-import { COLOR_WHITE } from '@/consts'
 import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/class-names'
+import { COLOR_WHITE } from '@lib/color/color'
+import { cn } from '@lib/shadcn-utils'
 
 export function HeightIcon({ w = 'w-4', className }: IIconProps) {
   return (

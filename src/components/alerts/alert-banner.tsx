@@ -1,6 +1,6 @@
 import { TRANS_COLOR_CLS } from '@/theme'
 import type { IChildrenProps } from '@interfaces/children-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import { useEffect, useState } from 'react'
 import { CloseIcon } from '../icons/close-icon'
 import { HCenterRow } from '../layout/h-center-row'

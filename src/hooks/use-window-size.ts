@@ -14,9 +14,10 @@ export function useWindowSize(): IDim {
   useEffect(() => {
     const handleResize = () => {
       // Set window width/height to state
+
       setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
+        w: window.innerWidth ?? 0,
+        h: window.innerHeight ?? 0,
       })
     }
 

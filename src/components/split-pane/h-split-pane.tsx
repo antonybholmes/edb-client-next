@@ -1,8 +1,8 @@
 import { TRANS_COLOR_CLS } from '@/theme'
 import { useMouseMoveListener } from '@hooks/use-mousemove-listener'
 import { useMouseUpListener } from '@hooks/use-mouseup-listener'
-import { type IElementProps } from '@interfaces/element-props'
-import { cn } from '@lib/class-names'
+import { type IDivProps } from '@interfaces/div-props'
+import { cn } from '@lib/shadcn-utils'
 import {
   useEffect,
   useId,
@@ -12,7 +12,7 @@ import {
   type ReactElement,
 } from 'react'
 
-interface IProps extends IElementProps {
+interface IProps extends IDivProps {
   panels: ReactElement[]
   p?: number
   limits?: [number, number]
@@ -62,7 +62,7 @@ export function HSplitPane({
 
     //console.log(x, p, cp, dragging.current.p)
 
-    const rcp = sticky.filter((x) => Math.abs(cp - x) < STICKY_SENSITIVITY)
+    const rcp = sticky.filter(x => Math.abs(cp - x) < STICKY_SENSITIVITY)
 
     if (rcp.length > 0) {
       cp = rcp[0]!
@@ -149,7 +149,7 @@ export function HSplitPane({
     }
   }
 
-  useMouseMoveListener((e) => onMouseMove(e as MouseEvent))
+  useMouseMoveListener(e => onMouseMove(e as MouseEvent))
   useMouseUpListener(onMouseUp)
 
   return (
@@ -173,7 +173,7 @@ export function HSplitPane({
         id={`hitbox-h-${id}`}
         className={cn(
           TRANS_COLOR_CLS,
-          'group m-1 flex shrink-0 grow-0 cursor-ew-resize flex-row items-center justify-center rounded-full p-1 outline-none hover:bg-ring/20 focus-visible:bg-ring/20',
+          'group m-1 flex shrink-0 grow-0 cursor-ew-resize flex-row items-center justify-center rounded-full p-1 outline-hidden hover:bg-ring/20 focus-visible:bg-ring/20',
           [isDragging, 'bg-ring/20']
         )}
         onMouseDown={onMouseDown}

@@ -1,9 +1,7 @@
 import { BASE_COMPONENT_CLS } from '@/theme'
 import { type ILinkProps } from '@interfaces/link-props'
 
-import { cn } from '@lib/class-names'
-
-import { forwardRef, type ForwardedRef } from 'react'
+import { cn } from '@lib/shadcn-utils'
 
 export const UNDERLINE_CLS =
   'data-[underline=true]:underline data-[underline=hover]:hover:underline data-[underline=false]:decoration-transparent'
@@ -12,15 +10,25 @@ const LINK_CLS = cn(BASE_COMPONENT_CLS, UNDERLINE_CLS)
 
 export const BLANK_TARGET = '_blank'
 
-export const BaseLink = forwardRef(function BaseLink(
-  { href, selected = false, target, className, children, ...props }: ILinkProps,
-  ref: ForwardedRef<HTMLAnchorElement>
-) {
+export function BaseLink({
+  ref,
+  title,
+  href = '',
+  selected = false,
+  target,
+  className,
+  children,
+  ...props
+}: ILinkProps) {
   if (!props['aria-label']) {
-    props['aria-label'] = `Click to visit ${href}`
+    if (title) {
+      props['aria-label'] = title
+    } else {
+      props['aria-label'] = `Click to visit ${href}`
+    }
   }
 
-  // Test if we use the NextJS router link or a regular a for external urls
+  // External links open in new windows, app urls do not.
   const isExt = href.startsWith('http') || href.startsWith('www')
 
   if (isExt && !target) {
@@ -31,7 +39,8 @@ export const BaseLink = forwardRef(function BaseLink(
     <a
       ref={ref}
       href={href}
-      data-selected={selected}
+      title={title}
+      data-checked={selected}
       className={cn(LINK_CLS, className)}
       target={target}
       {...props}
@@ -39,4 +48,4 @@ export const BaseLink = forwardRef(function BaseLink(
       {children}
     </a>
   )
-})
+}

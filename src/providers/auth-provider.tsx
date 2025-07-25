@@ -1,16 +1,16 @@
-import { APP_ACCOUNT_SIGNED_IN_URL } from '@/lib/edb/edb'
 import { Auth0Provider } from '@auth0/auth0-react'
 import type { IChildrenProps } from '@interfaces/children-props'
+import { APP_ACCOUNT_AUTH0_CALLBACK_URL } from '@lib/edb/edb'
 
 const AUTH0_DOMAIN = process.env.NEXT_PUBLIC_AUTH0_DOMAIN!
 const AUTH0_CLIENT_ID = process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID!
 const AUTH0_AUDIENCE = process.env.NEXT_PUBLIC_AUTH0_AUDIENCE!
 
-interface IProps extends IChildrenProps {
-  callbackUrl?: string
-}
+// interface IProps extends IChildrenProps {
+//   callbackUrl?: string
+// }
 
-export function AuthProvider({ callbackUrl = '', children }: IProps) {
+export function AuthProvider({ children }: IChildrenProps) {
   // const [url, setUrl] = useState('')
 
   // useEffect(() => {
@@ -24,10 +24,13 @@ export function AuthProvider({ callbackUrl = '', children }: IProps) {
       authorizationParams={{
         audience: AUTH0_AUDIENCE,
         //scope: 'openid name email',
-        redirect_uri: callbackUrl ? callbackUrl : APP_ACCOUNT_SIGNED_IN_URL,
+        redirect_uri: APP_ACCOUNT_AUTH0_CALLBACK_URL,
         // this is needed to force passwordless login, otherwise
         // the default social login page is shown
-        connection: 'email',
+        //connection: 'email',
+      }}
+      onRedirectCallback={appState => {
+        console.log('Redirecting to:', appState?.targetUrl)
       }}
     >
       {children}

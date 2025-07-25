@@ -1,5 +1,5 @@
-import type { IFieldMap } from '@/interfaces/field-map'
-import axios, { RawAxiosRequestHeaders } from 'axios'
+import type { IFieldMap } from '@interfaces/field-map'
+import axios, { type RawAxiosRequestHeaders } from 'axios'
 import { JSON_HEADERS } from './urls'
 
 export type RequestType = 'GET' | 'POST'
@@ -33,6 +33,8 @@ class FetchRequest implements IHttpRequest {
     const credentials: RequestCredentials = options?.withCredentials
       ? 'include'
       : 'same-origin'
+
+    //console.log('url', url)
 
     return fetch(url, {
       method: 'GET',

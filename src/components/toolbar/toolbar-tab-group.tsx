@@ -1,8 +1,10 @@
-import { VCenterRow } from '@/components/layout/v-center-row'
-import { EdbSettingsContext } from '@/lib/edb/edb-settings-provider'
+import { VCenterRow } from '@layout/v-center-row'
+
 import { type IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/class-names'
-import { useContext, type ReactNode } from 'react'
+import { useEdbSettings } from '@lib/edb/edb-settings'
+import { cn } from '@lib/shadcn-utils'
+import { type ReactNode } from 'react'
+import { BaseRow } from '../layout/base-row'
 import { HCenterCol } from '../layout/h-center-col'
 
 interface IProps extends IDivProps {
@@ -16,23 +18,27 @@ export function ToolbarTabGroup({
   children,
   ...props
 }: IProps) {
-  const { settings } = useContext(EdbSettingsContext)
+  const { settings } = useEdbSettings()
   let ret: ReactNode = (
-    <VCenterRow
+    <BaseRow
       id={name}
       aria-label={name}
-      className={cn('shrink-0 text-xs', className)}
+      className={cn('shrink-0 text-xs items-stretch', className)}
       {...props}
     >
       {children}
-    </VCenterRow>
+    </BaseRow>
   )
 
-  if (settings.toolbars.groups.labels.show && title) {
+  if (settings.toolbars.groups.labels.show && title !== undefined) {
     ret = (
-      <HCenterCol className="gap-y-0.5">
+      <HCenterCol className="gap-y-1 grow justify-between">
         {ret}
-        <span className="text-xxs text-foreground/40">{title}</span>
+        <VCenterRow className="h-4">
+          <span className="text-xxs text-foreground/75 tracking-wide">
+            {title}
+          </span>
+        </VCenterRow>
       </HCenterCol>
     )
   }

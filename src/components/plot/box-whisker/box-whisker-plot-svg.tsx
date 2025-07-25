@@ -1,20 +1,20 @@
 import { useMemo } from 'react'
 
-import { type IElementProps } from '@interfaces/element-props'
+import { type IDivProps } from '@interfaces/div-props'
 
+import { Axis, YAxis } from '@/components/plot/axis'
 import {
   DEFAULT_STROKE_PROPS,
   NO_FILL_PROPS,
-  type IFillProps,
+  type IColorProps,
   type IStrokeProps,
-} from '@/components/plot/svg-props'
-import type { LeftRightPos } from '@/components/side'
-import { COLOR_RED } from '@/consts'
-import { Axis, YAxis } from '@components/plot/axis'
+} from '@components/plot/svg-props'
+import type { LeftRightPos } from '@components/side'
+import { COLOR_RED } from '@lib/color/color'
 
-export type IBoxWhiskerMode = LeftRightPos | 'Full'
+export type IBoxWhiskerMode = LeftRightPos | 'full'
 
-interface IProps extends IElementProps {
+interface IProps extends IDivProps {
   data: number[]
   q1: number
   median: number
@@ -24,7 +24,7 @@ interface IProps extends IElementProps {
   height?: number
   stroke?: IStrokeProps
   medianStroke?: IStrokeProps
-  fill?: IFillProps
+  fill?: IColorProps
   mode?: IBoxWhiskerMode
 }
 
@@ -39,7 +39,7 @@ export function BoxWhiskerPlotSvg({
   stroke = { ...DEFAULT_STROKE_PROPS, width: 1.5 },
   medianStroke = { ...DEFAULT_STROKE_PROPS, color: COLOR_RED, width: 1.5 },
   fill = NO_FILL_PROPS,
-  mode = 'Full',
+  mode = 'full',
 }: IProps) {
   const svg = useMemo(() => {
     const iqr = q3 - q1
@@ -47,9 +47,9 @@ export function BoxWhiskerPlotSvg({
     const q0 = q1 - iqr15
     const q4 = q3 + iqr15
 
-    const w1 = data.filter((x) => x >= q0)
+    const w1 = data.filter(x => x >= q0)
     // reverse copy of array
-    const w2 = data.toReversed().filter((x) => x <= q4)
+    const w2 = data.toReversed().filter(x => x <= q4)
 
     //console.log(maxHeightMap)
 
@@ -60,9 +60,9 @@ export function BoxWhiskerPlotSvg({
         .setLength(height)
     }
 
-    const x1 = mode === 'Right' ? 0 : -0.5 * width
+    const x1 = mode === 'right' ? 0 : -0.5 * width
 
-    const x2 = mode === 'Left' ? 0 : width / 2
+    const x2 = mode === 'left' ? 0 : width / 2
 
     const y1 = yax.domainToRange(w1[0]!)
     const y2 = yax.domainToRange(w2[0]!)

@@ -1,7 +1,7 @@
-import { ChevronRightIcon } from '@components/icons/chevron-right-icon'
-import { V_SCROLL_CHILD_CLS, VScrollPanel } from '@components/v-scroll-panel'
+import { VScrollPanel } from '@components/v-scroll-panel'
+import { ChevronRightIcon } from '@icons/chevron-right-icon'
 import type { IChildrenProps } from '@interfaces/children-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
 import { cva, type VariantProps } from 'class-variance-authority'
 import {
@@ -14,7 +14,33 @@ import {
   type ReactNode,
 } from 'react'
 
-const Accordion = AccordionPrimitive.Root
+//const Accordion = AccordionPrimitive.Root
+
+export const accordionVariants = cva('flex flex-col', {
+  variants: {
+    variant: {
+      default: 'gap-y-0.5',
+      settings: 'gap-y-2',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+})
+
+const Accordion = forwardRef<
+  ComponentRef<typeof AccordionPrimitive.Root>,
+  ComponentPropsWithoutRef<typeof AccordionPrimitive.Root> &
+    VariantProps<typeof accordionVariants>
+>(({ variant, className, ...props }, ref) => (
+  <AccordionPrimitive.Root
+    ref={ref}
+    id="accordion"
+    className={accordionVariants({ variant, className })}
+    {...props}
+  />
+))
+Accordion.displayName = 'Accordion'
 
 interface IScrollAccordionProps extends IChildrenProps {
   value: string[]
@@ -23,8 +49,8 @@ interface IScrollAccordionProps extends IChildrenProps {
 
 export const ScrollAccordion = forwardRef<
   HTMLDivElement,
-  IScrollAccordionProps
->(({ value, onValueChange, className, children }, ref) => {
+  IScrollAccordionProps & VariantProps<typeof accordionVariants>
+>(({ value, onValueChange, variant, className, children }, ref) => {
   const [_value, setValue] = useState<string[]>([])
 
   useEffect(() => {
@@ -36,14 +62,15 @@ export const ScrollAccordion = forwardRef<
   const v = onValueChange ? value : _value
 
   return (
-    <VScrollPanel asChild={true} ref={ref} className="grow">
+    <VScrollPanel ref={ref} className={cn('grow', className)}>
       <Accordion
         type="multiple"
         value={v}
+        variant={variant}
         // if user species onChange, let them handle which
         // accordions are open, otherwise we'll do it internally
         onValueChange={onValueChange ?? setValue}
-        className={cn(V_SCROLL_CHILD_CLS, 'flex flex-col gap-y-0.5', className)}
+        //className={cn(V_SCROLL_CHILD_CLS, 'flex flex-col gap-y-0.5', className)}
       >
         {children}
       </Accordion>
@@ -85,17 +112,27 @@ const AccordionItem = forwardRef<
   ComponentRef<typeof AccordionPrimitive.Item>,
   ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
 >(({ className, ...props }, ref) => (
-  <AccordionPrimitive.Item ref={ref} className={className} {...props} />
+  <AccordionPrimitive.Item
+    ref={ref}
+    className={cn('flex flex-col gap-y-1', className)}
+    {...props}
+  />
 ))
 AccordionItem.displayName = 'AccordionItem'
 
+//  [&>div]:pl-2
 export const accordionTriggerVariants = cva(
-  'flex flex-1 items-center truncate justify-between p-1.5 font-semibold hover:underline [&[data-state=open]>svg]:rotate-90',
+  cn(
+    'outline-2 outline-transparent focus-visible:outline-ring data-[focus=true]:outline-ring -outline-offset-2 rounded-theme',
+    'flex flex-row grow items-center truncate justify-between font-semibold hover:underline [&[data-state=open]>svg]:rotate-90'
+  ),
   {
     variants: {
       variant: {
-        default: 'rounded-theme hover:bg-muted',
-        basic: '',
+        default:
+          'hover:bg-muted/50 pl-2 pr-1 py-1.5 data-[state=open]:bg-muted/75',
+        settings: 'py-1.5',
+        none: '',
       },
     },
     defaultVariants: {
@@ -134,7 +171,7 @@ const AccordionTrigger = forwardRef<
         {...props}
       >
         {children}
-        {/* <ChevronDownIcon className="h-4 w-4 shrink-0 text-foreground/50 transition-transform duration-200" /> */}
+
         {!rightChildren && (
           <ChevronRightIcon className="trans-transform" style={arrowStyle} />
         )}
@@ -161,15 +198,28 @@ const AccordionTrigger = forwardRef<
 )
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName
 
+export const accordionContentVariants = cva('flex flex-col', {
+  variants: {
+    variant: {
+      default: 'px-1 pb-4 mb-2 gap-y-1 border-b border-border/50',
+      settings: 'pl-2 pt-2 pb-4 gap-y-1',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+})
+
 const AccordionContent = forwardRef<
   ComponentRef<typeof AccordionPrimitive.Content>,
-  ComponentPropsWithoutRef<typeof AccordionPrimitive.Content> & {
-    innerClassName?: string
-    innerStyle?: CSSProperties
-  }
+  ComponentPropsWithoutRef<typeof AccordionPrimitive.Content> &
+    VariantProps<typeof accordionContentVariants> & {
+      innerClassName?: string
+      innerStyle?: CSSProperties
+    }
 >(
   (
-    { className, innerClassName = 'gap-y-1', innerStyle, children, ...props },
+    { variant, className, innerClassName, innerStyle, children, ...props },
     ref
   ) => (
     <AccordionPrimitive.Content
@@ -181,7 +231,10 @@ const AccordionContent = forwardRef<
       {...props}
     >
       <div
-        className={cn('flex flex-col p-2', innerClassName)}
+        className={accordionContentVariants({
+          variant,
+          className: innerClassName,
+        })}
         style={innerStyle}
       >
         {children}

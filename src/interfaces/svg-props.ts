@@ -1,3 +1,3 @@
-import { type PropsWithoutRef, type SVGAttributes } from 'react'
+import { type ComponentProps } from 'react'
 
-export type ISVGProps = PropsWithoutRef<SVGAttributes<SVGElement>>
+export type ISVGProps = ComponentProps<'svg'>

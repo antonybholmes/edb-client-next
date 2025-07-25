@@ -1,17 +1,18 @@
-import { type IElementProps } from '@interfaces/element-props'
-import { cn } from '@lib/class-names'
+import { type IDivProps } from '@interfaces/div-props'
+import { cn } from '@lib/shadcn-utils'
 
 import { HEADER_LINKS } from '@/menus'
 import { BaseLink, BLANK_TARGET } from '@components/link/base-link'
 import { ThemeLink } from '@components/link/theme-link'
-import { Button } from '@components/shadcn/ui/themed/button'
 
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { FOCUS_RING_CLS } from '@/theme'
 import { TAILWIND_MEDIA_SM, useWindowSize } from '@hooks/use-window-size'
 import type { ILinkProps } from '@interfaces/link-props'
+import { VCenterRow } from '@layout/v-center-row'
+import { useEdbSettings } from '@lib/edb/edb-settings'
 import { useState, type MouseEventHandler } from 'react'
 import { GripIcon } from '../icons/grip-icon'
+import { IconButton } from '../shadcn/ui/themed/icon-button'
 import {
   Popover,
   PopoverContent,
@@ -20,14 +21,14 @@ import {
 import { HeaderMenuSheet } from './header-menu-sheet'
 
 export const SIDE_OVERLAY_CLS = cn(
-  'fixed inset-0 z-overlay z-(--z-overlay) bg-overlay/30 backdrop-blur-sm duration-500 ease-in-out',
+  'fixed inset-0 z-overlay z-(--z-overlay) bg-overlay/30 backdrop-blur-xs duration-500 ease-in-out',
   'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0'
 )
 
 export const BASE_MUTED_THEME_CLS = cn(
   FOCUS_RING_CLS,
   'flex flex-row items-center shrink-0 grow-0 justify-start gap-3 p-2 px-3 group rounded-theme',
-  'border border-transparent hover:bg-background/50 hover:border-border hover:shadow-sm'
+  'border border-transparent hover:bg-background/50 hover:border-border hover:shadow-xs'
 )
 
 const ICON_CLS =
@@ -45,16 +46,18 @@ export function ModuleButtonLink({
   )
 }
 
-interface IHeaderLinksProps extends IElementProps {
+export interface IHeaderLinksProps extends IDivProps {
   tab?: string
-  onClick: MouseEventHandler<HTMLAnchorElement>
+  handleClick: MouseEventHandler<HTMLAnchorElement>
 }
 
-export function HeaderLinks({ onClick, className }: IHeaderLinksProps) {
+export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
+  const { settings } = useEdbSettings()
+
   // sort alphabetically and ignore sections
-  const items = HEADER_LINKS.map((section) => {
+  const items = HEADER_LINKS.map(section => {
     return section.modules.filter(
-      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()
@@ -74,9 +77,11 @@ export function HeaderLinks({ onClick, className }: IHeaderLinksProps) {
         <li key={moduleIndex}>
           <ModuleButtonLink
             href={module.slug}
-            onClick={onClick}
+            onClick={handleClick}
             aria-label={module.name}
-            target="_blank"
+            target={
+              settings.modules.links.openInNewWindow ? BLANK_TARGET : undefined
+            }
             title={module.description}
           >
             <div
@@ -108,7 +113,7 @@ export function HeaderLinks({ onClick, className }: IHeaderLinksProps) {
   )
 }
 
-interface IFileMenu extends IElementProps {
+interface IFileMenu extends IDivProps {
   tab?: string
 }
 
@@ -117,25 +122,24 @@ export function HeaderMenu({ tab = '' }: IFileMenu) {
 
   const windowSize = useWindowSize()
 
-  if (windowSize.width > TAILWIND_MEDIA_SM) {
+  if (windowSize.w > TAILWIND_MEDIA_SM) {
     return (
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button
+          <IconButton
             id="header-menu-popover-button"
-            variant="header"
-            size="none"
+            variant="muted"
+            size="2xl"
             rounded="none"
             ripple={false}
-            selected={open}
+            checked={open}
             aria-label={open ? 'Close Menu' : 'Open Menu'}
-            className="w-11 h-11 aspect-square"
           >
             <GripIcon />
-          </Button>
+          </IconButton>
         </PopoverTrigger>
-        <PopoverContent className="ml-1">
-          <HeaderLinks tab={tab} onClick={() => setOpen(false)} />
+        <PopoverContent className="ml-1" variant="glass">
+          <HeaderLinks tab={tab} handleClick={() => setOpen(false)} />
 
           <VCenterRow className="p-4 gap-x-5">
             <ThemeLink

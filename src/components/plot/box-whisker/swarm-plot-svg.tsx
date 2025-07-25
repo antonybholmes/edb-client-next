@@ -1,26 +1,26 @@
 import { useMemo } from 'react'
 
-import { type IElementProps } from '@interfaces/element-props'
+import { type IDivProps } from '@interfaces/div-props'
 
+import { Axis, YAxis } from '@/components/plot/axis'
 import {
   DEFAULT_FILL_PROPS,
   NO_STROKE_PROPS,
-  type IFillProps,
+  type IColorProps,
   type IStrokeProps,
-} from '@/components/plot/svg-props'
-import { Axis, YAxis } from '@components/plot/axis'
+} from '@components/plot/svg-props'
 import { histogram } from '@lib/math/histogram'
 import { range } from '@lib/math/range'
 import type { IBoxWhiskerMode } from './box-whisker-plot-svg'
 
-interface IProps extends IElementProps {
+interface IProps extends IDivProps {
   data: number[]
 
   yax?: Axis
   width?: number
   height?: number
   r?: number
-  fill?: IFillProps
+  fill?: IColorProps
   stroke?: IStrokeProps
   mode?: IBoxWhiskerMode
 }
@@ -49,7 +49,7 @@ export function SwarmPlotSvg({
         .setLength(height)
     }
 
-    if (mode !== 'Full') {
+    if (mode !== 'full') {
       // draw points in half the width
 
       width *= 0.5
@@ -60,7 +60,7 @@ export function SwarmPlotSvg({
     return (
       <>
         {hist
-          .filter((bin) => bin.values.length > 0)
+          .filter(bin => bin.values.length > 0)
           .map((bin, bi) => {
             // width required for all circles in bin
             let w = bin.values.length * d
@@ -74,10 +74,10 @@ export function SwarmPlotSvg({
             let x1 = 0
 
             switch (mode) {
-              case 'Right':
+              case 'right':
                 x1 = 0
                 break
-              case 'Left':
+              case 'left':
                 x1 = -(0.5 * (w + width))
                 break
               default:
@@ -92,9 +92,9 @@ export function SwarmPlotSvg({
             // other value offset by 1 and reverse it to create a
             // v shape of dots around the center of the plot
             values = [
-              ...range(0, values.length, 2).map((i) => values[i]!),
+              ...range(0, values.length, 2).map(i => values[i]!),
               ...range(1, values.length, 2)
-                .map((i) => values[i]!)
+                .map(i => values[i]!)
                 .toReversed(),
             ]
 

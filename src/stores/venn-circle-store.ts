@@ -1,4 +1,5 @@
-import { APP_ID, COLOR_BLACK, COLOR_WHITE } from '@/consts'
+import { APP_ID } from '@/consts'
+import { COLOR_BLACK, COLOR_WHITE } from '@lib/color/color'
 import { persistentAtom } from '@nanostores/persistent'
 import { useStore } from '@nanostores/react'
 
@@ -27,8 +28,8 @@ export const DEFAULT_SETTINGS: VennCirclesMap = {
 //   colors: JSON.stringify(DEFAULT_VENN_CIRCLES_PROPS),
 // })
 
-const localStorageMap = persistentAtom<VennCirclesMap>(
-  `${APP_ID}-venn-circles-v1`,
+const vennAtom = persistentAtom<VennCirclesMap>(
+  `${APP_ID}:module:venn:venn-circles:settings:v1`,
   {
     ...DEFAULT_SETTINGS,
   },
@@ -43,7 +44,7 @@ export function useVennCircleStore(): [
   (colorMap: VennCirclesMap) => void,
   () => void,
 ] {
-  const settings = useStore(localStorageMap)
+  const settings = useStore(vennAtom)
 
   // const [colorMap, setColorMap] = useState<IVennCirclesMap>(
   //   new Map(DEFAULT_VENN_CIRCLES_PROPS),
@@ -79,7 +80,7 @@ export function useVennCircleStore(): [
   // }
 
   function update(settings: VennCirclesMap) {
-    localStorageMap.set(settings)
+    vennAtom.set(settings)
   }
 
   function reset() {

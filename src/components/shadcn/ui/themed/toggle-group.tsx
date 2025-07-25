@@ -1,4 +1,4 @@
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group'
 import { type VariantProps } from 'class-variance-authority'
 import {

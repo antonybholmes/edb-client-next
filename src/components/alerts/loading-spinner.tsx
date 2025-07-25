@@ -1,49 +1,42 @@
 import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/class-names'
-import { motion } from 'motion/react'
+import { cn } from '@lib/shadcn-utils'
+import gsap from 'gsap'
+import { useEffect, useRef } from 'react'
 
 interface ILoadingSpinnerProps extends IIconProps {
   gradient?: string
 }
 
-export default function LoadingSpinner({
+export function LoadingSpinner({
   w = 'w-6',
-  gradient = 'from-input/25 to-theme',
+  gradient = 'from-background from-25% to-theme dark:to-foreground to-90%',
   className,
 }: ILoadingSpinnerProps) {
+  const boxRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    gsap.to(boxRef.current, {
+      rotation: 360,
+      duration: 1.5,
+      repeat: -1, // infinite
+      ease: 'none', // linear motion
+      transformOrigin: '50% 50%', // optional: set rotation center
+    })
+  }, [])
+
   return (
-    <motion.div
+    <span
+      ref={boxRef}
       className={cn(
         ICON_CLS,
-        'flex flex-row items-center justify-center rounded-full bg-[conic-gradient(var(--tw-gradient-stops))]',
+        'flex flex-row items-center justify-center rounded-full bg-conic relative p-[4px]',
         gradient,
         w,
         className
       )}
-      // Animate the rotation property
-      animate={{ rotate: 360 }}
-      // Transition to define the looping behavior
-      transition={{
-        repeat: Infinity, // Loop the animation infinitely
-        repeatType: 'loop', // Continuous looping
-        duration: 1.25, // Duration of one spin (1 second)
-        ease: 'linear', // Linear easing for a smooth rotation
-      }}
-      // Styling the spinner
-      style={{
-        padding: 4,
-        //background: "conic-gradient(from 0deg, blue, lightblue, white)",
-      }}
-
-      //     width: "50px", // Set the width of the spinner
-      //     height: "50px", // Set the height of the spinner
-      //     borderRadius: "50%", // Make the element circular
-      //     border: "5px solid lightgray", // Light gray border
-      //     borderTop: "5px solid blue", // Blue color on top to create a spinning effect
-      //     display: "inline-block",
-      //   }}
     >
-      <span className="bg-white rounded-full w-full h-full" />
-    </motion.div>
+      <span className="bg-background   rounded-full w-full h-full z-10 relative" />
+      <span className="absolute rounded-full w-[4px] h-[4px] aspect-square top-0 left-1/2 -translate-x-1/2 z-0 bg-linear-to-r bg-theme dark:bg-foreground" />
+    </span>
   )
 }

@@ -1,11 +1,10 @@
-import { type IChildrenProps } from '@interfaces/children-props'
-
+import type { IChildrenProps } from '@interfaces/children-props'
+import { createContext } from 'react'
 import {
   DEFAULT_EDB_SETTINGS,
-  useEdbSettingsStore,
+  useEdbSettings,
   type IEdbSettings,
-} from '@/lib/edb/edb-settings-store'
-import { createContext } from 'react'
+} from './edb-settings'
 
 export const EdbSettingsContext = createContext<{
   settings: IEdbSettings
@@ -18,7 +17,7 @@ export const EdbSettingsContext = createContext<{
 })
 
 export function EdbSettingsProvider({ children }: IChildrenProps) {
-  const { settings, updateSettings, resetSettings } = useEdbSettingsStore()
+  const { settings, updateSettings, resetSettings } = useEdbSettings()
 
   return (
     <EdbSettingsContext.Provider

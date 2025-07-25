@@ -1,4 +1,5 @@
-import { cn } from '@lib/class-names'
+import { VCenterRow } from '@layout/v-center-row'
+import { cn } from '@lib/shadcn-utils'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { cva, type VariantProps } from 'class-variance-authority'
 import {
@@ -18,7 +19,8 @@ const DialogPortal = DialogPrimitive.Portal
 const DialogClose = DialogPrimitive.Close
 
 const BG_CLS = cn(
-  'fixed inset-0 z-overlay z-(--z-overlay) data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+  'fixed inset-0 z-overlay z-(--z-overlay) data-[state=open]:animate-in data-[state=closed]:animate-out',
+  'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
   'flex flex-row items-center justifiy-center'
 )
 
@@ -26,24 +28,66 @@ export const overlayVariants = cva(BG_CLS, {
   variants: {
     overlayVariant: {
       default: '',
-      blurred: 'backdrop-blur',
+      blurred: 'backdrop-blur-sm',
     },
     overlayColor: {
-      default: 'bg-foreground/10',
+      default: 'bg-foreground/20',
       trans: '',
     },
   },
   defaultVariants: {
     overlayVariant: 'default',
-    overlayColor: 'trans',
+    overlayColor: 'default',
   },
 })
 
-export const dialogHeaderVariants = cva('px-4 py-2 rounded-t-xl', {
+export const contentVariants = cva(
+  cn(
+    'fixed left-[50%] top-[50%] z-(--z-modal)',
+    'translate-x-[-50%] translate-y-[-50%]',
+    'flex flex-col rounded-xl shadow-3xl'
+  ),
+  {
+    variants: {
+      contentVariant: {
+        default: 'bg-background',
+        glass: GLASS_CLS,
+        trans: '',
+      },
+      animation: {
+        default:
+          'duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out',
+        none: '',
+      },
+      motion: {
+        default:
+          'data-[state=open]:slide-in-from-top-10 data-[state=closed]:slide-out-to-top-10',
+        none: '',
+      },
+      fade: {
+        default: 'data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0',
+        none: '',
+      },
+      zoom: {
+        default: 'data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95',
+        none: '',
+      },
+    },
+    defaultVariants: {
+      contentVariant: 'default',
+      animation: 'default',
+      motion: 'default',
+      fade: 'default',
+      zoom: 'default',
+    },
+  }
+)
+
+export const dialogHeaderVariants = cva('px-5 py-3', {
   variants: {
     headerVariant: {
       default: '',
-      opaque: 'bg-background',
+      opaque: 'bg-background m-4',
     },
   },
   defaultVariants: {
@@ -51,11 +95,12 @@ export const dialogHeaderVariants = cva('px-4 py-2 rounded-t-xl', {
   },
 })
 
-export const dialogBodyVariants = cva('px-4', {
+export const dialogBodyVariants = cva('', {
   variants: {
     bodyVariant: {
-      default: '',
-      opaque: 'bg-background shadow-sm',
+      default: 'px-5',
+      opaque: 'bg-background',
+      card: 'mx-5 p-5 bg-background rounded-card border border-border/50',
     },
   },
   defaultVariants: {
@@ -63,10 +108,11 @@ export const dialogBodyVariants = cva('px-4', {
   },
 })
 
-export const dialogFooterVariants = cva('p-4 pt-6 rounded-b-xl', {
+export const dialogFooterVariants = cva('', {
   variants: {
     footerVariant: {
-      default: '',
+      default: 'p-5 pt-10',
+      line: 'mt-10 mx-5 py-5 border-t border-border/50',
       opaque: 'bg-background',
     },
   },
@@ -93,29 +139,6 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 // data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]
 // data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]
 
-export const contentVariants = cva(
-  cn(
-    'fixed left-[50%] top-[50%] z-modal z-(--z-modal) flex translate-x-[-50%] translate-y-[-50%] flex-col',
-    'duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out',
-    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-    'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
-    'data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]',
-    'data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[60%] rounded-xl'
-  ),
-  {
-    variants: {
-      contentVariant: {
-        default: 'bg-background shadow-4xl border border-border',
-        glass: cn('border border-border', GLASS_CLS),
-        trans: '',
-      },
-    },
-    defaultVariants: {
-      contentVariant: 'default',
-    },
-  }
-)
-
 const DialogContent = forwardRef<
   ComponentRef<typeof DialogPrimitive.Content>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.Content> &
@@ -127,6 +150,10 @@ const DialogContent = forwardRef<
       contentVariant,
       overlayVariant,
       overlayColor,
+      animation,
+      fade,
+      motion,
+      zoom,
       className,
       children,
       ...props
@@ -141,13 +168,20 @@ const DialogContent = forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          contentVariants({ contentVariant, className }),
+          contentVariants({
+            contentVariant,
+            animation,
+            motion,
+            fade,
+            zoom,
+            className,
+          }),
           className
         )}
         {...props}
       >
         {children}
-        {/* <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-foreground/50">
+        {/* <DialogPrimitive.Close className="absolute right-4 top-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-muted data-[state=open]:text-foreground/50">
         <Cross2Icon className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close> */}
@@ -161,13 +195,7 @@ const DialogHeader = ({
   className,
   ...props
 }: HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      'flex flex-col space-y-1.5 text-center sm:text-left',
-      className
-    )}
-    {...props}
-  />
+  <VCenterRow className={cn('justify-between', className)} {...props} />
 )
 DialogHeader.displayName = 'DialogHeader'
 
@@ -185,7 +213,7 @@ const DialogTitle = forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn(' font-medium leading-none capitalize', className)}
+    className={cn('text-base font-bold leading-none truncate', className)}
     {...props}
   />
 ))

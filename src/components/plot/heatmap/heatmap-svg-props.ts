@@ -1,9 +1,10 @@
-import type { IDim } from '@/interfaces/dim'
-import { BWR_CMAP, type ColorMap } from '@/lib/colormap'
+import type { IDim } from '@interfaces/dim'
+import { COLOR_MAPS } from '@lib/color/colormap'
 
-import type { LeftRightPos } from '@/components/side'
-import { COLOR_BLACK } from '@/consts'
-import type { ILim } from '../axis'
+import type { LeftRightPos } from '@components/side'
+import { COLOR_BLACK } from '@lib/color/color'
+
+import type { ILim } from '@/lib/math/math'
 import {
   DEFAULT_STROKE_PROPS,
   type ColorBarPos,
@@ -20,7 +21,7 @@ export interface IBlock {
 
 export const DOT_PLOT_PERCENT_TABLE = 'Group percentages'
 
-export const DEFAULT_COLORBAR_SIZE: IDim = { width: 160, height: 16 }
+export const DEFAULT_COLORBAR_SIZE: IDim = { w: 160, h: 14 }
 
 export const LEGEND_BLOCK_SIZE: IBlock = { w: 20, h: 20 }
 
@@ -29,6 +30,8 @@ const BLOCK_SIZE: IBlock = { w: 24, h: 24 }
 const GROUPS_SIZE: IBlock = { w: 24, h: 16 }
 
 export const MIN_INNER_HEIGHT: number = 200
+
+export type DotPlotMode = 'groups' | 'size'
 
 // interface IGridProps {
 //   show: boolean
@@ -48,15 +51,34 @@ export const DEFAULT_TREE_PROPS: ITreeProps = {
   stroke: { ...DEFAULT_STROKE_PROPS },
 }
 
+export type HeatmapMode = 'heatmap' | 'dot'
+
 export interface IHeatMapDisplayOptions {
+  cells: {
+    values: {
+      color: string
+      autoColor: {
+        on: boolean
+        threshold: number
+      }
+      dp: number
+      show: boolean
+      filter: {
+        on: boolean
+        value: number
+      }
+    }
+    border: IStrokeProps
+  }
   //margin: { top: number; right: number; bottom: number; left: number }
   blockSize: IBlock
   grid: IStrokeProps
   border: IStrokeProps
-  style: 'Square' | 'Dot'
+  mode: HeatmapMode
   range: ILim
   rowLabels: ILabelProps & {
     position: LeftRightPos
+    showMetadata: boolean
   }
   colLabels: ILabelProps & {
     position: TopBottomPos
@@ -80,11 +102,23 @@ export interface IHeatMapDisplayOptions {
     position: LegendPos
     width: number
     stroke: IStrokeProps
+    title: {
+      show: boolean
+      text: string
+    }
   }
-  dotLegend: {
+  dot: {
     sizes: number[]
     lim: ILim
-    type: string
+    mode: DotPlotMode
+    useOriginalValuesForSizes: boolean
+    legend: {
+      show: boolean
+      title: {
+        show: boolean
+        text: string
+      }
+    }
   }
   groups: {
     keepUnused: boolean
@@ -94,8 +128,8 @@ export interface IHeatMapDisplayOptions {
     border: IStrokeProps
   }
   padding: number
-  scale: number
-  cmap: ColorMap
+  zoom: number
+  cmap: keyof typeof COLOR_MAPS
 }
 
 export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
@@ -104,22 +138,25 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
   grid: { ...DEFAULT_STROKE_PROPS, color: '#EEEEEE' },
   border: { ...DEFAULT_STROKE_PROPS },
   range: [-3, 3],
-  style: 'Square',
+  mode: 'heatmap',
   rowLabels: {
-    position: 'Right',
-    width: 150,
+    position: 'right',
+    width: 120,
     show: true,
     color: COLOR_BLACK,
+    showMetadata: true,
+    alpha: 1,
   },
   colLabels: {
-    position: 'Top',
+    position: 'top',
     width: 150,
     isColored: true,
     show: true,
     color: COLOR_BLACK,
+    alpha: 1,
   },
   colorbar: {
-    position: 'Right',
+    position: 'right',
     size: { ...DEFAULT_COLORBAR_SIZE },
     width: 100,
     show: true,
@@ -133,22 +170,51 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
     grid: { ...DEFAULT_STROKE_PROPS, show: false },
   },
   legend: {
-    position: 'Upper Right',
+    position: 'upper-right',
     width: 200,
     show: true,
     stroke: { ...DEFAULT_STROKE_PROPS },
+    title: {
+      show: true,
+      text: 'Groups',
+    },
   },
-  dotLegend: {
+  dot: {
     sizes: [25, 50, 75, 100],
     lim: [0, 100],
-    type: '%',
+    mode: 'groups',
+    legend: {
+      show: true,
+      title: {
+        show: true,
+        text: 'Dot Size',
+      },
+    },
+    useOriginalValuesForSizes: true,
   },
-  rowTree: { ...DEFAULT_TREE_PROPS, position: 'Left' },
+  rowTree: { ...DEFAULT_TREE_PROPS, position: 'left' },
   colTree: {
     ...DEFAULT_TREE_PROPS,
-    position: 'Top',
+    position: 'top',
   },
   padding: 10,
-  scale: 1,
-  cmap: BWR_CMAP,
+  zoom: 1,
+  cmap: 'BWR v2',
+  cells: {
+    values: {
+      show: false,
+      dp: 1,
+      filter: {
+        on: false,
+        value: 1,
+      },
+
+      color: COLOR_BLACK,
+      autoColor: {
+        on: true,
+        threshold: 150,
+      },
+    },
+    border: { ...DEFAULT_STROKE_PROPS, show: false },
+  },
 }

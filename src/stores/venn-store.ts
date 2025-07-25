@@ -1,4 +1,5 @@
-import { APP_ID, COLOR_WHITE } from '@/consts'
+import { APP_ID } from '@/consts'
+import { COLOR_WHITE } from '@lib/color/color'
 import { persistentAtom } from '@nanostores/persistent'
 import { useStore } from '@nanostores/react'
 
@@ -46,7 +47,7 @@ const DEFAULT_SETTINGS: IVennStore = {
 //const localStorageMap = persistentMap("venn:", { ...DEFAULT_VENN_STORE })
 
 const localStorageMap = persistentAtom<IVennStore>(
-  `${APP_ID}-venn-v1`,
+  `${APP_ID}:module:venn:settings:v1`,
   {
     ...DEFAULT_SETTINGS,
   },

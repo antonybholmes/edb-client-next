@@ -1,6 +1,6 @@
-import { HCenterCol } from '@/components/layout/h-center-col'
 import { TRANS_COLOR_CLS, TRANS_OPACITY_CLS } from '@/theme'
-import { cn } from '@lib/class-names'
+import { HCenterCol } from '@layout/h-center-col'
+import { cn } from '@lib/shadcn-utils'
 import { nanoid } from 'nanoid'
 import { useState } from 'react'
 import { PanelResizeHandle } from 'react-resizable-panels'
@@ -19,7 +19,7 @@ export const RESIZE_DOT_CLS = cn(
 
 const CLS = cn(
   TRANS_COLOR_CLS,
-  'group m-1 flex shrink-0 grow-0 cursor-ew-resize flex-col items-center justify-center gap-y-1 outline-none rounded-full'
+  'group m-1 flex shrink-0 grow-0 cursor-ew-resize flex-col items-center justify-center gap-y-1 outline-hidden rounded-full'
 )
 
 export function HResizeHandle({
@@ -28,13 +28,13 @@ export function HResizeHandle({
 }: React.ComponentProps<typeof PanelResizeHandle>) {
   const [drag, setDrag] = useState(false)
 
-  const resizeDotCls = cn(RESIZE_DOT_CLS, [drag, 'opacity-100'])
+  const resizeDotCls = cn(RESIZE_DOT_CLS, drag && 'opacity-100')
 
   return (
     <PanelResizeHandle
       id={id ?? `h-resize-handle-${nanoid()}`}
-      className={cn(CLS, [drag, 'bg-muted', RESIZE_DRAG_CLS])}
-      onDragging={(drag) => {
+      className={cn(CLS, drag ? 'bg-muted' : RESIZE_DRAG_CLS)}
+      onDragging={drag => {
         setDrag(drag)
       }}
       {...props}

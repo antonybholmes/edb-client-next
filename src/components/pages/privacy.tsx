@@ -1,7 +1,7 @@
-'use client'
+// 'use client'
 
-import { BaseCol } from '@/components/layout/base-col'
-import { ContentDiv } from '@/components/layout/content-div'
+import { BaseCol } from '@layout/base-col'
+import { ContentDiv } from '@layout/content-div'
 
 import { HeaderLayout } from '@layouts/header-layout'
 import { CoreProviders } from '@providers/core-providers'

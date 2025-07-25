@@ -1,6 +1,7 @@
-import { BaseCol } from '@/components/layout/base-col'
-import { Button } from '@components/shadcn/ui/themed/button'
+import { BaseCol } from '@layout/base-col'
+import { Button, type IButtonProps } from '@themed/button'
 
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import {
   contentVariants,
   Dialog,
@@ -13,14 +14,13 @@ import {
   dialogHeaderVariants,
   DialogTitle,
   overlayVariants,
-} from '@components/shadcn/ui/themed/dialog'
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+} from '@themed/dialog'
 
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { APP_NAME, TEXT_CANCEL, TEXT_CLOSE, TEXT_OK } from '@/consts'
 import { type IChildrenProps } from '@interfaces/children-props'
 import { type IOpenChange } from '@interfaces/open-change'
-import { cn } from '@lib/class-names'
+import { VCenterRow } from '@layout/v-center-row'
+import { cn } from '@lib/shadcn-utils'
 import type { CSSProperties, ReactNode } from 'react'
 
 import type { VariantProps } from 'class-variance-authority'
@@ -37,6 +37,11 @@ interface IOSButtonRowProps extends IChildrenProps {
   buttonOrder?: ButtonOrder
 }
 
+export type DialogResponse = (
+  response: string,
+  data?: Record<string, unknown>
+) => void | undefined
+
 export function OSButtonRow({
   buttonOrder = 'auto',
   className,
@@ -49,7 +54,7 @@ export function OSButtonRow({
         buttonOrder === 'primary-last'
       }
       className={cn(
-        'gap-x-2 data-[rev=true]:flex-row-reverse data-[rev=true]:justify-start data-[rev=false]:justify-end',
+        'gap-x-2.5 data-[rev=true]:flex-row-reverse data-[rev=true]:justify-start data-[rev=false]:justify-end',
         className
       )}
     >
@@ -58,8 +63,25 @@ export function OSButtonRow({
   )
 }
 
+export function CloseButton({ ...props }: IButtonProps) {
+  return (
+    <Button
+      variant="muted"
+      size="icon-lg"
+      rounded="full"
+      title={TEXT_CLOSE}
+      {...props}
+    >
+      <CloseIcon />
+    </Button>
+  )
+}
+
 export interface IModalProps extends IOpenChange, IChildrenProps {
-  onReponse?: (response: string) => void
+  title?: ReactNode
+  description?: string
+  onResponse?: DialogResponse
+  buttons?: string[]
   buttonOrder?: 'auto' | 'primary-first' | 'primary-last'
   modalType?: 'Default' | 'Warning' | 'Error'
   bodyCls?: string | undefined
@@ -72,11 +94,8 @@ export interface IOKCancelDialogProps
     VariantProps<typeof dialogHeaderVariants>,
     VariantProps<typeof dialogBodyVariants>,
     VariantProps<typeof dialogFooterVariants> {
-  title?: string
-  description?: string
-  mainVariant?: string
-  onReponse?: (response: string) => void
-  buttons?: string[]
+  onResponse?: (response: string) => void
+
   showClose?: boolean
   headerChildren?: ReactNode
   leftHeaderChildren?: ReactNode
@@ -90,17 +109,16 @@ export function OKCancelDialog({
   description = '',
   open = true,
   onOpenChange = () => {},
-  onReponse = () => {},
+  onResponse = () => {},
   showClose = true,
   buttons = [TEXT_OK, TEXT_CANCEL],
   buttonOrder = 'auto',
-  mainVariant = 'theme',
   headerVariant = 'default',
   bodyVariant = 'default',
   footerVariant = 'default',
-  bodyCls = 'gap-y-0.5',
+  bodyCls = 'gap-y-1',
   modalType = 'Default',
-  className = 'w-11/12 sm:w-3/4 md:w-8/12 lg:w-1/2 3xl:w-1/3',
+  className = 'w-11/12 sm:w-3/4 md:w-8/12 xl:w-2/5 2xl:w-1/3',
   headerChildren,
   leftHeaderChildren,
   rightHeaderChildren,
@@ -110,7 +128,7 @@ export function OKCancelDialog({
   ...props
 }: IOKCancelDialogProps) {
   function _resp(resp: string) {
-    onReponse?.(resp)
+    onResponse?.(resp)
   }
 
   return (
@@ -122,29 +140,16 @@ export function OKCancelDialog({
       >
         <DialogHeader
           style={headerStyle}
-          className={dialogHeaderVariants({ headerVariant })}
+          className={cn('-mr-2', dialogHeaderVariants({ headerVariant }))}
         >
-          <VCenterRow className="-mr-2 justify-between">
-            <VCenterRow className="gap-x-2">
-              {leftHeaderChildren && leftHeaderChildren}
-              <DialogTitle>{title}</DialogTitle>
-              {headerChildren && headerChildren}
-            </VCenterRow>
-            <VCenterRow className="gap-x-2">
-              {rightHeaderChildren && rightHeaderChildren}
-              {showClose && (
-                <Button
-                  variant="accent"
-                  size="icon-lg"
-                  rounded="full"
-                  pad="none"
-                  onClick={() => _resp(TEXT_CANCEL)}
-                  title={TEXT_CLOSE}
-                >
-                  <CloseIcon strokeWidth={2} w="w-6" />
-                </Button>
-              )}
-            </VCenterRow>
+          <VCenterRow className="gap-x-2">
+            {leftHeaderChildren && leftHeaderChildren}
+            <DialogTitle>{title}</DialogTitle>
+            {headerChildren && headerChildren}
+          </VCenterRow>
+          <VCenterRow className="gap-x-2">
+            {rightHeaderChildren && rightHeaderChildren}
+            {showClose && <CloseButton onClick={() => _resp(TEXT_CANCEL)} />}
           </VCenterRow>
           <VisuallyHidden asChild>
             <DialogDescription>
@@ -153,14 +158,22 @@ export function OKCancelDialog({
           </VisuallyHidden>
         </DialogHeader>
 
-        <BaseCol className={dialogBodyVariants({ bodyVariant })}>
-          <VCenterRow className="gap-x-4">
-            {modalType === 'Warning' && (
-              <WarningIcon stroke="stroke-yellow-400" />
-            )}
-            <BaseCol className={cn(bodyCls, 'grow')}>{children}</BaseCol>
+        {modalType === 'Warning' && (
+          <VCenterRow
+            className={cn('gap-x-4 grow', dialogBodyVariants({ bodyVariant }))}
+          >
+            <WarningIcon />
+            <BaseCol className={cn('grow', bodyCls)}>{children}</BaseCol>
           </VCenterRow>
-        </BaseCol>
+        )}
+
+        {modalType === 'Default' && (
+          <BaseCol
+            className={cn('grow', dialogBodyVariants({ bodyVariant }), bodyCls)}
+          >
+            {children}
+          </BaseCol>
+        )}
 
         <DialogFooter
           className={dialogFooterVariants({
@@ -171,30 +184,12 @@ export function OKCancelDialog({
           <VCenterRow className="grow">
             {leftFooterChildren && leftFooterChildren}
           </VCenterRow>
-          {buttons.length > 0 && (
-            <OSButtonRow buttonOrder={buttonOrder}>
-              <Button
-                variant={mainVariant}
-                onClick={() => _resp(buttons[0]!)}
-                className="w-24"
-                size="lg"
-              >
-                {buttons[0]}
-              </Button>
 
-              {buttons.slice(1).map((button, bi) => (
-                <Button
-                  key={bi}
-                  onClick={() => _resp(button)}
-                  className="w-24"
-                  size="lg"
-                  variant="secondary"
-                >
-                  {button}
-                </Button>
-              ))}
-            </OSButtonRow>
-          )}
+          <DialogButtons
+            buttons={buttons}
+            buttonOrder={buttonOrder}
+            onResponse={_resp}
+          />
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -216,5 +211,44 @@ export function OKCancelDialog({
     //     </DialogCancel>
     //   </VCenterRow>
     // </TextDialog>
+  )
+}
+
+export function DialogButtons({
+  buttons = [],
+  buttonOrder = 'auto',
+  onResponse = () => {},
+}: {
+  buttons?: string[]
+  buttonOrder?: ButtonOrder
+  onResponse?: DialogResponse
+}) {
+  if (!buttons || buttons.length === 0) {
+    return null
+  }
+
+  return (
+    <OSButtonRow buttonOrder={buttonOrder}>
+      <Button
+        variant="theme"
+        onClick={() => onResponse?.(buttons[0]!)}
+        className="w-24"
+        size="lg"
+      >
+        {buttons[0]}
+      </Button>
+
+      {buttons.slice(1).map((button, bi) => (
+        <Button
+          key={bi}
+          onClick={() => onResponse?.(button)}
+          className="w-24"
+          size="lg"
+          variant="ghost"
+        >
+          {button}
+        </Button>
+      ))}
+    </OSButtonRow>
   )
 }

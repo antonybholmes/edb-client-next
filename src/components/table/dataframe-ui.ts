@@ -1,5 +1,7 @@
+import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
 import { type BaseDataFrame } from '@lib/dataframe/base-dataframe'
 import {
+  kmeans,
   log,
   meanFilter,
   medianFilter,
@@ -9,12 +11,27 @@ import {
   rowZScore,
   stdevFilter,
 } from '@lib/dataframe/dataframe-utils'
-import type { HistoryAction } from '@providers/history-provider'
-import type { Dispatch } from 'react'
+type HistoryAddStep = (description: string, sheets: BaseDataFrame[]) => void
+
+export function dfKmeans(
+  df: AnnotationDataFrame | null,
+  addStep: HistoryAddStep,
+  clusters: number = 5
+): AnnotationDataFrame | null {
+  if (!df) {
+    return null
+  }
+
+  df = kmeans(df, clusters)[0]
+
+  addStep(df.name, [df])
+
+  return df
+}
 
 export function dfLog(
   df: BaseDataFrame | null,
-  history: Dispatch<HistoryAction>,
+  addStep: HistoryAddStep,
   base: 2 | 10 | 'ln',
   add: number = 0
 ): BaseDataFrame | null {
@@ -24,11 +41,7 @@ export function dfLog(
 
   df = log(df, base, add)
 
-  history({
-    type: 'add-step',
-    description: df.name,
-    sheets: [df],
-  })
+  addStep(df.name, [df])
 
   return df
 }
@@ -42,26 +55,22 @@ export function dfLog(
 
 export function dfTranspose(
   df: BaseDataFrame | null,
-  history: Dispatch<HistoryAction>
+  addStep: HistoryAddStep
 ): BaseDataFrame | null {
   if (!df) {
     return null
   }
 
-  df = df.t().setName('Transpose')
+  df = df.t.setName('Transpose')
 
-  history({
-    type: 'add-step',
-    description: df.name,
-    sheets: [df],
-  })
+  addStep(df.name, [df])
 
   return df
 }
 
 export function dfRowZScore(
   df: BaseDataFrame | null,
-  history: Dispatch<HistoryAction>
+  addStep: HistoryAddStep
 ): BaseDataFrame | null {
   if (!df) {
     return null
@@ -69,37 +78,29 @@ export function dfRowZScore(
 
   df = rowZScore(df)
 
-  history({
-    type: 'add-step',
-    description: df.name,
-    sheets: [df],
-  })
+  addStep(df.name, [df])
 
   return df
 }
 
-export function dfStdev(
-  df: BaseDataFrame | null,
-  history: Dispatch<HistoryAction>
-) {
+export function dfStdev(df: BaseDataFrame | null, addStep: HistoryAddStep) {
   if (!df) {
     return
   }
 
   const sd = rowStdev(df)
 
-  df = df.copy().setCol('Row Stdev', sd)
+  df = df.copy()
+  ;(df as AnnotationDataFrame).rowMetaData.setCol('Row Stdev', sd, true)
 
-  history({
-    type: 'add-step',
-    description: 'Add row stdev',
-    sheets: [df],
-  })
+  //df.setCol('Row Stdev', sd, true)
+
+  addStep(df.name, [df])
 }
 
 export function dfStdevFilter(
   df: BaseDataFrame | null,
-  history: Dispatch<HistoryAction>,
+  addStep: HistoryAddStep,
   top = 1000
 ): BaseDataFrame | null {
   if (!df) {
@@ -108,37 +109,25 @@ export function dfStdevFilter(
 
   df = stdevFilter(df, top)
 
-  history({
-    type: 'add-step',
-    description: df.name,
-    sheets: [df],
-  })
-
+  addStep(df.name, [df])
   return df
 }
 
-export function dfMean(
-  df: BaseDataFrame | null,
-  history: Dispatch<HistoryAction>
-) {
+export function dfMean(df: BaseDataFrame | null, addStep: HistoryAddStep) {
   if (!df) {
     return
   }
 
   const sd = rowMean(df)
 
-  df = df.copy().setCol('Row Mean', sd)
+  df = df.copy().setCol('Row Mean', sd, true)
 
-  history({
-    type: 'add-step',
-    description: 'Add row mean',
-    sheets: [df],
-  })
+  addStep(df.name, [df])
 }
 
 export function dfMeanFilter(
   df: BaseDataFrame | null,
-  history: Dispatch<HistoryAction>,
+  addStep: HistoryAddStep,
   top = 1000
 ): BaseDataFrame | null {
   if (!df) {
@@ -147,37 +136,26 @@ export function dfMeanFilter(
 
   df = meanFilter(df, top)
 
-  history({
-    type: 'add-step',
-    description: df.name,
-    sheets: [df],
-  })
+  addStep(df.name, [df])
 
   return df
 }
 
-export function dfMedian(
-  df: BaseDataFrame | null,
-  history: Dispatch<HistoryAction>
-) {
+export function dfMedian(df: BaseDataFrame | null, addStep: HistoryAddStep) {
   if (!df) {
     return
   }
 
   const sd = rowMedian(df)
 
-  df = df.copy().setCol('Row Median', sd)
+  df = df.copy().setCol('Row Median', sd, true)
 
-  history({
-    type: 'add-step',
-    description: 'Add row median',
-    sheets: [df],
-  })
+  addStep(df.name, [df])
 }
 
 export function dfMedianFilter(
   df: BaseDataFrame | null,
-  history: Dispatch<HistoryAction>,
+  addStep: HistoryAddStep,
   top = 1000
 ): BaseDataFrame | null {
   if (!df) {
@@ -186,11 +164,7 @@ export function dfMedianFilter(
 
   df = medianFilter(df, top)
 
-  history({
-    type: 'add-step',
-    description: df.name,
-    sheets: [df],
-  })
+  addStep(df.name, [df])
 
   return df
 }

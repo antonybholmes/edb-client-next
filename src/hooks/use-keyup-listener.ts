@@ -1,4 +1,4 @@
-import { useWindowListener } from './use-window-listener'
+import { useWindowListener } from './window-listener'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useKeyUpListener(handler: (e: Event) => void) {

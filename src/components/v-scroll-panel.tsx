@@ -1,27 +1,25 @@
-import { forwardRef, type ForwardedRef, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
-import { BaseCol } from '@/components/layout/base-col'
 import type { IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/class-names'
+import { BaseCol } from '@layout/base-col'
+import { cn } from '@lib/shadcn-utils'
 
 export const V_SCROLL_CHILD_CLS = 'absolute w-full'
 
-export const VScrollPanel = forwardRef(function VScrollPanel(
-  {
-    asChild = false,
-    innerClassName,
-    className,
-    children,
-    ...props
-  }: IDivProps & {
-    // vscrollpane relies on the component being absolute
-    // so asChild is for components that are already absolute
-    // and don't require a parent wrapper to provide this.
-    asChild?: boolean
-    innerClassName?: string
-  },
-  ref: ForwardedRef<HTMLDivElement>
-) {
+export function VScrollPanel({
+  ref,
+  asChild = false,
+  innerClassName,
+  className,
+  children,
+  ...props
+}: IDivProps & {
+  // vscrollpane relies on the component being absolute
+  // so asChild is for components that are already absolute
+  // and don't require a parent wrapper to provide this.
+  asChild?: boolean
+  innerClassName?: string
+}) {
   let ret: ReactNode = children
 
   if (!asChild) {
@@ -36,7 +34,7 @@ export const VScrollPanel = forwardRef(function VScrollPanel(
     <div
       ref={ref}
       className={cn(
-        'relative overflow-y-auto overflow-x-hidden custom-scrollbar min-w-0 min-h-0 w-full h-full grow',
+        'relative overflow-y-auto overflow-x-hidden custom-scrollbar min-w-0 min-h-0  grow',
         className
       )}
       {...props}
@@ -44,4 +42,4 @@ export const VScrollPanel = forwardRef(function VScrollPanel(
       {ret}
     </div>
   )
-})
+}

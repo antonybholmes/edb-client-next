@@ -1,5 +1,5 @@
 import type { IClusterGroup } from '../cluster-group'
-import { randomHexColor } from '../color'
+import { randomHexColor } from '../color/color'
 import { nanoid } from '../utils'
 
 export interface IGeneset {

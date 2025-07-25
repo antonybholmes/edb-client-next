@@ -1,5 +1,5 @@
 import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import { Play } from 'lucide-react'
 
 export function PlayIcon({

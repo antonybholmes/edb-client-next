@@ -1,5 +1,5 @@
-import { LollipopQueryPage } from '@components/pages/modules/lollipop/lollipop'
-import MODULE_INFO from '@components/pages/modules/lollipop/module.json'
+import { LollipopQueryPage } from '@components/pages/apps/lollipop/lollipop-page'
+import MODULE_INFO from '@components/pages/apps/lollipop/module.json'
 import { makeMetaData } from '@lib/metadata'
 
 export const metadata = makeMetaData(MODULE_INFO.name)

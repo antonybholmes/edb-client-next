@@ -1,6 +1,6 @@
 import { type ILink } from '@interfaces/link'
 import { type IMouseProps } from '@interfaces/mouse-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import { useState } from 'react'
 import { BaseLink } from '../link/base-link'
 

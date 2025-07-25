@@ -1,13 +1,25 @@
 import { type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import { Info } from 'lucide-react'
 
 export function InfoIcon({
   w = 'w-5 h-5',
   stroke = 'stroke-foreground',
+  fill,
   className,
-  strokeWidth = 1.5,
+  strokeWidth = 2,
+  iconMode,
 }: IIconProps) {
+  if (iconMode === 'colorful') {
+    stroke = 'stroke-theme/50'
+    fill = 'fill-white'
+  }
+
+  if (iconMode === 'bw') {
+    stroke = 'stroke-foreground'
+    fill = 'fill-background'
+  }
+
   return (
     // <svg
     //   xmlns="http://www.w3.org/2000/svg"
@@ -36,7 +48,7 @@ export function InfoIcon({
     // </svg>
 
     <Info
-      className={cn(stroke, w, className)}
+      className={cn(stroke, fill, w, className)}
       stroke=""
       strokeWidth={strokeWidth}
     />

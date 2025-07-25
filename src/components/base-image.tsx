@@ -1,10 +1,10 @@
-import { type IFieldMap } from '../interfaces/field-map'
+import { type IFieldMap } from '@interfaces/field-map'
 
-import { type IElementProps } from '@interfaces/element-props'
+import { type IDivProps } from '@interfaces/div-props'
 import { type IImageProps } from '@interfaces/image-props'
 import { parse } from '../lib/path'
 
-export interface IProps extends IImageProps, IElementProps {
+export interface IProps extends IImageProps, IDivProps {
   pictureStyle?: IFieldMap
 }
 
@@ -27,7 +27,7 @@ export function getSrcSet(
   sizes: [number, number][]
 ): string {
   return sizes
-    .map((s) => `${dir}/opt/${name}-${s[0]}x${s[1]}.${ext} ${s[0]}w`)
+    .map(s => `${dir}/opt/${name}-${s[0]}x${s[1]}.${ext} ${s[0]}w`)
     .join(', ')
 }
 

@@ -1,7 +1,7 @@
 import { ButtonLink } from '@components/link/button-link'
 import { type ILinkProps } from '@interfaces/link-props'
 
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 
 export const OUTLINE_BUTTON_LINK_CLS = `border`
 
@@ -11,7 +11,12 @@ export function OutlineButtonLink({
   ...props
 }: ILinkProps) {
   return (
-    <ButtonLink className={cn(OUTLINE_BUTTON_LINK_CLS, className)} {...props}>
+    <ButtonLink
+      variant="accent"
+      size="lg"
+      className={cn(OUTLINE_BUTTON_LINK_CLS, className)}
+      {...props}
+    >
       {children}
     </ButtonLink>
   )

@@ -1,20 +1,21 @@
 import { TRANS_COLOR_CLS } from '@/theme'
 import { useMouseMoveListener } from '@hooks/use-mousemove-listener'
 import { useMouseUpListener } from '@hooks/use-mouseup-listener'
-import { type IElementProps } from '@interfaces/element-props'
-import { cn } from '@lib/class-names'
+import { type IDivProps } from '@interfaces/div-props'
+import { cn } from '@lib/shadcn-utils'
 import {
+  Children,
   useEffect,
   useId,
   useRef,
   useState,
   type KeyboardEvent,
-  type ReactElement,
 } from 'react'
+import { BaseCol } from '../layout/base-col'
 import { STICKY_SENSITIVITY } from './h-split-pane'
 
-interface IProps extends IElementProps {
-  panels: ReactElement[]
+interface IProps extends IDivProps {
+  //panels: ReactElement[]
   p?: number
   limits?: [number, number]
   hideTriggers?: [number, number]
@@ -24,7 +25,6 @@ interface IProps extends IElementProps {
 }
 
 export function VSplitPane({
-  panels,
   p = 0.8,
   limits = [0.1, 0.9],
   hideTriggers = [0.05, 0.95],
@@ -32,6 +32,7 @@ export function VSplitPane({
   keyInc = 0.05,
   sticky = [0.2, 0.8],
   className,
+  children,
 }: IProps) {
   const dragging = useRef<{ y: number; h: number; p: number } | null>(null)
   const [isDrag, setIsDrag] = useState(false)
@@ -40,6 +41,12 @@ export function VSplitPane({
   const refC2 = useRef<HTMLDivElement>(null)
   const [focus, setFocus] = useState(false)
   const id = useId()
+
+  const panels = Children.toArray(children)
+
+  if (panels.length < 2) {
+    return null
+  }
 
   useEffect(() => {
     moveByFraction(p)
@@ -59,7 +66,7 @@ export function VSplitPane({
 
     //console.log(y, cp, dragging.current.p, rect.height)
 
-    const rcp = sticky.filter((x) => Math.abs(cp - x) < STICKY_SENSITIVITY)
+    const rcp = sticky.filter(x => Math.abs(cp - x) < STICKY_SENSITIVITY)
 
     if (rcp.length > 0) {
       cp = rcp[0]!
@@ -146,14 +153,14 @@ export function VSplitPane({
     }
   }
 
-  useMouseMoveListener((e) => onMouseMove(e as MouseEvent))
+  useMouseMoveListener(e => onMouseMove(e as MouseEvent))
   useMouseUpListener(onMouseUp)
 
   return (
     <div
       ref={ref}
       className={cn(
-        'flex flex-col overflow-hidden',
+        'flex flex-col overflow-hidden grow',
         [isDrag, 'cursor-ns-resize'],
         className
       )}
@@ -166,29 +173,25 @@ export function VSplitPane({
       >
         {panels[0]}
       </div>
-      <div
+      <BaseCol
         id={`hitbox-v-${id}`}
         className={cn(
           TRANS_COLOR_CLS,
-          'group m-1 flex shrink-0 grow-0 cursor-ns-resize flex-col items-center justify-center rounded-full p-1 outline-none hover:bg-ring/20 focus-visible:bg-ring/20',
-          [isDrag, 'bg-ring/20']
+          'group m-1  shrink-0 grow-0 cursor-ns-resize justify-center p-1 outline-hidden'
         )}
         onMouseDown={onMouseDown}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(true)}
         onKeyDown={onKeyDown}
+        data-is-drag={isDrag}
         tabIndex={0}
       >
         <div
           id="divider"
-          className={cn(
-            TRANS_COLOR_CLS,
-            'pointer-events-none group-hover:bg-ring group-focus-visible:bg-ring',
-            [isDrag, 'bg-ring']
-          )}
-          style={{ height: 1 }}
+          className="pointer-events-none group-hover:bg-ring group-focus-visible:bg-ring data-[is-drag=true]:bg-ring h-[2px] trans-color grow"
+          data-is-drag={isDrag}
         />
-      </div>
+      </BaseCol>
       <div
         id="bottom-pane"
         ref={refC2}

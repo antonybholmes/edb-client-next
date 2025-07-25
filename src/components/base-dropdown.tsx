@@ -1,4 +1,4 @@
-import { type IElementProps } from '@interfaces/element-props'
+import { type IDivProps } from '@interfaces/div-props'
 
 import { Children, useState } from 'react'
 import {
@@ -9,7 +9,7 @@ import {
 
 export const DROPDOWN_CLS = 'left-0'
 
-interface IProps extends IElementProps {
+interface IProps extends IDivProps {
   open?: boolean
   onOpenChange?: (open: boolean) => void
   menuClassName?: string

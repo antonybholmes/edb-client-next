@@ -1,17 +1,17 @@
-import { BaseCol } from '@/components/layout/base-col'
+import { BaseCol } from '@layout/base-col'
 import { Children, useEffect, useState } from 'react'
 
 import { TEXT_DRAG_HERE } from '@/consts'
 import { DRAG_OUTLINE_CLS } from '@/theme'
 import type { IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import { PlusIcon } from './icons/plus-icon'
 import { VCenterCol } from './layout/v-center-col'
 
-const ANIMATION_DURATION_MS = 200
+const ANIMATION_DURATION_MS = 100
 
 const FILE_DRAG_CLS = cn(
-  'flex flex-col justify-center items-center w-full h-full absolute z-overlay z-(--z-overlay) grow bg-background rounded-theme overflow-hidden trans-opacity backdrop-blur items-center gap-y-2 p-2 text-center',
+  'flex flex-col justify-center items-center w-full h-full absolute z-(--z-overlay) grow bg-background rounded-theme overflow-hidden trans-opacity backdrop-blur-sm items-center gap-y-2 p-2 text-center',
   DRAG_OUTLINE_CLS
 )
 
@@ -56,18 +56,18 @@ export function FileDrag({
         className
       )}
       data-drag={true}
-      onDrop={(event) => {
+      onDrop={event => {
         event.preventDefault()
 
         onFileDrop?.(Array.from(event.dataTransfer.files))
       }}
-      onDragOver={(event) => {
+      onDragOver={event => {
         event.preventDefault()
       }}
-      onDragEnter={(event) => {
+      onDragEnter={event => {
         event.preventDefault()
       }}
-      onDragLeave={(event) => {
+      onDragLeave={event => {
         event.preventDefault()
 
         onDragLeave?.(event)
@@ -172,26 +172,28 @@ export function FileDropPanel({
   }
 
   function _onFileDrop(files: File[]) {
-    console.log('drop', files)
-    onFileDrop?.(files)
-
+    console.log('drag over')
     _onDragLeave()
+    onFileDrop?.(files)
   }
 
   return (
     <BaseCol
-      onDrop={(event) => {
+      onDrop={event => {
         event.preventDefault()
       }}
-      onDragOver={(event) => {
+      onDragOver={event => {
         event.preventDefault()
       }}
-      onDragEnter={(event) => {
+      onDragEnter={event => {
+        if (isDragging) {
+          return
+        }
         event.preventDefault()
         setIsDragging(true)
         setRegisterDragging(true)
       }}
-      onDragLeave={(event) => {
+      onDragLeave={event => {
         event.preventDefault()
       }}
       className={cn('grow relative', className)}

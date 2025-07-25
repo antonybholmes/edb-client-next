@@ -1,7 +1,8 @@
-import type { LeftRightPos } from '@/components/side'
 import { SVG_CRISP_EDGES } from '@/consts'
+import type { LeftRightPos } from '@components/side'
 import { ZERO_POS } from '@interfaces/pos'
 import { range } from 'd3'
+import { Fragment } from 'react'
 import type { IColLabelsSvgProps, ITreeSvgProps } from './col-svg'
 
 export function RowTreeSvg({
@@ -18,10 +19,10 @@ export function RowTreeSvg({
       shapeRendering={SVG_CRISP_EDGES}
     >
       {tree.coords.map((coords, ri) => {
-        const p = range(4).map((i) => ({
+        const p = range(4).map(i => ({
           y: coords[i]!.x * width,
           x:
-            mode === 'Left'
+            mode === 'left'
               ? height - coords[i]!.y * height
               : coords[i]!.y * height,
         }))
@@ -50,22 +51,34 @@ export function RowLabelsSvg({
 }: IColLabelsSvgProps) {
   const blockSize = props.blockSize
   const halfH = blockSize.h / 2
+  const rowMetaN = range(
+    0,
+    props.rowLabels.showMetadata ? df.rowMetaData.shape[1] : 1
+  )
+  const isLeft = props.rowLabels.position === 'left'
 
   return (
     <g transform={`translate(${pos.x}, ${pos.y})`}>
       {leaves.map((row, ri) => {
         return (
-          <text
-            key={ri}
-            x={0}
-            y={ri * blockSize.h + halfH}
-            fill={props.rowLabels.color}
-            dominantBaseline="central"
-            fontSize="smaller"
-            textAnchor={props.rowLabels.position === 'Left' ? 'end' : 'start'}
-          >
-            {df.rowNames[row]}
-          </text>
+          <Fragment key={row}>
+            {rowMetaN.map(rmi => {
+              return (
+                <text
+                  key={`${row}:${rmi}`}
+                  id={`${row}:${rmi}`}
+                  x={rmi * props.rowLabels.width * (isLeft ? -1 : 1)}
+                  y={ri * blockSize.h + halfH}
+                  fill={props.rowLabels.color}
+                  dominantBaseline="central"
+                  fontSize="smaller"
+                  textAnchor={isLeft ? 'end' : 'start'}
+                >
+                  {df.rowMetaData.str(row, rmi)}
+                </text>
+              )
+            })}
+          </Fragment>
         )
       })}
     </g>

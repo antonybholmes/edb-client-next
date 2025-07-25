@@ -1,43 +1,34 @@
 import { FOCUS_INSET_RING_CLS } from '@/theme'
 import { type ILinkProps } from '@interfaces/link-props'
-import { cn } from '@lib/class-names'
-import {
-  forwardRef,
-  useEffect,
-  useRef,
-  useState,
-  type ForwardedRef,
-} from 'react'
+import { cn } from '@lib/shadcn-utils'
+import { useEffect, useRef, useState } from 'react'
 import { BaseLink } from './base-link'
 
-import {
-  buttonVariants2,
-  RIPPLE_CLS,
-  type IButtonVariantProps,
-} from '@components/shadcn/ui/themed/button'
 import type { IPos } from '@interfaces/pos'
+import { buttonVariants, RIPPLE_CLS } from '@themed/button'
+import type { VariantProps } from 'class-variance-authority'
 import gsap from 'gsap'
 
-export interface IButtonLinkProps extends ILinkProps, IButtonVariantProps {}
+export interface IButtonLinkProps
+  extends ILinkProps,
+    VariantProps<typeof buttonVariants> {}
 
-export const ButtonLink = forwardRef(function ButtonLink(
-  {
-    variant = 'default',
-    size = 'default',
-    rounded = 'default',
-    ring = 'default',
-    justify = 'default',
-    items = 'default',
-    pad = 'default',
-    className,
-    onMouseUp,
-    onMouseDown,
-    onMouseLeave,
-    children,
-    ...props
-  }: IButtonLinkProps,
-  ref: ForwardedRef<HTMLAnchorElement>
-) {
+export function ButtonLink({
+  ref,
+  variant,
+  size,
+  rounded,
+  ring,
+  justify,
+  items,
+  flow,
+  className,
+  onMouseUp,
+  onMouseDown,
+  onMouseLeave,
+  children,
+  ...props
+}: IButtonLinkProps) {
   const rippleRef = useRef<HTMLSpanElement>(null)
   const [clickProps, setClickProps] = useState<IPos>({ x: -1, y: -1 })
 
@@ -75,7 +66,6 @@ export const ButtonLink = forwardRef(function ButtonLink(
   }
 
   function _onMouseDown(e: React.MouseEvent<HTMLAnchorElement>) {
-    console.log(e.nativeEvent.offsetX, e.nativeEvent.offsetY)
     setClickProps({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
     onMouseDown?.(e)
   }
@@ -88,14 +78,14 @@ export const ButtonLink = forwardRef(function ButtonLink(
   return (
     <BaseLink
       ref={ref}
-      className={buttonVariants2({
+      className={buttonVariants({
         variant,
         justify,
         items,
         size,
         rounded,
         ring,
-        pad,
+        flow,
         className: cn(
           FOCUS_INSET_RING_CLS,
           'relative overflow-hidden',
@@ -111,4 +101,4 @@ export const ButtonLink = forwardRef(function ButtonLink(
       <span ref={rippleRef} className={RIPPLE_CLS} />
     </BaseLink>
   )
-})
+}

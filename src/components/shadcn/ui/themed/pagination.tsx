@@ -1,10 +1,7 @@
 import { ICON_BUTTON_CLS } from '@/theme'
-import { ChevronRightIcon } from '@components/icons/chevron-right-icon'
-import {
-  buttonVariants2,
-  type IButtonProps,
-} from '@components/shadcn/ui/themed/button'
+import { ChevronRightIcon } from '@icons/chevron-right-icon'
 import { cn } from '@lib/shadcn-utils'
+import { buttonVariants, type IButtonProps } from '@themed/button'
 import { forwardRef, type ComponentProps } from 'react'
 
 const Pagination = ({ className, ...props }: ComponentProps<'nav'>) => (
@@ -49,14 +46,14 @@ const PaginationLink = ({
   <button
     aria-current={isActive ? 'page' : undefined}
     className={cn(
-      buttonVariants2({
+      buttonVariants({
         variant: 'muted',
         justify: 'center',
         size,
       }),
       className
     )}
-    data-selected={isActive}
+    data-checked={isActive}
     data-outline={true}
     {...props}
   />

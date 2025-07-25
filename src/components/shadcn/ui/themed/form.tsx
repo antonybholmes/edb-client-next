@@ -1,16 +1,9 @@
 import * as LabelPrimitive from '@radix-ui/react-label'
 import { Slot } from '@radix-ui/react-slot'
-import {
-  Controller,
-  FormProvider,
-  useFormContext,
-  type ControllerProps,
-  type FieldPath,
-  type FieldValues,
-} from 'react-hook-form'
+ 
 
-import { Label } from '@components/shadcn/ui/themed/label'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
+import { Label } from '@themed/label'
 import {
   createContext,
   forwardRef,
@@ -20,6 +13,7 @@ import {
   type ComponentRef,
   type HTMLAttributes,
 } from 'react'
+import { Controller, ControllerProps, FieldPath, FieldValues, FormProvider, useFormContext } from 'react-hook-form'
 
 const Form = FormProvider
 
@@ -179,5 +173,6 @@ export {
   FormItem,
   FormLabel,
   FormMessage,
-  useFormField,
+  useFormField
 }
+

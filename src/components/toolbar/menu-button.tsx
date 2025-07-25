@@ -1,21 +1,22 @@
-import { type IButtonProps } from '@components/shadcn/ui/themed/button'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
+import { type IButtonProps } from '@themed/button'
 
-import { forwardRef, type ForwardedRef } from 'react'
 import { BaseMenuButton } from './base-menu-button'
 
-export const MenuButton = forwardRef(function MenuButton(
-  { className, children, ...props }: IButtonProps,
-  ref: ForwardedRef<HTMLButtonElement>
-) {
+export function MenuButton({
+  ref,
+  className,
+  children,
+  ...props
+}: IButtonProps) {
   return (
     <BaseMenuButton
       ref={ref}
-      size="xxl"
+      size="2xl"
       className={cn('w-full', className)}
       {...props}
     >
       {children}
     </BaseMenuButton>
   )
-})
+}

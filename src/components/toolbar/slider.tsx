@@ -1,4 +1,4 @@
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 
 import { SVG_CRISP_EDGES } from '@/consts'
 import { FOCUS_RING_CLS, INPUT_BORDER_CLS } from '@/theme'
@@ -135,7 +135,7 @@ export function Slider({
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
         onMouseDown={onMouseDown}
-        onKeyDown={(e) => {
+        onKeyDown={e => {
           //console.log(e)
           switch (e.code) {
             case 'ArrowUp':
@@ -155,7 +155,7 @@ export function Slider({
         tabIndex={0}
       >
         <span
-          className="transition-color trans-300 absolute top-1/2 z-10 -translate-y-1/2 rounded-full bg-muted group-hover:bg-accent"
+          className="transition-color trans-300 absolute top-1/2 z-10 -translate-y-1/2 rounded-full bg-muted group-hover:bg-muted"
           style={{ height: 2 }}
         />
         <span
@@ -165,7 +165,7 @@ export function Slider({
         />
         <span
           ref={orbRef}
-          className={cn(ORB_CLS, [isDragging || hover, 'border-primary'])}
+          className={cn(ORB_CLS, (isDragging || hover) && 'border-primary')}
           style={{ left: percent }}
         />
       </div>

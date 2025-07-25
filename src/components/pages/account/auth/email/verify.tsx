@@ -6,23 +6,23 @@ import {
   CardHeader,
   CardTitle,
   CenteredCardContainer,
-} from '@components/shadcn/ui/themed/card'
+} from '@themed/card'
 
-import { bearerHeaders } from '@/lib/http/urls'
 import { HeaderLayout } from '@layouts/header-layout'
+import { bearerHeaders } from '@lib/http/urls'
 
 import {
   API_EMAIL_VERIFIED_URL,
+  APP_OAUTH2_SIGN_IN_ROUTE,
   EDB_ACCESS_TOKEN_COOKIE,
   EDB_TOKEN_PARAM,
-  SIGN_IN_ROUTE,
   SIGN_UP_ROUTE,
   TEXT_SIGN_UP,
-} from '@/lib/edb/edb'
+} from '@lib/edb/edb'
 
 import { TEXT_SIGN_IN } from '@/consts'
-import { httpFetch } from '@/lib/http/http-fetch'
-import { CoreProviders } from '@/providers/core-providers'
+import { httpFetch } from '@lib/http/http-fetch'
+import { CoreProviders } from '@providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
 import Cookies from 'js-cookie'
 import { jwtDecode, type JwtPayload } from 'jwt-decode'
@@ -110,7 +110,10 @@ function VerifyPage() {
                 </CardDescription>
               </CardHeader>
               <CardFooter className="flex flex-row justify-end">
-                <ThemeIndexLink href={SIGN_IN_ROUTE} aria-label="Sign In">
+                <ThemeIndexLink
+                  href={APP_OAUTH2_SIGN_IN_ROUTE}
+                  aria-label="Sign In"
+                >
                   {TEXT_SIGN_IN}
                 </ThemeIndexLink>
               </CardFooter>

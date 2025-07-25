@@ -1,5 +1,5 @@
 import { mean } from './mean'
-import { std } from './stats'
+import { populationStd } from './stats'
 
 export class ZScore {
   private _mean: number
@@ -12,7 +12,7 @@ export class ZScore {
 
   fit(data: number[]): ZScore {
     this._mean = mean(data)
-    this._std = std(data, this._mean)
+    this._std = populationStd(data, this._mean) // std(data, this._mean)
 
     //console.log('zscore', this._mean, this._std)
 
@@ -20,7 +20,7 @@ export class ZScore {
   }
 
   transform(data: number[]): number[] {
-    return data.map((v) => (v - this._mean) / this._std)
+    return data.map(v => (this._std !== 0 ? (v - this._mean) / this._std : 0))
   }
 
   /**

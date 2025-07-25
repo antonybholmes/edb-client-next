@@ -1,0 +1,122 @@
+---
+import { type CollectionEntry } from 'astro:content'
+
+import { MarkdownContent } from '@components/markdown-content'
+import { ThemeLink } from '@components/link/theme-link'
+import BaseLayout from '@layouts/BaseLayout.astro'
+
+import { BaseCol } from '@layout/base-col'
+import { TEXT_HELP } from '@/consts'
+import { render } from 'astro:content'
+import { HelpTreeNode, type ITopicTree } from '@help/help-tree-node'
+
+import { HelpCrumb } from '@help/help-crumb'
+
+import { HelpMenu } from '@help/help-menu'
+import { VScrollPanel } from '../v-scroll-panel'
+import { HelpAutocompleteQuery } from './help-autocomplete'
+import { HCenterRow } from '../layout/h-center-row'
+
+interface Props {
+  post: CollectionEntry<'help'>
+  node: ITopicTree
+  topicTree: ITopicTree
+}
+
+const { post, node, topicTree } = Astro.props
+const { Content, headings } = await render(post)
+
+//const filePath = `/${path.join('/')}`
+
+// const stack = topicTree.children.toReversed().map(t => ({ level: 0, tree: t }))
+
+// const flatTree = []
+
+// while (stack.length > 0) {
+//   const { level, tree } = stack.pop()!
+
+//   flatTree.push({ name: tree.name, level })
+
+//   for (const t of tree.children.toReversed()) {
+//     stack.push({ level: level + 1, tree: t })
+//   }
+// }
+
+// for this path, find the topic children
+
+const pathChildren: ITopicTree[][] = []
+
+let tm = topicTree
+for (const p of node.path) {
+  tm = tm.children.find(t => t.title === p)!
+  pathChildren.push(tm.children)
+}
+---
+
+<BaseLayout title={`${post.data.title} ${TEXT_HELP}`} bg="bg-white">
+  <article
+    class="flex h-screen flex-col gap-x-8 gap-y-3 lg:grid lg:grid-cols-4"
+    slot="main"
+  >
+    <BaseCol className="px-1">
+      <HelpMenu node={node} tree={topicTree} client:only="react" />
+      <VScrollPanel className="hidden lg:flex lg:grow">
+        <BaseCol className="hidden justify-start gap-y-4 py-4 text-xs lg:flex">
+          <ul>
+            {
+              topicTree.children.map(t => {
+                return (
+                  <HelpTreeNode
+                    node={t}
+                    currentNode={node}
+                    level={0}
+                    client:only="react"
+                  />
+                )
+              })
+            }
+          </ul>
+        </BaseCol>
+      </VScrollPanel>
+    </BaseCol>
+
+    <BaseCol className="grow gap-y-4 px-1 pt-2 lg:col-span-3">
+      <HCenterRow className="hidden lg:flex">
+        <HelpAutocompleteQuery client:only="react" className="w-1/2 xl:w-2/5" />
+      </HCenterRow>
+
+      <VScrollPanel className="grow" innerClassName="gap-y-4">
+        <HelpCrumb
+          node={node}
+          pathChildren={pathChildren}
+          client:only="react"
+        />
+
+        <h1 class="text-xl font-bold">{node.title}</h1>
+
+        <ol class="flex shrink-0 flex-col gap-y-0.5 text-sm md:gap-y-1">
+          {
+            headings.map((h: any) => {
+              return (
+                <li>
+                  <ThemeLink
+                    href={`#${h.slug}`}
+                    aria-label={`Goto help section ${h.text}`}
+                  >
+                    {h.text}
+                  </ThemeLink>
+                </li>
+              )
+            })
+          }
+        </ol>
+
+        <MarkdownContent
+          className="help flex flex-col gap-y-4 py-1 text-sm lg:pr-8"
+        >
+          <Content />
+        </MarkdownContent>
+      </VScrollPanel>
+    </BaseCol>
+  </article>
+</BaseLayout>

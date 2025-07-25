@@ -1,7 +1,7 @@
 import { ButtonLink } from '@components/link/button-link'
 import { type ILinkProps } from '@interfaces/link-props'
 
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 
 export const COLOR_BUTTON_CLS = 'text-white stroke-white border-transparent'
 

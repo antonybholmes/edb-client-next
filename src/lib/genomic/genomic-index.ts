@@ -1,4 +1,4 @@
-import { range } from '@/lib/math/range'
+import { range } from '@lib/math/range'
 import {
   GenomicLocation,
   sortLocations,
@@ -60,9 +60,9 @@ export class GenomicFeatureIndex<T extends GenomicLocation | IGenomicLocation> {
     return ret
   }
 
-  getOverlappingFeatures(location: GenomicLocation): T[] {
+  getOverlappingFeatures(location: GenomicLocation | IGenomicLocation): T[] {
     return this.getFeatures(location).filter(
-      (f) => f.start <= location.end && f.end >= location.start
+      f => f.start <= location.end && f.end >= location.start
     )
   }
 }

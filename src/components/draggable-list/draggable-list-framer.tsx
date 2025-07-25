@@ -1,8 +1,8 @@
-import type { IElementProps } from '@interfaces/element-props'
+import type { IDivProps } from '@interfaces/div-props'
 import { Reorder, useDragControls } from 'motion/react'
 import { Children, type CSSProperties } from 'react'
 
-interface IProps extends IElementProps {
+interface IProps extends IDivProps {
   order: string[]
   onOrderChange?: (order: string[]) => void
 
@@ -23,7 +23,7 @@ export function DraggableListFramer({
     <Reorder.Group
       axis="y"
       values={order}
-      onReorder={(order) => {
+      onReorder={order => {
         onOrderChange?.(order)
       }}
       className={className}
@@ -63,7 +63,7 @@ export function DraggableListFramer({
 //   return boxShadow
 // }
 
-interface IDraggableListItemProps extends IElementProps {
+interface IDraggableListItemProps extends IDivProps {
   item: string | number
 }
 
@@ -89,7 +89,7 @@ export const DraggableListItem = ({
 
       <div
         className="reorder-handle"
-        onPointerDown={(e) => dragControls.start(e)}
+        onPointerDown={e => dragControls.start(e)}
       >
         {children}
       </div>

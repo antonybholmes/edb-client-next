@@ -1,17 +1,21 @@
 import { normalDistributionPDF } from './normal-distribution'
 import { iqr } from './quartile'
-import { std } from './stats'
+import { populationStd } from './stats'
 import { sum } from './sum'
 
-const EST_POW = -1 / 5
+const EST_POW = -0.2 //-1 / 5
 
 // https://en.wikipedia.org/wiki/Kernel_density_estimation rule of thumb
 export function scottBandwidthEstimator(x: number[]) {
-  return 1.06 * std(x) * Math.pow(x.length, EST_POW)
+  return 1.06 * populationStd(x) * Math.pow(x.length, EST_POW)
 }
 
 export function silvermanBandwidthEstimator(x: number[]) {
-  return 0.9 * Math.min(std(x), iqr(x) / 1.34) * Math.pow(x.length, EST_POW)
+  return (
+    0.9 *
+    Math.min(populationStd(x), iqr(x) / 1.34) *
+    Math.pow(x.length, EST_POW)
+  )
 }
 
 // https://en.wikipedia.org/wiki/Kernel_density_estimation
@@ -45,8 +49,6 @@ export class KDE {
 
     // normalization factor
     this._A = 1 / (x.length * this._bandwidth)
-
-    //console.log("kde", this._bandwidth, this._A)
   }
 
   /**
@@ -60,9 +62,9 @@ export class KDE {
     }
 
     return y.map(
-      (yi) =>
+      yi =>
         this._A *
-        sum(this._x.map((xi) => this._kernel((yi - xi) / this._bandwidth)))
+        sum(this._x.map(xi => this._kernel((yi - xi) / this._bandwidth)))
     )
   }
 }

@@ -1,15 +1,22 @@
 import type { DialogProps } from '@radix-ui/react-dialog'
-import { MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import { Command as CommandPrimitive } from 'cmdk'
 
-import { Dialog, DialogContent } from '@components/shadcn/ui/themed/dialog'
-import { cn } from '@lib/class-names'
+import { BUTTON_MD_H_CLS } from '@/theme'
+import { SearchIcon } from '@icons/search-icon'
+import { VCenterRow } from '@layout/v-center-row'
+import { cn } from '@lib/shadcn-utils'
+import { Dialog, DialogContent } from '@themed/dialog'
+import type { VariantProps } from 'class-variance-authority'
 import {
+  Children,
   forwardRef,
+  type ComponentProps,
   type ComponentPropsWithoutRef,
   type ComponentRef,
   type HTMLAttributes,
 } from 'react'
+import { DROPDOWN_MENU_ICON_CONTAINER_CLS } from './button'
+import { dropdownMenuItemVariants } from './dropdown-menu'
 
 const Command = forwardRef<
   ComponentRef<typeof CommandPrimitive>,
@@ -17,10 +24,7 @@ const Command = forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive
     ref={ref}
-    className={cn(
-      'flex flex-col overflow-hidden rounded-theme bg-popover text-popover-foreground',
-      className
-    )}
+    className={cn('flex flex-col overflow-hidden', className)}
     {...props}
   />
 ))
@@ -42,17 +46,18 @@ const CommandInput = forwardRef<
   ComponentRef<typeof CommandPrimitive.Input>,
   ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
-  <div className="flex items-center border-b px-3">
-    <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+  <VCenterRow className="gap-x-2 border border-border/50 px-3 bg-background mt-1 mb-2 rounded-theme">
+    <SearchIcon className="shrink-0 opacity-50" />
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
-        'flex h-10 rounded-theme bg-transparent py-3 text-sm outline-none placeholder:text-foreground/50 disabled:cursor-not-allowed disabled:opacity-50',
+        BUTTON_MD_H_CLS,
+        'flex bg-transparent text-sm outline-hidden placeholder:text-foreground/50 disabled:cursor-not-allowed disabled:opacity-50',
         className
       )}
       {...props}
     />
-  </div>
+  </VCenterRow>
 ))
 
 CommandInput.displayName = CommandPrimitive.Input.displayName
@@ -63,7 +68,10 @@ const CommandList = forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.List
     ref={ref}
-    className={cn('max-h-[300px] overflow-y-auto overflow-x-hidden', className)}
+    className={cn(
+      'max-h-48 overflow-y-auto overflow-x-hidden custom-scrollbar',
+      className
+    )}
     {...props}
   />
 ))
@@ -90,7 +98,7 @@ const CommandGroup = forwardRef<
   <CommandPrimitive.Group
     ref={ref}
     className={cn(
-      'overflow-hidden p-1 text-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-foreground/50',
+      'overflow-hidden py-1 text-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-foreground/50',
       className
     )}
     {...props}
@@ -111,19 +119,42 @@ const CommandSeparator = forwardRef<
 ))
 CommandSeparator.displayName = CommandPrimitive.Separator.displayName
 
-const CommandItem = forwardRef<
-  ComponentRef<typeof CommandPrimitive.Item>,
-  ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
->(({ className, ...props }, ref) => (
-  <CommandPrimitive.Item
-    ref={ref}
-    className={cn(
-      'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-      className
-    )}
-    {...props}
-  />
-))
+export function CommandItem({
+  ref,
+  variant = 'default',
+  className,
+  children,
+  ...props
+}: ComponentProps<typeof CommandPrimitive.Item> &
+  VariantProps<typeof dropdownMenuItemVariants>) {
+  const c = Children.toArray(children)
+
+  return (
+    <CommandPrimitive.Item
+      ref={ref}
+      className={dropdownMenuItemVariants({
+        variant,
+        className: cn(
+          '[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+          className
+        ),
+      })}
+      {...props}
+    >
+      <span className={DROPDOWN_MENU_ICON_CONTAINER_CLS}>
+        {c.length > 1 && c[0]}
+      </span>
+
+      {c.length > 0 && (
+        <span className="grow">{c.length > 1 ? c[1] : c[0]}</span>
+      )}
+
+      {c.length > 2 && (
+        <span className={DROPDOWN_MENU_ICON_CONTAINER_CLS}>{c[2]}</span>
+      )}
+    </CommandPrimitive.Item>
+  )
+}
 
 CommandItem.displayName = CommandPrimitive.Item.displayName
 
@@ -149,7 +180,6 @@ export {
   CommandEmpty,
   CommandGroup,
   CommandInput,
-  CommandItem,
   CommandList,
   CommandSeparator,
   CommandShortcut,

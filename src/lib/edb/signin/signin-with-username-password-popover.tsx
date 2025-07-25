@@ -3,23 +3,23 @@ import {
   USERNAME_PATTERN,
 } from '@layouts/signin-layout'
 
-import { useContext, useRef, type BaseSyntheticEvent } from 'react'
+import { useRef, type BaseSyntheticEvent } from 'react'
 
 import { FormInputError } from '@components/input-error'
-import { Button } from '@components/shadcn/ui/themed/button'
-import { Form, FormField, FormItem } from '@components/shadcn/ui/themed/form'
+import { Button } from '@themed/button'
+import { Form, FormField, FormItem } from '@themed/form'
 
-import { Input } from '@components/shadcn/ui/themed/input'
-import { Label } from '@components/shadcn/ui/themed/label'
+import { Input } from '@themed/input'
+import { Label } from '@themed/label'
 
-import { EdbAuthContext } from '@/lib/edb/edb-auth-provider'
+import { useEdbAuth } from '@lib/edb/edb-auth'
 
 import { useForm } from 'react-hook-form'
 
 import {
   PASSWORD_PATTERN,
   TEXT_PASSWORD_REQUIRED,
-} from '@/components/pages/account/password-dialog'
+} from '@/components/pages/account/password-email-dialog'
 import { TEXT_SIGN_IN } from '@/consts'
 
 interface IForm {
@@ -28,7 +28,7 @@ interface IForm {
 }
 
 export function SignInWithUsernamePasswordPopover() {
-  const { signInWithUsernamePassword } = useContext(EdbAuthContext)
+  const { signInWithUsernamePassword } = useEdbAuth()
 
   const btnRef = useRef<HTMLButtonElement>(null)
 

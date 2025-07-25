@@ -1,16 +1,10 @@
-import { BaseCol } from '@/components/layout/base-col'
+import { BaseCol } from '@layout/base-col'
 
-import { HCenterRow } from '@/components/layout/h-center-row'
+import { HCenterRow } from '@layout/h-center-row'
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@components/shadcn/ui/themed/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@themed/card'
 
-import { EdbAuthContext } from '@/lib/edb/edb-auth-provider'
-import { useContext } from 'react'
+import { useEdbAuth } from '@lib/edb/edb-auth'
 import { SignInLayout, type ISignInLayoutProps } from './signin-layout'
 
 function notAllowedContent() {
@@ -43,7 +37,7 @@ export function RolesLayout({ children, ...props }: ISignInLayoutProps) {
   // passwordless or regular so that on refresh this page can see if
   // the details have been loaded
   //const { accessToken } = useAccessTokenStore()
-  const { edbUser } = useContext(EdbAuthContext)
+  const { session } = useEdbAuth()
 
   // const [accessToken, setAccessToken] = useState('')
   // const [accessContents, setAccessContents] =
@@ -51,7 +45,7 @@ export function RolesLayout({ children, ...props }: ISignInLayoutProps) {
 
   // useEffect(() => {
   //   async function fetch() {
-  //     setAccessToken(await getAccessTokenAutoRefresh())
+  //     setAccessToken(await fetchAccessToken())
   //   }
 
   //   fetch()
@@ -63,7 +57,7 @@ export function RolesLayout({ children, ...props }: ISignInLayoutProps) {
   //   }
   // }, [accessToken])
 
-  const roles = edbUser.roles.join(',')
+  const roles = session?.user.roles.join(',') ?? ''
 
   const isAdmin = roles.includes('Super') || roles.includes('Admin')
 

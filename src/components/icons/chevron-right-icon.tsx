@@ -1,5 +1,5 @@
 import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import { ChevronRight } from 'lucide-react'
 
 export function ChevronRightIcon({
@@ -7,6 +7,7 @@ export function ChevronRightIcon({
   stroke = 'stroke-foreground',
   className,
   strokeWidth = 2,
+  ...props
 }: IIconProps) {
   return (
     // <svg
@@ -29,6 +30,7 @@ export function ChevronRightIcon({
       className={cn(ICON_CLS, stroke, w, className)}
       strokeWidth={strokeWidth}
       stroke=""
+      {...props}
     />
   )
 }

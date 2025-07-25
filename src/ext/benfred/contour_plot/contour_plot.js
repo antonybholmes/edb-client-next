@@ -127,7 +127,7 @@ export function getContours(f, xScale, yScale, count, minima) {
           var point = current[j]
           for (var k = 0; k < initialPoints.length; ++k) {
             var other = initialPoints[k]
-            if (point[0] == other[0] && point[1] == other[1]) {
+            if (point[0] === other[0] && point[1] === other[1]) {
               duplicate = true
               break
             }
@@ -223,8 +223,8 @@ export function ContourPlot() {
           fx = f(x, y)
 
         tooltip
-          .style('Left', d3.event.pageX + 'px')
-          .style('Top', d3.event.pageY - 44 + 'px')
+          .style('left', d3.event.pageX + 'px')
+          .style('top', d3.event.pageY - 44 + 'px')
 
         tooltip.html(
           'x = ' +

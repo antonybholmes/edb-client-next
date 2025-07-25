@@ -30,8 +30,8 @@ export function filesReducer(state: IFileStore, action: IFileAction) {
     case 'add':
       return { ...state, files: [...state.files, ...action.files] }
     case 'remove':
-      const ret = state.files.filter((file) =>
-        action.files.every((af) => file.name != af.name)
+      const ret = state.files.filter(file =>
+        action.files.every(af => file.name != af.name)
       )
 
       return { ...state, files: ret }

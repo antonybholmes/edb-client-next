@@ -1,8 +1,8 @@
-import { BaseCol } from '@/components/layout/base-col'
-import { ContentDiv } from '@/components/layout/content-div'
+import { BaseCol } from '@layout/base-col'
+import { ContentDiv } from '@layout/content-div'
 
-import { VCenterCol } from '@/components/layout/v-center-col'
-import { cn } from '@lib/class-names'
+import { VCenterCol } from '@layout/v-center-col'
+import { cn } from '@lib/shadcn-utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { forwardRef, type HTMLAttributes } from 'react'
 
@@ -21,38 +21,47 @@ CardContainer.displayName = 'CardContainer'
 
 export const CenteredCardContainer = forwardRef<
   HTMLDivElement,
-  HTMLAttributes<HTMLDivElement>
->(({ children }, ref) => (
+  HTMLAttributes<HTMLDivElement> & { gap?: string }
+>(({ gap = 'gap-y-4', children }, ref) => (
   <VCenterCol ref={ref} className="grow">
-    <CardContainer>{children}</CardContainer>
+    <CardContainer gap={gap}>{children}</CardContainer>
   </VCenterCol>
 ))
 CenteredCardContainer.displayName = 'CenteredCardContainer'
 
-export const variants = cva('border border-border/40 rounded-xl', {
+export const variants = cva('border border-border/50', {
   variants: {
     variant: {
-      default: 'bg-background p-5',
+      default: 'bg-background p-6',
       content: 'bg-white p-2',
+      simple: 'bg-background',
     },
+
     gap: {
       default: 'gap-y-4',
       sm: 'gap-y-2',
+      none: '',
+    },
+    rounded: {
+      default: 'rounded-card',
+      '2xl': 'rounded-2xl',
+      none: '',
     },
   },
   defaultVariants: {
     variant: 'default',
     gap: 'default',
+    rounded: 'default',
   },
 })
 
 const Card = forwardRef<
   HTMLDivElement,
   HTMLAttributes<HTMLDivElement> & VariantProps<typeof variants>
->(({ variant, gap, className, ...props }, ref) => (
+>(({ variant, gap, rounded, className, ...props }, ref) => (
   <BaseCol
     ref={ref}
-    className={variants({ variant, gap, className })}
+    className={variants({ variant, gap, rounded, className })}
     {...props}
   />
 ))
@@ -82,27 +91,24 @@ const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
 CardHeader.displayName = 'CardHeader'
 
 const CardTitle = forwardRef<
-  HTMLParagraphElement,
-  HTMLAttributes<HTMLHeadingElement>
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <h3
+  <div
     ref={ref}
-    className={cn(
-      'text-base font-semibold leading-none tracking-tight',
-      className
-    )}
+    className={cn('font-semibold leading-none tracking-tight', className)}
     {...props}
   />
 ))
 CardTitle.displayName = 'CardTitle'
 
 const CardDescription = forwardRef<
-  HTMLParagraphElement,
-  HTMLAttributes<HTMLParagraphElement>
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <p
+  <div
     ref={ref}
-    className={cn('text-sm text-foreground/50', className)}
+    className={cn('text-sm text-muted-foreground', className)}
     {...props}
   />
 ))

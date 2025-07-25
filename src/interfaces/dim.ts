@@ -1,6 +1,6 @@
 export interface IDim {
-  width: number
-  height: number
+  w: number
+  h: number
 }
 
-export const NO_DIM: IDim = { width: -1, height: -1 }
+export const NO_DIM: IDim = { w: -1, h: -1 }

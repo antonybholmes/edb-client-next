@@ -1,5 +1,5 @@
 import { type ILinkProps } from '@interfaces/link-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import { ColorButtonLink } from './color-button-link'
 
 export const RED_BUTTON_CLS =

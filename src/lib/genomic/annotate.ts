@@ -1,11 +1,11 @@
 import { BaseDataFrame } from '@lib/dataframe/base-dataframe'
 
-import { API_GENES_URL } from '@/lib/edb/edb'
-import { DataFrame } from '@lib/dataframe/dataframe'
 import type { SeriesData } from '@lib/dataframe/dataframe-types'
+import { API_GENOME_URL } from '@lib/edb/edb'
 import { range } from '@lib/math/range'
 import { QueryClient } from '@tanstack/react-query'
 
+import { AnnotationDataFrame } from '../dataframe/annotation-dataframe'
 import { httpFetch } from '../http/http-fetch'
 
 /**
@@ -22,7 +22,7 @@ export async function createAnnotationTable(
   assembly: string,
   closest: number = 5,
   tss: [number, number] = [2000, 1000]
-): Promise<BaseDataFrame | null> {
+): Promise<AnnotationDataFrame | null> {
   const col = 0
 
   //const locations:Location[] = df.col(col)!.values.map(l=>parseLocation(l as string)!)
@@ -48,7 +48,7 @@ export async function createAnnotationTable(
             }[]
           }[]
         }>(
-          `${API_GENES_URL}/annotate/${assembly}?tss=${tss[0]},${tss[1]}&n=${closest}`,
+          `${API_GENOME_URL}/annotate/${assembly}?tss=${tss[0]},${tss[1]}&n=${closest}`,
           {
             body: {
               locations,
@@ -62,7 +62,7 @@ export async function createAnnotationTable(
     const table: SeriesData[][] = []
 
     for (const [ri, row] of df.values.entries()) {
-      const ann = data[ri]
+      const ann = data[ri]!
 
       console.log(ann)
 
@@ -103,7 +103,7 @@ export async function createAnnotationTable(
       ])
       .concat(
         range(closest)
-          .map((i) => [
+          .map(i => [
             `${i + 1} Closest ID`,
             `${i + 1} Closest Gene Symbol`,
             `${i + 1} Closest Gene Strand`,
@@ -115,7 +115,7 @@ export async function createAnnotationTable(
           .flat()
       )
 
-    return new DataFrame({ data: table, columns: header })
+    return new AnnotationDataFrame({ data: table, columns: header })
 
     // const table: SeriesType[][] = []
 
@@ -283,5 +283,5 @@ export async function createAnnotationFile(
     return null
   }
 
-  return table.values.map((row) => row.join('\t')).join('\n')
+  return table.values.map(row => row.join('\t')).join('\n')
 }

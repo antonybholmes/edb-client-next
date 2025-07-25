@@ -1,35 +1,81 @@
-import type { Shape } from './dataframe-types'
+import type { IndexMapFunc } from '.'
+import { cellNum, cellStr } from './cell'
+import type { SeriesData, Shape } from './dataframe-types'
 
-export type IndexType = 'number' | 'excel' | 'data'
+export abstract class BaseIndex {
+  /**
+   * Returns all values in the index.
+   */
+  abstract get values(): SeriesData[]
 
-export class BaseIndex {
-  // setName(name: string): BaseIndex {
-  //   return this
-  // }
+  /**
+   * Returns the value at a given position in the index.
+   * @param index
+   */
+  abstract get(index: number): SeriesData
 
-  get name(): string {
-    return ''
+  abstract setName(name: string): BaseIndex
+
+  map<T>(f: IndexMapFunc<T>): T[] {
+    return _map(this, f)
   }
 
-  get type(): IndexType {
-    return 'data'
+  /**
+   * Return the values as strings
+   */
+  get strs(): string[] {
+    return this.values.map(v => cellStr(v))
   }
 
-  get size(): number {
-    return -1
-  }
+  abstract get name(): string
+
+  /**
+   * Synonym for size
+   */
+  abstract get length(): number
 
   /**
    * Returns the shape of the index, typically n x 1
    */
   get shape(): Shape {
-    return [this.size, 0]
+    return [this.length, 1] as Shape
   }
 
   /**
-   * Synonym for size
+   * Returns an index value as a string.
+   *
+   * @param index
+   * @returns
    */
-  get length(): number {
-    return this.size
+  str(index: number): string {
+    return cellStr(this.get(index))
   }
+
+  /**
+   * Returns an index value as a number.
+   *
+   * @param index
+   * @returns
+   */
+  num(index: number): number {
+    return cellNum(this.get(index))
+  }
+
+  /**
+   * Return the index values as purely numbers
+   */
+  get numValues(): number[] {
+    return this.values.map(v => cellNum(v))
+  }
+
+  /**
+   * Returns the index values as numbers, removing any NaNs
+   */
+  get numsNoNA(): number[] {
+    return this.numValues.filter(v => !isNaN(v))
+  }
+}
+
+function _map<T>(index: BaseIndex, f: IndexMapFunc<T>): T[] {
+  return index.values.map((x, i) => f(x, i))
 }

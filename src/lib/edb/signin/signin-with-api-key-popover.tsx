@@ -1,13 +1,13 @@
-import { useContext, useRef, type BaseSyntheticEvent } from 'react'
+import { useRef, type BaseSyntheticEvent } from 'react'
 
 import { FormInputError } from '@components/input-error'
-import { Button } from '@components/shadcn/ui/themed/button'
-import { Form, FormField, FormItem } from '@components/shadcn/ui/themed/form'
+import { Button } from '@themed/button'
+import { Form, FormField, FormItem } from '@themed/form'
 
-import { Input } from '@components/shadcn/ui/themed/input'
-import { Label } from '@components/shadcn/ui/themed/label'
+import { Input } from '@themed/input'
+import { Label } from '@themed/label'
 
-import { EdbAuthContext } from '@/lib/edb/edb-auth-provider'
+import { useEdbAuth } from '@lib/edb/edb-auth'
 
 import { useForm } from 'react-hook-form'
 
@@ -25,7 +25,7 @@ interface IProps {
 }
 
 export function SignInWithApiKeyPopover({ apiKey = '' }: IProps) {
-  const { signInWithApiKey } = useContext(EdbAuthContext)
+  const { signInWithApiKey } = useEdbAuth()
 
   const btnRef = useRef<HTMLButtonElement>(null)
 

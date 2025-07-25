@@ -1,6 +1,7 @@
-import { type HTMLAttributes, type PropsWithoutRef } from 'react'
+import { type ComponentProps } from 'react'
 
-export interface IDivProps
-  extends PropsWithoutRef<HTMLAttributes<HTMLDivElement>> {
+export interface IDivProps extends ComponentProps<'div'> {
   selected?: boolean
+  //title?: string
+  tooltip?: string
 }

@@ -1,20 +1,21 @@
-import { type IElementProps } from '@interfaces/element-props'
-import { cn } from '@lib/class-names'
+import { type IDivProps } from '@interfaces/div-props'
+import { cn } from '@lib/shadcn-utils'
 
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { ThemeLink } from '@components/link/theme-link'
-import { useState, type MouseEventHandler } from 'react'
+import { VCenterRow } from '@layout/v-center-row'
+import { useState } from 'react'
 
 import { HEADER_LINKS } from '@/menus'
-import { Popover, PopoverContent } from '@components/shadcn/ui/themed/popover'
+import { Popover, PopoverContent } from '@themed/popover'
 
 import { BaseLink, BLANK_TARGET } from '@components/link/base-link'
-import { Button } from '@components/shadcn/ui/themed/button'
+import { Button } from '@themed/button'
 
 import { FOCUS_RING_CLS } from '@/theme'
-import { GLASS_CLS } from '@components/shadcn/ui/themed/glass'
 import type { ILinkProps } from '@interfaces/link-props'
 import { PopoverAnchor } from '@radix-ui/react-popover'
+import { GLASS_CLS } from '@themed/glass'
+import type { IHeaderLinksProps } from './header-menu'
 import { MenuButtonIcon } from './menu-button-icon'
 
 export function ModuleButtonLink({
@@ -36,16 +37,11 @@ export function ModuleButtonLink({
   )
 }
 
-interface IProps extends IElementProps {
-  tab?: string
-  onClick: MouseEventHandler<HTMLAnchorElement>
-}
-
-export function HeaderLinks({ onClick, className }: IProps) {
+export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
   // sort alphabetically and ignore sections
-  const items = HEADER_LINKS.map((section) => {
+  const items = HEADER_LINKS.map(section => {
     return section.modules.filter(
-      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()
@@ -63,7 +59,7 @@ export function HeaderLinks({ onClick, className }: IProps) {
         <li key={moduleIndex}>
           <ModuleButtonLink
             href={module.slug}
-            onClick={onClick}
+            onClick={handleClick}
             aria-label={module.name}
             target={BLANK_TARGET}
             title={module.description}
@@ -98,7 +94,7 @@ export function HeaderLinks({ onClick, className }: IProps) {
   )
 }
 
-interface IFileMenu extends IElementProps {
+interface IFileMenu extends IDivProps {
   tab?: string
 }
 
@@ -114,9 +110,9 @@ export function HeaderMenuPopover({ tab = '' }: IFileMenu) {
           size="none"
           rounded="none"
           ripple={false}
-          selected={open}
+          checked={open}
           onClick={() => setOpen(!open)}
-          className="h-11 w-11"
+          className="h-header w-header"
           aria-label={open ? 'Close Menu' : 'Open Menu'}
         >
           <MenuButtonIcon fill="fill-white/90" />
@@ -125,7 +121,7 @@ export function HeaderMenuPopover({ tab = '' }: IFileMenu) {
 
       <PopoverContent
         onEscapeKeyDown={() => setOpen(false)}
-        onInteractOutside={(e) => {
+        onInteractOutside={e => {
           if ((e.target as HTMLElement)?.id !== 'header-menu-popover-button') {
             setOpen(false)
           }
@@ -134,7 +130,7 @@ export function HeaderMenuPopover({ tab = '' }: IFileMenu) {
         alignOffset={8}
         className={cn(GLASS_CLS, 'text-xs flex flex-col ')}
       >
-        <HeaderLinks tab={tab} onClick={() => setOpen(false)} />
+        <HeaderLinks tab={tab} handleClick={() => setOpen(false)} />
 
         <VCenterRow className="px-4 pb-4 gap-x-5 justify-end">
           <ThemeLink

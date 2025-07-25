@@ -1,5 +1,5 @@
 import { type IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 
 import { forwardRef, type ForwardedRef } from 'react'
 import { BaseCol } from './base-col'

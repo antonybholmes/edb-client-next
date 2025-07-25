@@ -29,8 +29,14 @@ const OPERATORS: { [key: string]: { prec: number; assoc: 'l' | 'r' } } = {
   },
 }
 
-type StackOp = 'search' | 'AND' | 'OR' | '(' | ')'
+type StackOp = 'q' | 'AND' | 'OR' | '(' | ')'
 
+/**
+ * Determine if token is a keyword
+ *
+ * @param v
+ * @returns
+ */
 function isOp(v: string): boolean {
   v = v.toLowerCase()
 
@@ -81,14 +87,15 @@ export function toRPN(input: string): ISearchNode[] {
         token
           .toUpperCase()
           .replace('+', 'AND')
-          .replace('|', 'OR')
           .replace('||', 'OR')
+          .replace('|', 'OR')
       )
     } else {
       // Add the word to the result
       result.push(token)
 
-      // If the next word is not 'or' and is not the last word, add 'and'
+      // If the next word is not an operation add 'and' between them
+      // e.g. car train -> car AND train
       if (tokeni < tokens.length - 1 && !isOp(tokens[tokeni + 1]!)) {
         result.push('AND')
       }
@@ -132,7 +139,7 @@ export function toRPN(input: string): ISearchNode[] {
         opStack.pop()
         break
       default:
-        output.push({ v: token, op: 'search' })
+        output.push({ v: token, op: 'q' })
         break
     }
   }
@@ -146,18 +153,24 @@ export function toRPN(input: string): ISearchNode[] {
   return output
 }
 
-export class SearchQuery {
+export class BoolSearchQuery {
   private _rpn: ISearchNode[]
   private _caseSensitive: boolean
+  private _exact: boolean
 
-  constructor(exp: string, caseSensitive: boolean = false) {
+  constructor(
+    exp: string,
+    caseSensitive: boolean = false,
+    exact: boolean = false
+  ) {
     this._caseSensitive = caseSensitive
+    this._exact = exact
     this._rpn = toRPN(caseSensitive ? exp : exp.toLowerCase())
 
     //console.log(this._rpn)
   }
 
-  search(query: string): boolean {
+  match(query: string): boolean {
     if (!this._caseSensitive) {
       query = query.toLowerCase()
     }
@@ -183,9 +196,13 @@ export class SearchQuery {
           }
           break
         default:
-          //search
+          //look for value in query
 
-          stack.push(query.includes(n.v)) //search))
+          if (this._exact) {
+            stack.push(query === n.v)
+          } else {
+            stack.push(query.includes(n.v)) //search))
+          }
 
           break
       }

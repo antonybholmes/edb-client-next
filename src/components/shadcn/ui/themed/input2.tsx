@@ -1,42 +1,137 @@
-import { FOCUS_RING_CLS, INPUT_BORDER_CLS } from '@/theme'
-import { cn } from '@lib/class-names'
-import * as React from 'react'
-import { useState } from 'react'
-import { Placeholder, TEXTAREA_GROUP_CLS } from './textarea1'
+import { cn } from '@lib/shadcn-utils'
+import {
+  useState,
+  type ComponentProps,
+  type CSSProperties,
+  type ReactNode,
+} from 'react'
 
-const INPUT_CLS = cn(
-  'flex h-10 rounded-theme bg-background px-3 placeholder:text-foreground/50 disabled:cursor-not-allowed disabled:opacity-50 read-only:opacity-50',
-  INPUT_BORDER_CLS,
-  FOCUS_RING_CLS
+import { WarningIcon } from '@icons/warning-icon'
+import type { IDivProps } from '@interfaces/div-props'
+import { BaseCol } from '@layout/base-col'
+import { VCenterRow } from '@layout/v-center-row'
+import { cva, type VariantProps } from 'class-variance-authority'
+import { Label } from './label'
+
+export const PLACEHOLDER_CLS = cn(
+  'min-w-0 flex flex-row gap-x-2 items-center grow relative',
+  'disabled:cursor-not-allowed data-[readonly=true]:bg-muted/40',
+  'after:absolute after:bottom-0 after:h-px after:w-full',
+  'after:bg-border data-[focus=true]:after:bg-ring'
 )
 
-export type InputProps = React.InputHTMLAttributes<HTMLInputElement>
+export const inputVariants = cva(PLACEHOLDER_CLS, {
+  variants: {
+    variant: {
+      default: '',
+    },
+    h: {
+      default: 'h-10',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+    h: 'default',
+  },
+})
 
-export const Input2 = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ id, placeholder, value, className, type, ...props }, ref) => {
-    const [focus, setFocus] = useState(false)
+export const INPUT_CLS = cn(
+  'disabled:cursor-not-allowed disabled:opacity-50 read-only:opacity-50',
+  'placeholder:opacity-60 outline-hidden border-none ring-none min-w-0 grow'
+)
 
-    return (
-      <div
-        className={TEXTAREA_GROUP_CLS}
-        onFocus={() => setFocus(true)}
-        onBlur={() => setFocus(false)}
-      >
-        <Placeholder
-          id={id}
-          placeholder={placeholder}
-          focus={focus}
-          value={value}
-        />
-        <input
-          type={type}
-          value={value}
-          className={cn(INPUT_CLS, className)}
+export interface IPlaceholderProps extends IDivProps {
+  id: string | undefined
+  placeholder: string | undefined
+  focus?: boolean
+  hover?: boolean
+  value: string | number | readonly string[] | undefined
+  disabled?: boolean
+}
+
+export interface IInputProps
+  extends ComponentProps<'input'>,
+    VariantProps<typeof inputVariants> {
+  error?: boolean
+  inputCls?: string
+  inputStyle?: CSSProperties
+  leftChildren?: ReactNode
+  rightChildren?: ReactNode
+  otherChildren?: ReactNode
+  header?: string
+  onTextChange?: (v: string) => void
+  onTextChanged?: (v: string) => void
+}
+
+export function Input2({
+  ref,
+  leftChildren,
+  rightChildren,
+  otherChildren,
+  type,
+  inputCls,
+  inputStyle,
+  error = false,
+  header = '',
+  variant = 'default',
+  h = 'default',
+  disabled,
+  readOnly,
+  onChange,
+  onTextChange,
+  onTextChanged,
+  style,
+  className,
+  ...props
+}: IInputProps) {
+  const [focus, setFocus] = useState(false)
+
+  return (
+    <BaseCol className={cn('gap-y-1', className)}>
+      {header && (
+        <Label className="text-xs font-bold text-foreground/75">{header}</Label>
+      )}
+      <VCenterRow className="gap-x-4">
+        <VCenterRow
+          className={inputVariants({
+            variant,
+            h,
+            className: PLACEHOLDER_CLS,
+          })}
+          data-enabled={!disabled}
+          data-readonly={readOnly}
+          data-error={error}
+          onFocus={() => setFocus(true)}
+          onBlur={() => setFocus(false)}
+          data-focus={focus}
+          style={style}
           ref={ref}
-          {...props}
-        />
-      </div>
-    )
-  }
-)
-Input2.displayName = 'Input2'
+        >
+          {leftChildren && leftChildren}
+          <input
+            type={type}
+            className={cn(INPUT_CLS, inputCls)}
+            style={inputStyle}
+            disabled={disabled}
+            readOnly={readOnly}
+            onChange={e => {
+              onTextChange?.(e.currentTarget.value)
+              onChange?.(e)
+            }}
+            onKeyDown={e => {
+              //console.log(e)
+              if (e.key === 'Enter') {
+                onTextChanged?.(e.currentTarget.value)
+              }
+            }}
+            {...props}
+          />
+
+          {rightChildren && rightChildren}
+          {error && <WarningIcon stroke="stroke-destructive" w="w-4 h-4" />}
+        </VCenterRow>
+        {otherChildren && otherChildren}
+      </VCenterRow>
+    </BaseCol>
+  )
+}

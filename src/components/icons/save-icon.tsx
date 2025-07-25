@@ -1,13 +1,20 @@
 import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import { Save } from 'lucide-react'
 
 export function SaveIcon({
   w = 'w-5 h-5',
   stroke = 'stroke-foreground',
+  fill,
   className,
   strokeWidth = 1.5,
+  iconMode,
 }: IIconProps) {
+  if (iconMode === 'colorful') {
+    stroke = 'stroke-theme'
+    fill = 'fill-white'
+  }
+
   return (
     // <svg
     //   xmlns="http://www.w3.org/2000/svg"
@@ -18,7 +25,7 @@ export function SaveIcon({
     // </svg>
 
     <Save
-      className={cn(ICON_CLS, 'rotate-180', stroke, w, className)}
+      className={cn(ICON_CLS, 'rotate-180', stroke, fill, w, className)}
       strokeWidth={strokeWidth}
       stroke=""
     />

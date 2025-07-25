@@ -1,10 +1,10 @@
-import { BaseRow } from '@/components/layout/base-row'
 import { type IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/class-names'
+import { BaseRow } from '@layout/base-row'
+import { cn } from '@lib/shadcn-utils'
 import { forwardRef, type ForwardedRef } from 'react'
 
 const CLS =
-  'shrink-0 gap-x-1 text-xs bg-accent/25 grow p-1.5 rounded-lg dark:shadow-none justify-between items-end'
+  'shrink-0 gap-x-1 text-xs bg-muted/25 grow p-1.5 rounded-lg dark:shadow-none justify-between items-end'
 
 export const ToolbarTabPanel = forwardRef(function ToolbarTabPanel(
   { children, className, ...props }: IDivProps,

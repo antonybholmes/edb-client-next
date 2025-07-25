@@ -1,13 +1,14 @@
-import { COLOR_BLACK, COLOR_WHITE } from '@/consts'
+import { COLOR_BLACK, COLOR_RED, COLOR_WHITE } from '@lib/color/color'
 
-export type ColorBarPos = 'Bottom' | 'Right' | 'Upper Right'
+export type ColorBarPos = 'bottom' | 'right' | 'upper-right'
 
-export type TopBottomPos = 'Top' | 'Bottom'
-export type LegendPos = 'Right' | 'Upper Right' | 'Bottom'
+export type TopBottomPos = 'top' | 'bottom'
+export type LegendPos = 'right' | 'upper-right' | 'bottom'
 
 export interface IColorProps {
   show: boolean
   color: string
+  alpha: number
 }
 
 export interface ILabelProps extends IColorProps {
@@ -18,46 +19,41 @@ export const DEFAULT_LABEL_PROPS: ILabelProps = {
   show: true,
   width: 100,
   color: COLOR_BLACK,
+  alpha: 1,
 }
 
-export interface IFillProps {
-  show: boolean
-  color: string
-  alpha: number
-}
-
-export const DEFAULT_FILL_PROPS: IFillProps = {
+export const DEFAULT_FILL_PROPS: IColorProps = {
   show: true,
   alpha: 0.2,
-  color: COLOR_BLACK,
+  color: COLOR_RED,
 }
 
-export const OPAQUE_FILL_PROPS: IFillProps = {
+export const OPAQUE_FILL_PROPS: IColorProps = {
   show: true,
   alpha: 1,
   color: COLOR_BLACK,
 }
 
-export const WHITE_FILL_PROPS: IFillProps = {
+export const WHITE_FILL_PROPS: IColorProps = {
   show: true,
   alpha: 1,
   color: COLOR_WHITE,
 }
 
-export const NO_FILL_PROPS: IFillProps = { ...DEFAULT_FILL_PROPS, show: false }
+export const NO_FILL_PROPS: IColorProps = { ...DEFAULT_FILL_PROPS, show: false }
 
 export interface IStrokeProps {
   show: boolean
   width: number
   color: string
-  opacity: number
+  alpha: number
 }
 
 export const DEFAULT_STROKE_PROPS: IStrokeProps = {
   show: true,
   width: 1,
   color: COLOR_BLACK,
-  opacity: 1,
+  alpha: 1,
 }
 
 export const NO_STROKE_PROPS: IStrokeProps = {

@@ -1,27 +1,27 @@
-import { BaseCol } from '@/components/layout/base-col'
-import { VCenterRow } from '@/components/layout/v-center-row'
-import { Input } from '@components/shadcn/ui/themed/input'
 import { useMouseUpListener } from '@hooks/use-mouseup-listener'
 import { useResizeObserver } from '@hooks/use-resize-observer'
+import { BaseCol } from '@layout/base-col'
+import { VCenterRow } from '@layout/v-center-row'
+import { Input } from '@themed/input'
 
 import { FOCUS_RING_CLS } from '@/theme'
 import { EDGE_SCROLL_ZONE, useScrollOnEdges } from '@hooks/use-scroll-on-edges'
 import { type ICell } from '@interfaces/cell'
-import { type IElementProps } from '@interfaces/element-props'
+import { type IDivProps } from '@interfaces/div-props'
 import { setupCanvas } from '@lib/canvas'
-import { cn } from '@lib/class-names'
 import { findClosest } from '@lib/closest-search'
-import { NO_SHAPE, type BaseDataFrame } from '@lib/dataframe/base-dataframe'
+import { NO_SHAPE } from '@lib/dataframe/base-dataframe'
 import { cellStr, getExcelColName } from '@lib/dataframe/cell'
+import { cn } from '@lib/shadcn-utils'
 
-import { BaseRow } from '@/components/layout/base-row'
-import { COLOR_BLACK, COLOR_WHITE } from '@/consts'
+import { BaseRow } from '@layout/base-row'
+import { COLOR_BLACK, COLOR_WHITE } from '@lib/color/color'
+import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
 import type { Shape } from '@lib/dataframe/dataframe-types'
 import { range } from '@lib/math/range'
 import type { ChangeEvent, RefObject } from 'react'
 import {
   useCallback,
-  useContext,
   useEffect,
   useRef,
   useState,
@@ -31,9 +31,9 @@ import {
 import {
   NO_SELECTION,
   NO_SELECTION_RANGE,
-  SelectionRangeContext,
+  useSelectionRange,
   type ISelectionRange,
-} from './use-selection-range'
+} from '../../providers/selection-range'
 
 // function setDPI(canvas: HTMLCanvasElement, dpi: number) {
 //   // Set up CSS size.
@@ -61,13 +61,15 @@ export const BOLD_FONT = 'normal normal bold 12px Arial'
 export const NORMAL_FONT = 'normal normal normal 14px Arial'
 export const LINE_THICKNESS = 1
 
+export const INDEX_CELL_SIZE: Shape = [75, 28]
+
 export const DEFAULT_CELL_SIZE: Shape = [100, 28]
 export const COL_DRAG_SIZE = 5
 
 // limit size of scrollbars in pixels because browsers have limits on the max div size of an element,
 // so we use a scaling factor when the virtual canvas gets too big, e.g. if virtual is twice the size of
 // the max then we virtually scroll 2 pixels for every 1 screen pixel scrolled
-export const MAX_H = 16384
+const MAX_H = 16384
 
 export interface IScrollDirection {
   x: number
@@ -106,8 +108,8 @@ export interface IDragCol {
 
 export const NO_DRAG: IDragCol = { col: -1, cols: [] }
 
-export interface IDataFrameCanvasProps extends IElementProps {
-  df: BaseDataFrame
+export interface IDataFrameCanvasProps extends IDivProps {
+  df: AnnotationDataFrame
   cellSize?: Shape
   dp?: number
   scale?: number
@@ -135,7 +137,7 @@ export function DataFrameCanvas({
   const hoverCol = useRef(-1)
   const dragCol = useRef<IDragCol>(NO_DRAG)
 
-  const [, selectionRangeDispatch] = useContext(SelectionRangeContext)
+  const { updateSelection } = useSelectionRange()
 
   // defines the start and end row/cols for drawing a multi-cell
   // selection
@@ -145,8 +147,6 @@ export function DataFrameCanvas({
   // around. This is independent of the selection so the focus
   // can change even when the selected cell does not
   const [focusCell, setFocusCell] = useState<ICell>(NO_SELECTION)
-
-  //useImperativeHandle(outerRef, () => ref.current!, [])
 
   const isMouseDown = useRef('')
 
@@ -228,7 +228,7 @@ export function DataFrameCanvas({
   })
 
   useEffect(() => {
-    colPositions.current = range(df.shape[1] + 1).map((i) => i * cellSize[0])
+    colPositions.current = range(df.shape[1] + 1).map(i => i * cellSize[0])
   }, [df, cellSize])
 
   useEffect(() => {
@@ -244,7 +244,7 @@ export function DataFrameCanvas({
     const dim: Shape = [shape[1] * cellSize[0], shape[0] * cellSize[1]]
     //const hasRowIndex = df.rowIndex.length > 0
 
-    const rowIndexW = df.getRowName(0) !== '1' ? cellSize[0] : cellSize[1]
+    const rowIndexW = INDEX_CELL_SIZE[0] * df.rowMetaData.shape[1] //sum(df.rowMetaData.row(0).values.map(x => cellSize[0]))
 
     const scaledDim: Shape = [dim[0] * scale, dim[1] * scale]
     const maxScaledDim: Shape = [
@@ -276,15 +276,11 @@ export function DataFrameCanvas({
   }, [dfProps])
 
   useEffect(() => {
+    if (!scrollRef.current || focusCell === NO_SELECTION) {
+      return
+    }
+
     const d = scrollRef.current
-
-    if (!d) {
-      return
-    }
-
-    if (focusCell === NO_SELECTION) {
-      return
-    }
 
     //console.log('focus', shape.scaledCellSize)
 
@@ -369,15 +365,36 @@ export function DataFrameCanvas({
 
     ctx.save()
 
-    ctx.translate(0, cellSize[1])
+    ctx.fillStyle = COLOR_BLACK
+    ctx.font = BOLD_FONT
+    ctx.textBaseline = 'middle'
+    ctx.textAlign = 'center'
+
+    // Draw header names
+
+    for (let rowIndex = 0; rowIndex < df.rowMetaData.shape[1]; ++rowIndex) {
+      const v = df.rowMetaData.colName(rowIndex)
+
+      if (v === 'Index') {
+        continue
+      }
+
+      //ctx.textAlign = isNumber ? 'right' : 'left'
+
+      const x = INDEX_CELL_SIZE[0] * (rowIndex + 0.5) // + GAP // df.rowName(0) !== '1' ? GAP : 0.5 * dfProps.rowIndexW
+
+      ctx.fillText(v, x, cellSize[1] / 2 + TEXT_OFFSET) // - normTop + TEXT_OFFSET)
+    }
 
     const region = new Path2D()
-    region.rect(0, 0, dfProps.rowIndexW, h)
+    region.rect(0, cellSize[1], dfProps.rowIndexW, h)
     ctx.clip(region)
 
-    ctx.clearRect(0, 0, dfProps.rowIndexW, h)
+    ctx.clearRect(0, cellSize[1], dfProps.rowIndexW, h)
 
     // selection
+
+    ctx.translate(0, cellSize[1])
 
     if (selection.current.start.row !== -1) {
       ctx.strokeStyle = SELECTION_STROKE_COLOR
@@ -393,62 +410,32 @@ export function DataFrameCanvas({
       ctx.fillRect(0, y1 - normTop, dfProps.rowIndexW, h + scale)
     }
 
-    ctx.fillStyle = COLOR_BLACK
-    ctx.font = BOLD_FONT
-
     // row index
 
-    ctx.textAlign = df.getRowName(0) !== '1' ? 'left' : 'center'
-    ctx.textBaseline = 'middle'
-    const x = df.getRowName(0) !== '1' ? GAP : 0.5 * dfProps.rowIndexW
+    ctx.fillStyle = COLOR_BLACK
 
     let py = (rowRange[0] + 0.5) * cellSize[1] - normTop + TEXT_OFFSET
 
     if (rowRange[0] !== -1) {
-      range(rowRange[0], rowRange[1]).forEach((row) => {
-        const v = df.getRowName(row)
+      for (const row of range(rowRange[0], rowRange[1])) {
+        for (let rowIndex = 0; rowIndex < df.rowMetaData.shape[1]; ++rowIndex) {
+          const v = df.rowMetaData.get(row, rowIndex)
 
-        //const py = cellSize[1] + row * cellSize[1] - normTop
+          //const isNumber = typeof v === 'number'
 
-        ctx.fillText(v.toLocaleString(), x, py)
+          ctx.textAlign = 'center' //isNumber ? 'right' : 'left'
+
+          const x = INDEX_CELL_SIZE[0] * (rowIndex + 0.5)
+          //(isNumber ? INDEX_CELL_SIZE[0] - GAP : GAP) // df.rowName(0) !== '1' ? GAP : 0.5 * dfProps.rowIndexW
+
+          ctx.fillText(cellStr(v, { dp }), x, py)
+        }
 
         py += cellSize[1]
-      })
+      }
     }
 
-    // render the lines
-
-    // ctx.save()
-
-    // ctx.imageSmoothingEnabled = false
-    // ctx.translate(0.5, 0.5)
-
-    // py = 0
-    // ctx.strokeStyle = GRID_COLOR
-    // ctx.lineWidth = LINE_THICKNESS
-
-    // if (rowRange[0] !== -1) {
-    //   py = (rowRange[0] + 1) * cellSize[1] - normTop
-
-    //   ctx.strokeStyle = GRID_COLOR
-    //   ctx.lineWidth = LINE_THICKNESS
-
-    //   ctx.beginPath()
-    //   range(rowRange[0] + 1, rowRange[1] + 1).forEach(() => {
-    //     ctx.moveTo(GAP, py)
-    //     ctx.lineTo(dfProps.rowIndexW - GAP, py)
-
-    //     py += cellSize[1]
-    //   })
-
-    //   ctx.stroke()
-    // }
-
-    // ctx.restore()
-
     ctx.restore()
-
-    //ctx.translate(0, -cellSize[1])
   }
 
   function drawHeaderBg(ctx: ICtx, _normLeft: number, w: number) {
@@ -521,7 +508,7 @@ export function DataFrameCanvas({
     let px2: number
 
     if (colRange[0] !== -1) {
-      range(colRange[0], colRange[1] + 1).forEach((col) => {
+      for (const col of range(colRange[0], colRange[1])) {
         const v = df.shape[1] > 0 ? df.colName(col) : getExcelColName(col)
 
         px = colPositions.current[col]! - normLeft
@@ -543,7 +530,7 @@ export function DataFrameCanvas({
         )
 
         ctx.restore()
-      })
+      }
 
       // draw lines between cols
 
@@ -604,11 +591,12 @@ export function DataFrameCanvas({
 
     ctx.beginPath()
     const y2 = Math.min(dfProps.dim[1] - top, h)
-    range(colRange[0] + 1, colRange[1] + 1).forEach((x) => {
+    for (const x of range(colRange[0] + 1, colRange[1] + 1)) {
       const px = colPositions.current[x]! - left
       ctx.moveTo(px, 0)
       ctx.lineTo(px, y2)
-    })
+    }
+
     ctx.stroke()
 
     ctx.beginPath()
@@ -617,14 +605,14 @@ export function DataFrameCanvas({
 
     let py = (rowRange[0] + 1) * cellSize[1] - top
 
-    range(rowRange[0], rowRange[1]).forEach(() => {
+    for (const {} of range(rowRange[0], rowRange[1])) {
       //const py = (y + 1) * cellSize[1] - top + 0.5
 
       ctx.moveTo(0, py)
       ctx.lineTo(x2, py)
 
       py += cellSize[1]
-    })
+    }
 
     ctx.stroke()
 
@@ -807,8 +795,8 @@ export function DataFrameCanvas({
     let cellY = rowRange[0] * cellSize[1] - top + TEXT_OFFSET
     let py = cellY + cellSize[1] * 0.5 //(rowRange[0] + 0.5) * cellSize[1] - top + TEXT_OFFSET
 
-    range(rowRange[0], rowRange[1]).forEach((row) => {
-      range(colRange[0], colRange[1] + 1).forEach((col) => {
+    for (const row of range(rowRange[0], rowRange[1])) {
+      for (const col of range(colRange[0], colRange[1])) {
         const px1 = colPositions.current[col]! - left
         const px2 = colPositions.current[col + 1]! - left
         const w = px2 - px1
@@ -843,12 +831,12 @@ export function DataFrameCanvas({
         // ctx.stroke()
 
         ctx.restore()
-      })
+      }
 
       py += cellSize[1]
       cellY += cellSize[1]
       //ctx.restore()
-    })
+    }
 
     //ctx.restore()
 
@@ -1238,7 +1226,7 @@ export function DataFrameCanvas({
             ...dragCol.current.cols.slice(0, dragCol.current.col),
             ...dragCol.current.cols
               .slice(dragCol.current.col)
-              .map((cp) => cp + Math.max(minDragX, dragX)),
+              .map(cp => cp + Math.max(minDragX, dragX)),
           ]
 
           draw()
@@ -1355,7 +1343,7 @@ export function DataFrameCanvas({
   function resizeSelection(s: ISelectionRange) {
     selection.current = s
 
-    selectionRangeDispatch({ type: 'set', range: s })
+    updateSelection(s)
 
     if (s.start !== NO_SELECTION) {
       setEditText(
@@ -1589,24 +1577,24 @@ export function DataFrameCanvas({
                 range(
                   selection.current.start.col,
                   selection.current.end.col + 1
-                ).map((col) => df.colNames[col]!)
+                ).map(col => df.colNames[col]!)
               )
             }
 
             range(
               selection.current.start.row,
               selection.current.end.row + 1
-            ).map((row) => {
+            ).map(row => {
               out.push([])
               range(
                 selection.current.start.col,
                 selection.current.end.col + 1
-              ).map((col) => {
+              ).map(col => {
                 out[out.length - 1]!.push(df.get(row, col).toLocaleString())
               })
             })
 
-            const s = out.map((r) => r.join('\t')).join('\n')
+            const s = out.map(r => r.join('\t')).join('\n')
 
             navigator.clipboard.writeText(s)
           }
@@ -1807,7 +1795,7 @@ export function DataFrameCanvas({
   function onClick(e: MouseEvent) {
     //containerRef?.current && containerRef.current.focus()
 
-    if (e.detail == 2) {
+    if (e.detail === 2) {
       setEditCell(selection.current.start)
     }
 
@@ -1988,14 +1976,14 @@ export function DataFrameCanvas({
                   onMouseUp={(e: MouseEvent) => e.preventDefault()}
                 >
                   <input
-                    className={cn('w-full resize-none bg-white outline-none', [
-                      !isNaN(parseFloat(editText)),
-                      'text-right',
-                    ])}
+                    className={cn(
+                      'w-full resize-none bg-white outline-hidden',
+                      [!isNaN(parseFloat(editText)), 'text-right']
+                    )}
                     value={editText}
                     onKeyDown={onCellEditKeyDown}
                     onChange={onEditChange}
-                    onFocus={(e) => e.target.select()}
+                    onFocus={e => e.target.select()}
                     onClick={(e: MouseEvent) => e.stopPropagation()}
                     onMouseDown={(e: MouseEvent) => e.stopPropagation()}
                     readOnly={false}

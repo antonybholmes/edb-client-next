@@ -1,19 +1,13 @@
 import { APP_ID } from '@/consts'
+import type { ISearch } from '@hooks/use-search'
 import { persistentAtom } from '@nanostores/persistent'
 import { useStore } from '@nanostores/react'
 
-const SETTINGS_KEY = `${APP_ID}-search-filters-v2`
-
-interface ISearchFilter {
-  caseSensitive: boolean
-  matchEntireCell: boolean
-  keepOrder: boolean
-  ids: string[]
-}
+const SETTINGS_KEY = `${APP_ID}.search-filters-v2`
 
 export interface IFilters {
-  rows: ISearchFilter
-  cols: ISearchFilter
+  rows: ISearch
+  cols: ISearch
 }
 
 export const DEFAULT_FILTERS: IFilters = {
@@ -31,7 +25,7 @@ export const DEFAULT_FILTERS: IFilters = {
   },
 }
 
-const localFiltersStore = persistentAtom<IFilters>(
+const filtersAtom = persistentAtom<IFilters>(
   SETTINGS_KEY,
   {
     ...DEFAULT_FILTERS,
@@ -42,17 +36,17 @@ const localFiltersStore = persistentAtom<IFilters>(
   }
 )
 
-export function useSearchFilterStore(): {
+export function useSearchFilters(): {
   filters: IFilters
 
   updateFilters: (settings: IFilters) => void
   resetRowFilters: () => void
   resetColFilters: () => void
 } {
-  const filters = useStore(localFiltersStore)
+  const filters = useStore(filtersAtom)
 
   function updateFilters(settings: IFilters) {
-    localFiltersStore.set(settings)
+    filtersAtom.set(settings)
   }
 
   function resetRowFilters() {

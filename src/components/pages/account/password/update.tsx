@@ -1,12 +1,12 @@
-import { BaseCol } from '@/components/layout/base-col'
-import { Alerts } from '@components/alerts/alerts'
+import { BaseCol } from '@layout/base-col'
 
-import { HCenterRow } from '@/components/layout/h-center-row'
+import { HCenterRow } from '@layout/h-center-row'
+import { HeaderLayout } from '@layouts/header-layout'
 import {
   API_UPDATE_PASSWORD_URL,
   EDB_TOKEN_PARAM,
   type IResetJwtPayload,
-} from '@/lib/edb/edb'
+} from '@lib/edb/edb'
 import {
   Card,
   CardContent,
@@ -14,17 +14,16 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@components/shadcn/ui/themed/card'
-import { HeaderLayout } from '@layouts/header-layout'
+} from '@themed/card'
 
 import { jwtDecode } from 'jwt-decode'
 import { useEffect, useRef, useState, type BaseSyntheticEvent } from 'react'
 
 import { TEXT_CONTINUE } from '@/consts'
-import { WarningIcon } from '@components/icons/warning-icon'
 import { FormInputError } from '@components/input-error'
-import { Form, FormField, FormItem } from '@components/shadcn/ui/themed/form'
-import { Input5 } from '@components/shadcn/ui/themed/input5'
+import { WarningIcon } from '@icons/warning-icon'
+import { Form, FormField, FormItem } from '@themed/form'
+import { Input5 } from '@themed/input5'
 
 import {
   SignInLink,
@@ -34,11 +33,11 @@ import {
 } from '@layouts/signin-layout'
 import type { NullStr } from '@lib/text/text'
 
-import { useToast } from '@/hooks/use-toast'
-import { bearerHeaders } from '@/lib/http/urls'
 import { Button } from '@components/shadcn/ui/button'
+import { bearerHeaders } from '@lib/http/urls'
 import { CoreProviders } from '@providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
+import { toast } from '@themed/crisp'
 import axios from 'axios'
 import { useForm } from 'react-hook-form'
 import {
@@ -46,7 +45,7 @@ import {
   PASSWORD_PATTERN,
   TEXT_MIN_PASSWORD_LENGTH,
   TEXT_PASSWORD_DESCRIPTION,
-} from '../password-dialog'
+} from '../password-email-dialog'
 
 interface IFormInput {
   userId: string
@@ -88,7 +87,7 @@ function UpdatePasswordPage() {
   const [hasErrors, setHasErrors] = useState(false)
 
   // try to get name from either account or token
-  const userId = jwtData?.uuid ?? ''
+  const userId = jwtData?.userId ?? ''
 
   // try to get name from either account or token
   const name = jwtData?.data ?? 'User'
@@ -109,8 +108,6 @@ function UpdatePasswordPage() {
   //  useState<boolean>(false)
 
   //const [forceSignIn, setForceSignIn] = useState(0)
-
-  const { toast } = useToast()
 
   // useEffect(() => {
   //   if (forceSignIn > 0) {
@@ -227,12 +224,10 @@ function UpdatePasswordPage() {
   return (
     <HeaderLayout>
       <>
-        <Alerts />
-
         {/* <OKCancelDialog
           open={checkUserWantsToSendReset}
           title={APP_NAME}
-          onReponse={r => {
+          onResponse={r => {
             if (r === TEXT_OK) {
               setForceSignIn(forceSignIn + 1)
             }
@@ -247,7 +242,7 @@ function UpdatePasswordPage() {
         {/* <OKCancelDialog
           open={checkUserWantsToReset}
           title={APP_NAME}
-          onReponse={r => {
+          onResponse={r => {
             if (r === TEXT_OK) {
               setForceSignIn(forceSignIn + 1)
             }

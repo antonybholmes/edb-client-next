@@ -1,8 +1,5 @@
-import { type AnchorHTMLAttributes, type PropsWithoutRef } from 'react'
+import { type ComponentProps } from 'react'
 
-export interface ILinkProps
-  extends PropsWithoutRef<AnchorHTMLAttributes<HTMLAnchorElement>> {
-  href: string
-  'aria-label': string
+export interface ILinkProps extends ComponentProps<'a'> {
   selected?: boolean
 }

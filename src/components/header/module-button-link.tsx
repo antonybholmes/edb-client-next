@@ -1,6 +1,6 @@
 import { ButtonLink } from '@components/link/button-link'
 import { type ILinkProps } from '@interfaces/link-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 
 export function ModuleButtonLink({
   className,
@@ -9,13 +9,12 @@ export function ModuleButtonLink({
 }: ILinkProps) {
   return (
     <ButtonLink
-      variant="ghost"
+      variant="muted"
       size="none"
       justify="start"
       items="start"
-      pad="sm"
       className={cn(
-        'h-full justify-start gap-x-2 py-2 data-[selected=true]:bg-muted data-[selected=false]:hover:bg-muted',
+        'h-full justify-start gap-x-2 py-2 data-[checked=true]:bg-muted data-[checked=false]:hover:bg-muted',
         className
       )}
       {...props}

@@ -1,13 +1,12 @@
-import { BaseCol } from '@/components/layout/base-col'
 import { ModuleButtonLink } from '@components/header/module-button-link'
+import { BaseCol } from '@layout/base-col'
 
 import { HEADER_LINKS } from '@/menus'
-import { type IElementProps } from '@interfaces/element-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 
-import type { MouseEventHandler } from 'react'
+import type { ComponentProps, MouseEventHandler } from 'react'
 
-interface IProps extends IElementProps {
+interface IProps extends ComponentProps<'a'> {
   tab?: string
   onClick: MouseEventHandler<HTMLAnchorElement>
 }
@@ -77,7 +76,7 @@ export function HeaderLinks({ onClick, className }: IProps) {
             <ul className="mt-1 grid grid-cols-2 gap-2">
               {section.modules
                 .filter(
-                  (module) =>
+                  module =>
                     module.mode !== 'dev' ||
                     process.env.NODE_ENV !== 'production'
                 )

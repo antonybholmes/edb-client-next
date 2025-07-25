@@ -8,11 +8,11 @@ export function createDropShadowFilter(svg) {
     .append('feGaussianBlur')
     .attr('in', 'SourceAlpha')
     .attr('stdDeviation', 0.5)
-    .attr('result', 'blur')
+    .attr('result', 'blur-sm')
 
   filter
     .append('feOffset')
-    .attr('in', 'blur')
+    .attr('in', 'blur-sm')
     .attr('dx', 1)
     .attr('dy', 1)
     .attr('result', 'offsetBlur')

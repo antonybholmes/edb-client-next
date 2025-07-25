@@ -1,13 +1,20 @@
 import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 import { FileSpreadsheet } from 'lucide-react'
 
 export function FileIcon({
   w = 'w-5 h-5',
   stroke = 'stroke-foreground',
+  fill,
   className,
   strokeWidth = 1.5,
+  iconMode = 'colorful',
 }: IIconProps) {
+  if (iconMode === 'colorful') {
+    stroke = 'stroke-emerald-500'
+    fill = 'fill-white'
+  }
+
   return (
     // <svg
     //   xmlns="http://www.w3.org/2000/svg"
@@ -18,7 +25,7 @@ export function FileIcon({
     // </svg>
 
     <FileSpreadsheet
-      className={cn(ICON_CLS, stroke, w, className)}
+      className={cn(ICON_CLS, stroke, fill, w, className)}
       stroke=""
       strokeWidth={strokeWidth}
     />

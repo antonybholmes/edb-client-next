@@ -1,3 +1,1 @@
-export interface IStringMap {
-  [key: string]: string
-}
+export type IStringMap = Record<string, string>

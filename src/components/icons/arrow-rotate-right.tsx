@@ -1,4 +1,4 @@
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 
 import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
 

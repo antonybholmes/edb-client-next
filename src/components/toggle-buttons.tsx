@@ -1,9 +1,9 @@
 import type { IChildrenProps } from '@interfaces/children-props'
-import type { IElementProps } from '@interfaces/element-props'
-import { cn } from '@lib/class-names'
+import type { IDivProps } from '@interfaces/div-props'
 import { rangeMap } from '@lib/math/range'
 import { sum } from '@lib/math/sum'
-import type { VariantProps } from 'class-variance-authority'
+import { cn } from '@lib/shadcn-utils'
+import { cva, type VariantProps } from 'class-variance-authority'
 import { useContext, useEffect, useState } from 'react'
 import { BaseCol } from './layout/base-col'
 import type { toggleVariants } from './shadcn/ui/themed/toggle'
@@ -15,7 +15,7 @@ import {
   TabProvider,
   type ITab,
   type TabChange,
-} from './tab-provider'
+} from './tabs/tab-provider'
 
 // const BUTTON_CLS = cn(
 //   FOCUS_RING_CLS,
@@ -24,7 +24,7 @@ import {
 
 // const TOGGLE_VARIANT_DEFAULT_BUTTON_CLS = cn(
 //   BUTTON_CLS,
-//   'data-[state=inactive]:hover:bg-background/90 h-full rounded'
+//   'data-[state=inactive]:hover:bg-background/90 h-full rounded-sm'
 // )
 
 //const TOGGLE_VARIANT_TOOLBAR_BUTTON_CLS = cn(BUTTON_CLS)
@@ -50,29 +50,30 @@ export function ToggleButtons({
 }
 
 interface IToggleButtonContentProps
-  extends IElementProps,
+  extends IDivProps,
     VariantProps<typeof toggleVariants> {
   showLabels?: boolean
   defaultWidth?: number
 }
 
-// const TOGGLE_VARIANT_DEFAULT_LIST_CLS =
-//   'relative bg-muted p-0.75 rounded-theme overflow-hidden h-8.5 gap-x-1'
-
-// const TOGGLE_VARIANT_TOOLBAR_LIST_CLS =
-//   'relative rounded-theme overflow-hidden h-8.5'
-
-// const TOGGLE_VARIANT_DEFAULT_TAB_CLS =
-//   'absolute left-0.75 top-0.75 bottom-0.75 z-0 bg-background rounded-theme'
-
-// const TOGGLE_VARIANT_TOOLBAR_TAB_CLS =
-//   'absolute left-0 top-0 h-full z-0 bg-accent'
+export const toggleButtonVariants = cva('relative flex flex-row', {
+  variants: {
+    variant: {
+      default: 'rounded-theme overflow-hidden',
+      outline: 'p-0.25 rounded-theme bg-muted',
+      gray: '',
+      colorful: '',
+      tab: 'gap-x-0.5',
+      group: 'rounded-theme bg-background',
+    },
+  },
+})
 
 export function ToggleButtonTriggers({
   showLabels = true,
-  defaultWidth = 4,
-  //variant = 'default',
-  size = 'default',
+  defaultWidth = 5,
+  variant = 'default',
+  size = 'md',
   rounded = 'none',
   className,
 }: IToggleButtonContentProps) {
@@ -90,7 +91,7 @@ export function ToggleButtonTriggers({
 
     const x = sum(
       rangeMap(
-        (index) => (tabs[index]?.size ?? defaultWidth) + 0.25,
+        index => (tabs[index]?.size ?? defaultWidth) + 0.25,
         0,
         selectedTab.index
       )
@@ -104,6 +105,11 @@ export function ToggleButtonTriggers({
   }, [selectedTab])
 
   function _onValueChange(value: string) {
+    // one toggle must always be active
+    if (!value) {
+      return
+    }
+
     const tab = getTabFromValue(value, tabs)
     //const [name, index] = parseTabId(value)
 
@@ -117,7 +123,7 @@ export function ToggleButtonTriggers({
   // //let tabButtonCls = TOGGLE_VARIANT_DEFAULT_BUTTON_CLS
   // let tabCls = TOGGLE_VARIANT_DEFAULT_TAB_CLS
 
-  // if (variant === 'toolbar') {
+  // if (variant === 'muted') {
   //   tabListCls = TOGGLE_VARIANT_TOOLBAR_LIST_CLS
   //   //tabButtonCls = TOGGLE_VARIANT_TOOLBAR_BUTTON_CLS
   //   tabCls = TOGGLE_VARIANT_TOOLBAR_TAB_CLS
@@ -126,23 +132,35 @@ export function ToggleButtonTriggers({
   return (
     <ToggleGroup
       type="single"
-      value={selectedTab.tab.id}
+      value={selectedTab?.tab.id ?? ''}
       onValueChange={_onValueChange}
-      className={cn('relative flex flex-row gap-x-0.5', className)}
+      className={toggleButtonVariants({ variant, className })}
       size={size}
       rounded={rounded}
+      variant={variant}
     >
-      {tabs.map((tab) => {
+      {tabs.map((tab, ti) => {
         const tabId = tab.id //getTabId(tab)
         return (
           <ToggleGroupItem
+            id={tabId}
             value={tabId}
             key={tabId}
-            aria-label={tab.id}
-            //data-selected={_value === id}
+            aria-label={tabId}
             justify="center"
-            className="relative z-10"
-            style={{ width: tabPos.width }}
+            className={cn(
+              'relative',
+              variant === 'group' && ti === 0 && 'rounded-l-theme',
+              variant === 'group' &&
+                ti === tabs.length - 1 &&
+                'rounded-r-theme',
+              variant === 'gray' && ti === 0 && 'rounded-l-theme',
+              variant === 'gray' && ti === tabs.length - 1 && 'rounded-r-theme'
+            )}
+            style={{
+              width: tabPos.width,
+              marginLeft: variant === 'group' && ti > 0 ? -1 : 0,
+            }}
           >
             {showLabels && <span>{getTabName(tab)}</span>}
           </ToggleGroupItem>

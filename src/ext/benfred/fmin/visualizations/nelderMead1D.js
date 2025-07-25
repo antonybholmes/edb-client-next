@@ -111,7 +111,7 @@ NelderMead1d.prototype.initialize = function (initial) {
 
   this.params.history = states
 
-  fmin.nelderMead((x) => this.graph.f()(x[0]), initial, this.params)
+  fmin.nelderMead(x => this.graph.f()(x[0]), initial, this.params)
 
   this.increment(this.cycle, 1500)
 }

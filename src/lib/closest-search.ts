@@ -32,7 +32,7 @@ export function findClosest(
   while (i < j) {
     mid = Math.floor(0.5 * (i + j))
 
-    if (arr[mid] == target) {
+    if (arr[mid] === target) {
       return { index: mid, value: arr[mid]! }
     } else if (target < arr[mid]!) {
       // If target is less than array

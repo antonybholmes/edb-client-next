@@ -1,5 +1,5 @@
 import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/class-names'
+import { cn } from '@lib/shadcn-utils'
 
 export function MinusIcon({
   w = 'w-4',

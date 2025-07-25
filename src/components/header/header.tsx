@@ -1,11 +1,13 @@
-import { VCenterRow } from '@/components/layout/v-center-row'
-import { cn } from '@lib/class-names'
+import { VCenterRow } from '@layout/v-center-row'
+import { cn } from '@lib/shadcn-utils'
 import { type ReactNode } from 'react'
 
-import type { IElementProps } from '@interfaces/element-props'
-import Link from 'next/link'
+import { APP_NAME } from '@/consts'
+import { FOCUS_INSET_RING_CLS } from '@/theme'
+import type { IDivProps } from '@interfaces/div-props'
 import { FavIcon } from '../icons/favicon'
-import { HeaderMenu } from './header-menu'
+import { BaseLink } from '../link/base-link'
+import { HeaderMenuGrid } from './header-menu-grid'
 
 export interface IHeaderChildrenProps {
   leftHeaderChildren?: ReactNode
@@ -14,35 +16,43 @@ export interface IHeaderChildrenProps {
   headerTrayChildren?: ReactNode
 }
 
-export interface IHeaderProps extends IHeaderChildrenProps, IElementProps {}
+export interface IHeaderProps extends IHeaderChildrenProps, IDivProps {}
 
 export function Header({
   leftHeaderChildren,
   headerRightChildren,
   headerTrayChildren,
-  className, //'bg-gradient-to-r from-blue-500 to-indigo-500',
+  className, //'bg-linear-to-r from-blue-500 to-indigo-500',
   children,
 }: IHeaderProps) {
   return (
-    <header className={cn('grid grid-cols-3 h-11', className)}>
+    <header
+      className={cn('grid grid-cols-8 md:grid-cols-4 h-header', className)}
+    >
       <VCenterRow>
-        <HeaderMenu />
+        <HeaderMenuGrid />
 
         <VCenterRow className="hidden md:flex gap-x-4 shrink-0">
-          <Link className="hover:bg-muted trans-color" href="/">
+          <BaseLink
+            className={cn(FOCUS_INSET_RING_CLS, 'hover:bg-muted trans-color')}
+            href="/"
+            title={`${APP_NAME} Home`}
+          >
             <FavIcon />
-          </Link>
-          {/* {leftHeaderChildren && (
-            <span className="h-6 w-0.5 bg-foreground/50" />
-          )} */}
+          </BaseLink>
         </VCenterRow>
-        {leftHeaderChildren}
+        <VCenterRow id="header-left">{leftHeaderChildren}</VCenterRow>
       </VCenterRow>
 
-      <VCenterRow className="justify-center">{children}</VCenterRow>
+      <VCenterRow
+        className="justify-center col-span-6 md:col-span-2"
+        id="header-center"
+      >
+        {children}
+      </VCenterRow>
 
-      <VCenterRow className="justify-end">
-        {headerRightChildren}
+      <VCenterRow className="hidden md:flex justify-end">
+        <VCenterRow id="header-right">{headerRightChildren}</VCenterRow>
         {headerTrayChildren}
       </VCenterRow>
     </header>

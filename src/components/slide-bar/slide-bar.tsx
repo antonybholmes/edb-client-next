@@ -1,457 +1,564 @@
 import {
-  forwardRef,
-  useContext,
+  Children,
   useEffect,
-  useImperativeHandle,
+  useMemo,
   useRef,
   useState,
-  type ForwardedRef,
   type KeyboardEvent,
+  type ReactNode,
 } from 'react'
 
 import { H2_CLS } from '@/theme'
-import { cn } from '@lib/class-names'
 
-import { BaseCol } from '@/components/layout/base-col'
+import { BaseCol } from '@layout/base-col'
 
-import { type IButtonProps } from '@components/shadcn/ui/themed/button'
+import { type IButtonProps } from '@themed/button'
 
 import { ANIMATION_DURATION_S } from '@/consts'
-import type { IChildrenProps } from '@interfaces/children-props'
-import type { IElementProps } from '@interfaces/element-props'
-import type { IPos } from '@interfaces/pos'
-import { motion } from 'motion/react'
+import type { IDivProps } from '@interfaces/div-props'
 import { ChevronRightIcon } from '../icons/chevron-right-icon'
-import { HCenterRow } from '../layout/h-center-row'
 import { VCenterRow } from '../layout/v-center-row'
-import { Button } from '../shadcn/ui/themed/button'
-import {
-  SlidebarContext,
-  SlidebarProvider,
-  type ISlidebarContext,
-} from './slide-bar-provider'
 
-const KEY_STEP = 5
+import { useResizeObserver } from '@hooks/use-resize-observer'
+import { TAILWIND_MEDIA_SM, useWindowSize } from '@hooks/use-window-size'
+import { cn } from '@lib/shadcn-utils'
+import { useSessionAtom } from '@lib/storage'
+import gsap from 'gsap'
 
-const H_DIV_BOX_CLS =
-  'group hidden sm:flex shrink-0 grow-0 cursor-ew-resize flex-row items-center justify-center rounded-full px-2 outline-none overflow-hidden'
+import type { ILim } from '@/lib/math/math'
+import { IconButton } from '../shadcn/ui/themed/icon-button'
+import { HANDLE_CLS, InnerHandle } from '../shadcn/ui/themed/resizable'
+import type { LeftRightPos } from '../side'
 
-const H_LINE_CLS =
-  'pointer-events-none group-hover:bg-ring group-focus-visible:bg-ring h-full rounded-full trans-color w-[2px] shrink-0'
+export const KEY_STEP = 5
 
-const V_DIV_BOX_CLS =
-  'group flex flex-col sm:hidden shrink-0 grow-0 cursor-ns-resize items-center justify-center rounded-full py-2 outline-none'
+// The smallest size in px that the sidebar can be
+// resized to by the user
+const MIN_SIZE_PX = 16
 
-const V_LINE_CLS =
-  'pointer-events-none group-hover:bg-ring group-focus-visible:bg-ring w-full rounded-full trans-color h-[2px] shrink-0'
-
-type DragDirType = 'h' | 'v' | ''
+const CONTAINER_CLS = `flex data-[drag-dir=horizontal]:flex-row data-[drag-dir=vertical]:flex-col grow overflow-hidden
+  data-[drag=horizontal]:cursor-ew-resize data-[drag=vertical]:cursor-ns-resize`
 
 export function CloseButton({ className, ...props }: IButtonProps) {
   return (
-    <Button
-      variant="muted"
-      multiProps="icon-sm"
-      rounded="theme"
+    <IconButton
       className={cn('shrink-0', className)}
-      ripple={false}
-      title="Hide sidebar"
+      size="icon-sm"
+      //rounded="full"
+      title="Hide Pane"
       {...props}
     >
       <ChevronRightIcon />
-    </Button>
+    </IconButton>
   )
 }
 
-export function SlideBarMain(props: IChildrenProps) {
-  return <>{props.children}</>
+interface ISlideBarStore {
+  p: number
+  //flexBasis: number
+  mode: 'auto' | 'fixed'
 }
 
-export function SlideBarSide(props: IChildrenProps) {
-  return <>{props.children}</>
-}
-
-interface ISlideBarProps extends ISlidebarContext, IElementProps {
+export interface ISlideBarProps extends IDivProps {
+  id: string
   title?: string
-  side?: 'Left' | 'Right'
-  position: number
-  limits: [number, number]
+  side?: LeftRightPos
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  initialPosition?: number
+  cachePosition?: boolean
+  limits?: ILim
+  hideLimit?: number
+  mainContent?: ReactNode
+  sideContent?: ReactNode
 }
 
 export function SlideBar({
+  id,
   title = '',
-  side = 'Left',
+  side = 'left',
   open = true,
   onOpenChange = () => {},
-  position = 80,
+  initialPosition = 80,
+  cachePosition = true,
   limits = [5, 85],
-  mainContent,
-  sideContent,
+  hideLimit = 2,
+  className,
   children,
+  ...props
 }: ISlideBarProps) {
-  //const c = Children.toArray(children)
+  const [divOffset, setDivOffsetFromEdge] = cachePosition
+    ? useSessionAtom<ISlideBarStore>(`slidebar:${id}`, {
+        p: -1,
 
-  //let mainContent:ReactNode
-  //let sideContent:ReactNode
-  //let content:ReactNode[] = [];
+        mode: 'auto',
+      })
+    : useState<ISlideBarStore>({ p: -1, mode: 'auto' })
 
-  // Children.forEach(children,  (child:ReactNode)=> {
-  //   console.log(child?.type)
-  //   if (!isValidElement(child)) return;
-  //   if (child.type === SlideBarMain) {
-  //     mainContent = child;
-  //   } else if (child.type === SlideBarSide) {
-  //     sideContent = child;
-  //   } else {
-  //     content.push(child);
-  //   }
-  // })
+  //console.log('id', id, divOffset)
 
-  return (
-    <SlidebarProvider
-      title={title}
-      side={side}
-      open={open}
-      position={position}
-      limits={limits}
-      onOpenChange={onOpenChange}
-      mainContent={mainContent}
-      sideContent={sideContent}
-    >
-      {children}
-    </SlidebarProvider>
-  )
-}
+  //const isFixed = useRef(false) // false = percent mode
 
-interface ISlideBarContentProps extends IElementProps {
-  lineClassName?: string
-}
+  // we need to track when use starts messing around with ui
+  const initialOpen = useRef(open)
 
-interface IDrag {
-  pos: IPos
-  divPos: IPos
-  dir: DragDirType
-}
-const NO_DRAG: IDrag = {
-  pos: { x: -1, y: -1 },
-  divPos: { x: -1, y: -1 },
-  dir: '',
-}
+  // remains true until we detect user doing something
+  const isInitial = useRef(true)
 
-export const SlideBarContent = forwardRef(function SlideBarContent(
-  { lineClassName, className, ...props }: ISlideBarContentProps,
-  ref: ForwardedRef<HTMLDivElement>
-) {
-  //const firstUpdate = useRef(true)
-  //const _value = value ?? tabs[0].name // getTabValue(value, tabs)
+  // the position of the div in the ui considering if the side is open or closed.
+  const [flexBasis, setFlexBasis] = useState(0)
 
-  const innerRef = useRef<HTMLDivElement>(null)
-  useImperativeHandle(ref, () => innerRef.current!, [])
+  const c = Children.toArray(children)
+
+  const mainContent = c[0]
+  const sideContent = c[1]
+
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const contentRef = useRef<HTMLDivElement>(null)
   const sidebarRef = useRef<HTMLDivElement>(null)
+
   const hHitBoxRef = useRef<HTMLDivElement>(null)
-  const vHitBoxRef = useRef<HTMLDivElement>(null)
+  //const vHitBoxRef = useRef<HTMLDivElement>(null)
   const sidebarContentRef = useRef<HTMLDivElement>(null)
 
-  const {
-    title,
-    side,
-    open,
-    onOpenChange,
-    position,
-    limits,
-    mainContent,
-    sideContent,
-  } = useContext(SlidebarContext)
+  //const initial = useRef(true)
 
-  //const [focus, setFocus] = useState(false)
-  const [dragState, setDragState] = useState<IDrag>({ ...NO_DRAG })
-  const [showAnimation, setShowAnimation] = useState(true)
-  const [divPos, setDivPos] = useState(position)
-  const [flexPos, setFlexPos] = useState(
-    open ? position : side === 'Right' ? 100 : 0
-  )
+  const [dragDir, setDragDir] = useState<'horizontal' | 'vertical' | ''>('')
+  // const {
+  //   title,
+  //   side,
+  //   open,
+  //   onOpenChange,
+  //   position,
+  //   limits,
+  //   hideLimit,
+  //   mainContent,
+  //   sideContent,
+  // } = useContext(SlidebarContext)
 
-  function onMouseDown(e: MouseEvent | React.MouseEvent, dir: DragDirType) {
+  //const [dragState, setDragState] = useState<IDrag>({ ...NO_DRAG })
+  //const [showAnimation, setShowAnimation] = useState(true)
+  const showAnimation = useRef(0)
+
+  const wSize = useWindowSize()
+
+  //const [cachedOffset, setCachedOffset] = useStorageAtom(`slidebar:${id}`, -1)
+
+  const mode = useMemo(() => {
+    if (wSize.w < TAILWIND_MEDIA_SM) {
+      return 'vertical'
+    } else {
+      return 'horizontal'
+    }
+  }, [wSize])
+
+  function onMouseDown(e: MouseEvent | React.MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
 
-    const divRect =
-      dir === 'v'
-        ? vHitBoxRef.current!.getBoundingClientRect()
-        : hHitBoxRef.current!.getBoundingClientRect()
+    isInitial.current = false
 
-    setDragState({
-      pos: { x: e.pageX, y: e.pageY },
-      divPos: {
-        x: divRect.left + (side === 'Left' ? divRect.width : 0),
-        y: divRect.top + (side === 'Left' ? divRect.height : 0),
-      },
-      dir,
-    })
-
-    setShowAnimation(false)
-  }
-
-  function _onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
-    if (!focus) {
+    if (!containerRef.current) {
       return
     }
 
-    setShowAnimation(false)
+    //const divRect = vHitBoxRef.current!.getBoundingClientRect()
+
+    //const clientRect = containerRef.current.getBoundingClientRect()
+
+    const dragState = {
+      pos: { x: e.pageX, y: e.pageY },
+      flexBasis,
+    }
+
+    //setShowAnimation(false)
+    showAnimation.current = 0
+
+    function onMouseUp() {
+      e.preventDefault()
+      e.stopPropagation()
+
+      //setShowAnimation(true)
+      //showAnimation.current = ANIMATION_DURATION_S
+
+      document.removeEventListener('mouseup', onMouseUp)
+      document.removeEventListener('mousemove', onMouseMove)
+
+      setDragDir('')
+    }
+
+    function onMouseMove(e: MouseEvent) {
+      e.preventDefault()
+      e.stopPropagation()
+
+      if (!containerRef.current) {
+        return
+      }
+
+      //const clientRect = containerRef.current.getBoundingClientRect()
+
+      //const bw = side == 'right' ? divRect.width : -divRect.width
+      const dx =
+        mode === 'horizontal'
+          ? e.pageX - dragState.pos.x
+          : e.pageY - dragState.pos.y
+
+      //console.log('dragging h', dx)
+
+      //const p =
+      //  ((dragState.divPos.y + dy - clientRect.top) / clientRect.width) * 100
+
+      const p =
+        side === 'left' ? dragState.flexBasis + dx : dragState.flexBasis - dx
+
+      // once user starts dragging, we want to
+      // set the position to be fixed, so that
+      // it does not jump around when the window resizes
+      //isFixed.current = true
+      setDragDir(mode)
+      _setDivOffsetFromEdge(divOffset, p, 'fixed')
+    }
+
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup', onMouseUp)
+  }
+
+  function _onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    isInitial.current = false
+
+    if (!focus || !containerRef.current) {
+      return
+    }
+
+    const clientRect = containerRef.current.getBoundingClientRect()
+
+    const step =
+      ((mode === 'horizontal' ? clientRect.width : clientRect.height) *
+        KEY_STEP) /
+      100
+
+    //setShowAnimation(false)
+    showAnimation.current = 0
 
     switch (e.key) {
       case 'ArrowLeft':
       case 'ArrowUp':
-        setDivPos(Math.max(limits[0], divPos - KEY_STEP))
+        _setDivOffsetFromEdge(
+          divOffset,
+          divOffset.p - (side === 'left' ? step : -step),
+          'fixed',
+          false
+        )
         break
       case 'ArrowRight':
       case 'ArrowDown':
-        setDivPos(Math.min(limits[1], divPos + KEY_STEP))
+        _setDivOffsetFromEdge(
+          divOffset,
+          divOffset.p + (side === 'left' ? step : -step),
+          'fixed',
+          false
+        )
         break
+    }
+
+    // once user starts dragging, we want to
+    // set the position to be fixed, so that
+    // it does not jump around when the window resizes
+    //isFixed.current = true
+  }
+
+  function _onkeyUp(e: KeyboardEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    //setShowAnimation(true)
+    //showAnimation.current = ANIMATION_DURATION_S
+  }
+
+  /**
+   * Set where the divider is positioned in the container
+   * This sets the divider position and caches the position
+   * so that if the sidebar is closed and opened again, the
+   * original position is restored.
+   *
+   * @param offset             position in the container as pixels
+   * @param allowHiding   whether to allow hiding the sidebar
+   *                      when dragging to edges of screen
+   * @returns
+   */
+  function _setDivOffsetFromEdge(
+    divOffset: ISlideBarStore,
+    offset: number,
+    resizeMode: 'auto' | 'fixed',
+    allowHiding = true
+  ) {
+    if (!containerRef.current) {
+      return
+    }
+
+    const clientRect = containerRef.current.getBoundingClientRect()
+
+    const w = mode === 'horizontal' ? clientRect.width : clientRect.height
+
+    // since we specify position as the offset from the left or right edge,
+    // we need to convert it to the offset from the left edge
+    // depending on the side
+    let p = offset //side === 'left' ? offset : w - offset
+
+    const x1 = w * (limits![0] / 100)
+    const x2 = w * (limits![1] / 100)
+
+    // If user drags to the edge of the screen, we want to
+    // hide the sidebar. This is useful for small screens
+    // where the sidebar is not needed. This is only done
+    // when the sidebar is not fixed, i.e. when the user
+    // is dragging the sidebar to resize it.
+    // This is done by checking if the position is less than
+    // the hide limit. If it is, we set the position to the
+    // hide limit. This is done to prevent the sidebar from
+    // jumping around when the user is dragging it
+
+    //console.log('hiding', p, x1, w - x2, side === 'left' ? x1 : w - x2)
+
+    if (allowHiding && p <= (side === 'left' ? x1 : w - x2) / 2) {
+      p = MIN_SIZE_PX //(w * (100 - hideLimit!)) / 100
+    } else {
+      if (side === 'left') {
+        p = Math.max(x1, Math.min(x2, p))
+      } else {
+        p = Math.max(w - x2, Math.min(w - x1, p))
+      }
+    }
+
+    //Cache the position so that when the sidebar is closed
+    //it can be opened at the same position
+    // if (isFixed.current && cachePosition) {
+    //   setCachedOffset(p)
+    // }
+
+    // need to be careful when updating atom that we only
+    // do so when a primitive value changes, otherwise
+    // it can trigger too many renders dues to reacts poor
+    // handling of object equality
+    if (p !== divOffset.p || resizeMode !== divOffset.mode) {
+      setDivOffsetFromEdge({ p, mode: resizeMode })
     }
   }
 
-  function _onkeyUp() {
-    setShowAnimation(true)
-  }
+  function _setFlexPos(p: number) {
+    if (!containerRef.current || p === flexBasis) {
+      return
+    }
 
-  function setNormDivPos(p: number) {
-    p = Math.max(limits[0], Math.min(limits[1], p))
-    setDivPos(p)
+    const clientRect = containerRef.current.getBoundingClientRect()
+
+    const w = mode === 'horizontal' ? clientRect.width : clientRect.height
+
+    p = Math.max(0, Math.min(w, p))
+
+    setFlexBasis(p)
   }
 
   // set initial position on render
-  useEffect(() => {
-    setNormDivPos(position)
-  }, [position])
+  // useEffect(() => {
+  //   if (cachedOffset !== -1) {
+  //     _setDivOffsetFromEdge(cachedOffset)
+  //   }
+  // }, [cachedOffset])
 
+  // must only change when open changes
   useEffect(() => {
-    setFlexPos(open ? divPos : side === 'Right' ? 100 : 0)
-  }, [divPos, open])
-
-  useEffect(() => {
-    function onMouseUp() {
-      setDragState({ ...NO_DRAG })
-      setShowAnimation(true)
+    if (open !== initialOpen.current) {
+      isInitial.current = false
     }
 
-    function onMouseMove(e: MouseEvent) {
-      if (!innerRef.current || !hHitBoxRef.current || dragState.dir === '') {
+    if (!isInitial.current) {
+      showAnimation.current = ANIMATION_DURATION_S
+    }
+  }, [open])
+
+  // can change when either open or divOffset.p changes
+  useEffect(() => {
+    // We always show in the closed position.
+    // For open, we only do so once the ui is
+    // in user mode, otherwise we defer to other
+    // UI pieces to determine how to to display
+    // the flex pos. This is so this effect does
+    // not intefer with the resize observer.
+
+    const p = open ? divOffset.p : 0
+
+    _setFlexPos(p)
+  }, [open, divOffset.p])
+
+  useEffect(() => {
+    if (showAnimation.current > 0) {
+      gsap.to(sidebarRef.current, {
+        flexBasis: flexBasis,
+        duration: showAnimation.current,
+        //ease: 'power1.inOut',
+      })
+    } else {
+      gsap.set(sidebarRef.current, {
+        flexBasis: flexBasis,
+      })
+    }
+  }, [flexBasis])
+
+  useEffect(() => {
+    if (!containerRef || !containerRef.current || divOffset.mode === 'fixed') {
+      return
+    }
+
+    const observer = new ResizeObserver(() => {
+      // in auto mode, resize side bars based on percentage of component width/height
+      if (!containerRef.current) {
         return
       }
 
-      e.preventDefault()
-      e.stopPropagation()
+      const clientRect = containerRef.current.getBoundingClientRect()
 
-      const clientRect = innerRef.current.getBoundingClientRect()
+      //console.log('resize', isFixed.current, cachedOffset)
 
-      if (dragState.dir === 'v') {
-        //const bw = side == 'Right' ? divRect.height : -divRect.height
-        const dy = e.pageY - dragState.pos.y
+      const w = mode === 'horizontal' ? clientRect.width : clientRect.height
+      let newPx = (w * initialPosition) / 100
 
-        const p = Math.max(
-          limits[0],
-          Math.min(
-            limits[1],
-            ((dragState.divPos.y + dy - clientRect.top) / clientRect.height) *
-              100
-          )
-        )
-
-        setNormDivPos(p)
-      } else {
-        // h
-        const dx = e.pageX - dragState.pos.x
-
-        //const bw = side == 'Right' ? -divRect.width * 0.5 : divRect.width * 0.5
-
-        const p = Math.max(
-          limits[0],
-          Math.min(
-            limits[1],
-            ((dragState.divPos.x + dx - clientRect.left) / clientRect.width) *
-              100
-          )
-        )
-
-        setNormDivPos(p)
+      if (side === 'right') {
+        newPx = w - newPx
       }
+
+      _setDivOffsetFromEdge(divOffset, newPx, 'auto')
+    })
+
+    observer.observe(containerRef.current)
+
+    return () => observer.disconnect()
+  }, [divOffset.mode])
+
+  useResizeObserver<HTMLDivElement>(containerRef, target => {
+    if (divOffset.mode === 'fixed') {
+      return
     }
 
-    document.addEventListener('mouseup', onMouseUp)
-    document.addEventListener('mousemove', onMouseMove)
+    const clientRect = target.getBoundingClientRect()
 
-    return () => {
-      document.removeEventListener('mouseup', onMouseUp)
-      document.removeEventListener('mousemove', onMouseMove)
+    //console.log('resize', isFixed.current, cachedOffset)
+
+    const w = mode === 'horizontal' ? clientRect.width : clientRect.height
+    let newPx = (w * initialPosition) / 100
+
+    if (side === 'right') {
+      newPx = w - newPx
     }
-  }, [dragState])
 
-  const duration = showAnimation ? ANIMATION_DURATION_S : 0
+    _setDivOffsetFromEdge(divOffset, newPx, 'auto')
+  })
+
+  function mainPanel() {
+    return (
+      <div
+        ref={contentRef}
+        id="center-pane"
+        className="overflow-hidden flex flex-col grow"
+        //animate={{ height: flexPos.p }}
+      >
+        {mainContent && mainContent}
+      </div>
+    )
+  }
+
+  function hitbox() {
+    return (
+      <div
+        id="divider-hitbox"
+        ref={hHitBoxRef}
+        className={HANDLE_CLS}
+        onMouseDown={e => onMouseDown(e)}
+        onClick={() => {
+          hHitBoxRef.current!.focus()
+        }}
+        onKeyDown={_onKeyDown}
+        onKeyUp={_onkeyUp}
+        tabIndex={0}
+        data-drag-dir={mode}
+        data-resize-handle-state={dragDir !== '' ? 'drag' : ''}
+      >
+        <InnerHandle />
+      </div>
+    )
+  }
+
+  function sideContentPanel() {
+    return (
+      <BaseCol
+        ref={sidebarContentRef}
+        className="gap-x-1 overflow-hidden data-[drag=true]:pointer-events-none grow"
+        data-drag={dragDir !== ''}
+      >
+        {title && (
+          <VCenterRow className="justify-between pr-1">
+            <h2 className={H2_CLS}>{title}</h2>
+            <CloseButton onClick={() => onOpenChange?.(false)} />
+          </VCenterRow>
+        )}
+
+        {sideContent && sideContent}
+      </BaseCol>
+    )
+  }
+
+  function leftView() {
+    return (
+      <>
+        <div
+          id="side-pane"
+          ref={sidebarRef}
+          className="flex data-[drag-dir=horizontal]:flex-row data-[drag-dir=vertical]:flex-col overflow-hidden"
+          data-drag-dir={mode}
+        >
+          {sideContentPanel()}
+
+          {hitbox()}
+        </div>
+
+        {mainPanel()}
+      </>
+    )
+  }
+
+  function rightView() {
+    return (
+      <>
+        {mainPanel()}
+
+        <div
+          id="side-pane"
+          ref={sidebarRef}
+          className="flex data-[drag-dir=horizontal]:flex-row data-[drag-dir=vertical]:flex-col overflow-hidden"
+          //style={{ flexBasis: `${flexBasis}px` }}
+          data-drag-dir={mode}
+        >
+          {hitbox()}
+
+          {sideContentPanel()}
+        </div>
+      </>
+    )
+  }
 
   return (
     <div
-      ref={innerRef}
-      className={cn(
-        'flex flex-col sm:flex-row grow min-h-0 h-full overflow-hidden data-drag-[dir=h]:cursor-ew-resize data-drag-[dir=v]:cursor-ns-resize',
-        className
-      )}
-      data-drag-dir={dragState.dir}
+      ref={containerRef}
+      className={cn(CONTAINER_CLS, className)}
+      data-drag-dir={mode}
+      data-drag={dragDir}
       {...props}
     >
-      {side === 'Right' && (
-        <motion.div
-          initial={false}
-          layout
-          transition={{ type: 'easeInOut', duration }}
-          ref={contentRef}
-          id="center-pane"
-          className="min-w-0 basis-0 overflow-hidden flex flex-col"
-          animate={{ flexGrow: flexPos }}
-        >
-          {mainContent && mainContent}
-        </motion.div>
-      )}
-
-      <motion.div
-        initial={false}
-        layout
-        transition={{ type: 'easeInOut', duration }}
-        id="side-pane"
-        ref={sidebarRef}
-        className="flex flex-col sm:flex-row min-h-0 min-w-0 basis-0 overflow-hidden"
-        animate={{
-          flexGrow: side === 'Right' ? 100 - flexPos : flexPos,
-          opacity: open ? 1 : 0,
-        }}
-      >
-        <div
-          ref={sidebarContentRef}
-          className="flex flex-col sm:flex-row grow min-h-0 overflow-hidden"
-        >
-          {side === 'Right' && (
-            <>
-              <div
-                id="divider-hitbox"
-                ref={hHitBoxRef}
-                className={H_DIV_BOX_CLS}
-                onMouseDown={(e) => onMouseDown(e, 'h')}
-                onClick={() => {
-                  hHitBoxRef.current!.focus()
-                }}
-                //onFocus={() => setFocus(true)}
-                //onBlur={() => setFocus(false)}
-                onKeyDown={_onKeyDown}
-                onKeyUp={_onkeyUp}
-                tabIndex={0}
-              >
-                <div
-                  className={cn(
-                    H_LINE_CLS,
-                    [dragState.dir !== '', 'bg-ring'],
-                    lineClassName
-                  )}
-                />
-              </div>
-
-              <div
-                id="divider-hitbox"
-                ref={vHitBoxRef}
-                className={V_DIV_BOX_CLS}
-                onMouseDown={(e) => onMouseDown(e, 'v')}
-                onClick={() => {
-                  vHitBoxRef.current!.focus()
-                }}
-                //onFocus={() => setFocus(true)}
-                //onBlur={() => setFocus(false)}
-                onKeyDown={_onKeyDown}
-                onKeyUp={_onkeyUp}
-                tabIndex={0}
-              >
-                <div
-                  className={cn(V_LINE_CLS, [dragState.dir !== '', 'bg-ring'])}
-                />
-              </div>
-            </>
-          )}
-
-          <BaseCol
-            className="gap-y-1 grow overflow-hidden data-[drag=true]:pointer-events-none"
-            data-drag={dragState.dir !== ''}
-          >
-            {title && (
-              <VCenterRow className="justify-between pr-1">
-                <h2 className={H2_CLS}>{title}</h2>
-                <CloseButton onClick={() => onOpenChange?.(false)} />
-              </VCenterRow>
-            )}
-
-            {sideContent && sideContent}
-          </BaseCol>
-
-          {side === 'Left' && (
-            <>
-              <HCenterRow
-                id="divider-hitbox"
-                ref={hHitBoxRef}
-                className={H_DIV_BOX_CLS}
-                onMouseDown={(e) => onMouseDown(e, 'h')}
-                onClick={() => {
-                  hHitBoxRef.current!.focus()
-                }}
-                //onFocus={() => setFocus(true)}
-                //onBlur={() => setFocus(false)}
-                onKeyDown={_onKeyDown}
-                onKeyUp={_onkeyUp}
-                tabIndex={0}
-              >
-                <div
-                  className={cn(
-                    H_LINE_CLS,
-                    [dragState.dir !== '', 'bg-ring'],
-                    lineClassName
-                  )}
-                />
-              </HCenterRow>
-
-              <div
-                id="divider-hitbox"
-                ref={vHitBoxRef}
-                className={V_DIV_BOX_CLS}
-                onMouseDown={(e) => onMouseDown(e, 'v')}
-                onClick={() => {
-                  vHitBoxRef.current!.focus()
-                }}
-                //onFocus={() => setFocus(true)}
-                //onBlur={() => setFocus(false)}
-                onKeyDown={_onKeyDown}
-                onKeyUp={_onkeyUp}
-                tabIndex={0}
-              >
-                <div
-                  className={cn(V_LINE_CLS, [dragState.dir !== '', 'bg-ring'])}
-                />
-              </div>
-            </>
-          )}
-        </div>
-      </motion.div>
-
-      {side === 'Left' && (
-        <motion.div
-          initial={false}
-          layout
-          ref={contentRef}
-          id="center-pane"
-          className="min-w-0 basis-0 overflow-hidden"
-          animate={{ flexGrow: 100 - flexPos }}
-          transition={{ type: 'easeInOut', duration }}
-        >
-          {mainContent && mainContent}
-        </motion.div>
-      )}
+      {side === 'left' ? leftView() : rightView()}
     </div>
   )
-})
+}

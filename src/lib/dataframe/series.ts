@@ -1,26 +1,45 @@
-import { Index, NUM_INDEX, type IIndexOptions, type IndexFromType } from '.'
-import { BaseSeries } from './base-series'
+import { Index, makeIndex, type IIndexOptions } from '.'
+import { BaseIndex } from './base-index'
+import type { IndexFromType, SeriesData } from './dataframe-types'
 
-import { DataIndex } from './data-index'
-import type { SeriesData } from './dataframe-types'
+export const DEFAULT_INDEX_NAME = 'Index'
+
+export abstract class BaseSeries extends BaseIndex {
+  /**
+   * Returns the index associated with this series
+   */
+  abstract get index(): Index
+
+  abstract setIndex(index: IndexFromType, inplace: boolean): BaseSeries
+
+  get uniq(): SeriesData[] {
+    return [...new Set(this.values)].sort()
+  }
+
+  abstract set(index: number, v: SeriesData): void
+
+  abstract filter(idx: number[]): BaseSeries
+
+  abstract copy(): BaseSeries
+}
 
 export interface ISeriesOptions extends IIndexOptions {
-  index?: IndexFromType
+  index?: IndexFromType | undefined
 }
 
 export class Series extends BaseSeries {
   protected _data: SeriesData[]
   protected _name: string
-  protected _index: Index = NUM_INDEX
+  protected _index: Index
 
   constructor(data: SeriesData[], options: ISeriesOptions = {}) {
     super()
 
-    const { index, name } = { name: '', index: NUM_INDEX, ...options }
+    const { index, name = '' } = options
 
     this._data = data
     this._name = name
-    this.setIndex(index, true)
+    this._index = makeIndex(index, data.length)
   }
 
   setName(name: string): BaseSeries {
@@ -42,15 +61,9 @@ export class Series extends BaseSeries {
   ): BaseSeries {
     const series: Series = inplace ? this : (this.copy() as Series)
 
-    if (index instanceof Index) {
-      series._index = new DataIndex(index.values)
-    } else if (Array.isArray(index)) {
-      series._index = new DataIndex(index)
-    } else {
-      series._index = NUM_INDEX
-    }
+    series._index = makeIndex(index, series.length)
 
-    return this
+    return series
   }
 
   override get values(): SeriesData[] {
@@ -66,18 +79,50 @@ export class Series extends BaseSeries {
     return this
   }
 
-  override get size() {
+  override get length() {
     return this._data.length
   }
 
   override filter(idx: number[]): BaseSeries {
     return new Series(
-      idx.map((i) => this._data[i]!),
+      idx.map(i => this._data[i]!),
       { name: this._name, index: this._index.filter(idx) }
     )
   }
 
   override copy(): BaseSeries {
-    return new Series(this._data, { name: this._name, index: this._index })
+    return new Series(this._data, {
+      name: this._name,
+      index: this._index.copy(),
+    })
   }
 }
+
+export const EMPTY_SERIES = new Series([])
+
+// export class InfSeries extends BaseSeries {
+
+//   protected _defaultValue: SeriesData
+//   protected _length: number
+
+//   constructor(length: number = 1000000, defaultValue: SeriesData = NaN) {
+//     super()
+//     this._defaultValue = defaultValue
+//     this._length = length
+//     this
+//   }
+
+//   get defaultValue() {
+//     return this._defaultValue
+//   }
+
+//   setDefaultValue(v: SeriesData): BaseSeries {
+//     this._defaultValue = v
+
+//     return this
+//   }
+
+//   override get length(): number {
+//     return this._length
+//   }
+// }

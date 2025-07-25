@@ -1,28 +1,30 @@
-import { makeInfoAlert } from '@components/alerts/alerts-provider'
-
 import { HeaderLayout, type IHeaderLayoutProps } from '@layouts/header-layout'
 
-import { SIGN_IN_ROUTE, SIGN_UP_ROUTE, TEXT_SIGN_UP } from '@/lib/edb/edb'
+import {
+  APP_OAUTH2_SIGN_IN_ROUTE,
+  SIGN_UP_ROUTE,
+  TEXT_SIGN_UP,
+} from '@lib/edb/edb'
 
 import { ThemeIndexLink } from '@components/link/theme-index-link'
-import { useContext, useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 
-import { VCenterCol } from '@/components/layout/v-center-col'
 import { TEXT_SIGN_IN } from '@/consts'
 
-import { DinoIcon } from '@/components/icons/dino-icon'
-import { BaseCol } from '@/components/layout/base-col'
+import { AppIcon } from '@/components/icons/app-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
-import { Button } from '@/components/shadcn/ui/themed/button'
-import { EdbAuthContext } from '@/lib/edb/edb-auth-provider'
-import { EDBSignIn, type SignInMode } from '@/lib/edb/signin/edb-signin'
 
-export const FORWARD_DELAY_MS = 1000
+import { CenterCol } from '@/components/layout/center-col'
+import { Card, CardHeader, CardTitle } from '@/components/shadcn/ui/themed/card'
+import { EDBSignIn, type SignInMode } from '@/lib/edb/signin/edb-signin'
+import { useEdbAuth } from '@lib/edb/edb-auth'
+
+export const FORWARD_DELAY_MS = 2000
 
 //https://uibakery.io/regex-library/email
 export const EMAIL_PATTERN =
   /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/
-export const USERNAME_PATTERN = /^[\w@.]{4,}/
+export const USERNAME_PATTERN = /^[\w@.]{3,}/
 
 export const NAME_PATTERN = /^[\w ]*/
 
@@ -47,17 +49,11 @@ export function SignInLink() {
   return (
     <span>
       Already have an account?{' '}
-      <ThemeIndexLink href={SIGN_IN_ROUTE} aria-label={TEXT_SIGN_IN}>
+      <ThemeIndexLink href={APP_OAUTH2_SIGN_IN_ROUTE} aria-label={TEXT_SIGN_IN}>
         {TEXT_SIGN_IN}
       </ThemeIndexLink>
     </span>
   )
-}
-
-export function makeSignedInAlert() {
-  return makeInfoAlert({
-    title: 'You are signed in',
-  })
 }
 
 // interface IFormInput {
@@ -68,92 +64,109 @@ export function makeSignedInAlert() {
 // }
 
 export interface ISignInLayoutProps extends IHeaderLayoutProps {
-  signInMode?: SignInMode
-  showSignInError?: boolean
+  signedRequired?: 'auto' | 'always' | 'never'
   apiKey?: string
   // if signin is success, which page of the app to jump to
   // so that user is not left on signin page
-  callbackUrl?: string
+  redirectUrl?: string
+  signInMode?: SignInMode
+  showAccountButton?: boolean
+}
+
+export function SignInRequired({
+  redirectUrl = '',
+
+  children,
+}: ISignInLayoutProps) {
+  const [_redirectUrl, setRedirectUrl] = useState('')
+
+  //const queryClient = useQueryClient()
+
+  const { session, fetchSession } = useEdbAuth()
+
+  useEffect(() => {
+    async function checkSignedIn() {
+      // we need to check if user is signed in
+      // if not, we will redirect them to the sign in page.
+      // We must request the session rather than using the
+      // session from the store, because it may be stale
+      // and we want to ensure that the user is truly not
+      // signed in before redirecting them to the sign in page.
+      // session may be null upon initial load until the
+      // session is fetched from the server so it is not reliable
+      // for determining if the user is signed in and should
+      // only be used in passive ways, such as rendering the
+      // sign in button or showing the user name in the header.
+      const s = await fetchSession()
+
+      //console.log('loadUser', session)
+      if (!s) {
+        // the sign in callback includes this url so that the app can signin and
+        // then return user to the page they were signing into as a convenience
+
+        const url = redirectUrl ? redirectUrl : window.location.pathname
+
+        setRedirectUrl(url)
+      }
+    }
+
+    checkSignedIn()
+  }, [])
+
+  // if (_redirectUrl) {
+  //   console.log('redirect', _redirectUrl, session)
+  //   redirect(
+  //     `${APP_OAUTH2_SIGN_IN_ROUTE}?redirect=${encodeURIComponent(_redirectUrl)}`
+  //   )
+  // }
+
+  if (!session) {
+    return (
+      <CenterCol>
+        <Card className="shadow-2xl w-128 text-sm">
+          <CardHeader className="text-xl">
+            <VCenterRow className="gap-x-2">
+              <AppIcon w="w-10" />
+              <CardTitle>{TEXT_SIGN_IN} Required</CardTitle>
+            </VCenterRow>
+          </CardHeader>
+          <p>You need to sign in to view this page.</p>
+          {/* <VCenterRow className="justify-end">
+            <ThemeIndexLink href={APP_OAUTH2_SIGN_IN_ROUTE}>
+              {TEXT_SIGN_IN}
+            </ThemeIndexLink>
+          </VCenterRow> */}
+        </Card>
+      </CenterCol>
+    )
+  } else {
+    return children
+  }
 }
 
 export function SignInLayout({
   signInMode = 'auth0', //username-password',
-  showSignInError = true,
-  apiKey = '',
-  callbackUrl,
+  signedRequired = 'auto',
+  showAccountButton = true,
+  redirectUrl = '',
   className,
   headerTrayChildren,
   children,
-  ...props
 }: ISignInLayoutProps) {
-  const [_callbackUrl, setCallbackUrl] = useState<string | undefined>(
-    callbackUrl
-  )
-
-  //const queryClient = useQueryClient()
-
-  const { edbUser: user } = useContext(EdbAuthContext)
-
-  useEffect(() => {
-    // async function loadUser() {
-    //   setUser(await getCachedUser())
-    // }
-
-    // the sign in callback includes this url so that the app can signin and
-    // then return user to the page they were signing into as a convenience
-    if (!_callbackUrl) {
-      // default to returning to current page if none specified. This is not
-      // advantageous on the signin page itself as it may appear as though
-      // user has not signed in even when they have. In this case it should
-      // be manually set.
-      setCallbackUrl(window.location.href)
-    }
-
-    //loadUser()
-  }, [])
-
-  if (!user) {
-    return null // 'Checking callback url...'
-  }
-
-  if (!_callbackUrl) {
-    return null // 'Checking callback url...'
-  }
-
-  //const signInRequired = showSignInError && user.uuid === ''
-
-  //if (signInRequired) {
-  //  console.log('redirect', _callbackUrl)
-  //redirect(`${SIGN_IN_ROUTE}?callbackUrl=${_callbackUrl}`)
-  //}
-
   let elem: ReactNode
 
-  if (user.uuid === '' && showSignInError) {
+  if (signedRequired !== 'never') {
     elem = (
-      <VCenterCol className="h-full items-center grow">
-        <BaseCol className="gap-y-4 w-1/2">
-          <DinoIcon />
-          <h1 className="text-2xl font-medium">
-            Hmm, you do not appear to be signed in!
-          </h1>
-          <p>
-            You must be signed in to view this page. Try using the{' '}
-            <strong>{TEXT_SIGN_IN}</strong> button on the top right to enter
-            your credentials.
-          </p>
-
-          <VCenterRow className="mt-8 text-sm">
-            <Button
-              variant="theme"
-              size="lg"
-              onClick={() => window.location.reload()}
-            >
-              Reload
-            </Button>
-          </VCenterRow>
-        </BaseCol>
-      </VCenterCol>
+      <SignInRequired
+        signInMode={signInMode}
+        signedRequired={signedRequired}
+        showAccountButton={showAccountButton}
+        redirectUrl={redirectUrl}
+        className={className}
+        headerTrayChildren={headerTrayChildren}
+      >
+        {children}
+      </SignInRequired>
     )
   } else {
     elem = children
@@ -164,16 +177,16 @@ export function SignInLayout({
       className={className}
       headerTrayChildren={
         <>
+          {showAccountButton && <EDBSignIn signInMode={signInMode} />}
+
           {headerTrayChildren}
-          <EDBSignIn apiKey={apiKey} signInMode={signInMode} />
         </>
       }
-      {...props}
     >
       {/* <OKCancelDialog
           open={checkUserWantsToSignIn}
           title={APP_NAME}
-          onReponse={r => {
+          onResponse={r => {
             if (r === TEXT_OK) {
               setForceSignIn(true)
             }

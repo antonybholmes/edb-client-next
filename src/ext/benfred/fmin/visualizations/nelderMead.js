@@ -78,8 +78,8 @@ NelderMeadContour.prototype.initialize = function (initial) {
     .style('fill', 'red')
     .style('fill-opacity', 0.9)
     .attr('r', 5)
-    .attr('cx', (d) => this.plot.xScale(d[0]))
-    .attr('cy', (d) => this.plot.yScale(d[1]))
+    .attr('cx', d => this.plot.xScale(d[0]))
+    .attr('cy', d => this.plot.yScale(d[1]))
     .attr('filter', 'url(#dropshadow)')
   this.increment(this.cycle, this.duration)
 }

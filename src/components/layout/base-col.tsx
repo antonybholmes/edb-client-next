@@ -1,18 +1,10 @@
 import type { IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/class-names'
-import { forwardRef, type ForwardedRef } from 'react'
+import { cn } from '@lib/shadcn-utils'
 
-export const BaseCol = forwardRef(function BaseCol(
-  { className, children, ...props }: IDivProps,
-  ref: ForwardedRef<HTMLDivElement>
-) {
+export function BaseCol({ ref, className, children, ...props }: IDivProps) {
   return (
-    <div
-      ref={ref}
-      className={cn('flex flex-col min-w-0 min-h-0', className)}
-      {...props}
-    >
+    <div ref={ref} className={cn('flex flex-col', className)} {...props}>
       {children}
     </div>
   )
-})
+}

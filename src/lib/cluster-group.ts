@@ -1,4 +1,4 @@
-import { randomHexColor } from './color'
+import { randomHexColor } from './color/color'
 import { nanoid } from './utils'
 
 // export interface IBaseClusterGroup {
@@ -8,24 +8,45 @@ import { nanoid } from './utils'
 // }
 
 export interface IClusterGroup {
+  version: number
   id: string
   name: string
   search: string[]
+  exactMatch?: boolean
   color: string
+  columnNames: string[]
+}
+
+interface IGroupProps {
+  name: string
+  search?: string[]
+  exactMatch?: boolean
+  color?: string
   columnNames?: string[]
 }
 
 /**
- * Create a new empty group with sane defaults, that the user
- * will update to what they actually want to search for.
+ * Create a new empty group with sane defaults that the user
+ * can update.
  *
  * @returns
  */
-export function makeNewGroup(name: string = 'Group 1'): IClusterGroup {
+export function makeNewGroup(
+  {
+    name = 'Group 1',
+    search = [],
+    exactMatch = true,
+    color = randomHexColor(),
+    columnNames = [],
+  } = {} as IGroupProps
+): IClusterGroup {
   return {
+    version: 2,
     id: nanoid(),
     name,
-    search: [],
-    color: randomHexColor(),
+    search,
+    exactMatch,
+    color,
+    columnNames,
   }
 }

@@ -1,147 +1,154 @@
-import { VCenterRow } from '@/components/layout/v-center-row'
+import { cn } from '@lib/shadcn-utils'
 import {
-  CENTERED_ROW_CLS,
-  ROUNDED_MD_CLS,
-  TRANS_COLOR_CLS,
-  TRANS_TIME_CLS,
-} from '@/theme'
-import { cn } from '@lib/class-names'
-import { nanoid } from 'nanoid'
-import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
   useState,
-  type InputHTMLAttributes,
+  type ComponentProps,
+  type CSSProperties,
+  type ReactNode,
 } from 'react'
-import type { IPlaceholderProps } from './input'
 
-export const CONTAINER_CLS = cn(
-  TRANS_COLOR_CLS,
-  ROUNDED_MD_CLS,
-  'pt-2.5 pb-1.5 px-2 relative bg-background border border-border',
-  'data-[enabled=true]:data-[focus=true]:border-ring',
-  'data-[enabled=true]:data-[focus=true]:ring-1',
-
-  'data-[error=true]:ring-red-600 min-w-0',
-  'data-[enabled=false]:bg-muted'
-)
+import { WarningIcon } from '@icons/warning-icon'
+import type { IDivProps } from '@interfaces/div-props'
+import { VCenterRow } from '@layout/v-center-row'
+import { randId } from '@lib/utils'
+import { cva, type VariantProps } from 'class-variance-authority'
+import { Label } from './label'
 
 export const PLACEHOLDER_CLS = cn(
-  TRANS_TIME_CLS,
-  CENTERED_ROW_CLS,
-  'pointer-events-none absolute left-1.5 z-10 bg-background h-3 px-1.5',
-  'data-[focus=false]:text-foreground/50 data-[focus=true]:text-theme data-[enabled=false]:text-foreground/50',
-  'data-[hover=true]:text-theme'
+  'min-w-0 flex flex-row gap-x-2 items-center grow relative border',
+  'disabled:cursor-not-allowed data-[readonly=true]:bg-muted/40'
 )
+
+export const inputVariants = cva(PLACEHOLDER_CLS, {
+  variants: {
+    variant: {
+      default: '',
+    },
+    h: {
+      default: 'h-10',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+    h: 'default',
+  },
+})
 
 export const INPUT_CLS = cn(
-  'px-1 min-w-0 grow disabled:cursor-not-allowed disabled:opacity-50 read-only:opacity-50 outline-none border-none ring-none'
+  'disabled:cursor-not-allowed disabled:opacity-50 read-only:opacity-50',
+  'placeholder:opacity-60 outline-hidden border-none ring-none min-w-0 grow',
+  'peer w-full border-b-2 border-gray-300 bg-transparent pt-6 pb-2 px-0 text-base text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-500'
 )
 
-export function Placeholder({
+export interface IPlaceholderProps extends IDivProps {
+  id: string | undefined
+  placeholder: string | undefined
+  focus?: boolean
+  hover?: boolean
+  value: string | number | readonly string[] | undefined
+  disabled?: boolean
+}
+
+export interface IInputProps
+  extends ComponentProps<'input'>,
+    VariantProps<typeof inputVariants> {
+  error?: boolean
+  inputCls?: string
+  inputStyle?: CSSProperties
+  leftChildren?: ReactNode
+  rightChildren?: ReactNode
+  otherChildren?: ReactNode
+  header?: string
+  onTextChange?: (v: string) => void
+  onTextChanged?: (v: string) => void
+}
+
+export function Input3({
+  ref,
   id,
-  placeholder,
-  focus,
-  hover,
   value,
-  disabled = false,
-
+  leftChildren,
+  rightChildren,
+  otherChildren,
+  type,
+  inputCls,
+  inputStyle,
+  error = false,
+  header = '',
+  variant = 'default',
+  h = 'default',
+  placeholder,
+  disabled,
+  readOnly,
+  onChange,
+  onTextChange,
+  onTextChanged,
+  style,
   className,
-}: IPlaceholderProps) {
+  ...props
+}: IInputProps) {
+  const [focus, setFocus] = useState(false)
+
+  const [_id] = useState(id ?? randId('input'))
+
   return (
-    <label
-      data-focus={focus}
-      data-hover={hover}
-      data-value={value !== ''}
-      className={cn(PLACEHOLDER_CLS, className)}
-      data-enabled={!disabled}
-      style={{
-        transform: `translateY(${focus || value ? '-1.3rem' : '-0.1rem'})`,
-        fontSize: `${focus || value ? '75%' : '100%'}`,
-        fontWeight: `${focus || value ? '500' : 'normal'}`,
-      }}
-      htmlFor={id}
-    >
-      {focus ? placeholder?.replace('...', '') : placeholder}
-    </label>
-  )
-}
-
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  error?: boolean | undefined
-  globalClassName?: string
-  inputClassName?: string
-}
-
-export const Input3 = forwardRef<HTMLInputElement, InputProps>(
-  (
-    {
-      id,
-      placeholder = '',
-      value = '',
-      type,
-      disabled = false,
-      error = false,
-
-      className,
-      globalClassName,
-      inputClassName,
-      children,
-      ...props
-    },
-    ref
-  ) => {
-    const [focus, setFocus] = useState(false)
-    const [hover, setHover] = useState(false)
-    const innerRef = useRef<HTMLInputElement>(null)
-    useImperativeHandle(ref, () => innerRef.current!, [])
-
-    useEffect(() => {
-      if (focus && innerRef.current) {
-        innerRef.current.select()
-      }
-    }, [focus])
-
-    return (
+    <VCenterRow className="gap-x-4">
       <VCenterRow
-        className={cn(CONTAINER_CLS, globalClassName, className)}
+        className={inputVariants({
+          variant,
+          h,
+          className: PLACEHOLDER_CLS,
+        })}
+        data-enabled={!disabled}
+        data-readonly={readOnly}
+        data-error={error}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        data-enabled={!disabled}
-        data-error={error}
         data-focus={focus}
+        style={style}
+        ref={ref}
       >
-        {placeholder && (
-          <Placeholder
-            id={id ?? `input-v3-${nanoid()}`}
-            placeholder={placeholder}
-            focus={focus}
-            hover={hover}
-            value={value}
-            disabled={disabled}
-            data-enabled={!disabled}
-            className={globalClassName}
-          />
-        )}
-
         <input
-          ref={innerRef}
+          id={_id}
           type={type}
-          value={value}
-          //defaultValue={defaultValue}
+          className={cn(INPUT_CLS, inputCls)}
+          style={inputStyle}
           disabled={disabled}
-          data-enabled={!disabled}
-          className={cn(INPUT_CLS, globalClassName, inputClassName)}
+          readOnly={readOnly}
+          onChange={e => {
+            onTextChange?.(e.currentTarget.value)
+            onChange?.(e)
+          }}
+          onKeyDown={e => {
+            //console.log(e)
+            if (e.key === 'Enter') {
+              onTextChanged?.(e.currentTarget.value)
+            }
+          }}
+          value={value}
+          placeholder={placeholder}
           {...props}
         />
 
-        {children}
+        <Label
+          htmlFor={_id}
+          className={`absolute left-0 text-gray-500 text-base transition-all duration-200 transform origin-[0]
+           
+          peer-placeholder-shown:top-6 
+          peer-placeholder-shown:text-xs 
+          peer-placeholder-shown:text-gray-400 
+          peer-focus:top-0
+          peer-focus:text-xs 
+          peer-focus:text-blue-500 
+          ${value ? 'text-blue-500' : ''}
+        `}
+        >
+          {placeholder}
+        </Label>
+
+        {rightChildren && rightChildren}
+        {error && <WarningIcon stroke="stroke-destructive" w="w-4 h-4" />}
       </VCenterRow>
-    )
-  }
-)
-Input3.displayName = 'Input3'
+      {otherChildren && otherChildren}
+    </VCenterRow>
+  )
+}
