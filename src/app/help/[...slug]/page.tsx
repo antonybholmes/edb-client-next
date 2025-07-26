@@ -1,5 +1,7 @@
 import { BaseCol } from '@/components/layout/base-col'
 import { MarkdownContent } from '@/components/markdown-content'
+import { getHelpFiles, HELP_DIRECTORY } from '@/lib/markdown/help'
+import { loadMarkdownFile } from '@/lib/markdown/markdown'
 import fs from 'fs'
 import path from 'path'
 
@@ -29,15 +31,14 @@ export function generateStaticParams() {
   //   filename: edge?.node?._sys.breadcrumbs,
   // }))
 
-  const markdownFiles = getMarkdownFiles(
-    path.join(process.cwd(), 'content', 'help')
-  )
+  const markdownFiles = getHelpFiles()
 
   console.log('s', markdownFiles)
 
   return markdownFiles.map((file) => {
-    const filePath = path.relative(process.cwd(), file).replace(/\.md$/, '')
-    const slug = filePath.replace(/\\/g, '/')
+    const relativePath = path.relative(HELP_DIRECTORY, file)
+    const slug = relativePath.replace(/\.mdx?$/, '').split(path.sep) //filePath.replace(/\\/g, '/')
+    console.log('slugs', slug)
     return { slug }
   })
 }
@@ -48,6 +49,12 @@ export default async function HelpPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
+
+  console.log('slug', slug)
+
+  const fullPath = path.join(HELP_DIRECTORY, ...slug) + '.md'
+
+  const { contentHtml } = await loadMarkdownFile(fullPath)
 
   // Get the file path for the specific Markdown file based on the slug
   //const filePath = path.join(process.cwd(), 'content', `${slug}.md`)
@@ -75,7 +82,7 @@ export default async function HelpPage({
       </BaseCol>
 
       <MarkdownContent className="help flex flex-col gap-y-4 py-1 text-xs">
-        {/* <Content /> */}
+        {contentHtml}
       </MarkdownContent>
     </article>
   )

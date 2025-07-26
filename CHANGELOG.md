@@ -2,6 +2,10 @@
 
 ## 24.3 (Jul, 2025)
 
+### Added
+
+- Help pages now partially render.
+
 ### Fixed
 
 - Bug fixes and updates.

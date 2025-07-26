@@ -10,8 +10,8 @@ export async function loadMarkdownFile(filePath: string): Promise<{
   contentHtml: string
   [key: string]: any
 }> {
-  const fullPath = path.join(process.cwd(), filePath)
-  const fileContents = fs.readFileSync(fullPath, 'utf8')
+  //const fullPath = path.join(process.cwd(), filePath)
+  const fileContents = fs.readFileSync(filePath, 'utf8')
 
   const { content, data } = matter(fileContents)
 
@@ -44,4 +44,25 @@ export async function getPostData(id: string): Promise<{
     contentHtml,
     ...matterResult.data,
   }
+}
+
+// Recursively get all markdown files in a directory
+export function getAllMarkdownFiles(
+  dir: string,
+  fileList: string[] = []
+): string[] {
+  const files = fs.readdirSync(dir)
+
+  files.forEach((file) => {
+    const fullPath = path.join(dir, file)
+    const stat = fs.statSync(fullPath)
+
+    if (stat.isDirectory()) {
+      getAllMarkdownFiles(fullPath, fileList)
+    } else if (file.endsWith('.md') || file.endsWith('.mdx')) {
+      fileList.push(fullPath)
+    }
+  })
+
+  return fileList
 }
