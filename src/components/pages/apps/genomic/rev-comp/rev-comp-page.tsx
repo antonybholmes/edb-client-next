@@ -407,7 +407,7 @@ function RevCompPage() {
               collapsible={true}
             >
               <Textarea
-                className="grow whitespace-pre "
+                className="grow whitespace-pre"
                 placeholder="FASTA/DNA sequences"
                 value={text}
                 onChange={(e) => {

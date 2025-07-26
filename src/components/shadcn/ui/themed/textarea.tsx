@@ -2,9 +2,8 @@ import { FOCUS_INSET_RING_CLS } from '@/theme'
 import { BaseCol } from '@layout/base-col'
 import { cn } from '@lib/shadcn-utils'
 
-import { BaseRow } from '@components/layout/base-row'
+import { randId } from '@/lib/utils'
 import { VCenterRow } from '@components/layout/v-center-row'
-import { randId } from '@lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { Label } from './label'
@@ -31,7 +30,7 @@ export const textareaVariants = cva(TEXTAREA_GROUP_CLS, {
 })
 
 export const TEXT_CLS =
-  ' h-full text-foreground disabled:cursor-not-allowed disabled:opacity-50 outline-hidden ring-none read-only:opacity-50 w-full grow'
+  'h-full text-foreground disabled:cursor-not-allowed disabled:opacity-50 outline-hidden ring-none read-only:opacity-50 w-full grow'
 
 export interface ITextAreaProps
   extends ComponentProps<'textarea'>,
@@ -77,56 +76,44 @@ export function Textarea({
   //  setInputValue(event.target.value)
   //}
 
-  const [_id] = useState(id ?? randId('textarea'))
+  const _id = id ?? randId('textarea')
 
   let ret: ReactNode = (
-    <VCenterRow className={cn('gap-x-4', label === undefined && className)}>
-      {label && labelPos === 'left' && (
-        <Label
-          className={cn('text-sm font-bold text-foreground/80 px-0.5', labelW)}
-          htmlFor={_id}
-        >
-          {label}
-        </Label>
-      )}
-
-      <BaseRow
-        className={textareaVariants({
-          variant,
-          className: className,
-        })}
-        data-enabled={!disabled}
-        data-readonly={readOnly}
-        data-focus={focus}
-        onFocus={() => {
-          setFocus(true)
+    <BaseCol
+      className={textareaVariants({
+        variant,
+        className,
+      })}
+      data-enabled={!disabled}
+      data-readonly={readOnly}
+      data-focus={focus}
+      onFocus={() => {
+        setFocus(true)
+      }}
+      onBlur={() => {
+        setFocus(false)
+      }}
+    >
+      <textarea
+        id={_id}
+        disabled={disabled}
+        className={cn(TEXT_CLS, textareaCls)}
+        ref={ref}
+        value={lines ? lines.join('\n') : value}
+        readOnly={readOnly}
+        onChange={(e) => {
+          onTextChange?.(toLines(e.currentTarget.value))
+          onChange?.(e)
         }}
-        onBlur={() => {
-          setFocus(false)
+        onKeyDown={(e) => {
+          //console.log(e)
+          if (e.key === 'Enter') {
+            onTextChanged?.(toLines(e.currentTarget.value))
+          }
         }}
-      >
-        <textarea
-          id={_id}
-          disabled={disabled}
-          className={cn(TEXT_CLS, textareaCls)}
-          ref={ref}
-          value={lines ? lines.join('\n') : value}
-          readOnly={readOnly}
-          onChange={e => {
-            onTextChange?.(toLines(e.currentTarget.value))
-            onChange?.(e)
-          }}
-          onKeyDown={e => {
-            //console.log(e)
-            if (e.key === 'Enter') {
-              onTextChanged?.(toLines(e.currentTarget.value))
-            }
-          }}
-          {...props}
-        />
-        {rightChildren && rightChildren}
-      </BaseRow>
-    </VCenterRow>
+        {...props}
+      />
+    </BaseCol>
   )
 
   if ((label || labelChildren) && labelPos === 'top') {
