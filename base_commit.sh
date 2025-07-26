@@ -1,12 +1,11 @@
-msg=$1 #"Bug fixes and updates."
-type="fix"
-branch="dev"
+msg=$1
+type="Fixed"
+branch=`git branch --show-current`
 
 if [[ -z "${msg}" ]]
 then
 	msg="Bug fixes and updates."
 fi
-
 
 OPTSTRING="t:m:b:"
 
@@ -32,14 +31,7 @@ done
 echo "${type}: ${msg}"
 echo ${branch}
 
-# pnpm update-version
-
-./base_commit.sh -t "${type}" -m "${msg}" -b dev
-
-git switch main
-git merge dev -m "${type}: ${msg}"
-
-#git push -u origin main
-./base_commit.sh -t "${type}" -m "${msg}" -b main
-
-git switch dev
+# commit
+git add -A .
+git commit -m "${type}: ${msg}"
+git push -u origin ${branch}

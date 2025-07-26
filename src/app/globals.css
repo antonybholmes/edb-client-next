@@ -302,10 +302,6 @@
   [role='button']:not(:disabled) {
     cursor: pointer;
   }
-
-  html {
-    @apply font-sans tracking-wide antialiased;
-  }
 }
 
 /* @utility trans-100 {

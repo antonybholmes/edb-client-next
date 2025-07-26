@@ -1,0 +1,1156 @@
+[
+  {
+    "version": "19.6",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Row Filter feature renamed to Top Rows to better reflect what it does.",
+          "date": "2024-12-09T20:38:50.102Z"
+        },
+        {
+          "msg": "Heatmap side bar reorganized to cope with more properties..",
+          "date": "2024-12-09T20:38:50.102Z"
+        },
+        {
+          "msg": "Tiles are now drawn with use tag for efficiency.",
+          "date": "2024-12-09T20:38:50.102Z"
+        },
+        {
+          "msg": " Heatmap trees now use paths for line rendering to improve appearance.",
+          "date": "2024-12-09T20:38:50.102Z"
+        }
+      ],
+      "Added": [
+        {
+          "msg": "Lots of extra properties for customizing heatmaps.",
+          "date": "2024-12-09T21:10:27.059Z"
+        }
+      ],
+      "Removed": [
+        {
+          "msg": "Separate cluster button on MatCalc toolbar. Now the heatmap button does both heatmaps and clustergrams.",
+          "date": "2024-12-09T21:10:27.059Z"
+        }
+      ],
+      "Fixed": [
+        {
+          "msg": "Groups no longer have scaling animation when loading.",
+          "date": "2024-12-09T21:10:27.059Z"
+        },
+        {
+          "msg": " Plots are fully removed from UI when deleted.",
+          "date": "2024-12-09T21:10:27.059Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2024-12-09T19:34:13.061Z"
+  },
+  {
+    "version": "19.8",
+    "messages": {
+      "Added": [
+        {
+          "msg": "More properties to the GSEA plots tool.",
+          "date": "2024-12-11T21:10:27.059Z"
+        },
+        {
+          "msg": "Extended GSEA module in MatCalc.",
+          "date": "2024-12-11T21:10:27.059Z"
+        },
+        {
+          "msg": "General purpose gene set storage in MatCalc UI.",
+          "date": "2024-12-11T21:10:27.059Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Loading a file through drag and drop now prompts users with options for opening the file.",
+          "date": "2024-12-11T20:38:50.102Z"
+        },
+        {
+          "msg": "Groups in the groups side panel are now accented by their primary color rather than a gray selection rectangle.",
+          "date": "2024-12-11T20:38:50.102Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2024-12-11T19:34:13.061Z"
+  },
+  {
+    "version": "20.4",
+    "messages": {
+      "Added": [
+        {
+          "msg": "Ability to save seq browser tracks for later reuse.",
+          "date": "2024-12-12T21:10:27.059Z"
+        },
+        {
+          "msg": "Option to show only canonical genes in Seq Browser.",
+          "date": "2024-12-12T21:10:27.059Z"
+        },
+        {
+          "msg": "Sequence browser for NGS data.",
+          "date": "2024-12-12T21:10:27.059Z"
+        },
+        {
+          "msg": "Genesets grouping to MatCalc.",
+          "date": "2024-12-12T21:10:27.059Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Sign in now uses Auth0 workflow.",
+          "date": "2024-12-11T20:38:50.102Z"
+        },
+        {
+          "msg": "New settings dialog for altering dark mode.",
+          "date": "2024-12-11T20:38:50.102Z"
+        },
+        {
+          "msg": "More properties added to My Account.",
+          "date": "2024-12-11T20:38:50.102Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2024-12-11T19:34:13.061Z"
+  },
+  {
+    "version": "20.7",
+    "messages": {
+      "Added": [
+        {
+          "msg": "Ability to perform genomic multiway and one way overlaps.",
+          "date": "2025-01-12T21:10:27.059Z"
+        },
+        {
+          "msg": "Seq browser supports showing multiple locations.",
+          "date": "2025-01-12T21:10:27.059Z"
+        },
+        {
+          "msg": "Added ruler component to seq browser.",
+          "date": "2025-01-12T21:10:27.059Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Refreshed UI.",
+          "date": "2025-01-11T20:38:50.102Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-01-11T19:34:13.061Z"
+  },
+  {
+    "version": "21.3",
+    "messages": {
+      "Added": [
+        {
+          "msg": "Table viewer app for displaying arbitrary tables in second window.",
+          "date": "2025-03-12T21:10:27.059Z"
+        },
+        {
+          "msg": "Added hubs module for viewing data in the UCSC Genome browser.",
+          "date": "2025-03-12T21:10:27.059Z"
+        },
+        {
+          "msg": "Added GEX module to Matcalc.",
+          "date": "2025-03-12T21:10:27.059Z"
+        },
+        {
+          "msg": "Added hubs module for viewing data in the UCSC Genome browser.",
+          "date": "2025-03-12T21:10:27.059Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Revised sign in dialog.",
+          "date": "2025-03-11T20:38:50.102Z"
+        },
+        {
+          "msg": "UI refreshes to fix inconsistencies.",
+          "date": "2025-03-11T20:38:50.102Z"
+        },
+        {
+          "msg": "Motifs now has persistent settings.",
+          "date": "2025-03-11T20:38:50.102Z"
+        },
+        {
+          "msg": "Header menu reorganized.",
+          "date": "2025-03-11T20:38:50.102Z"
+        },
+        {
+          "msg": "Modules renamed to apps. Existing modules will continue to work at the old urls.",
+          "date": "2025-03-11T20:38:50.102Z"
+        },
+        {
+          "msg": "Save as dialogs now allow name to be changed.",
+          "date": "2025-03-11T20:38:50.102Z"
+        },
+        {
+          "msg": "Table view now supports multiple column indices.",
+          "date": "2025-03-11T20:38:50.102Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-03-11T19:34:13.061Z"
+  },
+  {
+    "version": "21.6",
+    "messages": {
+      "Added": [
+        {
+          "msg": "Seq browser supports loading BigWig files.",
+          "date": "2025-03-12T21:10:27.059Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Multiple locations are supported in the seq browser using the Locations tab.",
+          "date": "2025-05-11T20:38:50.102Z"
+        },
+        {
+          "msg": "Group and gene set colors can now be set from the side pane as well as the edit dialog.",
+          "date": "2025-03-11T20:38:50.102Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-05-11T19:34:13.061Z"
+  },
+  {
+    "version": "22.2",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Lots of UI tweaks to fix inconsistent labels, colors, sizes, corner roundings etc.",
+          "date": "2025-05-30T20:38:50.102Z"
+        }
+      ],
+      "Added": [
+        {
+          "msg": "Support for dot plots using table data as dot size.",
+          "date": "2025-05-30T21:10:27.059Z"
+        },
+        {
+          "msg": "Support for reading BigBed files.",
+          "date": "2025-05-30T21:10:27.059Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-05-30T19:34:13.061Z"
+  },
+  {
+    "version": "22.3",
+    "messages": {
+      "Fixed": [
+        {
+          "msg": "Removed glass UI from open file",
+          "date": "2025-05-30T19:34:13.061Z"
+        },
+        {
+          "msg": "Option to trim whitespace when opening files",
+          "date": "2025-05-30T20:10:56.608Z"
+        },
+        {
+          "msg": "Dot plot legend shows unadjusted counts",
+          "date": "2025-05-30T21:16:46.737Z"
+        },
+        {
+          "msg": "Dot plot reset now works",
+          "date": "2025-05-30T21:21:14.283Z"
+        },
+        {
+          "msg": "UI fixes",
+          "date": "2025-05-30T21:25:01.259Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Z-scores check for std zero",
+          "date": "2025-05-30T20:38:50.102Z"
+        },
+        {
+          "msg": "Dot legend decimal places match cells",
+          "date": "2025-05-30T22:37:06.864Z"
+        },
+        {
+          "msg": "Cell decimal place UI for dot plot made clearer",
+          "date": "2025-05-30T22:47:53.193Z"
+        }
+      ],
+      "Added": [
+        {
+          "msg": "Plot dot plots with log2 data, but show original data",
+          "date": "2025-05-30T21:10:27.059Z"
+        },
+        {
+          "msg": "Improved changelog",
+          "date": "2025-05-30T22:15:28.892Z"
+        },
+        {
+          "msg": "Changelog has cache mode",
+          "date": "2025-05-30T22:17:49.269Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-05-30T19:34:13.061Z"
+  },
+  {
+    "version": "22.4",
+    "messages": {
+      "Fixed": [
+        {
+          "msg": "Removal of log statements",
+          "date": "2025-05-30T22:53:36.075Z"
+        },
+        {
+          "msg": "Textarea not appearing",
+          "date": "2025-05-30T22:58:59.082Z"
+        },
+        {
+          "msg": "Colormap icon rendering updated",
+          "date": "2025-05-31T06:40:42.748Z"
+        }
+      ],
+      "Added": [
+        {
+          "msg": "Added border controls for dot plot cells",
+          "date": "2025-05-30T23:15:35.659Z"
+        },
+        {
+          "msg": "Dot plot legends and cells have lots more configuration options and ability to set titles",
+          "date": "2025-05-31T06:07:22.830Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Dot plot value render can ignore zeros",
+          "date": "2025-05-30T23:26:06.248Z"
+        },
+        {
+          "msg": "UI fixes",
+          "date": "2025-05-31T06:23:44.458Z"
+        },
+        {
+          "msg": "Revised plot toolbar UI",
+          "date": "2025-05-31T15:53:14.632Z"
+        },
+        {
+          "msg": "UI tweaks",
+          "date": "2025-05-31T16:19:52.906Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-05-30T22:53:36.075Z"
+  },
+  {
+    "version": "22.5",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Heatmap groups now pinned to plot so modification of groups do not force plot updates.",
+          "date": "2025-05-31T17:14:27.952Z"
+        },
+        {
+          "msg": "Dot plot auto color now has threshold control. Numerical spinners respond to long press mouse and keyboard events",
+          "date": "2025-06-01T16:27:13.867Z"
+        }
+      ],
+      "Fixed": [
+        {
+          "msg": "Dot plot properly ignores zero values when threshold filter on",
+          "date": "2025-06-02T14:25:39.596Z"
+        },
+        {
+          "msg": "Moved color consts to lib colors",
+          "date": "2025-06-02T17:49:00.182Z"
+        },
+        {
+          "msg": "Fixed row/col addressing in annotation data frame",
+          "date": "2025-06-02T21:39:10.711Z"
+        },
+        {
+          "msg": "UMAP now displays umaps from database",
+          "date": "2025-06-02T22:40:37.390Z"
+        }
+      ],
+      "Added": [
+        {
+          "msg": "Added features to UMAP module",
+          "date": "2025-06-02T21:53:06.842Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-05-31T17:14:27.952Z"
+  },
+  {
+    "version": "22.6",
+    "messages": {
+      "Fixed": [
+        {
+          "msg": "Improved canvas scaling",
+          "date": "2025-06-03T02:02:54.802Z"
+        },
+        {
+          "msg": "RGB hex conversion",
+          "date": "2025-06-03T17:28:03.547Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Added persistent umap settings",
+          "date": "2025-06-03T02:26:10.541Z"
+        },
+        {
+          "msg": "Revised some core search functions",
+          "date": "2025-06-03T17:57:10.804Z"
+        },
+        {
+          "msg": "Added autocomplete for genes to UMAP",
+          "date": "2025-06-03T18:08:40.423Z"
+        },
+        {
+          "msg": "Simplified UMAP gene search",
+          "date": "2025-06-03T22:49:23.658Z"
+        }
+      ],
+      "Added": [
+        {
+          "msg": "UMAP now has better colormap support",
+          "date": "2025-06-03T14:56:32.915Z"
+        },
+        {
+          "msg": "UMAP now supports gene exp umaps",
+          "date": "2025-06-03T22:40:44.360Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-06-03T02:02:54.802Z"
+  },
+  {
+    "version": "22.7",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "UMAP renamed to Single Cell",
+          "date": "2025-06-04T01:48:19.094Z"
+        },
+        {
+          "msg": "Changed EnsemblId to geneId so it is less specific and more universal",
+          "date": "2025-06-04T18:04:35.755Z"
+        },
+        {
+          "msg": "Revised saving system that auto creates and destroys links as necessary",
+          "date": "2025-06-04T21:03:10.050Z"
+        },
+        {
+          "msg": "Standardized svg creation",
+          "date": "2025-06-04T21:11:02.992Z"
+        },
+        {
+          "msg": "further standardized svg creation",
+          "date": "2025-06-04T21:29:29.228Z"
+        },
+        {
+          "msg": "More standardized svg creation",
+          "date": "2025-06-04T21:38:32.073Z"
+        },
+        {
+          "msg": "Moved clusters to their own panel",
+          "date": "2025-06-05T01:13:51.574Z"
+        }
+      ],
+      "Added": [
+        {
+          "msg": "Single cell now supports clusters, gex and cluster labels and improved rendering",
+          "date": "2025-06-04T16:49:42.525Z"
+        },
+        {
+          "msg": "Ability to customize cluster colors on UMAP",
+          "date": "2025-06-04T23:01:11.403Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-06-04T01:48:19.094Z"
+  },
+  {
+    "version": "22.8",
+    "messages": {
+      "Added": [
+        {
+          "msg": "Added genes module to single cell",
+          "date": "2025-06-05T02:06:13.311Z"
+        },
+        {
+          "msg": "UMAP can now show legend",
+          "date": "2025-06-05T16:54:23.238Z"
+        },
+        {
+          "msg": "Added colormap generator and new gray red color map",
+          "date": "2025-06-05T18:15:58.006Z"
+        },
+        {
+          "msg": "Support for scrna gex with adjustments and lots of UI fixes",
+          "date": "2025-06-05T22:07:33.936Z"
+        },
+        {
+          "msg": "More color maps and improved colormap UI",
+          "date": "2025-06-06T02:16:31.660Z"
+        },
+        {
+          "msg": "UMAP supports grid mode",
+          "date": "2025-06-06T22:14:56.088Z"
+        }
+      ],
+      "Fixed": [
+        {
+          "msg": "Added support for loading clusters and colors from db",
+          "date": "2025-06-05T15:24:09.851Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "UMAP image now without useless white border",
+          "date": "2025-06-05T22:59:27.416Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-06-05T02:06:13.311Z"
+  },
+  {
+    "version": "22.9",
+    "messages": {
+      "Fixed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-06-06T23:09:12.168Z"
+        },
+        {
+          "msg": "Move scrna plots to plot store model",
+          "date": "2025-06-08T02:42:28.835Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-06-10T23:19:14.036Z"
+        }
+      ],
+      "Added": [
+        {
+          "msg": "Added plot store for scrna to control multiple plots on grid",
+          "date": "2025-06-08T18:16:51.408Z"
+        },
+        {
+          "msg": "More support for multiple scrna gene plots",
+          "date": "2025-06-11T22:37:55.531Z"
+        },
+        {
+          "msg": "Added reds colormap",
+          "date": "2025-06-11T22:56:48.981Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Use kebab-case for type literals",
+          "date": "2025-06-08T22:12:55.175Z"
+        },
+        {
+          "msg": "Tranfer more props related to plot at runtime p plot-props-panel",
+          "date": "2025-06-09T22:45:52.470Z"
+        },
+        {
+          "msg": "Saving image now more robust by declaring min size",
+          "date": "2025-06-12T02:23:45.631Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-06-06T23:09:12.168Z"
+  },
+  {
+    "version": "23.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Gex and cluster umaps now work together. More props moved to plot grid store and out of settings",
+          "date": "2025-06-12T21:58:21.829Z"
+        },
+        {
+          "msg": "Updated seq browser ui",
+          "date": "2025-06-15T16:44:08.767Z"
+        }
+      ],
+      "Added": [
+        {
+          "msg": "Added hide side bar option to menus",
+          "date": "2025-06-13T13:51:34.999Z"
+        },
+        {
+          "msg": "Added support for simple view and dense display for genes in seq browser",
+          "date": "2025-06-14T23:58:58.668Z"
+        },
+        {
+          "msg": "Added gene controls to seq browser toolbar",
+          "date": "2025-06-15T04:53:36.531Z"
+        },
+        {
+          "msg": "Added more customizable props to gene view in seq browser",
+          "date": "2025-06-15T17:57:15.062Z"
+        }
+      ],
+      "Fixed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-06-13T23:31:04.187Z"
+        },
+        {
+          "msg": "Gene search working again",
+          "date": "2025-06-14T06:28:15.551Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-06-15T05:02:20.074Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-06-12T21:58:21.829Z"
+  },
+  {
+    "version": "23.1",
+    "messages": {
+      "Added": [
+        {
+          "msg": "Added more customizable props to gene view in seq browser",
+          "date": "2025-06-15T18:29:11.103Z"
+        },
+        {
+          "msg": "Added more features to single cell for plotting gex in specific clusters",
+          "date": "2025-06-16T22:15:30.617Z"
+        },
+        {
+          "msg": "Added support for supabase",
+          "date": "2025-06-17T23:21:52.963Z"
+        },
+        {
+          "msg": "Added support for supabase login",
+          "date": "2025-06-18T23:09:29.941Z"
+        },
+        {
+          "msg": "Signin uses form validation",
+          "date": "2025-06-19T03:39:18.697Z"
+        }
+      ],
+      "Fixed": [
+        {
+          "msg": "Fixed canonical filter not working",
+          "date": "2025-06-16T02:02:12.968Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-06-16T23:12:11.043Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Sign in now uses zod for validation. Input placeholder works",
+          "date": "2025-06-19T19:24:40.211Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-06-15T18:29:11.103Z"
+  },
+  {
+    "version": "23.2",
+    "messages": {
+      "Fixed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-06-20T23:51:28.105Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Auth workflow revised",
+          "date": "2025-06-22T02:19:02.892Z"
+        },
+        {
+          "msg": "UI fixes",
+          "date": "2025-06-22T05:19:46.781Z"
+        },
+        {
+          "msg": "Updated sign in menus and passwordless login",
+          "date": "2025-06-22T15:41:13.472Z"
+        },
+        {
+          "msg": "Sign in menu and dialog UI tweaks",
+          "date": "2025-06-22T16:04:48.983Z"
+        }
+      ],
+      "Added": [
+        {
+          "msg": "Added signedout page to complete signout process",
+          "date": "2025-06-22T02:53:19.794Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-06-20T23:51:28.105Z"
+  },
+  {
+    "version": "23.3",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Sign in menu and dialog UI tweaks",
+          "date": "2025-06-23T02:12:22.765Z"
+        },
+        {
+          "msg": "Tweaks to sign in ui",
+          "date": "2025-06-23T23:18:40.729Z"
+        },
+        {
+          "msg": "Refined sign in",
+          "date": "2025-06-24T03:21:26.414Z"
+        },
+        {
+          "msg": "UI fixes to sign in process",
+          "date": "2025-06-24T17:54:35.252Z"
+        }
+      ],
+      "Added": [
+        {
+          "msg": "Update user now uses short lived update token",
+          "date": "2025-06-24T21:18:09.991Z"
+        },
+        {
+          "msg": "Added more csrf checks",
+          "date": "2025-06-26T23:24:15.681Z"
+        },
+        {
+          "msg": "Sessions now use CSRF protection. Refined account update page",
+          "date": "2025-06-27T21:50:17.628Z"
+        }
+      ],
+      "Fixed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-06-24T22:46:03.036Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-06-23T02:12:22.765Z"
+  },
+  {
+    "version": "23.4",
+    "messages": {
+      "Fixed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-06-27T22:03:49.855Z"
+        }
+      ],
+      "Added": [
+        {
+          "msg": "Custom 404 page",
+          "date": "2025-06-28T16:12:42.018Z"
+        },
+        {
+          "msg": "404 with animated dinosaur easter egg",
+          "date": "2025-06-28T22:27:38.207Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Improvements to Auth0 login",
+          "date": "2025-06-30T01:37:39.429Z"
+        }
+      ],
+      "Updated": [
+        {
+          "msg": "Get lollipop plot ready for production",
+          "date": "2025-06-30T22:44:49.464Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-06-27T22:03:49.855Z"
+  },
+  {
+    "version": "23.5",
+    "messages": {
+      "Added": [
+        {
+          "msg": "Added db filter to lollipop",
+          "date": "2025-07-01T03:06:48.399Z"
+        },
+        {
+          "msg": "Lollipop can save features",
+          "date": "2025-07-01T22:15:21.852Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Redesigned lollipop app",
+          "date": "2025-07-01T15:29:12.746Z"
+        },
+        {
+          "msg": "Lollipop works and moved to prod",
+          "date": "2025-07-01T20:05:26.824Z"
+        },
+        {
+          "msg": "Added border control to mutations in lollipop",
+          "date": "2025-07-01T20:26:28.851Z"
+        },
+        {
+          "msg": "Revised uniprot search",
+          "date": "2025-07-01T20:47:51.351Z"
+        }
+      ],
+      "Fixed": [
+        {
+          "msg": "Revised uniprot search",
+          "date": "2025-07-01T20:50:48.863Z"
+        },
+        {
+          "msg": "Lollipop no longer tries to autoplot when table is loaded.",
+          "date": "2025-07-01T21:20:06.799Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-07-01T03:06:48.399Z"
+  },
+  {
+    "version": "23.6",
+    "messages": {
+      "Fixed": [
+        {
+          "msg": "Fixed feature display in Lollipop",
+          "date": "2025-07-01T22:33:49.564Z"
+        },
+        {
+          "msg": "Lollipop UI fixes",
+          "date": "2025-07-02T04:20:04.112Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Lots of UI fixes to lollipop",
+          "date": "2025-07-02T14:57:35.085Z"
+        },
+        {
+          "msg": "Protein sequence and aa are not independent so lollipop is more flexible",
+          "date": "2025-07-02T16:15:59.220Z"
+        },
+        {
+          "msg": "Changed some aa colors and improved parsing of variants.",
+          "date": "2025-07-02T16:30:18.019Z"
+        },
+        {
+          "msg": "Changed oauth2 to Auth0",
+          "date": "2025-07-02T21:09:36.997Z"
+        },
+        {
+          "msg": "Refined Auth0 workflow to cope with url redirects",
+          "date": "2025-07-02T21:25:17.923Z"
+        },
+        {
+          "msg": "Changing lollipop features now uses tabs to manage setting multiple colors",
+          "date": "2025-07-02T22:21:18.518Z"
+        }
+      ],
+      "Added": [
+        {
+          "msg": "Added position tooltip to lollipop sequence",
+          "date": "2025-07-02T18:15:47.609Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-07-01T22:33:49.564Z"
+  },
+  {
+    "version": "23.7",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "csrf uses localstorage",
+          "date": "2025-07-02T23:31:49.396Z"
+        },
+        {
+          "msg": "Cleaned up three color menu",
+          "date": "2025-07-03T03:05:26.714Z"
+        },
+        {
+          "msg": "Refined auth0 login. Csrf now uses zustrand store",
+          "date": "2025-07-03T14:53:57.298Z"
+        },
+        {
+          "msg": "Switch lollipop plot provider to zustrand lollipop store",
+          "date": "2025-07-03T17:57:14.191Z"
+        }
+      ],
+      "Fixed": [
+        {
+          "msg": "Change csrf token storage",
+          "date": "2025-07-02T23:45:36.581Z"
+        }
+      ],
+      "Added": [
+        {
+          "msg": "Lollipop features now have z-order",
+          "date": "2025-07-03T16:05:03.503Z"
+        },
+        {
+          "msg": "Lollipop legend revised",
+          "date": "2025-07-03T16:12:36.572Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-07-02T23:31:49.396Z"
+  },
+  {
+    "version": "23.8",
+    "messages": {
+      "Added": [
+        {
+          "msg": "Matcalc now supports lollipops",
+          "date": "2025-07-03T20:11:39.839Z"
+        },
+        {
+          "msg": "Lollipop context now serializable to session",
+          "date": "2025-07-03T21:38:14.544Z"
+        },
+        {
+          "msg": "Added aa colors to lollipop",
+          "date": "2025-07-04T06:02:04.629Z"
+        },
+        {
+          "msg": "Simplified lollipop. Custom AA colors menu",
+          "date": "2025-07-04T16:24:48.530Z"
+        },
+        {
+          "msg": "Added padding to reduce lollipop size and improve visuals",
+          "date": "2025-07-07T12:47:41.395Z"
+        },
+        {
+          "msg": "Support for gene search of protein table and warnings for bad proteins in lollipop",
+          "date": "2025-07-07T18:15:22.172Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Refined numerical input to add more display space",
+          "date": "2025-07-03T22:51:52.425Z"
+        },
+        {
+          "msg": "Lollipop UI updated",
+          "date": "2025-07-04T17:51:40.602Z"
+        }
+      ],
+      "Fixed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-07-06T04:31:28.277Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-07-03T20:11:39.839Z"
+  },
+  {
+    "version": "23.9",
+    "messages": {
+      "Added": [
+        {
+          "msg": "Autocomplete header for lollipop",
+          "date": "2025-07-07T20:24:11.497Z"
+        },
+        {
+          "msg": "Added logic for dealing with overlapping nodes for fixing layout issues",
+          "date": "2025-07-07T23:10:14.300Z"
+        },
+        {
+          "msg": "Added single lollipop view to lollipop and more animations",
+          "date": "2025-07-10T17:49:06.660Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Lollipop now uses adjustable widths and heights",
+          "date": "2025-07-07T21:44:32.070Z"
+        },
+        {
+          "msg": "Removed space between switch prop rows",
+          "date": "2025-07-07T22:07:11.803Z"
+        }
+      ],
+      "Fixed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-07-10T00:50:25.377Z"
+        },
+        {
+          "msg": "Added max variant view to lollipop. Settings tabs now uses zustrand store.",
+          "date": "2025-07-10T21:03:46.059Z"
+        },
+        {
+          "msg": "Fixed lollipop tooltips out of sync",
+          "date": "2025-07-10T21:31:10.897Z"
+        },
+        {
+          "msg": "UI tweaks",
+          "date": "2025-07-10T22:48:43.854Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-07-07T20:24:11.497Z"
+  },
+  {
+    "version": "24.0",
+    "messages": {
+      "Fixed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-07-10T22:54:21.277Z"
+        },
+        {
+          "msg": "Lollipop features enforce end greater than start and stop svg rect with negative widths",
+          "date": "2025-07-11T21:57:11.552Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-07-12T05:29:26.070Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Zoom now uses provider model, virt dataframe can turn off zoom, changed more selected to checked for consistency",
+          "date": "2025-07-11T16:05:04.644Z"
+        },
+        {
+          "msg": "Graph axis now based on d3 for ease of development",
+          "date": "2025-07-11T20:18:59.411Z"
+        },
+        {
+          "msg": "Message bus now uses zustrand",
+          "date": "2025-07-11T21:06:53.873Z"
+        }
+      ],
+      "Added": [
+        {
+          "msg": "Added support for porportional lollipops and counts",
+          "date": "2025-07-11T22:55:46.849Z"
+        },
+        {
+          "msg": "Lollipop UI tweaks",
+          "date": "2025-07-11T23:02:28.888Z"
+        },
+        {
+          "msg": "Toolbar UI now supports single ribbon view",
+          "date": "2025-07-12T03:46:32.436Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-07-10T22:54:21.277Z"
+  },
+  {
+    "version": "24.1",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Support scripts use tsx to make them easier to manage",
+          "date": "2025-07-13T00:25:33.287Z"
+        },
+        {
+          "msg": "Removed ripple for the moment",
+          "date": "2025-07-13T02:25:02.518Z"
+        },
+        {
+          "msg": "Refactored some code",
+          "date": "2025-07-13T17:05:10.355Z"
+        },
+        {
+          "msg": "Switch to clsx from class-names",
+          "date": "2025-07-14T14:54:52.146Z"
+        }
+      ],
+      "Fixed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-07-13T00:31:53.180Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-07-13T00:25:33.287Z"
+  },
+  {
+    "version": "24.2",
+    "messages": {
+      "Fixed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-07-17T13:28:33.636Z"
+        },
+        {
+          "msg": "Fixed colormap button in umap not updating color scheme",
+          "date": "2025-07-21T17:52:47.793Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-07-21T23:04:37.987Z"
+        }
+      ],
+      "Changed": [
+        {
+          "msg": "Fixed input size issue on dataframe and some UI fixes to axes",
+          "date": "2025-07-17T22:16:32.051Z"
+        },
+        {
+          "msg": "Single cell now uses context for plot data so we can make plots with multiple datasets if desired",
+          "date": "2025-07-21T21:13:52.230Z"
+        },
+        {
+          "msg": "Modified axis clipping to be more consistent",
+          "date": "2025-07-22T17:41:00.311Z"
+        },
+        {
+          "msg": "Single cell datasets now uses useQuery. Dataset selection moved to header",
+          "date": "2025-07-23T16:21:25.260Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-07-17T13:28:33.636Z"
+  },
+  {
+    "version": "24.3",
+    "messages": {
+      "Fixed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-07-25T02:00:37.184Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-07-25T02:00:37.184Z"
+  }
+]

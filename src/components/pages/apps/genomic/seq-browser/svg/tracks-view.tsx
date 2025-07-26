@@ -85,7 +85,7 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
   const { fetchAccessToken } = useEdbAuth()
 
   const axes = useMemo(() => {
-    return locations.map(location => {
+    return locations.map((location) => {
       let xax = new Axis().setLength(settings.plot.width)
 
       if (settings.reverse) {
@@ -276,7 +276,7 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
         // ])
 
         setLocations(
-          produce(locations, draft => {
+          produce(locations, (draft) => {
             draft[column.current.col] = new GenomicLocation(
               locations[column.current.col]!.chr,
               minX,
@@ -372,7 +372,7 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
       const res = await httpFetch.postJson<{ data: IGenomicFeatureSearch[] }>(
         url.toString(),
         {
-          body: { locations: locations.map(l => l.loc) },
+          body: { locations: locations.map((l) => l.loc) },
         }
       )
 
@@ -389,15 +389,15 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
   const tracks = useMemo(
     () =>
       state.order
-        .map(gid => state.groups[gid]!)
-        .map(tg => tg.order.map(id => tg.tracks[id]!))
+        .map((gid) => state.groups[gid]!)
+        .map((tg) => tg.order.map((id) => tg.tracks[id]!))
         .flat()
-        .filter(t => SEQ_TRACK_TYPES.has(t.trackType)) as ISignalTrack[],
+        .filter((t) => SEQ_TRACK_TYPES.has(t.trackType)) as ISignalTrack[],
     [state.order]
   )
 
   const seqTracks = useMemo(
-    () => tracks.filter(t => t.trackType === 'Seq') as ISignalTrack[],
+    () => tracks.filter((t) => t.trackType === 'Seq') as ISignalTrack[],
     [tracks]
   )
 
@@ -415,10 +415,10 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
         API_SEQS_BINS_URL,
         {
           body: {
-            locations: locations.map(l => l.loc),
+            locations: locations.map((l) => l.loc),
             binSizes,
             //scale: displayOptions.seq.applyScaling ? displayOptions.seq.scale : 0,
-            tracks: seqTracks.map(t => t.publicId),
+            tracks: seqTracks.map((t) => t.publicId),
           },
 
           headers: bearerHeaders(accessToken),
@@ -453,8 +453,8 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
 
   const svg = useMemo(() => {
     const tracks = state.order
-      .map(gid => state.groups[gid]!)
-      .map(tg => tg.order.map(id => tg.tracks[id]!))
+      .map((gid) => state.groups[gid]!)
+      .map((tg) => tg.order.map((id) => tg.tracks[id]!))
 
     if (tracks.length === 0) {
       return null
@@ -579,12 +579,12 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
                     locTrackBins: allLocTrackBins[li],
                     binSize: binSizes[li]!,
                     geneYMap: geneYMaps[li] || new Map(),
-                    setLocation: location => {
+                    setLocation: (location) => {
                       // for individual tracks, we can update their location
                       // using, for example, the ruler to propogate its
                       // changes back to here, where they can be subsequently
                       // used to update the global locations
-                      const newLocations = produce(locations, draft => {
+                      const newLocations = produce(locations, (draft) => {
                         draft[li] = location
                       })
 
@@ -705,7 +705,7 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
       </BaseSvg>
     )
   }, [
-    location,
+    locations,
     axes,
     state,
     locationFeatures,

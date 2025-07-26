@@ -11,13 +11,13 @@ import { VCenterRow } from '../layout/v-center-row'
 
 const APP_CLS = cn(
   FOCUS_RING_CLS,
-  'border border-border/25',
-  'flex flex-col bg-background lg:aspect-3/2 justify-center items-center h-full gap-2 p-2 rounded-2xl hover:scale-108 transition duration-500 ease-in-out'
+  'border-2 border-transparent',
+  'flex flex-col bg-background aspect-4/3 shrink-0 justify-center items-center grow gap-2 p-2 rounded-2xl hover:border-theme/50 transition-colors duration-500 ease-in-out'
 )
 
 export function Apps() {
   return (
-    <ul className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6  ">
+    <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
       {HEADER_LINKS.map((section) => {
         return section.modules.filter(
           (module) =>
@@ -43,7 +43,7 @@ export function Apps() {
                 className={APP_CLS}
               >
                 <VCenterRow
-                  className="w-12 aspect-square shrink-0 rounded-full justify-center bg-white text-2xl"
+                  className="w-11 h-11 aspect-square shrink-0 rounded-full justify-center bg-white text-2xl"
                   style={{
                     borderColor: module.color ?? 'lightslategray',
                     borderWidth: 3,

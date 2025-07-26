@@ -17,7 +17,7 @@ import { MenuSeparator } from '@themed/dropdown-menu'
 import { BLANK_TARGET } from '../link/base-link'
 
 const LINKS = [
-  ['Astro', 'https://astro.build/'],
+  ['Next.js', 'https://nextjs.org/'],
   ['React', 'https://reactjs.org'],
   ['Tailwind', 'https://tailwindcss.com/'],
   ['Lucide', 'https://lucide.dev/'],

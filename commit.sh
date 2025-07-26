@@ -1,39 +1,21 @@
 msg=$1 #"Bug fixes and updates."
-type="fix"
-branch=`git branch --show-current`
+type=$2
+branch="dev"
+
 
 if [[ -z "${msg}" ]]
 then
 	msg="Bug fixes and updates."
 fi
 
-OPTSTRING="t:m:b:"
+if [[ -z "${type}" ]]
+then
+	type="Fixed"
+fi
 
-while getopts ${OPTSTRING} opt
-do
-	case ${opt} in
-  	t)
-    	type=$OPTARG
-      	;;
-	m)
-    	msg=$OPTARG
-      	;;
-	b)
-      	branch=$OPTARG
-      	;;
-    ?)
-      echo "Invalid option: -${OPTARG}."
-      exit 1
-      ;;
-  esac
-done
+pnpm update-module-version
+pnpm update-version
+tsx scripts/update-changelog.ts "${msg}" "${type}"
+pnpm make-changelog-markdown
 
-echo "${type}: ${msg}"
-echo ${branch}
-
-#pnpm update-version
-
-# commit
-git add -A .
-git commit -m "${type}: ${msg}"
-git push -u origin ${branch}
+./base_commit.sh -t "${type}" -m "${msg}" -b dev

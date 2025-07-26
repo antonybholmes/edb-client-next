@@ -680,7 +680,9 @@ export function SeqBrowserQueryPage() {
       {/* <SeqBrowserSettingsProvider> */}
       {/* <SearchProvider defaultSearch="chr3:187441954-187466041"> */}
       {/* <ZoomProvider> */}
-      <TracksProvider>{/* <SeqBrowserPage /> */}</TracksProvider>
+      <TracksProvider>
+        <SeqBrowserPage />
+      </TracksProvider>
       {/* </ZoomProvider> */}
       {/* </SearchProvider> */}
       {/* </SeqBrowserSettingsProvider> */}
