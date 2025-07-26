@@ -1,7 +1,7 @@
 {
   "name": "Pathway",
   "description": "Pathway enrichment",
-  "version": "4.0.9.350",
+  "version": "4.1.0.351",
   "copyright": "Copyright (C) ${START_YEAR:2024} Antony Holmes. All rights reserved.",
-  "modified": "2025-07-26T01:25:58.334Z"
+  "modified": "2025-07-26T02:28:58.329Z"
 }

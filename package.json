@@ -7,6 +7,7 @@
     "build": "next build",
     "update-module-version": "tsx scripts/update-module-version.ts",
     "update-version": "tsx scripts/update-version.ts",
+    "make-changelog-markdown": "tsx scripts/make-changelog-markdown.ts",
     "dev-tina": "tinacms dev --port 4001 --datalayer-port 9006 -c \"astro dev\"",
     "discover": "node scripts/discover/modules.mjs && node scripts/discover/genesets.mjs",
     "format": "pnpm update-version && prettier --plugin-search-dir=. --write \"src/**/*.{ts,tsx,js,mjs,svelte,astro}\"",
