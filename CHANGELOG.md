@@ -4,6 +4,7 @@
 
 ### Fixed
 
+- Added changelog page.
 - Bug fixes and updates.
 
 

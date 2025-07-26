@@ -8,8 +8,11 @@ export function MarkdownContent({
   ...props
 }: IDivProps) {
   return (
-    <main ref={ref} className={cn('markdown', className)} {...props}>
-      {children}
-    </main>
+    <main
+      ref={ref}
+      className={cn('markdown', className)}
+      dangerouslySetInnerHTML={{ __html: children ?? '' }}
+      {...props}
+    />
   )
 }
