@@ -1156,6 +1156,12 @@
           "msg": "Bug fixes and updates.",
           "date": "2025-07-26T03:58:24.728Z"
         }
+      ],
+      "Added": [
+        {
+          "msg": "Help pages now partially render",
+          "date": "2025-07-26T13:35:56.072Z"
+        }
       ]
     },
     "author": "Antony Holmes",
