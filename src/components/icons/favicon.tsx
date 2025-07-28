@@ -15,7 +15,7 @@ export function FavIcon() {
     >
       <div
         data-hover={hover}
-        className="pointer-events-none data-[hover=false]:opacity-0 data-[hover=true]:opacity-100 absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 transition-opacity duration-500 ease-in-out"
+        className="pointer-events-none opacity-0 scale-70 data-[hover=true]:scale-100 data-[hover=true]:opacity-100 absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 transition-all duration-500 ease-in-out"
       >
         <HomeIcon
           data-hover={hover}
@@ -25,7 +25,7 @@ export function FavIcon() {
 
       <div
         data-hover={hover}
-        className="pointer-events-none data-[hover=false]:opacity-100 data-[hover=true]:opacity-0 absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 transition-opacity duration-500 ease-in-out"
+        className="pointer-events-none opacity-100 data-[hover=true]:scale-70 data-[hover=true]:opacity-0 absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 transition-all duration-500 ease-in-out"
       >
         <AppIcon />
       </div>

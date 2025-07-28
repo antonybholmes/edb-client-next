@@ -7,7 +7,7 @@ import {
 } from '@lib/edb/edb'
 
 import { ThemeIndexLink } from '@components/link/theme-index-link'
-import { useEffect, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 
 import { TEXT_SIGN_IN } from '@/consts'
 
@@ -84,38 +84,38 @@ export function SignInRequired({
 
   //const queryClient = useQueryClient()
 
-  const { session, csrfToken, fetchSession } = useEdbAuth()
+  const { session, loaded } = useEdbAuth()
 
-  useEffect(() => {
-    async function checkSignedIn() {
-      // we need to check if user is signed in
-      // if not, we will redirect them to the sign in page.
-      // We must request the session rather than using the
-      // session from the store, because it may be stale
-      // and we want to ensure that the user is truly not
-      // signed in before redirecting them to the sign in page.
-      // session may be null upon initial load until the
-      // session is fetched from the server so it is not reliable
-      // for determining if the user is signed in and should
-      // only be used in passive ways, such as rendering the
-      // sign in button or showing the user name in the header.
-      const s = await fetchSession()
+  // useEffect(() => {
+  //   async function checkSignedIn() {
+  //     // we need to check if user is signed in
+  //     // if not, we will redirect them to the sign in page.
+  //     // We must request the session rather than using the
+  //     // session from the store, because it may be stale
+  //     // and we want to ensure that the user is truly not
+  //     // signed in before redirecting them to the sign in page.
+  //     // session may be null upon initial load until the
+  //     // session is fetched from the server so it is not reliable
+  //     // for determining if the user is signed in and should
+  //     // only be used in passive ways, such as rendering the
+  //     // sign in button or showing the user name in the header.
+  //     const s = await fetchSession()
 
-      //console.log('loadUser', session)
-      if (!s) {
-        // the sign in callback includes this url so that the app can signin and
-        // then return user to the page they were signing into as a convenience
+  //     //console.log('loadUser', session)
+  //     if (!s) {
+  //       // the sign in callback includes this url so that the app can signin and
+  //       // then return user to the page they were signing into as a convenience
 
-        const url = redirectUrl ? redirectUrl : pathname // window.location.pathname
+  //       const url = redirectUrl ? redirectUrl : pathname // window.location.pathname
 
-        setRedirectUrl(url)
-      }
-    }
+  //       setRedirectUrl(url)
+  //     }
+  //   }
 
-    if (csrfToken) {
-      checkSignedIn()
-    }
-  }, [csrfToken])
+  //   if (csrfToken) {
+  //     checkSignedIn()
+  //   }
+  // }, [csrfToken])
 
   // if (_redirectUrl) {
   //   console.log('redirect', _redirectUrl, session)
@@ -123,6 +123,10 @@ export function SignInRequired({
   //     `${APP_OAUTH2_SIGN_IN_ROUTE}?redirect=${encodeURIComponent(_redirectUrl)}`
   //   )
   // }
+
+  if (!loaded) {
+    return null
+  }
 
   if (!session) {
     return (

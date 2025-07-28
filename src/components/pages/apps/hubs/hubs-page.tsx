@@ -69,51 +69,54 @@ export function HubsPage() {
 
   //const { toast } = useToast()
 
-  const { fetchAccessToken } = useEdbAuth()
-
-  async function loadHubs() {
-    const accessToken = await fetchAccessToken()
-
-    try {
-      const res = await queryClient.fetchQuery({
-        queryKey: ['hubs'],
-        queryFn: () => {
-          return httpFetch.getJson<{ data: IHub[] }>(
-            `${API_HUBS_URL}/${store.genome}`,
-            {
-              headers: bearerHeaders(accessToken),
-            }
-          )
-        },
-      })
-
-      const hubs: IHub[] = res.data
-
-      //setHubs(hubs)
-
-      const platformMap = new Map<string, Map<string, IHub[]>>()
-
-      for (const hub of hubs) {
-        if (!platformMap.has(hub.institution)) {
-          platformMap.set(hub.institution, new Map<string, IHub[]>())
-        }
-
-        if (!platformMap.get(hub.institution)!.has(hub.platform)) {
-          platformMap.get(hub.institution)!.set(hub.platform, [])
-        }
-
-        platformMap.get(hub.institution)!.get(hub.platform)!.push(hub)
-      }
-
-      setPlatformMap(platformMap)
-    } catch {
-      console.error('error loading hubs')
-    }
-  }
+  const { csrfToken, fetchAccessToken } = useEdbAuth()
 
   useEffect(() => {
+    async function loadHubs() {
+      if (!store.genome || !csrfToken) {
+        return
+      }
+
+      const accessToken = await fetchAccessToken()
+
+      try {
+        const res = await queryClient.fetchQuery({
+          queryKey: ['hubs'],
+          queryFn: () => {
+            return httpFetch.getJson<{ data: IHub[] }>(
+              `${API_HUBS_URL}/${store.genome}`,
+              {
+                headers: bearerHeaders(accessToken),
+              }
+            )
+          },
+        })
+
+        const hubs: IHub[] = res.data
+
+        //setHubs(hubs)
+
+        const platformMap = new Map<string, Map<string, IHub[]>>()
+
+        for (const hub of hubs) {
+          if (!platformMap.has(hub.institution)) {
+            platformMap.set(hub.institution, new Map<string, IHub[]>())
+          }
+
+          if (!platformMap.get(hub.institution)!.has(hub.platform)) {
+            platformMap.get(hub.institution)!.set(hub.platform, [])
+          }
+
+          platformMap.get(hub.institution)!.get(hub.platform)!.push(hub)
+        }
+
+        setPlatformMap(platformMap)
+      } catch {
+        console.error('error loading hubs')
+      }
+    }
     loadHubs()
-  }, [store.genome])
+  }, [store.genome, csrfToken])
 
   useEffect(() => {
     if (query) {

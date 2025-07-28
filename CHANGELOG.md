@@ -2,6 +2,10 @@
 
 ## 24.4 (Jul, 2025)
 
+### Added
+
+- Added loaded state to auth stores so we can understand if user is logged in, login failed, or we are waiting for data to hydrate.
+
 ### Changed
 
 - Fixed SSR hydration of bottom bar using rand ids from sheets by only rendering on mount.

@@ -87,7 +87,7 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
 
 export interface IEdbSettingsStore extends IEdbSettings {
   updateSettings: (settings: IEdbSettings) => void
-  applyTheme: (theme: Theme) => void
+  //applyTheme: (theme: Theme) => void
 }
 
 export const useEdbSettingsStore = create<IEdbSettingsStore>()(
@@ -96,15 +96,10 @@ export const useEdbSettingsStore = create<IEdbSettingsStore>()(
       ...DEFAULT_EDB_SETTINGS,
       updateSettings: (settings: IEdbSettings) => {
         console.log('Updating EDB settings', settings)
-        set((state) => ({
-          ...state,
-          ...settings,
-        }))
-      },
-      applyTheme: (theme: Theme) => {
+
         if (
-          theme === 'dark' ||
-          (theme === 'automatic' &&
+          settings.theme === 'dark' ||
+          (settings.theme === 'automatic' &&
             window.matchMedia('(prefers-color-scheme: dark)').matches)
         ) {
           document.documentElement.classList.add('dark')
@@ -114,9 +109,25 @@ export const useEdbSettingsStore = create<IEdbSettingsStore>()(
 
         set((state) => ({
           ...state,
-          theme,
+          ...settings,
         }))
       },
+      // applyTheme: (theme: Theme) => {
+      //   if (
+      //     theme === 'dark' ||
+      //     (theme === 'automatic' &&
+      //       window.matchMedia('(prefers-color-scheme: dark)').matches)
+      //   ) {
+      //     document.documentElement.classList.add('dark')
+      //   } else {
+      //     document.documentElement.classList.remove('dark')
+      //   }
+
+      //   set((state) => ({
+      //     ...state,
+      //     theme,
+      //   }))
+      // },
     }),
     {
       name: SETTINGS_KEY, // name in localStorage
@@ -135,7 +146,7 @@ export function useEdbSettings(): {
 } {
   const settings = useEdbSettingsStore((state) => state)
   const updateSettings = useEdbSettingsStore((state) => state.updateSettings)
-  const applyTheme = useEdbSettingsStore((state) => state.applyTheme)
+  //const applyTheme = useEdbSettingsStore((state) => state.applyTheme)
 
   function resetSettings() {
     updateSettings({ ...DEFAULT_EDB_SETTINGS })
@@ -143,7 +154,11 @@ export function useEdbSettings(): {
   }
 
   function resetTheme() {
-    applyTheme(DEFAULT_THEME)
+    updateSettings({ ...settings, theme: DEFAULT_THEME })
+  }
+
+  function applyTheme(theme: Theme) {
+    updateSettings({ ...settings, theme })
   }
 
   return {

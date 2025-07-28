@@ -12,7 +12,6 @@ import {
   TEXT_SIGN_OUT,
   type IDialogParams,
 } from '@/consts'
-import { cn } from '@/lib/shadcn-utils'
 import { useAuth0 } from '@auth0/auth0-react'
 import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
 import { SignOutIcon } from '@icons/sign-out-icon'
@@ -44,7 +43,7 @@ import { useEdbSettings } from '../edb-settings'
 import { SignInWithApiKeyPopover } from './signin-with-api-key-popover'
 
 const SIGNED_IN_ICON_CLS =
-  'rounded-full border border-foreground/75 flex flex-row items-center justify-center w-7 h-7 aspect-square text-xs font-medium bg-background trans-color overflow-hidden'
+  'rounded-full border border-foreground flex flex-row items-center justify-center w-7 h-7 aspect-square text-xs font-medium  overflow-hidden'
 
 export type SignInMode = 'username-password' | 'api' | 'auth0' | 'oauth2'
 
@@ -61,7 +60,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'oauth2' }: IProps) {
 
   const { settings } = useEdbSettings()
 
-  const { session } = useEdbAuth()
+  const { session, loaded } = useEdbAuth()
 
   const { loginWithRedirect } = useAuth0()
 
@@ -171,11 +170,11 @@ export function EDBSignIn({ apiKey = '', signInMode = 'oauth2' }: IProps) {
         rounded="none"
         checked={open}
         ripple={false}
-        title={isSignedIn ? TEXT_MY_ACCOUNT : TEXT_SIGN_IN}
+        title={TEXT_SIGN_IN}
       >
-        <UserIcon
-          className={cn(SIGNED_IN_ICON_CLS, 'fill-foreground/90 -mb-1')}
-        />
+        <span className={SIGNED_IN_ICON_CLS}>
+          {loaded && <UserIcon className="fill-foreground -mb-2 w-5 h-5" />}
+        </span>
       </Button>
     )
 

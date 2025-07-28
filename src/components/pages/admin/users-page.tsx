@@ -99,7 +99,7 @@ function AdminUsersPage() {
       setUserStats(stats)
     }
 
-    async function loadRoles() {
+    async function loadRoles(csrfToken: string) {
       const accessToken = await fetchAccessToken()
 
       if (!accessToken) {
@@ -122,7 +122,7 @@ function AdminUsersPage() {
 
     if (csrfToken) {
       try {
-        loadRoles()
+        loadRoles(csrfToken)
       } catch {
         console.error('could not fetch remote roles')
       }
