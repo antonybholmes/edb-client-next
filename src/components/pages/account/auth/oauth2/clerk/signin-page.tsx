@@ -1,5 +1,6 @@
 // 'use client'
 
+import { BaseImage } from '@/components/base-image'
 import { AppIcon } from '@/components/icons/app-icon'
 import { FormInputError } from '@/components/input-error'
 import { BaseCol } from '@/components/layout/base-col'
@@ -259,7 +260,7 @@ function SignInPage({ redirectTo = MYACCOUNT_ROUTE }: { redirectTo?: string }) {
             size="lg"
             onClick={() => handleOAuth('oauth_google')}
           >
-            <img
+            <BaseImage
               src="/images/google.svg"
               alt="Google"
               className="h-4.5 w-4.5"
@@ -273,7 +274,7 @@ function SignInPage({ redirectTo = MYACCOUNT_ROUTE }: { redirectTo?: string }) {
             size="lg"
             onClick={() => handleOAuth('oauth_github')}
           >
-            <img
+            <BaseImage
               src="/images/github-mark.svg"
               alt="Google"
               className="h-4.5 w-4.5"

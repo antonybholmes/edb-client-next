@@ -1,12 +1,5 @@
-import { type IFieldMap } from '@interfaces/field-map'
-
-import { type IDivProps } from '@interfaces/div-props'
-import { type IImageProps } from '@interfaces/image-props'
-import { parse } from '../lib/path'
-
-export interface IProps extends IImageProps, IDivProps {
-  pictureStyle?: IFieldMap
-}
+import Image from 'next/image'
+import { ComponentProps } from 'react'
 
 export function getSizes(size: [number, number]): [number, number][] {
   return [
@@ -27,7 +20,7 @@ export function getSrcSet(
   sizes: [number, number][]
 ): string {
   return sizes
-    .map(s => `${dir}/opt/${name}-${s[0]}x${s[1]}.${ext} ${s[0]}w`)
+    .map((s) => `${dir}/opt/${name}-${s[0]}x${s[1]}.${ext} ${s[0]}w`)
     .join(', ')
 }
 
@@ -48,45 +41,8 @@ export function getPlaceholderSrc(
   return `${dir}/opt/${name}-placeholder.${ext}`
 }
 
-export function BaseImage({
-  src,
-  alt,
-  size = [640, 320],
-  sizes = [],
-  loading = 'lazy',
-  decoding = 'async',
-  onLoad,
-  className,
-  style,
-  pictureStyle,
-}: IProps) {
-  if (sizes.length === 0) {
-    sizes = getSizes(size)
-  }
+export interface IProps extends ComponentProps<typeof Image> {}
 
-  const p = parse(src)
-  const dir = p.dir
-  const name = p.name
-  const ext = p.ext
-
-  const srcset = getSrcSet(name, dir, ext, sizes)
-  //const _sizes = sizes.map(s => `(min-width: ${s}px) ${s}px`).join(", ") //+ `, ${sizes[sizes.length - 1]}px`
-
-  return (
-    <picture style={pictureStyle}>
-      <img
-        src={getSrc(name, dir, ext, size)}
-        srcSet={srcset}
-        sizes={getSizeStr(size)}
-        width={size[0]}
-        height={size[1]}
-        className={className}
-        style={style}
-        loading={loading}
-        decoding={decoding}
-        alt={alt}
-        onLoad={onLoad}
-      />
-    </picture>
-  )
+export function BaseImage({ ...props }: IProps) {
+  return <Image {...props} />
 }

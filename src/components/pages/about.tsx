@@ -14,6 +14,7 @@ import { CoreProviders } from '@providers/core-providers'
 import { useQuery } from '@tanstack/react-query'
 import { Card } from '@themed/card'
 import { MenuSeparator } from '@themed/dropdown-menu'
+import { BaseImage } from '../base-image'
 import { BLANK_TARGET } from '../link/base-link'
 
 const LINKS = [
@@ -47,7 +48,7 @@ function AboutPage({ children }: IChildrenProps) {
         style={{ paddingLeft: 0, paddingRight: 0 }}
       >
         <VCenterRow className="gap-x-4 py-2 px-6">
-          <img
+          <BaseImage
             src="/favicon.svg"
             width={512}
             height={512}

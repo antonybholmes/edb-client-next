@@ -1,3 +1,4 @@
+import { BaseImage } from '@/components/base-image'
 import { AppIcon } from '@/components/icons/app-icon'
 import { FormInputError } from '@/components/input-error'
 import { BaseCol } from '@/components/layout/base-col'
@@ -215,7 +216,11 @@ export function SupabaseSignIn({
           rounded="none"
           onClick={() => handleOAuth('google')}
         >
-          <img src="/images/google.svg" alt="Google" className="h-6 w-6" />
+          <BaseImage
+            src="/images/google.svg"
+            alt="Google"
+            className="h-6 w-6"
+          />
           <span className="text-center col-span-4">Continue with Google</span>
           <></>
         </Button>
@@ -226,7 +231,11 @@ export function SupabaseSignIn({
           rounded="none"
           onClick={() => handleOAuth('github')}
         >
-          <img src="/images/github-mark.svg" alt="Google" className="h-6 w-6" />
+          <BaseImage
+            src="/images/github-mark.svg"
+            alt="GitHub"
+            className="h-6 w-6"
+          />
           <span className="col-span-4 text-center">Continue with GitHub</span>
           <></>
         </Button>

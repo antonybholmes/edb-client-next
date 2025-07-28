@@ -1162,6 +1162,12 @@
           "msg": "Help pages now partially render",
           "date": "2025-07-26T13:35:56.072Z"
         }
+      ],
+      "Changed": [
+        {
+          "msg": "Removed export. Added redirects. Switched to Image",
+          "date": "2025-07-28T14:02:18.746Z"
+        }
       ]
     },
     "author": "Antony Holmes",

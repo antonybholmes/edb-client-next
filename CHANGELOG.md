@@ -6,6 +6,10 @@
 
 - Help pages now partially render.
 
+### Changed
+
+- Removed export. Added redirects. Switched to Image.
+
 ### Fixed
 
 - Bug fixes and updates.
