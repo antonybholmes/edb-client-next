@@ -25,24 +25,25 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 import { useEdbSettings } from './edb-settings'
 
 //export const CSRF_COOKIE_NAME = 'edb-server-csrf-token'
-export const CSRF_KEY = `${APP_ID}:csrf:v1`
+export const CSRF_KEY = `${APP_ID}:csrf:v2`
 
 interface ICsrfStore {
   csrfToken: string
+  date: string
   setCsrfToken: (csrfToken: string) => void
 }
 
 export const useCsrfStore = create<ICsrfStore>()(
   persist(
-    set => ({
+    (set) => ({
       csrfToken: '',
-      setCsrfToken: (csrfToken: string) => {
-        set(
-          produce((state: ICsrfStore) => {
-            state.csrfToken = csrfToken
-          })
-        )
-      },
+      date: new Date().toISOString(),
+      setCsrfToken: (csrfToken: string) =>
+        set((state) => ({
+          ...state,
+          csrfToken,
+          date: new Date().toISOString(),
+        })),
     }),
     {
       name: CSRF_KEY, // name in localStorage
@@ -61,7 +62,7 @@ export interface IEdbAuthStore {
   setAccessToken: (token: string) => void
 }
 
-export const useEdbAuthStore = create<IEdbAuthStore>(set => ({
+export const useEdbAuthStore = create<IEdbAuthStore>((set) => ({
   session: null,
   loading: true,
   accessToken: '',
@@ -114,12 +115,12 @@ export interface IEdbAuthHook {
 export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
   const queryClient = useQueryClient()
 
-  const session = useEdbAuthStore(state => state.session)
-  const setSession = useEdbAuthStore(state => state.setSession)
-  const accessToken = useEdbAuthStore(state => state.accessToken)
+  const session = useEdbAuthStore((state) => state.session)
+  const setSession = useEdbAuthStore((state) => state.setSession)
+  const accessToken = useEdbAuthStore((state) => state.accessToken)
   //const csrfToken = useEdbAuthStore(state => state.csrfToken)
   //const setCsrfToken = useEdbAuthStore(state => state.setCsrfToken)
-  const setAccessToken = useEdbAuthStore(state => state.setAccessToken)
+  const setAccessToken = useEdbAuthStore((state) => state.setAccessToken)
 
   const { settings, updateSettings } = useEdbSettings()
 
@@ -130,8 +131,8 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
 
   //const [apiKey, setApiKey] = useState('')
 
-  const csrfToken = useCsrfStore(state => state.csrfToken)
-  const setCsrfToken = useCsrfStore(state => state.setCsrfToken)
+  const csrfToken = useCsrfStore((state) => state.csrfToken)
+  const setCsrfToken = useCsrfStore((state) => state.setCsrfToken)
 
   // const [csrfToken, setCsrfToken] = useState(() => {
   //   return localStorage.getItem(CSRF_KEY) || ''
@@ -257,7 +258,7 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
 
       if (settings.users.length === 0) {
         updateSettings(
-          produce(settings, draft => {
+          produce(settings, (draft) => {
             draft.users = [
               {
                 username: s!.user.username,
@@ -439,7 +440,7 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
 
     // remove user from cache
     updateSettings(
-      produce(settings, draft => {
+      produce(settings, (draft) => {
         draft.users = []
       })
     )

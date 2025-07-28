@@ -1,5 +1,12 @@
 # Changelog
 
+## 24.4 (Jul, 2025)
+
+### Changed
+
+- Auth workflow with nexjs specific fixes.
+
+
 ## 24.3 (Jul, 2025)
 
 ### Added

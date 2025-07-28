@@ -74,42 +74,14 @@ function AdminUsersPage() {
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  async function loadRoles() {
-    const accessToken = await fetchAccessToken()
-
-    if (!accessToken) {
-      return
-    }
-
-    try {
-      const res = await queryClient.fetchQuery({
-        queryKey: ['admin_roles'],
-        queryFn: () => {
-          return httpFetch.getJson<{ data: IRole[] }>(API_ADMIN_ROLES_URL, {
-            headers: csfrWithTokenHeaders(csrfToken, accessToken),
-          })
-        },
-      })
-
-      //console.log('roles', res.data)
-      setRoles(res.data)
-    } catch {
-      console.error('could not fetch remote roles')
-    }
-  }
-
   useEffect(() => {
-    loadRoles()
-  }, [])
+    async function loadUserStats() {
+      const accessToken = await fetchAccessToken()
 
-  async function loadUserStats() {
-    const accessToken = await fetchAccessToken()
+      if (!accessToken) {
+        return
+      }
 
-    if (!accessToken) {
-      return
-    }
-
-    try {
       const res = await queryClient.fetchQuery({
         queryKey: ['user_stats'],
         queryFn: () => {
@@ -125,16 +97,37 @@ function AdminUsersPage() {
       const stats: IUserStats = res.data
 
       setUserStats(stats)
-    } catch {
-      console.error('could not load user stats')
     }
-  }
 
-  useEffect(() => {
-    if (roles.length > 0) {
+    async function loadRoles() {
+      const accessToken = await fetchAccessToken()
+
+      if (!accessToken) {
+        return
+      }
+
+      const res = await queryClient.fetchQuery({
+        queryKey: ['admin_roles'],
+        queryFn: () => {
+          return httpFetch.getJson<{ data: IRole[] }>(API_ADMIN_ROLES_URL, {
+            headers: csfrWithTokenHeaders(csrfToken, accessToken),
+          })
+        },
+      })
+
+      //console.log('roles', res.data)
+      setRoles(res.data)
       loadUserStats()
     }
-  }, [roles])
+
+    if (csrfToken) {
+      try {
+        loadRoles()
+      } catch {
+        console.error('could not fetch remote roles')
+      }
+    }
+  }, [csrfToken])
 
   async function loadUsers() {
     const accessToken = await fetchAccessToken()
@@ -145,26 +138,26 @@ function AdminUsersPage() {
 
     console.log(accessToken)
 
-    try {
-      const res = await queryClient.fetchQuery({
-        queryKey: ['users'],
-        queryFn: () => {
-          return httpFetch.postJson<{ data: IEdbUser[] }>(API_ADMIN_USERS_URL, {
-            body: { offset: (page - 1) * itemsPerPage, records: itemsPerPage },
-            headers: csfrWithTokenHeaders(csrfToken, accessToken),
-          })
-        },
-      })
+    const res = await queryClient.fetchQuery({
+      queryKey: ['users'],
+      queryFn: () => {
+        return httpFetch.postJson<{ data: IEdbUser[] }>(API_ADMIN_USERS_URL, {
+          body: { offset: (page - 1) * itemsPerPage, records: itemsPerPage },
+          headers: csfrWithTokenHeaders(csrfToken, accessToken),
+        })
+      },
+    })
 
-      setUsers(res.data)
-    } catch {
-      console.error('could not load users from remote')
-    }
+    setUsers(res.data)
   }
 
   useEffect(() => {
     if (userStats) {
-      loadUsers()
+      try {
+        loadUsers()
+      } catch {
+        console.error('could not load users')
+      }
     }
 
     // reset offset if number of records changes significantly

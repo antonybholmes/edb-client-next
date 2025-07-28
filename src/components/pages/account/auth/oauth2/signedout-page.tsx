@@ -1,3 +1,5 @@
+'use client'
+
 import { AppIcon } from '@/components/icons/app-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { Card, CardHeader, CardTitle } from '@/components/shadcn/ui/themed/card'

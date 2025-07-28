@@ -1,10 +1,10 @@
 import { APP_ID } from '@/consts'
 import type { IStringMap } from '@interfaces/string-map'
 import type { IBasicEdbUser } from '@lib/edb/edb'
-import { persistentAtom } from '@nanostores/persistent'
-import { useStore } from '@nanostores/react'
+import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
-export const THEME_KEY = `${APP_ID}:theme:v2`
+export const THEME_KEY = `${APP_ID}:theme:v3`
 const SETTINGS_KEY = `${APP_ID}:settings:v10`
 
 export const THEME_CYCLE: IStringMap = {
@@ -26,7 +26,7 @@ export interface IEdbSettings {
     groups: { labels: { show: boolean } }
   }
   modules: { links: { openInNewWindow: boolean } }
-  csrfToken: string // optional, used for CSRF protection
+  theme: Theme
 }
 
 export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
@@ -46,39 +46,32 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
   },
   modules: {
     links: {
-      openInNewWindow: true,
+      openInNewWindow: false,
     },
   },
-  csrfToken: '',
+  //csrfToken: '',
+  theme: DEFAULT_THEME,
 }
 
-const themeAtom = persistentAtom<Theme>(THEME_KEY, DEFAULT_THEME)
+// const themeAtom = persistentAtom<Theme>(THEME_KEY, DEFAULT_THEME)
 
-const settingsAtom = persistentAtom<IEdbSettings>(
-  SETTINGS_KEY,
-  {
-    ...DEFAULT_EDB_SETTINGS,
-  },
-  {
-    encode: JSON.stringify,
-    decode: JSON.parse,
-  }
-)
+// const settingsAtom = persistentAtom<IEdbSettings>(
+//   SETTINGS_KEY,
+//   {
+//     ...DEFAULT_EDB_SETTINGS,
+//   },
+//   {
+//     encode: JSON.stringify,
+//     decode: JSON.parse,
+//   }
+// )
 
-function updateSettings(settings: IEdbSettings) {
-  console.log('Updating EDB settings', settings)
-  settingsAtom.set(settings)
-}
+// function updateSettings(settings: IEdbSettings) {
+//   console.log('Updating EDB settings', settings)
+//   settingsAtom.set(settings)
+// }
 
-function resetSettings() {
-  updateSettings({ ...DEFAULT_EDB_SETTINGS })
-}
-
-function resetTheme() {
-  applyTheme(DEFAULT_THEME)
-}
-
-function applyTheme(theme: Theme) {
+/* function applyTheme(theme: Theme) {
   if (
     theme === 'dark' ||
     (theme === 'automatic' &&
@@ -90,7 +83,47 @@ function applyTheme(theme: Theme) {
   }
 
   themeAtom.set(theme)
+} */
+
+export interface IEdbSettingsStore extends IEdbSettings {
+  updateSettings: (settings: IEdbSettings) => void
+  applyTheme: (theme: Theme) => void
 }
+
+export const useEdbSettingsStore = create<IEdbSettingsStore>()(
+  persist(
+    (set) => ({
+      ...DEFAULT_EDB_SETTINGS,
+      updateSettings: (settings: IEdbSettings) => {
+        console.log('Updating EDB settings', settings)
+        set((state) => ({
+          ...state,
+          ...settings,
+        }))
+      },
+      applyTheme: (theme: Theme) => {
+        if (
+          theme === 'dark' ||
+          (theme === 'automatic' &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ) {
+          document.documentElement.classList.add('dark')
+        } else {
+          document.documentElement.classList.remove('dark')
+        }
+
+        set((state) => ({
+          ...state,
+          theme,
+        }))
+      },
+    }),
+    {
+      name: THEME_KEY, // name in localStorage
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+)
 
 export function useEdbSettings(): {
   settings: IEdbSettings
@@ -100,12 +133,22 @@ export function useEdbSettings(): {
   applyTheme: (theme: Theme) => void
   resetTheme: () => void
 } {
-  const settings = useStore(settingsAtom)
-  const theme = useStore(themeAtom)
+  const settings = useEdbSettingsStore((state) => state)
+  const updateSettings = useEdbSettingsStore((state) => state.updateSettings)
+  const applyTheme = useEdbSettingsStore((state) => state.applyTheme)
+
+  function resetSettings() {
+    updateSettings({ ...DEFAULT_EDB_SETTINGS })
+    resetTheme()
+  }
+
+  function resetTheme() {
+    applyTheme(DEFAULT_THEME)
+  }
 
   return {
     settings,
-    theme,
+    theme: settings.theme,
     updateSettings,
     resetSettings,
     applyTheme,

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev -p 8000 --turbopack",
     "build": "next build",
     "update-module-version": "tsx scripts/update-module-version.ts",
     "update-version": "tsx scripts/update-version.ts",

@@ -1,9 +1,8 @@
-// 'use client'
+'use client'
 
 import { VCenterRow } from '@layout/v-center-row'
 import { REDIRECT_URL_PARAM } from '@lib/edb/edb'
 import { useEdbAuth } from '@lib/edb/edb-auth'
-import { redirect, REDIRECT_DELAY_MS } from '@lib/http/urls'
 
 import { useAuth0 } from '@auth0/auth0-react'
 import { CoreProviders } from '@providers/core-providers'
@@ -13,13 +12,26 @@ import { AppIcon } from '@/components/icons/app-icon'
 import { ThemeLink } from '@/components/link/theme-link'
 import { APP_NAME } from '@/consts'
 import { CenterLayout } from '@/layouts/center-layout'
+import { useRouter, useSearchParams } from 'next/navigation'
+
 import { useEffect, useState } from 'react'
 import { invalidRedirectUrl } from '../signedout-page'
 
 function CallbackPage() {
   const { signInWithAuth0 } = useEdbAuth()
 
-  const [redirectUrl, setRedirectUrl] = useState<string>('')
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const [redirectUrl, setRedirectUrl] = useState<string | null>(null)
+  const { signout } = useEdbAuth()
+
+  // useEffect(() => {
+  //   //const queryParameters = new URLSearchParams(window.location.search)
+  //   const param =
+  //     searchParams.get(REDIRECT_URL_PARAM) || APP_ACCOUNT_SIGN_IN_URL
+  //   setRedirectUrl(param)
+  // }, [searchParams])
 
   // useEffect(() => {
   //   // async function fetch() {
@@ -64,7 +76,7 @@ function CallbackPage() {
 
         let url = appState[REDIRECT_URL_PARAM]
 
-        //console.log('Redirect URL from appState:', appState)
+        console.log('Redirect URL from appState:', appState)
 
         if (invalidRedirectUrl(url)) {
           // if login triggered from signout page, do not redirect back to it.
@@ -108,10 +120,18 @@ function CallbackPage() {
   //   }
   // }, [isAuthenticated])
 
-  if (redirectUrl) {
-    //console.log('ahda', redirectUrl)
-    redirect(redirectUrl, REDIRECT_DELAY_MS)
-  }
+  // if (redirectUrl) {
+  //   //console.log('ahda', redirectUrl)
+  //   redirect(redirectUrl, REDIRECT_DELAY_MS)
+  // }
+
+  useEffect(() => {
+    if (redirectUrl !== null) {
+      // You can add validation or whitelist here for security
+      console.log('Redirecting to:', redirectUrl)
+      router.replace(redirectUrl)
+    }
+  }, [redirectUrl, router])
 
   return (
     <CenterLayout signedRequired="never">

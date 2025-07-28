@@ -1,7 +1,7 @@
 import { UserIcon } from '@icons/user-icon'
 import { Button } from '@themed/button'
 
-import { useEffect, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 
 import { SignInIcon } from '@/components/icons/sign-in-icon'
 import {
@@ -12,10 +12,10 @@ import {
   TEXT_SIGN_OUT,
   type IDialogParams,
 } from '@/consts'
+import { cn } from '@/lib/shadcn-utils'
 import { useAuth0 } from '@auth0/auth0-react'
 import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
 import { SignOutIcon } from '@icons/sign-out-icon'
-import { VCenterRow } from '@layout/v-center-row'
 import { redirect } from '@lib/http/urls'
 import { randId } from '@lib/utils'
 import { DropdownMenu } from '@radix-ui/react-dropdown-menu'
@@ -29,6 +29,7 @@ import {
 } from '@themed/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@themed/popover'
 import { UserRound } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 import { truncate } from '../../text/text'
 import {
   APP_OAUTH2_SIGN_IN_ROUTE,
@@ -53,11 +54,8 @@ interface IProps {
   redirectUrl?: string
 }
 
-export function EDBSignIn({
-  redirectUrl = '',
-  apiKey = '',
-  signInMode = 'oauth2',
-}: IProps) {
+export function EDBSignIn({ apiKey = '', signInMode = 'oauth2' }: IProps) {
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
@@ -67,11 +65,13 @@ export function EDBSignIn({
 
   const { loginWithRedirect } = useAuth0()
 
-  useEffect(() => {
-    if (!redirectUrl) {
-      redirectUrl = window.location.pathname //window.location.href
-    }
-  }, [])
+  //console.log('pathname', pathname)
+
+  // useEffect(() => {
+  //   if (!redirectUrl) {
+  //     redirectUrl = window.location.pathname //window.location.href
+  //   }
+  // }, [])
 
   const cachedUserInfo: IBasicEdbUser =
     settings.users.length > 0
@@ -97,31 +97,24 @@ export function EDBSignIn({
       ? `${cachedUserInfo.firstName[0]!.toUpperCase()}${cachedUserInfo.lastName[0]!.toUpperCase()}`
       : cachedUserInfo.username.slice(0, 2).toUpperCase()
 
-  const button = (
-    <Button
-      variant="muted"
-      size="header"
-      rounded="none"
-      checked={open}
-      ripple={false}
-      title={isSignedIn ? TEXT_MY_ACCOUNT : TEXT_SIGN_IN}
-    >
-      <VCenterRow data-checked={open} className={SIGNED_IN_ICON_CLS}>
-        {initials ? (
-          <span>{initials}</span>
-        ) : (
-          <UserIcon className="fill-foreground/90 -mb-1" />
-        )}
-      </VCenterRow>
-    </Button>
-  )
-
   let menu: ReactNode = null
 
   if (isSignedIn) {
     menu = (
       <DropdownMenu open={open} onOpenChange={setOpen}>
-        <DropdownMenuTrigger asChild>{button}</DropdownMenuTrigger>
+        <DropdownMenuTrigger asChild>
+          <Button
+            id="edb-signin-button"
+            variant="muted"
+            size="header"
+            rounded="none"
+            checked={open}
+            ripple={false}
+            title={isSignedIn ? TEXT_MY_ACCOUNT : TEXT_SIGN_IN}
+          >
+            <span className={SIGNED_IN_ICON_CLS}>{initials}</span>
+          </Button>
+        </DropdownMenuTrigger>
 
         <DropdownMenuContent
           onEscapeKeyDown={() => setOpen(false)}
@@ -170,6 +163,22 @@ export function EDBSignIn({
       </DropdownMenu>
     )
   } else {
+    const button = (
+      <Button
+        id="edb-signin-button"
+        variant="muted"
+        size="header"
+        rounded="none"
+        checked={open}
+        ripple={false}
+        title={isSignedIn ? TEXT_MY_ACCOUNT : TEXT_SIGN_IN}
+      >
+        <UserIcon
+          className={cn(SIGNED_IN_ICON_CLS, 'fill-foreground/90 -mb-1')}
+        />
+      </Button>
+    )
+
     switch (signInMode) {
       case 'auth0':
         menu = (
@@ -186,7 +195,7 @@ export function EDBSignIn({
                 aria-label={TEXT_SIGN_IN}
                 onClick={() => {
                   const state = {
-                    redirectUrl,
+                    redirectUrl: pathname, //window.location.href
                   }
 
                   console.log('EDBSignIn: loginWithRedirect state', state)

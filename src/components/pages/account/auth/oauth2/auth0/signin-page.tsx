@@ -8,22 +8,13 @@ import {
 } from '@lib/edb/edb'
 
 import { useAuth0 } from '@auth0/auth0-react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@themed/card'
-
-import { TEXT_SIGN_IN, TEXT_SIGN_OUT } from '@/consts'
-import { CenterCol } from '@layout/center-col'
+import { TEXT_SIGN_OUT } from '@/consts'
 import { useEdbAuth } from '@lib/edb/edb-auth'
 import { redirect } from '@lib/http/urls'
 import { CoreProviders } from '@providers/core-providers'
 import { useEffect, useState } from 'react'
-import { Auth0SignInButton } from './auth0-signin-button'
 
 // async function signIn(jwt: string): Promise<AxiosResponse> {
 //   console.log("signin")
@@ -45,20 +36,33 @@ import { Auth0SignInButton } from './auth0-signin-button'
 
 function SignInPage() {
   //const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
-  const [redirectUrl, setRedirectUrl] = useState('')
+  const [redirectUrl, setRedirectUrl] = useState<string | null>(null)
   const { signout } = useEdbAuth()
 
   useEffect(() => {
-    const queryParameters = new URLSearchParams(window.location.search)
+    //const queryParameters = new URLSearchParams(window.location.search)
+    const param =
+      searchParams.get(REDIRECT_URL_PARAM) || APP_ACCOUNT_SIGN_IN_URL
+    setRedirectUrl(param)
+  }, [searchParams])
+
+  useEffect(() => {
+    if (redirectUrl !== null) {
+      // You can add validation or whitelist here for security
+      console.log('Redirecting to:', redirectUrl)
+      //router.replace(redirectUrl)
+    }
 
     // used to reroute once authorized
-    setRedirectUrl(
-      queryParameters.get(REDIRECT_URL_PARAM) ?? APP_ACCOUNT_SIGN_IN_URL
-    ) // ?? MYACCOUNT_ROUTE)
+    //setRedirectUrl(
+    //  queryParameters.get(REDIRECT_URL_PARAM) ?? APP_ACCOUNT_SIGN_IN_URL
+    //) // ?? MYACCOUNT_ROUTE)
 
     //fetch()
-  }, [])
+  }, [redirectUrl, router])
 
   const {
     //isLoading,
@@ -87,7 +91,7 @@ function SignInPage() {
   // Allow users to signin
   return (
     <SignInLayout signedRequired="never">
-      <CenterCol>
+      {/* <CenterCol>
         <Card className="w-1/2 lg:w-1/3">
           <CardHeader>
             <CardTitle>{TEXT_SIGN_IN}</CardTitle>
@@ -100,8 +104,8 @@ function SignInPage() {
           </CardFooter>
         </Card>
 
-        {/* <CreateAccountLink /> */}
-      </CenterCol>
+ 
+      </CenterCol> */}
     </SignInLayout>
   )
 }
