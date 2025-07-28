@@ -148,7 +148,7 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
 
   useEffect(() => {
     console.log('useEdbAuth autoRefresh', autoRefresh)
-    if (autoRefresh) {
+    if (csrfToken && autoRefresh) {
       //setCsrfToken(getCsrfToken())
 
       try {
@@ -158,7 +158,7 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
         console.error(e)
       }
     }
-  }, [autoRefresh])
+  }, [autoRefresh, csrfToken])
 
   /**
    * Attempts to return cached access token, but if it determines
@@ -227,52 +227,48 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
 
     //const csrfToken = getCsrfToken()
 
-    console.log('refreshSession', csrfToken)
+    console.log('fetchSession', csrfToken)
 
-    try {
-      // After refreshing the session, we can fetch the session info
-      // to ensure we have the latest user information.
-      // This is useful if the user has updated their profile or roles.
-      //console.log('fetching session info after refresh')
-      const s = await queryClient.fetchQuery({
-        queryKey: ['session-info'],
+    // After refreshing the session, we can fetch the session info
+    // to ensure we have the latest user information.
+    // This is useful if the user has updated their profile or roles.
+    //console.log('fetching session info after refresh')
+    s = await queryClient.fetchQuery({
+      queryKey: ['session-info'],
 
-        queryFn: async () => {
-          const res = await httpFetch.getJson<{ data: IEdbSession }>(
-            SESSION_INFO_URL,
-            {
-              //headers: csfrHeaders(csrfToken),
-              withCredentials: true,
-            }
-          )
-
-          return res.data
-        },
-      })
-
-      console.log('getting session', s)
-
-      setSession(s)
-
-      //console.log(settings)
-
-      if (settings.users.length === 0) {
-        updateSettings(
-          produce(settings, (draft) => {
-            draft.users = [
-              {
-                username: s!.user.username,
-                email: s!.user.email,
-                firstName: s!.user.firstName,
-                lastName: s!.user.lastName,
-                roles: s!.user.roles,
-              } as IBasicEdbUser,
-            ]
-          })
+      queryFn: async () => {
+        const res = await httpFetch.getJson<{ data: IEdbSession }>(
+          SESSION_INFO_URL,
+          {
+            //headers: csfrHeaders(csrfToken),
+            withCredentials: true,
+          }
         )
-      }
-    } catch (e) {
-      setSession(null)
+
+        return res.data
+      },
+    })
+
+    console.log('getting session', s)
+
+    setSession(s)
+
+    //console.log(settings)
+
+    if (settings.users.length === 0) {
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.users = [
+            {
+              username: s!.user.username,
+              email: s!.user.email,
+              firstName: s!.user.firstName,
+              lastName: s!.user.lastName,
+              roles: s!.user.roles,
+            } as IBasicEdbUser,
+          ]
+        })
+      )
     }
 
     return s

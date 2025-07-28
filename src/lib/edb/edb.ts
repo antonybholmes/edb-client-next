@@ -407,6 +407,11 @@ export async function fetchTokenUsingSession(
 ): Promise<string> {
   //const queryClient = useQueryClient()
 
+  if (!csrfToken) {
+    console.warn(`No CSRF token available, cannot fetch ${tokenType} token.`)
+    throw new Error('No CSRF token available')
+  }
+
   // token not valid so attempt to use session to refresh
   const res = await queryClient.fetchQuery({
     queryKey: ['token', tokenType],

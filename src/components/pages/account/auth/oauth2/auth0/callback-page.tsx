@@ -12,7 +12,7 @@ import { AppIcon } from '@/components/icons/app-icon'
 import { ThemeLink } from '@/components/link/theme-link'
 import { APP_NAME } from '@/consts'
 import { CenterLayout } from '@/layouts/center-layout'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 import { useEffect, useState } from 'react'
 import { invalidRedirectUrl } from '../signedout-page'
@@ -21,7 +21,6 @@ function CallbackPage() {
   const { signInWithAuth0 } = useEdbAuth()
 
   const router = useRouter()
-  const searchParams = useSearchParams()
 
   const [redirectUrl, setRedirectUrl] = useState<string | null>(null)
   const { signout } = useEdbAuth()

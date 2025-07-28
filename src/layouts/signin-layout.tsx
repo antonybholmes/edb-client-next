@@ -18,6 +18,7 @@ import { CenterCol } from '@/components/layout/center-col'
 import { Card, CardHeader, CardTitle } from '@/components/shadcn/ui/themed/card'
 import { EDBSignIn, type SignInMode } from '@/lib/edb/signin/edb-signin'
 import { useEdbAuth } from '@lib/edb/edb-auth'
+import { usePathname } from 'next/navigation'
 
 export const FORWARD_DELAY_MS = 2000
 
@@ -78,11 +79,12 @@ export function SignInRequired({
 
   children,
 }: ISignInLayoutProps) {
+  const pathname = usePathname()
   const [_redirectUrl, setRedirectUrl] = useState('')
 
   //const queryClient = useQueryClient()
 
-  const { session, fetchSession } = useEdbAuth()
+  const { session, csrfToken, fetchSession } = useEdbAuth()
 
   useEffect(() => {
     async function checkSignedIn() {
@@ -104,14 +106,16 @@ export function SignInRequired({
         // the sign in callback includes this url so that the app can signin and
         // then return user to the page they were signing into as a convenience
 
-        const url = redirectUrl ? redirectUrl : window.location.pathname
+        const url = redirectUrl ? redirectUrl : pathname // window.location.pathname
 
         setRedirectUrl(url)
       }
     }
 
-    checkSignedIn()
-  }, [])
+    if (csrfToken) {
+      checkSignedIn()
+    }
+  }, [csrfToken])
 
   // if (_redirectUrl) {
   //   console.log('redirect', _redirectUrl, session)

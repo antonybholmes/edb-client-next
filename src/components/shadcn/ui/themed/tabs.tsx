@@ -65,9 +65,9 @@ export const TabsList = forwardRef<
   ComponentRef<typeof TabsPrimitive.List>,
   ComponentPropsWithoutRef<typeof TabsPrimitive.List> &
     VariantProps<typeof tabVariants>
->(({ className, variant = 'default', ...props }, ref) => (
+>(({ className, id = 'tabs-list', variant = 'default', ...props }, ref) => (
   <TabsPrimitive.List
-    id="tabs-list"
+    id={id}
     ref={ref}
     className={tabVariants({
       className,
@@ -144,7 +144,7 @@ export function TabsContent({
 }
 
 export function TabContentPanels({ tabs }: { tabs: ITab[] }) {
-  return tabs.map(tab => (
+  return tabs.map((tab) => (
     <TabsContent value={tab.id} className="h-full overflow-hidden" key={tab.id}>
       {tab.content}
     </TabsContent>

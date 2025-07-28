@@ -2,7 +2,7 @@ import { ChevronRightIcon } from '@icons/chevron-right-icon'
 import { VCenterRow } from '@layout/v-center-row'
 import type { TabsProps } from '@radix-ui/react-tabs'
 import { Tabs, TabsContent } from '@themed/tabs'
-import { useMemo, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { ToolbarIconButton } from './toolbar-icon-button'
 import { ToolbarTabGroup } from './toolbar-tab-group'
 
@@ -60,21 +60,12 @@ export function BottomBar({
   menuCallback = () => {},
   menuActions = [],
 }: IBottomBarProps) {
+  const [mounted, setMounted] = useState(false)
   const selectedTab = useMemo(() => getTabFromValue(value, tabs), [value, tabs])
-
-  if (!selectedTab) {
-    return null
-  }
-
-  const selectedTabId = selectedTab.tab.id //getTabId(selectedTab.tab)
-
-  //const _tabValue = getTabValue(value ?? _value, tabs)
 
   function _onValueChange(value: string) {
     //const [name, index] = parseTabId(value)
     const selectedTab = getTabFromValue(value, tabs)
-
-    console.log('Bottom', selectedTab)
 
     if (selectedTab?.tab.id) {
       onValueChange?.(selectedTab?.tab.id)
@@ -86,32 +77,17 @@ export function BottomBar({
     //onTabIdChange?.(value)
   }
 
-  // className="hidden data-[state=active]:flex flex-row items-center gap-x-1"
+  useEffect(() => setMounted(true), [])
 
-  let tabContents: ReactNode = (
-    <>
-      {tabs.map(tab => (
-        <TabsContent
-          value={tab.id}
-          key={tab.id}
-          className="hidden data-[state=active]:flex flex-col grow"
-        >
-          {tab.id === selectedTabId && tab.content}
-        </TabsContent>
-      ))}
-    </>
-  )
+  if (!mounted || !selectedTab) {
+    return null
+  }
 
-  // if (onFileDrop) {
-  //   tabContents = (
-  //     <FileDropZonePanel onFileDrop={onFileDrop}>
-  //       {tabContents}
-  //     </FileDropZonePanel>
-  //   )
-  // }
+  const selectedTabId = selectedTab.tab.id //getTabId(selectedTab.tab)
 
   let content: ReactNode = (
     <Tabs
+      id="bottom-bar"
       value={selectedTabId}
       onValueChange={_onValueChange}
       className={cn(
@@ -121,7 +97,16 @@ export function BottomBar({
       )}
       style={style}
     >
-      {tabContents}
+      {tabs.map((tab) => (
+        <TabsContent
+          value={tab.id}
+          key={tab.id}
+          className="hidden data-[state=active]:flex flex-col grow"
+        >
+          {tab.id === selectedTabId && tab.content}
+        </TabsContent>
+      ))}
+
       <VCenterRow className="shrink-0 justify-between text-xs">
         <VCenterRow className="gap-x-2">
           <ToolbarTabGroup>
@@ -133,8 +118,8 @@ export function BottomBar({
               onClick={() => {
                 const selectedTabIndex = tabs
                   .map((t, ti) => [t, ti] as [ITab, number])
-                  .filter(t => t[0]!.id === selectedTab.tab.id)
-                  .map(t => t[1]!)[0]!
+                  .filter((t) => t[0]!.id === selectedTab.tab.id)
+                  .map((t) => t[1]!)[0]!
 
                 const i =
                   selectedTabIndex === 0
@@ -165,8 +150,8 @@ export function BottomBar({
 
                 const selectedTabIndex = tabs
                   .map((t, ti) => [t, ti] as [ITab, number])
-                  .filter(t => t[0]!.id === selectedTab.tab.id)
-                  .map(t => t[1]!)[0]!
+                  .filter((t) => t[0]!.id === selectedTab.tab.id)
+                  .map((t) => t[1]!)[0]!
 
                 const i = Math.max(
                   0,
@@ -189,7 +174,7 @@ export function BottomBar({
                 </IconButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
-                {tabs.map(tab => (
+                {tabs.map((tab) => (
                   <DropdownMenuCheckboxItem
                     id={tab.id}
                     key={tab.id}

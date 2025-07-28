@@ -82,7 +82,7 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
   const innerRef = useRef<SVGSVGElement>(null)
   useImperativeHandle(ref, () => innerRef.current!)
 
-  const { fetchAccessToken } = useEdbAuth()
+  const { csrfToken, fetchAccessToken } = useEdbAuth()
 
   const axes = useMemo(() => {
     return locations.map((location) => {
@@ -403,7 +403,7 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
 
   // force updates when seqs, location or bin size change
   const binsQuery = useQuery({
-    queryKey: ['bins', seqTracks, locations, binSizes],
+    queryKey: ['bins', seqTracks, locations, binSizes, csrfToken],
     queryFn: async () => {
       // if (locations.length === 0 || seqs.length === 0) {
       //   return []

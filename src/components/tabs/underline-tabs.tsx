@@ -134,7 +134,12 @@ export function UnderlineTabs({
 
   return (
     <VCenterRow className={cn('justify-between gap-x-1', className)}>
-      <TabsList variant="base" className="relative" ref={tabListRef}>
+      <TabsList
+        variant="base"
+        className="relative"
+        ref={tabListRef}
+        id="underline-tabs"
+      >
         {tabs.map((tab, ti) => {
           //const id = makeTabId(tab, ti)
           //const w = tab.size ?? defaultWidth
@@ -151,7 +156,7 @@ export function UnderlineTabs({
               value={tab.id}
               id={tab.id}
               key={tab.id}
-              ref={el => {
+              ref={(el) => {
                 buttonsRef.current[ti] = el!
               }}
               onMouseEnter={() => {
@@ -176,7 +181,7 @@ export function UnderlineTabs({
             >
               <span
                 data-checked={selected}
-                ref={el => {
+                ref={(el) => {
                   itemsRef.current[ti] = el!
                 }}
                 aria-label={tab.id}

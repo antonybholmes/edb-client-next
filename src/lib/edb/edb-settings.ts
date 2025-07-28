@@ -4,8 +4,8 @@ import type { IBasicEdbUser } from '@lib/edb/edb'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-export const THEME_KEY = `${APP_ID}:theme:v3`
-const SETTINGS_KEY = `${APP_ID}:settings:v10`
+//export const THEME_KEY = `${APP_ID}:theme:v3`
+const SETTINGS_KEY = `${APP_ID}:settings:v12`
 
 export const THEME_CYCLE: IStringMap = {
   system: 'light',
@@ -119,7 +119,7 @@ export const useEdbSettingsStore = create<IEdbSettingsStore>()(
       },
     }),
     {
-      name: THEME_KEY, // name in localStorage
+      name: SETTINGS_KEY, // name in localStorage
       storage: createJSONStorage(() => localStorage),
     }
   )
