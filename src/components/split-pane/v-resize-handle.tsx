@@ -1,7 +1,6 @@
 import { TRANS_COLOR_CLS } from '@/theme'
 import { VCenterRow } from '@layout/v-center-row'
 import { cn } from '@lib/shadcn-utils'
-import { nanoid } from 'nanoid'
 import { useState } from 'react'
 import { PanelResizeHandle } from 'react-resizable-panels'
 import { RESIZE_DOT_CLS, RESIZE_DRAG_CLS } from './h-resize-handle'
@@ -20,9 +19,9 @@ export function VResizeHandle({
 
   return (
     <PanelResizeHandle
-      id={id ?? `hitbox-v-${nanoid()}`}
+      //id={id ?? `hitbox-v-${nanoid()}`}
       className={cn(CLS, drag ? 'bg-muted' : RESIZE_DRAG_CLS)}
-      onDragging={drag => {
+      onDragging={(drag) => {
         setDrag(drag)
       }}
       {...props}

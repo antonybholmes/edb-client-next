@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid'
 import { type ComponentProps } from 'react'
 import { PanelResizeHandle } from 'react-resizable-panels'
 
@@ -15,7 +14,7 @@ export function ThinVResizeHandle({
   //console.log(props.data['data-resize-handle-state'])
   return (
     <PanelResizeHandle
-      id={id ?? `v-resize-handle-thin-${nanoid()}`}
+      //id={id ?? `v-resize-handle-thin-${nanoid()}`}
       className={CLS}
       {...props}
     >
