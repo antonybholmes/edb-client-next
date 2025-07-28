@@ -41,8 +41,6 @@ export function getPlaceholderSrc(
   return `${dir}/opt/${name}-placeholder.${ext}`
 }
 
-export interface IProps extends ComponentProps<typeof Image> {}
-
-export function BaseImage({ ...props }: IProps) {
+export function BaseImage({ ...props }: ComponentProps<typeof Image>) {
   return <Image {...props} />
 }
