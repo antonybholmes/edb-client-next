@@ -87,7 +87,7 @@ export function HeatMapDialog({
       // })
 
       updateSettings(
-        produce(settings, draft => {
+        produce(settings, (draft) => {
           draft.heatmap.clusterCols = isClusterMap
         })
       )
@@ -218,7 +218,7 @@ export function HeatMapDialog({
     <OKCancelDialog
       open={open}
       title={'Heatmap'}
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onResponse?.(r)
         } else {
@@ -228,9 +228,7 @@ export function HeatMapDialog({
       //className="w-3/4 md:w-1/2 lg:w-1/3 3xl:w-1/4"
       //contentVariant="glass"
       //bodyVariant="card"
-      leftFooterChildren={
-        <HelpButton url="/help/applications/matcalc/heatmap" />
-      }
+      leftFooterChildren={<HelpButton url="/help/apps/matcalc/heatmap" />}
     >
       {error && <span className="text-destructive">{error}</span>}
       <Accordion
@@ -242,8 +240,8 @@ export function HeatMapDialog({
           <VCenterRow className="gap-x-2">
             <Checkbox
               checked={settings.heatmap.filterRows}
-              onCheckedChange={v => {
-                const newSettings = produce(settings, draft => {
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.heatmap.filterRows = v
                 })
 
@@ -255,8 +253,8 @@ export function HeatMapDialog({
               id="top-rows"
               limit={[0, 5000]}
               value={settings.heatmap.topRows.toString()}
-              onNumChange={v => {
-                const newSettings = produce(settings, draft => {
+              onNumChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.heatmap.topRows = v
                 })
 
@@ -267,8 +265,8 @@ export function HeatMapDialog({
             <span className="shrink-0">rows using</span>
             <SelectList
               value={settings.heatmap.rowFilterMethod}
-              onValueChange={v => {
-                const newSettings = produce(settings, draft => {
+              onValueChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.heatmap.rowFilterMethod = v
                 })
 
@@ -286,8 +284,8 @@ export function HeatMapDialog({
         <SettingsAccordionItem title="Transform">
           <Checkbox
             checked={settings.heatmap.applyLog2}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.heatmap.applyLog2 = v
               })
 
@@ -299,8 +297,8 @@ export function HeatMapDialog({
 
           <Checkbox
             checked={settings.heatmap.applyRowZscore}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.heatmap.applyRowZscore = v
               })
 
@@ -312,8 +310,8 @@ export function HeatMapDialog({
 
           <Checkbox
             checked={settings.heatmap.applyTranspose}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.heatmap.applyTranspose = v
               })
 
@@ -327,8 +325,8 @@ export function HeatMapDialog({
         <SettingsAccordionItem title="Cluster">
           <Checkbox
             checked={settings.heatmap.clusterRows}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.heatmap.clusterRows = v
               })
 
@@ -340,8 +338,8 @@ export function HeatMapDialog({
 
           <Checkbox
             checked={settings.heatmap.clusterCols}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.heatmap.clusterCols = v
               })
 
@@ -355,8 +353,8 @@ export function HeatMapDialog({
             <span className="w-24">Linkage</span>
             <SelectList
               value={settings.heatmap.linkage}
-              onValueChange={v => {
-                const newSettings = produce(settings, draft => {
+              onValueChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.heatmap.linkage = v
                 })
 
@@ -374,8 +372,8 @@ export function HeatMapDialog({
             <span className="w-24">Distance</span>
             <SelectList
               value={settings.heatmap.distance}
-              onValueChange={v => {
-                const newSettings = produce(settings, draft => {
+              onValueChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.heatmap.distance = v
                 })
 

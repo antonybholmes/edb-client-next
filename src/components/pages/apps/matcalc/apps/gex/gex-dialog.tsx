@@ -171,11 +171,11 @@ export function GexDialog({
       //console.log(res.data)
 
       // convert data to translate certain strings to numbers
-      datasets = res.data.map(dataset => {
-        return produce(dataset, draft => {
-          draft.samples = dataset.samples.map(sample => {
-            return produce(sample, sampleDraft => {
-              const entries = sample.metadata.map(m => {
+      datasets = res.data.map((dataset) => {
+        return produce(dataset, (draft) => {
+          draft.samples = dataset.samples.map((sample) => {
+            return produce(sample, (sampleDraft) => {
+              const entries = sample.metadata.map((m) => {
                 const v = Number(m.value)
 
                 return { name: m.name, value: !Number.isNaN(v) ? v : m.value }
@@ -194,14 +194,14 @@ export function GexDialog({
 
     setDatasetMap(
       new Map<string, IGexDataset>(
-        datasets.map(dataset => [dataset.publicId, dataset])
+        datasets.map((dataset) => [dataset.publicId, dataset])
       )
     )
 
     if (datasets.length > 0) {
       // check if the datasets the user already chose are selected
 
-      const previouslySelected = datasets.filter(dataset =>
+      const previouslySelected = datasets.filter((dataset) =>
         settings.apps.gex.selectedDatasets.includes(dataset.publicId)
       )
 
@@ -209,7 +209,7 @@ export function GexDialog({
         // we found one the use already selected, so highlight that
         setDatasetUseMap(
           new Map<string, boolean>(
-            previouslySelected.map(dataset => [dataset.publicId, true])
+            previouslySelected.map((dataset) => [dataset.publicId, true])
           )
         )
       } else {
@@ -251,7 +251,7 @@ export function GexDialog({
 
     setInstituteMap(instituteMap)
     setInstitutions(institutions)
-    setAccordionValues(institutions.map(ins => getAccordionId(ins)))
+    setAccordionValues(institutions.map((ins) => getAccordionId(ins)))
   }
 
   // const { data: technologyData } = useQuery({
@@ -263,7 +263,7 @@ export function GexDialog({
   //console.log(technologyData?.data)
 
   useEffect(() => {
-    const defaultTechnologies = TECHNOLOGIES.filter(t =>
+    const defaultTechnologies = TECHNOLOGIES.filter((t) =>
       t.name.includes(settings.apps.gex.technology)
     )
 
@@ -277,13 +277,13 @@ export function GexDialog({
       return
     }
 
-    let defaultGexTypes = technology.gexTypes.filter(t =>
+    let defaultGexTypes = technology.gexTypes.filter((t) =>
       t.includes(settings.apps.gex.gexType)
     )
 
     if (defaultGexTypes.length === 0) {
       // Can't find the type in the technology, so see if we have tpm
-      defaultGexTypes = technology.gexTypes.filter(t => t.includes('TPM'))
+      defaultGexTypes = technology.gexTypes.filter((t) => t.includes('TPM'))
 
       if (defaultGexTypes.length === 0) {
         // No TPM, so just pick the first one
@@ -293,7 +293,7 @@ export function GexDialog({
       setGexType(defaultGexTypes[0])
 
       updateSettings(
-        produce(settings, draft => {
+        produce(settings, (draft) => {
           draft.apps.gex.gexType = defaultGexTypes[0]!
         })
       )
@@ -312,10 +312,10 @@ export function GexDialog({
     const types = [
       ...new Set(
         datasets
-          .filter(dataset => datasetUseMap.get(dataset.publicId))
-          .map(dataset =>
+          .filter((dataset) => datasetUseMap.get(dataset.publicId))
+          .map((dataset) =>
             dataset.samples
-              .map(sample => sample.metadata.map(m => m.name))
+              .map((sample) => sample.metadata.map((m) => m.name))
               .flat()
           )
           .flat()
@@ -367,7 +367,7 @@ export function GexDialog({
       return
     }
 
-    const selectedDatasets = datasets.filter(dataset =>
+    const selectedDatasets = datasets.filter((dataset) =>
       datasetUseMap.get(dataset.publicId)
     )
 
@@ -408,7 +408,7 @@ export function GexDialog({
                 technology: technology.name,
                 gexType,
                 genes,
-                datasets: selectedDatasets.map(dataset => dataset.publicId),
+                datasets: selectedDatasets.map((dataset) => dataset.publicId),
               },
 
               headers: bearerHeaders(accessToken),
@@ -421,9 +421,9 @@ export function GexDialog({
 
       const geneResults = searchResults[0]!.features
 
-      const data: number[][] = range(geneResults.length).map(gi =>
+      const data: number[][] = range(geneResults.length).map((gi) =>
         searchResults
-          .map(datasetResult => datasetResult.features[gi]!.expression)
+          .map((datasetResult) => datasetResult.features[gi]!.expression)
           .flat()
       )
 
@@ -437,7 +437,7 @@ export function GexDialog({
             const labels = [sample.name]
 
             for (const datatype of sampleDataTypes.filter(
-              t => sampleDataTypeUseMap.get(t) ?? false
+              (t) => sampleDataTypeUseMap.get(t) ?? false
             )) {
               for (const m of sample.metadata) {
                 if (m.name === datatype) {
@@ -452,10 +452,10 @@ export function GexDialog({
         }
       } else {
         columns = searchResults
-          .map(datasetResult =>
+          .map((datasetResult) =>
             datasetMap
               .get(datasetResult.dataset)!
-              .samples.map(sample => sample.name)
+              .samples.map((sample) => sample.name)
           )
           .flat()
       }
@@ -471,7 +471,7 @@ export function GexDialog({
       ]
 
       if (technology.name.includes('Microarray')) {
-        geneData = geneResults.map(geneResult => [
+        geneData = geneResults.map((geneResult) => [
           geneResult.probeId ?? '',
           settings.apps.gex.species === 'Mouse'
             ? geneResult.gene.mgi
@@ -483,7 +483,7 @@ export function GexDialog({
 
         rowMetaDataColumns = ['Probe', ...rowMetaDataColumns]
       } else {
-        geneData = geneResults.map(geneResult => [
+        geneData = geneResults.map((geneResult) => [
           settings.apps.gex.species === 'Mouse'
             ? geneResult.gene.mgi
             : geneResult.gene.hugo,
@@ -513,20 +513,20 @@ export function GexDialog({
         // max number of alt names we might be adding
         const maxAltNameCount = Math.max(
           ...searchResults
-            .map(datasetResult =>
+            .map((datasetResult) =>
               datasetMap
                 .get(datasetResult.dataset)!
-                .samples.map(sample => sample.altNames.length)
+                .samples.map((sample) => sample.altNames.length)
             )
             .flat()
         )
 
         for (let i = 0; i < maxAltNameCount; i++) {
           const labels = searchResults
-            .map(datasetResult =>
+            .map((datasetResult) =>
               datasetMap
                 .get(datasetResult.dataset)!
-                .samples.map(sample =>
+                .samples.map((sample) =>
                   sample.altNames.length > i ? sample.altNames[i]! : ''
                 )
             )
@@ -539,11 +539,11 @@ export function GexDialog({
       // add the sample meta data
 
       for (const datatype of sampleDataTypes.filter(
-        t => sampleDataTypeUseMap.get(t) ?? false
+        (t) => sampleDataTypeUseMap.get(t) ?? false
       )) {
         const labels = searchResults
-          .map(datasetResult =>
-            datasetMap.get(datasetResult.dataset)!.samples.map(sample => {
+          .map((datasetResult) =>
+            datasetMap.get(datasetResult.dataset)!.samples.map((sample) => {
               let ret = ''
 
               for (const m of sample.metadata) {
@@ -594,7 +594,7 @@ export function GexDialog({
         // construct groups in order of appearance with
         // anything not in a group being pushed to the end in the NA group
         groups = [...orderedGroupNames, TEXT_NA]
-          .filter(groupName => groupsMap.has(groupName))
+          .filter((groupName) => groupsMap.has(groupName))
           .map((groupName, gi) => {
             const cidx = gi % DEFAULT_PALETTE.length
             let color = DEFAULT_PALETTE[cidx]!
@@ -628,7 +628,7 @@ export function GexDialog({
 
       // cache the genes so user doesn't have to keep re-entering them
       updateSettings(
-        produce(settings, draft => {
+        produce(settings, (draft) => {
           draft.apps.gex.genes = genes
         })
       )
@@ -661,7 +661,7 @@ export function GexDialog({
       }}
       buttons={[TEXT_OK]}
       leftFooterChildren={
-        <HelpButton url="/help/applications/matcalc/gene-expression" />
+        <HelpButton url="/help/apps/matcalc/gene-expression" />
       }
       headerChildren={
         <>
@@ -689,7 +689,7 @@ export function GexDialog({
             <ToggleButtonTriggers variant="tab" defaultWidth={5} />
           </ToggleButtons> */}
 
-          {/* <HelpButton url="/help/applications/matcalc/gene-expression" /> */}
+          {/* <HelpButton url="/help/apps/matcalc/gene-expression" /> */}
         </>
       }
     >
@@ -760,8 +760,8 @@ export function GexDialog({
               <HCenterRow className="pt-2">
                 <Tabs
                   value={settings.apps.gex.species}
-                  onValueChange={v => {
-                    const newOptions = produce(settings, draft => {
+                  onValueChange={(v) => {
+                    const newOptions = produce(settings, (draft) => {
                       draft.apps.gex.species = v
                     })
 
@@ -771,13 +771,13 @@ export function GexDialog({
                   <IOSTabsList
                     defaultWidth="64px"
                     value={settings.apps.gex.species}
-                    tabs={SPECIES.map(s => ({ id: s }))}
+                    tabs={SPECIES.map((s) => ({ id: s }))}
                   />
                 </Tabs>
               </HCenterRow>
 
               <ul className="flex flex-col">
-                {TECHNOLOGIES.map(t => {
+                {TECHNOLOGIES.map((t) => {
                   return (
                     <li key={t.publicId}>
                       <DropdownMenuButton
@@ -788,7 +788,7 @@ export function GexDialog({
                         className="w-full text-left"
                         onClick={() => {
                           updateSettings(
-                            produce(settings, draft => {
+                            produce(settings, (draft) => {
                               draft.apps.gex.technology = t.name
                             })
                           )
@@ -808,7 +808,7 @@ export function GexDialog({
           value={accordionValues}
           onValueChange={setAccordionValues}
         >
-          {institutions.map(institution => {
+          {institutions.map((institution) => {
             return (
               <SettingsAccordionItem
                 title={institution}
@@ -816,7 +816,7 @@ export function GexDialog({
                 key={institution}
               >
                 <ul className="flex flex-col gap-y-2">
-                  {instituteMap.get(institution)?.map(dataset => {
+                  {instituteMap.get(institution)?.map((dataset) => {
                     return (
                       <li
                         key={dataset.publicId}
@@ -835,7 +835,7 @@ export function GexDialog({
                               )
 
                               updateSettings(
-                                produce(settings, draft => {
+                                produce(settings, (draft) => {
                                   draft.apps.gex.selectedDatasets = [
                                     dataset.publicId,
                                   ]
@@ -913,7 +913,7 @@ export function GexDialog({
               label="Genes"
               labelW=""
               value={text}
-              onChange={e => setText(e.target.value)}
+              onChange={(e) => setText(e.target.value)}
               className="grow h-42" // rounded-theme border border-border overflow-hidden outline-hidden placeholder:text-muted-foreground"
               labelChildren={
                 <InfoHoverCard title="Genes">
@@ -926,14 +926,14 @@ export function GexDialog({
           <PropRow title="Expression">
             <Select
               value={gexType ?? ''}
-              onValueChange={value => {
+              onValueChange={(value) => {
                 if (technology) {
-                  const matches = technology.gexTypes.filter(t => t === value)
+                  const matches = technology.gexTypes.filter((t) => t === value)
 
                   if (matches.length > 0) {
                     setGexType(matches[0])
                     updateSettings(
-                      produce(settings, draft => {
+                      produce(settings, (draft) => {
                         draft.apps.gex.gexType = matches[0]!
                       })
                     )
@@ -959,7 +959,7 @@ export function GexDialog({
           <PropRow title="Sample Info">
             <SampleDataTypeCombo
               selectedValues={sampleDataTypes.filter(
-                t => sampleDataTypeUseMap.get(t) ?? false
+                (t) => sampleDataTypeUseMap.get(t) ?? false
               )}
               values={sampleDataTypes}
               setValue={(value, selected) => {
@@ -977,9 +977,9 @@ export function GexDialog({
           <CheckPropRow
             title="Add group"
             checked={settings.apps.gex.addGroup}
-            onCheckedChange={v => {
+            onCheckedChange={(v) => {
               updateSettings(
-                produce(settings, draft => {
+                produce(settings, (draft) => {
                   draft.apps.gex.addGroup = v
                 })
               )
@@ -988,7 +988,7 @@ export function GexDialog({
             <SampleDataTypeCombo
               selectedValues={groupSampleDataType}
               values={sampleDataTypes}
-              setValue={value => {
+              setValue={(value) => {
                 setGroupSampleDataType([value])
               }}
               className="w-48"
@@ -998,9 +998,9 @@ export function GexDialog({
           <CheckPropRow
             title="Add sample info to column names"
             checked={settings.apps.gex.addSampleMetadataToColumns}
-            onCheckedChange={v => {
+            onCheckedChange={(v) => {
               updateSettings(
-                produce(settings, draft => {
+                produce(settings, (draft) => {
                   draft.apps.gex.addSampleMetadataToColumns = v
                 })
               )
@@ -1010,9 +1010,9 @@ export function GexDialog({
           <CheckPropRow
             title="Add alternative names to columns"
             checked={settings.apps.gex.addAltNames}
-            onCheckedChange={v => {
+            onCheckedChange={(v) => {
               updateSettings(
-                produce(settings, draft => {
+                produce(settings, (draft) => {
                   draft.apps.gex.addAltNames = v
                 })
               )

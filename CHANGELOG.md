@@ -11,6 +11,10 @@
 - Fixed SSR hydration of bottom bar using rand ids from sheets by only rendering on mount.
 - Auth workflow with nexjs specific fixes.
 
+### Fixed
+
+- Bug fixes and updates.
+
 
 ## 24.3 (Jul, 2025)
 

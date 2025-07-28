@@ -2,28 +2,7 @@ import { BaseCol } from '@/components/layout/base-col'
 import { MarkdownContent } from '@/components/markdown-content'
 import { getHelpFiles, HELP_DIRECTORY } from '@/lib/markdown/help'
 import { loadMarkdownFile } from '@/lib/markdown/markdown'
-import fs from 'fs'
 import path from 'path'
-
-function getMarkdownFiles(dir: string): string[] {
-  let results: string[] = []
-  const list = fs.readdirSync(dir)
-
-  list.forEach((file) => {
-    const fullPath = path.join(dir, file)
-    const stat = fs.statSync(fullPath)
-
-    if (stat && stat.isDirectory()) {
-      // If it's a directory, recurse into it
-      results = results.concat(getMarkdownFiles(fullPath))
-    } else if (file.endsWith('.md')) {
-      // If it's a markdown file, add to results
-      results.push(fullPath)
-    }
-  })
-
-  return results
-}
 
 export function generateStaticParams() {
   // const pages = await client.queries.postConnection()

@@ -1,7 +1,7 @@
 {
   "name": "Matcalc",
   "description": "Tools for gene expression analysis.",
-  "version": "5.9.4.535",
+  "version": "5.9.5.536",
   "copyright": "Copyright (C) ${START_YEAR:2023} Antony Holmes. All rights reserved.",
-  "modified": "2025-07-28T19:51:13.187Z"
+  "modified": "2025-07-28T21:36:23.732Z"
 }

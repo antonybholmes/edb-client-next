@@ -218,7 +218,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
                 className="p-2 gap-y-2 w-full"
                 onClick={() => {
                   window.open(
-                    '/help/applications',
+                    '/help/apps',
                     'HelpWindow',
                     'width=1080,height=720,toolbar=no,status=no,menubar=no,scrollbars=yes,resizable=yes'
                   )

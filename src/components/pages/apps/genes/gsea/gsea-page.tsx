@@ -84,7 +84,7 @@ import { GseaSvg } from './gsea-svg'
 import type { IGeneRankScore, IGseaResult, IPathway } from './gsea-utils'
 import MODULE_INFO from './module.json'
 
-const HELP_URL = '/help/applications/gsea'
+const HELP_URL = '/help/apps/gsea'
 
 export function GseaPage() {
   //const [activeSideTab] = useState('Data')
