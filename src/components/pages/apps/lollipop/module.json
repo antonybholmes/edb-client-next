@@ -1,7 +1,7 @@
 {
   "name": "Lollipop",
   "description": "Create lollipop plots",
-  "version": "4.4.9.390",
+  "version": "4.5.0.391",
   "copyright": "Copyright (C) ${START_YEAR:2024} Antony Holmes. All rights reserved.",
-  "modified": "2025-07-29T18:07:59.017Z"
+  "modified": "2025-07-29T23:19:50.560Z"
 }
