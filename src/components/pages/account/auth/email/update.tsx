@@ -31,7 +31,6 @@ import {
   TEXT_EMAIL_ERROR,
 } from '@layouts/signin-layout'
 import { bearerHeaders, redirect } from '@lib/http/urls'
-import { CoreProviders } from '@providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
 import { Button } from '@themed/button'
 import { toast } from '@themed/crisp'
@@ -45,7 +44,7 @@ interface IFormInput {
   email2: string
 }
 
-function UpdateEmailPage() {
+export function UpdateEmailPage() {
   const queryClient = useQueryClient()
 
   const queryParameters = new URLSearchParams(window.location.search)
@@ -191,13 +190,5 @@ function UpdateEmailPage() {
         </CenteredCardContainer>
       </>
     </SignInLayout>
-  )
-}
-
-export function UpdateEmailQueryPage() {
-  return (
-    <CoreProviders>
-      <UpdateEmailPage />
-    </CoreProviders>
   )
 }

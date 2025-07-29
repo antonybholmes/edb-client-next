@@ -22,7 +22,6 @@ import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 
 import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
 
-import { QCP } from '@/query'
 import { useEffect, useState } from 'react'
 
 import {
@@ -60,7 +59,7 @@ import { HeaderLayout } from '@layouts/header-layout'
 import { HistoryPanel } from '../matcalc/history/history-panel'
 import { useHistory } from '../matcalc/history/history-store'
 
-function TableViewerPage() {
+export function TableViewerPage() {
   const { branch, sheet, openBranch, gotoSheet } = useHistory()
   const [showSideBar, setShowSideBar] = useState(false)
   const [rightTab, setRightTab] = useState(TEXT_HISTORY)
@@ -250,7 +249,7 @@ function TableViewerPage() {
           side="right"
           tabs={rightTabs}
           value={rightTab}
-          onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
@@ -262,7 +261,7 @@ function TableViewerPage() {
           <TabbedDataFrames
             selectedSheet={sheet?.id}
             dataFrames={[sheet as AnnotationDataFrame]}
-            onTabChange={selectedTab => {
+            onTabChange={(selectedTab) => {
               gotoSheet(selectedTab.tab.id)
             }}
             className="mx-2"
@@ -278,13 +277,5 @@ function TableViewerPage() {
         </ToolbarFooterPortal>
       </HeaderLayout>
     </>
-  )
-}
-
-export function TableViewerQueryPage() {
-  return (
-    <QCP>
-      <TableViewerPage />
-    </QCP>
   )
 }

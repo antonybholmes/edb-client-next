@@ -26,7 +26,6 @@ import { useSearch } from '@hooks/use-search'
 import { useEdbAuth } from '@lib/edb/edb-auth'
 import { httpFetch } from '@lib/http/http-fetch'
 import { bearerHeaders } from '@lib/http/urls'
-import { CoreProviders } from '@providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
 import {
   Accordion,
@@ -308,46 +307,4 @@ export function HubsPage() {
       </TabSlideBar>
     </ShortcutLayout>
   )
-}
-
-export function HubsQueryPage() {
-  return (
-    <CoreProviders>
-      {/* <SearchProvider> */}
-      <HubsPage />
-      {/* </SearchProvider> */}
-    </CoreProviders>
-  )
-}
-
-{
-  /* <table>
-<thead>
-  <tr>
-    <th>Genome</th>
-    <th>Platform</th>
-    <th>Name</th>
-    <th>Link</th>
-  </tr>
-</thead>
-<tbody>
-  {hubs.map(hub => {
-    return (
-      <tr key={hub.publicId}>
-        <td>{hub.genome}</td>
-        <td>{hub.platform}</td>
-        <td>{hub.name}</td>
-        <td>
-          <a
-            href={`${BASE_URL}db=${hub.genome}&hubUrl=${hub.url}${store.hideTracks ? '&hideTracks=1' : ''}`}
-            target="_blank"
-          >
-            Link
-          </a>
-        </td>
-      </tr>
-    )
-  })}
-</tbody>
-</table> */
 }

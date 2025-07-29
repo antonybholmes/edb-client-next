@@ -106,7 +106,6 @@ import {
 } from '@lib/genomic/overlap/overlap'
 import { snrRankGenes } from '@lib/gsea/gsea'
 import { textToLines } from '@lib/text/lines'
-import { CoreProviders } from '@providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
 import { Tabs, TabsContent } from '@themed/tabs'
 import { produce } from 'immer'
@@ -212,7 +211,7 @@ const TREE_ROOT_TAB: ITab = {
 //   return { ...GRAPHS_TAB, id: nanoid() }
 // }
 
-function MatcalcPage() {
+export function MatcalcPage() {
   const queryClient = useQueryClient()
 
   const {
@@ -1550,23 +1549,5 @@ function MatcalcPage() {
         )}
       </ShortcutLayout>
     </>
-  )
-}
-
-export function MatcalcQueryPage() {
-  return (
-    <CoreProviders>
-      {/* <MatcalcSettingsProvider> */}
-      {/* <SearchFilterProvider> */}
-      {/* <GroupsProvider> */}
-      {/* <GenesetsProvider> */}
-      {/* <MessagesProvider> */}
-      <MatcalcPage />
-      {/* </MessagesProvider> */}
-      {/* </GenesetsProvider> */}
-      {/* </GroupsProvider> */}
-      {/* </SearchFilterProvider> */}
-      {/* </MatcalcSettingsProvider> */}
-    </CoreProviders>
   )
 }

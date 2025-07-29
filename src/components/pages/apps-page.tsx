@@ -5,14 +5,14 @@ import { FOCUS_RING_CLS } from '@/theme'
 import { BaseLink } from '@components/link/base-link'
 import { ContentLayout } from '@layouts/content-layout'
 import { cn } from '@lib/shadcn-utils'
-import { CoreProviders } from '@providers/core-providers'
 import { HCenterCol } from '../layout/h-center-col'
 import { VCenterRow } from '../layout/v-center-row'
 
 const APP_CLS = cn(
   FOCUS_RING_CLS,
-  'border-2 border-transparent',
-  'flex flex-col bg-background aspect-4/3 shrink-0 justify-center items-center grow gap-2 p-2 rounded-2xl hover:border-theme/50 transition-colors duration-500 ease-in-out'
+  'border border-border/50',
+  'flex flex-col bg-background aspect-4/3 shrink-0 justify-center items-center grow gap-2 p-2',
+  'rounded-2xl hover:outline-ring transition-colors duration-300 ease-in-out'
 )
 
 export function Apps() {
@@ -65,18 +65,10 @@ export function Apps() {
   )
 }
 
-function AppsPage({ title = 'Index' }: { title?: string }) {
+export function AppsPage({ title = 'Index' }: { title?: string }) {
   return (
     <ContentLayout title={title} signedRequired="never">
       <Apps />
     </ContentLayout>
-  )
-}
-
-export function AppsQueryPage({ title = 'Index' }: { title?: string }) {
-  return (
-    <CoreProviders>
-      <AppsPage title={title} />
-    </CoreProviders>
   )
 }

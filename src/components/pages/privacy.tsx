@@ -4,9 +4,8 @@ import { BaseCol } from '@layout/base-col'
 import { ContentDiv } from '@layout/content-div'
 
 import { HeaderLayout } from '@layouts/header-layout'
-import { CoreProviders } from '@providers/core-providers'
 
-function PrivacyPage() {
+export function PrivacyPage() {
   return (
     <HeaderLayout title="Privacy">
       <ContentDiv className="mt-8 text-sm">
@@ -49,13 +48,5 @@ function PrivacyPage() {
         <></>
       </ContentDiv>
     </HeaderLayout>
-  )
-}
-
-export function PrivacyQueryPage() {
-  return (
-    <CoreProviders>
-      <PrivacyPage />
-    </CoreProviders>
   )
 }

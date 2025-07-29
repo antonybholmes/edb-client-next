@@ -1,4 +1,4 @@
-// import { useEffect, useState } from 'react'
+'use client'
 
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { createContext, useContext, useState } from 'react'

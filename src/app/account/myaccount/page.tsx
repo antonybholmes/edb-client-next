@@ -1,8 +1,8 @@
-import { MyAccountQueryPage } from '@/components/pages/account/myaccount/myaccount'
+import { MyAccountPage } from '@/components/pages/account/myaccount/myaccount'
 import { makeMetaData } from '@lib/metadata'
 
 export const metadata = makeMetaData('My Account')
 
 export default function Page() {
-  return <MyAccountQueryPage />
+  return <MyAccountPage />
 }

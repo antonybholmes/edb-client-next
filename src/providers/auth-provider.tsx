@@ -1,3 +1,5 @@
+'use client'
+
 import { Auth0Provider } from '@auth0/auth0-react'
 import type { IChildrenProps } from '@interfaces/children-props'
 import { APP_ACCOUNT_AUTH0_CALLBACK_URL } from '@lib/edb/edb'
@@ -29,7 +31,7 @@ export function AuthProvider({ children }: IChildrenProps) {
         // the default social login page is shown
         //connection: 'email',
       }}
-      onRedirectCallback={appState => {
+      onRedirectCallback={(appState) => {
         console.log('Redirecting to:', appState?.targetUrl)
       }}
     >

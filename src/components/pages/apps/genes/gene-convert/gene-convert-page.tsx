@@ -63,7 +63,6 @@ import { ToggleButtons, ToggleButtonTriggers } from '@components/toggle-buttons'
 import { FileIcon } from '@icons/file-icon'
 import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
 import { textToLines } from '@lib/text/lines'
-import { CoreProviders } from '@providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
 import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
 import { ZoomSlider } from '@toolbar/zoom-slider'
@@ -74,7 +73,7 @@ import { useHistory } from '../../matcalc/history/history-store'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import MODULE_INFO from './module.json'
 
-function GeneConvPage() {
+export function GeneConvPage() {
   const queryClient = useQueryClient()
 
   const { branch, sheet, sheets, openBranch, gotoSheet, addStep } = useHistory()
@@ -504,15 +503,5 @@ function GeneConvPage() {
         )}
       </ShortcutLayout>
     </>
-  )
-}
-
-export function GeneConvQueryPage() {
-  return (
-    <CoreProviders>
-      {/*  <ZoomProvider> */}
-      <GeneConvPage />
-      {/* </ZoomProvider> */}
-    </CoreProviders>
   )
 }

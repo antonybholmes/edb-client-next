@@ -12,7 +12,6 @@ import { SignIn } from '@/components/pages/account/auth/passwordless/signin'
 import { CenterLayout } from '@/layouts/center-layout'
 import { httpFetch } from '@lib/http/http-fetch'
 import { bearerHeaders, redirect } from '@lib/http/urls'
-import { CoreProviders } from '@providers/core-providers'
 import { toast } from '@themed/crisp'
 import { useEffect } from 'react'
 import type { IRedirectUrlJwtPayload } from '../email/verify'
@@ -35,7 +34,7 @@ import type { IRedirectUrlJwtPayload } from '../email/verify'
 //   })
 // }
 
-function SignInPage() {
+export function SignInPage() {
   //const url = queryParameters.get(EDB_URL_PARAM) ?? MYACCOUNT_ROUTE
 
   const queryClient = useQueryClient()
@@ -92,13 +91,5 @@ function SignInPage() {
     <CenterLayout signedRequired="never">
       <SignIn />
     </CenterLayout>
-  )
-}
-
-export function SignInQueryPage() {
-  return (
-    <CoreProviders>
-      <SignInPage />
-    </CoreProviders>
   )
 }

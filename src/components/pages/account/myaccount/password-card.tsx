@@ -20,10 +20,11 @@ import { Input } from '@/components/shadcn/ui/themed/input'
 import { Label } from '@/components/shadcn/ui/themed/label'
 import { TEXT_UPDATE } from '@/consts'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { queryClient } from '@/query'
+
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEdbAuth } from '@lib/edb/edb-auth'
 import { csfrHeaders } from '@lib/http/urls'
+import { useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
 
@@ -83,6 +84,8 @@ const FormSchema = z.object({
 })
 
 export function PasswordCard() {
+  const queryClient = useQueryClient()
+
   const { session } = useEdbAuth()
 
   const btnRef = useRef<HTMLButtonElement>(null)

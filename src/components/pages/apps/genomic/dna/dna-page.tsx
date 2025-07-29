@@ -79,7 +79,6 @@ import { VCenterRow } from '@layout/v-center-row'
 import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
 import { httpFetch } from '@lib/http/http-fetch'
 import { textToLines } from '@lib/text/lines'
-import { CoreProviders } from '@providers/core-providers'
 import { useQuery } from '@tanstack/react-query'
 import {
   AccordionContent,
@@ -101,7 +100,7 @@ import { useHistory } from '../../matcalc/history/history-store'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import MODULE_INFO from './module.json'
 
-function DNAPage() {
+export function DNAPage() {
   const { branch, sheet, sheets, gotoSheet, openBranch, addStep } = useHistory()
 
   const [rightTab, setRightTab] = useState(TEXT_SETTINGS)
@@ -492,15 +491,5 @@ function DNAPage() {
         </ToolbarFooterPortal>
       </ShortcutLayout>
     </>
-  )
-}
-
-export function DNAQueryPage() {
-  return (
-    <CoreProviders>
-      {/* <ZoomProvider> */}
-      <DNAPage />
-      {/* </ZoomProvider> */}
-    </CoreProviders>
   )
 }

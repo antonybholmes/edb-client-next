@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 //import { Geist, Geist_Mono } from "next/font/google";
 import { APP_NAME, SITE_DESCRIPTION } from '@/consts'
+
+import { CoreProviders } from '@/providers/core-providers'
 import { Geist } from 'next/font/google'
 import './globals.css'
 
@@ -33,7 +35,8 @@ export default function RootLayout({
       <body
         className={`${geist.className} antialiased margin-0 min-h-screen flex flex-col bg-body text-base font-normal`}
       >
-        {children}
+        {/* <CsrfProvider>{children}</CsrfProvider> */}
+        <CoreProviders>{children}</CoreProviders>
       </body>
     </html>
   )

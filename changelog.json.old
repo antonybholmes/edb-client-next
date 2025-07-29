@@ -1191,6 +1191,12 @@
           "msg": "Added loaded state to auth stores so we can understand if user is logged in, login failed, or we are waiting for data to hydrate",
           "date": "2025-07-28T21:34:11.957Z"
         }
+      ],
+      "Fixed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-07-28T22:00:55.278Z"
+        }
       ]
     },
     "author": "Antony Holmes",

@@ -5,7 +5,6 @@ import { REDIRECT_URL_PARAM } from '@lib/edb/edb'
 import { useEdbAuth } from '@lib/edb/edb-auth'
 
 import { useAuth0 } from '@auth0/auth0-react'
-import { CoreProviders } from '@providers/core-providers'
 import { Card, CardHeader, CardTitle } from '@themed/card'
 
 import { AppIcon } from '@/components/icons/app-icon'
@@ -17,7 +16,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { invalidRedirectUrl } from '../signedout-page'
 
-function CallbackPage() {
+export function CallbackPage() {
   const { signInWithAuth0 } = useEdbAuth()
 
   const router = useRouter()
@@ -153,13 +152,5 @@ function CallbackPage() {
         )}
       </Card>
     </CenterLayout>
-  )
-}
-
-export function CallbackQueryPage() {
-  return (
-    <CoreProviders>
-      <CallbackPage />
-    </CoreProviders>
   )
 }

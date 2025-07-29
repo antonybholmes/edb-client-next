@@ -4,7 +4,6 @@ import type { IDivProps } from '@interfaces/div-props'
 import { BaseCol } from '@layout/base-col'
 import { VCenterRow } from '@layout/v-center-row'
 import { cn } from '@lib/shadcn-utils'
-import { randId } from '@lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 import {
   useEffect,
@@ -118,7 +117,7 @@ export function Input({
   className,
   ...props
 }: IInputProps) {
-  const [_id] = useState(id ?? randId('input'))
+  //const [_id] = useState(id ?? randId('input'))
 
   const [_value, setValue] = useState(value ?? '')
 
@@ -131,7 +130,7 @@ export function Input({
   let ret: ReactNode = (
     <VCenterRow className={cn('gap-x-4', !label && w, !label && className)}>
       {label && labelPos === 'left' && (
-        <Label className={labelW} htmlFor={_id}>
+        <Label className={labelW} htmlFor={id}>
           {label}
         </Label>
       )}
@@ -153,7 +152,6 @@ export function Input({
         {leftChildren && leftChildren}
 
         <input
-          id={_id}
           value={_value}
           //defaultValue={defaultValue}
           type={type}
@@ -161,12 +159,12 @@ export function Input({
           style={inputStyle}
           disabled={disabled}
           readOnly={readOnly}
-          onChange={e => {
+          onChange={(e) => {
             setValue(e.currentTarget.value)
             onTextChange?.(e.currentTarget.value)
             onChange?.(e)
           }}
-          onKeyDown={e => {
+          onKeyDown={(e) => {
             //console.log(e)
             if (e.key === 'Enter') {
               onTextChanged?.(e.currentTarget.value)
@@ -188,7 +186,7 @@ export function Input({
         {label && (
           <Label
             className="text-sm font-bold text-foreground/80 px-0.5"
-            htmlFor={_id}
+            htmlFor={id}
           >
             {label}
           </Label>

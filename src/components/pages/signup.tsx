@@ -24,7 +24,6 @@ import { VCenterRow } from '@layout/v-center-row'
 import { SignInLink } from '@layouts/signin-layout'
 import { useEdbSettings } from '@lib/edb/edb-settings'
 import { httpFetch } from '@lib/http/http-fetch'
-import { CoreProviders } from '@providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
 import { Button } from '@themed/button'
 import { Form, FormField, FormItem } from '@themed/form'
@@ -50,7 +49,7 @@ interface ISignupProps {
   allowPassword?: boolean
 }
 
-function SignUpPage({ allowPassword = false }: ISignupProps) {
+export function SignUpPage({ allowPassword = false }: ISignupProps) {
   const queryClient = useQueryClient()
 
   const btnRef = useRef<HTMLButtonElement>(null)
@@ -124,7 +123,7 @@ function SignUpPage({ allowPassword = false }: ISignupProps) {
                 {allowPassword && (
                   <Switch
                     checked={settings.passwordless}
-                    onCheckedChange={state => {
+                    onCheckedChange={(state) => {
                       updateSettings({ ...settings, passwordless: state })
                     }}
                   >
@@ -285,13 +284,5 @@ function SignUpPage({ allowPassword = false }: ISignupProps) {
         </HCenterCol>
       </>
     </HeaderLayout>
-  )
-}
-
-export function SignUpQueryPage() {
-  return (
-    <CoreProviders>
-      <SignUpPage />
-    </CoreProviders>
   )
 }

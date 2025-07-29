@@ -22,7 +22,6 @@ import {
 
 import { TEXT_SIGN_IN } from '@/consts'
 import { httpFetch } from '@lib/http/http-fetch'
-import { CoreProviders } from '@providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
 import Cookies from 'js-cookie'
 import { jwtDecode, type JwtPayload } from 'jwt-decode'
@@ -33,7 +32,7 @@ export interface IRedirectUrlJwtPayload extends JwtPayload {
   redirectUrl: string
 }
 
-function VerifyPage() {
+export function VerifyPage() {
   const queryClient = useQueryClient()
 
   //const url = queryParameters.get(EDB_URL_PARAM) ?? ""
@@ -136,13 +135,5 @@ function VerifyPage() {
         </Card>
       </CenteredCardContainer>
     </HeaderLayout>
-  )
-}
-
-export function VerifyQueryPage() {
-  return (
-    <CoreProviders>
-      <VerifyPage />
-    </CoreProviders>
   )
 }

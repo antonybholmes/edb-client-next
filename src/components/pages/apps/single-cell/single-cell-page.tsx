@@ -101,7 +101,6 @@ import { useEdbAuth } from '@lib/edb/edb-auth'
 import { httpFetch } from '@lib/http/http-fetch'
 import { bearerHeaders } from '@lib/http/urls'
 import { zeros } from '@lib/math/zeros'
-import { CoreProviders } from '@providers/core-providers'
 import { SaveImageDialog } from '../../save-image-dialog'
 import { ShowSideButton } from '../../show-side-button'
 import { PLOT_CLS } from '../matcalc/apps/heatmap/heatmap-panel'
@@ -1332,20 +1331,8 @@ export function SingleCellPage() {
 
 export function SingleCellQueryPage() {
   return (
-    <CoreProviders>
-      {/* <MatcalcSettingsProvider> */}
-      {/* <SearchFilterProvider> */}
-      {/* <GroupsProvider> */}
-      {/* <GenesetsProvider> */}
-      {/* <MessagesProvider> */}
-      <PlotGridProvider>
-        <SingleCellPage />
-      </PlotGridProvider>
-      {/* </MessagesProvider> */}
-      {/* </GenesetsProvider> */}
-      {/* </GroupsProvider> */}
-      {/* </SearchFilterProvider> */}
-      {/* </MatcalcSettingsProvider> */}
-    </CoreProviders>
+    <PlotGridProvider>
+      <SingleCellPage />
+    </PlotGridProvider>
   )
 }

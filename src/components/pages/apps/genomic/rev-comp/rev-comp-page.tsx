@@ -67,7 +67,6 @@ import {
 } from '@components/pages/save-txt-dialog'
 import { FileIcon } from '@icons/file-icon'
 import { UploadIcon } from '@icons/upload-icon'
-import { CoreProviders } from '@providers/core-providers'
 import { Textarea } from '@themed/textarea'
 import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
 import MODULE_INFO from './module.json'
@@ -94,7 +93,7 @@ interface IRevCompSeq extends ISeq {
   rev: string
 }
 
-function RevCompPage() {
+export function RevCompPage() {
   const [text, setText] = useState('')
 
   const [output, setOutput] = useState('')
@@ -447,13 +446,5 @@ function RevCompPage() {
         )}
       </ShortcutLayout>
     </>
-  )
-}
-
-export function RevCompQueryPage() {
-  return (
-    <CoreProviders>
-      <RevCompPage />
-    </CoreProviders>
   )
 }

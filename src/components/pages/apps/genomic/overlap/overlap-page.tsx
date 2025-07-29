@@ -68,7 +68,6 @@ import { DownloadIcon } from '@components/icons/download-icon'
 import type { ITab } from '@components/tabs/tab-provider'
 import { reorder } from '@lib/math/reorder'
 import { where } from '@lib/math/where'
-import { CoreProviders } from '@providers/core-providers'
 import { ZoomSlider } from '@toolbar/zoom-slider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { FilesPropsPanel } from './files-props-panel'
@@ -513,12 +512,10 @@ function OverlapPage() {
 
 export function OverlapQueryPage() {
   return (
-    <CoreProviders>
-      <OverlapProvider>
-        {/* <ZoomProvider> */}
-        <OverlapPage />
-        {/* </ZoomProvider> */}
-      </OverlapProvider>
-    </CoreProviders>
+    <OverlapProvider>
+      {/* <ZoomProvider> */}
+      <OverlapPage />
+      {/* </ZoomProvider> */}
+    </OverlapProvider>
   )
 }

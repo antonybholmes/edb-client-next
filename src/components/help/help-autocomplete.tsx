@@ -1,4 +1,3 @@
-import { QCP } from '@/query'
 import type { IClassProps } from '@interfaces/class-props'
 import { APP_HELP_API_URL } from '@lib/edb/edb'
 import { httpFetch } from '@lib/http/http-fetch'
@@ -16,7 +15,7 @@ export type IHelpTopic = {
   slug: string
 }
 
-function HelpAutocomplete({ className }: IClassProps) {
+export function HelpAutocomplete({ className }: IClassProps) {
   const [searchResults, setResults] = useState<IHelpTopic[]>([])
 
   // Fetch search data from /search.json
@@ -64,13 +63,5 @@ function HelpAutocomplete({ className }: IClassProps) {
         </li>
       ))}
     </Autocomplete>
-  )
-}
-
-export function HelpAutocompleteQuery({ className }: IClassProps) {
-  return (
-    <QCP>
-      <HelpAutocomplete className={className} />
-    </QCP>
   )
 }

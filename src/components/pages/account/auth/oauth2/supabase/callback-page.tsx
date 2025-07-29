@@ -1,7 +1,5 @@
 // 'use client'
 
-import { CoreProviders } from '@providers/core-providers'
-
 import { AppIcon } from '@/components/icons/app-icon'
 import { HCenterCol } from '@/components/layout/h-center-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
@@ -19,7 +17,7 @@ import { CircleAlert } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { REDIRECT_PARAM, invalidRedirectUrl } from '../signedout-page'
 
-function CallbackPage() {
+export function CallbackPage() {
   const [redirectUrl, setRedirectUrl] = useState('')
   const [error, setError] = useState('')
   const { signInWithSupabase } = useEdbAuth()
@@ -109,13 +107,5 @@ function CallbackPage() {
         </Card>
       )}
     </CenterLayout>
-  )
-}
-
-export function CallbackQueryPage() {
-  return (
-    <CoreProviders>
-      <CallbackPage />
-    </CoreProviders>
   )
 }

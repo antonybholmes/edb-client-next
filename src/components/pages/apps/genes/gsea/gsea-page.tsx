@@ -73,7 +73,6 @@ import { VCenterRow } from '@layout/v-center-row'
 import { downloadSvgAutoFormat } from '@lib/image-utils'
 import { BoolSearchQuery } from '@lib/search'
 import { textToLines, textToTokens } from '@lib/text/lines'
-import { CoreProviders } from '@providers/core-providers'
 import { Card } from '@themed/card'
 import { ToolbarSeparator } from '@toolbar/toolbar-separator'
 import Fuse from 'fuse.js'
@@ -805,13 +804,5 @@ export function GseaPage() {
         )}
       </ShortcutLayout>
     </>
-  )
-}
-
-export function GseaQueryPage() {
-  return (
-    <CoreProviders>
-      <GseaPage />
-    </CoreProviders>
   )
 }

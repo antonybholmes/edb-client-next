@@ -93,7 +93,6 @@ import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
 import { useEdbAuth } from '@lib/edb/edb-auth'
 import { httpFetch } from '@lib/http/http-fetch'
 import { bearerHeaders } from '@lib/http/urls'
-import { CoreProviders } from '@providers/core-providers'
 import { toast } from '@themed/crisp'
 import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
@@ -975,13 +974,5 @@ export function MutationsPage() {
         </ToolbarFooterPortal>
       </ShortcutLayout>
     </>
-  )
-}
-
-export function MutationsQueryPage() {
-  return (
-    <CoreProviders>
-      <MutationsPage />
-    </CoreProviders>
   )
 }

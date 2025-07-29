@@ -23,7 +23,6 @@ import {
   MYACCOUNT_ROUTE,
   REDIRECT_URL_PARAM,
 } from '@lib/edb/edb'
-import { CoreProviders } from '@providers/core-providers'
 import { useEffect, useRef, useState, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
@@ -49,12 +48,16 @@ export const FORWARD_DELAY_MS = 2000
 
 //const STRIP_URL_REGEX = /^[^\/]*\//
 const FormSchema = z.object({
-  email: z.string().email({
+  email: z.email({
     message: 'You must enter a valid email address.',
   }),
 })
 
-function SignInPage({ redirectTo = MYACCOUNT_ROUTE }: { redirectTo?: string }) {
+export function SignInPage({
+  redirectTo = MYACCOUNT_ROUTE,
+}: {
+  redirectTo?: string
+}) {
   const { signIn, isLoaded, setActive } = useSignIn()
 
   const { settings } = useEdbSettings()
@@ -285,23 +288,5 @@ function SignInPage({ redirectTo = MYACCOUNT_ROUTE }: { redirectTo?: string }) {
         </HCenterCol>
       </Card>
     </CenterLayout>
-  )
-}
-
-export function SignInQueryPage() {
-  // const [url, setUrl] = useState('')
-
-  // useEffect(() => {
-  //   setUrl(window.location.href)
-  // }, [])
-
-  // if (!url) {
-  //   return null
-  // }
-
-  return (
-    <CoreProviders>
-      <SignInPage />
-    </CoreProviders>
   )
 }

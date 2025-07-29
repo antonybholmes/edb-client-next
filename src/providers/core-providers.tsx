@@ -1,6 +1,6 @@
 //// 'use client'
 
-import { QCP } from '@/query'
+import { QCP } from '@/qcp'
 import type { IChildrenProps } from '@interfaces/children-props'
 import { AuthProvider } from './auth-provider'
 import { ZoomProvider } from './zoom-provider'

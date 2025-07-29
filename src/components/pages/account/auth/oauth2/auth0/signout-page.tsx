@@ -7,7 +7,6 @@ import { APP_NAME } from '@/consts'
 import { CenterLayout } from '@/layouts/center-layout'
 import { APP_OAUTH2_SIGNED_OUT_URL } from '@/lib/edb/edb'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
-import { CoreProviders } from '@/providers/core-providers'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect } from 'react'
 import { REDIRECT_PARAM } from '../signedout-page'
@@ -48,23 +47,5 @@ export function SignOutPage() {
         <p>Please wait while we sign you out.</p>
       </Card>
     </CenterLayout>
-  )
-}
-
-export function SignOutQueryPage() {
-  // const [url, setUrl] = useState('')
-
-  // useEffect(() => {
-  //   setUrl(window.location.href)
-  // }, [])
-
-  // if (!url) {
-  //   return null
-  // }
-
-  return (
-    <CoreProviders>
-      <SignOutPage />
-    </CoreProviders>
   )
 }

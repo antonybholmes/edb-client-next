@@ -71,7 +71,6 @@ import { httpFetch } from '@lib/http/http-fetch'
 import { textToLines } from '@lib/text/lines'
 import { truncate } from '@lib/text/text'
 import { randId } from '@lib/utils'
-import { CoreProviders } from '@providers/core-providers'
 import { useQuery } from '@tanstack/react-query'
 import {
   AccordionContent,
@@ -102,7 +101,7 @@ export interface IGeneDbInfo {
   version: string
 }
 
-function AnnotationPage() {
+export function AnnotationPage() {
   const [assembly, setAssembly] = useState<string | null>(null)
 
   const { branch, sheet, sheets, gotoSheet, openBranch, addStep, dispatch } =
@@ -581,15 +580,5 @@ function AnnotationPage() {
         )}
       </ShortcutLayout>
     </>
-  )
-}
-
-export function AnnotationQueryPage() {
-  return (
-    <CoreProviders>
-      {/* <ZoomProvider> */}
-      <AnnotationPage />
-      {/* </ZoomProvider> */}
-    </CoreProviders>
   )
 }

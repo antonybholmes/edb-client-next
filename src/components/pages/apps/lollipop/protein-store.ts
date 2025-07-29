@@ -1,5 +1,6 @@
 import { APP_ID } from '@/consts'
 import { httpFetch } from '@/lib/http/http-fetch'
+
 import { queryClient } from '@/query'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
@@ -24,7 +25,7 @@ export const useProteinStore = create<IProteinStore>()(
     (set, get) => ({
       proteins: [],
       addProtein: (protein: IProtein) =>
-        set(state => ({
+        set((state) => ({
           proteins: [...state.proteins, protein],
         })),
 
@@ -32,7 +33,7 @@ export const useProteinStore = create<IProteinStore>()(
         const queryLower = query.toLowerCase()
 
         const existing = get().proteins.filter(
-          p =>
+          (p) =>
             p.gene.toLowerCase().includes(queryLower) ||
             p.name.toLowerCase().includes(queryLower) ||
             p.accession.toLowerCase().includes(queryLower)
@@ -45,7 +46,7 @@ export const useProteinStore = create<IProteinStore>()(
         const queryLower = query.toLowerCase()
 
         const existing = get().proteins.filter(
-          p =>
+          (p) =>
             p.gene.toLowerCase().includes(queryLower) ||
             p.name.toLowerCase().includes(queryLower) ||
             p.accession.toLowerCase().includes(queryLower)
@@ -130,13 +131,13 @@ export const useProteinStore = create<IProteinStore>()(
         ret.sort((a, b) => a.organism.localeCompare(b.organism))
 
         // add only those that are not already in the store
-        set(state => ({
+        set((state) => ({
           proteins: [
             ...state.proteins,
             ...ret.filter(
-              p =>
+              (p) =>
                 !state.proteins.some(
-                  existing => existing.accession === p.accession
+                  (existing) => existing.accession === p.accession
                 )
             ),
           ].slice(-MAX_CACHE_SIZE),
@@ -146,14 +147,14 @@ export const useProteinStore = create<IProteinStore>()(
       },
 
       removeProtein: (id: string) =>
-        set(state => ({
+        set((state) => ({
           proteins: state.proteins.filter(
-            p => p.gene.toLowerCase() === id.toLowerCase()
+            (p) => p.gene.toLowerCase() === id.toLowerCase()
           ),
         })),
       clear: () => set({ proteins: [] }),
       getProtein: (id: string) =>
-        get().proteins.find(p => p.gene.toLowerCase() === id.toLowerCase()),
+        get().proteins.find((p) => p.gene.toLowerCase() === id.toLowerCase()),
     }),
     {
       name: `${APP_ID}:app:lollipop:proteins:v1`, // name in localStorage
@@ -163,13 +164,13 @@ export const useProteinStore = create<IProteinStore>()(
 )
 
 export function useProteins(): IProteinStore {
-  const proteins = useProteinStore(state => state.proteins)
-  const addProtein = useProteinStore(state => state.addProtein)
-  const removeProtein = useProteinStore(state => state.removeProtein)
-  const searchUniprot = useProteinStore(state => state.searchUniprot)
-  const search = useProteinStore(state => state.search)
-  const clear = useProteinStore(state => state.clear)
-  const getProtein = useProteinStore(state => state.getProtein)
+  const proteins = useProteinStore((state) => state.proteins)
+  const addProtein = useProteinStore((state) => state.addProtein)
+  const removeProtein = useProteinStore((state) => state.removeProtein)
+  const searchUniprot = useProteinStore((state) => state.searchUniprot)
+  const search = useProteinStore((state) => state.search)
+  const clear = useProteinStore((state) => state.clear)
+  const getProtein = useProteinStore((state) => state.getProtein)
 
   return {
     proteins,

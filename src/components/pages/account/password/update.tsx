@@ -35,7 +35,6 @@ import type { NullStr } from '@lib/text/text'
 import { Input } from '@/components/shadcn/ui/themed/input'
 import { Button } from '@components/shadcn/ui/button'
 import { bearerHeaders } from '@lib/http/urls'
-import { CoreProviders } from '@providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from '@themed/crisp'
 import axios from 'axios'
@@ -54,7 +53,7 @@ interface IFormInput {
   passwordless: boolean
 }
 
-function UpdatePasswordPage() {
+export function UpdatePasswordPage() {
   const queryClient = useQueryClient()
 
   const [jwt, setJwt] = useState<NullStr>(null)
@@ -389,13 +388,5 @@ function UpdatePasswordPage() {
         </HCenterRow>
       </>
     </HeaderLayout>
-  )
-}
-
-export function UpdatePasswordQueryPage() {
-  return (
-    <CoreProviders>
-      <UpdatePasswordPage />
-    </CoreProviders>
   )
 }

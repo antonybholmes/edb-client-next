@@ -237,6 +237,7 @@ export const API_TOKEN_VALIDATE_URL = `${EDB_API_URL}/tokens/validate`
 export const SESSION_URL = `${EDB_API_URL}/sessions`
 export const SESSION_INIT_URL = `${SESSION_URL}/init`
 export const SESSION_INFO_URL = `${SESSION_URL}/info`
+export const SESSION_CSRF_TOKEN_URL = `${SESSION_URL}/csrf-token`
 export const SESSION_REFRESH_URL = `${SESSION_URL}/refresh`
 
 export const SESSION_API_KEY_SIGNIN_URL = `${SESSION_URL}/api/keys/signin`

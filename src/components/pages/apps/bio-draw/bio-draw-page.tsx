@@ -44,7 +44,6 @@ import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
 import { downloadDataFrame } from '@lib/dataframe/dataframe-utils'
 import { downloadSvgAutoFormat } from '@lib/image-utils'
 import { randId } from '@lib/utils'
-import { CoreProviders } from '@providers/core-providers'
 import { Card } from '@themed/card'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
 import { IconButton } from '@themed/icon-button'
@@ -91,7 +90,7 @@ export function BioDrawPage() {
 
   useEffect(() => {
     updateSettings(
-      produce(settings, draft => {
+      produce(settings, (draft) => {
         draft.zoom = zoom
       })
     )
@@ -233,9 +232,9 @@ export function BioDrawPage() {
             <ToggleButtons
               tabs={[{ id: 'Prob' }, { id: 'Bits' }]}
               value={settings.mode}
-              onTabChange={selectedTab => {
+              onTabChange={(selectedTab) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.mode = selectedTab.tab.id as Mode
                   })
                 )
@@ -275,7 +274,7 @@ export function BioDrawPage() {
               onClick={() => {
                 console.log('revComp', settings.revComp)
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.revComp = !settings.revComp
                   })
                 )
@@ -482,7 +481,7 @@ export function BioDrawPage() {
                 <TabbedDataFrames
                   selectedSheet={sheet?.id ?? ''}
                   dataFrames={sheets as AnnotationDataFrame[]}
-                  onTabChange={selectedTab => {
+                  onTabChange={(selectedTab) => {
                     gotoSheet(selectedTab.tab.id)
                   }}
                   className="relative grow"
@@ -499,17 +498,5 @@ export function BioDrawPage() {
         </ToolbarFooterPortal>
       </ShortcutLayout>
     </>
-  )
-}
-
-export function BioDrawQueryPage() {
-  return (
-    <CoreProviders>
-      {/* <ZoomProvider> */}
-
-      <BioDrawPage />
-
-      {/* </ZoomProvider> */}
-    </CoreProviders>
   )
 }

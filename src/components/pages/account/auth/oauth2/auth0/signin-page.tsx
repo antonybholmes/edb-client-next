@@ -13,7 +13,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { TEXT_SIGN_OUT } from '@/consts'
 import { useEdbAuth } from '@lib/edb/edb-auth'
 import { redirect } from '@lib/http/urls'
-import { CoreProviders } from '@providers/core-providers'
 import { useEffect, useState } from 'react'
 
 // async function signIn(jwt: string): Promise<AxiosResponse> {
@@ -34,7 +33,7 @@ import { useEffect, useState } from 'react'
 //   })
 // }
 
-function SignInPage() {
+export function SignInPage() {
   //const [isLoggedIn, setIsLoggedIn] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -107,23 +106,5 @@ function SignInPage() {
  
       </CenterCol> */}
     </SignInLayout>
-  )
-}
-
-export function SignInQueryPage() {
-  // const [url, setUrl] = useState('')
-
-  // useEffect(() => {
-  //   setUrl(window.location.href)
-  // }, [])
-
-  // if (!url) {
-  //   return null
-  // }
-
-  return (
-    <CoreProviders>
-      <SignInPage />
-    </CoreProviders>
   )
 }

@@ -13,7 +13,6 @@ import { redirect, REDIRECT_DELAY_MS } from '@lib/http/urls'
 
 import { useAuth } from '@clerk/clerk-react'
 import { SignInLayout } from '@layouts/signin-layout'
-import { CoreProviders } from '@providers/core-providers'
 import {
   Card,
   CardContent,
@@ -25,7 +24,7 @@ import {
 import { useEffect, useState } from 'react'
 import { invalidRedirectUrl } from '../signedout-page'
 
-function CallbackPage() {
+export function CallbackPage() {
   //const { user } = useUser()
   const { getToken, isSignedIn } = useAuth()
   const { session, signInWithClerk } = useEdbAuth()
@@ -194,13 +193,5 @@ function CallbackPage() {
         <Apps />
       </CenteredCardContainer>
     </SignInLayout>
-  )
-}
-
-export function CallbackQueryPage() {
-  return (
-    <CoreProviders>
-      <CallbackPage />
-    </CoreProviders>
   )
 }

@@ -48,7 +48,6 @@ import { Card } from '@themed/card'
 import { useEdbAuth } from '@lib/edb/edb-auth'
 import { httpFetch } from '@lib/http/http-fetch'
 import { csfrWithTokenHeaders } from '@lib/http/urls'
-import { CoreProviders } from '@providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from '@themed/crisp'
 import { EditUserDialog, type INewUser } from './edit-user-dialog'
@@ -57,7 +56,7 @@ interface IUserStats {
   users: number
 }
 
-function AdminUsersPage() {
+export function AdminUsersPage() {
   const queryClient = useQueryClient()
 
   const [userStats, setUserStats] = useState<IUserStats | null>(null)
@@ -590,13 +589,5 @@ function AdminUsersPage() {
         </HCenterRow>
       </RolesLayout>
     </>
-  )
-}
-
-export function AdminUsersQueryPage() {
-  return (
-    <CoreProviders>
-      <AdminUsersPage />
-    </CoreProviders>
   )
 }

@@ -43,7 +43,6 @@ import { DropdownMenuItem } from '@themed/dropdown-menu'
 
 import type { ITab } from '@components/tabs/tab-provider'
 import { textToLines } from '@lib/text/lines'
-import { CoreProviders } from '@providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
 
 import { HeaderPortal } from '@/components/header/header-portal'
@@ -169,11 +168,11 @@ function LollipopPage() {
       const proteins = await searchUniprot(gene)
 
       const index = range(proteins.length).filter(
-        i => proteins[i]!.organism === 'Human'
+        (i) => proteins[i]!.organism === 'Human'
       )[0]!
 
       setProtein(
-        produce(protein, draft => {
+        produce(protein, (draft) => {
           draft.name = proteins[index]!.name
           draft.sequence = proteins[index]!.sequence
         })
@@ -287,7 +286,7 @@ function LollipopPage() {
   function openFiles(files: ITextFileOpen[], options: IParseOptions) {
     filesToDataFrames(queryClient, files, {
       parseOpts: options,
-      onSuccess: tables => {
+      onSuccess: (tables) => {
         if (tables.length > 0) {
           openBranch(`Load ${tables[0]!.name}`, tables)
         }
@@ -325,7 +324,7 @@ function LollipopPage() {
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -383,7 +382,7 @@ function LollipopPage() {
               checked={displayProps.mutations.plot.showCounts}
               onClick={() => {
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.mutations.plot.showCounts =
                       !draft.mutations.plot.showCounts
                   })
@@ -411,7 +410,7 @@ function LollipopPage() {
                 checked={displayProps.mutations.plot.proportional}
                 onClick={() => {
                   setDisplayProps(
-                    produce(displayProps, draft => {
+                    produce(displayProps, (draft) => {
                       draft.mutations.plot.proportional =
                         !draft.mutations.plot.proportional
                     })
@@ -768,7 +767,7 @@ function LollipopPage() {
           id="lollipop-data-panel"
           side="right"
           tabs={rightTabs}
-          onTabChange={selectedTab => setSelectedTab(selectedTab.tab.id)}
+          onTabChange={(selectedTab) => setSelectedTab(selectedTab.tab.id)}
           value={selectedTab}
           open={showSideBar}
           onOpenChange={setShowSideBar}
@@ -808,7 +807,7 @@ function LollipopPage() {
               <TabbedDataFrames
                 selectedSheet={sheet?.id ?? ''}
                 dataFrames={sheets as AnnotationDataFrame[]}
-                onTabChange={selectedTab => {
+                onTabChange={(selectedTab) => {
                   gotoSheet(selectedTab.tab.id)
                 }}
                 zoom={1}
@@ -824,9 +823,9 @@ function LollipopPage() {
         <></>
         <>
           <ZoomSlider
-            onZoomChange={zoom => {
+            onZoomChange={(zoom) => {
               setDisplayProps(
-                produce(displayProps, draft => {
+                produce(displayProps, (draft) => {
                   draft.scale = zoom
                 })
               )
@@ -842,7 +841,7 @@ function LollipopPage() {
           open={showDialog.id}
           //onOpenChange={() => setShowDialog({...NO_DIALOG})}
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files =>
+            onTextFileChange(message, files, (files) =>
               parseFiles(message, files)
             )
           }
@@ -854,14 +853,8 @@ function LollipopPage() {
 
 export function LollipopQueryPage() {
   return (
-    <CoreProviders>
-      {/* <MessagesProvider> */}
-
-      <LollipopProvider id="lollipop-app:v2">
-        <LollipopPage />
-      </LollipopProvider>
-
-      {/* </MessagesProvider> */}
-    </CoreProviders>
+    <LollipopProvider id="lollipop-app:v2">
+      <LollipopPage />
+    </LollipopProvider>
   )
 }

@@ -97,7 +97,6 @@ import type { IGeneset } from '@lib/gsea/geneset'
 import { httpFetch } from '@lib/http/http-fetch'
 import { sum } from '@lib/math/sum'
 import { textToLines } from '@lib/text/lines'
-import { CoreProviders } from '@providers/core-providers'
 
 import { ToastSpinner } from '@themed/toast'
 import MODULE_INFO from './module.json'
@@ -106,7 +105,6 @@ import { HeaderPortal } from '@components/header/header-portal'
 import { ModuleInfoButton } from '@components/header/module-info-button'
 import { DownloadIcon } from '@components/icons/download-icon'
 import { ToolbarHelpTabGroup } from '@help/toolbar-help-tab-group'
-import { cdf } from '@lib/math/hypgeometric'
 import { toast } from '@themed/crisp'
 import { toast as sonnerToast } from 'sonner'
 import { HistoryPanel } from '../../matcalc/history/history-panel'
@@ -851,18 +849,5 @@ export function PathwayPage() {
       </ShortcutLayout>
       {/* </ZoomProvider> */}
     </>
-  )
-}
-
-export function PathwayQueryPage() {
-  //console.log(hypGeomPMF(2, 20, 7, 5))
-  console.log(cdf(2, 20, 7, 5))
-
-  return (
-    <CoreProviders>
-      {/* <ZoomProvider> */}
-      <PathwayPage />
-      {/* </ZoomProvider> */}
-    </CoreProviders>
   )
 }

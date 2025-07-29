@@ -7,11 +7,10 @@ import { supabase } from '@/lib/auth/supabase'
 import { APP_OAUTH2_SIGNED_OUT_URL } from '@/lib/edb/edb'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { redirect } from '@/lib/http/urls'
-import { CoreProviders } from '@/providers/core-providers'
 import { useEffect, useState } from 'react'
 import { REDIRECT_PARAM } from '../signedout-page'
 
-function SignOutPage() {
+export function SignOutPage() {
   const [redirectUrl, setRedirectUrl] = useState('')
   const { signout } = useEdbAuth()
 
@@ -48,13 +47,5 @@ function SignOutPage() {
         <p>Please wait while we sign you out.</p>
       </Card>
     </CenterLayout>
-  )
-}
-
-export function SignOutQueryPage() {
-  return (
-    <CoreProviders>
-      <SignOutPage />
-    </CoreProviders>
   )
 }

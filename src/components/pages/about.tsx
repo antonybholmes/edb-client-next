@@ -10,7 +10,6 @@ import { VCenterRow } from '@layout/v-center-row'
 import { getCopyright } from '@lib/copyright'
 import { API_ABOUT_URL } from '@lib/edb/edb'
 import { httpFetch } from '@lib/http/http-fetch'
-import { CoreProviders } from '@providers/core-providers'
 import { useQuery } from '@tanstack/react-query'
 import { Card } from '@themed/card'
 import { MenuSeparator } from '@themed/dropdown-menu'
@@ -29,7 +28,7 @@ const LINKS = [
   ['Visual Studio Code', 'https://code.visualstudio.com'],
 ]
 
-function AboutPage({ children }: IChildrenProps) {
+export function AboutPage({ children }: IChildrenProps) {
   const { data } = useQuery({
     queryKey: ['about'],
     queryFn: () =>
@@ -147,13 +146,5 @@ function AboutPage({ children }: IChildrenProps) {
       </Card>
       {children}
     </CenterLayout>
-  )
-}
-
-export function AboutQueryPage({ children }: IChildrenProps) {
-  return (
-    <CoreProviders>
-      <AboutPage>{children}</AboutPage>
-    </CoreProviders>
   )
 }

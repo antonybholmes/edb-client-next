@@ -37,7 +37,6 @@ import { Label } from '@themed/label'
 import { useEdbAuth } from '@lib/edb/edb-auth'
 import { httpFetch } from '@lib/http/http-fetch'
 import { csfrHeaders } from '@lib/http/urls'
-import { CoreProviders } from '@providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
 
 import { useForm } from 'react-hook-form'
@@ -92,7 +91,7 @@ const FormSchema = z.object({
   apiKeys: z.array(z.string()),
 })
 
-function MyAccountPage() {
+export function MyAccountPage() {
   const queryClient = useQueryClient()
 
   //const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
@@ -529,13 +528,5 @@ function MyAccountPage() {
           </VCenterRow> */}
       </BaseCol>
     </CenterLayout>
-  )
-}
-
-export function MyAccountQueryPage() {
-  return (
-    <CoreProviders>
-      <MyAccountPage />
-    </CoreProviders>
   )
 }
