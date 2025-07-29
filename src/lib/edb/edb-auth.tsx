@@ -53,12 +53,21 @@ export const useCsrfStore = create<ICsrfStore>()(
 
         try {
           console.log('Fetching CSRF token from server...')
-          const res = await httpFetch.getJson<{ data: { csrfToken: string } }>(
-            SESSION_CSRF_TOKEN_URL,
-            { withCredentials: true }
-          )
+          // const res = await httpFetch.getJson<{ data: { csrfToken: string } }>(
+          //   SESSION_CSRF_TOKEN_URL,
+          //   { withCredentials: true }
+          // )
 
-          const token = res.data.csrfToken
+          const token = await queryClient.fetchQuery({
+            queryKey: ['csrf-token'],
+            queryFn: async () => {
+              const res = await httpFetch.getJson<{
+                data: { csrfToken: string }
+              }>(SESSION_CSRF_TOKEN_URL, { withCredentials: true })
+
+              return res.data.csrfToken
+            },
+          })
 
           set({ token, loaded: true })
         } catch (err: any) {
