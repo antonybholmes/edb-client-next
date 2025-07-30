@@ -1211,5 +1211,18 @@
     },
     "author": "Antony Holmes",
     "date": "2025-07-28T17:26:58.630Z"
+  },
+  {
+    "version": "24.5",
+    "messages": {
+      "Fixed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-07-30T23:06:22.540Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-07-30T23:06:22.540Z"
   }
 ]

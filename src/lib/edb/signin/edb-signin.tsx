@@ -171,7 +171,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'oauth2' }: IProps) {
         checked={open}
         ripple={false}
         title={TEXT_SIGN_IN}
-        disabled={!loaded}
+        //disabled={!loaded}
       >
         {loaded && (
           <span className={SIGNED_IN_ICON_CLS}>
