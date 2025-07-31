@@ -184,7 +184,7 @@ function ColGraphsSvg({
 
         return (
           <g
-            ref={el => {
+            ref={(el) => {
               circlesRef.current[ei] = el
             }}
             key={entry.id}
@@ -281,7 +281,7 @@ export function labelsSvg(
   return (
     <g>
       {labels
-        .filter(label => label.show)
+        .filter((label) => label.show)
         .map((label, li) => {
           const x = xax.domainToRange(label.start) // (label.start - 1) * blockSize.w
           return (
@@ -323,7 +323,7 @@ export function featuresSvg(
   blockSize: IBlock,
   displayProps: ILollipopDisplayProps
 ) {
-  const filteredFeatures = features.filter(f => f.show).toReversed() // [...df.features].sort((a, b) => a.z - b.z)
+  const filteredFeatures = features.filter((f) => f.show).toReversed() // [...df.features].sort((a, b) => a.z - b.z)
 
   //console.log('features', df.features, features)
 
@@ -578,7 +578,7 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
   // keep things simple and use ints for the graph limits
 
   const maxSampleCount = Math.round(
-    Math.max(...aaStats.map(stats => aaSum(stats)))
+    Math.max(...aaStats.map((stats) => aaSum(stats)))
   )
 
   const graphHeight = maxSampleCount * blockSize.w //blockSize.w
@@ -590,15 +590,15 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
       .setTitle('Mutation count')
 
     // small plots look better with fewer ticks
-    //if (maxSampleCount < 10) {
-    // if (maxSampleCount % 2 === 0) {
-    //   yax = yax.setTicks([0, maxSampleCount / 2, maxSampleCount])
-    // } else {
-    //   yax = yax.setTicks([0, maxSampleCount])
-    // }
+    if (maxSampleCount < 10) {
+      if (maxSampleCount % 2 === 0) {
+        yax = yax.setTicks([0, maxSampleCount / 2, maxSampleCount])
+      } else {
+        yax = yax.setTicks([0, maxSampleCount])
+      }
 
-    //  yax = yax.setTicks([0, maxSampleCount])
-    //}
+      yax = yax.setTicks([0, maxSampleCount])
+    }
 
     return yax
   }, [blockSize.w, aaStats])
@@ -638,21 +638,21 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
     const filteredDatabasesForUse = new Set<string>(
       Object.entries(databasesForUse)
 
-        .filter(e => e[1])
-        .map(e => e[0])
+        .filter((e) => e[1])
+        .map((e) => e[0])
     )
 
     const filteredMutationsForUse = new Set<string>(
       Object.entries(mutationsForUse)
-        .filter(e => e[1])
-        .map(e => e[0])
+        .filter((e) => e[1])
+        .map((e) => e[0])
     )
 
     for (const stats of aaStats) {
       const mutTypes = displayProps.mutations.types
         .toReversed()
         .filter(
-          mutType =>
+          (mutType) =>
             mutType in stats.countMap && filteredMutationsForUse.has(mutType)
         )
 
@@ -666,7 +666,7 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
 
         for (const db of Object.keys(stats.countMap[mutType]!)
           .sort()
-          .filter(db => filteredDatabasesForUse.has(db))) {
+          .filter((db) => filteredDatabasesForUse.has(db))) {
           for (const aaInfo of [...stats.countMap[mutType]![db]!].sort()) {
             pileup[pileup.length - 1]!.mutations.push(
               `${mutType}|${db}|${aaInfo.sample}|${aaInfo.aa}`
@@ -676,8 +676,8 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
       }
 
       if (showMaxVariantOnly) {
-        const max = Math.max(...pileup.map(p => p.mutations.length))
-        pileup = pileup.filter(p => p.mutations.length === max)
+        const max = Math.max(...pileup.map((p) => p.mutations.length))
+        pileup = pileup.filter((p) => p.mutations.length === max)
       }
 
       pileups.push(pileup)

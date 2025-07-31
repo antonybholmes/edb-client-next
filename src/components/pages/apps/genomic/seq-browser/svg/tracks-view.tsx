@@ -10,6 +10,7 @@ import React, {
 import { BaseSvg } from '@/components/base-svg'
 import { Axis } from '@/components/plot/axis'
 import { TEXT_ZOOM } from '@/consts'
+import { logger } from '@/lib/logger'
 import type { IPos } from '@interfaces/pos'
 import type { ISVGProps } from '@interfaces/svg-props'
 import { API_GENOME_OVERLAP_URL, API_SEQS_BINS_URL } from '@lib/edb/edb'
@@ -367,7 +368,7 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
 
       url.search = new URLSearchParams(params).toString()
 
-      console.log('genes query', url.toString())
+      logger.debug('genes query', url.toString())
 
       const res = await httpFetch.postJson<{ data: IGenomicFeatureSearch[] }>(
         url.toString(),

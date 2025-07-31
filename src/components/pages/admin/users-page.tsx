@@ -45,6 +45,7 @@ import { BaseCol } from '@layout/base-col'
 import { HCenterRow } from '@layout/h-center-row'
 import { Card } from '@themed/card'
 
+import { logger } from '@/lib/logger'
 import { useEdbAuth } from '@lib/edb/edb-auth'
 import { httpFetch } from '@lib/http/http-fetch'
 import { csfrWithTokenHeaders } from '@lib/http/urls'
@@ -123,7 +124,7 @@ export function AdminUsersPage() {
       try {
         loadRoles(csrfToken)
       } catch {
-        console.error('could not fetch remote roles')
+        logger.error('could not fetch remote roles')
       }
     }
   }, [csrfToken])

@@ -22,7 +22,7 @@ export class Axis {
     .scaleLinear()
     .domain([0, 100])
     .range([0, 500])
-  protected _format: (d: d3.NumberValue) => string = d3.format(`.2f`)
+  protected _format: ((d: d3.NumberValue) => string) | null = null // d3.format(',d') //(`.2f`)
 
   protected _numTicks: number = 5
 
@@ -142,27 +142,28 @@ export class Axis {
       return this
     }
 
-    if (!this._format) {
-      this._format = this._scale.tickFormat(ticks.length)! //  d3.format('.2f')
-    }
-
     const a = this.copy()
 
-    if (ticks.every(item => typeof item === 'number')) {
+    if (ticks.every((item) => typeof item === 'number')) {
+      if (!a._format) {
+        // auto format the ticks if not set
+        a._format = this._scale.tickFormat(ticks.length)! //  d3.format('.2f')
+      }
+
       // if ticks are just numbers, convert to TickItem
-      a._ticks = ticks.map(v => ({
+      a._ticks = ticks.map((v) => ({
         v,
-        label: this._format(v),
+        label: a._format!(v),
       }))
-    } else if (ticks.every(item => typeof item === 'string')) {
+    } else if (ticks.every((item) => typeof item === 'string')) {
       // if ticks are just strings, convert to TickItem
-      a._ticks = ticks.map(v => ({
+      a._ticks = ticks.map((v) => ({
         v: parseFloat(v),
         label: v,
       }))
     } else if (
       ticks.every(
-        item => typeof item === 'object' && 'v' in item && 'label' in item
+        (item) => typeof item === 'object' && 'v' in item && 'label' in item
       )
     ) {
       a._ticks = ticks
@@ -207,7 +208,7 @@ export class Axis {
   get ticks(): TickItem[] {
     if (!this._ticks) {
       this._ticks =
-        this._scale.ticks(this._numTicks).map(v => ({
+        this._scale.ticks(this._numTicks).map((v) => ({
           v,
           label: this._scale.tickFormat?.()(v) ?? String(v),
         })) ?? []

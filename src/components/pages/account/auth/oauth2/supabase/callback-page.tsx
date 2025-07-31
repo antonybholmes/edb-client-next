@@ -13,6 +13,7 @@ import { supabase } from '@/lib/auth/supabase'
 import { APP_OAUTH2_SIGN_IN_ROUTE } from '@/lib/edb/edb'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { redirect } from '@/lib/http/urls'
+import { logger } from '@/lib/logger'
 import { CircleAlert } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { REDIRECT_PARAM, invalidRedirectUrl } from '../signedout-page'
@@ -34,26 +35,26 @@ export function CallbackPage() {
       try {
         const auth0Token = data.session?.access_token || ''
 
-        console.log('auth0Token', auth0Token)
+        logger.debug('auth0Token', auth0Token)
 
         await signInWithSupabase(auth0Token)
 
         let url =
           new URLSearchParams(window.location.search).get(REDIRECT_PARAM) || '/'
 
-        console.log('Redirect URL from query:', url, invalidRedirectUrl(url))
+        logger.debug('Redirect URL from query:', url, invalidRedirectUrl(url))
 
         if (!invalidRedirectUrl(url)) {
           // if login triggered from signout page, do not redirect back to it.
           // Instead goto account page. This stops login with immediate log out.
-          console.log('Redirect URL from query:', url)
+          logger.debug('Redirect URL from query:', url)
 
           setRedirectUrl(url)
         }
 
         // force user to be refreshed
       } catch (error) {
-        console.error(error)
+        logger.error(error)
         setError(
           'We couldn’t complete the sign in process. This might be due to an expired session or network issue. Please try again later.'
         )
@@ -64,7 +65,7 @@ export function CallbackPage() {
   }, [])
 
   if (redirectUrl) {
-    console.log('Redirecting to:', redirectUrl)
+    logger.debug('Redirecting to:', redirectUrl)
     redirect(redirectUrl)
   }
 

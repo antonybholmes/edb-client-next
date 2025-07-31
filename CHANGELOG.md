@@ -2,6 +2,10 @@
 
 ## 24.5 (Jul, 2025)
 
+### Changed
+
+- Fixes to auth stores and seq browser. UI fixes.
+
 ### Fixed
 
 - Bug fixes and updates.

@@ -53,6 +53,7 @@ import {
   TEXT_RUN,
   TEXT_SAVE_AS,
   TEXT_SAVE_TABLE,
+  TEXT_SELECT_ALL,
   type IDialogParams,
 } from '@/consts'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
@@ -617,9 +618,9 @@ export function PathwayPage() {
               aria-label="Select all gene sets"
               checked={selectAllDatasets}
               onCheckedChange={() => setSelectAllDatasets(!selectAllDatasets)}
-              className="pl-2"
+              className="pl-1"
             >
-              Select All
+              {TEXT_SELECT_ALL}
             </Checkbox>
 
             <ScrollAccordion

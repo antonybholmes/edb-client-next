@@ -25,7 +25,8 @@ import { produce } from 'immer'
 import { useEffect } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { useEdbSettings } from './edb-settings'
+import { logger } from '../logger'
+import { useEdbSettings, useEdbSettingsStore } from './edb-settings'
 
 // Cross-Site Request Forgery
 export const CSRF_KEY = `${APP_ID}:csrf:v2`
@@ -33,8 +34,9 @@ export const CSRF_KEY = `${APP_ID}:csrf:v2`
 interface ICsrfStore {
   token: string
   loaded: boolean
-  error: string | null
+  error: string
   fetchToken: () => Promise<string>
+  invalidateToken: () => void
 }
 
 export const useCsrfStore = create<ICsrfStore>()(
@@ -42,7 +44,7 @@ export const useCsrfStore = create<ICsrfStore>()(
     (set, get) => ({
       token: '',
       loaded: false,
-      error: null,
+      error: '',
 
       fetchToken: async () => {
         //const { token } = get()
@@ -52,7 +54,7 @@ export const useCsrfStore = create<ICsrfStore>()(
         }
 
         try {
-          console.log('Fetching CSRF token from server...')
+          logger.debug('Fetching CSRF token from server...')
           // const res = await httpFetch.getJson<{ data: { csrfToken: string } }>(
           //   SESSION_CSRF_TOKEN_URL,
           //   { withCredentials: true }
@@ -69,14 +71,15 @@ export const useCsrfStore = create<ICsrfStore>()(
             },
           })
 
-          set({ token, loaded: true })
+          set({ token, loaded: true, error: '' })
         } catch (err: any) {
-          set({
-            error: err?.message || 'Failed to fetch CSRF token',
-          })
+          set({ token: '', loaded: false, error: 'Failed to fetch CSRF token' })
         }
 
         return get().token
+      },
+      invalidateToken: () => {
+        set({ token: '', loaded: false, error: '' })
       },
     }),
     {
@@ -87,7 +90,11 @@ export const useCsrfStore = create<ICsrfStore>()(
 )
 
 export function useCsrf() {
-  const { token, loaded, error, fetchToken } = useCsrfStore()
+  const token = useCsrfStore((state) => state.token)
+  const loaded = useCsrfStore((state) => state.loaded)
+  const error = useCsrfStore((state) => state.error)
+  const fetchToken = useCsrfStore((state) => state.fetchToken)
+  const invalidateToken = useCsrfStore((state) => state.invalidateToken)
 
   // automatically fetch the token if not loaded or if there's an error
   useEffect(() => {
@@ -96,38 +103,29 @@ export function useCsrf() {
     }
   }, [token, loaded, error, fetchToken])
 
-  return { token, loaded, error, fetchToken }
+  return { token, loaded, error, fetchToken, invalidateToken }
 }
 
 export interface IEdbAuthStore {
   session: IEdbSession | null
   loaded: boolean
   accessToken: string
+  error: string
   //csrfToken: string
-  setSession: (session: IEdbSession | null) => void
-  setLoaded: () => void
-  setAccessToken: (token: string) => void
+
+  refreshSession: () => Promise<IEdbSession | null>
+  invalidateSession: () => void
+  fetchSession: () => Promise<IEdbSession | null>
+  fetchAccessToken: () => Promise<string>
 }
 
-export const useEdbAuthStore = create<IEdbAuthStore>((set) => ({
+export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
   session: null,
   loaded: false,
   accessToken: '',
+  error: '',
   //csrfToken: '',
-  setSession: (session: IEdbSession | null) => {
-    set(
-      produce((state: IEdbAuthStore) => {
-        state.session = session
-      })
-    )
-  },
-  setLoaded: () => {
-    set(
-      produce((state: IEdbAuthStore) => {
-        state.loaded = true
-      })
-    )
-  },
+
   setAccessToken: (token: string) => {
     set(
       produce((state: IEdbAuthStore) => {
@@ -135,11 +133,147 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set) => ({
       })
     )
   },
+
+  /**
+   * Fetches the current session from the server.
+   *
+   * @returns Returns the current session if it exists, otherwise
+   * attempts to refresh the session by making a request to the server.
+   * If the session is refreshed, it will also update the settings
+   * with the current user information.
+   */
+  fetchSession: async () => {
+    let s: IEdbSession | null = null
+
+    //const csrfToken = getCsrfToken()
+
+    // After refreshing the session, we can fetch the session info
+    // to ensure we have the latest user information.
+    // This is useful if the user has updated their profile or roles.
+    //console.log('fetching session info after refresh')
+
+    try {
+      s = await queryClient.fetchQuery({
+        queryKey: ['session-info'],
+
+        queryFn: async () => {
+          const res = await httpFetch.getJson<{ data: IEdbSession }>(
+            SESSION_INFO_URL,
+            {
+              //headers: csfrHeaders(csrfToken),
+              withCredentials: true,
+            }
+          )
+
+          return res.data
+        },
+      })
+
+      set({ session: s, loaded: true, error: '' })
+
+      //console.log(settings)
+
+      if (useEdbSettingsStore.getState().users.length === 0) {
+        useEdbSettingsStore.setState({
+          users: [
+            {
+              username: s!.user.username,
+              email: s!.user.email,
+              firstName: s!.user.firstName,
+              lastName: s!.user.lastName,
+              roles: s!.user.roles,
+            } as IBasicEdbUser,
+          ],
+        })
+      }
+    } catch (err: any) {
+      set({ error: 'Failed to fetch session' })
+      s = null
+    }
+
+    return s
+  },
+
+  /**
+   * Forces a refresh of the current session.
+   * This is useful if the session has expired or if you want to ensure
+   * that the session is up to date with the server.
+   * @returns
+   */
+  refreshSession: async () => {
+    let csrfToken = useCsrfStore.getState().token
+
+    // If the CSRF token is not available, attempt to fetch it.
+    if (!csrfToken) {
+      csrfToken = await useCsrfStore.getState().fetchToken()
+    }
+
+    if (!csrfToken) {
+      //console.warn('No CSRF token available to fetch access token')
+      set({ error: 'No CSRF token available to refresh session' })
+      return null
+    }
+
+    try {
+      logger.debug('refreshSession', csrfToken)
+
+      await httpFetch.post(SESSION_REFRESH_URL, {
+        headers: csfrHeaders(csrfToken),
+        withCredentials: true,
+      })
+
+      return get().fetchSession()
+    } catch (err: any) {
+      logger.warn('Failed to refresh session', err)
+      set({ error: 'Failed to refresh session' })
+      return null
+    }
+  },
+
+  invalidateSession: () => {
+    set({ session: null, loaded: false, accessToken: '', error: '' })
+  },
+
+  /**
+   * Attempts to return cached access token, but if it determines
+   * it is expired, attempts to refresh it.
+   * @returns
+   */
+  fetchAccessToken: async () => {
+    let accessToken = get().accessToken
+
+    //console.log(accessToken, validateToken(accessToken))
+    if (validateToken(accessToken)) {
+      return accessToken
+    }
+
+    let csrfToken = useCsrfStore.getState().token
+
+    // If the CSRF token is not available, attempt to fetch it.
+    if (!useCsrfStore.getState().loaded) {
+      csrfToken = await useCsrfStore.getState().fetchToken()
+    }
+
+    if (!csrfToken) {
+      set({ error: 'No CSRF token available to fetch access token' })
+      return accessToken
+    }
+
+    try {
+      accessToken = await fetchAccessTokenUsingSession(queryClient, csrfToken)
+
+      set({ accessToken })
+    } catch (err: any) {
+      //console.error('Failed to fetch access token', err)
+      set({ error: 'Failed to fetch access token' })
+    }
+
+    return accessToken
+  },
 }))
 
-export interface IEdbAuthHook {
-  session: IEdbSession | null
-  loaded: boolean
+export interface IEdbAuthHook
+  extends Omit<IEdbAuthStore, 'accessToken' | 'invalidateSession'> {
   csrfToken: string
   signInWithApiKey: (key: string) => Promise<void>
   signInWithUsernamePassword: (
@@ -149,25 +283,22 @@ export interface IEdbAuthHook {
   signInWithAuth0: (token: string) => Promise<IEdbSession | null>
   signInWithClerk: (token: string) => Promise<IEdbSession | null>
   signInWithSupabase: (token: string) => Promise<IEdbSession | null>
-  //fetchUser: () => Promise<void>
-  fetchSession: () => Promise<IEdbSession | null>
-  refreshSession: () => Promise<IEdbSession | null>
-  //updateUser: (user: IUser) => void
-  //autoRefreshSession: () => Promise<IEdbSession | null>
-  fetchAccessToken: () => Promise<string>
   fetchUpdateToken: () => Promise<string>
   signout: () => Promise<void>
 }
 
 export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
   const session = useEdbAuthStore((state) => state.session)
-  const setSession = useEdbAuthStore((state) => state.setSession)
+  const invalidateSession = useEdbAuthStore((state) => state.invalidateSession)
   const loaded = useEdbAuthStore((state) => state.loaded)
-  const setLoaded = useEdbAuthStore((state) => state.setLoaded)
-  const accessToken = useEdbAuthStore((state) => state.accessToken)
+  const fetchSession = useEdbAuthStore((state) => state.fetchSession)
+  const refreshSession = useEdbAuthStore((state) => state.refreshSession)
+
+  const error = useEdbAuthStore((state) => state.error)
+
   //const csrfToken = useEdbAuthStore(state => state.csrfToken)
   //const setCsrfToken = useEdbAuthStore(state => state.setCsrfToken)
-  const setAccessToken = useEdbAuthStore((state) => state.setAccessToken)
+  const fetchAccessToken = useEdbAuthStore((state) => state.fetchAccessToken)
 
   const { settings, updateSettings } = useEdbSettings()
 
@@ -178,7 +309,12 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
 
   //const [apiKey, setApiKey] = useState('')
 
-  const { token: csrfToken, loaded: csrfLoaded } = useCsrf()
+  const {
+    token: csrfToken,
+    loaded: csrfLoaded,
+    error: csrfError,
+    invalidateToken,
+  } = useCsrf()
 
   // const [csrfToken, setCsrfToken] = useState(() => {
   //   return localStorage.getItem(CSRF_KEY) || ''
@@ -194,148 +330,31 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
 
   useEffect(() => {
     async function setup() {
-      console.log('useEdbAuth setup')
-      if (!csrfLoaded) {
-        return
+      //console.log('useEdbAuth autoRefresh', autoRefresh)
+
+      if (autoRefresh) {
+        await fetchSession()
       }
-
-      console.log('useEdbAuth autoRefresh', autoRefresh)
-
-      //setCsrfToken(getCsrfToken())
-
-      if (autoRefresh && csrfToken) {
-        try {
-          //console.log('useEdbAuth autoRefreshSession')
-          await fetchSession()
-        } catch (e) {
-          console.error(e)
-        }
-      }
-
-      setLoaded()
     }
 
     setup()
-  }, [autoRefresh, csrfToken, csrfLoaded])
-
-  /**
-   * Attempts to return cached access token, but if it determines
-   * it is expired, attempts to refresh it.
-   * @returns
-   */
-  async function fetchAccessToken(): Promise<string> {
-    //console.log(accessToken, validateToken(accessToken))
-    if (validateToken(accessToken)) {
-      return accessToken
-    }
-
-    if (csrfLoaded && !csrfToken) {
-      console.warn('No CSRF token available to fetch access token')
-      throw new Error('No CSRF token available')
-    }
-
-    const t = await fetchAccessTokenUsingSession(queryClient, csrfToken)
-
-    setAccessToken(t)
-
-    return t
-  }
+  }, [autoRefresh])
 
   async function fetchUpdateToken(): Promise<string> {
-    if (csrfLoaded && !csrfToken) {
-      console.warn('No CSRF token available to fetch access token')
-      throw new Error('No CSRF token available')
+    if (!csrfToken) {
+      throw new Error('No CSRF token available to fetch update token')
     }
 
     return fetchUpdateTokenUsingSession(queryClient, csrfToken)
   }
 
   function removeData() {
-    setSession(null)
-    setAccessToken('')
+    invalidateSession()
+    invalidateToken()
+    //setAccessToken('')
     //setCsrfToken('')
 
     //Cookies.remove(CSRF_COOKIE_NAME)
-  }
-
-  /**
-   * Forces a refresh of the current session.
-   * This is useful if the session has expired or if you want to ensure
-   * that the session is up to date with the server.
-   * @returns
-   */
-  async function refreshSession(): Promise<IEdbSession | null> {
-    if (csrfLoaded && !csrfToken) {
-      console.warn('No CSRF token available to fetch access token')
-      throw new Error('No CSRF token available')
-    }
-
-    console.log('refreshSession', csrfToken)
-
-    await httpFetch.post(SESSION_REFRESH_URL, {
-      headers: csfrHeaders(csrfToken),
-      withCredentials: true,
-    })
-
-    return fetchSession()
-  }
-
-  /**
-   * Fetches the current session from the server.
-   *
-   * @returns Returns the current session if it exists, otherwise
-   * attempts to refresh the session by making a request to the server.
-   * If the session is refreshed, it will also update the settings
-   * with the current user information.
-   */
-  async function fetchSession(): Promise<IEdbSession | null> {
-    let s: IEdbSession | null = null
-
-    //const csrfToken = getCsrfToken()
-
-    // After refreshing the session, we can fetch the session info
-    // to ensure we have the latest user information.
-    // This is useful if the user has updated their profile or roles.
-    //console.log('fetching session info after refresh')
-    s = await queryClient.fetchQuery({
-      queryKey: ['session-info'],
-
-      queryFn: async () => {
-        const res = await httpFetch.getJson<{ data: IEdbSession }>(
-          SESSION_INFO_URL,
-          {
-            //headers: csfrHeaders(csrfToken),
-            withCredentials: true,
-          }
-        )
-
-        return res.data
-      },
-    })
-
-    console.log('getting session', s)
-
-    setSession(s)
-
-    //console.log(settings)
-
-    if (settings.users.length === 0) {
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.users = [
-            {
-              username: s!.user.username,
-              email: s!.user.email,
-              firstName: s!.user.firstName,
-              lastName: s!.user.lastName,
-              roles: s!.user.roles,
-            } as IBasicEdbUser,
-          ]
-        })
-      )
-    }
-
-    return s
   }
 
   // async function autoRefreshSession(): Promise<IEdbSession | null> {
@@ -520,6 +539,7 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
     session,
     loaded,
     csrfToken,
+    error,
     signInWithApiKey,
     signInWithUsernamePassword,
     signInWithAuth0,

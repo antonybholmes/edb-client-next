@@ -67,14 +67,10 @@ export function DataPanel({ branchId: panelId = 'Data' }: IDataPanelProps) {
 
   useEffect(() => {
     const filteredMessages = messages.filter(
-      message => message.target === panelId
+      (message) => message.target === panelId
     )
 
-    console.log(messages, panelId)
-
     for (const message of filteredMessages) {
-      console.log(message)
-
       if (message.text.includes('save')) {
         let format = 'txt'
 
@@ -121,7 +117,7 @@ export function DataPanel({ branchId: panelId = 'Data' }: IDataPanelProps) {
         id="onco-data-panel"
         side="right"
         tabs={rightTabs}
-        onTabChange={selectedTab => setSelectedTab(selectedTab.tab.id)}
+        onTabChange={(selectedTab) => setSelectedTab(selectedTab.tab.id)}
         value={selectedTab}
         open={showSideBar}
         onOpenChange={setShowSideBar}
@@ -129,7 +125,7 @@ export function DataPanel({ branchId: panelId = 'Data' }: IDataPanelProps) {
         <TabbedDataFrames
           selectedSheet={sheet?.id ?? ''}
           dataFrames={sheets as AnnotationDataFrame[]}
-          onTabChange={selectedTab => {
+          onTabChange={(selectedTab) => {
             dispatch({
               type: HISTORY_ACTION_GOTO_SHEET,
               addr: selectedTab.tab.id,

@@ -46,7 +46,6 @@ import { type ITab } from '@components/tabs/tab-provider'
 import { FileImageIcon } from '@icons/file-image-icon'
 import { downloadSvgAutoFormat } from '@lib/image-utils'
 import { randId } from '@lib/utils'
-import { CoreProviders } from '@providers/core-providers'
 import { useQuery } from '@tanstack/react-query'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
 import MODULE_INFO from './module.json'
@@ -94,7 +93,7 @@ import { SettingsPlotPanel } from './settings/settings-plot-panel'
 import { SettingsTracksPanel } from './settings/settings-tracks-panel'
 import { TracksView, type GenesMap } from './svg/tracks-view'
 
-export function SeqBrowserPage() {
+function SeqBrowserPage() {
   const { locations, binSizes, setLocations } = useContext(TracksContext)
   const { settings, updateSettings } = useSeqBrowserSettings()
 
@@ -676,16 +675,8 @@ export function SeqBrowserPage() {
 
 export function SeqBrowserQueryPage() {
   return (
-    <CoreProviders>
-      {/* <SeqBrowserSettingsProvider> */}
-      {/* <SearchProvider defaultSearch="chr3:187441954-187466041"> */}
-      {/* <ZoomProvider> */}
-      <TracksProvider>
-        <SeqBrowserPage />
-      </TracksProvider>
-      {/* </ZoomProvider> */}
-      {/* </SearchProvider> */}
-      {/* </SeqBrowserSettingsProvider> */}
-    </CoreProviders>
+    <TracksProvider>
+      <SeqBrowserPage />
+    </TracksProvider>
   )
 }

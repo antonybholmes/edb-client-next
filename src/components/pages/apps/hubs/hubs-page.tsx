@@ -204,7 +204,7 @@ export function HubsPage() {
           >
             <SelectValue placeholder="Select a genome" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent align="end">
             <SelectItem value="hg19">hg19</SelectItem>
             <SelectItem value="grch38">grch38</SelectItem>
             <SelectItem value="mm10">mm10</SelectItem>

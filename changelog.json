@@ -1220,6 +1220,12 @@
           "msg": "Bug fixes and updates.",
           "date": "2025-07-30T23:06:22.540Z"
         }
+      ],
+      "Changed": [
+        {
+          "msg": "Fixes to auth stores and seq browser. UI fixes",
+          "date": "2025-07-31T17:02:56.533Z"
+        }
       ]
     },
     "author": "Antony Holmes",

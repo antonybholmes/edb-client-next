@@ -21,7 +21,7 @@ export function AxisLeftSvg({
   showTicks = true,
   showTickLabels = true,
   tickSize = 5,
-  strokeWidth = 2,
+  strokeWidth = 1,
   color = COLOR_BLACK,
   pos = { ...ZERO_POS },
   title,
@@ -32,7 +32,7 @@ export function AxisLeftSvg({
   //use tick labels to guess an appropriate offset
   const _titleOffset =
     titleOffset ??
-    2 * tickSize + 12 * Math.max(...ax.ticks.map(t => t.label.length))
+    2 * tickSize + 12 * Math.max(...ax.ticks.map((t) => t.label.length))
 
   return (
     <g
@@ -105,7 +105,7 @@ export function AxisBottomSvg({
   showTicks = true,
   showTickLabels = true,
   tickSize = 5,
-  strokeWidth = 2,
+  strokeWidth = 1,
   color = COLOR_BLACK,
   pos = { ...ZERO_POS },
   titleOffset,

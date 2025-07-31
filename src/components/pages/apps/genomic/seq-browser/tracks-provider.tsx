@@ -543,8 +543,8 @@ export function newTrackGroup(tracks: TrackPlot[]): ITrackGroup {
     id: nanoid(),
     trackType: 'Track Group',
     name: tracks[0]!.name,
-    order: tracks.map(t => t.id),
-    tracks: Object.fromEntries(tracks.map(t => [t.id, t])),
+    order: tracks.map((t) => t.id),
+    tracks: Object.fromEntries(tracks.map((t) => [t.id, t])),
   }
 }
 
@@ -573,27 +573,27 @@ export function trackReducer(
     case 'add':
       groups = action.tracks //.map(ts => newTrackGroup(ts))
 
-      return produce(state, draft => {
+      return produce(state, (draft) => {
         draft.groups = Object.fromEntries([
           ...Object.entries(state.groups),
-          ...groups.map(g => [g.id, g] as [string, ITrackGroup]),
+          ...groups.map((g) => [g.id, g] as [string, ITrackGroup]),
         ])
-        draft.order = [...state.order, ...groups.map(g => g.id)]
+        draft.order = [...state.order, ...groups.map((g) => g.id)]
       })
     case 'set':
       groups = action.tracks //.map(ts => newTrackGroup(ts))
 
-      return produce(state, draft => {
+      return produce(state, (draft) => {
         draft.groups = Object.fromEntries(
-          groups.map(g => [g.id, g] as [string, ITrackGroup])
+          groups.map((g) => [g.id, g] as [string, ITrackGroup])
         )
-        draft.order = groups.map(g => g.id)
+        draft.order = groups.map((g) => g.id)
         draft.selected = new Map<string, boolean>()
       })
     case 'update':
-      return produce(state, draft => {
+      return produce(state, (draft) => {
         draft.groups = Object.fromEntries(
-          Object.entries(state.groups).map(e =>
+          Object.entries(state.groups).map((e) =>
             e[0] === action.group.id
               ? [
                   e[0],
@@ -619,10 +619,10 @@ export function trackReducer(
       return {
         ...state,
         groups: Object.fromEntries(
-          Object.entries(state.groups).filter(e => !removeIds.has(e[0]))
+          Object.entries(state.groups).filter((e) => !removeIds.has(e[0]))
         ),
         // see ifunknown groups were removed for having not tracks
-        order: state.order.filter(id => !removeIds.has(id)),
+        order: state.order.filter((id) => !removeIds.has(id)),
       }
     case 'remove-tracks':
       //modify the steps, but do not
@@ -631,7 +631,7 @@ export function trackReducer(
       return {
         ...state,
         groups: Object.fromEntries(
-          Object.entries(state.groups).map(e =>
+          Object.entries(state.groups).map((e) =>
             e[0] === action.group.id
               ? [
                   e[0],
@@ -639,10 +639,10 @@ export function trackReducer(
                     ...e[1],
                     tracks: Object.fromEntries(
                       Object.entries(e[1].tracks).filter(
-                        e => !removeIds.has(e[0])
+                        (e) => !removeIds.has(e[0])
                       )
                     ),
-                    order: e[1].order.filter(id => !removeIds.has(id)),
+                    order: e[1].order.filter((id) => !removeIds.has(id)),
                   },
                 ]
               : e
@@ -654,7 +654,7 @@ export function trackReducer(
         ...state,
         selected: new Map<string, boolean>([
           ...state.selected.entries(),
-          ...action.ids.map(id => [id, action.selected] as [string, boolean]),
+          ...action.ids.map((id) => [id, action.selected] as [string, boolean]),
         ]),
       }
 
@@ -705,14 +705,14 @@ export function trackReducer(
         },
       ]
 
-      groups = tracks.map(t => ({ ...newTrackGroup([t]), name: t.name }))
+      groups = tracks.map((t) => ({ ...newTrackGroup([t]), name: t.name }))
 
       return {
         ...state,
         groups: Object.fromEntries(
-          groups.map(g => [g.id, g] as [string, ITrackGroup])
+          groups.map((g) => [g.id, g] as [string, ITrackGroup])
         ),
-        order: groups.map(g => g.id),
+        order: groups.map((g) => g.id),
         selected: new Map<string, boolean>(),
       }
     default:
@@ -873,7 +873,7 @@ export function TracksProvider({ children }: IChildrenProps) {
 
   const [trackDb, setTrackDb] = useState<AllDBSignalTrackTypes[]>([])
   const [locations, setLocations] = useState<GenomicLocation[]>(
-    settings.locations.map(l => parseLocation(l))
+    settings.locations.map((l) => parseLocation(l))
   )
   const [binSizes, setBinSizes] = useState<number[]>([128])
 
@@ -898,7 +898,7 @@ export function TracksProvider({ children }: IChildrenProps) {
         }
       )
 
-      //console.log('tracks', res.data)
+      //logger.log('tracks', res.data)
 
       return res.data
     },
@@ -952,7 +952,7 @@ export function TracksProvider({ children }: IChildrenProps) {
       }
     }
 
-    locations.map(location => {
+    locations.map((location) => {
       const start = Math.max(1, Math.round(location.start))
       const end = Math.max(
         start + 10,
@@ -978,8 +978,8 @@ export function TracksProvider({ children }: IChildrenProps) {
 
     // Cache locations as user might be interested in them
     updateSettings(
-      produce(settings, draft => {
-        draft.locations = locations.map(l => l.loc)
+      produce(settings, (draft) => {
+        draft.locations = locations.map((l) => l.loc)
       })
     )
 
@@ -989,7 +989,7 @@ export function TracksProvider({ children }: IChildrenProps) {
   useEffect(() => {
     setBinSizes(
       settings.seqs.bins.autoSize
-        ? locations.map(location => autoBinSize(location))
+        ? locations.map((location) => autoBinSize(location))
         : fill(settings.seqs.bins.size, locations.length)
     )
   }, [locations, settings.seqs.bins.size, settings.seqs.bins.autoSize])

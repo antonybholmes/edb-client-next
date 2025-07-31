@@ -123,7 +123,7 @@ export function MyAccountPage() {
     },
   })
 
-  console.log('form', csrfToken)
+  //logger.debug('form', csrfToken)
 
   // useEffect(() => {
   //   async function fetch() {
