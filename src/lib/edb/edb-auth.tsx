@@ -17,84 +17,132 @@ import {
 import { httpFetch } from '@lib/http/http-fetch'
 import { bearerHeaders, csfrHeaders, JSON_HEADERS } from '@lib/http/urls'
 
-import { APP_ID } from '@/consts'
 //import { useQueryClient } from '@tanstack/react-query'
 
 import { queryClient } from '@/query'
 import { produce } from 'immer'
 import { useEffect } from 'react'
 import { create } from 'zustand'
-import { createJSONStorage, persist } from 'zustand/middleware'
 import { logger } from '../logger'
 import { useEdbSettings, useEdbSettingsStore } from './edb-settings'
 
-// Cross-Site Request Forgery
-export const CSRF_KEY = `${APP_ID}:csrf:v2`
+import Cookies from 'js-cookie'
 
-interface ICsrfStore {
+export const CSRF_COOKIE_NAME = 'csrf_token'
+
+interface ICSRFStore {
   token: string
   loaded: boolean
   error: string
+  setToken: (token: string) => void
   fetchToken: () => Promise<string>
   invalidateToken: () => void
 }
 
-export const useCsrfStore = create<ICsrfStore>()(
-  persist(
-    (set, get) => ({
-      token: '',
-      loaded: false,
-      error: '',
+export const useCSRFStore = create<ICSRFStore>((set) => ({
+  token: Cookies.get(CSRF_COOKIE_NAME) || '',
+  loaded: false,
+  error: '',
 
-      fetchToken: async () => {
-        //const { token } = get()
+  setToken: (token: string) => set({ token }),
 
-        if (get().loaded) {
-          return get().token
-        }
+  fetchToken: async () => {
+    try {
+      logger.log('Fetching CSRF token from server...')
+      const token = await queryClient.fetchQuery({
+        queryKey: ['csrf-token'],
+        queryFn: async () => {
+          const res = await httpFetch.getJson<{
+            data: { csrfToken: string }
+          }>(SESSION_CSRF_TOKEN_URL, { withCredentials: true })
 
-        try {
-          logger.debug('Fetching CSRF token from server...')
-          // const res = await httpFetch.getJson<{ data: { csrfToken: string } }>(
-          //   SESSION_CSRF_TOKEN_URL,
-          //   { withCredentials: true }
-          // )
+          return res.data.csrfToken
+        },
+      })
 
-          const token = await queryClient.fetchQuery({
-            queryKey: ['csrf-token'],
-            queryFn: async () => {
-              const res = await httpFetch.getJson<{
-                data: { csrfToken: string }
-              }>(SESSION_CSRF_TOKEN_URL, { withCredentials: true })
+      set({ token, loaded: true, error: '' })
 
-              return res.data.csrfToken
-            },
-          })
+      return token
+    } catch (err: any) {
+      set({ token: '', loaded: false, error: 'Failed to fetch CSRF token' })
 
-          set({ token, loaded: true, error: '' })
-        } catch (err: any) {
-          set({ token: '', loaded: false, error: 'Failed to fetch CSRF token' })
-        }
-
-        return get().token
-      },
-      invalidateToken: () => {
-        set({ token: '', loaded: false, error: '' })
-      },
-    }),
-    {
-      name: CSRF_KEY, // name in localStorage
-      storage: createJSONStorage(() => sessionStorage),
+      return ''
     }
-  )
-)
+    // Cookie will update automatically; we just update the cache
+    //Cookies.set('csrf_token', data.csrf_token); // optional
+  },
+  invalidateToken: () => {
+    set({ token: '', loaded: false, error: '' })
+  },
+}))
 
-export function useCsrf() {
-  const token = useCsrfStore((state) => state.token)
-  const loaded = useCsrfStore((state) => state.loaded)
-  const error = useCsrfStore((state) => state.error)
-  const fetchToken = useCsrfStore((state) => state.fetchToken)
-  const invalidateToken = useCsrfStore((state) => state.invalidateToken)
+// // Cross-Site Request Forgery
+// export const CSRF_KEY = `${APP_ID}:csrf:v2`
+
+// interface ICsrfStore {
+//   token: string
+//   loaded: boolean
+//   error: string
+//   fetchToken: () => Promise<string>
+//   invalidateToken: () => void
+// }
+
+// export const useCsrfStore = create<ICsrfStore>()(
+//   persist(
+//     (set, get) => ({
+//       token: '',
+//       loaded: false,
+//       error: '',
+
+//       fetchToken: async () => {
+//         //const { token } = get()
+
+//         if (get().loaded) {
+//           return get().token
+//         }
+
+//         try {
+//           logger.debug('Fetching CSRF token from server...')
+//           // const res = await httpFetch.getJson<{ data: { csrfToken: string } }>(
+//           //   SESSION_CSRF_TOKEN_URL,
+//           //   { withCredentials: true }
+//           // )
+
+//           const token = await queryClient.fetchQuery({
+//             queryKey: ['csrf-token'],
+//             queryFn: async () => {
+//               const res = await httpFetch.getJson<{
+//                 data: { csrfToken: string }
+//               }>(SESSION_CSRF_TOKEN_URL, { withCredentials: true })
+
+//               return res.data.csrfToken
+//             },
+//           })
+
+//           set({ token, loaded: true, error: '' })
+//         } catch (err: any) {
+//           set({ token: '', loaded: false, error: 'Failed to fetch CSRF token' })
+//         }
+
+//         return get().token
+//       },
+//       invalidateToken: () => {
+//         set({ token: '', loaded: false, error: '' })
+//       },
+//     }),
+//     {
+//       name: CSRF_KEY, // name in localStorage
+//       storage: createJSONStorage(() => sessionStorage),
+//     }
+//   )
+// )
+
+export function useCSRF() {
+  const token = useCSRFStore((state) => state.token)
+  const loaded = useCSRFStore((state) => state.loaded)
+  const error = useCSRFStore((state) => state.error)
+  const fetchToken = useCSRFStore((state) => state.fetchToken)
+  const invalidateToken = useCSRFStore((state) => state.invalidateToken)
 
   // automatically fetch the token if not loaded or if there's an error
   useEffect(() => {
@@ -201,11 +249,11 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
    * @returns
    */
   refreshSession: async () => {
-    let csrfToken = useCsrfStore.getState().token
+    let csrfToken = useCSRFStore.getState().token
 
     // If the CSRF token is not available, attempt to fetch it.
     if (!csrfToken) {
-      csrfToken = await useCsrfStore.getState().fetchToken()
+      csrfToken = await useCSRFStore.getState().fetchToken()
     }
 
     if (!csrfToken) {
@@ -247,11 +295,11 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
       return accessToken
     }
 
-    let csrfToken = useCsrfStore.getState().token
+    let csrfToken = useCSRFStore.getState().token
 
     // If the CSRF token is not available, attempt to fetch it.
-    if (!useCsrfStore.getState().loaded) {
-      csrfToken = await useCsrfStore.getState().fetchToken()
+    if (!useCSRFStore.getState().loaded) {
+      csrfToken = await useCSRFStore.getState().fetchToken()
     }
 
     if (!csrfToken) {
@@ -314,7 +362,7 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
     loaded: csrfLoaded,
     error: csrfError,
     invalidateToken,
-  } = useCsrf()
+  } = useCSRF()
 
   // const [csrfToken, setCsrfToken] = useState(() => {
   //   return localStorage.getItem(CSRF_KEY) || ''
