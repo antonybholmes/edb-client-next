@@ -9,36 +9,45 @@ export function HamburgerIcon({
   w = 'w-4 h-4',
   stroke = 'stroke-foreground',
   className,
-  strokeWidth = 2,
+  strokeWidth = 1.5,
   hover,
 }: IIconProps) {
-  const y1 = hover ? 9 : 7
-  const y2 = hover ? 15 : 17
-
   const line1Ref = useRef<SVGLineElement>(null)
   const line2Ref = useRef<SVGLineElement>(null)
+  const tlRef = useRef<gsap.core.Timeline>(null)
 
   useEffect(() => {
-    gsap
+    if (!line1Ref.current || !line2Ref.current) return
+
+    tlRef.current = gsap
       .timeline()
       .to(
         line1Ref.current,
         {
-          attr: { y1: y1, y2: y1 },
+          attr: { y1: 9, y2: 9 },
           duration: 0.3,
-          //ease: 'power1.inOut',
+          ease: 'power1.out',
         },
         0
       )
       .to(
         line2Ref.current,
         {
-          attr: { y1: y2, y2: y2 },
+          attr: { y1: 15, y2: 15 },
           duration: 0.3,
-          //ease: 'power1.inOut',
+          ease: 'power1.out',
         },
         0
       )
+      .pause()
+  }, [])
+
+  useEffect(() => {
+    if (hover) {
+      tlRef.current?.play()
+    } else {
+      tlRef.current?.reverse()
+    }
   }, [hover])
 
   return (
@@ -53,6 +62,8 @@ export function HamburgerIcon({
       <line
         x1="2"
         x2="22"
+        y1="7"
+        y2="7"
         ref={line1Ref}
         //initial={false}
         //animate={{ y1: y1, y2: y1 }}
@@ -62,6 +73,9 @@ export function HamburgerIcon({
         ref={line2Ref}
         x1="2"
         x2="22"
+        y1="17"
+        y2="17"
+
         //initial={false}
         //animate={{ y1: y2, y2: y2 }}
       />
