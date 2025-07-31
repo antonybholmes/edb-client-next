@@ -34,7 +34,7 @@ import { Form, FormField, FormItem } from '@themed/form'
 import { Input } from '@themed/input'
 import { Label } from '@themed/label'
 
-import { useEdbAuth } from '@lib/edb/edb-auth'
+import { useCSRF, useEdbAuth } from '@lib/edb/edb-auth'
 import { httpFetch } from '@lib/http/http-fetch'
 import { csfrHeaders } from '@lib/http/urls'
 import { useQueryClient } from '@tanstack/react-query'
@@ -105,6 +105,7 @@ export function MyAccountPage() {
   //const [user, setUser] = useState<IUser | null>(null)
 
   //const [account, setAccount] = useState<IAccount>({...DEFAULT_ACCOUNT})
+  const { fetchToken } = useCSRF()
   const { session, csrfToken, refreshSession, fetchUpdateToken } = useEdbAuth()
 
   //const [roles, setRoles] = useState<string[]>([])
@@ -235,7 +236,31 @@ export function MyAccountPage() {
         <Card className="shadow-md lg:w-192">
           <CardHeader>
             <CardTitle>{TEXT_MY_ACCOUNT}</CardTitle>
-            <CardDescription>Update your account information.</CardDescription>
+
+            <VCenterRow className="justify-between">
+              <CardDescription>
+                Update your account information.
+              </CardDescription>
+
+              <VCenterRow className="gap-x-2">
+                <IconButton
+                  onClick={() => {
+                    refreshSession()
+                  }}
+                  title="Reload account information"
+                >
+                  <ReloadIcon />
+                </IconButton>
+                <Button
+                  variant="theme"
+                  size="lg"
+                  //className="w-full"
+                  onClick={() => btnRef.current?.click()}
+                >
+                  {TEXT_SAVE}
+                </Button>
+              </VCenterRow>
+            </VCenterRow>
           </CardHeader>
 
           <CardContent>
@@ -446,24 +471,6 @@ export function MyAccountPage() {
 
                 <button ref={btnRef} type="submit" className="hidden" />
               </form>
-
-              <VCenterRow className="justify-between text-sm mt-8">
-                <IconButton
-                  onClick={() => {
-                    refreshSession()
-                  }}
-                  title="Reload account information"
-                >
-                  <ReloadIcon />
-                </IconButton>
-                <Button
-                  variant="theme"
-                  //className="w-full"
-                  onClick={() => btnRef.current?.click()}
-                >
-                  {TEXT_SAVE}
-                </Button>
-              </VCenterRow>
             </Form>
           </CardContent>
           {/* <CardFooter>
@@ -506,6 +513,19 @@ export function MyAccountPage() {
             </div>
           </div>
         </BaseCol>
+
+        <VCenterRow className="justify-end">
+          <Button
+            variant="secondary"
+            size="lg"
+            onClick={() => {
+              fetchToken()
+            }}
+            title="Generate a new CSRF token"
+          >
+            New CSRF Token
+          </Button>
+        </VCenterRow>
 
         {/* <p className="text-xs text-foreground/50">
             Some options cannot be changed unless you contact your

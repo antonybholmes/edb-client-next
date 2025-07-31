@@ -178,10 +178,21 @@ export function PasswordCard() {
       <CardHeader>
         <CardTitle>Password</CardTitle>
 
-        <CardDescription>
-          Update your password. This is optional if you are using passwordless
-          sign in.
-        </CardDescription>
+        <VCenterRow className="justify-between">
+          <CardDescription>
+            Update your password. This is optional if you are using passwordless
+            sign in.
+          </CardDescription>
+
+          <Button
+            variant="theme"
+            size="lg"
+            onClick={() => btnRef.current?.click()}
+            disabled={session?.user.isLocked}
+          >
+            {TEXT_UPDATE}
+          </Button>
+        </VCenterRow>
       </CardHeader>
 
       <CardContent>
@@ -274,16 +285,6 @@ export function PasswordCard() {
             <button ref={btnRef} type="submit" className="hidden" />
           </form>
         </Form>
-
-        <VCenterRow className="justify-end text-sm mt-8">
-          <Button
-            variant="theme"
-            onClick={() => btnRef.current?.click()}
-            disabled={session?.user.isLocked}
-          >
-            {TEXT_UPDATE}
-          </Button>
-        </VCenterRow>
       </CardContent>
     </Card>
   )

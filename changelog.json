@@ -1225,6 +1225,10 @@
         {
           "msg": "Fixes to auth stores and seq browser. UI fixes",
           "date": "2025-07-31T17:02:56.533Z"
+        },
+        {
+          "msg": "More robust CSRF handling. Revised account page",
+          "date": "2025-07-31T21:15:53.026Z"
         }
       ]
     },

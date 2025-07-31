@@ -4,6 +4,7 @@
 
 ### Changed
 
+- More robust CSRF handling. Revised account page.
 - Fixes to auth stores and seq browser. UI fixes.
 
 ### Fixed

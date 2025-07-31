@@ -32,7 +32,7 @@ export const CSRF_COOKIE_NAME = 'csrf_token'
 
 interface ICSRFStore {
   token: string
-  loaded: boolean
+
   error: string
   setToken: (token: string) => void
   fetchToken: () => Promise<string>
@@ -41,7 +41,7 @@ interface ICSRFStore {
 
 export const useCSRFStore = create<ICSRFStore>((set) => ({
   token: Cookies.get(CSRF_COOKIE_NAME) || '',
-  loaded: false,
+
   error: '',
 
   setToken: (token: string) => set({ token }),
@@ -60,11 +60,13 @@ export const useCSRFStore = create<ICSRFStore>((set) => ({
         },
       })
 
-      set({ token, loaded: true, error: '' })
+      logger.log('CSRF token fetched:', token)
+
+      set({ token, error: '' })
 
       return token
     } catch (err: any) {
-      set({ token: '', loaded: false, error: 'Failed to fetch CSRF token' })
+      set({ token: '', error: 'Failed to fetch CSRF token' })
 
       return ''
     }
@@ -72,7 +74,7 @@ export const useCSRFStore = create<ICSRFStore>((set) => ({
     //Cookies.set('csrf_token', data.csrf_token); // optional
   },
   invalidateToken: () => {
-    set({ token: '', loaded: false, error: '' })
+    set({ token: '', error: '' })
   },
 }))
 
@@ -137,21 +139,22 @@ export const useCSRFStore = create<ICSRFStore>((set) => ({
 //   )
 // )
 
-export function useCSRF() {
+export function useCSRF(autoRefresh: boolean = true) {
   const token = useCSRFStore((state) => state.token)
-  const loaded = useCSRFStore((state) => state.loaded)
+
   const error = useCSRFStore((state) => state.error)
   const fetchToken = useCSRFStore((state) => state.fetchToken)
   const invalidateToken = useCSRFStore((state) => state.invalidateToken)
 
   // automatically fetch the token if not loaded or if there's an error
   useEffect(() => {
-    if (!token || !loaded || !error) {
+    if (autoRefresh && (!token || error)) {
+      logger.log('Auto-refreshing CSRF token...')
       fetchToken()
     }
-  }, [token, loaded, error, fetchToken])
+  }, [autoRefresh, token, error, fetchToken])
 
-  return { token, loaded, error, fetchToken, invalidateToken }
+  return { token, error, fetchToken, invalidateToken }
 }
 
 export interface IEdbAuthStore {
@@ -252,9 +255,9 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
     let csrfToken = useCSRFStore.getState().token
 
     // If the CSRF token is not available, attempt to fetch it.
-    if (!csrfToken) {
-      csrfToken = await useCSRFStore.getState().fetchToken()
-    }
+    //if (!csrfToken) {
+    //  csrfToken = await useCSRFStore.getState().fetchToken()
+    //}
 
     if (!csrfToken) {
       //console.warn('No CSRF token available to fetch access token')
@@ -298,9 +301,9 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
     let csrfToken = useCSRFStore.getState().token
 
     // If the CSRF token is not available, attempt to fetch it.
-    if (!useCSRFStore.getState().loaded) {
-      csrfToken = await useCSRFStore.getState().fetchToken()
-    }
+    //if (!useCSRFStore.getState().token) {
+    //  csrfToken = await useCSRFStore.getState().fetchToken()
+    //}
 
     if (!csrfToken) {
       set({ error: 'No CSRF token available to fetch access token' })
@@ -359,10 +362,9 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
 
   const {
     token: csrfToken,
-    loaded: csrfLoaded,
-    error: csrfError,
-    invalidateToken,
-  } = useCSRF()
+    fetchToken: fetchCsrfToken,
+    invalidateToken: invalidateCsrfToken,
+  } = useCSRF(autoRefresh)
 
   // const [csrfToken, setCsrfToken] = useState(() => {
   //   return localStorage.getItem(CSRF_KEY) || ''
@@ -394,15 +396,6 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
     }
 
     return fetchUpdateTokenUsingSession(queryClient, csrfToken)
-  }
-
-  function removeData() {
-    invalidateSession()
-    invalidateToken()
-    //setAccessToken('')
-    //setCsrfToken('')
-
-    //Cookies.remove(CSRF_COOKIE_NAME)
   }
 
   // async function autoRefreshSession(): Promise<IEdbSession | null> {
@@ -463,28 +456,18 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
   }
 
   async function signInWithAuth0(token: string): Promise<IEdbSession | null> {
-    const csrfToken = await queryClient.fetchQuery({
-      queryKey: ['auth0-signin', token],
-      queryFn: async () => {
-        const res = await httpFetch.postJson<{ data: { csrfToken: string } }>(
-          SESSION_AUTH0_SIGNIN_URL, //SESSION_UPDATE_USER_URL,
-          {
-            headers: bearerHeaders(token),
-            withCredentials: true,
-          }
-        )
-
-        console.log('signInWithAuth0', res)
-
-        const csrfToken = res.data.csrfToken ?? ''
-
-        return csrfToken
-      },
-    })
-
-    console.log('signInWithAuth0 csrfToken', csrfToken)
+    await httpFetch.post(
+      SESSION_AUTH0_SIGNIN_URL, //SESSION_UPDATE_USER_URL,
+      {
+        headers: bearerHeaders(token),
+        withCredentials: true,
+      }
+    )
 
     //setCsrfToken(csrfToken)
+
+    // get a new token for this session
+    await fetchCsrfToken()
 
     const session = await fetchSession()
 
@@ -503,6 +486,9 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
           }
         ),
     })
+
+    // get a new token for this session
+    await fetchCsrfToken()
 
     const session = await fetchSession()
 
@@ -530,7 +516,8 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
       },
     })
 
-    //setCsrfToken(csrfToken)
+    // get a new token for this session
+    await fetchCsrfToken()
 
     const session = await fetchSession()
 
@@ -563,7 +550,8 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
       withCredentials: true,
     })
 
-    removeData()
+    invalidateSession()
+    invalidateCsrfToken()
 
     // remove user from cache
     updateSettings(
