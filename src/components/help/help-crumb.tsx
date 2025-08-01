@@ -1,3 +1,4 @@
+import { ITopicTree } from '@/lib/markdown/help-utils'
 import { getUrlFriendlyTag, redirect } from '@lib/http/urls'
 import { CornerDownRight } from 'lucide-react'
 import { Fragment } from 'react'
@@ -11,7 +12,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '../shadcn/ui/themed/dropdown-menu'
-import type { ITopicTree } from './help-tree-node'
 
 export function HelpCrumb({
   node,
@@ -51,7 +51,7 @@ export function HelpCrumb({
                     <span>{p}</span>
                   </DropdownMenuItem>
 
-                  {pathChildren[i]!.map(tab => {
+                  {pathChildren[i]!.map((tab) => {
                     const url = `/help/${tab.slug}`
                     return (
                       <DropdownMenuItem

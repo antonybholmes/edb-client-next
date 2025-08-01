@@ -1,3 +1,4 @@
+import { ITopicTree } from '@/lib/markdown/help-utils'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
@@ -5,7 +6,7 @@ import { HamburgerIcon } from '../icons/hamburger-icon'
 import { VCenterRow } from '../layout/v-center-row'
 import { DialogDescription, DialogTitle } from '../shadcn/ui/themed/dialog'
 import { Sheet, SheetContent, SheetTrigger } from '../shadcn/ui/themed/sheet'
-import { HelpTreeNode, type ITopicTree } from './help-tree-node'
+import { HelpTreeNode } from './help-tree-node'
 
 export function HelpMenu({
   tree,

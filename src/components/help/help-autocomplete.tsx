@@ -1,3 +1,4 @@
+import { ITopicTree } from '@/lib/markdown/help-utils'
 import type { IClassProps } from '@interfaces/class-props'
 import { APP_HELP_API_URL } from '@lib/edb/edb'
 import { httpFetch } from '@lib/http/http-fetch'
@@ -6,7 +7,6 @@ import Fuse from 'fuse.js'
 import { useMemo, useState } from 'react'
 import { Autocomplete } from '../autocomplete'
 import { SearchIcon } from '../icons/search-icon'
-import type { ITopicTree } from './help-tree-node'
 
 export type IHelpTopic = {
   title: string
