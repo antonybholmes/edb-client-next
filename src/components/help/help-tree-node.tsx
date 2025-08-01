@@ -1,7 +1,6 @@
 'use client'
 
 import { HelpNode } from '@/lib/markdown/help-utils'
-import { BUTTON_MD_H_CLS } from '@/theme'
 import type { IChildrenProps } from '@interfaces/children-props'
 import { cn } from '@lib/shadcn-utils'
 import { createContext, useContext, useState } from 'react'
@@ -88,8 +87,8 @@ function BaseHelpTreeNode({ level, node }: { level: number; node: HelpNode }) {
   const isValidSlug = true //validSlugs.has(slug)
 
   return (
-    <li className="flex flex-col gap-y-0.5">
-      <VCenterRow className={cn(BUTTON_MD_H_CLS, 'gap-x-1')}>
+    <li className="flex flex-col gap-y-0.5 ">
+      <VCenterRow className="h-9 gap-x-1">
         <span
           className="data-[checked=true]:bg-theme w-1 h-5 rounded-full shrink-0"
           data-checked={isSelected}
@@ -98,7 +97,9 @@ function BaseHelpTreeNode({ level, node }: { level: number; node: HelpNode }) {
         <VCenterRow
           className={cn(
             'justify-between items-center grow shrink-0 rounded-theme h-full gap-x-2',
-            isSelected ? 'bg-muted/70 font-semibold' : 'hover:bg-muted/50'
+            isSelected
+              ? 'bg-muted/70 font-semibold'
+              : 'text-foreground/70 hover:font-medium hover:text-foreground'
           )}
         >
           {isValidSlug && (

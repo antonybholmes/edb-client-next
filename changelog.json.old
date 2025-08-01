@@ -1256,6 +1256,10 @@
         {
           "msg": "Fixed help routes",
           "date": "2025-08-01T22:22:13.605Z"
+        },
+        {
+          "msg": "Fixed help url",
+          "date": "2025-08-01T22:26:09.909Z"
         }
       ]
     },

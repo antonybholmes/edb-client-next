@@ -2,6 +2,10 @@
 
 ## 24.6 (Aug, 2025)
 
+### Changed
+
+- Refined help.
+
 ### Fixed
 
 - Fixed help url.
