@@ -1,4 +1,4 @@
-import { ITopicTree } from '@/lib/markdown/help-utils'
+import { HelpNode } from '@/lib/markdown/help-utils'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
@@ -8,13 +8,7 @@ import { DialogDescription, DialogTitle } from '../shadcn/ui/themed/dialog'
 import { Sheet, SheetContent, SheetTrigger } from '../shadcn/ui/themed/sheet'
 import { HelpTreeNode } from './help-tree-node'
 
-export function HelpMenu({
-  tree,
-  node,
-}: {
-  tree: ITopicTree
-  node: ITopicTree
-}) {
+export function HelpMenu({ tree, node }: { tree: HelpNode; node: HelpNode }) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -31,13 +25,15 @@ export function HelpMenu({
           </button>
         </VCenterRow>
 
-        <ul className="text-xs">
-          {tree.children.map((t, ti) => {
-            return (
-              <HelpTreeNode key={ti} node={t} currentNode={node} level={0} />
-            )
-          })}
-        </ul>
+        {tree.children && tree.children.length > 0 && (
+          <ul className="text-xs">
+            {tree.children.map((t, ti) => {
+              return (
+                <HelpTreeNode key={ti} node={t} currentNode={node} level={0} />
+              )
+            })}
+          </ul>
+        )}
 
         <VisuallyHidden asChild>
           <DialogTitle>Help menu</DialogTitle>

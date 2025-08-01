@@ -12,7 +12,7 @@ export type ITopicTree = {
 
 export type HelpNode = {
   type: 'file' | 'dir'
-  slug: string
+  slug: string[]
   title: string
   description: string
   fullPath?: string // For files, not directories

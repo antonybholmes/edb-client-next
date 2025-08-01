@@ -1236,6 +1236,12 @@
           "msg": "Added help infrastructure and page creation",
           "date": "2025-08-01T20:50:37.359Z"
         }
+      ],
+      "changed": [
+        {
+          "msg": "Help system working",
+          "date": "2025-08-01T21:35:30.870Z"
+        }
       ]
     },
     "author": "Antony Holmes",

@@ -6,7 +6,7 @@ import path from 'path'
 
 function flattenNodes(
   nav: HelpNode[],
-  ret: { title: string; description: string; slug: string }[] = []
+  ret: { title: string; description: string; slug: string[] }[] = []
 ) {
   ret.push(
     ...nav
@@ -62,7 +62,7 @@ function buildNav(dirPath: string, basePath: string = ''): HelpNode[] {
           type: 'dir',
           title: capitalCase(entry.name),
           description: '',
-          slug: relativeSlug, //entry.name,
+          slug: relativeSlug.split('/'),
           children: buildNav(fullPath, relativeSlug),
         }
       }
@@ -70,7 +70,13 @@ function buildNav(dirPath: string, basePath: string = ''): HelpNode[] {
       if (entry.isFile() && entry.name.endsWith('.md')) {
         const slug = relativeSlug.replace(/\.mdx?$/, '')
         const { title, description } = extractTitle(fullPath)
-        return { type: 'file', slug, title, description, fullPath }
+        return {
+          type: 'file',
+          slug: slug.split('/'),
+          title,
+          description,
+          fullPath,
+        }
       }
 
       return null

@@ -1,4 +1,6 @@
-import { ITopicTree } from '@/lib/markdown/help-utils'
+'use client'
+
+import { HelpNode } from '@/lib/markdown/help-utils'
 import { BUTTON_MD_H_CLS } from '@/theme'
 import type { IChildrenProps } from '@interfaces/children-props'
 import { cn } from '@lib/shadcn-utils'
@@ -10,7 +12,7 @@ const HelpNodeContext = createContext<{
   selected: string
   setSelected: (selected: string) => void
 
-  currentNode: ITopicTree | null
+  currentNode: HelpNode | null
 }>({
   selected: '',
   setSelected: () => {},
@@ -22,7 +24,7 @@ interface IHelpNodeProps extends IChildrenProps {
   selected: string
   setSelected: (selected: string) => void
 
-  currentNode: ITopicTree
+  currentNode: HelpNode
 }
 
 export const HelpNodeProvider = ({
@@ -45,15 +47,15 @@ export const HelpNodeProvider = ({
 }
 
 export function HelpTreeNode({
-  level,
   node,
   currentNode,
+  level = 0,
 }: {
-  level: number
-  node: ITopicTree
-  currentNode: ITopicTree
+  node: HelpNode
+  currentNode: HelpNode
+  level?: number
 }) {
-  const [selected, setSelected] = useState(currentNode.slug)
+  const [selected, setSelected] = useState(currentNode.slug.join('/'))
 
   return (
     <HelpNodeProvider
@@ -66,13 +68,7 @@ export function HelpTreeNode({
   )
 }
 
-function BaseHelpTreeNode({
-  level,
-  node,
-}: {
-  level: number
-  node: ITopicTree
-}) {
+function BaseHelpTreeNode({ level, node }: { level: number; node: HelpNode }) {
   const { selected, setSelected, currentNode } = useContext(HelpNodeContext)
   const hasChildren = node.children && node.children.length > 0
 
@@ -80,12 +76,12 @@ function BaseHelpTreeNode({
   // with the node path at the same level. If they mirror each other, keep
   // all the nodes open
   const [isOpen, setIsOpen] = useState(
-    node.path[level] === currentNode!.path[level]
+    node.slug[level] === currentNode!.slug[level]
   )
 
   const name = node.title // .name.replace(/[\_\-]/g, ' ')
 
-  const isSelected = selected === node.slug
+  const isSelected = selected === node.slug.join('/')
 
   //const slug = getSlug(node.path.join('/'))
 
@@ -102,12 +98,12 @@ function BaseHelpTreeNode({
         <VCenterRow
           className={cn(
             'justify-between items-center grow shrink-0 rounded-theme h-full gap-x-2',
-            [isSelected, 'bg-muted/70 font-bold', 'hover:bg-muted/50']
+            isSelected ? 'bg-muted/70 font-semibold' : 'hover:bg-muted/50'
           )}
         >
           {isValidSlug && (
             <a
-              href={`/help/${node.slug}`}
+              href={`/help/${node.slug.join('/')}`}
               className="flex flex-row items-center justify-start grow h-full"
               style={{
                 paddingLeft: `${level * 0.5 + 0.5}rem`,
@@ -124,7 +120,7 @@ function BaseHelpTreeNode({
               onClick={() => {
                 setIsOpen(!isOpen)
 
-                setSelected(node.slug)
+                setSelected(node.slug.join('/'))
               }}
               style={{
                 paddingLeft: `${level * 0.5 + 0.5}rem`,
@@ -148,7 +144,7 @@ function BaseHelpTreeNode({
           )}
         </VCenterRow>
       </VCenterRow>
-      {hasChildren && isOpen && (
+      {node && node.children && isOpen && (
         <ul className="flex flex-col gap-y-0.5">
           {node.children.map((child, index) => (
             <BaseHelpTreeNode key={index} node={child} level={level + 1} />
