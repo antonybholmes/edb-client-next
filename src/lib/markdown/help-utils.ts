@@ -9,3 +9,12 @@ export type ITopicTree = {
   slug: string
   children: ITopicTree[]
 }
+
+export type HelpNode = {
+  type: 'file' | 'dir'
+  slug: string
+  title: string
+  description: string
+  fullPath?: string // For files, not directories
+  children?: HelpNode[]
+}

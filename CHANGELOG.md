@@ -2,6 +2,10 @@
 
 ## 24.5 (Jul, 2025)
 
+### Added
+
+- Added help infrastructure and page creation.
+
 ### Changed
 
 - More robust CSRF handling. Revised account page.

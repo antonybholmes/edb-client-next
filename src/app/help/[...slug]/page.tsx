@@ -1,89 +1,49 @@
+import { HelpAutocomplete } from '@/components/help/help-autocomplete'
 import { BaseCol } from '@/components/layout/base-col'
+import { HCenterRow } from '@/components/layout/h-center-row'
 import { MarkdownContent } from '@/components/markdown-content'
-import { getHelpFiles, HELP_DIRECTORY } from '@/lib/markdown/help'
-import { ITopicTree } from '@/lib/markdown/help-utils'
-import { IPostData, loadMarkdownFile } from '@/lib/markdown/markdown'
+import { HELP_DIRECTORY } from '@/lib/markdown/help'
+import { HelpNode } from '@/lib/markdown/help-utils'
+import { loadMarkdownFile } from '@/lib/markdown/markdown'
 import path from 'path'
+import nav from '../../../../content/help/toc.json' // or use dynamic fs read
 
-function buildPostTree(posts: IPostData[]): ITopicTree {
-  // Map each entry by its directory path
-  const nodesByDir: Record<string, ITopicTree> = {}
+function getAllSlugs(nav: HelpNode[]): string[][] {
+  const paths: string[][] = []
 
-  for (const post of posts) {
-    //const segments = post.id.split('/')
-
-    const node: ITopicTree = {
-      title: post.data.title as string,
-      description: (post.data.description as string) ?? '',
-      weight: (post.data.weight as number) ?? 0,
-      slug: post.id as string,
-      path: [],
-      children: [],
-    }
-    nodesByDir[post.id] = node
-  }
-
-  // Build tree
-  let root: ITopicTree = {
-    title: 'Root',
-    description: 'Root',
-    weight: -1,
-    slug: '',
-    path: [],
-    children: [],
-  }
-
-  for (const [dir, node] of Object.entries(nodesByDir)) {
-    const parentSegments = dir.split('/').slice(0, -1)
-    const parentDir = parentSegments.join('/')
-    const parent = nodesByDir[parentDir]
-
-    if (parent) {
-      parent.children.push(node)
+  function walk(node: HelpNode) {
+    if (node.children && node.children.length > 0) {
+      node.children.forEach(walk)
     } else {
-      root.children.push(node)
+      paths.push(node.slug.split('/'))
     }
   }
 
-  // Recursively sort children by weight
-  function sortTree(node: ITopicTree, currentPath: string[] = []) {
-    // do not add root to the path
-    node.path =
-      node.title !== 'Root' ? [...currentPath, node.title] : currentPath
+  nav.forEach(walk)
+  return paths
+}
 
-    node.children.sort((a, b) => a.weight - b.weight)
+function getAllNodes(nav: HelpNode[]): Record<string, HelpNode> {
+  const nodes: Record<string, HelpNode> = {}
 
-    for (const child of node.children) {
-      sortTree(child, node.path)
+  function walk(node: HelpNode) {
+    nodes[node.slug] = node
+    if (node.children && node.children.length > 0) {
+      node.children.forEach(walk)
     }
   }
 
-  // sort the children so we don't add root to the path
-  // for (const child of root.children) {
-  //   sortTree(child)
-  // }
-
-  sortTree(root)
-
-  return root
+  nav.forEach(walk)
+  return nodes
 }
 
 export function generateStaticParams() {
-  // const pages = await client.queries.postConnection()
-  // const paths = pages.data?.postConnection?.edges?.map((edge) => ({
-  //   filename: edge?.node?._sys.breadcrumbs,
-  // }))
-
-  const markdownFiles = getHelpFiles()
-
-  console.log('s', markdownFiles)
-
-  return markdownFiles.map((file) => {
-    const relativePath = path.relative(HELP_DIRECTORY, file)
-    const slug = relativePath.replace(/\.mdx?$/, '').split(path.sep) //filePath.replace(/\\/g, '/')
-    console.log('slugs', slug)
-    return { slug }
-  })
+  const slugs = getAllSlugs(nav as HelpNode[])
+  console.log(
+    'Generated slugs:',
+    slugs.map((slugArr) => ({ slug: slugArr }))
+  )
+  return slugs.map((slugArr) => ({ slug: slugArr }))
 }
 
 export default async function HelpPage({
@@ -93,40 +53,47 @@ export default async function HelpPage({
 }) {
   const { slug } = await params
 
-  console.log('slug', slug)
+  const slugMap = getAllNodes(nav as HelpNode[])
 
-  const fullPath = path.join(HELP_DIRECTORY, ...slug) + '.md'
+  const node = slugMap[slug.join('/')]
 
-  const { contentHtml } = await loadMarkdownFile(slug.join('/'), fullPath)
+  if (!node) {
+    return <div className="p-4">Help page not found</div>
+  }
 
-  // Get the file path for the specific Markdown file based on the slug
-  //const filePath = path.join(process.cwd(), 'content', `${slug}.md`)
-  //const fileContent = fs.readFileSync(filePath, 'utf8')
-
-  return (
-    <article className="flex flex-col gap-y-4">
-      <BaseCol className="shrink-0 gap-y-2 rounded-theme border border-border bg-background p-4 text-xs">
-        {/* <ul className="flex flex-col gap-y-2">
-      {
-        data.map((h:unknown) => {
-          return (
-            <li>
-              <ThemeLink
-                href={`#${h.slug}`}
-                aria-label={`Goto help section ${h.text}`}
-              >
-                {h.text}
-              </ThemeLink>
+  if (node.type === 'dir') {
+    return (
+      <div className="p-4">
+        <h1 className="text-lg font-semibold">{node.title}</h1>
+        <ul className="list-disc pl-5">
+          {node.children!.map((child) => (
+            <li key={child.slug}>
+              <a href={`/help/${child.slug}`}>{child.title}</a>
             </li>
-          )
-        })
-      }
-    </ul> */}
-      </BaseCol>
+          ))}
+        </ul>
+      </div>
+    )
+  } else {
+    const fullPath = path.join(HELP_DIRECTORY, ...slug) + '.md'
 
-      <MarkdownContent className="help flex flex-col gap-y-4 py-1 text-xs">
-        {contentHtml}
-      </MarkdownContent>
-    </article>
-  )
+    const { contentHtml } = await loadMarkdownFile(slug.join('/'), fullPath)
+
+    // Get the file path for the specific Markdown file based on the slug
+    //const filePath = path.join(process.cwd(), 'content', `${slug}.md`)
+    //const fileContent = fs.readFileSync(filePath, 'utf8')
+
+    return (
+      <BaseCol className="flex flex-col gap-y-4 p-4">
+        <HCenterRow className="hidden lg:flex">
+          <HelpAutocomplete className="w-1/2 xl:w-2/5" />
+        </HCenterRow>
+        <article className="flex flex-col gap-y-4">
+          <MarkdownContent className="help flex flex-col gap-y-4 py-1 text-xs">
+            {contentHtml}
+          </MarkdownContent>
+        </article>{' '}
+      </BaseCol>
+    )
+  }
 }

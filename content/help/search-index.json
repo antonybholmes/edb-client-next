@@ -1,0 +1,27 @@
+[
+  {
+    "title": "GSEA",
+    "description": "GSEA allows you to reformat GSEA data from the Broad GSEA tool.",
+    "slug": "apps/gsea"
+  },
+  {
+    "title": "Matcalc",
+    "description": "Tools for analyzing and plotting gene expression and other biological data.",
+    "slug": "apps/matcalc"
+  },
+  {
+    "title": "Pathway",
+    "description": "",
+    "slug": "apps/pathway"
+  },
+  {
+    "title": "Gene Expression",
+    "description": "",
+    "slug": "apps/matcalc/gene-expression"
+  },
+  {
+    "title": "Heatmap",
+    "description": "",
+    "slug": "apps/matcalc/heatmap"
+  }
+]

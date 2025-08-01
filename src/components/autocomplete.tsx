@@ -1,7 +1,6 @@
 import { useClickListener } from '@/hooks/click-listener'
 import { useKeyDownListener } from '@/hooks/keydown-listener'
 import { cn } from '@lib/shadcn-utils'
-import { randId } from '@lib/utils'
 import {
   Children,
   useRef,
@@ -29,9 +28,6 @@ export function Autocomplete({
   autoOpen?: boolean
 }) {
   const c = Children.toArray(children)
-
-  //const [value, setValue] = useState('')
-  const [_id] = useState(id ?? randId('autocomplete'))
 
   //const [isOpen, setIsOpen] = useState(false)
   const [hasFocus, setHasFocus] = useState(false)
@@ -64,7 +60,7 @@ export function Autocomplete({
 
   let ret: ReactNode = (
     <BaseCol
-      id={_id}
+      id={id}
       data-open={_isOpen}
       className={cn('relative group', label !== undefined ? 'grow' : className)}
       ref={ref}
@@ -135,7 +131,7 @@ export function Autocomplete({
         {label && (
           <Label
             className="text-sm font-bold text-foreground/80 px-0.5"
-            htmlFor={_id}
+            htmlFor={id}
           >
             {label}
           </Label>

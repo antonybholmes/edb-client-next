@@ -46,6 +46,7 @@ import {
 } from './amino-acids'
 import { useLollipopSettings } from './lollipop-settings-store'
 
+import { logger } from '@/lib/logger'
 import { LollipopContext } from './lollipop-provider'
 
 // export async function searchUniprot(
@@ -230,10 +231,10 @@ export function ProteinPanel() {
         placeholder="Sequence"
         aria-label="Protein sequence"
         value={protein.sequence}
-        onTextChange={v => {
-          console.log('Setting protein sequence:', v)
+        onTextChange={(v) => {
+          logger.log('Setting protein sequence:', v)
 
-          const p = produce(protein, draft => {
+          const p = produce(protein, (draft) => {
             draft.sequence = toAA(v[0]!)
           })
 
@@ -292,9 +293,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                 value={displayProps.axes.x.width}
                 limit={[1, 10000]}
                 //w="w-14"
-                onNumChange={v =>
+                onNumChange={(v) =>
                   setDisplayProps(
-                    produce(displayProps, draft => {
+                    produce(displayProps, (draft) => {
                       draft.axes.x.width = v
                     })
                   )
@@ -306,9 +307,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                 id="cell"
                 value={displayProps.grid.cell.w}
                 w="w-14"
-                onNumChange={v =>
+                onNumChange={(v) =>
                   setDisplayProps(
-                    produce(displayProps, draft => {
+                    produce(displayProps, (draft) => {
                       draft.grid.cell.w = v
                       draft.grid.cell.h = v
                     })
@@ -343,9 +344,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
             <SwitchPropRow
               title="Title"
               checked={displayProps.title.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.title.show = state
                   })
                 )
@@ -355,9 +356,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
             <SwitchPropRow
               title="Legend"
               checked={displayProps.legend.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.legend.show = state
                   })
                 )
@@ -367,9 +368,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                 id="legend-mutations-label"
                 value={displayProps.legend.mutations.label}
                 className="w-full rounded-theme"
-                onTextChange={v =>
+                onTextChange={(v) =>
                   setDisplayProps(
-                    produce(displayProps, draft => {
+                    produce(displayProps, (draft) => {
                       draft.legend.mutations.label = v
                     })
                   )
@@ -385,9 +386,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
             <SwitchPropRow
               title="Show"
               checked={displayProps.axes.x.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.axes.x.show = state
                   })
                 )
@@ -398,9 +399,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
               title="Last X-Tick"
               disabled={!displayProps.axes.x.show}
               checked={displayProps.axes.x.showEndTick}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.axes.x.showEndTick = state
                   })
                 )
@@ -415,9 +416,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
             <SwitchPropRow
               title="Show"
               checked={displayProps.axes.y.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.axes.y.show = state
                   })
                 )
@@ -426,9 +427,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
             <SwitchPropRow
               title="Y-Tick Lines"
               checked={displayProps.axes.y.ticks.lines.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.axes.y.ticks.lines.show = state
                   })
                 )
@@ -439,9 +440,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
               title="Y-Tick Zero Line"
               disabled={!displayProps.axes.y.ticks.lines.show}
               checked={displayProps.axes.y.ticks.lines.showZeroLine}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.axes.y.ticks.lines.showZeroLine = state
                   })
                 )
@@ -457,9 +458,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
             <SwitchPropRow
               title="Show"
               checked={displayProps.seq.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.seq.show = state
                   })
                 )
@@ -469,9 +470,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
             <SwitchPropRow
               title="Colors"
               checked={aaColor.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 setAAColor(
-                  produce(aaColor, draft => {
+                  produce(aaColor, (draft) => {
                     draft.show = state
                   })
                 )
@@ -503,7 +504,7 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                       <DropdownMenuContent align="end">
                         {Object.keys(AA_COLOR_SCHEMES)
                           .sort()
-                          .map(key => (
+                          .map((key) => (
                             <DropdownMenuItem
                               key={key}
                               onClick={() =>
@@ -537,9 +538,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                           </VCenterRow>
                           <ColorPickerButton
                             color={aaColor.scheme[aa]!}
-                            onColorChange={color =>
+                            onColorChange={(color) =>
                               setAAColor(
-                                produce(aaColor, draft => {
+                                produce(aaColor, (draft) => {
                                   draft.scheme[aa] = color
                                 })
                               )
@@ -581,9 +582,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
             <SwitchPropRow
               title="Invert"
               checked={aaColor.invert}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 setAAColor(
-                  produce(aaColor, draft => {
+                  produce(aaColor, (draft) => {
                     draft.invert = state
                   })
                 )

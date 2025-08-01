@@ -234,33 +234,33 @@ export function MyAccountPage() {
     <CenterLayout title={TEXT_MY_ACCOUNT}>
       <BaseCol className="text-sm gap-y-8 px-2">
         <Card className="shadow-md lg:w-192">
-          <CardHeader>
-            <CardTitle>{TEXT_MY_ACCOUNT}</CardTitle>
+          <CardHeader className="flex flex-row items-start justify-between">
+            <BaseCol className="gap-y-2">
+              <CardTitle>{TEXT_MY_ACCOUNT}</CardTitle>
 
-            <VCenterRow className="justify-between">
               <CardDescription>
                 Update your account information.
               </CardDescription>
+            </BaseCol>
 
-              <VCenterRow className="gap-x-2">
-                <IconButton
-                  size="icon-lg"
-                  onClick={() => {
-                    refreshSession()
-                  }}
-                  title="Reload account information"
-                >
-                  <ReloadIcon />
-                </IconButton>
-                <Button
-                  variant="theme"
-                  size="lg"
-                  //className="w-full"
-                  onClick={() => btnRef.current?.click()}
-                >
-                  {TEXT_SAVE}
-                </Button>
-              </VCenterRow>
+            <VCenterRow className="gap-x-2">
+              <IconButton
+                size="icon-lg"
+                onClick={() => {
+                  refreshSession()
+                }}
+                title="Reload account information"
+              >
+                <ReloadIcon />
+              </IconButton>
+              <Button
+                variant="theme"
+                size="lg"
+                //className="w-full"
+                onClick={() => btnRef.current?.click()}
+              >
+                {TEXT_SAVE}
+              </Button>
             </VCenterRow>
           </CardHeader>
 
@@ -493,11 +493,7 @@ export function MyAccountPage() {
 
         <PasswordCard />
 
-        <BaseCol className="gap-y-2 text-xs">
-          <CardTitle>Session</CardTitle>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 items-start text-xs">
-            {/* <div>Created</div>
+        {/* <div>Created</div>
               <div className="col-span-2">
                 {format(session?.createdAt ?? now, 'MMM, dd yyyy')} (Local time:{' '}
                 {format(session?.createdAt ?? now, 'HH:mm:ss')}, UTC:{' '}
@@ -506,16 +502,13 @@ export function MyAccountPage() {
               </div>
               <div /> */}
 
-            <div>Expires</div>
-            <div className="col-span-2">
-              {format(session?.expiresAt ?? now, 'MMM, dd yyyy')} (Local time:{' '}
-              {format(session?.expiresAt ?? now, 'HH:mm:ss')}, UTC:{' '}
-              {formatInTimeZone(session?.expiresAt ?? now, 'UTC', 'HH:mm:ss')})
-            </div>
-          </div>
-        </BaseCol>
+        <p>
+          Session Expires {format(session?.expiresAt ?? now, 'MMM, dd yyyy')} at{' '}
+          {format(session?.expiresAt ?? now, 'HH:mm:ss')} (
+          {formatInTimeZone(session?.expiresAt ?? now, 'UTC', 'HH:mm:ss')} UTC)
+        </p>
 
-        <VCenterRow className="justify-end">
+        <VCenterRow>
           <Button
             variant="secondary"
             size="lg"

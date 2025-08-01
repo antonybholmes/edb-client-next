@@ -5,7 +5,6 @@ import { SESSION_UPDATE_PASSWORD_URL } from '@lib/edb/edb'
 import { useRef, type BaseSyntheticEvent } from 'react'
 
 import { FormInputError } from '@/components/input-error'
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { Button } from '@/components/shadcn/ui/themed/button'
 import {
   Card,
@@ -21,6 +20,7 @@ import { Label } from '@/components/shadcn/ui/themed/label'
 import { TEXT_UPDATE } from '@/consts'
 import { httpFetch } from '@/lib/http/http-fetch'
 
+import { BaseCol } from '@/components/layout/base-col'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEdbAuth } from '@lib/edb/edb-auth'
 import { csfrHeaders } from '@lib/http/urls'
@@ -175,24 +175,24 @@ export function PasswordCard() {
 
   return (
     <Card className="shadow-md lg:w-192">
-      <CardHeader>
-        <CardTitle>Password</CardTitle>
+      <CardHeader className="flex flex-row items-start justify-between">
+        <BaseCol className="gap-y-2">
+          <CardTitle>Password</CardTitle>
 
-        <VCenterRow className="justify-between">
           <CardDescription>
             Update your password. This is optional if you are using passwordless
             sign in.
           </CardDescription>
+        </BaseCol>
 
-          <Button
-            variant="theme"
-            size="lg"
-            onClick={() => btnRef.current?.click()}
-            disabled={session?.user.isLocked}
-          >
-            {TEXT_UPDATE}
-          </Button>
-        </VCenterRow>
+        <Button
+          variant="theme"
+          size="lg"
+          onClick={() => btnRef.current?.click()}
+          disabled={session?.user.isLocked}
+        >
+          {TEXT_UPDATE}
+        </Button>
       </CardHeader>
 
       <CardContent>
