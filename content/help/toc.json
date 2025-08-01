@@ -10,7 +10,7 @@
       {
         "type": "dir",
         "title": "Matcalc",
-        "description": "",
+        "description": "Tools for analyzing and plotting gene expression and other biological data.",
         "slug": [
           "apps",
           "matcalc"
@@ -38,7 +38,8 @@
             "description": "",
             "fullPath": "content/help/apps/matcalc/heatmap.md"
           }
-        ]
+        ],
+        "fullPath": "content/help/apps/matcalc/index.md"
       },
       {
         "type": "file",
@@ -49,16 +50,6 @@
         "title": "GSEA",
         "description": "GSEA allows you to reformat GSEA data from the Broad GSEA tool.",
         "fullPath": "content/help/apps/gsea.md"
-      },
-      {
-        "type": "file",
-        "slug": [
-          "apps",
-          "matcalc"
-        ],
-        "title": "Matcalc",
-        "description": "Tools for analyzing and plotting gene expression and other biological data.",
-        "fullPath": "content/help/apps/matcalc.md"
       },
       {
         "type": "file",

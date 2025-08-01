@@ -4,11 +4,9 @@ import { BaseCol } from '@/components/layout/base-col'
 import { HCenterRow } from '@/components/layout/h-center-row'
 import { ThemeLink } from '@/components/link/theme-link'
 import { MarkdownContent } from '@/components/markdown-content'
-import { HELP_DIRECTORY } from '@/lib/markdown/help'
 import { HelpNode } from '@/lib/markdown/help-utils'
 import { loadMarkdownFile } from '@/lib/markdown/markdown'
 import { cn } from '@/lib/shadcn-utils'
-import path from 'path'
 import nav from '../../../../content/help/toc.json' // or use dynamic fs read
 
 function getAllSlugs(nav: HelpNode[]): string[][] {
@@ -124,7 +122,7 @@ export default async function HelpPage({
     return <div className="p-4">Help page not found</div>
   }
 
-  if (node.type === 'dir') {
+  if (node.type === 'dir' && !node.fullPath) {
     return (
       <BaseCol className="flex flex-col gap-y-4 p-4">
         <HCenterRow className="hidden lg:flex">
@@ -140,37 +138,38 @@ export default async function HelpPage({
           <article className="flex flex-col gap-y-4 col-span-3">
             <h1 className="text-lg font-semibold">{node.title}</h1>
             <ul>
-              {node
-                .children!.filter((node) => node.type === 'file')
-                .map((child, ci) => (
-                  <li
-                    key={child.slug.join('/')}
-                    className={cn(
-                      'flex flex-col gap-y-2 py-5',
-                      ci > 0 && 'border-t border-border/50'
-                    )}
+              {node.children!.map((child, ci) => (
+                <li
+                  key={child.slug.join('/')}
+                  className={cn(
+                    'flex flex-col gap-y-2 py-5',
+                    ci > 0 && 'border-t border-border/50'
+                  )}
+                >
+                  <ThemeLink
+                    href={`/help/${child.slug.join('/')}`}
+                    className="font-semibold"
                   >
-                    <ThemeLink
-                      href={`/help/${child.slug.join('/')}`}
-                      className="font-semibold"
-                    >
-                      {child.title}
-                    </ThemeLink>
+                    {child.title}
+                  </ThemeLink>
 
-                    <span className="text-sm text-foreground/70">
-                      {child.description}
-                    </span>
-                  </li>
-                ))}
+                  <span className="text-sm text-foreground/70">
+                    {child.description}
+                  </span>
+                </li>
+              ))}
             </ul>
           </article>
         </div>
       </BaseCol>
     )
   } else {
-    const fullPath = path.join(HELP_DIRECTORY, ...slug) + '.md'
+    //const fullPath = path.join(HELP_DIRECTORY, ...slug) + '.md'
 
-    const { contentHtml } = await loadMarkdownFile(slug.join('/'), fullPath)
+    const { contentHtml } = await loadMarkdownFile(
+      slug.join('/'),
+      node.fullPath || ''
+    )
 
     // Get the file path for the specific Markdown file based on the slug
     //const filePath = path.join(process.cwd(), 'content', `${slug}.md`)

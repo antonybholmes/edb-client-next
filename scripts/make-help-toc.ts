@@ -58,16 +58,35 @@ function buildNav(dirPath: string, basePath: string = ''): HelpNode[] {
       const relativeSlug = path.join(basePath, entry.name)
 
       if (entry.isDirectory()) {
-        return {
-          type: 'dir',
-          title: capitalCase(entry.name),
-          description: '',
-          slug: relativeSlug.split('/'),
-          children: buildNav(fullPath, relativeSlug),
+        // if index.md exists, use it as the full path
+        const indexPath = path.join(fullPath, 'index.md')
+        if (fs.existsSync(indexPath)) {
+          const { title, description } = extractTitle(indexPath)
+
+          return {
+            type: 'dir',
+            title: title,
+            description: description,
+            slug: relativeSlug.split('/'),
+            children: buildNav(fullPath, relativeSlug),
+            fullPath: indexPath,
+          }
+        } else {
+          return {
+            type: 'dir',
+            title: capitalCase(entry.name),
+            description: '',
+            slug: relativeSlug.split('/'),
+            children: buildNav(fullPath, relativeSlug),
+          }
         }
       }
 
-      if (entry.isFile() && entry.name.endsWith('.md')) {
+      if (
+        entry.isFile() &&
+        entry.name.endsWith('.md') &&
+        entry.name !== 'index.md'
+      ) {
         const slug = relativeSlug.replace(/\.mdx?$/, '')
         const { title, description } = extractTitle(fullPath)
         return {

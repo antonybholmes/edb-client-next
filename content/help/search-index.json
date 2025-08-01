@@ -8,14 +8,6 @@
     ]
   },
   {
-    "title": "Matcalc",
-    "description": "Tools for analyzing and plotting gene expression and other biological data.",
-    "slug": [
-      "apps",
-      "matcalc"
-    ]
-  },
-  {
     "title": "Pathway",
     "description": "",
     "slug": [

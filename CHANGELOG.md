@@ -1,5 +1,12 @@
 # Changelog
 
+## 24.6 (Aug, 2025)
+
+### Fixed
+
+- Fixed help side menu.
+
+
 ## 24.5 (Jul, 2025)
 
 ### Added
@@ -8,6 +15,7 @@
 
 ### Changed
 
+- Help system working.
 - More robust CSRF handling. Revised account page.
 - Fixes to auth stores and seq browser. UI fixes.
 

@@ -1229,6 +1229,10 @@
         {
           "msg": "More robust CSRF handling. Revised account page",
           "date": "2025-07-31T21:15:53.026Z"
+        },
+        {
+          "msg": "Help system working",
+          "date": "2025-08-01T21:35:30.870Z"
         }
       ],
       "Added": [
@@ -1236,15 +1240,22 @@
           "msg": "Added help infrastructure and page creation",
           "date": "2025-08-01T20:50:37.359Z"
         }
-      ],
-      "changed": [
-        {
-          "msg": "Help system working",
-          "date": "2025-08-01T21:35:30.870Z"
-        }
       ]
     },
     "author": "Antony Holmes",
     "date": "2025-07-30T23:06:22.540Z"
+  },
+  {
+    "version": "24.6",
+    "messages": {
+      "Fixed": [
+        {
+          "msg": "Fixed help side menu",
+          "date": "2025-08-01T22:07:30.899Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-08-01T22:07:30.899Z"
   }
 ]

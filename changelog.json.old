@@ -1229,6 +1229,10 @@
         {
           "msg": "More robust CSRF handling. Revised account page",
           "date": "2025-07-31T21:15:53.026Z"
+        },
+        {
+          "msg": "Help system working",
+          "date": "2025-08-01T21:35:30.870Z"
         }
       ],
       "Added": [
