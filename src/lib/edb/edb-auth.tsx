@@ -497,7 +497,7 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
     })
 
     // get a new token for this session
-    await fetchCsrfToken()
+    //await fetchCsrfToken()
 
     const session = await fetchSession()
 
@@ -507,7 +507,7 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
   async function signInWithSupabase(
     token: string
   ): Promise<IEdbSession | null> {
-    const csrfToken = await queryClient.fetchQuery({
+    await queryClient.fetchQuery({
       queryKey: ['supabase-signin', token],
       queryFn: async () => {
         // force session creation
@@ -518,15 +518,11 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
             withCredentials: true,
           }
         )
-
-        const csrfToken = res.data.csrfToken || ''
-
-        return csrfToken
       },
     })
 
     // get a new token for this session
-    await fetchCsrfToken()
+    //await fetchCsrfToken()
 
     const session = await fetchSession()
 

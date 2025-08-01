@@ -10,7 +10,7 @@ function flattenNodes(
 ) {
   ret.push(
     ...nav
-      .filter((node) => node.type === 'file')
+      .filter((node) => Boolean(node.fullPath))
       .map((node) => ({
         title: node.title,
         description: node.description,

@@ -4,23 +4,26 @@ import { BaseCol } from '@/components/layout/base-col'
 import { HCenterRow } from '@/components/layout/h-center-row'
 import { ThemeLink } from '@/components/link/theme-link'
 import { MarkdownContent } from '@/components/markdown-content'
+import { logger } from '@/lib/logger'
 import { HelpNode } from '@/lib/markdown/help-utils'
 import { loadMarkdownFile } from '@/lib/markdown/markdown'
 import { cn } from '@/lib/shadcn-utils'
 import nav from '../../../../content/help/toc.json' // or use dynamic fs read
 
-function getAllSlugs(nav: HelpNode[]): string[][] {
+function getAllSlugs(nav: HelpNode): string[][] {
   const paths: string[][] = []
 
   function walk(node: HelpNode) {
     if (node.children && node.children.length > 0) {
-      node.children.forEach(walk)
-    } else {
-      paths.push(node.slug)
+      for (const child of node.children) {
+        walk(child)
+      }
     }
+
+    paths.push(node.slug)
   }
 
-  nav.forEach(walk)
+  walk(nav)
   return paths
 }
 
@@ -39,8 +42,8 @@ function getAllNodes(nav: HelpNode[]): Record<string, HelpNode> {
 }
 
 export function generateStaticParams() {
-  const slugs = getAllSlugs(nav as HelpNode[])
-  console.log(
+  const slugs = getAllSlugs(nav[0] as HelpNode)
+  logger.log(
     'Generated slugs:',
     slugs.map((slugArr) => ({ slug: slugArr }))
   )
