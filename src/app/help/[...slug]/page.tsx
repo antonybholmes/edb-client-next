@@ -1,8 +1,72 @@
 import { BaseCol } from '@/components/layout/base-col'
 import { MarkdownContent } from '@/components/markdown-content'
 import { getHelpFiles, HELP_DIRECTORY } from '@/lib/markdown/help'
-import { loadMarkdownFile } from '@/lib/markdown/markdown'
+import { ITopicTree } from '@/lib/markdown/help-utils'
+import { IPostData, loadMarkdownFile } from '@/lib/markdown/markdown'
 import path from 'path'
+
+function buildPostTree(posts: IPostData[]): ITopicTree {
+  // Map each entry by its directory path
+  const nodesByDir: Record<string, ITopicTree> = {}
+
+  for (const post of posts) {
+    //const segments = post.id.split('/')
+
+    const node: ITopicTree = {
+      title: post.data.title as string,
+      description: (post.data.description as string) ?? '',
+      weight: (post.data.weight as number) ?? 0,
+      slug: post.id as string,
+      path: [],
+      children: [],
+    }
+    nodesByDir[post.id] = node
+  }
+
+  // Build tree
+  let root: ITopicTree = {
+    title: 'Root',
+    description: 'Root',
+    weight: -1,
+    slug: '',
+    path: [],
+    children: [],
+  }
+
+  for (const [dir, node] of Object.entries(nodesByDir)) {
+    const parentSegments = dir.split('/').slice(0, -1)
+    const parentDir = parentSegments.join('/')
+    const parent = nodesByDir[parentDir]
+
+    if (parent) {
+      parent.children.push(node)
+    } else {
+      root.children.push(node)
+    }
+  }
+
+  // Recursively sort children by weight
+  function sortTree(node: ITopicTree, currentPath: string[] = []) {
+    // do not add root to the path
+    node.path =
+      node.title !== 'Root' ? [...currentPath, node.title] : currentPath
+
+    node.children.sort((a, b) => a.weight - b.weight)
+
+    for (const child of node.children) {
+      sortTree(child, node.path)
+    }
+  }
+
+  // sort the children so we don't add root to the path
+  // for (const child of root.children) {
+  //   sortTree(child)
+  // }
+
+  sortTree(root)
+
+  return root
+}
 
 export function generateStaticParams() {
   // const pages = await client.queries.postConnection()
@@ -25,7 +89,7 @@ export function generateStaticParams() {
 export default async function HelpPage({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string[] }>
 }) {
   const { slug } = await params
 
@@ -33,7 +97,7 @@ export default async function HelpPage({
 
   const fullPath = path.join(HELP_DIRECTORY, ...slug) + '.md'
 
-  const { contentHtml } = await loadMarkdownFile(fullPath)
+  const { contentHtml } = await loadMarkdownFile(slug.join('/'), fullPath)
 
   // Get the file path for the specific Markdown file based on the slug
   //const filePath = path.join(process.cwd(), 'content', `${slug}.md`)

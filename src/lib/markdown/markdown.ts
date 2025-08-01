@@ -1,3 +1,4 @@
+import { IFieldMap } from '@/interfaces/field-map'
 import fs from 'fs'
 import matter from 'gray-matter'
 import path from 'path'
@@ -6,12 +7,18 @@ import html from 'remark-html'
 
 const POSTS_DIRECTORY = path.join(process.cwd(), 'content', 'posts')
 
-export async function loadMarkdownFile(filePath: string): Promise<{
+export interface IPostData {
+  id: string
   contentHtml: string
-  [key: string]: any
-}> {
+  data: IFieldMap
+}
+
+export async function loadMarkdownFile(
+  id: string,
+  fullPath: string
+): Promise<IPostData> {
   //const fullPath = path.join(process.cwd(), filePath)
-  const fileContents = fs.readFileSync(filePath, 'utf8')
+  const fileContents = fs.readFileSync(fullPath, 'utf8')
 
   const { content, data } = matter(fileContents)
 
@@ -19,8 +26,9 @@ export async function loadMarkdownFile(filePath: string): Promise<{
   const contentHtml = processedContent.toString()
 
   return {
+    id,
     contentHtml,
-    ...data,
+    data,
   }
 }
 

@@ -244,6 +244,7 @@ export function MyAccountPage() {
 
               <VCenterRow className="gap-x-2">
                 <IconButton
+                  size="icon-lg"
                   onClick={() => {
                     refreshSession()
                   }}

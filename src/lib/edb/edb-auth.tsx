@@ -47,9 +47,18 @@ export const useCSRFStore = create<ICSRFStore>((set) => ({
   setToken: (token: string) => set({ token }),
 
   fetchToken: async () => {
+    // if token still exists, return it
+    let token = Cookies.get(CSRF_COOKIE_NAME) || ''
+
+    if (token) {
+      logger.log('CSRF token already set:', token)
+      set({ token, error: '' })
+      return token
+    }
+
     try {
       logger.log('Fetching CSRF token from server...')
-      const token = await queryClient.fetchQuery({
+      token = await queryClient.fetchQuery({
         queryKey: ['csrf-token'],
         queryFn: async () => {
           const res = await httpFetch.getJson<{

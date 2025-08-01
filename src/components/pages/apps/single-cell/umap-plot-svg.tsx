@@ -67,7 +67,7 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
 
   function getDisplayClusters(clusters: IScrnaCluster[]): IScrnaCluster[] {
     return clusters.filter(
-      cluster =>
+      (cluster) =>
         cluster.scClass !== '' &&
         (!cluster.scClass.toLowerCase().includes('undet') ||
           settings.legend.showUndetClusters)
@@ -133,7 +133,7 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
           ? settings.legend.colorbar.size.w + 4 * settings.legend.gap
           : 0)
 
-      console.log('rows =>', rows, 'cols =>', cols, plots.length)
+      //console.log('rows =>', rows, 'cols =>', cols, plots.length)
 
       const height =
         Math.max(
@@ -155,28 +155,28 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
         let cdata: number[]
 
         if (plot.mode === 'clusters') {
-          plotdata = clusterInfo.order.map(i => points[i]!)
+          plotdata = clusterInfo.order.map((i) => points[i]!)
           //plotYdata = clusterInfo.order.map(i => ydata[i]!)
-          hue = clusterInfo.order.map(i => clusterInfo.cdata[i]!)
+          hue = clusterInfo.order.map((i) => clusterInfo.cdata[i]!)
           cdata = hue
         } else {
-          plotdata = plot.gex.hueOrder.map(i => points[i]!)
+          plotdata = plot.gex.hueOrder.map((i) => points[i]!)
           //plotYdata = plot.gex.hueOrder.map(i => ydata[i]!)
 
           // in gex mode we need to normalize for range
           hue = normalize(
-            plot.gex.hueOrder.map(i => plot.gex.hue[i]!),
+            plot.gex.hueOrder.map((i) => plot.gex.hue[i]!),
             settings.gex.useGlobalRange ? globalGexRange : plot.gex.range
           )
 
           // make a copy of cdata for only the clusters in the plot
-          const clusterIds = new Set(plot.clusters.map(c => c.clusterId))
+          const clusterIds = new Set(plot.clusters.map((c) => c.clusterId))
 
           // reorder cdata to match hueOrder, but only include clusters that are in the plot
           // if a cluster is not in the plot, use 0 as the value
           // this allows us to plot only the clusters that are in the plot
           // and not all clusters in the dataset.
-          cdata = plot.gex.hueOrder.map(i => {
+          cdata = plot.gex.hueOrder.map((i) => {
             const c = clusterInfo.cdata[i]!
             return clusterIds.has(c) ? c : 0
           })
@@ -233,7 +233,7 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
 
                 {settings.umap.clusters.show && (
                   <g id="cluster-labels">
-                    {getDisplayClusters(plot.clusters).map(cluster => {
+                    {getDisplayClusters(plot.clusters).map((cluster) => {
                       const x1 = xax.domainToRange(cluster.pos[0])
                       const y1 = yax.domainToRange(cluster.pos[1])
 
@@ -328,7 +328,6 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
       setSvg({ svg, dim: { w: svgWidth, h: height } })
     }
 
-    console.log('render umap', plots)
     render(plots)
   }, [points, settings, plots, size, clusterInfo])
 

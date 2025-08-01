@@ -476,7 +476,6 @@ export function SingleCellPage() {
   useEffect(() => {
     //setPlot({ ...plot, palette: COLOR_MAPS[settings.cmap]! })
     //if (settings.mode.includes('gex')) {
-    console.log('Say waht', settings.geneSets)
 
     if (selectedDataset) {
       setupGexPlot(selectedDataset, settings.geneSets, gexData)

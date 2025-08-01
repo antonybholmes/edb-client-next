@@ -1,21 +1,10 @@
+import { ITopicTree } from '@/lib/markdown/help-utils'
 import { BUTTON_MD_H_CLS } from '@/theme'
 import type { IChildrenProps } from '@interfaces/children-props'
 import { cn } from '@lib/shadcn-utils'
 import { createContext, useContext, useState } from 'react'
 import { ChevronRightIcon } from '../icons/chevron-right-icon'
 import { VCenterRow } from '../layout/v-center-row'
-
-export type ITopicMap = { [key: string]: ITopicMap }
-
-export type ITopicTree = {
-  title: string
-  description: string
-
-  weight: number
-  path: string[]
-  slug: string
-  children: ITopicTree[]
-}
 
 const HelpNodeContext = createContext<{
   selected: string

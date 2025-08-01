@@ -22,7 +22,6 @@ import {
 import { VCenterCol } from '../layout/v-center-col'
 import { ButtonLink } from '../link/button-link'
 import { SearchBox } from '../search-box'
-import { Button } from '../shadcn/ui/themed/button'
 import { MenuSeparator } from '../shadcn/ui/themed/dropdown-menu'
 import type { IHeaderLinksProps } from './header-menu'
 import { HeaderMenuSheet } from './header-menu-sheet'
@@ -211,7 +210,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
           <MenuSeparator />
 
           <ul className="grid grid-cols-5" style={{ width }}>
-            <li>
+            {/* <li>
               <Button
                 flow="column"
                 size="none"
@@ -240,7 +239,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
 
                 <p className="text-[0.7rem] text-center truncate">Help</p>
               </Button>
-            </li>
+            </li> */}
             <li>
               <ButtonLink
                 variant="muted"
