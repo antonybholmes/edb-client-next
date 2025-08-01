@@ -51,7 +51,7 @@ export function HelpAutocomplete({ className }: IClassProps) {
       {searchResults.map((item, li) => (
         <li key={li}>
           <a
-            href={`/help/${item.slug}`}
+            href={`/help/${item.slug.join('/')}`}
             className="hover:bg-muted/50 focus-visible:bg-muted/50 outline-none h-8 flex flex-row items-center px-3 gap-x-2"
             aria-label={item.title}
           >

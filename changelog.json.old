@@ -1252,6 +1252,10 @@
         {
           "msg": "Fixed help side menu",
           "date": "2025-08-01T22:07:30.899Z"
+        },
+        {
+          "msg": "Fixed help routes",
+          "date": "2025-08-01T22:22:13.605Z"
         }
       ]
     },

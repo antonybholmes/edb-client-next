@@ -4,6 +4,7 @@
 
 ### Fixed
 
+- Fixed help url.
 - Fixed help routes.
 - Fixed help side menu.
 
