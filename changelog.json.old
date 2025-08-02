@@ -1261,6 +1261,12 @@
           "msg": "Fixed help url",
           "date": "2025-08-01T22:26:09.909Z"
         }
+      ],
+      "Changed": [
+        {
+          "msg": "Refined help",
+          "date": "2025-08-01T22:49:50.072Z"
+        }
       ]
     },
     "author": "Antony Holmes",

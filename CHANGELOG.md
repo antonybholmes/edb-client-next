@@ -8,6 +8,7 @@
 
 ### Fixed
 
+- Bug fixes and updates.
 - Fixed help url.
 - Fixed help routes.
 - Fixed help side menu.
