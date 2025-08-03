@@ -1,7 +1,7 @@
 {
   "name": "Oncoplot",
   "description": "Create oncoplots",
-  "version": "4.2.7.368",
+  "version": "4.2.8.369",
   "copyright": "Copyright (C) ${START_YEAR:2024} Antony Holmes. All rights reserved.",
-  "modified": "2025-08-02T01:48:41.232Z"
+  "modified": "2025-08-02T04:40:32.756Z"
 }

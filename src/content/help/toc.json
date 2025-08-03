@@ -1,0 +1,66 @@
+[
+  {
+    "type": "dir",
+    "title": "Apps",
+    "description": "",
+    "slug": [
+      "apps"
+    ],
+    "children": [
+      {
+        "type": "dir",
+        "title": "Matcalc",
+        "description": "Tools for analyzing and plotting gene expression and other biological data.",
+        "slug": [
+          "apps",
+          "matcalc"
+        ],
+        "children": [
+          {
+            "type": "file",
+            "slug": [
+              "apps",
+              "matcalc",
+              "gene-expression"
+            ],
+            "title": "Gene Expression",
+            "description": "",
+            "fullPath": "content/help/apps/matcalc/gene-expression.md"
+          },
+          {
+            "type": "file",
+            "slug": [
+              "apps",
+              "matcalc",
+              "heatmap"
+            ],
+            "title": "Heatmap",
+            "description": "",
+            "fullPath": "content/help/apps/matcalc/heatmap.md"
+          }
+        ],
+        "fullPath": "content/help/apps/matcalc/index.md"
+      },
+      {
+        "type": "file",
+        "slug": [
+          "apps",
+          "gsea"
+        ],
+        "title": "GSEA",
+        "description": "GSEA allows you to reformat GSEA data from the Broad GSEA tool.",
+        "fullPath": "content/help/apps/gsea.md"
+      },
+      {
+        "type": "file",
+        "slug": [
+          "apps",
+          "pathway"
+        ],
+        "title": "Pathway",
+        "description": "",
+        "fullPath": "content/help/apps/pathway.md"
+      }
+    ]
+  }
+]

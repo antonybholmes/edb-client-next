@@ -374,7 +374,7 @@ textarea {
   }
 
   h2 {
-    @apply mt-8 font-bold;
+    @apply mt-8 font-bold first:mt-0;
   }
 
   h3 {
@@ -416,14 +416,14 @@ textarea {
 }
 
 .help {
-  @apply h-screen;
+  @apply min-h-screen;
 
   h1 {
-    @apply font-bold;
+    @apply font-semibold;
   }
 
   h2 {
-    @apply border-border/70 mb-4 border-b py-2 text-base font-bold;
+    @apply border-border/70 mb-4 border-b text-base font-semibold;
   }
 
   h3 {

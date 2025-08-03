@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Improved help.
 - Refined help.
 
 ### Fixed

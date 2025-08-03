@@ -35,7 +35,8 @@
       "@providers/*": ["./src/providers/*"],
       "@context/*": ["./src/context/*"],
       "@styles/*": ["./src/styles/*"],
-      "@layouts/*": ["./src/layouts/*"]
+      "@layouts/*": ["./src/layouts/*"],
+      "@content/*": ["./src/content/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

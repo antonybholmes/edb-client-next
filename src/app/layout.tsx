@@ -4,6 +4,7 @@ import { APP_NAME, SITE_DESCRIPTION } from '@/consts'
 
 import { CoreProviders } from '@/providers/core-providers'
 import { Geist } from 'next/font/google'
+import { ReactNode } from 'react'
 import './globals.css'
 
 const geist = Geist({
@@ -28,12 +29,12 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <body
-        className={`${geist.className} antialiased margin-0 min-h-screen flex flex-col bg-body text-base font-normal`}
+        className={`${geist.className} antialiased margin-0 h-full min-h-screen flex flex-col bg-body text-base font-normal`}
       >
         {/* <CsrfProvider>{children}</CsrfProvider> */}
         <CoreProviders>{children}</CoreProviders>

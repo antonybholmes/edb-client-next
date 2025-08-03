@@ -4,6 +4,7 @@ import { BaseCol } from '@/components/layout/base-col'
 import { HCenterRow } from '@/components/layout/h-center-row'
 import { ThemeLink } from '@/components/link/theme-link'
 import { MarkdownContent } from '@/components/markdown-content'
+import { TableOfContents } from '@/components/toc'
 import { logger } from '@/lib/logger'
 import { HelpNode } from '@/lib/markdown/help-utils'
 import { loadMarkdownFile } from '@/lib/markdown/markdown'
@@ -179,22 +180,25 @@ export default async function HelpPage({
     //const fileContent = fs.readFileSync(filePath, 'utf8')
 
     return (
-      <BaseCol className="flex flex-col gap-y-4 p-4">
-        <HCenterRow className="hidden lg:flex">
+      <BaseCol className="flex flex-col gap-y-4 px-4 xl:px-0 xl:w-4/5 grow ">
+        <HCenterRow className="hidden lg:flex py-4">
           <HelpAutocomplete className="w-1/2 xl:w-2/5" />
         </HCenterRow>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-          <aside className="hidden lg:block col-span-1">
-            <ul className="text-xs">
+        <div className="grid grid-cols-1 lg:grid-cols-5 lg:gap-x-8 grow">
+          <aside className="hidden lg:flex flex-col col-span-1">
+            <ul className="text-sm">
               <HelpTreeNode node={nav[0] as HelpNode} currentNode={node} />
             </ul>
           </aside>
-          <article className="flex flex-col gap-y-4 col-span-3">
-            <MarkdownContent className="help flex flex-col gap-y-4 py-1 text-xs">
-              {contentHtml}
-            </MarkdownContent>
-          </article>
+
+          <MarkdownContent className="help flex flex-col text-xs col-span-3 grow">
+            {contentHtml}
+          </MarkdownContent>
+
+          <aside className="hidden lg:flex flex-col col-span-1">
+            <TableOfContents title="On This Page" />
+          </aside>
         </div>
       </BaseCol>
     )
