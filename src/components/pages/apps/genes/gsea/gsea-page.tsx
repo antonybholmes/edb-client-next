@@ -27,6 +27,7 @@ import { UploadIcon } from '@icons/upload-icon'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
 
 import {
+  DOCS_URL,
   NO_DIALOG,
   TEXT_CANCEL,
   TEXT_DISPLAY,
@@ -83,7 +84,7 @@ import { GseaSvg } from './gsea-svg'
 import type { IGeneRankScore, IGseaResult, IPathway } from './gsea-utils'
 import MODULE_INFO from './module.json'
 
-const HELP_URL = '/help/apps/gsea'
+const HELP_URL = DOCS_URL + '/apps/gsea'
 
 export function GseaPage() {
   //const [activeSideTab] = useState('Data')

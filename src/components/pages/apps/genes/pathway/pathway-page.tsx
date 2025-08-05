@@ -44,6 +44,7 @@ import { UploadIcon } from '@icons/upload-icon'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
 
 import {
+  DOCS_URL,
   NO_DIALOG,
   TEXT_CANCEL,
   TEXT_DOWNLOAD_AS_CSV,
@@ -116,7 +117,7 @@ import {
 } from '../../matcalc/history/history-store'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 
-const HELP_URL = '/help/apps/pathway'
+const HELP_URL = DOCS_URL + '/apps/pathway'
 
 interface IDatasetInfo {
   organization: string

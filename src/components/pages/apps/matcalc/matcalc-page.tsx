@@ -25,6 +25,7 @@ import {
 } from '@lib/dataframe/dataframe-utils'
 
 import {
+  DOCS_URL,
   NO_DIALOG,
   TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_TXT,
@@ -165,7 +166,7 @@ export const NO_CF: IClusterFrameProps = {
   //
 }
 
-const HELP_URL = '/help/apps/matcalc'
+const HELP_URL = DOCS_URL + '/apps/matcalc/matcalc'
 
 export const HIGHLIGHT_PANEL_CLS = 'bg-muted grow p-3 mb-2 rounded-lg'
 
