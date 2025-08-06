@@ -1279,5 +1279,18 @@
     },
     "author": "Antony Holmes",
     "date": "2025-08-01T22:07:30.899Z"
+  },
+  {
+    "version": "24.7",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Updated help urls",
+          "date": "2025-08-06T23:03:48.579Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-08-06T23:03:48.579Z"
   }
 ]

@@ -10,7 +10,7 @@ fi
 
 if [[ -z "${type}" ]]
 then
-	type="Fixed"
+	type="Changed"
 fi
 
 pnpm update-module-version

@@ -166,7 +166,7 @@ export const NO_CF: IClusterFrameProps = {
   //
 }
 
-const HELP_URL = DOCS_URL + '/apps/matcalc/matcalc'
+const HELP_URL = DOCS_URL + '/apps/matcalc'
 
 export const HIGHLIGHT_PANEL_CLS = 'bg-muted grow p-3 mb-2 rounded-lg'
 

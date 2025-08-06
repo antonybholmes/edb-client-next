@@ -1,5 +1,12 @@
 # Changelog
 
+## 24.7 (Aug, 2025)
+
+### Changed
+
+- Updated help urls.
+
+
 ## 24.6 (Aug, 2025)
 
 ### Changed
