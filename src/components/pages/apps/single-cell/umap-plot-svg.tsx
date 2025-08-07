@@ -21,6 +21,7 @@ import {
 } from './plot-grid-provider'
 
 import type { IPos } from '@/interfaces/pos'
+import { ILim } from '@/lib/math/math'
 import {
   useUmapSettings,
   type ISingleCellSettings,
@@ -146,6 +147,10 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
       const svgWidth =
         width + (settings.legend.show ? settings.legend.width : 0)
 
+      // render umaps as virtual images
+      // this allows us to render the umaps as images in the svg
+      // and avoid the performance issues of rendering large canvases
+      // with many points.
       const imageUrls: string[] = []
 
       for (const plot of plots) {
@@ -153,6 +158,18 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
         //let plotYdata: number[]
         let hue: number[]
         let cdata: number[]
+
+        let range: ILim = plot.gex.range
+
+        if (settings.zscore.on) {
+          // if zscore is on, we need to normalize the hue values
+          // to the zscore range
+          range = settings.zscore.range
+        } else {
+          if (settings.gex.useGlobalRange) {
+            range = globalGexRange
+          }
+        }
 
         if (plot.mode === 'clusters') {
           plotdata = clusterInfo.order.map((i) => points[i]!)
@@ -166,7 +183,7 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
           // in gex mode we need to normalize for range
           hue = normalize(
             plot.gex.hueOrder.map((i) => plot.gex.hue[i]!),
-            settings.gex.useGlobalRange ? globalGexRange : plot.gex.range
+            range
           )
 
           // make a copy of cdata for only the clusters in the plot
@@ -176,6 +193,7 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
           // if a cluster is not in the plot, use 0 as the value
           // this allows us to plot only the clusters that are in the plot
           // and not all clusters in the dataset.
+          // cluster 0 is reserved for "not in plot", real clusters start at 1
           cdata = plot.gex.hueOrder.map((i) => {
             const c = clusterInfo.cdata[i]!
             return clusterIds.has(c) ? c : 0
@@ -197,7 +215,24 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
         }
       }
 
-      //const palette = plots[0]!.palette
+      let colorBarRange: ILim = plots[0].gex.range
+
+      if (settings.zscore.on) {
+        // if zscore is on, we need to normalize the hue values
+        // to the zscore range
+        colorBarRange = settings.zscore.range
+      } else {
+        if (settings.gex.useGlobalRange) {
+          colorBarRange = globalGexRange
+        }
+      }
+
+      // make svg grid using the images
+      // this allows us to render the umaps as images in the svg
+      // and avoid the performance issues of rendering large canvases
+      // with many points.
+      // we use the images as background for the svg elements
+      // and then draw the clusters on top of them
 
       const svg = (
         <g
@@ -221,7 +256,7 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
                     dominantBaseline="middle"
                     fill={settings.grid.titles.color}
                   >
-                    {plot.title}
+                    {plot.name}
                   </text>
                 )}
 
@@ -314,7 +349,7 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
               >
                 <VColorBarSvg
                   size={settings.legend.colorbar.size}
-                  domain={globalGexRange}
+                  domain={colorBarRange}
                   cmap={plots[0]!.palette}
                   //size={displayOptions.colorbar.size}
                   //stroke={displayOptions.colorbar.stroke}

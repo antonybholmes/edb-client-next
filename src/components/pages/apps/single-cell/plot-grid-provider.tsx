@@ -6,9 +6,12 @@ import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { argsort } from '@/lib/math/argsort'
+import { findCenter } from '@/lib/math/centroid'
 import type { ILim } from '@/lib/math/math'
 import { mean } from '@/lib/math/mean'
+import { ordered } from '@/lib/math/ordered'
 import { range } from '@/lib/math/range'
+import { where } from '@/lib/math/where'
 import { zeros } from '@/lib/math/zeros'
 import { ZScore } from '@/lib/math/zscore'
 import { truncate } from '@/lib/text/text'
@@ -19,6 +22,12 @@ import { createContext, useState } from 'react'
 import { useUmapSettings } from './single-cell-settings'
 
 export type PlotMode = 'gex' | 'global-gex' | 'clusters'
+
+export interface IGeneSet {
+  id: string
+  name: string
+  genes: IScrnaGene[]
+}
 
 export interface IScrnaDataset {
   publicId: string
@@ -43,6 +52,8 @@ export interface IScrnaGene {
 }
 
 export interface IScrnaGexGene extends IScrnaGene {
+  // pair of (cell index, expression value) so that we can
+  // store sparse matrices efficiently and ignore zeros
   gex: [number, number][]
 }
 
@@ -82,22 +93,20 @@ export interface IScrnaDatasetMetadata {
   cells: IScrnaSingleCell[]
 }
 
-export interface IBasePlot {
+export interface IUmapPlot {
   id: string
+  name: string
   mode: PlotMode
-  genes: IScrnaGene[]
-}
-
-export interface IUmapPlot extends IBasePlot {
-  title: string
-  //mode: PlotMode
-  clusters: IScrnaCluster[]
   palette: ColorMap
+  // optionally restrict to these clusters in
+  // a particular plot
+  clusters: IScrnaCluster[]
+
+  geneset: IGeneSet
   gex: {
     hue: number[]
     hueOrder: number[]
-    //useGlobal: boolean
-    useMean: boolean
+    //useMean: boolean
     range: ILim
   }
 }
@@ -105,6 +114,8 @@ export interface IUmapPlot extends IBasePlot {
 export interface IClusterInfo {
   clusters: IScrnaCluster[]
   cdata: number[]
+  // cells may not be in the order of cluster, so we
+  // can use the index to plot them in the right order
   order: number[]
   //map: Record<number, number>
   //palette: ColorMap
@@ -121,7 +132,7 @@ export interface IPlotGridStoreProps {
 }
 
 export interface IPlotGridStore extends IPlotGridStoreProps {
-  set: (state: IPlotGridStoreProps) => void
+  setDataset: (dataset: IScrnaDataset, metadata: IScrnaDatasetMetadata) => void
 
   //setClusters: (clusters: IScrnaCluster[]) => void
   updatePlot: (plot: IUmapPlot) => void
@@ -134,10 +145,10 @@ export interface IPlotGridStore extends IPlotGridStoreProps {
 export interface IPlotGridContext
   extends Omit<IPlotGridStore, 'setGlobalGexRange'> {
   setMode: (mode: PlotMode) => void
-  loadGex: (dataset: IScrnaDataset, geneSets: IScrnaGene[][]) => Promise<void>
+  loadGex: (dataset: IScrnaDataset, geneSets: IGeneSet[]) => Promise<void>
   setupGexPlot: (
     dataset: IScrnaDataset,
-    geneSets: IScrnaGene[][],
+    geneSets: IGeneSet[],
     gexData: Record<string, number[]>
   ) => void
   setPalette: (palette: ColorMap) => void
@@ -148,11 +159,10 @@ export const PlotGridContext = createContext<IPlotGridContext>({
   loadGex: async () => {},
   setupGexPlot: () => {},
   setPalette: () => {},
-  set: () => {},
+  setDataset: () => {},
   updatePlot: () => {},
   setPlots: () => {},
   setClusterInfo: () => {},
-
   clear: () => {},
   plots: [],
   globalGexRange: [0, 0],
@@ -168,7 +178,7 @@ export const PlotGridContext = createContext<IPlotGridContext>({
 export function PlotGridProvider({ children }: IChildrenProps) {
   const [store, setStore] = useState<IPlotGridStoreProps>({
     plots: [],
-    globalGexRange: [-3, 3],
+    globalGexRange: [0, 1],
     //xdata: [],
     //ydata: [],
     points: [],
@@ -183,6 +193,80 @@ export function PlotGridProvider({ children }: IChildrenProps) {
   const { fetchAccessToken } = useEdbAuth()
   const { settings } = useUmapSettings()
 
+  function setDataset(dataset: IScrnaDataset, metadata: IScrnaDatasetMetadata) {
+    const points = metadata.cells.map((m) => m.pos)
+
+    const clusters: IScrnaCluster[] = metadata.clusters.map((c) => {
+      const idx = where(
+        metadata.cells,
+        (cell) => cell.clusterId === c.clusterId
+      )
+
+      const xc = ordered(
+        points.map((p) => p.x),
+        idx
+      )
+      const yc = ordered(
+        points.map((p) => p.y),
+        idx
+      )
+      const pos = findCenter(xc, yc)
+
+      // add extended properties
+      return {
+        ...c,
+        id: nanoid(),
+        pos,
+        show: true,
+        showRoundel: true,
+      }
+    })
+
+    let hue = metadata.cells.map((c) => c.clusterId) //metadata.cells.map(c => normMap[c.clusterId]!)
+
+    // if we sort by hue, we are sorting by color norm and
+    // therefore cluster, so all points in a cluster will
+    // be drawn at the same z-level
+    const idx = argsort(hue)
+
+    const clusterInfo = {
+      clusters,
+      cdata: metadata.cells.map((c) => c.clusterId),
+      order: idx,
+      //map: Object.fromEntries(clusters.map((c, ci) => [c.clusterId, ci])),
+    }
+
+    console.log('Setting dataset', dataset, metadata, clusterInfo)
+
+    setStore(
+      produce(store, (draft) => {
+        draft.points = points
+        draft.clusterInfo = clusterInfo
+        draft.plots = [
+          {
+            id: nanoid(),
+            name: 'Clusters',
+            //genes: [],
+            mode: 'clusters',
+            // show all clusters
+            clusters,
+            geneset: {
+              id: nanoid(),
+              name: '',
+              genes: [],
+            },
+            gex: {
+              hue: [],
+              hueOrder: [],
+              range: [0, 1],
+            },
+            palette: BWR_CMAP_V2,
+          },
+        ]
+      })
+    )
+  }
+
   function setMode(mode: PlotMode) {
     setStore(
       produce(store, (draft) => {
@@ -192,7 +276,6 @@ export function PlotGridProvider({ children }: IChildrenProps) {
   }
 
   function setPlots(plots: IUmapPlot[]) {
-    console.log('setPlots', plots.length)
     setStore(
       produce(store, (draft) => {
         draft.plots = plots
@@ -208,7 +291,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
     )
   }
 
-  async function loadGex(dataset: IScrnaDataset, geneSets: IScrnaGene[][]) {
+  async function loadGex(dataset: IScrnaDataset, genesets: IGeneSet[]) {
     try {
       const accessToken = await fetchAccessToken()
 
@@ -216,27 +299,28 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         return
       }
 
-      if (settings.geneSets.length < 1) {
+      if (settings.genesets.length < 1) {
         return
       }
 
+      const genes = genesets
+        .map((g) => g.genes.map((gene) => gene.geneId))
+        .flat()
+
+      console.log('Loading GEX for', dataset.publicId, genes)
+
       const res = await queryClient.fetchQuery({
-        queryKey: [
-          'gex',
-          dataset.publicId,
-          geneSets
-            .flat()
-            .map((g) => g.geneId)
-            .join(','),
-        ],
+        queryKey: ['gex', dataset.publicId, genes],
         queryFn: () => {
+          console.log(genes)
+
           return httpFetch.postJson<{ data: IScrnaGexResults }>(
             `${API_SCRNA_GEX_URL}/${dataset.publicId}`,
 
             {
               headers: bearerHeaders(accessToken),
               body: {
-                genes: geneSets.flat().map((g) => g.geneId),
+                genes,
               },
             }
           )
@@ -247,7 +331,10 @@ export function PlotGridProvider({ children }: IChildrenProps) {
 
       // make some empty arrays to store the gene data
       const gexData = Object.fromEntries(
-        geneSets.flat().map((g) => [g.geneId, zeros(dataset.cells ?? 0)])
+        genesets
+          .map((g) => g.genes)
+          .flat()
+          .map((g) => [g.geneId, zeros(dataset.cells ?? 0)])
       )
 
       for (const gene of results.genes) {
@@ -256,21 +343,19 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         }
       }
 
-      console.log('waht foold', gexData)
-
-      setupGexPlot(dataset, geneSets, gexData)
+      setupGexPlot(dataset, genesets, gexData)
       //
     } catch (e) {
-      console.error('error loading datasets from remote' + e)
+      console.log('error loading datasets from remote' + e)
     }
   }
 
   function setupGexPlot(
     dataset: IScrnaDataset,
-    geneSets: IScrnaGene[][],
+    geneSets: IGeneSet[],
     gexData: Record<string, number[]>
   ) {
-    if (settings.geneSets.length === 0 || Object.keys(gexData).length === 0) {
+    if (settings.genesets.length === 0 || Object.keys(gexData).length === 0) {
       return
     }
 
@@ -278,17 +363,17 @@ export function PlotGridProvider({ children }: IChildrenProps) {
 
     let globalMax = 0
 
-    for (const genes of geneSets) {
+    for (const geneset of geneSets) {
       let avg: number[] = []
 
-      const useMean = genes.length > 1
+      const useMean = geneset.genes.length > 1
 
-      if (genes.length > 1) {
+      if (useMean) {
         avg = range(0, dataset.cells ?? 0).map((cellIdx) =>
-          mean(genes.map((gene) => gexData[gene.geneId]![cellIdx]!))
+          mean(geneset.genes.map((gene) => gexData[gene.geneId]![cellIdx]!))
         )
       } else {
-        avg = gexData[genes[0]!.geneId]!
+        avg = gexData[geneset.genes[0]!.geneId]!
       }
 
       //console.log(avg)
@@ -318,16 +403,17 @@ export function PlotGridProvider({ children }: IChildrenProps) {
 
       plots.push({
         id: nanoid(),
-        title: useMean
-          ? truncate(`Mean of ${genes.map((g) => g.geneSymbol).join(', ')}`)
-          : genes[0]!.geneSymbol,
-        genes,
-        mode: 'global-gex',
+        name: useMean
+          ? truncate(
+              `Mean of ${geneset.name}: ${geneset.genes.map((g) => g.geneSymbol).join(', ')}`
+            )
+          : geneset.genes[0]!.geneSymbol,
+        geneset,
+        mode: settings.gex.useGlobalRange ? 'global-gex' : 'gex',
         clusters: store.clusterInfo.clusters, //.slice(0, 2),
         gex: {
           hueOrder: idx,
           hue: avg,
-          useMean,
           range: [0, max],
         },
 
@@ -351,7 +437,10 @@ export function PlotGridProvider({ children }: IChildrenProps) {
 
     setStore(
       produce(store, (draft) => {
-        draft.plots = plots
+        draft.plots = [
+          ...store.plots,
+          ...plots.filter((p) => !store.plots.some((pp) => pp.name === p.name)),
+        ]
         draft.globalGexRange = [0, globalMax]
       })
     )
@@ -367,7 +456,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         points: store.points,
         clusterInfo: store.clusterInfo,
         //palette: store.palette,
-        set: setStore,
+        setDataset,
         setPlots,
         setClusterInfo,
         setMode,

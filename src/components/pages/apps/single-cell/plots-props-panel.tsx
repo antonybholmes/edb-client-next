@@ -133,7 +133,7 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
             className="overflow-hidden grow gap-y-1"
             //style={{ color: group.color, fill: group.color }}
           >
-            <p className="truncate font-semibold">{plot.title}</p>
+            <p className="truncate font-semibold">{plot.name}</p>
           </VCenterCol>
 
           <VCenterRow
@@ -142,7 +142,7 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
             className="gap-x-1 items-center opacity-0 data-[hover=true]:opacity-100 shrink-0"
           >
             <button
-              title={`Edit ${plot.title}`}
+              title={`Edit ${plot.name}`}
               className="opacity-50 hover:opacity-100"
               onClick={() => setShowDialog({ id: 'edit', params: { plot } })}
             >
@@ -157,9 +157,9 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
           className="gap-x-1 items-center opacity-0 data-[hover=true]:opacity-100 shrink-0"
         >
           <button
-            onClick={() => setPlots(plots.filter(p => p.id !== plot.id))}
+            onClick={() => setPlots(plots.filter((p) => p.id !== plot.id))}
             className="stroke-foreground/50 hover:stroke-red-500 trans-color"
-            title={`Delete ${plot.title}`}
+            title={`Delete ${plot.name}`}
           >
             <TrashIcon stroke="" />
           </button>
@@ -205,19 +205,24 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
     }
 
     if (newGenes.length > 0) {
+      const geneset = {
+        id: nanoid(),
+        name: truncate(newGenes.map((g) => g.geneSymbol).join(', ')),
+        genes: newGenes,
+      }
+
       // add new plots for each gene set
       setPlots([
         ...plots,
         {
           id: nanoid(),
-          title: truncate(newGenes.map(g => g.geneSymbol).join(', ')),
-          genes: newGenes,
+          name: truncate(newGenes.map((g) => g.geneSymbol).join(', ')),
+          geneset,
           mode: 'global-gex' as PlotMode,
           clusters: clusterInfo.clusters,
           gex: {
             hueOrder: [],
             hue: [],
-            useMean: true,
             range: [0, 1] as ILim,
           },
           palette: BWR_CMAP_V2,
@@ -225,8 +230,8 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
       ])
 
       updateSettings(
-        produce(settings, draft => {
-          draft.geneSets.push(newGenes)
+        produce(settings, (draft) => {
+          draft.genesets.push(geneset)
         })
       )
     }
@@ -263,7 +268,7 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
           id="filter"
           aria-label="Filter"
           value={text}
-          onChange={e => setText(e.target.value)}
+          onChange={(e) => setText(e.target.value)}
           placeholder={`Search...`}
           className="h-32"
         />
@@ -282,26 +287,28 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
                 //onDragStart={event => setActiveId(event.active.id as string)}
                 //for the moment do not allow to be re-arranged as it messes up
                 //cluster color rendering
-                onDragEnd={event => {
+                onDragEnd={(event) => {
                   const { active, over } = event
 
                   if (over && active.id !== over?.id) {
                     const oldIndex = plots.findIndex(
-                      plot => plot.id === active.id
+                      (plot) => plot.id === active.id
                     )
 
                     const newIndex = plots.findIndex(
-                      plot => plot.id === over.id
+                      (plot) => plot.id === over.id
                     )
 
                     const newOrder = arrayMove(
-                      plots.map(plot => plot.id),
+                      plots.map((plot) => plot.id),
                       oldIndex,
                       newIndex
                     )
 
                     setPlots(
-                      newOrder.map(id => plots.find(plot => plot.id === id)!)
+                      newOrder.map(
+                        (id) => plots.find((plot) => plot.id === id)!
+                      )
                     )
                   }
 
@@ -309,11 +316,11 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
                 }}
               >
                 <SortableContext
-                  items={plots.map(p => p.id)}
+                  items={plots.map((p) => p.id)}
                   strategy={verticalListSortingStrategy}
                 >
                   <ul className="flex flex-col">
-                    {plots.map(p => {
+                    {plots.map((p) => {
                       return (
                         <SortableItem key={p.id} id={p.id}>
                           <PlotItem key={p.id} plot={p} />

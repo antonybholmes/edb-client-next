@@ -60,7 +60,7 @@ export function drawUmap(
 
       if (plot.mode === 'clusters') {
         clusterMap = Object.fromEntries(
-          plot.clusters.map(c => [c.clusterId, c])
+          plot.clusters.map((c) => [c.clusterId, c])
         )
       }
 

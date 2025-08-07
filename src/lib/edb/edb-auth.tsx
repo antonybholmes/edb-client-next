@@ -32,7 +32,6 @@ export const CSRF_COOKIE_NAME = 'csrf_token'
 
 interface ICSRFStore {
   token: string
-
   error: string
   setToken: (token: string) => void
   fetchToken: () => Promise<string>
@@ -41,11 +40,8 @@ interface ICSRFStore {
 
 export const useCSRFStore = create<ICSRFStore>((set) => ({
   token: Cookies.get(CSRF_COOKIE_NAME) || '',
-
   error: '',
-
   setToken: (token: string) => set({ token }),
-
   fetchToken: async () => {
     // if token still exists, return it
     let token = Cookies.get(CSRF_COOKIE_NAME) || ''
@@ -323,7 +319,7 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
       accessToken = await fetchAccessTokenUsingSession(queryClient, csrfToken)
 
       set({ accessToken })
-    } catch (err: any) {
+    } catch {
       //console.error('Failed to fetch access token', err)
       set({ error: 'Failed to fetch access token' })
     }

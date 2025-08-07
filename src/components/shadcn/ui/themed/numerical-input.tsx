@@ -1,15 +1,14 @@
-import { BaseCol } from '@layout/base-col'
-
+import { TriangleRightIcon } from '@/components/icons/triangle-right-icon'
+import { VCenterCol } from '@/components/layout/v-center-col'
 import { clamp } from '@/lib/math/clamp'
-import { TriangleRightIcon } from '@icons/triangle-right-icon'
 import { useEffect, useRef, useState } from 'react'
 import { Input, type IInputProps } from './input'
 
-const BUTTON_CLS = `w-4 shrink-0 h-4 flex flex-row justify-center items-center 
+const BUTTON_CLS = `w-4 flex h-4 flex-row justify-center items-center
   data-[enabled=true]:stroke-foreground data-[enabled=false]:stroke-foreground/50 
   data-[enabled=true]:fill-foreground data-[enabled=false]:fill-foreground/50 
-  data-[enabled=true]:hover:fill-theme data-[enabled=true]:focus:fill-theme 
-  data-[enabled=true]:hover:stroke-theme data-[enabled=true]:focus:stroke-theme
+  data-[enabled=true]:hover:fill-theme data-[enabled=true]:focus-visible:fill-theme 
+  data-[enabled=true]:hover:stroke-theme data-[enabled=true]:focus-visible:stroke-theme
   outline-hidden trans-color`
 
 const UPDATE_INTERVAL_MS = 100
@@ -45,11 +44,14 @@ export function NumericalInput({
   //const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  // the internal value is unbounded so that user can type
-  // without it auto clamping. Once use performs action that
-  // propogates the value, e.g. press enter, then it will
-  // be clamped
-  const [_value, setValue] = useState<number>(Number(value) || 0)
+  // The internal value is unbounded so that user can type
+  // normally without constant auto formatting which is annoying.
+  // Once the user presses enter or stops updating via the arrow keys,
+  // we will format the value to the dp and clamp it to the limit.
+  const [_value, setValue] = useState(value)
+
+  // the internal number value is clamped to the limit
+  const [_n, setN] = useState(Number(value) || limit?.[0] || 0)
 
   function _getValue(v: number): number {
     if (limit?.length === 2) {
@@ -59,11 +61,19 @@ export function NumericalInput({
     return v
   }
 
-  function _onNumChange(v: number): number {
-    setValue(v)
+  function _onNumChange(text: string): number {
+    setValue(text)
+
+    let v = Number(text)
+
+    if (!Number.isNaN(v)) {
+      v = _getValue(v)
+      setN(v)
+      onNumChange?.(v)
+    }
 
     // also call more realtime update, just in case
-    onNumChange?.(_getValue(v))
+    //onNumChange?.(_getValue(v))
 
     return v
   }
@@ -71,7 +81,8 @@ export function NumericalInput({
   function _onNumChanged(v: number): number {
     v = _getValue(v)
 
-    setValue(v)
+    setValue(v.toFixed(dp)) // update the internal value and format it
+    setN(v) // update the internal value without formatting
     // update but ensure data is clamped
     onNumChange?.(v)
     onNumChanged?.(v)
@@ -81,27 +92,21 @@ export function NumericalInput({
 
   useEffect(() => {
     // if you set a value, it supersedes the internal value
-    const v = Number(value)
+    let v = Number(value)
 
     if (!Number.isNaN(v)) {
-      setValue(_getValue(v))
+      v = _getValue(v)
+      setValue(v.toFixed(dp))
+      setN(v)
     }
   }, [value])
 
   function updateValue(delta: number) {
-    setValue(prev => {
-      let newVal = prev + delta
-
-      if (limit?.length === 2) {
-        newVal = Math.min(limit[1], Math.max(limit[0], newVal))
-      }
-
-      return newVal
-    })
+    setN((prev) => _getValue(prev + delta))
   }
 
   function startUpdating(delta: number) {
-    setValue(_value + delta)
+    setN((prev) => _getValue(prev + delta))
     intervalRef.current = setInterval(
       () => updateValue(delta),
       UPDATE_INTERVAL_MS
@@ -116,7 +121,7 @@ export function NumericalInput({
 
     // Once we finish updating the internal state, push it
     // so the rest of the ui can respond
-    _onNumChanged(_value)
+    _onNumChanged(_n)
   }
   const handleKeyDown = (event: React.KeyboardEvent, delta: number) => {
     if (
@@ -138,7 +143,7 @@ export function NumericalInput({
 
   return (
     <Input
-      value={_value.toFixed(dp)}
+      value={_value}
       type="number"
       min={limit?.length === 2 ? limit[0] : undefined}
       max={limit?.length === 2 ? limit[1] : undefined}
@@ -146,7 +151,7 @@ export function NumericalInput({
       w={w}
       className={className}
       inputCls="text-right"
-      onKeyDown={e => {
+      onKeyDown={(e) => {
         //console.log(e)
         if (e.key === 'Enter') {
           const v = Number(e.currentTarget.value)
@@ -165,11 +170,11 @@ export function NumericalInput({
             switch (e.key) {
               case 'ArrowUp':
               case 'ArrowRight':
-                _onNumChanged(_value + step)
+                _onNumChanged(_n + step)
                 break
               case 'ArrowDown':
               case 'ArrowLeft':
-                _onNumChanged(_value - step)
+                _onNumChanged(_n - step)
                 break
               default:
                 break
@@ -177,17 +182,17 @@ export function NumericalInput({
           }
         }
       }}
-      onChange={e => {
-        const v = Number(e.target.value)
+      onChange={(e) => {
+        //const v = Number(e.target.value)
 
         // default to min if garbage input
-        if (!Number.isNaN(v)) {
-          _onNumChange(v)
-        }
+        //if (!Number.isNaN(v)) {
+        _onNumChange(e.target.value)
+        //}
       }}
       placeholder={placeholder}
       rightChildren={
-        <BaseCol className="shrink-0 -mr-1.5">
+        <VCenterCol className="shrink-0 -mr-1.5">
           <button
             disabled={disabled}
             data-enabled={!disabled}
@@ -198,7 +203,7 @@ export function NumericalInput({
             onMouseDown={() => startUpdating(step)}
             onMouseUp={stopUpdating}
             onMouseLeave={stopUpdating}
-            onKeyDown={e => handleKeyDown(e, step)}
+            onKeyDown={(e) => handleKeyDown(e, step)}
             onKeyUp={handleKeyUp}
           >
             <TriangleRightIcon
@@ -223,7 +228,7 @@ export function NumericalInput({
             onMouseDown={() => startUpdating(-step)}
             onMouseUp={stopUpdating}
             onMouseLeave={stopUpdating}
-            onKeyDown={e => handleKeyDown(e, -step)}
+            onKeyDown={(e) => handleKeyDown(e, -step)}
             onKeyUp={handleKeyUp}
           >
             <TriangleRightIcon
@@ -234,7 +239,7 @@ export function NumericalInput({
               fill=""
             />
           </button>
-        </BaseCol>
+        </VCenterCol>
       }
     />
   )

@@ -1288,6 +1288,12 @@
           "msg": "Updated help urls",
           "date": "2025-08-06T23:03:48.579Z"
         }
+      ],
+      "Fixed": [
+        {
+          "msg": "Fixes to help system",
+          "date": "2025-08-07T15:33:22.037Z"
+        }
       ]
     },
     "author": "Antony Holmes",

@@ -5,7 +5,7 @@ import { produce } from 'immer'
 
 import { ColorPickerButton } from '@/components/color/color-picker-button'
 import { LabelBlock } from '@/components/dialog/label-block'
-import { VCenterRow } from '@/components/layout/v-center-row'
+import { PropRow } from '@/components/dialog/prop-row'
 import { Checkbox } from '@/components/shadcn/ui/themed/check-box'
 import {
   Select,
@@ -37,8 +37,8 @@ export function PlotDialog({ plot, onResponse }: IProps) {
   return (
     <OKCancelDialog
       open={true}
-      title={`Edit ${_plot.title}`}
-      onResponse={r => {
+      title={`Edit ${_plot.name}`}
+      onResponse={(r) => {
         if (r === TEXT_OK) {
         }
 
@@ -67,9 +67,9 @@ export function PlotDialog({ plot, onResponse }: IProps) {
       <Input
         id="name"
         label="Title"
-        value={_plot.title}
-        onTextChange={e => {
-          updatePlot({ ..._plot, title: e })
+        value={_plot.name}
+        onTextChange={(e) => {
+          updatePlot({ ..._plot, name: e })
         }}
         placeholder="Title..."
         //variant="dialog"
@@ -77,39 +77,37 @@ export function PlotDialog({ plot, onResponse }: IProps) {
         className="grow"
       />
 
-      <LabelBlock title="Mode">
-        <VCenterRow className="justify-end">
-          <Select
-            value={_plot.mode}
-            onValueChange={v => {
-              const newPlot = produce(_plot, draft => {
-                draft.mode = v as PlotMode
-              })
+      <PropRow title="Mode">
+        <Select
+          value={_plot.mode}
+          onValueChange={(v) => {
+            const newPlot = produce(_plot, (draft) => {
+              draft.mode = v as PlotMode
+            })
 
-              console.log(newPlot)
+            console.log(newPlot)
 
-              updatePlot(newPlot)
-              setPlot(newPlot)
-            }}
-          >
-            <SelectTrigger className="w-42">
-              <SelectValue placeholder="Scale mode" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="global-gex">Global GEX</SelectItem>
-              <SelectItem value="gex">GEX</SelectItem>
-              <SelectItem value="clusters">Cluster</SelectItem>
-            </SelectContent>
-          </Select>
-        </VCenterRow>
-      </LabelBlock>
+            updatePlot(newPlot)
+            setPlot(newPlot)
+          }}
+        >
+          <SelectTrigger className="w-42">
+            <SelectValue placeholder="Scale mode" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="global-gex">Global GEX</SelectItem>
+            <SelectItem value="gex">GEX</SelectItem>
+            <SelectItem value="clusters">Cluster</SelectItem>
+          </SelectContent>
+        </Select>
+      </PropRow>
 
       <LabelBlock title="Clusters">
         <Checkbox
           checked={selectAll}
-          onCheckedChange={v => {
+          onCheckedChange={(v) => {
             setSelectAll(v)
-            const newPlot = produce(_plot, draft => {
+            const newPlot = produce(_plot, (draft) => {
               if (v) {
                 draft.clusters = clusterInfo.clusters
               } else {
@@ -125,19 +123,19 @@ export function PlotDialog({ plot, onResponse }: IProps) {
         </Checkbox>
         <VScrollPanel className="w-full h-42">
           <ul className="flex flex-col gap-y-1 p-1">
-            {clusterInfo.clusters.map(cluster => (
+            {clusterInfo.clusters.map((cluster) => (
               <li
                 key={cluster.clusterId}
                 className="flex flex-row items-center gap-x-2"
               >
                 <Checkbox
                   checked={_plot.clusters.some(
-                    c => c.clusterId === cluster.clusterId
+                    (c) => c.clusterId === cluster.clusterId
                   )}
-                  onCheckedChange={v => {
-                    const newPlot = produce(_plot, draft => {
+                  onCheckedChange={(v) => {
+                    const newPlot = produce(_plot, (draft) => {
                       draft.clusters = draft.clusters.filter(
-                        c => c.clusterId !== cluster.clusterId
+                        (c) => c.clusterId !== cluster.clusterId
                       )
 
                       if (v) {

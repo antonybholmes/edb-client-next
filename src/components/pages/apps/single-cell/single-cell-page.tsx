@@ -13,7 +13,6 @@ import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
 
 import { BaseCol } from '@layout/base-col'
 import { ToolbarButton } from '@toolbar/toolbar-button'
-import { ToolbarOptionalDropdownButton } from '@toolbar/toolbar-optional-dropdown-button'
 import { ToolbarSeparator } from '@toolbar/toolbar-separator'
 
 import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
@@ -37,7 +36,6 @@ import { useContext, useEffect, useRef, useState } from 'react'
 
 import { FileImageIcon } from '@icons/file-image-icon'
 
-import { BWR_CMAP_V2 } from '@lib/color/colormap'
 import { downloadSvgAutoFormat } from '@lib/image-utils'
 
 import { ClockIcon } from '@icons/clock-icon'
@@ -60,13 +58,12 @@ import {
 import { useZoom } from '@/providers/zoom-provider'
 import { OpenDialog } from '@components/pages/apps/matcalc/open-dialog'
 import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
-import { dfLog } from '@components/table/dataframe-ui'
 import { type ITab } from '@components/tabs/tab-provider'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
 import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
 import { textToLines } from '@lib/text/lines'
 import { truncate } from '@lib/text/text'
-import { nanoid, randId } from '@lib/utils'
+import { randId } from '@lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { Card } from '@themed/card'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
@@ -85,22 +82,16 @@ import {
 } from '@/components/shadcn/ui/themed/resizable'
 import { ThinVResizeHandle } from '@/components/split-pane/thin-v-resize-handle'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
-import { argsort } from '@/lib/math/argsort'
-import { findCenter } from '@/lib/math/centroid'
-import { ordered } from '@/lib/math/ordered'
-import { where } from '@/lib/math/where'
 import { queryClient } from '@/query'
 import { Checkbox } from '@components/shadcn/ui/themed/check-box'
 import {
   API_SCRNA_DATASETS_URL,
-  API_SCRNA_GEX_URL,
   API_SCRNA_METADATA_URL,
   API_SCRNA_SEARCH_GENES_URL,
 } from '@lib/edb/edb'
 import { useEdbAuth } from '@lib/edb/edb-auth'
 import { httpFetch } from '@lib/http/http-fetch'
 import { bearerHeaders } from '@lib/http/urls'
-import { zeros } from '@lib/math/zeros'
 import { SaveImageDialog } from '../../save-image-dialog'
 import { ShowSideButton } from '../../show-side-button'
 import { PLOT_CLS } from '../matcalc/apps/heatmap/heatmap-panel'
@@ -118,11 +109,9 @@ import {
   makeDomain,
   PlotGridContext,
   PlotGridProvider,
-  type IScrnaCluster,
   type IScrnaDataset,
   type IScrnaDatasetMetadata,
   type IScrnaGene,
-  type IScrnaGexResults,
 } from './plot-grid-provider'
 
 import {
@@ -152,8 +141,7 @@ const SPECIES: ISpeciesSet[] = [
 ]
 
 export function SingleCellPage() {
-  const { branch, sheet, sheets, history, gotoSheet, addStep, openBranch } =
-    useHistory()
+  const { branch, sheet, sheets, gotoSheet, addStep, openBranch } = useHistory()
 
   //const [clusterFrame, setClusterFrame] = useState<BaseDataFrame | null>(null)
   //const [cmap, setCMap] = useState<ColorMap>(BRIGHT_20_CMAP) //BWR_CMAP)
@@ -166,11 +154,11 @@ export function SingleCellPage() {
 
   //const [metadata, setMetadata] = useState<IScrnaDatasetMetadata | null>(null)
 
-  const [gexData, setGexData] = useState<Record<string, number[]>>({})
+  //const [gexData, setGexData] = useState<Record<string, number[]>>({})
 
   const [showSideBar, setShowSideBar] = useState(true)
 
-  const { set: setPlot, setMode, setupGexPlot } = useContext(PlotGridContext)!
+  const { setDataset, setMode, loadGex } = useContext(PlotGridContext)!
 
   //const [genes, setGenes] = useState<IScrnaGene[]>([])
   const [genesForUse, setGenesForUse] = useState<Map<string, boolean>>(
@@ -349,31 +337,31 @@ export function SingleCellPage() {
         //const ydata = metadata.cells.map(m => m.umapY)
         const points = metadata.cells.map((m) => m.pos)
 
-        const clusters: IScrnaCluster[] = metadata.clusters.map((c) => {
-          const idx = where(
-            metadata.cells,
-            (cell) => cell.clusterId === c.clusterId
-          )
+        // const clusters: IScrnaCluster[] = metadata.clusters.map((c) => {
+        //   const idx = where(
+        //     metadata.cells,
+        //     (cell) => cell.clusterId === c.clusterId
+        //   )
 
-          const xc = ordered(
-            points.map((p) => p.x),
-            idx
-          )
-          const yc = ordered(
-            points.map((p) => p.y),
-            idx
-          )
-          const pos = findCenter(xc, yc)
+        //   const xc = ordered(
+        //     points.map((p) => p.x),
+        //     idx
+        //   )
+        //   const yc = ordered(
+        //     points.map((p) => p.y),
+        //     idx
+        //   )
+        //   const pos = findCenter(xc, yc)
 
-          // add extended properties
-          return {
-            ...c,
-            id: nanoid(),
-            pos,
-            show: true,
-            showRoundel: true,
-          }
-        })
+        //   // add extended properties
+        //   return {
+        //     ...c,
+        //     id: nanoid(),
+        //     pos,
+        //     show: true,
+        //     showRoundel: true,
+        //   }
+        // })
 
         updateSettings(
           produce(settings, (draft) => {
@@ -386,46 +374,52 @@ export function SingleCellPage() {
         //   clusters.map((c, i) => [c.clusterId, i / (clusters.length - 1)])
         // )
 
-        let hue = metadata.cells.map((c) => c.clusterId) //metadata.cells.map(c => normMap[c.clusterId]!)
+        //let hue = metadata.cells.map((c) => c.clusterId) //metadata.cells.map(c => normMap[c.clusterId]!)
 
         // if we sort by hue, we are sorting by color norm and
         // therefore cluster, so all points in a cluster will
         // be drawn at the same z-level
-        const idx = argsort(hue)
+        //const idx = argsort(hue)
 
         // resort points so higher z drawn last and on top
 
-        setPlot({
-          //xdata,
-          //ydata,
-          points,
-          clusterInfo: {
-            clusters,
-            cdata: metadata.cells.map((c) => c.clusterId),
-            order: idx,
-            //map: Object.fromEntries(clusters.map((c, ci) => [c.clusterId, ci])),
-          },
-          plots: [
-            {
-              id: nanoid(),
-              title: 'Clusters',
-              genes: [],
-              mode: 'clusters',
+        setDataset(selectedDataset!, metadata)
 
-              clusters,
+        // set({
+        //   //xdata,
+        //   //ydata,
+        //   points,
+        //   clusterInfo: {
+        //     clusters,
+        //     cdata: metadata.cells.map((c) => c.clusterId),
+        //     order: idx,
+        //     //map: Object.fromEntries(clusters.map((c, ci) => [c.clusterId, ci])),
+        //   },
+        //   plots: [
+        //     {
+        //       id: nanoid(),
+        //       name: 'Clusters',
+        //       //genes: [],
+        //       mode: 'clusters',
+        //       // show all clusters
+        //       clusters,
+        //       geneset: {
+        //         id: nanoid(),
+        //         name: '',
+        //         genes: [],
+        //       },
+        //       gex: {
+        //         hue: [],
+        //         hueOrder: [],
 
-              gex: {
-                hue: [],
-                hueOrder: [],
-                useMean: true,
-                range: [0, 1],
-              },
-              palette: BWR_CMAP_V2,
-            },
-          ],
+        //         range: [0, 1],
+        //       },
+        //       palette: BWR_CMAP_V2,
+        //     },
+        //   ],
 
-          globalGexRange: [0, 1],
-        })
+        //   globalGexRange: [0, 1],
+        // })
       } catch (e) {
         console.error('error loading datasets from remote' + e)
       }
@@ -478,7 +472,7 @@ export function SingleCellPage() {
     //if (settings.mode.includes('gex')) {
 
     if (selectedDataset) {
-      setupGexPlot(selectedDataset, settings.geneSets, gexData)
+      loadGex(selectedDataset, settings.genesets) // setupGexPlot(selectedDataset, settings.genesets, gexData)
     }
   }, [
     settings.cmap,
@@ -486,69 +480,77 @@ export function SingleCellPage() {
     settings.grid.on,
     settings.zscore.range[0],
     settings.zscore.range[1],
-    settings.geneSets,
+    settings.genesets,
   ])
 
-  async function loadGex() {
-    try {
-      const accessToken = await fetchAccessToken()
+  function loadGexData() {
+    // try {
+    //   const accessToken = await fetchAccessToken()
 
-      if (!accessToken) {
-        return
-      }
+    //   if (!accessToken) {
+    //     return
+    //   }
 
-      //const genes =
-      //  settings.genes.filter(g => genesForUse.get(g.geneId) ?? false) ?? []
+    //   //const genes =
+    //   //  settings.genes.filter(g => genesForUse.get(g.geneId) ?? false) ?? []
 
-      if (settings.geneSets.length < 1) {
-        return
-      }
+    //   if (settings.genesets.length < 1) {
+    //     return
+    //   }
 
-      const res = await queryClient.fetchQuery({
-        queryKey: [
-          'gex',
-          selectedDataset?.publicId,
-          settings.geneSets
-            .flat()
-            .map((g) => g.geneId)
-            .join(','),
-        ],
-        queryFn: () => {
-          return httpFetch.postJson<{ data: IScrnaGexResults }>(
-            `${API_SCRNA_GEX_URL}/${selectedDataset?.publicId}`,
+    //   const res = await queryClient.fetchQuery({
+    //     queryKey: [
+    //       'gex',
+    //       selectedDataset?.publicId,
+    //       settings.genesets
 
-            {
-              headers: bearerHeaders(accessToken),
-              body: {
-                genes: settings.geneSets.flat().map((g) => g.geneId),
-              },
-            }
-          )
-        },
-      })
+    //         .map((g) => g.genes.map((g) => g.geneId))
+    //         .flat()
+    //         .join(','),
+    //     ],
+    //     queryFn: () => {
+    //       return httpFetch.postJson<{ data: IScrnaGexResults }>(
+    //         `${API_SCRNA_GEX_URL}/${selectedDataset?.publicId}`,
 
-      const results: IScrnaGexResults = res.data
+    //         {
+    //           headers: bearerHeaders(accessToken),
+    //           body: {
+    //             genes: settings.genesets
+    //               .map((g) => g.genes.map((g) => g.geneId))
+    //               .flat(),
+    //           },
+    //         }
+    //       )
+    //     },
+    //   })
 
-      // make some empty arrays to store the gene data
-      const gexData = Object.fromEntries(
-        settings.geneSets
-          .flat()
-          .map((g) => [g.geneId, zeros(selectedDataset?.cells ?? 0)])
-      )
+    //   const results: IScrnaGexResults = res.data
 
-      for (const gene of results.genes) {
-        for (const gx of gene.gex) {
-          gexData[gene.geneId]![gx[0]!] = gx[1]!
-        }
-      }
+    //   // make some empty arrays to store the gene data
+    //   const gexData = Object.fromEntries(
+    //     settings.genesets
+    //       .map((g) => g.genes)
+    //       .flat()
+    //       .map((g) => [g.geneId, zeros(selectedDataset?.cells ?? 0)])
+    //   )
 
-      setGexData(gexData)
+    //   for (const gene of results.genes) {
+    //     for (const gx of gene.gex) {
+    //       gexData[gene.geneId]![gx[0]!] = gx[1]!
+    //     }
+    //   }
 
-      setupGexPlot(selectedDataset!, settings.geneSets, gexData)
-      //
-    } catch (e) {
-      console.error('error loading datasets from remote' + e)
-    }
+    //   setGexData(gexData)
+
+    //   //setupGexPlot(selectedDataset!, settings.genesets, gexData)
+
+    //   loadGex(selectedDataset!, settings.genesets)
+    //   //
+    // } catch (e) {
+    //   console.error('error loading datasets from remote' + e)
+    // }
+
+    loadGex(selectedDataset!, settings.genesets)
   }
 
   function loadClusters() {
@@ -809,7 +811,7 @@ export function SingleCellPage() {
               Cluster
             </ToolbarButton>
 
-            <ToolbarButton arial-label="GEX" onClick={() => loadGex()}>
+            <ToolbarButton arial-label="GEX" onClick={() => loadGexData()}>
               GEX
             </ToolbarButton>
           </ToolbarTabGroup>
@@ -817,46 +819,46 @@ export function SingleCellPage() {
         </>
       ),
     },
-    {
-      //id: nanoid(),
-      id: 'Chart',
-      content: (
-        <>
-          <ToolbarOptionalDropdownButton
-            icon="Right"
-            onMainClick={() => dfLog(sheet!, addStep, 2, 1)}
-          >
-            <DropdownMenuItem
-              aria-label="Top"
-              onClick={() => dfLog(sheet!, addStep, 2, 0)}
-            >
-              Top
-            </DropdownMenuItem>
+    // {
+    //   //id: nanoid(),
+    //   id: 'Chart',
+    //   content: (
+    //     <>
+    //       <ToolbarOptionalDropdownButton
+    //         icon="Right"
+    //         onMainClick={() => dfLog(sheet!, addStep, 2, 1)}
+    //       >
+    //         <DropdownMenuItem
+    //           aria-label="Top"
+    //           onClick={() => dfLog(sheet!, addStep, 2, 0)}
+    //         >
+    //           Top
+    //         </DropdownMenuItem>
 
-            <DropdownMenuItem
-              aria-label="Add 1 to matrix then log2"
-              onClick={() => dfLog(sheet!, addStep, 2, 1)}
-            >
-              Left
-            </DropdownMenuItem>
+    //         <DropdownMenuItem
+    //           aria-label="Add 1 to matrix then log2"
+    //           onClick={() => dfLog(sheet!, addStep, 2, 1)}
+    //         >
+    //           Left
+    //         </DropdownMenuItem>
 
-            <DropdownMenuItem
-              aria-label="Log10"
-              onClick={() => dfLog(sheet!, addStep, 10, 0)}
-            >
-              Bottom
-            </DropdownMenuItem>
+    //         <DropdownMenuItem
+    //           aria-label="Log10"
+    //           onClick={() => dfLog(sheet!, addStep, 10, 0)}
+    //         >
+    //           Bottom
+    //         </DropdownMenuItem>
 
-            <DropdownMenuItem
-              aria-label="Add 1 to matrix then log10"
-              onClick={() => dfLog(sheet!, addStep, 10, 1)}
-            >
-              Right
-            </DropdownMenuItem>
-          </ToolbarOptionalDropdownButton>
-        </>
-      ),
-    },
+    //         <DropdownMenuItem
+    //           aria-label="Add 1 to matrix then log10"
+    //           onClick={() => dfLog(sheet!, addStep, 10, 1)}
+    //         >
+    //           Right
+    //         </DropdownMenuItem>
+    //       </ToolbarOptionalDropdownButton>
+    //     </>
+    //   ),
+    // },
   ]
 
   const rightTabs: ITab[] = [

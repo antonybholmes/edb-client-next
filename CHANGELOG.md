@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Updated help urls.
 
 ### Fixed

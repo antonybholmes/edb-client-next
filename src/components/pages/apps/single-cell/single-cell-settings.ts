@@ -17,12 +17,13 @@ import type { IDim } from '@/interfaces/dim'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import type { ILim } from '@/lib/math/math'
 import { getModuleName } from '@/lib/module-info'
-import { persistentAtom } from '@nanostores/persistent'
-import { useStore } from '@nanostores/react'
+import { nanoid } from '@/lib/utils'
+import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 import MODULE_INFO from './module.json'
-import type { IScrnaGene } from './plot-grid-provider'
+import { IGeneSet } from './plot-grid-provider'
 
-const KEY = `${APP_ID}:module:${getModuleName(MODULE_INFO.name)}:v10`
+const SETTINGS_KEY = `${APP_ID}:module:${getModuleName(MODULE_INFO.name)}:v14`
 
 // GEX - each plot use its own scale, Global GEX - all plots use the same scale, Cluster - draw clusters rather than GEX
 
@@ -78,7 +79,7 @@ export interface ISingleCellSettings extends IScatterDisplayOptions {
   scale: number
 
   autoAxes: boolean
-  geneSets: IScrnaGene[][]
+  genesets: IGeneSet[]
   //clusters: IScrnaCluster[]
   margin: IMarginProps
   roundel: IScrnaClusterRoundel
@@ -109,9 +110,17 @@ const DOT_GRAY = '#e0e0e0'
 
 export const DEFAULT_SETTINGS: ISingleCellSettings = {
   ...DEFAULT_SCATTER_PROPS,
-  geneSets: [
-    [{ geneId: 'ENSG00000111732.10', geneSymbol: 'AICDA' }],
-    [{ geneId: 'ENSG00000057657.15', geneSymbol: 'PRDM1' }],
+  genesets: [
+    {
+      id: nanoid(),
+      name: '',
+      genes: [{ geneId: 'ENSG00000111732.10', geneSymbol: 'AICDA' }],
+    },
+    {
+      id: nanoid(),
+      name: '',
+      genes: [{ geneId: 'ENSG00000057657.15', geneSymbol: 'PRDM1' }],
+    },
   ],
   autoAxes: true,
 
@@ -158,31 +167,55 @@ export const DEFAULT_SETTINGS: ISingleCellSettings = {
   },
 }
 
-const settingsAtom = persistentAtom<ISingleCellSettings>(
-  KEY,
-  {
-    ...DEFAULT_SETTINGS,
-  },
-  {
-    encode: JSON.stringify,
-    decode: JSON.parse,
-  }
+export interface ISingleCellSettingsStore extends ISingleCellSettings {
+  updateSettings: (settings: ISingleCellSettings) => void
+  //applyTheme: (theme: Theme) => void
+}
+
+export const useSingleCellSettingsStore = create<ISingleCellSettingsStore>()(
+  persist(
+    (set) => ({
+      ...DEFAULT_SETTINGS,
+      updateSettings: (settings: ISingleCellSettings) => {
+        set({ ...settings })
+      },
+    }),
+    {
+      name: SETTINGS_KEY, // name in localStorage
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
 )
 
-function updateSettings(settings: ISingleCellSettings) {
-  settingsAtom.set(settings)
-}
+// const settingsAtom = persistentAtom<ISingleCellSettings>(
+//   SETTINGS_KEY,
+//   {
+//     ...DEFAULT_SETTINGS,
+//   },
+//   {
+//     encode: JSON.stringify,
+//     decode: JSON.parse,
+//   }
+// )
 
-function resetSettings() {
-  updateSettings({ ...DEFAULT_SETTINGS })
-}
+// function updateSettings(settings: ISingleCellSettings) {
+//   settingsAtom.set(settings)
+// }
+
+// function resetSettings() {
+//   updateSettings({ ...DEFAULT_SETTINGS })
+// }
 
 export function useUmapSettings(): {
   settings: ISingleCellSettings
   updateSettings: (settings: ISingleCellSettings) => void
   resetSettings: () => void
 } {
-  const settings = useStore(settingsAtom)
+  const settings = useSingleCellSettingsStore((state) => state)
+  const updateSettings = useSingleCellSettingsStore(
+    (state) => state.updateSettings
+  )
+  const resetSettings = () => updateSettings({ ...DEFAULT_SETTINGS })
 
   //console.log('use matcalc settings')
   // // first load in the default values from the store

@@ -7,7 +7,7 @@ import type {
   IUmapPlot,
 } from './plot-grid-provider'
 
-const usePlotGridStore = create<IPlotGridStore>(set => ({
+const usePlotGridStore = create<IPlotGridStore>((set) => ({
   plots: [],
   globalGexRange: [-3, 3] as ILim,
   //xdata: [],
@@ -21,7 +21,7 @@ const usePlotGridStore = create<IPlotGridStore>(set => ({
   },
 
   set: (newState: IPlotGridStoreProps) => {
-    set(state => ({ ...state, ...newState }))
+    set((state) => ({ ...state, ...newState }))
   },
   //setPalette: (palette: ColorMap) =>
   //  set((state: IPlotGridStore) => ({ ...state, palette })),
@@ -36,7 +36,7 @@ const usePlotGridStore = create<IPlotGridStore>(set => ({
   updatePlot: (plot: IUmapPlot) =>
     set((state: IPlotGridStore) => ({
       ...state,
-      plots: state.plots.map(p => (p.id === plot.id ? plot : p)),
+      plots: state.plots.map((p) => (p.id === plot.id ? plot : p)),
     })),
   setPlots: (plots: IUmapPlot[]) =>
     set((state: IPlotGridStore) => ({
