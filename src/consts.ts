@@ -102,4 +102,4 @@ export const DEFAULT_DATE_FORMAT = 'MM/dd/yyyy'
 export const SITE_URL = 'https://edb.rdf-lab.org'
 
 export const DOCS_URL =
-  process.env.NEXT_PUBLIC_DOCS_URL || 'http://localhost:4321'
+  process.env.NEXT_PUBLIC_DOCS_URL || 'http://localhost:4321/docs'

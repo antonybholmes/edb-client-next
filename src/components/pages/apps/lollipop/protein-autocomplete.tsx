@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from 'react'
 import { TEXT_NAME } from '@/consts'
 
 import { Autocomplete } from '@/components/autocomplete'
+import { SearchIcon } from '@/components/icons/search-icon'
 import { toast } from '@/components/shadcn/ui/themed/crisp'
 import { findSheet, useHistory } from '../matcalc/history/history-store'
 import { LollipopContext } from './lollipop-provider'
@@ -76,12 +77,12 @@ export function ProteinAutocomplete() {
     <Autocomplete
       placeholder={TEXT_NAME}
       value={search}
-      onTextChange={v => {
+      onTextChange={(v) => {
         console.log('Setting protein name:', v)
         setSearch(v)
         setSearchProteins(searchCache(v))
       }}
-      onTextChanged={v => {
+      onTextChanged={(v) => {
         console.log('Searching for protein:', v)
 
         searchForProtein(v)
@@ -95,7 +96,7 @@ export function ProteinAutocomplete() {
         return (
           <li key={pi}>
             <button
-              className="justify-start text-left grow hover:bg-muted/50 p-2 w-full"
+              className="flex flex-row px-3  items-center gap-x-2 justify-between text-left grow hover:bg-muted/50 min-h-9 w-full"
               onClick={() => {
                 lollipopPlot(searchProtein)
 
@@ -103,10 +104,14 @@ export function ProteinAutocomplete() {
               }}
               aria-label={`Select ${searchProtein.gene}`}
             >
-              <span className="block font-bold">
-                {searchProtein.gene} ({searchProtein.sequence.length} aa)
+              <span className="inline-flex flex-row items-center gap-x-2">
+                <SearchIcon className="shrink-0" />
+
+                <span className="font-bold">
+                  {searchProtein.gene} ({searchProtein.sequence.length} aa)
+                </span>
               </span>
-              <span className="block text-foreground/50">
+              <span className="text-foreground/50">
                 {`${searchProtein.accession}, ${searchProtein.organism}`}
               </span>
             </button>

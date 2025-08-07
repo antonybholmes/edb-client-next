@@ -6,6 +6,10 @@
 
 - Updated help urls.
 
+### Fixed
+
+- Fixes to help system.
+
 
 ## 24.6 (Aug, 2025)
 

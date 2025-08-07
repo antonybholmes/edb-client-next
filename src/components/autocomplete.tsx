@@ -1,21 +1,14 @@
 import { useClickListener } from '@/hooks/click-listener'
 import { useKeyDownListener } from '@/hooks/keydown-listener'
 import { cn } from '@lib/shadcn-utils'
-import {
-  Children,
-  useRef,
-  useState,
-  type ComponentProps,
-  type ReactNode,
-} from 'react'
+import { Children, useRef, useState, type ComponentProps } from 'react'
 import { BaseCol } from './layout/base-col'
 import { VCenterRow } from './layout/v-center-row'
 import { SearchBox, type ISearchBoxProps } from './search-box'
-import { Label } from './shadcn/ui/themed/label'
 
 export function Autocomplete({
   id,
-  label,
+
   isOpen,
   autoOpen = true,
   asList = true,
@@ -58,11 +51,11 @@ export function Autocomplete({
   const _isOpen =
     isOpen !== undefined ? isOpen : autoOpen && hasFocus && c.length > 0
 
-  let ret: ReactNode = (
+  return (
     <BaseCol
       id={id}
       data-open={_isOpen}
-      className={cn('relative group', label !== undefined ? 'grow' : className)}
+      className={cn('relative group', className)}
       ref={ref}
 
       // onBlur={() => {
@@ -101,7 +94,7 @@ export function Autocomplete({
         data-open={_isOpen}
         //data-focus={focus}
         className={`absolute  
-          rounded-theme border border-border/50 shadow-xs bg-background
+          rounded-theme border border-border/50 data-[open=true]:shadow-lg bg-background
           w-full min-h-9 data-[open=true]:pt-11 data-[open=true]:pb-3 
           z-10 data-[open=true]:z-30 top-0 
           overflow-hidden`}
@@ -124,24 +117,6 @@ export function Autocomplete({
       </BaseCol>
     </BaseCol>
   )
-
-  if (label) {
-    ret = (
-      <BaseCol className={cn('gap-y-1', className)}>
-        {label && (
-          <Label
-            className="text-sm font-bold text-foreground/80 px-0.5"
-            htmlFor={id}
-          >
-            {label}
-          </Label>
-        )}
-        {ret}
-      </BaseCol>
-    )
-  }
-
-  return ret
 }
 
 const AUTOCOMPLETE_LI_CLS = cn(
