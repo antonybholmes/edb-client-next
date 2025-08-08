@@ -1,7 +1,7 @@
 {
   "name": "GSEA",
   "description": "Format GSEA data from the Broad GSEA tool",
-  "version": "3.1.1.211",
+  "version": "3.1.2.212",
   "copyright": "Copyright (C) ${START_YEAR:2024} Antony Holmes. All rights reserved.",
-  "modified": "2025-08-07T15:33:27.533Z"
+  "modified": "2025-08-08T01:30:53.742Z"
 }
