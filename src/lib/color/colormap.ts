@@ -54,7 +54,7 @@ export class ColorMap {
 
   constructor(name: string, cmap: (string | IRGBA)[]) {
     this._name = name
-    this._cmap = cmap.map(c => {
+    this._cmap = cmap.map((c) => {
       if (typeof c === 'string') {
         return hexToRgba(c)
       } else {
@@ -570,4 +570,8 @@ export const COLOR_MAPS: Record<string, ColorMap> = {
   Inferno: INFERNO_CMAP,
   Plasma: PLASMA_CMAP,
   Magma: MAGMA_CMAP,
+}
+
+export function getColorMap(name: string): ColorMap {
+  return name in COLOR_MAPS ? COLOR_MAPS[name]! : BWR_CMAP_V2
 }

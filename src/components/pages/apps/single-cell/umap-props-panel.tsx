@@ -19,7 +19,7 @@ import type { ILim } from '@/lib/math/math'
 import { produce } from 'immer'
 import { ColorMapMenu } from '../matcalc/color-map-menu'
 
-import { BWR_CMAP_V2 } from '@/lib/color/colormap'
+import { getColorMap } from '@/lib/color/colormap'
 
 import { PlotGridContext } from './plot-grid-provider'
 import { useUmapSettings } from './single-cell-settings'
@@ -76,10 +76,10 @@ export function UmapPropsPanel() {
                 w="w-16"
                 limit={[100, 10000]}
                 dp={0}
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   console.log(v)
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       if (settings.grid.on) {
                         draft.grid.axes.xaxis.length = v
                       } else {
@@ -88,9 +88,9 @@ export function UmapPropsPanel() {
                     })
                   )
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       if (settings.grid.on) {
                         draft.grid.axes.yaxis.length = v
                       } else {
@@ -104,9 +104,9 @@ export function UmapPropsPanel() {
             <SwitchPropRow
               title="Grid"
               checked={settings.grid.on}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.grid.on = v
                   })
                 )
@@ -114,9 +114,9 @@ export function UmapPropsPanel() {
             >
               <NumericalPropRow
                 title="Cols"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.grid.cols = v
                     })
                   )
@@ -128,9 +128,9 @@ export function UmapPropsPanel() {
             <SwitchPropRow
               title="Titles"
               checked={settings.grid.titles.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.grid.titles.show = v
                   })
                 )
@@ -148,9 +148,9 @@ export function UmapPropsPanel() {
                 inputCls="rounded-theme"
                 limit={[-1000, 1000]}
                 dp={0}
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.axes.xaxis.domain = [
                         v,
                         settings.axes.xaxis.domain[1],
@@ -158,9 +158,9 @@ export function UmapPropsPanel() {
                     })
                   )
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.axes.xaxis.domain = [
                         settings.axes.xaxis.domain[0],
                         v,
@@ -180,9 +180,9 @@ export function UmapPropsPanel() {
                 inputCls="rounded-theme"
                 limit={[-1000, 1000]}
                 dp={0}
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.axes.yaxis.domain = [
                         v,
                         settings.axes.yaxis.domain[1],
@@ -190,9 +190,9 @@ export function UmapPropsPanel() {
                     })
                   )
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.axes.yaxis.domain = [
                         settings.axes.yaxis.domain[0],
                         v,
@@ -208,9 +208,9 @@ export function UmapPropsPanel() {
             <SwitchPropRow
               title="Auto"
               checked={settings.autoAxes}
-              onCheckedChange={checked => {
+              onCheckedChange={(checked) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.autoAxes = checked
                   })
                 )
@@ -225,9 +225,9 @@ export function UmapPropsPanel() {
             <SwitchPropRow
               title="Z-score"
               checked={settings.zscore.on}
-              onCheckedChange={checked => {
+              onCheckedChange={(checked) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.zscore.on = checked
                   })
                 )
@@ -243,16 +243,16 @@ export function UmapPropsPanel() {
                 placeholder="Max..."
                 w="w-16"
                 className="rounded-theme"
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   const lim: ILim = [v, settings.zscore.range[1]]
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.zscore.range = lim
                     })
                   )
 
                   setPlots(
-                    plots.map(plot =>
+                    plots.map((plot) =>
                       plot.mode.includes('gex')
                         ? {
                             ...plot,
@@ -262,16 +262,16 @@ export function UmapPropsPanel() {
                     )
                   )
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   const lim: ILim = [settings.zscore.range[0], v]
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.zscore.range = lim
                     })
                   )
 
                   setPlots(
-                    plots.map(plot =>
+                    plots.map((plot) =>
                       plot.mode.includes('gex')
                         ? {
                             ...plot,
@@ -289,9 +289,9 @@ export function UmapPropsPanel() {
             <SwitchPropRow
               title="Labels"
               checked={settings.umap.clusters.show}
-              onCheckedChange={checked => {
+              onCheckedChange={(checked) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.umap.clusters.show = checked
                   })
                 )
@@ -306,8 +306,16 @@ export function UmapPropsPanel() {
             <PropRow title="Colormap">
               <ColorMapMenu
                 align="end"
-                cmap={plots[0]?.palette ?? BWR_CMAP_V2} // COLOR_MAPS[settings.cmap]!}
-                onChange={cmap => {
+                cmap={getColorMap(settings.cmap)} // COLOR_MAPS[settings.cmap]!}
+                onChange={(cmap) => {
+                  // store the cmap the user likes
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.cmap = cmap.name
+                    })
+                  )
+
+                  // set all plots to use the new cmap
                   setPalette(cmap)
                 }}
               />
@@ -338,9 +346,9 @@ export function UmapPropsPanel() {
             <SwitchPropRow
               title="Color Bar"
               checked={settings.legend.colorbar.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.legend.colorbar.show = v
                   })
                 )

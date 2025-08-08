@@ -57,7 +57,7 @@ export interface ILegend {
 }
 
 export interface ISingleCellSettings extends IScatterDisplayOptions {
-  gex: { useMean: boolean; useGlobalRange: boolean }
+  gex: { useGlobalRange: boolean }
   grid: {
     titles: { show: boolean; offset: number; color: string }
     on: boolean
@@ -131,7 +131,7 @@ export const DEFAULT_SETTINGS: ISingleCellSettings = {
     on: false,
     range: [-3, 3],
   },
-  cmap: 'Gray Red',
+  cmap: 'BWR v2',
   //mode: 'clusters',
   umap: {
     clusters: {
@@ -156,7 +156,6 @@ export const DEFAULT_SETTINGS: ISingleCellSettings = {
     },
   },
   gex: {
-    useMean: true,
     useGlobalRange: true,
   },
   roundel: { ...DEFAULT_ROUNDEL },

@@ -467,91 +467,19 @@ export function SingleCellPage() {
   //   setPalette(palette)
   // }, [clusterInfo])
 
-  useEffect(() => {
-    //setPlot({ ...plot, palette: COLOR_MAPS[settings.cmap]! })
-    //if (settings.mode.includes('gex')) {
+  // useEffect(() => {
+  //   //setPlot({ ...plot, palette: COLOR_MAPS[settings.cmap]! })
+  //   //if (settings.mode.includes('gex')) {
 
-    if (selectedDataset) {
-      loadGex(selectedDataset, settings.genesets) // setupGexPlot(selectedDataset, settings.genesets, gexData)
-    }
-  }, [
-    settings.cmap,
-    settings.zscore.on,
-    settings.grid.on,
-    settings.zscore.range[0],
-    settings.zscore.range[1],
-    settings.genesets,
-  ])
-
-  function loadGexData() {
-    // try {
-    //   const accessToken = await fetchAccessToken()
-
-    //   if (!accessToken) {
-    //     return
-    //   }
-
-    //   //const genes =
-    //   //  settings.genes.filter(g => genesForUse.get(g.geneId) ?? false) ?? []
-
-    //   if (settings.genesets.length < 1) {
-    //     return
-    //   }
-
-    //   const res = await queryClient.fetchQuery({
-    //     queryKey: [
-    //       'gex',
-    //       selectedDataset?.publicId,
-    //       settings.genesets
-
-    //         .map((g) => g.genes.map((g) => g.geneId))
-    //         .flat()
-    //         .join(','),
-    //     ],
-    //     queryFn: () => {
-    //       return httpFetch.postJson<{ data: IScrnaGexResults }>(
-    //         `${API_SCRNA_GEX_URL}/${selectedDataset?.publicId}`,
-
-    //         {
-    //           headers: bearerHeaders(accessToken),
-    //           body: {
-    //             genes: settings.genesets
-    //               .map((g) => g.genes.map((g) => g.geneId))
-    //               .flat(),
-    //           },
-    //         }
-    //       )
-    //     },
-    //   })
-
-    //   const results: IScrnaGexResults = res.data
-
-    //   // make some empty arrays to store the gene data
-    //   const gexData = Object.fromEntries(
-    //     settings.genesets
-    //       .map((g) => g.genes)
-    //       .flat()
-    //       .map((g) => [g.geneId, zeros(selectedDataset?.cells ?? 0)])
-    //   )
-
-    //   for (const gene of results.genes) {
-    //     for (const gx of gene.gex) {
-    //       gexData[gene.geneId]![gx[0]!] = gx[1]!
-    //     }
-    //   }
-
-    //   setGexData(gexData)
-
-    //   //setupGexPlot(selectedDataset!, settings.genesets, gexData)
-
-    //   loadGex(selectedDataset!, settings.genesets)
-    //   //
-    // } catch (e) {
-    //   console.error('error loading datasets from remote' + e)
-    // }
-
-    loadGex(selectedDataset!, settings.genesets)
-  }
+  //   loadGex(settings.genesets) // setupGexPlot(selectedDataset, settings.genesets, gexData)
+  // }, [
+  //   //settings.cmap,
+  //   //settings.zscore.on,
+  //   settings.grid.on,
+  //   settings.zscore.range[0],
+  //   settings.zscore.range[1],
+  //   settings.genesets,
+  // ])
 
   function loadClusters() {
     if (!sheet) {
@@ -811,7 +739,10 @@ export function SingleCellPage() {
               Cluster
             </ToolbarButton>
 
-            <ToolbarButton arial-label="GEX" onClick={() => loadGexData()}>
+            <ToolbarButton
+              arial-label="GEX"
+              onClick={() => loadGex(settings.genesets)}
+            >
               GEX
             </ToolbarButton>
           </ToolbarTabGroup>

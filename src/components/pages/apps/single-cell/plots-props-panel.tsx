@@ -28,7 +28,7 @@ import {
   TEXT_SEARCH,
   type IDialogParams,
 } from '@/consts'
-import { BWR_CMAP_V2 } from '@/lib/color/colormap'
+import { getColorMap } from '@/lib/color/colormap'
 import { API_SCRNA_SEARCH_GENES_URL } from '@/lib/edb/edb'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { httpFetch } from '@/lib/http/http-fetch'
@@ -225,7 +225,7 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
             hue: [],
             range: [0, 1] as ILim,
           },
-          palette: BWR_CMAP_V2,
+          palette: getColorMap(settings.cmap),
         },
       ])
 
