@@ -1,7 +1,7 @@
 {
   "name": "Gene Conversion",
   "description": "Convert gene names between human and mouse",
-  "version": "4.0.5.346",
+  "version": "4.0.6.347",
   "copyright": "Copyright (C) ${START_YEAR:2024} Antony Holmes. All rights reserved.",
-  "modified": "2025-08-09T05:31:44.649Z"
+  "modified": "2025-08-09T05:46:59.622Z"
 }

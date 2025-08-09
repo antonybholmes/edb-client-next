@@ -1,7 +1,7 @@
 {
   "name": "Get DNA",
   "description": "Annotate genomic coordinates",
-  "version": "3.6.6.307",
+  "version": "3.6.7.308",
   "copyright": "Copyright (C) ${START_YEAR:2022} Antony Holmes. All rights reserved.",
-  "modified": "2025-08-09T05:31:44.659Z"
+  "modified": "2025-08-09T05:46:59.624Z"
 }

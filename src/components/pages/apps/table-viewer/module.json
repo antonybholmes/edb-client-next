@@ -1,7 +1,7 @@
 {
   "name": "Table Viewer",
   "description": "Show tabular data in a simple viewer",
-  "version": "2.0.2.102",
+  "version": "2.0.3.103",
   "copyright": "Copyright (C) ${START_YEAR:2024} Antony Holmes. All rights reserved.",
-  "modified": "2025-08-09T05:31:44.674Z"
+  "modified": "2025-08-09T05:46:59.631Z"
 }

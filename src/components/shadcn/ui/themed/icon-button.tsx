@@ -4,7 +4,6 @@ export function IconButton({
   ref,
   variant = 'muted',
   size = 'icon',
-
   ripple = false,
   aspect = 'icon',
   className,
