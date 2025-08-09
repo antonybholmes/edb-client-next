@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - UI fixes. Changes to single cell module.
 - Bug fixes and updates.
 - Updated help urls.
