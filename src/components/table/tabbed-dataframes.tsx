@@ -36,7 +36,7 @@ export function TabbedDataFrames({
   menuCallback = () => {},
   onReorder = () => {},
   allowReorder = false,
-  zoom,
+  zoom = 1,
   className,
   style,
 }: IProps) {
@@ -84,7 +84,7 @@ export function TabbedDataFrames({
       tabs={tabs}
       maxNameLength={MAX_NAME_CHARS}
       onValueChange={onValueChange}
-      onTabChange={selectedTab => {
+      onTabChange={(selectedTab) => {
         // historyDispatch({
         //   type: 'goto-sheet',
         //   sheetId: selectedTab.index,

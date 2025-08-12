@@ -9,13 +9,13 @@ import { forwardRef, type ForwardedRef } from 'react'
 
 import { CheckPropRow } from '@dialog/check-prop-row'
 import { produce } from 'immer'
-import { useHubsStore } from './hubs-store'
+import { useHubs } from './hubs-store'
 
 export const HubsPropsPanel = forwardRef(function HubsPropsPanel(
   {},
   ref: ForwardedRef<HTMLDivElement>
 ) {
-  const { store, setStore } = useHubsStore()
+  const { settings, updateSettings } = useHubs()
 
   // function setProps(dataset: IGexDataset, props: IGexPlotDisplayProps) {
   //   updateGexPlotSettings(
@@ -37,24 +37,24 @@ export const HubsPropsPanel = forwardRef(function HubsPropsPanel(
             <AccordionContent>
               <CheckPropRow
                 title="Hide Tracks"
-                checked={store.hideTracks}
-                onCheckedChange={v => {
-                  const newStore = produce(store, draft => {
+                checked={settings.hideTracks}
+                onCheckedChange={(v) => {
+                  const newStore = produce(settings, (draft) => {
                     draft.hideTracks = v
                   })
 
-                  setStore(newStore)
+                  updateSettings(newStore)
                 }}
               />
               <CheckPropRow
                 title="Show guidelines"
-                checked={store.showGuidelines}
-                onCheckedChange={v => {
-                  const newStore = produce(store, draft => {
+                checked={settings.showGuidelines}
+                onCheckedChange={(v) => {
+                  const newStore = produce(settings, (draft) => {
                     draft.showGuidelines = v
                   })
 
-                  setStore(newStore)
+                  updateSettings(newStore)
                 }}
               />
             </AccordionContent>

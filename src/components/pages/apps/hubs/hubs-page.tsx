@@ -12,7 +12,7 @@ import { SlidersIcon } from '@icons/sliders-icon'
 
 import { HubsPropsPanel } from './hubs-props-panel'
 
-import { useHubsStore, type IHub } from './hubs-store'
+import { useHubs, type IHub } from './hubs-store'
 
 import { type ITab } from '@components/tabs/tab-provider'
 
@@ -52,7 +52,7 @@ export function HubsPage() {
 
   //const [hubs, setHubs] = useState<IHub[]>([])
 
-  const { store, setStore } = useHubsStore()
+  const { settings, updateSettings } = useHubs()
 
   const { query, setQuery, resetQuery } = useSearch()
 
@@ -72,7 +72,7 @@ export function HubsPage() {
 
   useEffect(() => {
     async function loadHubs() {
-      if (!store.genome || !csrfToken) {
+      if (!settings.genome || !csrfToken) {
         return
       }
 
@@ -83,7 +83,7 @@ export function HubsPage() {
           queryKey: ['hubs'],
           queryFn: () => {
             return httpFetch.getJson<{ data: IHub[] }>(
-              `${API_HUBS_URL}/${store.genome}`,
+              `${API_HUBS_URL}/${settings.genome}`,
               {
                 headers: bearerHeaders(accessToken),
               }
@@ -115,7 +115,7 @@ export function HubsPage() {
       }
     }
     loadHubs()
-  }, [store.genome, csrfToken])
+  }, [settings.genome, csrfToken])
 
   useEffect(() => {
     if (query) {
@@ -188,13 +188,13 @@ export function HubsPage() {
         </Autocomplete>
 
         <Select
-          value={store.genome}
+          value={settings.genome}
           onValueChange={(v) => {
-            const newStore = produce(store, (draft) => {
+            const newStore = produce(settings, (draft) => {
               draft.genome = v
             })
 
-            setStore(newStore)
+            updateSettings(newStore)
           }}
         >
           <SelectTrigger
@@ -255,15 +255,15 @@ export function HubsPage() {
                                 .get(platform)!
                                 .map((hub) => {
                                   const params = new URLSearchParams()
-                                  params.append('db', store.genome)
+                                  params.append('db', settings.genome)
                                   params.append('hubUrl', hub.url)
-                                  if (store.hideTracks) {
+                                  if (settings.hideTracks) {
                                     params.append('hideTracks', '1')
                                   }
 
                                   params.append(
                                     'guidelines',
-                                    store.showGuidelines ? 'on' : 'off'
+                                    settings.showGuidelines ? 'on' : 'off'
                                   )
 
                                   return (

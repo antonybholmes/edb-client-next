@@ -1,9 +1,8 @@
 import { APP_ID } from '@/consts'
-import { persistentAtom } from '@nanostores/persistent'
-import { useStore } from '@nanostores/react'
-import { useEffect } from 'react'
+import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${APP_ID}:module:hubs:settings:v5`
+const SETTINGS_KEY = `${APP_ID}:module:hubs:settings:v6`
 
 export interface ISearchItem {
   publicId: string
@@ -33,36 +32,51 @@ export const DEFAULT_HUB_OPTIONS: IHubOptions = {
   showGuidelines: false,
 }
 
-const hubsAtom = persistentAtom<IHubOptions>(
-  SETTINGS_KEY,
-  { ...DEFAULT_HUB_OPTIONS },
-  {
-    encode: JSON.stringify,
-    decode: JSON.parse,
-  }
+export interface IHubStore extends IHubOptions {
+  updateSettings: (settings: IHubOptions) => void
+  //applyTheme: (theme: Theme) => void
+}
+
+export const useHubsStore = create<IHubStore>()(
+  persist(
+    (set) => ({
+      ...DEFAULT_HUB_OPTIONS,
+      updateSettings: (settings: IHubOptions) => {
+        set({ ...settings })
+      },
+    }),
+    {
+      name: SETTINGS_KEY, // name in localStorage
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
 )
 
-function setStore(props: IHubOptions) {
-  hubsAtom.set(props)
-}
+// const hubsAtom = persistentAtom<IHubOptions>(
+//   SETTINGS_KEY,
+//   { ...DEFAULT_HUB_OPTIONS },
+//   {
+//     encode: JSON.stringify,
+//     decode: JSON.parse,
+//   }
+// )
 
-function resetStore() {
-  hubsAtom.set({ ...DEFAULT_HUB_OPTIONS })
-}
+// function setStore(props: IHubOptions) {
+//   hubsAtom.set(props)
+// }
 
-export function useHubsStore(): {
-  store: IHubOptions
-  setStore: (props: IHubOptions) => void
-  resetStore: () => void
+// function resetStore() {
+//   hubsAtom.set({ ...DEFAULT_HUB_OPTIONS })
+// }
+
+export function useHubs(): {
+  settings: IHubOptions
+  updateSettings: (settings: IHubOptions) => void
+  resetSettings: () => void
 } {
-  const store = useStore(hubsAtom)
+  const settings = useHubsStore((state) => state)
+  const updateSettings = useHubsStore((state) => state.updateSettings)
+  const resetSettings = () => updateSettings({ ...DEFAULT_HUB_OPTIONS })
 
-  useEffect(() => {
-    // auto recreate if deleted and app is running
-    if (!store) {
-      resetStore()
-    }
-  }, [store])
-
-  return { store, setStore, resetStore }
+  return { settings, updateSettings, resetSettings }
 }

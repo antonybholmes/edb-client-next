@@ -1303,6 +1303,10 @@
         {
           "msg": "Changed more nanostores to zustand",
           "date": "2025-08-12T14:18:28.164Z"
+        },
+        {
+          "msg": "UI fixes",
+          "date": "2025-08-12T16:55:13.766Z"
         }
       ],
       "Fixed": [

@@ -216,25 +216,5 @@ export function useUmapSettings(): {
   )
   const resetSettings = () => updateSettings({ ...DEFAULT_SETTINGS })
 
-  //console.log('use matcalc settings')
-  // // first load in the default values from the store
-  // const [settings, setSettings] = useState<ISettings>({
-  //   passwordless: localStore.passwordless === TRUE,
-  //   staySignedIn: localStore.staySignedIn === TRUE,
-  //   theme: localStore.theme as Theme,
-  // })
-
-  // // when the in memory store is updated, trigger a write to localstorage.
-  // // There may be an unnecessary write at the start where the localstorage
-  // // is overwritten with a copy of itself, but this is ok.
-  // useEffect(() => {
-  //   // Write to store when there are changes
-  //   localStorageMap.set({
-  //     passwordless: localStore.passwordless.toString(),
-  //     staySignedIn: localStore.staySignedIn.toString(),
-  //     theme: settings.theme,
-  //   })
-  // }, [settings])
-
   return { settings, updateSettings, resetSettings }
 }

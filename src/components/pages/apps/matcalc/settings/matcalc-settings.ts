@@ -1,12 +1,13 @@
 import { APP_ID } from '@/consts'
 
 import { getModuleName } from '@/lib/module-info'
-import { persistentAtom } from '@nanostores/persistent'
-import { useStore } from '@nanostores/react'
+import { create } from 'zustand'
 import type { HumanReadableDelimiter } from '../../../open-files'
 import MODULE_INFO from '../module.json'
 
-const KEY = `${APP_ID}:module:${getModuleName(MODULE_INFO.name)}:settings:v42`
+import { createJSONStorage, persist } from 'zustand/middleware'
+
+const SETTINGS_KEY = `${APP_ID}:module:${getModuleName(MODULE_INFO.name)}:settings:v42`
 
 export interface IMatcalcSettings {
   dot: { size: { useOriginalValuesForSizes: boolean } }
@@ -168,51 +169,52 @@ export const DEFAULT_SETTINGS: IMatcalcSettings = {
   },
 }
 
-const settingsAtom = persistentAtom<IMatcalcSettings>(
-  KEY,
-  {
-    ...DEFAULT_SETTINGS,
-  },
-  {
-    encode: JSON.stringify,
-    decode: JSON.parse,
-  }
+export interface IMatcalcStore extends IMatcalcSettings {
+  updateSettings: (settings: IMatcalcSettings) => void
+}
+
+export const useMatcalcStore = create<IMatcalcStore>()(
+  persist(
+    (set) => ({
+      ...DEFAULT_SETTINGS,
+      updateSettings: (settings: IMatcalcSettings) => {
+        set({ ...settings })
+      },
+    }),
+    {
+      name: SETTINGS_KEY, // name in localStorage
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
 )
 
-function updateSettings(settings: IMatcalcSettings) {
-  settingsAtom.set(settings)
-}
+// const settingsAtom = persistentAtom<IMatcalcSettings>(
+//   KEY,
+//   {
+//     ...DEFAULT_SETTINGS,
+//   },
+//   {
+//     encode: JSON.stringify,
+//     decode: JSON.parse,
+//   }
+// )
 
-function resetSettings() {
-  updateSettings({ ...DEFAULT_SETTINGS })
-}
+// function updateSettings(settings: IMatcalcSettings) {
+//   settingsAtom.set(settings)
+// }
+
+// function resetSettings() {
+//   updateSettings({ ...DEFAULT_SETTINGS })
+// }
 
 export function useMatcalcSettings(): {
   settings: IMatcalcSettings
   updateSettings: (settings: IMatcalcSettings) => void
   resetSettings: () => void
 } {
-  const settings = useStore(settingsAtom)
-
-  //console.log('use matcalc settings')
-  // // first load in the default values from the store
-  // const [settings, setSettings] = useState<ISettings>({
-  //   passwordless: localStore.passwordless === TRUE,
-  //   staySignedIn: localStore.staySignedIn === TRUE,
-  //   theme: localStore.theme as Theme,
-  // })
-
-  // // when the in memory store is updated, trigger a write to localstorage.
-  // // There may be an unnecessary write at the start where the localstorage
-  // // is overwritten with a copy of itself, but this is ok.
-  // useEffect(() => {
-  //   // Write to store when there are changes
-  //   localStorageMap.set({
-  //     passwordless: localStore.passwordless.toString(),
-  //     staySignedIn: localStore.staySignedIn.toString(),
-  //     theme: settings.theme,
-  //   })
-  // }, [settings])
+  const settings = useMatcalcStore((state) => state)
+  const updateSettings = useMatcalcStore((state) => state.updateSettings)
+  const resetSettings = () => updateSettings({ ...DEFAULT_SETTINGS })
 
   return { settings, updateSettings, resetSettings }
 }

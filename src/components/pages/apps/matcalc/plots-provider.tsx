@@ -5,8 +5,17 @@ import type { IFieldMap } from '@interfaces/field-map'
 import { where } from '@lib/math/where'
 import { createContext, useReducer, type Dispatch } from 'react'
 
+import { IHeatMapDisplayOptions } from '@/components/plot/heatmap/heatmap-svg-props'
+import { IExtGseaDisplayOptions } from '../genes/gsea/ext-gsea-store'
+import { IBoxPlotDisplayOptions } from './apps/boxplot/boxplot-plot-svg'
+import { IVolcanoDisplayOptions } from './apps/volcano/volcano-plot-svg'
 import { newPlot, type IPlot } from './history/history-store'
-import type { IPlotDisplayOptions } from './plot-props-store'
+
+export type IPlotDisplayOptions =
+  | IHeatMapDisplayOptions
+  | IVolcanoDisplayOptions
+  | IExtGseaDisplayOptions
+  | IBoxPlotDisplayOptions
 
 export type PlotStyle =
   | 'heatmap'
@@ -107,13 +116,13 @@ export function plotsReducer(
     case 'remove':
       return {
         ...state,
-        plots: state.plots.filter(plot => plot.id != action.id),
+        plots: state.plots.filter((plot) => plot.id != action.id),
         plotMap: Object.fromEntries(
-          Object.entries(state.plotMap).filter(e => e[0] != action.id)
+          Object.entries(state.plotMap).filter((e) => e[0] != action.id)
         ),
       }
     case 'update-display':
-      idx = where(state.plots, plot => plot.id === action.id)
+      idx = where(state.plots, (plot) => plot.id === action.id)
 
       if (idx.length > 0) {
         const plot = {
@@ -123,14 +132,14 @@ export function plotsReducer(
 
         return {
           ...state,
-          plots: state.plots.map(p => (p.id === action.id ? plot : p)),
+          plots: state.plots.map((p) => (p.id === action.id ? plot : p)),
           plotMap: { ...state.plotMap, [plot.id]: plot },
         }
       } else {
         return state
       }
     case 'update-custom-prop':
-      idx = where(state.plots, plot => plot.id === action.id)
+      idx = where(state.plots, (plot) => plot.id === action.id)
 
       if (idx.length > 0) {
         plot = state.plots[idx[0]!]!
@@ -142,7 +151,7 @@ export function plotsReducer(
 
         return {
           ...state,
-          plots: state.plots.map(p => (p.id === action.id ? plot : p)),
+          plots: state.plots.map((p) => (p.id === action.id ? plot : p)),
           plotMap: { ...state.plotMap, [plot.id]: plot },
         }
       } else {

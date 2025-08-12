@@ -1,19 +1,18 @@
 import { APP_ID } from '@/consts'
 
-import { persistentAtom } from '@nanostores/persistent'
-import { useStore } from '@nanostores/react'
-
 import MODULE_INFO from './module.json'
 
 import { getModuleName } from '@/lib/module-info'
 import type { IMarginProps } from '@components/plot/svg-props'
+import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
 export type Mode = 'prob' | 'bits'
 export type DNABase = 'a' | 'c' | 'g' | 't'
 
 export const LW = 45
 
-const KEY = `${APP_ID}:module:${getModuleName(MODULE_INFO.name)}:settings:v3`
+const SETTINGS_KEY = `${APP_ID}:module:${getModuleName(MODULE_INFO.name)}:settings:v4`
 
 export interface IMotifSettings {
   view: Mode
@@ -52,31 +51,53 @@ export const DEFAULT_SETTINGS: IMotifSettings = {
   },
 }
 
-const settingsAtom = persistentAtom<IMotifSettings>(
-  KEY,
-  {
-    ...DEFAULT_SETTINGS,
-  },
-  {
-    encode: JSON.stringify,
-    decode: JSON.parse,
-  }
+export interface IMotifStore extends IMotifSettings {
+  updateSettings: (settings: IMotifSettings) => void
+  //applyTheme: (theme: Theme) => void
+}
+
+export const useMotifStore = create<IMotifStore>()(
+  persist(
+    (set) => ({
+      ...DEFAULT_SETTINGS,
+      updateSettings: (settings: IMotifSettings) => {
+        set({ ...settings })
+      },
+    }),
+    {
+      name: SETTINGS_KEY, // name in localStorage
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
 )
 
-function updateSettings(settings: IMotifSettings) {
-  settingsAtom.set(settings)
-}
+// const settingsAtom = persistentAtom<IMotifSettings>(
+//   SETTINGS_KEY,
+//   {
+//     ...DEFAULT_SETTINGS,
+//   },
+//   {
+//     encode: JSON.stringify,
+//     decode: JSON.parse,
+//   }
+// )
 
-function resetSettings() {
-  updateSettings({ ...DEFAULT_SETTINGS })
-}
+// function updateSettings(settings: IMotifSettings) {
+//   settingsAtom.set(settings)
+// }
+
+// function resetSettings() {
+//   updateSettings({ ...DEFAULT_SETTINGS })
+// }
 
 export function useMotifSettings(): {
   settings: IMotifSettings
   updateSettings: (settings: IMotifSettings) => void
   resetSettings: () => void
 } {
-  const settings = useStore(settingsAtom)
+  const settings = useMotifStore((state) => state)
+  const updateSettings = useMotifStore((state) => state.updateSettings)
+  const resetSettings = () => updateSettings({ ...DEFAULT_SETTINGS })
 
   return { settings, updateSettings, resetSettings }
 }

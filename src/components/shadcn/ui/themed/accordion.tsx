@@ -130,7 +130,7 @@ export const accordionTriggerVariants = cva(
     variants: {
       variant: {
         default:
-          'hover:bg-muted/50 pl-2 pr-1 py-1.5 data-[state=open]:bg-muted/75',
+          'hover:bg-muted/50 pl-2.5 pr-2 py-2 data-[state=open]:bg-muted/75',
         settings: 'py-1.5',
         none: '',
       },
@@ -201,7 +201,7 @@ AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName
 export const accordionContentVariants = cva('flex flex-col', {
   variants: {
     variant: {
-      default: 'px-1 pb-4 mb-2 gap-y-1 border-b border-border/50',
+      default: 'px-1 pb-4 mb-2 gap-y-1',
       settings: 'pl-2 pt-2 pb-4 gap-y-1',
     },
   },
