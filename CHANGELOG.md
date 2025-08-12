@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Changed more nanostores to zustand.
 - Bug fixes and updates.
 - UI fixes. Changes to single cell module.
 - Bug fixes and updates.

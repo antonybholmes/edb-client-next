@@ -1,7 +1,7 @@
 {
   "name": "Venn",
   "description": "Create Venn diagrams",
-  "version": "6.1.0.351",
+  "version": "6.1.1.352",
   "copyright": "Copyright (C) ${START_YEAR:2023} Antony Holmes. All rights reserved.",
-  "modified": "2025-08-09T05:46:59.631Z"
+  "modified": "2025-08-11T12:38:06.225Z"
 }

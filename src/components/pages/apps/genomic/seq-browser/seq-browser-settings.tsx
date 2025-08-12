@@ -1,9 +1,6 @@
 import type { IChildrenProps } from '@interfaces/children-props'
 import { createContext } from 'react'
 
-import { persistentAtom } from '@nanostores/persistent'
-import { useStore } from '@nanostores/react'
-
 import { APP_ID } from '@/consts'
 import { getModuleName } from '@/lib/module-info'
 import {
@@ -19,10 +16,12 @@ import {
   COLOR_CORNFLOWER_BLUE,
   COLOR_NAVY_BLUE,
 } from '@lib/color/color'
+import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 import MODULE_INFO from './module.json'
 import type { BandStyle, GeneArrowStyle } from './tracks-provider'
 
-const KEY = `${APP_ID}:module:${getModuleName(MODULE_INFO.name)}:settings:v65`
+const SETTINGS_KEY = `${APP_ID}:module:${getModuleName(MODULE_INFO.name)}:settings:v68`
 
 export type TrackTitlePosition = 'top' | 'right'
 
@@ -241,31 +240,74 @@ export const DEFAULT_TRACKS_DISPLAY_PROPS: ISeqBrowserSettings = {
   locations: ['chr3:187441954-187466041', 'chr6:106441338-106557814'],
 }
 
-const settingsAtom = persistentAtom<ISeqBrowserSettings>(
-  KEY,
-  {
-    ...DEFAULT_TRACKS_DISPLAY_PROPS,
-  },
-  {
-    encode: JSON.stringify,
-    decode: JSON.parse,
-  }
+export interface ISeqBrowserStore extends ISeqBrowserSettings {
+  updateSettings: (settings: ISeqBrowserSettings) => void
+  //applyTheme: (theme: Theme) => void
+}
+
+export const useSeqBrowserStore = create<ISeqBrowserStore>()(
+  persist(
+    (set) => ({
+      ...DEFAULT_TRACKS_DISPLAY_PROPS,
+      updateSettings: (settings: ISeqBrowserSettings) => {
+        set({ ...settings })
+      },
+    }),
+    {
+      name: SETTINGS_KEY, // name in localStorage
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
 )
 
-function updateSettings(settings: ISeqBrowserSettings) {
-  settingsAtom.set(settings)
-}
+// const settingsAtom = persistentAtom<ISeqBrowserSettings>(
+//   SETTINGS_KEY,
+//   {
+//     ...DEFAULT_TRACKS_DISPLAY_PROPS,
+//   },
+//   {
+//     encode: JSON.stringify,
+//     decode: JSON.parse,
+//   }
+// )
 
-function resetSettings() {
-  updateSettings({ ...DEFAULT_TRACKS_DISPLAY_PROPS })
-}
+// function updateSettings(settings: ISeqBrowserSettings) {
+//   settingsAtom.set(settings)
+// }
+
+// function resetSettings() {
+//   updateSettings({ ...DEFAULT_TRACKS_DISPLAY_PROPS })
+// }
 
 export function useSeqBrowserSettings(): {
   settings: ISeqBrowserSettings
   updateSettings: (settings: ISeqBrowserSettings) => void
   resetSettings: () => void
 } {
-  const settings = useStore(settingsAtom)
+  const settings = useSeqBrowserStore((state) => state)
+  const updateSettings = useSeqBrowserStore((state) => state.updateSettings)
+  const resetSettings = () =>
+    updateSettings({ ...DEFAULT_TRACKS_DISPLAY_PROPS })
+
+  //console.log('use matcalc settings')
+  // // first load in the default values from the store
+  // const [settings, setSettings] = useState<ISettings>({
+  //   passwordless: localStore.passwordless === TRUE,
+  //   staySignedIn: localStore.staySignedIn === TRUE,
+  //   theme: localStore.theme as Theme,
+  // })
+
+  // // when the in memory store is updated, trigger a write to localstorage.
+  // // There may be an unnecessary write at the start where the localstorage
+  // // is overwritten with a copy of itself, but this is ok.
+  // useEffect(() => {
+  //   // Write to store when there are changes
+  //   localStorageMap.set({
+  //     passwordless: localStore.passwordless.toString(),
+  //     staySignedIn: localStore.staySignedIn.toString(),
+  //     theme: settings.theme,
+  //   })
+  // }, [settings])
 
   return { settings, updateSettings, resetSettings }
 }

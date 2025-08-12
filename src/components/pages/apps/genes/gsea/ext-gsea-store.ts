@@ -5,9 +5,8 @@ import {
   type IStrokeProps,
 } from '@components/plot/svg-props'
 import { COLOR_BLUE, COLOR_RED } from '@lib/color/color'
-import { persistentAtom } from '@nanostores/persistent'
-import { useStore } from '@nanostores/react'
-import { useEffect } from 'react'
+import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
 const SETTINGS_KEY = `${APP_ID}:ext-gsea:settings:v11`
 
@@ -184,36 +183,51 @@ export const DEFAULT_EXT_GSEA_PROPS: IExtGseaDisplayOptions = {
   },
 }
 
-const extGseaAtom = persistentAtom<IExtGseaDisplayOptions>(
-  SETTINGS_KEY,
-  { ...DEFAULT_EXT_GSEA_PROPS },
-  {
-    encode: JSON.stringify,
-    decode: JSON.parse,
-  }
+export interface IExtGseaStore extends IExtGseaDisplayOptions {
+  updateSettings: (settings: IExtGseaDisplayOptions) => void
+  //applyTheme: (theme: Theme) => void
+}
+
+export const useExtGseaStore = create<IExtGseaStore>()(
+  persist(
+    (set) => ({
+      ...DEFAULT_EXT_GSEA_PROPS,
+      updateSettings: (settings: IExtGseaDisplayOptions) => {
+        set({ ...settings })
+      },
+    }),
+    {
+      name: SETTINGS_KEY, // name in localStorage
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
 )
 
-function setDisplayProps(props: IExtGseaDisplayOptions) {
-  extGseaAtom.set(props)
-}
+// const extGseaAtom = persistentAtom<IExtGseaDisplayOptions>(
+//   SETTINGS_KEY,
+//   { ...DEFAULT_EXT_GSEA_PROPS },
+//   {
+//     encode: JSON.stringify,
+//     decode: JSON.parse,
+//   }
+// )
 
-function resetDisplayProps() {
-  extGseaAtom.set({ ...DEFAULT_EXT_GSEA_PROPS })
-}
+// function setDisplayProps(props: IExtGseaDisplayOptions) {
+//   extGseaAtom.set(props)
+// }
 
-export function useExtGseaStore(): {
-  displayProps: IExtGseaDisplayOptions
-  setDisplayProps: (props: IExtGseaDisplayOptions) => void
-  resetDisplayProps: () => void
+// function resetDisplayProps() {
+//   extGseaAtom.set({ ...DEFAULT_EXT_GSEA_PROPS })
+// }
+
+export function useExtGsea(): {
+  settings: IExtGseaDisplayOptions
+  updateSettings: (settings: IExtGseaStore) => void
+  resetSettings: () => void
 } {
-  const displayProps = useStore(extGseaAtom)
+  const settings = useExtGseaStore((state) => state)
+  const updateSettings = useExtGseaStore((state) => state.updateSettings)
+  const resetSettings = () => updateSettings({ ...DEFAULT_EXT_GSEA_PROPS })
 
-  useEffect(() => {
-    // auto recreate if deleted and app is running
-    if (!displayProps) {
-      resetDisplayProps()
-    }
-  }, [displayProps])
-
-  return { displayProps, setDisplayProps, resetDisplayProps }
+  return { settings, updateSettings, resetSettings }
 }

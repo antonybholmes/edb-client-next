@@ -1299,6 +1299,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2025-08-09T05:31:48.649Z"
+        },
+        {
+          "msg": "Changed more nanostores to zustand",
+          "date": "2025-08-12T14:18:28.164Z"
         }
       ],
       "Fixed": [
