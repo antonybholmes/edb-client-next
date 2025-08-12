@@ -1,5 +1,12 @@
 # Changelog
 
+## 24.8 (Aug, 2025)
+
+### Changed
+
+- Bug fixes and updates.
+
+
 ## 24.7 (Aug, 2025)
 
 ### Changed

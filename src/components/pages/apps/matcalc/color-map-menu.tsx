@@ -10,12 +10,8 @@ import { cn } from '@lib/shadcn-utils'
 import { useState } from 'react'
 
 export const BUTTON_CLS = cn(
-  'relative aspect-square border-4 border-transparent p-0.5',
-  'data-[checked=true]:border-border data-[checked=false]:hover:border-border data-[checked=false]:focus-visible:border-border',
-  "data-[checked=true]:after:content-[''] data-[checked=true]:after:-m-[4px] data-[checked=true]:after:absolute",
-  'data-[checked=true]:after:left-0 data-[checked=true]:after:top-0 data-[checked=true]:after:right-0',
-  'data-[checked=true]:after:bottom-0 data-[checked=true]:after:inset-0 data-[checked=true]:after:border-1',
-  'data-[checked=true]:after:border-foreground/75'
+  'relative border-2 border-transparent rounded-full p-[2px]',
+  'data-[checked=true]:border-foreground data-[checked=false]:hover:border-foreground/50 data-[checked=false]:focus-visible:border-border'
 )
 
 interface IProps {
@@ -32,7 +28,6 @@ export function ColorMapMenu({
   const [open, setOpen] = useState(false)
 
   function _onChange(cmap: ColorMap) {
-    console.log('ss', cmap)
     setOpen(false)
     onChange?.(cmap)
   }
@@ -42,7 +37,8 @@ export function ColorMapMenu({
       <PopoverTrigger title="Change colormap" onClick={() => setOpen(true)}>
         <ColorMapIcon
           cmap={cmap}
-          className="w-8 border border-foreground/50 rounded-full p-[2px]"
+          aspect="aspect-3/2"
+          className="w-8 border border-foreground  rounded-full"
         />
       </PopoverTrigger>
 
@@ -53,7 +49,7 @@ export function ColorMapMenu({
         className="fill-foreground"
         variant="content"
       >
-        <div className="grid grid-cols-4 gap-0.5">
+        <div className="grid grid-cols-5 gap-0.5">
           {Object.keys(COLOR_MAPS)
             .sort()
             .map((c, ci) => {
@@ -68,8 +64,9 @@ export function ColorMapMenu({
                 >
                   <ColorMapIcon
                     cmap={cm}
+                    data-checked={cm.name === cmap.name}
                     aspect="aspect-square"
-                    className="w-6 border border-foreground"
+                    className="w-6 rounded-full"
                   />
                 </button>
               )

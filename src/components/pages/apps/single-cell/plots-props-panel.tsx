@@ -207,7 +207,7 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
     if (newGenes.length > 0) {
       const geneset = {
         id: nanoid(),
-        name: truncate(newGenes.map((g) => g.geneSymbol).join(', ')),
+        name: truncate(newGenes.map((g) => g.sym).join(', ')),
         genes: newGenes,
       }
 
@@ -216,7 +216,7 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
         ...plots,
         {
           id: nanoid(),
-          name: truncate(newGenes.map((g) => g.geneSymbol).join(', ')),
+          name: truncate(newGenes.map((g) => g.sym).join(', ')),
           geneset,
           mode: 'global-gex' as PlotMode,
           clusters: clusterInfo.clusters,

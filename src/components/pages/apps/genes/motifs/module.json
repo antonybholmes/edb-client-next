@@ -1,7 +1,7 @@
 {
   "name": "Motifs",
   "description": "View logo plots for common motifs",
-  "version": "4.0.2.333",
+  "version": "4.0.3.334",
   "copyright": "Copyright (C) ${START_YEAR:2024} Antony Holmes. All rights reserved.",
-  "modified": "2025-08-12T14:21:46.937Z"
+  "modified": "2025-08-12T16:55:11.954Z"
 }

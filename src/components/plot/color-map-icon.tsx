@@ -12,7 +12,7 @@ interface IProps extends IDivProps {
 
 export function ColorMapIcon({
   cmap,
-  steps = 11,
+  steps = 15,
   aspect = 'aspect-3/2',
   style,
   className,

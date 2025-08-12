@@ -46,9 +46,9 @@ export interface IScrnaDataset {
 
 export interface IScrnaGene {
   // ensembl
-  geneId: string
+  id: string
   // gene symbol
-  geneSymbol: string
+  sym: string
 }
 
 export interface IScrnaGexGene extends IScrnaGene {
@@ -196,8 +196,6 @@ export function PlotGridProvider({ children }: IChildrenProps) {
     },
   })
 
-  console.log('PlotGridProvider', store)
-
   const { fetchAccessToken } = useEdbAuth()
   const { settings } = useUmapSettings()
 
@@ -206,7 +204,6 @@ export function PlotGridProvider({ children }: IChildrenProps) {
   }, [settings.genesets])
 
   useEffect(() => {
-    console.log('sdd')
     setupGexPlots(settings.genesets, store.gexData)
   }, [
     settings.zscore.on,
@@ -327,17 +324,13 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         return
       }
 
-      const genes = genesets
-        .map((g) => g.genes.map((gene) => gene.geneId))
-        .flat()
+      const genes = genesets.map((g) => g.genes.map((gene) => gene.id)).flat()
 
       console.log('Loading GEX for', store.dataset.publicId, genes)
 
       const res = await queryClient.fetchQuery({
         queryKey: ['gex', store.dataset.publicId, genes],
         queryFn: () => {
-          console.log(genes)
-
           return httpFetch.postJson<{ data: IScrnaGexResults }>(
             `${API_SCRNA_GEX_URL}/${store.dataset!.publicId}`,
 
@@ -358,12 +351,12 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         genesets
           .map((g) => g.genes)
           .flat()
-          .map((g) => [g.geneId, zeros(store.dataset!.cells ?? 0)])
+          .map((g) => [g.id, zeros(store.dataset!.cells ?? 0)])
       )
 
       for (const gene of results.genes) {
         for (const gx of gene.gex) {
-          gexData[gene.geneId]![gx[0]!] = gx[1]!
+          gexData[gene.id]![gx[0]!] = gx[1]!
         }
       }
 
@@ -372,8 +365,6 @@ export function PlotGridProvider({ children }: IChildrenProps) {
           draft.gexData = gexData
         })
       )
-
-      console.log('GEX data loaded', gexData)
 
       setupGexPlots(genesets, gexData)
       //
@@ -386,7 +377,6 @@ export function PlotGridProvider({ children }: IChildrenProps) {
     genesets: IGeneSet[],
     gexData: Record<string, number[]>
   ) {
-    console.log('step1', store.dataset, genesets, gexData)
     if (
       store.dataset === null ||
       genesets.length === 0 ||
@@ -394,8 +384,6 @@ export function PlotGridProvider({ children }: IChildrenProps) {
     ) {
       return
     }
-
-    console.log('step2)')
 
     const plots: IUmapPlot[] = []
 
@@ -408,10 +396,10 @@ export function PlotGridProvider({ children }: IChildrenProps) {
 
       if (useMean) {
         avg = range(0, store.dataset.cells ?? 0).map((cellIdx) =>
-          mean(geneset.genes.map((gene) => gexData[gene.geneId]![cellIdx]!))
+          mean(geneset.genes.map((gene) => gexData[gene.id]![cellIdx]!))
         )
       } else {
-        avg = gexData[geneset.genes[0]!.geneId]!
+        avg = gexData[geneset.genes[0]!.id]!
       }
 
       //console.log(avg)
@@ -443,9 +431,9 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         id: nanoid(),
         name: useMean
           ? truncate(
-              `Mean of ${geneset.name}: ${geneset.genes.map((g) => g.geneSymbol).join(', ')}`
+              `Mean of ${geneset.name}: ${geneset.genes.map((g) => g.sym).join(', ')}`
             )
-          : geneset.genes[0]!.geneSymbol,
+          : geneset.genes[0]!.sym,
         geneset,
         mode: settings.gex.useGlobalRange ? 'global-gex' : 'gex',
         clusters: store.clusterInfo.clusters, //.slice(0, 2),
@@ -457,8 +445,6 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         palette: getColorMap(settings.cmap),
       })
     }
-
-    console.log('Setting up GEX plots', globalMax)
 
     //globalMax = Math.max(globalMax, store.globalGexRange[1]!)
     //nz = ordered(nz, idx)
