@@ -1,7 +1,7 @@
 {
   "name": "Seq Browser",
   "description": "Display ChIP-seq, RNA-seq, BED and genomic data.",
-  "version": "3.8.2.285",
+  "version": "3.8.3.286",
   "copyright": "Copyright (C) ${START_YEAR:2024} Antony Holmes. All rights reserved.",
-  "modified": "2025-08-12T16:55:11.955Z"
+  "modified": "2025-08-12T22:45:58.328Z"
 }
