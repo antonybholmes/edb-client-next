@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Revised annotation modules.
 - Updated libs.
 - Bug fixes and updates.

@@ -79,7 +79,6 @@ export async function createAnnotationTable(
       const tssDists: number[] = []
 
       for (const g of ann.withinGenes) {
-        console.log(g, 'withinGene')
         geneIds.push(g.geneId)
         geneNames.push(g.geneName)
         strands.push(g.strand)
