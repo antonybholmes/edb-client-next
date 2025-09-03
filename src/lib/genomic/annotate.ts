@@ -28,20 +28,26 @@ export async function createAnnotationTable(
   //const locations:Location[] = df.col(col)!.values.map(l=>parseLocation(l as string)!)
   const locations: string[] = df.col(col).strs
 
+  console.log(
+    `${API_GENOME_URL}/annotate/${assembly}?tss=${tss[0]},${tss[1]}&n=${closest}`
+  )
+
   try {
     const res = await queryClient.fetchQuery({
       queryKey: ['genes'],
       queryFn: () =>
         httpFetch.postJson<{
           data: {
-            geneIds: string
-            geneSymbols: string
-            geneStrands: string
-            promLabels: string
-            tssDists: string
+            withinGenes: {
+              geneId: string
+              geneName: string
+              strand: string
+              promLabel: string
+              tssDist: number
+            }[]
             closestGenes: {
               geneId: string
-              geneSymbol: string
+              geneName: string
               strand: string
               promLabel: string
               tssDist: number
@@ -64,15 +70,30 @@ export async function createAnnotationTable(
     for (const [ri, row] of df.values.entries()) {
       const ann = data[ri]!
 
-      console.log(ann)
+      console.log(ann, assembly, 'ss')
+
+      const geneIds: string[] = []
+      const geneNames: string[] = []
+      const strands: string[] = []
+      const promLabels: string[] = []
+      const tssDists: number[] = []
+
+      for (const g of ann.withinGenes) {
+        console.log(g, 'withinGene')
+        geneIds.push(g.geneId)
+        geneNames.push(g.geneName)
+        strands.push(g.strand)
+        promLabels.push(g.promLabel)
+        tssDists.push(g.tssDist)
+      }
 
       let newRow = row.concat(
         assembly,
-        ann.geneIds,
-        ann.geneSymbols,
-        ann.geneStrands,
-        ann.promLabels,
-        ann.tssDists
+        geneIds.join('|'),
+        geneNames.join('|'),
+        strands.join('|'),
+        promLabels.join('|'),
+        tssDists.join('|')
       )
 
       newRow = newRow.concat(
@@ -80,11 +101,11 @@ export async function createAnnotationTable(
           .map(
             (g: {
               geneId: string
-              geneSymbol: string
+              geneName: string
               strand: string
               promLabel: string
               tssDist: number
-            }) => [g.geneId, g.geneSymbol, g.strand, g.promLabel, g.tssDist]
+            }) => [g.geneId, g.geneName, g.strand, g.promLabel, g.tssDist]
           )
           .flat()
       )
@@ -92,28 +113,30 @@ export async function createAnnotationTable(
       table.push(newRow)
     }
 
+    console.log(table, 'table')
+
     const header: string[] = df.colNames
       .concat([
         'Assembly',
-        'Gene ID',
-        'Gene Symbol',
+        'Gene Id',
+        'Gene Name',
         'Gene Strand',
         `Relative To Gene (prom=-${tss[0] / 1000}/+${tss[1] / 1000}kb)`,
         'TSS Distance',
       ])
       .concat(
         range(closest)
-          .map(i => [
-            `${i + 1} Closest ID`,
-            `${i + 1} Closest Gene Symbol`,
-            `${i + 1} Closest Gene Strand`,
-            `${i + 1} Relative To Gene (prom=-${tss[0] / 1000}/+${
-              tss[1] / 1000
-            }kb)`,
-            `${i + 1} TSS Closest Distance`,
+          .map((i) => [
+            `#${i + 1} Closest Id`,
+            `#${i + 1} Closest Gene Name`,
+            `#${i + 1} Closest Gene Strand`,
+            `#${i + 1} Relative To Gene (prom=-${tss[0] / 1000}/+${tss[1] / 1000}kb)`,
+            `#${i + 1} TSS Closest Distance`,
           ])
           .flat()
       )
+
+    console.log(header, 'header')
 
     return new AnnotationDataFrame({ data: table, columns: header })
 
@@ -140,8 +163,8 @@ export async function createAnnotationTable(
     // }
 
     // return new DataFrame({ data: table, columns: header })
-  } catch {
-    //data.push(row.concat([""]))
+  } catch (e) {
+    console.error(e)
   }
 
   return null
@@ -283,5 +306,5 @@ export async function createAnnotationFile(
     return null
   }
 
-  return table.values.map(row => row.join('\t')).join('\n')
+  return table.values.map((row) => row.join('\t')).join('\n')
 }

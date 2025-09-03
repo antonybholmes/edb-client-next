@@ -37,8 +37,6 @@ import { createAnnotationTable } from '@lib/genomic/annotate'
 
 import { useEffect, useState } from 'react'
 
-import { SlidersIcon } from '@icons/sliders-icon'
-
 import {
   type IDialogParams,
   NO_DIALOG,
@@ -60,39 +58,38 @@ import axios from 'axios'
 
 import type { ISaveAsFormat } from '@components/pages/save-as-dialog'
 import { SaveTxtDialog } from '@components/pages/save-txt-dialog'
-import { PropsPanel } from '@components/props-panel'
 import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
 import type { ITab } from '@components/tabs/tab-provider'
 import { FileIcon } from '@icons/file-icon'
 import { UploadIcon } from '@icons/upload-icon'
-import { VCenterRow } from '@layout/v-center-row'
 import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
 import { httpFetch } from '@lib/http/http-fetch'
 import { textToLines } from '@lib/text/lines'
 import { truncate } from '@lib/text/text'
 import { randId } from '@lib/utils'
 import { useQuery } from '@tanstack/react-query'
-import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-  ScrollAccordion,
-} from '@themed/accordion'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
-import { Label } from '@themed/label'
-import { RadioGroup, RadioGroupItem } from '@themed/radio-group'
 import { ToolbarButton } from '@toolbar/toolbar-button'
 import { Buffer } from 'buffer'
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/shadcn/ui/themed/select'
 import { HeaderPortal } from '@components/header/header-portal'
 import { ModuleInfoButton } from '@components/header/module-info-button'
 import { DownloadIcon } from '@components/icons/download-icon'
+import { produce } from 'immer'
 import { HistoryPanel } from '../../matcalc/history/history-panel'
 import {
   HISTORY_ACTION_OPEN_APP,
   useHistory,
 } from '../../matcalc/history/history-store'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
+import { useAnnotations } from './annotate-store'
 import MODULE_INFO from './module.json'
 
 export interface IGeneDbInfo {
@@ -102,8 +99,6 @@ export interface IGeneDbInfo {
 }
 
 export function AnnotationPage() {
-  const [assembly, setAssembly] = useState<string | null>(null)
-
   const { branch, sheet, sheets, gotoSheet, openBranch, addStep, dispatch } =
     useHistory()
 
@@ -113,6 +108,8 @@ export function AnnotationPage() {
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
   const [showFileMenu, setShowFileMenu] = useState(false)
+
+  const { settings, updateSettings } = useAnnotations()
 
   useEffect(() => {
     dispatch({ type: HISTORY_ACTION_OPEN_APP, name: MODULE_INFO.name })
@@ -184,15 +181,9 @@ export function AnnotationPage() {
       return
     }
 
-    console.log(genomesQuery.data)
+    const dfa = await createAnnotationTable(queryClient, sheet, settings.genome)
 
-    const a =
-      assembly ??
-      (genomesQuery && genomesQuery.data && genomesQuery.data.length > 0
-        ? genomesQuery.data[0]!.genome
-        : '')
-
-    const dfa = await createAnnotationTable(queryClient, sheet, a)
+    console.log(dfa, 'dfa')
 
     if (dfa) {
       addStep(`Annotated`, [dfa])
@@ -399,38 +390,38 @@ export function AnnotationPage() {
   ]
 
   const rightTabs: ITab[] = [
-    {
-      //id: nanoid(),
-      icon: <SlidersIcon />,
-      id: 'Settings',
-      content: (
-        <PropsPanel>
-          <ScrollAccordion value={['databases']}>
-            <AccordionItem value="databases">
-              <AccordionTrigger>Databases</AccordionTrigger>
-              <AccordionContent>
-                {dbs.length > 0 && (
-                  <RadioGroup
-                    defaultValue={assembly ?? dbs[0]!.genome}
-                    className="flex flex-col gap-y-1.5"
-                  >
-                    {dbs.map((db: IGeneDbInfo, dbi: number) => (
-                      <VCenterRow key={dbi} className="gap-x-1">
-                        <RadioGroupItem
-                          value={db.genome}
-                          onClick={() => setAssembly(db.genome)}
-                        />
-                        <Label htmlFor={db.genome}>{db.genome}</Label>
-                      </VCenterRow>
-                    ))}
-                  </RadioGroup>
-                )}
-              </AccordionContent>
-            </AccordionItem>
-          </ScrollAccordion>
-        </PropsPanel>
-      ),
-    },
+    // {
+    //   //id: nanoid(),
+    //   icon: <SlidersIcon />,
+    //   id: 'Settings',
+    //   content: (
+    //     <PropsPanel>
+    //       <ScrollAccordion value={['databases']}>
+    //         <AccordionItem value="databases">
+    //           <AccordionTrigger>Databases</AccordionTrigger>
+    //           <AccordionContent>
+    //             {dbs.length > 0 && (
+    //               <RadioGroup
+    //                 defaultValue={assembly ?? dbs[0]!.genome}
+    //                 className="flex flex-col gap-y-1.5"
+    //               >
+    //                 {dbs.map((db: IGeneDbInfo, dbi: number) => (
+    //                   <VCenterRow key={dbi} className="gap-x-1">
+    //                     <RadioGroupItem
+    //                       value={db.genome}
+    //                       onClick={() => setAssembly(db.genome)}
+    //                     />
+    //                     <Label htmlFor={db.genome}>{db.genome}</Label>
+    //                   </VCenterRow>
+    //                 ))}
+    //               </RadioGroup>
+    //             )}
+    //           </AccordionContent>
+    //         </AccordionItem>
+    //       </ScrollAccordion>
+    //     </PropsPanel>
+    //   ),
+    // },
     {
       //id: nanoid(),
       icon: <ClockRotateLeftIcon />,
@@ -506,6 +497,34 @@ export function AnnotationPage() {
       <ShortcutLayout info={MODULE_INFO} signedRequired="never">
         <HeaderPortal>
           <ModuleInfoButton info={MODULE_INFO} />
+
+          <></>
+
+          <Select
+            value={settings.genome}
+            onValueChange={(v) => {
+              const newStore = produce(settings, (draft) => {
+                draft.genome = v
+              })
+
+              updateSettings(newStore)
+            }}
+          >
+            <SelectTrigger
+              variant="header"
+              className="text-sm"
+              title="Select Genome"
+            >
+              <SelectValue placeholder="Select a genome" />
+            </SelectTrigger>
+            <SelectContent align="end">
+              {dbs.map((db) => (
+                <SelectItem key={db.genome} value={db.genome}>
+                  {db.genome}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </HeaderPortal>
 
         <Toolbar tabs={tabs}>
