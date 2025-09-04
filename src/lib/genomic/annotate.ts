@@ -264,7 +264,7 @@ export async function createAnnotationTable(
   //   if (within) {
   //     const genes = getWithinTranscripts(dataSet, location, gb, gbi)
   //     row.push(makeCell(genes.map(gene => gene.geneId).join(";")))
-  //     row.push(makeCell(genes.map(gene => gene.geneSymbol).join(";")))
+  //     row.push(makeCell(genes.map(gene => gene.geneName).join(";")))
   //   }
 
   //   if (closest) {
@@ -275,7 +275,7 @@ export async function createAnnotationTable(
 
   //     genes.forEach(gene => {
   //       values[vi++] = gene.geneId
-  //       values[vi++] = gene.geneSymbol
+  //       values[vi++] = gene.geneName
   //     })
 
   //     row.push(...values)

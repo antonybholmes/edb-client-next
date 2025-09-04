@@ -1338,6 +1338,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2025-09-03T22:24:36.170Z"
+        },
+        {
+          "msg": "Switched geneSymbol to geneName for new API compatibility",
+          "date": "2025-09-04T17:15:14.121Z"
         }
       ]
     },

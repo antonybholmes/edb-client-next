@@ -476,7 +476,7 @@ export function GexDialog({
           settings.apps.gex.species === 'Mouse'
             ? geneResult.gene.mgi
             : geneResult.gene.hugo,
-          geneResult.gene.geneSymbol,
+          geneResult.gene.geneName,
           geneResult.gene.ensembl,
           geneResult.gene.refseq,
         ])
@@ -487,7 +487,7 @@ export function GexDialog({
           settings.apps.gex.species === 'Mouse'
             ? geneResult.gene.mgi
             : geneResult.gene.hugo,
-          geneResult.gene.geneSymbol,
+          geneResult.gene.geneName,
           geneResult.gene.ensembl,
           geneResult.gene.refseq,
         ])

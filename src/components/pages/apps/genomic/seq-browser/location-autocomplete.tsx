@@ -75,11 +75,11 @@ export function LocationAutocomplete({
     <Autocomplete
       value={query}
       //showClear={false}
-      onTextChange={v => {
+      onTextChange={(v) => {
         setQuery(v)
         onTextChange?.(v)
       }}
-      onTextChanged={v => {
+      onTextChanged={(v) => {
         onTextChanged?.(v)
       }}
       className={className}
@@ -87,19 +87,19 @@ export function LocationAutocomplete({
       deleteLabel="Delete Location"
       {...props}
     >
-      {results.map(item => (
+      {results.map((item) => (
         <li key={item.geneId}>
           <button
             className={LI_CLS}
             onClick={() => {
-              if (item.geneSymbol) {
-                onTextChange?.(item.geneSymbol)
-                onTextChanged?.(item.geneSymbol)
+              if (item.geneName) {
+                onTextChange?.(item.geneName)
+                onTextChanged?.(item.geneName)
               }
             }}
           >
             <SearchIcon />
-            <span className="grow text-left">{item.geneSymbol}</span>
+            <span className="grow text-left">{item.geneName}</span>
             <span className="text-right text-foreground/30 text-xs truncate">
               {locStr(item.loc)}
             </span>

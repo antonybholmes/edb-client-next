@@ -23,7 +23,7 @@ export interface IGenomicFeature {
   loc: IGenomicLocation
   level: string
   strand: string
-  geneSymbol?: string
+  geneName?: string
   geneId?: string
   geneType?: string
   transcriptId?: string
@@ -85,11 +85,11 @@ export function getGeneTrackHeight(
           x1 = Math.floor(xax.domainToRange(t.loc.end))
           x2 =
             Math.floor(xax.domainToRange(t.loc.start)) +
-            (t.geneSymbol?.length ?? 0) * CHAR_W
+            (t.geneName?.length ?? 0) * CHAR_W
         } else {
           x1 =
             Math.floor(xax.domainToRange(t.loc.start)) -
-            (t.geneSymbol?.length ?? 0) * CHAR_W
+            (t.geneName?.length ?? 0) * CHAR_W
           x2 = Math.floor(xax.domainToRange(t.loc.end))
         }
 
@@ -370,8 +370,8 @@ export function SimpleGeneTrackSvg({
                             textAnchor={settings.reverse ? 'start' : 'end'}
                             //fontWeight="bold"
                           >
-                            {`${transcript.geneSymbol} ${settings.genes.labels.showGeneId ? `(${transcript.transcriptId})` : ''}`}
-                            <title>{`${transcript.geneSymbol} (${transcript.transcriptId})`}</title>
+                            {`${transcript.geneName} ${settings.genes.labels.showGeneId ? `(${transcript.transcriptId})` : ''}`}
+                            <title>{`${transcript.geneName} (${transcript.transcriptId})`}</title>
                           </text>
                         )}
 
@@ -380,7 +380,7 @@ export function SimpleGeneTrackSvg({
                           id="arrows"
                           //transform={`translate(0,-${track.displayOptions.arrows.size})`}
                         >
-                          {arrowXs.map(x => {
+                          {arrowXs.map((x) => {
                             return (
                               <use
                                 key={`${x}`}
@@ -643,8 +643,8 @@ export function GenesStructureTrackSvg({
                             textAnchor={settings.reverse ? 'start' : 'end'}
                             //fontWeight="bold"
                           >
-                            {`${transcript.geneSymbol} ${settings.genes.labels.showGeneId ? `(${transcript.transcriptId})` : ''}`}
-                            <title>{`${transcript.geneSymbol} (${transcript.transcriptId})`}</title>
+                            {`${transcript.geneName} ${settings.genes.labels.showGeneId ? `(${transcript.transcriptId})` : ''}`}
+                            <title>{`${transcript.geneName} (${transcript.transcriptId})`}</title>
                           </text>
                         )}
 
@@ -653,7 +653,7 @@ export function GenesStructureTrackSvg({
                           id="arrows"
                           //transform={`translate(0,-${track.displayOptions.arrows.size})`}
                         >
-                          {arrowXs.map(x => {
+                          {arrowXs.map((x) => {
                             return (
                               <use
                                 key={`${x}`}

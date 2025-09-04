@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Switched geneSymbol to geneName for new API compatibility.
 - Bug fixes and updates.
 - Revised annotation modules.
 - Updated libs.
