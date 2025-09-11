@@ -14,6 +14,7 @@ export interface IGenomicLocation {
   chr: string
   start: number
   end: number
+  strand: string
 }
 
 export class GenomicLocation {
@@ -262,11 +263,11 @@ export function convertDFToLocationFile(df: BaseDataFrame): ILocationFile {
       df.col(1).values,
       df.col(2).values
     ).map(
-      v => new GenomicLocation(v[0] as string, v[1] as number, v[2] as number)
+      (v) => new GenomicLocation(v[0] as string, v[1] as number, v[2] as number)
     )
   } else {
     // first col is treated as location
-    ret.locations = df.col(0).values.map(v => parseLocation(v as string))
+    ret.locations = df.col(0).values.map((v) => parseLocation(v as string))
   }
 
   // keep them sorted
@@ -294,7 +295,7 @@ export function convertDataFrameToLocationFiles(
   let location: GenomicLocation
 
   const ret: { fid: string; locations: GenomicLocation[] }[] = df.colNames.map(
-    col => ({
+    (col) => ({
       fid: col,
       locations: [],
     })
@@ -387,7 +388,7 @@ export class LocationBinMap {
     this._binSize = binSize
     this._binMap = new Map<string, Map<number, GenomicLocation[]>>()
 
-    locations.forEach(location => {
+    locations.forEach((location) => {
       const s = Math.floor(location.start / binSize)
       const e = Math.floor(location.end / binSize)
 
@@ -395,7 +396,7 @@ export class LocationBinMap {
         this._binMap.set(location.chr, new Map<number, GenomicLocation[]>())
       }
 
-      range(s, e + 1).forEach(b => {
+      range(s, e + 1).forEach((b) => {
         //console.log(location, s, e)
         if (!this._binMap.get(location.chr)?.has(b)) {
           this._binMap.get(location.chr)?.set(b, [])
@@ -424,7 +425,7 @@ export class LocationBinMap {
           this._binMap
             .get(location.chr)
             ?.get(s)
-            ?.forEach(l => {
+            ?.forEach((l) => {
               if (overlaps(location, l)) {
                 ret.push(l)
               }

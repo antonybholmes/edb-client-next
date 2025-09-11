@@ -21,7 +21,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 const FormSchema = z.object({
-  email: z.string().email({
+  email: z.email({
     message: 'You must enter a valid email address.',
   }),
 })

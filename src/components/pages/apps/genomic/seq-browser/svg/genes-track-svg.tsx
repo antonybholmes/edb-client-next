@@ -22,7 +22,7 @@ interface IGeneDBInfo {
 export interface IGenomicFeature {
   loc: IGenomicLocation
   level: string
-  strand: string
+  //strand: string
   geneName?: string
   geneId?: string
   geneType?: string
@@ -348,7 +348,7 @@ export function SimpleGeneTrackSvg({
                           : settings.genes.exons.fill.color
                       }
                     >
-                      <title>{`${transcript.transcriptId}, strand ${transcript.strand}`}</title>
+                      <title>{`${transcript.transcriptId}, strand ${transcript.loc.strand}`}</title>
                     </rect>
 
                     <g
@@ -384,7 +384,7 @@ export function SimpleGeneTrackSvg({
                             return (
                               <use
                                 key={`${x}`}
-                                xlinkHref={`#${track.id}-arrow-${transcript.strand === '+' ? 'right' : 'left'}`}
+                                xlinkHref={`#${track.id}-arrow-${transcript.loc.strand === '+' ? 'right' : 'left'}`}
                                 transform={`translate(${x},0)`}
                               />
                             )
@@ -596,7 +596,7 @@ export function GenesStructureTrackSvg({
                       height={track.displayOptions.transcripts.height}
                       fill="white"
                     >
-                      <title>{`${transcript.transcriptId}, strand ${transcript.strand}`}</title>
+                      <title>{`${transcript.transcriptId}, strand ${transcript.loc.strand}`}</title>
                     </rect>
 
                     <g
@@ -608,7 +608,7 @@ export function GenesStructureTrackSvg({
                           ti === 0) && (
                           <g
                             id="end-arrow"
-                            transform={`translate(${gene.strand === '+' ? x1 : x2}, 0) scale(${gene.strand === '+' ? 1 : -1},1)`}
+                            transform={`translate(${gene.loc.strand === '+' ? x1 : x2}, 0) scale(${gene.loc.strand === '+' ? 1 : -1},1)`}
                           >
                             <polygon
                               points={`0,0 0,-10 ${10 * sgn},-10 ${10 * sgn},-14 ${15 * sgn},-10 ${10 * sgn},-6 ${10 * sgn},-10 0,-10`}
@@ -657,7 +657,7 @@ export function GenesStructureTrackSvg({
                             return (
                               <use
                                 key={`${x}`}
-                                xlinkHref={`#${track.id}-arrow-${transcript.strand === '+' ? 'right' : 'left'}${isCanonical ? '-canonical' : ''}`}
+                                xlinkHref={`#${track.id}-arrow-${transcript.loc.strand === '+' ? 'right' : 'left'}${isCanonical ? '-canonical' : ''}`}
                                 transform={`translate(${x},0)`}
                               />
                             )
@@ -705,7 +705,7 @@ export function GenesStructureTrackSvg({
                                 stroke="none"
                                 key={ei}
                               >
-                                <title>{`${exon.transcriptId}, strand ${exon.strand}, exon ${exon.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
+                                <title>{`${exon.transcriptId}, strand ${exon.loc.strand}, exon ${exon.loc.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
                               </rect>
                             )
                           })}

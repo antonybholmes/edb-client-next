@@ -23,7 +23,11 @@ import {
   getFormattedShape,
 } from '@lib/dataframe/dataframe-utils'
 
-import { OpenFiles } from '@components/pages/open-files'
+import {
+  filesToDataFrames,
+  onTextFileChange,
+  OpenFiles,
+} from '@components/pages/open-files'
 
 import { BasicAlertDialog } from '@dialog/basic-alert-dialog'
 import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
@@ -72,6 +76,7 @@ import { DropdownMenuItem } from '@themed/dropdown-menu'
 import { ToolbarButton } from '@toolbar/toolbar-button'
 import { Buffer } from 'buffer'
 
+import { toast } from '@/components/shadcn/ui/themed/crisp'
 import {
   Select,
   SelectContent,
@@ -182,8 +187,6 @@ export function AnnotationPage() {
     }
 
     const dfa = await createAnnotationTable(queryClient, sheet, settings.genome)
-
-    console.log(dfa, 'dfa')
 
     if (dfa) {
       addStep(`Annotated`, [dfa])
@@ -576,6 +579,29 @@ export function AnnotationPage() {
             }}
             className="mx-2"
             style={{ marginBottom: '-2px' }}
+            onFileDrop={(files) => {
+              if (files.length > 0) {
+                onTextFileChange('Open from drag', files, (files) => {
+                  filesToDataFrames(queryClient, files, {
+                    parseOpts: { indexCols: 0 },
+                    onSuccess: (tables) => {
+                      if (tables.length > 0) {
+                        openBranch(`Load ${tables[0]!.name}`, tables)
+                      }
+                    },
+                    onFailure: () => {
+                      console.log('fail')
+                      toast({
+                        title: MODULE_INFO.name,
+                        description:
+                          'Your files could not be opened. Check they are formatted correctly.',
+                        variant: 'destructive',
+                      })
+                    },
+                  })
+                })
+              }
+            }}
           />
           {/* </Card> */}
         </TabSlideBar>

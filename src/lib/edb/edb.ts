@@ -250,8 +250,14 @@ export const SESSION_SUPABASE_CALLBACK_URL = `${SESSION_OAUTH2_URL}/supabase/cal
 
 export const SESSION_SIGNOUT_URL = `${SESSION_URL}/signout`
 
-export const SESSION_AUTH_SIGNIN_URL = `${SESSION_URL}/auth/signin`
-export const SESSION_AUTH_PASSWORDLESS_VALIDATE_URL = `${SESSION_URL}/auth/passwordless/validate`
+export const SESSION_AUTH_SIGNIN_URL = `${SESSION_AUTH_URL}/signin`
+
+export const SESSION_AUTH_OTP_URL = `${SESSION_AUTH_URL}/otp`
+export const SESSION_AUTH_OTP_SEND_URL = `${SESSION_AUTH_OTP_URL}/send`
+export const SESSION_AUTH_OTP_SIGNIN_URL = `${SESSION_AUTH_OTP_URL}/signin`
+
+export const SESSION_AUTH_PASSWORDLESS_VALIDATE_URL = `${SESSION_AUTH_URL}/passwordless/validate`
+
 export const SESSION_USER_URL = `${SESSION_URL}/user`
 export const SESSION_UPDATE_USER_URL = `${SESSION_USER_URL}/update`
 export const SESSION_UPDATE_PASSWORD_URL = `${SESSION_USER_URL}/passwords/update`

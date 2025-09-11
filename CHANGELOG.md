@@ -2,6 +2,10 @@
 
 ## 24.8 (Aug, 2025)
 
+### Added
+
+- Added support for OTP login. Improved error handling in httpfetch.
+
 ### Changed
 
 - Switched geneSymbol to geneName for new API compatibility.

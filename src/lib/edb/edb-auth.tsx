@@ -5,6 +5,8 @@ import {
   type IEdbSession,
   SESSION_API_KEY_SIGNIN_URL,
   SESSION_AUTH0_SIGNIN_URL,
+  SESSION_AUTH_OTP_SEND_URL,
+  SESSION_AUTH_OTP_SIGNIN_URL,
   SESSION_AUTH_SIGNIN_URL,
   SESSION_CLERK_SIGNIN_URL,
   SESSION_CSRF_TOKEN_URL,
@@ -331,6 +333,8 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
 export interface IEdbAuthHook
   extends Omit<IEdbAuthStore, 'accessToken' | 'invalidateSession'> {
   csrfToken: string
+  sendOTP: (email: string) => Promise<void>
+  signInWithEmailOTP: (email: string, otp: string) => Promise<void>
   signInWithApiKey: (key: string) => Promise<void>
   signInWithUsernamePassword: (
     username: string,
@@ -460,6 +464,35 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
     await fetchSession()
   }
 
+  async function sendOTP(email: string) {
+    console.log('sendOTP', email)
+
+    await queryClient.fetchQuery({
+      queryKey: ['signin-username-otp'],
+      queryFn: () =>
+        httpFetch.post(SESSION_AUTH_OTP_SEND_URL, {
+          body: { email },
+          headers: JSON_HEADERS,
+        }),
+    })
+
+    await fetchSession()
+  }
+
+  async function signInWithEmailOTP(email: string, otp: string) {
+    await queryClient.fetchQuery({
+      queryKey: ['signin-username-otp'],
+      queryFn: () =>
+        httpFetch.post(SESSION_AUTH_OTP_SIGNIN_URL, {
+          body: { email, otp },
+          headers: JSON_HEADERS,
+          withCredentials: true,
+        }),
+    })
+
+    await fetchSession()
+  }
+
   async function signInWithAuth0(token: string): Promise<IEdbSession | null> {
     await httpFetch.post(
       SESSION_AUTH0_SIGNIN_URL, //SESSION_UPDATE_USER_URL,
@@ -577,6 +610,8 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
     loaded,
     csrfToken,
     error,
+    sendOTP,
+    signInWithEmailOTP,
     signInWithApiKey,
     signInWithUsernamePassword,
     signInWithAuth0,

@@ -8,6 +8,8 @@ import { QueryClient } from '@tanstack/react-query'
 import { AnnotationDataFrame } from '../dataframe/annotation-dataframe'
 import { httpFetch } from '../http/http-fetch'
 
+const PAGE_SIZE = 50
+
 /**
  * Annotate locations with gene symbols.
  *
@@ -29,46 +31,75 @@ export async function createAnnotationTable(
   const locations: string[] = df.col(col).strs
 
   console.log(
-    `${API_GENOME_URL}/annotate/${assembly}?tss=${tss[0]},${tss[1]}&n=${closest}`
+    `${API_GENOME_URL}/annotate/${assembly}?promoter=${tss[0]},${tss[1]}&closest=${closest}`
   )
 
-  try {
-    const res = await queryClient.fetchQuery({
-      queryKey: ['genes'],
-      queryFn: () =>
-        httpFetch.postJson<{
-          data: {
-            withinGenes: {
-              geneId: string
-              geneName: string
-              strand: string
-              promLabel: string
-              tssDist: number
-            }[]
-            closestGenes: {
-              geneId: string
-              geneName: string
-              strand: string
-              promLabel: string
-              tssDist: number
-            }[]
-          }[]
-        }>(
-          `${API_GENOME_URL}/annotate/${assembly}?tss=${tss[0]},${tss[1]}&n=${closest}`,
-          {
-            body: {
-              locations,
-            },
-          }
-        ),
-    })
+  const allData: {
+    withinGenes: {
+      geneId: string
+      geneName: string
+      strand: string
+      promLabel: string
+      tssDist: number
+    }[]
+    closestGenes: {
+      geneId: string
+      geneName: string
+      strand: string
+      promLabel: string
+      tssDist: number
+    }[]
+  }[] = []
 
-    const data = res.data
+  for (const page of range(0, locations.length, PAGE_SIZE)) {
+    const locs = locations.slice(page, page + PAGE_SIZE)
+    console.log('annotating', page, locs.length)
+  }
+
+  try {
+    for (const page of range(0, locations.length, PAGE_SIZE)) {
+      const locs = locations.slice(page, page + PAGE_SIZE)
+      console.log('annotating', page, locs.length)
+
+      const res = await queryClient.fetchQuery({
+        queryKey: ['genes'],
+        queryFn: () =>
+          httpFetch.postJson<{
+            data: {
+              withinGenes: {
+                geneId: string
+                geneName: string
+                strand: string
+                promLabel: string
+                tssDist: number
+              }[]
+              closestGenes: {
+                geneId: string
+                geneName: string
+                strand: string
+                promLabel: string
+                tssDist: number
+              }[]
+            }[]
+          }>(
+            `${API_GENOME_URL}/annotate/${assembly}?promoter=${tss[0]},${tss[1]}&closest=${closest}`,
+            {
+              body: {
+                locations: locs,
+              },
+            }
+          ),
+      })
+
+      const data = res.data
+
+      allData.push(...data)
+    }
 
     const table: SeriesData[][] = []
 
     for (const [ri, row] of df.values.entries()) {
-      const ann = data[ri]!
+      const ann = allData[ri]!
 
       console.log(ann, assembly, 'ss')
 

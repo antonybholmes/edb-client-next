@@ -36,11 +36,17 @@ class FetchRequest implements IHttpRequest {
 
     //console.log('url', url)
 
-    return fetch(url, {
+    const response = await fetch(url, {
       method: 'GET',
       headers: headers as HeadersInit,
       credentials,
     })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`)
+    }
+
+    return response
   }
 
   async post(url: string, options: IFetchOptions = {}): Promise<Response> {
@@ -56,12 +62,18 @@ class FetchRequest implements IHttpRequest {
 
     //console.log('body', body, credentials)
 
-    return fetch(url, {
+    const response = await fetch(url, {
       method: 'POST',
       headers: headers as HeadersInit,
       body,
       credentials,
     })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`)
+    }
+
+    return response
   }
 
   async getJson<T = unknown>(
@@ -74,10 +86,6 @@ class FetchRequest implements IHttpRequest {
       ...options,
       headers: { ...options.headers, ...JSON_HEADERS },
     })
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`)
-    }
 
     const ret = await response.json()
 
@@ -94,10 +102,6 @@ class FetchRequest implements IHttpRequest {
       ...options,
       headers: { ...options.headers, ...JSON_HEADERS },
     })
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`)
-    }
 
     const ret = await response.json()
 
