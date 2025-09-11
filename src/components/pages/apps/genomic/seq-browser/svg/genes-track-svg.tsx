@@ -23,7 +23,7 @@ export interface IGenomicFeature {
   loc: IGenomicLocation
   level: string
   //strand: string
-  geneName?: string
+  geneSymbol?: string
   geneId?: string
   geneType?: string
   transcriptId?: string
@@ -85,11 +85,11 @@ export function getGeneTrackHeight(
           x1 = Math.floor(xax.domainToRange(t.loc.end))
           x2 =
             Math.floor(xax.domainToRange(t.loc.start)) +
-            (t.geneName?.length ?? 0) * CHAR_W
+            (t.geneSymbol?.length ?? 0) * CHAR_W
         } else {
           x1 =
             Math.floor(xax.domainToRange(t.loc.start)) -
-            (t.geneName?.length ?? 0) * CHAR_W
+            (t.geneSymbol?.length ?? 0) * CHAR_W
           x2 = Math.floor(xax.domainToRange(t.loc.end))
         }
 
@@ -241,7 +241,7 @@ export function GenesTrackSvg({
 }
 
 /**
- * Show genes in a simple view, i.e. with only the gene name and transcript as block.
+ * Show genes in a simple view, i.e. with only the gene symbol and transcript as block.
  * @param param0
  * @returns
  */
@@ -370,8 +370,8 @@ export function SimpleGeneTrackSvg({
                             textAnchor={settings.reverse ? 'start' : 'end'}
                             //fontWeight="bold"
                           >
-                            {`${transcript.geneName} ${settings.genes.labels.showGeneId ? `(${transcript.transcriptId})` : ''}`}
-                            <title>{`${transcript.geneName} (${transcript.transcriptId})`}</title>
+                            {`${transcript.geneSymbol} ${settings.genes.labels.showGeneId ? `(${transcript.transcriptId})` : ''}`}
+                            <title>{`${transcript.geneSymbol} (${transcript.transcriptId})`}</title>
                           </text>
                         )}
 
@@ -643,8 +643,8 @@ export function GenesStructureTrackSvg({
                             textAnchor={settings.reverse ? 'start' : 'end'}
                             //fontWeight="bold"
                           >
-                            {`${transcript.geneName} ${settings.genes.labels.showGeneId ? `(${transcript.transcriptId})` : ''}`}
-                            <title>{`${transcript.geneName} (${transcript.transcriptId})`}</title>
+                            {`${transcript.geneSymbol} ${settings.genes.labels.showGeneId ? `(${transcript.transcriptId})` : ''}`}
+                            <title>{`${transcript.geneSymbol} (${transcript.transcriptId})`}</title>
                           </text>
                         )}
 

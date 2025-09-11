@@ -92,14 +92,14 @@ export function LocationAutocomplete({
           <button
             className={LI_CLS}
             onClick={() => {
-              if (item.geneName) {
-                onTextChange?.(item.geneName)
-                onTextChanged?.(item.geneName)
+              if (item.geneSymbol) {
+                onTextChange?.(item.geneSymbol)
+                onTextChanged?.(item.geneSymbol)
               }
             }}
           >
             <SearchIcon />
-            <span className="grow text-left">{item.geneName}</span>
+            <span className="grow text-left">{item.geneSymbol}</span>
             <span className="text-right text-foreground/30 text-xs truncate">
               {locStr(item.loc)}
             </span>

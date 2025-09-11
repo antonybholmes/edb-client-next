@@ -476,7 +476,7 @@ export function GexDialog({
           settings.apps.gex.species === 'Mouse'
             ? geneResult.gene.mgi
             : geneResult.gene.hugo,
-          geneResult.gene.geneName,
+          geneResult.gene.geneSymbol,
           geneResult.gene.ensembl,
           geneResult.gene.refseq,
         ])
@@ -487,7 +487,7 @@ export function GexDialog({
           settings.apps.gex.species === 'Mouse'
             ? geneResult.gene.mgi
             : geneResult.gene.hugo,
-          geneResult.gene.geneName,
+          geneResult.gene.geneSymbol,
           geneResult.gene.ensembl,
           geneResult.gene.refseq,
         ])
@@ -497,6 +497,8 @@ export function GexDialog({
         data: geneData,
         columns: rowMetaDataColumns,
       })
+
+      console.log('data', data, columns, geneData, rowMetaData)
 
       const df = new AnnotationDataFrame({
         data,

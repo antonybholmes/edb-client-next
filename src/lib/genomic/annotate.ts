@@ -37,14 +37,14 @@ export async function createAnnotationTable(
   const allData: {
     withinGenes: {
       geneId: string
-      geneName: string
+      geneSymbol: string
       strand: string
       promLabel: string
       tssDist: number
     }[]
     closestGenes: {
       geneId: string
-      geneName: string
+      geneSymbol: string
       strand: string
       promLabel: string
       tssDist: number
@@ -68,14 +68,14 @@ export async function createAnnotationTable(
             data: {
               withinGenes: {
                 geneId: string
-                geneName: string
+                geneSymbol: string
                 strand: string
                 promLabel: string
                 tssDist: number
               }[]
               closestGenes: {
                 geneId: string
-                geneName: string
+                geneSymbol: string
                 strand: string
                 promLabel: string
                 tssDist: number
@@ -104,14 +104,14 @@ export async function createAnnotationTable(
       console.log(ann, assembly, 'ss')
 
       const geneIds: string[] = []
-      const geneNames: string[] = []
+      const geneSymbols: string[] = []
       const strands: string[] = []
       const promLabels: string[] = []
       const tssDists: number[] = []
 
       for (const g of ann.withinGenes) {
         geneIds.push(g.geneId)
-        geneNames.push(g.geneName)
+        geneSymbols.push(g.geneSymbol)
         strands.push(g.strand)
         promLabels.push(g.promLabel)
         tssDists.push(g.tssDist)
@@ -120,7 +120,7 @@ export async function createAnnotationTable(
       let newRow = row.concat(
         assembly,
         geneIds.join('|'),
-        geneNames.join('|'),
+        geneSymbols.join('|'),
         strands.join('|'),
         promLabels.join('|'),
         tssDists.join('|')
@@ -131,11 +131,11 @@ export async function createAnnotationTable(
           .map(
             (g: {
               geneId: string
-              geneName: string
+              geneSymbol: string
               strand: string
               promLabel: string
               tssDist: number
-            }) => [g.geneId, g.geneName, g.strand, g.promLabel, g.tssDist]
+            }) => [g.geneId, g.geneSymbol, g.strand, g.promLabel, g.tssDist]
           )
           .flat()
       )
@@ -149,7 +149,7 @@ export async function createAnnotationTable(
       .concat([
         'Assembly',
         'Gene Id',
-        'Gene Name',
+        'Gene Symbol',
         'Gene Strand',
         `Relative To Gene (prom=-${tss[0] / 1000}/+${tss[1] / 1000}kb)`,
         'TSS Distance',
@@ -158,7 +158,7 @@ export async function createAnnotationTable(
         range(closest)
           .map((i) => [
             `#${i + 1} Closest Id`,
-            `#${i + 1} Closest Gene Name`,
+            `#${i + 1} Closest Gene Symbol`,
             `#${i + 1} Closest Gene Strand`,
             `#${i + 1} Relative To Gene (prom=-${tss[0] / 1000}/+${tss[1] / 1000}kb)`,
             `#${i + 1} TSS Closest Distance`,

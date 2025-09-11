@@ -18,7 +18,7 @@ export interface IGexGene {
   mgi: string
   ensembl: string
   refseq: string
-  geneName: string
+  geneSymbol: string
 }
 
 export interface INameValue {

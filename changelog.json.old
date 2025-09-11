@@ -1343,6 +1343,12 @@
           "msg": "Switched geneSymbol to geneName for new API compatibility",
           "date": "2025-09-04T17:15:14.121Z"
         }
+      ],
+      "Added": [
+        {
+          "msg": "Added support for OTP login. Improved error handling in httpfetch",
+          "date": "2025-09-11T17:03:45.333Z"
+        }
       ]
     },
     "author": "Antony Holmes",

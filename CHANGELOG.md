@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Gene name is now symbol.
 - Switched geneSymbol to geneName for new API compatibility.
 - Bug fixes and updates.
 - Revised annotation modules.

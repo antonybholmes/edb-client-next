@@ -73,12 +73,12 @@ export function SignInPage() {
 
     setLoading(true)
 
-    //await signout()
+    await signout()
 
     try {
       await signInWithEmailOTP(data.email, data.otp)
 
-      console.log('redirectUrl', redirectUrl)
+      //console.log('redirectUrl', redirectUrl)
 
       if (redirectUrl) {
         router.push(redirectUrl)
@@ -95,7 +95,7 @@ export function SignInPage() {
 
       toast({
         title: APP_NAME,
-        description: error instanceof Error ? error.message : String(error),
+        description: 'The sign in failed. Please check the code and try again.',
         variant: 'destructive',
       })
     }
@@ -202,7 +202,9 @@ export function SignInPage() {
                       <button
                         className="text-sm text-theme hover:underline"
                         disabled={!form.watch('email')}
-                        onClick={async () => {
+                        onClick={async (e) => {
+                          e.preventDefault()
+
                           const isValid = await form.trigger('email')
 
                           if (isValid) {

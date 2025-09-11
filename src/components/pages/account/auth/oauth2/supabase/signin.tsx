@@ -133,16 +133,6 @@ export function SupabaseSignIn({
             <FormField
               control={form.control}
               name="email"
-              rules={{
-                required: {
-                  value: true,
-                  message: 'An email address is required',
-                },
-                // pattern: {
-                //   value: EMAIL_PATTERN,
-                //   message: TEXT_EMAIL_DESCRIPTION,
-                // },
-              }}
               render={({ field }) => (
                 <FormItem className="flex flex-col gap-y-1">
                   <Input

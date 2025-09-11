@@ -75,7 +75,7 @@ export const useProteinStore = create<IProteinStore>()(
             // )
             const res = httpFetch.getJson<{
               results: {
-                genes: { geneName: { value: string } }[]
+                genes: { geneSymbol: { value: string } }[]
                 primaryAccession: string
                 proteinDescription: {
                   recommendedName: { fullName: { value: string } }
@@ -101,9 +101,9 @@ export const useProteinStore = create<IProteinStore>()(
           const organism = p.organism.commonName
           const taxonId = p.organism.taxonId
 
-          const officialGeneName = p.genes[0]?.geneName.value ?? query
+          const officialGeneSymbol = p.genes[0]?.geneSymbol.value ?? query
 
-          console.log(officialGeneName, accession, name)
+          console.log(officialGeneSymbol, accession, name)
 
           // now get the sequence
 
@@ -118,7 +118,7 @@ export const useProteinStore = create<IProteinStore>()(
           console.log(res)
 
           ret.push({
-            gene: officialGeneName,
+            gene: officialGeneSymbol,
             name,
             accession,
             organism,
