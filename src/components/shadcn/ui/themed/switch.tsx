@@ -38,8 +38,8 @@ import {
 
 const TOGGLE_CLS = cn(
   FOCUS_RING_CLS,
-  'relative h-[22px] shrink-0 w-[32px] rounded-full',
-  'data-[enabled=true]:data-[state=checked]:bg-theme/90',
+  'relative h-[22px] shrink-0 w-[36px] rounded-full',
+  'data-[enabled=true]:data-[state=checked]:bg-theme/75',
   'data-[enabled=true]:data-[state=checked]:hover:bg-theme',
   'data-[enabled=true]:data-[state=unchecked]:bg-muted',
   'data-[enabled=true]:data-[state=unchecked]:hover:bg-muted',
@@ -58,15 +58,15 @@ const TOGGLE_CLS = cn(
 
 const THUMB_CLS = cn(
   'absolute shadow-sm pointer-events-none aspect-square shrink-0',
-  'w-[18px] h-[18px] rounded-full bg-white z-30 left-[2px] shadow-md',
+  'w-[22px] h-[18px] rounded-full bg-white z-30 left-[2px] shadow-md',
   'top-1/2 -translate-y-1/2'
 )
 
-const HIGHLIGHT_THUMB_CLS = cn(
-  'absolute pointer-events-none aspect-square w-[18px] h-[18px]',
-  'rounded-full shrink-0 z-10 left-[1px] top-1/2 -translate-y-1/2',
-  'data-[checked=true]:bg-theme/10 data-[checked=false]:bg-foreground/5'
-)
+// const HIGHLIGHT_THUMB_CLS = cn(
+//   'absolute pointer-events-none aspect-square w-[20px] h-[20px]',
+//   'rounded-full shrink-0 z-10 left-[1px] top-1/2 -translate-y-1/2',
+//   'data-[checked=true]:bg-theme/10 data-[checked=false]:bg-foreground/5'
+// )
 
 // const PRESSED_THUMB_CLS = cn(
 //   'absolute pointer-events-none aspect-square w-4.5 rounded-full shrink-0 z-20',
@@ -95,7 +95,7 @@ export const Switch = forwardRef<
   ref
 ) {
   const thumbRef = useRef<HTMLSpanElement>(null)
-  const highlightThumbRef = useRef<HTMLSpanElement>(null)
+  //const highlightThumbRef = useRef<HTMLSpanElement>(null)
   //const pressedThumbRef = useRef<HTMLSpanElement>(null)
 
   const [hover, setHover] = useState(false)
@@ -126,19 +126,19 @@ export const Switch = forwardRef<
     )
 
     // if not disabled, animate the highlight ring too
-    if (highlightThumbRef.current) {
-      tl.to(
-        highlightThumbRef.current,
-        {
-          transform: checked
-            ? `translate(10px, -50%) scale(${hover ? 1.8 : 1})`
-            : `translate(0, -50%) scale(${hover ? 1.8 : 1})`,
-          duration,
-          ease: 'power2.inOut',
-        },
-        0
-      )
-    }
+    // if (highlightThumbRef.current) {
+    //   tl.to(
+    //     highlightThumbRef.current,
+    //     {
+    //       transform: checked
+    //         ? `translate(10px, -50%) scale(${hover ? 1.8 : 1})`
+    //         : `translate(0, -50%) scale(${hover ? 1.8 : 1})`,
+    //       duration,
+    //       ease: 'power2.inOut',
+    //     },
+    //     0
+    //   )
+    // }
 
     tl.play()
     // .to(
@@ -180,7 +180,7 @@ export const Switch = forwardRef<
         data-enabled={!disabled}
         data-checked={checked}
       />
-      {!disabled && (
+      {/* {!disabled && (
         <>
           <span
             data-checked={checked}
@@ -191,7 +191,7 @@ export const Switch = forwardRef<
             className={HIGHLIGHT_THUMB_CLS}
             ref={highlightThumbRef}
           />
-          {/* <motion.span
+           <motion.span
             data-checked={checked}
             data-hover={true}
             layout
@@ -199,9 +199,9 @@ export const Switch = forwardRef<
             initial={false}
             className={PRESSED_THUMB_CLS}
             ref={pressedThumbRef}
-          /> */}
+          />  
         </>
-      )}
+      )} */}
     </SwitchPrimitives.Root>
   )
 

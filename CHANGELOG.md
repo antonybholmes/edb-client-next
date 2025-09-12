@@ -1,5 +1,12 @@
 # Changelog
 
+## 26.0 (Sep, 2025)
+
+### Changed
+
+- UI tweaks to switch and accordion.
+
+
 ## 24.8 (Aug, 2025)
 
 ### Added

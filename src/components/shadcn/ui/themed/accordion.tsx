@@ -130,7 +130,7 @@ export const accordionTriggerVariants = cva(
     variants: {
       variant: {
         default:
-          'hover:bg-muted/50 pl-2.5 pr-2 py-2 data-[state=open]:bg-muted/75',
+          'hover:bg-muted/70 pl-2.5 pr-2 py-2 data-[state=open]:bg-muted/70 trans-color',
         settings: 'py-1.5',
         none: '',
       },
