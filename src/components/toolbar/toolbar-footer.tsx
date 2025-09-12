@@ -1,12 +1,13 @@
 import { cn } from '@lib/shadcn-utils'
 
-import { CENTERED_ROW_CLS } from '@/theme'
+import { BUTTON_XS_H_CLS, CENTERED_ROW_CLS } from '@/theme'
 import type { IChildrenProps } from '@interfaces/children-props'
 import { VCenterRow } from '../layout/v-center-row'
 
 export const TOOLBAR_FOOTER_CLS = cn(
   CENTERED_ROW_CLS,
-  'h-6 text-xs text-foreground/50 overflow-hidden justify-between grid grid-cols-4 shrink-0 w-full bg-body border-t border-transparent hover:border-border/75 trans-color'
+  BUTTON_XS_H_CLS,
+  'text-xs text-foreground/50 overflow-hidden justify-between grid grid-cols-4 shrink-0 w-full bg-body border-t border-transparent hover:border-border/75 trans-color'
 )
 
 export function ToolbarFooter({ className }: IChildrenProps) {

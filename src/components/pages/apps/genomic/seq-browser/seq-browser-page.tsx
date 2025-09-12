@@ -612,7 +612,7 @@ function SeqBrowserPage() {
         </TabSlideBar>
 
         <ToolbarFooterPortal className="justify-between">
-          <VCenterRow className="gap-x-1">
+          <VCenterRow className="gap-x-2 px-1">
             <span>Bin size</span>
 
             <Select
@@ -633,7 +633,6 @@ function SeqBrowserPage() {
             >
               <SelectPrimitive.Trigger asChild>
                 <ToolbarFooterButton
-                  size="sm"
                   className={cn('justify-center px-1')}
                   aria-label="Show zoom levels"
                   variant="theme-muted"

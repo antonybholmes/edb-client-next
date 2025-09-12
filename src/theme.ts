@@ -30,8 +30,11 @@ export const TRANS_OPACITY_CLS = cn(TRANS_TIME_CLS, 'transition-opacity')
 export const DRAG_OUTLINE_CLS =
   'trans-color rounded-theme border-2 border-dashed border-transparent data-[drag=true]:bg-theme/5 data-[drag=true]:border-theme/20'
 
-export const BUTTON_SM_W_CLS = 'w-7'
-export const BUTTON_SM_H_CLS = 'h-7'
+export const BUTTON_XS_W_CLS = 'w-6'
+export const BUTTON_XS_H_CLS = 'h-6'
+
+export const BUTTON_SM_W_CLS = 'w-7.5'
+export const BUTTON_SM_H_CLS = 'h-7.5'
 //export const BUTTON_TOOLBAR_H_CLS = 'h-8'
 export const BUTTON_MD_H_CLS = 'h-8'
 export const BUTTON_MD_W_CLS = 'w-8'
@@ -39,6 +42,9 @@ export const BUTTON_LG_W_CLS = 'w-9.5'
 export const BUTTON_LG_H_CLS = 'h-9.5'
 export const BUTTON_XL_W_CLS = 'w-11'
 export const BUTTON_XL_H_CLS = 'h-11'
+
+export const TOOLBAR_BUTTON_W_CLS = BUTTON_SM_W_CLS //BUTTON_MD_W_CLS
+export const TOOLBAR_BUTTON_H_CLS = BUTTON_SM_H_CLS //BUTTON_MD_H_CLS
 
 export const BASE_ICON_BUTTON_CLS = 'shrink-0 grow-0 aspect-square'
 
@@ -57,7 +63,7 @@ export const DROPDOWN_BUTTON_CLS = cn(
 export const TOOLBAR_DROPDOWN_BUTTON_CLS = cn(
   BASE_ICON_BUTTON_CLS,
   'w-5',
-  BUTTON_SM_H_CLS
+  TOOLBAR_BUTTON_H_CLS
 )
 
 export const LARGE_ICON_BUTTON_CLS = cn(BASE_ICON_BUTTON_CLS, BUTTON_LG_W_CLS)
@@ -72,12 +78,16 @@ export const COL_BUTTON_CLS = 'flex flex-col'
 
 export const XS_ICON_BUTTON_CLS = cn(
   CENTERED_ROW_CLS,
-  'shrink-0 aspect-square w-4.5 h-4.5'
+  BUTTON_XS_W_CLS,
+  BUTTON_XS_H_CLS,
+  'shrink-0 aspect-square'
 )
 
 export const SM_ICON_BUTTON_CLS = cn(
   CENTERED_ROW_CLS,
-  'shrink-0 grow-0 aspect-square w-6 h-6'
+  BUTTON_SM_W_CLS,
+  BUTTON_SM_H_CLS,
+  'shrink-0 grow-0 aspect-square'
 )
 
 export const SMALL_BUTTON_CLS = cn(BUTTON_SM_H_CLS, 'px-2')

@@ -12,7 +12,11 @@ import { Input } from '@/components/shadcn/ui/themed/input'
 import { Label } from '@/components/shadcn/ui/themed/label'
 import { APP_NAME, TEXT_SIGN_IN } from '@/consts'
 import { CenterLayout } from '@/layouts/center-layout'
-import { REDIRECT_URL_PARAM } from '@/lib/edb/edb'
+import {
+  MYACCOUNT_ROUTE,
+  OTP_SIGN_IN_ROUTE,
+  REDIRECT_URL_PARAM,
+} from '@/lib/edb/edb'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -28,17 +32,19 @@ const FormSchema = z.object({
   email: z.email({
     message: 'You must enter a valid email address.',
   }),
-  otp: z.string().min(6, { message: 'You must enter the 6-digit code.' }),
+  otp: z
+    .string()
+    .regex(/^\d{6}$/, { message: 'You must enter a 6-digit code.' }),
 })
 
 export function SignInPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const [loading, setLoading] = useState(false)
+  const [otpSent, setOTPSent] = useState(false)
   const { settings } = useEdbSettings()
   const { sendOTP, signInWithEmailOTP, signout, session } = useEdbAuth()
-  const [redirectUrl, setRedirectUrl] = useState<string>('')
+  const [redirectUrl, setRedirectUrl] = useState<string>(MYACCOUNT_ROUTE)
 
   const btnRef = useRef<HTMLButtonElement>(null)
   // const [email, setEmail] = useState(
@@ -55,7 +61,7 @@ export function SignInPage() {
 
   useEffect(() => {
     //const queryParameters = new URLSearchParams(window.location.search)
-    setRedirectUrl(searchParams.get(REDIRECT_URL_PARAM) || '')
+    setRedirectUrl(searchParams.get(REDIRECT_URL_PARAM) || MYACCOUNT_ROUTE)
   }, [searchParams])
 
   useEffect(() => {
@@ -71,31 +77,42 @@ export function SignInPage() {
   ) {
     e?.preventDefault()
 
-    setLoading(true)
-
-    await signout()
-
     try {
       await signInWithEmailOTP(data.email, data.otp)
 
-      //console.log('redirectUrl', redirectUrl)
+      console.log('redirectUrl', redirectUrl)
 
-      if (redirectUrl) {
+      if (
+        redirectUrl &&
+        redirectUrl.length > 0 &&
+        redirectUrl !== '/' &&
+        redirectUrl !== OTP_SIGN_IN_ROUTE &&
+        redirectUrl.startsWith('/')
+      ) {
         router.push(redirectUrl)
       }
 
-      toast({
-        title: APP_NAME,
-        variant: 'success',
-        description: 'You have signed in successfully.',
-        //variant: 'destructive',
-      })
+      // toast({
+      //   title: APP_NAME,
+      //   variant: 'success',
+      //   description: `Hi, ${session.user.firstName}. You are signed in.`,
+      //   //variant: 'destructive',
+      // })
     } catch (error) {
       console.log('Error signing in: ', error)
 
+      //setOTPSent(false)
+
+      // try {
+      //   await signout()
+      // } catch (e) {
+      //   console.log('Error signing out: ', e)
+      // }
+
       toast({
         title: APP_NAME,
-        description: 'The sign in failed. Please check the code and try again.',
+        description:
+          'The sign in failed. Please check the one-time code and try again.',
         variant: 'destructive',
       })
     }
@@ -128,6 +145,24 @@ export function SignInPage() {
     // }
   }
 
+  async function sendCode(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault()
+
+    const isValid = await form.trigger('email')
+
+    if (isValid) {
+      sendOTP(form.getValues('email'))
+
+      setOTPSent(true)
+
+      toast({
+        title: APP_NAME,
+        description:
+          'If the email address is valid, you will receive a 6-digit code.',
+      })
+    }
+  }
+
   return (
     <CenterLayout
       title={TEXT_SIGN_IN}
@@ -136,20 +171,26 @@ export function SignInPage() {
       innerCls="gap-y-4"
     >
       {session && session.user && (
-        <p className="bg-emerald-50 w-120 p-3 rounded-xl border border-emerald-200">
-          Hi, {session.user.firstName}. You are signed in.
+        <p className="bg-emerald-50 w-120 px-5 py-2.5 rounded-xl border border-emerald-200">
+          Hi{' '}
+          <a href={MYACCOUNT_ROUTE} className="underline hover:text-theme">
+            {session.user.firstName || session.user.email}
+          </a>
+          , you are signed in.
         </p>
       )}
 
       <Card
-        className="shadow-2xl gap-y-8 w-120 text-sm p-12"
+        className="shadow-2xl gap-y-8 w-120 text-sm p-10"
         rounded="2xl"
         //variant="simple"
       >
         <CardHeader className="text-xl">
           <VCenterRow className="gap-x-2">
             <AppIcon w="w-10" />
-            <CardTitle>Sign in to {APP_NAME}</CardTitle>
+            <CardTitle>
+              {TEXT_SIGN_IN} to {APP_NAME}
+            </CardTitle>
           </VCenterRow>
         </CardHeader>
 
@@ -193,36 +234,28 @@ export function SignInPage() {
                       <Input
                         id="otp"
                         type="text"
-                        placeholder="OTP code, e.g. 123456"
+                        placeholder="123456"
                         h="xl"
                         variant="alt"
                         {...field}
                       />
-
-                      <button
-                        className="text-sm text-theme hover:underline"
-                        disabled={!form.watch('email')}
-                        onClick={async (e) => {
-                          e.preventDefault()
-
-                          const isValid = await form.trigger('email')
-
-                          if (isValid) {
-                            sendOTP(form.getValues('email'))
-
-                            toast({
-                              title: APP_NAME,
-                              description:
-                                'If the email address is valid, you will receive a 6-digit code.',
-                            })
-                          }
-                        }}
-                      >
-                        Send Code
-                      </button>
                     </VCenterRow>
 
                     <FormInputError error={form.formState.errors.otp} />
+
+                    {otpSent && (
+                      <button
+                        className="text-sm text-theme hover:underline"
+                        disabled={!form.watch('email')}
+                        onClick={(e) => {
+                          sendCode(e)
+                        }}
+                        aria-label="Send One-Time Password to Email"
+                        title="Send One-Time Password to Email"
+                      >
+                        Re-send Code
+                      </button>
+                    )}
                   </FormItem>
                 )}
               />
@@ -233,14 +266,32 @@ export function SignInPage() {
             <Button
               variant="theme"
               size="xl"
-              disabled={!form.watch('email') || !form.watch('otp')}
-              onClick={() => btnRef.current?.click()}
+              //disabled={otpSent && (!form.watch('email') || !form.watch('otp'))}
+              onClick={(e) => {
+                if (form.watch('email')) {
+                  if (!form.watch('otp')) {
+                    sendCode(e)
+                  } else {
+                    btnRef.current?.click()
+                  }
+                } else {
+                  toast({
+                    title: APP_NAME,
+                    description: 'Please enter your email address.',
+                    variant: 'destructive',
+                  })
+                }
+              }}
               className="group"
             >
               <div className="group-hover:w-5 group-hover:opacity-100 group-focus:w-5 group-focus:opacity-100 opacity-0 w-0 overflow-hidden trans-all">
                 <ArrowRight className="w-5" />
               </div>
-              <span>{TEXT_SIGN_IN}</span>
+              <span>
+                {form.watch('otp') || otpSent
+                  ? TEXT_SIGN_IN
+                  : 'Send One-Time Code'}
+              </span>
             </Button>
           </Form>
         </BaseCol>

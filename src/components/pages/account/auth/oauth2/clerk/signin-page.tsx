@@ -19,8 +19,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { HCenterCol } from '@layout/h-center-col'
 import {
   APP_OAUTH2_CALLBACK_URL,
-  APP_OAUTH2_CLERK_CALLBACK_ROUTE,
   MYACCOUNT_ROUTE,
+  OAUTH2_CLERK_CALLBACK_ROUTE,
   REDIRECT_URL_PARAM,
 } from '@lib/edb/edb'
 import { useEffect, useRef, useState, type BaseSyntheticEvent } from 'react'
@@ -90,9 +90,9 @@ export function SignInPage({
         url = '/' + url
       }
 
-      url = `${APP_OAUTH2_CLERK_CALLBACK_ROUTE}?redirectUrl=${url}`
+      url = `${OAUTH2_CLERK_CALLBACK_ROUTE}?redirectUrl=${url}`
     } else {
-      url = APP_OAUTH2_CLERK_CALLBACK_ROUTE
+      url = OAUTH2_CLERK_CALLBACK_ROUTE
     }
 
     // used to reroute once authorized

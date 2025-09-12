@@ -1,24 +1,20 @@
 import { cn } from '@lib/shadcn-utils'
-import { type IButtonProps } from '@themed/button'
-import { forwardRef, type ForwardedRef } from 'react'
-import { IconButton } from '../shadcn/ui/themed/icon-button'
+import { Button, type IButtonProps } from '@themed/button'
 
-export const ToolbarFooterButton = forwardRef(function ToolbarButton(
-  {
-    variant = 'muted',
-    size = 'icon-sm',
-    rounded: rounding = 'none',
-    className,
-    children,
-    ...props
-  }: IButtonProps,
-  ref: ForwardedRef<HTMLButtonElement>
-) {
+export function ToolbarFooterButton({
+  ref,
+  variant = 'muted',
+  size = 'xs',
+  rounded: rounding = 'none',
+  className,
+  children,
+  ...props
+}: IButtonProps) {
   //const [hover, setHover] = useState(false)
   //const [down, setDown] = useState(false)
 
   return (
-    <IconButton
+    <Button
       ref={ref}
       variant={variant}
       size={size}
@@ -28,6 +24,6 @@ export const ToolbarFooterButton = forwardRef(function ToolbarButton(
       {...props}
     >
       {children}
-    </IconButton>
+    </Button>
   )
-})
+}

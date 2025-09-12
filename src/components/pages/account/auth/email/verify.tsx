@@ -13,9 +13,9 @@ import { bearerHeaders } from '@lib/http/urls'
 
 import {
   API_EMAIL_VERIFIED_URL,
-  APP_OAUTH2_SIGN_IN_ROUTE,
   EDB_ACCESS_TOKEN_COOKIE,
   EDB_TOKEN_PARAM,
+  OAUTH2_SIGN_IN_ROUTE,
   SIGN_UP_ROUTE,
   TEXT_SIGN_UP,
 } from '@lib/edb/edb'
@@ -110,7 +110,7 @@ export function VerifyPage() {
               </CardHeader>
               <CardFooter className="flex flex-row justify-end">
                 <ThemeIndexLink
-                  href={APP_OAUTH2_SIGN_IN_ROUTE}
+                  href={OAUTH2_SIGN_IN_ROUTE}
                   aria-label="Sign In"
                 >
                   {TEXT_SIGN_IN}

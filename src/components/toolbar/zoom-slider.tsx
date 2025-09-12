@@ -64,7 +64,7 @@ export function ZoomSlider({
       <ToolbarFooterButton
         title="Zoom Out"
         onClick={() => _setValue(Math.max(zoomScales[0]!, _zoom - inc))}
-        size="icon-sm"
+        size="icon-xs"
         variant="theme-muted"
       >
         <Minus className="w-4 h-4" strokeWidth={1.5} />
@@ -90,7 +90,7 @@ export function ZoomSlider({
         onClick={() =>
           _setValue(Math.min(zoomScales[zoomScales.length - 1]!, _zoom + inc))
         }
-        size="icon-sm"
+        size="icon-xs"
         variant="theme-muted"
       >
         <Plus className="w-4 h-4" strokeWidth={1.5} />
@@ -100,7 +100,7 @@ export function ZoomSlider({
         open={open}
         onOpenChange={setOpen}
         value={_zoom.toString()}
-        onValueChange={value => _setValue(Number(value))}
+        onValueChange={(value) => _setValue(Number(value))}
       >
         <SelectTrigger asChild>
           <ToolbarFooterButton
@@ -118,7 +118,7 @@ export function ZoomSlider({
 
             {range(zoomScales.length)
               .toReversed()
-              .map(i => (
+              .map((i) => (
                 <SelectItem value={zoomScales[i]!.toString()} key={i}>
                   {formatZoom(zoomScales[i]!)}
                 </SelectItem>

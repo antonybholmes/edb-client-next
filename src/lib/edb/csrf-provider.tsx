@@ -3,7 +3,7 @@
 import { IChildrenProps } from '@/interfaces/children-props'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { httpFetch } from '../http/http-fetch'
-import { SESSION_CSRF_TOKEN_URL } from './edb'
+import { SESSION_REFRESH_CSRF_TOKEN_URL } from './edb'
 
 const KEY = 'edb:csrf-token:v2'
 
@@ -21,7 +21,7 @@ export function CsrfProvider({ children }: IChildrenProps) {
       async function fetchCsrfToken() {
         try {
           const res = await httpFetch.getJson<{ data: { csrfToken: string } }>(
-            SESSION_CSRF_TOKEN_URL,
+            SESSION_REFRESH_CSRF_TOKEN_URL,
             { withCredentials: true }
           )
 

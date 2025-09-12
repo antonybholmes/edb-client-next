@@ -2,6 +2,8 @@ import { format } from 'date-fns'
 import fs from 'fs'
 import path from 'path'
 
+const INC = 2
+
 function getAllFiles(dir: string, files: string[] = []) {
   const entries = fs.readdirSync(dir, { withFileTypes: true })
 
@@ -26,8 +28,8 @@ const currentDate = info.modified ? new Date(info.modified) : undefined
 
 // find largest mod time by recursively checking all files
 const [, modDate] = files
-  .filter(f => f.match(/(\.ts|\.tsx|\.js|\.jsx|\.astro)/))
-  .map(f => {
+  .filter((f) => f.match(/(\.ts|\.tsx|\.js|\.jsx|\.astro)/))
+  .map((f) => {
     const stats = fs.lstatSync(f)
     return [f, stats.mtime] as [string, Date]
   })
@@ -41,20 +43,20 @@ if (!currentDate || modDate.getTime() > currentDate.getTime()) {
   patch = parseInt(patch)
   build = parseInt(build)
 
-  build++
+  build += INC
 
   //if (build % 10 === 0) {
-  patch++
+  patch += INC
   //}
 
   if (patch > 9) {
     patch = 0
-    minor++
+    minor += INC
   }
 
   if (minor > 9) {
     minor = 0
-    major++
+    major += INC
   }
 
   // update version and modified date to latest file modification date

@@ -92,6 +92,29 @@ export const MYACCOUNT_ROUTE = '/account/myaccount'
 export const SIGN_UP_ROUTE = `${ACCOUNT_ROUTE}/signup`
 export const RESET_PASSWORD_ROUTE = '/account/password/reset'
 
+export const AUTH_ROUTE = `${ACCOUNT_ROUTE}/auth`
+
+export const AUTH_PASSWORDLESS_ROUTE = `${AUTH_ROUTE}/passwordless`
+export const AUTH_PASSWORDLESS_SIGN_IN_ROUTE = `${AUTH_PASSWORDLESS_ROUTE}/signin`
+
+export const OTP_ROUTE = `${AUTH_ROUTE}/otp`
+export const OTP_SIGN_IN_ROUTE = `${OTP_ROUTE}/signin`
+
+export const OAUTH2_ROUTE = `${AUTH_ROUTE}/oauth2`
+
+export const OAUTH2_CLERK_ROUTE = `${OAUTH2_ROUTE}/clerk`
+export const OAUTH2_CLERK_SIGN_IN_ROUTE = `${OAUTH2_CLERK_ROUTE}/signin`
+export const OAUTH2_CLERK_CALLBACK_ROUTE = `${OAUTH2_CLERK_ROUTE}/callback`
+
+export const OAUTH2_SUPABASE_ROUTE = `${OAUTH2_ROUTE}/supabase`
+export const OAUTH2_SUPABASE_SIGN_IN_ROUTE = `${OAUTH2_SUPABASE_ROUTE}/signin`
+export const OAUTH2_SUPABASE_CALLBACK_ROUTE = `${OAUTH2_SUPABASE_ROUTE}/callback`
+
+export const OAUTH2_SIGN_IN_ROUTE = `${OAUTH2_ROUTE}/signin`
+export const OAUTH2_CALLBACK_ROUTE = `${OAUTH2_ROUTE}/callback`
+export const OAUTH2_SIGN_OUT_ROUTE = `${OAUTH2_ROUTE}/signout`
+export const OAUTH2_SIGNED_OUT_ROUTE = `${OAUTH2_ROUTE}/signedout`
+
 export const EDB_ACCESS_TOKEN_COOKIE = `${APP_ID}.access-token-v1`
 export const EDB_SESSION_COOKIE = `${APP_ID}.session-v2`
 export const EDB_USER_COOKIE = `${APP_ID}.user-v1`
@@ -116,26 +139,6 @@ export const APP_ACCOUNT_OAUTH2_URL = `${APP_ACCOUNT_AUTH_URL}/oauth2`
 export const APP_ACCOUNT_AUTH0_URL = `${APP_ACCOUNT_OAUTH2_URL}/auth0`
 export const APP_ACCOUNT_AUTH0_SIGNIN_URL = `${APP_ACCOUNT_AUTH0_URL}/signin`
 export const APP_ACCOUNT_AUTH0_CALLBACK_URL = `${APP_ACCOUNT_AUTH0_URL}/callback`
-
-export const APP_AUTH_ROUTE = `${ACCOUNT_ROUTE}/auth`
-
-export const APP_AUTH_PASSWORDLESS_ROUTE = `${APP_AUTH_ROUTE}/passwordless`
-export const APP_AUTH_PASSWORDLESS_SIGN_IN_ROUTE = `${APP_AUTH_PASSWORDLESS_ROUTE}/signin`
-
-export const APP_OAUTH2_ROUTE = `${APP_AUTH_ROUTE}/oauth2`
-
-export const APP_OAUTH2_CLERK_ROUTE = `${APP_OAUTH2_ROUTE}/clerk`
-export const APP_OAUTH2_CLERK_SIGN_IN_ROUTE = `${APP_OAUTH2_CLERK_ROUTE}/signin`
-export const APP_OAUTH2_CLERK_CALLBACK_ROUTE = `${APP_OAUTH2_CLERK_ROUTE}/callback`
-
-export const APP_OAUTH2_SUPABASE_ROUTE = `${APP_OAUTH2_ROUTE}/supabase`
-export const APP_OAUTH2_SUPABASE_SIGN_IN_ROUTE = `${APP_OAUTH2_SUPABASE_ROUTE}/signin`
-export const APP_OAUTH2_SUPABASE_CALLBACK_ROUTE = `${APP_OAUTH2_SUPABASE_ROUTE}/callback`
-
-export const APP_OAUTH2_SIGN_IN_ROUTE = `${APP_OAUTH2_ROUTE}/signin`
-export const APP_OAUTH2_CALLBACK_ROUTE = `${APP_OAUTH2_ROUTE}/callback`
-export const APP_OAUTH2_SIGN_OUT_ROUTE = `${APP_OAUTH2_ROUTE}/signout`
-export const APP_OAUTH2_SIGNED_OUT_ROUTE = `${APP_OAUTH2_ROUTE}/signedout`
 
 export const APP_OAUTH2_SUPABASE_URL = `${APP_ACCOUNT_OAUTH2_URL}/supabase`
 export const APP_OAUTH2_SUPABASE_SIGN_IN_URL = `${APP_OAUTH2_SUPABASE_URL}/signin`
@@ -237,7 +240,7 @@ export const API_TOKEN_VALIDATE_URL = `${EDB_API_URL}/tokens/validate`
 export const SESSION_URL = `${EDB_API_URL}/sessions`
 export const SESSION_INIT_URL = `${SESSION_URL}/init`
 export const SESSION_INFO_URL = `${SESSION_URL}/info`
-export const SESSION_CSRF_TOKEN_URL = `${SESSION_URL}/csrf-token`
+export const SESSION_REFRESH_CSRF_TOKEN_URL = `${SESSION_URL}/csrf-token/refresh`
 export const SESSION_REFRESH_URL = `${SESSION_URL}/refresh`
 
 export const SESSION_API_KEY_SIGNIN_URL = `${SESSION_URL}/api/keys/signin`

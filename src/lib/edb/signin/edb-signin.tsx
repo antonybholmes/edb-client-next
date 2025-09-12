@@ -15,7 +15,6 @@ import {
 import { useAuth0 } from '@auth0/auth0-react'
 import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
 import { SignOutIcon } from '@icons/sign-out-icon'
-import { redirect } from '@lib/http/urls'
 import { randId } from '@lib/utils'
 import { DropdownMenu } from '@radix-ui/react-dropdown-menu'
 import {
@@ -28,13 +27,15 @@ import {
 } from '@themed/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@themed/popover'
 import { UserRound } from 'lucide-react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { truncate } from '../../text/text'
 import {
-  APP_OAUTH2_SIGN_IN_ROUTE,
-  APP_OAUTH2_SIGN_OUT_ROUTE,
   DEFAULT_BASIC_EDB_USER,
   MYACCOUNT_ROUTE,
+  OAUTH2_SIGN_IN_ROUTE,
+  OAUTH2_SIGN_OUT_ROUTE,
+  OTP_SIGN_IN_ROUTE,
+  REDIRECT_URL_PARAM,
   TEXT_MY_ACCOUNT,
   type IBasicEdbUser,
 } from '../edb'
@@ -54,6 +55,7 @@ interface IProps {
 }
 
 export function EDBSignIn({ apiKey = '', signInMode = 'oauth2' }: IProps) {
+  const router = useRouter()
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
@@ -203,7 +205,29 @@ export function EDBSignIn({ apiKey = '', signInMode = 'oauth2' }: IProps) {
                 }}
               >
                 <SignInIcon stroke="" />
-                <span>{TEXT_SIGN_IN}</span>
+                <span>{TEXT_SIGN_IN} with Auth0</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                aria-label={TEXT_SIGN_IN}
+                onClick={() => {
+                  router.push(
+                    OTP_SIGN_IN_ROUTE + `?${REDIRECT_URL_PARAM}=` + pathname
+                  )
+                }}
+              >
+                <span>{TEXT_SIGN_IN} with Email+OTP</span>
+              </DropdownMenuItem>
+
+              <MenuSeparator />
+
+              <DropdownMenuItem
+                aria-label={TEXT_SIGN_OUT}
+                onClick={() =>
+                  setShowDialog({ id: randId('signout'), params: {} })
+                }
+              >
+                {TEXT_SIGN_OUT}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -303,7 +327,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'oauth2' }: IProps) {
               //className="w-64"
             >
               <DropdownMenuAnchorItem
-                href={APP_OAUTH2_SIGN_IN_ROUTE}
+                href={OAUTH2_SIGN_IN_ROUTE}
                 aria-label={TEXT_SIGN_IN}
               >
                 <SignInIcon stroke="" />
@@ -339,7 +363,8 @@ export function EDBSignIn({ apiKey = '', signInMode = 'oauth2' }: IProps) {
         modalType="Warning"
         onResponse={(r) => {
           if (r === TEXT_OK) {
-            redirect(APP_OAUTH2_SIGN_OUT_ROUTE)
+            //redirect(APP_OAUTH2_SIGN_OUT_ROUTE)
+            router.push(OAUTH2_SIGN_OUT_ROUTE)
           }
 
           setShowDialog({ ...NO_DIALOG })

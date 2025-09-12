@@ -6,8 +6,8 @@ import {
   BUTTON_LG_H_CLS,
   BUTTON_MD_H_CLS,
   BUTTON_SM_H_CLS,
-  BUTTON_SM_W_CLS,
   BUTTON_XL_H_CLS,
+  BUTTON_XS_H_CLS,
   CENTERED_ROW_CLS,
   CORE_PRIMARY_BUTTON_CLS,
   CORE_PRIMARY_COLOR_BUTTON_CLS,
@@ -17,6 +17,8 @@ import {
   ICON_BUTTON_CLS,
   LARGE_ICON_BUTTON_CLS,
   SM_ICON_BUTTON_CLS,
+  TOOLBAR_BUTTON_H_CLS,
+  TOOLBAR_BUTTON_W_CLS,
   TOOLBAR_DROPDOWN_BUTTON_CLS,
   TRANS_COLOR_CLS,
   XL_ICON_BUTTON_CLS,
@@ -50,9 +52,8 @@ export const BASE_SECONDARY_CLS = cn(
 )
 
 export const BASE_MUTED_CLS = cn(
-  'border border-transparent data-[checked=false]:hover:bg-muted',
-  'data-[checked=true]:bg-muted data-[state=open]:bg-muted',
-  'data-[checked=true]:border-border'
+  'data-[checked=false]:hover:bg-muted',
+  'data-[checked=true]:bg-muted data-[state=open]:bg-muted'
 )
 
 export const BASE_MUTED_LIGHT_CLS = cn(
@@ -94,9 +95,9 @@ export const THEME_MENU_CLS = cn(
   'border border-transparent focus:bg-theme/50 focus:text-white focus:fill-white focus:stroke-white',
   'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
   'fill-foreground stroke-foreground px-1',
-  'hover:bg-theme/50 hover:text-white hover:fill-white hover:stroke-white',
-  'data-[state=checked]:bg-theme/40 data-[state=checked]:stroke-white data-[state=checked]:text-white',
-  'data-[checked=true]:bg-theme/40 data-[checked=true]:stroke-white data-[checked=true]:text-white'
+  'hover:bg-theme/50 hover:text-white hover:fill-white hover:stroke-white'
+  //'data-[state=checked]:bg-theme/40 data-[state=checked]:stroke-white data-[state=checked]:text-white',
+  //'data-[checked=true]:bg-theme/40 data-[checked=true]:stroke-white data-[checked=true]:text-white'
 )
 
 export const DROPDOWN_MENU_ICON_CONTAINER_CLS =
@@ -450,11 +451,15 @@ export const buttonVariants = cva(BASE_BUTTON_CLS, {
       end: 'justify-end',
     },
     size: {
-      md: cn(BUTTON_MD_H_CLS, 'px-3'),
+      xs: cn(BUTTON_XS_H_CLS, 'px-2'),
       sm: cn(BUTTON_SM_H_CLS, 'px-2'),
-      //md: BUTTON_MD_H_CLS,
-      toolbar: cn(BUTTON_SM_H_CLS, 'px-2'),
-      'toolbar-icon': cn(BUTTON_SM_W_CLS, BUTTON_SM_H_CLS, 'aspect-square'),
+      md: cn(BUTTON_MD_H_CLS, 'px-2.5'),
+      toolbar: cn(TOOLBAR_BUTTON_H_CLS, 'px-2.5'),
+      'toolbar-icon': cn(
+        TOOLBAR_BUTTON_W_CLS,
+        TOOLBAR_BUTTON_H_CLS,
+        'aspect-square'
+      ),
       lg: cn(BUTTON_LG_H_CLS, 'px-5'),
       xl: BUTTON_XL_H_CLS,
       '2xl': BUTTON_XL_H_CLS,

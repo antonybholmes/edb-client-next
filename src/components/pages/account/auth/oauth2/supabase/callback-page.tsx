@@ -10,7 +10,7 @@ import { APP_NAME, TEXT_SIGN_IN } from '@/consts'
 import { CenterLayout } from '@/layouts/center-layout'
 import { supabase } from '@/lib/auth/supabase'
 
-import { APP_OAUTH2_SIGN_IN_ROUTE } from '@/lib/edb/edb'
+import { OAUTH2_SIGN_IN_ROUTE } from '@/lib/edb/edb'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { redirect } from '@/lib/http/urls'
 import { logger } from '@/lib/logger'
@@ -80,7 +80,7 @@ export function CallbackPage() {
           </Card>
           <ButtonLink
             variant="theme"
-            href={APP_OAUTH2_SIGN_IN_ROUTE}
+            href={OAUTH2_SIGN_IN_ROUTE}
             size="lg"
             className="w-full"
           >

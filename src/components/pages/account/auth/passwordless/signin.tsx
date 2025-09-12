@@ -13,7 +13,7 @@ import { VCenterRow } from '@layout/v-center-row'
 
 import {
   APP_MYACCOUNT_URL,
-  APP_OAUTH2_SIGN_IN_ROUTE,
+  OAUTH2_SIGN_IN_ROUTE,
   RESET_PASSWORD_ROUTE,
   SESSION_AUTH_SIGNIN_URL,
   SIGN_UP_ROUTE,
@@ -79,7 +79,7 @@ export function SignInLink() {
   return (
     <span className="w-full">
       Already have an account?{' '}
-      <ThemeIndexLink href={APP_OAUTH2_SIGN_IN_ROUTE} aria-label={TEXT_SIGN_IN}>
+      <ThemeIndexLink href={OAUTH2_SIGN_IN_ROUTE} aria-label={TEXT_SIGN_IN}>
         {TEXT_SIGN_IN}
       </ThemeIndexLink>
     </span>
@@ -233,7 +233,7 @@ export function SignIn({ allowPassword = false, visitUrl }: ISignInProps) {
           {allowPassword && (
             <Switch
               checked={settings.passwordless}
-              onCheckedChange={state => {
+              onCheckedChange={(state) => {
                 updateSettings({ ...settings, passwordless: state })
               }}
             >
@@ -330,7 +330,7 @@ export function SignIn({ allowPassword = false, visitUrl }: ISignInProps) {
                     <FormControl>
                       <Switch
                         checked={field.value}
-                        onCheckedChange={state => {
+                        onCheckedChange={(state) => {
                           updateSettings({
                             ...settings,
                             staySignedIn: state,

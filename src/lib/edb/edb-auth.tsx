@@ -9,8 +9,8 @@ import {
   SESSION_AUTH_OTP_SIGNIN_URL,
   SESSION_AUTH_SIGNIN_URL,
   SESSION_CLERK_SIGNIN_URL,
-  SESSION_CSRF_TOKEN_URL,
   SESSION_INFO_URL,
+  SESSION_REFRESH_CSRF_TOKEN_URL,
   SESSION_REFRESH_URL,
   SESSION_SIGNOUT_URL,
   SESSION_SUPABASE_SIGNIN_URL,
@@ -46,22 +46,22 @@ export const useCSRFStore = create<ICSRFStore>((set) => ({
   setToken: (token: string) => set({ token }),
   fetchToken: async () => {
     // if token still exists, return it
-    let token = Cookies.get(CSRF_COOKIE_NAME) || ''
+    // let token = Cookies.get(CSRF_COOKIE_NAME) || ''
 
-    if (token) {
-      logger.log('CSRF token already set:', token)
-      set({ token, error: '' })
-      return token
-    }
+    // if (token) {
+    //   logger.log('CSRF token already set:', token)
+    //   set({ token, error: '' })
+    //   return token
+    // }
 
     try {
       logger.log('Fetching CSRF token from server...')
-      token = await queryClient.fetchQuery({
+      const token = await queryClient.fetchQuery({
         queryKey: ['csrf-token'],
         queryFn: async () => {
-          const res = await httpFetch.getJson<{
+          const res = await httpFetch.postJson<{
             data: { csrfToken: string }
-          }>(SESSION_CSRF_TOKEN_URL, { withCredentials: true })
+          }>(SESSION_REFRESH_CSRF_TOKEN_URL, { withCredentials: true })
 
           return res.data.csrfToken
         },
@@ -69,10 +69,12 @@ export const useCSRFStore = create<ICSRFStore>((set) => ({
 
       logger.log('CSRF token fetched:', token)
 
+      //Cookies.set(CSRF_COOKIE_NAME, token)
+
       set({ token, error: '' })
 
       return token
-    } catch (err: any) {
+    } catch (err) {
       set({ token: '', error: 'Failed to fetch CSRF token' })
 
       return ''

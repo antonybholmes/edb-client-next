@@ -105,7 +105,7 @@ export function MyAccountPage() {
   //const [user, setUser] = useState<IUser | null>(null)
 
   //const [account, setAccount] = useState<IAccount>({...DEFAULT_ACCOUNT})
-  const { fetchToken } = useCSRF()
+  const { token: csrf, fetchToken } = useCSRF()
   const { session, csrfToken, refreshSession, fetchUpdateToken } = useEdbAuth()
 
   //const [roles, setRoles] = useState<string[]>([])
@@ -508,17 +508,19 @@ export function MyAccountPage() {
           {formatInTimeZone(session?.expiresAt ?? now, 'UTC', 'HH:mm:ss')} UTC)
         </p>
 
-        <VCenterRow>
-          <Button
+        <VCenterRow className="justify-between">
+          <span>
+            CSRF token: <strong>{csrf}</strong>
+          </span>
+          <IconButton
             variant="secondary"
-            size="lg"
             onClick={() => {
               fetchToken()
             }}
             title="Generate a new CSRF token"
           >
-            New CSRF Token
-          </Button>
+            <ReloadIcon />
+          </IconButton>
         </VCenterRow>
 
         {/* <p className="text-xs text-foreground/50">

@@ -1,10 +1,6 @@
 import { HeaderLayout, type IHeaderLayoutProps } from '@layouts/header-layout'
 
-import {
-  APP_OAUTH2_SIGN_IN_ROUTE,
-  SIGN_UP_ROUTE,
-  TEXT_SIGN_UP,
-} from '@lib/edb/edb'
+import { OAUTH2_SIGN_IN_ROUTE, SIGN_UP_ROUTE, TEXT_SIGN_UP } from '@lib/edb/edb'
 
 import { ThemeIndexLink } from '@components/link/theme-index-link'
 import { useState, type ReactNode } from 'react'
@@ -50,7 +46,7 @@ export function SignInLink() {
   return (
     <span>
       Already have an account?{' '}
-      <ThemeIndexLink href={APP_OAUTH2_SIGN_IN_ROUTE} aria-label={TEXT_SIGN_IN}>
+      <ThemeIndexLink href={OAUTH2_SIGN_IN_ROUTE} aria-label={TEXT_SIGN_IN}>
         {TEXT_SIGN_IN}
       </ThemeIndexLink>
     </span>
