@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Fixed seqbrowser not showing gene symbols. Moved more data into location context for easier management.
 - Gene name is now symbol.
 - Switched geneSymbol to geneName for new API compatibility.
 - Bug fixes and updates.

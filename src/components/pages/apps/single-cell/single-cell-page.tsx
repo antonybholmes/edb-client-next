@@ -1088,30 +1088,30 @@ export function SingleCellPage() {
           >
             {searchGenes?.map((g) => {
               return (
-                <AutocompleteLi key={g.id}>
+                <AutocompleteLi key={g.geneId}>
                   <Checkbox
-                    aria-label={`Select ${g.sym}`}
-                    checked={genesForUse.get(g.id) ?? false}
+                    aria-label={`Select ${g.geneSymbol}`}
+                    checked={genesForUse.get(g.geneId) ?? false}
                     onCheckedChange={() => {
                       setGenesForUse(
                         new Map<string, boolean>([
                           ...genesForUse.entries(),
-                          [g.id, !genesForUse.get(g.id)],
+                          [g.geneId, !genesForUse.get(g.geneId)],
                         ])
                       )
                     }}
                   />
 
-                  <span className="grow text-xs truncate">{g.sym}</span>
+                  <span className="grow text-xs truncate">{g.geneSymbol}</span>
 
                   <span className="truncate shrink-1 opacity-50 text-xxs">
-                    {g.id}
+                    {g.geneId}
                   </span>
                 </AutocompleteLi>
               )
             })}
 
-            <li className="flex items-center justify-end pt-2 px-2">
+            <li className="flex items-center justify-end pt-2 px-2" key="add">
               <Button>{TEXT_ADD}</Button>
             </li>
           </Autocomplete>

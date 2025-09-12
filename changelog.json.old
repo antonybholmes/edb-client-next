@@ -1342,6 +1342,10 @@
         {
           "msg": "Switched geneSymbol to geneName for new API compatibility",
           "date": "2025-09-04T17:15:14.121Z"
+        },
+        {
+          "msg": "Gene name is now symbol",
+          "date": "2025-09-11T23:09:02.310Z"
         }
       ],
       "Added": [

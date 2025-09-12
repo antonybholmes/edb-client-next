@@ -21,8 +21,14 @@ export class GenomicLocation {
   private _chr: string
   private _start: number
   private _end: number
+  private _strand: string
 
-  constructor(chr: string | number, start: number, end: number) {
+  constructor(
+    chr: string | number,
+    start: number,
+    end: number,
+    strand: string = '.'
+  ) {
     this._chr = formatChr(chr)
     // start must be 1 since locations use 1 based counting
     // this should deal with people giving stupid coordinates
@@ -31,6 +37,7 @@ export class GenomicLocation {
     this._start = Math.max(1, Math.round(Math.min(start, end)))
     // end must be greater equal to start
     this._end = Math.max(this._start, Math.round(Math.max(start, end)))
+    this._strand = strand
   }
 
   get chr(): string {
@@ -43,6 +50,10 @@ export class GenomicLocation {
 
   get end(): number {
     return this._end
+  }
+
+  get strand(): string {
+    return this._strand
   }
 
   /**

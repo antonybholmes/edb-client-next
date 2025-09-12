@@ -114,12 +114,12 @@ export const DEFAULT_SETTINGS: ISingleCellSettings = {
     {
       id: nanoid(),
       name: '',
-      genes: [{ id: 'ENSG00000111732.10', sym: 'AICDA' }],
+      genes: [{ geneId: 'ENSG00000111732.10', geneSymbol: 'AICDA' }],
     },
     {
       id: nanoid(),
       name: '',
-      genes: [{ id: 'ENSG00000057657.15', sym: 'PRDM1' }],
+      genes: [{ geneId: 'ENSG00000057657.15', geneSymbol: 'PRDM1' }],
     },
   ],
   autoAxes: true,

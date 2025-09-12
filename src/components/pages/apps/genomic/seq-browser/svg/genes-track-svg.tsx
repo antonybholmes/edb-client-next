@@ -21,14 +21,16 @@ interface IGeneDBInfo {
 
 export interface IGenomicFeature {
   loc: IGenomicLocation
-  level: string
+  feature: string
+  level?: number
   //strand: string
   geneSymbol?: string
   geneId?: string
-  geneType?: string
+  //geneType?: string
   transcriptId?: string
   isCanonical?: boolean
-  transcriptType?: string
+  isLongest?: boolean
+  type?: string
   exonId?: string
   exonNumber?: number
   children?: IGenomicFeature[]
@@ -189,20 +191,13 @@ export function getGeneTrackHeight(
 interface IProps extends IDivProps {
   db?: IGeneDBInfo | undefined
   track: IGeneTrack
-  genes: IGenomicFeature[]
   titleHeight: number
   geneYMap: Map<string, number>
 }
 
-export function GenesTrackSvg({
-  db,
-  track,
-  genes,
-  titleHeight,
-  geneYMap,
-}: IProps) {
+export function GenesTrackSvg({ db, track, titleHeight, geneYMap }: IProps) {
   const { settings } = useSeqBrowserSettings()
-  const { xax } = useContext(LocationContext)
+  const { xax, genes } = useContext(LocationContext)
 
   return (
     <>
@@ -224,14 +219,12 @@ export function GenesTrackSvg({
       {settings.genes.view === 'transcript' ? (
         <SimpleGeneTrackSvg
           track={track}
-          genes={genes}
           titleHeight={titleHeight}
           geneYMap={geneYMap}
         />
       ) : (
         <GenesStructureTrackSvg
           track={track}
-          genes={genes}
           titleHeight={titleHeight}
           geneYMap={geneYMap}
         />
@@ -245,13 +238,8 @@ export function GenesTrackSvg({
  * @param param0
  * @returns
  */
-export function SimpleGeneTrackSvg({
-  track,
-  genes,
-  titleHeight,
-  geneYMap,
-}: IProps) {
-  const { xax } = useContext(LocationContext)
+export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
+  const { xax, genes } = useContext(LocationContext)
   const { settings } = useSeqBrowserSettings()
 
   let x1: number
@@ -411,11 +399,10 @@ export function SimpleGeneTrackSvg({
  */
 export function GenesStructureTrackSvg({
   track,
-  genes,
   titleHeight,
   geneYMap,
 }: IProps) {
-  const { xax } = useContext(LocationContext)
+  const { xax, genes } = useContext(LocationContext)
   const { settings } = useSeqBrowserSettings()
 
   // const genesQuery = useQuery({

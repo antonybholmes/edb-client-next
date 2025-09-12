@@ -46,9 +46,9 @@ export interface IScrnaDataset {
 
 export interface IScrnaGene {
   // ensembl
-  id: string
+  geneId: string
   // gene symbol
-  sym: string
+  geneSymbol: string
 }
 
 export interface IScrnaGexGene extends IScrnaGene {
@@ -324,7 +324,9 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         return
       }
 
-      const genes = genesets.map((g) => g.genes.map((gene) => gene.id)).flat()
+      const genes = genesets
+        .map((g) => g.genes.map((gene) => gene.geneId))
+        .flat()
 
       console.log('Loading GEX for', store.dataset.publicId, genes)
 
@@ -344,6 +346,8 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         },
       })
 
+      console.log('Got GEX results', res)
+
       const results: IScrnaGexResults = res.data
 
       // make some empty arrays to store the gene data
@@ -351,12 +355,12 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         genesets
           .map((g) => g.genes)
           .flat()
-          .map((g) => [g.id, zeros(store.dataset!.cells ?? 0)])
+          .map((g) => [g.geneId, zeros(store.dataset!.cells ?? 0)])
       )
 
       for (const gene of results.genes) {
         for (const gx of gene.gex) {
-          gexData[gene.id]![gx[0]!] = gx[1]!
+          gexData[gene.geneId]![gx[0]!] = gx[1]!
         }
       }
 
@@ -396,10 +400,10 @@ export function PlotGridProvider({ children }: IChildrenProps) {
 
       if (useMean) {
         avg = range(0, store.dataset.cells ?? 0).map((cellIdx) =>
-          mean(geneset.genes.map((gene) => gexData[gene.id]![cellIdx]!))
+          mean(geneset.genes.map((gene) => gexData[gene.geneId]![cellIdx]!))
         )
       } else {
-        avg = gexData[geneset.genes[0]!.id]!
+        avg = gexData[geneset.genes[0]!.geneId]!
       }
 
       //console.log(avg)
@@ -431,9 +435,9 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         id: nanoid(),
         name: useMean
           ? truncate(
-              `Mean of ${geneset.name}: ${geneset.genes.map((g) => g.sym).join(', ')}`
+              `Mean of ${geneset.name}: ${geneset.genes.map((g) => g.geneSymbol).join(', ')}`
             )
-          : geneset.genes[0]!.sym,
+          : geneset.genes[0]!.geneSymbol,
         geneset,
         mode: settings.gex.useGlobalRange ? 'global-gex' : 'gex',
         clusters: store.clusterInfo.clusters, //.slice(0, 2),

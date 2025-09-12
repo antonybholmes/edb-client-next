@@ -772,7 +772,6 @@ export const TracksContext = createContext<{
   locations: GenomicLocation[]
   setLocations: (location: (GenomicLocation | string)[]) => void
   trackDb: AllDBSignalTrackTypes[]
-
   binSizes: number[]
   state: IPlotsState
   dispatch: Dispatch<ITrackAction>
@@ -795,6 +794,7 @@ export const LocationContext = createContext<{
   globalY: number
   binSize: number
   location: GenomicLocation
+  genes: IGenomicFeature[]
   geneYMap: Map<string, number>
   setLocation: (location: GenomicLocation) => void
 }>({
@@ -806,6 +806,7 @@ export const LocationContext = createContext<{
   globalY: 1,
   binSize: 10,
   location: NO_LOCATION,
+  genes: [],
   geneYMap: new Map<string, number>(),
   setLocation: () => {},
 })

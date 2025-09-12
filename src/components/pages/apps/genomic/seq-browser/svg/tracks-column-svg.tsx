@@ -123,8 +123,8 @@ export function TracksColumnSvg({
   // )
 
   const tracks = state.order
-    .map(gid => state.groups[gid]!)
-    .map(tg => tg.order.map(id => tg.tracks[id]!))
+    .map((gid) => state.groups[gid]!)
+    .map((tg) => tg.order.map((id) => tg.tracks[id]!))
 
   if (tracks.length === 0) {
     return null
@@ -228,7 +228,6 @@ export function TracksColumnSvg({
             plotSvg = (
               <GenesTrackSvg
                 db={genesMap[settings.genome]}
-                genes={features}
                 key={ti}
                 track={ts[0]!}
                 titleHeight={titleHeightUsingPosition}

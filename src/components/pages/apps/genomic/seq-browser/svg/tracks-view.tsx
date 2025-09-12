@@ -579,6 +579,10 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
                     globalY,
                     locTrackBins: allLocTrackBins[li],
                     binSize: binSizes[li]!,
+                    genes:
+                      locationFeatures.length > li
+                        ? locationFeatures[li].features
+                        : [],
                     geneYMap: geneYMaps[li] || new Map(),
                     setLocation: (location) => {
                       // for individual tracks, we can update their location
