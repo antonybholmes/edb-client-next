@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Tab UI tweaks.
 - Bug fixes and updates.
 - UI tweaks to switch and accordion.
 

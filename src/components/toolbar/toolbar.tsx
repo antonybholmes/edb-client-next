@@ -206,7 +206,7 @@ export function ToolbarMenu({
         <VCenterRow id="toolbar-left-shortcuts h-8">{leftShortcuts}</VCenterRow>
       )}
 
-      <VCenterRow className="shrink-0 grow h-8" id="file-toolbar-menu">
+      <VCenterRow className="shrink-0 grow" id="file-toolbar-menu">
         <FileMenu
           open={open}
           onOpenChange={onOpenChange}
@@ -299,7 +299,7 @@ export function ToolbarPanel({ tabShortcutMenu }: IToolbarPanelProps) {
   return (
     <BaseRow className="items-end gap-x-2 px-2">
       <VCenterRow className="text-xs bg-background border border-border/25 shadow-md rounded-xl p-1.25 grow gap-x-2 justify-between">
-        {tabs.map(tab => (
+        {tabs.map((tab) => (
           <TabsContent
             value={tab.id}
             key={tab.id}
@@ -321,7 +321,7 @@ export function ToolbarPanel({ tabShortcutMenu }: IToolbarPanelProps) {
             <DropdownMenuCheckboxItem
               checked={settings.toolbars.ribbon.style === 'classic'}
               onCheckedChange={() => {
-                const newSettings = produce(settings, draft => {
+                const newSettings = produce(settings, (draft) => {
                   draft.toolbars.ribbon.style = 'classic'
                 })
 
@@ -333,7 +333,7 @@ export function ToolbarPanel({ tabShortcutMenu }: IToolbarPanelProps) {
             <DropdownMenuCheckboxItem
               checked={settings.toolbars.ribbon.style === 'single'}
               onCheckedChange={() => {
-                const newSettings = produce(settings, draft => {
+                const newSettings = produce(settings, (draft) => {
                   draft.toolbars.ribbon.style = 'single'
                 })
 
@@ -347,8 +347,8 @@ export function ToolbarPanel({ tabShortcutMenu }: IToolbarPanelProps) {
 
             <DropdownMenuCheckboxItem
               checked={settings.toolbars.groups.labels.show}
-              onCheckedChange={v => {
-                const newSettings = produce(settings, draft => {
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.toolbars.groups.labels.show = v
                 })
 

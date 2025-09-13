@@ -12,7 +12,7 @@ import {
 } from 'react'
 
 export const TABS_CLS =
-  'flex flex-row justify-center bg-muted p-0.25 rounded-theme text-xs relative'
+  'flex flex-row justify-center bg-muted rounded-theme text-xs relative'
 
 export const TRIGGER_SELECTED_CLS =
   'ring-offset-background focus-visible:outline-hidden disabled:pointer-events-none'
@@ -91,7 +91,7 @@ TabsList.displayName = 'TabsList' //TabsPrimitive.List.displayName
 // ))
 // BaseTabsTrigger.displayName = 'BaseTabsTrigger' //TabsPrimitive.Trigger.displayName
 
-const triggerVariants = cva(' ', {
+const triggerVariants = cva('relative', {
   variants: {
     variant: {
       base: '',

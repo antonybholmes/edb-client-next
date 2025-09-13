@@ -2,7 +2,7 @@ import gsap from 'gsap'
 import { useContext, useEffect, useRef } from 'react'
 import { TabIndicatorContext } from './tab-indicator-provider'
 
-export function TabIndicatorV({ w = 0.2 }: { w?: number }) {
+export function TabIndicatorV({ w = 0.1 }: { w?: number }) {
   const { tabIndicatorPos } = useContext(TabIndicatorContext)
 
   const line1Ref = useRef<HTMLSpanElement>(null)

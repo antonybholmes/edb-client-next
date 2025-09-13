@@ -59,7 +59,7 @@ export function FileMenu({
           //title="Open File Menu"
           className={tabVariants({
             variant: 'default',
-            className: 'px-2.5 py-1 mb-1',
+            className: 'px-2.5 py-1 rounded-sm',
           })}
           onClick={() => onOpenChange?.(true)}
         >

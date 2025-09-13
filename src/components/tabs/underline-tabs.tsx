@@ -14,7 +14,7 @@ import {
 import { cva, type VariantProps } from 'class-variance-authority'
 import { VCenterRow } from '../layout/v-center-row'
 
-import { BUTTON_SM_H_CLS, FOCUS_INSET_RING_CLS } from '@/theme'
+import { FOCUS_INSET_RING_CLS } from '@/theme'
 import { truncate } from '@lib/text/text'
 import { TabIndicatorH } from './tab-indicator-h'
 import { TabIndicatorContext } from './tab-indicator-provider'
@@ -31,7 +31,7 @@ export const tabVariants = cva(
     variants: {
       variant: {
         default:
-          'rounded-theme overflow-hidden mb-1 focus-visible:bg-muted hover:bg-muted data-[checked=true]:bg-muted px-2 py-1',
+          'overflow-hidden focus-visible:bg-muted hover:bg-muted data-[checked=true]:bg-muted px-2 py-1',
         sheet:
           'focus-visible:bg-muted hover:bg-muted data-[checked=true]:bg-muted',
         tab: '',
@@ -40,18 +40,16 @@ export const tabVariants = cva(
   }
 )
 
-export const tabButtonVariants = cva(
-  'group trans-color trans-color focus-visible:bg-muted hover:bg-muted data-[checked=true]:bg-muted overflow-hidden',
-  {
-    variants: {
-      variant: {
-        default: cn(BUTTON_SM_H_CLS, 'px-2 mb-1 rounded-theme'),
-        sheet: 'py-2 px-1 w-16 flex flex-row justify-center',
-        tab: 'border',
-      },
+export const tabButtonVariants = cva('group trans-color overflow-hidden', {
+  variants: {
+    variant: {
+      default: 'h-7 px-2',
+      sheet:
+        'py-2 px-1 w-16 flex flex-row justify-center focus-visible:bg-muted hover:bg-muted data-[checked=true]:bg-muted ',
+      tab: 'border',
     },
-  }
-)
+  },
+})
 
 export const UNDERLINE_LABEL_CLS =
   'boldable-text-tab data-[checked=true]:font-semibold text-foreground/75 truncate'
@@ -156,6 +154,7 @@ export function UnderlineTabs({
               value={tab.id}
               id={tab.id}
               key={tab.id}
+              data-selected={selected}
               ref={(el) => {
                 buttonsRef.current[ti] = el!
               }}
@@ -189,6 +188,12 @@ export function UnderlineTabs({
               >
                 {truncatedName}
               </span>
+
+              <span
+                data-selected={selected}
+                className="invisible data-[selected=false]:group-hover:visible absolute bottom-0 bg-border left-2 right-2"
+                style={{ height: '0.1rem' }}
+              />
             </TabsTrigger>
 
             // <TabsTrigger key={tab.id} value={tab.id}>{tab.id}</TabsTrigger>
