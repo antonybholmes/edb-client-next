@@ -1,3 +1,4 @@
+import gsap from 'gsap'
 import { useContext, useEffect, useMemo, useRef, type ReactNode } from 'react'
 
 import type { IChildrenProps } from '@interfaces/children-props'
@@ -23,7 +24,7 @@ import { TabIndicatorContext } from './tab-indicator-provider'
 //  'px-2.5 py-1.5 rounded-sm group trans-color focus-visible:bg-muted hover:bg-muted data-[checked=true]:bg-muted trans-color mb-1'
 
 const TAB_LINE_CLS =
-  'absolute bottom-0 bg-border left-2 right-2 transition-opacity duration-200 ease-in-out'
+  'absolute bottom-0 bg-border left-1 right-1 opacity-0 scale-x-50'
 
 export const tabVariants = cva(
   cn(
@@ -46,7 +47,7 @@ export const tabVariants = cva(
 export const tabButtonVariants = cva('group trans-color overflow-hidden', {
   variants: {
     variant: {
-      default: 'h-7 px-2',
+      default: 'h-8 px-1',
       sheet:
         'py-2 px-1 w-16 flex flex-row justify-center focus-visible:bg-muted hover:bg-muted data-[checked=true]:bg-muted',
       tab: 'border',
@@ -163,6 +164,7 @@ export function UnderlineTabs({
 }: IProps) {
   const tabListRef = useRef<HTMLDivElement>(null)
   const buttonsRef = useRef<HTMLButtonElement[]>([])
+
   const itemsRef = useRef<HTMLSpanElement[]>([])
   const pressed = useRef(false)
 
@@ -204,7 +206,7 @@ export function UnderlineTabs({
     <VCenterRow className={cn('justify-between gap-x-1', className)}>
       <TabsList
         variant="base"
-        className="relative"
+        className="relative gap-x-1.5"
         ref={tabListRef}
         id="underline-tabs"
       >
@@ -231,9 +233,23 @@ export function UnderlineTabs({
               onMouseEnter={() => {
                 if (selected) {
                   _scale(2)
+                } else {
+                  gsap.to(`#tab-line-${tab.id}`, {
+                    opacity: 1,
+                    scaleX: 1,
+                    duration: 0.2,
+                    ease: 'power.inOut',
+                  })
                 }
               }}
               onMouseLeave={() => {
+                gsap.to(`#tab-line-${tab.id}`, {
+                  opacity: 0,
+                  scaleX: 0.5,
+                  duration: 0.2,
+                  ease: 'power.inOut',
+                })
+
                 if (selected) {
                   _scale(1)
                 }
@@ -260,6 +276,7 @@ export function UnderlineTabs({
               </span>
 
               <span
+                id={`tab-line-${tab.id}`}
                 data-selected={selected}
                 className={TAB_LINE_CLS}
                 style={{ height: '0.1rem' }}

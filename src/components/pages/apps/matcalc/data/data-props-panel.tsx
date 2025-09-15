@@ -1,11 +1,11 @@
 import { PropsPanel } from '@components/props-panel'
 import { useState } from 'react'
 
-import { IOSTabsList } from '@components/tabs/ios-tabs'
+import { SideTabs } from '@/components/tabs/side-tabs'
 import { VScrollPanel } from '@components/v-scroll-panel'
 import type { IDivProps } from '@interfaces/div-props'
-import { HCenterRow } from '@layout/h-center-row'
 import { Tabs, TabsContent } from '@themed/tabs'
+import { Bolt, Component } from 'lucide-react'
 import { GenesetPropsPanel } from '../genesets/geneset-props-panel'
 import { GroupPropsPanel } from '../groups/group-props-panel'
 
@@ -32,18 +32,19 @@ export function DataPropsPanel({ ref, branchId }: IProps) {
         defaultValue={value}
         value={value}
         onValueChange={setValue}
-        className="grow flex flex-col"
+        className="grow flex flex-row gap-x-2"
+        orientation="vertical"
       >
-        <HCenterRow className="py-2 text-xs">
+        {/* <HCenterRow className="py-2 text-xs">
           <IOSTabsList
             value={value}
-            defaultWidth="80px"
+            defaultWidth="4.5rem"
             tabs={[
               { id: 'groups', name: 'Groups' },
               { id: 'genesets', name: 'Gene Sets' },
             ]}
           />
-        </HCenterRow>
+        </HCenterRow> */}
         {/* <HCenterRow className="py-2 text-xs">
           <TabsList>
             <TabsTrigger value="groups" className="w-20">
@@ -68,6 +69,23 @@ export function DataPropsPanel({ ref, branchId }: IProps) {
             </PropsPanel>
           </VScrollPanel>
         </TabsContent>
+
+        <SideTabs
+          value={value}
+          tabs={[
+            {
+              id: 'groups',
+              name: 'Groups',
+              icon: <Component className="w-4" />,
+            },
+            {
+              id: 'genesets',
+              name: 'Gene Sets',
+              icon: <Bolt className="w-4" />,
+            },
+          ]}
+          showLabels={false}
+        />
       </Tabs>
 
       {/* <ScrollAccordion value={openTabs} onValueChange={setOpenTabs}>

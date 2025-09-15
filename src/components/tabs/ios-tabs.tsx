@@ -98,7 +98,7 @@ export function IOSTabsList({
       data-focus={focus}
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
-      className="relative bg-muted/90 hover:bg-muted trans-color rounded-[10px] p-[2px]"
+      className="relative bg-muted/90 hover:bg-muted trans-color rounded-full p-[2px]"
     >
       {tabs.map((tab, ti) => {
         //const id = makeTabId(tab, ti)
@@ -117,10 +117,10 @@ export function IOSTabsList({
             id={tab.id}
             key={tab.id}
             data-checked={selected}
-            ref={el => {
+            ref={(el) => {
               buttonsRef.current[ti] = el!
             }}
-            className={cn('z-20 data-[checked=true]:font-semibold h-8')}
+            className={cn('z-20 data-[checked=true]:font-semibold h-7.5')}
             style={{ width: defaultWidth }}
           >
             {truncatedName}
@@ -133,7 +133,7 @@ export function IOSTabsList({
       <span
         data-segment={segment}
         ref={indicatorRef}
-        className="bg-background z-10 left-0 top-1/2 -translate-y-1/2 absolute rounded-[8px]"
+        className="bg-background z-10 left-0 top-1/2 -translate-y-1/2 absolute rounded-full"
         style={{ width: defaultWidth, height: 'calc(100% - 4px)' }}
       />
     </TabsList>

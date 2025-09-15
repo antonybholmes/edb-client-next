@@ -1,5 +1,12 @@
 # Changelog
 
+## 26.2 (Sep, 2025)
+
+### Changed
+
+- Tab UI fixes.
+
+
 ## 26.0 (Sep, 2025)
 
 ### Changed

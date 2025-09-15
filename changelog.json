@@ -1390,5 +1390,18 @@
     },
     "author": "Antony Holmes",
     "date": "2025-09-12T22:04:43.786Z"
+  },
+  {
+    "version": "26.2",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Tab UI fixes",
+          "date": "2025-09-15T18:07:14.111Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-09-15T18:07:14.111Z"
   }
 ]
