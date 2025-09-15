@@ -188,6 +188,7 @@ SelectLabel.displayName = SelectPrimitive.Label.displayName
 export function SelectItem({
   ref,
   variant = 'theme',
+  rounded = 'default',
   className,
   children,
   ...props
@@ -198,6 +199,7 @@ export function SelectItem({
       ref={ref}
       className={dropdownMenuItemVariants({
         variant,
+        rounded,
         className,
       })}
       {...props}

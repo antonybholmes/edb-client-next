@@ -1,17 +1,14 @@
 import { type IModuleLayoutProps } from './module-layout'
 
 import { APP_NAME } from '@/consts'
-import type { ReactNode } from 'react'
 import { SignInLayout } from './signin-layout'
 
 export interface IShortcutLayoutProps extends IModuleLayoutProps {
   mainClassName?: string
-  shortcuts?: ReactNode
 }
 
 export function ShortcutLayout({
   info,
-  shortcuts,
   children,
   className = 'gap-y-2',
   ...props

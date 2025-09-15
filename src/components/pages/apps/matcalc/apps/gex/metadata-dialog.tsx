@@ -44,9 +44,9 @@ export function GexMetadataDialog({
 
   const [platform, setPlatform] = useState<IGexTechnology | null>(null)
   const [datasets, setDatasets] = useState<IGexDataset[]>([])
-  const [datasetMap, setDatasetMap] = useState<Map<string, IGexDataset>>(
-    new Map<string, IGexDataset>()
-  )
+  // const [datasetMap, setDatasetMap] = useState<Map<string, IGexDataset>>(
+  //   new Map<string, IGexDataset>()
+  // )
   const [species, setSpecies] = useState<string>(SPECIES[0]!)
 
   const [institutions, setInstitutions] = useState<string[]>([])
@@ -67,13 +67,13 @@ export function GexMetadataDialog({
   // const [addSampleMetadataToNames, setAddSampleMetadataToNames] =
   //   useState(false)
 
-  const [sampleDataTypes, setSampleDataTypes] = useState<string[]>([])
+  // const [sampleDataTypes, setSampleDataTypes] = useState<string[]>([])
 
-  const [sampleDataTypeUseMap, setSampleDataTypeUseMap] = useState<
-    Map<string, boolean>
-  >(new Map<string, boolean>())
+  // const [sampleDataTypeUseMap, setSampleDataTypeUseMap] = useState<
+  //   Map<string, boolean>
+  // >(new Map<string, boolean>())
 
-  const [groupSampleDataType, setGroupSampleDataType] = useState<string[]>([])
+  // const [groupSampleDataType, setGroupSampleDataType] = useState<string[]>([])
 
   //const [sampleDataType, setSampleDataType] = useState<string[]>(['COO'])
 
@@ -130,11 +130,11 @@ export function GexMetadataDialog({
       )
     }
 
-    setDatasetMap(
-      new Map<string, IGexDataset>(
-        datasets.map((dataset) => [dataset.publicId, dataset])
-      )
-    )
+    // setDatasetMap(
+    //   new Map<string, IGexDataset>(
+    //     datasets.map((dataset) => [dataset.publicId, dataset])
+    //   )
+    // )
 
     // push certain types to the top of the list because we assume
     // people will be interested in these more
@@ -197,39 +197,38 @@ export function GexMetadataDialog({
     //loadValueTypes()
   }, [platform])
 
-  useEffect(() => {
-    const types = [
-      ...new Set(
-        datasets
-          .filter((dataset) => datasetUseMap.get(dataset.publicId))
-          .map((dataset) =>
-            dataset.samples
-              .map((sample) => sample.metadata.map((m) => m.name))
-              .flat()
-          )
-          .flat()
-        //.filter(x => !x.match(STANDARD_SAMPLE_DATA_TYPE_REGEX))
-      ),
-    ].toSorted()
+  // useEffect(() => {
+  //   const types = [
+  //     ...new Set(
+  //       datasets
+  //         .filter((dataset) => datasetUseMap.get(dataset.publicId))
+  //         .map((dataset) =>
+  //           dataset.samples
+  //             .map((sample) => sample.metadata.map((m) => m.name))
+  //             .flat()
+  //         )
+  //         .flat()
+  //       //.filter(x => !x.match(STANDARD_SAMPLE_DATA_TYPE_REGEX))
+  //     ),
+  //   ].toSorted()
 
-    if (types.length > 0) {
-      setSampleDataTypes([
-        //...DEFAULT_SAMPLE_DATA_TYPES,
+  //   // if (types.length > 0) {
+  //   //   // setSampleDataTypes([
+  //   //   //   //...DEFAULT_SAMPLE_DATA_TYPES,
+  //   //   //   ...types,
+  //   //   // ])
 
-        ...types,
-      ])
-
-      if (types.includes('COO')) {
-        // pick something we know people are interested in
-        setSampleDataTypeUseMap(new Map<string, boolean>([['COO', true]]))
-        setGroupSampleDataType(['COO'])
-      } else {
-        // oh well, just pick the first item in the menu as a guess
-        setSampleDataTypeUseMap(new Map<string, boolean>([[types[0]!, true]]))
-        setGroupSampleDataType([types[0]!])
-      }
-    }
-  }, [datasetUseMap])
+  //   //   if (types.includes('COO')) {
+  //   //     // pick something we know people are interested in
+  //   //     setSampleDataTypeUseMap(new Map<string, boolean>([['COO', true]]))
+  //   //     setGroupSampleDataType(['COO'])
+  //   //   } else {
+  //   //     // oh well, just pick the first item in the menu as a guess
+  //   //     setSampleDataTypeUseMap(new Map<string, boolean>([[types[0]!, true]]))
+  //   //     setGroupSampleDataType([types[0]!])
+  //   //   }
+  //   // }
+  // }, [datasetUseMap])
 
   async function fetchMetadata() {
     if (!platform) {

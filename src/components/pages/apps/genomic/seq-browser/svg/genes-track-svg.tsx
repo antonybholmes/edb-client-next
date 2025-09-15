@@ -63,7 +63,7 @@ export function getGeneTrackHeight(
   if (settings.genes.display === 'dense') {
     for (const [gi, gene] of genes.entries()) {
       //geneYMap.set(`gene-${gi}`, 0)
-      for (const [ti, _] of (gene.children ?? []).entries()) {
+      for (const ti of range(0, gene.children?.length ?? 0)) {
         geneYMap.set(`gene-${gi}:transcript-${ti}`, 0)
       }
     }
@@ -147,7 +147,7 @@ export function getGeneTrackHeight(
       //       track.displayOptions.genes.gap)
       // )
 
-      for (const [ti, _] of (gene.children ?? []).entries()) {
+      for (const ti of range(0, gene.children?.length ?? 0)) {
         geneYMap.set(
           `gene-${gi}:transcript-${ti}`,
           idx *
@@ -197,7 +197,7 @@ interface IProps extends IDivProps {
 
 export function GenesTrackSvg({ db, track, titleHeight, geneYMap }: IProps) {
   const { settings } = useSeqBrowserSettings()
-  const { xax, genes } = useContext(LocationContext)
+  const { xax } = useContext(LocationContext)
 
   return (
     <>

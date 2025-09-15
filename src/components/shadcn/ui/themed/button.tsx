@@ -693,11 +693,10 @@ export function Button({
       {...props}
     >
       {children}
-      <span
-        //ref={scope}
+      {/* <span
         className={RIPPLE_CLS}
         style={{ left: clickProps.x, top: clickProps.y }}
-      />
+      /> */}
     </Comp>
   )
 

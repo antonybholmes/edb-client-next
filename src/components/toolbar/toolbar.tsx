@@ -56,7 +56,7 @@ export function ShowOptionsButton({ ref, ...props }: IButtonProps) {
       variant="muted"
       rounded="md"
       size="icon-sm"
-      ripple={false}
+      // ripple={false}
       aria-label="Show options"
       name="Show options"
       {...props}
@@ -367,7 +367,7 @@ export function ToolbarPanel({ tabShortcutMenu }: IToolbarPanelProps) {
             <Button
               variant="muted"
               size="icon-xs"
-              ripple={false}
+              // ripple={false}
               title="Show Pane"
               checked={showDropdown}
             >

@@ -47,7 +47,7 @@ export function OptionalDropdownButton({
           <VCenterRow>
             <Button
               variant="muted"
-              ripple={false}
+              // ripple={false}
               onClick={() => onMainClick()}
               size={size}
               checked={open}
@@ -61,7 +61,7 @@ export function OptionalDropdownButton({
 
             <DropDownButton
               checked={open}
-              ripple={false}
+              // ripple={false}
               rounded={rounded}
               className="rounded-l-none"
               aria-label="Show dropdown menu"

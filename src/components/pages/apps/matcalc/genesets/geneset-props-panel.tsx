@@ -110,7 +110,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
         const name = df.colNames[i]
         const gs = makeNewGeneset(name)
 
-        gs.genes = df.col(i).strs.filter(x => x.length > 0)
+        gs.genes = df.col(i).strs.filter((x) => x.length > 0)
 
         genesets.push(gs)
       }
@@ -162,7 +162,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
           <ColorPickerButton
             color={color}
             onColorChange={setColor}
-            onOpenChanged={open => {
+            onOpenChanged={(open) => {
               if (!open) {
                 updateGeneset({ ...geneset, color })
               }
@@ -276,7 +276,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
       callback: (geneset: IGeneset) => {
         //const indices = getColIdxFromGroup(df, group)
 
-        if (genesets.some(g => g.id === geneset.id)) {
+        if (genesets.some((g) => g.id === geneset.id)) {
           // we modified and existing group so clone list, but replace existing
           // group with new group when they have the same id
           updateGeneset(geneset)
@@ -349,7 +349,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
       {confirmClear && (
         <OKCancelDialog
           title={MODULE_INFO.name}
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
               //onGroupsChange?.([])
               addGenesets([], 'set')
@@ -366,7 +366,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
         <OKCancelDialog
           showClose={true}
           title={MODULE_INFO.name}
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
               removeGenesets([delGroup!.id])
               // onGroupsChange &&
@@ -406,7 +406,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
           <ToolbarTabGroup>
             <IconButton
               //rounded="full"
-              ripple={false}
+              // ripple={false}
               onClick={() => setOpen(randId('open'))}
               title="Open Gene Sets"
               //className="fill-foreground/50 hover:fill-foreground"
@@ -416,7 +416,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
 
             <IconButton
               //rounded="full"
-              ripple={false}
+              // ripple={false}
               onClick={() => {
                 //setShowSaveDialog(true)
                 downloadJson(genesets, 'genesets.json')
@@ -429,7 +429,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
           <ToolbarSeparator />
 
           <IconButton
-            ripple={false}
+            // ripple={false}
             onClick={() => addGeneset()}
             title="New Gene Set"
             checked={openGenesetDialog !== undefined}
@@ -441,7 +441,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
           // <Button
           //   variant="accent"
           //   multiProps="icon"
-          //   ripple={false}
+          //   // ripple={false}
           //   onClick={() => setConfirmClear(true)}
           //   title="Clear all groups"
           // >
@@ -458,7 +458,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
       </VCenterRow>
 
       <FileDropZonePanel
-        onFileDrop={files => {
+        onFileDrop={(files) => {
           if (files.length > 0) {
             //setDroppedFile(files[0]);
             console.log('Dropped file:', files[0])
@@ -470,20 +470,20 @@ export function GenesetPropsPanel({ branchId }: IProps) {
         {/* <VScrollPanel> */}
         <DndContext
           modifiers={[restrictToVerticalAxis]}
-          onDragStart={event => setActiveId(event.active.id as string)}
-          onDragEnd={event => {
+          onDragStart={(event) => setActiveId(event.active.id as string)}
+          onDragEnd={(event) => {
             const { active, over } = event
 
             if (over && active.id !== over?.id) {
               const oldIndex = genesets.findIndex(
-                g => g.id === (active.id as string)
+                (g) => g.id === (active.id as string)
               )
 
               const newIndex = genesets.findIndex(
-                g => g.id === (over.id as string)
+                (g) => g.id === (over.id as string)
               )
               const newOrder = arrayMove(
-                genesets.map(g => g.id),
+                genesets.map((g) => g.id),
                 oldIndex,
                 newIndex
               )
@@ -495,11 +495,11 @@ export function GenesetPropsPanel({ branchId }: IProps) {
           }}
         >
           <SortableContext
-            items={genesets.map(g => g.id)}
+            items={genesets.map((g) => g.id)}
             strategy={verticalListSortingStrategy}
           >
             <ul className="flex flex-col">
-              {genesets.map(geneset => {
+              {genesets.map((geneset) => {
                 //const cols = getColNamesFromGroup(df, group)
                 const id = geneset.id
                 return (
@@ -514,7 +514,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
           <DragOverlay>
             {activeId ? (
               <GenesetItem
-                geneset={genesets.find(g => g.id === activeId)!}
+                geneset={genesets.find((g) => g.id === activeId)!}
                 active={activeId}
               />
             ) : null}
@@ -614,7 +614,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
           open={open}
           //onOpenChange={() => setOpen("")}
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
+            onTextFileChange(message, files, (files) => {
               openGenesetFiles(files)
             })
           }

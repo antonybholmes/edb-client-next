@@ -39,9 +39,9 @@ export function ModuleButtonLink({
 
 export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
   // sort alphabetically and ignore sections
-  const items = HEADER_LINKS.map(section => {
+  const items = HEADER_LINKS.map((section) => {
     return section.modules.filter(
-      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()
@@ -109,7 +109,7 @@ export function HeaderMenuPopover({ tab = '' }: IFileMenu) {
           variant="trans"
           size="none"
           rounded="none"
-          ripple={false}
+          // ripple={false}
           checked={open}
           onClick={() => setOpen(!open)}
           className="h-header w-header"
@@ -121,7 +121,7 @@ export function HeaderMenuPopover({ tab = '' }: IFileMenu) {
 
       <PopoverContent
         onEscapeKeyDown={() => setOpen(false)}
-        onInteractOutside={e => {
+        onInteractOutside={(e) => {
           if ((e.target as HTMLElement)?.id !== 'header-menu-popover-button') {
             setOpen(false)
           }

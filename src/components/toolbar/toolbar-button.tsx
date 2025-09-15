@@ -17,7 +17,7 @@ export function ToolbarButton({
       rounded="theme"
       size={size}
       className={className}
-      ripple={ripple}
+      // ripple={ripple}
       {...props}
     >
       {children}

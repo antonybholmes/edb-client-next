@@ -1,16 +1,15 @@
 import { TEXT_NAME, TEXT_OK } from '@/consts'
 import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
 import { Input } from '@themed/input'
-import type { AllSeqTrackTypes, ITrackGroup } from '../tracks-provider'
+import type { AllSeqTrackTypes } from '../tracks-provider'
 
 export interface IProps {
-  group: ITrackGroup
   track: AllSeqTrackTypes
 
   onCancel: () => void
 }
 
-export function TrackInfoDialog({ group, track, onCancel }: IProps) {
+export function TrackInfoDialog({ track, onCancel }: IProps) {
   return (
     <OKCancelDialog
       buttons={[TEXT_OK]}

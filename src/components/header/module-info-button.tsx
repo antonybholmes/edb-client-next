@@ -46,7 +46,7 @@ export function ModuleInfoButton({
         ref={ref}
         variant="muted"
         rounded="none"
-        ripple={false}
+        // ripple={false}
         className={cn(
           'hidden md:flex h-header gap-x-2 text-sm font-semibold truncate shrink-0 px-3',
           className

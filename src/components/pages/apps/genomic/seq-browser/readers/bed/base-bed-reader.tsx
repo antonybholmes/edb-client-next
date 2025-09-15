@@ -5,9 +5,7 @@ export abstract class BaseBedReader {
 }
 
 export class EmptyBedReader extends BaseBedReader {
-  override async getFeatures(
-    _location: IGenomicLocation
-  ): Promise<IGenomicLocation[]> {
+  override async getFeatures(): Promise<IGenomicLocation[]> {
     return []
   }
 }

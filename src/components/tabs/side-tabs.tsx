@@ -3,6 +3,7 @@ import { useContext, useEffect, useRef, type ComponentProps } from 'react'
 
 import { type ITooltipSide } from '@interfaces/tooltip-side-props'
 
+import { getUrlFriendlyTag } from '@/lib/http/urls'
 import {
   getTabName,
   TabContext,
@@ -142,6 +143,8 @@ export function SideTabsContent({
         const name = getTabName(tab)
         const selected = ti === selectedTab?.index
 
+        const id = getUrlFriendlyTag(tab.id)
+
         return (
           <TabsTrigger
             variant="base"
@@ -162,7 +165,7 @@ export function SideTabsContent({
               if (selected) {
                 _scale(selectedTab.index, 1)
               } else {
-                gsap.to(`#tab-line-${tab.id}`, {
+                gsap.to(`#tab-line-${id}`, {
                   opacity: 1,
                   scaleY: 0.9,
                   duration: 0.2,
@@ -181,7 +184,7 @@ export function SideTabsContent({
               if (selected) {
                 _scale(selectedTab.index, 0.8)
               } else {
-                gsap.to(`#tab-line-${tab.id}`, {
+                gsap.to(`#tab-line-${id}`, {
                   opacity: 0,
                   scaleY: 0.5,
                   duration: 0.2,
@@ -204,7 +207,7 @@ export function SideTabsContent({
 
             {!selected && (
               <span
-                id={`tab-line-${tab.id}`}
+                id={`tab-line-${id}`}
                 data-selected={selected}
                 className={TAB_LINE_CLS}
                 style={{ width: '0.1rem' }}

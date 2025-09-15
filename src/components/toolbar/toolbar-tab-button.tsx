@@ -14,7 +14,7 @@ export const ToolbarTabButton = forwardRef(function ToolbarTabButton(
       className={className}
       role={role}
       size="sm"
-      ripple={false}
+      // ripple={false}
       {...props}
     >
       {children}

@@ -14,7 +14,7 @@ export function DropDownButton({
     <Button
       ref={ref}
       variant={variant}
-      ripple={ripple}
+      // ripple={ripple}
       size={size}
       rounded={rounded}
       className={className}

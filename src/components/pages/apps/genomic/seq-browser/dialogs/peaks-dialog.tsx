@@ -184,7 +184,7 @@ export function PeaksDialog({
             <Button
               variant="ios"
               size="icon"
-              ripple={false}
+              // ripple={false}
               onClick={() => {
                 setAddedMap(new Map<string, boolean>(selectedMap.entries()))
               }}
@@ -195,7 +195,7 @@ export function PeaksDialog({
 
             <Button
               variant="ios"
-              ripple={false}
+              // ripple={false}
               size="icon"
               onClick={() => {
                 setSelectedMap(
@@ -219,7 +219,7 @@ export function PeaksDialog({
                 <Button
                   variant="ios"
                   size="icon"
-                  ripple={false}
+                  // ripple={false}
                   onClick={() => {
                     setAddedMap(new Map<string, boolean>(selectedMap.entries()))
                   }}
@@ -270,7 +270,7 @@ export function PeaksDialog({
           <Button
             //variant="accent"
             size="icon"
-            ripple={false}
+            // ripple={false}
             title={TEXT_REMOVE_FROM_CART}
             onClick={() => {
               const keys = new Set(addedSelectedMap.keys())
@@ -296,7 +296,7 @@ export function PeaksDialog({
           <Button
             //variant="accent"
             size="icon"
-            ripple={false}
+            // ripple={false}
             onClick={() => {
               setAddedSelectedMap(
                 new Map<string, boolean>([

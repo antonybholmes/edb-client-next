@@ -61,7 +61,7 @@ export function ToolbarOptionalDropdownButton({
             variant="muted"
             size="toolbar-dropdown"
             open={open}
-            ripple={false}
+            // ripple={false}
             className="rounded-l-none"
             aria-label="Show dropdown menu"
             onClick={() => setOpen(true)}

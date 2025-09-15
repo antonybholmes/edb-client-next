@@ -22,6 +22,7 @@ import {
   AccordionTrigger,
 } from '@themed/accordion'
 
+import { Tabs } from '@/components/shadcn/ui/themed/tabs'
 import { where } from '@lib/math/where'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { Fragment, useEffect, useState } from 'react'
@@ -135,6 +136,9 @@ export function SettingsDialog({
 
   const winSize = useWindowSize()
 
+  const activeSideTab = getTabName(selectedTab)
+  const activeSubSideTab = getTabName(subSelectedTab)
+
   if (winSize.w < TAILWIND_MEDIA_LG) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -198,19 +202,31 @@ export function SettingsDialog({
             <h1 className="text-base tracking-normal font-semibold">
               {TEXT_SETTINGS}
             </h1>
+            <Tabs
+              value={activeSideTab}
+              className="grow flex flex-row gap-x-2"
+              orientation="vertical"
+            >
+              <SideTabs
+                tabs={_tabs}
+                value={activeSideTab}
+                onTabChange={(t) => setSelectedTab(t.tab)}
+                showIcons={false}
+              />
+            </Tabs>
+          </BaseCol>
+          <Tabs
+            value={activeSubSideTab}
+            className="grow flex flex-row gap-x-2"
+            orientation="vertical"
+          >
             <SideTabs
-              tabs={_tabs}
-              value={getTabName(selectedTab)}
-              onTabChange={(t) => setSelectedTab(t.tab)}
+              tabs={selectedTab.children!}
+              value={getTabName(subSelectedTab)}
+              onTabChange={(t) => setSubSelectedTab(t.tab)}
               showIcons={false}
             />
-          </BaseCol>
-          <SideTabs
-            tabs={selectedTab.children!}
-            value={getTabName(subSelectedTab)}
-            onTabChange={(t) => setSubSelectedTab(t.tab)}
-            showIcons={false}
-          />
+          </Tabs>
         </div>
 
         <VScrollPanel className="grow">

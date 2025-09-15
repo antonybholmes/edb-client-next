@@ -1,13 +1,12 @@
 import { FOCUS_INSET_RING_CLS } from '@/theme'
 import { type ILinkProps } from '@interfaces/link-props'
 import { cn } from '@lib/shadcn-utils'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { BaseLink } from './base-link'
 
 import type { IPos } from '@interfaces/pos'
-import { buttonVariants, RIPPLE_CLS } from '@themed/button'
+import { buttonVariants } from '@themed/button'
 import type { VariantProps } from 'class-variance-authority'
-import gsap from 'gsap'
 
 export interface IButtonLinkProps
   extends ILinkProps,
@@ -29,36 +28,36 @@ export function ButtonLink({
   children,
   ...props
 }: IButtonLinkProps) {
-  const rippleRef = useRef<HTMLSpanElement>(null)
+  //const rippleRef = useRef<HTMLSpanElement>(null)
   const [clickProps, setClickProps] = useState<IPos>({ x: -1, y: -1 })
 
-  useEffect(() => {
-    if (clickProps.x !== -1) {
-      gsap.fromTo(
-        rippleRef.current,
-        {
-          left: clickProps.x,
-          top: clickProps.y,
-          transform: 'scale(1)',
-          height: '1rem',
-          width: '1rem',
-          opacity: 0.9,
-        },
-        {
-          transform: 'scale(12)',
-          opacity: 0.2,
-          duration: 2,
-          ease: 'power3.out',
-        }
-      )
-    } else {
-      gsap.to(rippleRef.current, {
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out',
-      })
-    }
-  }, [clickProps])
+  // useEffect(() => {
+  //   if (clickProps.x !== -1) {
+  //     gsap.fromTo(
+  //       rippleRef.current,
+  //       {
+  //         left: clickProps.x,
+  //         top: clickProps.y,
+  //         transform: 'scale(1)',
+  //         height: '1rem',
+  //         width: '1rem',
+  //         opacity: 0.9,
+  //       },
+  //       {
+  //         transform: 'scale(12)',
+  //         opacity: 0.2,
+  //         duration: 2,
+  //         ease: 'power3.out',
+  //       }
+  //     )
+  //   } else {
+  //     gsap.to(rippleRef.current, {
+  //       opacity: 0,
+  //       duration: 1,
+  //       ease: 'power3.out',
+  //     })
+  //   }
+  // }, [clickProps])
 
   function _onMouseUp(e: React.MouseEvent<HTMLAnchorElement>) {
     setClickProps({ x: -1, y: -1 })
@@ -98,7 +97,7 @@ export function ButtonLink({
       {...props}
     >
       {children}
-      <span ref={rippleRef} className={RIPPLE_CLS} />
+      {/* <span ref={rippleRef} className={RIPPLE_CLS} /> */}
     </BaseLink>
   )
 }

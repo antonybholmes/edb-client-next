@@ -7,5 +7,5 @@ export function useWindowListener(
   useEffect(() => {
     window.addEventListener(event, handler)
     return () => window.removeEventListener(event, handler)
-  }, [])
+  }, [event, handler])
 }

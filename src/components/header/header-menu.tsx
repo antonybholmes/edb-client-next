@@ -55,9 +55,9 @@ export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
   const { settings } = useEdbSettings()
 
   // sort alphabetically and ignore sections
-  const items = HEADER_LINKS.map(section => {
+  const items = HEADER_LINKS.map((section) => {
     return section.modules.filter(
-      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()
@@ -131,7 +131,7 @@ export function HeaderMenu({ tab = '' }: IFileMenu) {
             variant="muted"
             size="2xl"
             rounded="none"
-            ripple={false}
+            // ripple={false}
             checked={open}
             aria-label={open ? 'Close Menu' : 'Open Menu'}
           >

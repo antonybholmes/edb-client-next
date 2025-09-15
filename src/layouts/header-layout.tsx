@@ -53,7 +53,7 @@ export function HeaderLayout({
                 variant="muted"
                 size="header"
                 rounded="none"
-                ripple={false}
+                // ripple={false}
                 title={TEXT_SETTINGS}
                 checked={visible}
                 onClick={() => setSettingsVisible(true)}

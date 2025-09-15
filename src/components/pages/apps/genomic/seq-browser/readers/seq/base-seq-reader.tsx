@@ -60,20 +60,11 @@ export abstract class BaseSeqReader {
 }
 
 export class EmptySeqReader extends BaseSeqReader {
-  override async getRealYPoints(
-    _location: IGenomicLocation,
-    _binSize: number
-  ): Promise<ISeqPos[]> {
+  override async getRealYPoints(): Promise<ISeqPos[]> {
     return []
   }
 
-  override async getPoints(
-    _location: IGenomicLocation,
-    _xax: Axis,
-    _yax: Axis,
-    _binSize: number,
-    _smoothingFactor: number
-  ): Promise<ISeqPos[]> {
+  override async getPoints(): Promise<ISeqPos[]> {
     return []
   }
 }
@@ -93,7 +84,7 @@ export function makeBins(
   const start = Math.floor(location.start / binSize) * binSize // Math.max(1, location.start + 4 * binSize)
   const end = Math.ceil(location.end / binSize) * binSize
 
-  return range(start, end, binSize).map(b => {
+  return range(start, end, binSize).map((b) => {
     // one based start
     const s = b + 1
     return {
@@ -118,7 +109,7 @@ export function makePoints(
   const start = Math.floor(location.start / binSize) * binSize // Math.max(1, location.start + 4 * binSize)
   const end = Math.ceil(location.end / binSize) * binSize
 
-  return range(start, end, binSize).map(b => {
+  return range(start, end, binSize).map((b) => {
     const s = b + 1
     const e = s + binSize
     return {

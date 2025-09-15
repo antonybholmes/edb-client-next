@@ -15,7 +15,7 @@ export function IconButton({
       ref={ref}
       variant={variant}
       size={size}
-      ripple={ripple}
+      // ripple={ripple}
       aspect={aspect}
       className={className}
       {...props}

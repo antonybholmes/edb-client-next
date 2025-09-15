@@ -786,7 +786,7 @@ export function GexDialog({
                         checked={t.name === technology?.name}
                         //variant="menu"
                         animation="none"
-                        ripple={false}
+                        // ripple={false}
                         className="w-full text-left"
                         onClick={() => {
                           updateSettings(

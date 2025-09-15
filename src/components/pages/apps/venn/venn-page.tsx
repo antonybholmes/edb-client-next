@@ -899,7 +899,7 @@ function VennPage() {
                         <Button
                           variant="link"
                           size="sm"
-                          ripple={false}
+                          // ripple={false}
                           onClick={() =>
                             setListTextMap(new Map(listTextMap).set(index, ''))
                           }
@@ -1062,11 +1062,11 @@ function VennPage() {
                 </PropRow>
 
                 <BaseCol className="justify-start gap-y-1 pt-4">
-                  <LinkButton ripple={false} onClick={() => resetProps()}>
+                  <LinkButton onClick={() => resetProps()}>
                     Default settings
                   </LinkButton>
 
-                  <LinkButton ripple={false} onClick={() => resetColorMap()}>
+                  <LinkButton onClick={() => resetColorMap()}>
                     Default list colors
                   </LinkButton>
                 </BaseCol>

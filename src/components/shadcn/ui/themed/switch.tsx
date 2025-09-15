@@ -44,6 +44,7 @@ const TOGGLE_CLS = cn(
   'data-[enabled=true]:data-[state=unchecked]:bg-muted',
   'data-[enabled=true]:data-[state=unchecked]:hover:bg-muted',
   'data-[enabled=false]:bg-muted trans-color'
+  //'data-[checked=false]:justify-start data-[checked=true]:justify-end'
 )
 
 // const TOGGLE_ENABLED_CLS = cn(
@@ -58,8 +59,9 @@ const TOGGLE_CLS = cn(
 
 const THUMB_CLS = cn(
   'absolute shadow-sm pointer-events-none aspect-square shrink-0',
-  'w-[24px] h-[18px] rounded-full bg-white z-30 left-[2px] shadow-md',
-  'top-1/2 -translate-y-1/2'
+  'w-[18px] h-[18px] rounded-full bg-white z-30 left-[2px] shadow-md',
+  'top-1/2 -translate-y-1/2',
+  'data-[checked=false]:left-[2px] data-[checked=true]:right-[2px]'
 )
 
 // const HIGHLIGHT_THUMB_CLS = cn(
@@ -115,15 +117,37 @@ export const Switch = forwardRef<
   useEffect(() => {
     const duration = initial.current ? 0 : ANIMATION_DURATION_S
 
-    const tl = gsap.timeline({ paused: true }).to(
-      thumbRef.current,
-      {
-        transform: checked ? 'translate(10px, -50%)' : 'translate(0, -50%)',
-        duration,
-        ease: 'power2.inOut',
-      },
-      0
-    )
+    const tl = gsap.timeline()
+
+    if (checked) {
+      tl.to(
+        thumbRef.current,
+        {
+          width: hover ? 24 : 18,
+
+          left: 2,
+          //scaleX: hover ? 1.5 : 1,
+          //transform: checked ? 'translate(12px, -50%)' : 'translate(0, -50%)',
+          duration,
+          ease: 'power2.inOut',
+        },
+        0
+      )
+    } else {
+      tl.to(
+        thumbRef.current,
+        {
+          width: hover ? 24 : 18,
+
+          right: 2,
+          //scaleX: hover ? 1.5 : 1,
+          //transform: checked ? 'translate(12px, -50%)' : 'translate(0, -50%)',
+          duration,
+          ease: 'power2.inOut',
+        },
+        0
+      )
+    }
 
     // if not disabled, animate the highlight ring too
     // if (highlightThumbRef.current) {
@@ -140,7 +164,7 @@ export const Switch = forwardRef<
     //   )
     // }
 
-    tl.play()
+    //tl.play()
     // .to(
     //   pressedThumbRef.current,
     //   {
@@ -174,6 +198,7 @@ export const Switch = forwardRef<
       <span
         //layout
         //initial={false}
+
         data-hover={hover}
         className={THUMB_CLS}
         ref={thumbRef}

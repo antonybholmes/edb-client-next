@@ -110,7 +110,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'oauth2' }: IProps) {
             size="header"
             rounded="none"
             checked={open}
-            ripple={false}
+            // ripple={false}
             title={isSignedIn ? TEXT_MY_ACCOUNT : TEXT_SIGN_IN}
           >
             <span className={SIGNED_IN_ICON_CLS}>{initials}</span>
@@ -171,7 +171,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'oauth2' }: IProps) {
         size="header"
         rounded="none"
         checked={open}
-        ripple={false}
+        // ripple={false}
         title={TEXT_SIGN_IN}
         //disabled={!loaded}
       >

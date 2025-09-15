@@ -34,7 +34,7 @@ export function SampleDataTypeCombo({
         <Button
           variant="input"
           role="combobox"
-          ripple={false}
+          // ripple={false}
           aria-expanded={open}
           checked={open}
           justify="start"
@@ -54,11 +54,11 @@ export function SampleDataTypeCombo({
           <CommandList>
             <CommandEmpty>No sample info found.</CommandEmpty>
             <CommandGroup>
-              {values.map(v => (
+              {values.map((v) => (
                 <CommandItem
                   key={v}
                   value={v}
-                  onSelect={currentValue => {
+                  onSelect={(currentValue) => {
                     console.log(currentValue)
                     setValue?.(
                       currentValue,

@@ -71,7 +71,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
     <>
       {showDialog.id.includes('clear') && (
         <OKCancelDialog
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
               //onGroupsChange?.([])
               setLabels([])
@@ -89,11 +89,11 @@ export function LabelPropsPanel({ ref }: IDivProps) {
       {showDialog.id.includes('delete') && (
         <OKCancelDialog
           showClose={true}
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
               setLabels(
                 labels.filter(
-                  feature =>
+                  (feature) =>
                     feature.id !==
                     (showDialog!.params!.label as IProteinLabel).id
                 )
@@ -131,7 +131,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
             </IconButton>
 
             <IconButton
-              ripple={false}
+              // ripple={false}
               onClick={() => downloadJson(labels, 'labels.json')}
               title="Save labels"
             >
@@ -139,7 +139,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
             </IconButton>
 
             <IconButton
-              ripple={false}
+              // ripple={false}
               onClick={() =>
                 setLabels([
                   ...labels,
@@ -162,7 +162,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
             <Button
               variant="link"
               size="sm"
-              ripple={false}
+              // ripple={false}
               onClick={() => setShowDialog({ id: randId('clear'), params: {} })}
               //aria-label="Clear All"
               title="Clear all labels"
@@ -175,9 +175,9 @@ export function LabelPropsPanel({ ref }: IDivProps) {
         <BaseCol className="gap-y-1">
           <Switch
             checked={displayProps.labels.show}
-            onCheckedChange={state =>
+            onCheckedChange={(state) =>
               setDisplayProps(
-                produce(displayProps, draft => {
+                produce(displayProps, (draft) => {
                   draft.labels.show = state
                 })
               )
@@ -200,9 +200,9 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                 <VCenterRow className="gap-x-2 px-2 py-1 hover:bg-muted/50 rounded-theme">
                   <Switch
                     checked={label.show}
-                    onCheckedChange={state =>
+                    onCheckedChange={(state) =>
                       setLabels(
-                        produce(labels, draft => {
+                        produce(labels, (draft) => {
                           draft[li]!.show = state
                         })
                       )
@@ -213,9 +213,9 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                     placeholder={TEXT_NAME}
                     value={label.name}
                     className="grow min-w-0"
-                    onTextChange={v => {
+                    onTextChange={(v) => {
                       setLabels(
-                        produce(labels, draft => {
+                        produce(labels, (draft) => {
                           draft[li]!.name = v
                         })
                       )
@@ -226,9 +226,9 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                     value={label.start}
                     placeholder="Start"
                     w="w-16"
-                    onNumChange={v => {
+                    onNumChange={(v) => {
                       setLabels(
-                        produce(labels, draft => {
+                        produce(labels, (draft) => {
                           draft[li]!.start = Math.max(
                             1,
                             Math.min(v, aaStats.length)
@@ -240,9 +240,9 @@ export function LabelPropsPanel({ ref }: IDivProps) {
 
                   <ColorPickerButton
                     color={label.color}
-                    onColorChange={color =>
+                    onColorChange={(color) =>
                       setLabels(
-                        produce(labels, draft => {
+                        produce(labels, (draft) => {
                           draft[li]!.color = color
                         })
                       )
@@ -277,12 +277,12 @@ export function LabelPropsPanel({ ref }: IDivProps) {
             placeholder="Positions"
             className="grow shrink-0 text-center rounded-theme"
             value={positions}
-            onChange={e => setPositions(e.currentTarget.value)}
+            onChange={(e) => setPositions(e.currentTarget.value)}
           />
           <Button
             variant="theme"
             onClick={() => {
-              const used = new Set<number>(labels.map(label => label.start))
+              const used = new Set<number>(labels.map((label) => label.start))
 
               const newLabels: IProteinLabel[] = positions
                 .trim()
@@ -298,7 +298,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                     show: true,
                   }
                 })
-                .filter(label => !used.has(label.start))
+                .filter((label) => !used.has(label.start))
 
               if (newLabels.length > 0) {
                 setLabels([...labels, ...newLabels])
@@ -314,7 +314,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
         <OpenFiles
           //onOpenChange={() => setOpen("")}
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
+            onTextFileChange(message, files, (files) => {
               openLabelFiles(files)
             })
           }

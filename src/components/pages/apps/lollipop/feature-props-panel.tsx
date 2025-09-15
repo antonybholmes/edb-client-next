@@ -104,94 +104,94 @@ function FeatureElem({ feature, setDelFeature }: IFeatureProps) {
         color2={feature.border.color}
         color3={feature.fill.color}
         showColor2={feature.border.show}
-        onShowColor1={show => {
+        onShowColor1={(show) => {
           setFeature(
-            produce(feature, draft => {
+            produce(feature, (draft) => {
               draft.text.show = show
             })
           )
 
           setGlobalFeature(
-            produce(globalFeature, draft => {
+            produce(globalFeature, (draft) => {
               draft.text.show = show
             })
           )
         }}
-        onShowColor2={show => {
+        onShowColor2={(show) => {
           setFeature(
-            produce(feature, draft => {
+            produce(feature, (draft) => {
               draft.border.show = show
             })
           )
 
           setGlobalFeature(
-            produce(globalFeature, draft => {
+            produce(globalFeature, (draft) => {
               draft.border.show = show
             })
           )
         }}
-        onColor2Change={color => {
+        onColor2Change={(color) => {
           setFeature(
-            produce(feature, draft => {
+            produce(feature, (draft) => {
               draft.border.color = color
             })
           )
 
           setGlobalFeature(
-            produce(globalFeature, draft => {
+            produce(globalFeature, (draft) => {
               draft.border.color = color
             })
           )
         }}
         width2={feature.border.width}
-        onWidthChange2={width => {
+        onWidthChange2={(width) => {
           setFeature(
-            produce(feature, draft => {
+            produce(feature, (draft) => {
               draft.border.width = width
             })
           )
 
           setGlobalFeature(
-            produce(globalFeature, draft => {
+            produce(globalFeature, (draft) => {
               draft.border.width = width
             })
           )
         }}
-        onShowColor3={show => {
+        onShowColor3={(show) => {
           setFeature(
-            produce(feature, draft => {
+            produce(feature, (draft) => {
               draft.fill.show = show
             })
           )
 
           setGlobalFeature(
-            produce(globalFeature, draft => {
+            produce(globalFeature, (draft) => {
               draft.fill.show = show
             })
           )
         }}
-        onColor3Change={color => {
+        onColor3Change={(color) => {
           setFeature(
-            produce(feature, draft => {
+            produce(feature, (draft) => {
               draft.fill.color = color
             })
           )
 
           setGlobalFeature(
-            produce(globalFeature, draft => {
+            produce(globalFeature, (draft) => {
               draft.fill.color = color
             })
           )
         }}
-        onColor1Change={color => {
+        onColor1Change={(color) => {
           setFeature(
-            produce(feature, draft => {
+            produce(feature, (draft) => {
               draft.text.color = color
             })
           )
 
           setGlobalFeature(
-            produce(globalFeature, draft => {
+            produce(globalFeature, (draft) => {
               draft.text.color = color
             })
           )
@@ -204,9 +204,9 @@ function FeatureElem({ feature, setDelFeature }: IFeatureProps) {
         placeholder={TEXT_NAME}
         value={feature.name}
         className="grow min-w-0"
-        onTextChange={v =>
+        onTextChange={(v) =>
           setFeature(
-            produce(feature, draft => {
+            produce(feature, (draft) => {
               draft.name = v
             })
           )
@@ -218,9 +218,9 @@ function FeatureElem({ feature, setDelFeature }: IFeatureProps) {
         limit={[1, n]}
         placeholder="Start"
         w="w-14"
-        onNumChange={v => {
+        onNumChange={(v) => {
           setFeature(
-            produce(feature, draft => {
+            produce(feature, (draft) => {
               draft.start = Math.min(Math.max(1, v), n)
               draft.end = Math.min(Math.max(draft.start + 1, draft.end), n)
             })
@@ -234,11 +234,11 @@ function FeatureElem({ feature, setDelFeature }: IFeatureProps) {
         placeholder="End"
         w="w-14"
         //className="w-12 shrink-0 text-center rounded-theme"
-        onNumChange={v => {
+        onNumChange={(v) => {
           console.log('end', v, Math.min(Math.max(feature.start + 1, v)))
 
           setFeature(
-            produce(feature, draft => {
+            produce(feature, (draft) => {
               draft.end = Math.min(Math.max(feature.start + 1, v), n)
             })
           )
@@ -266,9 +266,9 @@ function FeatureElem({ feature, setDelFeature }: IFeatureProps) {
 
       <Switch
         checked={feature.show}
-        onCheckedChange={state =>
+        onCheckedChange={(state) =>
           setFeature(
-            produce(feature, draft => {
+            produce(feature, (draft) => {
               draft.show = state
             })
           )
@@ -327,7 +327,7 @@ export function FeaturePropsPanel({ ref }: IDivProps) {
     <>
       {showDialog.id.includes('clear') && (
         <OKCancelDialog
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
               //onGroupsChange?.([])
               setFeatures([])
@@ -344,11 +344,11 @@ export function FeaturePropsPanel({ ref }: IDivProps) {
         <OKCancelDialog
           //open={delFeature !== null}
           showClose={true}
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
               setFeatures(
                 features.filter(
-                  feature =>
+                  (feature) =>
                     feature.id !==
                     (showDialog.params!.feature! as IProteinFeature).id
                 )
@@ -378,7 +378,7 @@ export function FeaturePropsPanel({ ref }: IDivProps) {
             </IconButton>
 
             <IconButton
-              ripple={false}
+              // ripple={false}
               onClick={() => downloadJson(features, 'features.json')}
               title="Save features"
             >
@@ -386,10 +386,10 @@ export function FeaturePropsPanel({ ref }: IDivProps) {
             </IconButton>
 
             <IconButton
-              ripple={false}
+              // ripple={false}
               onClick={() =>
                 setFeatures(
-                  produce(features, draft => {
+                  produce(features, (draft) => {
                     draft.push({
                       ...feature,
                       id: nanoid(),
@@ -410,7 +410,7 @@ export function FeaturePropsPanel({ ref }: IDivProps) {
             <Button
               variant="link"
               size="sm"
-              ripple={false}
+              // ripple={false}
               onClick={() => setShowDialog({ id: randId('clear'), params: {} })}
               //aria-label="Clear All"
               title="Clear all groups"
@@ -423,9 +423,9 @@ export function FeaturePropsPanel({ ref }: IDivProps) {
         <SwitchPropRow
           title="Show"
           checked={displayProps.features.show}
-          onCheckedChange={state =>
+          onCheckedChange={(state) =>
             setDisplayProps(
-              produce(displayProps, draft => {
+              produce(displayProps, (draft) => {
                 draft.features.show = state
               })
             )
@@ -435,9 +435,9 @@ export function FeaturePropsPanel({ ref }: IDivProps) {
           title="Positions"
           disabled={!displayProps.features.show}
           checked={displayProps.features.positions.show}
-          onCheckedChange={state =>
+          onCheckedChange={(state) =>
             setDisplayProps(
-              produce(displayProps, draft => {
+              produce(displayProps, (draft) => {
                 draft.features.positions.show = state
               })
             )
@@ -533,9 +533,9 @@ export function FeaturePropsPanel({ ref }: IDivProps) {
             color3={feature.fill.color}
             color1={feature.text.color}
             showColor2={feature.border.show}
-            onShowColor2={show => {
+            onShowColor2={(show) => {
               setFeatures(
-                produce(features, draft => {
+                produce(features, (draft) => {
                   for (const f of draft) {
                     f.border.show = show
                   }
@@ -543,49 +543,49 @@ export function FeaturePropsPanel({ ref }: IDivProps) {
               )
 
               setGlobalFeature(
-                produce(feature, draft => {
+                produce(feature, (draft) => {
                   draft.border.show = show
                 })
               )
             }}
-            onColor1Change={color => {
+            onColor1Change={(color) => {
               setFeatures(
-                produce(features, draft => {
+                produce(features, (draft) => {
                   for (const f of draft) {
                     f.text.color = color
                   }
                 })
               )
               setGlobalFeature(
-                produce(feature, draft => {
+                produce(feature, (draft) => {
                   draft.text.color = color
                 })
               )
             }}
-            onColor2Change={color => {
+            onColor2Change={(color) => {
               setFeatures(
-                produce(features, draft => {
+                produce(features, (draft) => {
                   for (const f of draft) {
                     f.border.color = color
                   }
                 })
               )
               setGlobalFeature(
-                produce(feature, draft => {
+                produce(feature, (draft) => {
                   draft.border.color = color
                 })
               )
             }}
-            onColor3Change={color => {
+            onColor3Change={(color) => {
               setFeatures(
-                produce(features, draft => {
+                produce(features, (draft) => {
                   for (const f of draft) {
                     f.fill.color = color
                   }
                 })
               )
               setGlobalFeature(
-                produce(feature, draft => {
+                produce(feature, (draft) => {
                   draft.fill.color = color
                 })
               )
@@ -618,12 +618,12 @@ export function FeaturePropsPanel({ ref }: IDivProps) {
           sensors={sensors}
           modifiers={[restrictToVerticalAxis]}
           //onDragStart={event => setActiveId(event.active.id as string)}
-          onDragEnd={event => {
+          onDragEnd={(event) => {
             const { active, over } = event
 
             if (over && active.id !== over?.id) {
-              const oldIndex = features.findIndex(t => t.id === active.id)
-              const newIndex = features.findIndex(t => t.id === over.id)
+              const oldIndex = features.findIndex((t) => t.id === active.id)
+              const newIndex = features.findIndex((t) => t.id === over.id)
               const newOrder = arrayMove(features, oldIndex, newIndex)
 
               setFeatures(newOrder)
@@ -635,7 +635,7 @@ export function FeaturePropsPanel({ ref }: IDivProps) {
             strategy={verticalListSortingStrategy}
           >
             <ul className="flex flex-col">
-              {features.map(feature => {
+              {features.map((feature) => {
                 const id = feature.id
                 return (
                   <SortableItem
@@ -646,7 +646,7 @@ export function FeaturePropsPanel({ ref }: IDivProps) {
                     <FeatureElem
                       key={id}
                       feature={feature}
-                      setDelFeature={feature =>
+                      setDelFeature={(feature) =>
                         setShowDialog({
                           id: randId('delete'),
                           params: { feature },
@@ -665,7 +665,7 @@ export function FeaturePropsPanel({ ref }: IDivProps) {
         <OpenFiles
           //onOpenChange={() => setOpen("")}
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
+            onTextFileChange(message, files, (files) => {
               openFeatureFiles(files)
             })
           }

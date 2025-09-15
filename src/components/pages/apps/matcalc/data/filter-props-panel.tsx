@@ -221,7 +221,7 @@ export function FilterPropsPanel({ branchId }: IProps) {
         <Button
           variant="muted"
           size="icon"
-          ripple={false}
+          // ripple={false}
           onClick={() =>
             setShowDialog({
               id: randId('open'),
@@ -238,7 +238,7 @@ export function FilterPropsPanel({ branchId }: IProps) {
         <Button
           variant="link"
           size="none"
-          ripple={false}
+          // ripple={false}
           onClick={() => setConfirmClear(true)}
         >
           {TEXT_CLEAR}

@@ -31,7 +31,11 @@ export function ProteinAutocomplete() {
   }, [protein])
 
   useEffect(() => {
-    searchForProtein(protein.gene)
+    function fetch() {
+      searchForProtein(protein.gene)
+    }
+
+    fetch()
   }, [])
 
   async function searchForProtein(query: string) {

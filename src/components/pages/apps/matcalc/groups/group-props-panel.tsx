@@ -141,7 +141,7 @@ export function GroupPropsPanel({ branchId }: IProps) {
       //const indexMap = new Map<string, number[]>()
 
       // store lowercase for case insensitive searching
-      const columnNames = lines[2]?.split(/[ \t]/).map(x => x.toLowerCase())
+      const columnNames = lines[2]?.split(/[ \t]/).map((x) => x.toLowerCase())
 
       if (!columnNames) {
         return
@@ -247,7 +247,7 @@ export function GroupPropsPanel({ branchId }: IProps) {
           <ColorPickerButton
             color={color}
             onColorChange={setColor}
-            onOpenChanged={open => {
+            onOpenChanged={(open) => {
               if (!open) {
                 updateGroup({ ...group, color })
               }
@@ -333,8 +333,8 @@ export function GroupPropsPanel({ branchId }: IProps) {
     if (selection.start.col !== -1) {
       // if a column is selected, suggest its name as what the user wants to
       // to group
-      group.search = range(selection.start.col, selection.end.col + 1).map(i =>
-        sheet.colName(i)
+      group.search = range(selection.start.col, selection.end.col + 1).map(
+        (i) => sheet.colName(i)
       )
     }
 
@@ -344,7 +344,7 @@ export function GroupPropsPanel({ branchId }: IProps) {
       callback: (group: IClusterGroup) => {
         //const indices = getColIdxFromGroup(df, group)
 
-        if (groups.some(g => g.id === group.id)) {
+        if (groups.some((g) => g.id === group.id)) {
           // we modified and existing group so clone list, but replace existing
           // group with new group when they have the same id
           updateGroup(group)
@@ -365,8 +365,11 @@ export function GroupPropsPanel({ branchId }: IProps) {
 
     const groupMap = Object.fromEntries(
       groups
-        .map(group => {
-          return getColIdxFromGroup(sheet, group).map(col => [col, group.name])
+        .map((group) => {
+          return getColIdxFromGroup(sheet, group).map((col) => [
+            col,
+            group.name,
+          ])
         })
         .flat()
     )
@@ -415,7 +418,7 @@ export function GroupPropsPanel({ branchId }: IProps) {
           //contentVariant="glass"
           //bodyVariant="card"
           modalType="Warning"
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
               //onGroupsChange?.([])
               addGroups([], 'set')
@@ -432,7 +435,7 @@ export function GroupPropsPanel({ branchId }: IProps) {
         <OKCancelDialog
           showClose={true}
           title={MODULE_INFO.name}
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
               removeGroups([delGroup!.id])
               // onGroupsChange &&
@@ -516,7 +519,7 @@ export function GroupPropsPanel({ branchId }: IProps) {
           <ToolbarTabGroup>
             <IconButton
               //rounded="full"
-              ripple={false}
+              // ripple={false}
               onClick={() => setOpen(randId('open'))}
               title="Open Groups"
               //className="fill-foreground/50 hover:fill-foreground"
@@ -526,7 +529,7 @@ export function GroupPropsPanel({ branchId }: IProps) {
 
             <IconButton
               //rounded="full"
-              ripple={false}
+              // ripple={false}
               onClick={() => setShowSaveDialog(true)}
               title="Save Groups"
             >
@@ -536,7 +539,7 @@ export function GroupPropsPanel({ branchId }: IProps) {
           <ToolbarSeparator />
 
           <IconButton
-            ripple={false}
+            // ripple={false}
             onClick={() => addGroup()}
             title="New Group"
             checked={openGroupDialog !== undefined}
@@ -548,7 +551,7 @@ export function GroupPropsPanel({ branchId }: IProps) {
           // <Button
           //   variant="accent"
           //   multiProps="icon"
-          //   ripple={false}
+          //   // ripple={false}
           //   onClick={() => setConfirmClear(true)}
           //   title="Clear all groups"
           // >
@@ -557,7 +560,7 @@ export function GroupPropsPanel({ branchId }: IProps) {
 
           <LinkButton
             //rounded="full"
-            //ripple={false}
+            //// ripple={false}
             onClick={() => setConfirmClear(true)}
             title="Clear all groups"
           >
@@ -567,7 +570,7 @@ export function GroupPropsPanel({ branchId }: IProps) {
       </VCenterRow>
 
       <FileDropZonePanel
-        onFileDrop={files => {
+        onFileDrop={(files) => {
           if (files.length > 0) {
             //setDroppedFile(files[0]);
             console.log('Dropped file:', files[0])
@@ -580,19 +583,19 @@ export function GroupPropsPanel({ branchId }: IProps) {
         <DndContext
           sensors={sensors}
           modifiers={[restrictToVerticalAxis]}
-          onDragStart={event => setActiveId(event.active.id as string)}
-          onDragEnd={event => {
+          onDragStart={(event) => setActiveId(event.active.id as string)}
+          onDragEnd={(event) => {
             const { active, over } = event
 
             if (over && active.id !== over?.id) {
               const oldIndex = groups.findIndex(
-                group => group.id === (active.id as string)
+                (group) => group.id === (active.id as string)
               )
               const newIndex = groups.findIndex(
-                group => group.id === (over.id as string)
+                (group) => group.id === (over.id as string)
               )
               const newOrder = arrayMove(
-                groups.map(group => group.id),
+                groups.map((group) => group.id),
                 oldIndex,
                 newIndex
               )
@@ -604,11 +607,11 @@ export function GroupPropsPanel({ branchId }: IProps) {
           }}
         >
           <SortableContext
-            items={groups.map(group => group.id)}
+            items={groups.map((group) => group.id)}
             strategy={verticalListSortingStrategy}
           >
             <ul className="flex flex-col">
-              {groups.map(group => {
+              {groups.map((group) => {
                 const id = group.id
                 return (
                   <SortableItem key={id} id={id}>
@@ -622,7 +625,7 @@ export function GroupPropsPanel({ branchId }: IProps) {
           <DragOverlay>
             {activeId ? (
               <GroupItem
-                group={groups.find(group => group.id === activeId)!}
+                group={groups.find((group) => group.id === activeId)!}
                 active={activeId}
               />
             ) : null}
@@ -636,7 +639,7 @@ export function GroupPropsPanel({ branchId }: IProps) {
           open={open}
           //onOpenChange={() => setOpen("")}
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
+            onTextFileChange(message, files, (files) => {
               openGroupFiles(files)
             })
           }

@@ -102,7 +102,7 @@ export function HistoryPanelContent({ ref, branchId = '' }: IProps) {
           open={true}
           showClose={true}
           title={APP_NAME}
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
               resetBranch(branch.id)
             }
@@ -136,7 +136,7 @@ export function HistoryPanelContent({ ref, branchId = '' }: IProps) {
       <PropsPanel ref={ref} className="gap-y-2">
         <VCenterRow className="justify-end py-1">
           <LinkButton
-            ripple={false}
+            // ripple={false}
             onClick={() => {
               if (branch && branch.steps.length > 1) {
                 setShowDialog({ id: 'Clear', params: {} })
@@ -169,7 +169,7 @@ export function HistoryPanelContent({ ref, branchId = '' }: IProps) {
               return (
                 <li key={hi} className="group">
                   <button
-                    ref={el => {
+                    ref={(el) => {
                       buttonsRef.current[hi] = el!
                     }}
                     aria-label={`Goto history step ${hi + 1}`}
