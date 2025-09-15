@@ -8,7 +8,7 @@ import rehypeStringify from 'rehype-stringify'
 import { remark } from 'remark'
 import remarkRehype from 'remark-rehype'
 
-const POSTS_DIRECTORY = path.join(process.cwd(), 'content', 'posts')
+//const POSTS_DIRECTORY = path.join(process.cwd(), 'content', 'posts')
 
 export interface IPostData {
   id: string

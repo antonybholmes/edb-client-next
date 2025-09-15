@@ -79,7 +79,6 @@ export function SlideBar({
   open = true,
   onOpenChange = () => {},
   initialPosition = 80,
-  cachePosition = true,
   limits = [5, 85],
   hideLimit = 2,
   className,

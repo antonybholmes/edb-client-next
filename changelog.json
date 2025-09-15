@@ -1399,6 +1399,12 @@
           "msg": "Tab UI fixes",
           "date": "2025-09-15T18:07:14.111Z"
         }
+      ],
+      "Added": [
+        {
+          "msg": "Added table viewer. Fixed build errors",
+          "date": "2025-09-15T21:11:43.465Z"
+        }
       ]
     },
     "author": "Antony Holmes",

@@ -2,6 +2,10 @@
 
 ## 26.2 (Sep, 2025)
 
+### Added
+
+- Added table viewer. Fixed build errors.
+
 ### Changed
 
 - Tab UI fixes.

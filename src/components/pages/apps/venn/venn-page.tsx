@@ -94,6 +94,7 @@ import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
 import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 
 import { BaseSvg } from '@/components/base-svg'
+import { Tabs } from '@/components/shadcn/ui/themed/tabs'
 import { SideTabs } from '@/components/tabs/side-tabs'
 import { useZoom } from '@/providers/zoom-provider'
 import { useVennCircleStore } from '@/stores/venn-circle-store'
@@ -1337,15 +1338,21 @@ function VennPage() {
               </ToggleButtons> */}
 
               <BaseRow className="grow">
-                <SideTabs
-                  tabs={sidebarTabs}
+                <Tabs
                   value={activeSideTab}
-                  showLabels={false}
-                  //defaultWidth={2}
-                  onTabChange={(selectedTab) =>
-                    setActiveSideTab(selectedTab.tab.id)
-                  }
-                />
+                  className="grow flex flex-row gap-x-2"
+                  orientation="vertical"
+                >
+                  <SideTabs
+                    tabs={sidebarTabs}
+                    value={activeSideTab}
+                    showLabels={false}
+                    //defaultWidth={2}
+                    onTabChange={(selectedTab) =>
+                      setActiveSideTab(selectedTab.tab.id)
+                    }
+                  />
+                </Tabs>
 
                 <TabProvider
                   value={activeSideTab}

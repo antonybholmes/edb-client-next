@@ -21,9 +21,11 @@ import {
 } from './button'
 import { GLASS_CLS } from './glass'
 
+export const MENU_H_CLS = 'h-7'
+
 export const DROPDOWN_MENU_ITEM_CLS = cn(
-  BUTTON_MD_H_CLS,
-  'flex items-center relative rounded-menu cursor-default select-none',
+  MENU_H_CLS,
+  'flex items-center relative cursor-default select-none',
   'gap-x-1 outline-hidden'
 )
 // export const BASE_DROPDOWN_CONTENT_CLS = cn(
@@ -80,7 +82,7 @@ const DropdownMenuPrimitiveItem = DropdownMenuPrimitive.Item
 export const dropdownContentVariants = cva(CONTENT_CLS, {
   variants: {
     variant: {
-      default: 'bg-background p-1 min-w-48',
+      default: 'bg-background px-0.5 py-1 min-w-48',
       content: 'bg-background p-2',
       header: 'bg-background p-4',
       glass: cn(GLASS_CLS, 'p-1.5'),
@@ -119,8 +121,12 @@ export const dropdownMenuItemVariants = cva(DROPDOWN_MENU_ITEM_CLS, {
       default: BASE_MENU_CLS,
       theme: THEME_MENU_CLS,
     },
+    rounded: {
+      default: 'rounded-sm',
+    },
     defaultVariants: {
       variant: 'default',
+      rounded: 'default',
     },
   },
 })
@@ -128,6 +134,7 @@ export const dropdownMenuItemVariants = cva(DROPDOWN_MENU_ITEM_CLS, {
 export function BaseDropdownMenuItem({
   ref,
   variant = 'default',
+  rounded = 'default',
   className,
   children,
   ...props
@@ -136,7 +143,7 @@ export function BaseDropdownMenuItem({
   return (
     <DropdownMenuPrimitiveItem
       ref={ref}
-      className={dropdownMenuItemVariants({ variant, className })}
+      className={dropdownMenuItemVariants({ variant, rounded, className })}
       {...props}
     >
       {children}
@@ -211,6 +218,7 @@ export function DropdownMenuAnchorItem({
 export function DropdownMenuCheckboxItem({
   ref,
   variant = 'theme',
+  rounded = 'default',
   className = '',
   children,
   checked = false,
@@ -222,7 +230,7 @@ export function DropdownMenuCheckboxItem({
   return (
     <DropdownMenuPrimitive.CheckboxItem
       ref={ref}
-      className={dropdownMenuItemVariants({ variant, className })}
+      className={dropdownMenuItemVariants({ variant, rounded, className })}
       checked={checked}
       data-checked={checked}
       {...props}
@@ -332,6 +340,7 @@ export const dropdownMenuSubTriggerVariants = cva('', {
 export function DropdownMenuSubTrigger({
   ref,
   variant = 'theme',
+  rounded = 'default',
   className,
   inset,
   children,
@@ -346,6 +355,7 @@ export function DropdownMenuSubTrigger({
       ref={ref}
       className={dropdownMenuItemVariants({
         variant,
+        rounded,
         className: dropdownMenuSubTriggerVariants({
           variant,
           className: cn(BASE_TRIGGER_CLS, inset && 'pl-8', className),

@@ -10,7 +10,6 @@ const Tooltip = TooltipPrimitive.Root
 const TooltipTrigger = TooltipPrimitive.Trigger
 
 export function TooltipContent({
-  ref,
   className,
   sideOffset = 4,
   ...props

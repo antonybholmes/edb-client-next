@@ -5,8 +5,6 @@ const CLS =
   'group flex shrink-0 grow-0 flex-row items-center justify-center outline-hidden py-2 group'
 
 export function ThinVResizeHandle({
-  id,
-
   className,
   onDragging,
   ...props

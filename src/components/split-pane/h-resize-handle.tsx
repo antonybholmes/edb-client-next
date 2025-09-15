@@ -22,7 +22,6 @@ const CLS = cn(
 )
 
 export function HResizeHandle({
-  id,
   ...props
 }: React.ComponentProps<typeof PanelResizeHandle>) {
   const [drag, setDrag] = useState(false)

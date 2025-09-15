@@ -29,7 +29,6 @@ export function DataPropsPanel({ ref, branchId }: IProps) {
   return (
     <PropsPanel ref={ref}>
       <Tabs
-        defaultValue={value}
         value={value}
         onValueChange={setValue}
         className="grow flex flex-row gap-x-2"

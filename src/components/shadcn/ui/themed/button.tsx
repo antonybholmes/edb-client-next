@@ -52,8 +52,9 @@ export const BASE_SECONDARY_CLS = cn(
 )
 
 export const BASE_MUTED_CLS = cn(
-  'data-[checked=false]:hover:bg-muted',
-  'data-[checked=true]:bg-muted data-[state=open]:bg-muted'
+  'data-[checked=false]:hover:bg-muted border border-transparent',
+  'data-[checked=true]:bg-muted data-[state=open]:bg-muted',
+  'data-[checked=true]:border-border data-[state=open]:border-border'
 )
 
 export const BASE_MUTED_LIGHT_CLS = cn(
@@ -83,19 +84,21 @@ export const ACCENT_BUTTON_CLS =
 //   'hover:bg-muted/30 data-[checked=true]:bg-muted/30 data-[state=open]:bg-muted/30'
 
 export const BASE_MENU_CLS = cn(
-  'border border-transparent focus:bg-muted',
+  'focus:bg-muted',
   'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
   'fill-foreground stroke-foreground px-1',
-  'hover:bg-muted/50',
-  'data-[checked=true]:bg-muted/50 data-[checked=true]:border-border',
-  'data-[state=checked]:bg-muted/50 data-[state=checked]:border-border'
+  'hover:bg-muted'
+  //'data-[checked=true]:bg-muted/50 data-[checked=true]:border-border',
+  //'data-[state=checked]:bg-muted/50 data-[state=checked]:border-border'
 )
 
 export const THEME_MENU_CLS = cn(
-  'border border-transparent focus:bg-theme/50 focus:text-white focus:fill-white focus:stroke-white',
+  'focus:bg-theme/50',
   'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
   'fill-foreground stroke-foreground px-1',
-  'hover:bg-theme/50 hover:text-white hover:fill-white hover:stroke-white'
+  'hover:bg-theme/50',
+  'focus:text-white focus:fill-white focus:stroke-white'
+  //'hover:text-white hover:fill-white hover:stroke-white'
   //'data-[state=checked]:bg-theme/40 data-[state=checked]:stroke-white data-[state=checked]:text-white',
   //'data-[checked=true]:bg-theme/40 data-[checked=true]:stroke-white data-[checked=true]:text-white'
 )
@@ -561,7 +564,6 @@ export function Button({
   //state = 'inactive',
   asChild = false,
   type = 'button',
-  ripple = false,
   tooltip,
   tooltipSide = 'bottom',
   onMouseUp,

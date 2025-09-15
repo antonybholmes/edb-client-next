@@ -58,7 +58,7 @@ export function HColorBarSvg({
     axis.setTicks(ticks)
   } else {
     const dx = (domain[1] - domain[0]) / 4
-    axis = axis.setTicks(range(0, 5).map(x => domain[0] + x * dx))
+    axis = axis.setTicks(range(0, 5).map((x) => domain[0] + x * dx))
   }
 
   return (
@@ -68,7 +68,7 @@ export function HColorBarSvg({
       fontSize="small"
     >
       <g>
-        {range(steps).map(step => {
+        {range(steps).map((step) => {
           start += inc
           colorStart += colorStep
           const x1 = xscl(start)
@@ -180,7 +180,7 @@ export function VColorBarSvg({
     axis.setTicks(ticks)
   } else {
     const dx = (domain[1] - domain[0]) / 4
-    axis = axis.setTicks(range(0, 5).map(x => domain[0] + x * dx))
+    axis = axis.setTicks(range(0, 5).map((x) => domain[0] + x * dx))
   }
 
   return (
@@ -190,7 +190,7 @@ export function VColorBarSvg({
       fontSize="small"
     >
       <g>
-        {range(steps).map(step => {
+        {range(steps).map((step) => {
           start += inc
           colorStart -= colorStep
           const y1 = xscl(start)
@@ -202,8 +202,6 @@ export function VColorBarSvg({
               y={y1}
               width={size.h}
               height={y2 - y1}
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-
               fill={cmap.getHexColor(colorStart, false)}
             />
           )

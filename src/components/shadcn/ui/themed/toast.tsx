@@ -145,7 +145,6 @@ export function Toast({
   description,
   button,
   id,
-  durationMs,
   ...props
 }: IToast & ComponentProps<typeof ToastPrimitives.Root>) {
   return (

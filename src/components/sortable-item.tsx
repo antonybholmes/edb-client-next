@@ -75,7 +75,6 @@ export function DragHandle({ className, style, ...props }: IDivProps) {
 
 export function SmallDragHandle({
   className = 'cursor-ns-resize',
-  style,
   ...props
 }: IDivProps) {
   const { attributes, listeners } = useContext(SortableItemContext)

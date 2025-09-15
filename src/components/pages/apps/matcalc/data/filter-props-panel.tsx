@@ -10,7 +10,6 @@ import { HCenterRow } from '@layout/h-center-row'
 
 import { useSearchFilters } from '@/stores/search-filter-store'
 import { FileDropZonePanel } from '@components/file-dropzone-panel'
-import { IOSTabsList } from '@components/tabs/ios-tabs'
 import { BaseRow } from '@layout/base-row'
 import { type BaseDataFrame } from '@lib/dataframe/base-dataframe'
 import { filterColsById, filterRowsById } from '@lib/dataframe/dataframe-utils'
@@ -19,8 +18,8 @@ import { randId } from '@lib/utils'
 import { Button } from '@themed/button'
 import { Checkbox } from '@themed/check-box'
 import { toast } from '@themed/crisp'
-import { Tabs } from '@themed/tabs'
 import { Textarea } from '@themed/textarea'
+import { BetweenHorizonalStart, BetweenVerticalStart } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useBranch } from '../history/history-store'
 import MODULE_INFO from '../module.json'
@@ -121,7 +120,7 @@ export function FilterPropsPanel({ branchId }: IProps) {
         //contentVariant="glass"
         //bodyVariant="card"
         modalType="Warning"
-        onResponse={r => {
+        onResponse={(r) => {
           if (r === TEXT_OK) {
             setText('')
 
@@ -137,7 +136,7 @@ export function FilterPropsPanel({ branchId }: IProps) {
         Are you sure you want to clear all the filter items?
       </OKCancelDialog>
 
-      <Tabs
+      {/* <Tabs
         defaultValue={filterMode}
         value={filterMode}
         onValueChange={setFilterMode}
@@ -157,11 +156,12 @@ export function FilterPropsPanel({ branchId }: IProps) {
             defaultWidth="64px"
           />
         </HCenterRow>
-      </Tabs>
+      </Tabs> */}
+
       {/* <HCenterRow className="gap-x-2 shrink-0 py-2">
         <ToggleButtons
           value={filterMode}
-          onTabChange={selectedTab => {
+          onTabChange={(selectedTab) => {
             if (selectedTab) {
               setFilterMode(selectedTab.tab.id)
             }
@@ -179,12 +179,29 @@ export function FilterPropsPanel({ branchId }: IProps) {
         </ToggleButtons>
       </HCenterRow> */}
 
+      <HCenterRow className="py-2 text-xs gap-x-0.5">
+        <Button
+          onClick={() => setFilterMode('Rows')}
+          checked={filterMode === 'Rows'}
+        >
+          <BetweenHorizonalStart className="w-4" />
+          <span>Rows</span>
+        </Button>
+        <Button
+          onClick={() => setFilterMode('Cols')}
+          checked={filterMode === 'Cols'}
+        >
+          <BetweenVerticalStart className="w-4" />
+          <span>Cols</span>
+        </Button>
+      </HCenterRow>
+
       {/* <VScrollPanel innerClassName="gap-y-2"> */}
       <BaseRow className="gap-x-2">
         <FileDropZonePanel
-          onFileDrop={files => {
+          onFileDrop={(files) => {
             if (files.length > 0) {
-              onTextFileChange('Open filter list', files, files => {
+              onTextFileChange('Open filter list', files, (files) => {
                 if (files.length > 0) {
                   setText(files[0]!.text)
                 }
@@ -196,7 +213,7 @@ export function FilterPropsPanel({ branchId }: IProps) {
             id="filter"
             aria-label="Filter"
             value={text}
-            onChange={e => setText(e.target.value)}
+            onChange={(e) => setText(e.target.value)}
             placeholder={`Filter ${filterMode.toLowerCase()}...`}
             className="h-64"
           />
@@ -235,7 +252,7 @@ export function FilterPropsPanel({ branchId }: IProps) {
               ? filters.rows.caseSensitive
               : filters.cols.caseSensitive
           }
-          onCheckedChange={state => {
+          onCheckedChange={(state) => {
             if (filterMode.includes('Rows')) {
               updateFilters({
                 ...filters,
@@ -257,7 +274,7 @@ export function FilterPropsPanel({ branchId }: IProps) {
               ? filters.rows.matchEntireCell
               : filters.cols.matchEntireCell
           }
-          onCheckedChange={state => {
+          onCheckedChange={(state) => {
             if (filterMode.includes('Rows')) {
               updateFilters({
                 ...filters,
@@ -279,7 +296,7 @@ export function FilterPropsPanel({ branchId }: IProps) {
               ? filters.rows.keepOrder
               : filters.cols.keepOrder
           }
-          onCheckedChange={state => {
+          onCheckedChange={(state) => {
             if (filterMode.includes('Rows')) {
               updateFilters({
                 ...filters,
@@ -322,7 +339,7 @@ export function FilterPropsPanel({ branchId }: IProps) {
         <OpenFiles
           open={showDialog.id}
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
+            onTextFileChange(message, files, (files) => {
               if (files.length > 0) {
                 setText(files[0]!.text)
               }

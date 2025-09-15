@@ -65,10 +65,12 @@ export function SignInPage() {
   }, [searchParams])
 
   useEffect(() => {
-    form.setValue(
-      'email',
-      settings?.users.length! > 0 ? settings!.users[0]!.email : ''
-    )
+    if (settings.users.length! > 0) {
+      const email = settings.users[0]?.email
+      if (email) {
+        form.setValue('email', email)
+      }
+    }
   }, [settings, form])
 
   async function onSubmit(

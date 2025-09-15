@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
 
@@ -56,6 +56,7 @@ import type { ITab } from '@components/tabs/tab-provider'
 
 import { DownloadIcon } from '@icons/download-icon'
 import { HeaderLayout } from '@layouts/header-layout'
+import { useSearchParams } from 'next/navigation'
 import { HistoryPanel } from '../matcalc/history/history-panel'
 import { useHistory } from '../matcalc/history/history-store'
 
@@ -65,10 +66,12 @@ export function TableViewerPage() {
   const [rightTab, setRightTab] = useState(TEXT_HISTORY)
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const key = urlParams.get('key')
+  const searchParams = useSearchParams()
 
+  //const urlParams = new URLSearchParams(window.location.search)
+  const key = searchParams.get('key')
+
+  useEffect(() => {
     if (key) {
       const sharedData = localStorage.getItem(key)
       if (sharedData) {
@@ -97,7 +100,7 @@ export function TableViewerPage() {
         document.title = `${df.name} - Table Viewer`
       }
     }
-  }, [])
+  }, [key])
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 

@@ -41,7 +41,6 @@ export interface ITextAreaProps
   labelChildren?: ReactNode
   lines?: string[]
   textareaCls?: string | undefined
-  rightChildren?: ReactNode
   onTextChange?: (v: string[]) => void
   onTextChanged?: (v: string[]) => void
 }
@@ -64,7 +63,6 @@ export function Textarea({
   labelW = 'min-w-24',
   labelChildren,
   variant,
-  rightChildren,
   onChange,
   onTextChange,
   onTextChanged,

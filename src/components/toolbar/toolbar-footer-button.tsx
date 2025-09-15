@@ -19,7 +19,6 @@ export function ToolbarFooterButton({
       variant={variant}
       size={size}
       rounded={rounding}
-      ripple={false}
       className={cn('gap-x-2', className)}
       {...props}
     >

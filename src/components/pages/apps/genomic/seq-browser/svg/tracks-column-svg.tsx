@@ -34,7 +34,6 @@ interface IProps extends IDivProps {
 export function TracksColumnSvg({
   genesMap,
   //locTrackBins,
-  features,
 }: IProps) {
   const { state } = useContext(TracksContext)
   const { xax, location, geneYMap } = useContext(LocationContext)
