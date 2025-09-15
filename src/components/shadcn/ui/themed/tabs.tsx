@@ -103,7 +103,7 @@ const triggerVariants = cva('relative', {
   },
 })
 
-interface ITabTrigger
+export interface ITabTrigger
   extends ComponentProps<typeof TabsPrimitive.Trigger>,
     VariantProps<typeof triggerVariants> {
   selected?: boolean

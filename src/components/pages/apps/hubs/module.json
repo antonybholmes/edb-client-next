@@ -1,7 +1,7 @@
 {
   "name": "Hubs",
   "description": "Display UCSC Genome Browser hubs",
-  "version": "2.3.0.130",
+  "version": "2.3.1.131",
   "copyright": "Copyright (C) ${START_YEAR:2025} Antony Holmes. All rights reserved.",
-  "modified": "2025-09-13T14:26:19.266Z"
+  "modified": "2025-09-13T22:36:54.155Z"
 }

@@ -22,6 +22,9 @@ import { TabIndicatorContext } from './tab-indicator-provider'
 //export const UNDERLINE_TAB_CLS =
 //  'px-2.5 py-1.5 rounded-sm group trans-color focus-visible:bg-muted hover:bg-muted data-[checked=true]:bg-muted trans-color mb-1'
 
+const TAB_LINE_CLS =
+  'absolute bottom-0 bg-border left-2 right-2 transition-opacity duration-200 ease-in-out'
+
 export const tabVariants = cva(
   cn(
     FOCUS_INSET_RING_CLS,
@@ -45,7 +48,7 @@ export const tabButtonVariants = cva('group trans-color overflow-hidden', {
     variant: {
       default: 'h-7 px-2',
       sheet:
-        'py-2 px-1 w-16 flex flex-row justify-center focus-visible:bg-muted hover:bg-muted data-[checked=true]:bg-muted ',
+        'py-2 px-1 w-16 flex flex-row justify-center focus-visible:bg-muted hover:bg-muted data-[checked=true]:bg-muted',
       tab: 'border',
     },
   },
@@ -75,6 +78,71 @@ export interface ITabMenu {
   menuCallback?: (tab: ITab, action: string) => void
   menuActions?: IMenuAction[]
 }
+
+// interface ITabProps extends ITabTrigger {
+//   ti: number
+//   tab: ITab
+//   selectedTab: ISelectedTab | null
+//   scale: (scale: number) => void
+//   maxNameLength: number,
+
+// }
+
+// function Tab({ tab, selectedTab, scale, maxNameLength, ...props }: ITabProps) {
+//   const selected = tab.id === selectedTab?.tab.id // tab.id === selectedTab?.tab.id
+
+//   const name = getTabName(tab)
+//   const truncatedName = truncate(name, {
+//     length: maxNameLength,
+//   })
+
+//   return (
+//     <TabsTrigger
+//       variant="base"
+//       value={tab.id}
+//       id={tab.id}
+//       key={tab.id}
+//       data-selected={selected}
+//       ref={ref}
+//       onMouseEnter={() => {
+//         if (selected) {
+//           scale(2)
+//         }
+//       }}
+//       onMouseLeave={() => {
+//         if (selected) {
+//           scale(1)
+//         }
+//       }}
+//       onMouseDown={() => {
+//         pressed.current = true
+//       }}
+//       onMouseUp={() => {
+//         pressed.current = false
+//       }}
+//       className={tabButtonVariants({
+//         variant,
+//       })}
+//     >
+//       <span
+//         data-checked={selected}
+//         ref={(el) => {
+//           itemsRef.current[ti] = el!
+//         }}
+//         aria-label={tab.id}
+//         className={UNDERLINE_LABEL_CLS}
+//       >
+//         {truncatedName}
+//       </span>
+
+//       <span
+//         data-selected={selected}
+//         className={TAB_LINE_CLS}
+//         style={{ height: '0.1rem' }}
+//       />
+//     </TabsTrigger>
+//   )
+// }
 
 interface IProps
   extends ITabProvider,
@@ -129,6 +197,8 @@ export function UnderlineTabs({
       _scale(pressed.current ? 2 : 1)
     }
   }, [selectedTab?.index])
+
+  //
 
   return (
     <VCenterRow className={cn('justify-between gap-x-1', className)}>
@@ -191,7 +261,7 @@ export function UnderlineTabs({
 
               <span
                 data-selected={selected}
-                className="invisible data-[selected=false]:group-hover:visible absolute bottom-0 bg-border left-2 right-2"
+                className={TAB_LINE_CLS}
                 style={{ height: '0.1rem' }}
               />
             </TabsTrigger>
