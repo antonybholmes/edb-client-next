@@ -280,7 +280,7 @@ export function TracksPropsPanel() {
                     ...track,
                     id,
                     trackType: 'Remote BigWig',
-                    scale: track.tags.some(x => x.includes('BPM'))
+                    scale: track.tags.some((x) => x.includes('BPM'))
                       ? 'BPM'
                       : 'Count',
                     displayOptions,
@@ -300,7 +300,7 @@ export function TracksPropsPanel() {
             if (combine) {
               displayTracks = [newTrackGroup(signals)]
             } else {
-              displayTracks = signals.map(s => newTrackGroup([s]))
+              displayTracks = signals.map((s) => newTrackGroup([s]))
             }
 
             dispatch({ type: 'add', tracks: displayTracks })
@@ -312,7 +312,7 @@ export function TracksPropsPanel() {
 
       {showDialog.id.startsWith('track-info') && (
         <TrackInfoDialog
-          group={showDialog.params!.group as ITrackGroup}
+          //group={showDialog.params!.group as ITrackGroup}
           track={showDialog.params!.track as ISignalTrack}
           onCancel={() => setShowDialog({ ...NO_DIALOG })}
         />
@@ -355,7 +355,7 @@ export function TracksPropsPanel() {
             if (combine) {
               displayTracks = [newTrackGroup(peaks)]
             } else {
-              displayTracks = peaks.map(s => newTrackGroup([s]))
+              displayTracks = peaks.map((s) => newTrackGroup([s]))
             }
 
             dispatch({ type: 'add', tracks: displayTracks })
@@ -491,7 +491,7 @@ export function TracksPropsPanel() {
           bodyVariant="card"
           showClose={true}
           title={MODULE_INFO.name}
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
               dispatch({
                 type: 'remove-groups',
@@ -519,7 +519,7 @@ export function TracksPropsPanel() {
           bodyVariant="card"
           showClose={true}
           title={MODULE_INFO.name}
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
               dispatch({
                 type: 'remove-tracks',
@@ -548,11 +548,13 @@ export function TracksPropsPanel() {
           modalType="Warning"
           //contentVariant="glass"
           //bodyVariant="card"
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
               dispatch({
                 type: 'remove-groups',
-                ids: state.order.filter(id => state.selected.get(id) ?? false),
+                ids: state.order.filter(
+                  (id) => state.selected.get(id) ?? false
+                ),
               })
             }
             setShowDialog({ ...NO_DIALOG })
@@ -569,17 +571,17 @@ export function TracksPropsPanel() {
           //bodyVariant="card"
           open={showDialog.id.startsWith('join-seqs:')}
           title={MODULE_INFO.name}
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
               // we can join seqs together
-              let seqsByGroup = state.order.map(gid =>
+              let seqsByGroup = state.order.map((gid) =>
                 state.selected.has(gid)
-                  ? where(state.groups[gid]!.order, tid =>
+                  ? where(state.groups[gid]!.order, (tid) =>
                       SEQ_TRACK_TYPES.has(
                         state.groups[gid]!.tracks[tid]!.trackType
                       )
                     ).map(
-                      ti =>
+                      (ti) =>
                         state.groups[gid]!.tracks[
                           state.groups[gid]!.order[ti]!
                         ]!
@@ -597,7 +599,7 @@ export function TracksPropsPanel() {
                 // replace this entry with the merge
                 const replaceIdx = where(
                   state.order,
-                  id => id === groupIds[0]!
+                  (id) => id === groupIds[0]!
                 )[0]!
 
                 // get the groups involved
@@ -612,7 +614,7 @@ export function TracksPropsPanel() {
                     // what comes before our group is left intact
                     ...state.order
                       .slice(0, replaceIdx)
-                      .map(id => state.groups[id]!),
+                      .map((id) => state.groups[id]!),
 
                     // replace first seq in join with this new group
                     newGroup,
@@ -620,22 +622,22 @@ export function TracksPropsPanel() {
                     // groups we are merging
                     ...state.order
                       .slice(replaceIdx + 1)
-                      .filter(id => !groupIdSet.has(id))
-                      .map(id => state.groups[id]!),
+                      .filter((id) => !groupIdSet.has(id))
+                      .map((id) => state.groups[id]!),
                   ],
                 })
               }
 
               // now do the same for beds
 
-              seqsByGroup = state.order.map(gid =>
+              seqsByGroup = state.order.map((gid) =>
                 state.selected.has(gid)
-                  ? where(state.groups[gid]!.order, tid =>
+                  ? where(state.groups[gid]!.order, (tid) =>
                       BED_TRACK_TYPES.has(
                         state.groups[gid]!.tracks[tid]!.trackType
                       )
                     ).map(
-                      ti =>
+                      (ti) =>
                         state.groups[gid]!.tracks[
                           state.groups[gid]!.order[ti]!
                         ]!
@@ -652,7 +654,7 @@ export function TracksPropsPanel() {
                 // replace this entry with the merge
                 const replaceIdx = where(
                   state.order,
-                  id => id === groupIds[0]!
+                  (id) => id === groupIds[0]!
                 )[0]!
 
                 // get the groups involved
@@ -667,7 +669,7 @@ export function TracksPropsPanel() {
                     // what comes before our group is left intact
                     ...state.order
                       .slice(0, replaceIdx)
-                      .map(id => state.groups[id]!),
+                      .map((id) => state.groups[id]!),
 
                     // replace first seq in join with this new group
                     newGroup,
@@ -675,8 +677,8 @@ export function TracksPropsPanel() {
                     // groups we are merging
                     ...state.order
                       .slice(replaceIdx + 1)
-                      .filter(id => !groupIdSet.has(id))
-                      .map(id => state.groups[id]!),
+                      .filter((id) => !groupIdSet.has(id))
+                      .map((id) => state.groups[id]!),
                   ],
                 })
               }
@@ -986,22 +988,22 @@ export function TracksPropsPanel() {
                 // make tracks without local files since we cannot
                 // serialize those
                 const saveTracks = state.order
-                  .map(id => state.groups[id]!)
-                  .map(g => {
+                  .map((id) => state.groups[id]!)
+                  .map((g) => {
                     const order = g.order
-                      .map(id => [id, g.tracks[id]!] as [string, TrackPlot])
+                      .map((id) => [id, g.tracks[id]!] as [string, TrackPlot])
                       .filter(([, track]) => !track.trackType.includes('Local'))
                       .map(([id]) => id)
                     return {
                       ...g,
                       order,
                       tracks: Object.fromEntries(
-                        order.map(id => [id, g.tracks[id]])
+                        order.map((id) => [id, g.tracks[id]])
                       ),
                     }
                   })
                   // remove groups with no tracks left
-                  .filter(g => g.order.length > 0)
+                  .filter((g) => g.order.length > 0)
 
                 downloadJson(saveTracks, 'tracks.json')
               }}
@@ -1056,11 +1058,11 @@ export function TracksPropsPanel() {
             'application/octet-stream': ['.bw', '.bigWig', '.bb', '.bigBed'],
             'application/json': ['.json'],
           }}
-          onFileDrop={async files => {
+          onFileDrop={async (files) => {
             if (files.length > 0) {
               // first bed files
 
-              let filteredFiles = files.filter(file =>
+              let filteredFiles = files.filter((file) =>
                 file.name.endsWith('.bed')
               )
 
@@ -1090,7 +1092,7 @@ export function TracksPropsPanel() {
               // Next bigwigs
 
               filteredFiles = files.filter(
-                file =>
+                (file) =>
                   file.name.endsWith('.bw') || file.name.endsWith('.bigWig')
               )
 
@@ -1119,7 +1121,7 @@ export function TracksPropsPanel() {
               // finally bigbeds
 
               filteredFiles = files.filter(
-                file =>
+                (file) =>
                   file.name.endsWith('.bb') || file.name.endsWith('.bigBed')
               )
 
@@ -1146,7 +1148,7 @@ export function TracksPropsPanel() {
 
               onTextFileChange(
                 'Open dropped file',
-                files.filter(file => file.name.endsWith('.json')),
+                files.filter((file) => file.name.endsWith('.json')),
                 openTrackFiles
               )
             }
@@ -1155,8 +1157,8 @@ export function TracksPropsPanel() {
           <VScrollPanel>
             <DndContext
               modifiers={[restrictToVerticalAxis]}
-              onDragStart={event => setActiveId(event.active.id as string)}
-              onDragEnd={event => {
+              onDragStart={(event) => setActiveId(event.active.id as string)}
+              onDragEnd={(event) => {
                 const { active, over } = event
 
                 if (over && active.id !== over?.id) {
@@ -1178,7 +1180,7 @@ export function TracksPropsPanel() {
                 strategy={verticalListSortingStrategy}
               >
                 <ul className="flex flex-col">
-                  {state.order.map(gid => {
+                  {state.order.map((gid) => {
                     const tg = state.groups[gid]!
 
                     return (
@@ -1242,7 +1244,7 @@ export function TracksPropsPanel() {
           open={showDialog.id}
           //onOpenChange={() => setOpen("")}
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
+            onTextFileChange(message, files, (files) => {
               openTrackFiles(files)
             })
           }

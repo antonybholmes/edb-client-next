@@ -186,6 +186,7 @@ export function DropdownMenuAnchorItem({
   ref,
   href,
   variant = 'theme',
+  rounded = 'default',
   className,
   children,
   ...props
@@ -197,7 +198,7 @@ export function DropdownMenuAnchorItem({
     <a
       ref={ref}
       href={href}
-      className={dropdownMenuItemVariants({ variant, className })}
+      className={dropdownMenuItemVariants({ variant, rounded, className })}
       {...props}
     >
       <span className={DROPDOWN_MENU_ICON_CONTAINER_CLS}>

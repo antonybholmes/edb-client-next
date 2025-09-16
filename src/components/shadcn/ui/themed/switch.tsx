@@ -1,4 +1,3 @@
-import { ANIMATION_DURATION_S } from '@/consts'
 import { FOCUS_RING_CLS } from '@/theme'
 import type { LeftRightPos } from '@components/side'
 import { VCenterRow } from '@layout/v-center-row'
@@ -115,20 +114,20 @@ export const Switch = forwardRef<
   const initial = useRef(true)
 
   useEffect(() => {
-    const duration = initial.current ? 0 : ANIMATION_DURATION_S
+    const duration = initial.current ? 0 : 0.5 //ANIMATION_DURATION_S
 
     const tl = gsap.timeline()
 
     tl.to(
       thumbRef.current,
       {
-        //width: hover ? 24 : 18,
+        width: checked || hover ? '1.4rem' : '1.125rem',
 
         //left: hover ? 2 : 8,
         //scaleX: hover ? 1.5 : 1,
-        transform: checked ? 'translate(0.625rem, -50%)' : 'translate(0, -50%)',
+        transform: checked ? 'translate(0.6rem, -50%)' : 'translate(0, -50%)',
         duration,
-        ease: 'power2.inOut',
+        ease: 'power3.out',
       },
       0
     )
@@ -172,7 +171,7 @@ export const Switch = forwardRef<
       data-enabled={!disabled}
       //onCheckedChange={_onClick}
       className={TOGGLE_CLS}
-      style={{ height: 'calc(1.125rem + 4px)', width: 'calc(1.75rem + 4px)' }}
+      style={{ height: 'calc(1.125rem + 4px)', width: 'calc(2rem + 4px)' }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       onMouseDown={() => setPressed(true)}

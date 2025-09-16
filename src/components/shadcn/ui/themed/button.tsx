@@ -97,8 +97,8 @@ export const THEME_MENU_CLS = cn(
   'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
   'fill-foreground stroke-foreground px-1',
   'hover:bg-theme/50',
-  'focus:text-white focus:fill-white focus:stroke-white'
-  //'hover:text-white hover:fill-white hover:stroke-white'
+  'focus:text-white focus:fill-white focus:stroke-white',
+  'hover:text-white hover:fill-white hover:stroke-white'
   //'data-[state=checked]:bg-theme/40 data-[state=checked]:stroke-white data-[state=checked]:text-white',
   //'data-[checked=true]:bg-theme/40 data-[checked=true]:stroke-white data-[checked=true]:text-white'
 )
@@ -539,7 +539,7 @@ export interface IButtonProps
     //IButtonVariantProps,
     ITooltipSide {
   asChild?: boolean
-  checked?: boolean | undefined
+  checked?: boolean
   open?: boolean // for dropdowns
   //state?: ButtonState
   ripple?: boolean
@@ -561,6 +561,7 @@ export function Button({
   variant = 'muted',
   checked = false,
   open = false,
+  ripple = false,
   //state = 'inactive',
   asChild = false,
   type = 'button',

@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Refined switch.
 - Bug fixes and updates.
 - Tab UI fixes.

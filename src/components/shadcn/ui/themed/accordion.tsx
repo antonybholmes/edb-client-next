@@ -20,7 +20,7 @@ export const accordionVariants = cva('flex flex-col', {
   variants: {
     variant: {
       default: 'gap-y-0.5',
-      settings: 'gap-y-2',
+      settings: 'gap-y-1',
     },
   },
   defaultVariants: {
@@ -114,7 +114,7 @@ const AccordionItem = forwardRef<
 >(({ className, ...props }, ref) => (
   <AccordionPrimitive.Item
     ref={ref}
-    className={cn('flex flex-col gap-y-1', className)}
+    className={cn('flex flex-col gap-y-2', className)}
     {...props}
   />
 ))
@@ -123,15 +123,15 @@ AccordionItem.displayName = 'AccordionItem'
 //  [&>div]:pl-2
 export const accordionTriggerVariants = cva(
   cn(
-    'outline-2 outline-transparent focus-visible:outline-ring data-[focus=true]:outline-ring -outline-offset-2 rounded-theme',
-    'flex flex-row grow items-center truncate justify-between font-semibold hover:underline [&[data-state=open]>svg]:rotate-90'
+    'group relative outline-2 outline-transparent focus-visible:outline-ring data-[focus=true]:outline-ring -outline-offset-2',
+    'flex flex-row grow items-center truncate font-semibold hover:underline [&[data-state=open]>svg]:rotate-90'
   ),
   {
     variants: {
       variant: {
         default:
-          'hover:bg-muted/70 pl-2.5 pr-2 py-2 data-[state=open]:bg-muted/70 trans-color',
-        settings: 'py-1.5',
+          'gap-x-0.5 rounded-md hover:bg-muted/75 focus-visible:bg-muted/75 p-1.5 trans-color',
+        settings: 'gap-x-1 py-1.5',
         none: '',
       },
     },
@@ -157,7 +157,7 @@ const AccordionTrigger = forwardRef<
       leftChildren,
       rightChildren,
       children,
-      variant,
+      variant = 'default',
       ...props
     },
     ref
@@ -170,11 +170,13 @@ const AccordionTrigger = forwardRef<
         className={accordionTriggerVariants({ variant, className })}
         {...props}
       >
-        {children}
-
         {!rightChildren && (
           <ChevronRightIcon className="trans-transform" style={arrowStyle} />
         )}
+        {children}
+        {/* {variant === 'default' && (
+          <span className="absolute left-2 right-2 bottom-0 w-full h-px bg-border opacity-0 group-data-[state=open]:opacity-100"></span>
+        )} */}
       </AccordionPrimitive.Trigger>
 
       {rightChildren && (
@@ -201,8 +203,8 @@ AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName
 export const accordionContentVariants = cva('flex flex-col', {
   variants: {
     variant: {
-      default: 'px-1 pb-4 mb-2 gap-y-1',
-      settings: 'pt-2 pb-4 gap-y-1',
+      default: 'pl-5.5 pb-4 gap-y-1',
+      settings: 'pl-4.5 gap-y-1',
     },
   },
   defaultVariants: {
