@@ -4,7 +4,6 @@ const CLS =
   'group px-2 flex shrink-0 grow-0 cursor-ew-resize flex-col items-center justify-center outline-hidden'
 
 export function ThinHResizeHandle({
-  id,
   ...props
 }: React.ComponentProps<typeof PanelResizeHandle>) {
   return (

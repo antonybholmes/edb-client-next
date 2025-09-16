@@ -201,7 +201,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'oauth2' }: IProps) {
                   }
 
                   console.log('EDBSignIn: loginWithRedirect state', state)
-                  loginWithRedirect({ appState: state })
+                  loginWithRedirect() //{ appState: state })
                 }}
               >
                 <SignInIcon stroke="" />

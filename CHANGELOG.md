@@ -1,5 +1,12 @@
 # Changelog
 
+## 26.4 (Sep, 2025)
+
+### Changed
+
+- Bug fixes and updates.
+
+
 ## 26.2 (Sep, 2025)
 
 ### Added

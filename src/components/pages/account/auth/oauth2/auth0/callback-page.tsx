@@ -59,7 +59,10 @@ export function CallbackPage() {
   //   return null
   // }
 
-  const { getAccessTokenSilently, handleRedirectCallback } = useAuth0()
+  const { getAccessTokenSilently, handleRedirectCallback, isLoading, error } =
+    useAuth0()
+
+  console.log('Auth0 loading', isLoading, error)
 
   useEffect(() => {
     async function processCallback() {
