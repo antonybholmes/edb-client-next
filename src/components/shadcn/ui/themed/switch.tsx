@@ -38,7 +38,7 @@ import {
 
 const TOGGLE_CLS = cn(
   FOCUS_RING_CLS,
-  'relative h-[22px] shrink-0 w-[38px] rounded-full',
+  'relative shrink-0 rounded-full',
   'data-[enabled=true]:data-[state=checked]:bg-theme/75',
   'data-[enabled=true]:data-[state=checked]:hover:bg-theme',
   'data-[enabled=true]:data-[state=unchecked]:bg-muted',
@@ -59,7 +59,7 @@ const TOGGLE_CLS = cn(
 
 const THUMB_CLS = cn(
   'absolute shadow-sm pointer-events-none aspect-square shrink-0',
-  'w-[18px] h-[18px] rounded-full bg-white z-30 left-[2px] shadow-md',
+  'w-4.5 h-4.5 rounded-full bg-white z-30 left-[2px] shadow-md',
   'top-1/2 -translate-y-1/2',
   'data-[checked=false]:left-[2px] data-[checked=true]:right-[2px]'
 )
@@ -119,35 +119,19 @@ export const Switch = forwardRef<
 
     const tl = gsap.timeline()
 
-    if (checked) {
-      tl.to(
-        thumbRef.current,
-        {
-          width: hover ? 24 : 18,
+    tl.to(
+      thumbRef.current,
+      {
+        //width: hover ? 24 : 18,
 
-          left: 2,
-          //scaleX: hover ? 1.5 : 1,
-          //transform: checked ? 'translate(12px, -50%)' : 'translate(0, -50%)',
-          duration,
-          ease: 'power2.inOut',
-        },
-        0
-      )
-    } else {
-      tl.to(
-        thumbRef.current,
-        {
-          width: hover ? 24 : 18,
-
-          right: 2,
-          //scaleX: hover ? 1.5 : 1,
-          //transform: checked ? 'translate(12px, -50%)' : 'translate(0, -50%)',
-          duration,
-          ease: 'power2.inOut',
-        },
-        0
-      )
-    }
+        //left: hover ? 2 : 8,
+        //scaleX: hover ? 1.5 : 1,
+        transform: checked ? 'translate(0.625rem, -50%)' : 'translate(0, -50%)',
+        duration,
+        ease: 'power2.inOut',
+      },
+      0
+    )
 
     // if not disabled, animate the highlight ring too
     // if (highlightThumbRef.current) {
@@ -188,6 +172,7 @@ export const Switch = forwardRef<
       data-enabled={!disabled}
       //onCheckedChange={_onClick}
       className={TOGGLE_CLS}
+      style={{ height: 'calc(1.125rem + 4px)', width: 'calc(1.75rem + 4px)' }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       onMouseDown={() => setPressed(true)}
