@@ -40,10 +40,8 @@ import {
   TOOLBAR_BUTTON_ICON_CLS,
   XS_ICON_BUTTON_CLS,
 } from '@/theme'
-import * as d3 from 'd3'
 
 import { useEffect, useRef, useState } from 'react'
-import { sortAreas, VennDiagram } from '../../../../ext/benfred/venn/diagram'
 
 import {
   onTextFileChange,
@@ -124,6 +122,7 @@ import { ToolbarSeparator } from '@toolbar/toolbar-separator'
 import axios from 'axios'
 import { useHistory } from '../matcalc/history/history-store'
 import MODULE_INFO from './module.json'
+import { SvgVennDiagram } from './venn-diagram'
 
 interface ISet {
   label?: string
@@ -184,6 +183,8 @@ function VennPage() {
     new Map()
   )
 
+  // map of list id to the text contents for each list,
+  // we split these later to get the actual items
   const [listTextMap, setListTextMap] = useState<Map<number, string>>(new Map())
 
   // https://github.com/benfred/venn.js/
@@ -191,7 +192,7 @@ function VennPage() {
 
   //const [displayProps.isProportional, setProportional] = useState(true)
 
-  const [sets, setSets] = useState<ISet[]>([])
+  //const [sets, setSets] = useState<ISet[]>([])
 
   const svgRef = useRef<SVGSVGElement>(null)
   const overlapRef = useRef<HTMLTextAreaElement>(null)
@@ -320,7 +321,7 @@ function VennPage() {
     // map text back to its original name
     const originalMap = new Map<string, string>()
 
-    // count number of items
+    // store all items in lowercase for each list
     const countMap = new Map<number, string[]>()
 
     listIds.forEach((i) => {
@@ -343,10 +344,7 @@ function VennPage() {
     // )
 
     const uniqueCountMap = new Map(
-      Array.from(countMap.entries()).map(([listId, items]) => [
-        listId,
-        new Set(items),
-      ])
+      [...countMap].map(([listId, items]) => [listId, new Set(items)])
     )
 
     // const displayLabelMap = Object.fromEntries(
@@ -357,8 +355,8 @@ function VennPage() {
     // )
 
     // determine which lists are in use
-    const usableIds = numSort(
-      Array.from(uniqueCountMap.entries())
+    const listsInUseIds = numSort(
+      [...uniqueCountMap]
         .filter(([, items]) => items.size > 0)
         .map(([listId]) => listId)
     )
@@ -366,88 +364,109 @@ function VennPage() {
     // get all the intersections in use by id combinations for
     // example [0] is list 1 and [0, 1] is the intersection of list 1
     // and list 2
-    const combinations: number[][] = makeCombinations(usableIds).slice(1)
+    const combinations: number[][] = makeCombinations(listsInUseIds)
 
-    // pool all items and annotate by who is in what
-    const combs = new Map<string, number[]>()
+    // we need to know which items are in which combination so
+    // create a map of item to the lists it is found in for example
+    // itemA -> [0, 1]
+    const combs = new Map<string, Set<number>>()
 
-    usableIds.forEach((listId) => {
-      ;[...uniqueCountMap.get(listId)!].map((item) => {
+    for (const [listId, items] of uniqueCountMap.entries()) {
+      for (const item of items) {
         if (!combs.has(item)) {
-          combs.set(item, [])
+          combs.set(item, new Set())
         }
 
-        combs.get(item)!.push(listId)
-      })
-    })
+        combs.get(item)!.add(listId)
+      }
+    }
 
     const newSets: ISet[] = []
-    const vennMap = new Map<string, Set<string>>()
+    //const vennMap = new Map<string, Set<string>>()
     let maxRows = 0
 
     //
     // counts for venn
     //
 
-    const combs2 = new Map<string, Set<string>>()
+    const vennMap = new Map<string, Set<string>>()
 
-    const subCombMap = new Map<string, string[]>()
+    for (const [item, listIds] of combs.entries()) {
+      //const sets = [...listIds].sort() //.map( (s) => listLabelMap.get(s)!)
 
-    Array.from(combs.entries()).forEach(([item, listIds]) => {
-      const id = listIds.join(':')
+      console.log(item, listIds, 'item')
 
-      if (!subCombMap.has(id)) {
-        // cache the permutations we encounter
-        subCombMap.set(
-          id,
-          makeCombinations(listIds.map((s) => listLabelMap.get(s)))
-            .slice(1)
-            .map((c) => c.join('_'))
-        )
+      const id = [...listIds]
+        .sort()
+        .map((s) => s.toString())
+        .join(':')
+
+      if (!vennMap.has(id)) {
+        vennMap.set(id, new Set())
       }
 
-      const labels: string[] = subCombMap.get(id)!
+      vennMap.get(id)!.add(item)
+    }
 
-      labels.forEach((label) => {
-        if (!combs2.has(label)) {
-          combs2.set(label, new Set())
-        }
+    // const combs2 = new Map<string, Set<string>>()
 
-        combs2.get(label)?.add(item)
-      })
-    })
+    // const subCombMap = new Map<string, string[]>()
+
+    // Array.from(combs.entries()).forEach(([item, listIds]) => {
+    //   const id = listIds.join(':')
+
+    //   if (!subCombMap.has(id)) {
+    //     // cache the permutations we encounter
+    //     subCombMap.set(
+    //       id,
+    //       makeCombinations(listIds.map((s) => listLabelMap.get(s)))
+    //         .slice(1)
+    //         .map((c) => c.join('_'))
+    //     )
+    //   }
+
+    //   const labels: string[] = subCombMap.get(id)!
+
+    //   labels.forEach((label) => {
+    //     if (!combs2.has(label)) {
+    //       combs2.set(label, new Set())
+    //     }
+
+    //     combs2.get(label)?.add(item)
+    //   })
+    // })
 
     //console.log(combinations)
 
-    combinations.forEach((c) => {
-      const sets = c.map((s) => listLabelMap.get(s)!)
-      const label = sets.join('_')
+    // for (const c of combinations) {
+    //   const sets = c.map((s) => listLabelMap.get(s)!)
+    //   const label = sets.join('_')
 
-      const items: Set<string> = combs2.get(label) ?? EMPTY_SET
+    //   const items: Set<string> = combs.get(label) ?? EMPTY_SET
 
-      let size = items.size
+    //   let size = items.size
 
-      if (size > 0 && !displayProps.isProportional) {
-        if (sets.length === 1) {
-          // all sets have the same size
-          size = DEFAULT_SIZE
-        } else {
-          size = DEFAULT_OVERLAP
-        }
-      }
+    //   if (size > 0 && !displayProps.isProportional) {
+    //     if (sets.length === 1) {
+    //       // all sets have the same size
+    //       size = DEFAULT_SIZE
+    //     } else {
+    //       size = DEFAULT_OVERLAP
+    //     }
+    //   }
 
-      newSets.push({
-        sets,
-        //label: sets.length === 1 && displayProps.showLabels ? label : "",
-        size,
-      })
+    //   newSets.push({
+    //     sets,
+    //     //label: sets.length === 1 && displayProps.showLabels ? label : "",
+    //     size,
+    //   })
 
-      vennMap.set(label, items)
+    //   vennMap.set(label, items)
 
-      maxRows = Math.max(maxRows, items.size)
-    })
+    //   maxRows = Math.max(maxRows, items.size)
+    // }
 
-    setSets(newSets)
+    //setSets(newSets)
     setVennElemMap(vennMap)
 
     setCountMap(countMap)
@@ -488,245 +507,241 @@ function VennPage() {
     openBranch(`Venn Sets`, [df])
   }, [vennElemMap])
 
-  useEffect(() => {
-    if (sets.length === 0) {
-      return
-    }
+  // useEffect(() => {
+  //   const chart = VennDiagram()
+  //     .width(displayProps.w)
+  //     // @ts-expect-error: poor api design
+  //     .height(displayProps.w)
+  //     .duration(0)
+  //     .normalize(displayProps.normalize)
+  //   //displayProps.isProportional)
 
-    const chart = VennDiagram()
-      .width(displayProps.w)
-      // @ts-expect-error: poor api design
-      .height(displayProps.w)
-      .duration(0)
-      .normalize(displayProps.normalize)
-    //displayProps.isProportional)
+  //   const div = d3.select('#venn')
 
-    const div = d3.select('#venn')
+  //   // stop the animation and force refresh
+  //   // so that intersection labels remain
+  //   // in the correct place after resize
+  //   div.select('svg').selectAll('*').remove()
 
-    // stop the animation and force refresh
-    // so that intersection labels remain
-    // in the correct place after resize
-    div.select('svg').selectAll('*').remove()
+  //   div.datum(sets).call(chart)
 
-    div.datum(sets).call(chart)
+  //   //const svg = div.select("svg")
 
-    //const svg = div.select("svg")
+  //   div.select('svg').attr('class', 'absolute')
 
-    div.select('svg').attr('class', 'absolute')
+  //   const tooltip = d3.select('#tooltip') //.attr("class", "venntooltip")
 
-    const tooltip = d3.select('#tooltip') //.attr("class", "venntooltip")
+  //   div
+  //     .selectAll('path')
+  //     .style('stroke-opacity', 0)
+  //     .style('stroke', COLOR_WHITE)
+  //     .style('stroke-width', 3)
+  //     .style('cursor', 'pointer')
 
-    div
-      .selectAll('path')
-      .style('stroke-opacity', 0)
-      .style('stroke', COLOR_WHITE)
-      .style('stroke-width', 3)
-      .style('cursor', 'pointer')
+  //   // force node color
+  //   Array.from(listLabelMap.entries()).forEach(([k, v]) => {
+  //     const d = div.selectAll(`g[data-venn-sets='${v}']`)
 
-    // force node color
-    Array.from(listLabelMap.entries()).forEach(([k, v]) => {
-      const d = div.selectAll(`g[data-venn-sets='${v}']`)
+  //     d.selectAll('path')
+  //       .style('fill', colorMap[k]!.fill)
+  //       .style('fill-opacity', displayProps.isFilled ? 1 : 0)
 
-      d.selectAll('path')
-        .style('fill', colorMap[k]!.fill)
-        .style('fill-opacity', displayProps.isFilled ? 1 : 0)
+  //     if (displayProps.isOutlined) {
+  //       d.selectAll('path')
+  //         .style('stroke', colorMap[k]!.stroke)
+  //         .style('stroke-opacity', 1)
+  //     }
 
-      if (displayProps.isOutlined) {
-        d.selectAll('path')
-          .style('stroke', colorMap[k]!.stroke)
-          .style('stroke-opacity', 1)
-      }
+  //     d.selectAll('text').style('fill', colorMap[k]!.color)
+  //   })
 
-      d.selectAll('text').style('fill', colorMap[k]!.color)
-    })
+  //   // find the pieces who are labelled and where the
+  //   // label contains "_" as these are the ones that
+  //   // are intersections and whose labels are missing
+  //   // from the venn diagram
 
-    // find the pieces who are labelled and where the
-    // label contains "_" as these are the ones that
-    // are intersections and whose labels are missing
-    // from the venn diagram
+  //   //div.select("svg").select("#size-group").remove()
+  //   //div.select("svg").append("g").attr("id", "size-group")
 
-    //div.select("svg").select("#size-group").remove()
-    //div.select("svg").append("g").attr("id", "size-group")
+  //   if (!displayProps.isProportional) {
+  //     Array.from(vennElemMap.entries())
+  //       //.filter(([k, v]) => k.includes("_"))
+  //       .forEach(([k, v]) => {
+  //         const d = div.selectAll(`g[data-venn-sets='${k}']`)
 
-    if (!displayProps.isProportional) {
-      Array.from(vennElemMap.entries())
-        //.filter(([k, v]) => k.includes("_"))
-        .forEach(([k, v]) => {
-          const d = div.selectAll(`g[data-venn-sets='${k}']`)
+  //         if (d) {
+  //           const path = d.select(k.includes('_') ? 'path' : 'tspan')
 
-          if (d) {
-            const path = d.select(k.includes('_') ? 'path' : 'tspan')
+  //           // set the opacity of the auto labels
+  //           if (!k.includes('_')) {
+  //             path.attr('opacity', displayProps.showLabels ? 1 : 0)
+  //           }
 
-            // set the opacity of the auto labels
-            if (!k.includes('_')) {
-              path.attr('opacity', displayProps.showLabels ? 1 : 0)
-            }
+  //           if (path) {
+  //             const node = path.node()
 
-            if (path) {
-              const node = path.node()
+  //             if (node) {
+  //               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //               // @ts-expect-error
+  //               const box = node.getBBox()
 
-              if (node) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
-                const box = node.getBBox()
+  //               const idx = labelToIndexMap.get(k) ?? -1
 
-                const idx = labelToIndexMap.get(k) ?? -1
+  //               div
+  //                 .select('svg')
+  //                 .append('text')
+  //                 .attr('x', box.x + 0.5 * box.width)
+  //                 .attr(
+  //                   'y',
+  //                   box.y +
+  //                     0.5 * box.height +
+  //                     (k.includes('_') ? 0 : LABEL_Y_OFFSET)
+  //                 )
+  //                 .style(
+  //                   'fill',
+  //                   idx !== -1
+  //                     ? colorMap[idx]!.color
+  //                     : displayProps.intersectionColor
+  //                 )
+  //                 .attr('text-anchor', 'middle')
+  //                 .attr('dominant-baseline', 'middle')
+  //                 .attr('opacity', displayProps.showCounts ? 1 : 0)
+  //                 .text(v.size.toLocaleString())
+  //             }
+  //           }
+  //         }
+  //       })
+  //   }
 
-                div
-                  .select('svg')
-                  .append('text')
-                  .attr('x', box.x + 0.5 * box.width)
-                  .attr(
-                    'y',
-                    box.y +
-                      0.5 * box.height +
-                      (k.includes('_') ? 0 : LABEL_Y_OFFSET)
-                  )
-                  .style(
-                    'fill',
-                    idx !== -1
-                      ? colorMap[idx]!.color
-                      : displayProps.intersectionColor
-                  )
-                  .attr('text-anchor', 'middle')
-                  .attr('dominant-baseline', 'middle')
-                  .attr('opacity', displayProps.showCounts ? 1 : 0)
-                  .text(v.size.toLocaleString())
-              }
-            }
-          }
-        })
-    }
+  //   // add listeners to all the groups to display tooltip on mouseover
+  //   div
+  //     .selectAll('g')
+  //     .on('mouseover', function (_e, d) {
+  //       sortAreas(div, d)
 
-    // add listeners to all the groups to display tooltip on mouseover
-    div
-      .selectAll('g')
-      .on('mouseover', function (_e, d) {
-        sortAreas(div, d)
+  //       const selection = d3.select(this)
 
-        const selection = d3.select(this)
+  //       const vennId = selection.attr('data-venn-sets')
 
-        const vennId = selection.attr('data-venn-sets')
+  //       // highlight the current path
 
-        // highlight the current path
+  //       const overlapSet = vennElemMap.get(vennId) ?? EMPTY_SET
 
-        const overlapSet = vennElemMap.get(vennId) ?? EMPTY_SET
+  //       // Display a tooltip with the current size
+  //       tooltip.transition().duration(300).style('opacity', 0.9)
+  //       tooltip.text(`${overlapSet.size} item${overlapSet.size > 1 ? 's' : ''}`)
 
-        // Display a tooltip with the current size
-        tooltip.transition().duration(300).style('opacity', 0.9)
-        tooltip.text(`${overlapSet.size} item${overlapSet.size > 1 ? 's' : ''}`)
+  //       if (!displayProps.isOutlined) {
+  //         // sort all the areas relative to the current item
 
-        if (!displayProps.isOutlined) {
-          // sort all the areas relative to the current item
+  //         selection
+  //           .transition('tooltip')
+  //           .duration(300)
+  //           .select('path')
+  //           //.style("stroke-width", 3)
+  //           //.style("fill-opacity", d.sets.length == 1 ? 0.4 : 0.1)
+  //           .style('stroke-opacity', 1)
+  //         //.style("stroke", "#fff")
+  //       }
+  //     })
 
-          selection
-            .transition('tooltip')
-            .duration(300)
-            .select('path')
-            //.style("stroke-width", 3)
-            //.style("fill-opacity", d.sets.length == 1 ? 0.4 : 0.1)
-            .style('stroke-opacity', 1)
-          //.style("stroke", "#fff")
-        }
-      })
+  //     .on('mousedown', function (_e, d) {
+  //       // sort all the areas relative to the current item
+  //       sortAreas(div, d)
 
-      .on('mousedown', function (_e, d) {
-        // sort all the areas relative to the current item
-        sortAreas(div, d)
+  //       // highlight the current path
+  //       const selection = d3.select(this)
+  //       const vennId = selection.attr('data-venn-sets')
 
-        // highlight the current path
-        const selection = d3.select(this)
-        const vennId = selection.attr('data-venn-sets')
+  //       const overlapSet = vennElemMap.get(vennId) ?? EMPTY_SET
 
-        const overlapSet = vennElemMap.get(vennId) ?? EMPTY_SET
+  //       // label the header and remove counts from list ids
 
-        // label the header and remove counts from list ids
+  //       const ids = vennId.split('_')
 
-        const ids = vennId.split('_')
+  //       const label = `There ${
+  //         overlapSet.size !== 1 ? 'are' : 'is'
+  //       } ${overlapSet.size.toLocaleString()} item${
+  //         overlapSet.size !== 1 ? 's' : ''
+  //       } in ${ids.length > 1 ? 'the intersection of' : ''} ${ids
+  //         .map((x) => x.replace(/ \(.+/, ''))
+  //         .join(' AND ')}`
 
-        const label = `There ${
-          overlapSet.size !== 1 ? 'are' : 'is'
-        } ${overlapSet.size.toLocaleString()} item${
-          overlapSet.size !== 1 ? 's' : ''
-        } in ${ids.length > 1 ? 'the intersection of' : ''} ${ids
-          .map((x) => x.replace(/ \(.+/, ''))
-          .join(' AND ')}`
+  //       if (overlapRef.current) {
+  //         // format the intersection of results into a string.
+  //         // We use originalMap to convert the lowercase items
+  //         // back to their original state, though we only keep
+  //         // one such state for each id. Thus if you mix cases
+  //         // for a label, e.g. Lab1, lAb1, LaB1, only one of the
+  //         // original labels will be used since the intersection
+  //         // doesn't know which label to pick from.
+  //         overlapRef.current.value = [
+  //           `#${label}`,
+  //           ...[...overlapSet].sort().map((s) => _originalMap.get(s)),
+  //         ].join('\n')
+  //       }
 
-        if (overlapRef.current) {
-          // format the intersection of results into a string.
-          // We use originalMap to convert the lowercase items
-          // back to their original state, though we only keep
-          // one such state for each id. Thus if you mix cases
-          // for a label, e.g. Lab1, lAb1, LaB1, only one of the
-          // original labels will be used since the intersection
-          // doesn't know which label to pick from.
-          overlapRef.current.value = [
-            `#${label}`,
-            ...[...overlapSet].sort().map((s) => _originalMap.get(s)),
-          ].join('\n')
-        }
+  //       if (intersectLabelRef.current) {
+  //         // label the header and remove counts from list ids
 
-        if (intersectLabelRef.current) {
-          // label the header and remove counts from list ids
+  //         intersectLabelRef.current.innerText = label
+  //       }
+  //     })
 
-          intersectLabelRef.current.innerText = label
-        }
-      })
+  //     .on('mousemove', function (event) {
+  //       const [x, y] = d3.pointer(event)
 
-      .on('mousemove', function (event) {
-        const [x, y] = d3.pointer(event)
+  //       tooltip.style('left', x + 20 + 'px').style('top', y + 20 + 'px')
+  //     })
 
-        tooltip.style('left', x + 20 + 'px').style('top', y + 20 + 'px')
-      })
+  //     .on('mouseout', function () {
+  //       const selection = d3.select(this)
 
-      .on('mouseout', function () {
-        const selection = d3.select(this)
+  //       // determine if id represents one of the 4 circles
 
-        // determine if id represents one of the 4 circles
+  //       tooltip.transition().duration(300).style('opacity', 0)
 
-        tooltip.transition().duration(300).style('opacity', 0)
+  //       if (!displayProps.isOutlined) {
+  //         selection
+  //           .transition('tooltip')
+  //           .duration(300)
+  //           .select('path')
+  //           .style('stroke-opacity', 0)
+  //       }
+  //       //.style("stroke-width", 0)
+  //       //.style("fill-opacity", d.sets.length == 1 ? 0.25 : 0.0)
+  //       //.style("stroke-opacity", 0)
+  //     })
 
-        if (!displayProps.isOutlined) {
-          selection
-            .transition('tooltip')
-            .duration(300)
-            .select('path')
-            .style('stroke-opacity', 0)
-        }
-        //.style("stroke-width", 0)
-        //.style("fill-opacity", d.sets.length == 1 ? 0.25 : 0.0)
-        //.style("stroke-opacity", 0)
-      })
+  //   if (intersectLabelRef.current) {
+  //     // label the header and remove counts from list ids
 
-    if (intersectLabelRef.current) {
-      // label the header and remove counts from list ids
+  //     intersectLabelRef.current.innerText = 'Items List'
+  //   }
 
-      intersectLabelRef.current.innerText = 'Items List'
-    }
+  //   if (overlapRef.current) {
+  //     // label the header and remove counts from list ids
 
-    if (overlapRef.current) {
-      // label the header and remove counts from list ids
+  //     overlapRef.current.value = ''
+  //   }
 
-      overlapRef.current.value = ''
-    }
+  //   // if (sets.length > 0) {
+  //   //   const g = div.select(
+  //   //     `g[data-venn-sets='${listIds
+  //   //       .map(i => listLabelWithNums[i])
+  //   //       .join("_")}']`,
+  //   //   )
 
-    // if (sets.length > 0) {
-    //   const g = div.select(
-    //     `g[data-venn-sets='${listIds
-    //       .map(i => listLabelWithNums[i])
-    //       .join("_")}']`,
-    //   )
+  //   //   g.append("text").text(sets[sets.length - 1].size.toString())
 
-    //   g.append("text").text(sets[sets.length - 1].size.toString())
+  //   //   div
+  //   //     .select("svg")
+  //   //     .append("text")
+  //   //     .text(sets[sets.length - 1].size.toString())
 
-    //   div
-    //     .select("svg")
-    //     .append("text")
-    //     .text(sets[sets.length - 1].size.toString())
-
-    //   console.log("g", g.node().getBBox())
-    // }
-  }, [sets, colorMap])
+  //   //   console.log("g", g.node().getBBox())
+  //   // }
+  // }, [colorMap])
 
   useEffect(() => {
     updateProps({ ...displayProps, scale: zoom })
@@ -1301,11 +1316,17 @@ function VennPage() {
                     scale={scale}
                     width={displayProps.w}
                     height={displayProps.w}
-                  />
-                  <div
+                  >
+                    <SvgVennDiagram
+                      vennElemMap={vennElemMap}
+                      width={displayProps.w}
+                      height={displayProps.w}
+                    />
+                  </BaseSvg>
+                  {/* <div
                     id="tooltip"
                     className="venntooltip absolute z-(--z-modal) rounded-theme bg-black/80 px-4 py-2 text-white opacity-0"
-                  />
+                  />   */}
                 </div>
               </Card>
             </ResizablePanel>

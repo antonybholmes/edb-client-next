@@ -1433,6 +1433,10 @@
         {
           "msg": "Switched to NextJS auth0",
           "date": "2025-09-17T14:14:50.688Z"
+        },
+        {
+          "msg": "UI tweaks",
+          "date": "2025-09-17T18:02:44.274Z"
         }
       ],
       "changed": [

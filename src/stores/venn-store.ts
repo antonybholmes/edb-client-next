@@ -3,7 +3,7 @@ import { COLOR_WHITE } from '@lib/color/color'
 import { persistentAtom } from '@nanostores/persistent'
 import { useStore } from '@nanostores/react'
 
-export const PLOT_W = 600
+export const PLOT_W = 1000
 
 export interface IVennStore {
   showCounts: boolean
@@ -47,7 +47,7 @@ const DEFAULT_SETTINGS: IVennStore = {
 //const localStorageMap = persistentMap("venn:", { ...DEFAULT_VENN_STORE })
 
 const localStorageMap = persistentAtom<IVennStore>(
-  `${APP_ID}:module:venn:settings:v1`,
+  `${APP_ID}:module:venn:settings:v3`,
   {
     ...DEFAULT_SETTINGS,
   },

@@ -1,5 +1,12 @@
 # Changelog
 
+## 26.6 (Sep, 2025)
+
+### Changed
+
+- Added simplified SVG Venn diagram creator.
+
+
 ## 26.4 (Sep, 2025)
 
 ### Changed

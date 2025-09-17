@@ -15,15 +15,22 @@ export function numSort(a: number[]) {
 }
 
 export function makeCombinations<T>(items: T[]): T[][] {
-  const combinations: T[][] = [[]]
+  const result: T[][] = [[]]
 
-  items.forEach((item: T) => {
-    combinations.slice().forEach((comb: T[]) => {
-      combinations.push(comb.concat([item]))
-    })
-  })
+  for (const item of items) {
+    for (const combo of [...result]) {
+      result.push([...combo, item])
+    }
+  }
 
-  return combinations
+  // remove the empty set
+  return result
+    .slice(1)
+    .sort((a, b) =>
+      a.length !== b.length
+        ? a.length - b.length
+        : a.join(',').localeCompare(b.join(','))
+    )
 }
 
 export function end<T>(data: T[]): T {
