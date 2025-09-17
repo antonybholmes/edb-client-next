@@ -8,7 +8,7 @@ interface IProps {
   vennElemMap: Map<string, Set<string>>
   width?: number
   height?: number
-  overlapLabels: { [key: string]: { color: string; label: string } }
+  overlapLabels?: { [key: string]: { color: string; label: string } }
 }
 
 export function SVGThreeWayVenn({
