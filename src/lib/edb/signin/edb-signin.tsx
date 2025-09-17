@@ -56,7 +56,7 @@ interface IProps {
   redirectUrl?: string
 }
 
-export function EDBSignIn({ apiKey = '', signInMode = 'oauth2' }: IProps) {
+export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
   const router = useRouter()
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
