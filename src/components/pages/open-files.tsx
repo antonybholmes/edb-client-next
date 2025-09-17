@@ -93,7 +93,7 @@ export const DEFAULT_PARSE_OPTS: IParseOptions = {
 function getFileTypes(fileTypes: string[]) {
   return fileTypes
     .sort()
-    .map(t => `.${t}`)
+    .map((t) => `.${t}`)
     .join(', ')
 }
 
@@ -129,6 +129,7 @@ export function OpenFiles({
   multiple = false,
   fileTypes = ['txt', 'tsv', 'vst', 'xlsx'],
 }: IProps) {
+  console.log('render open files', open)
   const ref = useRef<HTMLInputElement>(null)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -216,13 +217,13 @@ export function readFile(file: File): Promise<string> {
     const reader = new FileReader()
 
     // Define error callback
-    reader.onerror = error => reject(error)
+    reader.onerror = (error) => reject(error)
 
     // Read the file as text (can be changed to readAsDataURL or others based on your needs)
     //reader.readAsText(file);
 
     if (file.name.includes('xlsx')) {
-      reader.onload = e => {
+      reader.onload = (e) => {
         const result = e.target?.result
 
         if (result) {
@@ -351,7 +352,7 @@ export function onBinaryFileChange(
   try {
     const fileReader = new FileReader()
 
-    fileReader.onload = e => {
+    fileReader.onload = (e) => {
       const result = e.target?.result
 
       if (result) {
@@ -453,7 +454,7 @@ export async function filesToDataFrames(
 
         // try some type conversion on the raw data
         const data = t.data.map((row: string[]) =>
-          row.map(c => makeCell(c, keepDefaultNA))
+          row.map((c) => makeCell(c, keepDefaultNA))
         )
 
         let rowIndex: BaseDataFrame | undefined = undefined
@@ -462,11 +463,11 @@ export async function filesToDataFrames(
           const columns =
             t.indexNames.length > 0
               ? t.indexNames
-              : range(indexCols).map(i => `${DEFAULT_INDEX_NAME} ${i + 1}`)
+              : range(indexCols).map((i) => `${DEFAULT_INDEX_NAME} ${i + 1}`)
 
           rowIndex = new DataFrame({
             data: t.index.map((row: string[]) =>
-              row.map(c => makeCell(c, keepDefaultNA))
+              row.map((c) => makeCell(c, keepDefaultNA))
             ),
             columns,
           })
@@ -477,7 +478,7 @@ export async function filesToDataFrames(
         if (t.columns.length > 0) {
           colIndex = new DataFrame({
             data: t.columns.map((col: string[]) =>
-              col.map(c => makeCell(c, keepDefaultNA))
+              col.map((c) => makeCell(c, keepDefaultNA))
             ),
             columns: [DEFAULT_COLUMN_INDEX_NAME],
           })

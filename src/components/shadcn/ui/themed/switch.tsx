@@ -58,7 +58,7 @@ const TOGGLE_CLS = cn(
 
 const THUMB_CLS = cn(
   'absolute shadow-sm pointer-events-none aspect-square shrink-0',
-  'w-4.5 h-4.5 rounded-full bg-white z-30 left-[2px] shadow-md',
+  'w-4 h-4 rounded-full bg-white z-30 left-[2px] shadow-md',
   'top-1/2 -translate-y-1/2',
   'data-[checked=false]:left-[2px] data-[checked=true]:right-[2px]'
 )
@@ -121,11 +121,11 @@ export const Switch = forwardRef<
     tl.to(
       thumbRef.current,
       {
-        width: checked || hover ? '1.4rem' : '1.125rem',
+        width: checked || hover ? '1.25rem' : '1rem',
 
         //left: hover ? 2 : 8,
         //scaleX: hover ? 1.5 : 1,
-        transform: checked ? 'translate(0.6rem, -50%)' : 'translate(0, -50%)',
+        transform: checked ? 'translate(0.5rem, -50%)' : 'translate(0, -50%)',
         duration,
         ease: 'power3.out',
       },
@@ -171,7 +171,7 @@ export const Switch = forwardRef<
       data-enabled={!disabled}
       //onCheckedChange={_onClick}
       className={TOGGLE_CLS}
-      style={{ height: 'calc(1.125rem + 4px)', width: 'calc(2rem + 4px)' }}
+      style={{ height: 'calc(1rem + 4px)', width: 'calc(1.75rem + 4px)' }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       onMouseDown={() => setPressed(true)}

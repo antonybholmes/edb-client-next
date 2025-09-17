@@ -33,7 +33,6 @@ import {
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_EXPORT,
   TEXT_SAVE_AS,
-  TEXT_SAVE_IMAGE,
   TEXT_SAVE_TABLE,
   type IDialogParams,
 } from '@/consts'
@@ -51,7 +50,6 @@ import { type ITab } from '@components/tabs/tab-provider'
 import { ExportIcon } from '@icons/export-icon'
 import { FileIcon } from '@icons/file-icon'
 import { FileImageIcon } from '@icons/file-image-icon'
-import { SaveIcon } from '@icons/save-icon'
 import { BaseCol } from '@layout/base-col'
 import { BaseRow } from '@layout/base-row'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
@@ -254,15 +252,8 @@ export function MotifsPage() {
       id: 'Home',
       content: (
         <>
-          <ToolbarTabGroup title="File">
-            {/* <ToolbarOpenFile
-              onOpenChange={open => {
-                if (open) {
-                  
-                }
-              }}
-              multiple={true}
-            /> */}
+          {/* <ToolbarTabGroup title="File">
+             
 
             <ToolbarIconButton
               title={TEXT_SAVE_IMAGE}
@@ -272,11 +263,11 @@ export function MotifsPage() {
                 })
               }
             >
-              <SaveIcon />
+              <DownloadIcon />
             </ToolbarIconButton>
           </ToolbarTabGroup>
 
-          <ToolbarSeparator />
+          <ToolbarSeparator /> */}
 
           <ToolbarTabGroup title="Options" className="gap-x-1">
             {/* <Tabs

@@ -4,6 +4,7 @@
 
 ### Changed
 
+- UI tweaks.
 - Switched to NextJS auth0.
 - Bug fixes and updates.
 

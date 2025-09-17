@@ -36,15 +36,48 @@ export const HISTORY_ACTION_ADD_SHEET = 'add-sheet'
 export const HISTORY_ACTION_ADD_PLOTS = 'add-plots'
 export const HISTORY_ACTION_REMOVE_PLOT = 'remove-plot'
 export const HISTORY_ACTION_REMOVE_STEP = 'remove-step'
-export const HISTORY_ACTION_REMOVE_SHEET = 'remove-sheet'
+export const HISTORY_ACTION_REMOVE_SHEETS = 'remove-sheets'
 export const HISTORY_ACTION_REMOVE_BRANCH = 'remove-branch'
 export const HISTORY_ACTION_RESET_BRANCH = 'reset-branch'
 export const HISTORY_ACTION_REORDER_SHEETS = 'reorder-sheets'
 export const HISTORY_ACTION_REORDER_PLOTS = 'reorder-plots'
-export const HISTORY_ACTION_UPDATE_PLOT = 'update-plot'
+export const HISTORY_ACTION_UPDATE_PLOTS = 'update-plots'
 export const HISTORY_ACTION_UNDO = 'undo'
 export const HISTORY_ACTION_REDO = 'redo'
 export const HISTORY_ACTION_RESET = 'reset'
+
+export type HistoryEvent =
+  | 'init-history'
+  | 'open-app'
+  | 'goto-app'
+  | 'open-branch'
+  | 'goto-branch'
+  | 'goto-step'
+  | 'goto-sheet'
+  | 'goto-plot'
+  | 'add-step'
+  | 'add-sheets'
+  | 'add-plots'
+  | 'remove-plot'
+  | 'remove-step'
+  | 'remove-sheet'
+  | 'remove-branch'
+  | 'reset-branch'
+  | 'add-groups'
+  | 'update-groups'
+  | 'remove-groups'
+  | 'reorder-groups'
+  | 'reorder-sheets'
+  | 'reorder-plots'
+  | 'update-plots'
+  | 'update-props'
+  | 'add-genesets'
+  | 'update-genesets'
+  | 'reorder-genesets'
+  | 'remove-genesets'
+  | 'undo'
+  | 'redo'
+  | 'reset'
 
 export interface IHistoryComp {
   id: string
@@ -266,6 +299,7 @@ export type HistoryOpenBranch = (
 
 interface IHistoryStore {
   history: IHistoryState
+  // A record of actions taken to modify history
   historyActions: { action: string; ids: string[] }[]
 
   openApp: (addr: string) => void
@@ -329,7 +363,7 @@ interface IHistoryStore {
 
 function init(): {
   history: IHistoryState
-  historyActions: { action: string; ids: string[] }[]
+  historyActions: { action: HistoryEvent; ids: string[] }[]
 } {
   const step = newHistoryStep('Load default sheet', [DATAFRAME_100x26])
 
@@ -801,7 +835,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => ({
 
         state.history.plotMap[plot.id] = plot
 
-        logAction('update-plot', [plot.id], state)
+        logAction('update-plots', [plot.id], state)
       })
     )
   },
@@ -896,7 +930,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => ({
 
         state.history.groupMap[group.id] = group
 
-        logAction('update-group', [group.id], state)
+        logAction('update-groups', [group.id], state)
       })
     )
   },
@@ -970,7 +1004,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => ({
 
         state.history.genesetMap[geneset.id] = geneset
 
-        logAction('update-geneset', [geneset.id], state)
+        logAction('update-genesets', [geneset.id], state)
       })
     )
   },
@@ -1021,7 +1055,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => ({
   },
 }))
 
-export type HistoryAction =
+export type HistoryDispatchAction =
   | {
       type: 'open-app'
       name: string
@@ -1166,7 +1200,7 @@ export function useHistory(): {
 
   undo: () => void
   redo: () => void
-  dispatch: (action: HistoryAction) => void
+  dispatch: (action: HistoryDispatchAction) => void
 } {
   //const historyState = useHistoryStore(state => state.history)
 
@@ -1214,7 +1248,9 @@ export function useHistory(): {
   const { branch, step, sheet, sheets, plot, plots, groups, genesets } =
     useCurrentBranch()
 
-  const dispatch = useCallback(function dispatch(action: HistoryAction) {
+  const dispatch = useCallback(function dispatch(
+    action: HistoryDispatchAction
+  ) {
     switch (action.type) {
       case HISTORY_ACTION_OPEN_APP:
         openApp(action.name)
@@ -1709,7 +1745,7 @@ export function findSheet(
     .find((s) => s.id === id || s.name === id)
 }
 
-function logAction(action: string, ids: string[], store: IHistoryStore) {
+function logAction(action: HistoryEvent, ids: string[], store: IHistoryStore) {
   store.historyActions.push({ action, ids })
   store.historyActions = store.historyActions.slice(
     Math.max(0, store.historyActions.length - MAX_HISTORY_ITEMS)

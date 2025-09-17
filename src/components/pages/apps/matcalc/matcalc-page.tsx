@@ -802,6 +802,7 @@ export function MatcalcPage() {
             </ToolbarIconButton>
           </ToolbarTabGroup>
           <ToolbarSeparator />
+
           <ToolbarTabGroup title="Plot">
             <ToolbarIconButton
               onClick={() => makeClusterMap(false)}
@@ -830,6 +831,24 @@ export function MatcalcPage() {
             >
               <BoxWhiskerChartIcon />
             </ToolbarIconButton>
+          </ToolbarTabGroup>
+          <ToolbarSeparator />
+
+          <ToolbarTabGroup title="Gene Expression">
+            <ToolbarButton
+              title="Download Gene Expression Data"
+              onClick={() => setShowDialog({ id: randId('gex'), params: {} })}
+            >
+              Gene Expression
+            </ToolbarButton>
+            {/* <ToolbarButton
+              title="Download gene expression metadata"
+              onClick={() =>
+                setShowDialog({ id: randId('gex-metadata'), params: {} })
+              }
+            >
+              Metadata
+            </ToolbarButton> */}
           </ToolbarTabGroup>
           <ToolbarSeparator />
         </>
@@ -1035,23 +1054,6 @@ export function MatcalcPage() {
             >
               GCT
             </ToolbarButton>
-          </ToolbarTabGroup>
-          <ToolbarSeparator />
-          <ToolbarTabGroup title="Gene Expression">
-            <ToolbarButton
-              title="Download Gene Expression Data"
-              onClick={() => setShowDialog({ id: randId('gex'), params: {} })}
-            >
-              Gene Expression
-            </ToolbarButton>
-            {/* <ToolbarButton
-              title="Download gene expression metadata"
-              onClick={() =>
-                setShowDialog({ id: randId('gex-metadata'), params: {} })
-              }
-            >
-              Metadata
-            </ToolbarButton> */}
           </ToolbarTabGroup>
           <ToolbarSeparator />
         </>
@@ -1321,6 +1323,21 @@ export function MatcalcPage() {
 
   return (
     <>
+      {showDialog.id.startsWith('open:') && (
+        <OpenFiles
+          open={showDialog.id}
+          //onOpenChange={() => setShowDialog({...NO_DIALOG})}
+          onFileChange={(message, files) =>
+            onTextFileChange(message, files, (files) => {
+              setShowDialog({
+                id: randId('open-file-dialog'),
+                params: { files },
+              })
+            })
+          }
+        />
+      )}
+
       {showDialog.id.startsWith('open-file-dialog') && (
         <OpenDialog
           files={showDialog.params!.files as ITextFileOpen[]}
@@ -1533,21 +1550,6 @@ export function MatcalcPage() {
         {/* {mainContent} */}
 
         {/* </HelpSlideBar> */}
-
-        {showDialog.id.startsWith('open:') && (
-          <OpenFiles
-            open={showDialog.id}
-            //onOpenChange={() => setShowDialog({...NO_DIALOG})}
-            onFileChange={(message, files) =>
-              onTextFileChange(message, files, (files) => {
-                setShowDialog({
-                  id: randId('open-file-dialog'),
-                  params: { files },
-                })
-              })
-            }
-          />
-        )}
       </ShortcutLayout>
     </>
   )

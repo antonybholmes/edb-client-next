@@ -16,7 +16,6 @@ import {
   FOCUS_INSET_RING_CLS,
   FOCUS_RING_CLS,
   INPUT_BORDER_CLS,
-  XS_ICON_BUTTON_CLS,
 } from '@/theme'
 
 import { useState } from 'react'
@@ -85,12 +84,9 @@ export const PRESET_COLORS = [
 //   "rounded-full",
 // )
 
-export const BASE_SIMPLE_COLOR_EXT_CLS = cn(XS_ICON_BUTTON_CLS, FOCUS_RING_CLS)
+//export const BASE_SIMPLE_COLOR_EXT_CLS = cn(XS_ICON_BUTTON_CLS, FOCUS_RING_CLS)
 
-export const SIMPLE_COLOR_EXT_CLS = cn(
-  BASE_SIMPLE_COLOR_EXT_CLS,
-  'rounded-full'
-)
+export const SIMPLE_COLOR_EXT_CLS = cn('w-5 h-5 rounded-full', FOCUS_RING_CLS)
 
 export interface IProps extends IButtonProps {
   color: string
@@ -234,7 +230,7 @@ export function ColorPickerPopover({
   //console.log(color)
 
   return (
-    <Popover open={o} onOpenChange={open => _openChanged(open)}>
+    <Popover open={o} onOpenChange={(open) => _openChanged(open)}>
       {/* <Tooltip content={tooltip}>
       <DropdownMenuTrigger
         className={cn(
@@ -338,7 +334,7 @@ export function ColorPickerUI({
         </VCenterRow>
       </BaseCol>
       <VCenterRow className="gap-px flex-wrap">
-        {PRESET_COLORS.map(presetColor => {
+        {PRESET_COLORS.map((presetColor) => {
           const prgb = hexToRgba(presetColor)
           const ps = prgb[0] + prgb[1] + prgb[2]
 
@@ -383,7 +379,7 @@ export function ColorPickerUI({
         <SwitchPropRow
           title="Show"
           checked={_show}
-          onCheckedChange={v => {
+          onCheckedChange={(v) => {
             setShow(v)
             onShowColor?.(v)
           }}
@@ -394,7 +390,7 @@ export function ColorPickerUI({
         <PropRow title="Width">
           <NumericalInput
             value={width}
-            onNumChange={v => onWidthChange?.(v)}
+            onNumChange={(v) => onWidthChange?.(v)}
             min={0}
             step={1}
             max={1000}

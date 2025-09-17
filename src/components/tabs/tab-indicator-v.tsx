@@ -16,9 +16,9 @@ export function TabIndicatorV({ w = 0.1 }: { w?: number }) {
     gsap.to([line1Ref.current, line2Ref.current], {
       y: tabIndicatorPos.x,
       height: tabIndicatorPos.size,
-      duration: 0.2,
-      stagger: 0.075,
-      //ease: 'power.inOut',
+      duration: 0.5,
+      stagger: 0.05,
+      ease: 'power3.inOut',
     })
   }, [tabIndicatorPos.x, tabIndicatorPos.size])
 

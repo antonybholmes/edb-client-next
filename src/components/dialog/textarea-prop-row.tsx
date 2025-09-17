@@ -19,14 +19,12 @@ export function TextareaPropRow({
   leftChildren,
   rightChildren,
   textareaCls,
-  className,
+
   children,
   ...props
 }: IProps) {
   return (
-    <BaseRow
-      className={cn('gap-x-2 justify-between items-center min-h-8', className)}
-    >
+    <BaseRow className={cn('gap-x-8 justify-between items-center min-h-8')}>
       <Label>{title}</Label>
 
       {children && <VCenterRow className="gap-x-2">{children}</VCenterRow>}

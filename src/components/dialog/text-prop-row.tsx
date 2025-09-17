@@ -28,7 +28,7 @@ export function TextPropRow({
 }: IProps) {
   return (
     <BaseRow
-      className={cn('gap-x-2 justify-between items-center min-h-8', className)}
+      className={cn('gap-x-8 justify-between items-center min-h-8', className)}
     >
       <Label>{title}</Label>
 

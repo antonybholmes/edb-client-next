@@ -1434,6 +1434,12 @@
           "msg": "Switched to NextJS auth0",
           "date": "2025-09-17T14:14:50.688Z"
         }
+      ],
+      "changed": [
+        {
+          "msg": "Simplified history store",
+          "date": "2025-09-17T16:43:34.767Z"
+        }
       ]
     },
     "author": "Antony Holmes",

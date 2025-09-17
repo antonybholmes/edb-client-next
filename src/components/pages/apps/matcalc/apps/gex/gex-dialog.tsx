@@ -35,6 +35,10 @@ import { Textarea } from '@themed/textarea'
 import { useHistory } from '../../history/history-store'
 
 import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from '@/components/shadcn/ui/themed/toggle-group'
+import {
   getAccordionId,
   SettingsAccordionItem,
 } from '@components/dialog/settings/settings-dialog'
@@ -51,8 +55,6 @@ import {
   PopoverSpeechArrow,
   PopoverTrigger,
 } from '@components/shadcn/ui/themed/popover'
-import { Tabs } from '@components/shadcn/ui/themed/tabs'
-import { IOSTabsList } from '@components/tabs/ios-tabs'
 import { HelpButton } from '@help/help-button'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import type { IGexDataset, IGexSearchResult, IGexTechnology } from './gex-store'
@@ -759,15 +761,15 @@ export function GexDialog({
               align="center"
             >
               <PopoverSpeechArrow />
-              <HCenterRow className="pt-2">
+              {/* <HCenterRow className="pt-2">
                 <Tabs
                   value={settings.apps.gex.species}
                   onValueChange={(v) => {
-                    const newOptions = produce(settings, (draft) => {
-                      draft.apps.gex.species = v
-                    })
-
-                    updateSettings(newOptions)
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.apps.gex.species = v
+                      })
+                    )
                   }}
                 >
                   <IOSTabsList
@@ -776,8 +778,32 @@ export function GexDialog({
                     tabs={SPECIES.map((s) => ({ id: s }))}
                   />
                 </Tabs>
-              </HCenterRow>
+              </HCenterRow> */}
 
+              <HCenterRow className="pt-2">
+                <ToggleGroup
+                  //variant="outline"
+                  type="single"
+                  value={settings.apps.gex.species}
+                  onValueChange={(v) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.apps.gex.species = v
+                      })
+                    )
+                  }}
+                >
+                  {SPECIES.map((s) => (
+                    <ToggleGroupItem
+                      value={s}
+                      className="w-16"
+                      aria-label="Filter rows"
+                    >
+                      {s}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              </HCenterRow>
               <ul className="flex flex-col">
                 {TECHNOLOGIES.map((t) => {
                   return (

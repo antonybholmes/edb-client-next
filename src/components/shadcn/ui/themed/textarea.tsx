@@ -10,7 +10,7 @@ import { Label } from './label'
 
 export const TEXTAREA_GROUP_CLS = cn(
   FOCUS_INSET_RING_CLS,
-  'relative data-[readonly=true]:bg-muted/40 grow'
+  'relative data-[readonly=true]:bg-muted/40'
 )
 
 export const textareaVariants = cva(TEXTAREA_GROUP_CLS, {
