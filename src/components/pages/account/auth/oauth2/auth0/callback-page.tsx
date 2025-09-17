@@ -1,25 +1,29 @@
 'use client'
 
 import { VCenterRow } from '@layout/v-center-row'
-import { REDIRECT_URL_PARAM } from '@lib/edb/edb'
+import { MYACCOUNT_ROUTE, REDIRECT_URL_PARAM } from '@lib/edb/edb'
 import { useEdbAuth } from '@lib/edb/edb-auth'
 
-import { useAuth0 } from '@auth0/auth0-react'
 import { Card, CardHeader, CardTitle } from '@themed/card'
 
 import { AppIcon } from '@/components/icons/app-icon'
 import { ThemeLink } from '@/components/link/theme-link'
 import { APP_NAME } from '@/consts'
 import { CenterLayout } from '@/layouts/center-layout'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
+import { httpFetch } from '@/lib/http/http-fetch'
+import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { invalidRedirectUrl } from '../signedout-page'
+
+const ACCESS_TOKEN_URL = '/auth/access-token'
 
 export function CallbackPage() {
   const { signInWithAuth0 } = useEdbAuth()
 
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   const [redirectUrl, setRedirectUrl] = useState<string | null>(null)
   const { signout } = useEdbAuth()
@@ -59,47 +63,92 @@ export function CallbackPage() {
   //   return null
   // }
 
-  const { getAccessTokenSilently, handleRedirectCallback, isLoading, error } =
-    useAuth0()
-
-  console.log('Auth0 loading', isLoading, error)
+  const { data: accessTokenData } = useQuery({
+    queryKey: ['access-token'],
+    queryFn: () =>
+      httpFetch.getJson<{ token: string; scope: string; expires_at: string }>(
+        ACCESS_TOKEN_URL
+      ),
+  })
 
   useEffect(() => {
     async function processCallback() {
       try {
-        const { appState } = await handleRedirectCallback()
+        //const { appState } = await handleRedirectCallback()
 
-        const auth0Token = await getAccessTokenSilently()
+        const auth0Token = accessTokenData!.token //await getAccessTokenSilently()
 
-        console.log('auth0Token', auth0Token)
+        //console.log('auth0Token', auth0Token)
 
         await signInWithAuth0(auth0Token)
 
-        let url = appState[REDIRECT_URL_PARAM]
-
-        console.log('Redirect URL from appState:', appState)
+        let url = searchParams.get(REDIRECT_URL_PARAM) || ''
 
         if (invalidRedirectUrl(url)) {
           // if login triggered from signout page, do not redirect back to it.
           // Instead goto account page. This stops login with immediate log out.
-          url = '/' //MYACCOUNT_ROUTE
+          url = MYACCOUNT_ROUTE
         }
+
+        console.log('Redirect URL from appState:', url)
 
         //console.log('Redirect URL from appState:', url, invalidRedirectUrl(url))
 
-        setRedirectUrl(url)
+        //setRedirectUrl(url)
+        router.push(url)
       } catch (error) {
         console.error('Error handling redirect callback:', error)
       }
     }
 
-    if (
-      window.location.search.includes('code=') &&
-      window.location.search.includes('state=')
-    ) {
+    if (accessTokenData) {
       processCallback()
     }
-  }, [handleRedirectCallback])
+  }, [accessTokenData])
+
+  // console.log('access token', data)
+
+  // const { getAccessTokenSilently, handleRedirectCallback, isLoading, error } =
+  //   useAuth0()
+
+  // console.log('Auth0 loading', isLoading, error)
+
+  // useEffect(() => {
+  //   async function processCallback() {
+  //     try {
+  //       const { appState } = await handleRedirectCallback()
+
+  //       const auth0Token = await getAccessTokenSilently()
+
+  //       console.log('auth0Token', auth0Token)
+
+  //       await signInWithAuth0(auth0Token)
+
+  //       let url = appState[REDIRECT_URL_PARAM]
+
+  //       console.log('Redirect URL from appState:', appState)
+
+  //       if (invalidRedirectUrl(url)) {
+  //         // if login triggered from signout page, do not redirect back to it.
+  //         // Instead goto account page. This stops login with immediate log out.
+  //         url = '/' //MYACCOUNT_ROUTE
+  //       }
+
+  //       //console.log('Redirect URL from appState:', url, invalidRedirectUrl(url))
+
+  //       setRedirectUrl(url)
+  //     } catch (error) {
+  //       console.error('Error handling redirect callback:', error)
+  //     }
+  //   }
+
+  //   if (
+  //     window.location.search.includes('code=') &&
+  //     window.location.search.includes('state=')
+  //   ) {
+  //     processCallback()
+  //   }
+  // }, [handleRedirectCallback])
 
   // useEffect(() => {
   //   async function load() {

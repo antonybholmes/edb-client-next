@@ -30,6 +30,8 @@ import { UserRound } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { truncate } from '../../text/text'
 import {
+  APP_ACCOUNT_AUTH0_CALLBACK_URL,
+  AUTH0_TOOLKIT_LOGIN,
   DEFAULT_BASIC_EDB_USER,
   MYACCOUNT_ROUTE,
   OAUTH2_SIGN_IN_ROUTE,
@@ -196,12 +198,21 @@ export function EDBSignIn({ apiKey = '', signInMode = 'oauth2' }: IProps) {
               <DropdownMenuItem
                 aria-label={TEXT_SIGN_IN}
                 onClick={() => {
-                  const state = {
-                    redirectUrl: MYACCOUNT_ROUTE, //window.location.href
-                  }
+                  // const state = {
+                  //   redirectUrl: MYACCOUNT_ROUTE, //window.location.href
+                  // }
 
-                  console.log('EDBSignIn: loginWithRedirect state', state)
-                  loginWithRedirect({ appState: state })
+                  // console.log('EDBSignIn: loginWithRedirect state', state)
+                  // loginWithRedirect({ appState: state })
+
+                  console.log(
+                    'redirecting to auth0 login',
+                    `${AUTH0_TOOLKIT_LOGIN}?returnTo=${APP_ACCOUNT_AUTH0_CALLBACK_URL}?${REDIRECT_URL_PARAM}=${window.location.pathname}`
+                  )
+
+                  router.push(
+                    `${AUTH0_TOOLKIT_LOGIN}?returnTo=${APP_ACCOUNT_AUTH0_CALLBACK_URL}?${REDIRECT_URL_PARAM}=${window.location.pathname}`
+                  )
                 }}
               >
                 <SignInIcon stroke="" />
