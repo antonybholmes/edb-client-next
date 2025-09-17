@@ -122,7 +122,7 @@ import { ToolbarSeparator } from '@toolbar/toolbar-separator'
 import axios from 'axios'
 import { useHistory } from '../matcalc/history/history-store'
 import MODULE_INFO from './module.json'
-import { SvgVennDiagram } from './venn-diagram'
+import { SVGThreeWayVenn } from './svg-three-way-venn'
 
 interface ISet {
   label?: string
@@ -1317,7 +1317,7 @@ function VennPage() {
                     width={displayProps.w}
                     height={displayProps.w}
                   >
-                    <SvgVennDiagram
+                    <SVGThreeWayVenn
                       vennElemMap={vennElemMap}
                       width={displayProps.w}
                       height={displayProps.w}

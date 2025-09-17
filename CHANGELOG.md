@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Added simplified SVG Venn diagram creator.
 
 

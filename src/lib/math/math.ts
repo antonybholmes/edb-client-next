@@ -1,6 +1,9 @@
 export const PI = Math.PI
 export const MAX_SAFE_INTEGER = BigInt(Number.MAX_SAFE_INTEGER)
 
+export const DEG_TO_RAD = PI / 180
+export const RAD_TO_DEG = 180 / PI
+
 export type ILim = [number, number]
 
 /**

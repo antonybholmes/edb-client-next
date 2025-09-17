@@ -4,9 +4,12 @@ import { persistentAtom } from '@nanostores/persistent'
 import { useStore } from '@nanostores/react'
 
 export interface IVennCircleProps {
+  name: string
   fill: string
   stroke: string
   color: string
+  fillOpacity: number
+  strokeOpacity: number
 }
 
 export const DEFAULT_VENN_CIRCLE_PROPS = {
@@ -17,11 +20,74 @@ export const DEFAULT_VENN_CIRCLE_PROPS = {
 
 export type VennCirclesMap = { [key: string]: IVennCircleProps }
 
-export const DEFAULT_SETTINGS: VennCirclesMap = {
-  0: { fill: '#ff000050', stroke: '#ff0000c0', color: COLOR_WHITE },
-  1: { fill: '#00800050', stroke: '#008000c0', color: COLOR_WHITE },
-  2: { fill: '#0000ff50', stroke: '#0000ffc0', color: COLOR_WHITE },
-  3: { fill: '#FFA50050', stroke: '#FFA500c0', color: COLOR_WHITE },
+export const DEFAULT_CIRCLES: IVennCircleProps[] = [
+  {
+    name: 'A',
+    fill: '#ff0000',
+    stroke: '#ff0000',
+    color: COLOR_WHITE,
+    fillOpacity: 0.3,
+    strokeOpacity: 1,
+  },
+  {
+    name: 'B',
+    fill: '#008000',
+    stroke: '#008000',
+    color: COLOR_WHITE,
+    fillOpacity: 0.3,
+    strokeOpacity: 1,
+  },
+  {
+    name: 'C',
+    fill: '#0000ff',
+    stroke: '#0000ff',
+    color: COLOR_WHITE,
+    fillOpacity: 0.3,
+    strokeOpacity: 1,
+  },
+  {
+    name: 'D',
+    fill: '#FFA500',
+    stroke: '#FFA500',
+    color: COLOR_WHITE,
+    fillOpacity: 0.3,
+    strokeOpacity: 1,
+  },
+]
+
+export const DEFAULT_CIRCLE_MAP: VennCirclesMap = {
+  0: {
+    name: 'A',
+    fill: '#ff0000',
+    stroke: '#ff0000',
+    color: COLOR_WHITE,
+    fillOpacity: 0.5,
+    strokeOpacity: 1,
+  },
+  1: {
+    name: 'B',
+    fill: '#008000',
+    stroke: '#008000',
+    color: COLOR_WHITE,
+    fillOpacity: 0.5,
+    strokeOpacity: 1,
+  },
+  2: {
+    name: 'C',
+    fill: '#0000ff',
+    stroke: '#0000ff',
+    color: COLOR_WHITE,
+    fillOpacity: 0.5,
+    strokeOpacity: 1,
+  },
+  3: {
+    name: 'D',
+    fill: '#FFA500',
+    stroke: '#FFA500',
+    color: COLOR_WHITE,
+    fillOpacity: 0.5,
+    strokeOpacity: 1,
+  },
 }
 
 // const localStorageColors = persistentMap("venn:", {
@@ -31,7 +97,7 @@ export const DEFAULT_SETTINGS: VennCirclesMap = {
 const vennAtom = persistentAtom<VennCirclesMap>(
   `${APP_ID}:module:venn:venn-circles:settings:v1`,
   {
-    ...DEFAULT_SETTINGS,
+    ...DEFAULT_CIRCLE_MAP,
   },
   {
     encode: JSON.stringify,
@@ -84,7 +150,7 @@ export function useVennCircleStore(): [
   }
 
   function reset() {
-    update({ ...DEFAULT_SETTINGS })
+    update({ ...DEFAULT_CIRCLE_MAP })
   }
 
   return [settings, update, reset]
