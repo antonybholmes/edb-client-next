@@ -197,11 +197,11 @@ export function EDBSignIn({ apiKey = '', signInMode = 'oauth2' }: IProps) {
                 aria-label={TEXT_SIGN_IN}
                 onClick={() => {
                   const state = {
-                    redirectUrl: pathname, //window.location.href
+                    redirectUrl: MYACCOUNT_ROUTE, //window.location.href
                   }
 
                   console.log('EDBSignIn: loginWithRedirect state', state)
-                  loginWithRedirect() //{ appState: state })
+                  loginWithRedirect({ appState: state })
                 }}
               >
                 <SignInIcon stroke="" />
