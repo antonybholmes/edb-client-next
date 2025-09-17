@@ -9,6 +9,8 @@ import { useEffect, useState } from 'react'
 
 export function invalidRedirectUrl(url: string): boolean {
   return (
+    url.toLowerCase().includes('signin') ||
+    url.toLowerCase().includes('login') ||
     url.toLowerCase().includes('signout') ||
     url.toLowerCase().includes('signedout') ||
     url.toLowerCase().includes('callback') ||

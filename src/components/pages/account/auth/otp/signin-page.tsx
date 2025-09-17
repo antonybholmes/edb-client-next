@@ -12,11 +12,7 @@ import { Input } from '@/components/shadcn/ui/themed/input'
 import { Label } from '@/components/shadcn/ui/themed/label'
 import { APP_NAME, TEXT_SIGN_IN } from '@/consts'
 import { CenterLayout } from '@/layouts/center-layout'
-import {
-  MYACCOUNT_ROUTE,
-  OTP_SIGN_IN_ROUTE,
-  REDIRECT_URL_PARAM,
-} from '@/lib/edb/edb'
+import { MYACCOUNT_ROUTE, REDIRECT_URL_PARAM } from '@/lib/edb/edb'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -27,6 +23,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { BaseSyntheticEvent, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
+import { invalidRedirectUrl } from '../oauth2/signedout-page'
 
 const FormSchema = z.object({
   email: z.email({
@@ -84,15 +81,20 @@ export function SignInPage() {
 
       console.log('redirectUrl', redirectUrl)
 
-      if (
-        redirectUrl &&
-        redirectUrl.length > 0 &&
-        redirectUrl !== '/' &&
-        redirectUrl !== OTP_SIGN_IN_ROUTE &&
-        redirectUrl.startsWith('/')
-      ) {
-        router.push(redirectUrl)
+      // if (
+      //   redirectUrl &&
+      //   redirectUrl.length > 0 &&
+      //   redirectUrl !== '/' &&
+      //   redirectUrl !== OTP_SIGN_IN_ROUTE &&
+      //   redirectUrl.startsWith('/')
+
+      let url = redirectUrl
+
+      if (invalidRedirectUrl(redirectUrl)) {
+        url = '/'
       }
+
+      router.push(url)
 
       // toast({
       //   title: APP_NAME,

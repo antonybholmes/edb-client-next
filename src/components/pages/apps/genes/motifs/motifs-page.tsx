@@ -23,6 +23,10 @@ import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
 import { useContext, useEffect, useRef, useState } from 'react'
 
 import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from '@/components/shadcn/ui/themed/toggle-group'
+import {
   NO_DIALOG,
   TEXT_CANCEL,
   TEXT_DOWNLOAD_AS_CSV,
@@ -41,10 +45,8 @@ import { DownloadIcon } from '@components/icons/download-icon'
 import type { ISaveAsFormat } from '@components/pages/save-as-dialog'
 import { SaveImageDialog } from '@components/pages/save-image-dialog'
 import { SaveTxtDialog } from '@components/pages/save-txt-dialog'
-import { Tabs } from '@components/shadcn/ui/themed/tabs'
 import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
 import { ThinVResizeHandle } from '@components/split-pane/thin-v-resize-handle'
-import { IOSTabsList } from '@components/tabs/ios-tabs'
 import { type ITab } from '@components/tabs/tab-provider'
 import { ExportIcon } from '@icons/export-icon'
 import { FileIcon } from '@icons/file-icon'
@@ -277,7 +279,7 @@ export function MotifsPage() {
           <ToolbarSeparator />
 
           <ToolbarTabGroup title="Options" className="gap-x-1">
-            <Tabs
+            {/* <Tabs
               value={settings.mode}
               onValueChange={(v) => {
                 updateSettings(
@@ -295,19 +297,22 @@ export function MotifsPage() {
                   { id: 'bits', name: 'Bits' },
                 ]}
               />
-            </Tabs>
+            </Tabs> */}
 
-            {/* <ToggleGroup
-              variant="outline"
+            <ToggleGroup
+              //variant="outline"
               type="single"
-              value={mode}
-              onValueChange={value => {
-                setMode(value as Mode)
+              value={settings.mode}
+              onValueChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.mode = v as Mode
+                  })
+                )
               }}
-              className="rounded-theme flex flex-row overflow-hidden p-0.25 bg-muted"
             >
               <ToggleGroupItem
-                value="Prob"
+                value="prob"
                 className="w-16"
                 aria-label="Probability view"
               >
@@ -315,18 +320,17 @@ export function MotifsPage() {
               </ToggleGroupItem>
 
               <ToggleGroupItem
-                value="Bits"
+                value="bits"
                 className="w-16"
                 aria-label="Bits view"
               >
                 Bits
               </ToggleGroupItem>
-            </ToggleGroup> */}
+            </ToggleGroup>
 
             <ToolbarIconButton
               checked={settings.revComp}
               onClick={() => {
-                console.log('revComp', settings.revComp)
                 updateSettings(
                   produce(settings, (draft) => {
                     draft.revComp = !settings.revComp

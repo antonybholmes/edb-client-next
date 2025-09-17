@@ -9,7 +9,8 @@ export const toggleVariants = cva(
   {
     variants: {
       variant: {
-        default: 'hover:bg-muted/50 data-[state=on]:bg-muted',
+        default:
+          'hover:bg-muted/50 data-[state=on]:bg-muted rounded-theme border border-transparent data-[state=on]:border-border',
         outline:
           'border border-transparent bg-transparent data-[state=on]:font-semibold text-xs data-[state=on]:bg-background data-[state=on]:shadow-xs data-[state=on]:border-border/75 rounded-theme overflow-hidden',
         gray: 'border border-transparent bg-transparent data-[state=off]:hover:bg-faint data-[state=on]:font-semibold text-xs data-[state=on]:bg-faint data-[state=on]:border-border overflow-hidden',
