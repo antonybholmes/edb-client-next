@@ -110,7 +110,7 @@ export const HEADER_LINKS: IHeaderLink[] = [
         name: 'Annotate',
         description: 'Add gene information to locations',
         slug: '/apps/genomic/annotate',
-        mode: 'prod',
+        mode: 'dev',
         color: '#FA8072',
       },
       {

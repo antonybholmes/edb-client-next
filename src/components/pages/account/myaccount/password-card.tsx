@@ -188,6 +188,7 @@ export function PasswordCard() {
         <Button
           variant="theme"
           size="lg"
+          rounded="full"
           onClick={() => btnRef.current?.click()}
           disabled={session?.user.isLocked}
         >

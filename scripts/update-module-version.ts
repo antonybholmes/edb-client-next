@@ -3,6 +3,8 @@ import path from 'path'
 
 const DIR = 'src/components/pages/apps'
 
+const INC = 2
+
 function getAllFiles(dir: string, files: string[] = []) {
   const entries = fs.readdirSync(dir, { withFileTypes: true })
 
@@ -24,7 +26,7 @@ function walk(dir: string) {
   const dirs: string[] = []
   const files: string[] = []
 
-  fs.readdirSync(dir, { withFileTypes: true }).forEach(entry => {
+  fs.readdirSync(dir, { withFileTypes: true }).forEach((entry) => {
     const f = path.join(dir, entry.name)
 
     if (entry.isDirectory()) {
@@ -35,9 +37,9 @@ function walk(dir: string) {
   })
 
   // prioritize dirs
-  dirs.forEach(d => walk(d))
+  dirs.forEach((d) => walk(d))
 
-  const moduleFiles = files.filter(f => f.includes('module.json'))
+  const moduleFiles = files.filter((f) => f.includes('module.json'))
 
   if (moduleFiles.length === 0) {
     // not a proper module
@@ -54,8 +56,8 @@ function walk(dir: string) {
   getAllFiles(dir, filesInDir) //fs.readdirSync(dir).map(f => path.join(dir, f))
 
   const [, modDate] = filesInDir
-    .filter(f => f.match(/(\.ts|\.tsx|\.js|\.jsx|\.astro)/))
-    .map(f => {
+    .filter((f) => f.match(/(\.ts|\.tsx|\.js|\.jsx|\.astro)/))
+    .map((f) => {
       const stats = fs.lstatSync(f)
 
       //console.log(format(stats.mtime, "yyyy MM dd"))
@@ -82,18 +84,18 @@ function walk(dir: string) {
     patch = parseInt(patch)
     build = parseInt(build)
 
-    build++
+    build += INC
 
-    patch++
+    patch += INC
 
     if (patch > 9) {
       patch = 0
-      minor++
+      minor += INC
     }
 
     if (minor > 9) {
       minor = 0
-      major++
+      major += INC
     }
 
     info.version = `${major}.${minor}.${patch}.${build}`

@@ -256,6 +256,7 @@ export function MyAccountPage() {
               <Button
                 variant="theme"
                 size="lg"
+                rounded="full"
                 //className="w-full"
                 onClick={() => btnRef.current?.click()}
               >

@@ -21,6 +21,7 @@ import {
 } from './button'
 import { GLASS_CLS } from './glass'
 
+// Standard height for menu items
 export const MENU_H_CLS = 'h-7'
 
 export const DROPDOWN_MENU_ITEM_CLS = cn(

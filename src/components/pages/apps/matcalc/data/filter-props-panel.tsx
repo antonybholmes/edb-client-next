@@ -8,6 +8,10 @@ import { VCenterRow } from '@layout/v-center-row'
 import { OpenIcon } from '@icons/open-icon'
 import { HCenterRow } from '@layout/h-center-row'
 
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from '@/components/shadcn/ui/themed/toggle-group'
 import { useSearchFilters } from '@/stores/search-filter-store'
 import { FileDropZonePanel } from '@components/file-dropzone-panel'
 import { BaseRow } from '@layout/base-row'
@@ -19,7 +23,6 @@ import { Button } from '@themed/button'
 import { Checkbox } from '@themed/check-box'
 import { toast } from '@themed/crisp'
 import { Textarea } from '@themed/textarea'
-import { BetweenHorizonalStart, BetweenVerticalStart } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useBranch } from '../history/history-store'
 import MODULE_INFO from '../module.json'
@@ -180,7 +183,7 @@ export function FilterPropsPanel({ branchId }: IProps) {
       </HCenterRow> */}
 
       <HCenterRow className="py-2 text-xs gap-x-0.5">
-        <Button
+        {/* <Button
           onClick={() => setFilterMode('Rows')}
           checked={filterMode === 'Rows'}
         >
@@ -193,7 +196,32 @@ export function FilterPropsPanel({ branchId }: IProps) {
         >
           <BetweenVerticalStart className="w-4" />
           <span>Cols</span>
-        </Button>
+        </Button> */}
+
+        <ToggleGroup
+          //variant="outline"
+          type="single"
+          value={filterMode}
+          onValueChange={(v) => {
+            setFilterMode(v)
+          }}
+        >
+          <ToggleGroupItem
+            value="Rows"
+            className="w-12"
+            aria-label="Filter rows"
+          >
+            Rows
+          </ToggleGroupItem>
+
+          <ToggleGroupItem
+            value="Cols"
+            className="w-12"
+            aria-label="Filter columns"
+          >
+            Cols
+          </ToggleGroupItem>
+        </ToggleGroup>
       </HCenterRow>
 
       {/* <VScrollPanel innerClassName="gap-y-2"> */}
