@@ -1,17 +1,10 @@
 import { DEG_TO_RAD } from '@/lib/math/math'
 import { useContext } from 'react'
+import { IVennProps } from './svg-three-way-venn'
 import { VennContext } from './venn-provider'
 import { useVenn } from './venn-store'
 
-export interface IVennProps {
-  labels?: string[]
-  vennElemMap: Map<string, Set<string>>
-  combinationNames: Map<string, string>
-
-  overlapLabels?: { [key: string]: { color: string; label: string } }
-}
-
-export function SVGThreeWayVenn({
+export function SVGFourWayVenn({
   labels = [],
 
   vennElemMap,

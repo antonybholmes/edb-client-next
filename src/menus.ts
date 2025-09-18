@@ -48,7 +48,7 @@ export const HEADER_LINKS: IHeaderLink[] = [
         name: 'Venn',
         description: 'Make Venn diagrams',
         slug: '/apps/venn',
-        mode: 'dev',
+        mode: 'prod',
         color: '#00008B',
       },
       {

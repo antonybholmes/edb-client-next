@@ -10,7 +10,7 @@ import {
   ToolbarPanel,
 } from '@toolbar/toolbar'
 
-import { DEFAULT_ZOOM_SCALES, ZoomSlider } from '@toolbar/zoom-slider'
+import { ZoomSlider } from '@toolbar/zoom-slider'
 
 import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
 
@@ -22,26 +22,22 @@ import { LayersIcon } from '@icons/layers-icon'
 import { SaveIcon } from '@icons/save-icon'
 import { SlidersIcon } from '@icons/sliders-icon'
 import { TableIcon } from '@icons/table-icon'
-import { DataIndex } from '@lib/dataframe'
-
-import { DataFrame } from '@lib/dataframe/dataframe'
 
 import {
   downloadSvg,
   downloadSvgAsPng,
   downloadSvgAutoFormat,
 } from '@lib/image-utils'
-import { makeCombinations, numSort } from '@lib/math/math'
+import { makeCombinations } from '@lib/math/math'
 
 import {
   FOCUS_RING_CLS,
   PILL_BUTTON_CLS,
   SM_ICON_BUTTON_CLS,
   TOOLBAR_BUTTON_ICON_CLS,
-  XS_ICON_BUTTON_CLS,
 } from '@/theme'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import {
   onTextFileChange,
@@ -92,12 +88,14 @@ import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
 import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 
 import { BaseSvg } from '@/components/base-svg'
+import { useVenn } from '@/components/pages/apps/venn/venn-store'
 import { Tabs } from '@/components/shadcn/ui/themed/tabs'
 import { SideTabs } from '@/components/tabs/side-tabs'
 import { useZoom } from '@/providers/zoom-provider'
-import { useVennCircleStore } from '@/stores/venn-circle-store'
-import { useVennStore } from '@/stores/venn-store'
-import { ColorPickerButton } from '@components/color/color-picker-button'
+import {
+  ColorPickerButton,
+  SIMPLE_COLOR_EXT_CLS,
+} from '@components/color/color-picker-button'
 import { HeaderPortal } from '@components/header/header-portal'
 import { ModuleInfoButton } from '@components/header/module-info-button'
 import { SaveImageDialog } from '@components/pages/save-image-dialog'
@@ -107,9 +105,8 @@ import { PropRow } from '@dialog/prop-row'
 import { SwitchPropRow } from '@dialog/switch-prop-row'
 import { FileIcon } from '@icons/file-icon'
 import { ListIcon } from '@icons/list-icon'
-import { BaseRow } from '@layout/base-row'
 import { COLOR_BLACK, COLOR_WHITE } from '@lib/color/color'
-import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
+import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
 import { downloadDataFrame } from '@lib/dataframe/dataframe-utils'
 import { textToLines } from '@lib/text/lines'
 import { CoreProviders } from '@providers/core-providers'
@@ -120,20 +117,12 @@ import { Textarea } from '@themed/textarea'
 import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
 import { ToolbarSeparator } from '@toolbar/toolbar-separator'
 import axios from 'axios'
+import { produce } from 'immer'
 import { useHistory } from '../matcalc/history/history-store'
 import MODULE_INFO from './module.json'
+import { SVGFourWayVenn } from './svg-four-way-venn'
 import { SVGThreeWayVenn } from './svg-three-way-venn'
-
-interface ISet {
-  label?: string
-  sets: string[]
-  size: number
-}
-
-const DEFAULT_SIZE = 100
-const DEFAULT_OVERLAP = 20
-const LABEL_Y_OFFSET = 20
-const EMPTY_SET = new Set<string>()
+import { VennProvider } from './venn-provider'
 
 function VennPage() {
   const queryClient = useQueryClient()
@@ -141,14 +130,20 @@ function VennPage() {
   const [activeSideTab, setActiveSideTab] = useState('Items')
   const [rightTab, setSelectedRightTab] = useState('Lists')
 
-  const [scale, setScale] = useState(1)
+  //const [scale, setScale] = useState(1)
 
   const { zoom } = useZoom()
 
   const [keyPressed, setKeyPressed] = useState<string | null>(null)
 
-  const [displayProps, updateProps, resetProps] = useVennStore()
-  const [colorMap, setColorMap, resetColorMap] = useVennCircleStore()
+  const {
+    settings,
+    updateSettings,
+    resetSettings,
+    circles,
+    updateCircles,
+    resetCircles,
+  } = useVenn()
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
@@ -162,22 +157,29 @@ function VennPage() {
     new Map()
   )
 
-  const [countMap, setCountMap] = useState<Map<number, string[]>>(
-    new Map(listIds.map((i) => [i, []]))
-  )
+  const [vennSets, setVennSets] = useState<
+    Map<
+      number,
+      {
+        name: string
+        items: string[]
+        uniqueItems: string[]
+      }
+    >
+  >(new Map())
 
   // track what is unique to each set so we get rid of repeats
-  const [uniqueCountMap, setUniqueCountMap] = useState<
-    Map<number, Set<string>>
-  >(new Map(listIds.map((i) => [i, new Set<string>()])))
+  // const [uniqueCountMap, setUniqueCountMap] = useState<
+  //   Map<number, Set<string>>
+  // >(new Map(listIds.map((i) => [i, new Set<string>()])))
 
   const [listLabelMap, setListLabelMap] = useState<Map<number, string>>(
     new Map<number, string>(listIds.map((i) => [i, `List ${i + 1}`]))
   )
 
-  const [labelToIndexMap, setLabelToIndexMap] = useState<Map<string, number>>(
-    new Map()
-  )
+  // const [labelToIndexMap, setLabelToIndexMap] = useState<Map<string, number>>(
+  //   new Map()
+  // )
 
   const [vennElemMap, setVennElemMap] = useState<Map<string, Set<string>>>(
     new Map()
@@ -187,16 +189,23 @@ function VennPage() {
   // we split these later to get the actual items
   const [listTextMap, setListTextMap] = useState<Map<number, string>>(new Map())
 
+  const [combinationNames, setCombinationNames] = useState<Map<string, string>>(
+    new Map()
+  )
+
   // https://github.com/benfred/venn.js/
   const [showFileMenu, setShowFileMenu] = useState(false)
 
-  //const [displayProps.isProportional, setProportional] = useState(true)
+  //const [settings.isProportional, setProportional] = useState(true)
 
   //const [sets, setSets] = useState<ISet[]>([])
 
   const svgRef = useRef<SVGSVGElement>(null)
   const overlapRef = useRef<HTMLTextAreaElement>(null)
-  const intersectLabelRef = useRef<HTMLHeadingElement>(null)
+  const [selectedItems, setSelectedItems] = useState<{
+    label: string
+    items: string[]
+  }>({ label: '', items: [] })
   const [showSideBar, setShowSideBar] = useState(true)
 
   const { sheet, sheets, openBranch, gotoSheet } = useHistory()
@@ -319,33 +328,49 @@ function VennPage() {
 
   useEffect(() => {
     // map text back to its original name
-    const originalMap = new Map<string, string>()
+    const originalNameMap = new Map<string, string>()
 
     // store all items in lowercase for each list
-    const countMap = new Map<number, string[]>()
+    const vennSetList: Map<
+      number,
+      {
+        // if user skips entering a list, we need
+        // an id from 0..n for each list in use
+        // For example if they enter list 1 and 3
+        // then ids will be 0 and 1
+        id: number
+        name: string
+        items: string[]
+        uniqueItems: string[]
+      }
+    > = new Map()
 
-    listIds.forEach((i) => {
+    for (const i of listIds) {
       const items = getItems(listTextMap.get(i)!)
 
-      countMap.set(
-        i,
-        items.map((item) => item.toLowerCase())
-      )
+      if (items.length > 0) {
+        vennSetList.set(i, {
+          id: vennSetList.size,
+          name: listLabelMap.get(i) || `List ${i + 1}`,
+          items,
+          uniqueItems: [...new Set(items.map((it) => it.toLowerCase()))].sort(),
+        })
 
-      items.forEach((item) => {
-        originalMap.set(item.toLowerCase(), item)
-      })
-    })
+        for (const item of items) {
+          originalNameMap.set(item.toLowerCase(), item)
+        }
+      }
+    }
 
-    setOriginalMap(originalMap)
+    setOriginalMap(originalNameMap)
 
     // const countMap = new Map(
     //   listIds.map(i => [i, getItems(listTextMap.get(i)!)]),
     // )
 
-    const uniqueCountMap = new Map(
-      [...countMap].map(([listId, items]) => [listId, new Set(items)])
-    )
+    // const uniqueCountMap = new Map(
+    //   [...vennSetList].map(([listId, items]) => [listId, new Set(items)])
+    // )
 
     // const displayLabelMap = Object.fromEntries(
     //   listIds.map(i => [
@@ -355,35 +380,44 @@ function VennPage() {
     // )
 
     // determine which lists are in use
-    const listsInUseIds = numSort(
-      [...uniqueCountMap]
-        .filter(([, items]) => items.size > 0)
-        .map(([listId]) => listId)
-    )
+    // const listsInUseIds = numSort(
+    //   [...uniqueCountMap]
+    //     .filter(([, items]) => items.size > 0)
+    //     .map(([listId]) => listId)
+    // )
 
     // get all the intersections in use by id combinations for
     // example [0] is list 1 and [0, 1] is the intersection of list 1
     // and list 2
-    const combinations: number[][] = makeCombinations(listsInUseIds)
+    const combinations: number[][] = makeCombinations(range(vennSetList.size))
+
+    setCombinationNames(
+      new Map(
+        combinations.map((c) => [
+          c.join(':'),
+          c.map((s) => listLabelMap.get(s)!).join(' AND '),
+        ])
+      )
+    )
 
     // we need to know which items are in which combination so
     // create a map of item to the lists it is found in for example
     // itemA -> [0, 1]
     const combs = new Map<string, Set<number>>()
 
-    for (const [listId, items] of uniqueCountMap.entries()) {
-      for (const item of items) {
+    for (const vs of vennSetList.values()) {
+      for (const item of vs.uniqueItems) {
         if (!combs.has(item)) {
           combs.set(item, new Set())
         }
 
-        combs.get(item)!.add(listId)
+        combs.get(item)!.add(vs.id)
       }
     }
 
-    const newSets: ISet[] = []
+    //const newSets: ISet[] = []
     //const vennMap = new Map<string, Set<string>>()
-    let maxRows = 0
+    //let maxRows = 0
 
     //
     // counts for venn
@@ -394,7 +428,7 @@ function VennPage() {
     for (const [item, listIds] of combs.entries()) {
       //const sets = [...listIds].sort() //.map( (s) => listLabelMap.get(s)!)
 
-      console.log(item, listIds, 'item')
+      //console.log(item, listIds, 'item')
 
       const id = [...listIds]
         .sort()
@@ -446,7 +480,7 @@ function VennPage() {
 
     //   let size = items.size
 
-    //   if (size > 0 && !displayProps.isProportional) {
+    //   if (size > 0 && !settings.isProportional) {
     //     if (sets.length === 1) {
     //       // all sets have the same size
     //       size = DEFAULT_SIZE
@@ -457,7 +491,7 @@ function VennPage() {
 
     //   newSets.push({
     //     sets,
-    //     //label: sets.length === 1 && displayProps.showLabels ? label : "",
+    //     //label: sets.length === 1 && settings.showLabels ? label : "",
     //     size,
     //   })
 
@@ -467,17 +501,18 @@ function VennPage() {
     // }
 
     //setSets(newSets)
+
     setVennElemMap(vennMap)
 
-    setCountMap(countMap)
-    setUniqueCountMap(uniqueCountMap)
+    setVennSets(vennSetList)
+    //setUniqueCountMap(uniqueCountMap)
 
-    setLabelToIndexMap(
-      new Map<string, number>(
-        Array.from(listLabelMap.entries()).map(([k, v]) => [v, k])
-      )
-    )
-  }, [listLabelMap, listTextMap, displayProps])
+    // setLabelToIndexMap(
+    //   new Map<string, number>(
+    //     Array.from(listLabelMap.entries()).map(([k, v]) => [v, k])
+    //   )
+    // )
+  }, [listLabelMap, listTextMap, settings])
 
   useEffect(() => {
     // make a dataframe
@@ -486,7 +521,9 @@ function VennPage() {
       return
     }
 
-    const index = Array.from(vennElemMap.keys()).sort()
+    const index = [...vennElemMap.keys()].sort((a, b) =>
+      a.length !== b.length ? a.length - b.length : a.localeCompare(b)
+    )
 
     const maxRows = index
       .map((n) => vennElemMap.get(n)!.size)
@@ -498,10 +535,15 @@ function VennPage() {
         .concat(Array(maxRows - vennElemMap.get(n)!.size).fill(''))
     )
 
-    const df = new DataFrame({
+    const df = new AnnotationDataFrame({
       name: 'Venn Sets',
       data: d,
-      index: new DataIndex(index.map((n) => n.split('_').join(' AND '))),
+      index: index.map((n) =>
+        n
+          .split(':')
+          .map((s) => listLabelMap.get(Number(s))!)
+          .join(' AND ')
+      ),
     }).t
 
     openBranch(`Venn Sets`, [df])
@@ -509,12 +551,12 @@ function VennPage() {
 
   // useEffect(() => {
   //   const chart = VennDiagram()
-  //     .width(displayProps.w)
+  //     .width(settings.w)
   //     // @ts-expect-error: poor api design
-  //     .height(displayProps.w)
+  //     .height(settings.w)
   //     .duration(0)
-  //     .normalize(displayProps.normalize)
-  //   //displayProps.isProportional)
+  //     .normalize(settings.normalize)
+  //   //settings.isProportional)
 
   //   const div = d3.select('#venn')
 
@@ -543,16 +585,16 @@ function VennPage() {
   //     const d = div.selectAll(`g[data-venn-sets='${v}']`)
 
   //     d.selectAll('path')
-  //       .style('fill', colorMap[k]!.fill)
-  //       .style('fill-opacity', displayProps.isFilled ? 1 : 0)
+  //       .style('fill', circles[k]!.fill)
+  //       .style('fill-opacity', settings.isFilled ? 1 : 0)
 
-  //     if (displayProps.isOutlined) {
+  //     if (settings.isOutlined) {
   //       d.selectAll('path')
-  //         .style('stroke', colorMap[k]!.stroke)
+  //         .style('stroke', circles[k]!.stroke)
   //         .style('stroke-opacity', 1)
   //     }
 
-  //     d.selectAll('text').style('fill', colorMap[k]!.color)
+  //     d.selectAll('text').style('fill', circles[k]!.color)
   //   })
 
   //   // find the pieces who are labelled and where the
@@ -563,7 +605,7 @@ function VennPage() {
   //   //div.select("svg").select("#size-group").remove()
   //   //div.select("svg").append("g").attr("id", "size-group")
 
-  //   if (!displayProps.isProportional) {
+  //   if (!settings.isProportional) {
   //     Array.from(vennElemMap.entries())
   //       //.filter(([k, v]) => k.includes("_"))
   //       .forEach(([k, v]) => {
@@ -574,7 +616,7 @@ function VennPage() {
 
   //           // set the opacity of the auto labels
   //           if (!k.includes('_')) {
-  //             path.attr('opacity', displayProps.showLabels ? 1 : 0)
+  //             path.attr('opacity', settings.showLabels ? 1 : 0)
   //           }
 
   //           if (path) {
@@ -600,12 +642,12 @@ function VennPage() {
   //                 .style(
   //                   'fill',
   //                   idx !== -1
-  //                     ? colorMap[idx]!.color
-  //                     : displayProps.intersectionColor
+  //                     ? circles[idx]!.color
+  //                     : settings.intersectionColor
   //                 )
   //                 .attr('text-anchor', 'middle')
   //                 .attr('dominant-baseline', 'middle')
-  //                 .attr('opacity', displayProps.showCounts ? 1 : 0)
+  //                 .attr('opacity', settings.showCounts ? 1 : 0)
   //                 .text(v.size.toLocaleString())
   //             }
   //           }
@@ -631,7 +673,7 @@ function VennPage() {
   //       tooltip.transition().duration(300).style('opacity', 0.9)
   //       tooltip.text(`${overlapSet.size} item${overlapSet.size > 1 ? 's' : ''}`)
 
-  //       if (!displayProps.isOutlined) {
+  //       if (!settings.isOutlined) {
   //         // sort all the areas relative to the current item
 
   //         selection
@@ -701,7 +743,7 @@ function VennPage() {
 
   //       tooltip.transition().duration(300).style('opacity', 0)
 
-  //       if (!displayProps.isOutlined) {
+  //       if (!settings.isOutlined) {
   //         selection
   //           .transition('tooltip')
   //           .duration(300)
@@ -741,10 +783,10 @@ function VennPage() {
 
   //   //   console.log("g", g.node().getBBox())
   //   // }
-  // }, [colorMap])
+  // }, [circles])
 
   useEffect(() => {
-    updateProps({ ...displayProps, scale: zoom })
+    updateSettings({ ...settings, scale: zoom })
   }, [zoom])
 
   function save(format: 'txt' | 'csv') {
@@ -832,34 +874,30 @@ function VennPage() {
                         />
                         <VCenterRow className={cn('shrink-0 gap-x-0.5')}>
                           <ColorPickerButton
-                            color={colorMap[index]!.fill}
-                            onColorChange={(color) =>
-                              setColorMap(
-                                Object.fromEntries([
-                                  ...[...Object.entries(colorMap)],
-                                  [
-                                    index,
-                                    {
-                                      ...colorMap[index]!,
-                                      fill: color,
-                                    },
-                                  ],
-                                ])
+                            allowAlpha={true}
+                            color={circles[index]!.fill}
+                            alpha={circles[index]!.fillOpacity}
+                            onColorChange={(color, alpha) =>
+                              updateCircles(
+                                produce(circles, (draft) => {
+                                  draft[index]!.fill = color
+                                  draft[index]!.fillOpacity = alpha
+                                })
                               )
                             }
                             title="Fill color"
-                            className={cn('rounded-xs', XS_ICON_BUTTON_CLS)}
+                            className={SIMPLE_COLOR_EXT_CLS}
                           />
                           <ColorPickerButton
-                            color={colorMap[index]!.stroke}
+                            color={circles[index]!.stroke}
                             onColorChange={(color) =>
-                              setColorMap(
+                              updateCircles(
                                 Object.fromEntries([
-                                  ...[...Object.entries(colorMap)],
+                                  ...[...Object.entries(circles)],
                                   [
                                     index,
                                     {
-                                      ...colorMap[index]!,
+                                      ...circles[index]!,
                                       stroke: color,
                                     },
                                   ],
@@ -867,19 +905,19 @@ function VennPage() {
                               )
                             }
                             title="Line color"
-                            className={cn('rounded-xs', XS_ICON_BUTTON_CLS)}
+                            className={SIMPLE_COLOR_EXT_CLS}
                           />
 
                           <ColorPickerButton
-                            color={colorMap[index]!.color}
+                            color={circles[index]!.color}
                             onColorChange={(color) =>
-                              setColorMap(
+                              updateCircles(
                                 Object.fromEntries([
-                                  ...[...Object.entries(colorMap)],
+                                  ...[...Object.entries(circles)],
                                   [
                                     index,
                                     {
-                                      ...colorMap[index]!,
+                                      ...circles[index]!,
                                       color,
                                     },
                                   ],
@@ -887,7 +925,7 @@ function VennPage() {
                               )
                             }
                             title="Text color"
-                            className={cn('rounded-xs', XS_ICON_BUTTON_CLS)}
+                            className={SIMPLE_COLOR_EXT_CLS}
                           />
                         </VCenterRow>
                       </VCenterRow>
@@ -906,8 +944,8 @@ function VennPage() {
                       />
                       <VCenterRow className="justify-between pr-1">
                         <span title="Total items / Unique items">
-                          {`${countMap.get(index)!.length} / ${
-                            uniqueCountMap.get(index)!.size
+                          {`${vennSets.get(index)?.items.length || 0} / ${
+                            vennSets.get(index)?.uniqueItems.length || 0
                           }`}
                         </span>
 
@@ -944,13 +982,28 @@ function VennPage() {
                 <PropRow title="Plot width">
                   <NumericalInput
                     id="w"
-                    max={1000}
-                    value={displayProps.w}
+                    max={10000}
+                    value={settings.w}
                     placeholder="Cell width..."
                     onNumChanged={(w) => {
-                      updateProps({
-                        ...displayProps,
+                      updateSettings({
+                        ...settings,
                         w,
+                      })
+                    }}
+                  />
+                </PropRow>
+
+                <PropRow title="Radius">
+                  <NumericalInput
+                    id="r"
+                    max={1000}
+                    value={settings.radius}
+                    placeholder="Circle radius..."
+                    onNumChanged={(r) => {
+                      updateSettings({
+                        ...settings,
+                        radius: r,
                       })
                     }}
                   />
@@ -963,66 +1016,64 @@ function VennPage() {
               <AccordionContent>
                 <SwitchPropRow
                   title="Fill"
-                  checked={displayProps.isFilled}
+                  checked={settings.isFilled}
                   onCheckedChange={(state) => {
                     let props = {
-                      ...displayProps,
+                      ...settings,
                       isFilled: state,
-                      isOutlined: state ? displayProps.isOutlined : true,
+                      isOutlined: state ? settings.isOutlined : true,
                     }
 
-                    if (displayProps.autoColorText) {
+                    if (settings.autoColorText) {
                       props = {
                         ...props,
                         intersectionColor: state ? COLOR_WHITE : COLOR_BLACK,
                       }
 
-                      setColorMap(
+                      updateCircles(
                         Object.fromEntries(
-                          Object.keys(colorMap).map((key) => [
+                          Object.keys(circles).map((key) => [
                             key,
                             {
-                              ...colorMap[key]!,
-                              color: state
-                                ? COLOR_WHITE
-                                : colorMap[key]!.stroke,
+                              ...circles[key]!,
+                              color: state ? COLOR_WHITE : circles[key]!.stroke,
                             },
                           ])
                         )
                       )
                     }
 
-                    updateProps(props)
+                    updateSettings(props)
                   }}
                 />
 
                 <SwitchPropRow
                   title="Outline"
-                  checked={displayProps.isOutlined}
+                  checked={settings.isOutlined}
                   onCheckedChange={(state) =>
-                    updateProps({
-                      ...displayProps,
+                    updateSettings({
+                      ...settings,
                       isOutlined: state,
-                      isFilled: state ? displayProps.isFilled : true,
+                      isFilled: state ? settings.isFilled : true,
                     })
                   }
                 />
                 <SwitchPropRow
                   title="Proportional"
-                  checked={displayProps.isProportional}
+                  checked={settings.isProportional}
                   onCheckedChange={(state) =>
-                    updateProps({
-                      ...displayProps,
+                    updateSettings({
+                      ...settings,
                       isProportional: state,
                     })
                   }
                 />
                 <SwitchPropRow
                   title="Normalize"
-                  checked={displayProps.normalize}
+                  checked={settings.normalize}
                   onCheckedChange={(state) =>
-                    updateProps({
-                      ...displayProps,
+                    updateSettings({
+                      ...settings,
                       normalize: state,
                     })
                   }
@@ -1035,40 +1086,40 @@ function VennPage() {
               <AccordionContent>
                 <SwitchPropRow
                   title="Labels"
-                  checked={displayProps.showLabels}
+                  checked={settings.showLabels}
                   onCheckedChange={(state) =>
-                    updateProps({
-                      ...displayProps,
+                    updateSettings({
+                      ...settings,
                       showLabels: state,
                     })
                   }
                 />
                 <SwitchPropRow
                   title="Counts"
-                  checked={displayProps.showCounts}
+                  checked={settings.showCounts}
                   onCheckedChange={(state) =>
-                    updateProps({
-                      ...displayProps,
+                    updateSettings({
+                      ...settings,
                       showCounts: state,
                     })
                   }
                 />
                 <SwitchPropRow
                   title="Auto-color"
-                  checked={displayProps.autoColorText}
+                  checked={settings.autoColorText}
                   onCheckedChange={(state) =>
-                    updateProps({
-                      ...displayProps,
+                    updateSettings({
+                      ...settings,
                       autoColorText: state,
                     })
                   }
                 />
                 <PropRow title="Intersection">
                   <ColorPickerButton
-                    color={displayProps.intersectionColor}
+                    color={settings.intersectionColor}
                     onColorChange={(color) =>
-                      updateProps({
-                        ...displayProps,
+                      updateSettings({
+                        ...settings,
                         intersectionColor: color,
                       })
                     }
@@ -1077,11 +1128,11 @@ function VennPage() {
                 </PropRow>
 
                 <BaseCol className="justify-start gap-y-1 pt-4">
-                  <LinkButton onClick={() => resetProps()}>
+                  <LinkButton onClick={() => resetSettings()}>
                     Default settings
                   </LinkButton>
 
-                  <LinkButton onClick={() => resetColorMap()}>
+                  <LinkButton onClick={() => resetCircles()}>
                     Default list colors
                   </LinkButton>
                 </BaseCol>
@@ -1093,19 +1144,19 @@ function VennPage() {
     },
   ]
 
-  function onWheel(e: { deltaY: number }) {
-    if (keyPressed === 'Shift') {
-      setScale(
-        Math.max(
-          DEFAULT_ZOOM_SCALES[0]!,
-          Math.min(
-            DEFAULT_ZOOM_SCALES[DEFAULT_ZOOM_SCALES.length - 1]!,
-            scale + (e.deltaY >= 0 ? 0.25 : -0.25)
-          )
-        )
-      )
-    }
-  }
+  // function onWheel(e: { deltaY: number }) {
+  //   if (keyPressed === 'Shift') {
+  //     setScale(
+  //       Math.max(
+  //         DEFAULT_ZOOM_SCALES[0]!,
+  //         Math.min(
+  //           DEFAULT_ZOOM_SCALES[DEFAULT_ZOOM_SCALES.length - 1]!,
+  //           scale + (e.deltaY >= 0 ? 0.25 : -0.25)
+  //         )
+  //       )
+  //     )
+  //   }
+  // }
 
   const sidebarTabs: ITab[] = [
     {
@@ -1121,6 +1172,10 @@ function VennPage() {
           className="h-full text-sm my-2 grow"
           placeholder="A list of the items in each Venn subset will appear here when you click on the diagram..."
           readOnly
+          value={[
+            selectedItems.label,
+            ...selectedItems.items.sort().map((s) => _originalMap.get(s)),
+          ].join('\n')}
         />
       ),
     },
@@ -1229,6 +1284,15 @@ function VennPage() {
     },
   ]
 
+  const labels: string[] = useMemo(
+    () =>
+      [...vennSets.keys()]
+        .sort()
+        .map((id, idx) => vennSets.get(id)?.name || `List ${idx + 1}`),
+
+    [vennSets]
+  )
+
   return (
     <>
       {showDialog.id.includes('export') && (
@@ -1293,7 +1357,7 @@ function VennPage() {
             //autoSaveId="venn-resizable-panels-v"
           >
             <ResizablePanel
-              defaultSize={70}
+              defaultSize={80}
               minSize={10}
               className="grow flex flex-col  overflow-hidden px-2"
               id="venn"
@@ -1305,7 +1369,7 @@ function VennPage() {
                     'custom-scrollbar relative grow overflow-scroll rounded-theme bg-background'
                   )}
                   id="venn"
-                  onWheel={onWheel}
+                  //onWheel={onWheel}
                   tabIndex={0}
                   onKeyDown={(e) => setKeyPressed(e.key)}
                   onKeyUp={() => setKeyPressed(null)}
@@ -1313,15 +1377,30 @@ function VennPage() {
                   <BaseSvg
                     className="absolute"
                     ref={svgRef}
-                    scale={scale}
-                    width={displayProps.w}
-                    height={displayProps.w}
+                    scale={zoom}
+                    width={settings.w}
+                    height={settings.w}
                   >
-                    <SVGThreeWayVenn
-                      vennElemMap={vennElemMap}
-                      width={displayProps.w}
-                      height={displayProps.w}
-                    />
+                    <VennProvider
+                      values={selectedItems}
+                      setItems={(label, items) =>
+                        setSelectedItems({ label, items })
+                      }
+                    >
+                      {labels.length > 3 ? (
+                        <SVGFourWayVenn
+                          labels={labels}
+                          vennElemMap={vennElemMap}
+                          combinationNames={combinationNames}
+                        />
+                      ) : (
+                        <SVGThreeWayVenn
+                          labels={labels}
+                          vennElemMap={vennElemMap}
+                          combinationNames={combinationNames}
+                        />
+                      )}
+                    </VennProvider>
                   </BaseSvg>
                   {/* <div
                     id="tooltip"
@@ -1333,7 +1412,7 @@ function VennPage() {
             <ResizableHandle />
             <ResizablePanel
               id="list"
-              defaultSize={30}
+              defaultSize={20}
               minSize={10}
               collapsible={true}
               className="grow flex flex-col"
@@ -1358,33 +1437,31 @@ function VennPage() {
                 <TabContentPanel />
               </ToggleButtons> */}
 
-              <BaseRow className="grow">
-                <Tabs
+              <Tabs
+                value={activeSideTab}
+                className="grow flex flex-row gap-x-2"
+                orientation="vertical"
+              >
+                <SideTabs
+                  tabs={sidebarTabs}
                   value={activeSideTab}
-                  className="grow flex flex-row gap-x-2"
-                  orientation="vertical"
-                >
-                  <SideTabs
-                    tabs={sidebarTabs}
-                    value={activeSideTab}
-                    showLabels={false}
-                    //defaultWidth={2}
-                    onTabChange={(selectedTab) =>
-                      setActiveSideTab(selectedTab.tab.id)
-                    }
-                  />
-                </Tabs>
+                  showLabels={false}
+                  //defaultWidth={2}
+                  onTabChange={(selectedTab) =>
+                    setActiveSideTab(selectedTab.tab.id)
+                  }
+                />
 
                 <TabProvider
                   value={activeSideTab}
                   //onTabChange={selectedTab => setSelectedTab(selectedTab.tab.name)}
                   tabs={sidebarTabs}
                 >
-                  <BaseCol className="grow px-2">
+                  <BaseCol className="grow">
                     <TabContentPanel />
                   </BaseCol>
                 </TabProvider>
-              </BaseRow>
+              </Tabs>
             </ResizablePanel>
           </ResizablePanelGroup>
         </TabSlideBar>
@@ -1392,7 +1469,9 @@ function VennPage() {
         <ToolbarFooterPortal>
           <></>
           <></>
-          <>{activeSideTab === 'Chart' && <ZoomSlider />}</>
+          <>
+            <ZoomSlider />
+          </>
         </ToolbarFooterPortal>
 
         {showDialog.id.includes('open') && (

@@ -2,7 +2,6 @@
 
 import { QCP } from '@/qcp'
 import type { IChildrenProps } from '@interfaces/children-props'
-import { AuthProvider } from './auth-provider'
 import { ZoomProvider } from './zoom-provider'
 
 //const PUBLISHABLE_KEY = import.meta.env.PUBLIC_CLERK_PUBLISHABLE_KEY
@@ -12,24 +11,24 @@ export function CoreProviders({ children }: IChildrenProps) {
   return (
     <QCP>
       {/* <EdbSettingsProvider> */}
-      <AuthProvider>
-        {/* <EdbAuthProvider cacheSession={cacheSession}> */}
+      {/* <AuthProvider> */}
+      {/* <EdbAuthProvider cacheSession={cacheSession}> */}
 
-        {/* <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/"> */}
-        {/* <HistoryProvider> */}
-        {/* <SelectionRangeProvider>*/}
+      {/* <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/"> */}
+      {/* <HistoryProvider> */}
+      {/* <SelectionRangeProvider>*/}
 
-        <ZoomProvider>{children}</ZoomProvider>
+      <ZoomProvider>{children}</ZoomProvider>
 
-        {/* </SelectionRangeProvider> */}
-        {/* </HistoryProvider> */}
-        {/* </ClerkProvider> */}
-        {/* </EdbAuthProvider> */}
-        {/* </SelectionRangeProvider> */}
-        {/* </HistoryProvider> */}
-        {/* </ClerkProvider> */}
-        {/* </EdbAuthProvider> */}
-      </AuthProvider>
+      {/* </SelectionRangeProvider> */}
+      {/* </HistoryProvider> */}
+      {/* </ClerkProvider> */}
+      {/* </EdbAuthProvider> */}
+      {/* </SelectionRangeProvider> */}
+      {/* </HistoryProvider> */}
+      {/* </ClerkProvider> */}
+      {/* </EdbAuthProvider> */}
+      {/* </AuthProvider> */}
       {/* </EdbSettingsProvider> */}
     </QCP>
   )

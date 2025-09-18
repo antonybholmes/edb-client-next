@@ -56,7 +56,7 @@ interface ISideTabProps extends ComponentProps<'ul'>, ITooltipSide {
   showLabels?: boolean
 }
 
-export function SideTabsContent({
+function SideTabsContent({
   defaultHeight = 2,
   showIcons = true,
   showLabels = true,

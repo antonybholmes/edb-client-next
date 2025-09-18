@@ -51,7 +51,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
       this._rowMetaData = rowMetaData
     } else {
       this._rowMetaData = new DataFrame({
-        data: makeIndex(index, this._dataframe.shape[0]).map(v => [v]),
+        data: makeIndex(index, this._dataframe.shape[0]).map((v) => [v]),
         columns: [indexName ?? DEFAULT_INDEX_NAME],
       })
     }
@@ -60,7 +60,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
       this._colMetaData = colMetaData
     } else {
       this._colMetaData = new DataFrame({
-        data: makeColumns(columns, this._dataframe.shape[1]).map(v => [v]),
+        data: makeColumns(columns, this._dataframe.shape[1]).map((v) => [v]),
         columns: [DEFAULT_COLUMN_INDEX_NAME],
       })
     }
@@ -125,7 +125,11 @@ export class AnnotationDataFrame extends BaseDataFrame {
     //   name: this._rowMetaData.str(row, 0),
     // })
 
-    const rowData = this._rowMetaData.col(DEFAULT_INDEX_NAME)
+    // col 0 of row meta data is always the index label
+    // so we can use that to find the row index
+    // then we can just return the row from the main dataframe
+    // with the name set from the meta data
+    const rowData = this._rowMetaData.col(0) //DEFAULT_INDEX_NAME)
 
     const rowIdx = findInSeries(rowData, row)[0]!
 
