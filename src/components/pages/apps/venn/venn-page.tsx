@@ -14,7 +14,6 @@ import { ZoomSlider } from '@toolbar/zoom-slider'
 
 import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
 
-import { VCenterRow } from '@layout/v-center-row'
 import { ToolbarButton } from '@toolbar/toolbar-button'
 
 import { FileImageIcon } from '@icons/file-image-icon'
@@ -28,7 +27,6 @@ import {
   downloadSvgAsPng,
   downloadSvgAutoFormat,
 } from '@lib/image-utils'
-import { makeCombinations } from '@lib/math/math'
 
 import {
   FOCUS_RING_CLS,
@@ -53,9 +51,7 @@ import {
   AccordionTrigger,
   ScrollAccordion,
 } from '@themed/accordion'
-import { Button } from '@themed/button'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
-import { Input } from '@themed/input'
 import { NumericalInput } from '@themed/numerical-input'
 import {
   ResizableHandle,
@@ -66,7 +62,6 @@ import {
 import {
   NO_DIALOG,
   TEXT_CANCEL,
-  TEXT_CLEAR,
   TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_EXPORT,
@@ -80,7 +75,7 @@ import { useWindowScrollListener } from '@hooks/use-window-scroll-listener'
 import { OpenIcon } from '@icons/open-icon'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
 import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
-import { range, rangeMap } from '@lib/math/range'
+import { rangeMap } from '@lib/math/range'
 import { cn } from '@lib/shadcn-utils'
 import { randId } from '@lib/utils'
 import { ToolbarOpenFile } from '@toolbar/toolbar-open-files'
@@ -88,14 +83,12 @@ import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
 import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 
 import { BaseSvg } from '@/components/base-svg'
-import { useVenn } from '@/components/pages/apps/venn/venn-store'
+import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
 import { Tabs } from '@/components/shadcn/ui/themed/tabs'
 import { SideTabs } from '@/components/tabs/side-tabs'
+import { httpFetch } from '@/lib/http/http-fetch'
 import { useZoom } from '@/providers/zoom-provider'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@components/color/color-picker-button'
+import { ColorPickerButton } from '@components/color/color-picker-button'
 import { HeaderPortal } from '@components/header/header-portal'
 import { ModuleInfoButton } from '@components/header/module-info-button'
 import { SaveImageDialog } from '@components/pages/save-image-dialog'
@@ -116,19 +109,20 @@ import { LinkButton } from '@themed/link-button'
 import { Textarea } from '@themed/textarea'
 import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
 import { ToolbarSeparator } from '@toolbar/toolbar-separator'
-import axios from 'axios'
-import { produce } from 'immer'
 import { useHistory } from '../matcalc/history/history-store'
 import MODULE_INFO from './module.json'
 import { SVGFourWayVenn } from './svg-four-way-venn'
 import { SVGThreeWayVenn } from './svg-three-way-venn'
-import { VennProvider } from './venn-provider'
+import { VennList } from './venn-list'
+import { IVennList, LIST_IDS, makeVennList, useVenn } from './venn-store'
 
 function VennPage() {
   const queryClient = useQueryClient()
 
   const [activeSideTab, setActiveSideTab] = useState('Items')
   const [rightTab, setSelectedRightTab] = useState('Lists')
+
+  const { selectedItems } = useVenn()
 
   //const [scale, setScale] = useState(1)
 
@@ -143,39 +137,32 @@ function VennPage() {
     circles,
     updateCircles,
     resetCircles,
-  } = useVenn()
+  } = useVennSettings()
+
+  const { vennLists, setVennLists, originalNames } = useVenn()
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  const [listIds] = useState<number[]>(range(4))
+  //const [listIds] = useState<number[]>(range(4))
 
   // Stores a mapping between the lowercase labels used for
   // matching and the original values. Note that this picks
   // the last value found as being original, so if you overlap
   // Lab1, and lAb1, lAb1 will be kept as the original value
-  const [_originalMap, setOriginalMap] = useState<Map<string, string>>(
-    new Map()
-  )
+  // const [_originalMap, setOriginalMap] = useState<Map<string, string>>(
+  //   new Map()
+  // )
 
-  const [vennSets, setVennSets] = useState<
-    Map<
-      number,
-      {
-        name: string
-        items: string[]
-        uniqueItems: string[]
-      }
-    >
-  >(new Map())
+  const [vennSets, setVennSets] = useState<Record<number, IVennList>>({})
 
   // track what is unique to each set so we get rid of repeats
   // const [uniqueCountMap, setUniqueCountMap] = useState<
   //   Map<number, Set<string>>
   // >(new Map(listIds.map((i) => [i, new Set<string>()])))
 
-  const [listLabelMap, setListLabelMap] = useState<Map<number, string>>(
-    new Map<number, string>(listIds.map((i) => [i, `List ${i + 1}`]))
-  )
+  // const [listLabelMap, setListLabelMap] = useState<Map<number, string>>(
+  //   new Map<number, string>(listIds.map((i) => [i, `List ${i + 1}`]))
+  // )
 
   // const [labelToIndexMap, setLabelToIndexMap] = useState<Map<string, number>>(
   //   new Map()
@@ -189,10 +176,6 @@ function VennPage() {
   // we split these later to get the actual items
   const [listTextMap, setListTextMap] = useState<Map<number, string>>(new Map())
 
-  const [combinationNames, setCombinationNames] = useState<Map<string, string>>(
-    new Map()
-  )
-
   // https://github.com/benfred/venn.js/
   const [showFileMenu, setShowFileMenu] = useState(false)
 
@@ -202,10 +185,7 @@ function VennPage() {
 
   const svgRef = useRef<SVGSVGElement>(null)
   const overlapRef = useRef<HTMLTextAreaElement>(null)
-  const [selectedItems, setSelectedItems] = useState<{
-    label: string
-    items: string[]
-  }>({ label: '', items: [] })
+
   const [showSideBar, setShowSideBar] = useState(true)
 
   const { sheet, sheets, openBranch, gotoSheet } = useHistory()
@@ -267,8 +247,12 @@ function VennPage() {
       .colNames(1)
       .read(lines).t
 
-    setListLabelMap(
-      new Map(rangeMap((ci) => [ci, table.index.str(ci)], table.shape[0]))
+    setVennLists(
+      Object.fromEntries(
+        rangeMap((ci) => {
+          return [ci, makeVennList(ci, table.index.str(ci), table.row(ci).strs)]
+        }, table.shape[0])
+      )
     )
 
     setListTextMap(
@@ -298,12 +282,27 @@ function VennPage() {
   async function loadTestData() {
     const res = await queryClient.fetchQuery({
       queryKey: ['test_data'],
-      queryFn: () => axios.get('/data/test/venn.json'),
+      queryFn: () => httpFetch.getJson<string[][]>('/data/test/venn.json'),
     })
 
-    setListTextMap(
-      new Map(
-        res.data.map((items: string[], i: number) => [i, items.join('\n')])
+    console.log(res)
+
+    setVennLists(
+      Object.fromEntries(
+        res.map((items: string[], ci: number) => {
+          return [
+            ci + 1,
+            {
+              id: ci + 1,
+              name: `List ${ci + 1}`,
+              items: items,
+              uniqueItems: [
+                ...new Set<string>(items.map((item) => item.toLowerCase())),
+              ].sort(),
+              text: items.join('\n'),
+            } as IVennList,
+          ]
+        }, res.length)
       )
     )
   }
@@ -312,57 +311,46 @@ function VennPage() {
   //   loadDefaultSheet(historyDispatch)
   // }, [])
 
-  useEffect(() => {
-    setListLabelMap(
-      new Map(range(listIds.length).map((i) => [i, `List ${i + 1}`]))
-    )
-  }, [listIds])
-
-  function getItems(text: string | undefined | null): string[] {
-    if (!text) {
-      return []
-    }
-
-    return textToLines(text, { trim: true })
-  }
+  // useEffect(() => {
+  //   setListLabelMap(
+  //     new Map(range(listIds.length).map((i) => [i, `List ${i + 1}`]))
+  //   )
+  // }, [listIds])
 
   useEffect(() => {
     // map text back to its original name
-    const originalNameMap = new Map<string, string>()
+    //const originalNameMap = new Map<string, string>()
 
-    // store all items in lowercase for each list
-    const vennSetList: Map<
-      number,
-      {
-        // if user skips entering a list, we need
-        // an id from 0..n for each list in use
-        // For example if they enter list 1 and 3
-        // then ids will be 0 and 1
-        id: number
-        name: string
-        items: string[]
-        uniqueItems: string[]
-      }
-    > = new Map()
+    // // store all items in lowercase for each list
+    // const vennSetList: Map<
+    //   number,
+    //   {
+    //     // if user skips entering a list, we need
+    //     // an id from 0..n for each list in use
+    //     // For example if they enter list 1 and 3
+    //     // then ids will be 0 and 1
+    //     id: number
+    //     name: string
+    //     items: string[]
+    //     uniqueItems: string[]
+    //   }
+    // > = new Map()
 
-    for (const i of listIds) {
-      const items = getItems(listTextMap.get(i)!)
+    const vennSetList: Record<string, IVennList> = {}
 
-      if (items.length > 0) {
-        vennSetList.set(i, {
-          id: vennSetList.size,
-          name: listLabelMap.get(i) || `List ${i + 1}`,
-          items,
-          uniqueItems: [...new Set(items.map((it) => it.toLowerCase()))].sort(),
-        })
+    for (const [i, vl] of Object.entries(vennLists)) {
+      //const items = getItems(listTextMap.get(i)!)
 
-        for (const item of items) {
-          originalNameMap.set(item.toLowerCase(), item)
-        }
+      if (vl.uniqueItems.length > 0) {
+        vennSetList[i] = vl
+
+        // for (const item of vl.uniqueItems) {
+        //   originalNameMap.set(item.toLowerCase(), item)
+        // }
       }
     }
 
-    setOriginalMap(originalNameMap)
+    //setOriginalMap(originalNameMap)
 
     // const countMap = new Map(
     //   listIds.map(i => [i, getItems(listTextMap.get(i)!)]),
@@ -386,26 +374,12 @@ function VennPage() {
     //     .map(([listId]) => listId)
     // )
 
-    // get all the intersections in use by id combinations for
-    // example [0] is list 1 and [0, 1] is the intersection of list 1
-    // and list 2
-    const combinations: number[][] = makeCombinations(range(vennSetList.size))
-
-    setCombinationNames(
-      new Map(
-        combinations.map((c) => [
-          c.join(':'),
-          c.map((s) => listLabelMap.get(s)!).join(' AND '),
-        ])
-      )
-    )
-
     // we need to know which items are in which combination so
     // create a map of item to the lists it is found in for example
     // itemA -> [0, 1]
     const combs = new Map<string, Set<number>>()
 
-    for (const vs of vennSetList.values()) {
+    for (const vs of Object.values(vennSetList)) {
       for (const item of vs.uniqueItems) {
         if (!combs.has(item)) {
           combs.set(item, new Set())
@@ -430,10 +404,7 @@ function VennPage() {
 
       //console.log(item, listIds, 'item')
 
-      const id = [...listIds]
-        .sort()
-        .map((s) => s.toString())
-        .join(':')
+      const id = [...listIds].sort().join(':')
 
       if (!vennMap.has(id)) {
         vennMap.set(id, new Set())
@@ -512,7 +483,7 @@ function VennPage() {
     //     Array.from(listLabelMap.entries()).map(([k, v]) => [v, k])
     //   )
     // )
-  }, [listLabelMap, listTextMap, settings])
+  }, [vennLists, listTextMap, settings])
 
   useEffect(() => {
     // make a dataframe
@@ -541,7 +512,8 @@ function VennPage() {
       index: index.map((n) =>
         n
           .split(':')
-          .map((s) => listLabelMap.get(Number(s))!)
+          .map((s) => Number(s))
+          .map((s) => vennLists[s]?.name ?? s)
           .join(' AND ')
       ),
     }).t
@@ -851,116 +823,14 @@ function VennPage() {
 
       content: (
         <PropsPanel>
-          <ScrollAccordion value={listIds.map((id) => `List ${id + 1}`)}>
-            {listIds.map((index: number) => {
-              const name = `List ${index + 1}`
+          <ScrollAccordion value={LIST_IDS.map((id) => `List ${id}`)}>
+            {LIST_IDS.map((id: number) => {
+              const name = `List ${id}`
               return (
-                <AccordionItem value={name} key={index}>
-                  <AccordionTrigger>{name}</AccordionTrigger>
+                <AccordionItem value={name} key={name}>
+                  <AccordionTrigger>{vennLists[id]?.name}</AccordionTrigger>
                   <AccordionContent>
-                    <BaseCol className="gap-y-1">
-                      <VCenterRow className="gap-x-2">
-                        <Input
-                          id={`label${index + 1}`}
-                          value={listLabelMap.get(index) ?? ''}
-                          onChange={(e) => {
-                            //console.log(index, e.target.value)
-                            setListLabelMap(
-                              new Map(listLabelMap).set(index, e.target.value)
-                            )
-                          }}
-                          className="w-0 grow rounded-theme"
-                          placeholder={`List ${index + 1} name...`}
-                        />
-                        <VCenterRow className={cn('shrink-0 gap-x-0.5')}>
-                          <ColorPickerButton
-                            allowAlpha={true}
-                            color={circles[index]!.fill}
-                            alpha={circles[index]!.fillOpacity}
-                            onColorChange={(color, alpha) =>
-                              updateCircles(
-                                produce(circles, (draft) => {
-                                  draft[index]!.fill = color
-                                  draft[index]!.fillOpacity = alpha
-                                })
-                              )
-                            }
-                            title="Fill color"
-                            className={SIMPLE_COLOR_EXT_CLS}
-                          />
-                          <ColorPickerButton
-                            color={circles[index]!.stroke}
-                            onColorChange={(color) =>
-                              updateCircles(
-                                Object.fromEntries([
-                                  ...[...Object.entries(circles)],
-                                  [
-                                    index,
-                                    {
-                                      ...circles[index]!,
-                                      stroke: color,
-                                    },
-                                  ],
-                                ])
-                              )
-                            }
-                            title="Line color"
-                            className={SIMPLE_COLOR_EXT_CLS}
-                          />
-
-                          <ColorPickerButton
-                            color={circles[index]!.color}
-                            onColorChange={(color) =>
-                              updateCircles(
-                                Object.fromEntries([
-                                  ...[...Object.entries(circles)],
-                                  [
-                                    index,
-                                    {
-                                      ...circles[index]!,
-                                      color,
-                                    },
-                                  ],
-                                ])
-                              )
-                            }
-                            title="Text color"
-                            className={SIMPLE_COLOR_EXT_CLS}
-                          />
-                        </VCenterRow>
-                      </VCenterRow>
-
-                      <Textarea
-                        id={`set${index + 1}`}
-                        aria-label={`Set ${index + 1}`}
-                        placeholder={listLabelMap.get(index) ?? ''}
-                        value={listTextMap.get(index) ?? ''}
-                        onChange={(e) =>
-                          setListTextMap(
-                            new Map(listTextMap).set(index, e.target.value)
-                          )
-                        }
-                        className="h-28"
-                      />
-                      <VCenterRow className="justify-between pr-1">
-                        <span title="Total items / Unique items">
-                          {`${vennSets.get(index)?.items.length || 0} / ${
-                            vennSets.get(index)?.uniqueItems.length || 0
-                          }`}
-                        </span>
-
-                        <Button
-                          variant="link"
-                          size="sm"
-                          // ripple={false}
-                          onClick={() =>
-                            setListTextMap(new Map(listTextMap).set(index, ''))
-                          }
-                        >
-                          {TEXT_CLEAR}
-                        </Button>
-                      </VCenterRow>
-                    </BaseCol>
+                    <VennList index={id} />
                   </AccordionContent>
                 </AccordionItem>
               )
@@ -1127,13 +997,13 @@ function VennPage() {
                   />
                 </PropRow>
 
-                <BaseCol className="justify-start gap-y-1 pt-4">
+                <BaseCol className="justify-start gap-y-2 pt-4">
                   <LinkButton onClick={() => resetSettings()}>
                     Default settings
                   </LinkButton>
 
                   <LinkButton onClick={() => resetCircles()}>
-                    Default list colors
+                    Default colors
                   </LinkButton>
                 </BaseCol>
               </AccordionContent>
@@ -1173,8 +1043,8 @@ function VennPage() {
           placeholder="A list of the items in each Venn subset will appear here when you click on the diagram..."
           readOnly
           value={[
-            selectedItems.label,
-            ...selectedItems.items.sort().map((s) => _originalMap.get(s)),
+            selectedItems.name,
+            ...selectedItems.items.sort().map((s) => originalNames[s] || s),
           ].join('\n')}
         />
       ),
@@ -1286,9 +1156,10 @@ function VennPage() {
 
   const labels: string[] = useMemo(
     () =>
-      [...vennSets.keys()]
+      [...Object.keys(vennSets)]
+        .map(Number)
         .sort()
-        .map((id, idx) => vennSets.get(id)?.name || `List ${idx + 1}`),
+        .map((id, idx) => vennSets[id]?.name || `List ${idx + 1}`),
 
     [vennSets]
   )
@@ -1381,26 +1252,17 @@ function VennPage() {
                     width={settings.w}
                     height={settings.w}
                   >
-                    <VennProvider
-                      values={selectedItems}
-                      setItems={(label, items) =>
-                        setSelectedItems({ label, items })
-                      }
-                    >
-                      {labels.length > 3 ? (
-                        <SVGFourWayVenn
-                          labels={labels}
-                          vennElemMap={vennElemMap}
-                          combinationNames={combinationNames}
-                        />
-                      ) : (
-                        <SVGThreeWayVenn
-                          labels={labels}
-                          vennElemMap={vennElemMap}
-                          combinationNames={combinationNames}
-                        />
-                      )}
-                    </VennProvider>
+                    {labels.length > 3 ? (
+                      <SVGFourWayVenn
+                        labels={labels}
+                        vennElemMap={vennElemMap}
+                      />
+                    ) : (
+                      <SVGThreeWayVenn
+                        labels={labels}
+                        vennElemMap={vennElemMap}
+                      />
+                    )}
                   </BaseSvg>
                   {/* <div
                     id="tooltip"

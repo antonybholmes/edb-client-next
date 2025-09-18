@@ -5,7 +5,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 export const PLOT_W = 600
 
-const SETTINGS_KEY = `${APP_ID}:module:venn:settings:v14`
+const SETTINGS_KEY = `${APP_ID}:module:venn:settings:v16`
 
 export interface IVennCircleProps {
   name: string
@@ -25,7 +25,7 @@ export const DEFAULT_VENN_CIRCLE_PROPS = {
 export type VennCirclesMap = Record<string, IVennCircleProps>
 
 export const DEFAULT_CIRCLE_MAP: VennCirclesMap = {
-  0: {
+  1: {
     name: 'A',
     fill: '#ff0000',
     stroke: '#ff0000',
@@ -33,7 +33,7 @@ export const DEFAULT_CIRCLE_MAP: VennCirclesMap = {
     fillOpacity: 0.3,
     strokeOpacity: 1,
   },
-  1: {
+  2: {
     name: 'B',
     fill: '#008000',
     stroke: '#008000',
@@ -41,7 +41,7 @@ export const DEFAULT_CIRCLE_MAP: VennCirclesMap = {
     fillOpacity: 0.3,
     strokeOpacity: 1,
   },
-  2: {
+  3: {
     name: 'C',
     fill: '#0000ff',
     stroke: '#0000ff',
@@ -49,7 +49,7 @@ export const DEFAULT_CIRCLE_MAP: VennCirclesMap = {
     fillOpacity: 0.3,
     strokeOpacity: 1,
   },
-  3: {
+  4: {
     name: 'D',
     fill: '#FFA500',
     stroke: '#FFA500',
@@ -59,7 +59,7 @@ export const DEFAULT_CIRCLE_MAP: VennCirclesMap = {
   },
 }
 
-export interface IVennOptions {
+export interface IVennSettings {
   showCounts: boolean
   showLabels: boolean
   w: number
@@ -74,7 +74,7 @@ export interface IVennOptions {
   circles: VennCirclesMap
 }
 
-const DEFAULT_SETTINGS: IVennOptions = {
+const DEFAULT_SETTINGS: IVennSettings = {
   w: PLOT_W,
   radius: 150,
   scale: 1,
@@ -90,18 +90,18 @@ const DEFAULT_SETTINGS: IVennOptions = {
 }
 
 export interface IVennStore {
-  settings: IVennOptions
+  settings: IVennSettings
   circles: VennCirclesMap
-  updateSettings: (settings: IVennOptions) => void
+  updateSettings: (settings: IVennSettings) => void
   updateCircles: (circles: VennCirclesMap) => void
 }
 
-export const useVennStore = create<IVennStore>()(
+export const useVennSettingsStore = create<IVennStore>()(
   persist(
     (set) => ({
       settings: { ...DEFAULT_SETTINGS },
       circles: { ...DEFAULT_CIRCLE_MAP },
-      updateSettings: (settings: IVennOptions) => {
+      updateSettings: (settings: IVennSettings) => {
         set({ settings: { ...settings } })
       },
       updateCircles: (circles: VennCirclesMap) => {
@@ -115,20 +115,20 @@ export const useVennStore = create<IVennStore>()(
   )
 )
 
-export function useVenn(): {
-  settings: IVennOptions
-  updateSettings: (settings: IVennOptions) => void
+export function useVennSettings(): {
+  settings: IVennSettings
+  updateSettings: (settings: IVennSettings) => void
   resetSettings: () => void
   circles: VennCirclesMap
   updateCircles: (circles: VennCirclesMap) => void
   resetCircles: () => void
 } {
-  const settings = useVennStore((state) => state.settings)
-  const updateSettings = useVennStore((state) => state.updateSettings)
+  const settings = useVennSettingsStore((state) => state.settings)
+  const updateSettings = useVennSettingsStore((state) => state.updateSettings)
   const resetSettings = () => updateSettings({ ...DEFAULT_SETTINGS })
 
-  const circles = useVennStore((state) => state.circles)
-  const updateCircles = useVennStore((state) => state.updateCircles)
+  const circles = useVennSettingsStore((state) => state.circles)
+  const updateCircles = useVennSettingsStore((state) => state.updateCircles)
   const resetCircles = () => updateCircles({ ...DEFAULT_CIRCLE_MAP })
 
   return {

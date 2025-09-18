@@ -1,25 +1,30 @@
 import { DEG_TO_RAD } from '@/lib/math/math'
-import { useContext } from 'react'
-import { IVennProps } from './svg-three-way-venn'
-import { VennContext } from './venn-provider'
+import { CountText } from './svg-three-way-venn'
+import { useVennSettings } from './venn-settings-store'
 import { useVenn } from './venn-store'
+
+export interface IVennProps {
+  labels?: string[]
+  vennElemMap: Map<string, Set<string>>
+
+  overlapLabels?: { [key: string]: { color: string; label: string } }
+}
 
 export function SVGFourWayVenn({
   labels = [],
 
   vennElemMap,
-  combinationNames,
 
   overlapLabels = {},
 }: IVennProps) {
-  const { setItems } = useContext(VennContext)
-  const { settings, circles } = useVenn()
+  const { setSelectedItems, combinationNames } = useVenn()
+  const { settings, circles } = useVennSettings()
 
   function _setItems(name: string, items: string[]) {
     const n = items.length
-    const title = `There ${n === 0 || n > 1 ? 'are' : 'is'} ${n} selected item${n !== 1 ? 's' : ''} in ${name}:`
+    const title = `There ${n === 0 || n > 1 ? 'are' : 'is'} ${n} ${name.includes('AND') ? 'common' : 'unique'} item${n !== 1 ? 's' : ''} in ${name}:`
 
-    setItems(title, items)
+    setSelectedItems(title, items)
   }
 
   const center = [settings.w * 0.5, settings.w * 0.5]
@@ -48,201 +53,246 @@ export function SVGFourWayVenn({
   return (
     <>
       {/* Circle A */}
-      <circle
-        cx={cA[0]}
-        cy={cA[1]}
-        r={settings.radius}
-        fill={circles[0].fill}
-        fillOpacity={circles[0].fillOpacity}
-        stroke={circles[0].stroke}
+      <ellipse
+        cx={center[0]}
+        cy={center[1]}
+        rx={settings.radius * 0.5}
+        ry={settings.radius}
+        fill={circles[1].fill}
+        fillOpacity={circles[1].fillOpacity}
+        stroke={circles[1].stroke}
+        transform={`translate(${-settings.radius / 2}, ${settings.radius / 4}) rotate(-45, ${center[0]}, ${center[1]}) `}
       />
 
       <text
-        x={cA[0]}
-        y={cA[1] - labelRadius}
+        x={center[0] - settings.radius}
+        y={center[1] + settings.radius}
         fontSize="16"
         fontWeight="bold"
         textAnchor="middle"
         dominantBaseline="middle"
       >
-        {labels[0]} ({(vennElemMap.get('0')?.size || 0).toLocaleString()})
+        {labels[0]} ({(vennElemMap.get('1')?.size || 0).toLocaleString()})
       </text>
 
+      {/* Circle B */}
+
+      <ellipse
+        cx={center[0]}
+        cy={center[1]}
+        rx={settings.radius * 0.5}
+        ry={settings.radius}
+        fill={circles[2].fill}
+        fillOpacity={circles[2].fillOpacity}
+        stroke={circles[2].stroke}
+        transform={`rotate(-45, ${center[0]}, ${center[1]})`}
+      />
+
       <text
-        x={labels.length > 1 ? lA[0] : cA[0]}
-        y={labels.length > 1 ? lA[1] : cA[1]}
+        x={center[0] - settings.radius / 2}
+        y={center[1] - settings.radius}
         fontSize="16"
         fontWeight="bold"
         textAnchor="middle"
         dominantBaseline="middle"
-        fill={circles[0].color}
+      >
+        {labels[1]} ({vennElemMap.get('2')?.size || 0})
+      </text>
+
+      {/* Circle C */}
+      <ellipse
+        cx={center[0]}
+        cy={center[1]}
+        rx={settings.radius * 0.5}
+        ry={settings.radius}
+        fill={circles[3].fill}
+        fillOpacity={circles[3].fillOpacity}
+        stroke={circles[3].stroke}
+        transform={`rotate(45, ${center[0]}, ${center[1]})`}
+      />
+
+      <text
+        x={center[0] + settings.radius / 2}
+        y={center[1] - settings.radius}
+        fontSize="16"
+        fontWeight="bold"
+        textAnchor="middle"
+        dominantBaseline="middle"
+      >
+        {labels[2]} ({vennElemMap.get('3')?.size || 0})
+      </text>
+
+      {/* Circle 4 */}
+
+      <ellipse
+        cx={center[0]}
+        cy={center[1]}
+        rx={settings.radius * 0.5}
+        ry={settings.radius}
+        fill={circles[4].fill}
+        fillOpacity={circles[4].fillOpacity}
+        stroke={circles[4].stroke}
+        transform={`translate(${settings.radius * 0.5}, ${settings.radius * 0.25}) rotate(45, ${center[0]}, ${center[1]}) `}
+      />
+
+      <text
+        x={center[0] + settings.radius}
+        y={center[1] + settings.radius}
+        fontSize="16"
+        fontWeight="bold"
+        textAnchor="middle"
+        dominantBaseline="middle"
+      >
+        {labels[3]} ({vennElemMap.get('3')?.size || 0})
+      </text>
+
+      {/* Lists */}
+
+      <CountText
+        id={'1'}
+        center={[center[0] - settings.radius * 0.9, center[1]]}
+        vennElemMap={vennElemMap}
+        overlapLabels={overlapLabels}
+        setItems={_setItems}
+      />
+
+      <CountText
+        id={'2'}
+        center={[
+          center[0] - settings.radius * 0.4,
+          center[1] - settings.radius * 0.55,
+        ]}
+        vennElemMap={vennElemMap}
+        overlapLabels={overlapLabels}
+        setItems={_setItems}
+      />
+
+      <CountText
+        id={'3'}
+        center={[
+          center[0] + settings.radius * 0.4,
+          center[1] - settings.radius * 0.55,
+        ]}
+        vennElemMap={vennElemMap}
+        overlapLabels={overlapLabels}
+        setItems={_setItems}
+      />
+
+      <CountText
+        id={'4'}
+        center={[center[0] + settings.radius * 0.9, center[1]]}
+        vennElemMap={vennElemMap}
+        overlapLabels={overlapLabels}
+        setItems={_setItems}
+      />
+
+      <CountText
+        id={'1:2'}
+        center={[
+          center[0] - settings.radius * 0.6,
+          center[1] - settings.radius * 0.3,
+        ]}
+        vennElemMap={vennElemMap}
+        overlapLabels={overlapLabels}
+        setItems={_setItems}
+      />
+
+      <CountText
+        id={'2:3'}
+        center={[center[0], center[1] - settings.radius * 0.3]}
+        vennElemMap={vennElemMap}
+        overlapLabels={overlapLabels}
+        setItems={_setItems}
+      />
+
+      <CountText
+        id={'3:4'}
+        center={[
+          center[0] + settings.radius * 0.6,
+          center[1] - settings.radius * 0.3,
+        ]}
+        vennElemMap={vennElemMap}
+        overlapLabels={overlapLabels}
+        setItems={_setItems}
+      />
+
+      <CountText
+        id={'1:3'}
+        center={[
+          center[0] - settings.radius * 0.5,
+          center[1] + settings.radius * 0.5,
+        ]}
+        vennElemMap={vennElemMap}
+        overlapLabels={overlapLabels}
+        setItems={_setItems}
+      />
+
+      <CountText
+        id={'2:4'}
+        center={[
+          center[0] + settings.radius * 0.5,
+          center[1] + settings.radius * 0.5,
+        ]}
+        vennElemMap={vennElemMap}
+        overlapLabels={overlapLabels}
+        setItems={_setItems}
+      />
+
+      <CountText
+        id={'1:4'}
+        center={[center[0], center[1] + settings.radius * 0.85]}
+        vennElemMap={vennElemMap}
+        overlapLabels={overlapLabels}
+        setItems={_setItems}
+      />
+
+      <CountText
+        id={'1:2:3'}
+        center={[
+          center[0] - settings.radius * 0.3,
+          center[1] + settings.radius * 0.1,
+        ]}
+        vennElemMap={vennElemMap}
+        overlapLabels={overlapLabels}
+        setItems={_setItems}
+      />
+
+      <CountText
+        id={'2:3:4'}
+        center={[
+          center[0] + settings.radius * 0.3,
+          center[1] + settings.radius * 0.1,
+        ]}
+        vennElemMap={vennElemMap}
+        overlapLabels={overlapLabels}
+        setItems={_setItems}
+      />
+
+      <CountText
+        id={'1:2:3:4'}
+        center={[center[0], center[1] + settings.radius * 0.4]}
+        vennElemMap={vennElemMap}
+        overlapLabels={overlapLabels}
+        setItems={_setItems}
+      />
+
+      {/* <text
+        x={center[0]}
+        y={center[1] + settings.radius * 0.4}
+        fontSize="16"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fill={overlapLabels['1:2:3']?.color || 'white'}
         onClick={() => {
-          _setItems(labels[0], Array.from(vennElemMap.get('0') || []))
+          _setItems(
+            combinationNames['1:2:3'] || '',
+            Array.from(vennElemMap.get('1:2:3') || [])
+          )
         }}
         style={{ cursor: 'pointer' }}
       >
-        {(vennElemMap.get('0')?.size || 0).toLocaleString()}
-      </text>
-
-      {labels.length > 1 && (
-        <>
-          {/* Circle B */}
-          <circle
-            cx={cB[0]}
-            cy={cB[1]}
-            r={settings.radius}
-            fill={circles[1].fill}
-            fillOpacity={circles[1].fillOpacity}
-            stroke={circles[1].stroke}
-          />
-
-          <text
-            x={cB[0]}
-            y={cB[1] - labelRadius}
-            fontSize="16"
-            fontWeight="bold"
-            textAnchor="middle"
-            dominantBaseline="middle"
-          >
-            {labels[1]} ({vennElemMap.get('1')?.size || 0})
-          </text>
-
-          <text
-            x={labels.length > 1 ? lB[0] : cB[0]}
-            y={labels.length > 1 ? lB[1] : cB[1]}
-            fontSize="16"
-            fontWeight="bold"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill={circles[1].color}
-            onClick={() => {
-              _setItems(labels[1], Array.from(vennElemMap.get('1') || []))
-            }}
-            style={{ cursor: 'pointer' }}
-          >
-            {vennElemMap.get('1')?.size || 0}
-          </text>
-        </>
-      )}
-
-      {labels.length > 2 && (
-        <>
-          {/* Circle C */}
-          <circle
-            cx={cC[0]}
-            cy={cC[1]}
-            r={settings.radius}
-            fill={circles[2].fill}
-            fillOpacity={circles[2].fillOpacity}
-            stroke={circles[2].stroke}
-          />
-
-          <text
-            x={cC[0]}
-            y={cC[1] + labelRadius}
-            fontSize="16"
-            fontWeight="bold"
-            textAnchor="middle"
-            dominantBaseline="middle"
-          >
-            {labels[2]} ({vennElemMap.get('2')?.size || 0})
-          </text>
-
-          <text
-            x={lC[0]}
-            y={lC[1]}
-            fontSize="16"
-            fontWeight="bold"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill={circles[2].color}
-            onClick={() => {
-              _setItems(labels[2], Array.from(vennElemMap.get('2') || []))
-            }}
-            style={{ cursor: 'pointer' }}
-          >
-            {vennElemMap.get('2')?.size || 0}
-          </text>
-        </>
-      )}
-
-      {labels.length > 1 && (
-        <>
-          <text
-            x={(cA[0] + cB[0]) / 2}
-            y={lA[1]}
-            fontSize="16"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill={overlapLabels['0:1']?.color || 'white'}
-            onClick={() => {
-              _setItems(
-                combinationNames.get('0:1') || '',
-                Array.from(vennElemMap.get('0:1') || [])
-              )
-            }}
-            style={{ cursor: 'pointer' }}
-          >
-            {vennElemMap.get('0:1')?.size || 0}
-          </text>
-        </>
-      )}
-
-      {labels.length > 2 && (
-        <>
-          <text
-            x={(lA[0] + lC[0]) / 2}
-            y={(lA[1] + lC[1]) / 2}
-            fontSize="16"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill={overlapLabels['0:2']?.color || 'white'}
-            onClick={() => {
-              _setItems(
-                combinationNames.get('0:2') || '',
-                Array.from(vennElemMap.get('0:2') || [])
-              )
-            }}
-            style={{ cursor: 'pointer' }}
-          >
-            {vennElemMap.get('0:2')?.size || 0}
-          </text>
-          <text
-            x={(lB[0] + lC[0]) / 2}
-            y={(lB[1] + lC[1]) / 2}
-            fontSize="16"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill={overlapLabels['1:2']?.color || 'white'}
-            onClick={() => {
-              _setItems(
-                combinationNames.get('1:2') || '',
-                Array.from(vennElemMap.get('1:2') || [])
-              )
-            }}
-            style={{ cursor: 'pointer' }}
-          >
-            {vennElemMap.get('1:2')?.size || 0}
-          </text>
-          <text
-            x={cC[0]}
-            y={center[1]}
-            fontSize="16"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill={overlapLabels['0:1:2']?.color || 'white'}
-            onClick={() => {
-              _setItems(
-                combinationNames.get('0:1:2') || '',
-                Array.from(vennElemMap.get('0:1:2') || [])
-              )
-            }}
-            style={{ cursor: 'pointer' }}
-          >
-            {vennElemMap.get('0:1:2')?.size || 0}
-          </text>
-        </>
-      )}
+        {vennElemMap.get('1:2:3:4')?.size || 0}
+      </text> */}
     </>
   )
 }

@@ -231,7 +231,7 @@ export function ProteinPanel() {
         placeholder="Sequence"
         aria-label="Protein sequence"
         value={protein.sequence}
-        onTextChange={(v) => {
+        onLinesChange={(v) => {
           logger.log('Setting protein sequence:', v)
 
           const p = produce(protein, (draft) => {

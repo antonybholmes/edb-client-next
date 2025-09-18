@@ -41,8 +41,10 @@ export interface ITextAreaProps
   labelChildren?: ReactNode
   lines?: string[]
   textareaCls?: string | undefined
-  onTextChange?: (v: string[]) => void
-  onTextChanged?: (v: string[]) => void
+  onTextChange?: (v: string) => void
+  onTextChanged?: (v: string) => void
+  onLinesChange?: (v: string[]) => void
+  onLinesChanged?: (v: string[]) => void
 }
 
 function toLines(text: string): string[] {
@@ -66,6 +68,8 @@ export function Textarea({
   onChange,
   onTextChange,
   onTextChanged,
+  onLinesChange,
+  onLinesChanged,
   ...props
 }: ITextAreaProps) {
   //const [_value, setInputValue] = useState("")
@@ -100,13 +104,15 @@ export function Textarea({
         value={lines ? lines.join('\n') : value}
         readOnly={readOnly}
         onChange={(e) => {
-          onTextChange?.(toLines(e.currentTarget.value))
+          onTextChange?.(e.currentTarget.value)
+          onLinesChange?.(toLines(e.currentTarget.value))
           onChange?.(e)
         }}
         onKeyDown={(e) => {
           //console.log(e)
           if (e.key === 'Enter') {
-            onTextChanged?.(toLines(e.currentTarget.value))
+            onTextChanged?.(e.currentTarget.value)
+            onLinesChanged?.(toLines(e.currentTarget.value))
           }
         }}
         {...props}

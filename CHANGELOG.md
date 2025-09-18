@@ -2,6 +2,10 @@
 
 ## 26.6 (Sep, 2025)
 
+### Added
+
+- Added 4 way venn.
+
 ### Changed
 
 - Bug fixes and updates.

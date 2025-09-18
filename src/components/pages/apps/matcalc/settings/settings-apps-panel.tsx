@@ -109,7 +109,7 @@ export function SettingsAppsPanel() {
                       key={settingName}
                       title={settingName}
                       lines={setting}
-                      onTextChange={(v) => {
+                      onLinesChange={(v) => {
                         const newOptions = produce(settings, (draft) => {
                           // the compiler refuses to get the correct type so we have to
                           // force it to behave
