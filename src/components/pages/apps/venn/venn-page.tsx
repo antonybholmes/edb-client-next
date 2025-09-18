@@ -139,7 +139,13 @@ function VennPage() {
     resetCircles,
   } = useVennSettings()
 
-  const { vennLists, setVennLists, originalNames } = useVenn()
+  const {
+    vennLists,
+    setVennLists,
+    originalNames,
+    vennElemMap,
+    setVennElemMap,
+  } = useVenn()
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
@@ -167,10 +173,6 @@ function VennPage() {
   // const [labelToIndexMap, setLabelToIndexMap] = useState<Map<string, number>>(
   //   new Map()
   // )
-
-  const [vennElemMap, setVennElemMap] = useState<Map<string, Set<string>>>(
-    new Map()
-  )
 
   // map of list id to the text contents for each list,
   // we split these later to get the actual items
@@ -397,7 +399,7 @@ function VennPage() {
     // counts for venn
     //
 
-    const vennMap = new Map<string, Set<string>>()
+    const vennMap: Record<string, string[]> = {}
 
     for (const [item, listIds] of combs.entries()) {
       //const sets = [...listIds].sort() //.map( (s) => listLabelMap.get(s)!)
@@ -406,11 +408,11 @@ function VennPage() {
 
       const id = [...listIds].sort().join(':')
 
-      if (!vennMap.has(id)) {
-        vennMap.set(id, new Set())
+      if (!(id in vennMap)) {
+        vennMap[id] = []
       }
 
-      vennMap.get(id)!.add(item)
+      vennMap[id].push(item)
     }
 
     // const combs2 = new Map<string, Set<string>>()
@@ -488,22 +490,22 @@ function VennPage() {
   useEffect(() => {
     // make a dataframe
 
-    if (vennElemMap.size === 0) {
+    if (Object.keys(vennSets).length === 0) {
       return
     }
 
-    const index = [...vennElemMap.keys()].sort((a, b) =>
+    const index = [...Object.keys(vennElemMap)].sort((a, b) =>
       a.length !== b.length ? a.length - b.length : a.localeCompare(b)
     )
 
     const maxRows = index
-      .map((n) => vennElemMap.get(n)!.size)
+      .map((n) => vennElemMap[n].length)
       .reduce((a, b) => Math.max(a, b), 0)
 
     const d = index.map((n) =>
-      [...vennElemMap.get(n)!]
+      [...vennElemMap[n]]
         .sort()
-        .concat(Array(maxRows - vennElemMap.get(n)!.size).fill(''))
+        .concat(Array(maxRows - vennElemMap[n].length).fill(''))
     )
 
     const df = new AnnotationDataFrame({
@@ -1253,15 +1255,9 @@ function VennPage() {
                     height={settings.w}
                   >
                     {labels.length > 3 ? (
-                      <SVGFourWayVenn
-                        labels={labels}
-                        vennElemMap={vennElemMap}
-                      />
+                      <SVGFourWayVenn labels={labels} />
                     ) : (
-                      <SVGThreeWayVenn
-                        labels={labels}
-                        vennElemMap={vennElemMap}
-                      />
+                      <SVGThreeWayVenn labels={labels} />
                     )}
                   </BaseSvg>
                   {/* <div

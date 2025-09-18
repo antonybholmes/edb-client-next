@@ -1,11 +1,10 @@
 import { DEG_TO_RAD } from '@/lib/math/math'
-import { CountText } from './svg-three-way-venn'
+import { CountText, makeTitle } from './svg-three-way-venn'
 import { useVennSettings } from './venn-settings-store'
 import { useVenn } from './venn-store'
 
 export interface IVennProps {
   labels?: string[]
-  vennElemMap: Map<string, Set<string>>
 
   overlapLabels?: { [key: string]: { color: string; label: string } }
 }
@@ -13,18 +12,13 @@ export interface IVennProps {
 export function SVGFourWayVenn({
   labels = [],
 
-  vennElemMap,
-
   overlapLabels = {},
 }: IVennProps) {
-  const { setSelectedItems, combinationNames } = useVenn()
+  const { setSelectedItems, vennElemMap } = useVenn()
   const { settings, circles } = useVennSettings()
 
   function _setItems(name: string, items: string[]) {
-    const n = items.length
-    const title = `There ${n === 0 || n > 1 ? 'are' : 'is'} ${n} ${name.includes('AND') ? 'common' : 'unique'} item${n !== 1 ? 's' : ''} in ${name}:`
-
-    setSelectedItems(title, items)
+    setSelectedItems(makeTitle(name, items), items)
   }
 
   const center = [settings.w * 0.5, settings.w * 0.5]
@@ -72,7 +66,7 @@ export function SVGFourWayVenn({
         textAnchor="middle"
         dominantBaseline="middle"
       >
-        {labels[0]} ({(vennElemMap.get('1')?.size || 0).toLocaleString()})
+        {labels[0]} ({(vennElemMap['1']?.length || 0).toLocaleString()})
       </text>
 
       {/* Circle B */}
@@ -96,7 +90,7 @@ export function SVGFourWayVenn({
         textAnchor="middle"
         dominantBaseline="middle"
       >
-        {labels[1]} ({vennElemMap.get('2')?.size || 0})
+        {labels[1]} ({vennElemMap['2']?.length || 0})
       </text>
 
       {/* Circle C */}
@@ -119,7 +113,7 @@ export function SVGFourWayVenn({
         textAnchor="middle"
         dominantBaseline="middle"
       >
-        {labels[2]} ({vennElemMap.get('3')?.size || 0})
+        {labels[2]} ({vennElemMap['3']?.length || 0})
       </text>
 
       {/* Circle 4 */}
@@ -143,7 +137,7 @@ export function SVGFourWayVenn({
         textAnchor="middle"
         dominantBaseline="middle"
       >
-        {labels[3]} ({vennElemMap.get('3')?.size || 0})
+        {labels[3]} ({vennElemMap['3']?.length || 0})
       </text>
 
       {/* Lists */}
@@ -151,7 +145,6 @@ export function SVGFourWayVenn({
       <CountText
         id={'1'}
         center={[center[0] - settings.radius * 0.9, center[1]]}
-        vennElemMap={vennElemMap}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
@@ -162,7 +155,6 @@ export function SVGFourWayVenn({
           center[0] - settings.radius * 0.4,
           center[1] - settings.radius * 0.55,
         ]}
-        vennElemMap={vennElemMap}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
@@ -173,7 +165,6 @@ export function SVGFourWayVenn({
           center[0] + settings.radius * 0.4,
           center[1] - settings.radius * 0.55,
         ]}
-        vennElemMap={vennElemMap}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
@@ -181,7 +172,6 @@ export function SVGFourWayVenn({
       <CountText
         id={'4'}
         center={[center[0] + settings.radius * 0.9, center[1]]}
-        vennElemMap={vennElemMap}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
@@ -192,7 +182,6 @@ export function SVGFourWayVenn({
           center[0] - settings.radius * 0.6,
           center[1] - settings.radius * 0.3,
         ]}
-        vennElemMap={vennElemMap}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
@@ -200,7 +189,6 @@ export function SVGFourWayVenn({
       <CountText
         id={'2:3'}
         center={[center[0], center[1] - settings.radius * 0.3]}
-        vennElemMap={vennElemMap}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
@@ -211,7 +199,6 @@ export function SVGFourWayVenn({
           center[0] + settings.radius * 0.6,
           center[1] - settings.radius * 0.3,
         ]}
-        vennElemMap={vennElemMap}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
@@ -222,7 +209,6 @@ export function SVGFourWayVenn({
           center[0] - settings.radius * 0.5,
           center[1] + settings.radius * 0.5,
         ]}
-        vennElemMap={vennElemMap}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
@@ -233,7 +219,6 @@ export function SVGFourWayVenn({
           center[0] + settings.radius * 0.5,
           center[1] + settings.radius * 0.5,
         ]}
-        vennElemMap={vennElemMap}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
@@ -241,7 +226,6 @@ export function SVGFourWayVenn({
       <CountText
         id={'1:4'}
         center={[center[0], center[1] + settings.radius * 0.85]}
-        vennElemMap={vennElemMap}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
@@ -252,7 +236,6 @@ export function SVGFourWayVenn({
           center[0] - settings.radius * 0.3,
           center[1] + settings.radius * 0.1,
         ]}
-        vennElemMap={vennElemMap}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
@@ -263,7 +246,6 @@ export function SVGFourWayVenn({
           center[0] + settings.radius * 0.3,
           center[1] + settings.radius * 0.1,
         ]}
-        vennElemMap={vennElemMap}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
@@ -271,7 +253,6 @@ export function SVGFourWayVenn({
       <CountText
         id={'1:2:3:4'}
         center={[center[0], center[1] + settings.radius * 0.4]}
-        vennElemMap={vennElemMap}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />

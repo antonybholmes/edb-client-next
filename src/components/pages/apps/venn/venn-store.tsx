@@ -90,6 +90,7 @@ export interface IVennOptions {
   originalNames: Record<string, string>
 
   combinationNames: Record<string, string>
+  vennElemMap: Record<string, string[]>
 }
 
 export const COMBINATIONS: number[][] = makeCombinations(range(1, 5))
@@ -110,12 +111,14 @@ const DEFAULT_SETTINGS: IVennOptions = {
   ),
   originalNames: {},
   combinationNames: {},
+  vennElemMap: {},
 }
 
 export interface IVennStore extends IVennOptions {
   setSelectedItems: (name: string, items: string[]) => void
   setVennLists: (vennLists: Record<number, IVennList>) => void
   updateVennListText: (id: number, text: string) => void
+  setVennElemMap: (vennElemMap: Record<string, string[]>) => void
 }
 
 export const useVennStore = create<IVennStore>((set, get) => ({
@@ -163,6 +166,14 @@ export const useVennStore = create<IVennStore>((set, get) => ({
       })
     )
   },
+  setVennElemMap: (vennElemMap: Record<string, string[]>) => {
+    // ensure unique and sorted items in each set
+    set({
+      vennElemMap: Object.fromEntries(
+        Object.entries(vennElemMap).map(([k, v]) => [k, [...new Set(v)].sort()])
+      ),
+    })
+  },
 }))
 
 export function useVenn(): IVennStore {
@@ -178,6 +189,9 @@ export function useVenn(): IVennStore {
 
   const combinationNames = useVennStore((state) => state.combinationNames)
 
+  const vennElemMap = useVennStore((state) => state.vennElemMap)
+  const setVennElemMap = useVennStore((state) => state.setVennElemMap)
+
   return {
     selectedItems,
     setSelectedItems,
@@ -186,5 +200,7 @@ export function useVenn(): IVennStore {
     updateVennListText,
     originalNames,
     combinationNames,
+    vennElemMap,
+    setVennElemMap,
   }
 }

@@ -1477,5 +1477,18 @@
     },
     "author": "Antony Holmes",
     "date": "2025-09-17T20:45:06.866Z"
+  },
+  {
+    "version": "26.8",
+    "messages": {
+      "changed": [
+        {
+          "msg": "Simplified venn objects",
+          "date": "2025-09-18T22:45:32.613Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-09-18T22:45:32.613Z"
   }
 ]

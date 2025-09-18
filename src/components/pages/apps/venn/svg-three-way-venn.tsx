@@ -4,7 +4,7 @@ import { useVenn } from './venn-store'
 
 interface ICountTextProps {
   id: string
-  vennElemMap: Map<string, Set<string>>
+
   center: [number, number]
   overlapLabels: { [key: string]: { color: string; label: string } }
   setItems: (name: string, items: string[]) => void
@@ -12,12 +12,12 @@ interface ICountTextProps {
 
 export function CountText({
   id,
-  vennElemMap,
+
   center,
   overlapLabels,
   setItems,
 }: ICountTextProps) {
-  const { combinationNames } = useVenn()
+  const { combinationNames, vennElemMap } = useVenn()
   return (
     <text
       x={center[0]}
@@ -27,21 +27,23 @@ export function CountText({
       dominantBaseline="middle"
       fill={overlapLabels[id]?.color || 'white'}
       onClick={() => {
-        setItems(
-          combinationNames[id] || '',
-          Array.from(vennElemMap.get(id) || [])
-        )
+        setItems(combinationNames[id] || '', Array.from(vennElemMap[id] || []))
       }}
       style={{ cursor: 'pointer' }}
     >
-      {vennElemMap.get(id)?.size || 0}
+      {vennElemMap[id]?.length || 0}
     </text>
   )
 }
 
+export function makeTitle(name: string, items: string[]) {
+  const n = items.length
+
+  return `There ${n === 0 || n > 1 ? 'are' : 'is'} ${n} ${name.includes('AND') ? 'common' : 'unique'} item${n !== 1 ? 's' : ''} in ${name}:`
+}
+
 export interface IVennProps {
   labels?: string[]
-  vennElemMap: Map<string, Set<string>>
 
   overlapLabels?: { [key: string]: { color: string; label: string } }
 }
@@ -49,18 +51,13 @@ export interface IVennProps {
 export function SVGThreeWayVenn({
   labels = [],
 
-  vennElemMap,
-
   overlapLabels = {},
 }: IVennProps) {
-  const { setSelectedItems, combinationNames } = useVenn()
+  const { setSelectedItems, vennElemMap } = useVenn()
   const { settings, circles } = useVennSettings()
 
   function _setItems(name: string, items: string[]) {
-    const n = items.length
-    const title = `There ${n === 0 || n > 1 ? 'are' : 'is'} ${n} ${name.includes('AND') ? 'common' : 'unique'} item${n !== 1 ? 's' : ''} in ${name}:`
-
-    setSelectedItems(title, items)
+    setSelectedItems(makeTitle(name, items), items)
   }
 
   const center = [settings.w * 0.5, settings.w * 0.5]
@@ -106,7 +103,7 @@ export function SVGThreeWayVenn({
         textAnchor="middle"
         dominantBaseline="middle"
       >
-        {labels[0]} ({(vennElemMap.get('1')?.size || 0).toLocaleString()})
+        {labels[0]} ({(vennElemMap['1']?.length || 0).toLocaleString()})
       </text>
 
       <text
@@ -118,11 +115,11 @@ export function SVGThreeWayVenn({
         dominantBaseline="middle"
         fill={circles[1].color}
         onClick={() => {
-          _setItems(labels[0], Array.from(vennElemMap.get('1') || []))
+          _setItems(labels[0], Array.from(vennElemMap['1'] || []))
         }}
         style={{ cursor: 'pointer' }}
       >
-        {(vennElemMap.get('1')?.size || 0).toLocaleString()}
+        {(vennElemMap['1']?.length || 0).toLocaleString()}
       </text>
 
       {labels.length > 1 && (
@@ -145,7 +142,7 @@ export function SVGThreeWayVenn({
             textAnchor="middle"
             dominantBaseline="middle"
           >
-            {labels[1]} ({vennElemMap.get('2')?.size || 0})
+            {labels[1]} ({vennElemMap['2']?.length || 0})
           </text>
 
           <text
@@ -157,11 +154,11 @@ export function SVGThreeWayVenn({
             dominantBaseline="middle"
             fill={circles[2].color}
             onClick={() => {
-              _setItems(labels[1], Array.from(vennElemMap.get('2') || []))
+              _setItems(labels[1], Array.from(vennElemMap['2'] || []))
             }}
             style={{ cursor: 'pointer' }}
           >
-            {vennElemMap.get('2')?.size || 0}
+            {vennElemMap['2']?.length || 0}
           </text>
         </>
       )}
@@ -186,102 +183,49 @@ export function SVGThreeWayVenn({
             textAnchor="middle"
             dominantBaseline="middle"
           >
-            {labels[2]} ({vennElemMap.get('3')?.size || 0})
+            {labels[2]} ({vennElemMap['3']?.length || 0})
           </text>
 
-          <text
-            x={lC[0]}
-            y={lC[1]}
-            fontSize="16"
-            fontWeight="bold"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill={circles[3].color}
-            onClick={() => {
-              _setItems(labels[2], Array.from(vennElemMap.get('3') || []))
-            }}
-            style={{ cursor: 'pointer' }}
-          >
-            {vennElemMap.get('3')?.size || 0}
-          </text>
+          <CountText
+            id={'3'}
+            center={lC as [number, number]}
+            overlapLabels={overlapLabels}
+            setItems={_setItems}
+          />
         </>
       )}
 
       {labels.length > 1 && (
-        <>
-          <text
-            x={(cA[0] + cB[0]) / 2}
-            y={lA[1]}
-            fontSize="16"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill={overlapLabels['2:3']?.color || 'white'}
-            onClick={() => {
-              _setItems(
-                combinationNames['2:3'] || '',
-                Array.from(vennElemMap.get('2:3') || [])
-              )
-            }}
-            style={{ cursor: 'pointer' }}
-          >
-            {vennElemMap.get('2:3')?.size || 0}
-          </text>
-        </>
+        <CountText
+          id={'1:2'}
+          center={[(cA[0] + cB[0]) / 2, lA[1]]}
+          overlapLabels={overlapLabels}
+          setItems={_setItems}
+        />
       )}
 
       {labels.length > 2 && (
         <>
-          <text
-            x={(lA[0] + lC[0]) / 2}
-            y={(lA[1] + lC[1]) / 2}
-            fontSize="16"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill={overlapLabels['1:3']?.color || 'white'}
-            onClick={() => {
-              _setItems(
-                combinationNames['1:3'] || '',
-                Array.from(vennElemMap.get('1:3') || [])
-              )
-            }}
-            style={{ cursor: 'pointer' }}
-          >
-            {vennElemMap.get('1:3')?.size || 0}
-          </text>
-          <text
-            x={(lB[0] + lC[0]) / 2}
-            y={(lB[1] + lC[1]) / 2}
-            fontSize="16"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill={overlapLabels['2:3']?.color || 'white'}
-            onClick={() => {
-              _setItems(
-                combinationNames['2:3'] || '',
-                Array.from(vennElemMap.get('2:3') || [])
-              )
-            }}
-            style={{ cursor: 'pointer' }}
-          >
-            {vennElemMap.get('2:3')?.size || 0}
-          </text>
-          <text
-            x={cC[0]}
-            y={center[1]}
-            fontSize="16"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill={overlapLabels['1:2:3']?.color || 'white'}
-            onClick={() => {
-              _setItems(
-                combinationNames['1:2:3'] || '',
-                Array.from(vennElemMap.get('1:2:3') || [])
-              )
-            }}
-            style={{ cursor: 'pointer' }}
-          >
-            {vennElemMap.get('1:2:3')?.size || 0}
-          </text>
+          <CountText
+            id={'1:3'}
+            center={[(lA[0] + lC[0]) / 2, (lA[1] + lC[1]) / 2]}
+            overlapLabels={overlapLabels}
+            setItems={_setItems}
+          />
+
+          <CountText
+            id={'2:3'}
+            center={[(lB[0] + lC[0]) / 2, (lB[1] + lC[1]) / 2]}
+            overlapLabels={overlapLabels}
+            setItems={_setItems}
+          />
+
+          <CountText
+            id={'1:2:3'}
+            center={[cC[0], center[1]]}
+            overlapLabels={overlapLabels}
+            setItems={_setItems}
+          />
         </>
       )}
     </>
