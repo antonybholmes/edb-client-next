@@ -2,6 +2,10 @@
 
 ## 26.8 (Sep, 2025)
 
+### Changed
+
+- Venn UI fixes.
+
 
 ## 26.6 (Sep, 2025)
 

@@ -3,9 +3,9 @@ import { COLOR_BLACK, COLOR_WHITE } from '@lib/color/color'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-export const PLOT_W = 600
+export const PLOT_W = 700
 
-const SETTINGS_KEY = `${APP_ID}:module:venn:settings:v16`
+const SETTINGS_KEY = `${APP_ID}:module:venn:settings:v22`
 
 export interface IVennCircleProps {
   name: string
@@ -26,33 +26,33 @@ export type VennCirclesMap = Record<string, IVennCircleProps>
 
 export const DEFAULT_CIRCLE_MAP: VennCirclesMap = {
   1: {
-    name: 'A',
-    fill: '#ff0000',
-    stroke: '#ff0000',
+    name: 'List 1',
+    fill: '#6495ED',
+    stroke: '#6495ED',
     color: COLOR_WHITE,
     fillOpacity: 0.3,
     strokeOpacity: 1,
   },
   2: {
-    name: 'B',
-    fill: '#008000',
-    stroke: '#008000',
+    name: 'List 2',
+    fill: '#ba55d3',
+    stroke: '#ba55d3',
     color: COLOR_WHITE,
     fillOpacity: 0.3,
     strokeOpacity: 1,
   },
   3: {
-    name: 'C',
-    fill: '#0000ff',
-    stroke: '#0000ff',
+    name: 'List 3',
+    fill: '#3CB371',
+    stroke: '#3CB371',
     color: COLOR_WHITE,
     fillOpacity: 0.3,
     strokeOpacity: 1,
   },
   4: {
-    name: 'D',
-    fill: '#FFA500',
-    stroke: '#FFA500',
+    name: 'List 4',
+    fill: '#ff0000',
+    stroke: '#ff0000',
     color: COLOR_WHITE,
     fillOpacity: 0.3,
     strokeOpacity: 1,

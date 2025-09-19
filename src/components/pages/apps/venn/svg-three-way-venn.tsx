@@ -8,6 +8,7 @@ interface ICountTextProps {
   center: [number, number]
   overlapLabels: { [key: string]: { color: string; label: string } }
   setItems: (name: string, items: string[]) => void
+  showPercent?: boolean
 }
 
 export function CountText({
@@ -16,23 +17,51 @@ export function CountText({
   center,
   overlapLabels,
   setItems,
+  showPercent = true,
 }: ICountTextProps) {
-  const { combinationNames, vennElemMap } = useVenn()
+  const { combinationNames, vennElemMap, originalNames } = useVenn()
+  const n = vennElemMap[id]?.length || 0
+  const p = ((n / Object.keys(originalNames).length) * 100).toFixed(1)
   return (
-    <text
-      x={center[0]}
-      y={center[1]}
-      fontSize="16"
-      textAnchor="middle"
-      dominantBaseline="middle"
-      fill={overlapLabels[id]?.color || 'white'}
-      onClick={() => {
-        setItems(combinationNames[id] || '', Array.from(vennElemMap[id] || []))
-      }}
-      style={{ cursor: 'pointer' }}
-    >
-      {vennElemMap[id]?.length || 0}
-    </text>
+    <>
+      <text
+        x={center[0]}
+        y={center[1]}
+        fontSize="16"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fill={overlapLabels[id]?.color || 'white'}
+        onClick={() => {
+          setItems(
+            combinationNames[id] || '',
+            Array.from(vennElemMap[id] || [])
+          )
+        }}
+        style={{ cursor: 'pointer' }}
+      >
+        {n.toLocaleString()}
+      </text>
+
+      {showPercent && (
+        <text
+          x={center[0]}
+          y={center[1] + 16}
+          fontSize="12"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fill={overlapLabels[id]?.color || 'white'}
+          onClick={() => {
+            setItems(
+              combinationNames[id] || '',
+              Array.from(vennElemMap[id] || [])
+            )
+          }}
+          style={{ cursor: 'pointer' }}
+        >
+          {p}%
+        </text>
+      )}
+    </>
   )
 }
 
@@ -106,21 +135,15 @@ export function SVGThreeWayVenn({
         {labels[0]} ({(vennElemMap['1']?.length || 0).toLocaleString()})
       </text>
 
-      <text
-        x={labels.length > 1 ? lA[0] : cA[0]}
-        y={labels.length > 1 ? lA[1] : cA[1]}
-        fontSize="16"
-        fontWeight="bold"
-        textAnchor="middle"
-        dominantBaseline="middle"
-        fill={circles[1].color}
-        onClick={() => {
-          _setItems(labels[0], Array.from(vennElemMap['1'] || []))
-        }}
-        style={{ cursor: 'pointer' }}
-      >
-        {(vennElemMap['1']?.length || 0).toLocaleString()}
-      </text>
+      <CountText
+        id={'1'}
+        center={[
+          labels.length > 1 ? lA[0] : cA[0],
+          labels.length > 1 ? lA[1] : cA[1],
+        ]}
+        overlapLabels={overlapLabels}
+        setItems={_setItems}
+      />
 
       {labels.length > 1 && (
         <>
@@ -145,21 +168,15 @@ export function SVGThreeWayVenn({
             {labels[1]} ({vennElemMap['2']?.length || 0})
           </text>
 
-          <text
-            x={labels.length > 1 ? lB[0] : cB[0]}
-            y={labels.length > 1 ? lB[1] : cB[1]}
-            fontSize="16"
-            fontWeight="bold"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill={circles[2].color}
-            onClick={() => {
-              _setItems(labels[1], Array.from(vennElemMap['2'] || []))
-            }}
-            style={{ cursor: 'pointer' }}
-          >
-            {vennElemMap['2']?.length || 0}
-          </text>
+          <CountText
+            id={'2'}
+            center={[
+              labels.length > 1 ? lB[0] : cB[0],
+              labels.length > 1 ? lB[1] : cB[1],
+            ]}
+            overlapLabels={overlapLabels}
+            setItems={_setItems}
+          />
         </>
       )}
 

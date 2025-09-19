@@ -83,6 +83,7 @@ import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
 import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 
 import { BaseSvg } from '@/components/base-svg'
+import { DownloadIcon } from '@/components/icons/download-icon'
 import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
 import { Tabs } from '@/components/shadcn/ui/themed/tabs'
 import { SideTabs } from '@/components/tabs/side-tabs'
@@ -292,18 +293,7 @@ function VennPage() {
     setVennLists(
       Object.fromEntries(
         res.map((items: string[], ci: number) => {
-          return [
-            ci + 1,
-            {
-              id: ci + 1,
-              name: `List ${ci + 1}`,
-              items: items,
-              uniqueItems: [
-                ...new Set<string>(items.map((item) => item.toLowerCase())),
-              ].sort(),
-              text: items.join('\n'),
-            } as IVennList,
-          ]
+          return [ci + 1, makeVennList(ci, `List ${ci + 1}`, items)]
         }, res.length)
       )
     )
@@ -804,7 +794,7 @@ function VennPage() {
                 setShowDialog({ id: 'export', params: {} })
               }}
             >
-              <SaveIcon />
+              <DownloadIcon />
             </ToolbarIconButton>
 
             {/* <ToolbarSaveSvg

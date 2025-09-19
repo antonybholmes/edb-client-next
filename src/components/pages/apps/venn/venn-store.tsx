@@ -157,7 +157,16 @@ export const useVennStore = create<IVennStore>((set, get) => ({
           ].sort()
 
           state.originalNames = {
-            ...state.originalNames,
+            ...Object.fromEntries(
+              [
+                ...new Set(
+                  Object.entries(state.vennLists)
+                    .filter(([k]) => parseInt(k) !== id)
+                    .map(([, v]) => v.items)
+                    .flat()
+                ),
+              ].map((v) => [v.toLowerCase(), v])
+            ),
             ...Object.fromEntries(
               state.vennLists[id].items.map((v) => [v.toLowerCase(), v])
             ),
