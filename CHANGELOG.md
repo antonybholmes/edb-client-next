@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - UI fixes.
 - Add suspense to signout pages.
 - Fixing Auth0 workflow.
