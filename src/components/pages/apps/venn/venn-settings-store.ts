@@ -5,7 +5,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 export const PLOT_W = 700
 
-const SETTINGS_KEY = `${APP_ID}:module:venn:settings:v22`
+const SETTINGS_KEY = `${APP_ID}:module:venn:settings:v24`
 
 export interface IVennCircleProps {
   name: string
@@ -30,15 +30,15 @@ export const DEFAULT_CIRCLE_MAP: VennCirclesMap = {
     fill: '#6495ED',
     stroke: '#6495ED',
     color: COLOR_WHITE,
-    fillOpacity: 0.3,
+    fillOpacity: 0.4,
     strokeOpacity: 1,
   },
   2: {
     name: 'List 2',
-    fill: '#ba55d3',
-    stroke: '#ba55d3',
+    fill: '#ff0000',
+    stroke: '#ff0000',
     color: COLOR_WHITE,
-    fillOpacity: 0.3,
+    fillOpacity: 0.25,
     strokeOpacity: 1,
   },
   3: {
@@ -46,15 +46,15 @@ export const DEFAULT_CIRCLE_MAP: VennCirclesMap = {
     fill: '#3CB371',
     stroke: '#3CB371',
     color: COLOR_WHITE,
-    fillOpacity: 0.3,
+    fillOpacity: 0.35,
     strokeOpacity: 1,
   },
   4: {
     name: 'List 4',
-    fill: '#ff0000',
-    stroke: '#ff0000',
+    fill: '#ba55d3',
+    stroke: '#ba55d3',
     color: COLOR_WHITE,
-    fillOpacity: 0.3,
+    fillOpacity: 0.4,
     strokeOpacity: 1,
   },
 }

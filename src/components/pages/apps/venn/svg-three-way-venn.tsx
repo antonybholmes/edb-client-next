@@ -91,7 +91,7 @@ export function SVGThreeWayVenn({
 
   const center = [settings.w * 0.5, settings.w * 0.5]
   const radius2 = settings.radius * 0.75
-  const labelRadius = settings.radius * 1.2
+  const labelRadius = settings.radius * 1.15
   const radius3 = settings.radius * 1.05
 
   const offset2 = [
@@ -125,7 +125,7 @@ export function SVGThreeWayVenn({
       />
 
       <text
-        x={cA[0]}
+        x={cA[0] - labelRadius * 0.1}
         y={cA[1] - labelRadius}
         fontSize="16"
         fontWeight="bold"
@@ -158,14 +158,14 @@ export function SVGThreeWayVenn({
           />
 
           <text
-            x={cB[0]}
+            x={cB[0] + labelRadius * 0.1}
             y={cB[1] - labelRadius}
             fontSize="16"
             fontWeight="bold"
             textAnchor="middle"
             dominantBaseline="middle"
           >
-            {labels[1]} ({vennElemMap['2']?.length || 0})
+            {labels[1]} ({(vennElemMap['2']?.length || 0).toLocaleString()})
           </text>
 
           <CountText
@@ -200,7 +200,7 @@ export function SVGThreeWayVenn({
             textAnchor="middle"
             dominantBaseline="middle"
           >
-            {labels[2]} ({vennElemMap['3']?.length || 0})
+            {labels[2]} ({(vennElemMap['3']?.length || 0).toLocaleString()})
           </text>
 
           <CountText
