@@ -4,6 +4,7 @@
 
 ### Changed
 
+- UI fixes.
 - Add suspense to signout pages.
 - Fixing Auth0 workflow.
 - Venn improvements using debounce to make user input feel faster.

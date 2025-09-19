@@ -18,7 +18,7 @@ import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { ArrowRight } from 'lucide-react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 
 import { BaseSyntheticEvent, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -35,7 +35,7 @@ const FormSchema = z.object({
 })
 
 export function SignInPage() {
-  const router = useRouter()
+  //const router = useRouter()
   const searchParams = useSearchParams()
 
   const [otpSent, setOTPSent] = useState(false)
@@ -94,7 +94,8 @@ export function SignInPage() {
         url = '/'
       }
 
-      router.push(url)
+      //router.push(url)
+      window.location.href = url
 
       // toast({
       //   title: APP_NAME,
@@ -230,9 +231,9 @@ export function SignInPage() {
                 control={form.control}
                 name="otp"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-y-1">
+                  <FormItem className="flex flex-col gap-y-2">
                     <Label htmlFor="otp" className="text-sm font-medium">
-                      One-Time Password (OTP)
+                      6-Digit One-Time Passcode
                     </Label>
                     <VCenterRow className="gap-x-4">
                       <Input
