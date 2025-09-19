@@ -170,15 +170,15 @@ export const DEFAULT_SETTINGS: IMatcalcSettings = {
 }
 
 export interface IMatcalcStore extends IMatcalcSettings {
-  updateSettings: (settings: IMatcalcSettings) => void
+  updateSettings: (settings: Partial<IMatcalcSettings>) => void
 }
 
 export const useMatcalcStore = create<IMatcalcStore>()(
   persist(
     (set) => ({
       ...DEFAULT_SETTINGS,
-      updateSettings: (settings: IMatcalcSettings) => {
-        set({ ...settings })
+      updateSettings: (settings: Partial<IMatcalcSettings>) => {
+        set((state) => ({ ...state, ...settings }))
       },
     }),
     {
@@ -209,7 +209,7 @@ export const useMatcalcStore = create<IMatcalcStore>()(
 
 export function useMatcalcSettings(): {
   settings: IMatcalcSettings
-  updateSettings: (settings: IMatcalcSettings) => void
+  updateSettings: (settings: Partial<IMatcalcSettings>) => void
   resetSettings: () => void
 } {
   const settings = useMatcalcStore((state) => state)

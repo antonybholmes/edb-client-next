@@ -86,7 +86,7 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
 } */
 
 export interface IEdbSettingsStore extends IEdbSettings {
-  updateSettings: (settings: IEdbSettings) => void
+  updateSettings: (settings: Partial<IEdbSettings>) => void
   //applyTheme: (theme: Theme) => void
 }
 
@@ -94,7 +94,7 @@ export const useEdbSettingsStore = create<IEdbSettingsStore>()(
   persist(
     (set) => ({
       ...DEFAULT_EDB_SETTINGS,
-      updateSettings: (settings: IEdbSettings) => {
+      updateSettings: (settings: Partial<IEdbSettings>) => {
         console.log('Updating EDB settings', settings)
 
         if (
@@ -139,7 +139,7 @@ export const useEdbSettingsStore = create<IEdbSettingsStore>()(
 export function useEdbSettings(): {
   settings: IEdbSettings
   theme: Theme
-  updateSettings: (settings: IEdbSettings) => void
+  updateSettings: (settings: Partial<IEdbSettings>) => void
   resetSettings: () => void
   applyTheme: (theme: Theme) => void
   resetTheme: () => void
@@ -154,11 +154,11 @@ export function useEdbSettings(): {
   }
 
   function resetTheme() {
-    updateSettings({ ...settings, theme: DEFAULT_THEME })
+    applyTheme(DEFAULT_THEME)
   }
 
   function applyTheme(theme: Theme) {
-    updateSettings({ ...settings, theme })
+    updateSettings({ theme })
   }
 
   return {

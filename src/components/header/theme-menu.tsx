@@ -24,7 +24,7 @@ export function ThemeMenu() {
   // }
 
   function clickTheme(theme: Theme) {
-    updateSettings({ ...settings })
+    //updateSettings({ ...settings })
     applyTheme(theme)
     setOpen(false)
   }

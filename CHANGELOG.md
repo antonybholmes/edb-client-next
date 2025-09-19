@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Refined stores to deal with partial updates to reduce all settings being overwritten.
 - Lots of Venn UI fixes.
 - Bug fixes and updates.
 - Venn UI fixes.

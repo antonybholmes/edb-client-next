@@ -52,7 +52,7 @@ export const DEFAULT_SETTINGS: IMotifSettings = {
 }
 
 export interface IMotifSettingsStore extends IMotifSettings {
-  updateSettings: (settings: IMotifSettings) => void
+  updateSettings: (settings: Partial<IMotifSettings>) => void
   //applyTheme: (theme: Theme) => void
 }
 
@@ -60,8 +60,8 @@ export const useMotifSettingsStore = create<IMotifSettingsStore>()(
   persist(
     (set) => ({
       ...DEFAULT_SETTINGS,
-      updateSettings: (settings: IMotifSettings) => {
-        set({ ...settings })
+      updateSettings: (settings: Partial<IMotifSettings>) => {
+        set((state) => ({ ...state, ...settings }))
       },
     }),
     {
@@ -92,7 +92,7 @@ export const useMotifSettingsStore = create<IMotifSettingsStore>()(
 
 export function useMotifSettings(): {
   settings: IMotifSettings
-  updateSettings: (settings: IMotifSettings) => void
+  updateSettings: (settings: Partial<IMotifSettings>) => void
   resetSettings: () => void
 } {
   const settings = useMotifSettingsStore((state) => state)

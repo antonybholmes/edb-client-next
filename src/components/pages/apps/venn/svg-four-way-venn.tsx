@@ -8,7 +8,7 @@ import { useVennSettings } from './venn-settings-store'
 import { useVenn } from './venn-store'
 
 export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
-  const { setSelectedItems, vennElemMap, vennListsInUse, vennLists } = useVenn()
+  const { setSelectedItems } = useVenn()
   const { settings, circles } = useVennSettings()
 
   function _setItems(name: string, items: string[]) {

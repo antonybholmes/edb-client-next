@@ -26,16 +26,9 @@ interface IProps {
 }
 
 export function VennList({ index }: IProps) {
-  const {
-    settings,
-    updateSettings,
-    resetSettings,
-    circles,
-    updateCircles,
-    resetCircles,
-  } = useVennSettings()
+  const { circles, updateCircles } = useVennSettings()
 
-  const { vennLists, setVennLists, updateVennListText } = useVenn()
+  const { vennLists, setVennLists } = useVenn()
 
   // Stores a mapping between the lowercase labels used for
   // matching and the original values. Note that this picks
@@ -99,16 +92,9 @@ export function VennList({ index }: IProps) {
             color={circles[index]!.stroke}
             onColorChange={(color) =>
               updateCircles(
-                Object.fromEntries([
-                  ...[...Object.entries(circles)],
-                  [
-                    index,
-                    {
-                      ...circles[index]!,
-                      stroke: color,
-                    },
-                  ],
-                ])
+                produce(circles, (draft) => {
+                  draft[index]!.stroke = color
+                })
               )
             }
             title="Line color"
@@ -119,16 +105,9 @@ export function VennList({ index }: IProps) {
             color={circles[index]!.color}
             onColorChange={(color) =>
               updateCircles(
-                Object.fromEntries([
-                  ...[...Object.entries(circles)],
-                  [
-                    index,
-                    {
-                      ...circles[index]!,
-                      color,
-                    },
-                  ],
-                ])
+                produce(circles, (draft) => {
+                  draft[index]!.color = color
+                })
               )
             }
             title="Text color"

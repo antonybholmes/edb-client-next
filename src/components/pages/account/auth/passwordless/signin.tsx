@@ -234,7 +234,7 @@ export function SignIn({ allowPassword = false, visitUrl }: ISignInProps) {
             <Switch
               checked={settings.passwordless}
               onCheckedChange={(state) => {
-                updateSettings({ ...settings, passwordless: state })
+                updateSettings({ passwordless: state })
               }}
             >
               {TEXT_PASSWORDLESS}

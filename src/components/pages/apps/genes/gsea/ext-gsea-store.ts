@@ -184,7 +184,7 @@ export const DEFAULT_EXT_GSEA_PROPS: IExtGseaDisplayOptions = {
 }
 
 export interface IExtGseaStore extends IExtGseaDisplayOptions {
-  updateSettings: (settings: IExtGseaDisplayOptions) => void
+  updateSettings: (settings: Partial<IExtGseaDisplayOptions>) => void
   //applyTheme: (theme: Theme) => void
 }
 
@@ -192,8 +192,8 @@ export const useExtGseaStore = create<IExtGseaStore>()(
   persist(
     (set) => ({
       ...DEFAULT_EXT_GSEA_PROPS,
-      updateSettings: (settings: IExtGseaDisplayOptions) => {
-        set({ ...settings })
+      updateSettings: (settings: Partial<IExtGseaDisplayOptions>) => {
+        set((state) => ({ ...state, ...settings }))
       },
     }),
     {
@@ -222,7 +222,7 @@ export const useExtGseaStore = create<IExtGseaStore>()(
 
 export function useExtGsea(): {
   settings: IExtGseaDisplayOptions
-  updateSettings: (settings: IExtGseaStore) => void
+  updateSettings: (settings: Partial<IExtGseaStore>) => void
   resetSettings: () => void
 } {
   const settings = useExtGseaStore((state) => state)

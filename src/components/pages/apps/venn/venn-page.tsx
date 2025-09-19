@@ -28,12 +28,7 @@ import {
   downloadSvgAutoFormat,
 } from '@lib/image-utils'
 
-import {
-  FOCUS_RING_CLS,
-  PILL_BUTTON_CLS,
-  SM_ICON_BUTTON_CLS,
-  TOOLBAR_BUTTON_ICON_CLS,
-} from '@/theme'
+import { FOCUS_RING_CLS, TOOLBAR_BUTTON_ICON_CLS } from '@/theme'
 
 import { useEffect, useRef, useState } from 'react'
 
@@ -89,7 +84,10 @@ import { Tabs } from '@/components/shadcn/ui/themed/tabs'
 import { SideTabs } from '@/components/tabs/side-tabs'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { useZoom } from '@/providers/zoom-provider'
-import { ColorPickerButton } from '@components/color/color-picker-button'
+import {
+  ColorPickerButton,
+  SIMPLE_COLOR_EXT_CLS,
+} from '@components/color/color-picker-button'
 import { HeaderPortal } from '@components/header/header-portal'
 import { ModuleInfoButton } from '@components/header/module-info-button'
 import { SaveImageDialog } from '@components/pages/save-image-dialog'
@@ -110,6 +108,7 @@ import { LinkButton } from '@themed/link-button'
 import { Textarea } from '@themed/textarea'
 import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
 import { ToolbarSeparator } from '@toolbar/toolbar-separator'
+import { produce } from 'immer'
 import { useHistory } from '../matcalc/history/history-store'
 import MODULE_INFO from './module.json'
 import { SVGFourWayVenn } from './svg-four-way-venn'
@@ -139,7 +138,10 @@ function VennPage() {
     circles,
     updateCircles,
     resetCircles,
+    updateRadius,
   } = useVennSettings()
+
+  console.log('settings', settings)
 
   const {
     vennLists,
@@ -755,7 +757,7 @@ function VennPage() {
   // }, [circles])
 
   useEffect(() => {
-    updateSettings({ ...settings, scale: zoom })
+    updateSettings({ scale: zoom })
   }, [zoom])
 
   function save(format: 'txt' | 'csv') {
@@ -849,7 +851,7 @@ function VennPage() {
                 <PropRow title="Plot width">
                   <NumericalInput
                     id="w"
-                    max={10000}
+                    limit={[200, 10000]}
                     value={settings.w}
                     placeholder="Cell width..."
                     onNumChanged={(w) => {
@@ -864,14 +866,11 @@ function VennPage() {
                 <PropRow title="Radius">
                   <NumericalInput
                     id="r"
-                    max={1000}
+                    limit={[10, 1000]}
                     value={settings.radius}
                     placeholder="Circle radius..."
                     onNumChanged={(r) => {
-                      updateSettings({
-                        ...settings,
-                        radius: r,
-                      })
+                      updateRadius(r)
                     }}
                   />
                 </PropRow>
@@ -898,15 +897,13 @@ function VennPage() {
                       }
 
                       updateCircles(
-                        Object.fromEntries(
-                          Object.keys(circles).map((key) => [
-                            key,
-                            {
-                              ...circles[key]!,
-                              color: state ? COLOR_WHITE : circles[key]!.stroke,
-                            },
-                          ])
-                        )
+                        produce(circles, (draft) => {
+                          for (let i = 0; i < circles.length; i++) {
+                            draft[i]!.color = state
+                              ? COLOR_WHITE
+                              : draft[i]!.stroke
+                          }
+                        })
                       )
                     }
 
@@ -990,7 +987,7 @@ function VennPage() {
                         intersectionColor: color,
                       })
                     }
-                    className={cn(PILL_BUTTON_CLS, SM_ICON_BUTTON_CLS)}
+                    className={SIMPLE_COLOR_EXT_CLS}
                   />
                 </PropRow>
 

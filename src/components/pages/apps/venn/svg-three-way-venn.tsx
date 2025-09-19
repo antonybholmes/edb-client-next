@@ -103,7 +103,7 @@ export interface IVennProps {
 }
 
 export function SVGThreeWayVenn({ overlapLabels = {} }: IVennProps) {
-  const { setSelectedItems, vennElemMap, vennListsInUse, vennLists } = useVenn()
+  const { setSelectedItems } = useVenn()
   const { settings, circles } = useVennSettings()
 
   function _setItems(name: string, items: string[]) {

@@ -167,7 +167,7 @@ export const DEFAULT_SETTINGS: ISingleCellSettings = {
 }
 
 export interface ISingleCellSettingsStore extends ISingleCellSettings {
-  updateSettings: (settings: ISingleCellSettings) => void
+  updateSettings: (settings: Partial<ISingleCellSettings>) => void
   //applyTheme: (theme: Theme) => void
 }
 
@@ -175,8 +175,8 @@ export const useSingleCellSettingsStore = create<ISingleCellSettingsStore>()(
   persist(
     (set) => ({
       ...DEFAULT_SETTINGS,
-      updateSettings: (settings: ISingleCellSettings) => {
-        set({ ...settings })
+      updateSettings: (settings: Partial<ISingleCellSettings>) => {
+        set((state) => ({ ...state, ...settings }))
       },
     }),
     {
@@ -207,7 +207,7 @@ export const useSingleCellSettingsStore = create<ISingleCellSettingsStore>()(
 
 export function useUmapSettings(): {
   settings: ISingleCellSettings
-  updateSettings: (settings: ISingleCellSettings) => void
+  updateSettings: (settings: Partial<ISingleCellSettings>) => void
   resetSettings: () => void
 } {
   const settings = useSingleCellSettingsStore((state) => state)

@@ -33,7 +33,7 @@ export const DEFAULT_HUB_OPTIONS: IHubOptions = {
 }
 
 export interface IHubStore extends IHubOptions {
-  updateSettings: (settings: IHubOptions) => void
+  updateSettings: (settings: Partial<IHubOptions>) => void
   //applyTheme: (theme: Theme) => void
 }
 
@@ -41,8 +41,8 @@ export const useHubsStore = create<IHubStore>()(
   persist(
     (set) => ({
       ...DEFAULT_HUB_OPTIONS,
-      updateSettings: (settings: IHubOptions) => {
-        set({ ...settings })
+      updateSettings: (settings: Partial<IHubOptions>) => {
+        set((state) => ({ ...state, ...settings }))
       },
     }),
     {
@@ -71,7 +71,7 @@ export const useHubsStore = create<IHubStore>()(
 
 export function useHubs(): {
   settings: IHubOptions
-  updateSettings: (settings: IHubOptions) => void
+  updateSettings: (settings: Partial<IHubOptions>) => void
   resetSettings: () => void
 } {
   const settings = useHubsStore((state) => state)

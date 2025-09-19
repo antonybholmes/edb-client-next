@@ -241,7 +241,7 @@ export const DEFAULT_TRACKS_DISPLAY_PROPS: ISeqBrowserSettings = {
 }
 
 export interface ISeqBrowserStore extends ISeqBrowserSettings {
-  updateSettings: (settings: ISeqBrowserSettings) => void
+  updateSettings: (settings: Partial<ISeqBrowserSettings>) => void
   //applyTheme: (theme: Theme) => void
 }
 
@@ -249,8 +249,8 @@ export const useSeqBrowserStore = create<ISeqBrowserStore>()(
   persist(
     (set) => ({
       ...DEFAULT_TRACKS_DISPLAY_PROPS,
-      updateSettings: (settings: ISeqBrowserSettings) => {
-        set({ ...settings })
+      updateSettings: (settings: Partial<ISeqBrowserSettings>) => {
+        set((state) => ({ ...state, ...settings }))
       },
     }),
     {
@@ -281,7 +281,7 @@ export const useSeqBrowserStore = create<ISeqBrowserStore>()(
 
 export function useSeqBrowserSettings(): {
   settings: ISeqBrowserSettings
-  updateSettings: (settings: ISeqBrowserSettings) => void
+  updateSettings: (settings: Partial<ISeqBrowserSettings>) => void
   resetSettings: () => void
 } {
   const settings = useSeqBrowserStore((state) => state)
