@@ -43,7 +43,7 @@ export function AboutPage({ children }: IChildrenProps) {
   return (
     <CenterLayout title="Help" signedRequired="never">
       <Card
-        className="text-sm shadow-md w-1/3"
+        className="text-sm shadow-md w-9/10 md:w-3/4 lg:w-1/2 xl:w-1/3"
         style={{ paddingLeft: 0, paddingRight: 0 }}
       >
         <VCenterRow className="gap-x-4 py-2 px-6">
@@ -105,7 +105,7 @@ export function AboutPage({ children }: IChildrenProps) {
           </>
         )}
       </Card>
-      <Card className="text-sm shadow-md w-1/3 mt-8">
+      <Card className="text-sm shadow-md w-9/10 md:w-3/4 lg:w-1/2 xl:w-1/3 mt-8">
         <BaseCol className="gap-y-1">
           <p>{APP_NAME}</p>
           <p>
