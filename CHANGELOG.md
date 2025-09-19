@@ -1,5 +1,12 @@
 # Changelog
 
+## 28.0 (Sep, 2025)
+
+### Changed
+
+- Venn improvements using debounce to make user input feel faster.
+
+
 ## 26.8 (Sep, 2025)
 
 ### Changed

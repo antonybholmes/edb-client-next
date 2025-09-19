@@ -6,9 +6,10 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 export const PLOT_W = 700
 
-const SETTINGS_KEY = `${APP_ID}:module:venn:settings:v28`
+const SETTINGS_KEY = `${APP_ID}:module:venn:settings:v42`
 
 export interface IVennCircleProps {
+  id: number
   name: string
   fill: string
   stroke: string
@@ -27,14 +28,16 @@ export type VennCirclesMap = Record<string, IVennCircleProps>
 
 export const DEFAULT_CIRCLE_MAP: IVennCircleProps[] = [
   {
+    id: 0,
     name: 'List 0',
     fill: '#000000',
-    stroke: '#00000',
+    stroke: '#000000',
     color: COLOR_WHITE,
     fillOpacity: 1,
     strokeOpacity: 1,
   },
   {
+    id: 1,
     name: 'List 1',
     fill: '#6495ED',
     stroke: '#6495ED',
@@ -43,6 +46,7 @@ export const DEFAULT_CIRCLE_MAP: IVennCircleProps[] = [
     strokeOpacity: 1,
   },
   {
+    id: 2,
     name: 'List 2',
     fill: '#ff0000',
     stroke: '#ff0000',
@@ -51,6 +55,7 @@ export const DEFAULT_CIRCLE_MAP: IVennCircleProps[] = [
     strokeOpacity: 1,
   },
   {
+    id: 3,
     name: 'List 3',
     fill: '#3CB371',
     stroke: '#3CB371',
@@ -59,6 +64,7 @@ export const DEFAULT_CIRCLE_MAP: IVennCircleProps[] = [
     strokeOpacity: 1,
   },
   {
+    id: 4,
     name: 'List 4',
     fill: '#ba55d3',
     stroke: '#ba55d3',
@@ -68,9 +74,30 @@ export const DEFAULT_CIRCLE_MAP: IVennCircleProps[] = [
   },
 ]
 
+export interface IFontProps {
+  //show: boolean
+  color: string
+  size: number
+  family: string
+  weight: string
+}
+
+const DEFAULT_FONT: IFontProps = {
+  color: COLOR_BLACK,
+  size: 16,
+  family: 'Arial',
+  weight: 'normal',
+}
+
+const BOLD_FONT: IFontProps = {
+  ...DEFAULT_FONT,
+  weight: 'bold',
+}
+
 export interface IVennSettings {
   showCounts: boolean
-  showLabels: boolean
+  showTitles: boolean
+  showPercentages: boolean
   w: number
   radius: number
   scale: number
@@ -81,6 +108,11 @@ export interface IVennSettings {
   autoColorText: boolean
   normalize: boolean
   circles: IVennCircleProps[]
+  fonts: {
+    title: IFontProps
+    counts: IFontProps
+    percentages: IFontProps
+  }
 }
 
 const DEFAULT_SETTINGS: IVennSettings = {
@@ -92,10 +124,16 @@ const DEFAULT_SETTINGS: IVennSettings = {
   isOutlined: false,
   intersectionColor: COLOR_WHITE,
   autoColorText: true,
-  showLabels: true,
+  showTitles: true,
   showCounts: true,
+  showPercentages: true,
   normalize: false,
   circles: [...DEFAULT_CIRCLE_MAP],
+  fonts: {
+    title: BOLD_FONT,
+    counts: DEFAULT_FONT,
+    percentages: { ...DEFAULT_FONT, size: 12 },
+  },
 }
 
 export interface IVennStore extends IVennSettings {
@@ -110,7 +148,6 @@ export const useVennSettingsStore = create<IVennStore>()(
       ...DEFAULT_SETTINGS,
 
       updateSettings: (settings: Partial<IVennSettings>) => {
-        console.log('updateSettings', settings)
         set((state) => ({
           ...state,
           ...settings,
@@ -155,7 +192,6 @@ export function useVennSettings(): {
   const updateRadius = useVennSettingsStore((state) => state.updateRadius)
 
   function resetSettings() {
-    console.log('resetSettings')
     updateSettings({ ...DEFAULT_SETTINGS })
   }
 

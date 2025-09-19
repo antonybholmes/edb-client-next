@@ -4,7 +4,7 @@ import { BaseCol } from '@layout/base-col'
 
 import { VCenterRow } from '@layout/v-center-row'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Button } from '@themed/button'
 import { Input } from '@themed/input'
@@ -13,22 +13,38 @@ import { TEXT_CLEAR } from '@/consts'
 import { cn } from '@lib/shadcn-utils'
 
 import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
+import { useDebounce } from '@/hooks/debounce'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
 } from '@components/color/color-picker-button'
 import { Textarea } from '@themed/textarea'
 import { produce } from 'immer'
-import { getItems, useVenn } from './venn-store'
+import { IVennList, useVenn } from './venn-store'
 
 interface IProps {
-  index: number
+  vennList: IVennList
 }
 
-export function VennList({ index }: IProps) {
+export function VennList({ vennList }: IProps) {
   const { circles, updateCircles } = useVennSettings()
 
-  const { vennLists, setVennLists } = useVenn()
+  const { vennLists, setVennLists, updateVennListFromText, updateCounter } =
+    useVenn()
+
+  const [text, setText] = useState(vennList.items.join('\n'))
+
+  const debouncedText = useDebounce(text, 500)
+
+  useEffect(() => {
+    updateVennListFromText(vennList.id, debouncedText)
+  }, [debouncedText])
+
+  useEffect(() => {
+    if (updateCounter === 0) {
+      setText(vennList.items.join('\n'))
+    }
+  }, [vennList.items])
 
   // Stores a mapping between the lowercase labels used for
   // matching and the original values. Note that this picks
@@ -55,12 +71,14 @@ export function VennList({ index }: IProps) {
   // we split these later to get the actual items
   //const [listTextMap, setListTextMap] = useState<Map<number, string>>(new Map())
 
+  const index = vennList.id - 1
+
   return (
     <BaseCol className="gap-y-1">
       <VCenterRow className="gap-x-2">
         <Input
-          id={`label${index}`}
-          value={vennLists[index]?.name ?? ''}
+          id={`label${vennList.id}`}
+          value={vennList.name ?? ''}
           onChange={(e) => {
             //console.log(index, e.target.value)
             setVennLists(
@@ -70,18 +88,18 @@ export function VennList({ index }: IProps) {
             )
           }}
           className="w-0 grow rounded-theme"
-          placeholder={`List ${index} name...`}
+          placeholder={`List ${vennList.id} name...`}
         />
         <VCenterRow className={cn('shrink-0 gap-x-0.5')}>
           <ColorPickerButton
             allowAlpha={true}
-            color={circles[index]!.fill}
-            alpha={circles[index]!.fillOpacity}
+            color={circles[vennList.id]!.fill}
+            alpha={circles[vennList.id]!.fillOpacity}
             onColorChange={(color, alpha) =>
               updateCircles(
                 produce(circles, (draft) => {
-                  draft[index]!.fill = color
-                  draft[index]!.fillOpacity = alpha
+                  draft[vennList.id]!.fill = color
+                  draft[vennList.id]!.fillOpacity = alpha
                 })
               )
             }
@@ -89,11 +107,11 @@ export function VennList({ index }: IProps) {
             className={SIMPLE_COLOR_EXT_CLS}
           />
           <ColorPickerButton
-            color={circles[index]!.stroke}
+            color={circles[vennList.id]!.stroke}
             onColorChange={(color) =>
               updateCircles(
                 produce(circles, (draft) => {
-                  draft[index]!.stroke = color
+                  draft[vennList.id]!.stroke = color
                 })
               )
             }
@@ -102,11 +120,11 @@ export function VennList({ index }: IProps) {
           />
 
           <ColorPickerButton
-            color={circles[index]!.color}
+            color={circles[vennList.id]!.color}
             onColorChange={(color) =>
               updateCircles(
                 produce(circles, (draft) => {
-                  draft[index]!.color = color
+                  draft[vennList.id]!.color = color
                 })
               )
             }
@@ -117,42 +135,38 @@ export function VennList({ index }: IProps) {
       </VCenterRow>
 
       <Textarea
-        id={`set${index + 1}`}
-        aria-label={`Set ${index + 1}`}
+        id={`set${vennList.id}`}
+        aria-label={`Set ${vennList.id}`}
         //placeholder={listLabelMap[index] ?? ''}
-        value={vennLists[index]?.text ?? ''}
+        value={text}
         onTextChange={(v) => {
-          setVennLists(
-            produce(vennLists, (draft) => {
-              draft[index]!.text = v
-              draft[index]!.items = getItems(v)
-              draft[index]!.uniqueItems = [
-                ...new Set(draft[index]!.items.map((v) => v.toLowerCase())),
-              ].sort()
-            })
-          )
+          setText(v)
+          // setVennLists(
+          //   produce(vennLists, (draft) => {
+          //     draft[index]!.text = v
+          //     draft[index]!.items = getItems(v)
+          //     draft[index]!.uniqueItems = [
+          //       ...new Set(draft[index]!.items.map((v) => v.toLowerCase())),
+          //     ].sort()
+          //   })
+          // )
         }}
         className="h-28"
       />
       <VCenterRow className="justify-between pr-1">
         <span title="Total items / Unique items">
-          {vennLists[index]?.items.length || 0} /{' '}
-          {vennLists[index]?.uniqueItems.length || 0} unique
+          {vennList.items.length || 0} / {vennList.uniqueItems.length || 0}{' '}
+          unique
         </span>
 
         <Button
           variant="link"
           size="sm"
           // ripple={false}
-          onClick={() =>
-            setVennLists(
-              produce(vennLists, (draft) => {
-                draft[index]!.text = ''
-                draft[index]!.items = []
-                draft[index]!.uniqueItems = []
-              })
-            )
-          }
+          onClick={() => {
+            setText('')
+            updateVennListFromText(vennList.id, '')
+          }}
         >
           {TEXT_CLEAR}
         </Button>

@@ -7,7 +7,6 @@ interface ICountTextProps {
   center: ILim
   overlapLabels: { [key: string]: { color: string; label: string } }
   setItems: (name: string, items: string[]) => void
-  showPercent?: boolean
 }
 
 export function CountText({
@@ -15,9 +14,9 @@ export function CountText({
   center,
   overlapLabels,
   setItems,
-  showPercent = true,
 }: ICountTextProps) {
   const { combinationNames, vennElemMap, originalNames } = useVenn()
+  const { settings } = useVennSettings()
   const n = vennElemMap[id]?.length || 0
   const d = Object.keys(originalNames).length
   const p = (d > 0 ? (n / d) * 100 : 0).toFixed(1)
@@ -27,7 +26,9 @@ export function CountText({
       <text
         x={center[0]}
         y={center[1]}
-        fontSize="16"
+        fontSize={settings.fonts.counts.size}
+        fontWeight={settings.fonts.counts.weight}
+        fontFamily={settings.fonts.counts.family}
         textAnchor="middle"
         dominantBaseline="middle"
         fill={overlapLabels[id]?.color || 'white'}
@@ -42,11 +43,13 @@ export function CountText({
         {n.toLocaleString()}
       </text>
 
-      {showPercent && (
+      {settings.showPercentages && (
         <text
           x={center[0]}
           y={center[1] + 16}
-          fontSize="12"
+          fontSize={settings.fonts.percentages.size}
+          fontWeight={settings.fonts.percentages.weight}
+          fontFamily={settings.fonts.percentages.family}
           textAnchor="middle"
           dominantBaseline="middle"
           fill={overlapLabels[id]?.color || 'white'}
@@ -76,18 +79,27 @@ export function TitleText({
   center,
   textAnchor = 'middle',
 }: ITitleTextProps) {
-  const { vennElemMap, vennLists } = useVenn()
+  const { vennLists } = useVenn()
+  const { settings } = useVennSettings()
+  const vennList = vennLists[id - 1]
   return (
     <text
       x={center[0]}
       y={center[1]}
-      fontSize="16"
-      fontWeight="bold"
+      fontSize={settings.fonts.title.size}
+      fontWeight={settings.fonts.title.weight}
+      fontFamily={settings.fonts.title.family}
+      fill={settings.fonts.title.color}
       textAnchor={textAnchor}
       dominantBaseline="middle"
     >
-      {vennLists[id]?.name || `List ${id}`} (
-      {(vennLists[id]?.uniqueItems.length || 0).toLocaleString()})
+      {vennList?.name || `List ${id}`}
+
+      {settings.showCounts && (
+        <tspan>
+          {` (${(vennList?.uniqueItems.length || 0).toLocaleString()})`}
+        </tspan>
+      )}
     </text>
   )
 }
@@ -145,10 +157,12 @@ export function SVGThreeWayVenn({ overlapLabels = {} }: IVennProps) {
         stroke={circles[1].stroke}
       />
 
-      <TitleText
-        id={1}
-        center={[cA[0] - labelRadius * 0.1, cA[1] - labelRadius]}
-      />
+      {settings.showTitles && (
+        <TitleText
+          id={1}
+          center={[cA[0] - labelRadius * 0.1, cA[1] - labelRadius]}
+        />
+      )}
 
       <CountText
         id={'1'}
@@ -167,10 +181,12 @@ export function SVGThreeWayVenn({ overlapLabels = {} }: IVennProps) {
         stroke={circles[2].stroke}
       />
 
-      <TitleText
-        id={2}
-        center={[cB[0] + labelRadius * 0.1, cB[1] - labelRadius]}
-      />
+      {settings.showTitles && (
+        <TitleText
+          id={2}
+          center={[cB[0] + labelRadius * 0.1, cB[1] - labelRadius]}
+        />
+      )}
 
       <CountText
         id={'2'}
@@ -189,7 +205,9 @@ export function SVGThreeWayVenn({ overlapLabels = {} }: IVennProps) {
         stroke={circles[3].stroke}
       />
 
-      <TitleText id={3} center={[cC[0], cC[1] + labelRadius]} />
+      {settings.showTitles && (
+        <TitleText id={3} center={[cC[0], cC[1] + labelRadius]} />
+      )}
 
       <CountText
         id={'3'}

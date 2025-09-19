@@ -1,5 +1,5 @@
 import { APP_ID } from '@/consts'
-import type { ISearch } from '@hooks/use-search'
+import type { ISearch } from '@/hooks/search'
 import { persistentAtom } from '@nanostores/persistent'
 import { useStore } from '@nanostores/react'
 

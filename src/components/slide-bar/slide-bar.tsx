@@ -19,8 +19,8 @@ import type { IDivProps } from '@interfaces/div-props'
 import { ChevronRightIcon } from '../icons/chevron-right-icon'
 import { VCenterRow } from '../layout/v-center-row'
 
-import { useResizeObserver } from '@hooks/use-resize-observer'
-import { TAILWIND_MEDIA_SM, useWindowSize } from '@hooks/use-window-size'
+import { useResizeObserver } from '@/hooks/resize-observer'
+import { TAILWIND_MEDIA_SM, useWindowSize } from '@/hooks/window-size'
 import { cn } from '@lib/shadcn-utils'
 import gsap from 'gsap'
 

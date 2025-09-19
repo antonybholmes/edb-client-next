@@ -10,8 +10,8 @@ import {
 } from '@themed/dialog'
 
 import { TEXT_CANCEL, TEXT_SETTINGS } from '@/consts'
+import { TAILWIND_MEDIA_LG, useWindowSize } from '@/hooks/window-size'
 import { VScrollPanel } from '@components/v-scroll-panel'
-import { TAILWIND_MEDIA_LG, useWindowSize } from '@hooks/use-window-size'
 import { GearIcon } from '@icons/gear-icon'
 import type { IChildrenProps } from '@interfaces/children-props'
 import { VCenterRow } from '@layout/v-center-row'

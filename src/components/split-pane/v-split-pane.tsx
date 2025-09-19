@@ -1,6 +1,6 @@
+import { useMouseMoveListener } from '@/hooks/mousemove-listener'
+import { useMouseUpListener } from '@/hooks/mouseup-listener'
 import { TRANS_COLOR_CLS } from '@/theme'
-import { useMouseMoveListener } from '@hooks/use-mousemove-listener'
-import { useMouseUpListener } from '@hooks/use-mouseup-listener'
 import { type IDivProps } from '@interfaces/div-props'
 import { cn } from '@lib/shadcn-utils'
 import {

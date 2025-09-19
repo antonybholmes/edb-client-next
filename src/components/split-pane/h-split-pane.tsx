@@ -1,6 +1,6 @@
+import { useMouseMoveListener } from '@/hooks/mousemove-listener'
+import { useMouseUpListener } from '@/hooks/mouseup-listener'
 import { TRANS_COLOR_CLS } from '@/theme'
-import { useMouseMoveListener } from '@hooks/use-mousemove-listener'
-import { useMouseUpListener } from '@hooks/use-mouseup-listener'
 import { type IDivProps } from '@interfaces/div-props'
 import { cn } from '@lib/shadcn-utils'
 import {
@@ -62,7 +62,7 @@ export function HSplitPane({
 
     //console.log(x, p, cp, dragging.current.p)
 
-    const rcp = sticky.filter(x => Math.abs(cp - x) < STICKY_SENSITIVITY)
+    const rcp = sticky.filter((x) => Math.abs(cp - x) < STICKY_SENSITIVITY)
 
     if (rcp.length > 0) {
       cp = rcp[0]!
@@ -149,7 +149,7 @@ export function HSplitPane({
     }
   }
 
-  useMouseMoveListener(e => onMouseMove(e as MouseEvent))
+  useMouseMoveListener((e) => onMouseMove(e as MouseEvent))
   useMouseUpListener(onMouseUp)
 
   return (

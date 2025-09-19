@@ -32,11 +32,13 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
         transform={`translate(${-radius2 / 2}, ${radius2 / 4}) rotate(-45, ${center[0]}, ${center[1]}) `}
       />
 
-      <TitleText
-        id={1}
-        center={[center[0] - radius2 * 0.9, center[1] + radius2 * 0.8]}
-        textAnchor="end"
-      />
+      {settings.showTitles && (
+        <TitleText
+          id={1}
+          center={[center[0] - radius2 * 0.9, center[1] + radius2 * 0.8]}
+          textAnchor="end"
+        />
+      )}
 
       {/* Circle B */}
 
@@ -51,10 +53,12 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
         transform={`rotate(-45, ${center[0]}, ${center[1]})`}
       />
 
-      <TitleText
-        id={2}
-        center={[center[0] - radius2 / 2, center[1] - radius2]}
-      />
+      {settings.showTitles && (
+        <TitleText
+          id={2}
+          center={[center[0] - radius2 / 2, center[1] - radius2]}
+        />
+      )}
 
       {/* Circle C */}
       <ellipse
@@ -68,10 +72,12 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
         transform={`rotate(45, ${center[0]}, ${center[1]})`}
       />
 
-      <TitleText
-        id={3}
-        center={[center[0] + radius2 / 2, center[1] - radius2]}
-      />
+      {settings.showTitles && (
+        <TitleText
+          id={3}
+          center={[center[0] + radius2 / 2, center[1] - radius2]}
+        />
+      )}
 
       {/* Circle 4 */}
 
@@ -86,11 +92,13 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
         transform={`translate(${radius2 * 0.5}, ${radius2 * 0.25}) rotate(45, ${center[0]}, ${center[1]}) `}
       />
 
-      <TitleText
-        id={4}
-        center={[center[0] + radius2 * 0.9, center[1] + radius2 * 0.8]}
-        textAnchor="start"
-      />
+      {settings.showTitles && (
+        <TitleText
+          id={4}
+          center={[center[0] + radius2 * 0.9, center[1] + radius2 * 0.8]}
+          textAnchor="start"
+        />
+      )}
 
       {/* Lists */}
 

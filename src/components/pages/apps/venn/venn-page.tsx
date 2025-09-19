@@ -66,7 +66,6 @@ import {
   TEXT_SETTINGS,
   type IDialogParams,
 } from '@/consts'
-import { useWindowScrollListener } from '@hooks/use-window-scroll-listener'
 import { OpenIcon } from '@icons/open-icon'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
 import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
@@ -115,7 +114,7 @@ import { SVGFourWayVenn } from './svg-four-way-venn'
 import { SVGThreeWayVenn } from './svg-three-way-venn'
 import { SVGTwoWayVenn } from './svg-two-way-venn'
 import { VennList } from './venn-list'
-import { IVennList, LIST_IDS, makeVennList, useVenn } from './venn-store'
+import { IVennList, makeVennList, useVenn } from './venn-store'
 
 function VennPage() {
   const queryClient = useQueryClient()
@@ -140,8 +139,6 @@ function VennPage() {
     resetCircles,
     updateRadius,
   } = useVennSettings()
-
-  console.log('settings', settings)
 
   const {
     vennLists,
@@ -198,7 +195,7 @@ function VennPage() {
 
   const { sheet, sheets, openBranch, gotoSheet } = useHistory()
 
-  useWindowScrollListener((e: unknown) => console.log(e))
+  //useWindowScrollListener((e: unknown) => console.log(e))
 
   // function onFileChange(_message: string, files: FileList | null) {
   //   if (!files) {
@@ -256,10 +253,9 @@ function VennPage() {
       .read(lines).t
 
     setVennLists(
-      Object.fromEntries(
-        rangeMap((ci) => {
-          return [ci, makeVennList(ci, table.index.str(ci), table.row(ci).strs)]
-        }, table.shape[0])
+      rangeMap(
+        (ci) => makeVennList(ci + 1, table.index.str(ci), table.row(ci).strs),
+        table.shape[0]
       )
     )
 
@@ -293,13 +289,11 @@ function VennPage() {
       queryFn: () => httpFetch.getJson<string[][]>('/data/test/venn.json'),
     })
 
-    console.log(res)
-
     setVennLists(
-      Object.fromEntries(
-        res.map((items: string[], ci: number) => {
-          return [ci + 1, makeVennList(ci, `List ${ci + 1}`, items)]
-        }, res.length)
+      res.map(
+        (items: string[], ci: number) =>
+          makeVennList(ci + 1, `List ${ci + 1}`, items),
+        res.length
       )
     )
   }
@@ -333,15 +327,17 @@ function VennPage() {
     //   }
     // > = new Map()
 
-    const vennSetList: Record<string, IVennList> = {}
+    const vennSetList: IVennList[] = []
     let inUse: number = 0
 
-    for (const i of LIST_IDS) {
-      const vl = vennLists[i]
+    //console.log(vennLists, 'vennLists')
+
+    for (const [i, vl] of vennLists.entries()) {
+      //console.log(vl, 'vl')
 
       if (vl.uniqueItems.length > 0) {
-        vennSetList[i] = vl
-        inUse = Math.max(inUse, i)
+        vennSetList.push(vl)
+        inUse = Math.max(inUse, vl.id)
 
         // for (const item of vl.uniqueItems) {
         //   originalNameMap.set(item.toLowerCase(), item)
@@ -378,15 +374,17 @@ function VennPage() {
     // itemA -> [0, 1]
     const combs = new Map<string, Set<number>>()
 
-    for (const vs of Object.values(vennSetList)) {
-      for (const item of vs.uniqueItems) {
+    for (const vl of vennSetList) {
+      for (const item of vl.uniqueItems) {
         if (!combs.has(item)) {
           combs.set(item, new Set())
         }
 
-        combs.get(item)!.add(vs.id)
+        combs.get(item)!.add(vl.id)
       }
     }
+
+    //console.log(combs, 'combs')
 
     //const newSets: ISet[] = []
     //const vennMap = new Map<string, Set<string>>()
@@ -822,14 +820,14 @@ function VennPage() {
 
       content: (
         <PropsPanel>
-          <ScrollAccordion value={LIST_IDS.map((id) => `List ${id}`)}>
-            {LIST_IDS.map((id: number) => {
-              const name = `List ${id}`
+          <ScrollAccordion value={vennLists.map((vl) => `List ${vl.id}`)}>
+            {vennLists.map((vl) => {
+              const name = `List ${vl.id}`
               return (
                 <AccordionItem value={name} key={name}>
-                  <AccordionTrigger>{vennLists[id]?.name}</AccordionTrigger>
+                  <AccordionTrigger>{vl.name}</AccordionTrigger>
                   <AccordionContent>
-                    <VennList index={id} />
+                    <VennList vennList={vl} />
                   </AccordionContent>
                 </AccordionItem>
               )
@@ -844,7 +842,9 @@ function VennPage() {
       icon: <SlidersIcon />,
       content: (
         <PropsPanel>
-          <ScrollAccordion value={['plot', 'circles', 'text']}>
+          <ScrollAccordion
+            value={['plot', 'circles', 'titles', 'counts', 'percentages']}
+          >
             <AccordionItem value="plot">
               <AccordionTrigger>Plot</AccordionTrigger>
               <AccordionContent>
@@ -856,7 +856,6 @@ function VennPage() {
                     placeholder="Cell width..."
                     onNumChanged={(w) => {
                       updateSettings({
-                        ...settings,
                         w,
                       })
                     }}
@@ -945,29 +944,47 @@ function VennPage() {
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="text">
-              <AccordionTrigger>Text</AccordionTrigger>
+            <AccordionItem value="titles">
+              <AccordionTrigger>Titles</AccordionTrigger>
               <AccordionContent>
                 <SwitchPropRow
-                  title="Labels"
-                  checked={settings.showLabels}
+                  title="Show"
+                  checked={settings.showTitles}
                   onCheckedChange={(state) =>
                     updateSettings({
-                      ...settings,
-                      showLabels: state,
+                      showTitles: state,
                     })
                   }
                 />
                 <SwitchPropRow
                   title="Counts"
                   checked={settings.showCounts}
+                  disabled={!settings.showTitles}
                   onCheckedChange={(state) =>
                     updateSettings({
-                      ...settings,
                       showCounts: state,
                     })
                   }
                 />
+                <PropRow title="Font size">
+                  <NumericalInput
+                    limit={[1, 128]}
+                    value={settings.fonts.title.size}
+                    placeholder="Cell width..."
+                    onNumChanged={(w) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.fonts.title.size = w
+                        })
+                      )
+                    }}
+                  />
+                </PropRow>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="counts">
+              <AccordionTrigger>Counts</AccordionTrigger>
+              <AccordionContent>
                 <SwitchPropRow
                   title="Auto-color"
                   checked={settings.autoColorText}
@@ -983,7 +1000,6 @@ function VennPage() {
                     color={settings.intersectionColor}
                     onColorChange={(color) =>
                       updateSettings({
-                        ...settings,
                         intersectionColor: color,
                       })
                     }
@@ -991,18 +1007,62 @@ function VennPage() {
                   />
                 </PropRow>
 
-                <BaseCol className="justify-start gap-y-2 pt-4">
-                  <LinkButton onClick={() => resetSettings()}>
-                    Default settings
-                  </LinkButton>
+                <PropRow title="Font size">
+                  <NumericalInput
+                    limit={[1, 128]}
+                    value={settings.fonts.counts.size}
+                    placeholder="Font size..."
+                    onNumChanged={(w) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.fonts.counts.size = w
+                        })
+                      )
+                    }}
+                  />
+                </PropRow>
+              </AccordionContent>
+            </AccordionItem>
 
-                  <LinkButton onClick={() => resetCircles()}>
-                    Default colors
-                  </LinkButton>
-                </BaseCol>
+            <AccordionItem value="percentages">
+              <AccordionTrigger>Percentages</AccordionTrigger>
+              <AccordionContent>
+                <SwitchPropRow
+                  title="Show"
+                  checked={settings.showPercentages}
+                  onCheckedChange={(state) =>
+                    updateSettings({
+                      showPercentages: state,
+                    })
+                  }
+                />
+                <PropRow title="Font Size">
+                  <NumericalInput
+                    limit={[1, 128]}
+                    value={settings.fonts.percentages.size}
+                    placeholder="Font size..."
+                    onNumChanged={(w) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.fonts.percentages.size = w
+                        })
+                      )
+                    }}
+                  />
+                </PropRow>
               </AccordionContent>
             </AccordionItem>
           </ScrollAccordion>
+
+          <BaseCol className="justify-start gap-y-2 pt-4">
+            <LinkButton onClick={() => resetSettings()}>
+              Default settings
+            </LinkButton>
+
+            <LinkButton onClick={() => resetCircles()}>
+              Default colors
+            </LinkButton>
+          </BaseCol>
         </PropsPanel>
       ),
     },

@@ -795,6 +795,7 @@ export function GexDialog({
                 >
                   {SPECIES.map((s) => (
                     <ToggleGroupItem
+                      key={s}
                       value={s}
                       className="w-16"
                       aria-label="Filter rows"

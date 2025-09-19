@@ -4,7 +4,7 @@ import { textToLines } from '@/lib/text/lines'
 import { produce } from 'immer'
 import { create } from 'zustand'
 
-export const LIST_IDS: number[] = [1, 2, 3, 4]
+const LIST_IDS: number[] = [1, 2, 3, 4]
 
 export function getItems(text: string | undefined | null): string[] {
   if (!text) {
@@ -54,7 +54,7 @@ export function getItems(text: string | undefined | null): string[] {
 export interface IVennList {
   id: number
   name: string
-  text: string
+  //text: string
   items: string[]
   uniqueItems: string[]
 }
@@ -78,7 +78,7 @@ export function makeVennList(
   return {
     id,
     name: name || `List ${id}`,
-    text: t,
+
     items,
     uniqueItems: [...new Set(items.map((item) => item.toLowerCase()))].sort(),
   }
@@ -86,40 +86,41 @@ export function makeVennList(
 
 export interface IVennOptions {
   selectedItems: { name: string; items: string[] }
-  vennLists: Record<number, IVennList>
+  vennLists: IVennList[]
   vennListsInUse: number
   originalNames: Record<string, string>
 
   combinationNames: Record<string, string>
   vennElemMap: Record<string, string[]>
+  /**
+   * Incremented every time a list is changed for determining if the
+   * lists have been set from outside or user is making updates
+   */
+  updateCounter: number
 }
 
 export const COMBINATIONS: number[][] = makeCombinations(range(1, 5))
 
 const DEFAULT_SETTINGS: IVennOptions = {
   selectedItems: { name: '', items: [] },
-  vennLists: Object.fromEntries(
-    LIST_IDS.map((id) => [
-      id.toString(),
-      {
-        id,
-        name: `List ${id}`,
-        text: '',
-        items: [],
-        uniqueItems: [],
-      },
-    ])
-  ),
+  vennLists: LIST_IDS.map((id) => ({
+    id,
+    name: `List ${id}`,
+    text: '',
+    items: [],
+    uniqueItems: [],
+  })),
   originalNames: {},
   combinationNames: {},
   vennElemMap: {},
   vennListsInUse: 0,
+  updateCounter: 0,
 }
 
 export interface IVennStore extends IVennOptions {
   setSelectedItems: (name: string, items: string[]) => void
-  setVennLists: (vennLists: Record<number, IVennList>) => void
-  updateVennListText: (id: number, text: string) => void
+  setVennLists: (vennLists: IVennList[]) => void
+  updateVennListFromText: (id: number, text: string) => void
   setVennElemMap: (vennElemMap: Record<string, string[]>) => void
   setVennListsInUse: (n: number) => void
 }
@@ -129,52 +130,63 @@ export const useVennStore = create<IVennStore>((set, get) => ({
   setSelectedItems: (name: string, items: string[]) => {
     set({ selectedItems: { name, items } })
   },
-  setVennLists: (vennLists: Record<number, IVennList>) => {
-    set({
-      vennLists: { ...get().vennLists, ...vennLists },
-      originalNames: Object.fromEntries(
-        [
-          ...new Set(
-            Object.values(vennLists)
-              .map((v) => v.items)
-              .flat()
-          ),
-        ].map((v) => [v.toLowerCase(), v])
-      ),
-      combinationNames: Object.fromEntries(
-        COMBINATIONS.map((comb) => [
-          comb.join(':'),
-          comb.map((i) => vennLists[i]?.name || `List ${i}`).join(' AND '),
-        ])
-      ),
-    })
-  },
-  updateVennListText: (id: number, text: string) => {
+  setVennLists: (vennLists: IVennList[]) => {
     set(
       produce((state: IVennStore) => {
-        if (id in state.vennLists) {
-          state.vennLists[id].text = text
-          state.vennLists[id].items = getItems(text)
-          state.vennLists[id].uniqueItems = [
-            ...new Set(state.vennLists[id].items),
-          ].sort()
+        vennLists = vennLists.slice(0, 4).map((vl, i) => ({ ...vl, id: i + 1 }))
 
-          state.originalNames = {
-            ...Object.fromEntries(
-              [
-                ...new Set(
-                  Object.entries(state.vennLists)
-                    .filter(([k]) => parseInt(k) !== id)
-                    .map(([, v]) => v.items)
-                    .flat()
-                ),
-              ].map((v) => [v.toLowerCase(), v])
-            ),
-            ...Object.fromEntries(
-              state.vennLists[id].items.map((v) => [v.toLowerCase(), v])
-            ),
-          }
+        // add at most first 4 items and also fix the ids
+        for (const [i, vl] of vennLists.entries()) {
+          state.vennLists[i] = vl
         }
+
+        state.originalNames = Object.fromEntries(
+          [
+            ...new Set(
+              Object.values(vennLists)
+                .map((v) => v.items)
+                .flat()
+            ),
+          ].map((v) => [v.toLowerCase(), v])
+        )
+        state.combinationNames = Object.fromEntries(
+          COMBINATIONS.map((comb) => [
+            comb.join(':'),
+            comb.map((i) => vennLists[i]?.name || `List ${i}`).join(' AND '),
+          ])
+        )
+
+        state.updateCounter = 0
+      })
+    )
+  },
+  updateVennListFromText: (id: number, text: string) => {
+    set(
+      produce((state: IVennStore) => {
+        const index = id - 1
+        //state.vennLists[id].text = text
+        state.vennLists[index].items = getItems(text)
+        state.vennLists[index].uniqueItems = [
+          ...new Set(state.vennLists[index].items),
+        ].sort()
+
+        state.originalNames = {
+          ...Object.fromEntries(
+            [
+              ...new Set(
+                Object.entries(state.vennLists)
+                  .filter(([k]) => parseInt(k) !== id)
+                  .map(([, v]) => v.items)
+                  .flat()
+              ),
+            ].map((v) => [v.toLowerCase(), v])
+          ),
+          ...Object.fromEntries(
+            state.vennLists[index].items.map((v) => [v.toLowerCase(), v])
+          ),
+        }
+
+        state.updateCounter++
       })
     )
   },
@@ -200,7 +212,11 @@ export function useVenn(): IVennStore {
 
   const setVennLists = useVennStore((state) => state.setVennLists)
 
-  const updateVennListText = useVennStore((state) => state.updateVennListText)
+  const updateCounter = useVennStore((state) => state.updateCounter)
+
+  const updateVennListFromText = useVennStore(
+    (state) => state.updateVennListFromText
+  )
 
   const combinationNames = useVennStore((state) => state.combinationNames)
 
@@ -212,12 +228,13 @@ export function useVenn(): IVennStore {
     setSelectedItems,
     vennLists,
     setVennLists,
-    updateVennListText,
+    updateVennListFromText,
     originalNames,
     combinationNames,
     vennElemMap,
     setVennElemMap,
     vennListsInUse: useVennStore((state) => state.vennListsInUse),
     setVennListsInUse: useVennStore((state) => state.setVennListsInUse),
+    updateCounter,
   }
 }
