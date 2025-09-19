@@ -1,19 +1,14 @@
-import { CountText, makeTitle } from './svg-three-way-venn'
+import {
+  CountText,
+  IVennProps,
+  makeTitle,
+  TitleText,
+} from './svg-three-way-venn'
 import { useVennSettings } from './venn-settings-store'
 import { useVenn } from './venn-store'
 
-export interface IVennProps {
-  labels?: string[]
-
-  overlapLabels?: { [key: string]: { color: string; label: string } }
-}
-
-export function SVGFourWayVenn({
-  labels = [],
-
-  overlapLabels = {},
-}: IVennProps) {
-  const { setSelectedItems, vennElemMap } = useVenn()
+export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
+  const { setSelectedItems, vennElemMap, vennListsInUse, vennLists } = useVenn()
   const { settings, circles } = useVennSettings()
 
   function _setItems(name: string, items: string[]) {
@@ -37,16 +32,11 @@ export function SVGFourWayVenn({
         transform={`translate(${-radius2 / 2}, ${radius2 / 4}) rotate(-45, ${center[0]}, ${center[1]}) `}
       />
 
-      <text
-        x={center[0] - radius2 * 0.9}
-        y={center[1] + radius2 * 0.8}
-        fontSize="16"
-        fontWeight="bold"
+      <TitleText
+        id={1}
+        center={[center[0] - radius2 * 0.9, center[1] + radius2 * 0.8]}
         textAnchor="end"
-        dominantBaseline="middle"
-      >
-        {labels[0]} ({(vennElemMap['1']?.length || 0).toLocaleString()})
-      </text>
+      />
 
       {/* Circle B */}
 
@@ -61,16 +51,10 @@ export function SVGFourWayVenn({
         transform={`rotate(-45, ${center[0]}, ${center[1]})`}
       />
 
-      <text
-        x={center[0] - radius2 / 2}
-        y={center[1] - radius2}
-        fontSize="16"
-        fontWeight="bold"
-        textAnchor="middle"
-        dominantBaseline="middle"
-      >
-        {labels[1]} ({vennElemMap['2']?.length || 0})
-      </text>
+      <TitleText
+        id={2}
+        center={[center[0] - radius2 / 2, center[1] - radius2]}
+      />
 
       {/* Circle C */}
       <ellipse
@@ -84,16 +68,10 @@ export function SVGFourWayVenn({
         transform={`rotate(45, ${center[0]}, ${center[1]})`}
       />
 
-      <text
-        x={center[0] + radius2 / 2}
-        y={center[1] - radius2}
-        fontSize="16"
-        fontWeight="bold"
-        textAnchor="middle"
-        dominantBaseline="middle"
-      >
-        {labels[2]} ({vennElemMap['3']?.length || 0})
-      </text>
+      <TitleText
+        id={3}
+        center={[center[0] + radius2 / 2, center[1] - radius2]}
+      />
 
       {/* Circle 4 */}
 
@@ -108,16 +86,11 @@ export function SVGFourWayVenn({
         transform={`translate(${radius2 * 0.5}, ${radius2 * 0.25}) rotate(45, ${center[0]}, ${center[1]}) `}
       />
 
-      <text
-        x={center[0] + radius2 * 0.9}
-        y={center[1] + radius2 * 0.8}
-        fontSize="16"
-        fontWeight="bold"
+      <TitleText
+        id={4}
+        center={[center[0] + radius2 * 0.9, center[1] + radius2 * 0.8]}
         textAnchor="start"
-        dominantBaseline="middle"
-      >
-        {labels[3]} ({vennElemMap['3']?.length || 0})
-      </text>
+      />
 
       {/* Lists */}
 

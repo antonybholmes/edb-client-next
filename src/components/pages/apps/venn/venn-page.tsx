@@ -35,7 +35,7 @@ import {
   TOOLBAR_BUTTON_ICON_CLS,
 } from '@/theme'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import {
   onTextFileChange,
@@ -114,6 +114,7 @@ import { useHistory } from '../matcalc/history/history-store'
 import MODULE_INFO from './module.json'
 import { SVGFourWayVenn } from './svg-four-way-venn'
 import { SVGThreeWayVenn } from './svg-three-way-venn'
+import { SVGTwoWayVenn } from './svg-two-way-venn'
 import { VennList } from './venn-list'
 import { IVennList, LIST_IDS, makeVennList, useVenn } from './venn-store'
 
@@ -146,6 +147,8 @@ function VennPage() {
     originalNames,
     vennElemMap,
     setVennElemMap,
+    vennListsInUse,
+    setVennListsInUse,
   } = useVenn()
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
@@ -160,7 +163,7 @@ function VennPage() {
   //   new Map()
   // )
 
-  const [vennSets, setVennSets] = useState<Record<number, IVennList>>({})
+  //const [vennSets, setVennSets] = useState<Record<number, IVennList>>({})
 
   // track what is unique to each set so we get rid of repeats
   // const [uniqueCountMap, setUniqueCountMap] = useState<
@@ -329,12 +332,14 @@ function VennPage() {
     // > = new Map()
 
     const vennSetList: Record<string, IVennList> = {}
+    let inUse: number = 0
 
-    for (const [i, vl] of Object.entries(vennLists)) {
-      //const items = getItems(listTextMap.get(i)!)
+    for (const i of LIST_IDS) {
+      const vl = vennLists[i]
 
       if (vl.uniqueItems.length > 0) {
         vennSetList[i] = vl
+        inUse = Math.max(inUse, i)
 
         // for (const item of vl.uniqueItems) {
         //   originalNameMap.set(item.toLowerCase(), item)
@@ -467,7 +472,7 @@ function VennPage() {
 
     setVennElemMap(vennMap)
 
-    setVennSets(vennSetList)
+    setVennListsInUse(inUse)
     //setUniqueCountMap(uniqueCountMap)
 
     // setLabelToIndexMap(
@@ -480,7 +485,7 @@ function VennPage() {
   useEffect(() => {
     // make a dataframe
 
-    if (Object.keys(vennSets).length === 0) {
+    if (vennListsInUse === 0 || Object.keys(vennElemMap).length === 0) {
       return
     }
 
@@ -1146,16 +1151,6 @@ function VennPage() {
     },
   ]
 
-  const labels: string[] = useMemo(
-    () =>
-      [...Object.keys(vennSets)]
-        .map(Number)
-        .sort()
-        .map((id, idx) => vennSets[id]?.name || `List ${idx + 1}`),
-
-    [vennSets]
-  )
-
   return (
     <>
       {showDialog.id.includes('export') && (
@@ -1220,7 +1215,7 @@ function VennPage() {
             //autoSaveId="venn-resizable-panels-v"
           >
             <ResizablePanel
-              defaultSize={80}
+              defaultSize={75}
               minSize={10}
               className="grow flex flex-col  overflow-hidden px-2"
               id="venn"
@@ -1244,11 +1239,9 @@ function VennPage() {
                     width={settings.w}
                     height={settings.w}
                   >
-                    {labels.length > 3 ? (
-                      <SVGFourWayVenn labels={labels} />
-                    ) : (
-                      <SVGThreeWayVenn labels={labels} />
-                    )}
+                    {vennListsInUse < 3 && <SVGTwoWayVenn />}
+                    {vennListsInUse === 3 && <SVGThreeWayVenn />}
+                    {vennListsInUse > 3 && <SVGFourWayVenn />}
                   </BaseSvg>
                   {/* <div
                     id="tooltip"
@@ -1260,7 +1253,7 @@ function VennPage() {
             <ResizableHandle />
             <ResizablePanel
               id="list"
-              defaultSize={20}
+              defaultSize={25}
               minSize={10}
               collapsible={true}
               className="grow flex flex-col"

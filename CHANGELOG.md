@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Lots of Venn UI fixes.
 - Bug fixes and updates.
 - Venn UI fixes.
 
