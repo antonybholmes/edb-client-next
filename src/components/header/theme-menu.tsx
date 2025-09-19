@@ -17,7 +17,7 @@ export function ThemeMenu() {
   const [open, setOpen] = useState(false)
 
   //const [theme, setTheme] = useState<string>("system")
-  const { settings, updateSettings, theme, applyTheme } = useEdbSettings()
+  const { theme, applyTheme } = useEdbSettings()
 
   // function onClose() {
   //   setOpen(false)

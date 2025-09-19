@@ -7,7 +7,6 @@ export function TriangleRightIcon({
   fill = 'fill-foreground',
   className,
   strokeWidth = 0,
-  ...props
 }: IIconProps) {
   return (
     // <svg

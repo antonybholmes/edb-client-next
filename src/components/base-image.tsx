@@ -41,6 +41,9 @@ export function getPlaceholderSrc(
   return `${dir}/opt/${name}-placeholder.${ext}`
 }
 
-export function BaseImage({ ...props }: ComponentProps<typeof Image>) {
-  return <Image {...props} />
+export function BaseImage({
+  alt = 'Interesting Image',
+  ...props
+}: ComponentProps<typeof Image>) {
+  return <Image alt={alt} {...props} />
 }

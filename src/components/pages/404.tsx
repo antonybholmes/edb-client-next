@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { CenterLayout } from '@/layouts/center-layout'
 import { CoreProviders } from '@providers/core-providers'

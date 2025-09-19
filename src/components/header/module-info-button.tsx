@@ -11,7 +11,6 @@ export function ModuleInfoButton({
   ref,
   info,
   className,
-  children,
   ...props
 }: IButtonProps & { info: IModuleInfo }) {
   //const [hover, setHover] = useState(false)

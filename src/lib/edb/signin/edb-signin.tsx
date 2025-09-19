@@ -31,11 +31,12 @@ import { usePathname, useRouter } from 'next/navigation'
 import { truncate } from '../../text/text'
 import {
   APP_ACCOUNT_AUTH0_CALLBACK_URL,
-  AUTH0_TOOLKIT_LOGIN,
+  APP_ACCOUNT_AUTH_SIGN_OUT_URL,
+  AUTH0_TOOLKIT_LOGIN_ROUTE,
+  AUTH0_TOOLKIT_LOGOUT_ROUTE,
   DEFAULT_BASIC_EDB_USER,
   MYACCOUNT_ROUTE,
   OAUTH2_SIGN_IN_ROUTE,
-  OAUTH2_SIGN_OUT_ROUTE,
   OTP_SIGN_IN_ROUTE,
   REDIRECT_URL_PARAM,
   TEXT_MY_ACCOUNT,
@@ -207,11 +208,11 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
 
                   console.log(
                     'redirecting to auth0 login',
-                    `${AUTH0_TOOLKIT_LOGIN}?returnTo=${APP_ACCOUNT_AUTH0_CALLBACK_URL}?${REDIRECT_URL_PARAM}=${window.location.pathname}`
+                    `${AUTH0_TOOLKIT_LOGIN_ROUTE}?returnTo=${APP_ACCOUNT_AUTH0_CALLBACK_URL}?${REDIRECT_URL_PARAM}=${window.location.pathname}`
                   )
 
                   router.push(
-                    `${AUTH0_TOOLKIT_LOGIN}?returnTo=${APP_ACCOUNT_AUTH0_CALLBACK_URL}?${REDIRECT_URL_PARAM}=${window.location.pathname}`
+                    `${AUTH0_TOOLKIT_LOGIN_ROUTE}?returnTo=${APP_ACCOUNT_AUTH0_CALLBACK_URL}?${REDIRECT_URL_PARAM}=${window.location.pathname}`
                   )
                 }}
               >
@@ -375,7 +376,13 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
         onResponse={(r) => {
           if (r === TEXT_OK) {
             //redirect(APP_OAUTH2_SIGN_OUT_ROUTE)
-            router.push(OAUTH2_SIGN_OUT_ROUTE)
+            console.log(
+              `${AUTH0_TOOLKIT_LOGOUT_ROUTE}?returnTo=${APP_ACCOUNT_AUTH_SIGN_OUT_URL}?${REDIRECT_URL_PARAM}=${window.location.pathname}`
+            )
+
+            router.push(
+              `${AUTH0_TOOLKIT_LOGOUT_ROUTE}?returnTo=${APP_ACCOUNT_AUTH_SIGN_OUT_URL}` //?${REDIRECT_URL_PARAM}=${window.location.pathname}`
+            )
           }
 
           setShowDialog({ ...NO_DIALOG })

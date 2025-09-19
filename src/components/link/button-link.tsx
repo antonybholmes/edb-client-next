@@ -1,10 +1,8 @@
 import { FOCUS_INSET_RING_CLS } from '@/theme'
 import { type ILinkProps } from '@interfaces/link-props'
 import { cn } from '@lib/shadcn-utils'
-import { useState } from 'react'
 import { BaseLink } from './base-link'
 
-import type { IPos } from '@interfaces/pos'
 import { buttonVariants } from '@themed/button'
 import type { VariantProps } from 'class-variance-authority'
 
@@ -29,7 +27,7 @@ export function ButtonLink({
   ...props
 }: IButtonLinkProps) {
   //const rippleRef = useRef<HTMLSpanElement>(null)
-  const [clickProps, setClickProps] = useState<IPos>({ x: -1, y: -1 })
+  //const [clickProps, setClickProps] = useState<IPos>({ x: -1, y: -1 })
 
   // useEffect(() => {
   //   if (clickProps.x !== -1) {
@@ -60,17 +58,17 @@ export function ButtonLink({
   // }, [clickProps])
 
   function _onMouseUp(e: React.MouseEvent<HTMLAnchorElement>) {
-    setClickProps({ x: -1, y: -1 })
+    //setClickProps({ x: -1, y: -1 })
     onMouseUp?.(e)
   }
 
   function _onMouseDown(e: React.MouseEvent<HTMLAnchorElement>) {
-    setClickProps({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
+    //setClickProps({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
     onMouseDown?.(e)
   }
 
   function _onMouseLeave(e: React.MouseEvent<HTMLAnchorElement>) {
-    setClickProps({ x: -1, y: -1 })
+    //setClickProps({ x: -1, y: -1 })
     onMouseLeave?.(e)
   }
 

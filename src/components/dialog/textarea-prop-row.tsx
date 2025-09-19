@@ -16,10 +16,7 @@ interface IProps extends ITextAreaProps {
 export function TextareaPropRow({
   title = '',
   disabled = false,
-  leftChildren,
-  rightChildren,
   textareaCls,
-
   children,
   ...props
 }: IProps) {

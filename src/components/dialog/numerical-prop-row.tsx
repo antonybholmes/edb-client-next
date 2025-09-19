@@ -22,12 +22,7 @@ interface IProps extends INumericalInputProps {
 export function NumericalPropRow({
   title = '',
   labelClassName,
-  checked = false,
-
-  disabled = false,
   w = 'w-16',
-  leftChildren,
-  rightChildren,
   className,
   children,
   ...props

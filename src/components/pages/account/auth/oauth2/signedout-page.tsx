@@ -5,7 +5,8 @@ import { VCenterRow } from '@/components/layout/v-center-row'
 import { Card, CardHeader, CardTitle } from '@/components/shadcn/ui/themed/card'
 import { APP_NAME } from '@/consts'
 import { CenterLayout } from '@/layouts/center-layout'
-import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
 
 export function invalidRedirectUrl(url: string): boolean {
   return (
@@ -24,15 +25,13 @@ export function invalidRedirectUrl(url: string): boolean {
 export const REDIRECT_PARAM = 'redirect'
 
 export function SignedOutPage() {
-  const [redirectUrl, setRedirectUrl] = useState('')
+  //const [redirectUrl, setRedirectUrl] = useState('')
+  const searchParams = useSearchParams()
 
   useEffect(() => {
-    let url =
-      new URLSearchParams(window.location.search).get(REDIRECT_PARAM) || ''
+    let url = searchParams.get(REDIRECT_PARAM) || '/'
 
-    if (!invalidRedirectUrl(url)) {
-      setRedirectUrl(url)
-    }
+    //window.location.href = url
 
     // force user to be refreshed
   }, [])

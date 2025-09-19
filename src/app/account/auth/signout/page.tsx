@@ -1,4 +1,4 @@
-import { SignOutPage } from '@/components/pages/account/auth/oauth2/auth0/signout-page'
+import { SignOutPage } from '@/components/pages/account/auth/oauth2/signout-page'
 import { makeMetaData } from '@lib/metadata'
 
 export const metadata = makeMetaData('Sign Out')

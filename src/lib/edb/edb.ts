@@ -119,7 +119,8 @@ export const EDB_ACCESS_TOKEN_COOKIE = `${APP_ID}.access-token-v1`
 export const EDB_SESSION_COOKIE = `${APP_ID}.session-v2`
 export const EDB_USER_COOKIE = `${APP_ID}.user-v1`
 
-export const AUTH0_TOOLKIT_LOGIN = '/auth/login'
+export const AUTH0_TOOLKIT_LOGIN_ROUTE = '/auth/login'
+export const AUTH0_TOOLKIT_LOGOUT_ROUTE = '/auth/logout'
 
 //export const EDB_REFRESH_TOKEN_COOKIE = "edb-refresh-token"
 
@@ -128,16 +129,18 @@ export const AUTH0_TOOLKIT_LOGIN = '/auth/login'
 //export const EDB_USERNAME_COOKIE = "edb-username"
 //export const EDB_USER_INFO_COOKIE = "edb-user-info"
 export const APP_ACCOUNT_URL = `${APP_URL}/account`
-export const APP_AUTH_URL = `${APP_ACCOUNT_URL}/auth`
+//export const APP_AUTH_URL = `${APP_ACCOUNT_URL}/auth`
 export const APP_HELP_API_URL = `${APP_URL}/api/help`
 
-export const APP_VERIFY_EMAIL_URL = `${APP_AUTH_URL}/email/verify`
 export const APP_ACCOUNT_SIGN_IN_URL = `${APP_ACCOUNT_URL}/signin`
 
 export const APP_ACCOUNT_SIGNED_IN_URL = `${APP_ACCOUNT_URL}/signedin`
-export const APP_ACCOUNT_SIGNED_OUT_URL = `${APP_ACCOUNT_URL}/signedout`
+
 export const APP_MYACCOUNT_URL = `${APP_ACCOUNT_URL}/myaccount`
 export const APP_ACCOUNT_AUTH_URL = `${APP_ACCOUNT_URL}/auth`
+export const APP_VERIFY_EMAIL_URL = `${APP_ACCOUNT_AUTH_URL}/email/verify`
+export const APP_ACCOUNT_AUTH_SIGN_OUT_URL = `${APP_ACCOUNT_AUTH_URL}/signout`
+export const APP_ACCOUNT_AUTH_SIGNED_OUT_URL = `${APP_ACCOUNT_AUTH_URL}/signedout`
 
 export const APP_ACCOUNT_OAUTH2_URL = `${APP_ACCOUNT_AUTH_URL}/oauth2`
 export const APP_ACCOUNT_AUTH0_URL = `${APP_ACCOUNT_OAUTH2_URL}/auth0`

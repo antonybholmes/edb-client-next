@@ -1508,5 +1508,18 @@
     },
     "author": "Antony Holmes",
     "date": "2025-09-18T22:45:32.613Z"
+  },
+  {
+    "version": "28.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Venn improvements using debounce to make user input feel faster",
+          "date": "2025-09-19T16:49:32.178Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-09-19T16:49:32.178Z"
   }
 ]

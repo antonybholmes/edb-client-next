@@ -5,32 +5,44 @@ import { VCenterRow } from '@/components/layout/v-center-row'
 import { Card, CardHeader, CardTitle } from '@/components/shadcn/ui/themed/card'
 import { APP_NAME } from '@/consts'
 import { CenterLayout } from '@/layouts/center-layout'
-import { APP_OAUTH2_SIGNED_OUT_URL } from '@/lib/edb/edb'
+import { APP_ACCOUNT_AUTH_SIGNED_OUT_URL } from '@/lib/edb/edb'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
-import { useAuth0 } from '@auth0/auth0-react'
+import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
-import { REDIRECT_PARAM } from '../signedout-page'
+import { REDIRECT_PARAM } from './signedout-page'
 
 export function SignOutPage() {
-  const { logout } = useAuth0()
   const { signout } = useEdbAuth()
+  // const router = useRouter()
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     async function completeSignout() {
-      signout()
+      try {
+        await signout()
+      } catch (e) {
+        console.error('Error during signout:', e)
+      }
 
-      let url =
-        new URLSearchParams(window.location.search).get(REDIRECT_PARAM) || '/'
+      try {
+        let url = searchParams.get(REDIRECT_PARAM) || '/'
 
-      const redirectUrl = `${APP_OAUTH2_SIGNED_OUT_URL}${url ? `?redirect=${encodeURIComponent(url)}` : ''}`
+        const redirectUrl = `${APP_ACCOUNT_AUTH_SIGNED_OUT_URL}${url ? `?${REDIRECT_PARAM}=${encodeURIComponent(url)}` : ''}`
 
-      console.log('Redirect URL from query:', redirectUrl)
+        console.log('Redirect URL from query:', redirectUrl)
 
-      logout({
-        logoutParams: {
-          returnTo: redirectUrl,
-        },
-      })
+        //router.push(redirectUrl)
+
+        window.location.href = redirectUrl
+
+        // logout({
+        //   logoutParams: {
+        //     returnTo: redirectUrl,
+        //   },
+        // })
+      } catch (e) {
+        console.error('Error during signout:', e)
+      }
     }
     completeSignout()
   }, [])

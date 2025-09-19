@@ -10,7 +10,7 @@ import { AppIcon } from '@/components/icons/app-icon'
 import { ThemeLink } from '@/components/link/theme-link'
 import { APP_NAME } from '@/consts'
 import { CenterLayout } from '@/layouts/center-layout'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 
 import { httpFetch } from '@/lib/http/http-fetch'
 import { useQuery } from '@tanstack/react-query'
@@ -22,11 +22,10 @@ const ACCESS_TOKEN_URL = '/auth/access-token'
 export function CallbackPage() {
   const { signInWithAuth0 } = useEdbAuth()
 
-  const router = useRouter()
+  //const router = useRouter()
   const searchParams = useSearchParams()
 
   const [redirectUrl, setRedirectUrl] = useState<string | null>(null)
-  const { signout } = useEdbAuth()
 
   // useEffect(() => {
   //   //const queryParameters = new URLSearchParams(window.location.search)
@@ -78,7 +77,7 @@ export function CallbackPage() {
 
         const auth0Token = accessTokenData!.token //await getAccessTokenSilently()
 
-        //console.log('auth0Token', auth0Token)
+        console.log('auth0Token', auth0Token)
 
         await signInWithAuth0(auth0Token)
 
@@ -95,7 +94,8 @@ export function CallbackPage() {
         //console.log('Redirect URL from appState:', url, invalidRedirectUrl(url))
 
         //setRedirectUrl(url)
-        router.push(url)
+        //router.push(url)
+        window.location.href = url
       } catch (error) {
         console.error('Error handling redirect callback:', error)
       }
@@ -179,9 +179,9 @@ export function CallbackPage() {
     if (redirectUrl !== null) {
       // You can add validation or whitelist here for security
       console.log('Redirecting to:', redirectUrl)
-      router.replace(redirectUrl)
+      window.location.href = redirectUrl
     }
-  }, [redirectUrl, router])
+  }, [redirectUrl])
 
   return (
     <CenterLayout signedRequired="never">
