@@ -165,7 +165,6 @@ export function ColorPickerButton({
       defaultBorderColor={defaultBorderColor}
       align={align}
       className={className}
-      {...props}
     >
       <PopoverTrigger
         className={cn(
@@ -176,6 +175,7 @@ export function ColorPickerButton({
         )}
         aria-label={props['aria-label'] ?? tooltip}
         style={{ backgroundColor: _color }}
+        {...props}
       >
         {children}
 

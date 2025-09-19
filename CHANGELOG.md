@@ -1,5 +1,12 @@
 # Changelog
 
+## 28.2 (Sep, 2025)
+
+### Fixed
+
+- Fixed title on color picker buttons.
+
+
 ## 28.0 (Sep, 2025)
 
 ### Changed
