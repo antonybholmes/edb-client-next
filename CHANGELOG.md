@@ -1,5 +1,12 @@
 # Changelog
 
+## 28.4 (Sep, 2025)
+
+### Changed
+
+- Removal of nanostores.
+
+
 ## 28.2 (Sep, 2025)
 
 ### Added

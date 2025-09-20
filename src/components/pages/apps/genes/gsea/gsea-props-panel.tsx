@@ -18,13 +18,14 @@ import { SwitchPropRow } from '@dialog/switch-prop-row'
 import { VCenterRow } from '@layout/v-center-row'
 import { LinkButton } from '@themed/link-button'
 import { NumericalInput } from '@themed/numerical-input'
-import { useGseaStore } from './gsea-store'
+import { produce } from 'immer'
+import { useGsea } from './gsea-store'
 
 export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
   {},
   ref: ForwardedRef<HTMLDivElement>
 ) {
-  const { displayProps, setDisplayProps, resetDisplayProps } = useGseaStore()
+  const { settings, updateSettings, reset } = useGsea()
 
   // const [text, setText] = useState<string>(
   //   process.env.NODE_ENV === 'development' ? 'BCL6\nPRDM1\nKMT2D' : ''
@@ -56,7 +57,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
       <PropsPanel ref={ref} className="px-1 h-full">
         <VCenterRow className="justify-end">
           <LinkButton
-            onClick={() => resetDisplayProps()}
+            onClick={() => reset()}
             title="Reset Properties to Defaults"
           >
             {TEXT_RESET}
@@ -70,19 +71,17 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
             <AccordionContent>
               <PropRow title="Columns">
                 <NumericalInput
-                  value={displayProps.page.columns}
+                  value={settings.page.columns}
                   placeholder="Opacity"
                   limit={[1, 100]}
                   step={1}
-                  onNumChanged={v =>
-                    setDisplayProps({
-                      ...displayProps,
-                      page: {
-                        ...displayProps.page,
-                        columns: v,
-                      },
-                    })
-                  }
+                  onNumChanged={(v) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.page.columns = v
+                      })
+                    )
+                  }}
                   className="w-16 rounded-theme"
                 />
               </PropRow>
@@ -93,85 +92,65 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
             <AccordionContent>
               <PropRow title="Top">
                 <NumericalInput
-                  value={displayProps.plot.margin.top}
+                  value={settings.plot.margin.top}
                   placeholder="Opacity"
                   limit={[1, 1000]}
                   step={1}
-                  onNumChanged={v =>
-                    setDisplayProps({
-                      ...displayProps,
-                      plot: {
-                        ...displayProps.plot,
-                        margin: {
-                          ...displayProps.plot.margin,
-                          top: v,
-                        },
-                      },
-                    })
-                  }
+                  onNumChanged={(v) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.plot.margin.top = v
+                      })
+                    )
+                  }}
                   className="w-16 rounded-theme"
                 />
               </PropRow>
               <PropRow title="Left">
                 <NumericalInput
-                  value={displayProps.plot.margin.left}
+                  value={settings.plot.margin.left}
                   placeholder="Opacity"
                   limit={[1, 1000]}
                   step={1}
-                  onNumChanged={v =>
-                    setDisplayProps({
-                      ...displayProps,
-                      plot: {
-                        ...displayProps.plot,
-                        margin: {
-                          ...displayProps.plot.margin,
-                          left: v,
-                        },
-                      },
-                    })
-                  }
+                  onNumChanged={(v) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.plot.margin.left = v
+                      })
+                    )
+                  }}
                   className="w-16 rounded-theme"
                 />
               </PropRow>
               <PropRow title="Bottom">
                 <NumericalInput
-                  value={displayProps.plot.margin.bottom}
+                  value={settings.plot.margin.bottom}
                   placeholder="Opacity"
                   limit={[1, 1000]}
                   step={1}
-                  onNumChanged={v =>
-                    setDisplayProps({
-                      ...displayProps,
-                      plot: {
-                        ...displayProps.plot,
-                        margin: {
-                          ...displayProps.plot.margin,
-                          bottom: v,
-                        },
-                      },
-                    })
-                  }
+                  onNumChanged={(v) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.plot.margin.bottom = v
+                      })
+                    )
+                  }}
                   className="w-16 rounded-theme"
                 />
               </PropRow>
               <PropRow title="Right">
                 <NumericalInput
-                  value={displayProps.plot.margin.right}
+                  value={settings.plot.margin.right}
                   placeholder="Opacity"
                   limit={[1, 1000]}
                   step={1}
-                  onNumChanged={v =>
-                    setDisplayProps({
-                      ...displayProps,
-                      plot: {
-                        ...displayProps.plot,
-                        margin: {
-                          ...displayProps.plot.margin,
-                          right: v,
-                        },
-                      },
-                    })
-                  }
+                  onNumChanged={(v) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.plot.margin.right = v
+                      })
+                    )
+                  }}
                   className="w-16 rounded-theme"
                 />
               </PropRow>
@@ -183,55 +162,37 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
             <AccordionContent>
               <PropRow title="Size">
                 <DoubleNumericalInput
-                  v1={displayProps.axes.x.length}
+                  v1={settings.axes.x.length}
                   placeholder="Width"
                   limit={[1, 1000]}
                   dp={0}
-                  onNumChanged1={v =>
-                    setDisplayProps({
-                      ...displayProps,
-                      axes: {
-                        ...displayProps.axes,
-                        x: {
-                          ...displayProps.axes.x,
-                          length: v,
-                        },
-                      },
-                    })
-                  }
-                  v2={displayProps.es.axes.y.length}
-                  onNumChanged2={v =>
-                    setDisplayProps({
-                      ...displayProps,
-                      es: {
-                        ...displayProps.es,
-                        axes: {
-                          ...displayProps.es.axes,
-                          y: {
-                            ...displayProps.es.axes.y,
-                            length: v,
-                          },
-                        },
-                      },
-                    })
-                  }
+                  onNumChanged1={(v) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.axes.x.length = v
+                      })
+                    )
+                  }}
+                  v2={settings.es.axes.y.length}
+                  onNumChanged2={(v) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.es.axes.y.length = v
+                      })
+                    )
+                  }}
                 />
               </PropRow>
               <PropRow title="Line color">
                 <ColorPickerButton
-                  color={displayProps.es.line.color}
-                  onColorChange={color =>
-                    setDisplayProps({
-                      ...displayProps,
-                      es: {
-                        ...displayProps.es,
-                        line: {
-                          ...displayProps.es.line,
-                          color,
-                        },
-                      },
-                    })
-                  }
+                  color={settings.es.line.color}
+                  onColorChange={(color) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.es.line.color = color
+                      })
+                    )
+                  }}
                   className={SIMPLE_COLOR_EXT_CLS}
                   title="Line color"
                 />
@@ -239,62 +200,44 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
 
               <PropRow title="Line stroke">
                 <NumericalInput
-                  value={displayProps.es.line.width}
-                  disabled={!displayProps.genes.show}
+                  value={settings.es.line.width}
+                  disabled={!settings.genes.show}
                   placeholder="Stroke"
                   limit={[1, 100]}
                   step={1}
-                  onNumChanged={v =>
-                    setDisplayProps({
-                      ...displayProps,
-                      es: {
-                        ...displayProps.es,
-                        line: {
-                          ...displayProps.es.line,
-                          width: v,
-                        },
-                      },
-                    })
-                  }
+                  onNumChanged={(v) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.es.line.width = v
+                      })
+                    )
+                  }}
                   className="w-16 rounded-theme"
                 />
               </PropRow>
 
               <SwitchPropRow
                 title="Leading Edge"
-                checked={displayProps.es.leadingEdge.show}
-                onCheckedChange={state =>
-                  setDisplayProps({
-                    ...displayProps,
-                    es: {
-                      ...displayProps.es,
-                      leadingEdge: {
-                        ...displayProps.es.leadingEdge,
-                        show: state,
-                      },
-                    },
-                  })
-                }
+                checked={settings.es.leadingEdge.show}
+                onCheckedChange={(state) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.es.leadingEdge.show = state
+                    })
+                  )
+                }}
               />
 
               <PropRow title="Color" className="ml-2">
                 <ColorPickerButton
-                  color={displayProps.es.leadingEdge.fill.color}
-                  onColorChange={color =>
-                    setDisplayProps({
-                      ...displayProps,
-                      es: {
-                        ...displayProps.es,
-                        leadingEdge: {
-                          ...displayProps.es.leadingEdge,
-                          fill: {
-                            ...displayProps.es.leadingEdge.fill,
-                            color,
-                          },
-                        },
-                      },
-                    })
-                  }
+                  color={settings.es.leadingEdge.fill.color}
+                  onColorChange={(color) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.es.leadingEdge.fill.color = color
+                      })
+                    )
+                  }}
                   className={SIMPLE_COLOR_EXT_CLS}
                   title="Line color"
                 />
@@ -302,27 +245,19 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
 
               <PropRow title="Opacity" className="ml-2">
                 <NumericalInput
-                  disabled={!displayProps.es.leadingEdge.show}
-                  value={displayProps.es.leadingEdge.fill.alpha}
+                  disabled={!settings.es.leadingEdge.show}
+                  value={settings.es.leadingEdge.fill.alpha}
                   placeholder="Opacity"
                   limit={[0, 1]}
                   step={0.1}
                   dp={1}
-                  onNumChanged={v =>
-                    setDisplayProps({
-                      ...displayProps,
-                      es: {
-                        ...displayProps.es,
-                        leadingEdge: {
-                          ...displayProps.es.leadingEdge,
-                          fill: {
-                            ...displayProps.es.leadingEdge.fill,
-                            alpha: v,
-                          },
-                        },
-                      },
-                    })
-                  }
+                  onNumChanged={(v) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.es.leadingEdge.fill.alpha = v
+                      })
+                    )
+                  }}
                   className="w-16 rounded-theme"
                 />
               </PropRow>
@@ -333,92 +268,76 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
             <AccordionContent>
               <SwitchPropRow
                 title="Show"
-                checked={displayProps.genes.show}
-                onCheckedChange={state =>
-                  setDisplayProps({
-                    ...displayProps,
-                    genes: {
-                      ...displayProps.genes,
-                      show: state,
-                    },
-                  })
-                }
+                checked={settings.genes.show}
+                onCheckedChange={(state) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.show = state
+                    })
+                  )
+                }}
               />
               <PropRow title="Height" className="ml-2">
                 <NumericalInput
-                  value={displayProps.genes.height}
-                  disabled={!displayProps.genes.show}
+                  value={settings.genes.height}
+                  disabled={!settings.genes.show}
                   placeholder="Height"
                   limit={[1, 100]}
                   step={1}
-                  onNumChanged={v =>
-                    setDisplayProps({
-                      ...displayProps,
-                      genes: {
-                        ...displayProps.genes,
-                        height: v,
-                      },
-                    })
-                  }
+                  onNumChanged={(v) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.genes.height = v
+                      })
+                    )
+                  }}
                   className="w-16 rounded-theme"
                 />
               </PropRow>
               <PropRow title="Stroke" className="ml-2">
                 <NumericalInput
-                  value={displayProps.genes.line.width}
-                  disabled={!displayProps.genes.show}
+                  value={settings.genes.line.width}
+                  disabled={!settings.genes.show}
                   placeholder="Stroke"
                   limit={[1, 100]}
                   step={1}
-                  onNumChanged={v =>
-                    setDisplayProps({
-                      ...displayProps,
-                      genes: {
-                        ...displayProps.genes,
-                        line: { ...displayProps.genes.line, width: v },
-                      },
-                    })
-                  }
+                  onNumChanged={(v) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.genes.line.width = v
+                      })
+                    )
+                  }}
                   className="w-16 rounded-theme"
                 />
               </PropRow>
 
               <PropRow title="Positive color" className="ml-2">
                 <ColorPickerButton
-                  disabled={!displayProps.genes.show}
-                  color={displayProps.genes.pos.color}
-                  onColorChange={color =>
-                    setDisplayProps({
-                      ...displayProps,
-                      genes: {
-                        ...displayProps.genes,
-                        pos: {
-                          ...displayProps.genes.pos,
-                          color,
-                        },
-                      },
-                    })
-                  }
+                  disabled={!settings.genes.show}
+                  color={settings.genes.pos.color}
+                  onColorChange={(color) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.genes.pos.color = color
+                      })
+                    )
+                  }}
                   className={SIMPLE_COLOR_EXT_CLS}
                   title="Positive color"
                 />
               </PropRow>
               <PropRow title="Negative color" className="ml-2">
                 <ColorPickerButton
-                  disabled={!displayProps.genes.show}
-                  color={displayProps.genes.neg.color}
-                  onColorChange={color =>
-                    setDisplayProps({
-                      ...displayProps,
-                      genes: {
-                        ...displayProps.genes,
-                        neg: {
-                          ...displayProps.genes.neg,
-                          color,
-                        },
-                      },
-                    })
-                  }
+                  disabled={!settings.genes.show}
+                  color={settings.genes.neg.color}
+                  onColorChange={(color) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.genes.neg.color = color
+                      })
+                    )
+                  }}
                   className={SIMPLE_COLOR_EXT_CLS}
                   title="Negative color"
                 />
@@ -431,34 +350,27 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
             <AccordionContent>
               <SwitchPropRow
                 title="Show"
-                checked={displayProps.ranking.show}
-                onCheckedChange={state =>
-                  setDisplayProps({
-                    ...displayProps,
-                    ranking: {
-                      ...displayProps.ranking,
-                      show: state,
-                    },
-                  })
-                }
+                checked={settings.ranking.show}
+                onCheckedChange={(state) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.ranking.show = state
+                    })
+                  )
+                }}
               />
 
               <PropRow title="Color" className="ml-2">
                 <ColorPickerButton
-                  color={displayProps.ranking.fill.color}
-                  disabled={!displayProps.ranking.show}
-                  onColorChange={color =>
-                    setDisplayProps({
-                      ...displayProps,
-                      ranking: {
-                        ...displayProps.ranking,
-                        fill: {
-                          ...displayProps.ranking.fill,
-                          color,
-                        },
-                      },
-                    })
-                  }
+                  color={settings.ranking.fill.color}
+                  disabled={!settings.ranking.show}
+                  onColorChange={(color) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.ranking.fill.color = color
+                      })
+                    )
+                  }}
                   className={SIMPLE_COLOR_EXT_CLS}
                   title="Positive color"
                 />
@@ -466,24 +378,19 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
 
               <PropRow title="Opacity" className="ml-2">
                 <NumericalInput
-                  value={displayProps.ranking.fill.alpha}
-                  disabled={!displayProps.ranking.show}
+                  value={settings.ranking.fill.alpha}
+                  disabled={!settings.ranking.show}
                   placeholder="Opacity"
                   limit={[0, 1]}
                   step={0.1}
                   dp={1}
-                  onNumChanged={v =>
-                    setDisplayProps({
-                      ...displayProps,
-                      ranking: {
-                        ...displayProps.ranking,
-                        fill: {
-                          ...displayProps.ranking.fill,
-                          alpha: v,
-                        },
-                      },
-                    })
-                  }
+                  onNumChanged={(v) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.ranking.fill.alpha = v
+                      })
+                    )
+                  }}
                   className="w-16 rounded-theme"
                 />
               </PropRow>
@@ -491,19 +398,14 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
               <SwitchPropRow
                 className="ml-2"
                 title="Zero crossing"
-                checked={displayProps.ranking.zeroCross.show}
-                disabled={!displayProps.ranking.show}
-                onCheckedChange={state =>
-                  setDisplayProps({
-                    ...displayProps,
-                    ranking: {
-                      ...displayProps.ranking,
-                      zeroCross: {
-                        ...displayProps.ranking.zeroCross,
-                        show: state,
-                      },
-                    },
-                  })
+                checked={settings.ranking.zeroCross.show}
+                disabled={!settings.ranking.show}
+                onCheckedChange={(state) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.ranking.zeroCross.show = state
+                    })
+                  )
                 }
               />
             </AccordionContent>

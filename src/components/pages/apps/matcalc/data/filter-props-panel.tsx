@@ -43,14 +43,14 @@ export function FilterPropsPanel({ branchId }: IProps) {
   const [confirmClear, setConfirmClear] = useState(false)
   const [filterMode, setFilterMode] = useState('Rows')
 
-  const { filters, updateFilters, resetRowFilters, resetColFilters } =
+  const { settings, updateSettings, resetRowFilters, resetColFilters } =
     useSearchFilters()
 
   useEffect(() => {
     if (filterMode.includes('Rows')) {
-      setText(filters.rows.ids.join('\n'))
+      setText(settings.rows.ids.join('\n'))
     } else {
-      setText(filters.cols.ids.join('\n'))
+      setText(settings.cols.ids.join('\n'))
     }
   }, [filterMode])
 
@@ -67,15 +67,15 @@ export function FilterPropsPanel({ branchId }: IProps) {
 
     if (filterMode.includes('Rows')) {
       df = filterRowsById(sheet!, ids, {
-        caseSensitive: filters.rows.caseSensitive,
-        matchEntireCell: filters.rows.matchEntireCell,
-        keepOrder: filters.rows.keepOrder,
+        caseSensitive: settings.rows.caseSensitive,
+        matchEntireCell: settings.rows.matchEntireCell,
+        keepOrder: settings.rows.keepOrder,
       }).setName('Row Filter')
     } else {
       df = filterColsById(sheet!, ids, {
-        caseSensitive: filters.cols.caseSensitive,
-        matchEntireCell: filters.cols.matchEntireCell,
-        keepOrder: filters.cols.keepOrder,
+        caseSensitive: settings.cols.caseSensitive,
+        matchEntireCell: settings.cols.matchEntireCell,
+        keepOrder: settings.cols.keepOrder,
       }).setName('Col Filter')
     }
 
@@ -83,18 +83,18 @@ export function FilterPropsPanel({ branchId }: IProps) {
       addStep(df.name, [df])
 
       if (filterMode.includes('Rows')) {
-        updateFilters({
-          ...filters,
+        updateSettings({
+          ...settings,
           rows: {
-            ...filters.rows,
+            ...settings.rows,
             ids,
           },
         })
       } else {
-        updateFilters({
-          ...filters,
+        updateSettings({
+          ...settings,
           cols: {
-            ...filters.cols,
+            ...settings.cols,
             ids,
           },
         })
@@ -277,19 +277,19 @@ export function FilterPropsPanel({ branchId }: IProps) {
         <Checkbox
           checked={
             filterMode.includes('Rows')
-              ? filters.rows.caseSensitive
-              : filters.cols.caseSensitive
+              ? settings.rows.caseSensitive
+              : settings.cols.caseSensitive
           }
           onCheckedChange={(state) => {
             if (filterMode.includes('Rows')) {
-              updateFilters({
-                ...filters,
-                rows: { ...filters.rows, caseSensitive: state },
+              updateSettings({
+                ...settings,
+                rows: { ...settings.rows, caseSensitive: state },
               })
             } else {
-              updateFilters({
-                ...filters,
-                cols: { ...filters.cols, caseSensitive: state },
+              updateSettings({
+                ...settings,
+                cols: { ...settings.cols, caseSensitive: state },
               })
             }
           }}
@@ -299,19 +299,19 @@ export function FilterPropsPanel({ branchId }: IProps) {
         <Checkbox
           checked={
             filterMode.includes('Rows')
-              ? filters.rows.matchEntireCell
-              : filters.cols.matchEntireCell
+              ? settings.rows.matchEntireCell
+              : settings.cols.matchEntireCell
           }
           onCheckedChange={(state) => {
             if (filterMode.includes('Rows')) {
-              updateFilters({
-                ...filters,
-                rows: { ...filters.rows, matchEntireCell: state },
+              updateSettings({
+                ...settings,
+                rows: { ...settings.rows, matchEntireCell: state },
               })
             } else {
-              updateFilters({
-                ...filters,
-                cols: { ...filters.cols, matchEntireCell: state },
+              updateSettings({
+                ...settings,
+                cols: { ...settings.cols, matchEntireCell: state },
               })
             }
           }}
@@ -321,26 +321,26 @@ export function FilterPropsPanel({ branchId }: IProps) {
         <Checkbox
           checked={
             filterMode.includes('Rows')
-              ? filters.rows.keepOrder
-              : filters.cols.keepOrder
+              ? settings.rows.keepOrder
+              : settings.cols.keepOrder
           }
           onCheckedChange={(state) => {
             if (filterMode.includes('Rows')) {
-              updateFilters({
-                ...filters,
+              updateSettings({
+                ...settings,
                 rows: {
-                  ...filters.rows,
+                  ...settings.rows,
                   keepOrder: state,
-                  matchEntireCell: state ? true : filters.rows.matchEntireCell,
+                  matchEntireCell: state ? true : settings.rows.matchEntireCell,
                 },
               })
             } else {
-              updateFilters({
-                ...filters,
+              updateSettings({
+                ...settings,
                 cols: {
-                  ...filters.cols,
+                  ...settings.cols,
                   keepOrder: state,
-                  matchEntireCell: state ? true : filters.cols.matchEntireCell,
+                  matchEntireCell: state ? true : settings.cols.matchEntireCell,
                 },
               })
             }

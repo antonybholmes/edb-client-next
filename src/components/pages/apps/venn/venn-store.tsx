@@ -125,7 +125,7 @@ export interface IVennStore extends IVennOptions {
   setVennListsInUse: (n: number) => void
 }
 
-export const useVennStore = create<IVennStore>((set, get) => ({
+export const useVennStore = create<IVennStore>((set) => ({
   ...DEFAULT_SETTINGS,
   setSelectedItems: (name: string, items: string[]) => {
     set({ selectedItems: { name, items } })

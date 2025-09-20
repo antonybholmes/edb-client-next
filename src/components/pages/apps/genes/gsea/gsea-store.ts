@@ -1,45 +1,47 @@
 import { APP_ID } from '@/consts'
-import { persistentAtom } from '@nanostores/persistent'
-import { useStore } from '@nanostores/react'
-import { useEffect } from 'react'
 
+import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 import {
   DEFAULT_GSEA_DISPLAY_PROPS,
   type IGseaDisplayProps,
 } from './gsea-utils'
+const SETTINGS_KEY = `${APP_ID}.gsea-settings-v22`
 
-const SETTINGS_KEY = `${APP_ID}.gsea-settings-v20`
+export interface IGseaStore extends IGseaDisplayProps {
+  updateSettings: (settings: Partial<IGseaDisplayProps>) => void
+}
 
-const localStorageMap = persistentAtom<IGseaDisplayProps>(
-  SETTINGS_KEY,
-  { ...DEFAULT_GSEA_DISPLAY_PROPS },
-  {
-    encode: JSON.stringify,
-    decode: JSON.parse,
-  }
+export const useGseaStore = create<IGseaStore>()(
+  persist(
+    (set) => ({
+      ...DEFAULT_GSEA_DISPLAY_PROPS,
+
+      updateSettings: (settings: Partial<IGseaDisplayProps>) => {
+        set((state) => ({
+          ...state,
+          ...settings,
+        }))
+      },
+    }),
+    {
+      name: SETTINGS_KEY, // name in localStorage
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
 )
 
-export function useGseaStore(): {
-  displayProps: IGseaDisplayProps
-  setDisplayProps: (props: IGseaDisplayProps) => void
-  resetDisplayProps: () => void
+export function useGsea(): {
+  settings: IGseaDisplayProps
+  updateSettings: (settings: Partial<IGseaDisplayProps>) => void
+  reset: () => void
 } {
-  const displayProps = useStore(localStorageMap)
+  const settings = useGseaStore((state) => state)
+  const updateSettings = useGseaStore((state) => state.updateSettings)
 
-  useEffect(() => {
-    // auto recreate if deleted and app is running
-    if (!displayProps) {
-      resetDisplayProps()
-    }
-  }, [displayProps])
-
-  function setDisplayProps(props: IGseaDisplayProps) {
-    localStorageMap.set(props)
+  function reset() {
+    updateSettings({ ...DEFAULT_GSEA_DISPLAY_PROPS })
   }
 
-  function resetDisplayProps() {
-    localStorageMap.set({ ...DEFAULT_GSEA_DISPLAY_PROPS })
-  }
-
-  return { displayProps, setDisplayProps, resetDisplayProps }
+  return { settings, updateSettings, reset }
 }

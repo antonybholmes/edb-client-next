@@ -1,9 +1,9 @@
 import { APP_ID } from '@/consts'
 import type { ISearch } from '@/hooks/search'
-import { persistentAtom } from '@nanostores/persistent'
-import { useStore } from '@nanostores/react'
+import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${APP_ID}.search-filters-v2`
+const SETTINGS_KEY = `${APP_ID}:search-filters:v4`
 
 export interface IFilters {
   rows: ISearch
@@ -25,41 +25,55 @@ export const DEFAULT_FILTERS: IFilters = {
   },
 }
 
-const filtersAtom = persistentAtom<IFilters>(
-  SETTINGS_KEY,
-  {
-    ...DEFAULT_FILTERS,
-  },
-  {
-    encode: JSON.stringify,
-    decode: JSON.parse,
-  }
+export interface ISearchFiltersStore extends IFilters {
+  updateSettings: (settings: Partial<IFilters>) => void
+}
+
+export const useSearchFiltersStore = create<ISearchFiltersStore>()(
+  persist(
+    (set) => ({
+      ...DEFAULT_FILTERS,
+
+      updateSettings: (settings: Partial<IFilters>) => {
+        set((state) => ({
+          ...state,
+          ...settings,
+        }))
+      },
+    }),
+    {
+      name: SETTINGS_KEY, // name in localStorage
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
 )
 
 export function useSearchFilters(): {
-  filters: IFilters
-
-  updateFilters: (settings: IFilters) => void
+  settings: IFilters
+  updateSettings: (settings: IFilters) => void
+  reset: () => void
   resetRowFilters: () => void
   resetColFilters: () => void
 } {
-  const filters = useStore(filtersAtom)
+  const settings = useSearchFiltersStore((state) => state)
+  const updateSettings = useSearchFiltersStore((state) => state.updateSettings)
 
-  function updateFilters(settings: IFilters) {
-    filtersAtom.set(settings)
+  function reset() {
+    updateSettings({ ...DEFAULT_FILTERS })
   }
 
   function resetRowFilters() {
-    updateFilters({ ...filters, rows: { ...DEFAULT_FILTERS.rows } })
+    updateSettings({ rows: { ...DEFAULT_FILTERS.rows } })
   }
 
   function resetColFilters() {
-    updateFilters({ ...filters, cols: { ...DEFAULT_FILTERS.rows } })
+    updateSettings({ cols: { ...DEFAULT_FILTERS.rows } })
   }
 
   return {
-    filters,
-    updateFilters,
+    settings,
+    updateSettings,
+    reset,
     resetRowFilters,
     resetColFilters,
   }

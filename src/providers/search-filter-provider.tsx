@@ -8,19 +8,19 @@ import {
 import { createContext } from 'react'
 
 export const SearchFiltersContext = createContext<{
-  filters: IFilters
-  updateFilters: (filters: IFilters) => void
+  settings: IFilters
+  updateSettings: (settings: IFilters) => void
   resetRowFilters: () => void
   resetColFilters: () => void
 }>({
-  filters: { ...DEFAULT_FILTERS },
-  updateFilters: () => {},
+  settings: { ...DEFAULT_FILTERS },
+  updateSettings: () => {},
   resetRowFilters: () => {},
   resetColFilters: () => {},
 })
 
 export function SearchFilterProvider({ children }: IChildrenProps) {
-  const { filters, updateFilters, resetRowFilters, resetColFilters } =
+  const { settings, updateSettings, resetRowFilters, resetColFilters } =
     useSearchFilters()
 
   // const [accountStore, setAccountStore] = useUserStore()
@@ -38,7 +38,7 @@ export function SearchFilterProvider({ children }: IChildrenProps) {
 
   return (
     <SearchFiltersContext.Provider
-      value={{ filters, updateFilters, resetRowFilters, resetColFilters }}
+      value={{ settings, updateSettings, resetRowFilters, resetColFilters }}
     >
       {children}
     </SearchFiltersContext.Provider>

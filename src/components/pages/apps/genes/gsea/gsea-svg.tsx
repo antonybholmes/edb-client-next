@@ -7,7 +7,7 @@ import { AxisBottomSvg, AxisLeftSvg } from '@components/plot/axis-svg'
 import { COLOR_BLACK } from '@lib/color/color'
 import { end } from '@lib/math/math'
 import { where } from '@lib/math/where'
-import { useGseaStore } from './gsea-store'
+import { useGsea } from './gsea-store'
 import type { IGeneRankScore, IGseaResult, IPathway } from './gsea-utils'
 
 interface IProps extends ISVGProps {
@@ -24,46 +24,43 @@ export function GseaSvg({
   reports,
   resultsMap,
 }: IProps) {
-  const { displayProps } = useGseaStore()
+  const { settings } = useGsea()
 
   const svg = useMemo(() => {
     // size of plot with padding
     const plotSize = [
-      displayProps.axes.x.length +
-        displayProps.plot.margin.left +
-        displayProps.plot.margin.right,
-      displayProps.es.axes.y.length +
-        (displayProps.genes.show
-          ? displayProps.plot.gap.y + displayProps.genes.height
+      settings.axes.x.length +
+        settings.plot.margin.left +
+        settings.plot.margin.right,
+      settings.es.axes.y.length +
+        (settings.genes.show
+          ? settings.plot.gap.y + settings.genes.height
           : 0) +
-        (displayProps.ranking.show
-          ? displayProps.plot.gap.y + displayProps.ranking.axes.y.length
+        (settings.ranking.show
+          ? settings.plot.gap.y + settings.ranking.axes.y.length
           : 0) +
-        displayProps.plot.margin.top +
-        displayProps.plot.margin.bottom,
+        settings.plot.margin.top +
+        settings.plot.margin.bottom,
     ]
 
     // keep only pathways for which we have results, i.e. with
     //suitable q values. If q == 1, unlikely GSEA generated it
     // so we cannot plot it
-    const pathways = phenotypes.map(report =>
-      reports.get(report)!.filter(pathway => resultsMap.has(pathway.name))
+    const pathways = phenotypes.map((report) =>
+      reports.get(report)!.filter((pathway) => resultsMap.has(pathway.name))
     )
 
-    const rows = Math.ceil(pathways.flat().length / displayProps.page.columns)
+    const rows = Math.ceil(pathways.flat().length / settings.page.columns)
 
-    const pageSize = [
-      plotSize[0]! * displayProps.page.columns,
-      plotSize[1]! * rows,
-    ]
+    const pageSize = [plotSize[0]! * settings.page.columns, plotSize[1]! * rows]
 
     let ploti = 0
 
     const plots = phenotypes
       .map((_, phenotypei) => {
-        return pathways[phenotypei]!.map(pathway => {
-          const col = ploti % displayProps.page.columns
-          const row = Math.floor(ploti / displayProps.page.columns)
+        return pathways[phenotypei]!.map((pathway) => {
+          const col = ploti % settings.page.columns
+          const row = Math.floor(ploti / settings.page.columns)
           const x = col * plotSize[0]!
           const y = row * plotSize[1]!
 
@@ -74,19 +71,19 @@ export function GseaSvg({
           let xax = new Axis()
             .setDomain([0, rankedGenes.length - 1])
             //.setDomain([0, plot.dna.seq.length])
-            .setLength(displayProps.axes.x.length)
+            .setLength(settings.axes.x.length)
 
           xax = xax.setTicks(xax.ticks.slice(1))
 
-          let yMin = Math.min(...results.es.map(e => e.score))
-          let yMax = Math.max(...results.es.map(e => e.score))
+          let yMin = Math.min(...results.es.map((e) => e.score))
+          let yMax = Math.max(...results.es.map((e) => e.score))
 
           let yax = new YAxis()
             .autoDomain([yMin, yMax])
             //.setDomain([0, plot.dna.seq.length])
-            .setLength(displayProps.es.axes.y.length)
+            .setLength(settings.es.axes.y.length)
 
-          const points = results.es.map(e => [
+          const points = results.es.map((e) => [
             xax.domainToRange(e.rank),
             yax.domainToRange(e.score),
           ])
@@ -111,9 +108,9 @@ export function GseaSvg({
             ]
           }
 
-          const leadingEdge = results.es.filter(e => e.leading)
+          const leadingEdge = results.es.filter((e) => e.leading)
 
-          let leadingPoints = leadingEdge.map(e => [
+          let leadingPoints = leadingEdge.map((e) => [
             xax.domainToRange(e.rank),
             yax.domainToRange(e.score),
           ]) as [number, number][]
@@ -140,31 +137,31 @@ export function GseaSvg({
 
           const esSvg = (
             <g>
-              {displayProps.es.leadingEdge.show && (
+              {settings.es.leadingEdge.show && (
                 <polygon
-                  points={leadingPoints.map(p => `${p[0]},${p[1]}`).join(' ')}
-                  fill={displayProps.es.leadingEdge.fill.color}
+                  points={leadingPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
+                  fill={settings.es.leadingEdge.fill.color}
                   stroke="none"
-                  fillOpacity={displayProps.es.leadingEdge.fill.alpha}
+                  fillOpacity={settings.es.leadingEdge.fill.alpha}
                 />
               )}
 
               <polyline
-                points={displayPoints.map(p => `${p[0]},${p[1]}`).join(' ')}
+                points={displayPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
                 fill="none"
-                stroke={displayProps.es.line.color}
-                strokeWidth={displayProps.es.line.width}
+                stroke={settings.es.line.color}
+                strokeWidth={settings.es.line.width}
               />
               <AxisLeftSvg ax={yax} title="ES" />
               <g transform={`translate(0, ${yax.domainToRange(0)})`}>
                 <AxisBottomSvg
                   ax={xax}
-                  showTicks={displayProps.es.axes.x.showTicks}
+                  showTicks={settings.es.axes.x.showTicks}
                 />
               </g>
 
               <g
-                transform={`translate(${displayProps.axes.x.length + displayProps.plot.gap.x / 2}, ${yax.domainToRange(0)})`}
+                transform={`translate(${settings.axes.x.length + settings.plot.gap.x / 2}, ${yax.domainToRange(0)})`}
               >
                 <text
                   fill={COLOR_BLACK}
@@ -178,7 +175,7 @@ export function GseaSvg({
               </g>
 
               <g
-                transform={`translate(${phenotypei === 0 ? displayProps.axes.x.length - 70 : 10}, ${phenotypei === 0 ? 10 : displayProps.es.axes.y.length - 20})`}
+                transform={`translate(${phenotypei === 0 ? settings.axes.x.length - 70 : 10}, ${phenotypei === 0 ? 10 : settings.es.axes.y.length - 20})`}
                 fontSize="small"
               >
                 <text
@@ -204,15 +201,15 @@ export function GseaSvg({
                 </g>
               </g>
 
-              {displayProps.es.labels.show && (
+              {settings.es.labels.show && (
                 <g
-                  transform={`translate(0, ${displayProps.es.axes.y.length + displayProps.plot.gap.y / 2})`}
+                  transform={`translate(0, ${settings.es.axes.y.length + settings.plot.gap.y / 2})`}
                 >
                   <g>
                     <text
                       fill={
-                        displayProps.es.labels.isColored
-                          ? displayProps.genes.pos.color
+                        settings.es.labels.isColored
+                          ? settings.genes.pos.color
                           : COLOR_BLACK
                       }
                       dominantBaseline="hanging"
@@ -224,11 +221,11 @@ export function GseaSvg({
                     </text>
                   </g>
 
-                  <g transform={`translate(${displayProps.axes.x.length}, 0)`}>
+                  <g transform={`translate(${settings.axes.x.length}, 0)`}>
                     <text
                       fill={
-                        displayProps.es.labels.isColored
-                          ? displayProps.genes.neg.color
+                        settings.es.labels.isColored
+                          ? settings.genes.neg.color
                           : COLOR_BLACK
                       }
                       dominantBaseline="hanging"
@@ -246,10 +243,10 @@ export function GseaSvg({
 
           let genesSvg: ReactNode | null = null
 
-          if (displayProps.genes.show) {
+          if (settings.genes.show) {
             genesSvg = (
               <g
-                transform={`translate(0, ${displayProps.es.axes.y.length + 2 * displayProps.plot.gap.y})`}
+                transform={`translate(0, ${settings.es.axes.y.length + 2 * settings.plot.gap.y})`}
               >
                 {points.map((p, pointi) => {
                   //console.log(pi, results.es[pi], rankedGenes.length)
@@ -259,12 +256,12 @@ export function GseaSvg({
                       x1={p[0]}
                       x2={p[0]}
                       y1={0}
-                      y2={displayProps.genes.height}
-                      strokeWidth={displayProps.genes.line.width}
+                      y2={settings.genes.height}
+                      strokeWidth={settings.genes.line.width}
                       stroke={
                         rankedGenes[results.es[pointi]!.rank]!.score > 0
-                          ? displayProps.genes.pos.color
-                          : displayProps.genes.neg.color
+                          ? settings.genes.pos.color
+                          : settings.genes.neg.color
                       }
                     />
                   )
@@ -276,15 +273,15 @@ export function GseaSvg({
           // ranking
           let rankingSvg: ReactNode | null = null
 
-          if (displayProps.ranking.show) {
-            yMin = Math.min(...rankedGenes.map(e => e.score))
-            yMax = Math.max(...rankedGenes.map(e => e.score))
+          if (settings.ranking.show) {
+            yMin = Math.min(...rankedGenes.map((e) => e.score))
+            yMax = Math.max(...rankedGenes.map((e) => e.score))
             yax = new YAxis()
               .autoDomain([yMin, yMax])
               //.setDomain([0, plot.dna.seq.length])
-              .setLength(displayProps.ranking.axes.y.length)
+              .setLength(settings.ranking.axes.y.length)
 
-            const points = rankedGenes.map(e => [
+            const points = rankedGenes.map((e) => [
               xax.domainToRange(e.rank),
               yax.domainToRange(e.score),
             ])
@@ -303,34 +300,34 @@ export function GseaSvg({
             ]
 
             const y =
-              displayProps.es.axes.y.length +
-              displayProps.plot.gap.y +
-              (displayProps.genes.show
-                ? displayProps.genes.height + 2 * displayProps.plot.gap.y
+              settings.es.axes.y.length +
+              settings.plot.gap.y +
+              (settings.genes.show
+                ? settings.genes.height + 2 * settings.plot.gap.y
                 : 0)
 
             const crossIndex =
-              end(where(rankedGenes, gene => gene.score > 0)) + 1
+              end(where(rankedGenes, (gene) => gene.score > 0)) + 1
             const crossingX = xax.domainToRange(crossIndex)
 
             rankingSvg = (
               <g transform={`translate(0, ${y})`}>
                 <polygon
-                  points={displayPoints.map(p => `${p[0]},${p[1]}`).join(' ')}
-                  fill={displayProps.ranking.fill.color}
+                  points={displayPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
+                  fill={settings.ranking.fill.color}
                   stroke="none"
-                  fillOpacity={displayProps.ranking.fill.alpha}
+                  fillOpacity={settings.ranking.fill.alpha}
                 />
-                {displayProps.ranking.zeroCross.show && (
+                {settings.ranking.zeroCross.show && (
                   <g transform={`translate(${crossingX}, 0)`}>
                     <line
-                      y2={displayProps.ranking.axes.y.length}
+                      y2={settings.ranking.axes.y.length}
                       stroke={COLOR_BLACK}
                       strokeWidth="2"
                       strokeDasharray="8"
                     />
                     <g
-                      transform={`translate(0, ${displayProps.ranking.axes.y.length + displayProps.plot.gap.y})`}
+                      transform={`translate(0, ${settings.ranking.axes.y.length + settings.plot.gap.y})`}
                     >
                       <text
                         fill={COLOR_BLACK}
@@ -354,9 +351,7 @@ export function GseaSvg({
           return (
             <g transform={`translate(${x}, ${y})`} key={ploti}>
               <text
-                x={
-                  displayProps.plot.margin.left + displayProps.axes.x.length / 2
-                }
+                x={settings.plot.margin.left + settings.axes.x.length / 2}
                 y="20"
                 textAnchor="middle"
               >
@@ -369,7 +364,7 @@ export function GseaSvg({
             height={plotSize[1]!}
           /> */}
               <g
-                transform={`translate(${displayProps.plot.margin.left}, ${displayProps.plot.margin.top})`}
+                transform={`translate(${settings.plot.margin.left}, ${settings.plot.margin.top})`}
               >
                 {esSvg}
 
@@ -386,7 +381,7 @@ export function GseaSvg({
     return (
       <BaseSvg
         ref={ref}
-        scale={displayProps.page.scale}
+        scale={settings.page.scale}
         width={pageSize[0]!}
         height={pageSize[1]!}
         //shapeRendering={SVG_CRISP_EDGES}
@@ -395,7 +390,7 @@ export function GseaSvg({
         {plots}
       </BaseSvg>
     )
-  }, [rankedGenes, reports, resultsMap, displayProps])
+  }, [rankedGenes, reports, resultsMap, settings])
 
   return (
     <>
