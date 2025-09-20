@@ -6,6 +6,10 @@
 
 - Added animations to venn.
 
+### Changed
+
+- Bug fixes and updates.
+
 ### Fixed
 
 - Fixed title on color picker buttons.

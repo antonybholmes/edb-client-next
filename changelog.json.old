@@ -1546,6 +1546,12 @@
           "msg": "Fixed title on color picker buttons",
           "date": "2025-09-19T22:42:30.395Z"
         }
+      ],
+      "Added": [
+        {
+          "msg": "Added animations to venn",
+          "date": "2025-09-20T01:59:03.090Z"
+        }
       ]
     },
     "author": "Antony Holmes",
