@@ -5,19 +5,19 @@ import { FOCUS_RING_CLS } from '@/theme'
 import { BaseLink } from '@components/link/base-link'
 import { ContentLayout } from '@layouts/content-layout'
 import { cn } from '@lib/shadcn-utils'
-import { HCenterCol } from '../layout/h-center-col'
+import { BaseCol } from '../layout/base-col'
 import { VCenterRow } from '../layout/v-center-row'
 
 const APP_CLS = cn(
   FOCUS_RING_CLS,
-  'border border-border/50',
-  'flex flex-col bg-background aspect-4/3 shrink-0 justify-center items-center grow gap-2 p-2',
-  'rounded-2xl hover:outline-ring transition-colors duration-300 ease-in-out'
+  'border border-border/25',
+  'flex flex-col bg-background h-30 shrink-0 justify-start items-start grow gap-2 p-4',
+  'rounded-3xl hover:outline-ring transition-colors duration-300 ease-in-out'
 )
 
 export function Apps() {
   return (
-    <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8">
+    <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
       {HEADER_LINKS.map((section) => {
         return section.modules.filter(
           (module) =>
@@ -42,21 +42,23 @@ export function Apps() {
                 href={module.slug}
                 className={APP_CLS}
               >
-                <VCenterRow
-                  className="w-11 h-11 aspect-square shrink-0 rounded-full justify-center bg-white text-2xl"
-                  style={{
-                    borderColor: module.color ?? 'lightslategray',
-                    borderWidth: 3,
-                    color: module.color ?? 'lightslategray',
-                  }}
-                >
-                  <span className="font-bold">{abbr[0]!.toUpperCase()}</span>
-                  <span>{abbr[1]!.toLowerCase()}</span>
+                <VCenterRow className="gap-x-2">
+                  <VCenterRow
+                    className="w-10 h-10 aspect-square shrink-0 rounded-full justify-center bg-white text-xl"
+                    style={{
+                      borderColor: module.color ?? 'lightslategray',
+                      borderWidth: 2,
+                      color: module.color ?? 'lightslategray',
+                    }}
+                  >
+                    <span className="font-bold">{abbr[0]!.toUpperCase()}</span>
+                    <span>{abbr[1]!.toLowerCase()}</span>
+                  </VCenterRow>
+                  <p className="font-semibold">{module.name}</p>
                 </VCenterRow>
-                <HCenterCol>
-                  <p className="font-semibold text-center">{module.name}</p>
-                  <p className="text-xs text-center">{module.description}</p>
-                </HCenterCol>
+                <BaseCol className="justify-start items-start">
+                  <p className="text-xs">{module.description}</p>
+                </BaseCol>
               </BaseLink>
             </li>
           )
