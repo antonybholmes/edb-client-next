@@ -1,3 +1,5 @@
+import { gsap } from 'gsap'
+import { useEffect, useRef } from 'react'
 import {
   CountText,
   IVennProps,
@@ -11,6 +13,37 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
   const { setSelectedItems } = useVenn()
   const { settings, circles } = useVennSettings()
 
+  const circle1Ref = useRef<SVGEllipseElement | null>(null)
+  const circle2Ref = useRef<SVGEllipseElement | null>(null)
+  const circle3Ref = useRef<SVGEllipseElement | null>(null)
+  const circle4Ref = useRef<SVGEllipseElement | null>(null)
+
+  useEffect(() => {
+    // Pulse animation (scale up and down)
+    gsap.timeline().fromTo(
+      [
+        circle1Ref.current,
+        circle2Ref.current,
+        circle3Ref.current,
+        circle4Ref.current,
+      ],
+      {
+        scale: 0.5,
+        opacity: 0.5,
+      },
+      {
+        scale: 1,
+        opacity: 1,
+        //transformOrigin: 'center center',
+        //repeat: -1,
+        //yoyo: true,
+        duration: 0.5,
+        ease: 'back.out',
+        stagger: 0.05,
+      }
+    )
+  }, [])
+
   function _setItems(name: string, items: string[]) {
     setSelectedItems(makeTitle(name, items), items)
   }
@@ -22,6 +55,7 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
     <>
       {/* Circle A */}
       <ellipse
+        ref={circle1Ref}
         cx={center[0]}
         cy={center[1]}
         rx={radius2 * 0.5}
@@ -32,17 +66,16 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
         transform={`translate(${-radius2 / 2}, ${radius2 / 4}) rotate(-45, ${center[0]}, ${center[1]}) `}
       />
 
-      {settings.showTitles && (
-        <TitleText
-          id={1}
-          center={[center[0] - radius2 * 0.9, center[1] + radius2 * 0.8]}
-          textAnchor="end"
-        />
-      )}
+      <TitleText
+        id={1}
+        center={[center[0] - radius2 * 0.9, center[1] + radius2 * 0.8]}
+        textAnchor="end"
+      />
 
       {/* Circle B */}
 
       <ellipse
+        ref={circle2Ref}
         cx={center[0]}
         cy={center[1]}
         rx={radius2 * 0.5}
@@ -53,15 +86,14 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
         transform={`rotate(-45, ${center[0]}, ${center[1]})`}
       />
 
-      {settings.showTitles && (
-        <TitleText
-          id={2}
-          center={[center[0] - radius2 / 2, center[1] - radius2]}
-        />
-      )}
+      <TitleText
+        id={2}
+        center={[center[0] - radius2 / 2, center[1] - radius2]}
+      />
 
       {/* Circle C */}
       <ellipse
+        ref={circle3Ref}
         cx={center[0]}
         cy={center[1]}
         rx={radius2 * 0.5}
@@ -72,16 +104,15 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
         transform={`rotate(45, ${center[0]}, ${center[1]})`}
       />
 
-      {settings.showTitles && (
-        <TitleText
-          id={3}
-          center={[center[0] + radius2 / 2, center[1] - radius2]}
-        />
-      )}
+      <TitleText
+        id={3}
+        center={[center[0] + radius2 / 2, center[1] - radius2]}
+      />
 
       {/* Circle 4 */}
 
       <ellipse
+        ref={circle4Ref}
         cx={center[0]}
         cy={center[1]}
         rx={radius2 * 0.5}
@@ -92,13 +123,11 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
         transform={`translate(${radius2 * 0.5}, ${radius2 * 0.25}) rotate(45, ${center[0]}, ${center[1]}) `}
       />
 
-      {settings.showTitles && (
-        <TitleText
-          id={4}
-          center={[center[0] + radius2 * 0.9, center[1] + radius2 * 0.8]}
-          textAnchor="start"
-        />
-      )}
+      <TitleText
+        id={4}
+        center={[center[0] + radius2 * 0.9, center[1] + radius2 * 0.8]}
+        textAnchor="start"
+      />
 
       {/* Lists */}
 

@@ -1,4 +1,6 @@
 import { DEG_TO_RAD, ILim } from '@/lib/math/math'
+import { gsap } from 'gsap'
+import { useEffect, useRef } from 'react'
 import {
   CountText,
   IVennProps,
@@ -11,6 +13,31 @@ import { useVenn } from './venn-store'
 export function SVGTwoWayVenn({ overlapLabels = {} }: IVennProps) {
   const { setSelectedItems, vennListsInUse } = useVenn()
   const { settings, circles } = useVennSettings()
+
+  const circle1Ref = useRef<SVGCircleElement | null>(null)
+  const circle2Ref = useRef<SVGCircleElement | null>(null)
+
+  useEffect(() => {
+    if (vennListsInUse < 2) return
+    // Pulse animation (scale up and down)
+    gsap.timeline().fromTo(
+      [circle1Ref.current, circle2Ref.current],
+      {
+        scale: 0.5,
+        opacity: 0.5,
+      },
+      {
+        scale: 1,
+        opacity: 1,
+        //transformOrigin: 'center center',
+        //repeat: -1,
+        //yoyo: true,
+        duration: 0.5,
+        stagger: 0.05,
+        ease: 'back.out',
+      }
+    )
+  }, [vennListsInUse])
 
   function _setItems(name: string, items: string[]) {
     setSelectedItems(makeTitle(name, items), items)
@@ -40,6 +67,7 @@ export function SVGTwoWayVenn({ overlapLabels = {} }: IVennProps) {
     <>
       {/* Circle A */}
       <circle
+        ref={circle1Ref}
         cx={cA[0]}
         cy={cA[1]}
         r={settings.radius}
@@ -61,6 +89,7 @@ export function SVGTwoWayVenn({ overlapLabels = {} }: IVennProps) {
         <>
           {/* Circle B */}
           <circle
+            ref={circle2Ref}
             cx={cB[0]}
             cy={cB[1]}
             r={settings.radius}

@@ -1,4 +1,6 @@
 import { DEG_TO_RAD, ILim } from '@/lib/math/math'
+import { gsap } from 'gsap'
+import { useEffect, useRef } from 'react'
 import { useVennSettings } from './venn-settings-store'
 import { useVenn } from './venn-store'
 
@@ -115,12 +117,8 @@ export interface IVennProps {
 }
 
 export function SVGThreeWayVenn({ overlapLabels = {} }: IVennProps) {
-  const { setSelectedItems } = useVenn()
+  const { setSelectedItems, vennLists } = useVenn()
   const { settings, circles } = useVennSettings()
-
-  function _setItems(name: string, items: string[]) {
-    setSelectedItems(makeTitle(name, items), items)
-  }
 
   const center = [settings.w * 0.5, settings.w * 0.5]
   const radius2 = settings.radius * 0.75
@@ -145,10 +143,40 @@ export function SVGThreeWayVenn({ overlapLabels = {} }: IVennProps) {
   const lB: ILim = [center[0] + offset3[0], center[1] - offset3[1]]
   const lC: ILim = [center[0], center[1] + radius3]
 
+  const circle1Ref = useRef(null)
+  const circle2Ref = useRef(null)
+  const circle3Ref = useRef(null)
+
+  useEffect(() => {
+    // Pulse animation (scale up and down)
+    gsap.timeline().fromTo(
+      [circle1Ref.current, circle2Ref.current, circle3Ref.current],
+      {
+        scale: 0.5,
+        opacity: 0.5,
+      },
+      {
+        scale: 1,
+        opacity: 1,
+        //transformOrigin: 'center center',
+        //repeat: -1,
+        //yoyo: true,
+        duration: 0.5,
+        stagger: 0.05,
+        ease: 'back.out',
+      }
+    )
+  }, [])
+
+  function _setItems(name: string, items: string[]) {
+    setSelectedItems(makeTitle(name, items), items)
+  }
+
   return (
     <>
       {/* Circle A */}
       <circle
+        ref={circle1Ref}
         cx={cA[0]}
         cy={cA[1]}
         r={settings.radius}
@@ -173,6 +201,7 @@ export function SVGThreeWayVenn({ overlapLabels = {} }: IVennProps) {
 
       {/* Circle B */}
       <circle
+        ref={circle2Ref}
         cx={cB[0]}
         cy={cB[1]}
         r={settings.radius}
@@ -197,6 +226,7 @@ export function SVGThreeWayVenn({ overlapLabels = {} }: IVennProps) {
 
       {/* Circle C */}
       <circle
+        ref={circle3Ref}
         cx={cC[0]}
         cy={cC[1]}
         r={settings.radius}

@@ -2,6 +2,10 @@
 
 ## 28.2 (Sep, 2025)
 
+### Added
+
+- Added animations to venn.
+
 ### Fixed
 
 - Fixed title on color picker buttons.

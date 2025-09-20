@@ -92,7 +92,6 @@ export interface IProps extends IButtonProps {
   color: string
   alpha?: number
   defaultColor?: string | undefined
-  tooltip?: string
   autoBorder?: boolean
   defaultBorderColor?: string
   allowNoColor?: boolean | undefined
@@ -130,8 +129,9 @@ export function ColorPickerButton({
   defaultBorderColor = 'border-transparent',
   align = 'start',
   className,
+  title,
+  'aria-label': ariaLabel,
   children,
-  ...props
 }: IProps) {
   const lightMode = textColorShouldBeDark(color)
 
@@ -173,9 +173,9 @@ export function ColorPickerButton({
           border,
           className
         )}
-        aria-label={props['aria-label'] ?? tooltip}
+        aria-label={ariaLabel}
+        title={title}
         style={{ backgroundColor: _color }}
-        {...props}
       >
         {children}
 

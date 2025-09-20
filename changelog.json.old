@@ -1537,5 +1537,18 @@
     },
     "author": "Antony Holmes",
     "date": "2025-09-19T16:49:32.178Z"
+  },
+  {
+    "version": "28.2",
+    "messages": {
+      "Fixed": [
+        {
+          "msg": "Fixed title on color picker buttons",
+          "date": "2025-09-19T22:42:30.395Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-09-19T22:42:30.395Z"
   }
 ]
