@@ -57,11 +57,11 @@ export function rgba2hex(rgba: IRGBA): string {
 }
 
 export function hexToRgba(hex: string): IRGBA {
+  const ret: IRGBA = [...BASE_RGBA]
+
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})?$/i.exec(
     hex
   )
-
-  const ret: IRGBA = [...BASE_RGBA]
 
   if (result) {
     ret[0] = Math.max(0, Math.min(255, parseInt(result[1]!, 16)))
@@ -76,7 +76,7 @@ export function hexToRgba(hex: string): IRGBA {
   return ret
 }
 
-export function addAlphaToHex(hex: string, alpha: number): string {
+export function addAlphaToHex(hex: string, alpha: number = 1): string {
   const a = Math.round(255 * Math.max(0, Math.min(1, alpha)))
     .toString(16)
     .padStart(2, '0')
@@ -84,6 +84,17 @@ export function addAlphaToHex(hex: string, alpha: number): string {
   //console.log(hex.slice(0, 7), alpha, a)
 
   return hexColorWithoutAlpha(hex) + a
+}
+
+export function addAlphaToHexIfNotPresent(
+  hex: string,
+  alpha: number = 1
+): string {
+  if (hex.length > 7) {
+    return hex
+  }
+
+  return addAlphaToHex(hex, alpha)
 }
 
 /**

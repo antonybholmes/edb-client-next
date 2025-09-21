@@ -3,7 +3,11 @@ import { APP_ID } from '@/consts'
 import MODULE_INFO from './module.json'
 
 import { getModuleName } from '@/lib/module-info'
-import type { IMarginProps } from '@components/plot/svg-props'
+import {
+  DEFAULT_FONT_PROPS,
+  type IFontProps,
+  type IMarginProps,
+} from '@components/plot/svg-props'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
@@ -12,7 +16,7 @@ export type DNABase = 'a' | 'c' | 'g' | 't'
 
 export const LW = 45
 
-const SETTINGS_KEY = `${APP_ID}:module:${getModuleName(MODULE_INFO.name)}:settings:v4`
+const SETTINGS_KEY = `${APP_ID}:module:${getModuleName(MODULE_INFO.name)}:settings:v6`
 
 export interface IMotifSettings {
   view: Mode
@@ -21,7 +25,7 @@ export interface IMotifSettings {
   mode: Mode
   zoom: number
   margin: IMarginProps
-  baseColors: Record<string, string>
+  baseColors: Record<string, IFontProps>
   titleOffset: number
   gap: number
   revComp: boolean
@@ -39,10 +43,10 @@ export const DEFAULT_SETTINGS: IMotifSettings = {
   gap: 80,
   margin: { top: 100, right: 100, bottom: 100, left: 100 },
   baseColors: {
-    a: '#3cb371',
-    c: '#4169e1',
-    g: '#FFA500',
-    t: '#ff0000',
+    a: { ...DEFAULT_FONT_PROPS, color: '#3cb371', alpha: 1 },
+    c: { ...DEFAULT_FONT_PROPS, color: '#4169e1', alpha: 1 },
+    g: { ...DEFAULT_FONT_PROPS, color: '#FFA500', alpha: 1 },
+    t: { ...DEFAULT_FONT_PROPS, color: '#ff0000', alpha: 1 },
   },
   titleOffset: 10,
   revComp: false,

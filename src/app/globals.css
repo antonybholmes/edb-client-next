@@ -345,10 +345,10 @@ input[type='search']::-webkit-search-cancel-button {
   appearance: none;
 }
 
-input,
+/* input,
 textarea {
   @apply bg-transparent;
-}
+} */
 
 .boldable-text-tab {
   @apply text-nowrap;
@@ -523,7 +523,7 @@ textarea {
 }
 
 .color-picker .react-colorful__saturation {
-  border-radius: 0.5rem !important;
+  border-radius: 0.25rem !important;
   border: none !important;
   box-shadow: none;
 }

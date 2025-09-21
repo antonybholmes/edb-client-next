@@ -39,6 +39,7 @@ export function NumericalInput({
   onNumChanged,
   disabled,
   w = 'w-20',
+  variant = 'default',
   className,
 }: INumericalInputProps) {
   //const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
@@ -150,6 +151,7 @@ export function NumericalInput({
       disabled={disabled}
       w={w}
       className={className}
+      variant={variant}
       inputCls="text-right"
       onKeyDown={(e) => {
         //console.log(e)

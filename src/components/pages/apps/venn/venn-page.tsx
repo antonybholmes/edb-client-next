@@ -1337,7 +1337,7 @@ function VennPage() {
 
               <Tabs
                 value={activeSideTab}
-                className="grow flex flex-row gap-x-2"
+                className="grow flex flex-row gap-x-2 px-2"
                 orientation="vertical"
               >
                 <SideTabs

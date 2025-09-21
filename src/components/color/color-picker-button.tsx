@@ -5,19 +5,16 @@ import { Popover, PopoverContent, PopoverTrigger } from '@themed/popover'
 
 import {
   addAlphaToHex,
+  addAlphaToHexIfNotPresent,
   COLOR_BLACK,
   COLOR_TRANSPARENT,
   hexToRgba,
+  hexColorWithoutAlpha as removeAlphaFromHex,
   textColorShouldBeDark,
 } from '@lib/color/color'
 import { cn } from '@lib/shadcn-utils'
 
-import {
-  BUTTON_MD_H_CLS,
-  FOCUS_INSET_RING_CLS,
-  FOCUS_RING_CLS,
-  INPUT_BORDER_CLS,
-} from '@/theme'
+import { BUTTON_MD_H_CLS, FOCUS_INSET_RING_CLS, FOCUS_RING_CLS } from '@/theme'
 
 import { useState } from 'react'
 import {
@@ -27,14 +24,15 @@ import {
 } from 'react-colorful'
 import { PropRow } from '../dialog/prop-row'
 import { SwitchPropRow } from '../dialog/switch-prop-row'
+import { inputVariants } from '../shadcn/ui/themed/input'
 import { NumericalInput } from '../shadcn/ui/themed/numerical-input'
 
 const COLOR_INPUT_CLS = cn(
   BUTTON_MD_H_CLS,
-  INPUT_BORDER_CLS,
+  //INPUT_BORDER_CLS,
   FOCUS_INSET_RING_CLS,
   //INPUT_CLS,
-  'px-1 rounded-theme bg-background w-20'
+  'px-2 rounded-theme bg-muted  w-20'
 )
 
 // export const PRESET_COLORS = [
@@ -250,7 +248,7 @@ export function ColorPickerPopover({
         onEscapeKeyDown={() => setOpen(false)}
         onInteractOutside={() => setOpen(false)}
         align={align}
-        className="text-xs flex flex-col gap-y-3 w-70"
+        className="text-xs flex flex-col gap-y-3 w-64"
         variant="content"
       >
         <ColorPickerUI
@@ -290,28 +288,51 @@ export function ColorPickerUI({
 }: IProps) {
   const [_show, setShow] = useState(showColor)
 
-  const _color = keepAlphaChannel ? color : addAlphaToHex(color, alpha)
+  const _colorWithAlpha = keepAlphaChannel
+    ? addAlphaToHexIfNotPresent(color, alpha)
+    : addAlphaToHex(color, alpha)
+
+  // if keepAlphaChannel is true, we use the alpha from the color
+  // otherwise we use the alpha prop. Since the color has been reconstructed
+  // to ensure it has the alpha channel, we can just extract it from there and
+  // it will be either from the color itself or the param depending on the user
+  // options.
+  alpha = hexToRgba(_colorWithAlpha)[3]
+
+  //console.log('ColorPickerUI', color, alpha, keepAlphaChannel, _colorWithAlpha)
+
+  const _color = keepAlphaChannel ? _colorWithAlpha : removeAlphaFromHex(color)
 
   function _onColorChange(color: string) {
     const rgba = hexToRgba(color)
 
     //console.log( color, rgba, keepAlphaChannel, rgba[3])
 
-    onColorChange?.(keepAlphaChannel ? color : color.slice(0, 7), rgba[3])
+    onColorChange?.(
+      keepAlphaChannel ? color : removeAlphaFromHex(color),
+      rgba[3]
+    )
+
+    // onColorChange?.(
+    //   keepAlphaChannel
+    //     ? addAlphaToHex(color, alpha)
+    //     : removeAlphaFromHex(color),
+    //   alpha
+    // )
   }
 
   // if (tooltip) {
   //   button = <Tooltip content={tooltip}>{button}</Tooltip>
   // }
 
-  //console.log(color)
+  //console.log(_color, keepAlphaChannel)
 
   return (
     <>
       <BaseCol className="color-picker gap-y-3">
         {allowAlpha ? (
           <HexAlphaColorPicker
-            color={_color ?? COLOR_BLACK}
+            color={_colorWithAlpha ?? COLOR_BLACK}
             onChange={_onColorChange}
           />
         ) : (
@@ -321,40 +342,50 @@ export function ColorPickerUI({
           />
         )}
 
-        <VCenterRow className="gap-x-4 justify-between">
-          <VCenterRow className="gap-x-1">
+        <VCenterRow className="gap-x-4">
+          <VCenterRow className="gap-x-2">
             <span>Hex</span>
             <HexColorInput
+              id="hex"
               color={_color.toUpperCase()}
               alpha={true}
               prefixed={true}
               onChange={_onColorChange}
-              className={COLOR_INPUT_CLS}
+              className={inputVariants({
+                variant: 'alt',
+                className: 'w-20',
+              })}
             />
           </VCenterRow>
 
           {allowAlpha && (
-            <VCenterRow className="gap-x-1">
+            <VCenterRow className="gap-x-2">
               <span>A</span>
               <NumericalInput
                 dp={2}
-                value={hexToRgba(_color)[3].toFixed(2)}
+                value={alpha}
                 className="w-16"
                 onNumChanged={(v) => {
                   const a = Math.max(0, Math.min(1, v))
 
+                  // if keepAlphaChannel is true, we need to reconstruct the color
+                  // to include the new alpha, otherwise strip the alpha from the color
                   onColorChange?.(
-                    keepAlphaChannel ? color : color.slice(0, 7),
+                    keepAlphaChannel
+                      ? addAlphaToHex(_color, a)
+                      : removeAlphaFromHex(_color),
                     a
                   )
                 }}
                 limit={[0, 1]}
+                step={0.1}
+                variant="alt"
               />
             </VCenterRow>
           )}
         </VCenterRow>
       </BaseCol>
-      <VCenterRow className="gap-px flex-wrap">
+      <VCenterRow className="gap-1 flex-wrap">
         {PRESET_COLORS.map((presetColor) => {
           const prgb = hexToRgba(presetColor)
           const ps = prgb[0] + prgb[1] + prgb[2]
@@ -363,12 +394,10 @@ export function ColorPickerUI({
             <button
               key={presetColor}
               className={cn(
-                'w-5 aspect-square border hover:scale-125 focus-visible:scale-125 rounded-xs',
-                [
-                  autoBorder && ps > 750,
-                  'border-border',
-                  'border-transparent hover:border-white',
-                ]
+                'w-5.5 aspect-square border hover:scale-125 focus-visible:scale-125 rounded-full transition-transform duration-300 ease-in-out',
+                autoBorder && ps >= 750 && 'border-border',
+                !autoBorder ||
+                  (ps < 750 && 'border-transparent hover:border-white')
               )}
               style={{ background: presetColor }}
               onClick={() => _onColorChange(presetColor)}

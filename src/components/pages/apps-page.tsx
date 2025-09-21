@@ -17,7 +17,7 @@ const APP_CLS = cn(
 
 export function Apps() {
   return (
-    <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+    <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
       {HEADER_LINKS.map((section) => {
         return section.modules.filter(
           (module) =>
