@@ -22,70 +22,65 @@ const SideToggleGroup = forwardRef<
     padding?: number
     values: string[]
   }
->(
-  (
-    { values, h = DEFAULT_H, padding = 0.25, className, children, ...props },
-    ref
-  ) => {
-    //const tabLineRef1 = useRef<HTMLSpanElement>(null)
-    //const tabLineRef2 = useRef<HTMLSpanElement>(null)
-    const [at, setAt] = useState(0)
-    const [scale, setScale] = useState(0.6)
-    const pressed = useRef(false)
-    const itemHeight = h + 2 * padding
+>(({ values, h = DEFAULT_H, padding = 0.25, className, ...props }, ref) => {
+  //const tabLineRef1 = useRef<HTMLSpanElement>(null)
+  //const tabLineRef2 = useRef<HTMLSpanElement>(null)
+  const [at, setAt] = useState(0)
+  const [scale, setScale] = useState(0.6)
+  const pressed = useRef(false)
+  const itemHeight = h + 2 * padding
 
-    useEffect(() => {
-      const v = props?.value?.toString() ?? ''
+  useEffect(() => {
+    const v = props?.value?.toString() ?? ''
 
-      const idx = values.indexOf(v)
+    const idx = values.indexOf(v)
 
-      if (idx > -1) {
-        setAt(idx)
-      }
-    }, [props.value])
+    if (idx > -1) {
+      setAt(idx)
+    }
+  }, [props.value])
 
-    return (
-      <TabIndicatorProvider index={at} size={itemHeight} scale={scale}>
-        <ToggleGroupPrimitive.Root
-          ref={ref}
-          className={cn('flex flex-col relative pl-1', className)}
-          {...props}
-        >
-          {values.map((v, i) => {
-            const selected = i === at
-            return (
-              <ToggleGroupItem
-                key={i}
-                value={v}
-                onMouseDown={() => {
-                  pressed.current = true
+  return (
+    <TabIndicatorProvider index={at} size={itemHeight} scale={scale}>
+      <ToggleGroupPrimitive.Root
+        ref={ref}
+        className={cn('flex flex-col relative pl-1', className)}
+        {...props}
+      >
+        {values.map((v, i) => {
+          const selected = i === at
+          return (
+            <ToggleGroupItem
+              key={i}
+              value={v}
+              onMouseDown={() => {
+                pressed.current = true
+                setScale(0.4)
+              }}
+              onMouseEnter={() => {
+                if (selected) {
                   setScale(0.4)
-                }}
-                onMouseEnter={() => {
-                  if (selected) {
-                    setScale(0.4)
-                  }
-                }}
-                onMouseUp={() => {
-                  pressed.current = false
-                }}
-                onMouseLeave={() => {
-                  if (selected) {
-                    setScale(0.6)
-                  }
-                }}
-              >
-                {v}
-              </ToggleGroupItem>
-            )
-          })}
+                }
+              }}
+              onMouseUp={() => {
+                pressed.current = false
+              }}
+              onMouseLeave={() => {
+                if (selected) {
+                  setScale(0.6)
+                }
+              }}
+            >
+              {v}
+            </ToggleGroupItem>
+          )
+        })}
 
-          <TabIndicatorV />
-        </ToggleGroupPrimitive.Root>
-      </TabIndicatorProvider>
-    )
-  }
-)
+        <TabIndicatorV />
+      </ToggleGroupPrimitive.Root>
+    </TabIndicatorProvider>
+  )
+})
 
 SideToggleGroup.displayName = ToggleGroupPrimitive.Root.displayName
 

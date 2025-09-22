@@ -96,7 +96,7 @@ export const SmallSwitch = forwardRef<
       },
       0
     )
-  }, [checked, hover, pressed])
+  }, [checked, hover, pressed, disabled])
 
   const button = (
     <SwitchPrimitives.Root

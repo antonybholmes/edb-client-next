@@ -5,7 +5,6 @@ export const LinkButton = forwardRef(function LinkButton(
   {
     variant = 'link',
 
-    ripple = false,
     size = 'none',
     justify = 'start',
     className,
@@ -18,7 +17,6 @@ export const LinkButton = forwardRef(function LinkButton(
     <Button
       ref={ref}
       variant={variant}
-      // ripple={ripple}
       size={size}
       justify={justify}
       className={className}

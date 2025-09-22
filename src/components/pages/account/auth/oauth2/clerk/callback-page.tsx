@@ -159,7 +159,7 @@ export function CallbackPage() {
   // }, [])
 
   return (
-    <SignInLayout signedRequired="never">
+    <SignInLayout signedRequired={false}>
       <CenteredCardContainer gap="gap-y-8">
         <Card className="shadow-lg">
           <CardHeader>

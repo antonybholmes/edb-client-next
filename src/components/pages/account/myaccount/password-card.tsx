@@ -189,6 +189,8 @@ export function PasswordCard() {
           variant="theme"
           size="lg"
           rounded="full"
+          className="w-20"
+          ripple={true}
           onClick={() => btnRef.current?.click()}
           disabled={session?.user.isLocked}
         >

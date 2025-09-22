@@ -89,7 +89,7 @@ export function SignInPage() {
 
   // Allow users to signin
   return (
-    <SignInLayout signedRequired="never">
+    <SignInLayout signedRequired={false}>
       {/* <CenterCol>
         <Card className="w-1/2 lg:w-1/3">
           <CardHeader>

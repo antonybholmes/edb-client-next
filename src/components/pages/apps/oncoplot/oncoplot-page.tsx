@@ -51,7 +51,6 @@ import {
   DEFAULT_DISPLAY_PROPS,
   type IOncoColumns,
   type IOncoProps,
-  type MultiMode,
 } from './oncoplot-utils'
 import { PlotsContext, PlotsProvider } from './plots-provider'
 
@@ -67,6 +66,8 @@ import { ClinicalDataTrack, makeClinicalTracks } from './clinical-utils'
 import { OncoPlotDialog, type OncoplotType } from './oncoplot-dialog'
 import { OncoplotPanelWrapper } from './oncoplot-panel'
 
+import { HeaderPortal } from '@/components/header/header-portal'
+import { ModuleInfoButton } from '@/components/header/module-info-button'
 import { parseLocation } from '@/lib/genomic/genomic'
 import { useMessages } from '@/providers/message-provider'
 import type { ITab } from '@components/tabs/tab-provider'
@@ -377,16 +378,10 @@ function OncoplotPage() {
     setShowFileMenu(false)
   }
 
-  function locationOncoplot(
-    multi: MultiMode = 'multi',
-    sort: boolean = true,
-    removeEmpty: boolean = true
-  ) {
+  function locationOncoplot() {
     const df = findSheet(step!, 'Mutations')!
 
     console.log(df)
-
-    const clinicalDf: BaseDataFrame | undefined = findSheet(step!, 'Clinical')
 
     const locationsDf: BaseDataFrame | undefined = findSheet(step!, 'Locations')
 
@@ -440,11 +435,7 @@ function OncoplotPage() {
     // })
   }
 
-  function oncoplot(
-    multi: MultiMode = 'multi',
-    sort: boolean = true,
-    removeEmpty: boolean = true
-  ) {
+  function oncoplot() {
     // Assume first sheet is
     // const df = findSheet('Mutations', step!)[0]!
     // const colMap: IOncoColumns = {
@@ -844,25 +835,23 @@ function OncoplotPage() {
       {showDialog.id.includes('oncoplot') && (
         <OncoPlotDialog
           type={showDialog.params!.type as OncoplotType}
-          onPlot={(
-            type: OncoplotType,
-            multi: MultiMode,
-            sort: boolean,
-            removeEmpty: boolean
-          ) => {
+          onPlot={(type: OncoplotType) => {
             setShowDialog({ ...NO_DIALOG })
 
             if (type === 'loconcoplot') {
-              locationOncoplot(multi, sort, removeEmpty)
+              locationOncoplot()
             } else {
-              oncoplot(multi, sort, removeEmpty)
+              oncoplot()
             }
           }}
           onCancel={() => setShowDialog({ ...NO_DIALOG })}
         />
       )}
 
-      <ShortcutLayout info={MODULE_INFO}>
+      <ShortcutLayout>
+        <HeaderPortal>
+          <ModuleInfoButton info={MODULE_INFO} />
+        </HeaderPortal>
         <Toolbar tabs={tabs}>
           <ToolbarMenu
             open={showFileMenu}

@@ -74,7 +74,7 @@ export const useCSRFStore = create<ICSRFStore>((set) => ({
       set({ token, error: '' })
 
       return token
-    } catch (err) {
+    } catch {
       set({ token: '', error: 'Failed to fetch CSRF token' })
 
       return ''
@@ -246,7 +246,7 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
           ],
         })
       }
-    } catch (err: any) {
+    } catch {
       set({ error: 'Failed to fetch session' })
       s = null
     }
@@ -542,13 +542,10 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
       queryKey: ['supabase-signin', token],
       queryFn: async () => {
         // force session creation
-        const res = await httpFetch.postJson<{ data: { csrfToken: string } }>(
-          SESSION_SUPABASE_SIGNIN_URL,
-          {
-            headers: bearerHeaders(token),
-            withCredentials: true,
-          }
-        )
+        await httpFetch.post(SESSION_SUPABASE_SIGNIN_URL, {
+          headers: bearerHeaders(token),
+          withCredentials: true,
+        })
       },
     })
 

@@ -4,12 +4,6 @@ interface DataPoint {
   group: number // 1 for group 1, 2 for group 2
 }
 
-interface PooledDataPoints {
-  duration: number
-  group1: number
-  group2: number
-}
-
 const EPSILON = 1e-8
 
 // Sample data: duration (time to event or censoring), event (1=event, 0=censoring), group (1=Group 1, 2=Group 2)
@@ -107,8 +101,8 @@ function logRankTest(group1: DataPoint[], group2: DataPoint[]): number {
 
 export function logrankExample() {
   // Split the data into two groups: Group 1 (event = 1), Group 2 (event = 0)
-  const group1 = TEST_DATA.filter(d => d.group === 1) // Group 1
-  const group2 = TEST_DATA.filter(d => d.group === 2) // Group 2
+  const group1 = TEST_DATA.filter((d) => d.group === 1) // Group 1
+  const group2 = TEST_DATA.filter((d) => d.group === 2) // Group 2
 
   //console.log(group1, group2)
 

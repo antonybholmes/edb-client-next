@@ -19,7 +19,7 @@ export interface IProps {
 export function AddLocalBigBedsDialog({ callback, onCancel }: IProps) {
   const [name, setName] = useState('')
   const [color, setColor] = useState(COLOR_BLACK)
-  const [error, setError] = useState('')
+  const [error] = useState('')
   const [bigBeds, setBigWigs] = useState<BigBed[]>([])
 
   // const [showAxes, setShowAxes] = useState(true)
@@ -78,7 +78,7 @@ export function AddLocalBigBedsDialog({ callback, onCancel }: IProps) {
       //buttons={[TEXT_OK]}
       title="Load BigBed Files From Device"
       bodyCls="gap-y-4"
-      onResponse={response => {
+      onResponse={(response) => {
         if (response === TEXT_OK) {
           if (bigBeds.length > 0) {
             callback?.(name, color, bigBeds)
@@ -113,16 +113,16 @@ export function AddLocalBigBedsDialog({ callback, onCancel }: IProps) {
 
       <FileDropZonePanel
         fileTypes={{ 'application/octet-stream': ['.bb', '.bigBed'] }}
-        onFileDrop={files => {
+        onFileDrop={(files) => {
           if (files.length > 0) {
-            setName(files.map(f => f.name).join(', '))
+            setName(files.map((f) => f.name).join(', '))
 
             // const bw = new BigWig({
             //   filehandle: new BlobFile(files[0]!),
             // })
 
             setBigWigs(
-              files.map(file => {
+              files.map((file) => {
                 return new BigBed({
                   filehandle: new BlobFile(file),
                 })

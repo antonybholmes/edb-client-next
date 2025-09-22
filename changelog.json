@@ -1575,6 +1575,12 @@
           "msg": "Bug fixes and updates.",
           "date": "2025-09-21T03:37:05.141Z"
         }
+      ],
+      "Added": [
+        {
+          "msg": "UI tweaks and flourishes. Simplified layout structure",
+          "date": "2025-09-22T17:22:25.933Z"
+        }
       ]
     },
     "author": "Antony Holmes",

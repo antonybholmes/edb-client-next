@@ -41,7 +41,7 @@ export function AboutPage({ children }: IChildrenProps) {
   const serverUpdated = data?.updated ?? ''
 
   return (
-    <CenterLayout title="Help" signedRequired="never">
+    <CenterLayout title="Help" signedRequired={false}>
       <Card
         className="text-sm shadow-md w-9/10 md:w-3/4 lg:w-1/2 xl:w-1/3"
         style={{ paddingLeft: 0, paddingRight: 0 }}

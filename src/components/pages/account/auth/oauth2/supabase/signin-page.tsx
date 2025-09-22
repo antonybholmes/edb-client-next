@@ -11,7 +11,7 @@ export function SignInPage({
   return (
     <CenterLayout
       title={TEXT_SIGN_IN}
-      signedRequired="never"
+      signedRequired={false}
       //showAccountButton={false}
     >
       <SupabaseSignIn redirectTo={redirectTo} />

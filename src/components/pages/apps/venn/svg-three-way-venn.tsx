@@ -1,6 +1,6 @@
 import { DEG_TO_RAD, ILim } from '@/lib/math/math'
 import { gsap } from 'gsap'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useVennSettings } from './venn-settings-store'
 import { useVenn } from './venn-store'
 
@@ -23,63 +23,117 @@ export function CountText({
   const d = Object.keys(originalNames).length
   const p = (d > 0 ? (n / d) * 100 : 0).toFixed(1)
   const ref = useRef<SVGGElement | null>(null)
+  const highlightRef = useRef(null)
+
+  const [bbox, setBbox] = useState<DOMRect | null>(null)
+
+  const [highlight, setHighlight] = useState(false)
+
+  useEffect(() => {
+    if (ref.current) {
+      const box = ref.current.getBBox()
+      setBbox(box)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (highlight && bbox && highlightRef.current) {
+      gsap.fromTo(
+        highlightRef.current,
+        { opacity: 0, scale: 0.8, transformOrigin: 'center center' },
+        { opacity: 1, scale: 1, duration: 0.3, ease: 'power3.out' }
+      )
+    }
+  }, [bbox, highlightRef, highlight])
 
   return (
-    <g
-      ref={ref}
-      onClick={() => {
-        setItems(combinationNames[id] || '', Array.from(vennElemMap[id] || []))
-      }}
-      style={{ cursor: 'pointer' }}
-      onMouseOver={() => {
-        if (ref.current) {
-          gsap.to(ref.current, {
-            scale: 1.2,
-            duration: 0.1,
-            ease: 'power3.out',
-            transformOrigin: 'center center',
-          })
-        }
-      }}
-      onMouseOut={() => {
-        if (ref.current) {
-          gsap.to(ref.current, {
-            scale: 1,
-            duration: 0.1,
-            ease: 'power3.out',
-            transformOrigin: 'center center',
-          })
-        }
-      }}
-    >
-      <text
-        x={center[0]}
-        y={center[1]}
-        fontSize={settings.fonts.counts.size}
-        fontWeight={settings.fonts.counts.weight}
-        fontFamily={settings.fonts.counts.family}
-        textAnchor="middle"
-        dominantBaseline="middle"
-        fill={overlapLabels[id]?.color || 'white'}
-      >
-        {n.toLocaleString()}
-      </text>
+    <>
+      {highlight && bbox && (
+        // <rect
+        //   //ref={highlightRef}
+        //   x={bbox.x - 8}
+        //   y={bbox.y - 8}
+        //   width={bbox.width + 16}
+        //   height={bbox.height + 16}
+        //   fill="white"
+        //   fillOpacity={0.3}
+        //   //stroke="white"
+        //   //strokeWidth={1}
+        //   pointerEvents="none" // So it doesn’t block interactions
+        //   rx={4}
+        // />
 
-      {settings.fonts.percentages.show && (
+        <circle
+          ref={highlightRef}
+          cx={bbox.x + bbox.width * 0.5}
+          cy={bbox.y + bbox.height * 0.5}
+          r={bbox.width * 0.75}
+          fill="white"
+          fillOpacity={0.2}
+          stroke="white"
+          strokeWidth={1}
+          pointerEvents="none" // So it doesn’t block interactions
+          rx={4}
+        />
+      )}
+      <g
+        ref={ref}
+        onClick={() => {
+          setItems(
+            combinationNames[id] || '',
+            Array.from(vennElemMap[id] || [])
+          )
+        }}
+        style={{ cursor: 'pointer' }}
+      >
+        {bbox && (
+          <rect
+            x={bbox.x}
+            y={bbox.y}
+            width={bbox.width}
+            height={bbox.height}
+            fill="transparent"
+            //fillOpacity={0.2} // Invisible but captures mouse events
+            onMouseOver={() => {
+              setHighlight(true)
+            }}
+            onMouseOut={() => {
+              setHighlight(false)
+            }}
+          />
+        )}
+
         <text
           x={center[0]}
-          y={center[1] + 16}
-          fontSize={settings.fonts.percentages.size}
-          fontWeight={settings.fonts.percentages.weight}
-          fontFamily={settings.fonts.percentages.family}
+          y={center[1]}
+          fontSize={settings.fonts.counts.size}
+          fontWeight={settings.fonts.counts.weight}
+          fontFamily={settings.fonts.counts.family}
           textAnchor="middle"
           dominantBaseline="middle"
           fill={overlapLabels[id]?.color || 'white'}
+          pointerEvents="none"
         >
-          {p}%
+          {n.toLocaleString()}
         </text>
-      )}
-    </g>
+
+        {settings.fonts.percentages.show && (
+          <text
+            x={center[0]}
+            y={center[1] + 16}
+            fontSize={settings.fonts.percentages.size}
+            fontWeight={settings.fonts.percentages.weight}
+            fontFamily={settings.fonts.percentages.family}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill={overlapLabels[id]?.color || 'white'}
+            pointerEvents="none"
+          >
+            {p}%
+          </text>
+        )}
+      </g>
+    </>
   )
 }
 

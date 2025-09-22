@@ -1,24 +1,16 @@
-import { type IModuleLayoutProps } from './module-layout'
+import { ISignInLayoutProps, SignInLayout } from './signin-layout'
 
-import { APP_NAME } from '@/consts'
-import { SignInLayout } from './signin-layout'
-
-export interface IShortcutLayoutProps extends IModuleLayoutProps {
+export interface IShortcutLayoutProps extends ISignInLayoutProps {
   mainClassName?: string
 }
 
 export function ShortcutLayout({
-  info,
   children,
   className = 'gap-y-2',
   ...props
 }: IShortcutLayoutProps) {
   return (
-    <SignInLayout
-      title={info?.name ?? APP_NAME}
-      className={className}
-      {...props}
-    >
+    <SignInLayout className={className} {...props}>
       {children}
     </SignInLayout>
 

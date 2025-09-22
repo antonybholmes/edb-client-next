@@ -4,6 +4,7 @@ import { createContext } from 'react'
 import { APP_ID } from '@/consts'
 import { getModuleName } from '@/lib/module-info'
 import {
+  DEFAULT_FONT_PROPS,
   DEFAULT_STROKE_PROPS,
   OPAQUE_FILL_PROPS,
   type IColorProps,
@@ -191,10 +192,7 @@ export const DEFAULT_TRACKS_DISPLAY_PROPS: ISeqBrowserSettings = {
     labels: {
       show: true,
       offset: 6,
-      font: {
-        size: 'x-small',
-        color: COLOR_BLACK,
-      },
+      font: { ...DEFAULT_FONT_PROPS, size: 'x-small' },
       showGeneId: false,
     },
   },
@@ -211,10 +209,7 @@ export const DEFAULT_TRACKS_DISPLAY_PROPS: ISeqBrowserSettings = {
     style: 'Rounded',
     labels: {
       show: true,
-      font: {
-        size: 'x-small',
-        color: COLOR_BLACK,
-      },
+      font: { ...DEFAULT_FONT_PROPS, size: 'x-small' },
       skip: {
         on: true,
         x: 50,

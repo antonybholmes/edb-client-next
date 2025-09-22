@@ -777,7 +777,7 @@ export function PathwayPage() {
       )}
 
       {/* <ZoomProvider> */}
-      <ShortcutLayout signedRequired="never">
+      <ShortcutLayout signedRequired={false}>
         <HeaderPortal>
           <ModuleInfoButton info={MODULE_INFO} />
         </HeaderPortal>

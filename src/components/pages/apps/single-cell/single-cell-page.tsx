@@ -141,7 +141,7 @@ const SPECIES: ISpeciesSet[] = [
 ]
 
 export function SingleCellPage() {
-  const { branch, sheet, sheets, gotoSheet, addStep, openBranch } = useHistory()
+  const { branch, sheet, sheets, gotoSheet, openBranch } = useHistory()
 
   //const [clusterFrame, setClusterFrame] = useState<BaseDataFrame | null>(null)
   //const [cmap, setCMap] = useState<ColorMap>(BRIGHT_20_CMAP) //BWR_CMAP)
@@ -1069,14 +1069,13 @@ export function SingleCellPage() {
       )}
 
       <ShortcutLayout
-        info={MODULE_INFO}
-        signedRequired="never"
-        // shortcuts={
-        //   <Shortcuts
-        //     tabs={sideTabs}
-        //     onTabChange={selectedTab => setSelectedTab(selectedTab.tab.id)}
-        //   />
-        // }
+
+      // shortcuts={
+      //   <Shortcuts
+      //     tabs={sideTabs}
+      //     onTabChange={selectedTab => setSelectedTab(selectedTab.tab.id)}
+      //   />
+      // }
       >
         <HeaderPortal>
           <ModuleInfoButton info={MODULE_INFO} />

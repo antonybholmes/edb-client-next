@@ -36,7 +36,7 @@ export function SignOutPage() {
   }
 
   return (
-    <CenterLayout signedRequired="never">
+    <CenterLayout signedRequired={false}>
       <Card className="shadow-2xl w-128 text-sm" rounded="2xl">
         <CardHeader className="text-xl">
           <VCenterRow className="gap-x-2">

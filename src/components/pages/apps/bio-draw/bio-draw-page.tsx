@@ -409,8 +409,7 @@ export function BioDrawPage() {
       )}
 
       <ShortcutLayout
-        info={MODULE_INFO}
-        signedRequired="never"
+        signedRequired={false}
 
         // shortcuts={
         //   <Shortcuts

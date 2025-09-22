@@ -166,7 +166,7 @@ export function SignInPage({
   return (
     <CenterLayout
       title={TEXT_SIGN_IN}
-      signedRequired="never"
+      signedRequired={false}
       showAccountButton={false}
     >
       <Card className="shadow-lg w-100 px-8 py-12 text-sm" rounded="2xl">

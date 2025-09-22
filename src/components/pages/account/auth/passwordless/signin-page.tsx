@@ -88,7 +88,7 @@ export function SignInPage() {
   }, [])
 
   return (
-    <CenterLayout signedRequired="never">
+    <CenterLayout signedRequired={false}>
       <SignIn />
     </CenterLayout>
   )

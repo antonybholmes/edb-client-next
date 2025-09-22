@@ -71,7 +71,6 @@ import { where } from '@lib/math/where'
 import { ZoomSlider } from '@toolbar/zoom-slider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { FilesPropsPanel } from './files-props-panel'
-import MODULE_INFO from './module.json'
 import { OverlapContext, OverlapProvider } from './overlap-provider'
 
 function OverlapPage() {
@@ -412,7 +411,7 @@ function OverlapPage() {
         </OKCancelDialog>
       )}
 
-      <ShortcutLayout info={MODULE_INFO} signedRequired="never">
+      <ShortcutLayout signedRequired={false}>
         <Toolbar tabs={tabs}>
           <ToolbarMenu
             open={showFileMenu}

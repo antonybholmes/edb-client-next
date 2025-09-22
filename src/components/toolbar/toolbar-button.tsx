@@ -1,7 +1,6 @@
 import { Button, type IButtonProps } from '@themed/button'
 
 export function ToolbarButton({
-  ripple = false,
   size = 'toolbar',
   //pad = 'default',
   className,

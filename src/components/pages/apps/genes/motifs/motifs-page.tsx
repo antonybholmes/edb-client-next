@@ -458,8 +458,7 @@ export function MotifsPage() {
       )}
 
       <ShortcutLayout
-        info={MODULE_INFO}
-        signedRequired="never"
+        signedRequired={false}
 
         // shortcuts={
         //   <Shortcuts

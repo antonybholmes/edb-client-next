@@ -78,11 +78,11 @@ const FormSchema = z.object({
         /^[a-zA-Z0-9]+$/,
         'Username must consist of letters and numbers only or else be an email address.'
       ),
-    z.string().email({
+    z.email({
       message: TEXT_EMAIL_ERROR,
     }),
   ]),
-  email: z.string().email({
+  email: z.email({
     message: TEXT_EMAIL_ERROR,
   }),
   roles: z.array(z.string()),
@@ -191,7 +191,7 @@ export function MyAccountPage() {
       toast({
         title: 'Your account information was updated',
         variant: 'success',
-        description: 'Please check your email for any changes.',
+        description: 'You will receive a confirmation email shortly.',
       })
     } catch (err) {
       console.log('update err', err)
@@ -257,6 +257,8 @@ export function MyAccountPage() {
                 variant="theme"
                 size="lg"
                 rounded="full"
+                className="w-20"
+                ripple={true}
                 //className="w-full"
                 onClick={() => btnRef.current?.click()}
               >
@@ -440,34 +442,37 @@ export function MyAccountPage() {
                   />
                   <div />
 
-                  <Label className="font-medium">Account</Label>
-                  <div className="col-span-1 md:col-span-2 grid grid-cols-4 gap-4 items-center">
-                    <FormField
-                      control={form.control}
-                      name="publicId"
-                      render={({ field }) => (
-                        <FormItem className="col-span-3">
-                          <Input
-                            id="publicId"
-                            variant="underline"
-                            value={field.value}
-                            placeholder="Account Status"
-                            readOnly
-                          />
-                        </FormItem>
-                      )}
-                    />
+                  <Label className="font-medium">Account ID</Label>
 
-                    <FormField
-                      control={form.control}
-                      name="isLocked"
-                      render={({ field }) => (
-                        <FormItem>
-                          <span>{field.value ? 'Locked' : 'Unlocked'}</span>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="publicId"
+                    render={({ field }) => (
+                      <FormItem className="col-span-1 md:col-span-2">
+                        <Input
+                          id="publicId"
+                          variant="underline"
+                          value={field.value}
+                          placeholder="Account Status"
+                          readOnly
+                        />
+                      </FormItem>
+                    )}
+                  />
+                  <div />
+
+                  <Label className="font-medium">Account Status</Label>
+
+                  <FormField
+                    control={form.control}
+                    name="isLocked"
+                    render={({ field }) => (
+                      <FormItem>
+                        <span>{field.value ? 'Locked' : 'Unlocked'}</span>
+                      </FormItem>
+                    )}
+                  />
+
                   <div />
                 </div>
 

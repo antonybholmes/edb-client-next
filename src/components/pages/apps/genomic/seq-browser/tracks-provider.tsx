@@ -1,5 +1,6 @@
 import {
   DEFAULT_FILL_PROPS,
+  DEFAULT_FONT_PROPS,
   DEFAULT_STROKE_PROPS,
   OPAQUE_FILL_PROPS,
   type IColorProps,
@@ -251,10 +252,7 @@ export const DEFAULT_SCALE_TRACK_DISPLAY_OPTIONS: IScaleTrackDisplayOptions = {
     show: true,
   },
   stroke: { ...DEFAULT_STROKE_PROPS },
-  font: {
-    size: 'small',
-    color: COLOR_BLACK,
-  },
+  font: { ...DEFAULT_FONT_PROPS, size: 'small' },
   autoSize: true,
   bp: 10000,
 }
@@ -292,10 +290,7 @@ export const DEFAULT_RULER_TRACK_DISPLAY_OPTIONS: IRulerTrackDisplayOptions = {
     show: true,
   },
   stroke: { ...DEFAULT_STROKE_PROPS },
-  font: {
-    size: 'x-small',
-    color: COLOR_BLACK,
-  },
+  font: { ...DEFAULT_FONT_PROPS, size: 'x-small' },
   autoSize: true,
   bp: 10000,
 }
@@ -363,10 +358,7 @@ export const DEFAULT_CYTOBANDS_TRACK_DISPLAY_OPTIONS: ICytobandsTrackDisplayOpti
     style: 'Rounded',
     labels: {
       show: true,
-      font: {
-        size: 'x-small',
-        color: COLOR_BLACK,
-      },
+      font: { ...DEFAULT_FONT_PROPS, size: 'x-small' },
       skip: {
         on: true,
         x: 50,

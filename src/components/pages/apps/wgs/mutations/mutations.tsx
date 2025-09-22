@@ -98,7 +98,6 @@ import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 import { HistoryPanel } from '../../matcalc/history/history-panel'
 import { useHistory } from '../../matcalc/history/history-store'
-import MODULE_INFO from './module.json'
 
 export const DEFAULT_MOTIF_PATTERNS: IMotifPattern[] = [
   {
@@ -723,7 +722,6 @@ export function MutationsPage() {
       )}
 
       <ShortcutLayout
-        info={MODULE_INFO}
         headerCenterChildren={
           <SearchBox
             value={search}

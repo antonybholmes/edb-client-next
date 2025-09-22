@@ -169,7 +169,7 @@ export function HubsPage() {
   const institutions = [...searchPlaformMap.keys()].sort()
 
   return (
-    <ShortcutLayout info={MODULE_INFO}>
+    <ShortcutLayout>
       <HeaderPortal>
         <ModuleInfoButton info={MODULE_INFO} />
 

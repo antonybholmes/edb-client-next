@@ -184,7 +184,7 @@ export function CallbackPage() {
   }, [redirectUrl])
 
   return (
-    <CenterLayout signedRequired="never">
+    <CenterLayout signedRequired={false}>
       <Card className="shadow-lg w-128 p-8  text-sm" rounded="2xl">
         <CardHeader className="text-xl ">
           <VCenterRow className="gap-x-2 ">

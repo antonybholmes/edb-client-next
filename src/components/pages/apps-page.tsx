@@ -69,7 +69,7 @@ export function Apps() {
 
 export function AppsPage({ title = 'Index' }: { title?: string }) {
   return (
-    <ContentLayout title={title} signedRequired="never">
+    <ContentLayout title={title} signedRequired={false}>
       <Apps />
     </ContentLayout>
   )

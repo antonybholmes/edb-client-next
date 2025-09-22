@@ -19,7 +19,7 @@ export interface IProps {
 export function AddLocalBigWigsDialog({ callback, onCancel }: IProps) {
   const [name, setName] = useState('')
   const [color, setColor] = useState(COLOR_BLACK)
-  const [error, setError] = useState('')
+  const [error] = useState('')
   const [bigWigs, setBigWigs] = useState<BigWig[]>([])
 
   // const [showAxes, setShowAxes] = useState(true)
@@ -78,7 +78,7 @@ export function AddLocalBigWigsDialog({ callback, onCancel }: IProps) {
       //buttons={[TEXT_OK]}
       title="Load BigWig Files From Device"
       bodyCls="gap-y-4"
-      onResponse={response => {
+      onResponse={(response) => {
         if (response === TEXT_OK) {
           if (bigWigs.length > 0) {
             callback?.(name, color, bigWigs)
@@ -113,19 +113,19 @@ export function AddLocalBigWigsDialog({ callback, onCancel }: IProps) {
 
       <FileDropZonePanel
         fileTypes={{ 'application/octet-stream': ['.bw', '.bigWig'] }}
-        onFileDrop={files => {
+        onFileDrop={(files) => {
           console.log('files', files)
 
           if (files.length > 0) {
             console.log('files', files)
-            setName(files.map(f => f.name).join(', '))
+            setName(files.map((f) => f.name).join(', '))
 
             // const bw = new BigWig({
             //   filehandle: new BlobFile(files[0]!),
             // })
 
             setBigWigs(
-              files.map(file => {
+              files.map((file) => {
                 return new BigWig({
                   filehandle: new BlobFile(file),
                 })

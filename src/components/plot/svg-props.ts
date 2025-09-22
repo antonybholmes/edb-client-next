@@ -65,14 +65,14 @@ export interface IFontProps {
   //show: boolean
   color: string
   size: string
-  alpha: number
+  opacity: number
 }
 
 export const DEFAULT_FONT_PROPS: IFontProps = {
   //show: true,
   color: COLOR_BLACK,
   size: 'small',
-  alpha: 1,
+  opacity: 1,
 }
 
 export interface IMarginProps {

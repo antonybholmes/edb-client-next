@@ -12,7 +12,6 @@ import {
   TEXT_SIGN_OUT,
   type IDialogParams,
 } from '@/consts'
-import { useAuth0 } from '@auth0/auth0-react'
 import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
 import { SignOutIcon } from '@icons/sign-out-icon'
 import { randId } from '@lib/utils'
@@ -65,9 +64,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
 
   const { settings } = useEdbSettings()
 
-  const { session, loaded } = useEdbAuth()
-
-  const { loginWithRedirect } = useAuth0()
+  const { session } = useEdbAuth()
 
   //console.log('pathname', pathname)
 

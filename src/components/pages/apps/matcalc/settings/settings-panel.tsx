@@ -16,7 +16,7 @@ export function SettingsPanel() {
   const { settings, updateSettings } = useMatcalcSettings()
 
   const appKeys = Object.keys(
-    (({ apps, ...rest }) => rest)(settings)
+    (({ ...rest }) => rest)(settings)
   ).sort() as (keyof typeof settings)[]
 
   const friendlyAppNames = appKeys.map((k) =>

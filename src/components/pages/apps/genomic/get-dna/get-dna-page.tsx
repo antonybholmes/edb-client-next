@@ -56,7 +56,6 @@ import { textToLines } from '@lib/text/lines'
 import { randId } from '@lib/utils'
 import { useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import MODULE_INFO from './module.json'
 
 export function GetDNAPage() {
   const queryClient = useQueryClient()
@@ -316,7 +315,7 @@ export function GetDNAPage() {
         </BasicAlertDialog>
       )}
 
-      <ShortcutLayout info={MODULE_INFO}>
+      <ShortcutLayout>
         <Toolbar tabs={tabs}>
           <ToolbarMenu
             open={showFileMenu}

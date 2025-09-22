@@ -3,7 +3,7 @@ import { HeaderLayout, type IHeaderLayoutProps } from '@layouts/header-layout'
 import { OAUTH2_SIGN_IN_ROUTE, SIGN_UP_ROUTE, TEXT_SIGN_UP } from '@lib/edb/edb'
 
 import { ThemeIndexLink } from '@components/link/theme-index-link'
-import { useState, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 import { TEXT_SIGN_IN } from '@/consts'
 
@@ -14,7 +14,6 @@ import { CenterCol } from '@/components/layout/center-col'
 import { Card, CardHeader, CardTitle } from '@/components/shadcn/ui/themed/card'
 import { EDBSignIn, type SignInMode } from '@/lib/edb/signin/edb-signin'
 import { useEdbAuth } from '@lib/edb/edb-auth'
-import { usePathname } from 'next/navigation'
 
 export const FORWARD_DELAY_MS = 2000
 
@@ -61,64 +60,25 @@ export function SignInLink() {
 // }
 
 export interface ISignInLayoutProps extends IHeaderLayoutProps {
-  signedRequired?: 'auto' | 'always' | 'never'
+  signedRequired?: boolean
   apiKey?: string
   // if signin is success, which page of the app to jump to
   // so that user is not left on signin page
   redirectUrl?: string
   signInMode?: SignInMode
+  /**
+   * Show the account button in the header even if sign in is not required.
+   */
   showAccountButton?: boolean
 }
 
-export function SignInRequired({
-  redirectUrl = '',
-
-  children,
-}: ISignInLayoutProps) {
-  const pathname = usePathname()
-  const [_redirectUrl, setRedirectUrl] = useState('')
+export function SignInRequired({ children }: ISignInLayoutProps) {
+  //const pathname = usePathname()
+  //const [_redirectUrl, setRedirectUrl] = useState('')
 
   //const queryClient = useQueryClient()
 
   const { session, loaded } = useEdbAuth()
-
-  // useEffect(() => {
-  //   async function checkSignedIn() {
-  //     // we need to check if user is signed in
-  //     // if not, we will redirect them to the sign in page.
-  //     // We must request the session rather than using the
-  //     // session from the store, because it may be stale
-  //     // and we want to ensure that the user is truly not
-  //     // signed in before redirecting them to the sign in page.
-  //     // session may be null upon initial load until the
-  //     // session is fetched from the server so it is not reliable
-  //     // for determining if the user is signed in and should
-  //     // only be used in passive ways, such as rendering the
-  //     // sign in button or showing the user name in the header.
-  //     const s = await fetchSession()
-
-  //     //console.log('loadUser', session)
-  //     if (!s) {
-  //       // the sign in callback includes this url so that the app can signin and
-  //       // then return user to the page they were signing into as a convenience
-
-  //       const url = redirectUrl ? redirectUrl : pathname // window.location.pathname
-
-  //       setRedirectUrl(url)
-  //     }
-  //   }
-
-  //   if (csrfToken) {
-  //     checkSignedIn()
-  //   }
-  // }, [csrfToken])
-
-  // if (_redirectUrl) {
-  //   console.log('redirect', _redirectUrl, session)
-  //   redirect(
-  //     `${APP_OAUTH2_SIGN_IN_ROUTE}?redirect=${encodeURIComponent(_redirectUrl)}`
-  //   )
-  // }
 
   if (!loaded) {
     return null
@@ -150,8 +110,8 @@ export function SignInRequired({
 
 export function SignInLayout({
   signInMode = 'auth0', //username-password',
-  signedRequired = 'auto',
-  showAccountButton = true,
+  signedRequired = true,
+  showAccountButton = false,
   redirectUrl = '',
   className,
   headerTrayChildren,
@@ -159,7 +119,7 @@ export function SignInLayout({
 }: ISignInLayoutProps) {
   let elem: ReactNode
 
-  if (signedRequired !== 'never') {
+  if (signedRequired) {
     elem = (
       <SignInRequired
         signInMode={signInMode}
@@ -181,7 +141,9 @@ export function SignInLayout({
       className={className}
       headerTrayChildren={
         <>
-          {showAccountButton && <EDBSignIn signInMode={signInMode} />}
+          {(signedRequired || showAccountButton) && (
+            <EDBSignIn signInMode={signInMode} />
+          )}
 
           {headerTrayChildren}
         </>

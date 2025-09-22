@@ -92,7 +92,7 @@ export function Error404Page() {
 
   return (
     <CenterLayout
-      signedRequired="never"
+      signedRequired={false}
       //className="bg-gradient-to-br from-sky-100 via-indigo-100 to-purple-100"
     >
       <div className="gap-y-4 xl:w-1/2 p-4">

@@ -28,7 +28,8 @@ import type { ITooltipSide } from '@interfaces/tooltip-side-props'
 import { cn } from '@lib/shadcn-utils'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { useState, type ComponentProps } from 'react'
+import { gsap } from 'gsap'
+import { useEffect, useRef, useState, type ComponentProps } from 'react'
 import { SimpleTooltip } from './tooltip'
 
 const BASE_GHOST_CLS =
@@ -566,6 +567,7 @@ export function Button({
   asChild = false,
   type = 'button',
   tooltip,
+  'aria-label': ariaLabel,
   tooltipSide = 'bottom',
   onMouseUp,
   onMouseDown,
@@ -584,65 +586,62 @@ export function Button({
   // use the title to reduce instances of aria-label
   // being empty
 
-  if (!props['aria-label']) {
-    props['aria-label'] = title
+  if (!ariaLabel) {
+    ariaLabel = title
   }
 
-  //const rippleRef = useRef<HTMLSpanElement>(null)
+  if (!ariaLabel) {
+    ariaLabel = tooltip
+  }
+
+  const rippleRef = useRef<HTMLSpanElement>(null)
   const [clickProps, setClickProps] = useState<IPos>({ x: -1, y: -1 })
 
-  // useEffect(() => {
-  //   if (!ripple || clickProps.x === -1 || clickProps.y === -1) {
-  //     return
-  //   }
+  useEffect(() => {
+    if (clickProps.x === -1 || clickProps.y === -1) {
+      return
+    }
 
-  //   // if (clickProps.x !== -1) {
-  //   //   gsap.fromTo(
-  //   //     rippleRef.current,
-  //   //     {
-
-  //   //       transform: "scale(1)",
-
-  //   //       opacity: 0.9,
-  //   //     },
-  //   //     {
-  //   //       transform: "scale(12)",
-  //   //       opacity: 0,
-  //   //       duration: 2,
-  //   //       ease: "power3.out",
-  //   //     },
-  //   //   )
-  //   // } else {
-  //   //   gsap.to(rippleRef.current, {
-  //   //     opacity: 0,
-  //   //     duration: 1,
-  //   //     ease: "power3.out",
-  //   //   })
-  //   // }
-
-  //   // Trigger an animation on click
-  //   animate(
-  //     scope.current,
-  //     {
-  //       transform: ['scale(1)', 'scale(8)'], // Scale up then back down
-  //       opacity: [0.9, 0], // Rotate 360 degrees
-  //     },
-  //     {
-  //       duration: 1, // Animation duration (in seconds)
-  //       ease: 'easeInOut', // Easing for a smooth effect
-  //     }
-  //   )
-  // }, [clickProps])
+    if (clickProps.x !== -1) {
+      gsap.fromTo(
+        rippleRef.current,
+        {
+          scale: 1,
+          opacity: 0.8,
+        },
+        {
+          scale: 12,
+          opacity: 0,
+          duration: 2,
+          ease: 'power2.out',
+        }
+      )
+    }
+    // Trigger an animation on click
+    // animate(
+    //   scope.current,
+    //   {
+    //     transform: ['scale(1)', 'scale(8)'], // Scale up then back down
+    //     opacity: [0.9, 0], // Rotate 360 degrees
+    //   },
+    //   {
+    //     duration: 1, // Animation duration (in seconds)
+    //     ease: 'easeInOut', // Easing for a smooth effect
+    //   }
+    // )
+  }, [clickProps.x, clickProps.y])
 
   function _onMouseUp(e: React.MouseEvent<HTMLButtonElement>) {
-    setClickProps({ x: -1, y: -1 })
+    //setClickProps({ x: -1, y: -1 })
 
     onMouseUp?.(e)
   }
 
   function _onMouseDown(e: React.MouseEvent<HTMLButtonElement>) {
     //console.log(e.nativeEvent.offsetX, e.nativeEvent.offsetY)
-    setClickProps({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
+    if (ripple) {
+      setClickProps({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
+    }
 
     onMouseDown?.(e)
   }
@@ -691,13 +690,17 @@ export function Button({
       onMouseUp={_onMouseUp}
       onMouseLeave={_onMouseLeave}
       title={title}
+      aria-label={ariaLabel}
       {...props}
     >
       {children}
-      {/* <span
-        className={RIPPLE_CLS}
-        style={{ left: clickProps.x, top: clickProps.y }}
-      /> */}
+      {ripple && (
+        <span
+          ref={rippleRef}
+          className={RIPPLE_CLS}
+          style={{ left: clickProps.x, top: clickProps.y }}
+        />
+      )}
     </Comp>
   )
 

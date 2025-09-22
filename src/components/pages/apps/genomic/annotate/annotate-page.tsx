@@ -497,7 +497,7 @@ export function AnnotationPage() {
         />
       )}
 
-      <ShortcutLayout info={MODULE_INFO} signedRequired="never">
+      <ShortcutLayout signedRequired={false}>
         <HeaderPortal>
           <ModuleInfoButton info={MODULE_INFO} />
 

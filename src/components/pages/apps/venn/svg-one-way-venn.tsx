@@ -57,10 +57,9 @@ export function SVGOneWayVenn({ overlapLabels = {} }: IVennProps) {
   ]
 
   const cA: ILim = [center[0] - offset2[0], center[1] - offset2[1]]
-  const cB: ILim = [center[0] + offset2[0], center[1] - offset2[1]]
 
   const lA: ILim = [center[0] - offset3[0], center[1] - offset3[1]]
-  const lB: ILim = [center[0] + offset3[0], center[1] - offset3[1]]
+
   return (
     <>
       {/* Circle A */}

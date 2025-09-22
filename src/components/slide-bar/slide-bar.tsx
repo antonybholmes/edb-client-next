@@ -59,7 +59,6 @@ interface ISlideBarStore {
 }
 
 export interface ISlideBarProps extends IDivProps {
-  id: string
   title?: string
   side?: LeftRightPos
   open?: boolean
@@ -73,7 +72,6 @@ export interface ISlideBarProps extends IDivProps {
 }
 
 export function SlideBar({
-  id,
   title = '',
   side = 'left',
   open = true,

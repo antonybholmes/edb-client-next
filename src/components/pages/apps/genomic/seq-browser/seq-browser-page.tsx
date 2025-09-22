@@ -509,7 +509,7 @@ function SeqBrowserPage() {
         />
       )}
 
-      <ShortcutLayout signedRequired="never">
+      <ShortcutLayout signedRequired={false} showAccountButton={true}>
         <HeaderPortal>
           <ModuleInfoButton info={MODULE_INFO} />
 

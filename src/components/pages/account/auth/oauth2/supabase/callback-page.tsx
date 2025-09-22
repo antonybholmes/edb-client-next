@@ -70,7 +70,7 @@ export function CallbackPage() {
   }
 
   return (
-    <CenterLayout signedRequired="never">
+    <CenterLayout signedRequired={false}>
       {error !== '' ? (
         <HCenterCol className="gap-8">
           <Card className="border-red-300 w-100 text-center items-center shadow-md">

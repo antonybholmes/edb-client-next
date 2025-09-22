@@ -67,15 +67,16 @@ export function DisplayPropsPanel() {
                     settings.baseColors[base.toLowerCase() as DNABase].color
                   }
                   alpha={
-                    settings.baseColors[base.toLowerCase() as DNABase].alpha
+                    settings.baseColors[base.toLowerCase() as DNABase].opacity
                   }
                   onColorChange={(color, alpha) =>
                     updateSettings(
                       produce(settings, (draft) => {
                         draft.baseColors[base.toLowerCase() as DNABase].color =
                           color
-                        draft.baseColors[base.toLowerCase() as DNABase].alpha =
-                          alpha
+                        draft.baseColors[
+                          base.toLowerCase() as DNABase
+                        ].opacity = alpha
                       })
                     )
                   }
@@ -97,7 +98,7 @@ export function DisplayPropsPanel() {
                             .color,
                         opacity:
                           settings.baseColors[base.toLowerCase() as DNABase]
-                            .alpha,
+                            .opacity,
                       }}
                     >
                       {base}

@@ -2,6 +2,10 @@
 
 ## 28.4 (Sep, 2025)
 
+### Added
+
+- UI tweaks and flourishes. Simplified layout structure.
+
 ### Changed
 
 - Bug fixes and updates.
