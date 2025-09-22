@@ -47,9 +47,9 @@ export function BoxWhiskerPlotSvg({
     const q0 = q1 - iqr15
     const q4 = q3 + iqr15
 
-    const w1 = data.filter(x => x >= q0)
+    const w1 = data.filter((x) => x >= q0)
     // reverse copy of array
-    const w2 = data.toReversed().filter(x => x <= q4)
+    const w2 = data.toReversed().filter((x) => x <= q4)
 
     //console.log(maxHeightMap)
 
@@ -111,7 +111,7 @@ export function BoxWhiskerPlotSvg({
           strokeWidth={stroke?.width ?? 0}
           stroke={stroke?.color ?? 'none'}
           fill={fill?.color ?? 'none'}
-          fillOpacity={fill?.alpha ?? 0}
+          fillOpacity={fill?.opacity ?? 0}
         />
 
         {/* median */}

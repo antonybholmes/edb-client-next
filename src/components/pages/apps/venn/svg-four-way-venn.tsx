@@ -60,9 +60,10 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
         cy={center[1]}
         rx={radius2 * 0.5}
         ry={radius2}
-        fill={circles[1].fill}
-        fillOpacity={circles[1].fillOpacity}
-        stroke={circles[1].stroke}
+        fill={circles[1].fill.color}
+        fillOpacity={circles[1].fill.opacity}
+        stroke={circles[1].stroke.color}
+        strokeOpacity={circles[1].stroke.opacity}
         transform={`translate(${-radius2 / 2}, ${radius2 / 4}) rotate(-45, ${center[0]}, ${center[1]}) `}
       />
 
@@ -80,9 +81,10 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
         cy={center[1]}
         rx={radius2 * 0.5}
         ry={radius2}
-        fill={circles[2].fill}
-        fillOpacity={circles[2].fillOpacity}
-        stroke={circles[2].stroke}
+        fill={circles[2].fill.color}
+        fillOpacity={circles[2].fill.opacity}
+        stroke={circles[2].stroke.color}
+        strokeOpacity={circles[2].stroke.opacity}
         transform={`rotate(-45, ${center[0]}, ${center[1]})`}
       />
 
@@ -98,9 +100,10 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
         cy={center[1]}
         rx={radius2 * 0.5}
         ry={radius2}
-        fill={circles[3].fill}
-        fillOpacity={circles[3].fillOpacity}
-        stroke={circles[3].stroke}
+        fill={circles[3].fill.color}
+        fillOpacity={circles[3].fill.opacity}
+        stroke={circles[3].stroke.color}
+        strokeOpacity={circles[3].stroke.opacity}
         transform={`rotate(45, ${center[0]}, ${center[1]})`}
       />
 
@@ -117,9 +120,10 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
         cy={center[1]}
         rx={radius2 * 0.5}
         ry={radius2}
-        fill={circles[4].fill}
-        fillOpacity={circles[4].fillOpacity}
-        stroke={circles[4].stroke}
+        fill={circles[4].fill.color}
+        fillOpacity={circles[4].fill.opacity}
+        stroke={circles[4].stroke.color}
+        strokeOpacity={circles[4].stroke.opacity}
         transform={`translate(${radius2 * 0.5}, ${radius2 * 0.25}) rotate(45, ${center[0]}, ${center[1]}) `}
       />
 

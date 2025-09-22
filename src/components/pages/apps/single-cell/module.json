@@ -1,7 +1,7 @@
 {
   "name": "Single Cell",
   "description": "Explore Single Cell data.",
-  "version": "5.0.6.256",
+  "version": "5.0.8.258",
   "copyright": "Copyright (C) ${START_YEAR:2023} Antony Holmes. All rights reserved.",
-  "modified": "2025-09-20T22:07:29.656Z"
+  "modified": "2025-09-21T21:19:42.606Z"
 }

@@ -1,21 +1,20 @@
+import { IColorProps } from '@/components/plot/svg-props'
 import { APP_ID } from '@/consts'
 import { COLOR_BLACK, COLOR_WHITE } from '@lib/color/color'
 import { produce } from 'immer'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-export const PLOT_W = 700
+export const PLOT_W = 600
 
-const SETTINGS_KEY = `${APP_ID}:module:venn:settings:v42`
+const SETTINGS_KEY = `${APP_ID}:module:venn:settings:v50`
 
 export interface IVennCircleProps {
   id: number
   name: string
-  fill: string
-  stroke: string
-  color: string
-  fillOpacity: number
-  strokeOpacity: number
+  fill: IColorProps
+  stroke: IColorProps
+  text: IColorProps
 }
 
 export const DEFAULT_VENN_CIRCLE_PROPS = {
@@ -30,52 +29,42 @@ export const DEFAULT_CIRCLE_MAP: IVennCircleProps[] = [
   {
     id: 0,
     name: 'List 0',
-    fill: '#000000',
-    stroke: '#000000',
-    color: COLOR_WHITE,
-    fillOpacity: 1,
-    strokeOpacity: 1,
+    fill: { color: '#000000', opacity: 0.3, show: true },
+    stroke: { color: '#000000', opacity: 1, show: true },
+    text: { color: COLOR_WHITE, opacity: 1, show: true },
   },
   {
     id: 1,
     name: 'List 1',
-    fill: '#6495ED',
-    stroke: '#6495ED',
-    color: COLOR_WHITE,
-    fillOpacity: 0.4,
-    strokeOpacity: 1,
+    fill: { color: '#6495ED', opacity: 0.3, show: true },
+    stroke: { color: '#6495ED', opacity: 1, show: true },
+    text: { color: COLOR_WHITE, opacity: 1, show: true },
   },
   {
     id: 2,
     name: 'List 2',
-    fill: '#ff0000',
-    stroke: '#ff0000',
-    color: COLOR_WHITE,
-    fillOpacity: 0.25,
-    strokeOpacity: 1,
+    fill: { color: '#ff0000', opacity: 0.3, show: true },
+    stroke: { color: '#ff0000', opacity: 1, show: true },
+    text: { color: COLOR_WHITE, opacity: 1, show: true },
   },
   {
     id: 3,
     name: 'List 3',
-    fill: '#3CB371',
-    stroke: '#3CB371',
-    color: COLOR_WHITE,
-    fillOpacity: 0.35,
-    strokeOpacity: 1,
+    fill: { color: '#3CB371', opacity: 0.3, show: true },
+    stroke: { color: '#3CB371', opacity: 1, show: true },
+    text: { color: COLOR_WHITE, opacity: 1, show: true },
   },
   {
     id: 4,
     name: 'List 4',
-    fill: '#ba55d3',
-    stroke: '#ba55d3',
-    color: COLOR_WHITE,
-    fillOpacity: 0.4,
-    strokeOpacity: 1,
+    fill: { color: '#ba55d3', opacity: 0.3, show: true },
+    stroke: { color: '#ba55d3', opacity: 1, show: true },
+    text: { color: COLOR_WHITE, opacity: 1, show: true },
   },
 ]
 
 export interface IFontProps {
-  //show: boolean
+  show: boolean
   color: string
   size: number
   family: string
@@ -87,6 +76,7 @@ const DEFAULT_FONT: IFontProps = {
   size: 16,
   family: 'Arial',
   weight: 'normal',
+  show: true,
 }
 
 const BOLD_FONT: IFontProps = {
@@ -95,9 +85,6 @@ const BOLD_FONT: IFontProps = {
 }
 
 export interface IVennSettings {
-  showCounts: boolean
-  showTitles: boolean
-  showPercentages: boolean
   w: number
   radius: number
   scale: number
@@ -109,7 +96,7 @@ export interface IVennSettings {
   normalize: boolean
   circles: IVennCircleProps[]
   fonts: {
-    title: IFontProps
+    title: IFontProps & { colored: boolean }
     counts: IFontProps
     percentages: IFontProps
   }
@@ -117,20 +104,18 @@ export interface IVennSettings {
 
 const DEFAULT_SETTINGS: IVennSettings = {
   w: PLOT_W,
-  radius: 140,
+  radius: 120,
   scale: 1,
   isProportional: false,
   isFilled: true,
   isOutlined: false,
   intersectionColor: COLOR_WHITE,
   autoColorText: true,
-  showTitles: true,
-  showCounts: true,
-  showPercentages: true,
+
   normalize: false,
   circles: [...DEFAULT_CIRCLE_MAP],
   fonts: {
-    title: BOLD_FONT,
+    title: { ...BOLD_FONT, colored: true },
     counts: DEFAULT_FONT,
     percentages: { ...DEFAULT_FONT, size: 12 },
   },

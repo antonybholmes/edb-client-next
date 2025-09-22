@@ -246,7 +246,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
               <PropRow title="Opacity" className="ml-2">
                 <NumericalInput
                   disabled={!settings.es.leadingEdge.show}
-                  value={settings.es.leadingEdge.fill.alpha}
+                  value={settings.es.leadingEdge.fill.opacity}
                   placeholder="Opacity"
                   limit={[0, 1]}
                   step={0.1}
@@ -254,7 +254,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   onNumChanged={(v) => {
                     updateSettings(
                       produce(settings, (draft) => {
-                        draft.es.leadingEdge.fill.alpha = v
+                        draft.es.leadingEdge.fill.opacity = v
                       })
                     )
                   }}
@@ -378,7 +378,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
 
               <PropRow title="Opacity" className="ml-2">
                 <NumericalInput
-                  value={settings.ranking.fill.alpha}
+                  value={settings.ranking.fill.opacity}
                   disabled={!settings.ranking.show}
                   placeholder="Opacity"
                   limit={[0, 1]}
@@ -387,7 +387,7 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   onNumChanged={(v) => {
                     updateSettings(
                       produce(settings, (draft) => {
-                        draft.ranking.fill.alpha = v
+                        draft.ranking.fill.opacity = v
                       })
                     )
                   }}

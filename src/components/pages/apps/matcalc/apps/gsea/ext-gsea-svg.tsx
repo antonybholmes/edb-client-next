@@ -123,7 +123,7 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
         <polygon
           points={points}
           fill={gs1.color}
-          fillOpacity={displayProps.es.gs1.leadingEdge.fill.alpha}
+          fillOpacity={displayProps.es.gs1.leadingEdge.fill.opacity}
           stroke="none"
         />
       )
@@ -183,7 +183,7 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
         <polygon
           points={points}
           fill={gs2.color}
-          fillOpacity={displayProps.es.gs2.leadingEdge.fill.alpha}
+          fillOpacity={displayProps.es.gs2.leadingEdge.fill.opacity}
           stroke="none"
         />
       )
@@ -353,7 +353,7 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
             points={displayPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
             fill={displayProps.ranking.fill.color}
             stroke="none"
-            fillOpacity={displayProps.ranking.fill.alpha}
+            fillOpacity={displayProps.ranking.fill.opacity}
           />
           {displayProps.ranking.zeroCross.show && (
             <g transform={`translate(${crossingX}, 0)`}>

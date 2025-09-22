@@ -8,7 +8,7 @@ export type LegendPos = 'right' | 'upper-right' | 'bottom'
 export interface IColorProps {
   show: boolean
   color: string
-  alpha: number
+  opacity: number
 }
 
 export interface ILabelProps extends IColorProps {
@@ -19,24 +19,24 @@ export const DEFAULT_LABEL_PROPS: ILabelProps = {
   show: true,
   width: 100,
   color: COLOR_BLACK,
-  alpha: 1,
+  opacity: 1,
 }
 
 export const DEFAULT_FILL_PROPS: IColorProps = {
   show: true,
-  alpha: 0.2,
+  opacity: 0.2,
   color: COLOR_RED,
 }
 
 export const OPAQUE_FILL_PROPS: IColorProps = {
   show: true,
-  alpha: 1,
+  opacity: 1,
   color: COLOR_BLACK,
 }
 
 export const WHITE_FILL_PROPS: IColorProps = {
   show: true,
-  alpha: 1,
+  opacity: 1,
   color: COLOR_WHITE,
 }
 

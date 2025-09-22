@@ -80,7 +80,7 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
                 limit={[1, 1000]}
                 placeholder="Width..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updateProps(plotAddr, 'displayOptions', {
                     ...displayOptions,
                     axes: {
@@ -107,7 +107,7 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
                 limit={[1, 1000]}
                 placeholder="Height..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updateProps(plotAddr, 'displayOptions', {
                     ...displayOptions,
                     es: {
@@ -125,7 +125,7 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
             <SwitchPropRow
               title="Line"
               checked={displayOptions.es.gs1.line.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 updateProps(plotAddr, 'displayOptions', {
                   ...displayOptions,
                   es: {
@@ -149,7 +149,7 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
                 disabled={!displayOptions.es.gs1.line.show}
                 placeholder="Stroke..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updateProps(plotAddr, 'displayOptions', {
                     ...displayOptions,
                     es: {
@@ -171,7 +171,7 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
             <SwitchPropRow
               title="Leading edge"
               checked={displayOptions.es.gs1.leadingEdge.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 updateProps(plotAddr, 'displayOptions', {
                   ...displayOptions,
                   es: {
@@ -198,13 +198,13 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
               <NumericalInput
                 id="line1-leading-opacity"
                 disabled={!displayOptions.es.gs1.leadingEdge.show}
-                value={displayOptions.es.gs1.leadingEdge.fill.alpha}
+                value={displayOptions.es.gs1.leadingEdge.fill.opacity}
                 dp={1}
                 step={0.1}
                 limit={[0, 1]}
                 placeholder="Opacity..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updateProps(plotAddr, 'displayOptions', {
                     ...displayOptions,
                     es: {
@@ -243,7 +243,7 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
             <SwitchPropRow
               title="Bars"
               checked={displayOptions.genes.line.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 updateProps(plotAddr, 'displayOptions', {
                   ...displayOptions,
                   genes: {
@@ -259,7 +259,7 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
                 value={displayOptions.genes.line.width}
                 placeholder="Stroke..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updateProps(plotAddr, 'displayOptions', {
                     ...displayOptions,
                     genes: {
@@ -276,7 +276,7 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
               className="ml-2"
               disabled={!displayOptions.genes.line.show}
               checked={displayOptions.genes.labels.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 updateProps(plotAddr, 'displayOptions', {
                   ...displayOptions,
                   genes: {
@@ -297,7 +297,7 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
                 !displayOptions.genes.labels.show
               }
               checked={displayOptions.genes.labels.isColored}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 updateProps(plotAddr, 'displayOptions', {
                   ...displayOptions,
                   genes: {
@@ -319,7 +319,7 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
             <SwitchPropRow
               title="Show"
               checked={displayOptions.ranking.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 updateProps(plotAddr, 'displayOptions', {
                   ...displayOptions,
                   ranking: {
@@ -334,7 +334,7 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
               <ColorPickerButton
                 color={displayOptions.ranking.fill.color}
                 disabled={!displayOptions.ranking.show}
-                onColorChange={color =>
+                onColorChange={(color) =>
                   updateProps(plotAddr, 'displayOptions', {
                     ...displayOptions,
                     ranking: {
@@ -353,13 +353,13 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
 
             <PropRow title="Opacity" className="ml-2">
               <NumericalInput
-                value={displayOptions.ranking.fill.alpha}
+                value={displayOptions.ranking.fill.opacity}
                 disabled={!displayOptions.ranking.show}
                 placeholder="Opacity"
                 limit={[0, 1]}
                 step={0.1}
                 dp={1}
-                onNumChanged={v =>
+                onNumChanged={(v) =>
                   updateProps(plotAddr, 'displayOptions', {
                     ...displayOptions,
                     ranking: {
@@ -380,7 +380,7 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
               title="Zero crossing"
               checked={displayOptions.ranking.zeroCross.show}
               disabled={!displayOptions.ranking.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 updateProps(plotAddr, 'displayOptions', {
                   ...displayOptions,
                   ranking: {

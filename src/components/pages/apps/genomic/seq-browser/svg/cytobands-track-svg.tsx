@@ -199,7 +199,7 @@ function CytobandsRoundStyleTrackSvg({
               width={Math.abs(pcenterxe - pcenterxs)}
               height={h}
               fill={track.displayOptions.center.fill.color}
-              fillOpacity={track.displayOptions.center.fill.alpha}
+              fillOpacity={track.displayOptions.center.fill.opacity}
               stroke="none"
             />
           )}
@@ -249,7 +249,7 @@ function CytobandsRoundStyleTrackSvg({
               width={Math.abs(qcentersxe - qcenterxs)}
               height={h}
               fill={track.displayOptions.center.fill.color}
-              fillOpacity={track.displayOptions.center.fill.alpha}
+              fillOpacity={track.displayOptions.center.fill.opacity}
               stroke="none"
             />
           )}
@@ -287,7 +287,7 @@ function CytobandsRoundStyleTrackSvg({
         height={settings.cytobands.height}
         stroke={track.displayOptions.location.stroke.color}
         fill={track.displayOptions.location.fill.color}
-        fillOpacity={track.displayOptions.location.fill.alpha}
+        fillOpacity={track.displayOptions.location.fill.opacity}
       />
     </>
   )
@@ -407,7 +407,7 @@ function CytobandsSquareStyleTrackSvg({
         <polygon
           points={`${centerx1},${h} ${centerx1},0 ${centerx2},${h} ${centerx2},0`}
           fill={track.displayOptions.center.fill.color}
-          fillOpacity={track.displayOptions.center.fill.alpha}
+          fillOpacity={track.displayOptions.center.fill.opacity}
           stroke="none"
         />
 
@@ -428,7 +428,7 @@ function CytobandsSquareStyleTrackSvg({
         height={track.displayOptions.height}
         stroke={track.displayOptions.location.stroke.color}
         fill={track.displayOptions.location.fill.color}
-        fillOpacity={track.displayOptions.location.fill.alpha}
+        fillOpacity={track.displayOptions.location.fill.opacity}
       />
     </>
   )

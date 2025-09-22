@@ -244,7 +244,7 @@ export const DEFAULT_DISPLAY_PROPS: ILollipopDisplayProps = {
     background: {
       show: true,
       color: '#dddddd',
-      alpha: 1,
+      opacity: 1,
       border: {
         show: false,
         color: COLOR_BLACK,
@@ -327,7 +327,7 @@ export const DEFAULT_LOLLIPOP: ILollipop = {
   aaStats: [],
   features: [],
   mutationsForUse: Object.fromEntries(
-    DEFAULT_DISPLAY_PROPS.mutations.types.map(m => [m, true])
+    DEFAULT_DISPLAY_PROPS.mutations.types.map((m) => [m, true])
   ),
   //displayProps: { ...DEFAULT_DISPLAY_PROPS },
   labels: [],

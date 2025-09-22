@@ -22,7 +22,7 @@ export function getBedTrackHeight(
 
   return displayOptions.beds.collapsed
     ? tracks[0]!.displayOptions.height
-    : sum(tracks.map(track => track.displayOptions.height))
+    : sum(tracks.map((track) => track.displayOptions.height))
 }
 
 interface IProps extends IDivProps {
@@ -44,7 +44,7 @@ export function BaseBedTrackSvg({
 }: IProps) {
   const { settings } = useSeqBrowserSettings()
 
-  const trackHeights: number[] = tracks.map(track =>
+  const trackHeights: number[] = tracks.map((track) =>
     settings.beds.collapsed ? 0 : track.track.displayOptions.height
   )
 
@@ -67,7 +67,7 @@ export function BaseBedTrackSvg({
               settings.titles.position === 'right' ? 'start' : 'middle'
             }
           >
-            {truncate(formattedList(tracks.map(t => t.track.name)), {
+            {truncate(formattedList(tracks.map((t) => t.track.name)), {
               length: Math.round(xax.length / 10),
             })}
           </text>
@@ -104,7 +104,7 @@ export function BaseBedTrackSvg({
                     }
                     fillOpacity={
                       track.track.displayOptions.fill.show
-                        ? track.track.displayOptions.fill.alpha
+                        ? track.track.displayOptions.fill.opacity
                         : 0
                     }
                     stroke={track.track.displayOptions.stroke.color}

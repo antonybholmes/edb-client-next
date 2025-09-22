@@ -70,7 +70,7 @@ export function ViolinPlotSvg({
     }
 
     // normalize
-    xsmooth = xsmooth.map(x => x / globalXMax!)
+    xsmooth = xsmooth.map((x) => x / globalXMax!)
     // so always join in the middle
     xsmooth[0] = 0
     xsmooth[xsmooth.length - 1] = 0
@@ -78,12 +78,12 @@ export function ViolinPlotSvg({
     switch (mode) {
       case 'left':
         // flip x so draw cdf on left side
-        xsmooth = xsmooth.map(x => -x)
+        xsmooth = xsmooth.map((x) => -x)
 
         break
       case 'full':
         // for the left
-        xsmooth = [...xsmooth, ...xsmooth.map(x => -x).toReversed()]
+        xsmooth = [...xsmooth, ...xsmooth.map((x) => -x).toReversed()]
         // then return on the right
         ysmooth = [...ysmooth!, ...ysmooth!.toReversed()]
         break
@@ -102,7 +102,7 @@ export function ViolinPlotSvg({
     // }
 
     const points: string = zip(xsmooth, ysmooth)
-      .map(p => `${0.5 * p[0]! * width},${yax!.domainToRange(p[1]!)}`)
+      .map((p) => `${0.5 * p[0]! * width},${yax!.domainToRange(p[1]!)}`)
       .join(' ')
 
     //console.log(points)
@@ -115,7 +115,7 @@ export function ViolinPlotSvg({
         fill={fill?.color ?? 'none'}
         stroke={stroke?.color ?? 'none'}
         strokeWidth={stroke?.width ?? 0}
-        fillOpacity={fill?.alpha ?? 0}
+        fillOpacity={fill?.opacity ?? 0}
       />
     )
   }, [data, globalXMax, xsmooth, ysmooth, yax])

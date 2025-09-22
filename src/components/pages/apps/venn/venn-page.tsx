@@ -111,6 +111,7 @@ import { produce } from 'immer'
 import { useHistory } from '../matcalc/history/history-store'
 import MODULE_INFO from './module.json'
 import { SVGFourWayVenn } from './svg-four-way-venn'
+import { SVGOneWayVenn } from './svg-one-way-venn'
 import { SVGThreeWayVenn } from './svg-three-way-venn'
 import { SVGTwoWayVenn } from './svg-two-way-venn'
 import { VennList } from './venn-list'
@@ -898,9 +899,9 @@ function VennPage() {
                       updateCircles(
                         produce(circles, (draft) => {
                           for (let i = 0; i < circles.length; i++) {
-                            draft[i]!.color = state
+                            draft[i]!.text.color = state
                               ? COLOR_WHITE
-                              : draft[i]!.stroke
+                              : draft[i]!.stroke.color
                           }
                         })
                       )
@@ -949,21 +950,36 @@ function VennPage() {
               <AccordionContent>
                 <SwitchPropRow
                   title="Show"
-                  checked={settings.showTitles}
+                  checked={settings.fonts.title.show}
                   onCheckedChange={(state) =>
-                    updateSettings({
-                      showTitles: state,
-                    })
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.fonts.title.show = state
+                      })
+                    )
+                  }
+                />
+                <SwitchPropRow
+                  title="Colored"
+                  checked={settings.fonts.title.colored}
+                  onCheckedChange={(state) =>
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.fonts.title.colored = state
+                      })
+                    )
                   }
                 />
                 <SwitchPropRow
                   title="Counts"
-                  checked={settings.showCounts}
-                  disabled={!settings.showTitles}
+                  checked={settings.fonts.counts.show}
+                  disabled={!settings.fonts.title.show}
                   onCheckedChange={(state) =>
-                    updateSettings({
-                      showCounts: state,
-                    })
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.fonts.counts.show = state
+                      })
+                    )
                   }
                 />
                 <PropRow title="Font size">
@@ -1029,11 +1045,13 @@ function VennPage() {
               <AccordionContent>
                 <SwitchPropRow
                   title="Show"
-                  checked={settings.showPercentages}
+                  checked={settings.fonts.percentages.show}
                   onCheckedChange={(state) =>
-                    updateSettings({
-                      showPercentages: state,
-                    })
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.fonts.percentages.show = state
+                      })
+                    )
                   }
                 />
                 <PropRow title="Font Size">
@@ -1296,7 +1314,8 @@ function VennPage() {
                     width={settings.w}
                     height={settings.w}
                   >
-                    {vennListsInUse < 3 && <SVGTwoWayVenn />}
+                    {vennListsInUse < 2 && <SVGOneWayVenn />}
+                    {vennListsInUse === 2 && <SVGTwoWayVenn />}
                     {vennListsInUse === 3 && <SVGThreeWayVenn />}
                     {vennListsInUse > 3 && <SVGFourWayVenn />}
                   </BaseSvg>

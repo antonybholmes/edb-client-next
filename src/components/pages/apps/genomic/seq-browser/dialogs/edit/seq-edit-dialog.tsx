@@ -77,8 +77,8 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
         label={TEXT_NAME}
         labelPos="left"
         value={_track.name}
-        onChange={e => {
-          const newTrack = produce(_track, draft => {
+        onChange={(e) => {
+          const newTrack = produce(_track, (draft) => {
             draft.name = e.target.value
           })
 
@@ -96,8 +96,8 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
             value={_track.displayOptions.height}
             placeholder="height"
             limit={[1, 1000]}
-            onNumChange={v => {
-              const newTrack = produce(_track, draft => {
+            onNumChange={(v) => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.height = v
               })
 
@@ -110,8 +110,8 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
         <SwitchPropRow
           title="Axes"
           checked={_track.displayOptions.axes.show}
-          onCheckedChange={state => {
-            const newTrack = produce(_track, draft => {
+          onCheckedChange={(state) => {
+            const newTrack = produce(_track, (draft) => {
               draft.displayOptions.axes.show = state
             })
 
@@ -125,8 +125,8 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
               <ColorPickerButton
                 color={_track.displayOptions.stroke.color}
                 disabled={!_track.displayOptions.stroke.show}
-                onColorChange={color => {
-                  const newTrack = produce(_track, draft => {
+                onColorChange={(color) => {
+                  const newTrack = produce(_track, (draft) => {
                     draft.displayOptions.stroke.color = color
                   })
 
@@ -140,8 +140,8 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
             </>
           }
           checked={_track.displayOptions.stroke.show}
-          onCheckedChange={state => {
-            const newTrack = produce(_track, draft => {
+          onCheckedChange={(state) => {
+            const newTrack = produce(_track, (draft) => {
               draft.displayOptions.stroke.show = state
             })
 
@@ -156,8 +156,8 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
               disabled={!_track.displayOptions.stroke.show}
               placeholder="Stroke..."
               className="w-18 rounded-theme"
-              onNumChange={v => {
-                const newTrack = produce(_track, draft => {
+              onNumChange={(v) => {
+                const newTrack = produce(_track, (draft) => {
                   draft.displayOptions.stroke.width = v
                 })
 
@@ -173,14 +173,14 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
               <ColorPickerButton
                 color={addAlphaToHex(
                   _track.displayOptions.fill.color,
-                  _track.displayOptions.fill.alpha
+                  _track.displayOptions.fill.opacity
                 )}
                 allowAlpha={true}
                 disabled={!_track.displayOptions.fill.show}
                 onColorChange={(v, alpha) => {
-                  const newTrack = produce(_track, draft => {
+                  const newTrack = produce(_track, (draft) => {
                     draft.displayOptions.fill.color = v
-                    draft.displayOptions.fill.alpha = alpha
+                    draft.displayOptions.fill.opacity = alpha
                   })
 
                   callback?.(group, newTrack)
@@ -193,8 +193,8 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
             </>
           }
           checked={_track.displayOptions.fill.show}
-          onCheckedChange={state => {
-            const newTrack = produce(_track, draft => {
+          onCheckedChange={(state) => {
+            const newTrack = produce(_track, (draft) => {
               draft.displayOptions.fill.show = state
             })
 
@@ -225,8 +225,8 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
         <SwitchPropRow
           title="Global Y"
           checked={_track.displayOptions.useGlobalY}
-          onCheckedChange={v => {
-            const newTrack = produce(_track, draft => {
+          onCheckedChange={(v) => {
+            const newTrack = produce(_track, (draft) => {
               draft.displayOptions.useGlobalY = v
             })
 
@@ -238,8 +238,8 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
             title="Auto"
             disabled={_track.displayOptions.useGlobalY}
             checked={_track.displayOptions.autoY}
-            onCheckedChange={v => {
-              const newTrack = produce(_track, draft => {
+            onCheckedChange={(v) => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.autoY = v
               })
 
@@ -255,8 +255,8 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
             }
             placeholder="ymax"
             limit={[1, 1000]}
-            onNumChange={v => {
-              const newTrack = produce(_track, draft => {
+            onNumChange={(v) => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.ymax = v
               })
 
@@ -269,8 +269,8 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
         <SwitchPropRow
           title="Smoothed"
           checked={_track.displayOptions.smooth}
-          onCheckedChange={v => {
-            const newTrack = produce(_track, draft => {
+          onCheckedChange={(v) => {
+            const newTrack = produce(_track, (draft) => {
               draft.displayOptions.smooth = v
             })
 

@@ -31,7 +31,7 @@ export function SwarmPlotSvg({
   width = 50,
   height = 500,
   r = 5,
-  fill = { ...DEFAULT_FILL_PROPS, alpha: 1 },
+  fill = { ...DEFAULT_FILL_PROPS, opacity: 1 },
   stroke = { ...NO_STROKE_PROPS },
   mode = 'full',
 }: IProps) {
@@ -110,7 +110,7 @@ export function SwarmPlotSvg({
                       fill={fill?.color ?? 'none'}
                       stroke={stroke?.color ?? 'none'}
                       strokeWidth={stroke?.width ?? 0}
-                      fillOpacity={fill?.alpha ?? 0}
+                      fillOpacity={fill?.opacity ?? 0}
                     />
                   )
                 })}

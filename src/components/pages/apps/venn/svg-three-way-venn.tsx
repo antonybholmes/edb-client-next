@@ -22,9 +22,36 @@ export function CountText({
   const n = vennElemMap[id]?.length || 0
   const d = Object.keys(originalNames).length
   const p = (d > 0 ? (n / d) * 100 : 0).toFixed(1)
+  const ref = useRef<SVGGElement | null>(null)
 
   return (
-    <>
+    <g
+      ref={ref}
+      onClick={() => {
+        setItems(combinationNames[id] || '', Array.from(vennElemMap[id] || []))
+      }}
+      style={{ cursor: 'pointer' }}
+      onMouseOver={() => {
+        if (ref.current) {
+          gsap.to(ref.current, {
+            scale: 1.2,
+            duration: 0.1,
+            ease: 'power3.out',
+            transformOrigin: 'center center',
+          })
+        }
+      }}
+      onMouseOut={() => {
+        if (ref.current) {
+          gsap.to(ref.current, {
+            scale: 1,
+            duration: 0.1,
+            ease: 'power3.out',
+            transformOrigin: 'center center',
+          })
+        }
+      }}
+    >
       <text
         x={center[0]}
         y={center[1]}
@@ -34,18 +61,11 @@ export function CountText({
         textAnchor="middle"
         dominantBaseline="middle"
         fill={overlapLabels[id]?.color || 'white'}
-        onClick={() => {
-          setItems(
-            combinationNames[id] || '',
-            Array.from(vennElemMap[id] || [])
-          )
-        }}
-        style={{ cursor: 'pointer' }}
       >
         {n.toLocaleString()}
       </text>
 
-      {settings.showPercentages && (
+      {settings.fonts.percentages.show && (
         <text
           x={center[0]}
           y={center[1] + 16}
@@ -55,18 +75,11 @@ export function CountText({
           textAnchor="middle"
           dominantBaseline="middle"
           fill={overlapLabels[id]?.color || 'white'}
-          onClick={() => {
-            setItems(
-              combinationNames[id] || '',
-              Array.from(vennElemMap[id] || [])
-            )
-          }}
-          style={{ cursor: 'pointer' }}
         >
           {p}%
         </text>
       )}
-    </>
+    </g>
   )
 }
 
@@ -82,7 +95,7 @@ export function TitleText({
   textAnchor = 'middle',
 }: ITitleTextProps) {
   const { vennLists } = useVenn()
-  const { settings } = useVennSettings()
+  const { settings, circles } = useVennSettings()
   const vennList = vennLists[id - 1]
   return (
     <text
@@ -91,13 +104,17 @@ export function TitleText({
       fontSize={settings.fonts.title.size}
       fontWeight={settings.fonts.title.weight}
       fontFamily={settings.fonts.title.family}
-      fill={settings.fonts.title.color}
+      fill={
+        settings.fonts.title.colored
+          ? circles[id]?.fill.color
+          : settings.fonts.title.color
+      }
       textAnchor={textAnchor}
       dominantBaseline="middle"
     >
       {vennList?.name || `List ${id}`}
 
-      {settings.showCounts && (
+      {settings.fonts.counts.show && (
         <tspan>
           {` (${(vennList?.uniqueItems.length || 0).toLocaleString()})`}
         </tspan>
@@ -117,7 +134,7 @@ export interface IVennProps {
 }
 
 export function SVGThreeWayVenn({ overlapLabels = {} }: IVennProps) {
-  const { setSelectedItems, vennLists } = useVenn()
+  const { setSelectedItems } = useVenn()
   const { settings, circles } = useVennSettings()
 
   const center = [settings.w * 0.5, settings.w * 0.5]
@@ -180,12 +197,13 @@ export function SVGThreeWayVenn({ overlapLabels = {} }: IVennProps) {
         cx={cA[0]}
         cy={cA[1]}
         r={settings.radius}
-        fill={circles[1].fill}
-        fillOpacity={circles[1].fillOpacity}
-        stroke={circles[1].stroke}
+        fill={circles[1].fill.color}
+        fillOpacity={circles[1].fill.opacity}
+        stroke={circles[1].stroke.color}
+        strokeOpacity={circles[1].stroke.opacity}
       />
 
-      {settings.showTitles && (
+      {settings.fonts.title.show && (
         <TitleText
           id={1}
           center={[cA[0] - labelRadius * 0.1, cA[1] - labelRadius]}
@@ -205,12 +223,13 @@ export function SVGThreeWayVenn({ overlapLabels = {} }: IVennProps) {
         cx={cB[0]}
         cy={cB[1]}
         r={settings.radius}
-        fill={circles[2].fill}
-        fillOpacity={circles[2].fillOpacity}
-        stroke={circles[2].stroke}
+        fill={circles[2].fill.color}
+        fillOpacity={circles[2].fill.opacity}
+        stroke={circles[2].stroke.color}
+        strokeOpacity={circles[2].stroke.opacity}
       />
 
-      {settings.showTitles && (
+      {settings.fonts.title.show && (
         <TitleText
           id={2}
           center={[cB[0] + labelRadius * 0.1, cB[1] - labelRadius]}
@@ -230,12 +249,13 @@ export function SVGThreeWayVenn({ overlapLabels = {} }: IVennProps) {
         cx={cC[0]}
         cy={cC[1]}
         r={settings.radius}
-        fill={circles[3].fill}
-        fillOpacity={circles[3].fillOpacity}
-        stroke={circles[3].stroke}
+        fill={circles[3].fill.color}
+        fillOpacity={circles[3].fill.opacity}
+        stroke={circles[3].stroke.color}
+        strokeOpacity={circles[3].stroke.opacity}
       />
 
-      {settings.showTitles && (
+      {settings.fonts.title.show && (
         <TitleText id={3} center={[cC[0], cC[1] + labelRadius]} />
       )}
 

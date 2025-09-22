@@ -158,7 +158,7 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
     const emptyHueColName = x //df.colName(x)
     const hueCol =
       hueOrder.length > 1
-        ? df.col(hue).strs.map(v => cleanHue(v))
+        ? df.col(hue).strs.map((v) => cleanHue(v))
         : fill(emptyHueColName, df.shape[0])
 
     //console.log('hue', hueOrder)
@@ -207,7 +207,7 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
     // comparisons. This can be used to work out how much space
     // to allocate to stats whilst keeping the plots aligned
     const values: number[] = [...dataMap.entries()]
-      .map(x =>
+      .map((x) =>
         [...x[1].entries()].map((hue: [string, number[]]) => hue[1]).flat()
       )
       .flat()
@@ -430,7 +430,7 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
                   }
                   fillOpacity={
                     singlePlotDisplayOptions[xOrder[0]!]![hue]!.violin.fill
-                      .alpha
+                      .opacity
                   }
                 />
                 <g transform={`translate(40, 5)`}>

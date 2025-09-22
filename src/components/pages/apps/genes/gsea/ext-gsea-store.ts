@@ -133,7 +133,7 @@ export const DEFAULT_EXT_GSEA_PROPS: IExtGseaDisplayOptions = {
       leadingEdge: {
         fill: {
           color: COLOR_BLUE,
-          alpha: 0.2,
+          opacity: 0.2,
           show: true,
         },
         show: true,
@@ -150,7 +150,7 @@ export const DEFAULT_EXT_GSEA_PROPS: IExtGseaDisplayOptions = {
       leadingEdge: {
         fill: {
           color: COLOR_RED,
-          alpha: 0.2,
+          opacity: 0.2,
           show: true,
         },
         show: true,
@@ -174,7 +174,7 @@ export const DEFAULT_EXT_GSEA_PROPS: IExtGseaDisplayOptions = {
     },
     fill: {
       color: 'gray',
-      alpha: 0.2,
+      opacity: 0.2,
       show: true,
     },
     zeroCross: {

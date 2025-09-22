@@ -491,7 +491,7 @@ export function GenesStructureTrackSvg({
               points={`${arrowHx},${-arrowHy} ${-arrowHx},0 ${arrowHx},${arrowHy}`}
               stroke="none"
               fill={track.displayOptions.arrows.fill.color}
-              fillOpacity={track.displayOptions.arrows.fill.alpha}
+              fillOpacity={track.displayOptions.arrows.fill.opacity}
               //strokeLinecap="round"
               //strokeLinejoin="round"
             />
@@ -500,7 +500,7 @@ export function GenesStructureTrackSvg({
               points={`${arrowHx},${-arrowHy} ${-arrowHx},0 ${arrowHx},${arrowHy}`}
               stroke="none"
               fill={settings.genes.canonical.stroke.color}
-              fillOpacity={track.displayOptions.arrows.fill.alpha}
+              fillOpacity={track.displayOptions.arrows.fill.opacity}
               //strokeLinecap="round"
               //strokeLinejoin="round"
             />
@@ -510,7 +510,7 @@ export function GenesStructureTrackSvg({
               points={`${-arrowHx},${-arrowHy} ${arrowHx},0 ${-arrowHx},${arrowHy}`}
               stroke="none"
               fill={track.displayOptions.arrows.fill.color}
-              fillOpacity={track.displayOptions.arrows.fill.alpha}
+              fillOpacity={track.displayOptions.arrows.fill.opacity}
               //strokeLinecap="round"
               //strokeLinejoin="round"
             />
@@ -519,7 +519,7 @@ export function GenesStructureTrackSvg({
               points={`${-arrowHx},${-arrowHy} ${arrowHx},0 ${-arrowHx},${arrowHy}`}
               stroke="none"
               fill={settings.genes.canonical.stroke.color}
-              fillOpacity={track.displayOptions.arrows.fill.alpha}
+              fillOpacity={track.displayOptions.arrows.fill.opacity}
               //strokeLinecap="round"
               //strokeLinejoin="round"
             />
@@ -604,7 +604,9 @@ export function GenesStructureTrackSvg({
                                   ? settings.genes.canonical.stroke.color
                                   : settings.genes.endArrows.fill.color
                               }
-                              fillOpacity={settings.genes.endArrows.fill.alpha}
+                              fillOpacity={
+                                settings.genes.endArrows.fill.opacity
+                              }
                               stroke={
                                 isCanonical
                                   ? settings.genes.canonical.stroke.color
@@ -688,7 +690,7 @@ export function GenesStructureTrackSvg({
                                     ? settings.genes.canonical.stroke.color
                                     : settings.genes.exons.fill.color
                                 }
-                                fillOpacity={settings.genes.exons.fill.alpha}
+                                fillOpacity={settings.genes.exons.fill.opacity}
                                 stroke="none"
                                 key={ei}
                               >

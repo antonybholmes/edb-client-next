@@ -37,7 +37,7 @@ export interface IScrnaClusterRoundel {
 export const DEFAULT_ROUNDEL: IScrnaClusterRoundel = {
   show: true,
   stroke: { ...DEFAULT_STROKE_PROPS },
-  fill: { ...DEFAULT_FILL_PROPS, color: COLOR_WHITE, alpha: 0.75 },
+  fill: { ...DEFAULT_FILL_PROPS, color: COLOR_WHITE, opacity: 0.75 },
   size: 12,
 }
 

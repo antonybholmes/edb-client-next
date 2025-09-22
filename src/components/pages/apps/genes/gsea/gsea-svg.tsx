@@ -142,7 +142,7 @@ export function GseaSvg({
                   points={leadingPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
                   fill={settings.es.leadingEdge.fill.color}
                   stroke="none"
-                  fillOpacity={settings.es.leadingEdge.fill.alpha}
+                  fillOpacity={settings.es.leadingEdge.fill.opacity}
                 />
               )}
 
@@ -316,7 +316,7 @@ export function GseaSvg({
                   points={displayPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
                   fill={settings.ranking.fill.color}
                   stroke="none"
-                  fillOpacity={settings.ranking.fill.alpha}
+                  fillOpacity={settings.ranking.fill.opacity}
                 />
                 {settings.ranking.zeroCross.show && (
                   <g transform={`translate(${crossingX}, 0)`}>

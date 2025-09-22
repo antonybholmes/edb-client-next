@@ -93,13 +93,13 @@ export function VennList({ vennList }: IProps) {
         <VCenterRow className={cn('shrink-0 gap-x-0.5')}>
           <ColorPickerButton
             allowAlpha={true}
-            color={circles[vennList.id]!.fill}
-            alpha={circles[vennList.id]!.fillOpacity}
+            color={circles[vennList.id]!.fill.color}
+            alpha={circles[vennList.id]!.fill.opacity}
             onColorChange={(color, alpha) =>
               updateCircles(
                 produce(circles, (draft) => {
-                  draft[vennList.id]!.fill = color
-                  draft[vennList.id]!.fillOpacity = alpha
+                  draft[vennList.id]!.fill.color = color
+                  draft[vennList.id]!.fill.opacity = alpha
                 })
               )
             }
@@ -107,11 +107,12 @@ export function VennList({ vennList }: IProps) {
             className={SIMPLE_COLOR_EXT_CLS}
           />
           <ColorPickerButton
-            color={circles[vennList.id]!.stroke}
-            onColorChange={(color) =>
+            color={circles[vennList.id]!.stroke.color}
+            onColorChange={(color, alpha) =>
               updateCircles(
                 produce(circles, (draft) => {
-                  draft[vennList.id]!.stroke = color
+                  draft[vennList.id]!.stroke.color = color
+                  draft[vennList.id]!.stroke.opacity = alpha
                 })
               )
             }
@@ -120,11 +121,12 @@ export function VennList({ vennList }: IProps) {
           />
 
           <ColorPickerButton
-            color={circles[vennList.id]!.color}
-            onColorChange={(color) =>
+            color={circles[vennList.id]!.text.color}
+            onColorChange={(color, alpha) =>
               updateCircles(
                 produce(circles, (draft) => {
-                  draft[vennList.id]!.color = color
+                  draft[vennList.id]!.text.color = color
+                  draft[vennList.id]!.text.opacity = alpha
                 })
               )
             }

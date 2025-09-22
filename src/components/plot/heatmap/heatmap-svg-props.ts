@@ -145,7 +145,7 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
     show: true,
     color: COLOR_BLACK,
     showMetadata: true,
-    alpha: 1,
+    opacity: 1,
   },
   colLabels: {
     position: 'top',
@@ -153,7 +153,7 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
     isColored: true,
     show: true,
     color: COLOR_BLACK,
-    alpha: 1,
+    opacity: 1,
   },
   colorbar: {
     position: 'right',

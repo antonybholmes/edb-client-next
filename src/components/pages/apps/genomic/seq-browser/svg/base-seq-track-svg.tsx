@@ -174,7 +174,7 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
               {truncate(
                 formattedList(
                   tracks.map(
-                    t =>
+                    (t) =>
                       `${t.track.name} ${'platform' in t.track ? `(${t.track.platform})` : ''}`
                   )
                 ),
@@ -251,7 +251,7 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
                   d={coords}
                   fill={t.track.displayOptions.fill.color}
                   stroke="none"
-                  fillOpacity={t.track.displayOptions.fill.alpha}
+                  fillOpacity={t.track.displayOptions.fill.opacity}
                 />
               )}
 

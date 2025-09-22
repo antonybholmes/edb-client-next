@@ -10,17 +10,16 @@ import {
 import { useVennSettings } from './venn-settings-store'
 import { useVenn } from './venn-store'
 
-export function SVGTwoWayVenn({ overlapLabels = {} }: IVennProps) {
+export function SVGOneWayVenn({ overlapLabels = {} }: IVennProps) {
   const { setSelectedItems, vennListsInUse } = useVenn()
   const { settings, circles } = useVennSettings()
 
   const circle1Ref = useRef<SVGCircleElement | null>(null)
-  const circle2Ref = useRef<SVGCircleElement | null>(null)
 
   useEffect(() => {
     // Pulse animation (scale up and down)
     gsap.timeline().fromTo(
-      [circle1Ref.current, circle2Ref.current],
+      [circle1Ref.current],
       {
         scale: 0.5,
         opacity: 0.5,
@@ -73,6 +72,7 @@ export function SVGTwoWayVenn({ overlapLabels = {} }: IVennProps) {
         fill={circles[1].fill.color}
         fillOpacity={circles[1].fill.opacity}
         stroke={circles[1].stroke.color}
+        strokeOpacity={circles[1].stroke.opacity}
       />
 
       <TitleText id={1} center={[cA[0], cA[1] - labelRadius]} />
@@ -80,34 +80,6 @@ export function SVGTwoWayVenn({ overlapLabels = {} }: IVennProps) {
       <CountText
         id={'1'}
         center={[vennListsInUse > 1 ? lA[0] : cA[0], cA[1]]}
-        overlapLabels={overlapLabels}
-        setItems={_setItems}
-      />
-
-      {/* Circle B */}
-      <circle
-        ref={circle2Ref}
-        cx={cB[0]}
-        cy={cB[1]}
-        r={settings.radius}
-        fill={circles[2].fill.color}
-        fillOpacity={circles[2].fill.opacity}
-        stroke={circles[2].stroke.color}
-        strokeOpacity={circles[2].stroke.opacity}
-      />
-
-      <TitleText id={2} center={[cB[0], cB[1] - labelRadius]} />
-
-      <CountText
-        id={'2'}
-        center={[lB[0], cB[1]]}
-        overlapLabels={overlapLabels}
-        setItems={_setItems}
-      />
-
-      <CountText
-        id={'1:2'}
-        center={[(cA[0] + cB[0]) / 2, cA[1]]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />

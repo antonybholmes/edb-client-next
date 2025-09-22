@@ -337,7 +337,7 @@ export function featuresSvg(
           fill={displayProps.features.background.color}
           stroke={displayProps.features.background.border.color}
           strokeOpacity={displayProps.features.background.border.alpha}
-          opacity={displayProps.features.background.alpha}
+          opacity={displayProps.features.background.opacity}
           strokeWidth={
             displayProps.features.background.border.show
               ? displayProps.features.background.border.width
@@ -360,7 +360,7 @@ export function featuresSvg(
               width={width}
               height={displayProps.features.height}
               fill={feature.fill.show ? feature.fill.color : 'none'}
-              opacity={feature.fill.alpha}
+              opacity={feature.fill.opacity}
               stroke={feature.border.show ? feature.border.color : 'none'} //displayProps.features.border.color}
               strokeOpacity={feature.border.alpha}
               strokeWidth={feature.border.show ? feature.border.width : 0}
