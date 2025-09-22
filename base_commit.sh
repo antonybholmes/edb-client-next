@@ -1,5 +1,5 @@
 msg=$1
-type="Fixed"
+type="Fix"
 branch=`git branch --show-current`
 
 if [[ -z "${msg}" ]]
