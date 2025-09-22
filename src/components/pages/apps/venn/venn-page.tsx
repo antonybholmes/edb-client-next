@@ -47,7 +47,6 @@ import {
   ScrollAccordion,
 } from '@themed/accordion'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
-import { NumericalInput } from '@themed/numerical-input'
 import {
   ResizableHandle,
   ResizablePanel,
@@ -83,31 +82,22 @@ import { Tabs } from '@/components/shadcn/ui/themed/tabs'
 import { SideTabs } from '@/components/tabs/side-tabs'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { useZoom } from '@/providers/zoom-provider'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@components/color/color-picker-button'
 import { HeaderPortal } from '@components/header/header-portal'
 import { ModuleInfoButton } from '@components/header/module-info-button'
 import { SaveImageDialog } from '@components/pages/save-image-dialog'
 import { TabContentPanel } from '@components/tabs/tab-content-panel'
 import { TabProvider, type ITab } from '@components/tabs/tab-provider'
-import { PropRow } from '@dialog/prop-row'
-import { SwitchPropRow } from '@dialog/switch-prop-row'
 import { FileIcon } from '@icons/file-icon'
 import { ListIcon } from '@icons/list-icon'
-import { COLOR_BLACK, COLOR_WHITE } from '@lib/color/color'
 import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
 import { downloadDataFrame } from '@lib/dataframe/dataframe-utils'
 import { textToLines } from '@lib/text/lines'
 import { CoreProviders } from '@providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
 import { Card } from '@themed/card'
-import { LinkButton } from '@themed/link-button'
 import { Textarea } from '@themed/textarea'
 import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
 import { ToolbarSeparator } from '@toolbar/toolbar-separator'
-import { produce } from 'immer'
 import { useHistory } from '../matcalc/history/history-store'
 import MODULE_INFO from './module.json'
 import { SVGFourWayVenn } from './svg-four-way-venn'
@@ -115,7 +105,8 @@ import { SVGOneWayVenn } from './svg-one-way-venn'
 import { SVGThreeWayVenn } from './svg-three-way-venn'
 import { SVGTwoWayVenn } from './svg-two-way-venn'
 import { VennList } from './venn-list'
-import { IVennList, makeVennList, useVenn } from './venn-store'
+import { VennPropsPanel } from './venn-props-panel'
+import { IVennList, makeVennList, useVenn, VENN_LIST_IDS } from './venn-store'
 
 function VennPage() {
   const queryClient = useQueryClient()
@@ -254,9 +245,19 @@ function VennPage() {
       .read(lines).t
 
     setVennLists(
-      rangeMap(
-        (ci) => makeVennList(ci + 1, table.index.str(ci), table.row(ci).strs),
-        table.shape[0]
+      Object.fromEntries(
+        rangeMap((ci) => {
+          const id = (ci + 1).toString()
+
+          return [
+            id,
+            makeVennList(
+              (ci + 1).toString(),
+              table.index.str(ci),
+              table.row(ci).strs
+            ),
+          ]
+        }, table.shape[0])
       )
     )
 
@@ -291,10 +292,14 @@ function VennPage() {
     })
 
     setVennLists(
-      res.map(
-        (items: string[], ci: number) =>
-          makeVennList(ci + 1, `List ${ci + 1}`, items),
-        res.length
+      Object.fromEntries(
+        res.map((items: string[], ci: number) => {
+          const id = (ci + 1).toString()
+          return [
+            id,
+            makeVennList((ci + 1).toString(), `List ${ci + 1}`, items),
+          ]
+        })
       )
     )
   }
@@ -305,12 +310,12 @@ function VennPage() {
 
     //console.log(vennLists, 'vennLists')
 
-    for (const [i, vl] of vennLists.entries()) {
-      //console.log(vl, 'vl')
+    for (const [i, id] of VENN_LIST_IDS.entries()) {
+      const vl = vennLists[id]
 
       if (vl.uniqueItems.length > 0) {
         vennSetList.push(vl)
-        inUse = Math.max(inUse, vl.id)
+        inUse = Math.max(inUse, i)
 
         // for (const item of vl.uniqueItems) {
         //   originalNameMap.set(item.toLowerCase(), item)
@@ -321,7 +326,7 @@ function VennPage() {
     // we need to know which items are in which combination so
     // create a map of item to the lists it is found in for example
     // itemA -> [0, 1]
-    const combs = new Map<string, Set<number>>()
+    const combs = new Map<string, Set<string>>()
 
     for (const vl of vennSetList) {
       for (const item of vl.uniqueItems) {
@@ -351,7 +356,7 @@ function VennPage() {
 
     setVennElemMap(vennMap)
 
-    setVennListsInUse(inUse)
+    setVennListsInUse(inUse + 1)
   }, [vennLists, listTextMap, settings])
 
   useEffect(() => {
@@ -456,14 +461,15 @@ function VennPage() {
 
       content: (
         <PropsPanel>
-          <ScrollAccordion value={vennLists.map((vl) => `List ${vl.id}`)}>
-            {vennLists.map((vl) => {
-              const name = `List ${vl.id}`
+          <ScrollAccordion value={VENN_LIST_IDS.map((vl) => `List ${vl}`)}>
+            {VENN_LIST_IDS.map((vi) => {
+              const name = `List ${vi}`
+              const vennList = vennLists[vi]
               return (
                 <AccordionItem value={name} key={name}>
-                  <AccordionTrigger>{vl.name}</AccordionTrigger>
+                  <AccordionTrigger>{vennList.name}</AccordionTrigger>
                   <AccordionContent>
-                    <VennList vennList={vl} />
+                    <VennList vennList={vennList} />
                   </AccordionContent>
                 </AccordionItem>
               )
@@ -476,248 +482,7 @@ function VennPage() {
       //id: nanoid(),
       id: TEXT_SETTINGS,
       icon: <SlidersIcon />,
-      content: (
-        <PropsPanel>
-          <ScrollAccordion
-            value={['plot', 'circles', 'titles', 'counts', 'percentages']}
-          >
-            <AccordionItem value="plot">
-              <AccordionTrigger>Plot</AccordionTrigger>
-              <AccordionContent>
-                <PropRow title="Plot width">
-                  <NumericalInput
-                    id="w"
-                    limit={[200, 10000]}
-                    value={settings.w}
-                    placeholder="Cell width..."
-                    onNumChanged={(w) => {
-                      updateSettings({
-                        w,
-                      })
-                    }}
-                  />
-                </PropRow>
-
-                <PropRow title="Radius">
-                  <NumericalInput
-                    id="r"
-                    limit={[10, 1000]}
-                    value={settings.radius}
-                    placeholder="Circle radius..."
-                    onNumChanged={(r) => {
-                      updateRadius(r)
-                    }}
-                  />
-                </PropRow>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="circles">
-              <AccordionTrigger>Circles</AccordionTrigger>
-              <AccordionContent>
-                <SwitchPropRow
-                  title="Fill"
-                  checked={settings.isFilled}
-                  onCheckedChange={(state) => {
-                    let props = {
-                      ...settings,
-                      isFilled: state,
-                      isOutlined: state ? settings.isOutlined : true,
-                    }
-
-                    if (settings.autoColorText) {
-                      props = {
-                        ...props,
-                        intersectionColor: state ? COLOR_WHITE : COLOR_BLACK,
-                      }
-
-                      updateCircles(
-                        produce(circles, (draft) => {
-                          for (let i = 0; i < circles.length; i++) {
-                            draft[i]!.text.color = state
-                              ? COLOR_WHITE
-                              : draft[i]!.stroke.color
-                          }
-                        })
-                      )
-                    }
-
-                    updateSettings(props)
-                  }}
-                />
-
-                <SwitchPropRow
-                  title="Outline"
-                  checked={settings.isOutlined}
-                  onCheckedChange={(state) =>
-                    updateSettings({
-                      ...settings,
-                      isOutlined: state,
-                      isFilled: state ? settings.isFilled : true,
-                    })
-                  }
-                />
-                <SwitchPropRow
-                  title="Proportional"
-                  checked={settings.isProportional}
-                  onCheckedChange={(state) =>
-                    updateSettings({
-                      ...settings,
-                      isProportional: state,
-                    })
-                  }
-                />
-                <SwitchPropRow
-                  title="Normalize"
-                  checked={settings.normalize}
-                  onCheckedChange={(state) =>
-                    updateSettings({
-                      ...settings,
-                      normalize: state,
-                    })
-                  }
-                />
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="titles">
-              <AccordionTrigger>Titles</AccordionTrigger>
-              <AccordionContent>
-                <SwitchPropRow
-                  title="Show"
-                  checked={settings.fonts.title.show}
-                  onCheckedChange={(state) =>
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.fonts.title.show = state
-                      })
-                    )
-                  }
-                />
-                <SwitchPropRow
-                  title="Colored"
-                  checked={settings.fonts.title.colored}
-                  onCheckedChange={(state) =>
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.fonts.title.colored = state
-                      })
-                    )
-                  }
-                />
-                <SwitchPropRow
-                  title="Counts"
-                  checked={settings.fonts.counts.show}
-                  disabled={!settings.fonts.title.show}
-                  onCheckedChange={(state) =>
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.fonts.counts.show = state
-                      })
-                    )
-                  }
-                />
-                <PropRow title="Font size">
-                  <NumericalInput
-                    limit={[1, 128]}
-                    value={settings.fonts.title.size}
-                    placeholder="Cell width..."
-                    onNumChanged={(w) => {
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.fonts.title.size = w
-                        })
-                      )
-                    }}
-                  />
-                </PropRow>
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="counts">
-              <AccordionTrigger>Counts</AccordionTrigger>
-              <AccordionContent>
-                <SwitchPropRow
-                  title="Auto-color"
-                  checked={settings.autoColorText}
-                  onCheckedChange={(state) =>
-                    updateSettings({
-                      ...settings,
-                      autoColorText: state,
-                    })
-                  }
-                />
-                <PropRow title="Intersection">
-                  <ColorPickerButton
-                    color={settings.intersectionColor}
-                    onColorChange={(color) =>
-                      updateSettings({
-                        intersectionColor: color,
-                      })
-                    }
-                    className={SIMPLE_COLOR_EXT_CLS}
-                  />
-                </PropRow>
-
-                <PropRow title="Font size">
-                  <NumericalInput
-                    limit={[1, 128]}
-                    value={settings.fonts.counts.size}
-                    placeholder="Font size..."
-                    onNumChanged={(w) => {
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.fonts.counts.size = w
-                        })
-                      )
-                    }}
-                  />
-                </PropRow>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="percentages">
-              <AccordionTrigger>Percentages</AccordionTrigger>
-              <AccordionContent>
-                <SwitchPropRow
-                  title="Show"
-                  checked={settings.fonts.percentages.show}
-                  onCheckedChange={(state) =>
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.fonts.percentages.show = state
-                      })
-                    )
-                  }
-                />
-                <PropRow title="Font Size">
-                  <NumericalInput
-                    limit={[1, 128]}
-                    value={settings.fonts.percentages.size}
-                    placeholder="Font size..."
-                    onNumChanged={(w) => {
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.fonts.percentages.size = w
-                        })
-                      )
-                    }}
-                  />
-                </PropRow>
-              </AccordionContent>
-            </AccordionItem>
-          </ScrollAccordion>
-
-          <BaseCol className="justify-start gap-y-2 pt-4">
-            <LinkButton onClick={() => resetSettings()}>
-              Default settings
-            </LinkButton>
-
-            <LinkButton onClick={() => resetCircles()}>
-              Default colors
-            </LinkButton>
-          </BaseCol>
-        </PropsPanel>
-      ),
+      content: <VennPropsPanel />,
     },
   ]
 

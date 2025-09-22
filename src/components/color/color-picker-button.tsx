@@ -14,7 +14,7 @@ import {
 } from '@lib/color/color'
 import { cn } from '@lib/shadcn-utils'
 
-import { BUTTON_MD_H_CLS, FOCUS_INSET_RING_CLS, FOCUS_RING_CLS } from '@/theme'
+import { FOCUS_RING_CLS } from '@/theme'
 
 import { useState } from 'react'
 import {
@@ -26,14 +26,6 @@ import { PropRow } from '../dialog/prop-row'
 import { SwitchPropRow } from '../dialog/switch-prop-row'
 import { inputVariants } from '../shadcn/ui/themed/input'
 import { NumericalInput } from '../shadcn/ui/themed/numerical-input'
-
-const COLOR_INPUT_CLS = cn(
-  BUTTON_MD_H_CLS,
-  //INPUT_BORDER_CLS,
-  FOCUS_INSET_RING_CLS,
-  //INPUT_CLS,
-  'px-2 rounded-theme bg-muted  w-20'
-)
 
 // export const PRESET_COLORS = [
 //   COLOR_WHITE,
@@ -88,7 +80,7 @@ export const SIMPLE_COLOR_EXT_CLS = cn('w-5 h-5 rounded-full', FOCUS_RING_CLS)
 
 export interface IProps extends IButtonProps {
   color: string
-  alpha?: number
+  opacity?: number
   defaultColor?: string | undefined
   autoBorder?: boolean
   defaultBorderColor?: string
@@ -97,7 +89,7 @@ export interface IProps extends IButtonProps {
   allowAlpha?: boolean
   keepAlphaChannel?: boolean
   align?: 'start' | 'end'
-  onColorChange?: (color: string, alpha: number) => void
+  onColorChange?: (color: string, opacity: number) => void
   onCancel?: () => void
   open?: boolean
   onOpenChanged?: (open: boolean) => void
@@ -109,7 +101,7 @@ export interface IProps extends IButtonProps {
 
 export function ColorPickerButton({
   color,
-  alpha = 1,
+  opacity = 1,
   defaultColor,
   tooltip = 'Change color',
   autoBorder = true,
@@ -130,11 +122,12 @@ export function ColorPickerButton({
   title,
   'aria-label': ariaLabel,
   children,
+  ...props
 }: IProps) {
   const lightMode = textColorShouldBeDark(color)
 
   // ensure alpha is maintained
-  const _color = keepAlphaChannel ? color : addAlphaToHex(color, alpha)
+  const _color = keepAlphaChannel ? color : addAlphaToHex(color, opacity)
 
   const border =
     (autoBorder && lightMode) || _color === COLOR_TRANSPARENT
@@ -152,7 +145,7 @@ export function ColorPickerButton({
   return (
     <ColorPickerPopover
       color={color}
-      alpha={alpha}
+      opacity={opacity}
       defaultColor={defaultColor}
       tooltip={tooltip}
       autoBorder={autoBorder}
@@ -163,6 +156,7 @@ export function ColorPickerButton({
       defaultBorderColor={defaultBorderColor}
       align={align}
       className={className}
+      {...props}
     >
       <PopoverTrigger
         className={cn(
@@ -267,7 +261,7 @@ export function ColorPickerPopover({
 
 export function ColorPickerUI({
   color,
-  alpha = 1,
+  opacity: alpha = 1,
   defaultColor,
   onColorChange,
   autoBorder = true,
@@ -306,7 +300,7 @@ export function ColorPickerUI({
   function _onColorChange(color: string) {
     const rgba = hexToRgba(color)
 
-    //console.log( color, rgba, keepAlphaChannel, rgba[3])
+    console.log(color, rgba, keepAlphaChannel, rgba[3], onColorChange)
 
     onColorChange?.(
       keepAlphaChannel ? color : removeAlphaFromHex(color),

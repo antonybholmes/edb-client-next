@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Lots of Venn UI fixes.
 - Bug fixes and updates.
 - Removal of nanostores.
 

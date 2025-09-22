@@ -3,7 +3,13 @@
 import { ThemeLink } from '@components/link/theme-link'
 import { BaseCol } from '@layout/base-col'
 
-import { APP_NAME, SITE_NAME, UPDATED, VERSION } from '@/consts'
+import {
+  APP_NAME,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  UPDATED,
+  VERSION,
+} from '@/consts'
 import { CenterLayout } from '@/layouts/center-layout'
 import type { IChildrenProps } from '@interfaces/children-props'
 import { VCenterRow } from '@layout/v-center-row'
@@ -14,6 +20,8 @@ import { useQuery } from '@tanstack/react-query'
 import { Card } from '@themed/card'
 import { MenuSeparator } from '@themed/dropdown-menu'
 import { BaseImage } from '../base-image'
+import { HCenterCol } from '../layout/h-center-col'
+import { VCenterCol } from '../layout/v-center-col'
 import { BLANK_TARGET } from '../link/base-link'
 
 const LINKS = [
@@ -42,33 +50,37 @@ export function AboutPage({ children }: IChildrenProps) {
 
   return (
     <CenterLayout title="Help" signedRequired={false}>
-      <Card
-        className="text-sm shadow-md w-9/10 md:w-3/4 lg:w-1/2 xl:w-1/3"
-        style={{ paddingLeft: 0, paddingRight: 0 }}
-      >
-        <VCenterRow className="gap-x-4 py-2 px-6">
-          <BaseImage
-            src="/favicon.svg"
-            width={512}
-            height={512}
-            alt={SITE_NAME}
-            className="w-12 aspect-square"
-          />
+      <HCenterCol className="w-9/10 md:w-3/4 lg:w-1/2 2xl:w-1/3 mx-auto gap-y-8">
+        <Card
+          className="text-sm shadow-md w-full"
+          style={{ paddingLeft: 0, paddingRight: 0 }}
+        >
+          <VCenterRow className="gap-x-4 py-2 px-6">
+            <BaseImage
+              src="/favicon.svg"
+              width={512}
+              height={512}
+              alt={SITE_NAME}
+              className="w-12 aspect-square"
+            />
 
-          <span className="text-xl font-semibold tracking-wide">
-            {APP_NAME}
-          </span>
-        </VCenterRow>
+            <VCenterCol>
+              <span className="text-xl font-semibold">{APP_NAME}</span>
+              <span className="text-sm text-foreground/50">
+                {SITE_DESCRIPTION}
+              </span>
+            </VCenterCol>
+          </VCenterRow>
 
-        <MenuSeparator />
+          <MenuSeparator />
 
-        <VCenterRow className="justify-between px-6">
-          <BaseCol className="gap-y-1">
-            <p>
-              Client v{VERSION} ({UPDATED})
-            </p>
-          </BaseCol>
-          {/* <Button
+          <VCenterRow className="justify-between px-6">
+            <BaseCol className="gap-y-1">
+              <p>
+                Client v{VERSION} ({UPDATED})
+              </p>
+            </BaseCol>
+            {/* <Button
               variant="link"
               //target={BLANK_TARGET}
               aria-label="View changelog"
@@ -83,68 +95,69 @@ export function AboutPage({ children }: IChildrenProps) {
               Changelog
             </Button> */}
 
-          <ThemeLink
-            href="/changelog"
-            aria-label="View changelog"
-            target={BLANK_TARGET}
-            //data-underline={true}
-            //className="text-sm text-foreground/50 hover:text-foreground"
-          >
-            Changelog
-          </ThemeLink>
-        </VCenterRow>
-        {serverVersion && (
-          <>
-            <MenuSeparator />
-
-            <BaseCol className="gap-y-1 px-6">
-              <p>
-                Server v{serverVersion} ({serverUpdated})
-              </p>
-            </BaseCol>
-          </>
-        )}
-      </Card>
-      <Card className="text-sm shadow-md w-9/10 md:w-3/4 lg:w-1/2 xl:w-1/3 mt-8">
-        <BaseCol className="gap-y-1">
-          <p>{APP_NAME}</p>
-          <p>
-            {getCopyright()}{' '}
             <ThemeLink
-              href="https://www.antonyholmes.dev"
-              aria-label="Email Antony Holmes"
+              href="/changelog"
+              aria-label="View changelog"
+              target={BLANK_TARGET}
               //data-underline={true}
+              //className="text-sm text-foreground/50 hover:text-foreground"
             >
-              Antony Holmes
+              Changelog
             </ThemeLink>
-            . All rights reserved.
-          </p>
-        </BaseCol>
+          </VCenterRow>
+          {serverVersion && (
+            <>
+              <MenuSeparator />
 
-        <BaseCol className="gap-y-1">
-          <p>
-            This application is made possible by open source software and other
-            services:
-          </p>
+              <BaseCol className="gap-y-1 px-6">
+                <p>
+                  Server v{serverVersion} ({serverUpdated})
+                </p>
+              </BaseCol>
+            </>
+          )}
+        </Card>
+        <Card className="text-sm shadow-md w-full">
+          <BaseCol className="gap-y-1">
+            <p>{APP_NAME}</p>
+            <p>
+              {getCopyright()}{' '}
+              <ThemeLink
+                href="https://www.antonyholmes.dev"
+                aria-label="Email Antony Holmes"
+                //data-underline={true}
+              >
+                Antony Holmes
+              </ThemeLink>
+              . All rights reserved.
+            </p>
+          </BaseCol>
 
-          <ul className="flex flex-col gap-y-0.5">
-            {LINKS.map((link, li) => {
-              return (
-                <li key={li}>
-                  <ThemeLink
-                    href={link[1]!}
-                    aria-label="View tool"
-                    //data-underline={true}
-                  >
-                    {link[0]}
-                  </ThemeLink>
-                </li>
-              )
-            })}
-          </ul>
-        </BaseCol>
-      </Card>
-      {children}
+          <BaseCol className="gap-y-1">
+            <p>
+              This application is made possible by open source software and
+              other services:
+            </p>
+
+            <ul className="flex flex-col gap-y-0.5">
+              {LINKS.map((link, li) => {
+                return (
+                  <li key={li}>
+                    <ThemeLink
+                      href={link[1]!}
+                      aria-label="View tool"
+                      //data-underline={true}
+                    >
+                      {link[0]}
+                    </ThemeLink>
+                  </li>
+                )
+              })}
+            </ul>
+          </BaseCol>
+        </Card>
+        {children}
+      </HCenterCol>
     </CenterLayout>
   )
 }

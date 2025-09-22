@@ -7,10 +7,10 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 export const PLOT_W = 600
 
-const SETTINGS_KEY = `${APP_ID}:module:venn:settings:v50`
+const SETTINGS_KEY = `${APP_ID}:module:venn:settings:v56`
 
 export interface IVennCircleProps {
-  id: number
+  id: string
   name: string
   fill: IColorProps
   stroke: IColorProps
@@ -25,43 +25,47 @@ export const DEFAULT_VENN_CIRCLE_PROPS = {
 
 export type VennCirclesMap = Record<string, IVennCircleProps>
 
-export const DEFAULT_CIRCLE_MAP: IVennCircleProps[] = [
-  {
-    id: 0,
-    name: 'List 0',
-    fill: { color: '#000000', opacity: 0.3, show: true },
-    stroke: { color: '#000000', opacity: 1, show: true },
-    text: { color: COLOR_WHITE, opacity: 1, show: true },
-  },
-  {
-    id: 1,
+export const DEFAULT_CIRCLE_MAP: VennCirclesMap = {
+  // {
+  //   id: 0,
+  //   name: 'List 0',
+  //   fill: { color: '#000000', opacity: 0.3, show: true },
+  //   stroke: { color: '#000000', opacity: 1, show: true },
+  //   text: { color: COLOR_WHITE, opacity: 1, show: true },
+  // },
+
+  '1': {
+    id: '1',
     name: 'List 1',
     fill: { color: '#6495ED', opacity: 0.3, show: true },
     stroke: { color: '#6495ED', opacity: 1, show: true },
     text: { color: COLOR_WHITE, opacity: 1, show: true },
   },
-  {
-    id: 2,
+
+  '2': {
+    id: '2',
     name: 'List 2',
     fill: { color: '#ff0000', opacity: 0.3, show: true },
     stroke: { color: '#ff0000', opacity: 1, show: true },
     text: { color: COLOR_WHITE, opacity: 1, show: true },
   },
-  {
-    id: 3,
+
+  '3': {
+    id: '3',
     name: 'List 3',
     fill: { color: '#3CB371', opacity: 0.3, show: true },
     stroke: { color: '#3CB371', opacity: 1, show: true },
     text: { color: COLOR_WHITE, opacity: 1, show: true },
   },
-  {
-    id: 4,
+
+  '4': {
+    id: '4',
     name: 'List 4',
     fill: { color: '#ba55d3', opacity: 0.3, show: true },
     stroke: { color: '#ba55d3', opacity: 1, show: true },
     text: { color: COLOR_WHITE, opacity: 1, show: true },
   },
-]
+}
 
 export interface IFontProps {
   show: boolean
@@ -94,7 +98,7 @@ export interface IVennSettings {
   intersectionColor: string
   autoColorText: boolean
   normalize: boolean
-  circles: IVennCircleProps[]
+  circles: Record<string, IVennCircleProps>
   fonts: {
     title: IFontProps & { colored: boolean }
     counts: IFontProps
@@ -113,7 +117,7 @@ const DEFAULT_SETTINGS: IVennSettings = {
   autoColorText: true,
 
   normalize: false,
-  circles: [...DEFAULT_CIRCLE_MAP],
+  circles: { ...DEFAULT_CIRCLE_MAP },
   fonts: {
     title: { ...BOLD_FONT, colored: true },
     counts: DEFAULT_FONT,
@@ -124,7 +128,7 @@ const DEFAULT_SETTINGS: IVennSettings = {
 export interface IVennStore extends IVennSettings {
   updateSettings: (settings: Partial<IVennSettings>) => void
   updateRadius: (radius: number) => void
-  updateCircles: (circles: IVennCircleProps[]) => void
+  updateCircles: (circles: Record<string, IVennCircleProps>) => void
 }
 
 export const useVennSettingsStore = create<IVennStore>()(
@@ -138,7 +142,7 @@ export const useVennSettingsStore = create<IVennStore>()(
           ...settings,
         }))
       },
-      updateCircles: (circles: IVennCircleProps[]) => {
+      updateCircles: (circles: Record<string, IVennCircleProps>) => {
         set(
           produce((state) => {
             state.circles = circles
@@ -164,8 +168,8 @@ export function useVennSettings(): {
   settings: IVennSettings
   updateSettings: (settings: Partial<IVennSettings>) => void
   resetSettings: () => void
-  circles: IVennCircleProps[]
-  updateCircles: (circles: IVennCircleProps[]) => void
+  circles: Record<string, IVennCircleProps>
+  updateCircles: (circles: Record<string, IVennCircleProps>) => void
   resetCircles: () => void
   updateRadius: (radius: number) => void
 } {
@@ -181,7 +185,7 @@ export function useVennSettings(): {
   }
 
   function resetCircles() {
-    updateCircles([...DEFAULT_CIRCLE_MAP])
+    updateCircles({ ...DEFAULT_CIRCLE_MAP })
   }
 
   return {

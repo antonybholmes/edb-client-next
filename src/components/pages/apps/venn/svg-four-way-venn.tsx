@@ -1,3 +1,4 @@
+import { ILim } from '@/lib/math/math'
 import { gsap } from 'gsap'
 import { useEffect, useRef } from 'react'
 import {
@@ -6,8 +7,49 @@ import {
   makeTitle,
   TitleText,
 } from './svg-three-way-venn'
-import { useVennSettings } from './venn-settings-store'
+import { IVennCircleProps, useVennSettings } from './venn-settings-store'
 import { useVenn } from './venn-store'
+
+interface IEllipseProps {
+  circle: IVennCircleProps
+  ref: React.RefObject<SVGEllipseElement | null>
+  loc: ILim
+  radius: number
+  transform?: string
+  mode: 'outline' | 'fill'
+}
+
+export function Ellipse({
+  circle,
+  radius,
+  ref,
+  loc,
+  transform,
+  mode,
+}: IEllipseProps) {
+  const { settings } = useVennSettings()
+
+  return (
+    <ellipse
+      ref={ref}
+      cx={loc[0]}
+      cy={loc[1]}
+      rx={radius * 0.5}
+      ry={radius}
+      fill={
+        mode === 'fill' && settings.isFilled && circle.fill.show
+          ? circle.fill.color
+          : 'none'
+      }
+      fillOpacity={circle.fill.opacity}
+      stroke={
+        mode === 'outline' && settings.isOutlined ? circle.stroke.color : 'none'
+      }
+      strokeOpacity={circle.stroke.opacity}
+      transform={transform}
+    />
+  )
+}
 
 export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
   const { setSelectedItems } = useVenn()
@@ -48,87 +90,70 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
     setSelectedItems(makeTitle(name, items), items)
   }
 
-  const center = [settings.w * 0.5, settings.w * 0.5]
+  const center: ILim = [settings.w * 0.5, settings.w * 0.5]
   const radius2 = settings.radius * 1.2
 
   return (
     <>
       {/* Circle A */}
-      <ellipse
+      <Ellipse
         ref={circle1Ref}
-        cx={center[0]}
-        cy={center[1]}
-        rx={radius2 * 0.5}
-        ry={radius2}
-        fill={circles[1].fill.color}
-        fillOpacity={circles[1].fill.opacity}
-        stroke={circles[1].stroke.color}
-        strokeOpacity={circles[1].stroke.opacity}
+        circle={circles[1]}
+        loc={center}
+        radius={radius2}
         transform={`translate(${-radius2 / 2}, ${radius2 / 4}) rotate(-45, ${center[0]}, ${center[1]}) `}
+        mode="fill"
       />
 
       <TitleText
-        id={1}
+        id={'1'}
         center={[center[0] - radius2 * 0.9, center[1] + radius2 * 0.8]}
         textAnchor="end"
       />
 
       {/* Circle B */}
-
-      <ellipse
+      <Ellipse
         ref={circle2Ref}
-        cx={center[0]}
-        cy={center[1]}
-        rx={radius2 * 0.5}
-        ry={radius2}
-        fill={circles[2].fill.color}
-        fillOpacity={circles[2].fill.opacity}
-        stroke={circles[2].stroke.color}
-        strokeOpacity={circles[2].stroke.opacity}
+        circle={circles[2]}
+        loc={center}
+        radius={radius2}
         transform={`rotate(-45, ${center[0]}, ${center[1]})`}
+        mode="fill"
       />
 
       <TitleText
-        id={2}
+        id={'2'}
         center={[center[0] - radius2 / 2, center[1] - radius2]}
       />
 
       {/* Circle C */}
-      <ellipse
+      <Ellipse
         ref={circle3Ref}
-        cx={center[0]}
-        cy={center[1]}
-        rx={radius2 * 0.5}
-        ry={radius2}
-        fill={circles[3].fill.color}
-        fillOpacity={circles[3].fill.opacity}
-        stroke={circles[3].stroke.color}
-        strokeOpacity={circles[3].stroke.opacity}
+        circle={circles[3]}
+        loc={center}
+        radius={radius2}
         transform={`rotate(45, ${center[0]}, ${center[1]})`}
+        mode="fill"
       />
 
       <TitleText
-        id={3}
+        id={'3'}
         center={[center[0] + radius2 / 2, center[1] - radius2]}
       />
 
       {/* Circle 4 */}
 
-      <ellipse
+      <Ellipse
         ref={circle4Ref}
-        cx={center[0]}
-        cy={center[1]}
-        rx={radius2 * 0.5}
-        ry={radius2}
-        fill={circles[4].fill.color}
-        fillOpacity={circles[4].fill.opacity}
-        stroke={circles[4].stroke.color}
-        strokeOpacity={circles[4].stroke.opacity}
+        circle={circles[4]}
+        loc={center}
+        radius={radius2}
         transform={`translate(${radius2 * 0.5}, ${radius2 * 0.25}) rotate(45, ${center[0]}, ${center[1]}) `}
+        mode="fill"
       />
 
       <TitleText
-        id={4}
+        id="4"
         center={[center[0] + radius2 * 0.9, center[1] + radius2 * 0.8]}
         textAnchor="start"
       />
@@ -136,21 +161,21 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
       {/* Lists */}
 
       <CountText
-        id={'1'}
+        id="1"
         center={[center[0] - radius2 * 0.96, center[1] - radius2 * 0.06]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       <CountText
-        id={'2'}
+        id="2"
         center={[center[0] - radius2 * 0.42, center[1] - radius2 * 0.6]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       <CountText
-        id={'3'}
+        id="3"
         center={[center[0] + radius2 * 0.42, center[1] - radius2 * 0.6]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
@@ -164,35 +189,35 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
       />
 
       <CountText
-        id={'1:2'}
+        id="1:2"
         center={[center[0] - radius2 * 0.62, center[1] - radius2 * 0.32]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       <CountText
-        id={'2:3'}
+        id="2:3"
         center={[center[0], center[1] - radius2 * 0.32]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       <CountText
-        id={'3:4'}
+        id="3:4"
         center={[center[0] + radius2 * 0.62, center[1] - radius2 * 0.32]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       <CountText
-        id={'1:3'}
+        id="1:3"
         center={[center[0] - radius2 * 0.52, center[1] + radius2 * 0.48]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       <CountText
-        id={'2:4'}
+        id="2:4"
         center={[center[0] + radius2 * 0.52, center[1] + radius2 * 0.48]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
@@ -206,24 +231,60 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
       />
 
       <CountText
-        id={'1:2:3'}
+        id="1:2:3"
         center={[center[0] - radius2 * 0.32, center[1] + radius2 * 0.05]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       <CountText
-        id={'2:3:4'}
+        id="2:3:4"
         center={[center[0] + radius2 * 0.32, center[1] + radius2 * 0.05]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       <CountText
-        id={'1:2:3:4'}
+        id="1:2:3:4"
         center={[center[0], center[1] + radius2 * 0.4]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
+      />
+
+      <Ellipse
+        ref={circle1Ref}
+        circle={circles['1']}
+        loc={center}
+        radius={radius2}
+        transform={`translate(${-radius2 / 2}, ${radius2 / 4}) rotate(-45, ${center[0]}, ${center[1]}) `}
+        mode="outline"
+      />
+
+      <Ellipse
+        ref={circle2Ref}
+        circle={circles['2']}
+        loc={center}
+        radius={radius2}
+        transform={`rotate(-45, ${center[0]}, ${center[1]})`}
+        mode="outline"
+      />
+
+      <Ellipse
+        ref={circle3Ref}
+        circle={circles['3']}
+        loc={center}
+        radius={radius2}
+        transform={`rotate(45, ${center[0]}, ${center[1]})`}
+        mode="outline"
+      />
+
+      <Ellipse
+        ref={circle4Ref}
+        circle={circles['4']}
+        loc={center}
+        radius={radius2}
+        transform={`translate(${radius2 * 0.5}, ${radius2 * 0.25}) rotate(45, ${center[0]}, ${center[1]}) `}
+        mode="outline"
       />
 
       {/* <text

@@ -59,7 +59,6 @@ import { randId } from '@lib/utils'
 import axios from 'axios'
 
 import type { ITab } from '@components/tabs/tab-provider'
-import { ToggleButtons, ToggleButtonTriggers } from '@components/toggle-buttons'
 import { FileIcon } from '@icons/file-icon'
 import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
 import { textToLines } from '@lib/text/lines'
@@ -67,6 +66,10 @@ import { useQueryClient } from '@tanstack/react-query'
 import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
 import { ZoomSlider } from '@toolbar/zoom-slider'
 
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from '@/components/shadcn/ui/themed/toggle-group'
 import { DownloadIcon } from '@components/icons/download-icon'
 import { HistoryPanel } from '../../matcalc/history/history-panel'
 import { useHistory } from '../../matcalc/history/history-store'
@@ -208,7 +211,23 @@ export function GeneConvPage() {
           </ToolbarTabGroup>
           <ToolbarSeparator />
           <ToolbarTabGroup className="gap-x-2 mr-1" title="From">
-            <ToggleButtons
+            <ToggleGroup
+              //variant="outline"
+              type="single"
+              value={fromSpecies}
+              onValueChange={(v) => {
+                setFromSpecies(v)
+              }}
+              size="toolbar"
+            >
+              {speciesTabs.map((tab) => (
+                <ToggleGroupItem key={tab.id} value={tab.id} className="w-16">
+                  {tab.id}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+
+            {/* <ToggleButtons
               tabs={speciesTabs}
               value={fromSpecies}
               onTabChange={(selectedTab) => {
@@ -217,11 +236,27 @@ export function GeneConvPage() {
               className="rounded-theme overflow-hidden"
             >
               <ToggleButtonTriggers defaultWidth={4.5} variant="tab" />
-            </ToggleButtons>
+            </ToggleButtons> */}
           </ToolbarTabGroup>
           <ToolbarSeparator />
           <ToolbarTabGroup className="gap-x-2 ml-1" title="To">
-            <ToggleButtons
+            <ToggleGroup
+              //variant="outline"
+              type="single"
+              value={toSpecies}
+              onValueChange={(v) => {
+                setToSpecies(v)
+              }}
+              size="toolbar"
+            >
+              {speciesTabs.map((tab) => (
+                <ToggleGroupItem key={tab.id} value={tab.id} className="w-16">
+                  {tab.id}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+
+            {/* <ToggleButtons
               tabs={speciesTabs}
               value={toSpecies}
               onTabChange={(selectedTab) => {
@@ -230,7 +265,7 @@ export function GeneConvPage() {
               className="rounded-theme overflow-hidden"
             >
               <ToggleButtonTriggers defaultWidth={4.5} variant="tab" />
-            </ToggleButtons>
+            </ToggleButtons> */}
           </ToolbarTabGroup>
           <ToolbarSeparator />
         </>

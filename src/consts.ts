@@ -11,7 +11,8 @@ export const SITE_DOMAIN = 'edb.rdf-lab.org'
 
 export const HEADER_SEP = '-'
 
-export const SITE_DESCRIPTION = 'Experiments Application'
+export const SITE_DESCRIPTION =
+  'A collection of data science tools for biologists.'
 export const EMAIL = 'hello@antonyholmes.dev'
 export const RECORDS_PER_PAGE = 12
 export const SEARCH_RECORDS_PER_PAGE = config.SEARCH_RECORDS_PER_PAGE

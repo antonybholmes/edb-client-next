@@ -33,6 +33,8 @@ export function randomRGBAColor(): IRGBA {
   return [...range(3).map(() => Math.floor(Math.random() * 256)), 1] as IRGBA
 }
 
+export type IRGB = [number, number, number]
+
 export type IRGBA = [number, number, number, number]
 
 export const BASE_RGBA: IRGBA = [0, 0, 0, 1]
@@ -111,9 +113,19 @@ export function rgbaStr(rgba: IRGBA): string {
   return 'rgba(' + rgba.join(',') + ')'
 }
 
-export function isLightColor(color: string): boolean {
-  const rgb = hexToRgba(color)
-  const s = rgb[0] + rgb[1] + rgb[2]
+/**
+ * Empirical function to determine if a color is light or dark.
+ * Used to determine if text should be black or white on top of a background color.
+ *
+ * @param color string hex color or rgb/rgba array
+ * @returns true if light color, false if dark color
+ */
+export function isLightColor(color: string | IRGB | IRGBA): boolean {
+  if (typeof color === 'string') {
+    color = hexToRgba(color)
+  }
+
+  const s = color[0] + color[1] + color[2]
 
   return s > 700
 }

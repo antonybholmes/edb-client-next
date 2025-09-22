@@ -1,7 +1,8 @@
+import { COLOR_BLACK, COLOR_WHITE, isLightColor } from '@/lib/color/color'
 import { DEG_TO_RAD, ILim } from '@/lib/math/math'
 import { gsap } from 'gsap'
 import { useEffect, useRef, useState } from 'react'
-import { useVennSettings } from './venn-settings-store'
+import { IVennCircleProps, useVennSettings } from './venn-settings-store'
 import { useVenn } from './venn-store'
 
 interface ICountTextProps {
@@ -11,17 +12,12 @@ interface ICountTextProps {
   setItems: (name: string, items: string[]) => void
 }
 
-export function CountText({
-  id,
-  center,
-  overlapLabels,
-  setItems,
-}: ICountTextProps) {
+export function CountText({ id, center, setItems }: ICountTextProps) {
   const { combinationNames, vennElemMap, originalNames } = useVenn()
-  const { settings } = useVennSettings()
+  const { settings, circles } = useVennSettings()
   const n = vennElemMap[id]?.length || 0
   const d = Object.keys(originalNames).length
-  const p = (d > 0 ? (n / d) * 100 : 0).toFixed(1)
+  const p = d > 0 ? (n / d) * 100 : 0
   const ref = useRef<SVGGElement | null>(null)
   const highlightRef = useRef(null)
 
@@ -46,6 +42,17 @@ export function CountText({
     }
   }, [bbox, highlightRef, highlight])
 
+  let color = COLOR_BLACK
+
+  if (id.includes(':')) {
+    color = settings.isFilled ? COLOR_WHITE : COLOR_BLACK
+  } else {
+    color =
+      settings.isFilled && !isLightColor(circles[id].fill.color)
+        ? COLOR_WHITE
+        : COLOR_BLACK
+  }
+
   return (
     <>
       {highlight && bbox && (
@@ -68,9 +75,9 @@ export function CountText({
           cx={bbox.x + bbox.width * 0.5}
           cy={bbox.y + bbox.height * 0.5}
           r={bbox.width * 0.75}
-          fill="white"
+          fill={COLOR_WHITE}
           fillOpacity={0.2}
-          stroke="white"
+          stroke={settings.isFilled ? COLOR_WHITE : COLOR_BLACK}
           strokeWidth={1}
           pointerEvents="none" // So it doesn’t block interactions
           rx={4}
@@ -111,7 +118,7 @@ export function CountText({
           fontFamily={settings.fonts.counts.family}
           textAnchor="middle"
           dominantBaseline="middle"
-          fill={overlapLabels[id]?.color || 'white'}
+          fill={color}
           pointerEvents="none"
         >
           {n.toLocaleString()}
@@ -126,10 +133,10 @@ export function CountText({
             fontFamily={settings.fonts.percentages.family}
             textAnchor="middle"
             dominantBaseline="middle"
-            fill={overlapLabels[id]?.color || 'white'}
+            fill={color}
             pointerEvents="none"
           >
-            {p}%
+            {Number.isInteger(p) ? p.toString() : p.toFixed(1)}%
           </text>
         )}
       </g>
@@ -138,7 +145,7 @@ export function CountText({
 }
 
 interface ITitleTextProps {
-  id: number
+  id: string
   textAnchor?: string
   center: ILim
 }
@@ -150,7 +157,7 @@ export function TitleText({
 }: ITitleTextProps) {
   const { vennLists } = useVenn()
   const { settings, circles } = useVennSettings()
-  const vennList = vennLists[id - 1]
+  const vennList = vennLists[id]
   return (
     <text
       x={center[0]}
@@ -163,6 +170,7 @@ export function TitleText({
           ? circles[id]?.fill.color
           : settings.fonts.title.color
       }
+      //fillOpacity={settings.fonts.title.colored ? circles[id]?.fill.opacity : 1}
       textAnchor={textAnchor}
       dominantBaseline="middle"
     >
@@ -174,6 +182,31 @@ export function TitleText({
         </tspan>
       )}
     </text>
+  )
+}
+
+export interface ICircleProps {
+  circle: IVennCircleProps
+  ref: React.RefObject<SVGCircleElement | null>
+  loc: ILim
+}
+
+export function Circle({ circle, ref, loc }: ICircleProps) {
+  const { settings } = useVennSettings()
+
+  return (
+    <circle
+      ref={ref}
+      cx={loc[0]}
+      cy={loc[1]}
+      r={settings.radius}
+      fill={settings.isFilled && circle.fill.show ? circle.fill.color : 'none'}
+      fillOpacity={circle.fill.opacity}
+      stroke={
+        settings.isOutlined && circle.stroke.show ? circle.stroke.color : 'none'
+      }
+      strokeOpacity={circle.stroke.opacity}
+    />
   )
 }
 
@@ -246,103 +279,79 @@ export function SVGThreeWayVenn({ overlapLabels = {} }: IVennProps) {
   return (
     <>
       {/* Circle A */}
-      <circle
-        ref={circle1Ref}
-        cx={cA[0]}
-        cy={cA[1]}
-        r={settings.radius}
-        fill={circles[1].fill.color}
-        fillOpacity={circles[1].fill.opacity}
-        stroke={circles[1].stroke.color}
-        strokeOpacity={circles[1].stroke.opacity}
-      />
+
+      <Circle circle={circles['1']} ref={circle1Ref} loc={cA} />
 
       {settings.fonts.title.show && (
         <TitleText
-          id={1}
+          id="1"
           center={[cA[0] - labelRadius * 0.1, cA[1] - labelRadius]}
         />
       )}
 
       <CountText
-        id={'1'}
+        id="1"
         center={lA}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       {/* Circle B */}
-      <circle
-        ref={circle2Ref}
-        cx={cB[0]}
-        cy={cB[1]}
-        r={settings.radius}
-        fill={circles[2].fill.color}
-        fillOpacity={circles[2].fill.opacity}
-        stroke={circles[2].stroke.color}
-        strokeOpacity={circles[2].stroke.opacity}
-      />
+
+      <Circle circle={circles['2']} ref={circle2Ref} loc={cB} />
 
       {settings.fonts.title.show && (
         <TitleText
-          id={2}
+          id="2"
           center={[cB[0] + labelRadius * 0.1, cB[1] - labelRadius]}
         />
       )}
 
       <CountText
-        id={'2'}
+        id="2"
         center={lB}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       {/* Circle C */}
-      <circle
-        ref={circle3Ref}
-        cx={cC[0]}
-        cy={cC[1]}
-        r={settings.radius}
-        fill={circles[3].fill.color}
-        fillOpacity={circles[3].fill.opacity}
-        stroke={circles[3].stroke.color}
-        strokeOpacity={circles[3].stroke.opacity}
-      />
+
+      <Circle circle={circles['3']} ref={circle3Ref} loc={cC} />
 
       {settings.fonts.title.show && (
-        <TitleText id={3} center={[cC[0], cC[1] + labelRadius]} />
+        <TitleText id="3" center={[cC[0], cC[1] + labelRadius]} />
       )}
 
       <CountText
-        id={'3'}
+        id="3"
         center={lC}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       <CountText
-        id={'1:2'}
+        id="1:2"
         center={[(cA[0] + cB[0]) / 2, lA[1]]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       <CountText
-        id={'1:3'}
+        id="1:3"
         center={[(lA[0] + lC[0]) / 2, (lA[1] + lC[1]) / 2]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       <CountText
-        id={'2:3'}
+        id="2:3"
         center={[(lB[0] + lC[0]) / 2, (lB[1] + lC[1]) / 2]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       <CountText
-        id={'1:2:3'}
+        id="1:2:3"
         center={[cC[0], center[1]]}
         overlapLabels={overlapLabels}
         setItems={_setItems}

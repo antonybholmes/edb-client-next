@@ -66,7 +66,7 @@ export function DisplayPropsPanel() {
                   color={
                     settings.baseColors[base.toLowerCase() as DNABase].color
                   }
-                  alpha={
+                  opacity={
                     settings.baseColors[base.toLowerCase() as DNABase].opacity
                   }
                   onColorChange={(color, alpha) =>

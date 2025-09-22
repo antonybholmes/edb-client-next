@@ -4,7 +4,7 @@ import { textToLines } from '@/lib/text/lines'
 import { produce } from 'immer'
 import { create } from 'zustand'
 
-const LIST_IDS: number[] = [1, 2, 3, 4]
+export const VENN_LIST_IDS: string[] = ['1', '2', '3', '4']
 
 export function getItems(text: string | undefined | null): string[] {
   if (!text) {
@@ -52,7 +52,7 @@ export function getItems(text: string | undefined | null): string[] {
 // }
 
 export interface IVennList {
-  id: number
+  id: string
   name: string
   //text: string
   items: string[]
@@ -60,7 +60,7 @@ export interface IVennList {
 }
 
 export function makeVennList(
-  id: number,
+  id: string,
   name: string,
   text: string | string[]
 ): IVennList {
@@ -86,7 +86,7 @@ export function makeVennList(
 
 export interface IVennOptions {
   selectedItems: { name: string; items: string[] }
-  vennLists: IVennList[]
+  vennLists: Record<string, IVennList>
   vennListsInUse: number
   originalNames: Record<string, string>
 
@@ -103,13 +103,18 @@ export const COMBINATIONS: number[][] = makeCombinations(range(1, 5))
 
 const DEFAULT_SETTINGS: IVennOptions = {
   selectedItems: { name: '', items: [] },
-  vennLists: LIST_IDS.map((id) => ({
-    id,
-    name: `List ${id}`,
-    text: '',
-    items: [],
-    uniqueItems: [],
-  })),
+  vennLists: Object.fromEntries(
+    VENN_LIST_IDS.map((id) => [
+      id,
+      {
+        id,
+        name: `List ${id}`,
+        text: '',
+        items: [],
+        uniqueItems: [],
+      },
+    ])
+  ),
   originalNames: {},
   combinationNames: {},
   vennElemMap: {},
@@ -119,8 +124,8 @@ const DEFAULT_SETTINGS: IVennOptions = {
 
 export interface IVennStore extends IVennOptions {
   setSelectedItems: (name: string, items: string[]) => void
-  setVennLists: (vennLists: IVennList[]) => void
-  updateVennListFromText: (id: number, text: string) => void
+  setVennLists: (vennLists: Record<string, IVennList>) => void
+  updateVennListFromText: (id: string, text: string) => void
   setVennElemMap: (vennElemMap: Record<string, string[]>) => void
   setVennListsInUse: (n: number) => void
 }
@@ -130,15 +135,21 @@ export const useVennStore = create<IVennStore>((set) => ({
   setSelectedItems: (name: string, items: string[]) => {
     set({ selectedItems: { name, items } })
   },
-  setVennLists: (vennLists: IVennList[]) => {
+  setVennLists: (vennLists: Record<string, IVennList>) => {
     set(
       produce((state: IVennStore) => {
-        vennLists = vennLists.slice(0, 4).map((vl, i) => ({ ...vl, id: i + 1 }))
+        vennLists = Object.fromEntries(
+          Object.entries(vennLists)
+            .sort((a, b) => a[0].localeCompare(b[0]))
+            .slice(0, 4)
+            .map(([_, vl], i) => {
+              const id = (i + 1).toString()
+              return [id, { ...vl, id }]
+            })
+        )
 
         // add at most first 4 items and also fix the ids
-        for (const [i, vl] of vennLists.entries()) {
-          state.vennLists[i] = vl
-        }
+        state.vennLists = { ...state.vennLists, ...vennLists }
 
         state.originalNames = Object.fromEntries(
           [
@@ -160,14 +171,13 @@ export const useVennStore = create<IVennStore>((set) => ({
       })
     )
   },
-  updateVennListFromText: (id: number, text: string) => {
+  updateVennListFromText: (id: string, text: string) => {
     set(
       produce((state: IVennStore) => {
-        const index = id - 1
         //state.vennLists[id].text = text
-        state.vennLists[index].items = getItems(text)
-        state.vennLists[index].uniqueItems = [
-          ...new Set(state.vennLists[index].items),
+        state.vennLists[id].items = getItems(text)
+        state.vennLists[id].uniqueItems = [
+          ...new Set(state.vennLists[id].items),
         ].sort()
 
         state.originalNames = {
@@ -175,14 +185,14 @@ export const useVennStore = create<IVennStore>((set) => ({
             [
               ...new Set(
                 Object.entries(state.vennLists)
-                  .filter(([k]) => parseInt(k) !== id)
+                  .filter(([k]) => k !== id)
                   .map(([, v]) => v.items)
                   .flat()
               ),
             ].map((v) => [v.toLowerCase(), v])
           ),
           ...Object.fromEntries(
-            state.vennLists[index].items.map((v) => [v.toLowerCase(), v])
+            state.vennLists[id].items.map((v) => [v.toLowerCase(), v])
           ),
         }
 

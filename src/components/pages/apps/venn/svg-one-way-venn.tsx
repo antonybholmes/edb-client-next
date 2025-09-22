@@ -2,6 +2,7 @@ import { DEG_TO_RAD, ILim } from '@/lib/math/math'
 import { gsap } from 'gsap'
 import { useEffect, useRef } from 'react'
 import {
+  Circle,
   CountText,
   IVennProps,
   makeTitle,
@@ -63,21 +64,13 @@ export function SVGOneWayVenn({ overlapLabels = {} }: IVennProps) {
   return (
     <>
       {/* Circle A */}
-      <circle
-        ref={circle1Ref}
-        cx={cA[0]}
-        cy={cA[1]}
-        r={settings.radius}
-        fill={circles[1].fill.color}
-        fillOpacity={circles[1].fill.opacity}
-        stroke={circles[1].stroke.color}
-        strokeOpacity={circles[1].stroke.opacity}
-      />
 
-      <TitleText id={1} center={[cA[0], cA[1] - labelRadius]} />
+      <Circle ref={circle1Ref} loc={cA} circle={circles[1]} />
+
+      <TitleText id="1" center={[cA[0], cA[1] - labelRadius]} />
 
       <CountText
-        id={'1'}
+        id="1"
         center={[vennListsInUse > 1 ? lA[0] : cA[0], cA[1]]}
         overlapLabels={overlapLabels}
         setItems={_setItems}

@@ -2,6 +2,7 @@ import { DEG_TO_RAD, ILim } from '@/lib/math/math'
 import { gsap } from 'gsap'
 import { useEffect, useRef } from 'react'
 import {
+  Circle,
   CountText,
   IVennProps,
   makeTitle,
@@ -65,48 +66,32 @@ export function SVGTwoWayVenn({ overlapLabels = {} }: IVennProps) {
   return (
     <>
       {/* Circle A */}
-      <circle
-        ref={circle1Ref}
-        cx={cA[0]}
-        cy={cA[1]}
-        r={settings.radius}
-        fill={circles[1].fill.color}
-        fillOpacity={circles[1].fill.opacity}
-        stroke={circles[1].stroke.color}
-      />
+      <Circle ref={circle1Ref} loc={cA} circle={circles['1']} />
 
-      <TitleText id={1} center={[cA[0], cA[1] - labelRadius]} />
+      <TitleText id="1" center={[cA[0], cA[1] - labelRadius]} />
 
       <CountText
-        id={'1'}
+        id="1"
         center={[vennListsInUse > 1 ? lA[0] : cA[0], cA[1]]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       {/* Circle B */}
-      <circle
-        ref={circle2Ref}
-        cx={cB[0]}
-        cy={cB[1]}
-        r={settings.radius}
-        fill={circles[2].fill.color}
-        fillOpacity={circles[2].fill.opacity}
-        stroke={circles[2].stroke.color}
-        strokeOpacity={circles[2].stroke.opacity}
-      />
 
-      <TitleText id={2} center={[cB[0], cB[1] - labelRadius]} />
+      <Circle ref={circle2Ref} loc={cB} circle={circles['2']} />
+
+      <TitleText id="2" center={[cB[0], cB[1] - labelRadius]} />
 
       <CountText
-        id={'2'}
+        id="2"
         center={[lB[0], cB[1]]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       <CountText
-        id={'1:2'}
+        id="1:2"
         center={[(cA[0] + cB[0]) / 2, cA[1]]}
         overlapLabels={overlapLabels}
         setItems={_setItems}

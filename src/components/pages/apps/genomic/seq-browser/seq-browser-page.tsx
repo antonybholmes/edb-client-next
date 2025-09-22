@@ -72,6 +72,10 @@ import { Card } from '@themed/card'
 import { ToolbarFooterButton } from '@toolbar/toolbar-footer-button'
 
 import { useSettingsTabs } from '@/components/dialog/settings/setting-tabs-store'
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from '@/components/shadcn/ui/themed/toggle-group'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { useSearch } from '@/hooks/search'
@@ -85,6 +89,7 @@ import type { IGeneDbInfo } from '../annotate/annotate-page'
 import { LocationAutocomplete } from './location-autocomplete'
 import { LocationsPropsPanel } from './locations/locations-props-panel'
 import {
+  GeneView,
   useSeqBrowserSettings,
   type BinSize,
   type GeneDisplay,
@@ -392,15 +397,43 @@ function SeqBrowserPage() {
               </SelectContent>
             </Select>
 
-            <ToolbarCol>
+            <ToggleGroup
+              //variant="outline"
+              type="single"
+              value={settings.genes.view}
+              onValueChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.genes.view = v as GeneView
+                  })
+                )
+              }}
+              className="flex flex-col items-start gap-y-0.5"
+              size="toolbar"
+              justify="start"
+            >
+              <ToggleGroupItem
+                key="transcript"
+                value="transcript"
+                className=" px-2"
+              >
+                Transcript
+              </ToggleGroupItem>
+
+              <ToggleGroupItem key="exon" value="exon" className="px-2">
+                Exons
+              </ToggleGroupItem>
+            </ToggleGroup>
+            {/* <ToolbarCol>
               <ToolbarButton
                 //rounded="none"
                 checked={settings.genes.view === 'transcript'}
                 onClick={() => {
-                  const newSettings = produce(settings, (draft) => {
-                    draft.genes.view = 'transcript'
-                  })
-                  updateSettings(newSettings)
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.view = 'transcript'
+                    })
+                  )
                 }}
                 title="Transcript View"
               >
@@ -419,7 +452,7 @@ function SeqBrowserPage() {
               >
                 Exons
               </ToolbarButton>
-            </ToolbarCol>
+            </ToolbarCol> */}
 
             <ToolbarSeparator />
 

@@ -71,8 +71,6 @@ export function VennList({ vennList }: IProps) {
   // we split these later to get the actual items
   //const [listTextMap, setListTextMap] = useState<Map<number, string>>(new Map())
 
-  const index = vennList.id - 1
-
   return (
     <BaseCol className="gap-y-1">
       <VCenterRow className="gap-x-2">
@@ -83,30 +81,32 @@ export function VennList({ vennList }: IProps) {
             //console.log(index, e.target.value)
             setVennLists(
               produce(vennLists, (draft) => {
-                draft[index]!.name = e.target.value
+                draft[vennList.id]!.name = e.target.value
               })
             )
           }}
           className="w-0 grow rounded-theme"
           placeholder={`List ${vennList.id} name...`}
         />
-        <VCenterRow className={cn('shrink-0 gap-x-0.5')}>
+        <VCenterRow className={cn('shrink-0 gap-x-1 pr-1')}>
           <ColorPickerButton
             allowAlpha={true}
             color={circles[vennList.id]!.fill.color}
-            alpha={circles[vennList.id]!.fill.opacity}
-            onColorChange={(color, alpha) =>
+            opacity={circles[vennList.id]!.fill.opacity}
+            onColorChange={(color, opacity) => {
+              console.log('color', color, opacity)
               updateCircles(
                 produce(circles, (draft) => {
                   draft[vennList.id]!.fill.color = color
-                  draft[vennList.id]!.fill.opacity = alpha
+                  draft[vennList.id]!.fill.opacity = opacity
                 })
               )
-            }
+            }}
             title="Fill color"
             className={SIMPLE_COLOR_EXT_CLS}
           />
           <ColorPickerButton
+            allowAlpha={true}
             color={circles[vennList.id]!.stroke.color}
             onColorChange={(color, alpha) =>
               updateCircles(
@@ -120,7 +120,7 @@ export function VennList({ vennList }: IProps) {
             className={SIMPLE_COLOR_EXT_CLS}
           />
 
-          <ColorPickerButton
+          {/* <ColorPickerButton
             color={circles[vennList.id]!.text.color}
             onColorChange={(color, alpha) =>
               updateCircles(
@@ -132,7 +132,7 @@ export function VennList({ vennList }: IProps) {
             }
             title="Text color"
             className={SIMPLE_COLOR_EXT_CLS}
-          />
+          /> */}
         </VCenterRow>
       </VCenterRow>
 

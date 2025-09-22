@@ -1,4 +1,8 @@
-import { BUTTON_MD_H_CLS, FOCUS_INSET_RING_CLS } from '@/theme'
+import {
+  BUTTON_MD_H_CLS,
+  FOCUS_INSET_RING_CLS,
+  TOOLBAR_BUTTON_H_CLS,
+} from '@/theme'
 import { cn } from '@lib/shadcn-utils'
 import * as TogglePrimitive from '@radix-ui/react-toggle'
 import { cva, type VariantProps } from 'class-variance-authority'
@@ -24,11 +28,11 @@ export const toggleVariants = cva(
         sm: 'h-7',
         md: cn(BUTTON_MD_H_CLS, 'px-2'),
         lg: 'h-10 px-3',
-        toolbar: 'h-9',
+        toolbar: TOOLBAR_BUTTON_H_CLS,
         colorful: 'h-16 w-24',
       },
       justify: {
-        start: 'justify-start',
+        start: 'justify-start text-left',
         center: 'justify-center',
       },
       rounded: {

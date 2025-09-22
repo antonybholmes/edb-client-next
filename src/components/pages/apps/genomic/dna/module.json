@@ -1,7 +1,7 @@
 {
   "name": "DNA",
   "description": "Get DNA sequences",
-  "version": "6.4.0.420",
+  "version": "6.4.2.422",
   "copyright": "Copyright (C) ${START_YEAR:2024} Antony Holmes. All rights reserved.",
-  "modified": "2025-09-22T17:20:48.869Z"
+  "modified": "2025-09-22T17:22:24.079Z"
 }
