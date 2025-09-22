@@ -7,7 +7,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 export const PLOT_W = 600
 
-const SETTINGS_KEY = `${APP_ID}:module:venn:settings:v56`
+const SETTINGS_KEY = `${APP_ID}:module:venn:settings:v58`
 
 export interface IVennCircleProps {
   id: string
@@ -112,7 +112,7 @@ const DEFAULT_SETTINGS: IVennSettings = {
   scale: 1,
   isProportional: false,
   isFilled: true,
-  isOutlined: false,
+  isOutlined: true,
   intersectionColor: COLOR_WHITE,
   autoColorText: true,
 
