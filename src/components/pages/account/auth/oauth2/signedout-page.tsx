@@ -41,7 +41,7 @@ export function SignedOutPage() {
   // }
 
   return (
-    <CenterLayout signedRequired={false}>
+    <CenterLayout signedRequired={false} showAccountButton={true}>
       <Card
         className="shadow-2xl w-128 text-sm"
         rounded="2xl"
