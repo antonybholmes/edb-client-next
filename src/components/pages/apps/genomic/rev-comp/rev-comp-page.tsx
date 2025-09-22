@@ -323,7 +323,7 @@ export function RevCompPage() {
                   checked={modeComp}
                   onCheckedChange={(state) => setModeComp(state)}
                 >
-                  Compliment
+                  Complement
                 </Checkbox>
               </AccordionContent>
             </AccordionItem>
@@ -355,7 +355,7 @@ export function RevCompPage() {
         />
       )}
 
-      <ShortcutLayout signedRequired={false}>
+      <ShortcutLayout signedRequired={false} showAccountButton={false}>
         <HeaderPortal>
           <ModuleInfoButton info={MODULE_INFO} />
         </HeaderPortal>

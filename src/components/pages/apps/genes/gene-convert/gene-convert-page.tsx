@@ -66,6 +66,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
 import { ZoomSlider } from '@toolbar/zoom-slider'
 
+import { HeaderPortal } from '@/components/header/header-portal'
+import { ModuleInfoButton } from '@/components/header/module-info-button'
 import {
   ToggleGroup,
   ToggleGroupItem,
@@ -74,6 +76,7 @@ import { DownloadIcon } from '@components/icons/download-icon'
 import { HistoryPanel } from '../../matcalc/history/history-panel'
 import { useHistory } from '../../matcalc/history/history-store'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
+import MODULE_INFO from './module.json'
 
 export function GeneConvPage() {
   const queryClient = useQueryClient()
@@ -466,7 +469,10 @@ export function GeneConvPage() {
         </BasicAlertDialog>
       )}
 
-      <ShortcutLayout signedRequired={false}>
+      <ShortcutLayout signedRequired={false} showAccountButton={false}>
+        <HeaderPortal>
+          <ModuleInfoButton info={MODULE_INFO} />
+        </HeaderPortal>
         <Toolbar tabs={tabs}>
           <ToolbarMenu
             open={showFileMenu}

@@ -1457,7 +1457,7 @@ export function MatcalcPage() {
         </BasicAlertDialog>
       )}
 
-      <ShortcutLayout signedRequired={false} showAccountButton={true}>
+      <ShortcutLayout signedRequired={false}>
         <HeaderPortal>
           <ModuleInfoButton info={MODULE_INFO} />
           {/* <LoadingSpinner/> */}

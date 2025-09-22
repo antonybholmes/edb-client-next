@@ -64,6 +64,8 @@ import {
 } from '@lib/genomic/overlap/overlap'
 import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
 
+import { HeaderPortal } from '@/components/header/header-portal'
+import { ModuleInfoButton } from '@/components/header/module-info-button'
 import { DownloadIcon } from '@components/icons/download-icon'
 import type { ITab } from '@components/tabs/tab-provider'
 import { reorder } from '@lib/math/reorder'
@@ -71,6 +73,7 @@ import { where } from '@lib/math/where'
 import { ZoomSlider } from '@toolbar/zoom-slider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { FilesPropsPanel } from './files-props-panel'
+import MODULE_INFO from './module.json'
 import { OverlapContext, OverlapProvider } from './overlap-provider'
 
 function OverlapPage() {
@@ -411,7 +414,10 @@ function OverlapPage() {
         </OKCancelDialog>
       )}
 
-      <ShortcutLayout signedRequired={false}>
+      <ShortcutLayout signedRequired={false} showAccountButton={false}>
+        <HeaderPortal>
+          <ModuleInfoButton info={MODULE_INFO} />
+        </HeaderPortal>
         <Toolbar tabs={tabs}>
           <ToolbarMenu
             open={showFileMenu}

@@ -1,5 +1,12 @@
 # Changelog
 
+## 28.6 (Sep, 2025)
+
+### Changed
+
+- Fix UI inconsistencies when showing signin button in header.
+
+
 ## 28.4 (Sep, 2025)
 
 ### Added

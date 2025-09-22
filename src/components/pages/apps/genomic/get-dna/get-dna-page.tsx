@@ -406,7 +406,7 @@ export function GetDNAPage() {
                   checked={modeComp}
                   onCheckedChange={(state) => setModeComp(state)}
                 >
-                  Compliment
+                  Complement
                 </Switch>
               </CollapseBlock>
 

@@ -1574,6 +1574,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2025-09-21T03:37:05.141Z"
+        },
+        {
+          "msg": "Lots of Venn UI fixes",
+          "date": "2025-09-22T21:19:59.170Z"
         }
       ],
       "Added": [

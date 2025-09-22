@@ -459,6 +459,7 @@ export function MotifsPage() {
 
       <ShortcutLayout
         signedRequired={false}
+        showAccountButton={false}
 
         // shortcuts={
         //   <Shortcuts

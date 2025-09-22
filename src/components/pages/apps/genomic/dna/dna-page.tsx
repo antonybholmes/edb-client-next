@@ -90,10 +90,12 @@ import { Label } from '@themed/label'
 import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
 import { ZoomSlider } from '@toolbar/zoom-slider'
 
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from '@/components/shadcn/ui/themed/toggle-group'
 import { HeaderPortal } from '@components/header/header-portal'
 import { ModuleInfoButton } from '@components/header/module-info-button'
-import { Tabs } from '@components/shadcn/ui/themed/tabs'
-import { IOSTabsList } from '@components/tabs/ios-tabs'
 import { DownloadIcon } from '@icons/download-icon'
 import { HistoryPanel } from '../../matcalc/history/history-panel'
 import { useHistory } from '../../matcalc/history/history-store'
@@ -279,8 +281,7 @@ export function DNAPage() {
             <AccordionItem value="display">
               <AccordionTrigger>Display</AccordionTrigger>
               <AccordionContent>
-                <VCenterRow className="gap-x-4">
-                  <Tabs
+                {/* <Tabs
                     value={format}
                     onValueChange={(v) => {
                       setFormat(v as FORMAT_TYPE)
@@ -291,8 +292,28 @@ export function DNAPage() {
                       value={format}
                       tabs={[{ id: 'Auto' }, { id: 'Upper' }, { id: 'Lower' }]}
                     />
-                  </Tabs>
-                </VCenterRow>
+                  </Tabs> */}
+                <PropRow title="Letters" />
+                <ToggleGroup
+                  //variant="outline"
+                  type="single"
+                  value={format}
+                  onValueChange={(v) => {
+                    setFormat(v as FORMAT_TYPE)
+                  }}
+                >
+                  <ToggleGroupItem value="Auto" className="px-2">
+                    Auto
+                  </ToggleGroupItem>
+
+                  <ToggleGroupItem value="Upper" className="px-2">
+                    Upper
+                  </ToggleGroupItem>
+
+                  <ToggleGroupItem value="Lower" className="px-2">
+                    Lower
+                  </ToggleGroupItem>
+                </ToggleGroup>
 
                 <PropRow title="Mask" />
                 <VCenterRow className="gap-x-4">
@@ -426,7 +447,7 @@ export function DNAPage() {
         />
       )}
 
-      <ShortcutLayout signedRequired={false}>
+      <ShortcutLayout signedRequired={false} showAccountButton={false}>
         <HeaderPortal>
           <ModuleInfoButton info={MODULE_INFO} />
         </HeaderPortal>

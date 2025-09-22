@@ -156,12 +156,12 @@ export async function fetchDNA(
   location: GenomicLocation,
   params: IDNAOptions = {}
 ): Promise<IDNA> {
-  const { assembly, format, mask, reverse, compliment } = {
+  const { assembly, format, mask, reverse, complement } = {
     assembly: 'grch38',
     format: 'Auto',
     mask: '',
     reverse: false,
-    compliment: false,
+    complement: false,
     ...params,
   }
 
@@ -178,7 +178,7 @@ export async function fetchDNA(
           ['format', format],
           ['mask', mask],
           ['rev', reverse.toString()],
-          ['comp', compliment.toString()],
+          ['comp', complement.toString()],
         ])
 
         //console.log({ locations: [location.toString()] })
@@ -211,7 +211,7 @@ export async function fetchDNA(
 
 export function dnaToJson(seqs: IDNA[]): string {
   return JSON.stringify(
-    seqs.map(seq => ({
+    seqs.map((seq) => ({
       chr: seq.location.chr,
       start: seq.location.start,
       end: seq.location.end,

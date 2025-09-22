@@ -111,7 +111,7 @@ export function SignInRequired({ children }: ISignInLayoutProps) {
 export function SignInLayout({
   signInMode = 'auth0', //username-password',
   signedRequired = true,
-  showAccountButton = false,
+  showAccountButton = true,
   redirectUrl = '',
   className,
   headerTrayChildren,

@@ -620,7 +620,7 @@ export function GseaPage() {
         />
       )}
 
-      <ShortcutLayout signedRequired={false}>
+      <ShortcutLayout signedRequired={false} showAccountButton={false}>
         <HeaderPortal>
           <ModuleInfoButton info={MODULE_INFO} />
 

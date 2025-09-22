@@ -1589,5 +1589,18 @@
     },
     "author": "Antony Holmes",
     "date": "2025-09-20T22:07:33.621Z"
+  },
+  {
+    "version": "28.6",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Fix UI inconsistencies when showing signin button in header",
+          "date": "2025-09-22T22:28:41.609Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-09-22T22:28:41.609Z"
   }
 ]
