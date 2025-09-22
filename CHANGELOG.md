@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Fix UI inconsistencies when showing signin button in header.
 
 
