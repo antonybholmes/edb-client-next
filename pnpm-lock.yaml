@@ -117,8 +117,8 @@ importers:
         specifier: ^4.1.13
         version: 4.1.13
       '@tanstack/react-query':
-        specifier: ^5.90.1
-        version: 5.90.1(react@19.1.1)
+        specifier: ^5.90.2
+        version: 5.90.2(react@19.1.1)
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -183,8 +183,8 @@ importers:
         specifier: ^0.544.0
         version: 0.544.0(react@19.1.1)
       motion:
-        specifier: ^12.23.18
-        version: 12.23.18(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        specifier: ^12.23.19
+        version: 12.23.19(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       nanoid:
         specifier: ^5.1.6
         version: 5.1.6
@@ -1645,11 +1645,11 @@ packages:
   '@tailwindcss/postcss@4.1.13':
     resolution: {integrity: sha512-HLgx6YSFKJT7rJqh9oJs/TkBFhxuMOfUKSBEPYwV+t78POOBsdQ7crhZLzwcH3T0UyUuOzU/GK5pk5eKr3wCiQ==}
 
-  '@tanstack/query-core@5.90.1':
-    resolution: {integrity: sha512-hmi8i+mWP3QnD8yq3+6LWri9IEZAlFbpbM/UVB+TJtp5RIxUfzuARqyW39b+HCfBKKnFKSHWMXNB5YN8lo/E/Q==}
+  '@tanstack/query-core@5.90.2':
+    resolution: {integrity: sha512-k/TcR3YalnzibscALLwxeiLUub6jN5EDLwKDiO7q5f4ICEoptJ+n9+7vcEFy5/x/i6Q+Lb/tXrsKCggf5uQJXQ==}
 
-  '@tanstack/react-query@5.90.1':
-    resolution: {integrity: sha512-tN7Fx2HuV2SBhl+STgL8enbfSInRoNU1B1+5LIU62klcMElE4lFzol4aReuRSUeD6ntzPayK0KrM6w9+ZlHEkw==}
+  '@tanstack/react-query@5.90.2':
+    resolution: {integrity: sha512-CLABiR+h5PYfOWr/z+vWFt5VsOA2ekQeRQBFSKlcoW6Ndx/f8rfyVmq4LbgOM4GG2qtxAxjLYLOpCNTYm4uKzw==}
     peerDependencies:
       react: ^18 || ^19
 
@@ -2865,8 +2865,8 @@ packages:
   fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
 
-  framer-motion@12.23.18:
-    resolution: {integrity: sha512-HBVXBL5x3nk/0WrYM5G4VgjBey99ytVYET5AX17s/pcnlH90cyaxVUqgoN8cpF4+PqZRVOhwWsv28F+hxA9Tzg==}
+  framer-motion@12.23.19:
+    resolution: {integrity: sha512-AaWAohgTs2+wUoDdpJaaqMgV6vkm1uzzDlZUItem45linLrFiFqi4iw7bryhcVqu4loaaSLtSjAojfCAB3qczw==}
     peerDependencies:
       '@emotion/is-prop-valid': '*'
       react: ^18.0.0 || ^19.0.0
@@ -3778,14 +3778,14 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  motion-dom@12.23.18:
-    resolution: {integrity: sha512-9piw3uOcP6DpS0qpnDF95bLDzmgMxLOg/jghLnHwYJ0YFizzuvbH/L8106dy39JNgHYmXFUTztoP9JQvUqlBwQ==}
+  motion-dom@12.23.19:
+    resolution: {integrity: sha512-ivUCJ0zVZt7S++D8+ONeefkJj/8JlpCRYzGegLdXr8Z9aWg64KyljdaCGVa54Vv0K8hNE7vRQSaQve7V5l3rMw==}
 
   motion-utils@12.23.6:
     resolution: {integrity: sha512-eAWoPgr4eFEOFfg2WjIsMoqJTW6Z8MTUCgn/GZ3VRpClWBdnbjryiA3ZSNLyxCTmCQx4RmYX6jX1iWHbenUPNQ==}
 
-  motion@12.23.18:
-    resolution: {integrity: sha512-uzcEs9eInMnOL2Tm8z6Akje/vETSFUzAlGQyKV58+8vlEFDOKx8jNR/asKei4ETi+8wH6vTyf6gCKgu580x4+w==}
+  motion@12.23.19:
+    resolution: {integrity: sha512-/GGg12T6gPllKgwftzlmPe4fbPsmjp6beb1qpHIwLte3KLwFXymSnqZDwWdSjGZH/sF3slYF8J2VAWzAkXwc0w==}
     peerDependencies:
       '@emotion/is-prop-valid': '*'
       react: ^18.0.0 || ^19.0.0
@@ -6308,11 +6308,11 @@ snapshots:
       postcss: 8.5.6
       tailwindcss: 4.1.13
 
-  '@tanstack/query-core@5.90.1': {}
+  '@tanstack/query-core@5.90.2': {}
 
-  '@tanstack/react-query@5.90.1(react@19.1.1)':
+  '@tanstack/react-query@5.90.2(react@19.1.1)':
     dependencies:
-      '@tanstack/query-core': 5.90.1
+      '@tanstack/query-core': 5.90.2
       react: 19.1.1
 
   '@tanstack/react-table@8.21.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
@@ -7772,9 +7772,9 @@ snapshots:
 
   fraction.js@4.3.7: {}
 
-  framer-motion@12.23.18(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
+  framer-motion@12.23.19(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
     dependencies:
-      motion-dom: 12.23.18
+      motion-dom: 12.23.19
       motion-utils: 12.23.6
       tslib: 2.8.1
     optionalDependencies:
@@ -9049,15 +9049,15 @@ snapshots:
 
   mkdirp@3.0.1: {}
 
-  motion-dom@12.23.18:
+  motion-dom@12.23.19:
     dependencies:
       motion-utils: 12.23.6
 
   motion-utils@12.23.6: {}
 
-  motion@12.23.18(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
+  motion@12.23.19(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
     dependencies:
-      framer-motion: 12.23.18(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      framer-motion: 12.23.19(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       tslib: 2.8.1
     optionalDependencies:
       react: 19.1.1

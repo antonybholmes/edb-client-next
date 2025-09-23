@@ -246,6 +246,7 @@ export function MyAccountPage() {
             <VCenterRow className="gap-x-2">
               <IconButton
                 size="icon-lg"
+                rounded="full"
                 onClick={() => {
                   refreshSession()
                 }}
@@ -514,12 +515,9 @@ export function MyAccountPage() {
           {formatInTimeZone(session?.expiresAt ?? now, 'UTC', 'HH:mm:ss')} UTC)
         </p>
 
-        <VCenterRow className="justify-between">
-          <span>
-            CSRF token: <strong>{csrf}</strong>
-          </span>
+        <VCenterRow className="gap-x-2">
           <IconButton
-            variant="secondary"
+            rounded="full"
             onClick={() => {
               fetchToken()
             }}
@@ -527,6 +525,9 @@ export function MyAccountPage() {
           >
             <ReloadIcon />
           </IconButton>
+          <span>
+            CSRF token: <strong>{csrf}</strong>
+          </span>
         </VCenterRow>
 
         {/* <p className="text-xs text-foreground/50">

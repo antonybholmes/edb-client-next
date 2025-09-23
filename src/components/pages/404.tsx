@@ -95,7 +95,7 @@ export function Error404Page() {
       signedRequired={false}
       //className="bg-gradient-to-br from-sky-100 via-indigo-100 to-purple-100"
     >
-      <div className="gap-y-4 xl:w-1/2 p-4">
+      <BaseCol className="gap-y-4 xl:w-1/2 p-4">
         <h1 className="font-bold text-4xl">404</h1>
         <div className="flex flex-col xl:flex-row gap-8 text-foreground/70">
           <BaseCol className="gap-y-2 grow">
@@ -119,7 +119,7 @@ export function Error404Page() {
             </div>
           </VCenterRow>
         </div>
-      </div>
+      </BaseCol>
     </CenterLayout>
   )
 }

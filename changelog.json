@@ -1614,5 +1614,18 @@
     },
     "author": "Antony Holmes",
     "date": "2025-09-22T22:28:41.609Z"
+  },
+  {
+    "version": "28.8",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-09-23T15:27:41.088Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-09-23T15:27:41.088Z"
   }
 ]
