@@ -35,13 +35,11 @@ import { parseLocation } from '@lib/genomic/genomic'
 
 import { CollapseTree, makeFoldersRootNode } from '@components/collapse-tree'
 import {
-  DEFAULT_PILEUP_PROPS,
   PileupPlotSvg,
   type IMotifPattern,
   type IMutationDataset,
   type IMutationSample,
   type IPileupPlot,
-  type IPileupProps,
   type IPileupResults,
 } from '@components/pages/apps/wgs/mutations/pileup-plot-svg'
 import { FileImageIcon } from '@icons/file-image-icon'
@@ -99,6 +97,7 @@ import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 import { HistoryPanel } from '../../matcalc/history/history-panel'
 import { useHistory } from '../../matcalc/history/history-store'
 import MODULE_INFO from './module.json'
+import { useMutations } from './mutation-store'
 
 export const DEFAULT_MOTIF_PATTERNS: IMotifPattern[] = [
   {
@@ -159,9 +158,7 @@ export function MutationsPage() {
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  const [displayProps, setDisplayProps] = useState<IPileupProps>({
-    ...DEFAULT_PILEUP_PROPS,
-  })
+  const { settings } = useMutations()
 
   const { branch, sheet, sheets, openBranch, gotoSheet } = useHistory()
 
@@ -256,32 +253,32 @@ export function MutationsPage() {
   }, [datasets, datasetUseMap])
 
   useEffect(() => {
-    if (!(displayProps.cmap in displayProps.cmaps)) {
+    if (!(settings.cmap in settings.cmaps)) {
       return
     }
 
-    let cmap: Record<string, string> = displayProps.cmaps['COO']
+    let cmap: Record<string, string> = settings.cmaps['COO']
 
-    switch (displayProps.cmap) {
+    switch (settings.cmap) {
       case 'Lymphgen':
-        cmap = displayProps.cmaps['Lymphgen']
+        cmap = settings.cmaps['Lymphgen']
         break
       case 'SNP':
-        cmap = displayProps.cmaps['SNP']
+        cmap = settings.cmaps['SNP']
         break
       default:
-        cmap = displayProps.cmaps['COO']
+        cmap = settings.cmaps['COO']
         break
     }
 
-    if (displayProps.cmap === 'Lymphgen') {
-      cmap = displayProps.cmaps['Lymphgen']
+    if (settings.cmap === 'Lymphgen') {
+      cmap = settings.cmaps['Lymphgen']
     }
 
     // sample color map
     let scm: Map<string, string> | null = null
 
-    switch (displayProps.cmap) {
+    switch (settings.cmap) {
       case 'COO':
         scm = new Map<string, string>(
           datasets
@@ -320,7 +317,7 @@ export function MutationsPage() {
     if (scm) {
       setSampleColorMap(scm)
     }
-  }, [datasets, displayProps])
+  }, [datasets, settings])
 
   useEffect(() => {
     setSamples(
@@ -468,7 +465,7 @@ export function MutationsPage() {
         ? pileup.pileupResults.pileup.flat().map((mutation) => {
             let chr = mutation.chr.replace('chr', '')
 
-            if (displayProps.chrPrefix.show) {
+            if (settings.chrPrefix.show) {
               chr = formatChr(chr) // `chr${chr}`
             }
 
@@ -523,7 +520,7 @@ export function MutationsPage() {
     })
 
     openBranch('Mutations', [df.setName('Mutations')])
-  }, [displayProps, pileup])
+  }, [settings, pileup])
 
   function save(name: string, format: string) {
     if (!sheet) {
@@ -620,9 +617,7 @@ export function MutationsPage() {
       id: 'Display',
       content: (
         <PileupPropsPanel
-          displayProps={displayProps}
           motifPatterns={motifPatterns}
-          onDisplayPropsChange={(props) => setDisplayProps(props)}
           onMotifPatternsChange={(patterns) => setMotifPatterns(patterns)}
         />
       ),
@@ -842,7 +837,7 @@ export function MutationsPage() {
                 }
                 ref={svgRef}
                 plot={pileup}
-                displayProps={displayProps}
+                settings={settings}
                 motifPatterns={motifPatterns}
               />
             </div>
@@ -926,7 +921,6 @@ export function MutationsPage() {
                             ref={svgRef}
                             sampleMap={sampleMap}
                             plot={pileup}
-                            displayProps={displayProps}
                             motifPatterns={motifPatterns}
                             colorMap={sampleColorMap}
                           />

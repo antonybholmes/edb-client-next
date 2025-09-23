@@ -1,13 +1,11 @@
 import { VCenterRow } from '@layout/v-center-row'
 
+import { IDivProps } from '@/interfaces/div-props'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
 } from '@components/color/color-picker-button'
-import type {
-  IMotifPattern,
-  IPileupProps,
-} from '@components/pages/apps/wgs/mutations/pileup-plot-svg'
+import type { IMotifPattern } from '@components/pages/apps/wgs/mutations/pileup-plot-svg'
 import { PropsPanel } from '@components/props-panel'
 import { SwitchPropRow } from '@dialog/switch-prop-row'
 import {
@@ -18,27 +16,23 @@ import {
 } from '@themed/accordion'
 import { Label } from '@themed/label'
 import { RadioGroup, RadioGroupItem } from '@themed/radio-group'
-import { forwardRef, type ForwardedRef } from 'react'
+import { produce } from 'immer'
+import { useMutations } from './mutation-store'
 
-export interface IProps {
+export interface IProps extends IDivProps {
   motifPatterns: IMotifPattern[]
 
-  displayProps: IPileupProps
-  onDisplayPropsChange: (props: IPileupProps) => void
   onMotifPatternsChange: (patterns: IMotifPattern[]) => void
   onDBChange?: (index: number) => void
 }
 
-export const PileupPropsPanel = forwardRef(function PileupPropsPanel(
-  {
-    motifPatterns,
+export function PileupPropsPanel({
+  ref,
+  motifPatterns,
+  onMotifPatternsChange,
+}: IProps) {
+  const { settings, updateSettings } = useMutations()
 
-    displayProps,
-    onDisplayPropsChange,
-    onMotifPatternsChange,
-  }: IProps,
-  ref: ForwardedRef<HTMLDivElement>
-) {
   return (
     <PropsPanel ref={ref}>
       <ScrollAccordion value={['plot', 'motif-patterns', 'colormap']}>
@@ -47,32 +41,35 @@ export const PileupPropsPanel = forwardRef(function PileupPropsPanel(
           <AccordionContent>
             <SwitchPropRow
               title="Index"
-              checked={displayProps.index.show}
-              onCheckedChange={state =>
-                onDisplayPropsChange({
-                  ...displayProps,
-                  index: { ...displayProps.index, show: state },
-                })
-              }
+              checked={settings.index.show}
+              onCheckedChange={(state) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.index.show = state
+                  })
+                )
+              }}
             />
 
             <SwitchPropRow
               title="Border"
-              checked={displayProps.border.show}
-              onCheckedChange={state =>
-                onDisplayPropsChange({
-                  ...displayProps,
-                  border: { ...displayProps.border, show: state },
-                })
+              checked={settings.border.show}
+              onCheckedChange={(v) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.border.show = v
+                  })
+                )
               }
             >
               <ColorPickerButton
-                color={displayProps.border.color}
-                onColorChange={color =>
-                  onDisplayPropsChange({
-                    ...displayProps,
-                    border: { ...displayProps.border, color },
-                  })
+                color={settings.border.color}
+                onColorChange={(color) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.border.color = color
+                    })
+                  )
                 }
                 className={SIMPLE_COLOR_EXT_CLS}
               />
@@ -80,12 +77,13 @@ export const PileupPropsPanel = forwardRef(function PileupPropsPanel(
 
             <SwitchPropRow
               title="Add chr prefix"
-              checked={displayProps.chrPrefix.show}
-              onCheckedChange={state =>
-                onDisplayPropsChange({
-                  ...displayProps,
-                  chrPrefix: { ...displayProps.chrPrefix, show: state },
-                })
+              checked={settings.chrPrefix.show}
+              onCheckedChange={(state) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.chrPrefix.show = state
+                  })
+                )
               }
             />
           </AccordionContent>
@@ -100,9 +98,9 @@ export const PileupPropsPanel = forwardRef(function PileupPropsPanel(
                   title={pattern.name}
                   key={pi}
                   checked={pattern.show}
-                  onCheckedChange={state =>
+                  onCheckedChange={(state) =>
                     onMotifPatternsChange([
-                      ...motifPatterns.filter(x => x.name !== pattern.name),
+                      ...motifPatterns.filter((x) => x.name !== pattern.name),
                       {
                         ...pattern,
                         show: state,
@@ -119,12 +117,13 @@ export const PileupPropsPanel = forwardRef(function PileupPropsPanel(
           <AccordionTrigger>Colormap</AccordionTrigger>
           <AccordionContent>
             <RadioGroup
-              value={displayProps.cmap}
-              onValueChange={value =>
-                onDisplayPropsChange({
-                  ...displayProps,
-                  cmap: value,
-                })
+              value={settings.cmap}
+              onValueChange={(value) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.cmap = value
+                  })
+                )
               }
               className="flex flex-col gap-y-1"
             >
@@ -133,9 +132,9 @@ export const PileupPropsPanel = forwardRef(function PileupPropsPanel(
                 <Label htmlFor="None">None</Label>
               </VCenterRow>
 
-              {Object.keys(displayProps.cmaps)
+              {Object.keys(settings.cmaps)
                 .sort()
-                .filter(cmap => cmap !== 'None')
+                .filter((cmap) => cmap !== 'None')
                 .map((cmap, pi) => {
                   return (
                     <VCenterRow className="gap-x-1" key={pi}>
@@ -150,4 +149,4 @@ export const PileupPropsPanel = forwardRef(function PileupPropsPanel(
       </ScrollAccordion>
     </PropsPanel>
   )
-})
+}

@@ -2,6 +2,10 @@
 
 ## 28.8 (Sep, 2025)
 
+### Added
+
+- Added store to mutations.
+
 ### Changed
 
 - Bug fixes and updates.
