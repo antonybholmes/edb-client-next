@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added uuid v7 support.
 - Bug fixes and updates.
 - Fix UI inconsistencies when showing signin button in header.
 

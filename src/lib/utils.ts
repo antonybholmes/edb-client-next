@@ -1,6 +1,6 @@
 import { customAlphabet } from 'nanoid'
+import { v7 } from 'uuid'
 import { range, rangeMap } from '../lib/math/range'
-
 const NANOID = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 12)
 
 export function isStr(x: unknown) {
@@ -41,7 +41,7 @@ export function result<T>(f: () => T | null | undefined) {
 }
 
 export function uuid(): string {
-  return crypto.randomUUID()
+  return v7() //crypto.randomUUID()
 }
 
 export function nanoid(): string {
@@ -64,7 +64,7 @@ export function randId(prefix: string): string {
 export function zip<T = unknown>(...cols: T[][]): T[][] {
   const colIdx = range(cols.length)
 
-  return rangeMap(i => colIdx.map(j => cols[j]![i]!), cols[0]!.length)
+  return rangeMap((i) => colIdx.map((j) => cols[j]![i]!), cols[0]!.length)
 }
 
 /**
