@@ -22,6 +22,7 @@ export function CountText({ id, center, setItems }: ICountTextProps) {
   const highlightRef = useRef(null)
 
   const [bbox, setBbox] = useState<DOMRect | null>(null)
+  const [bboxRad, setBboxRad] = useState<number>(0)
 
   const [highlight, setHighlight] = useState(false)
 
@@ -29,6 +30,7 @@ export function CountText({ id, center, setItems }: ICountTextProps) {
     if (ref.current) {
       const box = ref.current.getBBox()
       setBbox(box)
+      setBboxRad(Math.max((box.width ** 2 + box.height ** 2) ** 0.5, 0))
     }
   }, [])
 
@@ -74,7 +76,7 @@ export function CountText({ id, center, setItems }: ICountTextProps) {
           ref={highlightRef}
           cx={bbox.x + bbox.width * 0.5}
           cy={bbox.y + bbox.height * 0.5}
-          r={bbox.width * 0.75}
+          r={bbox.height * 0.8}
           fill={COLOR_WHITE}
           fillOpacity={0.2}
           stroke={settings.isFilled ? COLOR_WHITE : COLOR_BLACK}

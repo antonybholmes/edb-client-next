@@ -40,6 +40,11 @@ export function result<T>(f: () => T | null | undefined) {
   }
 }
 
+/**
+ * Generates a UUID v7 string.
+ *
+ * @returns A UUID v7 string.
+ */
 export function uuid(): string {
   return v7() //crypto.randomUUID()
 }
