@@ -1,3 +1,4 @@
+import { LabelContainer } from '@/components/shadcn/ui/themed/label'
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
 import { type GenomicLocation } from '@lib/genomic/genomic'
@@ -22,7 +23,7 @@ export function LocationDialog({
     <OKCancelDialog
       //buttons={[TEXT_OK]}
       title="New Location"
-      onResponse={e => {
+      onResponse={(e) => {
         if (e === TEXT_OK) {
           callback?.(index, text)
         } else {
@@ -33,15 +34,17 @@ export function LocationDialog({
       //bodyVariant="card"
       //bodyCls="flex flex-row items-center gap-x-4"
     >
-      <LocationAutocomplete
-        //variant="dialog"
-        //h="dialog"
-        value={text}
-        placeholder="height"
-        label="Location or gene"
-        onTextChange={v => setText(v)}
-        //className="rounded-theme grow"
-      />
+      <LabelContainer label="Location or gene" id="location">
+        <LocationAutocomplete
+          id="location"
+          //variant="dialog"
+          //h="dialog"
+          value={text}
+          placeholder="height"
+          onTextChange={(v) => setText(v)}
+          //className="rounded-theme grow"
+        />
+      </LabelContainer>
 
       {/* <SwitchPropRow
         title="Labels"

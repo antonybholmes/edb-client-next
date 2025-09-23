@@ -5,6 +5,7 @@ import { ColorPickerButton } from '@components/color/color-picker-button'
 import { OKCancelDialog, type IModalProps } from '@dialog/ok-cancel-dialog'
 import { cn } from '@lib/shadcn-utils'
 
+import { LabelContainer } from '@/components/shadcn/ui/themed/label'
 import { SM_ICON_BUTTON_CLS } from '@/theme'
 import type { IGeneset } from '@lib/gsea/geneset'
 import { textToLines } from '@lib/text/lines'
@@ -46,7 +47,7 @@ export function GenesetDialog({ geneset, callback, onResponse }: IProps) {
     <OKCancelDialog
       open={true}
       title={name.length > 0 ? `Edit ${name}` : 'New Gene Set'}
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onResponse?.(r)
         } else {
@@ -72,24 +73,19 @@ export function GenesetDialog({ geneset, callback, onResponse }: IProps) {
       }
     >
       <BaseCol className="gap-y-4">
-        {/* <Label>Name</Label> */}
-        <Input
-          id="name"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          placeholder={TEXT_NAME}
-          label={TEXT_NAME}
-          labelPos="left"
-          //variant="dialog"
-          //h="dialog"
-          //variant="alt"
-          //className="grow"
-        />
+        <LabelContainer label={TEXT_NAME} id="name">
+          <Input
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder={TEXT_NAME}
+          />
+        </LabelContainer>
 
         <Textarea
           id="search"
           value={search}
-          onChange={e => setSearch(e.target.value)}
+          onChange={(e) => setSearch(e.target.value)}
           placeholder="Genes"
           label="Genes"
           labelPos="left"

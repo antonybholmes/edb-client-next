@@ -7,6 +7,7 @@ import { ColorPickerButton } from '@/components/color/color-picker-button'
 import { LabelBlock } from '@/components/dialog/label-block'
 import { PropRow } from '@/components/dialog/prop-row'
 import { Checkbox } from '@/components/shadcn/ui/themed/check-box'
+import { LabelContainer } from '@/components/shadcn/ui/themed/label'
 import {
   Select,
   SelectContent,
@@ -64,18 +65,18 @@ export function PlotDialog({ plot, onResponse }: IProps) {
       //footerVariant="default"
       bodyCls="gap-y-4"
     >
-      <Input
-        id="name"
-        label="Title"
-        value={_plot.name}
-        onTextChange={(e) => {
-          updatePlot({ ..._plot, name: e })
-        }}
-        placeholder="Title..."
-        //variant="dialog"
-        h="dialog"
-        className="grow"
-      />
+      <LabelContainer label="Title" id="name">
+        <Input
+          id="name"
+          value={_plot.name}
+          onTextChange={(e) => {
+            updatePlot({ ..._plot, name: e })
+          }}
+          placeholder="Title..."
+          //variant="dialog"
+          h="dialog"
+        />
+      </LabelContainer>
 
       <PropRow title="Mode">
         <Select

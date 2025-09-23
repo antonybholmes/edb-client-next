@@ -1,3 +1,4 @@
+import { LabelContainer } from '@/components/shadcn/ui/themed/label'
 import { TEXT_NAME, TEXT_OK } from '@/consts'
 import {
   ColorPickerButton,
@@ -54,24 +55,24 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
       //   />
       // }
     >
-      <Input
-        id="name"
-        label={TEXT_NAME}
-        labelPos="left"
-        value={_track.name}
-        onChange={(e) => {
-          const newTrack = {
-            ...track,
-            name: e.target.value,
-          }
+      <LabelContainer label={TEXT_NAME} id="name">
+        <Input
+          id="name"
+          value={_track.name}
+          onChange={(e) => {
+            const newTrack = {
+              ...track,
+              name: e.target.value,
+            }
 
-          callback?.(group, newTrack)
-          setTrack(newTrack)
-        }}
-        placeholder="Track name"
-        className="rounded-theme"
-        //h="lg"
-      />
+            callback?.(group, newTrack)
+            setTrack(newTrack)
+          }}
+          placeholder="Track name"
+          className="rounded-theme"
+          //h="lg"
+        />
+      </LabelContainer>
 
       {/* <PropRow title="Height">
         <NumericalInput

@@ -3,6 +3,7 @@ import { OKCancelDialog, type IModalProps } from '@dialog/ok-cancel-dialog'
 
 import { useState } from 'react'
 import { Input } from '../shadcn/ui/themed/input'
+import { LabelContainer } from '../shadcn/ui/themed/label'
 
 export interface ISaveAsFormat {
   name: string
@@ -28,11 +29,11 @@ export function SaveAsDialog({
       open={open}
       title={title}
       //buttons={[...formats.map(format => format.ext), TEXT_CANCEL]}
-      buttons={formats.map(format => format.ext.toUpperCase())}
-      onResponse={response => {
+      buttons={formats.map((format) => format.ext.toUpperCase())}
+      onResponse={(response) => {
         if (response !== TEXT_CANCEL) {
           const format = formats.filter(
-            f => f.ext.toUpperCase() === response
+            (f) => f.ext.toUpperCase() === response
           )[0]!
           onResponse?.(response, {
             name: `${text.split('.')[0]}.${response.toLowerCase()}`,
@@ -58,14 +59,15 @@ export function SaveAsDialog({
         </Button>
       ))} */}
 
-      <Input
-        value={text}
-        label={TEXT_NAME}
-        labelPos="left"
-        placeholder="Save as..."
-        onChange={e => setText(e.target.value)}
-        className="rounded-theme grow"
-      />
+      <LabelContainer label={TEXT_NAME} id="save-as">
+        <Input
+          value={text}
+          id="save-as"
+          placeholder="Save as..."
+          onChange={(e) => setText(e.target.value)}
+          className="rounded-theme grow"
+        />
+      </LabelContainer>
 
       {/* <Form {...form}>
         <form

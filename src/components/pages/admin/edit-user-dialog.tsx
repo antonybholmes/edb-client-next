@@ -119,7 +119,7 @@ export function EditUserDialog({
                     h="lg"
                     id="firstName"
                     className="w-full"
-                    label="First name"
+                    //label="First name"
                     placeholder="First name"
                     error={'firstName' in form.formState.errors}
                     {...field}
@@ -146,7 +146,7 @@ export function EditUserDialog({
                     id="lastName"
                     className="w-full"
                     placeholder="Last name"
-                    label="Last name"
+                    //label="Last name"
                     error={'lastName' in form.formState.errors}
                     {...field}
                   />
@@ -174,7 +174,7 @@ export function EditUserDialog({
                 <Input
                   h="lg"
                   id="name"
-                  label="Username"
+                  //label="Username"
                   placeholder="Username"
                   error={'username' in form.formState.errors}
                   {...field}
@@ -202,7 +202,7 @@ export function EditUserDialog({
                 <Input
                   h="lg"
                   id="email"
-                  label="Email"
+                  //label="Email"
                   placeholder="Email"
                   error={'email' in form.formState.errors}
                   {...field}
@@ -229,7 +229,7 @@ export function EditUserDialog({
                   id="password"
                   error={'password' in form.formState.errors}
                   type="password"
-                  label={'Password'}
+                  //label={'Password'}
                   placeholder="Password"
                   {...field}
                 />
@@ -250,7 +250,7 @@ export function EditUserDialog({
                       id="publicId"
                       className="w-full"
                       placeholder="User Id"
-                      label="User Id"
+                      //label="User Id"
                       readOnly
                       disabled
                       {...field}

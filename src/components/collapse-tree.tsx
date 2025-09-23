@@ -176,9 +176,9 @@ function CollapseTreeNode({ className }: IClassProps) {
     useContext(CollapseTreeContext)
 
   const [isOpen, setIsOpen] = useState<boolean>(
-    (tab.children !== undefined && tab.children.length > 0) ||
-      (tab.isOpen !== undefined && tab.isOpen)
+    (tab.children && tab.children.length > 0) || Boolean(tab.isOpen)
   )
+
   const [hover, setHover] = useState<boolean>(false)
   const [focus, setFocus] = useState<boolean>(false)
   //const [buttonHover, setButtonHover] = useState(false) //level === 0 || (tab.isOpen??true))
@@ -229,7 +229,7 @@ function CollapseTreeNode({ className }: IClassProps) {
 
   // assume we don't show the root, in which case we just return the children
   // as a list
-  if (tab.children !== undefined && tab.children.length > 0) {
+  if (isOpen && tab.children !== undefined && tab.children.length > 0) {
     ret = tab.children.map((t, ti) => (
       <CollapseTreeProvider
         tab={t}

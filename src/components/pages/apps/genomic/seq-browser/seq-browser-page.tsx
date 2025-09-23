@@ -1,7 +1,6 @@
 'use client'
 
 import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
-import { ToolbarOpenFile } from '@toolbar/toolbar-open-files'
 import { ZoomSlider } from '@toolbar/zoom-slider'
 
 import {
@@ -239,7 +238,7 @@ function SeqBrowserPage() {
       content: (
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
-            <ToolbarOpenFile
+            {/* <ToolbarOpenFile
               onOpenChange={(open) => {
                 if (open) {
                   // setShowDialog({
@@ -249,7 +248,7 @@ function SeqBrowserPage() {
                 }
               }}
               multiple={true}
-            />
+            /> */}
 
             <ToolbarIconButton
               title={TEXT_SAVE_IMAGE}

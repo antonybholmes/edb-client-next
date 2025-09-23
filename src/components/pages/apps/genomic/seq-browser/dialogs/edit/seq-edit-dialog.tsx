@@ -1,3 +1,4 @@
+import { LabelContainer } from '@/components/shadcn/ui/themed/label'
 import { TEXT_NAME, TEXT_OK } from '@/consts'
 import {
   ColorPickerButton,
@@ -72,23 +73,24 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
       bodyCls="gap-y-4"
     >
       {/* <BaseCol className="bg-background p-4 rounded-lg gap-y-4"> */}
-      <Input
-        id="name"
-        label={TEXT_NAME}
-        labelPos="left"
-        value={_track.name}
-        onChange={(e) => {
-          const newTrack = produce(_track, (draft) => {
-            draft.name = e.target.value
-          })
 
-          callback?.(group, newTrack)
-          setTrack(newTrack)
-        }}
-        placeholder="Track name"
-        //h="xl"
-        //variant="alt"
-      />
+      <LabelContainer label={TEXT_NAME} id="name">
+        <Input
+          id="name"
+          value={_track.name}
+          onChange={(e) => {
+            const newTrack = produce(_track, (draft) => {
+              draft.name = e.target.value
+            })
+
+            callback?.(group, newTrack)
+            setTrack(newTrack)
+          }}
+          placeholder="Track name"
+          //h="xl"
+          //variant="alt"
+        />
+      </LabelContainer>
 
       <BaseCol>
         <PropRow title="Height">

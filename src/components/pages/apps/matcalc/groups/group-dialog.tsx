@@ -1,4 +1,5 @@
 import { VCenterRow } from '@/components/layout/v-center-row'
+import { LabelContainer } from '@/components/shadcn/ui/themed/label'
 import { TEXT_CANCEL } from '@/consts'
 import { SM_ICON_BUTTON_CLS } from '@/theme'
 import { ColorPickerButton } from '@components/color/color-picker-button'
@@ -82,37 +83,51 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
       //footerVariant="default"
       bodyCls="gap-y-4"
     >
-      <Input
-        id="name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Group Name"
+      <LabelContainer
         label="Group Name"
         labelPos="left"
-        //variant="dialog"
-        h="dialog"
-        className="grow"
-      />
-
-      <VCenterRow className="gap-x-2">
+        labelW="min-w-24"
+        id="name"
+      >
         <Input
-          id="search"
-          value={search}
-          onTextChange={(e) => setSearch(e)}
-          placeholder="Matches"
-          rightChildren={
-            <InfoHoverCard title="Matches">
-              A comma separated list of words or partial words that match column
-              names. All matching columns will belong to the group.
-            </InfoHoverCard>
-          }
-          label="Match"
-          labelPos="left"
-          //variant="alt"
+          id="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Group Name"
+          //label="Group Name"
+          //labelPos="left"
           //variant="dialog"
           h="dialog"
           className="grow"
         />
+      </LabelContainer>
+
+      <VCenterRow className="gap-x-2">
+        <LabelContainer
+          label="Match"
+          labelPos="left"
+          labelW="min-w-24"
+          id="search"
+        >
+          <Input
+            id="search"
+            value={search}
+            onTextChange={(e) => setSearch(e)}
+            placeholder="Matches"
+            rightChildren={
+              <InfoHoverCard title="Matches">
+                A comma separated list of words or partial words that match
+                column names. All matching columns will belong to the group.
+              </InfoHoverCard>
+            }
+            //label="Match"
+            //labelPos="left"
+            //variant="alt"
+            //variant="dialog"
+            h="dialog"
+            className="grow"
+          />
+        </LabelContainer>
 
         <Checkbox checked={exactMatch} onCheckedChange={setExactMatch}>
           Exact match

@@ -2,8 +2,6 @@
 
 import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
 
-import { BaseRow } from '@layout/base-row'
-
 import {
   ShowOptionsMenu,
   Toolbar,
@@ -49,7 +47,6 @@ import {
 import { FileImageIcon } from '@icons/file-image-icon'
 import { FolderIcon } from '@icons/folder-icon'
 import { PlayIcon } from '@icons/play-icon'
-import { SaveIcon } from '@icons/save-icon'
 import { SlidersIcon } from '@icons/sliders-icon'
 import { BaseCol } from '@layout/base-col'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
@@ -66,7 +63,6 @@ import { ShortcutLayout } from '@layouts/shortcut-layout'
 import { downloadDataFrame } from '@lib/dataframe/dataframe-utils'
 import { randID } from '@lib/id'
 import { downloadSvgAutoFormat } from '@lib/image-utils'
-import { ToolbarButton } from '@toolbar/toolbar-button'
 
 import { PileupPropsPanel } from './pileup-props-panel'
 
@@ -88,6 +84,8 @@ import {
 
 import { HeaderPortal } from '@/components/header/header-portal'
 import { ModuleInfoButton } from '@/components/header/module-info-button'
+import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadImageIcon } from '@/components/icons/download-image-icon'
 import { ShowSideButton } from '@components/pages/show-side-button'
 import { COLOR_BLACK, COLOR_RED } from '@lib/color/color'
 import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
@@ -146,7 +144,7 @@ export function MutationsPage() {
     new Map<string, IMutationSample>()
   )
   const [foldersTab, setFoldersTab] = useState<ITab>({
-    ...makeFoldersRootNode('Datasets'),
+    ...makeFoldersRootNode(),
   })
 
   //const [addChrPrefix, setAddChrPrefix] = useState(true)
@@ -248,11 +246,11 @@ export function MutationsPage() {
     })
 
     const tab: ITab = {
-      ...makeFoldersRootNode('Datasets'),
-      children,
+      ...makeFoldersRootNode(),
+      children: [{ id: 'datasets', name: 'Datasets', children, isOpen: true }],
     }
 
-    console.log(tab, datasetUseMap)
+    //console.log(tab, datasetUseMap)
 
     setFoldersTab(tab)
   }, [datasets, datasetUseMap])
@@ -392,38 +390,34 @@ export function MutationsPage() {
    * @returns
    */
   async function getPileup(search: string) {
-    const location = parseLocation(search)
-
-    if (!location) {
-      return
-    }
-
-    let dna: IDNA = { location, seq: '' }
-
     try {
+      const location = parseLocation(search)
+
+      if (!location) {
+        return
+      }
+
+      let dna: IDNA = { location, seq: '' }
+
       dna = await fetchDNA(queryClient, location, {
         format: 'Upper',
         assembly: 'hg19',
       })
-    } catch (e) {
-      console.log(e)
-    }
 
-    let pileup: IPileupResults = { location, pileup: [] }
+      let pileup: IPileupResults = { location, pileup: [] }
 
-    //console.log(dbIndex, dbQuery)
-    //console.log(`${dbQuery.data[dbIndex].assembly}:${dbQuery.data[database].name}`)
+      //console.log(dbIndex, dbQuery)
+      //console.log(`${dbQuery.data[dbIndex].assembly}:${dbQuery.data[database].name}`)
 
-    try {
       pileup = await fetchPileup(
         location,
         datasets.filter((dataset) => datasetUseMap.get(dataset.publicId))
       )
+
+      setPileup({ dna, pileupResults: pileup })
     } catch (e) {
       console.log(e)
     }
-
-    setPileup({ dna, pileupResults: pileup })
   }
 
   useEffect(() => {
@@ -569,14 +563,25 @@ export function MutationsPage() {
             /> */}
 
             <ToolbarIconButton
-              aria-label="Save matrix to local file"
+              title="Download matrix to local file"
+              onClick={() =>
+                setShowDialog({
+                  id: randID('save'),
+                })
+              }
+            >
+              <DownloadIcon />
+            </ToolbarIconButton>
+
+            <ToolbarIconButton
+              title="Download image to local file"
               onClick={() =>
                 setShowDialog({
                   id: randID('export'),
                 })
               }
             >
-              <SaveIcon />
+              <DownloadImageIcon />
             </ToolbarIconButton>
           </ToolbarTabGroup>
 
@@ -879,9 +884,9 @@ export function MutationsPage() {
                 defaultSize={20}
                 minSize={10}
                 maxSize={90}
-                className="flex flex-col bg-background p-3 rounded-md overflow-hidden mb-2"
+                className="flex flex-col bg-background/75 py-3 rounded-theme overflow-hidden mb-2 border border-border/50"
               >
-                <VCenterRow className="pb-2 border-b border-border/50 justify-between text-xs">
+                <VCenterRow className="px-3 pb-2 border-b border-border/50 justify-between text-xs">
                   <VCenterRow>{/* <Checkbox> </Checkbox> */}</VCenterRow>
                   <span>{samples.length} samples</span>
                 </VCenterRow>
@@ -937,7 +942,7 @@ export function MutationsPage() {
                     collapsible={true}
                     className="flex flex-col"
                   >
-                    <BaseRow className="grow gap-x-1">
+                    {/* <BaseRow className="grow gap-x-1">
                       <BaseCol>
                         <ToolbarButton
                           title="Save mutation table"
@@ -949,17 +954,17 @@ export function MutationsPage() {
                         >
                           <SaveIcon />
                         </ToolbarButton>
-                      </BaseCol>
+                      </BaseCol> */}
 
-                      <TabbedDataFrames
-                        key="tabbed-data-frames"
-                        selectedSheet={sheet?.id ?? ''}
-                        dataFrames={sheets as AnnotationDataFrame[]}
-                        onTabChange={(selectedTab) => {
-                          gotoSheet(selectedTab.tab.id)
-                        }}
-                      />
-                    </BaseRow>
+                    <TabbedDataFrames
+                      key="tabbed-data-frames"
+                      selectedSheet={sheet?.id ?? ''}
+                      dataFrames={sheets as AnnotationDataFrame[]}
+                      onTabChange={(selectedTab) => {
+                        gotoSheet(selectedTab.tab.id)
+                      }}
+                    />
+                    {/* </BaseRow> */}
                   </ResizablePanel>
                 </ResizablePanelGroup>
               </ResizablePanel>
@@ -969,7 +974,7 @@ export function MutationsPage() {
           <VScrollPanel>
             <CollapseTree
               tab={foldersTab}
-              value={tab!}
+              //value={tab!}
               onValueChange={(t) => {
                 // only use tabs from the tree that have content, otherwise
                 // the ui will appear empty
@@ -987,6 +992,7 @@ export function MutationsPage() {
                   ])
                 )
               }}
+              showRoot={false}
             />
           </VScrollPanel>
         </SlideBar>

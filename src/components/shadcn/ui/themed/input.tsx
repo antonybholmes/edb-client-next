@@ -14,7 +14,7 @@ import {
 } from 'react'
 
 export const PLACEHOLDER_CLS = cn(
-  'min-w-0 flex flex-row items-center grow',
+  'min-w-0 flex flex-row items-center',
   'disabled:cursor-not-allowed data-[readonly=true]:bg-muted/40 overflow-hidden'
 )
 
@@ -81,9 +81,9 @@ export interface IInputProps
   leftChildren?: ReactNode
   rightChildren?: ReactNode
   otherChildren?: ReactNode
-  label?: string | undefined
-  labelPos?: 'left' | 'top'
-  labelW?: string
+  //label?: string | undefined
+  //labelPos?: 'left' | 'top'
+  //labelW?: string
   w?: string
   onTextChange?: (v: string) => void
   onTextChanged?: (v: string) => void
@@ -100,9 +100,9 @@ export function Input({
   inputCls,
   inputStyle,
   error = false,
-  label,
-  labelPos = 'top',
-  labelW = 'min-w-24',
+  //label,
+  //labelPos = 'top',
+  //labelW = 'min-w-24',
   variant = 'default',
   h = 'md',
   gap = 'sm',
@@ -125,8 +125,6 @@ export function Input({
   useEffect(() => {
     setValue(value ?? '')
   }, [value])
-
-  console.log('w:', w)
 
   return (
     <VCenterRow

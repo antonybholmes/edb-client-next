@@ -16,7 +16,7 @@ export function useGeneQuery(
   return useQuery({
     queryKey: ['gene-search', genome, query],
     queryFn: async () => {
-      if (query.length < 2 || query.includes('chr:')) {
+      if (query.length < 2 || query.startsWith('chr')) {
         return []
       }
 

@@ -48,7 +48,7 @@ interface ILabelContainerProps extends IChildrenProps {
 export function LabelContainer({
   id,
   label,
-  labelPos,
+  labelPos = 'left',
   labelW = 'min-w-24',
   className,
   children,

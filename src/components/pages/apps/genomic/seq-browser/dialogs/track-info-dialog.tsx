@@ -1,3 +1,4 @@
+import { LabelContainer } from '@/components/shadcn/ui/themed/label'
 import { TEXT_NAME, TEXT_OK } from '@/consts'
 import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
 import { Input } from '@themed/input'
@@ -20,52 +21,41 @@ export function TrackInfoDialog({ track, onCancel }: IProps) {
         onCancel()
       }}
     >
-      <Input
-        id="name"
-        label={TEXT_NAME}
-        labelPos="left"
-        value={track.name}
-        readOnly={true}
-        placeholder={TEXT_NAME}
-        //className="rounded-theme"
-        //h="lg"
-      />
-
-      <Input
-        id="type"
-        label="Track Type"
-        labelPos="left"
-        value={track.trackType}
-        readOnly={true}
-        placeholder="Track Type"
-        //className="rounded-theme"
-        //h="lg"
-      />
-
-      {'url' in track && track.url && (
+      <LabelContainer label={TEXT_NAME} id="name">
         <Input
-          id="url"
-          label="URL"
-          labelPos="left"
-          value={track.url}
+          id="name"
+          value={track.name}
           readOnly={true}
-          placeholder="URL"
+          placeholder={TEXT_NAME}
           //className="rounded-theme"
           //h="lg"
         />
+      </LabelContainer>
+
+      <LabelContainer label="Track Type" id="type">
+        <Input
+          id="type"
+          value={track.trackType}
+          readOnly={true}
+          placeholder="Track Type"
+        />
+      </LabelContainer>
+
+      {'url' in track && track.url && (
+        <LabelContainer label="URL" id="url">
+          <Input id="url" value={track.url} readOnly={true} placeholder="URL" />
+        </LabelContainer>
       )}
 
       {'reads' in track && track.reads > 0 && (
-        <Input
-          id="reads"
-          label="Reads"
-          labelPos="left"
-          value={track.reads.toLocaleString()}
-          readOnly={true}
-          placeholder="Reads"
-          //className="rounded-theme"
-          //h="lg"
-        />
+        <LabelContainer label="Reads" id="reads">
+          <Input
+            id="reads"
+            value={track.reads.toLocaleString()}
+            readOnly={true}
+            placeholder="Reads"
+          />
+        </LabelContainer>
       )}
     </OKCancelDialog>
   )
