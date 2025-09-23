@@ -1,7 +1,7 @@
+import { useStableId } from '@/hooks/stable-id'
 import { BUTTON_MD_H_CLS, BUTTON_XL_H_CLS, FOCUS_INSET_RING_CLS } from '@/theme'
 import { WarningIcon } from '@icons/warning-icon'
 import type { IDivProps } from '@interfaces/div-props'
-import { BaseCol } from '@layout/base-col'
 import { VCenterRow } from '@layout/v-center-row'
 import { cn } from '@lib/shadcn-utils'
 import { cva, type VariantProps } from 'class-variance-authority'
@@ -12,7 +12,6 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react'
-import { Label } from './label'
 
 export const PLACEHOLDER_CLS = cn(
   'min-w-0 flex flex-row items-center grow',
@@ -117,7 +116,7 @@ export function Input({
   className,
   ...props
 }: IInputProps) {
-  //const [_id] = useState(id ?? randId('input'))
+  const _id = useStableId(id, 'input')
 
   const [_value, setValue] = useState(value ?? '')
 
@@ -127,74 +126,52 @@ export function Input({
     setValue(value ?? '')
   }, [value])
 
-  let ret: ReactNode = (
-    <VCenterRow className={cn('gap-x-4', !label && w, !label && className)}>
-      {label && labelPos === 'left' && (
-        <Label className={labelW} htmlFor={id}>
-          {label}
-        </Label>
-      )}
-      <VCenterRow
-        className={inputVariants({
-          variant,
-          h,
-          gap,
-        })}
-        data-enabled={!disabled}
-        data-readonly={readOnly}
-        data-error={error}
-        onFocus={() => setFocus(true)}
-        onBlur={() => setFocus(false)}
-        data-focus={focus}
-        style={style}
-        ref={ref}
-      >
-        {leftChildren && leftChildren}
+  console.log('w:', w)
 
-        <input
-          value={_value}
-          //defaultValue={defaultValue}
-          type={type}
-          className={cn(INPUT_CLS, inputCls)}
-          style={inputStyle}
-          disabled={disabled}
-          readOnly={readOnly}
-          onChange={(e) => {
-            setValue(e.currentTarget.value)
-            onTextChange?.(e.currentTarget.value)
-            onChange?.(e)
-          }}
-          onKeyDown={(e) => {
-            //console.log(e)
-            if (e.key === 'Enter') {
-              onTextChanged?.(e.currentTarget.value)
-            }
-          }}
-          {...props}
-        />
+  return (
+    <VCenterRow
+      className={inputVariants({
+        variant,
+        h,
+        gap,
+        className: cn(w, className),
+      })}
+      data-enabled={!disabled}
+      data-readonly={readOnly}
+      data-error={error}
+      onFocus={() => setFocus(true)}
+      onBlur={() => setFocus(false)}
+      data-focus={focus}
+      style={style}
+      ref={ref}
+    >
+      {leftChildren && leftChildren}
 
-        {rightChildren && rightChildren}
-        {error && <WarningIcon stroke="stroke-destructive" w="w-4 h-4" />}
-      </VCenterRow>
-      {otherChildren && otherChildren}
+      <input
+        id={_id}
+        value={_value}
+        //defaultValue={defaultValue}
+        type={type}
+        className={cn(INPUT_CLS, inputCls)}
+        style={inputStyle}
+        disabled={disabled}
+        readOnly={readOnly}
+        onChange={(e) => {
+          setValue(e.currentTarget.value)
+          onTextChange?.(e.currentTarget.value)
+          onChange?.(e)
+        }}
+        onKeyDown={(e) => {
+          //console.log(e)
+          if (e.key === 'Enter') {
+            onTextChanged?.(e.currentTarget.value)
+          }
+        }}
+        {...props}
+      />
+
+      {rightChildren && rightChildren}
+      {error && <WarningIcon stroke="stroke-destructive" w="w-4 h-4" />}
     </VCenterRow>
   )
-
-  if (label && labelPos === 'top') {
-    ret = (
-      <BaseCol className={cn('gap-y-1', w, className)}>
-        {label && (
-          <Label
-            className="text-sm font-bold text-foreground/80 px-0.5"
-            htmlFor={id}
-          >
-            {label}
-          </Label>
-        )}
-        {ret}
-      </BaseCol>
-    )
-  }
-
-  return ret
 }

@@ -52,8 +52,8 @@ import { Textarea } from '@/components/shadcn/ui/themed/textarea'
 import type { ITab } from '@components/tabs/tab-provider'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
 import { dnaToJson, fetchDNA, type IDNA } from '@lib/genomic/dna'
+import { randID } from '@lib/id'
 import { textToLines } from '@lib/text/lines'
-import { randId } from '@lib/utils'
 import { useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 
@@ -166,7 +166,7 @@ export function GetDNAPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randId('open'),
+                    id: randID('open'),
                   })
                 }
               }}

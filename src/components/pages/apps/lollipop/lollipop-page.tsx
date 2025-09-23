@@ -35,7 +35,7 @@ import { ShortcutLayout } from '@layouts/shortcut-layout'
 
 import axios from 'axios'
 
-import { randId } from '@lib/utils'
+import { randID } from '@lib/id'
 
 import { UploadIcon } from '@icons/upload-icon'
 import { range } from '@lib/math/range'
@@ -327,7 +327,7 @@ function LollipopPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randId('open'),
+                    id: randID('open'),
                   })
                 }
               }}
@@ -338,7 +338,7 @@ function LollipopPage() {
               aria-label="Save matrix to local file"
               onClick={() => {
                 setShowDialog({
-                  id: randId('save'),
+                  id: randID('save'),
                   params: {
                     name: 'lollipop',
                     format: 'png',
@@ -610,7 +610,7 @@ function LollipopPage() {
       content: (
         <DropdownMenuItem
           aria-label="Open file on your computer"
-          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
+          onClick={() => setShowDialog({ id: randID('open'), params: {} })}
         >
           <UploadIcon fill="" />
 

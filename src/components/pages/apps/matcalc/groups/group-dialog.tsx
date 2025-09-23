@@ -1,3 +1,4 @@
+import { VCenterRow } from '@/components/layout/v-center-row'
 import { TEXT_CANCEL } from '@/consts'
 import { SM_ICON_BUTTON_CLS } from '@/theme'
 import { ColorPickerButton } from '@components/color/color-picker-button'
@@ -37,7 +38,7 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
     callback?.({
       ...group,
       name,
-      search: search.split(',').map(x => x.trim().toLowerCase()),
+      search: search.split(',').map((x) => x.trim().toLowerCase()),
       color,
       exactMatch,
     })
@@ -47,7 +48,7 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
     <OKCancelDialog
       open={true}
       title={name.length > 0 ? `Edit ${name}` : 'New Group'}
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onResponse?.(r)
         } else {
@@ -84,7 +85,7 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
       <Input
         id="name"
         value={name}
-        onChange={e => setName(e.target.value)}
+        onChange={(e) => setName(e.target.value)}
         placeholder="Group Name"
         label="Group Name"
         labelPos="left"
@@ -93,29 +94,30 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
         className="grow"
       />
 
-      <Input
-        id="search"
-        value={search}
-        onTextChange={e => setSearch(e)}
-        placeholder="Matches"
-        rightChildren={
-          <InfoHoverCard title="Matches">
-            A comma separated list of words or partial words that match column
-            names. All matching columns will belong to the group.
-          </InfoHoverCard>
-        }
-        otherChildren={
-          <Checkbox checked={exactMatch} onCheckedChange={setExactMatch}>
-            Exact match
-          </Checkbox>
-        }
-        label="Match"
-        labelPos="left"
-        //variant="alt"
-        //variant="dialog"
-        h="dialog"
-        className="grow"
-      />
+      <VCenterRow className="gap-x-2">
+        <Input
+          id="search"
+          value={search}
+          onTextChange={(e) => setSearch(e)}
+          placeholder="Matches"
+          rightChildren={
+            <InfoHoverCard title="Matches">
+              A comma separated list of words or partial words that match column
+              names. All matching columns will belong to the group.
+            </InfoHoverCard>
+          }
+          label="Match"
+          labelPos="left"
+          //variant="alt"
+          //variant="dialog"
+          h="dialog"
+          className="grow"
+        />
+
+        <Checkbox checked={exactMatch} onCheckedChange={setExactMatch}>
+          Exact match
+        </Checkbox>
+      </VCenterRow>
 
       {/* <VCenterRow className="gap-x-1 mt-2">
         <span className="text-xs font-bold">Id {group?.id}</span>

@@ -19,7 +19,7 @@ import {
   messageImageFileFormat,
   useMessages,
 } from '@/providers/message-provider'
-import { randId } from '@lib/utils'
+import { randID } from '@lib/id'
 import { produce } from 'immer'
 import { DatabasPropsPanel } from '../../../lollipop/database-props-panel'
 import { FeaturePropsPanel } from '../../../lollipop/feature-props-panel'
@@ -69,7 +69,7 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
 
   useEffect(() => {
     const filteredMessages = messages.filter(
-      message => message.target === plot?.id
+      (message) => message.target === plot?.id
     )
 
     for (const message of filteredMessages) {
@@ -80,7 +80,7 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
             `heatmap.${messageImageFileFormat(message)}`
           )
         } else {
-          setShowDialog({ id: randId('save') })
+          setShowDialog({ id: randID('save') })
         }
       }
 
@@ -188,11 +188,11 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
         id="lollipop-data-panel"
         side="right"
         tabs={rightTabs}
-        onTabChange={selectedTab => setSelectedTab(selectedTab.tab.id)}
+        onTabChange={(selectedTab) => setSelectedTab(selectedTab.tab.id)}
         value={selectedTab}
         open={settings.sidebar.show}
-        onOpenChange={v => {
-          const newSettings = produce(settings, draft => {
+        onOpenChange={(v) => {
+          const newSettings = produce(settings, (draft) => {
             draft.sidebar.show = v
           })
 
@@ -213,9 +213,9 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
         <></>
         <>
           <ZoomSlider
-            onZoomChange={zoom => {
+            onZoomChange={(zoom) => {
               setDisplayProps(
-                produce(displayProps, draft => {
+                produce(displayProps, (draft) => {
                   draft.scale = zoom
                 })
               )

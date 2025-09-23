@@ -3,7 +3,7 @@
 import { range, rangeMap } from '@lib/math/range'
 
 import type { Index } from '.'
-import { nanoid } from '../utils'
+
 import { cellStr } from './cell'
 import type {
   IndexFromType,
@@ -13,6 +13,7 @@ import type {
   Shape,
 } from './dataframe-types'
 
+import { makeNanoIDLen12 } from '../id'
 import { whereStartsWith } from '../math/where'
 import { BaseSeries, Series } from './series'
 
@@ -44,7 +45,7 @@ export abstract class BaseDataFrame {
   private _id: string
 
   constructor(name: string = '') {
-    this._id = nanoid()
+    this._id = makeNanoIDLen12()
     this._name = name
   }
 
@@ -131,7 +132,7 @@ export abstract class BaseDataFrame {
   }
 
   get rowNames(): string[] {
-    return rangeMap(c => this.rowName(c), 0, this.shape[0])
+    return rangeMap((c) => this.rowName(c), 0, this.shape[0])
   }
 
   abstract get columns(): Index
@@ -146,7 +147,7 @@ export abstract class BaseDataFrame {
    * Get the names of the columns
    */
   get colNames(): string[] {
-    return range(this.shape[1]).map(c => this.colName(c))
+    return range(this.shape[1]).map((c) => this.colName(c))
   }
 
   abstract setColNames(index: IndexFromType, inplace: boolean): BaseDataFrame
@@ -255,18 +256,18 @@ function toString(
 
   if (index) {
     ret = rangeMap(
-      ri =>
+      (ri) =>
         [df.rowName(ri)]
-          .concat(df.row(ri)!.values.map(v => cellStr(v)))
+          .concat(df.row(ri)!.values.map((v) => cellStr(v)))
           .join(sep),
       df.shape[0]
     )
   } else {
     ret = rangeMap(
-      ri =>
+      (ri) =>
         df
           .row(ri)!
-          .values.map(v => cellStr(v))
+          .values.map((v) => cellStr(v))
           .join(sep),
       df.shape[0]
     )

@@ -30,9 +30,9 @@ import {
 } from '@dnd-kit/sortable'
 import { downloadJson } from '@lib/download-utils'
 import { GenomicLocation, parseLocation } from '@lib/genomic/genomic'
+import { randID } from '@lib/id'
 import { where } from '@lib/math/where'
 import type { NullStr } from '@lib/text/text'
-import { randId } from '@lib/utils'
 import { toast } from '@themed/crisp'
 import { useContext, useState } from 'react'
 import { GROUP_BG_CLS } from '../../../matcalc/groups/group-props-panel'
@@ -73,7 +73,7 @@ export function LocationsPropsPanel() {
 
           <LocationAutocomplete
             value={location.loc}
-            onTextChanged={loc => {
+            onTextChanged={(loc) => {
               if (loc.length > 0) {
                 setLocations(locations.map((l, li) => (li === index ? loc : l)))
               } else {
@@ -86,12 +86,12 @@ export function LocationsPropsPanel() {
                   })
 
                   // force refresh of all locations, i.e. no change
-                  setLocations(locations.map(l => l))
+                  setLocations(locations.map((l) => l))
                 } else {
                   // There is more than one location, so we allow
                   // this one to be deleted
                   setShowDialog({
-                    id: randId('remove-location'),
+                    id: randID('remove-location'),
                     params: { index },
                   })
                 }
@@ -168,7 +168,7 @@ export function LocationsPropsPanel() {
           modalType="Warning"
           //contentVariant="glass"
           //bodyVariant="card"
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
               // filter the locations to remove the one at the index
               const newLocations = locations.filter(
@@ -203,7 +203,7 @@ export function LocationsPropsPanel() {
           <IconButton
             onClick={() => {
               setShowDialog({
-                id: randId('open-locations'),
+                id: randID('open-locations'),
                 params: {},
               })
             }}
@@ -215,7 +215,7 @@ export function LocationsPropsPanel() {
           <IconButton
             onClick={() => {
               downloadJson(
-                locations.map(l => l.loc),
+                locations.map((l) => l.loc),
                 'locations.json'
               )
             }}
@@ -241,7 +241,7 @@ export function LocationsPropsPanel() {
         </ToolbarTabGroup>
 
         <FileDropZonePanel
-          onFileDrop={files => {
+          onFileDrop={(files) => {
             if (files.length > 0) {
               onTextFileChange('Open dropped file', files, openLocationFiles)
             }
@@ -250,32 +250,35 @@ export function LocationsPropsPanel() {
           <VScrollPanel>
             <DndContext
               modifiers={[restrictToVerticalAxis]}
-              onDragStart={event => setActiveId(event.active.id as string)}
-              onDragEnd={event => {
+              onDragStart={(event) => setActiveId(event.active.id as string)}
+              onDragEnd={(event) => {
                 const { active, over } = event
 
                 if (over && active.id !== over?.id) {
                   const oldIndex = where(
                     locations,
-                    l => l.loc === active.id
+                    (l) => l.loc === active.id
                   )[0]! // locations.indexOf(active.id as string)
-                  const newIndex = where(locations, l => l.loc === over.id)[0]! //locations.indexOf(over.id as string)
+                  const newIndex = where(
+                    locations,
+                    (l) => l.loc === over.id
+                  )[0]! //locations.indexOf(over.id as string)
                   const newOrder = arrayMove(
-                    locations.map(l => l.loc),
+                    locations.map((l) => l.loc),
                     oldIndex,
                     newIndex
                   )
 
                   console.log(newOrder)
 
-                  setLocations(newOrder.map(l => parseLocation(l)))
+                  setLocations(newOrder.map((l) => parseLocation(l)))
                 }
 
                 setActiveId(null)
               }}
             >
               <SortableContext
-                items={locations.map(l => l.loc)}
+                items={locations.map((l) => l.loc)}
                 strategy={verticalListSortingStrategy}
               >
                 <ul className="flex flex-col">
@@ -293,7 +296,7 @@ export function LocationsPropsPanel() {
                 {activeId ? (
                   <TrackItem
                     index={-1}
-                    location={locations.filter(l => l.loc === activeId)[0]!}
+                    location={locations.filter((l) => l.loc === activeId)[0]!}
                     key={activeId}
                     active={activeId}
                   />
@@ -326,7 +329,7 @@ export function LocationsPropsPanel() {
         <OpenFiles
           //onOpenChange={() => setOpen("")}
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
+            onTextFileChange(message, files, (files) => {
               openLocationFiles(files)
             })
           }

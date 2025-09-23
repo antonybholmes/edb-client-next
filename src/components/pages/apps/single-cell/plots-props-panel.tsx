@@ -36,7 +36,6 @@ import { bearerHeaders } from '@/lib/http/urls'
 import type { ILim } from '@/lib/math/math'
 import { textToLines } from '@/lib/text/lines'
 import { truncate } from '@/lib/text/text'
-import { nanoid } from '@/lib/utils'
 import { queryClient } from '@/query'
 import { DndContext } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
@@ -55,6 +54,7 @@ import {
   type PlotMode,
 } from './plot-grid-provider'
 
+import { makeNanoIDLen12 } from '@/lib/id'
 import { useUmapSettings } from './single-cell-settings'
 
 export const GROUP_BG_CLS = 'rounded-theme group gap-x-1'
@@ -206,7 +206,7 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
 
     if (newGenes.length > 0) {
       const geneset = {
-        id: nanoid(),
+        id: makeNanoIDLen12(),
         name: truncate(newGenes.map((g) => g.geneSymbol).join(', ')),
         genes: newGenes,
       }
@@ -215,7 +215,7 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
       setPlots([
         ...plots,
         {
-          id: nanoid(),
+          id: makeNanoIDLen12(),
           name: truncate(newGenes.map((g) => g.geneSymbol).join(', ')),
           geneset,
           mode: 'global-gex' as PlotMode,

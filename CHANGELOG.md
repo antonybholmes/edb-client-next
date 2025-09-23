@@ -6,6 +6,10 @@
 
 - Bug fixes and updates.
 
+### Fixed
+
+- Fixed gene search.
+
 
 ## 28.6 (Sep, 2025)
 

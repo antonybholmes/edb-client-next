@@ -4,19 +4,14 @@ import { SearchIcon } from '@icons/search-icon'
 
 import { useEffect, useState } from 'react'
 
-import { API_GENOME_INFO_URL } from '@lib/edb/edb'
-import { locStr } from '@lib/genomic/genomic'
+import { Feature, IGenomicFeature, locStr } from '@lib/genomic/genomic'
 
-import { useQuery } from '@tanstack/react-query'
-
-import { httpFetch } from '@lib/http/http-fetch'
-
+import { useGeneQuery } from '@/lib/edb/genome'
 import { BUTTON_MD_H_CLS } from '@/theme'
 import { Autocomplete } from '@components/autocomplete'
 import type { ISearchBoxProps } from '@components/search-box'
 import { cn } from '@lib/shadcn-utils'
 import { useSeqBrowserSettings } from './seq-browser-settings'
-import type { IGenomicFeature } from './svg/genes-track-svg'
 
 const LI_CLS = cn(
   BUTTON_MD_H_CLS,
@@ -24,42 +19,27 @@ const LI_CLS = cn(
   'justify-start items-center px-3 gap-x-2 w-full'
 )
 
+interface IProps extends ISearchBoxProps {
+  feature?: Feature
+  onLocationChanged?: (loc: IGenomicFeature) => void
+}
+
 export function LocationAutocomplete({
   value,
+  feature = 'gene',
   onTextChange,
   onTextChanged,
+  onLocationChanged,
   className,
   ...props
-}: ISearchBoxProps) {
+}: IProps) {
   const { settings } = useSeqBrowserSettings()
 
   const [query, setQuery] = useState('')
 
   const [results, setResults] = useState<IGenomicFeature[]>([])
 
-  const { data: geneData } = useQuery({
-    queryKey: ['gene-search', settings.genome, query],
-    queryFn: async () => {
-      if (query.length < 2 || query.includes('chr:')) {
-        return []
-      }
-
-      try {
-        const res = await httpFetch.getJson<{
-          data: IGenomicFeature[]
-        }>(
-          `${API_GENOME_INFO_URL}/${settings.genome}?search=${query}&level=gene&mode=fuzzy`
-        )
-
-        //console.log('search genes', res.data)
-
-        return res.data
-      } catch (e) {
-        console.log(e)
-        return []
-      }
-    },
-  })
+  const { data: geneData } = useGeneQuery(query, settings.genome, feature)
 
   useEffect(() => {
     if (geneData) {
@@ -68,7 +48,9 @@ export function LocationAutocomplete({
   }, [geneData])
 
   useEffect(() => {
-    setQuery(value?.toString() ?? '')
+    if (value) {
+      setQuery(value?.toString())
+    }
   }, [value])
 
   return (
@@ -95,6 +77,7 @@ export function LocationAutocomplete({
               if (item.geneSymbol) {
                 onTextChange?.(item.geneSymbol)
                 onTextChanged?.(item.geneSymbol)
+                onLocationChanged?.(item)
               }
             }}
           >

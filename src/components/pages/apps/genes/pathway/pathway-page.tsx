@@ -68,7 +68,7 @@ import {
   API_PATHWAY_DATASETS_URL,
   API_PATHWAY_GENES_URL,
 } from '@lib/edb/edb'
-import { nanoid, randId } from '@lib/utils'
+import { makeNanoIDLen12, randID } from '@lib/id'
 import axios from 'axios'
 
 import { range } from '@lib/math/range'
@@ -335,7 +335,7 @@ export function PathwayPage() {
     // only keep genes in approved list
     const genesets: IGeneset[] = range(sheet.shape[1]).map(() => {
       return {
-        id: nanoid(),
+        id: makeNanoIDLen12(),
         name: sheet.col(0).name.toString(),
         genes: sheet
           .col(0)
@@ -558,7 +558,7 @@ export function PathwayPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randId('open'),
+                    id: randID('open'),
                   })
                 }
               }}
@@ -567,7 +567,7 @@ export function PathwayPage() {
 
             {selectedTab === 0 && (
               <ToolbarIconButton
-                onClick={() => setShowDialog({ id: randId('save') })}
+                onClick={() => setShowDialog({ id: randID('save') })}
                 title={TEXT_SAVE_TABLE}
               >
                 <DownloadIcon />
@@ -693,7 +693,7 @@ export function PathwayPage() {
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
+          onClick={() => setShowDialog({ id: randID('open'), params: {} })}
         >
           <UploadIcon stroke="" />
 

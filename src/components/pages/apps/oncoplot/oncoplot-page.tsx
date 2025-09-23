@@ -60,7 +60,7 @@ import { ChartIcon } from '@icons/chart-icon'
 import { FolderIcon } from '@icons/folder-icon'
 import { UploadIcon } from '@icons/upload-icon'
 import { findCol, type BaseDataFrame } from '@lib/dataframe/base-dataframe'
-import { nanoid, randId } from '@lib/utils'
+import { makeNanoIDLen12, randID } from '@lib/id'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
 import { ClinicalDataTrack, makeClinicalTracks } from './clinical-utils'
 import { OncoPlotDialog, type OncoplotType } from './oncoplot-dialog'
@@ -488,7 +488,7 @@ function OncoplotPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randId('open'),
+                    id: randID('open'),
                   })
                 }
               }}
@@ -514,7 +514,7 @@ function OncoplotPage() {
             <ToolbarButton
               aria-label="Open location data"
               onClick={() =>
-                setShowDialog({ id: randId('Location'), params: {} })
+                setShowDialog({ id: randID('Location'), params: {} })
               }
             >
               Locations
@@ -522,7 +522,7 @@ function OncoplotPage() {
             <ToolbarButton
               aria-label="Open clinical information"
               onClick={() =>
-                setShowDialog({ id: randId('clinical'), params: {} })
+                setShowDialog({ id: randID('clinical'), params: {} })
               }
             >
               Clinical Data
@@ -534,7 +534,7 @@ function OncoplotPage() {
               aria-label="Create a location oncoplot"
               onClick={() =>
                 setShowDialog({
-                  id: randId('looncoplot'),
+                  id: randID('looncoplot'),
                   params: { type: 'loconcoplot' },
                 })
               }
@@ -545,7 +545,7 @@ function OncoplotPage() {
               aria-label="Create an oncoplot"
               onClick={() =>
                 setShowDialog({
-                  id: randId('oncoplot'),
+                  id: randID('oncoplot'),
                   params: { type: 'oncoplot' },
                 })
               }
@@ -658,7 +658,7 @@ function OncoplotPage() {
 
     plotsState.plots.forEach((plot) => {
       plotChildren.push({
-        id: nanoid(),
+        id: makeNanoIDLen12(),
         name: plot.name,
         icon: <ChartIcon className="fill-theme" />,
         onDelete: () => plotsDispatch({ type: 'remove', id: plot.id }),
@@ -743,7 +743,7 @@ function OncoplotPage() {
       content: (
         <DropdownMenuItem
           aria-label="Open file on your computer"
-          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
+          onClick={() => setShowDialog({ id: randID('open'), params: {} })}
         >
           <UploadIcon stroke="" />
 

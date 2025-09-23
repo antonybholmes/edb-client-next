@@ -1,8 +1,8 @@
+import { useStableId } from '@/hooks/stable-id'
 import { TRANS_COLOR_CLS } from '@/theme'
 import { VCenterRow } from '@layout/v-center-row'
 import { cn } from '@lib/shadcn-utils'
-import { nanoid } from 'nanoid'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { PanelResizeHandle } from 'react-resizable-panels'
 import { RESIZE_DOT_CLS, RESIZE_DRAG_CLS } from './h-resize-handle'
 
@@ -15,15 +15,14 @@ export function VResizeHandle({
   id,
   ...props
 }: React.ComponentProps<typeof PanelResizeHandle>) {
-  const internalIdRef = useRef(`v-resize-handle-${nanoid()}`)
-  const uniqueId = id || internalIdRef.current
+  const _id = useStableId(id, 'v-resize-handle')
 
   const [drag, setDrag] = useState(false)
   const resizeDotCls = cn(RESIZE_DOT_CLS, drag && 'opacity-100')
 
   return (
     <PanelResizeHandle
-      id={uniqueId}
+      id={_id}
       className={cn(CLS, drag ? 'bg-muted' : RESIZE_DRAG_CLS)}
       onDragging={(drag) => {
         setDrag(drag)

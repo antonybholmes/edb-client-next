@@ -30,7 +30,7 @@ import { useZoom } from '@/providers/zoom-provider'
 import { SaveImageDialog } from '@components/pages/save-image-dialog'
 import type { ITab } from '@components/tabs/tab-provider'
 import type { IDivProps } from '@interfaces/div-props'
-import { randId } from '@lib/utils'
+import { randID } from '@lib/id'
 import { Card } from '@themed/card'
 import { produce } from 'immer'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
@@ -126,7 +126,7 @@ export function VolcanoPanel({
   // })
 
   useEffect(() => {
-    const filteredMessage = messages.filter(m => m.target === plot?.id)
+    const filteredMessage = messages.filter((m) => m.target === plot?.id)
 
     for (const message of filteredMessage) {
       if (message.text.includes('save')) {
@@ -136,7 +136,7 @@ export function VolcanoPanel({
             `volcano.${messageImageFileFormat(message)}`
           )
         } else {
-          setShowDialog({ id: randId('save') })
+          setShowDialog({ id: randID('save') })
         }
       }
 
@@ -154,7 +154,7 @@ export function VolcanoPanel({
     updateProps(
       plotAddr,
       'displayOptions',
-      produce(displayOptions, draft => {
+      produce(displayOptions, (draft) => {
         draft.scale = zoom
       })
     )
@@ -230,8 +230,8 @@ export function VolcanoPanel({
           //onValueChange={setSelectedTab}
           //value={selectedTab}
           open={settings.sidebar.show}
-          onOpenChange={v => {
-            const newSettings = produce(settings, draft => {
+          onOpenChange={(v) => {
+            const newSettings = produce(settings, (draft) => {
               draft.sidebar.show = v
             })
 

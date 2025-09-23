@@ -3,7 +3,7 @@ import { CENTERED_ROW_CLS } from '@/theme'
 import { cn } from '@lib/shadcn-utils'
 
 import { TEXT_SEARCH } from '@/consts'
-import { randId } from '@lib/utils'
+import { useStableId } from '@/hooks/stable-id'
 import type { VariantProps } from 'class-variance-authority'
 import { useState } from 'react'
 import { CloseIcon } from './icons/close-icon'
@@ -43,7 +43,7 @@ export function SearchBox({
   className,
   ...props
 }: ISearchBoxProps) {
-  const [_id] = useState(id ?? randId('searchbox'))
+  const _id = useStableId(id, 'searchbox')
 
   const [_value, setValue] = useState('')
 
@@ -60,11 +60,11 @@ export function SearchBox({
       data-variant={variant}
       data-mode={variant}
       placeholder={placeholder}
-      onTextChange={v => {
+      onTextChange={(v) => {
         setValue(v)
         onTextChange?.(v)
       }}
-      onTextChanged={v => {
+      onTextChanged={(v) => {
         onTextChanged?.(v)
       }}
       leftChildren={

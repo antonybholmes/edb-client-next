@@ -1,4 +1,4 @@
-import { nanoid } from '@lib/utils'
+import { makeNanoIDLen12 } from '@lib/id'
 import { createRef, useRef, type RefObject } from 'react'
 import type { ExportHandle } from './bio-draw-utils'
 import { LipidSvg, type ILipid } from './components/lipid-svg'
@@ -12,12 +12,12 @@ export function BioDrawSvg() {
   )
 
   const handleExportAll = () => {
-    const allStates = childRefs.current.map(ref => ref.current?.exportState())
+    const allStates = childRefs.current.map((ref) => ref.current?.exportState())
     console.log('Exported states:', JSON.stringify(allStates))
   }
 
   const lipid: ILipid = {
-    id: nanoid(),
+    id: makeNanoIDLen12(),
     points: [],
   }
 

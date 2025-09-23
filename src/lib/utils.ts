@@ -1,11 +1,4 @@
-import { customAlphabet } from 'nanoid'
-import { v7 } from 'uuid'
 import { range, rangeMap } from '../lib/math/range'
-const NANOID = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 12)
-
-export function isStr(x: unknown) {
-  return typeof x === 'string'
-}
 
 /**
  * #move - Moves an array item from one position in an array to another.
@@ -38,32 +31,6 @@ export function result<T>(f: () => T | null | undefined) {
   } catch (error) {
     return [null, error]
   }
-}
-
-/**
- * Generates a UUID v7 string.
- *
- * @returns A UUID v7 string.
- */
-export function uuid(): string {
-  return v7() //crypto.randomUUID()
-}
-
-export function nanoid(): string {
-  return NANOID()
-}
-
-/**
- * Add a random id to the end of a prefix. Useful for when
- * we need to cause a state variable to repeatedly change,
- * e.g. click a button that sends an open message where
- * we want the message to be sent everytime and not cached
- * by react, so we add some randomness to it.
- * @param prefix
- * @returns
- */
-export function randId(prefix: string): string {
-  return `${prefix}:${nanoid()}`
 }
 
 export function zip<T = unknown>(...cols: T[][]): T[][] {

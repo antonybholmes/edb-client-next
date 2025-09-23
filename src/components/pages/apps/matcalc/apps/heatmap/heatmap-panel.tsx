@@ -30,8 +30,8 @@ import {
   useMessages,
 } from '@/providers/message-provider'
 import { useZoom } from '@/providers/zoom-provider'
+import { randID } from '@lib/id'
 import type { IClusterFrame } from '@lib/math/hcluster'
-import { randId } from '@lib/utils'
 import { produce } from 'immer'
 import { useHistory, usePlot } from '../../history/history-store'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
@@ -72,7 +72,7 @@ export function HeatmapPanel({ plotAddr }: IHeatmapPanelProps) {
 
   useEffect(() => {
     const filteredMessages = messages.filter(
-      message => message.target === plot?.id
+      (message) => message.target === plot?.id
     )
 
     for (const message of filteredMessages) {
@@ -83,7 +83,7 @@ export function HeatmapPanel({ plotAddr }: IHeatmapPanelProps) {
             `heatmap.${messageImageFileFormat(message)}`
           )
         } else {
-          setShowDialog({ id: randId('save') })
+          setShowDialog({ id: randID('save') })
         }
       }
 
@@ -92,7 +92,7 @@ export function HeatmapPanel({ plotAddr }: IHeatmapPanelProps) {
   }, [messages])
 
   useEffect(() => {
-    const newOptions = produce(displayOptions, draft => {
+    const newOptions = produce(displayOptions, (draft) => {
       draft.zoom = zoom
     })
 
@@ -183,8 +183,8 @@ export function HeatmapPanel({ plotAddr }: IHeatmapPanelProps) {
         //onValueChange={setSelectedTab}
         //value={selectedTab}
         open={settings.sidebar.show}
-        onOpenChange={v => {
-          const newSettings = produce(settings, draft => {
+        onOpenChange={(v) => {
+          const newSettings = produce(settings, (draft) => {
             draft.sidebar.show = v
           })
 

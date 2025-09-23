@@ -1,3 +1,6 @@
+import { BaseCol } from '@/components/layout/base-col'
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { IChildrenProps } from '@/interfaces/children-props'
 import { cn } from '@lib/shadcn-utils'
 import * as LabelPrimitive from '@radix-ui/react-label'
 import {
@@ -34,3 +37,46 @@ export const Label = forwardRef<
   />
 ))
 Label.displayName = LabelPrimitive.Root.displayName
+
+interface ILabelContainerProps extends IChildrenProps {
+  id: string
+  label: string
+  labelPos?: 'left' | 'top'
+  labelW?: string
+}
+
+export function LabelContainer({
+  id,
+  label,
+  labelPos,
+  labelW = 'min-w-24',
+  className,
+  children,
+}: ILabelContainerProps) {
+  //const [_id] = useState(id ?? randId('input'))
+
+  if (labelPos === 'top') {
+    return (
+      <BaseCol className={cn('gap-y-1', className)}>
+        <Label
+          className="text-sm font-bold text-foreground/80 px-0.5"
+          htmlFor={id}
+        >
+          {label}
+        </Label>
+
+        {children}
+      </BaseCol>
+    )
+  } else {
+    return (
+      <VCenterRow className="gap-x-4">
+        <Label className={labelW} htmlFor={id}>
+          {label}
+        </Label>
+
+        {children}
+      </VCenterRow>
+    )
+  }
+}

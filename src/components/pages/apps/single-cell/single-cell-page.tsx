@@ -61,9 +61,9 @@ import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
 import { type ITab } from '@components/tabs/tab-provider'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
 import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
+import { randID } from '@lib/id'
 import { textToLines } from '@lib/text/lines'
 import { truncate } from '@lib/text/text'
-import { randId } from '@lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { Card } from '@themed/card'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
@@ -722,7 +722,7 @@ export function SingleCellPage() {
               title={TEXT_SAVE_IMAGE}
               onClick={() =>
                 setShowDialog({
-                  id: randId(`save-plot`),
+                  id: randID(`save-plot`),
                 })
               }
             >
@@ -1227,7 +1227,7 @@ export function SingleCellPage() {
                     title={TEXT_SAVE_TABLE}
                     onClick={() =>
                       setShowDialog({
-                        id: randId(`save-table`),
+                        id: randID(`save-table`),
                       })
                     }
                   >

@@ -55,7 +55,7 @@ import { createGeneConvTable } from '@lib/gene/geneconv'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
 
 import { ShortcutLayout } from '@layouts/shortcut-layout'
-import { randId } from '@lib/utils'
+import { randID } from '@lib/id'
 import axios from 'axios'
 
 import type { ITab } from '@components/tabs/tab-provider'
@@ -188,7 +188,7 @@ export function GeneConvPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randId('open'),
+                    id: randID('open'),
                   })
                 }
               }}
@@ -429,7 +429,7 @@ export function GeneConvPage() {
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
+          onClick={() => setShowDialog({ id: randID('open'), params: {} })}
         >
           <UploadIcon stroke="" />
 

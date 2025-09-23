@@ -1,5 +1,5 @@
-import { nanoid } from 'nanoid'
-import { useRef, type ComponentProps } from 'react'
+import { useStableId } from '@/hooks/stable-id'
+import { type ComponentProps } from 'react'
 import { PanelResizeHandle } from 'react-resizable-panels'
 
 const CLS =
@@ -9,11 +9,10 @@ export function ThinVResizeHandle({
   id,
   ...props
 }: ComponentProps<typeof PanelResizeHandle>) {
-  const internalIdRef = useRef(`thin-v-resize-handle-${nanoid()}`)
-  const uniqueId = id || internalIdRef.current
+  const _id = useStableId(id, 'thin-v-resize-handle')
 
   return (
-    <PanelResizeHandle id={uniqueId} className={CLS} {...props}>
+    <PanelResizeHandle id={_id} className={CLS} {...props}>
       <span className="trans-color w-full h-[2px] trans-color group-data-[resize-handle-state=hover]:bg-ring group-data-[resize-handle-state=drag]:bg-ring" />
     </PanelResizeHandle>
   )

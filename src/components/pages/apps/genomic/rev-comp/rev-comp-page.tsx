@@ -46,9 +46,9 @@ import { DropdownMenuItem } from '@themed/dropdown-menu'
 import type { ITab } from '@components/tabs/tab-provider'
 import { OpenIcon } from '@icons/open-icon'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
+import { randID } from '@lib/id'
 import { cn } from '@lib/shadcn-utils'
 import { textToLines } from '@lib/text/lines'
-import { randId } from '@lib/utils'
 import {
   AccordionContent,
   AccordionItem,
@@ -232,7 +232,7 @@ export function RevCompPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randId('open'),
+                    id: randID('open'),
                   })
                 }
               }}
@@ -241,7 +241,7 @@ export function RevCompPage() {
 
             <ToolbarIconButton
               arial-label="Save to local file"
-              onClick={() => setShowDialog({ id: randId('save') })}
+              onClick={() => setShowDialog({ id: randID('save') })}
               title="Save sequences"
             >
               <SaveIcon />
@@ -269,7 +269,7 @@ export function RevCompPage() {
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randId('open') })}
+          onClick={() => setShowDialog({ id: randID('open') })}
         >
           <UploadIcon stroke="" />
 

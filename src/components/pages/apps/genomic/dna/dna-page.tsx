@@ -67,7 +67,7 @@ import { DropdownMenuItem } from '@themed/dropdown-menu'
 import { RadioGroup, RadioGroupItem } from '@themed/radio-group'
 
 import { ShortcutLayout } from '@layouts/shortcut-layout'
-import { randId } from '@lib/utils'
+import { randID } from '@lib/id'
 import axios from 'axios'
 
 import type { ISaveAsFormat } from '@components/pages/save-as-dialog'
@@ -219,7 +219,7 @@ export function DNAPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randId('open'),
+                    id: randID('open'),
                   })
                 }
               }}
@@ -228,7 +228,7 @@ export function DNAPage() {
 
             <ToolbarIconButton
               title={TEXT_SAVE_TABLE}
-              onClick={() => setShowDialog({ id: randId('save') })}
+              onClick={() => setShowDialog({ id: randID('save') })}
             >
               <DownloadIcon />
             </ToolbarIconButton>
@@ -381,7 +381,7 @@ export function DNAPage() {
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
+          onClick={() => setShowDialog({ id: randID('open'), params: {} })}
         >
           <UploadIcon stroke="" />
 

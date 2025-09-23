@@ -1,5 +1,5 @@
 import { randomHexColor } from './color/color'
-import { uuid } from './utils'
+import { makeUUIDv7 } from './id'
 
 // export interface IBaseClusterGroup {
 //   name: string
@@ -42,7 +42,7 @@ export function makeNewGroup(
 ): IClusterGroup {
   return {
     version: 2,
-    id: uuid(),
+    id: makeUUIDv7(),
     name,
     search,
     exactMatch,

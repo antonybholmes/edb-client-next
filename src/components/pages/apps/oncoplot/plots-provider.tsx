@@ -2,7 +2,7 @@ import { type IChildrenProps } from '@interfaces/children-props'
 
 import { createContext, useReducer, type Dispatch } from 'react'
 
-import { nanoid } from '@lib/utils'
+import { makeNanoIDLen12 } from '@lib/id'
 import type { IPlotState } from './plot-provider'
 
 export interface IPlot extends IPlotState {
@@ -58,7 +58,7 @@ export function plotsReducer(
         plots: [
           ...state.plots,
           {
-            id: action.plot.id ?? nanoid(),
+            id: action.plot.id ?? makeNanoIDLen12(),
             name: action.plot.name ?? `Oncoplot ${state.plots.length + 1}`,
             mutationFrame: action.plot.mutationFrame,
             clinicalTracks: action.plot.clinicalTracks,
@@ -72,7 +72,7 @@ export function plotsReducer(
         ...state,
         plots: [
           {
-            id: action.plot.id ?? nanoid(),
+            id: action.plot.id ?? makeNanoIDLen12(),
             name: action.plot.name ?? `Oncoplot ${state.plots.length + 1}`,
             mutationFrame: action.plot.mutationFrame,
             clinicalTracks: action.plot.clinicalTracks,
@@ -83,7 +83,7 @@ export function plotsReducer(
     case 'remove':
       return {
         ...state,
-        plots: state.plots.filter(plot => plot.id != action.id),
+        plots: state.plots.filter((plot) => plot.id != action.id),
       }
     case 'clear':
       return { ...state, plots: [] }

@@ -17,7 +17,7 @@ import type { IDim } from '@/interfaces/dim'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import type { ILim } from '@/lib/math/math'
 import { getModuleName } from '@/lib/module-info'
-import { nanoid } from '@/lib/utils'
+import { makeNanoIDLen12 } from '@lib/id'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import MODULE_INFO from './module.json'
@@ -112,12 +112,12 @@ export const DEFAULT_SETTINGS: ISingleCellSettings = {
   ...DEFAULT_SCATTER_PROPS,
   genesets: [
     {
-      id: nanoid(),
+      id: makeNanoIDLen12(),
       name: '',
       genes: [{ geneId: 'ENSG00000111732.10', geneSymbol: 'AICDA' }],
     },
     {
-      id: nanoid(),
+      id: makeNanoIDLen12(),
       name: '',
       genes: [{ geneId: 'ENSG00000057657.15', geneSymbol: 'PRDM1' }],
     },

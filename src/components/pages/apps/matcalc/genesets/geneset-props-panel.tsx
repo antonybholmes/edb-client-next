@@ -10,7 +10,7 @@ import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { TrashIcon } from '@icons/trash-icon'
 import { VCenterRow } from '@layout/v-center-row'
 import { downloadJson } from '@lib/download-utils'
-import { randId } from '@lib/utils'
+import { randID } from '@lib/id'
 import { useContext, useEffect, useState } from 'react'
 
 import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
@@ -407,7 +407,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
             <IconButton
               //rounded="full"
               // ripple={false}
-              onClick={() => setOpen(randId('open'))}
+              onClick={() => setOpen(randID('open'))}
               title="Open Gene Sets"
               //className="fill-foreground/50 hover:fill-foreground"
             >

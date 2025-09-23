@@ -231,10 +231,6 @@ export const API_PATHWAY_DATASET_URL = `${API_PATHWAY_URL}/dataset`
 export const API_PATHWAY_DATASETS_URL = `${API_PATHWAY_URL}/datasets`
 export const API_PATHWAY_OVERLAP_URL = `${API_PATHWAY_URL}/overlap`
 
-export const API_GENOME_URL = `${EDB_API_URL}/modules/genome`
-export const API_GENOME_GENOMES_URL = `${API_GENOME_URL}/genomes`
-export const API_GENOME_OVERLAP_URL = `${API_GENOME_URL}/overlap`
-export const API_GENOME_INFO_URL = `${API_GENOME_URL}/info`
 //export const API_GENES_DB_URL = `${API_GENES_URL}/db`
 
 export const API_CYTOBANDS_URL = `${EDB_API_URL}/modules/cytobands`

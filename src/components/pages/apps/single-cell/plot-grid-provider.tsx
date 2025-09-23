@@ -5,6 +5,7 @@ import { API_SCRNA_GEX_URL } from '@/lib/edb/edb'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
+import { makeNanoIDLen12 } from '@/lib/id'
 import { argsort } from '@/lib/math/argsort'
 import { findCenter } from '@/lib/math/centroid'
 import type { ILim } from '@/lib/math/math'
@@ -15,7 +16,6 @@ import { where } from '@/lib/math/where'
 import { zeros } from '@/lib/math/zeros'
 import { ZScore } from '@/lib/math/zscore'
 import { truncate } from '@/lib/text/text'
-import { nanoid } from '@/lib/utils'
 import { queryClient } from '@/query'
 import { produce } from 'immer'
 import { createContext, useEffect, useState } from 'react'
@@ -235,7 +235,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
       // add extended properties
       return {
         ...c,
-        id: nanoid(),
+        id: makeNanoIDLen12(),
         pos,
         show: true,
         showRoundel: true,
@@ -265,14 +265,14 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         draft.clusterInfo = clusterInfo
         draft.plots = [
           {
-            id: nanoid(),
+            id: makeNanoIDLen12(),
             name: 'Clusters',
             //genes: [],
             mode: 'clusters',
             // show all clusters
             clusters,
             geneset: {
-              id: nanoid(),
+              id: makeNanoIDLen12(),
               name: '',
               genes: [],
             },
@@ -432,7 +432,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
       const idx = argsort(avg) //.toReversed()
 
       plots.push({
-        id: nanoid(),
+        id: makeNanoIDLen12(),
         name: useMean
           ? truncate(
               `Mean of ${geneset.name}: ${geneset.genes.map((g) => g.geneSymbol).join(', ')}`

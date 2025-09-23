@@ -41,8 +41,8 @@ import {
   downloadDataFrame,
   getFormattedShape,
 } from '@lib/dataframe/dataframe-utils'
+import { randID } from '@lib/id'
 import { friendlyFilename, replaceFileExt } from '@lib/path'
-import { randId } from '@lib/utils'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from '@themed/crisp'
 import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
@@ -133,7 +133,7 @@ export function DataPanel({ branchId }: IDataPanelProps) {
   }
 
   useEffect(() => {
-    const filteredMessages = messages.filter(m => m.target === branch?.id)
+    const filteredMessages = messages.filter((m) => m.target === branch?.id)
 
     for (const message of filteredMessages) {
       //console.log(message)
@@ -201,7 +201,7 @@ export function DataPanel({ branchId }: IDataPanelProps) {
   function openFiles(files: ITextFileOpen[], options: IParseOptions) {
     filesToDataFrames(queryClient, files, {
       parseOpts: options,
-      onSuccess: tables => {
+      onSuccess: (tables) => {
         if (tables.length > 0) {
           openBranch(`Load ${tables[0]!.name}`, tables)
         }
@@ -257,7 +257,7 @@ export function DataPanel({ branchId }: IDataPanelProps) {
           contentVariant="glass"
           bodyVariant="card"
           modalType="Warning"
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
               if (step?.sheets) {
                 removeSheet(showDialog.params!.sheetId as string)
@@ -280,10 +280,10 @@ export function DataPanel({ branchId }: IDataPanelProps) {
         tabs={rightTabs}
         side="right"
         limits={[50, 85]}
-        onTabChange={selectedTab => setSelectedTab(selectedTab.tab.id)}
+        onTabChange={(selectedTab) => setSelectedTab(selectedTab.tab.id)}
         open={matcalcSettings.sidebar.show}
-        onOpenChange={v => {
-          const newSettings = produce(matcalcSettings, draft => {
+        onOpenChange={(v) => {
+          const newSettings = produce(matcalcSettings, (draft) => {
             draft.sidebar.show = v
           })
 
@@ -297,11 +297,11 @@ export function DataPanel({ branchId }: IDataPanelProps) {
           onTabChange={(selectedTab: ISelectedTab) => {
             gotoSheet(selectedTab.tab.id)
           }}
-          onFileDrop={files => {
+          onFileDrop={(files) => {
             if (files.length > 0) {
-              onTextFileChange('Open from drag', files, files => {
+              onTextFileChange('Open from drag', files, (files) => {
                 setShowDialog({
-                  id: randId('open-files'),
+                  id: randID('open-files'),
                   params: { files },
                 })
               })
@@ -309,7 +309,7 @@ export function DataPanel({ branchId }: IDataPanelProps) {
           }}
           className="relative mx-2"
           style={{ marginBottom: '-2px' }}
-          onReorder={order => {
+          onReorder={(order) => {
             console.log('reorder', order)
             reorderSheets(order)
           }}
@@ -320,7 +320,7 @@ export function DataPanel({ branchId }: IDataPanelProps) {
           menuCallback={(tab, action) => {
             if (action === TEXT_DELETE) {
               setShowDialog({
-                id: randId('delete-sheet'),
+                id: randID('delete-sheet'),
                 params: { sheetId: tab.id },
               })
             }

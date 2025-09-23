@@ -25,7 +25,7 @@ import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
 import { getDataFrameInfo } from '@lib/dataframe/dataframe-utils'
 import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
 
-import { GenomicLocation } from '@lib/genomic/genomic'
+import { GenomicLocation, locStr } from '@lib/genomic/genomic'
 import { useEffect, useRef, useState } from 'react'
 
 import {
@@ -64,8 +64,8 @@ import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
 import { VCenterRow } from '@layout/v-center-row'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
 import { downloadDataFrame } from '@lib/dataframe/dataframe-utils'
+import { randID } from '@lib/id'
 import { downloadSvgAutoFormat } from '@lib/image-utils'
-import { randId } from '@lib/utils'
 import { ToolbarButton } from '@toolbar/toolbar-button'
 
 import { PileupPropsPanel } from './pileup-props-panel'
@@ -76,7 +76,6 @@ import { type ITab } from '@components/tabs/tab-provider'
 import { V_SCROLL_CHILD_CLS, VScrollPanel } from '@components/v-scroll-panel'
 
 import type { ISaveAsFormat } from '@components/pages/save-as-dialog'
-import { SearchBox } from '@components/search-box'
 import { FileIcon } from '@icons/file-icon'
 import { Card } from '@themed/card'
 import {
@@ -87,6 +86,8 @@ import {
   SelectValue,
 } from '@themed/select'
 
+import { HeaderPortal } from '@/components/header/header-portal'
+import { ModuleInfoButton } from '@/components/header/module-info-button'
 import { ShowSideButton } from '@components/pages/show-side-button'
 import { COLOR_BLACK, COLOR_RED } from '@lib/color/color'
 import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
@@ -95,9 +96,11 @@ import { httpFetch } from '@lib/http/http-fetch'
 import { bearerHeaders } from '@lib/http/urls'
 import { toast } from '@themed/crisp'
 import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
+import { LocationAutocomplete } from '../../genomic/seq-browser/location-autocomplete'
 import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 import { HistoryPanel } from '../../matcalc/history/history-panel'
 import { useHistory } from '../../matcalc/history/history-store'
+import MODULE_INFO from './module.json'
 
 export const DEFAULT_MOTIF_PATTERNS: IMotifPattern[] = [
   {
@@ -382,7 +385,13 @@ export function MutationsPage() {
     return ret
   }
 
-  async function getPileup() {
+  /**
+   * Fetch pileup data for a given genomic location.
+   *
+   * @param search genomic location string e.g. chr1:1000-2000
+   * @returns
+   */
+  async function getPileup(search: string) {
     const location = parseLocation(search)
 
     if (!location) {
@@ -563,7 +572,7 @@ export function MutationsPage() {
               aria-label="Save matrix to local file"
               onClick={() =>
                 setShowDialog({
-                  id: randId('export'),
+                  id: randID('export'),
                 })
               }
             >
@@ -578,7 +587,7 @@ export function MutationsPage() {
               title="Fetch mutations"
               onClick={() => {
                 try {
-                  getPileup()
+                  getPileup(search)
                 } catch (e) {
                   console.log(e)
                 }
@@ -721,9 +730,10 @@ export function MutationsPage() {
         />
       )}
 
-      <ShortcutLayout
-        headerCenterChildren={
-          <SearchBox
+      <ShortcutLayout>
+        <HeaderPortal>
+          <ModuleInfoButton info={MODULE_INFO} />
+          {/* <SearchBox
             value={search}
             onTextChange={(v) => setSearch(v)}
             onTextChanged={() => {
@@ -731,10 +741,26 @@ export function MutationsPage() {
             }}
             variant="header"
             h="header"
-            className="text-sm w-1/2"
-          />
-        }
-        headerRightChildren={
+            w=" w-1/4 text-xs"
+          /> */}
+
+          <>
+            <LocationAutocomplete
+              value={search}
+              //showClear={false}
+              onTextChange={(v) => setSearch(v)}
+              onTextChanged={(v) => {
+                getPileup(v)
+              }}
+              onLocationChanged={(feature) => {
+                const search = locStr(feature.loc)
+                setSearch(search)
+                getPileup(search)
+              }}
+              className="w-4/5 lg:w-3/5 xl:w-1/2 2xl:w-2/5 text-xs"
+            />
+          </>
+
           <Select value={assembly} onValueChange={setAssembly}>
             <SelectTrigger
               variant="header"
@@ -748,8 +774,8 @@ export function MutationsPage() {
               <SelectItem value="grch38">grch38</SelectItem>
             </SelectContent>
           </Select>
-        }
-      >
+        </HeaderPortal>
+
         <Toolbar tabs={tabs}>
           <ToolbarMenu
             open={showFileMenu}
@@ -917,7 +943,7 @@ export function MutationsPage() {
                           title="Save mutation table"
                           onClick={() =>
                             setShowDialog({
-                              id: randId('save'),
+                              id: randID('save'),
                             })
                           }
                         >

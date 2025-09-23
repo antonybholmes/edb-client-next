@@ -1,6 +1,6 @@
 import type { IClusterGroup } from '../cluster-group'
 import { randomHexColor } from '../color/color'
-import { uuid } from '../utils'
+import { makeUUIDv7 } from '../id'
 
 export interface IGeneset {
   id: string
@@ -30,7 +30,7 @@ export interface IRankedGene {
 
 export function makeNewGeneset(name: string = 'Gene Set 1'): IGeneset {
   return {
-    id: uuid(),
+    id: makeUUIDv7(),
     name,
     genes: [],
     color: randomHexColor(),

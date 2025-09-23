@@ -57,9 +57,9 @@ import { TrashIcon } from '@icons/trash-icon'
 import { indexBed } from '@lib/genomic/bed'
 import type { IGenomicLocation } from '@lib/genomic/genomic'
 import type { GenomicFeatureIndex } from '@lib/genomic/genomic-index'
+import { makeNanoIDLen12, randID } from '@lib/id'
 import { where } from '@lib/math/where'
 import { textToLines } from '@lib/text/lines'
-import { nanoid, randId } from '@lib/utils'
 import { BlobFile } from 'generic-filehandle2'
 import {
   Columns3,
@@ -258,7 +258,7 @@ export function TracksPropsPanel() {
           onResponse={() => setShowDialog({ ...NO_DIALOG })}
           callback={(tracks, combine) => {
             const signals: AllSignalTrackTypes[] = tracks.map((track, ti) => {
-              const id = nanoid()
+              const id = makeNanoIDLen12()
               const displayOptions = {
                 ...DEFAULT_SEQ_TRACK_DISPLAY_OPTIONS,
                 stroke: {
@@ -328,7 +328,7 @@ export function TracksPropsPanel() {
             // even if they duplicate tracks
             const peaks: AllDBBedTrackTypes[] = beds.map(
               (track: AllDBBedTrackTypes) => {
-                const id = nanoid()
+                const id = makeNanoIDLen12()
                 const displayOptions = { ...DEFAULT_BED_TRACK_DISPLAY_OPTIONS }
 
                 switch (track.trackType) {
@@ -377,7 +377,7 @@ export function TracksPropsPanel() {
                 const displayBigWig: ILocalBigWigTrack = {
                   trackType: 'Local BigWig',
                   name,
-                  id: nanoid(),
+                  id: makeNanoIDLen12(),
                   scale: 'Count',
                   reader: new BigWigReader(file.data as BigWig),
                   displayOptions: {
@@ -398,7 +398,7 @@ export function TracksPropsPanel() {
                 const displayBigBed: ILocalBigBedTrack = {
                   trackType: 'Local BigBed',
                   name,
-                  id: nanoid(),
+                  id: makeNanoIDLen12(),
                   reader: new BigBedReader(file.data as BigBed),
                   displayOptions: {
                     ...DEFAULT_BED_TRACK_DISPLAY_OPTIONS,
@@ -414,7 +414,7 @@ export function TracksPropsPanel() {
                 const displayBed: ILocalBedTrack = {
                   trackType: 'Local BED',
                   name: file.name,
-                  id: nanoid(),
+                  id: makeNanoIDLen12(),
                   displayOptions: {
                     ...DEFAULT_BED_TRACK_DISPLAY_OPTIONS,
                     fill: { ...OPAQUE_FILL_PROPS, color },
@@ -714,7 +714,7 @@ export function TracksPropsPanel() {
               title="Add Track"
               onMainClick={() =>
                 setShowDialog({
-                  id: randId('add-chipseq'),
+                  id: randID('add-chipseq'),
                   params: {},
                 })
               }
@@ -731,7 +731,7 @@ export function TracksPropsPanel() {
                       aria-label="ChIP-seq"
                       onClick={() =>
                         setShowDialog({
-                          id: randId('add-chipseq'),
+                          id: randID('add-chipseq'),
                           params: {},
                         })
                       }
@@ -743,7 +743,7 @@ export function TracksPropsPanel() {
                       aria-label="RNA-seq"
                       onClick={() =>
                         setShowDialog({
-                          id: randId('add-rnaseq'),
+                          id: randID('add-rnaseq'),
                           params: {},
                         })
                       }
@@ -755,7 +755,7 @@ export function TracksPropsPanel() {
                       aria-label="Cut & Run"
                       onClick={() =>
                         setShowDialog({
-                          id: randId('add-cutandrun'),
+                          id: randID('add-cutandrun'),
                           params: {},
                         })
                       }
@@ -774,7 +774,7 @@ export function TracksPropsPanel() {
                       aria-label="ChIP-seq"
                       onClick={() => {
                         setShowDialog({
-                          id: randId('add-peaks'),
+                          id: randID('add-peaks'),
                           params: {},
                         })
                       }}
@@ -792,7 +792,7 @@ export function TracksPropsPanel() {
                 aria-label="Local Files"
                 onClick={() => {
                   setShowDialog({
-                    id: randId('add-local-files'),
+                    id: randID('add-local-files'),
                     params: {},
                   })
                 }}
@@ -804,7 +804,7 @@ export function TracksPropsPanel() {
               <DropdownMenuItem
                 onClick={() => {
                   setShowDialog({
-                    id: randId('open-tracks'),
+                    id: randID('open-tracks'),
                     params: {},
                   })
                 }}
@@ -870,7 +870,7 @@ export function TracksPropsPanel() {
                           const track: IRulerTrack = {
                             trackType: 'Ruler',
                             name: 'Ruler',
-                            id: nanoid(),
+                            id: makeNanoIDLen12(),
                             displayOptions: {
                               ...DEFAULT_RULER_TRACK_DISPLAY_OPTIONS,
                             },
@@ -893,7 +893,7 @@ export function TracksPropsPanel() {
                           const track: IScaleTrack = {
                             trackType: 'Scale',
                             name: 'Scale',
-                            id: nanoid(),
+                            id: makeNanoIDLen12(),
                             displayOptions: {
                               ...DEFAULT_SCALE_TRACK_DISPLAY_OPTIONS,
                             },
@@ -916,7 +916,7 @@ export function TracksPropsPanel() {
                           const track: IGeneTrack = {
                             trackType: 'Gene',
                             name: 'Genes',
-                            id: nanoid(),
+                            id: makeNanoIDLen12(),
                             displayOptions: {
                               ...DEFAULT_GENE_TRACK_DISPLAY_OPTIONS,
                             },
@@ -939,7 +939,7 @@ export function TracksPropsPanel() {
                           const track: ILocationTrack = {
                             trackType: 'Location',
                             name: 'Location',
-                            id: nanoid(),
+                            id: makeNanoIDLen12(),
                             displayOptions: {
                               ...DEFAULT_LOCATION_TRACK_DISPLAY_OPTIONS,
                             },
@@ -962,7 +962,7 @@ export function TracksPropsPanel() {
                           const track: ICytobandsTrack = {
                             trackType: 'Cytobands',
                             name: 'Cytobands',
-                            id: nanoid(),
+                            id: makeNanoIDLen12(),
                             displayOptions: {
                               ...DEFAULT_CYTOBANDS_TRACK_DISPLAY_OPTIONS,
                             },
@@ -1019,7 +1019,7 @@ export function TracksPropsPanel() {
                 <IconButton
                   onClick={() => {
                     setShowDialog({
-                      id: randId('join-seqs'),
+                      id: randID('join-seqs'),
                       params: {},
                     })
                   }}
@@ -1032,7 +1032,7 @@ export function TracksPropsPanel() {
                   title="Delete selected tracks"
                   onClick={() => {
                     setShowDialog({
-                      id: randId('remove-groups'),
+                      id: randID('remove-groups'),
                       params: {},
                     })
                   }}
@@ -1075,7 +1075,7 @@ export function TracksPropsPanel() {
                   const bed: ILocalBedTrack = {
                     trackType: 'Local BED',
                     name: file.name,
-                    id: nanoid(),
+                    id: makeNanoIDLen12(),
                     displayOptions: {
                       ...DEFAULT_BED_TRACK_DISPLAY_OPTIONS,
                     },
@@ -1103,7 +1103,7 @@ export function TracksPropsPanel() {
                 const displayBigWig: ILocalBigWigTrack = {
                   trackType: 'Local BigWig',
                   name: file.name,
-                  id: nanoid(),
+                  id: makeNanoIDLen12(),
                   scale: 'Count',
 
                   reader: new BigWigReader(bw),
@@ -1133,7 +1133,7 @@ export function TracksPropsPanel() {
                 const bed: ILocalBigBedTrack = {
                   trackType: 'Local BigBed',
                   name: file.name,
-                  id: nanoid(),
+                  id: makeNanoIDLen12(),
                   displayOptions: {
                     ...DEFAULT_BED_TRACK_DISPLAY_OPTIONS,
                   },

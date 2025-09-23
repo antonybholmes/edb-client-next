@@ -56,8 +56,8 @@ import { ShortcutLayout } from '@layouts/shortcut-layout'
 import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
 import type { BaseDataFrame } from '@lib/dataframe/base-dataframe'
 import { downloadDataFrame } from '@lib/dataframe/dataframe-utils'
+import { randID } from '@lib/id'
 import { downloadSvgAutoFormat } from '@lib/image-utils'
-import { randId } from '@lib/utils'
 import { Card } from '@themed/card'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
 import { IconButton } from '@themed/icon-button'
@@ -564,7 +564,7 @@ export function MotifsPage() {
                     title={TEXT_SAVE_TABLE}
                     onClick={() =>
                       setShowDialog({
-                        id: randId(`save-table`),
+                        id: randID(`save-table`),
                       })
                     }
                   >

@@ -27,8 +27,8 @@ import { SaveIcon } from '@icons/save-icon'
 import { TrashIcon } from '@icons/trash-icon'
 import { COLOR_BLACK } from '@lib/color/color'
 import { downloadJson } from '@lib/download-utils'
+import { makeNanoIDLen12, randID } from '@lib/id'
 import { cn } from '@lib/shadcn-utils'
-import { nanoid, randId } from '@lib/utils'
 import { Button } from '@themed/button'
 import { Input } from '@themed/input'
 import { Switch } from '@themed/switch'
@@ -124,7 +124,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
               </Button> */}
 
             <IconButton
-              onClick={() => setShowDialog({ id: randId('open'), params: {} })}
+              onClick={() => setShowDialog({ id: randID('open'), params: {} })}
               title="Open features"
             >
               <OpenIcon />
@@ -144,7 +144,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                 setLabels([
                   ...labels,
                   {
-                    id: nanoid(),
+                    id: makeNanoIDLen12(),
                     name: `${protein.sequence[0]}1`,
                     start: 1,
                     color: DEFAULT_FEATURE_COLOR,
@@ -163,7 +163,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
               variant="link"
               size="sm"
               // ripple={false}
-              onClick={() => setShowDialog({ id: randId('clear'), params: {} })}
+              onClick={() => setShowDialog({ id: randID('clear'), params: {} })}
               //aria-label="Clear All"
               title="Clear all labels"
             >
@@ -258,7 +258,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                     )}
                     onClick={() =>
                       setShowDialog({
-                        id: randId('delete'),
+                        id: randID('delete'),
                         params: { label },
                       })
                     }
@@ -291,7 +291,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                   const v = parseInt(s.trim())
 
                   return {
-                    id: nanoid(),
+                    id: makeNanoIDLen12(),
                     name: `${protein.sequence[v - 1]}${v}`,
                     start: v,
                     color: COLOR_BLACK,

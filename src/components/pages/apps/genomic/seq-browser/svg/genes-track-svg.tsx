@@ -2,7 +2,7 @@ import { type IDivProps } from '@interfaces/div-props'
 
 import type { Axis } from '@/components/plot/axis'
 import { COLOR_BLACK } from '@lib/color/color'
-import { type IGenomicLocation } from '@lib/genomic/genomic'
+import { IGenomicFeature, type IGenomicLocation } from '@lib/genomic/genomic'
 import { range } from '@lib/math/range'
 import { sign } from '@lib/math/sign'
 import { useContext } from 'react'
@@ -17,23 +17,6 @@ const CHAR_W = 8
 interface IGeneDBInfo {
   genome: string
   version: string
-}
-
-export interface IGenomicFeature {
-  loc: IGenomicLocation
-  feature: string
-  level?: number
-  //strand: string
-  geneSymbol?: string
-  geneId?: string
-  //geneType?: string
-  transcriptId?: string
-  isCanonical?: boolean
-  isLongest?: boolean
-  type?: string
-  exonId?: string
-  exonNumber?: number
-  children?: IGenomicFeature[]
 }
 
 export interface IGenomicFeatureSearch {

@@ -27,7 +27,7 @@ import {
 } from '@/consts'
 import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
 import { ChevronRightIcon } from '@icons/chevron-right-icon'
-import { API_GENOME_GENOMES_URL } from '@lib/edb/edb'
+
 import { GenomicLocation } from '@lib/genomic/genomic'
 import {
   Select,
@@ -44,8 +44,8 @@ import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 import { SaveImageDialog } from '@components/pages/save-image-dialog'
 import { type ITab } from '@components/tabs/tab-provider'
 import { FileImageIcon } from '@icons/file-image-icon'
+import { randID } from '@lib/id'
 import { downloadSvgAutoFormat } from '@lib/image-utils'
-import { randId } from '@lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
 import MODULE_INFO from './module.json'
@@ -79,6 +79,7 @@ import {
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { useSearch } from '@/hooks/search'
+import { API_GENOME_GENOMES_URL } from '@/lib/edb/genome'
 import { HeaderPortal } from '@components/header/header-portal'
 import { ModuleInfoButton } from '@components/header/module-info-button'
 import { DownloadIcon } from '@icons/download-icon'
@@ -254,7 +255,7 @@ function SeqBrowserPage() {
               title={TEXT_SAVE_IMAGE}
               onClick={() =>
                 setShowDialog({
-                  id: randId('save'),
+                  id: randID('save'),
                 })
               }
             >

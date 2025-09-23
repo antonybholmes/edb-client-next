@@ -1623,6 +1623,12 @@
           "msg": "Bug fixes and updates.",
           "date": "2025-09-23T15:27:41.088Z"
         }
+      ],
+      "Fixed": [
+        {
+          "msg": "Fixed gene search",
+          "date": "2025-09-23T20:41:15.590Z"
+        }
       ]
     },
     "author": "Antony Holmes",

@@ -14,7 +14,7 @@ import {
 } from '@/consts'
 import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
 import { SignOutIcon } from '@icons/sign-out-icon'
-import { randId } from '@lib/utils'
+import { randID } from '@lib/id'
 import { DropdownMenu } from '@radix-ui/react-dropdown-menu'
 import {
   DropdownMenuAnchorItem,
@@ -154,7 +154,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
 
           <DropdownMenuItem
             aria-label={TEXT_SIGN_OUT}
-            onClick={() => setShowDialog({ id: randId('signout'), params: {} })}
+            onClick={() => setShowDialog({ id: randID('signout'), params: {} })}
           >
             <SignOutIcon stroke="" />
 
@@ -233,7 +233,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
               <DropdownMenuItem
                 aria-label={TEXT_SIGN_OUT}
                 onClick={() =>
-                  setShowDialog({ id: randId('signout'), params: {} })
+                  setShowDialog({ id: randID('signout'), params: {} })
                 }
               >
                 {TEXT_SIGN_OUT}

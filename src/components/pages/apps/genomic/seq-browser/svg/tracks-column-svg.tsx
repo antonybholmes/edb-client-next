@@ -2,6 +2,7 @@ import { type IDivProps } from '@interfaces/div-props'
 
 import { useContext, type ReactNode } from 'react'
 
+import { IGenomicFeature } from '@/lib/genomic/genomic'
 import { cumsum } from '@lib/math/cumsum'
 import type { IGeneDbInfo } from '../../annotate/annotate-page'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
@@ -17,7 +18,7 @@ import {
 import { getBedTrackHeight } from './base-bed-track-svg'
 import { BedTrackSvg } from './bed-track-svg'
 import { CytobandsTrackSvg } from './cytobands-track-svg'
-import { GenesTrackSvg, type IGenomicFeature } from './genes-track-svg'
+import { GenesTrackSvg } from './genes-track-svg'
 import { LocationTrackSvg } from './location-track-svg'
 import { RulerTrackSvg } from './ruler-track-svg'
 import { ScaleTrackSvg } from './scale-track-svg'

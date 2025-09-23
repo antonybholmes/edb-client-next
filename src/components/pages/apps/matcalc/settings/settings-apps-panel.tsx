@@ -65,7 +65,7 @@ export function SettingsAppsPanel() {
 
                         updateSettings(newOptions)
                       }}
-                      w="w-1/2"
+                      className="w-1/2"
                     />
                   )
                 }

@@ -54,7 +54,7 @@ import {
   TEXT_SAVE_TABLE,
   TEXT_SETTINGS,
 } from '@/consts'
-import { API_GENOME_GENOMES_URL } from '@lib/edb/edb'
+
 import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
 
 import { ShortcutLayout } from '@layouts/shortcut-layout'
@@ -68,9 +68,9 @@ import { FileIcon } from '@icons/file-icon'
 import { UploadIcon } from '@icons/upload-icon'
 import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
 import { httpFetch } from '@lib/http/http-fetch'
+import { randID } from '@lib/id'
 import { textToLines } from '@lib/text/lines'
 import { truncate } from '@lib/text/text'
-import { randId } from '@lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
 import { ToolbarButton } from '@toolbar/toolbar-button'
@@ -84,6 +84,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/shadcn/ui/themed/select'
+import { API_GENOME_GENOMES_URL } from '@/lib/edb/genome'
 import { HeaderPortal } from '@components/header/header-portal'
 import { ModuleInfoButton } from '@components/header/module-info-button'
 import { DownloadIcon } from '@components/icons/download-icon'
@@ -360,7 +361,7 @@ export function AnnotationPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randId('open'),
+                    id: randID('open'),
                   })
                 }
               }}
@@ -369,7 +370,7 @@ export function AnnotationPage() {
 
             <ToolbarIconButton
               title={TEXT_SAVE_TABLE}
-              onClick={() => setShowDialog({ id: randId('save') })}
+              onClick={() => setShowDialog({ id: randID('save') })}
             >
               <DownloadIcon />
             </ToolbarIconButton>
@@ -441,7 +442,7 @@ export function AnnotationPage() {
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
+          onClick={() => setShowDialog({ id: randID('open'), params: {} })}
         >
           <UploadIcon stroke="" />
 

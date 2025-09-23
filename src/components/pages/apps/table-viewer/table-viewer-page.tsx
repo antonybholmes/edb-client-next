@@ -37,7 +37,7 @@ import {
 } from '@/consts'
 
 import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
-import { randId } from '@lib/utils'
+import { randID } from '@lib/id'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
 
 import type { ISaveAsFormat } from '@components/pages/save-as-dialog'
@@ -141,7 +141,7 @@ export function TableViewerPage() {
 
             <ToolbarIconButton
               title={TEXT_SAVE_TABLE}
-              onClick={() => setShowDialog({ id: randId('save') })}
+              onClick={() => setShowDialog({ id: randID('save') })}
             >
               <DownloadIcon />
             </ToolbarIconButton>

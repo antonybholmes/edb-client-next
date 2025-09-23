@@ -14,17 +14,18 @@ import {
   COLOR_NAVY_BLUE,
   COLOR_RED,
 } from '@lib/color/color'
-import { API_GENOME_INFO_URL, API_SEQS_SEARCH_URL } from '@lib/edb/edb'
+import { API_SEQS_SEARCH_URL } from '@lib/edb/edb'
 import { useEdbAuth } from '@lib/edb/edb-auth'
 import {
   GenomicLocation,
+  IGenomicFeature,
   NO_LOCATION,
   parseLocation,
   type IGenomicLocation,
 } from '@lib/genomic/genomic'
 import { httpFetch } from '@lib/http/http-fetch'
 import { bearerHeaders } from '@lib/http/urls'
-import { nanoid } from '@lib/utils'
+import { makeNanoIDLen12 } from '@lib/id'
 import { useQuery } from '@tanstack/react-query'
 import { produce } from 'immer'
 
@@ -38,9 +39,9 @@ import {
   type Dispatch,
 } from 'react'
 import { useSeqBrowserSettings } from './seq-browser-settings'
-import type { IGenomicFeature } from './svg/genes-track-svg'
 
 import { Axis } from '@/components/plot/axis'
+import { API_GENOME_INFO_URL } from '@/lib/edb/genome'
 import type { BaseBedReader } from './readers/bed/base-bed-reader'
 import type { BaseSeqReader } from './readers/seq/base-seq-reader'
 
@@ -532,7 +533,7 @@ export interface ITrackGroup {
 
 export function newTrackGroup(tracks: TrackPlot[]): ITrackGroup {
   return {
-    id: nanoid(),
+    id: makeNanoIDLen12(),
     trackType: 'Track Group',
     name: tracks[0]!.name,
     order: tracks.map((t) => t.id),
@@ -657,7 +658,7 @@ export function trackReducer(
         {
           trackType: 'Location',
           name: 'Location',
-          id: nanoid(),
+          id: makeNanoIDLen12(),
           displayOptions: {
             ...DEFAULT_LOCATION_TRACK_DISPLAY_OPTIONS,
           },
@@ -665,7 +666,7 @@ export function trackReducer(
         {
           trackType: 'Cytobands',
           name: 'Cytobands',
-          id: nanoid(),
+          id: makeNanoIDLen12(),
           displayOptions: {
             ...DEFAULT_CYTOBANDS_TRACK_DISPLAY_OPTIONS,
           },
@@ -673,7 +674,7 @@ export function trackReducer(
         {
           trackType: 'Scale',
           name: 'Scale',
-          id: nanoid(),
+          id: makeNanoIDLen12(),
           displayOptions: {
             ...DEFAULT_SCALE_TRACK_DISPLAY_OPTIONS,
           },
@@ -681,7 +682,7 @@ export function trackReducer(
         {
           trackType: 'Ruler',
           name: 'Ruler',
-          id: nanoid(),
+          id: makeNanoIDLen12(),
           displayOptions: {
             ...DEFAULT_RULER_TRACK_DISPLAY_OPTIONS,
           },
@@ -690,7 +691,7 @@ export function trackReducer(
         {
           trackType: 'Gene',
           name: 'Genes',
-          id: nanoid(),
+          id: makeNanoIDLen12(),
           displayOptions: {
             ...DEFAULT_GENE_TRACK_DISPLAY_OPTIONS,
           },
@@ -920,12 +921,12 @@ export function TracksProvider({ children }: IChildrenProps) {
               queryKey: ['genes', settings.genome, loc],
               queryFn: async () => {
                 console.log(
-                  `${API_GENOME_INFO_URL}/${settings.genome}?search=${loc}&level=gene`
+                  `${API_GENOME_INFO_URL}/${settings.genome}?search=${loc}&feature=gene`
                 )
                 const res = await httpFetch.getJson<{
                   data: IGenomicFeature[]
                 }>(
-                  `${API_GENOME_INFO_URL}/${settings.genome}?search=${loc}&level=gene`
+                  `${API_GENOME_INFO_URL}/${settings.genome}?search=${loc}&feature=gene`
                 )
 
                 //console.log('search genes', res.data)

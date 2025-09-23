@@ -5,6 +5,8 @@ import { range } from '@lib/math/range'
 import { zip } from '../utils'
 import { formatChr } from './dna'
 
+export type Feature = 'gene' | 'transcript' | 'exon'
+
 /**
  * This is useful for api calls that return locations
  * but as JSON rather than objects. Largely interchangable
@@ -467,4 +469,21 @@ export function sortLocations<T extends GenomicLocation | IGenomicLocation>(
 
     return a.end - b.end
   })
+}
+
+export interface IGenomicFeature {
+  loc: IGenomicLocation
+  feature: string
+  level?: number
+  //strand: string
+  geneSymbol?: string
+  geneId?: string
+  //geneType?: string
+  transcriptId?: string
+  isCanonical?: boolean
+  isLongest?: boolean
+  type?: string
+  exonId?: string
+  exonNumber?: number
+  children?: IGenomicFeature[]
 }

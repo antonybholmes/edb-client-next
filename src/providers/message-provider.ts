@@ -6,7 +6,7 @@ interface IMessage {
   text: string
 }
 
-import { nanoid } from '@/lib/utils'
+import { makeNanoIDLen12 } from '@/lib/id'
 import { create } from 'zustand'
 
 interface IMessageBusStore {
@@ -16,24 +16,27 @@ interface IMessageBusStore {
   removeMessage: (id: string) => void
 }
 
-export const useMessageBusStore = create<IMessageBusStore>(set => ({
+export const useMessageBusStore = create<IMessageBusStore>((set) => ({
   messages: [],
-  sendMessage: msg =>
-    set(state => ({
-      messages: [...state.messages, { id: nanoid(), time: Date.now(), ...msg }],
+  sendMessage: (msg) =>
+    set((state) => ({
+      messages: [
+        ...state.messages,
+        { id: makeNanoIDLen12(), time: Date.now(), ...msg },
+      ],
     })),
   clearMessages: () => set({ messages: [] }),
-  removeMessage: id =>
-    set(state => ({
-      messages: state.messages.filter(msg => msg.id !== id),
+  removeMessage: (id) =>
+    set((state) => ({
+      messages: state.messages.filter((msg) => msg.id !== id),
     })),
 }))
 
 export function useMessages() {
-  const messages = useMessageBusStore(state => state.messages)
-  const sendMessage = useMessageBusStore(state => state.sendMessage)
-  const clearMessages = useMessageBusStore(state => state.clearMessages)
-  const removeMessage = useMessageBusStore(state => state.removeMessage)
+  const messages = useMessageBusStore((state) => state.messages)
+  const sendMessage = useMessageBusStore((state) => state.sendMessage)
+  const clearMessages = useMessageBusStore((state) => state.clearMessages)
+  const removeMessage = useMessageBusStore((state) => state.removeMessage)
 
   return {
     messages,

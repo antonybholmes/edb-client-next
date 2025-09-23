@@ -1,11 +1,12 @@
 import { BaseDataFrame } from '@lib/dataframe/base-dataframe'
 
 import type { SeriesData } from '@lib/dataframe/dataframe-types'
-import { API_GENOME_URL } from '@lib/edb/edb'
+
 import { range } from '@lib/math/range'
 import { QueryClient } from '@tanstack/react-query'
 
 import { AnnotationDataFrame } from '../dataframe/annotation-dataframe'
+import { API_GENOME_URL } from '../edb/genome'
 import { httpFetch } from '../http/http-fetch'
 
 const PAGE_SIZE = 50

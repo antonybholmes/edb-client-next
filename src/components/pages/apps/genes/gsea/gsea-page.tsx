@@ -41,7 +41,7 @@ import {
 } from '@/consts'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
 
-import { nanoid, randId } from '@lib/utils'
+import { makeNanoIDLen12, randID } from '@lib/id'
 
 import {
   AccordionContent,
@@ -234,7 +234,7 @@ export function GseaPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randId('open'),
+                    id: randID('open'),
                   })
                 }
               }}
@@ -349,7 +349,7 @@ export function GseaPage() {
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
+          onClick={() => setShowDialog({ id: randID('open'), params: {} })}
         >
           <UploadIcon stroke="" />
 
@@ -513,7 +513,7 @@ export function GseaPage() {
               }
 
               reports.get(phen)!.push({
-                id: nanoid(),
+                id: makeNanoIDLen12(),
                 name,
                 phen: reportNames[pi]!,
                 size: Number(tokens[3]),
