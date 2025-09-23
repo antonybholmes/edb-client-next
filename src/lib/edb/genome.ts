@@ -20,13 +20,13 @@ export function useGeneQuery(
         return []
       }
 
-      console.log(
-        'search genes',
-        genome,
-        query,
-        feature,
-        `${API_GENOME_INFO_URL}/${genome}?search=${query}&feature=${feature}&mode=fuzzy`
-      )
+      // console.log(
+      //   'search genes',
+      //   genome,
+      //   query,
+      //   feature,
+      //   `${API_GENOME_INFO_URL}/${genome}?search=${query}&feature=${feature}&mode=fuzzy`
+      // )
 
       try {
         const res = await httpFetch.getJson<{
@@ -34,8 +34,6 @@ export function useGeneQuery(
         }>(
           `${API_GENOME_INFO_URL}/${genome}?search=${query}&feature=${feature}&mode=fuzzy`
         )
-
-        console.log('search genes', res.data)
 
         return res.data
       } catch (e) {
