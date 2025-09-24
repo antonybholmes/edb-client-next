@@ -9,7 +9,56 @@ import { HelpWidget } from '@help/help'
 import { type ILayoutProps } from '@interfaces/layout-props'
 import { cn } from '@lib/shadcn-utils'
 import { ToolbarFooter } from '@toolbar/toolbar-footer'
+import { gsap } from 'gsap'
+import { useEffect, useRef, useState } from 'react'
 import { Toaster as SonnerToaster } from 'sonner'
+
+export function SettingsButton() {
+  const { visible, setSettingsVisible } = useSettingsTabs()
+  const [hover, setHover] = useState(false)
+
+  const iconRef = useRef<SVGSVGElement>(null)
+
+  useEffect(() => {
+    gsap.timeline().to(iconRef.current, {
+      scale: hover || visible ? 1.1 : 1,
+
+      duration: 0.3,
+      ease: 'power3.out',
+    })
+    // .to(
+    //   iconRef.current,
+    //   {
+    //     rotate: 30,
+
+    //     duration: 1,
+    //     ease: 'power3.out',
+    //   },
+    //   0
+    // )
+  }, [hover, visible])
+
+  return (
+    <Button
+      id="header-settings-button"
+      variant="muted"
+      size="header"
+      rounded="none"
+      // ripple={false}
+      title={TEXT_SETTINGS}
+      checked={visible}
+      onClick={() => setSettingsVisible(true)}
+      onMouseOver={() => {
+        setHover(true)
+      }}
+      onMouseOut={() => {
+        setHover(false)
+      }}
+    >
+      <GearIcon ref={iconRef} />
+    </Button>
+  )
+}
 
 export interface IHeaderLayoutProps extends IHeaderChildrenProps, ILayoutProps {
   showHeader?: boolean
@@ -48,18 +97,7 @@ export function HeaderLayout({
           headerRightChildren={headerRightChildren}
           headerTrayChildren={
             <>
-              <Button
-                id="header-settings-button"
-                variant="muted"
-                size="header"
-                rounded="none"
-                // ripple={false}
-                title={TEXT_SETTINGS}
-                checked={visible}
-                onClick={() => setSettingsVisible(true)}
-              >
-                <GearIcon />
-              </Button>
+              <SettingsButton />
 
               {headerTrayChildren}
             </>

@@ -3,7 +3,7 @@ import { COLOR_BLACK } from '@lib/color/color'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${APP_ID}:module:wgs:mutations:v2`
+const SETTINGS_KEY = `${APP_ID}:module:wgs:mutations:v6`
 
 export interface IPileupProps {
   border: {
@@ -47,6 +47,8 @@ export interface IPileupProps {
   chrPrefix: {
     show: boolean
   }
+  scale: number
+  showTooltips: boolean
 }
 
 export const DEFAULT_PILEUP_PROPS: IPileupProps = {
@@ -91,6 +93,8 @@ export const DEFAULT_PILEUP_PROPS: IPileupProps = {
   chrPrefix: {
     show: true,
   },
+  scale: 1,
+  showTooltips: true,
 }
 
 export interface IMutationsStore extends IPileupProps {

@@ -3,6 +3,7 @@ import { cn } from '@lib/shadcn-utils'
 import { Settings } from 'lucide-react'
 
 export function GearIcon({
+  ref,
   w = 'w-5 h-5',
   stroke = 'stroke-foreground',
   className,
@@ -33,6 +34,7 @@ export function GearIcon({
     // </svg>
 
     <Settings
+      ref={ref}
       className={cn(ICON_CLS, stroke, w, className)}
       stroke=""
       strokeWidth={strokeWidth}

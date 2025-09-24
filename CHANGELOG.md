@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Lots of UI fixes to Mutations.
 - Mutations UI tweaks.
 - Bug fixes and updates.
 - UI tweaks to seqbrowser dialogs.

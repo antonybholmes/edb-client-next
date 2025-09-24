@@ -63,12 +63,12 @@ export function DragHandle({ className, style, ...props }: IDivProps) {
 
   return (
     <VCenterRow
-      className="cursor-ns-resize"
+      className="cursor-ns-resize group-data-[focus=true]:scale-125 group-hover:scale-125 transition-transform duration-200"
       {...listeners}
       {...attributes}
       {...props}
     >
-      <VerticalGripIcon w="w-4 h-4" className={className} style={style} />
+      <VerticalGripIcon w="w-4.5 h-4.5" className={className} style={style} />
     </VCenterRow>
   )
 }

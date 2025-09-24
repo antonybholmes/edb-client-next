@@ -83,6 +83,7 @@ import { HeaderPortal } from '@/components/header/header-portal'
 import { ModuleInfoButton } from '@/components/header/module-info-button'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { DownloadImageIcon } from '@/components/icons/download-image-icon'
+import { ZoomSlider } from '@/components/toolbar/zoom-slider'
 import { ShowSideButton } from '@components/pages/show-side-button'
 import { COLOR_BLACK, COLOR_RED } from '@lib/color/color'
 import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
@@ -156,7 +157,7 @@ export function MutationsPage() {
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  const { settings } = useMutations()
+  const { settings, updateSettings } = useMutations()
 
   const { branch, sheet, sheets, openBranch, gotoSheet } = useHistory()
 
@@ -991,7 +992,12 @@ export function MutationsPage() {
         <ToolbarFooterPortal className="justify-between">
           <div>{getDataFrameInfo(sheet!)}</div>
           <></>
-          {/* <ZoomSlider scaleIndex={scaleIndex} onZoomChange={adjustScale} /> */}
+          <ZoomSlider
+            zoom={settings.scale}
+            onZoomChange={(zoom) => {
+              updateSettings({ scale: zoom })
+            }}
+          />
         </ToolbarFooterPortal>
       </ShortcutLayout>
     </>

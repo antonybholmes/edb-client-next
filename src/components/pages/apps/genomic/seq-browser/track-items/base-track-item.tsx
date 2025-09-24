@@ -45,10 +45,10 @@ export function BaseTrackItem({
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
       data-focus={focus}
+      data-hover={hoverMode}
       //tabIndex={0}
     >
       <VCenterRow
-        data-hover={hoverMode}
         className={cn(
           TRACK_ITEM_CLS,
           'fill-foreground stroke-foreground',

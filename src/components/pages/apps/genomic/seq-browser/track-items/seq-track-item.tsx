@@ -29,12 +29,12 @@ export const BASE_TRACK_ITEM_CLS =
 
 export const MULTI_TRACK_ITEM_CLS = cn(
   BASE_TRACK_ITEM_CLS,
-  'data-[hover=true]:bg-muted'
+  'group-data-[hover=true]:bg-muted'
 )
 
 export const TRACK_ITEM_CLS = cn(MULTI_TRACK_ITEM_CLS, 'group')
 
-export const TRACK_ITEM_BUTTONS_CLS = `gap-x-1 opacity-0 scale-50 group-hover:scale-100 
+export const TRACK_ITEM_BUTTONS_CLS = `gap-x-1 opacity-0 scale-75 group-hover:scale-100 
   group-data-[focus=true]:scale-100 group-data-[focus=true]:opacity-100 data-[hover=true]:opacity-100 
   group-hover:opacity-100 shrink-0 transition-opacity transition-transform ease-in-out duration-200`
 

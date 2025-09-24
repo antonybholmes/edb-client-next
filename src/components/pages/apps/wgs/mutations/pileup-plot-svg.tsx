@@ -5,11 +5,15 @@ import { ISVGProps } from '@/interfaces/svg-props'
 import type { IPos } from '@interfaces/pos'
 import { COLOR_BLACK } from '@lib/color/color'
 import { formatChr, type IDNA } from '@lib/genomic/dna'
-import type { GenomicLocation, IGenomicLocation } from '@lib/genomic/genomic'
+import {
+  locStr,
+  type GenomicLocation,
+  type IGenomicLocation,
+} from '@lib/genomic/genomic'
 import { range } from '@lib/math/range'
 import { IPileupProps, useMutations } from './mutation-store'
 
-const MARGIN = { top: 100.5, right: 20.5, bottom: 20, left: 20.5 }
+const MARGIN = { top: 100.5, right: 20.5, bottom: 20.5, left: 20.5 }
 
 export interface IMutation extends IGenomicLocation {
   ref: string
@@ -56,7 +60,7 @@ export interface IPileupResults {
   pileup: IMutation[][]
 }
 
-const TOOLTIP_OFFSET = 20
+const TOOLTIP_OFFSET = 2
 
 const BASE_W = 16
 const HALF_BASE_W = 0.5 * BASE_W
@@ -153,9 +157,23 @@ export function PileupPlotSvg({
         ref={ref}
         width={width} //* settings.scale}
         height={height} //* settings.scale}
+        scale={settings.scale}
         //shapeRendering={SVG_CRISP_EDGES}
-        className="absolute"
+        className="absolute z-20"
       >
+        <g
+          transform={`translate(${MARGIN.left + width * 0.5}, ${MARGIN.top * 0.5})`}
+        >
+          <text
+            textAnchor="middle"
+            alignmentBaseline="middle"
+            fontSize="small"
+            fontWeight="bold"
+          >
+            {plot.pileupResults ? locStr(plot.pileupResults.location) : ''}
+          </text>
+        </g>
+
         <g transform={`translate(${MARGIN.left - HALF_BASE_W}, ${MARGIN.top})`}>
           {plot.dna.seq.split('').map((_base, bi) => (
             <rect
@@ -262,7 +280,7 @@ export function PileupPlotSvg({
                   return (
                     <text
                       x={m.type.includes('INS') ? HALF_BASE_W : 0}
-                      y={h}
+                      y={h + 1}
                       key={mi}
                       textAnchor="middle"
                       alignmentBaseline="middle"
@@ -273,11 +291,14 @@ export function PileupPlotSvg({
                         setToolTipInfo({
                           pos: {
                             x:
-                              MARGIN.left +
-                              x +
-                              (m.type.includes('INS') ? HALF_BASE_W : 0) -
-                              HALF_BASE_W,
-                            y: MARGIN.top + BASE_H + h - HALF_BASE_H,
+                              (MARGIN.left +
+                                x +
+                                (m.type.includes('INS') ? HALF_BASE_W : 0) -
+                                HALF_BASE_W) *
+                              settings.scale,
+                            y:
+                              (MARGIN.top + BASE_H + h - HALF_BASE_H) *
+                              settings.scale,
                           },
                           mutation: m,
                         })
@@ -300,14 +321,15 @@ export function PileupPlotSvg({
     <>
       {svg}
 
-      {toolTipInfo && (
+      {settings.showTooltips && toolTipInfo && (
         <>
           <div
             ref={tooltipRef}
             className="pointer-events-none absolute z-50 rounded-theme bg-black/60 p-3 text-xs text-white opacity-100"
             style={{
-              left: toolTipInfo.pos.x + TOOLTIP_OFFSET,
-              top: toolTipInfo.pos.y + TOOLTIP_OFFSET,
+              left:
+                toolTipInfo.pos.x + BASE_W * settings.scale + TOOLTIP_OFFSET,
+              top: toolTipInfo.pos.y + BASE_H * settings.scale + TOOLTIP_OFFSET,
             }}
           >
             <p className="font-semibold">
@@ -324,12 +346,12 @@ export function PileupPlotSvg({
 
           <span
             ref={highlightRef}
-            className="pointer-events-none absolute z-40 border-black"
+            className="pointer-events-none absolute z-10 bg-muted border-none rounded-sm"
             style={{
               top: `${toolTipInfo.pos.y - 1}px`,
-              left: `${toolTipInfo.pos.x - 1}px`,
-              width: `${BASE_W + 1}px`,
-              height: `${BASE_H + 1}px`,
+              left: `${toolTipInfo.pos.x}px`,
+              width: `${BASE_W * settings.scale + 1}px`,
+              height: `${BASE_H * settings.scale + 1}px`,
               borderWidth: `1px`,
             }}
           />

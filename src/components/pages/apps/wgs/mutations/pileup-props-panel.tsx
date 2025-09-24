@@ -72,6 +72,7 @@ export function PileupPropsPanel({
                   )
                 }
                 className={SIMPLE_COLOR_EXT_CLS}
+                title="Border color"
               />
             </SwitchPropRow>
 
@@ -82,6 +83,18 @@ export function PileupPropsPanel({
                 updateSettings(
                   produce(settings, (draft) => {
                     draft.chrPrefix.show = state
+                  })
+                )
+              }
+            />
+
+            <SwitchPropRow
+              title="Tooltips"
+              checked={settings.showTooltips}
+              onCheckedChange={(state) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.showTooltips = state
                   })
                 )
               }
