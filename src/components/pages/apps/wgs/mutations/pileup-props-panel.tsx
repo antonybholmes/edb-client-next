@@ -125,7 +125,7 @@ export function PileupPropsPanel({
                   })
                 )
               }
-              className="flex flex-col gap-y-1"
+              className="flex flex-col gap-y-2"
             >
               <VCenterRow className="gap-x-1">
                 <RadioGroupItem value="None" id="None" />

@@ -19,7 +19,6 @@ import {
   TEXT_SAVE_AS,
   type IDialogParams,
 } from '@/consts'
-import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
 import { getDataFrameInfo } from '@lib/dataframe/dataframe-utils'
 import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
 
@@ -94,7 +93,6 @@ import { toast } from '@themed/crisp'
 import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 import { LocationAutocomplete } from '../../genomic/seq-browser/location-autocomplete'
 import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
-import { HistoryPanel } from '../../matcalc/history/history-panel'
 import { useHistory } from '../../matcalc/history/history-store'
 import MODULE_INFO from './module.json'
 import { useMutations } from './mutation-store'
@@ -623,12 +621,12 @@ export function MutationsPage() {
       ),
     },
 
-    {
-      //name: nanoid(),
-      icon: <ClockRotateLeftIcon />,
-      id: 'History',
-      content: <HistoryPanel branchId={branch?.id ?? ''} />,
-    },
+    // {
+    //   //name: nanoid(),
+    //   icon: <ClockRotateLeftIcon />,
+    //   id: 'History',
+    //   content: <HistoryPanel branchId={branch?.id ?? ''} />,
+    // },
   ]
 
   const fileMenuTabs: ITab[] = [

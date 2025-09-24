@@ -388,7 +388,7 @@ export function ColorPickerUI({
             <button
               key={presetColor}
               className={cn(
-                'w-5.5 aspect-square border hover:scale-125 focus-visible:scale-125 rounded-full transition-transform duration-300 ease-in-out',
+                'w-5.5 aspect-square border hover:scale-125 focus-visible:scale-125 rounded-full transition-transform duration-300',
                 autoBorder && ps >= 750 && 'border-border',
                 !autoBorder ||
                   (ps < 750 && 'border-transparent hover:border-white')
