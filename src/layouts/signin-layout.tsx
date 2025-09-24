@@ -80,9 +80,11 @@ export function SignInRequired({ children }: ISignInLayoutProps) {
 
   const { session, loaded } = useEdbAuth()
 
-  if (!loaded) {
-    return null
-  }
+  console.log('SignInRequired session', session, loaded)
+
+  // if (!loaded) {
+  //   return null
+  // }
 
   if (!session) {
     return (

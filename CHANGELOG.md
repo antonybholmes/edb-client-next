@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Lots of UI fixes to Mutations.
 - Mutations UI tweaks.
 - Bug fixes and updates.
