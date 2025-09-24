@@ -771,7 +771,7 @@ export function MutationsPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="hg19">hg19</SelectItem>
-              <SelectItem value="grch38">grch38</SelectItem>
+              {/* <SelectItem value="grch38">grch38</SelectItem> */}
             </SelectContent>
           </Select>
         </HeaderPortal>
@@ -882,7 +882,6 @@ export function MutationsPage() {
                 className="flex flex-col bg-background/75 py-3 rounded-theme overflow-hidden mb-2 border border-border/50"
               >
                 <VCenterRow className="px-3 pb-2 border-b border-border/50 justify-between text-xs">
-                  <VCenterRow>{/* <Checkbox> </Checkbox> */}</VCenterRow>
                   <span>{samples.length} samples</span>
                 </VCenterRow>
                 <VScrollPanel asChild={true}>

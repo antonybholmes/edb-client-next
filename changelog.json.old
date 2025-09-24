@@ -1639,5 +1639,18 @@
     },
     "author": "Antony Holmes",
     "date": "2025-09-23T15:27:41.088Z"
+  },
+  {
+    "version": "30.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "UI tweaks to seqbrowser dialogs",
+          "date": "2025-09-24T16:27:26.657Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-09-24T16:27:26.657Z"
   }
 ]

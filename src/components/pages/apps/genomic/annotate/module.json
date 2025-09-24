@@ -1,7 +1,7 @@
 {
   "name": "Annotate",
   "description": "Annotate genomic coordinates",
-  "version": "6.6.6.438",
+  "version": "6.6.8.440",
   "copyright": "Copyright (C) ${START_YEAR:2024} Antony Holmes. All rights reserved.",
-  "modified": "2025-09-23T23:10:27.511Z"
+  "modified": "2025-09-24T16:27:24.901Z"
 }

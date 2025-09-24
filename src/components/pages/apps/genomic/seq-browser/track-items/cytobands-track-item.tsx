@@ -35,7 +35,7 @@ export function CytobandsTrackItem({
         </VCenterRow>
       }
     >
-      <span className="grow truncate font-semibold">{track.name}</span>
+      <span className="grow truncate font-semibold">{track.name} </span>
     </BaseTrackItem>
   )
 }

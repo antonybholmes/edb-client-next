@@ -28,6 +28,10 @@ export function BaseTrackItem({
 
   const [hover, setHover] = useState(false)
 
+  // When user tabs to the item we can respond to focus
+  // even though the item itself is not focusable
+  const [focus, setFocus] = useState(false)
+
   const hoverMode = hover || isDragging || group.id === active
   const { state, dispatch } = useContext(TracksContext)
 
@@ -38,6 +42,10 @@ export function BaseTrackItem({
       className={GROUP_BG_CLS}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
+      onFocus={() => setFocus(true)}
+      onBlur={() => setFocus(false)}
+      data-focus={focus}
+      //tabIndex={0}
     >
       <VCenterRow
         data-hover={hoverMode}

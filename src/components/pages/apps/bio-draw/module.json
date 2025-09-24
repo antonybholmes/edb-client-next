@@ -1,7 +1,7 @@
 {
   "name": "Bio Draw",
   "description": "Biological diagrams",
-  "version": "4.4.8.188",
+  "version": "4.6.0.190",
   "copyright": "Copyright (C) ${START_YEAR:2025} Antony Holmes. All rights reserved.",
-  "modified": "2025-09-23T23:10:27.509Z"
+  "modified": "2025-09-24T16:27:24.900Z"
 }
