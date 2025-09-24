@@ -27,7 +27,6 @@ import {
   getAccordionId,
   SettingsAccordionItem,
 } from '@dialog/settings/settings-dialog'
-import { BagIcon } from '@icons/bag-icon'
 import { ScrollAccordion } from '@themed/accordion'
 import {
   DropdownMenu,
@@ -37,12 +36,13 @@ import {
   DropdownMenuTrigger,
 } from '@themed/dropdown-menu'
 
-import { CartIcon } from '@components/icons/cart-icon'
-import { DialogTitle } from '@components/shadcn/ui/themed/dialog'
+import { PlusIcon } from '@/components/icons/plus-icon'
+import { TrashIcon } from '@/components/icons/trash-icon'
+import { CenterRow } from '@/components/layout/center-row'
 import { InfoHoverCard } from '@components/shadcn/ui/themed/hover-card'
 import { GlassSideDialog } from '@dialog/glass-side-dialog'
 import { SortIcon } from '@icons/sort-icon'
-import { CircleMinus } from 'lucide-react'
+import { DialogTitle } from '@radix-ui/react-dialog'
 import type { AllDBBedTrackTypes, IBedTrack } from '../tracks-provider'
 
 export interface IProps extends IModalProps {
@@ -129,10 +129,15 @@ export function PeaksDialog({
   return (
     <GlassSideDialog
       title={
-        <VCenterRow className="gap-x-2">
-          <CartIcon />
-          <DialogTitle>{`${platform.replaceAll('_', ' ').replaceAll('And', '&')} Peaks Cart`}</DialogTitle>
-        </VCenterRow>
+        <CenterRow className="gap-x-2 grow">
+          <SearchBox
+            id="search"
+            value={search}
+            onTextChange={(v) => setSearch(v)}
+            placeholder="Search samples..."
+            w="w-3/5"
+          />
+        </CenterRow>
       }
       open={open}
       onOpenChange={onOpenChange}
@@ -154,7 +159,7 @@ export function PeaksDialog({
       buttons={[TEXT_OK]}
       className={className}
       leftFooterChildren={
-        <>
+        <VCenterRow className="gap-x-2">
           <CheckPropRow
             title="Overlay tracks"
             checked={combine}
@@ -165,32 +170,24 @@ export function PeaksDialog({
             other in the same view. This is useful for comparing multiple
             datasets in the same region.
           </InfoHoverCard>
-        </>
+        </VCenterRow>
       }
       cols={3}
     >
       <BaseCol className="grow text-xs gap-y-2">
         {error && <span className="text-destructive">{error}</span>}
         <VCenterRow className="gap-x-2 justify-between">
-          <SearchBox
-            id="search"
-            value={search}
-            onTextChange={(v) => setSearch(v)}
-            placeholder="Search samples..."
-            className="grow"
-          />
-
           <VCenterRow>
             <Button
               variant="ios"
-              size="icon"
+              //size="icon"
               // ripple={false}
               onClick={() => {
                 setAddedMap(new Map<string, boolean>(selectedMap.entries()))
               }}
-              title="Add to Cart"
+              aria-label="Add to Cart"
             >
-              <BagIcon />
+              <PlusIcon /> <span>Add to Cart</span>
             </Button>
 
             <Button
@@ -213,46 +210,45 @@ export function PeaksDialog({
             >
               <MultiSelectIcon checked={!searchSelectAll} />
             </Button>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ios"
-                  size="icon"
-                  // ripple={false}
-                  onClick={() => {
-                    setAddedMap(new Map<string, boolean>(selectedMap.entries()))
-                  }}
-                  title="Sort Items"
-                >
-                  <SortIcon reverse={sortReversed} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                //side="right"
-                // onEscapeKeyDown={() => {
-                //   setMenuOpen(false)
-                // }}
-                // onInteractOutside={() => {
-                //   setMenuOpen(false)
-                // }}
-                // onPointerDownOutside={() => {
-                //   setMenuOpen(false)
-                // }}
-                align="start"
-                //className="fill-foreground"
-              >
-                <DropdownMenuLabel>Sort Order</DropdownMenuLabel>
-                <DropdownMenuCheckboxItem
-                  onClick={() => setSortReversed(!sortReversed)}
-                  aria-label="Sort items alphabetically"
-                  checked={sortReversed}
-                >
-                  <span>Reversed</span>
-                </DropdownMenuCheckboxItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </VCenterRow>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ios"
+                size="icon"
+                // ripple={false}
+                onClick={() => {
+                  setAddedMap(new Map<string, boolean>(selectedMap.entries()))
+                }}
+                title="Sort Items"
+              >
+                <SortIcon reverse={sortReversed} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              //side="right"
+              // onEscapeKeyDown={() => {
+              //   setMenuOpen(false)
+              // }}
+              // onInteractOutside={() => {
+              //   setMenuOpen(false)
+              // }}
+              // onPointerDownOutside={() => {
+              //   setMenuOpen(false)
+              // }}
+              align="start"
+              //className="fill-foreground"
+            >
+              <DropdownMenuLabel>Sort Order</DropdownMenuLabel>
+              <DropdownMenuCheckboxItem
+                onClick={() => setSortReversed(!sortReversed)}
+                aria-label="Sort items alphabetically"
+                checked={sortReversed}
+              >
+                <span>Reversed</span>
+              </DropdownMenuCheckboxItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </VCenterRow>
 
         {StoreItems(
@@ -266,53 +262,64 @@ export function PeaksDialog({
       </BaseCol>
 
       <BaseCol className="grow gap-y-2">
-        <VCenterRow className="justify-end text-xs">
-          <Button
-            //variant="accent"
-            size="icon"
-            // ripple={false}
-            title={TEXT_REMOVE_FROM_CART}
-            onClick={() => {
-              const keys = new Set(addedSelectedMap.keys())
+        <VCenterRow className="gap-x-2 justify-between">
+          <VCenterRow className="gap-x-2">
+            {/* <CartIcon /> */}
+            <DialogTitle className="font-bold">{`${platform.replaceAll('_', ' ').replaceAll('And', '&')} Peaks Cart`}</DialogTitle>
+          </VCenterRow>
 
-              setAddedMap(
-                new Map<string, boolean>([
-                  ...[...addedMap.entries()],
-                  ...[...keys].map((key) => [key, false] as [string, boolean]),
-                ])
-              )
+          <VCenterRow className="justify-end text-xs">
+            <Button
+              //variant="accent"
+              size="icon"
+              // ripple={false}
+              onClick={() => {
+                setAddedSelectedMap(
+                  new Map<string, boolean>([
+                    ...[...addedSelectedMap.entries()],
+                    ...searchedDb.map(
+                      (t) => [t.publicId, !addedSelectAll] as [string, boolean]
+                    ),
+                  ])
+                )
 
-              setAddedSelectedMap(
-                new Map<string, boolean>([
-                  ...[...addedSelectedMap.entries()],
-                  ...[...keys].map((key) => [key, false] as [string, boolean]),
-                ])
-              )
-            }}
-          >
-            <CircleMinus className="w-4" />
-          </Button>
+                setAddedSelectAll(!addedSelectAll)
+              }}
+              title={searchSelectAll ? TEXT_UNSELECT_ALL : TEXT_SELECT_ALL}
+            >
+              <MultiSelectIcon checked={!addedSelectAll} />
+            </Button>
 
-          <Button
-            //variant="accent"
-            size="icon"
-            // ripple={false}
-            onClick={() => {
-              setAddedSelectedMap(
-                new Map<string, boolean>([
-                  ...[...addedSelectedMap.entries()],
-                  ...searchedDb.map(
-                    (t) => [t.publicId, !addedSelectAll] as [string, boolean]
-                  ),
-                ])
-              )
+            <Button
+              //variant="accent"
+              size="icon"
+              // ripple={false}
+              title={TEXT_REMOVE_FROM_CART}
+              onClick={() => {
+                const keys = new Set(addedSelectedMap.keys())
 
-              setAddedSelectAll(!addedSelectAll)
-            }}
-            title={searchSelectAll ? TEXT_UNSELECT_ALL : TEXT_SELECT_ALL}
-          >
-            <MultiSelectIcon checked={!addedSelectAll} />
-          </Button>
+                setAddedMap(
+                  new Map<string, boolean>([
+                    ...[...addedMap.entries()],
+                    ...[...keys].map(
+                      (key) => [key, false] as [string, boolean]
+                    ),
+                  ])
+                )
+
+                setAddedSelectedMap(
+                  new Map<string, boolean>([
+                    ...[...addedSelectedMap.entries()],
+                    ...[...keys].map(
+                      (key) => [key, false] as [string, boolean]
+                    ),
+                  ])
+                )
+              }}
+            >
+              <TrashIcon className="w-4" />
+            </Button>
+          </VCenterRow>
         </VCenterRow>
 
         {cartItems(
@@ -391,12 +398,12 @@ function StoreItems(
                           ])
                         )
                       }}
-                    ></Checkbox>
+                    />
 
                     <BaseCol className="grow overflow-hidden">
                       <p className="truncate">{seq.name}</p>
                       <p className="text-xs text-secondary-foreground truncate">
-                        {`${seq.trackType === 'BED' ? `${seq.regions.toLocaleString()} regions,` : ''} ${seq.platform}, ${seq.genome}`}
+                        {`${seq.platform}, ${seq.genome} (${seq.trackType === 'BED' ? `${seq.regions.toLocaleString()} regions` : ''})`}
                       </p>
                     </BaseCol>
 
@@ -412,7 +419,7 @@ function StoreItems(
                       }}
                       title="Add to Cart"
                     >
-                      <BagIcon w="w-4" stroke="" />
+                      <PlusIcon w="w-4" stroke="" />
                     </button>
                   </li>
                 )
@@ -499,7 +506,7 @@ function cartItems(
                       }}
                       title={TEXT_REMOVE_FROM_CART}
                     >
-                      <CircleMinus className="w-5" stroke="" />
+                      <TrashIcon className="w-5" stroke="" />
                     </button>
                   </li>
                 )

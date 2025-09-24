@@ -50,7 +50,7 @@ export function InfoHoverCard({
 }: IChildrenProps & { title: string }) {
   return (
     <HoverCard openDelay={300}>
-      <HoverCardTrigger className="stroke-foreground/30 data-[state=open]:stroke-foreground/50 hover:stroke-foreground/50 trans-color">
+      <HoverCardTrigger className="stroke-foreground/30 data-[state=open]:stroke-theme hover:stroke-theme trans-color">
         <InfoIcon stroke="" />
       </HoverCardTrigger>
       <HoverCardContent className="flex flex-col gap-y-2 text-sm">

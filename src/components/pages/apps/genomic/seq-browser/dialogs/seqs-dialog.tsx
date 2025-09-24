@@ -12,7 +12,6 @@ import {
   getAccordionId,
   SettingsAccordionItem,
 } from '@dialog/settings/settings-dialog'
-import { BagIcon } from '@icons/bag-icon'
 import { MultiSelectIcon } from '@icons/multi-select-icon'
 import { BaseCol } from '@layout/base-col'
 import { VCenterRow } from '@layout/v-center-row'
@@ -27,15 +26,16 @@ import {
   DropdownMenuTrigger,
 } from '@themed/dropdown-menu'
 
-import { CartIcon } from '@components/icons/cart-icon'
+import { PlusIcon } from '@/components/icons/plus-icon'
+import { TrashIcon } from '@/components/icons/trash-icon'
+import { CenterRow } from '@/components/layout/center-row'
 import { ExternalLinkIcon } from '@components/icons/external-link'
-import { DialogTitle } from '@components/shadcn/ui/themed/dialog'
 import { InfoHoverCard } from '@components/shadcn/ui/themed/hover-card'
 import { GlassSideDialog } from '@dialog/glass-side-dialog'
 import { SortIcon } from '@icons/sort-icon'
 import { BoolSearchQuery } from '@lib/search'
 import { cn } from '@lib/shadcn-utils'
-import { CircleMinus } from 'lucide-react'
+import { DialogTitle } from '@radix-ui/react-dialog'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
 import { TracksContext, type AllDBSignalTrackTypes } from '../tracks-provider'
@@ -51,7 +51,7 @@ export interface IProps extends IModalProps {
 
 export function SeqsDialog({
   open = true,
-  onOpenChange = () => {},
+  //onOpenChange = () => {},
   platform,
   callback,
   onResponse = () => {},
@@ -108,13 +108,24 @@ export function SeqsDialog({
   return (
     <GlassSideDialog
       title={
-        <VCenterRow className="gap-x-2">
-          <CartIcon />
-          <DialogTitle>{`${platform.replaceAll('_', ' ').replaceAll('And', '&')} Cart`}</DialogTitle>
-        </VCenterRow>
+        // <VCenterRow className="gap-x-2">
+        //   <CartIcon />
+        //   <DialogTitle>{`${platform.replaceAll('_', ' ').replaceAll('And', '&')} Cart`}</DialogTitle>
+        // </VCenterRow>
+
+        <CenterRow className="grow">
+          <SearchBox
+            id="search"
+            value={search}
+            onTextChange={(v) => setSearch(v)}
+            placeholder="Search samples..."
+            w="w-3/5"
+          />
+        </CenterRow>
       }
+      //size="large"
       open={open}
-      onOpenChange={onOpenChange}
+      //onOpenChange={onOpenChange}
       className={className}
       onResponse={(response, data) => {
         if (response === TEXT_OK) {
@@ -133,7 +144,7 @@ export function SeqsDialog({
       }}
       buttons={[TEXT_OK]}
       leftFooterChildren={
-        <>
+        <VCenterRow className="gap-x-2">
           <CheckPropRow
             title="Overlay tracks"
             checked={combine}
@@ -145,25 +156,18 @@ export function SeqsDialog({
             other in the same view. This is useful for comparing multiple
             datasets in the same region.
           </InfoHoverCard>
-        </>
+        </VCenterRow>
       }
       cols={3}
     >
       <BaseCol className="grow text-xs gap-y-2">
         {error && <span className="text-destructive text-wrap">{error}</span>}
-        <VCenterRow className="gap-x-2">
-          <SearchBox
-            id="search"
-            value={search}
-            onTextChange={(v) => setSearch(v)}
-            placeholder="Search samples..."
-            className="grow"
-          />
 
+        <VCenterRow className="gap-x-2 justify-between">
           <VCenterRow>
             <Button
               variant="ios"
-              size="icon"
+              //size="icon"
               // ripple={false}
               onClick={() => {
                 setAddedMap(
@@ -174,9 +178,10 @@ export function SeqsDialog({
                   ])
                 )
               }}
-              title="Add to Cart"
+              aria-label="Add to Cart"
             >
-              <BagIcon />
+              <PlusIcon />
+              <span>Add to Cart</span>
             </Button>
 
             <Button
@@ -199,46 +204,46 @@ export function SeqsDialog({
             >
               <MultiSelectIcon checked={!searchSelectAll} />
             </Button>
+          </VCenterRow>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ios"
-                  size="icon"
-                  // ripple={false}
-                  /* onClick={() => {
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ios"
+                size="icon"
+                // ripple={false}
+                /* onClick={() => {
                     setAddedMap(new Map<string, boolean>(selectedMap.entries()))
                   }} */
-                  title="Sort Items"
-                >
-                  <SortIcon reverse={sortReversed} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                //side="right"
-                // onEscapeKeyDown={() => {
-                //   setMenuOpen(false)
-                // }}
-                // onInteractOutside={() => {
-                //   setMenuOpen(false)
-                // }}
-                // onPointerDownOutside={() => {
-                //   setMenuOpen(false)
-                // }}
-                align="start"
-                //className="fill-foreground"
+                title="Sort Items"
               >
-                <DropdownMenuLabel>Sort Order</DropdownMenuLabel>
-                <DropdownMenuCheckboxItem
-                  checked={sortReversed}
-                  onClick={() => setSortReversed(!sortReversed)}
-                  aria-label="Sort items alphabetically"
-                >
-                  <span>Reversed</span>
-                </DropdownMenuCheckboxItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </VCenterRow>
+                <SortIcon reverse={sortReversed} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              //side="right"
+              // onEscapeKeyDown={() => {
+              //   setMenuOpen(false)
+              // }}
+              // onInteractOutside={() => {
+              //   setMenuOpen(false)
+              // }}
+              // onPointerDownOutside={() => {
+              //   setMenuOpen(false)
+              // }}
+              align="start"
+              //className="fill-foreground"
+            >
+              <DropdownMenuLabel>Sort Order</DropdownMenuLabel>
+              <DropdownMenuCheckboxItem
+                checked={sortReversed}
+                onClick={() => setSortReversed(!sortReversed)}
+                aria-label="Sort items alphabetically"
+              >
+                <span>Reversed</span>
+              </DropdownMenuCheckboxItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </VCenterRow>
 
         {StoreItems(
@@ -252,46 +257,55 @@ export function SeqsDialog({
       </BaseCol>
 
       <BaseCol className="grow gap-y-2">
-        <VCenterRow className="justify-end text-xs">
-          <Button
-            //variant="accent"
-            size="icon"
-            // ripple={false}
-            title={TEXT_REMOVE_FROM_CART}
-            onClick={() => {
-              const keys = new Set(addedSelectedMap.keys())
+        <VCenterRow className="gap-x-2 justify-between">
+          <VCenterRow className="gap-x-2">
+            {/* <CartIcon /> */}
+            <DialogTitle className="font-bold">{`${platform.replaceAll('_', ' ').replaceAll('And', '&')} Cart`}</DialogTitle>
+          </VCenterRow>
 
-              setAddedMap(
-                new Map<string, boolean>([
-                  ...[...addedMap.entries()],
-                  ...[...keys].map((key) => [key, false] as [string, boolean]),
-                ])
-              )
-            }}
-          >
-            <CircleMinus className="w-4" />
-          </Button>
+          <VCenterRow className="justify-end text-xs">
+            <Button
+              //variant="accent"
+              size="icon"
+              // ripple={false}
+              onClick={() => {
+                setAddedSelectedMap(
+                  new Map<string, boolean>([
+                    ...[...addedSelectedMap.entries()],
+                    ...searchedDb.map(
+                      (t) => [t.publicId, !addedSelectAll] as [string, boolean]
+                    ),
+                  ])
+                )
 
-          <Button
-            //variant="accent"
-            size="icon"
-            // ripple={false}
-            onClick={() => {
-              setAddedSelectedMap(
-                new Map<string, boolean>([
-                  ...[...addedSelectedMap.entries()],
-                  ...searchedDb.map(
-                    (t) => [t.publicId, !addedSelectAll] as [string, boolean]
-                  ),
-                ])
-              )
+                setAddedSelectAll(!addedSelectAll)
+              }}
+              title={searchSelectAll ? TEXT_UNSELECT_ALL : TEXT_SELECT_ALL}
+            >
+              <MultiSelectIcon checked={!addedSelectAll} />
+            </Button>
 
-              setAddedSelectAll(!addedSelectAll)
-            }}
-            title={searchSelectAll ? TEXT_UNSELECT_ALL : TEXT_SELECT_ALL}
-          >
-            <MultiSelectIcon checked={!addedSelectAll} />
-          </Button>
+            <Button
+              //variant="accent"
+              size="icon"
+              // ripple={false}
+              title={TEXT_REMOVE_FROM_CART}
+              onClick={() => {
+                const keys = new Set(addedSelectedMap.keys())
+
+                setAddedMap(
+                  new Map<string, boolean>([
+                    ...[...addedMap.entries()],
+                    ...[...keys].map(
+                      (key) => [key, false] as [string, boolean]
+                    ),
+                  ])
+                )
+              }}
+            >
+              <TrashIcon className="w-4" />
+            </Button>
+          </VCenterRow>
         </VCenterRow>
 
         {cartItems(
@@ -377,7 +391,7 @@ function StoreItems(
                     <BaseCol className="grow overflow-hidden">
                       <p className="truncate">{seq.name}</p>
                       <p className="text-xs text-secondary-foreground truncate">
-                        {`${seq.trackType === 'Seq' ? `${seq.reads.toLocaleString()} reads,` : ''} ${seq.platform}, ${seq.genome}`}
+                        {`${seq.platform}, ${seq.genome}${seq.trackType === 'Seq' ? ` (${seq.reads.toLocaleString()} reads)` : ''}`}
                       </p>
                     </BaseCol>
 
@@ -404,7 +418,7 @@ function StoreItems(
                       }}
                       title="Add to Cart"
                     >
-                      <BagIcon w="w-4" stroke="" />
+                      <PlusIcon w="w-4" stroke="" />
                     </button>
                   </li>
                 )
@@ -493,7 +507,7 @@ function cartItems(
                       }}
                       title={TEXT_REMOVE_FROM_CART}
                     >
-                      <CircleMinus className="w-5" stroke="" />
+                      <TrashIcon className="w-5" stroke="" />
                     </button>
                   </li>
                 )

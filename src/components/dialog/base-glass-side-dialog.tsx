@@ -16,6 +16,7 @@ export const glassDialogVariants = cva('text-sm grid', {
   variants: {
     size: {
       default: 'w-9/10 xl:w-3/4 2xl:w-1/2',
+      large: 'w-9/10 xl:w-3/4 2xl:w-3/5',
     },
     height: {
       default: 'min-h-1/2',

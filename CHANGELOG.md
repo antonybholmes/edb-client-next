@@ -1,5 +1,12 @@
 # Changelog
 
+## 30.0 (Sep, 2025)
+
+### Changed
+
+- UI tweaks to seqbrowser dialogs.
+
+
 ## 28.8 (Sep, 2025)
 
 ### Added
