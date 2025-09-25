@@ -42,7 +42,7 @@ export function CloseButton({ className, ...props }: IButtonProps) {
   return (
     <IconButton
       className={cn('shrink-0', className)}
-      size="icon-sm"
+      size="icon-xs"
       //rounded="full"
       title="Hide Pane"
       {...props}

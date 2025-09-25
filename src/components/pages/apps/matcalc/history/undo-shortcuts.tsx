@@ -30,7 +30,7 @@ export function UndoShortcuts() {
   return (
     <>
       <OptionalDropdownButton
-        icon={<Undo2 className="w-4.5 -rotate-45 " strokeWidth={2} />}
+        icon={<Undo2 className="w-4.5 -rotate-45" strokeWidth={2} />}
         onMainClick={() => {
           undo()
         }}

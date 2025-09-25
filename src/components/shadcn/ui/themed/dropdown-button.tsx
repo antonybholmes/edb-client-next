@@ -5,6 +5,7 @@ export function DropDownButton({
   variant = 'muted',
   ripple = false,
   size = 'dropdown',
+  pad = 'none',
   rounded = 'theme',
   className,
   children,
@@ -16,6 +17,7 @@ export function DropDownButton({
       variant={variant}
       // ripple={ripple}
       size={size}
+      pad={pad}
       rounded={rounded}
       className={className}
       {...props}

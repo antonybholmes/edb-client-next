@@ -34,6 +34,7 @@ import { useEdbSettings } from '@lib/edb/edb-settings'
 import { EllipsisIcon } from '../icons/ellipsis-icon'
 import { SidebarCloseIcon } from '../icons/side-bar-close-icon'
 import { SidebarOpenIcon } from '../icons/side-bar-open-icon'
+import { IconButton } from '../shadcn/ui/themed/icon-button'
 import { TabIndicatorProvider } from '../tabs/tab-indicator-provider'
 import {
   getTabFromValue,
@@ -364,7 +365,7 @@ export function ToolbarPanel({ tabShortcutMenu }: IToolbarPanelProps) {
       {tabShortcutMenu && (
         <DropdownMenu open={showDropdown} onOpenChange={setShowDropdown}>
           <DropdownMenuTrigger asChild>
-            <Button
+            <IconButton
               variant="muted"
               size="icon-xs"
               // ripple={false}
@@ -372,7 +373,7 @@ export function ToolbarPanel({ tabShortcutMenu }: IToolbarPanelProps) {
               checked={showDropdown}
             >
               <ChevronRightIcon className="rotate-90" w="w-4" />
-            </Button>
+            </IconButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {tabShortcutMenu}

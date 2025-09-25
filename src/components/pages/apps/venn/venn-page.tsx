@@ -76,7 +76,7 @@ import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
 import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 
 import { BaseSvg } from '@/components/base-svg'
-import { DownloadIcon } from '@/components/icons/download-icon'
+import { DownloadImageIcon } from '@/components/icons/download-image-icon'
 import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
 import { Tabs } from '@/components/shadcn/ui/themed/tabs'
 import { SideTabs } from '@/components/tabs/side-tabs'
@@ -440,7 +440,7 @@ function VennPage() {
                 setShowDialog({ id: 'export', params: {} })
               }}
             >
-              <DownloadIcon />
+              <DownloadImageIcon />
             </ToolbarIconButton>
 
             {/* <ToolbarSaveSvg

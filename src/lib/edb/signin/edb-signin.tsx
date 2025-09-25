@@ -108,6 +108,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
             id="edb-signin-button"
             variant="muted"
             size="header"
+            pad="none"
             rounded="none"
             checked={open}
             // ripple={false}

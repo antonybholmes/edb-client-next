@@ -1,5 +1,12 @@
 # Changelog
 
+## 30.2 (Sep, 2025)
+
+### Changed
+
+- Bug fixes and updates.
+
+
 ## 30.0 (Sep, 2025)
 
 ### Changed

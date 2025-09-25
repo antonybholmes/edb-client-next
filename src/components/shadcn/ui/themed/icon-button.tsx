@@ -5,6 +5,7 @@ export function IconButton({
   variant = 'muted',
   size = 'icon',
   aspect = 'icon',
+  pad = 'none',
   className,
   children,
   ...props
@@ -14,6 +15,7 @@ export function IconButton({
       ref={ref}
       variant={variant}
       size={size}
+      pad={pad}
       // ripple={ripple}
       aspect={aspect}
       className={className}

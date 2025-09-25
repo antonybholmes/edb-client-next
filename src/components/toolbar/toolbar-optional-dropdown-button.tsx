@@ -31,9 +31,10 @@ export function ToolbarOptionalDropdownButton({
   size = 'toolbar',
   icon,
   onMainClick,
-  title,
+
   menuClassName,
   children,
+
   ...props
 }: IProps) {
   const [open, setOpen] = useState(false)
@@ -50,9 +51,8 @@ export function ToolbarOptionalDropdownButton({
             //rounded="none"
             //checked={open}
             open={open}
-            aria-label={props['aria-label']}
             className="rounded-r-none"
-            title={title}
+            {...props}
           >
             {icon}
           </ToolbarButton>

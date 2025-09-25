@@ -5,6 +5,8 @@ export function ToolbarIconButton({
   ref,
   variant = 'muted',
   size = 'toolbar-icon',
+  pad = 'none',
+  aspect = 'icon',
   className,
   children,
   ...props
@@ -14,6 +16,8 @@ export function ToolbarIconButton({
       ref={ref}
       variant={variant}
       size={size}
+      pad={pad}
+      aspect={aspect}
       className={className}
       {...props}
     >

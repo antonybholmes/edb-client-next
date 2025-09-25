@@ -44,7 +44,7 @@ export function SettingsButton() {
       variant="muted"
       size="header"
       rounded="none"
-      // ripple={false}
+      pad="none"
       title={TEXT_SETTINGS}
       checked={visible}
       onClick={() => setSettingsVisible(true)}

@@ -4,29 +4,60 @@ import { TEXT_OK } from '@/consts'
 import { FormInputError } from '@components/input-error'
 import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
 import type { IEdbUser, IRole } from '@lib/edb/edb'
-import { Form, FormField, FormItem } from '@themed/form'
+import { Form, FormField } from '@themed/form'
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
-  EMAIL_PATTERN,
   NAME_PATTERN,
+  PUBLIC_ID_REGEX,
   TEXT_EMAIL_ERROR,
   TEXT_USERNAME_DESCRIPTION,
-  TEXT_USERNAME_REQUIRED,
   USERNAME_PATTERN,
 } from '@layouts/signin-layout'
 import { Input } from '@themed/input'
-import { Label } from '@themed/label'
+import { Label, LabelContainer } from '@themed/label'
 import { ToggleGroup, ToggleGroupItem } from '@themed/toggle-group'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
-import {
-  PASSWORD_PATTERN,
-  TEXT_PASSWORD_DESCRIPTION,
-} from '../account/password-email-dialog'
+import z from 'zod'
+import { TEXT_PASSWORD_PATTERN_DESCRIPTION } from '../account/myaccount/password-card'
+import { PASSWORD_PATTERN } from '../account/password-email-dialog'
 
 export interface INewUser extends IEdbUser {
   password: string
 }
+
+const FormSchema = z.object({
+  publicId: z.string().regex(PUBLIC_ID_REGEX, {
+    message: 'This does not seem like a valid id',
+  }),
+  firstName: z.union([
+    z.literal(''),
+    z
+      .string()
+      .regex(NAME_PATTERN, { message: 'This does not seem like a valid name' }),
+  ]),
+  lastName: z.union([
+    z.literal(''),
+    z
+      .string()
+      .regex(NAME_PATTERN, { message: 'This does not seem like a valid name' }),
+  ]),
+  username: z.union([
+    z.email({ message: TEXT_EMAIL_ERROR }),
+    z.string().regex(USERNAME_PATTERN, { message: TEXT_USERNAME_DESCRIPTION }),
+  ]),
+  email: z.email({ message: TEXT_EMAIL_ERROR }),
+  password: z.union([
+    z.literal(''),
+    z.string().regex(PASSWORD_PATTERN, {
+      message: TEXT_PASSWORD_PATTERN_DESCRIPTION,
+    }),
+  ]),
+  roles: z.array(z.string()),
+  apiKeys: z.array(z.string()),
+  isLocked: z.boolean(),
+})
 
 // export const NEW_USER: INewUser = {
 //   password: '',
@@ -70,12 +101,32 @@ export function EditUserDialog({
     setUser(data, TEXT_OK)
   }
 
-  const form = useForm<INewUser>({
+  // const form = useForm<INewUser>({
+  //   defaultValues: {
+  //     ...user,
+  //     password: '',
+  //   },
+  // })
+
+  console.log('EditUserDialog user', user)
+
+  const form = useForm({
+    resolver: zodResolver(FormSchema),
     defaultValues: {
-      ...user,
+      publicId: '',
+      firstName: '',
+      lastName: '',
+      username: '',
+      email: '',
       password: '',
+      roles: [],
+      apiKeys: [],
+      isLocked: false,
+      ...user,
     },
   })
+
+  console.log('EditUserDialog user', user, form.formState.errors)
 
   return (
     <OKCancelDialog
@@ -114,7 +165,11 @@ export function EditUserDialog({
               //   },
               // }}
               render={({ field }) => (
-                <FormItem>
+                <LabelContainer
+                  id="firstName"
+                  label="First Name"
+                  labelPos="top"
+                >
                   <Input
                     h="lg"
                     id="firstName"
@@ -126,21 +181,15 @@ export function EditUserDialog({
                   />
 
                   <FormInputError error={form.formState.errors.firstName} />
-                </FormItem>
+                </LabelContainer>
               )}
             />
 
             <FormField
               control={form.control}
               name="lastName"
-              rules={{
-                pattern: {
-                  value: NAME_PATTERN,
-                  message: 'This does not seem like a valid name',
-                },
-              }}
               render={({ field }) => (
-                <FormItem>
+                <LabelContainer id="lastName" label="Last Name" labelPos="top">
                   <Input
                     h="lg"
                     id="lastName"
@@ -152,53 +201,33 @@ export function EditUserDialog({
                   />
 
                   <FormInputError error={form.formState.errors.lastName} />
-                </FormItem>
+                </LabelContainer>
               )}
             />
           </div>
           <FormField
             control={form.control}
             name="username"
-            rules={{
-              required: {
-                value: true,
-                message: TEXT_USERNAME_REQUIRED,
-              },
-              pattern: {
-                value: USERNAME_PATTERN,
-                message: TEXT_USERNAME_DESCRIPTION,
-              },
-            }}
             render={({ field }) => (
-              <FormItem className="flex flex-col gap-y-1">
+              <LabelContainer id="username" label="Username" labelPos="top">
                 <Input
                   h="lg"
-                  id="name"
+                  id="username"
                   //label="Username"
                   placeholder="Username"
                   error={'username' in form.formState.errors}
                   {...field}
                 />
                 <FormInputError error={form.formState.errors.username} />
-              </FormItem>
+              </LabelContainer>
             )}
           />
 
           <FormField
             control={form.control}
             name="email"
-            rules={{
-              required: {
-                value: true,
-                message: 'An email address is required',
-              },
-              pattern: {
-                value: EMAIL_PATTERN,
-                message: TEXT_EMAIL_ERROR,
-              },
-            }}
             render={({ field }) => (
-              <FormItem className="flex flex-col gap-y-1">
+              <LabelContainer id="email" label="Email" labelPos="top">
                 <Input
                   h="lg"
                   id="email"
@@ -209,21 +238,15 @@ export function EditUserDialog({
                 />
 
                 <FormInputError error={form.formState.errors.email} />
-              </FormItem>
+              </LabelContainer>
             )}
           />
 
           <FormField
             control={form.control}
             name="password"
-            rules={{
-              pattern: {
-                value: PASSWORD_PATTERN,
-                message: TEXT_PASSWORD_DESCRIPTION,
-              },
-            }}
             render={({ field }) => (
-              <FormItem>
+              <LabelContainer id="password" label="Password" labelPos="top">
                 <Input
                   h="lg"
                   id="password"
@@ -234,7 +257,7 @@ export function EditUserDialog({
                   {...field}
                 />
                 <FormInputError error={form.formState.errors.password} />
-              </FormItem>
+              </LabelContainer>
             )}
           />
 
@@ -244,7 +267,11 @@ export function EditUserDialog({
             render={({ field }) => {
               if (field.value) {
                 return (
-                  <FormItem>
+                  <LabelContainer
+                    id="publicId"
+                    label="Public Id"
+                    labelPos="top"
+                  >
                     <Input
                       h="lg"
                       id="publicId"
@@ -255,13 +282,32 @@ export function EditUserDialog({
                       disabled
                       {...field}
                     />
-                  </FormItem>
+                  </LabelContainer>
                 )
               } else {
                 return <></>
               }
             }}
           />
+
+          {/* <FormField
+            control={form.control}
+            name="apiKeys"
+            render={({ field }) => (
+              <FormItem>
+                <Input
+                  h="lg"
+                  id="apiKeys"
+                  className="w-full"
+                  placeholder="API Keys"
+                  //label="User Id"
+                  readOnly
+                  disabled
+                  {...field}
+                />
+              </FormItem>
+            )}
+          /> */}
 
           <FormField
             control={form.control}

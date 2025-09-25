@@ -74,7 +74,9 @@ import { Card } from '@themed/card'
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@themed/select'
@@ -769,8 +771,11 @@ export function MutationsPage() {
               <SelectValue placeholder="Select a genome" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="hg19">hg19</SelectItem>
-              {/* <SelectItem value="grch38">grch38</SelectItem> */}
+              <SelectGroup>
+                <SelectLabel>Genome Assembly</SelectLabel>
+                <SelectItem value="hg19">hg19</SelectItem>
+                {/* <SelectItem value="grch38">grch38</SelectItem> */}
+              </SelectGroup>
             </SelectContent>
           </Select>
         </HeaderPortal>

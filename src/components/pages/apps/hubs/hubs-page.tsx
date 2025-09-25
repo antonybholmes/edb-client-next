@@ -36,7 +36,9 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@themed/select'
@@ -205,9 +207,12 @@ export function HubsPage() {
             <SelectValue placeholder="Select a genome" />
           </SelectTrigger>
           <SelectContent align="end">
-            <SelectItem value="hg19">hg19</SelectItem>
-            <SelectItem value="grch38">grch38</SelectItem>
-            <SelectItem value="mm10">mm10</SelectItem>
+            <SelectGroup>
+              <SelectLabel>Genome Assembly</SelectLabel>
+              <SelectItem value="hg19">hg19</SelectItem>
+              <SelectItem value="grch38">grch38</SelectItem>
+              <SelectItem value="mm10">mm10</SelectItem>
+            </SelectGroup>
           </SelectContent>
         </Select>
       </HeaderPortal>
@@ -227,7 +232,7 @@ export function HubsPage() {
             type="multiple"
             value={institutions}
             variant="settings"
-            className="p-4"
+            className="p-4 gap-y-4"
           >
             {institutions.map((institution) => {
               return (

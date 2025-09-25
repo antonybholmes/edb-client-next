@@ -151,6 +151,8 @@ export function AdminUsersPage() {
     setUsers(res.data)
   }
 
+  console.log('users', users)
+
   useEffect(() => {
     if (userStats) {
       try {
@@ -211,11 +213,11 @@ export function AdminUsersPage() {
     columnHelper.accessor('roles', {
       header: 'Roles',
       cell: (props) => (
-        <VCenterRow className="gap-x-0.5 text-xs font-bold text-white">
+        <VCenterRow className="gap-x-0.5 text-xs font-semibold text-white">
           {props.getValue().map((role) => (
             <span
               key={role}
-              className="bg-theme/75 hover:bg-theme trans-color rounded-full px-2 py-0.75"
+              className="bg-foreground/80  hover:bg-foreground/90 trans-color rounded-full px-2 py-0.75"
             >
               {role}
             </span>
@@ -448,9 +450,9 @@ export function AdminUsersPage() {
             setShowDialog({ ...NO_DIALOG })
           }}
         >
-          {`Are you sure you want to delete user ${
-            (showDialog.params!.user as IEdbUser).publicId
-          }?`}
+          Are you sure you want to delete user{' '}
+          {(showDialog.params!.user as IEdbUser).username} (
+          {(showDialog.params!.user as IEdbUser).publicId})?
         </OKCancelDialog>
       )}
 
@@ -490,6 +492,7 @@ export function AdminUsersPage() {
               <VCenterRow>
                 <Button
                   variant="theme"
+                  rounded="full"
                   onClick={() => {
                     setShowDialog({
                       id: 'new',
@@ -499,6 +502,7 @@ export function AdminUsersPage() {
                       },
                     })
                   }}
+                  className="text-sm px-3"
                 >
                   <PlusIcon stroke="stroke-white" /> <span>New User</span>
                 </Button>

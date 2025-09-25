@@ -21,13 +21,15 @@ export const FORWARD_DELAY_MS = 2000
 export const EMAIL_PATTERN =
   /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/
 export const USERNAME_PATTERN = /^[\w@.]{3,}/
+export const USERNAME_REGEX = /^\w{3,}/
+export const PUBLIC_ID_REGEX = /^[a-zA-Z0-9\-\_]+$/
 
-export const NAME_PATTERN = /^[\w ]*/
+export const NAME_PATTERN = /^[\w ]+/
 
 export const TEXT_USERNAME_REQUIRED = 'A username is required'
 export const TEXT_NAME_REQUIRED = 'A first name is required'
 export const TEXT_USERNAME_DESCRIPTION =
-  'A username must contain at least 3 characters, which can be letters, numbers, andunknown of @.-'
+  'A username must contain at least 3 characters, which can be letters, numbers and special characters like @ and .'
 export const TEXT_EMAIL_ERROR = 'This does not seem like a valid email address'
 
 export function CreateAccountLink() {
@@ -78,9 +80,7 @@ export function SignInRequired({ children }: ISignInLayoutProps) {
 
   //const queryClient = useQueryClient()
 
-  const { session, loaded } = useEdbAuth()
-
-  console.log('SignInRequired session', session, loaded)
+  const { session } = useEdbAuth()
 
   // if (!loaded) {
   //   return null

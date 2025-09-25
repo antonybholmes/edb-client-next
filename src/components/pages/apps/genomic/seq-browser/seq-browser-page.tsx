@@ -71,6 +71,7 @@ import { Card } from '@themed/card'
 import { ToolbarFooterButton } from '@toolbar/toolbar-footer-button'
 
 import { useSettingsTabs } from '@/components/dialog/settings/setting-tabs-store'
+import { DownloadImageIcon } from '@/components/icons/download-image-icon'
 import {
   ToggleGroup,
   ToggleGroupItem,
@@ -81,7 +82,6 @@ import { useSearch } from '@/hooks/search'
 import { API_GENOME_GENOMES_URL } from '@/lib/edb/genome'
 import { HeaderPortal } from '@components/header/header-portal'
 import { ModuleInfoButton } from '@components/header/module-info-button'
-import { DownloadIcon } from '@icons/download-icon'
 import { ExportIcon } from '@icons/export-icon'
 import * as SelectPrimitive from '@radix-ui/react-select'
 import { produce } from 'immer'
@@ -258,7 +258,7 @@ function SeqBrowserPage() {
                 })
               }
             >
-              <DownloadIcon />
+              <DownloadImageIcon />
             </ToolbarIconButton>
           </ToolbarTabGroup>
 
@@ -267,6 +267,7 @@ function SeqBrowserPage() {
           <ToolbarTabGroup title="Zoom">
             <ToolbarOptionalDropdownButton
               size="toolbar-icon"
+              pad="none"
               icon={<ZoomInIcon />}
               onMainClick={() => {
                 setLocationZoom(0.5)
@@ -301,6 +302,7 @@ function SeqBrowserPage() {
 
             <ToolbarOptionalDropdownButton
               size="toolbar-icon"
+              pad="none"
               icon={<ZoomOutIcon />}
               onMainClick={() => {
                 setLocationZoom(2)
@@ -580,7 +582,7 @@ function SeqBrowserPage() {
               <SelectValue placeholder="Select a genome" />
             </SelectTrigger>
             <SelectContent align="end">
-              <SelectGroup className="flex flex-col">
+              <SelectGroup>
                 <SelectLabel>Genome Assembly</SelectLabel>
                 <SelectItem value="hg19" variant="theme">
                   hg19

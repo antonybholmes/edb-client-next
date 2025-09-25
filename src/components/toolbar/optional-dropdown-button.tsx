@@ -8,9 +8,10 @@ import { DropdownMenu, DropdownMenuContent } from '@themed/dropdown-menu'
 
 import { TRANS_COLOR_CLS } from '@/theme'
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
-import { Button, type IButtonProps } from '@themed/button'
+import { type IButtonProps } from '@themed/button'
 import { BaseCol } from '../layout/base-col'
 import { DropDownButton } from '../shadcn/ui/themed/dropdown-button'
+import { IconButton } from '../shadcn/ui/themed/icon-button'
 
 const CONTAINER_CLS = cn(
   TRANS_COLOR_CLS,
@@ -45,7 +46,7 @@ export function OptionalDropdownButton({
       <VCenterRow className={CONTAINER_CLS} ref={anchorRef}>
         <BaseCol>
           <VCenterRow>
-            <Button
+            <IconButton
               variant="muted"
               // ripple={false}
               onClick={() => onMainClick()}
@@ -57,7 +58,7 @@ export function OptionalDropdownButton({
               className="rounded-r-none"
             >
               {icon}
-            </Button>
+            </IconButton>
 
             <DropDownButton
               checked={open}
