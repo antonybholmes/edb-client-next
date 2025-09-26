@@ -42,7 +42,7 @@ import { BaseRow } from '@layout/base-row'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
 import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
 import { downloadDataFrame } from '@lib/dataframe/dataframe-utils'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import { downloadSvgAutoFormat } from '@lib/image-utils'
 import { Card } from '@themed/card'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
@@ -218,7 +218,7 @@ export function BioDrawPage() {
               title="Save motifs"
               onClick={() =>
                 setShowDialog({
-                  id: randID(`save-plot`),
+                  id: randId(`save-plot`),
                 })
               }
             >
@@ -470,7 +470,7 @@ export function BioDrawPage() {
                     title={TEXT_SAVE_TABLE}
                     onClick={() =>
                       setShowDialog({
-                        id: randID(`save-table`),
+                        id: randId(`save-table`),
                       })
                     }
                   >

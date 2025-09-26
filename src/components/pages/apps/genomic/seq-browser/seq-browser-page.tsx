@@ -43,7 +43,7 @@ import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 import { SaveImageDialog } from '@components/pages/save-image-dialog'
 import { type ITab } from '@components/tabs/tab-provider'
 import { FileImageIcon } from '@icons/file-image-icon'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import { downloadSvgAutoFormat } from '@lib/image-utils'
 import { useQuery } from '@tanstack/react-query'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
@@ -254,7 +254,7 @@ function SeqBrowserPage() {
               title={TEXT_SAVE_IMAGE}
               onClick={() =>
                 setShowDialog({
-                  id: randID('save'),
+                  id: randId('save'),
                 })
               }
             >

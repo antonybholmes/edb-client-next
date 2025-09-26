@@ -37,7 +37,6 @@ import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
 import { LayersIcon } from '@icons/layers-icon'
 import { OpenIcon } from '@icons/open-icon'
 import { type IDataset } from '@lib/gene/pathway/pathway'
-import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
 
 import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
 import { UploadIcon } from '@icons/upload-icon'
@@ -68,7 +67,7 @@ import {
   API_PATHWAY_DATASETS_URL,
   API_PATHWAY_GENES_URL,
 } from '@lib/edb/edb'
-import { makeNanoIDLen12, randID } from '@lib/id'
+import { makeNanoIdLen12, randId } from '@lib/id'
 import axios from 'axios'
 
 import { range } from '@lib/math/range'
@@ -335,7 +334,7 @@ export function PathwayPage() {
     // only keep genes in approved list
     const genesets: IGeneset[] = range(sheet.shape[1]).map(() => {
       return {
-        id: makeNanoIDLen12(),
+        id: makeNanoIdLen12(),
         name: sheet.col(0).name.toString(),
         genes: sheet
           .col(0)
@@ -558,7 +557,7 @@ export function PathwayPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randID('open'),
+                    id: randId('open'),
                   })
                 }
               }}
@@ -567,7 +566,7 @@ export function PathwayPage() {
 
             {selectedTab === 0 && (
               <ToolbarIconButton
-                onClick={() => setShowDialog({ id: randID('save') })}
+                onClick={() => setShowDialog({ id: randId('save') })}
                 title={TEXT_SAVE_TABLE}
               >
                 <DownloadIcon />
@@ -693,7 +692,7 @@ export function PathwayPage() {
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randID('open'), params: {} })}
+          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
         >
           <UploadIcon stroke="" />
 
@@ -791,12 +790,12 @@ export function PathwayPage() {
             fileMenuTabs={fileMenuTabs}
             leftShortcuts={<UndoShortcuts />}
             rightShortcuts={
-              <ToolbarTabButton
+              <ToolbarButton
                 onClick={() => loadTestData()}
                 title="Load test data to use features."
               >
                 Test data
-              </ToolbarTabButton>
+              </ToolbarButton>
             }
           />
           <ToolbarPanel

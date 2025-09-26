@@ -25,7 +25,7 @@ import {
 } from '@lib/genomic/genomic'
 import { httpFetch } from '@lib/http/http-fetch'
 import { bearerHeaders } from '@lib/http/urls'
-import { makeNanoIDLen12 } from '@lib/id'
+import { makeNanoIdLen12 } from '@lib/id'
 import { useQuery } from '@tanstack/react-query'
 import { produce } from 'immer'
 
@@ -533,7 +533,7 @@ export interface ITrackGroup {
 
 export function newTrackGroup(tracks: TrackPlot[]): ITrackGroup {
   return {
-    id: makeNanoIDLen12(),
+    id: makeNanoIdLen12(),
     trackType: 'Track Group',
     name: tracks[0]!.name,
     order: tracks.map((t) => t.id),
@@ -658,7 +658,7 @@ export function trackReducer(
         {
           trackType: 'Location',
           name: 'Location',
-          id: makeNanoIDLen12(),
+          id: makeNanoIdLen12(),
           displayOptions: {
             ...DEFAULT_LOCATION_TRACK_DISPLAY_OPTIONS,
           },
@@ -666,7 +666,7 @@ export function trackReducer(
         {
           trackType: 'Cytobands',
           name: 'Cytobands',
-          id: makeNanoIDLen12(),
+          id: makeNanoIdLen12(),
           displayOptions: {
             ...DEFAULT_CYTOBANDS_TRACK_DISPLAY_OPTIONS,
           },
@@ -674,7 +674,7 @@ export function trackReducer(
         {
           trackType: 'Scale',
           name: 'Scale',
-          id: makeNanoIDLen12(),
+          id: makeNanoIdLen12(),
           displayOptions: {
             ...DEFAULT_SCALE_TRACK_DISPLAY_OPTIONS,
           },
@@ -682,7 +682,7 @@ export function trackReducer(
         {
           trackType: 'Ruler',
           name: 'Ruler',
-          id: makeNanoIDLen12(),
+          id: makeNanoIdLen12(),
           displayOptions: {
             ...DEFAULT_RULER_TRACK_DISPLAY_OPTIONS,
           },
@@ -691,7 +691,7 @@ export function trackReducer(
         {
           trackType: 'Gene',
           name: 'Genes',
-          id: makeNanoIDLen12(),
+          id: makeNanoIdLen12(),
           displayOptions: {
             ...DEFAULT_GENE_TRACK_DISPLAY_OPTIONS,
           },

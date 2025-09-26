@@ -9,8 +9,8 @@ function _formatName(name: string) {
 }
 
 export function createCrumbs(url: string | null): ICrumb[] {
-  url = url ?? '/'
-  const segments = url.split('/').filter(s => s.length > 0)
+  url = url || '/'
+  const segments = url.split('/').filter((s) => s.length > 0)
 
   const crumbs: ICrumb[] = []
 

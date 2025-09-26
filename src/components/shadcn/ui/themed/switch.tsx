@@ -90,6 +90,7 @@ export const Switch = forwardRef<
     side = 'left',
     className,
     title,
+    'aria-label': ariaLabel,
     children,
     ...props
   },
@@ -102,19 +103,13 @@ export const Switch = forwardRef<
   const [hover, setHover] = useState(false)
   const [pressed, setPressed] = useState(false)
 
-  if (!props['aria-label']) {
-    props['aria-label'] = title
-  }
-
-  if (!props['aria-label']) {
-    props['aria-label'] = 'Switch'
-  }
+  ariaLabel = ariaLabel ?? title ?? 'Switch'
 
   // Looks nicer if animations are disabled on first render
   const initial = useRef(true)
 
   useEffect(() => {
-    const duration = initial.current ? 0 : 0.5 //ANIMATION_DURATION_S
+    const duration = initial.current ? 0 : 0.4 //ANIMATION_DURATION_S
 
     const tl = gsap.timeline()
 
@@ -177,6 +172,7 @@ export const Switch = forwardRef<
       onMouseDown={() => setPressed(true)}
       onMouseUp={() => setPressed(false)}
       title={title}
+      aria-label={ariaLabel}
       {...props}
     >
       <span

@@ -5,7 +5,7 @@ import { API_SCRNA_GEX_URL } from '@/lib/edb/edb'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
-import { makeNanoIDLen12 } from '@/lib/id'
+import { makeNanoIdLen12 } from '@/lib/id'
 import { argsort } from '@/lib/math/argsort'
 import { findCenter } from '@/lib/math/centroid'
 import type { ILim } from '@/lib/math/math'
@@ -235,7 +235,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
       // add extended properties
       return {
         ...c,
-        id: makeNanoIDLen12(),
+        id: makeNanoIdLen12(),
         pos,
         show: true,
         showRoundel: true,
@@ -265,14 +265,14 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         draft.clusterInfo = clusterInfo
         draft.plots = [
           {
-            id: makeNanoIDLen12(),
+            id: makeNanoIdLen12(),
             name: 'Clusters',
             //genes: [],
             mode: 'clusters',
             // show all clusters
             clusters,
             geneset: {
-              id: makeNanoIDLen12(),
+              id: makeNanoIdLen12(),
               name: '',
               genes: [],
             },
@@ -432,7 +432,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
       const idx = argsort(avg) //.toReversed()
 
       plots.push({
-        id: makeNanoIDLen12(),
+        id: makeNanoIdLen12(),
         name: useMean
           ? truncate(
               `Mean of ${geneset.name}: ${geneset.genes.map((g) => g.geneSymbol).join(', ')}`

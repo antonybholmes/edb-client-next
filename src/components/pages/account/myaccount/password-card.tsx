@@ -50,7 +50,7 @@ export type IPasswordAction =
       password: string
     }
   | {
-      type: 'newPassword2'
+      type: 'retypePassword'
       password: string
     }
 
@@ -78,7 +78,7 @@ const FormSchema = z.object({
   newPassword: z.string().regex(PASSWORD_PATTERN, {
     message: TEXT_PASSWORD_PATTERN_DESCRIPTION,
   }),
-  newPassword2: z.string().regex(PASSWORD_PATTERN, {
+  retypePassword: z.string().regex(PASSWORD_PATTERN, {
     message: TEXT_PASSWORD_PATTERN_DESCRIPTION,
   }),
 })
@@ -150,20 +150,20 @@ export function PasswordCard() {
     defaultValues: {
       password: '',
       newPassword: '',
-      newPassword2: '',
+      retypePassword: '',
     },
   })
 
   async function onSubmit(
-    data: { password: string; newPassword: string; newPassword2: string },
+    data: { password: string; newPassword: string; retypePassword: string },
     e: BaseSyntheticEvent | undefined
   ) {
     e?.preventDefault()
 
     console.log('onSubmit', data)
 
-    if (data.newPassword !== data.newPassword2) {
-      form.setError('newPassword2', {
+    if (data.newPassword !== data.retypePassword) {
+      form.setError('retypePassword', {
         type: 'manual',
         message: 'Passwords do not match',
       })
@@ -205,7 +205,9 @@ export function PasswordCard() {
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <div className="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 items-center">
-              <Label className="font-medium">Current Password</Label>
+              <Label className="font-medium" htmlFor="password">
+                Current Password
+              </Label>
               <FormField
                 control={form.control}
                 name="password"
@@ -230,16 +232,12 @@ export function PasswordCard() {
                 )}
               />
               <div />
-              <Label className="font-medium">New Password</Label>
+              <Label className="font-medium" htmlFor="newPassword">
+                New Password
+              </Label>
               <FormField
                 control={form.control}
                 name="newPassword"
-                rules={{
-                  pattern: {
-                    value: PASSWORD_PATTERN,
-                    message: TEXT_PASSWORD_DESCRIPTION,
-                  },
-                }}
                 render={({ field }) => (
                   <FormItem className="col-span-1 md:col-span-2">
                     <Input
@@ -256,20 +254,16 @@ export function PasswordCard() {
               />
               <div />
 
-              <Label className="font-medium">Retype Password</Label>
+              <Label className="font-medium" htmlFor="retypePassword">
+                Retype Password
+              </Label>
               <FormField
                 control={form.control}
-                name="newPassword2"
-                rules={{
-                  pattern: {
-                    value: PASSWORD_PATTERN,
-                    message: TEXT_PASSWORD_DESCRIPTION,
-                  },
-                }}
+                name="retypePassword"
                 render={({ field }) => (
                   <FormItem className="col-span-1 md:col-span-2">
                     <Input
-                      id="newPassword2"
+                      id="retypePassword"
                       type="password"
                       error={'newPassword2' in form.formState.errors}
                       placeholder="Retype Password"
@@ -277,7 +271,7 @@ export function PasswordCard() {
                       {...field}
                     />
                     <FormInputError
-                      error={form.formState.errors.newPassword2}
+                      error={form.formState.errors.retypePassword}
                     />
                   </FormItem>
                 )}

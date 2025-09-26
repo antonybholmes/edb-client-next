@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Improving lighthouse scores with aria fixes.
 - Bug fixes and updates.
 
 

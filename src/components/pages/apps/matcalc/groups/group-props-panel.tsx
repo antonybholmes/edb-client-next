@@ -13,7 +13,7 @@ import { VCenterRow } from '@layout/v-center-row'
 import { useSelectionRange } from '@providers/selection-range'
 
 import { download, downloadJson } from '@lib/download-utils'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import { range } from '@lib/math/range'
 import { useContext, useEffect, useState } from 'react'
 import { GroupDialog } from './group-dialog'
@@ -520,7 +520,7 @@ export function GroupPropsPanel({ branchId }: IProps) {
             <IconButton
               //rounded="full"
               // ripple={false}
-              onClick={() => setOpen(randID('open'))}
+              onClick={() => setOpen(randId('open'))}
               title="Open Groups"
               //className="fill-foreground/50 hover:fill-foreground"
             >

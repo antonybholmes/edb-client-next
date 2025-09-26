@@ -68,11 +68,10 @@ import {
 import { OpenIcon } from '@icons/open-icon'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
 import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import { rangeMap } from '@lib/math/range'
 import { cn } from '@lib/shadcn-utils'
 import { ToolbarOpenFile } from '@toolbar/toolbar-open-files'
-import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
 import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 
 import { BaseSvg } from '@/components/base-svg'
@@ -427,7 +426,7 @@ function VennPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randID('open'),
+                    id: randId('open'),
                   })
                 }
               }}
@@ -560,7 +559,7 @@ function VennPage() {
       content: (
         <DropdownMenuItem
           aria-label="Open file on your computer"
-          onClick={() => setShowDialog({ id: randID('open'), params: {} })}
+          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
         >
           <UploadIcon stroke="" />
 
@@ -652,13 +651,13 @@ function VennPage() {
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
             rightShortcuts={
-              <ToolbarTabButton
+              <ToolbarButton
                 onClick={() => loadTestData()}
                 role="button"
                 title="Load test data to use features."
               >
                 Test data
-              </ToolbarTabButton>
+              </ToolbarButton>
             }
           />
           <ToolbarPanel

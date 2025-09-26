@@ -1,12 +1,12 @@
 import { useMouseMoveListener } from '@/hooks/mousemove-listener'
 import { useMouseUpListener } from '@/hooks/mouseup-listener'
+import { useStableId } from '@/hooks/stable-id'
 import { TRANS_COLOR_CLS } from '@/theme'
 import { type IDivProps } from '@interfaces/div-props'
 import { cn } from '@lib/shadcn-utils'
 import {
   Children,
   useEffect,
-  useId,
   useRef,
   useState,
   type KeyboardEvent,
@@ -25,6 +25,7 @@ interface IProps extends IDivProps {
 }
 
 export function VSplitPane({
+  id,
   p = 0.8,
   limits = [0.1, 0.9],
   hideTriggers = [0.05, 0.95],
@@ -40,7 +41,7 @@ export function VSplitPane({
   const refC1 = useRef<HTMLDivElement>(null)
   const refC2 = useRef<HTMLDivElement>(null)
   const [focus, setFocus] = useState(false)
-  const id = useId()
+  const _id = useStableId(id, 'hitbox-v')
 
   const panels = Children.toArray(children)
 
@@ -174,7 +175,7 @@ export function VSplitPane({
         {panels[0]}
       </div>
       <BaseCol
-        id={`hitbox-v-${id}`}
+        id={_id}
         className={cn(
           TRANS_COLOR_CLS,
           'group m-1  shrink-0 grow-0 cursor-ns-resize justify-center p-1 outline-hidden'

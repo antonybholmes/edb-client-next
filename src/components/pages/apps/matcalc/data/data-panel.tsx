@@ -41,7 +41,7 @@ import {
   downloadDataFrame,
   getFormattedShape,
 } from '@lib/dataframe/dataframe-utils'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import { friendlyFilename, replaceFileExt } from '@lib/path'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from '@themed/crisp'
@@ -301,7 +301,7 @@ export function DataPanel({ branchId }: IDataPanelProps) {
             if (files.length > 0) {
               onTextFileChange('Open from drag', files, (files) => {
                 setShowDialog({
-                  id: randID('open-files'),
+                  id: randId('open-files'),
                   params: { files },
                 })
               })
@@ -320,7 +320,7 @@ export function DataPanel({ branchId }: IDataPanelProps) {
           menuCallback={(tab, action) => {
             if (action === TEXT_DELETE) {
               setShowDialog({
-                id: randID('delete-sheet'),
+                id: randId('delete-sheet'),
                 params: { sheetId: tab.id },
               })
             }

@@ -54,7 +54,7 @@ import {
   type PlotMode,
 } from './plot-grid-provider'
 
-import { makeNanoIDLen12 } from '@/lib/id'
+import { makeNanoIdLen12 } from '@/lib/id'
 import { useUmapSettings } from './single-cell-settings'
 
 export const GROUP_BG_CLS = 'rounded-theme group gap-x-1'
@@ -206,7 +206,7 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
 
     if (newGenes.length > 0) {
       const geneset = {
-        id: makeNanoIDLen12(),
+        id: makeNanoIdLen12(),
         name: truncate(newGenes.map((g) => g.geneSymbol).join(', ')),
         genes: newGenes,
       }
@@ -215,7 +215,7 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
       setPlots([
         ...plots,
         {
-          id: makeNanoIDLen12(),
+          id: makeNanoIdLen12(),
           name: truncate(newGenes.map((g) => g.geneSymbol).join(', ')),
           geneset,
           mode: 'global-gex' as PlotMode,

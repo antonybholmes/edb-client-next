@@ -5,7 +5,6 @@ import type { IDivProps } from '@interfaces/div-props'
 import { VCenterRow } from '@layout/v-center-row'
 
 import { cn } from '@lib/shadcn-utils'
-import { Minus } from 'lucide-react'
 import type { CSSProperties } from 'react'
 import { createContext, useContext } from 'react'
 import { EllipsisIcon } from './icons/ellipsis-icon'
@@ -47,13 +46,15 @@ export function SortableItem({ id, className, style, children }: IDivProps) {
     <SortableItemContext.Provider
       value={{ ref: setNodeRef, attributes, listeners, isDragging }}
     >
-      <li
+      <div
+        id={id}
         className={className}
         ref={setNodeRef}
         style={{ ...style, ...dragStyle }}
+        //role="tab"
       >
         {children}
-      </li>
+      </div>
     </SortableItemContext.Provider>
   )
 }
@@ -80,9 +81,17 @@ export function SmallDragHandle({
   const { attributes, listeners } = useContext(SortableItemContext)
 
   return (
-    <VCenterRow className={className} {...listeners} {...attributes} {...props}>
-      <Minus className="rotate-90 w-5 -ml-1 stroke-foreground/0 hover:stroke-foreground/50" />
-    </VCenterRow>
+    <span
+      className={cn(
+        'inline-flex flex-row items-center justify-center trans-opacity hover:opacity-100 opacity-50',
+        className
+      )}
+      {...listeners}
+      {...attributes}
+      {...props}
+    >
+      <EllipsisIcon className="rotate-90" />
+    </span>
   )
 }
 

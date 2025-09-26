@@ -275,7 +275,9 @@ export function MyAccountPage() {
                 onSubmit={form.handleSubmit(onSubmit)}
               >
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 items-center">
-                  <Label className="font-medium">First Name</Label>
+                  <Label className="font-medium" htmlFor="firstName">
+                    Name
+                  </Label>
                   <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
@@ -338,7 +340,9 @@ export function MyAccountPage() {
                     />
                   </div>
                   <div />
-                  <Label className="font-medium">Username</Label>
+                  <Label className="font-medium" htmlFor="username">
+                    Username
+                  </Label>
                   <FormField
                     control={form.control}
                     name="username"
@@ -355,10 +359,11 @@ export function MyAccountPage() {
                     render={({ field }) => (
                       <FormItem className="col-span-1 md:col-span-2">
                         <Input
-                          id="name"
+                          id="username"
                           placeholder="Username..."
                           readOnly={session?.user.isLocked}
                           variant="underline"
+                          autoComplete="username"
                           {...field}
                         />
                         <FormInputError
@@ -368,7 +373,9 @@ export function MyAccountPage() {
                     )}
                   />
                   <div />
-                  <Label className="font-medium">Email</Label>
+                  <Label className="font-medium" htmlFor="email">
+                    Email
+                  </Label>
                   <div className="col-span-1 md:col-span-2">
                     <FormField
                       control={form.control}
@@ -388,6 +395,7 @@ export function MyAccountPage() {
                           <Input
                             id="email"
                             placeholder="Email..."
+                            autoComplete="email"
                             readOnly
                             variant="underline"
                             {...field}
@@ -406,7 +414,9 @@ export function MyAccountPage() {
                     </LinkButton> */}
                   <div />
 
-                  <Label className="font-medium">Roles</Label>
+                  <Label className="font-medium" htmlFor="roles">
+                    Roles
+                  </Label>
                   <FormField
                     control={form.control}
                     name="roles"
@@ -424,7 +434,9 @@ export function MyAccountPage() {
                     )}
                   />
                   <div />
-                  <Label className="font-medium">API Keys</Label>
+                  <Label className="font-medium" htmlFor="apiKeys">
+                    API Keys
+                  </Label>
                   <FormField
                     control={form.control}
                     name="apiKeys"
@@ -443,7 +455,9 @@ export function MyAccountPage() {
                   />
                   <div />
 
-                  <Label className="font-medium">Account ID</Label>
+                  <Label className="font-medium" htmlFor="publicId">
+                    Account ID
+                  </Label>
 
                   <FormField
                     control={form.control}
@@ -462,14 +476,22 @@ export function MyAccountPage() {
                   />
                   <div />
 
-                  <Label className="font-medium">Account Status</Label>
+                  <Label className="font-medium" htmlFor="accountStatus">
+                    Account Status
+                  </Label>
 
                   <FormField
                     control={form.control}
                     name="isLocked"
                     render={({ field }) => (
-                      <FormItem>
-                        <span>{field.value ? 'Locked' : 'Unlocked'}</span>
+                      <FormItem className="col-span-1 md:col-span-2">
+                        <Input
+                          id="accountStatus"
+                          variant="underline"
+                          value={field.value ? 'Locked' : 'Unlocked'}
+                          placeholder="Account Status"
+                          readOnly
+                        />
                       </FormItem>
                     )}
                   />

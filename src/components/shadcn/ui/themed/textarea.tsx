@@ -3,7 +3,7 @@ import { BaseCol } from '@layout/base-col'
 import { cn } from '@lib/shadcn-utils'
 
 import { VCenterRow } from '@components/layout/v-center-row'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { Label } from './label'
@@ -78,7 +78,7 @@ export function Textarea({
   //  setInputValue(event.target.value)
   //}
 
-  const _id = id ?? randID('textarea')
+  const _id = id ?? randId('textarea')
 
   let ret: ReactNode = (
     <BaseCol

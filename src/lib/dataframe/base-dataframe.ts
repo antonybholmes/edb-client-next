@@ -13,7 +13,7 @@ import type {
   Shape,
 } from './dataframe-types'
 
-import { makeNanoIDLen12 } from '../id'
+import { makeNanoIdLen12 } from '../id'
 import { whereStartsWith } from '../math/where'
 import { BaseSeries, Series } from './series'
 
@@ -45,7 +45,7 @@ export abstract class BaseDataFrame {
   private _id: string
 
   constructor(name: string = '') {
-    this._id = makeNanoIDLen12()
+    this._id = makeNanoIdLen12()
     this._name = name
   }
 

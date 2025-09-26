@@ -15,7 +15,7 @@ function _formatName(name: string) {
 }
 
 export function createCrumbs(url: UndefStr): ICrumb[] {
-  url = url ?? '/'
+  url = url || '/'
   const segments = url.split('/').filter((s: string) => s.length > 0)
 
   const crumbs: ICrumb[] = []

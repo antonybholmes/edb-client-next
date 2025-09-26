@@ -46,7 +46,7 @@ import { UploadIcon } from '@icons/upload-icon'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
 
 import { ShortcutLayout } from '@layouts/shortcut-layout'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 
 import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
 import { DeleteIcon } from '@icons/delete-icon'
@@ -169,7 +169,7 @@ function OverlapPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randID('open'),
+                    id: randId('open'),
                   })
                 }
               }}
@@ -360,7 +360,7 @@ function OverlapPage() {
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randID('open'), params: {} })}
+          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
         >
           <UploadIcon stroke="" />
 
@@ -469,7 +469,7 @@ function OverlapPage() {
               menuCallback={(tab: ITab, action: string) => {
                 if (action === 'Delete') {
                   setShowDialog({
-                    id: randID('delete-sheet'),
+                    id: randId('delete-sheet'),
                     params: { id: tab.id },
                   })
                 }

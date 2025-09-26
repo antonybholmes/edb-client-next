@@ -27,11 +27,11 @@ export function makeUUIDv7(): string {
  *
  * @returns A nanoid string.
  */
-export function makeNanoIDLen12(): string {
+export function makeNanoIdLen12(): string {
   return NANOID_12()
 }
 
-export function makeNanoID(length: number = 12): string {
+export function makeNanoId(length: number = 12): string {
   if (length === 12) {
     return NANOID_12()
   }
@@ -48,6 +48,6 @@ export function makeNanoID(length: number = 12): string {
  * @param prefix
  * @returns
  */
-export function randID(prefix: string): string {
-  return `${prefix}:${makeNanoIDLen12()}`
+export function randId(prefix: string): string {
+  return `${prefix}:${makeNanoIdLen12()}`
 }

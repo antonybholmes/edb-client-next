@@ -17,7 +17,7 @@ import { PlusIcon } from '@icons/plus-icon'
 import { SaveIcon } from '@icons/save-icon'
 import { TrashIcon } from '@icons/trash-icon'
 import { downloadJson } from '@lib/download-utils'
-import { makeNanoIDLen12, randID } from '@lib/id'
+import { makeNanoIdLen12, randId } from '@lib/id'
 import { cn } from '@lib/shadcn-utils'
 import { Button } from '@themed/button'
 import { Input } from '@themed/input'
@@ -371,7 +371,7 @@ export function FeaturePropsPanel({ ref }: IDivProps) {
         <VCenterRow className="justify-between gap-x-2">
           <VCenterRow>
             <IconButton
-              onClick={() => setShowDialog({ id: randID('open'), params: {} })}
+              onClick={() => setShowDialog({ id: randId('open'), params: {} })}
               title="Open features"
             >
               <OpenIcon />
@@ -392,7 +392,7 @@ export function FeaturePropsPanel({ ref }: IDivProps) {
                   produce(features, (draft) => {
                     draft.push({
                       ...feature,
-                      id: makeNanoIDLen12(),
+                      id: makeNanoIdLen12(),
                       name: `Feature ${features.length + 1}`,
                       start: 1,
                       end: Math.min(10, aaStats.length),
@@ -411,7 +411,7 @@ export function FeaturePropsPanel({ ref }: IDivProps) {
               variant="link"
               size="sm"
               // ripple={false}
-              onClick={() => setShowDialog({ id: randID('clear'), params: {} })}
+              onClick={() => setShowDialog({ id: randId('clear'), params: {} })}
               //aria-label="Clear All"
               title="Clear all groups"
             >
@@ -648,7 +648,7 @@ export function FeaturePropsPanel({ ref }: IDivProps) {
                       feature={feature}
                       setDelFeature={(feature) =>
                         setShowDialog({
-                          id: randID('delete'),
+                          id: randId('delete'),
                           params: { feature },
                         })
                       }

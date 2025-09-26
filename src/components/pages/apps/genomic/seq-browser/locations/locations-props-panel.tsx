@@ -30,7 +30,7 @@ import {
 } from '@dnd-kit/sortable'
 import { downloadJson } from '@lib/download-utils'
 import { GenomicLocation, parseLocation } from '@lib/genomic/genomic'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import { where } from '@lib/math/where'
 import type { NullStr } from '@lib/text/text'
 import { toast } from '@themed/crisp'
@@ -91,7 +91,7 @@ export function LocationsPropsPanel() {
                   // There is more than one location, so we allow
                   // this one to be deleted
                   setShowDialog({
-                    id: randID('remove-location'),
+                    id: randId('remove-location'),
                     params: { index },
                   })
                 }
@@ -203,7 +203,7 @@ export function LocationsPropsPanel() {
           <IconButton
             onClick={() => {
               setShowDialog({
-                id: randID('open-locations'),
+                id: randId('open-locations'),
                 params: {},
               })
             }}

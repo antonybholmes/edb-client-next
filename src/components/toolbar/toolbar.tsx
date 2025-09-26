@@ -229,7 +229,7 @@ export function ToolbarMenu({
             const selected = tabId === selectedTabId
             return (
               <BaseTabsTrigger value={tabId} key={`tab-button-${ti}`} asChild>
-                <ToolbarTabButton
+                <ToolbarButton
                  
                   className="justify-center"
    
@@ -258,7 +258,7 @@ export function ToolbarMenu({
                   >
                     {tab.id}
                   </span>
-                </ToolbarTabButton>
+                </ToolbarButton>
               </BaseTabsTrigger>
             )
           })}

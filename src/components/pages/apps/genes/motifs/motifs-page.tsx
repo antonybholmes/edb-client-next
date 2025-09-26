@@ -18,7 +18,7 @@ import { ArrowRightArrowLeftIcon } from '@icons/arrow-right-arrow-left-icon'
 import { SearchIcon } from '@icons/search-icon'
 import { SlidersIcon } from '@icons/sliders-icon'
 import { getDataFrameInfo } from '@lib/dataframe/dataframe-utils'
-import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
+import { ToolbarButton } from '@toolbar/toolbar-button'
 
 import { useContext, useEffect, useRef, useState } from 'react'
 
@@ -56,7 +56,7 @@ import { ShortcutLayout } from '@layouts/shortcut-layout'
 import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
 import type { BaseDataFrame } from '@lib/dataframe/base-dataframe'
 import { downloadDataFrame } from '@lib/dataframe/dataframe-utils'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import { downloadSvgAutoFormat } from '@lib/image-utils'
 import { Card } from '@themed/card'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
@@ -490,12 +490,12 @@ export function MotifsPage() {
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
             rightShortcuts={
-              <ToolbarTabButton
+              <ToolbarButton
                 onClick={() => loadTestData()}
                 title="Load test data to use features."
               >
                 Test data
-              </ToolbarTabButton>
+              </ToolbarButton>
             }
           />
           <ToolbarPanel
@@ -564,7 +564,7 @@ export function MotifsPage() {
                     title={TEXT_SAVE_TABLE}
                     onClick={() =>
                       setShowDialog({
-                        id: randID(`save-table`),
+                        id: randId(`save-table`),
                       })
                     }
                   >

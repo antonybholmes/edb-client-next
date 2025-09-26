@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { CSSProperties, useMemo, useRef, useState } from 'react'
 
 import { TabsList, TabsTrigger } from '../shadcn/ui/themed/tabs'
 
@@ -16,7 +16,9 @@ import {
   arrayMove,
   horizontalListSortingStrategy,
   SortableContext,
+  useSortable,
 } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import type { IDivProps } from '@interfaces/div-props'
 import { where } from '@lib/math/where'
 import { truncate, type NullStr } from '@lib/text/text'
@@ -29,7 +31,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../shadcn/ui/themed/dropdown-menu'
-import { SmallDragHandle, SortableItem } from '../sortable-item'
+import {
+  SmallDragHandle,
+  SortableItem,
+  SortableItemContext,
+} from '../sortable-item'
 import { UNDERLINE_LABEL_CLS, type ITabMenu } from './underline-tabs'
 
 export const tabVariants = cva(
@@ -51,7 +57,7 @@ export const tabButtonVariants = cva('', {
   variants: {
     variant: {
       default: 'px-2 py-1',
-      sheet: 'py-2 pl-2 pr-1',
+      sheet: 'py-2',
       tab: 'border',
     },
   },
@@ -108,61 +114,89 @@ export function ReorderTabs({
     checked: boolean
     active?: NullStr
   }) {
-    //const { attributes, listeners } = useContext(SortableItemContext)
+    const {
+      attributes,
+      isDragging,
+      listeners,
+      setNodeRef,
+      //setActivatorNodeRef,
+      transform,
+      transition,
+    } = useSortable({ id: tab.id })
+
+    const dragStyle: CSSProperties = {
+      opacity: isDragging ? 0.4 : undefined,
+      transform: CSS.Translate.toString(transform),
+      transition,
+    }
 
     const name = getTabName(tab)
     const truncatedName = truncate(name, {
       length: maxNameLength,
     })
 
+    // <VCenterRow
+    //   id={tab.id}
+    //   key={tab.id}
+    //   data-checked={tab.id === active}
+    //   className={tabVariants({
+    //     variant,
+    //     className: 'relative',
+    //   })}
+    //   aria-label={name}
+    //   //role="tab"
+    // >
+    //   <SmallDragHandle
+    //     className="cursor-ew-resize -mr-2"
+    //     aria-label="Drag sheet to move"
+    //   />
+
     return (
-      <>
-        <VCenterRow
+      <SortableItemContext.Provider
+        value={{ ref: setNodeRef, attributes, listeners, isDragging }}
+      >
+        <TabsTrigger
+          ref={setNodeRef}
           id={tab.id}
+          variant="base"
+          value={tab.id}
           key={tab.id}
-          data-checked={tab.id === active}
-          className={tabVariants({
-            variant,
-            className: 'relative',
-          })}
           aria-label={name}
+          className={tabButtonVariants({
+            variant,
+            className: 'flex flex-row items-center relative pr-6',
+          })}
+          style={{ ...dragStyle }}
         >
           <SmallDragHandle
-            className="cursor-ew-resize -mr-2"
+            className="cursor-ew-resize w-4"
             aria-label="Drag sheet to move"
           />
-
-          <TabsTrigger
-            id={tab.id}
-            variant="base"
-            value={tab.id}
-            key={tab.id}
-            aria-label={name}
-            className={tabButtonVariants({ variant })}
+          <span
+            data-checked={checked}
+            aria-label={truncatedName}
+            className={UNDERLINE_LABEL_CLS}
+            ref={(el) => {
+              itemsRef.current.set(tab.id, el!)
+            }}
+            title={name}
           >
-            <span
-              data-checked={checked}
-              aria-label={truncatedName}
-              className={UNDERLINE_LABEL_CLS}
-              ref={el => {
-                itemsRef.current.set(tab.id, el!)
-              }}
-              title={name}
-            >
-              {truncatedName}
-            </span>
-          </TabsTrigger>
+            {truncatedName}
+          </span>
 
           {menuActions && menuActions.length > 0 && menuCallback && (
             <DropdownMenu
               open={show.get(tab.id) ?? false}
-              onOpenChange={v => {
+              onOpenChange={(v) => {
                 setShow(
                   new Map<string, boolean>([...show.entries(), [tab.id, v]])
                 )
               }}
             >
-              <DropdownMenuTrigger className="mr-1" aria-label="Show menu">
+              <DropdownMenuTrigger
+                className="absolute right-0"
+                aria-label="Show menu"
+              >
                 <ChevronRightIcon
                   className="rotate-90"
                   aria-label="Show menu"
@@ -186,29 +220,59 @@ export function ReorderTabs({
           {checked && (
             <span className="absolute bottom-0 w-full left-0 bg-theme h-0.5" />
           )}
-        </VCenterRow>
-      </>
+        </TabsTrigger>
+      </SortableItemContext.Provider>
     )
+
+    //   {menuActions && menuActions.length > 0 && menuCallback && (
+    //     <DropdownMenu
+    //       open={show.get(tab.id) ?? false}
+    //       onOpenChange={(v) => {
+    //         setShow(
+    //           new Map<string, boolean>([...show.entries(), [tab.id, v]])
+    //         )
+    //       }}
+    //     >
+    //       <DropdownMenuTrigger className="mr-1" aria-label="Show menu">
+    //         <ChevronRightIcon className="rotate-90" aria-label="Show menu" />
+    //       </DropdownMenuTrigger>
+    //       <DropdownMenuContent align="start">
+    //         {menuActions.map((menuAction, ai) => (
+    //           <DropdownMenuItem
+    //             key={ai}
+    //             onClick={() => menuCallback?.(tab, menuAction.action)}
+    //             aria-label={menuAction.action}
+    //           >
+    //             {menuAction.icon && menuAction.icon}
+    //             <span>{menuAction.action}</span>
+    //           </DropdownMenuItem>
+    //         ))}
+    //       </DropdownMenuContent>
+    //     </DropdownMenu>
+    //   )}
+
+    //
+    // </VCenterRow>
   }
 
   if (!selectedTab) {
     return null
   }
 
-  const tabIds = tabs.map(tab => tab.id)
+  const tabIds = tabs.map((tab) => tab.id)
 
   return (
     <VCenterRow className={cn('justify-between gap-x-1', className)} ref={ref}>
       <TabsList variant="base" className="relative text-xs" ref={tabListRef}>
         <DndContext
           modifiers={[restrictToHorizontalAxis]}
-          onDragStart={event => setActiveId(event.active.id as string)}
-          onDragEnd={event => {
+          onDragStart={(event) => setActiveId(event.active.id as string)}
+          onDragEnd={(event) => {
             const { active, over } = event
 
             if (over && active.id !== over?.id) {
-              const oldIndex = where(tabs, tab => tab.id === active.id)[0]!
-              const newIndex = where(tabs, tab => tab.id === over.id)[0]! //genesetState.order.indexOf(over.id as string)
+              const oldIndex = where(tabs, (tab) => tab.id === active.id)[0]!
+              const newIndex = where(tabs, (tab) => tab.id === over.id)[0]! //genesetState.order.indexOf(over.id as string)
               const newOrder = arrayMove(tabIds, oldIndex, newIndex)
 
               onReorder?.(newOrder)
@@ -221,30 +285,30 @@ export function ReorderTabs({
             items={tabIds}
             strategy={horizontalListSortingStrategy}
           >
-            <ul className="flex flex-row">
-              {tabs.map(tab => {
-                //const id = makeTabId(tab, ti)
-                //const w = tab.size ?? defaultWidth
-                const selected = tab.id === selectedTab.tab.id // tab.id === selectedTab?.tab.id
+            {/* <ul className="flex flex-row"> */}
+            {tabs.map((tab) => {
+              //const id = makeTabId(tab, ti)
+              //const w = tab.size ?? defaultWidth
+              const selected = tab.id === selectedTab.tab.id // tab.id === selectedTab?.tab.id
 
-                return (
-                  <SortableItem key={tab.id} id={tab.id}>
-                    <TabItem
-                      tab={tab}
-                      key={tab.id}
-                      checked={selected}
-                      active={activeId}
-                    />
-                  </SortableItem>
-                )
-              })}
-            </ul>
+              return (
+                <SortableItem key={tab.id} id={tab.id}>
+                  <TabItem
+                    tab={tab}
+                    key={tab.id}
+                    checked={selected}
+                    active={activeId}
+                  />
+                </SortableItem>
+              )
+            })}
+            {/* </ul> */}
           </SortableContext>
 
           <DragOverlay>
             {activeId ? (
               <TabItem
-                tab={tabs.filter(tab => tab.id === activeId)[0]!}
+                tab={tabs.filter((tab) => tab.id === activeId)[0]!}
                 checked={true}
                 active={activeId}
               />

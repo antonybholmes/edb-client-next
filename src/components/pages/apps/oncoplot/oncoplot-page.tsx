@@ -38,7 +38,6 @@ import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 import { FileImageIcon } from '@icons/file-image-icon'
 import { SaveIcon } from '@icons/save-icon'
 
-import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
 import { useContext, useEffect, useState } from 'react'
 
 import { ShortcutLayout } from '@layouts/shortcut-layout'
@@ -60,7 +59,7 @@ import { ChartIcon } from '@icons/chart-icon'
 import { FolderIcon } from '@icons/folder-icon'
 import { UploadIcon } from '@icons/upload-icon'
 import { findCol, type BaseDataFrame } from '@lib/dataframe/base-dataframe'
-import { makeNanoIDLen12, randID } from '@lib/id'
+import { makeNanoIdLen12, randId } from '@lib/id'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
 import { ClinicalDataTrack, makeClinicalTracks } from './clinical-utils'
 import { OncoPlotDialog, type OncoplotType } from './oncoplot-dialog'
@@ -488,7 +487,7 @@ function OncoplotPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randID('open'),
+                    id: randId('open'),
                   })
                 }
               }}
@@ -514,7 +513,7 @@ function OncoplotPage() {
             <ToolbarButton
               aria-label="Open location data"
               onClick={() =>
-                setShowDialog({ id: randID('Location'), params: {} })
+                setShowDialog({ id: randId('Location'), params: {} })
               }
             >
               Locations
@@ -522,7 +521,7 @@ function OncoplotPage() {
             <ToolbarButton
               aria-label="Open clinical information"
               onClick={() =>
-                setShowDialog({ id: randID('clinical'), params: {} })
+                setShowDialog({ id: randId('clinical'), params: {} })
               }
             >
               Clinical Data
@@ -534,7 +533,7 @@ function OncoplotPage() {
               aria-label="Create a location oncoplot"
               onClick={() =>
                 setShowDialog({
-                  id: randID('looncoplot'),
+                  id: randId('looncoplot'),
                   params: { type: 'loconcoplot' },
                 })
               }
@@ -545,7 +544,7 @@ function OncoplotPage() {
               aria-label="Create an oncoplot"
               onClick={() =>
                 setShowDialog({
-                  id: randID('oncoplot'),
+                  id: randId('oncoplot'),
                   params: { type: 'oncoplot' },
                 })
               }
@@ -658,7 +657,7 @@ function OncoplotPage() {
 
     plotsState.plots.forEach((plot) => {
       plotChildren.push({
-        id: makeNanoIDLen12(),
+        id: makeNanoIdLen12(),
         name: plot.name,
         icon: <ChartIcon className="fill-theme" />,
         onDelete: () => plotsDispatch({ type: 'remove', id: plot.id }),
@@ -743,7 +742,7 @@ function OncoplotPage() {
       content: (
         <DropdownMenuItem
           aria-label="Open file on your computer"
-          onClick={() => setShowDialog({ id: randID('open'), params: {} })}
+          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
         >
           <UploadIcon stroke="" />
 
@@ -863,25 +862,25 @@ function OncoplotPage() {
             leftShortcuts={<UndoShortcuts />}
             rightShortcuts={
               <>
-                <ToolbarTabButton
+                <ToolbarButton
                   onClick={() => loadTestData()}
                   title="Load test data to use features."
                 >
                   Plot test
-                </ToolbarTabButton>
+                </ToolbarButton>
 
-                <ToolbarTabButton
+                <ToolbarButton
                   onClick={() => loadGeneTestData()}
                   title="Load test data to use features."
                 >
                   Gene test
-                </ToolbarTabButton>
-                <ToolbarTabButton
+                </ToolbarButton>
+                <ToolbarButton
                   onClick={() => loadClinicalTestData()}
                   title="Load test data to use features."
                 >
                   Clinical test
-                </ToolbarTabButton>
+                </ToolbarButton>
               </>
             }
           />

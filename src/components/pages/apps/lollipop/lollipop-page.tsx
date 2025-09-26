@@ -27,7 +27,7 @@ import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 
 import { FileImageIcon } from '@icons/file-image-icon'
 
-import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
+import { ToolbarButton } from '@toolbar/toolbar-button'
 
 import { useContext, useRef, useState } from 'react'
 
@@ -35,7 +35,7 @@ import { ShortcutLayout } from '@layouts/shortcut-layout'
 
 import axios from 'axios'
 
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 
 import { UploadIcon } from '@icons/upload-icon'
 import { range } from '@lib/math/range'
@@ -75,7 +75,6 @@ import { LollipopContext, LollipopProvider } from './lollipop-provider'
 import { useLollipopSettings } from './lollipop-settings-store'
 
 import { BaseRow } from '@/components/layout/base-row'
-import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { LollipopCountIcon } from './lollipop-count-icon'
 import { LollipopSingleIcon } from './lollipop-single-icon'
@@ -327,7 +326,7 @@ function LollipopPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randID('open'),
+                    id: randId('open'),
                   })
                 }
               }}
@@ -338,7 +337,7 @@ function LollipopPage() {
               aria-label="Save matrix to local file"
               onClick={() => {
                 setShowDialog({
-                  id: randID('save'),
+                  id: randId('save'),
                   params: {
                     name: 'lollipop',
                     format: 'png',
@@ -610,7 +609,7 @@ function LollipopPage() {
       content: (
         <DropdownMenuItem
           aria-label="Open file on your computer"
-          onClick={() => setShowDialog({ id: randID('open'), params: {} })}
+          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
         >
           <UploadIcon fill="" />
 
@@ -716,13 +715,13 @@ function LollipopPage() {
             onValueChange={setToolbarTab}
             leftShortcuts={<UndoShortcuts />}
             rightShortcuts={
-              <ToolbarTabButton
+              <ToolbarButton
                 onClick={() => loadTestData()}
                 role="button"
                 title="Load test data to use features."
               >
                 Plot test
-              </ToolbarTabButton>
+              </ToolbarButton>
             }
           />
           <ToolbarPanel

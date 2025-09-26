@@ -3,7 +3,7 @@ import {
   DATAFRAME_100x26,
 } from '@lib/dataframe/annotation-dataframe'
 
-import { makeNanoIDLen12 } from '@lib/id'
+import { makeNanoIdLen12 } from '@lib/id'
 import { produce } from 'immer'
 import { create } from 'zustand'
 import { useShallow } from 'zustand/react/shallow'
@@ -174,7 +174,7 @@ export function newPlot(
   style: PlotStyle = 'heatmap'
 ): IPlot {
   return {
-    id: makeNanoIDLen12(),
+    id: makeNanoIdLen12(),
     name,
     dataframes,
     groups: [],
@@ -189,7 +189,7 @@ export function newHistoryStep(
   //plots: IPlot[] = []
 ): IHistoryStep {
   return {
-    id: makeNanoIDLen12(),
+    id: makeNanoIdLen12(),
 
     name,
     sheets: sheets.map((s) => s.id),
@@ -210,7 +210,7 @@ export function newHistoryApp(
   branches: IHistoryBranch[] = []
 ): IHistoryApp {
   return {
-    id: makeNanoIDLen12(),
+    id: makeNanoIdLen12(),
     name,
     //stepMap: Object.fromEntries(steps.map(s => [s.id, s])),
     branches: branches.map((s) => s.id),
@@ -231,7 +231,7 @@ export function newHistoryBranch(
   genesets: IGeneset[] = []
 ): IHistoryBranch {
   return {
-    id: makeNanoIDLen12(),
+    id: makeNanoIdLen12(),
     name,
     //stepMap: Object.fromEntries(steps.map(s => [s.id, s])),
     steps: steps.map((s) => s.id),

@@ -19,7 +19,7 @@ import {
   messageImageFileFormat,
   useMessages,
 } from '@/providers/message-provider'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import { produce } from 'immer'
 import { DatabasPropsPanel } from '../../../lollipop/database-props-panel'
 import { FeaturePropsPanel } from '../../../lollipop/feature-props-panel'
@@ -80,7 +80,7 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
             `heatmap.${messageImageFileFormat(message)}`
           )
         } else {
-          setShowDialog({ id: randID('save') })
+          setShowDialog({ id: randId('save') })
         }
       }
 

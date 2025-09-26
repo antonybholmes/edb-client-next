@@ -20,7 +20,6 @@ import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 
 import { FileLinesIcon } from '@icons/file-lines-icon'
 import { SaveIcon } from '@icons/save-icon'
-import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
 
 import {
   FILE_MENU_ITEM_DESC_CLS,
@@ -52,7 +51,7 @@ import { Textarea } from '@/components/shadcn/ui/themed/textarea'
 import type { ITab } from '@components/tabs/tab-provider'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
 import { dnaToJson, fetchDNA, type IDNA } from '@lib/genomic/dna'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import { textToLines } from '@lib/text/lines'
 import { useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
@@ -166,7 +165,7 @@ export function GetDNAPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randID('open'),
+                    id: randId('open'),
                   })
                 }
               }}
@@ -322,13 +321,13 @@ export function GetDNAPage() {
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
             rightShortcuts={
-              <ToolbarTabButton
+              <ToolbarButton
                 onClick={() => loadTestData()}
                 role="button"
                 title="Load test data to use features."
               >
                 Test data
-              </ToolbarTabButton>
+              </ToolbarButton>
             }
           />
           <ToolbarPanel />

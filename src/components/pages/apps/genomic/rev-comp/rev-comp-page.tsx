@@ -21,7 +21,6 @@ import { BasicAlertDialog } from '@dialog/basic-alert-dialog'
 import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 
 import { SaveIcon } from '@icons/save-icon'
-import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
 
 import { queryClient } from '@/query'
 import { useEffect, useState } from 'react'
@@ -46,7 +45,7 @@ import { DropdownMenuItem } from '@themed/dropdown-menu'
 import type { ITab } from '@components/tabs/tab-provider'
 import { OpenIcon } from '@icons/open-icon'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import { cn } from '@lib/shadcn-utils'
 import { textToLines } from '@lib/text/lines'
 import {
@@ -232,7 +231,7 @@ export function RevCompPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randID('open'),
+                    id: randId('open'),
                   })
                 }
               }}
@@ -241,7 +240,7 @@ export function RevCompPage() {
 
             <ToolbarIconButton
               arial-label="Save to local file"
-              onClick={() => setShowDialog({ id: randID('save') })}
+              onClick={() => setShowDialog({ id: randId('save') })}
               title="Save sequences"
             >
               <SaveIcon />
@@ -269,7 +268,7 @@ export function RevCompPage() {
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randID('open') })}
+          onClick={() => setShowDialog({ id: randId('open') })}
         >
           <UploadIcon stroke="" />
 
@@ -365,13 +364,13 @@ export function RevCompPage() {
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
             rightShortcuts={
-              <ToolbarTabButton
+              <ToolbarButton
                 onClick={() => loadTestData()}
                 role="button"
                 title="Load test data to use features."
               >
                 Test data
-              </ToolbarTabButton>
+              </ToolbarButton>
             }
           />
           <ToolbarPanel

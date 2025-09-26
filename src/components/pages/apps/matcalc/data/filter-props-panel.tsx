@@ -17,7 +17,7 @@ import { FileDropZonePanel } from '@components/file-dropzone-panel'
 import { BaseRow } from '@layout/base-row'
 import { type BaseDataFrame } from '@lib/dataframe/base-dataframe'
 import { filterColsById, filterRowsById } from '@lib/dataframe/dataframe-utils'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import { textToLines } from '@lib/text/lines'
 import { Button } from '@themed/button'
 import { Checkbox } from '@themed/check-box'
@@ -252,7 +252,7 @@ export function FilterPropsPanel({ branchId }: IProps) {
           // ripple={false}
           onClick={() =>
             setShowDialog({
-              id: randID('open'),
+              id: randId('open'),
             })
           }
           className="fill-foreground"

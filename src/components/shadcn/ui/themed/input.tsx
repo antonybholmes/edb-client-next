@@ -100,6 +100,7 @@ export function Input({
   inputCls,
   inputStyle,
   error = false,
+  autoComplete = 'off',
   //label,
   //labelPos = 'top',
   //labelW = 'min-w-24',
@@ -154,6 +155,7 @@ export function Input({
         style={inputStyle}
         disabled={disabled}
         readOnly={readOnly}
+        autoComplete={autoComplete}
         onChange={(e) => {
           setValue(e.currentTarget.value)
           onTextChange?.(e.currentTarget.value)

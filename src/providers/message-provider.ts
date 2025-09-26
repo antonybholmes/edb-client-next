@@ -6,7 +6,7 @@ interface IMessage {
   text: string
 }
 
-import { makeNanoIDLen12 } from '@/lib/id'
+import { makeNanoIdLen12 } from '@/lib/id'
 import { create } from 'zustand'
 
 interface IMessageBusStore {
@@ -22,7 +22,7 @@ export const useMessageBusStore = create<IMessageBusStore>((set) => ({
     set((state) => ({
       messages: [
         ...state.messages,
-        { id: makeNanoIDLen12(), time: Date.now(), ...msg },
+        { id: makeNanoIdLen12(), time: Date.now(), ...msg },
       ],
     })),
   clearMessages: () => set({ messages: [] }),

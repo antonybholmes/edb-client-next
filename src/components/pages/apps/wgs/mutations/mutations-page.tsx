@@ -20,7 +20,6 @@ import {
   type IDialogParams,
 } from '@/consts'
 import { getDataFrameInfo } from '@lib/dataframe/dataframe-utils'
-import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
 
 import { GenomicLocation, locStr } from '@lib/genomic/genomic'
 import { useEffect, useRef, useState } from 'react'
@@ -58,7 +57,7 @@ import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
 import { VCenterRow } from '@layout/v-center-row'
 import { ShortcutLayout } from '@layouts/shortcut-layout'
 import { downloadDataFrame } from '@lib/dataframe/dataframe-utils'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import { downloadSvgAutoFormat } from '@lib/image-utils'
 
 import { PileupPropsPanel } from './pileup-props-panel'
@@ -85,6 +84,7 @@ import { HeaderPortal } from '@/components/header/header-portal'
 import { ModuleInfoButton } from '@/components/header/module-info-button'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { DownloadImageIcon } from '@/components/icons/download-image-icon'
+import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ZoomSlider } from '@/components/toolbar/zoom-slider'
 import { ShowSideButton } from '@components/pages/show-side-button'
 import { COLOR_BLACK, COLOR_RED } from '@lib/color/color'
@@ -560,7 +560,7 @@ export function MutationsPage() {
               title="Download matrix to local file"
               onClick={() =>
                 setShowDialog({
-                  id: randID('save'),
+                  id: randId('save'),
                 })
               }
             >
@@ -571,7 +571,7 @@ export function MutationsPage() {
               title="Download image to local file"
               onClick={() =>
                 setShowDialog({
-                  id: randID('export'),
+                  id: randId('export'),
                 })
               }
             >
@@ -787,12 +787,12 @@ export function MutationsPage() {
               />
             }
             rightShortcuts={
-              <ToolbarTabButton
+              <ToolbarButton
                 onClick={() => loadTestData()}
                 title="Load test data to use features."
               >
                 Test data
-              </ToolbarTabButton>
+              </ToolbarButton>
             }
           />
           <ToolbarPanel

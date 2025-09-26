@@ -30,7 +30,7 @@ import {
   useMessages,
 } from '@/providers/message-provider'
 import { useZoom } from '@/providers/zoom-provider'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import type { IClusterFrame } from '@lib/math/hcluster'
 import { produce } from 'immer'
 import { useHistory, usePlot } from '../../history/history-store'
@@ -83,7 +83,7 @@ export function HeatmapPanel({ plotAddr }: IHeatmapPanelProps) {
             `heatmap.${messageImageFileFormat(message)}`
           )
         } else {
-          setShowDialog({ id: randID('save') })
+          setShowDialog({ id: randId('save') })
         }
       }
 

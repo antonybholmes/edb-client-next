@@ -37,7 +37,6 @@ import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 
 import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
 import { OpenIcon } from '@icons/open-icon'
-import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
 
 import { queryClient } from '@/query'
 import { useState } from 'react'
@@ -67,7 +66,7 @@ import { DropdownMenuItem } from '@themed/dropdown-menu'
 import { RadioGroup, RadioGroupItem } from '@themed/radio-group'
 
 import { ShortcutLayout } from '@layouts/shortcut-layout'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import axios from 'axios'
 
 import type { ISaveAsFormat } from '@components/pages/save-as-dialog'
@@ -219,7 +218,7 @@ export function DNAPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randID('open'),
+                    id: randId('open'),
                   })
                 }
               }}
@@ -228,7 +227,7 @@ export function DNAPage() {
 
             <ToolbarIconButton
               title={TEXT_SAVE_TABLE}
-              onClick={() => setShowDialog({ id: randID('save') })}
+              onClick={() => setShowDialog({ id: randId('save') })}
             >
               <DownloadIcon />
             </ToolbarIconButton>
@@ -381,7 +380,7 @@ export function DNAPage() {
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randID('open'), params: {} })}
+          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
         >
           <UploadIcon stroke="" />
 
@@ -458,13 +457,13 @@ export function DNAPage() {
             fileMenuTabs={fileMenuTabs}
             leftShortcuts={<UndoShortcuts />}
             rightShortcuts={
-              <ToolbarTabButton
+              <ToolbarButton
                 onClick={() => loadTestData()}
                 role="button"
                 title="Load test data to use features."
               >
                 Test data
-              </ToolbarTabButton>
+              </ToolbarButton>
             }
           />
           <ToolbarPanel

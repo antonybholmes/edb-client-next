@@ -2,28 +2,31 @@ import { SITE_NAME, SITE_URL } from '@/consts'
 import { Metadata } from 'next'
 import { IModuleInfo } from './module-info'
 
-export function makeMetaData(title: string): Metadata {
-  title = `${title} | ${SITE_NAME}`
+export function makeMetaData(
+  title: string,
+  description: string = ''
+): Metadata {
+  const fullTitle = `${title} | ${SITE_NAME}`
   return {
     metadataBase: new URL(SITE_URL),
-    title,
-    description: title,
+    title: fullTitle,
+    description: description || title,
     openGraph: {
-      title,
-      description: title,
+      title: fullTitle,
+      description: description || title,
     },
   }
 }
 
 export function makeMetaDataFromModule(module: IModuleInfo): Metadata {
-  const title = `${module.name} | ${SITE_NAME}`
+  const fullTitle = `${module.name} | ${SITE_NAME}`
   return {
     metadataBase: new URL(SITE_URL),
-    title,
-    description: module.description || title,
+    title: fullTitle,
+    description: module.description || module.name,
     openGraph: {
-      title,
-      description: module.description || title,
+      title: fullTitle,
+      description: module.description || module.name,
     },
   }
 }

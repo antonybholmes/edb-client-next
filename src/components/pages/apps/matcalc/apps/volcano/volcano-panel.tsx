@@ -30,7 +30,7 @@ import { useZoom } from '@/providers/zoom-provider'
 import { SaveImageDialog } from '@components/pages/save-image-dialog'
 import type { ITab } from '@components/tabs/tab-provider'
 import type { IDivProps } from '@interfaces/div-props'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import { Card } from '@themed/card'
 import { produce } from 'immer'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
@@ -136,7 +136,7 @@ export function VolcanoPanel({
             `volcano.${messageImageFileFormat(message)}`
           )
         } else {
-          setShowDialog({ id: randID('save') })
+          setShowDialog({ id: randId('save') })
         }
       }
 

@@ -35,7 +35,7 @@ import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 
 import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
 import { OpenIcon } from '@icons/open-icon'
-import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
+import { ToolbarButton } from '@toolbar/toolbar-button'
 
 import { useState } from 'react'
 
@@ -55,7 +55,7 @@ import { createGeneConvTable } from '@lib/gene/geneconv'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
 
 import { ShortcutLayout } from '@layouts/shortcut-layout'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import axios from 'axios'
 
 import type { ITab } from '@components/tabs/tab-provider'
@@ -188,7 +188,7 @@ export function GeneConvPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randID('open'),
+                    id: randId('open'),
                   })
                 }
               }}
@@ -429,7 +429,7 @@ export function GeneConvPage() {
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randID('open'), params: {} })}
+          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
         >
           <UploadIcon stroke="" />
 
@@ -480,12 +480,12 @@ export function GeneConvPage() {
             fileMenuTabs={fileMenuTabs}
             leftShortcuts={<UndoShortcuts />}
             rightShortcuts={
-              <ToolbarTabButton
+              <ToolbarButton
                 onClick={() => loadTestData()}
                 title="Load test data to use features."
               >
                 Test data
-              </ToolbarTabButton>
+              </ToolbarButton>
             }
           />
           <ToolbarPanel

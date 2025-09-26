@@ -1,7 +1,7 @@
 import { TEXT_OK, type IDialogParams } from '@/consts'
 import { useMouseUpListener } from '@/hooks/mouseup-listener'
 import { VCenterRow } from '@layout/v-center-row'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import { useContext, useState, type Dispatch, type SetStateAction } from 'react'
 
 import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
@@ -143,7 +143,7 @@ export function EditTrackButton({
       className="opacity-50 hover:opacity-100 trans-opacity"
       onClick={() => {
         setShowDialog({
-          id: randID(cmd),
+          id: randId(cmd),
           params: { group, track },
         })
       }}
@@ -168,7 +168,7 @@ export function TrackInfoButton({
       className="opacity-50 hover:opacity-100 trans-opacity"
       onClick={() => {
         setShowDialog({
-          id: randID('track-info'),
+          id: randId('track-info'),
           params: { group, track },
         })
       }}

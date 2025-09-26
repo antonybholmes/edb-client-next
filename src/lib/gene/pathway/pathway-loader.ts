@@ -1,7 +1,7 @@
 import { randomHexColor } from '@lib/color/color'
 
 import type { IGeneset } from '@lib/gsea/geneset'
-import { makeNanoIDLen12 } from '@lib/id'
+import { makeNanoIdLen12 } from '@lib/id'
 import { textToLines } from '@lib/text/lines'
 import { QueryClient } from '@tanstack/react-query'
 import axios from 'axios'
@@ -35,7 +35,7 @@ export async function loadGMT(
       const tokens = line.split('\t')
 
       geneSets.push({
-        id: makeNanoIDLen12(),
+        id: makeNanoIdLen12(),
         name: tokens[0]!,
         genes: tokens.slice(2),
         color: randomHexColor(),

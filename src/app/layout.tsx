@@ -1,6 +1,4 @@
-import type { Metadata } from 'next'
 //import { Geist, Geist_Mono } from "next/font/google";
-import { APP_NAME, SITE_DESCRIPTION } from '@/consts'
 
 import { CoreProviders } from '@/providers/core-providers'
 import { Geist } from 'next/font/google'
@@ -21,12 +19,12 @@ const geist = Geist({
 //   display: 'swap',
 // })
 
-export const metadata: Metadata = {
-  title: APP_NAME,
-  description: SITE_DESCRIPTION,
-}
+// export const metadata: Metadata = {
+//   title: APP_NAME,
+//   description: SITE_DESCRIPTION,
+// }
 
-export default function RootLayout({
+export default function Layout({
   children,
 }: Readonly<{
   children: ReactNode

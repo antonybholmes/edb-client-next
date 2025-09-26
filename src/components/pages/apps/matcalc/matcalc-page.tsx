@@ -72,7 +72,7 @@ import { SortRowDialog } from './sort-row-dialog'
 import { TopRowsDialog } from './top-rows-dialog'
 
 import { CollapseTree, makeFoldersRootNode } from '@components/collapse-tree'
-import { makeNanoIDLen12, randID } from '@lib/id'
+import { makeNanoIdLen12, randId } from '@lib/id'
 import { useSelectionRange } from '@providers/selection-range'
 import axios from 'axios'
 
@@ -122,7 +122,6 @@ import { CubeIcon } from '@icons/cube-icon'
 import { ExportIcon } from '@icons/export-icon'
 import { toast } from '@themed/crisp'
 import { ToastSpinner } from '@themed/toast'
-import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
 
 import { useMessages } from '@/providers/message-provider'
 import { logrankExample } from '@lib/math/logrank'
@@ -503,7 +502,7 @@ export function MatcalcPage() {
         const sheet = currentSheets(step)[0] // history.sheetMap[step.sheets[0]!]!
 
         return {
-          id: makeNanoIDLen12(),
+          id: makeNanoIdLen12(),
 
           name: sheet?.name ?? `Data ${bi + 1}`,
           type: 'plot',
@@ -740,20 +739,20 @@ export function MatcalcPage() {
 
   function makeClusterMap(isClusterMap: boolean) {
     setShowDialog({
-      id: randID('heatmap'),
+      id: randId('heatmap'),
       params: { df: sheet, isClusterMap },
     })
   }
 
   function makeDotPlot(isClusterMap: boolean) {
     setShowDialog({
-      id: randID('dotplot'),
+      id: randId('dotplot'),
       params: { df: sheet, isClusterMap },
     })
   }
 
   function makeVolcanoPlot() {
-    setShowDialog({ id: randID('volcano'), params: { df: sheet } })
+    setShowDialog({ id: randId('volcano'), params: { df: sheet } })
   }
 
   function makeLollipop() {
@@ -782,7 +781,7 @@ export function MatcalcPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randID('open'),
+                    id: randId('open'),
                   })
                 }
               }}
@@ -826,7 +825,7 @@ export function MatcalcPage() {
             <ToolbarIconButton
               title="Create Box Plot from Table"
               onClick={() =>
-                setShowDialog({ id: randID('box-whiskers'), params: {} })
+                setShowDialog({ id: randId('box-whiskers'), params: {} })
               }
             >
               <BoxWhiskerChartIcon />
@@ -837,7 +836,7 @@ export function MatcalcPage() {
           <ToolbarTabGroup title="Gene Expression">
             <ToolbarButton
               title="Download Gene Expression Data"
-              onClick={() => setShowDialog({ id: randID('gex'), params: {} })}
+              onClick={() => setShowDialog({ id: randId('gex'), params: {} })}
             >
               Gene Expression
             </ToolbarButton>
@@ -948,7 +947,7 @@ export function MatcalcPage() {
             <ToolbarButton
               title="K-means Clustering"
               onClick={() =>
-                setShowDialog({ id: randID('kmeans'), params: {} })
+                setShowDialog({ id: randId('kmeans'), params: {} })
               }
             >
               K-means
@@ -960,7 +959,7 @@ export function MatcalcPage() {
             <ToolbarIconButton
               title="Filter Top Rows using Statistics"
               onClick={() =>
-                setShowDialog({ id: randID('top-rows'), params: {} })
+                setShowDialog({ id: randId('top-rows'), params: {} })
               }
             >
               <FilterIcon />
@@ -970,7 +969,7 @@ export function MatcalcPage() {
             <ToolbarIconButton
               title="Sort Columns by Specific Rows"
               onClick={() =>
-                setShowDialog({ id: randID('sort-row'), params: {} })
+                setShowDialog({ id: randId('sort-row'), params: {} })
               }
             >
               <DataSortIcon />
@@ -1024,7 +1023,7 @@ export function MatcalcPage() {
             <ToolbarButton
               title="Convert Gene Symbols between Human and Mouse"
               onClick={() =>
-                setShowDialog({ id: randID('human-mouse'), params: {} })
+                setShowDialog({ id: randId('human-mouse'), params: {} })
               }
             >
               Convert Species
@@ -1033,7 +1032,7 @@ export function MatcalcPage() {
             <ToolbarButton
               title="Convert Motifs to Gene Symbols"
               onClick={() =>
-                setShowDialog({ id: randID('motif-to-gene'), params: {} })
+                setShowDialog({ id: randId('motif-to-gene'), params: {} })
               }
             >
               Motif To Gene
@@ -1143,7 +1142,7 @@ export function MatcalcPage() {
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randID('open'), params: {} })}
+          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
         >
           <UploadIcon />
 
@@ -1330,7 +1329,7 @@ export function MatcalcPage() {
           onFileChange={(message, files) =>
             onTextFileChange(message, files, (files) => {
               setShowDialog({
-                id: randID('open-file-dialog'),
+                id: randId('open-file-dialog'),
                 params: { files },
               })
             })
@@ -1425,7 +1424,7 @@ export function MatcalcPage() {
           onResponse={(_, data) => {
             if (data?.drawHeatmap) {
               setShowDialog({
-                id: randID('heatmap'),
+                id: randId('heatmap'),
                 params: { df: data.df },
               })
             } else {
@@ -1488,7 +1487,7 @@ export function MatcalcPage() {
             rightShortcuts={
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <ToolbarTabButton>Test Data</ToolbarTabButton>
+                  <ToolbarButton>Test Data</ToolbarButton>
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent align="end">

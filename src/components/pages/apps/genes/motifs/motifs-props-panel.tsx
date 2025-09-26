@@ -102,6 +102,7 @@ export function MotifsPropsPanel() {
         <VCenterRow className="gap-x-1 pl-0.5 pr-2 font-medium group-hover:bg-muted grow rounded-theme h-9">
           <VCenterRow
             className="cursor-ns-resize"
+            aria-label="Drag to reorder"
             {...listeners}
             {...attributes}
           >
@@ -136,7 +137,7 @@ export function MotifsPropsPanel() {
           contentVariant="glass"
           bodyVariant="card"
           modalType="Warning"
-          onResponse={r => {
+          onResponse={(r) => {
             if (r === TEXT_OK) {
               dispatch({ type: 'remove', ids: [delGroup.publicId] })
             }
@@ -158,7 +159,7 @@ export function MotifsPropsPanel() {
                   checked={
                     datasetsInUse.has(dataset) && datasetsInUse.get(dataset)!
                   }
-                  onCheckedChange={v => {
+                  onCheckedChange={(v) => {
                     setDatasetsInUse(
                       new Map<string, boolean>([
                         ...datasetsInUse.entries(),
@@ -177,7 +178,7 @@ export function MotifsPropsPanel() {
             <AccordionContent>
               <DndContext
                 modifiers={[restrictToVerticalAxis]}
-                onDragEnd={event => {
+                onDragEnd={(event) => {
                   const { active, over } = event
 
                   if (over && active.id !== over?.id) {
@@ -197,7 +198,7 @@ export function MotifsPropsPanel() {
                   strategy={verticalListSortingStrategy}
                 >
                   <ul className="flex flex-col">
-                    {state.order.map(id => {
+                    {state.order.map((id) => {
                       const geneset = state.motifs.get(id)!
                       //const cols = getColNamesFromGroup(df, group)
                       return <MotifItem motif={geneset} key={id} />

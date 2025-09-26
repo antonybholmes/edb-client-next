@@ -2,7 +2,7 @@ import { COLOR_BLACK, COLOR_WHITE } from '@lib/color/color'
 import { BWR_CMAP_V2, ColorMap } from '@lib/color/colormap'
 
 import type { IBlock } from '@components/plot/heatmap/heatmap-svg-props'
-import { makeNanoIDLen12 } from '@lib/id'
+import { makeNanoIdLen12 } from '@lib/id'
 
 import {
   DEFAULT_STROKE_PROPS,
@@ -361,7 +361,7 @@ export const DEFAULT_PROTEIN_COLORS: IProteinFeatureColors = {
 
 export const DEFAULT_PROTEIN_FEATURE: IProteinFeature = {
   ...DEFAULT_PROTEIN_COLORS,
-  id: makeNanoIDLen12(),
+  id: makeNanoIdLen12(),
   name: '',
   start: 1,
   end: 10,

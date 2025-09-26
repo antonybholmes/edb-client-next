@@ -34,7 +34,7 @@ import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 
 import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
 import { OpenIcon } from '@icons/open-icon'
-import { ToolbarTabButton } from '@toolbar/toolbar-tab-button'
+import { ToolbarButton } from '@toolbar/toolbar-button'
 
 import { queryClient } from '@/query'
 import { createAnnotationTable } from '@lib/genomic/annotate'
@@ -68,12 +68,11 @@ import { FileIcon } from '@icons/file-icon'
 import { UploadIcon } from '@icons/upload-icon'
 import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
 import { httpFetch } from '@lib/http/http-fetch'
-import { randID } from '@lib/id'
+import { randId } from '@lib/id'
 import { textToLines } from '@lib/text/lines'
 import { truncate } from '@lib/text/text'
 import { useQuery } from '@tanstack/react-query'
 import { DropdownMenuItem } from '@themed/dropdown-menu'
-import { ToolbarButton } from '@toolbar/toolbar-button'
 import { Buffer } from 'buffer'
 
 import { toast } from '@/components/shadcn/ui/themed/crisp'
@@ -361,7 +360,7 @@ export function AnnotationPage() {
               onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
-                    id: randID('open'),
+                    id: randId('open'),
                   })
                 }
               }}
@@ -370,7 +369,7 @@ export function AnnotationPage() {
 
             <ToolbarIconButton
               title={TEXT_SAVE_TABLE}
-              onClick={() => setShowDialog({ id: randID('save') })}
+              onClick={() => setShowDialog({ id: randId('save') })}
             >
               <DownloadIcon />
             </ToolbarIconButton>
@@ -442,7 +441,7 @@ export function AnnotationPage() {
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randID('open'), params: {} })}
+          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
         >
           <UploadIcon stroke="" />
 
@@ -538,12 +537,12 @@ export function AnnotationPage() {
             fileMenuTabs={fileMenuTabs}
             leftShortcuts={<UndoShortcuts />}
             rightShortcuts={
-              <ToolbarTabButton
+              <ToolbarButton
                 onClick={() => loadTestData()}
                 title="Load test data to use features."
               >
                 Test data
-              </ToolbarTabButton>
+              </ToolbarButton>
             }
           />
           <ToolbarPanel
