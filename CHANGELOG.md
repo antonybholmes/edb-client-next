@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Improving lighthouse scores with aria fixes.
 - Bug fixes and updates.
 
