@@ -2,6 +2,10 @@
 
 ## 30.2 (Sep, 2025)
 
+### Added
+
+- Adding generic components and some UI animations.
+
 ### Changed
 
 - Improving lighthouse scores with aria fixes.

@@ -1,6 +1,7 @@
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
 import { DotFilledIcon } from '@radix-ui/react-icons'
 
+import { IChildrenProps } from '@/interfaces/children-props'
 import { BUTTON_MD_H_CLS, ROUNDED_CLS } from '@/theme'
 import { CheckIcon } from '@icons/check-icon'
 import { ChevronRightIcon } from '@icons/chevron-right-icon'
@@ -36,7 +37,7 @@ export const DROPDOWN_MENU_ITEM_CLS = cn(
 
 //export const DROPDOWN_CONTENT_CLS = cn(GLASS_CLS, BASE_DROPDOWN_CONTENT_CLS)
 
-const CONTENT_CLS = cn(
+export const DROPDOWN_MENU_CONTENT_CLS = cn(
   'rounded-lg border border-border/50 shadow-xl',
   'flex flex-col text-xs z-(--z-modal) min-h-0',
   'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
@@ -80,7 +81,7 @@ const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
 
 const DropdownMenuPrimitiveItem = DropdownMenuPrimitive.Item
 
-export const dropdownContentVariants = cva(CONTENT_CLS, {
+export const dropdownContentVariants = cva(DROPDOWN_MENU_CONTENT_CLS, {
   variants: {
     variant: {
       default: 'bg-background px-0.5 py-1 min-w-48',
@@ -152,23 +153,11 @@ export function BaseDropdownMenuItem({
   )
 }
 
-export function DropdownMenuItem({
-  ref,
-  variant = 'theme',
-  className,
-  children,
-  ...props
-}: ComponentProps<typeof DropdownMenuPrimitiveItem> &
-  VariantProps<typeof dropdownMenuItemVariants>) {
+export function DropdownMenuItemContent({ children }: IChildrenProps) {
   const c = Children.toArray(children)
 
   return (
-    <BaseDropdownMenuItem
-      ref={ref}
-      variant={variant}
-      className={cn('flex-row', className)}
-      {...props}
-    >
+    <>
       <span className={DROPDOWN_MENU_ICON_CONTAINER_CLS}>
         {c.length > 1 && c[0]}
       </span>
@@ -179,6 +168,26 @@ export function DropdownMenuItem({
       <span className={DROPDOWN_MENU_ICON_CONTAINER_CLS}>
         {c.length > 2 && c[2]}
       </span>
+    </>
+  )
+}
+
+export function DropdownMenuItem({
+  ref,
+  variant = 'theme',
+  className,
+  children,
+  ...props
+}: ComponentProps<typeof DropdownMenuPrimitiveItem> &
+  VariantProps<typeof dropdownMenuItemVariants>) {
+  return (
+    <BaseDropdownMenuItem
+      ref={ref}
+      variant={variant}
+      className={cn('flex-row', className)}
+      {...props}
+    >
+      <DropdownMenuItemContent>{children}</DropdownMenuItemContent>
     </BaseDropdownMenuItem>
   )
 }

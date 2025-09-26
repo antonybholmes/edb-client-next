@@ -1,4 +1,3 @@
-import gsap from 'gsap'
 import { useContext, useEffect, useMemo, useRef, type ReactNode } from 'react'
 
 import type { IChildrenProps } from '@interfaces/children-props'
@@ -47,16 +46,16 @@ export const tabVariants = cva(
 export const tabButtonVariants = cva('group trans-color overflow-hidden', {
   variants: {
     variant: {
-      default: 'h-8 px-1',
+      default: 'h-8 px-2',
       sheet:
-        'py-2 px-1 w-16 flex flex-row justify-center focus-visible:bg-muted hover:bg-muted data-[checked=true]:bg-muted',
+        'py-1.5 px-3 w-20 flex flex-row justify-center focus-visible:bg-muted hover:bg-muted data-[checked=true]:bg-muted',
       tab: 'border',
     },
   },
 })
 
 export const UNDERLINE_LABEL_CLS =
-  'boldable-text-tab data-[checked=true]:font-semibold text-foreground/75 truncate'
+  'boldable-text-tab data-[checked=true]:font-semibold text-alt-foreground truncate'
 
 // export function ToolbarTabLine({ tabPos }: { tabPos: ITabPos }) {
 //   return (
@@ -206,7 +205,7 @@ export function UnderlineTabs({
     <VCenterRow className={cn('justify-between gap-x-1', className)}>
       <TabsList
         variant="base"
-        className="relative gap-x-1.5"
+        className="relative"
         ref={tabListRef}
         id="underline-tabs"
       >
@@ -233,22 +232,15 @@ export function UnderlineTabs({
               onMouseEnter={() => {
                 if (selected) {
                   _scale(2)
-                } else {
-                  gsap.to(`#tab-line-${tab.id}`, {
-                    opacity: 1,
-                    scaleX: 1,
-                    duration: 0.2,
-                    ease: 'power.inOut',
-                  })
                 }
               }}
               onMouseLeave={() => {
-                gsap.to(`#tab-line-${tab.id}`, {
-                  opacity: 0,
-                  scaleX: 0.5,
-                  duration: 0.2,
-                  ease: 'power.inOut',
-                })
+                // gsap.to(`#tab-line-${tab.id}`, {
+                //   opacity: 0,
+                //   scaleX: 0.5,
+                //   duration: 0.2,
+                //   ease: 'power.out',
+                // })
 
                 if (selected) {
                   _scale(1)
@@ -275,12 +267,12 @@ export function UnderlineTabs({
                 {truncatedName}
               </span>
 
-              <span
+              {/* <span
                 id={`tab-line-${tab.id}`}
                 data-selected={selected}
                 className={TAB_LINE_CLS}
                 style={{ height: '0.1rem' }}
-              />
+              /> */}
             </TabsTrigger>
 
             // <TabsTrigger key={tab.id} value={tab.id}>{tab.id}</TabsTrigger>

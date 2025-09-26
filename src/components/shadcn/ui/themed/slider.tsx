@@ -12,7 +12,8 @@ import {
 const THUMB_CLS = cn(
   TRANS_COLOR_CLS,
   FOCUS_RING_CLS,
-  'block h-4 w-4 rounded-full border border-border bg-background group-hover:border-theme/50 disabled:pointer-events-none disabled:opacity-50 cursor-pointer'
+  'block h-4 w-4 aspect-square rounded-full border border-border bg-background',
+  'group-hover:border-theme/75 disabled:pointer-events-none disabled:opacity-50 cursor-pointer'
 )
 
 const Slider = forwardRef<
@@ -32,7 +33,7 @@ const Slider = forwardRef<
     >
       <SliderPrimitive.Track
         data-focus={focus}
-        className="relative h-[3px] grow overflow-hidden rounded-full bg-muted trans-color"
+        className="relative h-[3px] grow overflow-hidden rounded-full bg-muted data-[focus=true]:bg-border group-hover:bg-border trans-color"
       >
         <SliderPrimitive.Range
           data-focus={focus}

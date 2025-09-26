@@ -9,34 +9,23 @@ import { HelpWidget } from '@help/help'
 import { type ILayoutProps } from '@interfaces/layout-props'
 import { cn } from '@lib/shadcn-utils'
 import { ToolbarFooter } from '@toolbar/toolbar-footer'
-import { gsap } from 'gsap'
-import { useEffect, useRef, useState } from 'react'
 import { Toaster as SonnerToaster } from 'sonner'
 
 export function SettingsButton() {
   const { visible, setSettingsVisible } = useSettingsTabs()
-  const [hover, setHover] = useState(false)
+  // const [hover, setHover] = useState(false)
 
-  const iconRef = useRef<SVGSVGElement>(null)
+  // const iconRef = useRef<SVGSVGElement>(null)
 
-  useEffect(() => {
-    gsap.timeline().to(iconRef.current, {
-      scale: hover || visible ? 1.1 : 1,
+  // useEffect(() => {
+  //   gsap.timeline().to(iconRef.current, {
+  //     scale: hover || visible ? 1.1 : 1,
 
-      duration: 0.3,
-      ease: 'power3.out',
-    })
-    // .to(
-    //   iconRef.current,
-    //   {
-    //     rotate: 30,
+  //     duration: 0.3,
+  //     ease: 'power3.out',
+  //   })
 
-    //     duration: 1,
-    //     ease: 'power3.out',
-    //   },
-    //   0
-    // )
-  }, [hover, visible])
+  // }, [hover, visible])
 
   return (
     <Button
@@ -48,14 +37,15 @@ export function SettingsButton() {
       title={TEXT_SETTINGS}
       checked={visible}
       onClick={() => setSettingsVisible(true)}
-      onMouseOver={() => {
-        setHover(true)
-      }}
-      onMouseOut={() => {
-        setHover(false)
-      }}
+      // onMouseOver={() => {
+      //   setHover(true)
+      // }}
+      // onMouseOut={() => {
+      //   setHover(false)
+      // }}
+      className="opacity-70 hover:opacity-100 data-[selected=true]:opacity-100 trans-color"
     >
-      <GearIcon ref={iconRef} />
+      <GearIcon />
     </Button>
   )
 }

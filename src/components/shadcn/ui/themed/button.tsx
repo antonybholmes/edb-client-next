@@ -55,7 +55,7 @@ export const BASE_SECONDARY_CLS = cn(
 export const BASE_MUTED_CLS = cn(
   'data-[checked=false]:hover:bg-muted border border-transparent',
   'data-[checked=true]:bg-muted data-[state=open]:bg-muted',
-  'data-[checked=true]:border-border data-[state=open]:border-border'
+  'data-[checked=true]:border-border/50 data-[state=open]:border-border/50'
 )
 
 export const BASE_MUTED_LIGHT_CLS = cn(

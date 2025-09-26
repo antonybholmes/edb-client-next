@@ -5,7 +5,12 @@ import type { IDivProps } from '@interfaces/div-props'
 import { VCenterRow } from '@layout/v-center-row'
 
 import { cn } from '@lib/shadcn-utils'
-import type { CSSProperties } from 'react'
+import type {
+  ComponentPropsWithoutRef,
+  CSSProperties,
+  ElementType,
+  ReactNode,
+} from 'react'
 import { createContext, useContext } from 'react'
 import { EllipsisIcon } from './icons/ellipsis-icon'
 import { VerticalGripIcon } from './icons/vertical-grip-icon'
@@ -14,18 +19,29 @@ import { HCenterRow } from './layout/h-center-row'
 interface Context {
   attributes: Record<string, any>
   listeners: DraggableSyntheticListeners
-  ref(node: HTMLElement | null): void
+  //ref(node: HTMLElement | null | undefined): void
   isDragging: boolean
 }
 
 export const SortableItemContext = createContext<Context>({
   attributes: {},
   listeners: undefined,
-  ref() {},
+  //ref: () => {},
   isDragging: false,
 })
 
-export function SortableItem({ id, className, style, children }: IDivProps) {
+type SortableItemProps<T extends ElementType> = {
+  as?: T
+  children?: ReactNode
+} & ComponentPropsWithoutRef<T>
+
+export function SortableItem<T extends ElementType = 'li'>({
+  id,
+  as,
+  className,
+  style,
+  children,
+}: SortableItemProps<T>) {
   const {
     attributes,
     isDragging,
@@ -42,11 +58,11 @@ export function SortableItem({ id, className, style, children }: IDivProps) {
     transition,
   }
 
+  const Component = as || 'li'
+
   return (
-    <SortableItemContext.Provider
-      value={{ ref: setNodeRef, attributes, listeners, isDragging }}
-    >
-      <div
+    <SortableItemContext.Provider value={{ attributes, listeners, isDragging }}>
+      <Component
         id={id}
         className={className}
         ref={setNodeRef}
@@ -54,7 +70,7 @@ export function SortableItem({ id, className, style, children }: IDivProps) {
         //role="tab"
       >
         {children}
-      </div>
+      </Component>
     </SortableItemContext.Provider>
   )
 }
@@ -83,7 +99,7 @@ export function SmallDragHandle({
   return (
     <span
       className={cn(
-        'inline-flex flex-row items-center justify-center trans-opacity hover:opacity-100 opacity-50',
+        'inline-flex flex-row items-center justify-center trans-opacity hover:opacity-100 opacity-30',
         className
       )}
       {...listeners}

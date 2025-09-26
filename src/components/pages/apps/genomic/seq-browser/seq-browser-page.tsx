@@ -668,7 +668,7 @@ function SeqBrowserPage() {
             >
               <SelectPrimitive.Trigger asChild>
                 <ToolbarFooterButton
-                  className={cn('justify-center px-1')}
+                  className={cn('justify-center px-2')}
                   aria-label="Show zoom levels"
                   variant="theme-muted"
                 >

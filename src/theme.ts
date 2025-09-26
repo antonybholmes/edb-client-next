@@ -43,8 +43,8 @@ export const BUTTON_LG_H_CLS = 'h-9.5'
 export const BUTTON_XL_W_CLS = 'w-11'
 export const BUTTON_XL_H_CLS = 'h-11'
 
-export const TOOLBAR_BUTTON_W_CLS = BUTTON_SM_W_CLS //BUTTON_MD_W_CLS
-export const TOOLBAR_BUTTON_H_CLS = BUTTON_SM_H_CLS //BUTTON_MD_H_CLS
+export const TOOLBAR_BUTTON_W_CLS = 'w-7' //BUTTON_SM_W_CLS //BUTTON_MD_W_CLS
+export const TOOLBAR_BUTTON_H_CLS = 'h-7' //BUTTON_SM_H_CLS //BUTTON_MD_H_CLS
 
 export const BASE_ICON_BUTTON_CLS = 'shrink-0 grow-0 aspect-square'
 

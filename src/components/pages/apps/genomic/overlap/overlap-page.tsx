@@ -414,7 +414,7 @@ function OverlapPage() {
         </OKCancelDialog>
       )}
 
-      <ShortcutLayout signedRequired={false} showAccountButton={false}>
+      <ShortcutLayout signedRequired={false}>
         <HeaderPortal>
           <ModuleInfoButton info={MODULE_INFO} />
         </HeaderPortal>

@@ -7,7 +7,7 @@ import { VCenterRow } from '../layout/v-center-row'
 export const TOOLBAR_FOOTER_CLS = cn(
   CENTERED_ROW_CLS,
   BUTTON_XS_H_CLS,
-  'text-xs text-foreground/50 overflow-hidden justify-between grid grid-cols-4 shrink-0 w-full bg-body border-t border-transparent hover:border-border/75 trans-color'
+  'px-2 text-xs text-alt-foreground overflow-hidden justify-between grid grid-cols-4 shrink-0 w-full bg-body border-t border-transparent hover:border-border/75 trans-color'
 )
 
 export function ToolbarFooter({ className }: IChildrenProps) {

@@ -50,7 +50,7 @@ export function BottomBar({
   value,
   onValueChange,
   onTabChange,
-  maxNameLength = 10,
+  maxNameLength = 16,
   rightContent,
   onFileDrop = undefined,
   allowReorder = false,

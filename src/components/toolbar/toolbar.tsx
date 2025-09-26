@@ -161,14 +161,10 @@ interface IToolbarMenuProps extends IOpenChange, TabsProps {
 export function ToolbarMenu({
   open = false,
   onOpenChange = () => {},
-
   fileMenuTabs = [],
-
   info = NO_MODULE_INFO,
   leftShortcuts,
   rightShortcuts,
-  //tabShortcutMenu,
-
   className,
 }: IToolbarMenuProps) {
   // useEffect(() => {

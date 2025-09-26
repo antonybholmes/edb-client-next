@@ -50,7 +50,9 @@
   --color-ring: var(--color-ring);
   --color-body: var(--color-body);
   --color-background: var(--color-background);
+
   --color-foreground: var(--color-foreground);
+  --color-alt-foreground: var(--color-alt-foreground);
 
   --color-primary: var(--color-primary);
   --color-primary-alt: var(--color-primary-alt);
@@ -200,6 +202,7 @@
   --color-body: oklch(0.985 0.002 247.839);
   --color-background: white;
   --color-foreground: oklch(27.8% 0.033 256.848);
+  --color-alt-foreground: oklch(55.1% 0.027 264.364);
   --color-card: white;
   --color-card-foreground: rgb(31 41 55);
   --color-popover: white;
@@ -247,6 +250,7 @@
 .dark {
   --color-body: oklch(0.27 0 0);
   --color-background: oklch(0.37 0 0);
+  --color-alt-background: oklch(20.5% 0 0);
   --color-foreground: white;
   --color-card: rgb(38 38 38);
   --color-card-foreground: rgb(248 250 252);

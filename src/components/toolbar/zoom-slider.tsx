@@ -67,7 +67,7 @@ export function ZoomSlider({
         size="icon-xs"
         variant="theme-muted"
       >
-        <Minus className="w-4 h-4" strokeWidth={1.5} />
+        <Minus className="w-4 h-4" strokeWidth={2} />
       </ToolbarFooterButton>
 
       <Slider
@@ -93,7 +93,7 @@ export function ZoomSlider({
         size="icon-xs"
         variant="theme-muted"
       >
-        <Plus className="w-4 h-4" strokeWidth={1.5} />
+        <Plus className="w-4 h-4" strokeWidth={2} />
       </ToolbarFooterButton>
 
       <Select

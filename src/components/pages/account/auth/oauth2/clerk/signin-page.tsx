@@ -164,11 +164,7 @@ export function SignInPage({
 
   // Allow users to signin
   return (
-    <CenterLayout
-      title={TEXT_SIGN_IN}
-      signedRequired={false}
-      showAccountButton={false}
-    >
+    <CenterLayout title={TEXT_SIGN_IN} signedRequired={false}>
       <Card className="shadow-lg w-100 px-8 py-12 text-sm" rounded="2xl">
         <CardHeader className="text-xl ">
           <VCenterRow className="gap-x-2 ">

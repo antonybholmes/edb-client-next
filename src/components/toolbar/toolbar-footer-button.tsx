@@ -6,6 +6,7 @@ export function ToolbarFooterButton({
   variant = 'muted',
   size = 'xs',
   rounded: rounding = 'none',
+  pad = 'none',
   className,
   children,
   ...props
@@ -19,6 +20,7 @@ export function ToolbarFooterButton({
       variant={variant}
       size={size}
       rounded={rounding}
+      pad={pad}
       className={cn('gap-x-2', className)}
       {...props}
     >

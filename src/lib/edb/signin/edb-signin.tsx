@@ -4,6 +4,7 @@ import { Button } from '@themed/button'
 import { useState, type ReactNode } from 'react'
 
 import { SignInIcon } from '@/components/icons/sign-in-icon'
+import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import {
   APP_NAME,
   NO_DIALOG,
@@ -46,7 +47,7 @@ import { useEdbSettings } from '../edb-settings'
 import { SignInWithApiKeyPopover } from './signin-with-api-key-popover'
 
 const SIGNED_IN_ICON_CLS =
-  'rounded-full border border-foreground flex flex-row items-center justify-center w-7 h-7 aspect-square text-xs font-medium  overflow-hidden'
+  'rounded-full border border-foreground flex flex-row items-center justify-center w-6 h-6 aspect-square text-xs font-medium overflow-hidden'
 
 export type SignInMode = 'username-password' | 'api' | 'auth0' | 'oauth2'
 
@@ -104,18 +105,17 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
     menu = (
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
-          <Button
+          <IconButton
             id="edb-signin-button"
             variant="muted"
             size="header"
-            pad="none"
             rounded="none"
             checked={open}
             // ripple={false}
             title={isSignedIn ? TEXT_MY_ACCOUNT : TEXT_SIGN_IN}
           >
             <span className={SIGNED_IN_ICON_CLS}>{initials}</span>
-          </Button>
+          </IconButton>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent

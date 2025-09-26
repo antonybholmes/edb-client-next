@@ -1,4 +1,11 @@
-import { CSSProperties, useMemo, useRef, useState } from 'react'
+import {
+  CSSProperties,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 
 import { TabsList, TabsTrigger } from '../shadcn/ui/themed/tabs'
 
@@ -23,14 +30,14 @@ import type { IDivProps } from '@interfaces/div-props'
 import { where } from '@lib/math/where'
 import { truncate, type NullStr } from '@lib/text/text'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { ChevronRightIcon } from '../icons/chevron-right-icon'
+import { gsap } from 'gsap'
 import { VCenterRow } from '../layout/v-center-row'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../shadcn/ui/themed/dropdown-menu'
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from '../shadcn/ui/themed/context-menu'
 import {
   SmallDragHandle,
   SortableItem,
@@ -57,7 +64,7 @@ export const tabButtonVariants = cva('', {
   variants: {
     variant: {
       default: 'px-2 py-1',
-      sheet: 'py-2',
+      sheet: 'py-1.5',
       tab: 'border',
     },
   },
@@ -91,9 +98,9 @@ export function ReorderTabs({
 }: IProps) {
   const tabListRef = useRef<HTMLDivElement>(null)
 
-  const itemsRef = useRef<Map<string, HTMLSpanElement>>(
-    new Map<string, HTMLSpanElement>()
-  )
+  // const itemsRef = useRef<Map<string, HTMLSpanElement>>(
+  //   new Map<string, HTMLSpanElement>()
+  // )
 
   const [activeId, setActiveId] = useState<string | null>(null)
 
@@ -130,10 +137,38 @@ export function ReorderTabs({
       transition,
     }
 
+    const labelRef = useRef<HTMLSpanElement>(null)
+    const ref = useRef<HTMLButtonElement>(null)
+    const lineRef = useRef<HTMLSpanElement>(null)
+    const initial = useRef(true)
+
     const name = getTabName(tab)
     const truncatedName = truncate(name, {
       length: maxNameLength,
     })
+
+    const [hover, setHover] = useState(false)
+
+    useEffect(() => {
+      const w1 = labelRef.current?.offsetWidth ?? 1
+      const w2 = ref.current?.offsetWidth ?? 2
+      const p = w1 / w2
+      const duration = initial.current ? 0 : 0.5
+
+      gsap.timeline().to(
+        lineRef.current,
+        {
+          scaleX: hover ? 1 : p,
+          opacity: hover ? 1 : 0.8,
+          duration,
+          transformOrigin: 'center center',
+          ease: 'power3.out',
+        },
+        0
+      )
+
+      initial.current = false
+    }, [ref.current, labelRef.current, hover])
 
     // <VCenterRow
     //   id={tab.id}
@@ -151,40 +186,43 @@ export function ReorderTabs({
     //     aria-label="Drag sheet to move"
     //   />
 
-    return (
-      <SortableItemContext.Provider
-        value={{ ref: setNodeRef, attributes, listeners, isDragging }}
+    let content: ReactNode = (
+      <TabsTrigger
+        ref={(el) => {
+          ref.current = el
+          setNodeRef(el)
+        }}
+        id={tab.id}
+        variant="base"
+        value={tab.id}
+        key={tab.id}
+        aria-label={name}
+        className={tabButtonVariants({
+          variant,
+          className: 'flex flex-row items-center relative pr-4',
+        })}
+        style={{ ...dragStyle }}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
       >
-        <TabsTrigger
-          ref={setNodeRef}
-          id={tab.id}
-          variant="base"
-          value={tab.id}
-          key={tab.id}
-          aria-label={name}
-          className={tabButtonVariants({
-            variant,
-            className: 'flex flex-row items-center relative pr-6',
-          })}
-          style={{ ...dragStyle }}
+        <SmallDragHandle
+          className="cursor-ew-resize w-4"
+          aria-label="Drag sheet to move"
+        />
+        <span
+          ref={labelRef}
+          data-checked={checked}
+          aria-label={truncatedName}
+          className={UNDERLINE_LABEL_CLS}
+          // ref={(el) => {
+          //   itemsRef.current.set(tab.id, el!)
+          // }}
+          title={name}
         >
-          <SmallDragHandle
-            className="cursor-ew-resize w-4"
-            aria-label="Drag sheet to move"
-          />
-          <span
-            data-checked={checked}
-            aria-label={truncatedName}
-            className={UNDERLINE_LABEL_CLS}
-            ref={(el) => {
-              itemsRef.current.set(tab.id, el!)
-            }}
-            title={name}
-          >
-            {truncatedName}
-          </span>
+          {truncatedName}
+        </span>
 
-          {menuActions && menuActions.length > 0 && menuCallback && (
+        {/* {menuActions && menuActions.length > 0 && menuCallback && (
             <DropdownMenu
               open={show.get(tab.id) ?? false}
               onOpenChange={(v) => {
@@ -215,12 +253,47 @@ export function ReorderTabs({
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-          )}
+          )} */}
 
-          {checked && (
-            <span className="absolute bottom-0 w-full left-0 bg-theme h-0.5" />
-          )}
-        </TabsTrigger>
+        {checked && (
+          <span
+            ref={lineRef}
+            className="absolute bottom-0 w-full bg-theme h-0.5"
+          />
+        )}
+      </TabsTrigger>
+    )
+
+    if (menuActions && menuActions.length > 0 && menuCallback) {
+      content = (
+        <ContextMenu>
+          <ContextMenuTrigger asChild>{content}</ContextMenuTrigger>
+          <ContextMenuContent>
+            {/* <ContextMenuItem>Profile</ContextMenuItem>
+            <ContextMenuItem>Billing</ContextMenuItem>
+            <ContextMenuItem>Team</ContextMenuItem>
+            <ContextMenuItem>Subscription</ContextMenuItem> */}
+
+            {menuActions.map((menuAction, ai) => (
+              <ContextMenuItem
+                key={ai}
+                onClick={() => menuCallback?.(tab, menuAction.action)}
+                aria-label={menuAction.action}
+              >
+                {menuAction.icon && menuAction.icon}
+                <span>{menuAction.action}</span>
+              </ContextMenuItem>
+            ))}
+          </ContextMenuContent>
+        </ContextMenu>
+      )
+    }
+
+    return (
+      <SortableItemContext.Provider
+        value={{ attributes, listeners, isDragging }}
+      >
+        {content}
       </SortableItemContext.Provider>
     )
 
@@ -292,7 +365,7 @@ export function ReorderTabs({
               const selected = tab.id === selectedTab.tab.id // tab.id === selectedTab?.tab.id
 
               return (
-                <SortableItem key={tab.id} id={tab.id}>
+                <SortableItem as="div" key={tab.id} id={tab.id}>
                   <TabItem
                     tab={tab}
                     key={tab.id}
