@@ -1,5 +1,12 @@
 # Changelog
 
+## 30.4 (Sep, 2025)
+
+### Changed
+
+- UI tweaks.
+
+
 ## 30.2 (Sep, 2025)
 
 ### Added

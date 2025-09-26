@@ -378,7 +378,7 @@ function SeqBrowserPage() {
           </ToolbarTabGroup>
           <ToolbarSeparator />
 
-          <ToolbarTabGroup title="Genes" className="gap-x-2 text-sm">
+          <ToolbarTabGroup title="Genes" className="gap-x-2 ">
             <Select
               value={settings.genes.display}
               onValueChange={(v) => {

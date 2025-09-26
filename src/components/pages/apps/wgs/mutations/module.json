@@ -1,7 +1,7 @@
 {
   "name": "Mutations",
   "description": "Query WGS mutations.",
-  "version": "8.0.6.468",
+  "version": "8.0.8.470",
   "copyright": "Copyright (C) ${START_YEAR:2024} Antony Holmes. All rights reserved.",
-  "modified": "2025-09-26T22:53:14.390Z"
+  "modified": "2025-09-26T22:57:48.684Z"
 }
