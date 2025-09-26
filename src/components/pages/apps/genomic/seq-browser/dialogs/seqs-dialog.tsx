@@ -29,6 +29,7 @@ import {
 import { PlusIcon } from '@/components/icons/plus-icon'
 import { TrashIcon } from '@/components/icons/trash-icon'
 import { CenterRow } from '@/components/layout/center-row'
+import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { ExternalLinkIcon } from '@components/icons/external-link'
 import { InfoHoverCard } from '@components/shadcn/ui/themed/hover-card'
 import { GlassSideDialog } from '@dialog/glass-side-dialog'
@@ -184,8 +185,7 @@ export function SeqsDialog({
               <span>Add to Cart</span>
             </Button>
 
-            <Button
-              variant="ios"
+            <IconButton
               // ripple={false}
               size="icon"
               onClick={() => {
@@ -203,14 +203,13 @@ export function SeqsDialog({
               title={searchSelectAll ? TEXT_UNSELECT_ALL : TEXT_SELECT_ALL}
             >
               <MultiSelectIcon checked={!searchSelectAll} />
-            </Button>
+            </IconButton>
           </VCenterRow>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
+              <IconButton
                 variant="ios"
-                size="icon"
                 // ripple={false}
                 /* onClick={() => {
                     setAddedMap(new Map<string, boolean>(selectedMap.entries()))
@@ -218,7 +217,7 @@ export function SeqsDialog({
                 title="Sort Items"
               >
                 <SortIcon reverse={sortReversed} />
-              </Button>
+              </IconButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               //side="right"
@@ -264,9 +263,9 @@ export function SeqsDialog({
           </VCenterRow>
 
           <VCenterRow className="justify-end text-xs">
-            <Button
+            <IconButton
               //variant="accent"
-              size="icon"
+
               // ripple={false}
               onClick={() => {
                 setAddedSelectedMap(
@@ -283,11 +282,11 @@ export function SeqsDialog({
               title={searchSelectAll ? TEXT_UNSELECT_ALL : TEXT_SELECT_ALL}
             >
               <MultiSelectIcon checked={!addedSelectAll} />
-            </Button>
+            </IconButton>
 
-            <Button
+            <IconButton
               //variant="accent"
-              size="icon"
+
               // ripple={false}
               title={TEXT_REMOVE_FROM_CART}
               onClick={() => {
@@ -304,7 +303,7 @@ export function SeqsDialog({
               }}
             >
               <TrashIcon className="w-4" />
-            </Button>
+            </IconButton>
           </VCenterRow>
         </VCenterRow>
 

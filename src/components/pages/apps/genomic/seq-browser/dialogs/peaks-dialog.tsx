@@ -39,6 +39,7 @@ import {
 import { PlusIcon } from '@/components/icons/plus-icon'
 import { TrashIcon } from '@/components/icons/trash-icon'
 import { CenterRow } from '@/components/layout/center-row'
+import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { InfoHoverCard } from '@components/shadcn/ui/themed/hover-card'
 import { GlassSideDialog } from '@dialog/glass-side-dialog'
 import { SortIcon } from '@icons/sort-icon'
@@ -190,10 +191,10 @@ export function PeaksDialog({
               <PlusIcon /> <span>Add to Cart</span>
             </Button>
 
-            <Button
+            <IconButton
               variant="ios"
               // ripple={false}
-              size="icon"
+
               onClick={() => {
                 setSelectedMap(
                   new Map<string, boolean>([
@@ -209,13 +210,12 @@ export function PeaksDialog({
               title={searchSelectAll ? TEXT_UNSELECT_ALL : TEXT_SELECT_ALL}
             >
               <MultiSelectIcon checked={!searchSelectAll} />
-            </Button>
+            </IconButton>
           </VCenterRow>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
+              <IconButton
                 variant="ios"
-                size="icon"
                 // ripple={false}
                 onClick={() => {
                   setAddedMap(new Map<string, boolean>(selectedMap.entries()))
@@ -223,7 +223,7 @@ export function PeaksDialog({
                 title="Sort Items"
               >
                 <SortIcon reverse={sortReversed} />
-              </Button>
+              </IconButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               //side="right"
@@ -269,9 +269,7 @@ export function PeaksDialog({
           </VCenterRow>
 
           <VCenterRow className="justify-end text-xs">
-            <Button
-              //variant="accent"
-              size="icon"
+            <IconButton
               // ripple={false}
               onClick={() => {
                 setAddedSelectedMap(
@@ -288,11 +286,9 @@ export function PeaksDialog({
               title={searchSelectAll ? TEXT_UNSELECT_ALL : TEXT_SELECT_ALL}
             >
               <MultiSelectIcon checked={!addedSelectAll} />
-            </Button>
+            </IconButton>
 
-            <Button
-              //variant="accent"
-              size="icon"
+            <IconButton
               // ripple={false}
               title={TEXT_REMOVE_FROM_CART}
               onClick={() => {
@@ -318,7 +314,7 @@ export function PeaksDialog({
               }}
             >
               <TrashIcon className="w-4" />
-            </Button>
+            </IconButton>
           </VCenterRow>
         </VCenterRow>
 

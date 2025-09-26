@@ -193,8 +193,6 @@ export function MutationsPage() {
       },
     })
 
-    console.log('ds', res.data)
-
     const datasets: IMutationDataset[] = res.data
 
     setDatasets(datasets)
@@ -290,8 +288,6 @@ export function MutationsPage() {
               s.coo in cmap ? cmap[s.coo]! : COLOR_BLACK,
             ])
         )
-
-        console.log(scm)
 
         break
       case 'Lymphgen':
