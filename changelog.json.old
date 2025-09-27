@@ -1695,5 +1695,18 @@
     },
     "author": "Antony Holmes",
     "date": "2025-09-25T23:13:29.302Z"
+  },
+  {
+    "version": "30.4",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "UI tweaks",
+          "date": "2025-09-26T23:00:43.001Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-09-26T23:00:43.001Z"
   }
 ]
