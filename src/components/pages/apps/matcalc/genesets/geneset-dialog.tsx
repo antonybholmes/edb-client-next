@@ -86,7 +86,7 @@ export function GenesetDialog({ geneset, callback, onResponse }: IProps) {
           id="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Genes"
+          placeholder="List of genes (one per line)..."
           label="Genes"
           labelPos="left"
           //variant="dialog"

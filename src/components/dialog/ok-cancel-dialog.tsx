@@ -234,6 +234,7 @@ export function DialogButtons({
         onClick={() => onResponse?.(buttons[0]!)}
         className="w-24"
         size="lg"
+        ripple={true}
       >
         {buttons[0]}
       </Button>

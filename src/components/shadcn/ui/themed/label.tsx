@@ -70,7 +70,7 @@ export function LabelContainer({
     )
   } else {
     return (
-      <VCenterRow className="gap-x-4">
+      <VCenterRow className="gap-x-4 grow">
         <Label className={labelW} htmlFor={id}>
           {label}
         </Label>

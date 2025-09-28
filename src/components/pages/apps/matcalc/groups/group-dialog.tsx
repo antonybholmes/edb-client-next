@@ -97,12 +97,12 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
           //label="Group Name"
           //labelPos="left"
           //variant="dialog"
-          h="dialog"
+          //h="dialog"
           className="grow"
         />
       </LabelContainer>
 
-      <VCenterRow className="gap-x-2">
+      <VCenterRow className="gap-x-4">
         <LabelContainer
           label="Match"
           labelPos="left"
@@ -113,7 +113,7 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
             id="search"
             value={search}
             onTextChange={(e) => setSearch(e)}
-            placeholder="Matches"
+            placeholder="Matches..."
             rightChildren={
               <InfoHoverCard title="Matches">
                 A comma separated list of words or partial words that match
@@ -124,8 +124,8 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
             //labelPos="left"
             //variant="alt"
             //variant="dialog"
-            h="dialog"
-            className="grow"
+            //h="dialog"
+            w="grow"
           />
         </LabelContainer>
 
