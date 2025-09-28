@@ -75,17 +75,28 @@ export function SortableItem<T extends ElementType = 'li'>({
   )
 }
 
+export const DRAG_HANDLE_APPEAR_CLS = `opacity-0 group-data-[focus=true]:opacity-50 group-hover:opacity-50 hover:opacity-100 focus-visible:opacity-100 trans-opacity`
+
+export const DRAG_HANDLE_HOVER_ANIM_CLS = `scale-75 
+  group-data-[focus=true]:scale-100 group-hover:scale-100 
+  transition-transform 
+  duration-200`
+
 export function DragHandle({ className, style, ...props }: IDivProps) {
   const { attributes, listeners } = useContext(SortableItemContext)
 
   return (
     <VCenterRow
-      className="cursor-ns-resize group-data-[focus=true]:scale-125 group-hover:scale-125 transition-transform duration-200"
+      className={cn('cursor-ns-resize', className)}
       {...listeners}
       {...attributes}
       {...props}
     >
-      <VerticalGripIcon w="w-4.5 h-4.5" className={className} style={style} />
+      <VerticalGripIcon
+        w="w-4.5 h-4.5"
+        style={style}
+        className={DRAG_HANDLE_HOVER_ANIM_CLS}
+      />
     </VCenterRow>
   )
 }

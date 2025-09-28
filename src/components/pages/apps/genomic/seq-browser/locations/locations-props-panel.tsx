@@ -35,7 +35,7 @@ import { where } from '@lib/math/where'
 import type { NullStr } from '@lib/text/text'
 import { toast } from '@themed/crisp'
 import { useContext, useState } from 'react'
-import { GROUP_BG_CLS } from '../../../matcalc/groups/group-props-panel'
+import { GROUP_CLS } from '../../../matcalc/groups/group-props-panel'
 import { LocationAutocomplete } from '../location-autocomplete'
 import MODULE_INFO from '../module.json'
 import { TracksContext } from '../tracks-provider'
@@ -62,7 +62,7 @@ export function LocationsPropsPanel() {
     const hoverMode = hover || isDragging || location.loc === active
 
     return (
-      <div className={GROUP_BG_CLS}>
+      <div className={GROUP_CLS}>
         <VCenterRow
           data-hover={hoverMode}
           className="flex flex-row items-center rounded-theme gap-x-1 py-1 pl-1 text-xs"

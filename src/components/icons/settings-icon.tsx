@@ -4,7 +4,7 @@ import { Settings2 } from 'lucide-react'
 
 export function SettingsIcon({
   w = 'w-5 h-5',
-  stroke = 'stroke-foreground',
+  stroke = 'stroke-current',
   className,
   strokeWidth = 1.5,
   style,

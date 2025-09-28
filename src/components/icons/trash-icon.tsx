@@ -4,7 +4,7 @@ import { Trash2 } from 'lucide-react'
 
 export function TrashIcon({
   w = 'w-5',
-  stroke = 'stroke-foreground hover:stroke-red-500',
+  stroke = 'stroke-current',
   className,
   strokeWidth = 1.5,
   style,

@@ -1,6 +1,6 @@
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { LabelContainer } from '@/components/shadcn/ui/themed/label'
-import { TEXT_CANCEL } from '@/consts'
+import { TEXT_CANCEL, TEXT_NAME } from '@/consts'
 import { SM_ICON_BUTTON_CLS } from '@/theme'
 import { ColorPickerButton } from '@components/color/color-picker-button'
 import { OKCancelDialog, type IModalProps } from '@dialog/ok-cancel-dialog'
@@ -48,7 +48,7 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
   return (
     <OKCancelDialog
       open={true}
-      title={name.length > 0 ? `Edit ${name}` : 'New Group'}
+      title={name.length > 0 ? `Edit ${name}` : 'New group'}
       onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onResponse?.(r)
@@ -74,7 +74,9 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
       //   </VCenterRow>
       // }
       leftFooterChildren={
-        <span className="text-foreground/50">Id: {group?.id}</span>
+        <span className="text-foreground/50" title="Group Id">
+          {group?.id}
+        </span>
       }
       //contentVariant="glass"
       //bodyVariant="card"
@@ -84,7 +86,7 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
       bodyCls="gap-y-4"
     >
       <LabelContainer
-        label="Group Name"
+        label={TEXT_NAME}
         labelPos="left"
         labelW="min-w-24"
         id="name"

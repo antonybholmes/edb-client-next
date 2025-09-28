@@ -21,7 +21,7 @@ export function VerticalGripIcon({
   stroke = 'stroke-foreground',
   className,
   strokeWidth = 1.5,
-  style,
+  ...props
 }: IProps) {
   return (
     // <svg
@@ -51,7 +51,7 @@ export function VerticalGripIcon({
       className={cn(ICON_CLS, stroke, w, className)}
       strokeWidth={strokeWidth}
       stroke=""
-      style={style}
+      {...props}
     />
   )
 }

@@ -50,6 +50,8 @@ import { LinkButton } from '@themed/link-button'
 import { ToolbarSeparator } from '@toolbar/toolbar-separator'
 import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 import {
+  DRAG_HANDLE_APPEAR_CLS,
+  DRAG_HANDLE_HOVER_ANIM_CLS,
   DragHandle,
   SortableItem,
   SortableItemContext,
@@ -57,16 +59,18 @@ import {
 import { useBranch, useHistory } from '../history/history-store'
 import MODULE_INFO from '../module.json'
 
+import { cn } from '@/lib/shadcn-utils'
 import { ColorPickerButton } from '@components/color/color-picker-button'
 import { PlusIcon } from '@icons/plus-icon'
 import { StretchRow } from '@layout/stretch-row'
 import { SaveGroupsDialog } from './save-groups-dialog'
 
-export const GROUP_BG_CLS = 'rounded-theme group gap-x-1'
+export const GROUP_CLS =
+  'group rounded-theme group gap-x-1 opacity-80 hover:opacity-100 trans-opacity'
 
-export const GROUP_CLS = `group flex flex-row items-center grow relative 
+export const GROUP_CONTENT_CLS = `flex flex-row items-center grow relative 
   w-full overflow-hidden py-2 pl-1 pr-2 gap-x-2 rounded-theme 
-  data-[hover=true]:bg-muted data-[drag=true]:shadow-md`
+  group-hover:bg-muted group-data-[focus=true]:bg-muted`
 
 export interface IGroupCallback {
   title?: string
@@ -218,28 +222,29 @@ export function GroupPropsPanel({ branchId }: IProps) {
 
     return (
       <VCenterRow
-        className={GROUP_BG_CLS}
+        className={GROUP_CLS}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
         data-focus={focus}
+        data-hover={hoverMode}
       >
         <VCenterRow
           //ref={ref}
           key={group.id}
           data-drag={group.id === active}
-          data-hover={hoverMode}
-          className={GROUP_CLS}
+          className={GROUP_CONTENT_CLS}
           // style={{
           //   backgroundColor: hoverMode ? `${group.color}20` : undefined,
           // }}
           //onMouseDown={handleMouseDown}
         >
           <DragHandle
-          // style={{
-          //   stroke: group.color,
-          // }}
+            className={DRAG_HANDLE_APPEAR_CLS}
+            // style={{
+            //   stroke: group.color,
+            // }}
           />
 
           {/* <ColorDotButton color={group.color}
@@ -276,15 +281,18 @@ export function GroupPropsPanel({ branchId }: IProps) {
           <VCenterRow
             //data-drag={isDragging}
 
-            className="gap-x-1 items-center opacity-0 group-data-[focus=true]:opacity-100 group-hover:opacity-100 shrink-0"
+            className={cn(
+              DRAG_HANDLE_APPEAR_CLS,
+              'gap-x-1 items-center shrink-0'
+            )}
           >
             <button
               title={`Edit ${group.name} group`}
-              className="opacity-50 focus-visible:opacity-100 hover:opacity-100 trans-opacity"
+              //className="text-foreground/50 focus-visible:text-foreground hover:text-foreground trans-color"
               onClick={() => editGroup(group)}
             >
               {/* <SettingsIcon style={{ stroke: group.color }} /> */}
-              <SettingsIcon className="scale-75 group-data-[focus=true]:scale-100 group-hover:scale-100 transition-transform duration-200" />
+              <SettingsIcon w="w-4" className={DRAG_HANDLE_HOVER_ANIM_CLS} />
             </button>
 
             {/* <button
@@ -305,11 +313,14 @@ export function GroupPropsPanel({ branchId }: IProps) {
         <VCenterRow
           //data-drag={isDragging}
 
-          className="gap-x-1 items-center opacity-0 group-data-[focus=true]:opacity-100 group-hover:opacity-100 shrink-0"
+          className={cn(
+            DRAG_HANDLE_APPEAR_CLS,
+            'gap-x-1 items-center shrink-0'
+          )}
         >
           <button
             onClick={() => setDelGroup(group)}
-            className="stroke-foreground/40 focus-visible:stroke-red-500 hover:stroke-red-500 trans-color"
+            className="hover:text-red-500 focus-visible:text-red-500 trans-color"
             // style={{
             //   stroke: group.color,
             // }}
@@ -317,10 +328,7 @@ export function GroupPropsPanel({ branchId }: IProps) {
             //onMouseEnter={() => setDelHover(true)}
             //onMouseLeave={() => setDelHover(false)}
           >
-            <TrashIcon
-              stroke=""
-              className="scale-75 group-data-[focus=true]:scale-100 group-hover:scale-100 transition-transform duration-200"
-            />
+            <TrashIcon w="w-4" className={DRAG_HANDLE_HOVER_ANIM_CLS} />
           </button>
         </VCenterRow>
       </VCenterRow>

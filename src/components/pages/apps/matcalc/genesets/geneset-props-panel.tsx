@@ -18,6 +18,8 @@ import { ToolbarSeparator } from '@toolbar/toolbar-separator'
 import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
 
 import {
+  DRAG_HANDLE_APPEAR_CLS,
+  DRAG_HANDLE_HOVER_ANIM_CLS,
   DragHandle,
   SortableItem,
   SortableItemContext,
@@ -39,12 +41,13 @@ import { IconButton } from '@themed/icon-button'
 import { LinkButton } from '@themed/link-button'
 import { GenesetDialog } from './geneset-dialog'
 
+import { cn } from '@/lib/shadcn-utils'
 import { ColorPickerButton } from '@components/color/color-picker-button'
 import { FileDropZonePanel } from '@components/file-dropzone-panel'
 import { PlusIcon } from '@icons/plus-icon'
 import { SaveIcon } from '@icons/save-icon'
 import { StretchRow } from '@layout/stretch-row'
-import { GROUP_BG_CLS, GROUP_CLS } from '../groups/group-props-panel'
+import { GROUP_CLS, GROUP_CONTENT_CLS } from '../groups/group-props-panel'
 import { useBranch, useHistory } from '../history/history-store'
 import MODULE_INFO from '../module.json'
 
@@ -129,6 +132,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
     const { isDragging } = useContext(SortableItemContext)
 
     const [hover, setHover] = useState(false)
+    const [focus, setFocus] = useState(false)
 
     const hoverMode = hover || isDragging || geneset.id === active
 
@@ -140,24 +144,23 @@ export function GenesetPropsPanel({ branchId }: IProps) {
 
     return (
       <VCenterRow
-        className={GROUP_BG_CLS}
+        className={GROUP_CLS}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}
+        data-focus={focus}
+        data-hover={hoverMode}
       >
         <VCenterRow
           key={geneset.name}
           data-drag={geneset.id === active}
-          data-hover={hoverMode}
-          className={GROUP_CLS}
+          className={GROUP_CONTENT_CLS}
           // style={{
           //   backgroundColor: hoverMode ? `${geneset.color}20` : 'transparent',
           // }}
         >
-          <DragHandle
-          // style={{
-          //   stroke: geneset.color,
-          // }}
-          />
+          <DragHandle className={DRAG_HANDLE_APPEAR_CLS} />
 
           <ColorPickerButton
             color={color}
@@ -184,39 +187,34 @@ export function GenesetPropsPanel({ branchId }: IProps) {
 
           <VCenterRow
             data-hover={hoverMode}
-            className="gap-x-1 opacity-0 group-hover:opacity-100 data-[hover=true]:opacity-100 shrink-0"
+            className={cn(
+              DRAG_HANDLE_APPEAR_CLS,
+              'gap-x-1 items-center shrink-0'
+            )}
           >
             <button
               title={`Edit ${geneset.name} group`}
-              className="opacity-50 hover:opacity-100"
               onClick={() => editGeneset(geneset)}
             >
-              <SettingsIcon
-              // style={{
-              //   stroke: geneset.color,
-              // }}
-              />
+              <SettingsIcon w="w-4" className={DRAG_HANDLE_HOVER_ANIM_CLS} />
             </button>
           </VCenterRow>
         </VCenterRow>
 
         <VCenterRow
-          data-hover={hoverMode}
-          className="gap-x-1 opacity-0 group-hover:opacity-100 data-[hover=true]:opacity-100 shrink-0"
+          className={cn(
+            DRAG_HANDLE_APPEAR_CLS,
+            'gap-x-1 items-center shrink-0'
+          )}
         >
           <button
             onClick={() => setDelGroup(geneset)}
-            className="stroke-foreground/50 hover:stroke-red-500 trans-color"
+            className="hover:text-red-500 focus-visible:text-red-500 trans-color"
             title={`Delete ${geneset.name} gene set`}
             //onMouseEnter={() => setDelHover(true)}
             //onMouseLeave={() => setDelHover(false)}
           >
-            <TrashIcon
-              stroke=""
-              // style={{
-              //   stroke: geneset.color,
-              // }}
-            />
+            <TrashIcon w="w-4" className={DRAG_HANDLE_HOVER_ANIM_CLS} />
           </button>
         </VCenterRow>
       </VCenterRow>

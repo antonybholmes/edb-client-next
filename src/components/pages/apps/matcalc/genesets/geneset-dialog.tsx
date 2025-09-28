@@ -69,7 +69,9 @@ export function GenesetDialog({ geneset, callback, onResponse }: IProps) {
         />
       }
       leftFooterChildren={
-        <span className="text-foreground/50">Id: {geneset?.id}</span>
+        <span className="text-foreground/50" title="Gene Set Id">
+          {geneset?.id}
+        </span>
       }
     >
       <BaseCol className="gap-y-4">

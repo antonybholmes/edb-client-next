@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Improved animation effects in groups.
 - Bug fixes and updates.
 - UI tweaks.
 

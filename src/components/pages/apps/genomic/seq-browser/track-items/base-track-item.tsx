@@ -5,7 +5,7 @@ import { cn } from '@lib/shadcn-utils'
 import type { NullStr } from '@lib/text/text'
 import { Checkbox } from '@themed/check-box'
 import { useContext, useState, type ReactNode } from 'react'
-import { GROUP_BG_CLS } from '../../../matcalc/groups/group-props-panel'
+import { GROUP_CLS } from '../../../matcalc/groups/group-props-panel'
 import { TracksContext, type ITrackGroup } from '../tracks-provider'
 import { TRACK_ITEM_CLS } from './seq-track-item'
 
@@ -39,7 +39,7 @@ export function BaseTrackItem({
 
   return (
     <VCenterRow
-      className={GROUP_BG_CLS}
+      className={GROUP_CLS}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       onFocus={() => setFocus(true)}

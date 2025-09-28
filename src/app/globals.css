@@ -308,13 +308,13 @@
   }
 }
 
-/* @utility trans-100 {
+@utility trans-100 {
   @apply duration-100 ease-in-out;
 }
 
 @utility trans-200 {
   @apply duration-200 ease-in-out;
-} */
+}
 
 @utility trans-300 {
   @apply duration-300 ease-in-out;
@@ -329,7 +329,7 @@
 }
 
 .trans-opacity {
-  @apply trans-300 transition-opacity;
+  @apply trans-200 transition-opacity;
 }
 
 .trans-shadow {
