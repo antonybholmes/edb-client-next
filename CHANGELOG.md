@@ -6,6 +6,10 @@
 
 - Added more animation effects.
 
+### Changed
+
+- Bug fixes and updates.
+
 
 ## 30.4 (Sep, 2025)
 

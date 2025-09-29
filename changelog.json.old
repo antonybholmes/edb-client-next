@@ -1722,5 +1722,18 @@
     },
     "author": "Antony Holmes",
     "date": "2025-09-26T23:00:43.001Z"
+  },
+  {
+    "version": "30.6",
+    "messages": {
+      "Added": [
+        {
+          "msg": "Added more animation effects",
+          "date": "2025-09-29T01:07:45.751Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2025-09-29T01:07:45.751Z"
   }
 ]

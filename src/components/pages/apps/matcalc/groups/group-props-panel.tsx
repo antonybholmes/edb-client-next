@@ -36,7 +36,6 @@ import {
 } from '@dnd-kit/sortable'
 import { OpenIcon } from '@icons/open-icon'
 import { SaveIcon } from '@icons/save-icon'
-import { SettingsIcon } from '@icons/settings-icon'
 import { TrashIcon } from '@icons/trash-icon'
 import { VCenterCol } from '@layout/v-center-col'
 import { randomHexColor } from '@lib/color/color'
@@ -63,6 +62,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { ColorPickerButton } from '@components/color/color-picker-button'
 import { PlusIcon } from '@icons/plus-icon'
 import { StretchRow } from '@layout/stretch-row'
+import { Settings2 } from 'lucide-react'
 import { SaveGroupsDialog } from './save-groups-dialog'
 
 export const GROUP_CLS =
@@ -292,7 +292,7 @@ export function GroupPropsPanel({ branchId }: IProps) {
               onClick={() => editGroup(group)}
             >
               {/* <SettingsIcon style={{ stroke: group.color }} /> */}
-              <SettingsIcon w="w-4" className={DRAG_HANDLE_HOVER_ANIM_CLS} />
+              <Settings2 className={cn('w-4', DRAG_HANDLE_HOVER_ANIM_CLS)} />
             </button>
 
             {/* <button

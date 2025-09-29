@@ -1731,6 +1731,12 @@
           "msg": "Added more animation effects",
           "date": "2025-09-29T01:07:45.751Z"
         }
+      ],
+      "Changed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2025-09-29T01:13:33.794Z"
+        }
       ]
     },
     "author": "Antony Holmes",
