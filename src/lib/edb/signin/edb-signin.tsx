@@ -3,6 +3,7 @@ import { Button } from '@themed/button'
 import { useState, type ReactNode } from 'react'
 
 import { SignInIcon } from '@/components/icons/sign-in-icon'
+import { UserIcon } from '@/components/icons/user-icon'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import {
   APP_NAME,
@@ -51,7 +52,7 @@ import { useEdbSettings } from '../edb-settings'
 import { SignInWithApiKeyPopover } from './signin-with-api-key-popover'
 
 const SIGNED_IN_ICON_CLS =
-  'rounded-full flex flex-row items-center justify-center w-6 h-6 aspect-square text-xs font-medium overflow-hidden'
+  'rounded-full flex flex-row items-center justify-center w-7 h-7 aspect-square text-xs font-medium overflow-hidden bg-foreground/50 group-hover:bg-theme/70 group-data-[checked=true]:bg-theme/70 trans-color text-background'
 
 export type SignInMode = 'username-password' | 'api' | 'auth0' | 'oauth2'
 
@@ -118,7 +119,20 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
             // ripple={false}
             title={isSignedIn ? TEXT_MY_ACCOUNT : TEXT_SIGN_IN}
           >
-            <span className={SIGNED_IN_ICON_CLS}>{initials}</span>
+            <span
+              className={cn(
+                'rounded-full bg-foreground/50 w-7 h-7 aspect-square flex items-center justify-center text-xs font-medium overflow-hidden text-background',
+                ICON_TRANSITION_FROM_CLS
+              )}
+            >
+              {initials}
+            </span>
+            <UserIcon
+              className={cn(
+                'w-5.5 h-5.5 aspect-square rounded-full overflow-hidden',
+                ICON_TRANSITION_TO_CLS
+              )}
+            />
           </IconButton>
         </DropdownMenuTrigger>
 

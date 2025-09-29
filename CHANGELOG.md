@@ -4,6 +4,7 @@
 
 ### Added
 
+- Added more UI effects.
 - Added more animation effects.
 
 ### Changed
