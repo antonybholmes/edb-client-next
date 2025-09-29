@@ -19,6 +19,11 @@ import {
   PopoverTrigger,
 } from '../shadcn/ui/themed/popover'
 
+import {
+  ICON_TRANSITION_FROM_CLS,
+  ICON_TRANSITION_TO_CLS,
+} from '@/interfaces/icon-props'
+import { LayoutGrid } from 'lucide-react'
 import { VCenterCol } from '../layout/v-center-col'
 import { ButtonLink } from '../link/button-link'
 import { SearchBox } from '../search-box'
@@ -183,11 +188,13 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
             rounded="none"
             // ripple={false}
             checked={open}
-            aria-label={open ? 'Close Menu' : 'Open Menu'}
-            tooltip="App Launcher"
-            tooltipSide="right"
+            //aria-label={open ? 'Close Menu' : 'Open Menu'}
+            //tooltip="App Launcher"
+            //tooltipSide="right"
+            title="App Launcher"
           >
-            <GripIcon />
+            <GripIcon className={ICON_TRANSITION_FROM_CLS} />
+            <LayoutGrid className={cn('w-4.5 h-4.5', ICON_TRANSITION_TO_CLS)} />
           </IconButton>
         </PopoverTrigger>
         {/* </SimpleTooltip> */}

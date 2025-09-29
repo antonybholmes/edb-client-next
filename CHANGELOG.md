@@ -1,5 +1,12 @@
 # Changelog
 
+## 30.6 (Sep, 2025)
+
+### Added
+
+- Added more animation effects.
+
+
 ## 30.4 (Sep, 2025)
 
 ### Added
