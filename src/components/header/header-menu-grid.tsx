@@ -178,7 +178,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
         <PopoverTrigger asChild>
           <IconButton
             id="header-menu-popover-button"
-            variant="muted"
+            variant="flat"
             size="header"
             rounded="none"
             // ripple={false}
@@ -243,7 +243,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
             </li>
             <li>
               <ButtonLink
-                variant="muted"
+                variant="flat"
                 flow="column"
                 size="none"
                 className="p-2 gap-y-2"
@@ -267,7 +267,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
 
           {/*<VCenterRow className="gap-x-5 mb-2 justify-end">
             <ButtonLink
-              variant="muted"
+              variant="flat"
               href="/about"
               aria-label="About"
               className="text-xs"

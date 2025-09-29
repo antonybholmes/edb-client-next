@@ -16,6 +16,7 @@ import { VCenterRow } from '../layout/v-center-row'
 
 import { FOCUS_INSET_RING_CLS } from '@/theme'
 import { truncate } from '@lib/text/text'
+import { gsap } from 'gsap'
 import { TabIndicatorH } from './tab-indicator-h'
 import { TabIndicatorContext } from './tab-indicator-provider'
 
@@ -23,7 +24,7 @@ import { TabIndicatorContext } from './tab-indicator-provider'
 //  'px-2.5 py-1.5 rounded-sm group trans-color focus-visible:bg-muted hover:bg-muted data-[checked=true]:bg-muted trans-color mb-1'
 
 const TAB_LINE_CLS =
-  'absolute bottom-0 bg-border left-1 right-1 opacity-0 scale-x-50'
+  'absolute bottom-0 bg-border left-1 right-1 opacity-0 scale-x-50 pointer-events-none select-none'
 
 export const tabVariants = cva(
   cn(
@@ -46,7 +47,7 @@ export const tabVariants = cva(
 export const tabButtonVariants = cva('group trans-color overflow-hidden', {
   variants: {
     variant: {
-      default: 'h-8 px-2',
+      default: 'h-8.5 px-2',
       sheet:
         'py-1.5 px-3 w-20 flex flex-row justify-center focus-visible:bg-muted hover:bg-muted data-[checked=true]:bg-muted',
       tab: 'border',
@@ -54,8 +55,12 @@ export const tabButtonVariants = cva('group trans-color overflow-hidden', {
   },
 })
 
-export const UNDERLINE_LABEL_CLS =
-  'boldable-text-tab data-[checked=true]:font-semibold text-alt-foreground truncate'
+export const UNDERLINE_LABEL_CLS = `boldable-text-tab data-[checked=true]:opacity-0 group-hover:opacity-0 
+group-focus-visible:opacity-0 trans-opacity text-alt-foreground truncate relative pointer-events-none`
+
+export const UNDERLINE_HOVER_LABEL_CLS = `z-10 opacity-0 font-semibold group-hover:opacity-100 
+data-[checked=true]:opacity-100 group-focus-visible:opacity-100 trans-opacity absolute 
+top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 truncate pointer-events-none select-none`
 
 // export function ToolbarTabLine({ tabPos }: { tabPos: ITabPos }) {
 //   return (
@@ -199,7 +204,87 @@ export function UnderlineTabs({
     }
   }, [selectedTab?.index])
 
-  //
+  function Trigger({ tab, ti }: { tab: ITab; ti: number }) {
+    const ref = useRef<HTMLSpanElement>(null)
+
+    const selected = tab.id === selectedTab?.tab.id // tab.id === selectedTab?.tab.id
+
+    const name = getTabName(tab)
+    const truncatedName = truncate(name, {
+      length: maxNameLength,
+    })
+
+    return (
+      <TabsTrigger
+        variant="base"
+        value={tab.id}
+        id={tab.id}
+        data-selected={selected}
+        ref={(el) => {
+          buttonsRef.current[ti] = el!
+        }}
+        onMouseEnter={() => {
+          gsap.to(ref.current, {
+            opacity: 1,
+            scaleX: 1,
+            duration: 0.2,
+            ease: 'power1.out',
+          })
+
+          if (selected) {
+            _scale(2)
+          }
+        }}
+        onMouseLeave={() => {
+          gsap.to(ref.current, {
+            opacity: 0,
+            scaleX: 0.5,
+            duration: 0.2,
+            ease: 'power1.out',
+          })
+
+          if (selected) {
+            _scale(1)
+          }
+        }}
+        onMouseDown={() => {
+          pressed.current = true
+        }}
+        onMouseUp={() => {
+          pressed.current = false
+        }}
+        className={tabButtonVariants({
+          variant,
+        })}
+      >
+        <span
+          data-checked={selected}
+          ref={(el) => {
+            itemsRef.current[ti] = el!
+          }}
+          aria-label={truncatedName}
+          className={UNDERLINE_LABEL_CLS}
+        >
+          {truncatedName}
+        </span>
+
+        <span
+          aria-label={truncatedName}
+          data-checked={selected}
+          className={UNDERLINE_HOVER_LABEL_CLS}
+        >
+          {truncatedName}
+        </span>
+
+        <span
+          ref={ref}
+          data-selected={selected}
+          className={TAB_LINE_CLS}
+          style={{ height: '0.1rem' }}
+        />
+      </TabsTrigger>
+    )
+  }
 
   return (
     <VCenterRow className={cn('justify-between gap-x-1', className)}>
@@ -210,73 +295,7 @@ export function UnderlineTabs({
         id="underline-tabs"
       >
         {tabs.map((tab, ti) => {
-          //const id = makeTabId(tab, ti)
-          //const w = tab.size ?? defaultWidth
-          const selected = tab.id === selectedTab?.tab.id // tab.id === selectedTab?.tab.id
-
-          const name = getTabName(tab)
-          const truncatedName = truncate(name, {
-            length: maxNameLength,
-          })
-
-          return (
-            <TabsTrigger
-              variant="base"
-              value={tab.id}
-              id={tab.id}
-              key={tab.id}
-              data-selected={selected}
-              ref={(el) => {
-                buttonsRef.current[ti] = el!
-              }}
-              onMouseEnter={() => {
-                if (selected) {
-                  _scale(2)
-                }
-              }}
-              onMouseLeave={() => {
-                // gsap.to(`#tab-line-${tab.id}`, {
-                //   opacity: 0,
-                //   scaleX: 0.5,
-                //   duration: 0.2,
-                //   ease: 'power.out',
-                // })
-
-                if (selected) {
-                  _scale(1)
-                }
-              }}
-              onMouseDown={() => {
-                pressed.current = true
-              }}
-              onMouseUp={() => {
-                pressed.current = false
-              }}
-              className={tabButtonVariants({
-                variant,
-              })}
-            >
-              <span
-                data-checked={selected}
-                ref={(el) => {
-                  itemsRef.current[ti] = el!
-                }}
-                aria-label={tab.id}
-                className={UNDERLINE_LABEL_CLS}
-              >
-                {truncatedName}
-              </span>
-
-              {/* <span
-                id={`tab-line-${tab.id}`}
-                data-selected={selected}
-                className={TAB_LINE_CLS}
-                style={{ height: '0.1rem' }}
-              /> */}
-            </TabsTrigger>
-
-            // <TabsTrigger key={tab.id} value={tab.id}>{tab.id}</TabsTrigger>
-          )
+          return <Trigger tab={tab} ti={ti} key={ti} />
         })}
 
         {/* <ToolbarTabLine tabPos={tabPos} /> */}

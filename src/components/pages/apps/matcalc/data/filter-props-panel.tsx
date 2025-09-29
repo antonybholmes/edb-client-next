@@ -205,6 +205,8 @@ export function FilterPropsPanel({ branchId }: IProps) {
           onValueChange={(v) => {
             setFilterMode(v)
           }}
+          rounded="none"
+          className="rounded-theme overflow-hidden"
         >
           <ToggleGroupItem
             value="Rows"
@@ -247,7 +249,7 @@ export function FilterPropsPanel({ branchId }: IProps) {
           />
         </FileDropZonePanel>
         <Button
-          variant="muted"
+          variant="flat"
           size="icon"
           // ripple={false}
           onClick={() =>

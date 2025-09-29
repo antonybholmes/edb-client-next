@@ -22,12 +22,13 @@ import type { ITab } from '@components/tabs/tab-provider'
 import type { VariantProps } from 'class-variance-authority'
 import { useSettingsTabs } from '../dialog/settings/setting-tabs-store'
 import { CookieIcon } from '../icons/cookie-icon'
-import { GearIcon } from '../icons/gear-icon'
+
 import { HelpIcon } from '../icons/help-icon'
 import { InfoIcon } from '../icons/info-icon'
 import { OptionsIcon } from '../icons/options-icon'
+import { SettingsIcon } from '../icons/settings-icon'
 import { BLANK_TARGET } from '../link/base-link'
-import { tabVariants, UNDERLINE_LABEL_CLS } from '../tabs/underline-tabs'
+import { tabVariants } from '../tabs/underline-tabs'
 
 export const SIDE_OVERLAY_CLS = cn(
   'fixed inset-0 z-overlay z-(--z-overlay) bg-overlay/30 backdrop-blur-xs duration-500 ease-in-out',
@@ -66,7 +67,7 @@ export function FileMenu({
           <span
             data-checked={open}
             aria-label={TEXT_FILE}
-            className={UNDERLINE_LABEL_CLS}
+            //className={UNDERLINE_LABEL_CLS}
           >
             {TEXT_FILE}
           </span>
@@ -142,7 +143,7 @@ export function FileMenu({
                 onClick={() => setSettingsVisible(true)}
                 aria-label="Show options"
               >
-                <GearIcon stroke="" />
+                <SettingsIcon stroke="" />
                 <span>{TEXT_SETTINGS}</span>
               </DropdownMenuItem>
             </DropdownMenuSubContent>

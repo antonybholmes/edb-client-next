@@ -66,7 +66,7 @@ export function OSButtonRow({
 export function CloseButton({ ...props }: IButtonProps) {
   return (
     <Button
-      variant="muted"
+      variant="flat"
       size="icon-lg"
       rounded="full"
       title={TEXT_CLOSE}

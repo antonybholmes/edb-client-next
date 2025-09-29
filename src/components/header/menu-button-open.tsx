@@ -7,7 +7,7 @@ import { MenuButtonIcon } from './menu-button-icon'
 export function MenuButtonOpen({ open, onClick, className }: IMenuButtonProps) {
   return (
     <Button
-      variant="muted"
+      variant="flat"
       size="icon-lg"
       rounded="none"
       onClick={onClick}

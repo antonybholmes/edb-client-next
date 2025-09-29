@@ -1,8 +1,9 @@
 import { SettingsDialog } from '@dialog/settings/settings-dialog'
-import { GearIcon } from '@icons/gear-icon'
+
 import { Button } from '@themed/button'
 
 import { useSettingsTabs } from '@/components/dialog/settings/setting-tabs-store'
+import { SettingsIcon } from '@/components/icons/settings-icon'
 import { TEXT_SETTINGS } from '@/consts'
 import { Header, type IHeaderChildrenProps } from '@components/header/header'
 import { HelpWidget } from '@help/help'
@@ -30,7 +31,7 @@ export function SettingsButton() {
   return (
     <Button
       id="header-settings-button"
-      variant="muted"
+      variant="flat"
       size="header"
       rounded="none"
       pad="none"
@@ -45,7 +46,7 @@ export function SettingsButton() {
       // }}
       className="opacity-70 hover:opacity-100 data-[selected=true]:opacity-100 trans-color"
     >
-      <GearIcon />
+      <SettingsIcon />
     </Button>
   )
 }

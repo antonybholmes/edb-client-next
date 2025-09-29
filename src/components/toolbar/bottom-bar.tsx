@@ -112,7 +112,7 @@ export function BottomBar({
           <ToolbarTabGroup>
             <ToolbarIconButton
               title="Previous Sheet"
-              variant="muted"
+              variant="flat"
               size="icon-sm"
               //rounded="full"
               onClick={() => {
@@ -136,7 +136,7 @@ export function BottomBar({
             </ToolbarIconButton>
             <ToolbarIconButton
               title="Next Sheet"
-              variant="muted"
+              variant="flat"
               size="icon-sm"
               //rounded="full"
               onClick={() => {

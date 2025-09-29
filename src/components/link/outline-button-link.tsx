@@ -12,7 +12,6 @@ export function OutlineButtonLink({
 }: ILinkProps) {
   return (
     <ButtonLink
-      variant="accent"
       size="lg"
       className={cn(OUTLINE_BUTTON_LINK_CLS, className)}
       {...props}

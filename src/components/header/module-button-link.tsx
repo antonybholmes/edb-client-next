@@ -9,7 +9,7 @@ export function ModuleButtonLink({
 }: ILinkProps) {
   return (
     <ButtonLink
-      variant="muted"
+      variant="flat"
       size="none"
       justify="start"
       items="start"

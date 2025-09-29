@@ -58,7 +58,7 @@ export function ToolbarOptionalDropdownButton({
           </ToolbarButton>
 
           <DropDownButton
-            variant="muted"
+            variant="flat"
             size="toolbar-dropdown"
             open={open}
             // ripple={false}

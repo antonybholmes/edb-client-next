@@ -1,5 +1,5 @@
-import { BUTTON_MD_H_CLS, FOCUS_RING_CLS } from '@/theme'
-import type { ITab } from '@components/tabs/tab-provider'
+import { FOCUS_RING_CLS } from '@/theme'
+import { type ITab } from '@components/tabs/tab-provider'
 import { cn } from '@lib/shadcn-utils'
 import * as TabsPrimitive from '@radix-ui/react-tabs'
 import { cva, type VariantProps } from 'class-variance-authority'
@@ -18,7 +18,6 @@ export const TRIGGER_SELECTED_CLS =
   'ring-offset-background focus-visible:outline-hidden disabled:pointer-events-none'
 
 export const TRIGGER_CLS = cn(
-  BUTTON_MD_H_CLS,
   FOCUS_RING_CLS,
   'inline-flex items-center justify-center whitespace-nowrap rounded-theme px-2',
   'disabled:opacity-50 data-[state=active]:bg-background',
@@ -28,7 +27,9 @@ export const TRIGGER_CLS = cn(
 
 //const CONTENT_CLS = "mt-2 ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
 
-export const Tabs = TabsPrimitive.Root
+export function Tabs({ ...props }: ComponentProps<typeof TabsPrimitive.Root>) {
+  return <TabsPrimitive.Root {...props} />
+}
 
 // export const BaseTabsList = forwardRef<
 //   ComponentRef<typeof TabsPrimitive.List>,

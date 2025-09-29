@@ -388,7 +388,6 @@ export function SignIn({ allowPassword = false, visitUrl }: ISignInProps) {
 
             <Button
               size="xl"
-              variant="accent"
               onClick={() => {
                 //passwordless.current = true
 

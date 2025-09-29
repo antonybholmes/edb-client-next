@@ -43,7 +43,11 @@ import {
   SortableItem,
   SortableItemContext,
 } from '../sortable-item'
-import { UNDERLINE_LABEL_CLS, type ITabMenu } from './underline-tabs'
+import {
+  UNDERLINE_HOVER_LABEL_CLS,
+  UNDERLINE_LABEL_CLS,
+  type ITabMenu,
+} from './underline-tabs'
 
 export const tabVariants = cva(
   'group trans-color trans-color flex flex-row items-center',
@@ -218,6 +222,14 @@ export function ReorderTabs({
           //   itemsRef.current.set(tab.id, el!)
           // }}
           title={name}
+        >
+          {truncatedName}
+        </span>
+
+        <span
+          aria-label={tab.id}
+          data-checked={checked}
+          className={UNDERLINE_HOVER_LABEL_CLS}
         >
           {truncatedName}
         </span>

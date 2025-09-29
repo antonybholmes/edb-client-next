@@ -114,7 +114,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
         <VCenterRow className="justify-between gap-x-2">
           <VCenterRow>
             {/* <Button
-                variant="muted"
+                variant="flat"
                 size="icon"
                 rounded="full"
                 onClick={() => setOpen(makeRandId("open"))}

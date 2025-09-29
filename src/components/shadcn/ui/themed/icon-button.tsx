@@ -2,7 +2,7 @@ import { Button, type IButtonProps } from '@themed/button'
 
 export function IconButton({
   ref,
-  variant = 'muted',
+  variant = 'flat',
   size = 'icon',
   aspect = 'icon',
   pad = 'none',

@@ -178,7 +178,7 @@ export function Toast({
           </button>
         ) : (
           <Button
-            variant="muted"
+            variant="flat"
             size="icon"
             rounded="full"
             onClick={() => dispatch({ type: 'REMOVE_TOAST', toastId: id })}

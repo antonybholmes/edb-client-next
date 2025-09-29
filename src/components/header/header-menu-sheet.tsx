@@ -10,7 +10,7 @@ import type { ILinkProps } from '@interfaces/link-props'
 import { BaseCol } from '@layout/base-col'
 import { VCenterRow } from '@layout/v-center-row'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
-import { BASE_MUTED_CLS, Button } from '@themed/button'
+import { BASE_FLAT_BUTTON_CLS, Button } from '@themed/button'
 import { Sheet, SheetContent, SheetTrigger } from '@themed/sheet'
 import { useState } from 'react'
 import { GripIcon } from '../icons/grip-icon'
@@ -26,7 +26,7 @@ export function ModuleButtonLink({
   return (
     <BaseLink
       className={cn(
-        BASE_MUTED_CLS,
+        BASE_FLAT_BUTTON_CLS,
         'flex flex-row items-center shrink-0 grow-0 justify-start gap-3 p-2 px-3 rounded-lg group',
         FOCUS_RING_CLS,
         className
@@ -102,7 +102,7 @@ export function HeaderMenuSheet({ tab = '' }: IFileMenu) {
       <SheetTrigger asChild>
         <Button
           id="header-menu-popover-button"
-          variant="muted"
+          variant="flat"
           size="none"
           rounded="none"
           // ripple={false}
@@ -120,7 +120,7 @@ export function HeaderMenuSheet({ tab = '' }: IFileMenu) {
       >
         <VCenterRow className="justify-end p-2">
           <Button
-            variant="muted"
+            variant="flat"
             rounded="full"
             size="icon"
             onClick={() => setOpen(false)}

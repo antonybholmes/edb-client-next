@@ -219,7 +219,7 @@
   --color-shortcuts: rgb(229 231 235);
 
   --color-faint: oklch(0.967 0.003 264.542);
-  --color-muted: oklch(0.928 0.006 264.531);
+  --color-muted: oklch(87.2% 0.01 258.338 / 0.7);
   --color-accent: oklch(0.872 0.01 258.338);
 
   --color-border: oklch(0.872 0.01 258.338);
@@ -321,7 +321,7 @@
 }
 
 .trans-500 {
-  @apply duration-500 ease-in-out;
+  @apply duration-500 ease-out;
 }
 
 .trans-color {

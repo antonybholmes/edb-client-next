@@ -12,7 +12,7 @@ export function ToolbarButton({
 
   return (
     <Button
-      variant="muted"
+      variant="flat"
       rounded="theme"
       size={size}
       className={className}

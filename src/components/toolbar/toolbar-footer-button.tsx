@@ -3,7 +3,7 @@ import { Button, type IButtonProps } from '@themed/button'
 
 export function ToolbarFooterButton({
   ref,
-  variant = 'muted',
+  variant = 'flat',
   size = 'xs',
   rounded: rounding = 'none',
   pad = 'none',

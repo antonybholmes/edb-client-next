@@ -1712,6 +1712,12 @@
           "msg": "Improved animation effects in groups",
           "date": "2025-09-28T17:44:57.108Z"
         }
+      ],
+      "Added": [
+        {
+          "msg": "Added icon transition animations",
+          "date": "2025-09-29T00:55:42.032Z"
+        }
       ]
     },
     "author": "Antony Holmes",

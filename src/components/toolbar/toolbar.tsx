@@ -54,7 +54,7 @@ export function ShowOptionsButton({ ref, ...props }: IButtonProps) {
   return (
     <Button
       ref={ref}
-      variant="muted"
+      variant="flat"
       rounded="md"
       size="icon-sm"
       // ripple={false}
@@ -197,7 +197,7 @@ export function ToolbarMenu({
 
   return (
     <VCenterRow
-      className={cn('shrink-0 text-xs grow px-2 gap-x-1 h-9', className)}
+      className={cn('shrink-0 text-xs grow px-2 gap-x-1 pb-1', className)}
     >
       {leftShortcuts && (
         <VCenterRow id="toolbar-left-shortcuts h-8">{leftShortcuts}</VCenterRow>
@@ -362,7 +362,7 @@ export function ToolbarPanel({ tabShortcutMenu }: IToolbarPanelProps) {
         <DropdownMenu open={showDropdown} onOpenChange={setShowDropdown}>
           <DropdownMenuTrigger asChild>
             <IconButton
-              variant="muted"
+              variant="flat"
               size="icon-xs"
               // ripple={false}
               title="Show Pane"
@@ -441,11 +441,10 @@ export function Toolbar({
   return (
     <TabProvider value={_value} onTabChange={onTabChange} tabs={tabs}>
       <Tabs
-        id="toolbar-menu-container"
+        id="toolbar-menu-tabs"
         value={_value}
         //defaultValue={_value === "" ? `${tabs[0].name}:0`:undefined}
         onValueChange={_onValueChange}
-        className="mb-2"
         orientation="horizontal"
       >
         {children}

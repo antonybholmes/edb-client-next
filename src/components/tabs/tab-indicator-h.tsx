@@ -26,7 +26,7 @@ export function TabIndicatorH({ h = 0.1 }: { h?: number }) {
     <>
       <span
         ref={line1Ref}
-        className="absolute bottom-0 left-0 z-0 bg-theme"
+        className="absolute bottom-0 left-0 z-0 bg-theme pointer-events-none select-none"
         // animate={{
         //   x: tabIndicatorPos.x,
         //   width: tabIndicatorPos.size,
@@ -38,7 +38,7 @@ export function TabIndicatorH({ h = 0.1 }: { h?: number }) {
 
       <span
         ref={line2Ref}
-        className="absolute bottom-0 left-0 z-0 bg-theme"
+        className="absolute bottom-0 left-0 z-0 bg-theme pointer-events-none select-none"
         // animate={{
         //   x: tabIndicatorPos.x,
         //   width: tabIndicatorPos.size,

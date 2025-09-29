@@ -301,6 +301,8 @@ export function MotifsPage() {
                   })
                 )
               }}
+              rounded="none"
+              className="rounded-theme overflow-hidden"
             >
               <ToggleGroupItem
                 value="prob"

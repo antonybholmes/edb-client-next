@@ -2,6 +2,10 @@
 
 ## 30.4 (Sep, 2025)
 
+### Added
+
+- Added icon transition animations.
+
 ### Changed
 
 - Improved animation effects in groups.

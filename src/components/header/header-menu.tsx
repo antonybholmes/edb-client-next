@@ -128,7 +128,7 @@ export function HeaderMenu({ tab = '' }: IFileMenu) {
         <PopoverTrigger asChild>
           <IconButton
             id="header-menu-popover-button"
-            variant="muted"
+            variant="flat"
             size="2xl"
             rounded="none"
             // ripple={false}

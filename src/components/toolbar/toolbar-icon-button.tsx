@@ -3,7 +3,7 @@ import { ToolbarButton } from './toolbar-button'
 
 export function ToolbarIconButton({
   ref,
-  variant = 'muted',
+  variant = 'flat',
   size = 'toolbar-icon',
   pad = 'none',
   aspect = 'icon',

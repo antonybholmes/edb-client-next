@@ -1,6 +1,11 @@
 'use client'
 
+import {
+  ICON_TRANSITION_FROM_CLS,
+  ICON_TRANSITION_TO_CLS,
+} from '@/interfaces/icon-props'
 import { useState } from 'react'
+import { VCenterRow } from '../layout/v-center-row'
 import { AppIcon } from './app-icon'
 import { HomeIcon } from './home-icon'
 
@@ -8,27 +13,17 @@ export function FavIcon() {
   const [hover, setHover] = useState(false)
 
   return (
-    <div
+    <VCenterRow
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       className="w-header h-header aspect-square justify-center group relative"
     >
-      <div
-        data-hover={hover}
-        className="pointer-events-none opacity-0 scale-70 data-[hover=true]:scale-100 data-[hover=true]:opacity-100 absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 transition-all duration-500 ease-in-out"
-      >
-        <HomeIcon
-          data-hover={hover}
-          stroke="stroke-theme dark:stroke-foreground stroke-2"
-        />
-      </div>
+      <HomeIcon
+        stroke="stroke-theme dark:stroke-foreground stroke-2"
+        className={ICON_TRANSITION_FROM_CLS}
+      />
 
-      <div
-        data-hover={hover}
-        className="pointer-events-none opacity-100 data-[hover=true]:scale-70 data-[hover=true]:opacity-0 absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 transition-all duration-500 ease-in-out"
-      >
-        <AppIcon />
-      </div>
-    </div>
+      <AppIcon className={ICON_TRANSITION_TO_CLS} />
+    </VCenterRow>
   )
 }

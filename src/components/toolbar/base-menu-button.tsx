@@ -4,7 +4,7 @@ import { Button, type IButtonProps } from '@themed/button'
 import { Children } from 'react'
 
 export function BaseMenuButton({
-  variant = 'muted',
+  variant = 'flat',
   size = '2xl',
   ref,
   className,

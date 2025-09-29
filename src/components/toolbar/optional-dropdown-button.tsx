@@ -47,7 +47,7 @@ export function OptionalDropdownButton({
         <BaseCol>
           <VCenterRow>
             <IconButton
-              variant="muted"
+              variant="flat"
               // ripple={false}
               onClick={() => onMainClick()}
               size={size}

@@ -43,7 +43,7 @@ export function ModuleInfoButton({
 
       <Button
         ref={ref}
-        variant="muted"
+        variant="flat"
         rounded="none"
         // ripple={false}
         className={cn(

@@ -405,7 +405,7 @@ export function ColorPickerUI({
 
       {allowNoColor && (
         <Button
-          variant="muted"
+          variant="flat"
           className="w-full"
           justify="start"
           rounded="md"
@@ -445,7 +445,7 @@ export function ColorPickerUI({
 
       {defaultColor && (
         <Button
-          variant="muted"
+          variant="flat"
           className="w-full"
           justify="start"
           rounded="md"

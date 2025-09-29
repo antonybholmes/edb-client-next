@@ -12,7 +12,7 @@ import {
 import { TEXT_CANCEL, TEXT_SETTINGS } from '@/consts'
 import { TAILWIND_MEDIA_LG, useWindowSize } from '@/hooks/window-size'
 import { VScrollPanel } from '@components/v-scroll-panel'
-import { GearIcon } from '@icons/gear-icon'
+
 import type { IChildrenProps } from '@interfaces/children-props'
 import { VCenterRow } from '@layout/v-center-row'
 import {
@@ -22,6 +22,7 @@ import {
   AccordionTrigger,
 } from '@themed/accordion'
 
+import { SettingsIcon } from '@/components/icons/settings-icon'
 import { Tabs } from '@/components/shadcn/ui/themed/tabs'
 import { where } from '@lib/math/where'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
@@ -80,7 +81,7 @@ export function SettingsDialog({
   let _tabs: ITab[] = [
     {
       id: 'General',
-      icon: <GearIcon stroke="" w="w-4.5" strokeWidth={2} />,
+      icon: <SettingsIcon stroke="" w="w-4.5" strokeWidth={2} />,
       children: [
         {
           id: 'Appearance',

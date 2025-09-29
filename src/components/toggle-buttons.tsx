@@ -91,7 +91,7 @@ export function ToggleButtonTriggers({
 
     const x = sum(
       rangeMap(
-        index => (tabs[index]?.size ?? defaultWidth) + 0.25,
+        (index) => (tabs[index]?.size ?? defaultWidth) + 0.25,
         0,
         selectedTab.index
       )
@@ -123,7 +123,7 @@ export function ToggleButtonTriggers({
   // //let tabButtonCls = TOGGLE_VARIANT_DEFAULT_BUTTON_CLS
   // let tabCls = TOGGLE_VARIANT_DEFAULT_TAB_CLS
 
-  // if (variant === 'muted') {
+  // if (variant === 'flat') {
   //   tabListCls = TOGGLE_VARIANT_TOOLBAR_LIST_CLS
   //   //tabButtonCls = TOGGLE_VARIANT_TOOLBAR_BUTTON_CLS
   //   tabCls = TOGGLE_VARIANT_TOOLBAR_TAB_CLS

@@ -2,7 +2,7 @@ import { Button, type IButtonProps } from '@themed/button'
 
 export function DropDownButton({
   ref,
-  variant = 'muted',
+  variant = 'flat',
   ripple = false,
   size = 'dropdown',
   pad = 'none',

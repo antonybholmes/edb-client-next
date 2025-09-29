@@ -1,4 +1,3 @@
-import { UserIcon } from '@icons/user-icon'
 import { Button } from '@themed/button'
 
 import { useState, type ReactNode } from 'react'
@@ -13,6 +12,11 @@ import {
   TEXT_SIGN_OUT,
   type IDialogParams,
 } from '@/consts'
+import {
+  ICON_TRANSITION_FROM_CLS,
+  ICON_TRANSITION_TO_CLS,
+} from '@/interfaces/icon-props'
+import { cn } from '@/lib/shadcn-utils'
 import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
 import { SignOutIcon } from '@icons/sign-out-icon'
 import { randId } from '@lib/id'
@@ -26,7 +30,7 @@ import {
   MenuSeparator,
 } from '@themed/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@themed/popover'
-import { UserRound } from 'lucide-react'
+import { LockOpen, UserRound } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { truncate } from '../../text/text'
 import {
@@ -47,7 +51,7 @@ import { useEdbSettings } from '../edb-settings'
 import { SignInWithApiKeyPopover } from './signin-with-api-key-popover'
 
 const SIGNED_IN_ICON_CLS =
-  'rounded-full border border-foreground flex flex-row items-center justify-center w-6 h-6 aspect-square text-xs font-medium overflow-hidden'
+  'rounded-full flex flex-row items-center justify-center w-6 h-6 aspect-square text-xs font-medium overflow-hidden'
 
 export type SignInMode = 'username-password' | 'api' | 'auth0' | 'oauth2'
 
@@ -107,7 +111,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
         <DropdownMenuTrigger asChild>
           <IconButton
             id="edb-signin-button"
-            variant="muted"
+            variant="flat"
             size="header"
             rounded="none"
             checked={open}
@@ -168,7 +172,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
     const button = (
       <Button
         id="edb-signin-button"
-        variant="muted"
+        variant="flat"
         size="header"
         rounded="none"
         checked={open}
@@ -176,9 +180,8 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
         title={TEXT_SIGN_IN}
         //disabled={!loaded}
       >
-        <span className={SIGNED_IN_ICON_CLS}>
-          <UserIcon className="fill-foreground -mb-2 w-5 h-5" />
-        </span>
+        <SignInIcon className={cn('w-5 h-5', ICON_TRANSITION_FROM_CLS)} />
+        <LockOpen className={cn('w-4 h-4', ICON_TRANSITION_TO_CLS)} />
       </Button>
     )
 

@@ -32,8 +32,8 @@ import { gsap } from 'gsap'
 import { useEffect, useRef, useState, type ComponentProps } from 'react'
 import { SimpleTooltip } from './tooltip'
 
-const BASE_GHOST_CLS =
-  'border border-transparent bg-muted hover:bg-accent data-[checked=true]:bg-accent'
+// const BASE_GHOST_CLS =
+//   'border border-transparent bg-muted hover:bg-accent data-[checked=true]:bg-accent'
 
 export const BASE_OUTLINE_CLS = cn(
   FOCUS_RING_CLS,
@@ -52,7 +52,7 @@ export const BASE_SECONDARY_CLS = cn(
   'data-[checked=true]:bg-faint data-[state=open]:bg-faint'
 )
 
-export const BASE_MUTED_CLS = cn(
+export const BASE_FLAT_BUTTON_CLS = cn(
   'data-[checked=false]:hover:bg-muted border border-transparent',
   'data-[checked=true]:bg-muted data-[state=open]:bg-muted',
   'data-[checked=true]:border-border/50 data-[state=open]:border-border/50'
@@ -68,8 +68,8 @@ export const THEME_MUTED_CLS = cn(
   'data-[checked=true]:bg-theme/25 data-[state=open]:bg-theme/25'
 )
 
-export const ACCENT_BUTTON_CLS =
-  'data-[mode=flat]:bg-accent data-[mode=flat]:hover:bg-accent hover:bg-accent'
+// export const ACCENT_BUTTON_CLS =
+//   'data-[mode=flat]:bg-accent data-[mode=flat]:hover:bg-accent hover:bg-accent'
 
 // export const BASE_TOOLBAR_CLS = cn(
 //   'border border-transparent data-[checked=false]:hover:bg-muted/50',
@@ -360,7 +360,7 @@ export const RIPPLE_CLS =
 //       pad: 'sm',
 //     },
 //     'toolbar-tab': {
-//       variant: 'muted',
+//       variant: 'flat',
 //       rounded: 'md',
 //       size: 'sm',
 //       pad: 'sm',
@@ -401,11 +401,11 @@ export const buttonVariants = cva(BASE_BUTTON_CLS, {
       destructive: DESTRUCTIVE_CLS,
       trans: 'hover:bg-white/20 data-[checked=true]:bg-white/20',
       secondary: BASE_SECONDARY_CLS,
-      accent: ACCENT_BUTTON_CLS,
-      ghost: BASE_GHOST_CLS,
+      //accent: ACCENT_BUTTON_CLS,
+      //ghost: BASE_GHOST_CLS,
       ios: BASE_IOS_CLS,
       input: BASE_OUTLINE_CLS,
-      muted: BASE_MUTED_CLS,
+      flat: BASE_FLAT_BUTTON_CLS,
       'muted-light': BASE_MUTED_LIGHT_CLS,
       'theme-muted': THEME_MUTED_CLS,
       //accent: BASE_ACCENT_CLS,
@@ -555,7 +555,7 @@ export function Button({
   items,
   aspect,
   animation,
-  variant = 'muted',
+  variant = 'flat',
   checked = false,
   open = false,
   ripple = false,
@@ -676,7 +676,7 @@ export function Button({
         aspect,
         items,
         animation,
-        className: cn('relative text-nowrap', className),
+        className: cn('relative text-nowrap group', className),
       })}
       ref={ref}
       data-checked={checked}
