@@ -19,6 +19,7 @@ import {
   PopoverTrigger,
 } from '../shadcn/ui/themed/popover'
 
+import { DOCS_URL } from '@/consts'
 import {
   ICON_TRANSITION_FROM_CLS,
   ICON_TRANSITION_TO_CLS,
@@ -225,7 +226,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
                 className="p-2 gap-y-2 w-full"
                 onClick={() => {
                   window.open(
-                    '/help/apps',
+                    DOCS_URL,
                     'HelpWindow',
                     'width=1080,height=720,toolbar=no,status=no,menubar=no,scrollbars=yes,resizable=yes'
                   )

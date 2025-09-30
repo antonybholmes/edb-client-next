@@ -7,6 +7,10 @@
 - UI tweaks.
 - Bug fixes and updates.
 
+### Fixed
+
+- Fixed help url.
+
 
 ## 30.6 (Sep, 2025)
 
