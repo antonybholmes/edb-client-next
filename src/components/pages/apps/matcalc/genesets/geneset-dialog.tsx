@@ -4,6 +4,7 @@ import { TEXT_CANCEL, TEXT_NAME } from '@/consts'
 import { ColorPickerPopover } from '@components/color/color-picker-button'
 import { OKCancelDialog, type IModalProps } from '@dialog/ok-cancel-dialog'
 
+import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { LabelContainer } from '@/components/shadcn/ui/themed/label'
 import { PopoverTrigger } from '@/components/shadcn/ui/themed/popover'
 import type { IGeneset } from '@lib/gsea/geneset'
@@ -46,7 +47,11 @@ export function GenesetDialog({ geneset, callback, onResponse }: IProps) {
   return (
     <OKCancelDialog
       open={true}
-      title={name.length > 0 ? `Edit ${name}` : 'New Gene Set'}
+      title={
+        <span style={{ color }}>
+          {name.length > 0 ? `Edit ${name}` : 'New Gene Set'}
+        </span>
+      }
       onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onResponse?.(r)
@@ -69,8 +74,21 @@ export function GenesetDialog({ geneset, callback, onResponse }: IProps) {
         // />
 
         <ColorPickerPopover color={color} onColorChange={setColor}>
-          <PopoverTrigger title="Set color">
-            <Palette style={{ fill: color }} className="stroke-foreground/80" />
+          <PopoverTrigger asChild>
+            <IconButton
+              variant="secondary"
+              size="icon-sm"
+              title="Gene set color"
+            >
+              <Palette
+                style={{ fill: color, strokeWidth: 1 }}
+                className="stroke-foreground/80 w-5"
+              />
+              {/* <Brush
+                          style={{ strokeWidth: 1 }}
+                          className="absolute bottom-1/5 left-1/2 fill-white w-5 stroke-black"
+                        /> */}
+            </IconButton>
           </PopoverTrigger>
         </ColorPickerPopover>
       }

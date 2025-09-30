@@ -4,6 +4,7 @@
 
 ### Changed
 
+- UI tweaks.
 - Bug fixes and updates.
 
 
