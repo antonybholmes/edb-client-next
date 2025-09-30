@@ -121,7 +121,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
           >
             <span
               className={cn(
-                'rounded-full bg-foreground/50 w-7 h-7 aspect-square flex items-center justify-center text-xs font-medium overflow-hidden text-background',
+                'rounded-full bg-foreground/70 w-7 h-7 aspect-square flex items-center justify-center text-xs font-semibold overflow-hidden text-background',
                 ICON_TRANSITION_FROM_CLS
               )}
             >
@@ -129,7 +129,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
             </span>
             <UserIcon
               className={cn(
-                'w-5.5 h-5.5 aspect-square rounded-full overflow-hidden',
+                'w-5 h-5 aspect-square rounded-full overflow-hidden',
                 ICON_TRANSITION_TO_CLS
               )}
             />
