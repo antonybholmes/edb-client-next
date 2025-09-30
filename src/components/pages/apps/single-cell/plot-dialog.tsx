@@ -74,7 +74,7 @@ export function PlotDialog({ plot, onResponse }: IProps) {
           }}
           placeholder="Title..."
           //variant="dialog"
-          h="dialog"
+          h="lg"
         />
       </LabelContainer>
 

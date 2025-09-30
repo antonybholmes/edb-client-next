@@ -81,7 +81,7 @@ export function Autocomplete({
           //onTextChanged={handleSearch}
           //onSearch={handleSearch}
           variant="plain"
-          h="dialog"
+          h="lg"
           className="grow"
           {...props}
         />

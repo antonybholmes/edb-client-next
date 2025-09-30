@@ -245,7 +245,7 @@ export function DialogButtons({
           onClick={() => onResponse?.(button)}
           className="w-24"
           size="lg"
-          variant="ghost"
+          variant="secondary"
         >
           {button}
         </Button>

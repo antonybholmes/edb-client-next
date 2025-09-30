@@ -467,12 +467,12 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
   }
 
   async function sendOTP(email: string) {
-    console.log('sendOTP', email)
+    //console.log('sendOTP', email)
 
     await queryClient.fetchQuery({
       queryKey: ['signin-username-otp'],
       queryFn: () =>
-        httpFetch.post(SESSION_AUTH_OTP_SEND_URL, {
+        httpFetch.postJson(SESSION_AUTH_OTP_SEND_URL, {
           body: { email },
           headers: JSON_HEADERS,
         }),

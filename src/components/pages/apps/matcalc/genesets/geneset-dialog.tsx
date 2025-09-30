@@ -1,16 +1,16 @@
 import { BaseCol } from '@layout/base-col'
 
 import { TEXT_CANCEL, TEXT_NAME } from '@/consts'
-import { ColorPickerButton } from '@components/color/color-picker-button'
+import { ColorPickerPopover } from '@components/color/color-picker-button'
 import { OKCancelDialog, type IModalProps } from '@dialog/ok-cancel-dialog'
-import { cn } from '@lib/shadcn-utils'
 
 import { LabelContainer } from '@/components/shadcn/ui/themed/label'
-import { SM_ICON_BUTTON_CLS } from '@/theme'
+import { PopoverTrigger } from '@/components/shadcn/ui/themed/popover'
 import type { IGeneset } from '@lib/gsea/geneset'
 import { textToLines } from '@lib/text/lines'
 import { Input } from '@themed/input'
 import { Textarea } from '@themed/textarea'
+import { Palette } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 export interface IProps extends IModalProps {
@@ -61,12 +61,18 @@ export function GenesetDialog({ geneset, callback, onResponse }: IProps) {
       //footerVariant="default"
       //className="w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4"
       leftHeaderChildren={
-        <ColorPickerButton
-          color={color}
-          onColorChange={setColor}
-          className={cn(SM_ICON_BUTTON_CLS, 'rounded-full')}
-          title="Set color"
-        />
+        // <ColorPickerButton
+        //   color={color}
+        //   onColorChange={setColor}
+        //   className={cn(XS_ICON_BUTTON_CLS, 'rounded-full')}
+        //   title="Set color"
+        // />
+
+        <ColorPickerPopover color={color} onColorChange={setColor}>
+          <PopoverTrigger title="Set color">
+            <Palette style={{ fill: color }} className="stroke-foreground/80" />
+          </PopoverTrigger>
+        </ColorPickerPopover>
       }
       leftFooterChildren={
         <span className="text-foreground/50" title="Gene Set Id">

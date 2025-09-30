@@ -1,14 +1,14 @@
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { LabelContainer } from '@/components/shadcn/ui/themed/label'
+import { PopoverTrigger } from '@/components/shadcn/ui/themed/popover'
 import { TEXT_CANCEL, TEXT_NAME } from '@/consts'
-import { SM_ICON_BUTTON_CLS } from '@/theme'
-import { ColorPickerButton } from '@components/color/color-picker-button'
+import { ColorPickerPopover } from '@components/color/color-picker-button'
 import { OKCancelDialog, type IModalProps } from '@dialog/ok-cancel-dialog'
 import type { IClusterGroup } from '@lib/cluster-group'
-import { cn } from '@lib/shadcn-utils'
 import { Checkbox } from '@themed/check-box'
 import { InfoHoverCard } from '@themed/hover-card'
 import { Input } from '@themed/input'
+import { Palette } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 export interface IProps extends IModalProps {
@@ -48,7 +48,11 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
   return (
     <OKCancelDialog
       open={true}
-      title={name.length > 0 ? `Edit ${name}` : 'New group'}
+      title={
+        <span style={{ color }}>
+          {name.length > 0 ? `Edit ${name}` : 'New group'}
+        </span>
+      }
       onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onResponse?.(r)
@@ -59,12 +63,18 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
       showClose={true}
       //className="w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4"
       leftHeaderChildren={
-        <ColorPickerButton
-          color={color}
-          onColorChange={setColor}
-          className={cn(SM_ICON_BUTTON_CLS, 'rounded-full')}
-          title="Set color"
-        />
+        // <ColorPickerButton
+        //   color={color}
+        //   onColorChange={setColor}
+        //   className={cn(XS_ICON_BUTTON_CLS, 'rounded-full')}
+        //   title="Set color"
+        // />
+
+        <ColorPickerPopover color={color} onColorChange={setColor}>
+          <PopoverTrigger title="Set color">
+            <Palette style={{ fill: color }} className="stroke-foreground/80" />
+          </PopoverTrigger>
+        </ColorPickerPopover>
       }
       //headerStyle={{ color }}
       // headerChildren={

@@ -77,17 +77,17 @@ export const CENTERED_ROW_CLS = 'flex flex-row items-center justify-center'
 export const COL_BUTTON_CLS = 'flex flex-col'
 
 export const XS_ICON_BUTTON_CLS = cn(
+  BASE_ICON_BUTTON_CLS,
   CENTERED_ROW_CLS,
   BUTTON_XS_W_CLS,
-  BUTTON_XS_H_CLS,
-  'shrink-0 aspect-square'
+  BUTTON_XS_H_CLS
 )
 
 export const SM_ICON_BUTTON_CLS = cn(
+  BASE_ICON_BUTTON_CLS,
   CENTERED_ROW_CLS,
   BUTTON_SM_W_CLS,
-  BUTTON_SM_H_CLS,
-  'shrink-0 grow-0 aspect-square'
+  BUTTON_SM_H_CLS
 )
 
 export const SMALL_BUTTON_CLS = cn(BUTTON_SM_H_CLS, 'px-2')

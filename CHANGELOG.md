@@ -11,6 +11,10 @@
 
 - Bug fixes and updates.
 
+### Fixed
+
+- UI fixes. Allow request errors to return json messages.
+
 
 ## 30.4 (Sep, 2025)
 

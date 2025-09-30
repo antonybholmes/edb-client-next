@@ -1741,6 +1741,12 @@
           "msg": "Bug fixes and updates.",
           "date": "2025-09-29T01:13:33.794Z"
         }
+      ],
+      "Fixed": [
+        {
+          "msg": "UI fixes. Allow request errors to return json messages",
+          "date": "2025-09-30T15:42:23.150Z"
+        }
       ]
     },
     "author": "Antony Holmes",

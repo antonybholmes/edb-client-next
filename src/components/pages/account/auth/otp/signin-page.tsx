@@ -20,6 +20,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowRight } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 
+import { addPeriod, capitalizeFirstWord } from '@/lib/text/capital-case'
 import { BaseSyntheticEvent, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
@@ -155,16 +156,31 @@ export function SignInPage() {
 
     const isValid = await form.trigger('email')
 
+    console.log('isValid', isValid, form.getValues('email'))
+
     if (isValid) {
-      sendOTP(form.getValues('email'))
+      try {
+        await sendOTP(form.getValues('email'))
 
-      setOTPSent(true)
+        setOTPSent(true)
 
-      toast({
-        title: APP_NAME,
-        description:
-          'If the email address is valid, you will receive a 6-digit code.',
-      })
+        toast({
+          title: APP_NAME,
+          description:
+            'If the email address is valid, you will receive a 6-digit code.',
+        })
+      } catch (error) {
+        console.log('Error sending OTP: ', error)
+
+        toast({
+          title: 'We were unable to send you a code',
+          description:
+            error instanceof Error
+              ? addPeriod(capitalizeFirstWord(error.message))
+              : 'Error sending code.',
+          variant: 'destructive',
+        })
+      }
     }
   }
 
@@ -247,23 +263,23 @@ export function SignInPage() {
                     </VCenterRow>
 
                     <FormInputError error={form.formState.errors.otp} />
-
-                    {otpSent && (
-                      <button
-                        className="text-sm text-theme hover:underline"
-                        disabled={!form.watch('email')}
-                        onClick={(e) => {
-                          sendCode(e)
-                        }}
-                        aria-label="Send One-Time Password to Email"
-                        title="Send One-Time Password to Email"
-                      >
-                        Re-send Code
-                      </button>
-                    )}
                   </FormItem>
                 )}
               />
+
+              {otpSent && (
+                <button
+                  className="text-sm text-theme hover:underline"
+                  disabled={!form.watch('email')}
+                  onClick={(e) => {
+                    sendCode(e)
+                  }}
+                  aria-label="Send One-Time Password to Email"
+                  title="Send One-Time Password to Email"
+                >
+                  Re-send Code
+                </button>
+              )}
 
               <button ref={btnRef} type="submit" className="hidden" />
             </form>

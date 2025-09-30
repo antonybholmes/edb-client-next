@@ -8,10 +8,21 @@ export type IFetchBody = IFieldMap | FormData
 
 export type HttpBackend = 'axios' | 'fetch'
 
+export class ApiError extends Error {
+  code: number
+
+  constructor(message: string, code: number) {
+    super(message)
+    this.name = 'ApiError'
+    this.code = code
+  }
+}
+
 export interface IFetchOptions {
   headers?: IFieldMap
   body?: IFieldMap
   withCredentials?: boolean
+  throwError?: boolean
 }
 
 interface IHttpRequest {
@@ -34,6 +45,8 @@ class FetchRequest implements IHttpRequest {
       ? 'include'
       : 'same-origin'
 
+    const throwError = options?.throwError ?? true
+
     //console.log('url', url)
 
     const response = await fetch(url, {
@@ -42,7 +55,7 @@ class FetchRequest implements IHttpRequest {
       credentials,
     })
 
-    if (!response.ok) {
+    if (!response.ok && throwError) {
       throw new Error(`HTTP error! Status: ${response.status}`)
     }
 
@@ -60,6 +73,8 @@ class FetchRequest implements IHttpRequest {
       ? 'include'
       : 'same-origin'
 
+    const throwError = options?.throwError ?? true
+
     //console.log('body', body, credentials)
 
     const response = await fetch(url, {
@@ -69,7 +84,7 @@ class FetchRequest implements IHttpRequest {
       credentials,
     })
 
-    if (!response.ok) {
+    if (!response.ok && throwError) {
       throw new Error(`HTTP error! Status: ${response.status}`)
     }
 
@@ -100,10 +115,17 @@ class FetchRequest implements IHttpRequest {
 
     const response = await this.post(url, {
       ...options,
+      throwError: false,
       headers: { ...options.headers, ...JSON_HEADERS },
     })
 
     const ret = await response.json()
+
+    console.log(response, ret)
+
+    if (!response.ok) {
+      throw new ApiError(ret.message || 'API Error', response.status)
+    }
 
     return ret
   }
