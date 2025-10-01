@@ -1,7 +1,7 @@
 {
   "name": "Overlap",
   "description": "Overlap sets of genomic coordinates.",
-  "version": "8.0.4.274",
+  "version": "8.0.6.276",
   "copyright": "Copyright (C) ${START_YEAR:2025} Antony Holmes. All rights reserved.",
-  "modified": "2025-09-30T21:54:39.842Z"
+  "modified": "2025-09-30T22:00:11.431Z"
 }
