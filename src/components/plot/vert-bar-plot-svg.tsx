@@ -73,7 +73,7 @@ export function VertBarPlotSvg({
   cmap = BLUES_CMAP,
   barWidth = 2,
   displayProps = {},
-  hue_norm = (x) => x,
+  hue_norm = x => x,
 }: IProps) {
   const _displayProps: IDisplayProps = {
     ...DEFAULT_DISPLAY_PROPS,
@@ -118,7 +118,7 @@ export function VertBarPlotSvg({
 
     if (hue) {
       const huecol = df.col(hue)!
-      huedata = (huecol.values as number[]).map((x) =>
+      huedata = (huecol.values as number[]).map(x =>
         cmap.getHexColor(hue_norm(x))
       )
     } else {

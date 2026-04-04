@@ -46,14 +46,14 @@ export interface IStrokeProps {
   show: boolean
   width: number
   color: string
-  alpha: number
+  opacity: number
 }
 
 export const DEFAULT_STROKE_PROPS: IStrokeProps = {
   show: true,
   width: 1,
   color: COLOR_BLACK,
-  alpha: 1,
+  opacity: 1,
 }
 
 export const NO_STROKE_PROPS: IStrokeProps = {
@@ -62,14 +62,14 @@ export const NO_STROKE_PROPS: IStrokeProps = {
 }
 
 export interface IFontProps {
-  //show: boolean
+  show: boolean
   color: string
   size: string
   opacity: number
 }
 
 export const DEFAULT_FONT_PROPS: IFontProps = {
-  //show: true,
+  show: true,
   color: COLOR_BLACK,
   size: 'small',
   opacity: 1,

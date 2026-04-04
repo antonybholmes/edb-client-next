@@ -144,26 +144,26 @@ export class Axis {
 
     const a = this.copy()
 
-    if (ticks.every((item) => typeof item === 'number')) {
+    if (ticks.every(item => typeof item === 'number')) {
       if (!a._format) {
         // auto format the ticks if not set
         a._format = this._scale.tickFormat(ticks.length)! //  d3.format('.2f')
       }
 
       // if ticks are just numbers, convert to TickItem
-      a._ticks = ticks.map((v) => ({
+      a._ticks = ticks.map(v => ({
         v,
         label: a._format!(v),
       }))
-    } else if (ticks.every((item) => typeof item === 'string')) {
+    } else if (ticks.every(item => typeof item === 'string')) {
       // if ticks are just strings, convert to TickItem
-      a._ticks = ticks.map((v) => ({
+      a._ticks = ticks.map(v => ({
         v: parseFloat(v),
         label: v,
       }))
     } else if (
       ticks.every(
-        (item) => typeof item === 'object' && 'v' in item && 'label' in item
+        item => typeof item === 'object' && 'v' in item && 'label' in item
       )
     ) {
       a._ticks = ticks
@@ -206,9 +206,10 @@ export class Axis {
   }
 
   get ticks(): TickItem[] {
+    // if ticks are not set, generate them from the scale
     if (!this._ticks) {
       this._ticks =
-        this._scale.ticks(this._numTicks).map((v) => ({
+        this._scale.ticks(this._numTicks).map(v => ({
           v,
           label: this._scale.tickFormat?.()(v) ?? String(v),
         })) ?? []
@@ -240,7 +241,7 @@ export class Axis {
   }
 
   /**
-   * Converts a number in domain space to range space.
+   * Converts a number in domain space to range space, i.e. real to pixel coordinates.
    *
    * @param x a value in domain space
    * @returns the value in range space (i.e. the pixel coordinate)

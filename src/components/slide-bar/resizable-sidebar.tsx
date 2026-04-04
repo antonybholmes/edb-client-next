@@ -27,11 +27,7 @@ export function ResizableSidebar({
   // need to wait for hydration to get the correct initial
   // size from the store, otherwise it will always start at 50%
 
-  const hydrated = useSlideBarStore.persist?.hasHydrated() ?? false
-
-  if (!hydrated) {
-    return null
-  }
+  const hydrated = useSlideBarStore((state) => state._hasHydrated)
 
   const _id = id ?? useStableId('resizable-sidebar')
 
@@ -79,6 +75,10 @@ export function ResizableSidebar({
 
     window.addEventListener('pointerup', stopDragging)
     window.addEventListener('pointercancel', stopDragging)
+  }
+
+  if (!hydrated) {
+    return null
   }
 
   const mainPanel = (

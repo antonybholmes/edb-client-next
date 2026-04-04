@@ -1,4 +1,5 @@
 import { SVG_CRISP_EDGES } from '@/consts'
+import type { ICell } from '@/interfaces/cell'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { COLOR_WHITE, getTextColorForBackground } from '@/lib/color/color'
 import { COLOR_MAPS } from '@/lib/color/colormap'
@@ -17,6 +18,8 @@ export interface ICellsSvgProps {
   dfSize?: BaseDataFrame | undefined
   rowLeaves: number[]
   colLeaves: number[]
+  handleVariantEnter?: (pos: IPos, cell: ICell) => void
+  handleVariantLeave?: () => void
   props: IHeatMapDisplayOptions
   pos?: IPos
 }
@@ -30,25 +33,16 @@ export function CellsSvg({
   rowLeaves,
   colLeaves,
   props,
+  handleVariantEnter,
+  handleVariantLeave,
   pos = { ...ZERO_POS },
 }: ICellsSvgProps) {
   const blockSize = props.blockSize
 
-  // function bound(x: number) {
-  //   const r = props.range[1] - props.range[0]
-
-  //   return (
-  //     (Math.max(props.range[0], Math.min(props.range[1], x)) - props.range[0]) /
-  //     r
-  //   )
-  // }
-
   const cmap = COLOR_MAPS[props.cmap]!
 
-  console.log(COLOR_MAPS, props.cmap)
-
-  const colors = rowLeaves.map((row) => {
-    return colLeaves.map((col) => {
+  const colors = rowLeaves.map(row => {
+    return colLeaves.map(col => {
       const v = df.get(row, col) as number
 
       //console.log(row, col, v)
@@ -60,7 +54,7 @@ export function CellsSvg({
     })
   })
 
-  const uniqueColorRects = [...new Set(colors.flat())].sort().map((color) => {
+  const uniqueColorRects = [...new Set(colors.flat())].sort().map(color => {
     const id = getUseRectId(color)
 
     return (
@@ -84,8 +78,12 @@ export function CellsSvg({
         transform={`translate(${pos.x}, ${pos.y})`}
         shapeRendering={SVG_CRISP_EDGES}
       >
-        {colors.map((row, ri) => {
-          return row.map((fill, ci) => {
+        {rowLeaves.map((row, ri) => {
+          const y = pos.y + row * blockSize.h
+          return colLeaves.map((col, ci) => {
+            const x = pos.x + col * blockSize.w
+            const fill = colors[ri]![ci]!
+
             const id = getUseRectId(fill)
 
             return (
@@ -103,6 +101,18 @@ export function CellsSvg({
                 key={`${ri}:${ci}`}
                 xlinkHref={`#${id}`}
                 transform={`translate(${ci * blockSize.w},${ri * blockSize.h})`}
+                onMouseEnter={() => {
+                  handleVariantEnter?.(
+                    {
+                      x,
+                      y,
+                    },
+                    { row: ri, col: ci }
+                  )
+                }}
+                onMouseLeave={() => {
+                  handleVariantLeave?.()
+                }}
               />
             )
           })
@@ -118,6 +128,8 @@ export function DotsSvg({
   dfSize,
   rowLeaves,
   colLeaves,
+  handleVariantEnter,
+  handleVariantLeave,
   props,
   pos = { ...ZERO_POS },
 }: ICellsSvgProps) {
@@ -140,7 +152,9 @@ export function DotsSvg({
       //shapeRendering={SVG_CRISP_EDGES}
     >
       {rowLeaves.map((row, ri) => {
+        const y = pos.y + row * blockSize.h
         return colLeaves.map((col, ci) => {
+          const x = pos.x + col * blockSize.w
           const v = df.get(row, col) as number
 
           const radius =
@@ -152,27 +166,27 @@ export function DotsSvg({
             ? cmap.getHexColor(bound(v), false)
             : COLOR_WHITE
 
-          let cellValue: number | undefined = undefined
+          let cellValue: number = Number.NaN
 
           if (props.cells.values.show) {
-            if (props.dot.useOriginalValuesForSizes) {
-              cellValue = dfRaw ? (dfRaw.get(row, col) as number) : undefined
+            if (props.dot.useOriginalValuesForSizes && dfRaw !== undefined) {
+              cellValue = dfRaw.get(row, col) as number //dfRaw ? (dfRaw.get(row, col) as number) : undefined
             } else {
               cellValue = df.get(row, col) as number
             }
-          }
 
-          if (
-            cellValue !== undefined &&
-            props.cells.values.filter.on &&
-            cellValue < props.cells.values.filter.value
-          ) {
-            cellValue = undefined
+            if (
+              props.cells.values.filter.on &&
+              cellValue < props.cells.values.filter.value
+            ) {
+              cellValue = Number.NaN
+            }
           }
 
           const cx = 0.5 * blockSize.w
           const cy = 0.5 * blockSize.h
-          const r = 0.5 * blockSize.w * radius * RADIUS_FACTOR
+          const r =
+            0.5 * Math.min(blockSize.w, blockSize.h) * radius * RADIUS_FACTOR
 
           const textColor =
             props.cells.values.autoColor.on && radius > 0.4
@@ -187,11 +201,30 @@ export function DotsSvg({
               key={`${ri}:${ci}`}
               transform={`translate(${ci * blockSize.w},${ri * blockSize.h})`}
             >
+              {/* Handle mouse events on transparent rect on top of circles to avoid 
+              issues with small circles not triggering mouse events */}
+              <rect
+                width={blockSize.w}
+                height={blockSize.h}
+                fill="transparent"
+                onMouseEnter={() => {
+                  handleVariantEnter?.(
+                    {
+                      x,
+                      y,
+                    },
+                    { row: ri, col: ci }
+                  )
+                }}
+                onMouseLeave={() => {
+                  handleVariantLeave?.()
+                }}
+              />
               <circle
                 id={`${ri}:${ci}`}
                 key={`${ri}:${ci}`}
                 cx={cx}
-                cy={cx}
+                cy={cy}
                 r={r}
                 fill={fill}
                 stroke={
@@ -200,10 +233,10 @@ export function DotsSvg({
                 strokeWidth={
                   props.cells.border.show ? props.cells.border.width : 0
                 }
-                //shapeRendering={SVG_CRISP_EDGES}
+                pointerEvents="none"
               />
 
-              {cellValue !== undefined && (
+              {!Number.isNaN(cellValue) && (
                 <text
                   x={cx}
                   y={cy}
@@ -211,6 +244,7 @@ export function DotsSvg({
                   dominantBaseline="middle"
                   fontSize="small"
                   textAnchor="middle"
+                  pointerEvents="none"
                   //fontWeight={track.displayOptions.font.weight}
                 >
                   {formatNumber(cellValue, props.cells.values.dp)}
@@ -234,17 +268,18 @@ interface IGridSvgProps {
 export function GridSvg({
   width,
   height,
+
   props,
   pos = { ...ZERO_POS },
 }: IGridSvgProps) {
   const blockSize = props.blockSize
 
   const hlines = range(blockSize.h, height, blockSize.h)
-    .map((y) => `M 0,${y} L ${width},${y}`)
+    .map(y => `M 0,${y} L ${width},${y}`)
     .join(' ')
 
   const vlines = range(blockSize.w, width, blockSize.w)
-    .map((x) => `M ${x},0 L ${x},${height}`)
+    .map(x => `M ${x},0 L ${x},${height}`)
     .join(' ')
 
   return (

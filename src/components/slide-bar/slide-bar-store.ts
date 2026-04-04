@@ -17,6 +17,7 @@ interface IBarProps {
 
   size: number
   open: boolean
+
   //previousSize: number
   sideLimits: [number, number]
   //message: ISlideBarMessage | null
@@ -26,6 +27,7 @@ const DEFAULT_BAR_PROPS: IBarProps = Object.freeze({
   //initialSize: 80,
   //previousSize: 80,
   open: true,
+
   size: 80,
   sideLimits: [5, 50] as [number, number],
   //message: null,
@@ -33,7 +35,9 @@ const DEFAULT_BAR_PROPS: IBarProps = Object.freeze({
 
 export interface ISlideBarStore {
   barMap: Record<string, IBarProps>
+  _hasHydrated: boolean
   setBar: (id: string, props: IBarProps) => void
+  setHasHydrated: (state: boolean) => void
   setInitialSize: (id: string, size: number) => void
   //setPreviousSize: (id: string, size: number) => void
   setSize: (id: string, size: number) => void
@@ -44,20 +48,21 @@ export interface ISlideBarStore {
 
 export const useSlideBarStore = create<ISlideBarStore>()(
   persist(
-    set => ({
+    (set) => ({
       barMap: {},
-
+      _hasHydrated: false,
       setBar: (id: string, props: IBarProps) => {
-        set(state => ({
+        set((state) => ({
           barMap: {
             ...state.barMap,
             [id]: props,
           },
         }))
       },
+      setHasHydrated: (state: boolean) => set({ _hasHydrated: state }),
       setInitialSize: (id: string, size: number) => {
         set(
-          produce(state => {
+          produce((state) => {
             if (!(id in state.barMap)) {
               state.barMap[id] = { ...DEFAULT_BAR_PROPS }
             }
@@ -83,7 +88,7 @@ export const useSlideBarStore = create<ISlideBarStore>()(
       // },
       setSize: (id: string, size: number) => {
         set(
-          produce(state => {
+          produce((state) => {
             if (!(id in state.barMap)) {
               state.barMap[id] = { ...DEFAULT_BAR_PROPS }
             }
@@ -94,7 +99,7 @@ export const useSlideBarStore = create<ISlideBarStore>()(
       },
       setSideLimits: (id: string, sideLimits: [number, number]) => {
         set(
-          produce(state => {
+          produce((state) => {
             if (!(id in state.barMap)) {
               state.barMap[id] = { ...DEFAULT_BAR_PROPS }
             }
@@ -105,7 +110,7 @@ export const useSlideBarStore = create<ISlideBarStore>()(
       },
       setOpen: (id: string, open: boolean) => {
         set(
-          produce(state => {
+          produce((state) => {
             if (!(id in state.barMap)) {
               state.barMap[id] = { ...DEFAULT_BAR_PROPS }
             }
@@ -129,6 +134,9 @@ export const useSlideBarStore = create<ISlideBarStore>()(
     {
       name: SETTINGS_KEY, // name in localStorage
       storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true)
+      },
     }
   )
 )
@@ -137,12 +145,12 @@ export function useSlideBar(id: string) {
   //const barMap = useSlideBarStore(state => state.barMap)
   //const { sendMessage } = useMessages(id)
   const barProps =
-    useSlideBarStore(state => state.barMap[id]) ?? DEFAULT_BAR_PROPS
-  const setSize = useSlideBarStore(state => state.setSize)
+    useSlideBarStore((state) => state.barMap[id]) ?? DEFAULT_BAR_PROPS
+  const setSize = useSlideBarStore((state) => state.setSize)
   //const setPreviousSize = useSlideBarStore(state => state.setPreviousSize)
-  const setInitialSize = useSlideBarStore(state => state.setInitialSize) // setInitialSize is just setBar with default props
-  const setSideLimits = useSlideBarStore(state => state.setSideLimits)
-  const setOpen = useSlideBarStore(state => state.setOpen)
+  const setInitialSize = useSlideBarStore((state) => state.setInitialSize) // setInitialSize is just setBar with default props
+  const setSideLimits = useSlideBarStore((state) => state.setSideLimits)
+  const setOpen = useSlideBarStore((state) => state.setOpen)
 
   return {
     barProps,

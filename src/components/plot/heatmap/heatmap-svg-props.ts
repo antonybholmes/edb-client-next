@@ -6,8 +6,10 @@ import { COLOR_BLACK } from '@/lib/color/color'
 
 import type { ILim } from '@/lib/math/math'
 import {
+  DEFAULT_FONT_PROPS,
   DEFAULT_STROKE_PROPS,
   type ColorBarPos,
+  type IFontProps,
   type ILabelProps,
   type IStrokeProps,
   type LegendPos,
@@ -54,6 +56,7 @@ export const DEFAULT_TREE_PROPS: ITreeProps = {
 export type HeatmapMode = 'heatmap' | 'dot'
 
 export interface IHeatMapDisplayOptions {
+  title: IFontProps & { text: string; offset: number }
   cells: {
     values: {
       color: string
@@ -70,7 +73,10 @@ export interface IHeatMapDisplayOptions {
     }
     border: IStrokeProps
   }
-  //margin: { top: number; right: number; bottom: number; left: number }
+  actions: {
+    show: boolean
+  }
+  //margin: IMarginProps
   blockSize: IBlock
   grid: IStrokeProps
   border: IStrokeProps
@@ -108,7 +114,7 @@ export interface IHeatMapDisplayOptions {
     }
   }
   dot: {
-    sizes: number[]
+    sizes: { size: number; value: number | string }[]
     lim: ILim
     mode: DotPlotMode
     useOriginalValuesForSizes: boolean
@@ -130,6 +136,9 @@ export interface IHeatMapDisplayOptions {
   padding: number
   zoom: number
   cmap: keyof typeof COLOR_MAPS
+  tooltip: {
+    show: boolean
+  }
 }
 
 export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
@@ -137,8 +146,10 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
   blockSize: BLOCK_SIZE,
   grid: { ...DEFAULT_STROKE_PROPS, color: '#EEEEEE' },
   border: { ...DEFAULT_STROKE_PROPS },
-  range: [-3, 3],
+  range: [-2, 2],
   mode: 'heatmap',
+  title: { ...DEFAULT_FONT_PROPS, text: '', offset: 20 },
+  actions: { show: true },
   rowLabels: {
     position: 'right',
     width: 120,
@@ -180,7 +191,12 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
     },
   },
   dot: {
-    sizes: [25, 50, 75, 100],
+    sizes: [
+      { size: 0.25, value: '25%' },
+      { size: 0.5, value: '50%' },
+      { size: 0.75, value: '75%' },
+      { size: 1, value: '100%' },
+    ],
     lim: [0, 100],
     mode: 'groups',
     legend: {
@@ -216,5 +232,8 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
       },
     },
     border: { ...DEFAULT_STROKE_PROPS, show: false },
+  },
+  tooltip: {
+    show: true,
   },
 }

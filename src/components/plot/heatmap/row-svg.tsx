@@ -2,7 +2,6 @@ import type { LeftRightPos } from '@/components/side'
 import { SVG_CRISP_EDGES } from '@/consts'
 import { ZERO_POS } from '@/interfaces/pos'
 import { range } from 'd3'
-import { Fragment } from 'react'
 import type { IColLabelsSvgProps, ITreeSvgProps } from './col-svg'
 
 export function RowTreeSvg({
@@ -19,7 +18,7 @@ export function RowTreeSvg({
       shapeRendering={SVG_CRISP_EDGES}
     >
       {tree.coords.map((coords, ri) => {
-        const p = range(4).map((i) => ({
+        const p = range(4).map(i => ({
           y: coords[i]!.x * width,
           x:
             mode === 'left'
@@ -53,7 +52,7 @@ export function RowLabelsSvg({
   const halfH = blockSize.h / 2
   const rowMetaN = range(
     0,
-    props.rowLabels.showMetadata ? df.rowMetaData.shape[1] : 1
+    props.rowLabels.showMetadata ? df.rowObs.shape[1] : 1
   )
   const isLeft = props.rowLabels.position === 'left'
 
@@ -61,24 +60,18 @@ export function RowLabelsSvg({
     <g transform={`translate(${pos.x}, ${pos.y})`}>
       {leaves.map((row, ri) => {
         return (
-          <Fragment key={row}>
-            {rowMetaN.map((rmi) => {
-              return (
-                <text
-                  key={`${row}:${rmi}`}
-                  id={`${row}:${rmi}`}
-                  x={rmi * props.rowLabels.width * (isLeft ? -1 : 1)}
-                  y={ri * blockSize.h + halfH}
-                  fill={props.rowLabels.color}
-                  dominantBaseline="central"
-                  fontSize="smaller"
-                  textAnchor={isLeft ? 'end' : 'start'}
-                >
-                  {df.rowMetaData.str(row, rmi)}
-                </text>
-              )
-            })}
-          </Fragment>
+          <text
+            key={row}
+            id={`row-label-${row}`}
+            x={0}
+            y={ri * blockSize.h + halfH}
+            fill={props.rowLabels.color}
+            dominantBaseline="central"
+            fontSize="smaller"
+            textAnchor={isLeft ? 'end' : 'start'}
+          >
+            {rowMetaN.map(rmi => df.rowObs.str(row, rmi)).join(', ')}
+          </text>
         )
       })}
     </g>

@@ -7,7 +7,8 @@ import { getNumCol } from '@/lib/dataframe/dataframe-utils'
 import { BaseSvg } from '@/components/base-svg'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { COLOR_BLACK } from '@/lib/color/color'
-import type { SeriesData } from '@/lib/dataframe/dataframe-types'
+
+import type { SeriesData } from '@/lib/dataframe'
 import type { ILim } from '@/lib/math/math'
 import { range } from '@/lib/math/range'
 import { Axis, YAxis } from '../axis'
@@ -143,7 +144,7 @@ export function ScatterPlotSvg({
       return null
     }
 
-    console.log(df.colNames, x)
+    console.log(df.columns, x)
 
     const xdata = getNumCol(df, findCol(df, x))
 
@@ -174,12 +175,12 @@ export function ScatterPlotSvg({
 
     // matching is case insensitive
     const labelSet = new Set<string>(
-      _displayProps.labels.values.map((x) => x.toLowerCase())
+      _displayProps.labels.values.map(x => x.toLowerCase())
     )
     const labelIdx = df.index.values
       .map((v, vi) => [v, vi] as [SeriesData, number])
-      .filter((v) => labelSet.has(v[0].toString().toLowerCase()))
-      .map((v) => v[1])
+      .filter(v => labelSet.has(v[0].toString().toLowerCase()))
+      .map(v => v[1])
 
     return (
       <BaseSvg
@@ -218,7 +219,7 @@ export function ScatterPlotSvg({
         </g>
 
         <g transform={`translate(${margin.left}, ${margin.top})`}>
-          {labelIdx.map((i) => {
+          {labelIdx.map(i => {
             const x1 = xax!.domainToRange(xdata[i]!)
             const y1 = yax!.domainToRange(ydata[i]!)
 

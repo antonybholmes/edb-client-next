@@ -29,7 +29,7 @@ export function ColorMapIcon({
       preserveAspectRatio="xMidYMid slice"
     >
       <g>
-        {range(steps).map((step) => {
+        {range(steps).map(step => {
           //colorStart += colorStep
 
           return (

@@ -28,7 +28,7 @@ export function ColTreeTopSvg({
       shapeRendering={SVG_CRISP_EDGES}
     >
       {tree.coords.map((coords, ri) => {
-        const p = range(4).map((i) => ({
+        const p = range(4).map(i => ({
           x: coords[i]!.x * width,
           y: height - coords[i]!.y * height,
         }))
