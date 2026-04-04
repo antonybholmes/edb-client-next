@@ -1,17 +1,17 @@
-import { ColorMapIcon } from '@components/plot/color-map-icon'
+import { ColorMapIcon } from '@/components/plot/color-map-icon'
 
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/shadcn/ui/themed/popover'
-import { BWR_CMAP_V2, COLOR_MAPS, ColorMap } from '@lib/color/colormap'
-import { cn } from '@lib/shadcn-utils'
+} from '@/components/shadcn/ui/themed/v2/popover'
+import { BWR_CMAP_V2, COLOR_MAPS, ColorMap } from '@/lib/color/colormap'
+import { cn } from '@/lib/shadcn-utils'
 import { useState } from 'react'
 
 export const BUTTON_CLS = cn(
-  'relative border-2 border-transparent rounded-full p-[2px]',
-  'data-[checked=true]:border-foreground data-[checked=false]:hover:border-foreground/50 data-[checked=false]:focus-visible:border-border'
+  'relative border-2 border-transparent rounded-xs p-[2px]',
+  'data-[checked=true]:border-foreground/50 data-[checked=false]:hover:border-border data-[checked=false]:focus-visible:border-border'
 )
 
 interface IProps {
@@ -37,15 +37,15 @@ export function ColorMapMenu({
       <PopoverTrigger title="Change colormap" onClick={() => setOpen(true)}>
         <ColorMapIcon
           cmap={cmap}
-          aspect="aspect-3/2"
-          className="w-8 border border-foreground  rounded-full"
+          aspect="aspect-5/3"
+          className="w-8 border border-foreground rounded-xs"
         />
       </PopoverTrigger>
 
       <PopoverContent
         align={align}
-        onEscapeKeyDown={() => setOpen(false)}
-        onInteractOutside={() => setOpen(false)}
+        //onEscapeKeyDown={() => setOpen(false)}
+        //onInteractOutside={() => setOpen(false)}
         className="fill-foreground"
         variant="content"
       >
@@ -66,7 +66,7 @@ export function ColorMapMenu({
                     cmap={cm}
                     data-checked={cm.name === cmap.name}
                     aspect="aspect-square"
-                    className="w-6 rounded-full"
+                    className="w-6 rounded-xs"
                   />
                 </button>
               )

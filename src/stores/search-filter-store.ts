@@ -1,13 +1,17 @@
-import { APP_ID } from '@/consts'
+import { config } from '@/config'
 import type { ISearch } from '@/hooks/search'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${APP_ID}:search-filters:v4`
+const SETTINGS_KEY = `${config.appId}:search-filters:v4`
+
+export interface IFilter extends ISearch {
+  keepOrder: boolean
+}
 
 export interface IFilters {
-  rows: ISearch
-  cols: ISearch
+  rows: IFilter
+  cols: IFilter
 }
 
 export const DEFAULT_FILTERS: IFilters = {
@@ -15,13 +19,13 @@ export const DEFAULT_FILTERS: IFilters = {
     caseSensitive: false,
     matchEntireCell: false,
     keepOrder: false,
-    ids: [],
+    queries: [],
   },
   cols: {
     caseSensitive: false,
     matchEntireCell: false,
     keepOrder: false,
-    ids: [],
+    queries: [],
   },
 }
 

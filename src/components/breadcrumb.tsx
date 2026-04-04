@@ -1,10 +1,10 @@
-import { type IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/shadcn-utils'
+import { type IDivProps } from '@/interfaces/div-props'
+import { cn } from '@/lib/shadcn-utils'
 import type { ReactNode } from 'react'
 
 import { ChevronRightIcon } from '@icons/chevron-right-icon'
 
-import type { ICrumbProps } from '@lib/crumbs'
+import type { ICrumbProps } from '@/lib/crumbs'
 import { BaseLink } from './link/base-link'
 
 const LINK_CLS =

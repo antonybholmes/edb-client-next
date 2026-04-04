@@ -1,4 +1,4 @@
-import { GenomicLocation, type IGenomicLocation } from './genomic'
+import { GenLoc, type IGenomicLocation } from './genomic'
 import { GenomicFeatureIndex } from './genomic-index'
 
 export function indexBed(
@@ -26,7 +26,7 @@ export function indexBed(
   }
 
   const bed = tokens.map(
-    row => new GenomicLocation(row[0]!, Number(row[1]!), Number(row[2]!))
+    row => new GenLoc(row[0]!, Number(row[1]!), Number(row[2]!))
   )
 
   return new GenomicFeatureIndex(name, bed)

@@ -1,13 +1,13 @@
-import { ILim } from '@/lib/math/math'
+import type { ILim } from '@/lib/math/math'
 import { gsap } from 'gsap'
 import { useEffect, useRef } from 'react'
 import {
   CountText,
-  IVennProps,
+  type IVennProps,
   makeTitle,
   TitleText,
 } from './svg-three-way-venn'
-import { IVennCircleProps, useVennSettings } from './venn-settings-store'
+import { type IVennCircleProps, useVennSettings } from './venn-settings-store'
 import { useVenn } from './venn-store'
 
 interface IEllipseProps {
@@ -98,7 +98,7 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
       {/* Circle A */}
       <Ellipse
         ref={circle1Ref}
-        circle={circles[1]}
+        circle={circles[1]!}
         loc={center}
         radius={radius2}
         transform={`translate(${-radius2 / 2}, ${radius2 / 4}) rotate(-45, ${center[0]}, ${center[1]}) `}
@@ -114,7 +114,7 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
       {/* Circle B */}
       <Ellipse
         ref={circle2Ref}
-        circle={circles[2]}
+        circle={circles[2]!}
         loc={center}
         radius={radius2}
         transform={`rotate(-45, ${center[0]}, ${center[1]})`}
@@ -129,7 +129,7 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
       {/* Circle C */}
       <Ellipse
         ref={circle3Ref}
-        circle={circles[3]}
+        circle={circles[3]!}
         loc={center}
         radius={radius2}
         transform={`rotate(45, ${center[0]}, ${center[1]})`}
@@ -145,7 +145,7 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
 
       <Ellipse
         ref={circle4Ref}
-        circle={circles[4]}
+        circle={circles[4]!}
         loc={center}
         radius={radius2}
         transform={`translate(${radius2 * 0.5}, ${radius2 * 0.25}) rotate(45, ${center[0]}, ${center[1]}) `}
@@ -253,7 +253,7 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
 
       <Ellipse
         ref={circle1Ref}
-        circle={circles['1']}
+        circle={circles['1']!}
         loc={center}
         radius={radius2}
         transform={`translate(${-radius2 / 2}, ${radius2 / 4}) rotate(-45, ${center[0]}, ${center[1]}) `}
@@ -262,7 +262,7 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
 
       <Ellipse
         ref={circle2Ref}
-        circle={circles['2']}
+        circle={circles['2']!}
         loc={center}
         radius={radius2}
         transform={`rotate(-45, ${center[0]}, ${center[1]})`}
@@ -271,7 +271,7 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
 
       <Ellipse
         ref={circle3Ref}
-        circle={circles['3']}
+        circle={circles['3']!}
         loc={center}
         radius={radius2}
         transform={`rotate(45, ${center[0]}, ${center[1]})`}
@@ -280,7 +280,7 @@ export function SVGFourWayVenn({ overlapLabels = {} }: IVennProps) {
 
       <Ellipse
         ref={circle4Ref}
-        circle={circles['4']}
+        circle={circles['4']!}
         loc={center}
         radius={radius2}
         transform={`translate(${radius2 * 0.5}, ${radius2 * 0.25}) rotate(45, ${center[0]}, ${center[1]}) `}

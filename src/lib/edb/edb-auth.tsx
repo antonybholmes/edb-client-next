@@ -1,6 +1,4 @@
 import {
-  fetchAccessTokenUsingSession,
-  fetchUpdateTokenUsingSession,
   type IBasicEdbUser,
   type IEdbSession,
   SESSION_API_KEY_SIGNIN_URL,
@@ -9,190 +7,168 @@ import {
   SESSION_AUTH_OTP_SIGNIN_URL,
   SESSION_AUTH_SIGNIN_URL,
   SESSION_CLERK_SIGNIN_URL,
+  SESSION_COGNITO_SIGNIN_URL,
   SESSION_INFO_URL,
-  SESSION_REFRESH_CSRF_TOKEN_URL,
   SESSION_REFRESH_URL,
   SESSION_SIGNOUT_URL,
   SESSION_SUPABASE_SIGNIN_URL,
   validateToken,
-} from '@lib/edb/edb'
-import { httpFetch } from '@lib/http/http-fetch'
-import { bearerHeaders, csfrHeaders, JSON_HEADERS } from '@lib/http/urls'
+} from '@/lib/edb/edb'
+import { httpFetch } from '@/lib/http/http-fetch'
+import {
+  bearerHeaders,
+  csfrHeaders,
+  JSON_CONTENT_HEADERS,
+} from '@/lib/http/urls'
 
 //import { useQueryClient } from '@tanstack/react-query'
 
-import { queryClient } from '@/query'
 import { produce } from 'immer'
 import { useEffect } from 'react'
 import { create } from 'zustand'
 import { logger } from '../logger'
 import { useEdbSettings, useEdbSettingsStore } from './edb-settings'
 
-import Cookies from 'js-cookie'
+import { persist } from 'zustand/middleware'
+import { csrfService } from './csrf-service'
+import {
+  DEFAULT_AUDIENCE,
+  sessionTokenService,
+  type TokenOpts,
+} from './session-token-service'
 
-export const CSRF_COOKIE_NAME = 'csrf_token'
+type SigninMethod =
+  | 'google'
+  | 'github'
+  | 'cognito'
+  | 'clerk'
+  | 'auth0'
+  | 'supabase'
+  | 'api-key'
+  | 'username-password'
+  | 'email-otp'
+  | ''
 
-interface ICSRFStore {
-  token: string
-  error: string
-  setToken: (token: string) => void
-  fetchToken: () => Promise<string>
-  invalidateToken: () => void
+export const SIGNIN_METHOD_MAP: Record<SigninMethod, string> = {
+  google: 'Google',
+  github: 'GitHub',
+  cognito: 'Cognito',
+  clerk: 'Clerk',
+  auth0: 'Auth0',
+  supabase: 'Supabase',
+  'api-key': 'API Key',
+  'username-password': 'Username/Password',
+  'email-otp': 'Email OTP',
+  '': 'Default',
 }
 
-export const useCSRFStore = create<ICSRFStore>((set) => ({
-  token: Cookies.get(CSRF_COOKIE_NAME) || '',
-  error: '',
-  setToken: (token: string) => set({ token }),
-  fetchToken: async () => {
-    // if token still exists, return it
-    // let token = Cookies.get(CSRF_COOKIE_NAME) || ''
+interface IEdbSignInStore {
+  signinMethod: SigninMethod
+  setSignInMethod: (method: SigninMethod) => void
+  clearSignInMethod: () => void
+}
 
-    // if (token) {
-    //   logger.log('CSRF token already set:', token)
-    //   set({ token, error: '' })
-    //   return token
-    // }
-
-    try {
-      logger.log('Fetching CSRF token from server...')
-      const token = await queryClient.fetchQuery({
-        queryKey: ['csrf-token'],
-        queryFn: async () => {
-          const res = await httpFetch.postJson<{
-            data: { csrfToken: string }
-          }>(SESSION_REFRESH_CSRF_TOKEN_URL, { withCredentials: true })
-
-          return res.data.csrfToken
-        },
-      })
-
-      logger.log('CSRF token fetched:', token)
-
-      //Cookies.set(CSRF_COOKIE_NAME, token)
-
-      set({ token, error: '' })
-
-      return token
-    } catch {
-      set({ token: '', error: 'Failed to fetch CSRF token' })
-
-      return ''
+export const useEdbSignInStore = create<IEdbSignInStore>()(
+  persist(
+    set => ({
+      signinMethod: 'auth0',
+      setSignInMethod: method => set({ signinMethod: method }),
+      clearSignInMethod: () => set({ signinMethod: '' }),
+    }),
+    {
+      name: 'edb-signin', // localStorage key
     }
-    // Cookie will update automatically; we just update the cache
-    //Cookies.set('csrf_token', data.csrf_token); // optional
-  },
-  invalidateToken: () => {
-    set({ token: '', error: '' })
-  },
-}))
+  )
+)
 
-// // Cross-Site Request Forgery
-// export const CSRF_KEY = `${APP_ID}:csrf:v2`
+interface ISigninHook extends IEdbSignInStore {
+  isOAuth: boolean
+  isGoogle: boolean
+  isGithub: boolean
+  isCognito: boolean
+  isClerk: boolean
+  isApiKey: boolean
+  isUsernamePassword: boolean
+  isEmailOtp: boolean
+}
 
-// interface ICsrfStore {
-//   token: string
-//   loaded: boolean
-//   error: string
-//   fetchToken: () => Promise<string>
-//   invalidateToken: () => void
+export function useEdbSignIn(): ISigninHook {
+  const signinMethod = useEdbSignInStore(s => s.signinMethod)
+  const setSignInMethod = useEdbSignInStore(s => s.setSignInMethod)
+  const clearSignInMethod = useEdbSignInStore(s => s.clearSignInMethod)
+
+  return {
+    signinMethod,
+    setSignInMethod,
+    clearSignInMethod,
+    isOAuth: signinMethod === 'auth0',
+    isGoogle: signinMethod === 'google',
+    isGithub: signinMethod === 'github',
+    isCognito: signinMethod === 'cognito',
+    isClerk: signinMethod === 'clerk',
+    isApiKey: signinMethod === 'api-key',
+    isUsernamePassword: signinMethod === 'username-password',
+    isEmailOtp: signinMethod === 'email-otp',
+  }
+}
+
+/**
+ * Fetches the CSRF token from the server or returns the existing one from cookies.
+ * This method may throw an error if the token cannot be fetched.
+ *
+ * @returns a promise to a string of the token
+ */
+// export async function fetchCSRFToken(): Promise<string> {
+//   const cookie = Cookies.get(CSRF_COOKIE_NAME)
+//   const token = cookie?.split('|')[0]
+
+//   if (token) {
+//     return token
+//   }
+
+//   // this will also refresh the cookie
+//   logger.log('Fetching CSRF token from server...')
+
+//   const res = await httpFetch.getJson<{
+//     data: { csrfToken: string }
+//   }>(SESSION_REFRESH_CSRF_TOKENS_URL, { withCredentials: true })
+
+//   token = res.data.csrfToken
+
+//   logger.log('CSRF token fetched:', token)
+
+//   return token
 // }
-
-// export const useCsrfStore = create<ICsrfStore>()(
-//   persist(
-//     (set, get) => ({
-//       token: '',
-//       loaded: false,
-//       error: '',
-
-//       fetchToken: async () => {
-//         //const { token } = get()
-
-//         if (get().loaded) {
-//           return get().token
-//         }
-
-//         try {
-//           logger.debug('Fetching CSRF token from server...')
-//           // const res = await httpFetch.getJson<{ data: { csrfToken: string } }>(
-//           //   SESSION_CSRF_TOKEN_URL,
-//           //   { withCredentials: true }
-//           // )
-
-//           const token = await queryClient.fetchQuery({
-//             queryKey: ['csrf-token'],
-//             queryFn: async () => {
-//               const res = await httpFetch.getJson<{
-//                 data: { csrfToken: string }
-//               }>(SESSION_CSRF_TOKEN_URL, { withCredentials: true })
-
-//               return res.data.csrfToken
-//             },
-//           })
-
-//           set({ token, loaded: true, error: '' })
-//         } catch (err: any) {
-//           set({ token: '', loaded: false, error: 'Failed to fetch CSRF token' })
-//         }
-
-//         return get().token
-//       },
-//       invalidateToken: () => {
-//         set({ token: '', loaded: false, error: '' })
-//       },
-//     }),
-//     {
-//       name: CSRF_KEY, // name in localStorage
-//       storage: createJSONStorage(() => sessionStorage),
-//     }
-//   )
-// )
-
-export function useCSRF(autoRefresh: boolean = true) {
-  const token = useCSRFStore((state) => state.token)
-
-  const error = useCSRFStore((state) => state.error)
-  const fetchToken = useCSRFStore((state) => state.fetchToken)
-  const invalidateToken = useCSRFStore((state) => state.invalidateToken)
-
-  // automatically fetch the token if not loaded or if there's an error
-  useEffect(() => {
-    if (autoRefresh && (!token || error)) {
-      logger.log('Auto-refreshing CSRF token...')
-      fetchToken()
-    }
-  }, [autoRefresh, token, error, fetchToken])
-
-  return { token, error, fetchToken, invalidateToken }
-}
 
 export interface IEdbAuthStore {
   session: IEdbSession | null
   loaded: boolean
-  accessToken: string
+  accessTokens: Record<string, string>
   error: string
-  //csrfToken: string
 
+  //csrfToken: string
+  //setAccessToken: (token: string, audience?: string) => void
   refreshSession: () => Promise<IEdbSession | null>
   invalidateSession: () => void
   fetchSession: () => Promise<IEdbSession | null>
-  fetchAccessToken: () => Promise<string>
+  fetchAccessToken: (audience?: string) => Promise<string>
 }
 
 export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
   session: null,
   loaded: false,
-  accessToken: '',
+  accessTokens: {},
   error: '',
+
   //csrfToken: '',
 
-  setAccessToken: (token: string) => {
-    set(
-      produce((state: IEdbAuthStore) => {
-        state.accessToken = token
-      })
-    )
-  },
+  // setAccessToken: (token: string, audience: string = 'edb') => {
+  //   set(
+  //     produce((state: IEdbAuthStore) => {
+  //       state.accessTokens[audience] = token
+  //     })
+  //   )
+  // },
 
   /**
    * Fetches the current session from the server.
@@ -213,25 +189,19 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
     //console.log('fetching session info after refresh')
 
     try {
-      s = await queryClient.fetchQuery({
-        queryKey: ['session-info'],
+      const res = await httpFetch.getJson<{ data: IEdbSession }>(
+        SESSION_INFO_URL,
+        {
+          //headers: csfrHeaders(csrfToken),
+          withCredentials: true,
+        }
+      )
 
-        queryFn: async () => {
-          const res = await httpFetch.getJson<{ data: IEdbSession }>(
-            SESSION_INFO_URL,
-            {
-              //headers: csfrHeaders(csrfToken),
-              withCredentials: true,
-            }
-          )
+      s = res.data
 
-          return res.data
-        },
-      })
+      //console.log('Session info fetched:', s)
 
       set({ session: s, loaded: true, error: '' })
-
-      //console.log(settings)
 
       if (useEdbSettingsStore.getState().users.length === 0) {
         useEdbSettingsStore.setState({
@@ -239,9 +209,9 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
             {
               username: s!.user.username,
               email: s!.user.email,
-              firstName: s!.user.firstName,
-              lastName: s!.user.lastName,
-              roles: s!.user.roles,
+              name: s!.user.name,
+              pictureUrl: s!.user.pictureUrl,
+              groups: s!.user.groups,
             } as IBasicEdbUser,
           ],
         })
@@ -261,11 +231,11 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
    * @returns
    */
   refreshSession: async () => {
-    let csrfToken = useCSRFStore.getState().token
+    let csrfToken = await csrfService.getToken() //token
 
     // If the CSRF token is not available, attempt to fetch it.
     //if (!csrfToken) {
-    //  csrfToken = await useCSRFStore.getState().fetchToken()
+    //  csrfToken = await await fetchCSRFToken()
     //}
 
     if (!csrfToken) {
@@ -291,7 +261,12 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
   },
 
   invalidateSession: () => {
-    set({ session: null, loaded: false, accessToken: '', error: '' })
+    set({
+      session: null,
+      loaded: false,
+      accessTokens: {},
+      error: '',
+    })
   },
 
   /**
@@ -299,42 +274,30 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
    * it is expired, attempts to refresh it.
    * @returns
    */
-  fetchAccessToken: async () => {
-    let accessToken = get().accessToken
+  fetchAccessToken: async (opts: TokenOpts = {}) => {
+    const { audience = DEFAULT_AUDIENCE } = opts
+    let accessToken = get().accessTokens[audience] ?? ''
 
-    //console.log(accessToken, validateToken(accessToken))
     if (validateToken(accessToken)) {
       return accessToken
     }
 
-    let csrfToken = useCSRFStore.getState().token
+    accessToken = await sessionTokenService.getAccessToken(opts)
 
-    // If the CSRF token is not available, attempt to fetch it.
-    //if (!useCSRFStore.getState().token) {
-    //  csrfToken = await useCSRFStore.getState().fetchToken()
-    //}
-
-    if (!csrfToken) {
-      set({ error: 'No CSRF token available to fetch access token' })
-      return accessToken
-    }
-
-    try {
-      accessToken = await fetchAccessTokenUsingSession(queryClient, csrfToken)
-
-      set({ accessToken })
-    } catch {
-      //console.error('Failed to fetch access token', err)
-      set({ error: 'Failed to fetch access token' })
-    }
+    set(
+      produce(state => {
+        state.accessTokens[audience] = accessToken
+      })
+    )
 
     return accessToken
   },
 }))
 
-export interface IEdbAuthHook
-  extends Omit<IEdbAuthStore, 'accessToken' | 'invalidateSession'> {
-  csrfToken: string
+export interface IEdbAuthHook extends Omit<
+  IEdbAuthStore,
+  'setSigninMethod' | 'accessTokens' | 'invalidateSession'
+> {
   sendOTP: (email: string) => Promise<void>
   signInWithEmailOTP: (email: string, otp: string) => Promise<void>
   signInWithApiKey: (key: string) => Promise<void>
@@ -343,6 +306,7 @@ export interface IEdbAuthHook
     password: string
   ) => Promise<void>
   signInWithAuth0: (token: string) => Promise<IEdbSession | null>
+  signInWithCognito: (token: string) => Promise<IEdbSession | null>
   signInWithClerk: (token: string) => Promise<IEdbSession | null>
   signInWithSupabase: (token: string) => Promise<IEdbSession | null>
   fetchUpdateToken: () => Promise<string>
@@ -350,44 +314,19 @@ export interface IEdbAuthHook
 }
 
 export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
-  const session = useEdbAuthStore((state) => state.session)
-  const invalidateSession = useEdbAuthStore((state) => state.invalidateSession)
-  const loaded = useEdbAuthStore((state) => state.loaded)
-  const fetchSession = useEdbAuthStore((state) => state.fetchSession)
-  const refreshSession = useEdbAuthStore((state) => state.refreshSession)
+  const session = useEdbAuthStore(state => state.session)
+  const invalidateSession = useEdbAuthStore(state => state.invalidateSession)
+  const loaded = useEdbAuthStore(state => state.loaded)
+  const fetchSession = useEdbAuthStore(state => state.fetchSession)
+  const refreshSession = useEdbAuthStore(state => state.refreshSession)
 
-  const error = useEdbAuthStore((state) => state.error)
+  const error = useEdbAuthStore(state => state.error)
 
-  //const csrfToken = useEdbAuthStore(state => state.csrfToken)
-  //const setCsrfToken = useEdbAuthStore(state => state.setCsrfToken)
-  const fetchAccessToken = useEdbAuthStore((state) => state.fetchAccessToken)
+  const { setSignInMethod } = useEdbSignInStore()
+
+  const fetchAccessToken = useEdbAuthStore(state => state.fetchAccessToken)
 
   const { settings, updateSettings } = useEdbSettings()
-
-  //const { isAuthenticated, logout } = useAuth0()
-  //const { isSignedIn, signOut } = useClerk()
-
-  //const [session, setEdbSession] = useState<IEdbSessionInfo|null>(null)
-
-  //const [apiKey, setApiKey] = useState('')
-
-  const {
-    token: csrfToken,
-    fetchToken: fetchCsrfToken,
-    invalidateToken: invalidateCsrfToken,
-  } = useCSRF(autoRefresh)
-
-  // const [csrfToken, setCsrfToken] = useState(() => {
-  //   return localStorage.getItem(CSRF_KEY) || ''
-  // })
-
-  // useEffect(() => {
-  //   try {
-  //     localStorage.setItem(CSRF_KEY, csrfToken)
-  //   } catch (err) {
-  //     console.warn('Error writing to localStorage key:', CSRF_KEY, err)
-  //   }
-  // }, [csrfToken])
 
   useEffect(() => {
     async function setup() {
@@ -401,136 +340,93 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
     setup()
   }, [autoRefresh])
 
-  async function fetchUpdateToken(): Promise<string> {
-    if (!csrfToken) {
-      throw new Error('No CSRF token available to fetch update token')
-    }
-
-    return fetchUpdateTokenUsingSession(queryClient, csrfToken)
+  async function fetchUpdateToken(opts: TokenOpts = {}): Promise<string> {
+    return await sessionTokenService.getUpdateToken(opts)
   }
 
-  // async function autoRefreshSession(): Promise<IEdbSession | null> {
-  //   if (session !== null) {
-  //     return session
-  //   }
-
-  //   const s = await fetchSession()
-
-  //   //setSession(session)
-
-  //   return s
-  // }
-
-  // async function refreshSession(): Promise<IEdbSession | null> {
-  //   await queryClient.fetchQuery({
-  //     queryKey: ['refresh-session'],
-  //     queryFn: () =>
-  //       httpFetch.post(SESSION_REFRESH_URL, {
-  //         withCredentials: true,
-  //       }),
-  //   })
-
-  //   return await autoRefreshSession()
-  // }
-
   async function signInWithApiKey(apiKey: string) {
-    await queryClient.fetchQuery({
-      queryKey: ['signin-api-key'],
-      queryFn: () =>
-        httpFetch.post(SESSION_API_KEY_SIGNIN_URL, {
-          body: { apiKey },
-          headers: JSON_HEADERS,
-          withCredentials: true,
-        }),
+    await httpFetch.post(SESSION_API_KEY_SIGNIN_URL, {
+      body: { apiKey },
+      headers: JSON_CONTENT_HEADERS,
+      withCredentials: true,
     })
 
     await fetchSession()
 
-    //setApiKey(apiKey)
+    setSignInMethod('api-key')
   }
 
   async function signInWithUsernamePassword(
     username: string,
     password: string
   ) {
-    await queryClient.fetchQuery({
-      queryKey: ['signin-username-password'],
-      queryFn: () =>
-        httpFetch.post(SESSION_AUTH_SIGNIN_URL, {
-          body: { username, password },
-          headers: JSON_HEADERS,
-          withCredentials: true,
-        }),
+    await httpFetch.post(SESSION_AUTH_SIGNIN_URL, {
+      body: { username, password },
+      headers: JSON_CONTENT_HEADERS,
+      withCredentials: true,
     })
 
     await fetchSession()
+
+    setSignInMethod('username-password')
   }
 
   async function sendOTP(email: string) {
-    //console.log('sendOTP', email)
-
-    await queryClient.fetchQuery({
-      queryKey: ['signin-username-otp'],
-      queryFn: () =>
-        httpFetch.postJson(SESSION_AUTH_OTP_SEND_URL, {
-          body: { email },
-          headers: JSON_HEADERS,
-        }),
+    await httpFetch.post(SESSION_AUTH_OTP_SEND_URL, {
+      body: { email },
+      headers: JSON_CONTENT_HEADERS,
     })
 
     await fetchSession()
   }
 
   async function signInWithEmailOTP(email: string, otp: string) {
-    await queryClient.fetchQuery({
-      queryKey: ['signin-username-otp'],
-      queryFn: () =>
-        httpFetch.post(SESSION_AUTH_OTP_SIGNIN_URL, {
-          body: { email, otp },
-          headers: JSON_HEADERS,
-          withCredentials: true,
-        }),
+    await httpFetch.post(SESSION_AUTH_OTP_SIGNIN_URL, {
+      body: { email, otp },
+      headers: JSON_CONTENT_HEADERS,
+      withCredentials: true,
     })
 
     await fetchSession()
+    setSignInMethod('email-otp')
   }
 
   async function signInWithAuth0(token: string): Promise<IEdbSession | null> {
-    await httpFetch.post(
-      SESSION_AUTH0_SIGNIN_URL, //SESSION_UPDATE_USER_URL,
-      {
-        headers: bearerHeaders(token),
-        withCredentials: true,
-      }
-    )
+    await httpFetch.post(SESSION_AUTH0_SIGNIN_URL, {
+      headers: bearerHeaders(token),
+      withCredentials: true,
+    })
 
-    //setCsrfToken(csrfToken)
-
-    // get a new token for this session
-    await fetchCsrfToken()
+    console.log('Signed in with Auth0, fetching session...')
 
     const session = await fetchSession()
+    setSignInMethod('auth0')
+
+    return session
+  }
+
+  async function signInWithCognito(token: string): Promise<IEdbSession | null> {
+    await httpFetch.post(SESSION_COGNITO_SIGNIN_URL, {
+      headers: bearerHeaders(token),
+      withCredentials: true,
+    })
+
+    const session = await fetchSession()
+
+    console.log('Signed in with Cognito:', session)
+    setSignInMethod('cognito')
 
     return session
   }
 
   async function signInWithClerk(token: string): Promise<IEdbSession | null> {
-    await queryClient.fetchQuery({
-      queryKey: ['clerk-signin', token],
-      queryFn: () =>
-        httpFetch.post(
-          SESSION_CLERK_SIGNIN_URL, //SESSION_UPDATE_USER_URL,
-          {
-            headers: bearerHeaders(token),
-            withCredentials: true,
-          }
-        ),
+    await httpFetch.post(SESSION_CLERK_SIGNIN_URL, {
+      headers: bearerHeaders(token),
+      withCredentials: true,
     })
 
-    // get a new token for this session
-    //await fetchCsrfToken()
-
     const session = await fetchSession()
+    setSignInMethod('clerk')
 
     return session
   }
@@ -538,86 +434,50 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
   async function signInWithSupabase(
     token: string
   ): Promise<IEdbSession | null> {
-    await queryClient.fetchQuery({
-      queryKey: ['supabase-signin', token],
-      queryFn: async () => {
-        // force session creation
-        await httpFetch.post(SESSION_SUPABASE_SIGNIN_URL, {
-          headers: bearerHeaders(token),
-          withCredentials: true,
-        })
-      },
+    await httpFetch.postJson(SESSION_SUPABASE_SIGNIN_URL, {
+      headers: bearerHeaders(token),
+      withCredentials: true,
     })
 
     // get a new token for this session
     //await fetchCsrfToken()
 
     const session = await fetchSession()
+    setSignInMethod('supabase')
 
     return session
   }
 
-  // async function signoutAuth0() {
-
-  //   // sign out of clerk
-  //   if (isAuthenticated) {
-  //     signOut() //{redirectUrl: APP_ACCOUNT_SIGNED_OUT_URL})
-  //   }
-
-  //   signout()
-  // }
-
-  //  async function signoutClerk() {
-
-  //   // sign out of auth0
-  //   if (isSignedIn) {
-  //     logout()
-  //   }
-
-  //   signout()
-  // }
-
   async function signout() {
+    const csrfToken = await csrfService.getToken()
+
     await httpFetch.post(SESSION_SIGNOUT_URL, {
-      headers: csfrHeaders(csrfToken ?? ''),
+      headers: csfrHeaders(csrfToken),
       withCredentials: true,
     })
 
     invalidateSession()
-    invalidateCsrfToken()
 
     // remove user from cache
     updateSettings(
-      produce(settings, (draft) => {
+      produce(settings, draft => {
         draft.users = []
       })
     )
-
-    // // sign out of auth0
-    // if (isAuthenticated) {
-    //   signOut() //{redirectUrl: APP_ACCOUNT_SIGNED_OUT_URL})
-    // }
-
-    // // sign out of clerk
-    // if (isSignedIn) {
-    //   logout()
-    // }
   }
 
   return {
     session,
     loaded,
-    csrfToken,
     error,
     sendOTP,
     signInWithEmailOTP,
     signInWithApiKey,
     signInWithUsernamePassword,
     signInWithAuth0,
+    signInWithCognito,
     signInWithClerk,
     signInWithSupabase,
-    //fetchUser,
-    //autoRefreshSession,
     fetchSession,
     refreshSession,
     fetchAccessToken,

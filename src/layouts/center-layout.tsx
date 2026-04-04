@@ -1,4 +1,4 @@
-import { CenterCol } from '@layout/center-col'
+import { CenterCol } from '@/components/layout/center-col'
 import { SignInLayout, type ISignInLayoutProps } from './signin-layout'
 
 export function CenterLayout({

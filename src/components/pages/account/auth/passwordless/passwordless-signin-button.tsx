@@ -1,16 +1,17 @@
 // 'use client'
 
-import { SESSION_AUTH_SIGNIN_URL } from '@lib/edb/edb'
+import { SESSION_AUTH_SIGNIN_URL } from '@/lib/edb/edb'
 
-import { Button } from '@themed/button'
+import { Button } from '@/themed/v2/button'
 
 import { TEXT_SIGN_IN } from '@/consts'
-import { BaseCol } from '@layout/base-col'
-import { Input } from '@themed/input'
+import { BaseCol } from '@/layout/base-col'
+import { Input } from '@/themed/v2/input'
 
-import { httpFetch } from '@lib/http/http-fetch'
-import { useQueryClient } from '@tanstack/react-query'
-import { toast } from '@themed/crisp'
+import { httpFetch } from '@/lib/http/http-fetch'
+
+import { makeUuid } from '@/lib/id'
+import { Toast } from '@base-ui/react/toast'
 import { useEffect, useState } from 'react'
 
 export function PasswordlessSignInButton({
@@ -18,12 +19,12 @@ export function PasswordlessSignInButton({
 }: {
   redirectUrl?: string
 }) {
-  const queryClient = useQueryClient()
-
   // some other page needs to force reload account details either
   // passwordless or regular so that on refresh this page can see if
   // the details have been loaded
   const [username, setUsername] = useState('')
+
+  const { add: addToast } = Toast.useToastManager()
 
   useEffect(() => {
     // the sign in callback includes this url so that the app can signin and
@@ -59,22 +60,19 @@ export function PasswordlessSignInButton({
 
             console.log(SESSION_AUTH_SIGNIN_URL)
 
-            const res = await queryClient.fetchQuery({
-              queryKey: ['signin'],
-              queryFn: () =>
-                httpFetch.postJson<{ data: { message: string } }>(
-                  SESSION_AUTH_SIGNIN_URL,
-                  {
-                    body: {
-                      username,
-                      redirectUrl,
-                    },
-                  }
-                ),
-            })
+            const res = await httpFetch.postJson<{ data: { message: string } }>(
+              SESSION_AUTH_SIGNIN_URL,
+              {
+                body: {
+                  username,
+                  redirectUrl,
+                },
+              }
+            )
 
             if (res.data.message.includes('email')) {
-              toast({
+              addToast({
+                id: makeUuid(),
                 title: 'Please check your email',
                 description:
                   'We sent you an email containing a link you can use to sign in.',

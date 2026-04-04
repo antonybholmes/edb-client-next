@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { type IDivProps } from '@interfaces/div-props'
+import { type IDivProps } from '@/interfaces/div-props'
 
 import { Axis, YAxis } from '@/components/plot/axis'
 import {
@@ -8,9 +8,9 @@ import {
   NO_FILL_PROPS,
   type IColorProps,
   type IStrokeProps,
-} from '@components/plot/svg-props'
-import type { LeftRightPos } from '@components/side'
-import { COLOR_RED } from '@lib/color/color'
+} from '@/components/plot/svg-props'
+import type { LeftRightPos } from '@/components/side'
+import { COLOR_RED } from '@/lib/color/color'
 
 export type IBoxWhiskerMode = LeftRightPos | 'full'
 

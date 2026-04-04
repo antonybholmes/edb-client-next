@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { type IDivProps } from '@interfaces/div-props'
+import { type IDivProps } from '@/interfaces/div-props'
 
 import { Axis, YAxis } from '@/components/plot/axis'
 import {
@@ -8,10 +8,10 @@ import {
   DEFAULT_STROKE_PROPS,
   type IColorProps,
   type IStrokeProps,
-} from '@components/plot/svg-props'
-import { KDE } from '@lib/math/kde'
-import { linspace } from '@lib/math/linspace'
-import { zip } from '@lib/utils'
+} from '@/components/plot/svg-props'
+import { KDE } from '@/lib/math/kde'
+import { linspace } from '@/lib/math/linspace'
+import { zip } from '@/lib/utils'
 import type { IBoxWhiskerMode } from './box-whisker-plot-svg'
 
 interface IProps extends IDivProps {

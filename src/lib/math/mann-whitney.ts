@@ -27,7 +27,7 @@ export function mannWhitneyU(
   // const n1 = xs.length
   // const n2 = ys.length
 
-  // // pool and rank
+  // pool and rank
   // const obs = numSort([...xs, ...ys])
   // const ranks = range(1, obs.length + 1)
   // const n = obs.length
@@ -54,11 +54,11 @@ export function mannWhitneyU(
   //   tied.push(ranks[i]!)
   // }
 
-  // // end case
+  // end case
   // rankMap.set(currentValue, mean(tied))
 
   // const r1 = sum(xs.map(x => rankMap.get(x)!))
-  // //const r2 = sum(ys.map(y => rankMap.get(y)!))
+  //const r2 = sum(ys.map(y => rankMap.get(y)!))
   const n1 = xs.length
   const n2 = ys.length
   const n = n1 + n2
@@ -143,7 +143,7 @@ export function mannWhitneyU(
   // since u1 + u2 = n1n2, we take the largest value in case either u1 or u2 are 0
   const U = Math.max(U1, U2)
 
-  // // all ties > 1 i.e. actual tied ranks
+  // all ties > 1 i.e. actual tied ranks
   // const tie_term = sum(
   //   ties.filter(t => t.length > 1).map(t => t.length ** 3 - t.length)
   // )

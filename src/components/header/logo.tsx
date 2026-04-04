@@ -1,8 +1,9 @@
-import { SITE_NAME } from '@/consts'
+import { cn } from '@/lib/shadcn-utils'
 import { CENTERED_ROW_CLS, FOCUS_RING_CLS, HEADER_ICON_SIZE_CLS } from '@/theme'
-import { cn } from '@lib/shadcn-utils'
 import { BaseImage } from '../base-image'
 import { BaseLink } from '../link/base-link'
+
+import { config } from '@/config'
 
 const LOGO_CLS = cn(FOCUS_RING_CLS, HEADER_ICON_SIZE_CLS, CENTERED_ROW_CLS)
 
@@ -17,7 +18,7 @@ export function Logo() {
           src="/favicon.svg"
           width={512}
           height={512}
-          alt={SITE_NAME}
+          alt={config.appName}
           className="w-6"
         />
       </div>

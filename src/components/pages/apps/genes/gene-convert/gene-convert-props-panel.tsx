@@ -1,13 +1,16 @@
-import { PropsPanel } from '@components/props-panel'
-import { ToggleButtonTriggers, ToggleButtons } from '@components/toggle-buttons'
-import { VCenterRow } from '@layout/v-center-row'
+import { PropsPanel } from '@/components/props-panel'
+import { Label } from '@/components/shadcn/ui/themed/v2/label'
+import {
+  ToggleButtonTriggers,
+  ToggleButtons,
+} from '@/components/toggle-buttons'
+import { VCenterRow } from '@/layout/v-center-row'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@themed/accordion'
-import { Label } from '@themed/label'
+} from '@/themed/v2/accordion'
 import { forwardRef, type ForwardedRef } from 'react'
 
 export interface IProps {
@@ -38,7 +41,7 @@ export const GeneConvertPropsPanel = forwardRef(function GeneConvertPropsPanel(
       <ScrollAccordion value={['species']}>
         <AccordionItem value="species">
           <AccordionTrigger>Species</AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent variant="sidebar">
             <VCenterRow className="gap-x-2">
               <Label className="w-12">From</Label>
               <ToggleButtons

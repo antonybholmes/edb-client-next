@@ -14,12 +14,13 @@ export class ZScore {
     this._mean = mean(data)
     this._std = populationStd(data, this._mean) // std(data, this._mean)
 
-    //console.log('zscore', this._mean, this._std)
+    //console.log('ZScore fit', data, this._mean)
 
     return this
   }
 
   transform(data: number[]): number[] {
+    //console.log('ZScore transform', this._mean, this._std)
     return data.map(v => (this._std !== 0 ? (v - this._mean) / this._std : 0))
   }
 

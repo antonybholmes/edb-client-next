@@ -1,4 +1,4 @@
-import { COLOR_RED } from '@lib/color/color'
+import { COLOR_RED } from '@/lib/color/color'
 
 export const DEFAULT_PALETTE: string[] = [
   COLOR_RED, // light coral

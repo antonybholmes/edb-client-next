@@ -1,6 +1,6 @@
-import { cn } from '@lib/shadcn-utils'
+import { cn } from '@/lib/shadcn-utils'
 
-import type { IDivProps } from '@interfaces/div-props'
+import type { IDivProps } from '@/interfaces/div-props'
 import { Children } from 'react'
 import { HCenterRow } from './h-center-row'
 

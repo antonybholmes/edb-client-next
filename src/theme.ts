@@ -1,4 +1,4 @@
-import { cn } from '@lib/shadcn-utils'
+import { cn } from '@/lib/shadcn-utils'
 
 export const ROUNDED_LG_CLS = 'rounded-lg'
 export const ROUNDED_MD_CLS = 'rounded-theme'
@@ -33,18 +33,18 @@ export const DRAG_OUTLINE_CLS =
 export const BUTTON_XS_W_CLS = 'w-6'
 export const BUTTON_XS_H_CLS = 'h-6'
 
-export const BUTTON_SM_W_CLS = 'w-7.5'
-export const BUTTON_SM_H_CLS = 'h-7.5'
+export const BUTTON_SM_W_CLS = 'w-7'
+export const BUTTON_SM_H_CLS = 'h-7'
 //export const BUTTON_TOOLBAR_H_CLS = 'h-8'
 export const BUTTON_MD_H_CLS = 'h-8'
 export const BUTTON_MD_W_CLS = 'w-8'
-export const BUTTON_LG_W_CLS = 'w-9.5'
-export const BUTTON_LG_H_CLS = 'h-9.5'
+export const BUTTON_LG_W_CLS = 'w-10'
+export const BUTTON_LG_H_CLS = 'h-10'
 export const BUTTON_XL_W_CLS = 'w-11'
 export const BUTTON_XL_H_CLS = 'h-11'
 
-export const TOOLBAR_BUTTON_W_CLS = 'w-7' //BUTTON_SM_W_CLS //BUTTON_MD_W_CLS
-export const TOOLBAR_BUTTON_H_CLS = 'h-7' //BUTTON_SM_H_CLS //BUTTON_MD_H_CLS
+//export const TOOLBAR_BUTTON_W_CLS = 'w-7' //BUTTON_SM_W_CLS //BUTTON_MD_W_CLS
+export const TOOLBAR_BUTTON_H_CLS = 'h-7.5' //BUTTON_SM_H_CLS //BUTTON_MD_H_CLS
 
 export const BASE_ICON_BUTTON_CLS = 'shrink-0 grow-0 aspect-square'
 
@@ -56,7 +56,13 @@ export const ICON_BUTTON_CLS = cn(
 
 export const DROPDOWN_BUTTON_CLS = cn(
   BASE_ICON_BUTTON_CLS,
-  'w-5',
+  'w-4.5',
+  BUTTON_MD_H_CLS
+)
+
+export const DROPDOWN_WITH_ICON_BUTTON_CLS = cn(
+  BASE_ICON_BUTTON_CLS,
+  'w-12',
   BUTTON_MD_H_CLS
 )
 

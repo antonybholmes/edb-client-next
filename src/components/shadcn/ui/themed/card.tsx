@@ -1,8 +1,8 @@
-import { BaseCol } from '@layout/base-col'
-import { ContentDiv } from '@layout/content-div'
+import { BaseCol } from '@/layout/base-col'
+import { ContentDiv } from '@/layout/content-div'
 
-import { VCenterCol } from '@layout/v-center-col'
-import { cn } from '@lib/shadcn-utils'
+import { VCenterCol } from '@/layout/v-center-col'
+import { cn } from '@/lib/shadcn-utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { forwardRef, type HTMLAttributes } from 'react'
 
@@ -29,7 +29,7 @@ export const CenteredCardContainer = forwardRef<
 ))
 CenteredCardContainer.displayName = 'CenteredCardContainer'
 
-export const variants = cva('border border-border/50', {
+export const variants = cva('border border-border/25', {
   variants: {
     variant: {
       default: 'bg-background p-6',
@@ -39,29 +39,38 @@ export const variants = cva('border border-border/50', {
 
     gap: {
       default: 'gap-y-4',
+      lg: 'gap-y-6',
+      xl: 'gap-y-8',
       sm: 'gap-y-2',
       none: '',
     },
     rounded: {
-      default: 'rounded-card',
+      sm: 'rounded-sm',
+      lg: 'rounded-lg',
+      xl: 'rounded-xl',
       '2xl': 'rounded-2xl',
+      none: '',
+    },
+    shadow: {
+      xl: 'shadow-xl',
       none: '',
     },
   },
   defaultVariants: {
     variant: 'default',
     gap: 'default',
-    rounded: 'default',
+    rounded: 'lg',
+    shadow: 'none',
   },
 })
 
 const Card = forwardRef<
   HTMLDivElement,
   HTMLAttributes<HTMLDivElement> & VariantProps<typeof variants>
->(({ variant, gap, rounded, className, ...props }, ref) => (
+>(({ variant, gap, rounded, shadow, className, ...props }, ref) => (
   <BaseCol
     ref={ref}
-    className={variants({ variant, gap, rounded, className })}
+    className={variants({ variant, gap, rounded, shadow, className })}
     {...props}
   />
 ))

@@ -1,15 +1,15 @@
-import { SlidersIcon } from '@icons/sliders-icon'
+import { SlidersIcon } from '@/icons/sliders-icon'
 
 import { useEffect, useRef, useState } from 'react'
 
-import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
-import { BaseCol } from '@layout/base-col'
-import { getFormattedShape } from '@lib/dataframe/dataframe-utils'
-import { downloadSvgAutoFormat } from '@lib/image-utils'
-import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
-import { ZoomSlider } from '@toolbar/zoom-slider'
+import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { BaseCol } from '@/layout/base-col'
+import { getFormattedShape } from '@/lib/dataframe/dataframe-utils'
+import { downloadSvgAutoFormat } from '@/lib/image-utils'
+import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
+import { ZoomSlider } from '@/toolbar/zoom-slider'
 
-import { useHistory, usePlot } from '../../history/history-store'
+import { useHistory, usePlot, type BoxPlot } from '../../history/history-store'
 
 import { NO_DIALOG, TEXT_CANCEL, type IDialogParams } from '@/consts'
 import {
@@ -18,19 +18,17 @@ import {
 } from '@/providers/message-provider'
 import { useZoom } from '@/providers/zoom-provider'
 
-import { SaveImageDialog } from '@components/pages/save-image-dialog'
-import type { ITab } from '@components/tabs/tab-provider'
-import type { IDivProps } from '@interfaces/div-props'
-import { randId } from '@lib/id'
-import { Card } from '@themed/card'
+import { SaveImageDialog } from '@/components/pages/save-image-dialog'
+import type { ITab } from '@/components/tabs/tab-provider'
+import type { IDivProps } from '@/interfaces/div-props'
+import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import { randId } from '@/lib/id'
+import { Card } from '@/themed/card'
 import { produce } from 'immer'
-import { PLOT_CLS } from '../heatmap/heatmap-panel'
+import { MESSAGE_CHANNEL, OPTS_SIDEBAR_ID } from '../../data/data-panel'
+import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { BoxPlotDataPanel } from './boxplot-data-panel'
-import {
-  BoxPlotSvg,
-  DEFAULT_BOX_PLOT_DISPLAY_PROPS,
-  type IBoxPlotDisplayOptions,
-} from './boxplot-plot-svg'
+import { BoxPlotSvg } from './boxplot-plot-svg'
 import { BoxPlotPropsPanel } from './boxplot-props-panel'
 
 export const VOLCANO_X = 'Log2 fold change'
@@ -42,19 +40,15 @@ interface IPanelProps extends IDivProps {
 
 export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
-  const { sheet, updateProps } = useHistory()
+  const { sheet, updatePlot } = useHistory()
 
-  const plot = usePlot(plotAddr)
+  const plot = usePlot(plotAddr)! as BoxPlot
 
-  const displayOptions: IBoxPlotDisplayOptions =
-    (plot?.customProps.displayOptions as IBoxPlotDisplayOptions) ??
-    DEFAULT_BOX_PLOT_DISPLAY_PROPS
-
-  const { messages, removeMessage } = useMessages() //'box-plot')
+  const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'box-plot')
 
   const svgRef = useRef<SVGSVGElement>(null)
 
-  const { zoom } = useZoom()
+  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
@@ -71,12 +65,14 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
 
   const [showSideBar, setShowSideBar] = useState(true)
 
+  const df = sheet?.df as AnnotationDataFrame
+
   useEffect(() => {
-    const filteredMessages = messages.filter((m) => m.target === plot?.id)
+    const filteredMessages = messages.filter(m => m.target === plot?.id)
 
     for (const message of filteredMessages) {
-      if (message.text.includes('save')) {
-        if (message.text.includes(':')) {
+      if (message.data.includes('save')) {
+        if (message.data.includes(':')) {
           downloadSvgAutoFormat(
             svgRef,
             `boxwhisker.${messageImageFileFormat(message)}`
@@ -86,7 +82,7 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
         }
       }
 
-      if (message.text.includes('show-sidebar')) {
+      if (message.data.includes('show-sidebar')) {
         setShowSideBar(!showSideBar)
       }
 
@@ -101,11 +97,9 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
     //   displayOptions: { ...displayOptions, scale },
     // })
 
-    updateProps(
-      plotAddr,
-      'displayOptions',
-      produce(displayOptions, (draft) => {
-        draft.page.scale = zoom
+    updatePlot(
+      produce(plot, draft => {
+        draft.props.page.scale = zoom
       })
     )
   }, [zoom])
@@ -134,7 +128,8 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
           name="boxplot"
           onResponse={(response, data) => {
             if (response !== TEXT_CANCEL) {
-              downloadSvgAutoFormat(svgRef, data!.name as string)
+              const d = data as { name: string }
+              downloadSvgAutoFormat(svgRef, d.name)
             }
 
             setShowDialog({ ...NO_DIALOG })
@@ -144,7 +139,7 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
 
       <BaseCol ref={ref} className="h-full overflow-hidden grow">
         {/* <ResizablePanelGroup
-          direction="horizontal"
+          orientation="horizontal"
           id="volcano-resizable-panels"
           className="overflow-hidden"
           //autoSaveId="volcano-resizable-panels"
@@ -152,8 +147,8 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
           <ResizablePanel
             id="volcano-svg"
             order={1}
-            defaultSize={75}
-            minSize={50}
+            defaultSize="75%"
+            minSize="50%"
             className="flex grow flex-col pt-2 pb-2 pl-2"
           >
             <div className="custom-scrollbar relative grow overflow-scroll rounded-lg border bg-white">
@@ -171,8 +166,8 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
             id="volcano-svg-right"
             order={2}
             className="flex flex-col overflow-hidden"
-            defaultSize={25}
-            minSize={15}
+            defaultSize="25%"
+            minSize="15%"
             collapsedSize={0}
             collapsible={true}
           >
@@ -181,7 +176,7 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
         </ResizablePanelGroup> */}
 
         <TabSlideBar
-          id="boxplot"
+          id={OPTS_SIDEBAR_ID}
           side="right"
           tabs={plotRightTabs}
           //onValueChange={setSelectedTab}
@@ -197,10 +192,10 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
         </TabSlideBar>
 
         <ToolbarFooterPortal className="shrink-0 grow-0 justify-end">
-          <span>{getFormattedShape(sheet)}</span>
+          <span>{getFormattedShape(df)}</span>
           <></>
           <>
-            <ZoomSlider />
+            <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
           </>
         </ToolbarFooterPortal>
       </BaseCol>

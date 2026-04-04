@@ -11,20 +11,41 @@ export function where<T>(
   data: T[],
   f: (x: T, idx: number) => boolean
 ): number[] {
-  // return data
-  //   .map((v, vi) => [v, vi] as [T, number])
-  //   .filter(a => f(a[0]!))
-  //   .map(a => a[1]!)
+  const len = data.length
+  const out = new Array<number>(len)
+  let k = 0
 
-  const ret: number[] = []
-
-  for (const [ci, c] of data.entries()) {
-    if (f(c, ci)) {
-      ret.push(ci)
+  for (let i = 0; i < len; i++) {
+    const v = data[i]!
+    if (f(v, i)) {
+      out[k++] = i
     }
   }
 
-  return ret
+  // trim the output array to the correct length
+  out.length = k
+  return out
+}
+
+/**
+ * A specific form of where for string matching
+ * the start of strings.
+ *
+ * @param data                   A list of strings to search.
+ * @param search                 A search prefix to look for.
+ * @param caseInsensitive        Case insensitive matching.
+ * @returns                      The indices of strings beginning with search.
+ */
+export function whereStr(
+  data: string[],
+  search: string,
+  caseInsensitive: boolean = true
+): number[] {
+  const s = caseInsensitive ? search.toLowerCase() : search
+
+  return where(data, x =>
+    caseInsensitive ? x.toLowerCase().includes(s) : x.includes(s)
+  )
 }
 
 /**
@@ -41,11 +62,7 @@ export function whereStartsWith(
   search: string,
   caseInsensitive: boolean = true
 ): number[] {
-  let s = search
-
-  if (caseInsensitive) {
-    s = s.toLowerCase()
-  }
+  const s = caseInsensitive ? search.toLowerCase() : search
 
   return where(data, x =>
     caseInsensitive ? x.toLowerCase().startsWith(s) : x.startsWith(s)

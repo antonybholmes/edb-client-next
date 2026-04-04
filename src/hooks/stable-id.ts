@@ -29,10 +29,7 @@ import { useId } from 'react'
  * @param prefix - A prefix to use for the generated ID.
  * @returns A stable ID.
  */
-export function useStableId(
-  id?: string | null | undefined,
-  prefix = 'id'
-): string {
+export function useStableId(prefix = 'id'): string {
   const reactId = useId()
-  return id || `${prefix}:${reactId}`
+  return prefix ? `${prefix}:${reactId}` : reactId
 }

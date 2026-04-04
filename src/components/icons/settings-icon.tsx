@@ -3,8 +3,8 @@ import {
   ICON_TRANSITION_FROM_CLS,
   ICON_TRANSITION_TO_CLS,
   type IIconProps,
-} from '@interfaces/icon-props'
-import { cn } from '@lib/shadcn-utils'
+} from '@/interfaces/icon-props'
+import { cn } from '@/lib/shadcn-utils'
 import { Cog, Settings } from 'lucide-react'
 
 interface Props extends IIconProps {
@@ -14,7 +14,7 @@ interface Props extends IIconProps {
 export function SettingsIcon({
   w = 'w-5 h-5',
   stroke = 'stroke-current',
-  isAnimated = true,
+  isAnimated = false,
   className,
   strokeWidth = 1.5,
   style,

@@ -1,6 +1,6 @@
 import { SVG_CRISP_EDGES } from '@/consts'
-import { ZERO_POS, type IPos } from '@interfaces/pos'
-import { COLOR_BLACK } from '@lib/color/color'
+import { ZERO_POS, type IPos } from '@/interfaces/pos'
+import { COLOR_BLACK } from '@/lib/color/color'
 import { Axis } from './axis'
 
 interface IAxisProps {

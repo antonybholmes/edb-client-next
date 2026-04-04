@@ -1,21 +1,25 @@
-import { type IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/shadcn-utils'
+import { type IDivProps } from '@/interfaces/div-props'
+import { cn } from '@/lib/shadcn-utils'
 
+import { BaseLink, BLANK_TARGET } from '@/components/link/base-link'
+import { ThemeLink } from '@/components/link/theme-link'
+
+import { CloseIcon } from '@/icons/close-icon'
+import type { ILinkProps } from '@/interfaces/link-props'
+import { BaseCol } from '@/layout/base-col'
+import { VCenterRow } from '@/layout/v-center-row'
 import { HEADER_LINKS } from '@/menus'
 import { FOCUS_RING_CLS } from '@/theme'
-import { BaseLink, BLANK_TARGET } from '@components/link/base-link'
-import { ThemeLink } from '@components/link/theme-link'
-import { CloseIcon } from '@icons/close-icon'
-import type { ILinkProps } from '@interfaces/link-props'
-import { BaseCol } from '@layout/base-col'
-import { VCenterRow } from '@layout/v-center-row'
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
-import { BASE_FLAT_BUTTON_CLS, Button } from '@themed/button'
-import { Sheet, SheetContent, SheetTrigger } from '@themed/sheet'
+import { BASE_FLAT_BUTTON_CLS, Button } from '@/themed/v2/button'
+//import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { HeaderIconButton } from '@/layouts/header-icon-button'
 import { useState } from 'react'
 import { GripIcon } from '../icons/grip-icon'
-import { DialogTitle } from '../shadcn/ui/dialog'
-import { DialogDescription } from '../shadcn/ui/themed/dialog'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '../shadcn/ui/themed/v2/popover'
 import type { IHeaderLinksProps } from './header-menu'
 
 export function ModuleButtonLink({
@@ -40,9 +44,9 @@ export function ModuleButtonLink({
 
 export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
   // sort alphabetically and ignore sections
-  const items = HEADER_LINKS.map((section) => {
+  const items = HEADER_LINKS.map(section => {
     return section.modules.filter(
-      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()
@@ -98,26 +102,25 @@ export function HeaderMenuSheet({ tab = '' }: IFileMenu) {
   const [open, setOpen] = useState(false)
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <Button
-          id="header-menu-popover-button"
-          variant="flat"
-          size="none"
-          rounded="none"
-          // ripple={false}
-          checked={open}
-          className="h-header w-header"
-          aria-label={open ? 'Close Menu' : 'Open Menu'}
-        >
-          <GripIcon />
-        </Button>
-      </SheetTrigger>
-      <SheetContent
-        side="left"
-        surface="glass"
-        overlayFill="" //"bg-foreground/10"
-      >
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger
+        render={
+          <HeaderIconButton
+            id="header-menu-popover-button"
+            variant="flat"
+            //size="none"
+            //rounded="none"
+            // ripple={false}
+            checked={open}
+            //className="h-header w-header"
+            aria-label={open ? 'Close Menu' : 'Open Menu'}
+          >
+            <GripIcon />
+          </HeaderIconButton>
+        }
+      />
+
+      <PopoverContent side="left" variant="glass">
         <VCenterRow className="justify-end p-2">
           <Button
             variant="flat"
@@ -150,13 +153,13 @@ export function HeaderMenuSheet({ tab = '' }: IFileMenu) {
           </ThemeLink>
         </VCenterRow>
 
-        <VisuallyHidden asChild>
+        {/* <VisuallyHidden asChild>
           <DialogTitle>Header Menu</DialogTitle>
         </VisuallyHidden>
         <VisuallyHidden asChild>
           <DialogDescription>Header Menu</DialogDescription>
-        </VisuallyHidden>
-      </SheetContent>
-    </Sheet>
+        </VisuallyHidden> */}
+      </PopoverContent>
+    </Popover>
   )
 }

@@ -6,42 +6,27 @@ import {
   type IColorProps,
   type IFontProps,
   type IStrokeProps,
-} from '@components/plot/svg-props'
-import { type IChildrenProps } from '@interfaces/children-props'
+} from '@/components/plot/svg-props'
 import {
   COLOR_BLACK,
   COLOR_CORNFLOWER_BLUE,
   COLOR_NAVY_BLUE,
   COLOR_RED,
-} from '@lib/color/color'
-import { API_SEQS_SEARCH_URL } from '@lib/edb/edb'
-import { useEdbAuth } from '@lib/edb/edb-auth'
+} from '@/lib/color/color'
 import {
-  GenomicLocation,
-  IGenomicFeature,
+  GenLoc,
   NO_LOCATION,
-  parseLocation,
+  parseGenLoc,
+  type IGenomicFeature,
   type IGenomicLocation,
-} from '@lib/genomic/genomic'
-import { httpFetch } from '@lib/http/http-fetch'
-import { bearerHeaders } from '@lib/http/urls'
-import { makeNanoIdLen12 } from '@lib/id'
-import { useQuery } from '@tanstack/react-query'
+} from '@/lib/genomic/genomic'
+import { makeUuid } from '@/lib/id'
 import { produce } from 'immer'
 
-import { queryClient } from '@/query'
-import { fill } from '@lib/fill'
-import {
-  createContext,
-  useEffect,
-  useReducer,
-  useState,
-  type Dispatch,
-} from 'react'
-import { useSeqBrowserSettings } from './seq-browser-settings'
-
 import { Axis } from '@/components/plot/axis'
-import { API_GENOME_INFO_URL } from '@/lib/edb/genome'
+import type { IDBEntity } from '@/interfaces/db-entity'
+import { ZERO_POS, type IPos } from '@/interfaces/pos'
+import { createContext } from 'react'
 import type { BaseBedReader } from './readers/bed/base-bed-reader'
 import type { BaseSeqReader } from './readers/seq/base-seq-reader'
 
@@ -55,19 +40,22 @@ export interface ITrack {
 
 export interface IDBTrack extends ITrack {
   /** A database identifier */
-  publicId: string
-  genome: string
-  platform: string
+  id: string
+  //genome: string
+  assembly: string
+  technology: string
+  institution: string
   dataset: string
-  trackType: string
+  reads: number
+  type: string
   url: string
   tags: string[]
 }
 
-export interface IDBSignalTrack extends IDBTrack {
-  reads: number
-  stat: string
-}
+// export interface IDBSignalTrack extends IDBTrack {
+//   reads: number
+//   stat: string
+// }
 
 // export interface ITrackGenome {
 //   name: string
@@ -84,17 +72,15 @@ export interface IDBSignalTrack extends IDBTrack {
 //   platforms: ITrackPlatforms[]
 // }
 
-export const DEFAULT_GENOMIC_LOCATION = parseLocation(
-  'chr3:187441954-187466041'
-)
+export const DEFAULT_GENOMIC_LOCATION = parseGenLoc('chr3:187441954-187466041')
 
-export interface ISignalTrack extends IDBSignalTrack {
-  trackType: 'Seq'
+export interface ISignalTrack extends IDBTrack {
+  type: 'Seq'
   displayOptions: ISeqTrackDisplayOptions
 }
 
 export interface IRemoteBigWigTrack extends IDBTrack {
-  trackType: 'Remote BigWig'
+  type: 'Remote BigWig'
   scale: string
   //reader: BaseSeqReader
   //index: GenomicFeatureIndex<GenomicLocation>
@@ -102,7 +88,7 @@ export interface IRemoteBigWigTrack extends IDBTrack {
 }
 
 export interface ILocalBigWigTrack extends ITrack {
-  trackType: 'Local BigWig'
+  type: 'Local BigWig'
   scale: string
 
   reader: BaseSeqReader
@@ -135,7 +121,7 @@ export const DEFAULT_SEQ_TRACK_DISPLAY_OPTIONS: ISeqTrackDisplayOptions = {
 }
 
 export interface IGeneTrack extends ITrack {
-  trackType: 'Gene'
+  type: 'Gene'
   //index: GenomicFeatureIndex<GenomicLocation>
   displayOptions: IGeneTrackDisplayOptions
 }
@@ -152,16 +138,11 @@ export interface IGeneTrackDisplayOptions {
   //height: number
 
   //stroke: IStrokeProps
-  genes: {
-    gap: number
-  }
-  transcripts: {
-    height: number
-  }
-  // exons: {
-  //   show: boolean
-  //   //height: number
-  //   fill: IFillProps
+  // genes: {
+  //   gap: number
+  // }
+  // transcripts: {
+  //   height: number
   // }
   arrows: {
     style: GeneArrowStyle
@@ -185,13 +166,6 @@ export interface IGeneTrackDisplayOptions {
 }
 
 export const DEFAULT_GENE_TRACK_DISPLAY_OPTIONS: IGeneTrackDisplayOptions = {
-  //height: 30,
-  // stroke: { ...DEFAULT_STROKE_PROPS, color: COLOR_CORNFLOWER_BLUE },
-  // exons: {
-  //   show: true,
-  //   //height: 15,
-  //   fill: { ...OPAQUE_FILL_PROPS, color: COLOR_CORNFLOWER_BLUE },
-  // },
   arrows: {
     stroke: { ...DEFAULT_STROKE_PROPS, color: COLOR_NAVY_BLUE },
     fill: { ...OPAQUE_FILL_PROPS, color: COLOR_NAVY_BLUE },
@@ -200,21 +174,6 @@ export const DEFAULT_GENE_TRACK_DISPLAY_OPTIONS: IGeneTrackDisplayOptions = {
     y: 3,
     show: false,
     style: 'lines',
-  },
-  /* labels: {
-    show: true,
-    offset: 6,
-    font: {
-      size: 'x-small',
-      color: COLOR_BLACK,
-    },
-    showGeneId: false,
-  }, */
-  genes: {
-    gap: 3,
-  },
-  transcripts: {
-    height: 15,
   },
   endArrows: {
     show: true,
@@ -229,7 +188,7 @@ export const DEFAULT_GENE_TRACK_DISPLAY_OPTIONS: IGeneTrackDisplayOptions = {
 }
 
 export interface IScaleTrack extends ITrack {
-  trackType: 'Scale'
+  type: 'Scale'
   //index: GenomicFeatureIndex<GenomicLocation>
   displayOptions: IScaleTrackDisplayOptions
 }
@@ -259,7 +218,7 @@ export const DEFAULT_SCALE_TRACK_DISPLAY_OPTIONS: IScaleTrackDisplayOptions = {
 }
 
 export interface IRulerTrack extends ITrack {
-  trackType: 'Ruler'
+  type: 'Ruler'
   //index: GenomicFeatureIndex<GenomicLocation>
   displayOptions: IRulerTrackDisplayOptions
 }
@@ -297,7 +256,7 @@ export const DEFAULT_RULER_TRACK_DISPLAY_OPTIONS: IRulerTrackDisplayOptions = {
 }
 
 export interface ILocationTrack extends ITrack {
-  trackType: 'Location'
+  type: 'Location'
   //index: GenomicFeatureIndex<GenomicLocation>
   displayOptions: ILocationTrackDisplayOptions
 }
@@ -316,7 +275,7 @@ export const DEFAULT_LOCATION_TRACK_DISPLAY_OPTIONS: ILocationTrackDisplayOption
   }
 
 export interface ICytobandsTrack extends ITrack {
-  trackType: 'Cytobands'
+  type: 'Cytobands'
   //index: GenomicFeatureIndex<GenomicLocation>
   displayOptions: ICytobandsTrackDisplayOptions
 }
@@ -324,14 +283,14 @@ export interface ICytobandsTrack extends ITrack {
 export type BandStyle = 'Rounded' | 'Square'
 
 export interface ICytobandsTrackDisplayOptions {
-  band: { height: number }
+  //band: { height: number }
   labels: {
     skip: { on: boolean; x: number }
     font: IFontProps
     show: boolean
   }
   style: BandStyle
-  height: number
+  //height: number
   //height: number
   stroke: IStrokeProps
   location: {
@@ -347,7 +306,7 @@ export const DEFAULT_CYTOBANDS_TRACK_DISPLAY_OPTIONS: ICytobandsTrackDisplayOpti
   {
     //height: 50,
     stroke: { ...DEFAULT_STROKE_PROPS },
-    height: 24,
+    //height: 24,
 
     location: {
       stroke: { ...DEFAULT_STROKE_PROPS, color: COLOR_RED },
@@ -365,13 +324,13 @@ export const DEFAULT_CYTOBANDS_TRACK_DISPLAY_OPTIONS: ICytobandsTrackDisplayOpti
         x: 50,
       },
     },
-    band: {
-      height: 16,
-    },
+    // band: {
+    //   height: 16,
+    // },
   }
 
 export interface IBedTrack extends IDBTrack {
-  trackType: 'BED'
+  type: 'BED'
   regions: number
 
   //index: GenomicFeatureIndex<GenomicLocation>
@@ -379,12 +338,12 @@ export interface IBedTrack extends IDBTrack {
 }
 
 export interface IRemoteBigBedTrack extends IDBTrack {
-  trackType: 'Remote BigBed'
+  type: 'Remote BigBed'
   displayOptions: IBedTrackDisplayOptions
 }
 
 export interface ILocalBigBedTrack extends ITrack {
-  trackType: 'Local BigBed'
+  type: 'Local BigBed'
 
   reader: BaseBedReader
   //index: GenomicFeatureIndex<GenomicLocation>
@@ -392,7 +351,7 @@ export interface ILocalBigBedTrack extends ITrack {
 }
 
 export interface ILocalBedTrack extends ITrack {
-  trackType: 'Local BED'
+  type: 'Local BED'
   reader: BaseBedReader
   //index: GenomicFeatureIndex<GenomicLocation>
   displayOptions: IBedTrackDisplayOptions
@@ -449,31 +408,40 @@ export type TrackPlot =
 // }
 
 // start, end, count
-export type SeqBin = [number, number, number]
+export interface ISeqBin {
+  s: number
+  e: number
+  c: number
+}
 
 /**
  * The bins for a track
  */
-export interface ITrackBinCounts {
-  name: string
+export interface ISampleBinCounts extends IDBEntity {
   // the public id of a sample
-  publicId: string
+
   binSize: number
   //track: IDBTrack
 
   //reads: number
   //start: number
-  bins: SeqBin[] //ISeqBin[]
+  bins: ISeqBin[] //ISeqBin[]
   ymax: number
-  bpmScaleFactor: number
+  //bpmScaleFactor: number
+  reads: number
+  binReads: number
 }
 
+/**
+ * The search results for a given location which
+ * will contain the bins for
+ */
 export interface ILocTrackBins {
   /** The location for which to display track data */
   location: IGenomicLocation
 
   /** Represents all the tracks requested in the order requested */
-  tracks: ITrackBinCounts[]
+  samples: ISampleBinCounts[]
 }
 
 export type ITrackAction =
@@ -522,10 +490,10 @@ export type ITrackAction =
 
 export interface ITrackGroup {
   id: string
-  trackType: 'Track Group' //optional, but useful for debugging
+  type: 'Track Group' //optional, but useful for debugging
   name: string
-  order: string[]
-  tracks: { [key: string]: TrackPlot } //Map<string, TrackPlot>
+  //order: string[]
+  tracks: TrackPlot[] //{ [key: string]: TrackPlot } //Map<string, TrackPlot>
 
   //childOrder?: string[]
   //children?: { [key: string]: TrackPlot } // Map<string, ITrackGroup>
@@ -533,26 +501,26 @@ export interface ITrackGroup {
 
 export function newTrackGroup(tracks: TrackPlot[]): ITrackGroup {
   return {
-    id: makeNanoIdLen12(),
-    trackType: 'Track Group',
+    id: makeUuid(),
+    type: 'Track Group',
     name: tracks[0]!.name,
-    order: tracks.map((t) => t.id),
-    tracks: Object.fromEntries(tracks.map((t) => [t.id, t])),
+    //order: tracks.map(t => t.id),
+    tracks: [...tracks], //: Object.fromEntries(tracks.map(t => [t.id, t])),
   }
 }
 
-interface IPlotGroup {
-  order: string[]
-  groups: { [key: string]: ITrackGroup } //Map<string, ITrackGroup>
+export interface IPlotGroup {
+  //order: string[]
+  groups: ITrackGroup[] //Record<string, ITrackGroup> //Map<string, ITrackGroup>
 }
 
-interface IPlotsState extends IPlotGroup {
+export interface IPlotsState extends IPlotGroup {
   // Each index is a separate track, but to allow
   // plots to be combined into the same drawing, such as
   // overlaying signals, each index can contain multiple
   // plots, but in reality most will only contain 1
 
-  selected: Map<string, boolean>
+  selected: Record<string, boolean>
 }
 
 export function trackReducer(
@@ -566,56 +534,50 @@ export function trackReducer(
     case 'add':
       groups = action.tracks //.map(ts => newTrackGroup(ts))
 
-      return produce(state, (draft) => {
-        draft.groups = Object.fromEntries([
-          ...Object.entries(state.groups),
-          ...groups.map((g) => [g.id, g] as [string, ITrackGroup]),
-        ])
-        draft.order = [...state.order, ...groups.map((g) => g.id)]
+      return produce(state, draft => {
+        // draft.groups = Object.fromEntries([
+        //   ...Object.entries(state.groups),
+        //   ...groups.map(g => [g.id, g] as [string, ITrackGroup]),
+        // ])
+        // draft.order = [...state.order, ...groups.map(g => g.id)]
+
+        draft.groups = [...state.groups, ...groups]
       })
     case 'set':
       groups = action.tracks //.map(ts => newTrackGroup(ts))
 
-      return produce(state, (draft) => {
-        draft.groups = Object.fromEntries(
-          groups.map((g) => [g.id, g] as [string, ITrackGroup])
-        )
-        draft.order = groups.map((g) => g.id)
-        draft.selected = new Map<string, boolean>()
+      return produce(state, draft => {
+        // draft.groups = Object.fromEntries(
+        //   groups.map(g => [g.id, g] as [string, ITrackGroup])
+        // )
+        // draft.order = groups.map(g => g.id)
+        draft.groups = [...state.groups, ...groups]
+        draft.selected = {}
       })
     case 'update':
-      return produce(state, (draft) => {
-        draft.groups = Object.fromEntries(
-          Object.entries(state.groups).map((e) =>
-            e[0] === action.group.id
-              ? [
-                  e[0],
-                  {
-                    ...e[1],
-                    tracks: Object.fromEntries([
-                      ...Object.entries(e[1].tracks),
-                      [action.track.id, action.track],
-                    ]),
-                  },
-                ]
-              : e
-          )
+      return produce(state, draft => {
+        draft.groups = state.groups.map(e =>
+          e.id === action.group.id
+            ? {
+                ...e,
+                tracks: [...e.tracks, action.track],
+              }
+            : e
         )
       })
 
-    case 'order':
-      return { ...state, order: action.order }
+    // case 'order':
+    //   return { ...state, order: action.order }
     case 'remove-groups':
       //modify the steps, but do not
       removeIds = new Set(action.ids)
 
       return {
         ...state,
-        groups: Object.fromEntries(
-          Object.entries(state.groups).filter((e) => !removeIds.has(e[0]))
-        ),
+        groups: state.groups.filter(e => !removeIds.has(e.id)),
+
         // see ifunknown groups were removed for having not tracks
-        order: state.order.filter((id) => !removeIds.has(id)),
+        //order: state.order.filter(id => !removeIds.has(id)),
       }
     case 'remove-tracks':
       //modify the steps, but do not
@@ -623,90 +585,78 @@ export function trackReducer(
 
       return {
         ...state,
-        groups: Object.fromEntries(
-          Object.entries(state.groups).map((e) =>
-            e[0] === action.group.id
-              ? [
-                  e[0],
-                  {
-                    ...e[1],
-                    tracks: Object.fromEntries(
-                      Object.entries(e[1].tracks).filter(
-                        (e) => !removeIds.has(e[0])
-                      )
-                    ),
-                    order: e[1].order.filter((id) => !removeIds.has(id)),
-                  },
-                ]
-              : e
-          )
+        groups: state.groups.map(e =>
+          e.id === action.group.id
+            ? {
+                ...e,
+                tracks: e.tracks.filter(e => !removeIds.has(e.id)),
+                //order: e  .order.filter(id => !removeIds.has(id)),
+              }
+            : e
         ),
       }
     case 'select':
       return {
         ...state,
-        selected: new Map<string, boolean>([
-          ...state.selected.entries(),
-          ...action.ids.map((id) => [id, action.selected] as [string, boolean]),
+        selected: Object.fromEntries([
+          ...Object.entries(state.selected),
+          ...action.ids.map(id => [id, action.selected] as [string, boolean]),
         ]),
       }
 
     case 'clear':
-      return { ...state, groups: {}, order: [] }
+      return { ...state, groups: [] }
     case 'reset':
       const tracks: TrackPlot[] = [
         {
-          trackType: 'Location',
+          type: 'Location',
           name: 'Location',
-          id: makeNanoIdLen12(),
+          id: makeUuid(),
           displayOptions: {
             ...DEFAULT_LOCATION_TRACK_DISPLAY_OPTIONS,
           },
         },
         {
-          trackType: 'Cytobands',
+          type: 'Cytobands',
           name: 'Cytobands',
-          id: makeNanoIdLen12(),
+          id: makeUuid(),
           displayOptions: {
             ...DEFAULT_CYTOBANDS_TRACK_DISPLAY_OPTIONS,
           },
         },
         {
-          trackType: 'Scale',
+          type: 'Scale',
           name: 'Scale',
-          id: makeNanoIdLen12(),
+          id: makeUuid(),
           displayOptions: {
             ...DEFAULT_SCALE_TRACK_DISPLAY_OPTIONS,
           },
         },
         {
-          trackType: 'Ruler',
+          type: 'Ruler',
           name: 'Ruler',
-          id: makeNanoIdLen12(),
+          id: makeUuid(),
           displayOptions: {
             ...DEFAULT_RULER_TRACK_DISPLAY_OPTIONS,
           },
         },
 
         {
-          trackType: 'Gene',
+          type: 'Gene',
           name: 'Genes',
-          id: makeNanoIdLen12(),
+          id: makeUuid(),
           displayOptions: {
             ...DEFAULT_GENE_TRACK_DISPLAY_OPTIONS,
           },
         },
       ]
 
-      groups = tracks.map((t) => ({ ...newTrackGroup([t]), name: t.name }))
+      groups = tracks.map(t => ({ ...newTrackGroup([t]), name: t.name }))
 
       return {
         ...state,
-        groups: Object.fromEntries(
-          groups.map((g) => [g.id, g] as [string, ITrackGroup])
-        ),
-        order: groups.map((g) => g.id),
-        selected: new Map<string, boolean>(),
+        groups,
+        selected: {},
       }
     default:
       return state
@@ -755,54 +705,11 @@ export function trackReducer(
 //   Dispatch<IMotifsAction> | undefined
 // >(undefined)
 
-const DEFAULT_STATE = {
-  groups: {},
-  order: [],
-  selected: new Map<string, boolean>(),
-}
-
-export const TracksContext = createContext<{
-  locations: GenomicLocation[]
-  setLocations: (location: (GenomicLocation | string)[]) => void
-  trackDb: AllDBSignalTrackTypes[]
-  binSizes: number[]
-  state: IPlotsState
-  dispatch: Dispatch<ITrackAction>
-  //tooltip: ITrackTooltip
-  //setTooltip: (tooltip: ITrackTooltip) => void
-}>({
-  locations: [],
-  setLocations: () => {},
-  trackDb: [],
-  binSizes: [],
-  state: { ...DEFAULT_STATE },
-  dispatch: () => {},
-  //tooltip: { ...NO_TRACK_TOOLTIP },
-  //setTooltip: () => {},
-})
-
-export const LocationContext = createContext<{
-  xax: Axis
-  locTrackBins: ILocTrackBins | undefined
-  globalY: number
-  binSize: number
-  location: GenomicLocation
-  genes: IGenomicFeature[]
-  geneYMap: Map<string, number>
-  setLocation: (location: GenomicLocation) => void
-}>({
-  xax: new Axis(),
-  locTrackBins: {
-    location: NO_LOCATION,
-    tracks: [],
-  },
-  globalY: 1,
-  binSize: 10,
-  location: NO_LOCATION,
-  genes: [],
-  geneYMap: new Map<string, number>(),
-  setLocation: () => {},
-})
+// const DEFAULT_STATE: IPlotsState = {
+//   groups: {},
+//   order: [],
+//   selected: {},
+// }
 
 /**
  * Return a bin size for a given region on display
@@ -810,7 +717,7 @@ export const LocationContext = createContext<{
  * @param location
  * @returns
  */
-export function autoBinSize(location: GenomicLocation) {
+export function autoBinSize(location: GenLoc) {
   const w = location.end - location.start + 1
 
   // if (w / 50 < 1000) {
@@ -833,222 +740,60 @@ export function autoBinSize(location: GenomicLocation) {
   //   return 20000
   // }
 
-  // if (w / 10 <= 1000) {
-  //   return 10
-  // } else if (w / 100 <= 1000) {
-  //   return 100
-  // } else if (w / 1000 < 1000) {
-  //   return 1000
-  // } else {
-  //   return 10000
-  // }
-
-  if (w / 16 <= 1000) {
-    return 16
-  } else if (w / 64 <= 1000) {
-    return 64
-  } else if (w / 256 < 1000) {
-    return 256
-  } else if (w / 1024 < 1000) {
-    return 1024
-  } else if (w / 4096 < 1000) {
-    return 4096
+  if (w / 10 < 1000) {
+    return 50
+  } else if (w / 100 < 1000) {
+    return 100
+  } else if (w / 1000 < 1000) {
+    return 1000
   } else {
-    return 16384
-  }
-}
-
-export function TracksProvider({ children }: IChildrenProps) {
-  const { settings, updateSettings } = useSeqBrowserSettings()
-
-  const { fetchAccessToken } = useEdbAuth()
-
-  const [state, dispatch] = useReducer(trackReducer, { ...DEFAULT_STATE })
-
-  const [trackDb, setTrackDb] = useState<AllDBSignalTrackTypes[]>([])
-  const [locations, setLocations] = useState<GenomicLocation[]>(
-    settings.locations.map((l) => parseLocation(l))
-  )
-  const [binSizes, setBinSizes] = useState<number[]>([128])
-
-  //const [tooltip, setTooltip] = useState<ITrackTooltip>(NO_TRACK_TOOLTIP)
-
-  useEffect(() => {
-    dispatch({ type: 'reset' })
-  }, [settings.genome])
-
-  const tracksQuery = useQuery({
-    queryKey: ['tracks', settings.genome],
-    queryFn: async () => {
-      const accessToken = await fetchAccessToken()
-
-      //const token = await loadAccessToken()
-      //console.log(API_SEQS_SEARCH_URL)
-
-      const res = await httpFetch.getJson<{ data: AllDBSignalTrackTypes[] }>(
-        `${API_SEQS_SEARCH_URL}/${settings.genome}`,
-        {
-          headers: bearerHeaders(accessToken),
-        }
-      )
-
-      //logger.log('tracks', res.data)
-
-      return res.data
-    },
-  })
-
-  useEffect(() => {
-    if (tracksQuery.data) {
-      setTrackDb(tracksQuery.data)
-    }
-  }, [tracksQuery.data])
-
-  async function _setLocations(locs: (GenomicLocation | string)[]) {
-    const locations: GenomicLocation[] = []
-
-    for (const loc of locs) {
-      if (loc instanceof GenomicLocation) {
-        locations.push(loc)
-      } else {
-        try {
-          locations.push(parseLocation(loc))
-        } catch {
-          // see if gene symbol
-
-          try {
-            const res = await queryClient.fetchQuery({
-              queryKey: ['genes', settings.genome, loc],
-              queryFn: async () => {
-                console.log(
-                  `${API_GENOME_INFO_URL}/${settings.genome}?search=${loc}&feature=gene`
-                )
-                const res = await httpFetch.getJson<{
-                  data: IGenomicFeature[]
-                }>(
-                  `${API_GENOME_INFO_URL}/${settings.genome}?search=${loc}&feature=gene`
-                )
-
-                //console.log('search genes', res.data)
-
-                return res.data
-              },
-            })
-
-            const features: IGenomicFeature[] = res
-
-            if (features.length > 0) {
-              const l = features[0]!.loc
-              locations.push(new GenomicLocation(l.chr, l.start, l.end))
-            }
-          } catch {}
-        }
-      }
-    }
-
-    locations.map((location) => {
-      const start = Math.max(1, Math.round(location.start))
-      const end = Math.max(
-        start + 10,
-        Math.min(300000000, Math.round(location.end))
-      )
-      //console.log(start, end)
-      return new GenomicLocation(location.chr, start, end)
-    })
-
-    // remove duplicates
-    // const used = new Set<string>()
-
-    // const uniqueLocations: GenomicLocation[] = []
-
-    // for (const l of locations) {
-    //   if (used.has(l.loc)) {
-    //     continue
-    //   }
-
-    //   uniqueLocations.push(l)
-    //   used.add(l.loc)
-    // }
-
-    // Cache locations as user might be interested in them
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.locations = locations.map((l) => l.loc)
-      })
-    )
-
-    setLocations(locations)
+    return 10000
   }
 
-  useEffect(() => {
-    setBinSizes(
-      settings.seqs.bins.autoSize
-        ? locations.map((location) => autoBinSize(location))
-        : fill(settings.seqs.bins.size, locations.length)
-    )
-  }, [locations, settings.seqs.bins.size, settings.seqs.bins.autoSize])
-
-  //const [orderedMotifSearchIds, orderedMotifSearchIdsDispatch] =
-  // useMotifSearchIds()
-
-  // useEffect(() => {
-  //   const rpn = toRPN(search)
-
-  //   //console.log(rpn)
-
-  //   const stack: number[][] = []
-  //   let idset: Set<number>
-  //   let ids1: number[]
-  //   let ids2: number[]
-
-  //   for (let n of rpn) {
-  //     switch (n.op) {
-  //       case "AND":
-  //         if (stack.length > 1) {
-  //           idset = new Set(stack.pop()!)
-  //           ids2 = stack.pop()!
-  //           stack.push(ids2.filter(id => idset.has(id)))
-  //         }
-  //         break
-  //       case "OR":
-  //         if (stack.length > 1) {
-  //           ids1 = stack.pop()!
-  //           idset = new Set(ids1)
-  //           ids2 = stack.pop()!
-  //           stack.push(ids1.concat(ids2.filter(id => !idset.has(id))))
-  //         }
-  //         break
-  //       default:
-  //         if (n.v) {
-  //           stack.push(motifDB.find(n.v)) //search))
-  //         }
-  //         break
-  //     }
-  //   }
-
-  //   if (stack.length > 0) {
-  //     const ids = stack.pop()! //motifDB.find(search)
-  //     // limit search results for rendering purposes
-  //     motifSearchIdsDispatch({ type: "set", ids: ids.slice(0, 20) })
-  //   }
-  //   //orderedMotifSearchIdsDispatch({ type: "add", ids: ids.slice(0, 20) })
-  // }, [motifDB, search])
-
-  return (
-    <TracksContext.Provider
-      value={{
-        locations,
-        setLocations: _setLocations,
-        trackDb,
-        binSizes,
-
-        state,
-        dispatch,
-        ///tooltip,
-        //setTooltip,
-      }}
-    >
-      {children}
-    </TracksContext.Provider>
-  )
+  // if (w / 16 <= 1000) {
+  //   return 16
+  // } else if (w / 64 <= 1000) {
+  //   return 64
+  // } else if (w / 256 < 1000) {
+  //   return 256
+  // } else if (w / 1024 < 1000) {
+  //   return 1024
+  // } else if (w / 4096 < 1000) {
+  //   return 4096
+  // } else {
+  //   return 16384
+  // }
 }
+
+export const LocationContext = createContext<{
+  xax: Axis
+  locTrackBins: ILocTrackBins | undefined
+  globalY: number
+  binSize: number
+  location: GenLoc
+  pos: IPos
+  genes: IGenomicFeature[]
+  geneYMap: Map<string, number>
+  setLocation: (location: GenLoc) => void
+}>({
+  xax: new Axis(),
+  locTrackBins: {
+    location: NO_LOCATION,
+    samples: [],
+  },
+  globalY: 1,
+  binSize: 10,
+  location: NO_LOCATION,
+  pos: { ...ZERO_POS },
+  genes: [],
+  geneYMap: new Map<string, number>(),
+  setLocation: () => {},
+})
+
+interface IMouseEventContext {
+  pos: IPos
+}
+
+export const MouseEventContext = createContext<IMouseEventContext>({
+  pos: { ...ZERO_POS },
+})

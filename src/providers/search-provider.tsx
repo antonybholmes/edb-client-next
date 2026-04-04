@@ -1,4 +1,4 @@
-import type { IChildrenProps } from '@interfaces/children-props'
+import type { IChildrenProps } from '@/interfaces/children-props'
 import { createContext, useState } from 'react'
 
 export const SearchContext = createContext<{

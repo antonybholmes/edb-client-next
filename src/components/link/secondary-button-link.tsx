@@ -1,5 +1,5 @@
-import { ButtonLink } from '@components/link/button-link'
-import { type ILinkProps } from '@interfaces/link-props'
+import { ButtonLink } from '@/components/link/button-link'
+import { type ILinkProps } from '@/interfaces/link-props'
 
 export function SecondaryButtonLink({
   className,

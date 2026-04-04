@@ -1,13 +1,12 @@
-import { useZoom } from '@/providers/zoom-provider'
-import type { ICell } from '@interfaces/cell'
-import type { IDim } from '@interfaces/dim'
-import type { IPos } from '@interfaces/pos'
-import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
-import { cellStr } from '@lib/dataframe/cell'
-import type { DataFrame } from '@lib/dataframe/dataframe'
-import { DEFAULT_INDEX_NAME } from '@lib/dataframe/series'
-import { range } from '@lib/math/range'
-import { cn } from '@lib/shadcn-utils'
+import type { ICell } from '@/interfaces/cell'
+import type { IDim } from '@/interfaces/dim'
+import type { IPos } from '@/interfaces/pos'
+import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import { cellStr } from '@/lib/dataframe/cell'
+import type { DataFrame } from '@/lib/dataframe/dataframe'
+import { DEFAULT_INDEX_NAME } from '@/lib/dataframe/series'
+import { range } from '@/lib/math/range'
+import { cn } from '@/lib/shadcn-utils'
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
 import {
   NO_SELECTION,
@@ -18,9 +17,9 @@ import {
 import { BaseCol } from '../layout/base-col'
 import { BaseRow } from '../layout/base-row'
 import { VCenterRow } from '../layout/v-center-row'
-import { Input } from '../shadcn/ui/themed/input'
+import { Input } from '../shadcn/ui/themed/v2/input'
 
-// // Sample data
+// Sample data
 // const data = [
 //   { name: 'John Doe', age: 28, city: 'New York' },
 //   { name: 'Jane Smith', age: 34, city: 'Los Angeles' },
@@ -31,7 +30,7 @@ import { Input } from '../shadcn/ui/themed/input'
 //   // Add more rows as needed
 // ]
 
-// // Column and row count
+// Column and row count
 // const columnCount = 3 // 3 columns: Name, Age, City
 // const rowCount = data.length
 
@@ -89,10 +88,8 @@ export function VirtualizedDataFrame({
   df,
   cell = { w: 72, h: 24 },
   editable = false,
-  zoom,
+  zoom = 1,
 }: IVirtualizedDataFrameProps) {
-  const { zoom: globalZoom } = useZoom()
-
   //const [scrollTop, setScrollTop] = useState(0)
   //const [scrollLeft, setScrollLeft] = useState(0)
   const [visibleRows, setVisibleRows] = useState<number[]>([])
@@ -148,27 +145,23 @@ export function VirtualizedDataFrame({
   }, [selection])
 
   const scaledCell: IDim = useMemo(() => {
-    const z = zoom !== undefined ? zoom : globalZoom
     return {
-      w: cell.w * z,
-      h: cell.h * z,
+      w: cell.w * zoom,
+      h: cell.h * zoom,
     }
-  }, [cell.w, cell.h, zoom, globalZoom])
+  }, [cell.w, cell.h, zoom])
 
   const indexWidth = useMemo(
-    () => df.rowMetaData.shape[1] * scaledCell.w,
-    [df.rowMetaData.shape[1], scaledCell.w]
+    () => df.rowObs.shape[1] * scaledCell.w,
+    [df.rowObs.shape[1], scaledCell.w]
   )
 
   const headerHeight = useMemo(
-    () => df.colMetaData.shape[1] * scaledCell.h,
-    [df.colMetaData.shape[1], scaledCell.h]
+    () => df.colVars.shape[1] * scaledCell.h,
+    [df.colVars.shape[1], scaledCell.h]
   )
 
-  const fontSize = useMemo(
-    () => `${BASE_FONT_SIZE * (zoom !== undefined ? zoom : globalZoom)}rem`,
-    [zoom, globalZoom]
-  )
+  const fontSize = useMemo(() => `${BASE_FONT_SIZE * zoom}rem`, [zoom])
 
   const colIndexes = useMemo(() => range(df.shape[1]), [df])
 
@@ -315,6 +308,8 @@ export function VirtualizedDataFrame({
 
     let scrollDiff = scrollSize.h - tableRef.current!.clientHeight
 
+    // if scroll less than or equal to 0 it means the table fits within the viewport
+    // so we just set the scroll to 0 and don't change anything
     const fracScrollTop = scrollDiff > 0 ? pos.top / scrollDiff : 0
 
     // the virtual scrolltop using the real table height
@@ -322,11 +317,7 @@ export function VirtualizedDataFrame({
       fracScrollTop * (tableSize.h - tableRef.current!.clientHeight)
     )
 
-    //setScrollTop(vSource.scrollTop)
     setVisibleRows(getVisibleRows(vScrollTop))
-
-    //const scrollWidth = hSource.scrollWidth // e.currentTarget.scrollHeight
-    //const clientWidth = hSource.clientWidth
 
     scrollDiff = scrollSize.w - tableRef.current!.clientWidth
 
@@ -336,43 +327,9 @@ export function VirtualizedDataFrame({
       fracScrollLeft * (tableSize.w - tableRef.current!.clientWidth)
     )
 
-    //setScrollLeft(hSource.scrollLeft)
     setVisibleCols(getVisibleCols(vScrollLeft))
 
     setScrollPos(pos)
-
-    //vScrollPos.current = { left: vScrollLeft, top: vScrollTop }
-
-    // if (hSourceRef.current) {
-    //   const sl = hSourceRef.current.scrollLeft
-    //   setScrollLeft(sl)
-
-    //   setVisibleCols(getVisibleCols(sl))
-    // }
-
-    // ignoreScroll.current = true
-
-    // if (targetVRef.length > 0) {
-    //   const v = pos.top / scrollSize.h
-
-    //   for (const ref of targetVRef) {
-    //     if (ref.current) {
-    //       ref.current.scrollTop = v * ref.current.scrollHeight
-    //     }
-    //   }
-    // }
-
-    // if (targetHRef.length > 0) {
-    //   const v = pos.left / scrollSize.w
-
-    //   for (const ref of targetHRef) {
-    //     if (ref.current) {
-    //       ref.current.scrollLeft = v * ref.current.scrollWidth
-    //     }
-    //   }
-    // }
-
-    // ignoreScroll.current = false
   }
 
   useEffect(() => {
@@ -683,19 +640,17 @@ export function VirtualizedDataFrame({
             // first the headings
             const out: string[][] = [
               [
-                ...df.rowMetaData.colNames,
+                ...df.rowObs.columns,
                 ...range(selection.start.col, selection.end.col + 1).map(
-                  col => df.colNames[col]!
+                  col => df.columns[col]!
                 ),
               ],
 
               // now add the selected rows
               ...range(selection.start.row, selection.end.row + 1).map(row => [
-                ...(df.rowMetaData as DataFrame)._data[row]!.map(v =>
-                  cellStr(v)
-                ),
+                ...(df.rowObs as DataFrame)._data[row]!.map(v => cellStr(v)),
                 ...range(selection.start.col, selection.end.col + 1).map(col =>
-                  cellStr((df._dataframe as DataFrame)._data[row]![col]!)
+                  cellStr((df._data as DataFrame)._data[row]![col]!)
                 ),
               ]),
             ]
@@ -876,7 +831,7 @@ export function VirtualizedDataFrame({
     switch (e.code) {
       case 'Enter':
         if (selection.start.row !== -1) {
-          df.set(selection.start.row, selection.start.col, editText)
+          df.at(selection.start.row, selection.start.col, editText)
         }
 
         resizeSelection({
@@ -932,9 +887,7 @@ export function VirtualizedDataFrame({
 
   function currentSelection(cell: ICell) {
     if (cell.col !== -1 && cell.row !== -1) {
-      setEditText(
-        cellStr((df._dataframe as DataFrame)._data[cell.row]![cell.col]!)
-      )
+      setEditText(cellStr((df._data as DataFrame)._data[cell.row]![cell.col]!))
 
       setSelectedCellRefText(`${cell.row + 1}R x ${cell.col + 1}C`)
     } else {
@@ -950,7 +903,7 @@ export function VirtualizedDataFrame({
       const v = e.currentTarget.value
 
       if (editable) {
-        df.set(currentCell.row, currentCell.col, v)
+        df.at(currentCell.row, currentCell.col, v)
       }
 
       const newCell = {
@@ -1034,7 +987,7 @@ export function VirtualizedDataFrame({
         <VCenterRow key={row}>
           {visibleCols.map(col => {
             // use the internal api for speed
-            const v = (df._dataframe as DataFrame)._data[row]![col]!
+            const v = (df._data as DataFrame)._data[row]![col]!
 
             const isNum = typeof v === 'number'
 
@@ -1083,14 +1036,20 @@ export function VirtualizedDataFrame({
       onBlur={() => window.removeEventListener('keydown', onKeyDown)}
     >
       <VCenterRow className="gap-x-3 text-sm">
+        <label htmlFor="cell-address" className="sr-only">
+          Cell address
+        </label>
         <Input
-          id="cell-location"
+          id="cell-address"
           value={selText}
-          w="w-24"
+          w="sm"
           className="rounded-theme"
           //readOnly
-          aria-label="Cell Location"
+          aria-label="Cell address"
         />
+        <label htmlFor="cell-edit-input" className="sr-only">
+          Cell value
+        </label>
         {editable ? (
           <Input
             id="cell-edit-input"
@@ -1117,13 +1076,13 @@ export function VirtualizedDataFrame({
         >
           <BaseRow
             id="table-index-header"
-            className="select-none border-border border-b border-r box-border pb-[1px] items-end"
+            className="select-none border-border border-b border-r box-border pb-px items-end"
             style={{
               width: indexWidth,
               height: headerHeight,
             }}
           >
-            {df.rowMetaData.colNames.map((colName, col) => {
+            {df.rowObs.columns.map((colName, col) => {
               return (
                 <VCenterRow
                   key={col}
@@ -1157,7 +1116,8 @@ export function VirtualizedDataFrame({
               id="table-index"
               className="absolute"
               style={{
-                top: -scrollOffset.top,
+                //top: -scrollOffset.top,
+                transform: `translateY(-${scrollOffset.top}px)`,
                 width: indexWidth,
               }}
             >
@@ -1194,8 +1154,8 @@ export function VirtualizedDataFrame({
                       height: scaledCell.h,
                     }}
                   >
-                    {range(df.rowMetaData.shape[1]).map(col => {
-                      const v = (df._rowMetaData as DataFrame)._data[row]![col]!
+                    {range(df.rowObs.shape[1]).map(col => {
+                      const v = (df._rowObs as DataFrame)._data[row]![col]!
 
                       return (
                         <VCenterRow
@@ -1240,7 +1200,8 @@ export function VirtualizedDataFrame({
                 id="table-header"
                 className="absolute table-fixed border-collapse"
                 style={{
-                  left: -scrollOffset.left,
+                  //left: -scrollOffset.left,
+                  transform: `translateX(-${scrollOffset.left}px)`,
                   width: tableWidth,
                 }}
               >
@@ -1280,8 +1241,8 @@ export function VirtualizedDataFrame({
                             : 'none'
                       }
                     >
-                      {range(df.colMetaData.shape[1]).map(metaDataCol => {
-                        const v = (df.colMetaData as DataFrame)._data[col]![
+                      {range(df.colVars.shape[1]).map(metaDataCol => {
+                        const v = (df.colVars as DataFrame)._data[col]![
                           metaDataCol
                         ]!
 
@@ -1345,8 +1306,9 @@ export function VirtualizedDataFrame({
                 id="table"
                 className="absolute"
                 style={{
-                  left: -scrollOffset.left,
-                  top: -scrollOffset.top,
+                  //left: -scrollOffset.left,
+                  //top: -scrollOffset.top,
+                  transform: `translate(-${scrollOffset.left}px, -${scrollOffset.top}px)`,
                   userSelect: selectionMouseDown ? 'none' : 'auto',
                 }}
                 onKeyDown={onKeyDown}
@@ -1358,8 +1320,9 @@ export function VirtualizedDataFrame({
               {selection.start.col !== -1 && selection.start.row === -1 && (
                 <span
                   style={{
-                    top: 0,
-                    left: selectionPos.x1 - scrollPos.left,
+                    //top: 0,
+                    //left: selectionPos.x1 - scrollPos.left,
+                    transform: `translate(${selectionPos.x1 - scrollPos.left}px, 0)`,
                     width: selectionPos.w - 1,
                     height: Math.min(
                       scrollSize.h - scrollPos.top,
@@ -1373,8 +1336,9 @@ export function VirtualizedDataFrame({
               {selection.start.col === -1 && selection.start.row !== -1 && (
                 <span
                   style={{
-                    top: selectionPos.y1 - scrollPos.top,
-                    left: 0,
+                    //top: selectionPos.y1 - scrollPos.top,
+                    //left: 0,
+                    transform: `translate(0, ${selectionPos.y1 - scrollPos.top}px)`,
                     height: selectionPos.y2 - selectionPos.y1,
 
                     width: Math.min(
@@ -1389,8 +1353,9 @@ export function VirtualizedDataFrame({
               {selection.start.col !== -1 && selection.start.row !== -1 && (
                 <span
                   style={{
-                    top: selectionPos.y1 - scrollPos.top,
-                    left: selectionPos.x1 - scrollPos.left,
+                    //top: selectionPos.y1 - scrollPos.top,
+                    //left: selectionPos.x1 - scrollPos.left,
+                    transform: `translate(${selectionPos.x1 - scrollPos.left}px, ${selectionPos.y1 - scrollPos.top}px)`,
                     width: selectionPos.w - 1,
                     height: selectionPos.y2 - selectionPos.y1,
                   }}
@@ -1399,10 +1364,11 @@ export function VirtualizedDataFrame({
               )}
 
               <input
-                className="resize-none bg-background outline-hidden absolute z-30 m-[2px]   p-0.5"
+                className="resize-none bg-background outline-hidden absolute z-30 m-0.5 p-0.5"
                 style={{
-                  top: currentCellPos.y - scrollPos.top,
-                  left: currentCellPos.x - scrollPos.left,
+                  //top: currentCellPos.y - scrollPos.top,
+                  //left: currentCellPos.x - scrollPos.left,
+                  transform: `translate(${currentCellPos.x - scrollPos.left}px, ${currentCellPos.y - scrollPos.top}px)`,
                   width: getColWidth(currentCell.col) - 5,
                   height: scaledCell.h - 5,
                   visibility: currentCell.row !== -1 ? 'visible' : 'hidden',

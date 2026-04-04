@@ -1,7 +1,7 @@
+import { ChevronRightIcon } from '@/icons/chevron-right-icon'
+import { cn } from '@/lib/shadcn-utils'
 import { ICON_BUTTON_CLS } from '@/theme'
-import { ChevronRightIcon } from '@icons/chevron-right-icon'
-import { cn } from '@lib/shadcn-utils'
-import { buttonVariants, type IButtonProps } from '@themed/button'
+import { buttonVariants, type IButtonProps } from '@/themed/v2/button'
 import { forwardRef, type ComponentProps } from 'react'
 
 const Pagination = ({ className, ...props }: ComponentProps<'nav'>) => (

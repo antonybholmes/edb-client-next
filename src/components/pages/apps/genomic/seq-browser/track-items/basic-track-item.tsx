@@ -1,7 +1,5 @@
-import { SortableItemContext } from '@components/sortable-item'
-import { VCenterRow } from '@layout/v-center-row'
-import type { NullStr } from '@lib/text/text'
-import { useContext } from 'react'
+import { VCenterRow } from '@/layout/v-center-row'
+import type { NullStr } from '@/lib/text/text'
 import type { ITrackGroup } from '../tracks-provider'
 import { BaseTrackItem } from './base-track-item'
 import {
@@ -18,18 +16,18 @@ export function BasicTrackItem({
   active: NullStr
   multiselect: boolean
 }) {
-  const { isDragging } = useContext(SortableItemContext)
+  //const { isDragging } = useContext(SortableItemContext)
 
-  const hoverMode = isDragging || group.id === active
+  const hoverMode = group.id === active
 
-  const track = group.tracks[group.order[0]!]!
+  const track = group.tracks[0]!
 
   return (
     <BaseTrackItem
       group={group}
       active={active}
       multiselect={multiselect}
-      rightChildren={
+      extChildren={
         <VCenterRow data-hover={hoverMode} className={TRACK_ITEM_BUTTONS_CLS}>
           <DeleteTrackGroupButton group={group} />
         </VCenterRow>

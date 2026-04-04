@@ -1,18 +1,22 @@
 import {
   TEXT_USERNAME_REQUIRED,
   USERNAME_PATTERN,
-} from '@layouts/signin-layout'
+} from '@/layouts/signin-layout'
 
 import { useRef, type BaseSyntheticEvent } from 'react'
 
-import { FormInputError } from '@components/input-error'
-import { Button } from '@themed/button'
-import { Form, FormField, FormItem } from '@themed/form'
+import { FormInputError } from '@/components/input-error'
+import {
+  Form,
+  FormField,
+  FormItem,
+} from '@/components/shadcn/ui/themed/v2/form'
+import { Button } from '@/themed/v2/button'
 
-import { Input } from '@themed/input'
-import { Label } from '@themed/label'
+import { Label } from '@/components/shadcn/ui/themed/v2/label'
+import { Input } from '@/themed/v2/input'
 
-import { useEdbAuth } from '@lib/edb/edb-auth'
+import { useEdbAuth } from '@/lib/edb/edb-auth'
 
 import { useForm } from 'react-hook-form'
 

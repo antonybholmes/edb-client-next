@@ -1,12 +1,17 @@
-import { OptionalDropdownButton } from '@toolbar/optional-dropdown-button'
+import { OptionalDropdownButton } from '@/toolbar/optional-dropdown-button'
 import { useHistory } from './history-store'
 
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { useKeyDownListener } from '@/hooks/keydown-listener'
-import { DropdownMenuItem } from '@themed/dropdown-menu'
 import { Redo2, Undo2 } from 'lucide-react'
 
 export function UndoShortcuts() {
-  const { undo, redo } = useHistory()
+  const { history, historyUndo, historyRedo } = useHistory()
+
+  const pastTooltip =
+    history.length > 1 ? `Undo ${history[history.length - 1]!.description}` : ''
+  const futureTooltip =
+    history.length > 0 ? `Redo ${history[0]!.description}` : ''
 
   useKeyDownListener((e: Event) => {
     const keyEvent = e as KeyboardEvent
@@ -18,31 +23,39 @@ export function UndoShortcuts() {
 
     if (isUndo) {
       e.preventDefault()
-      undo()
+      historyUndo()
     }
 
     if (isRedo) {
       e.preventDefault()
-      redo()
+      historyRedo()
     }
   })
 
   return (
     <>
       <OptionalDropdownButton
-        icon={<Undo2 className="w-4.5 -rotate-45" strokeWidth={2} />}
+        icon={<Undo2 size={18} className="-rotate-45" strokeWidth={1.5} />}
         onMainClick={() => {
-          undo()
+          historyUndo()
         }}
         title="Undo"
       >
-        <DropdownMenuItem aria-label="Log10(x+1)" onClick={() => undo()}>
-          <Undo2 className="w-4.5 -rotate-45" strokeWidth={2} />
+        <DropdownMenuItem
+          aria-label="Undo"
+          onClick={() => historyUndo()}
+          title={pastTooltip}
+        >
+          <Undo2 size={18} className="-rotate-45" strokeWidth={1.5} />
           <span>Undo</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem aria-label="Log10(x+1)" onClick={() => redo()}>
-          <Redo2 className="w-4.5 rotate-45" strokeWidth={2} />
+        <DropdownMenuItem
+          aria-label="Redo"
+          onClick={() => historyRedo()}
+          title={futureTooltip}
+        >
+          <Redo2 size={18} className="rotate-45" strokeWidth={1.5} />
           <span>Redo</span>
         </DropdownMenuItem>
       </OptionalDropdownButton>

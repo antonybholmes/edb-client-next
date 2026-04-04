@@ -1,4 +1,4 @@
-import { Button, type IButtonProps } from '@themed/button'
+import { Button, type IButtonProps } from '@/themed/v2/button'
 
 export function IconButton({
   ref,
@@ -6,7 +6,7 @@ export function IconButton({
   size = 'icon',
   aspect = 'icon',
   pad = 'none',
-  className,
+  className = '',
   children,
   ...props
 }: IButtonProps) {

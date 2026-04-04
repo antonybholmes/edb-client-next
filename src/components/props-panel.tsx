@@ -1,16 +1,11 @@
-import { forwardRef, type ForwardedRef } from 'react'
-
+import type { IDivProps } from '@/interfaces/div-props'
+import { BaseCol } from '@/layout/base-col'
+import { cn } from '@/lib/shadcn-utils'
 import { H2_CLS } from '@/theme'
-import type { IDivProps } from '@interfaces/div-props'
-import { BaseCol } from '@layout/base-col'
-import { cn } from '@lib/shadcn-utils'
 
 export const PROPS_TITLE_CLS = cn(H2_CLS, 'py-2')
 
-export const PropsPanel = forwardRef(function PropsPanel(
-  { className, children, ...props }: IDivProps,
-  ref: ForwardedRef<HTMLDivElement>
-) {
+export function PropsPanel({ ref, className, children, ...props }: IDivProps) {
   return (
     <BaseCol
       //id={randId('props-panel')}
@@ -21,4 +16,4 @@ export const PropsPanel = forwardRef(function PropsPanel(
       {children}
     </BaseCol>
   )
-})
+}

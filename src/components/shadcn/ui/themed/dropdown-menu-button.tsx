@@ -1,13 +1,13 @@
-import { CheckIcon } from '@components/icons/check-icon'
-import { cn } from '@lib/shadcn-utils'
+import { CheckIcon } from '@/components/icons/check-icon'
+import { cn } from '@/lib/shadcn-utils'
 import { Children, type ComponentProps } from 'react'
-import { Button, DROPDOWN_MENU_ICON_CONTAINER_CLS } from './button'
+import { Button, DROPDOWN_MENU_ICON_CONTAINER_CLS } from './v2/button'
 
 export function DropdownMenuButton({
   ref,
-  checked,
+  checked = false,
   variant = 'menu',
-  className,
+  className = '',
   children,
   ...props
 }: ComponentProps<typeof Button>) {

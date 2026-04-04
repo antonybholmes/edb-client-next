@@ -1,10 +1,10 @@
-import { BaseCol } from '@layout/base-col'
+import { BaseCol } from '@/layout/base-col'
 import { Children, useCallback } from 'react'
 
 import { TEXT_DRAG_HERE } from '@/consts'
+import type { IDivProps } from '@/interfaces/div-props'
+import { cn } from '@/lib/shadcn-utils'
 import { DRAG_OUTLINE_CLS } from '@/theme'
-import type { IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/shadcn-utils'
 import { useDropzone, type Accept } from 'react-dropzone'
 import { PlusIcon } from './icons/plus-icon'
 import { VCenterCol } from './layout/v-center-col'

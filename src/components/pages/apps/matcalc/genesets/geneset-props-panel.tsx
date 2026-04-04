@@ -2,54 +2,136 @@ import {
   onTextFileChange,
   OpenFiles,
   type ITextFileOpen,
-} from '@components/pages/open-files'
+} from '@/components/pages/open-files'
 
-import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
+import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
 
 import { TEXT_CLEAR, TEXT_OK } from '@/consts'
-import { TrashIcon } from '@icons/trash-icon'
-import { VCenterRow } from '@layout/v-center-row'
-import { downloadJson } from '@lib/download-utils'
-import { randId } from '@lib/id'
-import { useContext, useEffect, useState } from 'react'
+import { TrashIcon } from '@/icons/trash-icon'
+import { VCenterRow } from '@/layout/v-center-row'
+import { downloadJson } from '@/lib/download-utils'
+import { randId } from '@/lib/id'
+import { useEffect, useState } from 'react'
 
-import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
-import { ToolbarSeparator } from '@toolbar/toolbar-separator'
-import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
+import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
+import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
 import {
   DRAG_HANDLE_APPEAR_CLS,
-  DRAG_HANDLE_HOVER_ANIM_CLS,
-  DragHandle,
+  DRAG_ICON_ANIM_CLS,
   SortableItem,
-  SortableItemContext,
-} from '@components/sortable-item'
-import { DndContext, DragOverlay } from '@dnd-kit/core'
+} from '@/components/sortable-item'
+import { OpenIcon } from '@/icons/open-icon'
+import { VCenterCol } from '@/layout/v-center-col'
+import { makeNewGeneset, type IGeneset } from '@/lib/gsea/geneset'
+import { range } from '@/lib/math/range'
+import { textToLines } from '@/lib/text/lines'
+import { IconButton } from '@/themed/icon-button'
+import { LinkButton } from '@/themed/link-button'
+import { DndContext } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import {
   arrayMove,
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
-import { OpenIcon } from '@icons/open-icon'
-import { SettingsIcon } from '@icons/settings-icon'
-import { VCenterCol } from '@layout/v-center-col'
-import { makeNewGeneset, type IGeneset } from '@lib/gsea/geneset'
-import { range } from '@lib/math/range'
-import { textToLines } from '@lib/text/lines'
-import { IconButton } from '@themed/icon-button'
-import { LinkButton } from '@themed/link-button'
 import { GenesetDialog } from './geneset-dialog'
 
+import {
+  ColorPickerButton,
+  SIMPLE_COLOR_EXT_CLS,
+} from '@/components/color/color-picker-button'
+import { FileDropZonePanel } from '@/components/file-dropzone-panel'
+import { BaseCol } from '@/components/layout/base-col'
+import { PropsPanel } from '@/components/props-panel'
+import { TruncateSpan } from '@/components/truncate-span'
+import { VScrollPanel } from '@/components/v-scroll-panel'
+import { PlusIcon } from '@/icons/plus-icon'
+import { SaveIcon } from '@/icons/save-icon'
+import { StretchRow } from '@/layout/stretch-row'
 import { cn } from '@/lib/shadcn-utils'
-import { ColorPickerButton } from '@components/color/color-picker-button'
-import { FileDropZonePanel } from '@components/file-dropzone-panel'
-import { PlusIcon } from '@icons/plus-icon'
-import { SaveIcon } from '@icons/save-icon'
-import { StretchRow } from '@layout/stretch-row'
-import { GROUP_CLS, GROUP_CONTENT_CLS } from '../groups/group-props-panel'
-import { useBranch, useHistory } from '../history/history-store'
+import { Settings2 } from 'lucide-react'
+import { useHistory } from '../history/history-store'
 import MODULE_INFO from '../module.json'
+
+function GenesetItem({
+  geneset,
+  editGeneset,
+  setDelGroup,
+}: {
+  geneset: IGeneset
+  active?: string | null
+  editGeneset: (geneset: IGeneset) => void
+  setDelGroup: (geneset: IGeneset) => void
+}) {
+  const { updateGeneset } = useHistory()
+
+  const [color, setColor] = useState(geneset.color)
+
+  useEffect(() => {
+    setColor(geneset.color)
+  }, [geneset.color])
+
+  return (
+    <SortableItem
+      id={geneset.id}
+      extChildren={
+        <button
+          onClick={() => setDelGroup(geneset)}
+          className={cn(
+            DRAG_HANDLE_APPEAR_CLS,
+            'hover:text-red-500 focus-visible:text-red-500 trans-color'
+          )}
+          title={`Delete ${geneset.name} gene set`}
+          //onMouseEnter={() => setDelHover(true)}
+          //onMouseLeave={() => setDelHover(false)}
+        >
+          <TrashIcon w="w-4" className={DRAG_ICON_ANIM_CLS} />
+        </button>
+      }
+    >
+      <ColorPickerButton
+        color={color}
+        onColorChange={setColor}
+        onOpenChanged={open => {
+          if (!open) {
+            updateGeneset({ ...geneset, color })
+          }
+        }}
+        className={SIMPLE_COLOR_EXT_CLS}
+        title="Set gene set color"
+      />
+      <VCenterCol
+        className="grow gap-y-1 z-10 overflow-hidden"
+        // style={{
+        //   fill: geneset.color,
+        //   color: geneset.color,
+        // }}
+      >
+        <VCenterRow className="gap-x-1 h-4">
+          <TruncateSpan className="font-semibold grow h-full text-xs">
+            {geneset.name}
+          </TruncateSpan>
+        </VCenterRow>
+
+        <TruncateSpan className="grow h-4 text-xs opacity-75">
+          {geneset.genes.length} genes
+        </TruncateSpan>
+      </VCenterCol>
+
+      <BaseCol
+        className={cn(DRAG_HANDLE_APPEAR_CLS, 'gap-x-1 items-center shrink-0')}
+      >
+        <button
+          title={`Edit ${geneset.name} group`}
+          onClick={() => editGeneset(geneset)}
+        >
+          <Settings2 className={cn('w-4', DRAG_ICON_ANIM_CLS)} />
+        </button>
+      </BaseCol>
+    </SortableItem>
+  )
+}
 
 export interface IGenesetCallback {
   title?: string | undefined
@@ -57,22 +139,17 @@ export interface IGenesetCallback {
   callback?: (geneset: IGeneset) => void
 }
 
-export interface IProps {
-  branchId: string
-  onCancel?: () => void
-}
-
-export function GenesetPropsPanel({ branchId }: IProps) {
+export function GenesetPropsPanel() {
   const [open, setOpen] = useState('')
   const [confirmClear, setConfirmClear] = useState(false)
   //const [showSaveDialog, setShowSaveDialog] = useState(false)
   const [delGroup, setDelGroup] = useState<IGeneset | null>(null)
 
-  const [activeId, setActiveId] = useState<string | null>(null)
+  //const [activeId, setActiveId] = useState<string | null>(null)
 
   const { updateGeneset } = useHistory()
   const { genesets, addGenesets, removeGenesets, reorderGenesets } =
-    useBranch(branchId)
+    useHistory()
 
   const [openGenesetDialog, setOpenGroupDialog] = useState<
     IGenesetCallback | undefined
@@ -110,115 +187,16 @@ export function GenesetPropsPanel({ branchId }: IProps) {
       const genesets: IGeneset[] = []
 
       for (const i of range(df.shape[1])) {
-        const name = df.colNames[i]
+        const name = df.columns[i]
         const gs = makeNewGeneset(name)
 
-        gs.genes = df.col(i).strs.filter((x) => x.length > 0)
+        gs.genes = df.col(i).strs.filter(x => x.length > 0)
 
         genesets.push(gs)
       }
 
       addGenesets(genesets, 'set')
     }
-  }
-
-  function GenesetItem({
-    geneset,
-    active = null,
-  }: {
-    geneset: IGeneset
-    active?: string | null
-  }) {
-    const { isDragging } = useContext(SortableItemContext)
-
-    const [hover, setHover] = useState(false)
-    const [focus, setFocus] = useState(false)
-
-    const hoverMode = hover || isDragging || geneset.id === active
-
-    const [color, setColor] = useState(geneset.color)
-
-    useEffect(() => {
-      setColor(geneset.color)
-    }, [geneset.color])
-
-    return (
-      <VCenterRow
-        className={GROUP_CLS}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        onFocus={() => setFocus(true)}
-        onBlur={() => setFocus(false)}
-        data-focus={focus}
-        data-hover={hoverMode}
-      >
-        <VCenterRow
-          key={geneset.name}
-          data-drag={geneset.id === active}
-          className={GROUP_CONTENT_CLS}
-          // style={{
-          //   backgroundColor: hoverMode ? `${geneset.color}20` : 'transparent',
-          // }}
-        >
-          <DragHandle className={DRAG_HANDLE_APPEAR_CLS} />
-
-          <ColorPickerButton
-            color={color}
-            onColorChange={setColor}
-            onOpenChanged={(open) => {
-              if (!open) {
-                updateGeneset({ ...geneset, color })
-              }
-            }}
-            className="w-3.5 h-3.5 rounded-full aspect-auto shrink-0"
-            title="Set gene set color"
-          />
-
-          <VCenterCol
-            className="grow gap-y-1 z-10 overflow-hidden"
-            // style={{
-            //   fill: geneset.color,
-            //   color: geneset.color,
-            // }}
-          >
-            <p className="font-semibold truncate">{geneset.name}</p>
-            <p className="truncate">{geneset.genes.length} genes</p>
-          </VCenterCol>
-
-          <VCenterRow
-            data-hover={hoverMode}
-            className={cn(
-              DRAG_HANDLE_APPEAR_CLS,
-              'gap-x-1 items-center shrink-0'
-            )}
-          >
-            <button
-              title={`Edit ${geneset.name} group`}
-              onClick={() => editGeneset(geneset)}
-            >
-              <SettingsIcon w="w-4" className={DRAG_HANDLE_HOVER_ANIM_CLS} />
-            </button>
-          </VCenterRow>
-        </VCenterRow>
-
-        <VCenterRow
-          className={cn(
-            DRAG_HANDLE_APPEAR_CLS,
-            'gap-x-1 items-center shrink-0'
-          )}
-        >
-          <button
-            onClick={() => setDelGroup(geneset)}
-            className="hover:text-red-500 focus-visible:text-red-500 trans-color"
-            title={`Delete ${geneset.name} gene set`}
-            //onMouseEnter={() => setDelHover(true)}
-            //onMouseLeave={() => setDelHover(false)}
-          >
-            <TrashIcon w="w-4" className={DRAG_HANDLE_HOVER_ANIM_CLS} />
-          </button>
-        </VCenterRow>
-      </VCenterRow>
-    )
   }
 
   //const [groups, setGroups] = useState<IGroup[]>([])
@@ -274,7 +252,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
       callback: (geneset: IGeneset) => {
         //const indices = getColIdxFromGroup(df, group)
 
-        if (genesets.some((g) => g.id === geneset.id)) {
+        if (genesets.some(g => g.id === geneset.id)) {
           // we modified and existing group so clone list, but replace existing
           // group with new group when they have the same id
           updateGeneset(geneset)
@@ -335,6 +313,19 @@ export function GenesetPropsPanel({ branchId }: IProps) {
 
   return (
     <>
+      {open.includes('open') && (
+        <OpenFiles
+          message={open}
+          //onOpenChange={() => setOpen("")}
+          onFileChange={(message, files) =>
+            onTextFileChange(message, files, files => {
+              openGenesetFiles(files)
+            })
+          }
+          fileTypes={['json', 'tsv', 'txt']}
+        />
+      )}
+
       {openGenesetDialog?.callback && (
         <GenesetDialog
           title={openGenesetDialog.title}
@@ -347,7 +338,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
       {confirmClear && (
         <OKCancelDialog
           title={MODULE_INFO.name}
-          onResponse={(r) => {
+          onResponse={r => {
             if (r === TEXT_OK) {
               //onGroupsChange?.([])
               addGenesets([], 'set')
@@ -364,7 +355,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
         <OKCancelDialog
           showClose={true}
           title={MODULE_INFO.name}
-          onResponse={(r) => {
+          onResponse={r => {
             if (r === TEXT_OK) {
               removeGenesets([delGroup!.id])
               // onGroupsChange &&
@@ -399,152 +390,138 @@ export function GenesetPropsPanel({ branchId }: IProps) {
         </OKCancelDialog>
       )} */}
 
-      <VCenterRow className="justify-between">
-        <StretchRow className="gap-x-1">
-          <ToolbarTabGroup>
-            <IconButton
-              //rounded="full"
-              // ripple={false}
-              onClick={() => setOpen(randId('open'))}
-              title="Open Gene Sets"
-              //className="fill-foreground/50 hover:fill-foreground"
-            >
-              <OpenIcon />
-            </IconButton>
+      <PropsPanel className="gap-y-1">
+        <h2 className="font-semibold text-base opacity-80 mb-2">Gene Sets</h2>
+        <VCenterRow className="justify-between">
+          <StretchRow className="gap-x-1">
+            <VCenterRow>
+              <IconButton
+                //rounded="full"
+                // ripple={false}
+                onClick={() => setOpen(randId('open'))}
+                title="Open Gene Sets"
+                //className="fill-foreground/50 hover:fill-foreground"
+              >
+                <OpenIcon />
+              </IconButton>
+
+              <IconButton
+                //rounded="full"
+                // ripple={false}
+                onClick={() => {
+                  //setShowSaveDialog(true)
+                  downloadJson(genesets, 'genesets.json')
+                }}
+                title="Save Gene Sets"
+              >
+                <SaveIcon />
+              </IconButton>
+            </VCenterRow>
+            <ToolbarSeparator />
 
             <IconButton
-              //rounded="full"
               // ripple={false}
-              onClick={() => {
-                //setShowSaveDialog(true)
-                downloadJson(genesets, 'genesets.json')
-              }}
-              title="Save Gene Sets"
+              onClick={() => addGeneset()}
+              title="New Gene Set"
+              checked={openGenesetDialog !== undefined}
             >
-              <SaveIcon />
+              <PlusIcon />
             </IconButton>
-          </ToolbarTabGroup>
-          <ToolbarSeparator />
+          </StretchRow>
+          {genesets.length > 0 && (
+            // <Button
+            //   variant="accent"
+            //   multiProps="icon"
+            //   // ripple={false}
+            //   onClick={() => setConfirmClear(true)}
+            //   title="Clear all groups"
+            // >
+            //   <TrashIcon />
+            // </Button>
 
-          <IconButton
-            // ripple={false}
-            onClick={() => addGeneset()}
-            title="New Gene Set"
-            checked={openGenesetDialog !== undefined}
-          >
-            <PlusIcon />
-          </IconButton>
-        </StretchRow>
-        {genesets.length > 0 && (
-          // <Button
-          //   variant="accent"
-          //   multiProps="icon"
-          //   // ripple={false}
-          //   onClick={() => setConfirmClear(true)}
-          //   title="Clear all groups"
-          // >
-          //   <TrashIcon />
-          // </Button>
+            <LinkButton
+              onClick={() => setConfirmClear(true)}
+              title="Clear all gene sets"
+            >
+              {TEXT_CLEAR}
+            </LinkButton>
+          )}
+        </VCenterRow>
 
-          <LinkButton
-            onClick={() => setConfirmClear(true)}
-            title="Clear all gene sets"
-          >
-            {TEXT_CLEAR}
-          </LinkButton>
-        )}
-      </VCenterRow>
+        <FileDropZonePanel
+          onFileDrop={files => {
+            if (files.length > 0) {
+              //setDroppedFile(files[0]);
+              console.log('Dropped file:', files[0])
 
-      <FileDropZonePanel
-        onFileDrop={(files) => {
-          if (files.length > 0) {
-            //setDroppedFile(files[0]);
-            console.log('Dropped file:', files[0])
-
-            onTextFileChange('Open dropped file', files, openGenesetFiles)
-          }
-        }}
-      >
-        {/* <VScrollPanel> */}
-        <DndContext
-          modifiers={[restrictToVerticalAxis]}
-          onDragStart={(event) => setActiveId(event.active.id as string)}
-          onDragEnd={(event) => {
-            const { active, over } = event
-
-            if (over && active.id !== over?.id) {
-              const oldIndex = genesets.findIndex(
-                (g) => g.id === (active.id as string)
-              )
-
-              const newIndex = genesets.findIndex(
-                (g) => g.id === (over.id as string)
-              )
-              const newOrder = arrayMove(
-                genesets.map((g) => g.id),
-                oldIndex,
-                newIndex
-              )
-
-              reorderGenesets(newOrder)
+              onTextFileChange('Open dropped file', files, openGenesetFiles)
             }
-
-            setActiveId(null)
           }}
         >
-          <SortableContext
-            items={genesets.map((g) => g.id)}
-            strategy={verticalListSortingStrategy}
+          {/* <VScrollPanel> */}
+          <DndContext
+            modifiers={[restrictToVerticalAxis]}
+            //onDragStart={event => setActiveId(event.active.id as string)}
+            onDragEnd={event => {
+              const { active, over } = event
+
+              if (over && active.id !== over?.id) {
+                const oldIndex = genesets.findIndex(
+                  g => g.id === (active.id as string)
+                )
+
+                const newIndex = genesets.findIndex(
+                  g => g.id === (over.id as string)
+                )
+                const newOrder = arrayMove(
+                  genesets.map(g => g.id),
+                  oldIndex,
+                  newIndex
+                )
+
+                reorderGenesets(newOrder)
+              }
+
+              //setActiveId(null)
+            }}
           >
-            <ul className="flex flex-col">
-              {genesets.map((geneset) => {
-                //const cols = getColNamesFromGroup(df, group)
-                const id = geneset.id
-                return (
-                  <SortableItem key={id} id={id}>
-                    <GenesetItem geneset={geneset} key={id} />
-                  </SortableItem>
-                )
-              })}
-            </ul>
-          </SortableContext>
-
-          <DragOverlay>
-            {activeId ? (
-              <GenesetItem
-                geneset={genesets.find((g) => g.id === activeId)!}
-                active={activeId}
-              />
-            ) : null}
-          </DragOverlay>
-        </DndContext>
-
-        {/* <Reorder.Group
-              values={genesetState.order}
-              onReorder={order => {
-                //setOrder(order)
-                genesetDispatch({
-                  type: 'order',
-                  order: order,
-                })
-              }}
-              className="gap-y-1 flex flex-col"
+            <SortableContext
+              items={genesets.map(g => g.id)}
+              strategy={verticalListSortingStrategy}
             >
-              {genesetState.order.map(id => {
-                const geneset = genesetState.genesets.get(id)!
+              <VScrollPanel className="grow h-full">
+                <ul className="flex flex-col">
+                  {genesets.map(geneset => {
+                    //const cols = getColNamesFromGroup(df, group)
 
-                return (
-                  <Reorder.Item key={id} value={id}>
-                    <GenesetItem geneset={geneset} />
-                  </Reorder.Item>
-                )
-              })}
-            </Reorder.Group> */}
-        {/* </VScrollPanel> */}
-      </FileDropZonePanel>
+                    return (
+                      // <BaseSortableItem key={id} id={id}>
+                      <GenesetItem
+                        geneset={geneset}
+                        key={geneset.id}
+                        editGeneset={editGeneset}
+                        setDelGroup={setDelGroup}
+                      />
+                      // </BaseSortableItem>
+                    )
+                  })}
+                </ul>
+              </VScrollPanel>
+            </SortableContext>
 
+            {/* <DragOverlay>
+              {activeId ? (
+                <GenesetItem
+                  geneset={genesets.find(g => g.id === activeId)!.geneset}
+                  active={activeId}
+                />
+              ) : null}
+            </DragOverlay> */}
+          </DndContext>
+        </FileDropZonePanel>
+      </PropsPanel>
       {/* <ScrollAccordion
-          type="multiple"
+          multiple={true}
           value={groupValues}
           onValueChange={setGroupValues}
         >
@@ -590,7 +567,7 @@ export function GenesetPropsPanel({ branchId }: IProps) {
                 >
                   {`${group.name}: ${cols.length} column${cols.length !== 1 ? "s" : ""}`}
                 </AccordionTrigger>
-                <AccordionContent
+                <AccordionContent variant="sidebar"
                   innerClassName="flex flex-row gap-x-2"
                   innerStyle={{
                     color: group.color,
@@ -606,19 +583,6 @@ export function GenesetPropsPanel({ branchId }: IProps) {
             )
           })}
         </ScrollAccordion> */}
-
-      {open.includes('open') && (
-        <OpenFiles
-          open={open}
-          //onOpenChange={() => setOpen("")}
-          onFileChange={(message, files) =>
-            onTextFileChange(message, files, (files) => {
-              openGenesetFiles(files)
-            })
-          }
-          fileTypes={['json', 'tsv', 'txt']}
-        />
-      )}
     </>
   )
 }

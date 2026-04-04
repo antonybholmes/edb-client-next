@@ -1,22 +1,16 @@
 import { TEXT_OK } from '@/consts'
-import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
-import { VCenterRow } from '@layout/v-center-row'
-import { type BaseDataFrame } from '@lib/dataframe/base-dataframe'
+import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { VCenterRow } from '@/layout/v-center-row'
+import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import {
   meanFilter,
   medianFilter,
   stdevFilter,
-} from '@lib/dataframe/dataframe-utils'
-import { Input } from '@themed/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@themed/select'
+} from '@/lib/dataframe/dataframe-utils'
+import { Input } from '@/themed/v2/input'
+import { SelectItem, SelectList } from '@/themed/v2/select'
 import { useState } from 'react'
-import { useCurrentSheet, useHistory } from './history/history-store'
+import { useHistory, useSheet } from './history/history-store'
 
 export interface IProps {
   open?: boolean
@@ -33,10 +27,10 @@ export function TopRowsDialog({
 }: IProps) {
   const [topRows, setTopRows] = useState(300)
   const [method, setMethod] = useState('Stdev')
-  const { addStep } = useHistory()
+  const { addSheets } = useHistory()
+  const sheet = useSheet()!
 
-  const sheet = useCurrentSheet()
-  let df = sheet
+  let df = sheet as BaseDataFrame
 
   function applyFilter() {
     if (!df) {
@@ -70,7 +64,7 @@ export function TopRowsDialog({
       return
     }
 
-    addStep(df.name, [df])
+    addSheets([df], { name: 'Top Rows' })
 
     onFilter(df)
   }
@@ -96,20 +90,22 @@ export function TopRowsDialog({
           id="top-rows"
           value={topRows}
           onChange={e => setTopRows(Number.parseInt(e.target.value))}
-          className="w-16 rounded-theme"
+          w="md"
           placeholder="Top rows..."
         />
         <span>rows using row</span>
-        <Select defaultValue={method} onValueChange={setMethod}>
-          <SelectTrigger className="w-24">
-            <SelectValue placeholder="Select a statistic" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Stdev">Stdev</SelectItem>
-            <SelectItem value="Mean">Mean</SelectItem>
-            <SelectItem value="Median">Median</SelectItem>
-          </SelectContent>
-        </Select>
+        <SelectList
+          value={method}
+          onValueChange={v => {
+            if (v) {
+              setMethod(v as string)
+            }
+          }}
+        >
+          <SelectItem value="Stdev">Stdev</SelectItem>
+          <SelectItem value="Mean">Mean</SelectItem>
+          <SelectItem value="Median">Median</SelectItem>
+        </SelectList>
       </VCenterRow>
     </OKCancelDialog>
   )

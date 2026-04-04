@@ -1,39 +1,39 @@
-import { SlidersIcon } from '@icons/sliders-icon'
+import { SlidersIcon } from '@/icons/sliders-icon'
 
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
-import { type ITab } from '@components/tabs/tab-provider'
-import { downloadSvgAutoFormat } from '@lib/image-utils'
-import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
-import { ZoomSlider } from '@toolbar/zoom-slider'
+import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { type ITab } from '@/components/tabs/tab-provider'
+import { downloadSvgAutoFormat } from '@/lib/image-utils'
+import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
+import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { NO_DIALOG, TEXT_CANCEL, type IDialogParams } from '@/consts'
-import { Card } from '@themed/card'
+import { Card } from '@/themed/card'
 
-import { SaveImageDialog } from '@components/pages/save-image-dialog'
+import { SaveImageDialog } from '@/components/pages/save-image-dialog'
 
 import { LayersIcon } from '@/components/icons/layers-icon'
-import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { randId } from '@/lib/id'
 import {
   messageImageFileFormat,
   useMessages,
 } from '@/providers/message-provider'
-import { randId } from '@lib/id'
 import { produce } from 'immer'
-import { DatabasPropsPanel } from '../../../lollipop/database-props-panel'
-import { FeaturePropsPanel } from '../../../lollipop/feature-props-panel'
-import { LabelPropsPanel } from '../../../lollipop/label-props-panel'
-import { LollipopPropsPanel } from '../../../lollipop/lollipop-props-panel'
-import {
-  LollipopContext,
-  LollipopProvider,
-} from '../../../lollipop/lollipop-provider'
-import { useLollipopSettings } from '../../../lollipop/lollipop-settings-store'
-import { LollipopStackSvg } from '../../../lollipop/lollipop-stack-svg'
 
+import { useZoom } from '@/providers/zoom-provider'
+
+import { DomainPropsPanel } from '../../../wgs/lollipop/domain-props-panel'
+import { LabelPropsPanel } from '../../../wgs/lollipop/label-props-panel'
+import { LollipopPropsPanel } from '../../../wgs/lollipop/lollipop-props-panel'
+import { useLollipopSettings } from '../../../wgs/lollipop/lollipop-settings-store'
+import { LollipopStackSvg } from '../../../wgs/lollipop/lollipop-stack-svg'
+import { useLollipopStore } from '../../../wgs/lollipop/lollipop-store'
+import { VariantPropsPanel } from '../../../wgs/lollipop/variant-props-panel'
+import { MESSAGE_CHANNEL, OPTS_SIDEBAR_ID } from '../../data/data-panel'
 import { usePlot } from '../../history/history-store'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
+import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 
 export const PLOT_CLS = 'relative overflow-scroll custom-scrollbar grow'
 
@@ -52,29 +52,31 @@ interface ILollipopPanelProps {
 function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
   const plot = usePlot(plotAddr)!
 
-  const [selectedTab, setSelectedTab] = useState('Display')
+  //const [selectedTab, setSelectedTab] = useState('Display')
   const svgRef = useRef<SVGSVGElement>(null)
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  const { messages, removeMessage } = useMessages() //'heatmap')
+  const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'heatmap')
 
   const { settings, updateSettings } = useMatcalcSettings()
 
   //const { plotState, plotDispatch } = useContext(PlotContext)
 
-  const { protein, aaStats, lollipopFromTable } = useContext(LollipopContext)!
+  const { aaStats } = useLollipopStore()
 
   const { displayProps, setDisplayProps } = useLollipopSettings()
 
+  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
+
   useEffect(() => {
     const filteredMessages = messages.filter(
-      (message) => message.target === plot?.id
+      message => message.target === plot?.id
     )
 
     for (const message of filteredMessages) {
-      if (message.text.includes('save')) {
-        if (message.text.includes(':')) {
+      if (message.data.includes('save')) {
+        if (message.data.includes(':')) {
           downloadSvgAutoFormat(
             svgRef,
             `heatmap.${messageImageFileFormat(message)}`
@@ -89,10 +91,18 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
   }, [messages])
 
   useEffect(() => {
-    const df = plot.dataframes['main']! as BaseDataFrame
+    setDisplayProps(
+      produce(displayProps, draft => {
+        draft.scale = zoom
+      })
+    )
+  }, [zoom])
 
-    lollipopFromTable(df, protein)
-  }, [])
+  // useEffect(() => {
+  //   const df = plot.dataframes['main']! as BaseDataFrame
+
+  //   lollipopFromTable(df, protein)
+  // }, [])
 
   const rightTabs: ITab[] = [
     // {
@@ -111,13 +121,13 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
       //id: nanoid(),
       icon: <LayersIcon />,
       id: 'Databases',
-      content: <DatabasPropsPanel />,
+      content: <VariantPropsPanel />,
     },
     {
       //id: nanoid(),
       icon: <LayersIcon />,
       id: 'Features',
-      content: <FeaturePropsPanel />,
+      content: <DomainPropsPanel />,
     },
     {
       //id: nanoid(),
@@ -141,7 +151,8 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
           name="lollipop"
           onResponse={(response, data) => {
             if (response !== TEXT_CANCEL) {
-              downloadSvgAutoFormat(svgRef, data!.name as string)
+              const d = data as { name: string }
+              downloadSvgAutoFormat(svgRef, d.name)
             }
             setShowDialog({ ...NO_DIALOG })
           }}
@@ -149,7 +160,7 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
       )}
 
       {/* <ResizablePanelGroup
-          direction="horizontal"
+          orientation="horizontal"
           id="plot-resizable-panels"
           //autoSaveId="plot-resizable-panels"
           className="grow"
@@ -157,8 +168,8 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
           <ResizablePanel
             id="plot-svg"
             order={1}
-            defaultSize={75}
-            minSize={50}
+            defaultSize="75%"
+            minSize="50%"
             className="flex flex-col pl-2 pt-2 pb-2"
           >
             <div className="custom-scrollbar relative grow overflow-scroll rounded-lg border bg-white">
@@ -175,8 +186,8 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
             id="plot-svg-right"
             order={2}
             className="flex flex-col"
-            defaultSize={25}
-            minSize={15}
+            defaultSize="25%"
+            minSize="15%"
             collapsible={true}
             collapsedSize={0}
           >
@@ -185,14 +196,14 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
         </ResizablePanelGroup> */}
 
       <TabSlideBar
-        id="lollipop-data-panel"
+        id={OPTS_SIDEBAR_ID}
         side="right"
         tabs={rightTabs}
-        onTabChange={(selectedTab) => setSelectedTab(selectedTab.tab.id)}
-        value={selectedTab}
+        //onTabChange={selectedTab => setSelectedTab(selectedTab.tab.id)}
+        //value={selectedTab}
         open={settings.sidebar.show}
-        onOpenChange={(v) => {
-          const newSettings = produce(settings, (draft) => {
+        onOpenChange={v => {
+          const newSettings = produce(settings, draft => {
             draft.sidebar.show = v
           })
 
@@ -212,15 +223,7 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
         <></>
         <></>
         <>
-          <ZoomSlider
-            onZoomChange={(zoom) => {
-              setDisplayProps(
-                produce(displayProps, (draft) => {
-                  draft.scale = zoom
-                })
-              )
-            }}
-          />
+          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
         </>
       </ToolbarFooterPortal>
     </>
@@ -228,9 +231,5 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
 }
 
 export function LollipopPanelQuery({ id, plotAddr }: ILollipopPanelProps) {
-  return (
-    <LollipopProvider id={id}>
-      <LollipopPanel id={id} plotAddr={plotAddr} />
-    </LollipopProvider>
-  )
+  return <LollipopPanel id={id} plotAddr={plotAddr} />
 }

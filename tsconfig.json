@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -23,60 +19,13 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@components/*": [
-        "./src/components/*"
-      ],
-      "@dialog/*": [
-        "./src/components/dialog/*"
-      ],
-      "@layout/*": [
-        "./src/components/layout/*"
-      ],
-      "@toolbar/*": [
-        "./src/components/toolbar/*"
-      ],
-      "@themed/*": [
-        "./src/components/shadcn/ui/themed/*"
-      ],
-      "@icons/*": [
-        "./src/components/icons/*"
-      ],
-      "@help/*": [
-        "./src/components/help/*"
-      ],
-      "@assets/*": [
-        "./src/assets/*"
-      ],
-      "@lib/*": [
-        "./src/lib/*"
-      ],
-      "@hooks/*": [
-        "./src/hooks/*"
-      ],
-      "@modules/*": [
-        "./src/modules/*"
-      ],
-      "@interfaces/*": [
-        "./src/interfaces/*"
-      ],
-      "@providers/*": [
-        "./src/providers/*"
-      ],
-      "@context/*": [
-        "./src/context/*"
-      ],
-      "@styles/*": [
-        "./src/styles/*"
-      ],
-      "@layouts/*": [
-        "./src/layouts/*"
-      ],
-      "@content/*": [
-        "./src/content/*"
-      ]
+      "@/*": ["./src/*"],
+      "@/dialog/*": ["./src/components/dialog/*"],
+      "@/layout/*": ["./src/components/layout/*"],
+      "@/toolbar/*": ["./src/components/toolbar/*"],
+      "@/themed/*": ["./src/components/shadcn/ui/themed/*"],
+      "@/icons/*": ["./src/components/icons/*"],
+      "@/help/*": ["./src/components/help/*"]
     }
   },
   "include": [
@@ -86,7 +35,5 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

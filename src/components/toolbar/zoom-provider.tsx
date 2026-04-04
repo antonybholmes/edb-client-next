@@ -1,4 +1,4 @@
-import type { IDivProps } from '@interfaces/div-props'
+import type { IDivProps } from '@/interfaces/div-props'
 import { createContext, useEffect, useState } from 'react'
 
 export interface ITabIndicatorPos {

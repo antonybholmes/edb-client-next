@@ -1,4 +1,4 @@
-import type { ILim } from '@lib/math/math'
+import type { ILim } from '@/lib/math/math'
 import type { ScaleLinear } from 'd3'
 import * as d3 from 'd3'
 export type TickLabel = string | number

@@ -1,24 +1,24 @@
 import { useMouseUpListener } from '@/hooks/mouseup-listener'
 import { useResizeObserver } from '@/hooks/resize-observer'
-import { BaseCol } from '@layout/base-col'
-import { VCenterRow } from '@layout/v-center-row'
-import { Input } from '@themed/input'
+import { BaseCol } from '@/layout/base-col'
+import { VCenterRow } from '@/layout/v-center-row'
+import { Input } from '@/themed/v2/input'
 
 import { EDGE_SCROLL_ZONE, useScrollOnEdges } from '@/hooks/scroll-on-edges'
+import { type ICell } from '@/interfaces/cell'
+import { type IDivProps } from '@/interfaces/div-props'
+import { setupCanvas } from '@/lib/canvas'
+import { findClosest } from '@/lib/closest-search'
+import { NO_SHAPE } from '@/lib/dataframe/base-dataframe'
+import { cellStr, getExcelColName } from '@/lib/dataframe/cell'
+import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_RING_CLS } from '@/theme'
-import { type ICell } from '@interfaces/cell'
-import { type IDivProps } from '@interfaces/div-props'
-import { setupCanvas } from '@lib/canvas'
-import { findClosest } from '@lib/closest-search'
-import { NO_SHAPE } from '@lib/dataframe/base-dataframe'
-import { cellStr, getExcelColName } from '@lib/dataframe/cell'
-import { cn } from '@lib/shadcn-utils'
 
-import { BaseRow } from '@layout/base-row'
-import { COLOR_BLACK, COLOR_WHITE } from '@lib/color/color'
-import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
-import type { Shape } from '@lib/dataframe/dataframe-types'
-import { range } from '@lib/math/range'
+import { BaseRow } from '@/layout/base-row'
+import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
+import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import type { Shape } from '@/lib/dataframe/dataframe-types'
+import { range } from '@/lib/math/range'
 import type { ChangeEvent, RefObject } from 'react'
 import {
   useCallback,
@@ -108,6 +108,82 @@ export interface IDragCol {
 
 export const NO_DRAG: IDragCol = { col: -1, cols: [] }
 
+function DataframeHScroll({
+  hScrollRef,
+  dfProps,
+  scrollRef,
+
+  onScroll,
+}: {
+  hScrollRef: RefObject<HTMLDivElement | null>
+  dfProps: IDFProps
+  scrollRef: RefObject<HTMLDivElement | null>
+
+  onScroll: (
+    vSourceRef: RefObject<HTMLDivElement | null>,
+    hSourceRef: RefObject<HTMLDivElement | null>,
+    targetVRef: RefObject<HTMLDivElement | null> | null,
+    targetHRef: RefObject<HTMLDivElement | null> | null
+  ) => void
+}) {
+  return (
+    <div
+      id="dataframe-h-scrollbar"
+      className="shrink-0 relative h-3 custom-scrollbar overflow-x-scroll overflow-y-hidden"
+      ref={hScrollRef}
+      onScroll={() => onScroll(scrollRef, hScrollRef, null, scrollRef)}
+      style={{
+        marginLeft: dfProps.scaledRowIndexW,
+        width: `calc(100% - ${dfProps.scaledRowIndexW}px - 0.75rem)`,
+      }}
+    >
+      <span
+        className="invisible absolute left-0 top-0 h-px"
+        style={{
+          width: dfProps.maxScaledDim[0],
+        }}
+      />
+    </div>
+  )
+}
+
+function DataframeVScroll({
+  dfProps,
+  vScrollRef,
+  scrollRef,
+  onScroll,
+}: {
+  dfProps: IDFProps
+  vScrollRef: RefObject<HTMLDivElement | null>
+  scrollRef: RefObject<HTMLDivElement | null>
+  onScroll: (
+    vSourceRef: RefObject<HTMLDivElement | null>,
+    hSourceRef: RefObject<HTMLDivElement | null>,
+    targetVRef: RefObject<HTMLDivElement | null> | null,
+    targetHRef: RefObject<HTMLDivElement | null> | null
+  ) => void
+}) {
+  return (
+    <div
+      id="dataframe-v-scrollbar"
+      className="w-3 shrink-0 relative custom-scrollbar overflow-y-scroll overflow-x-hidden"
+      ref={vScrollRef}
+      onScroll={() => onScroll(vScrollRef, scrollRef, scrollRef, null)}
+      style={{
+        marginTop: dfProps.scaledCellSize[1],
+        //height: `calc(100% - ${dfProps.scaledCellSize[1]}px)`,
+      }}
+    >
+      <span
+        className="invisible absolute left-0 top-0 w-px"
+        style={{
+          height: dfProps.maxScaledDim[1],
+        }}
+      />
+    </div>
+  )
+}
+
 export interface IDataFrameCanvasProps extends IDivProps {
   df: AnnotationDataFrame
   cellSize?: Shape
@@ -171,50 +247,6 @@ export function DataFrameCanvas({
   //const gridCanvasRef = useRef<HTMLCanvasElement >()
   const tableCanvasRef = useRef<HTMLCanvasElement>(null)
 
-  function DataframeHScroll() {
-    return (
-      <div
-        id="dataframe-h-scrollbar"
-        className="shrink-0 relative h-3 custom-scrollbar overflow-x-scroll overflow-y-hidden"
-        ref={hScrollRef}
-        onScroll={() => onScroll(scrollRef, hScrollRef, null, scrollRef)}
-        style={{
-          marginLeft: dfProps.scaledRowIndexW,
-          width: `calc(100% - ${dfProps.scaledRowIndexW}px - 0.75rem)`,
-        }}
-      >
-        <span
-          className="invisible absolute left-0 top-0 h-px"
-          style={{
-            width: dfProps.maxScaledDim[0],
-          }}
-        />
-      </div>
-    )
-  }
-
-  function DataframeVScroll() {
-    return (
-      <div
-        id="dataframe-v-scrollbar"
-        className="w-3 shrink-0 relative custom-scrollbar overflow-y-scroll overflow-x-hidden"
-        ref={vScrollRef}
-        onScroll={() => onScroll(vScrollRef, scrollRef, scrollRef, null)}
-        style={{
-          marginTop: dfProps.scaledCellSize[1],
-          //height: `calc(100% - ${dfProps.scaledCellSize[1]}px)`,
-        }}
-      >
-        <span
-          className="invisible absolute left-0 top-0 w-px"
-          style={{
-            height: dfProps.maxScaledDim[1],
-          }}
-        />
-      </div>
-    )
-  }
-
   const scrollOnEdgesMouseDown = useScrollOnEdges(scrollRef, { onMouseUp })
 
   const [dfProps, setDFProps] = useState<IDFProps>({
@@ -228,7 +260,7 @@ export function DataFrameCanvas({
   })
 
   useEffect(() => {
-    colPositions.current = range(df.shape[1] + 1).map((i) => i * cellSize[0])
+    colPositions.current = range(df.shape[1] + 1).map(i => i * cellSize[0])
   }, [df, cellSize])
 
   useEffect(() => {
@@ -244,7 +276,7 @@ export function DataFrameCanvas({
     const dim: Shape = [shape[1] * cellSize[0], shape[0] * cellSize[1]]
     //const hasRowIndex = df.rowIndex.length > 0
 
-    const rowIndexW = INDEX_CELL_SIZE[0] * df.rowMetaData.shape[1] //sum(df.rowMetaData.row(0).values.map(x => cellSize[0]))
+    const rowIndexW = INDEX_CELL_SIZE[0] * df.rowObs.shape[1]
 
     const scaledDim: Shape = [dim[0] * scale, dim[1] * scale]
     const maxScaledDim: Shape = [
@@ -372,8 +404,8 @@ export function DataFrameCanvas({
 
     // Draw header names
 
-    for (let rowIndex = 0; rowIndex < df.rowMetaData.shape[1]; ++rowIndex) {
-      const v = df.rowMetaData.colName(rowIndex)
+    for (let rowIndex = 0; rowIndex < df.rowObs.shape[1]; ++rowIndex) {
+      const v = df.rowObs.colName(rowIndex)
 
       if (v === 'Index') {
         continue
@@ -418,8 +450,8 @@ export function DataFrameCanvas({
 
     if (rowRange[0] !== -1) {
       for (const row of range(rowRange[0], rowRange[1])) {
-        for (let rowIndex = 0; rowIndex < df.rowMetaData.shape[1]; ++rowIndex) {
-          const v = df.rowMetaData.get(row, rowIndex)
+        for (let rowIndex = 0; rowIndex < df.rowObs.shape[1]; ++rowIndex) {
+          const v = df.rowObs.get(row, rowIndex)
 
           //const isNumber = typeof v === 'number'
 
@@ -756,7 +788,7 @@ export function DataFrameCanvas({
 
     // ctx.restore()
 
-    // // reset transform
+    // reset transform
     // ctx.translate(-dfProps.rowIndexW, -cellSize[1])
   }
 
@@ -1226,7 +1258,7 @@ export function DataFrameCanvas({
             ...dragCol.current.cols.slice(0, dragCol.current.col),
             ...dragCol.current.cols
               .slice(dragCol.current.col)
-              .map((cp) => cp + Math.max(minDragX, dragX)),
+              .map(cp => cp + Math.max(minDragX, dragX)),
           ]
 
           draw()
@@ -1577,24 +1609,24 @@ export function DataFrameCanvas({
                 range(
                   selection.current.start.col,
                   selection.current.end.col + 1
-                ).map((col) => df.colNames[col]!)
+                ).map(col => df.columns[col]!)
               )
             }
 
             range(
               selection.current.start.row,
               selection.current.end.row + 1
-            ).map((row) => {
+            ).map(row => {
               out.push([])
               range(
                 selection.current.start.col,
                 selection.current.end.col + 1
-              ).map((col) => {
+              ).map(col => {
                 out[out.length - 1]!.push(df.get(row, col).toLocaleString())
               })
             })
 
-            const s = out.map((r) => r.join('\t')).join('\n')
+            const s = out.map(r => r.join('\t')).join('\n')
 
             navigator.clipboard.writeText(s)
           }
@@ -1829,7 +1861,7 @@ export function DataFrameCanvas({
     switch (e.code) {
       case 'Enter':
         if (selection.current.start.row !== -1) {
-          df.set(
+          df.at(
             selection.current.start.row,
             selection.current.start.col,
             editText
@@ -1849,7 +1881,7 @@ export function DataFrameCanvas({
 
     switch (e.code) {
       case 'Enter':
-        df.set(
+        df.at(
           selection.current.start.row,
           selection.current.start.col,
           (e.target as HTMLInputElement).value
@@ -1884,13 +1916,19 @@ export function DataFrameCanvas({
   return (
     <BaseCol ref={ref} className="grow gap-y-3">
       <VCenterRow className="gap-x-3 text-sm">
+        <label htmlFor="cell-address" className="sr-only">
+          Cell address
+        </label>
         <Input
-          id="cell-location"
+          id="cell-address"
           value={selText}
           className="w-24 rounded-theme"
           readOnly
-          aria-label="Cell Location"
+          aria-label="Cell address"
         />
+        <label htmlFor="cell-edit-input" className="sr-only">
+          Cell value
+        </label>
         {editable ? (
           <Input
             id="cell-edit-input"
@@ -1932,7 +1970,6 @@ export function DataFrameCanvas({
             <div
               id="dataframe-scroll"
               ref={scrollRef}
-              //className="relative z-50 overflow-scroll border border-orange-400"
               className="relative z-50 grow overflow-scroll scrollbar-hide"
               //onMouseMove={onMouseMove}
               onClick={onClick}
@@ -1983,7 +2020,7 @@ export function DataFrameCanvas({
                     value={editText}
                     onKeyDown={onCellEditKeyDown}
                     onChange={onEditChange}
-                    onFocus={(e) => e.target.select()}
+                    onFocus={e => e.target.select()}
                     onClick={(e: MouseEvent) => e.stopPropagation()}
                     onMouseDown={(e: MouseEvent) => e.stopPropagation()}
                     readOnly={false}
@@ -2001,10 +2038,20 @@ export function DataFrameCanvas({
             <canvas ref={bgCanvasRef} className="absolute left-0 top-0 z-0" />
           </BaseCol>
 
-          <DataframeVScroll />
+          <DataframeVScroll
+            vScrollRef={vScrollRef}
+            dfProps={dfProps}
+            scrollRef={scrollRef}
+            onScroll={onScroll}
+          />
         </BaseRow>
 
-        <DataframeHScroll />
+        <DataframeHScroll
+          dfProps={dfProps}
+          hScrollRef={hScrollRef}
+          scrollRef={scrollRef}
+          onScroll={onScroll}
+        />
       </BaseCol>
     </BaseCol>
   )

@@ -1,6 +1,6 @@
+import { type ILinkProps } from '@/interfaces/link-props'
+import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_RING_CLS } from '@/theme'
-import { type ILinkProps } from '@interfaces/link-props'
-import { cn } from '@lib/shadcn-utils'
 import { BaseLink } from './base-link'
 
 export const BASE_THEME_LINK_CLS = cn(FOCUS_RING_CLS, 'text-theme inline-block')

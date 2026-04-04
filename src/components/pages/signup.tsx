@@ -15,15 +15,15 @@ import {
   API_SIGNUP_URL,
   APP_VERIFY_EMAIL_URL,
   TEXT_PASSWORDLESS,
-} from '@lib/edb/edb'
+} from '@/lib/edb/edb'
 
 import { useRef, type BaseSyntheticEvent } from 'react'
 
 import { VCenterRow } from '@layout/v-center-row'
 
+import { useEdbSettings } from '@/lib/edb/edb-settings'
+import { httpFetch } from '@/lib/http/http-fetch'
 import { SignInLink } from '@layouts/signin-layout'
-import { useEdbSettings } from '@lib/edb/edb-settings'
-import { httpFetch } from '@lib/http/http-fetch'
 import { useQueryClient } from '@tanstack/react-query'
 import { Button } from '@themed/button'
 import { Form, FormField, FormItem } from '@themed/form'

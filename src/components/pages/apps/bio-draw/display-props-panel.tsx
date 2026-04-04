@@ -1,17 +1,17 @@
+import { ColorPickerButton } from '@/components/color/color-picker-button'
+import { BASE_IDS } from '@/components/pages/apps/genes/motifs/motif-svg'
+import { PropsPanel } from '@/components/props-panel'
+import { PropRow } from '@/dialog/prop-row'
+import { VCenterRow } from '@/layout/v-center-row'
+import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_RING_CLS, PILL_BUTTON_CLS } from '@/theme'
-import { ColorPickerButton } from '@components/color/color-picker-button'
-import { BASE_IDS } from '@components/pages/apps/genes/motifs/motif-svg'
-import { PropsPanel } from '@components/props-panel'
-import { PropRow } from '@dialog/prop-row'
-import { VCenterRow } from '@layout/v-center-row'
-import { cn } from '@lib/shadcn-utils'
+import { NumericalInput } from '@/themed/numerical-input'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@themed/accordion'
-import { NumericalInput } from '@themed/numerical-input'
+} from '@/themed/v2/accordion'
 import { produce } from 'immer'
 import { useMotifSettings, type DNABase } from './motifs-settings'
 
@@ -22,7 +22,7 @@ export function DisplayPropsPanel() {
       <ScrollAccordion value={['plot', 'colors']}>
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent variant="sidebar">
             <PropRow title="Letter width">
               <NumericalInput
                 id="w"
@@ -57,7 +57,7 @@ export function DisplayPropsPanel() {
         </AccordionItem>
         <AccordionItem value="colors">
           <AccordionTrigger>Colors</AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent variant="sidebar">
             <VCenterRow className="gap-x-3">
               {BASE_IDS.map(base => (
                 <ColorPickerButton

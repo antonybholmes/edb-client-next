@@ -1,10 +1,10 @@
-import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/shadcn-utils'
+import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
+import { cn } from '@/lib/shadcn-utils'
 import { TriangleAlert } from 'lucide-react'
 
 export function WarningIcon({
-  w = 'h-10 w-10',
-  fill = 'fill-white',
+  w = 'h-12 w-12',
+
   stroke = 'stroke-warning',
   className,
   strokeWidth = 2,
@@ -20,8 +20,9 @@ export function WarningIcon({
     // </svg>
 
     <TriangleAlert
-      className={cn(ICON_CLS, fill, stroke, w, className)}
+      className={cn(ICON_CLS, stroke, w, className)}
       strokeWidth={strokeWidth}
+      strokeOpacity={0.75}
       style={style}
       stroke=""
     />

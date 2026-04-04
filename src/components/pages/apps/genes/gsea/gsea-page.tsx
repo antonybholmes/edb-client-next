@@ -1,36 +1,38 @@
-'use client'
+// 'use client'
 
-import { ToolbarOpenFile } from '@toolbar/toolbar-open-files'
+import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
 
-import { BaseCol } from '@layout/base-col'
+import { BaseCol } from '@/layout/base-col'
 import {
   ShowOptionsMenu,
   Toolbar,
   ToolbarMenu,
   ToolbarPanel,
-} from '@toolbar/toolbar'
+} from '@/toolbar/toolbar'
 
 import {
   onBinaryFileChange,
   OpenFiles,
   type IBinaryFileOpen,
-} from '@components/pages/open-files'
+} from '@/components/pages/open-files'
 
-import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
+import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
-import { LayersIcon } from '@icons/layers-icon'
+import { LayersIcon } from '@/icons/layers-icon'
 
-import { OpenIcon } from '@icons/open-icon'
+import { OpenIcon } from '@/icons/open-icon'
 
-import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
-import { UploadIcon } from '@icons/upload-icon'
-import { DropdownMenuItem } from '@themed/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { UploadIcon } from '@/icons/upload-icon'
 
 import {
   DOCS_URL,
   NO_DIALOG,
   TEXT_CANCEL,
   TEXT_DISPLAY,
+  TEXT_DOWNLOAD_AS_PNG,
+  TEXT_DOWNLOAD_AS_SVG,
   TEXT_EXPORT,
   TEXT_FILE,
   TEXT_OPEN,
@@ -39,43 +41,45 @@ import {
   TEXT_SELECT_ALL,
   type IDialogParams,
 } from '@/consts'
-import { ShortcutLayout } from '@layouts/shortcut-layout'
+import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
-import { makeNanoIdLen12, randId } from '@lib/id'
+import { makeUuid, randId } from '@/lib/id'
 
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@themed/accordion'
+} from '@/themed/v2/accordion'
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 
 import JSZip from 'jszip'
 
-import type { ITab } from '@components/tabs/tab-provider'
+import type { ITab } from '@/components/tabs/tab-provider'
 
-import { Checkbox } from '@themed/check-box'
-import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
+import { Checkbox } from '@/themed/v2/check-box'
+import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 
+import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
+import { FileDropZonePanel } from '@/components/file-dropzone-panel'
+import { HeaderPortal } from '@/components/header/header-portal'
+import { ModuleInfoButton } from '@/components/header/module-info-button'
+import { SaveImageDialog } from '@/components/pages/save-image-dialog'
+import { ToolbarHelpTabGroup } from '@/help/toolbar-help-tab-group'
+import { useStableId } from '@/hooks/stable-id'
+import { DownloadIcon } from '@/icons/download-icon'
+import { ExportIcon } from '@/icons/export-icon'
+import { FileImageIcon } from '@/icons/file-image-icon'
+import { SearchIcon } from '@/icons/search-icon'
+import { SlidersIcon } from '@/icons/sliders-icon'
+import { VCenterRow } from '@/layout/v-center-row'
+import { downloadSvgAutoFormat } from '@/lib/image-utils'
+import { BoolSearchQuery } from '@/lib/search'
+import { textToLines, textToTokens } from '@/lib/text/lines'
+import { CoreProviders } from '@/providers/core-providers'
 import { useZoom } from '@/providers/zoom-provider'
-import { Autocomplete, AutocompleteLi } from '@components/autocomplete'
-import { FileDropZonePanel } from '@components/file-dropzone-panel'
-import { HeaderPortal } from '@components/header/header-portal'
-import { ModuleInfoButton } from '@components/header/module-info-button'
-import { SaveImageDialog } from '@components/pages/save-image-dialog'
-import { ToolbarHelpTabGroup } from '@help/toolbar-help-tab-group'
-import { DownloadIcon } from '@icons/download-icon'
-import { ExportIcon } from '@icons/export-icon'
-import { FileImageIcon } from '@icons/file-image-icon'
-import { SearchIcon } from '@icons/search-icon'
-import { SlidersIcon } from '@icons/sliders-icon'
-import { VCenterRow } from '@layout/v-center-row'
-import { downloadSvgAutoFormat } from '@lib/image-utils'
-import { BoolSearchQuery } from '@lib/search'
-import { textToLines, textToTokens } from '@lib/text/lines'
-import { Card } from '@themed/card'
-import { ToolbarSeparator } from '@toolbar/toolbar-separator'
+import { Card } from '@/themed/card'
+import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 import Fuse from 'fuse.js'
 import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
@@ -86,8 +90,10 @@ import MODULE_INFO from './module.json'
 
 const HELP_URL = DOCS_URL + '/apps/gsea'
 
+const PLOT_ZOOM_CHANNEL = 'gsea-plot-zoom'
+
 export function GseaPage() {
-  //const [activeSideTab] = useState('Data')
+  const _id = useStableId('gsea-page')
 
   const [rightTab, setRightTab] = useState('Gene Sets')
   const [showSideBar, setShowSideBar] = useState(true)
@@ -120,7 +126,7 @@ export function GseaPage() {
 
   const [toolbarTab, setToolbarTab] = useState('Home')
 
-  const { zoom } = useZoom()
+  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
 
   const [selectedTab] = useState(0)
   const [displayProps, setDisplayProps] = useState({
@@ -155,7 +161,7 @@ export function GseaPage() {
   }, [zoom])
 
   const searchIndex = useMemo(() => {
-    return new Fuse(phenotypes.map((k) => allReports.get(k)!).flat(), {
+    return new Fuse(phenotypes.map(k => allReports.get(k)!).flat(), {
       keys: ['phen', 'name'], // Fields to search
       threshold: 0.3, // Fuzzy match level
     })
@@ -181,12 +187,10 @@ export function GseaPage() {
   useEffect(() => {
     const pathways: [string, boolean][] = [...allReports.keys()]
       .sort()
-      .map((report) =>
+      .map(report =>
         allReports
           .get(report)!
-          .map(
-            (pathway) => [pathway.id, selectAllDatasets] as [string, boolean]
-          )
+          .map(pathway => [pathway.id, selectAllDatasets] as [string, boolean])
       )
       .flat()
 
@@ -231,7 +235,7 @@ export function GseaPage() {
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
-              onOpenChange={(open) => {
+              onOpenChange={open => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -279,7 +283,7 @@ export function GseaPage() {
           <BaseCol className="h-full gap-y-3 pt-2 text-xs">
             <VCenterRow className="px-2">
               <Checkbox
-                aria-label={`Select all gene sets`}
+                aria-label="Select all gene sets"
                 checked={selectAllDatasets}
                 onCheckedChange={() => setSelectAllDatasets(!selectAllDatasets)}
               >
@@ -287,14 +291,17 @@ export function GseaPage() {
               </Checkbox>
             </VCenterRow>
 
-            <ScrollAccordion value={reportTabs} onValueChange={setReportTabs}>
+            <ScrollAccordion
+              value={reportTabs}
+              onValueChange={v => setReportTabs(v as string[])}
+            >
               {phenotypes.map((report, reporti) => {
                 const reports = allReports.get(report)!
 
                 return (
                   <AccordionItem value={report} key={reporti}>
                     <AccordionTrigger>{report}</AccordionTrigger>
-                    <AccordionContent>
+                    <AccordionContent variant="sidebar">
                       <ul className="flex flex-col gap-y-1.5" key={reporti}>
                         {reports.map((pathway: IPathway, di: number) => (
                           <li key={di}>
@@ -386,21 +393,21 @@ export function GseaPage() {
       content: (
         <>
           <DropdownMenuItem
-            aria-label="Download as PNG"
+            aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
               downloadSvgAutoFormat(svgRef, 'gsea.png')
             }}
           >
             <FileImageIcon stroke="" />
-            <span>Download as PNG</span>
+            <span>{TEXT_DOWNLOAD_AS_PNG}</span>
           </DropdownMenuItem>
           <DropdownMenuItem
-            aria-label=" Download as SVG"
+            aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
               downloadSvgAutoFormat(svgRef, 'gsea.svg')
             }}
           >
-            <span>Download as SVG</span>
+            <span>{TEXT_DOWNLOAD_AS_SVG}</span>
           </DropdownMenuItem>
         </>
       ),
@@ -431,7 +438,7 @@ export function GseaPage() {
             setGeneRank(
               textToTokens(content)
                 .slice(1)
-                .filter((tokens) => tokens.length > 2)
+                .filter(tokens => tokens.length > 2)
                 .map((tokens, ti) => ({
                   gene: tokens[0]!,
                   rank: ti,
@@ -447,7 +454,7 @@ export function GseaPage() {
             // Check if the entry is a file, not a directory
             const content = await zipEntry.async('string')
 
-            const lines = textToLines(content).filter((tokens) =>
+            const lines = textToLines(content).filter(tokens =>
               tokens.includes('cls')
             )
 
@@ -503,8 +510,8 @@ export function GseaPage() {
 
           textToTokens(content)
             .slice(1)
-            .filter((tokens) => tokens.length > 7)
-            .forEach((tokens) => {
+            .filter(tokens => tokens.length > 7)
+            .forEach(tokens => {
               const name = tokens[0]!
               const phen = reportNames[pi]!
 
@@ -513,7 +520,7 @@ export function GseaPage() {
               }
 
               reports.get(phen)!.push({
-                id: makeNanoIdLen12(),
+                id: makeUuid(),
                 name,
                 phen: reportNames[pi]!,
                 size: Number(tokens[3]),
@@ -550,8 +557,8 @@ export function GseaPage() {
 
           const es = textToTokens(content)
             .slice(1)
-            .filter((tokens) => tokens.length > 5)
-            .map((tokens) => ({
+            .filter(tokens => tokens.length > 5)
+            .map(tokens => ({
               gene: tokens[1]!,
               rank: Number(tokens[3]!),
               score: Number(tokens[5]!),
@@ -588,10 +595,10 @@ export function GseaPage() {
 
     setSearchResults(
       phenotypes
-        .map((k) =>
+        .map(k =>
           allReports
             .get(k)!
-            .filter((r) => q.match(k) || q.match(r.phen) || q.match(r.name))
+            .filter(r => q.match(k) || q.match(r.phen) || q.match(r.name))
         )
         .flat()
     )
@@ -612,7 +619,11 @@ export function GseaPage() {
           name="gsea"
           onResponse={(response, data) => {
             if (response !== TEXT_CANCEL) {
-              downloadSvgAutoFormat(svgRef, data!.name as string)
+              const d = data as {
+                name: string
+              }
+
+              downloadSvgAutoFormat(svgRef, d.name as string)
             }
 
             setShowDialog({ ...NO_DIALOG })
@@ -620,53 +631,52 @@ export function GseaPage() {
         />
       )}
 
-      <ShortcutLayout signedRequired={false}>
-        <HeaderPortal>
-          <ModuleInfoButton info={MODULE_INFO} />
+      <HeaderPortal>
+        <ModuleInfoButton info={MODULE_INFO} />
 
-          <Autocomplete
-            value={search}
-            onTextChange={handleSearch}
-            className="w-3/4 lg:w-1/2 text-sm"
-          >
-            {phenotypes.map((p) => {
-              return (
-                // Split into each phenotype to make search cleaner
-                <Fragment key={p}>
-                  <li
-                    key={p}
-                    className="px-4 py-2 text-xxs text-theme/70 font-bold"
-                  >
-                    {p}
-                  </li>
+        <Autocomplete
+          value={search}
+          onTextChange={handleSearch}
+          className="w-3/4 lg:w-1/2 text-sm"
+        >
+          {phenotypes.map(p => {
+            return (
+              // Split into each phenotype to make search cleaner
+              <Fragment key={p}>
+                <li
+                  key={p}
+                  className="px-4 py-2 text-xxs text-theme/70 font-bold"
+                >
+                  {p}
+                </li>
 
-                  {searchResults
-                    .filter((item) => item.phen === p)
-                    .map((item) => (
-                      <AutocompleteLi key={item.id}>
-                        <SearchIcon />
-                        <span className="grow">{item.name}</span>
+                {searchResults
+                  .filter(item => item.phen === p)
+                  .map(item => (
+                    <AutocompleteLi key={item.id}>
+                      <SearchIcon />
+                      <span className="grow">{item.name}</span>
 
-                        <Checkbox
-                          aria-label="Select gene set"
-                          checked={datasetsForUse.get(item.id) ?? false}
-                          onCheckedChange={() => {
-                            setDatasetsForUse(
-                              new Map<string, boolean>([
-                                ...datasetsForUse.entries(),
-                                [item.id, !datasetsForUse.get(item.id)],
-                              ])
-                            )
-                          }}
-                        />
-                      </AutocompleteLi>
-                    ))}
-                </Fragment>
-              )
-            })}
-          </Autocomplete>
+                      <Checkbox
+                        aria-label="Select gene set"
+                        checked={datasetsForUse.get(item.id) ?? false}
+                        onCheckedChange={() => {
+                          setDatasetsForUse(
+                            new Map<string, boolean>([
+                              ...datasetsForUse.entries(),
+                              [item.id, !datasetsForUse.get(item.id)],
+                            ])
+                          )
+                        }}
+                      />
+                    </AutocompleteLi>
+                  ))}
+              </Fragment>
+            )
+          })}
+        </Autocomplete>
 
-          {/* <SearchBox
+        {/* <SearchBox
             variant="header"
  
             value={search}
@@ -681,10 +691,13 @@ export function GseaPage() {
             }}
             className="w-80 text-xs font-medium"
           /> */}
-        </HeaderPortal>
+      </HeaderPortal>
 
-        <Toolbar tabs={tabs}>
+      <ShortcutLayout signinRequired={false}>
+        <Toolbar>
           <ToolbarMenu
+            groupId={_id}
+            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             value={toolbarTab}
@@ -693,6 +706,8 @@ export function GseaPage() {
             leftShortcuts={<UndoShortcuts />}
           />
           <ToolbarPanel
+            groupId={_id}
+            tabs={tabs}
             tabShortcutMenu={
               <ShowOptionsMenu
                 show={showSideBar}
@@ -709,14 +724,14 @@ export function GseaPage() {
           side="right"
           tabs={rightTabs}
           value={rightTab}
-          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
+          onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
           open={showSideBar}
           onOpenChange={setShowSideBar}
           className="pr-2"
         >
           {rankedGenes.length > 0 ? (
             <FileDropZonePanel
-              onFileDrop={(files) => {
+              onFileDrop={files => {
                 if (files.length > 0) {
                   onBinaryFileChange('Open zip', files, openZipFiles)
                 }
@@ -731,11 +746,11 @@ export function GseaPage() {
                       new Map<string, IPathway[]>(
                         allReports
                           .keys()
-                          .map((report) => [
+                          .map(report => [
                             report,
                             allReports
                               .get(report)!
-                              .filter((pathway) =>
+                              .filter(pathway =>
                                 datasetsForUse.get(pathway.id)
                               ),
                           ])
@@ -749,7 +764,7 @@ export function GseaPage() {
             </FileDropZonePanel>
           ) : (
             <FileDropZonePanel
-              onFileDrop={(files) => {
+              onFileDrop={files => {
                 if (files.length > 0) {
                   //setDroppedFile(files[0]);
                   console.log('Dropped file:', files[0])
@@ -794,7 +809,7 @@ export function GseaPage() {
 
         {showDialog.id.includes('open') && (
           <OpenFiles
-            open={showDialog.id}
+            message={showDialog.id}
             fileTypes={['zip']}
             onFileChange={(message, files) => {
               onBinaryFileChange(message, files, openZipFiles)
@@ -805,5 +820,13 @@ export function GseaPage() {
         )}
       </ShortcutLayout>
     </>
+  )
+}
+
+export function GseaQueryPage() {
+  return (
+    <CoreProviders>
+      <GseaPage />
+    </CoreProviders>
   )
 }

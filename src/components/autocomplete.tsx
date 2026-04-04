@@ -1,6 +1,6 @@
 import { useClickListener } from '@/hooks/click-listener'
 import { useKeyDownListener } from '@/hooks/keydown-listener'
-import { cn } from '@lib/shadcn-utils'
+import { cn } from '@/lib/shadcn-utils'
 import { Children, useRef, useState, type ComponentProps } from 'react'
 import { BaseCol } from './layout/base-col'
 import { VCenterRow } from './layout/v-center-row'

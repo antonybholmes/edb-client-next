@@ -1,13 +1,12 @@
-import { DragHandle, SortableItemContext } from '@components/sortable-item'
-import type { IDivProps } from '@interfaces/div-props'
-import { VCenterRow } from '@layout/v-center-row'
-import { cn } from '@lib/shadcn-utils'
-import type { NullStr } from '@lib/text/text'
-import { Checkbox } from '@themed/check-box'
-import { useContext, useState, type ReactNode } from 'react'
-import { GROUP_CLS } from '../../../matcalc/groups/group-props-panel'
-import { TracksContext, type ITrackGroup } from '../tracks-provider'
-import { TRACK_ITEM_CLS } from './seq-track-item'
+import { SortableItem } from '@/components/sortable-item'
+import type { IDivProps } from '@/interfaces/div-props'
+import { VCenterRow } from '@/layout/v-center-row'
+import { cn } from '@/lib/shadcn-utils'
+import type { NullStr } from '@/lib/text/text'
+import { Checkbox } from '@/themed/v2/check-box'
+import { type ReactNode } from 'react'
+import { type ITrackGroup } from '../tracks-provider'
+import { useTracks } from '../tracks-store'
 
 export function BaseTrackItem({
   group,
@@ -17,63 +16,71 @@ export function BaseTrackItem({
   rightChildren,
   children,
   className,
+  extChildren,
   ...props
 }: IDivProps & {
   group: ITrackGroup
   multiselect: boolean
   active: NullStr
   rightChildren?: ReactNode
+  extChildren?: ReactNode
 }) {
-  const { isDragging } = useContext(SortableItemContext)
+  //const { isDragging } = useContext(SortableItemContext)
 
-  const [hover, setHover] = useState(false)
+  //const [hover, setHover] = useState(false)
 
   // When user tabs to the item we can respond to focus
   // even though the item itself is not focusable
-  const [focus, setFocus] = useState(false)
+  //const [focus, setFocus] = useState(false)
 
-  const hoverMode = hover || isDragging || group.id === active
-  const { state, dispatch } = useContext(TracksContext)
+  //const hoverMode = hover || group.id === active
+  const { selectedGroups, dispatch } = useTracks()
 
   //const c = Children.toArray(children)
 
   return (
-    <VCenterRow
-      className={GROUP_CLS}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      onFocus={() => setFocus(true)}
-      onBlur={() => setFocus(false)}
-      data-focus={focus}
-      data-hover={hoverMode}
-      //tabIndex={0}
-    >
-      <VCenterRow
-        className={cn(
-          TRACK_ITEM_CLS,
-          'fill-foreground stroke-foreground',
-          className
-        )}
-        {...props}
-      >
-        <DragHandle />
-
-        {multiselect && (
+    <SortableItem
+      id={group.id}
+      extChildren={extChildren}
+      style={style}
+      dragHandle={
+        multiselect ? (
           <Checkbox
-            checked={state.selected.get(group.id) ?? false}
+            checked={selectedGroups[group.id] ?? false}
             onCheckedChange={() => {
               dispatch({
                 type: 'select',
                 ids: [group.id],
-                selected: !(state.selected.get(group.id) ?? false),
+                selected: !(selectedGroups[group.id] ?? false),
               })
             }}
           />
+        ) : undefined
+      }
+    >
+      <VCenterRow
+        className={cn(
+          'group grow fill-foreground stroke-foreground gap-x-1.5',
+          className
         )}
+        {...props}
+      >
+        {/* {multiselect && (
+          <Checkbox
+            checked={selectedGroups[group.id] ?? false}
+            onCheckedChange={() => {
+              dispatch({
+                type: 'select',
+                ids: [group.id],
+                selected: !(selectedGroups[group.id] ?? false),
+              })
+            }}
+          />
+        )} */}
 
         {children}
       </VCenterRow>
       {rightChildren && rightChildren}
-    </VCenterRow>
+    </SortableItem>
   )
 }

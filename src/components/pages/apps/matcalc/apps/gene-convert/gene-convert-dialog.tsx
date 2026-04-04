@@ -1,33 +1,38 @@
-import { BaseCol } from '@layout/base-col'
+import { BaseCol } from '@/layout/base-col'
 
-import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
-import { Input } from '@themed/input'
+import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { Input } from '@/themed/v2/input'
 
+import { Label } from '@/components/shadcn/ui/themed/v2/label'
+import {
+  ToggleButtonTriggers,
+  ToggleButtons,
+} from '@/components/toggle-buttons'
 import { TEXT_CANCEL } from '@/consts'
-import { ToggleButtonTriggers, ToggleButtons } from '@components/toggle-buttons'
-import { VCenterRow } from '@layout/v-center-row'
-import type { ISelectionRange } from '@providers/selection-range'
-import { Label } from '@themed/label'
-import { RadioGroup, RadioGroupItem } from '@themed/radio-group'
+import { VCenterRow } from '@/layout/v-center-row'
+import type { ISelectionRange } from '@/providers/selection-range'
+import { RadioGroup, RadioGroupItem } from '@/themed/v2/radio-group'
 
-import { DataFrame } from '@lib/dataframe/dataframe'
-import { API_GENECONV_URL } from '@lib/edb/edb'
-import { NA } from '@lib/text/text'
+import { DataFrame } from '@/lib/dataframe/dataframe'
+import { API_GENECONV_URL } from '@/lib/edb/edb'
+import { NA } from '@/lib/text/text'
 
-import type { SeriesData } from '@lib/dataframe/dataframe-types'
-import { httpFetch } from '@lib/http/http-fetch'
-import { range } from '@lib/math/range'
-import { useQueryClient } from '@tanstack/react-query'
+import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+
+import type { SeriesData } from '@/lib/dataframe'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { range } from '@/lib/math/range'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@themed/accordion'
-import { Checkbox } from '@themed/check-box'
+} from '@/themed/v2/accordion'
+import { Checkbox } from '@/themed/v2/check-box'
+import { useQueryClient } from '@tanstack/react-query'
 import { produce } from 'immer'
 import { useEffect } from 'react'
-import { useCurrentSheet, useHistory } from '../../history/history-store'
+import { useHistory, useSheet } from '../../history/history-store'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 
 const OUTPUT_TYPES = [
@@ -62,9 +67,12 @@ export function GeneConvertDialog({
   //const [delimiter, setDelimiter] = useState(" /// ")
 
   //const [duplicate, setDuplicate] = useState(false)
-  const { addStep } = useHistory()
 
-  const sheet = useCurrentSheet()
+  const { addSheets } = useHistory()
+
+  const sheet = useSheet()
+
+  const df = sheet as AnnotationDataFrame
 
   useEffect(() => {
     updateSettings(
@@ -76,7 +84,7 @@ export function GeneConvertDialog({
   }, [sheet, selection])
 
   async function convert() {
-    if (!sheet! || sheet.size === 0) {
+    if (!df || df.size === 0) {
       return
     }
 
@@ -99,7 +107,7 @@ export function GeneConvertDialog({
 
       if (settings.apps.geneConvert.convertIndex) {
         // convert index
-        searches = sheet!.index.strs
+        searches = df.index.strs
         //range(df.shape[0]).map(i => {
         //   const g = df.index.getName(i)
 
@@ -110,7 +118,7 @@ export function GeneConvertDialog({
         //   }
         // })
       } else {
-        searches = sheet!.col(
+        searches = df.col(
           settings.apps.geneConvert.useSelectedColumns ? selection.start.col : 0
         )!.strs
       }
@@ -225,7 +233,7 @@ export function GeneConvertDialog({
 
       const outName = `${settings.apps.geneConvert.fromSpecies} to ${settings.apps.geneConvert.toSpecies}`
 
-      let df_out = sheet!
+      let df_out = df
         .copy()
         .setName(outName)
         .setCol(settings.apps.geneConvert.toSpecies, rename, true)
@@ -238,7 +246,7 @@ export function GeneConvertDialog({
           .values.map(v => v.toString())
         console.log(idCol)
 
-        let columns = df_out.columns.values
+        let columns = df_out.columns
         if (settings.apps.geneConvert.convertIndex) {
           columns = ['', ...columns]
         }
@@ -265,7 +273,7 @@ export function GeneConvertDialog({
         df_out = new DataFrame({ data: d, columns }).setName(outName)
       }
 
-      addStep(outName, [df_out])
+      addSheets([df_out], { name: outName })
 
       //data.push(row.concat([dj.data.dna]))
     } catch (error) {
@@ -289,13 +297,13 @@ export function GeneConvertDialog({
       contentVariant="glass"
       bodyVariant="card"
     >
-      <Accordion type="multiple" defaultValue={['species', 'output', 'input']}>
+      <Accordion multiple={true} defaultValue={['species', 'output', 'input']}>
         <AccordionItem
           value="species"
           //className="bg-background p-2 rounded-lg mb-4"
         >
           <AccordionTrigger variant="settings">Species</AccordionTrigger>
-          <AccordionContent innerClassName="flex flex-col gap-y-2">
+          <AccordionContent variant="sidebar" innerCls="flex flex-col gap-y-2">
             <VCenterRow className="gap-x-4">
               <VCenterRow className="gap-x-2">
                 <span>From</span>
@@ -340,7 +348,7 @@ export function GeneConvertDialog({
           //className="bg-background p-2 rounded-lg mb-4"
         >
           <AccordionTrigger variant="settings">Output</AccordionTrigger>
-          <AccordionContent innerClassName="flex flex-col gap-y-2">
+          <AccordionContent variant="sidebar" innerCls="flex flex-col gap-y-2">
             {/* <ToggleButtons
             tabs={OUTPUT_TYPES}
             value={outputSymbols}
@@ -352,7 +360,7 @@ export function GeneConvertDialog({
               onValueChange={v => {
                 updateSettings(
                   produce(settings, draft => {
-                    draft.apps.geneConvert.outputSymbols = v
+                    draft.apps.geneConvert.outputSymbols = v as string
                   })
                 )
               }}
@@ -373,7 +381,7 @@ export function GeneConvertDialog({
 
         <AccordionItem value="input">
           <AccordionTrigger variant="settings">Input</AccordionTrigger>
-          <AccordionContent innerClassName="flex flex-col gap-y-2">
+          <AccordionContent variant="sidebar" innerCls="flex flex-col gap-y-2">
             <VCenterRow>
               <span className="w-28">Delimiter</span>
               <Input

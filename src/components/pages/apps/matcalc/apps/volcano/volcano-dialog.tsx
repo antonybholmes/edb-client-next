@@ -1,27 +1,22 @@
+import { Form, FormField } from '@/components/shadcn/ui/themed/v2/form'
 import { TEXT_OK } from '@/consts'
-import { OKCancelDialog, type IModalProps } from '@dialog/ok-cancel-dialog'
-import { findCols, type BaseDataFrame } from '@lib/dataframe/base-dataframe'
-import { Checkbox } from '@themed/check-box'
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@themed/form'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@themed/select'
-import { newPlot, useHistory } from '../../history/history-store'
+import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
+import { findCols, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { SelectItem, SelectList } from '@/themed/v2/select'
+import { newVolcanoPlot, useSheet } from '../../history/history-store'
 
-import { DataFrame } from '@lib/dataframe/dataframe'
-import { filterNA, subset, zip } from '@lib/dataframe/dataframe-utils'
-import { range } from '@lib/math/range'
+import { DataFrame } from '@/lib/dataframe/dataframe'
+import { filterNA, subset, zip } from '@/lib/dataframe/dataframe-utils'
+import { range } from '@/lib/math/range'
 
-import type { SeriesData } from '@lib/dataframe/dataframe-types'
+import { CheckPropRow } from '@/components/dialog/check-prop-row'
+import { PropRow } from '@/components/dialog/prop-row'
+
+import type { SeriesData } from '@/lib/dataframe'
 import { produce } from 'immer'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
-import { DEFAULT_VOLCANO_PROPS } from './volcano-plot-svg'
 
 const MAX_COLS = 10
 const FOLD_REGEX = /fold/
@@ -39,9 +34,9 @@ function findFoldChangeCol(df: BaseDataFrame) {
     return 'Log2 Fold Change'
   }
 
-  console.log(df.colNames)
+  console.log(df.columns)
 
-  const cols = df.colNames.filter(c => FOLD_REGEX.test(c.toLowerCase()))
+  const cols = df.columns.filter(c => FOLD_REGEX.test(c.toLowerCase()))
 
   if (cols.length === 0) {
     return 'Log2 Fold Change'
@@ -55,7 +50,7 @@ function findPValueCol(df: BaseDataFrame | null) {
     return 'FDR'
   }
 
-  const cols = df.colNames.filter(c => P_REGEX.test(c.toLowerCase()))
+  const cols = df.columns.filter(c => P_REGEX.test(c.toLowerCase()))
 
   if (cols.length === 0) {
     return 'FDR'
@@ -76,14 +71,14 @@ export function VolcanoDialog({
   //df,
   onResponse,
 }: IProps) {
-  const { sheet, addPlots } = useHistory()
   const { settings, updateSettings } = useMatcalcSettings()
+  const sheet = useSheet()
 
   const btnRef = useRef<HTMLButtonElement>(null)
 
   //const branch = findBranch(branchAddr, history)[0]
   //const step = currentStep(branch)[0]
-  let df = sheet! //currentSheet(step)[0] as AnnotationDataFrame
+  let df = sheet as BaseDataFrame //currentSheet(step)[0] as AnnotationDataFrame
 
   //console.log('vdialog', df, df.colNames)
 
@@ -169,18 +164,13 @@ export function VolcanoDialog({
       })
     )
 
-    const plot = {
-      ...newPlot('Volcano', { main: vdf }, 'volcano'),
-      customProps: {
-        displayOptions: { ...DEFAULT_VOLCANO_PROPS },
-      },
-    }
+    const plot = newVolcanoPlot('Volcano', { main: vdf })
 
-    addPlots([plot])
+    //addPlots([plot])
 
     // plotsDispatch({ type: 'add', customProps:plots: [plot] })
 
-    onResponse?.(TEXT_OK)
+    onResponse?.(TEXT_OK, plot)
   }
 
   return (
@@ -198,38 +188,29 @@ export function VolcanoDialog({
     >
       <Form {...form}>
         <form
-          className="flex flex-col gap-y-2"
+          className="flex flex-col gap-y-1"
           onSubmit={form.handleSubmit(onSubmit)}
         >
           <FormField
             control={form.control}
             name="foldChangeCol"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center gap-x-2">
-                <FormLabel className="w-24 shrink-0 font-bold">
-                  Fold Change
-                </FormLabel>
-                <Select
+              <PropRow title="Fold Change">
+                <SelectList
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
+                  w="lg"
                 >
-                  <FormControl>
-                    <SelectTrigger className="w-40">
-                      <SelectValue placeholder="Select the fold change column" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {df?.colNames
-                      .filter(name => name !== '')
-                      .slice(0, MAX_COLS)
-                      .map((name, ni) => (
-                        <SelectItem value={name} key={ni}>
-                          {name}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </FormItem>
+                  {df?.columns
+                    .filter(name => name !== '')
+                    .slice(0, MAX_COLS)
+                    .map((name, ni) => (
+                      <SelectItem value={name} key={ni}>
+                        {name}
+                      </SelectItem>
+                    ))}
+                </SelectList>
+              </PropRow>
             )}
           />
 
@@ -237,31 +218,22 @@ export function VolcanoDialog({
             control={form.control}
             name="pValueCol"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center gap-x-2">
-                <FormLabel className="w-24 shrink-0 font-bold">
-                  P-value
-                </FormLabel>
-                <Select
+              <PropRow title="P-value">
+                <SelectList
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
+                  w="lg"
                 >
-                  <FormControl>
-                    <SelectTrigger className="w-40">
-                      <SelectValue placeholder="Select the fold change column" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {df?.colNames
-                      .filter(name => name !== '')
-                      .slice(0, MAX_COLS)
-                      .map((name, ni) => (
-                        <SelectItem value={name} key={ni}>
-                          {name}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </FormItem>
+                  {df?.columns
+                    .filter(name => name !== '')
+                    .slice(0, MAX_COLS)
+                    .map((name, ni) => (
+                      <SelectItem value={name} key={ni}>
+                        {name}
+                      </SelectItem>
+                    ))}
+                </SelectList>
+              </PropRow>
             )}
           />
 
@@ -269,17 +241,11 @@ export function VolcanoDialog({
             control={form.control}
             name="applyLog2ToFoldChange"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center gap-x-2">
-                <div className="w-24 shrink-0" />
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-
-                <FormLabel>Apply log2 to fold change</FormLabel>
-              </FormItem>
+              <CheckPropRow
+                title="Apply log2 to fold change"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
             )}
           />
 
@@ -287,17 +253,11 @@ export function VolcanoDialog({
             control={form.control}
             name="applyLog10ToPValue"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center gap-x-2">
-                <div className="w-24 shrink-0" />
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-
-                <FormLabel>Apply log10 to p-value</FormLabel>
-              </FormItem>
+              <CheckPropRow
+                title="Apply log10 to p-value"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
             )}
           />
 

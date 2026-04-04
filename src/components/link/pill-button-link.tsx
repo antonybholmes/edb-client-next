@@ -1,6 +1,6 @@
+import { type ILinkProps } from '@/interfaces/link-props'
+import { cn } from '@/lib/shadcn-utils'
 import { BASE_BUTTON_CLS, FOCUS_RING_CLS, PILL_BUTTON_CLS } from '@/theme'
-import { type ILinkProps } from '@interfaces/link-props'
-import { cn } from '@lib/shadcn-utils'
 import { BaseLink } from './base-link'
 
 const PILL_CLS = cn(BASE_BUTTON_CLS, FOCUS_RING_CLS, PILL_BUTTON_CLS)

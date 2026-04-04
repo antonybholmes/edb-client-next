@@ -1,33 +1,32 @@
-import { BaseCol } from '@layout/base-col'
-import { Button, type IButtonProps } from '@themed/button'
+import { BaseCol } from '@/layout/base-col'
+import { Button, type IButtonProps } from '@/themed/v2/button'
 
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import {
   contentVariants,
   Dialog,
   dialogBodyVariants,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   dialogFooterVariants,
   DialogHeader,
   dialogHeaderVariants,
   DialogTitle,
   overlayVariants,
-} from '@themed/dialog'
+} from '@/themed/v2/dialog'
+//import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
-import { APP_NAME, TEXT_CANCEL, TEXT_CLOSE, TEXT_OK } from '@/consts'
-import { type IChildrenProps } from '@interfaces/children-props'
-import { type IOpenChange } from '@interfaces/open-change'
-import { VCenterRow } from '@layout/v-center-row'
-import { cn } from '@lib/shadcn-utils'
+import { TEXT_CANCEL, TEXT_CLOSE, TEXT_OK } from '@/consts'
+import { type IChildrenProps } from '@/interfaces/children-props'
+import { type IOpenChange } from '@/interfaces/open-change'
+import { VCenterRow } from '@/layout/v-center-row'
+import { cn } from '@/lib/shadcn-utils'
 import type { CSSProperties, ReactNode } from 'react'
 
+import { config } from '@/config'
 import type { VariantProps } from 'class-variance-authority'
 import { osName } from 'react-device-detect'
 import { CloseIcon } from '../icons/close-icon'
 import { WarningIcon } from '../icons/warning-icon'
-
 // Try to determine the operating system
 const OS = osName
 
@@ -37,10 +36,7 @@ interface IOSButtonRowProps extends IChildrenProps {
   buttonOrder?: ButtonOrder
 }
 
-export type DialogResponse = (
-  response: string,
-  data?: Record<string, unknown>
-) => void | undefined
+export type DialogResponse = (response: string, data?: unknown) => void
 
 export function OSButtonRow({
   buttonOrder = 'auto',
@@ -88,7 +84,8 @@ export interface IModalProps extends IOpenChange, IChildrenProps {
 }
 
 export interface IOKCancelDialogProps
-  extends IModalProps,
+  extends
+    IModalProps,
     VariantProps<typeof contentVariants>,
     VariantProps<typeof overlayVariants>,
     VariantProps<typeof dialogHeaderVariants>,
@@ -105,7 +102,7 @@ export interface IOKCancelDialogProps
 }
 
 export function OKCancelDialog({
-  title = APP_NAME,
+  title = config.appName,
   description = '',
   open = true,
   onOpenChange = () => {},
@@ -119,6 +116,7 @@ export function OKCancelDialog({
   bodyCls = 'gap-y-1',
   modalType = 'Default',
   className = 'w-11/12 sm:w-3/4 md:w-8/12 xl:w-2/5 2xl:w-1/3',
+  style = {},
   headerChildren,
   leftHeaderChildren,
   rightHeaderChildren,
@@ -134,13 +132,13 @@ export function OKCancelDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        onEscapeKeyDown={() => _resp(TEXT_CANCEL)}
+        //onEscapeKeyDown={() => _resp(TEXT_CANCEL)}
         className={cn('text-sm flex flex-col', className)}
         {...props}
       >
         <DialogHeader
           style={headerStyle}
-          className={cn('-mr-2', dialogHeaderVariants({ headerVariant }))}
+          className={cn('-mr-3', dialogHeaderVariants({ headerVariant }))}
         >
           <VCenterRow className="gap-x-2">
             {leftHeaderChildren && leftHeaderChildren}
@@ -151,11 +149,11 @@ export function OKCancelDialog({
             {rightHeaderChildren && rightHeaderChildren}
             {showClose && <CloseButton onClick={() => _resp(TEXT_CANCEL)} />}
           </VCenterRow>
-          <VisuallyHidden asChild>
+          {/* <VisuallyHidden asChild>
             <DialogDescription>
               {description ? description : title}
             </DialogDescription>
-          </VisuallyHidden>
+          </VisuallyHidden> */}
         </DialogHeader>
 
         {modalType === 'Warning' && (

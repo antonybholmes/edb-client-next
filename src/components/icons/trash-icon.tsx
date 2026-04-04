@@ -1,10 +1,10 @@
-import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/shadcn-utils'
+import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
+import { cn } from '@/lib/shadcn-utils'
 import { Trash2 } from 'lucide-react'
 
 export function TrashIcon({
   w = 'w-5',
-  stroke = 'stroke-current',
+
   className,
   strokeWidth = 1.5,
   style,
@@ -39,8 +39,7 @@ export function TrashIcon({
     // </svg>
 
     <Trash2
-      className={cn(ICON_CLS, stroke, w, className)}
-      stroke=""
+      className={cn(ICON_CLS, w, className)}
       strokeWidth={strokeWidth}
       style={style}
     />

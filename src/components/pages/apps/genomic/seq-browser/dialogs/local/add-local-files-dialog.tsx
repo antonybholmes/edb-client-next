@@ -1,17 +1,17 @@
-import { TEXT_OK } from '@/consts'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@components/color/color-picker-button'
-import { FileDropZonePanel } from '@components/file-dropzone-panel'
-import { VCenterCol } from '@components/layout/v-center-col'
-import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
+} from '@/components/color/color-picker-button'
+import { FileDropZonePanel } from '@/components/file-dropzone-panel'
+import { VCenterCol } from '@/components/layout/v-center-col'
+import { TEXT_OK } from '@/consts'
+import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { COLOR_BLACK } from '@/lib/color/color'
+import { indexBed } from '@/lib/genomic/bed'
+import type { IGenomicLocation } from '@/lib/genomic/genomic'
+import type { GenomicFeatureIndex } from '@/lib/genomic/genomic-index'
+import { textToLines } from '@/lib/text/lines'
 import { BigBed, BigWig } from '@gmod/bbi'
-import { COLOR_BLACK } from '@lib/color/color'
-import { indexBed } from '@lib/genomic/bed'
-import type { IGenomicLocation } from '@lib/genomic/genomic'
-import type { GenomicFeatureIndex } from '@lib/genomic/genomic-index'
-import { textToLines } from '@lib/text/lines'
 import { BlobFile } from 'generic-filehandle2'
 import { useState } from 'react'
 

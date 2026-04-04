@@ -1,9 +1,9 @@
-import { type IDivProps } from '@interfaces/div-props'
+import { type IDivProps } from '@/interfaces/div-props'
 
 import { autoTickInterval, type Axis } from '@/components/plot/axis'
-import type { IPos } from '@interfaces/pos'
-import { GenomicLocation } from '@lib/genomic/genomic'
-import { range } from '@lib/math/range'
+import type { IPos } from '@/interfaces/pos'
+import { GenLoc } from '@/lib/genomic/genomic'
+import { range } from '@/lib/math/range'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
 import { LocationContext, type IRulerTrack } from '../tracks-provider'
@@ -54,7 +54,7 @@ export function RulerTrackSvg({ track, xax }: IProps) {
       startPos.current = null
 
       setLocation(
-        new GenomicLocation(
+        new GenLoc(
           location.chr,
           xax.domain[0] + domainX,
           xax.domain[1] + domainX

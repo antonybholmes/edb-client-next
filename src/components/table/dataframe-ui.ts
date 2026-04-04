@@ -1,5 +1,5 @@
-import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
-import { type BaseDataFrame } from '@lib/dataframe/base-dataframe'
+import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import {
   kmeans,
   log,
@@ -10,7 +10,7 @@ import {
   rowStdev,
   rowZScore,
   stdevFilter,
-} from '@lib/dataframe/dataframe-utils'
+} from '@/lib/dataframe/dataframe-utils'
 type HistoryAddStep = (description: string, sheets: BaseDataFrame[]) => void
 
 export function dfKmeans(
@@ -91,7 +91,7 @@ export function dfStdev(df: BaseDataFrame | null, addStep: HistoryAddStep) {
   const sd = rowStdev(df)
 
   df = df.copy()
-  ;(df as AnnotationDataFrame).rowMetaData.setCol('Row Stdev', sd, true)
+  ;(df as AnnotationDataFrame).rowObs.setCol('Row Stdev', sd, true)
 
   //df.setCol('Row Stdev', sd, true)
 

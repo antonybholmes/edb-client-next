@@ -1,10 +1,10 @@
-import { BaseCol } from '@layout/base-col'
+import { BaseCol } from '@/layout/base-col'
 import { Children, useEffect, useState } from 'react'
 
 import { TEXT_DRAG_HERE } from '@/consts'
+import type { IDivProps } from '@/interfaces/div-props'
+import { cn } from '@/lib/shadcn-utils'
 import { DRAG_OUTLINE_CLS } from '@/theme'
-import type { IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/shadcn-utils'
 import { PlusIcon } from './icons/plus-icon'
 import { VCenterCol } from './layout/v-center-col'
 
@@ -56,18 +56,18 @@ export function FileDrag({
         className
       )}
       data-drag={true}
-      onDrop={event => {
+      onDrop={(event) => {
         event.preventDefault()
 
         onFileDrop?.(Array.from(event.dataTransfer.files))
       }}
-      onDragOver={event => {
+      onDragOver={(event) => {
         event.preventDefault()
       }}
-      onDragEnter={event => {
+      onDragEnter={(event) => {
         event.preventDefault()
       }}
-      onDragLeave={event => {
+      onDragLeave={(event) => {
         event.preventDefault()
 
         onDragLeave?.(event)
@@ -179,13 +179,13 @@ export function FileDropPanel({
 
   return (
     <BaseCol
-      onDrop={event => {
+      onDrop={(event) => {
         event.preventDefault()
       }}
-      onDragOver={event => {
+      onDragOver={(event) => {
         event.preventDefault()
       }}
-      onDragEnter={event => {
+      onDragEnter={(event) => {
         if (isDragging) {
           return
         }
@@ -193,7 +193,7 @@ export function FileDropPanel({
         setIsDragging(true)
         setRegisterDragging(true)
       }}
-      onDragLeave={event => {
+      onDragLeave={(event) => {
         event.preventDefault()
       }}
       className={cn('grow relative', className)}

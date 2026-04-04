@@ -1,9 +1,9 @@
 import { useMouseMoveListener } from '@/hooks/mousemove-listener'
 import { useMouseUpListener } from '@/hooks/mouseup-listener'
 import { useStableId } from '@/hooks/stable-id'
+import { type IDivProps } from '@/interfaces/div-props'
+import { cn } from '@/lib/shadcn-utils'
 import { TRANS_COLOR_CLS } from '@/theme'
-import { type IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/shadcn-utils'
 import {
   Children,
   useEffect,

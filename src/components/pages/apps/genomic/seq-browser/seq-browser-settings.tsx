@@ -1,8 +1,6 @@
-import type { IChildrenProps } from '@interfaces/children-props'
+import type { IChildrenProps } from '@/interfaces/children-props'
 import { createContext } from 'react'
 
-import { APP_ID } from '@/consts'
-import { getModuleName } from '@/lib/module-info'
 import {
   DEFAULT_FONT_PROPS,
   DEFAULT_STROKE_PROPS,
@@ -11,35 +9,58 @@ import {
   type IFontProps,
   type IMarginProps,
   type IStrokeProps,
-} from '@components/plot/svg-props'
+} from '@/components/plot/svg-props'
+import { config } from '@/config'
 import {
   COLOR_BLACK,
   COLOR_CORNFLOWER_BLUE,
   COLOR_NAVY_BLUE,
-} from '@lib/color/color'
+} from '@/lib/color/color'
+import {
+  parseGenomicLocation,
+  type IGenomicLocation,
+} from '@/lib/genomic/genomic'
+import { getModuleName } from '@/lib/module-info'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import MODULE_INFO from './module.json'
 import type { BandStyle, GeneArrowStyle } from './tracks-provider'
 
-const SETTINGS_KEY = `${APP_ID}:module:${getModuleName(MODULE_INFO.name)}:settings:v68`
+const SETTINGS_KEY = `${config.appId}:app:${getModuleName(MODULE_INFO.name)}:settings:v92`
+
+const DEFAULT_LOCATIONS = [
+  parseGenomicLocation('chr3:187441954-187466041'),
+  parseGenomicLocation('chr6:106441338-106557814'),
+]
 
 export type TrackTitlePosition = 'top' | 'right'
 
 export type ReadScaleMode = 'Count' | 'CPM' | 'BPM'
 
-export type BinSize = 16 | 64 | 256 | 1024 | 4096 | 16384 //10 | 100 | 1000 | 10000
+export type BinSize = 50 | 100 | 1000 | 10000 // 16 | 64 | 256 | 1024 | 4096 | 16384 //10 | 100 | 1000 | 10000
 
 export type GeneDisplay = 'full' | 'pack' | 'dense'
-export type GeneView = 'transcript' | 'exon'
+export type GeneView = 'transcript' | 'features'
 export type GeneType = 'all' | 'protein-coding'
+
+export const GENE_DISPLAY_OPTIONS = [
+  { value: 'dense', label: 'Dense' },
+  { value: 'pack', label: 'Pack' },
+  { value: 'full', label: 'Full' },
+]
+
+// const GENE_DISPLAY_MAP: Record<GeneDisplay, string> = {
+//   dense: 'Dense',
+//   pack: 'Pack',
+//   full: 'Full',
+// }
 
 export interface ISeqBrowserSettings {
   plot: { width: number; gap: number }
-  genome: string
+  assembly: string
   zoom: number
   reverse: boolean
-  locations: string[]
+  locations: IGenomicLocation[]
   cytobands: {
     height: number
     band: { height: number }
@@ -60,7 +81,10 @@ export interface ISeqBrowserSettings {
       offset: number
     }
     stroke: IStrokeProps
-    exons: { show: boolean; fill: IColorProps }
+    transcripts: { show: boolean; fill: IColorProps; height: number }
+    exons: { show: boolean; fill: IColorProps; height: number }
+    cds: { show: boolean; fill: IColorProps; height: number }
+    utrs: { show: boolean; fill: IColorProps; height: number }
     endArrows: {
       fill: IColorProps
       firstTranscriptOnly: boolean
@@ -74,12 +98,13 @@ export interface ISeqBrowserSettings {
     canonical: {
       only: boolean
       isColored: boolean
-      stroke: IStrokeProps
+      fill: IColorProps
     }
     display: GeneDisplay
     view: GeneView
     types: GeneType
     offset: number
+    gap: number
   }
   margin: IMarginProps
   axes: {
@@ -151,7 +176,7 @@ export const DEFAULT_TRACKS_DISPLAY_PROPS: ISeqBrowserSettings = {
     },
     bins: {
       autoSize: true,
-      size: 64,
+      size: 50,
     },
   },
   beds: {
@@ -166,7 +191,7 @@ export const DEFAULT_TRACKS_DISPLAY_PROPS: ISeqBrowserSettings = {
     canonical: {
       only: false,
       isColored: true,
-      stroke: { ...DEFAULT_STROKE_PROPS, color: COLOR_CORNFLOWER_BLUE },
+      fill: { ...OPAQUE_FILL_PROPS, color: COLOR_CORNFLOWER_BLUE },
     },
     arrows: {
       show: true,
@@ -180,13 +205,28 @@ export const DEFAULT_TRACKS_DISPLAY_PROPS: ISeqBrowserSettings = {
     },
 
     stroke: { ...DEFAULT_STROKE_PROPS, color: COLOR_NAVY_BLUE },
-    exons: {
+    transcripts: {
       show: true,
-      //height: 15,
+      height: 16,
+      fill: { ...OPAQUE_FILL_PROPS, color: COLOR_NAVY_BLUE },
+    },
+    exons: {
+      show: false,
+      height: 16,
+      fill: { ...OPAQUE_FILL_PROPS, color: COLOR_NAVY_BLUE },
+    },
+    cds: {
+      show: true,
+      height: 16,
+      fill: { ...OPAQUE_FILL_PROPS, color: COLOR_NAVY_BLUE },
+    },
+    utrs: {
+      show: true,
+      height: 8,
       fill: { ...OPAQUE_FILL_PROPS, color: COLOR_NAVY_BLUE },
     },
     display: 'full',
-    view: 'exon',
+    view: 'features',
     types: 'protein-coding',
     offset: 16,
     labels: {
@@ -195,6 +235,7 @@ export const DEFAULT_TRACKS_DISPLAY_PROPS: ISeqBrowserSettings = {
       font: { ...DEFAULT_FONT_PROPS, size: 'x-small' },
       showGeneId: false,
     },
+    gap: 3,
   },
   scale: {
     autoSize: true,
@@ -221,7 +262,7 @@ export const DEFAULT_TRACKS_DISPLAY_PROPS: ISeqBrowserSettings = {
       height: 12,
     },
   },
-  genome: 'hg19',
+  assembly: 'hg19',
   plot: {
     width: 500,
     gap: 200,
@@ -232,20 +273,19 @@ export const DEFAULT_TRACKS_DISPLAY_PROPS: ISeqBrowserSettings = {
       height: 25,
     },
   },
-  locations: ['chr3:187441954-187466041', 'chr6:106441338-106557814'],
+  locations: [...DEFAULT_LOCATIONS],
 }
 
 export interface ISeqBrowserStore extends ISeqBrowserSettings {
   updateSettings: (settings: Partial<ISeqBrowserSettings>) => void
-  //applyTheme: (theme: Theme) => void
 }
 
 export const useSeqBrowserStore = create<ISeqBrowserStore>()(
   persist(
-    (set) => ({
+    set => ({
       ...DEFAULT_TRACKS_DISPLAY_PROPS,
       updateSettings: (settings: Partial<ISeqBrowserSettings>) => {
-        set((state) => ({ ...state, ...settings }))
+        set({ ...settings })
       },
     }),
     {
@@ -279,22 +319,22 @@ export function useSeqBrowserSettings(): {
   updateSettings: (settings: Partial<ISeqBrowserSettings>) => void
   resetSettings: () => void
 } {
-  const settings = useSeqBrowserStore((state) => state)
-  const updateSettings = useSeqBrowserStore((state) => state.updateSettings)
+  const settings = useSeqBrowserStore(state => state)
+  const updateSettings = useSeqBrowserStore(state => state.updateSettings)
   const resetSettings = () =>
     updateSettings({ ...DEFAULT_TRACKS_DISPLAY_PROPS })
 
   //console.log('use matcalc settings')
-  // // first load in the default values from the store
+  // first load in the default values from the store
   // const [settings, setSettings] = useState<ISettings>({
   //   passwordless: localStore.passwordless === TRUE,
   //   staySignedIn: localStore.staySignedIn === TRUE,
   //   theme: localStore.theme as Theme,
   // })
 
-  // // when the in memory store is updated, trigger a write to localstorage.
-  // // There may be an unnecessary write at the start where the localstorage
-  // // is overwritten with a copy of itself, but this is ok.
+  // when the in memory store is updated, trigger a write to localstorage.
+  // There may be an unnecessary write at the start where the localstorage
+  // is overwritten with a copy of itself, but this is ok.
   // useEffect(() => {
   //   // Write to store when there are changes
   //   localStorageMap.set({

@@ -1,12 +1,13 @@
-import { findCols, type BaseDataFrame } from '@lib/dataframe/base-dataframe'
+import { findCols, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
-import { API_DNA_URL } from '@lib/edb/edb'
+import { API_DNA_URL } from '@/lib/edb/edb'
 
-import type { SeriesData } from '@lib/dataframe/dataframe-types'
-import { QueryClient } from '@tanstack/react-query'
+import { TIME_5_MINUTES_MS } from '@/consts'
+import type { SeriesData } from '@/lib/dataframe/dataframe-types'
+import { QueryClient, useQuery } from '@tanstack/react-query'
 import { AnnotationDataFrame } from '../dataframe/annotation-dataframe'
 import { httpFetch } from '../http/http-fetch'
-import { GenomicLocation } from './genomic'
+import { GenLoc, locStr, type IGenomicLocation } from './genomic'
 
 export const CHR_INDEX_MAP: { [key: string]: number } = {
   chr1: 1,
@@ -37,6 +38,10 @@ export const CHR_INDEX_MAP: { [key: string]: number } = {
   chrMT: 25,
 }
 
+interface IDNAResp {
+  data: { seqs: { seq: string }[] }
+}
+
 /**
  * Format chr so it is in the form 'chrx'.
  *
@@ -62,13 +67,13 @@ export function humanChrToNum(chr: string): number {
 }
 
 export interface IDNA {
-  location: GenomicLocation
+  location: IGenomicLocation
   seq: string
   //rev: boolean
   //comp: boolean
 }
 
-export type FORMAT_TYPE = 'Auto' | 'Lower' | 'Upper'
+export type FORMAT_TYPE = 'auto' | 'lower' | 'upper'
 
 interface IDNAOptions {
   assembly?: string
@@ -104,7 +109,7 @@ export async function createDNATable(
   //  assemblyCol = findCol(df, "genome")
   //}
 
-  const header: string[] = df.colNames.concat(['DNA'])
+  const header: string[] = df.columns.concat(['DNA'])
 
   const locs: string[] = df.col(locCol).strs
 
@@ -153,17 +158,16 @@ export async function createDNATable(
 
 export async function fetchDNA(
   queryClient: QueryClient,
-  location: GenomicLocation,
+  location: GenLoc,
   params: IDNAOptions = {}
 ): Promise<IDNA> {
-  const { assembly, format, mask, reverse, complement } = {
-    assembly: 'grch38',
-    format: 'Auto',
-    mask: '',
-    reverse: false,
-    complement: false,
-    ...params,
-  }
+  const {
+    assembly = 'grch38',
+    format = 'Auto',
+    mask = '',
+    reverse = false,
+    complement = false,
+  } = params
 
   const dna: IDNA = {
     location,
@@ -172,8 +176,17 @@ export async function fetchDNA(
 
   try {
     const res = await queryClient.fetchQuery({
-      queryKey: ['dna'],
-      queryFn: () => {
+      queryKey: [
+        'dna',
+        assembly,
+        location.toString(),
+        format,
+        mask,
+        reverse,
+        complement,
+      ],
+      staleTime: TIME_5_MINUTES_MS,
+      queryFn: async () => {
         const params = new URLSearchParams([
           ['format', format],
           ['mask', mask],
@@ -183,22 +196,21 @@ export async function fetchDNA(
 
         //console.log({ locations: [location.toString()] })
 
-        return httpFetch.postJson<{ data: { seqs: { seq: string }[] } }>(
-          `${API_DNA_URL}/${assembly}?${params}`,
-          {
-            body: { locations: [location.toString()] },
-          }
-        )
+        const res = await httpFetch.postJson<{
+          data: { seqs: { seq: string }[] }
+        }>(`${API_DNA_URL}/${assembly}?${params}`, {
+          body: { locations: [location.toString()] },
+        })
+
+        return res.data
       },
     })
-
-    const data = res.data
 
     //console.log(data)
 
     return {
       location,
-      seq: data.seqs[0]!.seq,
+      seq: res.seqs[0]!.seq,
       //rev: data.isRev,
       //comp: data.isComp,
     }
@@ -209,9 +221,48 @@ export async function fetchDNA(
   return dna
 }
 
+export function useDNAQuery(
+  location: GenLoc | IGenomicLocation,
+  params: IDNAOptions = {}
+) {
+  const {
+    assembly = 'grch38',
+    format = 'Auto',
+    mask = '',
+    reverse = false,
+    complement = false,
+  } = params
+
+  const l = locStr(location)
+
+  return useQuery({
+    queryKey: ['dna', assembly, l, format, mask, reverse, complement],
+    staleTime: TIME_5_MINUTES_MS,
+    queryFn: async () => {
+      const params = new URLSearchParams([
+        ['format', format],
+        ['mask', mask],
+        ['rev', reverse.toString()],
+        ['comp', complement.toString()],
+      ])
+
+      //console.log({ locations: [location.toString()] })
+
+      const res = await httpFetch.postJson<IDNAResp>(
+        `${API_DNA_URL}/${assembly}?${params}`,
+        {
+          body: { locations: [l] },
+        }
+      )
+
+      return { location, seq: res.data.seqs[0]!.seq }
+    },
+  })
+}
+
 export function dnaToJson(seqs: IDNA[]): string {
   return JSON.stringify(
-    seqs.map((seq) => ({
+    seqs.map(seq => ({
       chr: seq.location.chr,
       start: seq.location.start,
       end: seq.location.end,

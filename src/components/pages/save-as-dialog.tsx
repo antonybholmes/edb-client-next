@@ -1,9 +1,8 @@
 import { TEXT_CANCEL, TEXT_NAME, TEXT_SAVE_AS } from '@/consts'
-import { OKCancelDialog, type IModalProps } from '@dialog/ok-cancel-dialog'
+import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
 
 import { useState } from 'react'
-import { Input } from '../shadcn/ui/themed/input'
-import { LabelContainer } from '../shadcn/ui/themed/label'
+import { TextPropRow } from '../dialog/text-prop-row'
 
 export interface ISaveAsFormat {
   name: string
@@ -12,7 +11,12 @@ export interface ISaveAsFormat {
 
 export interface ISaveAsDialogProps extends IModalProps {
   name?: string
-  formats?: ISaveAsFormat[]
+  formats?: readonly ISaveAsFormat[]
+}
+
+export interface ISaveAsResponse {
+  name: string
+  format: ISaveAsFormat
 }
 
 export function SaveAsDialog({
@@ -35,39 +39,27 @@ export function SaveAsDialog({
           const format = formats.filter(
             (f) => f.ext.toUpperCase() === response
           )[0]!
+
+          console.log('Save as...', text, format)
+
           onResponse?.(response, {
             name: `${text.split('.')[0]}.${response.toLowerCase()}`,
             format,
-          })
+          } as ISaveAsResponse)
         } else {
           onResponse?.(response)
         }
       }}
-      //contentVariant="glass"
-      //bodyVariant="card"
-      //bodyCls="gap-y-2"
     >
-      {/* {formats.map((format, fi) => (
-        <Button
-          key={fi}
-          variant={fi === 0 ? 'theme' : 'secondary'}
-          size="lg"
-          onClick={() => onSave?.(format)}
-          aria-label="Open groups"
-        >
-          {format.name} (.{format.ext})
-        </Button>
-      ))} */}
-
-      <LabelContainer label={TEXT_NAME} id="save-as">
-        <Input
-          value={text}
-          id="save-as"
-          placeholder="Save as..."
-          onChange={(e) => setText(e.target.value)}
-          className="rounded-theme grow"
-        />
-      </LabelContainer>
+      <TextPropRow
+        title={TEXT_NAME}
+        value={text}
+        placeholder="Save as..."
+        onTextChange={(e) => {
+          console.log('Save as...', e)
+          setText(e)
+        }}
+      />
 
       {/* <Form {...form}>
         <form
@@ -78,28 +70,28 @@ export function SaveAsDialog({
             control={form.control}
             name="format"
             render={({ field }) => (
-              <FormControl>
+               
                 <RadioGroup
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                   className="flex flex-col space-y-1"
                 >
                   <FormItem className="flex items-center gap-x-2">
-                    <FormControl>
+                    
                       <RadioGroupItem value="txt" />
-                    </FormControl>
+                
                     <FormLabel>TXT</FormLabel>
                   </FormItem>
  
                   <FormItem className="flex items-center gap-x-2">
-                    <FormControl>
+                   
                       <RadioGroupItem value="csv" />
-                    </FormControl>
+                  
                     <FormLabel>CSV</FormLabel>
                   </FormItem>
         
                 </RadioGroup>
-              </FormControl>
+             
             )}
           />
 

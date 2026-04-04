@@ -1,17 +1,16 @@
-import { IColorProps } from '@/components/plot/svg-props'
-import { APP_ID } from '@/consts'
-import { COLOR_BLACK, COLOR_WHITE } from '@lib/color/color'
+import type { IColorProps } from '@/components/plot/svg-props'
+import { config } from '@/config'
+import type { IDBEntity } from '@/interfaces/db-entity'
+import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import { produce } from 'immer'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 export const PLOT_W = 600
 
-const SETTINGS_KEY = `${APP_ID}:module:venn:settings:v58`
+const SETTINGS_KEY = `${config.appId}:app:venn:settings:v58`
 
-export interface IVennCircleProps {
-  id: string
-  name: string
+export interface IVennCircleProps extends IDBEntity {
   fill: IColorProps
   stroke: IColorProps
   text: IColorProps
@@ -133,25 +132,25 @@ export interface IVennStore extends IVennSettings {
 
 export const useVennSettingsStore = create<IVennStore>()(
   persist(
-    (set) => ({
+    set => ({
       ...DEFAULT_SETTINGS,
 
       updateSettings: (settings: Partial<IVennSettings>) => {
-        set((state) => ({
+        set(state => ({
           ...state,
           ...settings,
         }))
       },
       updateCircles: (circles: Record<string, IVennCircleProps>) => {
         set(
-          produce((state) => {
+          produce(state => {
             state.circles = circles
           })
         )
       },
       updateRadius: (radius: number) => {
         set(
-          produce((state) => {
+          produce(state => {
             state.radius = radius
           })
         )
@@ -173,12 +172,12 @@ export function useVennSettings(): {
   resetCircles: () => void
   updateRadius: (radius: number) => void
 } {
-  const settings = useVennSettingsStore((state) => state)
-  const updateSettings = useVennSettingsStore((state) => state.updateSettings)
+  const settings = useVennSettingsStore(state => state)
+  const updateSettings = useVennSettingsStore(state => state.updateSettings)
 
-  const circles = useVennSettingsStore((state) => state.circles)
-  const updateCircles = useVennSettingsStore((state) => state.updateCircles)
-  const updateRadius = useVennSettingsStore((state) => state.updateRadius)
+  const circles = useVennSettingsStore(state => state.circles)
+  const updateCircles = useVennSettingsStore(state => state.updateCircles)
+  const updateRadius = useVennSettingsStore(state => state.updateRadius)
 
   function resetSettings() {
     updateSettings({ ...DEFAULT_SETTINGS })

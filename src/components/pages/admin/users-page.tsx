@@ -10,14 +10,14 @@ import {
   DEFAULT_EDB_USER,
   type IEdbUser,
   type IRole,
-} from '@lib/edb/edb'
+} from '@/lib/edb/edb'
 
 import { useEffect, useState } from 'react'
 
 import { RolesLayout } from '@layouts/roles-layout'
 
+import { PaginationComponent } from '@/components/pagination-component'
 import { NO_DIALOG, TEXT_OK, type IDialogParams } from '@/consts'
-import { PaginationComponent } from '@components/pagination-component'
 import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
 import { PenIcon } from '@icons/pen-icon'
 import { PlusIcon } from '@icons/plus-icon'
@@ -45,10 +45,10 @@ import { BaseCol } from '@layout/base-col'
 import { HCenterRow } from '@layout/h-center-row'
 import { Card } from '@themed/card'
 
+import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { csfrWithTokenHeaders } from '@/lib/http/urls'
 import { logger } from '@/lib/logger'
-import { useEdbAuth } from '@lib/edb/edb-auth'
-import { httpFetch } from '@lib/http/http-fetch'
-import { csfrWithTokenHeaders } from '@lib/http/urls'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from '@themed/crisp'
 import { EditUserDialog, type INewUser } from './edit-user-dialog'

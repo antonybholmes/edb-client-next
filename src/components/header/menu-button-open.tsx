@@ -1,10 +1,14 @@
+import { cn } from '@/lib/shadcn-utils'
 import { CENTERED_ROW_CLS } from '@/theme'
-import { cn } from '@lib/shadcn-utils'
-import { Button } from '@themed/button'
-import type { IMenuButtonProps } from '@toolbar/base-side-menu'
+import { Button } from '@/themed/v2/button'
+import type { IMenuButtonProps } from '@/toolbar/base-side-menu'
 import { MenuButtonIcon } from './menu-button-icon'
 
-export function MenuButtonOpen({ open, onClick, className }: IMenuButtonProps) {
+export function MenuButtonOpen({
+  open,
+  onClick = () => {},
+  className = '',
+}: IMenuButtonProps) {
   return (
     <Button
       variant="flat"

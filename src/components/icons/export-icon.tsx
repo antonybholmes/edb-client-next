@@ -1,5 +1,5 @@
-import { type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/shadcn-utils'
+import { type IIconProps } from '@/interfaces/icon-props'
+import { cn } from '@/lib/shadcn-utils'
 import { ArrowRightFromLine } from 'lucide-react'
 
 export function ExportIcon({

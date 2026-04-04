@@ -1,19 +1,21 @@
-import { type IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/shadcn-utils'
+import { type IDivProps } from '@/interfaces/div-props'
+import { cn } from '@/lib/shadcn-utils'
 import { useContext, useEffect, useRef } from 'react'
 
-import { type ITooltipSide } from '@interfaces/tooltip-side-props'
+import { type ITooltipSide } from '@/interfaces/tooltip-side-props'
 
+import { TabContext, TabProvider } from '@/components/tabs/tab-provider'
+import { useStableId } from '@/hooks/stable-id'
+import { EMPTY_RECT } from '@/interfaces/rect'
+import { where } from '@/lib/math/where'
 import { FOCUS_INSET_RING_CLS } from '@/theme'
-import { TabContext, TabProvider } from '@components/tabs/tab-provider'
-import { where } from '@lib/math/where'
-import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/tabs'
-import { SimpleTooltip } from '../shadcn/ui/themed/tooltip'
+import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
+import { SimpleTooltip } from '../shadcn/ui/themed/v2/tooltip'
+import { TabIndicatorFollowV } from '../tabs/tab-indicator-follow-v'
 import {
   TabIndicatorContext,
   TabIndicatorProvider,
 } from '../tabs/tab-indicator-provider'
-import { TabIndicatorV } from '../tabs/tab-indicator-v'
 import { type IToolbarProps } from './toolbar'
 
 const BUTTON_CLS = cn(
@@ -37,7 +39,16 @@ export function Shortcuts({
 }: IShortcutProps) {
   return (
     <TabProvider value={value} onTabChange={onTabChange} tabs={tabs}>
-      <TabIndicatorProvider size={defaultWidth} scale={0.4}>
+      <TabIndicatorProvider
+        selectedPosition={{
+          ...EMPTY_RECT,
+          h: defaultWidth,
+          scale: 0.4,
+          animate: true,
+          index: 0,
+          tabs: 0,
+        }}
+      >
         <ShortcutContent gap={gap} />
       </TabIndicatorProvider>
     </TabProvider>
@@ -55,15 +66,19 @@ export function ShortcutContent({
 }: IShortcutsProps) {
   const { selectedTab, onTabChange, tabs } = useContext(TabContext)!
 
-  const { size, setTabIndicatorPos } = useContext(TabIndicatorContext)
+  const _id = useStableId('shortcut-tabs')
+
+  const { position, setPosition: setTabIndicatorPos } =
+    useContext(TabIndicatorContext)
   const pressed = useRef(false)
 
   function _scale(index: number, scale: number) {
-    const s = size * scale
+    const s = (position?.h || 0) * scale
 
     setTabIndicatorPos({
-      x: index * gap + (index + 0.5) * size - s * 0.5,
-      size: s,
+      ...EMPTY_RECT,
+      y: index * gap + (index + 0.5) * (position?.h || 0) - s * 0.5,
+      h: s,
       //transform: `scaleX(${ 1})`, //`scaleX(${scale > 1 ? trueScale : 1})`,
     })
   }
@@ -74,7 +89,7 @@ export function ShortcutContent({
     }
   }, [selectedTab])
 
-  const w = `${size}rem`
+  const w = `${position?.h || 0}rem`
 
   return (
     <Tabs
@@ -88,7 +103,7 @@ export function ShortcutContent({
       }}
     >
       <TabsList
-        variant="base"
+        variant="default"
         className={cn(
           'relative shrink-0 items-center my-2 w-header pl-0.5 ml-0.5',
           className
@@ -138,7 +153,7 @@ export function ShortcutContent({
           )
         })}
 
-        <TabIndicatorV />
+        <TabIndicatorFollowV groupId={_id} />
       </TabsList>
     </Tabs>
   )

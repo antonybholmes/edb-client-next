@@ -1,12 +1,16 @@
+import { SwitchPropRow } from '@/dialog/switch-prop-row'
+import {
+  TOOLBAR_STYLE_MAP,
+  useEdbSettings,
+  type ToolbarStyle,
+} from '@/lib/edb/edb-settings'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/shadcn/ui/themed/select'
-import { SwitchPropRow } from '@dialog/switch-prop-row'
-import { useEdbSettings, type ToolbarStyle } from '@lib/edb/edb-settings'
+} from '@/themed/v2/select'
 import { produce } from 'immer'
 import { PropRow } from '../prop-row'
 
@@ -38,8 +42,10 @@ export function SettingsToolbarPanel() {
             updateSettings(newSettings)
           }}
         >
-          <SelectTrigger className="w-32">
-            <SelectValue placeholder="Choose ribbon style" />
+          <SelectTrigger>
+            <SelectValue data-placeholder="Choose ribbon style">
+              {(value: ToolbarStyle) => <span>{TOOLBAR_STYLE_MAP[value]}</span>}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="classic">Classic</SelectItem>

@@ -1,6 +1,6 @@
 import { MarkdownContent } from '@/components/markdown-content'
 import { loadMarkdownFile } from '@/lib/markdown/markdown'
-import { makeMetaData } from '@lib/metadata'
+import { makeMetaData } from '@/lib/metadata'
 
 export const metadata = makeMetaData('Change Log')
 

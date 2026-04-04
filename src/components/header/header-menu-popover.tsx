@@ -1,20 +1,23 @@
-import { type IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/shadcn-utils'
+import { type IDivProps } from '@/interfaces/div-props'
+import { cn } from '@/lib/shadcn-utils'
 
-import { ThemeLink } from '@components/link/theme-link'
-import { VCenterRow } from '@layout/v-center-row'
+import { ThemeLink } from '@/components/link/theme-link'
+import { VCenterRow } from '@/layout/v-center-row'
 import { useState } from 'react'
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/shadcn/ui/themed/v2/popover'
 import { HEADER_LINKS } from '@/menus'
-import { Popover, PopoverContent } from '@themed/popover'
 
-import { BaseLink, BLANK_TARGET } from '@components/link/base-link'
-import { Button } from '@themed/button'
+import { BaseLink, BLANK_TARGET } from '@/components/link/base-link'
 
+import type { ILinkProps } from '@/interfaces/link-props'
+import { HeaderIconButton } from '@/layouts/header-icon-button'
 import { FOCUS_RING_CLS } from '@/theme'
-import type { ILinkProps } from '@interfaces/link-props'
-import { PopoverAnchor } from '@radix-ui/react-popover'
-import { GLASS_CLS } from '@themed/glass'
+import { GLASS_CLS } from '@/themed/glass'
 import type { IHeaderLinksProps } from './header-menu'
 import { MenuButtonIcon } from './menu-button-icon'
 
@@ -39,9 +42,9 @@ export function ModuleButtonLink({
 
 export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
   // sort alphabetically and ignore sections
-  const items = HEADER_LINKS.map((section) => {
+  const items = HEADER_LINKS.map(section => {
     return section.modules.filter(
-      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()
@@ -103,29 +106,29 @@ export function HeaderMenuPopover({ tab = '' }: IFileMenu) {
 
   return (
     <Popover open={open}>
-      <PopoverAnchor asChild>
-        <Button
-          id="header-menu-popover-button"
-          variant="trans"
-          size="none"
-          rounded="none"
-          // ripple={false}
-          checked={open}
-          onClick={() => setOpen(!open)}
-          className="h-header w-header"
-          aria-label={open ? 'Close Menu' : 'Open Menu'}
-        >
-          <MenuButtonIcon fill="fill-white/90" />
-        </Button>
-      </PopoverAnchor>
+      <PopoverTrigger
+        render={
+          <HeaderIconButton
+            id="header-menu-popover-button"
+            variant="trans"
+            rounded="none"
+            // ripple={false}
+            checked={open}
+            onClick={() => setOpen(!open)}
+            aria-label={open ? 'Close Menu' : 'Open Menu'}
+          >
+            <MenuButtonIcon fill="fill-white/90" />
+          </HeaderIconButton>
+        }
+      />
 
       <PopoverContent
-        onEscapeKeyDown={() => setOpen(false)}
-        onInteractOutside={(e) => {
-          if ((e.target as HTMLElement)?.id !== 'header-menu-popover-button') {
-            setOpen(false)
-          }
-        }}
+        // onEscapeKeyDown={() => setOpen(false)}
+        // onInteractOutside={e => {
+        //   if ((e.target as HTMLElement)?.id !== 'header-menu-popover-button') {
+        //     setOpen(false)
+        //   }
+        // }}
         align="start"
         alignOffset={8}
         className={cn(GLASS_CLS, 'text-xs flex flex-col ')}

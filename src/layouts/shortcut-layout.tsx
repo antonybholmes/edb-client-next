@@ -1,4 +1,4 @@
-import { ISignInLayoutProps, SignInLayout } from './signin-layout'
+import { type ISignInLayoutProps, SignInLayout } from './signin-layout'
 
 export interface IShortcutLayoutProps extends ISignInLayoutProps {
   mainClassName?: string
@@ -6,7 +6,7 @@ export interface IShortcutLayoutProps extends ISignInLayoutProps {
 
 export function ShortcutLayout({
   children,
-  className = 'gap-y-2',
+  className = 'gap-y-4',
   ...props
 }: IShortcutLayoutProps) {
   return (

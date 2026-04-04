@@ -1,6 +1,6 @@
 import { CENTERED_ROW_CLS } from '@/theme'
 
-import { cn } from '@lib/shadcn-utils'
+import { cn } from '@/lib/shadcn-utils'
 
 import { TEXT_SEARCH } from '@/consts'
 import { useStableId } from '@/hooks/stable-id'
@@ -12,7 +12,7 @@ import {
   Input,
   inputVariants,
   type IInputProps,
-} from './shadcn/ui/themed/input'
+} from './shadcn/ui/themed/v2/input'
 
 const BUTTON_CLS = cn(
   CENTERED_ROW_CLS,
@@ -22,11 +22,11 @@ const BUTTON_CLS = cn(
 )
 
 export interface ISearchBoxProps
-  extends IInputProps,
-    VariantProps<typeof inputVariants> {
-  showClear?: boolean
+  extends IInputProps, VariantProps<typeof inputVariants> {
+  //showClear?: boolean
   searchLabel?: string
   deleteLabel?: string
+  clear?: () => void
 }
 
 export function SearchBox({
@@ -35,19 +35,22 @@ export function SearchBox({
   //h = 'dialog',
   value,
   placeholder,
+  clear,
   onTextChange,
   onTextChanged,
-  showClear = true,
+  //showClear = true,
   searchLabel = TEXT_SEARCH,
-  deleteLabel: deleteText = 'Clear search',
-  className,
+  deleteLabel = 'Clear search',
+  className = '',
   ...props
 }: ISearchBoxProps) {
-  const _id = useStableId(id, 'searchbox')
+  const _id = id || useStableId('search-box')
 
   const [_value, setValue] = useState('')
 
   const v = value ?? _value
+
+  //console.log('search box value', v)
 
   return (
     <Input
@@ -79,16 +82,17 @@ export function SearchBox({
         </button>
       }
       rightChildren={
-        showClear && v ? (
+        clear && v ? (
           <button
             data-variant={variant}
             onClick={() => {
-              setValue('')
-              onTextChange?.('')
-              onTextChanged?.('')
+              //setValue('')
+              //onTextChange?.('')
+              //onTextChanged?.('')
+              clear?.()
             }}
             className={BUTTON_CLS}
-            title={deleteText}
+            title={deleteLabel}
           >
             <CloseIcon stroke="" w="w-4 h-4" />
           </button>

@@ -1,17 +1,17 @@
-import { BaseCol } from '@layout/base-col'
+import { BaseCol } from '@/layout/base-col'
 
+import {
+  ColorPickerButton,
+  SIMPLE_COLOR_EXT_CLS,
+} from '@/components/color/color-picker-button'
 import { TEXT_CANCEL, TEXT_NAME } from '@/consts'
-import { ColorPickerPopover } from '@components/color/color-picker-button'
-import { OKCancelDialog, type IModalProps } from '@dialog/ok-cancel-dialog'
+import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
 
-import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
-import { LabelContainer } from '@/components/shadcn/ui/themed/label'
-import { PopoverTrigger } from '@/components/shadcn/ui/themed/popover'
-import type { IGeneset } from '@lib/gsea/geneset'
-import { textToLines } from '@lib/text/lines'
-import { Input } from '@themed/input'
-import { Textarea } from '@themed/textarea'
-import { Palette } from 'lucide-react'
+import { PropRow } from '@/components/dialog/prop-row'
+import type { IGeneset } from '@/lib/gsea/geneset'
+import { textToLines } from '@/lib/text/lines'
+import { Textarea } from '@/themed/textarea'
+import { Input } from '@/themed/v2/input'
 import { useEffect, useState } from 'react'
 
 export interface IProps extends IModalProps {
@@ -52,7 +52,7 @@ export function GenesetDialog({ geneset, callback, onResponse }: IProps) {
           {name.length > 0 ? `Edit ${name}` : 'New Gene Set'}
         </span>
       }
-      onResponse={(r) => {
+      onResponse={r => {
         if (r === TEXT_CANCEL) {
           onResponse?.(r)
         } else {
@@ -73,45 +73,36 @@ export function GenesetDialog({ geneset, callback, onResponse }: IProps) {
         //   title="Set color"
         // />
 
-        <ColorPickerPopover color={color} onColorChange={setColor}>
-          <PopoverTrigger asChild>
-            <IconButton
-              variant="secondary"
-              size="icon-sm"
-              title="Gene set color"
-            >
-              <Palette
-                style={{ fill: color, strokeWidth: 1 }}
-                className="stroke-foreground/80 w-5"
-              />
-              {/* <Brush
-                          style={{ strokeWidth: 1 }}
-                          className="absolute bottom-1/5 left-1/2 fill-white w-5 stroke-black"
-                        /> */}
-            </IconButton>
-          </PopoverTrigger>
-        </ColorPickerPopover>
+        <ColorPickerButton
+          color={color}
+          onColorChange={setColor}
+          className={SIMPLE_COLOR_EXT_CLS}
+        />
       }
-      leftFooterChildren={
-        <span className="text-foreground/50" title="Gene Set Id">
-          {geneset?.id}
-        </span>
-      }
+      // leftFooterChildren={
+      //   <span className="text-foreground/50" title="Gene Set Id">
+      //     {geneset?.id}
+      //   </span>
+      // }
     >
-      <BaseCol className="gap-y-4">
-        <LabelContainer label={TEXT_NAME} id="name">
+      <BaseCol className="gap-y-2">
+        <PropRow title="Name">
           <Input
             id="name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={e => setName(e.target.value)}
             placeholder={TEXT_NAME}
           />
-        </LabelContainer>
+        </PropRow>
+
+        <PropRow title="Id">
+          <Input readOnly value={geneset?.id} />
+        </PropRow>
 
         <Textarea
           id="search"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={e => setSearch(e.target.value)}
           placeholder="List of genes (one per line)..."
           label="Genes"
           labelPos="left"

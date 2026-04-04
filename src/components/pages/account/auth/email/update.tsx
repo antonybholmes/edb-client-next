@@ -1,10 +1,10 @@
 import {
   API_UPDATE_EMAIL_URL,
   EDB_TOKEN_PARAM,
-  MYACCOUNT_ROUTE,
+  MYACCOUNT_PATH,
   getJwtContents,
   type IResetJwtPayload,
-} from '@lib/edb/edb'
+} from '@/lib/edb/edb'
 import {
   Card,
   CardContent,
@@ -13,30 +13,36 @@ import {
   CardHeader,
   CardTitle,
   CenteredCardContainer,
-} from '@themed/card'
+} from '@/themed/card'
 
 import { useRef, useState, type BaseSyntheticEvent } from 'react'
 
+import { FormInputError } from '@/components/input-error'
+import {
+  Form,
+  FormField,
+  FormItem,
+} from '@/components/shadcn/ui/themed/v2/form'
 import { TEXT_CANCEL, TEXT_CONFIRM } from '@/consts'
-import { FormInputError } from '@components/input-error'
-import { Form, FormField, FormItem } from '@themed/form'
 
-import { VCenterRow } from '@layout/v-center-row'
+import { VCenterRow } from '@/layout/v-center-row'
 
-import { WarningButtonLink } from '@components/link/warning-button-link'
+import { WarningButtonLink } from '@/components/link/warning-button-link'
+import { Label } from '@/components/shadcn/ui/themed/v2/label'
 import {
   EMAIL_PATTERN,
   FORWARD_DELAY_MS,
   SignInLayout,
   TEXT_EMAIL_ERROR,
-} from '@layouts/signin-layout'
-import { bearerHeaders, redirect } from '@lib/http/urls'
-import { useQueryClient } from '@tanstack/react-query'
-import { Button } from '@themed/button'
-import { toast } from '@themed/crisp'
-import { Input } from '@themed/input'
-import { Label } from '@themed/label'
-import axios from 'axios'
+} from '@/layouts/signin-layout'
+import { bearerHeaders, redirect } from '@/lib/http/urls'
+import { CoreProviders } from '@/providers/core-providers'
+
+import { httpFetch } from '@/lib/http/http-fetch'
+import { makeUuid } from '@/lib/id'
+import { Button } from '@/themed/v2/button'
+import { Input } from '@/themed/v2/input'
+import { Toast } from '@base-ui/react/toast'
 import { useForm } from 'react-hook-form'
 
 interface IFormInput {
@@ -45,13 +51,10 @@ interface IFormInput {
 }
 
 export function UpdateEmailPage() {
-  const queryClient = useQueryClient()
-
   const queryParameters = new URLSearchParams(window.location.search)
 
   const accessToken = queryParameters.get(EDB_TOKEN_PARAM) ?? ''
-  //const url = queryParameters.get(EDB_URL_PARAM)
-
+  const { add: addToast } = Toast.useToastManager()
   const jwtData: IResetJwtPayload | null =
     getJwtContents<IResetJwtPayload>(accessToken)
 
@@ -71,32 +74,26 @@ export function UpdateEmailPage() {
 
   async function update(data: IFormInput) {
     try {
-      await queryClient.fetchQuery({
-        queryKey: ['update'],
-        queryFn: () =>
-          axios.post(
-            API_UPDATE_EMAIL_URL,
-            {
-              email: data.email1,
-            },
-            {
-              headers: bearerHeaders(accessToken),
-            }
-          ),
+      await httpFetch.post(API_UPDATE_EMAIL_URL, {
+        body: { email: data.email1 },
+        headers: bearerHeaders(accessToken),
       })
 
-      toast({
+      addToast({
+        id: makeUuid(),
         title: 'Your email address was updated',
         description: 'Please use your new email address to sign in.',
+        type: 'success',
       })
 
       setTimeout(() => {
-        redirect(`${MYACCOUNT_ROUTE}?refresh=true`)
+        redirect(`${MYACCOUNT_PATH}?refresh=true`)
       }, FORWARD_DELAY_MS)
     } catch (error) {
-      toast({
+      addToast({
+        id: makeUuid(),
         title: error as string,
-        variant: 'destructive',
+        type: 'destructive',
       })
       setHasErrors(true)
     }
@@ -190,5 +187,13 @@ export function UpdateEmailPage() {
         </CenteredCardContainer>
       </>
     </SignInLayout>
+  )
+}
+
+export function UpdateEmailQueryPage() {
+  return (
+    <CoreProviders>
+      <UpdateEmailPage />
+    </CoreProviders>
   )
 }

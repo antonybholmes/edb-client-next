@@ -1,10 +1,10 @@
-import { ZERO_POS, type IPos } from '@interfaces/pos'
-import type { IClusterTree } from '@lib/math/hcluster'
+import { ZERO_POS, type IPos } from '@/interfaces/pos'
+import type { IClusterTree } from '@/lib/math/hcluster'
 
 import { SVG_CRISP_EDGES } from '@/consts'
-import { COLOR_WHITE } from '@lib/color/color'
-import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
-import { range } from '@lib/math/range'
+import { COLOR_WHITE } from '@/lib/color/color'
+import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import { range } from '@/lib/math/range'
 import type { IHeatMapDisplayOptions } from './heatmap-svg-props'
 
 export interface ITreeSvgProps {
@@ -28,7 +28,7 @@ export function ColTreeTopSvg({
       shapeRendering={SVG_CRISP_EDGES}
     >
       {tree.coords.map((coords, ri) => {
-        const p = range(4).map(i => ({
+        const p = range(4).map((i) => ({
           x: coords[i]!.x * width,
           y: height - coords[i]!.y * height,
         }))

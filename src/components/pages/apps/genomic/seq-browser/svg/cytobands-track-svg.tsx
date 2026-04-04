@@ -1,12 +1,12 @@
-import { type IDivProps } from '@interfaces/div-props'
+import { type IDivProps } from '@/interfaces/div-props'
 
 import { Axis } from '@/components/plot/axis'
-import type { IStringMap } from '@interfaces/string-map'
-import { COLOR_BLACK } from '@lib/color/color'
-import { API_CYTOBANDS_URL } from '@lib/edb/edb'
-import { type IGenomicLocation } from '@lib/genomic/genomic'
-import { httpFetch } from '@lib/http/http-fetch'
-import { range } from '@lib/math/range'
+import type { IStringMap } from '@/interfaces/string-map'
+import { COLOR_BLACK } from '@/lib/color/color'
+import { API_CYTOBANDS_URL } from '@/lib/edb/edb'
+import { type IGenomicLocation } from '@/lib/genomic/genomic'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { range } from '@/lib/math/range'
 import { useQuery } from '@tanstack/react-query'
 import { useContext } from 'react'
 import {
@@ -46,10 +46,10 @@ export function CytobandsTrackSvg({ track }: IProps) {
   const { location } = useContext(LocationContext)
 
   const { data } = useQuery({
-    queryKey: ['Cytobands'],
+    queryKey: ['cytobands'],
     queryFn: async () => {
       const res = await httpFetch.getJson<{ data: ICytoband[] }>(
-        `${API_CYTOBANDS_URL}/${settings.genome}/${location.chr}`
+        `${API_CYTOBANDS_URL}/assemblies/${settings.assembly}/chrs/${location.chr}`
       )
 
       return res.data
@@ -101,42 +101,42 @@ function CytobandsRoundStyleTrackSvg({
   }
 
   const pcenters = cytobands
-    .filter((c) => c.name.startsWith('p') && c.giemsaStain === 'acen')
-    .map((c) => c.loc)
+    .filter(c => c.name.startsWith('p') && c.giemsaStain === 'acen')
+    .map(c => c.loc)
 
   const qcenters = cytobands
-    .filter((c) => c.name.startsWith('q') && c.giemsaStain === 'acen')
-    .map((c) => c.loc)
+    .filter(c => c.name.startsWith('q') && c.giemsaStain === 'acen')
+    .map(c => c.loc)
 
   const pcenterxs =
     pcenters.length > 0
-      ? cytoAx.domainToRange(Math.min(...pcenters.map((l) => l.start)))
+      ? cytoAx.domainToRange(Math.min(...pcenters.map(l => l.start)))
       : 0
 
   const pcenterxe =
     pcenters.length > 0
-      ? cytoAx.domainToRange(Math.max(...pcenters.map((l) => l.end)))
+      ? cytoAx.domainToRange(Math.max(...pcenters.map(l => l.end)))
       : 0
 
   const qcenterxs =
     qcenters.length > 0
-      ? cytoAx.domainToRange(Math.min(...qcenters.map((l) => l.start)))
+      ? cytoAx.domainToRange(Math.min(...qcenters.map(l => l.start)))
       : 0
 
   const qcentersxe =
     qcenters.length > 0
-      ? cytoAx.domainToRange(Math.max(...qcenters.map((l) => l.end)))
+      ? cytoAx.domainToRange(Math.max(...qcenters.map(l => l.end)))
       : 0
 
   const pw = Math.max(1, Math.abs(pcenterxe - cytoAx.domainToRange(l1.start)))
   const qw = Math.max(1, Math.abs(cytoAx.domainToRange(l2.end) - qcenterxs))
 
   const pbands = cytobands.filter(
-    (c) => c.name.startsWith('p') && c.giemsaStain !== 'acen'
+    c => c.name.startsWith('p') && c.giemsaStain !== 'acen'
   )
 
   const qbands = cytobands.filter(
-    (c) => c.name.startsWith('q') && c.giemsaStain !== 'acen'
+    c => c.name.startsWith('q') && c.giemsaStain !== 'acen'
   )
 
   const h = settings.cytobands.band.height
@@ -314,23 +314,21 @@ function CytobandsSquareStyleTrackSvg({
   }
 
   const centers = cytobands
-    .filter((c) => c.giemsaStain === 'acen')
-    .map((c) => c.loc)
+    .filter(c => c.giemsaStain === 'acen')
+    .map(c => c.loc)
 
-  const centerx1 = cytoAx.domainToRange(
-    Math.min(...centers.map((l) => l.start))
-  )
-  const centerx2 = cytoAx.domainToRange(Math.max(...centers.map((l) => l.end)))
+  const centerx1 = cytoAx.domainToRange(Math.min(...centers.map(l => l.start)))
+  const centerx2 = cytoAx.domainToRange(Math.max(...centers.map(l => l.end)))
 
   const pbands = cytobands.filter(
-    (c) => c.name.startsWith('p') && c.giemsaStain !== 'acen'
+    c => c.name.startsWith('p') && c.giemsaStain !== 'acen'
   )
 
   const qbands = cytobands.filter(
-    (c) => c.name.startsWith('q') && c.giemsaStain !== 'acen'
+    c => c.name.startsWith('q') && c.giemsaStain !== 'acen'
   )
 
-  const h = track.displayOptions.band.height
+  const h = settings.cytobands.band.height
 
   const locx1 = cytoAx.domainToRange(location.start)
   const locx2 = cytoAx.domainToRange(location.end)
@@ -340,7 +338,7 @@ function CytobandsSquareStyleTrackSvg({
     <>
       <g
         id="p-bands"
-        transform={`translate(0, ${(track.displayOptions.height - h) / 2})`}
+        transform={`translate(0, ${(settings.cytobands.height - h) / 2})`}
       >
         {pbands.map((b, bi) => {
           const l = b.loc
@@ -364,7 +362,7 @@ function CytobandsSquareStyleTrackSvg({
 
       <g
         id="q-bands"
-        transform={`translate(0, ${(track.displayOptions.height - h) / 2})`}
+        transform={`translate(0, ${(settings.cytobands.height - h) / 2})`}
       >
         {qbands.map((b, bi) => {
           const l = b.loc
@@ -389,7 +387,7 @@ function CytobandsSquareStyleTrackSvg({
       {settings.cytobands.labels.show && (
         <g
           id="q-labels"
-          transform={`translate(0, ${track.displayOptions.height + settings.titles.offset})`}
+          transform={`translate(0, ${settings.cytobands.height + settings.titles.offset})`}
         >
           <LabelSvg
             pbands={pbands}
@@ -402,7 +400,7 @@ function CytobandsSquareStyleTrackSvg({
 
       <g
         id="center"
-        transform={`translate(0, ${(track.displayOptions.height - h) / 2})`}
+        transform={`translate(0, ${(settings.cytobands.height - h) / 2})`}
       >
         <polygon
           points={`${centerx1},${h} ${centerx1},0 ${centerx2},${h} ${centerx2},0`}
@@ -425,7 +423,7 @@ function CytobandsSquareStyleTrackSvg({
         id="location"
         x={locx1 - (settings.reverse ? locw : 0)}
         width={locw}
-        height={track.displayOptions.height}
+        height={settings.cytobands.height}
         stroke={track.displayOptions.location.stroke.color}
         fill={track.displayOptions.location.fill.color}
         fillOpacity={track.displayOptions.location.fill.opacity}
@@ -447,7 +445,7 @@ function LabelSvg({
 }) {
   const bands = [...pbands, ...qbands]
 
-  const labels = range(0, bands.length).map((i) => {
+  const labels = range(0, bands.length).map(i => {
     const b = bands[i]!
     const l = b.loc
 
@@ -486,7 +484,7 @@ function LabelSvg({
 
   return (
     <>
-      {displayLabels.map((label) => {
+      {displayLabels.map(label => {
         return (
           <text
             transform={`translate(${label.x}, 0)`}

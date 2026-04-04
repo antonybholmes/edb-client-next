@@ -1,7 +1,7 @@
+import type { IClassProps } from '@/interfaces/class-props'
+import { COLOR_TRANSPARENT } from '@/lib/color/color'
+import { cn } from '@/lib/shadcn-utils'
 import { ICON_BUTTON_CLS } from '@/theme'
-import type { IClassProps } from '@interfaces/class-props'
-import { COLOR_TRANSPARENT } from '@lib/color/color'
-import { cn } from '@lib/shadcn-utils'
 import { ColorPickerButton } from './color/color-picker-button'
 
 export interface IProps extends IClassProps {
@@ -36,7 +36,7 @@ export function FgBgColorPicker({
       <div className="absolute bg-background aspect-square w-5 h-5 p-px left-0 top-0 z-10 overflow-hidden rounded-xs">
         <ColorPickerButton
           color={fgColor}
-          onColorChange={color => onFgColorChange?.(color)}
+          onColorChange={(color) => onFgColorChange?.(color)}
           defaultColor={defaultFgColor}
           onCancel={onCancel}
           className="w-full rounded-xs aspect-square"
@@ -46,7 +46,7 @@ export function FgBgColorPicker({
       <div className="absolute bg-background aspect-square w-5 h-5 p-px left-2.5 top-2.5 overflow-hidden rounded-xs">
         <ColorPickerButton
           color={bgColor}
-          onColorChange={color => onBgColorChange?.(color)}
+          onColorChange={(color) => onBgColorChange?.(color)}
           defaultColor={defaultBgColor}
           onCancel={onCancel}
           className="w-full aspect-square rounded-xs"

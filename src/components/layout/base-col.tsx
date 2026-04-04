@@ -1,5 +1,5 @@
-import type { IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/shadcn-utils'
+import type { IDivProps } from '@/interfaces/div-props'
+import { cn } from '@/lib/shadcn-utils'
 
 export function BaseCol({ ref, className, children, ...props }: IDivProps) {
   return (

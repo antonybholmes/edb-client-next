@@ -1,10 +1,10 @@
 import { useAtom } from 'jotai'
 import { atomWithStorage, createJSONStorage } from 'jotai/utils'
 import { useMemo } from 'react'
-import { makeNanoIdLen12 } from './id'
+import { makeUuid } from './id'
 
 export function makeKey(group: string, slot: string): string {
-  return `edb:${group}:${slot}:${makeNanoIdLen12()}`
+  return `edb:${group}:${slot}:${makeUuid()}`
 }
 
 // Function to check the total space used by localStorage

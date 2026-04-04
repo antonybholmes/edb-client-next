@@ -1,7 +1,7 @@
-import { type IDivProps } from '@interfaces/div-props'
+import { type IDivProps } from '@/interfaces/div-props'
 
 import { type Axis } from '@/components/plot/axis'
-import { COLOR_BLACK } from '@lib/color/color'
+import { COLOR_BLACK } from '@/lib/color/color'
 import { useContext } from 'react'
 import { LocationContext, type ILocationTrack } from '../tracks-provider'
 

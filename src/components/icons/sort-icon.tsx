@@ -1,15 +1,16 @@
-import { type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/shadcn-utils'
+import type { SortOrder } from '@/consts'
+import { type IIconProps } from '@/interfaces/icon-props'
+import { cn } from '@/lib/shadcn-utils'
 import { ArrowDownNarrowWide, ArrowUpWideNarrow } from 'lucide-react'
 
 export function SortIcon({
   w = 'w-4.5',
-  reverse = false,
+  sortOrder = 'asc',
   stroke = 'stroke-foreground',
   className,
   strokeWidth = 1.5,
-}: IIconProps & { reverse?: boolean }) {
-  return reverse ? (
+}: IIconProps & { sortOrder: SortOrder }) {
+  return sortOrder === 'asc' ? (
     <ArrowUpWideNarrow
       className={cn(stroke, w, className)}
       stroke=""

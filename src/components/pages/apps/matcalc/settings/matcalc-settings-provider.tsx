@@ -1,4 +1,4 @@
-import type { IChildrenProps } from '@interfaces/children-props'
+import type { IChildrenProps } from '@/interfaces/children-props'
 import { createContext } from 'react'
 import {
   DEFAULT_SETTINGS,

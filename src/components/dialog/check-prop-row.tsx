@@ -1,32 +1,59 @@
-import { cn } from '@lib/shadcn-utils'
+import { cn } from '@/lib/shadcn-utils'
+import type { ReactNode } from 'react'
 import { VCenterRow } from '../layout/v-center-row'
-import { Checkbox, type ICheckboxProps } from '../shadcn/ui/themed/check-box'
-import { Label } from '../shadcn/ui/themed/label'
+import { type ICheckboxProps } from '../shadcn/ui/themed/v2/check-box'
+import { InfoHoverCard } from '../shadcn/ui/themed/v2/hover-card'
+import { Switch } from '../shadcn/ui/themed/v2/switch'
+
+interface IProps extends Omit<ICheckboxProps, 'title'> {
+  title: ReactNode
+  labelClassName?: string
+  h?: string
+  info?: string
+}
 
 export function CheckPropRow({
   title = '',
-  tooltip,
+  tooltip = '',
   checked = false,
   onCheckedChange = () => {},
   disabled = false,
-  className,
+  info,
+  h = 'min-h-6',
+  className = '',
   children,
-}: ICheckboxProps & { title: string; labelClassName?: string }) {
+}: IProps) {
   return (
-    <VCenterRow className="gap-x-2 justify-between min-h-8">
-      <VCenterRow className={cn('gap-x-2', className)}>
-        <Checkbox
+    <VCenterRow className={cn('gap-x-2 justify-between', h, className)}>
+      {/* <Checkbox
+        checked={checked}
+        onCheckedChange={onCheckedChange}
+        disabled={disabled}
+        data-enabled={!disabled}
+        title={tooltip}
+      >
+        {title}
+
+        {info && <InfoHoverCard>{info}</InfoHoverCard>}
+      </Checkbox> */}
+
+      <VCenterRow className="gap-x-2  ">
+        {title}
+
+        {info && <InfoHoverCard>{info}</InfoHoverCard>}
+      </VCenterRow>
+
+      <VCenterRow className="gap-x-2 justify-end grow overflow-hidden">
+        {children && children}
+
+        <Switch
           checked={checked}
           onCheckedChange={onCheckedChange}
           disabled={disabled}
           data-enabled={!disabled}
           title={tooltip}
         />
-
-        <Label title={tooltip}>{title}</Label>
       </VCenterRow>
-
-      {children && children}
     </VCenterRow>
   )
 }

@@ -1,27 +1,32 @@
-import { type IModalProps } from '@dialog/ok-cancel-dialog'
+import { type IModalProps } from '@/dialog/ok-cancel-dialog'
 import { useEffect, useState } from 'react'
 
+import {
+  ToggleButtons,
+  ToggleButtonTriggers,
+} from '@/components/toggle-buttons'
+import { API_GEX_DATASETS_URL, API_GEX_TECHNOLOGIES_URL } from '@/lib/edb/edb'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { bearerHeaders } from '@/lib/http/urls'
 import { queryClient } from '@/query'
-import { ToggleButtons, ToggleButtonTriggers } from '@components/toggle-buttons'
-import { API_GEX_DATASETS_URL, API_GEX_TECHNOLOGIES_URL } from '@lib/edb/edb'
-import { httpFetch } from '@lib/http/http-fetch'
-import { bearerHeaders } from '@lib/http/urls'
 
 import { TEXT_OK } from '@/consts'
-import { BaseCol } from '@layout/base-col'
-import { Checkbox } from '@themed/check-box'
+import { BaseCol } from '@/layout/base-col'
+import { Checkbox } from '@/themed/v2/check-box'
 
-import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
+import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { useQuery } from '@tanstack/react-query'
 import { produce } from 'immer'
 
-import { VScrollPanel } from '@components/v-scroll-panel'
-import { CheckPropRow } from '@dialog/check-prop-row'
-import { GlassSideDialog } from '@dialog/glass-side-dialog'
-import { toast } from '@themed/crisp'
+import { VScrollPanel } from '@/components/v-scroll-panel'
+import { CheckPropRow } from '@/dialog/check-prop-row'
+import { GlassSideDialog } from '@/dialog/glass-side-dialog'
+
 import { useHistory } from '../../history/history-store'
 
-import { useEdbAuth } from '@lib/edb/edb-auth'
+import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { makeUuid } from '@/lib/id'
+import { Toast } from '@base-ui/react/toast'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import type { IGexDataset, IGexTechnology } from './gex-store'
 
@@ -29,7 +34,7 @@ import type { IGexDataset, IGexTechnology } from './gex-store'
 
 // const STANDARD_SAMPLE_DATA_TYPE_REGEX = /(coo|lymphgen)/i
 
-const SPECIES = ['Human', 'Mouse']
+const GENOMES = ['Human', 'Mouse']
 
 export interface IProps extends IModalProps {
   open?: boolean
@@ -42,12 +47,10 @@ export function GexMetadataDialog({
 }: IProps) {
   const { settings, updateSettings } = useMatcalcSettings()
 
-  const [platform, setPlatform] = useState<IGexTechnology | null>(null)
+  const [technology, setTechnology] = useState<IGexTechnology | null>(null)
   const [datasets, setDatasets] = useState<IGexDataset[]>([])
-  // const [datasetMap, setDatasetMap] = useState<Map<string, IGexDataset>>(
-  //   new Map<string, IGexDataset>()
-  // )
-  const [species, setSpecies] = useState<string>(SPECIES[0]!)
+  const { add: addToast } = Toast.useToastManager()
+  const [genome] = useState<string>(GENOMES[0]!)
 
   const [institutions, setInstitutions] = useState<string[]>([])
   const [instituteMap, setInstituteMap] = useState<Map<string, IGexDataset[]>>(
@@ -56,11 +59,11 @@ export function GexMetadataDialog({
 
   //const [addAltNames, setAddAltNames] = useState(false)
 
-  const [datasetUseMap, setDatasetUseMap] = useState<Map<string, boolean>>(
+  const [datasetUseMap, setDatasetsInUseMap] = useState<Map<string, boolean>>(
     new Map<string, boolean>()
   )
 
-  const { openBranch } = useHistory()
+  const { openFile } = useHistory()
 
   //const [confirmClear, setConfirmClear] = useState(false)
 
@@ -92,8 +95,13 @@ export function GexMetadataDialog({
       const res = await queryClient.fetchQuery({
         queryKey: ['datasets'],
         queryFn: () => {
+          const params = new URLSearchParams({
+            genome,
+            technology: technology?.name ?? '',
+          })
+
           return httpFetch.getJson<{ data: IGexDataset[] }>(
-            `${API_GEX_DATASETS_URL}/${species}/${platform?.name ?? ''}`,
+            `${API_GEX_DATASETS_URL}?${params.toString()}`,
             { headers: bearerHeaders(accessToken) }
           )
         },
@@ -102,11 +110,11 @@ export function GexMetadataDialog({
       console.log(res.data)
 
       // convert data to translate certain strings to numbers
-      datasets = res.data.map((dataset) => {
-        return produce(dataset, (draft) => {
-          draft.samples = dataset.samples.map((sample) => {
-            return produce(sample, (sampleDraft) => {
-              const entries = sample.metadata.map((m) => {
+      datasets = res.data.map(dataset => {
+        return produce(dataset, draft => {
+          draft.samples = dataset.samples.map(sample => {
+            return produce(sample, sampleDraft => {
+              const entries = sample.metadata.map(m => {
                 const v = Number(m.value)
 
                 return { name: m.name, value: !Number.isNaN(v) ? v : m.value }
@@ -125,9 +133,7 @@ export function GexMetadataDialog({
 
     // make the first one selected
     if (datasets.length > 0) {
-      setDatasetUseMap(
-        new Map<string, boolean>([[datasets[0]!.publicId, true]])
-      )
+      setDatasetsInUseMap(new Map<string, boolean>([[datasets[0]!.id, true]]))
     }
 
     // setDatasetMap(
@@ -169,33 +175,33 @@ export function GexMetadataDialog({
     setInstitutions(institutions)
   }
 
-  const { data: platformData } = useQuery({
+  const { data: technologyData } = useQuery({
     queryKey: ['repoData'],
     queryFn: () =>
       httpFetch.getJson<{ data: IGexTechnology[] }>(API_GEX_TECHNOLOGIES_URL),
   })
 
   useEffect(() => {
-    if (platformData?.data) {
-      const defaultPlatforms = platformData.data.filter((t) =>
+    if (technologyData?.data) {
+      const defaultTechnologies = technologyData.data.filter(t =>
         t.name.includes('RNA')
       )
 
-      if (defaultPlatforms.length > 0) {
-        setPlatform(defaultPlatforms[0]!)
+      if (defaultTechnologies.length > 0) {
+        setTechnology(defaultTechnologies[0]!)
       }
     }
-  }, [platformData?.data])
+  }, [technologyData?.data])
 
   useEffect(() => {
-    if (!platform) {
+    if (!technology) {
       return
     }
 
     loadDatasets()
 
     //loadValueTypes()
-  }, [platform])
+  }, [technology])
 
   // useEffect(() => {
   //   const types = [
@@ -231,25 +237,27 @@ export function GexMetadataDialog({
   // }, [datasetUseMap])
 
   async function fetchMetadata() {
-    if (!platform) {
-      toast({
+    if (!technology) {
+      addToast({
+        id: makeUuid(),
         title: 'Gene Expression',
         description: 'You must select a platform.',
-        variant: 'destructive',
+        type: 'destructive',
       })
 
       return
     }
 
-    const selectedDatasets = datasets.filter((dataset) =>
-      datasetUseMap.get(dataset.publicId)
+    const selectedDatasets = datasets.filter(dataset =>
+      datasetUseMap.get(dataset.id)
     )
 
     if (selectedDatasets.length === 0) {
-      toast({
+      addToast({
+        id: makeUuid(),
         title: 'Gene Expression',
         description: 'You must select a dataset.',
-        variant: 'destructive',
+        type: 'destructive',
       })
 
       return
@@ -259,47 +267,45 @@ export function GexMetadataDialog({
 
     const data: string[][] = []
 
-    const maxAltNameCount = Math.max(
-      ...selectedDataset.samples.map((sample) => sample.altNames.length)
-    )
+    // const maxAltNameCount = Math.max(
+    //   ...selectedDataset.samples.map(sample => sample.altNames.length)
+    // )
 
     for (const sample of selectedDataset.samples) {
-      let row: string[] = []
+      //let row: string[] = []
 
-      if (settings.apps.gex.addAltNames) {
-        row = row.concat(sample.altNames)
-      }
+      // if (settings.apps.gex.addAltNames) {
+      //   row = row.concat(sample.altNames)
+      // }
 
-      row = row.concat(sample.metadata.map((m) => m.value.toString()))
+      const row = sample.metadata.map(m => m.value.toString())
 
       data.push(row)
     }
 
-    let columns: string[] = []
+    //let columns: string[] = []
 
-    if (settings.apps.gex.addAltNames) {
-      for (let i = 0; i < maxAltNameCount; i++) {
-        columns.push(`Alt Name ${i + 1}`)
-      }
-    }
+    // if (settings.apps.gex.addAltNames) {
+    //   for (let i = 0; i < maxAltNameCount; i++) {
+    //     columns.push(`Alt Name ${i + 1}`)
+    //   }
+    // }
 
-    columns = columns.concat(
-      selectedDataset.samples[0]!.metadata.map((m) => m.name)
-    )
+    const columns = selectedDataset.samples[0]!.metadata.map(m => m.name)
 
     console.log(columns, 'columns')
     console.log(data, 'data')
 
     const df = new AnnotationDataFrame({
       data,
-      index: selectedDataset.samples.map((sample) => sample.name),
+      index: selectedDataset.samples.map(sample => sample.name),
       columns,
       name: `${selectedDataset.name} metadata`,
     })
 
     df.setIndexName('Sample')
 
-    openBranch('Open GEX data', [df])
+    openFile('GEX data', { sheets: [df] })
 
     // if everthing works, finally respond with ok
     onResponse?.(TEXT_OK)
@@ -319,19 +325,19 @@ export function GexMetadataDialog({
       buttons={[TEXT_OK]}
       headerChildren={
         <ToggleButtons
-          value={platform?.name ?? ''}
-          onTabChange={(selectedTab) => {
-            if (platformData?.data) {
-              const defaultPlatforms = platformData.data.filter(
-                (t) => t.name === selectedTab.tab.id
+          value={technology?.name ?? ''}
+          onTabChange={selectedTab => {
+            if (technologyData?.data) {
+              const defaultTechnologies = technologyData.data.filter(
+                t => t.name === selectedTab.tab.id
               )
 
-              if (defaultPlatforms.length > 0) {
-                setPlatform(defaultPlatforms[0]!)
+              if (defaultTechnologies.length > 0) {
+                setTechnology(defaultTechnologies[0]!)
               }
             }
           }}
-          tabs={platformData?.data.map((p) => ({ id: p.name })) ?? []}
+          tabs={technologyData?.data.map(p => ({ id: p.name })) ?? []}
         >
           <ToggleButtonTriggers
             className="rounded-theme overflow-hidden"
@@ -343,22 +349,20 @@ export function GexMetadataDialog({
     >
       <VScrollPanel>
         <ul className="flex flex-col gap-y-4">
-          {institutions.map((institution) => {
+          {institutions.map(institution => {
             return (
               <li key={institution} className="flex flex-col gap-y-1">
                 <h2 className="text-sm font-semibold">{institution}</h2>
 
                 <ul className="flex flex-col gap-y-1">
-                  {instituteMap.get(institution)?.map((dataset) => {
+                  {instituteMap.get(institution)?.map(dataset => {
                     return (
-                      <li key={dataset.publicId}>
+                      <li key={dataset.id}>
                         <Checkbox
-                          checked={datasetUseMap.get(dataset.publicId) ?? false}
+                          checked={datasetUseMap.get(dataset.id) ?? false}
                           onCheckedChange={() => {
-                            setDatasetUseMap(
-                              new Map<string, boolean>([
-                                [dataset.publicId, true],
-                              ])
+                            setDatasetsInUseMap(
+                              new Map<string, boolean>([[dataset.id, true]])
                             )
                           }}
                         >
@@ -379,9 +383,9 @@ export function GexMetadataDialog({
           <CheckPropRow
             title="Add alternative names to columns"
             checked={settings.apps.gex.addAltNames}
-            onCheckedChange={(v) => {
+            onCheckedChange={v => {
               updateSettings(
-                produce(settings, (draft) => {
+                produce(settings, draft => {
                   draft.apps.gex.addAltNames = v
                 })
               )

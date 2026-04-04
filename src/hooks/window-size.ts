@@ -1,4 +1,4 @@
-import { type IDim, NO_DIM } from '@interfaces/dim'
+import { type IDim, NO_DIM } from '@/interfaces/dim'
 import { useEffect, useState } from 'react'
 
 export const TAILWIND_MEDIA_SM = 640 //	640px	@media (min-width: 640px) { ... }

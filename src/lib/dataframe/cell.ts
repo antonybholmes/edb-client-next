@@ -1,64 +1,63 @@
 import { DEFAULT_DATE_FORMAT } from '@/consts'
 import { format, parseISO } from 'date-fns'
+import type { SeriesData } from '.'
 import { formatNumber } from '../text/text'
-import type { SeriesData } from './dataframe-types'
 
-export const NA_REGEX = /^(NA|#?N\/A)$/i
-export const NUMBER_REGEX = /^-?\d*\.?\d+([eE][-+]?\d+)?$/ ///^-?\d+\.?\d*$/
+//export const NA_REGEX = /^(NA|#?N\/A)$/i
+//export const NUMBER_REGEX = /^-?\d*\.?\d+([eE][-+]?\d+)?$/ ///^-?\d+\.?\d*$/
 
 /**
  * Given an input value, attempt to type coerce it to a number or
  * date where appropriate.
  *
- * @param arg
+ * @param v
  * @param keepDefaultNA
  * @returns
  */
 export function makeCell(
-  arg: SeriesData,
+  v: SeriesData,
   keepDefaultNA: boolean = true
 ): SeriesData {
+  // if empty return empty string
+  if (!v) {
+    return ''
+  }
+
   // non strings are returned as their original type
-  if (typeof arg !== 'string') {
-    return arg
+  if (typeof v !== 'string') {
+    return v
   }
 
   // convert NA and N/A to nan
   if (keepDefaultNA) {
-    if (!arg || NA_REGEX.test(arg)) {
+    if (v === 'NA' || v === 'N/A' || v === '#N/A') {
       return NaN
     }
-  }
-
-  // if empty return empty string
-  if (!arg) {
-    return ''
   }
 
   //if (NUMBER_REGEX.test(arg)) {
 
   // see if value is a number
-  const v = Number(arg)
+  const n = Number(v)
 
-  if (!Number.isNaN(v)) {
-    return v
+  if (!Number.isNaN(n)) {
+    return n
   }
-  //}
 
   // doesn't seem to be number, so see if it's a date
 
-  const d = parseISO(arg)
+  const d = parseISO(v.toString())
 
   if (!Number.isNaN(d.getTime())) {
     return d
   }
 
   // treat it as an actual string
-  return arg
+  return v
 }
 
 export function makeCells(...args: SeriesData[]): SeriesData[] {
-  return args.map((arg) => makeCell(arg))
+  return args.map(arg => makeCell(arg))
 }
 
 interface ICellStrOpts {
@@ -66,14 +65,27 @@ interface ICellStrOpts {
   defaultValue?: string
 }
 
+/**
+ * Convert a cell value to a string for display. By default, NaN values are converted to 'NA'
+ * but this can be changed by setting defaultValue in the options.
+ *
+ * @param cell
+ * @param options
+ * @returns
+ */
 export function cellStr(cell: SeriesData, options: ICellStrOpts = {}): string {
   const { dp = 4, defaultValue = 'NA' } = { ...options }
+
   if (typeof cell === 'number') {
-    return formatNumber(cell, dp)
+    if (Number.isNaN(cell)) {
+      return defaultValue
+    } else {
+      return formatNumber(cell, dp)
+    }
   } else if (cell instanceof Date) {
     return format(cell, DEFAULT_DATE_FORMAT)
   } else {
-    return cell !== null ? cell.toString() : defaultValue
+    return cell.toString()
   }
 }
 

@@ -1,5 +1,5 @@
-import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/shadcn-utils'
+import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
+import { cn } from '@/lib/shadcn-utils'
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
 
@@ -29,14 +29,14 @@ export function LoadingSpinner({
       ref={boxRef}
       className={cn(
         ICON_CLS,
-        'flex flex-row items-center justify-center rounded-full bg-conic relative p-[4px]',
+        'flex flex-row items-center justify-center rounded-full bg-conic relative p-1',
         gradient,
         w,
         className
       )}
     >
       <span className="bg-background   rounded-full w-full h-full z-10 relative" />
-      <span className="absolute rounded-full w-[4px] h-[4px] aspect-square top-0 left-1/2 -translate-x-1/2 z-0 bg-linear-to-r bg-theme dark:bg-foreground" />
+      <span className="absolute rounded-full w-1 h-1 aspect-square top-0 left-1/2 -translate-x-1/2 z-0 bg-linear-to-r bg-theme dark:bg-foreground" />
     </span>
   )
 }

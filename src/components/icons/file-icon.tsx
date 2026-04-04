@@ -1,5 +1,5 @@
-import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/shadcn-utils'
+import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
+import { cn } from '@/lib/shadcn-utils'
 import { FileSpreadsheet } from 'lucide-react'
 
 export function FileIcon({
@@ -12,7 +12,7 @@ export function FileIcon({
 }: IIconProps) {
   if (iconMode === 'colorful') {
     stroke = 'stroke-emerald-500'
-    fill = 'fill-white'
+    fill = 'fill-background'
   }
 
   return (

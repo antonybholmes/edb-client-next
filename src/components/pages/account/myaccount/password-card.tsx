@@ -1,30 +1,29 @@
-import { SESSION_UPDATE_PASSWORD_URL } from '@lib/edb/edb'
+import { SESSION_UPDATE_PASSWORD_URL } from '@/lib/edb/edb'
 
-//import { AccountSettingsContext } from "@context/account-settings-context"
+//import { AccountSettingsContext } from "@/context/account-settings-context"
 
 import { useRef, type BaseSyntheticEvent } from 'react'
 
 import { FormInputError } from '@/components/input-error'
-import { Button } from '@/components/shadcn/ui/themed/button'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/shadcn/ui/themed/card'
-import { toast } from '@/components/shadcn/ui/themed/crisp'
-import { Form, FormField, FormItem } from '@/components/shadcn/ui/themed/form'
-import { Input } from '@/components/shadcn/ui/themed/input'
-import { Label } from '@/components/shadcn/ui/themed/label'
+  Form,
+  FormField,
+  FormItem,
+} from '@/components/shadcn/ui/themed/v2/form'
+import { Label } from '@/components/shadcn/ui/themed/v2/label'
 import { TEXT_UPDATE } from '@/consts'
 import { httpFetch } from '@/lib/http/http-fetch'
 
-import { BaseCol } from '@/components/layout/base-col'
+import { Button } from '@/themed/v2/button'
+import { Input } from '@/themed/v2/input'
+
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { csrfService } from '@/lib/edb/csrf-service'
+import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { csfrHeaders } from '@/lib/http/urls'
+import { makeUuid } from '@/lib/id'
+import { Toast } from '@base-ui/react/toast'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEdbAuth } from '@lib/edb/edb-auth'
-import { csfrHeaders } from '@lib/http/urls'
-import { useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
 
@@ -84,62 +83,38 @@ const FormSchema = z.object({
 })
 
 export function PasswordCard() {
-  const queryClient = useQueryClient()
-
   const { session } = useEdbAuth()
 
   const btnRef = useRef<HTMLButtonElement>(null)
 
-  //const [user, setUser] = useState<IUser | null>(null)
-
-  //const { accessToken } = useAccessTokenStore()
-
-  const { csrfToken } = useEdbAuth()
-
-  //const [passwordless, setPasswordless] = useState(settings.passwordless)
-
-  // useEffect(() => {
-  //   async function fetch() {
-  //     const token = await fetchAccessToken()
-
-  //     setAccessToken(token)
-
-  //     setUser(await getCachedUser(token))
-  //   }
-
-  //   fetch()
-  // }, [])
-
-  // if (!session || !accessToken) {
-  //   return null
-  // }
+  const { add: addToast } = Toast.useToastManager()
 
   async function updatePassword(password: string, newPassword: string) {
     try {
-      await queryClient.fetchQuery({
-        queryKey: ['update'],
-        queryFn: () =>
-          httpFetch.postJson(SESSION_UPDATE_PASSWORD_URL, {
-            body: {
-              password,
-              newPassword,
-            },
-            headers: csfrHeaders(csrfToken),
-            withCredentials: true,
-          }),
+      const csrfToken = await csrfService.getToken()
+
+      await httpFetch.postJson(SESSION_UPDATE_PASSWORD_URL, {
+        body: {
+          password,
+          newPassword,
+        },
+        headers: csfrHeaders(csrfToken),
+        withCredentials: true,
       })
 
-      toast({
+      addToast({
+        id: makeUuid(),
         title: 'Your password was updated',
-        variant: 'success',
+        type: 'success',
         description: 'An email will be sent to your address.',
       })
     } catch (err) {
       console.log('update err', err)
 
-      toast({
+      addToast({
+        id: makeUuid(),
         title: 'Your password could not be updated',
-        variant: 'destructive',
+        type: 'destructive',
         description: 'Please try again later.',
       })
     }
@@ -174,115 +149,101 @@ export function PasswordCard() {
   }
 
   return (
-    <Card className="shadow-md lg:w-192">
-      <CardHeader className="flex flex-row items-start justify-between">
-        <BaseCol className="gap-y-2">
-          <CardTitle>Password</CardTitle>
+    <>
+      <Form {...form}>
+        <form
+          className="flex flex-col gap-y-4 text-xs"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2  items-center">
+            <Label className="font-medium" htmlFor="password">
+              Current Password
+            </Label>
+            <FormField
+              control={form.control}
+              name="password"
+              rules={{
+                pattern: {
+                  value: PASSWORD_PATTERN,
+                  message: TEXT_PASSWORD_DESCRIPTION,
+                },
+              }}
+              render={({ field }) => (
+                <FormItem className="col-span-1 md:col-span-3">
+                  <Input
+                    id="password"
+                    type="password"
+                    error={'password' in form.formState.errors}
+                    placeholder="Current Password"
+                    //variant="underline"
+                    {...field}
+                  />
+                  <FormInputError error={form.formState.errors.password} />
+                </FormItem>
+              )}
+            />
 
-          <CardDescription>
-            Update your password. This is optional if you are using passwordless
-            sign in.
-          </CardDescription>
-        </BaseCol>
+            <Label className="font-medium" htmlFor="newPassword">
+              New Password
+            </Label>
+            <FormField
+              control={form.control}
+              name="newPassword"
+              render={({ field }) => (
+                <FormItem className="col-span-1 md:col-span-3">
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    error={'newPassword' in form.formState.errors}
+                    placeholder="New Password"
+                    //variant="underline"
+                    {...field}
+                  />
+                  <FormInputError error={form.formState.errors.newPassword} />
+                </FormItem>
+              )}
+            />
 
+            <Label className="font-medium" htmlFor="retypePassword">
+              Retype Password
+            </Label>
+            <FormField
+              control={form.control}
+              name="retypePassword"
+              render={({ field }) => (
+                <FormItem className="col-span-1 md:col-span-3">
+                  <Input
+                    id="retypePassword"
+                    type="password"
+                    error={'newPassword2' in form.formState.errors}
+                    placeholder="Retype Password"
+                    //variant="underline"
+                    {...field}
+                  />
+                  <FormInputError
+                    error={form.formState.errors.retypePassword}
+                  />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <button ref={btnRef} type="submit" className="hidden" />
+        </form>
+      </Form>
+      <VCenterRow className="justify-end">
         <Button
           variant="theme"
-          size="lg"
-          rounded="full"
-          className="w-20"
+          size="md"
+          //rounded="full"
+          className="w-18 text-sm"
           ripple={true}
           onClick={() => btnRef.current?.click()}
-          disabled={session?.user.isLocked}
+          disabled={session?.user.isLocked ?? false}
         >
           {TEXT_UPDATE}
         </Button>
-      </CardHeader>
-
-      <CardContent>
-        <Form {...form}>
-          <form
-            className="flex flex-col gap-y-4 text-xs"
-            onSubmit={form.handleSubmit(onSubmit)}
-          >
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 items-center">
-              <Label className="font-medium" htmlFor="password">
-                Current Password
-              </Label>
-              <FormField
-                control={form.control}
-                name="password"
-                rules={{
-                  pattern: {
-                    value: PASSWORD_PATTERN,
-                    message: TEXT_PASSWORD_DESCRIPTION,
-                  },
-                }}
-                render={({ field }) => (
-                  <FormItem className="col-span-1 md:col-span-2">
-                    <Input
-                      id="password"
-                      type="password"
-                      error={'password' in form.formState.errors}
-                      placeholder="Current Password"
-                      variant="underline"
-                      {...field}
-                    />
-                    <FormInputError error={form.formState.errors.password} />
-                  </FormItem>
-                )}
-              />
-              <div />
-              <Label className="font-medium" htmlFor="newPassword">
-                New Password
-              </Label>
-              <FormField
-                control={form.control}
-                name="newPassword"
-                render={({ field }) => (
-                  <FormItem className="col-span-1 md:col-span-2">
-                    <Input
-                      id="newPassword"
-                      type="password"
-                      error={'newPassword' in form.formState.errors}
-                      placeholder="New Password"
-                      variant="underline"
-                      {...field}
-                    />
-                    <FormInputError error={form.formState.errors.newPassword} />
-                  </FormItem>
-                )}
-              />
-              <div />
-
-              <Label className="font-medium" htmlFor="retypePassword">
-                Retype Password
-              </Label>
-              <FormField
-                control={form.control}
-                name="retypePassword"
-                render={({ field }) => (
-                  <FormItem className="col-span-1 md:col-span-2">
-                    <Input
-                      id="retypePassword"
-                      type="password"
-                      error={'newPassword2' in form.formState.errors}
-                      placeholder="Retype Password"
-                      variant="underline"
-                      {...field}
-                    />
-                    <FormInputError
-                      error={form.formState.errors.retypePassword}
-                    />
-                  </FormItem>
-                )}
-              />
-              <div />
-            </div>
-
-            <button ref={btnRef} type="submit" className="hidden" />
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+      </VCenterRow>
+    </>
   )
 }

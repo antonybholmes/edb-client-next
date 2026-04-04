@@ -1,4 +1,4 @@
-import { COLOR_BLACK, COLOR_RED, COLOR_WHITE } from '@lib/color/color'
+import { COLOR_BLACK, COLOR_RED, COLOR_WHITE } from '@/lib/color/color'
 
 export type ColorBarPos = 'bottom' | 'right' | 'upper-right'
 

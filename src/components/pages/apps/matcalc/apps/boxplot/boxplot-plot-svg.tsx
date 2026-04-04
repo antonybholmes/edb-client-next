@@ -1,23 +1,23 @@
 import { useMemo } from 'react'
 
 import { YAxis } from '@/components/plot/axis'
-import { AxisLeftSvg } from '@components/plot/axis-svg'
-import type { IPos } from '@interfaces/pos'
-import { linspace } from '@lib/math/linspace'
-import { median } from '@lib/math/median'
+import { AxisLeftSvg } from '@/components/plot/axis-svg'
+import type { IPos } from '@/interfaces/pos'
+import { linspace } from '@/lib/math/linspace'
+import { median } from '@/lib/math/median'
 
 import { BaseSvg } from '@/components/base-svg'
+import { SwarmPlotSvg } from '@/components/plot/box-whisker/swarm-plot-svg'
+import { ViolinPlotSvg } from '@/components/plot/box-whisker/violin-plot-svg'
+import type { IDim } from '@/interfaces/dim'
+import type { ISVGProps } from '@/interfaces/svg-props'
+import { COLOR_BLACK } from '@/lib/color/color'
+import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { cellNum } from '@/lib/dataframe/cell'
+import { fill } from '@/lib/fill'
 import { KDE } from '@/lib/math/kde'
-import { SwarmPlotSvg } from '@components/plot/box-whisker/swarm-plot-svg'
-import { ViolinPlotSvg } from '@components/plot/box-whisker/violin-plot-svg'
-import type { IDim } from '@interfaces/dim'
-import type { ISVGProps } from '@interfaces/svg-props'
-import { COLOR_BLACK } from '@lib/color/color'
-import type { BaseDataFrame } from '@lib/dataframe/base-dataframe'
-import { cellNum } from '@lib/dataframe/cell'
-import { fill } from '@lib/fill'
-import { q25, q75 } from '@lib/math/quartile'
-import { range } from '@lib/math/range'
+import { q25, q75 } from '@/lib/math/quartile'
+import { range } from '@/lib/math/range'
 import { BoxWhiskerPlotSvg } from '../../../../../plot/box-whisker/box-whisker-plot-svg'
 import {
   DEFAULT_FILL_PROPS,
@@ -29,7 +29,7 @@ import {
   type IStrokeProps,
   type LegendPos,
 } from '../../../../../plot/svg-props'
-import { usePlot } from '../../history/history-store'
+import { usePlot, type BoxPlot } from '../../history/history-store'
 
 /**
  * If strings are '0' and '1' for example, replace with 'No' and 'Yes' for
@@ -133,32 +133,34 @@ interface IProps extends ISVGProps {
 export function BoxPlotSvg({ ref, plotAddr }: IProps) {
   //const { plotsState } = useContext(PlotsContext)
 
-  const plot = usePlot(plotAddr)!
+  const plot = usePlot(plotAddr)! as BoxPlot
 
   //const)
 
-  const displayOptions: IBoxPlotDisplayOptions = plot!.customProps
-    .displayOptions as IBoxPlotDisplayOptions
+  const displayOptions: IBoxPlotDisplayOptions = plot.props
 
-  const singlePlotDisplayOptions = plot!.customProps
-    .singlePlotDisplayOptions as {
-    [key: string]: { [key: string]: IBoxPlotDisplayOptions }
+  const singlePlotDisplayOptions = plot.singlePlotDisplayOptions as {
+    [key: string]: {
+      [key: string]: {
+        [key: string]: { stroke: IStrokeProps; fill: IColorProps }
+      }
+    }
   }
 
   const svg = useMemo(() => {
     const df: BaseDataFrame = plot!.dataframes['main']! as BaseDataFrame
-    const x: string = plot!.customProps.x as string
-    const y: string = plot!.customProps.y as string
-    const hue: string = plot!.customProps.hue as string
-    const xOrder: string[] = plot!.customProps.xOrder as string[]
-    const hueOrder: string[] = plot!.customProps.hueOrder as string[]
+    const x: string = plot.x as string
+    const y: string = plot.y as string
+    const hue: string = plot.hue as string
+    const xOrder: string[] = plot.xOrder as string[]
+    const hueOrder: string[] = plot.hueOrder as string[]
 
     const xCol = df.col(x).strs
     const yCol = df.col(y).values
     const emptyHueColName = x //df.colName(x)
     const hueCol =
       hueOrder.length > 1
-        ? df.col(hue).strs.map((v) => cleanHue(v))
+        ? df.col(hue).strs.map(v => cleanHue(v))
         : fill(emptyHueColName, df.shape[0])
 
     //console.log('hue', hueOrder)
@@ -207,7 +209,7 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
     // comparisons. This can be used to work out how much space
     // to allocate to stats whilst keeping the plots aligned
     const values: number[] = [...dataMap.entries()]
-      .map((x) =>
+      .map(x =>
         [...x[1].entries()].map((hue: [string, number[]]) => hue[1]).flat()
       )
       .flat()
@@ -315,33 +317,33 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
 
                   const violinStroke = {
                     ...displayOptions.violin.stroke,
-                    color: plotOptions.violin.stroke.color,
+                    color: plotOptions.violin!.stroke.color,
                   }
                   const violinFill = {
                     ...displayOptions.violin.fill,
-                    color: plotOptions.violin.fill.color,
+                    color: plotOptions.violin!.fill.color,
                   }
 
                   const boxStroke = {
                     ...displayOptions.box.stroke,
-                    color: plotOptions.box.stroke.color,
+                    color: plotOptions.box!.stroke.color,
                   }
                   const boxFill = {
                     ...displayOptions.box.fill,
-                    color: plotOptions.box.fill.color,
+                    color: plotOptions.box!.fill.color,
                   }
-                  const boxMedianStroke = {
-                    ...displayOptions.box.median.stroke,
-                    color: plotOptions.box.median.stroke.color,
-                  }
+                  // const boxMedianStroke = {
+                  //   ...displayOptions.box.median.stroke,
+                  //   color: plotOptions.box!.median.stroke.color,
+                  // }
 
                   const swarmStroke = {
                     ...displayOptions.swarm.stroke,
-                    color: plotOptions.swarm.stroke.color,
+                    color: plotOptions.swarm!.stroke.color,
                   }
                   const swarmFill = {
                     ...displayOptions.swarm.fill,
-                    color: plotOptions.swarm.fill.color,
+                    color: plotOptions.swarm!.fill.color,
                   }
 
                   return (
@@ -377,7 +379,7 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
                           height={displayOptions.plot!.h}
                           fill={boxFill}
                           stroke={boxStroke}
-                          medianStroke={boxMedianStroke}
+                          //medianStroke={boxMedianStroke}
                           mode={
                             split ? (huei === 0 ? 'left' : 'right') : 'full'
                           }
@@ -421,15 +423,15 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
                   width={30}
                   height={10}
                   stroke={
-                    singlePlotDisplayOptions[xOrder[0]!]![hue]!.violin.stroke
+                    singlePlotDisplayOptions[xOrder[0]!]![hue]!.violin!.stroke
                       .color
                   }
                   fill={
-                    singlePlotDisplayOptions[xOrder[0]!]![hue]!.violin.fill
+                    singlePlotDisplayOptions[xOrder[0]!]![hue]!.violin!.fill
                       .color
                   }
                   fillOpacity={
-                    singlePlotDisplayOptions[xOrder[0]!]![hue]!.violin.fill
+                    singlePlotDisplayOptions[xOrder[0]!]![hue]!.violin!.fill
                       .opacity
                   }
                 />
@@ -449,7 +451,7 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
         </g>
       </BaseSvg>
     )
-  }, [displayOptions, plot!.customProps])
+  }, [displayOptions, plot])
 
   return (
     <>

@@ -1,7 +1,7 @@
+import { type IDivProps } from '@/interfaces/div-props'
+import { cn } from '@/lib/shadcn-utils'
 import { H3_CLS } from '@/theme'
-import { type IDivProps } from '@interfaces/div-props'
 import { BaseCol } from '@layout/base-col'
-import { cn } from '@lib/shadcn-utils'
 
 interface IProps extends IDivProps {
   title?: string

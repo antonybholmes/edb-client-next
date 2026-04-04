@@ -1,12 +1,13 @@
 import type { DialogProps } from '@radix-ui/react-dialog'
 import { Command as CommandPrimitive } from 'cmdk'
 
+import { SearchIcon } from '@/icons/search-icon'
+import { VCenterRow } from '@/layout/v-center-row'
+import { cn } from '@/lib/shadcn-utils'
 import { BUTTON_MD_H_CLS } from '@/theme'
-import { SearchIcon } from '@icons/search-icon'
-import { VCenterRow } from '@layout/v-center-row'
-import { cn } from '@lib/shadcn-utils'
-import { Dialog, DialogContent } from '@themed/dialog'
+import { Dialog, DialogContent } from '@/themed/v2/dialog'
 import type { VariantProps } from 'class-variance-authority'
+import { Check } from 'lucide-react'
 import {
   Children,
   forwardRef,
@@ -15,8 +16,8 @@ import {
   type ComponentRef,
   type HTMLAttributes,
 } from 'react'
-import { DROPDOWN_MENU_ICON_CONTAINER_CLS } from './button'
-import { dropdownMenuItemVariants } from './dropdown-menu'
+import { DROPDOWN_MENU_ICON_CONTAINER_CLS } from './v2/button'
+import { dropdownMenuItemVariants } from './v2/dropdown-menu'
 
 const Command = forwardRef<
   ComponentRef<typeof CommandPrimitive>,
@@ -34,7 +35,7 @@ const CommandDialog = ({ children, ...props }: DialogProps) => {
   return (
     <Dialog {...props}>
       <DialogContent className="overflow-hidden p-0">
-        <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-foreground/50 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
+        <Command className="**:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-foreground/50 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 **:[[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 **:[[cmdk-input]]:h-12 **:[[cmdk-item]]:px-2 **:[[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
           {children}
         </Command>
       </DialogContent>
@@ -98,7 +99,7 @@ const CommandGroup = forwardRef<
   <CommandPrimitive.Group
     ref={ref}
     className={cn(
-      'overflow-hidden py-1 text-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-foreground/50',
+      'overflow-hidden py-1 text-foreground **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:py-1.5 **:[[cmdk-group-heading]]:text-xs **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-foreground/50',
       className
     )}
     {...props}
@@ -121,7 +122,8 @@ CommandSeparator.displayName = CommandPrimitive.Separator.displayName
 
 export function CommandItem({
   ref,
-  variant = 'default',
+  variant = 'theme',
+  rounded = 'default',
   className,
   children,
   ...props
@@ -134,6 +136,7 @@ export function CommandItem({
       ref={ref}
       className={dropdownMenuItemVariants({
         variant,
+        rounded,
         className: cn(
           '[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
           className
@@ -144,11 +147,9 @@ export function CommandItem({
       <span className={DROPDOWN_MENU_ICON_CONTAINER_CLS}>
         {c.length > 1 && c[0]}
       </span>
-
       {c.length > 0 && (
         <span className="grow">{c.length > 1 ? c[1] : c[0]}</span>
       )}
-
       {c.length > 2 && (
         <span className={DROPDOWN_MENU_ICON_CONTAINER_CLS}>{c[2]}</span>
       )}
@@ -156,12 +157,23 @@ export function CommandItem({
   )
 }
 
-CommandItem.displayName = CommandPrimitive.Item.displayName
+export function CheckedCommandItem({
+  checked = false,
+  children,
+  ...props
+}: ComponentProps<typeof CommandItem> & { checked?: boolean }) {
+  return (
+    <CommandItem {...props}>
+      {checked && <Check size={16} strokeWidth={2} />}
+      {children}
+    </CommandItem>
+  )
+}
 
-const CommandShortcut = ({
+export function CommandShortcut({
   className,
   ...props
-}: HTMLAttributes<HTMLSpanElement>) => {
+}: HTMLAttributes<HTMLSpanElement>) {
   return (
     <span
       className={cn(
@@ -172,7 +184,6 @@ const CommandShortcut = ({
     />
   )
 }
-CommandShortcut.displayName = 'CommandShortcut'
 
 export {
   Command,
@@ -182,5 +193,4 @@ export {
   CommandInput,
   CommandList,
   CommandSeparator,
-  CommandShortcut,
 }

@@ -1,9 +1,9 @@
-import { cn } from '@lib/shadcn-utils'
+import { cn } from '@/lib/shadcn-utils'
 
 import { SVG_CRISP_EDGES } from '@/consts'
+import { MinusIcon } from '@/icons/minus-icon'
+import { PlusIcon } from '@/icons/plus-icon'
 import { FOCUS_RING_CLS, INPUT_BORDER_CLS } from '@/theme'
-import { MinusIcon } from '@icons/minus-icon'
-import { PlusIcon } from '@icons/plus-icon'
 import { useEffect, useRef, useState } from 'react'
 import { BaseRow } from '../layout/base-row'
 import { ToolbarFooterButton } from './toolbar-footer-button'

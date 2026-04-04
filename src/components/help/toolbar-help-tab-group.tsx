@@ -1,5 +1,5 @@
 import { TEXT_HELP } from '@/consts'
-import { type IDivProps } from '@interfaces/div-props'
+import { type IDivProps } from '@/interfaces/div-props'
 import { HelpIcon } from '../icons/help-icon'
 import { ToolbarButton } from '../toolbar/toolbar-button'
 import { ToolbarTabGroup } from '../toolbar/toolbar-tab-group'
@@ -26,7 +26,7 @@ export function ToolbarHelpTabGroup({
 }
 
 function HelpButton({ url, title = 'Show Help' }: IProps) {
-  const openHelp = useHelpWidgetStore(s => s.openHelp)
+  const openHelp = useHelpWidgetStore((s) => s.openHelp)
 
   //console.log('open', url)
 

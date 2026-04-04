@@ -1,32 +1,32 @@
-'use client'
+// 'use client'
 
-import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
+import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
 
-import { BaseCol } from '@layout/base-col'
+import { BaseCol } from '@/layout/base-col'
 import {
   ShowOptionsMenu,
   Toolbar,
   ToolbarMenu,
   ToolbarPanel,
-} from '@toolbar/toolbar'
+} from '@/toolbar/toolbar'
 
-import { ZoomSlider } from '@toolbar/zoom-slider'
+import { ZoomSlider } from '@/toolbar/zoom-slider'
 
-import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
+import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
-import { ToolbarButton } from '@toolbar/toolbar-button'
+import { ToolbarButton } from '@/toolbar/toolbar-button'
 
-import { FileImageIcon } from '@icons/file-image-icon'
-import { LayersIcon } from '@icons/layers-icon'
-import { SaveIcon } from '@icons/save-icon'
-import { SlidersIcon } from '@icons/sliders-icon'
-import { TableIcon } from '@icons/table-icon'
+import { FileImageIcon } from '@/icons/file-image-icon'
+import { LayersIcon } from '@/icons/layers-icon'
+import { SaveIcon } from '@/icons/save-icon'
+import { SlidersIcon } from '@/icons/sliders-icon'
+import { TableIcon } from '@/icons/table-icon'
 
 import {
   downloadSvg,
   downloadSvgAsPng,
   downloadSvgAutoFormat,
-} from '@lib/image-utils'
+} from '@/lib/image-utils'
 
 import { FOCUS_RING_CLS, TOOLBAR_BUTTON_ICON_CLS } from '@/theme'
 
@@ -36,27 +36,24 @@ import {
   onTextFileChange,
   OpenFiles,
   type ITextFileOpen,
-} from '@components/pages/open-files'
-import { PropsPanel } from '@components/props-panel'
-import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
-import { UploadIcon } from '@icons/upload-icon'
+} from '@/components/pages/open-files'
+import { PropsPanel } from '@/components/props-panel'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { UploadIcon } from '@/icons/upload-icon'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@themed/accordion'
-import { DropdownMenuItem } from '@themed/dropdown-menu'
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@themed/resizable'
+} from '@/themed/v2/accordion'
 
 import {
   NO_DIALOG,
   TEXT_CANCEL,
   TEXT_DOWNLOAD_AS_CSV,
+  TEXT_DOWNLOAD_AS_PNG,
+  TEXT_DOWNLOAD_AS_SVG,
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_EXPORT,
   TEXT_FILE,
@@ -65,39 +62,54 @@ import {
   TEXT_SETTINGS,
   type IDialogParams,
 } from '@/consts'
-import { OpenIcon } from '@icons/open-icon'
-import { ShortcutLayout } from '@layouts/shortcut-layout'
-import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
-import { randId } from '@lib/id'
-import { rangeMap } from '@lib/math/range'
-import { cn } from '@lib/shadcn-utils'
-import { ToolbarOpenFile } from '@toolbar/toolbar-open-files'
-import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
+import { OpenIcon } from '@/icons/open-icon'
+import { ShortcutLayout } from '@/layouts/shortcut-layout'
+import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
+import { randId } from '@/lib/id'
+import { rangeMap } from '@/lib/math/range'
+import { cn } from '@/lib/shadcn-utils'
+import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
+import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
 import { BaseSvg } from '@/components/base-svg'
+import { HeaderPortal } from '@/components/header/header-portal'
 import { DownloadImageIcon } from '@/components/icons/download-image-icon'
 import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
-import { Tabs } from '@/components/shadcn/ui/themed/tabs'
+import { TabContentPanel } from '@/components/shadcn/ui/themed/v2/tabs'
+import {
+  ResizablePanel,
+  ResizablePanelGroup,
+  ThinVResizeHandle,
+} from '@/themed/resizable'
+
+import { ModuleInfoButton } from '@/components/header/module-info-button'
+import { SaveImageDialog } from '@/components/pages/save-image-dialog'
 import { SideTabs } from '@/components/tabs/side-tabs'
+import { useStableId } from '@/hooks/stable-id'
+import { HeaderButton } from '@/layouts/header-button'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { useZoom } from '@/providers/zoom-provider'
-import { HeaderPortal } from '@components/header/header-portal'
-import { ModuleInfoButton } from '@components/header/module-info-button'
-import { SaveImageDialog } from '@components/pages/save-image-dialog'
-import { TabContentPanel } from '@components/tabs/tab-content-panel'
-import { TabProvider, type ITab } from '@components/tabs/tab-provider'
-import { FileIcon } from '@icons/file-icon'
-import { ListIcon } from '@icons/list-icon'
-import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
-import { downloadDataFrame } from '@lib/dataframe/dataframe-utils'
-import { textToLines } from '@lib/text/lines'
-import { CoreProviders } from '@providers/core-providers'
-import { useQueryClient } from '@tanstack/react-query'
-import { Card } from '@themed/card'
-import { Textarea } from '@themed/textarea'
-import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
-import { ToolbarSeparator } from '@toolbar/toolbar-separator'
-import { useHistory } from '../matcalc/history/history-store'
+
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { type ITab } from '@/components/tabs/tab-provider'
+import { useTabs } from '@/components/tabs/tab-store'
+import { FileIcon } from '@/icons/file-icon'
+import { ListIcon } from '@/icons/list-icon'
+import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
+import { textToLines } from '@/lib/text/lines'
+import { CoreProviders } from '@/providers/core-providers'
+import { Card } from '@/themed/card'
+import { Textarea } from '@/themed/textarea'
+import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
+import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
+import {
+  useApp,
+  useFile,
+  useHistory,
+  useSheet,
+  useSheets,
+} from '../matcalc/history/history-store'
 import MODULE_INFO from './module.json'
 import { SVGFourWayVenn } from './svg-four-way-venn'
 import { SVGOneWayVenn } from './svg-one-way-venn'
@@ -105,31 +117,32 @@ import { SVGThreeWayVenn } from './svg-three-way-venn'
 import { SVGTwoWayVenn } from './svg-two-way-venn'
 import { VennList } from './venn-list'
 import { VennPropsPanel } from './venn-props-panel'
-import { IVennList, makeVennList, useVenn, VENN_LIST_IDS } from './venn-store'
+import {
+  makeVennList,
+  useVenn,
+  VENN_LIST_IDS,
+  type IVennList,
+} from './venn-store'
+
+const PLOT_ZOOM_CHANNEL = 'venn-plot-zoom'
 
 function VennPage() {
-  const queryClient = useQueryClient()
+  const _id = useStableId('venn-page')
 
-  const [activeSideTab, setActiveSideTab] = useState('Items')
+  //const [activeSideTab, setActiveSideTab] = useState('Items')
   const [rightTab, setSelectedRightTab] = useState('Lists')
 
   const { selectedItems } = useVenn()
 
+  const { tab: selectedTab } = useTabs(_id)
+
   //const [scale, setScale] = useState(1)
 
-  const { zoom } = useZoom()
+  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
 
-  const [keyPressed, setKeyPressed] = useState<string | null>(null)
+  const [, setKeyPressed] = useState<string | null>(null)
 
-  const {
-    settings,
-    updateSettings,
-    resetSettings,
-    circles,
-    updateCircles,
-    resetCircles,
-    updateRadius,
-  } = useVennSettings()
+  const { settings, updateSettings } = useVennSettings()
 
   const {
     vennLists,
@@ -184,7 +197,12 @@ function VennPage() {
 
   const [showSideBar, setShowSideBar] = useState(true)
 
-  const { sheet, sheets, openBranch, gotoSheet } = useHistory()
+  const { openFile, goto } = useHistory()
+
+  const app = useApp()!
+  const file = useFile()!
+  const sheet = useSheet()
+  const sheets = useSheets()
 
   //useWindowScrollListener((e: unknown) => console.log(e))
 
@@ -245,7 +263,7 @@ function VennPage() {
 
     setVennLists(
       Object.fromEntries(
-        rangeMap((ci) => {
+        rangeMap(ci => {
           const id = (ci + 1).toString()
 
           return [
@@ -262,7 +280,7 @@ function VennPage() {
 
     setListTextMap(
       new Map(
-        table.values.map((r, ri) => [ri, r.map((c) => c.toString()).join('\n')])
+        table.values.map((r, ri) => [ri, r.map(c => c.toString()).join('\n')])
       )
     )
 
@@ -285,10 +303,7 @@ function VennPage() {
   }
 
   async function loadTestData() {
-    const res = await queryClient.fetchQuery({
-      queryKey: ['test_data'],
-      queryFn: () => httpFetch.getJson<string[][]>('/data/test/venn.json'),
-    })
+    const res = await httpFetch.getJson<string[][]>('/data/test/venn.json')
 
     setVennLists(
       Object.fromEntries(
@@ -310,7 +325,7 @@ function VennPage() {
     //console.log(vennLists, 'vennLists')
 
     for (const [i, id] of VENN_LIST_IDS.entries()) {
-      const vl = vennLists[id]
+      const vl = vennLists[id]!
 
       if (vl.uniqueItems.length > 0) {
         vennSetList.push(vl)
@@ -350,7 +365,7 @@ function VennPage() {
         vennMap[id] = []
       }
 
-      vennMap[id].push(item)
+      vennMap[id]!.push(item)
     }
 
     setVennElemMap(vennMap)
@@ -370,28 +385,28 @@ function VennPage() {
     )
 
     const maxRows = index
-      .map((n) => vennElemMap[n].length)
+      .map(n => vennElemMap[n]!.length)
       .reduce((a, b) => Math.max(a, b), 0)
 
-    const d = index.map((n) =>
-      [...vennElemMap[n]]
+    const d = index.map(n =>
+      [...vennElemMap[n]!]
         .sort()
-        .concat(Array(maxRows - vennElemMap[n].length).fill(''))
+        .concat(Array(maxRows - vennElemMap[n]!.length).fill(''))
     )
 
     const df = new AnnotationDataFrame({
       name: 'Venn Sets',
       data: d,
-      index: index.map((n) =>
+      index: index.map(n =>
         n
           .split(':')
-          .map((s) => Number(s))
-          .map((s) => vennLists[s]?.name ?? s)
+          .map(s => Number(s))
+          .map(s => vennLists[s]?.name ?? s)
           .join(' AND ')
       ),
     }).t
 
-    openBranch(`Venn Sets`, [df])
+    openFile(`Venn Sets`, { sheets: [df] })
   }, [vennElemMap])
 
   useEffect(() => {
@@ -405,7 +420,9 @@ function VennPage() {
 
     const sep = format === 'csv' ? ',' : '\t'
 
-    downloadDataFrame(sheet as AnnotationDataFrame, {
+    const df = sheet as AnnotationDataFrame
+
+    downloadDataFrame(df, {
       hasHeader: true,
       hasIndex: false,
       file: `table.${format}`,
@@ -423,7 +440,7 @@ function VennPage() {
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
-              onOpenChange={(open) => {
+              onOpenChange={open => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -460,14 +477,14 @@ function VennPage() {
 
       content: (
         <PropsPanel>
-          <ScrollAccordion value={VENN_LIST_IDS.map((vl) => `List ${vl}`)}>
-            {VENN_LIST_IDS.map((vi) => {
+          <ScrollAccordion value={VENN_LIST_IDS.map(vl => `List ${vl}`)}>
+            {VENN_LIST_IDS.map(vi => {
               const name = `List ${vi}`
-              const vennList = vennLists[vi]
+              const vennList = vennLists[vi]!
               return (
                 <AccordionItem value={name} key={name}>
                   <AccordionTrigger>{vennList.name}</AccordionTrigger>
-                  <AccordionContent>
+                  <AccordionContent variant="sidebar">
                     <VennList vennList={vennList} />
                   </AccordionContent>
                 </AccordionItem>
@@ -515,7 +532,7 @@ function VennPage() {
           readOnly
           value={[
             selectedItems.name,
-            ...selectedItems.items.sort().map((s) => originalNames[s] || s),
+            ...selectedItems.items.sort().map(s => originalNames[s] || s),
           ].join('\n')}
         />
       ),
@@ -527,23 +544,22 @@ function VennPage() {
 
       content: (
         <BaseCol className="grow mt-2 gap-y-1">
-          <ToolbarTabGroup>
+          <VCenterRow className="text-xs">
             <ToolbarButton
-              aria-label="Download pathway table"
-              tooltip="Download pathway table"
+              title="Download pathway table"
               onClick={() => save('txt')}
             >
               <SaveIcon />
               <span>{TEXT_EXPORT}</span>
             </ToolbarButton>
-          </ToolbarTabGroup>
+          </VCenterRow>
 
           <TabbedDataFrames
             key="tabbed-data-frames"
             selectedSheet={sheet?.id ?? ''}
-            dataFrames={sheets as AnnotationDataFrame[]}
-            onTabChange={(selectedTab) => {
-              gotoSheet(selectedTab.tab.id)
+            dataFrames={sheets.map(s => s as AnnotationDataFrame)}
+            onTabChange={selectedTab => {
+              goto({ app, file, sheet: selectedTab.tab })
             }}
           />
         </BaseCol>
@@ -555,7 +571,7 @@ function VennPage() {
     {
       //id: nanoid(),
       id: 'Open',
-      icon: <OpenIcon iconMode="colorful" />,
+      icon: <OpenIcon variant="colorful" />,
       content: (
         <DropdownMenuItem
           aria-label="Open file on your computer"
@@ -602,23 +618,23 @@ function VennPage() {
       content: (
         <>
           <DropdownMenuItem
-            aria-label="Download as PNG"
+            aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
               downloadSvgAsPng(svgRef, 'venn')
               //                 setShowFileMenu(false)
             }}
           >
             <FileImageIcon fill="" />
-            <span>Download as PNG</span>
+            <span>{TEXT_DOWNLOAD_AS_PNG}</span>
           </DropdownMenuItem>
           <DropdownMenuItem
-            aria-label=" Download as SVG"
+            aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
               downloadSvg(svgRef, 'venn')
               //                 setShowFileMenu(false)
             }}
           >
-            <span>Download as SVG</span>
+            <span>{TEXT_DOWNLOAD_AS_SVG}</span>
           </DropdownMenuItem>
         </>
       ),
@@ -627,12 +643,23 @@ function VennPage() {
 
   return (
     <>
+      {showDialog.id.includes('open') && (
+        <OpenFiles
+          message={showDialog.id}
+          //onOpenChange={() => setShowDialog({...NO_DIALOG})}
+          onFileChange={(message, files) =>
+            onTextFileChange(message, files, files => openFiles(files))
+          }
+        />
+      )}
+
       {showDialog.id.includes('export') && (
         <SaveImageDialog
           name="venn"
           onResponse={(response, data) => {
             if (response !== TEXT_CANCEL) {
-              downloadSvgAutoFormat(svgRef, data!.name as string)
+              const d = data as { name: string }
+              downloadSvgAutoFormat(svgRef, d.name as string)
             }
 
             setShowDialog({ ...NO_DIALOG })
@@ -640,27 +667,31 @@ function VennPage() {
         />
       )}
 
-      <ShortcutLayout signedRequired={false}>
-        <HeaderPortal>
-          <ModuleInfoButton info={MODULE_INFO} />
-        </HeaderPortal>
+      <HeaderPortal>
+        <ModuleInfoButton info={MODULE_INFO} />
+        <></>
+        <HeaderButton
+          onClick={() => loadTestData()}
+          role="button"
+          title="Load test data to demo the Venn diagram"
+          className="text-sm"
+        >
+          Test data
+        </HeaderButton>
+      </HeaderPortal>
 
-        <Toolbar tabs={tabs}>
+      <ShortcutLayout signinRequired={false}>
+        <Toolbar>
           <ToolbarMenu
+            groupId={_id}
+            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
-            rightShortcuts={
-              <ToolbarButton
-                onClick={() => loadTestData()}
-                role="button"
-                title="Load test data to use features."
-              >
-                Test data
-              </ToolbarButton>
-            }
           />
           <ToolbarPanel
+            groupId={_id}
+            tabs={tabs}
             tabShortcutMenu={
               <ShowOptionsMenu
                 show={showSideBar}
@@ -677,21 +708,21 @@ function VennPage() {
           limits={[50, 85]}
           side="right"
           tabs={vennRightTabs}
-          onTabChange={(selectedTab) => setSelectedRightTab(selectedTab.tab.id)}
+          onTabChange={selectedTab => setSelectedRightTab(selectedTab.tab.id)}
           value={rightTab}
           open={showSideBar}
           onOpenChange={setShowSideBar}
           className="mx-2"
         >
           <ResizablePanelGroup
-            direction="vertical"
-            className="grow"
+            orientation="vertical"
+            className="h-full"
             //autoSaveId="venn-resizable-panels-v"
           >
             <ResizablePanel
-              defaultSize={75}
-              minSize={10}
-              className="grow flex flex-col  overflow-hidden px-2"
+              defaultSize="75%"
+              minSize="0%"
+              className="flex flex-col overflow-hidden px-2"
               id="venn"
             >
               <Card className="grow" variant="content">
@@ -703,7 +734,7 @@ function VennPage() {
                   id="venn"
                   //onWheel={onWheel}
                   tabIndex={0}
-                  onKeyDown={(e) => setKeyPressed(e.key)}
+                  onKeyDown={e => setKeyPressed(e.key)}
                   onKeyUp={() => setKeyPressed(null)}
                 >
                   <BaseSvg
@@ -725,20 +756,19 @@ function VennPage() {
                 </div>
               </Card>
             </ResizablePanel>
-            <ResizableHandle />
+            <ThinVResizeHandle />
             <ResizablePanel
               id="list"
-              defaultSize={25}
-              minSize={10}
+              defaultSize="25%"
+              minSize="0%"
               collapsible={true}
-              className="grow flex flex-col"
+              className="grow flex flex-row"
             >
               {/* <TopTabs
                 tabs={sidebarTabs}
                 value={activeSideTab}
                 onValueChange={setActiveSideTab}
               /> */}
-
               {/* <ToggleButtons
                 tabs={sidebarTabs}
                 value={activeSideTab}
@@ -752,54 +782,40 @@ function VennPage() {
                 </VCenterRow>
                 <TabContentPanel />
               </ToggleButtons> */}
-
-              <Tabs
+              {/* <Tabs
                 value={activeSideTab}
                 className="grow flex flex-row gap-x-2 px-2"
                 orientation="vertical"
-              >
-                <SideTabs
-                  tabs={sidebarTabs}
-                  value={activeSideTab}
-                  showLabels={false}
-                  //defaultWidth={2}
-                  onTabChange={(selectedTab) =>
-                    setActiveSideTab(selectedTab.tab.id)
-                  }
-                />
+              > */}
+              <SideTabs
+                id={_id}
+                tabs={sidebarTabs}
+                //value={activeSideTab}
+                showLabels={false}
+                //defaultWidth={2}
+                // onTabChange={selectedTab =>
+                //   setActiveSideTab(selectedTab.tab.id)
+                // }
+              />
 
-                <TabProvider
-                  value={activeSideTab}
-                  //onTabChange={selectedTab => setSelectedTab(selectedTab.tab.name)}
-                  tabs={sidebarTabs}
-                >
-                  <BaseCol className="grow">
-                    <TabContentPanel />
-                  </BaseCol>
-                </TabProvider>
-              </Tabs>
+              <TabContentPanel
+                tabIndex={selectedTab?.index ?? 0}
+                tabs={sidebarTabs}
+              />
+
+              {/* </Tabs> */}
             </ResizablePanel>
           </ResizablePanelGroup>
         </TabSlideBar>
-
-        <ToolbarFooterPortal>
-          <></>
-          <></>
-          <>
-            <ZoomSlider />
-          </>
-        </ToolbarFooterPortal>
-
-        {showDialog.id.includes('open') && (
-          <OpenFiles
-            open={showDialog.id}
-            //onOpenChange={() => setShowDialog({...NO_DIALOG})}
-            onFileChange={(message, files) =>
-              onTextFileChange(message, files, (files) => openFiles(files))
-            }
-          />
-        )}
       </ShortcutLayout>
+
+      <ToolbarFooterPortal>
+        <></>
+        <></>
+        <>
+          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+        </>
+      </ToolbarFooterPortal>
     </>
   )
 }
@@ -807,9 +823,7 @@ function VennPage() {
 export function VennPageQuery() {
   return (
     <CoreProviders>
-      {/* <ZoomProvider> */}
       <VennPage />
-      {/* </ZoomProvider> */}
     </CoreProviders>
   )
 }

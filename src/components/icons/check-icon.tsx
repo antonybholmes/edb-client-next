@@ -1,5 +1,5 @@
-import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/shadcn-utils'
+import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
+import { cn } from '@/lib/shadcn-utils'
 
 export interface ICheckProps extends IIconProps {
   checked?: boolean
@@ -22,12 +22,12 @@ export function CheckIcon({
         strokeLinecap: 'round',
         strokeLinejoin: 'round',
         fill: 'none',
-        strokeWidth: 2.5,
+
         ...style,
       }}
       {...props}
     >
-      {checked && <path d="M 4,14 L 10,19 L 21,4" />}
+      {checked && <path d="M 4,14 L 10,19 L 20,6" style={{ strokeWidth: 2 }} />}
     </svg>
   )
 }

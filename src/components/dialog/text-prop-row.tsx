@@ -1,17 +1,17 @@
 import { type ReactNode } from 'react'
 
+import { cn } from '@/lib/shadcn-utils'
 import { H2_CLS } from '@/theme'
-import { cn } from '@lib/shadcn-utils'
-import { BaseRow } from '../layout/base-row'
+import type { VariantProps } from 'class-variance-authority'
 import { VCenterRow } from '../layout/v-center-row'
-import { Input, type IInputProps } from '../shadcn/ui/themed/input'
-import { Label } from '../shadcn/ui/themed/label'
+import { Input, type IInputProps } from '../shadcn/ui/themed/v2/input'
+import { labelVariants, PropRow } from './prop-row'
 
 export const PROPS_TITLE_CLS = cn(H2_CLS, 'py-2')
 
-interface IProps extends IInputProps {
+interface IProps
+  extends IInputProps, Omit<VariantProps<typeof labelVariants>, 'h'> {
   title: string
-
   leftChildren?: ReactNode
   rightChildren?: ReactNode
 }
@@ -20,21 +20,16 @@ export function TextPropRow({
   title = '',
   checked = false,
   disabled = false,
-  leftChildren,
-  rightChildren,
-  className,
+
+  labelW,
   children,
   ...props
 }: IProps) {
   return (
-    <BaseRow
-      className={cn('gap-x-8 justify-between items-center min-h-8', className)}
-    >
-      <Label>{title}</Label>
-
+    <PropRow title={title} labelW={labelW}>
       {children && <VCenterRow className="gap-x-2">{children}</VCenterRow>}
 
       <Input {...props} />
-    </BaseRow>
+    </PropRow>
   )
 }

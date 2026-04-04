@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 
-import { TabsList, TabsTrigger } from '../shadcn/ui/themed/tabs'
+import { TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
 
 import {
   getTabFromValue,
@@ -10,8 +10,8 @@ import {
 } from './tab-provider'
 
 import { ANIMATION_DURATION_S } from '@/consts'
-import { cn } from '@lib/shadcn-utils'
-import { truncate } from '@lib/text/text'
+import { cn } from '@/lib/shadcn-utils'
+import { truncate } from '@/lib/text/text'
 import type { TabsProps } from '@radix-ui/react-tabs'
 import gsap from 'gsap'
 
@@ -94,11 +94,11 @@ export function IOSTabsList({
   return (
     <TabsList
       ref={tabListRef}
-      variant="base"
+      variant="default"
       data-focus={focus}
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
-      className="relative bg-muted/90 hover:bg-muted trans-color rounded-full p-[2px]"
+      className="relative bg-muted/90 hover:bg-muted trans-color rounded-full p-0.5"
     >
       {tabs.map((tab, ti) => {
         //const id = makeTabId(tab, ti)
@@ -117,7 +117,7 @@ export function IOSTabsList({
             id={tab.id}
             key={tab.id}
             data-checked={selected}
-            ref={(el) => {
+            ref={el => {
               buttonsRef.current[ti] = el!
             }}
             className={cn('z-20 data-[checked=true]:font-semibold h-7.5')}

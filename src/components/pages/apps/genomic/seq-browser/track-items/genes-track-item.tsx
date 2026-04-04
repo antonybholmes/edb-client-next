@@ -1,7 +1,5 @@
 import type { IDialogParams } from '@/consts'
-import { VCenterRow } from '@layout/v-center-row'
-import { cn } from '@lib/shadcn-utils'
-import { type Dispatch, type SetStateAction } from 'react'
+import { VCenterRow } from '@/layout/v-center-row'
 import type { IGeneTrack, ITrackGroup } from '../tracks-provider'
 import { BaseTrackItem } from './base-track-item'
 import {
@@ -19,20 +17,20 @@ export function GenesTrackItem({
   group: ITrackGroup
   active: string | null
   multiselect: boolean
-  setShowDialog: Dispatch<SetStateAction<IDialogParams>>
+  setShowDialog: (params: IDialogParams) => void
 }) {
   //const [drag, setDrag] = useState(false)
 
   // useMouseUpListener(() => setDrag(false))
 
-  const track = group.tracks[group.order[0]!]! as IGeneTrack
+  const track = group.tracks[0]! as IGeneTrack
 
   return (
     <BaseTrackItem
       active={active}
       group={group}
       multiselect={multiselect}
-      rightChildren={
+      extChildren={
         <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
           <DeleteTrackGroupButton group={group} />
         </VCenterRow>
@@ -42,7 +40,7 @@ export function GenesTrackItem({
         <span className="font-semibold">{track.name}</span>
       </span>
 
-      <VCenterRow className={cn(TRACK_ITEM_BUTTONS_CLS, 'px-2')}>
+      <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
         <EditTrackButton
           cmd="edit-genes"
           group={group}

@@ -1,8 +1,8 @@
-import { CloseButton, DialogButtons } from '@dialog/ok-cancel-dialog'
+import { CloseButton, DialogButtons } from '@/dialog/ok-cancel-dialog'
 import { Children, type ReactNode } from 'react'
 
 import { TEXT_CANCEL } from '@/consts'
-import { DialogFooter, DialogHeader, DialogTitle } from '@themed/dialog'
+import { DialogFooter, DialogHeader, DialogTitle } from '@/themed/v2/dialog'
 import { BaseCol } from '../layout/base-col'
 import { VCenterRow } from '../layout/v-center-row'
 import {
@@ -52,7 +52,7 @@ export function GlassSideDialog({
       {c[0]!}
 
       <>
-        <DialogHeader className="flex flex-row -mt-2 -mr-2 justify-between">
+        <DialogHeader className="flex flex-row -mt-2 -mr-3 justify-between">
           {typeof title === 'string' && <DialogTitle>{title}</DialogTitle>}
           {title && typeof title !== 'string' && title}
 

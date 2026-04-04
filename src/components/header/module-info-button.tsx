@@ -1,8 +1,9 @@
-import { cn } from '@lib/shadcn-utils'
-import { Button, type IButtonProps } from '@themed/button'
+import { cn } from '@/lib/shadcn-utils'
+import { type IButtonProps } from '@/themed/v2/button'
 
+import { HeaderButton } from '@/layouts/header-button'
 import type { IModuleInfo } from '@/lib/module-info'
-import { formatString } from '@lib/text/format-string'
+import { formatString } from '@/lib/text/format-string'
 import { format } from 'date-fns'
 import { useState } from 'react'
 import { BasicAlertDialog } from '../dialog/basic-alert-dialog'
@@ -35,26 +36,22 @@ export function ModuleInfoButton({
           )}
 
           <p>
-            v{info.version} ({format(info.modified, 'MMM dd, yyyy')})
+            Version {info.version} (updated{' '}
+            {format(info.modified, 'MMM dd, yyyy')})
           </p>
           <p>{formatString(info.copyright)}</p>
         </BasicAlertDialog>
       )}
 
-      <Button
+      <HeaderButton
         ref={ref}
-        variant="flat"
-        rounded="none"
-        // ripple={false}
-        className={cn(
-          'hidden md:flex h-header gap-x-2 text-sm font-semibold truncate shrink-0 px-3',
-          className
-        )}
+        data-checked={modalVisible}
+        className={cn('hidden md:flex font-semibold text-sm', className)}
         onClick={() => setModalVisible(true)}
         {...props}
       >
         {info.name}
-      </Button>
+      </HeaderButton>
     </>
   )
 }

@@ -1,6 +1,6 @@
-import { cn } from '@lib/shadcn-utils'
+import { cn } from '@/lib/shadcn-utils'
 
-import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
+import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
 
 export function ArrowRotateRightIcon({ w = 'w-4', className }: IIconProps) {
   return (

@@ -1,6 +1,7 @@
-import { cn } from '@lib/shadcn-utils'
+import { cn } from '@/lib/shadcn-utils'
+import type { ComponentProps } from 'react'
 
-function Skeleton({ className, ...props }: React.ComponentProps<'div'>) {
+export function Skeleton({ className, ...props }: ComponentProps<'div'>) {
   return (
     <div
       data-slot="skeleton"
@@ -9,5 +10,3 @@ function Skeleton({ className, ...props }: React.ComponentProps<'div'>) {
     />
   )
 }
-
-export { Skeleton }

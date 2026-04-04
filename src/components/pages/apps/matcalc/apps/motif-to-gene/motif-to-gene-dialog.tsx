@@ -1,20 +1,20 @@
-import { BaseCol } from '@layout/base-col'
+import { BaseCol } from '@/layout/base-col'
 
 import { TEXT_CANCEL } from '@/consts'
-import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
-import type { ISelectionRange } from '@providers/selection-range'
+import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import type { ISelectionRange } from '@/providers/selection-range'
 
-import { DataFrame } from '@lib/dataframe/dataframe'
+import { DataFrame } from '@/lib/dataframe/dataframe'
 
 import { useEffect, useState } from 'react'
 
-import type { SeriesData } from '@lib/dataframe/dataframe-types'
-import { API_MOTIF_SEARCH_URL } from '@lib/edb/edb'
-import { httpFetch } from '@lib/http/http-fetch'
-import { NA } from '@lib/text/text'
+import type { SeriesData } from '@/lib/dataframe'
+import { API_MOTIF_SEARCH_URL } from '@/lib/edb/edb'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { NA } from '@/lib/text/text'
+import { Checkbox } from '@/themed/v2/check-box'
 import { useQueryClient } from '@tanstack/react-query'
-import { Checkbox } from '@themed/check-box'
-import { useHistory } from '../../history/history-store'
+import { useHistory, useSheet } from '../../history/history-store'
 
 export interface IProps {
   open?: boolean
@@ -34,45 +34,33 @@ export function MotifToGeneDialog({
   const [useIndex, setUseIndex] = useState(false)
   const [useColumns, setUseColumns] = useState(false)
 
-  const { sheet, addStep } = useHistory()
+  const { addSheets } = useHistory()
+  const sheet = useSheet()
+
+  const df = sheet as DataFrame
 
   useEffect(() => {
     setUseIndex(selection.start.col === -1)
     setUseColumns(selection.start.col !== -1)
   }, [sheet, selection])
 
-  // const dbQuery = useQuery({
-  //   queryKey: ["database"],
-  //   queryFn: async () => {
-  //     const res = await axios.get("/data/modules/motifs/motif_to_gene.json")
-
-  //     return res.data
-  //   },
-  // })
-
-  //console.log(dbQuery)
-
   async function convert() {
-    if (!sheet || sheet.size === 0) {
+    if (!df || df.size === 0) {
       return
     }
     try {
-      // const res = await queryClient.fetchQuery("database", async () => {
-      //   return axios.get("/data/modules/motifs/motif_to_gene.json")
-      // })
-
       let rename: string[]
 
       if (useIndex) {
         // convert index
-        rename = sheet.index.strs
+        rename = df.index.strs
       } else {
-        rename = sheet.col(useColumns ? selection.start.col : 0)!.strs
+        rename = df.col(useColumns ? selection.start.col : 0)!.strs
       }
 
       const table: SeriesData[][] = []
 
-      for (const [ri, row] of sheet.values.entries()) {
+      for (const [ri, row] of df.values.entries()) {
         const id = rename[ri] ?? NA
 
         const res = await queryClient.fetchQuery({
@@ -108,15 +96,17 @@ export function MotifToGeneDialog({
         table.push(row.concat([...genes].sort().join(',')))
       }
 
-      const header: string[] = sheet.colNames.concat(['Motif to gene'])
+      const header: string[] = df.columns.concat(['Motif to gene'])
 
       const df_out = new DataFrame({
         data: table,
-        index: sheet.index,
+        index: df.index,
         columns: header,
       })
 
-      addStep('Motif to gene', [df_out.setName('Motif to gene')])
+      addSheets([df_out.setName('Motif to gene')], {
+        name: 'Motif to gene',
+      })
     } catch (error) {
       console.log(error)
     }

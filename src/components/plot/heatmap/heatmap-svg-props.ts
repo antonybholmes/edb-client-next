@@ -1,8 +1,8 @@
-import type { IDim } from '@interfaces/dim'
-import { COLOR_MAPS } from '@lib/color/colormap'
+import type { IDim } from '@/interfaces/dim'
+import { COLOR_MAPS } from '@/lib/color/colormap'
 
-import type { LeftRightPos } from '@components/side'
-import { COLOR_BLACK } from '@lib/color/color'
+import type { LeftRightPos } from '@/components/side'
+import { COLOR_BLACK } from '@/lib/color/color'
 
 import type { ILim } from '@/lib/math/math'
 import {

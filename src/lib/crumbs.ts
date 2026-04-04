@@ -1,4 +1,4 @@
-import { fixName, type UndefStr } from '@lib/text/text'
+import { fixName, type UndefStr } from '@/lib/text/text'
 import { capitalCase } from './text/capital-case'
 
 const EXCLUDE = ['Tag', 'Category', 'Section', 'Page']

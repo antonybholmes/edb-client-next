@@ -1,19 +1,14 @@
-import { HeaderLayout, type IHeaderLayoutProps } from '@layouts/header-layout'
+import { HeaderLayout, type IHeaderLayoutProps } from '@/layouts/header-layout'
 
-import { OAUTH2_SIGN_IN_ROUTE, SIGN_UP_ROUTE, TEXT_SIGN_UP } from '@lib/edb/edb'
+import { SIGN_UP_PATH, TEXT_SIGN_UP } from '@/lib/edb/edb'
 
-import { ThemeIndexLink } from '@components/link/theme-index-link'
+import { ThemeIndexLink } from '@/components/link/theme-index-link'
 import { type ReactNode } from 'react'
 
 import { TEXT_SIGN_IN } from '@/consts'
 
-import { AppIcon } from '@/components/icons/app-icon'
-import { VCenterRow } from '@/components/layout/v-center-row'
-
-import { CenterCol } from '@/components/layout/center-col'
-import { Card, CardHeader, CardTitle } from '@/components/shadcn/ui/themed/card'
-import { EDBSignIn, type SignInMode } from '@/lib/edb/signin/edb-signin'
-import { useEdbAuth } from '@lib/edb/edb-auth'
+import { AuthModal } from '@/components/pages/account/auth/auth-modal'
+import { useEdbAuth } from '@/lib/edb/edb-auth'
 
 export const FORWARD_DELAY_MS = 2000
 
@@ -36,19 +31,8 @@ export function CreateAccountLink() {
   return (
     <span className="w-full">
       Don&apos;t have an account?{' '}
-      <ThemeIndexLink href={SIGN_UP_ROUTE} aria-label={TEXT_SIGN_UP}>
+      <ThemeIndexLink href={SIGN_UP_PATH} aria-label={TEXT_SIGN_UP}>
         Create an account
-      </ThemeIndexLink>
-    </span>
-  )
-}
-
-export function SignInLink() {
-  return (
-    <span>
-      Already have an account?{' '}
-      <ThemeIndexLink href={OAUTH2_SIGN_IN_ROUTE} aria-label={TEXT_SIGN_IN}>
-        {TEXT_SIGN_IN}
       </ThemeIndexLink>
     </span>
   )
@@ -62,16 +46,10 @@ export function SignInLink() {
 // }
 
 export interface ISignInLayoutProps extends IHeaderLayoutProps {
-  signedRequired?: boolean
   apiKey?: string
   // if signin is success, which page of the app to jump to
   // so that user is not left on signin page
   redirectUrl?: string
-  signInMode?: SignInMode
-  /**
-   * Show the account button in the header even if sign in is not required.
-   */
-  showAccountButton?: boolean
 }
 
 export function SignInRequired({ children }: ISignInLayoutProps) {
@@ -88,8 +66,8 @@ export function SignInRequired({ children }: ISignInLayoutProps) {
 
   if (!session) {
     return (
-      <CenterCol>
-        <Card className="shadow-2xl w-128 text-sm">
+      <AuthModal title={`${TEXT_SIGN_IN} Required`}>
+        {/* <Card className="shadow-2xl w-lg text-sm">
           <CardHeader className="text-xl">
             <VCenterRow className="gap-x-2">
               <AppIcon w="w-10" />
@@ -97,13 +75,10 @@ export function SignInRequired({ children }: ISignInLayoutProps) {
             </VCenterRow>
           </CardHeader>
           <p>You need to sign in to view this page.</p>
-          {/* <VCenterRow className="justify-end">
-            <ThemeIndexLink href={APP_OAUTH2_SIGN_IN_ROUTE}>
-              {TEXT_SIGN_IN}
-            </ThemeIndexLink>
-          </VCenterRow> */}
-        </Card>
-      </CenterCol>
+        </Card> */}
+
+        <p>You need to sign in to view this page.</p>
+      </AuthModal>
     )
   } else {
     return children
@@ -112,24 +87,24 @@ export function SignInRequired({ children }: ISignInLayoutProps) {
 
 export function SignInLayout({
   signInMode = 'auth0', //username-password',
-  signedRequired = true,
+  signinRequired = true,
   showAccountButton = true,
   redirectUrl = '',
   className,
-  headerTrayChildren,
+
   children,
+  ...props
 }: ISignInLayoutProps) {
   let elem: ReactNode
 
-  if (signedRequired) {
+  if (signinRequired) {
     elem = (
       <SignInRequired
         signInMode={signInMode}
-        signedRequired={signedRequired}
+        signinRequired={signinRequired}
         showAccountButton={showAccountButton}
         redirectUrl={redirectUrl}
         className={className}
-        headerTrayChildren={headerTrayChildren}
       >
         {children}
       </SignInRequired>
@@ -138,19 +113,10 @@ export function SignInLayout({
     elem = children
   }
 
-  return (
-    <HeaderLayout
-      className={className}
-      headerTrayChildren={
-        <>
-          {(signedRequired || showAccountButton) && (
-            <EDBSignIn signInMode={signInMode} />
-          )}
+  //elem = children
 
-          {headerTrayChildren}
-        </>
-      }
-    >
+  return (
+    <HeaderLayout className={className} {...props}>
       {/* <OKCancelDialog
           open={checkUserWantsToSignIn}
           title={APP_NAME}

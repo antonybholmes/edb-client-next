@@ -1,15 +1,13 @@
-import { SlidersIcon } from '@icons/sliders-icon'
+import { SlidersIcon } from '@/icons/sliders-icon'
 
 import { useEffect, useRef, useState } from 'react'
 
-import { HeatmapPropsPanel } from './heatmap-props-panel'
-
-import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
-import { type ITab } from '@components/tabs/tab-provider'
-import { getFormattedShape } from '@lib/dataframe/dataframe-utils'
-import { downloadSvgAutoFormat } from '@lib/image-utils'
-import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
-import { ZoomSlider } from '@toolbar/zoom-slider'
+import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { type ITab } from '@/components/tabs/tab-provider'
+import { getFormattedShape } from '@/lib/dataframe/dataframe-utils'
+import { downloadSvgAutoFormat } from '@/lib/image-utils'
+import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
+import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import {
   NO_DIALOG,
@@ -17,24 +15,25 @@ import {
   TEXT_DISPLAY,
   type IDialogParams,
 } from '@/consts'
-import {
-  DEFAULT_HEATMAP_PROPS,
-  type IHeatMapDisplayOptions,
-} from '@components/plot/heatmap/heatmap-svg-props'
-import { Card } from '@themed/card'
+import { Card } from '@/themed/card'
 
-import { SaveImageDialog } from '@components/pages/save-image-dialog'
+import { SaveImageDialog } from '@/components/pages/save-image-dialog'
 
+import { randId } from '@/lib/id'
+import type { IClusterFrame } from '@/lib/math/hcluster'
 import {
   messageImageFileFormat,
   useMessages,
 } from '@/providers/message-provider'
 import { useZoom } from '@/providers/zoom-provider'
-import { randId } from '@lib/id'
-import type { IClusterFrame } from '@lib/math/hcluster'
 import { produce } from 'immer'
-import { useHistory, usePlot } from '../../history/history-store'
-import { useMatcalcSettings } from '../../settings/matcalc-settings'
+import { MESSAGE_CHANNEL, OPTS_SIDEBAR_ID } from '../../data/data-panel'
+import {
+  useHistory,
+  usePlot,
+  type HeatMapPlot,
+} from '../../history/history-store'
+import { HeatmapPropsPanel } from './heatmap-props-panel'
 import { HeatMapSvg } from './heatmap-svg'
 
 export const PLOT_CLS = 'relative overflow-scroll custom-scrollbar grow'
@@ -46,38 +45,39 @@ export const PLOT_CLS = 'relative overflow-scroll custom-scrollbar grow'
 //   }
 // }
 
+export const PLOT_ZOOM_CHANNEL = 'matcalc-plot'
+
 interface IHeatmapPanelProps {
   //plotId: string
   plotAddr: string
 }
 
 export function HeatmapPanel({ plotAddr }: IHeatmapPanelProps) {
-  const { zoom } = useZoom()
+  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
 
-  const { updateProps } = useHistory()
-  const plot = usePlot(plotAddr)!
-  const cf = plot.dataframes['main']! as IClusterFrame
+  const { updatePlot } = useHistory()
+  console.log('Rendering HeatmapPanel with { file: plotAddr }', {
+    file: plotAddr,
+  })
+  const plot = usePlot(plotAddr)! as HeatMapPlot
+  const cf = plot?.dataframes['main'] as IClusterFrame
 
-  const displayOptions: IHeatMapDisplayOptions =
-    (plot?.customProps.displayOptions as IHeatMapDisplayOptions) ??
-    DEFAULT_HEATMAP_PROPS
-
-  const { settings, updateSettings } = useMatcalcSettings()
+  //const { settings, updateSettings } = useMatcalcSettings()
 
   const svgRef = useRef<SVGSVGElement>(null)
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  const { messages, removeMessage } = useMessages() //'heatmap')
+  const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'heatmap')
 
   useEffect(() => {
-    const filteredMessages = messages.filter(
-      (message) => message.target === plot?.id
-    )
+    // const filteredMessages = messages.filter(
+    //   message => message.target === plot?.id
+    // )
 
-    for (const message of filteredMessages) {
-      if (message.text.includes('save')) {
-        if (message.text.includes(':')) {
+    for (const message of messages) {
+      if (message.data.includes('save')) {
+        if (message.data.includes(':')) {
           downloadSvgAutoFormat(
             svgRef,
             `heatmap.${messageImageFileFormat(message)}`
@@ -92,12 +92,16 @@ export function HeatmapPanel({ plotAddr }: IHeatmapPanelProps) {
   }, [messages])
 
   useEffect(() => {
-    const newOptions = produce(displayOptions, (draft) => {
-      draft.zoom = zoom
-    })
-
-    updateProps(plotAddr, 'displayOptions', newOptions)
-  }, [zoom])
+    if (!plot) {
+      return
+    }
+    updatePlot(
+      produce(plot, draft => {
+        draft.props.zoom = zoom
+      }),
+      { file: plotAddr }
+    )
+  }, [plot, zoom])
 
   const plotRightTabs: ITab[] = [
     {
@@ -124,6 +128,10 @@ export function HeatmapPanel({ plotAddr }: IHeatmapPanelProps) {
   //   [plot, groupState.groups, displayOptions]
   // )
 
+  if (!plot || !cf) {
+    return null
+  }
+
   return (
     <>
       {showDialog.id.startsWith('save') && (
@@ -132,7 +140,8 @@ export function HeatmapPanel({ plotAddr }: IHeatmapPanelProps) {
           name="heatmap"
           onResponse={(response, data) => {
             if (response !== TEXT_CANCEL) {
-              downloadSvgAutoFormat(svgRef, data!.name as string)
+              const d = data as { name: string }
+              downloadSvgAutoFormat(svgRef, d.name)
             }
             setShowDialog({ ...NO_DIALOG })
           }}
@@ -140,7 +149,7 @@ export function HeatmapPanel({ plotAddr }: IHeatmapPanelProps) {
       )}
 
       {/* <ResizablePanelGroup
-          direction="horizontal"
+          orientation="horizontal"
           id="plot-resizable-panels"
           //autoSaveId="plot-resizable-panels"
           className="grow"
@@ -148,8 +157,8 @@ export function HeatmapPanel({ plotAddr }: IHeatmapPanelProps) {
           <ResizablePanel
             id="plot-svg"
             order={1}
-            defaultSize={75}
-            minSize={50}
+            defaultSize="75%"
+            minSize="50%"
             className="flex flex-col pl-2 pt-2 pb-2"
           >
             <div className="custom-scrollbar relative grow overflow-scroll rounded-lg border bg-white">
@@ -166,8 +175,8 @@ export function HeatmapPanel({ plotAddr }: IHeatmapPanelProps) {
             id="plot-svg-right"
             order={2}
             className="flex flex-col"
-            defaultSize={25}
-            minSize={15}
+            defaultSize="25%"
+            minSize="15%"
             collapsible={true}
             collapsedSize={0}
           >
@@ -176,20 +185,20 @@ export function HeatmapPanel({ plotAddr }: IHeatmapPanelProps) {
         </ResizablePanelGroup> */}
 
       <TabSlideBar
-        id="heatmap-panel"
+        id={OPTS_SIDEBAR_ID}
         tabs={plotRightTabs}
         side="right"
         //tabs={plotRightTabs}
         //onValueChange={setSelectedTab}
         //value={selectedTab}
-        open={settings.sidebar.show}
-        onOpenChange={(v) => {
-          const newSettings = produce(settings, (draft) => {
-            draft.sidebar.show = v
-          })
+        // open={settings.sidebar.show}
+        // onOpenChange={v => {
+        //   const newSettings = produce(settings, draft => {
+        //     draft.sidebar.show = v
+        //   })
 
-          updateSettings(newSettings)
-        }}
+        //   updateSettings(newSettings)
+        // }}
       >
         {/* {svg} */}
 
@@ -204,13 +213,13 @@ export function HeatmapPanel({ plotAddr }: IHeatmapPanelProps) {
         <span>{getFormattedShape(cf.df)} </span>
         <></>
         <>
-          <ZoomSlider />
+          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
         </>
       </ToolbarFooterPortal>
     </>
   )
 }
 
-// export function HeatmapPanelQuery({ plotAddr }: IHeatMapPanelProps) {
-//   return <HeatMapPanel plotAddr={plotAddr} />
+// export function HeatmapPanelQuery({ { file: plotAddr } }: IHeatMapPanelProps) {
+//   return <HeatMapPanel { file: plotAddr }={{ file: plotAddr }} />
 // }

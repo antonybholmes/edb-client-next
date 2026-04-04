@@ -1,17 +1,17 @@
-import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
+import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
 
 import { TEXT_CANCEL, TEXT_CLEAR } from '@/consts'
-import type { ISelectionRange } from '@providers/selection-range'
-import { Checkbox } from '@themed/check-box'
+import type { ISelectionRange } from '@/providers/selection-range'
+import { Checkbox } from '@/themed/v2/check-box'
 
-import { type BaseDataFrame } from '@lib/dataframe/base-dataframe'
-import { colMean, getColIdxFromGroup } from '@lib/dataframe/dataframe-utils'
-import { argsort } from '@lib/math/argsort'
-import { range } from '@lib/math/range'
+import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { colMean, getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
+import { argsort } from '@/lib/math/argsort'
+import { range } from '@/lib/math/range'
 
-import { VCenterRow } from '@layout/v-center-row'
-import { Button } from '@themed/button'
-import { Textarea } from '@themed/textarea'
+import { VCenterRow } from '@/layout/v-center-row'
+import { Textarea } from '@/themed/textarea'
+import { Button } from '@/themed/v2/button'
 import { useEffect } from 'react'
 
 import { useHistory } from './history/history-store'
@@ -33,7 +33,9 @@ export function SortRowDialog({
   //const [withinGroups, setWithinGroups] = useState(false)
   //const [text, setText] = useState<string>("")
   const { settings, updateSettings } = useMatcalcSettings()
-  const { sheet, addStep, groups } = useHistory()
+  const { sheet, addSheets, groups } = useHistory()
+
+  const df = sheet as BaseDataFrame
 
   useEffect(() => {
     if (sheet && selection.start.row > -1) {
@@ -42,7 +44,7 @@ export function SortRowDialog({
         sortByRow: {
           ...settings.sortByRow,
           text: range(selection.start.row, selection.end.row + 1)
-            .map((i) => sheet.index.str(i))
+            .map(i => df.index.str(i))
             .join(', '),
         },
       })
@@ -60,36 +62,32 @@ export function SortRowDialog({
 
     const ids = settings.sortByRow.text
       .split(/[\r\n\t,;]+/)
-      .map((x) => x.trim())
-      .filter((x) => x.length > 0)
+      .map(x => x.trim())
+      .filter(x => x.length > 0)
 
     if (settings.sortByRow.sortWithinGroups) {
       idx = groups
-        .map((group) => {
+        .map(group => {
           // all indices for this group from full table
-          const idx = getColIdxFromGroup(sheet, group)
+          const idx = getColIdxFromGroup(df, group)
 
           console.log(group, idx)
 
           // subset table
-          sortDf = sheet.iloc(':', idx)
-
-          console.log(sortDf.shape, 'blob')
+          sortDf = df.iloc({ cols: idx }) as BaseDataFrame
 
           // get the row ids of the gene(s) of interest
-          const rowIdx = ids.map((id) => sortDf.index.find(id)).flat()
+          const rowIdx = ids.map(id => sortDf.index.find(id)).flat()
+
+          sortDf = sortDf.iloc({ rows: rowIdx }) as BaseDataFrame
 
           // get col means
-          sortDf = sortDf.iloc(rowIdx, ':')
-
-          //console.log(sortDf.shape)
-
           const mean = colMean(sortDf)
 
           let sortedColIdx = argsort(mean)
 
           // need to map sortedcolidx back to original idx from full table
-          sortedColIdx = sortedColIdx.map((i) => idx[i]!)
+          sortedColIdx = sortedColIdx.map(i => idx[i]!)
 
           return sortedColIdx
         })
@@ -97,30 +95,30 @@ export function SortRowDialog({
 
       // add missing indices that won't be sorted to the end
       const s = new Set(idx)
-      const idx2 = range(sheet!.shape[1]).filter((i) => !s.has(i))
+      const idx2 = range(df!.shape[1]).filter(i => !s.has(i))
       idx = idx.concat(idx2)
 
-      const ret = sheet.iloc(':', idx)
+      const ret = df.iloc({ cols: idx }) as BaseDataFrame
 
-      addStep('Sort by row', [ret])
+      addSheets([ret], { name: 'Sort by row (within groups)' })
 
       onSort(ret)
     } else {
-      idx = ids.map((id) => sheet.index.find(id)).flat()
+      idx = ids.map(id => df.index.find(id)).flat()
 
       // get col means
-      const sortDf = sheet.iloc(idx, ':')
+      const sortDf = df.iloc({ rows: idx }) as BaseDataFrame
 
       console.log(sortDf.shape, idx.length, 'blob')
 
       const mean = colMean(sortDf)
 
       idx = argsort(mean)
-      const ret = sheet.iloc(':', idx)
+      const ret = df.iloc({ cols: idx }) as BaseDataFrame
 
       console.log(sortDf.shape, idx.length, 'blob2')
 
-      addStep('Sort by row', [ret])
+      addSheets([ret], { name: 'Sort by row' })
 
       onSort(ret)
     }
@@ -130,7 +128,7 @@ export function SortRowDialog({
     <OKCancelDialog
       open={open}
       title="Sort By Rows"
-      onResponse={(r) => {
+      onResponse={r => {
         if (r === TEXT_CANCEL) {
           onCancel()
         } else {
@@ -144,7 +142,7 @@ export function SortRowDialog({
       <Textarea
         id="top-rows"
         value={settings.sortByRow.text}
-        onChange={(e) =>
+        onChange={e =>
           updateSettings({
             ...settings,
             sortByRow: {
@@ -160,7 +158,7 @@ export function SortRowDialog({
       <VCenterRow className="gap-x-2 justify-between">
         <Checkbox
           checked={settings.sortByRow.sortWithinGroups}
-          onCheckedChange={(value) => {
+          onCheckedChange={value => {
             updateSettings({
               ...settings,
               sortByRow: { ...settings.sortByRow, sortWithinGroups: value },

@@ -1,125 +1,110 @@
-import { type IModalProps } from '@dialog/ok-cancel-dialog'
+import { type IModalProps } from '@/dialog/ok-cancel-dialog'
 import { useEffect, useState } from 'react'
 
-import { queryClient } from '@/query'
-import { API_GEX_DATASETS_URL, API_GEX_EXP_URL } from '@lib/edb/edb'
-import { useEdbAuth } from '@lib/edb/edb-auth'
-import { httpFetch } from '@lib/http/http-fetch'
-import { bearerHeaders } from '@lib/http/urls'
+import { API_GEX_DATASETS_URL, API_GEX_URL } from '@/lib/edb/edb'
+import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { bearerHeaders } from '@/lib/http/urls'
 
-import { TEXT_NA, TEXT_OK } from '@/consts'
-import { BaseCol } from '@layout/base-col'
-import { DEFAULT_PALETTE } from '@lib/color/palette'
-import { Checkbox } from '@themed/check-box'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@themed/select'
+import { TEXT_NA, TEXT_OK, TIME_5_MINUTES_MS } from '@/consts'
+import { BaseCol } from '@/layout/base-col'
+import { DEFAULT_PALETTE } from '@/lib/color/palette'
+import { SelectItem, SelectList } from '@/themed/v2/select'
 
-import { makeNewGroup, type IClusterGroup } from '@lib/cluster-group'
-import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
-import { range } from '@lib/math/range'
-import { textToLines } from '@lib/text/lines'
+import { makeNewGroup, type IClusterGroup } from '@/lib/cluster-group'
+import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import { range } from '@/lib/math/range'
+import { textToLines } from '@/lib/text/lines'
 import { produce } from 'immer'
 
-import { CheckPropRow } from '@dialog/check-prop-row'
-import { GlassSideDialog } from '@dialog/glass-side-dialog'
-import { PropRow } from '@dialog/prop-row'
-import { DataFrame } from '@lib/dataframe/dataframe'
-import { storeItem } from '@lib/storage'
-import { toast } from '@themed/crisp'
-import { Textarea } from '@themed/textarea'
+import { CheckPropRow } from '@/dialog/check-prop-row'
+import { GlassSideDialog } from '@/dialog/glass-side-dialog'
+import { PropRow } from '@/dialog/prop-row'
+import { DataFrame } from '@/lib/dataframe/dataframe'
+import { storeItem } from '@/lib/storage'
+
+import { Textarea } from '@/themed/textarea'
 import { useHistory } from '../../history/history-store'
 
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from '@/components/shadcn/ui/themed/toggle-group'
+import { RadioPropRow } from '@/components/dialog/radio-prop-row'
 import {
   getAccordionId,
   SettingsAccordionItem,
-} from '@components/dialog/settings/settings-dialog'
-import { ChevronUpDownIcon } from '@components/icons/chevron-up-down-icon'
-import { ExternalLinkIcon } from '@components/icons/external-link'
-import { HCenterRow } from '@components/layout/h-center-row'
-import { VCenterRow } from '@components/layout/v-center-row'
-import { ScrollAccordion } from '@components/shadcn/ui/themed/accordion'
-import { DropdownMenuButton } from '@components/shadcn/ui/themed/dropdown-menu-button'
-import { InfoHoverCard } from '@components/shadcn/ui/themed/hover-card'
+} from '@/components/dialog/settings/settings-dialog'
+import { ChevronUpDownIcon } from '@/components/icons/chevron-up-down-icon'
+import { ExternalLinkIcon } from '@/components/icons/external-link'
+import { HCenterRow } from '@/components/layout/h-center-row'
+import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
 import {
   Popover,
   PopoverContent,
+  PopoverMenuItem,
   PopoverSpeechArrow,
   PopoverTrigger,
-} from '@components/shadcn/ui/themed/popover'
-import { HelpButton } from '@help/help-button'
+} from '@/components/shadcn/ui/themed/v2/popover'
+import { RadioGroup } from '@/components/shadcn/ui/themed/v2/radio-group'
+import { HelpButton } from '@/help/help-button'
+import { makeUuid } from '@/lib/id'
+import { GroupToggle, ToggleGroup } from '@/themed/v2/toggle-group'
+import { Toast } from '@base-ui/react/toast'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
-import type { IGexDataset, IGexSearchResult, IGexTechnology } from './gex-store'
+import type { IGexDataset, IGexSearchResult } from './gex-store'
 import { metadataToShared } from './gex-utils'
 import { SampleDataTypeCombo } from './sample-datatype-combo'
 
+import { appsConfig } from '@/config/apps'
+import { useQuery } from '@tanstack/react-query'
 // const DEFAULT_SAMPLE_DATA_TYPES = ['COO', 'Lymphgen']
 
 // const STANDARD_SAMPLE_DATA_TYPE_REGEX = /(coo|lymphgen)/i
 
-const SPECIES = ['Human', 'Mouse']
+const GENOMES = Object.freeze(['Human', 'Mouse'])
 
-const TECHNOLOGIES: IGexTechnology[] = [
-  {
-    publicId: '8wyay6lyvz9f',
-    name: 'RNA-seq',
-    gexTypes: ['Counts', 'TPM', 'VST'],
-  },
-  { publicId: '4fdknkjpa95h', name: 'Microarray', gexTypes: ['RMA'] },
-]
+const TECHNOLOGIES = Object.freeze(['RNA-seq', 'scRNA-seq', 'Microarray'])
 
-const COO_COLORMAP: Record<string, string> = {
-  abc: 'cornflowerblue',
-  gcb: 'orange',
-  unclass: 'mediumseagreen',
-  u: 'mediumseagreen',
-  unc: 'mediumseagreen',
-  na: 'gray',
-}
+const COO_COLORMAP: Readonly<Record<string, string>> = Object.freeze({
+  abc: '#6495ED', // cornflowerblue
+  gcb: '#FFA500', // orange
+  unclass: '#3cb371', // mediumseagreen
+  u: ' #3cb371',
+  unc: ' #3cb371',
+  na: '#C0C0C0',
+})
+
+const GC_COLORMAP: Readonly<Record<string, string>> = Object.freeze({
+  n: '#8c8c8c',
+  gc: '#3CB371',
+  m: '#ffcc00',
+  dz: '#0066cc',
+  lz: '#ff0000',
+})
 
 export interface IProps extends IModalProps {
   open?: boolean
 }
 
-export function GexDialog({
-  open = true,
-
-  onResponse = undefined,
-}: IProps) {
+export function GexDialog({ open = true, onResponse = undefined }: IProps) {
   const { settings, updateSettings } = useMatcalcSettings()
 
-  const [technology, setTechnology] = useState<IGexTechnology | null>(null)
-  const [datasets, setDatasets] = useState<IGexDataset[]>([])
+  const [technology, setTechnology] = useState<string>('RNA-seq')
+  //const [datasets, setDatasets] = useState<IGexDataset[]>([])
   const [datasetMap, setDatasetMap] = useState<Map<string, IGexDataset>>(
     new Map<string, IGexDataset>()
   )
 
-  const [accordionValues, setAccordionValues] = useState<string[]>([])
-
-  const [institutions, setInstitutions] = useState<string[]>([])
-  const [instituteMap, setInstituteMap] = useState<Map<string, IGexDataset[]>>(
-    new Map<string, IGexDataset[]>()
-  )
+  const { add: addToast } = Toast.useToastManager()
 
   //const [addAltNames, setAddAltNames] = useState(false)
 
-  const [gexType, setGexType] = useState<string | undefined>(
-    settings.apps.gex.gexType
-  )
+  const [exprType, setExprType] = useState<string>('TPM')
 
-  const [datasetUseMap, setDatasetUseMap] = useState<Map<string, boolean>>(
-    new Map<string, boolean>()
-  )
+  // const [datasetUseMap, setDatasetsInUseMap] = useState<Map<string, boolean>>(
+  //   new Map<string, boolean>()
+  // )
 
-  const { openBranch } = useHistory()
+  const [dataset, setDataset] = useState<IGexDataset | undefined>(undefined)
+
+  const { openFile, addGroups } = useHistory()
 
   const [text, setText] = useState<string>(
     settings.apps.gex.genes.length > 0
@@ -142,131 +127,129 @@ export function GexDialog({
 
   const [groupSampleDataType, setGroupSampleDataType] = useState<string[]>([])
 
-  //const [sampleDataType, setSampleDataType] = useState<string[]>(['COO'])
+  const [accordionValues, setAccordionValues] = useState<string[]>([])
+
+  const [institutions, setInstitutions] = useState<string[]>([])
+  const [instituteMap, setInstituteMap] = useState<Map<string, IGexDataset[]>>(
+    new Map<string, IGexDataset[]>()
+  )
 
   const { fetchAccessToken } = useEdbAuth()
 
-  async function loadDatasets() {
-    if (!technology) {
-      return
-    }
-
-    let datasets: IGexDataset[] = []
-
-    try {
+  const { data: datasetData } = useQuery({
+    queryKey: ['datasets', settings.apps.gex.genome, technology],
+    staleTime: TIME_5_MINUTES_MS, // 5 minutes
+    queryFn: async () => {
       const accessToken = await fetchAccessToken()
 
       if (!accessToken) {
-        return
+        return null
       }
 
-      const res = await queryClient.fetchQuery({
-        queryKey: ['datasets'],
-        queryFn: () => {
-          return httpFetch.getJson<{ data: IGexDataset[] }>(
-            `${API_GEX_DATASETS_URL}/${settings.apps.gex.species}/${technology.name}`,
-            { headers: bearerHeaders(accessToken) }
-          )
-        },
+      const params = new URLSearchParams({
+        genome: settings.apps.gex.genome,
+        technology,
       })
 
-      //console.log(res.data)
+      const res = await httpFetch.getJson<{ data: IGexDataset[] }>(
+        `${API_GEX_DATASETS_URL}?${params.toString()}`,
+        { headers: bearerHeaders(accessToken) }
+      )
 
-      // convert data to translate certain strings to numbers
-      datasets = res.data.map((dataset) => {
-        return produce(dataset, (draft) => {
-          draft.samples = dataset.samples.map((sample) => {
-            return produce(sample, (sampleDraft) => {
-              const entries = sample.metadata.map((m) => {
-                const v = Number(m.value)
+      return res.data
+    },
+  })
 
-                return { name: m.name, value: !Number.isNaN(v) ? v : m.value }
+  useEffect(() => {
+    async function loadDatasets() {
+      try {
+        // convert data to translate certain strings to numbers
+        const datasets = datasetData!.map(dataset => {
+          return produce(dataset, draft => {
+            draft.samples = dataset.samples.map(sample => {
+              return produce(sample, draftSample => {
+                const entries = sample.metadata.map(m => {
+                  const v = Number(m.value)
+
+                  return {
+                    name: m.name,
+                    value: !Number.isNaN(v) ? v : m.value,
+                    color: m.color,
+                  }
+                })
+
+                draftSample.metadata = entries
               })
-
-              sampleDraft.metadata = entries
             })
           })
         })
-      })
-    } catch {
-      console.error('error loading datasets from remote')
-    }
 
-    setDatasets(datasets)
+        //setDatasets(datasets)
 
-    setDatasetMap(
-      new Map<string, IGexDataset>(
-        datasets.map((dataset) => [dataset.publicId, dataset])
-      )
-    )
-
-    if (datasets.length > 0) {
-      // check if the datasets the user already chose are selected
-
-      const previouslySelected = datasets.filter((dataset) =>
-        settings.apps.gex.selectedDatasets.includes(dataset.publicId)
-      )
-
-      if (previouslySelected.length > 0) {
-        // we found one the use already selected, so highlight that
-        setDatasetUseMap(
-          new Map<string, boolean>(
-            previouslySelected.map((dataset) => [dataset.publicId, true])
+        setDatasetMap(
+          new Map<string, IGexDataset>(
+            datasets.map(dataset => [dataset.id, dataset])
           )
         )
-      } else {
-        // nothing was selected, so just auto select the first dataset
-        setDatasetUseMap(
-          new Map<string, boolean>([[datasets[0]!.publicId, true]])
-        )
+
+        if (datasets.length > 0) {
+          // check if the datasets the user already chose are selected
+
+          const previouslySelected = datasets.filter(dataset =>
+            settings.apps.gex.selectedDatasets.includes(dataset.id)
+          )
+
+          if (previouslySelected.length > 0) {
+            // we found one the use already selected, so highlight that
+
+            setDataset(previouslySelected[0]!)
+          } else {
+            // nothing was selected, so just auto select the first dataset
+
+            setDataset(datasets[0]!)
+          }
+        }
+
+        const instituteMap = new Map<string, IGexDataset[]>()
+
+        for (const dataset of datasets) {
+          if (!instituteMap.has(dataset.institution)) {
+            instituteMap.set(dataset.institution, [])
+          }
+
+          instituteMap.get(dataset.institution)?.push(dataset)
+        }
+
+        const institutions = [
+          ...[...instituteMap.keys()]
+            .filter(
+              inst => inst === appsConfig.matcalc.apps.gex.defaultInstitution
+            )
+            .sort(),
+
+          ...[...instituteMap.keys()]
+            .filter(
+              inst => inst !== appsConfig.matcalc.apps.gex.defaultInstitution
+            )
+            .sort(),
+        ]
+
+        setInstituteMap(instituteMap)
+        setInstitutions(institutions)
+        setAccordionValues(institutions.map(ins => getAccordionId(ins)))
+      } catch {
+        console.error('error loading datasets from remote')
       }
     }
 
-    // push certain types to the top of the list because we assume
-    // people will be interested in these more
-    // setSampleDataTypes([
-    //   ...DEFAULT_SAMPLE_DATA_TYPES,
-
-    //   ...[
-    //     ...new Set(
-    //       datasets
-    //         .map(dataset =>
-    //           dataset.samples.map(sample => Object.keys(sample.data)).flat()
-    //         )
-    //         .flat()
-    //         .filter(x => !x.match(STANDARD_SAMPLE_DATA_TYPE_REGEX))
-    //     ),
-    //   ].toSorted(),
-    // ])
-
-    const instituteMap = new Map<string, IGexDataset[]>()
-
-    for (const dataset of datasets) {
-      if (!instituteMap.has(dataset.institution)) {
-        instituteMap.set(dataset.institution, [])
-      }
-
-      instituteMap.get(dataset.institution)?.push(dataset)
+    if (datasetData) {
+      loadDatasets()
     }
-
-    const institutions = [...instituteMap.keys()].sort()
-
-    setInstituteMap(instituteMap)
-    setInstitutions(institutions)
-    setAccordionValues(institutions.map((ins) => getAccordionId(ins)))
-  }
-
-  // const { data: technologyData } = useQuery({
-  //   queryKey: ['repoData'],
-  //   queryFn: () =>
-  //     httpFetch.getJson<{ data: IGexTechnology[] }>(API_GEX_TECHNOLOGIES_URL),
-  // })
-
-  //console.log(technologyData?.data)
+  }, [datasetData])
 
   useEffect(() => {
-    const defaultTechnologies = TECHNOLOGIES.filter((t) =>
-      t.name.includes(settings.apps.gex.technology)
+    const defaultTechnologies = TECHNOLOGIES.filter(t =>
+      t.includes(settings.apps.gex.technology)
     )
 
     if (defaultTechnologies.length > 0) {
@@ -275,55 +258,37 @@ export function GexDialog({
   }, [TECHNOLOGIES])
 
   useEffect(() => {
-    if (!technology) {
+    if (!dataset) {
       return
     }
 
-    let defaultGexTypes = technology.gexTypes.filter((t) =>
-      t.includes(settings.apps.gex.gexType)
+    let defaultGexTypes = dataset.exprTypes.filter(t =>
+      t.name.includes(settings.apps.gex.gexType)
     )
 
     if (defaultGexTypes.length === 0) {
       // Can't find the type in the technology, so see if we have tpm
-      defaultGexTypes = technology.gexTypes.filter((t) => t.includes('TPM'))
+      defaultGexTypes = dataset.exprTypes.filter(t => t.name.includes('TPM'))
 
       if (defaultGexTypes.length === 0) {
         // No TPM, so just pick the first one
-        defaultGexTypes = [technology.gexTypes[0]!]
+        defaultGexTypes = [dataset.exprTypes[0]!]
       }
 
-      setGexType(defaultGexTypes[0])
-
       updateSettings(
-        produce(settings, (draft) => {
-          draft.apps.gex.gexType = defaultGexTypes[0]!
+        produce(settings, draft => {
+          draft.apps.gex.gexType = defaultGexTypes[0]!.name
         })
       )
     }
 
-    loadDatasets()
+    setExprType(defaultGexTypes[0]!.name)
 
-    //loadValueTypes()
-  }, [technology])
-
-  useEffect(() => {
-    loadDatasets()
-  }, [settings.apps.gex.species])
-
-  useEffect(() => {
     const types = [
       ...new Set(
-        datasets
-          .filter((dataset) => datasetUseMap.get(dataset.publicId))
-          .map((dataset) =>
-            dataset.samples
-              .map((sample) => sample.metadata.map((m) => m.name))
-              .flat()
-          )
-          .flat()
-        //.filter(x => !x.match(STANDARD_SAMPLE_DATA_TYPE_REGEX))
+        dataset.samples.map(sample => sample.metadata.map(m => m.name)).flat()
       ),
-    ].toSorted()
+    ].sort()
 
     if (types.length > 0) {
       setSampleDataTypes([
@@ -342,14 +307,15 @@ export function GexDialog({
         setGroupSampleDataType([types[0]!])
       }
     }
-  }, [datasetUseMap])
+  }, [dataset])
 
   async function fetchGex() {
     if (!technology) {
-      toast({
-        title: 'Gene Expression',
+      addToast({
+        id: makeUuid(),
+        title: appsConfig.matcalc.apps.gex.title,
         description: 'You must select a platform.',
-        variant: 'destructive',
+        type: 'destructive',
       })
 
       return
@@ -360,37 +326,28 @@ export function GexDialog({
     //console.log(genes)
 
     if (genes.length === 0) {
-      toast({
+      addToast({
+        id: makeUuid(),
         title: 'Gene Expression',
         description: 'You must enter some genes to search for.',
-        variant: 'destructive',
+        type: 'destructive',
       })
 
       return
     }
 
-    const selectedDatasets = datasets.filter((dataset) =>
-      datasetUseMap.get(dataset.publicId)
-    )
+    if (!dataset) {
+      return
+    }
+
+    const selectedDatasets = [dataset]
 
     if (selectedDatasets.length === 0) {
-      toast({
+      addToast({
+        id: makeUuid(),
         title: 'Gene Expression',
         description: 'You must select a dataset.',
-        variant: 'destructive',
-      })
-
-      return
-    }
-
-    const accessToken = await fetchAccessToken()
-
-    if (!accessToken) {
-      toast({
-        title: 'Gene Expression',
-        description:
-          'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
-        variant: 'destructive',
+        type: 'destructive',
       })
 
       return
@@ -399,33 +356,39 @@ export function GexDialog({
     try {
       const accessToken = await fetchAccessToken()
 
-      const res = await queryClient.fetchQuery({
-        queryKey: ['gex'],
-        queryFn: () => {
-          return httpFetch.postJson<{ data: IGexSearchResult[] }>(
-            API_GEX_EXP_URL,
-            {
-              body: {
-                species: settings.apps.gex.species,
-                technology: technology.name,
-                gexType,
-                genes,
-                datasets: selectedDatasets.map((dataset) => dataset.publicId),
-              },
+      if (!accessToken) {
+        addToast({
+          id: makeUuid(),
+          title: appsConfig.matcalc.apps.gex.title,
+          description:
+            'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
+          type: 'destructive',
+        })
 
-              headers: bearerHeaders(accessToken),
-            }
-          )
-        },
-      })
+        return
+      }
+
+      const res = await httpFetch.postJson<{ data: IGexSearchResult[] }>(
+        `${API_GEX_URL}/types/${exprType}/expression`,
+        {
+          body: {
+            genes,
+            datasets: selectedDatasets.map(dataset => dataset.id),
+          },
+
+          headers: bearerHeaders(accessToken),
+        }
+      )
+
+      console.log('searched', res.data)
 
       const searchResults: IGexSearchResult[] = res.data
 
-      const geneResults = searchResults[0]!.features
+      const geneResults = searchResults[0]!.probes
 
-      const data: number[][] = range(geneResults.length).map((gi) =>
+      const data: number[][] = range(geneResults.length).map(gi =>
         searchResults
-          .map((datasetResult) => datasetResult.features[gi]!.expression)
+          .map(datasetResult => datasetResult.probes[gi]!.values)
           .flat()
       )
 
@@ -433,13 +396,13 @@ export function GexDialog({
 
       if (settings.apps.gex.addSampleMetadataToColumns) {
         for (const datasetResult of searchResults) {
-          const dataset = datasetMap.get(datasetResult.dataset)!
+          const dataset = datasetMap.get(datasetResult.dataset.id)!
 
           for (const sample of dataset.samples) {
             const labels = [sample.name]
 
             for (const datatype of sampleDataTypes.filter(
-              (t) => sampleDataTypeUseMap.get(t) ?? false
+              t => sampleDataTypeUseMap.get(t) ?? false
             )) {
               for (const m of sample.metadata) {
                 if (m.name === datatype) {
@@ -453,11 +416,17 @@ export function GexDialog({
           }
         }
       } else {
+        console.log(
+          'Sear',
+          searchResults.map(s => s.dataset)
+        )
+
+        console.log(datasetMap.keys())
         columns = searchResults
-          .map((datasetResult) =>
+          .map(datasetResult =>
             datasetMap
-              .get(datasetResult.dataset)!
-              .samples.map((sample) => sample.name)
+              .get(datasetResult.dataset.id)!
+              .samples.map(sample => sample.name)
           )
           .flat()
       }
@@ -465,89 +434,82 @@ export function GexDialog({
       let geneData: string[][] = []
 
       // If species is mouse we use MGI id, otherwise Hugo Id for human
-      let rowMetaDataColumns: string[] = [
-        settings.apps.gex.species === 'Mouse' ? 'MGI Id' : 'Hugo Id',
-        'Gene Symbol',
-        'Ensembl',
-        'RefSeq',
-      ]
+      let rowObsCols: string[]
 
-      if (technology.name.includes('Microarray')) {
-        geneData = geneResults.map((geneResult) => [
-          geneResult.probeId ?? '',
-          settings.apps.gex.species === 'Mouse'
-            ? geneResult.gene.mgi
-            : geneResult.gene.hugo,
-          geneResult.gene.geneSymbol,
-          geneResult.gene.ensembl,
-          geneResult.gene.refseq,
+      if (technology.includes('Microarray')) {
+        rowObsCols = ['Probe Id', 'Gene Id', 'Gene Symbol', 'Ensembl', 'RefSeq']
+
+        geneData = geneResults.map(geneResult => [
+          geneResult.probe.id,
+          geneResult.probe.gene.geneId,
+          geneResult.probe.gene.geneSymbol,
+          geneResult.probe.gene.ensembl ?? '',
+          geneResult.probe.gene.refseq ?? '',
         ])
-
-        rowMetaDataColumns = ['Probe', ...rowMetaDataColumns]
       } else {
-        geneData = geneResults.map((geneResult) => [
-          settings.apps.gex.species === 'Mouse'
-            ? geneResult.gene.mgi
-            : geneResult.gene.hugo,
-          geneResult.gene.geneSymbol,
-          geneResult.gene.ensembl,
-          geneResult.gene.refseq,
+        rowObsCols = ['Gene Id', 'Gene Symbol', 'Ensembl', 'RefSeq']
+
+        geneData = geneResults.map(geneResult => [
+          geneResult.probe.gene.geneId,
+          geneResult.probe.gene.geneSymbol,
+          geneResult.probe.gene.ensembl ?? '',
+          geneResult.probe.gene.refseq ?? '',
         ])
       }
 
-      const rowMetaData = new DataFrame({
+      const rowObs = new DataFrame({
         data: geneData,
-        columns: rowMetaDataColumns,
+        columns: rowObsCols,
       })
 
-      console.log('data', data, columns, geneData, rowMetaData)
+      console.log('data', data, columns, rowObs)
 
       const df = new AnnotationDataFrame({
         data,
-        rowMetaData,
+        rowObs,
         columns,
-        name: `${selectedDatasets[0]!.name} ${gexType}`,
+        name: `${selectedDatasets[0]!.name} ${exprType}`,
       })
 
       //df.setIndexName('Genes', true)
 
       // add alternative names
 
-      if (settings.apps.gex.addAltNames) {
-        // max number of alt names we might be adding
-        const maxAltNameCount = Math.max(
-          ...searchResults
-            .map((datasetResult) =>
-              datasetMap
-                .get(datasetResult.dataset)!
-                .samples.map((sample) => sample.altNames.length)
-            )
-            .flat()
-        )
+      // if (settings.apps.gex.addAltNames) {
+      //   // max number of alt names we might be adding
+      //   const maxAltNameCount = Math.max(
+      //     ...searchResults
+      //       .map(datasetResult =>
+      //         datasetMap
+      //           .get(datasetResult.dataset)!
+      //           .samples.map(sample => sample.altNames.length)
+      //       )
+      //       .flat()
+      //   )
 
-        for (let i = 0; i < maxAltNameCount; i++) {
-          const labels = searchResults
-            .map((datasetResult) =>
-              datasetMap
-                .get(datasetResult.dataset)!
-                .samples.map((sample) =>
-                  sample.altNames.length > i ? sample.altNames[i]! : ''
-                )
-            )
-            .flat()
+      //   for (let i = 0; i < maxAltNameCount; i++) {
+      //     const labels = searchResults
+      //       .map(datasetResult =>
+      //         datasetMap
+      //           .get(datasetResult.dataset)!
+      //           .samples.map(sample =>
+      //             sample.altNames.length > i ? sample.altNames[i]! : ''
+      //           )
+      //       )
+      //       .flat()
 
-          df.colMetaData.setCol(`Alt Name ${i + 1}`, labels, true)
-        }
-      }
+      //     df.colMetaData.setCol(`Alt Name ${i + 1}`, labels, true)
+      //   }
+      // }
 
       // add the sample meta data
 
       for (const datatype of sampleDataTypes.filter(
-        (t) => sampleDataTypeUseMap.get(t) ?? false
+        t => sampleDataTypeUseMap.get(t) ?? false
       )) {
         const labels = searchResults
-          .map((datasetResult) =>
-            datasetMap.get(datasetResult.dataset)!.samples.map((sample) => {
+          .map(datasetResult =>
+            datasetMap.get(datasetResult.dataset.id)!.samples.map(sample => {
               let ret = ''
 
               for (const m of sample.metadata) {
@@ -562,24 +524,32 @@ export function GexDialog({
           )
           .flat()
 
-        df.colMetaData.setCol(datatype, labels, true)
+        df.colVars.setCol(datatype, labels, true)
       }
 
       let groups: IClusterGroup[] = []
 
       if (settings.apps.gex.addGroup) {
         const groupsMap = new Map<string, string[]>()
+        const groupColorMap = new Map<string, string | undefined>()
         const orderedGroupNames = []
 
+        // using the sample order from the database, build a
+        // list of clusters using the first cluster we encounter
+        // that has not been assigned yet, thus the database
+        // can enforce the order of the groups otherwise we
+        // pick an order based on the group names
         for (const datasetResult of searchResults) {
-          const dataset = datasetMap.get(datasetResult.dataset)!
+          const dataset = datasetMap.get(datasetResult.dataset.id)!
 
           for (const sample of dataset.samples) {
             let t = TEXT_NA
+            let color = undefined
 
             for (const m of sample.metadata) {
               if (m.name === groupSampleDataType[0]) {
                 t = m.value.toString()
+                color = m.color
                 break
               }
             }
@@ -591,6 +561,8 @@ export function GexDialog({
               }
             }
 
+            groupColorMap.set(t, color)
+
             groupsMap.get(t)?.push(sample.name)
           }
         }
@@ -598,14 +570,25 @@ export function GexDialog({
         // construct groups in order of appearance with
         // anything not in a group being pushed to the end in the NA group
         groups = [...orderedGroupNames, TEXT_NA]
-          .filter((groupName) => groupsMap.has(groupName))
+          .filter(groupName => groupsMap.has(groupName))
           .map((groupName, gi) => {
             const cidx = gi % DEFAULT_PALETTE.length
-            let color = DEFAULT_PALETTE[cidx]!
 
-            // for coo, use a predefined palette
-            if (groupSampleDataType[0] === 'COO') {
+            // if color assigned from metadata, use that
+            let color = groupColorMap.get(groupName)
+
+            // if COO use standard COO colors
+            if (!color && groupSampleDataType[0] === 'COO') {
               color = COO_COLORMAP[groupName.toLowerCase()] ?? 'gray'
+            }
+
+            if (!color && groupName.toLowerCase() in GC_COLORMAP) {
+              color = GC_COLORMAP[groupName.toLowerCase()] ?? 'gray'
+            }
+
+            // otherwise, if no color, use a default color
+            if (!color) {
+              color = DEFAULT_PALETTE[cidx]!
             }
 
             // we face the issue that some sample names are prefixes of
@@ -628,11 +611,15 @@ export function GexDialog({
       // make sure that the groups are empty
       //addGroups(groups, 'set')
 
-      openBranch('Open GEX data', [df], { mode: 'append', groups })
+      addGroups(groups, { name: groupSampleDataType[0] ?? 'GEX' })
+
+      openFile('GEX data', {
+        sheets: [df],
+      })
 
       // cache the genes so user doesn't have to keep re-entering them
       updateSettings(
-        produce(settings, (draft) => {
+        produce(settings, draft => {
           draft.apps.gex.genes = genes
         })
       )
@@ -640,21 +627,27 @@ export function GexDialog({
       // if everthing works, finally respond with ok
       onResponse?.(TEXT_OK)
     } catch (e) {
-      console.log(e)
-
-      toast({
+      console.error(e)
+      addToast({
+        id: makeUuid(),
         title: 'Gene Expression',
         description:
           'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
-        variant: 'destructive',
+        type: 'destructive',
       })
     }
   }
 
+  // radio buttons don't seem to like init of null so make sure we
+  // have a dataset to select
+  // if (!dataset) {
+  //   return null
+  // }
+
   return (
     <GlassSideDialog
       cols={3}
-      title="Gene Expression"
+      title={appsConfig.matcalc.apps.gex.title}
       open={open}
       onResponse={(response, data) => {
         if (response === TEXT_OK) {
@@ -667,165 +660,71 @@ export function GexDialog({
       leftFooterChildren={
         <HelpButton url="/help/apps/matcalc/gene-expression" />
       }
-      headerChildren={
-        <>
-          {/* <ToggleButtons
-            value={technology?.name ?? ''}
-            onTabChange={selectedTab => {
-              console.log(selectedTab)
-              if (technologyData?.data) {
-                const defaultPlatforms = technologyData.data.filter(
-                  t => t.name === selectedTab.tab.id
-                )
-
-                if (defaultPlatforms.length > 0) {
-                  updateSettings(
-                    produce(settings, draft => {
-                      draft.apps.gex.technology = defaultPlatforms[0]!.name
-                    })
-                  )
-                  setTechnology(defaultPlatforms[0]!)
-                }
-              }
-            }}
-            tabs={technologyData?.data.map(p => ({ id: p.name })) ?? []}
-          >
-            <ToggleButtonTriggers variant="tab" defaultWidth={5} />
-          </ToggleButtons> */}
-
-          {/* <HelpButton url="/help/apps/matcalc/gene-expression" /> */}
-        </>
-      }
     >
+      {/* Side panel */}
       <>
         <HCenterRow>
-          {/* <Select
-            value={`${settings.apps.gex.species} ${technology?.name ?? ''}`}
-            onValueChange={v => {
-              const [species, plaform] = v.split(':')
-
-              const defaultPlatforms = TECHNOLOGIES.filter(
-                t => t.name === plaform
-              )
-
-              if (defaultPlatforms.length > 0) {
-                updateSettings(
-                  produce(settings, draft => {
-                    draft.apps.gex.technology = defaultPlatforms[0]!.name
-                  })
-                )
-                setTechnology(defaultPlatforms[0]!)
-              }
-
-              const newOptions = produce(settings, draft => {
-                draft.apps.gex.species = species!
-              })
-
-              updateSettings(newOptions)
-            }}
-          >
-            <SelectTrigger
-              variant="glass"
-              className="text-sm w-[10rem]"
-              aria-label="Select technology"
-            >
-              <SelectValue placeholder="Select technology..." />
-            </SelectTrigger>
-            <SelectContent>
-              {SPECIES.map(species => (
-                <SelectGroup key={species}>
-                  <SelectLabel>{species}</SelectLabel>
-
-                  {TECHNOLOGIES.map(t => {
-                    const id = `${species} ${t.name}`
-                    return (
-                      <SelectItem value={id} key={id}>
-                        {species} {t.name}
-                      </SelectItem>
-                    )
-                  })}
-                </SelectGroup>
-              ))}
-            </SelectContent>
-          </Select> */}
-
           <Popover>
-            <PopoverTrigger className="font-bold text-xs flex flex-row items-center gap-x-4 w-48 justify-between hover:bg-muted/75 data-[state=open]:bg-muted/75 rounded-theme p-2.5 trans-color">
-              <span>{`${settings.apps.gex.species} ${technology?.name ?? ''}`}</span>
+            <PopoverTrigger className="font-bold text-xs flex flex-row items-center gap-x-4 w-48 justify-between hover:bg-muted/75 data-popup-open:bg-muted/75 rounded-theme p-2.5 trans-color">
+              <span>{`${settings.apps.gex.genome} ${technology ?? ''}`}</span>
               <ChevronUpDownIcon />
             </PopoverTrigger>
             <PopoverContent
               //variant="content"
               className="w-48 flex flex-col gap-y-4 relative"
-              sideOffset={10}
+              sideOffset={12}
               align="center"
             >
               <PopoverSpeechArrow />
-              {/* <HCenterRow className="pt-2">
-                <Tabs
-                  value={settings.apps.gex.species}
-                  onValueChange={(v) => {
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.apps.gex.species = v
-                      })
-                    )
-                  }}
-                >
-                  <IOSTabsList
-                    defaultWidth="64px"
-                    value={settings.apps.gex.species}
-                    tabs={SPECIES.map((s) => ({ id: s }))}
-                  />
-                </Tabs>
-              </HCenterRow> */}
 
               <HCenterRow className="pt-2">
                 <ToggleGroup
                   //variant="outline"
-                  type="single"
-                  value={settings.apps.gex.species}
-                  onValueChange={(v) => {
+
+                  value={[settings.apps.gex.genome]}
+                  onValueChange={v => {
                     updateSettings(
-                      produce(settings, (draft) => {
-                        draft.apps.gex.species = v
+                      produce(settings, draft => {
+                        draft.apps.gex.genome = v[0] ?? ''
                       })
                     )
                   }}
+                  rounded="none"
+                  className="border border-border/50 rounded-theme overflow-hidden"
                 >
-                  {SPECIES.map((s) => (
-                    <ToggleGroupItem
+                  {GENOMES.map(s => (
+                    <GroupToggle
                       key={s}
                       value={s}
                       className="w-16"
                       aria-label="Filter rows"
                     >
                       {s}
-                    </ToggleGroupItem>
+                    </GroupToggle>
                   ))}
                 </ToggleGroup>
               </HCenterRow>
               <ul className="flex flex-col">
-                {TECHNOLOGIES.map((t) => {
+                {TECHNOLOGIES.map((t, tid) => {
                   return (
-                    <li key={t.publicId}>
-                      <DropdownMenuButton
-                        checked={t.name === technology?.name}
-                        //variant="menu"
+                    <li key={tid}>
+                      <PopoverMenuItem
+                        checked={t === technology}
+                        variant="theme"
                         animation="none"
                         // ripple={false}
                         className="w-full text-left"
                         onClick={() => {
                           updateSettings(
-                            produce(settings, (draft) => {
-                              draft.apps.gex.technology = t.name
+                            produce(settings, draft => {
+                              draft.apps.gex.technology = t
                             })
                           )
                           setTechnology(t)
                         }}
                       >
-                        {t.name}
-                      </DropdownMenuButton>
+                        {t}
+                      </PopoverMenuItem>
                     </li>
                   )
                 })}
@@ -833,106 +732,77 @@ export function GexDialog({
             </PopoverContent>
           </Popover>
         </HCenterRow>
-        <ScrollAccordion
-          value={accordionValues}
-          onValueChange={setAccordionValues}
-        >
-          {institutions.map((institution) => {
-            return (
-              <SettingsAccordionItem
-                title={institution}
-                value={institution}
-                key={institution}
-              >
-                <ul className="flex flex-col gap-y-2">
-                  {instituteMap.get(institution)?.map((dataset) => {
-                    return (
-                      <li
-                        key={dataset.publicId}
-                        className="flex flex-row items-center justify-between gap-x-2"
-                      >
-                        <VCenterRow className="gap-x-2">
-                          <Checkbox
-                            checked={
-                              datasetUseMap.get(dataset.publicId) ?? false
-                            }
-                            onCheckedChange={() => {
-                              setDatasetUseMap(
-                                new Map<string, boolean>([
-                                  [dataset.publicId, true],
-                                ])
-                              )
-
-                              updateSettings(
-                                produce(settings, (draft) => {
-                                  draft.apps.gex.selectedDatasets = [
-                                    dataset.publicId,
-                                  ]
-                                })
-                              )
-                            }}
-                          />
-
-                          <span className="text-left">{dataset.name}</span>
-                        </VCenterRow>
-
-                        <button
-                          title={`View metadata of ${dataset.name}`}
-                          onClick={() => {
-                            const id = storeItem(
-                              'table-viewer',
-                              'data',
-                              JSON.stringify(metadataToShared(dataset))
-                            )
-
-                            window.open(
-                              `/apps/table-viewer?key=${id}`,
-                              '_blank',
-                              'width=800,height=600'
-                            )
-                          }}
-                          className="opacity-30 hover:opacity-70"
-                        >
-                          <ExternalLinkIcon />
-                        </button>
-                      </li>
-                    )
-                  })}
-                </ul>
-              </SettingsAccordionItem>
-            )
-          })}
-        </ScrollAccordion>
-
-        {/* <VCenterRow className="justify-end border-t border-border/50 pt-2">
-          <Select
-            value={settings.apps.gex.species}
+        {dataset && (
+          <RadioGroup
+            className="flex flex-col grow relative"
+            value={dataset?.id}
             onValueChange={v => {
-              const newOptions = produce(settings, draft => {
-                draft.apps.gex.species = v
-              })
+              const ds = datasetMap.get(v)
 
-              updateSettings(newOptions)
+              if (ds) {
+                setDataset(ds)
+
+                updateSettings(
+                  produce(settings, draft => {
+                    draft.apps.gex.selectedDatasets = [ds.id]
+                  })
+                )
+              }
             }}
           >
-            <SelectTrigger
-              variant="glass"
-              className="text-sm w-24"
-              title="Select species"
+            <ScrollAccordion
+              value={accordionValues}
+              //onValueChange={setAccordionValues}
+              variant="settings"
             >
-              <SelectValue placeholder="Select a species" />
-            </SelectTrigger>
-            <SelectContent>
-              {SPECIES.map(species => (
-                <SelectItem value={species} key={species}>
-                  {species}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </VCenterRow> */}
+              {institutions.map(institution => {
+                return (
+                  <SettingsAccordionItem
+                    title={institution}
+                    value={institution}
+                    key={institution}
+                  >
+                    <ul className="flex flex-col">
+                      {instituteMap.get(institution)?.map(ds => {
+                        return (
+                          <li
+                            key={ds.id}
+                            className="flex flex-row items-center justify-between gap-x-2"
+                          >
+                            <RadioPropRow title={ds.name} value={ds.id}>
+                              <button
+                                title={`View metadata of ${ds.name}`}
+                                onClick={() => {
+                                  const id = storeItem(
+                                    'table-viewer',
+                                    'data',
+                                    JSON.stringify(metadataToShared(ds))
+                                  )
+
+                                  window.open(
+                                    `/apps/table-viewer?key=${id}`,
+                                    '_blank',
+                                    'width=800,height=600'
+                                  )
+                                }}
+                                className="opacity-30 hover:opacity-70"
+                              >
+                                <ExternalLinkIcon />
+                              </button>
+                            </RadioPropRow>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  </SettingsAccordionItem>
+                )
+              })}
+            </ScrollAccordion>
+          </RadioGroup>
+        )}
       </>
 
+      {/* Main panel */}
       <>
         <BaseCol className="grow gap-y-2">
           <BaseCol className="gap-y-1">
@@ -940,55 +810,54 @@ export function GexDialog({
               id="Genes"
               aria-label="Genes"
               label="Genes"
-              labelW=""
               value={text}
-              onChange={(e) => setText(e.target.value)}
-              className="grow h-42" // rounded-theme border border-border overflow-hidden outline-hidden placeholder:text-muted-foreground"
-              labelChildren={
-                <InfoHoverCard title="Genes">
-                  Enter a list of genes to search for, one per line.
-                </InfoHoverCard>
-              }
+              onChange={e => setText(e.target.value)}
+              className="grow h-50" // rounded-theme border border-border overflow-hidden outline-hidden placeholder:text-muted-foreground"
+              // labelChildren={
+              //   <InfoHoverCard title="Genes">
+              //     Enter a list of genes to search for, one per line.
+              //   </InfoHoverCard>
+              // }
             />
           </BaseCol>
 
           <PropRow title="Expression">
-            <Select
-              value={gexType ?? ''}
-              onValueChange={(value) => {
-                if (technology) {
-                  const matches = technology.gexTypes.filter((t) => t === value)
+            <SelectList
+              w="lg"
+              value={exprType}
+              onValueChange={value => {
+                if (dataset) {
+                  const matches = dataset.exprTypes.filter(
+                    t => t.name === value
+                  )
 
                   if (matches.length > 0) {
-                    setGexType(matches[0])
+                    setExprType(matches[0]!.name)
                     updateSettings(
-                      produce(settings, (draft) => {
-                        draft.apps.gex.gexType = matches[0]!
+                      produce(settings, draft => {
+                        draft.apps.gex.gexType = matches[0]!.name
                       })
                     )
                   }
                 }
               }}
             >
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
-              {technology && (
-                <SelectContent>
-                  {technology.gexTypes.map((t, ti) => (
-                    <SelectItem value={t} key={ti}>
-                      {t}
+              {dataset && (
+                <>
+                  {dataset.exprTypes.map((t, ti) => (
+                    <SelectItem value={t.name} key={ti}>
+                      {t.name}
                     </SelectItem>
                   ))}
-                </SelectContent>
+                </>
               )}
-            </Select>
+            </SelectList>
           </PropRow>
 
           <PropRow title="Sample Info">
             <SampleDataTypeCombo
               selectedValues={sampleDataTypes.filter(
-                (t) => sampleDataTypeUseMap.get(t) ?? false
+                t => sampleDataTypeUseMap.get(t) ?? false
               )}
               values={sampleDataTypes}
               setValue={(value, selected) => {
@@ -999,25 +868,26 @@ export function GexDialog({
                   ])
                 )
               }}
-              className="w-48"
+              w="lg"
             />
           </PropRow>
 
           <CheckPropRow
-            title="Add group"
+            title="Create groups"
             checked={settings.apps.gex.addGroup}
-            onCheckedChange={(v) => {
+            onCheckedChange={v => {
               updateSettings(
-                produce(settings, (draft) => {
+                produce(settings, draft => {
                   draft.apps.gex.addGroup = v
                 })
               )
             }}
+            info="Creates groups of samples for the unique data types."
           >
             <SampleDataTypeCombo
               selectedValues={groupSampleDataType}
               values={sampleDataTypes}
-              setValue={(value) => {
+              setValue={value => {
                 setGroupSampleDataType([value])
               }}
               className="w-48"
@@ -1027,9 +897,9 @@ export function GexDialog({
           <CheckPropRow
             title="Add sample info to column names"
             checked={settings.apps.gex.addSampleMetadataToColumns}
-            onCheckedChange={(v) => {
+            onCheckedChange={v => {
               updateSettings(
-                produce(settings, (draft) => {
+                produce(settings, draft => {
                   draft.apps.gex.addSampleMetadataToColumns = v
                 })
               )
@@ -1039,9 +909,9 @@ export function GexDialog({
           <CheckPropRow
             title="Add alternative names to columns"
             checked={settings.apps.gex.addAltNames}
-            onCheckedChange={(v) => {
+            onCheckedChange={v => {
               updateSettings(
-                produce(settings, (draft) => {
+                produce(settings, draft => {
                   draft.apps.gex.addAltNames = v
                 })
               )
@@ -1052,3 +922,167 @@ export function GexDialog({
     </GlassSideDialog>
   )
 }
+
+// function Side({
+//   dataset,
+//   datasetMap,
+//   setDataset,
+//   technology,
+//   setTechnology,
+//   accordionValues,
+//   institutions,
+//   instituteMap,
+// }: {
+//   dataset: IGexDataset | undefined
+//   datasetMap: Map<string, IGexDataset>
+//   setDataset: (dataset: IGexDataset) => void
+//   technology: string
+//   setTechnology: (tech: string) => void
+//   accordionValues: string[]
+//   institutions: string[]
+//   instituteMap: Map<string, IGexDataset[]>
+// }) {
+//   const { settings, updateSettings } = useMatcalcSettings()
+
+//   return (
+//     <>
+//       <HCenterRow>
+//         <Popover>
+//           <PopoverTrigger className="font-bold text-xs flex flex-row items-center gap-x-4 w-48 justify-between hover:bg-muted/75 data-popup-open:bg-muted/75 rounded-theme p-2.5 trans-color">
+//             <span>{`${settings.apps.gex.genome} ${technology ?? ''}`}</span>
+//             <ChevronUpDownIcon />
+//           </PopoverTrigger>
+//           <PopoverContent
+//             //variant="content"
+//             className="w-48 flex flex-col gap-y-4 relative"
+//             sideOffset={12}
+//             align="center"
+//           >
+//             <PopoverSpeechArrow />
+
+//             <HCenterRow className="pt-2">
+//               <ToggleGroup
+//                 //variant="outline"
+
+//                 value={[settings.apps.gex.genome]}
+//                 onValueChange={v => {
+//                   updateSettings(
+//                     produce(settings, draft => {
+//                       draft.apps.gex.genome = v[0] ?? ''
+//                     })
+//                   )
+//                 }}
+//                 rounded="none"
+//                 className="border border-border/50 rounded-theme overflow-hidden"
+//               >
+//                 {GENOMES.map(s => (
+//                   <GroupToggle
+//                     key={s}
+//                     value={s}
+//                     className="w-16"
+//                     aria-label="Filter rows"
+//                   >
+//                     {s}
+//                   </GroupToggle>
+//                 ))}
+//               </ToggleGroup>
+//             </HCenterRow>
+//             <ul className="flex flex-col">
+//               {TECHNOLOGIES.map((t, tid) => {
+//                 return (
+//                   <li key={tid}>
+//                     <PopoverMenuItem
+//                       checked={t === technology}
+//                       variant="theme"
+//                       animation="none"
+//                       // ripple={false}
+//                       className="w-full text-left"
+//                       onClick={() => {
+//                         updateSettings(
+//                           produce(settings, draft => {
+//                             draft.apps.gex.technology = t
+//                           })
+//                         )
+//                         setTechnology(t)
+//                       }}
+//                     >
+//                       {t}
+//                     </PopoverMenuItem>
+//                   </li>
+//                 )
+//               })}
+//             </ul>
+//           </PopoverContent>
+//         </Popover>
+//       </HCenterRow>
+//       {dataset && (
+//         <RadioGroup
+//           className="flex flex-col grow relative"
+//           value={dataset?.id}
+//           onValueChange={v => {
+//             const ds = datasetMap.get(v)
+
+//             if (ds) {
+//               setDataset(ds)
+
+//               updateSettings(
+//                 produce(settings, draft => {
+//                   draft.apps.gex.selectedDatasets = [ds.id]
+//                 })
+//               )
+//             }
+//           }}
+//         >
+//           <ScrollAccordion
+//             value={accordionValues}
+//             //onValueChange={setAccordionValues}
+//             variant="settings"
+//           >
+//             {institutions.map(institution => {
+//               return (
+//                 <SettingsAccordionItem
+//                   title={institution}
+//                   value={institution}
+//                   key={institution}
+//                 >
+//                   <ul className="flex flex-col">
+//                     {instituteMap.get(institution)?.map(ds => {
+//                       return (
+//                         <li
+//                           key={ds.id}
+//                           className="flex flex-row items-center justify-between gap-x-2"
+//                         >
+//                           <RadioPropRow title={ds.name} value={ds.id}>
+//                             <button
+//                               title={`View metadata of ${ds.name}`}
+//                               onClick={() => {
+//                                 const id = storeItem(
+//                                   'table-viewer',
+//                                   'data',
+//                                   JSON.stringify(metadataToShared(ds))
+//                                 )
+
+//                                 window.open(
+//                                   `/apps/table-viewer?key=${id}`,
+//                                   '_blank',
+//                                   'width=800,height=600'
+//                                 )
+//                               }}
+//                               className="opacity-30 hover:opacity-70"
+//                             >
+//                               <ExternalLinkIcon />
+//                             </button>
+//                           </RadioPropRow>
+//                         </li>
+//                       )
+//                     })}
+//                   </ul>
+//                 </SettingsAccordionItem>
+//               )
+//             })}
+//           </ScrollAccordion>
+//         </RadioGroup>
+//       )}
+//     </>
+//   )
+// }

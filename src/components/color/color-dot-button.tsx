@@ -1,6 +1,6 @@
-import { isLightColor } from '@lib/color/color'
-import { cn } from '@lib/shadcn-utils'
-import type { IButtonProps } from '../shadcn/ui/themed/button'
+import { isLightColor } from '@/lib/color/color'
+import { cn } from '@/lib/shadcn-utils'
+import type { IButtonProps } from '../shadcn/ui/themed/v2/button'
 
 export function ColorDotButton({
   color,

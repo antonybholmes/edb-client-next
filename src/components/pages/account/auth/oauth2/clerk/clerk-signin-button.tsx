@@ -1,33 +1,44 @@
 // 'use client'
 
-import { APP_MYACCOUNT_URL } from '@lib/edb/edb'
-
-import { Button } from '@themed/button'
+import { Button } from '@/themed/v2/button'
 
 import { TEXT_SIGN_IN } from '@/consts'
+import { APP_ACCOUNT_OAUTH2_CLERK_SIGNIN_CALLBACK_URL } from '@/lib/edb/edb'
+import {
+  DEFAULT_REDIRECT_STATE,
+  signinStateAtom,
+  type IRedirectState,
+} from '@/lib/edb/signin/edb-signin'
 import { useClerk } from '@clerk/clerk-react'
+import { useAtom } from 'jotai'
 
 export function ClerkSignInButton({
-  callbackUrl = '',
+  state = DEFAULT_REDIRECT_STATE,
 }: {
-  callbackUrl?: string
+  state: IRedirectState
 }) {
-  const { openSignIn } = useClerk()
+  //const { openSignIn } = useClerk()
+  const { redirectToSignIn } = useClerk()
+  const [, setState] = useAtom(signinStateAtom)
 
   // Allow users to signin
   return (
     <Button
-      variant="theme"
+      variant="secondary"
       //className="w-full"
       size="lg"
       onClick={() => {
-        openSignIn({
-          fallbackRedirectUrl: callbackUrl ? callbackUrl : APP_MYACCOUNT_URL,
+        setState(state)
+        // openSignIn({
+        //   fallbackRedirectUrl: state.target.path || APP_MYACCOUNT_URL,
+        // })
+        redirectToSignIn({
+          redirectUrl: APP_ACCOUNT_OAUTH2_CLERK_SIGNIN_CALLBACK_URL,
         })
       }}
       aria-label={TEXT_SIGN_IN}
     >
-      {TEXT_SIGN_IN}
+      {TEXT_SIGN_IN} with Clerk
     </Button>
   )
 }

@@ -1,5 +1,6 @@
+import type { IDBEntity } from '@/interfaces/db-entity'
 import { randomHexColor } from './color/color'
-import { makeUUIDv7 } from './id'
+import { makeUuid } from './id'
 
 // export interface IBaseClusterGroup {
 //   name: string
@@ -7,14 +8,14 @@ import { makeUUIDv7 } from './id'
 //   color: string
 // }
 
-export interface IClusterGroup {
+export interface IClusterGroup extends IDBEntity {
   version: number
-  id: string
-  name: string
   search: string[]
   exactMatch?: boolean
   color: string
-  columnNames: string[]
+  columns: string[]
+  type: 'cluster-group'
+  show: boolean
 }
 
 interface IGroupProps {
@@ -42,11 +43,13 @@ export function makeNewGroup(
 ): IClusterGroup {
   return {
     version: 2,
-    id: makeUUIDv7(),
+    id: makeUuid(),
     name,
     search,
     exactMatch,
     color,
-    columnNames,
+    columns: columnNames,
+    type: 'cluster-group',
+    show: true,
   }
 }

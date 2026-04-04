@@ -1,13 +1,12 @@
-import { type IButtonProps } from '@themed/button'
+import { type IButtonProps } from '@/themed/v2/button'
 import { ToolbarButton } from './toolbar-button'
 
 export function ToolbarIconButton({
   ref,
   variant = 'flat',
-  size = 'toolbar-icon',
   pad = 'none',
   aspect = 'icon',
-  className,
+  className = '',
   children,
   ...props
 }: IButtonProps) {
@@ -15,7 +14,7 @@ export function ToolbarIconButton({
     <ToolbarButton
       ref={ref}
       variant={variant}
-      size={size}
+      size="toolbar"
       pad={pad}
       aspect={aspect}
       className={className}

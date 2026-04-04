@@ -1,23 +1,23 @@
-import { DoubleNumericalInput } from '@components/double-numerical-input'
-import { PropsPanel } from '@components/props-panel'
-import { PropRow } from '@dialog/prop-row'
+import { DoubleNumericalInput } from '@/components/double-numerical-input'
+import { PropsPanel } from '@/components/props-panel'
+import { PropRow } from '@/dialog/prop-row'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@themed/accordion'
+} from '@/themed/v2/accordion'
 import { forwardRef, type ForwardedRef } from 'react'
 
-import { TEXT_RESET } from '@/consts'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@components/color/color-picker-button'
-import { SwitchPropRow } from '@dialog/switch-prop-row'
-import { VCenterRow } from '@layout/v-center-row'
-import { LinkButton } from '@themed/link-button'
-import { NumericalInput } from '@themed/numerical-input'
+} from '@/components/color/color-picker-button'
+import { TEXT_RESET } from '@/consts'
+import { SwitchPropRow } from '@/dialog/switch-prop-row'
+import { VCenterRow } from '@/layout/v-center-row'
+import { LinkButton } from '@/themed/link-button'
+import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
 import { useGsea } from './gsea-store'
 
@@ -68,16 +68,16 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
         >
           <AccordionItem value="page">
             <AccordionTrigger>Page</AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent variant="sidebar">
               <PropRow title="Columns">
                 <NumericalInput
                   value={settings.page.columns}
                   placeholder="Opacity"
                   limit={[1, 100]}
                   step={1}
-                  onNumChanged={(v) => {
+                  onNumChanged={v => {
                     updateSettings(
-                      produce(settings, (draft) => {
+                      produce(settings, draft => {
                         draft.page.columns = v
                       })
                     )
@@ -89,16 +89,16 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
           </AccordionItem>
           <AccordionItem value="padding">
             <AccordionTrigger>Padding</AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent variant="sidebar">
               <PropRow title="Top">
                 <NumericalInput
                   value={settings.plot.margin.top}
                   placeholder="Opacity"
                   limit={[1, 1000]}
                   step={1}
-                  onNumChanged={(v) => {
+                  onNumChanged={v => {
                     updateSettings(
-                      produce(settings, (draft) => {
+                      produce(settings, draft => {
                         draft.plot.margin.top = v
                       })
                     )
@@ -112,9 +112,9 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   placeholder="Opacity"
                   limit={[1, 1000]}
                   step={1}
-                  onNumChanged={(v) => {
+                  onNumChanged={v => {
                     updateSettings(
-                      produce(settings, (draft) => {
+                      produce(settings, draft => {
                         draft.plot.margin.left = v
                       })
                     )
@@ -128,9 +128,9 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   placeholder="Opacity"
                   limit={[1, 1000]}
                   step={1}
-                  onNumChanged={(v) => {
+                  onNumChanged={v => {
                     updateSettings(
-                      produce(settings, (draft) => {
+                      produce(settings, draft => {
                         draft.plot.margin.bottom = v
                       })
                     )
@@ -144,9 +144,9 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   placeholder="Opacity"
                   limit={[1, 1000]}
                   step={1}
-                  onNumChanged={(v) => {
+                  onNumChanged={v => {
                     updateSettings(
-                      produce(settings, (draft) => {
+                      produce(settings, draft => {
                         draft.plot.margin.right = v
                       })
                     )
@@ -159,24 +159,24 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
 
           <AccordionItem value="enrichment-plot">
             <AccordionTrigger>Enrichment</AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent variant="sidebar">
               <PropRow title="Size">
                 <DoubleNumericalInput
                   v1={settings.axes.x.length}
                   placeholder="Width"
                   limit={[1, 1000]}
                   dp={0}
-                  onNumChanged1={(v) => {
+                  onNumChanged1={v => {
                     updateSettings(
-                      produce(settings, (draft) => {
+                      produce(settings, draft => {
                         draft.axes.x.length = v
                       })
                     )
                   }}
                   v2={settings.es.axes.y.length}
-                  onNumChanged2={(v) => {
+                  onNumChanged2={v => {
                     updateSettings(
-                      produce(settings, (draft) => {
+                      produce(settings, draft => {
                         draft.es.axes.y.length = v
                       })
                     )
@@ -186,9 +186,9 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
               <PropRow title="Line color">
                 <ColorPickerButton
                   color={settings.es.line.color}
-                  onColorChange={(color) => {
+                  onColorChange={color => {
                     updateSettings(
-                      produce(settings, (draft) => {
+                      produce(settings, draft => {
                         draft.es.line.color = color
                       })
                     )
@@ -205,9 +205,9 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   placeholder="Stroke"
                   limit={[1, 100]}
                   step={1}
-                  onNumChanged={(v) => {
+                  onNumChanged={v => {
                     updateSettings(
-                      produce(settings, (draft) => {
+                      produce(settings, draft => {
                         draft.es.line.width = v
                       })
                     )
@@ -219,9 +219,9 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
               <SwitchPropRow
                 title="Leading Edge"
                 checked={settings.es.leadingEdge.show}
-                onCheckedChange={(state) => {
+                onCheckedChange={state => {
                   updateSettings(
-                    produce(settings, (draft) => {
+                    produce(settings, draft => {
                       draft.es.leadingEdge.show = state
                     })
                   )
@@ -231,9 +231,9 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
               <PropRow title="Color" className="ml-2">
                 <ColorPickerButton
                   color={settings.es.leadingEdge.fill.color}
-                  onColorChange={(color) => {
+                  onColorChange={color => {
                     updateSettings(
-                      produce(settings, (draft) => {
+                      produce(settings, draft => {
                         draft.es.leadingEdge.fill.color = color
                       })
                     )
@@ -251,9 +251,9 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   limit={[0, 1]}
                   step={0.1}
                   dp={1}
-                  onNumChanged={(v) => {
+                  onNumChanged={v => {
                     updateSettings(
-                      produce(settings, (draft) => {
+                      produce(settings, draft => {
                         draft.es.leadingEdge.fill.opacity = v
                       })
                     )
@@ -265,13 +265,13 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
           </AccordionItem>
           <AccordionItem value="genes-plot">
             <AccordionTrigger>Genes</AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent variant="sidebar">
               <SwitchPropRow
                 title="Show"
                 checked={settings.genes.show}
-                onCheckedChange={(state) => {
+                onCheckedChange={state => {
                   updateSettings(
-                    produce(settings, (draft) => {
+                    produce(settings, draft => {
                       draft.genes.show = state
                     })
                   )
@@ -284,9 +284,9 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   placeholder="Height"
                   limit={[1, 100]}
                   step={1}
-                  onNumChanged={(v) => {
+                  onNumChanged={v => {
                     updateSettings(
-                      produce(settings, (draft) => {
+                      produce(settings, draft => {
                         draft.genes.height = v
                       })
                     )
@@ -301,9 +301,9 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   placeholder="Stroke"
                   limit={[1, 100]}
                   step={1}
-                  onNumChanged={(v) => {
+                  onNumChanged={v => {
                     updateSettings(
-                      produce(settings, (draft) => {
+                      produce(settings, draft => {
                         draft.genes.line.width = v
                       })
                     )
@@ -316,9 +316,9 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                 <ColorPickerButton
                   disabled={!settings.genes.show}
                   color={settings.genes.pos.color}
-                  onColorChange={(color) => {
+                  onColorChange={color => {
                     updateSettings(
-                      produce(settings, (draft) => {
+                      produce(settings, draft => {
                         draft.genes.pos.color = color
                       })
                     )
@@ -331,9 +331,9 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                 <ColorPickerButton
                   disabled={!settings.genes.show}
                   color={settings.genes.neg.color}
-                  onColorChange={(color) => {
+                  onColorChange={color => {
                     updateSettings(
-                      produce(settings, (draft) => {
+                      produce(settings, draft => {
                         draft.genes.neg.color = color
                       })
                     )
@@ -347,13 +347,13 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
 
           <AccordionItem value="rank-plot">
             <AccordionTrigger>Ranked Genes</AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent variant="sidebar">
               <SwitchPropRow
                 title="Show"
                 checked={settings.ranking.show}
-                onCheckedChange={(state) => {
+                onCheckedChange={state => {
                   updateSettings(
-                    produce(settings, (draft) => {
+                    produce(settings, draft => {
                       draft.ranking.show = state
                     })
                   )
@@ -364,9 +364,9 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                 <ColorPickerButton
                   color={settings.ranking.fill.color}
                   disabled={!settings.ranking.show}
-                  onColorChange={(color) => {
+                  onColorChange={color => {
                     updateSettings(
-                      produce(settings, (draft) => {
+                      produce(settings, draft => {
                         draft.ranking.fill.color = color
                       })
                     )
@@ -384,9 +384,9 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                   limit={[0, 1]}
                   step={0.1}
                   dp={1}
-                  onNumChanged={(v) => {
+                  onNumChanged={v => {
                     updateSettings(
-                      produce(settings, (draft) => {
+                      produce(settings, draft => {
                         draft.ranking.fill.opacity = v
                       })
                     )
@@ -400,9 +400,9 @@ export const GseaPropsPanel = forwardRef(function GseaPropsPanel(
                 title="Zero crossing"
                 checked={settings.ranking.zeroCross.show}
                 disabled={!settings.ranking.show}
-                onCheckedChange={(state) =>
+                onCheckedChange={state =>
                   updateSettings(
-                    produce(settings, (draft) => {
+                    produce(settings, draft => {
                       draft.ranking.zeroCross.show = state
                     })
                   )

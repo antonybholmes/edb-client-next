@@ -8,6 +8,8 @@ self.onmessage = function (
 ) {
   const { rankedGenes, gs1, gs2 } = e.data
 
+  //console.log('Worker received data:', e.data)
+
   const extGsea = new ExtGSEA(rankedGenes)
 
   const extGseaRes = extGsea.runExtGsea(gs1, gs2)
@@ -15,6 +17,8 @@ self.onmessage = function (
   const gseaRes1 = extGsea.runGSEA(extGsea.gs1)
 
   const gseaRes2 = extGsea.runGSEA(extGsea.gs2)
+
+  //console.log('Worker computed results:', { extGseaRes, gseaRes1, gseaRes2 })
 
   self.postMessage({ extGseaRes, gseaRes1, gseaRes2 })
 }

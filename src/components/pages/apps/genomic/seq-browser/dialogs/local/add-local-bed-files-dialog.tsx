@@ -1,24 +1,21 @@
-import { TEXT_OK } from '@/consts'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@components/color/color-picker-button'
-import { FileDropZonePanel } from '@components/file-dropzone-panel'
-import { VCenterCol } from '@components/layout/v-center-col'
-import { onTextFileChange } from '@components/pages/open-files'
-import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
-import { COLOR_BLACK } from '@lib/color/color'
-import { indexBed } from '@lib/genomic/bed'
-import type { GenomicLocation } from '@lib/genomic/genomic'
-import type { GenomicFeatureIndex } from '@lib/genomic/genomic-index'
-import { textToLines } from '@lib/text/lines'
+} from '@/components/color/color-picker-button'
+import { FileDropZonePanel } from '@/components/file-dropzone-panel'
+import { VCenterCol } from '@/components/layout/v-center-col'
+import { onTextFileChange } from '@/components/pages/open-files'
+import { TEXT_OK } from '@/consts'
+import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { COLOR_BLACK } from '@/lib/color/color'
+import { indexBed } from '@/lib/genomic/bed'
+import type { GenLoc } from '@/lib/genomic/genomic'
+import type { GenomicFeatureIndex } from '@/lib/genomic/genomic-index'
+import { textToLines } from '@/lib/text/lines'
 import { useState } from 'react'
 
 export interface IProps {
-  callback?: (
-    color: string,
-    indexes: GenomicFeatureIndex<GenomicLocation>[]
-  ) => void
+  callback?: (color: string, indexes: GenomicFeatureIndex<GenLoc>[]) => void
   onCancel: () => void
 }
 
@@ -92,7 +89,7 @@ export function AddLocalBedFilesDialog({ callback, onCancel }: IProps) {
 
           const indexes = lines
             .map(l => indexBed(name, l))
-            .filter(i => i !== null) as GenomicFeatureIndex<GenomicLocation>[]
+            .filter(i => i !== null) as GenomicFeatureIndex<GenLoc>[]
 
           callback?.(color, indexes)
         } else {

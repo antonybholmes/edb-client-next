@@ -1,8 +1,8 @@
-import { ModuleButtonLink } from '@components/header/module-button-link'
-import { BaseCol } from '@layout/base-col'
+import { ModuleButtonLink } from '@/components/header/module-button-link'
+import { BaseCol } from '@/layout/base-col'
 
+import { cn } from '@/lib/shadcn-utils'
 import { HEADER_LINKS } from '@/menus'
-import { cn } from '@lib/shadcn-utils'
 
 import type { ComponentProps, MouseEventHandler } from 'react'
 
@@ -12,9 +12,9 @@ interface IProps extends ComponentProps<'a'> {
 }
 
 export function HeaderLinks({ onClick, className }: IProps) {
-  // // let ref
-  // // const tMenuLinkF
-  // // const tMenuLinkR
+  // let ref
+  // const tMenuLinkF
+  // const tMenuLinkR
   // const isFirstRun = useRef(0)
 
   // useEffect(() => {

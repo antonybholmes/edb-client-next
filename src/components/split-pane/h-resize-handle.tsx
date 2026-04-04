@@ -1,7 +1,7 @@
 import { useStableId } from '@/hooks/stable-id'
+import { cn } from '@/lib/shadcn-utils'
 import { TRANS_COLOR_CLS, TRANS_OPACITY_CLS } from '@/theme'
 import { HCenterCol } from '@layout/h-center-col'
-import { cn } from '@lib/shadcn-utils'
 import { useState } from 'react'
 import { PanelResizeHandle } from 'react-resizable-panels'
 

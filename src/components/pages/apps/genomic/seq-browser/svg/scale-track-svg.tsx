@@ -1,13 +1,12 @@
-import { type IDivProps } from '@interfaces/div-props'
+import { type IDivProps } from '@/interfaces/div-props'
 
-import { sign } from '@lib/math/sign'
+import { sign } from '@/lib/math/sign'
 import { useContext } from 'react'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
 import { LocationContext, type IScaleTrack } from '../tracks-provider'
 
 interface IProps extends IDivProps {
   genome: string
-
   track: IScaleTrack
 }
 

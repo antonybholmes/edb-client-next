@@ -1,13 +1,12 @@
-import { APP_ID } from '@/consts'
-
+import { config } from '@/config'
 import MODULE_INFO from './module.json'
 
-import { getModuleName } from '@/lib/module-info'
 import {
   DEFAULT_FONT_PROPS,
   type IFontProps,
   type IMarginProps,
-} from '@components/plot/svg-props'
+} from '@/components/plot/svg-props'
+import { getModuleName } from '@/lib/module-info'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
@@ -16,12 +15,21 @@ export type DNABase = 'a' | 'c' | 'g' | 't'
 
 export const LW = 45
 
-const SETTINGS_KEY = `${APP_ID}:module:${getModuleName(MODULE_INFO.name)}:settings:v6`
+const SETTINGS_KEY = `${config.appId}:app:${getModuleName(MODULE_INFO.name)}:settings:v34`
+
+export type MotifSortBy = 'dataset,motif-id' | 'motif-id'
+
+export const SORT_ORDER_MAP: Record<MotifSortBy, string> = {
+  'dataset,motif-id': 'Dataset + Motif ID ',
+  'motif-id': 'Motif ID',
+}
 
 export interface IMotifSettings {
+  sort: { by: MotifSortBy; asc: boolean }
   view: Mode
   plotHeight: number
   letterWidth: number
+  cols: number
   mode: Mode
   zoom: number
   margin: IMarginProps
@@ -29,9 +37,6 @@ export interface IMotifSettings {
   titleOffset: number
   gap: number
   revComp: boolean
-  datasets: {
-    selected: string[]
-  }
 }
 
 export const DEFAULT_SETTINGS: IMotifSettings = {
@@ -39,6 +44,7 @@ export const DEFAULT_SETTINGS: IMotifSettings = {
   plotHeight: 100,
   letterWidth: LW,
   zoom: 1,
+  cols: 1,
   mode: 'bits',
   gap: 80,
   margin: { top: 100, right: 100, bottom: 100, left: 100 },
@@ -50,22 +56,20 @@ export const DEFAULT_SETTINGS: IMotifSettings = {
   },
   titleOffset: 10,
   revComp: false,
-  datasets: {
-    selected: ['H12CORE'],
-  },
+
+  sort: { by: 'dataset,motif-id', asc: true },
 }
 
 export interface IMotifStore extends IMotifSettings {
   updateSettings: (settings: Partial<IMotifSettings>) => void
-  //applyTheme: (theme: Theme) => void
 }
 
 export const useMotifStore = create<IMotifStore>()(
   persist(
-    (set) => ({
+    set => ({
       ...DEFAULT_SETTINGS,
       updateSettings: (settings: Partial<IMotifSettings>) => {
-        set((state) => ({ ...state, ...settings }))
+        set(state => ({ ...state, ...settings }))
       },
     }),
     {
@@ -99,9 +103,12 @@ export function useMotifSettings(): {
   updateSettings: (settings: Partial<IMotifSettings>) => void
   resetSettings: () => void
 } {
-  const settings = useMotifStore((state) => state)
-  const updateSettings = useMotifStore((state) => state.updateSettings)
-  const resetSettings = () => updateSettings({ ...DEFAULT_SETTINGS })
+  const settings = useMotifStore(state => state)
+  const updateSettings = useMotifStore(state => state.updateSettings)
+  const resetSettings = () =>
+    updateSettings({
+      ...DEFAULT_SETTINGS,
+    })
 
   return { settings, updateSettings, resetSettings }
 }

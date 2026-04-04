@@ -1,42 +1,36 @@
-import { ChevronRightIcon } from '@icons/chevron-right-icon'
-import { VCenterRow } from '@layout/v-center-row'
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
+import { ChevronRightIcon } from '@/icons/chevron-right-icon'
+import { VCenterRow } from '@/layout/v-center-row'
 import type { TabsProps } from '@radix-ui/react-tabs'
-import { Tabs, TabsContent } from '@themed/tabs'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { ToolbarIconButton } from './toolbar-icon-button'
-import { ToolbarTabGroup } from './toolbar-tab-group'
 
+import { type IFileDropProps } from '@/components/file-drop-panel'
+import { cn } from '@/lib/shadcn-utils'
 import { DRAG_OUTLINE_CLS } from '@/theme'
-import { type IFileDropProps } from '@components/file-drop-panel'
-import { cn } from '@lib/shadcn-utils'
 import { FileDropZonePanel } from '../file-dropzone-panel'
 import { HamburgerIcon } from '../icons/hamburger-icon'
+import { IconButton } from '../shadcn/ui/themed/icon-button'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '../shadcn/ui/themed/dropdown-menu'
-import { IconButton } from '../shadcn/ui/themed/icon-button'
+} from '../shadcn/ui/themed/v2/dropdown-menu'
 import { ReorderTabs, type ITabReorder } from '../tabs/reorder-tabs'
-import { TabIndicatorProvider } from '../tabs/tab-indicator-provider'
 import {
   getTabFromValue,
   getTabName,
   type ITab,
   type ITabProvider,
 } from '../tabs/tab-provider'
-import { UnderlineTabs, type ITabMenu } from '../tabs/underline-tabs'
+import { type ITabMenu } from '../tabs/underline-tabs'
 
 // const LINE_CLS =
 //   "tab-line absolute bottom-0 left-0 block h-0.5 bg-theme"
 
 interface IBottomBarProps
-  extends TabsProps,
-    ITabProvider,
-    IFileDropProps,
-    ITabMenu,
-    ITabReorder {
+  extends TabsProps, ITabProvider, IFileDropProps, ITabMenu, ITabReorder {
   maxNameLength?: number
   padding?: number
   scale?: number
@@ -55,11 +49,12 @@ export function BottomBar({
   onFileDrop = undefined,
   allowReorder = false,
   className,
-  style,
+  style = {},
   onReorder = () => {},
   menuCallback = () => {},
   menuActions = [],
 }: IBottomBarProps) {
+  //const _id = useStableId('bottom-bar')
   const [mounted, setMounted] = useState(false)
   const selectedTab = useMemo(() => getTabFromValue(value, tabs), [value, tabs])
 
@@ -91,25 +86,21 @@ export function BottomBar({
       value={selectedTabId}
       onValueChange={_onValueChange}
       className={cn(
-        'flex grow flex-col',
+        'flex grow flex-col border border-green-300',
         [onFileDrop !== undefined, DRAG_OUTLINE_CLS],
         className
       )}
       style={style}
     >
-      {tabs.map((tab) => (
-        <TabsContent
-          value={tab.id}
-          key={tab.id}
-          className="hidden data-[state=active]:flex flex-col grow"
-        >
-          {tab.id === selectedTabId && tab.content}
+      {tabs.map(tab => (
+        <TabsContent value={tab.id} key={tab.id} className="flex flex-col grow">
+          {tab.content}
         </TabsContent>
       ))}
 
       <VCenterRow className="shrink-0 justify-between text-xs">
         <VCenterRow className="gap-x-2">
-          <ToolbarTabGroup>
+          <VCenterRow>
             <ToolbarIconButton
               title="Previous Sheet"
               variant="flat"
@@ -118,8 +109,8 @@ export function BottomBar({
               onClick={() => {
                 const selectedTabIndex = tabs
                   .map((t, ti) => [t, ti] as [ITab, number])
-                  .filter((t) => t[0]!.id === selectedTab.tab.id)
-                  .map((t) => t[1]!)[0]!
+                  .filter(t => t[0]!.id === selectedTab.tab.id)
+                  .map(t => t[1]!)[0]!
 
                 const i =
                   selectedTabIndex === 0
@@ -136,7 +127,6 @@ export function BottomBar({
             </ToolbarIconButton>
             <ToolbarIconButton
               title="Next Sheet"
-              variant="flat"
               size="icon-sm"
               //rounded="full"
               onClick={() => {
@@ -150,8 +140,8 @@ export function BottomBar({
 
                 const selectedTabIndex = tabs
                   .map((t, ti) => [t, ti] as [ITab, number])
-                  .filter((t) => t[0]!.id === selectedTab.tab.id)
-                  .map((t) => t[1]!)[0]!
+                  .filter(t => t[0]!.id === selectedTab.tab.id)
+                  .map(t => t[1]!)[0]!
 
                 const i = Math.max(
                   0,
@@ -168,13 +158,15 @@ export function BottomBar({
             </ToolbarIconButton>
 
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <IconButton size="icon-sm" title="Sheet List">
-                  <HamburgerIcon />
-                </IconButton>
-              </DropdownMenuTrigger>
+              <DropdownMenuTrigger
+                render={
+                  <IconButton size="icon-sm" title="Sheet List">
+                    <HamburgerIcon />
+                  </IconButton>
+                }
+              />
               <DropdownMenuContent align="start">
-                {tabs.map((tab) => (
+                {tabs.map(tab => (
                   <DropdownMenuCheckboxItem
                     id={tab.id}
                     key={tab.id}
@@ -185,29 +177,18 @@ export function BottomBar({
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-          </ToolbarTabGroup>
-          <TabIndicatorProvider>
-            {allowReorder ? (
-              <ReorderTabs
-                value={selectedTabId}
-                tabs={tabs}
-                maxNameLength={maxNameLength}
-                variant="sheet"
-                menuCallback={menuCallback}
-                menuActions={menuActions}
-                onReorder={onReorder}
-              />
-            ) : (
-              <UnderlineTabs
-                value={selectedTabId}
-                tabs={tabs}
-                maxNameLength={maxNameLength}
-                variant="sheet"
-                //menuCallback={menuCallback}
-                //menuActions={menuActions}
-              />
-            )}
-          </TabIndicatorProvider>
+          </VCenterRow>
+
+          <ReorderTabs
+            value={selectedTabId}
+            tabs={tabs}
+            maxNameLength={maxNameLength}
+            variant="sheet"
+            menuCallback={menuCallback}
+            menuActions={menuActions}
+            onReorder={onReorder}
+            allowReorder={allowReorder}
+          />
         </VCenterRow>
         {rightContent}
       </VCenterRow>

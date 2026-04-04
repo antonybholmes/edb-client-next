@@ -2,8 +2,8 @@ import {
   type ISaveAsDialogProps,
   type ISaveAsFormat,
   SaveAsDialog,
-} from '@components/pages/save-as-dialog'
-import { FILE_FORMAT_JSON } from '@components/pages/save-txt-dialog'
+} from '@/components/pages/save-as-dialog'
+import { FILE_FORMAT_JSON } from '@/components/pages/save-txt-dialog'
 
 const GROUP_FILE_FORMATS: ISaveAsFormat[] = [
   FILE_FORMAT_JSON,

@@ -1,19 +1,24 @@
-import { OKCancelDialog, type IModalProps } from '@dialog/ok-cancel-dialog'
-import axios from 'axios'
+import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
 
-import { STATUS_CODE_OK, TEXT_OK } from '@/consts'
-import { API_RESET_EMAIL_URL, APP_UPDATE_EMAIL_URL } from '@lib/edb/edb'
+import { TEXT_OK } from '@/consts'
+import { API_RESET_EMAIL_URL, APP_UPDATE_EMAIL_URL } from '@/lib/edb/edb'
 
-import { FormInputError } from '@components/input-error'
-import { Form, FormField, FormItem } from '@themed/form'
-import { Input } from '@themed/input'
-//import { AccountContext } from "@hooks/use-account"
-import { EMAIL_PATTERN } from '@layouts/signin-layout'
+import { FormInputError } from '@/components/input-error'
+import {
+  Form,
+  FormField,
+  FormItem,
+} from '@/components/shadcn/ui/themed/v2/form'
+import { Input } from '@/themed/v2/input'
+//import { AccountContext } from "@/hooks/use-account"
+import { EMAIL_PATTERN } from '@/layouts/signin-layout'
 
-import { useEdbAuth } from '@lib/edb/edb-auth'
-import { bearerHeaders } from '@lib/http/urls'
-import { useQueryClient } from '@tanstack/react-query'
-import { toast } from '@themed/crisp'
+import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { bearerHeaders } from '@/lib/http/urls'
+
+import { httpFetch } from '@/lib/http/http-fetch'
+import { makeUuid } from '@/lib/id'
+import { Toast } from '@base-ui/react/toast'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -53,9 +58,7 @@ export function EmailDialog({
   onOpenChange = () => {},
   onResponse = () => {},
 }: IModalProps) {
-  const queryClient = useQueryClient()
-
-  //const { password, password1, password2 } = passwords
+  const { add: addToast } = Toast.useToastManager()
 
   //const [settings, settingsDispatch] = useContext(SettingsContext)
   //const [account, accountDispatch] = useContext(AccountContext)
@@ -79,39 +82,25 @@ export function EmailDialog({
     const accessToken = await fetchAccessToken()
 
     try {
-      const res = await queryClient.fetchQuery({
-        queryKey: ['reset'],
-        queryFn: () =>
-          axios.post(
-            API_RESET_EMAIL_URL,
-            {
-              email,
-              callbackUrl: APP_UPDATE_EMAIL_URL,
-            },
-            {
-              //withCredentials: true,
-              headers: bearerHeaders(accessToken),
-            }
-          ),
+      await httpFetch.post(API_RESET_EMAIL_URL, {
+        headers: bearerHeaders(accessToken),
+        body: {
+          email,
+          callbackUrl: APP_UPDATE_EMAIL_URL,
+        },
       })
 
-      if (res.status !== STATUS_CODE_OK) {
-        toast({
-          title: res.data,
-          variant: 'destructive',
-        })
-
-        return
-      }
-
-      toast({
+      addToast({
+        id: makeUuid(),
         title:
           'Please check your email for a link to change your email address',
+        type: 'success',
       })
     } catch (error) {
-      toast({
+      addToast({
+        id: makeUuid(),
         title: error as string,
-        variant: 'destructive',
+        type: 'destructive',
       })
       console.error(error)
     }

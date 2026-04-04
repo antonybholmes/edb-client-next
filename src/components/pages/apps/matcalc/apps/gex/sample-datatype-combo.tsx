@@ -1,20 +1,26 @@
-import { CheckIcon } from '@icons/check-icon'
-import { ChevronUpDownIcon } from '@icons/chevron-up-down-icon'
-import type { IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/shadcn-utils'
-import { Button } from '@themed/button'
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  triggerVariants,
+} from '@/components/shadcn/ui/themed/v2/popover'
+import { ChevronUpDownIcon } from '@/icons/chevron-up-down-icon'
+import type { IDivProps } from '@/interfaces/div-props'
+import { cn } from '@/lib/shadcn-utils'
+import {
+  CheckedCommandItem,
   Command,
   CommandEmpty,
-  CommandGroup,
   CommandInput,
-  CommandItem,
   CommandList,
-} from '@themed/command'
-import { Popover, PopoverContent, PopoverTrigger } from '@themed/popover'
+} from '@/themed/command'
+import type { VariantProps } from 'class-variance-authority'
 import { useState } from 'react'
 
-interface IProp extends IDivProps {
+const CLS = `flex flex-row items-center gap-x-4 justify-between border border-border/50 
+  hover:border-ring data-popup-open:border-ring trans-color h-9 pl-2 pr-1 rounded-theme`
+
+interface IProp extends IDivProps, VariantProps<typeof triggerVariants> {
   selectedValues: string[]
   setValue?: (value: string, selected: boolean) => void
   values: string[]
@@ -28,58 +34,42 @@ export function SampleDataTypeCombo({
 }: IProp) {
   const [open, setOpen] = useState(false)
 
+  //console.log('SampleDataTypeCombo: selectedValues', selectedValues)
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="input"
-          role="combobox"
-          // ripple={false}
-          aria-expanded={open}
-          checked={open}
-          justify="start"
-          className={cn('gap-x-4', className)}
-        >
-          <span className="truncate grow text-left">
-            {selectedValues.length > 0
-              ? selectedValues.join(', ')
-              : 'Select sample info...'}
-          </span>
-          <ChevronUpDownIcon className="opacity-50" />
-        </Button>
+      <PopoverTrigger className={cn(CLS, className)} w="lg">
+        <span className="truncate grow text-left">
+          {selectedValues.length > 0
+            ? selectedValues.join(', ')
+            : 'Select sample info...'}
+        </span>
+        <ChevronUpDownIcon className="opacity-50" />
       </PopoverTrigger>
+
       <PopoverContent>
         <Command>
           <CommandInput placeholder="Search sample info..." />
           <CommandList>
             <CommandEmpty>No sample info found.</CommandEmpty>
-            <CommandGroup>
-              {values.map((v) => (
-                <CommandItem
-                  key={v}
-                  value={v}
-                  onSelect={(currentValue) => {
-                    console.log(currentValue)
-                    setValue?.(
-                      currentValue,
-                      !selectedValues.includes(currentValue)
-                    )
-                    setOpen(false)
-                  }}
-                >
-                  <></>
-                  {v}
-                  <CheckIcon
-                    stroke=""
-                    className={cn([
-                      selectedValues.includes(v),
-                      'opacity-100',
-                      'opacity-0',
-                    ])}
-                  />
-                </CommandItem>
-              ))}
-            </CommandGroup>
+
+            {values.map(v => (
+              <CheckedCommandItem
+                key={v}
+                value={v}
+                checked={selectedValues.includes(v)}
+                onSelect={currentValue => {
+                  console.log(currentValue)
+                  setValue?.(
+                    currentValue,
+                    !selectedValues.includes(currentValue)
+                  )
+                  setOpen(false)
+                }}
+              >
+                {v}
+              </CheckedCommandItem>
+            ))}
           </CommandList>
         </Command>
       </PopoverContent>

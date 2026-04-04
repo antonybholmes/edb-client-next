@@ -1,44 +1,46 @@
-import { ChevronRightIcon } from '@icons/chevron-right-icon'
-import { cn } from '@lib/shadcn-utils'
+import { cn } from '@/lib/shadcn-utils'
+import { ChevronDown } from 'lucide-react'
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '../shadcn/ui/themed/dropdown-menu'
+} from '../shadcn/ui/themed/v2/dropdown-menu'
 import { ToolbarButton } from './toolbar-button'
 
-interface IProps extends ComponentProps<'button'> {
+type IProps = ComponentProps<typeof ToolbarButton> & {
   icon: ReactNode
   menuClassName?: string
+  showArrow?: boolean
 }
 
 export function ToolbarDropdownButton({
   icon,
-  className,
-  menuClassName,
+  className = '',
+  menuClassName = '',
+  showArrow = true,
+  title,
   children,
-  ...props
 }: IProps) {
   const [open, setOpen] = useState(false)
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>
-        <ToolbarButton
-          className={cn('gap-x-2', className)}
-          {...props}
-          //checked={open}
-          //onClick={() => setOpen(true)}
-        >
-          {icon}
+      <DropdownMenuTrigger
+        render={
+          <ToolbarButton
+            //size={showArrow ? 'icon' : 'toolbar'}
+            aspect={showArrow ? 'auto' : 'icon'}
+            pad={showArrow ? 'xs' : 'none'}
+            className={cn('gap-x-1', className)}
+            title={title}
+          >
+            {icon}
 
-          <ChevronRightIcon
-            className="rotate-90 -mr-1"
-            stroke="stroke-foreground stroke-2"
-          />
-        </ToolbarButton>
-      </DropdownMenuTrigger>
+            {showArrow && <ChevronDown size={16} strokeWidth={2} />}
+          </ToolbarButton>
+        }
+      />
 
       <DropdownMenuContent
         //onInteractOutside={() => setOpen(false)}

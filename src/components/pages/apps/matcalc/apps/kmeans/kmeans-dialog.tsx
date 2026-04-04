@@ -1,18 +1,20 @@
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
-import { OKCancelDialog, type IModalProps } from '@dialog/ok-cancel-dialog'
-import { VCenterRow } from '@layout/v-center-row'
-import { type IDistFunc } from '@lib/math/hcluster'
+import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
+import { VCenterRow } from '@/layout/v-center-row'
+import { type IDistFunc } from '@/lib/math/hcluster'
 import { useState } from 'react'
 
-import { SelectItem, SelectList } from '@themed/select'
+import { SelectItem, SelectList } from '@/themed/v2/select'
 
 import {
   euclidean as euclideanDist,
   pearsond as pearsonDist,
-} from '@lib/math/distance'
+} from '@/lib/math/distance'
 
-import { SettingsAccordionItem } from '@dialog/settings/settings-dialog'
-import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
+import { CheckPropRow } from '@/components/dialog/check-prop-row'
+import { PropRow } from '@/components/dialog/prop-row'
+import { SettingsAccordionItem } from '@/dialog/settings/settings-dialog'
+import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import {
   kmeans,
   log,
@@ -20,13 +22,13 @@ import {
   medianFilter,
   rowZScore,
   stdevFilter,
-} from '@lib/dataframe/dataframe-utils'
-import { argsort } from '@lib/math/argsort'
-import { Accordion } from '@themed/accordion'
-import { Checkbox } from '@themed/check-box'
-import { NumericalInput } from '@themed/numerical-input'
+} from '@/lib/dataframe/dataframe-utils'
+import { argsort } from '@/lib/math/argsort'
+import { NumericalInput } from '@/themed/numerical-input'
+import { ScrollAccordion } from '@/themed/v2/accordion'
+import { Checkbox } from '@/themed/v2/check-box'
 import { produce } from 'immer'
-import { useHistory } from '../../history/history-store'
+import { useHistory, useSheet } from '../../history/history-store'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 
 export const MAX_HEATMAP_DIM = 10000
@@ -53,11 +55,12 @@ export function KmeansDialog({
   //const [distanceMetric, setDistanceMetric] = useState("Correlation")
 
   const { settings, updateSettings } = useMatcalcSettings()
-  const { sheet, addStep } = useHistory()
+  const { addSheets } = useHistory()
+  const sheet = useSheet()
 
   //const branch = findBranch(branchAddr, history)[0]
   //const step = currentStep(branch)[0]
-  let df = sheet //currentSheet(step)[0]
+  let df = sheet as AnnotationDataFrame
 
   const [error] = useState('')
 
@@ -114,11 +117,9 @@ export function KmeansDialog({
       )
 
       if (settings.apps.kmeans.sortByCluster) {
-        //const clusters = df.rowMetaData.col('Cluster').values as string[]
-
         const idx = argsort(clusters)
 
-        df = df.iloc(idx, ':') as AnnotationDataFrame
+        df = df.iloc({ rows: idx }) as AnnotationDataFrame
       }
     }
 
@@ -136,11 +137,11 @@ export function KmeansDialog({
 
         const idx = argsort(clusters)
 
-        df = df.iloc(':', idx) as AnnotationDataFrame
+        df = df.iloc({ cols: idx }) as AnnotationDataFrame
       }
     }
 
-    addStep('K-means', [df.setName('K-means') as AnnotationDataFrame])
+    addSheets([df.setName('K-means')], { name: 'K-means' })
 
     onResponse?.(TEXT_OK, {
       df,
@@ -163,10 +164,10 @@ export function KmeansDialog({
       //contentVariant="glass"
     >
       {error && <span className="text-destructive">{error}</span>}
-      <Accordion
-        type="multiple"
-        defaultValue={['filter', 'transform', 'cluster']}
-        //className="bg-background rounded-lg p-4"
+      <ScrollAccordion
+        value={['filter', 'transform', 'cluster']}
+        variant="settings"
+        className="h-72"
       >
         <SettingsAccordionItem title="Filter">
           <VCenterRow className="gap-x-2">
@@ -199,11 +200,13 @@ export function KmeansDialog({
             <SelectList
               value={settings.apps.kmeans.rowFilterMethod}
               onValueChange={v => {
-                const newSettings = produce(settings, draft => {
-                  draft.apps.kmeans.rowFilterMethod = v
-                })
+                if (v) {
+                  const newSettings = produce(settings, draft => {
+                    draft.apps.kmeans.rowFilterMethod = v as string
+                  })
 
-                updateSettings(newSettings)
+                  updateSettings(newSettings)
+                }
               }}
               className="w-32"
             >
@@ -215,7 +218,8 @@ export function KmeansDialog({
         </SettingsAccordionItem>
 
         <SettingsAccordionItem title="Transform">
-          <Checkbox
+          <CheckPropRow
+            title="Log2(data+1)"
             checked={settings.apps.kmeans.applyLog2}
             onCheckedChange={v => {
               const newSettings = produce(settings, draft => {
@@ -224,11 +228,10 @@ export function KmeansDialog({
 
               updateSettings(newSettings)
             }}
-          >
-            Log2(data+1)
-          </Checkbox>
+          />
 
-          <Checkbox
+          <CheckPropRow
+            title="Z-score"
             checked={settings.apps.kmeans.applyZscore}
             onCheckedChange={v => {
               const newSettings = produce(settings, draft => {
@@ -237,14 +240,11 @@ export function KmeansDialog({
 
               updateSettings(newSettings)
             }}
-          >
-            Z-score
-          </Checkbox>
+          />
         </SettingsAccordionItem>
 
         <SettingsAccordionItem title="Cluster">
-          <VCenterRow className="gap-x-2 py-1">
-            <span className="w-20">K</span>
+          <PropRow title="K">
             <NumericalInput
               value={settings.apps.kmeans.clusters}
               limit={[0, 1000]}
@@ -258,26 +258,26 @@ export function KmeansDialog({
               }}
               className="w-16 rounded-theme"
             />
-          </VCenterRow>
+          </PropRow>
 
-          <VCenterRow className="gap-x-2 py-1">
-            <span className="w-20">Distance</span>
+          <PropRow title="Distance">
             <SelectList
               value={settings.apps.kmeans.distance}
               onValueChange={v => {
-                const newSettings = produce(settings, draft => {
-                  draft.apps.kmeans.distance = v
-                })
+                if (v) {
+                  const newSettings = produce(settings, draft => {
+                    draft.apps.kmeans.distance = v as string
+                  })
 
-                updateSettings(newSettings)
+                  updateSettings(newSettings)
+                }
               }}
               className="w-40"
             >
               <SelectItem value="Correlation">Correlation</SelectItem>
-
               <SelectItem value="Euclidean">Euclidean</SelectItem>
             </SelectList>
-          </VCenterRow>
+          </PropRow>
 
           {/* <Checkbox
             checked={settings.modules.kmeans.clusterRows}
@@ -305,7 +305,8 @@ export function KmeansDialog({
             Columns
           </Checkbox> */}
 
-          <Checkbox
+          <CheckPropRow
+            title="Sort by cluster"
             checked={settings.apps.kmeans.sortByCluster}
             onCheckedChange={v => {
               const newSettings = produce(settings, draft => {
@@ -314,11 +315,10 @@ export function KmeansDialog({
 
               updateSettings(newSettings)
             }}
-          >
-            Sort by cluster
-          </Checkbox>
+          />
 
-          <Checkbox
+          <CheckPropRow
+            title="Show heatmap"
             checked={settings.apps.kmeans.showHeatmap}
             onCheckedChange={v => {
               const newSettings = produce(settings, draft => {
@@ -327,11 +327,9 @@ export function KmeansDialog({
 
               updateSettings(newSettings)
             }}
-          >
-            Show heatmap
-          </Checkbox>
+          />
         </SettingsAccordionItem>
-      </Accordion>
+      </ScrollAccordion>
     </OKCancelDialog>
   )
 }

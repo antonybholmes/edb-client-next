@@ -1,24 +1,23 @@
+import { SIMPLE_COLOR_EXT_CLS } from '@/components/color/color-picker-button'
+import { ColorPropRow } from '@/components/dialog/color-prop-row'
+import { SettingsAccordionItem } from '@/components/dialog/settings/settings-dialog'
+import { DoubleNumericalInput } from '@/components/double-numerical-input'
+import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
+import { LabelContainer } from '@/components/shadcn/ui/themed/v2/label'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/shadcn/ui/themed/select'
-import { Tabs } from '@/components/shadcn/ui/themed/tabs'
-import { IOSTabsList } from '@/components/tabs/ios-tabs'
+  RadioGroup,
+  RadioGroupItem,
+} from '@/components/shadcn/ui/themed/v2/radio-group'
 import { TEXT_OK } from '@/consts'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@components/color/color-picker-button'
-import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
-import { PropRow } from '@dialog/prop-row'
-import { SwitchPropRow } from '@dialog/switch-prop-row'
-import { NumericalInput } from '@themed/numerical-input'
+import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { PropRow } from '@/dialog/prop-row'
+import { SwitchPropRow } from '@/dialog/switch-prop-row'
+import { NumericalInput } from '@/themed/numerical-input'
+import { SelectItem, SelectList } from '@/themed/v2/select'
 import { produce } from 'immer'
 import { useState } from 'react'
 import {
+  GENE_DISPLAY_OPTIONS,
   useSeqBrowserSettings,
   type GeneDisplay,
   type GeneView,
@@ -98,293 +97,370 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
       //bodyVariant="card"
       //overlayColor="trans"
     >
-      {/* <BaseCol className="bg-background p-4 rounded-lg"> */}
-      <SwitchPropRow
-        title="Labels"
-        checked={settings.genes.labels.show}
-        onCheckedChange={v => {
-          // const newTrack = produce(_track, draft => {
-          //   draft.displayOptions.labels.show = v
-          // })
-
-          // callback?.(group, newTrack)
-          // setTrack(newTrack)
-
-          const newSettings = produce(settings, draft => {
-            draft.genes.labels.show = v
-          })
-
-          updateSettings(newSettings)
-        }}
-      />
-
-      <SwitchPropRow
-        className="ml-4"
-        title="Gene ID"
-        disabled={!settings.genes.labels.show}
-        checked={settings.genes.labels.showGeneId}
-        onCheckedChange={v => {
-          const newSettings = produce(settings, draft => {
-            draft.genes.labels.showGeneId = v
-          })
-
-          updateSettings(newSettings)
-        }}
-      />
-
-      <SwitchPropRow
-        title={
-          <>
-            <ColorPickerButton
-              color={settings.genes.stroke.color}
-              disabled={!settings.genes.stroke.show}
-              onColorChange={v => {
-                // const newTrack = produce(_track, draft => {
-                //   draft.displayOptions.stroke.color = v
-                // })
-
-                // callback?.(group, newTrack)
-                // setTrack(newTrack)
-
-                const newSettings = produce(settings, draft => {
-                  draft.genes.stroke.color = v
-                })
-
-                updateSettings(newSettings)
-              }}
-              className={SIMPLE_COLOR_EXT_CLS}
-              title="Stroke color"
-            />
-            <span>Stroke</span>
-          </>
-        }
-        checked={settings.genes.stroke.show}
-        onCheckedChange={v => {
-          const newSettings = produce(settings, draft => {
-            draft.genes.stroke.show = v
-          })
-
-          updateSettings(newSettings)
-        }}
+      <ScrollAccordion
+        value={['labels', 'genes', 'canonical-genes', 'display-density']}
+        variant="settings"
+        className="h-80"
       >
-        <PropRow title="W">
-          <NumericalInput
-            id="line1-stroke-width"
-            value={settings.genes.stroke.width}
-            disabled={!settings.genes.stroke.show}
-            placeholder="Stroke..."
-            w="w-16"
-            onNumChange={v => {
+        <SettingsAccordionItem
+          title="Labels"
+          description="Configure how genes are labelled"
+          showBorder={false}
+        >
+          <SwitchPropRow
+            title="Show labels"
+            side="right"
+            checked={settings.genes.labels.show}
+            onCheckedChange={v => {
               // const newTrack = produce(_track, draft => {
-              //   draft.displayOptions.stroke.width = v
+              //   draft.displayOptions.labels.show = v
               // })
 
               // callback?.(group, newTrack)
               // setTrack(newTrack)
 
               const newSettings = produce(settings, draft => {
-                draft.genes.stroke.width = v
+                draft.genes.labels.show = v
               })
 
               updateSettings(newSettings)
             }}
+            className="grow"
           />
-        </PropRow>
-      </SwitchPropRow>
-      {/* <SwitchPropRow
-        title="Exons"
-        checked={_track.displayOptions.exons.show}
-        onCheckedChange={v => {
-          const newTrack = produce(_track, draft => {
-            draft.displayOptions.exons.show = v
-          })
 
-          callback?.(group, newTrack)
-          setTrack(newTrack)
-        }}
-      > */}
-
-      <PropRow
-        title={
-          <>
-            <ColorPickerButton
-              color={settings.genes.exons.fill.color}
-              disabled={!settings.genes.exons.fill.show}
-              onColorChange={v => {
-                // const newTrack = produce(_track, draft => {
-                //   draft.displayOptions.exons.fill.color = v
-                // })
-
-                // callback?.(group, newTrack)
-                // setTrack(newTrack)
-
-                const newSettings = produce(settings, draft => {
-                  draft.genes.exons.fill.color = v
-                })
-
-                updateSettings(newSettings)
-              }}
-              className={SIMPLE_COLOR_EXT_CLS}
-              title="Exon color"
-            />
-            <span>Exons</span>
-          </>
-        }
-      >
-        <PropRow title="H">
-          <NumericalInput
-            value={_track.displayOptions.transcripts.height}
-            disabled={!settings.genes.exons.show}
-            placeholder="Height..."
-            w="w-16"
-            onNumChange={v => {
-              const newTrack = produce(_track, draft => {
-                draft.displayOptions.transcripts.height = v
+          <SwitchPropRow
+            title="Add gene Id"
+            side="right"
+            disabled={!settings.genes.labels.show}
+            checked={settings.genes.labels.showGeneId}
+            onCheckedChange={v => {
+              const newSettings = produce(settings, draft => {
+                draft.genes.labels.showGeneId = v
               })
 
-              callback?.(group, newTrack)
-              setTrack(newTrack)
+              updateSettings(newSettings)
             }}
+            className="grow ml-4"
           />
-        </PropRow>
-      </PropRow>
+        </SettingsAccordionItem>
 
-      {/* <SwitchPropRow
-        title="Arrows"
-        checked={_track.displayOptions.arrows.show}
-        onCheckedChange={v => {
-          const newTrack = produce(_track, draft => {
-            draft.displayOptions.arrows.show = v
-          })
+        <SettingsAccordionItem
+          title="Genes"
+          description="Customize the appearance of genes."
+        >
+          <SwitchPropRow
+            checked={settings.genes.stroke.show}
+            onCheckedChange={v => {
+              const newSettings = produce(settings, draft => {
+                draft.genes.stroke.show = v
+              })
 
-          callback?.(group, newTrack)
-          setTrack(newTrack)
-        }}
-      > */}
+              updateSettings(newSettings)
+            }}
+            side="right"
+            title={
+              <ColorPropRow
+                title="Stroke"
+                side="left"
+                color={settings.genes.stroke.color}
+                onColorChange={v => {
+                  updateSettings(
+                    produce(settings, draft => {
+                      draft.genes.stroke.color = v
+                    })
+                  )
+                }}
+                className={SIMPLE_COLOR_EXT_CLS}
+              />
+            }
+          >
+            <LabelContainer label="W">
+              <NumericalInput
+                value={settings.genes.stroke.width}
+                disabled={!settings.genes.stroke.show}
+                placeholder="Stroke..."
+                w="xxs"
+                onNumChange={v => {
+                  const newSettings = produce(settings, draft => {
+                    draft.genes.stroke.width = v
+                  })
 
-      <SwitchPropRow
-        checked={settings.genes.arrows.show}
-        onCheckedChange={v => {
-          const newSettings = produce(settings, draft => {
-            draft.genes.arrows.show = v
-          })
+                  updateSettings(newSettings)
+                }}
+              />
+            </LabelContainer>
+          </SwitchPropRow>
 
-          updateSettings(newSettings)
-        }}
-        title={
-          <>
-            <ColorPickerButton
-              color={_track.displayOptions.arrows.stroke.color}
-              disabled={!_track.displayOptions.arrows.stroke.show}
-              onColorChange={v => {
+          <SwitchPropRow
+            checked={settings.genes.exons.show}
+            onCheckedChange={v => {
+              const newSettings = produce(settings, draft => {
+                draft.genes.exons.show = v
+              })
+
+              updateSettings(newSettings)
+            }}
+            side="right"
+            title={
+              <ColorPropRow
+                title="Exons"
+                side="left"
+                color={settings.genes.exons.fill.color}
+                onColorChange={v => {
+                  updateSettings(
+                    produce(settings, draft => {
+                      draft.genes.exons.fill.color = v
+                    })
+                  )
+                }}
+                className={SIMPLE_COLOR_EXT_CLS}
+              />
+            }
+          >
+            <LabelContainer label="H">
+              <NumericalInput
+                value={settings.genes.exons.height}
+                disabled={!settings.genes.exons.show}
+                placeholder="Height..."
+                w="xxs"
+                onNumChange={v => {
+                  const newSettings = produce(settings, draft => {
+                    draft.genes.exons.height = v
+                  })
+
+                  updateSettings(newSettings)
+                }}
+              />
+            </LabelContainer>
+          </SwitchPropRow>
+
+          <SwitchPropRow
+            checked={settings.genes.cds.show}
+            onCheckedChange={v => {
+              const newSettings = produce(settings, draft => {
+                draft.genes.cds.show = v
+              })
+
+              updateSettings(newSettings)
+            }}
+            side="right"
+            title={
+              <ColorPropRow
+                title="CDS"
+                side="left"
+                color={settings.genes.cds.fill.color}
+                onColorChange={v => {
+                  updateSettings(
+                    produce(settings, draft => {
+                      draft.genes.cds.fill.color = v
+                    })
+                  )
+                }}
+                className={SIMPLE_COLOR_EXT_CLS}
+              />
+            }
+          >
+            <LabelContainer label="H">
+              <NumericalInput
+                value={settings.genes.cds.height}
+                disabled={!settings.genes.cds.show}
+                placeholder="Height..."
+                w="xxs"
+                onNumChange={v => {
+                  const newSettings = produce(settings, draft => {
+                    draft.genes.cds.height = v
+                  })
+
+                  updateSettings(newSettings)
+                }}
+              />
+            </LabelContainer>
+          </SwitchPropRow>
+
+          <SwitchPropRow
+            checked={settings.genes.utrs.show}
+            onCheckedChange={v => {
+              const newSettings = produce(settings, draft => {
+                draft.genes.utrs.show = v
+              })
+
+              updateSettings(newSettings)
+            }}
+            side="right"
+            title={
+              <ColorPropRow
+                title="UTRs"
+                side="left"
+                color={settings.genes.utrs.fill.color}
+                onColorChange={v => {
+                  updateSettings(
+                    produce(settings, draft => {
+                      draft.genes.utrs.fill.color = v
+                    })
+                  )
+                }}
+                className={SIMPLE_COLOR_EXT_CLS}
+              />
+            }
+          >
+            <LabelContainer label="H">
+              <NumericalInput
+                value={settings.genes.utrs.height}
+                disabled={!settings.genes.utrs.show}
+                placeholder="Height..."
+                w="xxs"
+                onNumChange={v => {
+                  const newSettings = produce(settings, draft => {
+                    draft.genes.utrs.height = v
+                  })
+
+                  updateSettings(newSettings)
+                }}
+              />
+            </LabelContainer>
+          </SwitchPropRow>
+
+          <SwitchPropRow
+            checked={settings.genes.arrows.show}
+            onCheckedChange={v => {
+              const newSettings = produce(settings, draft => {
+                draft.genes.arrows.show = v
+              })
+
+              updateSettings(newSettings)
+            }}
+            side="right"
+            title={
+              <ColorPropRow
+                title="Arrows"
+                side="left"
+                color={_track.displayOptions.arrows.stroke.color}
+                onColorChange={v => {
+                  const newTrack = produce(_track, draft => {
+                    draft.displayOptions.arrows.stroke.color = v
+                  })
+
+                  callback?.(group, newTrack)
+                  setTrack(newTrack)
+                }}
+                className={SIMPLE_COLOR_EXT_CLS}
+              />
+            }
+          >
+            <DoubleNumericalInput
+              v1={_track.displayOptions.arrows.x}
+              v2={_track.displayOptions.arrows.y}
+              placeholder="Width..."
+              dp={0}
+              w="xxs"
+              onNumChange1={v => {
                 const newTrack = produce(_track, draft => {
-                  draft.displayOptions.arrows.stroke.color = v
+                  draft.displayOptions.arrows.x = v
                 })
 
                 callback?.(group, newTrack)
                 setTrack(newTrack)
               }}
-              className={SIMPLE_COLOR_EXT_CLS}
-              title="Arrow color"
+              onNumChange2={v => {
+                const newTrack = produce(_track, draft => {
+                  draft.displayOptions.arrows.y = v
+                })
+
+                callback?.(group, newTrack)
+                setTrack(newTrack)
+              }}
             />
-            <span>Arrows</span>
-          </>
-        }
-      >
-        <PropRow title="W">
-          <NumericalInput
-            value={_track.displayOptions.arrows.x}
-            placeholder="Width..."
-            w="w-16"
-            onNumChange={v => {
-              const newTrack = produce(_track, draft => {
-                draft.displayOptions.arrows.x = v
+          </SwitchPropRow>
+        </SettingsAccordionItem>
+
+        <SettingsAccordionItem
+          title="Canonical genes"
+          description="Canonical genes can be displayed differently to other genes."
+        >
+          <SwitchPropRow
+            checked={settings.genes.canonical.isColored}
+            onCheckedChange={v => {
+              const newSettings = produce(settings, draft => {
+                draft.genes.canonical.isColored = v
               })
 
-              callback?.(group, newTrack)
-              setTrack(newTrack)
+              updateSettings(newSettings)
             }}
+            side="right"
+            title={
+              <ColorPropRow
+                title="Highlight canonical genes"
+                side="left"
+                color={settings.genes.canonical.fill.color}
+                onColorChange={v => {
+                  updateSettings(
+                    produce(settings, draft => {
+                      draft.genes.canonical.fill.color = v
+                    })
+                  )
+                }}
+                className={SIMPLE_COLOR_EXT_CLS}
+              />
+            }
           />
-        </PropRow>
 
-        <PropRow title="H">
-          <NumericalInput
-            value={_track.displayOptions.arrows.y}
-            placeholder="Height..."
-            w="w-16"
-            onNumChange={v => {
-              const newTrack = produce(_track, draft => {
-                draft.displayOptions.arrows.y = v
+          <SwitchPropRow
+            checked={settings.genes.canonical.only}
+            onCheckedChange={v => {
+              const newSettings = produce(settings, draft => {
+                draft.genes.canonical.only = v
               })
 
-              callback?.(group, newTrack)
-              setTrack(newTrack)
+              updateSettings(newSettings)
             }}
+            title="Only show canonical genes"
+            side="right"
+            className="ml-4"
           />
-        </PropRow>
-      </SwitchPropRow>
-      <PropRow title="Display">
-        <Select
-          value={settings.genes.display}
-          onValueChange={v => {
-            const newSettings = produce(settings, draft => {
-              draft.genes.display = v as GeneDisplay
-            })
+        </SettingsAccordionItem>
 
-            updateSettings(newSettings)
-          }}
+        <SettingsAccordionItem
+          title="Display density"
+          description="Control the appearance of genes to affect the display density."
         >
-          <SelectTrigger className="w-32">
-            <SelectValue placeholder="Choose display" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="dense">Dense</SelectItem>
-            <SelectItem value="pack">Pack</SelectItem>
-            <SelectItem value="full">Full</SelectItem>
-          </SelectContent>
-        </Select>
-      </PropRow>
-      <PropRow title="View">
-        {/* <Select
-          value={settings.genes.view}
-          onValueChange={v => {
-            const newSettings = produce(settings, draft => {
-              draft.genes.view = v as GeneView
-            })
+          <PropRow title="Display">
+            <SelectList
+              value={settings.genes.display}
+              onValueChange={v => {
+                const newSettings = produce(settings, draft => {
+                  draft.genes.display = v as GeneDisplay
+                })
 
-            updateSettings(newSettings)
-          }}
-        >
-          <SelectTrigger className="w-32">
-            <SelectValue placeholder="Choose view" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="transcripts">Transcripts</SelectItem>
-            <SelectItem value="exon">Exons</SelectItem>
-          </SelectContent>
-        </Select> */}
+                updateSettings(newSettings)
+              }}
+              // so items appear formatted
+              items={GENE_DISPLAY_OPTIONS}
+            >
+              {GENE_DISPLAY_OPTIONS.map(option => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectList>
+          </PropRow>
+          <PropRow title="View" className="items-start">
+            <RadioGroup
+              value={settings.genes.view}
+              onValueChange={v => {
+                const newSettings = produce(settings, draft => {
+                  draft.genes.view = v as GeneView
+                })
 
-        <Tabs
-          value={settings.genes.view}
-          onValueChange={v => {
-            const newSettings = produce(settings, draft => {
-              draft.genes.view = v as GeneView
-            })
-
-            updateSettings(newSettings)
-          }}
-          className="text-xs"
-        >
-          <IOSTabsList
-            defaultWidth="80px"
-            value={settings.genes.view}
-            tabs={[
-              { id: 'transcript', name: 'Transcripts' },
-              { id: 'exon', name: 'Exons' },
-            ]}
-          />
-        </Tabs>
-      </PropRow>
+                updateSettings(newSettings)
+              }}
+              className="text-xs flex flex-col gap-y-2"
+            >
+              <RadioGroupItem value="transcript">Transcripts</RadioGroupItem>
+              <RadioGroupItem value="features">Features</RadioGroupItem>
+            </RadioGroup>
+          </PropRow>
+        </SettingsAccordionItem>
+      </ScrollAccordion>
     </OKCancelDialog>
   )
 }

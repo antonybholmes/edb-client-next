@@ -1,26 +1,26 @@
-'use client'
+// 'use client'
 
-import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
+import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
-import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
+import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
 
 import {
   ShowOptionsMenu,
   Toolbar,
   ToolbarMenu,
   ToolbarPanel,
-} from '@toolbar/toolbar'
-import { ToolbarSeparator } from '@toolbar/toolbar-separator'
+} from '@/toolbar/toolbar'
+import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
 import {
   downloadDataFrame,
   getFormattedShape,
-} from '@lib/dataframe/dataframe-utils'
+} from '@/lib/dataframe/dataframe-utils'
 
-import { BasicAlertDialog } from '@dialog/basic-alert-dialog'
-import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
+import { BasicAlertDialog } from '@/dialog/basic-alert-dialog'
+import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
-import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
+import { ClockRotateLeftIcon } from '@/icons/clock-rotate-left-icon'
 
 import { useEffect, useState } from 'react'
 
@@ -36,71 +36,75 @@ import {
   type IDialogParams,
 } from '@/consts'
 
-import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
-import { randId } from '@lib/id'
-import { DropdownMenuItem } from '@themed/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { randId } from '@/lib/id'
 
-import type { ISaveAsFormat } from '@components/pages/save-as-dialog'
-import { SaveTxtDialog } from '@components/pages/save-txt-dialog'
-import { FileIcon } from '@icons/file-icon'
+import type { ISaveAsFormat } from '@/components/pages/save-as-dialog'
+import { SaveTxtDialog } from '@/components/pages/save-txt-dialog'
+import { FileIcon } from '@/icons/file-icon'
 import {
   AnnotationDataFrame,
   type ISharedAnnotationDataFrame,
-} from '@lib/dataframe/annotation-dataframe'
-import { DataFrame } from '@lib/dataframe/dataframe'
-import { friendlyFilename } from '@lib/path'
-import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
-import { ZoomSlider } from '@toolbar/zoom-slider'
+} from '@/lib/dataframe/annotation-dataframe'
+import { DataFrame } from '@/lib/dataframe/dataframe'
+import { friendlyFilename } from '@/lib/path'
+import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
+import { ZoomSlider } from '@/toolbar/zoom-slider'
 
-import type { ITab } from '@components/tabs/tab-provider'
+import type { ITab } from '@/components/tabs/tab-provider'
 
-import { DownloadIcon } from '@icons/download-icon'
-import { HeaderLayout } from '@layouts/header-layout'
-import { useSearchParams } from 'next/navigation'
+import { useStableId } from '@/hooks/stable-id'
+import { DownloadIcon } from '@/icons/download-icon'
+import { ShortcutLayout } from '@/layouts/shortcut-layout'
+import { CoreProviders } from '@/providers/core-providers'
 import { HistoryPanel } from '../matcalc/history/history-panel'
 import { useHistory } from '../matcalc/history/history-store'
 
+import { BaseCol } from '@/components/layout/base-col'
+import { formatString } from '@/lib/text/format-string'
+import MODULE_INFO from './module.json'
+
 export function TableViewerPage() {
-  const { branch, sheet, openBranch, gotoSheet } = useHistory()
+  const _id = useStableId('table-viewer-page')
+  const { sheet, openBranch, goto } = useHistory()
   const [showSideBar, setShowSideBar] = useState(false)
   const [rightTab, setRightTab] = useState(TEXT_HISTORY)
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  const searchParams = useSearchParams()
-
-  //const urlParams = new URLSearchParams(window.location.search)
-  const key = searchParams.get('key')
-
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const key = urlParams.get('key')
+
     if (key) {
       const sharedData = localStorage.getItem(key)
       if (sharedData) {
         const parsedData: ISharedAnnotationDataFrame = JSON.parse(sharedData)
 
-        const rowMetaData = new DataFrame({
-          data: parsedData.rowMetaData.data,
-          columns: parsedData.rowMetaData.columns,
+        const rowObs = new DataFrame({
+          data: parsedData.rowObs.data,
+          columns: parsedData.rowObs.columns,
         })
 
-        const colMetaData = new DataFrame({
-          data: parsedData.colMetaData.data,
-          columns: parsedData.colMetaData.columns,
+        const colVars = new DataFrame({
+          data: parsedData.colVars.data,
+          columns: parsedData.colVars.columns,
         })
 
         const df = new AnnotationDataFrame({
           name: parsedData.name,
           data: parsedData.data,
-          rowMetaData,
-          colMetaData,
+          rowObs,
+          colVars,
         })
 
-        openBranch(`Load ${df.name}`, [df])
+        openBranch(df.name, { sheets: [df] })
 
         // customize page title
         document.title = `${df.name} - Table Viewer`
       }
     }
-  }, [key])
+  }, [])
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 
@@ -123,7 +127,6 @@ export function TableViewerPage() {
 
   const tabs: ITab[] = [
     {
-      //id: nanoid(),
       id: 'Home',
       content: (
         <>
@@ -158,7 +161,7 @@ export function TableViewerPage() {
       //id: nanoid(),
       icon: <ClockRotateLeftIcon />,
       id: 'History',
-      content: <HistoryPanel branchId={branch?.id ?? ''} />,
+      content: <HistoryPanel />,
     },
   ]
 
@@ -217,10 +220,8 @@ export function TableViewerPage() {
           name={friendlyFilename(sheet?.name ?? 'table')}
           onResponse={(response, data) => {
             if (response !== TEXT_CANCEL) {
-              save(
-                data!.name as string,
-                (data!.format as ISaveAsFormat)!.ext! as string
-              )
+              const d = data as { name: string; format: ISaveAsFormat }
+              save(d.name, d.format.ext)
             }
 
             setShowDialog({ ...NO_DIALOG })
@@ -228,14 +229,34 @@ export function TableViewerPage() {
         />
       )}
 
-      <HeaderLayout showHeader={false}>
-        <Toolbar tabs={tabs}>
+      {/* <HeaderSlotPortal slot="header-left">
+        <ModuleInfoButton info={MODULE_INFO} />
+      </HeaderSlotPortal> */}
+
+      <ShortcutLayout showHeader={false} signinRequired={false}>
+        <Toolbar>
           <ToolbarMenu
+            groupId={_id}
+            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
+            extMenus={{
+              info: (
+                <DropdownMenuItem variant="none" className="h-16">
+                  <BaseCol className="text-xs gap-y-0.5">
+                    <p>{MODULE_INFO.name}</p>
+
+                    <p>Version {MODULE_INFO.version}</p>
+                    <p>{formatString(MODULE_INFO.copyright)}</p>
+                  </BaseCol>
+                </DropdownMenuItem>
+              ),
+            }}
           />
           <ToolbarPanel
+            groupId={_id}
+            tabs={tabs}
             tabShortcutMenu={
               <ShowOptionsMenu
                 show={showSideBar}
@@ -252,7 +273,7 @@ export function TableViewerPage() {
           side="right"
           tabs={rightTabs}
           value={rightTab}
-          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
+          onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
@@ -264,21 +285,29 @@ export function TableViewerPage() {
           <TabbedDataFrames
             selectedSheet={sheet?.id}
             dataFrames={[sheet as AnnotationDataFrame]}
-            onTabChange={(selectedTab) => {
-              gotoSheet(selectedTab.tab.id)
+            onTabChange={selectedTab => {
+              goto(selectedTab.tab.id, 'sheet')
             }}
-            className="mx-2"
+            className="mx-2 mt-2"
             // style={{ marginBottom: '-2px' }}
           />
           {/* </Card> */}
         </TabSlideBar>
 
         <ToolbarFooterPortal className="justify-end">
-          <span>{getFormattedShape(sheet)}</span>
+          <span>{getFormattedShape(sheet as AnnotationDataFrame)}</span>
           <></>
           <ZoomSlider />
         </ToolbarFooterPortal>
-      </HeaderLayout>
+      </ShortcutLayout>
     </>
+  )
+}
+
+export function TableViewerQueryPage() {
+  return (
+    <CoreProviders>
+      <TableViewerPage />
+    </CoreProviders>
   )
 }

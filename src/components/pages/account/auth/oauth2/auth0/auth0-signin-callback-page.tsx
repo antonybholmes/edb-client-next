@@ -1,0 +1,91 @@
+// 'use client'
+
+import { useEdbAuth } from '@/lib/edb/edb-auth'
+
+import {
+  signinStateAtom,
+  type IRedirectState,
+} from '@/lib/edb/signin/edb-signin'
+import { CoreProviders } from '@/providers/core-providers'
+import { useAuth0 } from '@auth0/auth0-react'
+import { useAtom } from 'jotai'
+import { useEffect, useState } from 'react'
+import { BaseSignInCallbackPage } from '../../signin-callback-page'
+
+export function CallbackPage() {
+  const { signInWithAuth0 } = useEdbAuth()
+  const [signinState] = useAtom(signinStateAtom)
+
+  const [state, setState] = useState<IRedirectState | null>(null)
+  const [allowRedirect, setAllowRedirect] = useState(false)
+
+  const { getAccessTokenSilently, getIdTokenClaims, handleRedirectCallback } =
+    useAuth0()
+
+  useEffect(() => {
+    async function processCallback() {
+      try {
+        // seems to be needed to complete the auth0 login process
+        await handleRedirectCallback()
+
+        console.log('Handling Auth0 redirect callback')
+
+        const auth0Token = await getAccessTokenSilently()
+        const idTokenClaims = await getIdTokenClaims()
+        const idToken = idTokenClaims?.__raw ?? ''
+
+        console.log('auth0Token', auth0Token)
+
+        console.log('id token', idToken)
+
+        await signInWithAuth0(idToken) //auth0Token)
+
+        // let t: IRedirectUrl =
+        //   decodeRedirectUrl(appState?.[REDIRECT_PARAM] || '') ||
+        //   DEFAULT_REDIRECT_URL
+
+        // auth0 allows storing objects in appState so we
+        // don't need to encode/decode URLs like with other providers
+        // let s: IRedirectState =
+        //   appState?.[STATE_PARAM] || DEFAULT_REDIRECT_STATE
+
+        // console.log('Redirect URL from appState:', appState)
+
+        // if (!isSafeRelativeUrl(s.target.path)) {
+        //   // if login triggered from signout page, do not redirect back to it.
+        //   // Instead goto account page. This stops login with immediate log out.
+        //   s.target = DEFAULT_REDIRECT_TARGET
+        // }
+
+        console.log('Redirect state from Auth0 appState:', signinState)
+
+        setAllowRedirect(true)
+      } catch (error) {
+        console.error('Error handling redirect callback:', error)
+      }
+    }
+
+    if (
+      window.location.search.includes('code=') &&
+      window.location.search.includes('state=')
+    ) {
+      processCallback()
+    }
+  }, [handleRedirectCallback, getAccessTokenSilently, getIdTokenClaims])
+
+  useEffect(() => {
+    if (signinState.target.path) {
+      setState(signinState)
+    }
+  }, [signinState])
+
+  return <BaseSignInCallbackPage state={state} allowRedirect={allowRedirect} />
+}
+
+export function SignInCallbackQueryPage() {
+  return (
+    <CoreProviders>
+      <CallbackPage />
+    </CoreProviders>
+  )
+}

@@ -1,13 +1,13 @@
-import type { IChildrenProps } from '@interfaces/children-props'
-import type { IDivProps } from '@interfaces/div-props'
-import { rangeMap } from '@lib/math/range'
-import { sum } from '@lib/math/sum'
-import { cn } from '@lib/shadcn-utils'
+import type { IChildrenProps } from '@/interfaces/children-props'
+import type { IDivProps } from '@/interfaces/div-props'
+import { rangeMap } from '@/lib/math/range'
+import { sum } from '@/lib/math/sum'
+import { cn } from '@/lib/shadcn-utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { useContext, useEffect, useState } from 'react'
 import { BaseCol } from './layout/base-col'
-import type { toggleVariants } from './shadcn/ui/themed/toggle'
-import { ToggleGroup, ToggleGroupItem } from './shadcn/ui/themed/toggle-group'
+import { type toggleVariants } from './shadcn/ui/themed/v2/toggle'
+import { GroupToggle, ToggleGroup } from './shadcn/ui/themed/v2/toggle-group'
 import {
   getTabFromValue,
   getTabName,
@@ -50,8 +50,7 @@ export function ToggleButtons({
 }
 
 interface IToggleButtonContentProps
-  extends IDivProps,
-    VariantProps<typeof toggleVariants> {
+  extends IDivProps, VariantProps<typeof toggleVariants> {
   showLabels?: boolean
   defaultWidth?: number
 }
@@ -120,7 +119,7 @@ export function ToggleButtonTriggers({
   }
 
   // let tabListCls = TOGGLE_VARIANT_DEFAULT_LIST_CLS
-  // //let tabButtonCls = TOGGLE_VARIANT_DEFAULT_BUTTON_CLS
+  //let tabButtonCls = TOGGLE_VARIANT_DEFAULT_BUTTON_CLS
   // let tabCls = TOGGLE_VARIANT_DEFAULT_TAB_CLS
 
   // if (variant === 'flat') {
@@ -131,9 +130,8 @@ export function ToggleButtonTriggers({
 
   return (
     <ToggleGroup
-      type="single"
-      value={selectedTab?.tab.id ?? ''}
-      onValueChange={_onValueChange}
+      value={[selectedTab?.tab.id ?? '']}
+      onValueChange={(v) => _onValueChange(v[0] ?? '')}
       className={toggleButtonVariants({ variant, className })}
       size={size}
       rounded={rounded}
@@ -142,7 +140,7 @@ export function ToggleButtonTriggers({
       {tabs.map((tab, ti) => {
         const tabId = tab.id //getTabId(tab)
         return (
-          <ToggleGroupItem
+          <GroupToggle
             id={tabId}
             value={tabId}
             key={tabId}
@@ -163,7 +161,7 @@ export function ToggleButtonTriggers({
             }}
           >
             {showLabels && <span>{getTabName(tab)}</span>}
-          </ToggleGroupItem>
+          </GroupToggle>
         )
       })}
 

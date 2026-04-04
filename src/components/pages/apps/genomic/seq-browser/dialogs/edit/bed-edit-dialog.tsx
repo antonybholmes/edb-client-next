@@ -1,15 +1,15 @@
-import { LabelContainer } from '@/components/shadcn/ui/themed/label'
-import { TEXT_NAME, TEXT_OK } from '@/consts'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@components/color/color-picker-button'
-import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
-import { PropRow } from '@dialog/prop-row'
-import { SwitchPropRow } from '@dialog/switch-prop-row'
-import { addAlphaToHex } from '@lib/color/color'
-import { Input } from '@themed/input'
-import { NumericalInput } from '@themed/numerical-input'
+} from '@/components/color/color-picker-button'
+import { LabelContainer } from '@/components/shadcn/ui/themed/v2/label'
+import { TEXT_NAME, TEXT_OK } from '@/consts'
+import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { PropRow } from '@/dialog/prop-row'
+import { SwitchPropRow } from '@/dialog/switch-prop-row'
+import { addAlphaToHex } from '@/lib/color/color'
+import { NumericalInput } from '@/themed/numerical-input'
+import { Input } from '@/themed/v2/input'
 import { produce } from 'immer'
 import { useState } from 'react'
 import type {
@@ -55,11 +55,11 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
       //   />
       // }
     >
-      <LabelContainer label={TEXT_NAME} id="name">
+      <LabelContainer label={TEXT_NAME}>
         <Input
           id="name"
           value={_track.name}
-          onChange={(e) => {
+          onChange={e => {
             const newTrack = {
               ...track,
               name: e.target.value,
@@ -97,8 +97,8 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
               color={_track.displayOptions.stroke.color}
               disabled={!_track.displayOptions.fill.show}
               allowAlpha={true}
-              onColorChange={(v) => {
-                const newTrack = produce(_track, (draft) => {
+              onColorChange={v => {
+                const newTrack = produce(_track, draft => {
                   draft.displayOptions.stroke.color = v
                 })
 
@@ -107,13 +107,13 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
               }}
               className={SIMPLE_COLOR_EXT_CLS}
               title="Stroke color"
-            ></ColorPickerButton>
+            />
             <span>Stroke</span>
           </>
         }
         checked={_track.displayOptions.stroke.show}
-        onCheckedChange={(state) => {
-          const newTrack = produce(_track, (draft) => {
+        onCheckedChange={state => {
+          const newTrack = produce(_track, draft => {
             draft.displayOptions.stroke.show = state
           })
 
@@ -127,9 +127,8 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
             value={_track.displayOptions.stroke.width}
             disabled={!_track.displayOptions.stroke.show}
             placeholder="Stroke..."
-            className="w-20 rounded-theme"
-            onNumChange={(v) => {
-              const newTrack = produce(_track, (draft) => {
+            onNumChange={v => {
+              const newTrack = produce(_track, draft => {
                 draft.displayOptions.stroke.width = v
               })
 
@@ -151,7 +150,7 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
               disabled={!_track.displayOptions.fill.show}
               allowAlpha={true}
               onColorChange={(v, alpha) => {
-                const newTrack = produce(_track, (draft) => {
+                const newTrack = produce(_track, draft => {
                   draft.displayOptions.fill.color = v
                   draft.displayOptions.fill.opacity = alpha
                 })
@@ -161,13 +160,13 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
               }}
               className={SIMPLE_COLOR_EXT_CLS}
               title="Fill color"
-            ></ColorPickerButton>
+            />
             <span>Fill</span>
           </>
         }
         checked={_track.displayOptions.fill.show}
-        onCheckedChange={(state) => {
-          const newTrack = produce(_track, (draft) => {
+        onCheckedChange={state => {
+          const newTrack = produce(_track, draft => {
             draft.displayOptions.fill.show = state
           })
 
@@ -183,15 +182,14 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
             limit={[0, 1]}
             step={0.1}
             dp={1}
-            onNumChange={(v) => {
-              const newTrack = produce(_track, (draft) => {
+            onNumChange={v => {
+              const newTrack = produce(_track, draft => {
                 draft.displayOptions.fill.opacity = v
               })
 
               callback?.(group, newTrack)
               setTrack(newTrack)
             }}
-            className="w-20 rounded-theme"
           />
         </PropRow>
       </SwitchPropRow>

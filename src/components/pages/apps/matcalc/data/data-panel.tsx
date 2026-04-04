@@ -1,9 +1,8 @@
-import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
+import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
-//import { ZoomSlider } from "@toolbar/zoom-slider"
+//import { ZoomSlider } from "@/toolbar/zoom-slider"
 
-import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
-import { LayersIcon } from '@icons/layers-icon'
+import { LayersIcon } from '@/icons/layers-icon'
 
 import { useEffect, useState } from 'react'
 
@@ -11,49 +10,50 @@ import {
   NO_DIALOG,
   TEXT_CANCEL,
   TEXT_DELETE,
-  TEXT_OK,
   type IDialogParams,
 } from '@/consts'
 
-import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
-import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
-import { DeleteIcon } from '@icons/delete-icon'
+import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { DeleteIcon } from '@/icons/delete-icon'
 
-import {
-  messageTextFileFormat,
-  useMessages,
-} from '@/providers/message-provider'
 import {
   filesToDataFrames,
   onTextFileChange,
   type IParseOptions,
   type ITextFileOpen,
-} from '@components/pages/open-files'
-import { SaveTxtDialog } from '@components/pages/save-txt-dialog'
-import { PropsPanel } from '@components/props-panel'
-import { type ISelectedTab, type ITab } from '@components/tabs/tab-provider'
-import { FilterIcon } from '@icons/filter-icon'
-import {
-  AnnotationDataFrame,
-  DATAFRAME_100x26,
-} from '@lib/dataframe/annotation-dataframe'
+} from '@/components/pages/open-files'
+import { SaveTxtDialog } from '@/components/pages/save-txt-dialog'
+import { PropsPanel } from '@/components/props-panel'
+import { type ISelectedTab, type ITab } from '@/components/tabs/tab-provider'
+import { FilterIcon } from '@/icons/filter-icon'
+import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import {
   downloadDataFrame,
   getFormattedShape,
-} from '@lib/dataframe/dataframe-utils'
-import { randId } from '@lib/id'
-import { friendlyFilename, replaceFileExt } from '@lib/path'
-import { useQueryClient } from '@tanstack/react-query'
-import { toast } from '@themed/crisp'
-import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
-import { ZoomSlider } from '@toolbar/zoom-slider'
-import { produce } from 'immer'
+} from '@/lib/dataframe/dataframe-utils'
+import { makeUuid, randId } from '@/lib/id'
+import { friendlyFilename, replaceFileExt } from '@/lib/path'
+import {
+  messageTextFileFormat,
+  useMessages,
+} from '@/providers/message-provider'
+import { useZoom } from '@/providers/zoom-provider'
+
+import { useSlideBar } from '@/components/slide-bar/slide-bar-store'
+import { ShowOptionsMenu } from '@/components/toolbar/toolbar'
+import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
+import { ZoomSlider } from '@/toolbar/zoom-slider'
+import { Toast } from '@base-ui/react/toast'
 import type { ISaveAsFormat } from '../../../save-as-dialog'
-import { HistoryPanel } from '../history/history-panel'
-import { useBranch, useHistory } from '../history/history-store'
+import {
+  useApp,
+  useFile,
+  useHistory,
+  useSheet,
+  useSheets,
+} from '../history/history-store'
 import MODULE_INFO from '../module.json'
 import { OpenDialog } from '../open-dialog'
-import { useMatcalcSettings } from '../settings/matcalc-settings'
 import { DataPropsPanel } from './data-props-panel'
 import { FilterPropsPanel } from './filter-props-panel'
 
@@ -61,33 +61,51 @@ export const DEFAULT_PANEL_ID = 'Table 1'
 
 export const SHEET_PANEL_CLS = 'overflow-hidden relative' //cn(DATA_PANEL_CLS, 'px-3 pt-3')
 
-export interface IDataPanelProps {
-  branchId: string
-  //setSlidebarSide: (c: ReactElement | undefined) => void
+export const DATA_ZOOM_CHANNEL = 'matcalc-data'
+
+export const MESSAGE_CHANNEL = 'matcalc'
+
+export const OPTS_SIDEBAR_ID = 'matcalc-opts-sidebar'
+
+export function ShowOptsSidebarBtn({
+  onClick,
+}: {
+  open: boolean
+  onClick: (open: boolean) => void
+}) {
+  const { barProps, setOpen } = useSlideBar(OPTS_SIDEBAR_ID)
+
+  return (
+    <ShowOptionsMenu
+      show={barProps.open}
+      onClick={() => {
+        // sendMessage({
+        //   data: open ? 'close' : 'open',
+        // })
+        setOpen(!barProps.open)
+        onClick(!barProps.open)
+      }}
+    />
+  )
 }
 
-export function DataPanel({ branchId }: IDataPanelProps) {
-  const queryClient = useQueryClient()
-
-  const { openBranch } = useHistory()
-
+export function DataPanel() {
   const {
-    branch,
-    step,
-    sheet,
-    sheets,
-    addSheets,
-    removeSheet,
-    gotoSheet,
+    openFile,
+
+    //addSheets,
+    //remove,
+    goto,
     reorderSheets,
-  } = useBranch(branchId)
+  } = useHistory()
 
-  //console.log('data panle2', branchId)
-  //const step = useCurrentStep(branchId)
-  //const sheet = useCurrentSheet(step?.id ?? '')
-  //const sheets = useCurrentSheets(step?.id ?? '')
+  const app = useApp()!
+  const file = useFile()!
+  const sheet = useSheet()!
+  const sheets = useSheets()
 
-  //console.log('data panle', branchId, step, sheet)
+  const { add: addToast } = Toast.useToastManager()
+  const { zoom } = useZoom(DATA_ZOOM_CHANNEL)
 
   //const [filesToOpen, setFilesToOpen] = useState<ITextFileOpen[]>([])
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
@@ -97,12 +115,12 @@ export function DataPanel({ branchId }: IDataPanelProps) {
   //const [tableH, setTableH] = useState<IReactTableCol[]>(DEFAULT_TABLE_HEADER)
   //const [selectedSheet, setSelectedSheet] = useState(0)
 
-  const [selectedTab, setSelectedTab] = useState('Labels')
+  //const [selectedTab, setSelectedTab] = useState('Labels')
 
-  const { messages, removeMessage } = useMessages() //)//'data-panel' + nanoid())
+  const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //)//'data-panel' + nanoid())
 
-  const { settings: matcalcSettings, updateSettings: updateMatcalcSettings } =
-    useMatcalcSettings()
+  // const { settings: matcalcSettings, updateSettings: updateMatcalcSettings } =
+  //   useMatcalcSettings()
 
   const [showSave, setShowSave] = useState('')
 
@@ -133,11 +151,11 @@ export function DataPanel({ branchId }: IDataPanelProps) {
   }
 
   useEffect(() => {
-    const filteredMessages = messages.filter((m) => m.target === branch?.id)
+    //const filteredMessages = messages.filter(m => m.target === branch?.id)
 
-    for (const message of filteredMessages) {
+    for (const message of messages) {
       //console.log(message)
-      if (message.text.includes('save:')) {
+      if (message.data.includes('save:')) {
         const ext = messageTextFileFormat(message)
         save(
           sheet && sheet.name
@@ -145,7 +163,7 @@ export function DataPanel({ branchId }: IDataPanelProps) {
             : replaceFileExt('table', ext),
           ext
         )
-      } else if (message.text === 'save') {
+      } else if (message.data === 'save') {
         setShowSave(messageTextFileFormat(message))
       } else {
         // do nothing
@@ -160,7 +178,7 @@ export function DataPanel({ branchId }: IDataPanelProps) {
     {
       id: 'Labels',
       icon: <LayersIcon />,
-      content: <DataPropsPanel branchId={branchId} />,
+      content: <DataPropsPanel />,
     },
     // {
     //   id: 'Groups',
@@ -178,7 +196,7 @@ export function DataPanel({ branchId }: IDataPanelProps) {
       //size: 2.2,
       content: (
         <PropsPanel className="gap-y-2">
-          <FilterPropsPanel branchId={branchId} />
+          <FilterPropsPanel />
         </PropsPanel>
       ),
     },
@@ -191,28 +209,28 @@ export function DataPanel({ branchId }: IDataPanelProps) {
     //     </PropsPanel>
     //   ),
     // },
-    {
-      id: 'History',
-      icon: <ClockRotateLeftIcon />,
-      content: <HistoryPanel branchId={branchId} />,
-    },
+    // {
+    //   id: 'History',
+    //   icon: <ClockRotateLeftIcon />,
+    //   content: <HistoryPanel />,
+    // },
   ]
 
   function openFiles(files: ITextFileOpen[], options: IParseOptions) {
-    filesToDataFrames(queryClient, files, {
+    filesToDataFrames(files, {
       parseOpts: options,
-      onSuccess: (tables) => {
+      onSuccess: tables => {
         if (tables.length > 0) {
-          openBranch(`Load ${tables[0]!.name}`, tables)
+          openFile(tables[0]!.name, { sheets: tables })
         }
       },
       onFailure: () => {
-        console.log('fail')
-        toast({
+        addToast({
+          id: makeUuid(),
           title: MODULE_INFO.name,
           description:
             'Your files could not be opened. Check they are formatted correctly.',
-          variant: 'destructive',
+          type: 'destructive',
         })
       },
     })
@@ -233,10 +251,8 @@ export function DataPanel({ branchId }: IDataPanelProps) {
         open={showSave !== ''}
         onResponse={(response, data) => {
           if (response !== TEXT_CANCEL) {
-            save(
-              data!.name as string,
-              (data!.format as ISaveAsFormat)!.ext! as string
-            )
+            const d = data as { name: string; format: ISaveAsFormat }
+            save(d.name, d.format.ext)
           }
 
           setShowSave('')
@@ -251,20 +267,20 @@ export function DataPanel({ branchId }: IDataPanelProps) {
         />
       )}
 
-      {showDialog.id.startsWith('delete-sheet') && (
+      {/* {showDialog.id.startsWith('delete-sheet') && (
         <OKCancelDialog
           title={MODULE_INFO.name}
           contentVariant="glass"
           bodyVariant="card"
           modalType="Warning"
-          onResponse={(r) => {
+          onResponse={r => {
             if (r === TEXT_OK) {
               if (step?.sheets) {
-                removeSheet(showDialog.params!.sheetId as string)
+                remove(showDialog.params!.sheetId as string, 'sheet')
               } else {
                 // if user is removing the only remaining sheet, load an empty
                 // sheet into the UI
-                addSheets([DATAFRAME_100x26], 'set')
+                addSheets([create100x26Df()], 'set')
               }
             }
             setShowDialog({ ...NO_DIALOG })
@@ -272,34 +288,34 @@ export function DataPanel({ branchId }: IDataPanelProps) {
         >
           Are you sure you want to delete this sheet?
         </OKCancelDialog>
-      )}
+      )} */}
 
       <TabSlideBar
-        id="matcalc-data-panel"
-        value={selectedTab}
+        id={OPTS_SIDEBAR_ID}
+        //value={selectedTab}
         tabs={rightTabs}
         side="right"
         limits={[50, 85]}
-        onTabChange={(selectedTab) => setSelectedTab(selectedTab.tab.id)}
-        open={matcalcSettings.sidebar.show}
-        onOpenChange={(v) => {
-          const newSettings = produce(matcalcSettings, (draft) => {
-            draft.sidebar.show = v
-          })
+        //onTabChange={selectedTab => setSelectedTab(selectedTab.tab.id)}
+        // open={matcalcSettings.sidebar.show}
+        // onOpenChange={v => {
+        //   const newSettings = produce(matcalcSettings, draft => {
+        //     draft.sidebar.show = v
+        //   })
 
-          updateMatcalcSettings(newSettings)
-        }}
+        //   updateMatcalcSettings(newSettings)
+        // }}
       >
         {/* <Card className="pb-0" variant="content"> */}
         <TabbedDataFrames
           selectedSheet={sheet?.id ?? ''}
           dataFrames={sheets as AnnotationDataFrame[]}
           onTabChange={(selectedTab: ISelectedTab) => {
-            gotoSheet(selectedTab.tab.id)
+            goto({ app, file, sheet: selectedTab.tab }) //, 'sheet')
           }}
-          onFileDrop={(files) => {
+          onFileDrop={files => {
             if (files.length > 0) {
-              onTextFileChange('Open from drag', files, (files) => {
+              onTextFileChange('Open from drag', files, files => {
                 setShowDialog({
                   id: randId('open-files'),
                   params: { files },
@@ -307,11 +323,11 @@ export function DataPanel({ branchId }: IDataPanelProps) {
               })
             }
           }}
-          className="relative mx-2"
-          style={{ marginBottom: '-2px' }}
-          onReorder={(order) => {
+          className="relative"
+          //style={{ marginBottom: '-2px' }}
+          onReorder={order => {
             console.log('reorder', order)
-            reorderSheets(order)
+            reorderSheets(order, file) //, 'sheet'))
           }}
           allowReorder={true}
           menuActions={[
@@ -325,14 +341,15 @@ export function DataPanel({ branchId }: IDataPanelProps) {
               })
             }
           }}
+          zoom={zoom}
         />
         {/* </Card> */}
       </TabSlideBar>
 
       <ToolbarFooterPortal>
-        <span>{getFormattedShape(sheet)}</span>
+        <span>{getFormattedShape(sheet as AnnotationDataFrame)}</span>
         <></>
-        <ZoomSlider />
+        <ZoomSlider channel={DATA_ZOOM_CHANNEL} />
       </ToolbarFooterPortal>
     </>
   )

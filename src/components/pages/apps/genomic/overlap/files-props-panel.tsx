@@ -1,44 +1,22 @@
-import { PropsPanel } from '@components/props-panel'
-import { VScrollPanel } from '@components/v-scroll-panel'
+import { PropsPanel } from '@/components/props-panel'
+import { SortableItem } from '@/components/sortable-item'
+import { VScrollPanel } from '@/components/v-scroll-panel'
+import { where } from '@/lib/math/where'
 import { DndContext } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import {
   arrayMove,
   SortableContext,
-  useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import { VerticalGripIcon } from '@icons/vertical-grip-icon'
-import { VCenterRow } from '@layout/v-center-row'
-import { where } from '@lib/math/where'
 import { useContext } from 'react'
 import { OverlapContext } from './overlap-provider'
 
-function FileItem({ value, name, ...props }: { value: string; name: string }) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: value })
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  }
-
+function FileItem({ value, name }: { value: string; name: string }) {
   return (
-    <li
-      value={value}
-      ref={setNodeRef}
-      key={value}
-      id={value}
-      className="flex flex-row items-center gap-x-2 hover:bg-muted rounded-theme overflow-hidden p-1"
-      {...props}
-      style={style}
-    >
-      <VCenterRow className="cursor-ns-resize" {...listeners} {...attributes}>
-        <VerticalGripIcon />
-      </VCenterRow>
+    <SortableItem value={value} key={value} id={value}>
       <span>{name}</span>
-    </li>
+    </SortableItem>
   )
 }
 
@@ -47,7 +25,7 @@ export function FilesPropsPanel() {
 
   return (
     <>
-      <PropsPanel>
+      <PropsPanel className="pr-2">
         {/* <FileDropPanel
           onFileDrop={files => {
             if (files.length > 0) {
@@ -58,8 +36,8 @@ export function FilesPropsPanel() {
             }
           }}
         > */}
-        <VScrollPanel>
-          {/* <Reorder.Group
+
+        {/* <Reorder.Group
             axis="y"
             values={dfs.map(df => df.id)}
             onReorder={order =>
@@ -72,42 +50,44 @@ export function FilesPropsPanel() {
             })}
           </Reorder.Group> */}
 
-          <DndContext
-            modifiers={[restrictToVerticalAxis]}
-            //onDragStart={event => setActiveId(event.active.id as string)}
-            onDragEnd={event => {
-              const { active, over } = event
+        <DndContext
+          modifiers={[restrictToVerticalAxis]}
+          //onDragStart={event => setActiveId(event.active.id as string)}
+          onDragEnd={event => {
+            const { active, over } = event
 
-              if (over && active.id !== over?.id) {
-                const oldIndex = where(
-                  dfs,
-                  df => df.id === (active.id as string)
-                )[0]!
-                const newIndex = where(
-                  dfs,
-                  df => df.id === (over.id as string)
-                )[0]!
-                //const oldIndex =    genesetState.order.indexOf(over.id as string)
-                const newOrder = arrayMove(dfs, oldIndex, newIndex)
+            if (over && active.id !== over?.id) {
+              const oldIndex = where(
+                dfs,
+                df => df.id === (active.id as string)
+              )[0]!
+              const newIndex = where(
+                dfs,
+                df => df.id === (over.id as string)
+              )[0]!
+              //const oldIndex =    genesetState.order.indexOf(over.id as string)
+              const newOrder = arrayMove(dfs, oldIndex, newIndex)
 
-                setDfs(newOrder)
-              }
+              setDfs(newOrder)
+            }
 
-              //setActiveId(null)
-            }}
+            //setActiveId(null)
+          }}
+        >
+          <SortableContext
+            items={dfs.map(df => df.id)}
+            strategy={verticalListSortingStrategy}
           >
-            <SortableContext
-              items={dfs.map(df => df.id)}
-              strategy={verticalListSortingStrategy}
-            >
+            <VScrollPanel>
               <ul className="flex flex-col">
                 {dfs.map(df => {
                   return <FileItem value={df.id} name={df.name} key={df.id} />
                 })}
               </ul>
-            </SortableContext>
+            </VScrollPanel>
+          </SortableContext>
 
-            {/* <DragOverlay>
+          {/* <DragOverlay>
                               {activeId ? (
                                 <FileItem
                                   geneset={genesetState.genesets[activeId]!}
@@ -115,8 +95,8 @@ export function FilesPropsPanel() {
                                 />
                               ) : null}
                             </DragOverlay> */}
-          </DndContext>
-        </VScrollPanel>
+        </DndContext>
+
         {/* </FileDropPanel> */}
       </PropsPanel>
     </>

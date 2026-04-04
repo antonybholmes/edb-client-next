@@ -1,41 +1,29 @@
-import { randomHexColor } from '@lib/color/color'
+import { randomHexColor } from '@/lib/color/color'
 
-import type { IGeneset } from '@lib/gsea/geneset'
-import { makeNanoIdLen12 } from '@lib/id'
-import { textToLines } from '@lib/text/lines'
-import { QueryClient } from '@tanstack/react-query'
-import axios from 'axios'
+import type { IGeneset } from '@/lib/gsea/geneset'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { makeUuid } from '@/lib/id'
+import { textToLines } from '@/lib/text/lines'
 import type { IGeneSetFile } from './pathway'
 
-export async function loadGMT(
-  queryClient: QueryClient,
-  file: IGeneSetFile
-): Promise<IGeneset[]> {
+export async function loadGMT(file: IGeneSetFile): Promise<IGeneset[]> {
   const geneSets: IGeneset[] = []
 
   try {
     //const content = await fetchData(file.url)
 
-    const res = await queryClient.fetchQuery({
-      queryKey: ['gmt'],
-      queryFn: () => axios.get(file.url),
-    })
+    const res = await httpFetch.getText(file.url)
 
-    //const content = res.data
-
-    //const response = await axios.get(file.url);
-    //const buffer = await response.data;
-    //const content = await zlib.gunzipSync(buffer).toString();
-
-    const lines: string[] = textToLines(res.data)
+    const lines: string[] = textToLines(res)
 
     console.log('loaded from', file.url, lines.length)
 
-    lines.forEach((line) => {
+    lines.forEach(line => {
       const tokens = line.split('\t')
 
       geneSets.push({
-        id: makeNanoIdLen12(),
+        id: makeUuid(),
+        type: 'geneset',
         name: tokens[0]!,
         genes: tokens.slice(2),
         color: randomHexColor(),

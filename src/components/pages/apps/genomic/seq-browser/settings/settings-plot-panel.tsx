@@ -1,18 +1,20 @@
+import { Label } from '@/components/shadcn/ui/themed/v2/label'
 import { TEXT_RESET } from '@/consts'
-import { PropRow } from '@dialog/prop-row'
-import { SettingsAccordionItem } from '@dialog/settings/settings-dialog'
-import { SwitchPropRow } from '@dialog/switch-prop-row'
-import { VCenterRow } from '@layout/v-center-row'
-import { Accordion } from '@themed/accordion'
-import { LinkButton } from '@themed/link-button'
-import { NumericalInput } from '@themed/numerical-input'
+import { PropRow } from '@/dialog/prop-row'
+import { SettingsAccordionItem } from '@/dialog/settings/settings-dialog'
+import { SwitchPropRow } from '@/dialog/switch-prop-row'
+import { VCenterRow } from '@/layout/v-center-row'
+import { capitalCase } from '@/lib/text/capital-case'
+import { LinkButton } from '@/themed/link-button'
+import { NumericalInput } from '@/themed/numerical-input'
+import { Accordion } from '@/themed/v2/accordion'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@themed/select'
+} from '@/themed/v2/select'
 import { produce } from 'immer'
 import {
   DEFAULT_TRACKS_DISPLAY_PROPS,
@@ -36,7 +38,7 @@ export function SettingsPlotPanel() {
         </LinkButton>
       </VCenterRow>
 
-      <Accordion defaultValue={['plot']} type="multiple" variant="settings">
+      <Accordion defaultValue={['plot']} multiple={true} variant="settings">
         <SettingsAccordionItem title="Plot">
           <PropRow title="Width">
             <NumericalInput
@@ -44,7 +46,7 @@ export function SettingsPlotPanel() {
               step={10}
               value={settings.plot.width}
               placeholder="Width..."
-              w="w-20 rounded-theme"
+              w="xs"
               onNumChanged={v => {
                 const newOptions = produce(settings, draft => {
                   draft.plot.width = v
@@ -61,7 +63,7 @@ export function SettingsPlotPanel() {
               step={10}
               value={settings.plot.gap}
               placeholder="Width..."
-              w="w-20 rounded-theme"
+              w="xs"
               onNumChanged={v => {
                 const newOptions = produce(settings, draft => {
                   draft.plot.gap = v
@@ -75,6 +77,7 @@ export function SettingsPlotPanel() {
           <SwitchPropRow
             title="Titles"
             checked={settings.titles.show}
+            side="left"
             onCheckedChange={state => {
               updateSettings({
                 ...settings,
@@ -82,21 +85,20 @@ export function SettingsPlotPanel() {
               })
             }}
           >
-            <PropRow title="Offset" className="ml-2">
-              <NumericalInput
-                limit={[1, 2000]}
-                value={settings.titles.offset}
-                placeholder="Offset..."
-                w="w-16 rounded-theme"
-                onNumChanged={v => {
-                  const newOptions = produce(settings, draft => {
-                    draft.titles.offset = v
-                  })
+            <Label>Offset</Label>
+            <NumericalInput
+              limit={[1, 2000]}
+              value={settings.titles.offset}
+              placeholder="Offset..."
+              w="xs"
+              onNumChanged={v => {
+                const newOptions = produce(settings, draft => {
+                  draft.titles.offset = v
+                })
 
-                  updateSettings(newOptions)
-                }}
-              />
-            </PropRow>
+                updateSettings(newOptions)
+              }}
+            />
 
             <Select
               value={settings.titles.position}
@@ -108,8 +110,10 @@ export function SettingsPlotPanel() {
                 updateSettings(newOptions)
               }}
             >
-              <SelectTrigger className="w-24">
-                <SelectValue placeholder="Choose title position" />
+              <SelectTrigger w="sm">
+                <SelectValue data-placeholder="Choose title position">
+                  {capitalCase(settings.titles.position)}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Top" variant="theme">

@@ -1,17 +1,21 @@
 import { useRef, useState, type ReactNode } from 'react'
 
-import { ChevronRightIcon } from '@icons/chevron-right-icon'
-import { VCenterRow } from '@layout/v-center-row'
-import { cn } from '@lib/shadcn-utils'
+import { ChevronRightIcon } from '@/icons/chevron-right-icon'
+import { VCenterRow } from '@/layout/v-center-row'
+import { cn } from '@/lib/shadcn-utils'
 
-import { DropdownMenu, DropdownMenuContent } from '@themed/dropdown-menu'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 
 import { ROUNDED_CLS, TRANS_COLOR_CLS } from '@/theme'
-import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
+
 import { BaseCol } from '../layout/base-col'
-import type { IButtonProps } from '../shadcn/ui/themed/button'
-import { DropDownButton } from '../shadcn/ui/themed/dropdown-button'
+import type { IButtonProps } from '../shadcn/ui/themed/v2/button'
 import { ToolbarButton } from './toolbar-button'
+import { ToolbarIconButton } from './toolbar-icon-button'
 
 const CONTAINER_CLS = cn(
   TRANS_COLOR_CLS,
@@ -21,7 +25,7 @@ const CONTAINER_CLS = cn(
   //[open, "border-border", "border-transparent hover:border-border"],
 )
 
-interface IProps extends IButtonProps {
+type IProps = IButtonProps & {
   icon: ReactNode
   onMainClick: () => void
   menuClassName?: string
@@ -32,7 +36,7 @@ export function ToolbarOptionalDropdownButton({
   icon,
   onMainClick,
 
-  menuClassName,
+  menuClassName = '',
   children,
 
   ...props
@@ -46,7 +50,7 @@ export function ToolbarOptionalDropdownButton({
       <BaseCol className={CONTAINER_CLS} ref={anchorRef}>
         <VCenterRow>
           <ToolbarButton
-            size={size}
+            //size={size}
             onClick={() => onMainClick()}
             //rounded="none"
             //checked={open}
@@ -57,8 +61,7 @@ export function ToolbarOptionalDropdownButton({
             {icon}
           </ToolbarButton>
 
-          <DropDownButton
-            variant="flat"
+          <ToolbarIconButton
             size="toolbar-dropdown"
             open={open}
             // ripple={false}
@@ -67,14 +70,14 @@ export function ToolbarOptionalDropdownButton({
             onClick={() => setOpen(true)}
           >
             <ChevronRightIcon className="rotate-90" w="w-4" />
-          </DropDownButton>
+          </ToolbarIconButton>
         </VCenterRow>
         <DropdownMenuTrigger className="invisible w-full h-0" />
       </BaseCol>
 
       <DropdownMenuContent
-        onInteractOutside={() => setOpen(false)}
-        onEscapeKeyDown={() => setOpen(false)}
+        //onInteractOutside={() => setOpen(false)}
+        /// onEscapeKeyDown={() => setOpen(false)}
         align="start"
         //sideOffset={20}
         className={menuClassName}

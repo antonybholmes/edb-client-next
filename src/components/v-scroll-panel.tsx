@@ -1,15 +1,15 @@
 import { type ReactNode } from 'react'
 
-import type { IDivProps } from '@interfaces/div-props'
-import { BaseCol } from '@layout/base-col'
-import { cn } from '@lib/shadcn-utils'
+import type { IDivProps } from '@/interfaces/div-props'
+import { BaseCol } from '@/layout/base-col'
+import { cn } from '@/lib/shadcn-utils'
 
 export const V_SCROLL_CHILD_CLS = 'absolute w-full'
 
 export function VScrollPanel({
   ref,
   asChild = false,
-  innerClassName,
+  innerCls,
   className,
   children,
   ...props
@@ -18,15 +18,13 @@ export function VScrollPanel({
   // so asChild is for components that are already absolute
   // and don't require a parent wrapper to provide this.
   asChild?: boolean
-  innerClassName?: string
+  innerCls?: string
 }) {
-  let ret: ReactNode = children
+  let content: ReactNode = children
 
   if (!asChild) {
-    ret = (
-      <BaseCol className={cn(V_SCROLL_CHILD_CLS, innerClassName)}>
-        {ret}
-      </BaseCol>
+    content = (
+      <BaseCol className={cn(V_SCROLL_CHILD_CLS, innerCls)}>{content}</BaseCol>
     )
   }
 
@@ -34,12 +32,12 @@ export function VScrollPanel({
     <div
       ref={ref}
       className={cn(
-        'relative overflow-y-auto overflow-x-hidden custom-scrollbar min-w-0 min-h-0  grow',
+        'relative overflow-y-auto overflow-x-hidden custom-scrollbar min-w-0 min-h-0 grow',
         className
       )}
       {...props}
     >
-      {ret}
+      {content}
     </div>
   )
 }

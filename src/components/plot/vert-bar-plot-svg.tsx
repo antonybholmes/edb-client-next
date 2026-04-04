@@ -1,17 +1,17 @@
-import { type IFieldMap } from '@interfaces/field-map'
+import { type IFieldMap } from '@/interfaces/field-map'
 import { useMemo } from 'react'
 
-import { BLUES_CMAP, ColorMap } from '@lib/color/colormap'
-import { BaseDataFrame } from '@lib/dataframe/base-dataframe'
+import { BLUES_CMAP, ColorMap } from '@/lib/color/colormap'
+import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
 import { Axis, YAxis, type TickLabel } from './axis'
 import { AxisBottomSvg, AxisLeftSvg } from './axis-svg'
 import { VColorBarSvg } from './color-bar-svg'
 
 import type { ISVGProps } from '@/interfaces/svg-props'
-import { fill } from '@lib/fill'
-import type { ILim } from '@lib/math/math'
-import { ones } from '@lib/math/ones'
+import { fill } from '@/lib/fill'
+import type { ILim } from '@/lib/math/math'
+import { ones } from '@/lib/math/ones'
 import { BaseSvg } from '../base-svg'
 
 const margin = { top: 100, right: 100, bottom: 100, left: 200 }
@@ -73,7 +73,7 @@ export function VertBarPlotSvg({
   cmap = BLUES_CMAP,
   barWidth = 2,
   displayProps = {},
-  hue_norm = x => x,
+  hue_norm = (x) => x,
 }: IProps) {
   const _displayProps: IDisplayProps = {
     ...DEFAULT_DISPLAY_PROPS,
@@ -118,7 +118,7 @@ export function VertBarPlotSvg({
 
     if (hue) {
       const huecol = df.col(hue)!
-      huedata = (huecol.values as number[]).map(x =>
+      huedata = (huecol.values as number[]).map((x) =>
         cmap.getHexColor(hue_norm(x))
       )
     } else {

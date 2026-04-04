@@ -5,11 +5,15 @@ import {
 import type { IGeneset } from '../../../../../lib/gsea/geneset'
 
 self.onmessage = function (
-  e: MessageEvent<{ genesets: IGeneset[]; datasets: IDataset[] }>
+  e: MessageEvent<{
+    genesets: IGeneset[]
+    datasets: IDataset[]
+    genesInUniverse: number
+  }>
 ) {
-  const { genesets, datasets } = e.data
+  const { genesets, datasets, genesInUniverse } = e.data
 
-  const overlap = new PathwayOverlap()
+  const overlap = new PathwayOverlap(genesInUniverse)
 
   for (const dataset of datasets) {
     overlap.addDataset(dataset)

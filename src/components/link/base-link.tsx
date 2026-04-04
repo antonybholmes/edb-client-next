@@ -1,8 +1,7 @@
+import { type ILinkProps } from '@/interfaces/link-props'
 import { BASE_COMPONENT_CLS } from '@/theme'
-import { type ILinkProps } from '@interfaces/link-props'
 
-import { cn } from '@lib/shadcn-utils'
-import Link from 'next/link'
+import { cn } from '@/lib/shadcn-utils'
 
 export const UNDERLINE_CLS =
   'data-[underline=true]:underline data-[underline=hover]:hover:underline data-[underline=false]:decoration-transparent'
@@ -37,7 +36,7 @@ export function BaseLink({
   }
 
   return (
-    <Link
+    <a
       ref={ref}
       href={href}
       title={title}
@@ -47,6 +46,6 @@ export function BaseLink({
       {...props}
     >
       {children}
-    </Link>
+    </a>
   )
 }

@@ -1,11 +1,11 @@
-import type { BaseDataFrame } from '@lib/dataframe/base-dataframe'
+import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
-import type { SeriesData } from '@lib/dataframe/dataframe-types'
-import { fill } from '@lib/fill'
-import { range } from '@lib/math/range'
-import { NA } from '@lib/text/text'
-import { zip } from '@lib/utils'
-import { GenomicLocation, LOC_REGEX, parseLocation } from '../genomic'
+import type { SeriesData } from '@/lib/dataframe/dataframe-types'
+import { fill } from '@/lib/fill'
+import { range } from '@/lib/math/range'
+import { NA } from '@/lib/text/text'
+import { zip } from '@/lib/utils'
+import { GenLoc, LOC_REGEX, parseGenLoc } from '../genomic'
 import { BlockSearch } from './block-search'
 
 export function oneWayFromDataframes(
@@ -21,15 +21,15 @@ export function oneWayFromDataframes(
 
   ret = ret.setName(`${ret.name} one way overlap`)
 
-  let locs: GenomicLocation[] = []
+  let locs: GenLoc[] = []
 
   if (ret.get(0, 0).toString().match(LOC_REGEX)) {
-    locs = ret.col(0).values.map(v => parseLocation(v as string))
+    locs = ret.col(0).values.map(v => parseGenLoc(v as string))
   } else {
     // assume 3 col bed format
 
     locs = zip(ret.col(0).values, ret.col(1).values, ret.col(2).values).map(
-      v => new GenomicLocation(v[0] as string, v[1] as number, v[2] as number)
+      v => new GenLoc(v[0] as string, v[1] as number, v[2] as number)
     )
   }
 
@@ -38,16 +38,16 @@ export function oneWayFromDataframes(
   for (const table of overlapTables) {
     const blockSearch = new BlockSearch<SeriesData[]>()
 
-    const colNames = table.colNames.map(name => `${table.name} ${name}`)
+    const colNames = table.columns.map(name => `${table.name} ${name}`)
 
     for (const i of range(table.shape[0])) {
-      let loc: GenomicLocation
+      let loc: GenLoc
 
       if (table.get(i, 0).toString().match(LOC_REGEX)) {
-        loc = parseLocation(table.get(i, 0).toString())
+        loc = parseGenLoc(table.get(i, 0).toString())
       } else {
         // assume 3 col bed format
-        loc = new GenomicLocation(
+        loc = new GenLoc(
           table.get(i, 0).toString(),
           table.get(i, 1) as number,
           table.get(i, 2) as number

@@ -1,5 +1,5 @@
-import { SwitchPropRow } from '@dialog/switch-prop-row'
-import { useEdbSettings } from '@lib/edb/edb-settings'
+import { SwitchPropRow } from '@/dialog/switch-prop-row'
+import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { produce } from 'immer'
 
 export function ModulesToolbarPanel() {

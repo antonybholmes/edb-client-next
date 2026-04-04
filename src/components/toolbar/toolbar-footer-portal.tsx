@@ -1,4 +1,4 @@
-import type { IChildrenProps } from '@interfaces/children-props'
+import type { IChildrenProps } from '@/interfaces/children-props'
 import { Children, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -69,11 +69,7 @@ export function ToolbarFooterPortal({ children }: IChildrenProps) {
     left: HTMLElement | null
     center: HTMLElement | null
     right: HTMLElement | null
-  }>({
-    left: null,
-    center: null,
-    right: null,
-  })
+  } | null>(null)
 
   useEffect(() => {
     setTargets({
@@ -83,10 +79,13 @@ export function ToolbarFooterPortal({ children }: IChildrenProps) {
     })
   }, [])
 
+  if (!targets) {
+    return null
+  }
+
   const c = Children.toArray(children)
 
   if (c.length === 0) {
-    console.warn('FooterPortal expects at least 1 child')
     return null
   }
 

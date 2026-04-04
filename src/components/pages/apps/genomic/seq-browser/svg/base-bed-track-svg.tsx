@@ -1,11 +1,11 @@
-import { type IDivProps } from '@interfaces/div-props'
+import { type IDivProps } from '@/interfaces/div-props'
 
 import { type Axis } from '@/components/plot/axis'
-import { COLOR_BLACK } from '@lib/color/color'
-import { locStr, type IGenomicLocation } from '@lib/genomic/genomic'
-import { cumsum } from '@lib/math/cumsum'
-import { sum } from '@lib/math/sum'
-import { formattedList, truncate } from '@lib/text/text'
+import { COLOR_BLACK } from '@/lib/color/color'
+import { locStr, type IGenomicLocation } from '@/lib/genomic/genomic'
+import { cumsum } from '@/lib/math/cumsum'
+import { sum } from '@/lib/math/sum'
+import { formattedList, truncate } from '@/lib/text/text'
 import {
   useSeqBrowserSettings,
   type ISeqBrowserSettings,
@@ -22,7 +22,7 @@ export function getBedTrackHeight(
 
   return displayOptions.beds.collapsed
     ? tracks[0]!.displayOptions.height
-    : sum(tracks.map((track) => track.displayOptions.height))
+    : sum(tracks.map(track => track.displayOptions.height))
 }
 
 interface IProps extends IDivProps {
@@ -44,7 +44,7 @@ export function BaseBedTrackSvg({
 }: IProps) {
   const { settings } = useSeqBrowserSettings()
 
-  const trackHeights: number[] = tracks.map((track) =>
+  const trackHeights: number[] = tracks.map(track =>
     settings.beds.collapsed ? 0 : track.track.displayOptions.height
   )
 
@@ -67,7 +67,7 @@ export function BaseBedTrackSvg({
               settings.titles.position === 'right' ? 'start' : 'middle'
             }
           >
-            {truncate(formattedList(tracks.map((t) => t.track.name)), {
+            {truncate(formattedList(tracks.map(t => t.track.name)), {
               length: Math.round(xax.length / 10),
             })}
           </text>

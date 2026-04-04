@@ -1,5 +1,5 @@
-import { type IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/shadcn-utils'
+import { type IDivProps } from '@/interfaces/div-props'
+import { cn } from '@/lib/shadcn-utils'
 
 export const BETWEEN_ROW_CLS =
   'flex flex-row items-center justify-between gap-x-2'

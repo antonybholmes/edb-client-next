@@ -1,11 +1,31 @@
-import type { IMannWhitneyUResult } from '@lib/math/mann-whitney'
+import type { IDBEntity } from '@/interfaces/db-entity'
+import type { IMannWhitneyUResult } from '@/lib/math/mann-whitney'
 
-//const SETTINGS_KEY = `${APP_ID}.gex-settings-v6`
+export type GexType =
+  | 'Counts'
+  | 'TPM'
+  | 'log2(TPM+1)'
+  | 'CPM'
+  | 'log2(CPM+1)'
+  | 'log2(FC)'
+  | 'VST'
+  | 'RMA'
+
+export interface IExprType {
+  id: string
+  name: GexType
+}
+
+export interface IGexGenome {
+  id: string
+  name: 'Human' | 'Mouse'
+  //exprTypes: IExprType[]
+}
 
 export interface IGexTechnology {
-  publicId: string
-  name: 'RNA-seq' | 'Microarray'
-  gexTypes: ('Counts' | 'TPM' | 'VST' | 'RMA')[]
+  id: string
+  name: 'RNA-seq' | 'scRNA-seq' | 'Microarray'
+  //exprTypes: IExprType[]
 }
 
 // export type IGexTechnologies = Record<
@@ -14,37 +34,40 @@ export interface IGexTechnology {
 // >
 
 export interface IGexGene {
-  hugo: string
-  mgi: string
-  ensembl: string
-  refseq: string
+  id: string
+  geneId: string
   geneSymbol: string
+  ensembl?: string
+  refseq?: string
+  ncbi?: number
+}
+
+export interface IGexProbe extends IDBEntity {
+  gene: IGexGene
 }
 
 export interface INameValue {
   name: string
   value: string | number
+  color?: string | undefined
 }
 
-export interface IGexSample {
-  publicId: string
-  name: string
-  altNames: string[]
+export interface IGexSample extends IDBEntity {
+  //altNames: string[]
   metadata: INameValue[]
 }
 
-export interface IGexDataset {
-  publicId: string
-  name: string // a human readable name for the database
-  institution: string // a public id for the database
-
+export interface IGexDataset extends IDBEntity {
+  technology: IGexTechnology
+  genome: IGexGenome
+  platform: string
+  institution: string
   samples: IGexSample[]
-
-  //displayProps: IGexPlotDisplayProps
+  exprTypes: IExprType[]
 }
 
 export interface IGexResultSample {
-  id: number
+  id: string
   //counts: number
   //tpm: number
   //vst: number
@@ -52,23 +75,22 @@ export interface IGexResultSample {
 }
 
 export interface IGexResultDataset {
-  publicId: string
+  id: string
   //samples: IGexResultSample[]
   values: number[]
 }
 
-export interface IGexResultFeature {
-  probeId?: string
-  gene: IGexGene
+export interface IGexProbeResult {
+  probe: IGexProbe
   //platform: IGexPlatform
   //gexValueType: IGexValueType
-  expression: number[]
+  values: number[]
 }
 
 export interface IGexSearchResult {
-  dataset: string
-  gexType: string
-  features: IGexResultFeature[]
+  dataset: IDBEntity
+  type: IExprType
+  probes: IGexProbeResult[]
 }
 
 export interface IGexStats extends IMannWhitneyUResult {

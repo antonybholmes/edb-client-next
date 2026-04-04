@@ -1,25 +1,24 @@
-'use client'
+// 'use client'
 
-import { ToolbarOpenFile } from '@toolbar/toolbar-open-files'
+import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
 
-import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
+import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
-import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
+import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
 
-import { PlayIcon } from '@icons/play-icon'
+import { PlayIcon } from '@/icons/play-icon'
 import {
   ShowOptionsMenu,
   Toolbar,
   ToolbarMenu,
   ToolbarPanel,
-} from '@toolbar/toolbar'
-import { ToolbarSeparator } from '@toolbar/toolbar-separator'
+} from '@/toolbar/toolbar'
+import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
-import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
 import {
   downloadDataFrame,
   getFormattedShape,
-} from '@lib/dataframe/dataframe-utils'
+} from '@/lib/dataframe/dataframe-utils'
 
 import {
   DEFAULT_PARSE_OPTS,
@@ -28,14 +27,13 @@ import {
   OpenFiles,
   type IParseOptions,
   type ITextFileOpen,
-} from '@components/pages/open-files'
+} from '@/components/pages/open-files'
 
-import { BasicAlertDialog } from '@dialog/basic-alert-dialog'
-import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
+import { BasicAlertDialog } from '@/dialog/basic-alert-dialog'
+import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
-import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
-import { OpenIcon } from '@icons/open-icon'
-import { ToolbarButton } from '@toolbar/toolbar-button'
+import { ClockRotateLeftIcon } from '@/icons/clock-rotate-left-icon'
+import { OpenIcon } from '@/icons/open-icon'
 
 import { useState } from 'react'
 
@@ -49,39 +47,57 @@ import {
   type IDialogParams,
 } from '@/consts'
 
-import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
-import { UploadIcon } from '@icons/upload-icon'
-import { createGeneConvTable } from '@lib/gene/geneconv'
-import { DropdownMenuItem } from '@themed/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { UploadIcon } from '@/icons/upload-icon'
+import { createGeneConvTable } from '@/lib/gene/geneconv'
 
-import { ShortcutLayout } from '@layouts/shortcut-layout'
-import { randId } from '@lib/id'
-import axios from 'axios'
+import { ShortcutLayout } from '@/layouts/shortcut-layout'
+import { randId } from '@/lib/id'
 
-import type { ITab } from '@components/tabs/tab-provider'
-import { FileIcon } from '@icons/file-icon'
-import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
-import { textToLines } from '@lib/text/lines'
+import type { ITab } from '@/components/tabs/tab-provider'
+import { FileIcon } from '@/icons/file-icon'
+import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
+import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { useQueryClient } from '@tanstack/react-query'
-import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
-import { ZoomSlider } from '@toolbar/zoom-slider'
 
-import { HeaderPortal } from '@/components/header/header-portal'
+import { HeaderSlotPortal } from '@/components/header/header-slot-portal'
 import { ModuleInfoButton } from '@/components/header/module-info-button'
+import { DownloadIcon } from '@/components/icons/download-icon'
+import { Toggle } from '@/components/shadcn/ui/themed/v2/toggle'
+import { useStableId } from '@/hooks/stable-id'
+import { HeaderButton } from '@/layouts/header-button'
+import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { textToLines } from '@/lib/text/lines'
+import { CoreProviders } from '@/providers/core-providers'
+import { GroupToggle, ToggleGroup } from '@/themed/v2/toggle-group'
 import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from '@/components/shadcn/ui/themed/toggle-group'
-import { DownloadIcon } from '@components/icons/download-icon'
+  HistoryLayout,
+  HistoryShowButton,
+} from '../../matcalc/history/history-layout'
 import { HistoryPanel } from '../../matcalc/history/history-panel'
-import { useHistory } from '../../matcalc/history/history-store'
+import {
+  useApp,
+  useFile,
+  useHistory,
+  useSheet,
+  useSheets,
+} from '../../matcalc/history/history-store'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import MODULE_INFO from './module.json'
 
 export function GeneConvPage() {
+  const _id = useStableId('gene-convert-page')
+
   const queryClient = useQueryClient()
 
-  const { branch, sheet, sheets, openBranch, gotoSheet, addStep } = useHistory()
+  const { openFile, goto, addSheets } = useHistory()
+
+  const app = useApp()!
+  const file = useFile()!
+  const sheet = useSheet()!
+  const sheets = useSheets()
 
   //const [filesToOpen, setFilesToOpen] = useState<IFileOpen[]>([])
 
@@ -104,11 +120,11 @@ export function GeneConvPage() {
   ) {
     //filesToDataFrames(files, historyDispatch, options)
 
-    filesToDataFrames(queryClient, files, {
+    filesToDataFrames(files, {
       parseOpts: options,
-      onSuccess: (tables) => {
+      onSuccess: tables => {
         if (tables.length > 0) {
-          openBranch(`Load ${tables[0]!.name}`, tables)
+          openFile(tables[0]!.name, { sheets: tables })
         }
       },
     })
@@ -132,7 +148,7 @@ export function GeneConvPage() {
     )
 
     if (dfa) {
-      addStep(`Gene Conversion`, [dfa])
+      addSheets([dfa], { name: `Gene Conversion` })
     }
   }
 
@@ -159,19 +175,16 @@ export function GeneConvPage() {
   // }, [])
 
   async function loadTestData() {
-    const res = await queryClient.fetchQuery({
-      queryKey: ['test_data'],
-      queryFn: () => axios.get('/data/test/geneconv.txt'),
-    })
-
     try {
-      const lines = textToLines(res.data)
+      const res = await httpFetch.getText('/data/test/geneconv.txt')
+
+      const lines = textToLines(res)
 
       const table = new DataFrameReader().indexCols(0).read(lines)
 
-      openBranch(`Load Test`, [
-        table.setName('Geneconv Test') as AnnotationDataFrame,
-      ])
+      openFile(`Test`, {
+        sheets: [table.setName('Geneconv Test') as AnnotationDataFrame],
+      })
     } catch {
       // do nothing
     }
@@ -185,7 +198,7 @@ export function GeneConvPage() {
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
-              onOpenChange={(open) => {
+              onOpenChange={open => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -216,46 +229,45 @@ export function GeneConvPage() {
           <ToolbarTabGroup className="gap-x-2 mr-1" title="From">
             <ToggleGroup
               //variant="outline"
-              type="single"
-              value={fromSpecies}
-              onValueChange={(v) => {
-                setFromSpecies(v)
+
+              value={[fromSpecies]}
+              onValueChange={v => {
+                setFromSpecies(v[0]!)
               }}
               size="toolbar"
+              className="rounded-theme overflow-hidden gap-x-px"
             >
-              {speciesTabs.map((tab) => (
-                <ToggleGroupItem key={tab.id} value={tab.id} className="w-16">
+              {speciesTabs.map(tab => (
+                <GroupToggle
+                  key={tab.id}
+                  value={tab.id}
+                  className="w-14"
+                  rounded="none"
+                >
                   {tab.id}
-                </ToggleGroupItem>
+                </GroupToggle>
               ))}
             </ToggleGroup>
-
-            {/* <ToggleButtons
-              tabs={speciesTabs}
-              value={fromSpecies}
-              onTabChange={(selectedTab) => {
-                setFromSpecies(selectedTab.tab.id)
-              }}
-              className="rounded-theme overflow-hidden"
-            >
-              <ToggleButtonTriggers defaultWidth={4.5} variant="tab" />
-            </ToggleButtons> */}
           </ToolbarTabGroup>
           <ToolbarSeparator />
           <ToolbarTabGroup className="gap-x-2 ml-1" title="To">
             <ToggleGroup
-              //variant="outline"
-              type="single"
-              value={toSpecies}
-              onValueChange={(v) => {
-                setToSpecies(v)
+              value={[toSpecies]}
+              onValueChange={v => {
+                setToSpecies(v[0]!)
               }}
               size="toolbar"
+              className="rounded-theme overflow-hidden gap-x-px"
             >
-              {speciesTabs.map((tab) => (
-                <ToggleGroupItem key={tab.id} value={tab.id} className="w-16">
+              {speciesTabs.map(tab => (
+                <Toggle
+                  key={tab.id}
+                  value={tab.id}
+                  className="w-14"
+                  rounded="none"
+                >
                   {tab.id}
-                </ToggleGroupItem>
+                </Toggle>
               ))}
             </ToggleGroup>
 
@@ -293,139 +305,16 @@ export function GeneConvPage() {
     //   ),
     // },
     {
-      //id: nanoid(),
       icon: <ClockRotateLeftIcon />,
       id: 'History',
-      content: <HistoryPanel branchId={branch?.id ?? ''} />,
+      content: <HistoryPanel />,
     },
   ]
 
-  // const sidebar: ITab[] = [
-  //   {
-  //     icon: <TableIcon className={TOOLBAR_BUTTON_ICON_CLS} />,
-  //     label: "Table View",
-  //     content: (
-  //       <ResizablePanelGroup direction="horizontal">
-  //         <ResizablePanel
-  //           id="tables"
-  //           defaultSize={75}
-  //           minSize={50}
-  //           className="flex flex-col"
-  //         >
-  //           <TabbedDataFrames
-  //             selectedSheet={history.step.sheetIndex}
-  //             dataFrames={history.step.dataframes}
-  //             onTabChange={(tab: number) => {
-  //               historyDispatch({ type: "goto-sheet", index: tab })
-  //             }}
-  //             onSelectionChange={setSelection}
-  //           />
-  //         </ResizablePanel>
-  //         <HResizeHandle />
-  //         <ResizablePanel
-  //           className="flex flex-col"
-  //           id="right-tabs"
-  //           defaultSize={25}
-  //           minSize={10}
-  //           collapsible={true}
-  //         >
-  //           <SideBar side="Right"
-  //             tabs={rightTabs}
-  //             activeTabIndex={selectedRightTab}
-  //             onTabChange={setSelectedRightTab}
-  //           />
-  //         </ResizablePanel>
-  //       </ResizablePanelGroup>
-
-  //     ),
-  //   },
-  // ]
-
-  // const fileMenuTabs: ITab[] = [
-  //   {
-  //     id: nanoid(),
-  //     name: "Open",
-  //     icon: <OpenIcon fill="" w="w-5" />,
-  //     content: (
-  //       <BaseCol className="gap-y-6 p-6">
-  //         <h1 className="text-2xl">Open</h1>
-
-  //         <ul className="flex flex-col gap-y-2 text-xs">
-  //           <li>
-  //             <MenuButton
-  //               aria-label="Open file on your computer"
-  //               onClick={() =>
-  //                 setShowDialog({ name: makeRandId("open"), params: {} })
-  //               }
-  //             >
-  //               <OpenIcon className="w-6" />
-  //               <p>
-  //                 <span className={FILE_MENU_ITEM_HEADING_CLS}>
-  //                   Open local file
-  //                 </span>
-  //                 <br />
-  //                 <span className={FILE_MENU_ITEM_DESC_CLS}>
-  //                   Open a local file on your computer.
-  //                 </span>
-  //               </p>
-  //             </MenuButton>
-  //           </li>
-  //         </ul>
-  //       </BaseCol>
-  //     ),
-  //   },
-  //   {
-  //     id: nanoid(),
-  //     name: TEXT_SAVE_AS,
-  //     content: (
-  //       <BaseCol className="gap-y-6 p-6">
-  //         <h1 className="text-2xl">{TEXT_SAVE_AS}</h1>
-
-  //         <ul className="flex flex-col gap-y-1 text-xs">
-  //           <li>
-  //             <MenuButton
-  //               aria-label="Save text file"
-  //               onClick={() => save("txt")}
-  //             >
-  //               <FileLinesIcon className="w-6" />
-  //               <p>
-  //                 <span className={FILE_MENU_ITEM_HEADING_CLS}>
-  //                   Download as TXT
-  //                 </span>
-  //                 <br />
-  //                 <span className={FILE_MENU_ITEM_DESC_CLS}>
-  //                   Save table as a tab-delimited text file.
-  //                 </span>
-  //               </p>
-  //             </MenuButton>
-  //           </li>
-  //           <li>
-  //             <MenuButton
-  //               aria-label="Save CSV file"
-  //               onClick={() => save("csv")}
-  //             >
-  //               <p>
-  //                 <span className={FILE_MENU_ITEM_HEADING_CLS}>
-  //                   Download as CSV
-  //                 </span>
-  //                 <br />
-  //                 <span className={FILE_MENU_ITEM_DESC_CLS}>
-  //                   Save table as a comma separated text file.
-  //                 </span>
-  //               </p>
-  //             </MenuButton>
-  //           </li>
-  //         </ul>
-  //       </BaseCol>
-  //     ),
-  //   },
-  // ]
-
   const fileMenuTabs: ITab[] = [
     {
-      //id: nanoid(),
       id: 'Open',
-      icon: <OpenIcon iconMode="colorful" />,
+      icon: <OpenIcon variant="colorful" />,
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
@@ -438,7 +327,6 @@ export function GeneConvPage() {
       ),
     },
     {
-      //id: nanoid(),
       id: TEXT_SAVE_AS,
       content: (
         <>
@@ -469,26 +357,38 @@ export function GeneConvPage() {
         </BasicAlertDialog>
       )}
 
-      <ShortcutLayout signedRequired={false}>
-        <HeaderPortal>
-          <ModuleInfoButton info={MODULE_INFO} />
-        </HeaderPortal>
-        <Toolbar tabs={tabs}>
+      <HeaderSlotPortal>
+        <ModuleInfoButton info={MODULE_INFO} />
+      </HeaderSlotPortal>
+
+      <HeaderSlotPortal slot="header-right">
+        <HeaderButton
+          className="text-xs"
+          onClick={() => loadTestData()}
+          title="Load test data to use features."
+        >
+          Test data
+        </HeaderButton>
+      </HeaderSlotPortal>
+
+      <ShortcutLayout signinRequired={false}>
+        <Toolbar>
           <ToolbarMenu
+            groupId={_id}
+            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
             leftShortcuts={<UndoShortcuts />}
             rightShortcuts={
-              <ToolbarButton
-                onClick={() => loadTestData()}
-                title="Load test data to use features."
-              >
-                Test data
-              </ToolbarButton>
+              <>
+                <HistoryShowButton />
+              </>
             }
           />
           <ToolbarPanel
+            groupId={_id}
+            tabs={tabs}
             tabShortcutMenu={
               <ShowOptionsMenu
                 show={showSideBar}
@@ -500,33 +400,30 @@ export function GeneConvPage() {
           />
         </Toolbar>
 
-        <TabSlideBar
-          id="gene-conv"
-          side="right"
-          tabs={rightTabs}
-          value={rightTab}
-          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
-          open={showSideBar}
-          onOpenChange={setShowSideBar}
-        >
-          {/* <Card
-            variant="content"
-            className="mx-2 pb-0"
-            style={{ marginBottom: '-2px' }}
+        <HistoryLayout>
+          {/* <TabSlideBar
+            id="gene-conv"
+            side="right"
+            tabs={rightTabs}
+            value={rightTab}
+            onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+            open={showSideBar}
+            onOpenChange={setShowSideBar}
           > */}
+
           <TabbedDataFrames
             selectedSheet={sheet?.id ?? ''}
             dataFrames={sheets as AnnotationDataFrame[]}
-            onTabChange={(selectedTab) => {
-              gotoSheet(selectedTab.tab.id)
+            onTabChange={selectedTab => {
+              goto({ app, file, sheet: selectedTab.tab })
             }}
             className="mx-2"
           />
-          {/* </Card> */}
-        </TabSlideBar>
 
+          {/* </TabSlideBar> */}
+        </HistoryLayout>
         <ToolbarFooterPortal className="justify-end">
-          <span>{getFormattedShape(sheet)}</span>
+          <span>{getFormattedShape(sheet as AnnotationDataFrame)}</span>
 
           <></>
           <ZoomSlider />
@@ -534,14 +431,22 @@ export function GeneConvPage() {
 
         {showDialog.id.includes('open') && (
           <OpenFiles
-            open={showDialog.id}
+            message={showDialog.id}
             //onOpenChange={() => setShowDialog({...NO_DIALOG})}
             onFileChange={(message, files) =>
-              onTextFileChange(message, files, (files) => openFiles(files))
+              onTextFileChange(message, files, files => openFiles(files))
             }
           />
         )}
       </ShortcutLayout>
     </>
+  )
+}
+
+export function GeneConvQueryPage() {
+  return (
+    <CoreProviders>
+      <GeneConvPage />
+    </CoreProviders>
   )
 }

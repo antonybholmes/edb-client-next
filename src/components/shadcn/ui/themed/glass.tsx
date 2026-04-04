@@ -1,5 +1,5 @@
-import { type IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/shadcn-utils'
+import { type IDivProps } from '@/interfaces/div-props'
+import { cn } from '@/lib/shadcn-utils'
 
 export const BASE_GLASS_CLS = 'backdrop-blur-lg'
 // export const GLASS_CLS = cn(

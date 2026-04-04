@@ -1,6 +1,7 @@
-import type { IPos } from '@interfaces/pos'
-import { BaseDataFrame } from '@lib/dataframe/base-dataframe'
-import { DataFrame } from '@lib/dataframe/dataframe'
+import type { IDBEntity } from '@/interfaces/db-entity'
+import type { IPos } from '@/interfaces/pos'
+import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { DataFrame } from '@/lib/dataframe/dataframe'
 import type { AnnotationDataFrame } from '../dataframe/annotation-dataframe'
 import { pearsond } from './distance'
 import { numSort } from './math'
@@ -26,7 +27,7 @@ export interface IClusterTree {
 
 //export const MAIN_CLUSTER_FRAME = 'main'
 
-export interface IClusterFrame {
+export interface IClusterFrame extends IDBEntity {
   df: AnnotationDataFrame
   //secondaryTables?: { [key: string]: BaseDataFrame } | undefined
   rowTree?: IClusterTree | undefined
@@ -606,7 +607,7 @@ export function getClusterOrderedDataFrame(cf: IClusterFrame): BaseDataFrame {
 
   const ret = new DataFrame({
     data: rowLeaves.map(r => colLeaves.map(c => data[r]![c]!)),
-    columns: colLeaves.map(c => df.colNames[c]!),
+    columns: colLeaves.map(c => df.columns[c]!),
     index: rowLeaves.map(r => df.rowNames[r]!),
     name: df.name,
   })

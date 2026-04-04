@@ -1,24 +1,28 @@
-import { SlidersIcon } from '@icons/sliders-icon'
+import { SlidersIcon } from '@/icons/sliders-icon'
 
 import { useEffect, useRef, useState } from 'react'
 
-import { autoLim } from '@/components/plot/axis'
 import {
   DEFAULT_VOLCANO_PROPS,
   VolcanoPlotSvg,
   type IVolcanoDisplayOptions,
-} from '@components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
-import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
-import { BaseCol } from '@layout/base-col'
-import { findCol, type BaseDataFrame } from '@lib/dataframe/base-dataframe'
-import { getFormattedShape, getNumCol } from '@lib/dataframe/dataframe-utils'
-import { downloadSvgAutoFormat } from '@lib/image-utils'
-import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
-import { ZoomSlider } from '@toolbar/zoom-slider'
+} from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
+import { autoLim } from '@/components/plot/axis'
+import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { BaseCol } from '@/layout/base-col'
+import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { getFormattedShape, getNumCol } from '@/lib/dataframe/dataframe-utils'
+import { downloadSvgAutoFormat } from '@/lib/image-utils'
+import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
+import { ZoomSlider } from '@/toolbar/zoom-slider'
 
-import { useHistory, usePlot } from '../../history/history-store'
+import {
+  useHistory,
+  usePlot,
+  type VolcanoPlot,
+} from '../../history/history-store'
 
-import { range } from '@lib/math/range'
+import { range } from '@/lib/math/range'
 
 import { NO_DIALOG, TEXT_CANCEL, type IDialogParams } from '@/consts'
 import {
@@ -27,14 +31,15 @@ import {
 } from '@/providers/message-provider'
 import { useZoom } from '@/providers/zoom-provider'
 
-import { SaveImageDialog } from '@components/pages/save-image-dialog'
-import type { ITab } from '@components/tabs/tab-provider'
-import type { IDivProps } from '@interfaces/div-props'
-import { randId } from '@lib/id'
-import { Card } from '@themed/card'
+import { SaveImageDialog } from '@/components/pages/save-image-dialog'
+import type { ITab } from '@/components/tabs/tab-provider'
+import type { IDivProps } from '@/interfaces/div-props'
+import { randId } from '@/lib/id'
+import { Card } from '@/themed/card'
 import { produce } from 'immer'
+import { MESSAGE_CHANNEL, OPTS_SIDEBAR_ID } from '../../data/data-panel'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
-import { PLOT_CLS } from '../heatmap/heatmap-panel'
+import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { VolcanoPropsPanel } from './volcano-props-panel'
 
 export const VOLCANO_X = 'Log2 fold change'
@@ -93,18 +98,14 @@ export function VolcanoPanel({
   //   return null
   // }
 
-  const { zoom } = useZoom()
+  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
 
-  const { updateProps } = useHistory()
-  const plot = usePlot(plotAddr)!
+  const { updatePlot } = useHistory()
+  const plot = usePlot(plotAddr)! as VolcanoPlot
 
-  const sheet = plot!.dataframes['main']! as BaseDataFrame
+  const sheet = plot?.dataframes['main'] as BaseDataFrame
 
-  const displayOptions =
-    (plot?.customProps.displayOptions as IVolcanoDisplayOptions) ??
-    DEFAULT_VOLCANO_PROPS
-
-  const { messages, removeMessage } = useMessages() //'volcano')
+  const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
 
   const svgRef = useRef<SVGSVGElement>(null)
 
@@ -126,11 +127,11 @@ export function VolcanoPanel({
   // })
 
   useEffect(() => {
-    const filteredMessage = messages.filter((m) => m.target === plot?.id)
+    const filteredMessage = messages.filter(m => m.target === plot?.id)
 
     for (const message of filteredMessage) {
-      if (message.text.includes('save')) {
-        if (message.text.includes(':')) {
+      if (message.data.includes('save')) {
+        if (message.data.includes(':')) {
           downloadSvgAutoFormat(
             svgRef,
             `volcano.${messageImageFileFormat(message)}`
@@ -151,12 +152,11 @@ export function VolcanoPanel({
       displayOptions: { ...displayProps, scale },
     }) */
 
-    updateProps(
-      plotAddr,
-      'displayOptions',
-      produce(displayOptions, (draft) => {
-        draft.scale = zoom
-      })
+    updatePlot(
+      produce(plot, draft => {
+        draft.props.scale = zoom
+      }),
+      { file: plotAddr }
     )
   }, [zoom])
 
@@ -177,7 +177,8 @@ export function VolcanoPanel({
           name="volcano"
           onResponse={(response, data) => {
             if (response !== TEXT_CANCEL) {
-              downloadSvgAutoFormat(svgRef, data!.name as string)
+              const d = data as { name: string }
+              downloadSvgAutoFormat(svgRef, d.name)
             }
 
             setShowDialog({ ...NO_DIALOG })
@@ -187,7 +188,7 @@ export function VolcanoPanel({
 
       <BaseCol ref={ref} className="h-full overflow-hidden grow">
         {/* <ResizablePanelGroup
-          direction="horizontal"
+          orientation="horizontal"
           id="volcano-resizable-panels"
           className="overflow-hidden"
           //autoSaveId="volcano-resizable-panels"
@@ -195,8 +196,8 @@ export function VolcanoPanel({
           <ResizablePanel
             id="volcano-svg"
             order={1}
-            defaultSize={75}
-            minSize={50}
+            defaultSize="75%"
+            minSize="50%"
             className="flex grow flex-col pt-2 pb-2 pl-2"
           >
             <div className="custom-scrollbar relative grow overflow-scroll rounded-lg border bg-white">
@@ -214,8 +215,8 @@ export function VolcanoPanel({
             id="volcano-svg-right"
             order={2}
             className="flex flex-col overflow-hidden"
-            defaultSize={25}
-            minSize={15}
+            defaultSize="25%"
+            minSize="15%"
             collapsedSize={0}
             collapsible={true}
           >
@@ -224,14 +225,14 @@ export function VolcanoPanel({
         </ResizablePanelGroup> */}
 
         <TabSlideBar
-          id="volcano-panel"
+          id={OPTS_SIDEBAR_ID}
           side="right"
           tabs={plotRightTabs}
           //onValueChange={setSelectedTab}
           //value={selectedTab}
           open={settings.sidebar.show}
-          onOpenChange={(v) => {
-            const newSettings = produce(settings, (draft) => {
+          onOpenChange={v => {
+            const newSettings = produce(settings, draft => {
               draft.sidebar.show = v
             })
 
@@ -255,7 +256,7 @@ export function VolcanoPanel({
           <span>{getFormattedShape(sheet)}</span>
           <></>
           <>
-            <ZoomSlider />
+            <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
           </>
         </ToolbarFooterPortal>
       </BaseCol>

@@ -1,8 +1,8 @@
-import { type IDivProps } from '@interfaces/div-props'
-import { BASE_ICON_CLS } from '@interfaces/icon-props'
-import { ColorMap } from '@lib/color/colormap'
-import { range } from '@lib/math/range'
-import { cn } from '@lib/shadcn-utils'
+import { type IDivProps } from '@/interfaces/div-props'
+import { BASE_ICON_CLS } from '@/interfaces/icon-props'
+import { ColorMap } from '@/lib/color/colormap'
+import { range } from '@/lib/math/range'
+import { cn } from '@/lib/shadcn-utils'
 
 interface IProps extends IDivProps {
   aspect?: string

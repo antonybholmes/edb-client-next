@@ -1,7 +1,7 @@
-import { cn } from '@lib/shadcn-utils'
+import { cn } from '@/lib/shadcn-utils'
 
+import type { IChildrenProps } from '@/interfaces/children-props'
 import { BUTTON_XS_H_CLS, CENTERED_ROW_CLS } from '@/theme'
-import type { IChildrenProps } from '@interfaces/children-props'
 import { VCenterRow } from '../layout/v-center-row'
 
 export const TOOLBAR_FOOTER_CLS = cn(

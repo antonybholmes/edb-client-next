@@ -1,9 +1,8 @@
-import { APP_ID } from '@/consts'
-
+import { config } from '@/config'
 import MODULE_INFO from './module.json'
 
+import type { IMarginProps } from '@/components/plot/svg-props'
 import { getModuleName } from '@/lib/module-info'
-import type { IMarginProps } from '@components/plot/svg-props'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
@@ -12,7 +11,7 @@ export type DNABase = 'a' | 'c' | 'g' | 't'
 
 export const LW = 45
 
-const SETTINGS_KEY = `${APP_ID}:module:${getModuleName(MODULE_INFO.name)}:settings:v4`
+const SETTINGS_KEY = `${config.appId}:app:${getModuleName(MODULE_INFO.name)}:settings:v4`
 
 export interface IMotifSettings {
   view: Mode
@@ -53,15 +52,14 @@ export const DEFAULT_SETTINGS: IMotifSettings = {
 
 export interface IMotifSettingsStore extends IMotifSettings {
   updateSettings: (settings: Partial<IMotifSettings>) => void
-  //applyTheme: (theme: Theme) => void
 }
 
 export const useMotifSettingsStore = create<IMotifSettingsStore>()(
   persist(
-    (set) => ({
+    set => ({
       ...DEFAULT_SETTINGS,
       updateSettings: (settings: Partial<IMotifSettings>) => {
-        set((state) => ({ ...state, ...settings }))
+        set(state => ({ ...state, ...settings }))
       },
     }),
     {
@@ -95,21 +93,21 @@ export function useMotifSettings(): {
   updateSettings: (settings: Partial<IMotifSettings>) => void
   resetSettings: () => void
 } {
-  const settings = useMotifSettingsStore((state) => state)
-  const updateSettings = useMotifSettingsStore((state) => state.updateSettings)
+  const settings = useMotifSettingsStore(state => state)
+  const updateSettings = useMotifSettingsStore(state => state.updateSettings)
   const resetSettings = () => updateSettings({ ...DEFAULT_SETTINGS })
 
   //console.log('use matcalc settings')
-  // // first load in the default values from the store
+  // first load in the default values from the store
   // const [settings, setSettings] = useState<ISettings>({
   //   passwordless: localStore.passwordless === TRUE,
   //   staySignedIn: localStore.staySignedIn === TRUE,
   //   theme: localStore.theme as Theme,
   // })
 
-  // // when the in memory store is updated, trigger a write to localstorage.
-  // // There may be an unnecessary write at the start where the localstorage
-  // // is overwritten with a copy of itself, but this is ok.
+  // when the in memory store is updated, trigger a write to localstorage.
+  // There may be an unnecessary write at the start where the localstorage
+  // is overwritten with a copy of itself, but this is ok.
   // useEffect(() => {
   //   // Write to store when there are changes
   //   localStorageMap.set({

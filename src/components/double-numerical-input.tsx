@@ -1,8 +1,10 @@
-import { VCenterRow } from '@layout/v-center-row'
-import { cn } from '@lib/shadcn-utils'
-import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react'
+import { useStableId } from '@/hooks/stable-id'
+import { VCenterRow } from '@/layout/v-center-row'
+import { cn } from '@/lib/shadcn-utils'
+import { type ReactNode } from 'react'
 import { CloseIcon } from './icons/close-icon'
 import { NumericalInput } from './shadcn/ui/themed/numerical-input'
+import type { IInputProps } from './shadcn/ui/themed/v2/input'
 
 export const CONTAINER_CLS = cn(
   'flex flex-row gap-x-1 justify-between disabled:cursor-not-allowed disabled:opacity-50'
@@ -12,7 +14,7 @@ export const INPUT_CLS = cn(
   'h-full shrink-0 disabled:cursor-not-allowed disabled:opacity-50 read-only:opacity-50'
 )
 
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends IInputProps {
   v1: number
   v2: number
   onNumChange1?: (v: number) => void
@@ -22,72 +24,76 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   limit?: [number, number]
   inc?: number
   inputCls?: string
-  w?: string
+
   dp?: number
   leftChildren?: ReactNode
 }
 
-export const DoubleNumericalInput = forwardRef<HTMLDivElement, InputProps>(
-  (
-    {
-      v1 = 1,
-      v2 = 1,
-      onNumChange1 = () => {},
-      onNumChange2 = () => {},
-      onNumChanged1 = () => {},
-      onNumChanged2 = () => {},
-      type,
-      inputCls = 'rounded-theme',
-      w = 'w-16',
-      limit = [1, 100],
-      inc = 1,
-      dp = 3,
-      leftChildren,
-      children,
-    },
-    ref
-  ) => {
-    //const [focus, setFocus] = useState(false)
+export function DoubleNumericalInput({
+  id,
+  v1 = 1,
+  v2 = 1,
+  onNumChange1 = () => {},
+  onNumChange2 = () => {},
+  onNumChanged1 = () => {},
+  onNumChanged2 = () => {},
+  type,
+  inputCls = 'rounded-theme',
+  w = 'xxs',
+  limit = [1, 100],
+  inc = 1,
+  dp = 3,
+  leftChildren,
+  children,
+}: InputProps) {
+  //const [focus, setFocus] = useState(false)
 
-    if (!children) {
-      children = <CloseIcon w="w-3" />
-    }
+  const _id = id ?? useStableId('double-numerical-input')
+  const id2 = `${_id}:2`
 
-    return (
-      <VCenterRow
-        className={CONTAINER_CLS}
-        ref={ref}
-        //onFocus={() => setFocus(true)}
-        //onBlur={() => setFocus(false)}
-      >
-        {leftChildren && leftChildren}
-        <NumericalInput
-          type={type}
-          className={inputCls}
-          value={v1}
-          dp={dp}
-          step={inc}
-          limit={limit}
-          onNumChange={onNumChange1}
-          onNumChanged={onNumChanged1}
-          w={w}
-        />
-
-        {children && children}
-
-        <NumericalInput
-          type={type}
-          className={inputCls}
-          value={v2}
-          dp={dp}
-          step={inc}
-          limit={limit}
-          onNumChange={onNumChange2}
-          onNumChanged={onNumChanged2}
-          w={w}
-        />
-      </VCenterRow>
-    )
+  if (!children) {
+    children = <CloseIcon w="w-3" />
   }
-)
-DoubleNumericalInput.displayName = 'DoubleNumericalInput'
+
+  return (
+    <VCenterRow
+      className={CONTAINER_CLS}
+      //ref={ref}
+      //onFocus={() => setFocus(true)}
+      //onBlur={() => setFocus(false)}
+    >
+      {leftChildren && leftChildren}
+      <NumericalInput
+        id={_id}
+        type={type}
+        className={inputCls}
+        value={v1}
+        dp={dp}
+        step={inc}
+        limit={limit}
+        onNumChange={onNumChange1}
+        onNumChanged={onNumChanged1}
+        w={w}
+      />
+
+      {children && children}
+
+      {/* <label htmlFor={id2} className="sr-only">
+        Max {_id}
+      </label> */}
+
+      <NumericalInput
+        id={id2}
+        type={type}
+        className={inputCls}
+        value={v2}
+        dp={dp}
+        step={inc}
+        limit={limit}
+        onNumChange={onNumChange2}
+        onNumChanged={onNumChanged2}
+        w={w}
+      />
+    </VCenterRow>
+  )
+}

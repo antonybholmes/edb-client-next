@@ -1,18 +1,18 @@
-import { OKCancelDialog, type IModalProps } from '@dialog/ok-cancel-dialog'
-import axios from 'axios'
+import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
 
-import { STATUS_CODE_OK, TEXT_OK } from '@/consts'
-import { API_RESET_PASSWORD_URL, APP_RESET_PASSWORD_URL } from '@lib/edb/edb'
+import { TEXT_OK } from '@/consts'
+import { API_RESET_PASSWORD_URL, APP_RESET_PASSWORD_URL } from '@/lib/edb/edb'
 
-//import { AccountSettingsContext } from "@context/account-settings-context"
+//import { AccountSettingsContext } from "@/context/account-settings-context"
 
 import { useState } from 'react'
 
-import { queryClient } from '@/query'
-import { useEdbAuth } from '@lib/edb/edb-auth'
-import { bearerHeaders } from '@lib/http/urls'
-import { QueryClient } from '@tanstack/react-query'
-import { toast } from '@themed/crisp'
+import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { bearerHeaders } from '@/lib/http/urls'
+
+import { httpFetch } from '@/lib/http/http-fetch'
+import { makeUuid } from '@/lib/id'
+import { Toast } from '@base-ui/react/toast'
 
 export const MIN_PASSWORD_LENGTH = 8
 export const TEXT_MIN_PASSWORD_LENGTH =
@@ -78,7 +78,7 @@ export function PasswordDialog({
   const [accessToken] = useState<string>('')
   //const [user, setUser] = useState<IUser | null>(null)
 
-  //const { accessToken } = useAccessTokenStore()
+  const { add: addToast } = Toast.useToastManager()
 
   const { session } = useEdbAuth()
 
@@ -104,58 +104,23 @@ export function PasswordDialog({
     onResponse?.(resp)
   }
 
-  // async function updatePassword(
-  //   password: string,
-  //   newPassword: string,
-  //   settings: ISettings,
-  // ): Promise<AxiosResponse> {
-  //   return await queryClient.fetchQuery({
-  //     queryKey: ["update"],
-  //     queryFn: () =>
-  //       axios.post(
-  //         SESSION_PASSWORD_UPDATE_URL,
-  //         {
-  //           password,
-  //           newPassword: settings.passwordless ? "" : newPassword,
-  //         },
-  //         {
-  //           headers: bearerHeaders(accessToken),
-  //           //withCredentials: true,
-  //         },
-  //       ),
-  //   })
-  // }
-
-  async function sendResetPasswordLink(queryClient: QueryClient) {
+  async function sendResetPasswordLink() {
     try {
-      const res = await queryClient.fetchQuery({
-        queryKey: ['reset_password'],
-        queryFn: () =>
-          axios.post(
-            API_RESET_PASSWORD_URL,
-            {
-              username: session?.user.username,
+      await httpFetch.post(API_RESET_PASSWORD_URL, {
+        body: {
+          username: session?.user.username,
 
-              callbackUrl: APP_RESET_PASSWORD_URL,
-            },
-            {
-              //withCredentials: true,
-              headers: bearerHeaders(accessToken),
-            }
-          ),
+          callbackUrl: APP_RESET_PASSWORD_URL,
+        },
+
+        //withCredentials: true,
+        headers: bearerHeaders(accessToken),
       })
 
-      if (res.status !== STATUS_CODE_OK) {
-        toast({
-          title: res.data,
-          variant: 'destructive',
-        })
-        return
-      }
-
-      toast({
+      addToast({
+        id: makeUuid(),
         title: 'Please check your email for a link to reset your password',
-        variant: 'destructive',
+        type: 'destructive',
       })
     } catch (error) {
       console.error(error)
@@ -176,7 +141,7 @@ export function PasswordDialog({
           case TEXT_OK:
             //update()
             //btnRef.current?.click()
-            sendResetPasswordLink(queryClient)
+            sendResetPasswordLink()
             break
           default:
             _resp(response)
@@ -221,7 +186,7 @@ export function PasswordDialog({
             name="passwordless"
             render={({ field }) => (
               <FormItem className="flex flex-row items-center gap-x-2">
-                <FormControl>
+               
                   <Switch
                     checked={field.value}
                     onCheckedChange={state => {
@@ -229,7 +194,7 @@ export function PasswordDialog({
                       field.onChange(state)
                     }}
                   ></Switch>
-                </FormControl>
+            
                 <FormLabel className="p-0">
                   Switch to {TEXT_PASSWORDLESS.toLowerCase()}
                 </FormLabel>

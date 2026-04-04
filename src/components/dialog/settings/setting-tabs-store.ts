@@ -1,4 +1,4 @@
-import type { ITab } from '@components/tabs/tab-provider'
+import type { ITab } from '@/components/tabs/tab-provider'
 import { create } from 'zustand'
 
 interface ISettingsTabStore {

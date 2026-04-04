@@ -1,44 +1,43 @@
-import { onTextFileChange, OpenFiles } from '@components/pages/open-files'
-import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
-import { BaseCol } from '@layout/base-col'
+import { onTextFileChange, OpenFiles } from '@/components/pages/open-files'
+import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { BaseCol } from '@/layout/base-col'
 
 import { NO_DIALOG, TEXT_CLEAR, TEXT_OK, type IDialogParams } from '@/consts'
-import { VCenterRow } from '@layout/v-center-row'
+import { VCenterRow } from '@/layout/v-center-row'
 
-import { OpenIcon } from '@icons/open-icon'
-import { HCenterRow } from '@layout/h-center-row'
+import { OpenIcon } from '@/icons/open-icon'
 
+import { PropsPanel } from '@/components/props-panel'
+import { LinkButton } from '@/themed/link-button'
 import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from '@/components/shadcn/ui/themed/toggle-group'
+  ResizablePanel,
+  ResizablePanelGroup,
+  ThinVResizeHandle,
+} from '@/themed/resizable'
+import { GroupToggle, ToggleGroup } from '@/themed/v2/toggle-group'
+
+import { FileDropZonePanel } from '@/components/file-dropzone-panel'
+import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
+import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { findCols, findRows } from '@/lib/dataframe/dataframe-utils'
+import { makeUuid, randId } from '@/lib/id'
+import { textToLines } from '@/lib/text/lines'
 import { useSearchFilters } from '@/stores/search-filter-store'
-import { FileDropZonePanel } from '@components/file-dropzone-panel'
-import { BaseRow } from '@layout/base-row'
-import { type BaseDataFrame } from '@lib/dataframe/base-dataframe'
-import { filterColsById, filterRowsById } from '@lib/dataframe/dataframe-utils'
-import { randId } from '@lib/id'
-import { textToLines } from '@lib/text/lines'
-import { Button } from '@themed/button'
-import { Checkbox } from '@themed/check-box'
-import { toast } from '@themed/crisp'
-import { Textarea } from '@themed/textarea'
+
+import { Textarea } from '@/themed/textarea'
+import { Button } from '@/themed/v2/button'
+import { Checkbox } from '@/themed/v2/check-box'
+import { Toast } from '@base-ui/react/toast'
 import { useEffect, useState } from 'react'
-import { useBranch } from '../history/history-store'
+import { useHistory } from '../history/history-store'
 import MODULE_INFO from '../module.json'
 
-export interface IProps {
-  branchId: string
-}
-
-export function FilterPropsPanel({ branchId }: IProps) {
+export function FilterPropsPanel() {
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  const { sheet, addStep } = useBranch(branchId)
+  const { sheet, addSheets } = useHistory()
 
-  //const [caseSensitive, setCaseSensitive] = useState(false)
-  //const [entireCell, setMatchEntireCell] = useState(false)
-  //const [keepOrder, setKeepOrder] = useState(false)
+  const { add: addToast } = Toast.useToastManager()
   const [text, setText] = useState('')
   const [confirmClear, setConfirmClear] = useState(false)
   const [filterMode, setFilterMode] = useState('Rows')
@@ -48,31 +47,30 @@ export function FilterPropsPanel({ branchId }: IProps) {
 
   useEffect(() => {
     if (filterMode.includes('Rows')) {
-      setText(settings.rows.ids.join('\n'))
+      setText(settings.rows.queries.join('\n'))
     } else {
-      setText(settings.cols.ids.join('\n'))
+      setText(settings.cols.queries.join('\n'))
     }
   }, [filterMode])
 
   function filterTable() {
-    const ids = textToLines(text, { trim: true })
+    const queries = textToLines(text, { trim: true })
 
     if (!sheet) {
       return
     }
 
-    console.log(ids)
-
     let df: BaseDataFrame
 
     if (filterMode.includes('Rows')) {
-      df = filterRowsById(sheet!, ids, {
+      df = findRows(sheet as BaseDataFrame, queries, {
         caseSensitive: settings.rows.caseSensitive,
         matchEntireCell: settings.rows.matchEntireCell,
         keepOrder: settings.rows.keepOrder,
       }).setName('Row Filter')
     } else {
-      df = filterColsById(sheet!, ids, {
+      console.log('Filtering cols with queries', queries)
+      df = findCols(sheet as BaseDataFrame, queries, {
         caseSensitive: settings.cols.caseSensitive,
         matchEntireCell: settings.cols.matchEntireCell,
         keepOrder: settings.cols.keepOrder,
@@ -80,14 +78,14 @@ export function FilterPropsPanel({ branchId }: IProps) {
     }
 
     if (df.size > 0) {
-      addStep(df.name, [df])
+      addSheets([df])
 
       if (filterMode.includes('Rows')) {
         updateSettings({
           ...settings,
           rows: {
             ...settings.rows,
-            ids,
+            queries,
           },
         })
       } else {
@@ -95,35 +93,44 @@ export function FilterPropsPanel({ branchId }: IProps) {
           ...settings,
           cols: {
             ...settings.cols,
-            ids,
+            queries,
           },
         })
       }
     } else {
-      toast({
+      addToast({
+        id: makeUuid(),
         title: MODULE_INFO.name,
         description: `There were no ${
           filterMode.includes('Rows') ? 'rows' : 'columns'
         } matching your filter.`,
-        variant: 'destructive',
+        type: 'destructive',
       })
     }
-
-    // historyState.current = ({
-    //   step: historyState.current.step + 1,
-    //   history: [{ title: df.name, df: [df] }],
-    // })
   }
 
   return (
     <>
+      {showDialog.id.includes('open') && (
+        <OpenFiles
+          message={showDialog.id}
+          onFileChange={(message, files) =>
+            onTextFileChange(message, files, files => {
+              if (files.length > 0) {
+                setText(files[0]!.text)
+              }
+            })
+          }
+        />
+      )}
+
       <OKCancelDialog
         open={confirmClear}
         title={MODULE_INFO.name}
         //contentVariant="glass"
         //bodyVariant="card"
         modalType="Warning"
-        onResponse={(r) => {
+        onResponse={r => {
           if (r === TEXT_OK) {
             setText('')
 
@@ -182,201 +189,192 @@ export function FilterPropsPanel({ branchId }: IProps) {
         </ToggleButtons>
       </HCenterRow> */}
 
-      <HCenterRow className="py-2 text-xs gap-x-0.5">
-        {/* <Button
-          onClick={() => setFilterMode('Rows')}
-          checked={filterMode === 'Rows'}
+      <PropsPanel className="pr-2 gap-y-2">
+        <ResizablePanelGroup
+          orientation="vertical"
+          className="grow"
+          //autoSaveId="venn-resizable-panels-v"
         >
-          <BetweenHorizonalStart className="w-4" />
-          <span>Rows</span>
-        </Button>
-        <Button
-          onClick={() => setFilterMode('Cols')}
-          checked={filterMode === 'Cols'}
-        >
-          <BetweenVerticalStart className="w-4" />
-          <span>Cols</span>
-        </Button> */}
-
-        <ToggleGroup
-          //variant="outline"
-          type="single"
-          value={filterMode}
-          onValueChange={(v) => {
-            setFilterMode(v)
-          }}
-          rounded="none"
-          className="rounded-theme overflow-hidden"
-        >
-          <ToggleGroupItem
-            value="Rows"
-            className="w-12"
-            aria-label="Filter rows"
+          <ResizablePanel
+            defaultSize="30%"
+            minSize="0%"
+            className="grow flex flex-col gap-y-2"
+            id="filter-text"
           >
-            Rows
-          </ToggleGroupItem>
-
-          <ToggleGroupItem
-            value="Cols"
-            className="w-12"
-            aria-label="Filter columns"
-          >
-            Cols
-          </ToggleGroupItem>
-        </ToggleGroup>
-      </HCenterRow>
-
-      {/* <VScrollPanel innerClassName="gap-y-2"> */}
-      <BaseRow className="gap-x-2">
-        <FileDropZonePanel
-          onFileDrop={(files) => {
-            if (files.length > 0) {
-              onTextFileChange('Open filter list', files, (files) => {
+            <FileDropZonePanel
+              onFileDrop={files => {
                 if (files.length > 0) {
-                  setText(files[0]!.text)
+                  onTextFileChange('Open filter list', files, files => {
+                    if (files.length > 0) {
+                      setText(files[0]!.text)
+                    }
+                  })
                 }
-              })
-            }
-          }}
-        >
-          <Textarea
+              }}
+            >
+              <Textarea
+                id="filter"
+                aria-label="Filter"
+                value={text}
+                onTextChange={e => setText(e)}
+                placeholder={`Filter ${filterMode.toLowerCase()}...`}
+                className="h-full"
+              />
+            </FileDropZonePanel>
+            <VCenterRow className="justify-end gap-x-2">
+              <LinkButton onClick={() => setConfirmClear(true)}>
+                {TEXT_CLEAR}
+              </LinkButton>
+            </VCenterRow>
+          </ResizablePanel>
+
+          <ThinVResizeHandle />
+          <ResizablePanel
+            defaultSize="70%"
+            minSize="0%"
+            className="grow flex flex-col gap-y-3 overflow-hidden"
             id="filter"
-            aria-label="Filter"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder={`Filter ${filterMode.toLowerCase()}...`}
-            className="h-64"
-          />
-        </FileDropZonePanel>
-        <Button
-          variant="flat"
-          size="icon"
-          // ripple={false}
-          onClick={() =>
-            setShowDialog({
-              id: randId('open'),
-            })
-          }
-          className="fill-foreground"
-          title="Open List of IDs from File"
-        >
-          <OpenIcon />
-        </Button>
-      </BaseRow>
+          >
+            <VCenterRow className="gap-x-1 items-stretch">
+              <Button
+                size="icon"
+                // ripple={false}
+                onClick={() =>
+                  setShowDialog({
+                    id: randId('open'),
+                  })
+                }
+                className="fill-foreground"
+                title="Open list of Ids from file"
+              >
+                <OpenIcon />
+              </Button>
 
-      <VCenterRow>
-        <Button
-          variant="link"
-          size="none"
-          // ripple={false}
-          onClick={() => setConfirmClear(true)}
-        >
-          {TEXT_CLEAR}
-        </Button>
-      </VCenterRow>
+              <ToolbarSeparator />
 
-      <BaseCol className="justify-between gap-y-1 py-2 shrink-0">
-        <Checkbox
-          checked={
-            filterMode.includes('Rows')
-              ? settings.rows.caseSensitive
-              : settings.cols.caseSensitive
-          }
-          onCheckedChange={(state) => {
-            if (filterMode.includes('Rows')) {
-              updateSettings({
-                ...settings,
-                rows: { ...settings.rows, caseSensitive: state },
-              })
-            } else {
-              updateSettings({
-                ...settings,
-                cols: { ...settings.cols, caseSensitive: state },
-              })
-            }
-          }}
-        >
-          Case sensitive
-        </Checkbox>
-        <Checkbox
-          checked={
-            filterMode.includes('Rows')
-              ? settings.rows.matchEntireCell
-              : settings.cols.matchEntireCell
-          }
-          onCheckedChange={(state) => {
-            if (filterMode.includes('Rows')) {
-              updateSettings({
-                ...settings,
-                rows: { ...settings.rows, matchEntireCell: state },
-              })
-            } else {
-              updateSettings({
-                ...settings,
-                cols: { ...settings.cols, matchEntireCell: state },
-              })
-            }
-          }}
-        >
-          Match entire cell
-        </Checkbox>
-        <Checkbox
-          checked={
-            filterMode.includes('Rows')
-              ? settings.rows.keepOrder
-              : settings.cols.keepOrder
-          }
-          onCheckedChange={(state) => {
-            if (filterMode.includes('Rows')) {
-              updateSettings({
-                ...settings,
-                rows: {
-                  ...settings.rows,
-                  keepOrder: state,
-                  matchEntireCell: state ? true : settings.rows.matchEntireCell,
-                },
-              })
-            } else {
-              updateSettings({
-                ...settings,
-                cols: {
-                  ...settings.cols,
-                  keepOrder: state,
-                  matchEntireCell: state ? true : settings.cols.matchEntireCell,
-                },
-              })
-            }
-          }}
-        >
-          Keep order
-        </Checkbox>
-      </BaseCol>
+              <ToggleGroup
+                //variant="outline"
+                rounded="none"
+                value={[filterMode]}
+                onValueChange={v => {
+                  setFilterMode(v[0] ?? 'Rows')
+                }}
+                //rounded="none"
+                className="rounded-theme overflow-hidden gap-x-px"
+              >
+                <GroupToggle
+                  value="Rows"
+                  className="w-12"
+                  aria-label="Filter rows"
+                >
+                  Rows
+                </GroupToggle>
 
-      <VCenterRow className="mb-2 shrink-0">
-        <Button
-          variant="theme"
-          //rounded="full"
-          className="px-4"
-          aria-label="Apply filter to current matrix"
-          onClick={() => filterTable()}
-        >
-          Apply
-        </Button>
-      </VCenterRow>
-      {/* </VScrollPanel>
-      </PropsPanel> */}
-      {showDialog.id.includes('open') && (
-        <OpenFiles
-          open={showDialog.id}
-          onFileChange={(message, files) =>
-            onTextFileChange(message, files, (files) => {
-              if (files.length > 0) {
-                setText(files[0]!.text)
-              }
-            })
-          }
-        />
-      )}
+                <GroupToggle
+                  value="Cols"
+                  className="w-12"
+                  aria-label="Filter columns"
+                >
+                  Cols
+                </GroupToggle>
+              </ToggleGroup>
+            </VCenterRow>
+
+            <BaseCol className="justify-between gap-y-1 shrink-0">
+              <Checkbox
+                checked={
+                  filterMode.includes('Rows')
+                    ? settings.rows.caseSensitive
+                    : settings.cols.caseSensitive
+                }
+                onCheckedChange={state => {
+                  if (filterMode.includes('Rows')) {
+                    updateSettings({
+                      ...settings,
+                      rows: { ...settings.rows, caseSensitive: state },
+                    })
+                  } else {
+                    updateSettings({
+                      ...settings,
+                      cols: { ...settings.cols, caseSensitive: state },
+                    })
+                  }
+                }}
+              >
+                Case sensitive
+              </Checkbox>
+              <Checkbox
+                checked={
+                  filterMode.includes('Rows')
+                    ? settings.rows.matchEntireCell
+                    : settings.cols.matchEntireCell
+                }
+                onCheckedChange={state => {
+                  if (filterMode.includes('Rows')) {
+                    updateSettings({
+                      ...settings,
+                      rows: { ...settings.rows, matchEntireCell: state },
+                    })
+                  } else {
+                    updateSettings({
+                      ...settings,
+                      cols: { ...settings.cols, matchEntireCell: state },
+                    })
+                  }
+                }}
+              >
+                Match entire cell
+              </Checkbox>
+              <Checkbox
+                checked={
+                  filterMode.includes('Rows')
+                    ? settings.rows.keepOrder
+                    : settings.cols.keepOrder
+                }
+                onCheckedChange={state => {
+                  if (filterMode.includes('Rows')) {
+                    updateSettings({
+                      ...settings,
+                      rows: {
+                        ...settings.rows,
+                        keepOrder: state,
+                        matchEntireCell: state
+                          ? true
+                          : settings.rows.matchEntireCell,
+                      },
+                    })
+                  } else {
+                    updateSettings({
+                      ...settings,
+                      cols: {
+                        ...settings.cols,
+                        keepOrder: state,
+                        matchEntireCell: state
+                          ? true
+                          : settings.cols.matchEntireCell,
+                      },
+                    })
+                  }
+                }}
+              >
+                Keep order
+              </Checkbox>
+            </BaseCol>
+
+            <VCenterRow className="mb-2 shrink-0">
+              <Button
+                variant="theme"
+                //rounded="full"
+                className="px-4"
+                aria-label="Apply filter to current matrix"
+                onClick={() => filterTable()}
+              >
+                Apply
+              </Button>
+            </VCenterRow>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </PropsPanel>
     </>
   )
 }

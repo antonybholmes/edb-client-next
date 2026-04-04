@@ -1,5 +1,5 @@
-import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/shadcn-utils'
+import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
+import { cn } from '@/lib/shadcn-utils'
 import { GripVertical } from 'lucide-react'
 import type { CSSProperties } from 'react'
 
@@ -17,8 +17,7 @@ interface IProps extends IIconProps {
 }
 
 export function VerticalGripIcon({
-  w = 'w-5',
-  stroke = 'stroke-foreground',
+  w = 16,
   className,
   strokeWidth = 1.5,
   ...props
@@ -48,9 +47,9 @@ export function VerticalGripIcon({
     // </HCenterCol>
 
     <GripVertical
-      className={cn(ICON_CLS, stroke, w, className)}
+      className={cn(ICON_CLS, className)}
       strokeWidth={strokeWidth}
-      stroke=""
+      size={w}
       {...props}
     />
   )

@@ -1,15 +1,9 @@
-import { type IModalProps } from '@dialog/ok-cancel-dialog'
+import { type IModalProps } from '@/dialog/ok-cancel-dialog'
 import { Children } from 'react'
 
-import { TEXT_CANCEL } from '@/consts'
-import { BaseCol } from '@layout/base-col'
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  overlayVariants,
-} from '@themed/dialog'
+import { BaseCol } from '@/layout/base-col'
+import { Dialog, DialogContent, overlayVariants } from '@/themed/v2/dialog'
+//import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { cva, type VariantProps } from 'class-variance-authority'
 
 export const glassDialogVariants = cva('text-sm grid', {
@@ -30,7 +24,8 @@ export const glassDialogVariants = cva('text-sm grid', {
 })
 
 export interface IBaseGlassDialogProps
-  extends IModalProps,
+  extends
+    IModalProps,
     VariantProps<typeof glassDialogVariants>,
     VariantProps<typeof overlayVariants> {
   open?: boolean
@@ -39,15 +34,13 @@ export interface IBaseGlassDialogProps
 }
 
 export function BaseGlassSideDialog({
-  title = '',
-  description = '',
   size,
   height,
   open = true,
   span = 1,
   cols = 4,
   overlayColor = 'trans',
-  onResponse = () => {},
+
   onOpenChange = () => {},
   className,
   children,
@@ -57,7 +50,7 @@ export function BaseGlassSideDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        onEscapeKeyDown={() => onResponse?.(TEXT_CANCEL)}
+        //onEscapeKeyDown={() => onResponse?.(TEXT_CANCEL)}
         className={glassDialogVariants({
           size,
           height,
@@ -76,15 +69,15 @@ export function BaseGlassSideDialog({
         </BaseCol>
 
         <BaseCol
-          className="bg-background rounded-r-lg border-l border-border/75 p-5 gap-y-4"
+          className="bg-background rounded-r-lg border-l border-border/75 p-6 gap-y-4"
           style={{ gridColumn: `span ${cols - span} / span ${cols - span}` }}
         >
           {c[1]!}
         </BaseCol>
 
-        <VisuallyHidden asChild>
+        {/* <VisuallyHidden asChild>
           <DialogDescription>{description ?? title}</DialogDescription>
-        </VisuallyHidden>
+        </VisuallyHidden> */}
       </DialogContent>
     </Dialog>
   )

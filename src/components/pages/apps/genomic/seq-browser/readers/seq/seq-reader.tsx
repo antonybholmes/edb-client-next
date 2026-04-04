@@ -1,6 +1,6 @@
-import { type IGenomicLocation } from '@lib/genomic/genomic'
+import { type IGenomicLocation } from '@/lib/genomic/genomic'
 import { type ISeqPos } from '../../svg/base-seq-track-svg'
-import { type ISignalTrack, type ITrackBinCounts } from '../../tracks-provider'
+import { type ISampleBinCounts, type ISignalTrack } from '../../tracks-provider'
 import { BaseSeqReader, type IGetPointOptions } from './base-seq-reader'
 
 export class SeqReader extends BaseSeqReader {
@@ -10,10 +10,10 @@ export class SeqReader extends BaseSeqReader {
   // private _mode: 'Cache Bins' | 'Cache X' | 'Collapse' | 'Fully Cached' =
   //   'Cache Bins'
 
-  private _trackBinCounts: ITrackBinCounts
+  private _trackBinCounts: ISampleBinCounts
   //private _binSize: number = -1
 
-  constructor(track: ISignalTrack, trackBinCounts: ITrackBinCounts) {
+  constructor(track: ISignalTrack, trackBinCounts: ISampleBinCounts) {
     super()
     this._track = track
     this._trackBinCounts = trackBinCounts
@@ -29,21 +29,22 @@ export class SeqReader extends BaseSeqReader {
     //if (loc !== this._loc || this._binSize !== binSize) {
     return this._trackBinCounts.bins.map(b => {
       // the real 1 based end
-      const start = b[0]!
+      const start = b.s
 
       // end is the real end of the block, but for
       // graphical purposes, it must be the same as the
       // start of a block so that line segments can be
       // joined together without small gaps between them
-      const end = b[1]! + 1
+      // thus we add 1 to make it inclusive
+      const end = b.e + 1
 
-      const reads = b[2]!
+      const reads = b.c
 
       let y = 0
 
       switch (mode) {
         case 'BPM':
-          y = reads * this._trackBinCounts.bpmScaleFactor
+          y = (reads / this._trackBinCounts.binReads) * 1000000 // * this._trackBinCounts.bpmScaleFactor
           break
         case 'CPM':
           y = (reads / this._track.reads) * 1000000

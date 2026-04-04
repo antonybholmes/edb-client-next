@@ -1,24 +1,30 @@
 // 'use client'
 
-import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
+import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
-import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
-import { ZoomSlider } from '@toolbar/zoom-slider'
+import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
+import { ZoomSlider } from '@/toolbar/zoom-slider'
 
-import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
-import { ToolbarSeparator } from '@toolbar/toolbar-separator'
+import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
+import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
-import { ArrowRightArrowLeftIcon } from '@icons/arrow-right-arrow-left-icon'
-import { SearchIcon } from '@icons/search-icon'
-import { SlidersIcon } from '@icons/sliders-icon'
-import { getDataFrameInfo } from '@lib/dataframe/dataframe-utils'
+import { ArrowRightArrowLeftIcon } from '@/icons/arrow-right-arrow-left-icon'
+import { SearchIcon } from '@/icons/search-icon'
+import { SlidersIcon } from '@/icons/sliders-icon'
+import { getDataFrameInfo } from '@/lib/dataframe/dataframe-utils'
 
 import { useEffect, useRef, useState } from 'react'
 
+import type { ISaveAsFormat } from '@/components/pages/save-as-dialog'
+import { SaveImageDialog } from '@/components/pages/save-image-dialog'
+import { SaveTxtDialog } from '@/components/pages/save-txt-dialog'
+import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import {
   NO_DIALOG,
   TEXT_CANCEL,
   TEXT_DOWNLOAD_AS_CSV,
+  TEXT_DOWNLOAD_AS_PNG,
+  TEXT_DOWNLOAD_AS_SVG,
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_EXPORT,
   TEXT_SAVE_AS,
@@ -26,44 +32,54 @@ import {
   type IDialogParams,
 } from '@/consts'
 import { useZoom } from '@/providers/zoom-provider'
-import type { ISaveAsFormat } from '@components/pages/save-as-dialog'
-import { SaveImageDialog } from '@components/pages/save-image-dialog'
-import { SaveTxtDialog } from '@components/pages/save-txt-dialog'
-import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
-import { ThinVResizeHandle } from '@components/split-pane/thin-v-resize-handle'
-import { type ITab } from '@components/tabs/tab-provider'
-import { ToggleButtons, ToggleButtonTriggers } from '@components/toggle-buttons'
-import { ExportIcon } from '@icons/export-icon'
-import { FileIcon } from '@icons/file-icon'
-import { FileImageIcon } from '@icons/file-image-icon'
-import { SaveIcon } from '@icons/save-icon'
-import { BaseCol } from '@layout/base-col'
-import { BaseRow } from '@layout/base-row'
-import { ShortcutLayout } from '@layouts/shortcut-layout'
-import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
-import { downloadDataFrame } from '@lib/dataframe/dataframe-utils'
-import { randId } from '@lib/id'
-import { downloadSvgAutoFormat } from '@lib/image-utils'
-import { Card } from '@themed/card'
-import { DropdownMenuItem } from '@themed/dropdown-menu'
-import { IconButton } from '@themed/icon-button'
-import { ResizablePanel, ResizablePanelGroup } from '@themed/resizable'
-import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
+
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { type ITab } from '@/components/tabs/tab-provider'
+import {
+  ToggleButtons,
+  ToggleButtonTriggers,
+} from '@/components/toggle-buttons'
+import { ExportIcon } from '@/icons/export-icon'
+import { FileIcon } from '@/icons/file-icon'
+import { FileImageIcon } from '@/icons/file-image-icon'
+import { SaveIcon } from '@/icons/save-icon'
+import { BaseCol } from '@/layout/base-col'
+import { BaseRow } from '@/layout/base-row'
+import { ShortcutLayout } from '@/layouts/shortcut-layout'
+import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
+import { randId } from '@/lib/id'
+import { downloadSvgAutoFormat } from '@/lib/image-utils'
+import { Card } from '@/themed/card'
+import { IconButton } from '@/themed/icon-button'
+import {
+  ResizablePanel,
+  ResizablePanelGroup,
+  ThinVResizeHandle,
+} from '@/themed/resizable'
+import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 import { produce } from 'immer'
 import { PLOT_CLS } from '../matcalc/apps/heatmap/heatmap-panel'
 import {
-  HISTORY_ACTION_OPEN_APP,
+  pathJoin,
   useHistory,
+  useSheet,
+  useSheets,
 } from '../matcalc/history/history-store'
 import { BioDrawSvg } from './bio-draw-canvas'
 import { DisplayPropsPanel } from './display-props-panel'
-import MODULE_INFO from './module.json'
 import { MotifsPropsPanel } from './motifs-props-panel'
 
-import { DownloadIcon } from '@components/icons/download-icon'
+import { DownloadIcon } from '@/components/icons/download-icon'
+import { CoreProviders } from '@/providers/core-providers'
+import MODULE_INFO from './module.json'
 import { useMotifSettings, type Mode } from './motifs-settings'
 
+const PLOT_ZOOM_CHANNEL = 'bio-draw-plot-zoom'
+
 export function BioDrawPage() {
+  //const _id = useStableId('bio-draw-page')
+
   //const [fileStore, filesDispatch] = useReducer(filesReducer, { files: [] })
   //const [fileData, setFileData] = useState<{ [key: string]: string[] }>({})
 
@@ -74,23 +90,28 @@ export function BioDrawPage() {
 
   const svgRef = useRef<SVGSVGElement>(null)
 
-  const [showFileMenu, setShowFileMenu] = useState(false)
+  //const [showFileMenu, setShowFileMenu] = useState(false)
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  const { zoom } = useZoom()
+  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
 
   const { settings, updateSettings } = useMotifSettings()
 
-  const { sheet, sheets, dispatch, openBranch, gotoSheet } = useHistory()
+  const { currentFile, openApp, goto } = useHistory()
+
+  const sheets = useSheets()
+  const sheet = useSheet()
+
+  const df = sheet as AnnotationDataFrame
 
   useEffect(() => {
-    dispatch({ type: HISTORY_ACTION_OPEN_APP, name: MODULE_INFO.name })
+    openApp(MODULE_INFO.name)
   }, [])
 
   useEffect(() => {
     updateSettings(
-      produce(settings, (draft) => {
+      produce(settings, draft => {
         draft.zoom = zoom
       })
     )
@@ -103,7 +124,7 @@ export function BioDrawPage() {
 
     const sep = format === 'csv' ? ',' : '\t'
 
-    downloadDataFrame(sheet as AnnotationDataFrame, {
+    downloadDataFrame(df, {
       hasHeader: true,
       hasIndex: true,
       file: name,
@@ -177,21 +198,21 @@ export function BioDrawPage() {
       content: (
         <>
           <DropdownMenuItem
-            aria-label="Download as PNG"
+            aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
               downloadSvgAutoFormat(svgRef, `motifs.png`)
             }}
           >
             <FileImageIcon stroke="" />
-            <span>Download as PNG</span>
+            <span>{TEXT_DOWNLOAD_AS_PNG}</span>
           </DropdownMenuItem>
           <DropdownMenuItem
-            aria-label=" Download as CSV"
+            aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
               downloadSvgAutoFormat(svgRef, `motifs.svg`)
             }}
           >
-            <span>Download as SVG</span>
+            <span>{TEXT_DOWNLOAD_AS_SVG}</span>
           </DropdownMenuItem>
         </>
       ),
@@ -232,9 +253,9 @@ export function BioDrawPage() {
             <ToggleButtons
               tabs={[{ id: 'Prob' }, { id: 'Bits' }]}
               value={settings.mode}
-              onTabChange={(selectedTab) => {
+              onTabChange={selectedTab => {
                 updateSettings(
-                  produce(settings, (draft) => {
+                  produce(settings, draft => {
                     draft.mode = selectedTab.tab.id as Mode
                   })
                 )
@@ -243,38 +264,12 @@ export function BioDrawPage() {
               <ToggleButtonTriggers defaultWidth={3.5} />
             </ToggleButtons>
 
-            {/* <ToggleGroup
-              variant="outline"
-              type="single"
-              value={mode}
-              onValueChange={value => {
-                setMode(value as Mode)
-              }}
-              className="rounded-theme flex flex-row overflow-hidden p-0.25 bg-muted"
-            >
-              <ToggleGroupItem
-                value="Prob"
-                className="w-16"
-                aria-label="Probability view"
-              >
-                Prob
-              </ToggleGroupItem>
-
-              <ToggleGroupItem
-                value="Bits"
-                className="w-16"
-                aria-label="Bits view"
-              >
-                Bits
-              </ToggleGroupItem>
-            </ToggleGroup> */}
-
             <ToolbarIconButton
               checked={settings.revComp}
               onClick={() => {
                 console.log('revComp', settings.revComp)
                 updateSettings(
-                  produce(settings, (draft) => {
+                  produce(settings, draft => {
                     draft.revComp = !settings.revComp
                   })
                 )
@@ -285,29 +280,6 @@ export function BioDrawPage() {
             </ToolbarIconButton>
           </ToolbarTabGroup>
           <ToolbarSeparator />
-
-          {/* <ToggleGroup
-            type="single"
-            value={selectedTab}
-            onValueChange={setSelectedTab}
-            className="rounded-theme overflow-hidden"
-          >
-            <ToggleGroupItem
-              value="Plot"
-              className="w-14"
-              aria-label="Plot view"
-            >
-              Plot
-            </ToggleGroupItem>
-
-            <ToggleGroupItem
-              value="Table"
-              className="w-14"
-              aria-label="Table view"
-            >
-              Table
-            </ToggleGroupItem>
-          </ToggleGroup> */}
         </>
       ),
     },
@@ -386,7 +358,11 @@ export function BioDrawPage() {
         name="motifs"
         onResponse={(response, data) => {
           if (response !== TEXT_CANCEL) {
-            downloadSvgAutoFormat(svgRef, data!.name as string)
+            const d = data as {
+              name: string
+            }
+
+            downloadSvgAutoFormat(svgRef, d.name as string)
           }
 
           setShowDialog({ ...NO_DIALOG })
@@ -397,10 +373,12 @@ export function BioDrawPage() {
         <SaveTxtDialog
           onResponse={(response, data) => {
             if (response !== TEXT_CANCEL) {
-              save(
-                data!.name as string,
-                (data!.format as ISaveAsFormat)!.ext! as string
-              )
+              const d = data as {
+                name: string
+                format: ISaveAsFormat
+              }
+
+              save(d.name as string, d.format.ext as string)
             }
 
             setShowDialog({ ...NO_DIALOG })
@@ -408,17 +386,7 @@ export function BioDrawPage() {
         />
       )}
 
-      <ShortcutLayout
-        signedRequired={false}
-
-        // shortcuts={
-        //   <Shortcuts
-
-        //     tabs={sideTabs}
-        //     onTabChange={selectedTab => setSelectedTab(selectedTab.tab.id)}
-        //   />
-        // }
-      >
+      <ShortcutLayout signinRequired={false}>
         {/* <TabProvider
           value={selectedTab}
           //onTabChange={selectedTab => setSelectedTab(selectedTab.tab.name)}
@@ -436,14 +404,14 @@ export function BioDrawPage() {
           limits={[50, 85]}
         >
           <ResizablePanelGroup
-            direction="vertical"
+            orientation="vertical"
             className="px-2"
             //autoSaveId="rev-comp-vert"
           >
             <ResizablePanel
               id="chart"
-              defaultSize={70}
-              minSize={10}
+              defaultSize="70%"
+              minSize="0%"
               className="flex flex-col text-sm"
               collapsible={true}
             >
@@ -460,8 +428,8 @@ export function BioDrawPage() {
             <ResizablePanel
               className="flex flex-col text-sm"
               id="output"
-              defaultSize={30}
-              minSize={10}
+              defaultSize="30%"
+              minSize="0%"
               collapsible={true}
             >
               <BaseRow className="gap-x-2 grow">
@@ -480,8 +448,8 @@ export function BioDrawPage() {
                 <TabbedDataFrames
                   selectedSheet={sheet?.id ?? ''}
                   dataFrames={sheets as AnnotationDataFrame[]}
-                  onTabChange={(selectedTab) => {
-                    gotoSheet(selectedTab.tab.id)
+                  onTabChange={selectedTab => {
+                    goto(pathJoin(currentFile, selectedTab.tab))
                   }}
                   className="relative grow"
                 />
@@ -491,11 +459,19 @@ export function BioDrawPage() {
         </TabSlideBar>
 
         <ToolbarFooterPortal className="justify-between">
-          <div>{getDataFrameInfo(sheet)}</div>
+          <div>{getDataFrameInfo(df)}</div>
           <></>
-          <ZoomSlider />
+          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
         </ToolbarFooterPortal>
       </ShortcutLayout>
     </>
+  )
+}
+
+export function BioDrawQueryPage() {
+  return (
+    <CoreProviders>
+      <BioDrawPage />
+    </CoreProviders>
   )
 }

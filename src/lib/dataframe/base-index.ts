@@ -1,6 +1,5 @@
-import type { IndexMapFunc } from '.'
+import type { IndexMapFunc, SeriesData, Shape } from '.'
 import { cellNum, cellStr } from './cell'
-import type { SeriesData, Shape } from './dataframe-types'
 
 export abstract class BaseIndex {
   /**
@@ -13,8 +12,6 @@ export abstract class BaseIndex {
    * @param index
    */
   abstract get(index: number): SeriesData
-
-  abstract setName(name: string): BaseIndex
 
   map<T>(f: IndexMapFunc<T>): T[] {
     return _map(this, f)
@@ -64,7 +61,7 @@ export abstract class BaseIndex {
   /**
    * Return the index values as purely numbers
    */
-  get numValues(): number[] {
+  get nums(): number[] {
     return this.values.map(v => cellNum(v))
   }
 
@@ -72,7 +69,7 @@ export abstract class BaseIndex {
    * Returns the index values as numbers, removing any NaNs
    */
   get numsNoNA(): number[] {
-    return this.numValues.filter(v => !isNaN(v))
+    return this.nums.filter(v => !isNaN(v))
   }
 }
 

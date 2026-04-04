@@ -1,16 +1,21 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { TabContentPanels, Tabs } from '../shadcn/ui/themed/tabs'
+import { TabContentPanels } from '../shadcn/ui/themed/v2/tabs'
 
-import { TabIndicatorProvider } from '../tabs/tab-indicator-provider'
-import { getTabFromValue, type ITabProvider } from '../tabs/tab-provider'
-import { UnderlineTabs } from '../tabs/underline-tabs'
+import { type ITabProvider } from '../tabs/tab-provider'
 
-import { CloseButton, SlideBar, type ISlideBarProps } from './slide-bar'
+import { useStableId } from '@/hooks/stable-id'
+import { BaseCol } from '../layout/base-col'
+import { VCenterRow } from '../layout/v-center-row'
+import { TabIndicatorFollowBlock } from '../tabs/tab-indicator-follow-block'
+import { TabIndicatorSelectedH } from '../tabs/tab-indicator-selected-h'
+import { useTabs } from '../tabs/tab-store'
+import { getSelectedMouseOverSize, UnderlineTabs } from '../tabs/underline-tabs'
+import { ResizableSidebar } from './resizable-sidebar'
+import { CloseButton, type ISlideBarProps } from './slide-bar'
+import { useSlideBar } from './slide-bar-store'
 
 interface IProps extends ITabProvider, ISlideBarProps {
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
   showCloseButton?: boolean
   limits?: [number, number]
   display?: 'block' | 'flex'
@@ -18,93 +23,92 @@ interface IProps extends ITabProvider, ISlideBarProps {
 
 export function TabSlideBar({
   id,
-  ref,
-  value,
   tabs,
-  onTabChange,
-  open,
   showCloseButton = true,
-  onOpenChange,
-  initialPosition: position = 80,
-  limits = [50, 85],
+  onTabChange,
   side = 'left',
-
   children,
 }: IProps) {
-  const [_value, setValue] = useState('')
-  const [_open, setOpen] = useState(true)
   const [hover, setHover] = useState(false)
 
-  const isOpen: boolean = open !== undefined ? open : _open
+  const _id = id ?? useStableId('tab-slide-bar')
 
-  const val = value !== undefined ? value : _value
+  const { setOpen } = useSlideBar(_id)
 
-  const selectedTab = useMemo(() => getTabFromValue(val, tabs), [val, tabs])
+  const { setTab } = useTabs(_id)
+
+  // set default tab on mount
+  useEffect(() => {
+    if (tabs.length === 0) {
+      return
+    }
+    setTab({ id: tabs[0]!.id, index: 0 })
+  }, [])
+
+  //const isOpen: boolean = open !== undefined ? open : _open
+
+  //const val = value !== undefined ? value : _value
+
+  // useEffect(() => {
+  //   setInitialSize(80)
+  // }, [])
+
+  // useEffect(() => {
+  //   sendMessage({ data: open ? 'open' : 'close' })
+  // }, [open])
+
+  // useEffect(() => {
+  //   if (value) {
+  //     const tab = getTabFromValue(value, tabs)
+  //     if (tab) {
+  //       setTab({ id: tab.tab.id, index: tab.index })
+  //     }
+  //   }
+  // }, [value])
 
   function _onOpenChange(state: boolean) {
     setOpen(state)
-    onOpenChange?.(state)
   }
-
-  function _onValueChange(value: string) {
-    const tab = getTabFromValue(value, tabs)
-
-    //const [name, index] = parseTabId(value)
-
-    //onValueChange?.(name)
-    if (tab) {
-      onTabChange?.(tab)
-    }
-
-    setValue(value)
-  }
-
-  const tabsElem = useMemo(() => {
-    const selectedTabId = selectedTab?.tab.id ?? '' // getTabId(selectedTab.tab)
-
-    //console.log('Selected tab', selectedTabId)
-
-    return (
-      <Tabs
-        className="flex min-h-0 flex-col relative grow gap-y-2 pr-2 text-xs"
-        value={selectedTabId} //selectedTab?.tab.id}
-        //defaultValue={_value === "" ? `${tabs[0].name}:0`:undefined}
-        onValueChange={_onValueChange}
-        orientation="horizontal"
-        ref={ref}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-      >
-        <TabIndicatorProvider>
-          <UnderlineTabs value={selectedTabId} tabs={tabs}>
-            {showCloseButton && (
-              <CloseButton
-                onClick={() => _onOpenChange(false)}
-                data-hover={hover}
-              />
-            )}
-          </UnderlineTabs>
-        </TabIndicatorProvider>
-        <TabContentPanels tabs={tabs} />
-        {/* {selectedTab.tab.content}   */}
-      </Tabs>
-    )
-  }, [val, tabs, hover, selectedTab])
 
   return (
-    <SlideBar
-      id={id}
-      open={isOpen}
-      onOpenChange={_onOpenChange}
-      side={side}
-      initialPosition={position}
-      limits={limits}
-      //mainContent={children}
-      //sideContent={tabsElem}
-    >
-      {/* <SlideBarContent className={className} /> */}
+    <ResizableSidebar id={_id} side={side}>
       <>{children}</>
-      <>{tabsElem}</>
-    </SlideBar>
+      <BaseCol className="gap-y-4 grow overflow-x-hidden">
+        <VCenterRow
+          className="justify-between px-1 text-xs"
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+        >
+          <UnderlineTabs
+            groupId={_id}
+            tabs={tabs}
+            selectedMouseOverSize={getSelectedMouseOverSize}
+            tabButtonProps={{ variant: 'default' }}
+            onTabChange={onTabChange}
+            //tabListCls="gap-x-0.5"
+          >
+            <TabIndicatorFollowBlock
+              groupId={_id}
+              rounded={false}
+              //color="bg-background"
+            />
+            <TabIndicatorSelectedH groupId={_id} />
+          </UnderlineTabs>
+
+          {showCloseButton && (
+            <CloseButton
+              onClick={() => _onOpenChange(false)}
+              data-hover={hover}
+            />
+          )}
+        </VCenterRow>
+
+        {/* <TabContentPanel tabIndex={tabIndex ?? 0} tabs={tabs} /> */}
+
+        <TabContentPanels tabs={tabs} groupId={_id} className="flex-col grow" />
+      </BaseCol>
+
+      {/* <TabContentForceMountPanels tabs={tabs} /> */}
+    </ResizableSidebar>
   )
 }

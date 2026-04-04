@@ -1,5 +1,5 @@
-import { type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/shadcn-utils'
+import { type IIconProps } from '@/interfaces/icon-props'
+import { cn } from '@/lib/shadcn-utils'
 import { Info } from 'lucide-react'
 
 export function InfoIcon({
@@ -7,17 +7,22 @@ export function InfoIcon({
   stroke = 'stroke-foreground',
   fill,
   className,
-  strokeWidth = 2,
+  strokeWidth = 1.5,
   iconMode,
+  ...props
 }: IIconProps) {
-  if (iconMode === 'colorful') {
-    stroke = 'stroke-theme/50'
-    fill = 'fill-white'
-  }
-
-  if (iconMode === 'bw') {
-    stroke = 'stroke-foreground'
-    fill = 'fill-background'
+  switch (iconMode) {
+    case 'colorful':
+      stroke = 'stroke-theme/50'
+      fill = 'fill-white'
+      break
+    case 'bw':
+      stroke = 'stroke-foreground'
+      fill = 'fill-background'
+      break
+    default:
+      stroke = 'stroke-foreground'
+      fill = 'fill-background'
   }
 
   return (
@@ -51,6 +56,7 @@ export function InfoIcon({
       className={cn(stroke, fill, w, className)}
       stroke=""
       strokeWidth={strokeWidth}
+      {...props}
     />
   )
 }

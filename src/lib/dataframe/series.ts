@@ -1,6 +1,13 @@
-import { Index, makeIndex, type IIndexOptions } from '.'
+import {
+  Index,
+  makeIndex,
+  type IIndexOptions,
+  type IndexFromType,
+  type SeriesData,
+} from '.'
 import { BaseIndex } from './base-index'
-import type { IndexFromType, SeriesData } from './dataframe-types'
+
+export type SeriesFromType = BaseSeries | IndexFromType
 
 export const DEFAULT_INDEX_NAME = 'Index'
 
@@ -16,6 +23,8 @@ export abstract class BaseSeries extends BaseIndex {
     return [...new Set(this.values)].sort()
   }
 
+  abstract setName(name: string): BaseSeries
+
   abstract set(index: number, v: SeriesData): void
 
   abstract filter(idx: number[]): BaseSeries
@@ -24,21 +33,21 @@ export abstract class BaseSeries extends BaseIndex {
 }
 
 export interface ISeriesOptions extends IIndexOptions {
-  index?: IndexFromType | undefined
+  index?: IndexFromType
 }
 
-export class Series extends BaseSeries {
-  protected _data: SeriesData[]
-  protected _name: string
-  protected _index: Index
+export class DataSeries extends BaseSeries {
+  _data: SeriesData[]
+  _name: string
+  _index: Index
 
   constructor(data: SeriesData[], options: ISeriesOptions = {}) {
     super()
 
     const { index, name = '' } = options
 
-    this._data = data
     this._name = name
+    this._data = [...data]
     this._index = makeIndex(index, data.length)
   }
 
@@ -59,7 +68,7 @@ export class Series extends BaseSeries {
     index: IndexFromType,
     inplace: boolean = false
   ): BaseSeries {
-    const series: Series = inplace ? this : (this.copy() as Series)
+    const series: DataSeries = inplace ? this : (this.copy() as DataSeries)
 
     series._index = makeIndex(index, series.length)
 
@@ -84,21 +93,21 @@ export class Series extends BaseSeries {
   }
 
   override filter(idx: number[]): BaseSeries {
-    return new Series(
+    return new DataSeries(
       idx.map(i => this._data[i]!),
       { name: this._name, index: this._index.filter(idx) }
     )
   }
 
   override copy(): BaseSeries {
-    return new Series(this._data, {
+    return new DataSeries([...this._data], {
       name: this._name,
       index: this._index.copy(),
     })
   }
 }
 
-export const EMPTY_SERIES = new Series([])
+export const EMPTY_SERIES = new DataSeries([])
 
 // export class InfSeries extends BaseSeries {
 

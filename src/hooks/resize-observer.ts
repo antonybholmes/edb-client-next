@@ -1,29 +1,40 @@
-import { useEffect, type RefObject } from 'react'
+import { useEffect, useRef, type RefObject } from 'react'
 
 export function useResizeObserver<T extends HTMLElement>(
-  ref: RefObject<T | undefined | null>,
-  callback: (target: T) => void
+  refs: RefObject<T | null> | RefObject<T | null>[],
+  callback: (target: ResizeObserverEntry) => void
 ) {
-  //const ref = useRef<T>(null)
+  const callbackRef = useRef(callback)
 
+  // keep latest callback without re-subscribing
   useEffect(() => {
-    const element = ref?.current
+    callbackRef.current = callback
+  }, [callback])
 
-    if (!element) {
-      return
-    }
-
-    const observer = new ResizeObserver(() => {
-      callback(element)
+  // create observer once and subscribe to changes
+  // callbackRef.current is mutable and always has the latest callback
+  useEffect(() => {
+    const observer = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        callbackRef.current(entry)
+      }
     })
 
-    observer.observe(element)
+    // deal with single or multiple refs
+    if (Array.isArray(refs)) {
+      for (const ref of refs) {
+        if (ref.current) {
+          observer.observe(ref.current)
+        }
+      }
+    } else {
+      if (refs.current) {
+        observer.observe(refs.current)
+      }
+    }
 
-    // cleanup by deactivating
     return () => {
       observer.disconnect()
     }
-  }, [callback, ref])
-
-  //return ref
+  }, [refs])
 }

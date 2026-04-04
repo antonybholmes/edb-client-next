@@ -1,23 +1,23 @@
 import { useState } from 'react'
 
-import { ComputerIcon } from '@icons/computer'
-import { MoonIcon } from '@icons/moon-icon'
-import { SunIcon } from '@icons/sun'
-import { Button } from '@themed/button'
+import { ComputerIcon } from '@/icons/computer'
+import { MoonIcon } from '@/icons/moon-icon'
+import { SunIcon } from '@/icons/sun'
+import { Button } from '@/themed/v2/button'
 
-import { useEdbSettings, type Theme } from '@lib/edb/edb-settings'
+import { useTheme, type Theme } from '@/lib/edb/theme'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '../shadcn/ui/themed/dropdown-menu'
+} from '../shadcn/ui/themed/v2/dropdown-menu'
 
 export function ThemeMenu() {
   const [open, setOpen] = useState(false)
 
   //const [theme, setTheme] = useState<string>("system")
-  const { theme, applyTheme } = useEdbSettings()
+  const { theme, setTheme } = useTheme()
 
   // function onClose() {
   //   setOpen(false)
@@ -25,7 +25,7 @@ export function ThemeMenu() {
 
   function clickTheme(theme: Theme) {
     //updateSettings({ ...settings })
-    applyTheme(theme)
+    setTheme(theme)
     setOpen(false)
   }
 
@@ -48,21 +48,23 @@ export function ThemeMenu() {
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>
-        <Button
-          size="icon"
-          aria-label="Toggle dark mode"
-          title="Toggle dark mode"
-          checked={open}
-          className="justify-center fill-foreground"
-        >
-          {getIcon(theme)}
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            size="icon"
+            aria-label="Toggle dark mode"
+            title="Toggle dark mode"
+            checked={open}
+            className="justify-center fill-foreground"
+          >
+            {getIcon(theme)}
+          </Button>
+        }
+      />
 
       <DropdownMenuContent
-        onEscapeKeyDown={() => setOpen(false)}
-        onInteractOutside={() => setOpen(false)}
+        //onEscapeKeyDown={() => setOpen(false)}
+        //onInteractOutside={() => setOpen(false)}
         align="end"
         className="fill-foreground"
       >

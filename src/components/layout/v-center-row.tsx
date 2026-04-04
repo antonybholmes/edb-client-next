@@ -1,6 +1,6 @@
+import { type IDivProps } from '@/interfaces/div-props'
+import { cn } from '@/lib/shadcn-utils'
 import { V_CENTERED_ROW_CLS } from '@/theme'
-import { type IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/shadcn-utils'
 
 export function VCenterRow({ ref, className, children, ...props }: IDivProps) {
   return (

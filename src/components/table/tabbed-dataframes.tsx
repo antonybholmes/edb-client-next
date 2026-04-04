@@ -1,23 +1,20 @@
-import { BottomBar } from '@toolbar/bottom-bar'
+import { BottomBar } from '@/toolbar/bottom-bar'
 
-import { type ITab, type ITabChange } from '@components/tabs/tab-provider'
-import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
-import { cn } from '@lib/shadcn-utils'
+import { type ITab, type ITabChange } from '@/components/tabs/tab-provider'
+import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import { cn } from '@/lib/shadcn-utils'
 import type { TabsProps } from '@radix-ui/react-tabs'
 import { useState } from 'react'
 import type { IFileDropProps } from '../file-drop-panel'
 import type { ITabReorder } from '../tabs/reorder-tabs'
 import type { ITabMenu } from '../tabs/underline-tabs'
-import { VirtualizedDataFrame } from './virtualized-dataframe'
+import { VirtualDataFrame } from './virtual-dataframe'
+//import { VirtualizedDataFrame } from './virtualized-dataframe'
 
 const MAX_NAME_CHARS = 15
 
 interface IProps
-  extends TabsProps,
-    ITabChange,
-    IFileDropProps,
-    ITabMenu,
-    ITabReorder {
+  extends TabsProps, ITabChange, IFileDropProps, ITabMenu, ITabReorder {
   dataFrames: AnnotationDataFrame[]
   selectedSheet?: string | undefined
   editable?: boolean
@@ -64,9 +61,8 @@ export function TabbedDataFrames({
         //   className={contentClassName}
         // />
 
-        <VirtualizedDataFrame df={df} key={i} editable={editable} zoom={zoom} />
+        <VirtualDataFrame df={df} key={i} editable={editable} zoom={zoom} />
       ),
-      //content: <LazyGlideUI df={df} key={i} scale={scale} />,
     }
   })
 
@@ -84,7 +80,7 @@ export function TabbedDataFrames({
       tabs={tabs}
       maxNameLength={MAX_NAME_CHARS}
       onValueChange={onValueChange}
-      onTabChange={(selectedTab) => {
+      onTabChange={selectedTab => {
         // historyDispatch({
         //   type: 'goto-sheet',
         //   sheetId: selectedTab.index,

@@ -1,32 +1,71 @@
-import { APP_ID } from '@/consts'
-import { httpFetch } from '@lib/http/http-fetch'
+import { config } from '@/config'
 
-import type { UndefNullStr } from '@lib/text/text'
-import type { QueryClient } from '@tanstack/react-query'
+import type { UndefNullStr } from '@/lib/text/text'
 
 //import { useUserStore } from "@/stores/account-store"
 
+import type { IDBEntity } from '@/interfaces/db-entity'
 import Cookies from 'js-cookie'
 import { jwtDecode, type JwtPayload } from 'jwt-decode'
-import { csfrHeaders } from '../http/urls'
 //import { CSRF_COOKIE_NAME } from './edb-auth'
+
+export interface IAuthProvider extends IDBEntity {
+  updatedAt: string
+}
+
+// export interface IRBACEntity {
+//   id: string
+//   name: string
+// }
+
+// export interface IRBACPermission {
+//   id: string
+//   name: string
+//   //action: string
+// }
+
+export interface IRBACRole extends IDBEntity {
+  permissions: IDBEntity[]
+}
+
+export interface IRBACGroup extends IDBEntity {
+  roles: IRBACRole[]
+}
+
+export interface IEdbJwtPayload extends JwtPayload {
+  userId: string
+}
+
+export interface IAccessJwtPayload extends IEdbJwtPayload {
+  roles: string
+}
+
+export interface IResetJwtPayload extends IEdbJwtPayload {
+  data?: string
+}
+
+export interface RolePermissions {
+  name: string
+  permissions: string[]
+}
 
 export interface IBasicEdbUser {
   //uuid: string
   username: string
   email: string
-  firstName: string
-  lastName: string
-  roles: string[]
+  name: string
+  pictureUrl?: string
+  groups: IRBACGroup[]
+  authProviders: IAuthProvider[]
 }
 
 // Properties we're ok caching in local storage
 export const DEFAULT_BASIC_EDB_USER: IBasicEdbUser = {
   username: '',
   email: '',
-  firstName: '',
-  lastName: '',
-  roles: [],
+  name: '',
+  groups: [],
+  authProviders: [],
 }
 
 // Adds properties obtained from querying the edb server
@@ -35,14 +74,14 @@ export const DEFAULT_BASIC_EDB_USER: IBasicEdbUser = {
 // and are lost on a page refresh/change
 export interface IEdbUser extends IBasicEdbUser {
   //id: number
-  publicId: string
+  id: string
   apiKeys: string[]
   isLocked: boolean
 }
 
 export const DEFAULT_EDB_USER: IEdbUser = {
   ...DEFAULT_BASIC_EDB_USER,
-  publicId: '',
+  id: '',
   isLocked: false,
   apiKeys: [],
   //id: 0,
@@ -62,11 +101,12 @@ export const DEFAULT_EDB_SESSION: IEdbSession = {
   expiresAt: EPOCH_DATE,
 }
 
-export const EDB_API_URL = process.env.NEXT_PUBLIC_EDB_API_URL //import.meta.env.PUBLIC_EDB_API_URL
-export const APP_URL = process.env.NEXT_PUBLIC_SITE_URL //import.meta.env.PUBLIC_SITE_URL
+export const EDB_API_URL = process.env.NEXT_PUBLIC_EDB_API_URL //process.env.NEXT_PUBLIC_EDB_API_URL
+export const APP_URL = process.env.NEXT_PUBLIC_SITE_URL //process.env.NEXT_PUBLIC_SITE_URL
 
-export const ROLE_SUPER = 'Super'
-export const ROLE_ADMIN = 'Admin'
+export const PERMISSION_ALL = '*:*'
+export const ROLE_SUPER = 'SuperAccess::*:*'
+export const ROLE_ADMIN = 'AdminAccess::*:*'
 
 export const TEXT_PASSWORDLESS = 'Passwordless'
 
@@ -83,41 +123,51 @@ export const REDIRECT_URL_PARAM = 'redirectUrl'
 export const TEXT_SERVER_ISSUE =
   'The server does not seem to be available. Please try again at a later time.'
 
-export const ACCOUNT_ROUTE = '/account'
+export const ACCOUNT_PATH = '/account'
 
-export const SIGN_OUT_ROUTE = '/account/signout'
-export const SIGNED_OUT_ROUTE = '/account/signedout'
 //export const SIGNEDIN_ROUTE = '/account/signedin'
-export const MYACCOUNT_ROUTE = '/account/myaccount'
-export const SIGN_UP_ROUTE = `${ACCOUNT_ROUTE}/signup`
-export const RESET_PASSWORD_ROUTE = '/account/password/reset'
+export const MYACCOUNT_PATH = '/account/myaccount'
+export const SIGN_UP_PATH = `${ACCOUNT_PATH}/signup`
+export const RESET_PASSWORD_PATH = `${ACCOUNT_PATH}/password/reset`
 
-export const AUTH_ROUTE = `${ACCOUNT_ROUTE}/auth`
+export const AUTH_PATH = `${ACCOUNT_PATH}/auth`
+//export const SIGNED_OUT_ROUTE = `${AUTH_PATH}/signed-out`
+export const SIGNED_OUT_PATH = `${AUTH_PATH}/signed-out`
 
-export const AUTH_PASSWORDLESS_ROUTE = `${AUTH_ROUTE}/passwordless`
+export const AUTH_PASSWORDLESS_ROUTE = `${AUTH_PATH}/passwordless`
 export const AUTH_PASSWORDLESS_SIGN_IN_ROUTE = `${AUTH_PASSWORDLESS_ROUTE}/signin`
 
-export const OTP_ROUTE = `${AUTH_ROUTE}/otp`
-export const OTP_SIGN_IN_ROUTE = `${OTP_ROUTE}/signin`
+export const OTP_PATH = `${AUTH_PATH}/otp`
+export const OTP_SIGN_IN_PATH = `${OTP_PATH}/signin`
 
-export const OAUTH2_ROUTE = `${AUTH_ROUTE}/oauth2`
+export const OAUTH2_PATH = `${AUTH_PATH}/oauth2`
 
-export const OAUTH2_CLERK_ROUTE = `${OAUTH2_ROUTE}/clerk`
-export const OAUTH2_CLERK_SIGN_IN_ROUTE = `${OAUTH2_CLERK_ROUTE}/signin`
-export const OAUTH2_CLERK_CALLBACK_ROUTE = `${OAUTH2_CLERK_ROUTE}/callback`
+export const OAUTH2_AUTH0_PATH = `${OAUTH2_PATH}/auth0`
+export const OAUTH2_AUTH0_SIGN_IN_PATH = `${OAUTH2_AUTH0_PATH}/signin`
+export const OAUTH2_AUTH0_SIGN_OUT_PATH = `${OAUTH2_AUTH0_PATH}/sign-out`
 
-export const OAUTH2_SUPABASE_ROUTE = `${OAUTH2_ROUTE}/supabase`
-export const OAUTH2_SUPABASE_SIGN_IN_ROUTE = `${OAUTH2_SUPABASE_ROUTE}/signin`
-export const OAUTH2_SUPABASE_CALLBACK_ROUTE = `${OAUTH2_SUPABASE_ROUTE}/callback`
+export const OAUTH2_COGNITO_PATH = `${OAUTH2_PATH}/cognito`
+export const OAUTH2_COGNITO_SIGN_IN_PATH = `${OAUTH2_COGNITO_PATH}/signin`
+export const OAUTH2_COGNITO_SIGN_OUT_PATH = `${OAUTH2_COGNITO_PATH}/sign-out`
 
-export const OAUTH2_SIGN_IN_ROUTE = `${OAUTH2_ROUTE}/signin`
-export const OAUTH2_CALLBACK_ROUTE = `${OAUTH2_ROUTE}/callback`
-export const OAUTH2_SIGN_OUT_ROUTE = `${OAUTH2_ROUTE}/signout`
-export const OAUTH2_SIGNED_OUT_ROUTE = `${OAUTH2_ROUTE}/signedout`
+export const OAUTH2_CLERK_PATH = `${OAUTH2_PATH}/clerk`
+export const OAUTH2_CLERK_SIGN_IN_PATH = `${OAUTH2_CLERK_PATH}/signin`
+export const OAUTH2_CLERK_SIGN_OUT_PATH = `${OAUTH2_CLERK_PATH}/sign-out`
+export const OAUTH2_CLERK_CALLBACK_PATH = `${OAUTH2_CLERK_PATH}/callback`
 
-export const EDB_ACCESS_TOKEN_COOKIE = `${APP_ID}.access-token-v1`
-export const EDB_SESSION_COOKIE = `${APP_ID}.session-v2`
-export const EDB_USER_COOKIE = `${APP_ID}.user-v1`
+export const OAUTH2_SUPABASE_PATH = `${OAUTH2_PATH}/supabase`
+export const OAUTH2_SUPABASE_SIGN_IN_PATH = `${OAUTH2_SUPABASE_PATH}/signin`
+export const OAUTH2_SUPABASE_SIGN_OUT_PATH = `${OAUTH2_SUPABASE_PATH}/sign-out`
+export const OAUTH2_SUPABASE_CALLBACK_PATH = `${OAUTH2_SUPABASE_PATH}/callback`
+
+//export const OAUTH2_SIGN_IN_PATH = `${OAUTH2_PATH}/signin`
+//export const OAUTH2_CALLBACK_ROUTE = `${OAUTH2_PATH}/callback`
+//export const OAUTH2_SIGN_OUT_ROUTE = `${OAUTH2_PATH}/sign-out`
+//export const OAUTH2_SIGNED_OUT_ROUTE = `${OAUTH2_PATH}/signed-out`
+
+export const EDB_ACCESS_TOKEN_COOKIE = `${config.appId}.access-token-v1`
+export const EDB_SESSION_COOKIE = `${config.appId}.session-v2`
+export const EDB_USER_COOKIE = `${config.appId}.user-v1`
 
 export const AUTH0_TOOLKIT_LOGIN_ROUTE = '/auth/login'
 export const AUTH0_TOOLKIT_LOGOUT_ROUTE = '/auth/logout'
@@ -134,28 +184,44 @@ export const APP_HELP_API_URL = `${APP_URL}/api/help`
 
 export const APP_ACCOUNT_SIGN_IN_URL = `${APP_ACCOUNT_URL}/signin`
 
-export const APP_ACCOUNT_SIGNED_IN_URL = `${APP_ACCOUNT_URL}/signedin`
+//export const APP_ACCOUNT_SIGNED_IN_URL = `${APP_ACCOUNT_URL}/signedin`
 
 export const APP_MYACCOUNT_URL = `${APP_ACCOUNT_URL}/myaccount`
 export const APP_ACCOUNT_AUTH_URL = `${APP_ACCOUNT_URL}/auth`
 export const APP_VERIFY_EMAIL_URL = `${APP_ACCOUNT_AUTH_URL}/email/verify`
-export const APP_ACCOUNT_AUTH_SIGN_OUT_URL = `${APP_ACCOUNT_AUTH_URL}/signout`
-export const APP_ACCOUNT_AUTH_SIGNED_OUT_URL = `${APP_ACCOUNT_AUTH_URL}/signedout`
+//export const APP_ACCOUNT_AUTH_SIGNIN_CALLBACK_URL = `${APP_ACCOUNT_AUTH_URL}/signin/callback`
+//export const APP_ACCOUNT_AUTH_SIGN_OUT_URL = `${APP_ACCOUNT_AUTH_URL}/sign-out`
+//export const APP_ACCOUNT_AUTH_SIGN_OUT_CALLBACK_URL = `${APP_ACCOUNT_AUTH_SIGN_OUT_URL}/callback`
+export const APP_ACCOUNT_AUTH_SIGNED_OUT_URL = `${APP_ACCOUNT_AUTH_URL}/signed-out`
 
 export const APP_ACCOUNT_OAUTH2_URL = `${APP_ACCOUNT_AUTH_URL}/oauth2`
-export const APP_ACCOUNT_AUTH0_URL = `${APP_ACCOUNT_OAUTH2_URL}/auth0`
-export const APP_ACCOUNT_AUTH0_SIGNIN_URL = `${APP_ACCOUNT_AUTH0_URL}/signin`
-export const APP_ACCOUNT_AUTH0_CALLBACK_URL = `${APP_ACCOUNT_AUTH0_URL}/callback`
+export const APP_ACCOUNT_OAUTH2_SIGNOUT_URL = `${APP_ACCOUNT_OAUTH2_URL}/sign-out`
+export const APP_ACCOUNT_OAUTH2_SIGNOUT_CALLBACK_URL = `${APP_ACCOUNT_OAUTH2_SIGNOUT_URL}/callback`
 
-export const APP_OAUTH2_SUPABASE_URL = `${APP_ACCOUNT_OAUTH2_URL}/supabase`
-export const APP_OAUTH2_SUPABASE_SIGN_IN_URL = `${APP_OAUTH2_SUPABASE_URL}/signin`
-export const APP_OAUTH2_SUPABASE_CALLBACK_URL = `${APP_OAUTH2_SUPABASE_URL}/callback`
-export const APP_OAUTH2_SUPABASE_SIGNOUT_URL = `${APP_OAUTH2_SUPABASE_URL}/signout`
+export const APP_ACCOUNT_OAUTH2_AUTH0_URL = `${APP_ACCOUNT_OAUTH2_URL}/auth0`
+export const APP_ACCOUNT_OAUTH2_AUTH0_SIGNIN_URL = `${APP_ACCOUNT_OAUTH2_AUTH0_URL}/signin`
+export const APP_ACCOUNT_OAUTH2_AUTH0_CALLBACK_URL = `${APP_ACCOUNT_OAUTH2_AUTH0_SIGNIN_URL}/callback`
+export const APP_ACCOUNT_OAUTH2_AUTH0_SIGN_OUT_URL = `${APP_ACCOUNT_OAUTH2_AUTH0_URL}/sign-out`
 
-export const APP_OAUTH2_SIGN_IN_URL = `${APP_ACCOUNT_OAUTH2_URL}/signin`
-export const APP_OAUTH2_CALLBACK_URL = `${APP_ACCOUNT_OAUTH2_URL}/callback`
-export const APP_OAUTH2_SIGN_OUT_URL = `${APP_ACCOUNT_OAUTH2_URL}/signout`
-export const APP_OAUTH2_SIGNED_OUT_URL = `${APP_ACCOUNT_OAUTH2_URL}/signedout`
+export const APP_ACCOUNT_OAUTH2_COGNITO_URL = `${APP_ACCOUNT_OAUTH2_URL}/cognito`
+export const APP_ACCOUNT_COGNITO_SIGNIN_URL = `${APP_ACCOUNT_OAUTH2_COGNITO_URL}/signin`
+export const APP_ACCOUNT_OAUTH2_COGNITO_SIGNIN_CALLBACK_URL = `${APP_ACCOUNT_COGNITO_SIGNIN_URL}/callback`
+export const APP_ACCOUNT_OAUTH2_COGNITO_SIGN_OUT_URL = `${APP_ACCOUNT_OAUTH2_COGNITO_URL}/sign-out`
+
+export const APP_ACCOUNT_OAUTH2_SUPABASE_URL = `${APP_ACCOUNT_OAUTH2_URL}/supabase`
+export const APP_ACCOUNT_OAUTH2_SUPABASE_SIGNIN_URL = `${APP_ACCOUNT_OAUTH2_SUPABASE_URL}/signin`
+export const APP_ACCOUNT_OAUTH2_SUPABASE_SIGNIN_CALLBACK_URL = `${APP_ACCOUNT_OAUTH2_SUPABASE_SIGNIN_URL}/callback`
+export const APP_ACCOUNT_OAUTH2_SUPABASE_SIGN_OUT_URL = `${APP_ACCOUNT_OAUTH2_SUPABASE_URL}/sign-out`
+
+export const APP_ACCOUNT_OAUTH2_CLERK_URL = `${APP_ACCOUNT_OAUTH2_URL}/clerk`
+export const APP_ACCOUNT_OAUTH2_CLERK_SIGNIN_URL = `${APP_ACCOUNT_OAUTH2_CLERK_URL}/signin`
+export const APP_ACCOUNT_OAUTH2_CLERK_SIGNIN_CALLBACK_URL = `${APP_ACCOUNT_OAUTH2_CLERK_SIGNIN_URL}/callback`
+export const APP_ACCOUNT_OAUTH2_CLERK_SIGN_OUT_URL = `${APP_ACCOUNT_OAUTH2_CLERK_URL}/sign-out`
+
+export const APP_ACCOUNT_OAUTH2_SIGN_IN_URL = `${APP_ACCOUNT_OAUTH2_URL}/signin`
+export const APP_ACCOUNT_OAUTH2_CALLBACK_URL = `${APP_ACCOUNT_OAUTH2_URL}/callback`
+export const APP_ACCOUNT_OAUTH2_SIGN_OUT_URL = `${APP_ACCOUNT_OAUTH2_URL}/sign-out`
+//export const APP_ACCOUNT_OAUTH2_SIGNED_OUT_URL = `${APP_ACCOUNT_OAUTH2_URL}/signedout`
 
 export const APP_ADMIN_USERS_URL = `${APP_URL}/admin/users`
 
@@ -184,15 +250,17 @@ export const API_DNA_URL = `${API_MODULES_URL}/dna`
 export const API_DNA_GENOMES_URL = `${API_MODULES_URL}/dna/genomes`
 export const API_GENECONV_URL = `${API_MODULES_URL}/geneconv`
 
-export const API_MUTATIONS_URL = `${API_MODULES_URL}/mutations`
-export const API_MUTATIONS_DATABASES_URL = `${API_MUTATIONS_URL}/datasets`
+export const API_WGS_URL = `${API_MODULES_URL}/wgs`
+//export const API_MUTATIONS_DATABASES_URL = `${API_MUTATIONS_URL}/datasets`
+//export const API_MUTATIONS_PILEUP_URL = `${API_MUTATIONS_URL}/pileup`
 
 export const API_ADMIN_URL = `${EDB_API_URL}/admin`
-export const API_ADMIN_ROLES_URL = `${API_ADMIN_URL}/roles`
+//export const API_ADMIN_ROLES_URL = `${API_ADMIN_URL}/roles`
+export const API_ADMIN_GROUPS_URL = `${API_ADMIN_URL}/groups`
 export const API_ADMIN_USERS_URL = `${API_ADMIN_URL}/users`
 export const API_ADMIN_ADD_USER_URL = `${API_ADMIN_USERS_URL}/add`
 export const API_ADMIN_UPDATE_USER_URL = `${API_ADMIN_USERS_URL}/update`
-export const API_ADMIN_DELETE_USER_URL = `${API_ADMIN_USERS_URL}/delete`
+//export const API_ADMIN_DELETE_USER_URL = `${API_ADMIN_USERS_URL}/delete`
 export const API_ADMIN_USER_STATS_URL = `${API_ADMIN_USERS_URL}/stats`
 
 export const API_HUBS_URL = `${EDB_API_URL}/modules/hubs`
@@ -201,28 +269,28 @@ export const API_GEX_URL = `${EDB_API_URL}/modules/gex`
 export const API_GEX_TECHNOLOGIES_URL = `${API_GEX_URL}/technologies`
 //export const API_GEX_VALUE_TYPES_URL = `${API_GEX_URL}/types`
 export const API_GEX_DATASETS_URL = `${API_GEX_URL}/datasets`
-export const API_GEX_EXP_URL = `${API_GEX_URL}/exp`
+//export const API_GEX_EXPR_URL = `${API_GEX_URL}/expression`
 
 export const API_SCRNA_URL = `${EDB_API_URL}/modules/scrna`
 export const API_SCRNA_ASSEMBLIES_URL = `${API_SCRNA_URL}/assemblies`
 //export const API_GEX_VALUE_TYPES_URL = `${API_GEX_URL}/types`
 export const API_SCRNA_DATASETS_URL = `${API_SCRNA_URL}/datasets`
 //export const API_SCRNA_CLUSTERS_URL = `${API_SCRNA_URL}/clusters`
-export const API_SCRNA_METADATA_URL = `${API_SCRNA_URL}/metadata`
-export const API_SCRNA_GENES_URL = `${API_SCRNA_URL}/genes`
-export const API_SCRNA_SEARCH_GENES_URL = `${API_SCRNA_GENES_URL}/search`
-export const API_SCRNA_GEX_URL = `${API_SCRNA_URL}/gex`
+//export const API_SCRNA_METADATA_URL = `${API_SCRNA_URL}/metadata`
+//export const API_SCRNA_GENES_URL = `${API_SCRNA_URL}/genes`
+//export const API_SCRNA_SEARCH_GENES_URL = `${API_SCRNA_GENES_URL}/search`
+//export const API_SCRNA_GEX_URL = `${API_SCRNA_URL}/gex`
 
 export const API_MOTIFS_URL = `${EDB_API_URL}/modules/motifs`
 export const API_MOTIF_DATASETS_URL = `${API_MOTIFS_URL}/datasets`
 export const API_MOTIF_SEARCH_URL = `${API_MOTIFS_URL}/search`
 
 export const API_SEQS_URL = `${EDB_API_URL}/modules/seqs`
-export const API_SEQS_SEARCH_URL = `${API_SEQS_URL}/search`
+//export const API_SEQS_SEARCH_URL = `${API_SEQS_URL}/search`
 export const API_SEQS_BINS_URL = `${API_SEQS_URL}/bins`
 
 export const API_BEDS_URL = `${EDB_API_URL}/modules/beds`
-export const API_SEARCH_BEDS_URL = `${API_BEDS_URL}/search`
+//export const API_SEARCH_BEDS_URL = `${API_BEDS_URL}/search`
 export const API_BEDS_REGIONS_URL = `${API_BEDS_URL}/regions`
 
 export const API_PATHWAY_URL = `${EDB_API_URL}/modules/pathway`
@@ -235,26 +303,24 @@ export const API_PATHWAY_OVERLAP_URL = `${API_PATHWAY_URL}/overlap`
 
 export const API_CYTOBANDS_URL = `${EDB_API_URL}/modules/cytobands`
 
-export const API_MUTATIONS_PILEUP_URL = `${API_MUTATIONS_URL}/pileup`
-export const API_MICROARRAY_URL = `${EDB_API_URL}/modules/microarray`
-export const API_MICROARRAY_EXPRESSION_URL = `${API_MICROARRAY_URL}/expression`
 export const API_TOKEN_VALIDATE_URL = `${EDB_API_URL}/tokens/validate`
 
 export const SESSION_URL = `${EDB_API_URL}/sessions`
 export const SESSION_INIT_URL = `${SESSION_URL}/init`
 export const SESSION_INFO_URL = `${SESSION_URL}/info`
-export const SESSION_REFRESH_CSRF_TOKEN_URL = `${SESSION_URL}/csrf-token/refresh`
+
 export const SESSION_REFRESH_URL = `${SESSION_URL}/refresh`
 
 export const SESSION_API_KEY_SIGNIN_URL = `${SESSION_URL}/api/keys/signin`
 export const SESSION_AUTH_URL = `${SESSION_URL}/auth`
 export const SESSION_OAUTH2_URL = `${SESSION_AUTH_URL}/oauth2`
 export const SESSION_AUTH0_SIGNIN_URL = `${SESSION_OAUTH2_URL}/auth0/signin`
+export const SESSION_COGNITO_SIGNIN_URL = `${SESSION_OAUTH2_URL}/cognito/signin`
 export const SESSION_CLERK_SIGNIN_URL = `${SESSION_OAUTH2_URL}/clerk/signin`
 export const SESSION_SUPABASE_SIGNIN_URL = `${SESSION_OAUTH2_URL}/supabase/signin`
 export const SESSION_SUPABASE_CALLBACK_URL = `${SESSION_OAUTH2_URL}/supabase/callback`
 
-export const SESSION_SIGNOUT_URL = `${SESSION_URL}/signout`
+export const SESSION_SIGNOUT_URL = `${SESSION_URL}/sign-out`
 
 export const SESSION_AUTH_SIGNIN_URL = `${SESSION_AUTH_URL}/signin`
 
@@ -268,9 +334,8 @@ export const SESSION_USER_URL = `${SESSION_URL}/user`
 export const SESSION_UPDATE_USER_URL = `${SESSION_USER_URL}/update`
 export const SESSION_UPDATE_PASSWORD_URL = `${SESSION_USER_URL}/passwords/update`
 
-export const SESSION_TOKENS_URL = `${SESSION_URL}/tokens`
 //export const SESSION_ACCESS_TOKEN_URL = `${SESSION_TOKENS_URL}/access`
-export const SESSION_CREATE_TOKEN_URL = `${SESSION_TOKENS_URL}/create`
+//export const SESSION_CREATE_TOKEN_URL = `${SESSION_TOKENS_URL}/create`
 
 // initiate resets
 //export const SESSION_RESET_PASSWORD_URL = `${SESSION_URL}/password/reset`
@@ -282,24 +347,6 @@ export const APP_RESET_PASSWORD_URL = `${APP_URL}/account/password/reset`
 export const APP_UPDATE_EMAIL_URL = `${APP_URL}/account/email/update`
 
 export const COOKIE_EXPIRE_DAYS = 365
-
-export interface IRole {
-  publicId: string
-  name: string
-  description: string
-}
-
-export interface IEdbJwtPayload extends JwtPayload {
-  userId: string
-}
-
-export interface IAccessJwtPayload extends IEdbJwtPayload {
-  roles: string
-}
-
-export interface IResetJwtPayload extends IEdbJwtPayload {
-  data?: string
-}
 
 // export function validateRefreshToken(): boolean {
 //   //check token exists
@@ -377,70 +424,6 @@ export function validateJwt(
  *
  * @returns A valid jwt token or null if user is not allowed a token
  */
-export async function fetchAccessTokenUsingSession(
-  queryClient: QueryClient,
-  csrfToken: string
-): Promise<string> {
-  // let token: string = ''
-
-  // //const queryClient = useQueryClient()
-
-  // try {
-  //   // token not valid so attempt to use session to refresh
-  //   const res = await queryClient.fetchQuery({
-  //     queryKey: ['access_token'],
-  //     queryFn: () =>
-  //       httpFetch.postJson<{ data: { accessToken: string } }>(
-  //         SESSION_ACCESS_TOKEN_URL,
-  //         {
-  //           withCredentials: true,
-  //         }
-  //       ),
-  //   })
-
-  //   token = res.data.accessToken
-  // } catch {
-  //   console.error('cannot fetch access token from remote')
-  // }
-
-  return fetchTokenUsingSession(queryClient, csrfToken, 'access')
-}
-
-export async function fetchUpdateTokenUsingSession(
-  queryClient: QueryClient,
-  csrfToken: string
-): Promise<string> {
-  return fetchTokenUsingSession(queryClient, csrfToken, 'update')
-}
-
-export async function fetchTokenUsingSession(
-  queryClient: QueryClient,
-  csrfToken: string,
-  tokenType: 'access' | 'update' | 'refresh'
-): Promise<string> {
-  //const queryClient = useQueryClient()
-
-  if (!csrfToken) {
-    console.warn(`No CSRF token available, cannot fetch ${tokenType} token.`)
-    throw new Error('No CSRF token available')
-  }
-
-  // token not valid so attempt to use session to refresh
-  const res = await queryClient.fetchQuery({
-    queryKey: ['token', tokenType],
-    staleTime: 0,
-    queryFn: () =>
-      httpFetch.postJson<{ data: { token: string } }>(
-        `${SESSION_CREATE_TOKEN_URL}/${tokenType}`,
-        {
-          headers: csfrHeaders(csrfToken),
-          withCredentials: true,
-        }
-      ),
-  })
-
-  return res.data.token ?? ''
-}
 
 /**
  * Returns true if user has signed in and has a valid session.
@@ -451,161 +434,119 @@ export function userIsSignedInWithSession(): boolean {
   return Boolean(Cookies.get(EDB_SESSION_COOKIE))
 }
 
-/**
- * Force load account info from server, so cache the the
- * account where possible.
- *
- * @returns The account info
- */
-// export async function loadAccount(): Promise<IAccount> {
-//   const res = await queryClient.fetchQuery("info", () =>
-//     axios.get(SESSION_USER_URL, {
-//       // the server is allowed access to the session in local
-//       // storage so it knows we are logged in. Since the session
-//       // is validated on the server, we don't need to provide
-//       // extra credentials. If we are logged in, we will get
-//       // the account info back.
-//       withCredentials: true,
-//     }),
-//   )
+export function flattenGroups(groups: IRBACGroup[]): string[] {
+  const flattened: string[] = []
 
-//   const userInfo: IAccount = res.data
+  for (let group of groups) {
+    for (let role of group.roles) {
+      for (let perm of role.permissions) {
+        flattened.push(`${group.name}::${role.name}::${perm.name}`)
+        //fattened.push(
+        //  `group=${group.name},role=${role.name},perm=${perm.resource}:${perm.action}`
+        //)
+      }
+    }
+  }
 
-//   console.log("user", userInfo)
+  return flattened
+}
 
-//   return userInfo
-// }
+export function flattenRoles(groups: IRBACGroup[]): string[] {
+  const flattened: Set<string> = new Set<string>()
 
-// export async function loadAccount(): Promise<IUser> {
-//   try {
-//     const token = await fetchAccessToken()
+  for (let group of groups) {
+    for (let role of group.roles) {
+      for (let perm of role.permissions) {
+        flattened.add(`${role.name}::${perm.name}`)
+        //fattened.push(
+        //  `group=${group.name},role=${role.name},perm=${perm.resource}:${perm.action}`
+        //)
+      }
+    }
+  }
 
-//     const res = await queryClient.fetchQuery({
-//       queryKey: ["info"],
-//       queryFn: () =>
-//         axios.post(
-//           API_USER_URL,
-//           {},
-//           {
-//             headers: bearerHeaders(token),
-//             // the server is allowed access to the session in local
-//             // storage so it knows we are logged in. Since the session
-//             // is validated on the server, we don't need to provide
-//             // extra credentials. If we are logged in, we will get
-//             // the account info back.
-//             //withCredentials: true,
-//           },
-//         ),
-//     })
+  return [...flattened].sort()
+}
 
-//     const userInfo: IUser = res.data
+// export function flattenRoles(roles: RolePermissions[]): string[] {
+//   const flatRoles: string[] = []
 
-//     return userInfo
-//   } catch (err) {
-//     throw err
-//   }
-// }
-
-// export async function loadAccountFromCookie(
-//   force: boolean = false,
-// ): Promise<IUser> {
-//   if (!force) {
-//     //check token exists
-//     const token = Cookies.get(EDB_USER_COOKIE)
-
-//     if (token) {
-//       return JSON.parse(token)
+//   for (let role of roles) {
+//     for (let perm of role.permissions) {
+//       flatRoles.push(`${role.name}:${perm}`)
 //     }
 //   }
 
-//   try {
-//     const userInfo: IUser = await loadAccount()
-
-//     Cookies.set(EDB_USER_COOKIE, JSON.stringify(userInfo))
-
-//     return userInfo
-//   } catch (err) {
-//     throw err
-//   }
+//   return flatRoles
 // }
 
-// interface IUseAccountReturnType {
-//   account: IUser
-//   refreshAccount: () => void
-//   isLoading: boolean
-//   error: Error | null
-// }
+// export function flattenCompactRoles(roles: RolePermissions[]): string[] {
+//   const flatRoles: string[] = []
 
-// export function useAccount(): IUseAccountReturnType {
-//   const [account, setAccount] = useState<IAccount>({ ...DEFAULT_ACCOUNT })
-//   const [isLoading, setIsLoading] = useState(true)
-//   const [error, setError] = useState<Error | null>(null)
-
-//   useEffect(() => {
-//     async function fetch() {
-//       try {
-//         const ac = await loadAccountFromCookie()
-
-//         setAccount(ac)
-//       } catch (err) {
-//         setError(err)
-//       } finally {
-//         setIsLoading(false)
-//       }
-//     }
-
-//     if (isLoading) {
-//       fetch()
-//     }
-//   }, [isLoading])
-
-//   function refreshAccount() {
-//     setIsLoading(true)
+//   for (let role of roles) {
+//     flatRoles.push(`${role.name}:${role.permissions.join(',')}`)
 //   }
 
-//   return { account, refreshAccount, isLoading, error }
+//   return flatRoles
 // }
 
-// export function useLoadUserInfo(
-//   setUserInfo: Dispatch<SetStateAction<IUserInfo | null>>,
-// ) {
-//   useEffect(() => {
-//     async function load() {
-//       setUserInfo(await LoadUserInfo())
-//     }
+function hasRole(user: IEdbUser, f: (roles: Set<string>) => boolean): boolean {
+  // technically should not happen as user should always have
+  // groups even if empty array, but to be safe we can skip
+  // on null/undefined so that pages render since hasRole can
+  // stop a lot of page rendering if it fails
+  if (!user.groups) {
+    return false
+  }
 
-//     load()
-//   }, [])
-// }
+  const roles = new Set(
+    user.groups.flatMap((group) =>
+      group.roles.flatMap((role) =>
+        role.permissions.map(
+          (perm) => `${group.name}::${role.name}::${perm.name}`
+        )
+      )
+    )
+  )
 
-// export async function getAuthJWT(): Promise<string> {
-//   const dj = await queryClient.fetchQuery("login", async () => {
-//     const data = new FormData()
-//     data.append("email", "antony@antonyholmes.dev")
-//     data.append("password", "tod4EwVHEyCRK8encuLE")
+  return f(roles)
+}
 
-//     const res = await fetch(API_LOGIN_URL, {
-//       method: "POST",
-//       body: data,
-//     })
+export function hasSuperRole(user: IEdbUser): boolean {
+  return hasRole(user, (roles) => {
+    for (let role of roles) {
+      if (role.includes(ROLE_SUPER)) {
+        return true
+      }
+    }
 
-//     if (!res.ok) {
-//       throw null
-//     }
+    return false
+  })
+}
 
-//     return res.json()
-//   })
+export function hasAdminRole(user: IEdbUser): boolean {
+  return hasRole(user, (roles) => {
+    for (let role of roles) {
+      if (role.includes(ROLE_ADMIN) || role.includes(ROLE_SUPER)) {
+        return true
+      }
+    }
 
-//   console.log(dj)
+    return false
+  })
+}
 
-//   const jwt = dj.data.jwt
+export function hasAdminPermission(user: IEdbUser): boolean {
+  return hasRole(user, (roles) => {
+    for (let role of roles) {
+      if (role.includes(PERMISSION_ALL)) {
+        return true
+      }
+    }
 
-//   const jwtData = jwtDecode(jwt)
-
-//   console.log(jwtData)
-
-//   return jwt
-// }
+    return false
+  })
+}
 
 /**
  * Log user out of EDB service

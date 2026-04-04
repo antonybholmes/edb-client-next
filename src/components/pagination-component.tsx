@@ -1,5 +1,5 @@
-import type { IDivProps } from '@interfaces/div-props'
-import { range } from '@lib/math/range'
+import type { IDivProps } from '@/interfaces/div-props'
+import { range } from '@/lib/math/range'
 import { useEffect } from 'react'
 import {
   Pagination,
@@ -65,7 +65,7 @@ export function PaginationComponent({
 
   let isPageNumberOutOfRange: boolean
 
-  const pageNumbers = range(pagesCount).map(index => {
+  const pageNumbers = range(pagesCount).map((index) => {
     const pageNumber = index + 1
     const isPageNumberFirst = pageNumber === 1
     const isPageNumberLast = pageNumber === pagesCount

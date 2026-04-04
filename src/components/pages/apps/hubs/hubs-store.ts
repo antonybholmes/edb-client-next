@@ -1,48 +1,42 @@
-import { APP_ID } from '@/consts'
+import { config } from '@/config'
+import type { IDBEntity } from '@/interfaces/db-entity'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${APP_ID}:module:hubs:settings:v6`
+const SETTINGS_KEY = `${config.appId}:app:hubs:settings:v8`
 
-export interface ISearchItem {
-  publicId: string
-  name: string
-}
-
-export type ISample = ISearchItem
-
-export interface IHub extends ISearchItem {
+export interface IDataset extends IDBEntity {
   genome: string
-  platform: string
+  assembly: string
+  technology: string
   institution: string
   url: string
   description: string
-  samples: ISample[]
+  samples: IDBEntity[]
 }
 
 export interface IHubOptions {
   showGuidelines: boolean
-  genome: string
+  assembly: string
   hideTracks: boolean
 }
 
 export const DEFAULT_HUB_OPTIONS: IHubOptions = {
   hideTracks: false,
-  genome: 'hg19',
+  assembly: 'hg19',
   showGuidelines: false,
 }
 
 export interface IHubStore extends IHubOptions {
   updateSettings: (settings: Partial<IHubOptions>) => void
-  //applyTheme: (theme: Theme) => void
 }
 
 export const useHubsStore = create<IHubStore>()(
   persist(
-    (set) => ({
+    set => ({
       ...DEFAULT_HUB_OPTIONS,
       updateSettings: (settings: Partial<IHubOptions>) => {
-        set((state) => ({ ...state, ...settings }))
+        set(state => ({ ...state, ...settings }))
       },
     }),
     {
@@ -74,8 +68,8 @@ export function useHubs(): {
   updateSettings: (settings: Partial<IHubOptions>) => void
   resetSettings: () => void
 } {
-  const settings = useHubsStore((state) => state)
-  const updateSettings = useHubsStore((state) => state.updateSettings)
+  const settings = useHubsStore(state => state)
+  const updateSettings = useHubsStore(state => state.updateSettings)
   const resetSettings = () => updateSettings({ ...DEFAULT_HUB_OPTIONS })
 
   return { settings, updateSettings, resetSettings }

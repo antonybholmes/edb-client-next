@@ -105,7 +105,7 @@ export function pearson(a: number[], b: number[]) {
   return populationCovariance(a, b, ma, mb) / denominator
 }
 
-// // https://en.wikipedia.org/wiki/Normal_distribution
+// https://en.wikipedia.org/wiki/Normal_distribution
 // export function pdf(x: number, mu: number = 0, sigma: number = 1) {
 //   if (sigma === 0) {
 //     return x === mu ? Number.POSITIVE_INFINITY : 0

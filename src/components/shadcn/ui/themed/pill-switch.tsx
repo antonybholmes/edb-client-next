@@ -1,8 +1,7 @@
 import { ANIMATION_DURATION_S } from '@/consts'
+import { VCenterRow } from '@/layout/v-center-row'
+import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_RING_CLS } from '@/theme'
-import { VCenterRow } from '@layout/v-center-row'
-import { cn } from '@lib/shadcn-utils'
-import * as SwitchPrimitives from '@radix-ui/react-switch'
 import gsap from 'gsap'
 import {
   forwardRef,
@@ -11,7 +10,8 @@ import {
   useState,
   type ComponentRef,
 } from 'react'
-import type { ISwitchProps } from './switch'
+import type { ISwitchProps } from './v2/switch'
+import * as SwitchPrimitives from './v2/switch'
 
 // const THUMB_CLS =
 //   "pointer-events-none block h-4 w-4 rounded-full bg-background ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
@@ -68,7 +68,7 @@ const THUMB_CLS = cn(
 // )
 
 export const PillSwitch = forwardRef<
-  ComponentRef<typeof SwitchPrimitives.Root>,
+  ComponentRef<typeof SwitchPrimitives.Switch>,
   ISwitchProps
 >(function Switch(
   {
@@ -125,7 +125,7 @@ export const PillSwitch = forwardRef<
   }, [checked, hover, pressed])
 
   const button = (
-    <SwitchPrimitives.Root
+    <SwitchPrimitives.Switch
       ref={ref}
       checked={checked}
       disabled={disabled}
@@ -148,7 +148,7 @@ export const PillSwitch = forwardRef<
         data-enabled={!disabled}
         data-checked={checked}
       />
-    </SwitchPrimitives.Root>
+    </SwitchPrimitives.Switch>
   )
 
   if (children) {

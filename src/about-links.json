@@ -1,0 +1,18 @@
+[
+  { "name": "Astro", "url": "https://astro.build/" },
+  { "name": "React", "url": "https://reactjs.org" },
+  { "name": "Tailwind", "url": "https://tailwindcss.com/" },
+  { "name": "Lucide", "url": "https://lucide.dev/" },
+  { "name": "Font Awesome", "url": "https://fontawesome.com/" },
+  { "name": "Node.js", "url": "https://nodejs.org/" },
+  { "name": "Go", "url": "https://go.dev/" },
+  { "name": "GitHub", "url": "https://github.com" },
+  { "name": "Visual Studio Code", "url": "https://code.visualstudio.com" },
+  { "name": "Vercel", "url": "https://vercel.com/" },
+  { "name": "Amazon Web Services", "url": "https://aws.amazon.com/" },
+  { "name": "Sqlite3", "url": "https://sqlite.org" },
+  { "name": "Valkey", "url": "https://valkey.io/" },
+  { "name": "nginx", "url": "https://nginx.org/" },
+  { "name": "Auth0", "url": "https://auth0.com/" },
+  { "name": "PostgreSQL", "url": "https://www.postgresql.org/" }
+]

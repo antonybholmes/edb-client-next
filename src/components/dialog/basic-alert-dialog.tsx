@@ -1,8 +1,9 @@
-import { APP_NAME } from '@/consts'
 import {
   OKCancelDialog,
   type IOKCancelDialogProps,
-} from '@dialog/ok-cancel-dialog'
+} from '@/dialog/ok-cancel-dialog'
+
+import { config } from '@/config'
 
 export interface IProps extends IOKCancelDialogProps {
   open?: boolean
@@ -23,7 +24,7 @@ export function BasicAlertDialog({
   return (
     <OKCancelDialog
       open={open}
-      title={title ?? APP_NAME}
+      title={title ?? config.appName}
       onResponse={onResponse}
       buttons={buttons}
       bodyCls={bodyCls}

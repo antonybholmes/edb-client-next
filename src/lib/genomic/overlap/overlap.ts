@@ -1,22 +1,22 @@
-import { DefaultMap } from '@lib/default-map'
-import { NA } from '@lib/text/text'
+import { DefaultMap } from '@/lib/default-map'
+import { NA } from '@/lib/text/text'
 
-import { BaseDataFrame } from '@lib/dataframe/base-dataframe'
+import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
-import { makeCell, makeCells } from '@lib/dataframe/cell'
-import { DataFrame } from '@lib/dataframe/dataframe'
+import { makeCell, makeCells } from '@/lib/dataframe/cell'
+import { DataFrame } from '@/lib/dataframe/dataframe'
 
-import type { SeriesData } from '@lib/dataframe/dataframe-types'
-import { range } from '@lib/math/range'
+import type { SeriesData } from '@/lib/dataframe/dataframe-types'
+import { range } from '@/lib/math/range'
 import {
-  GenomicLocation,
+  GenLoc,
   convertDFToLocationFile as convertDataFrameToLocationFile,
   convertDataFrameToLocationFiles,
   joinLocations,
   locStr,
   overlapFraction,
   overlaps,
-  parseLocation,
+  parseGenLoc,
   sortLocations,
   type ILocationFile,
 } from '../genomic'
@@ -25,10 +25,7 @@ export const BIN_SIZE = 1000
 
 export type OVERLAP_MODE = 'mcr' | 'max'
 
-function makeGenomicUniqueId(
-  sid: string,
-  loc: GenomicLocation | null | undefined
-) {
+function makeGenomicUniqueId(sid: string, loc: GenLoc | null | undefined) {
   return `${sid}=${loc ? locStr(loc) : 'none'}`
 }
 
@@ -38,7 +35,7 @@ function parseGenomicUid(uid: string): string[] {
 
 function getTestUids(
   uid1: string,
-  loc1: GenomicLocation,
+  loc1: GenLoc,
   binToUidsMap: Map<number, Set<string>>
 ): Set<string> {
   const testLocations = new Set<string>()
@@ -70,7 +67,7 @@ function getTestUids(
  */
 function _minMaxRegions(
   uids: string[],
-  uidToLocMap: Map<string, GenomicLocation>,
+  uidToLocMap: Map<string, GenLoc>,
   binToUidsMap: Map<number, Set<string>>
 ): Map<string, Map<string, string>> {
   // lets see what overlaps
@@ -84,8 +81,8 @@ function _minMaxRegions(
 
   //console.warn(`Processing ${uids.length}...`)
 
-  let loc1: GenomicLocation
-  let loc2: GenomicLocation
+  let loc1: GenLoc
+  let loc2: GenLoc
 
   // keep track of all locations that have been allocated at least once
   const allocated = new Set<string>()
@@ -166,7 +163,7 @@ function _minMaxRegions(
  */
 function _mcr(
   uids: string[],
-  uidToLocMap: Map<string, GenomicLocation>,
+  uidToLocMap: Map<string, GenLoc>,
   binToUidsMap: Map<number, Set<string>>
 ): Map<string, Map<string, string>> {
   // lets see what overlaps
@@ -180,8 +177,8 @@ function _mcr(
 
   //console.warn(`Processing ${uids.length}...`)
 
-  let loc1: GenomicLocation
-  let loc2: GenomicLocation
+  let loc1: GenLoc
+  let loc2: GenLoc
 
   //let overlapLocation: string
 
@@ -281,9 +278,9 @@ function _mcr(
 export function overlappingPeaks(
   fids: ILocationFile[],
   mode: OVERLAP_MODE = 'mcr'
-): [Map<string, Map<string, string>>, Map<string, GenomicLocation>] {
+): [Map<string, Map<string, string>>, Map<string, GenLoc>] {
   const sampleIdMap = new Map<string, string>()
-  const uidToLocMap = new Map<string, GenomicLocation>()
+  const uidToLocMap = new Map<string, GenLoc>()
   const binToUidsMap = new Map<number, Set<string>>()
   const uids: string[] = []
 
@@ -370,7 +367,7 @@ export function createOverlapTable(
   const coreLocations = [...locationCoreMap.keys()].sort()
 
   for (const coreLocation of coreLocations) {
-    const overlapLocation = parseLocation(coreLocation)!
+    const overlapLocation = parseGenLoc(coreLocation)!
 
     // size of the overlap in bp
     const overlap = overlapLocation.end - overlapLocation.start + 1
@@ -397,7 +394,7 @@ export function createOverlapTable(
       row.push(locationCoreMap.get(coreLocation)?.get(fid) || NA)
     }
 
-    const locs: GenomicLocation[] = []
+    const locs: GenLoc[] = []
 
     for (const fid of fids) {
       const uid = locationCoreMap.get(coreLocation)?.get(fid) || NA
@@ -431,7 +428,7 @@ export function createOverlapTable(
     const start = Math.min(...locs.map(loc => loc.start)) //[loc.start for loc in locs])
     const end = Math.max(...locs.map(loc => loc.end))
 
-    const region = new GenomicLocation(locs[0]!.chr, start, end)
+    const region = new GenLoc(locs[0]!.chr, start, end)
 
     row.push(region.loc)
     data.push(row)

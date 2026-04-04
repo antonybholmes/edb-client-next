@@ -1,11 +1,11 @@
 import { SVG_CRISP_EDGES } from '@/consts'
+import { ZERO_POS, type IPos } from '@/interfaces/pos'
+import { COLOR_WHITE, getTextColorForBackground } from '@/lib/color/color'
 import { COLOR_MAPS } from '@/lib/color/colormap'
-import { ZERO_POS, type IPos } from '@interfaces/pos'
-import { COLOR_WHITE, getTextColorForBackground } from '@lib/color/color'
-import type { BaseDataFrame } from '@lib/dataframe/base-dataframe'
-import { normalize } from '@lib/math/normalize'
-import { range } from '@lib/math/range'
-import { formatNumber } from '@lib/text/text'
+import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { normalize } from '@/lib/math/normalize'
+import { range } from '@/lib/math/range'
+import { formatNumber } from '@/lib/text/text'
 import type { IHeatMapDisplayOptions } from './heatmap-svg-props'
 
 // we want circles slightly smaller than box to allow for borders
@@ -47,8 +47,8 @@ export function CellsSvg({
 
   console.log(COLOR_MAPS, props.cmap)
 
-  const colors = rowLeaves.map(row => {
-    return colLeaves.map(col => {
+  const colors = rowLeaves.map((row) => {
+    return colLeaves.map((col) => {
       const v = df.get(row, col) as number
 
       //console.log(row, col, v)
@@ -60,7 +60,7 @@ export function CellsSvg({
     })
   })
 
-  const uniqueColorRects = [...new Set(colors.flat())].sort().map(color => {
+  const uniqueColorRects = [...new Set(colors.flat())].sort().map((color) => {
     const id = getUseRectId(color)
 
     return (
@@ -240,11 +240,11 @@ export function GridSvg({
   const blockSize = props.blockSize
 
   const hlines = range(blockSize.h, height, blockSize.h)
-    .map(y => `M 0,${y} L ${width},${y}`)
+    .map((y) => `M 0,${y} L ${width},${y}`)
     .join(' ')
 
   const vlines = range(blockSize.w, width, blockSize.w)
-    .map(x => `M ${x},0 L ${x},${height}`)
+    .map((x) => `M ${x},0 L ${x},${height}`)
     .join(' ')
 
   return (

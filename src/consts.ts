@@ -1,48 +1,35 @@
-import type { IFieldMap } from '@interfaces/field-map'
-import config from '../config.json'
+import type { IFieldMap } from '@/interfaces/field-map'
+
 import versionConfig from '../version.json'
 
-//export const SITE = "https://edb.rdf-lab.org"
-export const SITE_NAME = 'Experiments'
-export const APP_NAME = SITE_NAME
 // id for internally indentifying app and for use in prefixes etc
-export const APP_ID = 'edb'
-export const SITE_DOMAIN = 'edb.rdf-lab.org'
+
+// easy way for components to detect if in dev mode or not.
+export const IS_DEV_MODE = process.env.NODE_ENV === 'development'
 
 export const HEADER_SEP = '-'
 
-export const SITE_DESCRIPTION = 'Data science tools for scientists'
-export const EMAIL = 'hello@antonyholmes.dev'
-export const RECORDS_PER_PAGE = 12
-export const SEARCH_RECORDS_PER_PAGE = config.SEARCH_RECORDS_PER_PAGE
-export const AUTHOR_LATEST_POSTS = config.AUTHOR_LATEST_POSTS
 export const VERSION = versionConfig.version
 export const UPDATED = versionConfig.updated
-export const GITHUB_URL = config.GITHUB_URL
+
 export const ANIMATION_DURATION_S = 0.3
 export const ANIMATION_DURATION_MS = 250
 
-export const DEFAULT_SECTION = config.DEFAULT_SECTION
-
-export const GENES_BASE_URL = config.GENES_BASE_URL
-
-export const TAG_SLUG = config.TAG_SLUG
-export const PAGE_1_SLUG = config.PAGE_1_SLUG
+export const TIME_5_MINUTES_MS = 5 * 60 * 1000
+export const TIME_10_MINUTES_MS = 10 * 60 * 1000
 
 export const YEAR = new Date().getFullYear()
 
-export const SECTIONS = config.SECTIONS
-export const TEXT_SHOW_MORE = 'Show More'
-export const TEXT_FILE = 'File'
-export const TEXT_OPEN_FILE = 'Open Files from Device'
-export const TEXT_RUN = 'Run'
-
 export const STATUS_CODE_OK = 200
-
 export const STATUS_SUCCESS = 'success'
 export const STATUS_FAIL = 'fail'
 
 export const COLOR_THEME = 'theme'
+
+export const TEXT_SHOW_MORE = 'Show More'
+export const TEXT_FILE = 'File'
+export const TEXT_OPEN_FILE = 'Open Files from Device'
+export const TEXT_RUN = 'Run'
 
 export const TRUE = 'true'
 export const FALSE = 'false'
@@ -67,13 +54,28 @@ export const TEXT_NAME = 'Name'
 export const TEXT_DRAG_HERE = 'Drop File(s) Here to Open'
 export const TEXT_DELETE = 'Delete'
 export const TEXT_DISPLAY = 'Display'
+export const TEXT_DOWNLOAD = 'Download'
 export const TEXT_DOWNLOAD_AS_TXT = 'Download as TXT'
 export const TEXT_DOWNLOAD_AS_CSV = 'Download as CSV'
+export const TEXT_DOWNLOAD_AS_SVG = 'Download as SVG'
+export const TEXT_DOWNLOAD_AS_PNG = 'Download as PNG'
 export const TEXT_SHOW = 'Show'
 export const TEXT_TITLE = 'Title'
 export const TEXT_BORDER = 'Border'
-export const TEXT_SIGN_IN = 'Sign In'
 export const TEXT_NEXT = 'Next'
+export const TEXT_PREVIOUS = 'Previous'
+export const TEXT_BACK = 'Back'
+export const TEXT_SIGN_UP = 'Sign Up'
+export const TEXT_EMAIL = 'Email'
+
+export const TEXT_SIGN_IN = 'Sign In'
+export const TEXT_SIGNED_IN = 'Signed In'
+export const TEXT_WELCOME = 'Welcome'
+export const TEXT_WELCOME_BACK = 'Welcome Back'
+export const TEXT_LOADING = 'Loading...'
+export const TEXT_FORGOT_PASSWORD = 'Forgot Password?'
+export const TEXT_PASSWORD = 'Password'
+export const TEXT_USERNAME = 'Username'
 export const TEXT_SIGN_OUT = 'Sign Out'
 export const TEXT_SIGNED_OUT = 'Signed Out'
 export const TEXT_SELECT_ALL = 'Select All'
@@ -87,8 +89,14 @@ export const TEXT_ZOOM = 'Zoom'
 export const TEXT_SAVE_IMAGE = 'Save Image'
 export const TEXT_SAVE_TABLE = 'Save Table'
 export const TEXT_REMOVE_FROM_CART = 'Remove from Cart'
+export const TEXT_SORT_BY = 'Sort By'
 
 export const SVG_CRISP_EDGES = 'crispEdges'
+
+export const BIG0 = BigInt(0)
+export const BIG1 = BigInt(1)
+
+export type SortOrder = 'asc' | 'desc'
 
 export interface IDialogParams {
   id: string
@@ -98,8 +106,6 @@ export interface IDialogParams {
 export const NO_DIALOG: IDialogParams = { id: '' }
 
 export const DEFAULT_DATE_FORMAT = 'MM/dd/yyyy'
-
-export const SITE_URL = 'https://edb.rdf-lab.org'
 
 export const DOCS_URL =
   process.env.NEXT_PUBLIC_DOCS_URL || 'http://localhost:4321/docs'

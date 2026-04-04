@@ -1,12 +1,12 @@
-import type { BaseDataFrame } from '@lib/dataframe/base-dataframe'
+import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import {
   getColIdxFromGroup,
   rowMean,
   rowStdev,
-} from '@lib/dataframe/dataframe-utils'
-import { add, sub } from '@lib/math/add'
-import { argsort } from '@lib/math/argsort'
-import { div } from '@lib/math/multiply'
+} from '@/lib/dataframe/dataframe-utils'
+import { add, sub } from '@/lib/math/add'
+import { argsort } from '@/lib/math/argsort'
+import { div } from '@/lib/math/multiply'
 import type { IClusterGroup } from '../cluster-group'
 import type { IRankedGenes } from './geneset'
 
@@ -19,7 +19,7 @@ export function snrRankGenes(
   // split table for each group
   const tables = [group1, group2].map(group => {
     const colIdx = getColIdxFromGroup(df, group)
-    return df!.iloc(':', colIdx)
+    return df.iloc({ cols: colIdx })
   })
 
   const names = df.index.strs

@@ -1,30 +1,43 @@
-'use client'
+// 'use client'
 
 import { AppIcon } from '@/components/icons/app-icon'
 import { FormInputError } from '@/components/input-error'
 import { BaseCol } from '@/components/layout/base-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
-import { Button } from '@/components/shadcn/ui/themed/button'
-import { Card, CardHeader, CardTitle } from '@/components/shadcn/ui/themed/card'
-import { toast } from '@/components/shadcn/ui/themed/crisp'
-import { Form, FormField, FormItem } from '@/components/shadcn/ui/themed/form'
-import { Input } from '@/components/shadcn/ui/themed/input'
-import { Label } from '@/components/shadcn/ui/themed/label'
-import { APP_NAME, TEXT_SIGN_IN } from '@/consts'
+import {
+  Form,
+  FormField,
+  FormItem,
+} from '@/components/shadcn/ui/themed/v2/form'
+import { Label } from '@/components/shadcn/ui/themed/v2/label'
+import { TEXT_SIGN_IN } from '@/consts'
 import { CenterLayout } from '@/layouts/center-layout'
-import { MYACCOUNT_ROUTE, REDIRECT_URL_PARAM } from '@/lib/edb/edb'
+import { MYACCOUNT_PATH, TEXT_MY_ACCOUNT } from '@/lib/edb/edb'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { useEdbSettings } from '@/lib/edb/edb-settings'
+import { Card, CardHeader, CardTitle } from '@/themed/card'
+
+import { Button } from '@/themed/v2/button'
+import { Input } from '@/themed/v2/input'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { ArrowRight } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
 
+import { ThemeLink } from '@/components/link/theme-link'
+import { config } from '@/config'
+import {
+  getRedirectStateFromURI,
+  isSafeRelativeUrl,
+  safeRedirect,
+  type IRedirectState,
+} from '@/lib/edb/signin/edb-signin'
+import { makeUuid } from '@/lib/id'
 import { addPeriod, capitalizeFirstWord } from '@/lib/text/capital-case'
-import { BaseSyntheticEvent, useEffect, useRef, useState } from 'react'
+import { CoreProviders } from '@/providers/core-providers'
+import { Toast } from '@base-ui/react/toast'
+import { useEffect, useRef, useState, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
-import { invalidRedirectUrl } from '../oauth2/signedout-page'
 
 const FormSchema = z.object({
   email: z.email({
@@ -36,18 +49,14 @@ const FormSchema = z.object({
 })
 
 export function SignInPage() {
-  //const router = useRouter()
-  const searchParams = useSearchParams()
-
   const [otpSent, setOTPSent] = useState(false)
   const { settings } = useEdbSettings()
-  const { sendOTP, signInWithEmailOTP, signout, session } = useEdbAuth()
-  const [redirectUrl, setRedirectUrl] = useState<string>(MYACCOUNT_ROUTE)
+  const { sendOTP, signInWithEmailOTP, session } = useEdbAuth()
+  const [state, setState] = useState<IRedirectState | null>(null)
 
   const btnRef = useRef<HTMLButtonElement>(null)
-  // const [email, setEmail] = useState(
-  //   settings?.users.length > 0 ? settings.users[0]!.email : ''
-  // )
+
+  const { add: addToast } = Toast.useToastManager()
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -58,9 +67,12 @@ export function SignInPage() {
   })
 
   useEffect(() => {
-    //const queryParameters = new URLSearchParams(window.location.search)
-    setRedirectUrl(searchParams.get(REDIRECT_URL_PARAM) || MYACCOUNT_ROUTE)
-  }, [searchParams])
+    setState(
+      getRedirectStateFromURI({
+        target: { title: TEXT_MY_ACCOUNT, path: MYACCOUNT_PATH },
+      })
+    )
+  }, [])
 
   useEffect(() => {
     if (settings.users.length! > 0) {
@@ -80,7 +92,7 @@ export function SignInPage() {
     try {
       await signInWithEmailOTP(data.email, data.otp)
 
-      console.log('redirectUrl', redirectUrl)
+      console.log('redirectUrl', state)
 
       // if (
       //   redirectUrl &&
@@ -89,21 +101,16 @@ export function SignInPage() {
       //   redirectUrl !== OTP_SIGN_IN_ROUTE &&
       //   redirectUrl.startsWith('/')
 
-      let url = redirectUrl
+      let url = state?.target.path ?? MYACCOUNT_PATH
 
-      if (invalidRedirectUrl(redirectUrl)) {
-        url = '/'
+      console.log('Sign-in successful, redirecting to:', state)
+
+      if (!isSafeRelativeUrl(url)) {
+        url = MYACCOUNT_PATH
       }
 
       //router.push(url)
-      window.location.href = url
-
-      // toast({
-      //   title: APP_NAME,
-      //   variant: 'success',
-      //   description: `Hi, ${session.user.firstName}. You are signed in.`,
-      //   //variant: 'destructive',
-      // })
+      safeRedirect(url)
     } catch (error) {
       console.log('Error signing in: ', error)
 
@@ -115,11 +122,12 @@ export function SignInPage() {
       //   console.log('Error signing out: ', e)
       // }
 
-      toast({
-        title: APP_NAME,
+      addToast({
+        id: makeUuid(),
+        title: config.appName,
         description:
           'The sign in failed. Please check the one-time code and try again.',
-        variant: 'destructive',
+        type: 'destructive',
       })
     }
 
@@ -164,21 +172,23 @@ export function SignInPage() {
 
         setOTPSent(true)
 
-        toast({
-          title: APP_NAME,
+        addToast({
+          id: makeUuid(),
+          title: config.appName,
           description:
             'If the email address is valid, you will receive a 6-digit code.',
         })
       } catch (error) {
         console.log('Error sending OTP: ', error)
 
-        toast({
+        addToast({
+          id: makeUuid(),
           title: 'We were unable to send you a code',
           description:
             error instanceof Error
               ? addPeriod(capitalizeFirstWord(error.message))
               : 'Error sending code.',
-          variant: 'destructive',
+          type: 'destructive',
         })
       }
     }
@@ -187,18 +197,27 @@ export function SignInPage() {
   return (
     <CenterLayout
       title={TEXT_SIGN_IN}
-      signedRequired={false}
+      signinRequired={false}
       //
-      innerCls="gap-y-4"
+      innerCls="gap-y-8"
     >
       {session && session.user && (
-        <p className="bg-emerald-50 w-120 px-5 py-2.5 rounded-xl border border-emerald-200">
-          Hi{' '}
-          <a href={MYACCOUNT_ROUTE} className="underline hover:text-theme">
-            {session.user.firstName || session.user.email}
-          </a>
-          , you are signed in.
-        </p>
+        <BaseCol className="items-center gap-y-2">
+          <p className="font-bold text-lg">
+            Hi{' '}
+            <a href={MYACCOUNT_PATH} className="hover:underline">
+              {session.user.name || session.user.email}
+            </a>
+            , you are already signed in.
+          </p>
+          <p>
+            {state?.target && (
+              <ThemeLink href={state.target.path} className="hover:underline">
+                Go to {state.target.title ?? TEXT_MY_ACCOUNT}
+              </ThemeLink>
+            )}
+          </p>
+        </BaseCol>
       )}
 
       <Card
@@ -210,7 +229,7 @@ export function SignInPage() {
           <VCenterRow className="gap-x-2">
             <AppIcon w="w-10" />
             <CardTitle>
-              {TEXT_SIGN_IN} to {APP_NAME}
+              {TEXT_SIGN_IN} to {config.appName}
             </CardTitle>
           </VCenterRow>
         </CardHeader>
@@ -249,7 +268,7 @@ export function SignInPage() {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-y-2">
                     <Label htmlFor="otp" className="text-sm font-medium">
-                      6-Digit One-Time Passcode
+                      6 Digit One-Time Passcode
                     </Label>
                     <VCenterRow className="gap-x-4">
                       <Input
@@ -271,7 +290,7 @@ export function SignInPage() {
                 <button
                   className="text-sm text-theme hover:underline"
                   disabled={!form.watch('email')}
-                  onClick={(e) => {
+                  onClick={e => {
                     sendCode(e)
                   }}
                   aria-label="Send One-Time Password to Email"
@@ -284,39 +303,78 @@ export function SignInPage() {
               <button ref={btnRef} type="submit" className="hidden" />
             </form>
 
-            <Button
-              variant="theme"
-              size="xl"
-              //disabled={otpSent && (!form.watch('email') || !form.watch('otp'))}
-              onClick={(e) => {
-                if (form.watch('email')) {
-                  if (!form.watch('otp')) {
-                    sendCode(e)
+            <BaseCol className="gap-y-2">
+              {/* {session && session.user && (
+                <Button
+                  variant="theme"
+                  size="xl"
+                  //disabled={otpSent && (!form.watch('email') || !form.watch('otp'))}
+                  onClick={() => {
+                    console.log('redirectUrl', state)
+                    redirect(state?.target.path ?? MYACCOUNT_ROUTE)
+                  }}
+                  className="group"
+                >
+                  <div className="group-hover:w-5 group-hover:opacity-100 group-focus:w-5 group-focus:opacity-100 opacity-0 w-0 overflow-hidden trans-all">
+                    <ArrowRight className="w-5" />
+                  </div>
+                  <span>Go to {state?.target.title ?? TEXT_MY_ACCOUNT}</span>
+                </Button>
+              )} */}
+
+              <Button
+                variant={session && session.user ? 'secondary' : 'theme'}
+                size="xl"
+                //disabled={otpSent && (!form.watch('email') || !form.watch('otp'))}
+                onClick={e => {
+                  if (form.watch('email')) {
+                    if (!form.watch('otp')) {
+                      sendCode(e)
+                    } else {
+                      btnRef.current?.click()
+                    }
                   } else {
-                    btnRef.current?.click()
+                    addToast({
+                      id: makeUuid(),
+                      title: config.appName,
+                      description: 'Please enter your email address.',
+                      type: 'destructive',
+                    })
                   }
-                } else {
-                  toast({
-                    title: APP_NAME,
-                    description: 'Please enter your email address.',
-                    variant: 'destructive',
-                  })
-                }
-              }}
-              className="group"
-            >
-              <div className="group-hover:w-5 group-hover:opacity-100 group-focus:w-5 group-focus:opacity-100 opacity-0 w-0 overflow-hidden trans-all">
-                <ArrowRight className="w-5" />
-              </div>
-              <span>
-                {form.watch('otp') || otpSent
-                  ? TEXT_SIGN_IN
-                  : 'Send One-Time Code'}
-              </span>
-            </Button>
+                }}
+                className="group"
+              >
+                <div className="group-hover:w-5 group-hover:opacity-100 group-focus:w-5 group-focus:opacity-100 opacity-0 w-0 overflow-hidden trans-all">
+                  <ArrowRight className="w-5" />
+                </div>
+                <span>
+                  {form.watch('otp') || otpSent
+                    ? TEXT_SIGN_IN
+                    : 'Send One-Time Code'}
+                </span>
+              </Button>
+            </BaseCol>
           </Form>
         </BaseCol>
       </Card>
     </CenterLayout>
+  )
+}
+
+export function SignInQueryPage() {
+  // const [url, setUrl] = useState('')
+
+  // useEffect(() => {
+  //   setUrl(window.location.href)
+  // }, [])
+
+  // if (!url) {
+  //   return null
+  // }
+
+  return (
+    <CoreProviders>
+      <SignInPage />
+    </CoreProviders>
   )
 }

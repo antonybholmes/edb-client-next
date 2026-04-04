@@ -1,4 +1,4 @@
-import { type IDivProps } from '@interfaces/div-props'
+import { type IDivProps } from '@/interfaces/div-props'
 
 import { Children, useState } from 'react'
 import {

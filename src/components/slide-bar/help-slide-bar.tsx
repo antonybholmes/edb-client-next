@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
-import type { IDivProps } from '@interfaces/div-props'
+import type { IDivProps } from '@/interfaces/div-props'
+import { httpFetch } from '@/lib/http/http-fetch'
 import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
 import { SlideBar } from './slide-bar'
 
 interface IHelpFrameProps {
@@ -12,13 +12,13 @@ interface IHelpFrameProps {
 function HelpIFrame({ helpUrl }: IHelpFrameProps) {
   // const iframeRef = useRef<HTMLIFrameElement>(null)
   // const [height, setHeight] = useState('0px')
-  // // useEffect(() => {
-  // //   iframeRef.current!.style.height = iframeRef.current!.contentWindow!.document.body.scrollHeight + 'px';
+  // useEffect(() => {
+  //   iframeRef.current!.style.height = iframeRef.current!.contentWindow!.document.body.scrollHeight + 'px';
 
-  // //   // set the width of the iframe as the
-  // //   // width of the iframe content
-  // //   //iframeRef.current!.style.width  = iframeRef.current!.contentWindow!.document.body.scrollWidth + 'px';
-  // // },[])
+  //   // set the width of the iframe as the
+  //   // width of the iframe content
+  //   //iframeRef.current!.style.width  = iframeRef.current!.contentWindow!.document.body.scrollWidth + 'px';
+  // },[])
 
   // console.log(height, helpUrl)
 
@@ -47,8 +47,7 @@ function HelpIFrame({ helpUrl }: IHelpFrameProps) {
   const { data } = useQuery({
     queryKey: ['help'],
     queryFn: async () => {
-      const res = await axios.get(helpUrl)
-      return res.data
+      await httpFetch.get(helpUrl)
     },
   })
 
@@ -80,7 +79,6 @@ export function HelpSlideBar({
   helpUrl = '',
   position = 80,
   limits = [5, 85],
-  className,
   children,
 }: IProps) {
   const [isOpen, setIsOpen] = useState(true)

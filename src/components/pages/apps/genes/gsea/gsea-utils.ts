@@ -5,13 +5,13 @@ import {
   type IColorProps,
   type IMarginProps,
   type IStrokeProps,
-} from '@components/plot/svg-props'
+} from '@/components/plot/svg-props'
 import {
   COLOR_BLUE,
   COLOR_GRAY,
   COLOR_MEDIUM_SEA_GREEN,
   COLOR_RED,
-} from '@lib/color/color'
+} from '@/lib/color/color'
 
 export interface IPathway {
   id: string

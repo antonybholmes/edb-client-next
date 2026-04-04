@@ -1,26 +1,26 @@
-'use client'
+// 'use client'
 
-import { BaseCol } from '@layout/base-col'
+import { BaseCol } from '@/layout/base-col'
 
-import { VCenterRow } from '@layout/v-center-row'
+import { VCenterRow } from '@/layout/v-center-row'
 
 import { useEffect, useState } from 'react'
 
-import { Button } from '@themed/button'
-import { Input } from '@themed/input'
+import { Button } from '@/themed/v2/button'
+import { Input } from '@/themed/v2/input'
 
 import { TEXT_CLEAR } from '@/consts'
-import { cn } from '@lib/shadcn-utils'
+import { cn } from '@/lib/shadcn-utils'
 
-import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
-import { useDebounce } from '@/hooks/debounce'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@components/color/color-picker-button'
-import { Textarea } from '@themed/textarea'
+} from '@/components/color/color-picker-button'
+import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
+import { DEFAULT_DEBOUNCE_DELAY_MS, useDebounce } from '@/hooks/debounce'
+import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
-import { IVennList, useVenn } from './venn-store'
+import { type IVennList, useVenn } from './venn-store'
 
 interface IProps {
   vennList: IVennList
@@ -34,7 +34,9 @@ export function VennList({ vennList }: IProps) {
 
   const [text, setText] = useState(vennList.items.join('\n'))
 
-  const debouncedText = useDebounce(text, 500)
+  const debouncedText = useDebounce(text, {
+    delayMs: DEFAULT_DEBOUNCE_DELAY_MS,
+  })
 
   useEffect(() => {
     updateVennListFromText(vennList.id, debouncedText)
@@ -50,9 +52,9 @@ export function VennList({ vennList }: IProps) {
   // matching and the original values. Note that this picks
   // the last value found as being original, so if you overlap
   // Lab1, and lAb1, lAb1 will be kept as the original value
-  const [_originalMap, setOriginalMap] = useState<Map<string, string>>(
-    new Map()
-  )
+  // const [_originalMap, setOriginalMap] = useState<Map<string, string>>(
+  //   new Map()
+  // )
 
   // track what is unique to each set so we get rid of repeats
   // const [uniqueCountMap, setUniqueCountMap] = useState<
@@ -77,10 +79,10 @@ export function VennList({ vennList }: IProps) {
         <Input
           id={`label${vennList.id}`}
           value={vennList.name ?? ''}
-          onChange={(e) => {
+          onChange={e => {
             //console.log(index, e.target.value)
             setVennLists(
-              produce(vennLists, (draft) => {
+              produce(vennLists, draft => {
                 draft[vennList.id]!.name = e.target.value
               })
             )
@@ -96,7 +98,7 @@ export function VennList({ vennList }: IProps) {
             onColorChange={(color, opacity) => {
               console.log('color', color, opacity)
               updateCircles(
-                produce(circles, (draft) => {
+                produce(circles, draft => {
                   draft[vennList.id]!.fill.color = color
                   draft[vennList.id]!.fill.opacity = opacity
                 })
@@ -110,7 +112,7 @@ export function VennList({ vennList }: IProps) {
             color={circles[vennList.id]!.stroke.color}
             onColorChange={(color, alpha) =>
               updateCircles(
-                produce(circles, (draft) => {
+                produce(circles, draft => {
                   draft[vennList.id]!.stroke.color = color
                   draft[vennList.id]!.stroke.opacity = alpha
                 })
@@ -141,7 +143,7 @@ export function VennList({ vennList }: IProps) {
         aria-label={`Set ${vennList.id}`}
         //placeholder={listLabelMap[index] ?? ''}
         value={text}
-        onTextChange={(v) => {
+        onTextChange={v => {
           setText(v)
           // setVennLists(
           //   produce(vennLists, (draft) => {

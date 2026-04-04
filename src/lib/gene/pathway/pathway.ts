@@ -1,5 +1,6 @@
+import type { SeriesData } from '@/lib/dataframe'
 import { intersect1d } from '../../collections'
-import { type SeriesData } from '../../dataframe/dataframe-types'
+
 import type { IGeneset } from '../../gsea/geneset'
 import { argsort } from '../../math/argsort'
 
@@ -135,7 +136,7 @@ export class PathwayOverlap {
           // "# Genes in Universe",
           // "p",
           // "q",
-          // //"-log10q",
+          //"-log10q",
           // "Ratio k/n",
           // "Genes",
 

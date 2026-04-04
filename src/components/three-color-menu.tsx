@@ -1,5 +1,5 @@
 import type { IChildrenProps } from '@/interfaces/children-props'
-import { COLOR_TRANSPARENT } from '@lib/color/color'
+import { COLOR_TRANSPARENT } from '@/lib/color/color'
 import { useState, type ReactNode } from 'react'
 import { ColorPickerUI } from './color/color-picker-button'
 import {
@@ -167,7 +167,7 @@ export function ThreeColorMenu({
           <TabsContent value="text" className="flex flex-col gap-y-2 w-64">
             <ColorPickerUI
               color={color1}
-              onColorChange={color => onColor1Change?.(color)}
+              onColorChange={(color) => onColor1Change?.(color)}
               onCancel={onCancel}
               className="w-full aspect-square rounded-xs"
               allowNoColor={allowNoColor}
@@ -180,7 +180,7 @@ export function ThreeColorMenu({
           <TabsContent value="border" className="flex flex-col gap-y-2 w-64">
             <ColorPickerUI
               color={color2}
-              onColorChange={color => onColor2Change?.(color)}
+              onColorChange={(color) => onColor2Change?.(color)}
               onCancel={onCancel}
               className="w-full aspect-square rounded-xs"
               allowNoColor={allowNoColor}
@@ -193,7 +193,7 @@ export function ThreeColorMenu({
           <TabsContent value="fill" className="flex flex-col gap-y-2 w-64">
             <ColorPickerUI
               color={color3}
-              onColorChange={color => onColor3Change?.(color)}
+              onColorChange={(color) => onColor3Change?.(color)}
               onCancel={onCancel}
               className="w-full aspect-square rounded-xs"
               allowNoColor={allowNoColor}

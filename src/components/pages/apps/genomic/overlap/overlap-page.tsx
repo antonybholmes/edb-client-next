@@ -1,31 +1,31 @@
-'use client'
+// 'use client'
 
-import { ToolbarOpenFile } from '@toolbar/toolbar-open-files'
+import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
 
-import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
+import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
-import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
+import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
 
 import {
   ShowOptionsMenu,
   Toolbar,
   ToolbarMenu,
   ToolbarPanel,
-} from '@toolbar/toolbar'
-import { ToolbarSeparator } from '@toolbar/toolbar-separator'
+} from '@/toolbar/toolbar'
+import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
-import { ToolbarButton } from '@toolbar/toolbar-button'
+import { ToolbarButton } from '@/toolbar/toolbar-button'
 
 import {
   onTextFileChange,
   OpenFiles,
   type ITextFileOpen,
-} from '@components/pages/open-files'
+} from '@/components/pages/open-files'
 
-import { BasicAlertDialog } from '@dialog/basic-alert-dialog'
-import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
+import { BasicAlertDialog } from '@/dialog/basic-alert-dialog'
+import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
-import { OpenIcon } from '@icons/open-icon'
+import { OpenIcon } from '@/icons/open-icon'
 
 import { useContext, useState } from 'react'
 
@@ -41,46 +41,49 @@ import {
   type IDialogParams,
 } from '@/consts'
 
-import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
-import { UploadIcon } from '@icons/upload-icon'
-import { DropdownMenuItem } from '@themed/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { UploadIcon } from '@/icons/upload-icon'
 
-import { ShortcutLayout } from '@layouts/shortcut-layout'
-import { randId } from '@lib/id'
+import { ShortcutLayout } from '@/layouts/shortcut-layout'
+import { randId } from '@/lib/id'
 
-import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
-import { DeleteIcon } from '@icons/delete-icon'
-import { FileIcon } from '@icons/file-icon'
-import { SettingsIcon } from '@icons/settings-icon'
-import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
+import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { DeleteIcon } from '@/icons/delete-icon'
+import { FileIcon } from '@/icons/file-icon'
+import { SettingsIcon } from '@/icons/settings-icon'
+import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import {
   downloadDataFrame,
   getFormattedShape,
-} from '@lib/dataframe/dataframe-utils'
-import { oneWayFromDataframes } from '@lib/genomic/overlap/one-way-overlap'
+} from '@/lib/dataframe/dataframe-utils'
+import { oneWayFromDataframes } from '@/lib/genomic/overlap/one-way-overlap'
 import {
   createOverlapTableFromDataframes,
   type OVERLAP_MODE,
-} from '@lib/genomic/overlap/overlap'
-import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
+} from '@/lib/genomic/overlap/overlap'
+import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 
-import { HeaderPortal } from '@/components/header/header-portal'
+import { HeaderSlotPortal } from '@/components/header/header-slot-portal'
 import { ModuleInfoButton } from '@/components/header/module-info-button'
-import { DownloadIcon } from '@components/icons/download-icon'
-import type { ITab } from '@components/tabs/tab-provider'
-import { reorder } from '@lib/math/reorder'
-import { where } from '@lib/math/where'
-import { ZoomSlider } from '@toolbar/zoom-slider'
+import { DownloadIcon } from '@/components/icons/download-icon'
+import type { ITab } from '@/components/tabs/tab-provider'
+import { useStableId } from '@/hooks/stable-id'
+import { reorder } from '@/lib/math/reorder'
+import { where } from '@/lib/math/where'
+import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { FilesPropsPanel } from './files-props-panel'
 import MODULE_INFO from './module.json'
 import { OverlapContext, OverlapProvider } from './overlap-provider'
 
 function OverlapPage() {
+  const _id = useStableId('overlap-page')
+
   const { dfs, setDfs, selected, setSelected, openOverlapFiles } =
     useContext(OverlapContext)
 
-  const [rightTab, setRightTab] = useState('Options')
+  //const [rightTab, setRightTab] = useState('Options')
   const [showSideBar, setShowSideBar] = useState(true)
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
@@ -118,7 +121,7 @@ function OverlapPage() {
   function save(format: 'txt' | 'csv') {
     const sep = format === 'csv' ? ',' : '\t'
 
-    const idx = where(dfs, (df) => df.id === selected)
+    const idx = where(dfs, df => df.id === selected)
 
     if (idx.length > 0) {
       downloadDataFrame(dfs[idx[0]!]! as AnnotationDataFrame, {
@@ -132,32 +135,6 @@ function OverlapPage() {
     setShowFileMenu(false)
   }
 
-  // Load a default sheet
-  // useEffect(() => {
-  //   loadDefaultSheet(historyDispatch)
-  // }, [])
-
-  // async function loadTestData() {
-  //   const res = await queryClient.fetchQuery({
-  //     queryKey: ['test_data'],
-  //     queryFn: () => axios.get('/data/test/geneconv.txt'),
-  //   })
-
-  //   try {
-  //     const lines = textToLines(res.data)
-
-  //     const table = new DataFrameReader().indexCols(0).read(lines)
-
-  //     // historyDispatch({
-  //     //   type: 'open',
-  //     //   description: `Load Test`,
-  //     //   sheets: [table.setName('Geneconv Test')],
-  //     // })
-  //   } catch (error) {
-  //     // do nothing
-  //   }
-  // }
-
   const tabs: ITab[] = [
     {
       //id: nanoid(),
@@ -166,7 +143,7 @@ function OverlapPage() {
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
-              onOpenChange={(open) => {
+              onOpenChange={open => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -236,11 +213,11 @@ function OverlapPage() {
   //     icon: <TableIcon className={TOOLBAR_BUTTON_ICON_CLS} />,
   //     label: "Table View",
   //     content: (
-  //       <ResizablePanelGroup direction="horizontal">
+  //       <ResizablePanelGroup orientation="horizontal">
   //         <ResizablePanel
   //           id="tables"
-  //           defaultSize={75}
-  //           minSize={50}
+  //           defaultSize="75%"
+  //           minSize="50%"
   //           className="flex flex-col"
   //         >
   //           <TabbedDataFrames
@@ -256,8 +233,8 @@ function OverlapPage() {
   //         <ResizablePanel
   //           className="flex flex-col"
   //           id="right-tabs"
-  //           defaultSize={25}
-  //           minSize={10}
+  //           defaultSize="25%"
+  //           minSize="0%"
   //           collapsible={true}
   //         >
   //           <SideBar side="Right"
@@ -356,7 +333,7 @@ function OverlapPage() {
     {
       //id: nanoid(),
       id: 'Open',
-      icon: <OpenIcon iconMode="colorful" />,
+      icon: <OpenIcon variant="colorful" />,
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
@@ -403,9 +380,9 @@ function OverlapPage() {
       {showDialog.id.startsWith('delete-sheet') && (
         <OKCancelDialog
           //open={delGroup !== -1}
-          onResponse={(r) => {
+          onResponse={r => {
             if (r === TEXT_OK) {
-              setDfs(dfs.filter((df) => df.id !== showDialog.params!.id))
+              setDfs(dfs.filter(df => df.id !== showDialog.params!.id))
             }
             setShowDialog({ ...NO_DIALOG })
           }}
@@ -414,18 +391,23 @@ function OverlapPage() {
         </OKCancelDialog>
       )}
 
-      <ShortcutLayout signedRequired={false}>
-        <HeaderPortal>
-          <ModuleInfoButton info={MODULE_INFO} />
-        </HeaderPortal>
-        <Toolbar tabs={tabs}>
+      <HeaderSlotPortal>
+        <ModuleInfoButton info={MODULE_INFO} />
+      </HeaderSlotPortal>
+
+      <ShortcutLayout signinRequired={false}>
+        <Toolbar>
           <ToolbarMenu
+            groupId={_id}
+            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
             leftShortcuts={<UndoShortcuts />}
           />
           <ToolbarPanel
+            groupId={_id}
+            tabs={tabs}
             tabShortcutMenu={
               <ShowOptionsMenu
                 show={showSideBar}
@@ -441,8 +423,8 @@ function OverlapPage() {
           id="overlap-sidebar"
           side="right"
           tabs={rightTabs}
-          value={rightTab}
-          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
+          //value={rightTab}
+          //onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
@@ -462,7 +444,6 @@ function OverlapPage() {
               //   })
               // }}
               className="mx-2"
-              style={{ marginBottom: '-2px' }}
               menuActions={[
                 { action: 'Delete', icon: <DeleteIcon stroke="" /> },
               ]}
@@ -474,14 +455,14 @@ function OverlapPage() {
                   })
                 }
               }}
-              onTabChange={(v) => {
+              onTabChange={v => {
                 setSelected(v.tab.id)
               }}
-              onReorder={(order) => {
+              onReorder={order => {
                 setDfs(reorder(dfs, order, (df, id) => df.id === id))
               }}
               allowReorder={true}
-              onFileDrop={(files) => {
+              onFileDrop={files => {
                 if (files.length > 0) {
                   //setDroppedFile(files[0]);
                   //console.log('Dropped file:', files[0])
@@ -502,11 +483,11 @@ function OverlapPage() {
 
         {showDialog.id.includes('open') && (
           <OpenFiles
-            open={showDialog.id}
+            message={showDialog.id}
             multiple={true}
             //onOpenChange={() => setShowDialog({...NO_DIALOG})}
             onFileChange={(message, files) =>
-              onTextFileChange(message, files, (files) => openFiles(files))
+              onTextFileChange(message, files, files => openFiles(files))
             }
           />
         )}
@@ -518,9 +499,7 @@ function OverlapPage() {
 export function OverlapQueryPage() {
   return (
     <OverlapProvider>
-      {/* <ZoomProvider> */}
       <OverlapPage />
-      {/* </ZoomProvider> */}
     </OverlapProvider>
   )
 }

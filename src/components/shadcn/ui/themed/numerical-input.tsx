@@ -1,8 +1,9 @@
 import { TriangleRightIcon } from '@/components/icons/triangle-right-icon'
 import { VCenterCol } from '@/components/layout/v-center-col'
+import { useDebounce } from '@/hooks/debounce'
 import { clamp } from '@/lib/math/clamp'
 import { useEffect, useRef, useState } from 'react'
-import { Input, type IInputProps } from './input'
+import { Input, type IInputProps } from './v2/input'
 
 const BUTTON_CLS = `w-4 flex h-4 flex-row justify-center items-center
   data-[enabled=true]:stroke-foreground data-[enabled=false]:stroke-foreground/50 
@@ -11,9 +12,10 @@ const BUTTON_CLS = `w-4 flex h-4 flex-row justify-center items-center
   data-[enabled=true]:hover:stroke-theme data-[enabled=true]:focus-visible:stroke-theme
   outline-hidden trans-color`
 
-const UPDATE_INTERVAL_MS = 100
+const UPDATE_INTERVAL_MS = 150
 
-export interface INumericalInputProps extends IInputProps {
+export interface INumericalInputProps extends Omit<IInputProps, 'value'> {
+  value: number
   limit?: [number, number]
   step?: number
   dp?: number
@@ -26,10 +28,13 @@ export interface INumericalInputProps extends IInputProps {
    */
   onNumChange?: (v: number) => void
   onNumChanged?: (v: number) => void
-  w?: string
+
+  delay?: number
 }
 
 export function NumericalInput({
+  id,
+  name,
   value = 0,
   limit,
   step = 1,
@@ -38,23 +43,55 @@ export function NumericalInput({
   onNumChange,
   onNumChanged,
   disabled,
-  w = 'w-20',
+  w = 'xxs',
   variant = 'default',
-  className,
+  delay = UPDATE_INTERVAL_MS,
+  className = '',
 }: INumericalInputProps) {
-  //const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  //const _id = id ?? useStableId('numerical-input')
 
-  // The internal value is unbounded so that user can type
-  // normally without constant auto formatting which is annoying.
-  // Once the user presses enter or stops updating via the arrow keys,
-  // we will format the value to the dp and clamp it to the limit.
-  const [_value, setValue] = useState(value)
+  //const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // To allow ui to respond to spinner buttons without waiting for debounce,
+  // we keep an internal value that updates immediately as user types or clicks
+  // spinner, and then debounce the updates to the outside
+  const numValue = useRef<number>(value)
+
+  const [textValue, setTextValue] = useState<string>(value.toFixed(dp))
+
+  //const [numValue, setNumValue] = useState<number>(value)
+
+  // debounce the text value, so we don't call onNumChange too frequently as user types
+  const debouncedTextValue = useDebounce(textValue, {
+    delayMs: 500,
+  })
+
+  // const debouncedNumValue = useDebounce(numValue, {
+  //   delayMs: 500,
+  //   fn: v => _clampValue(v),
+  // })
+
+  // user provides a new value, we update the internal value immediately
+  useEffect(() => {
+    const v = _clampValue(value)
+    setTextValue(v.toFixed(dp))
+    numValue.current = v
+  }, [value])
 
   // the internal number value is clamped to the limit
-  const [_n, setN] = useState(Number(value) || limit?.[0] || 0)
+  //const _n = useRef(Number(value) || limit?.[0] || 0)
 
-  function _getValue(v: number): number {
+  useEffect(() => {
+    _onChange(debouncedTextValue, 'change')
+  }, [debouncedTextValue])
+
+  // useEffect(() => {
+  //   onNumChange?.(debouncedNumValue)
+  //   onNumChanged?.(debouncedNumValue)
+  // }, [debouncedNumValue])
+
+  function _clampValue(v: number): number {
     if (limit?.length === 2) {
       v = clamp(v, limit[0], limit[1])
     }
@@ -62,68 +99,106 @@ export function NumericalInput({
     return v
   }
 
-  function _onNumChange(text: string): number {
-    setValue(text)
+  function _onChange(text: string, mode: 'change' | 'changed') {
+    // remove commas for thousands separators, since they interfere with parsing
+    let v = Number(text.replaceAll(',', ''))
 
-    let v = Number(text)
-
-    if (!Number.isNaN(v)) {
-      v = _getValue(v)
-      setN(v)
-      onNumChange?.(v)
+    if (Number.isNaN(v)) {
+      return
     }
+
+    v = _clampValue(v)
+
+    if (v === value) {
+      // if value hasn't changed, do nothing
+      return
+    }
+
+    numValue.current = v
+
+    setTextValue(v.toFixed(dp))
+
+    onNumChange?.(v)
+
+    if (mode === 'changed') {
+      onNumChanged?.(v)
+    }
+
+    // setValue(text)
+
+    // // Clear the previous timeout
+    // if (timeoutRef.current) {
+    //   clearTimeout(timeoutRef.current)
+    // }
+
+    // // Set a new timeout to format after delay
+    // timeoutRef.current = setTimeout(() => {
+    //   let v = Number(text)
+
+    //   if (!Number.isNaN(v)) {
+    //     v = _clampValue(v)
+    //     _n.current = v
+
+    //     onNumChange?.(v)
+    //   }
+    // }, delay)
 
     // also call more realtime update, just in case
     //onNumChange?.(_getValue(v))
-
-    return v
   }
 
-  function _onNumChanged(v: number): number {
-    v = _getValue(v)
+  // function _onNumChanged(v: number): number {
+  //   v = _clampValue(v)
 
-    setValue(v.toFixed(dp)) // update the internal value and format it
-    setN(v) // update the internal value without formatting
-    // update but ensure data is clamped
-    onNumChange?.(v)
-    onNumChanged?.(v)
+  //   setValue(v.toFixed(dp)) // update the internal value and format it
+  //   _n.current = v // update the internal value without formatting
+  //   // update but ensure data is clamped
+  //   onNumChange?.(v)
+  //   onNumChanged?.(v)
 
-    return v
-  }
+  //   return v
+  // }
 
-  useEffect(() => {
-    // if you set a value, it supersedes the internal value
-    let v = Number(value)
+  // useEffect(() => {
+  //   // if you set a value, it supersedes the internal value
+  //   let v = Number(value)
 
-    if (!Number.isNaN(v)) {
-      v = _getValue(v)
-      setValue(v.toFixed(dp))
-      setN(v)
-    }
-  }, [value])
+  //   if (!Number.isNaN(v)) {
+  //     v = _clampValue(v)
+  //     setValue(v.toFixed(dp))
+  //     _n.current = v
+  //   }
+  // }, [value])
 
   function updateValue(delta: number) {
-    setN((prev) => _getValue(prev + delta))
+    numValue.current = _clampValue(numValue.current + delta)
+
+    // force ui to update immediately so user can see the change as they hold down the button
+    // but since this value is debounced, the onNumChange/onNumChanged callbacks won't be called until
+    // user releases the button or stops typing for a moment.
+    setTextValue(numValue.current.toFixed(dp))
   }
 
   function startUpdating(delta: number) {
-    setN((prev) => _getValue(prev + delta))
-    intervalRef.current = setInterval(
-      () => updateValue(delta),
-      UPDATE_INTERVAL_MS
-    )
+    updateValue(delta)
+
+    timeoutRef.current = setInterval(() => {
+      updateValue(delta)
+    }, delay)
   }
 
   function stopUpdating() {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current)
+    if (timeoutRef.current) {
+      clearInterval(timeoutRef.current)
     }
-    intervalRef.current = null
+
+    timeoutRef.current = null
 
     // Once we finish updating the internal state, push it
     // so the rest of the ui can respond
-    _onNumChanged(_n)
+    //_onNumChanged(numValue.current)
   }
+
   const handleKeyDown = (event: React.KeyboardEvent, delta: number) => {
     if (
       event.key === 'Enter' ||
@@ -140,12 +215,15 @@ export function NumericalInput({
     stopUpdating()
   }
 
-  //const v = value || _value ||
+  //console.log('_value', _value)
 
   return (
     <Input
-      value={_value}
+      id={id}
+      name={name}
+      value={textValue}
       type="number"
+      step={step}
       min={limit?.length === 2 ? limit[0] : undefined}
       max={limit?.length === 2 ? limit[1] : undefined}
       disabled={disabled}
@@ -153,45 +231,58 @@ export function NumericalInput({
       className={className}
       variant={variant}
       inputCls="text-right"
-      onKeyDown={(e) => {
+      onKeyDown={e => {
         //console.log(e)
         if (e.key === 'Enter') {
-          const v = Number(e.currentTarget.value)
+          //const v = Number(e.currentTarget.value)
 
           // only called when user presses enter,
           // this is for when you don't want to respond
           // on every change, (e.g. it taxes the ui to keep
           // redrawing quickly, so only respond once user
           // has made a final choice
-          if (!Number.isNaN(v)) {
-            _onNumChanged(v) //onNumChanged?.(Math.min(limit[1], Math.max(limit[0], v)))
-          }
-        } else {
-          // respond to arrow keys when ctrl pressed
-          if (e.ctrlKey) {
-            switch (e.key) {
-              case 'ArrowUp':
-              case 'ArrowRight':
-                _onNumChanged(_n + step)
-                break
-              case 'ArrowDown':
-              case 'ArrowLeft':
-                _onNumChanged(_n - step)
-                break
-              default:
-                break
-            }
-          }
+          //if (!Number.isNaN(v)) {
+          _onChange(e.currentTarget.value, 'changed') //onNumChanged?.(Math.min(limit[1], Math.max(limit[0], v)))
+          //}
         }
-      }}
-      onChange={(e) => {
-        //const v = Number(e.target.value)
 
-        // default to min if garbage input
-        //if (!Number.isNaN(v)) {
-        _onNumChange(e.target.value)
-        //}
+        // else {
+        //   // respond to arrow keys when ctrl pressed
+        //   if (e.ctrlKey) {
+        //     switch (e.key) {
+        //       case 'ArrowUp':
+        //       case 'ArrowRight':
+        //         console.log('up')
+        //         _onNumChanged(_n.current + step)
+        //         break
+        //       case 'ArrowDown':
+        //       case 'ArrowLeft':
+        //         _onNumChanged(_n.current - step)
+        //         break
+        //       default:
+        //         break
+        //     }
+        //   }
+        // }
       }}
+      // onKeyUp={e => {
+      //   switch (e.key) {
+      //     case 'ArrowUp':
+      //     case 'ArrowRight':
+      //     case 'ArrowDown':
+      //     case 'ArrowLeft':
+      //       // trigger event when arrow key is released
+      //       // the numerical input triggers updates automatically
+      //       // but we want to notify that the user has finished changing
+      //       // since some components do not listen for every change
+      //       // and instead are designed to respond once user has finished
+      //       _onNumChanged(_n.current)
+      //       break
+      //     default:
+      //       break
+      //   }
+      // }}
+      onTextChange={setTextValue}
       placeholder={placeholder}
       rightChildren={
         <VCenterCol className="shrink-0 -mr-1.5">
@@ -205,8 +296,9 @@ export function NumericalInput({
             onMouseDown={() => startUpdating(step)}
             onMouseUp={stopUpdating}
             onMouseLeave={stopUpdating}
-            onKeyDown={(e) => handleKeyDown(e, step)}
+            onKeyDown={e => handleKeyDown(e, step)}
             onKeyUp={handleKeyUp}
+            aria-label="Increase value"
           >
             <TriangleRightIcon
               className="-rotate-90 -mb-0.5"
@@ -230,8 +322,9 @@ export function NumericalInput({
             onMouseDown={() => startUpdating(-step)}
             onMouseUp={stopUpdating}
             onMouseLeave={stopUpdating}
-            onKeyDown={(e) => handleKeyDown(e, -step)}
+            onKeyDown={e => handleKeyDown(e, -step)}
             onKeyUp={handleKeyUp}
+            aria-label="Decrease value"
           >
             <TriangleRightIcon
               className="rotate-90 mb-0.5"

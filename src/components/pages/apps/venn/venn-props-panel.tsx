@@ -1,37 +1,30 @@
-'use client'
+// 'use client'
 
-import { BaseCol } from '@layout/base-col'
+import { BaseCol } from '@/layout/base-col'
 
-import { PropsPanel } from '@components/props-panel'
+import { PropsPanel } from '@/components/props-panel'
+import { NumericalInput } from '@/themed/numerical-input'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@themed/accordion'
-import { NumericalInput } from '@themed/numerical-input'
+} from '@/themed/v2/accordion'
 
-import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@components/color/color-picker-button'
-import { PropRow } from '@dialog/prop-row'
-import { SwitchPropRow } from '@dialog/switch-prop-row'
-import { COLOR_BLACK, COLOR_WHITE } from '@lib/color/color'
-import { LinkButton } from '@themed/link-button'
+} from '@/components/color/color-picker-button'
+import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
+import { PropRow } from '@/dialog/prop-row'
+import { SwitchPropRow } from '@/dialog/switch-prop-row'
+import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
+import { LinkButton } from '@/themed/link-button'
 import { produce } from 'immer'
 
 export function VennPropsPanel() {
-  const {
-    settings,
-    updateSettings,
-    resetSettings,
-    circles,
-    updateCircles,
-    resetCircles,
-    updateRadius,
-  } = useVennSettings()
+  const { settings, updateSettings, resetSettings, resetCircles } =
+    useVennSettings()
 
   return (
     <PropsPanel>
@@ -40,14 +33,14 @@ export function VennPropsPanel() {
       >
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent variant="sidebar">
             <PropRow title="Plot width">
               <NumericalInput
                 id="w"
                 limit={[200, 10000]}
                 value={settings.w}
                 placeholder="Cell width..."
-                onNumChanged={(w) => {
+                onNumChanged={w => {
                   updateSettings({
                     w,
                   })
@@ -61,7 +54,7 @@ export function VennPropsPanel() {
                 limit={[10, 1000]}
                 value={settings.radius}
                 placeholder="Circle radius..."
-                onNumChanged={(r) => {
+                onNumChanged={r => {
                   updateSettings({
                     radius: r,
                   })
@@ -73,18 +66,18 @@ export function VennPropsPanel() {
 
         <AccordionItem value="circles">
           <AccordionTrigger>Circles</AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent variant="sidebar">
             <SwitchPropRow
               title="Fill"
               checked={settings.isFilled}
-              onCheckedChange={(state) => {
+              onCheckedChange={state => {
                 updateSettings(
-                  produce(settings, (draft) => {
+                  produce(settings, draft => {
                     for (let i = 1; i < 5; i++) {
-                      draft.circles[i].fill.show = state
-                      draft.circles[i].text.color = state
-                        ? draft.circles[i].stroke.color
-                        : draft.circles[i].fill.color
+                      draft.circles[i]!.fill.show = state
+                      draft.circles[i]!.text.color = state
+                        ? draft.circles[i]!.stroke.color
+                        : draft.circles[i]!.fill.color
                     }
 
                     draft.isFilled = state
@@ -102,7 +95,7 @@ export function VennPropsPanel() {
             <SwitchPropRow
               title="Outline"
               checked={settings.isOutlined}
-              onCheckedChange={(state) =>
+              onCheckedChange={state =>
                 updateSettings({
                   isOutlined: state,
                 })
@@ -131,13 +124,13 @@ export function VennPropsPanel() {
 
         <AccordionItem value="titles">
           <AccordionTrigger>Titles</AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent variant="sidebar">
             <SwitchPropRow
               title="Show"
               checked={settings.fonts.title.show}
-              onCheckedChange={(state) =>
+              onCheckedChange={state =>
                 updateSettings(
-                  produce(settings, (draft) => {
+                  produce(settings, draft => {
                     draft.fonts.title.show = state
                   })
                 )
@@ -146,9 +139,9 @@ export function VennPropsPanel() {
             <SwitchPropRow
               title="Colored"
               checked={settings.fonts.title.colored}
-              onCheckedChange={(state) =>
+              onCheckedChange={state =>
                 updateSettings(
-                  produce(settings, (draft) => {
+                  produce(settings, draft => {
                     draft.fonts.title.colored = state
                   })
                 )
@@ -158,9 +151,9 @@ export function VennPropsPanel() {
               title="Counts"
               checked={settings.fonts.counts.show}
               disabled={!settings.fonts.title.show}
-              onCheckedChange={(state) =>
+              onCheckedChange={state =>
                 updateSettings(
-                  produce(settings, (draft) => {
+                  produce(settings, draft => {
                     draft.fonts.counts.show = state
                   })
                 )
@@ -171,9 +164,9 @@ export function VennPropsPanel() {
                 limit={[1, 128]}
                 value={settings.fonts.title.size}
                 placeholder="Cell width..."
-                onNumChanged={(w) => {
+                onNumChanged={w => {
                   updateSettings(
-                    produce(settings, (draft) => {
+                    produce(settings, draft => {
                       draft.fonts.title.size = w
                     })
                   )
@@ -184,11 +177,11 @@ export function VennPropsPanel() {
         </AccordionItem>
         <AccordionItem value="counts">
           <AccordionTrigger>Counts</AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent variant="sidebar">
             <SwitchPropRow
               title="Auto-color"
               checked={settings.autoColorText}
-              onCheckedChange={(state) =>
+              onCheckedChange={state =>
                 updateSettings({
                   ...settings,
                   autoColorText: state,
@@ -198,7 +191,7 @@ export function VennPropsPanel() {
             <PropRow title="Intersection">
               <ColorPickerButton
                 color={settings.intersectionColor}
-                onColorChange={(color) =>
+                onColorChange={color =>
                   updateSettings({
                     intersectionColor: color,
                   })
@@ -212,9 +205,9 @@ export function VennPropsPanel() {
                 limit={[1, 128]}
                 value={settings.fonts.counts.size}
                 placeholder="Font size..."
-                onNumChanged={(w) => {
+                onNumChanged={w => {
                   updateSettings(
-                    produce(settings, (draft) => {
+                    produce(settings, draft => {
                       draft.fonts.counts.size = w
                     })
                   )
@@ -226,13 +219,13 @@ export function VennPropsPanel() {
 
         <AccordionItem value="percentages">
           <AccordionTrigger>Percentages</AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent variant="sidebar">
             <SwitchPropRow
               title="Show"
               checked={settings.fonts.percentages.show}
-              onCheckedChange={(state) =>
+              onCheckedChange={state =>
                 updateSettings(
-                  produce(settings, (draft) => {
+                  produce(settings, draft => {
                     draft.fonts.percentages.show = state
                   })
                 )
@@ -243,9 +236,9 @@ export function VennPropsPanel() {
                 limit={[1, 128]}
                 value={settings.fonts.percentages.size}
                 placeholder="Font size..."
-                onNumChanged={(w) => {
+                onNumChanged={w => {
                   updateSettings(
-                    produce(settings, (draft) => {
+                    produce(settings, draft => {
                       draft.fonts.percentages.size = w
                     })
                   )

@@ -1,18 +1,19 @@
-import { cn } from '@lib/shadcn-utils'
+import { cn } from '@/lib/shadcn-utils'
 
-import { type IDivProps } from '@interfaces/div-props'
-import { SelectTrigger } from '@radix-ui/react-select'
-import { useEffect, useState } from 'react'
+import { type IDivProps } from '@/interfaces/div-props'
+
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
-} from '../shadcn/ui/themed/select'
+  SelectTrigger,
+} from '@/themed/v2/select'
+import { useEffect, useState } from 'react'
 // import { Slider } from "../toolbar/slider"
-import { useZoom } from '@/providers/zoom-provider'
-import { range } from '@lib/math/range'
-import { Slider } from '@themed/slider'
+import { range } from '@/lib/math/range'
+import { DEFAULT_ZOOM_CHANNEL, useZoom } from '@/providers/zoom-provider'
+import { Slider } from '@/themed/v2/slider'
 import { Minus, Plus } from 'lucide-react'
 import { VCenterRow } from '../layout/v-center-row'
 import { ToolbarFooterButton } from './toolbar-footer-button'
@@ -25,6 +26,7 @@ function formatZoom(scale: number): string {
 
 interface IZoomSliderProps extends IDivProps {
   zoom?: number | undefined
+  channel?: string
   onZoomChange?: (zoom: number) => void
   zoomScales?: number[] | undefined
   inc?: number | undefined
@@ -32,6 +34,7 @@ interface IZoomSliderProps extends IDivProps {
 
 export function ZoomSlider({
   zoom,
+  channel = DEFAULT_ZOOM_CHANNEL,
   onZoomChange,
   zoomScales = DEFAULT_ZOOM_SCALES,
   inc = 0.25,
@@ -39,9 +42,10 @@ export function ZoomSlider({
 }: IZoomSliderProps) {
   const [open, setOpen] = useState(false)
 
-  const { zoom: globalZoom, setZoom: setGlobalZoom } = useZoom()
+  const { zoom: chanelZoom, setZoom: setChannelZoom } = useZoom(channel)
+  //const { zoom: globalZoom, setZoom: setGlobalZoom } = useZoomCtx()
 
-  const [_zoom, setZoom] = useState(zoom ?? globalZoom)
+  const [_zoom, setZoom] = useState(zoom ?? chanelZoom)
 
   useEffect(() => {
     if (zoom !== undefined) {
@@ -54,18 +58,19 @@ export function ZoomSlider({
 
     setZoom(value)
     onZoomChange?.(value)
-    setGlobalZoom(value)
+    setChannelZoom(value)
+    //setGlobalZoom(value)
 
     setOpen(false)
   }
 
   return (
-    <VCenterRow className={cn('gap-x-1.5', className)}>
+    <VCenterRow className={cn('gap-x-2', className)}>
       <ToolbarFooterButton
         title="Zoom Out"
         onClick={() => _setValue(Math.max(zoomScales[0]!, _zoom - inc))}
         size="icon-xs"
-        variant="theme-muted"
+        //variant="theme-muted"
       >
         <Minus className="w-4 h-4" strokeWidth={2} />
       </ToolbarFooterButton>
@@ -80,7 +85,9 @@ export function ZoomSlider({
         //defaultValue={[1]}
         min={zoomScales[0]!}
         max={zoomScales[zoomScales.length - 1]!}
-        onValueChange={(values: number[]) => _setValue(values[0]!)}
+        onValueChange={(value: number | readonly number[]) =>
+          _setValue(Array.isArray(value) ? value[0]! : value)
+        }
         step={1}
         className="w-24"
       />
@@ -91,7 +98,7 @@ export function ZoomSlider({
           _setValue(Math.min(zoomScales[zoomScales.length - 1]!, _zoom + inc))
         }
         size="icon-xs"
-        variant="theme-muted"
+        //variant="theme-muted"
       >
         <Plus className="w-4 h-4" strokeWidth={2} />
       </ToolbarFooterButton>
@@ -100,17 +107,18 @@ export function ZoomSlider({
         open={open}
         onOpenChange={setOpen}
         value={_zoom.toString()}
-        onValueChange={(value) => _setValue(Number(value))}
+        onValueChange={value => _setValue(Number(value))}
       >
-        <SelectTrigger asChild>
-          <ToolbarFooterButton
-            className={cn('w-12 justify-center')}
-            checked={open}
-            aria-label="Show zoom levels"
-            variant="theme-muted"
-          >
-            {formatZoom(_zoom)}
-          </ToolbarFooterButton>
+        <SelectTrigger
+          variant="footer"
+          className="justify-center"
+          w="xxxs"
+          //checked={open}
+          aria-label="Show zoom levels"
+          showIcon={false}
+          //variant="theme-muted"
+        >
+          {formatZoom(_zoom)}
         </SelectTrigger>
         <SelectContent className="text-xs">
           <SelectGroup>
@@ -118,7 +126,7 @@ export function ZoomSlider({
 
             {range(zoomScales.length)
               .toReversed()
-              .map((i) => (
+              .map(i => (
                 <SelectItem value={zoomScales[i]!.toString()} key={i}>
                   {formatZoom(zoomScales[i]!)}
                 </SelectItem>
@@ -126,27 +134,6 @@ export function ZoomSlider({
           </SelectGroup>
         </SelectContent>
       </Select>
-
-      {/* <BaseDropDown open={open} onOpenChange={setOpen}>
-        <ToolbarFooterButton
-          className={cn("w-12 justify-center focus-visible:bg-primary/20")}
-          checked={open}
-        >
-          {formatZoom(scaleIndex)}
-        </ToolbarFooterButton>
-        <>
-          {range(ZOOM_SCALES.length)
-            .toReversed()
-            .map(i => (
-              <DropdownMenuItem onClick={() => _setValue(i)} key={i}>
-                {i === scaleIndex && (
-                  <CheckIcon className="stroke-foreground" />
-                )}
-                <span>{formatZoom(i)}</span>
-              </DropdownMenuItem>
-            ))}
-        </>
-      </BaseDropDown> */}
     </VCenterRow>
   )
 }

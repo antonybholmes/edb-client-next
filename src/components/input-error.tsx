@@ -1,4 +1,4 @@
-import type { IDivProps } from '@interfaces/div-props'
+import type { IDivProps } from '@/interfaces/div-props'
 import { forwardRef, type ForwardedRef } from 'react'
 import type { FieldError } from 'react-hook-form'
 import { WarningIcon } from './icons/warning-icon'

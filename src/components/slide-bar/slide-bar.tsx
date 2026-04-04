@@ -10,20 +10,21 @@ import {
 
 import { H2_CLS } from '@/theme'
 
-import { BaseCol } from '@layout/base-col'
+import { BaseCol } from '@/layout/base-col'
 
-import { type IButtonProps } from '@themed/button'
+import { type IButtonProps } from '@/themed/v2/button'
 
 import { ANIMATION_DURATION_S } from '@/consts'
-import type { IDivProps } from '@interfaces/div-props'
+import type { IDivProps } from '@/interfaces/div-props'
 import { ChevronRightIcon } from '../icons/chevron-right-icon'
 import { VCenterRow } from '../layout/v-center-row'
 
 import { useResizeObserver } from '@/hooks/resize-observer'
 import { TAILWIND_MEDIA_SM, useWindowSize } from '@/hooks/window-size'
-import { cn } from '@lib/shadcn-utils'
+import { cn } from '@/lib/shadcn-utils'
 import gsap from 'gsap'
 
+import { useStableId } from '@/hooks/stable-id'
 import type { ILim } from '@/lib/math/math'
 import { IconButton } from '../shadcn/ui/themed/icon-button'
 import { HANDLE_CLS, InnerHandle } from '../shadcn/ui/themed/resizable'
@@ -35,8 +36,8 @@ export const KEY_STEP = 5
 // resized to by the user
 const MIN_SIZE_PX = 16
 
-const CONTAINER_CLS = `flex data-[drag-dir=horizontal]:flex-row data-[drag-dir=vertical]:flex-col grow overflow-hidden
-  data-[drag=horizontal]:cursor-ew-resize data-[drag=vertical]:cursor-ns-resize`
+const CONTAINER_CLS = `flex data-[drag-dir=horizontal]:flex-row data-[drag-dir=vertical]:flex-col 
+  grow overflow-hidden data-[drag=horizontal]:cursor-ew-resize data-[drag=vertical]:cursor-ns-resize`
 
 export function CloseButton({ className, ...props }: IButtonProps) {
   return (
@@ -72,6 +73,7 @@ export interface ISlideBarProps extends IDivProps {
 }
 
 export function SlideBar({
+  id,
   title = '',
   side = 'left',
   open = true,
@@ -89,6 +91,8 @@ export function SlideBar({
   //       mode: 'auto',
   //     })
   //   : useState<ISlideBarStore>({ p: -1, mode: 'auto' })
+
+  const _id = id || useStableId('slide-bar')
 
   const [divOffset, setDivOffsetFromEdge] = useState<ISlideBarStore>({
     p: -1,
@@ -184,6 +188,8 @@ export function SlideBar({
 
       document.removeEventListener('mouseup', onMouseUp)
       document.removeEventListener('mousemove', onMouseMove)
+
+      console.log('done dragging')
 
       setDragDir('')
     }
@@ -439,12 +445,12 @@ export function SlideBar({
     return () => observer.disconnect()
   }, [divOffset.mode])
 
-  useResizeObserver<HTMLDivElement>(containerRef, (target) => {
+  useResizeObserver<HTMLDivElement>(containerRef, entry => {
     if (divOffset.mode === 'fixed') {
       return
     }
 
-    const clientRect = target.getBoundingClientRect()
+    const clientRect = entry.contentRect //target.getBoundingClientRect()
 
     //console.log('resize', isFixed.current, cachedOffset)
 
@@ -463,7 +469,7 @@ export function SlideBar({
       <div
         ref={contentRef}
         id="center-pane"
-        className="overflow-hidden flex flex-col grow"
+        className="overflow-hidden flex flex-col grow gap-y-1"
         //animate={{ height: flexPos.p }}
       >
         {mainContent && mainContent}
@@ -477,7 +483,7 @@ export function SlideBar({
         id="divider-hitbox"
         ref={hHitBoxRef}
         className={HANDLE_CLS}
-        onMouseDown={(e) => onMouseDown(e)}
+        onMouseDown={e => onMouseDown(e)}
         onClick={() => {
           hHitBoxRef.current!.focus()
         }}
@@ -496,7 +502,7 @@ export function SlideBar({
     return (
       <BaseCol
         ref={sidebarContentRef}
-        className="gap-x-1 overflow-hidden data-[drag=true]:pointer-events-none grow"
+        className="gap-y-1 overflow-hidden data-[drag=true]:pointer-events-none grow"
         data-drag={dragDir !== ''}
       >
         {title && (
@@ -552,6 +558,7 @@ export function SlideBar({
 
   return (
     <div
+      id={_id}
       ref={containerRef}
       className={cn(CONTAINER_CLS, className)}
       data-drag-dir={mode}

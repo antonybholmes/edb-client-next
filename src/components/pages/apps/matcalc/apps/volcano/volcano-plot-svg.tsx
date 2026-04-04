@@ -1,17 +1,18 @@
 import { useMemo, useRef, useState } from 'react'
 
-import { BaseDataFrame, findCol } from '@lib/dataframe/base-dataframe'
-import { getNumCol } from '@lib/dataframe/dataframe-utils'
+import { BaseDataFrame, findCol } from '@/lib/dataframe/base-dataframe'
+import { getNumCol } from '@/lib/dataframe/dataframe-utils'
 
-import { COLOR_BLACK } from '@lib/color/color'
-import { cellStr } from '@lib/dataframe/cell'
-import type { SeriesData } from '@lib/dataframe/dataframe-types'
+import { COLOR_BLACK } from '@/lib/color/color'
+import { cellStr } from '@/lib/dataframe/cell'
+
 import { Axis, YAxis } from '../../../../../plot/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '../../../../../plot/axis-svg'
-import { usePlot } from '../../history/history-store'
+import { usePlot, type VolcanoPlot } from '../../history/history-store'
 
 import { BaseSvg } from '@/components/base-svg'
-import type { ISVGProps } from '@interfaces/svg-props'
+import type { ISVGProps } from '@/interfaces/svg-props'
+import type { SeriesData } from '@/lib/dataframe'
 import {
   DEFAULT_SCATTER_PROPS,
   type IScatterDisplayOptions,
@@ -175,10 +176,9 @@ export function VolcanoPlotSvg({
   sizeFunc = (x: number) => x,
   plotAddr,
 }: IProps) {
-  const plot = usePlot(plotAddr)!
+  const plot = usePlot(plotAddr)! as VolcanoPlot
 
-  const displayOptions: IVolcanoDisplayOptions = plot!.customProps
-    .displayOptions as IVolcanoDisplayOptions
+  const displayOptions: IVolcanoDisplayOptions = (plot! as VolcanoPlot).props
 
   const sheet = plot!.dataframes['main']! as BaseDataFrame
 

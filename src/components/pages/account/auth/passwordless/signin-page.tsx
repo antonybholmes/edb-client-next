@@ -3,43 +3,23 @@
 import {
   EDB_TOKEN_PARAM as EDB_JWT_PARAM,
   SESSION_AUTH_PASSWORDLESS_VALIDATE_URL,
-} from '@lib/edb/edb'
+} from '@/lib/edb/edb'
 
-import { useQueryClient } from '@tanstack/react-query'
 import { jwtDecode } from 'jwt-decode'
 
 import { SignIn } from '@/components/pages/account/auth/passwordless/signin'
 import { CenterLayout } from '@/layouts/center-layout'
-import { httpFetch } from '@lib/http/http-fetch'
-import { bearerHeaders, redirect } from '@lib/http/urls'
-import { toast } from '@themed/crisp'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { bearerHeaders, redirect } from '@/lib/http/urls'
+import { CoreProviders } from '@/providers/core-providers'
+
+import { makeUuid } from '@/lib/id'
+import { Toast } from '@base-ui/react/toast'
 import { useEffect } from 'react'
 import type { IRedirectUrlJwtPayload } from '../email/verify'
 
-// async function signIn(jwt: string): Promise<AxiosResponse> {
-//   console.log("signin")
-
-//   return await queryClient.fetchQuery("signin", async () => {
-//     //const callbackUrl = `${SITE_URL}/login`
-
-//     return axios.post(
-//       SESSION_PASSWORDLESS_SIGNIN_URL,
-//       {},
-
-//       {
-//         headers: bearerHeaders(jwt),
-//         withCredentials: true,
-//       },
-//     )
-//   })
-// }
-
 export function SignInPage() {
-  //const url = queryParameters.get(EDB_URL_PARAM) ?? MYACCOUNT_ROUTE
-
-  const queryClient = useQueryClient()
-
-  //const [, acountDispatch] = useContext(AccountContext)
+  const { add: addToast } = Toast.useToastManager()
 
   useEffect(() => {
     async function signin() {
@@ -52,16 +32,13 @@ export function SignInPage() {
 
       try {
         // first validate jwt and ensure no errors
-        await queryClient.fetchQuery({
-          queryKey: ['signin'],
-          queryFn: () =>
-            httpFetch.post(SESSION_AUTH_PASSWORDLESS_VALIDATE_URL, {
-              headers: bearerHeaders(jwt),
-              withCredentials: true,
-            }),
+        await httpFetch.post(SESSION_AUTH_PASSWORDLESS_VALIDATE_URL, {
+          headers: bearerHeaders(jwt),
+          withCredentials: true,
         })
 
-        toast({
+        addToast({
+          id: makeUuid(),
           title: 'Signed in',
           description: 'You are signed in.',
         })
@@ -76,10 +53,11 @@ export function SignInPage() {
         redirect(redirectUrl)
       } catch {
         // we encounted a login error
-        toast({
+        addToast({
+          id: makeUuid(),
           title: 'Sign in error',
           description: 'We were not able to sign you in.',
-          variant: 'destructive',
+          type: 'destructive',
         })
       }
     }
@@ -88,8 +66,16 @@ export function SignInPage() {
   }, [])
 
   return (
-    <CenterLayout signedRequired={false}>
+    <CenterLayout signinRequired={false}>
       <SignIn />
     </CenterLayout>
+  )
+}
+
+export function SignInQueryPage() {
+  return (
+    <CoreProviders>
+      <SignInPage />
+    </CoreProviders>
   )
 }

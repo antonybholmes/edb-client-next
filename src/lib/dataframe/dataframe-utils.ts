@@ -1,24 +1,24 @@
 import { TEXT_OPEN_FILE } from '@/consts'
-import { argsort } from '@lib/math/argsort'
+import { argsort } from '@/lib/math/argsort'
 
-import { ZScore } from '@lib/math/zscore'
+import { ZScore } from '@/lib/math/zscore'
 
-import { mean } from '@lib/math/mean'
-import { median } from '@lib/math/median'
-import { range } from '@lib/math/range'
-import { populationStd } from '@lib/math/stats'
+import { mean } from '@/lib/math/mean'
+import { median } from '@/lib/math/median'
+import { range } from '@/lib/math/range'
+import { populationStd } from '@/lib/math/stats'
 import { BaseDataFrame } from './base-dataframe'
 
-import { download } from '@lib/download-utils'
+import { download } from '@/lib/download-utils'
 import type { IClusterGroup } from '../cluster-group'
 import { cellNum, cellStr } from './cell'
 
-import { DataIndex } from '.'
+import { DataIndex, type IndexId, type SeriesData } from '.'
 import { euclidean, type DistFunc, type Point } from '../math/distance'
 import { KMeans } from '../math/kmeans'
 import { AnnotationDataFrame } from './annotation-dataframe'
 import { DataFrame } from './dataframe'
-import type { IndexId, SeriesData } from './dataframe-types'
+
 import { DataFrameWriter, type IDataFrameWriterOpts } from './dataframe-writer'
 
 export type AxisDim = 0 | 1
@@ -199,183 +199,36 @@ interface IMatchOptions {
   keepOrder?: boolean
 }
 
-const DEFAULT_MATCH_OPTIONS: IMatchOptions = {
-  caseSensitive: false,
-  matchEntireCell: false,
-  keepOrder: false,
-}
-
-export function filterColsById(
+export function findCols(
   df: BaseDataFrame,
   ids: string[],
   options: IMatchOptions
 ): BaseDataFrame {
-  // const {
-  //   caseSensitive,
-  //   matchEntireCell: entireCell,
-  //   keepOrder,
-  // } = {
-  //   ...DEFAULT_MATCH_OPTIONS,
-  //   ...options,
-  // }
+  const idx = findIndices(df.columns, ids, options)
 
-  // let idx: number[] = []
-
-  // const lids = Array.from(ids).map(id =>
-  //   caseSensitive ? id : id.toLowerCase()
-  // )
-
-  // if (keepOrder) {
-  //   const colMap = Object.fromEntries(
-  //     df.colNames.map((v, i) => [
-  //       caseSensitive ? v.toString() : v.toString().toLowerCase(),
-  //       i,
-  //     ])
-  //   )
-
-  //   idx = lids
-  //     .map(id => {
-  //       if (id in colMap) {
-  //         return colMap[id]!
-  //       } else {
-  //         return -1
-  //       }
-  //     })
-  //     .filter(x => x !== -1)
-  // } else {
-  //   let index = df.colNames
-
-  //   if (!caseSensitive) {
-  //     index = index.map(s => s.toLowerCase())
-  //   }
-
-  //   if (entireCell) {
-  //     idx = range(df.shape[1]).filter(i => {
-  //       const n = caseSensitive ? df.colName(i) : df.colName(i).toLowerCase()
-  //       return lids.includes(n) // lids.has(df.index.get(i).toString().toLowerCase())
-  //     })
-  //   } else {
-  //     idx = range(df.shape[1]).filter(i => {
-  //       const n = caseSensitive
-  //         ? df.columns.get(i).toString()
-  //         : df.columns.get(i).toString().toLowerCase()
-  //       return lids.filter(id => n.includes(id)).length > 0 // lids.has(df.index.get(i).toString().toLowerCase())
-  //     })
-  //   }
-  // }
-
-  const idx = filterIndicesById(df.colNames, ids, options)
-
-  return df.iloc(':', idx)
+  return df.iloc({ cols: idx })
 }
 
-export function filterRowsById(
+export function findRows(
   df: BaseDataFrame,
   ids: string[],
   options: IMatchOptions
 ): BaseDataFrame {
-  const idx = filterIndicesById(df.index.strs, ids, options)
+  const idx = findIndices(df.index.strs, ids, options)
 
-  // const {
-  //   caseSensitive,
-  //   matchEntireCell: entireCell,
-  //   keepOrder,
-  // } = {
-  //   ...DEFAULT_MATCH_OPTIONS,
-  //   ...options,
-  // }
-
-  // let idx: number[] = []
-
-  // const lids = ids.map(id => (caseSensitive ? id : id.toLowerCase()))
-
-  // let index = df.index.strs
-
-  // if (!caseSensitive) {
-  //   index = index.map(s => s.toLowerCase())
-  // }
-
-  // if (keepOrder) {
-  //   if (entireCell) {
-  //     const rowMap = Object.fromEntries(index.map((v, i) => [v, i]))
-
-  //     idx = lids
-  //       .map(lid => {
-  //         if (lid in rowMap) {
-  //           return rowMap[lid]!
-  //         } else {
-  //           return -1
-  //         }
-  //       })
-  //       .filter(x => x !== -1)
-  //   } else {
-  //     // slower partial matching
-
-  //     for (const lid of lids) {
-  //       for (const [rowi, row] of index.entries()) {
-  //         if (row.includes(lid)) {
-  //           idx.push(rowi)
-  //         }
-  //       }
-  //     }
-  //   }
-  // } else {
-  //   if (entireCell) {
-  //     // idx = range(df.shape[0]).filter(i => {
-  //     //   const n = caseSensitive
-  //     //     ? df.index.get(i).toString()
-  //     //     : df.index.get(i).toString().toLowerCase()
-  //     //   return lids.includes(n) // lids.has(df.index.get(i).toString().toLowerCase())
-  //     // })
-
-  //     for (const [rowi, row] of index.entries()) {
-  //       for (const lid of lids) {
-  //         if (row === lid) {
-  //           idx.push(rowi)
-  //           break
-  //         }
-  //       }
-  //     }
-  //   } else {
-  //     for (const [rowi, row] of index.entries()) {
-  //       for (const lid of lids) {
-  //         if (row.includes(lid)) {
-  //           idx.push(rowi)
-  //           break
-  //         }
-  //       }
-  //     }
-
-  //     // for (const lid of lids) {
-
-  //     // console.log('hmm', df.shape[0])
-  //     // idx = range(df.shape[0]).filter(i => {
-  //     //   const matchIndex = caseSensitive
-  //     //     ? df.index.get(i).toString()
-  //     //     : df.index.get(i).toString().toLowerCase()
-  //     //   return lids.filter(id => matchIndex.includes(id)).length > 0 // lids.has(df.index.get(i).toString().toLowerCase())
-  //     // })
-
-  //     //console.log('aha', idx.length)
-  //   }
-  // }
-
-  return df.iloc(idx, ':')
+  return df.iloc({ rows: idx })
 }
 
-function filterIndicesById(
+function findIndices(
   index: string[],
   ids: string[],
   options: IMatchOptions
 ): number[] {
   const {
-    caseSensitive,
-    matchEntireCell: entireCell,
-    keepOrder,
-  } = {
-    ...DEFAULT_MATCH_OPTIONS,
-    ...options,
-  }
+    caseSensitive = false,
+    matchEntireCell = false,
+    keepOrder = false,
+  } = options
 
   let idx: number[] = []
 
@@ -386,7 +239,7 @@ function filterIndicesById(
   }
 
   if (keepOrder) {
-    if (entireCell) {
+    if (matchEntireCell) {
       const rowMap = Object.fromEntries(index.map((v, i) => [v, i]))
 
       idx = lids
@@ -410,14 +263,7 @@ function filterIndicesById(
       }
     }
   } else {
-    if (entireCell) {
-      // idx = range(df.shape[0]).filter(i => {
-      //   const n = caseSensitive
-      //     ? df.index.get(i).toString()
-      //     : df.index.get(i).toString().toLowerCase()
-      //   return lids.includes(n) // lids.has(df.index.get(i).toString().toLowerCase())
-      // })
-
+    if (matchEntireCell) {
       for (const [rowi, row] of index.entries()) {
         for (const lid of lids) {
           if (row === lid) {
@@ -435,74 +281,11 @@ function filterIndicesById(
           }
         }
       }
-
-      // for (const lid of lids) {
-
-      // console.log('hmm', df.shape[0])
-      // idx = range(df.shape[0]).filter(i => {
-      //   const matchIndex = caseSensitive
-      //     ? df.index.get(i).toString()
-      //     : df.index.get(i).toString().toLowerCase()
-      //   return lids.filter(id => matchIndex.includes(id)).length > 0 // lids.has(df.index.get(i).toString().toLowerCase())
-      // })
-
-      //console.log('aha', idx.length)
     }
   }
 
   return idx
 }
-
-// export function findCols(df: BaseDataFrame, id: string): number[] {
-//   if (id === '') {
-//     return []
-//   }
-
-//   const s: string = id.toLowerCase()
-//   return df.colNames
-//     .map((c, ci) => (c && c.toLowerCase().includes(s) ? ci : -1))
-//     .filter(x => x !== -1)
-// }
-
-// export function findCol(df: BaseDataFrame, ids: SheetId | SheetId[]): number {
-//   if (ids === '') {
-//     return -1
-//   }
-
-//   if (Number.isInteger(ids)) {
-//     return ids as number
-//   }
-
-//   if (!Array.isArray(ids)) {
-//     ids = [ids]
-//   }
-
-//   const ret: number[] = []
-
-//   for (const id of ids) {
-//     const idx = findCols(df, id.toString())
-
-//     if (idx.length > 0) {
-//       ret.push(idx[0]!)
-//       break
-//     }
-//   }
-
-//   if (ret.length > 0) {
-//     return ret[0]!
-//   }
-
-//   return -1
-// }
-
-// /**
-//  * Returns the size of the data frame.
-//  * @param df a dataframe
-//  * @returns the dimensions (rowsxcols) of the dataframe.
-//  */
-// export function getShape(df: IDataFrame): [number, number] {
-//   return [df.data.length, df.data.length > 0 ? df.data[0].length : 0]
-// }
 
 export function getFormattedShape(
   df: BaseDataFrame | null | undefined
@@ -538,17 +321,17 @@ export function rowJoinDataFrames(dataFrames: DataFrame[]): DataFrame {
   )
 
   // get the ids in order from first table
-  const orderedIds = dataFrames[0]!.colNames.filter(c => ids.has(c))
+  const orderedIds = dataFrames[0]!.columns.filter(c => ids.has(c))
 
   // sort other tables using these ids
   dataFrames = dataFrames.map(df => {
     const indexMap = Object.fromEntries(
-      df.colNames.map((colId, ci) => [colId, ci])
+      df.columns.map((colId, ci) => [colId, ci])
     )
 
     const indices = orderedIds.map(id => indexMap[id]!)
 
-    return df.iloc(':', indices) as DataFrame
+    return df.iloc({ cols: indices }) as DataFrame
   })
 
   return new DataFrame({
@@ -584,7 +367,7 @@ export function colJoinDataFrames(dataFrames: DataFrame[]): DataFrame {
 
     const indices = orderedIds.map(id => indexMap[id]!)
 
-    return df.iloc(indices, ':') as DataFrame //filterRows(df, indices)
+    return df.iloc({ rows: indices }) as DataFrame //filterRows(df, indices)
   })
 
   return new DataFrame({
@@ -592,7 +375,7 @@ export function colJoinDataFrames(dataFrames: DataFrame[]): DataFrame {
       dataFrames.map(df => df._data[r]!).flat()
     ),
     index: dataFrames[0]!.index,
-    columns: new DataIndex(dataFrames.map(df => df.colNames).flat()),
+    columns: new DataIndex(dataFrames.map(df => df.columns).flat()),
   })
 }
 
@@ -619,7 +402,7 @@ export function kmeans(
   const ret = df.copy() as AnnotationDataFrame
 
   // we use use clusters starting from 1
-  ret.rowMetaData.setCol(
+  ret.rowObs.setCol(
     'Cluster',
     assignments.map(c => `c${c + 1}`),
     true
@@ -633,15 +416,17 @@ export function log(
   base: 2 | 10 | 'ln',
   add: number = 0
 ): BaseDataFrame {
+  //const name = df.name ? df.name + ', ' : ''
+
   switch (base) {
     case 2:
-      return log2(df, add).setName(add > 0 ? `Log2(x + ${add})` : `Log2(x)`)
+      return log2(df, add) //.setName( add > 0 ? name + `Log2(x+${add})` : name + `Log2(x)`)
 
     case 10:
-      return log10(df, add).setName(add > 0 ? `Log10(x + ${add})` : `Log10(x)`)
+      return log10(df, add) //.setName(add > 0 ? name + `Log10(x+${add})` : name + `Log10(x)`)
 
     default:
-      return ln(df, add).setName(add > 0 ? `Ln(x + ${add})` : `Ln(x)`)
+      return ln(df, add) //.setName(add > 0 ? name + `Ln(x+${add})` : name + `Ln(x)`)
   }
 }
 
@@ -690,7 +475,7 @@ export function stdevFilter(df: BaseDataFrame, top = 1000) {
 
   // return a filtered matrix
   return df
-    .iloc(topIdx, ':')
+    .iloc({ rows: topIdx })
     .setName(`Filter rows using stdev, top ${top}`, true)
 }
 
@@ -705,7 +490,7 @@ export function meanFilter(df: BaseDataFrame, top = 1000) {
 
   // return a filtered matrix
   return df
-    .iloc(topIdx, ':')
+    .iloc({ rows: topIdx })
     .setName(`Filter rows using mean, top ${top}`, true)
 }
 
@@ -720,14 +505,14 @@ export function medianFilter(df: BaseDataFrame, top = 1000) {
 
   // return a filtered matrix
   return df
-    .iloc(topIdx, ':')
+    .iloc({ rows: topIdx })
     .setName(`Filter rows using median, top ${top}`, true)
 }
 
 export function zscore(df: BaseDataFrame): BaseDataFrame {
   const z = new ZScore().fit(df.values.flat() as number[])
 
-  return df.replaceData(df.values.map(row => z.transform(row as number[])))
+  return df.replace(df.values.map(row => z.transform(row as number[])))
 
   // return new AnnotationDataFrame({
   //   name: 'Row Z-score',
@@ -740,7 +525,11 @@ export function zscore(df: BaseDataFrame): BaseDataFrame {
 export function rowZScore(df: BaseDataFrame): BaseDataFrame {
   const z = df.values.map(row => new ZScore().fitTransform(row as number[]))
 
-  return df.replaceData(z)
+  const ret = df.replace(z)
+
+  //const name = df.name ? df.name + ', ' : ''
+
+  return ret //.setName(name + 'Row Z-score')
 
   // return new AnnotationDataFrame({
   //   name: 'Row Z-score',
@@ -765,7 +554,7 @@ export function makeGCT(df: BaseDataFrame): BaseDataFrame {
   l2[0] = s[0].toString()
   l2[1] = s[1].toString()
 
-  const l3 = ['Name', 'Description'].concat(df.colNames)
+  const l3 = ['Name', 'Description'].concat(df.columns)
 
   const d: SeriesData[][] = df.rowMap((row: SeriesData[], index: number) => {
     const n = df.index.get(index) as SeriesData
@@ -802,7 +591,7 @@ export interface ID3Item {
  * @returns   data as an array of maps suitable for d3
  */
 export function dataframeToD3(df: BaseDataFrame): ID3Item[] {
-  const groups = df.colNames
+  const groups = df.columns
   const variables = df.rowNames
 
   return df.values
@@ -849,6 +638,14 @@ export function downloadDataFrame(
   download(f, file)
 }
 
+/**
+ * Given a dataframe and a clustergroup, return the column indices matching the group.
+ *
+ * @param df  a dataframe
+ * @param g   a cluster group
+ * @param caseSensitive  whether to match case sensitively
+ * @returns  an array of column indices
+ */
 export function getColIdxFromGroup(
   df: BaseDataFrame | null,
   g: IClusterGroup,
@@ -858,14 +655,12 @@ export function getColIdxFromGroup(
     return []
   }
 
-  //console.log('g', g)
-
   const lcSearch = caseSensitive ? g.search : g.search.map(s => s.toLowerCase())
 
-  return df.columns.values
-    .map((col, ci) => ({ col: ci, name: col.toString().toLowerCase() }))
+  return df.columns
+    .map((col, ci) => ({ col: ci, name: col.toLowerCase() }))
     .filter(c => {
-      if (g.columnNames && g.columnNames.length > 0) {
+      if (g.columns && g.columns.length > 0) {
         // search via cls so use the cls definitions of columns
         // and check that the search, .e.g het
         // # het cbp
@@ -880,11 +675,11 @@ export function getColIdxFromGroup(
         // they are correctly synced.
         for (const x of lcSearch) {
           if (g.exactMatch) {
-            if (g.columnNames[c.col % g.columnNames.length] === x) {
+            if (g.columns[c.col % g.columns.length] === x) {
               return true
             }
           } else {
-            if (g.columnNames[c.col % g.columnNames.length]?.includes(x)) {
+            if (g.columns[c.col % g.columns.length]?.includes(x)) {
               return true
             }
           }

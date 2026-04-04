@@ -1,4 +1,4 @@
-import { type IIconProps } from '@interfaces/icon-props'
+import { type IIconProps } from '@/interfaces/icon-props'
 
 export function BreadcrumbChevronIcon({ className }: IIconProps) {
   return (

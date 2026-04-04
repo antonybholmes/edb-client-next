@@ -1,37 +1,36 @@
-import { SlidersIcon } from '@icons/sliders-icon'
+import { SlidersIcon } from '@/icons/sliders-icon'
 
 import { useEffect, useRef, useState } from 'react'
 
-import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
-import { type ITab } from '@components/tabs/tab-provider'
-import { getFormattedShape } from '@lib/dataframe/dataframe-utils'
-import { downloadSvgAutoFormat } from '@lib/image-utils'
-import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
-import { ZoomSlider } from '@toolbar/zoom-slider'
-import { useHistory, usePlot } from '../../history/history-store'
+import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { type ITab } from '@/components/tabs/tab-provider'
+import { downloadSvgAutoFormat } from '@/lib/image-utils'
+import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
+import { ZoomSlider } from '@/toolbar/zoom-slider'
+import {
+  useHistory,
+  usePlot,
+  type ExtGseaPlot,
+} from '../../history/history-store'
 
-import { TEXT_CANCEL, TEXT_DISPLAY } from '@/consts'
-import { SaveImageDialog } from '@components/pages/save-image-dialog'
+import { SaveImageDialog } from '@/components/pages/save-image-dialog'
 import {
   DEFAULT_HEATMAP_PROPS,
   type IHeatMapDisplayOptions,
-} from '@components/plot/heatmap/heatmap-svg-props'
-import {
-  DEFAULT_EXT_GSEA_PROPS,
-  type IExtGseaDisplayOptions,
-} from '../../../genes/gsea/ext-gsea-store'
+} from '@/components/plot/heatmap/heatmap-svg-props'
+import { TEXT_CANCEL, TEXT_DISPLAY } from '@/consts'
 
 import {
   messageImageFileFormat,
   useMessages,
 } from '@/providers/message-provider'
 import { useZoom } from '@/providers/zoom-provider'
-import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
-import { Card } from '@themed/card'
+import { Card } from '@/themed/card'
 import { produce } from 'immer'
 
+import { MESSAGE_CHANNEL, OPTS_SIDEBAR_ID } from '../../data/data-panel'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
-import { PLOT_CLS } from '../heatmap/heatmap-panel'
+import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { ExtGseaPropsPanel } from './ext-gsea-props-panel'
 import { ExtGseaSvg } from './ext-gsea-svg'
 
@@ -56,22 +55,18 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
   //   return null
   // }
 
-  const { updateProps } = useHistory()
+  const { updatePlot } = useHistory()
 
-  const plot = usePlot(plotAddr)!
+  const plot = usePlot(plotAddr)! as ExtGseaPlot
 
-  const sheet = plot!.dataframes['main']! as AnnotationDataFrame
+  //const sheet = plot!.dataframes['main']! as AnnotationDataFrame
 
-  const displayOptions: IExtGseaDisplayOptions =
-    (plot?.customProps.displayOptions as IExtGseaDisplayOptions) ??
-    DEFAULT_EXT_GSEA_PROPS
-
-  const { zoom } = useZoom()
+  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
 
   const svgRef = useRef<SVGSVGElement>(null)
 
   const [showSave, setShowSave] = useState(false)
-  const { messages, removeMessage } = useMessages() //'ext-gsea')
+  const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'ext-gsea')
   const { settings, updateSettings } = useMatcalcSettings()
 
   useEffect(() => {
@@ -80,8 +75,8 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
     )
 
     for (const message of filteredMessages) {
-      if (message.text.includes('save')) {
-        if (message.text.includes(':')) {
+      if (message.data.includes('save')) {
+        if (message.data.includes(':')) {
           downloadSvgAutoFormat(
             svgRef,
             `extgsea.${messageImageFileFormat(message)}`
@@ -96,11 +91,12 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
   }, [messages])
 
   useEffect(() => {
-    const newOptions = produce(displayOptions, draft => {
-      draft.page.scale = zoom
-    })
-
-    updateProps(plotAddr, 'displayOptions', newOptions)
+    updatePlot(
+      produce(plot, draft => {
+        draft.props.page.scale = zoom
+      }),
+      { file: plotAddr }
+    )
   }, [zoom])
 
   const plotRightTabs: ITab[] = [
@@ -119,7 +115,8 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
           name="ext-gsea"
           onResponse={(response, data) => {
             if (response !== TEXT_CANCEL) {
-              downloadSvgAutoFormat(svgRef, data!.name as string)
+              const d = data as { name: string }
+              downloadSvgAutoFormat(svgRef, d.name)
             }
 
             setShowSave(false)
@@ -128,7 +125,7 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
       )}
 
       {/* <ResizablePanelGroup
-          direction="horizontal"
+          orientation="horizontal"
           id="plot-resizable-panels"
           //autoSaveId="plot-resizable-panels"
           className="grow"
@@ -136,8 +133,8 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
           <ResizablePanel
             id="plot-svg"
             order={1}
-            defaultSize={75}
-            minSize={50}
+            defaultSize="75%"
+            minSize="50%"
             className="flex flex-col pl-2 pt-2 pb-2"
           >
             <div className="custom-scrollbar relative grow overflow-scroll rounded-lg border bg-white">
@@ -154,8 +151,8 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
             id="plot-svg-right"
             order={2}
             className="flex flex-col"
-            defaultSize={25}
-            minSize={15}
+            defaultSize="25%"
+            minSize="15%"
             collapsible={true}
             collapsedSize={0}
           >
@@ -164,7 +161,7 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
         </ResizablePanelGroup> */}
 
       <TabSlideBar
-        id="ext-gsea-panel"
+        id={OPTS_SIDEBAR_ID}
         tabs={plotRightTabs}
         side="right"
         //tabs={plotRightTabs}
@@ -192,10 +189,10 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
       </TabSlideBar>
 
       <ToolbarFooterPortal className="shrink-0 grow-0 ">
-        <span>{getFormattedShape(sheet)} </span>
+        <></>
         <></>
         <>
-          <ZoomSlider />
+          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
         </>
       </ToolbarFooterPortal>
     </>

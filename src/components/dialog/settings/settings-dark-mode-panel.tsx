@@ -1,23 +1,24 @@
-import { useEdbSettings } from '@lib/edb/edb-settings'
+import { useTheme } from '@/lib/edb/theme'
 import { Monitor, MoonStar, Sun } from 'lucide-react'
 import {
+  GroupToggle,
   ToggleGroup,
-  ToggleGroupItem,
-} from '../../shadcn/ui/themed/toggle-group'
+} from '../../shadcn/ui/themed/v2/toggle-group'
 
 export function SettingsDarkModePanel() {
-  const { theme, applyTheme } = useEdbSettings()
+  const { theme, setTheme } = useTheme()
 
   return (
     <ToggleGroup
-      type="single"
-      className="flex flex-row gap-x-1"
-      value={theme}
-      onValueChange={applyTheme}
+      className="gap-x-1"
+      value={[theme]}
+      onValueChange={value =>
+        setTheme(value[0] as 'dark' | 'light' | 'automatic')
+      }
       variant="colorful"
       rounded="lg"
     >
-      <ToggleGroupItem
+      <GroupToggle
         value="dark"
         aria-label="Toggle dark mode"
         //className="flex flex-col gap-y-2 items-center"
@@ -28,23 +29,19 @@ export function SettingsDarkModePanel() {
           strokeWidth={1.5}
         />
         <span>Dark</span>
-      </ToggleGroupItem>
-      <ToggleGroupItem
-        value="light"
-        aria-label="Toggle light mode"
-        size="colorful"
-      >
+      </GroupToggle>
+      <GroupToggle value="light" aria-label="Toggle light mode" size="colorful">
         <Sun className="w-6 h-6 aspect-square shrink-0" strokeWidth={1.5} />
         <span>Light</span>
-      </ToggleGroupItem>
-      <ToggleGroupItem
+      </GroupToggle>
+      <GroupToggle
         value="automatic"
         aria-label="Toggle automatic mode"
         size="colorful"
       >
         <Monitor className="w-6 h-6 aspect-square shrink-0" strokeWidth={1.5} />
         <span>Automatic</span>
-      </ToggleGroupItem>
+      </GroupToggle>
     </ToggleGroup>
   )
 }

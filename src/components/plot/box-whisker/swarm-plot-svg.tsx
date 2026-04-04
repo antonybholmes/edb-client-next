@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { type IDivProps } from '@interfaces/div-props'
+import { type IDivProps } from '@/interfaces/div-props'
 
 import { Axis, YAxis } from '@/components/plot/axis'
 import {
@@ -8,9 +8,9 @@ import {
   NO_STROKE_PROPS,
   type IColorProps,
   type IStrokeProps,
-} from '@components/plot/svg-props'
-import { histogram } from '@lib/math/histogram'
-import { range } from '@lib/math/range'
+} from '@/components/plot/svg-props'
+import { histogram } from '@/lib/math/histogram'
+import { range } from '@/lib/math/range'
 import type { IBoxWhiskerMode } from './box-whisker-plot-svg'
 
 interface IProps extends IDivProps {

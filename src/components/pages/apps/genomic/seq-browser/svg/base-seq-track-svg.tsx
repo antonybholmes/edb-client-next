@@ -1,14 +1,14 @@
-import { type IDivProps } from '@interfaces/div-props'
+import { type IDivProps } from '@/interfaces/div-props'
 
 import { type Axis } from '@/components/plot/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '@components/plot/axis-svg'
-import type { IPos } from '@interfaces/pos'
-import { COLOR_BLACK } from '@lib/color/color'
-import { formattedList, truncate } from '@lib/text/text'
+import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis-svg'
+import type { IPos } from '@/interfaces/pos'
+import { COLOR_BLACK } from '@/lib/color/color'
+import { formattedList, truncate } from '@/lib/text/text'
 import * as d3 from 'd3'
-import { useRef, useState } from 'react'
+import { useContext, useMemo } from 'react'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
-import { type AllSignalTrackTypes } from '../tracks-provider'
+import { MouseEventContext, type AllSignalTrackTypes } from '../tracks-provider'
 import { NO_TRACK_TOOLTIP } from '../use-tooltip'
 
 export interface ISeqPos extends IPos {
@@ -16,7 +16,7 @@ export interface ISeqPos extends IPos {
   end: number
   //x2: number
   realY: number
-  numPoints?: number
+  //numPoints?: number
 }
 
 interface IProps extends IDivProps {
@@ -38,10 +38,12 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
   //const currentLocation = useRef<GenomicLocation | null>(null)
 
   //const { setTooltip } = useTooltip()
-  const [tooltip, setTooltip] = useState({ ...NO_TRACK_TOOLTIP })
+  //const [tooltip, setTooltip] = useState({ ...NO_TRACK_TOOLTIP })
 
-  const rectRef = useRef<SVGRectElement>(null)
+  //const rectRef = useRef<SVGRectElement>(null)
   //const [isMouseDown, setIsMouseDown] = useState(false)
+
+  const { pos: mousePos } = useContext(MouseEventContext)
 
   function findClosestSeqPos(x: number, refPoints: ISeqPos[]): ISeqPos {
     if (refPoints.length === 0) {
@@ -93,31 +95,41 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
     return Math.abs(x - prev.x) <= Math.abs(x - next.x) ? prev : next
   }
 
-  function handleMouseMove(e: React.MouseEvent<SVGRectElement> | MouseEvent) {
-    const { clientX, target } = e
+  // function handleMouseMove(e: React.MouseEvent<SVGRectElement> | MouseEvent) {
+  //   const { clientX, target } = e
 
-    const rect = (target as SVGRectElement).getBoundingClientRect()
+  //   const rect = (target as SVGRectElement).getBoundingClientRect()
 
-    const relativeX = clientX - rect.left
+  //   const relativeX = clientX - rect.left
 
-    //console.log('mouse move ctrl', isCtrlPressed)
+  //   const pos = findClosestSeqPos(relativeX, tracks[0]!.positions)
 
-    // simple mouse move to indicate position
+  //   setTooltip({
+  //     start: pos.start,
+  //     end: pos.start,
+  //     //x2: relativeX,
+  //     x: relativeX, //e.clientX,
+  //     y: rect.top - titleHeight,
+  //     realY: pos.realY,
+  //   })
+  // }
 
-    //const domainX = xax.rangeToDomain(relativeX)
-    const pos = findClosestSeqPos(relativeX, tracks[0]!.positions)
+  //const deboundedMousePos = useDebounce(mousePos, {delayMs})
+
+  const tooltip = useMemo(() => {
+    const pos = findClosestSeqPos(mousePos.x, tracks[0]!.positions)
 
     //console.log(pos, relativeX, 'tooltip', e.target)
 
-    setTooltip({
+    return {
       start: pos.start,
       end: pos.start,
       //x2: relativeX,
-      x: relativeX, //e.clientX,
-      y: rect.top - titleHeight,
+      x: mousePos.y !== -1 ? mousePos.x : -1, //e.clientX,
+      y: pos.y, //-titleHeight,
       realY: pos.realY,
-    })
-  }
+    }
+  }, [mousePos.x, mousePos.y])
 
   // const clean = () => {
   //   //window.removeEventListener('keydown', handleKeyDown)
@@ -174,7 +186,7 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
               {truncate(
                 formattedList(
                   tracks.map(
-                    (t) =>
+                    t =>
                       `${t.track.name} ${'platform' in t.track ? `(${t.track.platform})` : ''}`
                   )
                 ),
@@ -201,6 +213,18 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
           //console.log(points.filter(p => p.realY === 0))
 
           const coords = line(points) ?? ''
+
+          let area = d3
+            .area<IPos>()
+            .x((d: IPos) => d.x)
+            .y0(yax.domainToRange(0))
+            .y1((d: IPos) => d.y)
+
+          if (settings.seqs.smoothing.on) {
+            area = area.curve(d3.curveBasis)
+          }
+
+          const fillCoords = area(points) ?? ''
 
           // let smoothedPoints: string = ''
 
@@ -248,7 +272,7 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
             <g key={ti}>
               {t.track.displayOptions.fill.show && (
                 <path
-                  d={coords}
+                  d={fillCoords}
                   fill={t.track.displayOptions.fill.color}
                   stroke="none"
                   fillOpacity={t.track.displayOptions.fill.opacity}
@@ -279,43 +303,63 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
       </g>
 
       {tooltip.x !== -1 && (
-        <g>
+        <g pointerEvents="none">
           <line
             x1={tooltip.x}
             x2={tooltip.x}
-            y1={titleHeight}
+            y1={28}
             y2={titleHeight + tracks[0]!.track.displayOptions.height}
             stroke="black"
-            strokeDasharray="5,5"
-            strokeWidth="2"
+            strokeDasharray="4,4"
+            strokeWidth="1"
+            shapeRendering="crispEdges"
           />
           <rect
             x={tooltip.x - 20}
-            y={titleHeight - 20}
-            width="40"
-            height="20"
+            y={-4}
+            width={40}
+            height={23}
             //stroke=""
             strokeWidth="1"
-            rx="4"
-            ry="4"
-            fill="black"
-            fillOpacity="0.70"
+            rx="1"
+            ry="1"
+            fill="white"
+            fillOpacity="0.8"
+            //stroke="green"
+            //shapeRendering="crispEdges"
+          />
+          <rect
+            x={tooltip.x - 20}
+            y={-4}
+            width={40}
+            height={23}
+            //stroke=""
+            strokeWidth="1"
+            rx="1"
+            ry="1"
+            fill="green"
+            fillOpacity="0.2"
+            stroke="darkgreen"
+            //shapeRendering="crispEdges"
           />
           <text
             x={tooltip.x}
-            y={titleHeight - settings.titles.offset}
+            y={12}
             textAnchor="middle"
             fontSize="small"
             //dominantBaseline="central"
-            fill="white"
+            //fill="green"
+            fillOpacity="0.9"
           >
-            {tooltip.realY.toFixed(2)}
+            {Number.isInteger(tooltip.realY)
+              ? tooltip.realY
+              : tooltip.realY.toFixed(2)}
           </text>
         </g>
       )}
 
       {/* for allowing mouse events to to be handled without affecting the svg output */}
-      <rect
+      {/* <rect
         ref={rectRef}
         width={xax.length}
         y={titleHeight}
@@ -326,8 +370,8 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
         onMouseLeave={() => {
           setTooltip({ ...NO_TRACK_TOOLTIP })
         }}
-        onMouseMove={handleMouseMove}
-      />
+        //onMouseMove={handleMouseMove}
+      /> */}
     </>
   )
 }

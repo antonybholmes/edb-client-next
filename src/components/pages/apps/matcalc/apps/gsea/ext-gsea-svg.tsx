@@ -1,21 +1,20 @@
 import { useMemo, type ReactNode } from 'react'
 
 import { Axis, YAxis } from '@/components/plot/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '@components/plot/axis-svg'
-import type { IExtGseaResult, IGseaResult } from '@lib/gsea/ext-gsea'
-import { abs } from '@lib/math/abs'
+import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis-svg'
+import type { IExtGseaResult, IGseaResult } from '@/lib/gsea/ext-gsea'
+import { abs } from '@/lib/math/abs'
 
-import { range } from '@lib/math/range'
-import { zip } from '@lib/utils'
+import { range } from '@/lib/math/range'
+import { zip } from '@/lib/utils'
 
 import { BaseSvg } from '@/components/base-svg'
-import type { ISVGProps } from '@interfaces/svg-props'
-import { COLOR_BLACK } from '@lib/color/color'
-import type { IGeneset, IRankedGenes } from '@lib/gsea/geneset'
-import { end, type ILim } from '@lib/math/math'
-import { where } from '@lib/math/where'
-import type { IExtGseaDisplayOptions } from '../../../genes/gsea/ext-gsea-store'
-import { usePlot } from '../../history/history-store'
+import type { ISVGProps } from '@/interfaces/svg-props'
+import { COLOR_BLACK } from '@/lib/color/color'
+import type { IGeneset, IRankedGenes } from '@/lib/gsea/geneset'
+import { end, type ILim } from '@/lib/math/math'
+import { where } from '@/lib/math/where'
+import { usePlot, type ExtGseaPlot } from '../../history/history-store'
 
 interface IProps extends ISVGProps {
   plotAddr: string
@@ -24,22 +23,17 @@ interface IProps extends ISVGProps {
 export function ExtGseaSvg({ ref, plotAddr }: IProps) {
   //const { displayProps } = useExtGseaStore()
 
-  const plot = usePlot(plotAddr)!
+  const plot = usePlot(plotAddr)! as ExtGseaPlot
 
-  const displayProps = plot!.customProps
-    .displayOptions as IExtGseaDisplayOptions
+  const displayProps = plot!.props
 
-  const rankedGenes: IRankedGenes = plot!.customProps[
-    'rankedGenes'
-  ] as IRankedGenes
-  const gs1: IGeneset = plot!.customProps['gs1'] as IGeneset
-  const gs2: IGeneset = plot!.customProps['gs2'] as IGeneset
+  const rankedGenes: IRankedGenes = plot.rankedGenes
+  const gs1: IGeneset = plot.gs1
+  const gs2: IGeneset = plot.gs2
 
-  const extGseaRes: IExtGseaResult = plot!.customProps[
-    'extGseaRes'
-  ] as IExtGseaResult
-  const gseaRes1: IGseaResult = plot!.customProps['gseaRes1'] as IGseaResult
-  const gseaRes2: IGseaResult = plot!.customProps['gseaRes2'] as IGseaResult
+  const extGseaRes: IExtGseaResult = plot.extGseaRes
+  const gseaRes1: IGseaResult = plot.gseaRes1
+  const gseaRes2: IGseaResult = plot.gseaRes2
 
   //const extGsea: ExtGSEA = plot!.customProps.extGsea as ExtGSEA
 
@@ -79,8 +73,8 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
     // subsample so we don't draw every point
     const ix = range(0, x.length, 100)
 
-    const x1 = ix.map((i) => x[i]!)
-    let y1 = ix.map((i) => y[i]!)
+    const x1 = ix.map(i => x[i]!)
+    let y1 = ix.map(i => y[i]!)
     y1[0] = 0
     y1[y1.length - 1] = 0
 
@@ -99,8 +93,8 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
       .setLength(displayProps.es.axes.y.length)
       .setTitle(displayProps.es.axes.y.title)
 
-    let xlead = gseaRes1.leadingEdge.map((g) => x[g.rank]!)
-    let ylead = gseaRes1.leadingEdge.map((g) => y[g.rank]!)
+    let xlead = gseaRes1.leadingEdge.map(g => x[g.rank]!)
+    let ylead = gseaRes1.leadingEdge.map(g => y[g.rank]!)
 
     // fix ends
 
@@ -155,12 +149,12 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
     y = gseaRes2.esAll //self._ranked_scores
     //x = range(y.length)
 
-    y1 = ix.map((i) => y[i]!)
+    y1 = ix.map(i => y[i]!)
     y1[0] = 0
     y1[y1.length - 1] = 0
 
-    xlead = gseaRes2.leadingEdge.map((g) => x[g.rank]!)
-    ylead = gseaRes2.leadingEdge.map((g) => y[g.rank]!)
+    xlead = gseaRes2.leadingEdge.map(g => x[g.rank]!)
+    ylead = gseaRes2.leadingEdge.map(g => y[g.rank]!)
 
     // fix ends
 
@@ -211,7 +205,7 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
     let genesSvg: ReactNode | undefined = undefined
 
     if (displayProps.genes.line.show) {
-      let points = where(gseaRes1.hits, (x) => x > 0)
+      let points = where(gseaRes1.hits, x => x > 0)
 
       const gengseaRes1Svg = (
         <g>
@@ -253,7 +247,7 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
         </g>
       )
 
-      points = where(gseaRes2.hits, (x) => x > 0)
+      points = where(gseaRes2.hits, x => x > 0)
 
       const gengseaRes2Svg = (
         <g
@@ -312,7 +306,7 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
 
     if (displayProps.ranking.show) {
       //const yMin = Math.min(...rankedGenes.map(e => e.score))
-      const yMax = Math.max(...abs(rankedGenes.genes.map((e) => e.score)))
+      const yMax = Math.max(...abs(rankedGenes.genes.map(e => e.score)))
 
       const yax = new YAxis()
         .autoDomain([-yMax, yMax])
@@ -337,7 +331,7 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
 
       // crossing point
       const crossIndex =
-        end(where(rankedGenes.genes, (gene) => gene.score > 0)) + 1
+        end(where(rankedGenes.genes, gene => gene.score > 0)) + 1
       const crossingX = xax.domainToRange(crossIndex)
 
       const y =
@@ -350,7 +344,7 @@ export function ExtGseaSvg({ ref, plotAddr }: IProps) {
       rankingSvg = (
         <g transform={`translate(0, ${y})`}>
           <polygon
-            points={displayPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
+            points={displayPoints.map(p => `${p[0]},${p[1]}`).join(' ')}
             fill={displayProps.ranking.fill.color}
             stroke="none"
             fillOpacity={displayProps.ranking.fill.opacity}

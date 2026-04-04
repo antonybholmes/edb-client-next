@@ -1,25 +1,24 @@
-import { ToolbarOpenFile } from '@toolbar/toolbar-open-files'
+import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
 
-import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
+import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
 
-import { PlayIcon } from '@icons/play-icon'
-import { BaseCol } from '@layout/base-col'
-import { Toolbar, ToolbarMenu, ToolbarPanel } from '@toolbar/toolbar'
-import { ToolbarSeparator } from '@toolbar/toolbar-separator'
-import { ToolbarTabPanel } from '@toolbar/toolbar-tab-panel'
+import { PlayIcon } from '@/icons/play-icon'
+import { BaseCol } from '@/layout/base-col'
+import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
+import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
-import { ToolbarButton } from '@toolbar/toolbar-button'
+import { ToolbarButton } from '@/toolbar/toolbar-button'
 
-import { download } from '@lib/download-utils'
+import { download } from '@/lib/download-utils'
 
-import { OpenFiles, onTextFileChange } from '@components/pages/open-files'
-import { MenuButton } from '@toolbar/menu-button'
+import { OpenFiles, onTextFileChange } from '@/components/pages/open-files'
+import { MenuButton } from '@/toolbar/menu-button'
 
-import { BasicAlertDialog } from '@dialog/basic-alert-dialog'
-import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
+import { BasicAlertDialog } from '@/dialog/basic-alert-dialog'
+import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
-import { FileLinesIcon } from '@icons/file-lines-icon'
-import { SaveIcon } from '@icons/save-icon'
+import { FileLinesIcon } from '@/icons/file-lines-icon'
+import { SaveIcon } from '@/icons/save-icon'
 
 import {
   FILE_MENU_ITEM_DESC_CLS,
@@ -34,27 +33,38 @@ import {
   TEXT_SETTINGS,
   type IDialogParams,
 } from '@/consts'
-import { HResizeHandle } from '@components/split-pane/h-resize-handle'
-import { ResizablePanel, ResizablePanelGroup } from '@themed/resizable'
 
-import { CollapseBlock } from '@components/collapse-block'
-import { VResizeHandle } from '@components/split-pane/v-resize-handle'
-import { ToggleButtonTriggers, ToggleButtons } from '@components/toggle-buttons'
-import { VCenterRow } from '@layout/v-center-row'
-import { GenomicLocation, parseLocation } from '@lib/genomic/genomic'
-import { Switch } from '@themed/switch'
+import {
+  ResizablePanel,
+  ResizablePanelGroup,
+  ThinHResizeHandle,
+  ThinVResizeHandle,
+} from '@/themed/resizable'
 
-import { Input } from '@themed/input'
-import { Label } from '@themed/label'
+import { CollapseBlock } from '@/components/collapse-block'
 
-import { Textarea } from '@/components/shadcn/ui/themed/textarea'
-import type { ITab } from '@components/tabs/tab-provider'
-import { ShortcutLayout } from '@layouts/shortcut-layout'
-import { dnaToJson, fetchDNA, type IDNA } from '@lib/genomic/dna'
-import { randId } from '@lib/id'
-import { textToLines } from '@lib/text/lines'
+import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
+import {
+  ToggleButtonTriggers,
+  ToggleButtons,
+} from '@/components/toggle-buttons'
+import { VCenterRow } from '@/layout/v-center-row'
+import { GenLoc, parseGenLoc } from '@/lib/genomic/genomic'
+
+import { Label } from '@/components/shadcn/ui/themed/v2/label'
+import { Input } from '@/themed/v2/input'
+
+import { Textarea } from '@/themed/textarea'
+
+import type { ITab } from '@/components/tabs/tab-provider'
+import { useStableId } from '@/hooks/stable-id'
+import { ShortcutLayout } from '@/layouts/shortcut-layout'
+import { dnaToJson, fetchDNA, type IDNA } from '@/lib/genomic/dna'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { randId } from '@/lib/id'
+import { textToLines } from '@/lib/text/lines'
+import { CoreProviders } from '@/providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
 
 export function GetDNAPage() {
   const queryClient = useQueryClient()
@@ -72,6 +82,8 @@ export function GetDNAPage() {
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 
+  const id = useStableId('get-dna-page')
+
   // function openFiles(files: IFileOpen[]) {
   //   setShowFileMenu(false)
   // }
@@ -79,12 +91,12 @@ export function GetDNAPage() {
   async function getDNA() {
     const lines = textToLines(text)
 
-    const seqs: GenomicLocation[] = []
+    const seqs: GenLoc[] = []
 
     for (let line of lines) {
       line = line.trim()
       if (line.startsWith('>')) {
-        const loc = parseLocation(line.substring(1))
+        const loc = parseGenLoc(line.substring(1))
         if (loc) {
           seqs.push(loc)
         }
@@ -95,7 +107,7 @@ export function GetDNAPage() {
 
     const dnaseqs: (IDNA | null)[] = await Promise.all(
       seqs.map(
-        async (loc) =>
+        async loc =>
           await fetchDNA(queryClient, loc, {
             reverse: modeRev,
             complement: modeComp,
@@ -103,7 +115,7 @@ export function GetDNAPage() {
       )
     )
 
-    setOutputSeqs(dnaseqs.filter((x) => x !== null) as IDNA[])
+    setOutputSeqs(dnaseqs.filter(x => x !== null) as IDNA[])
   }
 
   function save(format = 'fasta') {
@@ -118,7 +130,7 @@ export function GetDNAPage() {
       default:
         download(
           outputSeqs
-            .map((seq) => `>${seq.location.toString()}\n${seq.seq}`)
+            .map(seq => `>${seq.location.toString()}\n${seq.seq}`)
             .join('\n'),
           'dna.fasta'
         )
@@ -129,12 +141,9 @@ export function GetDNAPage() {
   }
 
   async function loadTestData() {
-    const res = await queryClient.fetchQuery({
-      queryKey: ['test_data'],
-      queryFn: () => axios.get('/data/test/get-dna.txt'),
-    })
+    const res = await httpFetch.getText('/data/test/get-dna.txt')
 
-    setText(res.data)
+    setText(res)
   }
 
   useEffect(() => {
@@ -146,7 +155,7 @@ export function GetDNAPage() {
         default:
           setOutput(
             outputSeqs
-              .map((seq) => `>${seq.location.toString()}\n${seq.seq}`)
+              .map(seq => `>${seq.location.toString()}\n${seq.seq}`)
               .join('\n')
           )
           break
@@ -159,10 +168,10 @@ export function GetDNAPage() {
       //id: nanoid(),
       id: 'Home',
       content: (
-        <ToolbarTabPanel>
+        <>
           <ToolbarTabGroup>
             <ToolbarOpenFile
-              onOpenChange={(open) => {
+              onOpenChange={open => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -226,7 +235,7 @@ export function GetDNAPage() {
               JSON
             </ToolbarButton>
           </ToolbarTabGroup> */}
-        </ToolbarTabPanel>
+        </>
       ),
     },
   ]
@@ -315,8 +324,10 @@ export function GetDNAPage() {
       )}
 
       <ShortcutLayout>
-        <Toolbar tabs={tabs}>
+        <Toolbar>
           <ToolbarMenu
+            groupId={id}
+            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
@@ -330,21 +341,21 @@ export function GetDNAPage() {
               </ToolbarButton>
             }
           />
-          <ToolbarPanel />
+          <ToolbarPanel tabId={id} tabs={tabs} />
         </Toolbar>
 
-        <ResizablePanelGroup direction="horizontal" className="grow pl-2">
+        <ResizablePanelGroup orientation="horizontal" className="h-full pl-2">
           <ResizablePanel
             id="main"
-            defaultSize={80}
-            minSize={50}
+            defaultSize="80%"
+            minSize="50%"
             className="flex flex-col"
           >
-            <ResizablePanelGroup direction="vertical">
+            <ResizablePanelGroup orientation="vertical">
               <ResizablePanel
                 id="dna"
-                defaultSize={50}
-                minSize={10}
+                defaultSize="50%"
+                minSize="0%"
                 className="flex flex-col"
                 collapsible={true}
               >
@@ -352,17 +363,17 @@ export function GetDNAPage() {
                   className="grow whitespace-pre"
                   placeholder=">chr3:187453454-187454415"
                   value={text}
-                  onChange={(e) => {
+                  onChange={e => {
                     setText(e.target.value)
                   }}
                 />
               </ResizablePanel>
-              <VResizeHandle />
+              <ThinVResizeHandle />
               <ResizablePanel
                 className="flex flex-col"
                 id="output"
-                defaultSize={50}
-                minSize={10}
+                defaultSize="50%"
+                minSize="0%"
                 collapsible={true}
               >
                 <Textarea
@@ -374,10 +385,10 @@ export function GetDNAPage() {
               </ResizablePanel>
             </ResizablePanelGroup>
           </ResizablePanel>
-          <HResizeHandle />
+          <ThinHResizeHandle />
           <ResizablePanel
-            defaultSize={20}
-            minSize={10}
+            defaultSize="20%"
+            minSize="0%"
             collapsible={true}
             className="flex flex-col"
             id="right-tabs"
@@ -396,14 +407,14 @@ export function GetDNAPage() {
               <CollapseBlock name="Output">
                 <Switch
                   checked={modeRev}
-                  onCheckedChange={(state) => setModeRev(state)}
+                  onCheckedChange={state => setModeRev(state)}
                 >
                   Reverse
                 </Switch>
 
                 <Switch
                   checked={modeComp}
-                  onCheckedChange={(state) => setModeComp(state)}
+                  onCheckedChange={state => setModeComp(state)}
                 >
                   Complement
                 </Switch>
@@ -423,7 +434,7 @@ export function GetDNAPage() {
                       },
                     ]}
                     value={outputMode}
-                    onTabChange={(selectedTab) =>
+                    onTabChange={selectedTab =>
                       setOutputMode(selectedTab.tab.id)
                     }
                   >
@@ -439,10 +450,10 @@ export function GetDNAPage() {
 
         {showDialog.id.includes('open') && (
           <OpenFiles
-            open={showDialog.id}
+            message={showDialog.id}
             //onOpenChange={() => setShowDialog({...NO_DIALOG})}
             onFileChange={(_, files) =>
-              onTextFileChange(_, files, (files) => {
+              onTextFileChange(_, files, files => {
                 setText(files[0]!.text)
               })
             }
@@ -451,5 +462,13 @@ export function GetDNAPage() {
         )}
       </ShortcutLayout>
     </>
+  )
+}
+
+export function GetDNAQueryPage() {
+  return (
+    <CoreProviders>
+      <GetDNAPage />
+    </CoreProviders>
   )
 }

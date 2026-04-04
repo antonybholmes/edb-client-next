@@ -1,5 +1,5 @@
+import { GenLoc } from '@/lib/genomic/genomic'
 import type { BigBed } from '@gmod/bbi'
-import { GenomicLocation } from '@lib/genomic/genomic'
 import { BaseBedReader } from './base-bed-reader'
 
 export class BigBedReader extends BaseBedReader {
@@ -10,9 +10,7 @@ export class BigBedReader extends BaseBedReader {
     this._bb = bb
   }
 
-  override async getFeatures(
-    location: GenomicLocation
-  ): Promise<GenomicLocation[]> {
+  override async getFeatures(location: GenLoc): Promise<GenLoc[]> {
     //const bins = makeBins(location, binSize)
     const feats = await this._bb.getFeatures(
       location.chr,
@@ -20,12 +18,12 @@ export class BigBedReader extends BaseBedReader {
       location.end
     )
 
-    const ret: GenomicLocation[] = feats.map(f => {
+    const ret: GenLoc[] = feats.map(f => {
       // convert to 1-based start
       // end is the real end of the block
       const start = f.start + 1
 
-      return new GenomicLocation(location.chr, start, f.end)
+      return new GenLoc(location.chr, start, f.end)
     })
 
     return ret

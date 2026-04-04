@@ -1,4 +1,4 @@
-import { Switch } from '@themed/switch'
+import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 
 import {
   Card,
@@ -7,20 +7,20 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@themed/card'
+} from '@/themed/card'
 
-import { VCenterRow } from '@layout/v-center-row'
+import { VCenterRow } from '@/layout/v-center-row'
 
 import {
   APP_MYACCOUNT_URL,
-  OAUTH2_SIGN_IN_ROUTE,
-  RESET_PASSWORD_ROUTE,
+  RESET_PASSWORD_PATH,
   SESSION_AUTH_SIGNIN_URL,
-  SIGN_UP_ROUTE,
+  SIGN_UP_PATH,
   TEXT_PASSWORDLESS,
   TEXT_SIGN_UP,
-} from '@lib/edb/edb'
+} from '@/lib/edb/edb'
 
+import { ThemeIndexLink } from '@/components/link/theme-index-link'
 import {
   MIN_PASSWORD_LENGTH,
   PASSWORD_PATTERN,
@@ -28,26 +28,30 @@ import {
   TEXT_PASSWORD_DESCRIPTION,
   TEXT_PASSWORD_REQUIRED,
 } from '@/components/pages/account/password-email-dialog'
-import { ThemeIndexLink } from '@components/link/theme-index-link'
 import { useEffect, useRef, type BaseSyntheticEvent } from 'react'
 
-import { FormInputError } from '@components/input-error'
-import { ThemeLink } from '@components/link/theme-link'
-import { Button } from '@themed/button'
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@themed/form'
-import { Input } from '@themed/input'
-import { Label } from '@themed/label'
+import { FormInputError } from '@/components/input-error'
+import { ThemeLink } from '@/components/link/theme-link'
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+} from '@/components/shadcn/ui/themed/v2/form'
+import { Label } from '@/components/shadcn/ui/themed/v2/label'
+import { Button } from '@/themed/v2/button'
+import { Input } from '@/themed/v2/input'
 
-import type { IDivProps } from '@interfaces/div-props'
+import type { IDivProps } from '@/interfaces/div-props'
 
-import { APP_NAME, TEXT_SIGN_IN } from '@/consts'
+import { TEXT_SIGN_IN } from '@/consts'
 
 import { AppIcon } from '@/components/icons/app-icon'
-import { useEdbSettings } from '@lib/edb/edb-settings'
-import { httpFetch } from '@lib/http/http-fetch'
-import { useQueryClient } from '@tanstack/react-query'
+import { config } from '@/config'
+import { useEdbSettings } from '@/lib/edb/edb-settings'
+import { httpFetch } from '@/lib/http/http-fetch'
 import { useForm } from 'react-hook-form'
-import { toast } from '../../../../shadcn/ui/themed/use-toast'
+import { toast } from '../../../../shadcn/ui/themed/v1/use-toast'
 
 export const FORWARD_DELAY_MS = 1000
 
@@ -68,23 +72,23 @@ export function CreateAccountLink() {
   return (
     <span>
       Don&apos;t have an account?{' '}
-      <ThemeIndexLink href={SIGN_UP_ROUTE} aria-label={TEXT_SIGN_UP}>
+      <ThemeIndexLink href={SIGN_UP_PATH} aria-label={TEXT_SIGN_UP}>
         Create one
       </ThemeIndexLink>
     </span>
   )
 }
 
-export function SignInLink() {
-  return (
-    <span className="w-full">
-      Already have an account?{' '}
-      <ThemeIndexLink href={OAUTH2_SIGN_IN_ROUTE} aria-label={TEXT_SIGN_IN}>
-        {TEXT_SIGN_IN}
-      </ThemeIndexLink>
-    </span>
-  )
-}
+// export function SignInLink() {
+//   return (
+//     <span className="w-full">
+//       Already have an account?{' '}
+//       <ThemeIndexLink href={OAUTH2_SIGN_IN_PATH} aria-label={TEXT_SIGN_IN}>
+//         {TEXT_SIGN_IN}
+//       </ThemeIndexLink>
+//     </span>
+//   )
+// }
 
 interface IFormInput {
   username: string
@@ -101,8 +105,6 @@ export interface ISignInProps extends IDivProps {
 }
 
 export function SignIn({ allowPassword = false, visitUrl }: ISignInProps) {
-  const queryClient = useQueryClient()
-
   // some other page needs to force reload account details either
   // passwordless or regular so that on refresh this page can see if
   // the details have been loaded
@@ -186,19 +188,18 @@ export function SignIn({ allowPassword = false, visitUrl }: ISignInProps) {
 
       console.log(SESSION_AUTH_SIGNIN_URL)
 
-      const res = await queryClient.fetchQuery({
-        queryKey: ['signin'],
-        queryFn: () =>
-          httpFetch.postJson<{ message: string }>(SESSION_AUTH_SIGNIN_URL, {
-            body: {
-              username: data.username,
-              password: settings.passwordless ? '' : data.password1,
-              staySignedIn: data.staySignedIn,
-              redirectUrl: APP_MYACCOUNT_URL,
-              //visitUrl,
-            },
-          }),
-      })
+      const res = await httpFetch.postJson<{ message: string }>(
+        SESSION_AUTH_SIGNIN_URL,
+        {
+          body: {
+            username: data.username,
+            password: settings.passwordless ? '' : data.password1,
+            staySignedIn: data.staySignedIn,
+            redirectUrl: APP_MYACCOUNT_URL,
+            //visitUrl,
+          },
+        }
+      )
 
       if (res.message.includes('email')) {
         toast({
@@ -228,12 +229,12 @@ export function SignIn({ allowPassword = false, visitUrl }: ISignInProps) {
       <CardHeader className="text-xl">
         <VCenterRow className="gap-x-2">
           <AppIcon w="w-10" />
-          <CardTitle>Sign in to {APP_NAME}</CardTitle>
+          <CardTitle>Sign in to {config.appName}</CardTitle>
 
           {allowPassword && (
             <Switch
               checked={settings.passwordless}
-              onCheckedChange={(state) => {
+              onCheckedChange={state => {
                 updateSettings({ passwordless: state })
               }}
             >
@@ -327,19 +328,18 @@ export function SignIn({ allowPassword = false, visitUrl }: ISignInProps) {
                 name="staySignedIn"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center gap-x-2">
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={(state) => {
-                          updateSettings({
-                            ...settings,
-                            staySignedIn: state,
-                          })
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={state => {
+                        updateSettings({
+                          ...settings,
+                          staySignedIn: state,
+                        })
 
-                          field.onChange(state)
-                        }}
-                      ></Switch>
-                    </FormControl>
+                        field.onChange(state)
+                      }}
+                    />
+
                     <FormLabel>Keep me signed in</FormLabel>
                   </FormItem>
                 )}
@@ -347,7 +347,7 @@ export function SignIn({ allowPassword = false, visitUrl }: ISignInProps) {
 
               {allowPassword && (
                 <ThemeLink
-                  href={RESET_PASSWORD_ROUTE}
+                  href={RESET_PASSWORD_PATH}
                   aria-label="Forgot password"
                 >
                   Forgot password?

@@ -1,4 +1,4 @@
-import type { ICell } from '@interfaces/cell'
+import type { ICell } from '@/interfaces/cell'
 import { produce } from 'immer'
 import { create } from 'zustand'
 
@@ -21,7 +21,7 @@ interface ISelectionRangeStore {
   clear: () => void
 }
 
-export const useSelectionRangeStore = create<ISelectionRangeStore>(set => ({
+export const useSelectionRangeStore = create<ISelectionRangeStore>((set) => ({
   selection: NO_SELECTION_RANGE,
   update: (selection: ISelectionRange) => {
     set(
@@ -51,9 +51,9 @@ export function useSelectionRange(): {
   updateSelection: (range: ISelectionRange) => void
   clearSelection: () => void
 } {
-  const selection = useSelectionRangeStore(state => state.selection)
-  const updateSelection = useSelectionRangeStore(state => state.update)
-  const clear = useSelectionRangeStore(state => state.clear)
+  const selection = useSelectionRangeStore((state) => state.selection)
+  const updateSelection = useSelectionRangeStore((state) => state.update)
+  const clear = useSelectionRangeStore((state) => state.clear)
 
   return { selection, updateSelection, clearSelection: clear }
 }

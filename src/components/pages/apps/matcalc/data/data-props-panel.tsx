@@ -1,19 +1,22 @@
-import { PropsPanel } from '@components/props-panel'
-import { useState } from 'react'
-
-import { SideTabs } from '@/components/tabs/side-tabs'
-import { VScrollPanel } from '@components/v-scroll-panel'
-import type { IDivProps } from '@interfaces/div-props'
-import { Tabs, TabsContent } from '@themed/tabs'
-import { Bolt, Component } from 'lucide-react'
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/shadcn/ui/themed/v2/tabs'
+import { useRef } from 'react'
 import { GenesetPropsPanel } from '../genesets/geneset-props-panel'
 import { GroupPropsPanel } from '../groups/group-props-panel'
 
-export interface IProps extends IDivProps {
-  branchId: string
-}
+// const TAB_CLS =
+//   'w-4.5 stroke-foreground/75 group-hover:stroke-foreground group-data-[selected=true]:stroke-foreground'
 
-export function DataPropsPanel({ ref, branchId }: IProps) {
+export function DataPropsPanel() {
+  const ref = useRef<HTMLDivElement>(null)
+  //const _id = useStableId('data-props-panel')
+
+  //const { tabIndex } = useTabs(_id)
+
   // const { plotsState, historyDispatch } = useContext(PlotsContext)
 
   // const plot = plotsState.plotMap[plotId]
@@ -22,85 +25,129 @@ export function DataPropsPanel({ ref, branchId }: IProps) {
   //   return null
   // }
 
-  //const [openTabs, setOpenTabs] = useState<string[]>(['groups', 'genesets'])
+  //const [openTabs, setOpenTabs] = useState<string[]>(['groups'])
 
-  const [value, setValue] = useState('groups')
+  // const tabs = [
+  //   {
+  //     id: 'groups',
+  //     name: 'Groups',
+  //     content: <GroupPropsPanel />,
+  //     icon: <Component className={TAB_CLS} />,
+  //   },
+  //   {
+  //     id: 'genesets',
+  //     name: 'Gene Sets',
+  //     content: <GenesetPropsPanel />,
+  //     icon: <Bolt className={TAB_CLS} />,
+  //   },
+  // ]
+
+  // <PropsPanel className="px-1">
+  {
+    /* <BaseRow className="grow overflow-hidden gap-x-2">
+        <VScrollPanel className="grow">
+          <TabContentPanel tabIndex={tabIndex} tabs={tabs} />
+        </VScrollPanel>
+
+        <SideTabs id={_id} tabs={tabs} showLabels={false} defaultHeight={1.8} />
+      </BaseRow> */
+  }
+
+  // return (
+  //   <Accordion
+  //     value={openTabs}
+  //     onValueChange={setOpenTabs}
+  //     variant="sidebar"
+  //     className="mr-1 grow    border-orange-200"
+  //     multiple={false}
+  //     //innerCls="grow h-full border border-red-500"
+  //   >
+  //     <AccordionItem value="groups">
+  //       <AccordionTrigger variant="sidebar">Groups</AccordionTrigger>
+  //       <AccordionContent variant="sidebar" style={{ height: '100vh' }}>
+  //         <GroupPropsPanel />
+  //       </AccordionContent>
+  //     </AccordionItem>
+  //     <AccordionItem value="genesets">
+  //       <AccordionTrigger variant="sidebar">Gene Sets</AccordionTrigger>
+  //       <AccordionContent variant="sidebar" style={{ height: '100%' }}>
+  //         <GenesetPropsPanel />
+  //       </AccordionContent>
+  //     </AccordionItem>
+  //   </Accordion>
+  // )
+
+  // return (
+  //   <OutlookAccordion
+  //     id="groups"
+  //     //innerCls="grow h-full border border-red-500"
+  //   >
+  //     <OutlookAccordionItem id="groups">
+  //       <OutlookAccordionTrigger>Groups</OutlookAccordionTrigger>
+  //       <OutlookAccordionContent>
+  //         <GroupPropsPanel />
+  //       </OutlookAccordionContent>
+  //     </OutlookAccordionItem>
+  //     <OutlookAccordionItem id="genesets">
+  //       <OutlookAccordionTrigger>Gene Sets</OutlookAccordionTrigger>
+  //       <OutlookAccordionContent>
+  //         <GenesetPropsPanel />
+  //       </OutlookAccordionContent>
+  //     </OutlookAccordionItem>
+  //   </OutlookAccordion>
+  // )
+
+  //const size = useComponentSize(ref)
 
   return (
-    <PropsPanel ref={ref}>
-      <Tabs
-        value={value}
-        onValueChange={setValue}
-        className="grow flex flex-row gap-x-2"
-        orientation="vertical"
-      >
-        {/* <HCenterRow className="py-2 text-xs">
-          <IOSTabsList
-            value={value}
-            defaultWidth="4.5rem"
-            tabs={[
-              { id: 'groups', name: 'Groups' },
-              { id: 'genesets', name: 'Gene Sets' },
-            ]}
-          />
-        </HCenterRow> */}
-        {/* <HCenterRow className="py-2 text-xs">
-          <TabsList>
-            <TabsTrigger value="groups" className="w-20">
-              Groups
-            </TabsTrigger>
-            <TabsTrigger value="genesets" className="w-20">
-              Gene sets
-            </TabsTrigger>
-          </TabsList>
-        </HCenterRow> */}
-        <TabsContent value="groups" className="flex flex-col grow">
-          <VScrollPanel className="grow">
-            <PropsPanel className="gap-y-2">
-              <GroupPropsPanel branchId={branchId} />
-            </PropsPanel>
-          </VScrollPanel>
-        </TabsContent>
-        <TabsContent value="genesets" className="flex flex-col grow">
-          <VScrollPanel className="grow">
-            <PropsPanel className="gap-y-2">
-              <GenesetPropsPanel branchId={branchId} />
-            </PropsPanel>
-          </VScrollPanel>
-        </TabsContent>
-
-        <SideTabs
-          value={value}
-          tabs={[
-            {
-              id: 'groups',
-              name: 'Groups',
-              icon: <Component className="w-4" />,
-            },
-            {
-              id: 'genesets',
-              name: 'Gene Sets',
-              icon: <Bolt className="w-4" />,
-            },
-          ]}
-          showLabels={false}
-        />
-      </Tabs>
-
-      {/* <ScrollAccordion value={openTabs} onValueChange={setOpenTabs}>
-        <AccordionItem value="groups">
-          <AccordionTrigger>Groups</AccordionTrigger>
-          <AccordionContent>
-            <GroupPropsPanel branchId={branchId} />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="genesets">
-          <AccordionTrigger>Gene Sets</AccordionTrigger>
-          <AccordionContent>
-            <GenesetPropsPanel branchId={branchId}  />
-          </AccordionContent>
-        </AccordionItem>
-      </ScrollAccordion> */}
-    </PropsPanel>
+    <Tabs
+      ref={ref}
+      orientation="vertical"
+      className="flex flex-col grow text-xs pr-1"
+    >
+      <TabsContent value="groups" className="grow overflow-hidden">
+        <GroupPropsPanel />
+      </TabsContent>
+      <TabsContent value="genesets" className="grow overflow-hidden">
+        <GenesetPropsPanel />
+      </TabsContent>
+      <TabsList className="py-1">
+        <TabsTrigger value="groups" className="grow" variant="sidebar">
+          Groups
+        </TabsTrigger>
+        <TabsTrigger value="genesets" className="grow" variant="sidebar">
+          Gene Sets
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
   )
+
+  // return (
+  //   <ResizablePanelGroup
+  //     orientation="vertical"
+  //     className="pr-1"
+  //     //autoSaveId="rev-comp-vert"
+  //   >
+  //     <SidebarResizablePanel
+  //       id="groups"
+  //       defaultSize="60%"
+  //       minSize="20%"
+  //       className="flex flex-col text-sm gap-y-2"
+  //       title="Labels"
+  //       isFirst={true}
+  //     >
+  //       <GroupPropsPanel />
+  //     </SidebarResizablePanel>
+  //     <ThinVLineHandle autoHide={false} />
+  //     <SidebarResizablePanel
+  //       className="flex flex-col text-sm gap-y-2"
+  //       id="gene-sets"
+  //       defaultSize="0%"
+  //       minSize="20%"
+  //       title="Gene Sets"
+  //     >
+  //       <GenesetPropsPanel />
+  //     </SidebarResizablePanel>
+  //   </ResizablePanelGroup>
+  // )
 }

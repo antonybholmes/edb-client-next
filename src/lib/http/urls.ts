@@ -1,5 +1,5 @@
-import { type IFieldMap } from '@interfaces/field-map'
-import { type IStringMap } from '@interfaces/string-map'
+import { type IFieldMap } from '@/interfaces/field-map'
+import { type IStringMap } from '@/interfaces/string-map'
 import type { UndefNullStr } from '../text/text'
 
 export const PATH_SEP = '/'
@@ -10,7 +10,11 @@ export const MIME_JSON = 'application/json'
 
 export const HEADER_X_CSRF_TOKEN = 'X-CSRF-Token'
 
-export const JSON_HEADERS = {
+export const JSON_ACCEPT_HEADERS = {
+  Accept: MIME_JSON,
+}
+
+export const JSON_CONTENT_HEADERS = {
   Accept: MIME_JSON,
   'Content-Type': MIME_JSON,
 }
@@ -21,7 +25,7 @@ export function bearerToken(token: UndefNullStr): string {
 
 export function bearerHeaders(jwt: UndefNullStr): IStringMap {
   return {
-    ...JSON_HEADERS,
+    ...JSON_ACCEPT_HEADERS,
     Authorization: bearerToken(jwt),
   }
 }
@@ -32,7 +36,7 @@ export function csfrHeaders(csrfToken: string): IStringMap {
   // }
 
   return {
-    ...JSON_HEADERS,
+    ...JSON_ACCEPT_HEADERS,
     [HEADER_X_CSRF_TOKEN]: csrfToken,
   }
 }
@@ -46,7 +50,7 @@ export function csfrWithTokenHeaders(
   // }
 
   return {
-    ...JSON_HEADERS,
+    ...JSON_ACCEPT_HEADERS,
     [HEADER_X_CSRF_TOKEN]: csrfToken,
     Authorization: bearerToken(jwt),
   }
@@ -299,10 +303,36 @@ export function makeGetUrl(
  *
  * @param url url to visit
  */
-export function redirect(url: string, delay: number = REDIRECT_DELAY_MS) {
+export function redirect(url: string, delayMs: number = REDIRECT_DELAY_MS) {
   if (typeof window !== 'undefined') {
     setTimeout(function () {
       window.location.href = url // .assign(url)
-    }, delay)
+    }, delayMs)
   }
+}
+
+export function toBase64Url(str: string): string {
+  const utf8Arr = new TextEncoder().encode(str) // Convert string to UTF-8 bytes
+  const base64Encoded = btoa(String.fromCharCode(...utf8Arr)) // Encode bytes to Base64
+  return base64Encoded
+    .replace(/\+/g, '-') // Replace '+' with '-'
+    .replace(/\//g, '_') // Replace '/' with '_'
+    .replace(/=+$/, '') // Remove trailing '=' padding
+}
+
+// --- Base64URL Decoder ---
+export function fromBase64Url(str: string): string {
+  let base64Encoded = str.replace(/-/g, '+').replace(/_/g, '/') // Revert URL-safe chars
+  // Add padding back if needed (length % 4 != 0)
+  while (base64Encoded.length % 4 !== 0) {
+    base64Encoded += '='
+  }
+
+  const uint8Array = new Uint8Array(
+    atob(base64Encoded)
+      .split('')
+      .map(char => char.charCodeAt(0))
+  )
+
+  return new TextDecoder().decode(uint8Array)
 }

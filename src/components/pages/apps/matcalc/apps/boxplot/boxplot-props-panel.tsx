@@ -1,16 +1,16 @@
-import { DoubleNumericalInput } from '@components/double-numerical-input'
-import { PropsPanel } from '@components/props-panel'
-import { PropRow } from '@dialog/prop-row'
-import { SwitchPropRow } from '@dialog/switch-prop-row'
+import { DoubleNumericalInput } from '@/components/double-numerical-input'
+import { PropsPanel } from '@/components/props-panel'
+import { PropRow } from '@/dialog/prop-row'
+import { SwitchPropRow } from '@/dialog/switch-prop-row'
+import { NumericalInput } from '@/themed/numerical-input'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@themed/accordion'
-import { NumericalInput } from '@themed/numerical-input'
+} from '@/themed/v2/accordion'
 import { produce } from 'immer'
-import { useHistory, usePlot } from '../../history/history-store'
+import { useHistory, usePlot, type BoxPlot } from '../../history/history-store'
 import type { IBoxPlotDisplayOptions } from './boxplot-plot-svg'
 
 export interface IProps {
@@ -20,19 +20,18 @@ export interface IProps {
 export function BoxPlotPropsPanel({ plotAddr }: IProps) {
   //const { plotsState, historyDispatch } = useContext(PlotsContext)
 
-  const { updateProps } = useHistory()
+  const { updatePlot } = useHistory()
 
-  const plot = usePlot(plotAddr)!
+  const plot = usePlot(plotAddr)! as BoxPlot
 
-  const displayOptions: IBoxPlotDisplayOptions = plot!.customProps
-    .displayOptions as IBoxPlotDisplayOptions
+  const displayOptions: IBoxPlotDisplayOptions = plot.props
 
   return (
     <PropsPanel>
       <ScrollAccordion value={['plot']}>
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent variant="sidebar">
             <PropRow title="Plot size">
               <DoubleNumericalInput
                 v1={displayOptions.plot!.w}
@@ -41,20 +40,16 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
                 dp={0}
                 limit={[0, 1000]}
                 onNumChanged1={v => {
-                  updateProps(
-                    plotAddr,
-                    'displayOptions',
-                    produce(displayOptions, draft => {
-                      draft.plot!.w = v
+                  updatePlot(
+                    produce(plot, draft => {
+                      draft.props.plot.w = v
                     })
                   )
                 }}
                 onNumChanged2={v => {
-                  updateProps(
-                    plotAddr,
-                    'displayOptions',
-                    produce(displayOptions, draft => {
-                      draft.plot!.h = v
+                  updatePlot(
+                    produce(plot, draft => {
+                      draft.props.plot.h = v
                     })
                   )
                 }}
@@ -68,11 +63,9 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
                 dp={0}
                 limit={[0, 1000]}
                 onNumChanged={v => {
-                  updateProps(
-                    plotAddr,
-                    'displayOptions',
-                    produce(displayOptions, draft => {
-                      draft.padding.plot = v
+                  updatePlot(
+                    produce(plot, draft => {
+                      draft.props.padding.plot = v
                     })
                   )
                 }}
@@ -85,11 +78,9 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
                 dp={0}
                 limit={[0, 1000]}
                 onNumChanged={v => {
-                  updateProps(
-                    plotAddr,
-                    'displayOptions',
-                    produce(displayOptions, draft => {
-                      draft.padding.hue = v
+                  updatePlot(
+                    produce(plot, draft => {
+                      draft.props.padding.hue = v
                     })
                   )
                 }}
@@ -100,11 +91,9 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
               title="Split"
               checked={displayOptions.split}
               onCheckedChange={v => {
-                updateProps(
-                  plotAddr,
-                  'displayOptions',
-                  produce(displayOptions, draft => {
-                    draft.split = v
+                updatePlot(
+                  produce(plot, draft => {
+                    draft.props.split = v
                   })
                 )
               }}
@@ -115,15 +104,16 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
         <AccordionItem value="violin">
           <AccordionTrigger>Violin</AccordionTrigger>
 
-          <AccordionContent>
+          <AccordionContent variant="sidebar">
             <SwitchPropRow
               title="Show"
               checked={displayOptions.violin.show}
               onCheckedChange={state => {
-                updateProps(plotAddr, 'displayOptions', {
-                  ...displayOptions,
-                  violin: { ...displayOptions.violin, show: state },
-                })
+                updatePlot(
+                  produce(plot, draft => {
+                    draft.props.violin.show = state
+                  })
+                )
               }}
             />
 
@@ -133,11 +123,9 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
                 placeholder="Stroke..."
                 className="w-14 rounded-theme"
                 onNumChanged={v => {
-                  updateProps(
-                    plotAddr,
-                    'displayOptions',
-                    produce(displayOptions, draft => {
-                      draft.violin.stroke.width = v
+                  updatePlot(
+                    produce(plot, draft => {
+                      draft.props.violin.stroke.width = v
                     })
                   )
                 }}
@@ -149,16 +137,14 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
         <AccordionItem value="box">
           <AccordionTrigger>Box</AccordionTrigger>
 
-          <AccordionContent>
+          <AccordionContent variant="sidebar">
             <SwitchPropRow
               title="Show"
               checked={displayOptions.box.show}
               onCheckedChange={v => {
-                updateProps(
-                  plotAddr,
-                  'displayOptions',
-                  produce(displayOptions, draft => {
-                    draft.box.show = v
+                updatePlot(
+                  produce(plot, draft => {
+                    draft.props.box.show = v
                   })
                 )
               }}
@@ -170,11 +156,9 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
                 placeholder="Stroke..."
                 className="w-14 rounded-theme"
                 onNumChanged={v => {
-                  updateProps(
-                    plotAddr,
-                    'displayOptions',
-                    produce(displayOptions, draft => {
-                      draft.box.stroke.width = v
+                  updatePlot(
+                    produce(plot, draft => {
+                      draft.props.box.stroke.width = v
                     })
                   )
                 }}
@@ -186,11 +170,9 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
                 placeholder="Width..."
                 className="w-14 rounded-theme"
                 onNumChanged={v => {
-                  updateProps(
-                    plotAddr,
-                    'displayOptions',
-                    produce(displayOptions, draft => {
-                      draft.box.width = v
+                  updatePlot(
+                    produce(plot, draft => {
+                      draft.props.box.width = v
                     })
                   )
                 }}
@@ -202,16 +184,14 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
         <AccordionItem value="swarm">
           <AccordionTrigger>Swarm</AccordionTrigger>
 
-          <AccordionContent>
+          <AccordionContent variant="sidebar">
             <SwitchPropRow
               title="Show"
               checked={displayOptions.swarm.show}
               onCheckedChange={v => {
-                updateProps(
-                  plotAddr,
-                  'displayOptions',
-                  produce(displayOptions, draft => {
-                    draft.swarm.show = v
+                updatePlot(
+                  produce(plot, draft => {
+                    draft.props.swarm.show = v
                   })
                 )
               }}
@@ -222,7 +202,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
         {/* <AccordionItem value="x">
           <AccordionTrigger>X</AccordionTrigger>
 
-          <AccordionContent>
+          <AccordionContent variant="sidebar">
             <Reorder.Group
               axis="y"
               values={plot!.customProps.xOrder}
@@ -242,7 +222,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
                   className="flex flex-row items-center gap-x-4 px-2 py-2 rounded-theme trans-color hover:bg-muted"
                 >
                   <VCenterRow className="cursor-ns-resize">
-                    <VerticalGripIcon w="h-5" className="bg-foreground/50" />
+                    <VerticalGripIcon  className="bg-foreground/50" />
                   </VCenterRow>
 
                   <span>{item}</span>
@@ -256,7 +236,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
           <AccordionItem value="hue">
             <AccordionTrigger>Hue</AccordionTrigger>
 
-            <AccordionContent>
+            <AccordionContent variant="sidebar">
               <Reorder.Group
                 axis="y"
                 values={plot!.customProps.hueOrder}
@@ -276,7 +256,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
                     className="flex flex-row items-center gap-x-4 px-2 py-2 rounded-theme trans-color hover:bg-muted"
                   >
                     <VCenterRow className="cursor-ns-resize">
-                      <VerticalGripIcon w="h-5" className="bg-foreground/50" />
+                      <VerticalGripIcon   className="bg-foreground/50" />
                     </VCenterRow>
 
                     <span className="grow">{item}</span>

@@ -1,20 +1,16 @@
-import { PropsPanel } from '@components/props-panel'
+import { PropsPanel } from '@/components/props-panel'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@themed/accordion'
-import { forwardRef, type ForwardedRef } from 'react'
+} from '@/themed/v2/accordion'
 
-import { CheckPropRow } from '@dialog/check-prop-row'
+import { CheckPropRow } from '@/dialog/check-prop-row'
 import { produce } from 'immer'
 import { useHubs } from './hubs-store'
 
-export const HubsPropsPanel = forwardRef(function HubsPropsPanel(
-  {},
-  ref: ForwardedRef<HTMLDivElement>
-) {
+export function HubsPropsPanel() {
   const { settings, updateSettings } = useHubs()
 
   // function setProps(dataset: IGexDataset, props: IGexPlotDisplayProps) {
@@ -29,38 +25,40 @@ export const HubsPropsPanel = forwardRef(function HubsPropsPanel(
   // }
 
   return (
-    <>
-      <PropsPanel ref={ref} className="px-1">
-        <ScrollAccordion value={['search', 'plot', 'all-plots']}>
-          <AccordionItem value="search">
-            <AccordionTrigger>Display</AccordionTrigger>
-            <AccordionContent>
-              <CheckPropRow
-                title="Hide Tracks"
-                checked={settings.hideTracks}
-                onCheckedChange={(v) => {
-                  const newStore = produce(settings, (draft) => {
-                    draft.hideTracks = v
-                  })
+    <PropsPanel className="px-1">
+      <ScrollAccordion
+        value={['display', 'plot', 'all-plots']}
+        variant="sidebar"
+      >
+        <AccordionItem value="display">
+          <AccordionTrigger variant="sidebar">Display</AccordionTrigger>
+          <AccordionContent variant="sidebar">
+            <CheckPropRow
+              title="Hide tracks"
+              checked={settings.hideTracks}
+              onCheckedChange={v => {
+                const newStore = produce(settings, draft => {
+                  draft.hideTracks = v
+                })
 
-                  updateSettings(newStore)
-                }}
-              />
-              <CheckPropRow
-                title="Show guidelines"
-                checked={settings.showGuidelines}
-                onCheckedChange={(v) => {
-                  const newStore = produce(settings, (draft) => {
-                    draft.showGuidelines = v
-                  })
+                updateSettings(newStore)
+              }}
+            />
+            <CheckPropRow
+              title="Show guidelines"
+              checked={settings.showGuidelines}
+              onCheckedChange={v => {
+                const newStore = produce(settings, draft => {
+                  draft.showGuidelines = v
+                })
 
-                  updateSettings(newStore)
-                }}
-              />
-            </AccordionContent>
-          </AccordionItem>
+                updateSettings(newStore)
+              }}
+            />
+          </AccordionContent>
+        </AccordionItem>
 
-          {/* {datasets.map((dataset, di) => {
+        {/* {datasets.map((dataset, di) => {
             const props: IGexPlotDisplayProps = gexPlotSettings[
               dataset.id.toString()
             ] ?? { ...DEFAULT_GEX_PLOT_DISPLAY_PROPS }
@@ -68,7 +66,7 @@ export const HubsPropsPanel = forwardRef(function HubsPropsPanel(
             return (
               <AccordionItem value={dataset.name} key={di}>
                 <AccordionTrigger>{dataset.name}</AccordionTrigger>
-                <AccordionContent>
+                <AccordionContent variant="sidebar">
                   <DialogBlock>
                     <Label className="font-medium">Box & Whisker</Label>
 
@@ -316,8 +314,7 @@ export const HubsPropsPanel = forwardRef(function HubsPropsPanel(
               </AccordionItem>
             )
           })} */}
-        </ScrollAccordion>
-      </PropsPanel>
-    </>
+      </ScrollAccordion>
+    </PropsPanel>
   )
-})
+}

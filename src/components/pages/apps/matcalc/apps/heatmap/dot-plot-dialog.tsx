@@ -1,41 +1,48 @@
-import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import {
   DEFAULT_HEATMAP_PROPS,
   DOT_PLOT_PERCENT_TABLE,
   type DotPlotMode,
   type IHeatMapDisplayOptions,
-} from '@components/plot/heatmap/heatmap-svg-props'
-import { OKCancelDialog, type IModalProps } from '@dialog/ok-cancel-dialog'
-import { Accordion } from '@themed/accordion'
-import { Checkbox } from '@themed/check-box'
+} from '@/components/plot/heatmap/heatmap-svg-props'
+import { TEXT_CANCEL, TEXT_OK } from '@/consts'
+import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
+import { Accordion } from '@/themed/v2/accordion'
 
-import { SettingsAccordionItem } from '@dialog/settings/settings-dialog'
-import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
+import { SettingsAccordionItem } from '@/dialog/settings/settings-dialog'
+import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import {
   getColIdxFromGroup,
   log2,
   rowMean,
   rowZScore,
-} from '@lib/dataframe/dataframe-utils'
+} from '@/lib/dataframe/dataframe-utils'
 import {
   HCluster,
   type IClusterFrame,
   type IClusterTree,
-} from '@lib/math/hcluster'
+} from '@/lib/math/hcluster'
 import { useEffect, useState } from 'react'
 
 import { CheckPropRow } from '@/components/dialog/check-prop-row'
+import { WarningIcon } from '@/components/icons/warning-icon'
 import { HCenterRow } from '@/components/layout/h-center-row'
-import { InfoHoverCard } from '@/components/shadcn/ui/themed/hover-card'
-import { WarningIcon } from '@components/icons/warning-icon'
-import { VCenterRow } from '@components/layout/v-center-row'
-import { Tabs } from '@components/shadcn/ui/themed/tabs'
-import { IOSTabsList } from '@components/tabs/ios-tabs'
-import { cumulativeSteps } from '@lib/math/quartile'
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
+import { VScrollPanel } from '@/components/v-scroll-panel'
+import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { makeUuid } from '@/lib/id'
+import { cumulativeSteps } from '@/lib/math/quartile'
+import { formatNumber } from '@/lib/text/text'
+import { GroupToggle, ToggleGroup } from '@/themed/v2/toggle-group'
 import { produce } from 'immer'
-import { newPlot, useHistory, type IPlot } from '../../history/history-store'
+import {
+  newHeatMapPlot,
+  useGroups,
+  useSheet,
+  type HistoryPlot,
+} from '../../history/history-store'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
-import { MAX_CLUSTER_ITEMS } from './heatmap-dialog'
+import { MAX_CLUSTER_ITEMS, MAX_HEATMAP_DIM } from './heatmap-dialog'
 
 export interface IProps extends IModalProps {
   open?: boolean
@@ -53,7 +60,9 @@ export function DotPlotDialog({
   const { settings, updateSettings } = useMatcalcSettings()
   const [dotplotMode, setDotPlotMode] = useState<DotPlotMode>('size')
   const [error, setError] = useState('')
-  const { sheet, addPlots, groups } = useHistory()
+
+  const sheet = useSheet()
+  const groups = useGroups()
 
   useEffect(() => {
     // In cluster mode, force column clustering
@@ -65,13 +74,16 @@ export function DotPlotDialog({
     }
   }, [isClusterMap])
 
-  function _resp(resp: string) {
-    onResponse?.(resp)
-  }
-
   function makeDotPlot() {
     if (!sheet) {
-      _resp(TEXT_CANCEL)
+      onResponse?.(TEXT_CANCEL)
+      return
+    }
+
+    if ((sheet as BaseDataFrame).shape[0] > MAX_HEATMAP_DIM) {
+      setError(
+        `You can plot up to ${MAX_HEATMAP_DIM.toLocaleString()} rows. Please reduce the number of rows in your table.`
+      )
       return
     }
 
@@ -88,18 +100,23 @@ export function DotPlotDialog({
       return
     }
 
+    const df = sheet as BaseDataFrame
+
     // get group means
     const means: number[][] = []
     const percents: number[][] = []
+    const groupsToPlot = groups.filter(
+      g => g.show || settings.groups.filter.mode === 'keep'
+    )
 
-    for (const group of groups) {
-      const colIdx = getColIdxFromGroup(sheet!, group)
+    for (const group of groupsToPlot) {
+      const colIdx = getColIdxFromGroup(df, group)
 
-      const dfg = sheet!.iloc(':', colIdx)
+      const dfg = df.iloc({ cols: colIdx }) as BaseDataFrame
       means.push(rowMean(dfg))
 
       // percentage in each group
-      const p: number[] = sheet!.rowMap(
+      const p: number[] = df.rowMap(
         row =>
           (row as number[]).filter(x => x > minThreshold).length / row.length
       )
@@ -107,20 +124,21 @@ export function DotPlotDialog({
       percents.push(p)
     }
 
-    const index = groups.map(g => g.name)
+    const index = groupsToPlot.map(g => g.name)
+
     // build group mean row centric then transpose
     const groupMeanDf = new AnnotationDataFrame({
       name: 'Group means',
       data: means,
       index,
-      columns: sheet!.index,
+      columns: (sheet as BaseDataFrame).index,
     }).t
 
     const groupPercentDf = new AnnotationDataFrame({
       name: DOT_PLOT_PERCENT_TABLE,
       data: percents,
       index,
-      columns: sheet!.index,
+      columns: (sheet as BaseDataFrame).index,
     }).t
 
     // historyDispatch({
@@ -134,7 +152,7 @@ export function DotPlotDialog({
       : groupMeanDf
 
     if (!dfZ) {
-      _resp(TEXT_CANCEL)
+      onResponse?.(TEXT_CANCEL)
       return
     }
 
@@ -152,6 +170,8 @@ export function DotPlotDialog({
     }
 
     const cf: IClusterFrame = {
+      id: makeUuid(),
+      name: 'Dot Plot Cluster Frame',
       rowTree: rowC,
       colTree: colC,
       df: dfZ as AnnotationDataFrame,
@@ -163,16 +183,18 @@ export function DotPlotDialog({
       mode: 'dot',
     }
 
-    const plot: IPlot = {
-      ...newPlot('Dot Plot', { main: cf, size: groupPercentDf }, 'dot'),
-      customProps: {
-        displayOptions,
-      },
-    }
+    const plot: HistoryPlot = newHeatMapPlot(
+      'Dot Plot',
+      { main: cf, size: groupPercentDf },
+      {
+        style: 'dot',
+        props: displayOptions,
+      }
+    )
 
-    addPlots([plot])
+    //addPlots([plot])
 
-    _resp(TEXT_OK)
+    onResponse?.(TEXT_OK, plot)
 
     //_resp(TEXT_OK)
   }
@@ -191,7 +213,9 @@ export function DotPlotDialog({
     // want 4 points equally spaced within range but not covering the
     //extremes
 
-    const dfLog = settings.heatmap.applyLog2 ? log2(sheet!, 1) : sheet!
+    const df = sheet as BaseDataFrame
+
+    const dfLog = settings.heatmap.applyLog2 ? log2(df, 1) : df
 
     // based sizes on log data
     let min = dfLog.min()
@@ -203,8 +227,8 @@ export function DotPlotDialog({
     const sizeDf = new AnnotationDataFrame({
       name: 'Size',
       data: size,
-      index: sheet!.index,
-      columns: sheet!.colNames,
+      index: df.index,
+      columns: df.columns,
     })
 
     // now z-score
@@ -212,25 +236,36 @@ export function DotPlotDialog({
     const dfZ = settings.heatmap.applyRowZscore ? rowZScore(dfLog) : dfLog
 
     if (!dfZ) {
-      _resp(TEXT_CANCEL)
+      onResponse?.(TEXT_CANCEL)
       return
     }
 
     // Sizes for legend are based on unadjusted matrix
 
-    if (settings.dot.size.useOriginalValuesForSizes) {
-      min = sheet!.min()
-      max = sheet!.max()
-      range = max - min
-    } else {
-      min = dfLog!.min()
-      max = dfLog!.max()
-      range = max - min
+    min = dfLog!.min()
+    max = dfLog!.max()
+    range = max - min
+
+    let sizes = cumulativeSteps(range, 4).map(s => s + min)
+    //.slice(0, 4)
+
+    // if data is logged, but user wants to see
+    // original values for sizes, then convert back
+    if (
+      settings.dot.size.useOriginalValuesForSizes &&
+      settings.heatmap.applyLog2
+    ) {
+      sizes = sizes.map(s => Math.round(Math.pow(2, s)))
     }
 
-    const sizes = cumulativeSteps(range, 5)
-      .map(s => s + min)
-      .slice(0, 4)
+    // console.log(
+    //   sizes,
+    //   cumulativeSteps(1, 4),
+    //   sizes.map((s, si) => ({
+    //     size: (si + 1) / 4,
+    //     value: formatNumber(s, DEFAULT_HEATMAP_PROPS.cells.values.dp),
+    //   }))
+    // )
 
     const hc = new HCluster()
 
@@ -246,6 +281,8 @@ export function DotPlotDialog({
     }
 
     const cf: IClusterFrame = {
+      id: makeUuid(),
+      name: 'Dot Plot Cluster Frame',
       rowTree: rowC,
       colTree: colC,
       df: dfZ as AnnotationDataFrame,
@@ -259,22 +296,28 @@ export function DotPlotDialog({
         ...DEFAULT_HEATMAP_PROPS.dot,
         useOriginalValuesForSizes: settings.dot.size.useOriginalValuesForSizes,
         mode: dotplotMode,
-        sizes,
+        sizes: sizes.map((s, si) => ({
+          size: (si + 1) / 4,
+          value: formatNumber(s, DEFAULT_HEATMAP_PROPS.cells.values.dp),
+        })),
+        //sizes: sizes.map(s => ({ size: s, value: s })),
         lim: [min, max],
       },
     }
 
-    const plot: IPlot = {
-      ...newPlot('Dot Plot', { main: cf, raw: sheet!, size: sizeDf }, 'dot'),
-      groups,
-      customProps: {
-        displayOptions,
-      },
-    }
+    const plot: HistoryPlot = newHeatMapPlot(
+      'Dot Plot',
+      { main: cf, raw: df, size: sizeDf },
+      {
+        style: 'dot',
+        groups,
+        props: displayOptions,
+      }
+    )
 
-    addPlots([plot])
+    //addPlots([plot])
 
-    _resp(TEXT_OK)
+    onResponse?.(TEXT_OK, plot)
 
     //_resp(TEXT_OK)
   }
@@ -285,12 +328,12 @@ export function DotPlotDialog({
       title="Dot Plot"
       onResponse={r => {
         if (r === TEXT_CANCEL) {
-          _resp(r)
+          onResponse?.(r)
         } else {
           makeDotPlot()
         }
       }}
-      //contentVariant="glass"
+      bodyCls="gap-y-4"
     >
       {error && (
         <VCenterRow className="text-destructive gap-x-2  rounded-theme p-2 bg-destructive/10">
@@ -300,105 +343,110 @@ export function DotPlotDialog({
       )}
 
       <HCenterRow>
-        <Tabs
-          defaultValue={dotplotMode}
-          value={dotplotMode}
-          onValueChange={v => setDotPlotMode(v as DotPlotMode)}
+        <ToggleGroup
+          //variant="outline"
+
+          value={[dotplotMode]}
+          onValueChange={v => setDotPlotMode(v[0] as DotPlotMode)}
+          className="overflow-hidden rounded-theme flex flex-row border border-border"
+          rounded="none"
+          //size="lg"
         >
-          <IOSTabsList
-            value={dotplotMode}
-            defaultWidth="80px"
-            tabs={[
-              { id: 'size', name: 'Size' },
-              { id: 'groups', name: 'Groups' },
-            ]}
-          />
-        </Tabs>
+          <GroupToggle key="size" value="size" className="w-20">
+            Size
+          </GroupToggle>
+
+          <GroupToggle key="groups" value="groups" className="w-20">
+            Groups
+          </GroupToggle>
+        </ToggleGroup>
       </HCenterRow>
 
-      {dotplotMode === 'size' && (
-        <VCenterRow className="gap-x-1">
-          <CheckPropRow
-            title="Use original data for sizes"
-            checked={settings.dot.size.useOriginalValuesForSizes}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
-                draft.dot.size.useOriginalValuesForSizes = v
-              })
+      <VScrollPanel className="grow h-72" innerCls="flex flex-col gap-y-4">
+        {dotplotMode === 'size' && (
+          <VCenterRow className="gap-x-1">
+            <CheckPropRow
+              title="Use original data for sizes"
+              checked={settings.dot.size.useOriginalValuesForSizes}
+              onCheckedChange={v => {
+                const newSettings = produce(settings, draft => {
+                  draft.dot.size.useOriginalValuesForSizes = v
+                })
 
-              updateSettings(newSettings)
-            }}
-          />
-          <InfoHoverCard title="Use original data for sizes">
-            <p>
-              Show the original data in the dot plot sizes. This is useful if
-              you do not want to interpret log values.
-            </p>
-          </InfoHoverCard>
-        </VCenterRow>
-      )}
+                updateSettings(newSettings)
+              }}
+            />
+            <InfoHoverCard>
+              Label dot sizes with original data values. This is useful if you
+              do not want to interpret log values.
+            </InfoHoverCard>
+          </VCenterRow>
+        )}
 
-      <Accordion
-        type="multiple"
-        defaultValue={['transform', 'cluster']}
-        //className="p-4 bg-background rounded-lg"
-      >
-        <SettingsAccordionItem title="Transform">
-          <Checkbox
-            checked={settings.heatmap.applyLog2}
-            onCheckedChange={value => {
-              const newSettings = produce(settings, draft => {
-                draft.heatmap.applyLog2 = value
-              })
-
-              updateSettings(newSettings)
-            }}
+        <Accordion
+          multiple={true}
+          defaultValue={['transform', 'cluster']}
+          variant="settings"
+        >
+          <SettingsAccordionItem
+            title="Transform"
+            description="Modify data before plotting for improved contrast."
           >
-            Log2(data + 1)
-          </Checkbox>
+            <CheckPropRow
+              title="Log2(data + 1)"
+              checked={settings.heatmap.applyLog2}
+              onCheckedChange={value => {
+                const newSettings = produce(settings, draft => {
+                  draft.heatmap.applyLog2 = value
+                })
 
-          <Checkbox
-            checked={settings.heatmap.applyRowZscore}
-            onCheckedChange={value => {
-              const newSettings = produce(settings, draft => {
-                draft.heatmap.applyRowZscore = value
-              })
+                updateSettings(newSettings)
+              }}
+            />
 
-              updateSettings(newSettings)
-            }}
+            <CheckPropRow
+              title="Z-score rows"
+              checked={settings.heatmap.applyRowZscore}
+              onCheckedChange={value => {
+                const newSettings = produce(settings, draft => {
+                  draft.heatmap.applyRowZscore = value
+                })
+
+                updateSettings(newSettings)
+              }}
+            />
+          </SettingsAccordionItem>
+
+          <SettingsAccordionItem
+            title="Cluster"
+            description="Apply hierarchical row/column clustering to data."
           >
-            Z-score rows
-          </Checkbox>
-        </SettingsAccordionItem>
+            <CheckPropRow
+              title="Rows"
+              checked={settings.heatmap.clusterRows}
+              onCheckedChange={value => {
+                const newSettings = produce(settings, draft => {
+                  draft.heatmap.clusterRows = value
+                })
 
-        <SettingsAccordionItem title="Cluster">
-          <Checkbox
-            checked={settings.heatmap.clusterRows}
-            onCheckedChange={value => {
-              const newSettings = produce(settings, draft => {
-                draft.heatmap.clusterRows = value
-              })
+                updateSettings(newSettings)
+              }}
+            />
 
-              updateSettings(newSettings)
-            }}
-          >
-            Rows
-          </Checkbox>
+            <CheckPropRow
+              title="Columns"
+              checked={settings.heatmap.clusterCols}
+              onCheckedChange={value => {
+                const newSettings = produce(settings, draft => {
+                  draft.heatmap.clusterCols = value
+                })
 
-          <Checkbox
-            checked={settings.heatmap.clusterCols}
-            onCheckedChange={value => {
-              const newSettings = produce(settings, draft => {
-                draft.heatmap.clusterCols = value
-              })
-
-              updateSettings(newSettings)
-            }}
-          >
-            Columns
-          </Checkbox>
-        </SettingsAccordionItem>
-      </Accordion>
+                updateSettings(newSettings)
+              }}
+            />
+          </SettingsAccordionItem>
+        </Accordion>
+      </VScrollPanel>
     </OKCancelDialog>
   )
 }

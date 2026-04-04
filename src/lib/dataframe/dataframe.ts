@@ -1,4 +1,4 @@
-import { range } from '@lib/math/range'
+import { range } from '@/lib/math/range'
 import {
   BaseDataFrame,
   findCol,
@@ -8,19 +8,27 @@ import {
   type LocType,
 } from './base-dataframe'
 import { makeCell } from './cell'
+
 import {
+  DataIndex,
+  Index,
+  makeColumns,
+  makeIndex,
   shapesEqual,
   type IndexFromType,
   type IndexId,
   type SeriesData,
-  type SeriesFromType,
   type Shape,
-} from './dataframe-types'
-import { DataIndex, Index, makeColumns, makeIndex } from './index'
-import { BaseSeries, Series, type ISeriesOptions } from './series'
+} from './index'
+import {
+  BaseSeries,
+  DataSeries,
+  type ISeriesOptions,
+  type SeriesFromType,
+} from './series'
 
 export interface IDataFrameOptions extends ISeriesOptions {
-  data?: BaseDataFrame | BaseSeries | SeriesData[] | SeriesData[][]
+  data?: BaseSeries | BaseSeries[] | SeriesData[] | SeriesData[][]
   columns?: IndexFromType | undefined
   indexName?: string
 }
@@ -135,7 +143,7 @@ export class DataFrame extends BaseDataFrame {
 
     const v = this._data.map(row => row[idx]!) //this.colValues(idx)
 
-    return new Series(v, {
+    return new DataSeries(v, {
       name: this._columns.get(idx) as string,
       index: this._index,
     })
@@ -151,7 +159,7 @@ export class DataFrame extends BaseDataFrame {
     const colIdx = findCol(this, col)
 
     if (colIdx === -1) {
-      throw new Error('invalid col')
+      throw new Error('invalid col ' + col)
     }
 
     return this._data[rowIdx]![colIdx]! // ?? NaN
@@ -170,7 +178,7 @@ export class DataFrame extends BaseDataFrame {
       throw new Error('invalid row')
     }
 
-    return new Series(this._data[idx]!, {
+    return new DataSeries(this._data[idx]!, {
       name: this.rowName(idx),
       index: this._columns,
     })
@@ -211,9 +219,28 @@ export class DataFrame extends BaseDataFrame {
     return df
   }
 
-  override set(row: number, col: number, v: SeriesData): BaseDataFrame {
-    this._data[row]![col]! = makeCell(v)
-    return this
+  override at(
+    row: IndexId,
+    col: IndexId,
+    v: SeriesData,
+    inplace = true
+  ): BaseDataFrame {
+    const df: DataFrame = inplace ? this : (this.copy() as DataFrame)
+
+    const rowIdx = findRow(df, row)
+    const colIdx = findCol(df, col)
+
+    if (rowIdx === -1) {
+      throw new Error(`${row} is an invalid row`)
+    }
+
+    if (colIdx === -1) {
+      throw new Error(`${col} is an invalid column`)
+    }
+
+    df._data[rowIdx]![colIdx]! = makeCell(v)
+
+    return df
   }
 
   override setIndex(index: IndexFromType, inplace = true): BaseDataFrame {
@@ -236,8 +263,12 @@ export class DataFrame extends BaseDataFrame {
     return this._index
   }
 
-  override get columns(): Index {
-    return this._columns
+  // override get columns(): Index {
+  //   return this._columns
+  // }
+
+  override get columns(): string[] {
+    return this._columns.strs
   }
 
   override setColNames(
@@ -260,7 +291,7 @@ export class DataFrame extends BaseDataFrame {
   override get cols(): BaseSeries[] {
     return range(this.shape[1]).map(
       (c: number) =>
-        new Series(
+        new DataSeries(
           this._data.map(row => row[c]!),
           {
             name: this._columns.get(c) as string,
@@ -322,11 +353,14 @@ export class DataFrame extends BaseDataFrame {
     return _colMap(this, f)
   }
 
-  override iloc(rows: LocType = ':', cols: LocType = ':'): BaseDataFrame {
-    return _iloc(this, rows, cols)
+  override iloc({
+    rows,
+    cols,
+  }: { rows?: LocType; cols?: LocType } = {}): BaseDataFrame {
+    return _iloc(this, rows ?? ':', cols ?? ':')
   }
 
-  min(): number {
+  override min(): number {
     let min = Number.MAX_VALUE
     for (const row of this._data) {
       for (const cell of row) {
@@ -337,7 +371,7 @@ export class DataFrame extends BaseDataFrame {
     return min
   }
 
-  max(): number {
+  override max(): number {
     let max = Number.MIN_VALUE
     for (const row of this._data) {
       for (const cell of row) {
@@ -372,8 +406,8 @@ export class DataFrame extends BaseDataFrame {
     })
   }
 
-  override replaceData(
-    data: SeriesData[][] | SeriesData[] | BaseDataFrame | BaseSeries
+  override replace(
+    data: SeriesData[] | SeriesData[][] | BaseSeries
   ): BaseDataFrame {
     if (!shapesEqual(shape(data), this.shape)) {
       throw new Error('replacement data must be same shape as matrix')
@@ -381,9 +415,9 @@ export class DataFrame extends BaseDataFrame {
 
     return new DataFrame({
       name: this.name,
-      data: data instanceof BaseDataFrame ? data.values : data,
-      index: this._index.copy(),
-      columns: this._columns.copy(),
+      data,
+      index: this._index,
+      columns: this._columns,
     })
   }
 }
@@ -614,7 +648,7 @@ function _iloc(
     data: d,
     name: df.name,
     index: df.index.filter(rowIdx),
-    columns: df.columns.filter(colIdx),
+    columns: df._columns.filter(colIdx),
   })
 
   return ret

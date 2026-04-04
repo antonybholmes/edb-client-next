@@ -1,14 +1,13 @@
+import { type ILinkProps } from '@/interfaces/link-props'
+import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_INSET_RING_CLS } from '@/theme'
-import { type ILinkProps } from '@interfaces/link-props'
-import { cn } from '@lib/shadcn-utils'
 import { BaseLink } from './base-link'
 
-import { buttonVariants } from '@themed/button'
+import { buttonVariants } from '@/themed/v2/button'
 import type { VariantProps } from 'class-variance-authority'
 
 export interface IButtonLinkProps
-  extends ILinkProps,
-    VariantProps<typeof buttonVariants> {}
+  extends ILinkProps, VariantProps<typeof buttonVariants> {}
 
 export function ButtonLink({
   ref,

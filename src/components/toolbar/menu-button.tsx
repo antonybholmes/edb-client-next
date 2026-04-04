@@ -1,5 +1,5 @@
-import { cn } from '@lib/shadcn-utils'
-import { type IButtonProps } from '@themed/button'
+import { cn } from '@/lib/shadcn-utils'
+import { type IButtonProps } from '@/themed/v2/button'
 
 import { BaseMenuButton } from './base-menu-button'
 

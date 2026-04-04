@@ -1,56 +1,52 @@
-import type { DraggableSyntheticListeners } from '@dnd-kit/core'
+import type { IDivProps } from '@/interfaces/div-props'
+import { VCenterRow } from '@/layout/v-center-row'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import type { IDivProps } from '@interfaces/div-props'
-import { VCenterRow } from '@layout/v-center-row'
 
-import { cn } from '@lib/shadcn-utils'
+import type { IClassProps } from '@/interfaces/class-props'
+import { cn } from '@/lib/shadcn-utils'
 import type {
   ComponentPropsWithoutRef,
   CSSProperties,
   ElementType,
   ReactNode,
 } from 'react'
-import { createContext, useContext } from 'react'
 import { EllipsisIcon } from './icons/ellipsis-icon'
 import { VerticalGripIcon } from './icons/vertical-grip-icon'
 import { HCenterRow } from './layout/h-center-row'
 
-interface Context {
-  attributes: Record<string, any>
-  listeners: DraggableSyntheticListeners
-  //ref(node: HTMLElement | null | undefined): void
-  isDragging: boolean
-}
+// Will make items fade in when hovering over a drag item
+export const DRAG_HANDLE_APPEAR_CLS = `opacity-0 group-data-[focus=true]:opacity-50 
+  group-hover:opacity-50 hover:opacity-100 focus-visible:opacity-100 trans-opacity`
 
-export const SortableItemContext = createContext<Context>({
-  attributes: {},
-  listeners: undefined,
-  //ref: () => {},
-  isDragging: false,
-})
+export const DRAG_ICON_ANIM_CLS = `opacity-50 
+  group-data-[focus=true]:opacity-100 
+  group-data-[dragging=true]:opacity-100
+  group-hover:opacity-100 
+  trans-opacity`
 
-type SortableItemProps<T extends ElementType> = {
+// interface Context {
+//   id: string
+// }
+
+// export const SortableItemContext = createContext<Context>({
+//   id: '',
+// })
+
+type BaseSortableItemProps<T extends ElementType = 'li'> = {
   as?: T
   children?: ReactNode
+  extChildren?: ReactNode
 } & ComponentPropsWithoutRef<T>
 
-export function SortableItem<T extends ElementType = 'li'>({
+export function BaseSortableItem<T extends ElementType = 'li'>({
   id,
   as,
   className,
   style,
   children,
-}: SortableItemProps<T>) {
-  const {
-    attributes,
-    isDragging,
-    listeners,
-    setNodeRef,
-    //setActivatorNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: id! })
+}: BaseSortableItemProps<T>) {
+  const { isDragging, setNodeRef, transform, transition } = useSortable({ id })
 
   const dragStyle: CSSProperties = {
     opacity: isDragging ? 0.4 : undefined,
@@ -58,59 +54,98 @@ export function SortableItem<T extends ElementType = 'li'>({
     transition,
   }
 
-  const Component = as || 'li'
+  const Component = as ?? 'li'
 
   return (
-    <SortableItemContext.Provider value={{ attributes, listeners, isDragging }}>
-      <Component
-        id={id}
-        className={className}
-        ref={setNodeRef}
-        style={{ ...style, ...dragStyle }}
-        //role="tab"
-      >
-        {children}
-      </Component>
-    </SortableItemContext.Provider>
+    // <SortableItemContext.Provider value={{ id }}>
+    <Component
+      id={id}
+      className={cn('group relative', className)}
+      ref={setNodeRef}
+      style={{ ...style, ...dragStyle }}
+      //role="tab"
+    >
+      {children}
+    </Component>
+    // </SortableItemContext.Provider>
   )
 }
 
-export const DRAG_HANDLE_APPEAR_CLS = `opacity-0 group-data-[focus=true]:opacity-50 group-hover:opacity-50 hover:opacity-100 focus-visible:opacity-100 trans-opacity`
+type SortableItemProps<T extends ElementType = 'li'> =
+  BaseSortableItemProps<T> & {
+    //we can optionally pass a custom drag handle instead of the default one rendered inside SortableItem
+    dragHandle?: ReactNode
+    innerCls?: string
+  }
 
-export const DRAG_HANDLE_HOVER_ANIM_CLS = `scale-75 
-  group-data-[focus=true]:scale-100 group-hover:scale-100 
-  transition-transform 
-  duration-200`
+export function SortableItem<T extends ElementType = 'li'>({
+  as,
+  id,
+  dragHandle,
+  innerCls,
+  className,
+  children,
+  extChildren,
+}: SortableItemProps<T>) {
+  return (
+    <BaseSortableItem
+      as={as ?? 'li'}
+      id={id}
+      className={cn(
+        'flex flex-row items-center gap-x-2 grow min-w-0',
+        className
+      )}
+      style={{ minWidth: 0 }}
+    >
+      <VCenterRow
+        className={cn(
+          'gap-x-1.5 pl-1.5 pr-1.5 py-1 h-full hover:bg-muted/30 grow rounded-theme min-h-10',
+          innerCls
+        )}
+      >
+        {dragHandle ? dragHandle : <DragHandle id={id} />}
+        {children}
+      </VCenterRow>
+      {extChildren}
+    </BaseSortableItem>
+  )
+}
 
-export function DragHandle({ className, style, ...props }: IDivProps) {
-  const { attributes, listeners } = useContext(SortableItemContext)
+export function DragHandle({
+  id,
+  className,
+
+  style,
+  ...props
+}: IClassProps & { id: string }) {
+  //const { id } = useContext(SortableItemContext)
+  const { attributes, listeners, isDragging } = useSortable({ id })
 
   return (
     <VCenterRow
-      className={cn('cursor-ns-resize', className)}
+      className={cn('group cursor-ns-resize w-4.5 justify-center', className)}
+      data-dragging={isDragging}
       {...listeners}
       {...attributes}
       {...props}
     >
-      <VerticalGripIcon
-        w="w-4.5 h-4.5"
-        style={style}
-        className={DRAG_HANDLE_HOVER_ANIM_CLS}
-      />
+      <VerticalGripIcon w={16} style={style} className={DRAG_ICON_ANIM_CLS} />
     </VCenterRow>
   )
 }
 
 export function SmallDragHandle({
+  id,
   className = 'cursor-ns-resize',
   ...props
-}: IDivProps) {
-  const { attributes, listeners } = useContext(SortableItemContext)
+}: IDivProps & { id: string }) {
+  //const { id } = useContext(SortableItemContext)
+  const { attributes, listeners } = useSortable({ id })
 
   return (
     <span
       className={cn(
-        'inline-flex flex-row items-center justify-center trans-opacity hover:opacity-100 opacity-30',
+        'inline-flex flex-row items-center justify-center',
         className
       )}
       {...listeners}
@@ -123,11 +158,13 @@ export function SmallDragHandle({
 }
 
 export function HDragHandle({
+  id,
   className = 'cursor-ew-resize',
   style,
   ...props
-}: IDivProps) {
-  const { attributes, listeners } = useContext(SortableItemContext)
+}: IDivProps & { id: string }) {
+  //const { id } = useContext(SortableItemContext)
+  const { attributes, listeners } = useSortable({ id })
 
   return (
     <HCenterRow

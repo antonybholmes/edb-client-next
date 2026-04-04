@@ -1,34 +1,39 @@
-import { cellStr } from '@lib/dataframe/cell'
+import { cellStr } from '@/lib/dataframe/cell'
 
-import { type ICell } from '@interfaces/cell'
-import { ZERO_POS, type IPos } from '@interfaces/pos'
+import { type ICell } from '@/interfaces/cell'
+import { ZERO_POS, type IPos } from '@/interfaces/pos'
 
-import { type IClusterFrame } from '@lib/math/hcluster'
+import { type IClusterFrame } from '@/lib/math/hcluster'
 
-import { HColorBarSvg, VColorBarSvg } from '@components/plot/color-bar-svg'
-import { CellsSvg, DotsSvg, GridSvg } from '@components/plot/heatmap/cell-svg'
+import { HColorBarSvg, VColorBarSvg } from '@/components/plot/color-bar-svg'
+import { CellsSvg, DotsSvg, GridSvg } from '@/components/plot/heatmap/cell-svg'
 import {
   ColGroupsSvg,
   ColLabelsSvg,
   ColTreeTopSvg,
-} from '@components/plot/heatmap/col-svg'
+} from '@/components/plot/heatmap/col-svg'
 import {
   LEGEND_BLOCK_SIZE,
   MIN_INNER_HEIGHT,
-  type IHeatMapDisplayOptions,
-} from '@components/plot/heatmap/heatmap-svg-props'
+} from '@/components/plot/heatmap/heatmap-svg-props'
 
-import { RowLabelsSvg, RowTreeSvg } from '@components/plot/heatmap/row-svg'
-import type { ISVGProps } from '@interfaces/svg-props'
-import { getColIdxFromGroup } from '@lib/dataframe/dataframe-utils'
-import { range } from '@lib/math/range'
-import { useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { RowLabelsSvg, RowTreeSvg } from '@/components/plot/heatmap/row-svg'
+import type { ISVGProps } from '@/interfaces/svg-props'
+import { getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
+import { range } from '@/lib/math/range'
+import { useCallback, useMemo, useRef, useState } from 'react'
 
 import { BaseSvg } from '@/components/base-svg'
+import type { IMarginProps } from '@/components/plot/svg-props'
+import { useMergeRefs } from '@/hooks/merge-refs'
 import { COLOR_MAPS } from '@/lib/color/colormap'
-import type { BaseDataFrame } from '@lib/dataframe/base-dataframe'
-import { usePlot } from '../../history/history-store'
+import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { svgPointToScreen } from '@/lib/graphics/svg'
+import { createPortal } from 'react-dom'
+import { usePlot, type HeatMapPlot } from '../../history/history-store'
+import { ActionListSvg } from './action-list-svg'
 import { DotLegend, LegendBottomSvg, LegendRightSvg } from './legend-svg'
+import { TitleSvg } from './title-svg'
 
 export interface ITooltip {
   pos: IPos
@@ -44,17 +49,17 @@ interface IProps extends ISVGProps {
 }
 
 export function HeatMapSvg({ ref, plotAddr }: IProps) {
-  const plot = usePlot(plotAddr)!
-  //const { groups } = useHistory()
+  const plot = usePlot(plotAddr)! as HeatMapPlot
 
   //console.log(plot)
 
-  const cf = plot?.dataframes['main'] as IClusterFrame
+  const cf = plot.dataframes['main'] as IClusterFrame
 
-  const groups = plot?.groups || []
+  const groups = plot.groups || []
 
-  const displayOptions = plot.customProps
-    .displayOptions as IHeatMapDisplayOptions
+  //const groups = groups.filter(g => g.show|| settings.groups.filter.mode === 'keep')
+
+  const displayOptions = plot.props
 
   const blockSize = displayOptions.blockSize
 
@@ -64,7 +69,9 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
   }
 
   const innerRef = useRef<SVGSVGElement>(null)
-  useImperativeHandle(ref, () => innerRef.current!)
+  const setRefs = useMergeRefs(innerRef, ref)
+
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const tooltipRef = useRef<HTMLDivElement>(null)
   const highlightRef = useRef<HTMLSpanElement>(null)
@@ -76,9 +83,9 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
 
   const rowLabelsMetaW =
     displayOptions.rowLabels.width *
-    (displayOptions.rowLabels.showMetadata ? dfMain.rowMetaData.shape[1] : 1)
+    (displayOptions.rowLabels.showMetadata ? dfMain.rowObs.shape[1] : 1)
 
-  const margin = useMemo(() => {
+  const margin: IMarginProps = useMemo(() => {
     const left =
       displayOptions.padding +
       (cf.rowTree &&
@@ -127,10 +134,7 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
 
     const bottom =
       displayOptions.padding +
-      (displayOptions.colLabels.show &&
-      displayOptions.colLabels.position === 'bottom'
-        ? displayOptions.colLabels.width + displayOptions.padding
-        : 0) +
+      displayOptions.colLabels.width +
       (displayOptions.legend.show && displayOptions.legend.position === 'bottom'
         ? 2 * legendBlockSize + displayOptions.padding
         : 0) +
@@ -142,9 +146,42 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
     return { top, left, bottom, right }
   }, [displayOptions])
 
-  const svg = useMemo(() => {
+  const handleVariantEnter = useCallback(
+    (pos: IPos, cell: ICell) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+
+      if (!innerRef.current) {
+        return
+      }
+
+      const screen = svgPointToScreen(innerRef.current, pos.x, pos.y)
+
+      if (!screen) {
+        return
+      }
+
+      setToolTipInfo({ pos: screen, cell })
+    },
+    [margin.left, margin.top, blockSize, displayOptions.zoom]
+  )
+
+  const handleVariantLeave = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+
+    timeoutRef.current = setTimeout(() => setToolTipInfo(null), 300)
+  }, [])
+
+  const { svg, width, height } = useMemo(() => {
     if (!cf) {
-      return null
+      return {
+        svg: null,
+        width: 0,
+        height: 0,
+      }
     }
 
     const dfSize = plot?.dataframes['size'] as BaseDataFrame
@@ -164,18 +201,20 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
     if (cf.colTree) {
       colLeaves = cf.colTree.leaves
     } else if (groups.length > 0) {
-      // order according to group order
+      // if we are not clustering columns, but have groups,
+      // order by groups
 
       colLeaves = groups.map(group => getColIdxFromGroup(dfMain, group)).flat()
 
       const used = new Set<number>(colLeaves)
 
-      // add unused indices in order at end
+      // add unused indices in the order encountered at the end of the list
+      // so we don't lose any data but move the unclassified to the end
       if (displayOptions.groups.keepUnused) {
         colLeaves = [...colLeaves, ...range(s[1]).filter(i => !used.has(i))]
       }
     } else {
-      // keep current order
+      // no clustering or groups, just show in original order
 
       colLeaves = range(s[1])
     }
@@ -237,16 +276,19 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
       }
     }
 
-    return (
-      <BaseSvg
-        ref={innerRef}
-        scale={displayOptions.zoom}
-        width={width}
-        height={height}
-        //shapeRendering={SVG_CRISP_EDGES}
-        onMouseMove={onMouseMove}
-        className="absolute"
-      >
+    const svg = (
+      <>
+        {displayOptions.title.show && displayOptions.title.text && (
+          <TitleSvg
+            title={displayOptions.title.text}
+            font={displayOptions.title}
+            pos={{
+              x: margin.left + innerWidth / 2,
+              y: displayOptions.title.offset,
+            }}
+          />
+        )}
+
         {cf.colTree &&
           displayOptions.colTree.show &&
           displayOptions.colTree.position === 'top' && (
@@ -272,6 +314,26 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
             }}
             leaves={colLeaves}
             props={displayOptions}
+          />
+        )}
+
+        {displayOptions.colLabels.show && (
+          <ColLabelsSvg
+            df={dfMain}
+            leaves={colLeaves}
+            props={displayOptions}
+            colorMap={colColorMap}
+            pos={{
+              x: margin.left,
+              y:
+                displayOptions.colLabels.position === 'top'
+                  ? margin.top -
+                    displayOptions.padding -
+                    (displayOptions.groups.show && groups.length > 0
+                      ? displayOptions.groups.height + displayOptions.padding
+                      : 0)
+                  : margin.top + innerHeight + displayOptions.padding,
+            }}
           />
         )}
 
@@ -342,6 +404,8 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
               dfSize={dfSize}
               rowLeaves={rowLeaves}
               colLeaves={colLeaves}
+              handleVariantEnter={handleVariantEnter}
+              handleVariantLeave={handleVariantLeave}
               props={displayOptions}
               pos={{ x: margin.left, y: margin.top }}
             />
@@ -354,6 +418,8 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
               colLeaves={colLeaves}
               props={displayOptions}
               pos={{ x: margin.left, y: margin.top }}
+              handleVariantEnter={handleVariantEnter}
+              handleVariantLeave={handleVariantLeave}
             />
             <GridSvg
               width={innerWidth}
@@ -362,26 +428,6 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
               pos={{ x: margin.left, y: margin.top }}
             />
           </>
-        )}
-
-        {displayOptions.colLabels.show && (
-          <ColLabelsSvg
-            df={dfMain}
-            leaves={colLeaves}
-            props={displayOptions}
-            colorMap={colColorMap}
-            pos={{
-              x: margin.left,
-              y:
-                displayOptions.colLabels.position === 'top'
-                  ? margin.top -
-                    displayOptions.padding -
-                    (displayOptions.groups.show && groups.length > 0
-                      ? displayOptions.groups.height + displayOptions.padding
-                      : 0)
-                  : margin.top + innerHeight + displayOptions.padding,
-            }}
-          />
         )}
 
         {displayOptions.colorbar.show &&
@@ -441,7 +487,11 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
           groups.length > 0 &&
           displayOptions.legend.show &&
           displayOptions.legend.position.includes('right') && (
-            <LegendRightSvg pos={legendPos} props={displayOptions} />
+            <LegendRightSvg
+              pos={legendPos}
+              props={displayOptions}
+              groups={groups}
+            />
           )}
 
         {/* Legend on bottom */}
@@ -449,7 +499,7 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
         {displayOptions.groups.show &&
           groups.length > 0 &&
           displayOptions.legend.show &&
-          displayOptions.legend.position.includes('bottom') && (
+          displayOptions.legend.position === 'bottom' && (
             <LegendBottomSvg
               pos={{
                 x: margin.left,
@@ -463,101 +513,150 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
                     : 0),
               }}
               props={displayOptions}
+              groups={groups}
             />
           )}
 
         {/* Plot the dot legend */}
 
-        {dfSize &&
-          displayOptions.mode === 'dot' &&
+        {displayOptions.mode === 'dot' &&
           displayOptions.legend.position.includes('right') &&
           displayOptions.dot.legend.show && (
-            <DotLegend props={displayOptions} pos={dotLegendPos} />
+            <DotLegend
+              props={displayOptions}
+              pos={dotLegendPos}
+              groups={groups}
+            />
           )}
-      </BaseSvg>
+
+        {/* Show a list of transforms to create heatmap */}
+        {displayOptions.actions.show &&
+          plot.actions &&
+          plot.actions.length > 0 && (
+            <ActionListSvg
+              actions={plot.actions}
+              props={displayOptions}
+              pos={{
+                x: margin.left,
+                y:
+                  margin.top +
+                  innerHeight +
+                  3 * displayOptions.padding +
+                  (displayOptions.colLabels.show &&
+                  displayOptions.colLabels.position === 'bottom'
+                    ? displayOptions.colLabels.width + displayOptions.padding
+                    : 0) +
+                  (displayOptions.legend.show &&
+                  displayOptions.legend.position === 'bottom'
+                    ? 2 * legendBlockSize + displayOptions.padding
+                    : 0) +
+                  (displayOptions.colorbar.show &&
+                  displayOptions.colorbar.position === 'bottom'
+                    ? 2 * legendBlockSize + displayOptions.padding
+                    : 0),
+              }}
+            />
+          )}
+      </>
     )
-  }, [cf, displayOptions])
 
-  function onMouseMove(e: { pageX: number; pageY: number }) {
-    if (!innerRef.current) {
-      return
-    }
+    //console.log('rendering heatmap svg')
 
-    const rect = innerRef.current.getBoundingClientRect()
+    return { svg, width, height }
+  }, [cf, displayOptions, groups])
 
-    let c = Math.floor(
-      (e.pageX -
-        margin.left * displayOptions.zoom -
-        rect.left -
-        window.scrollX) /
-        scaledBlockSize.w
-    )
+  // function onMouseMove(e: { pageX: number; pageY: number }) {
+  //   if (!innerRef.current) {
+  //     return
+  //   }
 
-    if (c < 0 || c > dfMain.shape[1] - 1) {
-      c = -1
-    }
+  //   const rect = innerRef.current.getBoundingClientRect()
 
-    let r = Math.floor(
-      (e.pageY - margin.top * displayOptions.zoom - rect.top - window.scrollY) /
-        scaledBlockSize.h
-    )
+  //   let c = Math.floor(
+  //     (e.pageX -
+  //       margin.left * displayOptions.zoom -
+  //       rect.left -
+  //       window.scrollX) /
+  //       scaledBlockSize.w
+  //   )
 
-    if (r < 0 || r > dfMain.shape[0] - 1) {
-      r = -1
-    }
+  //   if (c < 0 || c > dfMain.shape[1] - 1) {
+  //     c = -1
+  //   }
 
-    if (r === -1 || c === -1) {
-      setToolTipInfo(null)
-    } else {
-      setToolTipInfo({
-        ...toolTipInfo,
-        pos: {
-          x: (margin.left + c * blockSize.w) * displayOptions.zoom - 1,
-          y: (margin.top + r * blockSize.h) * displayOptions.zoom - 1,
-        },
-        cell: { row: r, col: c },
-      })
-    }
-  }
+  //   let r = Math.floor(
+  //     (e.pageY - margin.top * displayOptions.zoom - rect.top - window.scrollY) /
+  //       scaledBlockSize.h
+  //   )
+
+  //   if (r < 0 || r > dfMain.shape[0] - 1) {
+  //     r = -1
+  //   }
+
+  //   if (r === -1 || c === -1) {
+  //     setToolTipInfo(null)
+  //   } else {
+  //     setToolTipInfo({
+  //       ...toolTipInfo,
+  //       pos: {
+  //         x: (margin.left + c * blockSize.w) * displayOptions.zoom - 1,
+  //         y: (margin.top + r * blockSize.h) * displayOptions.zoom - 1,
+  //       },
+  //       cell: { row: r, col: c },
+  //     })
+  //   }
+  // }
 
   //const inBlock = highlightCol[0] > -1 && highlightCol[1] > -1
 
   return (
     <>
-      {svg}
+      <BaseSvg
+        ref={setRefs}
+        scale={displayOptions.zoom}
+        width={width}
+        height={height}
+        //shapeRendering={SVG_CRISP_EDGES}
+        //onMouseMove={onMouseMove}
+        className="absolute"
+      >
+        {svg}
+      </BaseSvg>
 
-      {toolTipInfo && (
+      {displayOptions.tooltip.show && toolTipInfo && (
         <>
-          <div
-            ref={tooltipRef}
-            className="absolute z-50 rounded-lg bg-black/50 px-5 py-4 text-xs text-white"
-            style={{
-              left: toolTipInfo.pos.x + scaledBlockSize.w + 2,
-              top: toolTipInfo.pos.y + scaledBlockSize.h + 2,
-            }}
-          >
-            <p className="font-semibold">{`${dfMain.colName(
-              toolTipInfo.cell.col
-            )} (${toolTipInfo.cell.row + 1}, ${toolTipInfo.cell.col + 1})`}</p>
-            <p>
-              {cellStr(dfMain.get(toolTipInfo.cell.row, toolTipInfo.cell.col))}
-            </p>
-            {/* <p>
-          row: {toolTipInfo.cell.r + 1}, col: {toolTipInfo.cell.c + 1}
-        </p> */}
-          </div>
-
-          <span
-            ref={highlightRef}
-            className="absolute z-40 border-black"
-            style={{
-              top: `${toolTipInfo.pos.y}px`,
-              left: `${toolTipInfo.pos.x}px`,
-              width: `${scaledBlockSize.w + 1}px`,
-              height: `${scaledBlockSize.h + 1}px`,
-              borderWidth: `${Math.max(1, displayOptions.zoom)}px`,
-            }}
-          />
+          {createPortal(
+            <>
+              <div
+                ref={tooltipRef}
+                className="fixed z-50 rounded-lg bg-black/50 px-5 py-4 text-xs text-white"
+                style={{
+                  left: toolTipInfo.pos.x + scaledBlockSize.w + 2,
+                  top: toolTipInfo.pos.y + scaledBlockSize.h + 2,
+                }}
+              >
+                <p className="font-semibold">{`${dfMain.colName(
+                  toolTipInfo.cell.col
+                )} (${toolTipInfo.cell.row + 1}, ${toolTipInfo.cell.col + 1})`}</p>
+                <p>
+                  {cellStr(
+                    dfMain.get(toolTipInfo.cell.row, toolTipInfo.cell.col)
+                  )}
+                </p>
+              </div>
+              <span
+                ref={highlightRef}
+                className="fixed z-40 border border-black pointer-events-none"
+                style={{
+                  top: toolTipInfo.pos.y - 1,
+                  left: toolTipInfo.pos.x - 1,
+                  width: scaledBlockSize.w + 1,
+                  height: scaledBlockSize.h + 1,
+                }}
+              />
+            </>,
+            document.body
+          )}
         </>
       )}
     </>

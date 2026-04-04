@@ -1,6 +1,6 @@
 import { DNAPage } from '@/components/pages/apps/genomic/dna/dna-page'
+import MODULE_INFO from '@/components/pages/apps/genomic/dna/module.json'
 import { makeMetaDataFromModule } from '@/lib/metadata'
-import MODULE_INFO from '@components/pages/apps/genomic/dna/module.json'
 
 export const metadata = makeMetaDataFromModule(MODULE_INFO)
 

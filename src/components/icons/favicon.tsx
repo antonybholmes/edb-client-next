@@ -1,9 +1,11 @@
-'use client'
+// 'use client'
 
 import {
   ICON_TRANSITION_FROM_CLS,
   ICON_TRANSITION_TO_CLS,
 } from '@/interfaces/icon-props'
+import { cn } from '@/lib/shadcn-utils'
+import { BUTTON_LG_W_CLS } from '@/theme'
 import { useState } from 'react'
 import { VCenterRow } from '../layout/v-center-row'
 import { AppIcon } from './app-icon'
@@ -16,7 +18,10 @@ export function FavIcon() {
     <VCenterRow
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      className="w-header h-header aspect-square justify-center group relative"
+      className={cn(
+        BUTTON_LG_W_CLS,
+        'aspect-square justify-center group relative'
+      )}
     >
       <HomeIcon
         stroke="stroke-theme dark:stroke-foreground stroke-2"

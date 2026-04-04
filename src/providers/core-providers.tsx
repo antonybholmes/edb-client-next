@@ -1,10 +1,11 @@
-//// 'use client'
+'use client'
 
+import {
+  StackedToasts,
+  Provider as ToastProvider,
+} from '@/components/shadcn/ui/themed/v2/toast'
+import type { IChildrenProps } from '@/interfaces/children-props'
 import { QCP } from '@/qcp'
-import type { IChildrenProps } from '@interfaces/children-props'
-import { ZoomProvider } from './zoom-provider'
-
-//const PUBLISHABLE_KEY = import.meta.env.PUBLIC_CLERK_PUBLISHABLE_KEY
 
 export function CoreProviders({ children }: IChildrenProps) {
   // Add other providers nested here as needed
@@ -18,7 +19,10 @@ export function CoreProviders({ children }: IChildrenProps) {
       {/* <HistoryProvider> */}
       {/* <SelectionRangeProvider>*/}
 
-      <ZoomProvider>{children}</ZoomProvider>
+      <ToastProvider>
+        <StackedToasts />
+        {children}
+      </ToastProvider>
 
       {/* </SelectionRangeProvider> */}
       {/* </HistoryProvider> */}

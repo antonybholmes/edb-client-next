@@ -1,5 +1,5 @@
+import { locStr, type IGenomicLocation } from '@/lib/genomic/genomic'
 import type { BigWig } from '@gmod/bbi'
-import { locStr, type IGenomicLocation } from '@lib/genomic/genomic'
 import { type ISeqPos } from '../../svg/base-seq-track-svg'
 import { BaseSeqReader, makeBins } from './base-seq-reader'
 
@@ -38,6 +38,8 @@ export class BigWigReader extends BaseSeqReader {
         { scale: 1 / binSize }
       )
 
+      const pointCountMap = new Map<number, number>()
+
       // fill in the occupied bins
       for (const f of feats) {
         const start = f.start + 1
@@ -47,14 +49,15 @@ export class BigWigReader extends BaseSeqReader {
         const bin = Math.max(0, Math.floor((start - location.start) / binSize))
 
         points[bin]!.realY += y
-        points[bin]!.numPoints!++
+        pointCountMap.set(bin, (pointCountMap.get(bin) ?? 0) + 1)
       }
 
       // average the point realY to account for multiple bins in a region
-      for (const b of points) {
-        if (b.numPoints! > 0) {
+      for (const [bin, p] of points.entries()) {
+        const count = pointCountMap.get(bin) ?? 0
+        if (count! > 0) {
           // average the bin
-          b.realY = b.realY / b.numPoints!
+          p.realY = p.realY / count
         }
       }
 
@@ -72,7 +75,7 @@ export class BigWigReader extends BaseSeqReader {
     // make up the bins from the reference bin starts
     // const points = binLoc.bins.map(b => ({ ...b }))
 
-    // // fill in the occupied bins
+    // fill in the occupied bins
     // for (const b of bins) {
     //   //points[b.bin]!.y = b.y
 

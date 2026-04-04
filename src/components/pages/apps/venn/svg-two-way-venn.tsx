@@ -1,10 +1,10 @@
-import { DEG_TO_RAD, ILim } from '@/lib/math/math'
+import { DEG_TO_RAD, type ILim } from '@/lib/math/math'
 import { gsap } from 'gsap'
 import { useEffect, useRef } from 'react'
 import {
   Circle,
   CountText,
-  IVennProps,
+  type IVennProps,
   makeTitle,
   TitleText,
 } from './svg-three-way-venn'
@@ -58,41 +58,41 @@ export function SVGTwoWayVenn({ overlapLabels = {} }: IVennProps) {
     Math.sin(30 * DEG_TO_RAD) * radius3,
   ]
 
-  const cA: ILim = [center[0] - offset2[0], center[1] - offset2[1]]
-  const cB: ILim = [center[0] + offset2[0], center[1] - offset2[1]]
+  const cA: ILim = [center[0]! - offset2[0]!, center[1]! - offset2[1]!]
+  const cB: ILim = [center[0]! + offset2[0]!, center[1]! - offset2[1]!]
 
-  const lA: ILim = [center[0] - offset3[0], center[1] - offset3[1]]
-  const lB: ILim = [center[0] + offset3[0], center[1] - offset3[1]]
+  const lA: ILim = [center[0]! - offset3[0]!, center[1]! - offset3[1]!]
+  const lB: ILim = [center[0]! + offset3[0]!, center[1]! - offset3[1]!]
   return (
     <>
       {/* Circle A */}
-      <Circle ref={circle1Ref} loc={cA} circle={circles['1']} />
+      <Circle ref={circle1Ref} loc={cA} circle={circles['1']!} />
 
-      <TitleText id="1" center={[cA[0], cA[1] - labelRadius]} />
+      <TitleText id="1" center={[cA[0]!, cA[1]! - labelRadius]} />
 
       <CountText
         id="1"
-        center={[vennListsInUse > 1 ? lA[0] : cA[0], cA[1]]}
+        center={[vennListsInUse > 1 ? lA[0]! : cA[0]!, cA[1]!]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       {/* Circle B */}
 
-      <Circle ref={circle2Ref} loc={cB} circle={circles['2']} />
+      <Circle ref={circle2Ref} loc={cB} circle={circles['2']!} />
 
-      <TitleText id="2" center={[cB[0], cB[1] - labelRadius]} />
+      <TitleText id="2" center={[cB[0]!, cB[1]! - labelRadius]} />
 
       <CountText
         id="2"
-        center={[lB[0], cB[1]]}
+        center={[lB[0]!, cB[1]!]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />
 
       <CountText
         id="1:2"
-        center={[(cA[0] + cB[0]) / 2, cA[1]]}
+        center={[(cA[0]! + cB[0]!) / 2, cA[1]!]}
         overlapLabels={overlapLabels}
         setItems={_setItems}
       />

@@ -1,30 +1,30 @@
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 
-import { OKCancelDialog, type IModalProps } from '@dialog/ok-cancel-dialog'
-import { findCol } from '@lib/dataframe/base-dataframe'
-import { uniqueInOrder } from '@lib/utils'
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@themed/form'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@themed/select'
+import { Form, FormField } from '@/components/shadcn/ui/themed/v2/form'
+import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
+import { BaseDataFrame, findCol } from '@/lib/dataframe/base-dataframe'
+import { uniqueInOrder } from '@/lib/utils'
+import { SelectItem, SelectList } from '@/themed/v2/select'
 
+import { CheckPropRow } from '@/components/dialog/check-prop-row'
+import { PropRow } from '@/components/dialog/prop-row'
 import {
   DEFAULT_FILL_PROPS,
   DEFAULT_STROKE_PROPS,
   WHITE_FILL_PROPS,
-} from '@components/plot/svg-props'
-import { TAB10_PALETTE } from '@lib/color/palette'
-import { DataFrame } from '@lib/dataframe/dataframe'
-import { range } from '@lib/math/range'
-import { Checkbox } from '@themed/check-box'
+} from '@/components/plot/svg-props'
+import { TAB10_PALETTE } from '@/lib/color/palette'
+import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import { DataFrame } from '@/lib/dataframe/dataframe'
+import { range } from '@/lib/math/range'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
-import { newPlot, useHistory, type IPlot } from '../../history/history-store'
-import { cleanHue, DEFAULT_BOX_PLOT_DISPLAY_PROPS } from './boxplot-plot-svg'
+import {
+  newBoxPlot,
+  useHistory,
+  type HistoryPlot,
+} from '../../history/history-store'
+import { cleanHue } from './boxplot-plot-svg'
 
 const MAX_COLS = 30
 
@@ -54,11 +54,11 @@ export function BoxPlotDialog({
   //df,
   onResponse,
 }: IProps) {
-  const { sheet, addPlots } = useHistory()
+  const { sheet } = useHistory()
 
   //const branch = findBranch(branchAddr, history)[0]
   //const step = currentStep(branch)[0]
-  let df = sheet! //currentSheet(step)[0]!
+  let df = sheet!.df as AnnotationDataFrame
 
   function _resp(resp: string) {
     onResponse?.(resp)
@@ -68,8 +68,8 @@ export function BoxPlotDialog({
 
   const form = useForm<IFormInput>({
     defaultValues: {
-      xCol: df?.colNames[0] ?? '',
-      yCol: df?.colNames[1] ?? '',
+      xCol: df?.columns[0] ?? '',
+      yCol: df?.columns[1] ?? '',
       hueCol: '<none>',
       columnMode: false,
     },
@@ -88,6 +88,8 @@ export function BoxPlotDialog({
     let xOrder: string[] = []
     let hueOrder: string[] = ['']
 
+    let boxDf: BaseDataFrame = df
+
     if (data.columnMode) {
       // convert columns to data
       xCol = 'Category'
@@ -97,13 +99,13 @@ export function BoxPlotDialog({
       // the name of the x col. That way we have a name for it when creating
       // the length rather than using a blank space
       hueOrder = [xCol]
-      xOrder = uniqueInOrder(df.colNames)
+      xOrder = uniqueInOrder(df.columns)
 
       const data = range(df.shape[0])
-        .map(col => df.col(col).numsNoNA.map(v => [df.colNames[col]!, v]))
+        .map(col => df.col(col).numsNoNA.map(v => [df.columns[col]!, v]))
         .flat()
 
-      df = new DataFrame({ data, columns: ['Category', 'Datum'] })
+      boxDf = new DataFrame({ data, columns: ['Category', 'Datum'] })
     } else {
       xCol = data.xCol
       yCol = data.yCol
@@ -154,22 +156,23 @@ export function BoxPlotDialog({
       ])
     )
 
-    const plot: IPlot = {
-      ...newPlot('Box Plot', { main: df }, 'box'),
-      customProps: {
+    const plot: HistoryPlot = newBoxPlot(
+      'Box Plot',
+      { main: boxDf },
+      {
         x: xCol,
         y: yCol,
         hue: hueCol,
         xOrder,
         hueOrder,
-        displayOptions: { ...DEFAULT_BOX_PLOT_DISPLAY_PROPS },
+
         singlePlotDisplayOptions,
-      },
-    }
+      }
+    )
 
     //console.log('add plot', plot)
 
-    addPlots([plot])
+    //addPlots([plot])
 
     // plotsDispatch({
     //   type: 'add',
@@ -186,10 +189,10 @@ export function BoxPlotDialog({
     //   style: 'Box Plot Plot',
     // })
 
-    _resp(TEXT_OK)
+    onResponse?.(TEXT_OK, plot)
   }
 
-  const cols = df?.colNames.slice(0, MAX_COLS)
+  const cols = df?.columns.slice(0, MAX_COLS)
 
   return (
     <OKCancelDialog
@@ -213,15 +216,11 @@ export function BoxPlotDialog({
             control={form.control}
             name="columnMode"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center gap-x-3">
-                <FormControl>
-                  <Checkbox
-                    onCheckedChange={field.onChange}
-                    checked={field.value}
-                  />
-                </FormControl>
-                <FormLabel>Column Mode</FormLabel>
-              </FormItem>
+              <CheckPropRow
+                title="Column Mode"
+                onCheckedChange={field.onChange}
+                checked={field.value}
+              />
             )}
           />
 
@@ -229,27 +228,19 @@ export function BoxPlotDialog({
             control={form.control}
             name="xCol"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center gap-x-2">
-                <FormLabel className="w-24 shrink-0">X</FormLabel>
-                <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder="Select the x column" />
-                    </SelectTrigger>
-
-                    <SelectContent>
-                      {cols.map((name, ni) => (
-                        <SelectItem value={name} key={ni}>
-                          {name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-              </FormItem>
+              <PropRow title="X">
+                <SelectList
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  w="lg"
+                >
+                  {cols.map((name, ni) => (
+                    <SelectItem value={name} key={ni}>
+                      {name}
+                    </SelectItem>
+                  ))}
+                </SelectList>
+              </PropRow>
             )}
           />
 
@@ -257,27 +248,19 @@ export function BoxPlotDialog({
             control={form.control}
             name="yCol"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center gap-x-2">
-                <FormLabel className="w-24 shrink-0">Y</FormLabel>
-                <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder="Select the y column" />
-                    </SelectTrigger>
-
-                    <SelectContent>
-                      {cols.map((name, ni) => (
-                        <SelectItem value={name} key={ni}>
-                          {name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-              </FormItem>
+              <PropRow title="X">
+                <SelectList
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  w="lg"
+                >
+                  {cols.map((name, ni) => (
+                    <SelectItem value={name} key={ni}>
+                      {name}
+                    </SelectItem>
+                  ))}
+                </SelectList>
+              </PropRow>
             )}
           />
 
@@ -285,30 +268,23 @@ export function BoxPlotDialog({
             control={form.control}
             name="hueCol"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center gap-x-2">
-                <FormLabel className="w-24 shrink-0">Hue</FormLabel>
-                <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder="Select the hue column" />
-                    </SelectTrigger>
+              <PropRow title="Hue">
+                <SelectList
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  w="lg"
+                >
+                  <SelectItem value="<none>" key="none">
+                    {'<none>'}
+                  </SelectItem>
 
-                    <SelectContent>
-                      <SelectItem value="<none>" key="none">
-                        {'<none>'}
-                      </SelectItem>
-                      {cols.map((name, ni) => (
-                        <SelectItem value={name} key={ni}>
-                          {name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-              </FormItem>
+                  {cols.map((name, ni) => (
+                    <SelectItem value={name} key={ni}>
+                      {name}
+                    </SelectItem>
+                  ))}
+                </SelectList>
+              </PropRow>
             )}
           />
 

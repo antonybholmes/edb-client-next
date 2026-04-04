@@ -1,28 +1,39 @@
-import type { IDivProps } from '@interfaces/div-props'
-import type { UndefStr } from '@lib/text/text'
+import type { IDivProps } from '@/interfaces/div-props'
+import type { UndefStr } from '@/lib/text/text'
 import { createContext, useState, type ReactNode } from 'react'
 
+export type NodeType = 'folder' | 'file'
+export type OpenState = boolean | 'auto'
+
 export interface ITab {
-  showChildren?: 'always' | 'auto' | 'never'
+  //showChildren?: 'always' | 'auto' | 'never'
   // The id should be a unique identifier for the tab
   id: string
+  path?: string
   // Can be used as alternative name, for instance if the id is a uuid,
   // name can be something more human friendly
   //isGroup?: boolean
   name?: string
+  description?: string
   type?: string
   //tab?: ReactNode
   icon?: ReactNode
+  // alternative icon when tab is open
+  openIcon?: ReactNode
+  //showIcon?: boolean
   content?: ReactNode
-  //data?: unknown
+  data?: unknown
   size?: number
-  isOpen?: boolean
+  isOpen?: OpenState
   closable?: boolean
+  // control if this tab represents a folder in a tree structure
+  //nodeType?: NodeType
   onDelete?: () => void
   onClick?: () => void
   checked?: boolean
   //onCheckedChange?: (state: boolean) => void
   children?: ITab[]
+  createdAt?: string | number | Date
 }
 
 export interface IUrlTab extends ITab {
@@ -37,7 +48,7 @@ export interface ISelectedTab {
 export type TabChange = (selectedTab: ISelectedTab) => void
 
 export interface ITabChange {
-  onTabChange?: TabChange
+  onTabChange?: TabChange | undefined
 }
 
 export interface ITabProvider extends ITabChange {
@@ -91,28 +102,37 @@ export function getTabName(tab: ITab): string {
 export function getTabFromValue(
   value: UndefStr,
   tabs: ITab[]
-): ISelectedTab | undefined {
-  // if no tabs return undefined
+): ISelectedTab | null {
+  // if no tabs {return undefined}
   if (tabs.length === 0) {
-    return undefined
+    return null
   }
-
-  // default to first tab if there is an error
-  let selectedTab: ISelectedTab = { index: 0, tab: tabs[0]! } //undefined
 
   // no value specified, default to first tab
   if (!value) {
-    return selectedTab
+    return null
   }
 
-  for (const [ti, tab] of tabs.entries()) {
-    const tabId = tab.id //getTabId(tab)
+  let selectedTab = tabs
+    .entries()
+    .map(([ti, tab]) => ({ index: ti, tab }))
+    .find(t => {
+      return t.tab.id.includes(value) || t.tab.name?.includes(value)
+    })
 
-    if (tabId.includes(value) || tab.name?.includes(value)) {
-      selectedTab = { index: ti, tab }
-      break
-    }
+  if (!selectedTab) {
+    // default to first tab if there is an error
+    selectedTab = { index: 0, tab: tabs[0]! } //undefined
   }
+
+  // for (const [ti, tab] of tabs.entries()) {
+  //   const tabId = tab.id //getTabId(tab)
+
+  //   if (tabId.includes(value) || tab.name?.includes(value)) {
+  //     selectedTab = { index: ti, tab }
+  //     break
+  //   }
+  // }
 
   return selectedTab
 }
@@ -136,7 +156,7 @@ export function TabProvider({ value, onTabChange, tabs, children }: IProps) {
 
   const v = value !== undefined ? value : _value
 
-  const selectedTab: ISelectedTab | undefined = getTabFromValue(v, tabs)
+  const selectedTab = getTabFromValue(v, tabs)
 
   //console.log("eh", value.length, tabs, selectedTab)
 

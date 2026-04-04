@@ -1,13 +1,13 @@
-import { TEXT_OK } from '@/consts'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@components/color/color-picker-button'
-import { FileDropZonePanel } from '@components/file-dropzone-panel'
-import { VCenterCol } from '@components/layout/v-center-col'
-import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
+} from '@/components/color/color-picker-button'
+import { FileDropZonePanel } from '@/components/file-dropzone-panel'
+import { VCenterCol } from '@/components/layout/v-center-col'
+import { TEXT_OK } from '@/consts'
+import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { COLOR_BLACK } from '@/lib/color/color'
 import { BigBed } from '@gmod/bbi'
-import { COLOR_BLACK } from '@lib/color/color'
 import { BlobFile } from 'generic-filehandle2'
 import { useState } from 'react'
 
@@ -78,7 +78,7 @@ export function AddLocalBigBedsDialog({ callback, onCancel }: IProps) {
       //buttons={[TEXT_OK]}
       title="Load BigBed Files From Device"
       bodyCls="gap-y-4"
-      onResponse={(response) => {
+      onResponse={response => {
         if (response === TEXT_OK) {
           if (bigBeds.length > 0) {
             callback?.(name, color, bigBeds)
@@ -113,16 +113,16 @@ export function AddLocalBigBedsDialog({ callback, onCancel }: IProps) {
 
       <FileDropZonePanel
         fileTypes={{ 'application/octet-stream': ['.bb', '.bigBed'] }}
-        onFileDrop={(files) => {
+        onFileDrop={files => {
           if (files.length > 0) {
-            setName(files.map((f) => f.name).join(', '))
+            setName(files.map(f => f.name).join(', '))
 
             // const bw = new BigWig({
             //   filehandle: new BlobFile(files[0]!),
             // })
 
             setBigWigs(
-              files.map((file) => {
+              files.map(file => {
                 return new BigBed({
                   filehandle: new BlobFile(file),
                 })

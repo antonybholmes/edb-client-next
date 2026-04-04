@@ -1,4 +1,4 @@
-import { Button, type IButtonProps } from '@themed/button'
+import { Button, type IButtonProps } from '@/themed/v2/button'
 
 export function DropDownButton({
   ref,
@@ -7,7 +7,7 @@ export function DropDownButton({
   size = 'dropdown',
   pad = 'none',
   rounded = 'theme',
-  className,
+  className = '',
   children,
   ...props
 }: IButtonProps) {

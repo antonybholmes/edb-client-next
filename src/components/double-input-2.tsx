@@ -1,5 +1,5 @@
+import { cn } from '@/lib/shadcn-utils'
 import { VCenterRow } from '@layout/v-center-row'
-import { cn } from '@lib/shadcn-utils'
 import {
   useState,
   type ComponentProps,
@@ -54,7 +54,7 @@ export function DoubleInput({
         onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
           onKeyDown1?.(e)
         }}
-        onChange={e => setText1(e.currentTarget.value)}
+        onChange={(e) => setText1(e.currentTarget.value)}
         style={{
           width: `${Math.max(MIN_CH, _text1.toString().length + 1)}ch`,
         }}
@@ -70,7 +70,7 @@ export function DoubleInput({
         onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
           onKeyDown2?.(e)
         }
-        onChange={e => setText2(e.currentTarget.value)}
+        onChange={(e) => setText2(e.currentTarget.value)}
         style={{
           width: `${Math.max(MIN_CH, _text2.toString().length + 1)}ch`,
         }}

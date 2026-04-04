@@ -1,40 +1,47 @@
-import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/shadcn-utils'
+import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
+import { cn } from '@/lib/shadcn-utils'
+import gsap from 'gsap'
+import { useEffect, useRef } from 'react'
 
 const Y2 = 12
 const Y1 = Y2 - 6
 const Y3 = Y2 + 6
+const DURATION = 0.3
 
 export function IndexArrowIcon({
   w = 'w-4 h-4',
   stroke = 'stroke-white',
   strokeWidth = 2,
+  hover = false,
   className,
 }: IIconProps) {
-  //const lineRef = useRef(null)
-  //const arrowRef = useRef(null)
+  const lineRef = useRef(null)
+  const arrowRef = useRef(null)
 
-  // useEffect(() => {
-  //   gsap
-  //     .timeline()
-  //     .to(
-  //       arrowRef.current,
-  //       {
-  //         x: selected ? "2px" : 0,
-  //         duration: DURATION,
-  //       },
-  //       0
-  //     )
-  //     .to(
-  //       lineRef.current,
-  //       {
-  //         scaleX: selected ? 1 : 0,
-  //         opacity: selected ? 1 : 0,
-  //         duration: DURATION,
-  //       },
-  //       0
-  //     )
-  // }, [selected])
+  useEffect(() => {
+    gsap
+      .timeline()
+      .to(
+        arrowRef.current,
+        {
+          x: hover ? 3 : 0,
+          duration: DURATION,
+          ease: 'power3.out',
+        },
+        0
+      )
+      .to(
+        lineRef.current,
+        {
+          scaleX: hover ? 1 : 0,
+          transformOrigin: 'center center',
+          opacity: hover ? 1 : 0,
+          duration: DURATION,
+          ease: 'power3.out',
+        },
+        0
+      )
+  }, [hover])
 
   return (
     <svg
@@ -45,15 +52,17 @@ export function IndexArrowIcon({
       strokeWidth={strokeWidth}
     >
       <line
+        ref={lineRef}
         x1={7}
         y1={Y2}
         x2={18.5}
         y2={Y2}
-        className="trans-opacity opacity-0 group-hover:opacity-100"
+        className="opacity-0"
       />
       <path
+        ref={arrowRef}
         d={`M 12,${Y1} L 18,${Y2} L 12,${Y3}`}
-        className="trans-transform group-hover:translate-x-[3px]"
+        //className="trans-transform group-hover:translate-x-[3px]"
       />
     </svg>
   )

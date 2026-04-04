@@ -139,26 +139,6 @@ export class ExtGSEA {
   runExtGsea(gs1: IGeneset, gs2: IGeneset): IExtGseaResult {
     this._gs1 = gs1
     this._gs2 = gs2
-    //this._gsn1 = gs1.name
-    //this._gsn2 = gs2.name
-
-    //const gs1s = new Set<string>(gs1)
-    //const gs2s = new Set<string>(gs2)
-
-    //let l = this._rankedGeneList.length
-
-    // this._hits1 = zeros(l)
-    // this._hits2 = zeros(l)
-
-    // range(l).forEach(i => {
-    //   if (gs1s.has(this._rankedGeneList[i]!)) {
-    //     this._hits1[i] = 1
-    //   }
-
-    //   if (gs2s.has(this._rankedGeneList[i]!)) {
-    //     this._hits2[i] = 1
-    //   }
-    // })
 
     const l = this._rkc.length
 
@@ -194,8 +174,6 @@ export class ExtGSEA {
     this._esAllGenes = sub(this._scoreHits, this._scoreMisses)
     const maxEs = Math.max(...this._esAllGenes)
     const minEs = Math.min(...this._esAllGenes)
-
-    //console.log('es all', this._esAllGenes)
 
     this._es = maxEs + minEs
 

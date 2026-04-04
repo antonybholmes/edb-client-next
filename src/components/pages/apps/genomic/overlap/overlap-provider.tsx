@@ -1,12 +1,12 @@
-import { type IChildrenProps } from '@interfaces/children-props'
+import { type IChildrenProps } from '@/interfaces/children-props'
 
-import type { ITextFileOpen } from '@components/pages/open-files'
-import type { BaseDataFrame } from '@lib/dataframe/base-dataframe'
-import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
+import type { ITextFileOpen } from '@/components/pages/open-files'
+import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 
-import { DATAFRAME_100x26 } from '@lib/dataframe/annotation-dataframe'
-import { range } from '@lib/math/range'
-import { textToLines } from '@lib/text/lines'
+import { DATAFRAME_100x26 } from '@/lib/dataframe/annotation-dataframe'
+import { range } from '@/lib/math/range'
+import { textToLines } from '@/lib/text/lines'
 import { createContext, useState } from 'react'
 
 export const OverlapContext = createContext<{

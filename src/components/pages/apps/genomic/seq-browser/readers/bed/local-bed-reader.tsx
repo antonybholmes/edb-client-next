@@ -1,5 +1,5 @@
-import { type IGenomicLocation } from '@lib/genomic/genomic'
-import type { GenomicFeatureIndex } from '@lib/genomic/genomic-index'
+import { type IGenomicLocation } from '@/lib/genomic/genomic'
+import type { GenomicFeatureIndex } from '@/lib/genomic/genomic-index'
 import { BaseBedReader } from './base-bed-reader'
 
 export class LocalBedReader extends BaseBedReader {

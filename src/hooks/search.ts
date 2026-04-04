@@ -3,8 +3,7 @@ import { create } from 'zustand'
 export interface ISearch {
   caseSensitive: boolean
   matchEntireCell: boolean
-  keepOrder: boolean
-  ids: string[]
+  queries: (string | RegExp)[]
 }
 
 // export const DEFAULT_SEARCH: ISearch = {
@@ -14,23 +13,18 @@ export interface ISearch {
 //   ids: [],
 // }
 
-interface SearchState {
-  queries: string[]
-  caseSensitive: boolean
-  matchEntireCell: boolean
-  keepOrder: boolean
-
-  setQuery: (queries: string[]) => void
+interface SearchState extends ISearch {
+  setQuery: (queries: (string | RegExp)[]) => void
   //setCache: (query: string, result: SearchResult) => void
   //getCachedResult: (query: string) => SearchResult | undefined
 }
 
-export const useSearchStore = create<SearchState>((set) => ({
+export const useSearchStore = create<SearchState>(set => ({
   queries: [],
   caseSensitive: false,
   matchEntireCell: false,
-  keepOrder: false,
-  setQuery: (queries: string[]) => set({ queries }),
+
+  setQuery: (queries: (string | RegExp)[]) => set({ queries }),
 
   //getCachedResult: query => get().cache[query],
 }))

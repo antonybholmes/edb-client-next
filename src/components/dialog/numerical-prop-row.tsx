@@ -1,14 +1,12 @@
 import { type ReactNode } from 'react'
 
+import { cn } from '@/lib/shadcn-utils'
 import { H2_CLS } from '@/theme'
-import { cn } from '@lib/shadcn-utils'
-import { BaseRow } from '../layout/base-row'
-import { VCenterRow } from '../layout/v-center-row'
-import { Label } from '../shadcn/ui/themed/label'
 import {
   NumericalInput,
   type INumericalInputProps,
 } from '../shadcn/ui/themed/numerical-input'
+import { PropRow } from './prop-row'
 
 export const PROPS_TITLE_CLS = cn(H2_CLS, 'py-2')
 
@@ -17,25 +15,23 @@ interface IProps extends INumericalInputProps {
   labelClassName?: string
   leftChildren?: ReactNode
   rightChildren?: ReactNode
+  breakpoint?: number
 }
 
 export function NumericalPropRow({
   title = '',
   labelClassName,
-  w = 'w-16',
+
+  breakpoint = 200,
   className,
   children,
   ...props
 }: IProps) {
+  //const id = useStableId('text-prop-row')
+
   return (
-    <BaseRow
-      className={cn('gap-x-2 justify-between items-center min-h-8', className)}
-    >
-      <Label className={labelClassName}>{title}</Label>
-
-      {children && <VCenterRow className="gap-x-2">{children}</VCenterRow>}
-
-      <NumericalInput {...props} w={w} className="rounded-theme" />
-    </BaseRow>
+    <PropRow title={title}>
+      <NumericalInput className="rounded-theme" {...props} />
+    </PropRow>
   )
 }

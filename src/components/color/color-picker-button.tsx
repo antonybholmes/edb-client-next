@@ -1,7 +1,11 @@
-import { BaseCol } from '@layout/base-col'
-import { VCenterRow } from '@layout/v-center-row'
-import { Button, type IButtonProps } from '@themed/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@themed/popover'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/shadcn/ui/themed/v2/popover'
+import { BaseCol } from '@/layout/base-col'
+import { VCenterRow } from '@/layout/v-center-row'
+import { Button, type IButtonProps } from '@/themed/v2/button'
 
 import {
   addAlphaToHex,
@@ -11,8 +15,8 @@ import {
   hexToRgba,
   hexColorWithoutAlpha as removeAlphaFromHex,
   textColorShouldBeDark,
-} from '@lib/color/color'
-import { cn } from '@lib/shadcn-utils'
+} from '@/lib/color/color'
+import { cn } from '@/lib/shadcn-utils'
 
 import { FOCUS_RING_CLS } from '@/theme'
 
@@ -22,10 +26,9 @@ import {
   HexColorInput,
   HexColorPicker,
 } from 'react-colorful'
-import { PropRow } from '../dialog/prop-row'
-import { SwitchPropRow } from '../dialog/switch-prop-row'
-import { inputVariants } from '../shadcn/ui/themed/input'
+import { CheckPropRow } from '../dialog/check-prop-row'
 import { NumericalInput } from '../shadcn/ui/themed/numerical-input'
+import { inputVariants } from '../shadcn/ui/themed/v2/input'
 
 // export const PRESET_COLORS = [
 //   COLOR_WHITE,
@@ -76,9 +79,12 @@ export const PRESET_COLORS = [
 
 //export const BASE_SIMPLE_COLOR_EXT_CLS = cn(XS_ICON_BUTTON_CLS, FOCUS_RING_CLS)
 
-export const SIMPLE_COLOR_EXT_CLS = cn('w-5 h-5 rounded-full', FOCUS_RING_CLS)
+export const SIMPLE_COLOR_EXT_CLS = cn(
+  'w-4 h-4 aspect-square rounded-full shrink-0',
+  FOCUS_RING_CLS
+)
 
-export interface IProps extends IButtonProps {
+export type IProps = IButtonProps & {
   color: string
   opacity?: number
   defaultColor?: string | undefined
@@ -103,7 +109,6 @@ export function ColorPickerButton({
   color,
   opacity = 1,
   defaultColor,
-  tooltip = 'Change color',
   autoBorder = true,
   allowNoColor = false,
   allowAlpha = false,
@@ -116,9 +121,9 @@ export function ColorPickerButton({
   // colors without the alpha channel and instead use fillOpacity and
   // strokeOpacity to set the color opacity on the svg element.
   keepAlphaChannel = false,
-  defaultBorderColor = 'border-transparent',
+  defaultBorderColor = 'border-foreground',
   align = 'start',
-  className,
+  className = '',
   title,
   'aria-label': ariaLabel,
   children,
@@ -136,6 +141,14 @@ export function ColorPickerButton({
 
   const textColor = lightMode ? 'text-black' : 'text-white'
 
+  // if (!ariaLabel) {
+  //   ariaLabel = tooltip
+  // }
+
+  if (!ariaLabel) {
+    ariaLabel = 'Choose color'
+  }
+
   //console.log('color', color, lightMode, textColor)
 
   // if (tooltip) {
@@ -147,7 +160,6 @@ export function ColorPickerButton({
       color={color}
       opacity={opacity}
       defaultColor={defaultColor}
-      tooltip={tooltip}
       autoBorder={autoBorder}
       allowNoColor={allowNoColor}
       allowAlpha={allowAlpha}
@@ -160,7 +172,7 @@ export function ColorPickerButton({
     >
       <PopoverTrigger
         className={cn(
-          'relative overflow-hidden border',
+          'relative overflow-hidden border flex flex-row items-center justify-center bg-background',
           textColor,
           border,
           className
@@ -169,7 +181,12 @@ export function ColorPickerButton({
         title={title}
         style={{ backgroundColor: _color }}
       >
-        {children}
+        {/* {children} */}
+
+        {/* <span
+          style={{ backgroundColor: _color }}
+          className="absolute left-px top-px bottom-px right-px rounded-sm"
+        /> */}
 
         {_color === COLOR_TRANSPARENT && (
           <span className="absolute left-0 w-full bg-red-400 h-px top-1/2 -translate-y-1/2 -rotate-45" />
@@ -224,7 +241,7 @@ export function ColorPickerPopover({
   //console.log(color)
 
   return (
-    <Popover open={o} onOpenChange={(open) => _openChanged(open)}>
+    <Popover open={o} onOpenChange={open => _openChanged(open)}>
       {/* <Tooltip content={tooltip}>
       <DropdownMenuTrigger
         className={cn(
@@ -239,10 +256,10 @@ export function ColorPickerPopover({
       {children}
 
       <PopoverContent
-        onEscapeKeyDown={() => setOpen(false)}
-        onInteractOutside={() => setOpen(false)}
+        //onEscapeKeyDown={() => setOpen(false)}
+        //onInteractOutside={() => setOpen(false)}
         align={align}
-        className="text-xs flex flex-col gap-y-3 w-64"
+        className="text-xs flex flex-col gap-y-3"
         variant="content"
       >
         <ColorPickerUI
@@ -300,8 +317,6 @@ export function ColorPickerUI({
   function _onColorChange(color: string) {
     const rgba = hexToRgba(color)
 
-    console.log(color, rgba, keepAlphaChannel, rgba[3], onColorChange)
-
     onColorChange?.(
       keepAlphaChannel ? color : removeAlphaFromHex(color),
       rgba[3]
@@ -338,7 +353,7 @@ export function ColorPickerUI({
 
         <VCenterRow className="gap-x-4">
           <VCenterRow className="gap-x-2">
-            <span>Hex</span>
+            <span className="w-10">Hex</span>
             <HexColorInput
               id="hex"
               color={_color.toUpperCase()}
@@ -359,7 +374,7 @@ export function ColorPickerUI({
                 dp={2}
                 value={alpha}
                 className="w-16"
-                onNumChanged={(v) => {
+                onNumChanged={v => {
                   const a = Math.max(0, Math.min(1, v))
 
                   // if keepAlphaChannel is true, we need to reconstruct the color
@@ -379,8 +394,9 @@ export function ColorPickerUI({
           )}
         </VCenterRow>
       </BaseCol>
-      <VCenterRow className="gap-1 flex-wrap">
-        {PRESET_COLORS.map((presetColor) => {
+
+      <div className="grid grid-cols-10 gap-1 items-center justify-center">
+        {PRESET_COLORS.map(presetColor => {
           const prgb = hexToRgba(presetColor)
           const ps = prgb[0] + prgb[1] + prgb[2]
 
@@ -388,7 +404,7 @@ export function ColorPickerUI({
             <button
               key={presetColor}
               className={cn(
-                'w-5.5 aspect-square border hover:scale-125 focus-visible:scale-125 rounded-full transition-transform duration-300',
+                'w-5.5 aspect-square border hover:scale-125 focus-visible:scale-125 rounded-xs transition-transform duration-300',
                 autoBorder && ps >= 750 && 'border-border',
                 !autoBorder ||
                   (ps < 750 && 'border-transparent hover:border-white')
@@ -399,7 +415,7 @@ export function ColorPickerUI({
             />
           )
         })}
-      </VCenterRow>
+      </div>
 
       {/* {(allowNoColor || defaultColor) && <MenuSeparator />} */}
 
@@ -419,28 +435,29 @@ export function ColorPickerUI({
         </Button>
       )}
 
-      {onShowColor && (
-        <SwitchPropRow
-          title="Show"
-          checked={_show}
-          onCheckedChange={(v) => {
-            setShow(v)
-            onShowColor?.(v)
-          }}
-        />
-      )}
-
       {onWidthChange && (
-        <PropRow title="Width">
+        <VCenterRow className="gap-x-2">
+          <span className="w-10">Width</span>
           <NumericalInput
             value={width}
-            onNumChange={(v) => onWidthChange?.(v)}
+            onNumChange={v => onWidthChange?.(v)}
             min={0}
             step={1}
             max={1000}
             placeholder="Width"
           />
-        </PropRow>
+        </VCenterRow>
+      )}
+
+      {onShowColor && (
+        <CheckPropRow
+          title="Show"
+          checked={_show}
+          onCheckedChange={v => {
+            setShow(v)
+            onShowColor?.(v)
+          }}
+        />
       )}
 
       {defaultColor && (

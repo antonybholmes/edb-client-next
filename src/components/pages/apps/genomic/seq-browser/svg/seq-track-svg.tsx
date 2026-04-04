@@ -1,6 +1,7 @@
-import { type IDivProps } from '@interfaces/div-props'
+import { type IDivProps } from '@/interfaces/div-props'
 
 import { YAxis } from '@/components/plot/axis'
+import { locStr } from '@/lib/genomic/genomic'
 import { BigWig } from '@gmod/bbi'
 import { RemoteFile } from 'generic-filehandle2'
 import { useContext, useEffect, useState } from 'react'
@@ -45,11 +46,11 @@ export async function getYMax(
   let ymax = 0
 
   for (const track of tracks) {
-    switch (track.trackType) {
+    switch (track.type) {
       case 'Remote BigWig':
       case 'Local BigWig':
         const reader =
-          track.trackType === 'Remote BigWig'
+          track.type === 'Remote BigWig'
             ? new BigWigReader(
                 new BigWig({
                   filehandle: new RemoteFile(track.url),
@@ -68,30 +69,31 @@ export async function getYMax(
         // our track of interest then test bins in that
         const trackSpecificBins: ILocTrackBins[] = locTrackBins.map(ltb => ({
           ...ltb,
-          tracks: ltb.tracks.filter(t => t.publicId === track.publicId),
+          tracks: ltb.samples.filter(t => t.id === track.id),
         }))
 
         switch (scaleMode) {
           case 'BPM':
             const bpm = trackSpecificBins
               .map(ltb =>
-                ltb.tracks.length > 0
-                  ? ltb.tracks[0]!.bins.map(
-                      b => b[2]! * ltb.tracks[0]!.bpmScaleFactor
+                ltb.samples.length > 0
+                  ? ltb.samples[0]!.bins.map(
+                      b => (b.c / ltb.samples[0]!.binReads) * 1000000
                     )
                   : []
               )
               .flat()
 
             ymax = Math.max(ymax, Math.max(...bpm))
+
             break
           case 'CPM':
             ymax = Math.max(
               ymax,
               Math.max(
                 ...trackSpecificBins.map(ltb =>
-                  ltb.tracks.length > 0
-                    ? (ltb.tracks[0]!.ymax / track.reads) * 1000000
+                  ltb.samples.length > 0
+                    ? (ltb.samples[0]!.ymax / track.reads) * 1000000
                     : 0
                 )
               )
@@ -102,7 +104,7 @@ export async function getYMax(
               ymax,
               Math.max(
                 ...trackSpecificBins.map(ltb =>
-                  ltb.tracks.length > 0 ? ltb.tracks[0]!.ymax : 0
+                  ltb.samples.length > 0 ? ltb.samples[0]!.ymax : 0
                 )
               )
             )
@@ -120,6 +122,9 @@ export async function getYMax(
 }
 
 interface IProps extends IDivProps {
+  // we can overlay multiple tracks on the same plot,
+  // for example a signal track and a gene annotation track,
+  // therefore we need to pass in an array
   tracks: (ISignalTrack | IRemoteBigWigTrack | ILocalBigWigTrack)[]
   scale?: string
   titleHeight: number
@@ -143,148 +148,6 @@ export function SeqTrackSvg({ tracks, scale = 'Count', titleHeight }: IProps) {
   function updateYMax(newYmax: number) {
     setYmax(Math.max(1, newYmax))
   }
-
-  // function getPoints(
-  //   yax: YAxis,
-  //   track: ISeqTrack,
-  //   binCounts: ITrackBinCounts
-  // ): ISeqPos[] {
-  //   if (binCounts.bins.length === 0) {
-  //     return []
-  //   }
-
-  //   const y0 = yax.domainToRange(0)
-
-  //   // fill in the blanks, we could do this on server, but
-  //   // may as well try to get user to do as much computation
-  //   // as possible
-  //   const bins: SeqBin[] = []
-
-  //   for (const [bi, bin] of binCounts.bins.entries()) {
-  //     bins.push(bin)
-
-  //     if (bi < binCounts.bins.length - 1) {
-  //       const nextBin = binCounts.bins[bi + 1]!
-
-  //       if (nextBin[0]! - bin[1]! > 1) {
-  //         // the next bin is not adjacent, so insert a gap
-  //         bins.push([bin[1]! + 1, nextBin[0] - 1, 0])
-  //       }
-  //     }
-  //   }
-
-  //   let points: ISeqPos[] = bins
-  //     .map(bin => {
-  //       const s = bin[0]!
-  //       const e = bin[1]!
-  //       const reads = bin[2]!
-  //       let y = 0
-
-  //       switch (settings.seqs.scale.mode) {
-  //         case 'BPM':
-  //           y = reads * binCounts.bpmScaleFactor
-  //           break
-  //         case 'CPM':
-  //           y = (reads / track.reads) * 1000000
-  //           break
-  //         default:
-  //           y = reads
-  //       }
-
-  //       const x1 = xax.domainToRange(s)
-  //       const x2 = xax.domainToRange(e)
-  //       const y1 = yax.domainToRange(y)
-
-  //       if (x2 !== x1) {
-  //         // points map to different locations so
-  //         // we want both points
-
-  //         if (settings.seqs.smooth) {
-  //           // to further smooth, use the mid point of the bin in addition
-  //           // to d3
-  //           return [
-  //             {
-  //               x: (x1 + x2) / 2,
-  //               y: y1,
-  //               realY: y,
-  //             },
-  //           ]
-  //         } else {
-  //           return [
-  //             {
-  //               x: x1,
-  //               y: y1,
-  //               realY: y,
-  //             },
-  //             {
-  //               x: x2,
-  //               y: y1,
-  //               realY: y,
-  //             },
-  //           ]
-  //         }
-  //       } else {
-  //         // points resolve to same location, so just
-  //         // return one of them
-  //         return [
-  //           {
-  //             x: x1,
-  //             y: y1,
-  //             realY: y,
-  //           },
-  //         ]
-  //       }
-  //     })
-  //     .flat()
-
-  //   // zero the ends
-  //   points = [
-  //     { x: points[0]!.x, y: y0, realY: 0 },
-  //     ...points,
-  //     { x: points[points.length - 1]!.x, y: y0, realY: 0 },
-  //   ]
-
-  //   return points
-  // }
-
-  // const res = useQuery({
-  //   queryKey: ['seq', tracks, location, binSize],
-  //   queryFn: async () => {
-  //     //console.log(API_SEQS_BINS_URL)
-
-  //     const accessToken = await fetchAccessToken()
-
-  //     const res = await httpFetch.postJson<{ data: ILocTrackBins[] }>(
-  //       API_SEQS_BINS_URL,
-  //       {
-  //         body: {
-  //           locations: [location.loc],
-  //           //scale: displayOptions.seq.applyScaling ? displayOptions.seq.scale : 0,
-  //           binSizes: [binSize],
-  //           tracks: tracks.map(t => t.publicId),
-  //         },
-
-  //         headers: bearerHeaders(accessToken),
-  //       }
-  //     )
-
-  //     return res.data
-  //   },
-  // })
-
-  // each entry is a location, bincounts represents the counts for
-  // each track at a location
-  // const allLocTrackBins: ILocTrackBins[] = res.data ? res.data : []
-
-  // if (allLocTrackBins.length === 0) {
-  //   return null
-  // }
-
-  //console.log(allLocTrackBins)
-
-  //const locTrackBins = allLocTrackBins[0]!
-
-  //console.log(locTrackBins)
 
   useEffect(() => {
     async function updateY() {
@@ -312,15 +175,21 @@ export function SeqTrackSvg({ tracks, scale = 'Count', titleHeight }: IProps) {
     if (locTrackBins) {
       updateY()
     }
-  }, [locTrackBins, settings.seqs.globalY, settings.seqs.scale, tracks])
-
-  //const allTracksBinCounts = locTrackBins.tracks
+  }, [
+    locStr(locTrackBins?.location),
+    locTrackBins?.samples ,
+    globalY,
+    settings.seqs.globalY.on,
+    settings.seqs.scale.mode,
+    settings.seqs.scale,
+    tracks ,
+  ])
 
   const yax = new YAxis()
     .setDomain([0, ymax])
     .setLength(tracks[0]!.displayOptions.height)
     .setTicks([0, ymax])
-    .setTitle(tracks[0]!.trackType === 'Seq' ? settings.seqs.scale.mode : scale)
+    .setTitle(tracks[0]!.type === 'Seq' ? settings.seqs.scale.mode : scale)
 
   //const refPoints: ISeqPos[] = getPoints(yax, tracks[0]!, allBinCounts[0]!)
 
@@ -333,12 +202,13 @@ export function SeqTrackSvg({ tracks, scale = 'Count', titleHeight }: IProps) {
 
       let reader: BaseSeqReader = EMPTY_SEQ_READER
 
+      // since tracks can be overlaid get all the data
       for (const t of tracks) {
-        switch (t.trackType) {
+        switch (t.type) {
           case 'Remote BigWig':
           case 'Local BigWig':
             reader =
-              t.trackType === 'Remote BigWig'
+              t.type === 'Remote BigWig'
                 ? new BigWigReader(
                     new BigWig({
                       filehandle: new RemoteFile(t.url),
@@ -351,27 +221,22 @@ export function SeqTrackSvg({ tracks, scale = 'Count', titleHeight }: IProps) {
             // the tracks we downloaded for this location, therefore
             // we need to filter the locTrackBins to get the track with
             // the publicId matching the track we want to display
+
             reader = new SeqReader(
               t,
-              locTrackBins!.tracks.filter(
-                ltb => ltb.publicId === t.publicId
-              )[0]!
+              locTrackBins!.samples.filter(ltb => ltb.id === t.id)[0]!
             )
             break
         }
 
         coreTracks.push({
           track: t,
-          positions: await reader!.getPoints(
-            location,
-            xax,
-            yax,
-            binSize,
-            settings.seqs.smoothing.on ? settings.seqs.smoothing.factor : 0,
-            {
-              mode: settings.seqs.scale.mode,
-            }
-          ),
+          positions: await reader!.getPoints(location, xax, yax, binSize, {
+            smoothingFactor: settings.seqs.smoothing.on
+              ? settings.seqs.smoothing.factor
+              : 0,
+            mode: settings.seqs.scale.mode,
+          }),
         })
       }
 
@@ -382,8 +247,9 @@ export function SeqTrackSvg({ tracks, scale = 'Count', titleHeight }: IProps) {
       getPoints()
     }
   }, [
+    locStr(locTrackBins?.location),
+    locTrackBins?.samples.map(s => s.id).join('|'),
     tracks,
-    locTrackBins,
     xax.domain[0],
     xax.domain[1],
     yax.domain[0],
@@ -391,6 +257,7 @@ export function SeqTrackSvg({ tracks, scale = 'Count', titleHeight }: IProps) {
     binSize,
     settings.seqs.smoothing.on,
     settings.seqs.smoothing.factor,
+    settings.seqs.scale.mode,
   ])
 
   if (coreTracks.length === 0) {

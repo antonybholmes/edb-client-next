@@ -1,31 +1,32 @@
-import { ICON_CLS, type IIconProps } from '@interfaces/icon-props'
-import { cn } from '@lib/shadcn-utils'
-import { Grip } from 'lucide-react'
+import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
+import { cn } from '@/lib/shadcn-utils'
+
+const R = 2
 
 export function GripIcon({
   w = 'h-5 w-5',
-  stroke = 'fill-foreground',
+  fill = 'fill-foreground/50 stroke-none',
   className,
 }: IIconProps) {
   return (
-    // <svg
-    //   xmlns="http://www.w3.org/2000/svg"
-    //   viewBox="0 0 20 20"
-    //   className={cn(ICON_CLS, w, fill, className)}
-    // >
-    //   <text
-    //     textAnchor="middle"
-    //     dominantBaseline="central"
-    //     x="10"
-    //     y="10"
-    //     fontSize="small"
-    //     className="font-medium stroke-none"
-    //   >
-    //     ?
-    //   </text>
-    //   <circle cx="10" cy="10" r="9" className="stroke-2 fill-none" />
-    // </svg>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 32 32"
+      className={cn(ICON_CLS, w, fill, className)}
+    >
+      <circle cx="4" cy="4" r={R} />
+      <circle cx="16" cy="4" r={R} />
+      <circle cx="28" cy="4" r={R} />
 
-    <Grip className={cn(ICON_CLS, stroke, w, className)} />
+      <circle cx="4" cy="16" r={R} />
+      <circle cx="16" cy="16" r={R} />
+      <circle cx="28" cy="16" r={R} />
+
+      <circle cx="4" cy="28" r={R} />
+      <circle cx="16" cy="28" r={R} />
+      <circle cx="28" cy="28" r={R} />
+    </svg>
+
+    // <Grip className={cn(ICON_CLS, stroke, w, className)} />
   )
 }

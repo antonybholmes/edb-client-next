@@ -1,60 +1,413 @@
-import { Button } from '@themed/button'
-
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 
 import { SignInIcon } from '@/components/icons/sign-in-icon'
 import { UserIcon } from '@/components/icons/user-icon'
-import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import {
-  APP_NAME,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/shadcn/ui/themed/v2/popover'
+import {
+  IS_DEV_MODE,
   NO_DIALOG,
+  TEXT_EMAIL,
   TEXT_OK,
   TEXT_SIGN_IN,
   TEXT_SIGN_OUT,
   type IDialogParams,
 } from '@/consts'
+import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { SignOutIcon } from '@/icons/sign-out-icon'
 import {
   ICON_TRANSITION_FROM_CLS,
   ICON_TRANSITION_TO_CLS,
 } from '@/interfaces/icon-props'
+import { randId } from '@/lib/id'
 import { cn } from '@/lib/shadcn-utils'
-import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
-import { SignOutIcon } from '@icons/sign-out-icon'
-import { randId } from '@lib/id'
-import { DropdownMenu } from '@radix-ui/react-dropdown-menu'
+import { UserRound } from 'lucide-react'
+
+import { BaseCol } from '@/components/layout/base-col'
+import { BaseRow } from '@/components/layout/base-row'
+import { ThemeLink } from '@/components/link/theme-link'
+import { Auth0SignInButton } from '@/components/pages/account/auth/oauth2/auth0/auth0-signin-button'
+import { CognitoSignInButton } from '@/components/pages/account/auth/oauth2/cognito/cognito-signin-button'
+
+import { SupabaseSignInButton } from '@/components/pages/account/auth/oauth2/supabase/supabase-signin-button'
+import { StrikeThroughMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { HeaderIconButton } from '@/layouts/header-icon-button'
 import {
-  DropdownMenuAnchorItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-  MenuSeparator,
-} from '@themed/dropdown-menu'
-import { Popover, PopoverContent, PopoverTrigger } from '@themed/popover'
-import { LockOpen, UserRound } from 'lucide-react'
-import { usePathname, useRouter } from 'next/navigation'
-import { truncate } from '../../text/text'
+  fromBase64Url,
+  redirect,
+  REDIRECT_DELAY_MS,
+  toBase64Url,
+} from '@/lib/http/urls'
+import { Button } from '@/themed/v2/button'
+
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { config } from '@/config'
+import { useAtom } from 'jotai'
+import { atomWithStorage } from 'jotai/utils'
 import {
-  APP_ACCOUNT_AUTH0_CALLBACK_URL,
-  APP_ACCOUNT_AUTH_SIGN_OUT_URL,
-  AUTH0_TOOLKIT_LOGIN_ROUTE,
-  AUTH0_TOOLKIT_LOGOUT_ROUTE,
+  APP_ACCOUNT_AUTH_SIGNED_OUT_URL,
   DEFAULT_BASIC_EDB_USER,
-  MYACCOUNT_ROUTE,
-  OAUTH2_SIGN_IN_ROUTE,
-  OTP_SIGN_IN_ROUTE,
-  REDIRECT_URL_PARAM,
+  hasAdminPermission,
+  MYACCOUNT_PATH,
+  OAUTH2_AUTH0_SIGN_OUT_PATH,
+  OAUTH2_CLERK_SIGN_OUT_PATH,
+  OAUTH2_COGNITO_SIGN_OUT_PATH,
+  OAUTH2_SUPABASE_SIGN_OUT_PATH,
+  OTP_SIGN_IN_PATH,
+  SIGNED_OUT_PATH,
   TEXT_MY_ACCOUNT,
   type IBasicEdbUser,
 } from '../edb'
-import { useEdbAuth } from '../edb-auth'
+import { useEdbAuth, useEdbSignIn } from '../edb-auth'
 import { useEdbSettings } from '../edb-settings'
 import { SignInWithApiKeyPopover } from './signin-with-api-key-popover'
 
-const SIGNED_IN_ICON_CLS =
-  'rounded-full flex flex-row items-center justify-center w-7 h-7 aspect-square text-xs font-medium overflow-hidden bg-foreground/50 group-hover:bg-theme/70 group-data-[checked=true]:bg-theme/70 trans-color text-background'
-
 export type SignInMode = 'username-password' | 'api' | 'auth0' | 'oauth2'
+
+export const STATE_PARAM = 'state'
+export const REDIRECT_PARAM = 'redirect'
+export const TITLE_PARAM = 'title'
+
+export interface IRedirectTarget {
+  title: string // display title
+  path: string // relative path
+}
+
+export interface IRedirectState {
+  target: IRedirectTarget
+}
+
+export const DEFAULT_REDIRECT_TARGET: IRedirectTarget = {
+  title: 'Home',
+  path: '/',
+}
+
+export const NULL_REDIRECT_TARGET: IRedirectTarget = {
+  title: '',
+  path: '',
+}
+
+export const DEFAULT_REDIRECT_STATE: IRedirectState = {
+  target: DEFAULT_REDIRECT_TARGET,
+}
+
+export const NULL_REDIRECT_STATE: IRedirectState = {
+  target: NULL_REDIRECT_TARGET,
+}
+
+// Create an atom synced with sessionStorage
+export const signinStateAtom = atomWithStorage<IRedirectState>(
+  'edb:auth:signin-state',
+  NULL_REDIRECT_STATE
+)
+
+// Create an atom synced with sessionStorage
+export const signOutStateAtom = atomWithStorage<IRedirectState>(
+  'edb:auth:sign-out-state',
+  NULL_REDIRECT_STATE
+)
+
+/**
+ * Hook for triggering sign out process. It will sign out the user
+ * from the application and redirect to the appropriate sign out URL
+ * for the current authentication provider.
+ * @param state - The redirect state to be used after sign out.
+ *
+ * @returns An object containing the signOut function.
+ */
+export function useSignOut(): {
+  signOut: (state: IRedirectState) => Promise<void>
+} {
+  const { signinMethod } = useEdbSignIn()
+  const { signout } = useEdbAuth()
+  const [, setLogoutState] = useAtom(signOutStateAtom)
+
+  async function signOut(state: IRedirectState) {
+    console.log('Signing out using method:', signinMethod)
+
+    try {
+      await signout()
+    } catch (error) {
+      console.error('Error during signout:', error)
+    }
+
+    if (!isSafeRelativeUrl(state.target.path)) {
+      state.target = DEFAULT_REDIRECT_TARGET
+    }
+
+    // Cache state for post-logout
+    setLogoutState(state)
+
+    // Determine provider logout URL
+    let path = ''
+    switch (signinMethod) {
+      case 'cognito':
+        path = OAUTH2_COGNITO_SIGN_OUT_PATH
+        break
+      case 'supabase':
+        path = OAUTH2_SUPABASE_SIGN_OUT_PATH
+        break
+      case 'clerk':
+        path = OAUTH2_CLERK_SIGN_OUT_PATH
+        break
+      default:
+        path = OAUTH2_AUTH0_SIGN_OUT_PATH
+        break
+    }
+
+    console.log('Redirecting to logout URL:', path, state)
+
+    if (path) {
+      path = addRedirectStateToUrl(path, state)
+      redirect(path)
+    }
+  }
+
+  return { signOut }
+}
+
+/**
+ * Redirects to the signed out uri. This is for auth0
+ * and services that need the full uri
+ * @param state
+ * @returns
+ */
+export function makeSignedOutRedirectUri(
+  state: IRedirectState = DEFAULT_REDIRECT_STATE
+): IRedirectState {
+  return {
+    target: {
+      title: state.target.title,
+      path: addRedirectStateToUrl(APP_ACCOUNT_AUTH_SIGNED_OUT_URL, state),
+    },
+  }
+}
+
+/**
+ * Redirects to the signed out route with the given state.
+ * @param state
+ * @returns
+ */
+export function makeSignedOutRedirectRoute(
+  state: IRedirectState = DEFAULT_REDIRECT_STATE
+): IRedirectState {
+  return {
+    target: {
+      title: state.target.title,
+      path: addRedirectStateToUrl(SIGNED_OUT_PATH, state),
+    },
+  }
+}
+
+/**
+ * Retrieves and validates the redirect URL from the query parameters.
+ *
+ * @param defaultState  The default URL to use if no valid redirect is found, defaults to '/'.
+ * @returns The validated redirect URL.
+ */
+export function getRedirectStateFromURI(
+  defaultState: IRedirectState = DEFAULT_REDIRECT_STATE
+): IRedirectState {
+  const params = new URLSearchParams(window.location.search)
+
+  let state = decodeRedirectState(params.get(STATE_PARAM)) ?? defaultState
+
+  if (!state) {
+    state = defaultState
+  }
+
+  return state
+}
+
+export function encodeRedirectState(state: IRedirectState | null): string {
+  if (!state) {
+    return ''
+  }
+
+  return encodeURIComponent(JSON.stringify(state))
+}
+
+export function addRedirectStateToUrl(
+  url: string,
+  state: IRedirectState | null
+): string {
+  // return (
+  //   url +
+  //   (state
+  //     ? `?${STATE_PARAM}=` + encodeURIComponent(JSON.stringify(state))
+  //     : '')
+  // )
+
+  return (
+    url + (state ? `?${STATE_PARAM}=` + toBase64Url(JSON.stringify(state)) : '')
+  )
+}
+
+export function decodeRedirectState(
+  param: string | null
+): { target: IRedirectTarget } | null {
+  if (!param) {
+    return null
+  }
+
+  try {
+    // Decode URL and parse JSON
+    const decoded = fromBase64Url(param) // decodeURIComponent(param)
+    const parsed = JSON.parse(decoded)
+
+    // typeof null is 'object', so need extra checks
+    if (
+      parsed === null ||
+      typeof parsed !== 'object' ||
+      Array.isArray(parsed)
+    ) {
+      return null
+    }
+
+    const { target } = parsed as { target: IRedirectTarget }
+
+    if (
+      target === null ||
+      typeof target !== 'object' ||
+      Array.isArray(target)
+    ) {
+      return null
+    }
+
+    const { title, path } = target as Partial<IRedirectTarget>
+
+    if (typeof title !== 'string' || typeof path !== 'string') {
+      return null
+    }
+
+    if (!isSafeRelativeUrl(target.path)) {
+      return null
+    }
+
+    return parsed
+  } catch (e) {
+    // Catch decodeURIComponent or JSON.parse errors
+    console.error('Error decoding state parameter:', e)
+    return null
+  }
+}
+
+/**
+ * Checks if a redirect URL is invalid to prevent open redirect attacks.
+ * The URL must be a relative path and not contain signin/signout/callback
+ * to prevent open redirect attacks and looping redirects.
+ *
+ * @param url  The redirect URL to validate.
+ * @returns True if the URL is invalid, false otherwise.
+ */
+// export function invalidRedirectUrl(url: string): boolean {
+//   // redirec url must be a relative path and not contain
+//   // signin/signout/callback to prevent open redirect attacks
+//   // and looping redirects
+
+//   const lurl = url.toLowerCase().trim()
+
+//   return (
+//     !lurl.startsWith('/') || // must be a relative path
+//     lurl.includes('signin') || // prevent sign-in URLs
+//     lurl.includes('signout') || // prevent sign-in/sign-out URLs
+//     lurl.includes('signedout') || // prevent signedout URLs
+//     lurl.includes('callback') || // prevent callback URLs
+//     lurl.includes(' ') || // prevent spaces
+//     lurl.includes('..') || // prevent directory traversal
+//     lurl.includes(':') || // prevent full URLs with protocol
+//     lurl.includes('//') || // prevent full URLs with protocol
+//     lurl.includes('\\') || // prevent backslashes
+//     lurl.includes('%2f') || // prevent encoded slashes
+//     lurl.includes('%5c')
+//     // prevent encoded backslashes
+//   )
+// }
+
+export function isSafeRelativeUrl(url: string): boolean {
+  // Empty is not valid
+  if (!url) return false
+
+  // // Reject protocol-relative URLs (e.g. "//evil.com")
+  // if (value.startsWith('//')) {
+  //   return false
+  // }
+
+  // // Reject absolute URLs (e.g. "http://...", "https://...", "ftp://...")
+  // // Detect any scheme-like pattern: "<letters>:" before a slash
+  // if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(value)) {
+  //   return false
+  // }
+
+  // Reject encoded attempts to hide a scheme (e.g. "%2f%2fevil.com")
+  // %2f = "/", so after decoding it might start with "//"
+  let decoded: string
+
+  try {
+    decoded = decodeURIComponent(url)
+  } catch {
+    return false // bad encoding → reject
+  }
+
+  // Reject URLs with spaces
+  if (/\s/.test(decoded)) {
+    return false
+  }
+
+  // Reject ASCII control characters
+  if (/[\u0000-\u001F]/.test(decoded)) {
+    return false
+  }
+
+  // Reject absolute URLs
+  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(decoded)) {
+    return false
+  }
+
+  // Allow ONLY URLs starting with a slash
+  if (!decoded.startsWith('/')) {
+    return false
+  }
+
+  // Reject protocol-relative URLs like //evil.com
+  if (decoded.startsWith('//')) {
+    return false
+  }
+
+  const ld = decoded.toLowerCase()
+
+  if (
+    ld.includes('signin') || // prevent sign-in URLs
+    ld.includes('signout') || // prevent sign-in/sign-out URLs
+    ld.includes('sign-out') || // prevent sign-in/sign-out URLs
+    ld.includes('signedout') || // prevent signedout URLs
+    ld.includes('signed-out') || // prevent signedout URLs
+    ld.includes('callback')
+  ) {
+    // prevent callback URLs
+    return false
+  }
+
+  return true
+}
+
+/**
+ * Safely redirects to a given URL after validating it, i.e. needs to be
+ * a safe relative URL.
+ *
+ * @param url
+ * @param delayMs
+ */
+export function safeRedirect(url: string, delayMs: number = REDIRECT_DELAY_MS) {
+  if (!isSafeRelativeUrl(url)) {
+    throw new Error('unsafe redirect url: ' + url)
+  }
+
+  redirect(url, delayMs)
+}
 
 interface IProps {
   apiKey?: string
@@ -63,277 +416,221 @@ interface IProps {
 }
 
 export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
-  const router = useRouter()
-  const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
-
   const { settings } = useEdbSettings()
-
   const { session } = useEdbAuth()
+  const [, setSigninState] = useAtom(signinStateAtom)
+  //const { loginWithRedirect } = useAuth0()
+  const { signOut } = useSignOut()
 
-  //console.log('pathname', pathname)
+  const [state, setState] = useState<IRedirectState>(DEFAULT_REDIRECT_STATE)
 
-  // useEffect(() => {
-  //   if (!redirectUrl) {
-  //     redirectUrl = window.location.pathname //window.location.href
-  //   }
-  // }, [])
+  //const [pathname, setPathName] = useState('/')
+
+  useEffect(() => {
+    if (window) {
+      setState({
+        target: {
+          title: document.title.replace(/ [-|].*$/, ''), // remove app name suffix,
+          path: window.location.pathname,
+        },
+      })
+    }
+  }, [])
 
   const cachedUserInfo: IBasicEdbUser =
     settings.users.length > 0
       ? settings.users[0]!
       : { ...DEFAULT_BASIC_EDB_USER }
 
-  const roles = cachedUserInfo.roles.join(',')
+  const isAdmin = session ? hasAdminPermission(session?.user) : false
 
   let name: string = ''
 
-  if (cachedUserInfo.firstName) {
-    name = `${cachedUserInfo.firstName} ${cachedUserInfo.lastName}` // user.firstName.split(' ')[0]!
+  if (cachedUserInfo.name) {
+    name = cachedUserInfo.name
   } else {
-    name = cachedUserInfo.username
+    name = cachedUserInfo.username.replace(/@.*/, '') // remove domain from email
   }
 
   const isSignedIn = session !== null //userIsSignedInWithSession()
 
-  const initials =
-    isSignedIn &&
-    cachedUserInfo.firstName !== '' &&
-    cachedUserInfo.lastName !== ''
-      ? `${cachedUserInfo.firstName[0]!.toUpperCase()}${cachedUserInfo.lastName[0]!.toUpperCase()}`
-      : cachedUserInfo.username.slice(0, 2).toUpperCase()
+  let initials = ''
+
+  if (isSignedIn) {
+    initials =
+      cachedUserInfo.name ?? cachedUserInfo.username ?? cachedUserInfo.email
+
+    if (initials.includes(' ')) {
+      // use first letters of part of name
+      initials = initials
+        .split(' ')
+        .map(word => word[0])
+        .join('')
+    }
+
+    initials = initials.toUpperCase().slice(0, 3)
+  }
 
   let menu: ReactNode = null
 
   if (isSignedIn) {
     menu = (
-      <DropdownMenu open={open} onOpenChange={setOpen}>
-        <DropdownMenuTrigger asChild>
-          <IconButton
-            id="edb-signin-button"
-            variant="flat"
-            size="header"
-            rounded="none"
-            checked={open}
-            // ripple={false}
-            title={isSignedIn ? TEXT_MY_ACCOUNT : TEXT_SIGN_IN}
-          >
-            <span
-              className={cn(
-                'rounded-full bg-foreground/70 w-7 h-7 aspect-square flex items-center justify-center text-xs font-semibold overflow-hidden text-background',
-                ICON_TRANSITION_FROM_CLS
-              )}
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger
+          render={
+            <HeaderIconButton
+              id="edb-signin-button"
+              checked={open}
+              rounded="full"
+              // ripple={false}
+              title={isSignedIn ? TEXT_MY_ACCOUNT : TEXT_SIGN_IN}
             >
-              {initials}
-            </span>
-            <UserIcon
+              {cachedUserInfo.pictureUrl ? (
+                <img
+                  src={cachedUserInfo.pictureUrl}
+                  alt={name}
+                  className="rounded-full w-7 h-7"
+                />
+              ) : (
+                <span className="rounded-full bg-theme/70 w-7 h-7 group-hover:bg-theme group-focus-visible:bg-theme group-data-[checked=true]:bg-theme trans-color aspect-square flex items-center justify-center text-xs font-semibold overflow-hidden text-background">
+                  {initials}
+                </span>
+              )}
+              {/* <UserIcon
               className={cn(
                 'w-5 h-5 aspect-square rounded-full overflow-hidden',
                 ICON_TRANSITION_TO_CLS
               )}
-            />
-          </IconButton>
-        </DropdownMenuTrigger>
+            /> */}
+            </HeaderIconButton>
+          }
+        />
 
-        <DropdownMenuContent
-          onEscapeKeyDown={() => setOpen(false)}
-          onInteractOutside={() => setOpen(false)}
+        <PopoverContent
+          //onEscapeKeyDown={() => setOpen(false)}
+          //onInteractOutside={() => setOpen(false)}
           align="end"
-          className="w-64"
+          className="w-96 gap-y-4"
+          variant="header"
         >
-          <DropdownMenuLabel>
-            Hi, {truncate(name, { length: 22 })}
-          </DropdownMenuLabel>
+          <BaseRow className="gap-x-4">
+            {cachedUserInfo.pictureUrl ? (
+              <img
+                src={cachedUserInfo.pictureUrl}
+                alt={name}
+                className="rounded-full w-18 h-18 aspect-square"
+              />
+            ) : (
+              <VCenterRow className="w-20 h-20 aspect-square border border-border/50 rounded-full overflow-hidden justify-center relative">
+                <UserRound className="w-18 h-18 aspect-square absolute top-1/2 left-1/2 -translate-1/2 z-0 stroke-foreground rounded-full overflow-hidden" />
+                <span className="absolute w-full h-full backdrop-blur-sm bg-white/20 z-10" />
+                <span className=" absolute top-1/2 left-1/2 -translate-1/2 z-20 truncate text-3xl font-bold">
+                  {initials}
+                </span>
+              </VCenterRow>
+            )}
 
-          <DropdownMenuAnchorItem
-            href={MYACCOUNT_ROUTE}
-            aria-label={TEXT_MY_ACCOUNT}
-          >
-            <UserRound className="w-4.5 h-4.5" />
-            <span>{TEXT_MY_ACCOUNT}</span>
-          </DropdownMenuAnchorItem>
+            <BaseCol className="gap-y-3">
+              <BaseCol className="gap-y-0.5">
+                <span className="font-semibold truncate">{name}</span>
+                <span className="truncate">{cachedUserInfo.email}</span>
+              </BaseCol>
 
-          {(roles.includes('Super') || roles.includes('Admin')) && (
-            // <DropdownMenuItem
-            //   onClick={() => {
-            //     window.location.href = '/admin/users'
-            //   }}
-            //   aria-label="Admin users"
-            // >
-            //   Users
-            // </DropdownMenuItem>
+              <ThemeLink href={MYACCOUNT_PATH} aria-label={TEXT_MY_ACCOUNT}>
+                {TEXT_MY_ACCOUNT}
+              </ThemeLink>
 
-            <DropdownMenuAnchorItem href={'/admin/users'} aria-label="Users">
-              Users
-            </DropdownMenuAnchorItem>
-          )}
+              {isAdmin && (
+                // <DropdownMenuItem
+                //   onClick={() => {
+                //     window.location.href = '/admin/users'
+                //   }}
+                //   aria-label="Admin users"
+                // >
+                //   Users
+                // </DropdownMenuItem>
 
-          <MenuSeparator />
+                <ThemeLink href="/admin/users" aria-label="Users">
+                  User Admin
+                </ThemeLink>
+              )}
+            </BaseCol>
+          </BaseRow>
 
-          <DropdownMenuItem
-            aria-label={TEXT_SIGN_OUT}
-            onClick={() => setShowDialog({ id: randId('signout'), params: {} })}
-          >
-            <SignOutIcon stroke="" />
+          <BaseCol className="gap-y-2">
+            {IS_DEV_MODE && (
+              <>
+                <Auth0SignInButton state={state} />
 
-            {TEXT_SIGN_OUT}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+                <CognitoSignInButton state={state} />
+
+                {/* <ClerkSignInButton state={state} /> */}
+
+                <SupabaseSignInButton state={state} />
+
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  aria-label={TEXT_SIGN_IN}
+                  onClick={() => {
+                    setSigninState(state)
+                    redirect(addRedirectStateToUrl(OTP_SIGN_IN_PATH, state))
+                  }}
+                >
+                  <span>
+                    {TEXT_SIGN_IN} with {TEXT_EMAIL}
+                  </span>
+                </Button>
+              </>
+            )}
+
+            <Button
+              variant="theme"
+              size="lg"
+              aria-label={TEXT_SIGN_OUT}
+              onClick={() =>
+                setShowDialog({ id: randId('signout'), params: {} })
+              }
+            >
+              <SignOutIcon stroke="" />
+
+              {TEXT_SIGN_OUT}
+            </Button>
+          </BaseCol>
+        </PopoverContent>
+      </Popover>
     )
   } else {
     const button = (
-      <Button
+      <HeaderIconButton
         id="edb-signin-button"
-        variant="flat"
-        size="header"
-        rounded="none"
         checked={open}
         // ripple={false}
         title={TEXT_SIGN_IN}
-        //disabled={!loaded}
+        rounded="full"
       >
-        <SignInIcon className={cn('w-5 h-5', ICON_TRANSITION_FROM_CLS)} />
-        <LockOpen className={cn('w-4 h-4', ICON_TRANSITION_TO_CLS)} />
-      </Button>
+        <UserIcon
+          className={cn(
+            'w-5 h-5 aspect-square rounded-full overflow-hidden fill-foreground',
+            ICON_TRANSITION_FROM_CLS
+          )}
+        />
+        <SignInIcon className={cn('w-5 h-5', ICON_TRANSITION_TO_CLS)} />
+        {/* <LockOpen className={cn('w-4 h-4', ICON_TRANSITION_TO_CLS)} /> */}
+      </HeaderIconButton>
     )
 
     switch (signInMode) {
-      case 'auth0':
-        menu = (
-          <DropdownMenu open={open} onOpenChange={setOpen}>
-            <DropdownMenuTrigger asChild>{button}</DropdownMenuTrigger>
-
-            <DropdownMenuContent
-              onEscapeKeyDown={() => setOpen(false)}
-              onInteractOutside={() => setOpen(false)}
-              align="end"
-              //className="w-64"
-            >
-              <DropdownMenuItem
-                aria-label={TEXT_SIGN_IN}
-                onClick={() => {
-                  // const state = {
-                  //   redirectUrl: MYACCOUNT_ROUTE, //window.location.href
-                  // }
-
-                  // console.log('EDBSignIn: loginWithRedirect state', state)
-                  // loginWithRedirect({ appState: state })
-
-                  console.log(
-                    'redirecting to auth0 login',
-                    `${AUTH0_TOOLKIT_LOGIN_ROUTE}?returnTo=${APP_ACCOUNT_AUTH0_CALLBACK_URL}?${REDIRECT_URL_PARAM}=${window.location.pathname}`
-                  )
-
-                  router.push(
-                    `${AUTH0_TOOLKIT_LOGIN_ROUTE}?returnTo=${APP_ACCOUNT_AUTH0_CALLBACK_URL}?${REDIRECT_URL_PARAM}=${window.location.pathname}`
-                  )
-                }}
-              >
-                <SignInIcon stroke="" />
-                <span>{TEXT_SIGN_IN} with Auth0</span>
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                aria-label={TEXT_SIGN_IN}
-                onClick={() => {
-                  router.push(
-                    OTP_SIGN_IN_ROUTE + `?${REDIRECT_URL_PARAM}=` + pathname
-                  )
-                }}
-              >
-                <span>{TEXT_SIGN_IN} with Email+OTP</span>
-              </DropdownMenuItem>
-
-              <MenuSeparator />
-
-              <DropdownMenuItem
-                aria-label={TEXT_SIGN_OUT}
-                onClick={() =>
-                  setShowDialog({ id: randId('signout'), params: {} })
-                }
-              >
-                {TEXT_SIGN_OUT}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          // <Popover open={open} onOpenChange={setOpen}>
-          //   <PopoverTrigger asChild>{button}</PopoverTrigger>
-
-          //   <PopoverContent
-          //     onEscapeKeyDown={() => setOpen(false)}
-          //     onInteractOutside={() => setOpen(false)}
-          //     align="end"
-          //     variant="content"
-          //     className="w-64 text-xs gap-y-1"
-          //     //variant="glass"
-          //   >
-          //     <Button
-          //       variant="theme"
-          //       //className="w-full"
-          //       size="lg"
-          //       onClick={() => {
-          //         const state = {
-          //           redirectUrl,
-          //         }
-
-          //         loginWithRedirect({ appState: state })
-          //       }}
-          //       aria-label={TEXT_SIGN_IN}
-          //     >
-          //       {TEXT_SIGN_IN}
-          //     </Button>
-
-          //     {/* <PasswordlessSignInButton /> */}
-
-          //     {/* <ButtonLink
-          //       href={APP_CLERK_SIGN_IN_ROUTE}
-          //       aria-label="Passwordless sign in"
-          //       //data-underline="hover"
-          //     >
-          //       {TEXT_SIGN_IN}
-          //     </ButtonLink> */}
-
-          //     <ButtonLink
-          //       variant="ghost"
-          //       href={APP_AUTH_PASSWORDLESS_SIGN_IN_ROUTE}
-          //       aria-label="Passwordless sign in"
-          //       //data-underline="hover"
-          //     >
-          //       {TEXT_PASSWORDLESS}
-          //     </ButtonLink>
-
-          //     <MenuSeparator />
-
-          //     <Button
-          //       variant="menu"
-          //       justify="start"
-          //       aria-label={TEXT_SIGN_OUT}
-          //       animation="none"
-          //       onClick={() =>
-          //         setShowDialog({ id: randId('signout'), params: {} })
-          //       }
-          //     >
-          //       <span className={DROPDOWN_MENU_ICON_CONTAINER_CLS}>
-          //         <SignOutIcon stroke="" />
-          //       </span>
-
-          //       {TEXT_SIGN_OUT}
-          //     </Button>
-          //   </PopoverContent>
-          // </Popover>
-        )
-        break
       case 'api':
         menu = (
           <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>{button}</PopoverTrigger>
+            <PopoverTrigger render={button} />
 
             <PopoverContent
-              onEscapeKeyDown={() => setOpen(false)}
-              onInteractOutside={() => setOpen(false)}
+              //onEscapeKeyDown={() => setOpen(false)}
+              //onInteractOutside={() => setOpen(false)}
               align="end"
               className="w-80 text-xs gap-y-2 flex flex-col px-3 py-4"
             >
@@ -344,37 +641,60 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
         break
       default:
         menu = (
-          <DropdownMenu open={open} onOpenChange={setOpen}>
-            <DropdownMenuTrigger asChild>{button}</DropdownMenuTrigger>
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger render={button} />
 
-            <DropdownMenuContent
-              onEscapeKeyDown={() => setOpen(false)}
-              onInteractOutside={() => setOpen(false)}
+            <PopoverContent
+              //onEscapeKeyDown={() => setOpen(false)}
+              //onInteractOutside={() => setOpen(false)}
               align="end"
-              //className="w-64"
+              className="w-90 gap-y-4"
+              variant="header"
             >
-              <DropdownMenuAnchorItem
-                href={OAUTH2_SIGN_IN_ROUTE}
-                aria-label={TEXT_SIGN_IN}
-              >
-                <SignInIcon stroke="" />
-                <span>{TEXT_SIGN_IN}</span>
-              </DropdownMenuAnchorItem>
+              <BaseCol className="gap-y-2">
+                <span className="font-bold text-xl text-center text-foreground/75">
+                  {TEXT_SIGN_IN}
+                </span>
+                <Auth0SignInButton state={state} />
 
-              {/* <MenuSeparator />
+                <StrikeThroughMenuItem>Or</StrikeThroughMenuItem>
 
-              <DropdownMenuItem
-                aria-label={TEXT_SIGN_OUT}
-                onClick={() =>
-                  setShowDialog({ id: randId('signout'), params: {} })
-                }
-              >
-                  <SignOutIcon stroke="" />  
+                {IS_DEV_MODE && (
+                  <>
+                    <CognitoSignInButton state={state} />
+                    {/* <ClerkSignInButton state={state} /> */}
+                    <SupabaseSignInButton state={state} />
+                  </>
+                )}
 
-                <span>{TEXT_SIGN_OUT}</span>
-              </DropdownMenuItem> */}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  aria-label={TEXT_SIGN_IN}
+                  onClick={() => {
+                    setSigninState(state)
+                    redirect(addRedirectStateToUrl(OTP_SIGN_IN_PATH, state))
+                  }}
+                >
+                  <span>
+                    {TEXT_SIGN_IN} with {TEXT_EMAIL}
+                  </span>
+                </Button>
+              </BaseCol>
+
+              {IS_DEV_MODE && (
+                <Button
+                  size="lg"
+                  aria-label={TEXT_SIGN_OUT}
+                  onClick={() => {
+                    setShowDialog({ id: randId('signout'), params: {} })
+                  }}
+                >
+                  {TEXT_SIGN_OUT}
+                </Button>
+              )}
+            </PopoverContent>
+          </Popover>
         )
         break
     }
@@ -384,20 +704,18 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
     <>
       <OKCancelDialog
         open={showDialog.id.startsWith('signout')}
-        title={APP_NAME}
+        title={config.appName}
         //contentVariant="glass"
         //bodyVariant="card"
         modalType="Warning"
-        onResponse={(r) => {
+        onResponse={r => {
           if (r === TEXT_OK) {
-            //redirect(APP_OAUTH2_SIGN_OUT_ROUTE)
-            console.log(
-              `${AUTH0_TOOLKIT_LOGOUT_ROUTE}?returnTo=${APP_ACCOUNT_AUTH_SIGN_OUT_URL}?${REDIRECT_URL_PARAM}=${window.location.pathname}`
-            )
+            //const url = addRedirectStateToUrl(SIGN_OUT_ROUTE, state)
+            //redirect(url)
 
-            router.push(
-              `${AUTH0_TOOLKIT_LOGOUT_ROUTE}?returnTo=${APP_ACCOUNT_AUTH_SIGN_OUT_URL}` //?${REDIRECT_URL_PARAM}=${window.location.pathname}`
-            )
+            if (state) {
+              signOut(state)
+            }
           }
 
           setShowDialog({ ...NO_DIALOG })

@@ -1,21 +1,17 @@
-import { APP_ID } from '@/consts'
-import type { IStringMap } from '@interfaces/string-map'
-import type { IBasicEdbUser } from '@lib/edb/edb'
+import { config } from '@/config'
+import type { IBasicEdbUser } from '@/lib/edb/edb'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { useTheme } from './theme'
 
-//export const THEME_KEY = `${APP_ID}:theme:v3`
-const SETTINGS_KEY = `${APP_ID}:settings:v12`
+const SETTINGS_KEY = `${config.appId}:settings:v22`
 
-export const THEME_CYCLE: IStringMap = {
-  system: 'light',
-  light: 'dark',
-  dark: 'automatic',
-}
-
-export type Theme = 'light' | 'dark' | 'automatic'
-export const DEFAULT_THEME: Theme = 'automatic'
 export type ToolbarStyle = 'classic' | 'single'
+
+export const TOOLBAR_STYLE_MAP: Record<ToolbarStyle, string> = {
+  classic: 'Classic',
+  single: 'Single Line',
+}
 
 export interface IEdbSettings {
   users: IBasicEdbUser[]
@@ -26,7 +22,12 @@ export interface IEdbSettings {
     groups: { labels: { show: boolean } }
   }
   modules: { links: { openInNewWindow: boolean } }
-  theme: Theme
+  sidebar: { show: boolean }
+  history: {
+    sidebar: {
+      show: boolean
+    }
+  }
 }
 
 export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
@@ -41,7 +42,7 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
       },
     },
     ribbon: {
-      style: 'classic',
+      style: 'single',
     },
   },
   modules: {
@@ -49,85 +50,30 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
       openInNewWindow: false,
     },
   },
-  //csrfToken: '',
-  theme: DEFAULT_THEME,
+  sidebar: { show: true },
+  history: {
+    sidebar: {
+      show: false,
+    },
+  },
 }
-
-// const themeAtom = persistentAtom<Theme>(THEME_KEY, DEFAULT_THEME)
-
-// const settingsAtom = persistentAtom<IEdbSettings>(
-//   SETTINGS_KEY,
-//   {
-//     ...DEFAULT_EDB_SETTINGS,
-//   },
-//   {
-//     encode: JSON.stringify,
-//     decode: JSON.parse,
-//   }
-// )
-
-// function updateSettings(settings: IEdbSettings) {
-//   console.log('Updating EDB settings', settings)
-//   settingsAtom.set(settings)
-// }
-
-/* function applyTheme(theme: Theme) {
-  if (
-    theme === 'dark' ||
-    (theme === 'automatic' &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches)
-  ) {
-    document.documentElement.classList.add('dark')
-  } else {
-    document.documentElement.classList.remove('dark')
-  }
-
-  themeAtom.set(theme)
-} */
 
 export interface IEdbSettingsStore extends IEdbSettings {
   updateSettings: (settings: Partial<IEdbSettings>) => void
-  //applyTheme: (theme: Theme) => void
 }
 
 export const useEdbSettingsStore = create<IEdbSettingsStore>()(
   persist(
-    (set) => ({
+    set => ({
       ...DEFAULT_EDB_SETTINGS,
       updateSettings: (settings: Partial<IEdbSettings>) => {
         console.log('Updating EDB settings', settings)
 
-        if (
-          settings.theme === 'dark' ||
-          (settings.theme === 'automatic' &&
-            window.matchMedia('(prefers-color-scheme: dark)').matches)
-        ) {
-          document.documentElement.classList.add('dark')
-        } else {
-          document.documentElement.classList.remove('dark')
-        }
-
-        set((state) => ({
+        set(state => ({
           ...state,
           ...settings,
         }))
       },
-      // applyTheme: (theme: Theme) => {
-      //   if (
-      //     theme === 'dark' ||
-      //     (theme === 'automatic' &&
-      //       window.matchMedia('(prefers-color-scheme: dark)').matches)
-      //   ) {
-      //     document.documentElement.classList.add('dark')
-      //   } else {
-      //     document.documentElement.classList.remove('dark')
-      //   }
-
-      //   set((state) => ({
-      //     ...state,
-      //     theme,
-      //   }))
-      // },
     }),
     {
       name: SETTINGS_KEY, // name in localStorage
@@ -138,35 +84,41 @@ export const useEdbSettingsStore = create<IEdbSettingsStore>()(
 
 export function useEdbSettings(): {
   settings: IEdbSettings
-  theme: Theme
+
   updateSettings: (settings: Partial<IEdbSettings>) => void
   resetSettings: () => void
-  applyTheme: (theme: Theme) => void
-  resetTheme: () => void
+  toggleHistorySidebar: () => void
+  historySidebarOpen: (open: boolean) => void
 } {
-  const settings = useEdbSettingsStore((state) => state)
-  const updateSettings = useEdbSettingsStore((state) => state.updateSettings)
-  //const applyTheme = useEdbSettingsStore((state) => state.applyTheme)
+  const settings = useEdbSettingsStore(state => state)
+  const updateSettings = useEdbSettingsStore(state => state.updateSettings)
+  const { resetTheme } = useTheme()
 
   function resetSettings() {
     updateSettings({ ...DEFAULT_EDB_SETTINGS })
     resetTheme()
   }
 
-  function resetTheme() {
-    applyTheme(DEFAULT_THEME)
+  function toggleHistorySidebar() {
+    historySidebarOpen(!settings.history.sidebar.show)
   }
 
-  function applyTheme(theme: Theme) {
-    updateSettings({ theme })
+  function historySidebarOpen(open: boolean) {
+    updateSettings({
+      history: {
+        sidebar: {
+          show: open,
+        },
+      },
+    })
   }
 
   return {
     settings,
-    theme: settings.theme,
+
     updateSettings,
     resetSettings,
-    applyTheme,
-    resetTheme,
+    toggleHistorySidebar,
+    historySidebarOpen,
   }
 }

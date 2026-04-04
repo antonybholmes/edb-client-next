@@ -1,11 +1,13 @@
-import { type IDivProps } from '@interfaces/div-props'
+import { type IDivProps } from '@/interfaces/div-props'
 
 import type { Axis } from '@/components/plot/axis'
-import { COLOR_BLACK } from '@lib/color/color'
-import { IGenomicFeature, type IGenomicLocation } from '@lib/genomic/genomic'
-import { range } from '@lib/math/range'
-import { sign } from '@lib/math/sign'
+import { COLOR_BLACK } from '@/lib/color/color'
+import type { IGenomicFeature, IGenomicLocation } from '@/lib/genomic/genomic'
+import { range } from '@/lib/math/range'
+import { sign } from '@/lib/math/sign'
 import { useContext } from 'react'
+
+import { useGenomes } from '@/lib/edb/genome'
 import {
   useSeqBrowserSettings,
   type ISeqBrowserSettings,
@@ -14,10 +16,10 @@ import { LocationContext, type IGeneTrack } from '../tracks-provider'
 
 const CHAR_W = 8
 
-interface IGeneDBInfo {
-  genome: string
-  version: string
-}
+// interface IGeneDBInfo {
+//   genome: string
+//   version: string
+// }
 
 export interface IGenomicFeatureSearch {
   location: IGenomicLocation
@@ -36,7 +38,6 @@ export interface IGenomicFeatureSearch {
  * @returns
  */
 export function getGeneTrackHeight(
-  track: IGeneTrack,
   genes: IGenomicFeature[],
   settings: ISeqBrowserSettings,
   xax: Axis
@@ -46,14 +47,17 @@ export function getGeneTrackHeight(
   if (settings.genes.display === 'dense') {
     for (const [gi, gene] of genes.entries()) {
       //geneYMap.set(`gene-${gi}`, 0)
-      for (const ti of range(0, gene.children?.length ?? 0)) {
+      for (const ti of range(
+        0,
+        gene.children?.filter(f => f.type === 'transcript').length ?? 0
+      )) {
         geneYMap.set(`gene-${gi}:transcript-${ti}`, 0)
       }
     }
 
     geneYMap.set(
       'height',
-      track.displayOptions.transcripts.height + track.displayOptions.genes.gap
+      settings.genes.transcripts.height + settings.genes.gap
     )
   } else if (settings.genes.display === 'pack') {
     // pack
@@ -61,7 +65,9 @@ export function getGeneTrackHeight(
     const depths = range(0, xax.length).map(() => new Set<number>())
     let maxRow = 0
     for (const [gi, gene] of genes.entries()) {
-      for (const [ti, t] of (gene.children ?? []).entries()) {
+      for (const [ti, t] of (
+        gene.children?.filter(f => f.type === 'transcript') ?? []
+      ).entries()) {
         let x1: number
         let x2: number
 
@@ -99,9 +105,7 @@ export function getGeneTrackHeight(
             // and set the geneYMap for this transcript
             geneYMap.set(
               `gene-${gi}:transcript-${ti}`,
-              row *
-                (track.displayOptions.transcripts.height +
-                  track.displayOptions.genes.gap)
+              row * (settings.genes.transcripts.height + settings.genes.gap)
             )
             // and update the maxRow if needed
             maxRow = Math.max(maxRow, row)
@@ -113,9 +117,7 @@ export function getGeneTrackHeight(
 
     geneYMap.set(
       'height',
-      maxRow *
-        (track.displayOptions.transcripts.height +
-          track.displayOptions.genes.gap)
+      maxRow * (settings.genes.transcripts.height + settings.genes.gap)
     )
   } else {
     // full
@@ -130,12 +132,13 @@ export function getGeneTrackHeight(
       //       track.displayOptions.genes.gap)
       // )
 
-      for (const ti of range(0, gene.children?.length ?? 0)) {
+      for (const ti of range(
+        0,
+        gene.children?.filter(f => f.type === 'transcript').length ?? 0
+      )) {
         geneYMap.set(
           `gene-${gi}:transcript-${ti}`,
-          idx *
-            (track.displayOptions.transcripts.height +
-              track.displayOptions.genes.gap)
+          idx * (settings.genes.transcripts.height + settings.genes.gap)
         )
         ++idx
       }
@@ -143,9 +146,7 @@ export function getGeneTrackHeight(
 
     geneYMap.set(
       'height',
-      idx *
-        (track.displayOptions.transcripts.height +
-          track.displayOptions.genes.gap)
+      idx * (settings.genes.transcripts.height + settings.genes.gap)
     )
   }
 
@@ -172,15 +173,16 @@ export function getGeneTrackHeight(
 // }
 
 interface IProps extends IDivProps {
-  db?: IGeneDBInfo | undefined
   track: IGeneTrack
   titleHeight: number
   geneYMap: Map<string, number>
 }
 
-export function GenesTrackSvg({ db, track, titleHeight, geneYMap }: IProps) {
+export function GenesTrackSvg({ track, titleHeight, geneYMap }: IProps) {
   const { settings } = useSeqBrowserSettings()
   const { xax } = useContext(LocationContext)
+
+  const { gtf } = useGenomes()
 
   return (
     <>
@@ -189,12 +191,13 @@ export function GenesTrackSvg({ db, track, titleHeight, geneYMap }: IProps) {
           <text
             transform={`translate(${xax.length / 2}, 0)`}
             fill={COLOR_BLACK}
-            dominantBaseline="baseline"
+            dominantBaseline="middle"
             fontSize="small"
             textAnchor="middle"
             //fontWeight="bold"
           >
-            {track.name} ({db?.genome},{db?.version})
+            {/* {track.name} ({db?.genome},{db?.version}) */}
+            {track.name} ({gtf?.name})
           </text>
         </g>
       )}
@@ -272,100 +275,102 @@ export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
               //transform={`translate(0, ${geneYMap.get(`gene-${gi}`) ?? 0})`}
               key={gi}
             >
-              {gene.children?.map((transcript, ti) => {
-                const transLoc = transcript.loc
-                x1 = xax.domainToRange(transLoc.start)
-                x2 = xax.domainToRange(transLoc.end)
+              {gene.children
+                ?.filter(f => f.type === 'transcript')
+                .map((transcript, ti) => {
+                  const transLoc = transcript.loc
+                  x1 = xax.domainToRange(transLoc.start)
+                  x2 = xax.domainToRange(transLoc.end)
 
-                const arrowStart =
-                  Math.round(
-                    ((settings.reverse ? x2 : x1) +
-                      track.displayOptions.arrows.gap) /
-                      track.displayOptions.arrows.gap
-                  ) * track.displayOptions.arrows.gap
+                  const arrowStart =
+                    Math.round(
+                      ((settings.reverse ? x2 : x1) +
+                        track.displayOptions.arrows.gap) /
+                        track.displayOptions.arrows.gap
+                    ) * track.displayOptions.arrows.gap
 
-                const arrowEnd =
-                  Math.round(
-                    (settings.reverse ? x1 : x2) /
-                      track.displayOptions.arrows.gap
-                  ) * track.displayOptions.arrows.gap
+                  const arrowEnd =
+                    Math.round(
+                      (settings.reverse ? x1 : x2) /
+                        track.displayOptions.arrows.gap
+                    ) * track.displayOptions.arrows.gap
 
-                const arrowXs = range(
-                  arrowStart,
-                  arrowEnd,
-                  track.displayOptions.arrows.gap
-                )
+                  const arrowXs = range(
+                    arrowStart,
+                    arrowEnd,
+                    track.displayOptions.arrows.gap
+                  )
 
-                const isCanonical =
-                  settings.genes.canonical.isColored && transcript.isCanonical
+                  const isCanonical =
+                    settings.genes.canonical.isColored && transcript.isCanonical
 
-                w = Math.abs(x2 - x1)
+                  w = Math.abs(x2 - x1)
 
-                return (
-                  <g
-                    id="transcript"
-                    transform={`translate(0, ${geneYMap.get(`gene-${gi}:transcript-${ti}`) ?? 0})`}
-                    key={ti}
-                  >
-                    <rect
-                      id="transcript-block"
-                      rx={w > 5 ? 2 : 0}
-                      x={x1 - (settings.reverse ? w : 0)}
-                      width={w}
-                      height={track.displayOptions.transcripts.height}
-                      fill={
-                        isCanonical
-                          ? settings.genes.canonical.stroke.color
-                          : settings.genes.exons.fill.color
-                      }
-                    >
-                      <title>{`${transcript.transcriptId}, strand ${transcript.loc.strand}`}</title>
-                    </rect>
-
+                  return (
                     <g
-                      transform={`translate(0, ${track.displayOptions.transcripts.height / 2})`}
+                      id="transcript"
+                      transform={`translate(0, ${geneYMap.get(`gene-${gi}:transcript-${ti}`) ?? 0})`}
+                      key={ti}
                     >
-                      {settings.genes.labels.show &&
-                        settings.genes.display !== 'dense' && (
-                          <text
-                            transform={`translate(${Math.max(-settings.genes.labels.offset, x1 - settings.genes.labels.offset * sgn)}, 0)`}
-                            //fill={track.displayOptions.labels.font.color}
+                      <rect
+                        id="transcript-block"
+                        rx={w > 5 ? 2 : 0}
+                        x={x1 - (settings.reverse ? w : 0)}
+                        width={w}
+                        height={settings.genes.transcripts.height}
+                        fill={
+                          isCanonical
+                            ? settings.genes.canonical.fill.color
+                            : settings.genes.exons.fill.color
+                        }
+                      >
+                        <title>{`${transcript.transcriptId}, strand ${transcript.loc.strand}`}</title>
+                      </rect>
 
-                            fill={
-                              isCanonical
-                                ? settings.genes.canonical.stroke.color
-                                : settings.genes.exons.fill.color
-                            }
-                            dominantBaseline="middle"
-                            fontSize={settings.genes.labels.font.size}
-                            textAnchor={settings.reverse ? 'start' : 'end'}
-                            //fontWeight="bold"
+                      <g
+                        transform={`translate(0, ${settings.genes.transcripts.height / 2})`}
+                      >
+                        {settings.genes.labels.show &&
+                          settings.genes.display !== 'dense' && (
+                            <text
+                              transform={`translate(${Math.max(-settings.genes.labels.offset, x1 - settings.genes.labels.offset * sgn)}, 0)`}
+                              //fill={track.displayOptions.labels.font.color}
+
+                              fill={
+                                isCanonical
+                                  ? settings.genes.canonical.fill.color
+                                  : settings.genes.exons.fill.color
+                              }
+                              dominantBaseline="middle"
+                              fontSize={settings.genes.labels.font.size}
+                              textAnchor={settings.reverse ? 'start' : 'end'}
+                              //fontWeight="bold"
+                            >
+                              {`${transcript.geneSymbol} ${settings.genes.labels.showGeneId ? `(${transcript.transcriptId})` : ''}`}
+                              <title>{`${transcript.geneSymbol} (${transcript.transcriptId})`}</title>
+                            </text>
+                          )}
+
+                        {settings.genes.arrows.show && (
+                          <g
+                            id="arrows"
+                            //transform={`translate(0,-${track.displayOptions.arrows.size})`}
                           >
-                            {`${transcript.geneSymbol} ${settings.genes.labels.showGeneId ? `(${transcript.transcriptId})` : ''}`}
-                            <title>{`${transcript.geneSymbol} (${transcript.transcriptId})`}</title>
-                          </text>
+                            {arrowXs.map(x => {
+                              return (
+                                <use
+                                  key={`${x}`}
+                                  xlinkHref={`#${track.id}-arrow-${transcript.loc.strand === '+' ? 'right' : 'left'}`}
+                                  transform={`translate(${x},0)`}
+                                />
+                              )
+                            })}
+                          </g>
                         )}
-
-                      {settings.genes.arrows.show && (
-                        <g
-                          id="arrows"
-                          //transform={`translate(0,-${track.displayOptions.arrows.size})`}
-                        >
-                          {arrowXs.map((x) => {
-                            return (
-                              <use
-                                key={`${x}`}
-                                xlinkHref={`#${track.id}-arrow-${transcript.loc.strand === '+' ? 'right' : 'left'}`}
-                                transform={`translate(${x},0)`}
-                              />
-                            )
-                          })}
-                        </g>
-                      )}
+                      </g>
                     </g>
-                  </g>
-                )
-              })}
+                  )
+                })}
             </g>
           )
         })}
@@ -439,7 +444,7 @@ export function GenesStructureTrackSvg({
             <polyline
               id={`${track.id}-arrow-left-canonical`}
               points={`${arrowHx},${-arrowHy} ${-arrowHx},0 ${arrowHx},${arrowHy}`}
-              stroke={settings.genes.canonical.stroke.color}
+              stroke={settings.genes.canonical.fill.color}
               strokeWidth={track.displayOptions.arrows.stroke.width}
               fill="none"
               strokeLinecap="round"
@@ -458,7 +463,7 @@ export function GenesStructureTrackSvg({
             <polyline
               id={`${track.id}-arrow-right-canonical`}
               points={`${-arrowHx},${-arrowHy} ${arrowHx},0 ${-arrowHx},${arrowHy}`}
-              stroke={settings.genes.canonical.stroke.color}
+              stroke={settings.genes.canonical.fill.color}
               strokeWidth={track.displayOptions.arrows.stroke.width}
               fill="none"
               strokeLinecap="round"
@@ -482,7 +487,7 @@ export function GenesStructureTrackSvg({
               id={`${track.id}-arrow-left-canonical`}
               points={`${arrowHx},${-arrowHy} ${-arrowHx},0 ${arrowHx},${arrowHy}`}
               stroke="none"
-              fill={settings.genes.canonical.stroke.color}
+              fill={settings.genes.canonical.fill.color}
               fillOpacity={track.displayOptions.arrows.fill.opacity}
               //strokeLinecap="round"
               //strokeLinejoin="round"
@@ -501,7 +506,7 @@ export function GenesStructureTrackSvg({
               id={`${track.id}-arrow-right-canonical`}
               points={`${-arrowHx},${-arrowHy} ${arrowHx},0 ${-arrowHx},${arrowHy}`}
               stroke="none"
-              fill={settings.genes.canonical.stroke.color}
+              fill={settings.genes.canonical.fill.color}
               fillOpacity={track.displayOptions.arrows.fill.opacity}
               //strokeLinecap="round"
               //strokeLinejoin="round"
@@ -522,175 +527,319 @@ export function GenesStructureTrackSvg({
               //transform={`translate(0, ${geneYMap.get(`gene-${gi}`) ?? 0})`}
               key={gi}
             >
-              {gene.children?.map((transcript, ti) => {
-                const transLoc = transcript.loc
-                x1 = xax.domainToRange(transLoc.start)
-                x2 = xax.domainToRange(transLoc.end)
-
-                const exonCount = transcript.children?.length ?? 0
-
-                const arrowStart =
-                  Math.round(
-                    ((settings.reverse ? x2 : x1) +
-                      track.displayOptions.arrows.gap) /
-                      track.displayOptions.arrows.gap
-                  ) * track.displayOptions.arrows.gap
-
-                const arrowEnd =
-                  Math.round(
-                    (settings.reverse ? x1 : x2) /
-                      track.displayOptions.arrows.gap
-                  ) * track.displayOptions.arrows.gap
-
-                const arrowXs = range(
-                  arrowStart,
-                  arrowEnd,
-                  track.displayOptions.arrows.gap
+              {gene.children
+                ?.filter(
+                  f =>
+                    f.type === 'transcript' &&
+                    (!settings.genes.canonical.only || (f.isCanonical ?? false))
                 )
+                .map((transcript, ti) => {
+                  const transLoc = transcript.loc
+                  x1 = xax.domainToRange(transLoc.start)
+                  x2 = xax.domainToRange(transLoc.end)
 
-                const isCanonical =
-                  settings.genes.canonical.isColored && transcript.isCanonical
+                  const exonCount =
+                    transcript.children?.filter(f => f.type === 'exon')
+                      .length ?? 0
 
-                w = Math.abs(x2 - x1)
+                  const arrowStart =
+                    Math.round(
+                      ((settings.reverse ? x2 : x1) +
+                        track.displayOptions.arrows.gap) /
+                        track.displayOptions.arrows.gap
+                    ) * track.displayOptions.arrows.gap
 
-                return (
-                  <g
-                    id="transcript"
-                    transform={`translate(0, ${geneYMap.get(`gene-${gi}:transcript-${ti}`) ?? 0})`}
-                    key={ti}
-                  >
-                    <rect
-                      id="transcript-block"
-                      x={x1 - (settings.reverse ? w : 0)}
-                      width={w}
-                      height={track.displayOptions.transcripts.height}
-                      fill="white"
-                    >
-                      <title>{`${transcript.transcriptId}, strand ${transcript.loc.strand}`}</title>
-                    </rect>
+                  const arrowEnd =
+                    Math.round(
+                      (settings.reverse ? x1 : x2) /
+                        track.displayOptions.arrows.gap
+                    ) * track.displayOptions.arrows.gap
 
+                  const arrowXs = range(
+                    arrowStart,
+                    arrowEnd,
+                    track.displayOptions.arrows.gap
+                  )
+
+                  const isCanonical =
+                    settings.genes.canonical.isColored &&
+                    (transcript.isCanonical ?? false)
+
+                  w = Math.abs(x2 - x1)
+
+                  return (
                     <g
-                      transform={`translate(0, ${track.displayOptions.transcripts.height / 2})`}
+                      id="transcript"
+                      transform={`translate(0, ${geneYMap.get(`gene-${gi}:transcript-${ti}`) ?? 0})`}
+                      key={ti}
                     >
-                      {settings.genes.endArrows.show &&
-                        settings.genes.display !== 'dense' &&
-                        (!settings.genes.endArrows.firstTranscriptOnly ||
-                          ti === 0) && (
-                          <g
-                            id="end-arrow"
-                            transform={`translate(${gene.loc.strand === '+' ? x1 : x2}, 0) scale(${gene.loc.strand === '+' ? 1 : -1},1)`}
-                          >
-                            <polygon
-                              points={`0,0 0,-10 ${10 * sgn},-10 ${10 * sgn},-14 ${15 * sgn},-10 ${10 * sgn},-6 ${10 * sgn},-10 0,-10`}
+                      <rect
+                        id="transcript-block"
+                        x={x1 - (settings.reverse ? w : 0)}
+                        width={w}
+                        height={settings.genes.transcripts.height}
+                        fill="white"
+                      >
+                        <title>{`${transcript.transcriptId}, strand ${transcript.loc.strand}`}</title>
+                      </rect>
+
+                      <g
+                        transform={`translate(0, ${settings.genes.transcripts.height / 2})`}
+                      >
+                        {settings.genes.endArrows.show &&
+                          settings.genes.display !== 'dense' &&
+                          (!settings.genes.endArrows.firstTranscriptOnly ||
+                            ti === 0) && (
+                            <g
+                              id="end-arrow"
+                              transform={`translate(${gene.loc.strand === '+' ? x1 : x2}, 0) scale(${gene.loc.strand === '+' ? 1 : -1},1)`}
+                            >
+                              <polygon
+                                points={`0,0 0,-10 ${10 * sgn},-10 ${10 * sgn},-14 ${15 * sgn},-10 ${10 * sgn},-6 ${10 * sgn},-10 0,-10`}
+                                fill={
+                                  isCanonical
+                                    ? settings.genes.canonical.fill.color
+                                    : settings.genes.endArrows.fill.color
+                                }
+                                fillOpacity={
+                                  settings.genes.endArrows.fill.opacity
+                                }
+                                stroke={
+                                  isCanonical
+                                    ? settings.genes.canonical.fill.color
+                                    : settings.genes.endArrows.stroke.color
+                                }
+                              />
+                            </g>
+                          )}
+
+                        {settings.genes.labels.show &&
+                          settings.genes.display !== 'dense' && (
+                            <text
+                              transform={`translate(${Math.max(-settings.genes.labels.offset, x1 - settings.genes.labels.offset * sgn)}, 0)`}
+                              //fill={track.displayOptions.labels.font.color}
+
                               fill={
                                 isCanonical
-                                  ? settings.genes.canonical.stroke.color
-                                  : settings.genes.endArrows.fill.color
+                                  ? settings.genes.canonical.fill.color
+                                  : settings.genes.exons.fill.color
                               }
-                              fillOpacity={
-                                settings.genes.endArrows.fill.opacity
-                              }
-                              stroke={
-                                isCanonical
-                                  ? settings.genes.canonical.stroke.color
-                                  : settings.genes.endArrows.stroke.color
-                              }
-                            />
+                              dominantBaseline="middle"
+                              fontSize={settings.genes.labels.font.size}
+                              textAnchor={settings.reverse ? 'start' : 'end'}
+                              //fontWeight="bold"
+                            >
+                              {`${transcript.geneSymbol} ${settings.genes.labels.showGeneId ? `(${transcript.transcriptId})` : ''}`}
+                              <title>{`${transcript.geneSymbol} (${transcript.transcriptId})`}</title>
+                            </text>
+                          )}
+
+                        {settings.genes.arrows.show && (
+                          <g
+                            id="arrows"
+                            //transform={`translate(0,-${track.displayOptions.arrows.size})`}
+                          >
+                            {arrowXs.map(x => {
+                              return (
+                                <use
+                                  key={`${x}`}
+                                  xlinkHref={`#${track.id}-arrow-${transcript.loc.strand === '+' ? 'right' : 'left'}${isCanonical ? '-canonical' : ''}`}
+                                  transform={`translate(${x},0)`}
+                                />
+                              )
+                            })}
                           </g>
                         )}
 
-                      {settings.genes.labels.show &&
-                        settings.genes.display !== 'dense' && (
-                          <text
-                            transform={`translate(${Math.max(-settings.genes.labels.offset, x1 - settings.genes.labels.offset * sgn)}, 0)`}
-                            //fill={track.displayOptions.labels.font.color}
-
-                            fill={
+                        {settings.genes.stroke.show && (
+                          <line
+                            id="transcript-line"
+                            x1={x1}
+                            x2={x2}
+                            stroke={
                               isCanonical
-                                ? settings.genes.canonical.stroke.color
-                                : settings.genes.exons.fill.color
+                                ? settings.genes.canonical.fill.color
+                                : settings.genes.stroke.color
                             }
-                            dominantBaseline="middle"
-                            fontSize={settings.genes.labels.font.size}
-                            textAnchor={settings.reverse ? 'start' : 'end'}
-                            //fontWeight="bold"
-                          >
-                            {`${transcript.geneSymbol} ${settings.genes.labels.showGeneId ? `(${transcript.transcriptId})` : ''}`}
-                            <title>{`${transcript.geneSymbol} (${transcript.transcriptId})`}</title>
-                          </text>
+                            strokeWidth={settings.genes.stroke.width}
+                          />
                         )}
 
-                      {settings.genes.arrows.show && (
-                        <g
-                          id="arrows"
-                          //transform={`translate(0,-${track.displayOptions.arrows.size})`}
-                        >
-                          {arrowXs.map((x) => {
-                            return (
-                              <use
-                                key={`${x}`}
-                                xlinkHref={`#${track.id}-arrow-${transcript.loc.strand === '+' ? 'right' : 'left'}${isCanonical ? '-canonical' : ''}`}
-                                transform={`translate(${x},0)`}
-                              />
-                            )
-                          })}
-                        </g>
-                      )}
-
-                      {settings.genes.stroke.show && (
-                        <line
-                          id="transcript-line"
-                          x1={x1}
-                          x2={x2}
-                          stroke={
-                            isCanonical
-                              ? settings.genes.canonical.stroke.color
-                              : settings.genes.stroke.color
-                          }
-                          strokeWidth={settings.genes.stroke.width}
+                        <UTRSvg
+                          transcript={transcript}
+                          xax={xax}
+                          exonCount={exonCount}
+                          isCanonical={isCanonical}
                         />
-                      )}
 
-                      {settings.genes.exons.show && (
-                        <g
-                          id="exons"
-                          transform={`translate(0, ${-track.displayOptions.transcripts.height / 2})`}
-                        >
-                          {transcript.children?.map((exon, ei) => {
-                            const exonLoc = exon.loc
-                            x1 = xax.domainToRange(exonLoc.start)
-                            x2 = xax.domainToRange(exonLoc.end)
-                            w = Math.abs(x2 - x1)
-                            return (
-                              <rect
-                                id="exon"
-                                rx={w > 5 ? 2 : 0}
-                                x={x1 - (settings.reverse ? w : 0)}
-                                width={w}
-                                height={track.displayOptions.transcripts.height}
-                                fill={
-                                  isCanonical
-                                    ? settings.genes.canonical.stroke.color
-                                    : settings.genes.exons.fill.color
-                                }
-                                fillOpacity={settings.genes.exons.fill.opacity}
-                                stroke="none"
-                                key={ei}
-                              >
-                                <title>{`${exon.transcriptId}, strand ${exon.loc.strand}, exon ${exon.loc.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
-                              </rect>
-                            )
-                          })}
-                        </g>
-                      )}
+                        <CDSSvg
+                          transcript={transcript}
+                          xax={xax}
+                          exonCount={exonCount}
+                          isCanonical={isCanonical}
+                        />
+
+                        <ExonsSvg
+                          transcript={transcript}
+                          xax={xax}
+                          exonCount={exonCount}
+                          isCanonical={isCanonical}
+                        />
+                      </g>
                     </g>
-                  </g>
-                )
-              })}
+                  )
+                })}
             </g>
           )
         })}
       </g>
     </>
+  )
+}
+
+function ExonsSvg({
+  transcript,
+  xax,
+  exonCount,
+  isCanonical,
+}: {
+  transcript: IGenomicFeature
+  xax: Axis
+  exonCount: number
+  isCanonical: boolean
+}) {
+  const { settings } = useSeqBrowserSettings()
+
+  if (!settings.genes.exons.show) return null
+
+  return (
+    <g
+      id="exons"
+      transform={`translate(0, ${-settings.genes.exons.height / 2})`}
+    >
+      {transcript.children
+        ?.filter(f => f.type === 'exon')
+        .map((exon, ei) => {
+          const exonLoc = exon.loc
+          const x1 = xax.domainToRange(exonLoc.start)
+          const x2 = xax.domainToRange(exonLoc.end)
+          const w = Math.abs(x2 - x1)
+          return (
+            <rect
+              id="exon"
+              rx={w > 5 ? 2 : 0}
+              x={x1 - (settings.reverse ? w : 0)}
+              width={w}
+              height={settings.genes.exons.height}
+              fill={
+                isCanonical
+                  ? settings.genes.canonical.fill.color
+                  : settings.genes.exons.fill.color
+              }
+              fillOpacity={settings.genes.exons.fill.opacity}
+              stroke="none"
+              key={ei}
+            >
+              <title>{`${exon.transcriptId}, strand ${exon.loc.strand}, exon ${exon.loc.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
+            </rect>
+          )
+        })}
+    </g>
+  )
+}
+
+function CDSSvg({
+  transcript,
+  xax,
+  exonCount,
+  isCanonical,
+}: {
+  transcript: IGenomicFeature
+  xax: Axis
+  exonCount: number
+  isCanonical: boolean
+}) {
+  const { settings } = useSeqBrowserSettings()
+
+  if (!settings.genes.cds.show) return null
+
+  return (
+    <g id="cds" transform={`translate(0, ${-settings.genes.cds.height / 2})`}>
+      {transcript.children
+        ?.filter(f => f.type === 'cds')
+        .map((cds, ei) => {
+          const cdsLoc = cds.loc
+          const x1 = xax.domainToRange(cdsLoc.start)
+          const x2 = xax.domainToRange(cdsLoc.end)
+          const w = Math.abs(x2 - x1)
+          return (
+            <rect
+              id="cds"
+              rx={w > 5 ? 2 : 0}
+              x={x1 - (settings.reverse ? w : 0)}
+              width={w}
+              height={settings.genes.cds.height}
+              fill={
+                isCanonical
+                  ? settings.genes.canonical.fill.color
+                  : settings.genes.cds.fill.color
+              }
+              fillOpacity={settings.genes.cds.fill.opacity}
+              stroke="none"
+              key={ei}
+            >
+              <title>{`${cds.transcriptId}, strand ${cds.loc.strand}, cds ${cds.loc.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
+            </rect>
+          )
+        })}
+    </g>
+  )
+}
+
+function UTRSvg({
+  transcript,
+  xax,
+  exonCount,
+  isCanonical,
+}: {
+  transcript: IGenomicFeature
+  xax: Axis
+  exonCount: number
+  isCanonical: boolean
+}) {
+  const { settings } = useSeqBrowserSettings()
+
+  if (!settings.genes.utrs.show) return null
+
+  return (
+    <g id="utrs" transform={`translate(0, ${-settings.genes.utrs.height / 2})`}>
+      {transcript.children
+        ?.filter(f => f.type === 'utr')
+        .map((utr, ei) => {
+          const utrLoc = utr.loc
+          const x1 = xax.domainToRange(utrLoc.start)
+          const x2 = xax.domainToRange(utrLoc.end)
+          const w = Math.abs(x2 - x1)
+          return (
+            <rect
+              id="utr"
+              rx={w > 5 ? 2 : 0}
+              x={x1 - (settings.reverse ? w : 0)}
+              width={w}
+              height={settings.genes.utrs.height}
+              fill={
+                isCanonical
+                  ? settings.genes.canonical.fill.color
+                  : settings.genes.utrs.fill.color
+              }
+              fillOpacity={settings.genes.utrs.fill.opacity}
+              stroke="none"
+              key={ei}
+            >
+              <title>{`${utr.transcriptId}, strand ${utr.loc.strand}, utr ${utr.loc.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
+            </rect>
+          )
+        })}
+    </g>
   )
 }

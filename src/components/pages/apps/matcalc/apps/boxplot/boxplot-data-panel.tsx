@@ -1,23 +1,23 @@
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@components/color/color-picker-button'
-import type { IColorProps, IStrokeProps } from '@components/plot/svg-props'
-import { PropsPanel } from '@components/props-panel'
-import { PropRow } from '@dialog/prop-row'
-import { VerticalGripIcon } from '@icons/vertical-grip-icon'
-import { VCenterRow } from '@layout/v-center-row'
-import { capitalCase } from '@lib/text/capital-case'
+} from '@/components/color/color-picker-button'
+import type { IColorProps, IStrokeProps } from '@/components/plot/svg-props'
+import { PropsPanel } from '@/components/props-panel'
+import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { PropRow } from '@/dialog/prop-row'
+import { VerticalGripIcon } from '@/icons/vertical-grip-icon'
+import { VCenterRow } from '@/layout/v-center-row'
+import { capitalCase } from '@/lib/text/capital-case'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   SubAccordion,
-} from '@themed/accordion'
-import { MenuSeparator } from '@themed/dropdown-menu'
+} from '@/themed/v2/accordion'
 import { produce } from 'immer'
 import { Reorder } from 'motion/react'
-import { useHistory, usePlot } from '../../history/history-store'
+import { useHistory, usePlot, type BoxPlot } from '../../history/history-store'
 
 export interface IProps {
   plotAddr: string
@@ -26,11 +26,10 @@ export interface IProps {
 export function BoxPlotDataPanel({ plotAddr }: IProps) {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
 
-  const { updateProps } = useHistory()
-  const plot = usePlot(plotAddr)!
+  const { updatePlot } = useHistory()
+  const plot = usePlot(plotAddr)! as BoxPlot
 
-  const singlePlotDisplayOptions = plot.customProps
-    .singlePlotDisplayOptions as {
+  const singlePlotDisplayOptions = plot.singlePlotDisplayOptions as {
     [key: string]: {
       [key: string]: {
         [key: string]: { stroke: IStrokeProps; fill: IColorProps }
@@ -38,8 +37,8 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
     }
   }
 
-  const xOrder: string[] = plot!.customProps.xOrder as string[]
-  const hueOrder: string[] = plot!.customProps.hueOrder as string[]
+  const xOrder: string[] = plot.xOrder as string[]
+  const hueOrder: string[] = plot.hueOrder as string[]
   const typeOrder = ['violin', 'box', 'swarm']
 
   //const [typeTabs, setTypeTabs] = useState(typeOrder)
@@ -53,7 +52,11 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
         axis="y"
         values={xOrder}
         onReorder={(order: unknown) => {
-          updateProps(plotAddr, 'xOrder', order)
+          updatePlot(
+            produce(plot, draft => {
+              draft.xOrder = order as string[]
+            })
+          )
         }}
       >
         {xOrder.map((item: string) => (
@@ -63,7 +66,7 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
             className="flex flex-row items-center gap-x-4 px-2 py-2 rounded-theme trans-color hover:bg-muted"
           >
             <VCenterRow className="cursor-ns-resize">
-              <VerticalGripIcon w="h-5" className="bg-foreground/50" />
+              <VerticalGripIcon className="bg-foreground/50" />
             </VCenterRow>
 
             <span>{item}</span>
@@ -80,7 +83,11 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
             axis="y"
             values={hueOrder}
             onReorder={(order: unknown) => {
-              updateProps(plotAddr, 'hueOrder', order)
+              updatePlot(
+                produce(plot, draft => {
+                  draft.hueOrder = order as string[]
+                })
+              )
             }}
           >
             {hueOrder.map((item: string) => (
@@ -90,7 +97,7 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
                 className="flex flex-row items-center gap-x-4 px-2 py-2 rounded-theme trans-color hover:bg-muted"
               >
                 <VCenterRow className="cursor-ns-resize">
-                  <VerticalGripIcon w="h-5" className="bg-foreground/50" />
+                  <VerticalGripIcon className="bg-foreground/50" />
                 </VCenterRow>
 
                 <span className="grow">{item}</span>
@@ -105,19 +112,19 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
         {typeOrder.map(t => (
           <AccordionItem value={t} key={t}>
             <AccordionTrigger>{capitalCase(t)}</AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent variant="sidebar">
               <SubAccordion value={[]}>
                 {xOrder.map(x => (
                   <AccordionItem value={x} key={x}>
                     <AccordionTrigger>{x}</AccordionTrigger>
-                    <AccordionContent>
+                    <AccordionContent variant="sidebar">
                       <SubAccordion value={[]}>
                         {hueOrder.map(hue => (
                           <AccordionItem value={hue} key={hue}>
                             <AccordionTrigger>
                               {capitalCase(hue)}
                             </AccordionTrigger>
-                            <AccordionContent>
+                            <AccordionContent variant="sidebar">
                               <PropRow title="Stroke">
                                 {/* <NumericalInput
                                   value={
@@ -164,16 +171,24 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
                                       .stroke.color
                                   }
                                   onColorChange={color =>
-                                    updateProps(
-                                      plotAddr,
-                                      'singlePlotDisplayOptions',
-                                      produce(
-                                        singlePlotDisplayOptions,
-                                        draft => {
-                                          draft[x]![hue]![t]!.stroke.color =
-                                            color
-                                        }
-                                      )
+                                    // updateProps(
+                                    //   plotAddr,
+                                    //   'singlePlotDisplayOptions',
+                                    //   produce(
+                                    //     singlePlotDisplayOptions,
+                                    //     draft => {
+                                    //       draft[x]![hue]![t]!.stroke.color =
+                                    //         color
+                                    //     }
+                                    //   )
+                                    // )
+
+                                    updatePlot(
+                                      produce(plot, draft => {
+                                        ;(
+                                          draft.singlePlotDisplayOptions as any
+                                        )[x]![hue]![t]!.stroke.color = color
+                                      })
                                     )
                                   }
                                   className={SIMPLE_COLOR_EXT_CLS}
@@ -189,15 +204,12 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
                                       .color
                                   }
                                   onColorChange={color =>
-                                    updateProps(
-                                      plotAddr,
-                                      'singlePlotDisplayOptions',
-                                      produce(
-                                        singlePlotDisplayOptions,
-                                        draft => {
-                                          draft[x]![hue]![t]!.fill.color = color
-                                        }
-                                      )
+                                    updatePlot(
+                                      produce(plot, draft => {
+                                        ;(
+                                          draft.singlePlotDisplayOptions as any
+                                        )[x]![hue]![t]!.fill.color = color
+                                      })
                                     )
                                   }
                                   className={SIMPLE_COLOR_EXT_CLS}

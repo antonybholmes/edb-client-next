@@ -1,12 +1,13 @@
 import type { Axis } from '@/components/plot/axis'
-import type { IGenomicLocation } from '@lib/genomic/genomic'
-import { range } from '@lib/math/range'
+import type { IGenomicLocation } from '@/lib/genomic/genomic'
+import { range } from '@/lib/math/range'
 import { type ISeqPos } from '../../svg/base-seq-track-svg'
 
 export interface IGetPointOptions {
   mode?: 'CPM' | 'BPM' | 'Count'
   //smooth?: boolean
   accessToken?: string
+  smoothingFactor?: number
 }
 
 export abstract class BaseSeqReader {
@@ -31,9 +32,10 @@ export abstract class BaseSeqReader {
     xax: Axis,
     yax: Axis,
     binSize: number,
-    smoothingFactor: number,
-    { mode = 'Count' }: IGetPointOptions = {}
+    options: IGetPointOptions = {}
   ): Promise<ISeqPos[]> {
+    const { mode = 'Count' } = options
+
     const points = await this.getRealYPoints(location, binSize, { mode })
 
     //if (this._mode === 'Cache X') {
@@ -55,7 +57,7 @@ export abstract class BaseSeqReader {
     //this._mode = 'Fully Cached'
     //}
 
-    return collapsePoints(points, xax, yax, smoothingFactor)
+    return collapsePoints(points, xax, yax)
   }
 }
 
@@ -84,7 +86,7 @@ export function makeBins(
   const start = Math.floor(location.start / binSize) * binSize // Math.max(1, location.start + 4 * binSize)
   const end = Math.ceil(location.end / binSize) * binSize
 
-  return range(start, end, binSize).map((b) => {
+  return range(start, end, binSize).map(b => {
     // one based start
     const s = b + 1
     return {
@@ -96,7 +98,7 @@ export function makeBins(
 
       realY: 0,
       // how many points are in the is window
-      numPoints: 0,
+      //numPoints: 0,
     }
   })
 }
@@ -109,7 +111,7 @@ export function makePoints(
   const start = Math.floor(location.start / binSize) * binSize // Math.max(1, location.start + 4 * binSize)
   const end = Math.ceil(location.end / binSize) * binSize
 
-  return range(start, end, binSize).map((b) => {
+  return range(start, end, binSize).map(b => {
     const s = b + 1
     const e = s + binSize
     return {
@@ -128,8 +130,7 @@ export function makePoints(
 export function collapsePoints(
   points: ISeqPos[],
   xax: Axis,
-  yax: Axis,
-  smoothingFactor: number
+  yax: Axis
 ): ISeqPos[] {
   // no data, so no point attempting to collapse them
   if (points.length === 0) {
@@ -141,70 +142,71 @@ export function collapsePoints(
 
   // fill the gaps
 
-  let filledPoints: ISeqPos[] = [points[0]!]
+  let pointsWithoutGaps: ISeqPos[] = [points[0]!]
 
   let p2: ISeqPos
   //let p1: ISeqPos
-  let npi = 0
+  let currentPointIndex = 0
   //let joins: number[][] = [[0]]
 
   for (let i2 = 1; i2 < points.length; i2++) {
-    npi = filledPoints.length - 1
+    currentPointIndex = pointsWithoutGaps.length - 1
 
     p2 = points[i2]!
 
     if (
-      p2.start === filledPoints[npi]!.end &&
-      Math.abs(p2.realY - filledPoints[npi]!.realY) < Number.EPSILON
+      p2.start === pointsWithoutGaps[currentPointIndex]!.end &&
+      Math.abs(p2.realY - pointsWithoutGaps[currentPointIndex]!.realY) <
+        Number.EPSILON
     ) {
       // both points are contiguous and of the same height, so merge them
-      filledPoints[npi]!.end = p2.end
+      pointsWithoutGaps[currentPointIndex]!.end = p2.end
     } else {
       // if there is a gap between points, add a zero spacer
-      if (p2.start > filledPoints[npi]!.end) {
-        filledPoints.push({
-          start: filledPoints[npi]!.end,
+      if (p2.start > pointsWithoutGaps[currentPointIndex]!.end) {
+        pointsWithoutGaps.push({
+          start: pointsWithoutGaps[currentPointIndex]!.end,
           end: p2.start,
           x: 0,
           y: 0,
           realY: 0, //smooth ? (p1.realY + p2.realY) / 2 : 0,
-          numPoints: 0,
+          //numPoints: 0,
         })
       }
 
-      filledPoints.push(p2)
+      pointsWithoutGaps.push(p2)
     }
   }
 
-  //console.log(filledPoints, 'fill', smoothingFactor)
+  //console.log(pointsWithoutGaps, 'fill', smoothingFactor)
 
-  if (smoothingFactor > 0) {
-    // increase size of zero regions to mean of flanking regions so that dips are not
-    // as severe
+  // if (smoothingFactor > 0) {
+  //   // increase size of zero regions to mean of flanking regions so that dips are not
+  //   // as severe
 
-    for (let i = 1; i < filledPoints.length - 1; i++) {
-      if (filledPoints[i]!.realY === 0) {
-        filledPoints[i]!.realY =
-          (filledPoints[i - 1]!.realY + filledPoints[i + 1]!.realY) *
-          0.5 *
-          smoothingFactor
-      }
-    }
-  }
+  //   for (let i = 1; i < filledPoints.length - 1; i++) {
+  //     if (filledPoints[i]!.realY === 0) {
+  //       filledPoints[i]!.realY =
+  //         (filledPoints[i - 1]!.realY + filledPoints[i + 1]!.realY) *
+  //         0.5 *
+  //         smoothingFactor
+  //     }
+  //   }
+  // }
 
-  let linePoints: ISeqPos[] = []
+  //let linePoints: ISeqPos[] = []
 
   // we need to duplicate starts and ends as unique
   // points for drawing lines. end will be ignored
   // by the renderer so only start is important. We
   // set end to equal start to indicate this
 
-  for (const b of filledPoints) {
-    linePoints.push({ ...b, end: b.start })
-    linePoints.push({ ...b, start: b.end })
-  }
+  // for (const b of pointsWithoutGaps) {
+  //   linePoints.push({ ...b, end: b.start })
+  //   linePoints.push({ ...b, start: b.end })
+  // }
 
-  for (const b of linePoints) {
+  for (const b of pointsWithoutGaps) {
     b.x = xax.domainToRange(b.start)
     b.y = yax.domainToRange(b.realY)
   }
@@ -212,11 +214,38 @@ export function collapsePoints(
   // zero the ends
   const y0 = yax.domainToRange(0)
 
-  linePoints = [
-    { ...linePoints[0]!, y: y0, realY: 0 },
-    ...linePoints,
-    { ...linePoints[linePoints.length - 1]!, y: y0, realY: 0 },
-  ]
+  if (pointsWithoutGaps[0]!.y - y0 <= Number.EPSILON) {
+    // zero the first point if it is close enough to zero to avoid rendering artefacts
+    pointsWithoutGaps[0]!.y = y0
+    pointsWithoutGaps[0]!.realY = 0
+  } else {
+    // if the first point is not zero, add a zero point at the start to ensure the line starts at zero
+    pointsWithoutGaps = [
+      { ...pointsWithoutGaps[0]!, y: y0, realY: 0 },
+      ...pointsWithoutGaps,
+    ]
+  }
 
-  return linePoints
+  const idx = pointsWithoutGaps.length - 1
+
+  if (pointsWithoutGaps[idx]!.y - y0 <= Number.EPSILON) {
+    // zero the last point if it is close enough to zero to avoid rendering artefacts
+    pointsWithoutGaps[idx]!.y = y0
+    pointsWithoutGaps[idx]!.realY = 0
+  } else {
+    // if the last point is not zero, add a zero point at the end to ensure the line ends at zero
+    pointsWithoutGaps.push({
+      ...pointsWithoutGaps[idx]!,
+      y: y0,
+      realY: 0,
+    })
+  }
+
+  // linePoints = [
+  //   { ...linePoints[0]!, y: y0, realY: 0 },
+  //   ...linePoints,
+  //   { ...linePoints[linePoints.length - 1]!, y: y0, realY: 0 },
+  // ]
+
+  return pointsWithoutGaps
 }

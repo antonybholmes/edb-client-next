@@ -1,5 +1,5 @@
 import { TEXT_OPEN } from '@/consts'
-import type { IDivProps } from '@interfaces/div-props'
+import type { IDivProps } from '@/interfaces/div-props'
 import { OpenIcon } from '../icons/open-icon'
 import { ToolbarIconButton } from './toolbar-icon-button'
 

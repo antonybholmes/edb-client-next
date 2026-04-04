@@ -1,6 +1,6 @@
+import type { LeftRightPos } from '@/components/side'
 import { SVG_CRISP_EDGES } from '@/consts'
-import type { LeftRightPos } from '@components/side'
-import { ZERO_POS } from '@interfaces/pos'
+import { ZERO_POS } from '@/interfaces/pos'
 import { range } from 'd3'
 import { Fragment } from 'react'
 import type { IColLabelsSvgProps, ITreeSvgProps } from './col-svg'
@@ -19,7 +19,7 @@ export function RowTreeSvg({
       shapeRendering={SVG_CRISP_EDGES}
     >
       {tree.coords.map((coords, ri) => {
-        const p = range(4).map(i => ({
+        const p = range(4).map((i) => ({
           y: coords[i]!.x * width,
           x:
             mode === 'left'
@@ -62,7 +62,7 @@ export function RowLabelsSvg({
       {leaves.map((row, ri) => {
         return (
           <Fragment key={row}>
-            {rowMetaN.map(rmi => {
+            {rowMetaN.map((rmi) => {
               return (
                 <text
                   key={`${row}:${rmi}`}

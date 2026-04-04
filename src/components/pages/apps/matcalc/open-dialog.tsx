@@ -1,5 +1,5 @@
 import { TEXT_OK } from '@/consts'
-import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
+import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
 import { useEffect } from 'react'
 
 import {
@@ -9,20 +9,20 @@ import {
   type HumanReadableDelimiter,
   type IParseOptions,
   type ITextFileOpen,
-} from '@components/pages/open-files'
-import { CheckPropRow } from '@dialog/check-prop-row'
-import { PropRow } from '@dialog/prop-row'
-import { SwitchPropRow } from '@dialog/switch-prop-row'
-import { VCenterRow } from '@layout/v-center-row'
-import { truncate } from '@lib/text/text'
-import { NumericalInput } from '@themed/numerical-input'
+} from '@/components/pages/open-files'
+import { CheckPropRow } from '@/dialog/check-prop-row'
+import { PropRow } from '@/dialog/prop-row'
+import { SwitchPropRow } from '@/dialog/switch-prop-row'
+import { VCenterRow } from '@/layout/v-center-row'
+import { truncate } from '@/lib/text/text'
+import { NumericalInput } from '@/themed/numerical-input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@themed/select'
+} from '@/themed/v2/select'
 import { produce } from 'immer'
 import { useMatcalcSettings } from './settings/matcalc-settings'
 
@@ -98,7 +98,7 @@ export function OpenDialog({ files, openFiles, onCancel }: IProps) {
           updateSettings(newSettings)
         }}
       >
-        <VCenterRow className="w-32 gap-x-2">
+        <VCenterRow className="w-28 gap-x-2">
           <NumericalInput
             value={settings.openFile.index.cols}
             disabled={!settings.openFile.index.hasIndex}
@@ -117,7 +117,7 @@ export function OpenDialog({ files, openFiles, onCancel }: IProps) {
       </CheckPropRow>
 
       <PropRow className="gap-x-2" title="Skip">
-        <VCenterRow className="w-32 gap-x-2">
+        <VCenterRow className="w-28 gap-x-2">
           <NumericalInput
             value={settings.openFile.skipRows}
             limit={[0, 1000]}
@@ -135,7 +135,7 @@ export function OpenDialog({ files, openFiles, onCancel }: IProps) {
         </VCenterRow>
       </PropRow>
 
-      <PropRow title="Delimiter">
+      <PropRow title="Delimiter" contentCls="gap-x-4">
         {/* <Input
               value={settings.openFile.delimiter}
               onChange={e => {
@@ -160,7 +160,7 @@ export function OpenDialog({ files, openFiles, onCancel }: IProps) {
           }}
         >
           <SelectTrigger className="w-32">
-            <SelectValue placeholder="Select a delimiter" />
+            <SelectValue data-placeholder="Select a delimiter" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="<tab>">{'<tab>'}</SelectItem>

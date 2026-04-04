@@ -1,7 +1,10 @@
-'use client'
+// 'use client'
 
 import type { IChildrenProps } from '@/interfaces/children-props'
-import { createContext, useContext, useState } from 'react'
+import { createContext, useCallback, useContext, useState } from 'react'
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import { useShallow } from 'zustand/react/shallow'
 
 // interface IGlobalState {
 //   zoom: number
@@ -60,35 +63,87 @@ import { createContext, useContext, useState } from 'react'
 // import { create } from 'zustand'
 // import { persist } from 'zustand/middleware'
 
-interface IZoomStore {
+interface IZoomContext {
   zoom: number
   setZoom: (zoom: number) => void
+  resetZoom: () => void
 }
 
-// const useZoomStore = create<IZoomStore>()(
-//   persist(
-//     set => ({
-//       zoom: 1,
-//       setZoom: (zoom: number) => set({ zoom }),
-//     }),
-//     {
-//       name: 'zoom', // key in localStorage
-//     }
-//   )
-// )
+export interface IZoomStore {
+  zooms: Record<string, number>
+  setZoom: (id: string, value: number) => void
+  resetZoom: (id: string) => void
+  resetAll: () => void
+}
 
-// export function useZoom(): IZoomStore {
-//   const zoom = useZoomStore(state => state.zoom)
-//   const setZoom = useZoomStore(state => state.setZoom)
+export const DEFAULT_ZOOM = 1
+export const DEFAULT_ZOOM_CHANNEL = 'default'
 
-//   return { zoom, setZoom }
-// }
+export const useZoomStore = create<IZoomStore>()(
+  persist(
+    (set) => ({
+      zooms: {},
 
-const DEFAULT_ZOOM = 1
+      setZoom: (id, value) =>
+        set((state) => ({
+          zooms: {
+            ...state.zooms,
+            [id]: value,
+          },
+        })),
 
-const ZoomContext = createContext<IZoomStore>({
+      resetZoom: (channel) =>
+        set((state) => {
+          const zooms = { ...state.zooms }
+          delete zooms[channel]
+
+          return { zooms }
+        }),
+
+      resetAll: () => set({ zooms: {} }),
+    }),
+    {
+      name: 'zoom-channels:v4',
+    }
+  )
+)
+
+/**
+ * A hook for accessing a zoom channel from a zoom store.
+ * This is to allow for multiple independent zoom levels for different parts of the application.
+ *
+ * @param channel The zoom channel to access.
+ * @returns An object containing the current zoom value and a function to set the zoom value for the specified channel.
+ */
+export function useZoom(
+  channel: string = DEFAULT_ZOOM_CHANNEL,
+  defaultZoom: number = DEFAULT_ZOOM
+): IZoomContext {
+  const zoom = useZoomStore(
+    useShallow((state) => state.zooms[channel] ?? defaultZoom)
+  )
+  const setZoom = useZoomStore((state) => state.setZoom)
+  const resetZoom = useZoomStore((state) => state.resetZoom)
+
+  const setChannelZoom = useCallback(
+    (value: number) => {
+      setZoom(channel, value)
+    },
+    [channel, setZoom]
+  )
+
+  const resetChannelZoom = useCallback(
+    () => resetZoom(channel),
+    [channel, resetZoom]
+  )
+
+  return { zoom, setZoom: setChannelZoom, resetZoom: resetChannelZoom }
+}
+
+const ZoomContext = createContext<IZoomContext>({
   zoom: DEFAULT_ZOOM,
   setZoom: () => {},
+  resetZoom: () => {},
 })
 
 export function ZoomProvider({ children }: IChildrenProps) {
@@ -104,16 +159,24 @@ export function ZoomProvider({ children }: IChildrenProps) {
   const [zoom, setZoom] = useState(DEFAULT_ZOOM)
 
   return (
-    <ZoomContext.Provider value={{ zoom, setZoom }}>
+    <ZoomContext.Provider
+      value={{ zoom, setZoom, resetZoom: () => setZoom(DEFAULT_ZOOM) }}
+    >
       {children}
     </ZoomContext.Provider>
   )
 }
 
-export function useZoom(): IZoomStore {
+export function useZoomCtx(): IZoomContext {
   const context = useContext(ZoomContext)
+
   if (!context) {
     throw new Error('useZoom must be used within a ZoomProvider')
   }
-  return { zoom: context.zoom, setZoom: context.setZoom }
+
+  return {
+    zoom: context.zoom,
+    setZoom: context.setZoom,
+    resetZoom: context.resetZoom,
+  }
 }

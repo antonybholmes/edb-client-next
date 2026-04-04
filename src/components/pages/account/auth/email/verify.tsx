@@ -1,4 +1,4 @@
-import { ThemeIndexLink } from '@components/link/theme-index-link'
+import { ThemeIndexLink } from '@/components/link/theme-index-link'
 import {
   Card,
   CardDescription,
@@ -6,23 +6,21 @@ import {
   CardHeader,
   CardTitle,
   CenteredCardContainer,
-} from '@themed/card'
+} from '@/themed/card'
 
-import { HeaderLayout } from '@layouts/header-layout'
-import { bearerHeaders } from '@lib/http/urls'
+import { HeaderLayout } from '@/layouts/header-layout'
+import { bearerHeaders } from '@/lib/http/urls'
 
 import {
   API_EMAIL_VERIFIED_URL,
   EDB_ACCESS_TOKEN_COOKIE,
   EDB_TOKEN_PARAM,
-  OAUTH2_SIGN_IN_ROUTE,
-  SIGN_UP_ROUTE,
+  SIGN_UP_PATH,
   TEXT_SIGN_UP,
-} from '@lib/edb/edb'
+} from '@/lib/edb/edb'
 
-import { TEXT_SIGN_IN } from '@/consts'
-import { httpFetch } from '@lib/http/http-fetch'
-import { useQueryClient } from '@tanstack/react-query'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { CoreProviders } from '@/providers/core-providers'
 import Cookies from 'js-cookie'
 import { jwtDecode, type JwtPayload } from 'jwt-decode'
 import { useEffect, useState } from 'react'
@@ -33,8 +31,6 @@ export interface IRedirectUrlJwtPayload extends JwtPayload {
 }
 
 export function VerifyPage() {
-  const queryClient = useQueryClient()
-
   //const url = queryParameters.get(EDB_URL_PARAM) ?? ""
 
   //const { accessToken } = useAccessTokenStore()
@@ -56,7 +52,7 @@ export function VerifyPage() {
     Boolean(Cookies.get(EDB_ACCESS_TOKEN_COOKIE))
   )
 
-  const [firstName, setFirstName] = useState('')
+  const [name, setName] = useState('')
 
   useEffect(() => {
     async function verify() {
@@ -65,21 +61,17 @@ export function VerifyPage() {
       const jwtData = jwtDecode<IRedirectUrlJwtPayload>(jwt)
 
       try {
-        const res = await queryClient.fetchQuery({
-          queryKey: ['verify'],
-          queryFn: () =>
-            httpFetch.postJson<{ data: { success: boolean } }>(
-              API_EMAIL_VERIFIED_URL,
-              {
-                headers: bearerHeaders(jwt),
-              }
-            ),
-        })
+        const res = await httpFetch.postJson<{ data: { success: boolean } }>(
+          API_EMAIL_VERIFIED_URL,
+          {
+            headers: bearerHeaders(jwt),
+          }
+        )
 
         const success: boolean = res.data.success
 
         setIsVerified(success)
-        setFirstName(jwtData.data)
+        setName(jwtData.data)
 
         // url encoded in jwt to make it more tamper proof
         //const visitUrl = jwtData.redirectUrl
@@ -102,19 +94,16 @@ export function VerifyPage() {
           {isVerified ? (
             <>
               <CardHeader>
-                <CardTitle>{`Thanks ${firstName},`}</CardTitle>
+                <CardTitle>{`Thanks ${name},`}</CardTitle>
                 <CardDescription>
                   Your email address has been verified. To sign in, click the
                   link below.
                 </CardDescription>
               </CardHeader>
               <CardFooter className="flex flex-row justify-end">
-                <ThemeIndexLink
-                  href={OAUTH2_SIGN_IN_ROUTE}
-                  aria-label="Sign In"
-                >
+                {/* <ThemeIndexLink href={OAUTH2_SIGN_IN_PATH} aria-label="Sign In">
                   {TEXT_SIGN_IN}
-                </ThemeIndexLink>
+                </ThemeIndexLink> */}
               </CardFooter>
             </>
           ) : (
@@ -126,7 +115,7 @@ export function VerifyPage() {
                 </CardDescription>
               </CardHeader>
               <CardFooter className="flex flex-row justify-end">
-                <ThemeIndexLink href={SIGN_UP_ROUTE} aria-label={TEXT_SIGN_UP}>
+                <ThemeIndexLink href={SIGN_UP_PATH} aria-label={TEXT_SIGN_UP}>
                   {TEXT_SIGN_UP}
                 </ThemeIndexLink>
               </CardFooter>
@@ -135,5 +124,13 @@ export function VerifyPage() {
         </Card>
       </CenteredCardContainer>
     </HeaderLayout>
+  )
+}
+
+export function VerifyQueryPage() {
+  return (
+    <CoreProviders>
+      <VerifyPage />
+    </CoreProviders>
   )
 }

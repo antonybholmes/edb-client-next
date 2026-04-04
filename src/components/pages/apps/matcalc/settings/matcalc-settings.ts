@@ -1,5 +1,4 @@
-import { APP_ID } from '@/consts'
-
+import { config } from '@/config'
 import { getModuleName } from '@/lib/module-info'
 import { create } from 'zustand'
 import type { HumanReadableDelimiter } from '../../../open-files'
@@ -7,7 +6,7 @@ import MODULE_INFO from '../module.json'
 
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${APP_ID}:module:${getModuleName(MODULE_INFO.name)}:settings:v42`
+const SETTINGS_KEY = `${config.appId}:app:${getModuleName(MODULE_INFO.name)}:settings:v48`
 
 export interface IMatcalcSettings {
   dot: { size: { useOriginalValuesForSizes: boolean } }
@@ -49,7 +48,7 @@ export interface IMatcalcSettings {
     }
 
     gex: {
-      species: string
+      genome: string
       gexType: string
       addGroup: boolean
       addSampleMetadataToColumns: boolean
@@ -80,11 +79,18 @@ export interface IMatcalcSettings {
     }
     delimiter: HumanReadableDelimiter
     keepDefaultNA: boolean
+    // whether to show multiple files when opened
     multiFileView: boolean
   }
 
   sidebar: {
     show: boolean
+  }
+
+  groups: {
+    filter: {
+      mode: 'keep' | 'hide' | 'ignore'
+    }
   }
 }
 
@@ -120,7 +126,7 @@ export const DEFAULT_SETTINGS: IMatcalcSettings = {
       cols: 1,
     },
     skipRows: 0,
-    multiFileView: false,
+    multiFileView: true,
     trimWhitespace: true,
   },
 
@@ -158,13 +164,19 @@ export const DEFAULT_SETTINGS: IMatcalcSettings = {
       technology: 'RNA-seq',
       gexType: 'TPM',
       genes: [],
-      species: 'Human',
+      genome: 'Human',
       selectedDatasets: [],
     },
   },
   dot: {
     size: {
       useOriginalValuesForSizes: true,
+    },
+  },
+
+  groups: {
+    filter: {
+      mode: 'ignore',
     },
   },
 }
@@ -175,10 +187,10 @@ export interface IMatcalcStore extends IMatcalcSettings {
 
 export const useMatcalcStore = create<IMatcalcStore>()(
   persist(
-    (set) => ({
+    set => ({
       ...DEFAULT_SETTINGS,
       updateSettings: (settings: Partial<IMatcalcSettings>) => {
-        set((state) => ({ ...state, ...settings }))
+        set(state => ({ ...state, ...settings }))
       },
     }),
     {
@@ -212,8 +224,8 @@ export function useMatcalcSettings(): {
   updateSettings: (settings: Partial<IMatcalcSettings>) => void
   resetSettings: () => void
 } {
-  const settings = useMatcalcStore((state) => state)
-  const updateSettings = useMatcalcStore((state) => state.updateSettings)
+  const settings = useMatcalcStore(state => state)
+  const updateSettings = useMatcalcStore(state => state.updateSettings)
   const resetSettings = () => updateSettings({ ...DEFAULT_SETTINGS })
 
   return { settings, updateSettings, resetSettings }

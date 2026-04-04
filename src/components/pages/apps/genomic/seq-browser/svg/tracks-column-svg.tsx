@@ -1,20 +1,19 @@
-import { type IDivProps } from '@interfaces/div-props'
+import { type IDivProps } from '@/interfaces/div-props'
 
-import { useContext, type ReactNode } from 'react'
+import { useContext, useEffect, useState, type ReactNode } from 'react'
 
-import { IGenomicFeature } from '@/lib/genomic/genomic'
-import { cumsum } from '@lib/math/cumsum'
-import type { IGeneDbInfo } from '../../annotate/annotate-page'
+import { cumsum } from '@/lib/math/cumsum'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
 import {
   LocationContext,
-  TracksContext,
+  MouseEventContext,
   type AllBedTrackTypes,
   type AllSignalTrackTypes,
   type IBedTrack,
   type ILocalBedTrack,
   type IRemoteBigBedTrack,
 } from '../tracks-provider'
+import { useTracks } from '../tracks-store'
 import { getBedTrackHeight } from './base-bed-track-svg'
 import { BedTrackSvg } from './bed-track-svg'
 import { CytobandsTrackSvg } from './cytobands-track-svg'
@@ -24,21 +23,20 @@ import { RulerTrackSvg } from './ruler-track-svg'
 import { ScaleTrackSvg } from './scale-track-svg'
 import { SeqTrackSvg } from './seq-track-svg'
 
-export type GenesMap = { [key: string]: IGeneDbInfo }
+//export type GenesMap = { [key: string]: IGeneDbInfo }
 
-interface IProps extends IDivProps {
-  genesMap: GenesMap
-  //locTrackBins: ILocTrackBins | null
-  features: IGenomicFeature[]
-}
-
-export function TracksColumnSvg({
-  genesMap,
-  //locTrackBins,
-}: IProps) {
-  const { state } = useContext(TracksContext)
-  const { xax, location, geneYMap } = useContext(LocationContext)
+export function TracksColumnSvg(
+  {
+    //locTrackBins,
+  }: IDivProps
+) {
+  const { groups } = useTracks()
+  const { pos, xax, location, geneYMap } = useContext(LocationContext)
   const { settings } = useSeqBrowserSettings()
+
+  const { pos: mousePos } = useContext(MouseEventContext)
+
+  const [colMousePos, setColMousePos] = useState({ x: -1, y: -1 })
 
   // let xax = new Axis()
   //   .setDomain([location.start, location.end])
@@ -64,8 +62,8 @@ export function TracksColumnSvg({
   //   },
   // })
 
-  // // we need this here to calculate the height of the track rather than
-  // // having the query inside the svg component
+  // we need this here to calculate the height of the track rather than
+  // having the query inside the svg component
   // const features: IGenomicFeature[] = genesQuery.data ? genesQuery.data : []
 
   // useEffect(() => {
@@ -83,7 +81,7 @@ export function TracksColumnSvg({
   //console.log(state)
 
   // const seqs = state.order
-  //   .map(gid => state.groups[gid]!)
+  //   .map(gid => groups[gid]!)
   //   .map(tg => tg.order.map(id => tg.tracks[id]!))
   //   .flat()
   //   .filter(t => t.type === 'Seq') as ISeqTrack[]
@@ -122,9 +120,10 @@ export function TracksColumnSvg({
   //   [locTrackBins, settings.seqs.globalY, settings.seqs.scale]
   // )
 
-  const tracks = state.order
-    .map((gid) => state.groups[gid]!)
-    .map((tg) => tg.order.map((id) => tg.tracks[id]!))
+  const tracks = groups.map(g => g.tracks)
+
+  //.map(gid => groups[gid]!)
+  //.map(tg => tg.order.map(id => tg.tracks[id]!))
 
   if (tracks.length === 0) {
     return null
@@ -137,7 +136,7 @@ export function TracksColumnSvg({
 
   for (const ts of tracks) {
     // if there is a gene track, we need to calculate the height based on the features
-    switch (ts[0]!.trackType) {
+    switch (ts[0]!.type) {
       case 'Seq':
       case 'Remote BigWig':
       case 'Local BigWig':
@@ -155,7 +154,7 @@ export function TracksColumnSvg({
         break
       case 'Ruler':
       case 'Cytobands':
-        trackHeights.push(ts[0]!.displayOptions.height + settings.titles.height)
+        trackHeights.push(settings.cytobands.height + settings.titles.height)
         break
       case 'Gene':
         trackHeights.push(
@@ -189,78 +188,119 @@ export function TracksColumnSvg({
 
   const trackY = cumsum([0, ...trackHeights])
 
+  useEffect(() => {
+    let x = mousePos.x - pos.x
+
+    if (x < 0 || x > xax.length) {
+      x = -1
+    }
+
+    let y = mousePos.y - pos.y
+
+    if (y < 0 || y > trackY[trackY.length - 1]!) {
+      y = -1
+    }
+
+    setColMousePos({ x, y })
+  }, [
+    mousePos.x,
+    mousePos.y,
+    pos.x,
+    pos.y,
+    xax.length,
+    trackY.map(h => h.toString()).join('|'),
+  ])
+
+  //console.log('col mouse pos', colMousePos)
+
   return (
-    <g id={`track-col-${location.loc}`}>
-      {tracks.map((ts, ti) => {
-        let plotSvg: ReactNode = <text>{ts[0]!.trackType} not implemented</text>
-        switch (ts[0]!.trackType) {
-          case 'Seq':
-          case 'Remote BigWig':
-          case 'Local BigWig':
-            plotSvg = (
-              <SeqTrackSvg
-                tracks={ts as AllSignalTrackTypes[]}
-                titleHeight={titleHeightUsingPosition}
-                key={ti}
-                scale={
-                  ts[0]!.trackType === 'Remote BigWig' ||
-                  ts[0]!.trackType === 'Local BigWig'
-                    ? ts[0]!.scale
-                    : 'Count'
-                }
-              />
-            )
-            break
-          case 'BED':
-          case 'Local BED':
-          case 'Remote BigBed':
-          case 'Local BigBed':
-            plotSvg = (
-              <BedTrackSvg
-                key={ti}
-                tracks={ts as AllBedTrackTypes[]}
-                titleHeight={titleHeightUsingPosition}
-              />
-            )
-            break
+    <MouseEventContext.Provider value={{ pos: colMousePos }}>
+      <g
+        id={`track-col-${location.loc}`}
+        transform={`translate(${pos.x}, ${pos.y})`}
+      >
+        {tracks.map((ts, ti) => {
+          let plotSvg: ReactNode = <text>{ts[0]!.type} not implemented</text>
+          switch (ts[0]!.type) {
+            case 'Seq':
+            case 'Remote BigWig':
+            case 'Local BigWig':
+              plotSvg = (
+                <SeqTrackSvg
+                  tracks={ts as AllSignalTrackTypes[]}
+                  titleHeight={titleHeightUsingPosition}
+                  key={ti}
+                  scale={
+                    ts[0]!.type === 'Remote BigWig' ||
+                    ts[0]!.type === 'Local BigWig'
+                      ? ts[0]!.scale
+                      : 'Count'
+                  }
+                />
+              )
+              break
+            case 'BED':
+            case 'Local BED':
+            case 'Remote BigBed':
+            case 'Local BigBed':
+              plotSvg = (
+                <BedTrackSvg
+                  key={ti}
+                  tracks={ts as AllBedTrackTypes[]}
+                  titleHeight={titleHeightUsingPosition}
+                />
+              )
+              break
 
-          case 'Gene':
-            plotSvg = (
-              <GenesTrackSvg
-                db={genesMap[settings.genome]}
-                key={ti}
-                track={ts[0]!}
-                titleHeight={titleHeightUsingPosition}
-                geneYMap={geneYMap}
-              />
-            )
-            break
-          case 'Location':
-            plotSvg = <LocationTrackSvg key={ti} track={ts[0]!} xax={xax} />
-            break
-          case 'Scale':
-            plotSvg = (
-              <ScaleTrackSvg genome={settings.genome} key={ti} track={ts[0]!} />
-            )
-            break
-          case 'Ruler':
-            plotSvg = <RulerTrackSvg key={ti} track={ts[0]!} xax={xax} />
-            break
-          case 'Cytobands':
-            plotSvg = <CytobandsTrackSvg key={ti} track={ts[0]!} />
-            break
+            case 'Gene':
+              plotSvg = (
+                <GenesTrackSvg
+                  key={ti}
+                  track={ts[0]!}
+                  titleHeight={titleHeightUsingPosition}
+                  geneYMap={geneYMap}
+                />
+              )
+              break
+            case 'Location':
+              plotSvg = <LocationTrackSvg key={ti} track={ts[0]!} xax={xax} />
+              break
+            case 'Scale':
+              plotSvg = (
+                <ScaleTrackSvg
+                  genome={settings.assembly}
+                  key={ti}
+                  track={ts[0]!}
+                />
+              )
+              break
+            case 'Ruler':
+              plotSvg = <RulerTrackSvg key={ti} track={ts[0]!} xax={xax} />
+              break
+            case 'Cytobands':
+              plotSvg = <CytobandsTrackSvg key={ti} track={ts[0]!} />
+              break
 
-          default:
-            break
-        }
+            default:
+              break
+          }
 
-        return (
-          <g transform={`translate(0, ${trackY[ti]!})`} key={ts[0]!.id}>
-            {/* <rect width={xax.width} height={trackHeights[ti]} stroke='black' fill='none'/> */}
-            {plotSvg}
-          </g>
-        )
-      })}
-    </g>
+          return (
+            <g transform={`translate(0, ${trackY[ti]!})`} key={ts[0]!.id}>
+              {/* <rect width={xax.width} height={trackHeights[ti]} stroke='black' fill='none'/> */}
+
+              {/* <rect
+              width={xax.length}
+              height={trackHeights[trackHeights.length - 1]!}
+              fill="red"
+            
+            /> */}
+
+              {plotSvg}
+            </g>
+          )
+        })}
+      </g>
+    </MouseEventContext.Provider>
   )
 }

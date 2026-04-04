@@ -1,12 +1,12 @@
-import { type IDivProps } from '@interfaces/div-props'
+import { type IDivProps } from '@/interfaces/div-props'
 
+import { API_BEDS_REGIONS_URL } from '@/lib/edb/edb'
+import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { type IGenomicLocation } from '@/lib/genomic/genomic'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { bearerHeaders } from '@/lib/http/urls'
 import { queryClient } from '@/query'
 import { BigBed } from '@gmod/bbi'
-import { API_BEDS_REGIONS_URL } from '@lib/edb/edb'
-import { useEdbAuth } from '@lib/edb/edb-auth'
-import { type IGenomicLocation } from '@lib/genomic/genomic'
-import { httpFetch } from '@lib/http/http-fetch'
-import { bearerHeaders } from '@lib/http/urls'
 import { RemoteFile } from 'generic-filehandle2'
 import { useContext, useEffect, useState } from 'react'
 
@@ -27,11 +27,16 @@ import {
 } from '../tracks-provider'
 import { BaseBedTrackSvg } from './base-bed-track-svg'
 
-export interface IBedFeature {
+export interface IBedRegion {
   loc: IGenomicLocation
   score: number
   name: string
-  tags: string
+  tags: string[]
+}
+
+export interface ISampleBedFeatures {
+  sample: string
+  regions: IBedRegion[]
 }
 
 interface IProps extends IDivProps {
@@ -84,12 +89,12 @@ export function BedTrackSvg({ tracks, titleHeight }: IProps) {
       let reader: BaseBedReader = EMPTY_BED_READER
 
       for (const t of tracks) {
-        switch (t.trackType) {
+        switch (t.type) {
           case 'Remote BigBed':
           case 'Local BigBed':
           case 'Local BED':
             reader =
-              t.trackType === 'Remote BigBed'
+              t.type === 'Remote BigBed'
                 ? new BigBedReader(
                     new BigBed({
                       filehandle: new RemoteFile(t.url),
@@ -104,17 +109,17 @@ export function BedTrackSvg({ tracks, titleHeight }: IProps) {
             // the publicId matching the track we want to display
 
             try {
-              const res = await queryClient.fetchQuery({
-                queryKey: ['BED', t, location],
-                queryFn: async () => {
-                  const accessToken = await fetchAccessToken()
+              const accessToken = await fetchAccessToken()
 
+              const res = await queryClient.fetchQuery({
+                queryKey: ['BED', t.id, location.loc],
+                queryFn: async () => {
                   const res = await httpFetch.postJson<{
-                    data: IBedFeature[][]
+                    data: ISampleBedFeatures[]
                   }>(API_BEDS_REGIONS_URL, {
                     body: {
                       location: location.loc,
-                      beds: [t.publicId],
+                      samples: [t.id],
                     },
 
                     headers: bearerHeaders(accessToken),

@@ -1,15 +1,15 @@
+import {
+  ColorPickerButton,
+  SIMPLE_COLOR_EXT_CLS,
+} from '@/components/color/color-picker-button'
+import { PropRow } from '@/components/dialog/prop-row'
 import { VCenterRow } from '@/components/layout/v-center-row'
-import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
-import { LabelContainer } from '@/components/shadcn/ui/themed/label'
-import { PopoverTrigger } from '@/components/shadcn/ui/themed/popover'
+import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
 import { TEXT_CANCEL, TEXT_NAME } from '@/consts'
-import { ColorPickerPopover } from '@components/color/color-picker-button'
-import { OKCancelDialog, type IModalProps } from '@dialog/ok-cancel-dialog'
-import type { IClusterGroup } from '@lib/cluster-group'
-import { Checkbox } from '@themed/check-box'
-import { InfoHoverCard } from '@themed/hover-card'
-import { Input } from '@themed/input'
-import { Palette } from 'lucide-react'
+import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
+import type { IClusterGroup } from '@/lib/cluster-group'
+import { Checkbox } from '@/themed/v2/check-box'
+import { Input } from '@/themed/v2/input'
 import { useEffect, useState } from 'react'
 
 export interface IProps extends IModalProps {
@@ -40,7 +40,7 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
     callback?.({
       ...group,
       name,
-      search: search.split(',').map((x) => x.trim().toLowerCase()),
+      search: search.split(',').map(x => x.trim().toLowerCase()),
       color,
       exactMatch,
     })
@@ -54,7 +54,7 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
           {name.length > 0 ? `Edit ${name}` : 'New group'}
         </span>
       }
-      onResponse={(r) => {
+      onResponse={r => {
         if (r === TEXT_CANCEL) {
           onResponse?.(r)
         } else {
@@ -71,20 +71,11 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
         //   title="Set color"
         // />
 
-        <ColorPickerPopover color={color} onColorChange={setColor}>
-          <PopoverTrigger asChild>
-            <IconButton variant="secondary" size="icon-sm" title="Group color">
-              <Palette
-                style={{ fill: color, strokeWidth: 1 }}
-                className="stroke-foreground/80 w-5"
-              />
-              {/* <Brush
-                style={{ strokeWidth: 1 }}
-                className="absolute bottom-1/5 left-1/2 fill-white w-5 stroke-black"
-              /> */}
-            </IconButton>
-          </PopoverTrigger>
-        </ColorPickerPopover>
+        <ColorPickerButton
+          color={color}
+          onColorChange={setColor}
+          className={SIMPLE_COLOR_EXT_CLS}
+        />
       }
       //headerStyle={{ color }}
       // headerChildren={
@@ -93,72 +84,68 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
       //     <span className="truncate">{group?.id}</span>
       //   </VCenterRow>
       // }
-      leftFooterChildren={
-        <span className="text-foreground/50" title="Group Id">
-          {group?.id}
-        </span>
-      }
+      // leftFooterChildren={
+      //   <span className="text-foreground/50" title="Group Id">
+      //     {group?.id}
+      //   </span>
+      // }
       //contentVariant="glass"
       //bodyVariant="card"
       //headerVariant="opaque"
       //bodyVariant="default"
       //footerVariant="default"
-      bodyCls="gap-y-4"
+      bodyCls="gap-y-2"
     >
-      <LabelContainer
-        label={TEXT_NAME}
-        labelPos="left"
-        labelW="min-w-24"
-        id="name"
-      >
+      <PropRow title={TEXT_NAME} id="name" labelW="sm">
         <Input
           id="name"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={e => setName(e.target.value)}
           placeholder="Group Name"
           //label="Group Name"
           //labelPos="left"
           //variant="dialog"
           //h="dialog"
-          className="grow"
         />
-      </LabelContainer>
 
-      <VCenterRow className="gap-x-4">
-        <LabelContainer
-          label="Match"
-          labelPos="left"
-          labelW="min-w-24"
+        <ColorPickerButton
+          color={color}
+          onColorChange={setColor}
+          className={SIMPLE_COLOR_EXT_CLS}
+        />
+      </PropRow>
+
+      <PropRow title="Match" labelW="sm">
+        <Input
           id="search"
-        >
-          <Input
-            id="search"
-            value={search}
-            onTextChange={(e) => setSearch(e)}
-            placeholder="Matches..."
-            rightChildren={
-              <InfoHoverCard title="Matches">
-                A comma separated list of words or partial words that match
-                column names. All matching columns will belong to the group.
-              </InfoHoverCard>
-            }
-            //label="Match"
-            //labelPos="left"
-            //variant="alt"
-            //variant="dialog"
-            //h="dialog"
-            w="grow"
-          />
-        </LabelContainer>
+          value={search}
+          onTextChange={e => setSearch(e)}
+          placeholder="Matches..."
+          rightChildren={
+            <InfoHoverCard>
+              A comma separated list of words or partial words that match column
+              names. All matching columns will belong to the group.
+            </InfoHoverCard>
+          }
+          //label="Match"
+          //labelPos="left"
+          //variant="alt"
+          //variant="dialog"
+          //h="dialog"
+        />
+      </PropRow>
 
-        <Checkbox checked={exactMatch} onCheckedChange={setExactMatch}>
-          Exact match
-        </Checkbox>
-      </VCenterRow>
+      <PropRow title="" labelW="sm">
+        <VCenterRow className="grow w-full">
+          <Checkbox checked={exactMatch} onCheckedChange={setExactMatch}>
+            Exact match
+          </Checkbox>
+        </VCenterRow>
+      </PropRow>
 
-      {/* <VCenterRow className="gap-x-1 mt-2">
-        <span className="text-xs font-bold">Id {group?.id}</span>
-      </VCenterRow> */}
+      <PropRow title="Id" labelW="sm">
+        <Input value={group?.id} readOnly />
+      </PropRow>
 
       {/* <VCenterRow>
           <span className="w-24 shrink-0">Color</span>
@@ -167,7 +154,7 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
             onColorChange={setColor}
             className={SIMPLE_COLOR_EXT_CLS}
           />
-        </VCenterRow> */}
+        </VCenterRow>  
 
       {/* <span>Color</span> */}
     </OKCancelDialog>

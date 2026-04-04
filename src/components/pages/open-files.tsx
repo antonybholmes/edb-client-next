@@ -1,21 +1,20 @@
-import { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
+import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import {
   BaseDataFrame,
   DEFAULT_COLUMN_INDEX_NAME,
-} from '@lib/dataframe/base-dataframe'
-import { makeCell } from '@lib/dataframe/cell'
-import { DataFrame } from '@lib/dataframe/dataframe'
+} from '@/lib/dataframe/base-dataframe'
+import { makeCell } from '@/lib/dataframe/cell'
+import { DataFrame } from '@/lib/dataframe/dataframe'
 import {
   DataFrameReader,
   type Delimiter,
-} from '@lib/dataframe/dataframe-reader'
-import { DEFAULT_INDEX_NAME } from '@lib/dataframe/series'
-import { API_XLSX_TO_JSON_URL } from '@lib/edb/edb'
-import { fill } from '@lib/fill'
-import { httpFetch } from '@lib/http/http-fetch'
-import { range } from '@lib/math/range'
-import { textToLines } from '@lib/text/lines'
-import type { QueryClient } from '@tanstack/react-query'
+} from '@/lib/dataframe/dataframe-reader'
+import { DEFAULT_INDEX_NAME } from '@/lib/dataframe/series'
+import { API_XLSX_TO_JSON_URL } from '@/lib/edb/edb'
+import { fill } from '@/lib/fill'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { range } from '@/lib/math/range'
+import { textToLines } from '@/lib/text/lines'
 import { Buffer } from 'buffer'
 import { useEffect, useRef, type ChangeEvent } from 'react'
 
@@ -113,7 +112,7 @@ export function arrayBufferToBase64(buffer: ArrayBuffer): string {
 }
 
 interface IProps {
-  open?: string
+  message?: string
   //onOpenChange?: (message: string) => void
   onFileChange?: (message: string, files: FileList | null) => void
   dirMode?: boolean
@@ -122,21 +121,20 @@ interface IProps {
 }
 
 export function OpenFiles({
-  open = 'open',
+  message = 'open',
   //onOpenChange,
   onFileChange,
   dirMode = false,
   multiple = false,
   fileTypes = ['txt', 'tsv', 'vst', 'xlsx'],
 }: IProps) {
-  console.log('render open files', open)
   const ref = useRef<HTMLInputElement>(null)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function _onFileChange(e: ChangeEvent<HTMLInputElement>) {
     const { files } = e.target
 
-    onFileChange?.(open, files)
+    onFileChange?.(message, files)
 
     // force clear selection so we can keep selecting file if we want.
     e.target.value = ''
@@ -147,7 +145,7 @@ export function OpenFiles({
     ref.current?.click()
 
     //onOpenChange?.("")
-  }, [open])
+  }, [message])
 
   if (dirMode) {
     return (
@@ -289,50 +287,6 @@ export async function onTextFileChange(
   }))
 
   onSuccess(ret)
-
-  // try {
-  //   const fileReader = new FileReader()
-
-  //   if (file.name.includes('xlsx')) {
-  //     fileReader.onload = e => {
-  //       const result = e.target?.result
-
-  //       if (result) {
-  //         // since this seems to block rendering, delay by a second so that the
-  //         // animation has time to start to indicate something is happening and
-  //         // then finish processing the file
-
-  //         const buffer: ArrayBuffer = result as ArrayBuffer
-
-  //         const text = arrayBufferToBase64(buffer)
-
-  //         onSuccess([{ name, text, ext: name.split('.').pop() || '' }])
-  //       }
-  //     }
-
-  //     fileReader.readAsArrayBuffer(file)
-  //   } else {
-  //     fileReader.onload = e => {
-  //       const result = e.target?.result
-
-  //       if (result) {
-  //         // since this seems to block rendering, delay by a second so that the
-  //         // animation has time to start to indicate something is happening and
-  //         // then finish processing the file
-
-  //         const text: string = result as string
-
-  //         onSuccess([{ name, text, ext: name.split('.').pop() || '' }])
-  //       }
-  //     }
-
-  //     fileReader.readAsText(file)
-  //   }
-  // } catch (err) {
-  //   if (err instanceof Error) {
-  //     onFailure?.(err.message, files)
-  //   }
-  // }
 }
 
 export function onBinaryFileChange(
@@ -390,7 +344,6 @@ interface IFilesToDataFrameProps {
  * @returns
  */
 export async function filesToDataFrames(
-  queryClient: QueryClient,
   files: ITextFileOpen[],
   options: IFilesToDataFrameProps = {}
 ) {
@@ -424,28 +377,24 @@ export async function filesToDataFrames(
 
       let table: AnnotationDataFrame | null = null
 
-      if (file.name.includes(XLSX_EXT)) {
-        const res = await queryClient.fetchQuery({
-          queryKey: ['convert'],
-          queryFn: () =>
-            httpFetch.postJson<{
-              data: {
-                table: {
-                  data: string[][]
-                  indexNames: string[]
-                  index: string[][]
-                  columns: string[][]
-                }
-              }
-            }>(API_XLSX_TO_JSON_URL, {
-              body: {
-                b64xlsx: file.text,
-                indexes: indexCols,
-                headers: colNames,
-                skipRows,
-                trimWhitespace,
-              },
-            }),
+      if (file.ext.includes(XLSX_EXT) || file.name.includes(XLSX_EXT)) {
+        const res = await httpFetch.postJson<{
+          data: {
+            table: {
+              data: string[][]
+              indexNames: string[]
+              index: string[][]
+              columns: string[][]
+            }
+          }
+        }>(API_XLSX_TO_JSON_URL, {
+          body: {
+            b64xlsx: file.text,
+            indexes: indexCols,
+            headers: colNames,
+            skipRows,
+            trimWhitespace,
+          },
         })
 
         const t = res.data.table
@@ -486,8 +435,8 @@ export async function filesToDataFrames(
 
         table = new AnnotationDataFrame({
           data,
-          rowMetaData: rowIndex,
-          colMetaData: colIndex,
+          rowObs: rowIndex,
+          colVars: colIndex,
           name,
         })
       } else {

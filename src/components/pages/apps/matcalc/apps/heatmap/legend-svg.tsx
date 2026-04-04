@@ -1,24 +1,27 @@
-import { ZERO_POS, type IPos } from '@interfaces/pos'
+import { ZERO_POS, type IPos } from '@/interfaces/pos'
 
-import { SVG_CRISP_EDGES } from '@/consts'
 import {
   LEGEND_BLOCK_SIZE,
   type IHeatMapDisplayOptions,
-} from '@components/plot/heatmap/heatmap-svg-props'
-import { COLOR_BLACK } from '@lib/color/color'
-import { formatNumber } from '@lib/text/text'
-import { useHistory } from '../../history/history-store'
+} from '@/components/plot/heatmap/heatmap-svg-props'
+import { SVG_CRISP_EDGES } from '@/consts'
+import type { IClusterGroup } from '@/lib/cluster-group'
+import { COLOR_BLACK } from '@/lib/color/color'
 
 export interface ILegendSvgProps {
+  groups: IClusterGroup[]
   props: IHeatMapDisplayOptions
   pos?: IPos
 }
 
 export function LegendRightSvg({
+  groups,
   props,
   pos = { ...ZERO_POS },
 }: ILegendSvgProps) {
-  const { groups } = useHistory()
+  //const { groups } = useHistory()
+
+  //const groupsToPlot = groups.filter(g => g.group.show)
 
   const legendBlockSize = LEGEND_BLOCK_SIZE.h
   const cx = 0.5 * legendBlockSize
@@ -31,6 +34,7 @@ export function LegendRightSvg({
         </text>
       )}
       {groups.map((g, gi) => {
+        //const cg = g.group
         // looks more visually appealing when gap is smaller
         const y = (legendBlockSize + props.padding / 2) * gi
 
@@ -68,15 +72,19 @@ export function LegendRightSvg({
 }
 
 export function LegendBottomSvg({
+  groups,
   props,
   pos = { ...ZERO_POS },
 }: ILegendSvgProps) {
-  const { groups } = useHistory()
+  //const { groups } = useHistory()
   const legendBlockSize = LEGEND_BLOCK_SIZE.h
+
+  //const groupsToPlot = groups.filter(g => g.group.show)
 
   return (
     <g transform={`translate(${pos.x}, ${pos.y})`}>
       {groups.map((g, gi) => {
+        //const cg = g.group
         const x =
           (legendBlockSize + props.legend.width * 0.4 + props.padding) * gi
         return (
@@ -109,9 +117,9 @@ export function LegendBottomSvg({
 }
 
 export function DotLegend({ props, pos = { ...ZERO_POS } }: ILegendSvgProps) {
-  const legendBlockSize = LEGEND_BLOCK_SIZE.h
+  const legendBlockSize = Math.min(props.blockSize.w, props.blockSize.h) //  LEGEND_BLOCK_SIZE.h
   const halfW = legendBlockSize / 2
-  const suffix = props.dot.mode === 'groups' ? '%' : ''
+  //const suffix = props.dot.mode === 'groups' ? '%' : ''
   const cx = 0.5 * legendBlockSize
 
   //console.log('props in dot legend',props)
@@ -126,9 +134,7 @@ export function DotLegend({ props, pos = { ...ZERO_POS } }: ILegendSvgProps) {
       <g>
         {props.dot.sizes.map((ds, dsi) => {
           const y = (legendBlockSize + props.padding * 0.5) * dsi
-          const r =
-            (halfW * (ds - props.dot.lim[0])) /
-            (props.dot.lim[1] - props.dot.lim[0])
+          const r = halfW * ds.size // (halfW * (ds - props.dot.lim[0])) / (props.dot.lim[1] - props.dot.lim[0])
 
           return (
             <g key={`dot:${dsi}`} transform={`translate(0, ${y})`}>
@@ -141,7 +147,9 @@ export function DotLegend({ props, pos = { ...ZERO_POS } }: ILegendSvgProps) {
                 dominantBaseline="central"
                 fontSize="smaller"
               >
-                {`${formatNumber(ds, props.cells.values.dp)}${suffix ? suffix : ''}`}
+                {/* {`${formatNumber(ds, props.cells.values.dp)}${suffix ? suffix : ''}`} */}
+                {/* {`${ds.value}${suffix ? suffix : ''}`} */}
+                {ds.value}
               </text>
             </g>
           )

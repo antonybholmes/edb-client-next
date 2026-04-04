@@ -4,76 +4,79 @@ import {
   TEXT_SELECT_ALL,
   TEXT_UNSELECT_ALL,
 } from '@/consts'
-import { type IModalProps } from '@dialog/ok-cancel-dialog'
+import { type IModalProps } from '@/dialog/ok-cancel-dialog'
 
-import { SearchBox } from '@components/search-box'
-import { CheckPropRow } from '@dialog/check-prop-row'
+import { SearchBox } from '@/components/search-box'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownSortOrderGroup,
+} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { CheckPropRow } from '@/dialog/check-prop-row'
 import {
   getAccordionId,
   SettingsAccordionItem,
-} from '@dialog/settings/settings-dialog'
-import { MultiSelectIcon } from '@icons/multi-select-icon'
-import { BaseCol } from '@layout/base-col'
-import { VCenterRow } from '@layout/v-center-row'
-import { ScrollAccordion } from '@themed/accordion'
-import { Button } from '@themed/button'
-import { Checkbox } from '@themed/check-box'
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from '@themed/dropdown-menu'
+} from '@/dialog/settings/settings-dialog'
+import { MultiSelectIcon } from '@/icons/multi-select-icon'
+import { BaseCol } from '@/layout/base-col'
+import { VCenterRow } from '@/layout/v-center-row'
+import { ScrollAccordion } from '@/themed/v2/accordion'
+import { Button } from '@/themed/v2/button'
+import { Checkbox } from '@/themed/v2/check-box'
 
+import { ExternalLinkIcon } from '@/components/icons/external-link'
 import { PlusIcon } from '@/components/icons/plus-icon'
 import { TrashIcon } from '@/components/icons/trash-icon'
-import { CenterRow } from '@/components/layout/center-row'
-import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
-import { ExternalLinkIcon } from '@components/icons/external-link'
-import { InfoHoverCard } from '@components/shadcn/ui/themed/hover-card'
-import { GlassSideDialog } from '@dialog/glass-side-dialog'
-import { SortIcon } from '@icons/sort-icon'
-import { BoolSearchQuery } from '@lib/search'
-import { cn } from '@lib/shadcn-utils'
-import { DialogTitle } from '@radix-ui/react-dialog'
-import { useContext, useEffect, useMemo, useState } from 'react'
-import { useSeqBrowserSettings } from '../seq-browser-settings'
-import { TracksContext, type AllDBSignalTrackTypes } from '../tracks-provider'
+import { CenterCol } from '@/components/layout/center-col'
+import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
+import { GlassSideDialog } from '@/dialog/glass-side-dialog'
+import { BoolSearchQuery } from '@/lib/search'
+import { cn } from '@/lib/shadcn-utils'
+import { IconButton } from '@/themed/icon-button'
 
-function makeUcscUrl(seq: AllDBSignalTrackTypes): string {
-  return `https://genome.ucsc.edu/cgi-bin/hgTracks?db=${seq.genome}&hgct_customText=track%20type=bigWig%20name=%22${seq.name}%22%20visibility=full%20bigDataUrl=${seq.url}`
+import { DialogTitle } from '@/components/shadcn/ui/themed/v2/dialog'
+import { useEffect, useMemo, useState } from 'react'
+import { useSeqBrowserSettings } from '../seq-browser-settings'
+import { type IDBTrack } from '../tracks-provider'
+import { useTracks } from '../tracks-store'
+
+import { appsConfig } from '@/config/apps'
+import { ArrowDownUp } from 'lucide-react'
+
+function makeUcscUrl(seq: IDBTrack): string {
+  return `https://genome.ucsc.edu/cgi-bin/hgTracks?db=${seq.assembly}&hgct_customText=track%20type=bigWig%20name=%22${seq.name}%22%20visibility=full%20bigDataUrl=${seq.url}`
 }
 
 export interface IProps extends IModalProps {
-  platform: string
-  callback?: (tracks: AllDBSignalTrackTypes[], combine: boolean) => void
+  technology: string
+  callback?: (tracks: IDBTrack[], combine: boolean) => void
 }
 
 export function SeqsDialog({
   open = true,
   //onOpenChange = () => {},
-  platform,
+  technology,
   callback,
   onResponse = () => {},
   className,
 }: IProps) {
-  const { trackDb } = useContext(TracksContext)
+  const { trackDb } = useTracks()
   const { settings } = useSeqBrowserSettings()
   const [error, setError] = useState('')
   const [search, setSearch] = useState('')
   const [searchSelectAll, setSearchSelectAll] = useState(false)
   const [addedSelectAll, setAddedSelectAll] = useState(false)
   const [combine, setCombine] = useState(false)
-  const [sortReversed, setSortReversed] = useState(false)
-  const [searchedDb, setSearchedDb] = useState<AllDBSignalTrackTypes[]>([])
+  const [asc, setAsc] = useState(true)
+  const [searchedDb, setSearchedDb] = useState<IDBTrack[]>([])
 
   const seqs = useMemo(
     () =>
       trackDb.filter(
-        (t) => t.genome === settings.genome && t.platform === platform
+        t => t.assembly === settings.assembly && t.technology === technology
       ),
-    [trackDb, settings.genome, platform]
+    [trackDb, settings.assembly, technology]
   )
 
   const [selectedMap, setSelectedMap] = useState<Map<string, boolean>>(
@@ -90,7 +93,7 @@ export function SeqsDialog({
 
   useEffect(() => {
     setSelectedMap(
-      new Map<string, boolean>(seqs.map((track) => [track.publicId, false]))
+      new Map<string, boolean>(seqs.map(track => [track.id, false]))
     )
   }, [seqs])
 
@@ -100,7 +103,7 @@ export function SeqsDialog({
     } else {
       const sq = new BoolSearchQuery(search)
 
-      setSearchedDb(seqs.filter((track) => sq.match(track.name)))
+      setSearchedDb(seqs.filter(track => sq.match(track.name)))
     }
   }, [seqs, search])
 
@@ -114,24 +117,24 @@ export function SeqsDialog({
         //   <DialogTitle>{`${platform.replaceAll('_', ' ').replaceAll('And', '&')} Cart`}</DialogTitle>
         // </VCenterRow>
 
-        <CenterRow className="grow">
+        <CenterCol className="grow">
           <SearchBox
             id="search"
             value={search}
-            onTextChange={(v) => setSearch(v)}
+            onTextChange={v => setSearch(v)}
             placeholder="Search samples..."
-            w="w-3/5"
+            className="w-3/5"
           />
-        </CenterRow>
+        </CenterCol>
       }
       //size="large"
       open={open}
       //onOpenChange={onOpenChange}
-      className={className}
+      className={cn('h-3/5', className)}
       onResponse={(response, data) => {
         if (response === TEXT_OK) {
           const selectedTracks = seqs.filter(
-            (track) => addedMap.get(track.publicId) ?? false
+            track => addedMap.get(track.id) ?? false
           )
 
           if (selectedTracks.length > 0) {
@@ -152,7 +155,7 @@ export function SeqsDialog({
             onCheckedChange={setCombine}
           />
 
-          <InfoHoverCard title="Overlay tracks">
+          <InfoHoverCard>
             When enabled, the selected tracks will be overlaid on top of each
             other in the same view. This is useful for comparing multiple
             datasets in the same region.
@@ -175,7 +178,7 @@ export function SeqsDialog({
                   new Map<string, boolean>([
                     ...[...addedMap.entries()],
                     // only add the positive ones we selected
-                    ...[...selectedMap.entries()].filter((e) => e[1]),
+                    ...[...selectedMap.entries()].filter(e => e[1]),
                   ])
                 )
               }}
@@ -187,13 +190,13 @@ export function SeqsDialog({
 
             <IconButton
               // ripple={false}
-              size="icon"
+              variant="ios"
               onClick={() => {
                 setSelectedMap(
                   new Map<string, boolean>([
                     ...[...selectedMap.entries()],
                     ...searchedDb.map(
-                      (t) => [t.publicId, !searchSelectAll] as [string, boolean]
+                      t => [t.id, !searchSelectAll] as [string, boolean]
                     ),
                   ])
                 )
@@ -207,18 +210,20 @@ export function SeqsDialog({
           </VCenterRow>
 
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <IconButton
-                variant="ios"
-                // ripple={false}
-                /* onClick={() => {
+            <DropdownMenuTrigger
+              render={
+                <IconButton
+                  variant="ios"
+                  // ripple={false}
+                  /* onClick={() => {
                     setAddedMap(new Map<string, boolean>(selectedMap.entries()))
                   }} */
-                title="Sort Items"
-              >
-                <SortIcon reverse={sortReversed} />
-              </IconButton>
-            </DropdownMenuTrigger>
+                  title="Sort Items"
+                >
+                  <ArrowDownUp size={20} strokeWidth={1.5} />
+                </IconButton>
+              }
+            />
             <DropdownMenuContent
               //side="right"
               // onEscapeKeyDown={() => {
@@ -233,33 +238,25 @@ export function SeqsDialog({
               align="start"
               //className="fill-foreground"
             >
-              <DropdownMenuLabel>Sort Order</DropdownMenuLabel>
-              <DropdownMenuCheckboxItem
-                checked={sortReversed}
-                onClick={() => setSortReversed(!sortReversed)}
-                aria-label="Sort items alphabetically"
-              >
-                <span>Reversed</span>
-              </DropdownMenuCheckboxItem>
+              <DropdownSortOrderGroup asc={asc} setAsc={setAsc} />
             </DropdownMenuContent>
           </DropdownMenu>
         </VCenterRow>
 
-        {StoreItems(
-          searchedDb,
-          addedMap,
-          setAddedMap,
-          selectedMap,
-          setSelectedMap,
-          sortReversed
-        )}
+        <ItemsInStore
+          searchedDb={searchedDb}
+          addedMap={addedMap}
+          setAddedMap={setAddedMap}
+          selectedMap={selectedMap}
+          setSelectedMap={setSelectedMap}
+          asc={asc}
+        />
       </BaseCol>
 
       <BaseCol className="grow gap-y-2">
         <VCenterRow className="gap-x-2 justify-between">
           <VCenterRow className="gap-x-2">
-            {/* <CartIcon /> */}
-            <DialogTitle className="font-bold">{`${platform.replaceAll('_', ' ').replaceAll('And', '&')} Cart`}</DialogTitle>
+            <DialogTitle className="font-bold">{`${technology.replaceAll('_', ' ').replaceAll('And', '&')} Cart`}</DialogTitle>
           </VCenterRow>
 
           <VCenterRow className="justify-end text-xs">
@@ -272,7 +269,7 @@ export function SeqsDialog({
                   new Map<string, boolean>([
                     ...[...addedSelectedMap.entries()],
                     ...searchedDb.map(
-                      (t) => [t.publicId, !addedSelectAll] as [string, boolean]
+                      t => [t.id, !addedSelectAll] as [string, boolean]
                     ),
                   ])
                 )
@@ -295,9 +292,7 @@ export function SeqsDialog({
                 setAddedMap(
                   new Map<string, boolean>([
                     ...[...addedMap.entries()],
-                    ...[...keys].map(
-                      (key) => [key, false] as [string, boolean]
-                    ),
+                    ...[...keys].map(key => [key, false] as [string, boolean]),
                   ])
                 )
               }}
@@ -307,34 +302,65 @@ export function SeqsDialog({
           </VCenterRow>
         </VCenterRow>
 
-        {cartItems(
-          seqs,
-          addedMap,
-          setAddedMap,
-          addedSelectedMap,
-          setAddedSelectedMap,
-          sortReversed
-        )}
+        <CartItems
+          searchedDb={searchedDb}
+          addedMap={addedMap}
+          setAddedMap={setAddedMap}
+          selectedMap={addedSelectedMap}
+          setSelectedMap={setAddedSelectedMap}
+          asc={asc}
+        />
       </BaseCol>
     </GlassSideDialog>
   )
 }
 
-function StoreItems(
-  searchedDb: AllDBSignalTrackTypes[],
-  addedMap: Map<string, boolean>,
-  setAddedMap: (selected: Map<string, boolean>) => void,
-  selectedMap: Map<string, boolean>,
-  setSelectedMap: (selected: Map<string, boolean>) => void,
-  reverseSort: boolean
-) {
+function ItemsInStore({
+  searchedDb,
+  addedMap,
+  setAddedMap,
+  selectedMap,
+  setSelectedMap,
+  asc,
+}: {
+  searchedDb: IDBTrack[]
+  addedMap: Map<string, boolean>
+  setAddedMap: (selected: Map<string, boolean>) => void
+  selectedMap: Map<string, boolean>
+  setSelectedMap: (selected: Map<string, boolean>) => void
+  asc: boolean
+}) {
   const [searchDatasetNames, setSearchDatasets] = useState<string[]>([])
   const [accordionValues, setAccordionValues] = useState<string[]>([])
 
   useEffect(() => {
-    let searchDatasets = [...new Set(searchedDb.map((t) => t.dataset))].sort()
+    //console.log(searchedDb)
 
-    if (reverseSort) {
+    // prioritize default institution over others so that
+    // Columbia's results appear above everyone else's
+    let searchDatasets: string[] = [
+      ...[
+        ...new Set(
+          searchedDb
+            .filter(
+              t => t.institution === appsConfig.seqbrowser.defaultInstitution
+            )
+            .map(t => t.dataset)
+        ),
+      ].sort(),
+
+      ...[
+        ...new Set(
+          searchedDb
+            .filter(
+              t => t.institution !== appsConfig.seqbrowser.defaultInstitution
+            )
+            .map(t => t.dataset)
+        ),
+      ].sort(),
+    ]
+
+    if (!asc) {
       searchDatasets = searchDatasets.toReversed()
     }
 
@@ -342,25 +368,27 @@ function StoreItems(
 
     setAccordionValues(
       searchedDb.length < 50
-        ? searchDatasets.map((dataset) => getAccordionId(dataset))
+        ? searchDatasets.map(dataset => getAccordionId(dataset))
         : []
     )
-  }, [searchedDb, reverseSort])
+  }, [searchedDb, asc])
 
-  const displayDatasets: AllDBSignalTrackTypes[][] = searchDatasetNames.map(
-    (dataset) => {
-      let ret = searchedDb.filter((track) => track.dataset === dataset)
+  const displayDatasets: IDBTrack[][] = searchDatasetNames.map(dataset => {
+    let ret = searchedDb.filter(track => track.dataset === dataset)
 
-      if (reverseSort) {
-        ret = ret.toReversed()
-      }
-
-      return ret
+    if (!asc) {
+      ret = ret.toReversed()
     }
-  )
+
+    return ret
+  })
 
   return (
-    <ScrollAccordion value={accordionValues} onValueChange={setAccordionValues}>
+    <ScrollAccordion
+      value={accordionValues}
+      onValueChange={v => setAccordionValues(v as string[])}
+      variant="settings"
+    >
       {searchDatasetNames.map((dataset, dataseti) => {
         return (
           <SettingsAccordionItem
@@ -368,7 +396,7 @@ function StoreItems(
             value={dataset}
             key={dataseti}
           >
-            <ul className="flex flex-col">
+            <ul className="flex flex-col text-sm">
               {displayDatasets[dataseti]!.map((seq, ti) => {
                 return (
                   <li
@@ -376,12 +404,12 @@ function StoreItems(
                     className="flex flex-row items-center justify-between gap-y-0.5 gap-x-2 p-2 hover:bg-muted overflow-hidden rounded-theme group"
                   >
                     <Checkbox
-                      checked={selectedMap.get(seq.publicId) ?? false}
-                      onCheckedChange={(state) => {
+                      checked={selectedMap.get(seq.id) ?? false}
+                      onCheckedChange={state => {
                         setSelectedMap(
                           new Map<string, boolean>([
                             ...selectedMap.entries(),
-                            [seq.publicId, state],
+                            [seq.id, state],
                           ])
                         )
                       }}
@@ -390,7 +418,7 @@ function StoreItems(
                     <BaseCol className="grow overflow-hidden">
                       <p className="truncate">{seq.name}</p>
                       <p className="text-xs text-secondary-foreground truncate">
-                        {`${seq.platform}, ${seq.genome}${seq.trackType === 'Seq' ? ` (${seq.reads.toLocaleString()} reads)` : ''}`}
+                        {`${seq.technology}, ${seq.assembly}${seq.type === 'Seq' ? ` (${seq.reads.toLocaleString()} reads)` : ''}`}
                       </p>
                     </BaseCol>
 
@@ -411,7 +439,7 @@ function StoreItems(
                         setAddedMap(
                           new Map<string, boolean>([
                             ...[...addedMap.entries()],
-                            [seq.publicId, true] as [string, boolean],
+                            [seq.id, true] as [string, boolean],
                           ])
                         )
                       }}
@@ -430,26 +458,33 @@ function StoreItems(
   )
 }
 
-function cartItems(
-  searchedDb: AllDBSignalTrackTypes[],
-  addedMap: Map<string, boolean>,
-  setAddedMap: (selected: Map<string, boolean>) => void,
-  selectedMap: Map<string, boolean>,
-  setSelectedMap: (selected: Map<string, boolean>) => void,
-  reverseSort: boolean
-) {
-  searchedDb = searchedDb.filter((t) => addedMap.get(t.publicId) ?? false)
+function CartItems({
+  searchedDb,
+  addedMap,
+  setAddedMap,
+  selectedMap,
+  setSelectedMap,
+  asc,
+}: {
+  searchedDb: IDBTrack[]
+  addedMap: Map<string, boolean>
+  setAddedMap: (selected: Map<string, boolean>) => void
+  selectedMap: Map<string, boolean>
+  setSelectedMap: (selected: Map<string, boolean>) => void
+  asc: boolean
+}) {
+  searchedDb = searchedDb.filter(t => addedMap.get(t.id) ?? false)
 
-  let datasets = [...new Set(searchedDb.map((t) => t.dataset))].sort()
+  let datasets = [...new Set(searchedDb.map(t => t.dataset))].sort()
 
-  if (reverseSort) {
+  if (!asc) {
     datasets = datasets.toReversed()
   }
 
-  const allDatasets: AllDBSignalTrackTypes[][] = datasets.map((dataset) => {
-    let ret = searchedDb.filter((track) => track.dataset === dataset)
+  const allDatasets: IDBTrack[][] = datasets.map(dataset => {
+    let ret = searchedDb.filter(track => track.dataset === dataset)
 
-    if (reverseSort) {
+    if (!asc) {
       ret = ret.toReversed()
     }
 
@@ -457,7 +492,7 @@ function cartItems(
   })
 
   return (
-    <ScrollAccordion value={datasets.map((dataset) => getAccordionId(dataset))}>
+    <ScrollAccordion value={datasets.map(dataset => getAccordionId(dataset))}>
       {datasets.map((dataset, dataseti) => {
         return (
           <SettingsAccordionItem title={dataset} key={dataseti}>
@@ -471,15 +506,15 @@ function cartItems(
                     <VCenterRow className="p-2.5 gap-x-2 grow group-hover:bg-muted overflow-hidden rounded-theme">
                       <Checkbox
                         className={cn([
-                          !selectedMap.get(seq.publicId),
+                          !selectedMap.get(seq.id),
                           'invisible group-hover:visible',
                         ])}
-                        checked={selectedMap.get(seq.publicId) ?? false}
-                        onCheckedChange={(state) => {
+                        checked={selectedMap.get(seq.id) ?? false}
+                        onCheckedChange={state => {
                           setSelectedMap(
                             new Map<string, boolean>([
                               ...selectedMap.entries(),
-                              [seq.publicId, state],
+                              [seq.id, state],
                             ])
                           )
                         }}
@@ -487,10 +522,10 @@ function cartItems(
                       <BaseCol>
                         <span className="truncate">{seq.name}</span>
                         <span className="text-xs text-secondary-foreground">
-                          {seq.trackType === 'Seq'
+                          {seq.type === 'Seq'
                             ? `${seq.reads.toLocaleString()} reads,`
                             : ''}
-                          {seq.platform}, {seq.genome}
+                          {seq.technology}, {seq.assembly}
                         </span>
                       </BaseCol>
                     </VCenterRow>
@@ -500,7 +535,7 @@ function cartItems(
                         setAddedMap(
                           new Map<string, boolean>([
                             ...[...addedMap.entries()],
-                            [seq.publicId, false] as [string, boolean],
+                            [seq.id, false] as [string, boolean],
                           ])
                         )
                       }}

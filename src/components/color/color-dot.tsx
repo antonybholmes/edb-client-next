@@ -1,5 +1,5 @@
-import { isLightColor } from '@lib/color/color'
-import { cn } from '@lib/shadcn-utils'
+import { isLightColor } from '@/lib/color/color'
+import { cn } from '@/lib/shadcn-utils'
 import type { ComponentProps } from 'react'
 
 export function ColorDot({

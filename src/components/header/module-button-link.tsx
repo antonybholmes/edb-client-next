@@ -1,6 +1,7 @@
-import { ButtonLink } from '@components/link/button-link'
-import { type ILinkProps } from '@interfaces/link-props'
-import { cn } from '@lib/shadcn-utils'
+import { ButtonLink } from '@/components/link/button-link'
+import { type ILinkProps } from '@/interfaces/link-props'
+import { cn } from '@/lib/shadcn-utils'
+import { BASE_FLAT_BUTTON_CLS } from '../shadcn/ui/themed/v2/button'
 
 export function ModuleButtonLink({
   className,
@@ -9,11 +10,11 @@ export function ModuleButtonLink({
 }: ILinkProps) {
   return (
     <ButtonLink
-      variant="flat"
       size="none"
       justify="start"
       items="start"
       className={cn(
+        BASE_FLAT_BUTTON_CLS,
         'h-full justify-start gap-x-2 py-2 data-[checked=true]:bg-muted data-[checked=false]:hover:bg-muted',
         className
       )}

@@ -1,27 +1,27 @@
-'use client'
+// 'use client'
 
-import { ToolbarOpenFile } from '@toolbar/toolbar-open-files'
+import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
 
-import { TabbedDataFrames } from '@components/table/tabbed-dataframes'
+import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
-import { ToolbarFooterPortal } from '@toolbar/toolbar-footer-portal'
+import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
 
-import { PlayIcon } from '@icons/play-icon'
+import { PlayIcon } from '@/icons/play-icon'
 import {
   ShowOptionsMenu,
   Toolbar,
   ToolbarMenu,
   ToolbarPanel,
-} from '@toolbar/toolbar'
-import { ToolbarSeparator } from '@toolbar/toolbar-separator'
+} from '@/toolbar/toolbar'
+import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
-import { ToolbarButton } from '@toolbar/toolbar-button'
+import { ToolbarButton } from '@/toolbar/toolbar-button'
 
-import { DataFrameReader } from '@lib/dataframe/dataframe-reader'
+import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import {
   downloadDataFrame,
   getFormattedShape,
-} from '@lib/dataframe/dataframe-utils'
+} from '@/lib/dataframe/dataframe-utils'
 
 import {
   DEFAULT_PARSE_OPTS,
@@ -30,16 +30,15 @@ import {
   OpenFiles,
   type IParseOptions,
   type ITextFileOpen,
-} from '@components/pages/open-files'
+} from '@/components/pages/open-files'
 
-import { BasicAlertDialog } from '@dialog/basic-alert-dialog'
-import { ToolbarTabGroup } from '@toolbar/toolbar-tab-group'
+import { BasicAlertDialog } from '@/dialog/basic-alert-dialog'
+import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
-import { ClockRotateLeftIcon } from '@icons/clock-rotate-left-icon'
-import { OpenIcon } from '@icons/open-icon'
+import { OpenIcon } from '@/icons/open-icon'
 
 import { queryClient } from '@/query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
   NO_DIALOG,
@@ -51,81 +50,94 @@ import {
   TEXT_RUN,
   TEXT_SAVE_AS,
   TEXT_SAVE_TABLE,
-  TEXT_SETTINGS,
   type IDialogParams,
 } from '@/consts'
 
-import { PropsPanel } from '@components/props-panel'
-import { TabSlideBar } from '@components/slide-bar/tab-slide-bar'
-import { SlidersIcon } from '@icons/sliders-icon'
-import { UploadIcon } from '@icons/upload-icon'
-import { API_DNA_GENOMES_URL } from '@lib/edb/edb'
-import { createDNATable, type FORMAT_TYPE } from '@lib/genomic/dna'
-import { Checkbox } from '@themed/check-box'
-import { DropdownMenuItem } from '@themed/dropdown-menu'
-import { RadioGroup, RadioGroupItem } from '@themed/radio-group'
+import { PropsPanel } from '@/components/props-panel'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { SlidersIcon } from '@/icons/sliders-icon'
+import { UploadIcon } from '@/icons/upload-icon'
+import { API_DNA_GENOMES_URL } from '@/lib/edb/edb'
+import { createDNATable, type FORMAT_TYPE } from '@/lib/genomic/dna'
+import { Checkbox } from '@/themed/v2/check-box'
+import { RadioGroup, RadioGroupItem } from '@/themed/v2/radio-group'
 
-import { ShortcutLayout } from '@layouts/shortcut-layout'
-import { randId } from '@lib/id'
-import axios from 'axios'
+import { ShortcutLayout } from '@/layouts/shortcut-layout'
+import { randId } from '@/lib/id'
 
-import type { ISaveAsFormat } from '@components/pages/save-as-dialog'
-import { SaveTxtDialog } from '@components/pages/save-txt-dialog'
-import type { ITab } from '@components/tabs/tab-provider'
-import { PropRow } from '@dialog/prop-row'
-import { FileIcon } from '@icons/file-icon'
-import { VCenterRow } from '@layout/v-center-row'
-import type { AnnotationDataFrame } from '@lib/dataframe/annotation-dataframe'
-import { httpFetch } from '@lib/http/http-fetch'
-import { textToLines } from '@lib/text/lines'
-import { useQuery } from '@tanstack/react-query'
+import type { ISaveAsFormat } from '@/components/pages/save-as-dialog'
+import { SaveTxtDialog } from '@/components/pages/save-txt-dialog'
+import { Label } from '@/components/shadcn/ui/themed/v2/label'
+import type { ITab } from '@/components/tabs/tab-provider'
+import { FileIcon } from '@/icons/file-icon'
+import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { textToLines } from '@/lib/text/lines'
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
   ScrollAccordion,
-} from '@themed/accordion'
-import { Label } from '@themed/label'
-import { ToolbarIconButton } from '@toolbar/toolbar-icon-button'
-import { ZoomSlider } from '@toolbar/zoom-slider'
+} from '@/themed/v2/accordion'
+import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
+import { ZoomSlider } from '@/toolbar/zoom-slider'
+import { useQuery } from '@tanstack/react-query'
 
+import { HeaderSlotPortal } from '@/components/header/header-slot-portal'
+import { ModuleInfoButton } from '@/components/header/module-info-button'
+import { BaseCol } from '@/components/layout/base-col'
+import { useStableId } from '@/hooks/stable-id'
+import { DownloadIcon } from '@/icons/download-icon'
+import { CoreProviders } from '@/providers/core-providers'
+import { GroupToggle, ToggleGroup } from '@/themed/v2/toggle-group'
 import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from '@/components/shadcn/ui/themed/toggle-group'
-import { HeaderPortal } from '@components/header/header-portal'
-import { ModuleInfoButton } from '@components/header/module-info-button'
-import { DownloadIcon } from '@icons/download-icon'
-import { HistoryPanel } from '../../matcalc/history/history-panel'
-import { useHistory } from '../../matcalc/history/history-store'
+  HistoryLayout,
+  HistoryShowButton,
+} from '../../matcalc/history/history-layout'
+import {
+  useApp,
+  useFile,
+  useHistory,
+  useSheet,
+  useSheets,
+} from '../../matcalc/history/history-store'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import MODULE_INFO from './module.json'
 
 export function DNAPage() {
-  const { branch, sheet, sheets, gotoSheet, openBranch, addStep } = useHistory()
-
-  const [rightTab, setRightTab] = useState(TEXT_SETTINGS)
+  const _id = useStableId('dna-page')
+  const { openApp, goto, openFile, addSheets } = useHistory()
+  const app = useApp()!
+  const file = useFile()!
+  const sheets = useSheets()
+  const sheet = useSheet()
+  //const [rightTab, setRightTab] = useState(TEXT_SETTINGS)
   const [showSideBar, setShowSideBar] = useState(true)
 
   const [assembly, setAssembly] = useState('grch38')
   const [reverse, setReverse] = useState(false)
   const [complement, setComplement] = useState(false)
-  const [format, setFormat] = useState<FORMAT_TYPE>('Auto')
+  const [format, setFormat] = useState<FORMAT_TYPE>('auto')
   const [mask, setMask] = useState<'' | 'lower' | 'n'>('')
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 
+  useEffect(() => {
+    openApp(MODULE_INFO.name)
+  }, [])
+
   function openFiles(
     files: ITextFileOpen[],
     parseOpts: IParseOptions = { ...DEFAULT_PARSE_OPTS }
   ) {
-    filesToDataFrames(queryClient, files, {
+    filesToDataFrames(files, {
       ...parseOpts,
-      onSuccess: (tables) => {
+      onSuccess: tables => {
         if (tables.length > 0) {
-          openBranch(`Load ${tables[0]!.name}`, tables)
+          openFile(tables[0]!.name, { sheets: tables })
         }
       },
     })
@@ -147,7 +159,7 @@ export function DNAPage() {
     )
 
     if (dfa) {
-      addStep(`DNA`, [dfa])
+      addSheets([dfa], { name: `DNA` })
     }
   }
 
@@ -174,21 +186,18 @@ export function DNAPage() {
   // }, [])
 
   async function loadTestData() {
-    const res = await queryClient.fetchQuery({
-      queryKey: ['test_data'],
-      queryFn: () => axios.get('/data/test/dna.txt'),
-    })
+    const res = await httpFetch.getText('/data/test/dna.txt')
 
     try {
-      const lines = textToLines(res.data)
+      const lines = textToLines(res)
 
       const table = new DataFrameReader().indexCols(0).read(lines)
 
       //resolve({ ...table, name: file.name })
 
-      openBranch(`Load "DNA Test"`, [
-        table.setName('DNA Test') as AnnotationDataFrame,
-      ])
+      openFile(`DNA Test`, {
+        sheets: [table.setName('DNA Test') as AnnotationDataFrame],
+      })
     } catch {
       // do nothing
     }
@@ -215,7 +224,7 @@ export function DNAPage() {
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
-              onOpenChange={(open) => {
+              onOpenChange={open => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -253,11 +262,14 @@ export function DNAPage() {
       icon: <SlidersIcon />,
       id: 'Settings',
       content: (
-        <PropsPanel>
-          <ScrollAccordion value={['assembly', 'display']}>
+        <PropsPanel className="pr-2">
+          <ScrollAccordion
+            value={['assembly', 'letters', 'mask', 'strand']}
+            variant="sidebar"
+          >
             <AccordionItem value="assembly">
-              <AccordionTrigger>Assembly</AccordionTrigger>
-              <AccordionContent>
+              <AccordionTrigger variant="sidebar">Assembly</AccordionTrigger>
+              <AccordionContent variant="sidebar">
                 {genomesQuery.data && (
                   <RadioGroup
                     defaultValue={assembly ?? genomesQuery.data[0]}
@@ -277,45 +289,37 @@ export function DNAPage() {
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="display">
-              <AccordionTrigger>Display</AccordionTrigger>
-              <AccordionContent>
-                {/* <Tabs
-                    value={format}
-                    onValueChange={(v) => {
-                      setFormat(v as FORMAT_TYPE)
-                    }}
-                  >
-                    <IOSTabsList
-                      defaultWidth="72px"
-                      value={format}
-                      tabs={[{ id: 'Auto' }, { id: 'Upper' }, { id: 'Lower' }]}
-                    />
-                  </Tabs> */}
-                <PropRow title="Letters" />
+            <AccordionItem value="letters">
+              <AccordionTrigger variant="sidebar">Letters</AccordionTrigger>
+              <AccordionContent variant="sidebar">
                 <ToggleGroup
-                  //variant="outline"
-                  type="single"
-                  value={format}
-                  onValueChange={(v) => {
-                    setFormat(v as FORMAT_TYPE)
+                  direction="row"
+                  className="overflow-hidden rounded-theme"
+                  rounded="none"
+                  value={[format]}
+                  onValueChange={v => {
+                    setFormat(v[0] as FORMAT_TYPE)
                   }}
                 >
-                  <ToggleGroupItem value="Auto" className="px-2">
+                  <GroupToggle value="auto" className="px-2">
                     Auto
-                  </ToggleGroupItem>
+                  </GroupToggle>
 
-                  <ToggleGroupItem value="Upper" className="px-2">
+                  <GroupToggle value="upper" className="px-2">
                     Upper
-                  </ToggleGroupItem>
+                  </GroupToggle>
 
-                  <ToggleGroupItem value="Lower" className="px-2">
+                  <GroupToggle value="lower" className="px-2">
                     Lower
-                  </ToggleGroupItem>
+                  </GroupToggle>
                 </ToggleGroup>
+              </AccordionContent>
+            </AccordionItem>
 
-                <PropRow title="Mask" />
-                <VCenterRow className="gap-x-4">
+            <AccordionItem value="mask">
+              <AccordionTrigger variant="sidebar">Mask</AccordionTrigger>
+              <AccordionContent variant="sidebar">
+                <BaseCol className="gap-y-1">
                   <Checkbox
                     checked={mask === 'n'}
                     onCheckedChange={() => {
@@ -326,7 +330,7 @@ export function DNAPage() {
                       }
                     }}
                   >
-                    <span>N</span>
+                    N
                   </Checkbox>
 
                   <Checkbox
@@ -339,12 +343,15 @@ export function DNAPage() {
                       }
                     }}
                   >
-                    <span>Lowercase</span>
+                    Lowercase
                   </Checkbox>
-                </VCenterRow>
-
-                <PropRow title="Strand" />
-                <VCenterRow className="gap-x-4">
+                </BaseCol>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="strand">
+              <AccordionTrigger variant="sidebar">Strand</AccordionTrigger>
+              <AccordionContent variant="sidebar">
+                <BaseCol className="gap-y-1">
                   <Checkbox
                     checked={reverse}
                     onCheckedChange={() => setReverse(!reverse)}
@@ -357,26 +364,26 @@ export function DNAPage() {
                   >
                     <span>Complement</span>
                   </Checkbox>
-                </VCenterRow>
+                </BaseCol>
               </AccordionContent>
             </AccordionItem>
           </ScrollAccordion>
         </PropsPanel>
       ),
     },
-    {
-      //id: nanoid(),
-      icon: <ClockRotateLeftIcon />,
-      id: 'History',
-      content: <HistoryPanel branchId={branch?.id ?? ''} />,
-    },
+    // {
+    //   //id: nanoid(),
+    //   icon: <ClockRotateLeftIcon />,
+    //   id: 'History',
+    //   content: <HistoryPanel />,
+    // },
   ]
 
   const fileMenuTabs: ITab[] = [
     {
       //id: nanoid(),
       id: 'Open',
-      icon: <OpenIcon iconMode="colorful" w="w-5" />,
+      icon: <OpenIcon variant="colorful" w="w-5" />,
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
@@ -422,7 +429,7 @@ export function DNAPage() {
 
       {showDialog.id.includes('open') && (
         <OpenFiles
-          open={showDialog.id}
+          message={showDialog.id}
           //onOpenChange={() => setShowDialog({...NO_DIALOG})}
           onFileChange={(message, files) =>
             onTextFileChange(message, files, openFiles)
@@ -435,10 +442,8 @@ export function DNAPage() {
           name="dna"
           onResponse={(response, data) => {
             if (response !== TEXT_CANCEL) {
-              save(
-                data!.name as string,
-                (data!.format as ISaveAsFormat)!.ext! as string
-              )
+              const d = data as { name: string; format: ISaveAsFormat }
+              save(d.name, d.format!.ext! as string)
             }
 
             setShowDialog({ ...NO_DIALOG })
@@ -446,27 +451,35 @@ export function DNAPage() {
         />
       )}
 
-      <ShortcutLayout signedRequired={false}>
-        <HeaderPortal>
-          <ModuleInfoButton info={MODULE_INFO} />
-        </HeaderPortal>
-        <Toolbar tabs={tabs}>
+      <HeaderSlotPortal>
+        <ModuleInfoButton info={MODULE_INFO} />
+      </HeaderSlotPortal>
+
+      <ShortcutLayout signinRequired={false}>
+        <HeaderSlotPortal slot="header-right">
+          <ToolbarButton
+            onClick={() => loadTestData()}
+            role="button"
+            title="Load test data to use features."
+            className="text-xs"
+          >
+            Test data
+          </ToolbarButton>
+        </HeaderSlotPortal>
+
+        <Toolbar>
           <ToolbarMenu
+            groupId={_id}
+            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
             leftShortcuts={<UndoShortcuts />}
-            rightShortcuts={
-              <ToolbarButton
-                onClick={() => loadTestData()}
-                role="button"
-                title="Load test data to use features."
-              >
-                Test data
-              </ToolbarButton>
-            }
+            rightShortcuts={<HistoryShowButton />}
           />
           <ToolbarPanel
+            groupId={_id}
+            tabs={tabs}
             tabShortcutMenu={
               <ShowOptionsMenu
                 show={showSideBar}
@@ -478,38 +491,47 @@ export function DNAPage() {
           />
         </Toolbar>
 
-        <TabSlideBar
-          id="dna"
-          side="right"
-          tabs={rightTabs}
-          value={rightTab}
-          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
-          open={showSideBar}
-          onOpenChange={setShowSideBar}
-        >
-          {/* <Card
+        <HistoryLayout>
+          <TabSlideBar
+            id="dna"
+            side="right"
+            tabs={rightTabs}
+            //value={rightTab}
+            //onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+            open={showSideBar}
+            onOpenChange={setShowSideBar}
+          >
+            {/* <Card
             variant="content"
             className="mx-2 pb-0"
             style={{ marginBottom: '-2px' }}
           > */}
-          <TabbedDataFrames
-            selectedSheet={sheet?.id ?? ''}
-            dataFrames={sheets as AnnotationDataFrame[]}
-            onTabChange={(selectedTab) => {
-              gotoSheet(selectedTab.tab.id)
-            }}
-            className="mx-2"
-            style={{ marginBottom: '-2px' }}
-          />
-          {/* </Card> */}
-        </TabSlideBar>
-
-        <ToolbarFooterPortal className="justify-end">
-          <span>{getFormattedShape(sheet)}</span>
-          <></>
-          <ZoomSlider />
-        </ToolbarFooterPortal>
+            <TabbedDataFrames
+              selectedSheet={sheet?.id ?? ''}
+              dataFrames={sheets as AnnotationDataFrame[]}
+              onTabChange={selectedTab => {
+                goto({ app, file, sheet: selectedTab.tab })
+              }}
+              className="mx-2"
+            />
+            {/* </Card> */}
+          </TabSlideBar>
+        </HistoryLayout>
       </ShortcutLayout>
+
+      <ToolbarFooterPortal className="justify-end">
+        <span>{getFormattedShape(sheet as AnnotationDataFrame)}</span>
+        <></>
+        <ZoomSlider />
+      </ToolbarFooterPortal>
     </>
+  )
+}
+
+export function DNAQueryPage() {
+  return (
+    <CoreProviders>
+      <DNAPage />
+    </CoreProviders>
   )
 }

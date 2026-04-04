@@ -1,5 +1,5 @@
+import { cn } from '@/lib/shadcn-utils'
 import { ChevronRightIcon } from '@icons/chevron-right-icon'
-import { cn } from '@lib/shadcn-utils'
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import {
   Collapsible,

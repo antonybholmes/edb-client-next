@@ -1,8 +1,8 @@
 'use client'
 
+import type { IChildrenProps } from '@/interfaces/children-props'
+import { APP_ACCOUNT_AUTH0_CALLBACK_URL } from '@/lib/edb/edb'
 import { Auth0Provider } from '@auth0/auth0-react'
-import type { IChildrenProps } from '@interfaces/children-props'
-import { APP_ACCOUNT_AUTH0_CALLBACK_URL } from '@lib/edb/edb'
 
 const AUTH0_DOMAIN = process.env.NEXT_PUBLIC_AUTH0_DOMAIN!
 const AUTH0_CLIENT_ID = process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID!

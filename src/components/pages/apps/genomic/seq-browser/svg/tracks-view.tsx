@@ -1,5 +1,5 @@
 import React, {
-  useContext,
+  Fragment,
   useEffect,
   useImperativeHandle,
   useMemo,
@@ -9,30 +9,29 @@ import React, {
 
 import { BaseSvg } from '@/components/base-svg'
 import { Axis } from '@/components/plot/axis'
-import { TEXT_ZOOM } from '@/consts'
-import { API_GENOME_OVERLAP_URL } from '@/lib/edb/genome'
-import { logger } from '@/lib/logger'
-import type { IPos } from '@interfaces/pos'
-import type { ISVGProps } from '@interfaces/svg-props'
-import { API_SEQS_BINS_URL } from '@lib/edb/edb'
-import { useEdbAuth } from '@lib/edb/edb-auth'
-import { GenomicLocation } from '@lib/genomic/genomic'
-import { httpFetch } from '@lib/http/http-fetch'
-import { bearerHeaders } from '@lib/http/urls'
-import { sum } from '@lib/math/sum'
+import { TEXT_ZOOM, TIME_5_MINUTES_MS } from '@/consts'
+import { ZERO_POS, type IPos } from '@/interfaces/pos'
+import type { ISVGProps } from '@/interfaces/svg-props'
+import { API_SEQS_BINS_URL } from '@/lib/edb/edb'
+import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { API_GENOME_URL, useGenomes } from '@/lib/edb/genome'
+import { GenLoc } from '@/lib/genomic/genomic'
+import { httpFetch } from '@/lib/http/http-fetch'
+import { bearerHeaders } from '@/lib/http/urls'
+import { sum } from '@/lib/math/sum'
 import { useQuery } from '@tanstack/react-query'
 import { produce } from 'immer'
-import type { IGeneDbInfo } from '../../annotate/annotate-page'
+
 import { useSeqBrowserSettings } from '../seq-browser-settings'
 import {
   LocationContext,
-  TracksContext,
+  MouseEventContext,
   type IBedTrack,
-  type IGeneTrack,
   type ILocalBedTrack,
   type ILocTrackBins,
   type ISignalTrack,
 } from '../tracks-provider'
+import { useTracks } from '../tracks-store'
 import { getBedTrackHeight } from './base-bed-track-svg'
 import {
   getGeneTrackHeight,
@@ -57,15 +56,10 @@ export const BED_TRACK_TYPES = new Set([
   'Remote BigBed',
 ])
 
-export type GenesMap = { [key: string]: IGeneDbInfo }
-
-interface IProps extends ISVGProps {
-  genesMap: GenesMap
-}
-
-export function TracksView({ ref, genesMap, className, style }: IProps) {
-  const { state, locations, binSizes, setLocations } = useContext(TracksContext)
+export function TracksView({ ref, className, style }: ISVGProps) {
+  const { groups, locations, binSizes, setLocations } = useTracks()
   const { settings } = useSeqBrowserSettings()
+  const { gtf } = useGenomes()
 
   const selectionGroupRef = useRef<SVGGElement>(null)
   //const selectionLineRef1 = useRef<SVGLineElement>(null)
@@ -75,19 +69,23 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
   const zoomArrowRef1 = useRef<SVGPathElement>(null)
   const zoomArrowRef2 = useRef<SVGPathElement>(null)
 
-  const [globalY, setGlobalY] = useState(1)
+  //const [globalY, setGlobalY] = useState(1)
+
+  const [mousePos, setMousePos] = useState<IPos>({ ...ZERO_POS })
 
   const column = useRef<{ x: number; col: number }>({ x: 0, col: 0 })
+
+  const [globalY, setGlobalY] = useState(1)
 
   const columnWidth = settings.plot.width + settings.plot.gap //settings.margin.left+settings.margin.right+settings.plot.width
 
   const innerRef = useRef<SVGSVGElement>(null)
   useImperativeHandle(ref, () => innerRef.current!)
 
-  const { csrfToken, fetchAccessToken } = useEdbAuth()
+  const { fetchAccessToken } = useEdbAuth()
 
   const axes = useMemo(() => {
-    return locations.map((location) => {
+    return locations.map(location => {
       let xax = new Axis().setLength(settings.plot.width)
 
       if (settings.reverse) {
@@ -278,8 +276,8 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
         // ])
 
         setLocations(
-          produce(locations, (draft) => {
-            draft[column.current.col] = new GenomicLocation(
+          produce(locations, draft => {
+            draft[column.current.col] = new GenLoc(
               locations[column.current.col]!.chr,
               minX,
               maxX
@@ -348,16 +346,19 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
 
   const genesQuery = useQuery({
     queryKey: [
-      'genes',
+      'gtf',
+      gtf?.id,
       locations,
-      settings.genome,
+      settings.assembly,
       settings.genes.canonical,
       settings.genes.types,
     ],
     queryFn: async () => {
-      //console.log(API_GENES_OVERLAP_URL)
+      if (!gtf) {
+        return null
+      }
 
-      const url = new URL(`${API_GENOME_OVERLAP_URL}/${settings.genome}`)
+      const url = new URL(`${API_GENOME_URL}/gtfs/${gtf.id}/overlap`)
 
       const params: Record<string, string> = {
         canonical: settings.genes.canonical.only ? 'true' : 'false',
@@ -369,14 +370,14 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
 
       url.search = new URLSearchParams(params).toString()
 
-      logger.debug('genes query', url.toString())
-
       const res = await httpFetch.postJson<{ data: IGenomicFeatureSearch[] }>(
         url.toString(),
         {
-          body: { locations: locations.map((l) => l.loc) },
+          body: { locations: locations.map(l => l.loc) },
         }
       )
+
+      //console.log('tracks', res.data)
 
       return res.data
     },
@@ -390,22 +391,22 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
 
   const tracks = useMemo(
     () =>
-      state.order
-        .map((gid) => state.groups[gid]!)
-        .map((tg) => tg.order.map((id) => tg.tracks[id]!))
+      groups
+        .map(g => g.tracks)
         .flat()
-        .filter((t) => SEQ_TRACK_TYPES.has(t.trackType)) as ISignalTrack[],
-    [state.order]
+        .filter(t => SEQ_TRACK_TYPES.has(t.type)) as ISignalTrack[],
+    [groups]
   )
 
   const seqTracks = useMemo(
-    () => tracks.filter((t) => t.trackType === 'Seq') as ISignalTrack[],
+    () => tracks.filter(t => t.type === 'Seq') as ISignalTrack[],
     [tracks]
   )
 
   // force updates when seqs, location or bin size change
-  const binsQuery = useQuery({
-    queryKey: ['bins', seqTracks, locations, binSizes, csrfToken],
+  const { data: allLocTrackBins } = useQuery({
+    queryKey: ['bins', seqTracks, locations, binSizes],
+    staleTime: TIME_5_MINUTES_MS,
     queryFn: async () => {
       // if (locations.length === 0 || seqs.length === 0) {
       //   return []
@@ -417,10 +418,10 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
         API_SEQS_BINS_URL,
         {
           body: {
-            locations: locations.map((l) => l.loc),
+            locations: locations.map(l => l.loc),
             binSizes,
             //scale: displayOptions.seq.applyScaling ? displayOptions.seq.scale : 0,
-            tracks: seqTracks.map((t) => t.publicId),
+            samples: seqTracks.map(t => t.id),
           },
 
           headers: bearerHeaders(accessToken),
@@ -431,15 +432,13 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
     },
   })
 
-  const allLocTrackBins: ILocTrackBins[] = binsQuery.data ? binsQuery.data : []
+  //const allLocTrackBins: ILocTrackBins[] = binsQuery.data ? binsQuery.data : []
 
   // use either the auto global or user fixed global
   useEffect(() => {
     async function updateY() {
-      updateGlobalY(
-        settings.seqs.globalY.auto &&
-          allLocTrackBins.length > 0 &&
-          tracks.length > 0
+      const y =
+        settings.seqs.globalY.auto && allLocTrackBins && tracks.length > 0
           ? await getYMax(
               tracks,
               allLocTrackBins,
@@ -447,279 +446,254 @@ export function TracksView({ ref, genesMap, className, style }: IProps) {
               settings.seqs.scale.mode
             )
           : settings.seqs.globalY.ymax
-      )
+
+      console.log('global y', y)
+
+      updateGlobalY(y)
     }
 
     updateY()
-  }, [allLocTrackBins, settings.seqs.globalY, settings.seqs.scale, tracks])
+  }, [
+    allLocTrackBins,
+    settings.seqs.globalY,
+    settings.seqs.scale,
+    tracks,
+    binSizes,
+  ])
 
-  const svg = useMemo(() => {
-    const tracks = state.order
-      .map((gid) => state.groups[gid]!)
-      .map((tg) => tg.order.map((id) => tg.tracks[id]!))
+  const orderedTracks = groups.map(t => t.tracks)
 
-    if (tracks.length === 0) {
-      return null
+  if (orderedTracks.length === 0) {
+    return null
+  }
+
+  const titleHeightUsingPosition =
+    settings.titles.position === 'top' ? settings.titles.height : 0
+
+  // determine how much space in the svg is required by each
+  // track
+  const trackHeights: number[] = []
+  const geneYMaps: Map<string, number>[] = []
+
+  for (const ts of orderedTracks) {
+    switch (ts[0]!.type) {
+      case 'Seq':
+      case 'Local BigWig':
+      case 'Remote BigWig':
+        trackHeights.push(
+          ts[0]!.displayOptions.height +
+            titleHeightUsingPosition +
+            settings.titles.height +
+            settings.axes.x.height +
+            // Add some extra height when labels on right to account for x-axis labels
+            (settings.titles.position === 'right' ? settings.titles.height : 0)
+        )
+        break
+      case 'Scale':
+      case 'Location':
+        trackHeights.push(ts[0]!.displayOptions.height)
+        break
+      case 'Ruler':
+      case 'Cytobands':
+        trackHeights.push(settings.cytobands.height + settings.titles.height)
+        break
+      case 'Gene':
+        let maxHeight = 0
+
+        for (const [li, featureSearch] of locationFeatures.entries()) {
+          const xax = axes[li]!
+
+          const geneYMap = getGeneTrackHeight(
+            featureSearch.features,
+            settings,
+            xax
+          )
+
+          maxHeight = Math.max(maxHeight, geneYMap.get('height') ?? 0)
+
+          geneYMaps.push(geneYMap)
+        }
+
+        trackHeights.push(
+          maxHeight + titleHeightUsingPosition + settings.genes.offset
+        )
+        break
+      case 'BED':
+      case 'Local BED':
+      case 'Remote BigBed':
+      case 'Local BigBed':
+        trackHeights.push(
+          getBedTrackHeight(ts as (IBedTrack | ILocalBedTrack)[], settings) +
+            titleHeightUsingPosition
+        )
+        break
+      default:
+        trackHeights.push(0)
+        break
     }
+  }
 
-    const titleHeightUsingPosition =
-      settings.titles.position === 'top' ? settings.titles.height : 0
+  //const trackY = cumsum([0, ...trackHeights])
+  const innerHeight = sum(trackHeights)
 
-    // determine how much space in the svg is required by each
-    // track
-    const trackHeights: number[] = []
-    const geneYMaps: Map<string, number>[] = []
+  const width =
+    columnWidth * locations.length +
+    settings.margin.left +
+    settings.margin.right
 
-    for (const ts of tracks) {
-      switch (ts[0]!.trackType) {
-        case 'Seq':
-        case 'Local BigWig':
-        case 'Remote BigWig':
-          trackHeights.push(
-            ts[0]!.displayOptions.height +
-              titleHeightUsingPosition +
-              settings.titles.height +
-              settings.axes.x.height +
-              // Add some extra height when labels on right to account for x-axis labels
-              (settings.titles.position === 'right'
-                ? settings.titles.height
-                : 0)
-          )
-          break
-        case 'Scale':
-        case 'Location':
-          trackHeights.push(ts[0]!.displayOptions.height)
-          break
-        case 'Ruler':
-        case 'Cytobands':
-          trackHeights.push(
-            ts[0]!.displayOptions.height + settings.titles.height
-          )
-          break
-        case 'Gene':
-          let maxHeight = 0
+  const height = innerHeight + settings.margin.top + settings.margin.bottom
 
-          for (const [li, featureSearch] of locationFeatures.entries()) {
-            const xax = axes[li]!
+  const svg = (
+    <BaseSvg
+      ref={innerRef}
+      scale={settings.zoom}
+      width={width}
+      height={height}
+      style={style}
+      onMouseMove={e => {
+        const rect = e.currentTarget.getBoundingClientRect()
+        const x = e.clientX - rect.left - settings.margin.left
+        const y = e.clientY - rect.top - settings.margin.top
 
-            const geneYMap = getGeneTrackHeight(
-              ts[0]! as IGeneTrack,
-              featureSearch.features,
-              settings,
-              xax
-            )
-
-            maxHeight = Math.max(maxHeight, geneYMap.get('height') ?? 0)
-
-            geneYMaps.push(geneYMap)
-          }
-
-          trackHeights.push(
-            maxHeight + titleHeightUsingPosition + settings.genes.offset
-          )
-          break
-        case 'BED':
-        case 'Local BED':
-        case 'Remote BigBed':
-        case 'Local BigBed':
-          trackHeights.push(
-            getBedTrackHeight(ts as (IBedTrack | ILocalBedTrack)[], settings) +
-              titleHeightUsingPosition
-          )
-          break
-        default:
-          trackHeights.push(0)
-          break
-      }
-    }
-
-    //const trackY = cumsum([0, ...trackHeights])
-    const innerHeight = sum(trackHeights)
-
-    const width =
-      columnWidth * locations.length +
-      settings.margin.left +
-      settings.margin.right
-
-    const height = innerHeight + settings.margin.top + settings.margin.bottom
-
-    //console.log('tracks-view', globalY)
-
-    return (
-      <BaseSvg
-        ref={innerRef}
-        scale={settings.zoom}
-        width={width}
-        height={height}
-        style={style}
+        setMousePos({ x, y })
+      }}
+    >
+      <g
+        transform={`translate(${settings.margin.left}, ${settings.margin.top})`}
       >
-        <g
-          transform={`translate(${settings.margin.left}, ${
-            settings.margin.top
-          })`}
-        >
-          {locations.map((location, li) => {
-            // if (settings.reverse) {
-            //   xax
-            //     .setDomain([location.end, location.start])
-            //     .setTicks([location.end, location.start])
-            // }
+        {locations.map((location, li) => {
+          return (
+            <Fragment key={li}>
+              <LocationContext.Provider
+                value={{
+                  location,
+                  xax: axes[li]!,
+                  globalY,
+                  pos: { x: li * columnWidth, y: settings.margin.top },
+                  locTrackBins: allLocTrackBins?.[li],
+                  binSize: binSizes[li]!,
+                  genes:
+                    locationFeatures.length > li
+                      ? locationFeatures[li]!.features
+                      : [],
+                  geneYMap: geneYMaps[li] || new Map(),
+                  setLocation: location => {
+                    // for individual tracks, we can update their location
+                    // using, for example, the ruler to propogate its
+                    // changes back to here, where they can be subsequently
+                    // used to update the global locations
+                    const newLocations = produce(locations, draft => {
+                      draft[li] = location
+                    })
 
-            return (
-              <g
-                id={`loc-col-${location.loc}`}
-                transform={`translate(${li * columnWidth}, ${
-                  settings.margin.top
-                })`}
-                key={li}
+                    setLocations(newLocations)
+                  },
+                }}
               >
-                <LocationContext.Provider
-                  value={{
-                    location,
-                    xax: axes[li]!,
-                    globalY,
-                    locTrackBins: allLocTrackBins[li],
-                    binSize: binSizes[li]!,
-                    genes:
-                      locationFeatures.length > li
-                        ? locationFeatures[li].features
-                        : [],
-                    geneYMap: geneYMaps[li] || new Map(),
-                    setLocation: (location) => {
-                      // for individual tracks, we can update their location
-                      // using, for example, the ruler to propogate its
-                      // changes back to here, where they can be subsequently
-                      // used to update the global locations
-                      const newLocations = produce(locations, (draft) => {
-                        draft[li] = location
-                      })
+                <MouseEventContext.Provider value={{ pos: mousePos }}>
+                  <TracksColumnSvg />
+                </MouseEventContext.Provider>
+              </LocationContext.Provider>
+            </Fragment>
+          )
+        })}
+      </g>
 
-                      setLocations(newLocations)
-                    },
-                  }}
-                >
-                  <TracksColumnSvg
-                    genesMap={genesMap}
-                    // locTrackBins={
-                    //   allLocTrackBins.length > li ? allLocTrackBins[li]! : null
-                    // }
-                    features={
-                      locationFeatures.length > li
-                        ? locationFeatures[li]!.features
-                        : []
-                    }
-                  />
-                </LocationContext.Provider>
-              </g>
-            )
-          })}
-        </g>
+      <g opacity="0" ref={selectionGroupRef}>
+        <rect
+          ref={selectionRef}
+          x={SELECTION_RECT_GAP}
+          width={0}
+          y={12}
+          rx={4}
+          ry={4}
+          height={height - 12}
+          fill="mediumslateblue"
+          fillOpacity="0.1"
+          //stroke="mediumslateblue"
+          //strokeWidth="1"
+          //strokeDasharray="5,5"
+        />
 
-        <g opacity="0" ref={selectionGroupRef}>
-          <rect
-            ref={selectionRef}
-            x={SELECTION_RECT_GAP}
-            width={0}
-            y={12}
-            rx={4}
-            ry={4}
-            height={height - 12}
-            fill="mediumslateblue"
-            fillOpacity="0.1"
-            //stroke="mediumslateblue"
-            //strokeWidth="1"
-            //strokeDasharray="5,5"
+        <g id="zoom-text">
+          <path
+            ref={zoomArrowRef1}
+            d="M 6,-6 L 0,0 L 6,6"
+            stroke="mediumslateblue"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            transform={`translate(8, ${12 + (height - 12) / 2})`}
+            opacity={0}
           />
+          <text
+            ref={zoomTextRef}
+            x="0"
+            y={12 + (height - 12) / 2}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill="mediumslateblue"
+            opacity={0}
+          >
+            {TEXT_ZOOM}
+          </text>
 
-          <g id="zoom-text">
+          <g transform={`translate(0, ${12 + (height - 12) / 2})`}>
             <path
-              ref={zoomArrowRef1}
-              d="M 6,-6 L 0,0 L 6,6"
+              ref={zoomArrowRef2}
+              d="M -6,-6 L 0,0 L -6,6"
               stroke="mediumslateblue"
               fill="none"
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              transform={`translate(8, ${12 + (height - 12) / 2})`}
               opacity={0}
-            />
-            <text
-              ref={zoomTextRef}
-              x="0"
-              y={12 + (height - 12) / 2}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill="mediumslateblue"
-              opacity={0}
-            >
-              {TEXT_ZOOM}
-            </text>
-
-            <g transform={`translate(0, ${12 + (height - 12) / 2})`}>
-              <path
-                ref={zoomArrowRef2}
-                d="M -6,-6 L 0,0 L -6,6"
-                stroke="mediumslateblue"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                opacity={0}
-              />
-            </g>
-          </g>
-
-          <g id="selection-line-1">
-            <path
-              d="M -5,1 L 5,1 L 5,5 L 0,10 L -5,5 Z"
-              stroke="mediumslateblue"
-              fill="mediumslateblue"
-              fillOpacity="0.25"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-
-            <line
-              x1="0"
-              y1="12"
-              x2="0"
-              y2={height - 1}
-              stroke="mediumslateblue"
-              strokeWidth="1"
-            />
-          </g>
-
-          <g id="selection-line-2" ref={selectionLineRef2}>
-            <path
-              d="M -5,1 L 5,1 L 5,5 L 0,10 L -5,5 Z"
-              stroke="mediumslateblue"
-              fill="mediumslateblue"
-              fillOpacity="0.25"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <line
-              x1="0"
-              y1="12"
-              x2="0"
-              y2={height - 1}
-              stroke="mediumslateblue"
-              strokeWidth="1"
             />
           </g>
         </g>
-      </BaseSvg>
-    )
-  }, [
-    locations,
-    axes,
-    state,
-    locationFeatures,
-    settings,
-    globalY,
-    binSizes,
-    allLocTrackBins,
-  ])
+
+        <g id="selection-line-1">
+          <path
+            d="M -5,1 L 5,1 L 5,5 L 0,10 L -5,5 Z"
+            stroke="mediumslateblue"
+            fill="mediumslateblue"
+            fillOpacity="0.25"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+
+          <line
+            x1="0"
+            y1="12"
+            x2="0"
+            y2={height - 1}
+            stroke="mediumslateblue"
+            strokeWidth="1"
+          />
+        </g>
+
+        <g id="selection-line-2" ref={selectionLineRef2}>
+          <path
+            d="M -5,1 L 5,1 L 5,5 L 0,10 L -5,5 Z"
+            stroke="mediumslateblue"
+            fill="mediumslateblue"
+            fillOpacity="0.25"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <line
+            x1="0"
+            y1="12"
+            x2="0"
+            y2={height - 1}
+            stroke="mediumslateblue"
+            strokeWidth="1"
+          />
+        </g>
+      </g>
+    </BaseSvg>
+  )
 
   return (
     <div

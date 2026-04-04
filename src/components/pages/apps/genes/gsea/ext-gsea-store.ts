@@ -1,14 +1,14 @@
-import { APP_ID } from '@/consts'
 import {
   DEFAULT_STROKE_PROPS,
   type IColorProps,
   type IStrokeProps,
-} from '@components/plot/svg-props'
-import { COLOR_BLUE, COLOR_RED } from '@lib/color/color'
+} from '@/components/plot/svg-props'
+import { config } from '@/config'
+import { COLOR_BLUE, COLOR_RED } from '@/lib/color/color'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${APP_ID}:ext-gsea:settings:v11`
+const SETTINGS_KEY = `${config.appId}:ext-gsea:settings:v12`
 
 export interface IExtGseaDisplayOptions {
   axes: {
@@ -128,7 +128,7 @@ export const DEFAULT_EXT_GSEA_PROPS: IExtGseaDisplayOptions = {
         color: COLOR_BLUE,
         width: 2,
         show: true,
-        alpha: 1,
+        opacity: 1,
       },
       leadingEdge: {
         fill: {
@@ -145,7 +145,7 @@ export const DEFAULT_EXT_GSEA_PROPS: IExtGseaDisplayOptions = {
         color: COLOR_RED,
         width: 2,
         show: true,
-        alpha: 1,
+        opacity: 1,
       },
       leadingEdge: {
         fill: {
@@ -185,15 +185,14 @@ export const DEFAULT_EXT_GSEA_PROPS: IExtGseaDisplayOptions = {
 
 export interface IExtGseaStore extends IExtGseaDisplayOptions {
   updateSettings: (settings: Partial<IExtGseaDisplayOptions>) => void
-  //applyTheme: (theme: Theme) => void
 }
 
 export const useExtGseaStore = create<IExtGseaStore>()(
   persist(
-    (set) => ({
+    set => ({
       ...DEFAULT_EXT_GSEA_PROPS,
       updateSettings: (settings: Partial<IExtGseaDisplayOptions>) => {
-        set((state) => ({ ...state, ...settings }))
+        set(state => ({ ...state, ...settings }))
       },
     }),
     {
@@ -225,8 +224,8 @@ export function useExtGsea(): {
   updateSettings: (settings: Partial<IExtGseaStore>) => void
   resetSettings: () => void
 } {
-  const settings = useExtGseaStore((state) => state)
-  const updateSettings = useExtGseaStore((state) => state.updateSettings)
+  const settings = useExtGseaStore(state => state)
+  const updateSettings = useExtGseaStore(state => state.updateSettings)
   const resetSettings = () => updateSettings({ ...DEFAULT_EXT_GSEA_PROPS })
 
   return { settings, updateSettings, resetSettings }

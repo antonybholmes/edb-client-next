@@ -1,9 +1,9 @@
 import { BaseCol } from '@layout/base-col'
 
+import { FormInputError } from '@/components/input-error'
 import { TEXT_OK } from '@/consts'
-import { FormInputError } from '@components/input-error'
+import type { IEdbUser, IRole } from '@/lib/edb/edb'
 import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
-import type { IEdbUser, IRole } from '@lib/edb/edb'
 import { Form, FormField } from '@themed/form'
 
 import { zodResolver } from '@hookform/resolvers/zod'

@@ -1,9 +1,10 @@
-import { range } from '@lib/math/range'
+import { range } from '@/lib/math/range'
 import { AnnotationDataFrame } from './annotation-dataframe'
 import { DEFAULT_COLUMN_INDEX_NAME } from './base-dataframe'
 import { makeCell } from './cell'
 import { DataFrame } from './dataframe'
-import type { SeriesData } from './dataframe-types'
+
+import type { SeriesData } from '.'
 import { DEFAULT_INDEX_NAME } from './series'
 
 export type Delimiter = '\t' | ',' | ' '
@@ -179,7 +180,7 @@ export class DataFrameReader {
           // })
 
           // each row must be the have the same number of rows
-          const cells = Array(columns).fill(defaultCellValue)
+          const cells = new Array(columns).fill(defaultCellValue)
 
           // overwrite with the real values. This means if text file
           // has missing values (e.g. row is short because couldn't be
@@ -219,8 +220,8 @@ export class DataFrameReader {
 
     const ret = new AnnotationDataFrame({
       data,
-      rowMetaData: rowIndex,
-      colMetaData: colIndex,
+      rowObs: rowIndex,
+      colVars: colIndex,
     })
 
     return ret

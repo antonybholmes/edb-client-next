@@ -1,27 +1,41 @@
 // 'use client'
 
-import { SearchIcon } from '@icons/search-icon'
+import { SearchIcon } from '@/icons/search-icon'
 
 import { useEffect, useState } from 'react'
 
-import { Feature, IGenomicFeature, locStr } from '@lib/genomic/genomic'
+import {
+  type Feature,
+  type IGenomicFeature,
+  type IGenomicLocation,
+  locStr,
+} from '@/lib/genomic/genomic'
 
+import { Autocomplete } from '@/components/autocomplete'
+import type { ISearchBoxProps } from '@/components/search-box'
+import { useDebounce } from '@/hooks/debounce'
 import { useGeneQuery } from '@/lib/edb/genome'
+import { cn } from '@/lib/shadcn-utils'
 import { BUTTON_MD_H_CLS } from '@/theme'
-import { Autocomplete } from '@components/autocomplete'
-import type { ISearchBoxProps } from '@components/search-box'
-import { cn } from '@lib/shadcn-utils'
 import { useSeqBrowserSettings } from './seq-browser-settings'
 
 const LI_CLS = cn(
   BUTTON_MD_H_CLS,
-  'hover:bg-muted/50 outline-none focus-visible:bg-muted/50 flex flex-row',
+  'hover:bg-muted/60 outline-none focus-visible:bg-muted/60 flex flex-row',
   'justify-start items-center px-3 gap-x-2 w-full'
 )
 
 interface IProps extends ISearchBoxProps {
   feature?: Feature
-  onLocationChanged?: (loc: IGenomicFeature) => void
+  /**
+   * Called when user clicks on a location in the dropdown.
+   * This distinguishes it from onTextChanged which is called
+   * whenever the text input changes.
+   *
+   * @param loc   The genomic location selected by the user.
+   * @returns
+   */
+  onLocationChanged?: (loc: IGenomicLocation) => void
 }
 
 export function LocationAutocomplete({
@@ -30,7 +44,7 @@ export function LocationAutocomplete({
   onTextChange,
   onTextChanged,
   onLocationChanged,
-  className,
+  className = '',
   ...props
 }: IProps) {
   const { settings } = useSeqBrowserSettings()
@@ -39,7 +53,19 @@ export function LocationAutocomplete({
 
   const [results, setResults] = useState<IGenomicFeature[]>([])
 
-  const { data: geneData } = useGeneQuery(query, settings.genome, feature)
+  /**
+   * Debounce the query to avoid excessive requests. User should
+   * be able to type without lag.
+   */
+  const debouncedQuery = useDebounce(query, { delayMs: 500 })
+
+  const { data: geneData } = useGeneQuery(
+    debouncedQuery,
+    settings.assembly,
+    feature
+  )
+
+  //console.log('geneData=', geneData, debouncedQuery, settings.genome, feature)
 
   useEffect(() => {
     if (geneData) {
@@ -57,11 +83,11 @@ export function LocationAutocomplete({
     <Autocomplete
       value={query}
       //showClear={false}
-      onTextChange={(v) => {
+      onTextChange={v => {
         setQuery(v)
         onTextChange?.(v)
       }}
-      onTextChanged={(v) => {
+      onTextChanged={v => {
         onTextChanged?.(v)
       }}
       className={className}
@@ -69,16 +95,16 @@ export function LocationAutocomplete({
       deleteLabel="Delete Location"
       {...props}
     >
-      {results.map((item) => (
+      {results.map(item => (
         <li key={item.geneId}>
           <button
             className={LI_CLS}
             onClick={() => {
-              if (item.geneSymbol) {
-                onTextChange?.(item.geneSymbol)
-                onTextChanged?.(item.geneSymbol)
-                onLocationChanged?.(item)
-              }
+              //if (item.geneSymbol) {
+              //onTextChange?.(item.geneSymbol)
+              //onTextChanged?.(item.geneSymbol)
+              onLocationChanged?.(item.loc)
+              //}
             }}
           >
             <SearchIcon />

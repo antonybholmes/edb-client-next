@@ -1,4 +1,4 @@
-import { APP_ID } from '@/consts'
+import { config } from '@/config'
 
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
@@ -6,7 +6,7 @@ import {
   DEFAULT_GSEA_DISPLAY_PROPS,
   type IGseaDisplayProps,
 } from './gsea-utils'
-const SETTINGS_KEY = `${APP_ID}.gsea-settings-v22`
+const SETTINGS_KEY = `${config.appId}:gsea-settings-v22`
 
 export interface IGseaStore extends IGseaDisplayProps {
   updateSettings: (settings: Partial<IGseaDisplayProps>) => void
@@ -14,11 +14,11 @@ export interface IGseaStore extends IGseaDisplayProps {
 
 export const useGseaStore = create<IGseaStore>()(
   persist(
-    (set) => ({
+    set => ({
       ...DEFAULT_GSEA_DISPLAY_PROPS,
 
       updateSettings: (settings: Partial<IGseaDisplayProps>) => {
-        set((state) => ({
+        set(state => ({
           ...state,
           ...settings,
         }))
@@ -36,8 +36,8 @@ export function useGsea(): {
   updateSettings: (settings: Partial<IGseaDisplayProps>) => void
   reset: () => void
 } {
-  const settings = useGseaStore((state) => state)
-  const updateSettings = useGseaStore((state) => state.updateSettings)
+  const settings = useGseaStore(state => state)
+  const updateSettings = useGseaStore(state => state.updateSettings)
 
   function reset() {
     updateSettings({ ...DEFAULT_GSEA_DISPLAY_PROPS })

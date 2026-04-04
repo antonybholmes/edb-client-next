@@ -1,27 +1,27 @@
-import { type IDivProps } from '@interfaces/div-props'
-import { cn } from '@lib/shadcn-utils'
+import { type IDivProps } from '@/interfaces/div-props'
+import { cn } from '@/lib/shadcn-utils'
 
+import { BaseLink, BLANK_TARGET } from '@/components/link/base-link'
+import { ThemeLink } from '@/components/link/theme-link'
 import { HEADER_LINKS } from '@/menus'
-import { BaseLink, BLANK_TARGET } from '@components/link/base-link'
-import { ThemeLink } from '@components/link/theme-link'
 
 import { TAILWIND_MEDIA_SM, useWindowSize } from '@/hooks/window-size'
+import type { ILinkProps } from '@/interfaces/link-props'
+import { VCenterRow } from '@/layout/v-center-row'
+import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { FOCUS_RING_CLS } from '@/theme'
-import type { ILinkProps } from '@interfaces/link-props'
-import { VCenterRow } from '@layout/v-center-row'
-import { useEdbSettings } from '@lib/edb/edb-settings'
-import { useState, type MouseEventHandler } from 'react'
+import { useState } from 'react'
 import { GripIcon } from '../icons/grip-icon'
 import { IconButton } from '../shadcn/ui/themed/icon-button'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '../shadcn/ui/themed/popover'
+} from '../shadcn/ui/themed/v2/popover'
 import { HeaderMenuSheet } from './header-menu-sheet'
 
 export const SIDE_OVERLAY_CLS = cn(
-  'fixed inset-0 z-overlay z-(--z-overlay) bg-overlay/30 backdrop-blur-xs duration-500 ease-in-out',
+  'fixed inset-0 z-(--z-overlay) bg-overlay/30 backdrop-blur-xs duration-500 ease-in-out',
   'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0'
 )
 
@@ -48,16 +48,16 @@ export function ModuleButtonLink({
 
 export interface IHeaderLinksProps extends IDivProps {
   tab?: string
-  handleClick: MouseEventHandler<HTMLAnchorElement>
+  handleClick: () => void
 }
 
 export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
   const { settings } = useEdbSettings()
 
   // sort alphabetically and ignore sections
-  const items = HEADER_LINKS.map((section) => {
+  const items = HEADER_LINKS.map(section => {
     return section.modules.filter(
-      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()
@@ -125,19 +125,21 @@ export function HeaderMenu({ tab = '' }: IFileMenu) {
   if (windowSize.w > TAILWIND_MEDIA_SM) {
     return (
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <IconButton
-            id="header-menu-popover-button"
-            variant="flat"
-            size="2xl"
-            rounded="none"
-            // ripple={false}
-            checked={open}
-            aria-label={open ? 'Close Menu' : 'Open Menu'}
-          >
-            <GripIcon />
-          </IconButton>
-        </PopoverTrigger>
+        <PopoverTrigger
+          render={
+            <IconButton
+              id="header-menu-popover-button"
+              variant="flat"
+              size="2xl"
+              rounded="none"
+              // ripple={false}
+              checked={open}
+              aria-label={open ? 'Close Menu' : 'Open Menu'}
+            >
+              <GripIcon />
+            </IconButton>
+          }
+        />
         <PopoverContent className="ml-1" variant="glass">
           <HeaderLinks tab={tab} handleClick={() => setOpen(false)} />
 

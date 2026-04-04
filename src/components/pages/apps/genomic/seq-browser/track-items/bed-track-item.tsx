@@ -1,8 +1,8 @@
+import { TruncateSpan } from '@/components/truncate-span'
 import type { IDialogParams } from '@/consts'
-import { BaseCol } from '@layout/base-col'
-import { VCenterRow } from '@layout/v-center-row'
-import { cn } from '@lib/shadcn-utils'
-import { type Dispatch, type SetStateAction } from 'react'
+import { BaseCol } from '@/layout/base-col'
+import { VCenterRow } from '@/layout/v-center-row'
+import { cn } from '@/lib/shadcn-utils'
 import type { IBedTrack, ILocalBedTrack, ITrackGroup } from '../tracks-provider'
 import { BaseTrackItem } from './base-track-item'
 import {
@@ -21,7 +21,7 @@ export function BedTrackItem({
   group: ITrackGroup
   active: string | null
   multiselect: boolean
-  setShowDialog: Dispatch<SetStateAction<IDialogParams>>
+  setShowDialog: (params: IDialogParams) => void
 }) {
   //const [drag, setDrag] = useState(false)
 
@@ -33,55 +33,56 @@ export function BedTrackItem({
       group={group}
       multiselect={multiselect}
       className="data-[hover=true]:bg-transparent"
+      extChildren={
+        <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
+          <DeleteTrackGroupButton group={group} />
+        </VCenterRow>
+      }
     >
-      {group.order.length > 1 && <UngroupButton group={group} />}
+      {group.tracks.length > 1 && <UngroupButton group={group} />}
       <BaseCol className="grow overflow-hidden">
-        {group.order
-          .map(id => group.tracks[id]! as IBedTrack | ILocalBedTrack)
-          .map((t, ti) => {
-            return (
+        {(group.tracks as (IBedTrack | ILocalBedTrack)[]).map((t, ti) => {
+          return (
+            <VCenterRow
+              key={t.id}
+              id={t.name}
+              style={{
+                color: t.displayOptions.fill.color,
+                fill: t.displayOptions.fill.color,
+              }}
+              className="gap-x-1"
+            >
               <VCenterRow
-                key={t.id}
-                id={t.name}
-                style={{
-                  color: t.displayOptions.fill.color,
-                  fill: t.displayOptions.fill.color,
-                }}
-                className="gap-x-1"
+                data-pos={
+                  group.tracks.length === 1
+                    ? 'normal'
+                    : ti === 0
+                      ? 'start'
+                      : ti === group.tracks.length - 1
+                        ? 'end'
+                        : 'middle'
+                }
+                className={cn(
+                  'grow overflow-hidden h-9 data-[pos=normal]:rounded-theme data-[pos=start]:rounded-t-theme data-[pos=end]:rounded-b-theme',
+                  { 'pl-4': ti > 0 }
+                )}
               >
-                <VCenterRow
-                  data-pos={
-                    group.order.length === 1
-                      ? 'normal'
-                      : ti === 0
-                        ? 'start'
-                        : ti === group.order.length - 1
-                          ? 'end'
-                          : 'middle'
-                  }
-                  className={cn(
-                    'grow overflow-hidden group-hover:bg-muted h-9 data-[pos=normal]:rounded-theme data-[pos=start]:rounded-t-theme data-[pos=end]:rounded-b-theme px-2',
-                    [ti > 0, 'pl-4']
-                  )}
-                >
-                  <span className="grow truncate font-semibold">{t.name}</span>
-
-                  <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
-                    <EditTrackButton
-                      cmd="edit-bed"
-                      group={group}
-                      track={t}
-                      setShowDialog={setShowDialog}
-                    />
-                  </VCenterRow>
-                </VCenterRow>
+                <TruncateSpan className="h-9 w-full font-semibold">
+                  {t.name}
+                </TruncateSpan>
 
                 <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
-                  <DeleteTrackGroupButton group={group} />
+                  <EditTrackButton
+                    cmd="edit-bed"
+                    group={group}
+                    track={t}
+                    setShowDialog={setShowDialog}
+                  />
                 </VCenterRow>
               </VCenterRow>
-            )
-          })}
+            </VCenterRow>
+          )
+        })}
       </BaseCol>
     </BaseTrackItem>
   )
