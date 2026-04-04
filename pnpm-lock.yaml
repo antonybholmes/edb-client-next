@@ -36,8 +36,8 @@ importers:
         specifier: ^3.2.2
         version: 3.2.2(react@19.2.4)
       '@gmod/bbi':
-        specifier: ^9.0.7
-        version: 9.0.7
+        specifier: ^9.0.9
+        version: 9.0.9
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.72.1(react@19.2.4))
@@ -159,8 +159,8 @@ importers:
         specifier: ^3.2.0
         version: 3.2.0(date-fns@4.1.0)
       fuse.js:
-        specifier: ^7.2.0
-        version: 7.2.0
+        specifier: ^7.3.0
+        version: 7.3.0
       generic-filehandle2:
         specifier: ^2.1.4
         version: 2.1.4
@@ -670,8 +670,8 @@ packages:
   '@gmod/abortable-promise-cache@3.0.4':
     resolution: {integrity: sha512-kxRJj5fyRKFuZDp/YvnHeadYCV2EEUKyH2T4a2Iz9O7T/thOWWHUDiiD/Mg6WZP/RNNDIcfSHl/xVHHy/+j8qg==}
 
-  '@gmod/bbi@9.0.7':
-    resolution: {integrity: sha512-uBetZN1NMqM3cQdbqhMhWp0eCSSeRsuz9LdyFb87zGuUzyqFrAfpuFK1kSW9StvCkSbUvCdsrgG/TJc/PWfSrA==}
+  '@gmod/bbi@9.0.9':
+    resolution: {integrity: sha512-p2T98daTTbNyQ7oH0F9hoBC4IjMnrPyuBcFzJT66nlbl2DSpqtQDehryhf/nb+u0HTw9AFtzxI3Ew3Fs3uwhLA==}
 
   '@hookform/resolvers@5.2.2':
     resolution: {integrity: sha512-A/IxlMLShx3KjV/HeTcTfaMxdwy690+L/ZADoeaTltLx+CVuzkeVIPuybK3jrRfw7YZnmdKsVVHAlEPIAEUNlA==}
@@ -3067,8 +3067,8 @@ packages:
   functions-have-names@1.2.3:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
 
-  fuse.js@7.2.0:
-    resolution: {integrity: sha512-zf4vdcIGpjNKTuXwug33Hm2okqX6a0t2ZEbez+o9oBJQSNhVJ5AqERfeiRD3r8HcLqP66MrjdkmzxrncbAOTUQ==}
+  fuse.js@7.3.0:
+    resolution: {integrity: sha512-plz8RVjfcDedTGfVngWH1jmJvBvAwi1v2jecfDerbEnMcmOYUEEwKFTHbNoCiYyzaK2Ws8lABkTCcRSqCY1q4w==}
     engines: {node: '>=10'}
 
   generic-filehandle2@2.1.4:
@@ -5413,7 +5413,7 @@ snapshots:
 
   '@gmod/abortable-promise-cache@3.0.4': {}
 
-  '@gmod/bbi@9.0.7':
+  '@gmod/bbi@9.0.9':
     dependencies:
       '@gmod/abortable-promise-cache': 3.0.4
       '@jbrowse/quick-lru': 7.3.5
@@ -8107,7 +8107,7 @@ snapshots:
 
   functions-have-names@1.2.3: {}
 
-  fuse.js@7.2.0: {}
+  fuse.js@7.3.0: {}
 
   generic-filehandle2@2.1.4: {}
 
