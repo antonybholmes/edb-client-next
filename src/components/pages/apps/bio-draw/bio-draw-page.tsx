@@ -61,7 +61,8 @@ import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 import { produce } from 'immer'
 import { PLOT_CLS } from '../matcalc/apps/heatmap/heatmap-panel'
 import {
-  pathJoin,
+  useApp,
+  useFile,
   useHistory,
   useSheet,
   useSheets,
@@ -98,8 +99,10 @@ export function BioDrawPage() {
 
   const { settings, updateSettings } = useMotifSettings()
 
-  const { currentFile, openApp, goto } = useHistory()
+  const { openApp, goto } = useHistory()
 
+  const app = useApp()!
+  const file = useFile()!
   const sheets = useSheets()
   const sheet = useSheet()
 
@@ -449,7 +452,7 @@ export function BioDrawPage() {
                   selectedSheet={sheet?.id ?? ''}
                   dataFrames={sheets as AnnotationDataFrame[]}
                   onTabChange={selectedTab => {
-                    goto(pathJoin(currentFile, selectedTab.tab))
+                    goto({ app, file, sheet: selectedTab.tab })
                   }}
                   className="relative grow"
                 />

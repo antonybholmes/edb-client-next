@@ -104,7 +104,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
 
   const [dataset, setDataset] = useState<IGexDataset | undefined>(undefined)
 
-  const { openFile, addGroups } = useHistory()
+  const { openFile } = useHistory()
 
   const [text, setText] = useState<string>(
     settings.apps.gex.genes.length > 0
@@ -611,10 +611,11 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
       // make sure that the groups are empty
       //addGroups(groups, 'set')
 
-      addGroups(groups, { name: groupSampleDataType[0] ?? 'GEX' })
-
       openFile('GEX data', {
         sheets: [df],
+        groups,
+
+        groupsName: groupSampleDataType[0] ?? 'GEX',
       })
 
       // cache the genes so user doesn't have to keep re-entering them

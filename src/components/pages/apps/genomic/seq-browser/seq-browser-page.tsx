@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
@@ -123,7 +123,7 @@ function SeqBrowserPage() {
 
   function setLocationZoom(scale: number) {
     setLocations(
-      locations.map(location => {
+      locations.map((location) => {
         const w = Math.round(
           Math.max(100, (location.end - location.start + 1) * scale)
         )
@@ -135,7 +135,7 @@ function SeqBrowserPage() {
     )
   }
 
-  useKeyDownListener(e => {
+  useKeyDownListener((e) => {
     if ((e as KeyboardEvent).ctrlKey) {
       setIsCtrlPressed(true) // Ctrl key is pressed
     }
@@ -174,7 +174,7 @@ function SeqBrowserPage() {
   useEffect(
     () =>
       updateSettings(
-        produce(settings, draft => {
+        produce(settings, (draft) => {
           draft.zoom = zoom
         })
       ),
@@ -191,7 +191,7 @@ function SeqBrowserPage() {
   // shows the first location being viewed.
   useEffect(() => {
     setQuery(
-      locations.map(location => {
+      locations.map((location) => {
         return location.loc
       })
     )
@@ -325,7 +325,7 @@ function SeqBrowserPage() {
                 title="Move Left"
                 onClick={() => {
                   setLocations(
-                    locations.map(location => {
+                    locations.map((location) => {
                       const w = location.end - location.start + 1
                       const s =
                         location.start -
@@ -346,7 +346,7 @@ function SeqBrowserPage() {
                 title="Move Right"
                 onClick={() => {
                   setLocations(
-                    locations.map(location => {
+                    locations.map((location) => {
                       const w = location.end - location.start + 1
                       const s =
                         location.start +
@@ -400,7 +400,7 @@ function SeqBrowserPage() {
                   checked={settings.genes.display === 'dense'}
                   onClick={() => {
                     updateSettings(
-                      produce(settings, draft => {
+                      produce(settings, (draft) => {
                         draft.genes.display = 'dense'
                       })
                     )
@@ -413,7 +413,7 @@ function SeqBrowserPage() {
                   checked={settings.genes.display === 'pack'}
                   onClick={() => {
                     updateSettings(
-                      produce(settings, draft => {
+                      produce(settings, (draft) => {
                         draft.genes.display = 'pack'
                       })
                     )
@@ -426,7 +426,7 @@ function SeqBrowserPage() {
                   checked={settings.genes.display === 'full'}
                   onClick={() => {
                     updateSettings(
-                      produce(settings, draft => {
+                      produce(settings, (draft) => {
                         draft.genes.display = 'full'
                       })
                     )
@@ -440,7 +440,7 @@ function SeqBrowserPage() {
                 title="Reverse"
                 checked={settings.reverse}
                 onClick={() => {
-                  const newOptions = produce(settings, draft => {
+                  const newOptions = produce(settings, (draft) => {
                     draft.reverse = !draft.reverse
                   })
 
@@ -453,10 +453,10 @@ function SeqBrowserPage() {
 
             <ToggleGroup
               value={[settings.genes.view]}
-              onValueChange={v => {
+              onValueChange={(v) => {
                 if (v[0]) {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.genes.view = v[0] as GeneView
                     })
                   )
@@ -484,8 +484,8 @@ function SeqBrowserPage() {
                   ? ['protein-coding']
                   : [],
               ].flat()}
-              onValueChange={v => {
-                const newSettings = produce(settings, draft => {
+              onValueChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.genes.canonical.only = v.includes('canonical')
 
                   draft.genes.types = v.includes('protein-coding')
@@ -553,14 +553,14 @@ function SeqBrowserPage() {
             <LocationAutocomplete
               value={query.toString()}
               //showClear={false}
-              onTextChange={v => {
+              onTextChange={(v) => {
                 setQuery([v])
               }}
               clear={() => {
                 setQuery([])
               }}
-              onTextChanged={v => {
-                const tokens = v.split(',').map(s => s.trim())
+              onTextChanged={(v) => {
+                const tokens = v.split(',').map((s) => s.trim())
 
                 if (tokens.length === 0) {
                   return
@@ -591,7 +591,7 @@ function SeqBrowserPage() {
 
                 setLocations(newLocations)
               }}
-              onLocationChanged={l => {
+              onLocationChanged={(l) => {
                 //const newLocations: GenLoc[] = [...locations]
 
                 ///newLocations[0] = toGenLoc(l)
@@ -613,8 +613,8 @@ function SeqBrowserPage() {
             w="xs"
             className="text-xs"
             value={settings.assembly}
-            onValueChange={v => {
-              const newOptions = produce(settings, draft => {
+            onValueChange={(v) => {
+              const newOptions = produce(settings, (draft) => {
                 draft.assembly = (v as string) ?? 'hg19'
               })
 
@@ -651,9 +651,9 @@ function SeqBrowserPage() {
             tabShortcutMenu={
               <ShowOptsSidebarBtn
                 open={edbSettings.sidebar.show}
-                onClick={open => {
+                onClick={(open) => {
                   updateEdbSettings(
-                    produce(edbSettings, draft => {
+                    produce(edbSettings, (draft) => {
                       draft.sidebar.show = open
                     })
                   )
@@ -701,8 +701,8 @@ function SeqBrowserPage() {
               value={
                 settings.seqs.bins.autoSize ? 'auto' : binSizes[0]!.toString()
               }
-              onValueChange={v => {
-                const newOptions = produce(settings, draft => {
+              onValueChange={(v) => {
+                const newOptions = produce(settings, (draft) => {
                   draft.seqs.bins.autoSize = v === 'auto'
 
                   if (v !== 'auto') {

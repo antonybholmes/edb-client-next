@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
 
@@ -122,7 +122,7 @@ export function GeneConvPage() {
 
     filesToDataFrames(files, {
       parseOpts: options,
-      onSuccess: tables => {
+      onSuccess: (tables) => {
         if (tables.length > 0) {
           openFile(tables[0]!.name, { sheets: tables })
         }
@@ -198,7 +198,7 @@ export function GeneConvPage() {
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -231,13 +231,13 @@ export function GeneConvPage() {
               //variant="outline"
 
               value={[fromSpecies]}
-              onValueChange={v => {
+              onValueChange={(v) => {
                 setFromSpecies(v[0]!)
               }}
               size="toolbar"
               className="rounded-theme overflow-hidden gap-x-px"
             >
-              {speciesTabs.map(tab => (
+              {speciesTabs.map((tab) => (
                 <GroupToggle
                   key={tab.id}
                   value={tab.id}
@@ -253,13 +253,13 @@ export function GeneConvPage() {
           <ToolbarTabGroup className="gap-x-2 ml-1" title="To">
             <ToggleGroup
               value={[toSpecies]}
-              onValueChange={v => {
+              onValueChange={(v) => {
                 setToSpecies(v[0]!)
               }}
               size="toolbar"
               className="rounded-theme overflow-hidden gap-x-px"
             >
-              {speciesTabs.map(tab => (
+              {speciesTabs.map((tab) => (
                 <Toggle
                   key={tab.id}
                   value={tab.id}
@@ -414,7 +414,7 @@ export function GeneConvPage() {
           <TabbedDataFrames
             selectedSheet={sheet?.id ?? ''}
             dataFrames={sheets as AnnotationDataFrame[]}
-            onTabChange={selectedTab => {
+            onTabChange={(selectedTab) => {
               goto({ app, file, sheet: selectedTab.tab })
             }}
             className="mx-2"
@@ -434,7 +434,7 @@ export function GeneConvPage() {
             message={showDialog.id}
             //onOpenChange={() => setShowDialog({...NO_DIALOG})}
             onFileChange={(message, files) =>
-              onTextFileChange(message, files, files => openFiles(files))
+              onTextFileChange(message, files, (files) => openFiles(files))
             }
           />
         )}

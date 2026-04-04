@@ -1,6 +1,6 @@
 //import { Geist, Geist_Mono } from "next/font/google";
 
-import { CoreProviders } from '@/providers/core-providers'
+import { BaseCol } from '@/components/layout/base-col'
 import { Geist } from 'next/font/google'
 import { ReactNode } from 'react'
 import './globals.css'
@@ -35,7 +35,8 @@ export default function Layout({
         className={`${geist.className} antialiased margin-0 h-full min-h-screen flex flex-col bg-body text-base font-normal`}
       >
         {/* <CsrfProvider>{children}</CsrfProvider> */}
-        <CoreProviders>{children}</CoreProviders>
+        {/* <CoreProviders>{children}</CoreProviders> */}
+        <BaseCol className="root grow">{children}</BaseCol>
       </body>
     </html>
   )

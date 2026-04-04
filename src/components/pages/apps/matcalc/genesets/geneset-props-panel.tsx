@@ -51,7 +51,7 @@ import { SaveIcon } from '@/icons/save-icon'
 import { StretchRow } from '@/layout/stretch-row'
 import { cn } from '@/lib/shadcn-utils'
 import { Settings2 } from 'lucide-react'
-import { useHistory } from '../history/history-store'
+import { useGenesets, useHistory } from '../history/history-store'
 import MODULE_INFO from '../module.json'
 
 function GenesetItem({
@@ -147,9 +147,10 @@ export function GenesetPropsPanel() {
 
   //const [activeId, setActiveId] = useState<string | null>(null)
 
-  const { updateGeneset } = useHistory()
-  const { genesets, addGenesets, removeGenesets, reorderGenesets } =
+  const { addGenesets, updateGeneset, removeGenesets, reorderGenesets } =
     useHistory()
+
+  const genesets = useGenesets()
 
   const [openGenesetDialog, setOpenGroupDialog] = useState<
     IGenesetCallback | undefined
@@ -173,7 +174,7 @@ export function GenesetPropsPanel() {
       const g = JSON.parse(file.text)
 
       if (Array.isArray(g)) {
-        addGenesets(g, 'set') //({ type: 'set', genesets: g })
+        addGenesets(g, { mode: 'set' }) //({ type: 'set', genesets: g })
       }
     } else {
       // open txt
@@ -195,7 +196,7 @@ export function GenesetPropsPanel() {
         genesets.push(gs)
       }
 
-      addGenesets(genesets, 'set')
+      addGenesets(genesets, { mode: 'set' })
     }
   }
 
@@ -341,7 +342,7 @@ export function GenesetPropsPanel() {
           onResponse={r => {
             if (r === TEXT_OK) {
               //onGroupsChange?.([])
-              addGenesets([], 'set')
+              addGenesets([], { mode: 'set' })
             }
 
             setConfirmClear(false)

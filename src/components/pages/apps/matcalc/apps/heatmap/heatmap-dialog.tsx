@@ -106,23 +106,29 @@ export function HeatMapDialog({
   }, [isClusterMap])
 
   function makeCluster() {
+    console.log('make cluster', df)
     if (!df) {
       onResponse?.(TEXT_CANCEL)
       return
     }
 
+    let dfToPlot = df
+
     const groupsToPlot = groups.filter(
       g => g.show || settings.groups.filter.mode === 'keep'
     )
 
-    console.log(df.shape)
+    if (groupsToPlot.length > 0 && settings.groups.filter.mode === 'ignore') {
+      console.log(df.shape)
 
-    const idx = groupsToPlot.map(group => getColIdxFromGroup(df, group)).flat()
+      const idx = groupsToPlot
+        .map(group => getColIdxFromGroup(df, group))
+        .flat()
 
-    // if user has chosen to ignore unselected groups, we need to remove them from the dataframe before filtering/clustering
-    // which will affect analysis. Hide will just hide them from the plot without affecting analysis.
-    let dfToPlot =
-      settings.groups.filter.mode === 'ignore' ? df.iloc({ cols: idx }) : df
+      // if user has chosen to ignore unselected groups, we need to remove them from the dataframe before filtering/clustering
+      // which will affect analysis. Hide will just hide them from the plot without affecting analysis.
+      dfToPlot = dfToPlot.iloc({ cols: idx })
+    }
 
     if (settings.heatmap.filterRows) {
       switch (settings.heatmap.rowFilterMethod) {
@@ -251,7 +257,7 @@ export function HeatMapDialog({
       }
     )
 
-    //console.log('aha', plot, history)
+    console.log('aha', plot, history)
 
     //_addPlots([plot])
 
@@ -263,6 +269,7 @@ export function HeatMapDialog({
       open={open}
       title="Heatmap"
       onResponse={r => {
+        console.log('heatmap dialog response', r)
         if (r === TEXT_CANCEL) {
           onResponse?.(r)
         } else {

@@ -6,7 +6,8 @@
 
 @theme {
   --font-*: initial;
-  --font-sans: Geist, Inter, Figtree, Helvetica, Arial;
+  /* Using astro font system, so specify the font variables using var(--font-geist) etc */
+  --font-sans: var(--font-inter), Mona Sans, Figtree, Helvetica, Arial;
 
   /* --spacing-2px: rgb(2px);
   --spacing-1_2: rgb(0.3rem);
@@ -15,7 +16,9 @@
   --spacing-4\/10: rgb(40%);
   --spacing-9\/10: rgb(90%); */
 
-  --spacing-header: 2.75rem;
+  /* --spacing-header: 2.5rem; */
+
+  /* --spacing-button-lg: 2.5rem; */
 
   --breakpoint-2xl: 112rem;
   --breakpoint-3xl: 128rem;
@@ -212,9 +215,9 @@
   --color-primary-alt: oklch(0.37 0.03 260);
   --color-primary-foreground: white;
 
-  --color-theme: oklch(0.623 0.214 259.815);
-  --color-theme-muted: oklch(0.707 0.165 254.624);
-  --color-theme-alt: oklch(0.546 0.245 262.881);
+  --color-theme: oklch(62.3% 0.214 259.815);
+  --color-theme-muted: oklch(74.6% 0.16 232.661);
+  --color-theme-alt: oklch(54.6% 0.245 262.881);
 
   --color-shortcuts: rgb(229 231 235);
 
@@ -234,7 +237,7 @@
   --color-input: rgb(241 245 249);
   --color-ring: oklch(0.81 0.1 252);
 
-  --radius-theme: 0.5rem;
+  --radius-theme: 0.375rem;
   --radius-menu: 0.375rem;
   --radius-card: 0.75rem;
   --sidebar: hsl(0 0% 98%);
@@ -306,6 +309,10 @@
   [role='button']:not(:disabled) {
     cursor: pointer;
   }
+}
+
+.root {
+  isolation: isolate;
 }
 
 @utility trans-100 {
@@ -443,8 +450,8 @@ textarea {
 /* scrollbar */
 
 .custom-scrollbar::-webkit-scrollbar {
-  height: 0.4rem;
-  width: 0.4rem;
+  height: 0.3rem;
+  width: 0.3rem;
 }
 
 .custom-scrollbar::-webkit-scrollbar:disabled {
@@ -459,7 +466,7 @@ textarea {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-foreground/30 rounded-full;
+  @apply bg-foreground/20 rounded-full;
 }
 
 /* collapse */
@@ -535,8 +542,8 @@ textarea {
 /* https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp */
 
 /* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }

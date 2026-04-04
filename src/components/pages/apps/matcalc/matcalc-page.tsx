@@ -1531,6 +1531,7 @@ export function MatcalcPage() {
           isClusterMap={(showDialog.params?.isClusterMap as boolean) ?? false}
           //df={showDialog.params?.df as BaseDataFrame}
           onResponse={(response, data) => {
+            console.log('heatmap dialog response', response, data)
             if (response === TEXT_OK) {
               const plot = data as HistoryPlot
 

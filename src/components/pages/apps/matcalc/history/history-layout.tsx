@@ -7,6 +7,7 @@ import {
 import type { IChildrenProps } from '@/interfaces/children-props'
 
 import { OKCancelDialog } from '@/components/dialog/ok-cancel-dialog'
+import { BaseCol } from '@/components/layout/base-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
@@ -28,17 +29,17 @@ export interface IProps extends IChildrenProps {}
  * @param param0
  * @returns
  */
-export function HistoryLayout({ className, children }: IProps) {
+export function HistoryLayout({ children }: IProps) {
   const leftPanelRef = useRef(null)
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  const { reset } = useHistory()
-  const app = useApp()
+  const { resetApp } = useHistory()
+  const app = useApp()!
 
   const { settings, historySidebarOpen } = useEdbSettings()
 
-  const [tab, setTab] = useState('list')
+  //const [tab, setTab] = useState('list')
   // useEffect(() => {
   //   if (
   //     messages.some(s => s.data.startsWith('collapse')) &&
@@ -78,7 +79,7 @@ export function HistoryLayout({ className, children }: IProps) {
           //title={config.appName}
           onResponse={r => {
             if (r === TEXT_OK) {
-              reset()
+              resetApp(app)
             }
 
             setShowDialog({ ...NO_DIALOG })
@@ -87,7 +88,7 @@ export function HistoryLayout({ className, children }: IProps) {
           Are you sure you want to clear the history?
         </OKCancelDialog>
       )}
-      <ResizablePanelGroup orientation="horizontal">
+      <ResizablePanelGroup orientation="horizontal" className="grow h-full">
         <ResizablePanel
           defaultSize="80%"
           minSize="10%"
@@ -116,7 +117,7 @@ export function HistoryLayout({ className, children }: IProps) {
           className="flex flex-col text-xs overflow-hidden min-h-0 px-2"
         >
           {/* <BaseCol className="mx-2 mb-2 p-2 rounded-xl bg-background/75 hover:bg-background trans-color grow border border-border/30 hover:border-border/50 gap-y-2 h-full"> */}
-          <VCenterRow className="justify-between gap-x-2 h-8">
+          <VCenterRow className="justify-between gap-x-2 h-8 px-1">
             <h2 className="font-bold">History</h2>
             <VCenterRow className="gap-x-2">
               {/* <IconToggle
@@ -143,9 +144,11 @@ export function HistoryLayout({ className, children }: IProps) {
 
           {/* <Tabs value={tab} className="flex flex-col grow">
               <TabsContent value="list" className="grow flex flex-col"> */}
-          <VScrollPanel className="h-full">
-            <HistoryTabs />
-          </VScrollPanel>
+          <BaseCol className="p-2 rounded-xl bg-background/75 hover:bg-background trans-color grow border border-border/30">
+            <VScrollPanel className="h-full">
+              <HistoryTabs />
+            </VScrollPanel>
+          </BaseCol>
           {/* </TabsContent>
               <TabsContent value="tree" className="grow flex flex-col">
                 <VScrollPanel className="grow h-full">

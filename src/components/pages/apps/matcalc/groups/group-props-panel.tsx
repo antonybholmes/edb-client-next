@@ -52,8 +52,7 @@ import {
   SortableItem,
 } from '../../../../sortable-item'
 import {
-  useApp,
-  useFile,
+  useGroupName,
   useGroups,
   useHistory,
   useSheet,
@@ -94,9 +93,7 @@ function GroupItem({
   editGroup: (group: IClusterGroup, title?: string) => void
   setDelGroup: (group: IClusterGroup) => void
 }) {
-  const { addGroups } = useHistory()
-
-  const groups = useGroups()
+  const { updateGroup } = useHistory()
 
   const sheet = useSheet()
 
@@ -127,17 +124,13 @@ function GroupItem({
       <Checkbox
         checked={group.show}
         onCheckedChange={v => {
-          addGroups(
-            groups.map(g => (g.id === group.id ? { ...g, show: v } : g))
-          )
+          updateGroup({ ...group, show: v })
         }}
       />
       <ColorPickerButton
         color={group.color}
         onColorChange={v => {
-          addGroups(
-            groups.map(g => (g.id === group.id ? { ...g, color: v } : g))
-          )
+          updateGroup({ ...group, color: v })
         }}
         // onOpenChanged={open => {
         //   if (!open) {
@@ -200,9 +193,8 @@ export function GroupPropsPanel() {
 
   const { addGroups, removeGroups, reorderGroups } = useHistory()
 
-  const app = useApp()
-  const file = useFile()
   const groups = useGroups()
+  const groupsName = useGroupName()
   const sheet = useSheet()
 
   const { selection } = useSelectionRange()
@@ -500,7 +492,7 @@ export function GroupPropsPanel() {
 
         <Input
           placeholder="Groups..."
-          value={file?.groupsName ?? ''}
+          value={groupsName}
           onTextChange={v => addGroups(groups, { name: v })}
           className="max-h-8 text-xs"
         />
