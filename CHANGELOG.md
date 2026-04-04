@@ -1,5 +1,12 @@
 # Changelog
 
+## 32.0 (Apr, 2026)
+
+### Changed
+
+- Bug fixes and updates.
+
+
 ## 30.8 (Sep, 2025)
 
 ### Changed
