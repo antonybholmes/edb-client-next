@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
 
@@ -133,14 +133,14 @@ export function AnnotationPage() {
 
     const fileReader = new FileReader()
 
-    fileReader.onload = e => {
+    fileReader.onload = (e) => {
       const result = e.target?.result
 
       if (result) {
         const text: string =
           typeof result === 'string' ? result : Buffer.from(result).toString()
 
-        const lines = text.split(/[\r\n]+/g).filter(line => line.length > 0)
+        const lines = text.split(/[\r\n]+/g).filter((line) => line.length > 0)
         //.slice(0, 100)
 
         //const locs = parseLocations(lines)
@@ -289,7 +289,7 @@ export function AnnotationPage() {
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -439,13 +439,13 @@ export function AnnotationPage() {
             className="text-xs"
             w="xs"
             value={settings.genome}
-            items={dbs.map(db => ({
+            items={dbs.map((db) => ({
               value: db.assembly,
               label: db.assembly,
             }))}
-            onValueChange={v => {
+            onValueChange={(v) => {
               if (v) {
-                const newStore = produce(settings, draft => {
+                const newStore = produce(settings, (draft) => {
                   draft.genome = (v as string) ?? draft.genome
                 })
 
@@ -453,7 +453,7 @@ export function AnnotationPage() {
               }
             }}
           >
-            {dbs.map(db => (
+            {dbs.map((db) => (
               <SelectItem key={db.assembly} value={db.assembly}>
                 {db.assembly}
               </SelectItem>
@@ -497,7 +497,7 @@ export function AnnotationPage() {
           side="right"
           tabs={rightTabs}
           value={rightTab}
-          onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
@@ -509,16 +509,16 @@ export function AnnotationPage() {
           <TabbedDataFrames
             selectedSheet={sheet?.id ?? ''}
             dataFrames={sheets as AnnotationDataFrame[]}
-            onTabChange={selectedTab => {
+            onTabChange={(selectedTab) => {
               goto({ app, file, sheet: selectedTab.tab })
             }}
             className="mx-2"
-            onFileDrop={files => {
+            onFileDrop={(files) => {
               if (files.length > 0) {
-                onTextFileChange('Open from drag', files, files => {
+                onTextFileChange('Open from drag', files, (files) => {
                   filesToDataFrames(files, {
                     parseOpts: { indexCols: 0 },
-                    onSuccess: tables => {
+                    onSuccess: (tables) => {
                       if (tables.length > 0) {
                         openFile(tables[0]!.name, { sheets: tables })
                       }

@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
@@ -267,7 +267,7 @@ export function PathwayPage() {
           skipRows: files[0]!.name.includes('gmx') ? 1 : 0,
           delimiter: files[0]!.ext === 'csv' ? ',' : '\t',
         },
-        onSuccess: tables => {
+        onSuccess: (tables) => {
           if (tables.length > 0) {
             open(tables[0]!)
           }
@@ -304,13 +304,13 @@ export function PathwayPage() {
         name: df.col(0).name.toString(),
         genes: df
           .col(0)
-          .strs.filter(v => v !== '' && genes.has(v.toLowerCase())),
+          .strs.filter((v) => v !== '' && genes.has(v.toLowerCase())),
         color: randomHexColor(),
         type: 'geneset',
       }
     })
 
-    if (sum(genesets.map(geneset => geneset.genes.length)) === 0) {
+    if (sum(genesets.map((geneset) => geneset.genes.length)) === 0) {
       // setShowDialog({
       //   name: "alert",
       //   params: {
@@ -340,8 +340,8 @@ export function PathwayPage() {
     }
 
     const queryDatasets = datasets
-      .map(org =>
-        org.datasets.filter(dataset => datasetsForUse[makeDatasetId(dataset)])
+      .map((org) =>
+        org.datasets.filter((dataset) => datasetsForUse[makeDatasetId(dataset)])
       )
       .flat()
 
@@ -502,7 +502,7 @@ export function PathwayPage() {
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -622,7 +622,7 @@ export function PathwayPage() {
           message={showDialog.id}
           //onOpenChange={() => setShowDialog({...NO_DIALOG})}
           onFileChange={(message, files) => {
-            onTextFileChange(message, files, files => {
+            onTextFileChange(message, files, (files) => {
               if (files.length > 0) {
                 filesToDataFrames(files, {
                   parseOpts: {
@@ -630,7 +630,7 @@ export function PathwayPage() {
                     colNames: files[0]!.name.includes('gmx') ? 0 : 1,
                     skipRows: files[0]!.name.includes('gmx') ? 1 : 0,
                   },
-                  onSuccess: tables => {
+                  onSuccess: (tables) => {
                     if (tables.length > 0) {
                       open(tables[0]!)
                     }
@@ -712,18 +712,18 @@ export function PathwayPage() {
             side="right"
             tabs={rightTabs}
             value={rightTab}
-            onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+            onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
             open={showSideBar}
             onOpenChange={setShowSideBar}
           >
             {/* <Card variant="content" className="mx-2 pb-0"> */}
             <TabbedDataFrames
               selectedSheet={df?.id ?? ''}
-              dataFrames={sheets.map(s => s as AnnotationDataFrame)}
-              onTabChange={selectedTab => {
+              dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
+              onTabChange={(selectedTab) => {
                 goto({ app, file, sheet: selectedTab.tab })
               }}
-              onFileDrop={files => {
+              onFileDrop={(files) => {
                 if (files.length > 0) {
                   //setDroppedFile(files[0]);
                   console.log('Dropped file:', files[0])

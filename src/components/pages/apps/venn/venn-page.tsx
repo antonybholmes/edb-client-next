@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
 
@@ -263,7 +263,7 @@ function VennPage() {
 
     setVennLists(
       Object.fromEntries(
-        rangeMap(ci => {
+        rangeMap((ci) => {
           const id = (ci + 1).toString()
 
           return [
@@ -280,7 +280,7 @@ function VennPage() {
 
     setListTextMap(
       new Map(
-        table.values.map((r, ri) => [ri, r.map(c => c.toString()).join('\n')])
+        table.values.map((r, ri) => [ri, r.map((c) => c.toString()).join('\n')])
       )
     )
 
@@ -385,10 +385,10 @@ function VennPage() {
     )
 
     const maxRows = index
-      .map(n => vennElemMap[n]!.length)
+      .map((n) => vennElemMap[n]!.length)
       .reduce((a, b) => Math.max(a, b), 0)
 
-    const d = index.map(n =>
+    const d = index.map((n) =>
       [...vennElemMap[n]!]
         .sort()
         .concat(Array(maxRows - vennElemMap[n]!.length).fill(''))
@@ -397,11 +397,11 @@ function VennPage() {
     const df = new AnnotationDataFrame({
       name: 'Venn Sets',
       data: d,
-      index: index.map(n =>
+      index: index.map((n) =>
         n
           .split(':')
-          .map(s => Number(s))
-          .map(s => vennLists[s]?.name ?? s)
+          .map((s) => Number(s))
+          .map((s) => vennLists[s]?.name ?? s)
           .join(' AND ')
       ),
     }).t
@@ -440,7 +440,7 @@ function VennPage() {
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -477,8 +477,8 @@ function VennPage() {
 
       content: (
         <PropsPanel>
-          <ScrollAccordion value={VENN_LIST_IDS.map(vl => `List ${vl}`)}>
-            {VENN_LIST_IDS.map(vi => {
+          <ScrollAccordion value={VENN_LIST_IDS.map((vl) => `List ${vl}`)}>
+            {VENN_LIST_IDS.map((vi) => {
               const name = `List ${vi}`
               const vennList = vennLists[vi]!
               return (
@@ -532,7 +532,7 @@ function VennPage() {
           readOnly
           value={[
             selectedItems.name,
-            ...selectedItems.items.sort().map(s => originalNames[s] || s),
+            ...selectedItems.items.sort().map((s) => originalNames[s] || s),
           ].join('\n')}
         />
       ),
@@ -557,8 +557,8 @@ function VennPage() {
           <TabbedDataFrames
             key="tabbed-data-frames"
             selectedSheet={sheet?.id ?? ''}
-            dataFrames={sheets.map(s => s as AnnotationDataFrame)}
-            onTabChange={selectedTab => {
+            dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
+            onTabChange={(selectedTab) => {
               goto({ app, file, sheet: selectedTab.tab })
             }}
           />
@@ -648,7 +648,7 @@ function VennPage() {
           message={showDialog.id}
           //onOpenChange={() => setShowDialog({...NO_DIALOG})}
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => openFiles(files))
+            onTextFileChange(message, files, (files) => openFiles(files))
           }
         />
       )}
@@ -708,7 +708,7 @@ function VennPage() {
           limits={[50, 85]}
           side="right"
           tabs={vennRightTabs}
-          onTabChange={selectedTab => setSelectedRightTab(selectedTab.tab.id)}
+          onTabChange={(selectedTab) => setSelectedRightTab(selectedTab.tab.id)}
           value={rightTab}
           open={showSideBar}
           onOpenChange={setShowSideBar}
@@ -734,7 +734,7 @@ function VennPage() {
                   id="venn"
                   //onWheel={onWheel}
                   tabIndex={0}
-                  onKeyDown={e => setKeyPressed(e.key)}
+                  onKeyDown={(e) => setKeyPressed(e.key)}
                   onKeyUp={() => setKeyPressed(null)}
                 >
                   <BaseSvg

@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
 
@@ -121,7 +121,7 @@ export function RevCompPage() {
     let bases: DNABase[] = seq.seq.split('') as DNABase[]
 
     if (modeComp) {
-      bases = bases.map(c => REV_MAP[c] ?? c)
+      bases = bases.map((c) => REV_MAP[c] ?? c)
     }
 
     if (modeRev) {
@@ -167,7 +167,7 @@ export function RevCompPage() {
       return
     }
 
-    const revSeqs = seqs.map(s => ({
+    const revSeqs = seqs.map((s) => ({
       id: s.id,
       seq: s.seq,
       rev: revComp(s),
@@ -190,7 +190,7 @@ export function RevCompPage() {
       default:
         //fasta
         download(
-          outputSeqs.map(seq => `>${seq.id}\n${seq.rev}`).join('\n'),
+          outputSeqs.map((seq) => `>${seq.id}\n${seq.rev}`).join('\n'),
           name
         )
         break
@@ -216,7 +216,9 @@ export function RevCompPage() {
           setOutput(JSON.stringify(outputSeqs))
           break
         default:
-          setOutput(outputSeqs.map(seq => `>${seq.id}\n${seq.rev}`).join('\n'))
+          setOutput(
+            outputSeqs.map((seq) => `>${seq.id}\n${seq.rev}`).join('\n')
+          )
           break
       }
     }
@@ -230,7 +232,7 @@ export function RevCompPage() {
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -315,14 +317,14 @@ export function RevCompPage() {
               <AccordionContent variant="sidebar">
                 <Checkbox
                   checked={modeRev}
-                  onCheckedChange={state => setModeRev(state)}
+                  onCheckedChange={(state) => setModeRev(state)}
                 >
                   Reverse
                 </Checkbox>
 
                 <Checkbox
                   checked={modeComp}
-                  onCheckedChange={state => setModeComp(state)}
+                  onCheckedChange={(state) => setModeComp(state)}
                 >
                   Complement
                 </Checkbox>
@@ -419,7 +421,7 @@ export function RevCompPage() {
                 className="grow whitespace-pre"
                 placeholder="FASTA/DNA sequences"
                 value={text}
-                onChange={e => {
+                onChange={(e) => {
                   console.log(e.target.value)
                   setText(e.target.value)
                 }}
@@ -447,7 +449,7 @@ export function RevCompPage() {
           <OpenFiles
             message={showDialog.id}
             onFileChange={(message, files) =>
-              onTextFileChange(message, files, files => {
+              onTextFileChange(message, files, (files) => {
                 setText(files[0]!.text)
               })
             }

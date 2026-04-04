@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
 
@@ -178,7 +178,7 @@ export function VariantsPage() {
     }
 
     updateSettings(
-      produce(settings, draft => {
+      produce(settings, (draft) => {
         draft.variants.cmap = cmap
       })
     )
@@ -233,9 +233,9 @@ export function VariantsPage() {
 
     const cooMap = new Map<string, string>(
       datasets
-        .map(dataset =>
+        .map((dataset) =>
           dataset.samples.map(
-            sample => [sample.id, sample.coo ?? ''] as [string, string]
+            (sample) => [sample.id, sample.coo ?? ''] as [string, string]
           )
         )
         .flat()
@@ -243,9 +243,9 @@ export function VariantsPage() {
 
     const lymphgenMap = new Map<string, string>(
       datasets
-        .map(dataset =>
+        .map((dataset) =>
           dataset.samples.map(
-            sample => [sample.id, sample.lymphgenClass] as [string, string]
+            (sample) => [sample.id, sample.lymphgenClass] as [string, string]
           )
         )
         .flat()
@@ -254,7 +254,7 @@ export function VariantsPage() {
     const loc = parseGenLoc(searchLocation)
 
     const data = variants
-      ? variants.variants.map(variant => {
+      ? variants.variants.map((variant) => {
           let chr = variant.chr.replace('chr', '')
 
           if (settings.chrPrefix.show) {
@@ -283,7 +283,9 @@ export function VariantsPage() {
             sampleMap[variant.sample]!.pairedNormalDna,
             [
               ...new Set(
-                variant.datasets.map(dataset => datasetMap[dataset]?.name ?? '')
+                variant.datasets.map(
+                  (dataset) => datasetMap[dataset]?.name ?? ''
+                )
               ),
             ]
               .sort()
@@ -291,7 +293,7 @@ export function VariantsPage() {
             [
               ...new Set(
                 variant.datasets.map(
-                  dataset => datasetMap[dataset]?.institution ?? ''
+                  (dataset) => datasetMap[dataset]?.institution ?? ''
                 )
               ),
             ]
@@ -389,11 +391,11 @@ export function VariantsPage() {
           <ToolbarTabGroup title="View">
             <ToggleGroup
               value={[settings.view]}
-              onValueChange={v => {
+              onValueChange={(v) => {
                 console.log('view change', v)
                 if (v.length > 0) {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.view = v[0] as 'pileup' | 'maf'
                     })
                   )
@@ -549,19 +551,19 @@ export function VariantsPage() {
         <LocationAutocomplete
           value={searchLocation}
           //showClear={false}
-          onTextChange={v => setSearchLocation(v)}
-          onTextChanged={v => {
+          onTextChange={(v) => setSearchLocation(v)}
+          onTextChanged={(v) => {
             updateSettings(
-              produce(settings, draft => {
+              produce(settings, (draft) => {
                 draft.location = parseGenomicLocation(v)
               })
             )
           }}
-          onLocationChanged={location => {
+          onLocationChanged={(location) => {
             const search = locStr(location)
             setSearchLocation(search)
             updateSettings(
-              produce(settings, draft => {
+              produce(settings, (draft) => {
                 draft.location = location
               })
             )
@@ -575,9 +577,9 @@ export function VariantsPage() {
             className="text-xs"
             w="xs"
             value={settings.assembly}
-            onValueChange={value =>
+            onValueChange={(value) =>
               updateSettings(
-                produce(settings, draft => {
+                produce(settings, (draft) => {
                   draft.assembly = (value as string) ?? 'hg19'
                 })
               )
@@ -639,9 +641,9 @@ export function VariantsPage() {
                   <Card variant="content" className="mb-2 grow">
                     <Tabs
                       value={settings.view}
-                      onValueChange={v => {
+                      onValueChange={(v) => {
                         updateSettings(
-                          produce(settings, draft => {
+                          produce(settings, (draft) => {
                             draft.view = v as 'pileup' | 'maf'
                           })
                         )
@@ -670,8 +672,8 @@ export function VariantsPage() {
                   <TabbedDataFrames
                     key="tabbed-data-frames"
                     selectedSheet={sheet?.id ?? ''}
-                    dataFrames={sheets.map(s => s as AnnotationDataFrame)}
-                    onTabChange={selectedTab => {
+                    dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
+                    onTabChange={(selectedTab) => {
                       goto({ app, file, sheet: selectedTab.tab })
                     }}
                   />
@@ -687,9 +689,9 @@ export function VariantsPage() {
           <></>
           <ZoomSlider
             zoom={settings.scale}
-            onZoomChange={zoom => {
+            onZoomChange={(zoom) => {
               updateSettings(
-                produce(settings, draft => {
+                produce(settings, (draft) => {
                   draft.scale = zoom
                 })
               )

@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
 
@@ -135,7 +135,7 @@ export function DNAPage() {
   ) {
     filesToDataFrames(files, {
       ...parseOpts,
-      onSuccess: tables => {
+      onSuccess: (tables) => {
         if (tables.length > 0) {
           openFile(tables[0]!.name, { sheets: tables })
         }
@@ -224,7 +224,7 @@ export function DNAPage() {
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -297,7 +297,7 @@ export function DNAPage() {
                   className="overflow-hidden rounded-theme"
                   rounded="none"
                   value={[format]}
-                  onValueChange={v => {
+                  onValueChange={(v) => {
                     setFormat(v[0] as FORMAT_TYPE)
                   }}
                 >
@@ -509,7 +509,7 @@ export function DNAPage() {
             <TabbedDataFrames
               selectedSheet={sheet?.id ?? ''}
               dataFrames={sheets as AnnotationDataFrame[]}
-              onTabChange={selectedTab => {
+              onTabChange={(selectedTab) => {
                 goto({ app, file, sheet: selectedTab.tab })
               }}
               className="mx-2"

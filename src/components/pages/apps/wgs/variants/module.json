@@ -1,7 +1,7 @@
 {
   "name": "Variants",
   "description": "WGS variant data explorer.",
-  "version": "22.2.6.828",
+  "version": "22.2.8.830",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-04-04T20:02:23.208Z"
+  "modified": "2026-04-04T21:28:30.156Z"
 }

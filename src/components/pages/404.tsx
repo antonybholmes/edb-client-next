@@ -14,19 +14,24 @@ export function Error404Page() {
   const dinoRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const el = dinoRef.current!
+    const el = ref.current
+    const dinoEl = dinoRef.current
+
+    if (!el || !dinoEl) {
+      return
+    }
 
     // Timeline for jump + squash/stretch (1s total)
     const jumpTl = gsap.timeline({ paused: true, repeat: -1 })
     jumpTl
-      .to(el, {
+      .to(dinoEl, {
         y: '4rem',
         scaleX: 1,
         scaleY: 0.9,
         duration: 0.5,
         ease: 'power1.out',
       })
-      .to(el, {
+      .to(dinoEl, {
         y: 0,
 
         scaleX: 1,
@@ -35,7 +40,7 @@ export function Error404Page() {
         ease: 'power1.in',
       })
       .to(
-        el,
+        dinoEl,
         {
           rotation: '+=360',
           duration: 1.5,
@@ -78,13 +83,13 @@ export function Error404Page() {
       })
     }
 
-    ref.current!.addEventListener('mouseenter', onMouseEnter)
-    ref.current!.addEventListener('mouseleave', onMouseLeave)
+    el.addEventListener('mouseenter', onMouseEnter)
+    el.addEventListener('mouseleave', onMouseLeave)
 
     // Cleanup
     return () => {
-      ref.current!.removeEventListener('mouseenter', onMouseEnter)
-      ref.current!.removeEventListener('mouseleave', onMouseLeave)
+      el.removeEventListener('mouseenter', onMouseEnter)
+      el.removeEventListener('mouseleave', onMouseLeave)
       //spinTween.kill()
       jumpTl.kill()
     }

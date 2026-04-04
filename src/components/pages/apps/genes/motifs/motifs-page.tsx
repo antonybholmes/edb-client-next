@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
@@ -159,7 +159,7 @@ export function MotifsPage() {
 
   useEffect(() => {
     updateSettings(
-      produce(settings, draft => {
+      produce(settings, (draft) => {
         draft.zoom = zoom
       })
     )
@@ -231,7 +231,7 @@ export function MotifsPage() {
 
   useEffect(() => {
     console.log('searchResult.motifs changed', searchResult.motifs)
-    const dataframes: BaseDataFrame[] = searchResult.motifs.map(motif => {
+    const dataframes: BaseDataFrame[] = searchResult.motifs.map((motif) => {
       const df = new AnnotationDataFrame({
         name: motif.name,
         data: motif.weights,
@@ -348,10 +348,10 @@ export function MotifsPage() {
               //variant="outline"
 
               value={[settings.mode]}
-              onValueChange={v => {
+              onValueChange={(v) => {
                 if (v) {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.mode = v[0] as Mode
                     })
                   )
@@ -378,7 +378,7 @@ export function MotifsPage() {
               checked={settings.revComp}
               onClick={() => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.revComp = !settings.revComp
                   })
                 )
@@ -395,7 +395,7 @@ export function MotifsPage() {
               checked={search.mode === 'advanced'}
               onClick={() => {
                 updateSearch(
-                  produce(search, draft => {
+                  produce(search, (draft) => {
                     if (search.mode === 'advanced') {
                       draft.mode = 'basic'
                     } else {
@@ -518,9 +518,9 @@ export function MotifsPage() {
           <Autocomplete
             value={search.query}
             onTextChange={
-              v =>
+              (v) =>
                 updateSearch(
-                  produce(search, draft => {
+                  produce(search, (draft) => {
                     draft.query = v
                   })
                 )
@@ -536,9 +536,9 @@ export function MotifsPage() {
             variant="header"
             className="text-xs"
             value={search.paging.pageSize.toString()}
-            onValueChange={value => {
+            onValueChange={(value) => {
               updateSearch(
-                produce(search, draft => {
+                produce(search, (draft) => {
                   draft.paging.pageSize = value ? parseInt(value as string) : 10
                   draft.paging.page = 1 // reset to first page
                 })
@@ -583,7 +583,7 @@ export function MotifsPage() {
                       checked={settings.sort.by === 'dataset,motif-id'}
                       onClick={() =>
                         updateSettings(
-                          produce(settings, draft => {
+                          produce(settings, (draft) => {
                             draft.sort.by = 'dataset,motif-id'
                           })
                         )
@@ -595,7 +595,7 @@ export function MotifsPage() {
                       checked={settings.sort.by === 'motif-id'}
                       onClick={() =>
                         updateSettings(
-                          produce(settings, draft => {
+                          produce(settings, (draft) => {
                             console.log('Setting sort by motif-id')
                             draft.sort.by = 'motif-id'
                           })
@@ -610,9 +610,9 @@ export function MotifsPage() {
 
                   <DropdownSortOrderGroup
                     asc={settings.sort.asc}
-                    setAsc={v => {
+                    setAsc={(v) => {
                       updateSettings(
-                        produce(settings, draft => {
+                        produce(settings, (draft) => {
                           draft.sort.asc = v
                         })
                       )
@@ -628,9 +628,9 @@ export function MotifsPage() {
             tabShortcutMenu={
               <ShowOptsSidebarBtn
                 open={edbSettings.sidebar.show}
-                onClick={open => {
+                onClick={(open) => {
                   updateEdbSettings(
-                    produce(edbSettings, draft => {
+                    produce(edbSettings, (draft) => {
                       draft.sidebar.show = open
                     })
                   )
@@ -703,7 +703,7 @@ export function MotifsPage() {
                 <TabbedDataFrames
                   selectedSheet={sheet?.id ?? ''}
                   dataFrames={sheets as AnnotationDataFrame[]}
-                  onTabChange={selectedTab => {
+                  onTabChange={(selectedTab) => {
                     goto({ app, file, sheet: selectedTab.tab })
                   }}
                   className="relative grow"

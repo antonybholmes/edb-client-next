@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import {
   ShowOptionsMenu,
@@ -265,10 +265,10 @@ function OncoplotPage() {
     setClinicalTracks(clinicalTracks)
 
     setDisplayProps(
-      produce(displayProps, draft => {
+      produce(displayProps, (draft) => {
         draft.legend.clinical.tracks = tracksProps
         draft.legend.clinical.trackOrder = clinicalTracks.map(
-          track => track.name
+          (track) => track.name
         )
       })
     )
@@ -355,7 +355,7 @@ function OncoplotPage() {
 
     filesToDataFrames(files, {
       parseOpts: options,
-      onSuccess: tables => {
+      onSuccess: (tables) => {
         if (tables.length > 0) {
           openFile(tables[0]!.name, { sheets: tables })
 
@@ -535,7 +535,7 @@ function OncoplotPage() {
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   console.log('open file menu ')
                   setShowDialog({
@@ -606,8 +606,8 @@ function OncoplotPage() {
                 displayProps.sort.sortGenes ? ['rows'] : [],
                 displayProps.sort.sortSamples ? ['columns'] : [],
               ].flat()}
-              onValueChange={v => {
-                const newSettings = produce(displayProps, draft => {
+              onValueChange={(v) => {
+                const newSettings = produce(displayProps, (draft) => {
                   draft.sort.sortGenes = v.includes('rows')
 
                   draft.sort.sortSamples = v.includes('columns')
@@ -657,9 +657,9 @@ function OncoplotPage() {
             <ToolbarCol>
               <Select
                 defaultValue={displayProps.multi}
-                onValueChange={v => {
+                onValueChange={(v) => {
                   setDisplayProps(
-                    produce(displayProps, draft => {
+                    produce(displayProps, (draft) => {
                       draft.multi = v as MultiMode
                     })
                   )
@@ -685,7 +685,7 @@ function OncoplotPage() {
                 checked={displayProps.removeEmptySamples}
                 onClick={() => {
                   setDisplayProps(
-                    produce(displayProps, draft => {
+                    produce(displayProps, (draft) => {
                       draft.removeEmptySamples =
                         !displayProps.removeEmptySamples
                     })
@@ -994,7 +994,7 @@ function OncoplotPage() {
           message={showDialog.id}
           //onOpenChange={() => setShowDialog({...NO_DIALOG})}
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files =>
+            onTextFileChange(message, files, (files) =>
               parseFiles(message, files)
             )
           }

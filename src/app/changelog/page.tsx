@@ -1,4 +1,4 @@
-import { MarkdownContent } from '@/components/markdown-content'
+import { ChangelogQueryPage } from '@/components/pages/changelog-page'
 import { loadMarkdownFile } from '@/lib/markdown/markdown'
 import { makeMetaData } from '@/lib/metadata'
 
@@ -7,7 +7,5 @@ export const metadata = makeMetaData('Change Log')
 export default async function Page() {
   const { contentHtml } = await loadMarkdownFile('CHANGELOG', 'CHANGELOG.md')
 
-  return (
-    <MarkdownContent className="changelog p-6">{contentHtml}</MarkdownContent>
-  )
+  return <ChangelogQueryPage contentHtml={contentHtml} />
 }

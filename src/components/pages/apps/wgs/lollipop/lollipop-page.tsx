@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import {
   ShowOptionsMenu,
@@ -162,7 +162,7 @@ function LollipopPage() {
       const proteins = await searchUniprot(gene)
 
       const index = range(proteins.length).filter(
-        i => proteins[i]!.organism === 'Human'
+        (i) => proteins[i]!.organism === 'Human'
       )[0]!
 
       // setProtein(
@@ -303,7 +303,7 @@ function LollipopPage() {
     console.log('Opening files:', files)
     filesToDataFrames(files, {
       parseOpts: options,
-      onSuccess: tables => {
+      onSuccess: (tables) => {
         if (tables.length > 0) {
           openFile(tables[0]!.name, { sheets: tables })
         }
@@ -341,7 +341,7 @@ function LollipopPage() {
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   console.log('open file menu')
                   setShowDialog({
@@ -408,7 +408,7 @@ function LollipopPage() {
                 checked={displayProps.variants.plot.proportional}
                 onClick={() => {
                   setDisplayProps(
-                    produce(displayProps, draft => {
+                    produce(displayProps, (draft) => {
                       draft.variants.plot.proportional =
                         !draft.variants.plot.proportional
                     })
@@ -424,7 +424,7 @@ function LollipopPage() {
               checked={displayProps.variants.plot.showCounts}
               onClick={() => {
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.variants.plot.showCounts =
                       !draft.variants.plot.showCounts
                   })
@@ -613,7 +613,7 @@ function LollipopPage() {
 
           onFileChange={
             (message, files) =>
-              onTextFileChange(message, files, files =>
+              onTextFileChange(message, files, (files) =>
                 parseFiles(message, files)
               )
             // onTextFileChange(message, files, files => {
@@ -737,8 +737,8 @@ function LollipopPage() {
             >
               <TabbedDataFrames
                 selectedSheet={sheet?.id ?? ''}
-                dataFrames={sheets.map(s => s as AnnotationDataFrame)}
-                onTabChange={selectedTab => {
+                dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
+                onTabChange={(selectedTab) => {
                   goto({ app, file, sheet: selectedTab.tab })
                 }}
                 zoom={1}
@@ -754,9 +754,9 @@ function LollipopPage() {
         <></>
         <>
           <ZoomSlider
-            onZoomChange={zoom => {
+            onZoomChange={(zoom) => {
               setDisplayProps(
-                produce(displayProps, draft => {
+                produce(displayProps, (draft) => {
                   draft.scale = zoom
                 })
               )

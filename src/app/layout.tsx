@@ -1,23 +1,23 @@
 //import { Geist, Geist_Mono } from "next/font/google";
 
 import { BaseCol } from '@/components/layout/base-col'
-import { Geist } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import { ReactNode } from 'react'
 import './globals.css'
 
-const geist = Geist({
-  subsets: ['latin'],
-})
+// const geist = Geist({
+//   subsets: ['latin'],
+// })
 
 // const geistMono = Geist_Mono({
 //   variable: "--font-geist-mono",
 //   subsets: ["latin"],
 // });
 
-// const inter = Inter({
-//   subsets: ['latin'],
-//   display: 'swap',
-// })
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+})
 
 // export const metadata: Metadata = {
 //   title: APP_NAME,
@@ -32,7 +32,7 @@ export default function Layout({
   return (
     <html lang="en" className="h-full">
       <body
-        className={`${geist.className} antialiased margin-0 h-full min-h-screen flex flex-col bg-body text-base font-normal`}
+        className={`${inter.className} antialiased margin-0 h-full min-h-screen flex flex-col bg-body text-base font-normal`}
       >
         {/* <CsrfProvider>{children}</CsrfProvider> */}
         {/* <CoreProviders>{children}</CoreProviders> */}

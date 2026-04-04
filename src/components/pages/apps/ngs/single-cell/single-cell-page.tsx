@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
@@ -235,7 +235,7 @@ export function SingleCellPage() {
 
   useEffect(() => {
     updateSettings(
-      produce(settings, draft => {
+      produce(settings, (draft) => {
         draft.scale = zoom
       })
     )
@@ -597,7 +597,7 @@ export function SingleCellPage() {
           //open={showDialog}
           //onOpenChange={open => setShowDialog(open ? "open" : "")}
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => setFilesToOpen(files))
+            onTextFileChange(message, files, (files) => setFilesToOpen(files))
           }
         />
       )}
@@ -637,7 +637,7 @@ export function SingleCellPage() {
           onTextChange={handleSearch}
           className="w-3/4 lg:w-1/2 text-sm"
         >
-          {searchGenes?.map(g => {
+          {searchGenes?.map((g) => {
             return (
               <AutocompleteLi key={g.geneId}>
                 <Checkbox
@@ -667,14 +667,14 @@ export function SingleCellPage() {
               onClick={() => {
                 const selectedGenes =
                   searchGenes?.filter(
-                    g => genesForUse.get(g.geneId) ?? false
+                    (g) => genesForUse.get(g.geneId) ?? false
                   ) ?? []
 
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.genesets = [
                       ...draft.genesets,
-                      ...selectedGenes.map(g => ({
+                      ...selectedGenes.map((g) => ({
                         id: makeUuid(),
                         name: g.geneSymbol,
                         genes: [g],
@@ -697,14 +697,14 @@ export function SingleCellPage() {
         <SelectList
           variant="header"
           value={dataset?.id ?? ''}
-          onValueChange={v => {
-            setDataset(datasets?.find(d => d.id === v)!)
+          onValueChange={(v) => {
+            setDataset(datasets?.find((d) => d.id === v)!)
           }}
           // make display nicer
-          items={datasets.map(d => ({ value: d.id, label: d.name })) || []}
+          items={datasets.map((d) => ({ value: d.id, label: d.name })) || []}
           className="text-sm"
         >
-          {datasets.map(dataset => (
+          {datasets.map((dataset) => (
             <SelectItem key={dataset.id} value={dataset.id} variant="theme">
               {dataset.name}
             </SelectItem>
@@ -744,9 +744,9 @@ export function SingleCellPage() {
             tabShortcutMenu={
               <ShowOptsSidebarBtn
                 open={edbSettings.sidebar.show}
-                onClick={open => {
+                onClick={(open) => {
                   updateEdbSettings(
-                    produce(edbSettings, draft => {
+                    produce(edbSettings, (draft) => {
                       draft.sidebar.show = open
                     })
                   )
@@ -822,8 +822,8 @@ export function SingleCellPage() {
                 </BaseCol>
                 <TabbedDataFrames
                   selectedSheet={sheet?.id ?? ''}
-                  dataFrames={sheets.map(s => s) as AnnotationDataFrame[]}
-                  onTabChange={selectedTab => {
+                  dataFrames={sheets.map((s) => s) as AnnotationDataFrame[]}
+                  onTabChange={(selectedTab) => {
                     goto({ app, file, sheet: selectedTab.tab })
                   }}
                   className="relative grow"
