@@ -1,4 +1,4 @@
-import { MyAccountPage } from '@/components/pages/account/myaccount/myaccount'
+import { MyAccountPage } from '@/components/pages/account/myaccount/myaccount-page'
 import { makeMetaData } from '@/lib/metadata'
 
 export const metadata = makeMetaData('My Account')

@@ -1,10 +1,10 @@
 //import { Geist, Geist_Mono } from "next/font/google";
 
 import { BaseCol } from '@/components/layout/base-col'
+import { Auth0Provider } from '@auth0/nextjs-auth0/client'
 import { Inter } from 'next/font/google'
 import { ReactNode } from 'react'
 import './globals.css'
-
 // const geist = Geist({
 //   subsets: ['latin'],
 // })
@@ -36,7 +36,9 @@ export default function Layout({
       >
         {/* <CsrfProvider>{children}</CsrfProvider> */}
         {/* <CoreProviders>{children}</CoreProviders> */}
-        <BaseCol className="root grow">{children}</BaseCol>
+        <BaseCol className="root grow">
+          <Auth0Provider>{children}</Auth0Provider>
+        </BaseCol>
       </body>
     </html>
   )
