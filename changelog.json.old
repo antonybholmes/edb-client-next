@@ -1812,6 +1812,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2026-04-07T01:47:16.712Z"
+        },
+        {
+          "msg": "Nextjs version now compiles",
+          "date": "2026-04-07T02:35:36.538Z"
         }
       ]
     },
