@@ -111,7 +111,7 @@ export function DataPropsPanel() {
       <TabsContent value="genesets" className="grow overflow-hidden">
         <GenesetPropsPanel />
       </TabsContent>
-      <TabsList className="py-1">
+      <TabsList className="py-1 gap-y-px">
         <TabsTrigger value="groups" className="grow" variant="sidebar">
           Groups
         </TabsTrigger>
