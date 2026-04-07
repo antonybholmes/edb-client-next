@@ -1,7 +1,7 @@
 {
   "name": "History Viewer",
   "description": "Visualize and manage the history of changes made to data within the application.",
-  "version": "5.0.4.104",
+  "version": "5.0.6.106",
   "copyright": "(C) ${START_YEAR:2025} Antony Holmes",
-  "modified": "2026-04-07T00:37:48.351Z"
+  "modified": "2026-04-07T01:35:27.892Z"
 }

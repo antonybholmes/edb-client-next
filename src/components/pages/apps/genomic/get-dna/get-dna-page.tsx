@@ -1,3 +1,5 @@
+'use client'
+
 import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
 
 import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
@@ -107,7 +109,7 @@ export function GetDNAPage() {
 
     const dnaseqs: (IDNA | null)[] = await Promise.all(
       seqs.map(
-        async loc =>
+        async (loc) =>
           await fetchDNA(queryClient, loc, {
             reverse: modeRev,
             complement: modeComp,
@@ -115,7 +117,7 @@ export function GetDNAPage() {
       )
     )
 
-    setOutputSeqs(dnaseqs.filter(x => x !== null) as IDNA[])
+    setOutputSeqs(dnaseqs.filter((x) => x !== null) as IDNA[])
   }
 
   function save(format = 'fasta') {
@@ -130,7 +132,7 @@ export function GetDNAPage() {
       default:
         download(
           outputSeqs
-            .map(seq => `>${seq.location.toString()}\n${seq.seq}`)
+            .map((seq) => `>${seq.location.toString()}\n${seq.seq}`)
             .join('\n'),
           'dna.fasta'
         )
@@ -155,7 +157,7 @@ export function GetDNAPage() {
         default:
           setOutput(
             outputSeqs
-              .map(seq => `>${seq.location.toString()}\n${seq.seq}`)
+              .map((seq) => `>${seq.location.toString()}\n${seq.seq}`)
               .join('\n')
           )
           break
@@ -171,7 +173,7 @@ export function GetDNAPage() {
         <>
           <ToolbarTabGroup>
             <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpenChange={(open) => {
                 if (open) {
                   setShowDialog({
                     id: randId('open'),
@@ -341,7 +343,7 @@ export function GetDNAPage() {
               </ToolbarButton>
             }
           />
-          <ToolbarPanel tabId={id} tabs={tabs} />
+          <ToolbarPanel groupId={id} tabs={tabs} />
         </Toolbar>
 
         <ResizablePanelGroup orientation="horizontal" className="h-full pl-2">
@@ -363,7 +365,7 @@ export function GetDNAPage() {
                   className="grow whitespace-pre"
                   placeholder=">chr3:187453454-187454415"
                   value={text}
-                  onChange={e => {
+                  onChange={(e) => {
                     setText(e.target.value)
                   }}
                 />
@@ -407,14 +409,14 @@ export function GetDNAPage() {
               <CollapseBlock name="Output">
                 <Switch
                   checked={modeRev}
-                  onCheckedChange={state => setModeRev(state)}
+                  onCheckedChange={(state) => setModeRev(state)}
                 >
                   Reverse
                 </Switch>
 
                 <Switch
                   checked={modeComp}
-                  onCheckedChange={state => setModeComp(state)}
+                  onCheckedChange={(state) => setModeComp(state)}
                 >
                   Complement
                 </Switch>
@@ -434,7 +436,7 @@ export function GetDNAPage() {
                       },
                     ]}
                     value={outputMode}
-                    onTabChange={selectedTab =>
+                    onTabChange={(selectedTab) =>
                       setOutputMode(selectedTab.tab.id)
                     }
                   >
@@ -453,7 +455,7 @@ export function GetDNAPage() {
             message={showDialog.id}
             //onOpenChange={() => setShowDialog({...NO_DIALOG})}
             onFileChange={(_, files) =>
-              onTextFileChange(_, files, files => {
+              onTextFileChange(_, files, (files) => {
                 setText(files[0]!.text)
               })
             }

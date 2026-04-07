@@ -9,7 +9,12 @@ import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
-import { useHistory, usePlot, type BoxPlot } from '../../history/history-store'
+import {
+  useHistory,
+  usePlot,
+  useSheet,
+  type BoxPlot,
+} from '../../history/history-store'
 
 import { NO_DIALOG, TEXT_CANCEL, type IDialogParams } from '@/consts'
 import {
@@ -40,7 +45,8 @@ interface IPanelProps extends IDivProps {
 
 export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
-  const { sheet, updatePlot } = useHistory()
+  const { updatePlot } = useHistory()
+  const sheet = useSheet()
 
   const plot = usePlot(plotAddr)! as BoxPlot
 
@@ -65,10 +71,10 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
 
   const [showSideBar, setShowSideBar] = useState(true)
 
-  const df = sheet?.df as AnnotationDataFrame
+  const df = sheet as AnnotationDataFrame
 
   useEffect(() => {
-    const filteredMessages = messages.filter(m => m.target === plot?.id)
+    const filteredMessages = messages.filter((m) => m.target === plot?.id)
 
     for (const message of filteredMessages) {
       if (message.data.includes('save')) {
@@ -98,7 +104,7 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
     // })
 
     updatePlot(
-      produce(plot, draft => {
+      produce(plot, (draft) => {
         draft.props.page.scale = zoom
       })
     )

@@ -1,7 +1,7 @@
 {
   "name": "Convert",
   "description": "Convert gene symbols between human and mouse.",
-  "version": "18.0.8.718",
+  "version": "18.2.0.720",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-04-07T00:37:48.350Z"
+  "modified": "2026-04-07T01:35:27.882Z"
 }
