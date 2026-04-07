@@ -41,7 +41,7 @@ export function VSplitPane({
   const refC1 = useRef<HTMLDivElement>(null)
   const refC2 = useRef<HTMLDivElement>(null)
   const [focus, setFocus] = useState(false)
-  const _id = useStableId(id, 'hitbox-v')
+  const _id = id || useStableId('hitbox-v')
 
   const panels = Children.toArray(children)
 
@@ -63,7 +63,7 @@ export function VSplitPane({
 
     //console.log(y, cp, dragging.current.p, rect.height)
 
-    const rcp = sticky.filter((x) => Math.abs(cp - x) < STICKY_SENSITIVITY)
+    const rcp = sticky.filter(x => Math.abs(cp - x) < STICKY_SENSITIVITY)
 
     if (rcp.length > 0) {
       cp = rcp[0]!
@@ -150,7 +150,7 @@ export function VSplitPane({
     }
   }
 
-  useMouseMoveListener((e) => onMouseMove(e as MouseEvent))
+  useMouseMoveListener(e => onMouseMove(e as MouseEvent))
   useMouseUpListener(onMouseUp)
 
   if (panels.length < 2) {

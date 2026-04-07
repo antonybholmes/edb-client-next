@@ -1,7 +1,7 @@
 {
   "name": "Info",
   "description": "Information about Experiments web client.",
-  "version": "3.2.8.68",
+  "version": "3.4.0.70",
   "copyright": "(C) ${START_YEAR:2023} Antony Holmes",
-  "modified": "2026-04-07T01:35:27.893Z"
+  "modified": "2026-04-07T01:47:12.416Z"
 }

@@ -29,13 +29,14 @@ import { Button } from '@/themed/v2/button'
 import { Checkbox } from '@/themed/v2/check-box'
 import { Toast } from '@base-ui/react/toast'
 import { useEffect, useState } from 'react'
-import { useHistory } from '../history/history-store'
+import { useHistory, useSheet } from '../history/history-store'
 import MODULE_INFO from '../module.json'
 
 export function FilterPropsPanel() {
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
-  const { sheet, addSheets } = useHistory()
+  const { addSheets } = useHistory()
+  const sheet = useSheet()
 
   const { add: addToast } = Toast.useToastManager()
   const [text, setText] = useState('')
@@ -115,7 +116,7 @@ export function FilterPropsPanel() {
         <OpenFiles
           message={showDialog.id}
           onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
+            onTextFileChange(message, files, (files) => {
               if (files.length > 0) {
                 setText(files[0]!.text)
               }
@@ -130,7 +131,7 @@ export function FilterPropsPanel() {
         //contentVariant="glass"
         //bodyVariant="card"
         modalType="Warning"
-        onResponse={r => {
+        onResponse={(r) => {
           if (r === TEXT_OK) {
             setText('')
 
@@ -202,9 +203,9 @@ export function FilterPropsPanel() {
             id="filter-text"
           >
             <FileDropZonePanel
-              onFileDrop={files => {
+              onFileDrop={(files) => {
                 if (files.length > 0) {
-                  onTextFileChange('Open filter list', files, files => {
+                  onTextFileChange('Open filter list', files, (files) => {
                     if (files.length > 0) {
                       setText(files[0]!.text)
                     }
@@ -216,7 +217,7 @@ export function FilterPropsPanel() {
                 id="filter"
                 aria-label="Filter"
                 value={text}
-                onTextChange={e => setText(e)}
+                onTextChange={(e) => setText(e)}
                 placeholder={`Filter ${filterMode.toLowerCase()}...`}
                 className="h-full"
               />
@@ -256,7 +257,7 @@ export function FilterPropsPanel() {
                 //variant="outline"
                 rounded="none"
                 value={[filterMode]}
-                onValueChange={v => {
+                onValueChange={(v) => {
                   setFilterMode(v[0] ?? 'Rows')
                 }}
                 //rounded="none"
@@ -287,7 +288,7 @@ export function FilterPropsPanel() {
                     ? settings.rows.caseSensitive
                     : settings.cols.caseSensitive
                 }
-                onCheckedChange={state => {
+                onCheckedChange={(state) => {
                   if (filterMode.includes('Rows')) {
                     updateSettings({
                       ...settings,
@@ -309,7 +310,7 @@ export function FilterPropsPanel() {
                     ? settings.rows.matchEntireCell
                     : settings.cols.matchEntireCell
                 }
-                onCheckedChange={state => {
+                onCheckedChange={(state) => {
                   if (filterMode.includes('Rows')) {
                     updateSettings({
                       ...settings,
@@ -331,7 +332,7 @@ export function FilterPropsPanel() {
                     ? settings.rows.keepOrder
                     : settings.cols.keepOrder
                 }
-                onCheckedChange={state => {
+                onCheckedChange={(state) => {
                   if (filterMode.includes('Rows')) {
                     updateSettings({
                       ...settings,

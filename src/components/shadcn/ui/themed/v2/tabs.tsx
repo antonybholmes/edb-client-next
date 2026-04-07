@@ -5,7 +5,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { BUTTON_MD_H_CLS, FOCUS_RING_CLS } from '@/theme'
 import { Tabs as TabsPrimitive } from '@base-ui/react/tabs'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { Activity, memo } from 'react'
+import { memo } from 'react'
 
 import {
   forwardRef,
@@ -263,15 +263,15 @@ export function TabContentPanels({
   )
 }
 
-export function TabContentForceMountPanels({
-  groupId,
-  tabs,
-}: ITabContentPanelsProps) {
-  const { tab: selectedTab } = useTabs(groupId)
+// export function TabContentForceMountPanels({
+//   groupId,
+//   tabs,
+// }: ITabContentPanelsProps) {
+//   const { tab: selectedTab } = useTabs(groupId)
 
-  return tabs.map((tab, ti) => (
-    <Activity mode={ti == selectedTab?.index ? 'visible' : 'hidden'} key={ti}>
-      {tab.content}
-    </Activity>
-  ))
-}
+//   return tabs.map((tab, ti) => (
+//     <Activity mode={ti == selectedTab?.index ? 'visible' : 'hidden'} key={ti}>
+//       {tab.content}
+//     </Activity>
+//   ))
+// }
