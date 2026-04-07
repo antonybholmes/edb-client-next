@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
@@ -59,7 +59,12 @@ import { DownloadIcon } from '@/icons/download-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { CoreProviders } from '@/providers/core-providers'
 import { HistoryPanel } from '../matcalc/history/history-panel'
-import { useHistory } from '../matcalc/history/history-store'
+import {
+  useApp,
+  useFile,
+  useHistory,
+  useSheet,
+} from '../matcalc/history/history-store'
 
 import { BaseCol } from '@/components/layout/base-col'
 import { formatString } from '@/lib/text/format-string'
@@ -67,7 +72,11 @@ import MODULE_INFO from './module.json'
 
 export function TableViewerPage() {
   const _id = useStableId('table-viewer-page')
-  const { sheet, openBranch, goto } = useHistory()
+  const { goto, openFile } = useHistory()
+  const app = useApp()!
+  const file = useFile()!
+  const sheet = useSheet()!
+
   const [showSideBar, setShowSideBar] = useState(false)
   const [rightTab, setRightTab] = useState(TEXT_HISTORY)
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
@@ -98,7 +107,7 @@ export function TableViewerPage() {
           colVars,
         })
 
-        openBranch(df.name, { sheets: [df] })
+        openFile(df.name, { sheets: [df] })
 
         // customize page title
         document.title = `${df.name} - Table Viewer`
@@ -273,7 +282,7 @@ export function TableViewerPage() {
           side="right"
           tabs={rightTabs}
           value={rightTab}
-          onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
+          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
@@ -285,8 +294,8 @@ export function TableViewerPage() {
           <TabbedDataFrames
             selectedSheet={sheet?.id}
             dataFrames={[sheet as AnnotationDataFrame]}
-            onTabChange={selectedTab => {
-              goto(selectedTab.tab.id, 'sheet')
+            onTabChange={(selectedTab) => {
+              goto({ app, file, sheet: selectedTab.tab })
             }}
             className="mx-2 mt-2"
             // style={{ marginBottom: '-2px' }}

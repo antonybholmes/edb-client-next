@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import {
   EDB_TOKEN_PARAM as EDB_JWT_PARAM,

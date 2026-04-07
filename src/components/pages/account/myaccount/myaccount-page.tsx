@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import {
   EMAIL_PATTERN,
@@ -273,7 +273,7 @@ export function MyAccountPage() {
         //variant={variant}
         // if user species onChange, let them handle which
         // accordions are open, otherwise we'll do it internally
-        onValueChange={v => setTabs(v as string[])}
+        onValueChange={(v) => setTabs(v as string[])}
         className="w-9/10 xl:w-2/3"
         variant="settings"
       >
@@ -421,7 +421,7 @@ export function MyAccountPage() {
                       <Textarea
                         id="groups"
                         value={formattedList(
-                          field.value.map(group => group.name).sort()
+                          field.value.map((group) => group.name).sort()
                         )}
                         placeholder="Groups..."
                         readOnly

@@ -15,7 +15,7 @@ export function SignInPage({
       signinRequired={false}
       //
     >
-      <SupabaseSignIn redirectTo={redirectTo} />
+      <SupabaseSignIn />
     </CenterLayout>
   )
 }

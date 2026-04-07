@@ -1,5 +1,5 @@
 import { HelpIcon } from '../icons/help-icon'
-import { type IButtonProps } from '../shadcn/ui/themed/button'
+import { type IButtonProps } from '../shadcn/ui/themed/v2/button'
 import { HELP_WINDOW_PARAMS } from './help'
 
 interface IProps extends IButtonProps {

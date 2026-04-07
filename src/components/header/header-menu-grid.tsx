@@ -27,7 +27,6 @@ import { HeaderIconButton } from '@/layouts/header-icon-button'
 import gsap from 'gsap'
 import { HelpCircle, Info, LayoutGrid } from 'lucide-react'
 import { VCenterCol } from '../layout/v-center-col'
-
 import { ButtonLink } from '../link/button-link'
 import { SearchBox } from '../search-box'
 import { Button } from '../shadcn/ui/themed/v2/button'
@@ -73,14 +72,14 @@ export function HeaderLinks({
   const { settings } = useEdbSettings()
 
   // sort alphabetically and ignore sections
-  let items = HEADER_LINKS.map((section) => {
+  let items = HEADER_LINKS.map(section => {
     return section.modules.filter(
-      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()
     .filter(
-      (module) =>
+      module =>
         !search ||
         module.name.toLowerCase().includes(search.toLowerCase()) ||
         module.description.toLowerCase().includes(search.toLowerCase())
@@ -158,14 +157,14 @@ export function SearchHeaderLinks({
   const { settings } = useEdbSettings()
 
   // sort alphabetically and ignore sections
-  let items = HEADER_LINKS.map((section) => {
+  let items = HEADER_LINKS.map(section => {
     return section.modules.filter(
-      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()
     .filter(
-      (module) =>
+      module =>
         !search ||
         module.name.toLowerCase().includes(search.toLowerCase()) ||
         module.description.toLowerCase().includes(search.toLowerCase())

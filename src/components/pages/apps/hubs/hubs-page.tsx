@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { useEffect, useState } from 'react'
 
@@ -127,7 +127,9 @@ export function HubsPage() {
               hub.institution.toLowerCase().includes(ls) ||
               hub.genome.toLowerCase().includes(ls) ||
               hub.technology.toLowerCase().includes(ls) ||
-              hub.samples.some(sample => sample.name.toLowerCase().includes(ls))
+              hub.samples.some((sample) =>
+                sample.name.toLowerCase().includes(ls)
+              )
             ) {
               if (!searchPlatformMap.has(institution)) {
                 searchPlatformMap.set(
@@ -168,7 +170,7 @@ export function HubsPage() {
         variant="settings"
         className="p-4 gap-y-4"
       >
-        {institutions.map(institution => {
+        {institutions.map((institution) => {
           return (
             <AccordionItem
               key={institution}
@@ -181,7 +183,7 @@ export function HubsPage() {
               <AccordionContent variant="sidebar">
                 {[...searchTechnologyMap.get(institution)!.keys()]
                   .sort()
-                  .map(platform => {
+                  .map((platform) => {
                     return (
                       <BaseCol
                         className="gap-y-2 border-t border-border/50 p-4"
@@ -192,7 +194,7 @@ export function HubsPage() {
                           {searchTechnologyMap
                             .get(institution)!
                             .get(platform)!
-                            .map(hub => {
+                            .map((hub) => {
                               const params = new URLSearchParams()
                               params.append('db', settings.assembly)
                               params.append('hubUrl', hub.url)
@@ -256,10 +258,10 @@ export function HubsPage() {
           //variant="header"
           h="header"
           value={query.toString()}
-          onTextChange={v => (v.length > 0 ? setQuery([v]) : resetQuery())}
+          onTextChange={(v) => (v.length > 0 ? setQuery([v]) : resetQuery())}
           className="w-4/5 lg:w-1/2 text-xs font-medium"
         >
-          {institutions.map(institution => {
+          {institutions.map((institution) => {
             return (
               <AutocompleteLi key={institution}>{institution}</AutocompleteLi>
             )
@@ -271,8 +273,8 @@ export function HubsPage() {
           className="text-sm"
           w="xs"
           value={settings.assembly}
-          onValueChange={v => {
-            const newStore = produce(settings, draft => {
+          onValueChange={(v) => {
+            const newStore = produce(settings, (draft) => {
               draft.assembly = (v as string) ?? 'hg19'
             })
 

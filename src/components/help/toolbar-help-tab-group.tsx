@@ -26,7 +26,7 @@ export function ToolbarHelpTabGroup({
 }
 
 function HelpButton({ url, title = 'Show Help' }: IProps) {
-  const openHelp = useHelpWidgetStore((s) => s.openHelp)
+  const openHelp = useHelpWidgetStore(s => s.openHelp)
 
   //console.log('open', url)
 

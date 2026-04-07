@@ -14,24 +14,19 @@ export function Error404Page() {
   const dinoRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const el = ref.current
-    const dinoEl = dinoRef.current
-
-    if (!el || !dinoEl) {
-      return
-    }
+    const el = dinoRef.current!
 
     // Timeline for jump + squash/stretch (1s total)
     const jumpTl = gsap.timeline({ paused: true, repeat: -1 })
     jumpTl
-      .to(dinoEl, {
+      .to(el, {
         y: '4rem',
         scaleX: 1,
         scaleY: 0.9,
         duration: 0.5,
         ease: 'power1.out',
       })
-      .to(dinoEl, {
+      .to(el, {
         y: 0,
 
         scaleX: 1,
@@ -40,7 +35,7 @@ export function Error404Page() {
         ease: 'power1.in',
       })
       .to(
-        dinoEl,
+        el,
         {
           rotation: '+=360',
           duration: 1.5,
@@ -83,13 +78,13 @@ export function Error404Page() {
       })
     }
 
-    el.addEventListener('mouseenter', onMouseEnter)
-    el.addEventListener('mouseleave', onMouseLeave)
+    ref.current!.addEventListener('mouseenter', onMouseEnter)
+    ref.current!.addEventListener('mouseleave', onMouseLeave)
 
     // Cleanup
     return () => {
-      el.removeEventListener('mouseenter', onMouseEnter)
-      el.removeEventListener('mouseleave', onMouseLeave)
+      ref.current!.removeEventListener('mouseenter', onMouseEnter)
+      ref.current!.removeEventListener('mouseleave', onMouseLeave)
       //spinTween.kill()
       jumpTl.kill()
     }
@@ -97,7 +92,7 @@ export function Error404Page() {
 
   return (
     <CenterLayout
-      signedRequired={false}
+      signinRequired={false}
       //className="bg-gradient-to-br from-sky-100 via-indigo-100 to-purple-100"
     >
       <BaseCol className="gap-y-4 xl:w-1/2 p-4">
@@ -116,7 +111,7 @@ export function Error404Page() {
             <div
               ref={dinoRef}
               title="Look at them jump, they're so happy!"
-              className="flex-shrink-0 transform-origin-center cursor-pointer  "
+              className="shrink-0 transform-origin-center cursor-pointer"
               //onMouseOver={() => setHover(true)}
               //onMouseOut={() => setHover(false)}
             >

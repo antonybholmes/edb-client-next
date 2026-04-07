@@ -6,13 +6,13 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from './shadcn/ui/themed/popover'
+} from './shadcn/ui/themed/v2/popover'
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from './shadcn/ui/themed/tabs'
+} from './shadcn/ui/themed/v2/tabs'
 
 export interface IProps extends IChildrenProps {
   color2: string
@@ -43,11 +43,11 @@ export interface IProps extends IChildrenProps {
   tooltips?: string[]
 }
 
-const TRIGGER_CLS = `relative shrink-0 w-16 h-10 flex flex-col items-center 
-  justify-center data-[state=active]:bg-muted/50  data-[state=active]:font-bold
-  data-[state=inactive]:hover:bg-muted/25 rounded-theme`
+const TRIGGER_CLS = `relative shrink-0 w-16 h-11 flex flex-col items-center 
+  justify-center data-active:bg-muted/60 data-active:font-bold
+  hover:bg-muted/25 rounded-theme gap-y-1`
 
-const DOT_CLS = 'rounded-full w-3 h-3 border border-border'
+const DOT_CLS = 'rounded-sm w-5 h-2 border border-foreground'
 
 //const DOT_CLS = 'w-11 h-[2px]'
 
@@ -116,10 +116,7 @@ export function ThreeColorMenu({
         variant="content"
       >
         <Tabs defaultValue="text" className="flex flex-col gap-y-2">
-          <TabsList
-            variant="base"
-            className="flex flex-row items-center justify-start gap-px"
-          >
+          <TabsList className="flex flex-row items-center justify-center gap-px">
             <TabsTrigger
               value="text"
               className={TRIGGER_CLS}

@@ -1,9 +1,10 @@
 'use client'
 
-import { BaseCol } from '@layout/base-col'
-import { ContentDiv } from '@layout/content-div'
+import { BaseCol } from '@/layout/base-col'
+import { ContentDiv } from '@/layout/content-div'
+import { CoreProviders } from '@/providers/core-providers'
 
-import { HeaderLayout } from '@layouts/header-layout'
+import { HeaderLayout } from '@/layouts/header-layout'
 
 export function PrivacyPage() {
   return (
@@ -48,5 +49,13 @@ export function PrivacyPage() {
         <></>
       </ContentDiv>
     </HeaderLayout>
+  )
+}
+
+export function PrivacyQueryPage() {
+  return (
+    <CoreProviders>
+      <PrivacyPage />
+    </CoreProviders>
   )
 }

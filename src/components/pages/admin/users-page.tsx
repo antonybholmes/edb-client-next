@@ -2,34 +2,26 @@
 
 import {
   API_ADMIN_ADD_USER_URL,
-  API_ADMIN_DELETE_USER_URL,
-  API_ADMIN_ROLES_URL,
+  API_ADMIN_GROUPS_URL,
   API_ADMIN_UPDATE_USER_URL,
   API_ADMIN_USER_STATS_URL,
   API_ADMIN_USERS_URL,
   DEFAULT_EDB_USER,
+  flattenGroups,
+  flattenRoles,
   type IEdbUser,
-  type IRole,
+  type IRBACGroup,
 } from '@/lib/edb/edb'
 
 import { useEffect, useState } from 'react'
 
-import { RolesLayout } from '@layouts/roles-layout'
-
 import { PaginationComponent } from '@/components/pagination-component'
 import { NO_DIALOG, TEXT_OK, type IDialogParams } from '@/consts'
-import { OKCancelDialog } from '@dialog/ok-cancel-dialog'
-import { PenIcon } from '@icons/pen-icon'
-import { PlusIcon } from '@icons/plus-icon'
-import { TrashIcon } from '@icons/trash-icon'
-import { VCenterRow } from '@layout/v-center-row'
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
-import { Button } from '@themed/button'
+import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { PenIcon } from '@/icons/pen-icon'
+import { PlusIcon } from '@/icons/plus-icon'
+import { TrashIcon } from '@/icons/trash-icon'
+import { VCenterRow } from '@/layout/v-center-row'
 import {
   Table,
   TableBody,
@@ -37,20 +29,30 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@themed/table'
+} from '@/themed/table'
+import { Button } from '@/themed/v2/button'
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
 
-import { CenterRow } from '@layout/center-row'
+import { CenterCol } from '@/components/layout/center-col'
 
-import { BaseCol } from '@layout/base-col'
-import { HCenterRow } from '@layout/h-center-row'
-import { Card } from '@themed/card'
+import { BaseCol } from '@/layout/base-col'
+import { Card } from '@/themed/card'
 
+import { AdminLayout } from '@/layouts/admin-layout'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { csfrWithTokenHeaders } from '@/lib/http/urls'
 import { logger } from '@/lib/logger'
-import { useQueryClient } from '@tanstack/react-query'
-import { toast } from '@themed/crisp'
+import { CoreProviders } from '@/providers/core-providers'
+
+import { csrfService } from '@/lib/edb/csrf-service'
+import { makeUuid } from '@/lib/id'
+import { Toast } from '@base-ui/react/toast'
 import { EditUserDialog, type INewUser } from './edit-user-dialog'
 
 interface IUserStats {
@@ -58,11 +60,9 @@ interface IUserStats {
 }
 
 export function AdminUsersPage() {
-  const queryClient = useQueryClient()
-
   const [userStats, setUserStats] = useState<IUserStats | null>(null)
 
-  const [roles, setRoles] = useState<IRole[]>([])
+  const [groups, setGroups] = useState<IRBACGroup[]>([])
 
   const [page, setPage] = useState(1)
 
@@ -70,7 +70,9 @@ export function AdminUsersPage() {
 
   const [users, setUsers] = useState<IEdbUser[]>([])
 
-  const { csrfToken, fetchAccessToken } = useEdbAuth()
+  const { fetchAccessToken } = useEdbAuth()
+
+  const { add: addToast } = Toast.useToastManager()
 
   const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
@@ -82,52 +84,47 @@ export function AdminUsersPage() {
         return
       }
 
-      const res = await queryClient.fetchQuery({
-        queryKey: ['user_stats'],
-        queryFn: () => {
-          return httpFetch.getJson<{ data: IUserStats }>(
-            API_ADMIN_USER_STATS_URL,
-            {
-              headers: csfrWithTokenHeaders(csrfToken, accessToken),
-            }
-          )
-        },
-      })
+      const csrfToken = await csrfService.getToken()
+
+      const res = await httpFetch.getJson<{ data: IUserStats }>(
+        API_ADMIN_USER_STATS_URL,
+        {
+          headers: csfrWithTokenHeaders(csrfToken, accessToken),
+        }
+      )
 
       const stats: IUserStats = res.data
 
       setUserStats(stats)
     }
 
-    async function loadRoles(csrfToken: string) {
+    async function loadRoles() {
       const accessToken = await fetchAccessToken()
 
       if (!accessToken) {
         return
       }
 
-      const res = await queryClient.fetchQuery({
-        queryKey: ['admin_roles'],
-        queryFn: () => {
-          return httpFetch.getJson<{ data: IRole[] }>(API_ADMIN_ROLES_URL, {
-            headers: csfrWithTokenHeaders(csrfToken, accessToken),
-          })
-        },
-      })
+      const csrfToken = await csrfService.getToken()
+
+      const res = await httpFetch.getJson<{ data: IRBACGroup[] }>(
+        API_ADMIN_GROUPS_URL,
+        {
+          headers: csfrWithTokenHeaders(csrfToken, accessToken),
+        }
+      )
 
       //console.log('roles', res.data)
-      setRoles(res.data)
+      setGroups(res.data)
       loadUserStats()
     }
 
-    if (csrfToken) {
-      try {
-        loadRoles(csrfToken)
-      } catch {
-        logger.error('could not fetch remote roles')
-      }
+    try {
+      loadRoles()
+    } catch {
+      logger.error('could not fetch remote roles')
     }
-  }, [csrfToken])
+  }, [])
 
   async function loadUsers() {
     const accessToken = await fetchAccessToken()
@@ -136,22 +133,20 @@ export function AdminUsersPage() {
       return
     }
 
-    console.log(accessToken)
+    const csrfToken = await csrfService.getToken()
 
-    const res = await queryClient.fetchQuery({
-      queryKey: ['users'],
-      queryFn: () => {
-        return httpFetch.postJson<{ data: IEdbUser[] }>(API_ADMIN_USERS_URL, {
-          body: { offset: (page - 1) * itemsPerPage, records: itemsPerPage },
-          headers: csfrWithTokenHeaders(csrfToken, accessToken),
-        })
-      },
-    })
+    const res = await httpFetch.postJson<{ data: IEdbUser[] }>(
+      API_ADMIN_USERS_URL,
+      {
+        body: { offset: (page - 1) * itemsPerPage, records: itemsPerPage },
+        headers: csfrWithTokenHeaders(csrfToken, accessToken),
+      }
+    )
 
     setUsers(res.data)
   }
 
-  console.log('users', users)
+  logger.log('users', users)
 
   useEffect(() => {
     if (userStats) {
@@ -169,18 +164,6 @@ export function AdminUsersPage() {
     //}
   }, [page, itemsPerPage, userStats])
 
-  //const form = useForm<IUserAdminView>({
-  // defaultValues: {
-  //   // username: account.username,
-  //   // email: account.email,
-  //   // firstName: account.firstName,
-  //   // lastName: account.lastName,
-  //   // uuid: account.uuid,
-  //   // roles: account.roles.join(", "),
-  //   ...user,
-  // },
-  //})
-
   // useEffect(() => {
   //   if (!user) {
   //     return
@@ -194,35 +177,51 @@ export function AdminUsersPage() {
   const columnHelper = createColumnHelper<IEdbUser>()
 
   const columns = [
-    columnHelper.accessor('publicId', {
-      header: 'Id',
+    columnHelper.accessor((row) => row, {
+      header: 'User',
+      cell: (props) => (
+        <BaseCol className="text-xs gap-0.5 truncate">
+          <p className="font-semibold">{props.getValue().username}</p>
+          <p title={props.getValue().id}>{props.getValue().id}</p>
+        </BaseCol>
+      ),
     }),
 
-    columnHelper.accessor('username', {
-      header: 'Username',
-    }),
+    // columnHelper.accessor('username', {
+    //   header: 'Username',
+    // }),
 
     columnHelper.accessor('email', {
       header: 'Email',
     }),
 
-    columnHelper.accessor((row) => `${row.firstName} ${row.lastName}`, {
-      header: 'Name',
+    columnHelper.accessor('groups', {
+      header: 'Groups',
+      cell: (props) => (
+        <BaseCol className="gap-y-0.5">
+          {props.getValue().map((group) => (
+            <div key={group.id} className="truncate" title={group.name}>
+              {group.name}
+            </div>
+          ))}
+        </BaseCol>
+      ),
     }),
 
-    columnHelper.accessor('roles', {
+    columnHelper.accessor('groups', {
       header: 'Roles',
       cell: (props) => (
-        <VCenterRow className="gap-x-0.5 text-xs font-semibold text-white">
-          {props.getValue().map((role) => (
-            <span
-              key={role}
-              className="bg-foreground/80  hover:bg-foreground/90 trans-color rounded-full px-2 py-0.75"
-            >
-              {role}
-            </span>
-          ))}
-        </VCenterRow>
+        <BaseCol className="gap-y-0.5">
+          {props
+            .getValue()
+            .map((group) => flattenRoles([group]))
+            .flat()
+            .map((role) => (
+              <div key={role} className="truncate" title={role}>
+                {role}
+              </div>
+            ))}
+        </BaseCol>
       ),
     }),
 
@@ -230,7 +229,7 @@ export function AdminUsersPage() {
       id: 'edit',
       header: '',
       cell: (props) => (
-        <VCenterRow className="gap-x-3 justify-end">
+        <VCenterRow className="gap-x-2 justify-end">
           <button
             title="Edit user"
             onClick={() => {
@@ -279,23 +278,21 @@ export function AdminUsersPage() {
     columnHelper.accessor((row) => row, {
       header: 'User Info',
       cell: (props) => (
-        <BaseCol className="gap-y-3 text-sm">
-          <span className=" font-bold">{props.getValue().publicId}</span>
+        <BaseCol className="gap-y-3 text-sm truncate">
+          <span className="font-bold">{props.getValue().id}</span>
           <span>{props.getValue().username}</span>
           <span>{props.getValue().email}</span>
-          <span>
-            {props.getValue().firstName} {props.getValue().lastName}
-          </span>
-          <VCenterRow className="gap-x-1 text-xs font-bold">
-            {props.getValue().roles.map((role) => (
-              <span
-                key={role}
-                className="bg-theme/75 hover:bg-theme trans-color rounded-full px-2 py-0.75"
-              >
-                {role}
-              </span>
+          {props.getValue().name && <span>{props.getValue().name}</span>}
+
+          {props
+            .getValue()
+            .groups.map((group) => flattenGroups([group]))
+            .flat()
+            .map((group) => (
+              <div key={group} className="truncate">
+                {group}
+              </div>
             ))}
-          </VCenterRow>
         </BaseCol>
       ),
     }),
@@ -356,15 +353,12 @@ export function AdminUsersPage() {
       return
     }
 
+    const csrfToken = await csrfService.getToken()
+
     try {
-      await queryClient.fetchQuery({
-        queryKey: ['new_user'],
-        queryFn: () => {
-          return httpFetch.post(API_ADMIN_ADD_USER_URL, {
-            body: { ...user },
-            headers: csfrWithTokenHeaders(csrfToken, accessToken),
-          })
-        },
+      await httpFetch.post(API_ADMIN_ADD_USER_URL, {
+        body: { ...user },
+        headers: csfrWithTokenHeaders(csrfToken, accessToken),
       })
 
       // force refresh
@@ -381,25 +375,28 @@ export function AdminUsersPage() {
       return
     }
 
-    console.log(user)
+    const csrfToken = await csrfService.getToken()
+
+    console.log(
+      'updating user',
+      user,
+      user.selectedGroups,
+      API_ADMIN_UPDATE_USER_URL
+    )
 
     try {
-      await queryClient.fetchQuery({
-        queryKey: ['update_user'],
-        queryFn: () => {
-          return httpFetch.post(
-            API_ADMIN_UPDATE_USER_URL, ///${user.uuid}`,
-            {
-              body: { ...user },
-              headers: csfrWithTokenHeaders(csrfToken, accessToken),
-            }
-          )
-        },
-      })
+      await httpFetch.post(
+        API_ADMIN_UPDATE_USER_URL, ///${user.uuid}`,
+        {
+          body: { ...user, groups: user.selectedGroups },
+          headers: csfrWithTokenHeaders(csrfToken, accessToken),
+        }
+      )
 
       await loadUsers()
 
-      toast({
+      addToast({
+        id: makeUuid(),
         title: 'User updated',
       })
     } catch (err) {
@@ -414,17 +411,11 @@ export function AdminUsersPage() {
       return
     }
 
+    const csrfToken = await csrfService.getToken()
+
     try {
-      await queryClient.fetchQuery({
-        queryKey: ['delete_user'],
-        queryFn: () => {
-          return httpFetch.delete(
-            `${API_ADMIN_DELETE_USER_URL}/${user.publicId}`,
-            {
-              headers: csfrWithTokenHeaders(csrfToken, accessToken),
-            }
-          )
-        },
+      await httpFetch.delete(`${API_ADMIN_USERS_URL}/${user.id}/delete`, {
+        headers: csfrWithTokenHeaders(csrfToken, accessToken),
       })
 
       await loadUsers()
@@ -447,12 +438,13 @@ export function AdminUsersPage() {
             if (r === TEXT_OK) {
               deleteUser(showDialog.params!.user as IEdbUser)
             }
+
             setShowDialog({ ...NO_DIALOG })
           }}
         >
           Are you sure you want to delete user{' '}
           {(showDialog.params!.user as IEdbUser).username} (
-          {(showDialog.params!.user as IEdbUser).publicId})?
+          {(showDialog.params!.user as IEdbUser).id})?
         </OKCancelDialog>
       )}
 
@@ -467,7 +459,7 @@ export function AdminUsersPage() {
 
             setShowDialog({ ...NO_DIALOG })
           }}
-          roles={roles}
+          groups={groups}
         />
       )}
 
@@ -481,18 +473,18 @@ export function AdminUsersPage() {
 
             setShowDialog({ ...NO_DIALOG })
           }}
-          roles={roles}
+          groups={groups}
         />
       )}
 
-      <RolesLayout title="Users">
-        <HCenterRow>
-          <BaseCol className="w-9/10 lg:w-3/4 gap-y-4">
+      <AdminLayout title="Users">
+        <CenterCol className="grow">
+          <BaseCol className="w-9/10 gap-y-4">
             <BaseCol className="flex flex-col gap-y-4">
               <VCenterRow>
                 <Button
                   variant="theme"
-                  rounded="full"
+                  //rounded="full"
                   onClick={() => {
                     setShowDialog({
                       id: 'new',
@@ -507,7 +499,7 @@ export function AdminUsersPage() {
                   <PlusIcon stroke="stroke-white" /> <span>New User</span>
                 </Button>
               </VCenterRow>
-              <Card className="hidden xl:flex">
+              <Card className="hidden xl:flex text-xs" variant="content">
                 <Table>
                   <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => {
@@ -529,7 +521,7 @@ export function AdminUsersPage() {
                     {table.getRowModel().rows.map((row) => (
                       <TableRow key={row.id}>
                         {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
+                          <TableCell key={cell.id} className="text-xs">
                             {flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext()
@@ -578,8 +570,8 @@ export function AdminUsersPage() {
               </Card>
             </BaseCol>
 
-            <CenterRow>
-              <CenterRow className="col-span-2">
+            <CenterCol>
+              <CenterCol className="col-span-2">
                 <PaginationComponent
                   currentPage={page}
                   setCurrentPage={(page) => {
@@ -588,11 +580,19 @@ export function AdminUsersPage() {
                   itemsPerPage={itemsPerPage}
                   itemCount={users.length}
                 />
-              </CenterRow>
-            </CenterRow>
+              </CenterCol>
+            </CenterCol>
           </BaseCol>
-        </HCenterRow>
-      </RolesLayout>
+        </CenterCol>
+      </AdminLayout>
     </>
+  )
+}
+
+export function AdminUsersQueryPage() {
+  return (
+    <CoreProviders>
+      <AdminUsersPage />
+    </CoreProviders>
   )
 }

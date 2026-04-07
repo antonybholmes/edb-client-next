@@ -5,7 +5,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from './shadcn/ui/themed/dropdown-menu'
+} from './shadcn/ui/themed/v2/dropdown-menu'
 
 export const DROPDOWN_CLS = 'left-0'
 
@@ -19,7 +19,7 @@ interface IProps extends IDivProps {
 export function BaseDropDown({
   open,
   onOpenChange,
-  menuClassName,
+  menuClassName = '',
   children,
 }: IProps) {
   const [_open, setOpen] = useState(false)
@@ -56,11 +56,11 @@ export function BaseDropDown({
 
   return (
     <DropdownMenu open={open ?? _open} onOpenChange={_onOpenChange}>
-      <DropdownMenuTrigger asChild>{c[0]}</DropdownMenuTrigger>
+      <DropdownMenuTrigger render={c[0] as React.ReactElement} />
 
       <DropdownMenuContent
-        onInteractOutside={() => _onOpenChange(false)}
-        onEscapeKeyDown={() => _onOpenChange(false)}
+        //onInteractOutside={() => _onOpenChange(false)}
+        //onEscapeKeyDown={() => _onOpenChange(false)}
         align="start"
         className={menuClassName}
       >

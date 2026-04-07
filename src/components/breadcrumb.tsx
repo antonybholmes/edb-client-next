@@ -2,7 +2,7 @@ import { type IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
 import type { ReactNode } from 'react'
 
-import { ChevronRightIcon } from '@icons/chevron-right-icon'
+import { ChevronRightIcon } from '@/icons/chevron-right-icon'
 
 import type { ICrumbProps } from '@/lib/crumbs'
 import { BaseLink } from './link/base-link'

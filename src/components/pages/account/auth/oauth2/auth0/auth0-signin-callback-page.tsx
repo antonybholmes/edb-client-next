@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 

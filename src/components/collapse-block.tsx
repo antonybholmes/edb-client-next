@@ -1,13 +1,13 @@
+import { ChevronRightIcon } from '@/icons/chevron-right-icon'
 import { cn } from '@/lib/shadcn-utils'
-import { ChevronRightIcon } from '@icons/chevron-right-icon'
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from './shadcn/ui/themed/collapsible'
+} from './shadcn/ui/themed/v2/collapsible'
 
-import { BaseCol } from '@layout/base-col'
+import { BaseCol } from '@/layout/base-col'
 import { VCenterRow } from './layout/v-center-row'
 import type { LeftRightPos } from './side'
 

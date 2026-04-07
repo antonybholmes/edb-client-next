@@ -11,6 +11,7 @@ export const COLOR_LIGHTGRAY = '#C0C0C0'
 export const COLOR_TRANSPARENT = '#00000000'
 export const COLOR_CORNFLOWER_BLUE = '#6495ED'
 export const COLOR_NAVY_BLUE = '#000080'
+export const COLOR_ORANGE = '#FFA500'
 
 const MAX_COLORS_8BIT = 16777215
 

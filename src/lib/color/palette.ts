@@ -1,7 +1,7 @@
 import { COLOR_RED } from '@/lib/color/color'
 
-export const DEFAULT_PALETTE: string[] = [
-  COLOR_RED, // light coral
+export const DEFAULT_PALETTE = Object.freeze([
+  COLOR_RED,
   '#3CB371', // medium sea green
   '#6495ED', // cornflower blue
   '#FFD700', // khaki
@@ -10,9 +10,9 @@ export const DEFAULT_PALETTE: string[] = [
   '#FF69B4', // light sea green
   '#1E90FF', // dodger blue
   '#8FBC8F', // dark sea green
-]
+])
 
-export const TAB10_PALETTE: string[] = [
+export const TAB10_PALETTE = Object.freeze([
   '#1f77b4',
   '#ff7f0e',
   '#2ca02c',
@@ -23,9 +23,9 @@ export const TAB10_PALETTE: string[] = [
   '#7f7f7f',
   '#bcbd22',
   '#17becf',
-]
+])
 
-export const TABLEAU_20_PALETTE = [
+export const TABLEAU_20_PALETTE = Object.freeze([
   '#1f77b4',
   '#aec7e8',
   '#ff7f0e',
@@ -46,9 +46,9 @@ export const TABLEAU_20_PALETTE = [
   '#dbdb8d',
   '#17becf',
   '#9edae5',
-]
+])
 
-export const BRIGHT_20_PALETTE = [
+export const BRIGHT_20_PALETTE = Object.freeze([
   '#e6194b',
   '#3cb44b',
   '#ffe119',
@@ -69,4 +69,4 @@ export const BRIGHT_20_PALETTE = [
   '#ffd8b1',
   '#000075',
   '#808080',
-]
+])
