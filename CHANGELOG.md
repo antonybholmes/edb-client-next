@@ -1,5 +1,12 @@
 # Changelog
 
+## 32.6 (Apr, 2026)
+
+### Changed
+
+- Bug fixes and updates.
+
+
 ## 32.4 (Apr, 2026)
 
 ### Changed
