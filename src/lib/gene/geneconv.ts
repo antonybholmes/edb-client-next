@@ -1,10 +1,10 @@
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
-import type { SeriesData } from '@/lib/dataframe/dataframe-types'
 import { API_GENECONV_URL } from '@/lib/edb/edb'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { capitalCase } from '@/lib/text/capital-case'
 import { QueryClient } from '@tanstack/react-query'
+import { SeriesData } from '../dataframe'
 import { AnnotationDataFrame } from '../dataframe/annotation-dataframe'
 
 export interface GeneConvResult {

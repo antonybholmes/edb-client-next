@@ -1,7 +1,7 @@
-'use client'
+// 'use client'
 
 import type { IChildrenProps } from '@/interfaces/children-props'
-import { APP_ACCOUNT_AUTH0_CALLBACK_URL } from '@/lib/edb/edb'
+import { APP_ACCOUNT_OAUTH2_AUTH0_CALLBACK_URL } from '@/lib/edb/edb'
 import { Auth0Provider } from '@auth0/auth0-react'
 
 const AUTH0_DOMAIN = process.env.NEXT_PUBLIC_AUTH0_DOMAIN!
@@ -26,14 +26,14 @@ export function AuthProvider({ children }: IChildrenProps) {
       authorizationParams={{
         audience: AUTH0_AUDIENCE,
         //scope: 'openid name email',
-        redirect_uri: APP_ACCOUNT_AUTH0_CALLBACK_URL,
+        redirect_uri: APP_ACCOUNT_OAUTH2_AUTH0_CALLBACK_URL,
         // this is needed to force passwordless login, otherwise
         // the default social login page is shown
         //connection: 'email',
       }}
-      onRedirectCallback={(appState) => {
-        console.log('Redirecting to:', appState?.targetUrl)
-      }}
+      // onRedirectCallback={appState => {
+      //   console.log('Redirecting to:', appState?.targetUrl)
+      // }}
     >
       {children}
     </Auth0Provider>

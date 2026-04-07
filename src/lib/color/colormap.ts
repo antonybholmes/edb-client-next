@@ -1,7 +1,6 @@
 import { clamp } from '../math/clamp'
 import { lerp } from '../math/lerp'
 import { hexToRgba, rgba2hex, type IRGBA } from './color'
-import { BRIGHT_20_PALETTE, TAB10_PALETTE, TABLEAU_20_PALETTE } from './palette'
 
 // based on https://github.com/bpostlethwaite/colormap/
 
@@ -511,15 +510,15 @@ export const REDS_CMAP: ColorMap = new ColorMap('Reds', [
 //  ],
 //})
 
-export const TAB10_CMAP: ColorMap = new ColorMap('Tab10', TAB10_PALETTE)
-export const TABLEAU_20_CMAP: ColorMap = new ColorMap(
-  'Tableu20',
-  TABLEAU_20_PALETTE
-)
-export const BRIGHT_20_CMAP: ColorMap = new ColorMap(
-  'Bright20',
-  BRIGHT_20_PALETTE
-)
+// export const TAB10_CMAP: ColorMap = new ColorMap('Tab10',  TAB10_PALETTE)
+// export const TABLEAU_20_CMAP: ColorMap = new ColorMap(
+//   'Tableu20',
+//   TABLEAU_20_PALETTE
+// )
+// export const BRIGHT_20_CMAP: ColorMap = new ColorMap(
+//   'Bright20',
+//   BRIGHT_20_PALETTE
+// )
 
 export const GRAY_RED_CMAP = new ColorMap('Gray Red', [
   '#f0f0f0',

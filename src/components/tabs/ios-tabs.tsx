@@ -118,7 +118,7 @@ export function IOSTabsList({
             key={tab.id}
             data-checked={selected}
             ref={el => {
-              buttonsRef.current[ti] = el!
+              buttonsRef.current[ti] = el as HTMLButtonElement
             }}
             className={cn('z-20 data-[checked=true]:font-semibold h-7.5')}
             style={{ width: defaultWidth }}

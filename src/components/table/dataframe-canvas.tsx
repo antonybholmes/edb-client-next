@@ -17,7 +17,8 @@ import { FOCUS_RING_CLS } from '@/theme'
 import { BaseRow } from '@/layout/base-row'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import type { Shape } from '@/lib/dataframe/dataframe-types'
+
+import { Shape } from '@/lib/dataframe'
 import { range } from '@/lib/math/range'
 import type { ChangeEvent, RefObject } from 'react'
 import {
@@ -260,7 +261,7 @@ export function DataFrameCanvas({
   })
 
   useEffect(() => {
-    colPositions.current = range(df.shape[1] + 1).map(i => i * cellSize[0])
+    colPositions.current = range(df.shape[1] + 1).map((i) => i * cellSize[0])
   }, [df, cellSize])
 
   useEffect(() => {
@@ -1258,7 +1259,7 @@ export function DataFrameCanvas({
             ...dragCol.current.cols.slice(0, dragCol.current.col),
             ...dragCol.current.cols
               .slice(dragCol.current.col)
-              .map(cp => cp + Math.max(minDragX, dragX)),
+              .map((cp) => cp + Math.max(minDragX, dragX)),
           ]
 
           draw()
@@ -1609,24 +1610,24 @@ export function DataFrameCanvas({
                 range(
                   selection.current.start.col,
                   selection.current.end.col + 1
-                ).map(col => df.columns[col]!)
+                ).map((col) => df.columns[col]!)
               )
             }
 
             range(
               selection.current.start.row,
               selection.current.end.row + 1
-            ).map(row => {
+            ).map((row) => {
               out.push([])
               range(
                 selection.current.start.col,
                 selection.current.end.col + 1
-              ).map(col => {
+              ).map((col) => {
                 out[out.length - 1]!.push(df.get(row, col).toLocaleString())
               })
             })
 
-            const s = out.map(r => r.join('\t')).join('\n')
+            const s = out.map((r) => r.join('\t')).join('\n')
 
             navigator.clipboard.writeText(s)
           }
@@ -2020,7 +2021,7 @@ export function DataFrameCanvas({
                     value={editText}
                     onKeyDown={onCellEditKeyDown}
                     onChange={onEditChange}
-                    onFocus={e => e.target.select()}
+                    onFocus={(e) => e.target.select()}
                     onClick={(e: MouseEvent) => e.stopPropagation()}
                     onMouseDown={(e: MouseEvent) => e.stopPropagation()}
                     readOnly={false}

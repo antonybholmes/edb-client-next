@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Nextjs version now compiles.
 - Bug fixes and updates.
 
 
