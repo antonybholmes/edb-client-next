@@ -297,7 +297,7 @@ export function DNAPage() {
                   className="overflow-hidden rounded-theme"
                   rounded="none"
                   value={[format]}
-                  onValueChange={(v) => {
+                  onValueChange={(v: string[]) => {
                     setFormat(v[0] as FORMAT_TYPE)
                   }}
                 >
