@@ -28,9 +28,8 @@ const BASE_CLS = cn(
 
 const APP_CLS = cn(
   BASE_CLS,
-  'flex flex-col aspect-10/9 shrink-0 justify-start grow px-4 py-5',
-  'rounded-xl gap-y-1 border border-border/30 bg-background',
-  'hover:shadow-xl'
+  'flex flex-col aspect-square shrink-0 justify-start grow px-4 py-5',
+  'rounded-2xl gap-y-1 hover:shadow-2xl hover:bg-background/50'
 )
 
 const TABS = Object.freeze(['grid', 'list', 'compact'])
@@ -86,7 +85,7 @@ function GridView() {
                   <HCenterCol className="gap-y-2">
                     <HCenterCol className="gap-y-2">
                       <VCenterRow
-                        className="w-11 h-11 aspect-square shrink-0 rounded-[1.25rem] justify-center text-lg opacity-80 group-hover:opacity-100 trans-all"
+                        className="w-11 h-11 aspect-square gap-x-px shrink-0 rounded-[1.25rem] justify-center text-lg trans-all"
                         style={{
                           backgroundColor: module.color ?? 'lightslategray',
                         }}
@@ -94,7 +93,7 @@ function GridView() {
                         <span className="font-bold text-white/95">
                           {abbr[0]!.toUpperCase()}
                         </span>
-                        <span className="font-thin text-white/80">
+                        <span className="font-base text-white/80">
                           {abbr[1]!.toLowerCase()}
                         </span>
                       </VCenterRow>
@@ -286,7 +285,7 @@ export function AppsPage({ title = 'Index' }: { title?: string }) {
     <CenterLayout signinRequired={false} title={title}>
       <HeaderSlotPortal slot="header-right">
         <ToggleGroup
-          value={[tab?.id ?? '']}
+          value={[tab?.id ?? 'grid']}
           onValueChange={(v) => {
             if (v[0]) {
               setTab({ id: v[0], index: TABS.indexOf(v[0]!) })

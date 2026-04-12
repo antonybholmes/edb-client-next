@@ -41,15 +41,14 @@ export const SIDE_OVERLAY_CLS = cn(
 
 export const BASE_MUTED_THEME_CLS = cn(
   FOCUS_INSET_RING_CLS,
-  'flex flex-col items-center shrink-0 grow-0 justify-center gap-3 group ',
-  'rounded-lg border border-transparent hover:shadow-xl hover:border-border/25 aspect-10/9',
+  'flex flex-col items-center shrink-0 grow-0 justify-center gap-2 group',
+  'rounded-lg border border-transparent hover:shadow-xl hover:border-border/20 aspect-11/10',
   'hover:bg-background'
   //'transition duration-300 ease-in-out'
 )
 
-const ICON_CLS = `flex w-9 h-9 aspect-square shrink-0 flex-row 
-  items-center justify-center rounded-2xl text-sm gap-x-0.25 
-  opacity-80 group-hover:opacity-100 trans-all`
+const ICON_CLS = `flex w-9 h-9 aspect-11/10 shrink-0 flex-row 
+  items-center justify-center rounded-full text-sm trans-all`
 
 export function ModuleButtonLink({
   className,
@@ -72,14 +71,14 @@ export function HeaderLinks({
   const { settings } = useEdbSettings()
 
   // sort alphabetically and ignore sections
-  let items = HEADER_LINKS.map(section => {
+  let items = HEADER_LINKS.map((section) => {
     return section.modules.filter(
-      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()
     .filter(
-      module =>
+      (module) =>
         !search ||
         module.name.toLowerCase().includes(search.toLowerCase()) ||
         module.description.toLowerCase().includes(search.toLowerCase())
@@ -115,10 +114,12 @@ export function HeaderLinks({
                 //backgroundColor: `${module.color}cc`
               }}
             >
-              <span className="font-bold text-white/95">
+              <span className="font-bold text-white">
                 {abbr[0]!.toUpperCase()}
               </span>
-              <span className="text-white/80">{abbr[1]!.toLowerCase()}</span>
+              <span className="font-base text-white/90">
+                {abbr[1]!.toLowerCase()}
+              </span>
             </div>
 
             <p className="text-[0.7rem] text-center truncate font-medium">
@@ -139,7 +140,7 @@ export function HeaderLinks({
 
   return (
     <ul
-      className={cn('grid grid-cols-5 mt-2', className)}
+      className={cn('grid grid-cols-5 gap-1', className)}
       style={{ width, minHeight: '6rem' }}
     >
       {items}
@@ -157,14 +158,14 @@ export function SearchHeaderLinks({
   const { settings } = useEdbSettings()
 
   // sort alphabetically and ignore sections
-  let items = HEADER_LINKS.map(section => {
+  let items = HEADER_LINKS.map((section) => {
     return section.modules.filter(
-      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()
     .filter(
-      module =>
+      (module) =>
         !search ||
         module.name.toLowerCase().includes(search.toLowerCase()) ||
         module.description.toLowerCase().includes(search.toLowerCase())
@@ -199,13 +200,16 @@ export function SearchHeaderLinks({
               style={{
                 //color: module.color ?? 'lightslategray',
                 backgroundColor: module.color ?? 'lightslategray',
+
                 //backgroundColor: `${module.color}cc`
               }}
             >
               <span className="font-bold text-white/95">
                 {abbr[0]!.toUpperCase()}
               </span>
-              <span className="text-white/80">{abbr[1]!.toLowerCase()}</span>
+              <span className="font-thin text-white/80">
+                {abbr[1]!.toLowerCase()}
+              </span>
             </div>
 
             <p className="text-[0.7rem] text-center truncate font-medium">
@@ -359,14 +363,14 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
 
             <LineSeparator />
 
-            <ul className="grid grid-cols-5" style={{ width }}>
+            <ul className="grid grid-cols-5 gap-1" style={{ width }}>
               <li>
                 <Button
                   variant="flat"
                   flow="column"
                   size="none"
                   rounded="xl"
-                  className="p-2 gap-3 aspect-10/9 w-full h-full"
+                  className="p-2 gap-3 aspect-11/10 w-full h-full"
                   onClick={() => {
                     window.open(
                       DOCS_URL,
@@ -398,7 +402,7 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
                   flow="column"
                   size="none"
                   rounded="xl"
-                  className="p-2 gap-3 aspect-10/9 w-full h-full"
+                  className="p-2 gap-3 aspect-11/10 w-full h-full"
                   href="/about"
                   onClick={() => setOpen(false)}
                   aria-label="About"

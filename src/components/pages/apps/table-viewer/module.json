@@ -1,7 +1,7 @@
 {
   "name": "Table Viewer",
   "description": "A basic viewer for tabular data.",
-  "version": "14.4.8.438",
+  "version": "14.6.0.440",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-04-08T00:48:30.261Z"
+  "modified": "2026-04-11T04:03:41.264Z"
 }

@@ -26,6 +26,7 @@ import {
   NO_DIALOG,
   TEXT_CANCEL,
   TEXT_DOWNLOAD_AS_PNG,
+  TEXT_DOWNLOAD_AS_SVG,
   type IDialogParams,
 } from '@/consts'
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
@@ -586,12 +587,12 @@ function LollipopPage() {
             <span>{TEXT_DOWNLOAD_AS_PNG}</span>
           </DropdownMenuItem>
           <DropdownMenuItem
-            aria-label=" TEXT_DOWNLOAD_AS_SVG"
+            aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
               downloadSvgAutoFormat(svgRef, 'lollipop.svg')
             }}
           >
-            <span>TEXT_DOWNLOAD_AS_SVG</span>
+            <span>{TEXT_DOWNLOAD_AS_SVG}</span>
           </DropdownMenuItem>
         </>
       ),
