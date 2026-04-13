@@ -6,6 +6,7 @@ import {
   signinStateAtom,
   type IRedirectState,
 } from '@/lib/edb/signin/edb-signin'
+import { AuthProvider } from '@/providers/auth-provider'
 import { CoreProviders } from '@/providers/core-providers'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useAtom } from 'jotai'
@@ -59,7 +60,7 @@ export function CallbackPage() {
 
         console.log('Redirect state from Auth0 appState:', signinState)
 
-        setAllowRedirect(true)
+        //setAllowRedirect(true)
       } catch (error) {
         console.error('Error handling redirect callback:', error)
       }
@@ -85,7 +86,9 @@ export function CallbackPage() {
 export function SignInCallbackQueryPage() {
   return (
     <CoreProviders>
-      <CallbackPage />
+      <AuthProvider>
+        <CallbackPage />
+      </AuthProvider>
     </CoreProviders>
   )
 }

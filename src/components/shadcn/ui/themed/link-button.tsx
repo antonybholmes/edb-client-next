@@ -1,19 +1,16 @@
 import { Button, type IButtonProps } from '@/themed/v2/button'
-import { forwardRef, type ForwardedRef } from 'react'
 
-export const LinkButton = forwardRef(function LinkButton(
-  {
-    variant = 'link',
+export function LinkButton({
+  ref,
+  variant = 'link',
 
-    size = 'none',
-    justify = 'start',
-    pad = 'none',
-    className = '',
-    children,
-    ...props
-  }: IButtonProps,
-  ref: ForwardedRef<HTMLButtonElement>
-) {
+  size = 'none',
+  justify = 'start',
+  pad = 'none',
+  className = '',
+  children,
+  ...props
+}: IButtonProps) {
   return (
     <Button
       ref={ref}
@@ -27,4 +24,4 @@ export const LinkButton = forwardRef(function LinkButton(
       {children}
     </Button>
   )
-})
+}

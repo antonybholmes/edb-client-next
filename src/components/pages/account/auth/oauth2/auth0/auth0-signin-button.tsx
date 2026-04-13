@@ -1,16 +1,14 @@
 // 'use client'
 
-import { useAuth0 } from '@auth0/auth0-react'
-
-import { Button } from '@/themed/v2/button'
-
 import { SignInIcon } from '@/components/icons/sign-in-icon'
+import { Button } from '@/components/shadcn/ui/themed/v2/button'
 import { TEXT_SIGN_IN } from '@/consts'
 import {
   DEFAULT_REDIRECT_STATE,
   signinStateAtom,
   type IRedirectState,
 } from '@/lib/edb/signin/edb-signin'
+import { useAuth0 } from '@auth0/auth0-react'
 import { useAtom } from 'jotai'
 
 // export function auth0SignIn(
@@ -58,3 +56,22 @@ export function Auth0SignInButton({
     </Button>
   )
 }
+
+// export function Auth0SignInButton({
+//   state = DEFAULT_REDIRECT_STATE,
+// }: {
+//   state: IRedirectState
+// }) {
+//   console.log(`/auth/login?returnTo=${state.target.path}`)
+//   return (
+//     <ButtonLink
+//       variant="theme"
+//       size="lg"
+//       aria-label={TEXT_SIGN_IN}
+//       href={`/auth/login?returnTo=${state.target.path}`}
+//     >
+//       <SignInIcon stroke="" />
+//       <span>{TEXT_SIGN_IN}</span>
+//     </ButtonLink>
+//   )
+// }

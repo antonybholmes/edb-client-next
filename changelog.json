@@ -1833,6 +1833,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2026-04-07T22:26:12.228Z"
+        },
+        {
+          "msg": "Fixes for auth0 login",
+          "date": "2026-04-13T22:41:43.428Z"
         }
       ]
     },

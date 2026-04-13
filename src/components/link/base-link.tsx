@@ -2,6 +2,7 @@ import { type ILinkProps } from '@/interfaces/link-props'
 import { BASE_COMPONENT_CLS } from '@/theme'
 
 import { cn } from '@/lib/shadcn-utils'
+import Link from 'next/link'
 
 export const UNDERLINE_CLS =
   'data-[underline=true]:underline data-[underline=hover]:hover:underline data-[underline=false]:decoration-transparent'
@@ -31,8 +32,23 @@ export function BaseLink({
   // External links open in new windows, app urls do not.
   const isExt = href.startsWith('http') || href.startsWith('www')
 
-  if (isExt && !target) {
-    target = BLANK_TARGET
+  // if (isExt && !target) {
+  //   target = BLANK_TARGET
+  // }
+
+  if (!isExt) {
+    return (
+      <Link
+        href={href}
+        title={title}
+        data-checked={selected}
+        className={cn(LINK_CLS, className)}
+        target={target}
+        {...props}
+      >
+        {children}
+      </Link>
+    )
   }
 
   return (

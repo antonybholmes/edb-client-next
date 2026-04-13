@@ -45,6 +45,7 @@ import { Button } from '@/themed/v2/button'
 
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { config } from '@/config'
+import { AuthProvider } from '@/providers/auth-provider'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import {
@@ -466,7 +467,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
       // use first letters of part of name
       initials = initials
         .split(' ')
-        .map(word => word[0])
+        .map((word) => word[0])
         .join('')
     }
 
@@ -562,7 +563,9 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
           <BaseCol className="gap-y-2">
             {IS_DEV_MODE && (
               <>
-                <Auth0SignInButton state={state} />
+                <AuthProvider>
+                  <Auth0SignInButton state={state} />
+                </AuthProvider>
 
                 <CognitoSignInButton state={state} />
 
@@ -655,8 +658,9 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
                 <span className="font-bold text-xl text-center text-foreground/75">
                   {TEXT_SIGN_IN}
                 </span>
-                <Auth0SignInButton state={state} />
-
+                <AuthProvider>
+                  <Auth0SignInButton state={state} />
+                </AuthProvider>
                 <StrikeThroughMenuItem>Or</StrikeThroughMenuItem>
 
                 {IS_DEV_MODE && (
@@ -708,7 +712,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
         //contentVariant="glass"
         //bodyVariant="card"
         modalType="Warning"
-        onResponse={r => {
+        onResponse={(r) => {
           if (r === TEXT_OK) {
             //const url = addRedirectStateToUrl(SIGN_OUT_ROUTE, state)
             //redirect(url)

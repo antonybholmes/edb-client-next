@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Fixes for auth0 login.
 - Bug fixes and updates.
 
 
