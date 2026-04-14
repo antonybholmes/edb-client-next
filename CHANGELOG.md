@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Updating libs etc to match Astro.
 
 

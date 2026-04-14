@@ -1842,5 +1842,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-04-07T22:26:12.228Z"
+  },
+  {
+    "version": "32.8",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Updating libs etc to match Astro",
+          "date": "2026-04-14T15:18:59.911Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-04-14T15:18:59.911Z"
   }
 ]
