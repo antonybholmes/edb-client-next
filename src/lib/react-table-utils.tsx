@@ -1,6 +1,6 @@
 import { range } from '@/lib/math/range'
 
-import { SeriesData } from './dataframe'
+import type { SeriesData } from './dataframe'
 import { cellStr, getExcelColName } from './dataframe/cell'
 
 export interface IReactTableCol {
@@ -14,10 +14,10 @@ export const INDEX_COL: IReactTableCol = makeReactTableIndexCol('')
 
 export const DEFAULT_TABLE_HEADER = [
   INDEX_COL,
-  ...range(20).map((i) => makeReactTableExcelCol(i)),
+  ...range(20).map(i => makeReactTableExcelCol(i)),
 ]
 
-export const DEFAULT_TABLE_ROWS = range(50).map((i) =>
+export const DEFAULT_TABLE_ROWS = range(50).map(i =>
   makeReactTableExcelIndexCell(i)
 )
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 32.8 (Apr, 2026)
+
+### Changed
+
+- Updating libs etc to match Astro.
+
+
 ## 32.6 (Apr, 2026)
 
 ### Changed

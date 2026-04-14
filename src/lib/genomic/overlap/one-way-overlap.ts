@@ -1,6 +1,6 @@
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
-import { SeriesData } from '@/lib/dataframe'
+import type { SeriesData } from '@/lib/dataframe'
 import { fill } from '@/lib/fill'
 import { range } from '@/lib/math/range'
 import { NA } from '@/lib/text/text'
@@ -24,12 +24,12 @@ export function oneWayFromDataframes(
   let locs: GenLoc[] = []
 
   if (ret.get(0, 0).toString().match(LOC_REGEX)) {
-    locs = ret.col(0).values.map((v) => parseGenLoc(v as string))
+    locs = ret.col(0).values.map(v => parseGenLoc(v as string))
   } else {
     // assume 3 col bed format
 
     locs = zip(ret.col(0).values, ret.col(1).values, ret.col(2).values).map(
-      (v) => new GenLoc(v[0] as string, v[1] as number, v[2] as number)
+      v => new GenLoc(v[0] as string, v[1] as number, v[2] as number)
     )
   }
 
@@ -38,7 +38,7 @@ export function oneWayFromDataframes(
   for (const table of overlapTables) {
     const blockSearch = new BlockSearch<SeriesData[]>()
 
-    const colNames = table.columns.map((name) => `${table.name} ${name}`)
+    const colNames = table.columns.map(name => `${table.name} ${name}`)
 
     for (const i of range(table.shape[0])) {
       let loc: GenLoc
@@ -67,7 +67,7 @@ export function oneWayFromDataframes(
         // if there are multiple features, concatenate each one
         for (const ci of range(newCols.length)) {
           const text = range(features.length)
-            .map((fi) => features[fi]![ci]!)
+            .map(fi => features[fi]![ci]!)
             .join(';')
 
           newCols[ci]![ri]! = text

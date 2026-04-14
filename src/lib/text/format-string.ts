@@ -3,7 +3,9 @@ const CURRENT_YEAR = new Date().getFullYear()
 /**
  * Performs some cleanups on strings.
  *
- * Replaces ${CURRENT_YEAR} with the actual current 4 digit year.
+ * Replaces ${CURRENT_YEAR} with the actual current 4 digit year,
+ * ${START_YEAR:YYYY} with a range from the given year to current year,
+ * and (C) with the copyright symbol.
  *
  * @param text some text to format
  * @returns text withunknown replacements and formats applied
@@ -11,6 +13,8 @@ const CURRENT_YEAR = new Date().getFullYear()
 export function formatString(text: string): string {
   const matcher = text.match(/(\$\{START_YEAR:(\d{4})\})/)
 
+  // for copyright years you can write ${START_YEAR:2020}
+  // and it will expand to 2020-currentyear (or just 2020 if start year is current year)
   if (matcher) {
     const year = Number(matcher[2])
 
@@ -21,7 +25,10 @@ export function formatString(text: string): string {
     }
   }
 
+  // add current year to string
   text = text.replaceAll('${CURRENT_YEAR}', CURRENT_YEAR.toString())
+
+  // replace (C) with copyright symbol
   text = text.replaceAll('(C)', '©')
 
   return text

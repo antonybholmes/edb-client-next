@@ -67,12 +67,9 @@ export const useEdbSettingsStore = create<IEdbSettingsStore>()(
     set => ({
       ...DEFAULT_EDB_SETTINGS,
       updateSettings: (settings: Partial<IEdbSettings>) => {
-        console.log('Updating EDB settings', settings)
-
-        set(state => ({
-          ...state,
+        set({
           ...settings,
-        }))
+        })
       },
     }),
     {
@@ -84,7 +81,6 @@ export const useEdbSettingsStore = create<IEdbSettingsStore>()(
 
 export function useEdbSettings(): {
   settings: IEdbSettings
-
   updateSettings: (settings: Partial<IEdbSettings>) => void
   resetSettings: () => void
   toggleHistorySidebar: () => void

@@ -19,10 +19,6 @@ export function useTheme(): {
   setTheme: (theme: Theme) => void
   resetTheme: () => void
 } {
-  // const [theme, setTheme] = useState<Theme>(() => {
-  //   return (localStorage.getItem(THEME_KEY) as Theme) ?? DEFAULT_THEME
-  // })
-
   const [theme, setTheme] = useState<Theme>(DEFAULT_THEME)
 
   useEffect(() => {

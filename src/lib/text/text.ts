@@ -89,7 +89,38 @@ export function truncate(text: string, options: ITruncateOptions = {}) {
   )
 }
 
-export function formattedList(values: string[]): string {
+interface IformatListOptions {
+  delimiter?: string
+  finalDelimiter?: string | null | undefined
+  useOxfordComma?: boolean
+  useSpaces?: boolean
+}
+
+/**
+ * Formats a list of strings into a human-readable string.
+ * For example, ['apple', 'banana', 'cherry'] becomes
+ * 'apple, banana, and cherry'.
+ *
+ * @param values An array of strings to format.
+ * @param options Options for formatting the list, including:
+ * - `delimiter`: The delimiter to use between items (default is ',').
+ * - `finalDelimiter`: The delimiter to use before the last item (default is 'and').
+ * - `useOxfordComma`: Whether to use the Oxford comma (default is true).
+ * - `useSpaces`: Whether to include spaces after delimiters (default is true).
+ *
+ * @returns A formatted string.
+ */
+export function formattedList(
+  values: string[],
+  options: IformatListOptions = {}
+): string {
+  let {
+    delimiter = ',',
+    finalDelimiter = 'and',
+    useOxfordComma: oxfordComma = true,
+    useSpaces = true,
+  } = options
+
   if (values.length === 0) {
     return ''
   }
@@ -98,9 +129,25 @@ export function formattedList(values: string[]): string {
     return values[0]!
   }
 
+  delimiter = delimiter.trim()
+
+  if (!finalDelimiter) {
+    finalDelimiter = delimiter
+  }
+
+  finalDelimiter = finalDelimiter.trim()
+
+  delimiter = useSpaces ? delimiter + ' ' : delimiter
+
+  if (finalDelimiter === 'and') {
+    finalDelimiter = oxfordComma ? ', and ' : ' and '
+  } else {
+    finalDelimiter = useSpaces ? finalDelimiter + ' ' : finalDelimiter
+  }
+
   return (
-    values.slice(0, values.length - 1).join(', ') +
-    ', and ' +
+    values.slice(0, values.length - 1).join(delimiter) +
+    finalDelimiter +
     values[values.length - 1]
   )
 }

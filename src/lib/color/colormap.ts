@@ -53,7 +53,7 @@ export class ColorMap {
 
   constructor(name: string, cmap: (string | IRGBA)[]) {
     this._name = name
-    this._cmap = cmap.map((c) => {
+    this._cmap = cmap.map(c => {
       if (typeof c === 'string') {
         return hexToRgba(c)
       } else {
@@ -510,7 +510,7 @@ export const REDS_CMAP: ColorMap = new ColorMap('Reds', [
 //  ],
 //})
 
-// export const TAB10_CMAP: ColorMap = new ColorMap('Tab10',  TAB10_PALETTE)
+// export const TAB10_CMAP: ColorMap = new ColorMap('Tab10', TAB10_PALETTE)
 // export const TABLEAU_20_CMAP: ColorMap = new ColorMap(
 //   'Tableu20',
 //   TABLEAU_20_PALETTE

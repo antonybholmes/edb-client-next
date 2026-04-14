@@ -5,7 +5,7 @@ import { API_DNA_URL } from '@/lib/edb/edb'
 import { TIME_5_MINUTES_MS } from '@/consts'
 
 import { QueryClient, useQuery } from '@tanstack/react-query'
-import { SeriesData } from '../dataframe'
+import type { SeriesData } from '../dataframe'
 import { AnnotationDataFrame } from '../dataframe/annotation-dataframe'
 import { httpFetch } from '../http/http-fetch'
 import { GenLoc, locStr, type IGenomicLocation } from './genomic'
@@ -263,7 +263,7 @@ export function useDNAQuery(
 
 export function dnaToJson(seqs: IDNA[]): string {
   return JSON.stringify(
-    seqs.map((seq) => ({
+    seqs.map(seq => ({
       chr: seq.location.chr,
       start: seq.location.start,
       end: seq.location.end,
