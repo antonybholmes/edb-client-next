@@ -178,6 +178,7 @@ export function AdminUsersPage() {
 
   const columns = [
     columnHelper.accessor((row) => row, {
+      id: 'user',
       header: 'User',
       cell: (props) => (
         <BaseCol className="text-xs gap-0.5 truncate">
@@ -196,6 +197,7 @@ export function AdminUsersPage() {
     }),
 
     columnHelper.accessor('groups', {
+      id: 'groups',
       header: 'Groups',
       cell: (props) => (
         <BaseCol className="gap-y-0.5">
@@ -209,6 +211,7 @@ export function AdminUsersPage() {
     }),
 
     columnHelper.accessor('groups', {
+      id: 'roles',
       header: 'Roles',
       cell: (props) => (
         <BaseCol className="gap-y-0.5">
@@ -261,6 +264,7 @@ export function AdminUsersPage() {
             <TrashIcon
               stroke="stroke-foreground/25"
               className="group-hover:stroke-red-500"
+              w="w-4"
             />
           </button>
         </VCenterRow>

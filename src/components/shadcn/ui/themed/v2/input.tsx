@@ -85,9 +85,7 @@ export interface IPlaceholderProps extends IDivProps {
 }
 
 export interface IInputProps
-  extends
-    ComponentProps<typeof InputPrimitive>,
-    VariantProps<typeof inputVariants> {
+  extends ComponentProps<'input'>, VariantProps<typeof inputVariants> {
   error?: boolean
   inputCls?: string
   inputStyle?: CSSProperties
@@ -128,7 +126,7 @@ export function Input({
   onChange,
   onTextChange,
   onTextChanged,
-  style,
+  style = {},
   className,
   'aria-label': ariaLabel,
   ...props
@@ -183,12 +181,12 @@ export function Input({
         disabled={disabled}
         readOnly={readOnly}
         autoComplete={autoComplete}
-        onChange={e => {
+        onChange={(e) => {
           setValue(e.currentTarget.value)
           onTextChange?.(e.currentTarget.value)
           onChange?.(e)
         }}
-        onKeyDown={e => {
+        onKeyDown={(e) => {
           //console.log(e)
           if (e.key === 'Enter') {
             onTextChanged?.(e.currentTarget.value)
