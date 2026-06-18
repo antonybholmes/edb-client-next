@@ -8,9 +8,10 @@ export function ChangelogPage({ contentHtml }: { contentHtml: string }) {
   return (
     <>
       <HeaderLayout title="Change Log">
-        <MarkdownContent className="changelog p-6">
-          {contentHtml}
-        </MarkdownContent>
+        <MarkdownContent
+          className="changelog p-6"
+          dangerouslySetInnerHTML={{ __html: contentHtml }}
+        />
       </HeaderLayout>
     </>
   )

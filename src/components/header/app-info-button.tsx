@@ -51,7 +51,7 @@ export function AppInfoButton({
     <HeaderButton
       ref={ref}
       data-checked={modalVisible}
-      className={cn('hidden md:flex font-semibold text-sm', className)}
+      className={cn('hidden md:flex font-medium text-sm', className)}
       onClick={() => {
         setModalVisible(true)
         openDialog({

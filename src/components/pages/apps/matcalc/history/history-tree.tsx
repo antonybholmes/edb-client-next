@@ -26,6 +26,7 @@ export function HistoryTree({
     }
 
     for (const app of getApps(store, state)) {
+      console.log('app', app)
       const appTab: ITab = {
         id: app.id,
         path: pathJoin(app),

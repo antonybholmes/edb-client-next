@@ -2,22 +2,23 @@
 
 import { BaseCol } from '@/components/layout/base-col'
 import { Auth0Provider } from '@auth0/nextjs-auth0/client'
-import { Inter } from 'next/font/google'
+import { Geist } from 'next/font/google'
 import { ReactNode } from 'react'
 import './globals.css'
-// const geist = Geist({
-//   subsets: ['latin'],
-// })
+const primaryFont = Geist({
+  subsets: ['latin'],
+  variable: '--font-primary',
+})
 
 // const geistMono = Geist_Mono({
 //   variable: "--font-geist-mono",
 //   subsets: ["latin"],
 // });
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-primary',
-})
+// const inter = Inter({
+//   subsets: ['latin'],
+//   variable: '--font-primary',
+// })
 
 // export const metadata: Metadata = {
 //   title: APP_NAME,
@@ -32,7 +33,7 @@ export default function Layout({
   return (
     <html lang="en" className="h-full">
       <body
-        className={`${inter.className} antialiased margin-0 h-full min-h-screen flex flex-col bg-body text-base font-normal`}
+        className={`${primaryFont.className} antialiased margin-0 h-full min-h-screen flex flex-col bg-body text-base font-normal`}
       >
         {/* <CsrfProvider>{children}</CsrfProvider> */}
         {/* <CoreProviders>{children}</CoreProviders> */}

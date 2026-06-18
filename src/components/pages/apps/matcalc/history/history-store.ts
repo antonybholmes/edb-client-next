@@ -660,6 +660,8 @@ function resetStore(): IHistoryDataStore {
   }
 }
 
+// The store is a datastore of files and an undo state
+// that stores IHistoryState snapshots and patches for undo/redo functionality.
 function init(): IUndoState<IHistoryState> & IHistoryDataStore {
   const id = makeUuid()
 
@@ -842,28 +844,31 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
         (a) => a.name.toLowerCase() === nl || a.id.toLowerCase() === nl
       )
 
+      console.log('all aps', get().apps)
+
       addAction(
         `Open ${name} app`,
         '',
         (state: IHistoryState) => {
           //const { branch } = newDefaultBranch()
 
-          // only create a new app if it doesn't already exist.
-          // If it does, just switch to it
-          if (!exists) {
-            // Remove default app if it's the first in the order
-            // if (state.appOrder[0] === DEFAULT_APP.id) {
-            //   state.appOrder.shift()
-            // }
-
-            state.appOrder.push(app.id)
-
-            state.fileOrder[app.id] = [DEFAULT_FILE.id]
-            state.sheetOrder[DEFAULT_FILE.id] = [DEFAULT_SHEET.id]
-          }
-
           // switch to the new app
           state.currentApp = app.id
+
+          if (!state.appOrder.includes(state.currentApp)) {
+            state.appOrder.push(app.id)
+          }
+
+          state.fileOrder[state.currentApp] = [DEFAULT_FILE.id]
+          state.sheetOrder[DEFAULT_FILE.id] = [DEFAULT_SHEET.id]
+
+          console.log(
+            'b',
+            exists,
+            name,
+            app.id,
+            state.fileOrder[state.currentApp]
+          )
 
           const files = state.fileOrder[state.currentApp]!
           state.currentFile = files[files.length - 1]!
@@ -1766,7 +1771,12 @@ export function getApps(
   store: IHistoryDataStore,
   state: IHistoryState
 ): IHistoryApp[] {
-  return state.appOrder.map((id) => store.apps[id]!)
+  console.log('order', state.appOrder)
+  console.log('apps', store.apps)
+
+  return state.appOrder
+    .filter((id) => id in store.apps)
+    .map((id) => store.apps[id]!)
 }
 
 export function getFiles(
