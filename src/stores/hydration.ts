@@ -1,15 +1,6 @@
 import { useEffect, useState } from 'react'
-import type { StoreApi } from 'zustand'
 
-type PersistStore = StoreApi<any> & {
-  persist: {
-    hasHydrated: () => boolean
-    onHydrate: (fn: () => void) => () => void
-    onFinishHydration: (fn: () => void) => () => void
-  }
-}
-
-export const useHydration = (store: PersistStore) => {
+export const useHydration = (store: any) => {
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
