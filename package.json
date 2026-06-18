@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 8000 --turbopack",
     "build": "next build",
-    "update-module-version": "tsx scripts/update-module-version.ts",
+    "update-app-version": "tsx scripts/update-app-version.ts",
     "update-version": "tsx scripts/update-version.ts",
     "make-changelog-markdown": "tsx scripts/make-changelog-markdown.ts",
     "dev-tina": "tinacms dev --port 4001 --datalayer-port 9006 -c \"astro dev\"",

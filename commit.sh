@@ -13,7 +13,8 @@ then
 	type="Changed"
 fi
 
-pnpm update-module-version
+pnpm update-app-version
+pnpm discover-apps
 pnpm update-version
 tsx scripts/update-changelog.ts "${msg}" "${type}"
 pnpm make-changelog-markdown
