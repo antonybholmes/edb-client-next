@@ -23,6 +23,7 @@ import type { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
 import { PATH_SEP } from '@/lib/http/urls'
 import type { IClusterFrame } from '@/lib/math/hcluster'
 import { formattedList, type UndefNullStr } from '@/lib/text/text'
+import { useHydration } from '@/stores/hydrated'
 import {
   DEFAULT_BOX_PLOT_DISPLAY_PROPS,
   type IBoxPlotDisplayOptions,
@@ -524,9 +525,9 @@ export function pathJoin(...parts: ({ id: string } | UndefNullStr)[]): string {
   return (
     '/' +
     parts
-      .filter(part => part !== null && part !== undefined)
-      .map(part => (typeof part === 'string' ? part.trim() : part.id))
-      .map(part => part.split(PATH_SEP))
+      .filter((part) => part !== null && part !== undefined)
+      .map((part) => (typeof part === 'string' ? part.trim() : part.id))
+      .map((part) => part.split(PATH_SEP))
       .flat() // split parts by path separator to avoid issues with nested paths and flatten the result
 
       .filter((p, pi) => pi > 0 || p !== '') // remove empty leading
@@ -731,7 +732,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
     // use the current state for producing the next state. Inverse
     // patches are used for undo functionality.
 
-    set(state => {
+    set((state) => {
       const result = historyManager.applyUpdate(
         state,
         name,
@@ -814,19 +815,19 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
     undo: () => {
       // the past becomes the present, the current present becomes the future
       // and the past loses an entry
-      set(state => ({
+      set((state) => ({
         ...historyManager.undo(state),
       }))
     },
 
     redo: () => {
-      set(state => ({
+      set((state) => ({
         ...historyManager.redo(state),
       }))
     },
 
     seek: (step: number | string) => {
-      set(state => ({
+      set((state) => ({
         ...historyManager.goto(state, step),
       }))
     },
@@ -838,7 +839,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
 
       // check if app with this name already exists. If it does, we don't want to create a new app, just switch to it
       const exists = Object.values(get().apps).some(
-        a => a.name.toLowerCase() === nl || a.id.toLowerCase() === nl
+        (a) => a.name.toLowerCase() === nl || a.id.toLowerCase() === nl
       )
 
       addAction(
@@ -916,7 +917,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
             // remove default file if it exists. Default file
             // must always be first
             const files = (state.fileOrder[app] || []).filter(
-              id => id !== DEFAULT_FILE.id
+              (id) => id !== DEFAULT_FILE.id
             )
 
             state.fileOrder[app] = [...files, file.id]
@@ -925,11 +926,11 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
             state.fileOrder[app] = [file.id] // [state.fileOrder[appId]![0]!, file.id]
           }
 
-          state.sheetOrder[file.id] = sheets.map(s => s.id)
+          state.sheetOrder[file.id] = sheets.map((s) => s.id)
 
-          state.plotOrder[file.id] = plots.map(p => p.id)
-          state.groupOrder[file.id] = groups.map(g => g.id)
-          state.genesetOrder[file.id] = genesets.map(g => g.id)
+          state.plotOrder[file.id] = plots.map((p) => p.id)
+          state.groupOrder[file.id] = groups.map((g) => g.id)
+          state.genesetOrder[file.id] = genesets.map((g) => g.id)
 
           state.currentFile = file.id
           state.currentSheet = sheets[sheets.length - 1]!.id
@@ -1000,13 +1001,13 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
         getFormattedShape(sheets[0]!),
         (state: IHistoryState) => {
           // user cannot add default sheet
-          const ids = sheets.map(s => s.id) //.filter(id => id !== DEFAULT_SHEET.id)
+          const ids = sheets.map((s) => s.id) //.filter(id => id !== DEFAULT_SHEET.id)
 
           if (mode === 'append') {
             console.log('Appending sheets:', ids)
             // when appending, remove default sheet if it exists to avoid confusion, but keep it at the beginning of the order if it's still there since it's a special sheet that should always be available
             const sheets = (state.sheetOrder[file] || []).filter(
-              id => id !== DEFAULT_SHEET.id
+              (id) => id !== DEFAULT_SHEET.id
             )
             state.sheetOrder[file] = [...sheets, ...ids]
           } else {
@@ -1056,9 +1057,9 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
         '',
         (state: IHistoryState) => {
           if (mode === 'append') {
-            state.plotOrder[file]?.push(...plots.map(p => p.id))
+            state.plotOrder[file]?.push(...plots.map((p) => p.id))
           } else {
-            state.plotOrder[file] = plots.map(p => p.id)
+            state.plotOrder[file] = plots.map((p) => p.id)
           }
 
           state.currentPlot = plots[plots.length - 1]!.id
@@ -1077,7 +1078,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
         return
       }
 
-      const pathIds: PathId[] = paths.map(path => {
+      const pathIds: PathId[] = paths.map((path) => {
         return toPathId(path)
       })
 
@@ -1140,7 +1141,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
         return
       }
 
-      const pathIds: PathId[] = paths.map(path => {
+      const pathIds: PathId[] = paths.map((path) => {
         return toPathId(path)
       })
 
@@ -1226,14 +1227,14 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
       }
 
       addAction(
-        `Add ${formattedList(groups.map(gs => gs.name))} group${groups.length > 1 ? 's' : ''}`,
+        `Add ${formattedList(groups.map((gs) => gs.name))} group${groups.length > 1 ? 's' : ''}`,
         '',
 
         (state: IHistoryState) => {
           if (mode === 'append') {
-            state.groupOrder[file]?.push(...groups.map(g => g.id))
+            state.groupOrder[file]?.push(...groups.map((g) => g.id))
           } else {
-            state.groupOrder[file] = groups.map(g => g.id)
+            state.groupOrder[file] = groups.map((g) => g.id)
           }
         },
         (store: IHistoryDataStore) => {
@@ -1281,7 +1282,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
 
       addAction(`Remove groups`, '', (state: IHistoryState) => {
         state.groupOrder[file] = state.groupOrder[file]!.filter(
-          id => !ids.includes(id)
+          (id) => !ids.includes(id)
         )
       })
     },
@@ -1314,13 +1315,13 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
       }
 
       addAction(
-        `Add ${formattedList(genesets.map(gs => gs.name))} geneset${genesets.length > 1 ? 's' : ''}`,
+        `Add ${formattedList(genesets.map((gs) => gs.name))} geneset${genesets.length > 1 ? 's' : ''}`,
         '',
         (state: IHistoryState) => {
           if (mode === 'append') {
-            state.genesetOrder[file]?.push(...genesets.map(g => g.id))
+            state.genesetOrder[file]?.push(...genesets.map((g) => g.id))
           } else {
-            state.genesetOrder[file] = genesets.map(g => g.id)
+            state.genesetOrder[file] = genesets.map((g) => g.id)
           }
         },
         (store: IHistoryDataStore) => {
@@ -1358,7 +1359,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
         '',
         (state: IHistoryState) => {
           state.genesetOrder[file] = state.genesetOrder[file]!.filter(
-            id => !ids.includes(id)
+            (id) => !ids.includes(id)
           )
         }
       )
@@ -1451,6 +1452,7 @@ export function useHistory(): {
   // tracks the last item entered in the history
   currentSelections: ISelectionPath[]
   currentSelection: ISelectionPath | undefined
+  hydrated: boolean
   reset: () => void
   resetApp: (app: OptStrOrIdObj) => void
   openApp: (name: string) => void
@@ -1481,6 +1483,8 @@ export function useHistory(): {
   IGenesetSlice {
   const store = useHistoryStore() as IHistoryDataStore
 
+  const hydrated = useHydration(store)
+
   const {
     state,
     history,
@@ -1493,7 +1497,7 @@ export function useHistory(): {
     currentSelections,
     currentSelection,
   } = useHistoryStore(
-    useShallow(state => {
+    useShallow((state) => {
       const presentEntry = state.history[state.cursor]
 
       return {
@@ -1516,39 +1520,38 @@ export function useHistory(): {
     })
   )
 
-  const openApp = useHistoryStore(state => state.openApp)
-  const openFile = useHistoryStore(state => state.openFile)
-  const reset = useHistoryStore(state => state.reset)
-  const resetApp = useHistoryStore(state => state.resetApp)
-  const remove = useHistoryStore(state => state.remove)
-  const removeFiles = useHistoryStore(state => state.removeFiles)
+  const openApp = useHistoryStore((state) => state.openApp)
+  const openFile = useHistoryStore((state) => state.openFile)
+  const reset = useHistoryStore((state) => state.reset)
+  const resetApp = useHistoryStore((state) => state.resetApp)
+  const remove = useHistoryStore((state) => state.remove)
+  const removeFiles = useHistoryStore((state) => state.removeFiles)
 
-  const addSheets = useHistoryStore(state => state.addSheets)
-  const reorderSheets = useHistoryStore(state => state.reorderSheets)
-  const addPlots = useHistoryStore(state => state.addPlots)
-  const reorderPlots = useHistoryStore(state => state.reorderPlots)
-  const updatePlot = useHistoryStore(state => state.updatePlot)
+  const addSheets = useHistoryStore((state) => state.addSheets)
+  const reorderSheets = useHistoryStore((state) => state.reorderSheets)
+  const addPlots = useHistoryStore((state) => state.addPlots)
+  const reorderPlots = useHistoryStore((state) => state.reorderPlots)
+  const updatePlot = useHistoryStore((state) => state.updatePlot)
 
-  const addGroups = useHistoryStore(state => state.addGroups)
-  const updateGroup = useHistoryStore(state => state.updateGroup)
-  const removeGroups = useHistoryStore(state => state.removeGroups)
-  const reorderGroups = useHistoryStore(state => state.reorderGroups)
+  const addGroups = useHistoryStore((state) => state.addGroups)
+  const updateGroup = useHistoryStore((state) => state.updateGroup)
+  const removeGroups = useHistoryStore((state) => state.removeGroups)
+  const reorderGroups = useHistoryStore((state) => state.reorderGroups)
 
-  const addGenesets = useHistoryStore(state => state.addGenesets)
-  const updateGeneset = useHistoryStore(state => state.updateGeneset)
-  const removeGenesets = useHistoryStore(state => state.removeGenesets)
-  const reorderGenesets = useHistoryStore(state => state.reorderGenesets)
+  const addGenesets = useHistoryStore((state) => state.addGenesets)
+  const updateGeneset = useHistoryStore((state) => state.updateGeneset)
+  const removeGenesets = useHistoryStore((state) => state.removeGenesets)
+  const reorderGenesets = useHistoryStore((state) => state.reorderGenesets)
 
-  const goto = useHistoryStore(state => state.goto)
+  const goto = useHistoryStore((state) => state.goto)
 
-  const undo = useHistoryStore(state => state.undo)
-  const redo = useHistoryStore(state => state.redo)
-  const seek = useHistoryStore(state => state.seek)
+  const undo = useHistoryStore((state) => state.undo)
+  const redo = useHistoryStore((state) => state.redo)
+  const seek = useHistoryStore((state) => state.seek)
 
   return {
     store,
     state,
-
     history,
     cursor,
     present,
@@ -1558,6 +1561,7 @@ export function useHistory(): {
     currentPlot,
     currentSelections,
     currentSelection,
+    hydrated,
     openApp,
     openFile,
 
@@ -1589,7 +1593,7 @@ export function useHistory(): {
 }
 
 export function useState(): IHistoryState {
-  return useHistoryStore(useShallow(state => state.present))
+  return useHistoryStore(useShallow((state) => state.present))
 }
 
 // export function pathSplit(path: string): string[] {
@@ -1608,7 +1612,7 @@ export function useApp(
   app: OptStrOrIdObj = undefined
 ): IHistoryApp | undefined {
   return useHistoryStore(
-    useShallow(state => {
+    useShallow((state) => {
       const aid = getAppId(state.present, { app })
       return state.apps[aid]
     })
@@ -1617,10 +1621,10 @@ export function useApp(
 
 export function useFiles(app: OptStrOrIdObj = undefined): IHistoryComp[] {
   return useHistoryStore(
-    useShallow(state => {
+    useShallow((state) => {
       const aid = getAppId(state.present, { app })
 
-      return (state.present.fileOrder[aid] || []).map(id => state.files[id]!)
+      return (state.present.fileOrder[aid] || []).map((id) => state.files[id]!)
     })
   )
 }
@@ -1637,7 +1641,7 @@ export function useFile(
   file: OptStrOrIdObj = undefined
 ): IHistoryComp | undefined {
   return useHistoryStore(
-    useShallow(state => {
+    useShallow((state) => {
       const fid = getFileId(state.present, { file })
       return state.files[fid]
     })
@@ -1646,16 +1650,18 @@ export function useFile(
 
 export function useGroups(file: OptStrOrIdObj = undefined): IClusterGroup[] {
   return useHistoryStore(
-    useShallow(state => {
+    useShallow((state) => {
       const fid = getFileId(state.present, { file })
-      return (state.present.groupOrder[fid] || []).map(id => state.groups[id]!)
+      return (state.present.groupOrder[fid] || []).map(
+        (id) => state.groups[id]!
+      )
     })
   )
 }
 
 export function useGroupName(file: OptStrOrIdObj = undefined): string {
   return useHistoryStore(
-    useShallow(state => {
+    useShallow((state) => {
       const fid = getFileId(state.present, { file })
       return state.groupNames[fid] || ''
     })
@@ -1664,10 +1670,10 @@ export function useGroupName(file: OptStrOrIdObj = undefined): string {
 
 export function useGenesets(file: OptStrOrIdObj = undefined): IGeneSet[] {
   return useHistoryStore(
-    useShallow(state => {
+    useShallow((state) => {
       const fid = getFileId(state.present, { file })
       return (state.present.genesetOrder[fid] || []).map(
-        id => state.genesets[id]!
+        (id) => state.genesets[id]!
       )
     })
   )
@@ -1677,7 +1683,7 @@ export function useSheet(
   sheet: OptStrOrIdObj = undefined
 ): DataFrameType | undefined {
   return useHistoryStore(
-    useShallow(state => {
+    useShallow((state) => {
       const sid = getSheetId(state.present, { sheet })
 
       return state.sheets[sid]
@@ -1690,24 +1696,24 @@ export function useSheets(
 ): DataFrameType[] {
   const { file } = opts
   return useHistoryStore(
-    useShallow(state => {
+    useShallow((state) => {
       const fid = getFileId(state.present, { file })
       const sheets = state.present.sheetOrder[fid] || []
       // return (
       //   removeDefaultSheets && sheets.length > 1 ? sheets.slice(1) : sheets
       // ).map(id => state.sheets[id]!)
-      return sheets.map(id => state.sheets[id]).filter(s => s !== undefined)
+      return sheets.map((id) => state.sheets[id]).filter((s) => s !== undefined)
     })
   )
 }
 
 export function usePlots(file: OptStrOrIdObj = undefined): HistoryPlot[] {
   return useHistoryStore(
-    useShallow(state => {
+    useShallow((state) => {
       const fid = getFileId(state.present, { file })
       return (state.present.plotOrder[fid] || [])
-        .map(id => state.plots[id])
-        .filter(p => p !== undefined)
+        .map((id) => state.plots[id])
+        .filter((p) => p !== undefined)
     })
   )
 }
@@ -1716,7 +1722,7 @@ export function usePlot(
   plot: OptStrOrIdObj = undefined
 ): HistoryPlot | undefined {
   return useHistoryStore(
-    useShallow(state => {
+    useShallow((state) => {
       const pid = getPlotId(state.present, { plot })
 
       return pid ? state.plots[pid] : undefined
@@ -1760,7 +1766,7 @@ export function getApps(
   store: IHistoryDataStore,
   state: IHistoryState
 ): IHistoryApp[] {
-  return state.appOrder.map(id => store.apps[id]!)
+  return state.appOrder.map((id) => store.apps[id]!)
 }
 
 export function getFiles(
@@ -1771,7 +1777,7 @@ export function getFiles(
   const { app } = opts
   const id = getAppId(state, { app })
 
-  return (state.fileOrder[id] || []).map(id => store.files[id]!)
+  return (state.fileOrder[id] || []).map((id) => store.files[id]!)
 }
 
 export function getSheets(
@@ -1782,7 +1788,7 @@ export function getSheets(
   const { file } = opts
   const id = getFileId(state, { file })
 
-  return (state.sheetOrder[id] || []).map(id => store.sheets[id]!)
+  return (state.sheetOrder[id] || []).map((id) => store.sheets[id]!)
 }
 
 export function getPlots(
@@ -1793,7 +1799,7 @@ export function getPlots(
   const { file } = opts
   const id = getFileId(state, { file })
 
-  return (state.plotOrder[id] || []).map(id => store.plots[id]!)
+  return (state.plotOrder[id] || []).map((id) => store.plots[id]!)
 }
 
 /**
@@ -1816,9 +1822,9 @@ export function getAllPlots(
 
   const fileIds = state.fileOrder[appId] || []
 
-  const plotIds = fileIds.flatMap(fileId => state.plotOrder[fileId] || [])
+  const plotIds = fileIds.flatMap((fileId) => state.plotOrder[fileId] || [])
 
-  return plotIds.map(id => store.plots[id]!)
+  return plotIds.map((id) => store.plots[id]!)
 }
 
 export function getGroups(
@@ -1830,7 +1836,7 @@ export function getGroups(
 
   const id = getFileId(state, { file })
 
-  return (state.groupOrder[id] || []).map(id => store.groups[id]!)
+  return (state.groupOrder[id] || []).map((id) => store.groups[id]!)
 }
 
 export function getGenesets(
@@ -1841,7 +1847,7 @@ export function getGenesets(
   const { file } = opts
   const id = getFileId(state, { file })
 
-  return (state.genesetOrder[id] || []).map(id => store.genesets[id]!)
+  return (state.genesetOrder[id] || []).map((id) => store.genesets[id]!)
 }
 
 export function findSheet(
@@ -1856,8 +1862,8 @@ export function findSheet(
   const lid = q.toLowerCase()
 
   return (state.sheetOrder[id] || [])
-    .map(id => store.sheets[id]!)
-    .find(s => s.id === q || s.name.toLowerCase() === lid)
+    .map((id) => store.sheets[id]!)
+    .find((s) => s.id === q || s.name.toLowerCase() === lid)
 }
 
 type PathId = {
@@ -1893,7 +1899,7 @@ function removeApp(state: IHistoryState, p: PathId) {
     return // cannot remove default
   }
 
-  state.appOrder = state.appOrder.filter(id => id !== p.app)
+  state.appOrder = state.appOrder.filter((id) => id !== p.app)
   delete state.fileOrder[p.app]
 }
 
@@ -1903,7 +1909,7 @@ function removeFile(state: IHistoryState, p: PathId) {
     return
   }
 
-  state.fileOrder[p.app] = state.fileOrder[p.app]!.filter(id => id !== p.file)
+  state.fileOrder[p.app] = state.fileOrder[p.app]!.filter((id) => id !== p.file)
 
   delete state.sheetOrder[p.file]
   delete state.plotOrder[p.file]
@@ -1930,7 +1936,7 @@ function removeSheet(state: IHistoryState, p: PathId) {
   }
 
   state.sheetOrder[p.file] = state.sheetOrder[p.file]!.filter(
-    id => id !== p.sheet
+    (id) => id !== p.sheet
   )
 
   console.log('Removing sheet', p.sheet, 'from file', p.file)
@@ -1941,7 +1947,9 @@ function removeSheet(state: IHistoryState, p: PathId) {
 }
 
 function removePlot(state: IHistoryState, p: PathId) {
-  state.plotOrder[p.file] = state.plotOrder[p.file]!.filter(id => id !== p.plot)
+  state.plotOrder[p.file] = state.plotOrder[p.file]!.filter(
+    (id) => id !== p.plot
+  )
 
   if (state.plotOrder[p.file]!.length > 0) {
     // if there are still plots left, select the previous one
@@ -1959,13 +1967,13 @@ function removePlot(state: IHistoryState, p: PathId) {
 
 function removeGroup(state: IHistoryState, p: PathId) {
   state.groupOrder[p.file] = state.groupOrder[p.file]!.filter(
-    id => id !== p.group
+    (id) => id !== p.group
   )
 }
 
 function removeGeneset(state: IHistoryState, p: PathId) {
   state.genesetOrder[p.file] = state.genesetOrder[p.file]!.filter(
-    id => id !== p.geneset
+    (id) => id !== p.geneset
   )
 }
 

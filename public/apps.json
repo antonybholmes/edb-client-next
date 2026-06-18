@@ -1,0 +1,218 @@
+[
+  {
+    "name": "Annotate",
+    "description": "Annotate genomic coordinates.",
+    "color": "#FA8072",
+    "version": "20.6.0",
+    "copyright": "© 2024-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.579Z",
+    "hash": "16193811b25591ca96195d48003c52be7341b7d2fad48908fffa201a35fb583f",
+    "build": 812
+  },
+  {
+    "name": "Bio Draw",
+    "description": "Biological diagrams",
+    "version": "16.4.8",
+    "copyright": "© 2025-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.578Z",
+    "hash": "7016cf7dc91d5911066380461044dd2f6a031e2c4e9770531ef05db80011daa9",
+    "build": 494
+  },
+  {
+    "name": "Convert",
+    "description": "Convert gene symbols.",
+    "color": "#20B2AA",
+    "version": "18.8.8",
+    "copyright": "© 2024-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.578Z",
+    "hash": "b0c1c9180c9193ecc7003d4c417b048d4306463f74c08cecb6ab073e347c9be2",
+    "build": 772
+  },
+  {
+    "name": "DNA",
+    "description": "Get DNA sequences",
+    "color": "#FF4500",
+    "version": "20.4.6",
+    "copyright": "© 2024-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.579Z",
+    "hash": "b5f8c4f0b02bb28fafd566843424f0e89b63e20fccdc2db295190ebb99fda18a",
+    "build": 786
+  },
+  {
+    "name": "Get DNA",
+    "description": "Get DNA for genomic locations.",
+    "version": "19.0.0",
+    "copyright": "© 2022-2026 Antony Holmes",
+    "modified": "2026-06-16T02:51:34.819Z",
+    "hash": "eead60ec864c2a33931ddb571f08c424eb1813c7806780e80d526239f9ebf664",
+    "build": 668
+  },
+  {
+    "name": "GSEA Plot",
+    "description": "Format GSEA plots.",
+    "color": "#ffb366",
+    "version": "21.4.8",
+    "copyright": "© 2024-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.579Z",
+    "hash": "50c1ecd850a281abd5416b9c78f8f6808db5e94fb2ccd179c617e838a6be7954",
+    "build": 714
+  },
+  {
+    "name": "GSEA Web",
+    "description": "GSEA in a web app.",
+    "color": "#4169E1",
+    "version": "3.2.2",
+    "copyright": "© 2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.579Z",
+    "hash": "c1e2b07b8d9f8504464a34d6fb6cb67eee4ea67ba757b9f8f11918ae52230603",
+    "build": 32
+  },
+  {
+    "name": "History Viewer",
+    "description": "Visualize and manage the history of changes made to data within the application.",
+    "version": "3.8.4",
+    "copyright": "© 2025-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.580Z",
+    "hash": "19e9c128065b1f03b72f4dcf449605075737c72e13cb04016dd88d6562e223bd",
+    "build": 96
+  },
+  {
+    "name": "Hubs",
+    "description": "Load UCSC Genome Browser hubs.",
+    "color": "#0000ff",
+    "version": "22.0.8",
+    "copyright": "© 2025-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.580Z",
+    "hash": "8d285542895f51032c8c2c981c37e1aba7fe53fff0637cce80189efc10f5973f",
+    "build": 484
+  },
+  {
+    "name": "Info",
+    "description": "Information about Experiments web client.",
+    "version": "3.4.0",
+    "copyright": "© 2023-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.580Z",
+    "hash": "df8c2b70d18737b0f64b218a403faebb650bd909b40ffc3d003ce7892a497bd5",
+    "build": 80
+  },
+  {
+    "name": "Lollipop",
+    "description": "Create lollipop plots.",
+    "color": "#DA70D6",
+    "version": "27.4.6",
+    "copyright": "© 2024-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.583Z",
+    "hash": "b6ce9af502f4f13dc07c2a99d07f4c4a93822f7f270ecc324a9c4d9fffb6856d",
+    "build": 1032
+  },
+  {
+    "name": "Matcalc",
+    "description": "Tabular data analysis.",
+    "color": "#40bf80",
+    "version": "46.6.6",
+    "copyright": "© 2023-2026 Antony Holmes",
+    "modified": "2026-06-18T19:28:04.317Z",
+    "hash": "cbb4fd9a974987c6e82b874c562b39aa7561d6e8384049e3556fce80bb5b51da",
+    "build": 1614
+  },
+  {
+    "name": "Motifs",
+    "description": "View motif logo plots.",
+    "color": "#009933",
+    "version": "48.0.8",
+    "copyright": "© 2024-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.579Z",
+    "hash": "85978716bc44ade77f5436558b2c9e5d6660c0b9977c8627148b37bf21dfb320",
+    "build": 918
+  },
+  {
+    "name": "Oncoplot",
+    "description": "Create oncoplots.",
+    "color": "#ff99cc",
+    "version": "28.8.0",
+    "copyright": "© 2024-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.584Z",
+    "hash": "b567f05aa6a9e504dbca088d66a11448afab0c6ac0171018b212a496729caa92",
+    "build": 1030
+  },
+  {
+    "name": "Overlap",
+    "description": "Overlap sets of genomic coordinates.",
+    "color": "#008080",
+    "version": "18.6.2",
+    "copyright": "© 2025-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.579Z",
+    "hash": "181ff5f09b648a2b62b911800545a374a7d5646026c157e038e822756e964754",
+    "build": 520
+  },
+  {
+    "name": "Pathway",
+    "description": "Pathway enrichment",
+    "color": "#6495ED",
+    "version": "36.0.6",
+    "copyright": "© 2024-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.579Z",
+    "hash": "05b8454a2d7739ff07969578861f2f28037c08ba26d599989baa25d798f2d002",
+    "build": 850
+  },
+  {
+    "name": "Rev Comp",
+    "description": "Reverse Complement DNA.",
+    "color": "#808080",
+    "version": "17.8.4",
+    "copyright": "© 2024-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.579Z",
+    "hash": "027ed57bce0662fe602b364bd6fae5fb78c8fd488628f0de2ed73874fb5b428d",
+    "build": 590
+  },
+  {
+    "name": "Seq Browser",
+    "description": "Plot NGS data and make figures.",
+    "color": "#FF0000",
+    "version": "30.8.6",
+    "copyright": "© 2024-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.580Z",
+    "hash": "24bc39694e2fa6d8216205944e5f389cb14e073761be7efa085686e4f272db0d",
+    "build": 1006
+  },
+  {
+    "name": "Single Cell",
+    "description": "Explore Single Cell data.",
+    "color": "#9966ff",
+    "version": "26.4.0",
+    "copyright": "© 2024-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.583Z",
+    "hash": "a27709d4d8319566c085f7053db6ee2ec4ea59f49f381f170e85619222d7a19a",
+    "build": 780
+  },
+  {
+    "name": "Table Viewer",
+    "description": "A basic viewer for tabular data.",
+    "version": "14.6.4",
+    "color": "#c0c0c0",
+    "copyright": "© 2024-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.583Z",
+    "hash": "d6dc4ac30340b32adacbb56977e19c4d9d8ac3a2f8c139e9d3eeacc935c7d075",
+    "build": 450
+  },
+  {
+    "name": "Variants",
+    "description": "WGS variant data explorer.",
+    "color": "#FA8072",
+    "version": "26.4.6",
+    "copyright": "© 2024-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.584Z",
+    "hash": "c641008e5efa49f7fb6ff03f27a16d97bf762142a0d4aad6b6109930bc4d51f9",
+    "build": 956
+  },
+  {
+    "name": "Venn",
+    "description": "Make Venn diagrams.",
+    "color": "#00008B",
+    "version": "26.2.2",
+    "copyright": "© 2023-2026 Antony Holmes",
+    "modified": "2026-06-18T19:27:55.583Z",
+    "hash": "ae7e1f0939095988c136b9973ddaeb17285189571acb094bb37c0c5892acda77",
+    "build": 830
+  }
+]
