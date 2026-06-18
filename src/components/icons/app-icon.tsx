@@ -8,7 +8,7 @@ export function AppIcon({ size = 1.5, className }: IIconProps) {
       version="1.1"
       viewBox="0 0 14.5 14.5"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn(ICON_CLS, size, className)}
+      className={cn(ICON_CLS, className)}
       style={{ width: s, height: s }}
     >
       <g transform="translate(-33.407 -100.86)" id="g12">

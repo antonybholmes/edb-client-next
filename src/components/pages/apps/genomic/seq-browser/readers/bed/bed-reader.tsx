@@ -1,4 +1,5 @@
-import { type IGenomicLocation } from '@/lib/genomic/genomic'
+import {} from '@/lib/genomic/genomic'
+import { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import type { ISampleBedFeatures } from '../../svg/bed-track-svg'
 import { BaseBedReader } from './base-bed-reader'
 
@@ -18,6 +19,6 @@ export class BedReader extends BaseBedReader {
   override async getFeatures(
     _location: IGenomicLocation
   ): Promise<IGenomicLocation[]> {
-    return this._features.regions.map(r => r.loc)
+    return this._features.regions.map((r) => r.loc)
   }
 }

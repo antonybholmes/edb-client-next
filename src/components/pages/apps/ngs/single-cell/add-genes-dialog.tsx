@@ -10,7 +10,7 @@ import { bearerHeaders } from '@/lib/http/urls'
 import { makeUuid } from '@/lib/id'
 import { textToLines } from '@/lib/text/lines'
 import { truncate } from '@/lib/text/text'
-import { queryClient } from '@/query'
+import { queryClient } from '@/qcp'
 import { Textarea } from '@/themed/textarea'
 import { Checkbox } from '@/themed/v2/check-box'
 import { useState } from 'react'
@@ -38,7 +38,7 @@ export function AddGenesDialog({ datasetId, onResponse }: IProps) {
 
     // if signature, put all genes into one geneset
     // else, make one geneset per gene
-    const signatures = makeSignature ? [ids] : ids.map(id => [id])
+    const signatures = makeSignature ? [ids] : ids.map((id) => [id])
 
     const genesets: IGeneSet[] = []
 
@@ -79,7 +79,7 @@ export function AddGenesDialog({ datasetId, onResponse }: IProps) {
       if (newGenes.length > 0) {
         const geneset = {
           id: makeUuid(),
-          name: truncate(newGenes.map(g => g.geneSymbol).join(',')),
+          name: truncate(newGenes.map((g) => g.geneSymbol).join(',')),
           genes: newGenes,
           mode: settings.gex.useGlobalRange
             ? 'global-gex'
@@ -92,7 +92,7 @@ export function AddGenesDialog({ datasetId, onResponse }: IProps) {
 
     if (genesets.length > 0) {
       updateSettings(
-        produce(settings, draft => {
+        produce(settings, (draft) => {
           draft.genesets.push(...genesets)
         })
       )
@@ -108,7 +108,7 @@ export function AddGenesDialog({ datasetId, onResponse }: IProps) {
     <OKCancelDialog
       open={true}
       title="Add gene plots"
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_OK) {
           search()
         }
@@ -141,7 +141,7 @@ export function AddGenesDialog({ datasetId, onResponse }: IProps) {
         id="filter"
         aria-label="Filter"
         value={text}
-        onChange={e => setText(e.target.value)}
+        onChange={(e) => setText(e.target.value)}
         placeholder="=aicda"
         className="h-32"
       />

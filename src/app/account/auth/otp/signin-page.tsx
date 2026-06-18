@@ -124,7 +124,7 @@ export function SignInPage() {
 
       addToast({
         id: makeUuid(),
-        title: config.appName,
+        title: config.name,
         description:
           'The sign in failed. Please check the one-time code and try again.',
         type: 'destructive',
@@ -174,7 +174,7 @@ export function SignInPage() {
 
         addToast({
           id: makeUuid(),
-          title: config.appName,
+          title: config.name,
           description:
             'If the email address is valid, you will receive a 6-digit code.',
         })
@@ -227,9 +227,9 @@ export function SignInPage() {
       >
         <CardHeader className="text-xl">
           <VCenterRow className="gap-x-2">
-            <AppIcon w="w-10" />
+            <AppIcon size={2} />
             <CardTitle>
-              {TEXT_SIGN_IN} to {config.appName}
+              {TEXT_SIGN_IN} to {config.name}
             </CardTitle>
           </VCenterRow>
         </CardHeader>
@@ -336,7 +336,7 @@ export function SignInPage() {
                   } else {
                     addToast({
                       id: makeUuid(),
-                      title: config.appName,
+                      title: config.name,
                       description: 'Please enter your email address.',
                       type: 'destructive',
                     })

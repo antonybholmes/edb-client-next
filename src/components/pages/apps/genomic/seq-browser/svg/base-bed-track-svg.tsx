@@ -2,7 +2,8 @@ import { type IDivProps } from '@/interfaces/div-props'
 
 import { type Axis } from '@/components/plot/axis'
 import { COLOR_BLACK } from '@/lib/color/color'
-import { locStr, type IGenomicLocation } from '@/lib/genomic/genomic'
+import { locStr } from '@/lib/genomic/genomic'
+import { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { cumsum } from '@/lib/math/cumsum'
 import { sum } from '@/lib/math/sum'
 import { formattedList, truncate } from '@/lib/text/text'
@@ -22,7 +23,7 @@ export function getBedTrackHeight(
 
   const h = settings.tracks.beds.collapsed
     ? tracks[0]!.displayOptions.height
-    : sum(tracks.map(track => track.displayOptions.height))
+    : sum(tracks.map((track) => track.displayOptions.height))
 
   console.log('Calculated bed track height:', h)
 
@@ -47,7 +48,7 @@ export function BaseBedTrackSvg({
 }: IProps) {
   const { settings } = useSeqBrowserSettings()
 
-  const trackHeights: number[] = tracks.map(track =>
+  const trackHeights: number[] = tracks.map((track) =>
     settings.tracks.beds.collapsed ? 0 : track.track.displayOptions.height
   )
 
@@ -70,7 +71,7 @@ export function BaseBedTrackSvg({
               settings.titles.position === 'right' ? 'start' : 'middle'
             }
           >
-            {truncate(formattedList(tracks.map(t => t.track.name)), {
+            {truncate(formattedList(tracks.map((t) => t.track.name)), {
               length: Math.round(xax.length / 10),
             })}
           </text>
@@ -101,7 +102,7 @@ export function BaseBedTrackSvg({
                     x={x1 - (settings.reverse ? w : 0)}
                     width={w}
                     height={h}
-                    rx={settings.tracks.beds.style === 'Rounded' ? h / 2 : 0}
+                    rx={settings.tracks.beds.style === 'rounded' ? h / 2 : 0}
                     fill={
                       track.track.displayOptions.fill.show
                         ? track.track.displayOptions.fill.value

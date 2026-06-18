@@ -2,14 +2,17 @@ import { type IDivProps } from '@/interfaces/div-props'
 
 import { API_BEDS_REGIONS_URL } from '@/lib/edb/edb'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
-import { locStr, type IGenomicLocation } from '@/lib/genomic/genomic'
+import { locStr } from '@/lib/genomic/genomic'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
-import { queryClient } from '@/query'
+
 import { useContext, useEffect, useState } from 'react'
 
 import { BedReader } from '../readers/bed/bed-reader'
 
+import { IGenomicLocation } from '@/lib/genomic/genomic-location'
+
+import { queryClient } from '@/qcp'
 import {
   EMPTY_BED_READER,
   type BaseBedReader,

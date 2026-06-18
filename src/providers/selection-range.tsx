@@ -13,10 +13,10 @@ export interface ISelectionRange {
 
 //export const NO_SELECTION: ICell = { row: -1, col: -1 }
 
-// export const NO_SELECTION_RANGE: ISelectionRange = {
-//   rows: undefined,
-//   cols: undefined,
-// }
+export const NO_SELECTION_RANGE: ISelectionRange = {
+  rows: undefined,
+  cols: undefined,
+}
 
 interface ISelectionRangeStore {
   selection: ISelectionRange | undefined
@@ -25,7 +25,7 @@ interface ISelectionRangeStore {
   clear: () => void
 }
 
-export const useSelectionRangeStore = create<ISelectionRangeStore>(set => ({
+export const useSelectionRangeStore = create<ISelectionRangeStore>((set) => ({
   selection: undefined,
   update: (selection: ISelectionRange) => {
     set(
@@ -55,9 +55,9 @@ export function useSelectionRange(): {
   update: (range: ISelectionRange) => void
   clear: () => void
 } {
-  const selection = useSelectionRangeStore(state => state.selection)
-  const update = useSelectionRangeStore(state => state.update)
-  const clear = useSelectionRangeStore(state => state.clear)
+  const selection = useSelectionRangeStore((state) => state.selection)
+  const update = useSelectionRangeStore((state) => state.update)
+  const clear = useSelectionRangeStore((state) => state.clear)
 
   return { selection, update, clear }
 }

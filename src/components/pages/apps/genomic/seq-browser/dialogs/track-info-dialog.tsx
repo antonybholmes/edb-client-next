@@ -9,6 +9,11 @@ export interface IProps {
 }
 
 export function TrackInfoDialog({ track, onCancel }: IProps) {
+  let reads = 0
+
+  if ('reads' in track) {
+    reads = track.reads ?? 0
+  }
   return (
     <OKCancelDialog
       buttons={[TEXT_OK]}
@@ -47,11 +52,11 @@ export function TrackInfoDialog({ track, onCancel }: IProps) {
         />
       )}
 
-      {'reads' in track && track.reads > 0 && (
+      {reads > 0 && (
         <TextPropRow
           title="Reads"
           labelW="sm"
-          value={track.reads.toLocaleString()}
+          value={reads.toLocaleString()}
           readOnly={true}
           placeholder="Reads"
         />

@@ -6,8 +6,9 @@ import {
 import { DEFAULT_COLOR_PROPS } from '@/components/plot/svg-props'
 import { TEXT_OK } from '@/consts'
 import { DEFAULT_PALETTE } from '@/lib/color/palette'
-import type { IGenomicLocation } from '@/lib/genomic/genomic'
+
 import type { GenomicFeatureIndex } from '@/lib/genomic/genomic-index'
+import { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { makeUuid } from '@/lib/id'
 import { BigBed, BigWig } from '@gmod/bbi'
 import { produce } from 'immer'
@@ -114,50 +115,52 @@ interface ISeqBrowserDialogStore {
   clear: () => void
 }
 
-export const useSeqBrowserDialogStore = create<ISeqBrowserDialogStore>(set => ({
-  stack: [],
+export const useSeqBrowserDialogStore = create<ISeqBrowserDialogStore>(
+  (set) => ({
+    stack: [],
 
-  open: d => {
-    const id = makeUuid()
-    const dialog = { ...d, id, time: Date.now() }
+    open: (d) => {
+      const id = makeUuid()
+      const dialog = { ...d, id, time: Date.now() }
 
-    set(state => ({
-      stack: [...state.stack.slice(-MAX_DIALOGS + 1), dialog],
-    }))
-
-    return {
-      id,
-      close: () =>
-        set(state => ({
-          stack: state.stack.filter(d => d.id !== id),
-        })),
-    }
-  },
-  bringToFront: (id: string) =>
-    set(state => {
-      const dialog = state.stack.find(d => d.id === id)
-
-      if (!dialog) {
-        return state
-      }
+      set((state) => ({
+        stack: [...state.stack.slice(-MAX_DIALOGS + 1), dialog],
+      }))
 
       return {
-        stack: [
-          ...state.stack.filter(d => d.id !== id),
-          { ...dialog, time: Date.now() },
-        ],
+        id,
+        close: () =>
+          set((state) => ({
+            stack: state.stack.filter((d) => d.id !== id),
+          })),
       }
-    }),
-  close: (id: string) =>
-    set(state => ({
-      stack: state.stack.filter(d => d.id !== id),
-    })),
-  clear: () => set({ stack: [] }),
-}))
+    },
+    bringToFront: (id: string) =>
+      set((state) => {
+        const dialog = state.stack.find((d) => d.id === id)
+
+        if (!dialog) {
+          return state
+        }
+
+        return {
+          stack: [
+            ...state.stack.filter((d) => d.id !== id),
+            { ...dialog, time: Date.now() },
+          ],
+        }
+      }),
+    close: (id: string) =>
+      set((state) => ({
+        stack: state.stack.filter((d) => d.id !== id),
+      })),
+    clear: () => set({ stack: [] }),
+  })
+)
 
 export function useSeqBrowserDialogs() {
-  const open = useSeqBrowserDialogStore(s => s.open)
-  const close = useSeqBrowserDialogStore(s => s.close)
+  const open = useSeqBrowserDialogStore((s) => s.open)
+  const close = useSeqBrowserDialogStore((s) => s.close)
 
   return { open, close }
 }
@@ -280,7 +283,7 @@ function AddSeqsDialogRenderer({ dialog, close }: IDialogRenderer<'add-seqs'>) {
           const signals: ISeqDBTrack[] = data.tracks.map((track, ti) => {
             const displayOptions: ISeqTrackDisplayOptions = produce(
               DEFAULT_SEQ_TRACK_DISPLAY_OPTIONS,
-              draft => {
+              (draft) => {
                 draft.stroke.value =
                   DEFAULT_PALETTE[ti % DEFAULT_PALETTE.length]!
                 draft.fill.value = DEFAULT_PALETTE[ti % DEFAULT_PALETTE.length]!
@@ -294,7 +297,7 @@ function AddSeqsDialogRenderer({ dialog, close }: IDialogRenderer<'add-seqs'>) {
                 return {
                   ...track,
                   type: 'RemoteBigWig',
-                  scale: track.tags.some(x => x.value.includes('BPM'))
+                  scale: track.tags.some((x) => x.value.includes('BPM'))
                     ? 'BPM'
                     : 'Count',
                   displayOptions,
@@ -308,7 +311,7 @@ function AddSeqsDialogRenderer({ dialog, close }: IDialogRenderer<'add-seqs'>) {
                 return {
                   ...track,
                   type: 'BigWig',
-                  scale: track.tags.some(x => x.value.includes('BPM'))
+                  scale: track.tags.some((x) => x.value.includes('BPM'))
                     ? 'BPM'
                     : 'Count',
                   displayOptions,
@@ -327,7 +330,7 @@ function AddSeqsDialogRenderer({ dialog, close }: IDialogRenderer<'add-seqs'>) {
           if (data.combine) {
             displayTracks = [newTrackGroup(signals)]
           } else {
-            displayTracks = signals.map(s => newTrackGroup([s]))
+            displayTracks = signals.map((s) => newTrackGroup([s]))
           }
 
           dispatch({ type: 'add', tracks: displayTracks })
@@ -376,7 +379,7 @@ function AddPeaksDialogRenderer({
           if (data.combine) {
             displayTracks = [newTrackGroup(peaks)]
           } else {
-            displayTracks = peaks.map(s => newTrackGroup([s]))
+            displayTracks = peaks.map((s) => newTrackGroup([s]))
           }
 
           dispatch({ type: 'add', tracks: displayTracks })
@@ -458,8 +461,8 @@ function DialogRenderer({
 }
 
 export function SeqbrowserDialogsRoot() {
-  const stack = useSeqBrowserDialogStore(s => s.stack)
-  const close = useSeqBrowserDialogStore(s => s.close)
+  const stack = useSeqBrowserDialogStore((s) => s.stack)
+  const close = useSeqBrowserDialogStore((s) => s.close)
   const dialog = stack.at(-1) as Dialog | undefined // top dialog is still a discriminated union for rendering
 
   if (!dialog) {

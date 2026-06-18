@@ -8,7 +8,7 @@ import {
 import { API_GEX_DATASETS_URL, API_GEX_TECHNOLOGIES_URL } from '@/lib/edb/edb'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
-import { queryClient } from '@/query'
+import { queryClient } from '@/qcp'
 
 import { TEXT_OK } from '@/consts'
 import { BaseCol } from '@/layout/base-col'
@@ -110,11 +110,11 @@ export function GexMetadataDialog({
       console.log(res.data)
 
       // convert data to translate certain strings to numbers
-      datasets = res.data.map(dataset => {
-        return produce(dataset, draft => {
-          draft.samples = dataset.samples.map(sample => {
-            return produce(sample, sampleDraft => {
-              const entries = sample.metadata.map(m => {
+      datasets = res.data.map((dataset) => {
+        return produce(dataset, (draft) => {
+          draft.samples = dataset.samples.map((sample) => {
+            return produce(sample, (sampleDraft) => {
+              const entries = sample.metadata.map((m) => {
                 const v = Number(m.value)
 
                 return { name: m.name, value: !Number.isNaN(v) ? v : m.value }
@@ -183,7 +183,7 @@ export function GexMetadataDialog({
 
   useEffect(() => {
     if (technologyData?.data) {
-      const defaultTechnologies = technologyData.data.filter(t =>
+      const defaultTechnologies = technologyData.data.filter((t) =>
         t.name.includes('RNA')
       )
 
@@ -248,7 +248,7 @@ export function GexMetadataDialog({
       return
     }
 
-    const selectedDatasets = datasets.filter(dataset =>
+    const selectedDatasets = datasets.filter((dataset) =>
       datasetUseMap.get(dataset.id)
     )
 
@@ -278,7 +278,7 @@ export function GexMetadataDialog({
       //   row = row.concat(sample.altNames)
       // }
 
-      const row = sample.metadata.map(m => m.value.toString())
+      const row = sample.metadata.map((m) => m.value.toString())
 
       data.push(row)
     }
@@ -291,14 +291,14 @@ export function GexMetadataDialog({
     //   }
     // }
 
-    const columns = selectedDataset.samples[0]!.metadata.map(m => m.name)
+    const columns = selectedDataset.samples[0]!.metadata.map((m) => m.name)
 
     console.log(columns, 'columns')
     console.log(data, 'data')
 
     const df = new AnnotationDataFrame({
       data,
-      index: selectedDataset.samples.map(sample => sample.name),
+      index: selectedDataset.samples.map((sample) => sample.name),
       columns,
       name: `${selectedDataset.name} metadata`,
     })
@@ -326,10 +326,10 @@ export function GexMetadataDialog({
       headerChildren={
         <ToggleButtons
           value={technology?.name ?? ''}
-          onTabChange={selectedTab => {
+          onTabChange={(selectedTab) => {
             if (technologyData?.data) {
               const defaultTechnologies = technologyData.data.filter(
-                t => t.name === selectedTab.tab.id
+                (t) => t.name === selectedTab.tab.id
               )
 
               if (defaultTechnologies.length > 0) {
@@ -337,7 +337,7 @@ export function GexMetadataDialog({
               }
             }
           }}
-          tabs={technologyData?.data.map(p => ({ id: p.name })) ?? []}
+          tabs={technologyData?.data.map((p) => ({ id: p.name })) ?? []}
         >
           <ToggleButtonTriggers
             className="rounded-theme overflow-hidden"
@@ -349,13 +349,13 @@ export function GexMetadataDialog({
     >
       <VScrollPanel>
         <ul className="flex flex-col gap-y-4">
-          {institutions.map(institution => {
+          {institutions.map((institution) => {
             return (
               <li key={institution} className="flex flex-col gap-y-1">
                 <h2 className="text-sm font-semibold">{institution}</h2>
 
                 <ul className="flex flex-col gap-y-1">
-                  {instituteMap.get(institution)?.map(dataset => {
+                  {instituteMap.get(institution)?.map((dataset) => {
                     return (
                       <li key={dataset.id}>
                         <Checkbox
@@ -383,9 +383,9 @@ export function GexMetadataDialog({
           <CheckPropRow
             title="Add alternative names to columns"
             checked={settings.apps.gex.addAltNames}
-            onCheckedChange={v => {
+            onCheckedChange={(v) => {
               updateSettings(
-                produce(settings, draft => {
+                produce(settings, (draft) => {
                   draft.apps.gex.addAltNames = v
                 })
               )

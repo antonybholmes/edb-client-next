@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Compiles with all recent updates.
 - Bug fixes and updates.
 - Updated to match Astro version.
 

@@ -1,7 +1,8 @@
 import { LabelContainer } from '@/components/shadcn/ui/themed/v2/label'
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
-import { locStr, type IGenomicLocation } from '@/lib/genomic/genomic'
+import { locStr } from '@/lib/genomic/genomic'
+import { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { useState } from 'react'
 import { LocationAutocomplete } from '../location-autocomplete'
 
@@ -24,7 +25,7 @@ export function LocationDialog({
     <OKCancelDialog
       //buttons={[TEXT_OK]}
       title="New Location"
-      onResponse={e => {
+      onResponse={(e) => {
         if (e === TEXT_OK) {
           callback?.(index, text)
         } else {
@@ -42,7 +43,7 @@ export function LocationDialog({
           //h="dialog"
           value={text}
           placeholder="height"
-          onTextChange={v => setText(v)}
+          onTextChange={(v) => setText(v)}
           //className="rounded-theme grow"
         />
       </LabelContainer>

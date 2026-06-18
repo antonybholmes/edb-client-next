@@ -16,7 +16,7 @@ import { range } from '@/lib/math/range'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
 
-import type { SeriesData } from '@/lib/dataframe'
+import { SeriesData } from '@/lib/dataframe/series-data'
 import { produce } from 'immer'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
@@ -40,7 +40,7 @@ function findFoldChangeCol(df: BaseDataFrame) {
 
   console.log(df.columns)
 
-  const cols = df.columns.filter(c => FOLD_REGEX.test(c.toLowerCase()))
+  const cols = df.columns.filter((c) => FOLD_REGEX.test(c.toLowerCase()))
 
   if (cols.length === 0) {
     return 'Log2 Fold Change'
@@ -54,7 +54,7 @@ function findPValueCol(df: BaseDataFrame | null) {
     return 'FDR'
   }
 
-  const cols = df.columns.filter(c => P_REGEX.test(c.toLowerCase()))
+  const cols = df.columns.filter((c) => P_REGEX.test(c.toLowerCase()))
 
   if (cols.length === 0) {
     return 'FDR'
@@ -121,18 +121,18 @@ export function VolcanoDialog({
     pvalues = subset(pvalues, idx)
 
     const log2foldChanges = data.applyLog2ToFoldChange
-      ? foldChanges.map(v => -Math.log2(v as number))
+      ? foldChanges.map((v) => -Math.log2(v as number))
       : foldChanges
 
     // label
     const idxUp = pvalues
       .map((v, vi) => [v, vi] as [number, number])
-      .filter(v => v[0] < 0.05 && (foldChanges[v[1]] as number) >= 0)
-      .map(v => v[1])
+      .filter((v) => v[0] < 0.05 && (foldChanges[v[1]] as number) >= 0)
+      .map((v) => v[1])
     const idxDown = pvalues
       .map((v, vi) => [v, vi] as [number, number])
-      .filter(v => v[0] < 0.05 && (foldChanges[v[1]] as number) < 0)
-      .map(v => v[1])
+      .filter((v) => v[0] < 0.05 && (foldChanges[v[1]] as number) < 0)
+      .map((v) => v[1])
 
     const labels = range(foldChanges.length).map(() => 0.5)
 
@@ -145,7 +145,7 @@ export function VolcanoDialog({
     }
 
     const logpvalues = data.applyLog10ToPValue
-      ? pvalues.map(v => -Math.log10(v as number))
+      ? pvalues.map((v) => -Math.log10(v as number))
       : pvalues
 
     const vdf = new DataFrame({
@@ -162,7 +162,7 @@ export function VolcanoDialog({
     // })
 
     updateSettings(
-      produce(settings, draft => {
+      produce(settings, (draft) => {
         draft.volcano.log2FC = settings.volcano.log2FC
         draft.volcano.log10P = data.applyLog10ToPValue
       })
@@ -181,7 +181,7 @@ export function VolcanoDialog({
     <OKCancelDialog
       open={open}
       title="Volcano Plot"
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_OK) {
           btnRef.current?.click()
         } else {
@@ -206,7 +206,7 @@ export function VolcanoDialog({
                   w="lg"
                 >
                   {df?.columns
-                    .filter(name => name !== '')
+                    .filter((name) => name !== '')
                     .slice(0, MAX_COLS)
                     .map((name, ni) => (
                       <SelectItem value={name} key={ni}>
@@ -229,7 +229,7 @@ export function VolcanoDialog({
                   w="lg"
                 >
                   {df?.columns
-                    .filter(name => name !== '')
+                    .filter((name) => name !== '')
                     .slice(0, MAX_COLS)
                     .map((name, ni) => (
                       <SelectItem value={name} key={ni}>

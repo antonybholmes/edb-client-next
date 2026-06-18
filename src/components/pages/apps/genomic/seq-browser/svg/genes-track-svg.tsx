@@ -1,13 +1,14 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
 import type { Axis } from '@/components/plot/axis'
-import type { IGenomicFeature } from '@/lib/genomic/genomic'
+
 import { range } from '@/lib/math/range'
 import { sign } from '@/lib/math/sign'
 import { useContext } from 'react'
 
 import { SvgText } from '@/components/plot/svg-text'
 import { useGenomes } from '@/lib/edb/genome'
+import { IGenomicFeature } from '@/lib/genomic/genomic-feature'
 import {
   useSeqBrowserSettings,
   type ISeqBrowserSettings,
@@ -44,7 +45,7 @@ export function getGeneTrackHeight(
       //geneYMap.set(`gene-${gi}`, 0)
       for (const ti of range(
         0,
-        gene.children?.filter(f => f.type === 'transcript').length ?? 0
+        gene.children?.filter((f) => f.type === 'transcript').length ?? 0
       )) {
         geneYMap.set(`gene-${gi}:transcript-${ti}`, 0)
       }
@@ -61,7 +62,7 @@ export function getGeneTrackHeight(
     let maxRow = 0
     for (const [gi, gene] of genes.entries()) {
       for (const [ti, t] of (
-        gene.children?.filter(f => f.type === 'transcript') ?? []
+        gene.children?.filter((f) => f.type === 'transcript') ?? []
       ).entries()) {
         let x1: number
         let x2: number
@@ -132,7 +133,7 @@ export function getGeneTrackHeight(
 
       for (const ti of range(
         0,
-        gene.children?.filter(f => f.type === 'transcript').length ?? 0
+        gene.children?.filter((f) => f.type === 'transcript').length ?? 0
       )) {
         geneYMap.set(
           `gene-${gi}:transcript-${ti}`,
@@ -278,7 +279,7 @@ export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
               key={gi}
             >
               {gene.children
-                ?.filter(f => f.type === 'transcript')
+                ?.filter((f) => f.type === 'transcript')
                 .map((transcript, ti) => {
                   const transLoc = transcript.loc
                   x1 = xax.domainToRange(transLoc.start)
@@ -359,7 +360,7 @@ export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
                             id="arrows"
                             //transform={`translate(0,-${track.displayOptions.arrows.size})`}
                           >
-                            {arrowXs.map(x => {
+                            {arrowXs.map((x) => {
                               return (
                                 <use
                                   key={`${x}`}
@@ -534,7 +535,7 @@ export function GenesStructureTrackSvg({
             >
               {gene.children
                 ?.filter(
-                  f =>
+                  (f) =>
                     f.type === 'transcript' &&
                     (!settings.tracks.genes.canonical.only ||
                       (f.isCanonical ?? false))
@@ -545,7 +546,7 @@ export function GenesStructureTrackSvg({
                   x2 = xax.domainToRange(transLoc.end)
 
                   const exonCount =
-                    transcript.children?.filter(f => f.type === 'exon')
+                    transcript.children?.filter((f) => f.type === 'exon')
                       .length ?? 0
 
                   const arrowStart =
@@ -647,7 +648,7 @@ export function GenesStructureTrackSvg({
                             id="arrows"
                             //transform={`translate(0,-${track.displayOptions.arrows.size})`}
                           >
-                            {arrowXs.map(x => {
+                            {arrowXs.map((x) => {
                               return (
                                 <use
                                   key={`${x}`}
@@ -726,7 +727,7 @@ function ExonsSvg({
       transform={`translate(0, ${-settings.tracks.genes.exons.height / 2})`}
     >
       {transcript.children
-        ?.filter(f => f.type === 'exon')
+        ?.filter((f) => f.type === 'exon')
         .map((exon, ei) => {
           const exonLoc = exon.loc
           const x1 = xax.domainToRange(exonLoc.start)
@@ -777,7 +778,7 @@ function CDSSvg({
       transform={`translate(0, ${-settings.tracks.genes.cds.height / 2})`}
     >
       {transcript.children
-        ?.filter(f => f.type === 'cds')
+        ?.filter((f) => f.type === 'cds')
         .map((cds, ei) => {
           const cdsLoc = cds.loc
           const x1 = xax.domainToRange(cdsLoc.start)
@@ -828,7 +829,7 @@ function UTRSvg({
       transform={`translate(0, ${-settings.tracks.genes.utrs.height / 2})`}
     >
       {transcript.children
-        ?.filter(f => f.type === 'utr')
+        ?.filter((f) => f.type === 'utr')
         .map((utr, ei) => {
           const utrLoc = utr.loc
           const x1 = xax.domainToRange(utrLoc.start)

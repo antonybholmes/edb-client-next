@@ -22,7 +22,7 @@ export function AuthModal({ title, className, children }: IProps) {
   return (
     <CenterCol className={cn('gap-y-2', className)}>
       <VCenterRow className="gap-x-3">
-        <AppIcon w="w-12" />
+        <AppIcon size={2} />
         <p className="font-bold text-lg">{title}</p>
       </VCenterRow>
 

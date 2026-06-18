@@ -4,18 +4,15 @@ import { SearchIcon } from '@/icons/search-icon'
 
 import { useEffect, useState } from 'react'
 
-import {
-  type Feature,
-  type IGenomicFeature,
-  type IGenomicLocation,
-  locStr,
-} from '@/lib/genomic/genomic'
+import { locStr } from '@/lib/genomic/genomic'
 
 import { Autocomplete } from '@/components/autocomplete'
 import type { ISearchBoxProps } from '@/components/search-box'
 import { useDebounce } from '@/hooks/debounce'
 import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { useGeneQuery } from '@/lib/edb/genome'
+import { Feature, IGenomicFeature } from '@/lib/genomic/genomic-feature'
+import { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { cn } from '@/lib/shadcn-utils'
 
 const LI_CLS = cn(

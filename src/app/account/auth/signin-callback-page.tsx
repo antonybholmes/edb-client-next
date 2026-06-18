@@ -54,7 +54,7 @@ export function BaseSignInCallbackPage({
       {error ? (
         <p className="text-red-500">{error}</p>
       ) : (
-        <AuthModal title={`Signing in to ${config.appName}...`}>
+        <AuthModal title={`Signing in to ${config.name}...`}>
           {_state && (
             <p>
               You will be redirected to{' '}

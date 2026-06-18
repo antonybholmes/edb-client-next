@@ -73,7 +73,9 @@ export async function handleCognitoCallback(): Promise<{
   const stateRaw = params.get('state')
   const verifier = localStorage.getItem('pkce_verifier')
 
-  if (!code || !verifier) return null
+  if (!code || !verifier) {
+    return null
+  }
 
   // Exchange code for tokens
   const body = new URLSearchParams({
@@ -82,7 +84,7 @@ export async function handleCognitoCallback(): Promise<{
     code_verifier: verifier,
     code,
     redirect_uri: APP_ACCOUNT_OAUTH2_COGNITO_SIGNIN_CALLBACK_URL,
-  })
+  } as Record<string, string>)
 
   const res = await fetch(`${COGNITO_DOMAIN}/oauth2/token`, {
     method: 'POST',

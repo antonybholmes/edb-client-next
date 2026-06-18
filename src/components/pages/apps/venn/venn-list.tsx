@@ -168,7 +168,7 @@ export function VennList({ vennList }: IProps) {
 
         <Button
           variant="link"
-          size="sm"
+          //size="sm"
           // ripple={false}
           onClick={() => {
             setText('')

@@ -1,4 +1,4 @@
-import { type IGenomicLocation } from '@/lib/genomic/genomic'
+import { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { type ISeqPos } from '../../svg/base-seq-track-svg'
 import {
   type IBigWigTrack,
@@ -39,7 +39,7 @@ export class SeqReader extends BaseSeqReader {
     }
 
     //if (loc !== this._loc || this._binSize !== binSize) {
-    return this._trackBinCounts.bins.map(b => {
+    return this._trackBinCounts.bins.map((b) => {
       // the real 1 based end
       const start = b.s
 
@@ -83,7 +83,7 @@ export class SeqReader extends BaseSeqReader {
     //const loc = locStr(location)
 
     //if (loc !== this._loc || this._binSize !== binSize) {
-    return this._trackBinCounts.bins.map(b => {
+    return this._trackBinCounts.bins.map((b) => {
       // the real 1 based end
       const start = b.s
 

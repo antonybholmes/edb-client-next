@@ -65,8 +65,8 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
               showAlign={false}
               showColor={false}
               textProps={settings.tracks.genes.labels.text}
-              update={textProps => {
-                const newSettings = produce(settings, draft => {
+              update={(textProps) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.tracks.genes.labels.text = textProps
                 })
 
@@ -80,8 +80,8 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
             side="right"
             disabled={!settings.tracks.genes.labels.text.show}
             checked={settings.tracks.genes.labels.showGeneId}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.tracks.genes.labels.showGeneId = v
               })
 
@@ -97,8 +97,8 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
         >
           <SwitchPropRow
             checked={settings.tracks.genes.stroke.show}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.tracks.genes.stroke.show = v
               })
 
@@ -109,14 +109,18 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
               <ColorPropRow
                 title="Stroke"
                 side="left"
-                color={settings.tracks.genes.stroke.value}
-                onColorChange={v => {
-                  updateSettings(
-                    produce(settings, draft => {
-                      draft.tracks.genes.stroke.value = v
-                    })
-                  )
-                }}
+                colors={[
+                  {
+                    color: settings.tracks.genes.stroke.value,
+                    onColorChange: (v) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.tracks.genes.stroke.value = v
+                        })
+                      )
+                    },
+                  },
+                ]}
                 className={SIMPLE_COLOR_EXT_CLS}
               />
             }
@@ -127,8 +131,8 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 disabled={!settings.tracks.genes.stroke.show}
                 placeholder="Stroke..."
                 w="xxs"
-                onNumChange={v => {
-                  const newSettings = produce(settings, draft => {
+                onNumChange={(v) => {
+                  const newSettings = produce(settings, (draft) => {
                     draft.tracks.genes.stroke.width = v
                   })
 
@@ -140,8 +144,8 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
 
           <SwitchPropRow
             checked={settings.tracks.genes.exons.show}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.tracks.genes.exons.show = v
               })
 
@@ -152,14 +156,18 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
               <ColorPropRow
                 title="Exons"
                 side="left"
-                color={settings.tracks.genes.exons.fill.value}
-                onColorChange={v => {
-                  updateSettings(
-                    produce(settings, draft => {
-                      draft.tracks.genes.exons.fill.value = v
-                    })
-                  )
-                }}
+                colors={[
+                  {
+                    color: settings.tracks.genes.exons.fill.value,
+                    onColorChange: (v) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.tracks.genes.exons.fill.value = v
+                        })
+                      )
+                    },
+                  },
+                ]}
                 className={SIMPLE_COLOR_EXT_CLS}
               />
             }
@@ -170,8 +178,8 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 disabled={!settings.tracks.genes.exons.show}
                 placeholder="Height..."
                 w="xxs"
-                onNumChange={v => {
-                  const newSettings = produce(settings, draft => {
+                onNumChange={(v) => {
+                  const newSettings = produce(settings, (draft) => {
                     draft.tracks.genes.exons.height = v
                   })
 
@@ -183,8 +191,8 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
 
           <SwitchPropRow
             checked={settings.tracks.genes.cds.show}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.tracks.genes.cds.show = v
               })
 
@@ -195,14 +203,18 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
               <ColorPropRow
                 title="CDS"
                 side="left"
-                color={settings.tracks.genes.cds.fill.value}
-                onColorChange={v => {
-                  updateSettings(
-                    produce(settings, draft => {
-                      draft.tracks.genes.cds.fill.value = v
-                    })
-                  )
-                }}
+                colors={[
+                  {
+                    color: settings.tracks.genes.cds.fill.value,
+                    onColorChange: (v) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.tracks.genes.cds.fill.value = v
+                        })
+                      )
+                    },
+                  },
+                ]}
                 className={SIMPLE_COLOR_EXT_CLS}
               />
             }
@@ -213,8 +225,8 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 disabled={!settings.tracks.genes.cds.show}
                 placeholder="Height..."
                 w="xxs"
-                onNumChange={v => {
-                  const newSettings = produce(settings, draft => {
+                onNumChange={(v) => {
+                  const newSettings = produce(settings, (draft) => {
                     draft.tracks.genes.cds.height = v
                   })
 
@@ -226,8 +238,8 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
 
           <SwitchPropRow
             checked={settings.tracks.genes.utrs.show}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.tracks.genes.utrs.show = v
               })
 
@@ -238,14 +250,18 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
               <ColorPropRow
                 title="UTRs"
                 side="left"
-                color={settings.tracks.genes.utrs.fill.value}
-                onColorChange={v => {
-                  updateSettings(
-                    produce(settings, draft => {
-                      draft.tracks.genes.utrs.fill.value = v
-                    })
-                  )
-                }}
+                colors={[
+                  {
+                    color: settings.tracks.genes.utrs.fill.value,
+                    onColorChange: (v) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.tracks.genes.utrs.fill.value = v
+                        })
+                      )
+                    },
+                  },
+                ]}
                 className={SIMPLE_COLOR_EXT_CLS}
               />
             }
@@ -256,8 +272,8 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 disabled={!settings.tracks.genes.utrs.show}
                 placeholder="Height..."
                 w="xxs"
-                onNumChange={v => {
-                  const newSettings = produce(settings, draft => {
+                onNumChange={(v) => {
+                  const newSettings = produce(settings, (draft) => {
                     draft.tracks.genes.utrs.height = v
                   })
 
@@ -269,8 +285,8 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
 
           <SwitchPropRow
             checked={settings.tracks.genes.arrows.show}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.tracks.genes.arrows.show = v
               })
 
@@ -281,15 +297,19 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
               <ColorPropRow
                 title="Arrows"
                 side="left"
-                color={_track.displayOptions.arrows.stroke.value}
-                onColorChange={v => {
-                  const newTrack = produce(_track, draft => {
-                    draft.displayOptions.arrows.stroke.value = v
-                  })
+                colors={[
+                  {
+                    color: _track.displayOptions.arrows.stroke.value,
+                    onColorChange: (v) => {
+                      const newTrack = produce(_track, (draft) => {
+                        draft.displayOptions.arrows.stroke.value = v
+                      })
 
-                  onResponse?.(TEXT_OK, { group, track: newTrack })
-                  setTrack(newTrack)
-                }}
+                      onResponse?.(TEXT_OK, { group, track: newTrack })
+                      setTrack(newTrack)
+                    },
+                  },
+                ]}
                 className={SIMPLE_COLOR_EXT_CLS}
               />
             }
@@ -300,16 +320,16 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
               placeholder="Width..."
               dp={0}
               w="xxs"
-              onNumChange1={v => {
-                const newTrack = produce(_track, draft => {
+              onNumChange1={(v) => {
+                const newTrack = produce(_track, (draft) => {
                   draft.displayOptions.arrows.x = v
                 })
 
                 onResponse?.(TEXT_OK, { group, track: newTrack })
                 setTrack(newTrack)
               }}
-              onNumChange2={v => {
-                const newTrack = produce(_track, draft => {
+              onNumChange2={(v) => {
+                const newTrack = produce(_track, (draft) => {
                   draft.displayOptions.arrows.y = v
                 })
 
@@ -326,8 +346,8 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
         >
           <SwitchPropRow
             checked={settings.tracks.genes.canonical.isColored}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.tracks.genes.canonical.isColored = v
               })
 
@@ -338,14 +358,18 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
               <ColorPropRow
                 title="Highlight canonical genes"
                 side="left"
-                color={settings.tracks.genes.canonical.fill.value}
-                onColorChange={v => {
-                  updateSettings(
-                    produce(settings, draft => {
-                      draft.tracks.genes.canonical.fill.value = v
-                    })
-                  )
-                }}
+                colors={[
+                  {
+                    color: settings.tracks.genes.canonical.fill.value,
+                    onColorChange: (v) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.tracks.genes.canonical.fill.value = v
+                        })
+                      )
+                    },
+                  },
+                ]}
                 className={SIMPLE_COLOR_EXT_CLS}
               />
             }
@@ -353,8 +377,8 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
 
           <SwitchPropRow
             checked={settings.tracks.genes.canonical.only}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.tracks.genes.canonical.only = v
               })
 
@@ -373,8 +397,8 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
           <PropRow title="Display">
             <SelectList
               value={settings.tracks.genes.display}
-              onValueChange={v => {
-                const newSettings = produce(settings, draft => {
+              onValueChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.tracks.genes.display = v as GeneDisplay
                 })
 
@@ -383,7 +407,7 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
               // so items appear formatted
               items={GENE_DISPLAY_OPTIONS}
             >
-              {GENE_DISPLAY_OPTIONS.map(option => (
+              {GENE_DISPLAY_OPTIONS.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
                   {option.label}
                 </SelectItem>
@@ -408,8 +432,8 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
 
             <ToggleGroup
               value={[settings.tracks.genes.view]}
-              onValueChange={v => {
-                const newSettings = produce(settings, draft => {
+              onValueChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.tracks.genes.view = v[0] as GeneView
                 })
 

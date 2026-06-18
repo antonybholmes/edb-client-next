@@ -9,6 +9,7 @@ import {
   DEFAULT_EDB_USER,
   flattenGroups,
   flattenRoles,
+  INewUser,
   type IEdbUser,
   type IRBACGroup,
 } from '@/lib/edb/edb'
@@ -53,7 +54,7 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { getCSRFToken } from '@/lib/edb/csrf'
 import { makeUuid } from '@/lib/id'
 import { Toast } from '@base-ui/react/toast'
-import { type INewUser } from './edit-user-dialog'
+
 import { UsersDialogsRoot, useUserDialogs } from './users-dialogs'
 
 interface IUserStats {

@@ -7,8 +7,8 @@ import { makeUuid } from '@/lib/id'
 import { create } from 'zustand'
 
 import { TEXT_OK } from '@/consts'
-import { type IEdbUser, type IRBACGroup } from '@/lib/edb/edb'
-import { EditUserDialog, type INewUser } from './edit-user-dialog'
+import { INewUser, type IEdbUser, type IRBACGroup } from '@/lib/edb/edb'
+import { EditUserDialog } from './edit-user-dialog'
 
 type DialogTypeMap = {
   'edit-user': {
@@ -50,28 +50,28 @@ interface ISingleCellDialogStore {
   clear: () => void
 }
 
-export const useUsersDialogStore = create<ISingleCellDialogStore>(set => ({
+export const useUsersDialogStore = create<ISingleCellDialogStore>((set) => ({
   stack: [],
 
-  open: d => {
+  open: (d) => {
     const id = makeUuid()
     const dialog = { ...d, id, time: Date.now() }
 
-    set(state => ({
+    set((state) => ({
       stack: [...state.stack.slice(-MAX_DIALOGS + 1), dialog],
     }))
 
     return {
       id,
       close: () =>
-        set(state => ({
-          stack: state.stack.filter(d => d.id !== id),
+        set((state) => ({
+          stack: state.stack.filter((d) => d.id !== id),
         })),
     }
   },
   bringToFront: (id: string) =>
-    set(state => {
-      const dialog = state.stack.find(d => d.id === id)
+    set((state) => {
+      const dialog = state.stack.find((d) => d.id === id)
 
       if (!dialog) {
         return state
@@ -79,22 +79,22 @@ export const useUsersDialogStore = create<ISingleCellDialogStore>(set => ({
 
       return {
         stack: [
-          ...state.stack.filter(d => d.id !== id),
+          ...state.stack.filter((d) => d.id !== id),
           { ...dialog, time: Date.now() },
         ],
       }
     }),
   close: (id: string) =>
-    set(state => ({
+    set((state) => ({
       // if id is provided, remove that dialog. If not, remove the top dialog.
-      stack: state.stack.filter(d => d.id !== id),
+      stack: state.stack.filter((d) => d.id !== id),
     })),
   clear: () => set({ stack: [] }),
 }))
 
 export function useUserDialogs() {
-  const open = useUsersDialogStore(s => s.open)
-  const close = useUsersDialogStore(s => s.close)
+  const open = useUsersDialogStore((s) => s.open)
+  const close = useUsersDialogStore((s) => s.close)
 
   return { open, close }
 }
@@ -143,8 +143,8 @@ function DialogRenderer({
 }
 
 export function UsersDialogsRoot() {
-  const stack = useUsersDialogStore(s => s.stack)
-  const close = useUsersDialogStore(s => s.close)
+  const stack = useUsersDialogStore((s) => s.stack)
+  const close = useUsersDialogStore((s) => s.close)
   const dialog = stack.at(-1) as Dialog | undefined // top dialog is still a discriminated union for rendering
 
   if (!dialog) {

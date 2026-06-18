@@ -34,7 +34,7 @@ import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
 import { OpenIcon } from '@/icons/open-icon'
 
-import { queryClient } from '@/query'
+import { queryClient } from '@/qcp'
 import { useEffect, useState } from 'react'
 
 import {

@@ -33,13 +33,13 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
   const df = sheet as BaseDataFrame
 
   useEffect(() => {
-    if (sheet && selection.start.row > -1) {
+    if (sheet && selection.rows && selection.rows.start > -1) {
       updateSettings({
         ...settings,
         sortByRow: {
           ...settings.sortByRow,
-          text: range(selection.start.row, selection.end.row + 1)
-            .map(i => df.index.str(i))
+          text: range(selection.rows.start, selection.rows.end + 1)
+            .map((i) => df.index.str(i))
             .join(', '),
         },
       })
@@ -57,12 +57,12 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
 
     const ids = settings.sortByRow.text
       .split(/[\r\n\t,;]+/)
-      .map(x => x.trim())
-      .filter(x => x.length > 0)
+      .map((x) => x.trim())
+      .filter((x) => x.length > 0)
 
     if (settings.sortByRow.sortWithinGroups) {
       idx = groups
-        .map(group => {
+        .map((group) => {
           // all indices for this group from full table
           const idx = getColIdxFromGroup(df, group)
 
@@ -72,7 +72,7 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
           sortDf = df.iloc({ cols: idx }) as BaseDataFrame
 
           // get the row ids of the gene(s) of interest
-          const rowIdx = ids.map(id => sortDf.index.find(id)).flat()
+          const rowIdx = ids.map((id) => sortDf.index.find(id)).flat()
 
           sortDf = sortDf.iloc({ rows: rowIdx }) as BaseDataFrame
 
@@ -82,7 +82,7 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
           let sortedColIdx = argsort(mean)
 
           // need to map sortedcolidx back to original idx from full table
-          sortedColIdx = sortedColIdx.map(i => idx[i]!)
+          sortedColIdx = sortedColIdx.map((i) => idx[i]!)
 
           return sortedColIdx
         })
@@ -90,7 +90,7 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
 
       // add missing indices that won't be sorted to the end
       const s = new Set(idx)
-      const idx2 = range(df!.shape[1]).filter(i => !s.has(i))
+      const idx2 = range(df!.shape[1]).filter((i) => !s.has(i))
       idx = idx.concat(idx2)
 
       const ret = df.iloc({ cols: idx }) as BaseDataFrame
@@ -99,7 +99,7 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
 
       onResponse?.(TEXT_OK, ret)
     } else {
-      idx = ids.map(id => df.index.find(id)).flat()
+      idx = ids.map((id) => df.index.find(id)).flat()
 
       // get col means
       const sortDf = df.iloc({ rows: idx }) as BaseDataFrame
@@ -123,7 +123,7 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
     <OKCancelDialog
       open={open}
       title="Sort By Rows"
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onResponse?.(TEXT_CANCEL, undefined)
         } else {
@@ -137,7 +137,7 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
       <Textarea
         id="top-rows"
         value={settings.sortByRow.text}
-        onChange={e =>
+        onChange={(e) =>
           updateSettings({
             ...settings,
             sortByRow: {
@@ -153,7 +153,7 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
       <VCenterRow className="gap-x-2 justify-between">
         <Checkbox
           checked={settings.sortByRow.sortWithinGroups}
-          onCheckedChange={value => {
+          onCheckedChange={(value) => {
             updateSettings({
               ...settings,
               sortByRow: { ...settings.sortByRow, sortWithinGroups: value },
@@ -165,7 +165,7 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
 
         <Button
           variant="link"
-          size="sm"
+          //size="sm"
           // ripple={false}
           onClick={() =>
             updateSettings({

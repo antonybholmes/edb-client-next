@@ -21,7 +21,7 @@ export function SaveGroupsDialog({
       title="Save Groups As"
       name={name}
       onResponse={onResponse}
-      formats={GROUP_FILE_FORMATS}
+      fileTypes={GROUP_FILE_FORMATS}
     />
   )
 }

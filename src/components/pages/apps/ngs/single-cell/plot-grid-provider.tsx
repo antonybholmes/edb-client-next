@@ -16,7 +16,7 @@ import { where } from '@/lib/math/where'
 import { zeros } from '@/lib/math/zeros'
 import { ZScore } from '@/lib/math/zscore'
 import { truncate } from '@/lib/text/text'
-import { queryClient } from '@/query'
+import { queryClient } from '@/qcp'
 import { produce } from 'immer'
 import { createContext, useEffect, useState } from 'react'
 import type {
@@ -112,12 +112,12 @@ export function PlotGridProvider({ children }: IChildrenProps) {
       let globalMax = 0
 
       const clusterMap = new Map<number, IScrnaCluster>(
-        store.clusterInfo?.clusters.map(c => [c.label, c])
+        store.clusterInfo?.clusters.map((c) => [c.label, c])
       )
 
       // create a mask for cells that are in shown clusters
       const mask =
-        store.clusterInfo?.cdata.map(c => {
+        store.clusterInfo?.cdata.map((c) => {
           const cluster = clusterMap.get(c)
           return cluster?.show
         }) || []
@@ -148,8 +148,8 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         const useMean = geneset.genes.length > 1
 
         if (useMean) {
-          avg = range(0, dataset.cells ?? 0).map(cellIdx =>
-            mean(geneset.genes.map(gene => gexData[gene.geneId]![cellIdx]!))
+          avg = range(0, dataset.cells ?? 0).map((cellIdx) =>
+            mean(geneset.genes.map((gene) => gexData[gene.geneId]![cellIdx]!))
           )
         } else {
           avg = gexData[geneset.genes[0]!.geneId]!
@@ -165,13 +165,13 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         if (settings.gex.log.on) {
           switch (settings.gex.log.mode) {
             case 'log2':
-              avg = avg.map(v => Math.log2(v + 1))
+              avg = avg.map((v) => Math.log2(v + 1))
               break
             case 'log10':
-              avg = avg.map(v => Math.log10(v + 1))
+              avg = avg.map((v) => Math.log10(v + 1))
               break
             case 'ln':
-              avg = avg.map(v => Math.log1p(v))
+              avg = avg.map((v) => Math.log1p(v))
               break
           }
         }
@@ -183,7 +183,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
 
         // get max regardless of min max using only the visible clusters
         max = Math.ceil(
-          Math.max(...avg.filter((_, i) => mask[i]).map(x => Math.abs(x)))
+          Math.max(...avg.filter((_, i) => mask[i]).map((x) => Math.abs(x)))
         )
 
         // i like even numbers
@@ -215,7 +215,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
 
           name: useMean
             ? truncate(
-                `Mean of ${geneset.name}: ${geneset.genes.map(g => g.geneSymbol).join(', ')}`
+                `Mean of ${geneset.name}: ${geneset.genes.map((g) => g.geneSymbol).join(', ')}`
               )
             : geneset.genes[0]!.geneSymbol,
 
@@ -249,7 +249,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
       console.log('Setting up gex plots', store.plots)
 
       setStore(
-        produce(store, draft => {
+        produce(store, (draft) => {
           // replace existing plots of the same name
 
           // replace exiting plots of the same name and add new ones at the end
@@ -262,7 +262,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
       if (settings.gex.autoRange) {
         console.log('Setting global range to ', [-globalMax, globalMax])
         updateSettings(
-          produce(settings, draft => {
+          produce(settings, (draft) => {
             if (settings.gex.zscore.on) {
               draft.gex.zscore.range = [-globalMax, globalMax]
             } else {
@@ -292,17 +292,17 @@ export function PlotGridProvider({ children }: IChildrenProps) {
   ])
 
   function setDataset(dataset: IScrnaDataset, metadata: IScrnaDatasetMetadata) {
-    const points = metadata.cells.map(m => ({ x: m.x, y: m.y }))
+    const points = metadata.cells.map((m) => ({ x: m.x, y: m.y }))
 
-    const clusters: IScrnaCluster[] = metadata.clusters.map(c => {
-      const idx = where(metadata.cells, cell => cell.cluster === c.label)
+    const clusters: IScrnaCluster[] = metadata.clusters.map((c) => {
+      const idx = where(metadata.cells, (cell) => cell.cluster === c.label)
 
       const xc = ordered(
-        points.map(p => p.x),
+        points.map((p) => p.x),
         idx
       )
       const yc = ordered(
-        points.map(p => p.y),
+        points.map((p) => p.y),
         idx
       )
       const pos = findCenter(xc, yc)
@@ -324,7 +324,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
 
     console.log(clusters)
 
-    let hue = metadata.cells.map(c => c.cluster) //metadata.cells.map(c => normMap[c.clusterId]!)
+    let hue = metadata.cells.map((c) => c.cluster) //metadata.cells.map(c => normMap[c.clusterId]!)
 
     // if we sort by hue, we are sorting by color norm and
     // therefore cluster, so all points in a cluster will
@@ -333,7 +333,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
 
     const clusterInfo = {
       clusters,
-      cdata: metadata.cells.map(c => c.cluster),
+      cdata: metadata.cells.map((c) => c.cluster),
       order: idx,
       //map: Object.fromEntries(clusters.map((c, ci) => [c.clusterId, ci])),
       roundel: { show: true },
@@ -342,7 +342,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
     console.log('Setting dataset', dataset, metadata, clusterInfo)
 
     setStore(
-      produce(store, draft => {
+      produce(store, (draft) => {
         draft.dataset = dataset
         draft.points = points
         draft.clusterInfo = clusterInfo
@@ -372,7 +372,7 @@ export function PlotGridProvider({ children }: IChildrenProps) {
 
   function updateClusterInfo(clusterInfo: IClusterInfo) {
     setStore(
-      produce(store, draft => {
+      produce(store, (draft) => {
         draft.clusterInfo = clusterInfo
       })
     )
@@ -391,8 +391,8 @@ export function PlotGridProvider({ children }: IChildrenProps) {
     }
 
     const genes = genesets
-      .filter(g => g.mode !== 'clusters')
-      .map(g => g.genes.map(gene => gene.geneId))
+      .filter((g) => g.mode !== 'clusters')
+      .map((g) => g.genes.map((gene) => gene.geneId))
       .flat()
 
     console.log('Loading GEX for', dataset.id, genes)
@@ -418,10 +418,10 @@ export function PlotGridProvider({ children }: IChildrenProps) {
     // make some empty arrays to store the gene data
     const gexData = Object.fromEntries(
       genesets
-        .filter(g => g.mode !== 'clusters')
-        .map(g => g.genes)
+        .filter((g) => g.mode !== 'clusters')
+        .map((g) => g.genes)
         .flat()
-        .map(g => [g.geneId, zeros(store.dataset!.cells ?? 0)])
+        .map((g) => [g.geneId, zeros(store.dataset!.cells ?? 0)])
     )
 
     for (const gene of results.genes) {
@@ -454,8 +454,8 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         //setMode,
         setPalette: (palette: ColorMap) => {
           setStore(
-            produce(store, draft => {
-              draft.plots = draft.plots.map(p => ({
+            produce(store, (draft) => {
+              draft.plots = draft.plots.map((p) => ({
                 ...p,
                 palette,
               }))
@@ -464,8 +464,8 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         },
         updatePlot: (plot: IUmapPlot) => {
           setStore(
-            produce(store, draft => {
-              const idx = draft.plots.findIndex(p => p.id === plot.id)
+            produce(store, (draft) => {
+              const idx = draft.plots.findIndex((p) => p.id === plot.id)
               if (idx !== -1) {
                 draft.plots[idx] = plot
               }

@@ -50,8 +50,8 @@ export function ScaleEditDialog({ group, track, onResponse }: IProps) {
                 {
                   title: 'Scale Labels',
                   textProps: _track.displayOptions.text,
-                  update: textProps => {
-                    const newTrack = produce(_track, draft => {
+                  update: (textProps) => {
+                    const newTrack = produce(_track, (draft) => {
                       draft.displayOptions.text = textProps
                     })
 
@@ -72,15 +72,19 @@ export function ScaleEditDialog({ group, track, onResponse }: IProps) {
           <ColorPropRow
             title="Color"
             //side="left"
-            color={_track.displayOptions.stroke.value}
-            onColorChange={v => {
-              const newTrack = produce(_track, draft => {
-                draft.displayOptions.stroke.value = v
-              })
+            colors={[
+              {
+                color: _track.displayOptions.stroke.value,
+                onColorChange: (v) => {
+                  const newTrack = produce(_track, (draft) => {
+                    draft.displayOptions.stroke.value = v
+                  })
 
-              onResponse?.(TEXT_OK, { group, track: newTrack })
-              setTrack(newTrack)
-            }}
+                  onResponse?.(TEXT_OK, { group, track: newTrack })
+                  setTrack(newTrack)
+                },
+              },
+            ]}
             className={SIMPLE_COLOR_EXT_CLS}
           />
 
@@ -88,8 +92,8 @@ export function ScaleEditDialog({ group, track, onResponse }: IProps) {
             title="Caps"
             side="right"
             checked={_track.displayOptions.caps.show}
-            onCheckedChange={v => {
-              const newTrack = produce(_track, draft => {
+            onCheckedChange={(v) => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.caps.show = v
               })
 
@@ -101,8 +105,8 @@ export function ScaleEditDialog({ group, track, onResponse }: IProps) {
               value={_track.displayOptions.caps.height}
               placeholder="height"
               limit={[1, 1000]}
-              onNumChange={v => {
-                const newTrack = produce(_track, draft => {
+              onNumChange={(v) => {
+                const newTrack = produce(_track, (draft) => {
                   draft.displayOptions.caps.height = v
                 })
 
@@ -117,8 +121,8 @@ export function ScaleEditDialog({ group, track, onResponse }: IProps) {
             title="Auto size (bp)"
             side="right"
             checked={settings.tracks.scale.autoSize}
-            onCheckedChange={v => {
-              const newOptions = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newOptions = produce(settings, (draft) => {
                 draft.tracks.scale.autoSize = v
               })
 
@@ -133,8 +137,8 @@ export function ScaleEditDialog({ group, track, onResponse }: IProps) {
               placeholder="BP"
               className="rounded-theme"
               w="sm"
-              onNumChanged={v => {
-                const newOptions = produce(settings, draft => {
+              onNumChanged={(v) => {
+                const newOptions = produce(settings, (draft) => {
                   draft.tracks.scale.bp = v
                 })
 
