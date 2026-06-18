@@ -12,7 +12,7 @@ import { TAILWIND_MEDIA_SM, useWindowSize } from '@/hooks/window-size'
 
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { cn } from '@/lib/shadcn-utils'
-import { useHydration } from '@/stores/hydrated'
+import { useHydration } from '@/stores/hydration'
 import { createPortal } from 'react-dom'
 import { usePanelRef } from 'react-resizable-panels'
 import { ChevronRightIcon } from '../icons/chevron-right-icon'

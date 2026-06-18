@@ -2,6 +2,7 @@ import { type ILinkProps } from '@/interfaces/link-props'
 import { BASE_COMPONENT_CLS, FOCUS_RING_CLS } from '@/theme'
 
 import { cn } from '@/lib/shadcn-utils'
+import Link from 'next/link'
 
 export const UNDERLINE_CLS =
   'data-[underline=true]:underline data-[underline=hover]:hover:underline data-[underline=false]:decoration-transparent'
@@ -31,15 +32,28 @@ export function BaseLink({
   // External links open in new windows, app urls do not.
   const isExt = href.startsWith('http') || href.startsWith('www')
 
-  const astroReload = !isExt && !target
-
   if (isExt && !target) {
     target = BLANK_TARGET
   }
 
+  if (isExt) {
+    return (
+      <a
+        ref={ref}
+        href={href}
+        title={title}
+        data-checked={selected}
+        className={cn(LINK_CLS, className)}
+        target={target}
+        {...props}
+      >
+        {children}
+      </a>
+    )
+  }
+
   return (
-    <a
-      data-astro-reload={astroReload}
+    <Link
       ref={ref}
       href={href}
       title={title}
@@ -49,6 +63,6 @@ export function BaseLink({
       {...props}
     >
       {children}
-    </a>
+    </Link>
   )
 }

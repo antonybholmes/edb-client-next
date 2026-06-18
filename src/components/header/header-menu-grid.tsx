@@ -187,7 +187,8 @@ export function SearchHeaderLinks({
               settings.apps.links.openInNewWindow ? BLANK_TARGET : undefined
             }
             title={module.description}
-            className="w-full justify-start gap-3 h-14"
+            size="xl"
+            className="w-full justify-start gap-3"
           >
             <div
               className={ICON_CLS}

@@ -5,7 +5,7 @@ import type { IAppInfo } from '../app-info'
 import type { IBasicEdbUser } from './edb'
 import { useTheme } from './theme'
 
-const SETTINGS_KEY = `${config.appId}:settings:v36`
+const SETTINGS_KEY = `${config.appId}:settings:v38`
 
 export type ToolbarStyle = 'classic' | 'single'
 
@@ -59,7 +59,7 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
   },
   apps: {
     links: {
-      openInNewWindow: true,
+      openInNewWindow: false,
     },
     useAccentColors: true,
   },

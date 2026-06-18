@@ -36,7 +36,9 @@ export default function Layout({
       >
         {/* <CsrfProvider>{children}</CsrfProvider> */}
         {/* <CoreProviders>{children}</CoreProviders> */}
-        <BaseCol className="root grow">
+
+        {/* Added for base-ui to render dialogs */}
+        <BaseCol className="root isolate grow">
           <Auth0Provider>{children}</Auth0Provider>
         </BaseCol>
       </body>

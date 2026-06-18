@@ -23,7 +23,7 @@ import type { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
 import { PATH_SEP } from '@/lib/http/urls'
 import type { IClusterFrame } from '@/lib/math/hcluster'
 import { formattedList, type UndefNullStr } from '@/lib/text/text'
-import { useHydration } from '@/stores/hydrated'
+import { useHydration } from '@/stores/hydration'
 import {
   DEFAULT_BOX_PLOT_DISPLAY_PROPS,
   type IBoxPlotDisplayOptions,
