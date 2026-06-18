@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@auth0/auth0-react':
-        specifier: ^2.18.0
-        version: 2.18.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^2.19.0
+        version: 2.19.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@auth0/nextjs-auth0':
         specifier: ^4.22.0
         version: 4.22.0(next@16.2.9(@babel/core@7.29.7)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -201,8 +201,8 @@ importers:
         specifier: ^12.40.0
         version: 12.40.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       nanoid:
-        specifier: ^5.1.11
-        version: 5.1.11
+        specifier: ^5.1.14
+        version: 5.1.14
       next:
         specifier: '16.2'
         version: 16.2.9(@babel/core@7.29.7)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -340,17 +340,17 @@ packages:
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
 
-  '@auth0/auth0-auth-js@1.7.0':
-    resolution: {integrity: sha512-SxF5WcPehbLOPwGrM+mqqVhnwZ3ZHEfM2wI/Yc3h0Kn1MM78seegxj7PrKoEMMRIfslDyHG+UNlOuobY8YOcKg==}
+  '@auth0/auth0-auth-js@1.9.1':
+    resolution: {integrity: sha512-YY8/We7NpJyN8aDlYZI0ENRFlPsuFQ5NGETI4dkJa+BEwCibNTRlM1E9O9qc77K4TpOANZsmaADSMde2If+Alg==}
 
-  '@auth0/auth0-react@2.18.0':
-    resolution: {integrity: sha512-AO1SCAEwXrZywJkbtGk7bH+7svMZoM5+ZzARx7zpzOZ41TpqyH6FIg75gAe2M/jxYMAPltHQjW6gFURWBxrK1w==}
+  '@auth0/auth0-react@2.19.0':
+    resolution: {integrity: sha512-w7AjJyEvnKynOBUf7leDncFpSMxoSO8LMssOQM1HQRBwALuESlAcnbs8ztR9abNC0Okgk9CyGH/oF4sqMDaF5w==}
     peerDependencies:
       react: ^16.11.0 || ^17 || ^18 || ~19.0.1 || ~19.1.2 || ^19.2.1
       react-dom: ^16.11.0 || ^17 || ^18 || ~19.0.1 || ~19.1.2 || ^19.2.1
 
-  '@auth0/auth0-spa-js@2.21.1':
-    resolution: {integrity: sha512-Z4HfUZ/bSJLjobcWvRzh762jsJjXZdqh4Lmu+Ho8qNfldL6B+6RUMw3BJmwRMiWPoeLFvL25eTAMCxaLiULFSQ==}
+  '@auth0/auth0-spa-js@2.21.2':
+    resolution: {integrity: sha512-CkIzlTJeae0LbYluXgNRPs7X8+Yd7W8ya/d1Cq/AGZ0d5/gfWwgDdFv9tCQR59KhRqdmvESSJUaIQjcjD0B1aA==}
 
   '@auth0/nextjs-auth0@4.22.0':
     resolution: {integrity: sha512-RzoKWkdw/ND2+7R/OY3M7x5k45LjOxc3XlzE3fDL67gG24ux1eHTEf28FJwDcOXtWUOPUjpzPTIldAhu49Jepg==}
@@ -2356,8 +2356,8 @@ packages:
     resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
     engines: {node: 18 || 20 || >=22}
 
-  baseline-browser-mapping@2.10.37:
-    resolution: {integrity: sha512-girxaJ7WZssDOFhzCGZTDKoTa1gk6A1TbflaYTpykLJ4UU9Fz9kx1aREM8JCuoVHbL8X8T/mJg7w2oYSq72Oig==}
+  baseline-browser-mapping@2.10.38:
+    resolution: {integrity: sha512-31/02mVB4yuQU6adKk5SlY6m+mxDwUq5KZkyYgnLrrKl7TEm1+3PyDtDBz2kOv/wxZz41GHsvV1A/u6RmiyBvw==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -4108,8 +4108,8 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  nanoid@5.1.11:
-    resolution: {integrity: sha512-v+KEsUv2ps74PaSKv0gHTxTCgMXOIfBEbaqa6w6ISIGC7ZsvHN4N9oJ8d4cmf0n5oTzQz2SLmThbQWhjd/8eKg==}
+  nanoid@5.1.14:
+    resolution: {integrity: sha512-5c8l8kVzqpnDPaicbEop/fV0Q1w16FmbWtVhMqugTozAwYdlIQojWH5a/M7UfziFmGdQRrUdV+EPzc9Xng3VAQ==}
     engines: {node: ^18 || >=20}
     hasBin: true
 
@@ -5155,20 +5155,20 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
-  '@auth0/auth0-auth-js@1.7.0':
+  '@auth0/auth0-auth-js@1.9.1':
     dependencies:
       jose: 6.2.3
       openid-client: 6.8.4
 
-  '@auth0/auth0-react@2.18.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@auth0/auth0-react@2.19.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
-      '@auth0/auth0-spa-js': 2.21.1
+      '@auth0/auth0-spa-js': 2.21.2
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
 
-  '@auth0/auth0-spa-js@2.21.1':
+  '@auth0/auth0-spa-js@2.21.2':
     dependencies:
-      '@auth0/auth0-auth-js': 1.7.0
+      '@auth0/auth0-auth-js': 1.9.1
       browser-tabs-lock: 1.3.0
       dpop: 2.1.1
       es-cookie: 1.3.2
@@ -7345,7 +7345,7 @@ snapshots:
 
   balanced-match@4.0.4: {}
 
-  baseline-browser-mapping@2.10.37: {}
+  baseline-browser-mapping@2.10.38: {}
 
   brace-expansion@1.1.15:
     dependencies:
@@ -7370,7 +7370,7 @@ snapshots:
 
   browserslist@4.28.2:
     dependencies:
-      baseline-browser-mapping: 2.10.37
+      baseline-browser-mapping: 2.10.38
       caniuse-lite: 1.0.30001799
       electron-to-chromium: 1.5.375
       node-releases: 2.0.47
@@ -9711,7 +9711,7 @@ snapshots:
 
   nanoid@3.3.12: {}
 
-  nanoid@5.1.11: {}
+  nanoid@5.1.14: {}
 
   napi-postinstall@0.3.4: {}
 
@@ -9721,7 +9721,7 @@ snapshots:
     dependencies:
       '@next/env': 16.2.9
       '@swc/helpers': 0.5.15
-      baseline-browser-mapping: 2.10.37
+      baseline-browser-mapping: 2.10.38
       caniuse-lite: 1.0.30001799
       postcss: 8.4.31
       react: 19.2.7

@@ -1,6 +1,6 @@
 import { makeMetaData } from '@/lib/metadata'
 
-import { PrivacyQueryPage } from '@/components/pages/privacy'
+import { PrivacyQueryPage } from '@/components/pages/privacy-page'
 
 export const metadata = makeMetaData('Privacy')
 

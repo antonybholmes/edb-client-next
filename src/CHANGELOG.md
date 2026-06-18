@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Updated to match Astro version.
 
 
