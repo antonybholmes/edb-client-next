@@ -29,7 +29,7 @@ function HelpIFrame({ helpUrl }: IHelpFrameProps) {
   //     <iframe
   //       ref={iframeRef}
   //       src={helpUrl}
-  //       className="w-full h-64 bg-red-500 "
+  //       className="w-full h-64 bg-destructive "
   //       scrolling="auto"
 
   //       // onLoad={() => {

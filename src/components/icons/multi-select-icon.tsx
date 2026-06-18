@@ -3,7 +3,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { Copy, CopyCheck } from 'lucide-react'
 
 export function MultiSelectIcon({
-  w = 'w-4.5',
+  size = 'w-4.5',
   checked = false,
   //stroke = 'stroke-foreground',
   className,
@@ -11,10 +11,10 @@ export function MultiSelectIcon({
 }: IIconProps & { checked?: boolean }) {
   return checked ? (
     <CopyCheck
-      className={cn(ICON_CLS, w, className)}
+      className={cn(ICON_CLS, size, className)}
       strokeWidth={strokeWidth}
     />
   ) : (
-    <Copy className={cn(ICON_CLS, w, className)} strokeWidth={strokeWidth} />
+    <Copy className={cn(ICON_CLS, size, className)} strokeWidth={strokeWidth} />
   )
 }

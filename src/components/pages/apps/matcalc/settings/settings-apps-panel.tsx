@@ -1,11 +1,11 @@
-import { NumericalPropRow } from '@/dialog/numerical-prop-row'
+import { NumericalPropRow } from '@/dialogs/numerical-prop-row'
 import {
   getAccordionId,
   SettingsAccordionItem,
-} from '@/dialog/settings/settings-dialog'
-import { SwitchPropRow } from '@/dialog/switch-prop-row'
-import { TextPropRow } from '@/dialog/text-prop-row'
-import { TextareaPropRow } from '@/dialog/textarea-prop-row'
+} from '@/dialogs/settings/settings-dialog'
+import { SwitchPropRow } from '@/dialogs/switch-prop-row'
+import { TextPropRow } from '@/dialogs/text-prop-row'
+import { TextareaPropRow } from '@/dialogs/textarea-prop-row'
 import { capitalCase } from '@/lib/text/capital-case'
 import { isStringArray, splitOnCapitalLetters } from '@/lib/text/text'
 import { Accordion } from '@/themed/v2/accordion'

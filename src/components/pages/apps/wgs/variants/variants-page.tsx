@@ -1,6 +1,6 @@
 'use client'
 
-import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
+import { FooterPortal } from '@/components/toolbar/footer-portal'
 
 import {
   ShowOptionsMenu,
@@ -9,25 +9,20 @@ import {
   ToolbarPanel,
 } from '@/toolbar/toolbar'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
-import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
 import {
-  NO_DIALOG,
-  TEXT_CANCEL,
   TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_PNG,
   TEXT_DOWNLOAD_AS_SVG,
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_SAVE_AS,
-  type IDialogParams,
 } from '@/consts'
 import { getDataFrameInfo } from '@/lib/dataframe/dataframe-utils'
 
-import { locStr, parseGenomicLocation } from '@/lib/genomic/genomic'
+import { locStr } from '@/lib/genomic/genomic'
 import { useEffect, useRef, useState } from 'react'
 
 import { formatChr } from '@/lib/genomic/dna'
-import { parseGenLoc } from '@/lib/genomic/genomic'
 
 import { PileupPlotPanel } from '@/components/pages/apps/wgs/variants/pileup-plot-panel'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -42,34 +37,30 @@ import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
-import { makeUuid, randId } from '@/lib/id'
+import { makeUuid } from '@/lib/id'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 
 import { PileupPropsPanel } from './pileup-props-panel'
 
-import { SaveImageDialog } from '@/components/pages/save-image-dialog'
-import { SaveTxtDialog } from '@/components/pages/save-txt-dialog'
 import { type ITab } from '@/components/tabs/tab-provider'
 
-import type { ISaveAsFormat } from '@/components/pages/save-as-dialog'
+import type { ISaveAsFileType, ISaveAsResponse } from '@/dialogs/save-as-dialog'
 import { FileIcon } from '@/icons/file-icon'
-import { Card } from '@/themed/card'
-import {
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectList,
-} from '@/themed/v2/select'
 
+import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
-import { ModuleInfoButton } from '@/components/header/module-info-button'
 import { DownloadIcon } from '@/components/icons/download-icon'
-import { DownloadImageIcon } from '@/components/icons/download-image-icon'
 import { ShowSideButton } from '@/components/pages/show-side-button'
 import { ZoomSlider } from '@/components/toolbar/zoom-slider'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { CoreProviders } from '@/providers/core-providers'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
+import { AppHeaderIcon } from '@/components/header/app-header-icon'
+import { BaseCol } from '@/components/layout/base-col'
+import { BaseRow } from '@/components/layout/base-row'
+import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import {
   GroupToggle,
@@ -77,10 +68,13 @@ import {
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { ResizableSidebar } from '@/components/slide-bar/resizable-sidebar'
 import { useSlideBar } from '@/components/slide-bar/slide-bar-store'
-import { VScrollPanel } from '@/components/v-scroll-panel'
 import { TAB10_PALETTE } from '@/lib/color/palette'
+import { AssemblySelect } from '@/lib/edb/assembly-select'
+import { useAppInfo } from '@/lib/edb/edb-settings'
+import { parseGenomicLocation } from '@/lib/genomic/genomic-location'
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 import { produce } from 'immer'
+import { MonitorDown } from 'lucide-react'
 import { LocationAutocomplete } from '../../genomic/seq-browser/location-autocomplete'
 import {
   HistoryLayout,
@@ -97,7 +91,7 @@ import { DatasetPanel } from './dataset-panel'
 import { useDatasets } from './dataset-store'
 import { FeaturePropsPanel } from './feature-props-panel'
 import { MAFPanel } from './maf-panel'
-import MODULE_INFO from './module.json'
+import APP_INFO from './manifest.json'
 import {
   CMAP_NONE,
   useVariantSettings,
@@ -113,21 +107,15 @@ export function VariantsPage() {
   const _id = 'variants-page'
 
   const { settings, updateSettings } = useVariantSettings()
+  const { setAppInfo } = useAppInfo()
   const { datasets, datasetMap, sampleMap } = useDatasets()
   const { variants } = useVariants()
 
   const [searchLocation, setSearchLocation] = useState(
     locStr(settings.location)
   )
-  // Order the display based on the drag list re-ordering
 
-  //const [databases, setDatabases] = useState<IMutationDB[]>([])
-
-  //const searchRef = useRef<HTMLTextAreaElement>(null)
-  //const [variants, setVariants] = useState<IVariantResults | null>(null)
-  //const [dna, setDna] = useState<IDNA | null>(null)
-
-  const { barProps, setOpen } = useSlideBar('variants-folders')
+  const { open, setOpen } = useSlideBar('variants-folders')
 
   //const [addChrPrefix, setAddChrPrefix] = useState(true)
 
@@ -137,7 +125,7 @@ export function VariantsPage() {
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
+  const { open: openDialog } = useDialogs()
 
   const { openApp, openFile, goto } = useHistory()
   const app = useApp()!
@@ -148,7 +136,8 @@ export function VariantsPage() {
   const df = sheet as AnnotationDataFrame
 
   useEffect(() => {
-    openApp(MODULE_INFO.name)
+    setAppInfo(APP_INFO)
+    openApp(APP_INFO.name)
   }, [])
 
   useEffect(() => {
@@ -188,44 +177,6 @@ export function VariantsPage() {
     setSearchLocation(locStr(settings.location))
   }, [locStr(settings.location)])
 
-  /**
-   * Fetch pileup data for a given genomic location.
-   *
-   * @param search genomic location string e.g. chr1:1000-2000
-   * @returns
-   */
-  // async function getPileup(search: string) {
-  //   try {
-  //     const location = parseGenLoc(search)
-
-  //     if (!location) {
-  //       return
-  //     }
-
-  //     let dna: IDNA = { location, seq: '' }
-
-  //     dna = await fetchDNA(queryClient, location, {
-  //       format: 'upper',
-  //       assembly: 'hg19',
-  //     })
-
-  //     setDna(dna)
-
-  //     let variantResults = await searchVariants(
-  //       location,
-  //       datasets.filter(dataset => datasetUseMap[dataset.id] ?? false)
-  //     )
-
-  //     if (!variantResults) {
-  //       return
-  //     }
-
-  //     setVariants(variantResults)
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // }
-
   useEffect(() => {
     if (!variants) {
       return
@@ -251,7 +202,7 @@ export function VariantsPage() {
         .flat()
     )
 
-    const loc = parseGenLoc(searchLocation)
+    const loc = parseGenomicLocation(searchLocation)
 
     const data = variants
       ? variants.variants.map((variant) => {
@@ -262,7 +213,13 @@ export function VariantsPage() {
           }
 
           return [
-            sampleMap[variant.sample]!.name,
+            variant.gene,
+            locStr({
+              chr,
+              start: variant.start,
+              end: variant.end,
+              strand: '+',
+            }),
             chr,
             variant.start,
             variant.end,
@@ -273,7 +230,11 @@ export function VariantsPage() {
             variant.type,
             variant.hgvsP ?? '',
             variant.hgvsC ?? '',
+            variant.exon,
+            variant.exons,
             variant.consequence ?? '',
+            sampleMap[variant.sample]!.name,
+            variant.transcript,
             // remove 1:, 2:, 3: ordering info
             variant.tDepth - variant.tAltCount,
             variant.tAltCount,
@@ -313,7 +274,8 @@ export function VariantsPage() {
     const df = new AnnotationDataFrame({
       data,
       columns: [
-        'Sample',
+        'Gene_Symbol',
+        'Location',
         'Chromosome',
         'Start_Position',
         'End_Position',
@@ -323,7 +285,11 @@ export function VariantsPage() {
         'Variant_Type',
         'AAChange',
         'DNAChange',
+        'Exon_Number',
+        'Total_Exons',
         'Variant_Classification',
+        'Sample',
+        'Transcript',
         't_ref_count',
         't_alt_count',
         't_depth',
@@ -364,29 +330,20 @@ export function VariantsPage() {
         <>
           <ToolbarTabGroup title="File">
             <ToolbarIconButton
-              title="Download variant table to local file"
-              onClick={() =>
-                setShowDialog({
-                  id: randId('save'),
+              title="Download image to local file"
+              onClick={() => {
+                openDialog({
+                  type: 'save-image',
+                  payload: {
+                    name: 'variants',
+                    svgRef,
+                  },
                 })
-              }
+              }}
             >
               <DownloadIcon />
             </ToolbarIconButton>
-
-            <ToolbarIconButton
-              title="Download image to local file"
-              onClick={() =>
-                setShowDialog({
-                  id: randId('export'),
-                })
-              }
-            >
-              <DownloadImageIcon />
-            </ToolbarIconButton>
           </ToolbarTabGroup>
-
-          <ToolbarSeparator />
 
           <ToolbarTabGroup title="View">
             <ToggleGroup
@@ -411,59 +368,24 @@ export function VariantsPage() {
               <GroupToggle value="maf">MAF</GroupToggle>
             </ToggleGroup>
           </ToolbarTabGroup>
-          <ToolbarSeparator />
         </>
       ),
     },
   ]
 
   const rightTabs: ITab[] = [
-    // {
-    //   icon: <DatabaseIcon />,
-    //   name: "Databases",
-    //   content: (<MutationDBPanel databases={databases} />)
-    // },
     {
-      //name: nanoid(),
-      //icon: <SlidersIcon />,
       id: 'Display',
       content: <PileupPropsPanel />,
     },
 
     {
-      //name: nanoid(),
-      //icon: <SlidersIcon />,
       id: 'Features',
       content: <FeaturePropsPanel />,
     },
-
-    // {
-    //   //name: nanoid(),
-    //   icon: <ClockRotateLeftIcon />,
-    //   id: 'History',
-    //   content: <HistoryPanel branchId={branch?.id ?? ''} />,
-    // },
   ]
 
   const fileMenuTabs: ITab[] = [
-    // {
-    //   id: nanoid(),
-    //   name: "Open",
-    //   icon: <OpenIcon fill="" />,
-    //   content: (
-    //     <DropdownMenuItem
-    //       aria-label={TEXT_OPEN_FILE}
-    //       onClick={() =>
-    //         setShowDialog({ name: makeRandId("open"), params: {} })
-    //       }
-    //     >
-    //       <UploadIcon fill="" />
-
-    //       <span>{TEXT_OPEN_FILE}</span>
-    //     </DropdownMenuItem>
-    //   ),
-    // },
-    // { id: nanoid(), name: "<divider>" },
     {
       //name: nanoid(),
       id: TEXT_SAVE_AS,
@@ -517,37 +439,11 @@ export function VariantsPage() {
 
   return (
     <>
-      {showDialog.id.includes('save') && (
-        <SaveTxtDialog
-          name="variants"
-          onResponse={(response, data) => {
-            if (response !== TEXT_CANCEL) {
-              const d = data as { name: string; format: ISaveAsFormat }
-              save(d.name as string, d.format.ext)
-            }
-
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        />
-      )}
-
-      {showDialog.id.includes('export') && (
-        <SaveImageDialog
-          name="variants"
-          onResponse={(response, data) => {
-            if (response !== TEXT_CANCEL) {
-              const d = data as { name: string }
-              downloadSvgAutoFormat(svgRef, d.name as string)
-            }
-
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        />
-      )}
-
       <HeaderPortal>
-        <ModuleInfoButton info={MODULE_INFO} />
-
+        <>
+          <AppHeaderIcon />
+          <AppInfoButton />
+        </>
         <LocationAutocomplete
           value={searchLocation}
           //showClear={false}
@@ -571,26 +467,7 @@ export function VariantsPage() {
           className="w-4/5 lg:w-3/5 xl:w-1/2 2xl:w-2/5 text-xs"
         />
 
-        <>
-          <SelectList
-            variant="header"
-            className="text-xs"
-            w="xs"
-            value={settings.assembly}
-            onValueChange={(value) =>
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.assembly = (value as string) ?? 'hg19'
-                })
-              )
-            }
-          >
-            <SelectGroup>
-              <SelectLabel>Genome Assembly</SelectLabel>
-              <SelectItem value="hg19">hg19</SelectItem>
-            </SelectGroup>
-          </SelectList>
-        </>
+        <AssemblySelect />
       </HeaderPortal>
 
       <ShortcutLayout signinRequired={false}>
@@ -602,10 +479,7 @@ export function VariantsPage() {
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
             leftShortcuts={
-              <ShowSideButton
-                open={barProps.open}
-                onClick={() => setOpen(!barProps.open)}
-              />
+              <ShowSideButton open={open} onClick={() => setOpen(!open)} />
             }
             rightShortcuts={<HistoryShowButton />}
           />
@@ -638,28 +512,26 @@ export function VariantsPage() {
                   className="flex flex-col"
                   id="pileup"
                 >
-                  <Card variant="content" className="mb-2 grow">
-                    <Tabs
-                      value={settings.view}
-                      onValueChange={(v) => {
-                        updateSettings(
-                          produce(settings, (draft) => {
-                            draft.view = v as 'pileup' | 'maf'
-                          })
-                        )
-                      }}
-                      className="grow flex flex-col"
-                    >
-                      <TabsContent value="pileup" className="flex-col grow ">
-                        <VScrollPanel className="grow h-full">
-                          <PileupPlotPanel ref={svgRef} />
-                        </VScrollPanel>
-                      </TabsContent>
-                      <TabsContent value="maf">
-                        <MAFPanel ref={svgRef} />
-                      </TabsContent>
-                    </Tabs>
-                  </Card>
+                  <Tabs
+                    value={settings.view}
+                    onValueChange={(v) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.view = v as 'pileup' | 'maf'
+                        })
+                      )
+                    }}
+                    className="grow flex flex-col"
+                  >
+                    <TabsContent value="pileup" className="flex-col grow ">
+                      <ExtScrollCard>
+                        <PileupPlotPanel ref={svgRef} />
+                      </ExtScrollCard>
+                    </TabsContent>
+                    <TabsContent value="maf">
+                      <MAFPanel ref={svgRef} />
+                    </TabsContent>
+                  </Tabs>
                 </ResizablePanel>
                 <ThinVResizeHandle />
                 <ResizablePanel
@@ -669,14 +541,39 @@ export function VariantsPage() {
                   collapsible={true}
                   className="flex flex-col"
                 >
-                  <TabbedDataFrames
-                    key="tabbed-data-frames"
-                    selectedSheet={sheet?.id ?? ''}
-                    dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
-                    onTabChange={(selectedTab) => {
-                      goto({ app, file, sheet: selectedTab.tab })
-                    }}
-                  />
+                  <BaseRow className="gap-x-1 grow">
+                    <BaseCol>
+                      <IconButton
+                        title="Download variant table to local file"
+                        onClick={() => {
+                          openDialog({
+                            type: 'save',
+                            payload: {
+                              name: 'variants',
+                              callback: (data: ISaveAsResponse) => {
+                                const d = data as {
+                                  name: string
+                                  format: ISaveAsFileType
+                                }
+                                save(d.name, d.format.ext)
+                              },
+                            },
+                          })
+                        }}
+                      >
+                        <MonitorDown size={20} strokeWidth={1.5} />
+                      </IconButton>
+                    </BaseCol>
+
+                    <TabbedDataFrames
+                      key="tabbed-data-frames"
+                      selectedSheet={sheet?.id ?? ''}
+                      dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
+                      onTabChange={(selectedTab) => {
+                        goto({ app, file, sheet: selectedTab.tab })
+                      }}
+                    />
+                  </BaseRow>
                 </ResizablePanel>
               </ResizablePanelGroup>
             </TabSlideBar>
@@ -684,20 +581,11 @@ export function VariantsPage() {
             <DatasetPanel />
           </ResizableSidebar>
         </HistoryLayout>
-        <ToolbarFooterPortal className="justify-between">
+        <FooterPortal className="justify-between">
           <div>{getDataFrameInfo(df)}</div>
           <></>
-          <ZoomSlider
-            zoom={settings.scale}
-            onZoomChange={(zoom) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.scale = zoom
-                })
-              )
-            }}
-          />
-        </ToolbarFooterPortal>
+          <ZoomSlider />
+        </FooterPortal>
       </ShortcutLayout>
     </>
   )

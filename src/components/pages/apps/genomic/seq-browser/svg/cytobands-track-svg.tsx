@@ -1,9 +1,11 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
 import { Axis } from '@/components/plot/axis'
+import { SvgText } from '@/components/plot/svg-text'
 import type { IStringMap } from '@/interfaces/string-map'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { API_CYTOBANDS_URL } from '@/lib/edb/edb'
+import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { type IGenomicLocation } from '@/lib/genomic/genomic'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { range } from '@/lib/math/range'
@@ -43,13 +45,15 @@ interface IProps extends IDivProps {
 
 export function CytobandsTrackSvg({ track }: IProps) {
   const { settings } = useSeqBrowserSettings()
+  const { settings: edbSettings } = useEdbSettings()
+
   const { location } = useContext(LocationContext)
 
   const { data } = useQuery({
     queryKey: ['cytobands'],
     queryFn: async () => {
       const res = await httpFetch.getJson<{ data: ICytoband[] }>(
-        `${API_CYTOBANDS_URL}/assemblies/${settings.assembly}/chrs/${location.chr}`
+        `${API_CYTOBANDS_URL}/assemblies/${edbSettings.genomic.assembly}/chrs/${location.chr}`
       )
 
       return res.data
@@ -71,7 +75,7 @@ export function CytobandsTrackSvg({ track }: IProps) {
         fill="none"
       /> */}
 
-      {settings.cytobands.style === 'Rounded' ? (
+      {settings.tracks.cytobands.style === 'rounded' ? (
         <CytobandsRoundStyleTrackSvg track={track} cytobands={cytobands} />
       ) : (
         <CytobandsSquareStyleTrackSvg track={track} cytobands={cytobands} />
@@ -139,7 +143,7 @@ function CytobandsRoundStyleTrackSvg({
     c => c.name.startsWith('q') && c.giemsaStain !== 'acen'
   )
 
-  const h = settings.cytobands.band.height
+  const h = settings.tracks.cytobands.band.height
 
   const locx1 = cytoAx.domainToRange(location.start)
   const locx2 = cytoAx.domainToRange(location.end)
@@ -168,7 +172,7 @@ function CytobandsRoundStyleTrackSvg({
 
       <g
         id="p-arm"
-        transform={`translate(0, ${(settings.cytobands.height - h) / 2})`}
+        transform={`translate(0, ${(settings.tracks.cytobands.height - h) / 2})`}
       >
         <g id="p-bands" clipPath="url(#p-arm)">
           {pbands.map((b, bi) => {
@@ -198,7 +202,7 @@ function CytobandsRoundStyleTrackSvg({
               }
               width={Math.abs(pcenterxe - pcenterxs)}
               height={h}
-              fill={track.displayOptions.center.fill.color}
+              fill={track.displayOptions.center.fill.value}
               fillOpacity={track.displayOptions.center.fill.opacity}
               stroke="none"
             />
@@ -209,7 +213,7 @@ function CytobandsRoundStyleTrackSvg({
           x={cytoAx.domainToRange(l1.start) - (settings.reverse ? pw : 0)}
           width={pw}
           height={h}
-          stroke={track.displayOptions.stroke.color}
+          stroke={track.displayOptions.stroke.value}
           strokeWidth={track.displayOptions.stroke.width}
           fill="none"
           rx={h / 2}
@@ -218,7 +222,7 @@ function CytobandsRoundStyleTrackSvg({
 
       <g
         id="q-arm"
-        transform={`translate(0, ${(settings.cytobands.height - h) / 2})`}
+        transform={`translate(0, ${(settings.tracks.cytobands.height - h) / 2})`}
       >
         <g id="q-bands" clipPath="url(#q-arm)">
           {qbands.map((b, bi) => {
@@ -248,7 +252,7 @@ function CytobandsRoundStyleTrackSvg({
               }
               width={Math.abs(qcentersxe - qcenterxs)}
               height={h}
-              fill={track.displayOptions.center.fill.color}
+              fill={track.displayOptions.center.fill.value}
               fillOpacity={track.displayOptions.center.fill.opacity}
               stroke="none"
             />
@@ -259,17 +263,17 @@ function CytobandsRoundStyleTrackSvg({
           x={qcenterxs - (settings.reverse ? qw : 0)}
           width={qw}
           height={h}
-          stroke={track.displayOptions.stroke.color}
+          stroke={track.displayOptions.stroke.value}
           strokeWidth={track.displayOptions.stroke.width}
           fill="none"
           rx={h / 2}
         />
       </g>
 
-      {settings.cytobands.labels.show && (
+      {settings.tracks.cytobands.labels.text.show && (
         <g
           id="q-labels"
-          transform={`translate(0, ${settings.cytobands.height + settings.titles.offset})`}
+          transform={`translate(0, ${settings.tracks.cytobands.height + settings.titles.offset})`}
         >
           <LabelSvg
             pbands={pbands}
@@ -284,9 +288,9 @@ function CytobandsRoundStyleTrackSvg({
         id="location"
         x={locx1 - (settings.reverse ? locw : 0)}
         width={locw}
-        height={settings.cytobands.height}
-        stroke={track.displayOptions.location.stroke.color}
-        fill={track.displayOptions.location.fill.color}
+        height={settings.tracks.cytobands.height}
+        stroke={track.displayOptions.location.stroke.value}
+        fill={track.displayOptions.location.fill.value}
         fillOpacity={track.displayOptions.location.fill.opacity}
       />
     </>
@@ -328,7 +332,7 @@ function CytobandsSquareStyleTrackSvg({
     c => c.name.startsWith('q') && c.giemsaStain !== 'acen'
   )
 
-  const h = settings.cytobands.band.height
+  const h = settings.tracks.cytobands.band.height
 
   const locx1 = cytoAx.domainToRange(location.start)
   const locx2 = cytoAx.domainToRange(location.end)
@@ -338,7 +342,7 @@ function CytobandsSquareStyleTrackSvg({
     <>
       <g
         id="p-bands"
-        transform={`translate(0, ${(settings.cytobands.height - h) / 2})`}
+        transform={`translate(0, ${(settings.tracks.cytobands.height - h) / 2})`}
       >
         {pbands.map((b, bi) => {
           const l = b.loc
@@ -362,7 +366,7 @@ function CytobandsSquareStyleTrackSvg({
 
       <g
         id="q-bands"
-        transform={`translate(0, ${(settings.cytobands.height - h) / 2})`}
+        transform={`translate(0, ${(settings.tracks.cytobands.height - h) / 2})`}
       >
         {qbands.map((b, bi) => {
           const l = b.loc
@@ -384,10 +388,10 @@ function CytobandsSquareStyleTrackSvg({
         })}
       </g>
 
-      {settings.cytobands.labels.show && (
+      {settings.tracks.cytobands.labels.text.show && (
         <g
           id="q-labels"
-          transform={`translate(0, ${settings.cytobands.height + settings.titles.offset})`}
+          transform={`translate(0, ${settings.tracks.cytobands.height + settings.titles.offset})`}
         >
           <LabelSvg
             pbands={pbands}
@@ -400,11 +404,11 @@ function CytobandsSquareStyleTrackSvg({
 
       <g
         id="center"
-        transform={`translate(0, ${(settings.cytobands.height - h) / 2})`}
+        transform={`translate(0, ${(settings.tracks.cytobands.height - h) / 2})`}
       >
         <polygon
           points={`${centerx1},${h} ${centerx1},0 ${centerx2},${h} ${centerx2},0`}
-          fill={track.displayOptions.center.fill.color}
+          fill={track.displayOptions.center.fill.value}
           fillOpacity={track.displayOptions.center.fill.opacity}
           stroke="none"
         />
@@ -412,7 +416,7 @@ function CytobandsSquareStyleTrackSvg({
         <polygon
           points={`0,${h} 0,0 ${settings.reverse ? centerx2 : centerx1},0 ${settings.reverse ? centerx1 : centerx2},${h} ${xax.length},${h} ${xax.length},0 ${settings.reverse ? centerx1 : centerx2},0 ${settings.reverse ? centerx2 : centerx1},${h}`}
           fill="none"
-          stroke={track.displayOptions.stroke.color}
+          stroke={track.displayOptions.stroke.value}
           strokeWidth={track.displayOptions.stroke.width}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -423,9 +427,9 @@ function CytobandsSquareStyleTrackSvg({
         id="location"
         x={locx1 - (settings.reverse ? locw : 0)}
         width={locw}
-        height={settings.cytobands.height}
-        stroke={track.displayOptions.location.stroke.color}
-        fill={track.displayOptions.location.fill.color}
+        height={settings.tracks.cytobands.height}
+        stroke={track.displayOptions.location.stroke.value}
+        fill={track.displayOptions.location.fill.value}
         fillOpacity={track.displayOptions.location.fill.opacity}
       />
     </>
@@ -465,13 +469,13 @@ function LabelSvg({
   let minX = -1000
 
   // Use an empirical method to space labels out nicely
-  const thresholdX = settings.cytobands.labels.skip.auto
+  const thresholdX = settings.tracks.cytobands.labels.skip.auto
     ? Math.log2(ax.length) * 5
-    : settings.cytobands.labels.skip.x
+    : settings.tracks.cytobands.labels.skip.x
 
   for (const label of labels) {
     if (
-      settings.cytobands.labels.skip.on &&
+      settings.tracks.cytobands.labels.skip.on &&
       Math.abs(label.x - minX) < thresholdX
     ) {
       continue
@@ -486,17 +490,14 @@ function LabelSvg({
     <>
       {displayLabels.map(label => {
         return (
-          <text
+          <SvgText
             transform={`translate(${label.x}, 0)`}
-            fill={settings.cytobands.labels.font.color}
-            fontSize={settings.cytobands.labels.font.size}
+            font={settings.tracks.cytobands.labels.text}
             dominantBaseline="hanging"
-            textAnchor="middle"
-            //fontWeight="bold"
             key={label.name}
           >
             {label.name}
-          </text>
+          </SvgText>
         )
       })}
     </>

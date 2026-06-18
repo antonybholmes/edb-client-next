@@ -1,13 +1,12 @@
 import { type ILinkProps } from '@/interfaces/link-props'
-import { BASE_COMPONENT_CLS } from '@/theme'
+import { BASE_COMPONENT_CLS, FOCUS_RING_CLS } from '@/theme'
 
 import { cn } from '@/lib/shadcn-utils'
-import Link from 'next/link'
 
 export const UNDERLINE_CLS =
   'data-[underline=true]:underline data-[underline=hover]:hover:underline data-[underline=false]:decoration-transparent'
 
-const LINK_CLS = cn(BASE_COMPONENT_CLS, UNDERLINE_CLS)
+const LINK_CLS = cn(BASE_COMPONENT_CLS, FOCUS_RING_CLS, UNDERLINE_CLS)
 
 export const BLANK_TARGET = '_blank'
 
@@ -32,27 +31,15 @@ export function BaseLink({
   // External links open in new windows, app urls do not.
   const isExt = href.startsWith('http') || href.startsWith('www')
 
-  // if (isExt && !target) {
-  //   target = BLANK_TARGET
-  // }
+  const astroReload = !isExt && !target
 
-  if (!isExt) {
-    return (
-      <Link
-        href={href}
-        title={title}
-        data-checked={selected}
-        className={cn(LINK_CLS, className)}
-        target={target}
-        {...props}
-      >
-        {children}
-      </Link>
-    )
+  if (isExt && !target) {
+    target = BLANK_TARGET
   }
 
   return (
     <a
+      data-astro-reload={astroReload}
       ref={ref}
       href={href}
       title={title}

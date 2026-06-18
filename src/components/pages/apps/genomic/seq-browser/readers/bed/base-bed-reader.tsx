@@ -1,4 +1,4 @@
-import type { IGenomicLocation } from '@/lib/genomic/genomic'
+import type { IGenomicLocation } from '@/lib/genomic/genomic-location'
 
 export abstract class BaseBedReader {
   abstract getFeatures(location: IGenomicLocation): Promise<IGenomicLocation[]>

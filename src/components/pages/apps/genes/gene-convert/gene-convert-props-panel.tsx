@@ -4,6 +4,7 @@ import {
   ToggleButtonTriggers,
   ToggleButtons,
 } from '@/components/toggle-buttons'
+import type { IDivProps } from '@/interfaces/div-props'
 import { VCenterRow } from '@/layout/v-center-row'
 import {
   AccordionContent,
@@ -11,9 +12,8 @@ import {
   AccordionTrigger,
   ScrollAccordion,
 } from '@/themed/v2/accordion'
-import { forwardRef, type ForwardedRef } from 'react'
 
-export interface IProps {
+export interface IProps extends IDivProps {
   fromSpecies: string
   toSpecies: string
   exact: boolean
@@ -22,16 +22,14 @@ export interface IProps {
   setExact: (value: boolean) => void
 }
 
-export const GeneConvertPropsPanel = forwardRef(function GeneConvertPropsPanel(
-  {
-    fromSpecies,
-    toSpecies,
+export function GeneConvertPropsPanel({
+  ref,
+  fromSpecies,
+  toSpecies,
 
-    setFromSpecies,
-    setToSpecies,
-  }: IProps,
-  ref: ForwardedRef<HTMLDivElement>
-) {
+  setFromSpecies,
+  setToSpecies,
+}: IProps) {
   const tabs = [{ id: 'Human' }, { id: 'Mouse' }]
 
   console.log(fromSpecies, toSpecies)
@@ -41,13 +39,13 @@ export const GeneConvertPropsPanel = forwardRef(function GeneConvertPropsPanel(
       <ScrollAccordion value={['species']}>
         <AccordionItem value="species">
           <AccordionTrigger>Species</AccordionTrigger>
-          <AccordionContent variant="sidebar">
+          <AccordionContent>
             <VCenterRow className="gap-x-2">
               <Label className="w-12">From</Label>
               <ToggleButtons
                 tabs={tabs}
                 value={fromSpecies}
-                onTabChange={(selectedTab) => {
+                onTabChange={selectedTab => {
                   setFromSpecies(selectedTab.tab.id)
                 }}
               >
@@ -60,7 +58,7 @@ export const GeneConvertPropsPanel = forwardRef(function GeneConvertPropsPanel(
               <ToggleButtons
                 tabs={tabs}
                 value={toSpecies}
-                onTabChange={(selectedTab) => {
+                onTabChange={selectedTab => {
                   setToSpecies(selectedTab.tab.id)
                 }}
               >
@@ -72,4 +70,4 @@ export const GeneConvertPropsPanel = forwardRef(function GeneConvertPropsPanel(
       </ScrollAccordion>
     </PropsPanel>
   )
-})
+}

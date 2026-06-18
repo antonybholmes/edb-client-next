@@ -1,13 +1,14 @@
-import { TEXT_OK } from '@/consts'
-import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
+import { IS_DEV_MODE, TEXT_OK } from '@/consts'
+import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { produce } from 'immer'
 
+import { PropRow } from '@/components/dialogs/prop-row'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import { SwitchPropRow } from '@/components/dialog/switch-prop-row'
-import { TextPropRow } from '@/components/dialog/text-prop-row'
+} from '@/components/plot/color-picker-popover'
+import { SwitchPropRow } from '@/dialogs/switch-prop-row'
+import { TextPropRow } from '@/dialogs/text-prop-row'
 import { useEffect, useState } from 'react'
 import { usePlotGrid, type IScrnaCluster } from './plot-grid-store'
 
@@ -28,6 +29,7 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
   return (
     <OKCancelDialog
       open={true}
+      buttons={[TEXT_OK]}
       title={`Edit ${!cluster.name.toLowerCase().includes('cluster') ? 'Cluster ' : ''}${cluster.name}`}
       onResponse={r => {
         if (r === TEXT_OK) {
@@ -48,31 +50,34 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
 
       leftHeaderChildren={
         <ColorPickerButton
-          color={_cluster.color}
-          onColorChange={color => {
-            const newCluster = produce(_cluster, draft => {
-              draft.color = color
-            })
+          colors={[
+            {
+              color: _cluster.color,
+              onColorChange: color => {
+                const newCluster = produce(_cluster, draft => {
+                  draft.color = color
+                })
 
-            setCluster(newCluster)
+                setCluster(newCluster)
 
-            if (!clusterInfo) {
-              return
-            }
-
-            updateClusterInfo(
-              produce(clusterInfo, draft => {
-                draft.clusters.find(c => c.label === _cluster.label)!.color =
-                  color
-              })
-            )
-          }}
+                if (clusterInfo) {
+                  updateClusterInfo(
+                    produce(clusterInfo, draft => {
+                      draft.clusters.find(
+                        c => c.label === _cluster.label
+                      )!.color = color
+                    })
+                  )
+                }
+              },
+            },
+          ]}
           className={SIMPLE_COLOR_EXT_CLS}
         />
       }
-      leftFooterChildren={
-        <span className="text-foreground/50">{cluster.id}</span>
-      }
+      // leftFooterChildren={
+      //   <span className="text-foreground/50">{cluster.id}</span>
+      // }
       //contentVariant="glass"
       //bodyVariant="card"
       //headerVariant="opaque"
@@ -175,6 +180,11 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
           )
         }}
       />
+      {IS_DEV_MODE && (
+        <PropRow title="Cluster Id">
+          <span className="text-foreground/50">{cluster.id}</span>
+        </PropRow>
+      )}
     </OKCancelDialog>
   )
 }

@@ -1,5 +1,5 @@
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
-import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
+import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { VCenterRow } from '@/layout/v-center-row'
 import { type IDistFunc } from '@/lib/math/hcluster'
 import { useState } from 'react'
@@ -11,9 +11,9 @@ import {
   pearsond as pearsonDist,
 } from '@/lib/math/distance'
 
-import { CheckPropRow } from '@/components/dialog/check-prop-row'
-import { PropRow } from '@/components/dialog/prop-row'
-import { SettingsAccordionItem } from '@/dialog/settings/settings-dialog'
+import { CheckPropRow } from '@/dialogs/check-prop-row'
+import { PropRow } from '@/dialogs/prop-row'
+import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import {
   kmeans,
@@ -40,7 +40,10 @@ const DISTANCE_METRIC_MAP: Record<string, IDistFunc> = {
   Euclidean: euclideanDist,
 }
 
-export interface IProps extends IModalProps {
+export interface IProps extends IModalProps<{
+  df: AnnotationDataFrame
+  drawHeatmap: boolean
+}> {
   open?: boolean
   //df: AnnotationDataFrame
   isClusterMap?: boolean
@@ -66,7 +69,7 @@ export function KmeansDialog({
 
   function makeClusters() {
     if (!df) {
-      onResponse?.(TEXT_CANCEL)
+      onResponse?.(TEXT_CANCEL, undefined)
       return
     }
 
@@ -155,7 +158,7 @@ export function KmeansDialog({
       title="K-means"
       onResponse={r => {
         if (r === TEXT_CANCEL) {
-          onResponse?.(r)
+          onResponse?.(r, undefined)
         } else {
           makeClusters()
         }

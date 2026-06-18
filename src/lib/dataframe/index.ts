@@ -1,7 +1,9 @@
 import { range } from '../math/range'
 import { whereStr } from '../math/where'
+import type { UndefStr } from '../text/text'
 import { BaseIndex } from './base-index'
 import { getExcelColName } from './cell'
+import type { SeriesData } from './series-data'
 
 export type Shape = [number, number]
 
@@ -10,9 +12,6 @@ export type IndexFromType = Index | SeriesData[]
 export function shapesEqual(s1: Shape, s2: Shape): boolean {
   return s1[0] === s2[0] && s1[1] === s2[1]
 }
-export type SeriesData = IndexId | Date | boolean
-
-export type IndexId = number | string
 
 export type IndexMapFunc<T> = (v: SeriesData, i: number) => T
 
@@ -46,7 +45,7 @@ export abstract class Index extends BaseIndex {
 }
 
 export interface IIndexOptions {
-  name?: string | undefined
+  name?: UndefStr
 }
 
 export abstract class InfIndex extends Index {
@@ -329,4 +328,20 @@ export function indexAsValues(index: IndexFromType): SeriesData[] {
   } else {
     return index
   }
+}
+
+export function strs(data: SeriesData[]): string[] {
+  return data.map(d => d.toString())
+}
+
+export function nums(data: SeriesData[]): number[] {
+  return data.map(d => (typeof d === 'number' ? d : NaN))
+}
+
+export function bools(data: SeriesData[]): boolean[] {
+  return data.map(d => (typeof d === 'boolean' ? d : Boolean(d)))
+}
+
+export function dates(data: SeriesData[]): Date[] {
+  return data.map(d => (d instanceof Date ? d : new Date(NaN)))
 }

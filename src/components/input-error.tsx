@@ -9,7 +9,11 @@ export const InputError = forwardRef(function InputError(
   ref: ForwardedRef<HTMLDivElement>
 ) {
   return (
-    <VCenterRow ref={ref} className="gap-x-1 text-xs text-red-500" {...props}>
+    <VCenterRow
+      ref={ref}
+      className="gap-x-1 text-xs text-destructive"
+      {...props}
+    >
       {children}
     </VCenterRow>
   )
@@ -21,7 +25,7 @@ export const InputErrorWithIcon = forwardRef(function InputErrorWithIcon(
 ) {
   return (
     <InputError ref={ref} className="py-1" {...props}>
-      <WarningIcon w="w-4" />
+      <WarningIcon size="w-4" />
       {children}
     </InputError>
   )

@@ -1,7 +1,6 @@
-import { SettingsDialog } from '@/dialog/settings/settings-dialog'
+import { useSettingsTabs } from '@/dialogs/settings/setting-tabs-store'
 
-import { useSettingsTabs } from '@/components/dialog/settings/setting-tabs-store'
-
+import { DialogsRoot } from '@/components/dialogs/dialogs'
 import { Header, type IHeaderChildrenProps } from '@/components/header/header'
 import { SettingsIcon } from '@/components/icons/settings-icon'
 import { BaseCol } from '@/components/layout/base-col'
@@ -10,13 +9,14 @@ import { HelpWidget } from '@/help/help'
 import { type ILayoutProps } from '@/interfaces/layout-props'
 import { EDBSignIn, type SignInMode } from '@/lib/edb/signin/edb-signin'
 import { cn } from '@/lib/shadcn-utils'
-import { ToolbarFooter } from '@/toolbar/toolbar-footer'
+
+import { Footer } from '@/components/toolbar/footer'
 import { Toaster as SonnerToaster } from 'sonner'
 import { DevLayout } from './dev-layout'
 import { HeaderIconButton } from './header-icon-button'
 
 export function SettingsButton() {
-  const { visible, setSettingsVisible } = useSettingsTabs()
+  const { visible, openSettings } = useSettingsTabs()
   // const [hover, setHover] = useState(false)
 
   // const iconRef = useRef<SVGSVGElement>(null)
@@ -36,7 +36,7 @@ export function SettingsButton() {
       id="header-settings-button"
       title={TEXT_SETTINGS}
       checked={visible}
-      onClick={() => setSettingsVisible(true)}
+      onClick={() => openSettings()}
       // onMouseOver={() => {
       //   setHover(true)
       // }}
@@ -70,7 +70,7 @@ export function HeaderLayout({
   className,
   children,
 }: IHeaderLayoutProps) {
-  const { visible, setSettingsVisible } = useSettingsTabs()
+  //const { visible, setSettingsVisible } = useSettingsTabs()
 
   return (
     <>
@@ -84,13 +84,17 @@ export function HeaderLayout({
       {/* <Toaster /> */}
       <SonnerToaster position="top-right" />
 
-      {visible && (
+      {/* {visible && (
         <SettingsDialog
           //open={tabStat.visible}
           onOpenChange={setSettingsVisible}
           onResponse={() => setSettingsVisible(false)}
         />
-      )}
+      )} */}
+
+      {/* Show standardized dialogs at the root of the app to avoid nesting issues 
+      with portals and z-index */}
+      <DialogsRoot />
 
       <DevLayout>
         <BaseCol className="grow h-full">
@@ -119,7 +123,7 @@ export function HeaderLayout({
             {children}
           </main>
 
-          <ToolbarFooter />
+          <Footer />
         </BaseCol>
       </DevLayout>
 

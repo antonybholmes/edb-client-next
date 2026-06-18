@@ -1,4 +1,4 @@
-import { type IModalProps } from '@/dialog/ok-cancel-dialog'
+import { type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { useEffect, useState } from 'react'
 
 import { API_GEX_DATASETS_URL, API_GEX_URL } from '@/lib/edb/edb'
@@ -13,54 +13,32 @@ import { SelectItem, SelectList } from '@/themed/v2/select'
 
 import { makeNewGroup, type IClusterGroup } from '@/lib/cluster-group'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { range } from '@/lib/math/range'
 import { textToLines } from '@/lib/text/lines'
 import { produce } from 'immer'
 
-import { CheckPropRow } from '@/dialog/check-prop-row'
-import { GlassSideDialog } from '@/dialog/glass-side-dialog'
-import { PropRow } from '@/dialog/prop-row'
+import { CheckPropRow } from '@/dialogs/check-prop-row'
+import { GlassSideDialog } from '@/dialogs/glass-side-dialog'
+import { PropRow } from '@/dialogs/prop-row'
 import { DataFrame } from '@/lib/dataframe/dataframe'
-import { storeItem } from '@/lib/storage'
 
 import { Textarea } from '@/themed/textarea'
 import { useHistory } from '../../history/history-store'
 
-import { RadioPropRow } from '@/components/dialog/radio-prop-row'
-import {
-  getAccordionId,
-  SettingsAccordionItem,
-} from '@/components/dialog/settings/settings-dialog'
-import { ChevronUpDownIcon } from '@/components/icons/chevron-up-down-icon'
-import { ExternalLinkIcon } from '@/components/icons/external-link'
-import { HCenterRow } from '@/components/layout/h-center-row'
-import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
-import {
-  Popover,
-  PopoverContent,
-  PopoverMenuItem,
-  PopoverSpeechArrow,
-  PopoverTrigger,
-} from '@/components/shadcn/ui/themed/v2/popover'
-import { RadioGroup } from '@/components/shadcn/ui/themed/v2/radio-group'
+import { getAccordionId } from '@/dialogs/settings/settings-dialog'
 import { HelpButton } from '@/help/help-button'
 import { makeUuid } from '@/lib/id'
-import { GroupToggle, ToggleGroup } from '@/themed/v2/toggle-group'
 import { Toast } from '@base-ui/react/toast'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import type { IGexDataset, IGexSearchResult } from './gex-store'
-import { metadataToShared } from './gex-utils'
 import { SampleDataTypeCombo } from './sample-datatype-combo'
 
 import { appsConfig } from '@/config/apps'
+import type { UndefStr } from '@/lib/text/text'
 import { useQuery } from '@tanstack/react-query'
+import { GexDialogSidePanel, TECHNOLOGIES } from './gex-dialog-side-panel'
 // const DEFAULT_SAMPLE_DATA_TYPES = ['COO', 'Lymphgen']
 
 // const STANDARD_SAMPLE_DATA_TYPE_REGEX = /(coo|lymphgen)/i
-
-const GENOMES = Object.freeze(['Human', 'Mouse'])
-
-const TECHNOLOGIES = Object.freeze(['RNA-seq', 'scRNA-seq', 'Microarray'])
 
 const COO_COLORMAP: Readonly<Record<string, string>> = Object.freeze({
   abc: '#6495ED', // cornflowerblue
@@ -91,6 +69,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
   const [datasetMap, setDatasetMap] = useState<Map<string, IGexDataset>>(
     new Map<string, IGexDataset>()
   )
+  const [accordionValues, setAccordionValues] = useState<string[]>([])
 
   const { add: addToast } = Toast.useToastManager()
 
@@ -126,8 +105,6 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
   >(new Map<string, boolean>())
 
   const [groupSampleDataType, setGroupSampleDataType] = useState<string[]>([])
-
-  const [accordionValues, setAccordionValues] = useState<string[]>([])
 
   const [institutions, setInstitutions] = useState<string[]>([])
   const [instituteMap, setInstituteMap] = useState<Map<string, IGexDataset[]>>(
@@ -199,8 +176,11 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
             settings.apps.gex.selectedDatasets.includes(dataset.id)
           )
 
+          console.log('previously selected datasets', previouslySelected)
+
           if (previouslySelected.length > 0) {
             // we found one the use already selected, so highlight that
+            console.log('previously selected datasets', previouslySelected)
 
             setDataset(previouslySelected[0]!)
           } else {
@@ -380,16 +360,20 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
         }
       )
 
-      console.log('searched', res.data)
+      //console.log('searched', res.data)
 
       const searchResults: IGexSearchResult[] = res.data
 
       const geneResults = searchResults[0]!.probes
 
-      const data: number[][] = range(geneResults.length).map(gi =>
-        searchResults
-          .map(datasetResult => datasetResult.probes[gi]!.values)
-          .flat()
+      // const data: number[][] = range(geneResults.length).map(gi =>
+      //   searchResults
+      //     .map(datasetResult => datasetResult.probes[gi]!.values)
+      //     .flat()
+      // )
+
+      const data: number[][] = searchResults[0]!.probes.map(
+        probeResult => probeResult.values
       )
 
       let columns: string[] = []
@@ -416,12 +400,6 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
           }
         }
       } else {
-        console.log(
-          'Sear',
-          searchResults.map(s => s.dataset)
-        )
-
-        console.log(datasetMap.keys())
         columns = searchResults
           .map(datasetResult =>
             datasetMap
@@ -438,31 +416,42 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
 
       if (technology.includes('Microarray')) {
         rowObsCols = ['Probe Id', 'Gene Id', 'Gene Symbol', 'Ensembl', 'RefSeq']
-
-        geneData = geneResults.map(geneResult => [
-          geneResult.probe.id,
-          geneResult.probe.gene.geneId,
-          geneResult.probe.gene.geneSymbol,
-          geneResult.probe.gene.ensembl ?? '',
-          geneResult.probe.gene.refseq ?? '',
-        ])
       } else {
-        rowObsCols = ['Gene Id', 'Gene Symbol', 'Ensembl', 'RefSeq']
-
-        geneData = geneResults.map(geneResult => [
-          geneResult.probe.gene.geneId,
-          geneResult.probe.gene.geneSymbol,
-          geneResult.probe.gene.ensembl ?? '',
-          geneResult.probe.gene.refseq ?? '',
-        ])
+        rowObsCols = ['Gene Symbol', 'Ensembl', 'RefSeq'] //'Gene Id',
       }
+
+      geneData = geneResults.map(geneResult => {
+        // if user wants official symbol use that if available,
+        // otherwise use the original symbol from the dataset
+        // which may not be standardized
+        const geneSymbol = settings.apps.gex.useOfficialGeneSymbol
+          ? (geneResult.probe.gene?.symbol ?? geneResult.probe?.symbol)
+          : geneResult.probe.symbol
+
+        if (technology.includes('Microarray')) {
+          return [
+            geneResult.probe.id,
+            geneResult.probe.gene?.geneId ?? '',
+            geneSymbol,
+            geneResult.probe.gene?.ensembl ?? '',
+            geneResult.probe.gene?.refseq ?? '',
+          ]
+        } else {
+          return [
+            //geneResult.probe.gene?.geneId ?? '',
+            geneSymbol,
+            geneResult.probe.gene?.ensembl ?? '',
+            geneResult.probe.gene?.refseq ?? '',
+          ]
+        }
+      })
 
       const rowObs = new DataFrame({
         data: geneData,
         columns: rowObsCols,
       })
 
-      console.log('data', data, columns, rowObs)
+      //console.log('data', data, columns, rowObs)
 
       const df = new AnnotationDataFrame({
         data,
@@ -531,7 +520,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
 
       if (settings.apps.gex.addGroup) {
         const groupsMap = new Map<string, string[]>()
-        const groupColorMap = new Map<string, string | undefined>()
+        const groupColorMap = new Map<string, UndefStr>()
         const orderedGroupNames = []
 
         // using the sample order from the database, build a
@@ -611,7 +600,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
       // make sure that the groups are empty
       //addGroups(groups, 'set')
 
-      openFile('GEX data', {
+      openFile(df.name + ' GEX', {
         sheets: [df],
         groups,
 
@@ -662,146 +651,16 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
         <HelpButton url="/help/apps/matcalc/gene-expression" />
       }
     >
-      {/* Side panel */}
-      <>
-        <HCenterRow>
-          <Popover>
-            <PopoverTrigger className="font-bold text-xs flex flex-row items-center gap-x-4 w-48 justify-between hover:bg-muted/75 data-popup-open:bg-muted/75 rounded-theme p-2.5 trans-color">
-              <span>{`${settings.apps.gex.genome} ${technology ?? ''}`}</span>
-              <ChevronUpDownIcon />
-            </PopoverTrigger>
-            <PopoverContent
-              //variant="content"
-              className="w-48 flex flex-col gap-y-4 relative"
-              sideOffset={12}
-              align="center"
-            >
-              <PopoverSpeechArrow />
-
-              <HCenterRow className="pt-2">
-                <ToggleGroup
-                  //variant="outline"
-
-                  value={[settings.apps.gex.genome]}
-                  onValueChange={v => {
-                    updateSettings(
-                      produce(settings, draft => {
-                        draft.apps.gex.genome = v[0] ?? ''
-                      })
-                    )
-                  }}
-                  rounded="none"
-                  className="border border-border/50 rounded-theme overflow-hidden"
-                >
-                  {GENOMES.map(s => (
-                    <GroupToggle
-                      key={s}
-                      value={s}
-                      className="w-16"
-                      aria-label="Filter rows"
-                    >
-                      {s}
-                    </GroupToggle>
-                  ))}
-                </ToggleGroup>
-              </HCenterRow>
-              <ul className="flex flex-col">
-                {TECHNOLOGIES.map((t, tid) => {
-                  return (
-                    <li key={tid}>
-                      <PopoverMenuItem
-                        checked={t === technology}
-                        variant="theme"
-                        animation="none"
-                        // ripple={false}
-                        className="w-full text-left"
-                        onClick={() => {
-                          updateSettings(
-                            produce(settings, draft => {
-                              draft.apps.gex.technology = t
-                            })
-                          )
-                          setTechnology(t)
-                        }}
-                      >
-                        {t}
-                      </PopoverMenuItem>
-                    </li>
-                  )
-                })}
-              </ul>
-            </PopoverContent>
-          </Popover>
-        </HCenterRow>
-        {dataset && (
-          <RadioGroup
-            className="flex flex-col grow relative"
-            value={dataset?.id}
-            onValueChange={v => {
-              const ds = datasetMap.get(v)
-
-              if (ds) {
-                setDataset(ds)
-
-                updateSettings(
-                  produce(settings, draft => {
-                    draft.apps.gex.selectedDatasets = [ds.id]
-                  })
-                )
-              }
-            }}
-          >
-            <ScrollAccordion
-              value={accordionValues}
-              //onValueChange={setAccordionValues}
-              variant="settings"
-            >
-              {institutions.map(institution => {
-                return (
-                  <SettingsAccordionItem
-                    title={institution}
-                    value={institution}
-                    key={institution}
-                  >
-                    <ul className="flex flex-col">
-                      {instituteMap.get(institution)?.map(ds => {
-                        return (
-                          <li
-                            key={ds.id}
-                            className="flex flex-row items-center justify-between gap-x-2"
-                          >
-                            <RadioPropRow title={ds.name} value={ds.id}>
-                              <button
-                                title={`View metadata of ${ds.name}`}
-                                onClick={() => {
-                                  const id = storeItem(
-                                    'table-viewer',
-                                    'data',
-                                    JSON.stringify(metadataToShared(ds))
-                                  )
-
-                                  window.open(
-                                    `/apps/table-viewer?key=${id}`,
-                                    '_blank',
-                                    'width=800,height=600'
-                                  )
-                                }}
-                                className="opacity-30 hover:opacity-70"
-                              >
-                                <ExternalLinkIcon />
-                              </button>
-                            </RadioPropRow>
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  </SettingsAccordionItem>
-                )
-              })}
-            </ScrollAccordion>
-          </RadioGroup>
-        )}
-      </>
+      <GexDialogSidePanel
+        technology={technology}
+        setTechnology={setTechnology}
+        setDataset={setDataset}
+        datasetMap={datasetMap}
+        institutions={institutions}
+        instituteMap={instituteMap}
+        accordionValues={accordionValues}
+        dataset={dataset}
+      />
 
       {/* Main panel */}
       <>
@@ -894,6 +753,19 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
               className="w-48"
             />
           </CheckPropRow>
+
+          <CheckPropRow
+            title="Use official gene symbol"
+            info="Use the official gene symbol in place of the original symbol if available."
+            checked={settings.apps.gex.useOfficialGeneSymbol}
+            onCheckedChange={v => {
+              updateSettings(
+                produce(settings, draft => {
+                  draft.apps.gex.useOfficialGeneSymbol = v
+                })
+              )
+            }}
+          />
 
           <CheckPropRow
             title="Add sample info to column names"

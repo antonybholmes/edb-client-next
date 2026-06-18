@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { cn } from '@/lib/shadcn-utils'
 import { ContextMenu as ContextMenuPrimitive } from '@base-ui/react/context-menu'

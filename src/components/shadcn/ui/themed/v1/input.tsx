@@ -3,7 +3,8 @@ import { WarningIcon } from '@/icons/warning-icon'
 import type { IDivProps } from '@/interfaces/div-props'
 import { VCenterRow } from '@/layout/v-center-row'
 import { cn } from '@/lib/shadcn-utils'
-import { BUTTON_MD_H_CLS, BUTTON_XL_H_CLS, FOCUS_INSET_RING_CLS } from '@/theme'
+import type { UndefStr } from '@/lib/text/text'
+import { BUTTON_XL_H_CLS, FOCUS_INSET_RING_CLS } from '@/theme'
 import { cva, type VariantProps } from 'class-variance-authority'
 import {
   useEffect,
@@ -38,7 +39,7 @@ export const inputVariants = cva(PLACEHOLDER_CLS, {
     },
     h: {
       sm: 'h-7',
-      md: BUTTON_MD_H_CLS,
+      md: 'h-button-md',
       //dialog: 'h-9',
       lg: 'h-9',
       xl: BUTTON_XL_H_CLS,
@@ -64,8 +65,8 @@ export const INPUT_CLS = cn(
 )
 
 export interface IPlaceholderProps extends IDivProps {
-  id: string | undefined
-  placeholder?: string | undefined
+  id: UndefStr
+  placeholder?: UndefStr
   focus?: boolean
   hover?: boolean
   value: string | number | readonly string[] | undefined
@@ -80,7 +81,7 @@ export interface IInputProps
   leftChildren?: ReactNode
   rightChildren?: ReactNode
   otherChildren?: ReactNode
-  //label?: string | undefined
+  //label?: UndefStr
   //labelPos?: 'left' | 'top'
   //labelW?: string
   w?: string
@@ -182,7 +183,7 @@ export function Input({
       />
 
       {rightChildren && rightChildren}
-      {error && <WarningIcon stroke="stroke-destructive" w="w-4 h-4" />}
+      {error && <WarningIcon stroke="stroke-destructive" size="w-4 h-4" />}
     </VCenterRow>
   )
 }

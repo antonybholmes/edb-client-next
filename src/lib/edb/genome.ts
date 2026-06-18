@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import type { Feature, IGenomicFeature } from '../genomic/genomic'
+
 import { httpFetch } from '../http/http-fetch'
 import { EDB_API_URL } from './edb'
 
@@ -9,53 +9,82 @@ export const API_GENOME_GTFS_URL = `${API_GENOME_URL}/gtfs`
 //export const API_GENOME_INFO_URL = `${API_GENOME_URL}/info`
 
 import { useEffect } from 'react'
-import { useSeqBrowserSettings } from '../../components/pages/apps/genomic/seq-browser/seq-browser-settings'
 
 import { create } from 'zustand'
+import { TIME_5_MINUTES_MS } from '../../consts'
 
-export interface IGenomeAnnotation {
+import type { Feature, IGenomicFeature } from '../genomic/genomic-feature'
+import { useEdbSettings } from './edb-settings'
+
+export interface IGTFInfo {
   id: string
   genome: string
   assembly: string
   name: string
 }
 
-export type GtfInfoMap = Record<string, IGenomeAnnotation>
+export type GtfInfoMap = Record<string, IGTFInfo>
+
+export const DEFAULT_ASSEMBLIES = [
+  { value: 'grch37', label: 'GRCh37/hg19' },
+  { value: 'grch38', label: 'GRCh38/hg38' },
+  { value: 'grcm38', label: 'GRCm38/mm10' },
+  //{ value: 'grcm39', label: 'GRCm39/mm39' },
+]
+
+/**
+ * Standardize genome assembly names to a common format. This is useful for mapping user input or different data sources to the correct GTF annotations.
+ * @param name
+ * @returns
+ */
+export function normalizeAssemblyName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace('hg19', 'grch37')
+    .replace('hg38', 'grch38')
+    .replace('mm10', 'grcm38')
+    .replace('mm39', 'grcm39')
+}
 
 export interface IGenomeStore {
+  gtfs: IGTFInfo[]
   gtfMap: GtfInfoMap
-  gtf: IGenomeAnnotation | null
+  gtf: IGTFInfo | null
 
-  setGtfMap: (gtfMap: GtfInfoMap) => void
-  setGtf: (gtf: IGenomeAnnotation) => void
+  setGtfs: (gtfs: IGTFInfo[], gtfMap: GtfInfoMap) => void
+  setGtf: (gtf: IGTFInfo) => void
 }
 
 export const useGenomesStore = create<IGenomeStore>()(set => ({
+  gtfs: [],
   gtfMap: {},
   gtf: null,
 
-  setGtfMap: gtfMap => {
-    set({ gtfMap })
+  setGtfs: (gtfs, gtfMap) => {
+    set({ gtfs, gtfMap })
   },
-  setGtf: (gtf: IGenomeAnnotation) => {
+
+  setGtf: (gtf: IGTFInfo) => {
     set({ gtf })
   },
 }))
 
 export function useGenomes() {
-  const { settings } = useSeqBrowserSettings()
+  const { settings } = useEdbSettings()
   const gtfMap = useGenomesStore(state => state.gtfMap)
+  const gtfs = useGenomesStore(state => state.gtfs)
   const gtf = useGenomesStore(state => state.gtf)
-  const setGtfMap = useGenomesStore(state => state.setGtfMap)
+  const setGtfs = useGenomesStore(state => state.setGtfs)
   const setGtf = useGenomesStore(state => state.setGtf)
 
   // get the available GTF annotations available
   const gtfQuery = useQuery({
     queryKey: ['genomes'],
+    staleTime: TIME_5_MINUTES_MS,
     queryFn: async () => {
       //const token = await loadAccessToken()
 
-      const res = await httpFetch.getJson<{ data: IGenomeAnnotation[] }>(
+      const res = await httpFetch.getJson<{ data: IGTFInfo[] }>(
         API_GENOME_GTFS_URL
       )
 
@@ -64,48 +93,50 @@ export function useGenomes() {
   })
 
   useEffect(() => {
-    if (gtfQuery.data) {
-      const gtfMap: GtfInfoMap = Object.fromEntries(
-        gtfQuery.data.map(
-          (g: IGenomeAnnotation) =>
-            [g.assembly.toLowerCase(), g] as [string, IGenomeAnnotation]
-        )
-      )
-
-      if ('grch37' in gtfMap) {
-        gtfMap['hg19'] = gtfMap['grch37']
-      }
-
-      if ('grch38' in gtfMap) {
-        gtfMap['hg38'] = gtfMap['grch38']
-      }
-
-      if ('grcm38' in gtfMap) {
-        gtfMap['mm10'] = gtfMap['grcm38']
-      }
-
-      if ('grcm39' in gtfMap) {
-        gtfMap['mm39'] = gtfMap['grcm39']
-      }
-
-      //console.log('GTF Map:', gtfMap)
-
-      setGtfMap(gtfMap)
+    if (!gtfQuery.data) {
+      return
     }
+
+    const gtfMap: GtfInfoMap = Object.fromEntries(
+      gtfQuery.data.map(
+        (g: IGTFInfo) => [g.assembly.toLowerCase(), g] as [string, IGTFInfo]
+      )
+    )
+
+    if ('grch37' in gtfMap) {
+      gtfMap['hg19'] = gtfMap['grch37']
+    }
+
+    if ('grch38' in gtfMap) {
+      gtfMap['hg38'] = gtfMap['grch38']
+    }
+
+    if ('grcm38' in gtfMap) {
+      gtfMap['mm10'] = gtfMap['grcm38']
+    }
+
+    if ('grcm39' in gtfMap) {
+      gtfMap['mm39'] = gtfMap['grcm39']
+    }
+
+    //console.log('GTF Map:', gtfMap)
+
+    setGtfs(gtfQuery.data, gtfMap)
   }, [gtfQuery.data])
 
   useEffect(() => {
     if (gtfMap) {
-      const gtf = gtfMap[settings.assembly.toLowerCase()]
+      const gtf = gtfMap[settings.genomic.assembly.toLowerCase()]
 
       if (gtf) {
         setGtf(gtf)
       }
     }
-  }, [settings.assembly, gtfMap])
+  }, [settings.genomic.assembly, gtfMap])
 
   return {
     gtf,
+    gtfs,
     gtfMap,
   }
 }
@@ -115,12 +146,12 @@ export function useGeneQuery(
   assembly: string,
   feature: Feature = 'gene'
 ) {
-  const { gtf } = useGenomes()
+  //const { gtf } = useGenomes()
 
   return useQuery({
-    queryKey: ['gene-search', gtf?.id, assembly, query],
+    queryKey: ['gene-search', assembly, query],
     queryFn: async () => {
-      if (!gtf || query.length < 2 || query.startsWith('chr')) {
+      if (query.length < 2 || query.startsWith('chr')) {
         return []
       }
 
@@ -134,7 +165,7 @@ export function useGeneQuery(
         const res = await httpFetch.getJson<{
           data: IGenomicFeature[]
         }>(
-          `${API_GENOME_URL}/gtfs/${gtf.id}/search?q=${query}&feature=${feature}` //&mode=fuzzy`
+          `${API_GENOME_GTFS_URL}/${assembly}/search?q=${query}&feature=${feature}` //&mode=fuzzy`
         )
 
         console.log('gene search result', res.data)

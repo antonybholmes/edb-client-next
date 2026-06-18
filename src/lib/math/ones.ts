@@ -1,5 +1,5 @@
-import { fill } from '../fill'
+import { vfill } from '../fill'
 
 export function ones(size: number): number[] {
-  return fill(1, size)
+  return vfill(1, size)
 }

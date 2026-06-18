@@ -189,7 +189,7 @@ export function VSplitPane({
       >
         <div
           id="divider"
-          className="pointer-events-none group-hover:bg-ring group-focus-visible:bg-ring data-[is-drag=true]:bg-ring h-[2px] trans-color grow"
+          className="pointer-events-none group-hover:bg-ring group-focus-visible:bg-ring data-[is-drag=true]:bg-ring h-0.5 trans-color grow"
           data-is-drag={isDrag}
         />
       </BaseCol>

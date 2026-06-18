@@ -58,14 +58,6 @@ export function MenuLink({ link, selected, onClick }: IProps) {
         [hover || hasFocus, 'bg-muted']
       )}
     >
-      {/* <HCenterRow
-          className={cn(
-            `h-8 min-w-8 items-center overflow-hidden rounded-theme border border-gray-200 bg-white transition-all duration-300`
-          )}
-        >
-          {getIcon(link.name)}
-        </HCenterRow> */}
-
       {link.name}
     </BaseLink>
   )

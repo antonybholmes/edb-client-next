@@ -1,7 +1,7 @@
-import type { SeriesData } from '@/lib/dataframe'
+import type { SeriesData } from '@/lib/dataframe/series-data'
 import { intersect1d } from '../../collections'
 
-import type { IGeneset } from '../../gsea/geneset'
+import type { ICollection, IGeneSet } from '../../gsea/geneset'
 import { argsort } from '../../math/argsort'
 
 import { Hypergeometric } from '../../math/hypgeometric'
@@ -48,16 +48,10 @@ export interface IGeneSetFile {
   url: string
 }
 
-export interface IPathway extends IGeneset {
-  organization: string
-  dataset: string
-}
-
-export interface IDataset {
-  organization: string
-  name: string
-  pathways: IPathway[]
-}
+// export interface IPathway extends IGeneset {
+//   //organization: string
+//   dataset: string
+// }
 
 // export interface IGeneSetCollection {
 //   name: string
@@ -65,7 +59,7 @@ export interface IDataset {
 // }
 
 export class PathwayOverlap {
-  _datasets: IDataset[]
+  _collections: ICollection[]
   _gene_map: Map<string, Set<string>>
   _source_map: Map<string, Map<string, string>>
   _npathways: number
@@ -73,7 +67,7 @@ export class PathwayOverlap {
   _show_gene_pathway_table: boolean
 
   constructor(n_genes = GENES_IN_UNIVERSE, show_gene_pathway_table = false) {
-    this._datasets = []
+    this._collections = []
     this._gene_map = new Map<string, Set<string>>()
     this._source_map = new Map<string, Map<string, string>>()
     this._npathways = -1
@@ -81,21 +75,21 @@ export class PathwayOverlap {
     this._show_gene_pathway_table = show_gene_pathway_table
   }
 
-  addDataset(dataset: IDataset) {
-    this._datasets.push(dataset)
+  addDataset(collection: ICollection) {
+    this._collections.push(collection)
     this._npathways = -1
   }
 
   get pathways(): number {
-    console.log(this._datasets)
+    console.log(this._collections)
     if (this._npathways === -1) {
-      this._npathways = sum(this._datasets.map(gcs => gcs.pathways.length))
+      this._npathways = sum(this._collections.map(gcs => gcs.genesets.length))
     }
 
     return this._npathways
   }
 
-  test(genesets: IGeneset[]): [SeriesData[][], string[]] {
+  test(genesets: IGeneSet[]): [SeriesData[][], string[]] {
     let allData: SeriesData[][] = []
 
     genesets.forEach(geneset => {
@@ -106,9 +100,9 @@ export class PathwayOverlap {
 
       //console.log(tgs.name)
 
-      this._datasets.forEach(dataset => {
+      this._collections.forEach(collection => {
         //console.log(gcs.name)
-        dataset.pathways.forEach((pathway, pi) => {
+        collection.genesets.forEach((pathway, pi) => {
           const pathwayGenes = new Set<string>(pathway.genes)
 
           const n = pathwayGenes.size
@@ -142,7 +136,7 @@ export class PathwayOverlap {
 
           data.push([
             geneset.name,
-            dataset.name,
+            collection.name,
             pathway.name,
             pi === 0 ? [...genes].sort().join(',') : '',
             K,

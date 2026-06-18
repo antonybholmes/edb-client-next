@@ -27,6 +27,6 @@ for (const entry of changelog.toReversed()) {
   markdown += `\n`
 }
 
-fs.writeFileSync('CHANGELOG.md', markdown.trim() + '\n')
+fs.writeFileSync('src/CHANGELOG.md', markdown.trim() + '\n')
 
 console.log('✅ CHANGELOG.md generated')

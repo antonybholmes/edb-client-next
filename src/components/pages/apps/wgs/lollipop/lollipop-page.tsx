@@ -10,7 +10,6 @@ import {
 import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
 
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
-import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
 import { OpenIcon } from '@/icons/open-icon'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
@@ -18,17 +17,10 @@ import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import {
   filesToDataFrames,
   onTextFileChange,
-  OpenFiles,
   type IParseOptions,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
-import {
-  NO_DIALOG,
-  TEXT_CANCEL,
-  TEXT_DOWNLOAD_AS_PNG,
-  TEXT_DOWNLOAD_AS_SVG,
-  type IDialogParams,
-} from '@/consts'
+import { TEXT_DOWNLOAD_AS_PNG } from '@/consts'
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
 import { FileImageIcon } from '@/icons/file-image-icon'
@@ -39,8 +31,6 @@ import { useEffect, useRef, useState } from 'react'
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
-import { makeUuid, randId } from '@/lib/id'
-
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { UploadIcon } from '@/icons/upload-icon'
 import { range } from '@/lib/math/range'
@@ -48,11 +38,10 @@ import { range } from '@/lib/math/range'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { textToLines } from '@/lib/text/lines'
 
+import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
-import { ModuleInfoButton } from '@/components/header/module-info-button'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { SlidersIcon } from '@/components/icons/sliders-icon'
-import { Card } from '@/themed/card'
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -60,7 +49,7 @@ import {
 } from '@/themed/resizable'
 
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
-import { ToolbarFooterPortal } from '@/components/toolbar/toolbar-footer-portal'
+import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/components/toolbar/zoom-slider'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
@@ -74,10 +63,12 @@ import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { CoreProviders } from '@/providers/core-providers'
 
-import type { ISaveAsFormat } from '@/components/pages/save-as-dialog'
-import { SaveImageDialog } from '@/components/pages/save-image-dialog'
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
+import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
-import { Toast } from '@base-ui/react'
+import { useAppInfo } from '@/lib/edb/edb-settings'
+import { useZoom } from '@/providers/zoom-provider'
 import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 import {
   useApp,
@@ -87,7 +78,6 @@ import {
   useSheets,
 } from '../../matcalc/history/history-store'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
-import { OpenDialog } from '../../matcalc/open-dialog'
 import { FeaturePropsPanel } from './feature-props-panel'
 import { LollipopCountIcon } from './lollipop-count-icon'
 import { LollipopPropsPanel } from './lollipop-props-panel'
@@ -96,14 +86,14 @@ import { LollipopSingleSvg } from './lollipop-single-svg'
 import { LollipopStackIcon } from './lollipop-stack-icon'
 import { LollipopStackSvg } from './lollipop-stack-svg'
 import { useLollipopStore } from './lollipop-store'
-import MODULE_INFO from './module.json'
+import APP_INFO from './manifest.json'
 import { ProteinAutocomplete } from './protein-autocomplete'
 import { useProteins } from './protein-store'
 
 function LollipopPage() {
   const _id = useStableId('lollipop-page')
 
-  const { goto, openFile, addSheets } = useHistory()
+  const { goto, openFile, addSheets, undo } = useHistory()
   const app = useApp()!
   const file = useFile()!
   const sheet = useSheet()
@@ -111,6 +101,10 @@ function LollipopPage() {
 
   const { protein, displayProps, setDisplayProps, setProtein } =
     useLollipopSettings()
+
+  const { setAppInfo } = useAppInfo()
+
+  const { zoom } = useZoom()
 
   //const [working, setWorking] = useState(false)
   //const [tableData, setTableData] = useState<object[]>(DEFAULT_TABLE_ROWS)
@@ -141,8 +135,6 @@ function LollipopPage() {
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 
-  const { add: addToast } = Toast.useToastManager()
-
   //const [proteinState, proteinDispatch] = useContext(ProteinContext)
 
   const { plotStyle, setPlotStyle, showMaxVariantOnly, setShowMaxVariantOnly } =
@@ -150,11 +142,11 @@ function LollipopPage() {
 
   const { aaStats, lollipopFromTable, featuresFromTable } = useLollipopStore() // useContext(LollipopContext)!
 
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
-
   const [showSideBar, setShowSideBar] = useState(true)
 
   const { searchUniprot } = useProteins()
+
+  const { open: openDialog } = useDialogs()
 
   async function loadTestData() {
     const gene = 'BTG1'
@@ -165,13 +157,6 @@ function LollipopPage() {
       const index = range(proteins.length).filter(
         (i) => proteins[i]!.organism === 'Human'
       )[0]!
-
-      // setProtein(
-      //   produce(protein, draft => {
-      //     draft.name = proteins[index]!.name
-      //     draft.sequence = proteins[index]!.sequence
-      //   })
-      // )
 
       setProtein(proteins[index]!)
 
@@ -206,7 +191,7 @@ function LollipopPage() {
 
       table = new DataFrameReader().keepDefaultNA(false).read(lines)
 
-      addSheets([table.setName('Features')])
+      addSheets([table.setName('Features')], { mode: 'append' })
 
       featuresFromTable(table)
 
@@ -222,38 +207,42 @@ function LollipopPage() {
   }
 
   useEffect(() => {
-    if (sheet && sheet.name === 'Variants' && protein) {
-      console.log('Updating lollipop plot with sheet:', sheet.name)
+    setAppInfo(APP_INFO)
+  }, [])
 
-      try {
-        lollipopFromTable(sheet as BaseDataFrame, protein)
-      } catch (error) {
-        console.log('Error updating lollipop plot:', error)
+  useEffect(() => {
+    if (!sheet || sheet.name !== 'Variants' || !protein) {
+      return
+    }
+    console.log('Updating lollipop plot with sheet:', sheet.name)
 
-        addToast({
-          id: makeUuid(),
-          title: 'Variants',
-          description: error instanceof Error ? error.message : String(error),
+    try {
+      lollipopFromTable(sheet as BaseDataFrame, protein)
+    } catch (error) {
+      //remove([{ app, file, sheet } as SheetPath]) // remove the offending sheet to prevent repeated errors
+
+      openDialog({
+        type: 'alert',
+        payload: {
+          title: APP_INFO.name,
+          content: error instanceof Error ? error.message : String(error),
           type: 'warning',
-        })
-      }
+          callback: () => {
+            // go back in history to undo the action that caused the error
+            undo()
+          },
+        },
+      })
     }
   }, [sheet, protein])
 
-  // useEffect(() => {
-  //   loadDefaultSheet(historyDispatch)
-  // }, [])
-
-  // useEffect(() => {
-  //   setTab(dataTab)
-  //   clearSelection()
-  // }, [history])
-
-  // useEffect(() => {
-  //   if (plotState.plots.length > 0) {
-  //     setPanelTab(plotState.plots[plotState.plots.length - 1].name)
-  //   }
-  // }, [plotState])
+  useEffect(() => {
+    setDisplayProps(
+      produce(displayProps, (draft) => {
+        draft.scale = zoom
+      })
+    )
+  }, [zoom])
 
   function parseFiles(message: string, files: ITextFileOpen[]) {
     if (files.length === 0) {
@@ -264,14 +253,14 @@ function LollipopPage() {
     const name = file.name
     const text = file.text
 
-    if (message.includes('Location')) {
+    if (message.includes('locations')) {
       const lines = textToLines(text)
 
       const locationTable = new DataFrameReader()
         .keepDefaultNA(false)
         .read(lines)
 
-      addSheets([locationTable.setName('Locations')])
+      addSheets([locationTable.setName('Locations')], { mode: 'append' })
     } else {
       //setFilesToOpen([
       //  { name: "Variants", text, ext: name.split(".").pop() || "" },
@@ -314,6 +303,20 @@ function LollipopPage() {
     setShowFileMenu(false)
   }
 
+  function _open(message: string) {
+    openDialog({
+      type: 'open',
+      payload: {
+        message,
+        callback: (message, files) => {
+          onTextFileChange(message, files, (files) =>
+            parseFiles(message, files)
+          )
+        },
+      },
+    })
+  }
+
   // useEffect(() => {
   //   if (step) {
   //     lollipopPlot()
@@ -342,25 +345,21 @@ function LollipopPage() {
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
-              onOpenChange={(open) => {
-                if (open) {
-                  console.log('open file menu')
-                  setShowDialog({
-                    id: randId('open'),
-                  })
-                }
+              onOpen={() => {
+                console.log('open file menu')
+                _open('variants')
               }}
               multiple={true}
             />
 
             <ToolbarIconButton
-              aria-label="Save matrix to local file"
+              aria-label="Save image"
               onClick={() => {
-                setShowDialog({
-                  id: randId('save'),
-                  params: {
+                openDialog({
+                  type: 'save-image',
+                  payload: {
                     name: 'lollipop',
-                    format: 'png',
+                    svgRef,
                   },
                 })
               }}
@@ -368,7 +367,7 @@ function LollipopPage() {
               <DownloadIcon />
             </ToolbarIconButton>
           </ToolbarTabGroup>
-          <ToolbarSeparator />
+
           <ToolbarTabGroup title="View" className="gap-x-1 items-start">
             <ToolbarCol>
               <ToolbarIconButton
@@ -435,8 +434,6 @@ function LollipopPage() {
               <LollipopCountIcon />
             </ToolbarIconButton>
           </ToolbarTabGroup>
-
-          <ToolbarSeparator />
         </>
       ),
     },
@@ -562,7 +559,7 @@ function LollipopPage() {
       content: (
         <DropdownMenuItem
           aria-label="Open file on your computer"
-          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
+          onClick={() => _open('variants')}
         >
           <UploadIcon fill="" />
 
@@ -587,12 +584,12 @@ function LollipopPage() {
             <span>{TEXT_DOWNLOAD_AS_PNG}</span>
           </DropdownMenuItem>
           <DropdownMenuItem
-            aria-label={TEXT_DOWNLOAD_AS_SVG}
+            aria-label=" TEXT_DOWNLOAD_AS_SVG"
             onClick={() => {
               downloadSvgAutoFormat(svgRef, 'lollipop.svg')
             }}
           >
-            <span>{TEXT_DOWNLOAD_AS_SVG}</span>
+            <span>TEXT_DOWNLOAD_AS_SVG</span>
           </DropdownMenuItem>
         </>
       ),
@@ -601,62 +598,14 @@ function LollipopPage() {
 
   return (
     <>
-      {(showDialog.id.startsWith('open:') ||
-        showDialog.id.includes('Location') ||
-        showDialog.id.includes('clinical')) && (
-        <OpenFiles
-          message={showDialog.id}
-          //onOpenChange={() => setShowDialog({...NO_DIALOG})}
-          // onFileChange={(message, files) =>
-          //   onTextFileChange(message, files, files =>
-          //     parseFiles(message, files)
-          //   )}
-
-          onFileChange={
-            (message, files) =>
-              onTextFileChange(message, files, (files) =>
-                parseFiles(message, files)
-              )
-            // onTextFileChange(message, files, files => {
-            //   setShowDialog({
-            //     id: randId('open-file-dialog'),
-            //     params: { files },
-            //   })
-            // })
-          }
-        />
-      )}
-
-      {showDialog.id.startsWith('open-file-dialog') && (
-        <OpenDialog
-          files={showDialog.params!.files as ITextFileOpen[]}
-          openFiles={(files, options) => {
-            openFiles(files, options)
-            setShowDialog({ ...NO_DIALOG })
-          }}
-          onCancel={() => {
-            //setFilesToOpen([])
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        />
-      )}
-      {showDialog.id.startsWith('save') && (
-        <SaveImageDialog
-          open={showDialog.id.startsWith('save')}
-          name="lollipop"
-          onResponse={(response, data) => {
-            if (response !== TEXT_CANCEL) {
-              downloadSvgAutoFormat(svgRef, (data as ISaveAsFormat).name)
-            }
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        />
-      )}
+      {/* <DialogsRoot /> */}
 
       <ShortcutLayout signinRequired={false}>
         <HeaderPortal>
-          <ModuleInfoButton info={MODULE_INFO} />
-
+          <>
+            <AppHeaderIcon />
+            <AppInfoButton />
+          </>
           <ProteinAutocomplete />
         </HeaderPortal>
 
@@ -667,7 +616,7 @@ function LollipopPage() {
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
-            info={MODULE_INFO}
+            info={APP_INFO}
             value={toolbarTab}
             onValueChange={setToolbarTab}
             leftShortcuts={<UndoShortcuts />}
@@ -675,7 +624,7 @@ function LollipopPage() {
               <ToolbarButton
                 onClick={() => loadTestData()}
                 role="button"
-                title="Load test data to use features."
+                title="Load test data."
               >
                 Plot test
               </ToolbarButton>
@@ -699,16 +648,10 @@ function LollipopPage() {
           id="lollipop-data-panel"
           side="right"
           tabs={rightTabs}
-          //onTabChange={selectedTab => setSelectedTab(selectedTab.tab.id)}
-          //value={selectedTab}
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
-          <ResizablePanelGroup
-            orientation="vertical"
-            className="px-2 h-full"
-            //autoSaveId="rev-comp-vert"
-          >
+          <ResizablePanelGroup orientation="vertical" className="px-2 h-full">
             <ResizablePanel
               id="chart"
               defaultSize="70%"
@@ -716,7 +659,7 @@ function LollipopPage() {
               className="flex flex-col text-sm"
               collapsible={true}
             >
-              <Card variant="content" className="grow">
+              <ExtScrollCard>
                 {aaStats.length > 0 && (
                   <div className={PLOT_CLS}>
                     {plotStyle === 'stack' ? (
@@ -726,7 +669,7 @@ function LollipopPage() {
                     )}
                   </div>
                 )}
-              </Card>
+              </ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />
             <ResizablePanel
@@ -742,7 +685,7 @@ function LollipopPage() {
                 onTabChange={(selectedTab) => {
                   goto({ app, file, sheet: selectedTab.tab })
                 }}
-                zoom={1}
+                //zoom={1}
                 //className={DATA_PANEL_CLS}
               />
             </ResizablePanel>
@@ -750,21 +693,12 @@ function LollipopPage() {
         </TabSlideBar>
       </ShortcutLayout>
 
-      <ToolbarFooterPortal>
+      <FooterPortal>
         <></>
         <></>
-        <>
-          <ZoomSlider
-            onZoomChange={(zoom) => {
-              setDisplayProps(
-                produce(displayProps, (draft) => {
-                  draft.scale = zoom
-                })
-              )
-            }}
-          />
-        </>
-      </ToolbarFooterPortal>
+
+        <ZoomSlider />
+      </FooterPortal>
     </>
   )
 }
@@ -772,9 +706,7 @@ function LollipopPage() {
 export function LollipopQueryPage() {
   return (
     <CoreProviders>
-      {/* <LollipopProvider id="lollipop-app:v2"> */}
       <LollipopPage />
-      {/* </LollipopProvider> */}
     </CoreProviders>
   )
 }

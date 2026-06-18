@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { SearchIcon } from '@/icons/search-icon'
 
@@ -14,14 +14,12 @@ import {
 import { Autocomplete } from '@/components/autocomplete'
 import type { ISearchBoxProps } from '@/components/search-box'
 import { useDebounce } from '@/hooks/debounce'
+import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { useGeneQuery } from '@/lib/edb/genome'
 import { cn } from '@/lib/shadcn-utils'
-import { BUTTON_MD_H_CLS } from '@/theme'
-import { useSeqBrowserSettings } from './seq-browser-settings'
 
 const LI_CLS = cn(
-  BUTTON_MD_H_CLS,
-  'hover:bg-muted/60 outline-none focus-visible:bg-muted/60 flex flex-row',
+  'h-button-md hover:bg-muted/60 outline-none focus-visible:bg-muted/60 flex flex-row',
   'justify-start items-center px-3 gap-x-2 w-full'
 )
 
@@ -47,7 +45,7 @@ export function LocationAutocomplete({
   className = '',
   ...props
 }: IProps) {
-  const { settings } = useSeqBrowserSettings()
+  const { settings } = useEdbSettings()
 
   const [query, setQuery] = useState('')
 
@@ -61,7 +59,7 @@ export function LocationAutocomplete({
 
   const { data: geneData } = useGeneQuery(
     debouncedQuery,
-    settings.assembly,
+    settings.genomic.assembly,
     feature
   )
 
@@ -83,19 +81,20 @@ export function LocationAutocomplete({
     <Autocomplete
       value={query}
       //showClear={false}
-      onTextChange={v => {
+      onTextChange={(v) => {
         setQuery(v)
         onTextChange?.(v)
       }}
-      onTextChanged={v => {
+      onTextChanged={(v) => {
         onTextChanged?.(v)
       }}
       className={className}
+      placeholder="e.g. TP53, chr1:1000-2000"
       searchLabel="Search for Gene or Location"
       deleteLabel="Delete Location"
       {...props}
     >
-      {results.map(item => (
+      {results.map((item) => (
         <li key={item.geneId}>
           <button
             className={LI_CLS}
@@ -108,7 +107,7 @@ export function LocationAutocomplete({
             }}
           >
             <SearchIcon />
-            <span className="grow text-left">{item.geneSymbol}</span>
+            <span className="grow text-left">{item.symbol}</span>
             <span className="text-right text-foreground/30 text-xs truncate">
               {locStr(item.loc)}
             </span>

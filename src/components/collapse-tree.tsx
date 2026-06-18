@@ -20,10 +20,11 @@ import {
 } from 'react'
 import { TrashIcon } from './icons/trash-icon'
 
-import { TEXT_DELETE } from '@/consts'
+import { TEXT_OK, TEXT_REMOVE } from '@/consts'
 import { FOCUS_INSET_RING_CLS } from '@/theme'
 import { gsap } from 'gsap'
 import { Ellipsis, File, Folder, FolderOpen } from 'lucide-react'
+import { useDialogs } from './dialogs/dialogs'
 import { CenterCol } from './layout/center-col'
 import { VCenterRow } from './layout/v-center-row'
 import { Checkbox } from './shadcn/ui/themed/v2/check-box'
@@ -33,18 +34,35 @@ const DURATION_S = 0.2
 
 const CollapseTreeContext = createContext<{
   isOpen: OpenState
-  value?: ITab | undefined
+  value?: string | undefined
+  //selectedId?: string | undefined
+  //setSelectedId?: (id: string) => void
+  setValue: (tab: string) => void
   onValueChange: (tab: ITab) => void
   onCheckedChange: (tab: ITab, state: boolean) => void
 }>({
   isOpen: false,
+  setValue: () => {},
   onValueChange: () => {},
   onCheckedChange: () => {},
 })
 
+function useCollapseTreeContext() {
+  const ctx = useContext(CollapseTreeContext)
+
+  if (!ctx) {
+    throw new Error(
+      'useCollapseTreeContext must be used within a CollapseTreeProvider'
+    )
+  }
+
+  return ctx
+}
+
 interface ICollapseTreeProviderProps extends IChildrenProps {
-  value?: ITab | undefined
+  value?: string | undefined
   isOpen?: OpenState
+  selectedId?: string | undefined
   onValueChange: (tab: ITab) => void
   onCheckedChange?: (tab: ITab, state: boolean) => void
 }
@@ -52,19 +70,21 @@ interface ICollapseTreeProviderProps extends IChildrenProps {
 export const CollapseTreeProvider = ({
   value,
   isOpen = 'auto',
+  //selectedId,
   onValueChange,
   onCheckedChange,
   children,
 }: ICollapseTreeProviderProps) => {
-  const [_value, setValue] = useState<ITab | undefined>(value)
+  const [_value, setValue] = useState<string | undefined>(value)
+
+  //const [_selectedId, setSelectedId] = useState<string | undefined>(selectedId)
 
   useEffect(() => {
-    // sync internal value to external if it changes
     setValue(value)
   }, [value])
 
   function _onValueChange(tab: ITab) {
-    setValue(tab)
+    setValue(tab.id)
     onValueChange?.(tab)
   }
 
@@ -77,7 +97,9 @@ export const CollapseTreeProvider = ({
       value={{
         isOpen: isOpen,
         value: _value,
-
+        setValue,
+        //selectedId: _selectedId,
+        //setSelectedId: setSelectedId,
         onValueChange: _onValueChange,
         onCheckedChange: _onCheckedChange,
       }}
@@ -121,7 +143,7 @@ const LIST_CLS = 'flex flex-col gap-y-px overflow-hidden'
 
 interface ICollapseTreeProps extends IDivProps {
   tab: ITab
-  value?: ITab | undefined
+  value?: string | undefined
   onValueChange?: (tab: ITab) => void
   onCheckedChange?: (tab: ITab, state: boolean) => void
   showRoot?: boolean | undefined
@@ -148,7 +170,7 @@ export function CollapseTree({
   return (
     <CollapseTreeProvider
       value={value}
-      onValueChange={(t) => {
+      onValueChange={t => {
         onValueChange?.(t)
       }}
       onCheckedChange={(tab: ITab, state: boolean) => {
@@ -156,7 +178,7 @@ export function CollapseTree({
       }}
     >
       <ul className={LIST_CLS}>
-        {children.map((child) => (
+        {children.map(child => (
           <CollapseTreeNode
             key={child.id}
             tab={child}
@@ -172,34 +194,29 @@ export function CollapseTree({
 function CollapseTreeNode({
   tab,
   level,
+  root = '',
   className,
-}: { tab: ITab; level: number } & IClassProps) {
+}: { tab: ITab; level: number; root?: string } & IClassProps) {
   // showRoot is true for children since children always have a root
   // showRoot is only really used for the true root to determine if the
   // root should be shown or not or just the children in a list
 
   const {
+    value,
     isOpen: globalIsOpen,
-    value: selectedTab,
+    //value: selectedTab,
+    //selectedId,
+    //setSelectedId,
+    setValue,
     onValueChange,
     onCheckedChange,
-  } = useContext(CollapseTreeContext)
+  } = useCollapseTreeContext()
+
+  const { open: openDialog } = useDialogs()
 
   const hasChildren = Array.isArray(tab.children) && tab.children.length > 0
 
   const [isOpen, setIsOpen] = useState(false)
-
-  useEffect(() => {
-    const open = tab.isOpen ?? globalIsOpen ?? 'auto'
-
-    if (open === 'auto') {
-      setIsOpen(hasChildren)
-    } else {
-      setIsOpen(open)
-    }
-  }, [tab.isOpen, globalIsOpen, hasChildren])
-
-  //const isGroup = tab.isGroup ?? (tab.children !== undefined && hasChildren)
 
   const [hover, setHover] = useState<boolean>(false)
   const [focus, setFocus] = useState<boolean>(false)
@@ -214,10 +231,11 @@ function CollapseTreeNode({
   const containerRef = useRef<HTMLLIElement>(null)
   const [menuOpen, setMenuOpen] = useState<boolean>(false)
 
-  const tabId = tab.id //getTabId(tab)
-  const valueId = selectedTab?.id //getTabId(selectedTab)
+  //const tabId = tab.id
+  //const valueId = selectedTab?.id
+  const path = root + '/' + tab.id
 
-  const isSelected = tabId === valueId
+  const isSelected = value === tab.id
   const dataMenu = menuOpen ? 'open' : 'closed'
 
   // determine which parts are highlighted
@@ -228,9 +246,15 @@ function CollapseTreeNode({
         ? 'menu-selected'
         : 'default'
 
-  //console.log({ isSelected, menuHover, hover, menuOpen, mode })
+  useEffect(() => {
+    const open = tab.isOpen ?? globalIsOpen ?? 'auto'
 
-  //const closable = tab.closable ?? true
+    if (open === 'auto') {
+      setIsOpen(hasChildren)
+    } else {
+      setIsOpen(open)
+    }
+  }, [tab.isOpen, globalIsOpen, hasChildren])
 
   useEffect(() => {
     const tl = gsap.timeline({ paused: true })
@@ -256,32 +280,6 @@ function CollapseTreeNode({
     }
 
     tl.play()
-
-    // if (openIconRef.current) {
-    //   tl.to(
-    //     openIconRef.current,
-    //     {
-    //       scale: isOpen ? 1 : 0.9,
-    //       opacity: isOpen ? 1 : 0,
-    //       duration: DURATION_S,
-    //       ease: 'power3.out',
-    //     },
-    //     0
-    //   )
-    // }
-
-    // if (closeIconRef.current) {
-    //   tl.to(
-    //     closeIconRef.current,
-    //     {
-    //       scale: isOpen ? 0.9 : 1,
-    //       opacity: isOpen ? 0 : 1,
-    //       duration: 0.3,
-    //       ease: 'power3.out',
-    //     },
-    //     0
-    //   )
-    // }
   }, [isOpen])
 
   const openIcon: ReactNode = useMemo(() => {
@@ -292,12 +290,12 @@ function CollapseTreeNode({
       icon = tab.icon
     } else if (hasChildren || tab.type === 'folder') {
       if (isOpen) {
-        icon = <FolderOpen strokeWidth={1.5} size={20} />
+        icon = <FolderOpen strokeWidth={1.5} size={18} />
       } else {
-        icon = <Folder strokeWidth={1.5} size={20} />
+        icon = <Folder strokeWidth={1.5} size={18} />
       }
     } else {
-      return <File size={20} strokeWidth={1.5} />
+      return <File size={18} strokeWidth={1.5} />
     }
 
     return <span>{icon}</span>
@@ -320,19 +318,32 @@ function CollapseTreeNode({
   // make a list of the children if open
   if (isOpen && hasChildren) {
     childNodes = tab.children!.map((t, ti) => (
-      <CollapseTreeNode key={ti} tab={t} level={level + 1} />
+      <CollapseTreeNode key={ti} tab={t} level={level + 1} root={path} />
     ))
   }
 
   return (
-    <li className={cn(LIST_CLS, className)} id={tab.id} ref={containerRef}>
+    <li
+      className={cn(LIST_CLS, className)}
+      id={path}
+      data-selected-id={value}
+      ref={containerRef}
+    >
       <VCenterRow
         className={OUTER_CONTAINER_CLS}
+        data-selected={isSelected}
         data-root={level === 0}
         data-focus={focus}
-        onFocus={() => setFocus(true)}
+        onClick={() => {
+          console.log('focus', path)
+
+          setFocus(true)
+        }}
+        onFocus={() => {
+          setValue?.(path)
+        }}
         onBlur={() => setFocus(false)}
-        onKeyDown={(e) => {
+        onKeyDown={e => {
           if (e.key === 'Enter') {
             // Invert openings
             if (tab.children) {
@@ -341,7 +352,7 @@ function CollapseTreeNode({
 
             tab.onClick?.()
 
-            onValueChange(tab)
+            onValueChange?.(tab)
           }
         }}
         tabIndex={0}
@@ -354,6 +365,7 @@ function CollapseTreeNode({
           data-root={level === 0}
           data-mode={mode}
           data-focus={focus}
+          data-selected={isSelected}
           onMouseEnter={() => {
             setHover(true)
           }}
@@ -389,10 +401,10 @@ function CollapseTreeNode({
           {tab.checked !== undefined && (
             <Checkbox
               checked={tab.checked}
-              onCheckedChange={(state) => {
+              onCheckedChange={state => {
                 onCheckedChange?.(tab, state)
                 //tab.onClick?.()
-                onValueChange(tab)
+                onValueChange?.(tab)
               }}
             />
           )}
@@ -401,7 +413,7 @@ function CollapseTreeNode({
             className={NODE_BUTTON_CLS}
             onClick={() => {
               tab.onClick?.()
-              onValueChange(tab)
+              onValueChange?.(tab)
             }}
           >
             {openIcon && openIcon}
@@ -429,12 +441,29 @@ function CollapseTreeNode({
             </DropdownMenuTrigger>
             <DropdownMenuContent side="right" align="start">
               <DropdownMenuItem
-                onClick={() => tab.onDelete?.()}
-                aria-label="Set theme to light"
+                onClick={() => {
+                  openDialog({
+                    type: 'warning',
+                    payload: {
+                      title: `Delete ${tab.name}`,
+                      content: `Are you sure you want to delete the ${tab.name} ${
+                        hasChildren ? 'folder and all its contents' : tab.type
+                      }?`,
+                      callback: response => {
+                        console.log('response', response, tab)
+                        if (response === TEXT_OK) {
+                          tab.onDelete?.()
+                        }
+                      },
+                    },
+                  })
+                }}
               >
-                <TrashIcon w="w-4" />
+                <TrashIcon />
 
-                <span>{TEXT_DELETE}</span>
+                <span>
+                  {TEXT_REMOVE} {hasChildren ? 'folder' : tab.type}
+                </span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

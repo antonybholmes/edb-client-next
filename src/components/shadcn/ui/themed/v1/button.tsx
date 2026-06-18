@@ -5,14 +5,11 @@ import { cn } from '@/lib/shadcn-utils'
 import {
   BASE_BUTTON_CLS,
   BASE_ICON_BUTTON_CLS,
-  BUTTON_LG_H_CLS,
-  BUTTON_MD_H_CLS,
-  BUTTON_SM_H_CLS,
   BUTTON_XL_H_CLS,
   BUTTON_XS_H_CLS,
   CENTERED_ROW_CLS,
   CORE_PRIMARY_BUTTON_CLS,
-  CORE_PRIMARY_COLOR_BUTTON_CLS,
+  CORE_THEME_BUTTON_CLS,
   DESTRUCTIVE_CLS,
   DROPDOWN_BUTTON_CLS,
   DROPDOWN_WITH_ICON_BUTTON_CLS,
@@ -20,11 +17,9 @@ import {
   ICON_BUTTON_CLS,
   LARGE_ICON_BUTTON_CLS,
   SM_ICON_BUTTON_CLS,
-  TOOLBAR_BUTTON_H_CLS,
   TOOLBAR_DROPDOWN_BUTTON_CLS,
   TRANS_COLOR_CLS,
   XL_ICON_BUTTON_CLS,
-  XS_ICON_BUTTON_CLS,
 } from '@/theme'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
@@ -121,7 +116,7 @@ const LINK_CLS = cn(
 
 const RED_LINK_CLS = cn(
   FOCUS_RING_CLS,
-  'text-red-500 underline-offset-4 hover:underline'
+  'text-destructive underline-offset-4 hover:underline'
 )
 
 export const RIPPLE_CLS =
@@ -404,7 +399,7 @@ export const buttonVariants = cva(BASE_BUTTON_CLS, {
     variant: {
       none: '',
       primary: CORE_PRIMARY_BUTTON_CLS,
-      theme: CORE_PRIMARY_COLOR_BUTTON_CLS,
+      theme: CORE_THEME_BUTTON_CLS,
       destructive: DESTRUCTIVE_CLS,
       trans: 'hover:bg-white/20 data-[checked=true]:bg-white/20',
       secondary: BASE_SECONDARY_CLS,
@@ -463,11 +458,11 @@ export const buttonVariants = cva(BASE_BUTTON_CLS, {
     },
     size: {
       xs: BUTTON_XS_H_CLS,
-      sm: BUTTON_SM_H_CLS,
-      md: BUTTON_MD_H_CLS,
-      toolbar: TOOLBAR_BUTTON_H_CLS,
+      //sm: BUTTON_SM_H_CLS,
+      md: 'h-button-md',
+      toolbar: 'h-toolbar-button',
       //'toolbar-icon': cn(TOOLBAR_BUTTON_W_CLS, TOOLBAR_BUTTON_H_CLS),
-      lg: cn(BUTTON_LG_H_CLS, 'px-5'),
+      lg: 'h-button-lg px-5',
       xl: BUTTON_XL_H_CLS,
       '2xl': BUTTON_XL_H_CLS,
       icon: cn(ICON_BUTTON_CLS, 'justify-center'),
@@ -477,9 +472,9 @@ export const buttonVariants = cva(BASE_BUTTON_CLS, {
         LARGE_ICON_BUTTON_CLS
       ),
       'icon-xl': cn(BASE_ICON_BUTTON_CLS, CENTERED_ROW_CLS, XL_ICON_BUTTON_CLS),
-      'icon-md': cn(BASE_ICON_BUTTON_CLS, CENTERED_ROW_CLS, BUTTON_MD_H_CLS),
+      'icon-md': cn(BASE_ICON_BUTTON_CLS, CENTERED_ROW_CLS, 'h-button-md'),
       'icon-sm': SM_ICON_BUTTON_CLS,
-      'icon-xs': XS_ICON_BUTTON_CLS,
+      //'icon-xs': XS_ICON_BUTTON_CLS,
       dropdown: DROPDOWN_BUTTON_CLS,
       'dropdown-with-icon': DROPDOWN_WITH_ICON_BUTTON_CLS,
       'toolbar-dropdown': TOOLBAR_DROPDOWN_BUTTON_CLS,

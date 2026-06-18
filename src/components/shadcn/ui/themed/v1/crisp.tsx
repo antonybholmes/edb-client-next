@@ -38,8 +38,14 @@ function Toast({ id, variant, title, description, button }: IToast) {
   return (
     <div className={toastVariants({ variant })}>
       <VCenterRow className="gap-x-4">
-        <WarningIcon w="w-8 h-8" className="hidden group-[.warning]:block" />
-        <ErrorIcon w="w-8 h-8" className="hidden group-[.destructive]:block" />
+        <WarningIcon
+          size="w-button-md h-button-md"
+          className="hidden group-[.warning]:block"
+        />
+        <ErrorIcon
+          size="w-button-md h-button-md"
+          className="hidden group-[.destructive]:block"
+        />
         <VCenterCol className="gap-y-1">
           <h1 className="text-sm font-bold">{title}</h1>
           {typeof description === 'string' ? (

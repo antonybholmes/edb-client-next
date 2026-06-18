@@ -1,5 +1,5 @@
 import { TEXT_OK } from '@/consts'
-import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
+import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { produce } from 'immer'
 
 //import { API_SCRNA_SEARCH_GENES_URL } from '@/lib/edb/edb'
@@ -41,8 +41,6 @@ export function AddGenesDialog({ datasetId, onResponse }: IProps) {
     const signatures = makeSignature ? [ids] : ids.map(id => [id])
 
     const genesets: IGeneSet[] = []
-
-    console.error('signatures', signatures)
 
     // attempt to look up each id of each signature
     for (const sig of signatures) {

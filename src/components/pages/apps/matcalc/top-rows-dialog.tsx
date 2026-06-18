@@ -1,5 +1,6 @@
-import { TEXT_OK } from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
+import { TEXT_CANCEL, TEXT_OK } from '@/consts'
+import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { VCenterRow } from '@/layout/v-center-row'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import {
@@ -7,24 +8,14 @@ import {
   medianFilter,
   stdevFilter,
 } from '@/lib/dataframe/dataframe-utils'
-import { Input } from '@/themed/v2/input'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 import { useState } from 'react'
 import { useHistory, useSheet } from './history/history-store'
 
-export interface IProps {
-  open?: boolean
-  //df: BaseDataFrame | null
-  onFilter: (df: BaseDataFrame) => void
-  onCancel: () => void
-}
-
 export function TopRowsDialog({
-  open = true,
   //df,
-  onFilter,
-  onCancel,
-}: IProps) {
+  onResponse,
+}: IModalProps<BaseDataFrame>) {
   const [topRows, setTopRows] = useState(300)
   const [method, setMethod] = useState('Stdev')
   const { addSheets } = useHistory()
@@ -34,7 +25,7 @@ export function TopRowsDialog({
 
   function applyFilter() {
     if (!df) {
-      onCancel()
+      onResponse?.(TEXT_CANCEL)
       return
     }
 
@@ -60,37 +51,38 @@ export function TopRowsDialog({
     }
 
     if (!df) {
-      onCancel()
+      onResponse?.(TEXT_CANCEL)
       return
     }
 
     addSheets([df], { name: 'Top Rows' })
 
-    onFilter(df)
+    onResponse?.(TEXT_OK, df)
   }
 
   return (
     <OKCancelDialog
-      open={open}
       title="Top Rows"
       onResponse={r => {
         if (r === TEXT_OK) {
           applyFilter()
         } else {
-          onCancel()
+          onResponse?.(TEXT_CANCEL)
         }
       }}
       //contentVariant="glass"
       //headerVariant="opaque"
       //bodyVariant="opaque"
     >
-      <VCenterRow className="gap-x-2">
+      <VCenterRow className="gap-x-3">
         <span>Keep top</span>
-        <Input
+        <NumericalInput
           id="top-rows"
           value={topRows}
+          limit={[1, Number.MAX_SAFE_INTEGER]}
+          step={1}
           onChange={e => setTopRows(Number.parseInt(e.target.value))}
-          w="md"
+          w="xs"
           placeholder="Top rows..."
         />
         <span>rows using row</span>

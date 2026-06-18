@@ -228,7 +228,7 @@ export function DotsSvg({
                 r={r}
                 fill={fill}
                 stroke={
-                  props.cells.border.show ? props.cells.border.color : 'none'
+                  props.cells.border.show ? props.cells.border.value : 'none'
                 }
                 strokeWidth={
                   props.cells.border.show ? props.cells.border.width : 0
@@ -247,7 +247,7 @@ export function DotsSvg({
                   pointerEvents="none"
                   //fontWeight={track.displayOptions.font.weight}
                 >
-                  {formatNumber(cellValue, props.cells.values.dp)}
+                  {formatNumber(cellValue, { dp: props.cells.values.dp })}
                 </text>
               )}
             </g>
@@ -288,14 +288,14 @@ export function GridSvg({
         <>
           <path
             d={hlines}
-            stroke={props.grid.color}
+            stroke={props.grid.value}
             strokeWidth={props.grid.width}
             shapeRendering={SVG_CRISP_EDGES}
           />
 
           <path
             d={vlines}
-            stroke={props.grid.color}
+            stroke={props.grid.value}
             strokeWidth={props.grid.width}
             shapeRendering={SVG_CRISP_EDGES}
           />
@@ -308,7 +308,7 @@ export function GridSvg({
           y={0}
           width={width}
           height={height}
-          stroke={props.border.color}
+          stroke={props.border.value}
           strokeWidth={props.border.width}
           fill="none"
           shapeRendering={SVG_CRISP_EDGES}

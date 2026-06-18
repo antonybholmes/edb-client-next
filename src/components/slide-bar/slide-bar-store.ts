@@ -5,73 +5,56 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:slidebars:v6`
-
-// interface ISlideBarMessage {
-//   id: string
-//   type: 'resize' | 'open' | 'close'
-// }
+const SETTINGS_KEY = `${config.appId}:slidebars:v8`
 
 interface IBarProps {
-  //initialSize: number
-
   size: number
   open: boolean
-
-  //previousSize: number
   sideLimits: [number, number]
-  //message: ISlideBarMessage | null
 }
 
 const DEFAULT_BAR_PROPS: IBarProps = Object.freeze({
-  //initialSize: 80,
-  //previousSize: 80,
   open: true,
-
   size: 80,
   sideLimits: [5, 50] as [number, number],
-  //message: null,
 })
+
+/**
+ * Ensures that a bar with the given ID exists in the state.
+ * If it doesn't exist, it creates one with the default properties.
+ * Returns the bar properties for the given ID.
+ * @param state
+ * @param id
+ * @returns
+ */
+function ensureBar(state: ISlideBarStore, id: string): IBarProps {
+  if (!state.barMap[id]) {
+    state.barMap[id] = { ...DEFAULT_BAR_PROPS }
+  }
+  return state.barMap[id]
+}
 
 export interface ISlideBarStore {
   barMap: Record<string, IBarProps>
-  _hasHydrated: boolean
   setBar: (id: string, props: IBarProps) => void
-  setHasHydrated: (state: boolean) => void
-  setInitialSize: (id: string, size: number) => void
-  //setPreviousSize: (id: string, size: number) => void
   setSize: (id: string, size: number) => void
   setOpen: (id: string, open: boolean) => void
   setSideLimits: (id: string, sideLimits: [number, number]) => void
-  //sendMessage: (id: string, message: ISlideBarMessage) => void
 }
 
 export const useSlideBarStore = create<ISlideBarStore>()(
   persist(
-    (set) => ({
+    set => ({
       barMap: {},
-      _hasHydrated: false,
       setBar: (id: string, props: IBarProps) => {
-        set((state) => ({
+        set(state => ({
           barMap: {
             ...state.barMap,
             [id]: props,
           },
         }))
       },
-      setHasHydrated: (state: boolean) => set({ _hasHydrated: state }),
-      setInitialSize: (id: string, size: number) => {
-        set(
-          produce((state) => {
-            if (!(id in state.barMap)) {
-              state.barMap[id] = { ...DEFAULT_BAR_PROPS }
-            }
 
-            state.barMap[id].initialSize = size
-            state.barMap[id].size = size
-          })
-        )
-      },
       // setPreviousSize: (id: string, size: number) => {
       //   set(
       //     produce(state => {
@@ -88,102 +71,92 @@ export const useSlideBarStore = create<ISlideBarStore>()(
       // },
       setSize: (id: string, size: number) => {
         set(
-          produce((state) => {
-            if (!(id in state.barMap)) {
-              state.barMap[id] = { ...DEFAULT_BAR_PROPS }
-            }
+          produce(state => {
+            const bar = ensureBar(state, id)
 
-            state.barMap[id].size = size
+            bar.size = size
           })
         )
       },
       setSideLimits: (id: string, sideLimits: [number, number]) => {
         set(
-          produce((state) => {
-            if (!(id in state.barMap)) {
-              state.barMap[id] = { ...DEFAULT_BAR_PROPS }
-            }
+          produce(state => {
+            const bar = ensureBar(state, id)
 
-            state.barMap[id].sideLimits = sideLimits
+            bar.sideLimits = sideLimits
           })
         )
       },
       setOpen: (id: string, open: boolean) => {
         set(
-          produce((state) => {
-            if (!(id in state.barMap)) {
-              state.barMap[id] = { ...DEFAULT_BAR_PROPS }
-            }
+          produce(state => {
+            const bar = ensureBar(state, id)
 
-            state.barMap[id].open = open
+            bar.open = open
           })
         )
       },
-      // sendMessage: (id: string, message: ISlideBarMessage) => {
-      //   set(
-      //     produce(state => {
-      //       if (!(id in state.barMap)) {
-      //         state.barMap[id] = { ...DEFAULT_BAR_PROPS }
-      //       }
-
-      //       state.barMap[id].message = message
-      //     })
-      //   )
-      // },
     }),
     {
       name: SETTINGS_KEY, // name in localStorage
       storage: createJSONStorage(() => localStorage),
-      onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true)
-      },
     }
   )
 )
 
-export function useSlideBar(id: string) {
-  //const barMap = useSlideBarStore(state => state.barMap)
-  //const { sendMessage } = useMessages(id)
-  const barProps =
-    useSlideBarStore((state) => state.barMap[id]) ?? DEFAULT_BAR_PROPS
-  const setSize = useSlideBarStore((state) => state.setSize)
+export function useSlideBar(
+  id: string,
+  opts: {
+    defaultOpen?: boolean
+    defaultSize?: number
+    defaultSideLimits?: [number, number]
+  } = {}
+) {
+  const {
+    defaultOpen = true,
+    defaultSize = DEFAULT_BAR_PROPS.size,
+    defaultSideLimits = DEFAULT_BAR_PROPS.sideLimits,
+  } = opts
+
+  const size = useSlideBarStore(state => state.barMap[id]?.size ?? defaultSize)
+  const open = useSlideBarStore(state => state.barMap[id]?.open ?? defaultOpen)
+  const sideLimits = useSlideBarStore(
+    state => state.barMap[id]?.sideLimits ?? defaultSideLimits
+  )
+
+  const setSize = useSlideBarStore(state => state.setSize)
   //const setPreviousSize = useSlideBarStore(state => state.setPreviousSize)
-  const setInitialSize = useSlideBarStore((state) => state.setInitialSize) // setInitialSize is just setBar with default props
-  const setSideLimits = useSlideBarStore((state) => state.setSideLimits)
-  const setOpen = useSlideBarStore((state) => state.setOpen)
+  //const setInitialSize = useSlideBarStore(state => state.setInitialSize) // setInitialSize is just setBar with default props
+  const setSideLimits = useSlideBarStore(state => state.setSideLimits)
+  const setOpen = useSlideBarStore(state => state.setOpen)
+
+  const setSizeCallback = useCallback(
+    (size: number) => {
+      setSize(id, size)
+    },
+    [id, setSize]
+  )
+
+  const setSideLimitsCallback = useCallback(
+    (sideLimits: [number, number]) => {
+      setSideLimits(id, sideLimits)
+    },
+    [id, setSideLimits]
+  )
+
+  const setOpenCallback = useCallback(
+    (open: boolean) => {
+      setOpen(id, open)
+    },
+    [id, setOpen]
+  )
 
   return {
-    barProps,
-    setInitialSize: useCallback(
-      (size: number) => {
-        setInitialSize(id, size)
-      },
-      [id, setInitialSize]
-    ),
-    // setPreviousSize: useCallback(
-    //   (size: number) => {
-    //     setPreviousSize(id, size)
-    //   },
-    //   [id, setPreviousSize]
-    // ),
-    setSize: useCallback(
-      (size: number) => {
-        setSize(id, size)
-      },
-      [id, setSize]
-    ),
-    setSideLimits: useCallback(
-      (sideLimits: [number, number]) => {
-        setSideLimits(id, sideLimits)
-      },
-      [id, setSideLimits]
-    ),
-    setOpen: useCallback(
-      (open: boolean) => {
-        setOpen(id, open)
-      },
-      [id, setOpen]
-    ),
-    //sendMessage,
+    open,
+    size,
+    sideLimits,
+    setSize: setSizeCallback,
+    setSideLimits: setSideLimitsCallback,
+    setOpen: setOpenCallback,
   }
 }

@@ -1,0 +1,10 @@
+{
+  "name": "Convert",
+  "description": "Convert gene symbols.",
+  "color": "#20B2AA",
+  "version": "18.8.8",
+  "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
+  "modified": "2026-06-14T02:38:47.871Z",
+  "hash": "a9b43faf8b1a0a2cb25a4a29f809b6ef86e8a20057551e31a1cf757870181374",
+  "build": 770
+}

@@ -1,12 +1,15 @@
-import { cn } from '@/lib/shadcn-utils'
-import type { ComponentProps } from 'react'
+import { cn } from "@/lib/shadcn-utils"
 
-export function Skeleton({ className, ...props }: ComponentProps<'div'>) {
+function Skeleton({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      data-slot="skeleton"
-      className={cn('bg-accent animate-pulse rounded-md', className)}
+      className={cn("animate-pulse rounded-md bg-primary/10", className)}
       {...props}
     />
   )
 }
+
+export { Skeleton }

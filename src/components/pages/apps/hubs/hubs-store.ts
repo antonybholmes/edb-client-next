@@ -3,7 +3,7 @@ import type { IDBEntity } from '@/interfaces/db-entity'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:hubs:settings:v8`
+const SETTINGS_KEY = `${config.appId}:app:hubs:settings:v10`
 
 export interface IDataset extends IDBEntity {
   genome: string
@@ -17,13 +17,13 @@ export interface IDataset extends IDBEntity {
 
 export interface IHubOptions {
   showGuidelines: boolean
-  assembly: string
+
   hideTracks: boolean
 }
 
 export const DEFAULT_HUB_OPTIONS: IHubOptions = {
   hideTracks: false,
-  assembly: 'hg19',
+
   showGuidelines: false,
 }
 

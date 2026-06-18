@@ -1,6 +1,6 @@
 import { SlidersIcon } from '@/icons/sliders-icon'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 import {
   DEFAULT_VOLCANO_PROPS,
@@ -9,38 +9,32 @@ import {
 } from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
 import { autoLim } from '@/components/plot/axis'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { BaseCol } from '@/layout/base-col'
 import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { getFormattedShape, getNumCol } from '@/lib/dataframe/dataframe-utils'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
-import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
-import {
-  useHistory,
-  usePlot,
-  type VolcanoPlot,
-} from '../../history/history-store'
+import { useHistory } from '../../history/history-store'
 
 import { range } from '@/lib/math/range'
 
-import { NO_DIALOG, TEXT_CANCEL, type IDialogParams } from '@/consts'
-import {
-  messageImageFileFormat,
-  useMessages,
-} from '@/providers/message-provider'
+import { messageImageFileFormat, useMessages } from '@/providers/messages'
 import { useZoom } from '@/providers/zoom-provider'
 
-import { SaveImageDialog } from '@/components/pages/save-image-dialog'
+import { useDialogs } from '@/components/dialogs/dialogs'
 import type { ITab } from '@/components/tabs/tab-provider'
 import type { IDivProps } from '@/interfaces/div-props'
-import { randId } from '@/lib/id'
 import { Card } from '@/themed/card'
 import { produce } from 'immer'
-import { MESSAGE_CHANNEL, OPTS_SIDEBAR_ID } from '../../data/data-panel'
+import { MESSAGE_CHANNEL } from '../../data/data-panel'
+
+import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { VolcanoPropsPanel } from './volcano-props-panel'
+import { useVolcanoContext } from './volcano-provider'
 
 export const VOLCANO_X = 'Log2 fold change'
 export const VOLCANO_Y = '-log10 p-value'
@@ -79,14 +73,14 @@ export function makeDefaultVolcanoProps(
 
 interface IPanelProps extends IDivProps {
   //plotId: string
-  plotAddr: string
+
   x?: string
   y?: string
 }
 
 export function VolcanoPanel({
   ref,
-  plotAddr,
+
   x = 'Log2 fold change',
   y = '-log10 p-value',
 }: IPanelProps) {
@@ -101,7 +95,7 @@ export function VolcanoPanel({
   const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
 
   const { updatePlot } = useHistory()
-  const plot = usePlot(plotAddr)! as VolcanoPlot
+  const { plot } = useVolcanoContext()
 
   const sheet = plot?.dataframes['main'] as BaseDataFrame
 
@@ -109,7 +103,7 @@ export function VolcanoPanel({
 
   const svgRef = useRef<SVGSVGElement>(null)
 
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
+  const { open: openDialog } = useDialogs()
 
   const { settings, updateSettings } = useMatcalcSettings()
 
@@ -127,17 +121,20 @@ export function VolcanoPanel({
   // })
 
   useEffect(() => {
-    const filteredMessage = messages.filter(m => m.target === plot?.id)
+    //const filteredMessage = messages.filter(m => m.target === plot?.id)
 
-    for (const message of filteredMessage) {
-      if (message.data.includes('save')) {
+    for (const message of messages) {
+      if (typeof message.data === 'string' && message.data.includes('save')) {
         if (message.data.includes(':')) {
           downloadSvgAutoFormat(
             svgRef,
             `volcano.${messageImageFileFormat(message)}`
           )
         } else {
-          setShowDialog({ id: randId('save') })
+          openDialog({
+            type: 'save-image',
+            payload: { svgRef, name: `volcano` },
+          })
         }
       }
 
@@ -155,8 +152,7 @@ export function VolcanoPanel({
     updatePlot(
       produce(plot, draft => {
         draft.props.scale = zoom
-      }),
-      { file: plotAddr }
+      })
     )
   }, [zoom])
 
@@ -166,100 +162,44 @@ export function VolcanoPanel({
       id: 'Display',
       icon: <SlidersIcon />,
 
-      content: <VolcanoPropsPanel x={x} y={y} plotAddr={plotAddr} />,
+      content: <VolcanoPropsPanel x={x} y={y} />,
     },
   ]
 
   return (
-    <>
-      {showDialog.id.startsWith('save') && (
-        <SaveImageDialog
-          name="volcano"
-          onResponse={(response, data) => {
-            if (response !== TEXT_CANCEL) {
-              const d = data as { name: string }
-              downloadSvgAutoFormat(svgRef, d.name)
-            }
+    <BaseCol ref={ref} className="h-full overflow-hidden grow">
+      <TabSlideBar
+        id={OPTS_SIDEBAR_ID}
+        side="right"
+        tabs={plotRightTabs}
+        open={settings.sidebar.show}
+        onOpenChange={v => {
+          const newSettings = produce(settings, draft => {
+            draft.sidebar.show = v
+          })
 
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        />
-      )}
+          updateSettings(newSettings)
+        }}
+      >
+        <Card variant="content" className="ml-2 mb-2 grow">
+          <div className={PLOT_CLS}>
+            <VolcanoPlotSvg
+              ref={svgRef}
+              //displayProps={displayOptions}
+              x={x}
+              y={y}
+            />
+          </div>
+        </Card>
+      </TabSlideBar>
 
-      <BaseCol ref={ref} className="h-full overflow-hidden grow">
-        {/* <ResizablePanelGroup
-          orientation="horizontal"
-          id="volcano-resizable-panels"
-          className="overflow-hidden"
-          //autoSaveId="volcano-resizable-panels"
-        >
-          <ResizablePanel
-            id="volcano-svg"
-            order={1}
-            defaultSize="75%"
-            minSize="50%"
-            className="flex grow flex-col pt-2 pb-2 pl-2"
-          >
-            <div className="custom-scrollbar relative grow overflow-scroll rounded-lg border bg-white">
-              <VolcanoPlotSvg
-                ref={svgRef}
-                df={plot.cf.dataframes[MAIN_CLUSTER_FRAME]}
-                displayProps={displayProps}
-                x={x}
-                y={y}
-              />
-            </div>
-          </ResizablePanel>
-          <ThinHResizeHandle />
-          <ResizablePanel
-            id="volcano-svg-right"
-            order={2}
-            className="flex flex-col overflow-hidden"
-            defaultSize="25%"
-            minSize="15%"
-            collapsedSize={0}
-            collapsible={true}
-          >
-            <SideBarTextTabs tabs={plotRightTabs} />
-          </ResizablePanel>
-        </ResizablePanelGroup> */}
-
-        <TabSlideBar
-          id={OPTS_SIDEBAR_ID}
-          side="right"
-          tabs={plotRightTabs}
-          //onValueChange={setSelectedTab}
-          //value={selectedTab}
-          open={settings.sidebar.show}
-          onOpenChange={v => {
-            const newSettings = produce(settings, draft => {
-              draft.sidebar.show = v
-            })
-
-            updateSettings(newSettings)
-          }}
-        >
-          <Card variant="content" className="ml-2 mb-2 grow">
-            <div className={PLOT_CLS}>
-              <VolcanoPlotSvg
-                ref={svgRef}
-                //displayProps={displayOptions}
-                x={x}
-                y={y}
-                plotAddr={plotAddr}
-              />
-            </div>
-          </Card>
-        </TabSlideBar>
-
-        <ToolbarFooterPortal className="shrink-0 grow-0 justify-end">
-          <span>{getFormattedShape(sheet)}</span>
-          <></>
-          <>
-            <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
-          </>
-        </ToolbarFooterPortal>
-      </BaseCol>
-    </>
+      <FooterPortal className="shrink-0 grow-0 justify-end">
+        <span>{getFormattedShape(sheet)}</span>
+        <></>
+        <>
+          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+        </>
+      </FooterPortal>
+    </BaseCol>
   )
 }

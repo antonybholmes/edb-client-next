@@ -18,7 +18,8 @@ import { Button } from '@/themed/v2/button'
 import { Input } from '@/themed/v2/input'
 
 import { VCenterRow } from '@/components/layout/v-center-row'
-import { csrfService } from '@/lib/edb/csrf-service'
+
+import { getCSRFToken } from '@/lib/edb/csrf'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { csfrHeaders } from '@/lib/http/urls'
 import { makeUuid } from '@/lib/id'
@@ -91,7 +92,7 @@ export function PasswordCard() {
 
   async function updatePassword(password: string, newPassword: string) {
     try {
-      const csrfToken = await csrfService.getToken()
+      const csrfToken = await getCSRFToken()
 
       await httpFetch.postJson(SESSION_UPDATE_PASSWORD_URL, {
         body: {

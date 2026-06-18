@@ -5,10 +5,12 @@ import { API_DNA_URL } from '@/lib/edb/edb'
 import { TIME_5_MINUTES_MS } from '@/consts'
 
 import { QueryClient, useQuery } from '@tanstack/react-query'
-import type { SeriesData } from '../dataframe'
+
 import { AnnotationDataFrame } from '../dataframe/annotation-dataframe'
+import type { SeriesData } from '../dataframe/series-data'
 import { httpFetch } from '../http/http-fetch'
-import { GenLoc, locStr, type IGenomicLocation } from './genomic'
+import { GenLoc, locStr } from './genomic'
+import type { IGenomicLocation } from './genomic-location'
 
 export const CHR_INDEX_MAP: { [key: string]: number } = {
   chr1: 1,
@@ -104,11 +106,11 @@ export async function createDNATable(
     return null
   }
 
-  //let assemblyCol = findCol(df, "assembly")
+  // let assemblyCol = findCol(df, 'assembly')
 
-  //if (assemblyCol === -1) {
-  //  assemblyCol = findCol(df, "genome")
-  //}
+  // if (assemblyCol === -1) {
+  //   assemblyCol = findCol(df, 'genome')
+  // }
 
   const header: string[] = df.columns.concat(['DNA'])
 
@@ -117,7 +119,7 @@ export async function createDNATable(
   //.map(v => parseLocation(v.toString()))
   //.map(v => v!.toJson())
 
-  //const a = assemblyCol !== -1 ? df.get(0, assemblyCol).toString() : assembly
+  //const a = assemblyCol !== -1 ? df.col(assemblyCol).strs : vfill(assembly, locs.length)
 
   try {
     const res = await queryClient.fetchQuery({
@@ -159,7 +161,7 @@ export async function createDNATable(
 
 export async function fetchDNA(
   queryClient: QueryClient,
-  location: GenLoc,
+  location: IGenomicLocation,
   params: IDNAOptions = {}
 ): Promise<IDNA> {
   const {
@@ -223,7 +225,7 @@ export async function fetchDNA(
 }
 
 export function useDNAQuery(
-  location: GenLoc | IGenomicLocation,
+  location: IGenomicLocation | GenLoc,
   params: IDNAOptions = {}
 ) {
   const {

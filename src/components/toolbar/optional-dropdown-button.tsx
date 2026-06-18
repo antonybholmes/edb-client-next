@@ -19,7 +19,7 @@ import { IconButton } from '../shadcn/ui/themed/icon-button'
 
 const CONTAINER_CLS = cn(
   TRANS_COLOR_CLS,
-  //BUTTON_MD_H_CLS,
+
   'overflow-hidden'
   //[open, "border-border", "border-transparent hover:border-border"],
 )

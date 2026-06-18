@@ -41,9 +41,11 @@ export function DoubleNumericalInput({
   inputCls = 'rounded-theme',
   w = 'xxs',
   limit = [1, 100],
+  h,
   inc = 1,
   dp = 3,
   leftChildren,
+
   children,
 }: InputProps) {
   //const [focus, setFocus] = useState(false)
@@ -52,7 +54,7 @@ export function DoubleNumericalInput({
   const id2 = `${_id}:2`
 
   if (!children) {
-    children = <CloseIcon w="w-3" />
+    children = <CloseIcon size="w-3" />
   }
 
   return (
@@ -74,6 +76,7 @@ export function DoubleNumericalInput({
         onNumChange={onNumChange1}
         onNumChanged={onNumChanged1}
         w={w}
+        h={h}
       />
 
       {children && children}
@@ -93,6 +96,7 @@ export function DoubleNumericalInput({
         onNumChange={onNumChange2}
         onNumChanged={onNumChanged2}
         w={w}
+        h={h}
       />
     </VCenterRow>
   )

@@ -1,4 +1,4 @@
-import type { IGenomicLocation } from '@/lib/genomic/genomic'
+import type { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { range } from '@/lib/math/range'
 import type { IVariantDataset, IVariantSample } from './dataset-store'
 import type { IVariant, IVariantResults } from './variant-store'

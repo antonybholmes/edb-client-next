@@ -1,19 +1,20 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import { TabContentPanels } from '../shadcn/ui/themed/v2/tabs'
 
 import { type ITabProvider } from '../tabs/tab-provider'
 
-import { useStableId } from '@/hooks/stable-id'
-import { BaseCol } from '../layout/base-col'
-import { VCenterRow } from '../layout/v-center-row'
 import { TabIndicatorFollowBlock } from '../tabs/tab-indicator-follow-block'
 import { TabIndicatorSelectedH } from '../tabs/tab-indicator-selected-h'
 import { useTabs } from '../tabs/tab-store'
 import { getSelectedMouseOverSize, UnderlineTabs } from '../tabs/underline-tabs'
-import { ResizableSidebar } from './resizable-sidebar'
-import { CloseButton, type ISlideBarProps } from './slide-bar'
-import { useSlideBar } from './slide-bar-store'
+import {
+  OPTS_SIDEBAR_ID,
+  ResizableSidebar,
+  ResizableSidebarHeaderPortal,
+  useResizableSidebarContext,
+} from './resizable-sidebar'
+import { type ISlideBarProps } from './slide-bar'
 
 interface IProps extends ITabProvider, ISlideBarProps {
   showCloseButton?: boolean
@@ -21,21 +22,45 @@ interface IProps extends ITabProvider, ISlideBarProps {
   display?: 'block' | 'flex'
 }
 
+function SideBar({ tabs }: ITabProvider) {
+  const { id } = useResizableSidebarContext() // Assuming useResizableSidebar is a hook to get the id of the ResizableSidebar
+  return (
+    <>
+      <ResizableSidebarHeaderPortal>
+        <UnderlineTabs
+          groupId={id}
+          tabs={tabs}
+          selectedMouseOverSize={getSelectedMouseOverSize}
+          tabButtonProps={{ variant: 'default' }}
+          //onTabChange={onTabChange}
+          //tabListCls="gap-x-0.5"
+          className="text-xs"
+        >
+          <TabIndicatorFollowBlock
+            groupId={id}
+            rounded={false}
+            //color="bg-background"
+          />
+          <TabIndicatorSelectedH groupId={id} />
+        </UnderlineTabs>
+      </ResizableSidebarHeaderPortal>
+
+      <TabContentPanels tabs={tabs} groupId={id} className="flex-col grow" />
+    </>
+  )
+}
+
 export function TabSlideBar({
-  id,
+  id = OPTS_SIDEBAR_ID,
   tabs,
-  showCloseButton = true,
-  onTabChange,
+  //showCloseButton = true,
+  //onTabChange,
   side = 'left',
   children,
 }: IProps) {
-  const [hover, setHover] = useState(false)
+  //const [ , setHover] = useState(false)
 
-  const _id = id ?? useStableId('tab-slide-bar')
-
-  const { setOpen } = useSlideBar(_id)
-
-  const { setTab } = useTabs(_id)
+  const { setTab } = useTabs(id)
 
   // set default tab on mount
   useEffect(() => {
@@ -66,47 +91,36 @@ export function TabSlideBar({
   //   }
   // }, [value])
 
-  function _onOpenChange(state: boolean) {
-    setOpen(state)
-  }
+  //function _onOpenChange(state: boolean) {
+  //setOpen(state)
+  //}
 
   return (
-    <ResizableSidebar id={_id} side={side}>
+    <ResizableSidebar id={id} side={side}>
       <>{children}</>
-      <BaseCol className="gap-y-4 grow overflow-x-hidden">
-        <VCenterRow
-          className="justify-between px-1 text-xs"
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
+
+      <SideBar tabs={tabs} />
+
+      {/* <BaseCol className="gap-y-4 grow overflow-x-hidden">
+        <UnderlineTabs
+          groupId={id}
+          tabs={tabs}
+          selectedMouseOverSize={getSelectedMouseOverSize}
+          tabButtonProps={{ variant: 'default' }}
+          onTabChange={onTabChange}
+          //tabListCls="gap-x-0.5"
         >
-          <UnderlineTabs
-            groupId={_id}
-            tabs={tabs}
-            selectedMouseOverSize={getSelectedMouseOverSize}
-            tabButtonProps={{ variant: 'default' }}
-            onTabChange={onTabChange}
-            //tabListCls="gap-x-0.5"
-          >
-            <TabIndicatorFollowBlock
-              groupId={_id}
-              rounded={false}
-              //color="bg-background"
-            />
-            <TabIndicatorSelectedH groupId={_id} />
-          </UnderlineTabs>
+          <TabIndicatorFollowBlock
+            groupId={id}
+            rounded={false}
+            //color="bg-background"
+          />
+          <TabIndicatorSelectedH groupId={id} />
+        </UnderlineTabs>
 
-          {showCloseButton && (
-            <CloseButton
-              onClick={() => _onOpenChange(false)}
-              data-hover={hover}
-            />
-          )}
-        </VCenterRow>
-
-        {/* <TabContentPanel tabIndex={tabIndex ?? 0} tabs={tabs} /> */}
-
-        <TabContentPanels tabs={tabs} groupId={_id} className="flex-col grow" />
-      </BaseCol>
+    
+        <TabContentPanels tabs={tabs} groupId={id} className="flex-col grow" />
+      </BaseCol> */}
 
       {/* <TabContentForceMountPanels tabs={tabs} /> */}
     </ResizableSidebar>

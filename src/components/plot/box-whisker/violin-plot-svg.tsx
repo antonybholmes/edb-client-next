@@ -4,9 +4,9 @@ import { type IDivProps } from '@/interfaces/div-props'
 
 import { Axis, YAxis } from '@/components/plot/axis'
 import {
-  DEFAULT_FILL_PROPS,
+  DEFAULT_COLOR_PROPS,
   DEFAULT_STROKE_PROPS,
-  type IColorProps,
+  type IPaintProps,
   type IStrokeProps,
 } from '@/components/plot/svg-props'
 import { KDE } from '@/lib/math/kde'
@@ -23,7 +23,7 @@ interface IProps extends IDivProps {
   width?: number
   height?: number
   r?: number
-  fill?: IColorProps
+  fill?: IPaintProps
   stroke?: IStrokeProps
   // whether to only draw half of the violin
   mode?: IBoxWhiskerMode
@@ -37,7 +37,7 @@ export function ViolinPlotSvg({
   yax,
   width = 50,
   height = 500,
-  fill = DEFAULT_FILL_PROPS,
+  fill = DEFAULT_COLOR_PROPS,
   stroke = DEFAULT_STROKE_PROPS,
   mode = 'full',
 }: IProps) {
@@ -112,8 +112,8 @@ export function ViolinPlotSvg({
     return (
       <polygon
         points={points}
-        fill={fill?.color ?? 'none'}
-        stroke={stroke?.color ?? 'none'}
+        fill={fill?.value ?? 'none'}
+        stroke={stroke?.value ?? 'none'}
         strokeWidth={stroke?.width ?? 0}
         fillOpacity={fill?.opacity ?? 0}
       />

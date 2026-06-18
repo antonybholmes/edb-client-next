@@ -14,7 +14,7 @@ interface IProps extends IIconProps {
 }
 
 export function SmallVerticalGripIcon({
-  w = 'h-4.5 w-4.5',
+  size = 'h-4.5 w-4.5',
   stroke = 'stroke-foreground',
   className,
   strokeWidth = 1.5,
@@ -24,7 +24,7 @@ export function SmallVerticalGripIcon({
     // <svg
     //   viewBox="0 0 24 24"
     //   xmlns="http://www.w3.org/2000/svg"
-    //   className={cn(ICON_CLS, w, fill, className)}
+    //   className={cn(ICON_CLS, size, fill, className)}
     //   style={{ ...style, strokeLinecap: "round", strokeLinejoin: "round" }}
     //   //shapeRendering={SVG_CRISP_EDGES}
     // >
@@ -40,7 +40,7 @@ export function SmallVerticalGripIcon({
       strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={cn(ICON_CLS, stroke, w, className)}
+      className={cn(ICON_CLS, stroke, size, className)}
       style={style}
     >
       {/* <circle cx="12" cy="12" r="1" /> */}
@@ -49,7 +49,7 @@ export function SmallVerticalGripIcon({
     </svg>
 
     // <EllipsisVertical
-    //   className={cn(ICON_CLS, stroke, w, className)}
+    //   className={cn(ICON_CLS, stroke, size, className)}
     //   strokeWidth={strokeWidth}
     //   stroke=""
     //   style={style}

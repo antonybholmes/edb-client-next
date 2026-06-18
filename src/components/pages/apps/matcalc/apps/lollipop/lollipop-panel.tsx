@@ -1,28 +1,22 @@
 import { SlidersIcon } from '@/icons/sliders-icon'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { type ITab } from '@/components/tabs/tab-provider'
+import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
-import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
-import { NO_DIALOG, TEXT_CANCEL, type IDialogParams } from '@/consts'
 import { Card } from '@/themed/card'
 
-import { SaveImageDialog } from '@/components/pages/save-image-dialog'
-
 import { LayersIcon } from '@/components/icons/layers-icon'
-import { randId } from '@/lib/id'
-import {
-  messageImageFileFormat,
-  useMessages,
-} from '@/providers/message-provider'
+import { messageImageFileFormat, useMessages } from '@/providers/messages'
 import { produce } from 'immer'
 
 import { useZoom } from '@/providers/zoom-provider'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
 import { DomainPropsPanel } from '../../../wgs/lollipop/domain-props-panel'
 import { LabelPropsPanel } from '../../../wgs/lollipop/label-props-panel'
 import { LollipopPropsPanel } from '../../../wgs/lollipop/lollipop-props-panel'
@@ -30,7 +24,9 @@ import { useLollipopSettings } from '../../../wgs/lollipop/lollipop-settings-sto
 import { LollipopStackSvg } from '../../../wgs/lollipop/lollipop-stack-svg'
 import { useLollipopStore } from '../../../wgs/lollipop/lollipop-store'
 import { VariantPropsPanel } from '../../../wgs/lollipop/variant-props-panel'
-import { MESSAGE_CHANNEL, OPTS_SIDEBAR_ID } from '../../data/data-panel'
+import { MESSAGE_CHANNEL } from '../../data/data-panel'
+
+import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
 import { usePlot } from '../../history/history-store'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
@@ -55,8 +51,6 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
   //const [selectedTab, setSelectedTab] = useState('Display')
   const svgRef = useRef<SVGSVGElement>(null)
 
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
-
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'heatmap')
 
   const { settings, updateSettings } = useMatcalcSettings()
@@ -69,20 +63,25 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
 
   const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
 
+  const { open: openDialog } = useDialogs()
+
   useEffect(() => {
     const filteredMessages = messages.filter(
       message => message.target === plot?.id
     )
 
     for (const message of filteredMessages) {
-      if (message.data.includes('save')) {
+      if (typeof message.data === 'string' && message.data.includes('save')) {
         if (message.data.includes(':')) {
           downloadSvgAutoFormat(
             svgRef,
             `heatmap.${messageImageFileFormat(message)}`
           )
         } else {
-          setShowDialog({ id: randId('save') })
+          openDialog({
+            type: 'save-image',
+            payload: { svgRef, name: `lollipop` },
+          })
         }
       }
 
@@ -145,56 +144,6 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
 
   return (
     <>
-      {showDialog.id.startsWith('save') && (
-        <SaveImageDialog
-          open={showDialog.id.startsWith('save')}
-          name="lollipop"
-          onResponse={(response, data) => {
-            if (response !== TEXT_CANCEL) {
-              const d = data as { name: string }
-              downloadSvgAutoFormat(svgRef, d.name)
-            }
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        />
-      )}
-
-      {/* <ResizablePanelGroup
-          orientation="horizontal"
-          id="plot-resizable-panels"
-          //autoSaveId="plot-resizable-panels"
-          className="grow"
-        >
-          <ResizablePanel
-            id="plot-svg"
-            order={1}
-            defaultSize="75%"
-            minSize="50%"
-            className="flex flex-col pl-2 pt-2 pb-2"
-          >
-            <div className="custom-scrollbar relative grow overflow-scroll rounded-lg border bg-white">
-              <HeatMapSvg
-                ref={svgRef}
-                cf={plot.cf}
-                groups={groups}
-                displayProps={displayProps}
-              />
-            </div>
-          </ResizablePanel>
-          <ThinHResizeHandle />
-          <ResizablePanel
-            id="plot-svg-right"
-            order={2}
-            className="flex flex-col"
-            defaultSize="25%"
-            minSize="15%"
-            collapsible={true}
-            collapsedSize={0}
-          >
-            <SideBarTextTabs tabs={plotRightTabs} />
-          </ResizablePanel>
-        </ResizablePanelGroup> */}
-
       <TabSlideBar
         id={OPTS_SIDEBAR_ID}
         side="right"
@@ -219,13 +168,13 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
         </Card>
       </TabSlideBar>
 
-      <ToolbarFooterPortal className="shrink-0 grow-0 ">
+      <FooterPortal className="shrink-0 grow-0 ">
         <></>
         <></>
         <>
           <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
         </>
-      </ToolbarFooterPortal>
+      </FooterPortal>
     </>
   )
 }

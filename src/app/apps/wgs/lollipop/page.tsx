@@ -1,4 +1,4 @@
-import MODULE_INFO from '@/components/pages/apps/wgs/lollipop/module.json'
+import MODULE_INFO from '@/components/pages/apps/wgs/lollipop/manifest.json'
 import { makeMetaDataFromModule } from '@/lib/metadata'
 
 import { LollipopQueryPage } from '@/components/pages/apps/wgs/lollipop/lollipop-page'

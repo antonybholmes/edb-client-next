@@ -1,4 +1,4 @@
-import { fill } from '../fill'
+import { vfill } from '../fill'
 import { argMin } from './argmin'
 import { type DistFunc, type Point } from './distance'
 
@@ -71,10 +71,10 @@ export class KMeans {
     // here we create an array of k arrays of size of a point.
     // Usually this will be 2D arrays, e.g. x,y
     const newCentroids: Point[] = Array.from({ length: this._k }, () =>
-      fill(0, n)
+      vfill(0, n)
     )
 
-    const count: number[] = fill(0, this._k)
+    const count: number[] = vfill(0, this._k)
 
     // Sum all points assigned to each centroid
     for (let i = 0; i < points.length; i++) {
@@ -115,7 +115,7 @@ export class KMeans {
     let centroids = this._initializeCentroids(points)
 
     // default everything is assigned to one cluster if all else fails
-    let assignments: number[] = fill(0, points.length)
+    let assignments: number[] = vfill(0, points.length)
 
     for (let iteration = 0; iteration < this._maxIterations; iteration++) {
       assignments = this._assignPointsToCentroids(points, centroids)

@@ -14,7 +14,7 @@ export function ToolbarButton({
 
   return (
     <Button
-      variant="flat"
+      //variant="flat"
       rounded="theme"
       size={size}
       pad={pad}

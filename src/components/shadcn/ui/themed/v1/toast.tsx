@@ -1,4 +1,4 @@
-//import { LoadingSpinner } from '@/components/alerts/loading-spinner'
+import { LoadingSpinnerGradient } from '@/components/alerts/loading-spinner-gradient'
 import { CloseIcon } from '@/icons/close-icon'
 import { ErrorIcon } from '@/icons/error-icon'
 import { WarningIcon } from '@/icons/warning-icon'
@@ -6,6 +6,7 @@ import type { IChildrenProps } from '@/interfaces/children-props'
 import { VCenterCol } from '@/layout/v-center-col'
 import { VCenterRow } from '@/layout/v-center-row'
 import { cn } from '@/lib/shadcn-utils'
+import type { UndefStr } from '@/lib/text/text'
 import * as ToastPrimitives from '@radix-ui/react-toast'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { type ComponentProps, type ReactNode } from 'react'
@@ -18,7 +19,7 @@ export interface IToast extends VariantProps<typeof toastVariants> {
   description?: ReactNode
   button?:
     | {
-        label?: string | undefined
+        label?: UndefStr
         onClick: () => void
       }
     | undefined
@@ -131,7 +132,7 @@ export const toastVariants = cva(
 export function ToastSpinner({ children }: IChildrenProps) {
   return (
     <VCenterRow className="gap-x-3">
-      {/* <LoadingSpinner /> */}
+      <LoadingSpinnerGradient />
       {children}
     </VCenterRow>
   )
@@ -154,8 +155,14 @@ export function Toast({
       {...props}
     >
       <VCenterRow className="gap-x-4">
-        <WarningIcon w="w-8 h-8" className="hidden group-[.warning]:block" />
-        <ErrorIcon w="w-8 h-8" className="hidden group-[.destructive]:block" />
+        <WarningIcon
+          size="w-button-md h-button-md"
+          className="hidden group-[.warning]:block"
+        />
+        <ErrorIcon
+          size="w-button-md h-button-md"
+          className="hidden group-[.destructive]:block"
+        />
         <VCenterCol className="gap-y-1">
           <p className="text-sm font-medium  ">{title}</p>
           {typeof description === 'string' ? (

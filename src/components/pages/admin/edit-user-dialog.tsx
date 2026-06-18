@@ -1,13 +1,10 @@
-import { BaseCol } from '@/layout/base-col'
-
 import { FormInputError } from '@/components/input-error'
 import { Form, FormField } from '@/components/shadcn/ui/themed/v2/form'
 import { TEXT_OK } from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
-import type { IEdbUser, IRBACGroup } from '@/lib/edb/edb'
+import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
+import type { IEdbUser, INewUser, IRBACGroup } from '@/lib/edb/edb'
 
-import { Label, LabelContainer } from '@/components/shadcn/ui/themed/v2/label'
-import { Toggle } from '@/components/shadcn/ui/themed/v2/toggle'
+import { PropRow } from '@/components/dialogs/prop-row'
 import {
   NAME_PATTERN,
   PUBLIC_ID_REGEX,
@@ -16,20 +13,13 @@ import {
   USERNAME_PATTERN,
 } from '@/layouts/signin-layout'
 import { Input } from '@/themed/v2/input'
-import { ToggleGroup } from '@/themed/v2/toggle-group'
+import { GroupToggle, ToggleGroup } from '@/themed/v2/toggle-group'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
 import { TEXT_PASSWORD_PATTERN_DESCRIPTION } from '../account/myaccount/password-card'
 import { PASSWORD_PATTERN } from '../account/password-email-dialog'
-
-export interface INewUser extends IEdbUser {
-  password: string
-  // we need to track selected groups  as strings
-  // to make toggle group work
-  selectedGroups: string[]
-}
 
 const UserFormSchema = z.object({
   id: z.string().regex(PUBLIC_ID_REGEX, {
@@ -84,15 +74,11 @@ const UserFormSchema = z.object({
   selectedGroups: z.array(z.string()),
 })
 
-interface IEditUserDialogProps {
+interface IEditUserDialogProps extends IModalProps<INewUser> {
   open?: boolean
-  title?: string
-  user: INewUser | undefined
-  setUser: (
-    user: INewUser | undefined,
+  title?: string | undefined
+  user: IEdbUser | undefined
 
-    response: string
-  ) => void
   groups: IRBACGroup[]
 }
 
@@ -100,8 +86,8 @@ export function EditUserDialog({
   open = true,
   title,
   user,
-  setUser,
   groups,
+  onResponse,
 }: IEditUserDialogProps) {
   if (!title) {
     title = `Edit User`
@@ -116,7 +102,7 @@ export function EditUserDialog({
     //   update(data)
     // }
 
-    setUser(data, TEXT_OK)
+    onResponse?.(TEXT_OK, data)
   }
 
   // const form = useForm<INewUser>({
@@ -140,7 +126,7 @@ export function EditUserDialog({
       apiKeys: [],
       isLocked: false,
       groups: [],
-      selectedGroups: user?.groups.map((g) => g.id) || [],
+      selectedGroups: user?.groups.map(g => g.id) || [],
       ...user,
     },
   })
@@ -151,11 +137,11 @@ export function EditUserDialog({
     <OKCancelDialog
       open={open}
       title={title}
-      onResponse={(r) => {
+      onResponse={r => {
         if (r === TEXT_OK) {
           btnRef.current?.click()
         } else {
-          setUser(undefined, r)
+          onResponse?.(r)
         }
       }}
       //contentVariant="glass"
@@ -165,46 +151,44 @@ export function EditUserDialog({
           className="flex flex-col gap-y-4 text-sm"
           onSubmit={form.handleSubmit(onSubmit)}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="name"
-              // rules={{
-              //   required: {
-              //     value: true,
-              //     message: TEXT_NAME_REQUIRED,
-              //   },
-              //   minLength: {
-              //     value: 1,
-              //     message: TEXT_NAME_REQUIRED,
-              //   },
-              //   pattern: {
-              //     value: NAME_PATTERN,
-              //     message: 'This does not seem like a valid name',
-              //   },
-              // }}
-              render={({ field }) => (
-                <LabelContainer label="First Name" labelPos="top">
-                  <Input
-                    h="lg"
-                    id="name"
-                    className="w-full"
-                    //label="First name"
-                    placeholder="First name"
-                    error={'name' in form.formState.errors}
-                    {...field}
-                  />
+          <FormField
+            control={form.control}
+            name="name"
+            // rules={{
+            //   required: {
+            //     value: true,
+            //     message: TEXT_NAME_REQUIRED,
+            //   },
+            //   minLength: {
+            //     value: 1,
+            //     message: TEXT_NAME_REQUIRED,
+            //   },
+            //   pattern: {
+            //     value: NAME_PATTERN,
+            //     message: 'This does not seem like a valid name',
+            //   },
+            // }}
+            render={({ field }) => (
+              <PropRow title="First Name" labelW="md">
+                <Input
+                  h="lg"
+                  id="name"
+                  //label="First name"
+                  placeholder="First name"
+                  error={'name' in form.formState.errors}
+                  {...field}
+                />
 
-                  <FormInputError error={form.formState.errors.name} />
-                </LabelContainer>
-              )}
-            />
-          </div>
+                <FormInputError error={form.formState.errors.name} />
+              </PropRow>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="username"
             render={({ field }) => (
-              <LabelContainer label="Username" labelPos="top">
+              <PropRow title="Username" labelW="md">
                 <Input
                   h="lg"
                   id="username"
@@ -214,7 +198,7 @@ export function EditUserDialog({
                   {...field}
                 />
                 <FormInputError error={form.formState.errors.username} />
-              </LabelContainer>
+              </PropRow>
             )}
           />
 
@@ -222,7 +206,7 @@ export function EditUserDialog({
             control={form.control}
             name="email"
             render={({ field }) => (
-              <LabelContainer label="Email" labelPos="top">
+              <PropRow title="Email" labelW="md">
                 <Input
                   h="lg"
                   id="email"
@@ -233,7 +217,7 @@ export function EditUserDialog({
                 />
 
                 <FormInputError error={form.formState.errors.email} />
-              </LabelContainer>
+              </PropRow>
             )}
           />
 
@@ -241,7 +225,7 @@ export function EditUserDialog({
             control={form.control}
             name="password"
             render={({ field }) => (
-              <LabelContainer label="Password" labelPos="top">
+              <PropRow title="Password" labelW="md">
                 <Input
                   h="lg"
                   id="password"
@@ -252,7 +236,7 @@ export function EditUserDialog({
                   {...field}
                 />
                 <FormInputError error={form.formState.errors.password} />
-              </LabelContainer>
+              </PropRow>
             )}
           />
 
@@ -262,7 +246,7 @@ export function EditUserDialog({
             render={({ field }) => {
               if (field.value) {
                 return (
-                  <LabelContainer label="User Id" labelPos="top">
+                  <PropRow title="User Id" labelW="md">
                     <Input
                       h="lg"
                       id="id"
@@ -273,7 +257,7 @@ export function EditUserDialog({
                       disabled
                       {...field}
                     />
-                  </LabelContainer>
+                  </PropRow>
                 )
               } else {
                 return <></>
@@ -304,8 +288,7 @@ export function EditUserDialog({
             control={form.control}
             name="selectedGroups"
             render={({ field }) => (
-              <BaseCol className="gap-y-2">
-                <Label className="font-bold">Groups</Label>
+              <PropRow title="Groups" labelW="md">
                 <ToggleGroup
                   multiple={true}
                   justify="start"
@@ -314,19 +297,19 @@ export function EditUserDialog({
                   onValueChange={field.onChange}
                   className="gap-x-1"
                 >
-                  {groups.map((group) => {
+                  {groups.map(group => {
                     return (
-                      <Toggle
+                      <GroupToggle
                         value={group.id}
                         key={group.id}
                         className="text-xs px-2"
                       >
                         {group.name}
-                      </Toggle>
+                      </GroupToggle>
                     )
                   })}
                 </ToggleGroup>
-              </BaseCol>
+              </PropRow>
             )}
           />
 
@@ -334,7 +317,7 @@ export function EditUserDialog({
             control={form.control}
             name="authProviders"
             render={({ field }) => (
-              <span>{field.value?.map((p) => p.name).join(', ')}</span>
+              <span>{field.value?.map(p => p.name).join(', ')}</span>
             )}
           />
 

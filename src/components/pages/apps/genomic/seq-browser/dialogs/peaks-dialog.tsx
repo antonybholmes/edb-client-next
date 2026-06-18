@@ -6,10 +6,10 @@ import {
   TEXT_SELECT_ALL,
   TEXT_UNSELECT_ALL,
 } from '@/consts'
-import { type IModalProps } from '@/dialog/ok-cancel-dialog'
+import { type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
 import { SearchBox } from '@/components/search-box'
-import { CheckPropRow } from '@/dialog/check-prop-row'
+import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { MultiSelectIcon } from '@/icons/multi-select-icon'
 import { VCenterRow } from '@/layout/v-center-row'
 
@@ -19,7 +19,6 @@ import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { BoolSearchQuery } from '@/lib/search'
 import { cn } from '@/lib/shadcn-utils'
-import { Button } from '@/themed/v2/button'
 import { Checkbox } from '@/themed/v2/check-box'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
@@ -35,45 +34,46 @@ import {
 import {
   getAccordionId,
   SettingsAccordionItem,
-} from '@/dialog/settings/settings-dialog'
+} from '@/dialogs/settings/settings-dialog'
 import { ScrollAccordion } from '@/themed/v2/accordion'
 
 import { PlusIcon } from '@/components/icons/plus-icon'
 import { TrashIcon } from '@/components/icons/trash-icon'
 import { CenterCol } from '@/components/layout/center-col'
 import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
-import { GlassSideDialog } from '@/dialog/glass-side-dialog'
+import { GlassSideDialog } from '@/dialogs/glass-side-dialog'
 import { IconButton } from '@/themed/icon-button'
 
 import { DialogTitle } from '@/components/shadcn/ui/themed/v2/dialog'
 import { API_BEDS_URL } from '@/lib/edb/edb'
-import { ArrowDownUp } from 'lucide-react'
-import type { AllDBBedTrackTypes, IBedTrack } from '../tracks-provider'
+import { useEdbSettings } from '@/lib/edb/edb-settings'
+import { ArrowDownUp, ShoppingCart } from 'lucide-react'
+import type { IBedDBDataTrack, IBedDBTrack } from '../tracks-provider'
 
-export interface IProps extends IModalProps {
-  assembly: string
+export interface IProps extends IModalProps<{
+  tracks: IBedDBTrack[]
+  combine: boolean
+}> {
   technology: string
-  callback?: (tracks: AllDBBedTrackTypes[], combine: boolean) => void
 }
 
 export function PeaksDialog({
-  assembly,
   technology,
   open = true,
   onOpenChange = () => {},
-  callback,
-  onResponse = () => {},
+  onResponse,
   className,
 }: IProps) {
   const { fetchAccessToken } = useEdbAuth()
   const [combine, setCombine] = useState(false)
   const [search, setSearch] = useState('')
   const [error, setError] = useState('')
-  const [trackDb, setTrackDb] = useState<IBedTrack[]>([])
-  const [searchedDb, setSearchedDb] = useState<IBedTrack[]>([])
+  const [trackDb, setTrackDb] = useState<IBedDBDataTrack[]>([])
+  const [searchedDb, setSearchedDb] = useState<IBedDBDataTrack[]>([])
   const [searchSelectAll, setSearchSelectAll] = useState(false)
   const [addedSelectAll, setAddedSelectAll] = useState(false)
   const [reverseSort, setReverseSort] = useState(false)
+  const { settings } = useEdbSettings()
 
   const [selectedMap, setSelectedMap] = useState<Map<string, boolean>>(
     new Map<string, boolean>()
@@ -92,8 +92,8 @@ export function PeaksDialog({
     queryFn: async () => {
       const accessToken = await fetchAccessToken()
 
-      const res = await httpFetch.getJson<{ data: IBedTrack[] }>(
-        `${API_BEDS_URL}/assemblies/${assembly}/samples`,
+      const res = await httpFetch.getJson<{ data: IBedDBDataTrack[] }>(
+        `${API_BEDS_URL}/assemblies/${settings.genomic.assembly}/samples`,
         {
           headers: bearerHeaders(accessToken),
         }
@@ -106,7 +106,7 @@ export function PeaksDialog({
   useEffect(() => {
     if (data) {
       //console.log('got beds', data)
-      let beds: IBedTrack[] = data
+      let beds: IBedDBDataTrack[] = data
 
       beds = beds.filter(bed => bed.technology === technology)
 
@@ -118,7 +118,7 @@ export function PeaksDialog({
         )
       )
     }
-  }, [data, assembly, technology])
+  }, [data, settings.genomic.assembly, technology])
 
   useEffect(() => {
     if (search === '') {
@@ -147,19 +147,19 @@ export function PeaksDialog({
       }
       open={open}
       onOpenChange={onOpenChange}
-      onResponse={(response, data) => {
+      onResponse={response => {
         if (response === TEXT_OK) {
           const selectedTracks = trackDb.filter(
             track => addedMap.get(track.id) ?? false
           )
 
           if (selectedTracks.length > 0) {
-            callback?.(selectedTracks, combine)
+            onResponse?.(TEXT_OK, { tracks: selectedTracks, combine })
           } else {
             setError('You must add at least one track to the cart')
           }
         } else {
-          onResponse?.(response, data)
+          onResponse?.(response)
         }
       }}
       buttons={[TEXT_OK]}
@@ -184,80 +184,75 @@ export function PeaksDialog({
         {error && <span className="text-destructive">{error}</span>}
         <VCenterRow className="gap-x-2 justify-between">
           <VCenterRow>
-            <Button
-              variant="ios"
+            <IconButton
+              //variant="ios"
               //size="icon"
               // ripple={false}
               onClick={() => {
                 setAddedMap(new Map<string, boolean>(selectedMap.entries()))
               }}
-              aria-label="Add to Cart"
+              title="Add to Cart"
             >
-              <PlusIcon /> <span>Add to Cart</span>
-            </Button>
-
-            <IconButton
-              variant="ios"
-              // ripple={false}
-
-              onClick={() => {
-                setSelectedMap(
-                  new Map<string, boolean>([
-                    ...[...selectedMap.entries()],
-                    ...searchedDb.map(
-                      t => [t.id, !searchSelectAll] as [string, boolean]
-                    ),
-                  ])
-                )
-
-                setSearchSelectAll(!searchSelectAll)
-              }}
-              title={searchSelectAll ? TEXT_UNSELECT_ALL : TEXT_SELECT_ALL}
-            >
-              <MultiSelectIcon checked={!searchSelectAll} />
+              <ShoppingCart size={20} strokeWidth={1.5} />
+              {/* <Plus
+                className="absolute left-1/2 top-1/2 -translate-1/2"
+                size={8}
+                strokeWidth={3}
+              /> */}
             </IconButton>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <IconButton
+                    //variant="ios"
+                    // ripple={false}
+                    onClick={() => {
+                      setAddedMap(
+                        new Map<string, boolean>(selectedMap.entries())
+                      )
+                    }}
+                    title="Sort Items"
+                  >
+                    <ArrowDownUp size={20} strokeWidth={1.5} />
+                  </IconButton>
+                }
+              />
+              <DropdownMenuContent align="start">
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>Sort Order</DropdownMenuLabel>
+                  <DropdownMenuCheckboxItem
+                    onClick={() => setReverseSort(!reverseSort)}
+                    aria-label="Sort items alphabetically"
+                    checked={reverseSort}
+                  >
+                    <span>Reversed</span>
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </VCenterRow>
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <IconButton
-                  variant="ios"
-                  // ripple={false}
-                  onClick={() => {
-                    setAddedMap(new Map<string, boolean>(selectedMap.entries()))
-                  }}
-                  title="Sort Items"
-                >
-                  <ArrowDownUp size={20} strokeWidth={1.5} />
-                </IconButton>
-              }
-            />
-            <DropdownMenuContent
-              //side="right"
-              // onEscapeKeyDown={() => {
-              //   setMenuOpen(false)
-              // }}
-              // onInteractOutside={() => {
-              //   setMenuOpen(false)
-              // }}
-              // onPointerDownOutside={() => {
-              //   setMenuOpen(false)
-              // }}
-              align="start"
-              //className="fill-foreground"
-            >
-              <DropdownMenuGroup>
-                <DropdownMenuLabel>Sort Order</DropdownMenuLabel>
-                <DropdownMenuCheckboxItem
-                  onClick={() => setReverseSort(!reverseSort)}
-                  aria-label="Sort items alphabetically"
-                  checked={reverseSort}
-                >
-                  <span>Reversed</span>
-                </DropdownMenuCheckboxItem>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+
+          <IconButton
+            //variant="ios"
+            // ripple={false}
+
+            onClick={() => {
+              setSelectedMap(
+                new Map<string, boolean>([
+                  ...[...selectedMap.entries()],
+                  ...searchedDb.map(
+                    t => [t.id, !searchSelectAll] as [string, boolean]
+                  ),
+                ])
+              )
+
+              setSearchSelectAll(!searchSelectAll)
+            }}
+            title={searchSelectAll ? TEXT_UNSELECT_ALL : TEXT_SELECT_ALL}
+          >
+            <MultiSelectIcon checked={!searchSelectAll} />
+          </IconButton>
         </VCenterRow>
 
         <StoreItems
@@ -318,7 +313,7 @@ export function PeaksDialog({
                 )
               }}
             >
-              <TrashIcon className="w-4" />
+              <TrashIcon />
             </IconButton>
           </VCenterRow>
         </VCenterRow>
@@ -344,7 +339,7 @@ function StoreItems({
   setSelectedMap,
   reverseSort,
 }: {
-  searchedDb: IBedTrack[]
+  searchedDb: IBedDBDataTrack[]
   addedMap: Map<string, boolean>
   setAddedMap: (selected: Map<string, boolean>) => void
   selectedMap: Map<string, boolean>
@@ -389,15 +384,17 @@ function StoreItems({
     )
   }, [searchedDb, reverseSort])
 
-  const displayDatasets: IBedTrack[][] = searchDatasetNames.map(dataset => {
-    let ret = searchedDb.filter(track => track.dataset === dataset)
+  const displayDatasets: IBedDBDataTrack[][] = searchDatasetNames.map(
+    dataset => {
+      let ret = searchedDb.filter(track => track.dataset === dataset)
 
-    if (reverseSort) {
-      ret = ret.toReversed()
+      if (reverseSort) {
+        ret = ret.toReversed()
+      }
+
+      return ret
     }
-
-    return ret
-  })
+  )
 
   return (
     <ScrollAccordion
@@ -433,7 +430,7 @@ function StoreItems({
                     <BaseCol className="grow overflow-hidden">
                       <p className="truncate">{seq.name}</p>
                       <p className="text-xs text-secondary-foreground truncate">
-                        {`${seq.technology}, ${seq.assembly}${seq.type === 'BED' ? `(${seq.regions.toLocaleString()} regions)` : ''}`}
+                        {`${seq.technology}, ${seq.assembly}${seq.type === 'BED' ? `(${seq.regions!.toLocaleString()} regions)` : ''}`}
                       </p>
                     </BaseCol>
 
@@ -449,7 +446,7 @@ function StoreItems({
                       }}
                       title="Add to Cart"
                     >
-                      <PlusIcon w="w-4" stroke="" />
+                      <PlusIcon stroke="" />
                     </button>
                   </li>
                 )
@@ -470,7 +467,7 @@ function CartItems({
   setSelectedMap,
   reverseSort,
 }: {
-  searchedDb: IBedTrack[]
+  searchedDb: IBedDBDataTrack[]
   addedMap: Map<string, boolean>
   setAddedMap: (selected: Map<string, boolean>) => void
   selectedMap: Map<string, boolean>
@@ -485,7 +482,7 @@ function CartItems({
     datasets = datasets.toReversed()
   }
 
-  const allDatasets: IBedTrack[][] = datasets.map(dataset => {
+  const allDatasets: IBedDBDataTrack[][] = datasets.map(dataset => {
     let ret = searchedDb.filter(track => track.dataset === dataset)
 
     if (reverseSort) {
@@ -526,13 +523,13 @@ function CartItems({
                       <BaseCol>
                         <span className="truncate">{seq.name}</span>
                         <span className="text-xs text-secondary-foreground">
-                          {`${seq.type === 'BED' ? `${seq.regions.toLocaleString()} regions,` : ''} ${seq.technology}, ${seq.assembly}`}
+                          {`${seq.type === 'BED' ? `${seq.regions!.toLocaleString()} regions,` : ''} ${seq.technology}, ${seq.assembly}`}
                         </span>
                       </BaseCol>
                     </VCenterRow>
 
                     <button
-                      className="invisible group-hover:visible stroke-foreground/50 hover:stroke-red-500"
+                      className="invisible group-hover:visible stroke-foreground/50 hover:stroke-destructive"
                       onClick={() => {
                         setAddedMap(
                           new Map<string, boolean>([
@@ -543,7 +540,7 @@ function CartItems({
                       }}
                       title={TEXT_REMOVE_FROM_CART}
                     >
-                      <TrashIcon className="w-5" stroke="" />
+                      <TrashIcon stroke="" />
                     </button>
                   </li>
                 )

@@ -1,6 +1,6 @@
 import { TruncateSpan } from '@/components/truncate-span'
-import type { IDialogParams } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
+import { useSeqBrowserDialogs } from '../seq-browser-dialogs'
 import type { IRulerTrack, ITrackGroup } from '../tracks-provider'
 import { BaseTrackItem } from './base-track-item'
 import {
@@ -13,16 +13,12 @@ export function RulerTrackItem({
   group,
   active,
   multiselect,
-  setShowDialog,
 }: {
   group: ITrackGroup
   active: string | null
   multiselect: boolean
-  setShowDialog: (params: IDialogParams) => void
 }) {
-  //const [drag, setDrag] = useState(false)
-
-  //useMouseUpListener(() => setDrag(false))
+  const { open: openDialog } = useSeqBrowserDialogs()
 
   const track = group.tracks[0]! as IRulerTrack
 
@@ -43,10 +39,12 @@ export function RulerTrackItem({
 
       <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
         <EditTrackButton
-          cmd="edit-ruler"
-          group={group}
-          track={track}
-          setShowDialog={setShowDialog}
+          onClick={() => {
+            openDialog({
+              type: 'edit-ruler',
+              payload: {},
+            })
+          }}
         />
       </VCenterRow>
     </BaseTrackItem>

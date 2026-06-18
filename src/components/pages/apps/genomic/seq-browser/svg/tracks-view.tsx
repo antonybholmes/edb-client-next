@@ -1,5 +1,4 @@
 import React, {
-  Fragment,
   useEffect,
   useImperativeHandle,
   useMemo,
@@ -7,59 +6,47 @@ import React, {
   useState,
 } from 'react'
 
-import { BaseSvg } from '@/components/base-svg'
 import { Axis } from '@/components/plot/axis'
-import { TEXT_ZOOM, TIME_5_MINUTES_MS } from '@/consts'
+import { SvgBase } from '@/components/plot/svg-base'
+import { TEXT_ZOOM } from '@/consts'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import type { ISVGProps } from '@/interfaces/svg-props'
-import { API_SEQS_BINS_URL } from '@/lib/edb/edb'
-import { useEdbAuth } from '@/lib/edb/edb-auth'
-import { API_GENOME_URL, useGenomes } from '@/lib/edb/genome'
-import { GenLoc } from '@/lib/genomic/genomic'
-import { httpFetch } from '@/lib/http/http-fetch'
-import { bearerHeaders } from '@/lib/http/urls'
-import { sum } from '@/lib/math/sum'
-import { useQuery } from '@tanstack/react-query'
+
 import { produce } from 'immer'
 
 import { useSeqBrowserSettings } from '../seq-browser-settings'
 import {
-  LocationContext,
-  MouseEventContext,
-  type IBedTrack,
-  type ILocalBedTrack,
-  type ILocTrackBins,
-  type ISignalTrack,
+  LocationProvider,
+  MouseEventProvider,
+  type IPeakTrack,
 } from '../tracks-provider'
 import { useTracks } from '../tracks-store'
 import { getBedTrackHeight } from './base-bed-track-svg'
-import {
-  getGeneTrackHeight,
-  type IGenomicFeatureSearch,
-} from './genes-track-svg'
-import { getYMax } from './seq-track-svg'
+import { getGeneTrackHeight } from './genes-track-svg'
+
+import { useDebounce } from '@/hooks/debounce'
+import { fill } from '@/lib/fill'
+import { locStr } from '@/lib/genomic/genomic'
+import { newGenomicLocation } from '@/lib/genomic/genomic-location'
+import { makeUuid } from '@/lib/id'
+import { cumsum } from '@/lib/math/cumsum'
+import { zeros } from '@/lib/math/zeros'
 import { TracksColumnSvg } from './tracks-column-svg'
 
 const SELECTION_RECT_GAP = 3
 const SELECTION_RECT_W_OFFSET = SELECTION_RECT_GAP * 2
 const MIN_ZOOM_SIZE_BP = 1000
 
-/**
- * The track types that represent signals, which can either be the
- * db format, or bigwigs
- */
-export const SEQ_TRACK_TYPES = new Set(['Seq', 'Remote BigWig', 'Local BigWig'])
-export const BED_TRACK_TYPES = new Set([
-  'BED',
-  'Local BED',
-  'Local BigBed',
-  'Remote BigBed',
-])
-
 export function TracksView({ ref, className, style }: ISVGProps) {
-  const { groups, locations, binSizes, setLocations } = useTracks()
+  const {
+    groups,
+    locations,
+    locationFeatures,
+    binSizes,
+    seqSearchResults,
+    setLocations,
+  } = useTracks()
   const { settings } = useSeqBrowserSettings()
-  const { gtf } = useGenomes()
 
   const selectionGroupRef = useRef<SVGGElement>(null)
   //const selectionLineRef1 = useRef<SVGLineElement>(null)
@@ -73,16 +60,15 @@ export function TracksView({ ref, className, style }: ISVGProps) {
 
   const [mousePos, setMousePos] = useState<IPos>({ ...ZERO_POS })
 
-  const column = useRef<{ x: number; col: number }>({ x: 0, col: 0 })
+  // try to reduce redraws
+  const debouncedMousePos = useDebounce(mousePos, { delayMs: 10 })
 
-  const [globalY, setGlobalY] = useState(1)
+  const column = useRef<{ x: number; col: number }>({ x: 0, col: 0 })
 
   const columnWidth = settings.plot.width + settings.plot.gap //settings.margin.left+settings.margin.right+settings.plot.width
 
   const innerRef = useRef<SVGSVGElement>(null)
   useImperativeHandle(ref, () => innerRef.current!)
-
-  const { fetchAccessToken } = useEdbAuth()
 
   const axes = useMemo(() => {
     return locations.map(location => {
@@ -119,10 +105,6 @@ export function TracksView({ ref, className, style }: ISVGProps) {
     } else {
       // do nothing
     }
-  }
-
-  function updateGlobalY(y: number) {
-    setGlobalY(Math.max(1, y))
   }
 
   function handleKeyUp() {
@@ -275,18 +257,22 @@ export function TracksView({ ref, className, style }: ISVGProps) {
         //   ...locations.filter((_, index) => index !== column.current.col),
         // ])
 
+        const newLocation = newGenomicLocation(
+          locations[column.current.col]!.chr,
+          minX,
+          maxX
+        )
+
         setLocations(
           produce(locations, draft => {
-            draft[column.current.col] = new GenLoc(
-              locations[column.current.col]!.chr,
-              minX,
-              maxX
-            )
+            draft[column.current.col] = {
+              id: makeUuid(),
+              search: locStr(newLocation),
+              ...newLocation,
+            }
           })
         )
       }
-
-      //clean()
     }
 
     cleanSelection()
@@ -344,207 +330,171 @@ export function TracksView({ ref, className, style }: ISVGProps) {
     }
   }, [])
 
-  const genesQuery = useQuery({
-    queryKey: [
-      'gtf',
-      gtf?.id,
-      locations,
-      settings.assembly,
-      settings.genes.canonical,
-      settings.genes.types,
-    ],
-    queryFn: async () => {
-      if (!gtf) {
-        return null
-      }
-
-      const url = new URL(`${API_GENOME_URL}/gtfs/${gtf.id}/overlap`)
-
-      const params: Record<string, string> = {
-        canonical: settings.genes.canonical.only ? 'true' : 'false',
-      }
-
-      if (settings.genes.types === 'protein-coding') {
-        params.type = 'protein_coding'
-      }
-
-      url.search = new URLSearchParams(params).toString()
-
-      const res = await httpFetch.postJson<{ data: IGenomicFeatureSearch[] }>(
-        url.toString(),
-        {
-          body: { locations: locations.map(l => l.loc) },
-        }
-      )
-
-      //console.log('tracks', res.data)
-
-      return res.data
-    },
-  })
-
-  // we need this here to calculate the height of the track rather than
-  // having the query inside the svg component
-  const locationFeatures: IGenomicFeatureSearch[] = genesQuery.data
-    ? genesQuery.data
-    : []
-
-  const tracks = useMemo(
-    () =>
-      groups
-        .map(g => g.tracks)
-        .flat()
-        .filter(t => SEQ_TRACK_TYPES.has(t.type)) as ISignalTrack[],
-    [groups]
-  )
-
-  const seqTracks = useMemo(
-    () => tracks.filter(t => t.type === 'Seq') as ISignalTrack[],
-    [tracks]
-  )
-
-  // force updates when seqs, location or bin size change
-  const { data: allLocTrackBins } = useQuery({
-    queryKey: ['bins', seqTracks, locations, binSizes],
-    staleTime: TIME_5_MINUTES_MS,
-    queryFn: async () => {
-      // if (locations.length === 0 || seqs.length === 0) {
-      //   return []
-      // }
-
-      const accessToken = await fetchAccessToken()
-
-      const res = await httpFetch.postJson<{ data: ILocTrackBins[] }>(
-        API_SEQS_BINS_URL,
-        {
-          body: {
-            locations: locations.map(l => l.loc),
-            binSizes,
-            //scale: displayOptions.seq.applyScaling ? displayOptions.seq.scale : 0,
-            samples: seqTracks.map(t => t.id),
-          },
-
-          headers: bearerHeaders(accessToken),
-        }
-      )
-
-      return res.data
-    },
-  })
-
   //const allLocTrackBins: ILocTrackBins[] = binsQuery.data ? binsQuery.data : []
 
-  // use either the auto global or user fixed global
-  useEffect(() => {
-    async function updateY() {
-      const y =
-        settings.seqs.globalY.auto && allLocTrackBins && tracks.length > 0
-          ? await getYMax(
-              tracks,
-              allLocTrackBins,
-              binSizes,
-              settings.seqs.scale.mode
-            )
-          : settings.seqs.globalY.ymax
-
-      console.log('global y', y)
-
-      updateGlobalY(y)
-    }
-
-    updateY()
-  }, [
-    allLocTrackBins,
-    settings.seqs.globalY,
-    settings.seqs.scale,
-    tracks,
-    binSizes,
-  ])
-
   const orderedTracks = groups.map(t => t.tracks)
-
-  if (orderedTracks.length === 0) {
-    return null
-  }
 
   const titleHeightUsingPosition =
     settings.titles.position === 'top' ? settings.titles.height : 0
 
   // determine how much space in the svg is required by each
   // track
-  const trackHeights: number[] = []
-  const geneYMaps: Map<string, number>[] = []
 
-  for (const ts of orderedTracks) {
-    switch (ts[0]!.type) {
-      case 'Seq':
-      case 'Local BigWig':
-      case 'Remote BigWig':
-        trackHeights.push(
-          ts[0]!.displayOptions.height +
+  const { geneYMaps, innerHeight, locationHeights, trackYs } = useMemo(() => {
+    if (
+      orderedTracks.length === 0 ||
+      !locationFeatures ||
+      locationFeatures.length === 0
+    ) {
+      return { geneYMaps: [], innerHeight: 0 }
+    }
+
+    let innerHeight = 0
+    const geneYMaps: Map<string, number>[] = []
+
+    const locationsN = locationFeatures.length
+    const locationHeights = zeros(locationsN)
+
+    const trackHeights = fill(() => [] as number[], locationsN) //.map(() => [])
+
+    let h = 0
+
+    for (const track of orderedTracks) {
+      //console.log('Calculating height for track type:', track[0]!.type, track)
+      switch (track[0]!.type) {
+        case 'Seq':
+        case 'BigWig':
+        case 'RemoteBigWig':
+        case 'LocalBigWig':
+          h =
+            track[0]!.displayOptions.height +
             titleHeightUsingPosition +
             settings.titles.height +
             settings.axes.x.height +
             // Add some extra height when labels on right to account for x-axis labels
             (settings.titles.position === 'right' ? settings.titles.height : 0)
-        )
-        break
-      case 'Scale':
-      case 'Location':
-        trackHeights.push(ts[0]!.displayOptions.height)
-        break
-      case 'Ruler':
-      case 'Cytobands':
-        trackHeights.push(settings.cytobands.height + settings.titles.height)
-        break
-      case 'Gene':
-        let maxHeight = 0
 
-        for (const [li, featureSearch] of locationFeatures.entries()) {
-          const xax = axes[li]!
+          innerHeight += h
+          for (let i = 0; i < locationsN; i++) {
+            locationHeights[i]! += h
+            trackHeights[i]!.push(h)
+          }
+          break
+        case 'Scale':
+        case 'Location':
+          h = track[0]!.displayOptions.height
+          innerHeight += h
+          // increment all location heights by the height of the ruler, since it is present in all columns
+          for (let i = 0; i < locationsN; i++) {
+            locationHeights[i]! += h
+            trackHeights[i]!.push(h)
+          }
 
-          const geneYMap = getGeneTrackHeight(
-            featureSearch.features,
-            settings,
-            xax
-          )
+          //console.log('Scale/Location track height:', h, trackHeights)
+          break
+        case 'Ruler':
+        case 'Cytobands':
+          h = settings.tracks.cytobands.height + settings.titles.height
+          innerHeight += h
 
-          maxHeight = Math.max(maxHeight, geneYMap.get('height') ?? 0)
+          // increment all location heights by the height of the ruler, since it is present in all columns
+          for (let i = 0; i < locationsN; i++) {
+            locationHeights[i]! += h
+            trackHeights[i]!.push(h)
+          }
 
-          geneYMaps.push(geneYMap)
-        }
+          break
+        case 'Gene':
+          let maxHeight = 0
 
-        trackHeights.push(
-          maxHeight + titleHeightUsingPosition + settings.genes.offset
-        )
-        break
-      case 'BED':
-      case 'Local BED':
-      case 'Remote BigBed':
-      case 'Local BigBed':
-        trackHeights.push(
-          getBedTrackHeight(ts as (IBedTrack | ILocalBedTrack)[], settings) +
+          for (const [li, location] of locationFeatures.entries()) {
+            const xax = axes[li]!
+
+            const geneYMap = getGeneTrackHeight(
+              location.features,
+              settings,
+              xax
+            )
+
+            h = geneYMap.get('height') ?? 0
+
+            // the max height of the gene track is determined by the location with the most genes,
+            // since all locations must allocate enough space for their gene track even if they have few genes
+            maxHeight = Math.max(maxHeight, h)
+
+            // for each location we need to add the extra spacing required by the gene track, max height
+            // does not need this because it will be added once max height is finalized
+            h += titleHeightUsingPosition + settings.tracks.genes.offset
+
+            geneYMaps.push(geneYMap)
+
+            locationHeights[li]! += h
+            trackHeights[li]!.push(h)
+          }
+
+          innerHeight +=
+            maxHeight + titleHeightUsingPosition + settings.tracks.genes.offset
+          break
+        case 'BED':
+        case 'BigBed':
+        case 'RemoteBigBed':
+        case 'LocalBigBed':
+        case 'LocalBED':
+          h =
+            getBedTrackHeight(track as IPeakTrack[], settings) +
             titleHeightUsingPosition
-        )
-        break
-      default:
-        trackHeights.push(0)
-        break
+          innerHeight += h
+          for (let i = 0; i < locationsN; i++) {
+            locationHeights[i]! += h
+            trackHeights[i]!.push(h)
+          }
+          break
+        default:
+          // add nothing
+          break
+      }
     }
-  }
 
-  //const trackY = cumsum([0, ...trackHeights])
-  const innerHeight = sum(trackHeights)
+    const trackYs = trackHeights.map(h => cumsum([0, ...h]))
 
-  const width =
-    columnWidth * locations.length +
-    settings.margin.left +
-    settings.margin.right
+    //console.log('Calculated track heights:', trackHeights)
+    //console.log(
+    //  'Calculated track Ys:',
+    //  trackYs,
+    //  orderedTracks.map(t => t[0]!.type)
+    //)
 
-  const height = innerHeight + settings.margin.top + settings.margin.bottom
+    return { geneYMaps, innerHeight, locationHeights, trackYs }
+  }, [
+    orderedTracks,
+    titleHeightUsingPosition,
+    settings.titles.height,
+    settings.axes.x.height,
+    settings.tracks.genes.offset,
+    locationFeatures,
+    axes,
+  ])
+
+  const { width, height } = useMemo(() => {
+    const width =
+      columnWidth * locations.length +
+      settings.margin.left +
+      settings.margin.right
+
+    const height = innerHeight + settings.margin.top + settings.margin.bottom
+
+    return { width, height }
+  }, [
+    innerHeight,
+    locations.length,
+    settings.margin.left,
+    settings.margin.right,
+    settings.margin.top,
+    settings.margin.bottom,
+  ])
 
   const svg = (
-    <BaseSvg
+    <SvgBase
       ref={innerRef}
       scale={settings.zoom}
       width={width}
@@ -562,39 +512,44 @@ export function TracksView({ ref, className, style }: ISVGProps) {
         transform={`translate(${settings.margin.left}, ${settings.margin.top})`}
       >
         {locations.map((location, li) => {
+          const x = li * columnWidth
           return (
-            <Fragment key={li}>
-              <LocationContext.Provider
-                value={{
-                  location,
-                  xax: axes[li]!,
-                  globalY,
-                  pos: { x: li * columnWidth, y: settings.margin.top },
-                  locTrackBins: allLocTrackBins?.[li],
-                  binSize: binSizes[li]!,
-                  genes:
-                    locationFeatures.length > li
-                      ? locationFeatures[li]!.features
-                      : [],
-                  geneYMap: geneYMaps[li] || new Map(),
-                  setLocation: location => {
-                    // for individual tracks, we can update their location
-                    // using, for example, the ruler to propogate its
-                    // changes back to here, where they can be subsequently
-                    // used to update the global locations
-                    const newLocations = produce(locations, draft => {
-                      draft[li] = location
-                    })
+            <LocationProvider
+              key={li}
+              value={{
+                location,
+                xax: axes[li]!,
+                pos: { x, y: settings.margin.top },
+                seqSearchResult: seqSearchResults?.[li],
+                binSize: binSizes[li]!,
+                genes:
+                  locationFeatures && locationFeatures.length > li
+                    ? locationFeatures[li]!.features
+                    : [],
+                geneYMap: geneYMaps[li] || new Map(),
+                height: locationHeights?.[li]! || 0,
+                trackY: trackYs?.[li]! || [],
+                setLocation: location => {
+                  // for individual tracks, we can update their location
+                  // using, for example, the ruler to propogate its
+                  // changes back to here, where they can be subsequently
+                  // used to update the global locations
+                  const newLocations = produce(locations, draft => {
+                    draft[li] = {
+                      id: makeUuid(),
+                      search: locStr(location),
+                      ...location,
+                    }
+                  })
 
-                    setLocations(newLocations)
-                  },
-                }}
-              >
-                <MouseEventContext.Provider value={{ pos: mousePos }}>
-                  <TracksColumnSvg />
-                </MouseEventContext.Provider>
-              </LocationContext.Provider>
-            </Fragment>
+                  setLocations(newLocations)
+                },
+              }}
+            >
+              <MouseEventProvider value={{ pos: debouncedMousePos }}>
+                <TracksColumnSvg />
+              </MouseEventProvider>
+            </LocationProvider>
           )
         })}
       </g>
@@ -692,7 +647,7 @@ export function TracksView({ ref, className, style }: ISVGProps) {
           />
         </g>
       </g>
-    </BaseSvg>
+    </SvgBase>
   )
 
   return (

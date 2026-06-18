@@ -1,21 +1,25 @@
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
 import { FileDropZonePanel } from '@/components/file-dropzone-panel'
 import { VCenterCol } from '@/components/layout/v-center-col'
 import { onTextFileChange } from '@/components/pages/open-files'
+import {
+  ColorPickerButton,
+  SIMPLE_COLOR_EXT_CLS,
+} from '@/components/plot/color-picker-popover'
 import { TEXT_OK } from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { indexBed } from '@/lib/genomic/bed'
-import type { GenLoc } from '@/lib/genomic/genomic'
+
 import type { GenomicFeatureIndex } from '@/lib/genomic/genomic-index'
+import type { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { textToLines } from '@/lib/text/lines'
 import { useState } from 'react'
 
 export interface IProps {
-  callback?: (color: string, indexes: GenomicFeatureIndex<GenLoc>[]) => void
+  callback?: (
+    color: string,
+    indexes: GenomicFeatureIndex<IGenomicLocation>[]
+  ) => void
   onCancel: () => void
 }
 
@@ -43,7 +47,7 @@ export function AddLocalBedFilesDialog({ callback, onCancel }: IProps) {
 
   //   setStrokeShow(_track.displayOptions.stroke.show)
   //   setStrokeWidth(_track.displayOptions.stroke.width)
-  //   setStrokeColor(_track.displayOptions.stroke.color)
+  //   setStrokeColor(_track.displayOptions.stroke.value)
 
   //   setFillShow(_track.displayOptions.fill.show)
   //   setFillOpacity(_track.displayOptions.fill.opacity)
@@ -89,7 +93,7 @@ export function AddLocalBedFilesDialog({ callback, onCancel }: IProps) {
 
           const indexes = lines
             .map(l => indexBed(name, l))
-            .filter(i => i !== null) as GenomicFeatureIndex<GenLoc>[]
+            .filter(i => i !== null) as GenomicFeatureIndex<IGenomicLocation>[]
 
           callback?.(color, indexes)
         } else {
@@ -102,8 +106,12 @@ export function AddLocalBedFilesDialog({ callback, onCancel }: IProps) {
       }
       leftHeaderChildren={
         <ColorPickerButton
-          color={color}
-          onColorChange={setColor}
+          colors={[
+            {
+              color,
+              onColorChange: setColor,
+            },
+          ]}
           className={SIMPLE_COLOR_EXT_CLS}
           title="Set color"
         />

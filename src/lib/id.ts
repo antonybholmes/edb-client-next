@@ -6,6 +6,7 @@ const NANO_ID_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz'
 export const BLANK_UUID = '00000000-0000-0000-0000-000000000000'
 export const BLANK_TIMENANOID = '00000000000000'
 export const BLANK_NANOID = '000000000000'
+export const ID_DELIMITER = ':'
 
 /**
  * A custom nanoid generator that generates 12 character IDs
@@ -73,9 +74,9 @@ export function randId(prefix: string): string {
 }
 
 export function randNanoId(prefix: string): string {
-  return `${prefix}:${makeUuid()}`
+  return `${prefix}${ID_DELIMITER}${makeUuid()}`
 }
 
 export function randUUIDv7Id(prefix: string): string {
-  return `${prefix}:${makeUuid()}`
+  return `${prefix}${ID_DELIMITER}${makeUuid()}`
 }

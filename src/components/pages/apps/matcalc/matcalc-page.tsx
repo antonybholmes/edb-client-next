@@ -7,7 +7,6 @@ import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
 import { ToolbarButton } from '@/toolbar/toolbar-button'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import { ToolbarOptionalDropdownButton } from '@/toolbar/toolbar-optional-dropdown-button'
-import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import {
@@ -22,7 +21,6 @@ import {
 import {
   filesToDataFrames,
   onTextFileChange,
-  OpenFiles,
   type IParseOptions,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
@@ -34,46 +32,25 @@ import {
 } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import {
   DOCS_URL,
-  NO_DIALOG,
-  TEXT_DOWNLOAD,
   TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_PNG,
   TEXT_DOWNLOAD_AS_SVG,
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_EXPORT,
   TEXT_HOME,
-  TEXT_OK,
   TEXT_OPEN_FILE,
   TEXT_SAVE_AS,
-  type IDialogParams,
 } from '@/consts'
-import { BasicAlertDialog } from '@/dialog/basic-alert-dialog'
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
 import { type IClusterFrame } from '@/lib/math/hcluster'
 
-import {
-  useEffect,
-  useRef,
-  useState,
-  type ReactElement,
-  type ReactNode,
-} from 'react'
+import { useEffect, useMemo, useState, type ReactElement } from 'react'
 
-import { OpenDialog } from '@/components/pages/apps/matcalc/open-dialog'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
-import { GeneConvertDialog } from './apps/gene-convert/gene-convert-dialog'
-import { HeatMapDialog } from './apps/heatmap/heatmap-dialog'
-import { VolcanoDialog } from './apps/volcano/volcano-dialog'
-import { SortRowDialog } from './sort-row-dialog'
-import { TopRowsDialog } from './top-rows-dialog'
-
-import { CollapseTree, ROOT_NODE } from '@/components/collapse-tree'
-import { makeUuid, randId } from '@/lib/id'
+import { makeUuid } from '@/lib/id'
 import { useSelectionRange } from '@/providers/selection-range'
-
-import { MotifToGeneDialog } from './apps/motif-to-gene/motif-to-gene-dialog'
 
 import { VolcanoPanel } from './apps/volcano/volcano-panel'
 import { type PlotStyle } from './plots-provider'
@@ -85,14 +62,12 @@ import { FileImageIcon } from '@/icons/file-image-icon'
 import { FilterIcon } from '@/icons/filter-icon'
 import { OpenIcon } from '@/icons/open-icon'
 import { UploadIcon } from '@/icons/upload-icon'
-import { BaseCol } from '@/layout/base-col'
 
 import { ToolbarDropdownButton } from '@/toolbar/toolbar-dropdown-button'
 
 import { ShowSideButton } from '@/components/pages/show-side-button'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import { type ITab } from '@/components/tabs/tab-provider'
-import { VScrollPanel } from '@/components/v-scroll-panel'
 import { TransposeIcon } from '@/icons/transpose-icon'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { oneWayFromDataframes } from '@/lib/genomic/overlap/one-way-overlap'
@@ -100,67 +75,65 @@ import {
   createOverlapTableFromDataframes,
   type OVERLAP_MODE,
 } from '@/lib/genomic/overlap/overlap'
-import { snrRankGenes } from '@/lib/gsea/gsea'
+import { snrRankGenes } from '@/lib/gsea/gsea2'
 import { textToLines } from '@/lib/text/lines'
 import { produce } from 'immer'
 
-import { BoxPlotDialog } from './apps/boxplot/boxplot-dialog'
 import { BoxPlotPanel } from './apps/boxplot/boxplot-panel'
-import MODULE_INFO from './module.json'
+import APP_INFO from './manifest.json'
 
-import { useSettingsTabs } from '@/components/dialog/settings/setting-tabs-store'
+import { useSettingsTabs } from '@/dialogs/settings/setting-tabs-store'
 
 import { CubeIcon } from '@/icons/cube-icon'
 import { ExportIcon } from '@/icons/export-icon'
 
 import { logrankExample } from '@/lib/math/logrank'
-import { useMessages } from '@/providers/message-provider'
 
-import { GexDialog } from './apps/gex/gex-dialog'
-import { ExtGseaPanelQuery } from './apps/gsea/ext-gsea-panel'
-import { DotPlotDialog } from './apps/heatmap/dot-plot-dialog'
-import { KmeansDialog } from './apps/kmeans/kmeans-dialog'
-import {
-  DataPanel,
-  MESSAGE_CHANNEL,
-  ShowOptsSidebarBtn,
-} from './data/data-panel'
+import { ExtGseaPanelQuery } from './apps/ext-gsea/ext-gsea-panel'
+import { DataPanel, MESSAGE_CHANNEL } from './data/data-panel'
 
-import { HeaderSlotPortal } from '@/components/header/header-slot-portal'
-import { ModuleInfoButton } from '@/components/header/module-info-button'
+import { AppInfoButton } from '@/components/header/app-info-button'
+import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { ResizableSidebar } from '@/components/slide-bar/resizable-sidebar'
 import { useSlideBar } from '@/components/slide-bar/slide-bar-store'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarHelpTabGroup } from '@/help/toolbar-help-tab-group'
 import { HeaderButton } from '@/layouts/header-button'
 import type { IClusterGroup } from '@/lib/cluster-group'
-import type { IGeneset } from '@/lib/gsea/geneset'
+import type { IGeneSet } from '@/lib/gsea/geneset'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { CoreProviders } from '@/providers/core-providers'
 import { Toast } from '@base-ui/react/toast'
-import { FileChartColumnIncreasing, FileSpreadsheet } from 'lucide-react'
+import { DecimalsArrowLeft, DecimalsArrowRight } from 'lucide-react'
 import { HeatmapPanel } from './apps/heatmap/heatmap-panel'
 import { HistoryLayout, HistoryShowButton } from './history/history-layout'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { AppHeaderIcon } from '@/components/header/app-header-icon'
+import { CommaIcon } from '@/components/icons/comma-icon'
+import { useAppInfo } from '@/lib/edb/edb-settings'
+import { useMessages } from '@/providers/messages'
+import { useExtGseaWorker } from './apps/ext-gsea/ext-gsea-worker'
+import { HeatmapProvider } from './apps/heatmap/heatmap-provider'
+import { VolcanoProvider } from './apps/volcano/volcano-provider'
+import { OptsSidebarMenu } from './data/opts-sidebar-menu'
 import {
-  getPlots,
-  getSheets,
+  getAllPlots,
   newExtGseaPlot,
   pathJoin,
-  useApp,
   useFile,
-  useFiles,
   useGenesets,
   useGroups,
   //newLollipopPlot,
   useHistory,
   usePlot,
-  usePlots,
   useSheet,
   useSheets,
   type HistoryPlot,
 } from './history/history-store'
 import { UndoShortcuts } from './history/undo-shortcuts'
+import { MatcalcDialogsRoot, useMatcalcDialogs } from './matcalc-dialogs'
+import { MatcalcFileTree } from './matcalc-file-tree'
 import { useMatcalcSettings } from './settings/matcalc-settings'
 import { SettingsAppsPanel } from './settings/settings-apps-panel'
 
@@ -180,7 +153,6 @@ const HELP_URL = DOCS_URL + '/apps/matcalc'
 
 export const HIGHLIGHT_PANEL_CLS = 'bg-muted grow p-3 mb-2 rounded-lg'
 
-export const TAB_DATA_TABLES = 'Data Tables'
 export const TAB_PLOTS = 'Plots'
 
 export const TEXT_HEATMAP = 'Heatmap'
@@ -193,38 +165,44 @@ export const TEXT_DOT_PLOT = 'Dot Plot'
 //   isOpen: true,
 // }
 
-const DATA_TABLES_TAB: ITab = Object.freeze({
-  id: TAB_DATA_TABLES,
-  //isOpen: true,
-  type: 'folder',
-  children: [],
-})
-
-const PLOTS_TAB: ITab = Object.freeze({
-  id: 'Plots',
-
-  type: 'folder',
-  //isOpen: true,
-})
-
-const TREE_ROOT_TAB: ITab = Object.freeze({
-  ...ROOT_NODE,
-  children: [{ ...DATA_TABLES_TAB }, { ...PLOTS_TAB }],
-})
+function plotElem(plot: HistoryPlot): ReactElement {
+  switch (plot.style) {
+    case 'heatmap':
+    case 'dot':
+      return (
+        <HeatmapProvider plot={plot}>
+          <HeatmapPanel />
+        </HeatmapProvider>
+      )
+    case 'volcano':
+      return (
+        <VolcanoProvider plot={plot}>
+          <VolcanoPanel />
+        </VolcanoProvider>
+      )
+    case 'box':
+      return <BoxPlotPanel plotAddr={plot.id} />
+    case 'ext-gsea':
+      return <ExtGseaPanelQuery plotAddr={plot.id} />
+    // case 'lollipop':
+    //   return (
+    //     <LollipopPanelQuery key={plot.id} id={plot.id} plotAddr={plot.id} />
+    //   )
+    default:
+      return <></>
+  }
+}
 
 export function MatcalcPage() {
   const {
     store,
     state,
+    currentApp,
     currentFile,
     currentSelection,
-    goto,
-    remove,
-    removeFiles,
     openApp,
     openFile,
     addSheets,
-
     addPlots,
   } = useHistory()
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
@@ -236,9 +214,10 @@ export function MatcalcPage() {
   //const [tableH, setTableH] = useState<IReactTableCol[]>(DEFAULT_TABLE_HEADER)
   //const [selectedSheet, setSelectedSheet] = useState(0)
 
+  const { setAppInfo } = useAppInfo()
+
   const { settings, updateSettings } = useMatcalcSettings()
 
-  const [treeRootTab, setTreeRootTab] = useState<ITab>(TREE_ROOT_TAB)
   //const [dataTableTab, setDataTableTab] = useState<ITab | undefined>(undefined)
   //const [branch?.id??'', setbranch?.id??''] = useState('')
   const [selectedPanelTab, setSelectedPanelTab] = useState<string>('')
@@ -259,9 +238,8 @@ export function MatcalcPage() {
   //   DEFAULT_DISPLAY_PROPS,
   // )
 
-  const app = useApp()!
   //const appPath = `/${app?.id}`
-  const files = useFiles()
+  //const files = useFiles()
   const file = useFile()
 
   //const currentFile = `${appPath}/${file?.id}`
@@ -272,19 +250,31 @@ export function MatcalcPage() {
   const sheet = useSheet()
   const sheets = useSheets()
   const plot = usePlot()
-  const plots = usePlots()
+  //const plots = usePlots()
+
+  // we need all plots from all files in the current app to be
+  // able to display them in the file tree and access
+  // them when clicking on a plot tab
+  const plots = useMemo(
+    () => getAllPlots(store, state),
+    [store, state, currentApp]
+  )
+
+  //console.log('plots', plots)
 
   const { setSettingsTabs, setDefaultSettingsTab } = useSettingsTabs()
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
+  const { open: openDialog } = useDialogs()
 
-  //const { groupState, setGroups } = useGroups()
+  const { open: openMatcalcDialog } = useMatcalcDialogs()
 
-  const { barProps, setOpen } = useSlideBar(folderId) //) //'matcalc') //useContext(MessageContext)
+  const { open, setOpen } = useSlideBar(folderId) //) //'matcalc') //useContext(MessageContext)
 
-  const extGseaWorkerRef = useRef<Worker | null>(null)
+  //const extGseaWorkerRef = useRef<Worker | null>(null)
+
+  const { run: runExtGseaWorker } = useExtGseaWorker()
 
   const { add: addToast, close: closeToast } = Toast.useToastManager()
 
@@ -296,12 +286,14 @@ export function MatcalcPage() {
   //const sheets = step?.sheets
 
   useEffect(() => {
-    openApp(MODULE_INFO.name)
+    // open a dedicated history app for this module
+    openApp(APP_INFO.name)
+    setAppInfo(APP_INFO)
 
     // custom settings for the global settings app
     const settingsTabs: ITab[] = [
       {
-        id: MODULE_INFO.name,
+        id: APP_INFO.name,
         icon: <CubeIcon fill="" />,
         children: [
           // {
@@ -318,26 +310,20 @@ export function MatcalcPage() {
     ]
 
     setSettingsTabs(settingsTabs)
-    setDefaultSettingsTab(MODULE_INFO.name)
+    setDefaultSettingsTab(APP_INFO.name)
     //setSelectedPanelTab(branch.id)
 
-    extGseaWorkerRef.current = new Worker(
-      new URL('./apps/gsea/ext-gsea.worker.ts', import.meta.url),
-      {
-        type: 'module',
-      }
-    )
-
-    return () => {
-      // Terminate the worker when component unmounts
-      extGseaWorkerRef.current?.terminate()
-      extGseaWorkerRef.current = null
-    }
+    // extGseaWorkerRef.current = new Worker(
+    //   new URL('./apps/ext-gsea/ext-gsea.worker.ts', import.meta.url),
+    //   {
+    //     type: 'module',
+    //   }
+    // )
   }, [])
 
   useEffect(() => {
-    if (currentSelection?.path) {
-      setSelectedPanelTab(currentSelection.path)
+    if (currentSelection?.id) {
+      setSelectedPanelTab(currentSelection.id)
     }
   }, [currentSelection])
 
@@ -380,6 +366,18 @@ export function MatcalcPage() {
       //mode: 'append',
 
       sheets: [table.setName('Deseq Test') as AnnotationDataFrame],
+    })
+  }
+
+  async function loadAnnotateTestData() {
+    const res = await httpFetch.getText('/data/test/annotate.txt')
+
+    const lines = textToLines(res)
+
+    const table = new DataFrameReader().indexCols(0).read(lines)
+
+    openFile(`Test locations`, {
+      sheets: [table.setName('Test Locations') as AnnotationDataFrame],
     })
   }
 
@@ -427,230 +425,18 @@ export function MatcalcPage() {
       '/data/test/extgsea/groups.json'
     )
 
-    const genesets = await httpFetch.getJson<IGeneset[]>(
+    const genesets = await httpFetch.getJson<IGeneSet[]>(
       '/data/test/extgsea/genesets.json'
     )
 
     openFile(`Ext GSEA Test`, {
-      //mode: 'append',
       groups,
       genesets,
       sheets: [table.setName('Ext GSEA Test') as AnnotationDataFrame],
     })
   }
 
-  useEffect(() => {
-    //const lastHistoryAction = historyActions[historyActions.length - 1]!
-
-    // ignore the default branch created at startup
-    const filesWithoutDefault = files.length > 1 ? files.slice(1) : files
-
-    const tableChildrenTabs: ITab[] = []
-    const plotChildrenTabs: ITab[] = []
-
-    const allPlots: HistoryPlot[] = []
-
-    for (const [fi, file] of filesWithoutDefault.entries()) {
-      // const plotChildren: ITab[] = currentPlots(branch).map((plot, pi) => ({
-      //   id: plot.id,
-      //   name: plot.name ?? `Graph ${pi + 1}`,
-      //   type: 'plot',
-      //   icon: <ImageIcon />,
-      //   onDelete: () => {
-      //     dispatch({ type: 'remove-plot', addr: plot.id })
-      //   },
-      //   onClick: () => {
-      //     setSelectedTab(plot.id)
-      //     gotoBranch(branch.id)
-      //     gotoPlot(plot.id)
-      //   },
-
-      //   isOpen: true,
-      // }))
-
-      //const plotsTab = { ...makeGraphsTab(), children: plotChildren }
-
-      const sheet = getSheets(store, state, file)[0]! // history.sheetMap[step.sheets[0]!]!
-
-      //const sheetPath = pathJoin(app, file, sheet)
-
-      // const sheetNode: ITab = {
-      //   id: `${branch.id}-sheet`,
-      //   icon: (
-      //     <FileSpreadsheet
-      //       strokeWidth={2}
-      //       className="w-4 fill-background stroke-foreground"
-      //     />
-      //   ),
-      //   name: 'Data', //sheet?.name ?? `Data ${bi + 1}`,
-      //   type: 'table',
-      //   onClick: () => {
-      //     setSelectedPanelTab(branch.id)
-      //     goto(branch.id, 'branch')
-      //   },
-
-      //   //children: plotChildren.length > 0 ? [plotsTab] : [],
-      //   isOpen: true, // plotChildren.length > 0,
-      // }
-
-      const fileNode: ITab = {
-        id: sheet.id, //file.id,
-        name: sheet?.name ?? `File ${fi + 1}`,
-        icon: <FileSpreadsheet strokeWidth={1.5} size={20} />,
-        // isOpen: true,
-        //type: 'folder',
-        //children: plotChildren.length > 0 ? [plotsNode] : [],
-        onClick: () => {
-          setSelectedPanelTab(sheet.id) //file.id)
-          //goto(branch.id, 'branch')
-
-          console.log('goto sheet dd', sheet.id)
-
-          //goto(sheet?.path ?? '', 'path')
-          goto({ app, file, sheet }) //, 'branch')
-        },
-        onDelete: () => {
-          // find the branch above it
-
-          //const idx = where(branches, b => b.id === file.id)
-
-          //const b = idx.length > 0 ? branches[idx[0]! - 1] : branches[0]
-
-          removeFiles([{ app, file }]) //file.id], 'file')
-
-          //console.log('b', b)
-          //if (b) {
-          //setSelectedPanelTab(b.id)
-          //goto(b.path, 'path')
-          //}
-        },
-      }
-
-      tableChildrenTabs.push(fileNode)
-
-      allPlots.push(...getPlots(store, state, file))
-    }
-
-    for (const [pi, plot] of allPlots.entries()) {
-      //const plotPath = pathJoin(currentFile, plot)
-      const plotNode: ITab = {
-        id: plot.id,
-        name: plot.name ?? `Graph ${pi + 1}`,
-        type: 'plot',
-        icon: <FileChartColumnIncreasing strokeWidth={1.5} size={20} />,
-        onDelete: () => {
-          if (allPlots.length > 0) {
-            if (allPlots.length === 1) {
-              // select the branch if we are removing the last plot
-              setSelectedPanelTab(plot.id) //file.id)
-            } else {
-              // select the first plot that is not the one being removed
-              // so that something is selected
-              setSelectedPanelTab(
-                allPlots.filter((p) => p.id !== plot.id)[0]!.id
-              ) //file.id)
-            }
-          }
-
-          remove([{ app, file, plot }]) // [plot.id], 'plot')
-        },
-        onClick: () => {
-          setSelectedPanelTab(plot.id)
-          //goto(branch.id, 'branch')
-          //goto(plot.id, 'plot')
-
-          goto({ app, file, sheet, plot }) //plot.id, 'plot')
-        },
-
-        ///isOpen: true,
-      }
-
-      plotChildrenTabs.push(plotNode)
-    }
-
-    // const dataTablesTab = {
-    //   ...DATA_TABLES_TAB,
-    //   children: tableChildrenTabs,
-    // }
-
-    // const graphChildrenTabs: ITab[] = branches
-    //   .map((branch, bi) => {
-    //     const plotChildren: ITab[] = currentPlots(branch).map((plot, pi) => ({
-    //       id: plot.id,
-    //       name: plot.name ?? `Graph ${pi + 1}`,
-    //       type: 'plot',
-    //       icon: (
-    //         <FileChartLine
-    //           strokeWidth={1.5}
-    //           className="w-4 stroke-foreground fill-background"
-    //         />
-    //       ),
-    //       onDelete: () => {
-    //         remove(plot.id, 'plot')
-    //       },
-    //       onClick: () => {
-    //         setSelectedPanelTab(plot.id)
-    //         goto(branch.id, 'branch')
-    //         goto(plot.id, 'plot')
-    //       },
-
-    //       isOpen: true,
-    //     }))
-
-    //     //const plotsTab = { ...makeGraphsTab(), children: plotChildren }
-
-    //     const step = currentSteps(branch)[0] // history.stepMap[branch.steps[0]!]!
-    //     const sheet = currentSheets(step)[0] // history.sheetMap[step.sheets[0]!]!
-
-    //     return {
-    //       id: makeRandId(),
-
-    //       name: sheet?.name ?? `Data ${bi + 1}`,
-    //       type: 'plot',
-
-    //       children: plotChildren,
-    //       isOpen: true, // plotChildren.length > 0,
-    //     }
-    //   })
-    //   .filter(tab => tab.children.length > 0)
-
-    // const graphsTab = {
-    //   ...GRAPHS_TAB,
-    //   children: graphChildrenTabs,
-    // }
-
-    // const tab: ITab = {
-    //   ...treeRootTab,
-    //   children: [dataTablesTab],
-    // }
-
-    setTreeRootTab({
-      ...ROOT_NODE,
-      children: [
-        { ...DATA_TABLES_TAB, children: tableChildrenTabs },
-        { ...PLOTS_TAB, children: plotChildrenTabs },
-      ],
-    })
-
-    // if the history says we just added a plot, then try to select it
-
-    // if (
-    //   lastHistoryAction.action.includes(HISTORY_ACTION_OPEN_BRANCH) ||
-    //   lastHistoryAction.action.includes('remove-branch') ||
-    //   lastHistoryAction.action.includes('add-plot') ||
-    //   lastHistoryAction.action.includes('remove-plot')
-    // ) {
-    //   setSelectedPanelTab(lastHistoryAction.ids[0]!)
-    // }
-
-    // if we opened a branch, default to selecting it
-    // if (lastHistoryAction.action.includes(HISTORY_ACTION_OPEN_BRANCH)) {
-    //   console.log('ajaaaa', lastHistoryAction.ids[0]!)
-    //   //gotoBranch(lastHistoryAction.ids[0]!)
-    // }
-  }, [state, files, plots, sheets])
-
-  function openFiles(files: ITextFileOpen[], options: IParseOptions) {
+  function openFiles(files: ITextFileOpen[], options: IParseOptions = {}) {
     filesToDataFrames(files, {
       parseOpts: options,
       onSuccess: (tables) => {
@@ -667,10 +453,10 @@ export function MatcalcPage() {
           })
         }
       },
-      onFailure: () => {
+      onError: () => {
         addToast({
           id: makeUuid(),
-          title: MODULE_INFO.name,
+          title: APP_INFO.name,
           description:
             'Your files could not be opened. Check they are formatted correctly.',
           type: 'destructive',
@@ -678,14 +464,7 @@ export function MatcalcPage() {
       },
     })
 
-    // remove existing plots
-    //plotsDispatch({ type: 'clear' })
-
     setShowFileMenu(false)
-
-    //setFilesToOpen([])
-
-    setShowDialog({ ...NO_DIALOG })
   }
 
   function gct() {
@@ -792,91 +571,74 @@ export function MatcalcPage() {
       })
     }, 1000) */
 
-    if (extGseaWorkerRef.current) {
-      const id = makeUuid()
+    const id = makeUuid()
 
-      addToast({
-        id,
-        title: MODULE_INFO.name,
-        description:
-          'Running Extended GSEA, please do not refresh your browser window...',
+    addToast({
+      id,
+      title: APP_INFO.name,
+      description:
+        'Running Extended GSEA, please do not refresh your browser window...',
 
-        timeout: 60000,
-      })
+      timeout: 60000,
+    })
 
-      const group1 = groups[0]! //groupState.groups[groupState.order[0]!]!
-      const group2 = groups[1]! //groupState.groups[groupState.order[1]!]!
+    const group1 = groups[0]! //groupState.groups[groupState.order[0]!]!
+    const group2 = groups[1]! //groupState.groups[groupState.order[1]!]!
 
-      const rankedGenes = snrRankGenes(
-        sheet as AnnotationDataFrame,
-        group1,
-        group2
-      )
+    const rankedGenes = snrRankGenes(
+      sheet as AnnotationDataFrame,
+      group1,
+      group2
+    )
 
-      const gs1 = genesets[0]! // genesets[genesetState.order[0]!]!
-      const gs2 = genesets[1]! // genesetState.genesets[genesetState.order[1]!]!
+    const gs1 = genesets[0]! // genesets[genesetState.order[0]!]!
+    const gs2 = genesets[1]! // genesetState.genesets[genesetState.order[1]!]!
 
-      extGseaWorkerRef.current.onmessage = function (e) {
-        const { extGseaRes, gseaRes1, gseaRes2 } = e.data
-
-        // plotsDispatch({
-        //   type: 'add',
-        //   style: 'Extended GSEA',
-        //   //cf: { df },
-        //   customProps: {
-        //     rankedGenes,
-        //     gs1,
-        //     gs2,
-        //     extGseaRes,
-        //     gseaRes1,
-        //     gseaRes2,
-        //   },
-        // })
+    runExtGseaWorker(
+      {
+        rankedGenes,
+        gs1,
+        gs2,
+      },
+      (data) => {
+        const { extGseaRes, gseaRes1, gseaRes2 } = data
 
         const plot = {
-          ...newExtGseaPlot(
-            'Extended GSEA',
-
-            {
-              rankedGenes,
-              gs1: gs1,
-              gs2: gs2,
-              extGseaRes,
-              gseaRes1,
-              gseaRes2,
-            }
-          ),
+          ...newExtGseaPlot('Extended GSEA', {
+            rankedGenes,
+            gs1: gs1,
+            gs2: gs2,
+            extGseaRes,
+            gseaRes1,
+            gseaRes2,
+          }),
         }
 
         _addPlots([plot])
         // we've finished so get rid of the animations
         closeToast(id)
       }
-
-      extGseaWorkerRef.current.postMessage({
-        rankedGenes,
-        gs1,
-        gs2,
-      })
-    }
+    )
   }
 
   function makeClusterMap(isClusterMap: boolean) {
-    setShowDialog({
-      id: randId('heatmap'),
-      params: { df: sheet, isClusterMap },
+    openMatcalcDialog({
+      type: 'heatmap',
+      payload: {
+        isClusterMap,
+        callback: (plot) => _addPlots([plot]),
+      },
     })
   }
 
   function makeDotPlot(isClusterMap: boolean) {
-    setShowDialog({
-      id: randId('dotplot'),
-      params: { df: sheet, isClusterMap },
+    openMatcalcDialog({
+      type: 'dot-plot',
+      payload: {
+        isClusterMap,
+        callback: (plot) => _addPlots([plot]),
+      },
     })
-  }
-
-  function makeVolcanoPlot() {
-    setShowDialog({ id: randId('volcano'), params: { df: sheet } })
   }
 
   // function makeLollipop() {
@@ -895,6 +657,15 @@ export function MatcalcPage() {
     addSheets([df as AnnotationDataFrame])
   }
 
+  function _open(message: string, files: FileList | []) {
+    onTextFileChange(message, files, (files) => {
+      openMatcalcDialog({
+        type: 'open-table-file',
+        payload: { files, callback: openFiles },
+      })
+    })
+  }
+
   const tabs: ITab[] = [
     {
       //id: nanoid(),
@@ -902,19 +673,36 @@ export function MatcalcPage() {
       //size: 2.1,
       content: (
         <>
-          <ToolbarTabGroup title="File">
+          <ToolbarTabGroup title="File" className="items-start">
             <ToolbarOpenFile
-              onOpenChange={(open) => {
-                if (open) {
-                  setShowDialog({
-                    id: randId('open'),
-                  })
-                }
+              onOpen={() => {
+                openDialog({
+                  type: 'open',
+                  payload: {
+                    callback: _open,
+                  },
+                })
               }}
             />
 
+            {/* <ToolbarColSmallButton
+              title="Download current table locally"
+              onClick={() => {
+                console.log('save', file?.id ?? '')
+                sendMessage({
+                  type: 'info',
+                  source: 'matcalc',
+                  target: file?.id ?? '',
+                  data: 'save',
+                })
+              }}
+              icon={<DownloadIcon   />}
+            >
+              {TEXT_DOWNLOAD}
+            </ToolbarColSmallButton> */}
+
             <ToolbarIconButton
-              title={TEXT_DOWNLOAD}
+              title="Download current table to device"
               onClick={() => {
                 console.log('save', file?.id ?? '')
                 sendMessage({
@@ -928,7 +716,6 @@ export function MatcalcPage() {
               <DownloadIcon />
             </ToolbarIconButton>
           </ToolbarTabGroup>
-          <ToolbarSeparator />
 
           <ToolbarTabGroup title="Plot" className="items-start">
             <ToolbarCol>
@@ -936,62 +723,102 @@ export function MatcalcPage() {
                 onClick={() => makeClusterMap(false)}
                 aria-label={TEXT_HEATMAP}
               >
-                {/* <HeatmapChartIcon /> */}
                 {TEXT_HEATMAP}
               </ToolbarButton>
               <ToolbarButton
                 onClick={() => makeDotPlot(false)}
                 aria-label={TEXT_DOT_PLOT}
               >
-                {/* <Circle className="w-5 h-5" /> */}
                 Dot
               </ToolbarButton>
             </ToolbarCol>
             <ToolbarCol>
               <ToolbarButton
                 title="Create Volcano Plot from Table"
-                onClick={() => makeVolcanoPlot()}
+                onClick={() => {
+                  openMatcalcDialog({
+                    type: 'volcano-plot',
+                    payload: {
+                      callback: (plot) => _addPlots([plot]),
+                    },
+                  })
+                }}
               >
                 Volcano
               </ToolbarButton>
 
               <ToolbarButton
                 title="Create Box Plot from Table"
-                onClick={() =>
-                  setShowDialog({ id: randId('box-whiskers'), params: {} })
-                }
+                onClick={() => {
+                  openMatcalcDialog({
+                    type: 'box-whiskers',
+                    payload: {
+                      callback: (plot) => _addPlots([plot]),
+                    },
+                  })
+                }}
               >
-                {/* <BoxWhiskerChartIcon /> */}
                 Box
               </ToolbarButton>
             </ToolbarCol>
           </ToolbarTabGroup>
-          <ToolbarSeparator />
 
           <ToolbarTabGroup title="Gene Expression">
             <ToolbarButton
               title="Download Gene Expression Data"
-              onClick={() => setShowDialog({ id: randId('gex'), params: {} })}
+              onClick={() => openMatcalcDialog({ type: 'gex', payload: {} })}
             >
               Gene Expression
             </ToolbarButton>
-            {/* <ToolbarButton
-              title="Download gene expression metadata"
+          </ToolbarTabGroup>
+
+          <ToolbarTabGroup title="Number" className="items-start">
+            <ToolbarIconButton
+              checked={settings.view.commas}
+              title="Comma"
               onClick={() =>
-                setShowDialog({ id: randId('gex-metadata'), params: {} })
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.view.commas = !draft.view.commas
+                  })
+                )
               }
             >
-              Metadata
-            </ToolbarButton> */}
+              <CommaIcon />
+            </ToolbarIconButton>
+            <ToolbarCol>
+              <ToolbarIconButton
+                title="Decrease Decimal"
+                onClick={() =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.view.dp = Math.max(draft.view.dp - 1, 0)
+                    })
+                  )
+                }
+              >
+                <DecimalsArrowLeft strokeWidth={1.5} size={20} />
+              </ToolbarIconButton>
+              <ToolbarIconButton
+                title="Increase Decimal"
+                onClick={() =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.view.dp = Math.min(draft.view.dp + 1, 10)
+                    })
+                  )
+                }
+              >
+                <DecimalsArrowRight strokeWidth={1.5} size={20} />
+              </ToolbarIconButton>
+            </ToolbarCol>
           </ToolbarTabGroup>
-          <ToolbarSeparator />
         </>
       ),
     },
     {
-      //id: nanoid(),
       id: 'Data',
-      //size: 2,
+
       content: (
         <>
           <ToolbarTabGroup title="Matrix">
@@ -1124,39 +951,60 @@ export function MatcalcPage() {
             </ToolbarDropdownButton>
           </ToolbarTabGroup>
 
-          <ToolbarSeparator />
-
           <ToolbarTabGroup title="Cluster">
             <ToolbarButton
               title="K-means Clustering"
-              onClick={() =>
-                setShowDialog({ id: randId('kmeans'), params: {} })
-              }
+              onClick={() => {
+                openMatcalcDialog({
+                  type: 'kmeans',
+                  payload: {
+                    callback: (data: {
+                      df: AnnotationDataFrame
+                      drawHeatmap: boolean
+                    }) => {
+                      openMatcalcDialog({
+                        type: 'heatmap',
+                        payload: {
+                          sheet: data.df,
+                          callback: (plot) => _addPlots([plot]),
+                        },
+                      })
+                    },
+                  },
+                })
+              }}
             >
               K-means
             </ToolbarButton>
           </ToolbarTabGroup>
 
-          <ToolbarSeparator />
           <ToolbarTabGroup title="Rows">
             <ToolbarIconButton
               title="Filter Top Rows using Statistics"
-              onClick={() =>
-                setShowDialog({ id: randId('top-rows'), params: {} })
-              }
+              onClick={() => {
+                openMatcalcDialog({
+                  type: 'top-rows',
+                  payload: {},
+                })
+              }}
             >
               <FilterIcon />
-              {/* <span>Top Rows</span> */}
             </ToolbarIconButton>
 
             <ToolbarIconButton
               title="Sort Columns by Specific Rows"
-              onClick={() =>
-                setShowDialog({ id: randId('sort-row'), params: {} })
-              }
+              onClick={() => {
+                if (selection) {
+                  openMatcalcDialog({
+                    type: 'sort-rows',
+                    payload: {
+                      selection,
+                    },
+                  })
+                }
+              }}
             >
               <DataSortIcon />
-              {/* <span>Sort By Rows</span> */}
             </ToolbarIconButton>
 
             <ToolbarButton
@@ -1179,8 +1027,6 @@ export function MatcalcPage() {
             </ToolbarButton>
           </ToolbarTabGroup>
 
-          <ToolbarSeparator />
-
           {process.env.NODE_ENV !== 'development' && (
             <>
               <ToolbarTabGroup title="Clinical">
@@ -1191,79 +1037,74 @@ export function MatcalcPage() {
                   Survival
                 </ToolbarButton>
               </ToolbarTabGroup>
-
-              <ToolbarSeparator />
             </>
           )}
         </>
       ),
     },
     {
-      //id: nanoid(),
       id: 'Gene',
-      //size: 2,
       content: (
         <>
           <ToolbarTabGroup title="Annotation">
-            <ToolbarButton
-              title="Convert Gene Symbols between Human and Mouse"
-              onClick={() =>
-                setShowDialog({ id: randId('human-mouse'), params: {} })
-              }
-            >
-              Convert Species
-            </ToolbarButton>
+            <ToolbarCol>
+              <ToolbarButton
+                title="Convert Gene Symbols between Human and Mouse"
+                onClick={() => {
+                  openMatcalcDialog({
+                    type: 'gene-species-convert',
+                    payload: {},
+                  })
+                }}
+              >
+                Convert Species
+              </ToolbarButton>
 
-            <ToolbarButton
-              title="Convert Motifs to Gene Symbols"
-              onClick={() =>
-                setShowDialog({ id: randId('motif-to-gene'), params: {} })
-              }
-            >
-              Motif To Gene
-            </ToolbarButton>
+              <ToolbarButton
+                title="Convert Motifs to Gene Symbols"
+                onClick={() => {
+                  if (selection) {
+                    openMatcalcDialog({
+                      type: 'motif-to-gene',
+                      payload: {
+                        selection,
+                        // callback: (response, data) => {
+                        //   if (response === TEXT_OK && data) {
+                        //     addSheets([data])
+                        //   }
+                        // },
+                      },
+                    })
+                  }
+                }}
+              >
+                Motif To Gene
+              </ToolbarButton>
+            </ToolbarCol>
           </ToolbarTabGroup>
-          <ToolbarSeparator />
+
           <ToolbarTabGroup title="GSEA">
-            <ToolbarButton
-              aria-label="Run Extended GSEA"
-              onClick={() => runExtGsea()}
-            >
-              Extended GSEA
-            </ToolbarButton>
+            <ToolbarCol>
+              <ToolbarButton
+                aria-label="Run Extended GSEA"
+                onClick={() => runExtGsea()}
+              >
+                Extended GSEA
+              </ToolbarButton>
 
-            <ToolbarButton
-              title="Convert Matrix to GSEA GCT Format"
-              onClick={() => gct()}
-            >
-              GCT
-            </ToolbarButton>
+              <ToolbarButton
+                title="Convert Matrix to GSEA GCT Format"
+                onClick={() => gct()}
+              >
+                GCT
+              </ToolbarButton>
+            </ToolbarCol>
           </ToolbarTabGroup>
-          <ToolbarSeparator />
         </>
       ),
     },
-    // {
-    //   id: 'Protein',
-    //   content: (
-    //     <>
-    //       <ToolbarTabGroup title="Protein">
-    //         <ToolbarButton
-    //           title="Create lollipop plot from table"
-    //           onClick={() => makeLollipop()}
-    //         >
-    //           Lollipop
-    //         </ToolbarButton>
-    //       </ToolbarTabGroup>
-
-    //       <ToolbarSeparator />
-    //     </>
-    //   ),
-    // },
     {
-      //id: nanoid(),
       id: 'Genomic',
-      //size: 2,
       content: (
         <>
           <ToolbarTabGroup title="Overlap">
@@ -1287,135 +1128,137 @@ export function MatcalcPage() {
               One Way
             </ToolbarButton>
           </ToolbarTabGroup>
-          <ToolbarSeparator />
+
+          <ToolbarTabGroup title="Annotation">
+            <ToolbarCol>
+              <ToolbarButton
+                title="Annotate Locations"
+                onClick={() => {
+                  openMatcalcDialog({
+                    type: 'annotate',
+                    payload: {
+                      selection: selection!,
+                    },
+                  })
+                }}
+              >
+                Annotate
+              </ToolbarButton>
+            </ToolbarCol>
+          </ToolbarTabGroup>
         </>
       ),
     },
-    // {
-    //   id: 'Gene Expression',
-    //   content: (
-    //     <>
-    //       <ToolbarTabGroup title="Gene Expression">
-    //         <ToolbarButton
-    //           title="Perform a one way overlap of files"
-    //           onClick={() => setShowDialog({ id: randId('gex'), params: {} })}
-    //         >
-    //           Gene Expression
-    //         </ToolbarButton>
-    //       </ToolbarTabGroup>
-    //       <ToolbarSeparator />
-    //     </>
-    //   ),
-    // },
     {
       id: 'Help',
-      content: (
-        <>
-          <ToolbarHelpTabGroup url={HELP_URL} />
-
-          <ToolbarSeparator />
-        </>
-      ),
+      content: <ToolbarHelpTabGroup url={HELP_URL} />,
     },
   ]
 
-  const fileMenuTabs: ITab[] = [
-    {
-      //id: nanoid(),
-      id: 'Open',
-      icon: <OpenIcon variant="colorful" />,
-      content: (
-        <DropdownMenuItem
-          aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
-        >
-          <UploadIcon />
+  const fileMenuTabs: ITab[] = useMemo(
+    () => [
+      {
+        //id: nanoid(),
+        id: 'Open',
+        icon: <OpenIcon variant="colorful" />,
+        content: (
+          <DropdownMenuItem
+            aria-label={TEXT_OPEN_FILE}
+            onClick={() => {
+              openDialog({
+                type: 'open',
+                payload: {
+                  callback: _open,
+                },
+              })
+            }}
+          >
+            <UploadIcon />
 
-          <span>{TEXT_OPEN_FILE}</span>
-        </DropdownMenuItem>
-      ),
-    },
-    {
-      //id: nanoid(),
-      id: '<divider>',
-    },
-    {
-      //id: nanoid(),
-      id: TEXT_SAVE_AS,
-      icon: <DownloadIcon stroke="stroke-theme" />,
-      content: (
-        <>
-          <DropdownMenuItem
-            aria-label={TEXT_DOWNLOAD_AS_TXT}
-            onClick={() => {
-              sendMessage({
-                type: 'info',
-                source: 'matcalc',
-                target: file?.id ?? '',
-                data: 'save:txt',
-              })
-              // save("txt")}
-            }}
-          >
-            <FileIcon stroke="" />
-            <span>{TEXT_DOWNLOAD_AS_TXT}</span>
+            <span>{TEXT_OPEN_FILE}</span>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            aria-label={TEXT_DOWNLOAD_AS_CSV}
-            onClick={() => {
-              sendMessage({
-                type: 'info',
-                source: 'matcalc',
-                target: file?.id ?? '',
-                data: 'save:csv',
-              })
-              // save("txt")}
-            }}
-          >
-            <span>{TEXT_DOWNLOAD_AS_CSV}</span>
-          </DropdownMenuItem>
-        </>
-      ),
-    },
-    {
-      //id: nanoid(),
-      id: TEXT_EXPORT,
-      icon: <ExportIcon />,
-      content: (
-        <>
-          <DropdownMenuItem
-            aria-label={TEXT_DOWNLOAD_AS_PNG}
-            onClick={() => {
-              sendMessage({
-                type: 'info',
-                source: 'matcalc',
-                target: plot?.id ?? '',
-                data: 'save:png',
-              })
-              // save("txt")}
-            }}
-          >
-            <FileImageIcon stroke="" />
-            <span>{TEXT_DOWNLOAD_AS_PNG}</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            aria-label={TEXT_DOWNLOAD_AS_SVG}
-            onClick={() => {
-              sendMessage({
-                type: 'info',
-                source: 'matcalc',
-                target: plot?.id ?? '',
-                data: 'save:svg',
-              })
-              // save("txt")}
-            }}
-          >
-            <span>{TEXT_DOWNLOAD_AS_SVG}</span>
-          </DropdownMenuItem>
-        </>
-      ),
-    },
-  ]
+        ),
+      },
+      {
+        id: '<divider>',
+      },
+      {
+        id: TEXT_SAVE_AS,
+        icon: <DownloadIcon />,
+        content: (
+          <>
+            <DropdownMenuItem
+              aria-label={TEXT_DOWNLOAD_AS_TXT}
+              onClick={() => {
+                sendMessage({
+                  type: 'info',
+                  source: 'matcalc',
+                  target: file?.id ?? '',
+                  data: 'save:txt',
+                })
+                // save("txt")}
+              }}
+            >
+              <FileIcon stroke="" />
+              <span>{TEXT_DOWNLOAD_AS_TXT}</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              aria-label={TEXT_DOWNLOAD_AS_CSV}
+              onClick={() => {
+                sendMessage({
+                  type: 'info',
+                  source: 'matcalc',
+                  target: file?.id ?? '',
+                  data: 'save:csv',
+                })
+                // save("txt")}
+              }}
+            >
+              <span>{TEXT_DOWNLOAD_AS_CSV}</span>
+            </DropdownMenuItem>
+          </>
+        ),
+      },
+      {
+        id: TEXT_EXPORT,
+        icon: <ExportIcon />,
+        content: (
+          <>
+            <DropdownMenuItem
+              aria-label={TEXT_DOWNLOAD_AS_PNG}
+              onClick={() => {
+                sendMessage({
+                  type: 'info',
+                  source: 'matcalc',
+                  target: plot?.id ?? '',
+                  data: 'save:png',
+                })
+                // save("txt")}
+              }}
+            >
+              <FileImageIcon stroke="" />
+              <span>{TEXT_DOWNLOAD_AS_PNG}</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              aria-label={TEXT_DOWNLOAD_AS_SVG}
+              onClick={() => {
+                sendMessage({
+                  type: 'info',
+                  source: 'matcalc',
+                  target: plot?.id ?? '',
+                  data: 'save:svg',
+                })
+                // save("txt")}
+              }}
+            >
+              <span>{TEXT_DOWNLOAD_AS_SVG}</span>
+            </DropdownMenuItem>
+          </>
+        ),
+      },
+    ],
+    [file?.id, plot?.id, sendMessage]
+  )
 
   const mainContent = (
     <Tabs
@@ -1423,40 +1266,10 @@ export function MatcalcPage() {
       value={selectedPanelTab}
       className="min-h-0 h-full flex flex-col grow"
     >
-      {/* <TabsContent key={branch?.id ?? ''} value={branch?.id ?? ''} asChild>
-          <DataPanel branchId={branch?.id ?? ''} />
-        </TabsContent>
-
-        {plot && plotElem(plot)} */}
-
-      {/* {branches.map(branch => {
-          return ( */}
-
-      {files.map((file) => {
-        //const path = pathJoin(app, file, file.sheets[0]!)
-        const sheet = getSheets(store, state, file)[0]!
-
-        return (
-          <TabsContent key={sheet.id} value={sheet.id}>
-            <DataPanel />
-          </TabsContent>
-        )
-      })}
-
-      {/* )
-        })} */}
-
-      {/* {sheet && (
-          <TabsContent key={sheet.id} value={sheet.id} asChild>
-            <DataPanel />
-          </TabsContent>
-        )} */}
-
-      {/* {branch && (
-          <TabsContent key={branch.id} value={branch.id} asChild>
-            <DataPanel />
-          </TabsContent>
-        )} */}
+      {/* Shows the current sheet so tab needs id of current sheet. If no sheet, show empty data panel */}
+      <TabsContent value={sheet?.id ?? ''}>
+        <DataPanel />
+      </TabsContent>
 
       {plots.map((plot) => {
         return (
@@ -1468,200 +1281,13 @@ export function MatcalcPage() {
     </Tabs>
   )
 
-  const sideContent = (
-    <BaseCol className="pl-1 grow">
-      <VScrollPanel className="grow">
-        <CollapseTree
-          tab={treeRootTab}
-          value={{ id: selectedPanelTab }}
-          showRoot={false}
-
-          ///asChild={false}
-        />
-      </VScrollPanel>
-    </BaseCol>
-  )
-
-  //console.log('render check', plots)
-
   return (
     <>
-      {showDialog.id.startsWith('open:') && (
-        <OpenFiles
-          message={showDialog.id}
-          //onOpenChange={() => setShowDialog({...NO_DIALOG})}
-          onFileChange={(message, files) =>
-            onTextFileChange(message, files, (files) => {
-              setShowDialog({
-                id: randId('open-file-dialog'),
-                params: { files },
-              })
-            })
-          }
-        />
-      )}
-
-      {showDialog.id.startsWith('open-file-dialog') && (
-        <OpenDialog
-          files={showDialog.params!.files as ITextFileOpen[]}
-          openFiles={(files, options) => {
-            openFiles(files, options)
-            setShowDialog({ ...NO_DIALOG })
-          }}
-          onCancel={() => {
-            //setFilesToOpen([])
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        />
-      )}
-
-      {showDialog.id.startsWith('top-rows') && (
-        <TopRowsDialog
-          //df={sheet!}
-          onFilter={() => {
-            setShowDialog({ ...NO_DIALOG })
-          }}
-          onCancel={() => setShowDialog({ ...NO_DIALOG })}
-        />
-      )}
-
-      {showDialog.id.startsWith('heatmap') && (
-        <HeatMapDialog
-          open={showDialog.id.startsWith('heatmap')}
-          isClusterMap={(showDialog.params?.isClusterMap as boolean) ?? false}
-          //df={showDialog.params?.df as BaseDataFrame}
-          onResponse={(response, data) => {
-            console.log('heatmap dialog response', response, data)
-            if (response === TEXT_OK) {
-              const plot = data as HistoryPlot
-
-              console.log('plot from heatmap dialog', plot)
-
-              _addPlots([plot])
-            }
-
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        />
-      )}
-
-      {showDialog.id.startsWith('dotplot') && (
-        <DotPlotDialog
-          open={showDialog.id.startsWith('dotplot')}
-          isClusterMap={(showDialog.params?.isClusterMap as boolean) ?? false}
-          onResponse={(response, data) => {
-            if (response === TEXT_OK) {
-              const plot = data as HistoryPlot
-
-              _addPlots([plot])
-            }
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        />
-      )}
-
-      {showDialog.id.startsWith('volcano') && (
-        <VolcanoDialog
-          open={showDialog.id.startsWith('volcano')}
-          //df={showDialog.params?.df as BaseDataFrame}
-          onResponse={(response, data) => {
-            if (response === TEXT_OK) {
-              const plot = data as HistoryPlot
-
-              _addPlots([plot])
-            }
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        />
-      )}
-
-      {showDialog.id.startsWith('box-whiskers') && (
-        <BoxPlotDialog
-          open={showDialog.id.startsWith('box-whiskers')}
-          //df={sheet!}
-          onResponse={(response, data) => {
-            if (response === TEXT_OK) {
-              const plot = data as HistoryPlot
-
-              _addPlots([plot])
-            }
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        />
-      )}
-
-      {showDialog.id.startsWith('human-mouse') && (
-        <GeneConvertDialog
-          selection={selection}
-          onConversion={() => setShowDialog({ ...NO_DIALOG })}
-          onCancel={() => setShowDialog({ ...NO_DIALOG })}
-        />
-      )}
-
-      {showDialog.id.startsWith('motif-to-gene') && (
-        <MotifToGeneDialog
-          selection={selection}
-          onConversion={() => setShowDialog({ ...NO_DIALOG })}
-          onCancel={() => setShowDialog({ ...NO_DIALOG })}
-        />
-      )}
-
-      {showDialog.id.startsWith('sort-row') && (
-        <SortRowDialog
-          selection={selection}
-          onSort={() => setShowDialog({ ...NO_DIALOG })}
-          onCancel={() => setShowDialog({ ...NO_DIALOG })}
-        />
-      )}
-
-      {showDialog.id.startsWith('kmeans') && (
-        <KmeansDialog
-          //df={sheet as AnnotationDataFrame}
-          onResponse={(text, data) => {
-            if (text === TEXT_OK) {
-              const d = data as {
-                df: AnnotationDataFrame
-                drawHeatmap: boolean
-              }
-              if (d.drawHeatmap) {
-                setShowDialog({
-                  id: randId('heatmap'),
-                  params: { df: d.df },
-                })
-              } else {
-                setShowDialog({ ...NO_DIALOG })
-              }
-            } else {
-              setShowDialog({ ...NO_DIALOG })
-            }
-          }}
-        />
-      )}
-
-      {showDialog.id.startsWith('gex:') && (
-        <GexDialog
-          onResponse={() => {
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        />
-      )}
-
-      {/* {showDialog.id.startsWith('gex-metadata:') && (
-        <GexMetadataDialog
-          onResponse={() => {
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        />
-      )} */}
-
-      {showDialog.id.startsWith('alert') && (
-        <BasicAlertDialog onResponse={() => setShowDialog({ ...NO_DIALOG })}>
-          {showDialog.params!.message as ReactNode}
-        </BasicAlertDialog>
-      )}
+      <MatcalcDialogsRoot />
 
       <HeaderSlotPortal slot="header-left">
-        <ModuleInfoButton info={MODULE_INFO} />
+        <AppHeaderIcon />
+        <AppInfoButton />
       </HeaderSlotPortal>
 
       <HeaderSlotPortal slot="header-right">
@@ -1683,6 +1309,9 @@ export function MatcalcPage() {
             <DropdownMenuItem onClick={() => loadExtGseaTestData()}>
               Ext GSEA
             </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => loadAnnotateTestData()}>
+              Annotate
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </HeaderSlotPortal>
@@ -1695,13 +1324,13 @@ export function MatcalcPage() {
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
-            info={MODULE_INFO}
+            info={APP_INFO}
             leftShortcuts={
               <>
                 <ShowSideButton
-                  open={barProps.open}
+                  open={open}
                   onClick={() => {
-                    setOpen(!barProps.open)
+                    setOpen(!open)
                   }}
                 />
                 <UndoShortcuts />
@@ -1712,24 +1341,18 @@ export function MatcalcPage() {
           <ToolbarPanel
             groupId="matcalc-toolbar"
             tabs={tabs}
-            tabShortcutMenu={
-              <ShowOptsSidebarBtn
-                open={settings.sidebar.show}
-                onClick={(open) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.sidebar.show = open
-                    })
-                  )
-                }}
-              />
-            }
+            tabShortcutMenu={<OptsSidebarMenu open={settings.sidebar.show} />}
           />
         </Toolbar>
         <HistoryLayout>
-          <ResizableSidebar id={folderId} side="left" className="grow">
-            <>{mainContent}</>
-            <>{sideContent}</>
+          <ResizableSidebar
+            id={folderId}
+            side="left"
+            className="grow"
+            showCloseButton={false}
+          >
+            {mainContent}
+            <MatcalcFileTree />
           </ResizableSidebar>
         </HistoryLayout>
       </ShortcutLayout>
@@ -1753,36 +1376,4 @@ export function MatcalcQueryPage() {
       {/* </MatcalcSettingsProvider> */}
     </CoreProviders>
   )
-}
-
-function plotElem(plot: HistoryPlot): ReactElement {
-  switch (plot.style) {
-    case 'heatmap':
-    case 'dot':
-      return (
-        <HeatmapPanel
-          key={plot.id}
-          //plotId={plot.id}
-          plotAddr={plot.id}
-        />
-      )
-    case 'volcano':
-      return (
-        <VolcanoPanel
-          key={plot.id}
-          //plotId={plot.id}
-          plotAddr={plot.id}
-        />
-      )
-    case 'box':
-      return <BoxPlotPanel key={plot.id} plotAddr={plot.id} />
-    case 'ext-gsea':
-      return <ExtGseaPanelQuery key={plot.id} plotAddr={plot.id} />
-    // case 'lollipop':
-    //   return (
-    //     <LollipopPanelQuery key={plot.id} id={plot.id} plotAddr={plot.id} />
-    //   )
-    default:
-      return <></>
-  }
 }

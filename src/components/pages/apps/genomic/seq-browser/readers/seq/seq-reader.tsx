@@ -1,30 +1,42 @@
 import { type IGenomicLocation } from '@/lib/genomic/genomic'
 import { type ISeqPos } from '../../svg/base-seq-track-svg'
-import { type ISampleBinCounts, type ISignalTrack } from '../../tracks-provider'
+import {
+  type IBigWigTrack,
+  type ISampleSearchResult,
+  type ISeqTrack,
+} from '../../tracks-provider'
 import { BaseSeqReader, type IGetPointOptions } from './base-seq-reader'
 
 export class SeqReader extends BaseSeqReader {
-  private _track: ISignalTrack
-  //private _points: ISeqPos[] = []
-  // private _loc: string = ''
-  // private _mode: 'Cache Bins' | 'Cache X' | 'Collapse' | 'Fully Cached' =
-  //   'Cache Bins'
+  private _track: ISeqTrack | IBigWigTrack
+  private _reads: number
 
-  private _trackBinCounts: ISampleBinCounts
-  //private _binSize: number = -1
+  private _trackBinCounts: ISampleSearchResult
 
-  constructor(track: ISignalTrack, trackBinCounts: ISampleBinCounts) {
+  constructor(
+    track: ISeqTrack | IBigWigTrack,
+    trackBinCounts: ISampleSearchResult
+  ) {
     super()
     this._track = track
+    this._reads = track.reads ?? 0
     this._trackBinCounts = trackBinCounts
   }
 
   override async getRealYPoints(
     _location: IGenomicLocation,
     _binSize: number,
-    { mode = 'Count' }: IGetPointOptions = {}
+    opts: IGetPointOptions = {}
   ): Promise<ISeqPos[]> {
     //const loc = locStr(location)
+
+    let { mode = 'Count' } = opts
+
+    // If the track is a BigWig we ignore scaling
+    // and just use data as it, i.e count mode
+    if (this._track.type === 'BigWig') {
+      return this._getRealYPointsBigWig(_location, _binSize)
+    }
 
     //if (loc !== this._loc || this._binSize !== binSize) {
     return this._trackBinCounts.bins.map(b => {
@@ -44,18 +56,14 @@ export class SeqReader extends BaseSeqReader {
 
       switch (mode) {
         case 'BPM':
-          y = (reads / this._trackBinCounts.binReads) * 1000000 // * this._trackBinCounts.bpmScaleFactor
+          y = (reads / this._trackBinCounts.binReads!) * 1000000 // * this._trackBinCounts.bpmScaleFactor
           break
         case 'CPM':
-          y = (reads / this._track.reads) * 1000000
+          y = (reads / this._reads) * 1000000
           break
         default:
           y = reads
       }
-
-      //const b = Math.max(0, Math.floor(start / binSize)) * binSize
-      //const sb = Math.max(0, Math.floor((start - location.start) / binSize))
-      //const eb = Math.max(0, Math.floor((end - location.start) / binSize))
 
       return {
         start,
@@ -65,32 +73,37 @@ export class SeqReader extends BaseSeqReader {
         realY: y,
         numPoints: 1,
       }
-
-      // this._points.push({
-      //   start: end,
-      //   x: 0,
-      //   y: 0,
-      //   realY: y,
-      //   numPoints: 1,
-      // })
-
-      // for (let bin = sb; bin <= eb; bin++) {
-      //   this._points[bin]!.realY += y
-      //   this._points[bin]!.numPoints!++
-      //   console.log('vvv', bin, this._points[bin])
-      // }
     })
+  }
 
-    // for (const b of this._points) {
-    //   if (b.numPoints! > 0) {
-    //     // average the bin
-    //     b.realY = b.realY / b.numPoints!
-    //   }
-    // }
+  _getRealYPointsBigWig(
+    _location: IGenomicLocation,
+    _binSize: number
+  ): ISeqPos[] {
+    //const loc = locStr(location)
 
-    // console.log('ljdsfklfslksdflkdflkfds', this._points)
+    //if (loc !== this._loc || this._binSize !== binSize) {
+    return this._trackBinCounts.bins.map(b => {
+      // the real 1 based end
+      const start = b.s
 
-    //this._mode = 'Cache X'
-    //}
+      // end is the real end of the block, but for
+      // graphical purposes, it must be the same as the
+      // start of a block so that line segments can be
+      // joined together without small gaps between them
+      // thus we add 1 to make it inclusive
+      const end = b.e + 1
+
+      const y = b.c
+
+      return {
+        start,
+        end,
+        x: 0,
+        y: 0,
+        realY: y,
+        numPoints: 1,
+      }
+    })
   }
 }

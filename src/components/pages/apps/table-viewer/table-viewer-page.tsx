@@ -2,7 +2,7 @@
 
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
-import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
+import { FooterPortal } from '@/components/toolbar/footer-portal'
 
 import {
   ShowOptionsMenu,
@@ -10,14 +10,12 @@ import {
   ToolbarMenu,
   ToolbarPanel,
 } from '@/toolbar/toolbar'
-import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
 import {
   downloadDataFrame,
   getFormattedShape,
 } from '@/lib/dataframe/dataframe-utils'
 
-import { BasicAlertDialog } from '@/dialog/basic-alert-dialog'
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
 import { ClockRotateLeftIcon } from '@/icons/clock-rotate-left-icon'
@@ -25,23 +23,17 @@ import { ClockRotateLeftIcon } from '@/icons/clock-rotate-left-icon'
 import { useEffect, useState } from 'react'
 
 import {
-  NO_DIALOG,
-  TEXT_CANCEL,
   TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_FILE,
   TEXT_HISTORY,
   TEXT_SAVE_AS,
   TEXT_SAVE_TABLE,
-  type IDialogParams,
 } from '@/consts'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
-import { randId } from '@/lib/id'
 
-import type { ISaveAsFormat } from '@/components/pages/save-as-dialog'
-import { SaveTxtDialog } from '@/components/pages/save-txt-dialog'
 import { FileIcon } from '@/icons/file-icon'
 import {
   AnnotationDataFrame,
@@ -66,20 +58,22 @@ import {
   useSheet,
 } from '../matcalc/history/history-store'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
 import { BaseCol } from '@/components/layout/base-col'
 import { formatString } from '@/lib/text/format-string'
-import MODULE_INFO from './module.json'
+import APP_INFO from './manifest.json'
 
 export function TableViewerPage() {
   const _id = useStableId('table-viewer-page')
-  const { goto, openFile } = useHistory()
+  const { openFile, goto } = useHistory()
   const app = useApp()!
   const file = useFile()!
-  const sheet = useSheet()!
+  const sheet = useSheet()
 
   const [showSideBar, setShowSideBar] = useState(false)
   const [rightTab, setRightTab] = useState(TEXT_HISTORY)
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
+
+  const { open: openDialog } = useDialogs()
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
@@ -140,26 +134,20 @@ export function TableViewerPage() {
       content: (
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
-            {/* <ToolbarOpenFile
-              onOpenChange={open => {
-                if (open) {
-                  setShowDialog({
-                    id: randId('open'),
-                  })
-                }
-              }}
-              multiple={true}
-            /> */}
-
             <ToolbarIconButton
               title={TEXT_SAVE_TABLE}
-              onClick={() => setShowDialog({ id: randId('save') })}
+              onClick={() =>
+                openDialog({
+                  type: 'save',
+                  payload: {
+                    name: friendlyFilename(sheet?.name ?? 'table'),
+                  },
+                })
+              }
             >
               <DownloadIcon />
             </ToolbarIconButton>
           </ToolbarTabGroup>
-
-          <ToolbarSeparator />
         </>
       ),
     },
@@ -167,28 +155,13 @@ export function TableViewerPage() {
 
   const rightTabs: ITab[] = [
     {
-      //id: nanoid(),
-      icon: <ClockRotateLeftIcon />,
       id: 'History',
+      icon: <ClockRotateLeftIcon />,
       content: <HistoryPanel />,
     },
   ]
 
   const fileMenuTabs: ITab[] = [
-    // {
-    //   id: 'Open',
-    //   icon: <OpenIcon stroke="" />,
-    //   content: (
-    //     <DropdownMenuItem
-    //       aria-label={TEXT_OPEN_FILE}
-    //       onClick={() => setShowDialog({ id: randId('open'), params: {} })}
-    //     >
-    //       <UploadIcon stroke="" />
-
-    //       <span>{TEXT_OPEN_FILE}</span>
-    //     </DropdownMenuItem>
-    //   ),
-    // },
     {
       id: TEXT_SAVE_AS,
       content: (
@@ -217,99 +190,66 @@ export function TableViewerPage() {
   ]
 
   return (
-    <>
-      {showDialog.id === 'alert' && (
-        <BasicAlertDialog onResponse={() => setShowDialog({ ...NO_DIALOG })}>
-          {showDialog.params!.message as string}
-        </BasicAlertDialog>
-      )}
+    <ShortcutLayout showHeader={false} signinRequired={false}>
+      <Toolbar>
+        <ToolbarMenu
+          groupId={_id}
+          tabs={tabs}
+          open={showFileMenu}
+          onOpenChange={setShowFileMenu}
+          fileMenuTabs={fileMenuTabs}
+          extMenus={{
+            info: (
+              <DropdownMenuItem variant="none" className="h-16">
+                <BaseCol className="text-xs gap-y-0.5">
+                  <p>{APP_INFO.name}</p>
 
-      {showDialog.id.includes('save') && (
-        <SaveTxtDialog
-          name={friendlyFilename(sheet?.name ?? 'table')}
-          onResponse={(response, data) => {
-            if (response !== TEXT_CANCEL) {
-              const d = data as { name: string; format: ISaveAsFormat }
-              save(d.name, d.format.ext)
-            }
-
-            setShowDialog({ ...NO_DIALOG })
+                  <p>Version {APP_INFO.version}</p>
+                  <p>{formatString(APP_INFO.copyright)}</p>
+                </BaseCol>
+              </DropdownMenuItem>
+            ),
           }}
         />
-      )}
+        <ToolbarPanel
+          groupId={_id}
+          tabs={tabs}
+          tabShortcutMenu={
+            <ShowOptionsMenu
+              show={showSideBar}
+              onClick={() => {
+                setShowSideBar(!showSideBar)
+              }}
+            />
+          }
+        />
+      </Toolbar>
 
-      {/* <HeaderSlotPortal slot="header-left">
-        <ModuleInfoButton info={MODULE_INFO} />
-      </HeaderSlotPortal> */}
+      <TabSlideBar
+        id="table-viewer"
+        side="right"
+        tabs={rightTabs}
+        value={rightTab}
+        onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
+        open={showSideBar}
+        onOpenChange={setShowSideBar}
+      >
+        <TabbedDataFrames
+          selectedSheet={sheet?.id}
+          dataFrames={[sheet as AnnotationDataFrame]}
+          onTabChange={(selectedTab) => {
+            goto({ app, file, sheet: selectedTab.tab })
+          }}
+          className="mx-2 mt-2"
+        />
+      </TabSlideBar>
 
-      <ShortcutLayout showHeader={false} signinRequired={false}>
-        <Toolbar>
-          <ToolbarMenu
-            groupId={_id}
-            tabs={tabs}
-            open={showFileMenu}
-            onOpenChange={setShowFileMenu}
-            fileMenuTabs={fileMenuTabs}
-            extMenus={{
-              info: (
-                <DropdownMenuItem variant="none" className="h-16">
-                  <BaseCol className="text-xs gap-y-0.5">
-                    <p>{MODULE_INFO.name}</p>
-
-                    <p>Version {MODULE_INFO.version}</p>
-                    <p>{formatString(MODULE_INFO.copyright)}</p>
-                  </BaseCol>
-                </DropdownMenuItem>
-              ),
-            }}
-          />
-          <ToolbarPanel
-            groupId={_id}
-            tabs={tabs}
-            tabShortcutMenu={
-              <ShowOptionsMenu
-                show={showSideBar}
-                onClick={() => {
-                  setShowSideBar(!showSideBar)
-                }}
-              />
-            }
-          />
-        </Toolbar>
-
-        <TabSlideBar
-          id="table-viewer"
-          side="right"
-          tabs={rightTabs}
-          value={rightTab}
-          onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
-          open={showSideBar}
-          onOpenChange={setShowSideBar}
-        >
-          {/* <Card
-            variant="content"
-            className="mx-2 pb-0"
-            style={{ marginBottom: '-2px' }}
-          > */}
-          <TabbedDataFrames
-            selectedSheet={sheet?.id}
-            dataFrames={[sheet as AnnotationDataFrame]}
-            onTabChange={(selectedTab) => {
-              goto({ app, file, sheet: selectedTab.tab })
-            }}
-            className="mx-2 mt-2"
-            // style={{ marginBottom: '-2px' }}
-          />
-          {/* </Card> */}
-        </TabSlideBar>
-
-        <ToolbarFooterPortal className="justify-end">
-          <span>{getFormattedShape(sheet as AnnotationDataFrame)}</span>
-          <></>
-          <ZoomSlider />
-        </ToolbarFooterPortal>
-      </ShortcutLayout>
-    </>
+      <FooterPortal className="justify-end">
+        <span>{getFormattedShape(sheet as AnnotationDataFrame)}</span>
+        <></>
+        <ZoomSlider />
+      </FooterPortal>
+    </ShortcutLayout>
   )
 }
 

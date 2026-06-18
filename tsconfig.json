@@ -20,7 +20,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@/dialog/*": ["./src/components/dialog/*"],
+      "@/dialogs/*": ["./src/components/dialogs/*"],
       "@/layout/*": ["./src/components/layout/*"],
       "@/toolbar/*": ["./src/components/toolbar/*"],
       "@/themed/*": ["./src/components/shadcn/ui/themed/*"],

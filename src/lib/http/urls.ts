@@ -1,5 +1,5 @@
-import { type IFieldMap } from '@/interfaces/field-map'
-import { type IStringMap } from '@/interfaces/string-map'
+import { type IFieldMap } from '../../interfaces/field-map'
+import { type IStringMap } from '../../interfaces/string-map'
 import type { UndefNullStr } from '../text/text'
 
 export const PATH_SEP = '/'

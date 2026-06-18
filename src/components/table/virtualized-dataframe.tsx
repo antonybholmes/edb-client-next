@@ -9,8 +9,6 @@ import { range } from '@/lib/math/range'
 import { cn } from '@/lib/shadcn-utils'
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
 import {
-  NO_SELECTION,
-  NO_SELECTION_RANGE,
   useSelectionRange,
   type ISelectionRange,
 } from '../../providers/selection-range'

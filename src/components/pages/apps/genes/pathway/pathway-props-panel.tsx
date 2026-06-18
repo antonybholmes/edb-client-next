@@ -1,6 +1,4 @@
-// 'use client'
-
-import { TEXT_SELECT_ALL } from '@/consts'
+'use client'
 
 import {
   AccordionContent,
@@ -15,36 +13,40 @@ import { PropsPanel } from '@/components/props-panel'
 
 //import { toast } from '@/themed/use-toast'
 
-import { VCenterRow } from '@/components/layout/v-center-row'
-import { Button } from '@/components/shadcn/ui/themed/v2/button'
-
-import { PropRow } from '@/components/dialog/prop-row'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
-import { useEffect, useState } from 'react'
+import { PropRow } from '@/dialogs/prop-row'
+import { useEffect, useMemo, useState } from 'react'
+
+import { SelectAll } from '@/components/select-all'
 import {
-  makeDatasetId,
   usePathways,
-  type IDatasetInfo,
-  type IOrgInfo,
+  type ICollectionInfo,
+  type IDatsetInfo,
 } from './pathway-store'
 
 export function PathwayPropsPage() {
   const {
     datasets,
-    datasetsForUse,
-    selectAllDatasets,
-    setDatasetsForUse,
-    setSelectAllDatasets,
+    collectionsInUse,
+    setCollectionsInUse,
+    setSelectAllCollections,
     genesInUniverse,
     setGenesInUniverse,
   } = usePathways()
 
-  const [values, setValues] = useState<string[]>(datasets.map(org => org.name))
+  const filteredDatasets = useMemo(
+    () => datasets.filter((dataset) => dataset.collections.length > 0),
+    [datasets]
+  )
+
+  const [values, setValues] = useState<string[]>(
+    filteredDatasets.map((dataset) => dataset.name)
+  )
 
   useEffect(() => {
-    setValues(datasets.map(org => org.name))
-  }, [datasets])
+    setValues(filteredDatasets.map((dataset) => dataset.name))
+  }, [filteredDatasets])
 
   return (
     <PropsPanel className="gap-y-2 pr-1 text-xs">
@@ -61,49 +63,47 @@ export function PathwayPropsPage() {
           The background set of genes used for the hypergeometric test.
         </InfoHoverCard>
       </PropRow>
-      <VCenterRow>
-        <Button
-          variant="link"
-          pad="xs"
-          aria-label="Select all gene sets"
-          checked={selectAllDatasets}
-          onClick={() => setSelectAllDatasets(!selectAllDatasets)}
-        >
-          {TEXT_SELECT_ALL}
-        </Button>
-      </VCenterRow>
+
+      <SelectAll
+        className="pl-1.5"
+        setSelectAll={(v) => {
+          console.log('select all collections', v)
+          setSelectAllCollections(v)
+        }}
+      />
+
       <ScrollAccordion
-        variant="sidebar"
         value={values}
-        onValueChange={v => setValues(v as string[])}
+        onValueChange={(v) => setValues(v as string[])}
       >
-        {datasets.map((org: IOrgInfo, oi) => {
+        {filteredDatasets.map((dataset: IDatsetInfo, oi) => {
           return (
             <AccordionItem
-              value={org.name}
+              value={dataset.name}
               key={oi}
               className="flex flex-col gap-y-1"
             >
-              <AccordionTrigger variant="sidebar">{org.name}</AccordionTrigger>
-              <AccordionContent variant="sidebar">
+              <AccordionTrigger>{dataset.name}</AccordionTrigger>
+              <AccordionContent>
                 <ul className="flex flex-col gap-y-1.5">
-                  {org.datasets.map((dataset: IDatasetInfo, di: number) => (
-                    <li key={di}>
-                      <Checkbox
-                        aria-label={`Use dataset ${dataset.name}`}
-                        checked={datasetsForUse[makeDatasetId(dataset)]}
-                        onCheckedChange={() => {
-                          setDatasetsForUse({
-                            ...datasetsForUse,
-                            [makeDatasetId(dataset)]:
-                              !datasetsForUse[makeDatasetId(dataset)],
-                          })
-                        }}
-                      >
-                        {`${dataset.name} (${dataset.pathways.toLocaleString()})`}
-                      </Checkbox>
-                    </li>
-                  ))}
+                  {dataset.collections.map(
+                    (collection: ICollectionInfo, di: number) => (
+                      <li key={di}>
+                        <Checkbox
+                          aria-label={`Use collection ${collection.name}`}
+                          checked={collectionsInUse[collection.id]}
+                          onCheckedChange={() => {
+                            setCollectionsInUse({
+                              ...collectionsInUse,
+                              [collection.id]: !collectionsInUse[collection.id],
+                            })
+                          }}
+                        >
+                          {`${collection.name} (${collection.genesets.toLocaleString()})`}
+                        </Checkbox>
+                      </li>
+                    )
+                  )}
                 </ul>
               </AccordionContent>
             </AccordionItem>

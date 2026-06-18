@@ -1,18 +1,18 @@
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 
 import { Form, FormField } from '@/components/shadcn/ui/themed/v2/form'
-import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
+import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { BaseDataFrame, findCol } from '@/lib/dataframe/base-dataframe'
 import { uniqueInOrder } from '@/lib/utils'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 
-import { CheckPropRow } from '@/components/dialog/check-prop-row'
-import { PropRow } from '@/components/dialog/prop-row'
 import {
-  DEFAULT_FILL_PROPS,
+  DEFAULT_COLOR_PROPS,
   DEFAULT_STROKE_PROPS,
   WHITE_FILL_PROPS,
 } from '@/components/plot/svg-props'
+import { CheckPropRow } from '@/dialogs/check-prop-row'
+import { PropRow } from '@/dialogs/prop-row'
 import { TAB10_PALETTE } from '@/lib/color/palette'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { DataFrame } from '@/lib/dataframe/dataframe'
@@ -35,21 +35,11 @@ interface IFormInput {
   columnMode: boolean
 }
 
-export interface IProps extends IModalProps {
+export interface IProps extends IModalProps<HistoryPlot> {
   open?: boolean
-  //df: BaseDataFrame
-
-  // onPlot: (
-  //   df: BaseDataFrame,
-  //   x: string,
-  //   y: string,
-  //   hue: string,
-  //   xOrder: string[],
-  //   hueOrder: string[]
-  // ) => void
 }
 
-export function BoxPlotDialog({
+export function BoxWhiskersDialog({
   open = true,
   //df,
   onResponse,
@@ -61,7 +51,7 @@ export function BoxPlotDialog({
   let df = sheet as AnnotationDataFrame
 
   function _resp(resp: string) {
-    onResponse?.(resp)
+    onResponse?.(resp, undefined)
   }
 
   const btnRef = useRef<HTMLButtonElement>(null)
@@ -102,7 +92,7 @@ export function BoxPlotDialog({
       xOrder = uniqueInOrder(df.columns)
 
       const data = range(df.shape[0])
-        .map((col) => df.col(col).numsNoNA.map((v) => [df.columns[col]!, v]))
+        .map(col => df.col(col).numsNoNA.map(v => [df.columns[col]!, v]))
         .flat()
 
       boxDf = new DataFrame({ data, columns: ['Category', 'Datum'] })
@@ -114,7 +104,7 @@ export function BoxPlotDialog({
       if (data.hueCol !== '<none>') {
         hueCol = data.hueCol
         if (findCol(df, hueCol) !== -1) {
-          hueOrder = uniqueInOrder(df.col(hueCol).strs).map((v) => cleanHue(v))
+          hueOrder = uniqueInOrder(df.col(hueCol).strs).map(v => cleanHue(v))
         }
       } else {
         hueCol = xCol
@@ -125,7 +115,7 @@ export function BoxPlotDialog({
     }
 
     const singlePlotDisplayOptions = Object.fromEntries(
-      xOrder.map((x) => [
+      xOrder.map(x => [
         x,
         Object.fromEntries(
           hueOrder.map((hue, huei) => {
@@ -143,11 +133,11 @@ export function BoxPlotDialog({
                 },
                 violin: {
                   stroke: { ...DEFAULT_STROKE_PROPS, color },
-                  fill: { ...DEFAULT_FILL_PROPS, color },
+                  fill: { ...DEFAULT_COLOR_PROPS, color },
                 },
                 swarm: {
                   stroke: { ...DEFAULT_STROKE_PROPS, color },
-                  fill: { ...DEFAULT_FILL_PROPS, color },
+                  fill: { ...DEFAULT_COLOR_PROPS, color },
                 },
               },
             ]
@@ -198,7 +188,7 @@ export function BoxPlotDialog({
     <OKCancelDialog
       open={open}
       title="Box Plot"
-      onResponse={(r) => {
+      onResponse={r => {
         if (r === TEXT_OK) {
           btnRef.current?.click()
         } else {

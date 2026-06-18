@@ -1,10 +1,10 @@
-// 'use client'
+'use client'
 
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 
 import { signinStateAtom } from '@/lib/edb/signin/edb-signin'
 import { CoreProviders } from '@/providers/core-providers'
-import { useAuth } from '@clerk/clerk-react'
+import { useAuth } from '@clerk/react'
 import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { BaseSignInCallbackPage } from '../../signin-callback-page'

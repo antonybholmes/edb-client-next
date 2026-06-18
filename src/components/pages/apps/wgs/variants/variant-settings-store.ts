@@ -1,8 +1,10 @@
 import {
-  DEFAULT_FILL_PROPS,
+  DEFAULT_COLOR_PROPS,
   DEFAULT_STROKE_PROPS,
-  type IColorProps,
+  DEFAULT_TEXT_PROPS,
+  type IPaintProps,
   type IStrokeProps,
+  type ITextProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
 import type { IDBEntity } from '@/interfaces/db-entity'
@@ -18,12 +20,13 @@ import {
 import {
   parseGenomicLocation,
   type IGenomicLocation,
-} from '@/lib/genomic/genomic'
+} from '@/lib/genomic/genomic-location'
+
 import { makeUuid } from '@/lib/id'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:wgs:variants:v8`
+const SETTINGS_KEY = `${config.appId}:app:wgs:variants:v12`
 
 export type PredefinedCMAP = 'coo' | 'lymphgen' | 'snv' | 'variant'
 
@@ -94,12 +97,10 @@ export const DEFAULT_MOTIF_PATTERNS: IMotifPattern[] = [
 ]
 
 export interface IPileupProps {
-  assembly: string
-
   dna: {
-    show: boolean
+    text: ITextProps
     index: {
-      show: boolean
+      text: ITextProps
     }
     border: IStrokeProps
     motifs: {
@@ -128,7 +129,7 @@ export interface IPileupProps {
     plot: {
       height: number
       line: IStrokeProps
-      fill: IColorProps
+      fill: IPaintProps
     }
   }
   chrPrefix: {
@@ -274,12 +275,16 @@ const DEFAULT_HEATMAPS: Record<PredefinedCMAP, ICMAP> = {
 }
 
 export const DEFAULT_PILEUP_PROPS: IPileupProps = {
-  assembly: 'hg19',
-
   dna: {
-    show: true,
+    text: {
+      ...DEFAULT_TEXT_PROPS,
+      font: { ...DEFAULT_TEXT_PROPS.font, fontSize: 16 },
+    },
     index: {
-      show: true,
+      text: {
+        ...DEFAULT_TEXT_PROPS,
+        font: { ...DEFAULT_TEXT_PROPS.font, fontSize: 9 },
+      },
     },
     border: { ...DEFAULT_STROKE_PROPS },
     motifs: {
@@ -310,10 +315,10 @@ export const DEFAULT_PILEUP_PROPS: IPileupProps = {
       height: 200,
       line: {
         ...DEFAULT_STROKE_PROPS,
-        color: COLOR_CORNFLOWER_BLUE,
+        value: COLOR_CORNFLOWER_BLUE,
         width: 1.5,
       },
-      fill: { ...DEFAULT_FILL_PROPS, color: COLOR_CORNFLOWER_BLUE },
+      fill: { ...DEFAULT_COLOR_PROPS, value: COLOR_CORNFLOWER_BLUE },
     },
   },
   scale: 1,

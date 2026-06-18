@@ -1,13 +1,13 @@
 import { LabelContainer } from '@/components/shadcn/ui/themed/v2/label'
 import { TEXT_OK } from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
-import { type GenLoc } from '@/lib/genomic/genomic'
+import { OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
+import { locStr, type IGenomicLocation } from '@/lib/genomic/genomic'
 import { useState } from 'react'
 import { LocationAutocomplete } from '../location-autocomplete'
 
 export interface IProps {
   index: number
-  location: GenLoc
+  location: IGenomicLocation
   callback?: (index: number, location: string) => void
   onCancel: () => void
 }
@@ -18,7 +18,8 @@ export function LocationDialog({
   callback,
   onCancel,
 }: IProps) {
-  const [text, setText] = useState(location.loc)
+  const [text, setText] = useState(locStr(location))
+
   return (
     <OKCancelDialog
       //buttons={[TEXT_OK]}

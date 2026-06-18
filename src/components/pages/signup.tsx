@@ -123,7 +123,7 @@ export function SignUpPage({ allowPassword = false }: ISignupProps) {
                 {allowPassword && (
                   <Switch
                     checked={settings.passwordless}
-                    onCheckedChange={(state) => {
+                    onCheckedChange={state => {
                       updateSettings({ passwordless: state })
                     }}
                   >

@@ -7,7 +7,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { useEffect, useState, type ComponentProps, type ReactNode } from 'react'
 import { FileMenu } from './file-menu'
 
-import { NO_MODULE_INFO, type IModuleInfo } from '@/lib/module-info'
+import { type IAppInfo } from '@/lib/app-info'
 
 import type { IChildrenProps } from '@/interfaces/children-props'
 import type { TabsProps } from '@radix-ui/react-tabs'
@@ -19,6 +19,9 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   MenuSeparator,
 } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -30,8 +33,8 @@ import { Button } from '@/themed/v2/button'
 import { produce } from 'immer'
 
 import { useEdbSettings } from '@/lib/edb/edb-settings'
-import { SidebarCloseIcon } from '../icons/side-bar-close-icon'
-import { SidebarOpenIcon } from '../icons/side-bar-open-icon'
+
+import { SidebarCloseIcon, SidebarOpenIcon } from 'lucide-react'
 import { BaseCol } from '../layout/base-col'
 import { IconButton } from '../shadcn/ui/themed/icon-button'
 import { TabContentPanels } from '../shadcn/ui/themed/v2/tabs'
@@ -68,15 +71,28 @@ export function ShowOptionsButton({
 
 export function ShowOptionsMenu({
   ref,
+  name = 'Sidebar',
   show = false,
   onClick = () => {},
-}: ComponentProps<typeof DropdownMenuItem> & { show?: boolean }) {
+}: ComponentProps<typeof DropdownMenuItem> & {
+  show?: boolean
+  name?: string
+}) {
   //const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <DropdownMenuItem ref={ref} onClick={onClick}>
-      {show ? <SidebarCloseIcon stroke="" /> : <SidebarOpenIcon stroke="" />}
-      <span>{show ? 'Hide Pane' : 'Show Pane'}</span>
+      {show ? (
+        <SidebarCloseIcon
+          strokeWidth={1.5}
+          size={20}
+          className="-scale-x-100"
+        />
+      ) : (
+        <SidebarOpenIcon strokeWidth={1.5} size={20} className="-scale-x-100" />
+      )}
+
+      <span>{show ? `Hide ${name}` : `Show ${name}`}</span>
     </DropdownMenuItem>
   )
 }
@@ -153,9 +169,10 @@ interface IToolbarMenuProps extends IOpenChange, TabsProps {
   groupId: string
   tabs: ITab[]
   fileMenuTabs?: ITab[]
-  info?: IModuleInfo
+  info?: IAppInfo
   leftShortcuts?: ReactNode
   rightShortcuts?: ReactNode
+  fileMenuShortcuts?: ReactNode
   extMenus?: Record<string, ReactNode>
 }
 
@@ -165,19 +182,14 @@ export function ToolbarMenu({
   open = false,
   onOpenChange = () => {},
   fileMenuTabs = [],
-  info = NO_MODULE_INFO,
+  fileMenuShortcuts,
   leftShortcuts,
   rightShortcuts,
   extMenus = {},
   className,
 }: IToolbarMenuProps) {
-  //const { setTab } = useTabs(groupId)
-  //const { selectedTab, tabs, onTabChange } = useContext(TabContext)!
-
-  //const [_selectedTab, _setSelectedTab] = useState<ISelectedTab | null>(null)
-
   return (
-    <VCenterRow className={cn('shrink-0 text-xs px-2 gap-x-1', className)}>
+    <VCenterRow className={cn('shrink-0 text-xs px-1.5 gap-x-1', className)}>
       {leftShortcuts && (
         <VCenterRow id="toolbar-left-shortcuts">{leftShortcuts}</VCenterRow>
       )}
@@ -187,7 +199,6 @@ export function ToolbarMenu({
           open={open}
           onOpenChange={onOpenChange}
           tabs={fileMenuTabs}
-          info={info}
           extMenus={extMenus}
         />
 
@@ -200,6 +211,15 @@ export function ToolbarMenu({
           <TabIndicatorFollowH groupId={groupId} />
           <TabIndicatorSelectedH groupId={groupId} />
         </UnderlineTabs>
+
+        {fileMenuShortcuts && (
+          <VCenterRow
+            id="file-menu-shortcuts"
+            className="hidden sm:flex gap-x-1"
+          >
+            {fileMenuShortcuts}
+          </VCenterRow>
+        )}
       </VCenterRow>
 
       {rightShortcuts && (
@@ -228,21 +248,25 @@ export function ToolbarTabContentPanel({ groupId, tabs }: IToolbarPanelProps) {
   //const { tabIndex } = useTabs(groupId)
 
   return (
-    <BaseRow
-      //value={selectedTab.tab.id}
+    <TabContentPanels
       id="ribbon"
-      className="gap-x-1 group"
       data-ribbon={settings.toolbars.ribbon.style}
-    >
-      {/* {selectedTab.content} */}
-
-      {/* <TabContentForceMountPanels tabId={tabId} tabs={tabs} /> */}
-      <TabContentPanels groupId={groupId} tabs={tabs} />
-
-      {/* <TabContentPanel tabIndex={tabIndex ?? 0} tabs={tabs} /> */}
-    </BaseRow>
+      groupId={groupId}
+      tabs={tabs}
+      className="group"
+      contentCls="gap-x-1"
+    />
   )
 }
+
+const TAB_CONTENT_PANEL_CLS = cn(
+  'text-xs bg-background shadow-md border border-border/25 rounded-lg px-1.5 py-1 grow gap-x-2 justify-between'
+  //'group-data-[ribbon=single]:min-h-11',
+  //'group-data-[ribbon=single]:group-data-[show-labels=show]:min-h-15',
+  //'group-data-[ribbon=classic]:min-h-18',
+  //'group-data-[ribbon=classic]:group-data-[show-labels=auto]:min-h-24',
+  //'group-data-[ribbon=classic]:group-data-[show-labels=show]:min-h-24'
+)
 
 export function ToolbarPanel({
   groupId,
@@ -262,8 +286,12 @@ export function ToolbarPanel({
   }, []) //tabs.map(tab => tab.id).join('|'), setTab])
 
   return (
-    <BaseRow className="items-end gap-x-2 px-2">
-      <VCenterRow className="text-xs bg-background shadow-md rounded-xl p-1.25 grow gap-x-2 justify-between items-end">
+    <BaseRow
+      className="group items-end gap-x-2 px-1.5"
+      data-ribbon={settings.toolbars.ribbon.style}
+      data-show-labels={settings.toolbars.groups.labels.mode}
+    >
+      <BaseRow className={TAB_CONTENT_PANEL_CLS}>
         <ToolbarTabContentPanel groupId={groupId} tabs={tabs} />
 
         {/* <TabContentForceMountPanels
@@ -272,73 +300,106 @@ export function ToolbarPanel({
           className="flex-row gap-x-1 group"
         /> */}
 
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <ToolbarIconButton title="More Options" size="icon-xs">
-                <ChevronRightIcon className="rotate-90" />
-              </ToolbarIconButton>
-            }
-          />
-          <DropdownMenuContent align="end">
-            <DropdownMenuGroup>
-              <DropdownMenuLabel>Ribbon Style</DropdownMenuLabel>
-              <DropdownMenuCheckboxItem
-                checked={settings.toolbars.ribbon.style === 'classic'}
-                onCheckedChange={() => {
-                  const newSettings = produce(settings, draft => {
-                    draft.toolbars.ribbon.style = 'classic'
-                  })
+        <BaseCol className="justify-end">
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <ToolbarIconButton title="More Options" size="icon-sm">
+                  <ChevronRightIcon className="rotate-90" />
+                </ToolbarIconButton>
+              }
+            />
+            <DropdownMenuContent align="end">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>Ribbon Style</DropdownMenuLabel>
+                <DropdownMenuCheckboxItem
+                  checked={settings.toolbars.ribbon.style === 'classic'}
+                  onCheckedChange={() => {
+                    const newSettings = produce(settings, draft => {
+                      draft.toolbars.ribbon.style = 'classic'
+                    })
 
-                  updateSettings(newSettings)
-                }}
-              >
-                Classic
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem
-                checked={settings.toolbars.ribbon.style === 'single'}
-                onCheckedChange={() => {
-                  const newSettings = produce(settings, draft => {
-                    draft.toolbars.ribbon.style = 'single'
-                  })
+                    updateSettings(newSettings)
+                  }}
+                >
+                  Classic
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  checked={settings.toolbars.ribbon.style === 'single'}
+                  onCheckedChange={() => {
+                    const newSettings = produce(settings, draft => {
+                      draft.toolbars.ribbon.style = 'single'
+                    })
 
-                  updateSettings(newSettings)
-                }}
-              >
-                Single Line
-              </DropdownMenuCheckboxItem>
-
+                    updateSettings(newSettings)
+                  }}
+                >
+                  Single Line
+                </DropdownMenuCheckboxItem>
+              </DropdownMenuGroup>
               <MenuSeparator />
 
-              <DropdownMenuCheckboxItem
-                checked={settings.toolbars.groups.labels.show}
-                onCheckedChange={v => {
-                  const newSettings = produce(settings, draft => {
-                    draft.toolbars.groups.labels.show = v
-                  })
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuContent side="right">
+                    <DropdownMenuCheckboxItem
+                      checked={settings.toolbars.groups.labels.mode === 'auto'}
+                      onCheckedChange={() => {
+                        const newSettings = produce(settings, draft => {
+                          draft.toolbars.groups.labels.mode = 'auto'
+                        })
 
-                  updateSettings(newSettings)
-                }}
-              >
-                {/* <LabelIcon stroke="" /> */}
-                Show Labels
-              </DropdownMenuCheckboxItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </VCenterRow>
+                        updateSettings(newSettings)
+                      }}
+                    >
+                      Auto
+                    </DropdownMenuCheckboxItem>
+
+                    <DropdownMenuCheckboxItem
+                      checked={settings.toolbars.groups.labels.mode === 'show'}
+                      onCheckedChange={() => {
+                        const newSettings = produce(settings, draft => {
+                          draft.toolbars.groups.labels.mode = 'show'
+                        })
+
+                        updateSettings(newSettings)
+                      }}
+                    >
+                      Show
+                    </DropdownMenuCheckboxItem>
+
+                    <DropdownMenuCheckboxItem
+                      checked={settings.toolbars.groups.labels.mode === 'hide'}
+                      onCheckedChange={() => {
+                        const newSettings = produce(settings, draft => {
+                          draft.toolbars.groups.labels.mode = 'hide'
+                        })
+
+                        updateSettings(newSettings)
+                      }}
+                    >
+                      Hide
+                    </DropdownMenuCheckboxItem>
+                  </DropdownMenuContent>
+                </DropdownMenuPortal>
+              </DropdownMenuSub>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </BaseCol>
+      </BaseRow>
       {tabShortcutMenu && (
         <DropdownMenu open={showDropdown} onOpenChange={setShowDropdown}>
           <DropdownMenuTrigger
             render={
               <IconButton
                 variant="flat"
-                size="icon-xs"
+                size="icon-sm"
                 // ripple={false}
                 title="Show Pane"
                 checked={showDropdown}
               >
-                <ChevronRightIcon className="rotate-90" w="w-4" />
+                <ChevronRightIcon className="rotate-90" size="w-4" />
               </IconButton>
             }
           />
@@ -355,41 +416,5 @@ export function ToolbarPanel({
 export interface IToolbarProps extends ITabProvider, IChildrenProps {}
 
 export function Toolbar({ className, children }: IDivProps) {
-  //const [selectedTab, setSelectedTab] = useState<ITab | null>(null)
-  //const [focus, setFocus] = useState(false)
-  //const [hover, setHover] = useState(false)
-  //const initial = useRef(true)
-
-  //const lineRef1 = useRef<SVGLineElement>(null)
-
-  // const buttonsRef = useRef<HTMLButtonElement[]>([])
-  // const itemsRef = useRef<HTMLSpanElement[]>([])
-  // const tabListRef = useRef<HTMLDivElement>(null)
-
-  // const [tabPos, setTabPos] = useState<ITabPos>({
-  //   x: 0,
-  //   width: 0,
-  //   //transform: `scaleX(1)`,
-  // })
-
-  // useEffect(() => {
-  //   const selectedTab = getTabFromValue(value, tabs)
-
-  //   if (selectedTab) {
-  //     setSelectedTab(selectedTab.tab)
-  //   }
-  // }, [value, tabs])
-
-  // function _onValueChange(value: string) {
-  //   const selectedTab = getTabFromValue(value, tabs)
-  //   //const [name, index] = parseTabId(value)
-
-  //   //onValueChange?.(name)
-  //   if (selectedTab) {
-  //     onTabChange?.(selectedTab)
-  //     setSelectedTab(selectedTab.tab)
-  //   }
-  // }
-
   return <BaseCol className={cn('gap-y-1', className)}>{children}</BaseCol>
 }

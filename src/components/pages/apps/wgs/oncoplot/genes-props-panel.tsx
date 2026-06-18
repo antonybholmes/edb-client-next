@@ -1,16 +1,12 @@
 import { VCenterRow } from '@/layout/v-center-row'
 
-import { useState } from 'react'
-
 import { PropsPanel } from '@/components/props-panel'
-import { NO_DIALOG, TEXT_NAME, TEXT_OK, type IDialogParams } from '@/consts'
+import { TEXT_NAME, TEXT_OK } from '@/consts'
 import { PlusIcon } from '@/icons/plus-icon'
-import { SaveIcon } from '@/icons/save-icon'
 import { downloadJson } from '@/lib/download-utils'
-import { makeUuid, randId } from '@/lib/id'
+import { makeUuid } from '@/lib/id'
 import { Input } from '@/themed/v2/input'
 
-import { OpenIcon } from '@/components/icons/open-icon'
 import { SortableItem } from '@/components/sortable-item'
 import type { IDivProps } from '@/interfaces/div-props'
 import { IconButton } from '@/themed/icon-button'
@@ -30,19 +26,21 @@ import {
 } from '@dnd-kit/sortable'
 import { produce } from 'immer'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { DownloadIcon } from '@/components/icons/download-icon'
+import { TrashIcon } from '@/components/icons/trash-icon'
+import { UploadIcon } from '@/components/icons/upload-icon'
+import {
+  onTextFileChange,
+  type ITextFileOpen,
+} from '@/components/pages/open-files'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import { OKCancelDialog } from '@/components/dialog/ok-cancel-dialog'
-import { TrashIcon } from '@/components/icons/trash-icon'
-import {
-  onTextFileChange,
-  OpenFiles,
-  type ITextFileOpen,
-} from '@/components/pages/open-files'
+} from '@/components/plot/color-picker-popover'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { randomHexColor } from '@/lib/color/color'
 import { cn } from '@/lib/shadcn-utils'
@@ -55,11 +53,11 @@ interface IGeneElemProps {
   gene: IOncoGene
 
   setDelGene?: (gene: IOncoGene) => void
-  setShowDialog: (params: IDialogParams) => void
 }
 
-function SortableGeneElem({ gene, setShowDialog }: IGeneElemProps) {
+function SortableGeneElem({ gene }: IGeneElemProps) {
   const { genes, setGenes } = useOncoplot()
+  const { open: openDialog } = useDialogs()
 
   return (
     <SortableItem
@@ -74,15 +72,22 @@ function SortableGeneElem({ gene, setShowDialog }: IGeneElemProps) {
             )}
             onClick={() => {
               //setGenes(genes.filter(m => m.id !== gene.id))
-
-              setShowDialog({
-                id: 'delete',
-                params: { gene },
+              console.log('Opening delete dialog for gene', gene)
+              openDialog({
+                type: 'warning',
+                payload: {
+                  content: `Are you sure you want to delete ${gene.name}?`,
+                  callback: response => {
+                    if (response === TEXT_OK) {
+                      setGenes(genes.filter(m => m.id !== gene.id))
+                    }
+                  },
+                },
               })
             }}
             title="Delete gene"
           >
-            <TrashIcon stroke="" w="w-4" />
+            <TrashIcon stroke="" />
           </button>
         </VCenterRow>
       }
@@ -103,17 +108,21 @@ function SortableGeneElem({ gene, setShowDialog }: IGeneElemProps) {
 
       <ColorPickerButton
         className={SIMPLE_COLOR_EXT_CLS}
-        color={gene.color}
-        onColorChange={color => {
-          setGenes(
-            produce(genes, draft => {
-              const mut = draft.find(m => m.id === gene.id)
-              if (mut) {
-                mut.color = color
-              }
-            })
-          )
-        }}
+        colors={[
+          {
+            color: gene.color,
+            onColorChange: color => {
+              setGenes(
+                produce(genes, draft => {
+                  const g = draft.find(m => m.id === gene.id)
+                  if (g) {
+                    g.color = color
+                  }
+                })
+              )
+            },
+          },
+        ]}
       />
 
       <Input
@@ -137,9 +146,10 @@ function SortableGeneElem({ gene, setShowDialog }: IGeneElemProps) {
 
 export function GenePropsPanel({ ref }: IDivProps) {
   //const [delFeature, setDelFeature] = useState<IProteinFeature | null>(null)
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
   const { genes, setGenes } = useOncoplot()
+
+  const { open: openDialog } = useDialogs()
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -164,143 +174,89 @@ export function GenePropsPanel({ ref }: IDivProps) {
   }
 
   return (
-    <>
-      {showDialog.id.startsWith('open') && (
-        <OpenFiles
-          //onOpenChange={() => setOpen("")}
-          onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
-              openFeatureFiles(files)
-            })
-          }
-          fileTypes={['json']}
-        />
-      )}
+    <PropsPanel ref={ref} className="gap-y-2 pr-1">
+      <VCenterRow className="justify-between gap-x-2">
+        <VCenterRow>
+          <IconButton
+            onClick={() => {
+              openDialog({
+                type: 'open',
+                payload: {
+                  fileTypes: ['json'],
+                  callback: (message, files) =>
+                    onTextFileChange(message, files, files => {
+                      openFeatureFiles(files)
+                    }),
+                },
+              })
+            }}
+            title="Open mutations"
+          >
+            <UploadIcon />
+          </IconButton>
 
-      {/* {showDialog.id.includes('reset') && (
-        <OKCancelDialog
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              //onGroupsChange?.([])
-              setGenes([...DEFAULT_MUTATIONS])
-            }
+          <IconButton
+            // ripple={false}
+            onClick={() => downloadJson(genes, 'genes.json')}
+            title="Save genes"
+          >
+            <DownloadIcon />
+          </IconButton>
 
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        >
-          Are you sure you want to reset all mutations?
-        </OKCancelDialog>
-      )} */}
+          <ToolbarSeparator />
 
-      {showDialog.id.includes('delete') && (
-        <OKCancelDialog
-          //open={delFeature !== null}
-          showClose={true}
-          onResponse={r => {
-            if (r === TEXT_OK) {
+          <IconButton
+            // ripple={false}
+            onClick={() =>
               setGenes(
-                genes.filter(
-                  gene => gene.id !== (showDialog.params!.gene! as IOncoGene).id
-                )
+                produce(genes, draft => {
+                  draft.push({
+                    id: makeUuid(),
+                    name: 'New gene',
+                    color: randomHexColor(),
+                    show: true,
+                  })
+                })
               )
             }
-            setShowDialog({ ...NO_DIALOG })
+            title="Add gene"
+          >
+            <PlusIcon fill="stroke-foreground" />
+          </IconButton>
+        </VCenterRow>
+      </VCenterRow>
+
+      <MenuSeparator />
+
+      <VScrollPanel>
+        <DndContext
+          sensors={sensors}
+          modifiers={[restrictToVerticalAxis]}
+          //onDragStart={event => setActiveId(event.active.id as string)}
+          onDragEnd={event => {
+            const { active, over } = event
+
+            if (over && active.id !== over?.id) {
+              const oldIndex = genes.findIndex(t => t.id === active.id)
+              const newIndex = genes.findIndex(t => t.id === over.id)
+              const newOrder = arrayMove(genes, oldIndex, newIndex)
+
+              setGenes(newOrder)
+            }
           }}
         >
-          {`Are you sure you want to delete ${
-            (showDialog.params!.gene! as IOncoGene).name
-          }?`}
-        </OKCancelDialog>
-      )}
-
-      <PropsPanel ref={ref} className="gap-y-2 pr-1">
-        <VCenterRow className="justify-between gap-x-2">
-          <VCenterRow>
-            <IconButton
-              onClick={() => setShowDialog({ id: randId('open'), params: {} })}
-              title="Open mutations"
-            >
-              <OpenIcon />
-            </IconButton>
-
-            <IconButton
-              // ripple={false}
-              onClick={() => downloadJson(genes, 'genes.json')}
-              title="Save genes"
-            >
-              <SaveIcon />
-            </IconButton>
-
-            <IconButton
-              // ripple={false}
-              onClick={() =>
-                setGenes(
-                  produce(genes, draft => {
-                    draft.push({
-                      id: makeUuid(),
-                      name: 'New gene',
-                      color: randomHexColor(),
-                      show: true,
-                    })
-                  })
-                )
-              }
-              title="Add gene"
-            >
-              <PlusIcon fill="stroke-foreground" />
-            </IconButton>
-          </VCenterRow>
-
-          {/* <Button
-            variant="link"
-            size="sm"
-            // ripple={false}
-            onClick={() => setShowDialog({ id: randId('reset'), params: {} })}
-            //aria-label="Clear All"
-            title="Reset genes"
+          <SortableContext
+            items={genes.map(gene => gene.id)}
+            strategy={verticalListSortingStrategy}
           >
-            {TEXT_RESET}
-          </Button> */}
-        </VCenterRow>
-
-        <MenuSeparator />
-
-        <VScrollPanel>
-          <DndContext
-            sensors={sensors}
-            modifiers={[restrictToVerticalAxis]}
-            //onDragStart={event => setActiveId(event.active.id as string)}
-            onDragEnd={event => {
-              const { active, over } = event
-
-              if (over && active.id !== over?.id) {
-                const oldIndex = genes.findIndex(t => t.id === active.id)
-                const newIndex = genes.findIndex(t => t.id === over.id)
-                const newOrder = arrayMove(genes, oldIndex, newIndex)
-
-                setGenes(newOrder)
-              }
-            }}
-          >
-            <SortableContext
-              items={genes.map(gene => gene.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <ul className="flex flex-col  ">
-                {genes.map(gene => {
-                  return (
-                    <SortableGeneElem
-                      key={gene.id}
-                      gene={gene}
-                      setShowDialog={setShowDialog}
-                    />
-                  )
-                })}
-              </ul>
-            </SortableContext>
-          </DndContext>
-        </VScrollPanel>
-      </PropsPanel>
-    </>
+            <ul className="flex flex-col  ">
+              {genes.map(gene => {
+                return <SortableGeneElem key={gene.id} gene={gene} />
+              })}
+            </ul>
+          </SortableContext>
+        </DndContext>
+      </VScrollPanel>
+    </PropsPanel>
   )
 }

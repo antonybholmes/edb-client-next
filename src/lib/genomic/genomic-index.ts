@@ -1,9 +1,10 @@
 import { range } from '@/lib/math/range'
-import { GenLoc, sortLocations, type IGenomicLocation } from './genomic'
+import { GenLoc, sortLocations } from './genomic'
+import type { IGenomicLocation } from './genomic-location'
 
 const BIN_SIZE = 16384
 
-export class GenomicFeatureIndex<T extends GenLoc | IGenomicLocation> {
+export class GenomicFeatureIndex<T extends IGenomicLocation | GenLoc> {
   private _index: Map<string, Map<number, T[]>>
   private _name: string
 
@@ -37,7 +38,7 @@ export class GenomicFeatureIndex<T extends GenLoc | IGenomicLocation> {
    * Get features in closest bins
    * @param location
    */
-  getFeatures(location: GenLoc | IGenomicLocation): T[] {
+  getFeatures(location: IGenomicLocation | GenLoc): T[] {
     if (!this._index.has(location.chr)) {
       return []
     }
@@ -56,7 +57,7 @@ export class GenomicFeatureIndex<T extends GenLoc | IGenomicLocation> {
     return ret
   }
 
-  getOverlappingFeatures(location: GenLoc | IGenomicLocation): T[] {
+  getOverlappingFeatures(location: IGenomicLocation | GenLoc): T[] {
     return this.getFeatures(location).filter(
       f => f.start <= location.end && f.end >= location.start
     )

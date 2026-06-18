@@ -1,13 +1,34 @@
-import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
+import {
+  ICON_CLS,
+  VECTOR_ICON_CLS,
+  type IIconProps,
+} from '@/interfaces/icon-props'
 import { cn } from '@/lib/shadcn-utils'
+import { cva, type VariantProps } from 'class-variance-authority'
 import { Play } from 'lucide-react'
 
+export const variants = cva(VECTOR_ICON_CLS, {
+  variants: {
+    variant: {
+      none: '',
+      default: 'stroke-foreground',
+      colorful: 'fill-emerald-500',
+      'app-theme': 'fill-app-theme/50 stroke-app-theme/90',
+    },
+  },
+  defaultVariants: {
+    variant: 'app-theme',
+  },
+})
+
 export function PlayIcon({
-  w = 'w-5 h-5',
-  stroke = 'stroke-foreground',
+  size = 20,
+  stroke,
+  fill,
   className,
-  strokeWidth = 1.5,
-}: IIconProps) {
+  strokeWidth = 1,
+  variant,
+}: IIconProps & VariantProps<typeof variants>) {
   return (
     // <svg
     //   xmlns="http://www.w3.org/2000/svg"
@@ -23,8 +44,11 @@ export function PlayIcon({
     // </svg>
 
     <Play
-      className={cn(ICON_CLS, stroke, w, className)}
-      stroke=""
+      className={variants({
+        variant,
+        className: cn(ICON_CLS, stroke, fill, className),
+      })}
+      size={size}
       strokeWidth={strokeWidth}
     />
   )

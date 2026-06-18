@@ -3,7 +3,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { WholeWord } from 'lucide-react'
 
 export function LabelIcon({
-  w = 'w-4 h-4',
+  size = 'w-4 h-4',
   stroke = 'stroke-foreground',
   className,
   strokeWidth = 2,
@@ -13,7 +13,7 @@ export function LabelIcon({
     // <svg
     //   viewBox="0 0 16 16"
     //   xmlns="http://www.w3.org/2000/svg"
-    //   className={cn(ICON_CLS, w, stroke, fill, className)}
+    //   className={cn(ICON_CLS, size, stroke, fill, className)}
     //   style={{ ...style, strokeLinecap: 'round', strokeLinejoin: 'round' }}
     //   data-checked={selected}
     // >
@@ -21,7 +21,7 @@ export function LabelIcon({
     // </svg>
 
     <WholeWord
-      className={cn(ICON_CLS, stroke, w, className)}
+      className={cn(ICON_CLS, stroke, size, className)}
       strokeWidth={strokeWidth}
     />
   )

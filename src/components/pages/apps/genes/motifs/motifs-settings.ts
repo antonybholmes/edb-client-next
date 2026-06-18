@@ -1,12 +1,15 @@
 import { config } from '@/config'
-import MODULE_INFO from './module.json'
+import APP_INFO from './manifest.json'
 
 import {
-  DEFAULT_FONT_PROPS,
-  type IFontProps,
+  DEFAULT_BOLD_FONT_PROPS,
+  DEFAULT_BOLD_TEXT_PROPS,
+  DEFAULT_COLOR_PROPS,
+  DEFAULT_TEXT_PROPS,
   type IMarginProps,
+  type ITextProps,
 } from '@/components/plot/svg-props'
-import { getModuleName } from '@/lib/module-info'
+import { getAppName } from '@/lib/app-info'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
@@ -15,7 +18,7 @@ export type DNABase = 'a' | 'c' | 'g' | 't'
 
 export const LW = 45
 
-const SETTINGS_KEY = `${config.appId}:app:${getModuleName(MODULE_INFO.name)}:settings:v34`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v36`
 
 export type MotifSortBy = 'dataset,motif-id' | 'motif-id'
 
@@ -33,10 +36,16 @@ export interface IMotifSettings {
   mode: Mode
   zoom: number
   margin: IMarginProps
-  baseColors: Record<string, IFontProps>
-  titleOffset: number
+  bases: Record<string, ITextProps>
+  title: { text: ITextProps; offset: number }
   gap: number
   revComp: boolean
+  axes: {
+    show: boolean
+    ticks: { show: boolean }
+    title: ITextProps
+    labels: ITextProps
+  }
 }
 
 export const DEFAULT_SETTINGS: IMotifSettings = {
@@ -48,15 +57,50 @@ export const DEFAULT_SETTINGS: IMotifSettings = {
   mode: 'bits',
   gap: 80,
   margin: { top: 100, right: 100, bottom: 100, left: 100 },
-  baseColors: {
-    a: { ...DEFAULT_FONT_PROPS, color: '#3cb371', opacity: 1 },
-    c: { ...DEFAULT_FONT_PROPS, color: '#4169e1', opacity: 1 },
-    g: { ...DEFAULT_FONT_PROPS, color: '#FFA500', opacity: 1 },
-    t: { ...DEFAULT_FONT_PROPS, color: '#ff0000', opacity: 1 },
+  bases: {
+    a: {
+      ...DEFAULT_TEXT_PROPS,
+      font: {
+        ...DEFAULT_BOLD_FONT_PROPS,
+        fill: { ...DEFAULT_COLOR_PROPS, value: '#3cb371' },
+      },
+    },
+    c: {
+      ...DEFAULT_TEXT_PROPS,
+      font: {
+        ...DEFAULT_BOLD_FONT_PROPS,
+        fill: { ...DEFAULT_COLOR_PROPS, value: '#4169e1' },
+      },
+    },
+    g: {
+      ...DEFAULT_TEXT_PROPS,
+      font: {
+        ...DEFAULT_BOLD_FONT_PROPS,
+        fill: { ...DEFAULT_COLOR_PROPS, value: '#FFA500' },
+      },
+    },
+    t: {
+      ...DEFAULT_TEXT_PROPS,
+      font: {
+        ...DEFAULT_BOLD_FONT_PROPS,
+        fill: { ...DEFAULT_COLOR_PROPS, value: '#ff0000' },
+      },
+    },
   },
-  titleOffset: 10,
+  title: {
+    text: {
+      ...DEFAULT_BOLD_TEXT_PROPS,
+      font: { ...DEFAULT_BOLD_FONT_PROPS, fontSize: 16 },
+    },
+    offset: 10,
+  },
   revComp: false,
-
+  axes: {
+    show: true,
+    ticks: { show: true },
+    title: { ...DEFAULT_BOLD_TEXT_PROPS },
+    labels: { ...DEFAULT_TEXT_PROPS },
+  },
   sort: { by: 'dataset,motif-id', asc: true },
 }
 

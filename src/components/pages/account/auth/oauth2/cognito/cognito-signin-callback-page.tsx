@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { CoreProviders } from '@/providers/core-providers'
 

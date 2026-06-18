@@ -1,0 +1,10 @@
+{
+  "name": "DNA",
+  "description": "Get DNA sequences",
+  "color": "#FF4500",
+  "version": "20.4.6",
+  "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
+  "modified": "2026-06-14T02:38:47.878Z",
+  "hash": "088ff296280e02ab82f3541d0c101b4bce01af4c678470bc0db862b20871d226",
+  "build": 784
+}

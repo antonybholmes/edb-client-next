@@ -1,11 +1,11 @@
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import type { IColorProps, IStrokeProps } from '@/components/plot/svg-props'
+} from '@/components/plot/color-picker-popover'
+import type { IPaintProps, IStrokeProps } from '@/components/plot/svg-props'
 import { PropsPanel } from '@/components/props-panel'
 import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { PropRow } from '@/dialog/prop-row'
+import { PropRow } from '@/dialogs/prop-row'
 import { VerticalGripIcon } from '@/icons/vertical-grip-icon'
 import { VCenterRow } from '@/layout/v-center-row'
 import { capitalCase } from '@/lib/text/capital-case'
@@ -32,7 +32,7 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
   const singlePlotDisplayOptions = plot.singlePlotDisplayOptions as {
     [key: string]: {
       [key: string]: {
-        [key: string]: { stroke: IStrokeProps; fill: IColorProps }
+        [key: string]: { stroke: IStrokeProps; fill: IPaintProps }
       }
     }
   }
@@ -112,19 +112,19 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
         {typeOrder.map(t => (
           <AccordionItem value={t} key={t}>
             <AccordionTrigger>{capitalCase(t)}</AccordionTrigger>
-            <AccordionContent variant="sidebar">
+            <AccordionContent>
               <SubAccordion value={[]}>
                 {xOrder.map(x => (
                   <AccordionItem value={x} key={x}>
                     <AccordionTrigger>{x}</AccordionTrigger>
-                    <AccordionContent variant="sidebar">
+                    <AccordionContent>
                       <SubAccordion value={[]}>
                         {hueOrder.map(hue => (
                           <AccordionItem value={hue} key={hue}>
                             <AccordionTrigger>
                               {capitalCase(hue)}
                             </AccordionTrigger>
-                            <AccordionContent variant="sidebar">
+                            <AccordionContent>
                               <PropRow title="Stroke">
                                 {/* <NumericalInput
                                   value={
@@ -166,54 +166,47 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
 
                                 <ColorPickerButton
                                   align="end"
-                                  color={
-                                    singlePlotDisplayOptions[x]![hue]![t]!
-                                      .stroke.color
-                                  }
-                                  onColorChange={color =>
-                                    // updateProps(
-                                    //   plotAddr,
-                                    //   'singlePlotDisplayOptions',
-                                    //   produce(
-                                    //     singlePlotDisplayOptions,
-                                    //     draft => {
-                                    //       draft[x]![hue]![t]!.stroke.color =
-                                    //         color
-                                    //     }
-                                    //   )
-                                    // )
+                                  colors={[
+                                    {
+                                      color:
+                                        singlePlotDisplayOptions[x]![hue]![t]!
+                                          .stroke.value,
 
-                                    updatePlot(
-                                      produce(plot, draft => {
-                                        ;(
-                                          draft.singlePlotDisplayOptions as any
-                                        )[x]![hue]![t]!.stroke.color = color
-                                      })
-                                    )
-                                  }
+                                      onColorChange: color =>
+                                        updatePlot(
+                                          produce(plot, draft => {
+                                            ;(
+                                              draft.singlePlotDisplayOptions as any
+                                            )[x]![hue]![t]!.stroke.value = color
+                                          })
+                                        ),
+                                    },
+                                  ]}
                                   className={SIMPLE_COLOR_EXT_CLS}
-                                  title="Change border color"
+                                  title="Border Color"
                                 />
                               </PropRow>
 
                               <PropRow title="Fill">
                                 <ColorPickerButton
                                   align="end"
-                                  color={
-                                    singlePlotDisplayOptions[x]![hue]![t]!.fill
-                                      .color
-                                  }
-                                  onColorChange={color =>
-                                    updatePlot(
-                                      produce(plot, draft => {
-                                        ;(
-                                          draft.singlePlotDisplayOptions as any
-                                        )[x]![hue]![t]!.fill.color = color
-                                      })
-                                    )
-                                  }
+                                  colors={[
+                                    {
+                                      color:
+                                        singlePlotDisplayOptions[x]![hue]![t]!
+                                          .fill.value,
+                                      onColorChange: color =>
+                                        updatePlot(
+                                          produce(plot, draft => {
+                                            ;(
+                                              draft.singlePlotDisplayOptions as any
+                                            )[x]![hue]![t]!.fill.color = color
+                                          })
+                                        ),
+                                    },
+                                  ]}
                                   className={SIMPLE_COLOR_EXT_CLS}
-                                  title="Change border color"
+                                  title="Border Color"
                                 />
                               </PropRow>
                             </AccordionContent>

@@ -1,4 +1,5 @@
-import { useEffect, useRef, type RefObject } from 'react'
+import type { IDim } from '@/interfaces/dim'
+import { useEffect, useRef, useState, type RefObject } from 'react'
 
 export function useResizeObserver<T extends HTMLElement>(
   refs: RefObject<T | null> | RefObject<T | null>[],
@@ -37,4 +38,23 @@ export function useResizeObserver<T extends HTMLElement>(
       observer.disconnect()
     }
   }, [refs])
+}
+
+export function useSizeObserver<T extends HTMLElement>(
+  refs: RefObject<T | null> | RefObject<T | null>[],
+  callback: ((size: IDim) => void) | undefined = undefined
+): IDim {
+  const [size, setSize] = useState<IDim>({ w: 0, h: 0 })
+
+  useResizeObserver(refs, entry => {
+    const size = {
+      w: entry.contentRect.width,
+      h: entry.contentRect.height,
+    }
+    setSize(size)
+
+    callback?.(size)
+  })
+
+  return size
 }

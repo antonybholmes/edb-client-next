@@ -2,21 +2,27 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:annotations:settings:v6`
+const SETTINGS_KEY = `${config.appId}:app:annotations:settings:v10`
 
 export interface IAnnotationOptions {
   genome: string
+  closest: number
+  tss: { prom5p: number; prom3p: number }
+  useOfficialGenes: boolean
 }
 
 export const DEFAULT_ANNOTATION_OPTIONS: IAnnotationOptions = {
   genome: 'grch38',
+  closest: 5,
+  tss: { prom5p: 2000, prom3p: 1000 },
+  useOfficialGenes: true,
 }
 
 export interface IAnnotationStore extends IAnnotationOptions {
   updateSettings: (settings: IAnnotationOptions) => void
 }
 
-export const useHubsStore = create<IAnnotationStore>()(
+export const useAnnotationStore = create<IAnnotationStore>()(
   persist(
     set => ({
       ...DEFAULT_ANNOTATION_OPTIONS,
@@ -53,8 +59,8 @@ export function useAnnotations(): {
   updateSettings: (settings: IAnnotationOptions) => void
   resetSettings: () => void
 } {
-  const settings = useHubsStore(state => state)
-  const updateSettings = useHubsStore(state => state.updateSettings)
+  const settings = useAnnotationStore(state => state)
+  const updateSettings = useAnnotationStore(state => state.updateSettings)
   const resetSettings = () => updateSettings({ ...DEFAULT_ANNOTATION_OPTIONS })
 
   return { settings, updateSettings, resetSettings }

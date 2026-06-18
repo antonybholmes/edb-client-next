@@ -1,7 +1,7 @@
 import { CoreProviders } from '@/providers/core-providers'
 
 import { APP_ACCOUNT_AUTH_SIGNED_OUT_URL } from '@/lib/edb/edb'
-import { useClerk } from '@clerk/clerk-react'
+import { useClerk } from '@clerk/react'
 import { useEffect, useState } from 'react'
 
 import {

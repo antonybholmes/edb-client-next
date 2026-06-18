@@ -23,17 +23,17 @@ import { getColIdxFromGroup } from '@/lib/dataframe/dataframe-utils'
 import { range } from '@/lib/math/range'
 import { useCallback, useMemo, useRef, useState } from 'react'
 
-import { BaseSvg } from '@/components/base-svg'
+import { SvgBase } from '@/components/plot/svg-base'
 import type { IMarginProps } from '@/components/plot/svg-props'
 import { useMergeRefs } from '@/hooks/merge-refs'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { createPortal } from 'react-dom'
-import { usePlot, type HeatMapPlot } from '../../history/history-store'
 import { ActionListSvg } from './action-list-svg'
+import { useHeatmapContext } from './heatmap-provider'
 import { DotLegend, LegendBottomSvg, LegendRightSvg } from './legend-svg'
-import { TitleSvg } from './title-svg'
+import { SvgTitle } from './title-svg'
 
 export interface ITooltip {
   pos: IPos
@@ -41,15 +41,14 @@ export interface ITooltip {
 }
 
 interface IProps extends ISVGProps {
-  plotAddr: string
   //cf: IClusterFrame
   maxRows?: number
   maxCols?: number
   //plotAddr: IHistItemAddr
 }
 
-export function HeatMapSvg({ ref, plotAddr }: IProps) {
-  const plot = usePlot(plotAddr)! as HeatMapPlot
+export function HeatMapSvg({ ref }: IProps) {
+  const { plot } = useHeatmapContext()
 
   //console.log(plot)
 
@@ -279,14 +278,13 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
     const svg = (
       <>
         {displayOptions.title.show && displayOptions.title.text && (
-          <TitleSvg
-            title={displayOptions.title.text}
+          <SvgTitle
             font={displayOptions.title}
-            pos={{
-              x: margin.left + innerWidth / 2,
-              y: displayOptions.title.offset,
-            }}
-          />
+            x={margin.left + innerWidth / 2}
+            y={displayOptions.title.offset}
+          >
+            {displayOptions.title.text}
+          </SvgTitle>
         )}
 
         {cf.colTree &&
@@ -437,6 +435,7 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
               cmap={COLOR_MAPS[displayOptions.cmap]!}
               size={displayOptions.colorbar.size}
               stroke={displayOptions.colorbar.stroke}
+              font={displayOptions.legend}
               pos={{
                 x:
                   margin.left +
@@ -463,6 +462,7 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
               cmap={COLOR_MAPS[displayOptions.cmap]!}
               size={displayOptions.colorbar.size}
               stroke={displayOptions.colorbar.stroke}
+              font={displayOptions.legend}
               pos={{
                 x: margin.left,
                 y:
@@ -487,11 +487,7 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
           groups.length > 0 &&
           displayOptions.legend.show &&
           displayOptions.legend.position.includes('right') && (
-            <LegendRightSvg
-              pos={legendPos}
-              props={displayOptions}
-              groups={groups}
-            />
+            <LegendRightSvg pos={legendPos} groups={groups} />
           )}
 
         {/* Legend on bottom */}
@@ -512,7 +508,6 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
                     ? displayOptions.colLabels.width + displayOptions.padding
                     : 0),
               }}
-              props={displayOptions}
               groups={groups}
             />
           )}
@@ -522,11 +517,7 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
         {displayOptions.mode === 'dot' &&
           displayOptions.legend.position.includes('right') &&
           displayOptions.dot.legend.show && (
-            <DotLegend
-              props={displayOptions}
-              pos={dotLegendPos}
-              groups={groups}
-            />
+            <DotLegend pos={dotLegendPos} groups={groups} />
           )}
 
         {/* Show a list of transforms to create heatmap */}
@@ -611,17 +602,17 @@ export function HeatMapSvg({ ref, plotAddr }: IProps) {
 
   return (
     <>
-      <BaseSvg
+      <SvgBase
         ref={setRefs}
         scale={displayOptions.zoom}
         width={width}
         height={height}
         //shapeRendering={SVG_CRISP_EDGES}
         //onMouseMove={onMouseMove}
-        className="absolute"
+        //className="absolute"
       >
         {svg}
-      </BaseSvg>
+      </SvgBase>
 
       {displayOptions.tooltip.show && toolTipInfo && (
         <>

@@ -1,11 +1,11 @@
-import type { IDialogParams } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
 import type { NullStr } from '@/lib/text/text'
+import { Settings2 } from 'lucide-react'
+import { useSeqBrowserDialogs } from '../seq-browser-dialogs'
 import type { IScaleTrack, ITrackGroup } from '../tracks-provider'
 import { BaseTrackItem } from './base-track-item'
 import {
   DeleteTrackGroupButton,
-  EditTrackButton,
   TRACK_ITEM_BUTTONS_CLS,
 } from './seq-track-item'
 
@@ -13,16 +13,12 @@ export function ScaleTrackItem({
   group,
   active,
   multiselect,
-  setShowDialog,
 }: {
   group: ITrackGroup
   active: NullStr
   multiselect: boolean
-  setShowDialog: (params: IDialogParams) => void
 }) {
-  //const [drag, setDrag] = useState(false)
-
-  //useMouseUpListener(() => setDrag(false))
+  const { open: openDialog } = useSeqBrowserDialogs()
 
   const track = group.tracks[0]! as IScaleTrack
 
@@ -42,12 +38,22 @@ export function ScaleTrackItem({
       </span>
 
       <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
-        <EditTrackButton
-          cmd="edit-scale"
-          group={group}
-          track={track}
-          setShowDialog={setShowDialog}
-        />
+        <button
+          title={`Edit ${track.name}`}
+          className="opacity-50 hover:opacity-100 trans-opacity"
+          onClick={() => {
+            console.log('edit scale track', track)
+            openDialog({
+              type: 'edit-scale',
+              payload: {
+                group,
+                track,
+              },
+            })
+          }}
+        >
+          <Settings2 size={20} strokeWidth={1.5} />
+        </button>
       </VCenterRow>
     </BaseTrackItem>
   )

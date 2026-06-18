@@ -1,21 +1,21 @@
-import { fill } from '../../lib/fill'
-import { abs } from '../../lib/math/abs'
-import { sub } from '../../lib/math/add'
-import { argsort } from '../../lib/math/argsort'
-import { cumsum } from '../../lib/math/cumsum'
+import { vfill } from '../fill'
+import { abs } from '../math/abs'
+import { sub } from '../math/add'
+import { argsort } from '../math/argsort'
+import { cumsum } from '../math/cumsum'
 
-import { mean } from '../../lib/math/mean'
-import { div, mult } from '../../lib/math/multiply'
-import { ones } from '../../lib/math/ones'
-import { pow } from '../../lib/math/power'
-import { range } from '../../lib/math/range'
-import { zeros } from '../../lib/math/zeros'
+import { mean } from '../math/mean'
+import { div, mult } from '../math/multiply'
+import { ones } from '../math/ones'
+import { pow } from '../math/power'
 import { permutation } from '../math/random'
+import { range } from '../math/range'
 import { where } from '../math/where'
+import { zeros } from '../math/zeros'
 
 import {
   EMPTY_GENE_SET,
-  type IGeneset,
+  type IGeneSet,
   type IRankedGene,
   type IRankedGenes,
 } from './geneset'
@@ -61,38 +61,35 @@ export class ExtGSEA {
   private _scoreMisses: number[]
   private _esAllGenes: number[]
   private _nes: number
-  private _gs1: IGeneset
-  private _gs2: IGeneset
+  private _gs1: IGeneSet
+  private _gs2: IGeneSet
   //private _rankedScores: number[]
 
-  constructor(
-    rankedGenes: IRankedGenes,
-
-    permutations = 1000,
-    w = 1
-  ) {
+  constructor(rankedGenes: IRankedGenes, permutations = 1000, w = 1) {
     this._w = w
     this._np = permutations
     this._rankedGenes = rankedGenes
 
+    console.log('rankedGenes', rankedGenes)
+
     const l = rankedGenes.genes.length
 
     // the negative versions are for the second gene set
-    const names = rankedGenes.genes.map(g => g.name)
-    const scores = rankedGenes.genes.map(g => g.score)
+    const names = rankedGenes.genes.map((g) => g.name)
+    const scores = rankedGenes.genes.map((g) => g.score)
 
     const rk = [...names, ...names] //np.concatenate((ranked_gene_list, ranked_gene_list), axis=0)
-    const rsc = [...scores, ...scores.map(x => -x)] //np.concatenate((ranked_scores, -ranked_scores), axis=0)
+    const rsc = [...scores, ...scores.map((x) => -x)] //np.concatenate((ranked_scores, -ranked_scores), axis=0)
     //descending order
     const ix = argsort(rsc).reverse()
 
-    const pn = [...ones(l), ...fill(-1, l)] //np.concatenate((np.ones(l), -np.ones(l)), axis=0)
+    const pn = [...ones(l), ...vfill(-1, l)] //np.concatenate((np.ones(l), -np.ones(l)), axis=0)
 
     this._gs1 = { ...EMPTY_GENE_SET }
     this._gs2 = { ...EMPTY_GENE_SET }
-    this._rkc = ix.map(i => rk[i]!)
-    this._rsc = ix.map(i => rsc[i]!)
-    this._pn = ix.map(i => pn[i]!)
+    this._rkc = ix.map((i) => rk[i]!)
+    this._rsc = ix.map((i) => rsc[i]!)
+    this._pn = ix.map((i) => pn[i]!)
 
     // Defaults if nothing found
     this._es = -1
@@ -120,11 +117,11 @@ export class ExtGSEA {
     return this._rankedGenes
   }
 
-  get gs1(): IGeneset {
+  get gs1(): IGeneSet {
     return this._gs1
   }
 
-  get gs2(): IGeneset {
+  get gs2(): IGeneSet {
     return this._gs2
   }
 
@@ -136,7 +133,7 @@ export class ExtGSEA {
     return this._pvalue
   }
 
-  runExtGsea(gs1: IGeneset, gs2: IGeneset): IExtGseaResult {
+  runExtGsea(gs1: IGeneSet, gs2: IGeneSet): IExtGseaResult {
     this._gs1 = gs1
     this._gs2 = gs2
 
@@ -147,6 +144,9 @@ export class ExtGSEA {
 
     const ids1 = new Set(gs1.genes)
     const ids2 = new Set(gs2.genes)
+
+    console.log('ids1', ids1)
+    console.log('ids2', ids2)
 
     for (const i of range(l)) {
       if (
@@ -164,7 +164,7 @@ export class ExtGSEA {
       this._scoreHits[this._scoreHits.length - 1]!
     )
 
-    this._scoreMisses = cumsum(isInGeneset.map(v => 1 - v))
+    this._scoreMisses = cumsum(isInGeneset.map((v) => 1 - v))
 
     this._scoreMisses = div(
       this._scoreMisses,
@@ -180,7 +180,7 @@ export class ExtGSEA {
     const isEnriched = zeros(l)
 
     if (this._es < 0) {
-      const ixpk = where(this._esAllGenes, x => x === minEs)[0]!
+      const ixpk = where(this._esAllGenes, (x) => x === minEs)[0]!
 
       for (const i of range(ixpk, isEnriched.length)) {
         isEnriched[i] = 1
@@ -190,7 +190,8 @@ export class ExtGSEA {
         .filter((_, gi) => isEnriched[gi] === 1 && isInGeneset[gi] === 1)
         .reverse()
     } else {
-      const ixpk = where(this._esAllGenes, x => x === maxEs)[0]!
+      console.log('es > 0', this._esAllGenes)
+      const ixpk = where(this._esAllGenes, (x) => x === maxEs)[0]!
 
       for (const i of range(ixpk + 1)) {
         isEnriched[i] = 1
@@ -206,12 +207,12 @@ export class ExtGSEA {
       const n = isInGeneset.length
 
       for (const i of range(this._np)) {
-        const bgIsInGeneset = permutation(n).map(i => isInGeneset[i]!)
+        const bgIsInGeneset = permutation(n).map((i) => isInGeneset[i]!)
 
         let bgHit = cumsum(pow(abs(mult(this._rsc, bgIsInGeneset)), this._w))
         bgHit = div(bgHit, bgHit[bgHit.length - 1]!)
 
-        let bgMiss = cumsum(bgIsInGeneset.map(v => 1 - v))
+        let bgMiss = cumsum(bgIsInGeneset.map((v) => 1 - v))
         bgMiss = div(bgMiss, bgMiss[bgMiss.length - 1]!)
 
         const bgAll = sub(bgHit, bgMiss)
@@ -219,11 +220,11 @@ export class ExtGSEA {
       }
 
       if (this._es < 0) {
-        this._pvalue = bgEs.filter(v => v <= this._es).length / this._np
-        this._nes = this._es / Math.abs(mean(bgEs.filter(es => es < 0)))
+        this._pvalue = bgEs.filter((v) => v <= this._es).length / this._np
+        this._nes = this._es / Math.abs(mean(bgEs.filter((es) => es < 0)))
       } else {
-        this._pvalue = bgEs.filter(v => v >= this._es).length / this._np
-        this._nes = this._es / Math.abs(mean(bgEs.filter(es => es > 0)))
+        this._pvalue = bgEs.filter((v) => v >= this._es).length / this._np
+        this._nes = this._es / Math.abs(mean(bgEs.filter((es) => es > 0)))
       }
     }
 
@@ -235,7 +236,7 @@ export class ExtGSEA {
     }
   }
 
-  runGSEA(gs1: IGeneset): IGseaResult {
+  runGSEA(gs1: IGeneSet): IGseaResult {
     const l = this._rankedGenes.genes.length
 
     const isInGeneset = zeros(l)
@@ -248,12 +249,12 @@ export class ExtGSEA {
       }
     }
 
-    const scores = this._rankedGenes.genes.map(g => g.score)
+    const scores = this._rankedGenes.genes.map((g) => g.score)
 
     // Compute ES
     let scoreHits = cumsum(pow(abs(mult(scores, isInGeneset)), this._w))
     scoreHits = div(scoreHits, scoreHits[scoreHits.length - 1]!)
-    let scoreMisses = cumsum(isInGeneset.map(v => 1 - v))
+    let scoreMisses = cumsum(isInGeneset.map((v) => 1 - v))
     scoreMisses = div(scoreMisses, scoreMisses[scoreMisses.length - 1]!)
 
     const esAll = sub(scoreHits, scoreMisses)
@@ -266,7 +267,7 @@ export class ExtGSEA {
 
     if (es < 0) {
       // where does the leading edge start
-      const ixpk = where(esAll, x => x === minEs)[0]!
+      const ixpk = where(esAll, (x) => x === minEs)[0]!
 
       for (const i of range(ixpk, leadingEdgeIndices.length)) {
         leadingEdgeIndices[i] = 1
@@ -279,7 +280,7 @@ export class ExtGSEA {
         .sort((r1, r2) => r1.rank - r2.rank)
         .reverse()
     } else {
-      const ixpk = where(esAll, x => x === maxEs)[0]!
+      const ixpk = where(esAll, (x) => x === maxEs)[0]!
 
       for (const i of range(ixpk + 1)) {
         leadingEdgeIndices[i] = 1

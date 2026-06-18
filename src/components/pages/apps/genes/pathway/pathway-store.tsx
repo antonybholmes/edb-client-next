@@ -5,64 +5,82 @@ import { useEffect } from 'react'
 import { create } from 'zustand'
 
 import { TIME_5_MINUTES_MS } from '@/consts'
+import type { IDBEntity } from '@/interfaces/db-entity'
 import { API_PATHWAY_DATASETS_URL } from '@/lib/edb/edb'
 import { GENES_IN_UNIVERSE } from '@/lib/gene/pathway/pathway'
 
-export interface IDatasetInfo {
-  organization: string
-  name: string
-  pathways: number
+export interface ICollectionInfo extends IDBEntity {
+  genesets: number
 }
 
-export interface IOrgInfo {
-  name: string
-  datasets: IDatasetInfo[]
+export interface IDatsetInfo extends IDBEntity {
+  collections: ICollectionInfo[]
 }
 
 export interface IPathwayStore {
-  datasets: IOrgInfo[]
-  datasetsForUse: Record<string, boolean>
-  selectAllDatasets: boolean
+  datasets: IDatsetInfo[]
+  collectionsInUse: Record<string, boolean>
+
   genesInUniverse: number
-  setDatasets: (datasets: IOrgInfo[]) => void
-  setDatasetsForUse: (datasetsForUse: Record<string, boolean>) => void
-  setSelectAllDatasets: (selectAllDatasets: boolean) => void
+  setDatasets: (datasets: IDatsetInfo[]) => void
+  setCollectionsInUse: (collectionsInUse: Record<string, boolean>) => void
+  setSelectAllCollections: (selectAll: boolean) => void
   setGenesInUniverse: (genesInUniverse: number) => void
 }
 
+// Used to store local collections of genesets that are not in the database
+export const LOCAL_DATASET: IDatsetInfo = {
+  id: '019e6b18-c3e2-7e24-ab08-f7a34991eaef',
+  name: 'Local',
+  collections: [],
+}
+
 export const usePathwayStore = create<IPathwayStore>()(set => ({
-  datasets: [],
-  datasetsForUse: {},
-  selectAllDatasets: true,
+  datasets: [{ ...LOCAL_DATASET }],
+  collectionsInUse: {},
+
   genesInUniverse: GENES_IN_UNIVERSE,
-  setDatasets: (datasets: IOrgInfo[]) => set({ datasets }),
-  setDatasetsForUse: (datasetsForUse: Record<string, boolean>) =>
-    set({ datasetsForUse }),
-  setSelectAllDatasets: (selectAllDatasets: boolean) =>
-    set({ selectAllDatasets }),
+  setDatasets: (datasets: IDatsetInfo[]) =>
+    set(state => ({ ...state, datasets: [state.datasets[0]!, ...datasets] })),
+  setCollectionsInUse: (collectionsInUse: Record<string, boolean>) =>
+    set({ collectionsInUse }),
+  setSelectAllCollections: (selectAll: boolean) => {
+    set(state => ({
+      collectionsInUse: Object.fromEntries(
+        state.datasets
+          .map(dataset => dataset.collections)
+          .flat()
+          .map(ds => [ds.id, selectAll])
+      ),
+    }))
+  },
   setGenesInUniverse: (genesInUniverse: number) => set({ genesInUniverse }),
 }))
 
-export function usePathways(): IPathwayStore {
+export function usePathways(opts: { selectAll?: boolean } = {}): IPathwayStore {
+  const { selectAll = true } = opts
+
   const datasets = usePathwayStore(state => state.datasets)
-  const datasetsForUse = usePathwayStore(state => state.datasetsForUse)
-  const selectAllDatasets = usePathwayStore(state => state.selectAllDatasets)
+  const collectionsInUse = usePathwayStore(state => state.collectionsInUse)
+
   const genesInUniverse = usePathwayStore(state => state.genesInUniverse)
 
   const setDatasets = usePathwayStore(state => state.setDatasets)
-  const setDatasetsForUse = usePathwayStore(state => state.setDatasetsForUse)
-  const setSelectAllDatasets = usePathwayStore(
-    state => state.setSelectAllDatasets
+  const setCollectionsInUse = usePathwayStore(
+    state => state.setCollectionsInUse
+  )
+  const setSelectAllCollections = usePathwayStore(
+    state => state.setSelectAllCollections
   )
   const setGenesInUniverse = usePathwayStore(state => state.setGenesInUniverse)
 
-  const { data: datasetsData } = useQuery({
+  const { data: datasetsDb } = useQuery({
     queryKey: ['datasets'],
     staleTime: TIME_5_MINUTES_MS, // 5 minutes
     queryFn: async () => {
       //const token = await loadAccessToken()
 
-      const res = await httpFetch.getJson<{ data: IOrgInfo[] }>(
+      const res = await httpFetch.getJson<{ data: IDatsetInfo[] }>(
         API_PATHWAY_DATASETS_URL
       )
 
@@ -71,31 +89,30 @@ export function usePathways(): IPathwayStore {
   })
 
   useEffect(() => {
-    if (datasetsData) {
-      setDatasets(datasetsData)
-      setDatasetsForUse(
+    if (datasetsDb) {
+      setDatasets(datasetsDb)
+      setCollectionsInUse(
         Object.fromEntries(
-          datasetsData
-            .map(org => org.datasets)
+          datasetsDb
+            .map(dataset => dataset.collections)
             .flat()
-            .map(ds => [makeDatasetId(ds), true])
+            .map(ds => [ds.id, selectAll])
         )
       )
     }
-  }, [datasetsData])
+  }, [datasetsDb])
 
   return {
     datasets,
-    datasetsForUse,
-    selectAllDatasets,
+    collectionsInUse,
     genesInUniverse,
     setDatasets,
-    setDatasetsForUse,
-    setSelectAllDatasets,
+    setCollectionsInUse,
+    setSelectAllCollections,
     setGenesInUniverse,
   }
 }
 
-export function makeDatasetId(dataset: IDatasetInfo) {
-  return `${dataset.organization}:${dataset.name}`
-}
+// export function makeDatasetId(dataset: ICollectionInfo) {
+//   return `${dataset.organization}:${dataset.name}`
+// }

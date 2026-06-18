@@ -1,12 +1,15 @@
 import { config } from '@/config'
 import { Metadata } from 'next'
-import { IModuleInfo } from './module-info'
+import { IAppInfo } from './app-info'
 
 export function makeMetaData(
   title: string,
   description: string = ''
 ): Metadata {
-  const fullTitle = `${title} | ${config.appName}`
+  const fullTitle = `${title} | ${config.name}`
+
+  console.log(config)
+
   return {
     metadataBase: new URL(config.url),
     title: fullTitle,
@@ -18,8 +21,8 @@ export function makeMetaData(
   }
 }
 
-export function makeMetaDataFromModule(module: IModuleInfo): Metadata {
-  const fullTitle = `${module.name} | ${config.appName}`
+export function makeMetaDataFromModule(module: IAppInfo): Metadata {
+  const fullTitle = `${module.name} | ${config.name}`
   return {
     metadataBase: new URL(config.url),
     title: fullTitle,

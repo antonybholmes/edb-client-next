@@ -1,5 +1,5 @@
 import { Axis, YAxis } from '@/components/plot/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis-svg'
+import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
 import {
@@ -11,14 +11,15 @@ import {
   type RefObject,
 } from 'react'
 
-import { BaseSvg } from '@/components/base-svg'
 import { BaseCol } from '@/components/layout/base-col'
 import type { IBlock } from '@/components/plot/heatmap/heatmap-svg-props'
+import { SvgBase } from '@/components/plot/svg-base'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import type { IRect } from '@/interfaces/rect'
 import type { ISVGProps } from '@/interfaces/svg-props'
-import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
+import { COLOR_WHITE } from '@/lib/color/color'
 
+import { SvgText } from '@/components/plot/svg-text'
 import { Label } from '@/components/shadcn/ui/themed/v2/label'
 import { gsap } from 'gsap'
 import { useLollipopSettings, type IAAColor } from './lollipop-settings-store'
@@ -61,7 +62,7 @@ export function yTickLinesSvg(
               y1={y}
               y2={y}
               strokeDasharray={displayProps.axes.y.ticks.lines.dash}
-              stroke={displayProps.axes.y.ticks.lines.color}
+              stroke={displayProps.axes.y.ticks.lines.value}
               strokeOpacity={displayProps.axes.y.ticks.lines.opacity}
               strokeWidth={
                 displayProps.axes.y.ticks.lines.show
@@ -224,7 +225,7 @@ function ColGraphsSvg({
                 displayProps.variants.colorMap[mutType!] ??
                 DEFAULT_MUTATION_COLOR
               }
-              stroke={displayProps.variants.plot.border.color}
+              stroke={displayProps.variants.plot.border.value}
               strokeOpacity={displayProps.variants.plot.border.opacity}
               opacity={displayProps.variants.plot.opacity}
               strokeWidth={
@@ -247,8 +248,8 @@ export function seqSvg(
   protein: IProtein,
   aaColor: IAAColor,
   blockSize: IBlock
-  //spacing: IPos
 ) {
+  const { displayProps } = useLollipopSettings()
   return (
     <g id="aa-sequence">
       {protein.sequence.split('').map((aa, aai) => {
@@ -280,16 +281,15 @@ export function seqSvg(
               </rect>
             )}
 
-            <text
+            <SvgText
               fill={textColor}
               dominantBaseline="central"
-              fontSize="small"
               textAnchor="middle"
-              fontWeight="bold"
+              font={displayProps.seq.text}
             >
               {aa}
               <title>{`Position ${aai + 1}: ${aa}`}</title>
-            </text>
+            </SvgText>
           </g>
         )
       })}
@@ -322,7 +322,7 @@ export function labelsSvg(
                 }
               />
 
-              <text
+              <SvgText
                 //y={-displayProps.labels.height}
                 transform="rotate(270)"
                 //text-anchor="middle"
@@ -333,7 +333,7 @@ export function labelsSvg(
                 fill={label.color}
               >
                 {label.name}
-              </text>
+              </SvgText>
             </g>
           )
         })}
@@ -359,8 +359,8 @@ export function featuresSvg(
           y={3}
           width={xax.length}
           height={displayProps.features.height - 6}
-          fill={displayProps.features.background.color}
-          stroke={displayProps.features.background.border.color}
+          fill={displayProps.features.background.value}
+          stroke={displayProps.features.background.border.value}
           strokeOpacity={displayProps.features.background.border.opacity}
           opacity={displayProps.features.background.opacity}
           strokeWidth={
@@ -384,49 +384,45 @@ export function featuresSvg(
             <rect
               width={width}
               height={displayProps.features.height}
-              fill={feature.fill.show ? feature.fill.color : 'none'}
+              fill={feature.fill.show ? feature.fill.value : 'none'}
               opacity={feature.fill.opacity}
-              stroke={feature.border.show ? feature.border.color : 'none'} //displayProps.features.border.color}
+              stroke={feature.border.show ? feature.border.value : 'none'} //displayProps.features.border.value}
               strokeOpacity={feature.border.opacity}
               strokeWidth={feature.border.show ? feature.border.width : 0}
               rx={displayProps.features.rounding}
             />
             {feature.text.show && feature.name && (
-              <text
+              <SvgText
                 x={0.5 * width}
                 y={0.5 * displayProps.features.height}
                 dominantBaseline="central"
-                fontSize="smaller"
                 textAnchor="middle"
-                fontWeight="bold"
-                fill={feature.text.color}
+                font={feature.text}
               >
                 {feature.name}
-              </text>
+              </SvgText>
             )}
 
             {displayProps.features.positions.show && (
               <g
                 transform={`translate(${0.5 * blockSize.w}, ${displayProps.features.height + displayProps.axisOffset})`}
               >
-                <text
+                <SvgText
                   dominantBaseline="central"
-                  fontSize="smaller"
                   textAnchor="middle"
-                  //fontWeight="bold"
+                  font={displayProps.axes.labels}
                 >
                   {feature.start}
-                </text>
+                </SvgText>
 
-                <text
+                <SvgText
                   x={width - blockSize.w}
                   dominantBaseline="central"
-                  fontSize="smaller"
                   textAnchor="middle"
-                  //fontWeight="bold"
+                  font={displayProps.axes.labels}
                 >
                   {feature.end}
-                </text>
+                </SvgText>
               </g>
             )}
           </g>
@@ -445,14 +441,13 @@ export function legendSvg(
     <>
       <g id="mutations-legend">
         <g transform={`translate(60, 0)`}>
-          <text
+          <SvgText
             dominantBaseline="central"
-            fontSize="smaller"
             textAnchor="end"
-            fontWeight="bold"
+            font={displayProps.axes.title}
           >
             {displayProps.legend.variants.label}
-          </text>
+          </SvgText>
         </g>
 
         <g transform={`translate(${0.5 * blockSize.w + 80}, 0)`}>
@@ -468,7 +463,7 @@ export function legendSvg(
                 <circle
                   r={0.5 * blockSize.w}
                   fill={fill}
-                  stroke={displayProps.variants.plot.border.color}
+                  stroke={displayProps.variants.plot.border.value}
                   strokeOpacity={displayProps.variants.plot.border.opacity}
                   opacity={displayProps.variants.plot.opacity}
                   strokeWidth={
@@ -478,15 +473,14 @@ export function legendSvg(
                   }
                 />
 
-                <text
+                <SvgText
                   x={blockSize.w}
-                  fill={COLOR_BLACK}
                   dominantBaseline="central"
-                  fontSize="smaller"
+                  font={displayProps.axes.labels}
                   //textAnchor="end"
                 >
                   {name}
-                </text>
+                </SvgText>
               </g>
             )
           })}
@@ -506,14 +500,9 @@ export function legendSvg(
         </g>
 
         <g transform={`translate(80, 0)`}>
-          <text
-            fill={COLOR_BLACK}
-            dominantBaseline="central"
-            fontSize="smaller"
-            //textAnchor="end"
-          >
+          <SvgText dominantBaseline="central" font={displayProps.axes.labels}>
             {datasets.join(', ')}
-          </text>
+          </SvgText>
         </g>
       </g>
     </>
@@ -528,14 +517,9 @@ export function vLegendSvg(
   return (
     <>
       <g id="mutations-legend">
-        <text
-          dominantBaseline="central"
-          fontSize="smaller"
-          //textAnchor="end"
-          fontWeight="bold"
-        >
+        <SvgText dominantBaseline="central" font={displayProps.axes.title}>
           {displayProps.legend.variants.label}
-        </text>
+        </SvgText>
 
         <g transform={`translate(${blockSize.w / 2}, 20)`}>
           {displayProps.variants.types.map((name, ni) => {
@@ -550,7 +534,7 @@ export function vLegendSvg(
                 <circle
                   r={0.5 * blockSize.w}
                   fill={fill}
-                  stroke={displayProps.variants.plot.border.color}
+                  stroke={displayProps.variants.plot.border.value}
                   strokeOpacity={displayProps.variants.plot.border.opacity}
                   opacity={displayProps.variants.plot.opacity}
                   strokeWidth={
@@ -560,16 +544,15 @@ export function vLegendSvg(
                   }
                 />
 
-                <text
+                <SvgText
                   x={blockSize.w}
                   y={-1}
-                  fill={COLOR_BLACK}
                   dominantBaseline="central"
-                  fontSize="smaller"
+                  font={displayProps.axes.labels}
                   //textAnchor="end"
                 >
                   {name}
-                </text>
+                </SvgText>
               </g>
             )
           })}
@@ -593,14 +576,12 @@ export function vLegendSvg(
                 key={di}
                 transform={`translate(0, ${di * (blockSize.w + displayProps.legend.gap)})`}
               >
-                <text
-                  fill={COLOR_BLACK}
+                <SvgText
                   dominantBaseline="central"
-                  fontSize="smaller"
-                  //textAnchor="end"
+                  font={displayProps.axes.labels}
                 >
                   {dataset}
-                </text>
+                </SvgText>
               </g>
             )
           })}
@@ -841,27 +822,6 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
     //console.log(flattenedPileups)
 
     return flattenedPileups
-
-    // pileups
-    //   .flatMap((pileup, pi) => {
-    //     return pileup.map((entry, ei) => {
-    //       const x = xax.domainToRange(pi + 1) // (pi + 1) * blockSize.w
-    //       const y1 = yax.domainToRange(ei + 1)
-
-    //       const rect = {
-    //         x: x,
-    //         y: y1 - y0,
-    //         width: blockSize.w,
-    //         height: blockSize.h,
-    //       }
-
-    //       // add y to id
-    //       // return { id: `${entry}:${ei}`, rect }
-
-    //       return { id: `${entry}|x:${pi + 1}, y:${ei + 1}`, rect }
-    //     })
-    //   })
-    // return flattenedPileups
   }, [
     aaStats,
     datasetsForUse,
@@ -892,29 +852,28 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
 
   return (
     <>
-      <BaseSvg
+      <SvgBase
         ref={innerRef}
         width={width}
         height={height}
         scale={displayProps.scale}
         //shapeRendering={SVG_CRISP_EDGES}
         //onMouseMove={onMouseMove}
-        className="absolute"
+        //className="absolute"
       >
-        {displayProps.title.show && (
+        {displayProps.title.text.show && (
           <g
             id="title"
             transform={`translate(${marginLeft + gridWidth / 2}, ${top - displayProps.title.offset})`}
           >
-            <text
-              fill={COLOR_BLACK}
+            <SvgText
               dominantBaseline="central"
               //fontSize="large"
               textAnchor="middle"
-              fontWeight="bold"
+              font={displayProps.title.text}
             >
               {protein?.name ?? ''}
-            </text>
+            </SvgText>
           </g>
         )}
 
@@ -935,6 +894,8 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
             <AxisLeftSvg
               ax={yax}
               strokeWidth={displayProps.variants.plot.border.width}
+              font={displayProps.axes.labels}
+              labelFont={displayProps.axes.title}
             />
           </g>
         )}
@@ -994,6 +955,8 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
             <AxisBottomSvg
               ax={xax}
               strokeWidth={displayProps.variants.plot.border.width}
+              font={displayProps.axes.labels}
+              labelFont={displayProps.axes.title}
             />
           </g>
         )}
@@ -1011,7 +974,7 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
               <g>{vLegendSvg(datasets, blockSize, displayProps)}</g>
             </g>
           )}
-      </BaseSvg>
+      </SvgBase>
 
       <Tooltip
         ref={tooltipRef}

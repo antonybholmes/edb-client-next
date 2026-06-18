@@ -1,5 +1,6 @@
 import type { IDBEntity } from '@/interfaces/db-entity'
 import type { IMannWhitneyUResult } from '@/lib/math/mann-whitney'
+import type { UndefStr } from '@/lib/text/text'
 
 export type GexType =
   | 'Counts'
@@ -36,20 +37,22 @@ export interface IGexTechnology {
 export interface IGexGene {
   id: string
   geneId: string
-  geneSymbol: string
-  ensembl?: string
-  refseq?: string
-  ncbi?: number
+  symbol: string
+  ensembl: string
+  refseq: string
+  ncbi: number
+  source: string
 }
 
 export interface IGexProbe extends IDBEntity {
-  gene: IGexGene
+  symbol: string // original gene symbol from dataset, may not be standardized
+  gene?: IGexGene // mgi/hgnc standardized gene info
 }
 
 export interface INameValue {
   name: string
   value: string | number
-  color?: string | undefined
+  color?: UndefStr
 }
 
 export interface IGexSample extends IDBEntity {

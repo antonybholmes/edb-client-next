@@ -1,16 +1,12 @@
 import {
   onTextFileChange,
-  OpenFiles,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
-
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
 
 import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { TrashIcon } from '@/icons/trash-icon'
 import { VCenterRow } from '@/layout/v-center-row'
 import { downloadJson } from '@/lib/download-utils'
-import { randId } from '@/lib/id'
 import { useEffect, useState } from 'react'
 
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
@@ -21,9 +17,8 @@ import {
   DRAG_ICON_ANIM_CLS,
   SortableItem,
 } from '@/components/sortable-item'
-import { OpenIcon } from '@/icons/open-icon'
 import { VCenterCol } from '@/layout/v-center-col'
-import { makeNewGeneset, type IGeneset } from '@/lib/gsea/geneset'
+import { makeNewGeneset, type IGeneSet } from '@/lib/gsea/geneset'
 import { range } from '@/lib/math/range'
 import { textToLines } from '@/lib/text/lines'
 import { IconButton } from '@/themed/icon-button'
@@ -37,39 +32,43 @@ import {
 } from '@dnd-kit/sortable'
 import { GenesetDialog } from './geneset-dialog'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { FileDropZonePanel } from '@/components/file-dropzone-panel'
+import { DownloadIcon } from '@/components/icons/download-icon'
+import { UploadIcon } from '@/components/icons/upload-icon'
+import { BaseCol } from '@/components/layout/base-col'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import { FileDropZonePanel } from '@/components/file-dropzone-panel'
-import { BaseCol } from '@/components/layout/base-col'
+} from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
+import { ResizableSidebarHeaderPortal } from '@/components/slide-bar/resizable-sidebar'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { PlusIcon } from '@/icons/plus-icon'
-import { SaveIcon } from '@/icons/save-icon'
 import { StretchRow } from '@/layout/stretch-row'
+import { randomHexColor } from '@/lib/color/color'
 import { cn } from '@/lib/shadcn-utils'
+import type { UndefStr } from '@/lib/text/text'
 import { Settings2 } from 'lucide-react'
 import { useGenesets, useHistory } from '../history/history-store'
-import MODULE_INFO from '../module.json'
 
 function GenesetItem({
   geneset,
   editGeneset,
-  setDelGroup,
 }: {
-  geneset: IGeneset
+  geneset: IGeneSet
   active?: string | null
-  editGeneset: (geneset: IGeneset) => void
-  setDelGroup: (geneset: IGeneset) => void
+  editGeneset: (geneset: IGeneSet) => void
 }) {
-  const { updateGeneset } = useHistory()
-
-  const [color, setColor] = useState(geneset.color)
+  const { removeGenesets, updateGeneset } = useHistory()
+  const { open: openDialog } = useDialogs()
+  const [color, setColor] = useState(geneset.color ?? randomHexColor())
 
   useEffect(() => {
-    setColor(geneset.color)
+    if (geneset.color) {
+      setColor(geneset.color)
+    }
   }, [geneset.color])
 
   return (
@@ -77,22 +76,39 @@ function GenesetItem({
       id={geneset.id}
       extChildren={
         <button
-          onClick={() => setDelGroup(geneset)}
+          onClick={() => {
+            openDialog({
+              type: 'warning',
+              payload: {
+                title: 'Delete Gene Set',
+                content: `Are you sure you want to delete the ${geneset.name} gene set?`,
+                callback: response => {
+                  if (response === TEXT_OK) {
+                    removeGenesets([geneset.id])
+                  }
+                },
+              },
+            })
+          }}
           className={cn(
             DRAG_HANDLE_APPEAR_CLS,
-            'hover:text-red-500 focus-visible:text-red-500 trans-color'
+            'hover:text-destructive focus-visible:text-destructive trans-color'
           )}
           title={`Delete ${geneset.name} gene set`}
           //onMouseEnter={() => setDelHover(true)}
           //onMouseLeave={() => setDelHover(false)}
         >
-          <TrashIcon w="w-4" className={DRAG_ICON_ANIM_CLS} />
+          <TrashIcon className={DRAG_ICON_ANIM_CLS} />
         </button>
       }
     >
       <ColorPickerButton
-        color={color}
-        onColorChange={setColor}
+        colors={[
+          {
+            color,
+            onColorChange: color => setColor(color),
+          },
+        ]}
         onOpenChanged={open => {
           if (!open) {
             updateGeneset({ ...geneset, color })
@@ -134,35 +150,23 @@ function GenesetItem({
 }
 
 export interface IGenesetCallback {
-  title?: string | undefined
-  geneset: IGeneset
-  callback?: (geneset: IGeneset) => void
+  title?: UndefStr
+  geneset: IGeneSet
+  callback?: (geneset: IGeneSet) => void
 }
 
 export function GenesetPropsPanel() {
-  const [open, setOpen] = useState('')
-  const [confirmClear, setConfirmClear] = useState(false)
-  //const [showSaveDialog, setShowSaveDialog] = useState(false)
-  const [delGroup, setDelGroup] = useState<IGeneset | null>(null)
-
   //const [activeId, setActiveId] = useState<string | null>(null)
 
-  const { addGenesets, updateGeneset, removeGenesets, reorderGenesets } =
-    useHistory()
+  const { addGenesets, updateGeneset, reorderGenesets } = useHistory()
 
   const genesets = useGenesets()
+
+  const { open: openDialog } = useDialogs()
 
   const [openGenesetDialog, setOpenGroupDialog] = useState<
     IGenesetCallback | undefined
   >(undefined)
-
-  // cache the group items so that when dragging, they are
-  // not re-rendered so that on drag effects work
-  // const items = useMemo(() => {
-  //   return genesetState.genesets.map((geneset, gi) => (
-  //     <GroupItem geneset={geneset} key={gi} />
-  //   ))
-  // }, [genesetState.genesets])
 
   function openGenesetFiles(files: ITextFileOpen[]) {
     if (files.length === 0) {
@@ -185,9 +189,11 @@ export function GenesetPropsPanel() {
         .skipRows(file.ext === 'gmx' ? 1 : 0)
         .read(lines)
 
-      const genesets: IGeneset[] = []
+      const genesets: IGeneSet[] = []
 
-      for (const i of range(df.shape[1])) {
+      const startIndex = file.ext === 'gmt' ? 1 : 0
+
+      for (const i of range(startIndex, df.shape[1])) {
         const name = df.columns[i]
         const gs = makeNewGeneset(name)
 
@@ -200,57 +206,16 @@ export function GenesetPropsPanel() {
     }
   }
 
-  //const [groups, setGroups] = useState<IGroup[]>([])
-
-  // useEffect(() => {
-  //   setGroups([])
-  // }, [df])
-
-  // function onFileChange(_message: string, files: FileList | null) {
-  //   if (!files) {
-  //     return
-  //   }
-
-  //   const file: File = files[0]!
-
-  //   //setFile(files[0])
-  //   //setShowLoadingDialog(true)
-
-  //   const fileReader = new FileReader()
-
-  //   fileReader.onload = e => {
-  //     const result = e.target?.result
-
-  //     if (result) {
-  //       // since this seems to block rendering, delay by a second so that the
-  //       // animation has time to start to indicate something is happening and
-  //       // then finish processing the file
-  //       const text: string =
-  //         typeof result === 'string' ? result : Buffer.from(result).toString()
-
-  //       const g = JSON.parse(text)
-
-  //       if (Array.isArray(g)) {
-  //         genesetDispatch({ type: 'set', groups: g })
-  //       }
-  //     }
-  //   }
-
-  //   fileReader.readAsText(file)
-
-  //   //setShowFileMenu(false)
-  // }
-
   function addGeneset() {
     // edit a new group
     editGeneset(makeNewGeneset(), 'New gene set')
   }
 
-  function editGeneset(geneset: IGeneset, title: string = 'Edit Gene Set') {
+  function editGeneset(geneset: IGeneSet, title: string = 'Edit Gene Set') {
     setOpenGroupDialog({
       title,
       geneset,
-      callback: (geneset: IGeneset) => {
+      callback: (geneset: IGeneSet) => {
         //const indices = getColIdxFromGroup(df, group)
 
         if (genesets.some(g => g.id === geneset.id)) {
@@ -267,155 +232,59 @@ export function GenesetPropsPanel() {
     })
   }
 
-  // function editGroup(group: IClusterGroup) {
-  //   if (!df) {
-  //     return
-  //   }
-
-  //   setOpenGroupDialog({
-  //     group,
-  //     callback: (g:IClusterGroup) => {
-  //       // const lcSearch = search.map(s => s.toLowerCase())
-  //       // const indices: number[] = df.columns.values
-  //       //   .map(
-  //       //     (col, ci) => [ci, col.toString().toLowerCase()] as [number, string]
-  //       //   )
-  //       //   .filter((c: [number, string]) => {
-  //       //     for (const x of lcSearch) {
-  //       //       if (c[1].includes(x)) {
-  //       //         return true
-  //       //       }
-  //       //     }
-
-  //       //     return false
-  //       //   })
-  //       //   .map((c: [number, string]) => c[0])
-
-  //       const indices = getColIdxFromGroup(df, g)
-
-  //       // only update group if search changes actually
-  //       // result in items being found, otherwise just
-  //       // keep the old group
-  //       if (indices.length > 0) {
-  //         g.indices = indices
-
-  //         const newGroups = genesetState.groups.map(g =>
-  //           g.id === group.id ? { ...g, name, search, color, indices } : g
-  //         )
-  //         //setGroups(g)
-  //         //onGroupsChange?.(newGroups)
-  //         genesetDispatch({ type: 'set', groups: newGroups })
-  //       }
-
-  //       setOpenGroupDialog(undefined)
-  //     },
-  //   })
-  // }
-
   return (
     <>
-      {open.includes('open') && (
-        <OpenFiles
-          message={open}
-          //onOpenChange={() => setOpen("")}
-          onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
-              openGenesetFiles(files)
-            })
-          }
-          fileTypes={['json', 'tsv', 'txt']}
-        />
-      )}
-
       {openGenesetDialog?.callback && (
         <GenesetDialog
           title={openGenesetDialog.title}
           geneset={openGenesetDialog?.geneset}
-          callback={openGenesetDialog?.callback}
-          onResponse={() => setOpenGroupDialog(undefined)}
+          onResponse={(response, geneset) => {
+            if (response === TEXT_OK && geneset) {
+              openGenesetDialog.callback?.(geneset)
+            } else {
+              setOpenGroupDialog(undefined)
+            }
+          }}
         />
       )}
 
-      {confirmClear && (
-        <OKCancelDialog
-          title={MODULE_INFO.name}
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              //onGroupsChange?.([])
-              addGenesets([], { mode: 'set' })
-            }
-
-            setConfirmClear(false)
-          }}
-        >
-          Are you sure you want to clear all gene sets?
-        </OKCancelDialog>
-      )}
-
-      {delGroup !== null && (
-        <OKCancelDialog
-          showClose={true}
-          title={MODULE_INFO.name}
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              removeGenesets([delGroup!.id])
-              // onGroupsChange &&
-              //   onGroupsChange([
-              //     ...groups.slice(0, delId),
-              //     ...groups.slice(delId + 1),
-              //   ])
-            }
-            setDelGroup(null)
-          }}
-        >
-          {`Are you sure you want to delete the ${
-            delGroup !== null ? delGroup.name : 'selected'
-          } group?`}
-        </OKCancelDialog>
-      )}
-
-      {/* {showSaveDialog && (
-        <OKCancelDialog
-          title="Save Gene Sets"
-          open={showSaveDialog}
-          showClose={true}
-          buttons={[]}
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              downloadJson(genesetState.genesets, 'genesets.json')
-            }
-            setShowSaveDialog(false)
-          }}
-        >
-         
-        </OKCancelDialog>
-      )} */}
+      <ResizableSidebarHeaderPortal>
+        <h2 className="font-bold opacity-80">Gene Sets</h2>
+      </ResizableSidebarHeaderPortal>
 
       <PropsPanel className="gap-y-1">
-        <h2 className="font-semibold text-base opacity-80 mb-2">Gene Sets</h2>
         <VCenterRow className="justify-between">
           <StretchRow className="gap-x-1">
             <VCenterRow>
               <IconButton
                 //rounded="full"
                 // ripple={false}
-                onClick={() => setOpen(randId('open'))}
+                onClick={() =>
+                  openDialog({
+                    type: 'open',
+                    payload: {
+                      message: 'Select gene set file to open',
+                      fileTypes: ['json', 'tsv', 'txt', 'gmx', 'gmt'],
+                      callback: (message, files) => {
+                        onTextFileChange(message, files, files => {
+                          openGenesetFiles(files)
+                        })
+                      },
+                    },
+                  })
+                }
                 title="Open Gene Sets"
-                //className="fill-foreground/50 hover:fill-foreground"
               >
-                <OpenIcon />
+                <UploadIcon />
               </IconButton>
 
               <IconButton
-                //rounded="full"
-                // ripple={false}
                 onClick={() => {
-                  //setShowSaveDialog(true)
                   downloadJson(genesets, 'genesets.json')
                 }}
                 title="Save Gene Sets"
               >
-                <SaveIcon />
+                <DownloadIcon />
               </IconButton>
             </VCenterRow>
             <ToolbarSeparator />
@@ -441,7 +310,21 @@ export function GenesetPropsPanel() {
             // </Button>
 
             <LinkButton
-              onClick={() => setConfirmClear(true)}
+              onClick={() => {
+                openDialog({
+                  type: 'warning',
+                  payload: {
+                    title: 'Clear Gene Sets',
+                    content: 'Are you sure you want to clear all gene sets?',
+                    callback: response => {
+                      if (response === TEXT_OK) {
+                        //onGroupsChange?.([])
+                        addGenesets([], { mode: 'set' })
+                      }
+                    },
+                  },
+                })
+              }}
               title="Clear all gene sets"
             >
               {TEXT_CLEAR}
@@ -501,7 +384,6 @@ export function GenesetPropsPanel() {
                         geneset={geneset}
                         key={geneset.id}
                         editGeneset={editGeneset}
-                        setDelGroup={setDelGroup}
                       />
                       // </BaseSortableItem>
                     )
@@ -568,7 +450,7 @@ export function GenesetPropsPanel() {
                 >
                   {`${group.name}: ${cols.length} column${cols.length !== 1 ? "s" : ""}`}
                 </AccordionTrigger>
-                <AccordionContent variant="sidebar"
+                <AccordionContent 
                   innerClassName="flex flex-row gap-x-2"
                   innerStyle={{
                     color: group.color,

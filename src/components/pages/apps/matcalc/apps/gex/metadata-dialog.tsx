@@ -1,4 +1,4 @@
-import { type IModalProps } from '@/dialog/ok-cancel-dialog'
+import { type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { useEffect, useState } from 'react'
 
 import {
@@ -19,8 +19,8 @@ import { useQuery } from '@tanstack/react-query'
 import { produce } from 'immer'
 
 import { VScrollPanel } from '@/components/v-scroll-panel'
-import { CheckPropRow } from '@/dialog/check-prop-row'
-import { GlassSideDialog } from '@/dialog/glass-side-dialog'
+import { CheckPropRow } from '@/dialogs/check-prop-row'
+import { GlassSideDialog } from '@/dialogs/glass-side-dialog'
 
 import { useHistory } from '../../history/history-store'
 
@@ -305,7 +305,7 @@ export function GexMetadataDialog({
 
     df.setIndexName('Sample')
 
-    openFile('GEX data', { sheets: [df] })
+    openFile('GEX metadata', { sheets: [df] })
 
     // if everthing works, finally respond with ok
     onResponse?.(TEXT_OK)

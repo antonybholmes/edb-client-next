@@ -2,7 +2,7 @@ import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
 import { cn } from '@/lib/shadcn-utils'
 
 export function MinusIcon({
-  w = 'w-4',
+  size = 'w-4',
   stroke = 'stroke-2',
   fill = 'fill-foreground',
   style,
@@ -13,7 +13,7 @@ export function MinusIcon({
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      className={cn(ICON_CLS, stroke, fill, w, className)}
+      className={cn(ICON_CLS, stroke, fill, size, className)}
       style={{
         strokeLinecap: 'round',
         strokeLinejoin: 'round',

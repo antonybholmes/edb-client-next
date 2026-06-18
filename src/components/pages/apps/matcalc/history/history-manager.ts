@@ -61,7 +61,10 @@ export class HistoryManager<T extends object> {
   }
 
   trim(history: IHistoryEntry<T>[]): IHistoryEntry<T>[] {
-    if (history.length <= this._maxItems) return history
+    if (history.length <= this._maxItems) {
+      return history
+    }
+
     const start = history.length - this._maxItems
     const snapshotIndex = findIndexEx(
       history,
@@ -99,6 +102,7 @@ export class HistoryManager<T extends object> {
       ...state.history.slice(0, state.cursor + 1),
       entry,
     ]
+
     history = this.trim(history)
 
     return {
@@ -130,7 +134,7 @@ export class HistoryManager<T extends object> {
       }
 
       if (snapshotIndex >= 0) {
-        // start from previous snapshot
+        // start from previous snapshot and apply all patches up to current cursor
         prevState = (state.history[snapshotIndex]! as IHistorySnapshot<T>).state
         for (let i = snapshotIndex + 1; i < state.cursor; i++) {
           const e = state.history[i]! as IHistoryPatch
@@ -151,6 +155,8 @@ export class HistoryManager<T extends object> {
       return state
     }
 
+    // look ahead to next entry and either switch to
+    // it if a snapshot, or apply the patches if a patch entry
     const nextEntry = state.history[state.cursor + 1]!
     const nextState =
       nextEntry.type === 'snapshot'
@@ -161,6 +167,7 @@ export class HistoryManager<T extends object> {
   }
 
   goto(state: IUndoState<T>, step: number | string): IUndoState<T> {
+    // where we are currently in the history
     const stepIndex = findHistoryEntry(state.history, step)
 
     if (stepIndex === -1) {
@@ -168,11 +175,14 @@ export class HistoryManager<T extends object> {
       return state
     }
 
+    // find nearest snapshot before the target we want
     const { snapshot, index: startIndex } = findNearestSnapshot(
       state.history,
       stepIndex
     )
 
+    // apply all patches from that snapshot up to the target step
+    // to get the new present state
     let newPresent = snapshot
 
     for (let i = startIndex + 1; i <= stepIndex; i++) {
@@ -186,6 +196,13 @@ export class HistoryManager<T extends object> {
   }
 }
 
+/**
+ * Finds the nearest snapshot before the target index in the history.
+ *
+ * @param history The history array.
+ * @param targetIndex The target index to find the nearest snapshot for.
+ * @returns An object containing the nearest snapshot state and its index.
+ */
 export function findNearestSnapshot<T>(
   history: IHistoryEntry<T>[],
   targetIndex: number
@@ -205,6 +222,13 @@ export function findNearestSnapshot<T>(
   }
 }
 
+/**
+ * Finds the index of a history entry by its index, id or name.
+ *
+ * @param history The history array.
+ * @param step The index, id, or name of the history entry to find.
+ * @returns The index of the history entry, or -1 if not found.
+ */
 export function findHistoryEntry<T>(
   history: IHistoryEntry<T>[],
   step: number | string

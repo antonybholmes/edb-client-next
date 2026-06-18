@@ -4,8 +4,9 @@ import { DEFAULT_COLUMN_INDEX_NAME } from './base-dataframe'
 import { makeCell } from './cell'
 import { DataFrame } from './dataframe'
 
-import type { SeriesData } from '.'
+import { vfill } from '../fill'
 import { DEFAULT_INDEX_NAME } from './series'
+import type { SeriesData } from './series-data'
 
 export type Delimiter = '\t' | ',' | ' '
 
@@ -180,7 +181,7 @@ export class DataFrameReader {
           // })
 
           // each row must be the have the same number of rows
-          const cells = new Array(columns).fill(defaultCellValue)
+          const cells = vfill(defaultCellValue, columns) //Array(columns).fill(defaultCellValue) --- IGNORE ---
 
           // overwrite with the real values. This means if text file
           // has missing values (e.g. row is short because couldn't be

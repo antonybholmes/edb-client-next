@@ -1,4 +1,4 @@
-import type { IColorProps } from '@/components/plot/svg-props'
+import type { IPaintProps } from '@/components/plot/svg-props'
 import { config } from '@/config'
 import type { IDBEntity } from '@/interfaces/db-entity'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
@@ -8,12 +8,12 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 export const PLOT_W = 600
 
-const SETTINGS_KEY = `${config.appId}:app:venn:settings:v58`
+const SETTINGS_KEY = `${config.appId}:app:venn:settings:v60`
 
 export interface IVennCircleProps extends IDBEntity {
-  fill: IColorProps
-  stroke: IColorProps
-  text: IColorProps
+  fill: IPaintProps
+  stroke: IPaintProps
+  text: IPaintProps
 }
 
 export const DEFAULT_VENN_CIRCLE_PROPS = {
@@ -36,33 +36,33 @@ export const DEFAULT_CIRCLE_MAP: VennCirclesMap = {
   '1': {
     id: '1',
     name: 'List 1',
-    fill: { color: '#6495ED', opacity: 0.3, show: true },
-    stroke: { color: '#6495ED', opacity: 1, show: true },
-    text: { color: COLOR_WHITE, opacity: 1, show: true },
+    fill: { value: '#6495ED', opacity: 0.4, show: true },
+    stroke: { value: '#6495ED', opacity: 1, show: true },
+    text: { value: COLOR_WHITE, opacity: 1, show: true },
   },
 
   '2': {
     id: '2',
     name: 'List 2',
-    fill: { color: '#ff0000', opacity: 0.3, show: true },
-    stroke: { color: '#ff0000', opacity: 1, show: true },
-    text: { color: COLOR_WHITE, opacity: 1, show: true },
+    fill: { value: '#ff0000', opacity: 0.4, show: true },
+    stroke: { value: '#ff0000', opacity: 1, show: true },
+    text: { value: COLOR_WHITE, opacity: 1, show: true },
   },
 
   '3': {
     id: '3',
     name: 'List 3',
-    fill: { color: '#3CB371', opacity: 0.3, show: true },
-    stroke: { color: '#3CB371', opacity: 1, show: true },
-    text: { color: COLOR_WHITE, opacity: 1, show: true },
+    fill: { value: '#3CB371', opacity: 0.4, show: true },
+    stroke: { value: '#3CB371', opacity: 1, show: true },
+    text: { value: COLOR_WHITE, opacity: 1, show: true },
   },
 
   '4': {
     id: '4',
     name: 'List 4',
-    fill: { color: '#ba55d3', opacity: 0.3, show: true },
-    stroke: { color: '#ba55d3', opacity: 1, show: true },
-    text: { color: COLOR_WHITE, opacity: 1, show: true },
+    fill: { value: '#ba55d3', opacity: 0.4, show: true },
+    stroke: { value: '#ba55d3', opacity: 1, show: true },
+    text: { value: COLOR_WHITE, opacity: 1, show: true },
   },
 }
 

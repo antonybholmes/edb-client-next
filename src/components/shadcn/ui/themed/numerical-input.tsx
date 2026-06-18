@@ -8,8 +8,8 @@ import { Input, type IInputProps } from './v2/input'
 const BUTTON_CLS = `w-4 flex h-4 flex-row justify-center items-center
   data-[enabled=true]:stroke-foreground data-[enabled=false]:stroke-foreground/50 
   data-[enabled=true]:fill-foreground data-[enabled=false]:fill-foreground/50 
-  data-[enabled=true]:hover:fill-theme data-[enabled=true]:focus-visible:fill-theme 
-  data-[enabled=true]:hover:stroke-theme data-[enabled=true]:focus-visible:stroke-theme
+  data-[enabled=true]:hover:fill-app-theme data-[enabled=true]:focus-visible:fill-app-theme 
+  data-[enabled=true]:hover:stroke-app-theme data-[enabled=true]:focus-visible:stroke-app-theme
   outline-hidden trans-color`
 
 const UPDATE_INTERVAL_MS = 150
@@ -43,10 +43,13 @@ export function NumericalInput({
   onNumChange,
   onNumChanged,
   disabled,
+  h,
   w = 'xxs',
   variant = 'default',
   delay = UPDATE_INTERVAL_MS,
   className = '',
+  title,
+  ...props
 }: INumericalInputProps) {
   //const _id = id ?? useStableId('numerical-input')
 
@@ -90,6 +93,8 @@ export function NumericalInput({
   //   onNumChange?.(debouncedNumValue)
   //   onNumChanged?.(debouncedNumValue)
   // }, [debouncedNumValue])
+
+  const ariaLabel = props['aria-label'] ?? title ?? 'Numerical input'
 
   function _clampValue(v: number): number {
     if (limit?.length === 2) {
@@ -197,6 +202,10 @@ export function NumericalInput({
     // Once we finish updating the internal state, push it
     // so the rest of the ui can respond
     //_onNumChanged(numValue.current)
+
+    const v = numValue.current
+    setTextValue(v.toFixed(dp)) // ensure value is formatted correctly after user finishes changing
+    onNumChanged?.(v)
   }
 
   const handleKeyDown = (event: React.KeyboardEvent, delta: number) => {
@@ -223,6 +232,7 @@ export function NumericalInput({
       name={name}
       value={textValue}
       type="number"
+      h={h}
       step={step}
       min={limit?.length === 2 ? limit[0] : undefined}
       max={limit?.length === 2 ? limit[1] : undefined}
@@ -302,7 +312,7 @@ export function NumericalInput({
           >
             <TriangleRightIcon
               className="-rotate-90 -mb-0.5"
-              w="w-3"
+              size="w-3"
               stroke=""
               fill=""
               //strokeWidth={3}
@@ -328,7 +338,7 @@ export function NumericalInput({
           >
             <TriangleRightIcon
               className="rotate-90 mb-0.5"
-              w="w-3"
+              size="w-3"
               stroke=""
               strokeWidth={0}
               fill=""
@@ -336,6 +346,8 @@ export function NumericalInput({
           </button>
         </VCenterCol>
       }
+      aria-label={ariaLabel}
+      title={title}
     />
   )
 }

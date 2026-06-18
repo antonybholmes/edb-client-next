@@ -1,7 +1,7 @@
 'use client'
 
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
-import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
+import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
 
 import { PlayIcon } from '@/icons/play-icon'
@@ -11,7 +11,6 @@ import {
   ToolbarMenu,
   ToolbarPanel,
 } from '@/toolbar/toolbar'
-import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
 import { ToolbarButton } from '@/toolbar/toolbar-button'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
@@ -26,16 +25,13 @@ import {
   DEFAULT_PARSE_OPTS,
   filesToDataFrames,
   onTextFileChange,
-  OpenFiles,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 
-import { BasicAlertDialog } from '@/dialog/basic-alert-dialog'
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
 import { LayersIcon } from '@/icons/layers-icon'
 import { OpenIcon } from '@/icons/open-icon'
-import { type IDataset } from '@/lib/gene/pathway/pathway'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
@@ -43,8 +39,6 @@ import { UploadIcon } from '@/icons/upload-icon'
 
 import {
   DOCS_URL,
-  NO_DIALOG,
-  TEXT_CANCEL,
   TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_OPEN,
@@ -52,7 +46,6 @@ import {
   TEXT_RUN,
   TEXT_SAVE_AS,
   TEXT_SAVE_TABLE,
-  type IDialogParams,
 } from '@/consts'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import {
@@ -60,12 +53,15 @@ import {
   DEFAULT_SHEET_NAME,
 } from '@/lib/dataframe/base-dataframe'
 
-import { API_PATHWAY_DATASET_URL, API_PATHWAY_GENES_URL } from '@/lib/edb/edb'
-import { makeUuid, randId } from '@/lib/id'
+import {
+  API_PATHWAY_COLLECTIONS_URL,
+  API_PATHWAY_GENES_URL,
+} from '@/lib/edb/edb'
+import { makeUuid } from '@/lib/id'
 
 import { range } from '@/lib/math/range'
 import { truncate } from '@/lib/text/text'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import type { ITab } from '@/components/tabs/tab-provider'
 
@@ -73,26 +69,27 @@ import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 
 import { randomHexColor } from '@/lib/color/color'
 
-import type { ISaveAsFormat } from '@/components/pages/save-as-dialog'
-import { SaveTxtDialog } from '@/components/pages/save-txt-dialog'
 import { FileIcon } from '@/icons/file-icon'
 
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import type { IGeneset } from '@/lib/gsea/geneset'
+import type { ICollection, IDataset, IGeneSet } from '@/lib/gsea/geneset'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { sum } from '@/lib/math/sum'
 import { textToLines } from '@/lib/text/lines'
 
-import MODULE_INFO from './module.json'
+import APP_INFO from './manifest.json'
 //import { toast } from '@/themed/use-toast'
-import { HeaderSlotPortal } from '@/components/header/header-slot-portal'
-import { ModuleInfoButton } from '@/components/header/module-info-button'
+import { AppInfoButton } from '@/components/header/app-info-button'
+import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { ToolbarHelpTabGroup } from '@/help/toolbar-help-tab-group'
 import { useStableId } from '@/hooks/stable-id'
 import { CoreProviders } from '@/providers/core-providers'
 
-import { Toast } from '@base-ui/react/toast'
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { AppHeaderIcon } from '@/components/header/app-header-icon'
+import { RunningIndicator } from '@/components/toolbar/running-indicator'
+import { useAppInfo } from '@/lib/edb/edb-settings'
 import {
   HistoryLayout,
   HistoryShowButton,
@@ -106,18 +103,16 @@ import {
 } from '../../matcalc/history/history-store'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { PathwayPropsPage } from './pathway-props-panel'
-import { makeDatasetId, usePathways } from './pathway-store'
+import { usePathways } from './pathway-store'
+import { usePathwayWorker } from './pathway-worker'
 
 const HELP_URL = DOCS_URL + '/apps/pathway'
 
 export function PathwayPage() {
-  const { add: addToast, close: closeToast } = Toast.useToastManager()
-
+  const { setAppInfo } = useAppInfo()
   const _id = useStableId('pathway-page')
 
-  const { datasets, datasetsForUse, genesInUniverse } = usePathways()
-
-  const workerRef = useRef<Worker | null>(null)
+  const { datasets, collectionsInUse, genesInUniverse } = usePathways()
 
   const [rightTab, setRightTab] = useState('Gene Sets')
   const [showSideBar, setShowSideBar] = useState(true)
@@ -127,37 +122,26 @@ export function PathwayPage() {
 
   const [selectedTab] = useState(0)
 
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
-
   const [showFileMenu, setShowFileMenu] = useState(false)
 
-  //const [showHelp, setShowHelp] = useState(false)
+  const [indicatorMessage, setIndicatorMessage] = useState<string | null>(null)
 
   const { openApp, openFile, goto, addSheets } = useHistory()
   const app = useApp()!
   const file = useFile()!
   const sheets = useSheets()
   const sheet = useSheet()
+  const { open: openDialog } = useDialogs()
 
   const df = sheet as AnnotationDataFrame
 
   const [validGeneSet, setValidGeneSet] = useState(new Set<string>())
 
+  const { run: runPathway } = usePathwayWorker()
+
   useEffect(() => {
-    openApp(MODULE_INFO.name)
-
-    workerRef.current = new Worker(
-      new URL('./pathway.worker.ts', import.meta.url),
-      {
-        type: 'module',
-      }
-    )
-
-    return () => {
-      // Terminate the worker when component unmounts
-      workerRef.current?.terminate()
-      workerRef.current = null
-    }
+    setAppInfo(APP_INFO)
+    openApp(APP_INFO.name)
   }, [])
 
   /**
@@ -284,12 +268,20 @@ export function PathwayPage() {
     }
 
     if (df.size === 0 || df.name === DEFAULT_SHEET_NAME) {
-      addToast({
-        id: makeUuid(),
-        title: 'Pathway',
-        description: 'You must load at least 1 geneset.',
-        type: 'destructive',
-        timeout: 10000,
+      // addToast({
+      //   id: makeUuid(),
+      //   title: 'Pathway',
+      //   description: 'You must load at least 1 geneset.',
+      //   type: 'destructive',
+      //   timeout: 10000,
+      // })
+
+      openDialog({
+        type: 'alert',
+        payload: {
+          content: 'You must load at least 1 geneset.',
+          type: 'warning',
+        },
       })
 
       return
@@ -298,7 +290,7 @@ export function PathwayPage() {
     const genes = await getValidGenes()
 
     // only keep genes in approved list
-    const genesets: IGeneset[] = range(df.shape[1]).map(() => {
+    const genesets: IGeneSet[] = range(df.shape[1]).map(() => {
       return {
         id: makeUuid(),
         name: df.col(0).name.toString(),
@@ -311,119 +303,61 @@ export function PathwayPage() {
     })
 
     if (sum(genesets.map((geneset) => geneset.genes.length)) === 0) {
-      // setShowDialog({
-      //   name: "alert",
-      //   params: {
-      //     message: "You must load at least 1 geneset to test.",
-      //   },
-      // })
-
-      // toast({
-      //   type: 'set',
-      //   alert: makeErrorAlert({
-      //     title: 'Pathway',
-      //     content:
-      //       'None of your gene sets appear to contain valid gene symbols.',
-      //     //size: 'dialog',
-      //   }),
-      // })
-
-      addToast({
-        id: makeUuid(),
-        title: 'Pathway',
-        description:
-          'None of your gene sets appear to contain valid gene symbols.',
-        type: 'destructive',
-      })
-
-      return
-    }
-
-    const queryDatasets = datasets
-      .map((org) =>
-        org.datasets.filter((dataset) => datasetsForUse[makeDatasetId(dataset)])
-      )
-      .flat()
-
-    const fullDatasets: IDataset[] = []
-
-    try {
-      for (const qd of queryDatasets) {
-        const res = await httpFetch.postJson<{ data: IDataset }>(
-          API_PATHWAY_DATASET_URL,
-          {
-            body: {
-              organization: qd.organization,
-              name: qd.name,
-            },
-          }
-        )
-
-        const dataset = res.data
-
-        fullDatasets.push(dataset) //{organization:dataset.organization, name:dataset, genes:new Set<string>(dataset.genes)})
-      }
-    } catch (e) {
-      console.log(e)
-    }
-
-    if (fullDatasets.length < 1) {
-      setShowDialog({
-        id: 'alert',
-        params: {
-          message: 'You must select some datasets to test.',
+      openDialog({
+        type: 'alert',
+        payload: {
+          content:
+            'None of your gene sets appear to contain valid gene symbols. Please check your input and try again.',
+          type: 'error',
         },
       })
 
       return
     }
 
-    //const runningAlertId = nanoid()
-    // toast({
-    //   type: 'set',
-    //   alert: makeAlert({
-    //     //id: runningAlertId,
-    //     //title: "Pathway",
-    //     icon: <LoadingSpinner />,
-    //     content: 'Running analysis, this may take a few seconds...',
+    const queryCollections = datasets
+      .map((dataset) =>
+        dataset.collections.filter(
+          (collection) => collectionsInUse[collection.id]
+        )
+      )
+      .flat()
 
-    //     onClose: () => {
-    //       //console.log("terminated")
-    //       if (worker.current) {
-    //         worker.current.terminate()
-    //       }
-    //     },
-    //   }),
-    // })
-    if (workerRef.current) {
-      const id = makeUuid()
-      addToast({
-        id,
-        title: 'Pathway',
-        description:
-          'Calculating pathway enrichment, please do not refresh your browser window...',
+    let fullCollections: ICollection[] = []
 
-        timeout: 60000,
-        // onClose: () => {
-        //   //console.log("terminated")
-        //   if (workerRef.current) {
-        //     workerRef.current.terminate()
-        //   }
-        // },
+    try {
+      const res = await httpFetch.postJson<{ data: IDataset[] }>(
+        API_PATHWAY_COLLECTIONS_URL,
+        {
+          body: {
+            ids: queryCollections.map((c) => c.id),
+          },
+        }
+      )
+
+      fullCollections = res.data.flatMap((dataset) => dataset.collections)
+    } catch (e) {
+      console.log(e)
+    }
+
+    if (fullCollections.length < 1) {
+      openDialog({
+        type: 'alert',
+        payload: {
+          content: 'You must select at least 1 collection to test.',
+          type: 'warning',
+        },
       })
 
-      // stopunknown current jobs before continuing
-      // if (workerRef.current) {
-      //   workerRef.current.terminate()
-      // }
+      return
+    }
 
-      // workerRef.current = new Worker(
-      //   new URL('./pathway.worker.ts', import.meta.url),
+    setIndicatorMessage('Calculating pathway enrichment...')
 
-      // )
-
-      workerRef.current.onmessage = function (e) {
-        const { data, columns } = e.data
+    runPathway(
+      { genesets, collections: fullCollections, genesInUniverse },
+      (e) => {
+        const { data, columns } = e
 
         const dfOut = new AnnotationDataFrame({ data, columns }).setName(
           'Pathways'
@@ -434,15 +368,9 @@ export function PathwayPage() {
 
         // we've finished so get rid of the animations
 
-        closeToast(id)
+        setIndicatorMessage(null)
       }
-
-      workerRef.current.postMessage({
-        genesets,
-        datasets: fullDatasets,
-        genesInUniverse,
-      })
-    }
+    )
   }
 
   function save(name: string, format: string) {
@@ -460,6 +388,25 @@ export function PathwayPage() {
     })
 
     setShowFileMenu(false)
+  }
+
+  function _open(message: string, files: FileList | []) {
+    onTextFileChange(message, files, (files) => {
+      if (files.length > 0) {
+        filesToDataFrames(files, {
+          parseOpts: {
+            ...DEFAULT_PARSE_OPTS,
+            colNames: files[0]!.name.includes('gmx') ? 0 : 1,
+            skipRows: files[0]!.name.includes('gmx') ? 1 : 0,
+          },
+          onSuccess: (tables) => {
+            if (tables.length > 0) {
+              open(tables[0]!)
+            }
+          },
+        })
+      }
+    })
   }
 
   // useEffect(() => {
@@ -502,27 +449,35 @@ export function PathwayPage() {
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
-              onOpenChange={(open) => {
-                if (open) {
-                  setShowDialog({
-                    id: randId('open'),
-                  })
-                }
+              onOpen={() => {
+                openDialog({
+                  type: 'open',
+                  payload: {
+                    callback: _open,
+                  },
+                })
               }}
               multiple={true}
             />
 
             {selectedTab === 0 && (
               <ToolbarIconButton
-                onClick={() => setShowDialog({ id: randId('save') })}
+                onClick={() => {
+                  openDialog({
+                    type: 'save',
+                    payload: {
+                      callback: (data) => {
+                        save(data.name, data.format.ext!)
+                      },
+                    },
+                  })
+                }}
                 title={TEXT_SAVE_TABLE}
               >
                 <DownloadIcon />
               </ToolbarIconButton>
             )}
           </ToolbarTabGroup>
-
-          <ToolbarSeparator />
 
           <ToolbarTabGroup title="Pathways">
             <ToolbarButton
@@ -539,18 +494,12 @@ export function PathwayPage() {
               </ToolbarButton>
             </Tooltip> */}
           </ToolbarTabGroup>
-          <ToolbarSeparator />
         </>
       ),
     },
     {
       id: 'Help',
-      content: (
-        <>
-          <ToolbarHelpTabGroup url={HELP_URL} />
-          <ToolbarSeparator />
-        </>
-      ),
+      content: <ToolbarHelpTabGroup url={HELP_URL} />,
     },
   ]
 
@@ -577,7 +526,14 @@ export function PathwayPage() {
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
+          onClick={() => {
+            openDialog({
+              type: 'open',
+              payload: {
+                callback: _open,
+              },
+            })
+          }}
         >
           <UploadIcon stroke="" />
 
@@ -611,62 +567,11 @@ export function PathwayPage() {
 
   return (
     <>
-      {showDialog.id === 'alert' && (
-        <BasicAlertDialog onResponse={() => setShowDialog({ ...NO_DIALOG })}>
-          {showDialog.params!.message as string}
-        </BasicAlertDialog>
-      )}
-
-      {showDialog.id.includes('open') && (
-        <OpenFiles
-          message={showDialog.id}
-          //onOpenChange={() => setShowDialog({...NO_DIALOG})}
-          onFileChange={(message, files) => {
-            onTextFileChange(message, files, (files) => {
-              if (files.length > 0) {
-                filesToDataFrames(files, {
-                  parseOpts: {
-                    ...DEFAULT_PARSE_OPTS,
-                    colNames: files[0]!.name.includes('gmx') ? 0 : 1,
-                    skipRows: files[0]!.name.includes('gmx') ? 1 : 0,
-                  },
-                  onSuccess: (tables) => {
-                    if (tables.length > 0) {
-                      open(tables[0]!)
-                    }
-                  },
-                })
-              }
-            })
-
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        />
-      )}
-
-      {showDialog.id.includes('save') && (
-        <SaveTxtDialog
-          name="pathways"
-          onResponse={(response, data) => {
-            if (response !== TEXT_CANCEL) {
-              const d = data as {
-                name: string
-                format: ISaveAsFormat
-              }
-
-              save(
-                d.name as string,
-                (d.format as ISaveAsFormat)!.ext! as string
-              )
-            }
-
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        />
-      )}
+      {/* <DialogsRoot /> */}
 
       <HeaderSlotPortal>
-        <ModuleInfoButton info={MODULE_INFO} />
+        <AppHeaderIcon />
+        <AppInfoButton />
       </HeaderSlotPortal>
 
       <ShortcutLayout signinRequired={false}>
@@ -684,7 +589,7 @@ export function PathwayPage() {
               <>
                 <ToolbarButton
                   onClick={() => loadTestData()}
-                  title="Load test data to use features."
+                  title="Load test data."
                 >
                   Test data
                 </ToolbarButton>
@@ -736,13 +641,15 @@ export function PathwayPage() {
             {/* </Card> */}
           </TabSlideBar>
         </HistoryLayout>
-        <ToolbarFooterPortal className="justify-end">
-          <span>{getFormattedShape(df)}</span>
+        <FooterPortal className="justify-end">
+          <RunningIndicator message={indicatorMessage}>
+            <span>{getFormattedShape(df)}</span>
+          </RunningIndicator>
 
           <></>
 
           <ZoomSlider />
-        </ToolbarFooterPortal>
+        </FooterPortal>
       </ShortcutLayout>
     </>
   )

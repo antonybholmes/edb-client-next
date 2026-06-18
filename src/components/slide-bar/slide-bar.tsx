@@ -12,11 +12,8 @@ import { H2_CLS } from '@/theme'
 
 import { BaseCol } from '@/layout/base-col'
 
-import { type IButtonProps } from '@/themed/v2/button'
-
 import { ANIMATION_DURATION_S } from '@/consts'
 import type { IDivProps } from '@/interfaces/div-props'
-import { ChevronRightIcon } from '../icons/chevron-right-icon'
 import { VCenterRow } from '../layout/v-center-row'
 
 import { useResizeObserver } from '@/hooks/resize-observer'
@@ -26,9 +23,9 @@ import gsap from 'gsap'
 
 import { useStableId } from '@/hooks/stable-id'
 import type { ILim } from '@/lib/math/math'
-import { IconButton } from '../shadcn/ui/themed/icon-button'
 import { HANDLE_CLS, InnerHandle } from '../shadcn/ui/themed/resizable'
 import type { LeftRightPos } from '../side'
+import { CloseButton } from './resizable-sidebar'
 
 export const KEY_STEP = 5
 
@@ -38,20 +35,6 @@ const MIN_SIZE_PX = 16
 
 const CONTAINER_CLS = `flex data-[drag-dir=horizontal]:flex-row data-[drag-dir=vertical]:flex-col 
   grow overflow-hidden data-[drag=horizontal]:cursor-ew-resize data-[drag=vertical]:cursor-ns-resize`
-
-export function CloseButton({ className, ...props }: IButtonProps) {
-  return (
-    <IconButton
-      className={cn('shrink-0', className)}
-      size="icon-xs"
-      //rounded="full"
-      title="Hide Pane"
-      {...props}
-    >
-      <ChevronRightIcon />
-    </IconButton>
-  )
-}
 
 interface ISlideBarStore {
   p: number

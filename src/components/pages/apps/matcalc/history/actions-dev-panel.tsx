@@ -11,11 +11,12 @@ import { useState } from 'react'
 import { ActionsTree } from './actions-tree'
 
 export const SELECTABLE_TYPES = new Set([
-  'sheet',
+  'action',
   'plot',
   'step',
-  'branch',
+  'file',
   'app',
+  'sheet',
 ])
 
 export function ActionsDevPanel() {

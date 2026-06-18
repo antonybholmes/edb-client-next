@@ -5,11 +5,15 @@ import type { IBlock } from '@/components/plot/heatmap/heatmap-svg-props'
 import { makeUuid } from '@/lib/id'
 
 import {
+  DEFAULT_BOLD_FONT_PROPS,
+  DEFAULT_BOLD_TEXT_PROPS,
+  DEFAULT_COLOR_PROPS,
   DEFAULT_STROKE_PROPS,
-  OPAQUE_FILL_PROPS,
+  DEFAULT_TEXT_PROPS,
   type ColorBarPos,
-  type IColorProps,
+  type IPaintProps,
   type IStrokeProps,
+  type ITextProps,
   type LegendPos,
   type TopBottomPos,
 } from '@/components/plot/svg-props'
@@ -83,7 +87,7 @@ export const DEFAULT_COLOR_MAP: Readonly<Record<VariantClass, string>> =
   ) as Readonly<Record<VariantClass, string>>
 
 export interface ILollipopDisplayProps {
-  title: { show: boolean; offset: number }
+  title: { text: ITextProps; offset: number }
   labels: {
     show: boolean
     height: number
@@ -92,7 +96,7 @@ export interface ILollipopDisplayProps {
     opacity: number
   }
   features: {
-    background: IColorProps & { border: IStrokeProps }
+    background: IPaintProps & { border: IStrokeProps }
     show: boolean
     positions: { show: boolean }
     height: number
@@ -100,6 +104,7 @@ export interface ILollipopDisplayProps {
     rounding: number
   }
   seq: {
+    text: ITextProps
     height: number
     show: boolean
     border: {
@@ -129,6 +134,8 @@ export interface ILollipopDisplayProps {
   }
 
   axes: {
+    title: ITextProps
+    labels: ITextProps
     x: {
       show: boolean
       position: 'top' | 'bottom'
@@ -237,27 +244,21 @@ export const DEFAULT_DISPLAY_PROPS: ILollipopDisplayProps = {
     },
 
     height: 20,
+    text: {
+      ...DEFAULT_TEXT_PROPS,
+      font: { ...DEFAULT_BOLD_FONT_PROPS, fontSize: 12 },
+    },
   },
   features: {
     show: true,
     height: 25,
-    border: {
-      show: true,
-      color: COLOR_BLACK,
-      width: 1,
-      opacity: 1,
-    },
+    border: { ...DEFAULT_STROKE_PROPS },
     positions: { show: true },
     background: {
       show: true,
-      color: '#dddddd',
+      value: '#dddddd',
       opacity: 1,
-      border: {
-        show: false,
-        color: COLOR_BLACK,
-        width: 1,
-        opacity: 1,
-      },
+      border: { ...DEFAULT_STROKE_PROPS },
     },
     rounding: 3,
   },
@@ -269,10 +270,15 @@ export const DEFAULT_DISPLAY_PROPS: ILollipopDisplayProps = {
     opacity: 1,
   },
   title: {
-    show: true,
+    text: {
+      ...DEFAULT_BOLD_TEXT_PROPS,
+      font: { ...DEFAULT_BOLD_FONT_PROPS, fontSize: 16 },
+    },
     offset: 30,
   },
   axes: {
+    title: { ...DEFAULT_BOLD_TEXT_PROPS },
+    labels: { ...DEFAULT_TEXT_PROPS },
     x: {
       show: true,
       position: 'top',
@@ -346,8 +352,8 @@ export interface ILegend {
 }
 
 export interface IDomainColors {
-  text: IColorProps
-  fill: IColorProps
+  text: ITextProps
+  fill: IPaintProps
   border: IStrokeProps
 }
 
@@ -359,8 +365,8 @@ export interface IDomain extends IDBEntity, IDomainColors {
 }
 
 export const DEFAULT_DOMAIN_COLORS: IDomainColors = Object.freeze({
-  text: { ...OPAQUE_FILL_PROPS },
-  fill: { ...OPAQUE_FILL_PROPS, color: DEFAULT_FEATURE_BG_COLOR },
+  text: { ...DEFAULT_TEXT_PROPS },
+  fill: { ...DEFAULT_COLOR_PROPS, color: DEFAULT_FEATURE_BG_COLOR },
   border: { ...DEFAULT_STROKE_PROPS },
 })
 

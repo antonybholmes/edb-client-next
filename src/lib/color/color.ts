@@ -53,8 +53,14 @@ export function rgba2hex(rgba: IRGBA): string {
     hex += ('00' + dig).substring(dig.length)
   }
 
+  const alphaHex = Math.round(255 * rgba[3])
+    .toString(16)
+    .padStart(2, '0')
+
+  //console.log('rgba2hex', rgba, hex, alphaHex)
+
   // alpha
-  hex += (255 * rgba[3]).toString(16)
+  hex += alphaHex
 
   return hex
 }
@@ -83,8 +89,6 @@ export function addAlphaToHex(hex: string, alpha: number = 1): string {
   const a = Math.round(255 * Math.max(0, Math.min(1, alpha)))
     .toString(16)
     .padStart(2, '0')
-
-  //console.log(hex.slice(0, 7), alpha, a)
 
   return hexColorWithoutAlpha(hex) + a
 }

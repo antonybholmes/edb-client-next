@@ -1,11 +1,17 @@
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
-import type { SeriesData } from '@/lib/dataframe'
-import { fill } from '@/lib/fill'
+import { vfill } from '@/lib/fill'
 import { range } from '@/lib/math/range'
 import { NA } from '@/lib/text/text'
 import { zip } from '@/lib/utils'
-import { GenLoc, LOC_REGEX, parseGenLoc } from '../genomic'
+
+import type { SeriesData } from '@/lib/dataframe/series-data'
+import {
+  LOC_REGEX,
+  newGenomicLocation,
+  parseGenomicLocation,
+  type IGenomicLocation,
+} from '../genomic-location'
 import { BlockSearch } from './block-search'
 
 export function oneWayFromDataframes(
@@ -21,15 +27,15 @@ export function oneWayFromDataframes(
 
   ret = ret.setName(`${ret.name} one way overlap`)
 
-  let locs: GenLoc[] = []
+  let locs: IGenomicLocation[] = []
 
   if (ret.get(0, 0).toString().match(LOC_REGEX)) {
-    locs = ret.col(0).values.map(v => parseGenLoc(v as string))
+    locs = ret.col(0).values.map(v => parseGenomicLocation(v as string))
   } else {
     // assume 3 col bed format
 
-    locs = zip(ret.col(0).values, ret.col(1).values, ret.col(2).values).map(
-      v => new GenLoc(v[0] as string, v[1] as number, v[2] as number)
+    locs = zip(ret.col(0).values, ret.col(1).values, ret.col(2).values).map(v =>
+      newGenomicLocation(v[0] as string, v[1] as number, v[2] as number)
     )
   }
 
@@ -41,13 +47,13 @@ export function oneWayFromDataframes(
     const colNames = table.columns.map(name => `${table.name} ${name}`)
 
     for (const i of range(table.shape[0])) {
-      let loc: GenLoc
+      let loc: IGenomicLocation
 
       if (table.get(i, 0).toString().match(LOC_REGEX)) {
-        loc = parseGenLoc(table.get(i, 0).toString())
+        loc = parseGenomicLocation(table.get(i, 0).toString())
       } else {
         // assume 3 col bed format
-        loc = new GenLoc(
+        loc = newGenomicLocation(
           table.get(i, 0).toString(),
           table.get(i, 1) as number,
           table.get(i, 2) as number
@@ -57,7 +63,7 @@ export function oneWayFromDataframes(
       blockSearch.addFeature(loc, table.row(i).values)
     }
 
-    const newCols = range(colNames.length).map(() => fill(NA, ret.shape[0]))
+    const newCols = range(colNames.length).map(() => vfill(NA, ret.shape[0]))
 
     for (const ri of range(ret.shape[0])) {
       const loc = locs[ri]!

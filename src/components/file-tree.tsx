@@ -10,26 +10,49 @@ const FileTreeContext = createContext<{
   expanded: boolean
   onValueChange?: ((tab: ITab) => void) | undefined
   iconRenderer?: IconRenderer
+  selectedId?: string
+  setSelectedId?: (id: string) => void
 }>({
   expanded: true,
   onValueChange: () => {},
   iconRenderer: treeFileIconRenderer,
 })
 
+function useFileTreeContext() {
+  const ctx = useContext(FileTreeContext)
+
+  if (!ctx) {
+    throw new Error('useFileTreeContext must be used within a FileTreeProvider')
+  }
+
+  return ctx
+}
+
 interface IFileTreeProviderProps extends IChildrenProps {
   expanded?: boolean
   onValueChange?: ((tab: ITab) => void) | undefined
   iconRenderer?: IconRenderer
+  selectedId?: string
 }
 
 export const FileTreeProvider = ({
   expanded = true,
   onValueChange,
   iconRenderer = treeFileIconRenderer,
+  selectedId = '',
   children,
 }: IFileTreeProviderProps) => {
+  const [_selectedId, setSelectedId] = useState(selectedId)
   return (
-    <FileTreeContext.Provider value={{ expanded, onValueChange, iconRenderer }}>
+    <FileTreeContext.Provider
+      value={{
+        expanded,
+        onValueChange,
+        iconRenderer,
+        selectedId: _selectedId,
+        setSelectedId,
+      }}
+    >
       {children}
     </FileTreeContext.Provider>
   )
@@ -100,8 +123,17 @@ export function treeArrowIconRenderer(
 }
 
 // Recursive Tree Node component
-const TreeNode = ({ node, depth = 0 }: { node: ITab; depth?: number }) => {
-  const { expanded, onValueChange, iconRenderer } = useContext(FileTreeContext)
+const TreeNode = ({
+  node,
+  depth = 0,
+  root = '',
+}: {
+  node: ITab
+  depth?: number
+  root?: string
+}) => {
+  const { expanded, onValueChange, iconRenderer, selectedId, setSelectedId } =
+    useFileTreeContext()
 
   const [_expanded, setExpanded] = useState(expanded)
 
@@ -109,15 +141,24 @@ const TreeNode = ({ node, depth = 0 }: { node: ITab; depth?: number }) => {
 
   const isFolder = hasChildren || node.type === 'folder'
 
+  const icon = node.icon || iconRenderer!(isFolder, hasChildren, _expanded)
+
   function toggle() {
     if (isFolder) {
       setExpanded(!_expanded)
     }
   }
 
+  // Some nodes can have same id since we allow reuse of default files etc.
+  // Therefore we need to use the path as the unique identifier for selection
+  const currentPath = root + '/' + node.id
+
   return (
-    <li>
-      <VCenterRow className="gap-x-1 hover:bg-muted/60 rounded-md px-2">
+    <li id={currentPath}>
+      <VCenterRow
+        data-selected={selectedId === currentPath}
+        className="gap-x-1 hover:bg-muted/60 data-[selected=true]:bg-muted/60 rounded-md px-2"
+      >
         <button
           onClick={() => {
             toggle()
@@ -136,10 +177,11 @@ const TreeNode = ({ node, depth = 0 }: { node: ITab; depth?: number }) => {
               : node.name
           }
         >
-          {iconRenderer!(isFolder, hasChildren, _expanded)}
+          {icon}
         </button>
         <button
           onClick={() => {
+            setSelectedId?.(currentPath)
             onValueChange?.(node)
           }}
           style={{
@@ -154,7 +196,12 @@ const TreeNode = ({ node, depth = 0 }: { node: ITab; depth?: number }) => {
       {isFolder && _expanded && node.children && (
         <ul>
           {node.children.map((child, index) => (
-            <TreeNode key={index} node={child} depth={depth + 1} />
+            <TreeNode
+              key={index}
+              node={child}
+              depth={depth + 1}
+              root={currentPath}
+            />
           ))}
         </ul>
       )}
@@ -172,7 +219,7 @@ interface IProps extends IClassProps {
 // Main Tree Component
 export function FileTree({
   tab,
-  onValueChange = undefined,
+  onValueChange,
   expanded = true,
   iconRenderer = treeFileIconRenderer,
   className,

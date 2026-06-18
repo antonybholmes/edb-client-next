@@ -4,9 +4,9 @@ import { type IDivProps } from '@/interfaces/div-props'
 
 import { Axis, YAxis } from '@/components/plot/axis'
 import {
-  DEFAULT_FILL_PROPS,
+  DEFAULT_COLOR_PROPS,
   NO_STROKE_PROPS,
-  type IColorProps,
+  type IPaintProps,
   type IStrokeProps,
 } from '@/components/plot/svg-props'
 import { histogram } from '@/lib/math/histogram'
@@ -20,7 +20,7 @@ interface IProps extends IDivProps {
   width?: number
   height?: number
   r?: number
-  fill?: IColorProps
+  fill?: IPaintProps
   stroke?: IStrokeProps
   mode?: IBoxWhiskerMode
 }
@@ -31,7 +31,7 @@ export function SwarmPlotSvg({
   width = 50,
   height = 500,
   r = 5,
-  fill = { ...DEFAULT_FILL_PROPS, opacity: 1 },
+  fill = { ...DEFAULT_COLOR_PROPS, opacity: 1 },
   stroke = { ...NO_STROKE_PROPS },
   mode = 'full',
 }: IProps) {
@@ -107,8 +107,8 @@ export function SwarmPlotSvg({
                       cx={x1 + vi * dx}
                       cy={yax?.domainToRange(v)}
                       r={r}
-                      fill={fill?.color ?? 'none'}
-                      stroke={stroke?.color ?? 'none'}
+                      fill={fill?.value ?? 'none'}
+                      stroke={stroke?.value ?? 'none'}
                       strokeWidth={stroke?.width ?? 0}
                       fillOpacity={fill?.opacity ?? 0}
                     />

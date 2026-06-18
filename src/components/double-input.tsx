@@ -1,10 +1,6 @@
 import { VCenterRow } from '@/layout/v-center-row'
 import { cn } from '@/lib/shadcn-utils'
-import {
-  BUTTON_MD_H_CLS,
-  FOCUS_INSET_RING_CLS,
-  INPUT_BORDER_CLS,
-} from '@/theme'
+import { FOCUS_INSET_RING_CLS, INPUT_BORDER_CLS } from '@/theme'
 import {
   forwardRef,
   useState,
@@ -14,8 +10,8 @@ import {
 import { CloseIcon } from './icons/close-icon'
 
 export const CONTAINER_CLS = cn(
-  'flex flex-row px-1 gap-x-2 overflow-hidden justify-between disabled:cursor-not-allowed disabled:opacity-50 rounded-theme ring-inset',
-  BUTTON_MD_H_CLS,
+  'flex flex-row h-button-md px-1 gap-x-2 overflow-hidden justify-between disabled:cursor-not-allowed disabled:opacity-50 rounded-theme ring-inset',
+
   INPUT_BORDER_CLS,
   FOCUS_INSET_RING_CLS
 )
@@ -23,7 +19,7 @@ export const CONTAINER_CLS = cn(
 const MIN_CH = 8
 
 export const INPUT_CLS = cn(
-  'h-full shrink-0 disabled:cursor-not-allowed disabled:opacity-50 read-only:opacity-50 outline-hidden border border-red-500 ring-none padding-0 margin-0'
+  'h-full shrink-0 disabled:cursor-not-allowed disabled:opacity-50 read-only:opacity-50 outline-hidden border border-destructive ring-none padding-0 margin-0'
 )
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -44,7 +40,9 @@ export const DoubleInput = forwardRef<HTMLDivElement, InputProps>(
     const [focus, setFocus] = useState(false)
 
     if (!children) {
-      children = <CloseIcon className="-mb-0.5 fill-foreground/50" w="w-2 " />
+      children = (
+        <CloseIcon className="-mb-0.5 fill-foreground/50" size="w-2 " />
+      )
     }
 
     return (
@@ -57,7 +55,7 @@ export const DoubleInput = forwardRef<HTMLDivElement, InputProps>(
           onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
             onKeyDown1?.(e)
           }}
-          onChange={(e) => setText1(e.currentTarget.value)}
+          onChange={e => setText1(e.currentTarget.value)}
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}
           style={{
@@ -74,7 +72,7 @@ export const DoubleInput = forwardRef<HTMLDivElement, InputProps>(
           onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
             onKeyDown2?.(e)
           }
-          onChange={(e) => setText2(e.currentTarget.value)}
+          onChange={e => setText2(e.currentTarget.value)}
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}
           style={{

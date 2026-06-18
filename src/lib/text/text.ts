@@ -1,4 +1,5 @@
 export const NA = 'NA'
+export const DEFAULT_LOCALE = 'en-US'
 
 export type UndefStr = string | undefined
 export type NullStr = string | null
@@ -166,19 +167,37 @@ export function splitOnCapitalLetters(str: string): string {
   return str.split(/(?=[A-Z])/).join(' ')
 }
 
+export interface IFormatNumOpts {
+  dp?: number
+  commas?: boolean
+  na?: string
+  locale?: string
+}
+
 /**
  * Returns a number as a string formatted to a given number of decimal places.
  * If the number is an integer, decimal places are not added.
- * If dp = -1, number is displayed in full.
+ * If dp = -1, number is displayed as is using the default locale and format.
  *
  * @param x
  * @param dp
  * @returns
  */
-export function formatNumber(x: number, dp: number = -1): string {
-  if (Number.isInteger(x) || dp === -1) {
-    return x.toLocaleString()
-  } else {
-    return x.toFixed(dp)
+export function formatNumber(x: number, options: IFormatNumOpts = {}): string {
+  const { dp = -1, commas = true, na = NA, locale = DEFAULT_LOCALE } = options
+
+  if (Number.isNaN(x)) {
+    return na
   }
+
+  if (Number.isInteger(x) || dp === -1) {
+    return commas ? x.toLocaleString() : x.toString()
+  }
+
+  return commas
+    ? x.toLocaleString(locale, {
+        minimumFractionDigits: dp,
+        maximumFractionDigits: dp,
+      })
+    : x.toFixed(dp)
 }

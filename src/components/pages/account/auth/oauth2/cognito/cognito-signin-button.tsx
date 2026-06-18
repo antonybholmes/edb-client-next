@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { Button } from '@/themed/v2/button'
 
@@ -20,8 +20,10 @@ import { redirect } from '@/lib/http/urls'
 import { useAtom } from 'jotai'
 import {} from '../../signin-callback-page'
 
-const COGNITO_DOMAIN = process.env.NEXT_PUBLIC_COGNITO_DOMAIN!
-const CLIENT_ID = process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID!
+const COGNITO_DOMAIN = process.env.NEXT_PUBLIC_COGNITO_DOMAIN
+const CLIENT_ID = process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID
+//const SIGNIN_CALLBACK_URI = process.env.NEXT_PUBLIC_COGNITO_SIGNIN_CALLBACK_URI
+//const SIGNOUT_CALLBACK_URI = process.env.NEXT_PUBLIC_COGNITO_SIGNOUT_CALLBACK_URI
 
 function base64UrlEncode(buf: Uint8Array) {
   return btoa(String.fromCharCode(...buf))

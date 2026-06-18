@@ -1,4 +1,3 @@
-//import { LoadingSpinner } from '@/components/alerts/loading-spinner'
 import { CloseIcon } from '@/components/icons/close-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import { TEXT_CLOSE } from '@/consts'
@@ -7,6 +6,7 @@ import { VCenterRow } from '@/layout/v-center-row'
 import { cn } from '@/lib/shadcn-utils'
 import styles from './toast.module.css'
 
+import { LoadingSpinnerGradient } from '@/components/alerts/loading-spinner-gradient'
 import {
   Toast as ToastPrimitive,
   type ToastRootToastObject,
@@ -22,8 +22,8 @@ export const Viewport = ToastPrimitive.Viewport
 export const toastVariants = cva(
   cn(
     'group relative flex flex-row w-full text-sm items-start justify-between',
-    'text-background backdrop-blur-sm border border-border/50 shadow-lg',
-    'overflow-hidden rounded-lg p-4 trans-all'
+    'shadow-lg',
+    'overflow-hidden rounded-lg p-4 trans-all backdrop-blur-sm'
     //'transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out',
     //'data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
     //'data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
@@ -33,9 +33,10 @@ export const toastVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-foreground/30 text-foreground ',
+        default: 'bg-background/90 border border-border/50',
+        glass: 'bg-foreground/30',
         success: 'text-emerald-700 stroke-emerald-700',
-        destructive: 'bg-foreground/30',
+        destructive: 'bg-destructive/70 text-white',
         warning: 'warning border-warning bg-background',
       },
     },
@@ -48,7 +49,7 @@ export const toastVariants = cva(
 export function ToastSpinner({ children }: IChildrenProps) {
   return (
     <VCenterRow className="gap-x-3">
-      {/* <LoadingSpinner /> */}
+      <LoadingSpinnerGradient />
       {children}
     </VCenterRow>
   )
@@ -76,7 +77,7 @@ export function ToastContent({
         <ToastPrimitive.Description />
       </BaseCol>
       <ToastPrimitive.Close aria-label={TEXT_CLOSE}>
-        <CloseIcon stroke="" w="w-4" />
+        <CloseIcon stroke="" size="w-4" />
       </ToastPrimitive.Close>
     </ToastPrimitive.Content>
   )
@@ -85,7 +86,7 @@ export function ToastContent({
 export function StackedViewport({ ...props }: ComponentProps<typeof Viewport>) {
   return (
     <Viewport
-      className="fixed top-4 right-4 z-(--z-alert) m-0 flex w-80 flex-col gap-y-2 outline-none"
+      className="fixed top-4 right-4 z-(--z-alert) m-0 flex w-96 flex-col gap-y-2 outline-none"
       {...props}
     />
   )

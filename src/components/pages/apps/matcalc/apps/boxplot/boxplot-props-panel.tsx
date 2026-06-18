@@ -1,7 +1,7 @@
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { PropsPanel } from '@/components/props-panel'
-import { PropRow } from '@/dialog/prop-row'
-import { SwitchPropRow } from '@/dialog/switch-prop-row'
+import { PropRow } from '@/dialogs/prop-row'
+import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { NumericalInput } from '@/themed/numerical-input'
 import {
   AccordionContent,
@@ -31,7 +31,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
       <ScrollAccordion value={['plot']}>
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
-          <AccordionContent variant="sidebar">
+          <AccordionContent>
             <PropRow title="Plot size">
               <DoubleNumericalInput
                 v1={displayOptions.plot!.w}
@@ -104,7 +104,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
         <AccordionItem value="violin">
           <AccordionTrigger>Violin</AccordionTrigger>
 
-          <AccordionContent variant="sidebar">
+          <AccordionContent>
             <SwitchPropRow
               title="Show"
               checked={displayOptions.violin.show}
@@ -137,7 +137,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
         <AccordionItem value="box">
           <AccordionTrigger>Box</AccordionTrigger>
 
-          <AccordionContent variant="sidebar">
+          <AccordionContent>
             <SwitchPropRow
               title="Show"
               checked={displayOptions.box.show}
@@ -184,7 +184,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
         <AccordionItem value="swarm">
           <AccordionTrigger>Swarm</AccordionTrigger>
 
-          <AccordionContent variant="sidebar">
+          <AccordionContent>
             <SwitchPropRow
               title="Show"
               checked={displayOptions.swarm.show}
@@ -202,7 +202,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
         {/* <AccordionItem value="x">
           <AccordionTrigger>X</AccordionTrigger>
 
-          <AccordionContent variant="sidebar">
+          <AccordionContent >
             <Reorder.Group
               axis="y"
               values={plot!.customProps.xOrder}
@@ -236,7 +236,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
           <AccordionItem value="hue">
             <AccordionTrigger>Hue</AccordionTrigger>
 
-            <AccordionContent variant="sidebar">
+            <AccordionContent >
               <Reorder.Group
                 axis="y"
                 values={plot!.customProps.hueOrder}

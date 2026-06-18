@@ -228,8 +228,8 @@ export function SignIn({ allowPassword = false, visitUrl }: ISignInProps) {
     <Card className="text-sm p-8 py-12 w-110 shadow-2xl" variant="content">
       <CardHeader className="text-xl">
         <VCenterRow className="gap-x-2">
-          <AppIcon w="w-10" />
-          <CardTitle>Sign in to {config.appName}</CardTitle>
+          <AppIcon size="w-10" />
+          <CardTitle>Sign in to {config.name}</CardTitle>
 
           {allowPassword && (
             <Switch

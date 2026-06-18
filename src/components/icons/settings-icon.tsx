@@ -12,7 +12,7 @@ interface Props extends IIconProps {
 }
 
 export function SettingsIcon({
-  w = 'w-5 h-5',
+  size = 'w-5 h-5',
   stroke = 'stroke-current',
   isAnimated = false,
   className,
@@ -24,11 +24,9 @@ export function SettingsIcon({
       <Settings
         className={cn(
           ICON_CLS,
-
           isAnimated && ICON_TRANSITION_FROM_CLS,
-
           stroke,
-          w,
+          size,
           className
         )}
         strokeWidth={strokeWidth}
@@ -38,7 +36,13 @@ export function SettingsIcon({
 
       {isAnimated && (
         <Cog
-          className={cn(ICON_CLS, ICON_TRANSITION_TO_CLS, stroke, w, className)}
+          className={cn(
+            ICON_CLS,
+            ICON_TRANSITION_TO_CLS,
+            stroke,
+            size,
+            className
+          )}
           strokeWidth={strokeWidth}
           style={style}
           stroke=""

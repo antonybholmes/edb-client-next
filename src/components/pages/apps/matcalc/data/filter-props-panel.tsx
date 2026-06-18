@@ -1,14 +1,10 @@
-import { onTextFileChange, OpenFiles } from '@/components/pages/open-files'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { onTextFileChange } from '@/components/pages/open-files'
 import { BaseCol } from '@/layout/base-col'
 
-import { NO_DIALOG, TEXT_CLEAR, TEXT_OK, type IDialogParams } from '@/consts'
+import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
 
-import { OpenIcon } from '@/icons/open-icon'
-
 import { PropsPanel } from '@/components/props-panel'
-import { LinkButton } from '@/themed/link-button'
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -20,27 +16,30 @@ import { FileDropZonePanel } from '@/components/file-dropzone-panel'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { findCols, findRows } from '@/lib/dataframe/dataframe-utils'
-import { makeUuid, randId } from '@/lib/id'
+import { makeUuid } from '@/lib/id'
 import { textToLines } from '@/lib/text/lines'
 import { useSearchFilters } from '@/stores/search-filter-store'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { UploadIcon } from '@/components/icons/upload-icon'
+import { ResizableSidebarHeaderPortal } from '@/components/slide-bar/resizable-sidebar'
 import { Textarea } from '@/themed/textarea'
 import { Button } from '@/themed/v2/button'
 import { Checkbox } from '@/themed/v2/check-box'
 import { Toast } from '@base-ui/react/toast'
 import { useEffect, useState } from 'react'
 import { useHistory, useSheet } from '../history/history-store'
-import MODULE_INFO from '../module.json'
+import APP_INFO from '../manifest.json'
 
 export function FilterPropsPanel() {
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
-
   const { addSheets } = useHistory()
   const sheet = useSheet()
 
+  const { open: openDialog } = useDialogs()
+
   const { add: addToast } = Toast.useToastManager()
   const [text, setText] = useState('')
-  const [confirmClear, setConfirmClear] = useState(false)
+
   const [filterMode, setFilterMode] = useState('Rows')
 
   const { settings, updateSettings, resetRowFilters, resetColFilters } =
@@ -101,7 +100,7 @@ export function FilterPropsPanel() {
     } else {
       addToast({
         id: makeUuid(),
-        title: MODULE_INFO.name,
+        title: APP_INFO.name,
         description: `There were no ${
           filterMode.includes('Rows') ? 'rows' : 'columns'
         } matching your filter.`,
@@ -112,85 +111,11 @@ export function FilterPropsPanel() {
 
   return (
     <>
-      {showDialog.id.includes('open') && (
-        <OpenFiles
-          message={showDialog.id}
-          onFileChange={(message, files) =>
-            onTextFileChange(message, files, (files) => {
-              if (files.length > 0) {
-                setText(files[0]!.text)
-              }
-            })
-          }
-        />
-      )}
+      <ResizableSidebarHeaderPortal>
+        <h2 className="font-bold opacity-80">Filter</h2>
+      </ResizableSidebarHeaderPortal>
 
-      <OKCancelDialog
-        open={confirmClear}
-        title={MODULE_INFO.name}
-        //contentVariant="glass"
-        //bodyVariant="card"
-        modalType="Warning"
-        onResponse={(r) => {
-          if (r === TEXT_OK) {
-            setText('')
-
-            if (filterMode.includes('Rows')) {
-              resetRowFilters()
-            } else {
-              resetColFilters()
-            }
-          }
-          setConfirmClear(false)
-        }}
-      >
-        Are you sure you want to clear all the filter items?
-      </OKCancelDialog>
-
-      {/* <Tabs
-        defaultValue={filterMode}
-        value={filterMode}
-        onValueChange={setFilterMode}
-      >
-        <HCenterRow className="py-2 text-xs">
-          <IOSTabsList
-            value={filterMode}
-            //defaultWidth={5}
-            tabs={[
-              {
-                id: 'Rows',
-              },
-              {
-                id: 'Cols',
-              },
-            ]}
-            defaultWidth="64px"
-          />
-        </HCenterRow>
-      </Tabs> */}
-
-      {/* <HCenterRow className="gap-x-2 shrink-0 py-2">
-        <ToggleButtons
-          value={filterMode}
-          onTabChange={(selectedTab) => {
-            if (selectedTab) {
-              setFilterMode(selectedTab.tab.id)
-            }
-          }}
-          tabs={[
-            {
-              id: 'Rows',
-            },
-            {
-              id: 'Cols',
-            },
-          ]}
-        >
-          <ToggleButtonTriggers variant="outline" defaultWidth={4} />
-        </ToggleButtons>
-      </HCenterRow> */}
-
-      <PropsPanel className="pr-2 gap-y-2">
+      <PropsPanel className="gap-y-2">
         <ResizablePanelGroup
           orientation="vertical"
           className="grow"
@@ -199,13 +124,13 @@ export function FilterPropsPanel() {
           <ResizablePanel
             defaultSize="30%"
             minSize="0%"
-            className="grow flex flex-col gap-y-2"
+            className="grow flex flex-col gap-y-2 overflow-hidden"
             id="filter-text"
           >
             <FileDropZonePanel
-              onFileDrop={(files) => {
+              onFileDrop={files => {
                 if (files.length > 0) {
-                  onTextFileChange('Open filter list', files, (files) => {
+                  onTextFileChange('Open filter list', files, files => {
                     if (files.length > 0) {
                       setText(files[0]!.text)
                     }
@@ -217,68 +142,99 @@ export function FilterPropsPanel() {
                 id="filter"
                 aria-label="Filter"
                 value={text}
-                onTextChange={(e) => setText(e)}
+                onTextChange={e => setText(e)}
                 placeholder={`Filter ${filterMode.toLowerCase()}...`}
                 className="h-full"
               />
             </FileDropZonePanel>
-            <VCenterRow className="justify-end gap-x-2">
-              <LinkButton onClick={() => setConfirmClear(true)}>
-                {TEXT_CLEAR}
-              </LinkButton>
-            </VCenterRow>
           </ResizablePanel>
 
           <ThinVResizeHandle />
+
           <ResizablePanel
             defaultSize="70%"
             minSize="0%"
             className="grow flex flex-col gap-y-3 overflow-hidden"
             id="filter"
           >
-            <VCenterRow className="gap-x-1 items-stretch">
+            <VCenterRow className="gap-x-1 justify-between overflow-hidden">
+              <VCenterRow className="gap-x-1 items-stretch">
+                <Button
+                  size="icon"
+                  // ripple={false}
+                  onClick={() =>
+                    openDialog({
+                      type: 'open',
+                      payload: {
+                        callback: (message, files) => {
+                          onTextFileChange(message, files, files => {
+                            if (files.length > 0) {
+                              setText(files[0]!.text)
+                            }
+                          })
+                        },
+                      },
+                    })
+                  }
+                  className="fill-foreground"
+                  title="Open list of Ids from file"
+                >
+                  <UploadIcon />
+                </Button>
+
+                <ToolbarSeparator />
+
+                <ToggleGroup
+                  //variant="outline"
+                  rounded="none"
+                  value={[filterMode]}
+                  onValueChange={v => {
+                    setFilterMode(v[0] ?? 'Rows')
+                  }}
+                  //rounded="none"
+                  className="rounded-theme overflow-hidden gap-x-px"
+                >
+                  <GroupToggle
+                    value="Rows"
+                    className="w-12"
+                    aria-label="Filter rows"
+                  >
+                    Rows
+                  </GroupToggle>
+
+                  <GroupToggle
+                    value="Cols"
+                    className="w-12"
+                    aria-label="Filter columns"
+                  >
+                    Cols
+                  </GroupToggle>
+                </ToggleGroup>
+              </VCenterRow>
               <Button
-                size="icon"
-                // ripple={false}
-                onClick={() =>
-                  setShowDialog({
-                    id: randId('open'),
+                onClick={() => {
+                  openDialog({
+                    type: 'warning',
+                    payload: {
+                      title: 'Clear filter',
+                      content: 'Are you sure you want to clear the filter?',
+                      callback: response => {
+                        if (response === TEXT_OK) {
+                          setText('')
+
+                          if (filterMode.includes('Rows')) {
+                            resetRowFilters()
+                          } else {
+                            resetColFilters()
+                          }
+                        }
+                      },
+                    },
                   })
-                }
-                className="fill-foreground"
-                title="Open list of Ids from file"
-              >
-                <OpenIcon />
-              </Button>
-
-              <ToolbarSeparator />
-
-              <ToggleGroup
-                //variant="outline"
-                rounded="none"
-                value={[filterMode]}
-                onValueChange={(v) => {
-                  setFilterMode(v[0] ?? 'Rows')
                 }}
-                //rounded="none"
-                className="rounded-theme overflow-hidden gap-x-px"
               >
-                <GroupToggle
-                  value="Rows"
-                  className="w-12"
-                  aria-label="Filter rows"
-                >
-                  Rows
-                </GroupToggle>
-
-                <GroupToggle
-                  value="Cols"
-                  className="w-12"
-                  aria-label="Filter columns"
-                >
-                  Cols
-                </GroupToggle>
-              </ToggleGroup>
+                {TEXT_CLEAR}
+              </Button>
             </VCenterRow>
 
             <BaseCol className="justify-between gap-y-1 shrink-0">
@@ -288,7 +244,7 @@ export function FilterPropsPanel() {
                     ? settings.rows.caseSensitive
                     : settings.cols.caseSensitive
                 }
-                onCheckedChange={(state) => {
+                onCheckedChange={state => {
                   if (filterMode.includes('Rows')) {
                     updateSettings({
                       ...settings,
@@ -310,7 +266,7 @@ export function FilterPropsPanel() {
                     ? settings.rows.matchEntireCell
                     : settings.cols.matchEntireCell
                 }
-                onCheckedChange={(state) => {
+                onCheckedChange={state => {
                   if (filterMode.includes('Rows')) {
                     updateSettings({
                       ...settings,
@@ -332,7 +288,7 @@ export function FilterPropsPanel() {
                     ? settings.rows.keepOrder
                     : settings.cols.keepOrder
                 }
-                onCheckedChange={(state) => {
+                onCheckedChange={state => {
                   if (filterMode.includes('Rows')) {
                     updateSettings({
                       ...settings,
@@ -364,7 +320,7 @@ export function FilterPropsPanel() {
 
             <VCenterRow className="mb-2 shrink-0">
               <Button
-                variant="theme"
+                variant="app-theme"
                 //rounded="full"
                 className="px-4"
                 aria-label="Apply filter to current matrix"

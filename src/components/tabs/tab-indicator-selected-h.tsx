@@ -1,7 +1,9 @@
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
-import { type ITabIndicatorPos } from './tab-indicator-provider'
-import { useTabIndicators } from './tab-indicator-store'
+import {
+  useTabIndicators,
+  type ITabIndicatorPos,
+} from './tab-indicator-provider'
 
 /**
  * A horizontal line that can be used to follow the mouse
@@ -12,13 +14,14 @@ import { useTabIndicators } from './tab-indicator-store'
  * @returns
  */
 export function TabIndicatorSelectedH({
-  groupId,
   h = 2,
+  color = undefined,
 }: {
-  groupId: string
+  groupId?: string
   h?: number
+  color?: string | undefined
 }) {
-  const { selectedPosition } = useTabIndicators(groupId) //useContext(TabIndicatorContext)
+  const { selectedPosition } = useTabIndicators() //groupId) //useContext(TabIndicatorContext)
 
   // we use this to track transitions between 0 width and non-zero width
   // to determine animation duration. If item was previously 0 width, we want
@@ -76,12 +79,15 @@ export function TabIndicatorSelectedH({
   return (
     <span
       ref={selectedLineRef}
-      className="absolute left-0 bottom-0 z-10 bg-theme pointer-events-none select-none"
+      className="absolute left-0 bottom-0 z-10 bg-app-theme pointer-events-none select-none"
       // animate={{
       //   x: tabIndicatorPos.x,
       //   width: tabIndicatorPos.size,
       // }}
-      style={{ height: `${h}px` }}
+      style={{
+        height: `${h}px`,
+        backgroundColor: color,
+      }}
       //initial={false}
       //transition={{ ease: 'easeOut', duration: 0.25 }}
     />

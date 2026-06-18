@@ -15,9 +15,10 @@ const RADIO_BUTTON_CLS = cn(
   FOCUS_RING_CLS,
   CENTERED_ROW_CLS,
   'aspect-square h-4.5 w-4.5 rounded-full bg-background border',
-  'data-unchecked:border-border hover:data-unchecked:border-ring group-hover:data-unchecked:border-ring',
-  'data-checked:border-transparent data-checked:bg-theme/90',
-  'data-checked:hover:bg-theme shrink-0'
+  'data-unchecked:border-border hover:data-unchecked:border-ring',
+  'group-hover:data-unchecked:border-ring',
+  'data-checked:border-transparent data-checked:bg-app-theme/90',
+  'data-checked:hover:bg-app-theme shrink-0'
 )
 
 export const Radio = RadioPrimitive.Root
@@ -57,9 +58,9 @@ interface SideRadioGroupItemProps extends ComponentProps<typeof Radio> {
 }
 
 const SIDE_BUTTON_CLS = cn(
-  'relative h-5.5 w-5.5 rounded-sm aspect-square overflow-hidden group',
-  'border data-[state=checked]:border-theme data-[state=unchecked]:border-foreground/50',
-  'data-[state=unchecked]:hover:border-foreground/75',
+  'relative h-5.5 w-5.5 rounded-sm aspect-square overflow-hidden group cursor-pointer',
+  'border data-[state=checked]:border-app-theme data-[state=unchecked]:border-foreground/30',
+  'data-[state=unchecked]:hover:border-foreground/50 trans-color',
   'bg-background'
 )
 
@@ -115,10 +116,10 @@ export function SideRadioGroupItem({
           data-state={value === currentValue ? 'checked' : 'unchecked'}
           data-enabled={!disabled}
           className={cn(
-            'absolute right-0 top-0 z-20 w-1.5 data-[state=checked]:bg-theme',
-            'data-[state=unchecked]:bg-foreground/50',
-            'data-[state=unchecked]:group-hover:bg-foreground/75',
-            [String(value).includes('upper'), 'bottom-1/2', 'bottom-0']
+            'absolute right-0.5 top-0.5 z-20 w-0.75 data-[state=checked]:bg-app-theme',
+            'data-[state=unchecked]:bg-foreground/30 trans-color rounded-sm',
+            'data-[state=unchecked]:group-hover:bg-foreground/50',
+            [String(value).includes('upper'), 'bottom-1/2', 'bottom-0.5']
           )}
         />
       )}

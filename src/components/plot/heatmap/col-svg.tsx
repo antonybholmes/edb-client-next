@@ -5,6 +5,7 @@ import { SVG_CRISP_EDGES } from '@/consts'
 import { COLOR_WHITE } from '@/lib/color/color'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { range } from '@/lib/math/range'
+import { SvgText } from '../svg-text'
 import type { IHeatMapDisplayOptions } from './heatmap-svg-props'
 
 export interface ITreeSvgProps {
@@ -40,7 +41,7 @@ export function ColTreeTopSvg({
             strokeLinecap="round"
             strokeLinejoin="round"
             fill="none"
-            stroke={props.colTree.stroke.color}
+            stroke={props.colTree.stroke.value}
             strokeWidth={props.colTree.stroke.width}
           />
         )
@@ -72,20 +73,20 @@ export function ColLabelsSvg({
       {leaves.map((col, ci) => {
         const x = ci * blockSize.w + halfW
         return (
-          <text
+          <SvgText
             key={ci}
             transform={`translate(${x}, 0) rotate(270)`}
             fill={
               props.colLabels.isColored
-                ? (colorMap?.get(col) ?? props.colLabels.color)
-                : props.colLabels.color
+                ? (colorMap?.get(col) ?? props.colLabels.font.fill.value)
+                : undefined
             }
             dominantBaseline="central"
             textAnchor={props.colLabels.position === 'top' ? 'start' : 'end'}
-            fontSize="smaller"
+            font={props.colLabels}
           >
             {df.colName(col)}
-          </text>
+          </SvgText>
         )
       })}
     </g>
@@ -114,7 +115,7 @@ export function ColGroupsSvg({
             width={blockSize.w}
             height={props.groups.height}
             fill={fill}
-            stroke={props.groups.grid.show ? props.groups.grid.color : 'none'}
+            stroke={props.groups.grid.show ? props.groups.grid.value : 'none'}
             strokeWidth={props.groups.grid.width}
             shapeRendering={SVG_CRISP_EDGES}
           />
@@ -128,7 +129,7 @@ export function ColGroupsSvg({
           width={leaves.length * blockSize.w}
           height={props.groups.height}
           fill="none"
-          stroke={props.groups.border.color}
+          stroke={props.groups.border.value}
           strokeWidth={props.groups.border.width}
           shapeRendering={SVG_CRISP_EDGES}
         />

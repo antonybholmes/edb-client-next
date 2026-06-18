@@ -1,26 +1,34 @@
+import { VCenterRow } from '@/components/layout/v-center-row'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import { PropRow } from '@/components/dialog/prop-row'
-import { VCenterRow } from '@/components/layout/v-center-row'
+} from '@/components/plot/color-picker-popover'
 import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
-import { TEXT_CANCEL, TEXT_NAME } from '@/consts'
-import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
+import { IS_DEV_MODE, TEXT_CANCEL, TEXT_OK } from '@/consts'
+import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import type { IClusterGroup } from '@/lib/cluster-group'
+import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import { getColNamesFromGroup } from '@/lib/dataframe/dataframe-utils'
 import { Checkbox } from '@/themed/v2/check-box'
 import { Input } from '@/themed/v2/input'
+import { produce } from 'immer'
 import { useEffect, useState } from 'react'
+import { useSheet } from '../history/history-store'
+import { useMatcalcSettings } from '../settings/matcalc-settings'
 
-export interface IProps extends IModalProps {
+export interface IProps extends IModalProps<IClusterGroup> {
   group: IClusterGroup
-  callback?: (group: IClusterGroup) => void
 }
 
-export function GroupDialog({ group, callback, onResponse }: IProps) {
+export function GroupDialog({ group, onResponse }: IProps) {
+  const { settings, updateSettings } = useMatcalcSettings()
+
   const [name, setName] = useState('')
   const [search, setSearch] = useState('')
-  const [exactMatch, setExactMatch] = useState(true)
+
+  const [cols, setCols] = useState<string[]>([])
+
+  const sheet = useSheet()
 
   const [color, setColor] = useState('#6495ED') //`#${Math.floor(Math.random() * 16777215).toString(16)}`,
 
@@ -32,23 +40,37 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
     if (group.color.match(/#[0-9a-fA-F]+/)) {
       setColor(group.color)
     }
-    setExactMatch(group.exactMatch ?? true)
   }, [group])
+
+  useEffect(() => {
+    if (!search) {
+      return
+    }
+
+    const g = {
+      ...group,
+      name,
+      search: search.split(',').map(x => x.trim().toLowerCase()),
+
+      exactMatch: settings.groups.match.exact,
+    }
+
+    setCols(getColNamesFromGroup(sheet as AnnotationDataFrame, g))
+  }, [name, search, settings.groups.match.exact])
 
   function makeGroup() {
     // return modified group
-    callback?.({
+    onResponse?.(TEXT_OK, {
       ...group,
       name,
       search: search.split(',').map(x => x.trim().toLowerCase()),
       color,
-      exactMatch,
+      exactMatch: settings.groups.match.exact,
     })
   }
 
   return (
     <OKCancelDialog
-      open={true}
       title={
         <span style={{ color }}>
           {name.length > 0 ? `Edit ${name}` : 'New group'}
@@ -56,7 +78,7 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
       }
       onResponse={r => {
         if (r === TEXT_CANCEL) {
-          onResponse?.(r)
+          onResponse?.(r, undefined)
         } else {
           makeGroup()
         }
@@ -64,58 +86,36 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
       showClose={true}
       //className="w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4"
       leftHeaderChildren={
-        // <ColorPickerButton
-        //   color={color}
-        //   onColorChange={setColor}
-        //   className={cn(XS_ICON_BUTTON_CLS, 'rounded-full')}
-        //   title="Set color"
-        // />
-
         <ColorPickerButton
-          color={color}
-          onColorChange={setColor}
+          colors={[{ color, onColorChange: color => setColor(color) }]}
           className={SIMPLE_COLOR_EXT_CLS}
         />
       }
-      //headerStyle={{ color }}
-      // headerChildren={
-      //   <VCenterRow className="gap-x-1 bg-foreground/50 text-background rounded-full text-xs px-3 py-1.5 hidden xl:flex">
-      //     <span className="text-nowrap shrink-0">Id</span>
-      //     <span className="truncate">{group?.id}</span>
-      //   </VCenterRow>
-      // }
-      // leftFooterChildren={
-      //   <span className="text-foreground/50" title="Group Id">
-      //     {group?.id}
-      //   </span>
-      // }
-      //contentVariant="glass"
-      //bodyVariant="card"
-      //headerVariant="opaque"
-      //bodyVariant="default"
-      //footerVariant="default"
+      leftFooterChildren={
+        IS_DEV_MODE ? (
+          <span className="text-foreground/50">{group.id}</span>
+        ) : undefined
+      }
       bodyCls="gap-y-2"
     >
-      <PropRow title={TEXT_NAME} id="name" labelW="sm">
+      <div className="grid grid-cols-5 items-center gap-2">
+        <span>Name</span>
         <Input
           id="name"
           value={name}
           onChange={e => setName(e.target.value)}
           placeholder="Group Name"
-          //label="Group Name"
-          //labelPos="left"
-          //variant="dialog"
-          //h="dialog"
+          className="col-span-4"
+          rightChildren={
+            <ColorPickerButton
+              colors={[{ color, onColorChange: color => setColor(color) }]}
+              className={SIMPLE_COLOR_EXT_CLS}
+            />
+          }
         />
 
-        <ColorPickerButton
-          color={color}
-          onColorChange={setColor}
-          className={SIMPLE_COLOR_EXT_CLS}
-        />
-      </PropRow>
+        <span>Match</span>
 
-      <PropRow title="Match" labelW="sm">
         <Input
           id="search"
           value={search}
@@ -127,25 +127,35 @@ export function GroupDialog({ group, callback, onResponse }: IProps) {
               names. All matching columns will belong to the group.
             </InfoHoverCard>
           }
-          //label="Match"
-          //labelPos="left"
-          //variant="alt"
-          //variant="dialog"
-          //h="dialog"
+          className="col-span-4"
         />
-      </PropRow>
-
-      <PropRow title="" labelW="sm">
-        <VCenterRow className="grow w-full">
-          <Checkbox checked={exactMatch} onCheckedChange={setExactMatch}>
+        <span></span>
+        <VCenterRow className="col-span-4">
+          <Checkbox
+            checked={settings.groups.match.exact}
+            onCheckedChange={v => {
+              updateSettings(
+                produce(settings, draft => {
+                  draft.groups.match.exact = v
+                })
+              )
+            }}
+          >
             Exact match
           </Checkbox>
         </VCenterRow>
-      </PropRow>
 
-      <PropRow title="Id" labelW="sm">
-        <Input value={group?.id} readOnly />
-      </PropRow>
+        <span></span>
+        <VCenterRow className="col-span-4 text-xs">
+          {cols.length > 0 && cols.join(', ')}
+        </VCenterRow>
+      </div>
+
+      {/* {IS_DEV_MODE && (
+        <PropRow title="Id">
+          <span className="text-foreground/50">{group.id}</span>
+        </PropRow>
+      )} */}
 
       {/* <VCenterRow>
           <span className="w-24 shrink-0">Color</span>

@@ -1,46 +1,45 @@
+import { VCenterRow } from '@/components/layout/v-center-row'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import { VCenterRow } from '@/components/layout/v-center-row'
+} from '@/components/plot/color-picker-popover'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { Label, LabelContainer } from '@/components/shadcn/ui/themed/v2/label'
-import { TEXT_NAME, TEXT_OK } from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
-import { PropRow } from '@/dialog/prop-row'
-import { SwitchPropRow } from '@/dialog/switch-prop-row'
+import { TEXT_CANCEL, TEXT_NAME, TEXT_OK } from '@/consts'
+import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
+import { PropRow } from '@/dialogs/prop-row'
+import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { BaseCol } from '@/layout/base-col'
-import { addAlphaToHex } from '@/lib/color/color'
 import { NumericalInput } from '@/themed/numerical-input'
 import { Input } from '@/themed/v2/input'
 import { produce } from 'immer'
 import { useState } from 'react'
 import type {
-  ILocalBigWigTrack,
+  IBigWigTrack,
   IRemoteBigWigTrack,
-  ISignalTrack,
+  ISeqTrack,
   ITrackGroup,
 } from '../../tracks-provider'
 
-export type TrackEditCallBack = (
-  group: ITrackGroup,
-  track: ISignalTrack | IRemoteBigWigTrack | ILocalBigWigTrack
-) => void
-
-export interface IProps {
+export interface ITrackEditCallBack {
   group: ITrackGroup
-  track: ISignalTrack | IRemoteBigWigTrack | ILocalBigWigTrack
-  callback?: TrackEditCallBack
-  onCancel: () => void
+  track: ISeqTrack | IBigWigTrack | IRemoteBigWigTrack
 }
 
-export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
+export interface IProps extends IModalProps<ITrackEditCallBack> {
+  group: ITrackGroup
+  track: ISeqTrack | IBigWigTrack | IRemoteBigWigTrack
+}
+
+export function SeqEditDialog({ group, track, onResponse }: IProps) {
   const [_track, setTrack] = useState(track)
 
+  _track
+
   const footer =
-    'reads' in _track && _track.reads > 0 ? (
+    (_track?.reads ?? 0) > 0 ? (
       <span className="text-foreground/50">
-        {`Reads: ${_track.reads.toLocaleString()}`}
+        {`Reads: ${(_track?.reads ?? 0).toLocaleString()}`}
       </span>
     ) : undefined
 
@@ -50,18 +49,18 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
       buttons={[TEXT_OK]}
       title="Edit Track" //{`Track${track.name.length > 0 ? ` - ${_track.name}` : ''}`}
       onResponse={() => {
-        onCancel()
+        onResponse?.(TEXT_CANCEL, undefined)
       }}
       //contentVariant="glass"
       //bodyVariant="card"
       showClose={true}
       // leftHeaderChildren={
       //   <ColorPickerButton
-      //     color={_track.displayOptions.stroke.color}
+      //     color={_track.displayOptions.stroke.value}
       //     disabled={!_track.displayOptions.stroke.show}
       //     onColorChange={color => {
       //       const newTrack = produce(_track, draft => {
-      //         draft.displayOptions.stroke.color = color
+      //         draft.displayOptions.stroke.value = color
       //       })
 
       //       callback?.(group, newTrack)
@@ -85,7 +84,7 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
               draft.name = e.target.value
             })
 
-            callback?.(group, newTrack)
+            onResponse?.(TEXT_OK, { group, track: newTrack })
             setTrack(newTrack)
           }}
           placeholder="Track name"
@@ -103,7 +102,7 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
                 draft.displayOptions.height = v
               })
 
-              callback?.(group, newTrack)
+              onResponse?.(TEXT_OK, { group, track: newTrack })
               setTrack(newTrack)
             }}
             className="w-18 rounded-theme"
@@ -117,7 +116,7 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
               draft.displayOptions.axes.show = state
             })
 
-            callback?.(group, newTrack)
+            onResponse?.(TEXT_OK, { group, track: newTrack })
             setTrack(newTrack)
           }}
         />
@@ -129,7 +128,7 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
               draft.displayOptions.stroke.show = state
             })
 
-            callback?.(group, newTrack)
+            onResponse?.(TEXT_OK, { group, track: newTrack })
             setTrack(newTrack)
           }}
         >
@@ -146,22 +145,27 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
                   draft.displayOptions.stroke.width = v
                 })
 
-                callback?.(group, newTrack)
+                onResponse?.(TEXT_OK, { group, track: newTrack })
                 setTrack(newTrack)
               }}
             />
           </VCenterRow>
           <ColorPickerButton
-            color={_track.displayOptions.stroke.color}
-            disabled={!_track.displayOptions.stroke.show}
-            onColorChange={color => {
-              const newTrack = produce(_track, draft => {
-                draft.displayOptions.stroke.color = color
-              })
+            colors={[
+              {
+                color: _track.displayOptions.stroke.value,
 
-              callback?.(group, newTrack)
-              setTrack(newTrack)
-            }}
+                onColorChange: color => {
+                  const newTrack = produce(_track, draft => {
+                    draft.displayOptions.stroke.value = color
+                  })
+
+                  onResponse?.(TEXT_OK, { group, track: newTrack })
+                  setTrack(newTrack)
+                },
+              },
+            ]}
+            disabled={!_track.displayOptions.stroke.show}
             className={SIMPLE_COLOR_EXT_CLS}
             title="Stroke color"
           />
@@ -174,26 +178,35 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
               draft.displayOptions.fill.show = state
             })
 
-            callback?.(group, newTrack)
+            onResponse?.(TEXT_OK, { group, track: newTrack })
             setTrack(newTrack)
           }}
         >
           <ColorPickerButton
-            color={addAlphaToHex(
-              _track.displayOptions.fill.color,
-              _track.displayOptions.fill.opacity
-            )}
-            allowAlpha={true}
-            disabled={!_track.displayOptions.fill.show}
-            onColorChange={(v, alpha) => {
-              const newTrack = produce(_track, draft => {
-                draft.displayOptions.fill.color = v
-                draft.displayOptions.fill.opacity = alpha
-              })
+            colors={[
+              {
+                color: _track.displayOptions.fill.value,
+                opacity: _track.displayOptions.fill.opacity,
+                onColorChange: (v, opacity) => {
+                  const newTrack = produce(_track, draft => {
+                    draft.displayOptions.fill.value = v
+                    draft.displayOptions.fill.opacity = opacity
+                  })
 
-              callback?.(group, newTrack)
-              setTrack(newTrack)
-            }}
+                  console.log(
+                    'newTrack',
+                    _track.displayOptions.fill.opacity,
+                    v,
+                    opacity,
+                    newTrack
+                  )
+
+                  onResponse?.(TEXT_OK, { group, track: newTrack })
+                  setTrack(newTrack)
+                },
+              },
+            ]}
+            disabled={!_track.displayOptions.fill.show}
             className={SIMPLE_COLOR_EXT_CLS}
             title="Fill color"
           />
@@ -206,7 +219,7 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
               draft.displayOptions.useGlobalY = v
             })
 
-            callback?.(group, newTrack)
+            onResponse?.(TEXT_OK, { group, track: newTrack })
             setTrack(newTrack)
           }}
         >
@@ -218,7 +231,7 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
                 draft.displayOptions.autoY = v
               })
 
-              callback?.(group, newTrack)
+              onResponse?.(TEXT_OK, { group, track: newTrack })
               setTrack(newTrack)
             }}
           >
@@ -237,7 +250,7 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
                 draft.displayOptions.ymax = v
               })
 
-              callback?.(group, newTrack)
+              onResponse?.(TEXT_OK, { group, track: newTrack })
               setTrack(newTrack)
             }}
             className="w-18 rounded-theme"
@@ -251,7 +264,7 @@ export function SeqEditDialog({ group, track, callback, onCancel }: IProps) {
               draft.displayOptions.smooth = v
             })
 
-            callback?.(group, newTrack)
+            onResponse?.(TEXT_OK, { group, track: newTrack })
             setTrack(newTrack)
           }}
         />

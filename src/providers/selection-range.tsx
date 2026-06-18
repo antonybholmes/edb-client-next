@@ -1,36 +1,40 @@
-import type { ICell } from '@/interfaces/cell'
 import { produce } from 'immer'
 import { create } from 'zustand'
 
+export interface IRange {
+  start: number
+  end: number
+}
+
 export interface ISelectionRange {
-  start: ICell
-  end: ICell
+  rows: IRange | undefined
+  cols: IRange | undefined
 }
 
-export const NO_SELECTION: ICell = { row: -1, col: -1 }
+//export const NO_SELECTION: ICell = { row: -1, col: -1 }
 
-export const NO_SELECTION_RANGE: ISelectionRange = {
-  start: NO_SELECTION,
-  end: NO_SELECTION,
-}
+// export const NO_SELECTION_RANGE: ISelectionRange = {
+//   rows: undefined,
+//   cols: undefined,
+// }
 
 interface ISelectionRangeStore {
-  selection: ISelectionRange
+  selection: ISelectionRange | undefined
 
   update: (range: ISelectionRange) => void
   clear: () => void
 }
 
-export const useSelectionRangeStore = create<ISelectionRangeStore>((set) => ({
-  selection: NO_SELECTION_RANGE,
+export const useSelectionRangeStore = create<ISelectionRangeStore>(set => ({
+  selection: undefined,
   update: (selection: ISelectionRange) => {
     set(
       produce((state: ISelectionRangeStore) => {
         if (
-          selection.start.row !== state.selection.start.row ||
-          selection.start.col !== state.selection.start.col ||
-          selection.end.row !== state.selection.end.row ||
-          selection.end.col !== state.selection.end.col
+          selection.rows?.start !== state.selection?.rows?.start ||
+          selection.cols?.start !== state.selection?.cols?.start ||
+          selection.rows?.end !== state.selection?.rows?.end ||
+          selection.cols?.end !== state.selection?.cols?.end
         ) {
           state.selection = selection
         }
@@ -40,22 +44,22 @@ export const useSelectionRangeStore = create<ISelectionRangeStore>((set) => ({
   clear: () => {
     set(
       produce((state: ISelectionRangeStore) => {
-        state.selection = { ...NO_SELECTION_RANGE }
+        state.selection = undefined
       })
     )
   },
 }))
 
 export function useSelectionRange(): {
-  selection: ISelectionRange
-  updateSelection: (range: ISelectionRange) => void
-  clearSelection: () => void
+  selection: ISelectionRange | undefined
+  update: (range: ISelectionRange) => void
+  clear: () => void
 } {
-  const selection = useSelectionRangeStore((state) => state.selection)
-  const updateSelection = useSelectionRangeStore((state) => state.update)
-  const clear = useSelectionRangeStore((state) => state.clear)
+  const selection = useSelectionRangeStore(state => state.selection)
+  const update = useSelectionRangeStore(state => state.update)
+  const clear = useSelectionRangeStore(state => state.clear)
 
-  return { selection, updateSelection, clearSelection: clear }
+  return { selection, update, clear }
 }
 
 // export type SelectionRangeAction =

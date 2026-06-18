@@ -7,10 +7,10 @@ import {
   type ReactNode,
 } from 'react'
 
-import { BaseSvg } from '@/components/base-svg'
 import { Axis, YAxis } from '@/components/plot/axis'
 import { VColorBarSvg } from '@/components/plot/color-bar-svg'
 import { type IDrawScatterOptions } from '@/components/plot/scatter/scatter-plot-canvas'
+import { SvgBase } from '@/components/plot/svg-base'
 import type { IDim } from '@/interfaces/dim'
 import { normalize } from '@/lib/math/normalize'
 
@@ -294,13 +294,13 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
                                   cy={y1}
                                   r={settings.umap.clusters.roundel.size}
                                   fill={
-                                    settings.umap.clusters.roundel.fill.color
+                                    settings.umap.clusters.roundel.fill.value
                                   }
                                   fillOpacity={
                                     settings.umap.clusters.roundel.fill.opacity
                                   }
                                   stroke={
-                                    settings.umap.clusters.roundel.stroke.color
+                                    settings.umap.clusters.roundel.stroke.value
                                   }
                                   strokeWidth={
                                     settings.umap.clusters.roundel.stroke.width
@@ -362,7 +362,7 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
   }, [points, settings, plots, size, clusterInfo])
 
   return (
-    <BaseSvg
+    <SvgBase
       ref={_svgRef}
       width={svg.dim.w}
       height={svg.dim.h}
@@ -370,7 +370,7 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
       className="absolute"
     >
       {svg.svg && svg.svg}
-    </BaseSvg>
+    </SvgBase>
   )
 }
 

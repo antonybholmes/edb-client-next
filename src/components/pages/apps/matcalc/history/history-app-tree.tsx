@@ -1,6 +1,5 @@
 import { FileTree } from '@/components/file-tree'
 import type { ITab } from '@/components/tabs/tab-provider'
-import { makeUuid } from '@/lib/id'
 import { useMemo } from 'react'
 import {
   getApps,
@@ -34,7 +33,7 @@ export function HistoryAppTree({
         type: 'app',
       }
 
-      for (const file of getFiles(store, state, app.id)) {
+      for (const file of getFiles(store, state, { app })) {
         const fileTab: ITab = {
           id: file.id,
           name: file.name,
@@ -44,7 +43,7 @@ export function HistoryAppTree({
         }
 
         const sheetsTab: ITab = {
-          id: makeUuid(),
+          id: `sheets-folder:${file.id}`,
 
           name: 'Sheets',
           type: 'folder',
@@ -52,14 +51,14 @@ export function HistoryAppTree({
         }
 
         const plotsTab: ITab = {
-          id: makeUuid(),
+          id: `plots-folder:${file.id}`,
 
           name: 'Plots',
           type: 'folder',
           children: [],
         }
 
-        for (const sheet of getSheets(store, state, file)) {
+        for (const sheet of getSheets(store, state, { file })) {
           const sheetTab: ITab = {
             id: sheet.id,
 
@@ -73,7 +72,7 @@ export function HistoryAppTree({
           sheetsTab.children!.push(sheetTab)
         }
 
-        for (const plot of getPlots(store, state, file)) {
+        for (const plot of getPlots(store, state, { file })) {
           const plotTab: ITab = {
             id: plot.id,
             path: pathJoin(app, file, plot),

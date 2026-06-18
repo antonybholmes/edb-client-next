@@ -1,5 +1,6 @@
 import { BaseCol } from '@/layout/base-col'
 import { cn } from '@/lib/shadcn-utils'
+import type { UndefStr } from '@/lib/text/text'
 import { FOCUS_INSET_RING_CLS } from '@/theme'
 
 import { cva, type VariantProps } from 'class-variance-authority'
@@ -40,12 +41,12 @@ export const TEXT_CLS = `h-full text-foreground disabled:cursor-not-allowed disa
 
 export interface ITextAreaProps
   extends ComponentProps<'textarea'>, VariantProps<typeof textareaVariants> {
-  label?: string | undefined
+  label?: UndefStr
   labelPos?: 'left' | 'top'
   labelW?: string
   labelChildren?: ReactNode
   lines?: string[]
-  textareaCls?: string | undefined
+  textareaCls?: UndefStr
   onTextChange?: (v: string) => void
   onTextChanged?: (v: string) => void
   onLinesChange?: (v: string[]) => void

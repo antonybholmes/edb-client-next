@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { SESSION_AUTH_SIGNIN_URL } from '@/lib/edb/edb'
 
@@ -47,7 +47,7 @@ export function PasswordlessSignInButton({
         //error={"username" in form.formState.errors}
         className=" rounded-theme"
         value={username}
-        onChange={e => setUsername(e.target.value)}
+        onChange={(e) => setUsername(e.target.value)}
       />
 
       <Button

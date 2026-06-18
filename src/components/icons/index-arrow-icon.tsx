@@ -9,7 +9,7 @@ const Y3 = Y2 + 6
 const DURATION = 0.3
 
 export function IndexArrowIcon({
-  w = 'w-4 h-4',
+  size = 'w-4 h-4',
   stroke = 'stroke-white',
   strokeWidth = 2,
   hover = false,
@@ -47,7 +47,7 @@ export function IndexArrowIcon({
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox={`0 0 24 24`}
-      className={cn(ICON_CLS, w, stroke, className)}
+      className={cn(ICON_CLS, size, stroke, className)}
       style={{ strokeLinecap: 'round', strokeLinejoin: 'round', fill: 'none' }}
       strokeWidth={strokeWidth}
     >

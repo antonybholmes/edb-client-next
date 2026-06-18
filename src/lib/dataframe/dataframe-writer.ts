@@ -1,12 +1,13 @@
 import { range } from '@/lib/math/range'
-import { fill } from '../fill'
+import { vfill } from '../fill'
+import type { IFormatNumOpts } from '../text/text'
 import { AnnotationDataFrame } from './annotation-dataframe'
 import { BaseDataFrame } from './base-dataframe'
 import { cellStr } from './cell'
 
-export interface IDataFrameWriterOpts {
+export interface IDataFrameWriterOpts extends IFormatNumOpts {
   sep?: string
-  dp?: number
+
   hasIndex?: boolean
   hasHeader?: boolean
 }
@@ -16,21 +17,23 @@ export class DataFrameWriter {
   private _dp: number
   private _index: boolean
   private _header: boolean
+  private _commas: boolean
 
   /**
    *
    */
-  constructor(options?: IDataFrameWriterOpts) {
-    const { sep, dp, hasHeader, hasIndex } = {
-      sep: '\t',
-      dp: -1,
-      hasHeader: true,
-      hasIndex: true,
-      ...options,
-    }
+  constructor(options: IDataFrameWriterOpts = {}) {
+    const {
+      sep = '\t',
+      dp = -1,
+      commas = true,
+      hasHeader = true,
+      hasIndex = true,
+    } = options
 
     this._sep = sep
     this._dp = dp
+    this._commas = commas
     this._index = hasIndex
     this._header = hasHeader
   }
@@ -44,6 +47,12 @@ export class DataFrameWriter {
   dp(dp: number): DataFrameWriter {
     const ret = new DataFrameWriter()
     ret._dp = dp
+    return ret
+  }
+
+  commas(commas: boolean): DataFrameWriter {
+    const ret = new DataFrameWriter()
+    ret._commas = commas
     return ret
   }
 
@@ -68,14 +77,20 @@ export class DataFrameWriter {
     if (this._index) {
       ret = range(df.shape[0]).map(ri =>
         [df.rowName(ri)]
-          .concat(df.row(ri)!.values.map(v => cellStr(v, { dp: this._dp })))
+          .concat(
+            df
+              .row(ri)!
+              .values.map(v =>
+                cellStr(v, { dp: this._dp, commas: this._commas })
+              )
+          )
           .join(this._sep)
       )
     } else {
       ret = range(df.shape[0]).map(ri =>
         df
           .row(ri)!
-          .values.map(v => cellStr(v, { dp: this._dp }))
+          .values.map(v => cellStr(v, { dp: this._dp, commas: this._commas }))
           .join(this._sep)
       )
     }
@@ -101,14 +116,18 @@ export class DataFrameWriter {
       ret = range(df.shape[0]).map(ri =>
         [
           ...range(rowMetaN).map(mi => df.rowObs.get(ri, mi)),
-          ...df.row(ri)!.values.map(v => cellStr(v, { dp: this._dp })),
+          ...df
+            .row(ri)!
+            .values.map(v =>
+              cellStr(v, { dp: this._dp, commas: this._commas })
+            ),
         ].join(this._sep)
       )
     } else {
       ret = range(df.shape[0]).map(ri =>
         df
           .row(ri)!
-          .values.map(v => cellStr(v, { dp: this._dp }))
+          .values.map(v => cellStr(v, { dp: this._dp, commas: this._commas }))
           .join(this._sep)
       )
     }
@@ -118,7 +137,7 @@ export class DataFrameWriter {
       let headers: string[][] = []
 
       if (this._index) {
-        const emptyHeadings = fill('', rowMetaN)
+        const emptyHeadings = vfill('', rowMetaN)
 
         headers = range(colMetaN).map(mi => [
           ...emptyHeadings,

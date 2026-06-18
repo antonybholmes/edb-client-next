@@ -1,24 +1,24 @@
-import { TEXT_OK, type IDialogParams } from '@/consts'
+import { TEXT_OK } from '@/consts'
 import { useMouseUpListener } from '@/hooks/mouseup-listener'
 import { VCenterRow } from '@/layout/v-center-row'
-import { randId } from '@/lib/id'
 import { useState } from 'react'
 
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
 import { TrashIcon } from '@/icons/trash-icon'
 import { UnLinkIcon } from '@/icons/unlink-icon'
 import { BaseCol } from '@/layout/base-col'
 import { hexColorWithoutAlpha } from '@/lib/color/color'
 import { cn } from '@/lib/shadcn-utils'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
 import { InfoIcon } from '@/components/icons/info-icon'
+import type { IButtonProps } from '@/components/shadcn/ui/themed/v2/button'
 import { TruncateSpan } from '@/components/truncate-span'
 import { where } from '@/lib/math/where'
 import { Settings2 } from 'lucide-react'
-import MODULE_INFO from '../module.json'
+import { useSeqBrowserDialogs } from '../seq-browser-dialogs'
 import {
   newTrackGroup,
-  type ISignalTrack,
+  type ISeqTrack,
   type ITrackGroup,
   type TrackPlot,
 } from '../tracks-provider'
@@ -44,42 +44,35 @@ export const TRACK_ITEM_BUTTONS_CLS = `gap-x-1 pr-1 opacity-0 scale-75 group-hov
 
 export function DeleteTrackGroupButton({ group }: { group: ITrackGroup }) {
   const { dispatch } = useTracks()
-  const [showDialog, setShowDialog] = useState(false)
+
+  const { open: openDialog } = useDialogs()
 
   return (
-    <>
-      {showDialog && (
-        <OKCancelDialog
-          showClose={true}
-          modalType="Warning"
-          //contentVariant="glass"
-          //bodyVariant="card"
-          title={MODULE_INFO.name}
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              dispatch({
-                type: 'remove-groups',
-                ids: [group.id],
-              })
-            }
-            setShowDialog(false)
-          }}
-        >
-          {`Are you sure you want to remove the ${group.name} track?`}
-        </OKCancelDialog>
-      )}
-
-      <button
-        onClick={() => setShowDialog(true)}
-        className="stroke-foreground/50 hover:stroke-red-500"
-        // style={{
-        //   stroke: track.displayOptions.stroke.color,
-        // }}
-        title={`Delete ${group.name}`}
-      >
-        <TrashIcon stroke="" w="w-4" />
-      </button>
-    </>
+    <button
+      onClick={() => {
+        openDialog({
+          type: 'warning',
+          payload: {
+            content: `Are you sure you want to remove the ${group.name} track? This action cannot be undone.`,
+            callback: response => {
+              if (response === TEXT_OK) {
+                dispatch({
+                  type: 'remove-groups',
+                  ids: [group.id],
+                })
+              }
+            },
+          },
+        })
+      }}
+      className="stroke-foreground/50 hover:stroke-destructive"
+      // style={{
+      //   stroke: track.displayOptions.stroke.value,
+      // }}
+      title={`Delete ${group.name}`}
+    >
+      <TrashIcon stroke="" />
+    </button>
   )
 }
 
@@ -91,143 +84,92 @@ export function DeleteTrackButton({
   track: TrackPlot
 }) {
   const { dispatch } = useTracks()
-  const [showDialog, setShowDialog] = useState(false)
+  const { open: openDialog } = useDialogs()
 
   return (
-    <>
-      {showDialog && (
-        <OKCancelDialog
-          modalType="Warning"
-          showClose={true}
-          title={MODULE_INFO.name}
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              dispatch({
-                type: 'remove-tracks',
-                group: group,
-                ids: [track.id],
-              })
-            }
-            setShowDialog(false)
-          }}
-        >
-          {`Are you sure you want to remove the ${group.name} track?`}
-        </OKCancelDialog>
-      )}
-
-      <button
-        onClick={() => setShowDialog(true)}
-        //className="opacity-50 hover:opacity-100 trans-opacity shrink-0"
-        // style={{
-        //   stroke: track.displayOptions.stroke.color,
-        // }}
-        className="stroke-foreground/50 hover:stroke-red-500"
-        title={`Delete ${group.name}`}
-      >
-        <TrashIcon stroke="" />
-      </button>
-    </>
+    <button
+      onClick={() => {
+        openDialog({
+          type: 'warning',
+          payload: {
+            content: `Are you sure you want to remove the ${group.name} track? This action cannot be undone.`,
+            callback: response => {
+              if (response === TEXT_OK) {
+                dispatch({
+                  type: 'remove-tracks',
+                  group: group,
+                  ids: [track.id],
+                })
+              }
+            },
+          },
+        })
+      }}
+      //className="opacity-50 hover:opacity-100 trans-opacity shrink-0"
+      // style={{
+      //   stroke: track.displayOptions.stroke.value,
+      // }}
+      className="stroke-foreground/50 hover:stroke-destructive"
+      title={`Delete ${group.name}`}
+    >
+      <TrashIcon stroke="" />
+    </button>
   )
 }
 
-export function EditTrackButton({
-  cmd,
-  group,
-  track,
-  setShowDialog,
-}: {
-  cmd: string
-  group: ITrackGroup
-  track: TrackPlot
-  setShowDialog: (params: IDialogParams) => void
-}) {
+export function EditTrackButton({ className, ...props }: IButtonProps) {
   return (
     <button
-      title={`Edit ${track.name}`}
-      className="opacity-50 hover:opacity-100 trans-opacity"
-      onClick={() => {
-        setShowDialog({
-          id: randId(cmd),
-          params: { group, track },
-        })
-      }}
+      className={cn('opacity-50 hover:opacity-100 trans-opacity', className)}
+      {...props}
     >
       <Settings2 size={20} strokeWidth={1.5} />
     </button>
   )
 }
 
-export function TrackInfoButton({
-  group,
-  track,
-  setShowDialog,
-}: {
-  group: ITrackGroup
-  track: TrackPlot
-  setShowDialog: (params: IDialogParams) => void
-}) {
-  return (
-    <button
-      title={`${track.name} Info`}
-      className="opacity-50 hover:opacity-100 trans-opacity"
-      onClick={() => {
-        setShowDialog({
-          id: randId('track-info'),
-          params: { group, track },
-        })
-      }}
-    >
-      <InfoIcon />
-    </button>
-  )
-}
-
 export function UngroupButton({ group }: { group: ITrackGroup }) {
   const { groups, dispatch } = useTracks()
-  const [showDialog, setShowDialog] = useState(false)
+  const { open: openDialog } = useDialogs()
 
   return (
-    <>
-      <OKCancelDialog
-        open={showDialog}
-        title={MODULE_INFO.name}
-        onResponse={r => {
-          if (r === TEXT_OK) {
-            // find current index of the group
-            const idx = where(groups, g => g.id === group.id)[0]!
+    <button
+      onClick={() => {
+        openDialog({
+          type: 'warning',
+          payload: {
+            content: 'Are you sure you want to ungroup the tracks?',
+            callback: response => {
+              if (response === TEXT_OK) {
+                // find current index of the group
+                const idx = where(groups, g => g.id === group.id)[0]!
 
-            dispatch({
-              type: 'set',
-              tracks: [
-                // what comes before our group is left intact
-                ...groups.slice(0, idx),
+                dispatch({
+                  type: 'set',
+                  tracks: [
+                    // what comes before our group is left intact
+                    ...groups.slice(0, idx),
 
-                // split each track into a separate group
-                ...group.tracks.map(t => newTrackGroup([t])),
+                    // split each track into a separate group
+                    ...group.tracks.map(t => newTrackGroup([t])),
 
-                // add what comes after the group intact
-                ...groups.slice(idx + 1),
-              ],
-            })
-          }
-
-          setShowDialog(false)
-        }}
-      >
-        Are you sure you want to ungroup the tracks?
-      </OKCancelDialog>
-
-      <button
-        onClick={() => setShowDialog(true)}
-        className="opacity-50 hover:opacity-100 trans-opacity shrink-0"
-        // style={{
-        //   stroke: track.displayOptions.stroke.color,
-        // }}
-        title="Ungroup tracks"
-      >
-        <UnLinkIcon />
-      </button>
-    </>
+                    // add what comes after the group intact
+                    ...groups.slice(idx + 1),
+                  ],
+                })
+              }
+            },
+          },
+        })
+      }}
+      className="opacity-50 hover:opacity-100 trans-opacity shrink-0"
+      // style={{
+      //   stroke: track.displayOptions.stroke.value,
+      // }}
+      title="Ungroup tracks"
+    >
+      <UnLinkIcon />
+    </button>
   )
 }
 
@@ -235,20 +177,20 @@ export function SeqTrackItem({
   group,
   active,
   multiselect,
-  setShowDialog,
 }: {
   group: ITrackGroup
   active: string | null
   multiselect: boolean
-  setShowDialog: (params: IDialogParams) => void
 }) {
-  //const { state, dispatch } = useContext(TracksContext)
+  const { dispatch } = useTracks()
+
+  const { open: openDialog } = useSeqBrowserDialogs()
 
   const [drag, setDrag] = useState(false)
 
   useMouseUpListener(() => setDrag(false))
 
-  const track = group.tracks[0]! as ISignalTrack
+  const track = group.tracks[0]! as ISeqTrack
 
   return (
     <BaseTrackItem
@@ -260,8 +202,8 @@ export function SeqTrackItem({
     >
       {group.tracks.length > 1 && <UngroupButton group={group} />}
       <BaseCol className="grow overflow-hidden">
-        {(group.tracks as ISignalTrack[]).map((t, ti) => {
-          const accentColor = hexColorWithoutAlpha(t.displayOptions.fill.color)
+        {(group.tracks as ISeqTrack[]).map((t, ti) => {
+          const accentColor = hexColorWithoutAlpha(t.displayOptions.fill.value)
           return (
             <VCenterRow
               key={t.id}
@@ -293,18 +235,41 @@ export function SeqTrackItem({
                 </TruncateSpan>
 
                 <VCenterRow data-drag={drag} className={TRACK_ITEM_BUTTONS_CLS}>
-                  <EditTrackButton
-                    cmd="edit-seq"
-                    group={group}
-                    track={t}
-                    setShowDialog={setShowDialog}
-                  />
+                  <button
+                    title={`Edit ${track.name}`}
+                    className="opacity-50 hover:opacity-100 trans-opacity"
+                    onClick={() => {
+                      openDialog({
+                        type: 'edit-seq',
+                        payload: {
+                          group,
+                          track,
+                          callback: data => {
+                            dispatch({
+                              type: 'update',
+                              group,
+                              track: data.track,
+                            })
+                          },
+                        },
+                      })
+                    }}
+                  >
+                    <Settings2 size={20} strokeWidth={1.5} />
+                  </button>
 
-                  <TrackInfoButton
-                    group={group}
-                    track={t}
-                    setShowDialog={setShowDialog}
-                  />
+                  <button
+                    title={`${track.name} Info`}
+                    className="opacity-50 hover:opacity-100 trans-opacity"
+                    onClick={() => {
+                      openDialog({
+                        type: 'track-info',
+                        payload: { track: t },
+                      })
+                    }}
+                  >
+                    <InfoIcon />
+                  </button>
                 </VCenterRow>
               </VCenterRow>
               <VCenterRow data-drag={drag} className={TRACK_ITEM_BUTTONS_CLS}>

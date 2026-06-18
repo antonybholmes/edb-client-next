@@ -8,7 +8,7 @@ export interface IChartIconProps extends IIconProps {
 }
 
 export function SplitIcon({
-  w = 'w-4',
+  size = 'w-4',
   fill = 'stroke-foreground fill-none',
   stroke = 'stroke-2',
   className,
@@ -16,7 +16,7 @@ export function SplitIcon({
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className={cn(ICON_CLS, fill, stroke, w, className)}
+      className={cn(ICON_CLS, fill, stroke, size, className)}
       viewBox="0 0 24 24"
       style={{ strokeLinecap: 'round', strokeLinejoin: 'round' }}
     >

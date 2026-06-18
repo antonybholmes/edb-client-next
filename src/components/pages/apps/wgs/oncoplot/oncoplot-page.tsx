@@ -11,7 +11,6 @@ import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
 
 import { ToolbarButton } from '@/toolbar/toolbar-button'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
-import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
 import { OpenIcon } from '@/icons/open-icon'
 
@@ -20,18 +19,15 @@ import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import {
   filesToDataFrames,
   onTextFileChange,
-  OpenFiles,
   type IParseOptions,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 import {
-  NO_DIALOG,
   TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_PNG,
   TEXT_DOWNLOAD_AS_SVG,
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_SAVE_AS,
-  type IDialogParams,
 } from '@/consts'
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
@@ -41,12 +37,7 @@ import { useEffect, useState } from 'react'
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
-import {
-  makeOncoPlot,
-  MULTI_MODE_MAP,
-  type IOncoColumns,
-  type MultiMode,
-} from './oncoplot-utils'
+import { MULTI_MODE_MAP, type MultiMode } from './oncoplot-utils'
 
 import {
   DropdownMenu,
@@ -55,13 +46,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { UploadIcon } from '@/icons/upload-icon'
-import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { randId } from '@/lib/id'
+import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeClinicalTracks } from './clinical-utils'
 import { OncoplotPanel, PANEL_ID } from './oncoplot-panel'
 
-import { HeaderSlotPortal } from '@/components/header/header-slot-portal'
-import { ModuleInfoButton } from '@/components/header/module-info-button'
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { AppHeaderIcon } from '@/components/header/app-header-icon'
+import { AppInfoButton } from '@/components/header/app-info-button'
+import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import {
   GroupToggle,
@@ -72,10 +64,11 @@ import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { useStableId } from '@/hooks/stable-id'
 import { FileIcon } from '@/icons/file-icon'
 import { HeaderButton } from '@/layouts/header-button'
+import { useAppInfo } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
 import { CoreProviders } from '@/providers/core-providers'
-import { useMessages } from '@/providers/message-provider'
+import { useMessages } from '@/providers/messages'
 import {
   Select,
   SelectContent,
@@ -85,21 +78,17 @@ import {
 } from '@/themed/v2/select'
 import { produce } from 'immer'
 import { HistoryShowButton } from '../../matcalc/history/history-layout'
-import {
-  findSheet,
-  useFile,
-  useHistory,
-} from '../../matcalc/history/history-store'
+import { useHistory } from '../../matcalc/history/history-store'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
-import MODULE_INFO from './module.json'
+import APP_INFO from './manifest.json'
+import { OncoplotDialogsRoot } from './oncoplot-dialogs'
 import { useOncoplotSettings } from './oncoplot-settings-store'
 import { useOncoplot } from './oncoplot-store'
 
 function OncoplotPage() {
   const _id = useStableId('oncoplot-page')
 
-  const { store, state, addSheets, openFile } = useHistory()
-  const file = useFile()
+  const { addSheets, openFile } = useHistory()
 
   //const [working, setWorking] = useState(false)
   //const [tableData, setTableData] = useState<object[]>(DEFAULT_TABLE_ROWS)
@@ -122,29 +111,26 @@ function OncoplotPage() {
 
   //const [search] = useState<string[]>([])
 
-  const { mutations, displayProps, setDisplayProps, setMutations } =
-    useOncoplotSettings()
+  const { displayProps, setDisplayProps } = useOncoplotSettings()
 
-  const {
-    genes,
-    clinicalTracks,
-    setMutationFrame,
-    setVariantsInUse,
-    setClinicalTracks,
-    setGenesFromTable,
-  } = useOncoplot()
+  const { setClinicalTracks, setGenesFromTable } = useOncoplot()
 
   //const [locations, setLocations] = useState<GenomicLocation[]>([])
 
   const [showFileMenu, setShowFileMenu] = useState(false)
-
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
   //const [showLoadingDialog, setShowLoadingDialog] = useState(false)
 
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
 
   const { sendMessage } = useMessages('oncoplot') //'onco')
+
+  const { open: openDialog } = useDialogs()
+  const { setAppInfo } = useAppInfo()
+
+  useEffect(() => {
+    setAppInfo(APP_INFO)
+  }, [])
 
   //const [clusterFrame, setClusterFrame] = useState<IClusterFrameProps>(NO_CF)
 
@@ -199,7 +185,7 @@ function OncoplotPage() {
 
       table = new DataFrameReader().keepDefaultNA(false).read(lines)
 
-      addSheets([table.setName('Locations')])
+      addSheets([table.setName('Locations')], { mode: 'append' })
 
       res = await httpFetch.getText('/data/test/adalgisa_clinical_data.txt')
 
@@ -274,7 +260,7 @@ function OncoplotPage() {
     )
 
     // show sheet in UI
-    addSheets([clinicalTable.setName('Clinical')])
+    addSheets([clinicalTable.setName('Clinical')], { mode: 'append' })
   }
 
   // useEffect(() => {
@@ -320,14 +306,14 @@ function OncoplotPage() {
         .read(lines)
 
       setClinicalData(clinicalTable)
-    } else if (message.includes('Location')) {
+    } else if (message.includes('locations')) {
       const lines = textToLines(text)
 
       const locationTable = new DataFrameReader()
         .keepDefaultNA(false)
         .read(lines)
 
-      addSheets([locationTable.setName('Locations')])
+      addSheets([locationTable.setName('Locations')], { mode: 'append' })
     } else {
       //setFilesToOpen([
       //  { name: "Variants", text, ext: name.split(".").pop() || "" },
@@ -353,6 +339,8 @@ function OncoplotPage() {
   function openFiles(files: ITextFileOpen[], options: IParseOptions) {
     //filesToDataFrames(files, historyDispatch, options)
 
+    console.log('Parsing files with options:', files)
+
     filesToDataFrames(files, {
       parseOpts: options,
       onSuccess: (tables) => {
@@ -362,186 +350,43 @@ function OncoplotPage() {
           setGenesFromTable(tables[0]!)
         }
       },
+      onError: (error) => {
+        console.log('Error parsing files:', error)
+        openDialog({
+          type: 'alert',
+          payload: {
+            content: `${error}. Please check the file format and try again.`,
+          },
+        })
+      },
     })
 
     setShowFileMenu(false)
   }
 
-  // function locationOncoplot() {
-  //   const df = sheet?.df as BaseDataFrame
-
-  //   console.log(df)
-
-  //   const locationsDf: BaseDataFrame | undefined = findSheet('Locations', step!)
-  //     ?.df as BaseDataFrame
-
-  //   const locations = locationsDf
-  //     ?.col(0)
-  //     .strs.map((l: string) => parseGenLoc(l))
-
-  //   const colMap: IOncoColumns = {
-  //     sample: findCol(df, 'Sample'),
-  //     chr: findCol(df, 'Chromosome'),
-  //     start: findCol(df, 'Start_Position'),
-  //     end: findCol(df, 'End_position'),
-  //     ref: findCol(df, 'Reference_Allele'),
-  //     tum: findCol(df, 'Tumor_Seq_Allele2'),
-  //     gene: findCol(df, 'Gene'),
-  //     type: findCol(df, 'Type'),
-  //   }
-
-  //   console.log(locations, colMap)
-
-  //   // const [table, legend] = makeLocationOncoPlot(
-  //   //   df,
-  //   //   clinicalDf,
-  //   //   locations,
-  //   //   colMap,
-  //   //   multi,
-  //   //   sort,
-  //   //   removeEmpty,
-  //   //   oncoQuery.data!
-  //   // )
-
-  //   // const dp = {
-  //   //   ...displayProps,
-  //   //   multi,
-  //   //   legend: {
-  //   //     ...displayProps.legend,
-  //   //     mutations: { ...displayProps.legend.mutations, ...legend },
-  //   //   },
-  //   // }
-
-  //   // setDisplayProps(dp)
-
-  //   // plotsDispatch({
-  //   //   type: 'set',
-  //   //   plot: {
-  //   //     mutationFrame: table,
-  //   //     clinicalTracks,
-  //   //     //clinicalTracksColorMaps: [],
-  //   //     displayProps: dp,
-  //   //   },
-  //   // })
-  // }
-
-  useEffect(() => {
-    function oncoplot() {
-      if (genes.length === 0 || mutations.length === 0) {
-        return
-      }
-
-      // Assume first sheet is
-      const sheet = findSheet(store, state, file, 'Variants')
-
-      if (!sheet) {
-        return
-      }
-
-      const df = sheet as BaseDataFrame
-
-      console.log('Generating oncoplot from df:', df, mutations)
-
-      const colMap: IOncoColumns = {
-        sample: findCol(df, 'Sample'),
-        chr: findCol(df, 'Chromosome'),
-        start: findCol(df, 'Start_Position'),
-        end: findCol(df, 'End_position'),
-        ref: findCol(df, 'Reference_Allele'),
-        tum: findCol(df, 'Tumor_Seq_Allele2'),
-        gene: findCol(df, 'Gene'),
-        type: findCol(df, 'Type'),
-      }
-
-      // for people who don't use the correct names
-
-      if (colMap.sample === -1) {
-        colMap.sample = findCol(df, 'Tumor_Sample_Barcode')
-      }
-
-      if (colMap.type === -1) {
-        colMap.type = findCol(df, 'Variant Classification')
-      }
-
-      //const multi = 'multi'
-      //const sort = true
-      //const removeEmpty = true
-
-      const { oncoFrame, mutationsInUse, newMutations } = makeOncoPlot(
-        df,
-        mutations,
-        colMap,
-        displayProps.multi,
-        displayProps.sort,
-        displayProps.removeEmptySamples,
-        genes,
-        clinicalTracks
-      )
-
-      setMutationFrame(oncoFrame)
-      setVariantsInUse(mutationsInUse)
-
-      console.log('Variants in use:', mutationsInUse)
-
-      // setDisplayProps(
-      //   produce(displayProps, draft => {
-      //     draft.legend.mutations.names = legend.names
-      //     draft.legend.mutations.colorMap = legend.colorMap
-      //   })
-      // )
-
-      if (newMutations.length > 0) {
-        setMutations([...mutations, ...newMutations])
-      }
-
-      // if (colMap.sample !== -1) {
-      //   // see if table might contain clinical info
-      //   const cooCol = findCol(df, 'COO')
-      //   const lymphGenCol = findCol(df, 'LymphGen')
-
-      //   if (cooCol !== -1 && lymphGenCol !== -1) {
-      //     const dfClinical = df.iloc(':', [colMap.sample, cooCol, lymphGenCol])
-
-      //     console.log(dfClinical, 'aha')
-
-      //     setClinicalData(dfClinical)
-      //   }
-      // }
-    }
-
-    // auto make oncoplot when data or settings change
-    oncoplot()
-  }, [
-    file,
-
-    mutations,
-    genes,
-    clinicalTracks,
-    displayProps.multi,
-    displayProps.sort,
-    displayProps.removeEmptySamples,
-    setMutationFrame,
-    setVariantsInUse,
-    setMutations,
-    //oncoQuery.data,
-  ])
+  function _open(message: string) {
+    openDialog({
+      type: 'open',
+      payload: {
+        message,
+        callback: (message, files) => {
+          onTextFileChange(message, files, (files) =>
+            parseFiles(message, files)
+          )
+        },
+      },
+    })
+  }
 
   const tabs: ITab[] = [
     {
-      ////name: nanoid(),
       id: 'Home',
-
       content: (
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
-              onOpenChange={(open) => {
-                if (open) {
-                  console.log('open file menu ')
-                  setShowDialog({
-                    id: randId('open'),
-                  })
-                }
+              onOpen={() => {
+                _open('variants')
               }}
               multiple={true}
             />
@@ -552,7 +397,7 @@ function OncoplotPage() {
                 //save("txt")
                 sendMessage({
                   type: 'info',
-                  source: MODULE_INFO.name,
+                  source: APP_INFO.name,
                   target: PANEL_ID,
                   data: 'save',
                 })
@@ -561,46 +406,33 @@ function OncoplotPage() {
               <DownloadIcon />
             </ToolbarIconButton>
           </ToolbarTabGroup>
-          <ToolbarSeparator />
+
           <ToolbarTabGroup title="Data">
             <ToolbarCol>
               <ToolbarButton
                 aria-label="Open clinical information"
-                onClick={() =>
-                  setShowDialog({ id: randId('clinical'), params: {} })
-                }
+                onClick={() => {
+                  _open('clinical')
+                }}
               >
                 Clinical
               </ToolbarButton>
               <ToolbarButton
                 aria-label="Open location data"
-                onClick={() =>
-                  setShowDialog({ id: randId('Location'), params: {} })
-                }
+                onClick={() => {
+                  _open('locations')
+                }}
               >
                 Locations
               </ToolbarButton>
             </ToolbarCol>
           </ToolbarTabGroup>
-          <ToolbarSeparator />
+
           <ToolbarTabGroup
             title="Plot"
             className="gap-x-4"
             style={{ alignItems: 'flex-start' }}
           >
-            {/* <ToolbarButton
-              onClick={() =>
-                setShowDialog({
-                  id: randId('oncoplot'),
-                  params: { type: 'oncoplot' },
-                })
-              }
-              title="Create Oncoplot"
-            >
-              <PlayIcon />
-              <span>Oncoplot</span>
-            </ToolbarButton> */}
-
             <ToggleGroup
               value={[
                 displayProps.sort.sortGenes ? ['rows'] : [],
@@ -619,6 +451,7 @@ function OncoplotPage() {
               justify="start"
               direction="toolbar"
               multiple={true}
+              className="gap-x-0.5"
             >
               <GroupToggle value="rows">Sort rows</GroupToggle>
 
@@ -695,206 +528,20 @@ function OncoplotPage() {
                 No empty samples
               </ToolbarButton>
             </ToolbarCol>
-
-            {/* <ToolbarButton
-              aria-label="Create a location oncoplot"
-              onClick={() =>
-                setShowDialog({
-                  id: randId('looncoplot'),
-                  params: { type: 'loconcoplot' },
-                })
-              }
-            >
-              Location Oncoplot
-            </ToolbarButton> */}
           </ToolbarTabGroup>
-
-          <ToolbarSeparator />
         </>
       ),
     },
   ]
 
-  // const rightTabs: ITab[] = [
-  //   {
-  //     // id: randId(),
-  //     icon: <LayerIcon />,
-  //     name: "Groups",
-  //     content: (
-  //       <GroupsPanel
-  //         df={history.step.dataframe}
-  //         groups={groups}
-  //         onGroupsChange={groupsDispatch}
-  //         selection={selection}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     // id: randId(),
-  //     icon: <FilterIcon />,
-  //     name: "Filter Table",
-  //     content: (
-  //       <FilterPanel
-  //         df={history.step.dataframe}
-
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     // id: randId(),
-  //     icon: <ClockRotateLeftIcon />,
-  //     name: "History",
-  //     content: (
-  //       <HistoryPanel />
-  //     ),
-  //   },
-  // ]
-
-  // const plotRightTabs: ITab[] = [
-  //   {
-  //     icon: <SlidersIcon />,
-  //     label: "Display",
-  //     content: (
-  //       <DisplayPropsPanel
-  //         cf={clusterFrame.cf}
-  //         displayProps={displayProps}
-  //         onChange={props => setDisplayProps(props)}
-  //       />
-  //     ),
-  //   },
-  // ]
-
-  // let svgPanel: ReactNode = null
-  // if (clusterFrame.cf) {
-  //   // switch (clusterFrame.type) {
-  //   // case "heatmap":
-  //   svgPanel = (
-  //     <HeatMapSvg
-  //       ref={svgRef}
-  //       cf={clusterFrame.cf}
-  //       groups={groups}
-  //       search={search}
-  //       displayProps={displayProps}
-  //     />
-  //   )
-
-  // }
-
-  // const topTabs: ITab[] = [
-  //   {
-  //     id: nanoid(),
-  //     icon: <TableIcon className="fill-theme" />,
-  //     name: "Data",
-  //     content: (
-  //       <DataPanel />
-
-  //     ),
-  //   },
-  // ]
-
-  // plotState.plots.forEach((plot: IPlot) => {
-  //   topTabs.push({
-  //     id: nanoid(),
-  //     name: plot.name,
-  //     icon: <ChartIcon className="fill-theme" />,
-  //     onDelete: () => plotsDispatch({ type: "remove", id: plot.id }),
-  //     content: (
-  //       <OncoplotPanelWrapper
-  //         panelId={plot.name}
-  //         oncoProps={oncoQuery.data}
-  //         mutationFrame={plot.mutationFrame}
-  //         clinicalTracks={plot.clinicalTracks}
-  //         displayProps={plot.displayProps}
-  //       />
-  //     ),
-  //   })
-  // })
-
-  // useEffect(() => {
-  //   const plotChildren: ITab[] = []
-
-  //   plotsState.plots.forEach(plot => {
-  //     plotChildren.push({
-  //       id: NANOID12(),
-  //       name: plot.name,
-  //       icon: <ChartIcon className="fill-theme" />,
-  //       onDelete: () => plotsDispatch({ type: 'remove', id: plot.id }),
-  //       content: (
-  //         <OncoplotPanel panelId={plot.id} oncoProps={oncoQuery.data!} />
-  //       ),
-  //     })
-  //   })
-
-  //   const tab: ITab = {
-  //     ...makeFoldersRootNode(),
-  //     children: [
-  //       dataTab,
-  //       {
-  //         ////name: nanoid(),
-  //         id: 'Plots',
-  //         icon: <FolderIcon />,
-  //         isOpen: true,
-  //         children: plotChildren,
-  //       },
-  //     ],
-  //   }
-
-  //   setFoldersTab(tab)
-
-  //   console.log(tab)
-
-  //   // if the children
-  //   if (plotChildren.length > 0) {
-  //     setTab(plotChildren[plotChildren.length - 1])
-  //   } else {
-  //     setTab(dataTab)
-  //   }
-  // }, [plotsState])
-
-  // plots.plots.forEach(plot => {
-  //   switch (plot.type) {
-  //     case "Heatmap":
-  //     case "Dot Plot":
-  //       topTabs.push({
-  //         // id: randId(),
-  //         name: plot.name,
-  //         onDelete: () => plotsDispatch({ type: "remove", id: plot.id }),
-  //         content: (
-  //           <OncoplotPanel
-  //             id={plot.name}
-  //             plot={plot}
-  //             groups={groups}
-  //           />
-  //         ),
-  //       })
-  //       break
-  //     case "Volcano Plot":
-  //       topTabs.push({
-  //         // id: randId(),
-  //         name: plot.name,
-  //         onDelete: () => plotsDispatch({ type: "remove", id: plot.id }),
-  //         content: (
-  //           <VolcanoPanel
-  //             id={plot.name}
-  //             plot={plot}
-  //           />
-  //         ),
-  //       })
-  //       break
-  //     default:
-  //     // do nothing
-  //   }
-  // })
-
   const fileMenuTabs: ITab[] = [
     {
-      //id: nanoid(),
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
       content: (
         <DropdownMenuItem
           aria-label="Open file on your computer"
-          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
+          onClick={() => _open('variants')}
         >
           <UploadIcon stroke="" />
 
@@ -903,11 +550,9 @@ function OncoplotPage() {
       ),
     },
     {
-      //name: nanoid(),
       id: '<divider>',
     },
     {
-      //id: nanoid(),
       id: TEXT_SAVE_AS,
       content: (
         <>
@@ -954,7 +599,7 @@ function OncoplotPage() {
             onClick={() => {
               sendMessage({
                 type: 'info',
-                source: MODULE_INFO.name,
+                source: APP_INFO.name,
                 target: PANEL_ID,
                 data: 'save:png',
               })
@@ -969,7 +614,7 @@ function OncoplotPage() {
             onClick={() => {
               sendMessage({
                 type: 'info',
-                source: MODULE_INFO.name,
+                source: APP_INFO.name,
                 target: PANEL_ID,
                 data: 'save:svg',
               })
@@ -983,42 +628,13 @@ function OncoplotPage() {
     },
   ]
 
-  console.log('onco refresh check', showDialog.id)
-
   return (
     <>
-      {(showDialog.id.startsWith('open:') ||
-        showDialog.id.includes('Location') ||
-        showDialog.id.includes('clinical')) && (
-        <OpenFiles
-          message={showDialog.id}
-          //onOpenChange={() => setShowDialog({...NO_DIALOG})}
-          onFileChange={(message, files) =>
-            onTextFileChange(message, files, (files) =>
-              parseFiles(message, files)
-            )
-          }
-        />
-      )}
+      {/* <DialogsRoot filter={['open', 'alert', 'ok-cancel']} /> */}
 
-      {/* {showDialog.id.includes('oncoplot') && (
-        <OncoPlotDialog
-          type={showDialog.params!.type as OncoplotType}
-          onPlot={(type: OncoplotType) => {
-            setShowDialog({ ...NO_DIALOG })
-
-            if (type === 'loconcoplot') {
-              locationOncoplot()
-            } else {
-              //oncoplot()
-            }
-          }}
-          onCancel={() => setShowDialog({ ...NO_DIALOG })}
-        />
-      )} */}
-
-      <HeaderSlotPortal slot="header-left">
-        <ModuleInfoButton info={MODULE_INFO} />
+      <HeaderSlotPortal>
+        <AppHeaderIcon />
+        <AppInfoButton />
       </HeaderSlotPortal>
 
       <HeaderSlotPortal slot="header-right">
@@ -1041,6 +657,8 @@ function OncoplotPage() {
         </DropdownMenu>
       </HeaderSlotPortal>
 
+      <OncoplotDialogsRoot />
+
       <ShortcutLayout signinRequired={false}>
         <Toolbar>
           <ToolbarMenu
@@ -1049,7 +667,7 @@ function OncoplotPage() {
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
-            info={MODULE_INFO}
+            info={APP_INFO}
             value={toolbarTab}
             onValueChange={setToolbarTab}
             leftShortcuts={<UndoShortcuts />}
@@ -1064,7 +682,7 @@ function OncoplotPage() {
                   //save("txt")
                   sendMessage({
                     type: 'info',
-                    source: MODULE_INFO.name,
+                    source: APP_INFO.name,
                     target: PANEL_ID,
                     data: 'show-sidebar',
                   })

@@ -52,7 +52,7 @@ export function Checkbox({
       >
         <CheckboxPrimitive.Indicator>
           <CheckIcon
-            w="w-3"
+            size="w-3"
             stroke="stroke-white/90"
             style={{ strokeWidth: 4 }}
           />

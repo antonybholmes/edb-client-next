@@ -32,7 +32,7 @@ export const BASE_MUTED_THEME_CLS = cn(
 )
 
 const ICON_CLS =
-  'flex w-7.5 aspect-square shrink-0 flex-row items-center justify-center rounded-full text-sm border-2 bg-white'
+  'flex w-toolbar-button aspect-square shrink-0 flex-row items-center justify-center rounded-full text-sm border-2 bg-white'
 
 export function ModuleButtonLink({
   className,
@@ -56,7 +56,7 @@ export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
 
   // sort alphabetically and ignore sections
   const items = HEADER_LINKS.map(section => {
-    return section.modules.filter(
+    return section.apps.filter(
       module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
@@ -80,7 +80,7 @@ export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
             onClick={handleClick}
             aria-label={module.name}
             target={
-              settings.modules.links.openInNewWindow ? BLANK_TARGET : undefined
+              settings.apps.links.openInNewWindow ? BLANK_TARGET : undefined
             }
             title={module.description}
           >

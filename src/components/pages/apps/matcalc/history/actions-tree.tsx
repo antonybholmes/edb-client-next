@@ -1,5 +1,6 @@
 import { FileTree } from '@/components/file-tree'
 import type { ITab } from '@/components/tabs/tab-provider'
+import { FileClock } from 'lucide-react'
 import { useMemo } from 'react'
 import { useHistory } from './history-store'
 
@@ -8,11 +9,11 @@ export function ActionsTree({
 }: {
   onTabChange: (tab: ITab) => void
 }) {
-  const { history } = useHistory()
+  const { history, seek } = useHistory()
 
   const tree: ITab = useMemo(() => {
     const actionsTab: ITab = {
-      id: 'actions',
+      id: 'root',
       name: 'Actions',
       children: [],
     }
@@ -20,9 +21,10 @@ export function ActionsTree({
     for (const action of history) {
       const actionTab: ITab = {
         id: action.id,
+        icon: <FileClock size={16} />,
         name: `${action.name}`,
         data: action,
-        type: 'Action',
+        type: 'action',
       }
 
       actionsTab.children!.push(actionTab)
@@ -42,6 +44,7 @@ export function ActionsTree({
       tab={tree}
       onValueChange={t => {
         onTabChange(t)
+        seek(t.id)
       }}
     />
   )

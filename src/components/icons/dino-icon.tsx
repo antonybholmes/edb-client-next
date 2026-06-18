@@ -4,19 +4,19 @@ import { cn } from '@/lib/shadcn-utils'
 // https://www.svgrepo.com/svg/415013/dinosaur-kids-play
 export function DinoIcon({
   ref,
-  w = 6,
+  size = 6,
   stroke = 'text-foreground',
   strokeWidth = 2,
   className,
 }: IIconProps) {
-  const width = `${w}rem`
+  const width = `${size}rem`
 
   return (
     <svg
       ref={ref}
       viewBox="0 0 162.95 152.57"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn(ICON_CLS, w, stroke, className)}
+      className={cn(ICON_CLS, size, stroke, className)}
       style={{ strokeWidth, width, height: width }}
     >
       <g transform="translate(-65.618 -67.993)">

@@ -1,4 +1,4 @@
-import MODULE_INFO from '@/components/pages/apps/wgs/variants/module.json'
+import MODULE_INFO from '@/components/pages/apps/wgs/variants/manifest.json'
 import { makeMetaDataFromModule } from '@/lib/metadata'
 
 import { VariantsQueryPage } from '@/components/pages/apps/wgs/variants/variants-page'

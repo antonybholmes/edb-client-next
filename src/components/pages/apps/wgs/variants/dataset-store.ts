@@ -2,12 +2,12 @@ import { TIME_5_MINUTES_MS } from '@/consts'
 import type { IDBEntity } from '@/interfaces/db-entity'
 import { API_WGS_URL } from '@/lib/edb/edb'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { create } from 'zustand'
-import { useVariantSettings } from './variant-settings-store'
 
 // export interface IMutationDataset {
 //   name: string
@@ -96,7 +96,7 @@ export const useVariantSettingsStore = create<IDatasetStore>()((set, get) => ({
 
 export function useDatasets(): Omit<IDatasetStore, 'setDatasets'> {
   const { fetchAccessToken } = useEdbAuth()
-  const { settings } = useVariantSettings()
+  const { settings } = useEdbSettings()
 
   const datasets = useVariantSettingsStore(state => state.datasets)
   const datasetsInUse = useVariantSettingsStore(state => state.datasetsInUse)
@@ -110,13 +110,13 @@ export function useDatasets(): Omit<IDatasetStore, 'setDatasets'> {
   )
 
   const { data: datasetData } = useQuery({
-    queryKey: ['datasets', settings.assembly],
+    queryKey: ['datasets', settings.genomic.assembly],
     staleTime: TIME_5_MINUTES_MS,
     queryFn: async () => {
       const accessToken = await fetchAccessToken()
 
       const res = await httpFetch.getJson<{ data: IVariantDataset[] }>(
-        `${API_WGS_URL}/assemblies/${settings.assembly}/datasets`,
+        `${API_WGS_URL}/assemblies/${settings.genomic.assembly}/datasets`,
         { headers: bearerHeaders(accessToken) }
       )
 

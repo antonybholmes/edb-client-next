@@ -18,7 +18,7 @@ export function Logo() {
           src="/favicon.svg"
           width={512}
           height={512}
-          alt={config.appName}
+          alt={config.name}
           className="w-6"
         />
       </div>

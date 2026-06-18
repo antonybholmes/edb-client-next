@@ -1,9 +1,7 @@
 import { Button, type IButtonProps } from '@/themed/v2/button'
 
 export function LinkButton({
-  ref,
   variant = 'link',
-
   size = 'none',
   justify = 'start',
   pad = 'none',
@@ -13,7 +11,6 @@ export function LinkButton({
 }: IButtonProps) {
   return (
     <Button
-      ref={ref}
       variant={variant}
       size={size}
       justify={justify}

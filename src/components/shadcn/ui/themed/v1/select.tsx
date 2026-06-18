@@ -1,6 +1,6 @@
 import { CheckIcon } from '@/icons/check-icon'
 import { cn } from '@/lib/shadcn-utils'
-import { BUTTON_MD_H_CLS, BUTTON_SM_H_CLS, FOCUS_INSET_RING_CLS } from '@/theme'
+import { FOCUS_INSET_RING_CLS } from '@/theme'
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons'
 import * as SelectPrimitive from '@radix-ui/react-select'
 
@@ -40,19 +40,13 @@ const triggerVariants = cva(
       variant: {
         default: cn(
           'bg-background stroke-foreground border border-border focus:border-ring hover:border-ring',
-          'data-[state=open]:border-ring placeholder:text-foreground/50 rounded-theme pl-2 pr-1',
-          BUTTON_MD_H_CLS
+          'data-[state=open]:border-ring placeholder:text-foreground/50 rounded-theme pl-2 pr-1 h-button-md'
         ),
         toolbar: cn(
-          BUTTON_SM_H_CLS,
-          'rounded-theme pl-2 pr-1 border border-transparent focus:border-border/60',
+          'rounded-theme h-button-sm pl-2 pr-1 border border-transparent focus:border-border/60',
           'hover:border-border/60 data-[state=open]:border-border/60'
         ),
-        button: cn(
-          BASE_FLAT_BUTTON_CLS,
-          BUTTON_SM_H_CLS,
-          'rounded-theme pl-2 pr-1'
-        ),
+        button: cn(BASE_FLAT_BUTTON_CLS, 'rounded-theme h-button-sm pl-2 pr-1'),
         header: '',
         glass: '',
       },
@@ -91,7 +85,7 @@ function SelectTrigger({
       <SelectPrimitive.Icon asChild>
         {/* <CaretSortIcon className="h-4 w-4 opacity-50" /> */}
         {/* <ChevronUpDownIcon className="opacity-50" w="w-4" /> */}
-        <ChevronRightIcon className="opacity-50 rotate-90" w="w-4" />
+        <ChevronRightIcon className="opacity-50 rotate-90" size="w-4" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   )
@@ -214,7 +208,7 @@ export function SelectItem({
     >
       <span className={DROPDOWN_MENU_ICON_CONTAINER_CLS}>
         <SelectPrimitive.ItemIndicator>
-          <CheckIcon w="w-3.5 h-3.5" stroke="" />
+          <CheckIcon size="w-3.5 h-3.5" stroke="" />
         </SelectPrimitive.ItemIndicator>
       </span>
 

@@ -2,7 +2,7 @@ import { Input } from '@/themed/v2/input'
 
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { PropsPanel } from '@/components/props-panel'
-import { PropRow } from '@/dialog/prop-row'
+import { PropRow } from '@/dialogs/prop-row'
 import {
   AccordionContent,
   AccordionItem,
@@ -13,8 +13,9 @@ import {
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import { CheckPropRow } from '@/components/dialog/check-prop-row'
+} from '@/components/plot/color-picker-popover'
+import { FontPopover } from '@/components/plot/font/font-popover'
+import { CheckPropRow } from '@/dialogs/check-prop-row'
 import type { IDivProps } from '@/interfaces/div-props'
 import { produce } from 'immer'
 import { useState } from 'react'
@@ -27,14 +28,41 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
 
   return (
     <PropsPanel ref={ref} className="pr-1">
-      <ScrollAccordion
-        value={tabs}
-        onValueChange={v => setTabs(v as string[])}
-        variant="sidebar"
-      >
-        <AccordionItem value="grid" variant="sidebar">
-          <AccordionTrigger variant="sidebar">Grid</AccordionTrigger>
-          <AccordionContent variant="sidebar">
+      <ScrollAccordion value={tabs} onValueChange={v => setTabs(v as string[])}>
+        <AccordionItem value="grid">
+          <AccordionTrigger
+            rightChildren={
+              <FontPopover
+                fonts={[
+                  {
+                    title: 'Title',
+                    textProps: displayProps.title,
+                    update: font =>
+                      setDisplayProps(
+                        produce(displayProps, draft => {
+                          draft.title = font
+                        })
+                      ),
+                    showEnabled: false,
+                  },
+                  {
+                    title: 'Labels',
+                    textProps: displayProps.text,
+                    update: font =>
+                      setDisplayProps(
+                        produce(displayProps, draft => {
+                          draft.text = font
+                        })
+                      ),
+                    showEnabled: false,
+                  },
+                ]}
+              />
+            }
+          >
+            Grid
+          </AccordionTrigger>
+          <AccordionContent>
             <PropRow title="Label">
               <Input
                 id="w"
@@ -104,14 +132,17 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
               }
             >
               <ColorPickerButton
-                color={displayProps.border.color}
-                onColorChange={color =>
-                  setDisplayProps(
-                    produce(displayProps, draft => {
-                      draft.border.color = color
-                    })
-                  )
-                }
+                colors={[
+                  {
+                    color: displayProps.border.value,
+                    onColorChange: color =>
+                      setDisplayProps(
+                        produce(displayProps, draft => {
+                          draft.border.value = color
+                        })
+                      ),
+                  },
+                ]}
                 className={SIMPLE_COLOR_EXT_CLS}
               />
             </CheckPropRow>
@@ -127,23 +158,26 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
               }
             >
               <ColorPickerButton
-                color={displayProps.grid.color}
-                onColorChange={color =>
-                  setDisplayProps(
-                    produce(displayProps, draft => {
-                      draft.grid.color = color
-                    })
-                  )
-                }
+                colors={[
+                  {
+                    color: displayProps.grid.value,
+                    onColorChange: color =>
+                      setDisplayProps(
+                        produce(displayProps, draft => {
+                          draft.grid.value = color
+                        })
+                      ),
+                  },
+                ]}
                 className={SIMPLE_COLOR_EXT_CLS}
               />
             </CheckPropRow>
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="samples" variant="sidebar">
-          <AccordionTrigger variant="sidebar">Samples</AccordionTrigger>
-          <AccordionContent variant="sidebar">
+        <AccordionItem value="samples">
+          <AccordionTrigger>Samples</AccordionTrigger>
+          <AccordionContent>
             <CheckPropRow
               title="Mutation graph"
               checked={displayProps.samples.graphs.show}
@@ -183,23 +217,26 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
               }
             >
               <ColorPickerButton
-                color={displayProps.samples.graphs.border.color}
-                onColorChange={color =>
-                  setDisplayProps(
-                    produce(displayProps, draft => {
-                      draft.samples.graphs.border.color = color
-                    })
-                  )
-                }
+                colors={[
+                  {
+                    color: displayProps.samples.graphs.border.value,
+                    onColorChange: color =>
+                      setDisplayProps(
+                        produce(displayProps, draft => {
+                          draft.samples.graphs.border.value = color
+                        })
+                      ),
+                  },
+                ]}
                 className={SIMPLE_COLOR_EXT_CLS}
               />
             </CheckPropRow>
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="features" variant="sidebar">
-          <AccordionTrigger variant="sidebar">Features</AccordionTrigger>
-          <AccordionContent variant="sidebar">
+        <AccordionItem value="features">
+          <AccordionTrigger>Features</AccordionTrigger>
+          <AccordionContent>
             <CheckPropRow
               title="Sample distribution graph"
               checked={displayProps.features.graphs.show}
@@ -225,14 +262,17 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
               }
             >
               <ColorPickerButton
-                color={displayProps.features.graphs.border.color}
-                onColorChange={color =>
-                  setDisplayProps(
-                    produce(displayProps, draft => {
-                      draft.features.graphs.border.color = color
-                    })
-                  )
-                }
+                colors={[
+                  {
+                    color: displayProps.features.graphs.border.value,
+                    onColorChange: color =>
+                      setDisplayProps(
+                        produce(displayProps, draft => {
+                          draft.features.graphs.border.value = color
+                        })
+                      ),
+                  },
+                ]}
                 className={SIMPLE_COLOR_EXT_CLS}
               />
             </CheckPropRow>
@@ -254,7 +294,7 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
 
         {/* <AccordionItem value="variants">
           <AccordionTrigger>Variants</AccordionTrigger>
-          <AccordionContent variant="sidebar">
+          <AccordionContent >
             {displayProps.legend.variants.names.map(
               (variant: string, vi: number) => (
                 <VCenterRow key={vi} className="gap-x-2">

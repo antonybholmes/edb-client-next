@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { AppIcon } from '@/components/icons/app-icon'
 import { FormInputError } from '@/components/input-error'
@@ -290,7 +290,7 @@ export function SignInPage() {
                 <button
                   className="text-sm text-theme hover:underline"
                   disabled={!form.watch('email')}
-                  onClick={e => {
+                  onClick={(e) => {
                     sendCode(e)
                   }}
                   aria-label="Send One-Time Password to Email"
@@ -326,7 +326,7 @@ export function SignInPage() {
                 variant={session && session.user ? 'secondary' : 'theme'}
                 size="xl"
                 //disabled={otpSent && (!form.watch('email') || !form.watch('otp'))}
-                onClick={e => {
+                onClick={(e) => {
                   if (form.watch('email')) {
                     if (!form.watch('otp')) {
                       sendCode(e)

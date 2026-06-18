@@ -3,7 +3,7 @@ import { SquareArrowUpRight } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import { create } from 'zustand'
 import { useShallow } from 'zustand/react/shallow'
-import { CloseButton } from '../dialog/ok-cancel-dialog'
+import { CloseButton } from '../dialogs/ok-cancel-dialog'
 import { BaseCol } from '../layout/base-col'
 import { VCenterRow } from '../layout/v-center-row'
 
@@ -19,18 +19,18 @@ type HelpWidgetStore = {
   toggle: () => void
 }
 
-export const useHelpWidgetStore = create<HelpWidgetStore>((set) => ({
+export const useHelpWidgetStore = create<HelpWidgetStore>(set => ({
   isOpen: false,
   url: '',
   open: () => set({ isOpen: true }),
   openHelp: (url: string) => set({ isOpen: true, url: url }),
   close: () => set({ isOpen: false }),
-  toggle: () => set((state) => ({ isOpen: !state.isOpen })),
+  toggle: () => set(state => ({ isOpen: !state.isOpen })),
 }))
 
 export function HelpWidget() {
   const { isOpen, url, close } = useHelpWidgetStore(
-    useShallow((state) => ({
+    useShallow(state => ({
       url: state.url,
       isOpen: state.isOpen,
       close: state.close,

@@ -1,5 +1,6 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
+import { SvgText } from '@/components/plot/svg-text'
 import { sign } from '@/lib/math/sign'
 import { useContext } from 'react'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
@@ -14,9 +15,9 @@ export function ScaleTrackSvg({ genome, track }: IProps) {
   const { settings } = useSeqBrowserSettings()
   const { location, xax } = useContext(LocationContext)
 
-  const rulerBb: number = settings.scale.autoSize
+  const rulerBb: number = settings.tracks.scale.autoSize
     ? Math.pow(10, Math.floor(Math.log10(location.end - location.start)))
-    : settings.scale.bp
+    : settings.tracks.scale.bp
 
   let x1 = xax.domainToRange(xax.domain[0])
   let x2 = xax.domainToRange(xax.domain[0] + rulerBb * sign(!settings.reverse))
@@ -49,7 +50,7 @@ export function ScaleTrackSvg({ genome, track }: IProps) {
         <line
           x1={x1}
           x2={x2}
-          stroke={track.displayOptions.stroke.color}
+          stroke={track.displayOptions.stroke.value}
           strokeWidth={track.displayOptions.stroke.width}
         />
 
@@ -60,7 +61,7 @@ export function ScaleTrackSvg({ genome, track }: IProps) {
               x2={x1}
               y1={-track.displayOptions.caps.height}
               y2={track.displayOptions.caps.height}
-              stroke={track.displayOptions.stroke.color}
+              stroke={track.displayOptions.stroke.value}
               strokeWidth={track.displayOptions.stroke.width}
             />
             <line
@@ -68,34 +69,31 @@ export function ScaleTrackSvg({ genome, track }: IProps) {
               x2={x2}
               y1={-track.displayOptions.caps.height}
               y2={track.displayOptions.caps.height}
-              stroke={track.displayOptions.stroke.color}
+              stroke={track.displayOptions.stroke.value}
               strokeWidth={track.displayOptions.stroke.width}
             />
           </g>
         )}
 
-        <text
+        <SvgText
           transform={`translate(${x1 - 10}, 0)`}
-          fill={track.displayOptions.font.color}
-          fontSize={track.displayOptions.font.size}
+          font={track.displayOptions.text}
           dominantBaseline="middle"
           textAnchor="end"
           //fontWeight="bold"
         >
           {rulerBb.toLocaleString()} bp
-        </text>
+        </SvgText>
 
-        <text
+        <SvgText
           transform={`translate(${x2 + 10}, 0)`}
-          fill={track.displayOptions.font.color}
-          fontSize={track.displayOptions.font.size}
+          font={track.displayOptions.text}
           dominantBaseline="middle"
-
-          //textAnchor="end"
+          textAnchor="start"
           //fontWeight="bold"
         >
           {genome}
-        </text>
+        </SvgText>
       </g>
     </>
   )

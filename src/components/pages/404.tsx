@@ -115,7 +115,7 @@ export function Error404Page() {
               //onMouseOver={() => setHover(true)}
               //onMouseOut={() => setHover(false)}
             >
-              <DinoIcon w={6} stroke="fill-emerald-500" />
+              <DinoIcon size={6} stroke="fill-emerald-500" />
             </div>
           </VCenterRow>
         </div>

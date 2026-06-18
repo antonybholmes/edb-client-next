@@ -90,7 +90,7 @@ export function ToggleButtonTriggers({
 
     const x = sum(
       rangeMap(
-        (index) => (tabs[index]?.size ?? defaultWidth) + 0.25,
+        index => (tabs[index]?.size ?? defaultWidth) + 0.25,
         0,
         selectedTab.index
       )
@@ -131,7 +131,7 @@ export function ToggleButtonTriggers({
   return (
     <ToggleGroup
       value={[selectedTab?.tab.id ?? '']}
-      onValueChange={(v) => _onValueChange(v[0] ?? '')}
+      onValueChange={v => _onValueChange(v[0] ?? '')}
       className={toggleButtonVariants({ variant, className })}
       size={size}
       rounded={rounded}

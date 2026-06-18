@@ -1,8 +1,11 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
 import { autoTickInterval, type Axis } from '@/components/plot/axis'
+import { SvgLine } from '@/components/plot/svg-line'
+import { SvgText } from '@/components/plot/svg-text'
 import type { IPos } from '@/interfaces/pos'
-import { GenLoc } from '@/lib/genomic/genomic'
+
+import { newGenomicLocation } from '@/lib/genomic/genomic-location'
 import { range } from '@/lib/math/range'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
@@ -54,7 +57,7 @@ export function RulerTrackSvg({ track, xax }: IProps) {
       startPos.current = null
 
       setLocation(
-        new GenLoc(
+        newGenomicLocation(
           location.chr,
           xax.domain[0] + domainX,
           xax.domain[1] + domainX
@@ -80,9 +83,9 @@ export function RulerTrackSvg({ track, xax }: IProps) {
     }
   }
 
-  let rulerBb: number = settings.ruler.autoSize
+  let rulerBb: number = settings.tracks.ruler.autoSize
     ? autoTickInterval([location.start, location.end])
-    : settings.ruler.bp
+    : settings.tracks.ruler.bp
 
   if (Math.abs(_xax.domain[1] - _xax.domain[0]) / rulerBb > 8) {
     rulerBb *= 2
@@ -125,7 +128,7 @@ export function RulerTrackSvg({ track, xax }: IProps) {
         width={_xax.length}
         height={settings.titles.height + track.displayOptions.height}
         stroke="none"
-        fill="white"
+        fill="black"
         opacity="0"
         onMouseDown={handleMouseDown}
         style={{ cursor: isDragging ? 'ew-resize' : 'auto' }}
@@ -149,23 +152,14 @@ export function RulerTrackSvg({ track, xax }: IProps) {
                   .filter(px2 => px2 >= minX && px2 <= maxX)
                   .map((px2, tti) => {
                     return (
-                      // <circle
-                      //   cx={px2}
-                      //   r={2.5}
-                      //   fill={track.displayOptions.stroke.color}
-                      //   opacity={0.3}
-                      //   key={`${ti}:${tti}`}
-                      // />
-
-                      <line
+                      <SvgLine
                         key={`${ti}:${tti}`}
                         x1={px2}
                         x2={px2}
                         y1={majorH2 - track.displayOptions.minorTicks.height}
                         y2={majorH2}
-                        stroke={track.displayOptions.stroke.color}
-                        strokeWidth={track.displayOptions.stroke.width}
-                        strokeOpacity={0.5}
+                        s={track.displayOptions.stroke}
+                        //strokeOpacity={0.5}
                       />
                     )
                   })}
@@ -180,15 +174,14 @@ export function RulerTrackSvg({ track, xax }: IProps) {
             .filter(px1 => px1 >= minX && px1 <= maxX)
             .map((px1, pi) => {
               return (
-                <line
+                <SvgLine
                   id={`major-tick-${pi}`}
                   key={pi}
                   x1={px1}
                   x2={px1}
                   y1={-majorH2}
                   y2={majorH2}
-                  stroke={track.displayOptions.stroke.color}
-                  strokeWidth={track.displayOptions.stroke.width}
+                  s={track.displayOptions.stroke}
                 />
               )
             })}
@@ -201,23 +194,21 @@ export function RulerTrackSvg({ track, xax }: IProps) {
             .map((t, pi) => {
               const [tick, px1] = t
               return (
-                <text
+                <SvgText
                   id={`major-tick-${pi}`}
                   key={pi}
                   transform={`translate(${px1}, ${-h - 5})`}
-                  fill={track.displayOptions.font.color}
-                  fontSize={track.displayOptions.font.size}
+                  font={track.displayOptions.text}
                   dominantBaseline="auto"
-                  textAnchor="middle"
+
                   //fontWeight="bold"
                 >
                   {tick.toLocaleString()}
-                </text>
+                </SvgText>
               )
             })}
         </g>
       </g>
-      {/* </g> */}
     </>
   )
 }

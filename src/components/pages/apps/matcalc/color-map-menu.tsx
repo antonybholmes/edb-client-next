@@ -38,7 +38,7 @@ export function ColorMapMenu({
         <ColorMapIcon
           cmap={cmap}
           aspect="aspect-5/3"
-          className="w-8 border border-foreground rounded-xs"
+          className="w-button-md h-button-md border border-foreground rounded-xs"
         />
       </PopoverTrigger>
 

@@ -1,5 +1,6 @@
-import type { IndexMapFunc, SeriesData, Shape } from '.'
+import type { IndexMapFunc, Shape } from '.'
 import { cellNum, cellStr } from './cell'
+import type { SeriesData } from './series-data'
 
 export abstract class BaseIndex {
   /**

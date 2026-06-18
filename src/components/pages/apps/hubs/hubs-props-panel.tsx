@@ -6,7 +6,7 @@ import {
   ScrollAccordion,
 } from '@/themed/v2/accordion'
 
-import { CheckPropRow } from '@/dialog/check-prop-row'
+import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { produce } from 'immer'
 import { useHubs } from './hubs-store'
 
@@ -26,13 +26,10 @@ export function HubsPropsPanel() {
 
   return (
     <PropsPanel className="px-1">
-      <ScrollAccordion
-        value={['display', 'plot', 'all-plots']}
-        variant="sidebar"
-      >
+      <ScrollAccordion value={['display', 'plot', 'all-plots']}>
         <AccordionItem value="display">
-          <AccordionTrigger variant="sidebar">Display</AccordionTrigger>
-          <AccordionContent variant="sidebar">
+          <AccordionTrigger>Display</AccordionTrigger>
+          <AccordionContent>
             <CheckPropRow
               title="Hide tracks"
               checked={settings.hideTracks}
@@ -66,7 +63,7 @@ export function HubsPropsPanel() {
             return (
               <AccordionItem value={dataset.name} key={di}>
                 <AccordionTrigger>{dataset.name}</AccordionTrigger>
-                <AccordionContent variant="sidebar">
+                <AccordionContent >
                   <DialogBlock>
                     <Label className="font-medium">Box & Whisker</Label>
 
@@ -130,7 +127,7 @@ export function HubsPropsPanel() {
                       }}
                     >
                       <ColorPickerButton
-                        color={props.box.stroke.color}
+                        color={props.box.stroke.value}
                         onColorChange={color =>
                           setProps(dataset, {
                             ...props,
@@ -212,7 +209,7 @@ export function HubsPropsPanel() {
                       }}
                     >
                       <ColorPickerButton
-                        color={props.violin.stroke.color}
+                        color={props.violin.stroke.value}
                         onColorChange={color =>
                           setProps(dataset, {
                             ...props,
@@ -295,7 +292,7 @@ export function HubsPropsPanel() {
                       }}
                     >
                       <ColorPickerButton
-                        color={props.swarm.stroke.color}
+                        color={props.swarm.stroke.value}
                         onColorChange={color =>
                           setProps(dataset, {
                             ...props,

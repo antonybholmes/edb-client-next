@@ -3,10 +3,10 @@ import { VCenterRow } from '@/layout/v-center-row'
 //import { faFloppyDisk, faTrash } from "@fortawesome/free-solid-svg-icons"
 //import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
-import { ColorPickerButton } from '@/components/color/color-picker-button'
+import { ColorPickerButton } from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
 import { DRAG_ICON_ANIM_CLS, SortableItem } from '@/components/sortable-item'
-import { NO_DIALOG, TEXT_RESET, type IDialogParams } from '@/consts'
+import { TEXT_RESET } from '@/consts'
 import { LinkButton } from '@/themed/link-button'
 import { DndContext } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
@@ -19,8 +19,8 @@ import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { cn } from '@/lib/shadcn-utils'
 import { Settings2 } from 'lucide-react'
-import { ClusterDialog } from './cluster-dialog'
 import { usePlotGrid, type IScrnaCluster } from './plot-grid-store'
+import { useSingleCellDialogs } from './single-cell-dialogs'
 import { useSingleCellSettings } from './single-cell-settings'
 
 export const GROUP_BG_CLS = 'rounded-theme group gap-x-1'
@@ -31,16 +31,15 @@ export const GROUP_CLS = `flex flex-row items-center grow relative
 
 function ClusterItem({
   cluster,
-  setShowDialog,
+
   active = null,
 }: {
   cluster: IScrnaCluster
-  setShowDialog: (params: IDialogParams) => void
+
   active?: number | null
 }) {
-  //const { isDragging } = useContext(SortableItemContext)
-  //const [isDragging, setIsDragging] = useState(false)
   const { clusterInfo, updateClusterInfo } = usePlotGrid() //useContext(PlotGridContext)!
+  const { open: openDialog } = useSingleCellDialogs()
 
   const [hover, setHover] = useState(false)
 
@@ -52,23 +51,6 @@ function ClusterItem({
     setColor(cluster.color)
   }, [cluster.color])
 
-  // const ref = useRef<HTMLDivElement>(null
-
-  // function handleMouseDown() {
-  //   function onMouseUp() {
-  //     setIsDragging(false)
-
-  //     document.removeEventListener('mouseup', onMouseUp)
-  //   }
-
-  //   console.log('Sdfsdfsdfsdf')
-  //   setIsDragging(true)
-
-  //   document.addEventListener('mouseup', onMouseUp)
-  // }
-
-  //useMouseDownListener(handleMouseDown)
-
   return (
     <SortableItem
       id={cluster.label.toString()}
@@ -79,22 +61,6 @@ function ClusterItem({
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      {/* <Switch
-        checked={cluster.show}
-        onCheckedChange={checked => {
-          if (!clusterInfo) {
-            return
-          }
-
-          updateClusterInfo(
-            produce(clusterInfo, draft => {
-              draft.clusters.find(c => c.label === cluster.label)!.show =
-                checked
-            })
-          )
-        }}
-      /> */}
-
       <Checkbox
         checked={cluster.show}
         onCheckedChange={checked => {
@@ -112,8 +78,12 @@ function ClusterItem({
       />
 
       <ColorPickerButton
-        color={color}
-        onColorChange={setColor}
+        colors={[
+          {
+            color,
+            onColorChange: color => setColor(color),
+          },
+        ]}
         onOpenChanged={open => {
           if (!open) {
             if (!clusterInfo) {
@@ -138,7 +108,9 @@ function ClusterItem({
       <button
         title={`Edit ${cluster.name}`}
         className="opacity-50 hover:opacity-100 focus-visible:opacity-100 shrink-0"
-        onClick={() => setShowDialog({ id: 'edit', params: { cluster } })}
+        onClick={() =>
+          openDialog({ type: 'edit-cluster', payload: { cluster } })
+        }
       >
         <Settings2 className={cn(DRAG_ICON_ANIM_CLS, 'w-4')} />
       </button>
@@ -148,93 +120,78 @@ function ClusterItem({
 
 export function ClusterPropsPanel() {
   const { resetSettings } = useSingleCellSettings()
-  const { clusterInfo } = usePlotGrid() // useContext(PlotGridContext)!
-
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
+  const { clusterInfo } = usePlotGrid()
 
   return (
-    <>
-      {showDialog.id.includes('edit') && (
-        <ClusterDialog
-          open={true}
-          cluster={showDialog.params!['cluster']! as IScrnaCluster}
-          onResponse={() => setShowDialog({ ...NO_DIALOG })}
-        />
-      )}
-
-      <PropsPanel className="gap-y-2 pr-1">
-        <VCenterRow className="justify-end px-2">
-          <LinkButton
-            onClick={() => {
-              resetSettings()
-            }}
-            title="Reset Properties to Defaults"
-          >
-            {TEXT_RESET}
-          </LinkButton>
-        </VCenterRow>
-
-        <DndContext
-          modifiers={[restrictToVerticalAxis]}
-          //onDragStart={event => setActiveId(event.active.id as string)}
-          // for the moment do not allow to be re-arranged as it messes up
-          // cluster color rendering
-          // onDragEnd={event => {
-          //   const { active, over } = event
-
-          //   if (over && active.id !== over?.id) {
-          //     const oldIndex = where(
-          //       settings.clusters,
-          //       c => c.id === active.id
-          //     )[0]!
-
-          //     const newIndex = where(
-          //       settings.clusters,
-          //       c => c.id === over.id
-          //     )[0]!
-
-          //     const newOrder = arrayMove(
-          //       settings.clusters.map(c => c.id),
-          //       oldIndex,
-          //       newIndex
-          //     )
-
-          //     console.log(newOrder)
-
-          //     updateSettings(
-          //       produce(settings, draft => {
-          //         draft.clusters = newOrder.map(
-          //           id => settings.clusters.find(c => c.id === id)!
-          //         )
-          //       })
-          //     )
-          //   }
-
-          //   //setActiveId(null)
-          // }}
+    <PropsPanel className="gap-y-2 pr-1">
+      <VCenterRow className="justify-end px-2">
+        <LinkButton
+          onClick={() => {
+            resetSettings()
+          }}
+          title="Reset Properties to Defaults"
         >
-          <SortableContext
-            items={clusterInfo?.clusters.map(c => c.label) || []}
-            strategy={verticalListSortingStrategy}
-          >
-            <VScrollPanel>
-              <ul className="flex flex-col">
-                {clusterInfo?.clusters.map(c => {
-                  return (
-                    // <BaseSortableItem key={c.id} id={c.id.toString()}>
-                    <ClusterItem
-                      key={c.label}
-                      cluster={c}
-                      setShowDialog={setShowDialog}
-                    />
-                    // </BaseSortableItem>
-                  )
-                })}
-              </ul>
-            </VScrollPanel>
-          </SortableContext>
+          {TEXT_RESET}
+        </LinkButton>
+      </VCenterRow>
 
-          {/* <DragOverlay>
+      <DndContext
+        modifiers={[restrictToVerticalAxis]}
+        //onDragStart={event => setActiveId(event.active.id as string)}
+        // for the moment do not allow to be re-arranged as it messes up
+        // cluster color rendering
+        // onDragEnd={event => {
+        //   const { active, over } = event
+
+        //   if (over && active.id !== over?.id) {
+        //     const oldIndex = where(
+        //       settings.clusters,
+        //       c => c.id === active.id
+        //     )[0]!
+
+        //     const newIndex = where(
+        //       settings.clusters,
+        //       c => c.id === over.id
+        //     )[0]!
+
+        //     const newOrder = arrayMove(
+        //       settings.clusters.map(c => c.id),
+        //       oldIndex,
+        //       newIndex
+        //     )
+
+        //     console.log(newOrder)
+
+        //     updateSettings(
+        //       produce(settings, draft => {
+        //         draft.clusters = newOrder.map(
+        //           id => settings.clusters.find(c => c.id === id)!
+        //         )
+        //       })
+        //     )
+        //   }
+
+        //   //setActiveId(null)
+        // }}
+      >
+        <SortableContext
+          items={clusterInfo?.clusters.map(c => c.label) || []}
+          strategy={verticalListSortingStrategy}
+        >
+          <VScrollPanel>
+            <ul className="flex flex-col">
+              {clusterInfo?.clusters.map(c => {
+                return (
+                  // <BaseSortableItem key={c.id} id={c.id.toString()}>
+                  <ClusterItem key={c.label} cluster={c} />
+                  // </BaseSortableItem>
+                )
+              })}
+            </ul>
+          </VScrollPanel>
+        </SortableContext>
+
+        {/* <DragOverlay>
                 {activeId ? (
                   <TrackItem
                     index={-1}
@@ -244,8 +201,7 @@ export function ClusterPropsPanel() {
                   />
                 ) : null}
               </DragOverlay> */}
-        </DndContext>
-      </PropsPanel>
-    </>
+      </DndContext>
+    </PropsPanel>
   )
 }

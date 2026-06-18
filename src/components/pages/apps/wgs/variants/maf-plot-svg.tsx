@@ -1,6 +1,6 @@
-import { BaseSvg } from '@/components/base-svg'
 import { Axis, YAxis } from '@/components/plot/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis-svg'
+import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/svg-axis'
+import { SvgBase } from '@/components/plot/svg-base'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { useDNAQuery } from '@/lib/genomic/dna'
 import { locStr } from '@/lib/genomic/genomic'
@@ -118,7 +118,7 @@ export function MAFPlotSVG({ ref }: ISVGProps) {
   }
 
   return (
-    <BaseSvg
+    <SvgBase
       ref={ref}
       width={width} //* settings.scale}
       height={height} //* settings.scale}
@@ -144,7 +144,7 @@ export function MAFPlotSVG({ ref }: ISVGProps) {
         {settings.mafs.plot.fill.show && fillPathD && (
           <path
             d={fillPathD}
-            fill={settings.mafs.plot.fill.color}
+            fill={settings.mafs.plot.fill.value}
             fillOpacity={settings.mafs.plot.fill.opacity}
             stroke="none"
           />
@@ -152,7 +152,7 @@ export function MAFPlotSVG({ ref }: ISVGProps) {
         {settings.mafs.plot.line.show && pathD && (
           <path
             d={pathD}
-            stroke={settings.mafs.plot.line.color}
+            stroke={settings.mafs.plot.line.value}
             strokeOpacity={settings.mafs.plot.line.opacity}
             strokeWidth={settings.mafs.plot.line.width}
             fill="none"
@@ -180,9 +180,10 @@ export function MAFPlotSVG({ ref }: ISVGProps) {
         xax={xax}
         pos={{
           x: MARGIN.left,
-          y: MARGIN.top + plotHeight + (settings.dna.show ? 120 : 50),
+          y:
+            MARGIN.top + plotHeight + (settings.dna.index.text.show ? 120 : 50),
         }}
       />
-    </BaseSvg>
+    </SvgBase>
   )
 }

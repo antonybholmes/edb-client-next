@@ -5,22 +5,22 @@ import {
   type IScatterDisplayOptions,
 } from '@/components/plot/scatter/scatter-plot-svg'
 import {
-  DEFAULT_FILL_PROPS,
+  DEFAULT_COLOR_PROPS,
   DEFAULT_MARGIN,
   DEFAULT_STROKE_PROPS,
-  type IColorProps,
   type IMarginProps,
+  type IPaintProps,
   type IStrokeProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
 import type { IDBEntity } from '@/interfaces/db-entity'
 import type { IDim } from '@/interfaces/dim'
+import { getAppName } from '@/lib/app-info'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import type { ILim } from '@/lib/math/math'
-import { getModuleName } from '@/lib/module-info'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import MODULE_INFO from './module.json'
+import APP_INFO from './manifest.json'
 
 interface IGenome {
   name: string
@@ -52,21 +52,21 @@ export interface IGeneSet extends IDBEntity {
   genes: IScrnaGene[]
 }
 
-const SETTINGS_KEY = `${config.appId}:app:${getModuleName(MODULE_INFO.name)}:v28`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:v28`
 
 // GEX - each plot use its own scale, Global GEX - all plots use the same scale, Cluster - draw clusters rather than GEX
 
 export interface IScrnaClusterRoundel {
   show: boolean
   stroke: IStrokeProps
-  fill: IColorProps
+  fill: IPaintProps
   size: number
 }
 
 export const DEFAULT_ROUNDEL: IScrnaClusterRoundel = {
   show: true,
   stroke: { ...DEFAULT_STROKE_PROPS },
-  fill: { ...DEFAULT_FILL_PROPS, color: COLOR_WHITE, opacity: 0.8 },
+  fill: { ...DEFAULT_COLOR_PROPS, value: COLOR_WHITE, opacity: 0.8 },
   size: 12,
 }
 

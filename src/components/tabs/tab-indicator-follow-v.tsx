@@ -1,8 +1,10 @@
 import { cn } from '@/lib/shadcn-utils'
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
-import { type ITabIndicatorPos } from './tab-indicator-provider'
-import { useTabIndicators } from './tab-indicator-store'
+import {
+  useTabIndicators,
+  type ITabIndicatorPos,
+} from './tab-indicator-provider'
 
 const LINE_CLS =
   'absolute left-0 top-0 pointer-events-none select-none shrink-0'
@@ -16,13 +18,12 @@ const LINE_CLS =
  * @returns
  */
 export function TabIndicatorFollowV({
-  groupId,
   w = 2,
 }: {
-  groupId: string
+  groupId?: string
   w?: number
 }) {
-  const { position } = useTabIndicators(groupId)
+  const { position } = useTabIndicators() //groupId)
 
   // we use this to track transitions between 0 width and non-zero width
   // to determine animation duration. If item was previously 0 width, we want

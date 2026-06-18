@@ -1,6 +1,5 @@
-import { useStableId } from '@/hooks/stable-id'
-import { randUUIDv7Id } from '@/lib/id'
-import { useRef, useState } from 'react'
+import { randId } from '@/lib/id'
+import { useEffect, useRef, useState } from 'react'
 import { CloseIcon } from '../icons/close-icon'
 import { VCenterRow } from '../layout/v-center-row'
 import { ActionsDevPanel } from '../pages/apps/matcalc/history/actions-dev-panel'
@@ -12,8 +11,12 @@ import {
   TabsTrigger,
 } from '../shadcn/ui/themed/v2/tabs'
 import { TabIndicatorFollowBlock } from '../tabs/tab-indicator-follow-block'
+import {
+  TabIndicatorProvider,
+  useTabIndicators,
+} from '../tabs/tab-indicator-provider'
 import { TabIndicatorSelectedH } from '../tabs/tab-indicator-selected-h'
-import { useTabIndicators } from '../tabs/tab-indicator-store'
+
 import { useDevSettings } from './dev-setting-store'
 
 const TABS = [
@@ -21,15 +24,27 @@ const TABS = [
   { id: 'actions', label: 'Actions' },
 ]
 
-export function DevPanel() {
+function _DevPanel() {
   const [activeTab, setActiveTab] = useState('history')
   const tabListRef = useRef<HTMLDivElement>(null)
   const buttonsRef = useRef<HTMLElement[]>([])
 
   const { setMessage } = useDevSettings()
-  const _id = useStableId('dev-panel')
 
-  const { setPosition, setSelectedPosition } = useTabIndicators(_id)
+  const { setPosition, setSelectedPosition } = useTabIndicators() //_id)
+
+  // setup initial selected tab
+  useEffect(() => {
+    const containerRect = tabListRef.current!.getBoundingClientRect()
+    const clientRect = buttonsRef.current[0]!.getBoundingClientRect()
+
+    setSelectedPosition({
+      x: clientRect.left - containerRect.left,
+      y: 0,
+      h: clientRect.height,
+      w: clientRect.width,
+    })
+  }, [])
 
   return (
     <Tabs
@@ -85,8 +100,8 @@ export function DevPanel() {
             </TabsTrigger>
           ))}
 
-          <TabIndicatorFollowBlock groupId={_id} rounded={false} />
-          <TabIndicatorSelectedH groupId={_id} />
+          <TabIndicatorFollowBlock rounded={false} />
+          <TabIndicatorSelectedH />
         </TabsList>
 
         <button
@@ -96,17 +111,17 @@ export function DevPanel() {
             // close the dev panel, we do this by setting a unique message
             // so that the dev layout sees the change and hides the panel
             // every time
-            setMessage(randUUIDv7Id('collapse'))
+            setMessage(randId('collapse'))
           }}
         >
-          <CloseIcon w="w-4" />
+          <CloseIcon size="w-4" />
         </button>
       </VCenterRow>
 
-      <TabsContent value="history" className="grow">
+      <TabsContent value="history">
         <HistoryDevPanel />
       </TabsContent>
-      <TabsContent value="actions" className="grow">
+      <TabsContent value="actions">
         <ActionsDevPanel />
       </TabsContent>
       {/* <TabsContent value="console" className="grow">
@@ -117,3 +132,11 @@ export function DevPanel() {
 }
 
 // <ResizablePanelGroup orientation="horizontal" className="h-full">
+
+export function DevPanel() {
+  return (
+    <TabIndicatorProvider>
+      <_DevPanel />
+    </TabIndicatorProvider>
+  )
+}

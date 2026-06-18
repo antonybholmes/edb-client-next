@@ -2,13 +2,14 @@ import type { IDBEntity } from '@/interfaces/db-entity'
 import { makeCombinations } from '@/lib/math/math'
 import { range } from '@/lib/math/range'
 import { textToLines } from '@/lib/text/lines'
-import { makeReadonly } from '@/lib/utils'
+import type { UndefStr } from '@/lib/text/text'
+import { deepFreeze } from '@/lib/utils'
 import { produce } from 'immer'
 import { create } from 'zustand'
 
 export const VENN_LIST_IDS: string[] = ['1', '2', '3', '4']
 
-export function getItems(text: string | undefined | null): string[] {
+export function getItems(text: UndefStr): string[] {
   if (!text) {
     return []
   }
@@ -77,7 +78,7 @@ export function makeVennList(
     name: name || `List ${id}`,
 
     items,
-    uniqueItems: [...new Set(items.map((item) => item.toLowerCase()))].sort(),
+    uniqueItems: [...new Set(items.map(item => item.toLowerCase()))].sort(),
   }
 }
 
@@ -96,14 +97,14 @@ export interface IVennOptions {
   updateCounter: number
 }
 
-export const COMBINATIONS: readonly number[][] = makeReadonly(
+export const COMBINATIONS: readonly number[][] = deepFreeze(
   makeCombinations(range(1, 5))
 )
 
 const DEFAULT_SETTINGS: IVennOptions = {
   selectedItems: { name: '', items: [] },
   vennLists: Object.fromEntries(
-    VENN_LIST_IDS.map((id) => [
+    VENN_LIST_IDS.map(id => [
       id,
       {
         id,
@@ -129,7 +130,7 @@ export interface IVennStore extends IVennOptions {
   setVennListsInUse: (n: number) => void
 }
 
-export const useVennStore = create<IVennStore>((set) => ({
+export const useVennStore = create<IVennStore>(set => ({
   ...DEFAULT_SETTINGS,
   setSelectedItems: (name: string, items: string[]) => {
     set({ selectedItems: { name, items } })
@@ -154,15 +155,15 @@ export const useVennStore = create<IVennStore>((set) => ({
           [
             ...new Set(
               Object.values(vennLists)
-                .map((v) => v.items)
+                .map(v => v.items)
                 .flat()
             ),
-          ].map((v) => [v.toLowerCase(), v])
+          ].map(v => [v.toLowerCase(), v])
         )
         state.combinationNames = Object.fromEntries(
-          COMBINATIONS.map((comb) => [
+          COMBINATIONS.map(comb => [
             comb.join(':'),
-            comb.map((i) => vennLists[i]?.name || `List ${i}`).join(' AND '),
+            comb.map(i => vennLists[i]?.name || `List ${i}`).join(' AND '),
           ])
         )
 
@@ -188,10 +189,10 @@ export const useVennStore = create<IVennStore>((set) => ({
                   .map(([, v]) => v.items)
                   .flat()
               ),
-            ].map((v) => [v.toLowerCase(), v])
+            ].map(v => [v.toLowerCase(), v])
           ),
           ...Object.fromEntries(
-            state.vennLists[id]!.items.map((v) => [v.toLowerCase(), v])
+            state.vennLists[id]!.items.map(v => [v.toLowerCase(), v])
           ),
         }
 
@@ -213,24 +214,24 @@ export const useVennStore = create<IVennStore>((set) => ({
 }))
 
 export function useVenn(): IVennStore {
-  const selectedItems = useVennStore((state) => state.selectedItems)
-  const setSelectedItems = useVennStore((state) => state.setSelectedItems)
-  const originalNames = useVennStore((state) => state.originalNames)
+  const selectedItems = useVennStore(state => state.selectedItems)
+  const setSelectedItems = useVennStore(state => state.setSelectedItems)
+  const originalNames = useVennStore(state => state.originalNames)
 
-  const vennLists = useVennStore((state) => state.vennLists)
+  const vennLists = useVennStore(state => state.vennLists)
 
-  const setVennLists = useVennStore((state) => state.setVennLists)
+  const setVennLists = useVennStore(state => state.setVennLists)
 
-  const updateCounter = useVennStore((state) => state.updateCounter)
+  const updateCounter = useVennStore(state => state.updateCounter)
 
   const updateVennListFromText = useVennStore(
-    (state) => state.updateVennListFromText
+    state => state.updateVennListFromText
   )
 
-  const combinationNames = useVennStore((state) => state.combinationNames)
+  const combinationNames = useVennStore(state => state.combinationNames)
 
-  const vennElemMap = useVennStore((state) => state.vennElemMap)
-  const setVennElemMap = useVennStore((state) => state.setVennElemMap)
+  const vennElemMap = useVennStore(state => state.vennElemMap)
+  const setVennElemMap = useVennStore(state => state.setVennElemMap)
 
   return {
     selectedItems,
@@ -242,8 +243,8 @@ export function useVenn(): IVennStore {
     combinationNames,
     vennElemMap,
     setVennElemMap,
-    vennListsInUse: useVennStore((state) => state.vennListsInUse),
-    setVennListsInUse: useVennStore((state) => state.setVennListsInUse),
+    vennListsInUse: useVennStore(state => state.vennListsInUse),
+    setVennListsInUse: useVennStore(state => state.setVennListsInUse),
     updateCounter,
   }
 }

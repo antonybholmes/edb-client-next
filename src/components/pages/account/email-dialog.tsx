@@ -1,4 +1,4 @@
-import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
+import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
 import { TEXT_OK } from '@/consts'
 import { API_RESET_EMAIL_URL, APP_UPDATE_EMAIL_URL } from '@/lib/edb/edb'

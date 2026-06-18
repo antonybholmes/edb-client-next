@@ -7,7 +7,12 @@ import { range } from '@/lib/math/range'
 import * as d3 from 'd3'
 import { Axis, YAxis } from './axis'
 import { DEFAULT_COLORBAR_SIZE } from './heatmap/heatmap-svg-props'
-import { DEFAULT_STROKE_PROPS, type IStrokeProps } from './svg-props'
+import {
+  DEFAULT_STROKE_PROPS,
+  type IStrokeProps,
+  type ITextProps,
+} from './svg-props'
+import { SvgText } from './svg-text'
 
 interface IColorBarSvgProps {
   domain?: ILim
@@ -15,6 +20,7 @@ interface IColorBarSvgProps {
   cmap?: ColorMap
   stroke?: IStrokeProps
   steps?: number
+  font?: ITextProps
   size?: IDim
   tickSize?: number
   pos?: IPos
@@ -29,6 +35,7 @@ export function HColorBarSvg({
   stroke = { ...DEFAULT_STROKE_PROPS },
   tickSize = 5,
   pos = { ...ZERO_POS },
+  font,
 }: IColorBarSvgProps) {
   if (!steps) {
     steps = cmap.colors
@@ -89,7 +96,7 @@ export function HColorBarSvg({
           <rect
             width={size.w}
             height={size.h}
-            stroke={stroke.color}
+            stroke={stroke.value}
             strokeWidth={stroke.width}
             fill="none"
           />
@@ -103,11 +110,17 @@ export function HColorBarSvg({
           <g transform={`translate(${x}, ${size.h + 2})`} key={ti}>
             <line
               y2={tickSize}
-              stroke={stroke.color}
+              stroke={stroke.value}
               strokeWidth={stroke.width}
             />
-            <g transform={`translate(0, ${tickSize + 15})`}>
-              <text textAnchor="middle">{tick.label}</text>
+            <g transform={`translate(0, ${tickSize + 8})`}>
+              <SvgText
+                font={font}
+                textAnchor="middle"
+                dominantBaseline="hanging"
+              >
+                {tick.label}
+              </SvgText>
             </g>
           </g>
         )
@@ -118,14 +131,14 @@ export function HColorBarSvg({
         <line
           y2={5}
           transform={`translate(${0.5 * size.w}, 0)`}
-          stroke={stroke.color}
+          stroke={stroke.value}
             strokeWidth={stroke.width}
           shapeRendering={SVG_CRISP_EDGES}
         />
         <line
           y2={5}
           transform={`translate(${size.w}, 0)`}
-          stroke={stroke.color}
+          stroke={stroke.value}
             strokeWidth={stroke.width}
           shapeRendering={SVG_CRISP_EDGES}
         />
@@ -152,6 +165,7 @@ export function VColorBarSvg({
   tickSize = 5,
   stroke = { ...DEFAULT_STROKE_PROPS },
   pos = { ...ZERO_POS },
+  font,
 }: IColorBarSvgProps) {
   if (!steps) {
     steps = cmap.colors
@@ -211,7 +225,7 @@ export function VColorBarSvg({
           <rect
             width={size.h}
             height={size.w}
-            stroke={stroke.color}
+            stroke={stroke.value}
             strokeWidth={stroke.width}
             fill="none"
           />
@@ -225,11 +239,13 @@ export function VColorBarSvg({
           <g transform={`translate(${size.h + 2}, ${y})`} key={ti}>
             <line
               x2={tickSize}
-              stroke={stroke.color}
+              stroke={stroke.value}
               strokeWidth={stroke.width}
             />
             <g transform={`translate(${tickSize + 5}, 0)`}>
-              <text dominantBaseline="central">{tick.label}</text>
+              <SvgText font={font} dominantBaseline="central">
+                {tick.label}
+              </SvgText>
             </g>
           </g>
         )

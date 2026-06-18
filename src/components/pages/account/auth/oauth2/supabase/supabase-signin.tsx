@@ -95,7 +95,7 @@ export function SupabaseSignIn() {
 
       addToast({
         id: makeUuid(),
-        title: config.appName,
+        title: config.name,
         description: error.message,
         type: 'destructive',
       })
@@ -133,7 +133,7 @@ export function SupabaseSignIn() {
       if (error) {
         addToast({
           id: makeUuid(),
-          title: config.appName,
+          title: config.name,
           description: error.message,
           type: 'destructive',
         })
@@ -188,8 +188,8 @@ export function SupabaseSignIn() {
     >
       <CardHeader className="text-xl px-8 pt-8">
         <VCenterRow className="gap-x-2">
-          <AppIcon w="w-10" />
-          <CardTitle>Sign in to {config.appName}</CardTitle>
+          <AppIcon size="w-10" />
+          <CardTitle>Sign in to {config.name}</CardTitle>
         </VCenterRow>
       </CardHeader>
 

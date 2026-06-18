@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { Button } from '@/themed/v2/button'
 
@@ -9,7 +9,7 @@ import {
   signinStateAtom,
   type IRedirectState,
 } from '@/lib/edb/signin/edb-signin'
-import { useClerk } from '@clerk/clerk-react'
+import { useClerk } from '@clerk/react'
 import { useAtom } from 'jotai'
 
 export function ClerkSignInButton({

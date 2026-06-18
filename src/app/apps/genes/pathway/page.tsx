@@ -1,4 +1,4 @@
-import MODULE_INFO from '@/components/pages/apps/genes/pathway/module.json'
+import MODULE_INFO from '@/components/pages/apps/genes/pathway/manifest.json'
 import { PathwayQueryPage } from '@/components/pages/apps/genes/pathway/pathway-page'
 import { makeMetaDataFromModule } from '@/lib/metadata'
 

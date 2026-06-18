@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { AppIcon } from '@/components/icons/app-icon'
 import { FormInputError } from '@/components/input-error'
@@ -124,7 +124,7 @@ export function SignInPage() {
 
       addToast({
         id: makeUuid(),
-        title: config.appName,
+        title: config.name,
         description:
           'The sign in failed. Please check the one-time code and try again.',
         type: 'destructive',
@@ -174,7 +174,7 @@ export function SignInPage() {
 
         addToast({
           id: makeUuid(),
-          title: config.appName,
+          title: config.name,
           description:
             'If the email address is valid, you will receive a 6-digit code.',
         })
@@ -227,9 +227,9 @@ export function SignInPage() {
       >
         <CardHeader className="text-xl">
           <VCenterRow className="gap-x-2">
-            <AppIcon w="w-10" />
+            <AppIcon size="w-10" />
             <CardTitle>
-              {TEXT_SIGN_IN} to {config.appName}
+              {TEXT_SIGN_IN} to {config.name}
             </CardTitle>
           </VCenterRow>
         </CardHeader>
@@ -290,7 +290,7 @@ export function SignInPage() {
                 <button
                   className="text-sm text-theme hover:underline"
                   disabled={!form.watch('email')}
-                  onClick={e => {
+                  onClick={(e) => {
                     sendCode(e)
                   }}
                   aria-label="Send One-Time Password to Email"
@@ -326,7 +326,7 @@ export function SignInPage() {
                 variant={session && session.user ? 'secondary' : 'theme'}
                 size="xl"
                 //disabled={otpSent && (!form.watch('email') || !form.watch('otp'))}
-                onClick={e => {
+                onClick={(e) => {
                   if (form.watch('email')) {
                     if (!form.watch('otp')) {
                       sendCode(e)
@@ -336,7 +336,7 @@ export function SignInPage() {
                   } else {
                     addToast({
                       id: makeUuid(),
-                      title: config.appName,
+                      title: config.name,
                       description: 'Please enter your email address.',
                       type: 'destructive',
                     })

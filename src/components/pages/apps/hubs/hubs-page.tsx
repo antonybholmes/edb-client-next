@@ -17,14 +17,17 @@ import { useHubs, type IDataset } from './hubs-store'
 import { type ITab } from '@/components/tabs/tab-provider'
 
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
+import { AppHeaderIcon } from '@/components/header/app-header-icon'
+import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
-import { ModuleInfoButton } from '@/components/header/module-info-button'
 import { IndexArrowIcon } from '@/components/icons/index-arrow-icon'
 import { BLANK_TARGET } from '@/components/link/base-link'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { TIME_5_MINUTES_MS } from '@/consts'
 import { useSearch } from '@/hooks/search'
+import { AssemblySelect } from '@/lib/edb/assembly-select'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { CoreProviders } from '@/providers/core-providers'
@@ -34,15 +37,8 @@ import {
   AccordionTrigger,
   ScrollAccordion,
 } from '@/themed/v2/accordion'
-import {
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectList,
-} from '@/themed/v2/select'
 import { useQuery } from '@tanstack/react-query'
-import { produce } from 'immer'
-import MODULE_INFO from './module.json'
+import APP_INFO from './manifest.json'
 
 const BASE_URL = 'http://genome.ucsc.edu/cgi-bin/hgTracks' //https://genome.ucsc.edu/goldenPath/help/examples/hubDirectory/hub.txt
 
@@ -51,9 +47,9 @@ export function HubsPage() {
 
   //const [rightTab, setRightTab] = useState('Search')
 
-  //const [hubs, setHubs] = useState<IHub[]>([])
-
-  const { settings, updateSettings } = useHubs()
+  const { setAppInfo } = useAppInfo()
+  const { settings: edbSettings } = useEdbSettings()
+  const { settings } = useHubs()
 
   const { query, setQuery, resetQuery } = useSearch()
 
@@ -72,19 +68,23 @@ export function HubsPage() {
   const { fetchAccessToken } = useEdbAuth()
 
   const { data: hubData } = useQuery({
-    queryKey: ['hubs', settings.assembly],
+    queryKey: ['hubs', edbSettings.genomic.assembly],
     staleTime: TIME_5_MINUTES_MS,
     queryFn: async () => {
       const accessToken = await fetchAccessToken()
 
       return httpFetch.getJson<{ data: IDataset[] }>(
-        `${API_HUBS_URL}/assemblies/${settings.assembly}/datasets`,
+        `${API_HUBS_URL}/assemblies/${edbSettings.genomic.assembly}/datasets`,
         {
           headers: bearerHeaders(accessToken),
         }
       )
     },
   })
+
+  useEffect(() => {
+    setAppInfo(APP_INFO)
+  }, [])
 
   useEffect(() => {
     async function loadHubs() {
@@ -180,7 +180,7 @@ export function HubsPage() {
               <AccordionTrigger variant="none" className="p-4">
                 {institution}
               </AccordionTrigger>
-              <AccordionContent variant="sidebar">
+              <AccordionContent>
                 {[...searchTechnologyMap.get(institution)!.keys()]
                   .sort()
                   .map((platform) => {
@@ -196,7 +196,7 @@ export function HubsPage() {
                             .get(platform)!
                             .map((hub) => {
                               const params = new URLSearchParams()
-                              params.append('db', settings.assembly)
+                              params.append('db', edbSettings.genomic.assembly)
                               params.append('hubUrl', hub.url)
                               if (settings.hideTracks) {
                                 params.append('hideTracks', '1')
@@ -252,14 +252,17 @@ export function HubsPage() {
   return (
     <ShortcutLayout signinRequired={false}>
       <HeaderPortal>
-        <ModuleInfoButton info={MODULE_INFO} />
+        <>
+          <AppHeaderIcon />
+          <AppInfoButton />
+        </>
 
         <Autocomplete
           //variant="header"
           h="header"
           value={query.toString()}
           onTextChange={(v) => (v.length > 0 ? setQuery([v]) : resetQuery())}
-          className="w-4/5 lg:w-1/2 text-xs font-medium"
+          className="w-4/5 lg:w-3/5 text-xs font-medium"
         >
           {institutions.map((institution) => {
             return (
@@ -268,26 +271,7 @@ export function HubsPage() {
           })}
         </Autocomplete>
 
-        <SelectList
-          variant="header"
-          className="text-sm"
-          w="xs"
-          value={settings.assembly}
-          onValueChange={(v) => {
-            const newStore = produce(settings, (draft) => {
-              draft.assembly = (v as string) ?? 'hg19'
-            })
-
-            updateSettings(newStore)
-          }}
-        >
-          <SelectGroup>
-            <SelectLabel>Genome Assembly</SelectLabel>
-            <SelectItem value="hg19">hg19</SelectItem>
-            <SelectItem value="grch38">grch38</SelectItem>
-            <SelectItem value="mm10">mm10</SelectItem>
-          </SelectGroup>
-        </SelectList>
+        <AssemblySelect />
       </HeaderPortal>
 
       <TabSlideBar

@@ -1,16 +1,11 @@
 import type { IFieldMap } from '@/interfaces/field-map'
 
-import versionConfig from '../version.json'
-
 // id for internally indentifying app and for use in prefixes etc
 
 // easy way for components to detect if in dev mode or not.
 export const IS_DEV_MODE = process.env.NODE_ENV === 'development'
 
 export const HEADER_SEP = '-'
-
-export const VERSION = versionConfig.version
-export const UPDATED = versionConfig.updated
 
 export const ANIMATION_DURATION_S = 0.3
 export const ANIMATION_DURATION_MS = 250
@@ -53,6 +48,10 @@ export const TEXT_NEW = 'New'
 export const TEXT_NAME = 'Name'
 export const TEXT_DRAG_HERE = 'Drop File(s) Here to Open'
 export const TEXT_DELETE = 'Delete'
+export const TEXT_REMOVE = 'Remove'
+export const TEXT_EDIT = 'Edit'
+export const TEXT_COPY = 'Copy'
+export const TEXT_MOVE = 'Move'
 export const TEXT_DISPLAY = 'Display'
 export const TEXT_DOWNLOAD = 'Download'
 export const TEXT_DOWNLOAD_AS_TXT = 'Download as TXT'
@@ -62,6 +61,11 @@ export const TEXT_DOWNLOAD_AS_PNG = 'Download as PNG'
 export const TEXT_SHOW = 'Show'
 export const TEXT_TITLE = 'Title'
 export const TEXT_BORDER = 'Border'
+export const TEXT_COLOR = 'Color'
+export const TEXT_SIZE = 'Size'
+export const TEXT_WIDTH = 'Width'
+export const TEXT_HEIGHT = 'Height'
+export const TEXT_OPACITY = 'Opacity'
 export const TEXT_NEXT = 'Next'
 export const TEXT_PREVIOUS = 'Previous'
 export const TEXT_BACK = 'Back'
@@ -79,6 +83,7 @@ export const TEXT_USERNAME = 'Username'
 export const TEXT_SIGN_OUT = 'Sign Out'
 export const TEXT_SIGNED_OUT = 'Signed Out'
 export const TEXT_SELECT_ALL = 'Select All'
+export const TEXT_SELECT = 'Select'
 export const TEXT_UNSELECT_ALL = 'Unselect All'
 export const TEXT_SEARCH = 'Search'
 export const TEXT_UNLABELLED = '<Unlabelled>'

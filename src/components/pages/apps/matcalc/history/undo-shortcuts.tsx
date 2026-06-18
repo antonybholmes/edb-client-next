@@ -6,7 +6,7 @@ import { useKeyDownListener } from '@/hooks/keydown-listener'
 import { Redo2, Undo2 } from 'lucide-react'
 
 export function UndoShortcuts() {
-  const { history, historyUndo, historyRedo } = useHistory()
+  const { history, undo: historyUndo, redo: historyRedo } = useHistory()
 
   const pastTooltip =
     history.length > 1 ? `Undo ${history[history.length - 1]!.description}` : ''

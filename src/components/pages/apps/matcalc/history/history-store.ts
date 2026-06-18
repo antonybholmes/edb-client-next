@@ -14,20 +14,23 @@ import {
 } from '@/components/plot/heatmap/heatmap-svg-props'
 import type { IClusterGroup } from '@/lib/cluster-group'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { getFormattedShape } from '@/lib/dataframe/dataframe-utils'
+import {
+  getFormattedShape,
+  getFormattedShapeSmall,
+} from '@/lib/dataframe/dataframe-utils'
 import type { IExtGseaResult, IGseaResult } from '@/lib/gsea/ext-gsea'
-import type { IGeneset, IRankedGenes } from '@/lib/gsea/geneset'
+import type { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
 import { PATH_SEP } from '@/lib/http/urls'
 import type { IClusterFrame } from '@/lib/math/hcluster'
-import { formattedList } from '@/lib/text/text'
-import {
-  DEFAULT_EXT_GSEA_PROPS,
-  type IExtGseaDisplayOptions,
-} from '../../genes/gsea/ext-gsea-store'
+import { formattedList, type UndefNullStr } from '@/lib/text/text'
 import {
   DEFAULT_BOX_PLOT_DISPLAY_PROPS,
   type IBoxPlotDisplayOptions,
 } from '../apps/boxplot/boxplot-plot-svg'
+import {
+  DEFAULT_EXT_GSEA_PROPS,
+  type IExtGseaDisplayOptions,
+} from '../apps/ext-gsea/ext-gsea-store'
 import {
   DEFAULT_VOLCANO_PROPS,
   type IVolcanoDisplayOptions,
@@ -47,7 +50,7 @@ export const DEFAULT_APP_NAME = 'Default'
 export const DEFAULT_STEP_NAME = 'Load sheet'
 
 const DEFAULT_APP = newHistoryApp('Default')
-const DEFAULT_FILE = newHistoryFile('Sheet 1')
+const DEFAULT_FILE = newHistoryFile('Default')
 const DEFAULT_SHEET = DATAFRAME_100x26
 
 export type NodeType = 'app' | 'branch' | 'sheet' | 'plot'
@@ -55,8 +58,8 @@ export type NodeType = 'app' | 'branch' | 'sheet' | 'plot'
 export type GotoType = NodeType | 'path'
 
 export interface ISelectionPath {
-  type: 'sheet' | 'plot'
-  path: string
+  type: NodeType
+  id: string
 }
 
 export interface IHistoryComp {
@@ -129,8 +132,8 @@ export interface ExtGseaPlot extends BasePlot {
   style: 'ext-gsea'
   props: IExtGseaDisplayOptions
   rankedGenes: IRankedGenes
-  gs1: IGeneset
-  gs2: IGeneset
+  gs1: IGeneSet
+  gs2: IGeneSet
   extGseaRes: IExtGseaResult
   gseaRes1: IGseaResult
   gseaRes2: IGseaResult
@@ -144,6 +147,10 @@ export type HistoryPlot =
   | BoxPlot
 
 export type HistoryNode = IHistoryApp | HistoryPlot
+
+// function createDefaultSheet(): BaseDataFrame {
+//   return create100x26Df()
+// }
 
 export function newHeatMapPlot(
   name: string,
@@ -269,8 +276,8 @@ export function newExtGseaPlot(
     gseaRes1 = {} as IGseaResult,
     gseaRes2 = {} as IGseaResult,
     rankedGenes = {} as IRankedGenes,
-    gs1 = {} as IGeneset,
-    gs2 = {} as IGeneset,
+    gs1 = {} as IGeneSet,
+    gs2 = {} as IGeneSet,
     props = { ...DEFAULT_EXT_GSEA_PROPS },
   } = opts
 
@@ -294,16 +301,6 @@ export function newExtGseaPlot(
   }
 }
 
-export interface IHistoryFile extends IHistoryComp {
-  //currentSheet: string
-  //sheets: DataFrameType[]
-  //currentPlot: string
-  //plots: HistoryPlot[]
-  //groupsName: string
-  //groups: IClusterGroup[] //IHistoryGroups
-  //genesets: IGeneset[]
-}
-
 export interface IHistoryFileDesc {
   app: string
   file: string
@@ -312,85 +309,8 @@ export interface IHistoryFileDesc {
 }
 
 export interface IHistoryApp extends IHistoryComp {
-  //currentBranch: IHistoryBranch | undefined
-  //currentBranch: string
-  //branches: IHistoryBranch[]
-
-  //currentSheet: string
-  //sheets: DataFrameType[]
-
-  //currentPlot: string
-  //plots: HistoryPlot[]
-
-  //currentFile: string
-  //files: IHistoryFile[]
-
-  //IHistoryFileDesc[]
-
-  //nextBranchIndex: number
   type: 'app'
 }
-
-// export interface IHistoryBranch extends IHistoryComp {
-//   // maintains the current position in the history stack
-//   // since the stack can include redo actions if we undo
-//   // an action
-
-//   //currentPlot: string
-//   //plots: string[]
-
-//   // Name of the group set so we can given them an identifiable name. Defaults to "Groups".
-//   groupsName: string
-//   groups: IClusterGroup[] //IHistoryGroups
-
-//   genesets: IGeneset[]
-
-//   currentSheet: string
-//   sheets: DataFrameType[]
-
-//   currentPlot: string
-//   plots: HistoryPlot[]
-
-//   type: 'branch'
-// }
-
-// export interface IHistoryStep extends IHistoryComp {
-//   //currentId: string
-//   //currentSheet: BaseDataFrame | undefined
-
-//   currentSheet: DataFrameType
-//   sheets: DataFrameType[]
-
-//   currentPlot: HistoryPlot | undefined
-//   plots: HistoryPlot[]
-//   type: 'step'
-// }
-
-// export const BASE_STEP: IHistoryStep = Object.freeze({
-//   id: '',
-//   currentSheet: DATAFRAME_100x26,
-//   sheets: [DATAFRAME_100x26],
-//   currentPlot: undefined,
-//   plots: [],
-//   type: 'step',
-//   path: '',
-//   name: '',
-//   createdAt: 0,
-// })
-
-// const DEFAULT_FILE: IHistoryFile = {
-//   id: makeUuid(),
-//   name: 'Sheet 1',
-//   ////currentSheet: DATAFRAME_100x26.id,
-//   //sheets: [DATAFRAME_100x26],
-//   //currentPlot: '',
-//   //plots: [],
-//   //groupsName: '',
-//   //groups: [],
-//   //genesets: [],
-//   //path: '',
-//   createdAt: Date.now(),
-// }
 
 export function newHistoryApp(name: string): IHistoryApp {
   const id = makeUuid()
@@ -399,72 +319,18 @@ export function newHistoryApp(name: string): IHistoryApp {
     id,
     //path,
     name,
-
-    //currentFile: files[0]?.id || '',
-    //files,
-
-    //currentSheet: sheets[sheets.length - 1]!.id,
-    //sheets,
-    //currentPlot: plots[plots.length - 1]?.id || '',
-    //plots,
     type: 'app',
     createdAt: Date.now(),
   }
 }
 
-export function newHistoryFile(name: string): IHistoryFile {
+export function newHistoryFile(name: string): IHistoryComp {
   return {
     id: makeUuid(),
     name,
-    //currentSheet: DATAFRAME_100x26.id,
-    //sheets: [DATAFRAME_100x26],
-    //currentPlot: '',
-    //plots: [],
-    //groupsName: '',
-    //groups: [],
-    // genesets: [],
-    //path: '',
     createdAt: Date.now(),
   }
 }
-
-// interface IHistoryBranchOpts {
-//   groupsName?: string
-//   groups?: IClusterGroup[]
-
-//   genesets?: IGeneset[]
-//   files?: IHistoryFile[]
-// }
-
-// function newHistoryBranch(
-//   name: string,
-
-//   opts: IHistoryBranchOpts = {}
-// ): IHistoryBranch {
-//   const {
-//     groupsName = '',
-//     groups = [],
-//     genesets = [],
-//     sheets = [DATAFRAME_100x26],
-//     plots = [],
-//   } = opts
-
-//   return {
-//     id: makeUuid(),
-//     path: '',
-//     name,
-
-//     groupsName,
-//     groups,
-//     genesets,
-//     currentSheet: sheets[sheets.length - 1]!.id,
-//     sheets,
-//     currentPlot: plots[plots.length - 1]?.id || '',
-//     plots,
-//     type: 'branch',
-//     createdAt: Date.now(),
-//   }
-// }
 
 export function cloneHistory(history: IHistoryApp): IHistoryApp {
   return produce(history, () => {})
@@ -484,17 +350,6 @@ export type HistoryUpdateProps = (
   prop: unknown
 ) => void
 
-// interface IOpenBranchOpts {
-//   stepName?: string | undefined
-//   //sheets?: BaseDataFrame[]
-//   groupsName?: string
-//   groups?: IClusterGroup[]
-//   genesets?: IGeneset[]
-//   //plots?: HistoryPlot[]
-//   mode?: AppendMode | undefined
-//   sheets?: BaseDataFrame[]
-// }
-
 interface IAppSlice {
   openApp: (name: string) => void
   openFile: (name: string, opts: IFileOps) => void
@@ -510,21 +365,22 @@ interface IAppSlice {
 interface IPlotSlice {
   addPlots: (plot: HistoryPlot[], opts?: ISheetOps) => void
   reorderPlots: (plotIds: string[], opts?: ISheetOps) => void
-  updatePlot: (plot: HistoryPlot, opts?: ISheetOps) => void
+  updatePlot: (plot: HistoryPlot) => void
 }
 
-type HasId = { id: string }
+type IdObj = { id: string }
 
-type StrOrId = string | HasId
+type StrOrIdObj = string | IdObj
+type OptStrOrIdObj = StrOrIdObj | undefined
 
-type AppPath = { app: StrOrId }
+type AppPath = { app: StrOrIdObj }
 
-type BaseFilePath = { file: StrOrId }
+type BaseFilePath = { file: StrOrIdObj }
 type FilePath = AppPath & BaseFilePath
-type SheetPath = FilePath & { sheet: StrOrId } // omit file
-type PlotPath = FilePath & { plot: StrOrId }
-type GroupPath = FilePath & { group: StrOrId }
-type GenesetPath = FilePath & { geneset: StrOrId }
+export type SheetPath = FilePath & { sheet: StrOrIdObj } // omit file
+type PlotPath = FilePath & { plot: StrOrIdObj }
+type GroupPath = FilePath & { group: StrOrIdObj }
+type GenesetPath = FilePath & { geneset: StrOrIdObj }
 
 type HistoryPath =
   | AppPath
@@ -543,85 +399,9 @@ type HistoryPath =
  * @param strOrId
  * @returns
  */
-export function strOrIdToStr(strOrId: StrOrId): string {
+export function strOrIdToStr(strOrId: StrOrIdObj): string {
   return typeof strOrId === 'string' ? strOrId : strOrId.id
 }
-
-// function toAppPath(path: AppPath | string): AppPath | null {
-//   if (typeof path !== 'string' && 'appId' in path) {
-//     return path
-//   }
-
-//   const parts = pathSplit(path)
-
-//   if (parts.length < 1) {
-//     return null
-//   }
-
-//   return { appId: parts[0]! }
-// }
-
-// function toGroupPath(path: GroupPath | string): GroupPath | null {
-//   if (typeof path !== 'string' && 'groupId' in path) {
-//     return path
-//   }
-
-//   const parts = pathSplit(path)
-//   if (parts.length < 3) {
-//     return null
-//   }
-
-//   return { appId: parts[0]!, fileId: parts[1]!, groupId: parts[2]! }
-// }
-
-// function toFilePath(path: FilePath | string): FilePath | null {
-//   if (typeof path !== 'string' && 'appId' in path && 'fileId' in path) {
-//     return path
-//   }
-
-//   const parts = pathSplit(path)
-//   if (parts.length < 2) {
-//     return null
-//   }
-
-//   return { appId: parts[0]!, fileId: parts[1]! }
-// }
-
-// function toSheetPath(path: SheetPath | string): SheetPath | null {
-//   if (
-//     typeof path !== 'string' &&
-//     'appId' in path &&
-//     'fileId' in path &&
-//     'sheetId' in path
-//   ) {
-//     return path
-//   }
-
-//   const parts = path.split(PATH_SEP)
-//   if (parts.length < 3) {
-//     return null
-//   }
-
-//   return { appId: parts[0]!, fileId: parts[1]!, sheetId: parts[2]! }
-// }
-
-// function toPlotPath(path: PlotPath | string): PlotPath | null {
-//   if (
-//     typeof path !== 'string' &&
-//     'appId' in path &&
-//     'fileId' in path &&
-//     'plotId' in path
-//   ) {
-//     return path
-//   }
-
-//   const parts = path.split(PATH_SEP)
-//   if (parts.length < 3) {
-//     return null
-//   }
-
-//   return { appId: parts[0]!, fileId: parts[1]!, plotId: parts[2]! }
-// }
 
 interface IGroupOps {
   name?: string
@@ -644,10 +424,10 @@ interface IGroupSlice {
 }
 
 interface IGenesetSlice {
-  addGenesets: (genesets: IGeneset[], opts?: IGroupOps) => void
+  addGenesets: (genesets: IGeneSet[], opts?: IGroupOps) => void
   reorderGenesets: (ids: string[], opts?: IGroupOps) => void
   removeGenesets: (ids: string[], opts?: IGroupOps) => void
-  updateGeneset: (geneset: IGeneset) => void
+  updateGeneset: (geneset: IGeneSet) => void
 }
 
 interface ISheetSlice {
@@ -682,18 +462,19 @@ export interface IHistoryState extends IHistoryComp {
   currentApp: string
   currentFile: string
   currentSheet: string
-  currentPlot: string
+  currentPlot: string | undefined
   currentSelections: ISelectionPath[]
 }
 
-interface IDataStore {
+// Stores all objects by ID for easy access and immutability
+interface IHistoryDataStore {
   apps: Record<string, IHistoryApp>
-  files: Record<string, IHistoryFile>
+  files: Record<string, IHistoryComp>
   sheets: Record<string, DataFrameType>
   plots: Record<string, HistoryPlot>
   groupNames: Record<string, string>
   groups: Record<string, IClusterGroup>
-  genesets: Record<string, IGeneset>
+  genesets: Record<string, IGeneSet>
 }
 
 interface IHistoryStore
@@ -705,7 +486,7 @@ interface IHistoryStore
     IGroupSlice,
     IGenesetSlice,
     IUndoState<IHistoryState>,
-    IDataStore {
+    IHistoryDataStore {
   //addAction: (action: HistoryEvent, fn: (draft: IHistoryState) => void) => void
 
   /**
@@ -716,11 +497,11 @@ interface IHistoryStore
    */
 
   reset: () => void
-  resetApp: (app: StrOrId) => void
+  resetApp: (app: OptStrOrIdObj) => void
 
-  historyUndo: () => void
-  historyRedo: () => void
-  historyGoto: (step: number | string) => void
+  undo: () => void
+  redo: () => void
+  seek: (step: number | string) => void
 }
 
 // function getCurrentApp(state: IHistoryState): IHistoryApp {
@@ -739,9 +520,7 @@ interface IHistoryStore
 //   }
 // }
 
-export function pathJoin(
-  ...parts: ({ id: string } | string | undefined | null)[]
-): string {
+export function pathJoin(...parts: ({ id: string } | UndefNullStr)[]): string {
   return (
     '/' +
     parts
@@ -808,7 +587,7 @@ export function pathJoin(
 //   }
 // }
 
-function resetState(): Omit<IHistoryState, 'id' | 'name' | 'createdAt'> {
+function initState(): Omit<IHistoryState, 'id' | 'name' | 'createdAt'> {
   return {
     appOrder: [DEFAULT_APP.id],
     fileOrder: { [DEFAULT_APP.id]: [DEFAULT_FILE.id] },
@@ -821,29 +600,75 @@ function resetState(): Omit<IHistoryState, 'id' | 'name' | 'createdAt'> {
     currentFile: DEFAULT_FILE.id,
     currentSheet: DEFAULT_SHEET.id,
     currentPlot: '',
-    currentSelections: [{ type: 'sheet', path: DEFAULT_SHEET.id }],
+    currentSelections: [{ type: 'sheet', id: DEFAULT_SHEET.id }],
   }
 }
 
-function resetApp(app: StrOrId, state: IHistoryState) {
-  const id = getAppId(app, state)
+function resetState(
+  state: IHistoryState
+): Omit<IHistoryState, 'id' | 'name' | 'createdAt'> {
+  const defaultSheet = state.sheetOrder[DEFAULT_FILE.id]![0]!
+
+  return {
+    appOrder: [DEFAULT_APP.id],
+    fileOrder: { [DEFAULT_APP.id]: [DEFAULT_FILE.id] },
+    sheetOrder: { [DEFAULT_FILE.id]: [defaultSheet] },
+    plotOrder: { [DEFAULT_FILE.id]: [] },
+    groupOrder: { [DEFAULT_FILE.id]: [] },
+    genesetOrder: { [DEFAULT_FILE.id]: [] },
+
+    currentApp: DEFAULT_APP.id,
+    currentFile: DEFAULT_FILE.id,
+    currentSheet: defaultSheet,
+    currentPlot: '',
+    currentSelections: [{ type: 'sheet', id: defaultSheet }],
+  }
+}
+
+function resetApp(state: IHistoryState, opts: { app?: OptStrOrIdObj } = {}) {
+  const { app } = opts
+  const id = getAppId(state, { app })
 
   state.fileOrder[id] = [DEFAULT_FILE.id]
 
   state.currentFile = DEFAULT_FILE.id
-  state.currentSheet = DEFAULT_SHEET.id
+  state.currentSheet = state.sheetOrder[0]![0]!
   state.currentPlot = ''
-  state.currentSelections = [{ type: 'sheet', path: DEFAULT_SHEET.id }]
+  state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]
 }
 
-function init(): IUndoState<IHistoryState> & IDataStore {
+// const DEFAULT_HISTORY_STORE: IHistoryDataStore = {
+//   apps: { [DEFAULT_APP.id]: DEFAULT_APP },
+//   files: { [DEFAULT_FILE.id]: DEFAULT_FILE },
+//   sheets: { [DEFAULT_SHEET.id]: DEFAULT_SHEET },
+//   plots: {},
+//   groups: {},
+//   groupNames: { [DEFAULT_FILE.id]: 'Groups' },
+//   genesets: {},
+// }
+
+function resetStore(): IHistoryDataStore {
+  return {
+    apps: { [DEFAULT_APP.id]: DEFAULT_APP },
+    files: { [DEFAULT_FILE.id]: DEFAULT_FILE },
+    sheets: { [DEFAULT_SHEET.id]: DEFAULT_SHEET },
+    plots: {},
+    groups: {},
+    groupNames: { [DEFAULT_FILE.id]: 'Groups' },
+    genesets: {},
+  }
+}
+
+function init(): IUndoState<IHistoryState> & IHistoryDataStore {
   const id = makeUuid()
+
+  //const defaultSheet = createDefaultSheet()
 
   let state: IHistoryState = {
     id,
     name: 'History',
     createdAt: Date.now(),
-    ...resetState(),
+    ...initState(),
   }
 
   const historyEntry: IHistoryEntry<IHistoryState> = {
@@ -856,13 +681,7 @@ function init(): IUndoState<IHistoryState> & IDataStore {
   }
 
   return {
-    apps: { [DEFAULT_APP.id]: DEFAULT_APP },
-    files: { [DEFAULT_FILE.id]: DEFAULT_FILE },
-    sheets: { [DEFAULT_SHEET.id]: DEFAULT_SHEET },
-    plots: {},
-    groups: {},
-    groupNames: { [DEFAULT_FILE.id]: 'Groups' },
-    genesets: {},
+    ...resetStore(),
 
     present: state,
     history: [historyEntry],
@@ -870,6 +689,23 @@ function init(): IUndoState<IHistoryState> & IDataStore {
   }
 }
 
+function dataStoreView(state: IHistoryStore): IHistoryDataStore {
+  return {
+    apps: state.apps,
+    files: state.files,
+    sheets: state.sheets,
+    plots: state.plots,
+    groupNames: state.groupNames,
+    groups: state.groups,
+    genesets: state.genesets,
+  }
+}
+
+// logic to manage history state, including undo/redo and goto functionality.
+// We use a combination of snapshots and patches to optimize for both memory
+// usage and performance. Snapshots are taken every 10 steps or when the
+// number of patches exceeds 50 to ensure that we don't have to apply too
+// many patches when undoing/redoing.
 const historyManager = new HistoryManager<IHistoryState>()
 
 export const useHistoryStore = create<IHistoryStore>((set, get) => {
@@ -886,23 +722,16 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
   function addAction(
     name: string,
     description: string,
-    updateHistory: (state: IHistoryState, store: Readonly<IDataStore>) => void,
-    sideEffect?: (store: IDataStore) => void
+    updateHistory: (
+      state: IHistoryState,
+      store: Readonly<IHistoryDataStore>
+    ) => void,
+    updateStore?: (store: IHistoryDataStore) => void
   ) {
     // use the current state for producing the next state. Inverse
     // patches are used for undo functionality.
 
     set(state => {
-      // const readonlyStore: Readonly<IDataStore> = makeReadonly({
-      //   apps: state.apps,
-      //   files: state.files,
-      //   sheets: state.sheets,
-      //   plots: state.plots,
-      //   groups: state.groups,
-      //   groupNames: state.groupNames,
-      //   genesets: state.genesets,
-      // })
-
       const result = historyManager.applyUpdate(
         state,
         name,
@@ -911,7 +740,10 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
           // draft` is mutable here — Immer handles producing the next state
           // `state as Readonly<IDataStore>` ensures that updateHistory cannot accidentally mutate
           // the rest of the store.
-          updateHistory(draft, state as Readonly<IDataStore>)
+          updateHistory(
+            draft,
+            dataStoreView(state) as Readonly<IHistoryDataStore>
+          )
         }
       )
 
@@ -921,8 +753,8 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
       }
 
       // side effects can safely mutate the returned store
-      if (sideEffect) {
-        sideEffect(newState)
+      if (updateStore) {
+        updateStore(dataStoreView(newState))
       }
 
       // the returned object becomes the new state
@@ -938,7 +770,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
         produce((state: IHistoryStore) => {
           state.present = {
             ...state.present,
-            ...resetState(),
+            ...resetState(state.present),
           }
 
           const historyEntry: IHistoryEntry<IHistoryState> = {
@@ -956,13 +788,13 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
       )
     },
 
-    resetApp: (app: StrOrId) => {
+    resetApp: (app: OptStrOrIdObj = undefined) => {
       set(
         produce((state: IHistoryStore) => {
-          const id = getAppId(app, state.present)
+          const id = getAppId(state.present, { app })
           const appObj = state.apps[id]!
 
-          resetApp(app, state.present)
+          resetApp(state.present, { app })
 
           const historyEntry: IHistoryEntry<IHistoryState> = {
             id: makeUuid(),
@@ -979,7 +811,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
       )
     },
 
-    historyUndo: () => {
+    undo: () => {
       // the past becomes the present, the current present becomes the future
       // and the past loses an entry
       set(state => ({
@@ -987,13 +819,13 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
       }))
     },
 
-    historyRedo: () => {
+    redo: () => {
       set(state => ({
         ...historyManager.redo(state),
       }))
     },
 
-    historyGoto: (step: number | string) => {
+    seek: (step: number | string) => {
       set(state => ({
         ...historyManager.goto(state, step),
       }))
@@ -1002,10 +834,12 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
     openApp: (name: string) => {
       const app = newHistoryApp(name)
 
-      // check if app with this name already exists. If it does, we don't want to create a new app, just switch to it
-      const exists = Object.values(get().apps).some(a => a.name === name)
+      const nl = name.toLowerCase()
 
-      console.log('Opening app', name, 'exists:', exists)
+      // check if app with this name already exists. If it does, we don't want to create a new app, just switch to it
+      const exists = Object.values(get().apps).some(
+        a => a.name.toLowerCase() === nl || a.id.toLowerCase() === nl
+      )
 
       addAction(
         `Open ${name} app`,
@@ -1013,16 +847,22 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
         (state: IHistoryState) => {
           //const { branch } = newDefaultBranch()
 
-          // only create a new app if it doesn't already exist. If it does, just switch to it
+          // only create a new app if it doesn't already exist.
+          // If it does, just switch to it
           if (!exists) {
+            // Remove default app if it's the first in the order
+            // if (state.appOrder[0] === DEFAULT_APP.id) {
+            //   state.appOrder.shift()
+            // }
+
             state.appOrder.push(app.id)
 
             state.fileOrder[app.id] = [DEFAULT_FILE.id]
-
             state.sheetOrder[DEFAULT_FILE.id] = [DEFAULT_SHEET.id]
-
-            state.currentApp = app.id
           }
+
+          // switch to the new app
+          state.currentApp = app.id
 
           const files = state.fileOrder[state.currentApp]!
           state.currentFile = files[files.length - 1]!
@@ -1032,11 +872,9 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
 
           state.currentPlot = ''
 
-          state.currentSelections = [
-            { type: 'sheet', path: state.currentSheet },
-          ]
+          state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]
         },
-        (store: IDataStore) => {
+        (store: IHistoryDataStore) => {
           if (!exists) {
             // after opening the app, we want to make sure the default file and sheet are added to the store
             store.apps[app.id] = app
@@ -1047,10 +885,10 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
 
     openFile: (name: string, opts: IFileOps = {}) => {
       let {
-        sheets = [DATAFRAME_100x26],
+        sheets = [DEFAULT_SHEET],
         plots = [],
         mode = 'append',
-        path: appId = get().present.currentApp,
+        app = get().present.currentApp,
         groupsName = '',
         groups = [],
         genesets = [],
@@ -1066,17 +904,29 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
 
       const file = newHistoryFile(name)
 
+      //const defaultSheet = createDefaultSheet()
+
       addAction(
         `Open file ${name}`,
-        getFormattedShape(sheets[0]),
+        getFormattedShapeSmall(sheets[0]),
         (state: IHistoryState) => {
+          // these actions are logged to the history
+
           if (mode === 'append') {
-            state.fileOrder[appId]?.push(file.id)
+            // remove default file if it exists. Default file
+            // must always be first
+            const files = (state.fileOrder[app] || []).filter(
+              id => id !== DEFAULT_FILE.id
+            )
+
+            state.fileOrder[app] = [...files, file.id]
           } else {
-            state.fileOrder[appId] = [file.id]
+            // Replace existing files with the new file
+            state.fileOrder[app] = [file.id] // [state.fileOrder[appId]![0]!, file.id]
           }
 
           state.sheetOrder[file.id] = sheets.map(s => s.id)
+
           state.plotOrder[file.id] = plots.map(p => p.id)
           state.groupOrder[file.id] = groups.map(g => g.id)
           state.genesetOrder[file.id] = genesets.map(g => g.id)
@@ -1085,13 +935,20 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
           state.currentSheet = sheets[sheets.length - 1]!.id
           state.currentPlot =
             plots.length > 0 ? plots[plots.length - 1]!.id : state.currentPlot
-          state.currentSelections = [
-            { type: 'sheet', path: state.currentSheet },
-          ]
+          state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]
         },
-        (store: IDataStore) => {
-          console.log(store.files, file)
+        (store: IHistoryDataStore) => {
+          // these actions are not logged to the history,
+          // but are used to update the store with the new file, sheets, and plots.
+          // We separate them because we don't want to log the entire file and sheet data
+          // to the history, just the action of opening a file with a certain name and shape.
+          // this is so objects are stored once, but operations on them are logged to the history,
+          // which is more efficient and makes the history easier to understand.
+
           store.files[file.id] = file
+
+          // add the default sheet for this file
+          //store.sheets[DEFAULT_SHEET.id] = DEFAULT_SHEET
 
           for (const sheet of sheets) {
             store.sheets[sheet.id] = sheet
@@ -1127,30 +984,45 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
       // and can't be removed, so we don't want to allow adding sheets
       // to it since it should always have the default sheet
 
-      console.log('Adding sheets', file, DEFAULT_FILE.id)
+      // cannot add to default file
       if (file === DEFAULT_FILE.id) {
         return
       }
 
-      addAction(
+      name =
         name ||
-          (sheets.length === 1
-            ? `Add sheet ${sheets[0]!.name}`
-            : `Add ${sheets.length} sheets`),
+        (sheets.length === 1
+          ? `Add sheet ${sheets[0]!.name}`
+          : `Add ${sheets.length} sheets`)
+
+      addAction(
+        name,
         getFormattedShape(sheets[0]!),
         (state: IHistoryState) => {
+          // user cannot add default sheet
+          const ids = sheets.map(s => s.id) //.filter(id => id !== DEFAULT_SHEET.id)
+
           if (mode === 'append') {
-            state.sheetOrder[file]?.push(...sheets.map(s => s.id))
+            console.log('Appending sheets:', ids)
+            // when appending, remove default sheet if it exists to avoid confusion, but keep it at the beginning of the order if it's still there since it's a special sheet that should always be available
+            const sheets = (state.sheetOrder[file] || []).filter(
+              id => id !== DEFAULT_SHEET.id
+            )
+            state.sheetOrder[file] = [...sheets, ...ids]
           } else {
-            state.sheetOrder[file] = sheets.map(s => s.id)
+            // There must be a default sheet
+            // state.sheetOrder[file] = [
+            //   state.sheetOrder[file]![0]!,
+            //   ...sheets.map(s => s.id),
+            // ]
+
+            state.sheetOrder[file] = ids
           }
 
           state.currentSheet = sheets[sheets.length - 1]!.id
-          state.currentSelections = [
-            { type: 'sheet', path: state.currentSheet },
-          ]
+          state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]
         },
-        (store: IDataStore) => {
+        (store: IHistoryDataStore) => {
           for (const sheet of sheets) {
             store.sheets[sheet.id] = sheet
           }
@@ -1168,11 +1040,6 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
         mode = 'append',
         file = get().present.currentFile,
       } = opts || {}
-
-      console.log('Adding sheets', file, DEFAULT_FILE.id)
-      if (file === DEFAULT_FILE.id) {
-        return
-      }
 
       // Plots cannot be added to the default file since it's meant to be a simple starting point
       // with just a default sheet, and allowing plots to be added to it could
@@ -1195,9 +1062,9 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
           }
 
           state.currentPlot = plots[plots.length - 1]!.id
-          state.currentSelections = [{ type: 'plot', path: state.currentPlot }]
+          state.currentSelections = [{ type: 'plot', id: state.currentPlot }]
         },
-        (store: IDataStore) => {
+        (store: IHistoryDataStore) => {
           for (const plot of plots) {
             store.plots[plot.id] = plot
           }
@@ -1214,16 +1081,26 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
         return toPathId(path)
       })
 
+      console.log(
+        'Removing paths',
+        pathIds,
+        isAppOnly(pathIds[0]!),
+        isFileOnly(pathIds[0]!),
+        isSheet(pathIds[0]!)
+      )
+
       addAction(
         `Remove objects`,
         '',
         (state: IHistoryState) => {
           for (const p of pathIds) {
+            console.log('Removing path', p, state)
             if (isAppOnly(p)) {
               removeApp(state, p)
             } else if (isFileOnly(p)) {
               removeFile(state, p)
             } else if (isSheet(p)) {
+              console.log('Removing sheet', p)
               removeSheet(state, p)
             } else if (isPlot(p)) {
               removePlot(state, p)
@@ -1235,26 +1112,26 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
               // do nothing if the path is invalid
             }
           }
-        },
-        (store: IDataStore) => {
-          for (const p of pathIds) {
-            if (isAppOnly(p) && Object.keys(store.apps).length > 1) {
-              delete store.apps[p.app]
-            } else if (isFileOnly(p) && Object.keys(store.files).length > 1) {
-              delete store.files[p.file]
-            } else if (isSheet(p) && Object.keys(store.sheets).length > 1) {
-              delete store.sheets[p.sheet]
-            } else if (isPlot(p)) {
-              delete store.plots[p.plot]
-            } else if (isGroup(p)) {
-              delete store.groups[p.group]
-            } else if (isGeneset(p)) {
-              delete store.genesets[p.geneset]
-            } else {
-              // do nothing if the path is invalid or if it's the only remaining item of that type
-            }
-          }
         }
+        // (store: IHistoryDataStore) => {
+        //   for (const p of pathIds) {
+        //     if (isAppOnly(p) && Object.keys(store.apps).length > 1) {
+        //       delete store.apps[p.app]
+        //     } else if (isFileOnly(p) && Object.keys(store.files).length > 1) {
+        //       delete store.files[p.file]
+        //     } else if (isSheet(p) && Object.keys(store.sheets).length > 1) {
+        //       delete store.sheets[p.sheet]
+        //     } else if (isPlot(p)) {
+        //       delete store.plots[p.plot]
+        //     } else if (isGroup(p)) {
+        //       delete store.groups[p.group]
+        //     } else if (isGeneset(p)) {
+        //       delete store.genesets[p.geneset]
+        //     } else {
+        //       // do nothing if the path is invalid or if it's the only remaining item of that type
+        //     }
+        //   }
+        // }
       )
     },
 
@@ -1275,7 +1152,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
             removeFile(state, p)
           }
         },
-        (store: IDataStore) => {
+        (store: IHistoryDataStore) => {
           for (const p of pathIds) {
             if (Object.keys(store.files).length > 1) {
               delete store.files[p.file]
@@ -1327,7 +1204,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
         `Update plot ${plot.id}`,
         '',
         () => {},
-        (store: IDataStore) => {
+        (store: IHistoryDataStore) => {
           store.plots[plot.id] = plot
         }
       )
@@ -1359,7 +1236,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
             state.groupOrder[file] = groups.map(g => g.id)
           }
         },
-        (store: IDataStore) => {
+        (store: IHistoryDataStore) => {
           for (const group of groups) {
             store.groups[group.id] = group
           }
@@ -1385,7 +1262,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
         '',
 
         () => {},
-        (store: IDataStore) => {
+        (store: IHistoryDataStore) => {
           store.groups[group.id] = group
         }
       )
@@ -1425,7 +1302,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
       })
     },
 
-    addGenesets: (genesets: IGeneset[], opts: IGroupOps = {}) => {
+    addGenesets: (genesets: IGeneSet[], opts: IGroupOps = {}) => {
       if (genesets.length === 0) {
         return
       }
@@ -1446,7 +1323,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
             state.genesetOrder[file] = genesets.map(g => g.id)
           }
         },
-        (store: IDataStore) => {
+        (store: IHistoryDataStore) => {
           for (const geneset of genesets) {
             store.genesets[geneset.id] = geneset
           }
@@ -1454,12 +1331,12 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
       )
     },
 
-    updateGeneset: (geneset: IGeneset) => {
+    updateGeneset: (geneset: IGeneSet) => {
       addAction(
         `Update geneset ${geneset.id}`,
         '',
         () => {},
-        (store: IDataStore) => {
+        (store: IHistoryDataStore) => {
           store.genesets[geneset.id] = geneset
         }
       )
@@ -1509,7 +1386,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
       addAction(
         `Goto ${Boolean(plot) ? `plot ${plot}` : Boolean(sheet) ? `sheet ${sheet}` : Boolean(file) ? `file ${file}` : `app ${app}`}`,
         '',
-        (state: IHistoryState, store: Readonly<IDataStore>) => {
+        (state: IHistoryState, store: Readonly<IHistoryDataStore>) => {
           if (app in store.apps) {
             state.currentApp = app
           }
@@ -1523,7 +1400,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
             state.currentSelections = [
               {
                 type: 'sheet',
-                path: state.currentSheet,
+                id: state.currentSheet,
               },
             ]
           }
@@ -1533,7 +1410,7 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
             state.currentSelections = [
               {
                 type: 'plot',
-                path: state.currentPlot,
+                id: state.currentPlot,
               },
             ]
           }
@@ -1545,12 +1422,12 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
 
 interface IFileOps {
   mode?: AppendMode
-  path?: string
+  app?: string
   sheets?: BaseDataFrame[]
   plots?: HistoryPlot[]
   groupsName?: string
   groups?: IClusterGroup[]
-  genesets?: IGeneset[]
+  genesets?: IGeneSet[]
 }
 
 interface ISheetOps {
@@ -1561,7 +1438,7 @@ interface ISheetOps {
 }
 
 export function useHistory(): {
-  store: IDataStore
+  store: IHistoryDataStore
   state: IHistoryState
 
   history: IHistoryEntry<IHistoryState>[]
@@ -1570,11 +1447,12 @@ export function useHistory(): {
   currentApp: string
   currentFile: string
   currentSheet: string
-  currentPlot: string
-  currentSelections: { type: 'sheet' | 'plot'; path: string }[]
+  currentPlot: string | undefined
+  // tracks the last item entered in the history
+  currentSelections: ISelectionPath[]
   currentSelection: ISelectionPath | undefined
   reset: () => void
-  resetApp: (app: StrOrId) => void
+  resetApp: (app: OptStrOrIdObj) => void
   openApp: (name: string) => void
 
   // openBranch: (
@@ -1584,16 +1462,24 @@ export function useHistory(): {
   // ) => void
   //updateBranch: (partial: Partial<IHistoryBranch>) => void
 
-  historyUndo: (mode?: 'clear' | 'all' | 'step') => void
-  historyRedo: () => void
-  historyGoto: (step: number | string) => void
+  undo: () => void
+  redo: () => void
+  /**
+   * Seek to a specific point in history by index or id. If a string id is given,
+   * it will seek to the entry with that id. If a number index is given,
+   * it will seek to that index in the history array.
+   *
+   * @param step
+   * @returns
+   */
+  seek: (step: number | string) => void
 } & IHistorySlice &
   IAppSlice &
   ISheetSlice &
   IPlotSlice &
   IGroupSlice &
   IGenesetSlice {
-  const store = useHistoryStore() as IDataStore
+  const store = useHistoryStore() as IHistoryDataStore
 
   const {
     state,
@@ -1655,9 +1541,9 @@ export function useHistory(): {
 
   const goto = useHistoryStore(state => state.goto)
 
-  const historyUndo = useHistoryStore(state => state.historyUndo)
-  const historyRedo = useHistoryStore(state => state.historyRedo)
-  const historyGoto = useHistoryStore(state => state.historyGoto)
+  const undo = useHistoryStore(state => state.undo)
+  const redo = useHistoryStore(state => state.redo)
+  const seek = useHistoryStore(state => state.seek)
 
   return {
     store,
@@ -1696,9 +1582,9 @@ export function useHistory(): {
     removeFiles,
     //select,
     goto,
-    historyUndo,
-    historyRedo,
-    historyGoto,
+    undo,
+    redo,
+    seek,
   }
 }
 
@@ -1718,19 +1604,21 @@ export function useState(): IHistoryState {
 //   return path.split(PATH_SEP).map(part => part.trim())
 // }
 
-export function useApp(app: StrOrId = ''): IHistoryApp | undefined {
+export function useApp(
+  app: OptStrOrIdObj = undefined
+): IHistoryApp | undefined {
   return useHistoryStore(
     useShallow(state => {
-      const aid = getAppId(app, state.present)
+      const aid = getAppId(state.present, { app })
       return state.apps[aid]
     })
   )
 }
 
-export function useFiles(app: StrOrId = ''): IHistoryFile[] {
+export function useFiles(app: OptStrOrIdObj = undefined): IHistoryComp[] {
   return useHistoryStore(
     useShallow(state => {
-      const aid = getAppId(app, state.present)
+      const aid = getAppId(state.present, { app })
 
       return (state.present.fileOrder[aid] || []).map(id => state.files[id]!)
     })
@@ -1738,42 +1626,46 @@ export function useFiles(app: StrOrId = ''): IHistoryFile[] {
 }
 
 /**
- * Returns a files from an app. If no id is given, returns the
+ * Returns a file from an app. If no id is given, returns the
+ * current file in none given.
+ *
  * @param path
  * @param id
  * @returns
  */
-export function useFile(file: StrOrId = ''): IHistoryFile | undefined {
+export function useFile(
+  file: OptStrOrIdObj = undefined
+): IHistoryComp | undefined {
   return useHistoryStore(
     useShallow(state => {
-      const fid = getFileId(file, state.present)
+      const fid = getFileId(state.present, { file })
       return state.files[fid]
     })
   )
 }
 
-export function useGroups(file: StrOrId = ''): IClusterGroup[] {
+export function useGroups(file: OptStrOrIdObj = undefined): IClusterGroup[] {
   return useHistoryStore(
     useShallow(state => {
-      const fid = getFileId(file, state.present)
+      const fid = getFileId(state.present, { file })
       return (state.present.groupOrder[fid] || []).map(id => state.groups[id]!)
     })
   )
 }
 
-export function useGroupName(file: StrOrId = ''): string {
+export function useGroupName(file: OptStrOrIdObj = undefined): string {
   return useHistoryStore(
     useShallow(state => {
-      const fid = getFileId(file, state.present)
+      const fid = getFileId(state.present, { file })
       return state.groupNames[fid] || ''
     })
   )
 }
 
-export function useGenesets(file: StrOrId = ''): IGeneset[] {
+export function useGenesets(file: OptStrOrIdObj = undefined): IGeneSet[] {
   return useHistoryStore(
     useShallow(state => {
-      const fid = getFileId(file, state.present)
+      const fid = getFileId(state.present, { file })
       return (state.present.genesetOrder[fid] || []).map(
         id => state.genesets[id]!
       )
@@ -1781,127 +1673,185 @@ export function useGenesets(file: StrOrId = ''): IGeneset[] {
   )
 }
 
-export function useSheet(sheet: StrOrId = ''): DataFrameType | undefined {
+export function useSheet(
+  sheet: OptStrOrIdObj = undefined
+): DataFrameType | undefined {
   return useHistoryStore(
     useShallow(state => {
-      const sid = getSheetId(sheet, state.present)
+      const sid = getSheetId(state.present, { sheet })
 
       return state.sheets[sid]
     })
   )
 }
 
-export function useSheets(file: StrOrId = ''): DataFrameType[] {
+export function useSheets(
+  opts: { file?: OptStrOrIdObj; removeDefaultSheets?: boolean } = {}
+): DataFrameType[] {
+  const { file } = opts
   return useHistoryStore(
     useShallow(state => {
-      const fid = getFileId(file, state.present)
-      return (state.present.sheetOrder[fid] || []).map(id => state.sheets[id]!)
+      const fid = getFileId(state.present, { file })
+      const sheets = state.present.sheetOrder[fid] || []
+      // return (
+      //   removeDefaultSheets && sheets.length > 1 ? sheets.slice(1) : sheets
+      // ).map(id => state.sheets[id]!)
+      return sheets.map(id => state.sheets[id]).filter(s => s !== undefined)
     })
   )
 }
 
-export function usePlots(file: StrOrId = ''): HistoryPlot[] {
+export function usePlots(file: OptStrOrIdObj = undefined): HistoryPlot[] {
   return useHistoryStore(
     useShallow(state => {
-      const fid = getFileId(file, state.present)
-      return (state.present.plotOrder[fid] || []).map(id => state.plots[id]!)
+      const fid = getFileId(state.present, { file })
+      return (state.present.plotOrder[fid] || [])
+        .map(id => state.plots[id])
+        .filter(p => p !== undefined)
     })
   )
 }
 
-export function usePlot(plot: StrOrId = ''): HistoryPlot | undefined {
+export function usePlot(
+  plot: OptStrOrIdObj = undefined
+): HistoryPlot | undefined {
   return useHistoryStore(
     useShallow(state => {
-      const pid = getPlotId(plot, state.present)
-      return state.plots[pid]
+      const pid = getPlotId(state.present, { plot })
+
+      return pid ? state.plots[pid] : undefined
     })
   )
 }
 
-function getAppId(app: StrOrId | undefined, state: IHistoryState): string {
+function getAppId(
+  state: IHistoryState,
+  opts: { app?: OptStrOrIdObj } = {}
+): string {
+  const { app } = opts
   return (typeof app === 'string' ? app : app?.id) || state.currentApp
 }
 
-function getFileId(file: StrOrId | undefined, state: IHistoryState): string {
+function getFileId(
+  state: IHistoryState,
+  opts: { file?: OptStrOrIdObj } = {}
+): string {
+  const { file } = opts
   return (typeof file === 'string' ? file : file?.id) || state.currentFile
 }
 
-function getSheetId(sheet: StrOrId | undefined, state: IHistoryState): string {
+function getSheetId(
+  state: IHistoryState,
+  opts: { sheet?: OptStrOrIdObj } = {}
+): string {
+  const { sheet } = opts
   return (typeof sheet === 'string' ? sheet : sheet?.id) || state.currentSheet
 }
 
-function getPlotId(plot: StrOrId | undefined, state: IHistoryState): string {
+function getPlotId(
+  state: IHistoryState,
+  opts: { plot?: OptStrOrIdObj } = {}
+): string | undefined {
+  const { plot } = opts
   return (typeof plot === 'string' ? plot : plot?.id) || state.currentPlot
 }
 
 export function getApps(
-  store: IDataStore,
+  store: IHistoryDataStore,
   state: IHistoryState
 ): IHistoryApp[] {
   return state.appOrder.map(id => store.apps[id]!)
 }
 
 export function getFiles(
-  store: IDataStore,
+  store: IHistoryDataStore,
   state: IHistoryState,
-  app: StrOrId | undefined = ''
-): IHistoryFile[] {
-  const id = (typeof app === 'string' ? app : app?.id) || state.currentApp
+  opts: { app?: OptStrOrIdObj } = {}
+): IHistoryComp[] {
+  const { app } = opts
+  const id = getAppId(state, { app })
 
   return (state.fileOrder[id] || []).map(id => store.files[id]!)
 }
 
 export function getSheets(
-  store: IDataStore,
+  store: IHistoryDataStore,
   state: IHistoryState,
-  file: StrOrId | undefined = ''
+  opts: { file?: OptStrOrIdObj } = {}
 ): DataFrameType[] {
-  const id = (typeof file === 'string' ? file : file?.id) || state.currentFile
+  const { file } = opts
+  const id = getFileId(state, { file })
 
   return (state.sheetOrder[id] || []).map(id => store.sheets[id]!)
 }
 
 export function getPlots(
-  store: IDataStore,
+  store: IHistoryDataStore,
   state: IHistoryState,
-  file: StrOrId | undefined = ''
+  opts: { file?: OptStrOrIdObj } = {}
 ): HistoryPlot[] {
-  const id = (typeof file === 'string' ? file : file?.id) || state.currentFile
+  const { file } = opts
+  const id = getFileId(state, { file })
 
   return (state.plotOrder[id] || []).map(id => store.plots[id]!)
 }
 
-export function getGroups(
-  store: IDataStore,
+/**
+ * Returns all plots for a given app by first finding all files in the app and then
+ * finding all plots for each file and flattening the result.
+ * If no app is given, uses the current app.
+ *
+ * @param store
+ * @param state
+ * @param app
+ * @returns
+ */
+export function getAllPlots(
+  store: IHistoryDataStore,
   state: IHistoryState,
-  file: StrOrId | undefined = ''
+  opts: { app?: OptStrOrIdObj } = {}
+): HistoryPlot[] {
+  const { app } = opts
+  const appId = getAppId(state, { app })
+
+  const fileIds = state.fileOrder[appId] || []
+
+  const plotIds = fileIds.flatMap(fileId => state.plotOrder[fileId] || [])
+
+  return plotIds.map(id => store.plots[id]!)
+}
+
+export function getGroups(
+  store: IHistoryDataStore,
+  state: IHistoryState,
+  opts: { file?: OptStrOrIdObj } = {}
 ): IClusterGroup[] {
-  const id = (typeof file === 'string' ? file : file?.id) || state.currentFile
+  const { file } = opts
+
+  const id = getFileId(state, { file })
 
   return (state.groupOrder[id] || []).map(id => store.groups[id]!)
 }
 
 export function getGenesets(
-  store: IDataStore,
+  store: IHistoryDataStore,
   state: IHistoryState,
-  file: StrOrId | undefined = ''
-): IGeneset[] {
-  const id = (typeof file === 'string' ? file : file?.id) || state.currentFile
+  opts: { file?: OptStrOrIdObj } = {}
+): IGeneSet[] {
+  const { file } = opts
+  const id = getFileId(state, { file })
 
   return (state.genesetOrder[id] || []).map(id => store.genesets[id]!)
 }
 
 export function findSheet(
-  store: IDataStore,
+  store: IHistoryDataStore,
   state: IHistoryState,
-  file: StrOrId | undefined,
-  q: string
+  q: string,
+  opts: { file?: OptStrOrIdObj } = {}
 ): DataFrameType | undefined {
-  if (!file) {
-    return undefined
-  }
-
-  const id = (typeof file === 'string' ? file : file?.id) || state.currentFile
+  const { file } = opts
+  const id = getFileId(state, { file })
 
   const lid = q.toLowerCase()
 
@@ -1909,19 +1859,6 @@ export function findSheet(
     .map(id => store.sheets[id]!)
     .find(s => s.id === q || s.name.toLowerCase() === lid)
 }
-
-// export function findPlot(
-//   state: IHistoryState,
-//   file: IHistoryFile,
-//   id: string | undefined = undefined
-// ): HistoryPlot | undefined {
-//   if (!id) {
-//     return file.plots.find(s => state.currentPlot.includes(s.id))
-//   }
-
-//   const lid = id.toLowerCase()
-//   return file.plots.find(s => s.id === id || s.name.toLowerCase() === lid)
-// }
 
 type PathId = {
   app: string
@@ -1940,7 +1877,7 @@ type PathId = {
  * @param path
  * @returns
  */
-function toPathId(path: Record<string, StrOrId>): PathId {
+function toPathId(path: Record<string, StrOrIdObj>): PathId {
   const app = 'app' in path ? strOrIdToStr(path.app) : ''
   const file = 'file' in path ? strOrIdToStr(path.file) : ''
   const sheet = 'sheet' in path ? strOrIdToStr(path.sheet) : ''
@@ -1952,7 +1889,7 @@ function toPathId(path: Record<string, StrOrId>): PathId {
 }
 
 function removeApp(state: IHistoryState, p: PathId) {
-  if ((state.appOrder.length || 0) < 2) {
+  if ((state.appOrder.length || 0) < 2 || p.app === DEFAULT_APP.id) {
     return // cannot remove default
   }
 
@@ -1961,8 +1898,9 @@ function removeApp(state: IHistoryState, p: PathId) {
 }
 
 function removeFile(state: IHistoryState, p: PathId) {
+  // there must be at least one file in the app, and the default file cannot be removed
   if ((state.fileOrder[p.app]?.length || 0) < 2) {
-    return // cannot remove default
+    return
   }
 
   state.fileOrder[p.app] = state.fileOrder[p.app]!.filter(id => id !== p.file)
@@ -1981,21 +1919,25 @@ function removeFile(state: IHistoryState, p: PathId) {
   state.currentSheet = sheets[sheets.length - 1]!
   const plots = state.plotOrder[lastFile]!
   state.currentPlot = plots[plots.length - 1]!
-  state.currentSelections = [{ type: 'sheet', path: state.currentSheet }]
+  state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]
 }
 
 function removeSheet(state: IHistoryState, p: PathId) {
+  // cannot remove the first sheet
+  //if (p.sheet === state.sheetOrder[p.file]?.[0]) {
   if ((state.sheetOrder[p.file]?.length || 0) < 2) {
-    return // cannot remove default
+    return
   }
 
   state.sheetOrder[p.file] = state.sheetOrder[p.file]!.filter(
     id => id !== p.sheet
   )
 
+  console.log('Removing sheet', p.sheet, 'from file', p.file)
+
   const sheets = state.sheetOrder[p.file]!
   state.currentSheet = sheets[sheets.length - 1]!
-  state.currentSelections = [{ type: 'sheet', path: state.currentSheet }]
+  state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]
 }
 
 function removePlot(state: IHistoryState, p: PathId) {
@@ -2005,13 +1947,13 @@ function removePlot(state: IHistoryState, p: PathId) {
     // if there are still plots left, select the previous one
     const plots = state.plotOrder[p.file]!
     state.currentPlot = plots[plots.length - 1]!
-    state.currentSelections = [{ type: 'plot', path: state.currentPlot }]
+    state.currentSelections = [{ type: 'plot', id: state.currentPlot }]
   } else {
     // otherwise select the last sheet
     const sheets = state.sheetOrder[p.file]!
-    state.currentPlot = ''
+    state.currentPlot = undefined
     state.currentSheet = sheets[sheets.length - 1]!
-    state.currentSelections = [{ type: 'sheet', path: state.currentSheet }]
+    state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]
   }
 }
 

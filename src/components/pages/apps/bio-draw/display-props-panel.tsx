@@ -1,7 +1,7 @@
-import { ColorPickerButton } from '@/components/color/color-picker-button'
-import { BASE_IDS } from '@/components/pages/apps/genes/motifs/motif-svg'
+import { BASE_IDS } from '@/components/pages/apps/genes/motifs/motifs-svg'
+import { ColorPickerButton } from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
-import { PropRow } from '@/dialog/prop-row'
+import { PropRow } from '@/dialogs/prop-row'
 import { VCenterRow } from '@/layout/v-center-row'
 import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_RING_CLS, PILL_BUTTON_CLS } from '@/theme'
@@ -22,7 +22,7 @@ export function DisplayPropsPanel() {
       <ScrollAccordion value={['plot', 'colors']}>
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
-          <AccordionContent variant="sidebar">
+          <AccordionContent>
             <PropRow title="Letter width">
               <NumericalInput
                 id="w"
@@ -57,21 +57,25 @@ export function DisplayPropsPanel() {
         </AccordionItem>
         <AccordionItem value="colors">
           <AccordionTrigger>Colors</AccordionTrigger>
-          <AccordionContent variant="sidebar">
+          <AccordionContent>
             <VCenterRow className="gap-x-3">
               {BASE_IDS.map(base => (
                 <ColorPickerButton
                   key={base}
-                  color={
-                    settings.baseColors[base.toLowerCase() as DNABase] as string
-                  }
-                  onColorChange={color =>
-                    updateSettings(
-                      produce(settings, draft => {
-                        draft.baseColors[base.toLowerCase() as DNABase] = color
-                      })
-                    )
-                  }
+                  colors={[
+                    {
+                      color: settings.baseColors[
+                        base.toLowerCase() as DNABase
+                      ] as string,
+                      onColorChange: color =>
+                        updateSettings(
+                          produce(settings, draft => {
+                            draft.baseColors[base.toLowerCase() as DNABase] =
+                              color
+                          })
+                        ),
+                    },
+                  ]}
                   className={cn(
                     PILL_BUTTON_CLS,
                     'aspect-square w-7',

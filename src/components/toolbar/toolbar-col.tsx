@@ -1,8 +1,9 @@
 import type { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
 
-export const TOOLBAR_COL_CLS = `flex justify-start h-full
-  group-data-[ribbon=classic]:flex-col group-data-[ribbon=classic]:items-start group-data-[ribbon=classic]:gap-y-0.5
+export const TOOLBAR_COL_CLS = `flex justify-start 
+  group-data-[ribbon=classic]:flex-col group-data-[ribbon=classic]:items-start
+  group-data-[ribbon=classic]:gap-y-0.5
   group-data-[ribbon=single]:flex-row group-data-[ribbon=single]:items-center`
 
 /**
@@ -16,7 +17,7 @@ export const TOOLBAR_COL_CLS = `flex justify-start h-full
 export function ToolbarCol({
   ref,
   className,
-  gap = 'gap-0.5',
+  gap = 'gap-x-0.5',
   children,
   ...props
 }: IDivProps & { gap?: string }) {

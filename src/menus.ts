@@ -1,27 +1,43 @@
-export interface IHeaderModule {
+import GENE_CONVERT_MODULE from './components/pages/apps/genes/gene-convert/manifest.json'
+import GSEA_PLOT_MODULE from './components/pages/apps/genes/gsea-plot/manifest.json'
+import GSEA_WEB_MODULE from './components/pages/apps/genes/gsea-web/manifest.json'
+import MOTIFS_MODULE from './components/pages/apps/genes/motifs/manifest.json'
+import PATHWAY_MODULE from './components/pages/apps/genes/pathway/manifest.json'
+import ANNOTATE_MODULE from './components/pages/apps/genomic/annotate/manifest.json'
+import DNA_MODULE from './components/pages/apps/genomic/dna/manifest.json'
+import OVERLAP_MODULE from './components/pages/apps/genomic/overlap/manifest.json'
+import REV_COMP_MODULE from './components/pages/apps/genomic/rev-comp/manifest.json'
+import SEQBROWSER_MODULE from './components/pages/apps/genomic/seq-browser/manifest.json'
+import HUBS_MODULE from './components/pages/apps/hubs/manifest.json'
+import MATCALC_MODULE from './components/pages/apps/matcalc/manifest.json'
+import SINGLE_CELL_MODULE from './components/pages/apps/ngs/single-cell/manifest.json'
+import VENN_MODULE from './components/pages/apps/venn/manifest.json'
+import LOLLIPOP_MODULE from './components/pages/apps/wgs/lollipop/manifest.json'
+import ONCOPLOT_MODULE from './components/pages/apps/wgs/oncoplot/manifest.json'
+import VARIANTS_MODULE from './components/pages/apps/wgs/variants/manifest.json'
+
+export interface IAppHeaderLink {
   name: string
   abbr?: string
   description: string
-  slug: string
-  mode: string
+  slug?: string
+  mode?: string
   color?: string
 }
 
 export interface IHeaderLink {
   name: string
-  modules: IHeaderModule[]
+  apps: IAppHeaderLink[]
 }
 
 export const HEADER_LINKS: IHeaderLink[] = [
   {
     name: 'Plot',
-    modules: [
+    apps: [
       {
-        name: 'Matcalc',
-        description: 'Gene expression and heatmaps.',
+        ...MATCALC_MODULE,
         slug: '/apps/matcalc',
         mode: 'prod',
-        color: '#6495ED',
       },
       {
         name: 'Bio Draw',
@@ -31,116 +47,85 @@ export const HEADER_LINKS: IHeaderLink[] = [
         color: '#6495ED',
       },
       {
-        name: 'Oncoplot',
-        description: 'Make oncoplots.',
+        ...ONCOPLOT_MODULE,
         slug: '/apps/wgs/oncoplot',
         mode: 'prod',
-        color: '#FFA500',
       },
       {
-        name: 'Lollipop',
-        description: 'Lollipop plots.',
+        ...LOLLIPOP_MODULE,
         slug: '/apps/wgs/lollipop',
         mode: 'prod',
-        color: '#DA70D6',
       },
       {
-        name: 'Venn',
-        description: 'Venn diagrams.',
+        ...VENN_MODULE,
         slug: '/apps/venn',
         mode: 'prod',
-        color: '#00008B',
       },
       {
-        name: 'Single Cell',
-        description: 'Plot single cell data.',
+        ...SINGLE_CELL_MODULE,
         slug: '/apps/ngs/single-cell',
         mode: 'prod',
-        color: '#9966ff',
       },
     ],
   },
-  // {
-  //   name: 'Expression',
-  //   modules: [
-  //     {
-  //       name: 'Gene Expression',
-  //       abbr: 'Gx',
-  //       description: 'Download expression data',
-  //       slug: '/apps/gex',
-  //       mode: 'dev',
-  //     },
-  //   ],
-  // },
+
   {
     name: 'Genes',
-    modules: [
+    apps: [
       {
-        name: 'Pathway',
-        description: 'Pathway enrichment tests.',
+        ...PATHWAY_MODULE,
         slug: '/apps/genes/pathway',
         mode: 'prod',
-        color: '#66CDAA',
       },
       {
-        name: 'Motifs',
-        description: 'Gene motif plots.',
+        ...MOTIFS_MODULE,
         slug: '/apps/genes/motifs',
         mode: 'prod',
-        color: '#009933',
       },
       {
-        name: 'Gene Convert',
-        description: 'Convert genes between species.',
+        ...GENE_CONVERT_MODULE,
         slug: '/apps/genes/convert',
         mode: 'prod',
-        color: '#20B2AA',
       },
       {
-        name: 'GSEA',
-        description: 'Format GSEA figures.',
-        slug: '/apps/genes/gsea',
+        ...GSEA_WEB_MODULE,
+        slug: '/apps/genes/gsea-web',
+        mode: 'dev',
+      },
+      {
+        ...GSEA_PLOT_MODULE,
+        slug: '/apps/genes/gsea-plot',
         mode: 'prod',
-        color: '#4169E1',
       },
     ],
   },
   {
     name: 'Genomic',
-    modules: [
+    apps: [
       {
-        name: 'Annotate',
-        description: 'Gene information for locations.',
+        ...ANNOTATE_MODULE,
         slug: '/apps/genomic/annotate',
-        mode: 'dev',
-        color: '#FA8072',
+        mode: 'prod',
       },
       {
-        name: 'Overlap',
-        description: 'Overlap genomic regions.',
+        ...OVERLAP_MODULE,
         slug: '/apps/genomic/overlap',
         mode: 'dev',
-        color: '#008080',
       },
       {
-        name: 'DNA',
-        description: 'DNA sequences.',
+        ...DNA_MODULE,
         slug: '/apps/genomic/dna',
         mode: 'prod',
-        color: '#FF4500',
       },
       {
-        name: 'Rev Comp',
-        description: 'Reverse complement DNA.',
+        ...REV_COMP_MODULE,
         slug: '/apps/genomic/rev-comp',
         mode: 'prod',
       },
       {
-        name: 'Hubs',
-        description: 'Links for UCSC hubs.',
+        ...HUBS_MODULE,
         slug: '/apps/hubs',
         mode: 'prod',
-        color: '#0000ff',
       },
       // {
       //   name: 'Fasta View',
@@ -149,23 +134,19 @@ export const HEADER_LINKS: IHeaderLink[] = [
       //   mode: 'dev',
       // },
       {
-        name: 'Seq Browser',
-        description: 'Next gen sequence data plots.',
-        slug: '/apps/genomic/seqbrowser',
+        ...SEQBROWSER_MODULE,
+        slug: '/apps/genomic/seq-browser',
         mode: 'prod',
-        color: '#FF0000',
       },
     ],
   },
   {
     name: 'WGS',
-    modules: [
+    apps: [
       {
-        name: 'Variants',
-        description: 'Explore mutation data.',
+        ...VARIANTS_MODULE,
         slug: '/apps/wgs/variants',
         mode: 'prod',
-        color: '#FA8072',
       },
     ],
   },

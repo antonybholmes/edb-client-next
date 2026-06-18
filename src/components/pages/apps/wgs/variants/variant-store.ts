@@ -1,8 +1,10 @@
 import { TIME_5_MINUTES_MS } from '@/consts'
 import { API_WGS_URL } from '@/lib/edb/edb'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { useDNAQuery, type IDNA } from '@/lib/genomic/dna'
-import { locStr, type IGenomicLocation } from '@/lib/genomic/genomic'
+import { locStr } from '@/lib/genomic/genomic'
+import type { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { useQuery } from '@tanstack/react-query'
@@ -15,13 +17,16 @@ export interface IVariant extends IGenomicLocation {
   datasets: string[]
   ref: string
   tum: string
-  gene?: string
+  gene: string
+  transcript: string
   tRefCount: number
   tAltCount: number
   tDepth: number
   type: string
-  hgvsC?: string
   hgvsP?: string
+  hgvsC?: string
+  exon: number
+  exons: number
   consequence?: string
   vaf: number
   sample: string
@@ -66,6 +71,7 @@ export const useVariantsStore = create<IVariantStore>()(set => ({
 
 export function useVariants(): Omit<IVariantStore, 'setVariants' | 'setDNA'> {
   const { fetchAccessToken } = useEdbAuth()
+  const { settings: edbSettings } = useEdbSettings()
   const { settings } = useVariantSettings()
   const { datasetsInUse } = useDatasets()
 
@@ -80,14 +86,14 @@ export function useVariants(): Omit<IVariantStore, 'setVariants' | 'setDNA'> {
       'variants',
       locStr(settings.location),
       datasetsInUse.map(d => d.id).join(','),
-      settings.assembly,
+      edbSettings.genomic.assembly,
     ],
     staleTime: TIME_5_MINUTES_MS,
     queryFn: async () => {
       const accessToken = await fetchAccessToken()
 
       const res = await httpFetch.postJson<{ data: IVariantResults }>(
-        `${API_WGS_URL}/assemblies/${settings.assembly}/variants`,
+        `${API_WGS_URL}/assemblies/${edbSettings.genomic.assembly}/variants`,
         {
           body: {
             locations: [locStr(settings.location)],

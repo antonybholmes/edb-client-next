@@ -1,7 +1,9 @@
 import { TIME_5_MINUTES_MS } from '@/consts'
 import { API_WGS_URL } from '@/lib/edb/edb'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
-import { locStr, type IGenomicLocation } from '@/lib/genomic/genomic'
+import { useEdbSettings } from '@/lib/edb/edb-settings'
+import { locStr } from '@/lib/genomic/genomic'
+import type { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { useQuery } from '@tanstack/react-query'
@@ -39,6 +41,7 @@ export function useMAFs(): Omit<IMAFStore, 'setMAFs'> & {
 } {
   const { fetchAccessToken } = useEdbAuth()
   const { settings } = useVariantSettings()
+  const { settings: edbSettings } = useEdbSettings()
   const { datasetsInUse } = useDatasets()
 
   const mafs = useMAFStore(state => state.mafs)
@@ -49,14 +52,14 @@ export function useMAFs(): Omit<IMAFStore, 'setMAFs'> & {
       'mafs',
       locStr(settings.location),
       datasetsInUse.map(d => d.id).join(','),
-      settings.assembly,
+      edbSettings.genomic.assembly,
     ],
     staleTime: TIME_5_MINUTES_MS,
     queryFn: async () => {
       const accessToken = await fetchAccessToken()
 
       const res = await httpFetch.postJson<{ data: IMAFResults }>(
-        `${API_WGS_URL}/assemblies/${settings.assembly}/mafs`,
+        `${API_WGS_URL}/assemblies/${edbSettings.genomic.assembly}/mafs`,
         {
           body: {
             locations: [locStr(settings.location)],

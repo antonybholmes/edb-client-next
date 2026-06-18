@@ -1,31 +1,30 @@
 import { useMemo } from 'react'
 
 import { YAxis } from '@/components/plot/axis'
-import { AxisLeftSvg } from '@/components/plot/axis-svg'
+import { AxisLeftSvg } from '@/components/plot/svg-axis'
 import type { IPos } from '@/interfaces/pos'
 import { linspace } from '@/lib/math/linspace'
 import { median } from '@/lib/math/median'
 
-import { BaseSvg } from '@/components/base-svg'
 import { SwarmPlotSvg } from '@/components/plot/box-whisker/swarm-plot-svg'
 import { ViolinPlotSvg } from '@/components/plot/box-whisker/violin-plot-svg'
+import { SvgBase } from '@/components/plot/svg-base'
 import type { IDim } from '@/interfaces/dim'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { COLOR_BLACK } from '@/lib/color/color'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { cellNum } from '@/lib/dataframe/cell'
-import { fill } from '@/lib/fill'
+import { vfill } from '@/lib/fill'
 import { KDE } from '@/lib/math/kde'
 import { q25, q75 } from '@/lib/math/quartile'
 import { range } from '@/lib/math/range'
 import { BoxWhiskerPlotSvg } from '../../../../../plot/box-whisker/box-whisker-plot-svg'
 import {
-  DEFAULT_FILL_PROPS,
+  DEFAULT_COLOR_PROPS,
   DEFAULT_MARGIN,
   DEFAULT_STROKE_PROPS,
-  OPAQUE_FILL_PROPS,
-  type IColorProps,
   type IMarginProps,
+  type IPaintProps,
   type IStrokeProps,
   type LegendPos,
 } from '../../../../../plot/svg-props'
@@ -53,7 +52,7 @@ export function cleanHue(hue: string): string {
 interface IBoxProps {
   show: boolean
   stroke: IStrokeProps
-  fill: IColorProps
+  fill: IPaintProps
 }
 
 export interface IBoxPlotDisplayOptions {
@@ -83,19 +82,19 @@ export interface IBoxPlotDisplayOptions {
 export const DEFAULT_BOX_PLOT_DISPLAY_PROPS: IBoxPlotDisplayOptions = {
   box: {
     stroke: { ...DEFAULT_STROKE_PROPS },
-    fill: { ...OPAQUE_FILL_PROPS },
+    fill: { ...DEFAULT_COLOR_PROPS },
     show: true,
     median: { stroke: { ...DEFAULT_STROKE_PROPS } },
     width: 25,
   },
   violin: {
     stroke: { ...DEFAULT_STROKE_PROPS },
-    fill: { ...DEFAULT_FILL_PROPS },
+    fill: { ...DEFAULT_COLOR_PROPS },
     show: true,
   },
   swarm: {
     stroke: { ...DEFAULT_STROKE_PROPS },
-    fill: { ...DEFAULT_FILL_PROPS },
+    fill: { ...DEFAULT_COLOR_PROPS },
     r: 3,
     show: false,
   },
@@ -142,7 +141,7 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
   const singlePlotDisplayOptions = plot.singlePlotDisplayOptions as {
     [key: string]: {
       [key: string]: {
-        [key: string]: { stroke: IStrokeProps; fill: IColorProps }
+        [key: string]: { stroke: IStrokeProps; fill: IPaintProps }
       }
     }
   }
@@ -161,7 +160,7 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
     const hueCol =
       hueOrder.length > 1
         ? df.col(hue).strs.map(v => cleanHue(v))
-        : fill(emptyHueColName, df.shape[0])
+        : vfill(emptyHueColName, df.shape[0])
 
     //console.log('hue', hueOrder)
 
@@ -265,7 +264,7 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
     }
 
     return (
-      <BaseSvg
+      <SvgBase
         ref={ref}
         scale={displayOptions.page.scale}
         width={width}
@@ -317,33 +316,33 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
 
                   const violinStroke = {
                     ...displayOptions.violin.stroke,
-                    color: plotOptions.violin!.stroke.color,
+                    color: plotOptions.violin!.stroke.value,
                   }
                   const violinFill = {
                     ...displayOptions.violin.fill,
-                    color: plotOptions.violin!.fill.color,
+                    color: plotOptions.violin!.fill.value,
                   }
 
                   const boxStroke = {
                     ...displayOptions.box.stroke,
-                    color: plotOptions.box!.stroke.color,
+                    color: plotOptions.box!.stroke.value,
                   }
                   const boxFill = {
                     ...displayOptions.box.fill,
-                    color: plotOptions.box!.fill.color,
+                    color: plotOptions.box!.fill.value,
                   }
                   // const boxMedianStroke = {
                   //   ...displayOptions.box.median.stroke,
-                  //   color: plotOptions.box!.median.stroke.color,
+                  //   color: plotOptions.box!.median.stroke.value,
                   // }
 
                   const swarmStroke = {
                     ...displayOptions.swarm.stroke,
-                    color: plotOptions.swarm!.stroke.color,
+                    color: plotOptions.swarm!.stroke.value,
                   }
                   const swarmFill = {
                     ...displayOptions.swarm.fill,
-                    color: plotOptions.swarm!.fill.color,
+                    color: plotOptions.swarm!.fill.value,
                   }
 
                   return (
@@ -424,11 +423,11 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
                   height={10}
                   stroke={
                     singlePlotDisplayOptions[xOrder[0]!]![hue]!.violin!.stroke
-                      .color
+                      .value
                   }
                   fill={
                     singlePlotDisplayOptions[xOrder[0]!]![hue]!.violin!.fill
-                      .color
+                      .value
                   }
                   fillOpacity={
                     singlePlotDisplayOptions[xOrder[0]!]![hue]!.violin!.fill
@@ -449,7 +448,7 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
             ))}
           </g>
         </g>
-      </BaseSvg>
+      </SvgBase>
     )
   }, [displayOptions, plot])
 

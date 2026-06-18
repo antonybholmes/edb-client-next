@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { APP_ACCOUNT_OAUTH2_AUTH0_CALLBACK_URL } from '@/lib/edb/edb'

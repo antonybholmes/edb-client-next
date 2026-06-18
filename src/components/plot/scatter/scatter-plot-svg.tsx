@@ -4,15 +4,15 @@ import { BWR_CMAP_V2, COLOR_MAPS, ColorMap } from '@/lib/color/colormap'
 import { BaseDataFrame, findCol } from '@/lib/dataframe/base-dataframe'
 import { getNumCol } from '@/lib/dataframe/dataframe-utils'
 
-import { BaseSvg } from '@/components/base-svg'
+import { SvgBase } from '@/components/plot/svg-base'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { COLOR_BLACK } from '@/lib/color/color'
 
-import type { SeriesData } from '@/lib/dataframe'
+import type { SeriesData } from '@/lib/dataframe/series-data'
 import type { ILim } from '@/lib/math/math'
 import { range } from '@/lib/math/range'
 import { Axis, YAxis } from '../axis'
-import { AxisBottomSvg, AxisLeftSvg } from '../axis-svg'
+import { AxisBottomSvg, AxisLeftSvg } from '../svg-axis'
 
 const margin = { top: 100, right: 100, bottom: 100, left: 100 }
 
@@ -183,7 +183,7 @@ export function ScatterPlotSvg({
       .map(v => v[1])
 
     return (
-      <BaseSvg
+      <SvgBase
         ref={ref}
         width={width}
         height={height}
@@ -230,7 +230,7 @@ export function ScatterPlotSvg({
             )
           })}
         </g>
-      </BaseSvg>
+      </SvgBase>
     )
   }, [df, y, displayProps, sizeFunc])
 

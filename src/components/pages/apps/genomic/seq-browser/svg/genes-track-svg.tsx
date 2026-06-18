@@ -1,12 +1,12 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
 import type { Axis } from '@/components/plot/axis'
-import { COLOR_BLACK } from '@/lib/color/color'
-import type { IGenomicFeature, IGenomicLocation } from '@/lib/genomic/genomic'
+import type { IGenomicFeature } from '@/lib/genomic/genomic'
 import { range } from '@/lib/math/range'
 import { sign } from '@/lib/math/sign'
 import { useContext } from 'react'
 
+import { SvgText } from '@/components/plot/svg-text'
 import { useGenomes } from '@/lib/edb/genome'
 import {
   useSeqBrowserSettings,
@@ -20,11 +20,6 @@ const CHAR_W = 8
 //   genome: string
 //   version: string
 // }
-
-export interface IGenomicFeatureSearch {
-  location: IGenomicLocation
-  features: IGenomicFeature[]
-}
 
 /**
  * Global function to calculate the height of a gene track based on the number of genes and their transcripts.
@@ -44,7 +39,7 @@ export function getGeneTrackHeight(
 ): Map<string, number> {
   const geneYMap: Map<string, number> = new Map()
 
-  if (settings.genes.display === 'dense') {
+  if (settings.tracks.genes.display === 'dense') {
     for (const [gi, gene] of genes.entries()) {
       //geneYMap.set(`gene-${gi}`, 0)
       for (const ti of range(
@@ -57,9 +52,9 @@ export function getGeneTrackHeight(
 
     geneYMap.set(
       'height',
-      settings.genes.transcripts.height + settings.genes.gap
+      settings.tracks.genes.transcripts.height + settings.tracks.genes.gap
     )
-  } else if (settings.genes.display === 'pack') {
+  } else if (settings.tracks.genes.display === 'pack') {
     // pack
 
     const depths = range(0, xax.length).map(() => new Set<number>())
@@ -76,11 +71,11 @@ export function getGeneTrackHeight(
           x1 = Math.floor(xax.domainToRange(t.loc.end))
           x2 =
             Math.floor(xax.domainToRange(t.loc.start)) +
-            (t.geneSymbol?.length ?? 0) * CHAR_W
+            (t.symbol?.length ?? 0) * CHAR_W
         } else {
           x1 =
             Math.floor(xax.domainToRange(t.loc.start)) -
-            (t.geneSymbol?.length ?? 0) * CHAR_W
+            (t.symbol?.length ?? 0) * CHAR_W
           x2 = Math.floor(xax.domainToRange(t.loc.end))
         }
 
@@ -105,7 +100,9 @@ export function getGeneTrackHeight(
             // and set the geneYMap for this transcript
             geneYMap.set(
               `gene-${gi}:transcript-${ti}`,
-              row * (settings.genes.transcripts.height + settings.genes.gap)
+              row *
+                (settings.tracks.genes.transcripts.height +
+                  settings.tracks.genes.gap)
             )
             // and update the maxRow if needed
             maxRow = Math.max(maxRow, row)
@@ -117,7 +114,8 @@ export function getGeneTrackHeight(
 
     geneYMap.set(
       'height',
-      maxRow * (settings.genes.transcripts.height + settings.genes.gap)
+      maxRow *
+        (settings.tracks.genes.transcripts.height + settings.tracks.genes.gap)
     )
   } else {
     // full
@@ -138,7 +136,9 @@ export function getGeneTrackHeight(
       )) {
         geneYMap.set(
           `gene-${gi}:transcript-${ti}`,
-          idx * (settings.genes.transcripts.height + settings.genes.gap)
+          idx *
+            (settings.tracks.genes.transcripts.height +
+              settings.tracks.genes.gap)
         )
         ++idx
       }
@@ -146,7 +146,8 @@ export function getGeneTrackHeight(
 
     geneYMap.set(
       'height',
-      idx * (settings.genes.transcripts.height + settings.genes.gap)
+      idx *
+        (settings.tracks.genes.transcripts.height + settings.tracks.genes.gap)
     )
   }
 
@@ -188,21 +189,20 @@ export function GenesTrackSvg({ track, titleHeight, geneYMap }: IProps) {
     <>
       {settings.titles.show && settings.titles.position === 'top' && (
         <g id="track-title" transform={`translate(0, ${titleHeight})`}>
-          <text
+          <SvgText
             transform={`translate(${xax.length / 2}, 0)`}
-            fill={COLOR_BLACK}
-            dominantBaseline="middle"
-            fontSize="small"
+            //dominantBaseline="middle"
             textAnchor="middle"
             //fontWeight="bold"
+            font={settings.tracks.genes.labels.text}
           >
             {/* {track.name} ({db?.genome},{db?.version}) */}
             {track.name} ({gtf?.name})
-          </text>
+          </SvgText>
         </g>
       )}
 
-      {settings.genes.view === 'transcript' ? (
+      {settings.tracks.genes.view === 'transcript' ? (
         <SimpleGeneTrackSvg
           track={track}
           titleHeight={titleHeight}
@@ -267,7 +267,9 @@ export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
         />
       </defs>
 
-      <g transform={`translate(0, ${titleHeight + settings.genes.offset})`}>
+      <g
+        transform={`translate(0, ${titleHeight + settings.tracks.genes.offset})`}
+      >
         {genes.map((gene, gi) => {
           return (
             <g
@@ -302,7 +304,8 @@ export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
                   )
 
                   const isCanonical =
-                    settings.genes.canonical.isColored && transcript.isCanonical
+                    settings.tracks.genes.canonical.isColored &&
+                    transcript.isCanonical
 
                   w = Math.abs(x2 - x1)
 
@@ -317,41 +320,41 @@ export function SimpleGeneTrackSvg({ track, titleHeight, geneYMap }: IProps) {
                         rx={w > 5 ? 2 : 0}
                         x={x1 - (settings.reverse ? w : 0)}
                         width={w}
-                        height={settings.genes.transcripts.height}
+                        height={settings.tracks.genes.transcripts.height}
                         fill={
                           isCanonical
-                            ? settings.genes.canonical.fill.color
-                            : settings.genes.exons.fill.color
+                            ? settings.tracks.genes.canonical.fill.value
+                            : settings.tracks.genes.exons.fill.value
                         }
                       >
-                        <title>{`${transcript.transcriptId}, strand ${transcript.loc.strand}`}</title>
+                        <title>{`${transcript.transcript}, strand ${transcript.loc.strand}`}</title>
                       </rect>
 
                       <g
-                        transform={`translate(0, ${settings.genes.transcripts.height / 2})`}
+                        transform={`translate(0, ${settings.tracks.genes.transcripts.height / 2})`}
                       >
-                        {settings.genes.labels.show &&
-                          settings.genes.display !== 'dense' && (
-                            <text
-                              transform={`translate(${Math.max(-settings.genes.labels.offset, x1 - settings.genes.labels.offset * sgn)}, 0)`}
+                        {settings.tracks.genes.labels.text.show &&
+                          settings.tracks.genes.display !== 'dense' && (
+                            <SvgText
+                              transform={`translate(${Math.max(-settings.tracks.genes.labels.offset, x1 - settings.tracks.genes.labels.offset * sgn)}, 0)`}
                               //fill={track.displayOptions.labels.font.color}
 
                               fill={
                                 isCanonical
-                                  ? settings.genes.canonical.fill.color
-                                  : settings.genes.exons.fill.color
+                                  ? settings.tracks.genes.canonical.fill.value
+                                  : settings.tracks.genes.exons.fill.value
                               }
                               dominantBaseline="middle"
-                              fontSize={settings.genes.labels.font.size}
+                              font={settings.tracks.genes.labels.text}
                               textAnchor={settings.reverse ? 'start' : 'end'}
                               //fontWeight="bold"
                             >
-                              {`${transcript.geneSymbol} ${settings.genes.labels.showGeneId ? `(${transcript.transcriptId})` : ''}`}
-                              <title>{`${transcript.geneSymbol} (${transcript.transcriptId})`}</title>
-                            </text>
+                              {`${transcript.symbol} ${settings.tracks.genes.labels.showGeneId ? `(${transcript.transcript})` : ''}`}
+                              <title>{`${transcript.symbol} (${transcript.transcript})`}</title>
+                            </SvgText>
                           )}
 
-                        {settings.genes.arrows.show && (
+                        {settings.tracks.genes.arrows.show && (
                           <g
                             id="arrows"
                             //transform={`translate(0,-${track.displayOptions.arrows.size})`}
@@ -430,12 +433,12 @@ export function GenesStructureTrackSvg({
   return (
     <>
       <defs>
-        {settings.genes.arrows.style === 'lines' && (
+        {settings.tracks.genes.arrows.style === 'lines' && (
           <>
             <polyline
               id={`${track.id}-arrow-left`}
               points={`${arrowHx},${-arrowHy} ${-arrowHx},0 ${arrowHx},${arrowHy}`}
-              stroke={track.displayOptions.arrows.stroke.color}
+              stroke={track.displayOptions.arrows.stroke.value}
               strokeWidth={track.displayOptions.arrows.stroke.width}
               fill="none"
               strokeLinecap="round"
@@ -444,7 +447,7 @@ export function GenesStructureTrackSvg({
             <polyline
               id={`${track.id}-arrow-left-canonical`}
               points={`${arrowHx},${-arrowHy} ${-arrowHx},0 ${arrowHx},${arrowHy}`}
-              stroke={settings.genes.canonical.fill.color}
+              stroke={settings.tracks.genes.canonical.fill.value}
               strokeWidth={track.displayOptions.arrows.stroke.width}
               fill="none"
               strokeLinecap="round"
@@ -454,7 +457,7 @@ export function GenesStructureTrackSvg({
             <polyline
               id={`${track.id}-arrow-right`}
               points={`${-arrowHx},${-arrowHy} ${arrowHx},0 ${-arrowHx},${arrowHy}`}
-              stroke={track.displayOptions.arrows.stroke.color}
+              stroke={track.displayOptions.arrows.stroke.value}
               strokeWidth={track.displayOptions.arrows.stroke.width}
               fill="none"
               strokeLinecap="round"
@@ -463,7 +466,7 @@ export function GenesStructureTrackSvg({
             <polyline
               id={`${track.id}-arrow-right-canonical`}
               points={`${-arrowHx},${-arrowHy} ${arrowHx},0 ${-arrowHx},${arrowHy}`}
-              stroke={settings.genes.canonical.fill.color}
+              stroke={settings.tracks.genes.canonical.fill.value}
               strokeWidth={track.displayOptions.arrows.stroke.width}
               fill="none"
               strokeLinecap="round"
@@ -472,13 +475,13 @@ export function GenesStructureTrackSvg({
           </>
         )}
 
-        {settings.genes.arrows.style === 'filled' && (
+        {settings.tracks.genes.arrows.style === 'filled' && (
           <>
             <polygon
               id={`${track.id}-arrow-left`}
               points={`${arrowHx},${-arrowHy} ${-arrowHx},0 ${arrowHx},${arrowHy}`}
               stroke="none"
-              fill={track.displayOptions.arrows.fill.color}
+              fill={track.displayOptions.arrows.fill.value}
               fillOpacity={track.displayOptions.arrows.fill.opacity}
               //strokeLinecap="round"
               //strokeLinejoin="round"
@@ -487,7 +490,7 @@ export function GenesStructureTrackSvg({
               id={`${track.id}-arrow-left-canonical`}
               points={`${arrowHx},${-arrowHy} ${-arrowHx},0 ${arrowHx},${arrowHy}`}
               stroke="none"
-              fill={settings.genes.canonical.fill.color}
+              fill={settings.tracks.genes.canonical.fill.value}
               fillOpacity={track.displayOptions.arrows.fill.opacity}
               //strokeLinecap="round"
               //strokeLinejoin="round"
@@ -497,7 +500,7 @@ export function GenesStructureTrackSvg({
               id={`${track.id}-arrow-right`}
               points={`${-arrowHx},${-arrowHy} ${arrowHx},0 ${-arrowHx},${arrowHy}`}
               stroke="none"
-              fill={track.displayOptions.arrows.fill.color}
+              fill={track.displayOptions.arrows.fill.value}
               fillOpacity={track.displayOptions.arrows.fill.opacity}
               //strokeLinecap="round"
               //strokeLinejoin="round"
@@ -506,7 +509,7 @@ export function GenesStructureTrackSvg({
               id={`${track.id}-arrow-right-canonical`}
               points={`${-arrowHx},${-arrowHy} ${arrowHx},0 ${-arrowHx},${arrowHy}`}
               stroke="none"
-              fill={settings.genes.canonical.fill.color}
+              fill={settings.tracks.genes.canonical.fill.value}
               fillOpacity={track.displayOptions.arrows.fill.opacity}
               //strokeLinecap="round"
               //strokeLinejoin="round"
@@ -515,7 +518,9 @@ export function GenesStructureTrackSvg({
         )}
       </defs>
 
-      <g transform={`translate(0, ${titleHeight + settings.genes.offset})`}>
+      <g
+        transform={`translate(0, ${titleHeight + settings.tracks.genes.offset})`}
+      >
         {genes.map((gene, gi) => {
           // const geneLoc = feature.loc
           // x1 = xax.domainToRange(geneLoc.start)
@@ -531,7 +536,8 @@ export function GenesStructureTrackSvg({
                 ?.filter(
                   f =>
                     f.type === 'transcript' &&
-                    (!settings.genes.canonical.only || (f.isCanonical ?? false))
+                    (!settings.tracks.genes.canonical.only ||
+                      (f.isCanonical ?? false))
                 )
                 .map((transcript, ti) => {
                   const transLoc = transcript.loc
@@ -562,7 +568,7 @@ export function GenesStructureTrackSvg({
                   )
 
                   const isCanonical =
-                    settings.genes.canonical.isColored &&
+                    settings.tracks.genes.canonical.isColored &&
                     (transcript.isCanonical ?? false)
 
                   w = Math.abs(x2 - x1)
@@ -577,18 +583,19 @@ export function GenesStructureTrackSvg({
                         id="transcript-block"
                         x={x1 - (settings.reverse ? w : 0)}
                         width={w}
-                        height={settings.genes.transcripts.height}
+                        height={settings.tracks.genes.transcripts.height}
                         fill="white"
                       >
-                        <title>{`${transcript.transcriptId}, strand ${transcript.loc.strand}`}</title>
+                        <title>{`${transcript.transcript}, strand ${transcript.loc.strand}`}</title>
                       </rect>
 
                       <g
-                        transform={`translate(0, ${settings.genes.transcripts.height / 2})`}
+                        transform={`translate(0, ${settings.tracks.genes.transcripts.height / 2})`}
                       >
-                        {settings.genes.endArrows.show &&
-                          settings.genes.display !== 'dense' &&
-                          (!settings.genes.endArrows.firstTranscriptOnly ||
+                        {settings.tracks.genes.endArrows.show &&
+                          settings.tracks.genes.display !== 'dense' &&
+                          (!settings.tracks.genes.endArrows
+                            .firstTranscriptOnly ||
                             ti === 0) && (
                             <g
                               id="end-arrow"
@@ -598,43 +605,44 @@ export function GenesStructureTrackSvg({
                                 points={`0,0 0,-10 ${10 * sgn},-10 ${10 * sgn},-14 ${15 * sgn},-10 ${10 * sgn},-6 ${10 * sgn},-10 0,-10`}
                                 fill={
                                   isCanonical
-                                    ? settings.genes.canonical.fill.color
-                                    : settings.genes.endArrows.fill.color
+                                    ? settings.tracks.genes.canonical.fill.value
+                                    : settings.tracks.genes.endArrows.fill.value
                                 }
                                 fillOpacity={
-                                  settings.genes.endArrows.fill.opacity
+                                  settings.tracks.genes.endArrows.fill.opacity
                                 }
                                 stroke={
                                   isCanonical
-                                    ? settings.genes.canonical.fill.color
-                                    : settings.genes.endArrows.stroke.color
+                                    ? settings.tracks.genes.canonical.fill.value
+                                    : settings.tracks.genes.endArrows.stroke
+                                        .value
                                 }
                               />
                             </g>
                           )}
 
-                        {settings.genes.labels.show &&
-                          settings.genes.display !== 'dense' && (
-                            <text
-                              transform={`translate(${Math.max(-settings.genes.labels.offset, x1 - settings.genes.labels.offset * sgn)}, 0)`}
+                        {settings.tracks.genes.labels.text.show &&
+                          settings.tracks.genes.display !== 'dense' && (
+                            <SvgText
+                              transform={`translate(${Math.max(-settings.tracks.genes.labels.offset, x1 - settings.tracks.genes.labels.offset * sgn)}, 0)`}
                               //fill={track.displayOptions.labels.font.color}
 
                               fill={
                                 isCanonical
-                                  ? settings.genes.canonical.fill.color
-                                  : settings.genes.exons.fill.color
+                                  ? settings.tracks.genes.canonical.fill.value
+                                  : settings.tracks.genes.exons.fill.value
                               }
                               dominantBaseline="middle"
-                              fontSize={settings.genes.labels.font.size}
+                              font={settings.tracks.genes.labels.text}
                               textAnchor={settings.reverse ? 'start' : 'end'}
                               //fontWeight="bold"
                             >
-                              {`${transcript.geneSymbol} ${settings.genes.labels.showGeneId ? `(${transcript.transcriptId})` : ''}`}
-                              <title>{`${transcript.geneSymbol} (${transcript.transcriptId})`}</title>
-                            </text>
+                              {`${transcript.symbol} ${settings.tracks.genes.labels.showGeneId ? `(${transcript.transcript})` : ''}`}
+                              <title>{`${transcript.symbol} (${transcript.transcript})`}</title>
+                            </SvgText>
                           )}
 
-                        {settings.genes.arrows.show && (
+                        {settings.tracks.genes.arrows.show && (
                           <g
                             id="arrows"
                             //transform={`translate(0,-${track.displayOptions.arrows.size})`}
@@ -651,17 +659,17 @@ export function GenesStructureTrackSvg({
                           </g>
                         )}
 
-                        {settings.genes.stroke.show && (
+                        {settings.tracks.genes.stroke.show && (
                           <line
                             id="transcript-line"
                             x1={x1}
                             x2={x2}
                             stroke={
                               isCanonical
-                                ? settings.genes.canonical.fill.color
-                                : settings.genes.stroke.color
+                                ? settings.tracks.genes.canonical.fill.value
+                                : settings.tracks.genes.stroke.value
                             }
-                            strokeWidth={settings.genes.stroke.width}
+                            strokeWidth={settings.tracks.genes.stroke.width}
                           />
                         )}
 
@@ -710,12 +718,12 @@ function ExonsSvg({
 }) {
   const { settings } = useSeqBrowserSettings()
 
-  if (!settings.genes.exons.show) return null
+  if (!settings.tracks.genes.exons.show) return null
 
   return (
     <g
       id="exons"
-      transform={`translate(0, ${-settings.genes.exons.height / 2})`}
+      transform={`translate(0, ${-settings.tracks.genes.exons.height / 2})`}
     >
       {transcript.children
         ?.filter(f => f.type === 'exon')
@@ -730,17 +738,17 @@ function ExonsSvg({
               rx={w > 5 ? 2 : 0}
               x={x1 - (settings.reverse ? w : 0)}
               width={w}
-              height={settings.genes.exons.height}
+              height={settings.tracks.genes.exons.height}
               fill={
                 isCanonical
-                  ? settings.genes.canonical.fill.color
-                  : settings.genes.exons.fill.color
+                  ? settings.tracks.genes.canonical.fill.value
+                  : settings.tracks.genes.exons.fill.value
               }
-              fillOpacity={settings.genes.exons.fill.opacity}
+              fillOpacity={settings.tracks.genes.exons.fill.opacity}
               stroke="none"
               key={ei}
             >
-              <title>{`${exon.transcriptId}, strand ${exon.loc.strand}, exon ${exon.loc.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
+              <title>{`${exon.transcript}, strand ${exon.loc.strand}, exon ${exon.loc.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
             </rect>
           )
         })}
@@ -761,10 +769,13 @@ function CDSSvg({
 }) {
   const { settings } = useSeqBrowserSettings()
 
-  if (!settings.genes.cds.show) return null
+  if (!settings.tracks.genes.cds.show) return null
 
   return (
-    <g id="cds" transform={`translate(0, ${-settings.genes.cds.height / 2})`}>
+    <g
+      id="cds"
+      transform={`translate(0, ${-settings.tracks.genes.cds.height / 2})`}
+    >
       {transcript.children
         ?.filter(f => f.type === 'cds')
         .map((cds, ei) => {
@@ -778,17 +789,17 @@ function CDSSvg({
               rx={w > 5 ? 2 : 0}
               x={x1 - (settings.reverse ? w : 0)}
               width={w}
-              height={settings.genes.cds.height}
+              height={settings.tracks.genes.cds.height}
               fill={
                 isCanonical
-                  ? settings.genes.canonical.fill.color
-                  : settings.genes.cds.fill.color
+                  ? settings.tracks.genes.canonical.fill.value
+                  : settings.tracks.genes.cds.fill.value
               }
-              fillOpacity={settings.genes.cds.fill.opacity}
+              fillOpacity={settings.tracks.genes.cds.fill.opacity}
               stroke="none"
               key={ei}
             >
-              <title>{`${cds.transcriptId}, strand ${cds.loc.strand}, cds ${cds.loc.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
+              <title>{`${cds.transcript}, strand ${cds.loc.strand}, cds ${cds.loc.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
             </rect>
           )
         })}
@@ -809,10 +820,13 @@ function UTRSvg({
 }) {
   const { settings } = useSeqBrowserSettings()
 
-  if (!settings.genes.utrs.show) return null
+  if (!settings.tracks.genes.utrs.show) return null
 
   return (
-    <g id="utrs" transform={`translate(0, ${-settings.genes.utrs.height / 2})`}>
+    <g
+      id="utrs"
+      transform={`translate(0, ${-settings.tracks.genes.utrs.height / 2})`}
+    >
       {transcript.children
         ?.filter(f => f.type === 'utr')
         .map((utr, ei) => {
@@ -826,17 +840,17 @@ function UTRSvg({
               rx={w > 5 ? 2 : 0}
               x={x1 - (settings.reverse ? w : 0)}
               width={w}
-              height={settings.genes.utrs.height}
+              height={settings.tracks.genes.utrs.height}
               fill={
                 isCanonical
-                  ? settings.genes.canonical.fill.color
-                  : settings.genes.utrs.fill.color
+                  ? settings.tracks.genes.canonical.fill.value
+                  : settings.tracks.genes.utrs.fill.value
               }
-              fillOpacity={settings.genes.utrs.fill.opacity}
+              fillOpacity={settings.tracks.genes.utrs.fill.opacity}
               stroke="none"
               key={ei}
             >
-              <title>{`${utr.transcriptId}, strand ${utr.loc.strand}, utr ${utr.loc.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
+              <title>{`${utr.transcript}, strand ${utr.loc.strand}, utr ${utr.loc.strand === '+' ? ei + 1 : exonCount - ei} of ${exonCount}`}</title>
             </rect>
           )
         })}

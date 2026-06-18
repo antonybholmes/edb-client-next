@@ -9,29 +9,18 @@ import {
   ToolbarMenu,
   ToolbarPanel,
 } from '@/toolbar/toolbar'
-import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
 import { ToolbarButton } from '@/toolbar/toolbar-button'
 
 import { download } from '@/lib/download-utils'
 
-import { OpenFiles, onTextFileChange } from '@/components/pages/open-files'
+import { onTextFileChange } from '@/components/pages/open-files'
 
-import { BasicAlertDialog } from '@/dialog/basic-alert-dialog'
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
-
-import { SaveIcon } from '@/icons/save-icon'
 
 import { useEffect, useState } from 'react'
 
-import {
-  NO_DIALOG,
-  TEXT_CANCEL,
-  TEXT_OPEN,
-  TEXT_OPEN_FILE,
-  TEXT_SAVE_AS,
-  type IDialogParams,
-} from '@/consts'
+import { TEXT_OPEN, TEXT_OPEN_FILE, TEXT_SAVE_AS } from '@/consts'
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -47,7 +36,6 @@ import { Checkbox } from '@/themed/v2/check-box'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { OpenIcon } from '@/icons/open-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
-import { randId } from '@/lib/id'
 import { cn } from '@/lib/shadcn-utils'
 import { textToLines } from '@/lib/text/lines'
 import {
@@ -57,22 +45,23 @@ import {
   ScrollAccordion,
 } from '@/themed/v2/accordion'
 
-import { HeaderSlotPortal } from '@/components/header/header-slot-portal'
-import { ModuleInfoButton } from '@/components/header/module-info-button'
-import type { ISaveAsFormat } from '@/components/pages/save-as-dialog'
-import {
-  FILE_FORMAT_JSON,
-  SaveTxtDialog,
-} from '@/components/pages/save-txt-dialog'
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { AppHeaderIcon } from '@/components/header/app-header-icon'
+import { AppInfoButton } from '@/components/header/app-info-button'
+import { HeaderSlotPortal } from '@/components/header/header-portal'
+import { DownloadIcon } from '@/components/icons/download-icon'
+import type { ISaveAsFileType } from '@/dialogs/save-as-dialog'
+import { FILE_FORMAT_JSON } from '@/dialogs/save-txt-dialog'
 import { useStableId } from '@/hooks/stable-id'
 import { FileIcon } from '@/icons/file-icon'
 import { UploadIcon } from '@/icons/upload-icon'
 import { HeaderButton } from '@/layouts/header-button'
+import { useAppInfo } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { CoreProviders } from '@/providers/core-providers'
 import { Textarea } from '@/themed/textarea'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
-import MODULE_INFO from './module.json'
+import APP_INFO from './manifest.json'
 
 export type DNABase = 'A' | 'C' | 'G' | 'T' | 'a' | 'c' | 'g' | 't'
 
@@ -85,6 +74,11 @@ const REV_MAP: { [K in DNABase]: DNABase } = {
   c: 'g',
   g: 'c',
   t: 'a',
+}
+
+const FASTA_FILE_TYPE: ISaveAsFileType = {
+  name: 'FASTA',
+  ext: 'fasta',
 }
 
 interface ISeq {
@@ -104,14 +98,14 @@ export function RevCompPage() {
   const [output, setOutput] = useState('')
   const [outputMode] = useState('FASTA')
   const [outputSeqs, setOutputSeqs] = useState<IRevCompSeq[]>([])
-
+  const { setAppInfo } = useAppInfo()
   const [modeRev, setModeRev] = useState(true)
   const [modeComp, setModeComp] = useState(true)
   const [showSideBar, setShowSideBar] = useState(true)
 
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
-
   const [showFileMenu, setShowFileMenu] = useState(false)
+
+  const { open: openDialog } = useDialogs()
 
   // function openFiles(files: IFileOpen[]) {
   //   setShowFileMenu(false)
@@ -210,6 +204,10 @@ export function RevCompPage() {
   }
 
   useEffect(() => {
+    setAppInfo(APP_INFO)
+  }, [])
+
+  useEffect(() => {
     if (outputSeqs.length > 0) {
       switch (outputMode) {
         case 'json':
@@ -232,33 +230,48 @@ export function RevCompPage() {
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
-              onOpenChange={(open) => {
-                if (open) {
-                  setShowDialog({
-                    id: randId('open'),
-                  })
-                }
+              onOpen={() => {
+                openDialog({
+                  type: 'open',
+                  payload: {
+                    fileTypes: ['fasta'],
+                    callback: (message, files) => {
+                      onTextFileChange(message, files, (files) => {
+                        setText(files[0]!.text)
+                      })
+                    },
+                  },
+                })
               }}
               multiple={true}
             />
 
             <ToolbarIconButton
               arial-label="Save to local file"
-              onClick={() => setShowDialog({ id: randId('save') })}
+              onClick={() => {
+                openDialog({
+                  type: 'save',
+                  payload: {
+                    name: 'rev-comp',
+                    fileTypes: [FASTA_FILE_TYPE, FILE_FORMAT_JSON],
+                    callback: (data) => {
+                      save(data.name, data.format.ext)
+                    },
+                  },
+                })
+              }}
               title="Save sequences"
             >
-              <SaveIcon />
+              <DownloadIcon />
             </ToolbarIconButton>
           </ToolbarTabGroup>
 
-          <ToolbarSeparator />
           <ToolbarTabGroup title="Convert">
             <ToolbarButton title="Convert" onClick={applyRevComp}>
               <PlayIcon />
               <span>Convert</span>
             </ToolbarButton>
           </ToolbarTabGroup>
-          <ToolbarSeparator />
         </>
       ),
     },
@@ -272,7 +285,19 @@ export function RevCompPage() {
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randId('open') })}
+          onClick={() => {
+            openDialog({
+              type: 'open',
+              payload: {
+                fileTypes: ['fasta'],
+                callback: (message, files) => {
+                  onTextFileChange(message, files, (files) => {
+                    setText(files[0]!.text)
+                  })
+                },
+              },
+            })
+          }}
         >
           <UploadIcon stroke="" />
 
@@ -311,10 +336,10 @@ export function RevCompPage() {
       id: 'Settings',
       content: (
         <PropsPanel className="pr-2">
-          <ScrollAccordion value={['output']} variant="sidebar">
+          <ScrollAccordion value={['output']}>
             <AccordionItem value="output">
-              <AccordionTrigger variant="sidebar">Output</AccordionTrigger>
-              <AccordionContent variant="sidebar">
+              <AccordionTrigger>Output</AccordionTrigger>
+              <AccordionContent>
                 <Checkbox
                   checked={modeRev}
                   onCheckedChange={(state) => setModeRev(state)}
@@ -338,36 +363,18 @@ export function RevCompPage() {
 
   return (
     <>
-      {showDialog.id === 'alert' && (
-        <BasicAlertDialog onResponse={() => setShowDialog({ ...NO_DIALOG })}>
-          {showDialog.params!.message as string}
-        </BasicAlertDialog>
-      )}
-
-      {showDialog.id.includes('save') && (
-        <SaveTxtDialog
-          name="seqs"
-          formats={[{ name: 'FASTA', ext: 'fasta' }, FILE_FORMAT_JSON]}
-          onResponse={(response, data) => {
-            if (response !== TEXT_CANCEL) {
-              const d = data as { name: string; format: ISaveAsFormat }
-              save(d.name as string, (d.format as ISaveAsFormat).ext)
-            }
-
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        />
-      )}
+      {/* <DialogsRoot /> */}
 
       <HeaderSlotPortal>
-        <ModuleInfoButton info={MODULE_INFO} />
+        <AppHeaderIcon />
+        <AppInfoButton />
       </HeaderSlotPortal>
 
       <HeaderSlotPortal slot="header-right">
         <HeaderButton
           onClick={() => loadTestData()}
           role="button"
-          title="Load test data to use features."
+          title="Load test data."
           className="text-xs"
         >
           Test data
@@ -444,18 +451,6 @@ export function RevCompPage() {
             </ResizablePanel>
           </ResizablePanelGroup>
         </TabSlideBar>
-
-        {showDialog.id.includes('open') && (
-          <OpenFiles
-            message={showDialog.id}
-            onFileChange={(message, files) =>
-              onTextFileChange(message, files, (files) => {
-                setText(files[0]!.text)
-              })
-            }
-            fileTypes={['fasta']}
-          />
-        )}
       </ShortcutLayout>
     </>
   )

@@ -2,8 +2,10 @@ import type { IClassProps } from '@/interfaces/class-props'
 import { cn } from '@/lib/shadcn-utils'
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
-import { type ITabIndicatorPos } from './tab-indicator-provider'
-import { useTabIndicators } from './tab-indicator-store'
+import {
+  useTabIndicators,
+  type ITabIndicatorPos,
+} from './tab-indicator-provider'
 
 const ROUNDED_FIRST = {
   borderTopLeftRadius: '0.5rem',
@@ -41,20 +43,17 @@ function getRoundedStyle(rounded: boolean, first: boolean, last: boolean) {
 }
 
 interface IProps extends IClassProps {
-  groupId: string
+  groupId?: string
   color?: string
-
   rounded?: boolean
 }
 
 export function TabIndicatorFollowBlock({
-  groupId,
   color = 'bg-muted/60',
-
   rounded = true,
   className,
 }: IProps) {
-  const { position } = useTabIndicators(groupId)
+  const { position } = useTabIndicators() //groupId)
   const previousPos = useRef<ITabIndicatorPos | undefined>(undefined)
 
   const blockRef = useRef<HTMLSpanElement>(null)
@@ -116,14 +115,6 @@ export function TabIndicatorFollowBlock({
     <span
       ref={blockRef}
       className={cn(`absolute left-0 z-0 opacity-0`, color, className)}
-      //style={{ height: position?.h || 0 }}
-      // animate={{
-      //   y: `${tabIndicatorPos.x}rem`,
-      //   height: `${(tabIndicatorPos.size as number) - 0.15}rem`,
-      // }}
-
-      //initial={false}
-      //transition={{ ease: 'easeOut', duration: 0.25 }}
     />
   )
 }

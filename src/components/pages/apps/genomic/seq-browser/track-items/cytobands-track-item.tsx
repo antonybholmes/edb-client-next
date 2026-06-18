@@ -1,11 +1,11 @@
 import { TruncateSpan } from '@/components/truncate-span'
-import type { IDialogParams } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
+import { Settings2 } from 'lucide-react'
+import { useSeqBrowserDialogs } from '../seq-browser-dialogs'
 import type { ICytobandsTrack, ITrackGroup } from '../tracks-provider'
 import { BaseTrackItem } from './base-track-item'
 import {
   DeleteTrackGroupButton,
-  EditTrackButton,
   TRACK_ITEM_BUTTONS_CLS,
 } from './seq-track-item'
 
@@ -13,17 +13,12 @@ export function CytobandsTrackItem({
   group,
   active,
   multiselect,
-  setShowDialog,
 }: {
   group: ITrackGroup
   active: string | null
   multiselect: boolean
-  setShowDialog: (params: IDialogParams) => void
 }) {
-  //const [drag, setDrag] = useState(false)
-
-  //useMouseUpListener(() => setDrag(false))
-
+  const { open: openDialog } = useSeqBrowserDialogs()
   const track = group.tracks[0]! as ICytobandsTrack
 
   return (
@@ -42,12 +37,18 @@ export function CytobandsTrackItem({
       </TruncateSpan>
 
       <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
-        <EditTrackButton
-          cmd="edit-cytobands"
-          group={group}
-          track={track}
-          setShowDialog={setShowDialog}
-        />
+        <button
+          title={`Edit ${track.name}`}
+          className="opacity-50 hover:opacity-100 trans-opacity"
+          onClick={() => {
+            openDialog({
+              type: 'edit-cytobands',
+              payload: {},
+            })
+          }}
+        >
+          <Settings2 size={20} strokeWidth={1.5} />
+        </button>
       </VCenterRow>
     </BaseTrackItem>
   )

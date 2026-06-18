@@ -9,9 +9,13 @@ import {
   dropdownContentVariants,
   DropdownMenuItemContent,
   dropdownMenuItemVariants,
+  POPOVER_CLS,
+  POSITIONER_CLS,
 } from './dropdown-menu'
 
 export const Popover = PopoverPrimitive.Root
+
+export const PopoverTitle = PopoverPrimitive.Title
 
 //export const PopoverTrigger = PopoverPrimitive.Trigger
 
@@ -55,49 +59,34 @@ export function PopoverTrigger({
   )
 }
 
-// const POP_CLS = cn(
-//   CONTENT_CLS,
-//   'z-modal z-(--z-modal) outline-hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0',
-//   'data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
-//   'data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2',
-//   'data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2'
-// )
-
-// export const popoverContentVariants = cva(POP_CLS, {
-//   variants: {
-//     variant: {
-//       default: 'bg-background',
-//       glass: GLASS_CLS,
-//       trans: '',
-//     },
-//   },
-//   defaultVariants: {
-//     variant: 'default',
-//   },
-// })
-
 export function PopoverContent({
   ref,
   className = '',
-  variant = 'default',
+  variant = 'content',
   align = 'start',
   sideOffset = 4,
-  ...props
+  children,
 }: ComponentProps<typeof PopoverPrimitive.Popup> &
   ComponentProps<typeof PopoverPrimitive.Positioner> &
+  //ComponentProps<typeof PopoverPrimitive.Viewport> &
   VariantProps<typeof dropdownContentVariants>) {
   return (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Positioner
         align={align}
         sideOffset={sideOffset}
-        className={dropdownContentVariants({ variant })}
+        className={POSITIONER_CLS}
       >
         <PopoverPrimitive.Popup
           ref={ref}
-          {...props}
-          className={cn('flex flex-col', className)}
-        />
+          //{...props}
+          className={dropdownContentVariants({
+            variant,
+            className: cn(POPOVER_CLS, className),
+          })}
+        >
+          {children}
+        </PopoverPrimitive.Popup>
       </PopoverPrimitive.Positioner>
     </PopoverPrimitive.Portal>
   )
@@ -151,7 +140,11 @@ export function PopoverMenuItem({
       <DropdownMenuItemContent>
         {checked && (
           <span className={DROPDOWN_MENU_ICON_CONTAINER_CLS}>
-            <CheckIcon w="w-3.5 h-3.5" stroke="" style={{ strokeWidth: 3 }} />
+            <CheckIcon
+              size="w-3.5 h-3.5"
+              stroke=""
+              style={{ strokeWidth: 3 }}
+            />
           </span>
         )}
 

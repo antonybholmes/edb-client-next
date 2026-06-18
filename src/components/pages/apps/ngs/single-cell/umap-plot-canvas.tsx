@@ -161,7 +161,7 @@ export function drawUmap(
       //   //   ctx.fillStyle = label.roundel.fill.color
       //   //   ctx.fill()
       //   //   ctx.globalAlpha = label.roundel.stroke.alpha
-      //   //   ctx.strokeStyle = label.roundel.stroke.color
+      //   //   ctx.strokeStyle = label.roundel.stroke.value
       //   //   ctx.lineWidth = label.roundel.stroke.width
       //   //   ctx.stroke()
       //   //   ctx.globalAlpha = 1

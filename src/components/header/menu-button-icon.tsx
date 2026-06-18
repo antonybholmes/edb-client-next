@@ -7,7 +7,7 @@ export const X2 = 18
 //export const X3 = 14
 
 export function MenuButtonIcon({
-  w = 'w-5',
+  size = 'w-5',
 
   className,
 }: IIconProps) {
@@ -15,7 +15,7 @@ export function MenuButtonIcon({
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      className={cn(ICON_CLS, w, className)}
+      className={cn(ICON_CLS, size, className)}
     >
       <circle cx={X1} cy={X1} r={R} className="fill-white" />
       <circle cx={X2} cy={X1} r={R} className="fill-white/60" />

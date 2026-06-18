@@ -5,7 +5,8 @@ import log from 'loglevel'
 if (typeof window !== 'undefined') {
   const logLevel = IS_DEV_MODE
     ? log.levels.DEBUG
-    : (process.env.NEXT_PUBLIC_LOG_LEVEL ?? log.levels.SILENT) as log.LogLevelDesc
+    : ((process.env.NEXT_PUBLIC_LOG_LEVEL ??
+        log.levels.SILENT) as log.LogLevelDesc)
 
   log.setLevel(logLevel)
 }

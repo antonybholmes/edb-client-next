@@ -1,4 +1,4 @@
-import MODULE_INFO from '@/components/pages/apps/venn/module.json'
+import MODULE_INFO from '@/components/pages/apps/venn/manifest.json'
 import { VennPageQuery } from '@/components/pages/apps/venn/venn-page'
 import { makeMetaDataFromModule } from '@/lib/metadata'
 

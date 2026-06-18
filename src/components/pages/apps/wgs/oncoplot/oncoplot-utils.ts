@@ -1,11 +1,16 @@
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { GenLoc, LocationBinMap } from '@/lib/genomic/genomic'
+import { LocationBinMap } from '@/lib/genomic/genomic'
 
 import type { IBlock } from '@/components/plot/heatmap/heatmap-svg-props'
-import type {
-  ColorBarPos,
-  LegendPos,
-  TopBottomPos,
+import {
+  DEFAULT_BOLD_TEXT_PROPS,
+  DEFAULT_STROKE_PROPS,
+  DEFAULT_TEXT_PROPS,
+  type ColorBarPos,
+  type IStrokeProps,
+  type ITextProps,
+  type LegendPos,
+  type TopBottomPos,
 } from '@/components/plot/svg-props'
 import type { LeftRightPos } from '@/components/side'
 import { BIG0, BIG1 } from '@/consts'
@@ -14,6 +19,10 @@ import type { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK, randomHexColor } from '@/lib/color/color'
 import { BWR_CMAP_V2, ColorMap } from '@/lib/color/colormap'
 import { formatChr } from '@/lib/genomic/dna'
+import {
+  newGenomicLocation,
+  type IGenomicLocation,
+} from '@/lib/genomic/genomic-location'
 import { makeUuid } from '@/lib/id'
 import type { ILim } from '@/lib/math/math'
 import { range } from '@/lib/math/range'
@@ -233,17 +242,14 @@ export interface IOncoplotSort {
 }
 
 export interface IOncoplotDisplayProps {
+  text: ITextProps
+  title: ITextProps
   samples: {
     graphs: {
       show: boolean
       height: number
       opacity: number
-      border: {
-        show: boolean
-        color: string
-        strokeWidth: number
-        opacity: number
-      }
+      border: IStrokeProps
       yaxis: {
         show: boolean
         label: string
@@ -255,12 +261,7 @@ export interface IOncoplotDisplayProps {
       show: boolean
       height: number
       opacity: number
-      border: {
-        show: boolean
-        color: string
-        strokeWidth: number
-        opacity: number
-      }
+      border: IStrokeProps
       percentages: {
         show: boolean
         width: number
@@ -272,30 +273,16 @@ export interface IOncoplotDisplayProps {
   sort: IOncoplotSort
   removeEmptySamples: boolean
 
-  grid: {
-    opacity: number
-    show: boolean
-    color: string
-    strokeWidth: number
+  grid: IStrokeProps & {
     spacing: IPos
     cell: IBlock
   }
-  border: {
-    show: boolean
-    color: string
-    strokeWidth: number
-    opacity: number
-  }
+  border: IStrokeProps
   clinical: {
     show: boolean
     height: number
     gap: number
-    border: {
-      show: boolean
-      color: string
-      strokeWidth: number
-      opacity: number
-    }
+    border: IStrokeProps
   }
   rowLabels: { position: LeftRightPos; width: number; isColored: boolean }
   colLabels: { position: TopBottomPos; width: number; isColored: boolean }
@@ -305,13 +292,12 @@ export interface IOncoplotDisplayProps {
     position: ColorBarPos
   }
 
-  legend: {
-    show: boolean
+  legend: ITextProps & {
     offset: number
     position: LegendPos
     width: number
     gap: number
-    title: { height: number }
+    title: ITextProps & { height: number }
     variants: {
       show: boolean
       label: string
@@ -342,13 +328,13 @@ export interface IOncoplotDisplayProps {
 
 export const DEFAULT_DISPLAY_PROPS: IOncoplotDisplayProps = {
   multi: 'multi',
+  text: { ...DEFAULT_TEXT_PROPS },
+  title: { ...DEFAULT_BOLD_TEXT_PROPS },
   sort: { sortGenes: true, sortSamples: true },
   removeEmptySamples: false,
   grid: {
+    ...DEFAULT_STROKE_PROPS,
     show: false,
-    color: COLOR_BLACK,
-    opacity: 1,
-    strokeWidth: 1,
     cell: { w: 4, h: 16 },
     spacing: {
       x: 2,
@@ -356,16 +342,28 @@ export const DEFAULT_DISPLAY_PROPS: IOncoplotDisplayProps = {
     },
   },
 
-  border: { show: false, color: COLOR_BLACK, opacity: 1, strokeWidth: 1 },
+  border: { ...DEFAULT_STROKE_PROPS, show: false },
   rowLabels: { position: 'right', width: 100, isColored: false },
   colLabels: { position: 'top', width: 150, isColored: true },
   colorbar: { position: 'right', barSize: [160, 16], width: 100 },
-  legend: {
+  dotLegend: {
+    sizes: [25, 50, 75, 100],
+    lim: [0, 100],
+    type: '%',
+  },
+  clinical: {
     show: true,
+    height: 16,
+    gap: 4,
+
+    border: { ...DEFAULT_STROKE_PROPS, show: false },
+  },
+  legend: {
+    ...DEFAULT_TEXT_PROPS,
     position: 'bottom',
     gap: 5,
     width: 200,
-    title: { height: 20 },
+    title: { ...DEFAULT_BOLD_TEXT_PROPS, height: 20 },
     variants: {
       show: true,
       //names: [],
@@ -375,22 +373,12 @@ export const DEFAULT_DISPLAY_PROPS: IOncoplotDisplayProps = {
     },
     clinical: {
       show: true,
-      tracks: {},
+      tracks: {}, // Record<string, IClinicalTrackProps>
       trackOrder: [],
     },
     offset: 20,
   },
-  dotLegend: {
-    sizes: [25, 50, 75, 100],
-    lim: [0, 100],
-    type: '%',
-  },
-  clinical: {
-    height: 16,
-    gap: 4,
-    show: true,
-    border: { show: false, color: COLOR_BLACK, opacity: 1, strokeWidth: 1 },
-  },
+
   scale: 1,
   cmap: BWR_CMAP_V2,
   axisOffset: 10,
@@ -403,12 +391,7 @@ export const DEFAULT_DISPLAY_PROPS: IOncoplotDisplayProps = {
       show: true,
       height: 50,
       opacity: 1,
-      border: {
-        show: true,
-        color: COLOR_BLACK,
-        strokeWidth: 1,
-        opacity: 1,
-      },
+      border: { ...DEFAULT_STROKE_PROPS },
       yaxis: {
         show: true,
         label: 'TMB',
@@ -420,12 +403,7 @@ export const DEFAULT_DISPLAY_PROPS: IOncoplotDisplayProps = {
       show: true,
       height: 100,
       opacity: 1,
-      border: {
-        show: true,
-        color: COLOR_BLACK,
-        strokeWidth: 1,
-        opacity: 1,
-      },
+      border: { ...DEFAULT_STROKE_PROPS },
       percentages: {
         show: true,
         width: 60,
@@ -630,7 +608,9 @@ export class OncoplotFrame {
     sampleOrder: number[] = []
   ) {
     this._data = data
+    // rows
     this._geneStats = geneStats
+    // cols
     this._sampleStats = sampleStats
     this._geneOrder = geneOrder.length > 0 ? geneOrder : range(geneStats.length)
     this._sampleOrder =
@@ -649,6 +629,14 @@ export class OncoplotFrame {
     return this.setGeneOrder(geneOrder)
   }
 
+  /**
+   * Set the gene/row order so that we can sort the
+   * the data to appear more visually appealing. We don't want to mutate the original data
+   * because we want to be able to reset the order to the original order.
+   *
+   * @param idx
+   * @returns
+   */
   setGeneOrder(idx: number[]): OncoplotFrame {
     const ret = new OncoplotFrame(
       this._data,
@@ -986,7 +974,7 @@ export function makeOncoPlot(
 export function makeLocationOncoPlot(
   mutDf: BaseDataFrame,
   clinicalDf: BaseDataFrame | undefined,
-  features: GenLoc[],
+  features: IGenomicLocation[],
   mutations: readonly IMutation[],
   columns: IOncoColumns,
   //displayProps: IOncoplotDisplayProps,
@@ -1050,7 +1038,7 @@ export function makeLocationOncoPlot(
     start = mutDf.col(columns.start).values[row] as number
     end = mutDf.col(columns.end).values[row] as number
 
-    const loc = new GenLoc(chr, start, end)
+    const loc = newGenomicLocation(chr, start, end)
 
     mutType = 'SNP'
 

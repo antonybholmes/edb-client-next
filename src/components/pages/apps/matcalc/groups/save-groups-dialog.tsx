@@ -1,11 +1,11 @@
 import {
   type ISaveAsDialogProps,
-  type ISaveAsFormat,
+  type ISaveAsFileType,
   SaveAsDialog,
-} from '@/components/pages/save-as-dialog'
-import { FILE_FORMAT_JSON } from '@/components/pages/save-txt-dialog'
+} from '@/dialogs/save-as-dialog'
+import { FILE_FORMAT_JSON } from '@/dialogs/save-txt-dialog'
 
-const GROUP_FILE_FORMATS: ISaveAsFormat[] = [
+const GROUP_FILE_FORMATS: ISaveAsFileType[] = [
   FILE_FORMAT_JSON,
   { name: 'GSEA cls', ext: 'cls' },
 ]

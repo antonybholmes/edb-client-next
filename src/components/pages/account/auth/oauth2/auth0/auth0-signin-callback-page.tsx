@@ -20,7 +20,8 @@ export function CallbackPage() {
   const [state, setState] = useState<IRedirectState | null>(null)
   const [allowRedirect, setAllowRedirect] = useState(false)
 
-  const { getIdTokenClaims, handleRedirectCallback } = useAuth0()
+  const { getAccessTokenSilently, getIdTokenClaims, handleRedirectCallback } =
+    useAuth0()
 
   useEffect(() => {
     async function processCallback() {
@@ -30,11 +31,11 @@ export function CallbackPage() {
 
         console.log('Handling Auth0 redirect callback')
 
-        //const auth0Token = await getAccessTokenSilently()
+        const auth0Token = await getAccessTokenSilently()
         const idTokenClaims = await getIdTokenClaims()
         const idToken = idTokenClaims?.__raw ?? ''
 
-        //console.log('auth0Token', auth0Token)
+        console.log('auth0Token', auth0Token)
 
         console.log('id token', idToken)
 
@@ -59,7 +60,7 @@ export function CallbackPage() {
 
         console.log('Redirect state from Auth0 appState:', signinState)
 
-        //setAllowRedirect(true)
+        setAllowRedirect(true)
       } catch (error) {
         console.error('Error handling redirect callback:', error)
       }
@@ -71,7 +72,7 @@ export function CallbackPage() {
     ) {
       processCallback()
     }
-  }, [handleRedirectCallback, getIdTokenClaims])
+  }, [handleRedirectCallback, getAccessTokenSilently, getIdTokenClaims])
 
   useEffect(() => {
     if (signinState.target.path) {

@@ -1,100 +1,60 @@
 @import 'tailwindcss';
-/* @source '../src'; */
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
-@theme {
+@theme inline {
   --font-*: initial;
   /* Using astro font system, so specify the font variables using var(--font-geist) etc */
-  --font-sans: var(--font-inter), Mona Sans, Figtree, Helvetica, Arial;
-
-  /* --spacing-2px: rgb(2px);
-  --spacing-1_2: rgb(0.3rem);
-  --spacing-1_4: rgb(0.35rem);
-  --spacing-3\/10: rgb(30%);
-  --spacing-4\/10: rgb(40%);
-  --spacing-9\/10: rgb(90%); */
-
-  /* --spacing-header: 2.5rem; */
-
-  /* --spacing-button-lg: 2.5rem; */
+  --font-sans: var(--font-primary), Mona Sans, Figtree, Helvetica, Arial;
 
   --breakpoint-2xl: 112rem;
   --breakpoint-3xl: 128rem;
   --breakpoint-4xl: 144rem;
   --breakpoint-5xl: 160rem;
 
-  /* --scale-101: 1.01;
-  --scale-102: 1.02;
-  --scale-104: 1.04;
+  --color-border: var(--edb-border);
 
-  --leading-8: 2rem;
-  --leading-10: 2.5rem;
-  --leading-12: 3rem; */
+  --color-border-dark: var(--edb-border-dark);
 
-  /* --color-gray-50: rgb(#f9fafb);
-  --color-gray-100: rgb(#f3f4f6);
-  --color-gray-200: rgb(#e5e7eb);
-  --color-gray-300: rgb(#d1d5db);
-  --color-gray-400: rgb(#9ca3af);
-  --color-gray-500: rgb(#6b7280);
-  --color-gray-600: rgb(#4b5563);
-  --color-gray-700: rgb(#374151);
-  --color-gray-800: rgb(#1f2937);
-  --color-gray-900: rgb(#111827);
-  --color-gray-950: rgb(#030712); */
+  --color-input: var(--edb-input);
+  --color-ring: var(--edb-ring);
+  --color-body: var(--edb-body);
+  --color-background: var(--edb-background);
 
-  --color-border: var(--color-border);
-  /* --color-border-light: var(--color-border-light); */
-  --color-border-dark: var(--color-border-dark);
+  --color-foreground: var(--edb-foreground);
+  --color-alt-foreground: var(--edb-alt-foreground);
 
-  --color-input: var(--color-input);
-  --color-ring: var(--color-ring);
-  --color-body: var(--color-body);
-  --color-background: var(--color-background);
+  --color-primary: var(--edb-primary);
+  --color-primary-alt: var(--edb-primary-alt);
+  --color-primary-foreground: var(--edb-primary-foreground);
 
-  --color-foreground: var(--color-foreground);
-  --color-alt-foreground: var(--color-alt-foreground);
+  --color-theme: var(--edb-theme);
+  --color-theme-muted: var(--edb-theme-muted);
+  --color-theme-alt: var(--edb-theme-alt);
+  --color-theme-foreground: var(--edb-primary-foreground);
 
-  --color-primary: var(--color-primary);
-  --color-primary-alt: var(--color-primary-alt);
-  --color-primary-foreground: var(--color-primary-foreground);
+  --color-app-theme: var(--edb-app-theme);
 
-  --color-theme: var(--color-theme);
-  --color-theme-muted: var(--color-theme-muted);
-  --color-theme-alt: var(--color-theme-alt);
-  --color-theme-foreground: var(--color-primary-foreground);
+  --color-destructive: var(--edb-destructive);
+  --color-warning: var(--edb-warning);
+  --color-destructive-alt: var(--edb-destructive-alt);
+  --color-destructive-foreground: var(--edb-destructive-foreground);
 
-  /* --color-secondary: var(--color-secondary);
-  --color-secondary-foreground: var(--color-secondary-foreground); */
+  --color-shortcuts: var(--edb-shortcuts);
 
-  --color-destructive: var(--color-destructive);
-  --color-warning: var(--color-warning);
-  --color-destructive-alt: var(--color-destructive-alt);
-  --color-destructive-foreground: var(--color-destructive-foreground);
+  --color-faint: var(--edb-faint);
+  --color-muted: var(--edb-muted);
+  --color-accent: var(--edb-app-theme);
 
-  --color-shortcuts: var(--color-shortcuts);
+  --color-popover: var(--edb-popover);
+  --color-popover-foreground: var(--edb-popover-foreground);
+  --color-popover-alt: var(--edb-popover-alt);
 
-  --color-faint: var(--color-faint);
-  --color-muted: var(--color-muted);
-  --color-accent: var(--color-accent);
-  /* --color-toolbar-foreground: var(--color-toolbar-foreground); */
+  --color-card: var(--edb-card);
+  --color-card-foreground: var(--edb-card-foreground);
 
-  /* --color-dialog: var(--color-dialog); */
-
-  /* --color-accent: var(--color-accent); */
-  /* --color-accent-dark: var(--color-accent-dark);
-  --color-accent-foreground: var(--color-accent-foreground); */
-
-  --color-popover: var(--color-popover);
-  --color-popover-foreground: var(--color-popover-foreground);
-  --color-popover-alt: var(--color-popover-alt);
-
-  --color-card: var(--color-card);
-  --color-card-foreground: var(--color-card-foreground);
-
-  --color-overlay: var(--color-overlay);
+  --color-overlay: var(--edb-overlay);
 
   --shadow-search: 0 0 0.5rem rgba(0, 0, 0, 0.15);
   --shadow-box: 0 4px 32px rgba(0, 0, 0, 0.1);
@@ -109,78 +69,26 @@
     0px 0px 32px 8px rgba(0, 0, 0, 0.2), 0 0 0 100vw rgba(0, 0, 0, 0.2);
   --shadow-dark-glass:
     0px 0px 32px 8px rgba(0, 0, 0, 0.2), 0 0 0 100vw rgba(0, 0, 0, 0.5);
-  /* --shadow-glass:
-    inset 0 0 0 3000px rgba(150, 150, 150, 0.2),
-    rgba(150, 150, 150, 0.2) 0px 0px 100px -20px,
-    rgba(150, 150, 150, 0.2) 0px 30px 60px -30px; */
-  /* --shadow-dark-glass:
-    inset 0 0 0 3000px rgba(0, 0, 0, 0.2),
-    rgba(0, 0, 0, 0.3) 0px 0px 100px -20px,
-    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px; */
-
-  /* --border-width-3: 3px; */
 
   --radius-theme: var(--radius-theme);
   --radius-menu: var(--radius-menu);
   --radius-card: var(--radius-card);
 
-  /* --inset-0_75: 0.1875rem;
-
-  --padding-0_75: 0.1875rem; */
-
-  /* --z-index-60: 60;
-  --z-index-70: 70;
-  --z-index-80: 80;
-  --z-index-90: 90;
-  --z-index-100: 100;
-  --z-index-110: 110; */
   --z-overlay: 200;
   --z-modal: 300;
   --z-alert: 400;
 
-  /* --grid-template-columns-16: repeat(16, minmax(0, 1fr));
-  --grid-template-columns-20: repeat(20, minmax(0, 1fr));
-
-  --grid-column-span-13: span 13 / span 13;
-  --grid-column-span-14: span 14 / span 14;
-  --grid-column-span-15: span 15 / span 15;
-  --grid-column-span-18: span 18 / span 18;
-
-  --stroke-width-2: 2px;
-  --stroke-width-3: 3px;
-  --stroke-width-4: 4px; */
-
   --text-xxs: 0.6rem;
 
-  /* --transition-property-filter: filter;
-  --transition-property-placeholder: opacity, filter, transform; */
+  --spacing-button-md: var(--size-button-md);
+  --spacing-button-sm: var(--size-button-sm);
+  --spacing-button-lg: var(--size-button-lg);
 
-  /* --margin-18: rgb(4.5rem);
-
-  --grayscale-50: rgb(50%); */
-
-  /* --ease-smooth: cubic-bezier(0.83, 0, 0.17, 1);
-
-  --animate-accordion-down: accordion-down 0.2s ease-out;
-  --animate-accordion-up: accordion-up 0.2s ease-out; */
-
-  /* @keyframes accordion-down {
-    from {
-      height: 0;
-    }
-    to {
-      height: var(--radix-accordion-content-height);
-    }
-  }
-
-  @keyframes accordion-up {
-    from {
-      height: var(--radix-accordion-content-height);
-    }
-    to {
-      height: 0;
-    }
-  } */
+  --spacing-toolbar-button: var(--size-toolbar-button);
+  --spacing-large-toolbar-button-width: var(--size-large-toolbar-button-width);
+  --spacing-large-toolbar-button-height: var(
+    --size-large-toolbar-button-height
+  );
 
   --animate-hover-bounce: hover-bounce 1s ease-in-out infinite;
 
@@ -202,40 +110,42 @@
 }
 
 :root {
-  --color-body: oklch(0.985 0.002 247.839);
-  --color-background: white;
-  --color-foreground: oklch(27.8% 0.033 256.848);
-  --color-alt-foreground: oklch(55.1% 0.027 264.364);
-  --color-card: white;
-  --color-card-foreground: rgb(31 41 55);
-  --color-popover: white;
-  --color-popover-foreground: rgb(31 41 55);
+  --edb-body: oklch(0.985 0.002 247.839);
+  --edb-background: white;
+  --edb-foreground: oklch(27.8% 0.033 256.848);
+  --edb-alt-foreground: oklch(55.1% 0.027 264.364);
+  --edb-card: white;
+  --edb-card-foreground: rgb(31 41 55);
+  --edb-popover: white;
+  --edb-popover-foreground: rgb(31 41 55);
 
-  --color-primary: oklch(0.28 0.03 257);
-  --color-primary-alt: oklch(0.37 0.03 260);
-  --color-primary-foreground: white;
+  --edb-primary: oklch(0.28 0.03 257);
+  --edb-primary-alt: oklch(0.37 0.03 260);
+  --edb-primary-foreground: white;
 
-  --color-theme: oklch(62.3% 0.214 259.815);
-  --color-theme-muted: oklch(74.6% 0.16 232.661);
-  --color-theme-alt: oklch(54.6% 0.245 262.881);
+  --edb-theme: oklch(62.3% 0.214 259.815);
+  --edb-theme-muted: oklch(74.6% 0.16 232.661);
+  --edb-theme-alt: oklch(54.6% 0.245 262.881);
 
-  --color-shortcuts: rgb(229 231 235);
+  /* The module color allows for accenting apps, it defaults to the theme color */
+  --edb-app-theme: var(--edb-theme);
 
-  --color-faint: oklch(0.967 0.003 264.542);
-  --color-muted: oklch(87.2% 0.01 258.338 / 0.7);
-  --color-accent: oklch(0.872 0.01 258.338);
+  --edb-shortcuts: rgb(229 231 235);
 
-  --color-border: oklch(0.872 0.01 258.338);
-  --color-border-dark: oklch(0.707 0.022 261.325);
+  --edb-faint: oklch(0.967 0.003 264.542);
+  --edb-muted: oklch(87.2% 0.01 258.338 / 0.7);
 
-  --color-destructive: oklch(0.704 0.191 22.216);
-  --color-warning: oklch(0.879 0.169 91.605);
-  --color-destructive-alt: rgb(220 38 38);
-  --color-destructive-foreground: white;
+  --edb-border: oklch(0.872 0.01 258.338);
+  --edb-border-dark: oklch(0.707 0.022 261.325);
 
-  --color-overlay: rgb(2 6 23);
-  --color-input: rgb(241 245 249);
-  --color-ring: oklch(0.81 0.1 252);
+  --edb-destructive: oklch(0.704 0.191 22.216);
+  --edb-warning: oklch(0.879 0.169 91.605);
+  --edb-destructive-alt: rgb(220 38 38);
+  --edb-destructive-foreground: white;
+
+  --edb-overlay: rgb(2 6 23);
+  --edb-input: rgb(241 245 249);
+  --edb-ring: oklch(0.81 0.1 252);
 
   --radius-theme: 0.375rem;
   --radius-menu: 0.375rem;
@@ -248,35 +158,41 @@
   --sidebar-accent-foreground: hsl(240 5.9% 10%);
   --sidebar-border: hsl(220 13% 91%);
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
+
+  --size-button-md: 2rem;
+  --size-button-sm: 1.5rem;
+  --size-button-lg: 2.5rem;
+  --size-toolbar-button: 1.875rem;
+
+  --size-large-toolbar-button-width: 3rem;
+  --size-large-toolbar-button-height: 3.75rem;
 }
 
 .dark {
-  --color-body: oklch(0.27 0 0);
-  --color-background: oklch(0.37 0 0);
-  --color-alt-background: oklch(20.5% 0 0);
-  --color-foreground: white;
-  --color-card: rgb(38 38 38);
-  --color-card-foreground: rgb(248 250 252);
-  --color-popover: rgb(38 38 38);
-  --color-popover-foreground: white;
-  --color-primary: rgb(37 99 235);
-  --color-primary-foreground: white;
+  --edb-body: oklch(0.27 0 0);
+  --edb-background: oklch(0.37 0 0);
+  --edb-alt-background: oklch(20.5% 0 0);
+  --edb-foreground: white;
+  --edb-card: rgb(38 38 38);
+  --edb-card-foreground: rgb(248 250 252);
+  --edb-popover: rgb(38 38 38);
+  --edb-popover-foreground: white;
+  --edb-primary: rgb(37 99 235);
+  --edb-primary-foreground: white;
 
-  --color-theme: oklch(80.9% 0.105 251.813);
-  --color-theme-muted: rgb(96 165 250);
-  --color-faint: oklch(0.44 0 0);
-  --color-muted: oklch(0.44 0 0);
-  --color-accent: oklch(0.56 0 0);
-  /* --color-accent: rgb(115 115 115);
-  --color-accent-foreground: white; */
-  --color-destructive: rgb(239 68 68);
-  --color-destructive-foreground: white;
-  --color-overlay: rgb(2 6 23);
-  --color-border: rgb(115 115 115);
-  --color-border-light: rgb(51 65 85);
-  --color-border-dark: rgb(115 115 115);
-  --color-input: rgb(115 115 115);
-  --color-ring: rgb(96 165 250);
+  --edb-theme: oklch(80.9% 0.105 251.813);
+  --edb-theme-muted: rgb(96 165 250);
+  --edb-faint: oklch(0.44 0 0);
+  --edb-muted: oklch(0.44 0 0);
+
+  --edb-destructive: rgb(239 68 68);
+  --edb-destructive-foreground: white;
+  --edb-overlay: rgb(2 6 23);
+  --edb-border: rgb(115 115 115);
+  --edb-border-light: rgb(51 65 85);
+  --edb-border-dark: rgb(115 115 115);
+  --edb-input: rgb(115 115 115);
+  --edb-ring: rgb(96 165 250);
   --sidebar: hsl(240 5.9% 10%);
   --sidebar-foreground: hsl(240 4.8% 95.9%);
   --sidebar-primary: hsl(224.3 76.3% 48%);
@@ -301,7 +217,7 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+    border-color: var(--edb-gray-200, currentColor);
   }
 
   /* Default cursor for buttons, removed in v4 so must be added */
@@ -309,10 +225,6 @@
   [role='button']:not(:disabled) {
     cursor: pointer;
   }
-}
-
-.root {
-  isolation: isolate;
 }
 
 @utility trans-100 {
@@ -356,11 +268,6 @@ input[type='search']::-webkit-search-cancel-button {
   appearance: none;
 }
 
-/* input,
-textarea {
-  @apply bg-transparent;
-} */
-
 .boldable-text-tab {
   @apply text-nowrap;
 }
@@ -377,6 +284,10 @@ textarea {
 .boldable-text-tab::after {
   @apply pointer-events-none invisible flex h-0 flex-col overflow-hidden font-bold select-none;
   content: attr(aria-label);
+}
+
+ol {
+  @apply list-decimal pr-6;
 }
 
 .markdown {
@@ -398,10 +309,6 @@ textarea {
 
   ul {
     @apply list-disc;
-  }
-
-  ol {
-    @apply list-decimal;
   }
 }
 
@@ -450,23 +357,24 @@ textarea {
 /* scrollbar */
 
 .custom-scrollbar::-webkit-scrollbar {
-  height: 0.3rem;
-  width: 0.3rem;
+  @apply h-1.25 w-1.25;
 }
 
 .custom-scrollbar::-webkit-scrollbar:disabled {
-  display: none;
+  @apply hidden;
 }
 
 .custom-scrollbar::-webkit-scrollbar-button,
 .custom-scrollbar::-webkit-scrollbar-corner {
-  background: transparent;
-  cursor: pointer;
-  display: none;
+  @apply hidden cursor-pointer bg-transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-foreground/20 rounded-full;
+  @apply bg-foreground/20 rounded-full transition-colors duration-300 ease-out;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-foreground/30;
 }
 
 /* collapse */

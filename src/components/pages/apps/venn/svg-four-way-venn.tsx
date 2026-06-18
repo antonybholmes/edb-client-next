@@ -38,12 +38,12 @@ export function Ellipse({
       ry={radius}
       fill={
         mode === 'fill' && settings.isFilled && circle.fill.show
-          ? circle.fill.color
+          ? circle.fill.value
           : 'none'
       }
       fillOpacity={circle.fill.opacity}
       stroke={
-        mode === 'outline' && settings.isOutlined ? circle.stroke.color : 'none'
+        mode === 'outline' && settings.isOutlined ? circle.stroke.value : 'none'
       }
       strokeOpacity={circle.stroke.opacity}
       transform={transform}

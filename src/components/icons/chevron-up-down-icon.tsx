@@ -3,7 +3,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { ChevronsUpDown } from 'lucide-react'
 
 export function ChevronUpDownIcon({
-  w = 'w-4 h-4',
+  size = 'w-4 h-4',
   stroke = 'stroke-foreground',
   className,
   strokeWidth = 2,
@@ -12,7 +12,7 @@ export function ChevronUpDownIcon({
     // <svg
     //   xmlns="http://www.w3.org/2000/svg"
     //   viewBox="0 0 24 24"
-    //   className={cn(ICON_CLS, fill, stroke, w, className)}
+    //   className={cn(ICON_CLS, fill, stroke, size, className)}
     //   style={{
     //     strokeLinecap: 'round',
     //     strokeLinejoin: 'round',
@@ -26,7 +26,7 @@ export function ChevronUpDownIcon({
     // </svg>
 
     <ChevronsUpDown
-      className={cn(ICON_CLS, stroke, w, className)}
+      className={cn(ICON_CLS, stroke, size, className)}
       strokeWidth={strokeWidth}
       stroke=""
     />

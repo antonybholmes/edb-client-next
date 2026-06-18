@@ -2,7 +2,7 @@ import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
 import { cn } from '@/lib/shadcn-utils'
 
 export function CompactLayoutIcon({
-  w = 'w-4 h-4',
+  size = 'w-4 h-4',
   stroke = 'stroke-foreground',
   className,
   strokeWidth = 2,
@@ -14,7 +14,7 @@ export function CompactLayoutIcon({
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={strokeWidth}
-      className={cn(ICON_CLS, stroke, w, className)}
+      className={cn(ICON_CLS, stroke, size, className)}
     >
       <line x1="3" y1="5" x2="10" y2="5" />
       <line x1="14" y1="5" x2="21" y2="5" />

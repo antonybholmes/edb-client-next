@@ -6,7 +6,7 @@ import { CheckIcon } from '@/icons/check-icon'
 import { ChevronRightIcon } from '@/icons/chevron-right-icon'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { cn } from '@/lib/shadcn-utils'
-import { BUTTON_MD_H_CLS, ROUNDED_CLS } from '@/theme'
+import { ROUNDED_CLS } from '@/theme'
 import { cva, type VariantProps } from 'class-variance-authority'
 import {
   Children,
@@ -249,7 +249,7 @@ export function DropdownMenuCheckboxItem({
     >
       <span className={DROPDOWN_MENU_ICON_CONTAINER_CLS}>
         <DropdownMenuPrimitive.ItemIndicator>
-          <CheckIcon w="w-3.5 h-3.5" stroke="" style={{ strokeWidth: 3 }} />
+          <CheckIcon size="w-3.5 h-3.5" stroke="" style={{ strokeWidth: 3 }} />
         </DropdownMenuPrimitive.ItemIndicator>
       </span>
 
@@ -282,8 +282,7 @@ const DropdownMenuRadioItem = forwardRef<
     ref={ref}
     className={cn(
       ROUNDED_CLS,
-      BUTTON_MD_H_CLS,
-      'relative flex cursor-default select-none items-center text-xs outline-hidden focus:bg-muted focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50',
+      'h-button-md relative flex cursor-default select-none items-center text-xs outline-hidden focus:bg-muted focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50',
       className
     )}
     {...props}
@@ -394,7 +393,7 @@ export function DropdownMenuSubTrigger({
       )}
 
       <span className={DROPDOWN_MENU_ICON_CONTAINER_CLS}>
-        <ChevronRightIcon w="w-4" stroke="" />
+        <ChevronRightIcon size="w-4" stroke="" />
       </span>
     </DropdownMenuPrimitive.SubTrigger>
   )

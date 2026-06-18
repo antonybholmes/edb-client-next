@@ -2,17 +2,18 @@ import { VCenterRow } from '@/layout/v-center-row'
 
 import { useState } from 'react'
 
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import { OpenIcon } from '@/components/icons/open-icon'
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { DownloadIcon } from '@/components/icons/download-icon'
+import { UploadIcon } from '@/components/icons/upload-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import {
   onTextFileChange,
-  OpenFiles,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
+import {
+  ColorPickerButton,
+  SIMPLE_COLOR_EXT_CLS,
+} from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -22,23 +23,13 @@ import {
 } from '@/components/sortable-item'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { VScrollPanel } from '@/components/v-scroll-panel'
-import {
-  NO_DIALOG,
-  TEXT_ADD,
-  TEXT_CLEAR,
-  TEXT_NAME,
-  TEXT_OK,
-  TEXT_SHOW,
-  type IDialogParams,
-} from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { TEXT_ADD, TEXT_CLEAR, TEXT_NAME, TEXT_OK, TEXT_SHOW } from '@/consts'
 import { PlusIcon } from '@/icons/plus-icon'
-import { SaveIcon } from '@/icons/save-icon'
 import { TrashIcon } from '@/icons/trash-icon'
 import type { IDivProps } from '@/interfaces/div-props'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { downloadJson } from '@/lib/download-utils'
-import { makeUuid, randId } from '@/lib/id'
+import { makeUuid } from '@/lib/id'
 import { cn } from '@/lib/shadcn-utils'
 import { TRANS_COLOR_CLS } from '@/theme'
 import { IconButton } from '@/themed/icon-button'
@@ -69,7 +60,8 @@ export function LabelPropsPanel({ ref }: IDivProps) {
   //const [delLabel, setDelLabel] = useState<IProteinLabel | null>(null)
 
   const { displayProps, setDisplayProps } = useLollipopSettings()
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
+
+  const { open: openDialog } = useDialogs()
 
   //const [confirmClear, setConfirmClear] = useState(false)
   const [positions, setPositions] = useState('')
@@ -97,279 +89,260 @@ export function LabelPropsPanel({ ref }: IDivProps) {
   }
 
   return (
-    <>
-      {showDialog.id.startsWith('open') && (
-        <OpenFiles
-          //onOpenChange={() => setOpen("")}
-          onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
-              openLabelFiles(files)
-            })
-          }
-          fileTypes={['json']}
-        />
-      )}
+    <PropsPanel ref={ref} className="gap-y-2 pr-1">
+      <h2 className="font-semibold text-lg">Labels</h2>
 
-      {showDialog.id.includes('clear') && (
-        <OKCancelDialog
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              //onGroupsChange?.([])
-              setLabels([])
-            }
+      <VCenterRow className="justify-between gap-x-2 items-stretch">
+        <VCenterRow className="gap-x-2">
+          <VCenterRow>
+            <IconButton
+              onClick={() => {
+                openDialog({
+                  type: 'open',
+                  payload: {
+                    fileTypes: ['json'],
+                    callback: (message, files) =>
+                      onTextFileChange(message, files, files => {
+                        openLabelFiles(files)
+                      }),
+                  },
+                })
+              }}
+              title="Open labels"
+            >
+              <UploadIcon />
+            </IconButton>
 
-            //setConfirmClear(false)
+            <IconButton
+              // ripple={false}
+              onClick={() => downloadJson(labels, 'labels.json')}
+              title="Save labels"
+            >
+              <DownloadIcon />
+            </IconButton>
 
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        >
-          Are you sure you want to clear all features?
-        </OKCancelDialog>
-      )}
-
-      {showDialog.id.includes('delete') && (
-        <OKCancelDialog
-          showClose={true}
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              setLabels(
-                labels.filter(
-                  feature =>
-                    feature.id !==
-                    (showDialog!.params!.label as IProteinLabel).id
-                )
+            <IconButton
+              // ripple={false}
+              onClick={() =>
+                setLabels([
+                  ...labels,
+                  {
+                    id: makeUuid(),
+                    name: `${protein?.sequence[0] ?? ''}1`,
+                    start: 1,
+                    color: DEFAULT_FEATURE_COLOR,
+                    show: true,
+                  },
+                ])
+              }
+              title="Add label"
+            >
+              <PlusIcon fill="stroke-foreground" />
+            </IconButton>
+          </VCenterRow>
+          <ToolbarSeparator />
+          <Checkbox
+            checked={displayProps.labels.show}
+            onCheckedChange={state =>
+              setDisplayProps(
+                produce(displayProps, draft => {
+                  draft.labels.show = state
+                })
               )
             }
-            //setDelLabel(null)
+          >
+            {TEXT_SHOW}
+          </Checkbox>
+        </VCenterRow>
 
-            setShowDialog({ ...NO_DIALOG })
+        {labels.length > 0 && (
+          <Button
+            variant="link"
+            // size="sm"
+            // ripple={false}
+            onClick={() => {
+              openDialog({
+                type: 'warning',
+                payload: {
+                  content: 'Are you sure you want to clear all labels?',
+                  callback: response => {
+                    if (response === TEXT_OK) {
+                      setLabels([])
+                    }
+                  },
+                },
+              })
+            }}
+            //aria-label="Clear All"
+            title="Clear all labels"
+          >
+            {TEXT_CLEAR}
+          </Button>
+        )}
+      </VCenterRow>
+
+      <VCenterRow className="justify-between gap-x-2">
+        <Input
+          placeholder="Positions"
+          className="grow shrink-0 text-center rounded-theme"
+          value={positions}
+          onChange={e => setPositions(e.currentTarget.value)}
+        />
+        <Button
+          variant="theme"
+          onClick={() => {
+            const used = new Set<number>(labels.map(label => label.start))
+
+            const newLabels: IProteinLabel[] = positions
+              .trim()
+              .split(',')
+              .map((s: string) => {
+                const v = parseInt(s.trim())
+
+                return {
+                  id: makeUuid(),
+                  name: `${protein?.sequence[v - 1] ?? ''}${v}`,
+                  start: v,
+                  color: COLOR_BLACK,
+                  show: true,
+                }
+              })
+              .filter(label => !used.has(label.start))
+
+            if (newLabels.length > 0) {
+              setLabels([...labels, ...newLabels])
+            }
           }}
         >
-          Are you sure you want to delete this label?
-        </OKCancelDialog>
-      )}
+          {TEXT_ADD}
+        </Button>
+      </VCenterRow>
 
-      <PropsPanel ref={ref} className="gap-y-2 pr-1">
-        <h2 className="font-semibold text-lg">Labels</h2>
+      <LineSeparator />
 
-        <VCenterRow className="justify-between gap-x-2 items-stretch">
-          <VCenterRow className="gap-x-2">
-            <VCenterRow>
-              <IconButton
-                onClick={() =>
-                  setShowDialog({ id: randId('open'), params: {} })
-                }
-                title="Open features"
-              >
-                <OpenIcon />
-              </IconButton>
+      <DndContext
+        sensors={sensors}
+        modifiers={[restrictToVerticalAxis]}
+        //onDragStart={event => setActiveId(event.active.id as string)}
+        // onDragEnd={event => {
+        //   const { active, over } = event
 
-              <IconButton
-                // ripple={false}
-                onClick={() => downloadJson(labels, 'labels.json')}
-                title="Save labels"
-              >
-                <SaveIcon className="rotate-180" />
-              </IconButton>
+        //   if (over && active.id !== over?.id) {
+        //     const oldIndex = features.findIndex(t => t.id === active.id)
+        //     const newIndex = features.findIndex(t => t.id === over.id)
+        //     const newOrder = arrayMove(features, oldIndex, newIndex)
 
-              <IconButton
-                // ripple={false}
-                onClick={() =>
-                  setLabels([
-                    ...labels,
-                    {
-                      id: makeUuid(),
-                      name: `${protein?.sequence[0] ?? ''}1`,
-                      start: 1,
-                      color: DEFAULT_FEATURE_COLOR,
-                      show: true,
-                    },
-                  ])
-                }
-                title="Add label"
-              >
-                <PlusIcon fill="stroke-foreground" />
-              </IconButton>
-            </VCenterRow>
-            <ToolbarSeparator />
-            <Checkbox
-              checked={displayProps.labels.show}
-              onCheckedChange={state =>
-                setDisplayProps(
-                  produce(displayProps, draft => {
-                    draft.labels.show = state
-                  })
-                )
-              }
-            >
-              {TEXT_SHOW}
-            </Checkbox>
-          </VCenterRow>
-
-          {labels.length > 0 && (
-            <Button
-              variant="link"
-              size="sm"
-              // ripple={false}
-              onClick={() => setShowDialog({ id: randId('clear'), params: {} })}
-              //aria-label="Clear All"
-              title="Clear all labels"
-            >
-              {TEXT_CLEAR}
-            </Button>
-          )}
-        </VCenterRow>
-
-        <VCenterRow className="justify-between gap-x-2">
-          <Input
-            placeholder="Positions"
-            className="grow shrink-0 text-center rounded-theme"
-            value={positions}
-            onChange={e => setPositions(e.currentTarget.value)}
-          />
-          <Button
-            variant="theme"
-            onClick={() => {
-              const used = new Set<number>(labels.map(label => label.start))
-
-              const newLabels: IProteinLabel[] = positions
-                .trim()
-                .split(',')
-                .map((s: string) => {
-                  const v = parseInt(s.trim())
-
-                  return {
-                    id: makeUuid(),
-                    name: `${protein?.sequence[v - 1] ?? ''}${v}`,
-                    start: v,
-                    color: COLOR_BLACK,
-                    show: true,
-                  }
-                })
-                .filter(label => !used.has(label.start))
-
-              if (newLabels.length > 0) {
-                setLabels([...labels, ...newLabels])
-              }
-            }}
-          >
-            {TEXT_ADD}
-          </Button>
-        </VCenterRow>
-
-        <LineSeparator />
-
-        <DndContext
-          sensors={sensors}
-          modifiers={[restrictToVerticalAxis]}
-          //onDragStart={event => setActiveId(event.active.id as string)}
-          // onDragEnd={event => {
-          //   const { active, over } = event
-
-          //   if (over && active.id !== over?.id) {
-          //     const oldIndex = features.findIndex(t => t.id === active.id)
-          //     const newIndex = features.findIndex(t => t.id === over.id)
-          //     const newOrder = arrayMove(features, oldIndex, newIndex)
-
-          //     setFeatures(newOrder)
-          //   }
-          // }}
+        //     setFeatures(newOrder)
+        //   }
+        // }}
+      >
+        <SortableContext
+          items={labels.map((label, li) => `label-${label}-${li}`)}
+          strategy={verticalListSortingStrategy}
         >
-          <SortableContext
-            items={labels.map((label, li) => `label-${label}-${li}`)}
-            strategy={verticalListSortingStrategy}
-          >
-            <VScrollPanel>
-              <ul className="flex flex-col">
-                {labels.map((label, li) => {
-                  const id = `label-${label}-${li}`
-                  return (
-                    <SortableItem
-                      key={id}
-                      id={id}
-                      extChildren={
-                        <VCenterRow className={DRAG_HANDLE_APPEAR_CLS}>
-                          <button
-                            className={cn(
-                              TRANS_COLOR_CLS,
-                              'stroke-foreground/50 hover:stroke-red-400'
-                            )}
-                            onClick={() =>
-                              setShowDialog({
-                                id: randId('delete'),
-                                params: { label },
-                              })
-                            }
-                            title="Delete label"
-                          >
-                            <TrashIcon stroke="" w="w-4" />
-                          </button>
-                        </VCenterRow>
+          <VScrollPanel>
+            <ul className="flex flex-col">
+              {labels.map((label, li) => {
+                const id = `label-${label}-${li}`
+                return (
+                  <SortableItem
+                    key={id}
+                    id={id}
+                    extChildren={
+                      <VCenterRow className={DRAG_HANDLE_APPEAR_CLS}>
+                        <button
+                          className={cn(
+                            TRANS_COLOR_CLS,
+                            'stroke-foreground/50 hover:stroke-red-400'
+                          )}
+                          onClick={() => {
+                            openDialog({
+                              type: 'warning',
+                              payload: {
+                                content:
+                                  'Are you sure you want to delete this label?',
+                                callback: response => {
+                                  if (response === TEXT_OK) {
+                                    setLabels(
+                                      labels.filter(l => l.id !== label.id)
+                                    )
+                                  }
+                                },
+                              },
+                            })
+                          }}
+                          title="Delete label"
+                        >
+                          <TrashIcon stroke="" />
+                        </button>
+                      </VCenterRow>
+                    }
+                  >
+                    <Checkbox
+                      checked={label.show}
+                      onCheckedChange={state =>
+                        setLabels(
+                          produce(labels, draft => {
+                            draft[li]!.show = state
+                          })
+                        )
                       }
-                    >
-                      <Checkbox
-                        checked={label.show}
-                        onCheckedChange={state =>
-                          setLabels(
-                            produce(labels, draft => {
-                              draft[li]!.show = state
-                            })
-                          )
-                        }
-                      />
+                    />
 
-                      <ColorPickerButton
-                        color={label.color}
-                        onColorChange={color =>
-                          setLabels(
-                            produce(labels, draft => {
-                              draft[li]!.color = color
-                            })
-                          )
-                        }
-                        className={SIMPLE_COLOR_EXT_CLS}
-                        title="Label color"
-                      />
-                      <BaseCol className="gap-y-1 grow">
-                        <Input
-                          id={li.toString()}
-                          placeholder={TEXT_NAME}
-                          value={label.name}
-                          w="grow"
-                          onTextChange={v => {
+                    <ColorPickerButton
+                      colors={[
+                        {
+                          color: label.color,
+                          onColorChange: color =>
                             setLabels(
                               produce(labels, draft => {
-                                draft[li]!.name = v
+                                draft[li]!.color = color
+                              })
+                            ),
+                        },
+                      ]}
+                      className={SIMPLE_COLOR_EXT_CLS}
+                      title="Label color"
+                    />
+                    <BaseCol className="gap-y-1 grow">
+                      <Input
+                        id={li.toString()}
+                        placeholder={TEXT_NAME}
+                        value={label.name}
+                        w="grow"
+                        onTextChange={v => {
+                          setLabels(
+                            produce(labels, draft => {
+                              draft[li]!.name = v
+                            })
+                          )
+                        }}
+                      />
+
+                      <VCenterRow className="gap-x-2">
+                        <NumericalInput
+                          value={label.start}
+                          placeholder="Start"
+                          onNumChange={v => {
+                            setLabels(
+                              produce(labels, draft => {
+                                draft[li]!.start = Math.max(
+                                  1,
+                                  Math.min(v, aaStats.length)
+                                )
                               })
                             )
                           }}
                         />
-
-                        <VCenterRow className="gap-x-2">
-                          <NumericalInput
-                            value={label.start}
-                            placeholder="Start"
-                            onNumChange={v => {
-                              setLabels(
-                                produce(labels, draft => {
-                                  draft[li]!.start = Math.max(
-                                    1,
-                                    Math.min(v, aaStats.length)
-                                  )
-                                })
-                              )
-                            }}
-                          />
-                        </VCenterRow>
-                      </BaseCol>
-                    </SortableItem>
-                  )
-                })}
-              </ul>
-            </VScrollPanel>
-          </SortableContext>
-        </DndContext>
-      </PropsPanel>
-    </>
+                      </VCenterRow>
+                    </BaseCol>
+                  </SortableItem>
+                )
+              })}
+            </ul>
+          </VScrollPanel>
+        </SortableContext>
+      </DndContext>
+    </PropsPanel>
   )
 }

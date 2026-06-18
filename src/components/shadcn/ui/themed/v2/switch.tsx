@@ -36,9 +36,9 @@ import {
 
 const TOGGLE_CLS = cn(
   FOCUS_RING_CLS,
-  'relative shrink-0 rounded-full',
-  'data-[enabled=true]:data-[checked]:bg-theme/80',
-  'data-[enabled=true]:data-[checked]:hover:bg-theme',
+  'relative shrink-0 rounded-full cursor-pointer',
+  'data-[enabled=true]:data-[checked]:bg-app-theme/80',
+  'data-[enabled=true]:data-[checked]:hover:bg-app-theme',
   'data-[enabled=true]:data-[unchecked]:bg-muted',
   'data-[enabled=true]:data-[unchecked]:hover:bg-muted',
   'data-[enabled=false]:bg-muted trans-color'
@@ -57,7 +57,7 @@ const TOGGLE_CLS = cn(
 
 const THUMB_CLS = cn(
   'absolute pointer-events-none aspect-square shrink-0',
-  'rounded-full bg-white z-30 left-[2px]',
+  'cursor-pointer rounded-full bg-white z-30 left-[2px]',
   'top-1/2 -translate-y-1/2 data-[checked=false]:left-[2px] data-[checked=true]:right-[2px]'
 )
 

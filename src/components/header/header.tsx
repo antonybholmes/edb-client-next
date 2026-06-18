@@ -2,11 +2,7 @@ import { VCenterRow } from '@/layout/v-center-row'
 import { cn } from '@/lib/shadcn-utils'
 import { type ReactNode } from 'react'
 
-import { config } from '@/config'
 import type { IDivProps } from '@/interfaces/div-props'
-import { FOCUS_INSET_RING_CLS } from '@/theme'
-import { FavIcon } from '../icons/favicon'
-import { BaseLink } from '../link/base-link'
 import { HeaderMenuGrid } from './header-menu-grid'
 
 export interface IHeaderChildrenProps {
@@ -29,7 +25,7 @@ export function Header({
       <VCenterRow className="gap-x-1">
         <HeaderMenuGrid />
 
-        <VCenterRow className="hidden md:flex gap-x-4 shrink-0">
+        {/* <VCenterRow className="hidden md:flex gap-x-4 shrink-0">
           <BaseLink
             className={cn(
               FOCUS_INSET_RING_CLS,
@@ -38,14 +34,16 @@ export function Header({
             href="/"
             title={`${config.appName} Home`}
           >
-            <FavIcon />
+            {showHomeIcon && <FavIcon />}
           </BaseLink>
+        </VCenterRow> */}
+        <VCenterRow id="header-left" className="gap-x-1">
+          {leftHeaderChildren}
         </VCenterRow>
-        <VCenterRow id="header-left">{leftHeaderChildren}</VCenterRow>
       </VCenterRow>
 
       <VCenterRow
-        className="justify-center col-span-6 md:col-span-2"
+        className="justify-center col-span-6 md:col-span-2 gap-x-1"
         id="header-center"
       >
         {children}

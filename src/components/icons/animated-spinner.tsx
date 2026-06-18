@@ -1,4 +1,4 @@
-import { type IIconProps } from '@/interfaces/icon-props'
+import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
 import { cn } from '@/lib/shadcn-utils'
 
 interface IProps extends IIconProps {
@@ -13,7 +13,8 @@ export function AnimatedSpinnerIcon({
     <svg
       aria-hidden="true"
       className={cn(
-        'mr-2 inline h-8 w-8 animate-spin text-gray-200 dark:text-gray-600',
+        ICON_CLS,
+        'mr-2 inline h-button-md w-button-md animate-spin text-gray-200 dark:text-gray-600',
         color,
         className
       )}

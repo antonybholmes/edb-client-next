@@ -1,4 +1,5 @@
 import { COLOR_BLACK } from '@/lib/color/color'
+import type { UndefStr } from '@/lib/text/text'
 
 export const AMINO_ACIDS: readonly string[] = Object.freeze([
   'A',
@@ -210,16 +211,16 @@ export function toVariantLevel(prefix: string): VariantLevel {
 
 export interface IVariant {
   from: string
-  to?: string | undefined
+  to?: UndefStr
   position: number
   level: VariantLevel
-  end?: string | undefined
+  end?: UndefStr
   isFrameShift: boolean
   isStop: boolean
   stopOffset?: number | undefined
   isDeletion: boolean
   isInsertion: boolean
-  insertion?: string | undefined
+  insertion?: UndefStr
   raw: string
 }
 
@@ -228,12 +229,12 @@ export function parseVariant(raw: string): IVariant {
 
   let level: VariantLevel = 'protein'
   let from: string = ''
-  let to: string | undefined = undefined
-  let end: string | undefined
+  let to: UndefStr = undefined
+  let end: UndefStr = undefined
   let isStop: boolean = false
   let isDeletion: boolean = false
   let isInsertion: boolean = false
-  let insertion: string | undefined = undefined
+  let insertion: UndefStr = undefined
   let position: number = -1
   let isFrameShift: boolean = false
   let stopOffset: number | undefined = undefined

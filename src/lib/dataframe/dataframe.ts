@@ -16,8 +16,6 @@ import {
   makeIndex,
   shapesEqual,
   type IndexFromType,
-  type IndexId,
-  type SeriesData,
   type Shape,
 } from './index'
 import {
@@ -26,6 +24,7 @@ import {
   type ISeriesOptions,
   type SeriesFromType,
 } from './series'
+import type { IndexId, SeriesData } from './series-data'
 
 export interface IDataFrameOptions extends ISeriesOptions {
   data?: BaseSeries | BaseSeries[] | SeriesData[] | SeriesData[][]
@@ -153,13 +152,13 @@ export class DataFrame extends BaseDataFrame {
     const rowIdx = findRow(this, row)
 
     if (rowIdx === -1) {
-      throw new Error('invalid row')
+      throw new Error(`invalid row ${row} ${col}`)
     }
 
     const colIdx = findCol(this, col)
 
     if (colIdx === -1) {
-      throw new Error('invalid col ' + col)
+      throw new Error(`invalid col ${col} ${row}`)
     }
 
     return this._data[rowIdx]![colIdx]! // ?? NaN

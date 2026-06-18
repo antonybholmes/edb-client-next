@@ -13,7 +13,7 @@ import { ColormapPropsPanel } from './colormap-props-panel'
 export function FeaturePropsPanel() {
   return (
     <Tabs orientation="vertical" className="flex flex-col grow text-xs pr-1">
-      <TabsContent value="colormap" className="grow overflow-hidden">
+      <TabsContent value="colormap">
         <ColormapPropsPanel />
       </TabsContent>
 

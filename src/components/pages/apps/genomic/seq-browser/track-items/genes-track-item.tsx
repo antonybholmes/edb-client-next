@@ -1,10 +1,11 @@
-import type { IDialogParams } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
+import { Settings2 } from 'lucide-react'
+import { useSeqBrowserDialogs } from '../seq-browser-dialogs'
 import type { IGeneTrack, ITrackGroup } from '../tracks-provider'
+import { useTracks } from '../tracks-store'
 import { BaseTrackItem } from './base-track-item'
 import {
   DeleteTrackGroupButton,
-  EditTrackButton,
   TRACK_ITEM_BUTTONS_CLS,
 } from './seq-track-item'
 
@@ -12,16 +13,13 @@ export function GenesTrackItem({
   group,
   active,
   multiselect,
-  setShowDialog,
 }: {
   group: ITrackGroup
   active: string | null
   multiselect: boolean
-  setShowDialog: (params: IDialogParams) => void
 }) {
-  //const [drag, setDrag] = useState(false)
-
-  // useMouseUpListener(() => setDrag(false))
+  const { open: openDialog } = useSeqBrowserDialogs()
+  const { dispatch } = useTracks()
 
   const track = group.tracks[0]! as IGeneTrack
 
@@ -41,12 +39,28 @@ export function GenesTrackItem({
       </span>
 
       <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
-        <EditTrackButton
-          cmd="edit-genes"
-          group={group}
-          track={track}
-          setShowDialog={setShowDialog}
-        />
+        <button
+          title={`Edit ${track.name}`}
+          className="opacity-50 hover:opacity-100 trans-opacity"
+          onClick={() => {
+            openDialog({
+              type: 'edit-genes',
+              payload: {
+                group,
+                track,
+                callback: data => {
+                  dispatch({
+                    type: 'update',
+                    group,
+                    track: data.track,
+                  })
+                },
+              },
+            })
+          }}
+        >
+          <Settings2 size={20} strokeWidth={1.5} />
+        </button>
       </VCenterRow>
     </BaseTrackItem>
   )

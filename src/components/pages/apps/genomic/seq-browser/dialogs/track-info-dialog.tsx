@@ -1,12 +1,10 @@
-import { LabelContainer } from '@/components/shadcn/ui/themed/v2/label'
 import { TEXT_NAME, TEXT_OK } from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
-import { Input } from '@/themed/v2/input'
-import type { AllSeqTrackTypes } from '../tracks-provider'
+import { OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
+import { TextPropRow } from '@/dialogs/text-prop-row'
+import type { SignalOrPeakTrack } from '../tracks-provider'
 
 export interface IProps {
-  track: AllSeqTrackTypes
-
+  track: SignalOrPeakTrack
   onCancel: () => void
 }
 
@@ -21,41 +19,42 @@ export function TrackInfoDialog({ track, onCancel }: IProps) {
         onCancel()
       }}
     >
-      <LabelContainer label={TEXT_NAME} className="w-30">
-        <Input
-          id="name"
-          value={track.name}
-          readOnly={true}
-          placeholder={TEXT_NAME}
-          //className="rounded-theme"
-          //h="lg"
-        />
-      </LabelContainer>
+      <TextPropRow
+        title="Name"
+        labelW="sm"
+        value={track.name}
+        readOnly={true}
+        placeholder={TEXT_NAME}
+        //className="rounded-theme"
+        //h="lg"
+      />
 
-      <LabelContainer label="Track Type" className="w-30">
-        <Input
-          id="type"
-          value={track.type}
-          readOnly={true}
-          placeholder="Track Type"
-        />
-      </LabelContainer>
+      <TextPropRow
+        labelW="sm"
+        title="Track Type"
+        value={track.type}
+        readOnly={true}
+        placeholder="Track Type"
+      />
 
       {'url' in track && track.url && (
-        <LabelContainer label="URL" className="w-30">
-          <Input id="url" value={track.url} readOnly={true} placeholder="URL" />
-        </LabelContainer>
+        <TextPropRow
+          title="URL"
+          labelW="sm"
+          value={track.url}
+          readOnly={true}
+          placeholder="URL"
+        />
       )}
 
       {'reads' in track && track.reads > 0 && (
-        <LabelContainer label="Reads" className="w-30">
-          <Input
-            id="reads"
-            value={track.reads.toLocaleString()}
-            readOnly={true}
-            placeholder="Reads"
-          />
-        </LabelContainer>
+        <TextPropRow
+          title="Reads"
+          labelW="sm"
+          value={track.reads.toLocaleString()}
+          readOnly={true}
+          placeholder="Reads"
+        />
       )}
     </OKCancelDialog>
   )

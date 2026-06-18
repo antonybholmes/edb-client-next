@@ -93,7 +93,7 @@ export function BottomBar({
       style={style}
     >
       {tabs.map(tab => (
-        <TabsContent value={tab.id} key={tab.id} className="flex flex-col grow">
+        <TabsContent value={tab.id} key={tab.id}>
           {tab.content}
         </TabsContent>
       ))}
@@ -123,7 +123,7 @@ export function BottomBar({
                 _onValueChange(tabs[i]!.id)
               }}
             >
-              <ChevronRightIcon w="w-4" className="-scale-x-100" />
+              <ChevronRightIcon size="w-4" className="-scale-x-100" />
             </ToolbarIconButton>
             <ToolbarIconButton
               title="Next Sheet"
@@ -154,7 +154,7 @@ export function BottomBar({
                 _onValueChange(tabs[i]!.id)
               }}
             >
-              <ChevronRightIcon w="w-4" />
+              <ChevronRightIcon size="w-4" />
             </ToolbarIconButton>
 
             <DropdownMenu>

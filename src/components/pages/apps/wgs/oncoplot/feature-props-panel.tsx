@@ -22,13 +22,13 @@ export function FeaturePropsPanel() {
       orientation="vertical"
       className="flex flex-col grow text-xs pr-1"
     >
-      <TabsContent value="genes" className="grow overflow-hidden">
+      <TabsContent value="genes">
         <GenePropsPanel />
       </TabsContent>
-      <TabsContent value="variants" className="grow overflow-hidden">
+      <TabsContent value="variants">
         <VariantPropsPanel />
       </TabsContent>
-      <TabsContent value="clinical" className="grow overflow-hidden">
+      <TabsContent value="clinical">
         <ClinicalPropsPanel />
       </TabsContent>
       <TabsList className="py-1">

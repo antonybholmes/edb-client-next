@@ -9,7 +9,7 @@ import {
   type LocType,
 } from './base-dataframe'
 
-import { fill, fill2d } from '../fill'
+import { fill2d, vfill } from '../fill'
 import { getExcelColName } from './cell'
 import { ColFrame } from './col-frame'
 import { type IDataFrameOptions } from './dataframe'
@@ -21,8 +21,6 @@ import {
   makeIndex,
   shapesEqual,
   type IndexFromType,
-  type IndexId,
-  type SeriesData,
   type Shape,
 } from './index'
 import {
@@ -31,6 +29,7 @@ import {
   DataSeries,
   type SeriesFromType,
 } from './series'
+import type { IndexId, SeriesData } from './series-data'
 
 export interface IAnnotationDataFrameOptions extends IDataFrameOptions {
   rowObs?: BaseDataFrame | undefined
@@ -107,10 +106,14 @@ export class AnnotationDataFrame extends BaseDataFrame {
   override col(col: IndexId): BaseSeries {
     const colData = this._colVars.col(DEFAULT_COLUMN_INDEX_NAME)
 
-    const colIdx = findInSeries(colData, col)[0]!
+    const colIdx = findInSeries(colData, col)
 
-    return new DataSeries(this._data.col(colIdx).values, {
-      name: this._colVars.str(colIdx, 0),
+    if (colIdx.length === 0) {
+      throw new Error(`Column ${col} not found in table`)
+    }
+
+    return new DataSeries(this._data.col(colIdx[0]!).values, {
+      name: this._colVars.str(colIdx[0]!, 0),
     })
   }
 
@@ -349,7 +352,7 @@ function setMetadataRow(metadata: BaseDataFrame, rowIdx: number, row: IndexId) {
     // we fill in the missing annotation by assuming the first
     // meta column is the index label and anything else is
     // extra annotation which we set to the empty string
-    metadata.setRow(rowIdx, [row, ...fill('', metadata.shape[1] - 1)], true)
+    metadata.setRow(rowIdx, [row, ...vfill('', metadata.shape[1] - 1)], true)
   }
 }
 

@@ -1,6 +1,7 @@
+import type { UndefStr } from '@/lib/text/text'
 import type { CSSProperties } from 'react'
 
 export interface IClassProps {
-  className?: string | undefined
+  className?: UndefStr
   style?: CSSProperties | undefined
 }

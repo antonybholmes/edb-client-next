@@ -1,8 +1,8 @@
 import { config } from '@/config'
-import MODULE_INFO from './module.json'
+import APP_INFO from './manifest.json'
 
 import type { IMarginProps } from '@/components/plot/svg-props'
-import { getModuleName } from '@/lib/module-info'
+import { getAppName } from '@/lib/app-info'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
@@ -11,7 +11,7 @@ export type DNABase = 'a' | 'c' | 'g' | 't'
 
 export const LW = 45
 
-const SETTINGS_KEY = `${config.appId}:app:${getModuleName(MODULE_INFO.name)}:settings:v4`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v4`
 
 export interface IMotifSettings {
   view: Mode

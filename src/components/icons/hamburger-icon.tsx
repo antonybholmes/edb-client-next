@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react'
 //const LINE_CLS = 'w-full h-px absolute bg-foreground origin-center'
 
 export function HamburgerIcon({
-  w = 'w-4 h-4',
+  size = 'w-4 h-4',
   stroke = 'stroke-foreground',
   className,
   strokeWidth = 2,
@@ -67,7 +67,7 @@ export function HamburgerIcon({
     <svg
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn(ICON_CLS, stroke, w, className)}
+      className={cn(ICON_CLS, stroke, size, className)}
       strokeWidth={strokeWidth}
       //animate={{ scaleX:  1, scaleY: hover ? 0.7 : 1 }}
       // transition={{ ease: 'easeInOut' }}
@@ -106,7 +106,7 @@ export function HamburgerIcon({
     </svg>
 
     // <VCenterCol
-    //   className={cn(ICON_CLS, w, className)}
+    //   className={cn(ICON_CLS, size, className)}
     //   //style={style}
     // >
     //   <span

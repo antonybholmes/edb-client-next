@@ -1,10 +1,10 @@
 import { API_MOTIF_DATASETS_URL, API_MOTIF_SEARCH_URL } from '@/lib/edb/edb'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { useQuery } from '@tanstack/react-query'
-import MODULE_INFO from './module.json'
+import APP_INFO from './manifest.json'
 
 import { config } from '@/config'
-import { getModuleName } from '@/lib/module-info'
+import { getAppName } from '@/lib/app-info'
 
 import { useEffect } from 'react'
 import { create } from 'zustand'
@@ -16,7 +16,7 @@ import { useMotifSettings } from './motifs-settings'
 
 //const MAX_MOTIFS = 100
 
-const SETTINGS_KEY = `${config.appId}:app:${getModuleName(MODULE_INFO.name)}:store:v4`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:store:v4`
 
 export interface IPaging {
   page: number

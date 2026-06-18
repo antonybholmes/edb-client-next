@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState } from 'react'
 
 import { SignInIcon } from '@/components/icons/sign-in-icon'
 import { UserIcon } from '@/components/icons/user-icon'
@@ -9,20 +9,16 @@ import {
 } from '@/components/shadcn/ui/themed/v2/popover'
 import {
   IS_DEV_MODE,
-  NO_DIALOG,
   TEXT_EMAIL,
   TEXT_OK,
   TEXT_SIGN_IN,
   TEXT_SIGN_OUT,
-  type IDialogParams,
 } from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
 import { SignOutIcon } from '@/icons/sign-out-icon'
 import {
   ICON_TRANSITION_FROM_CLS,
   ICON_TRANSITION_TO_CLS,
 } from '@/interfaces/icon-props'
-import { randId } from '@/lib/id'
 import { cn } from '@/lib/shadcn-utils'
 import { UserRound } from 'lucide-react'
 
@@ -43,8 +39,9 @@ import {
 } from '@/lib/http/urls'
 import { Button } from '@/themed/v2/button'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
 import { VCenterRow } from '@/components/layout/v-center-row'
-import { config } from '@/config'
+import { AuthProvider } from '@/providers/auth-provider'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import {
@@ -417,12 +414,13 @@ interface IProps {
 
 export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
   const [open, setOpen] = useState(false)
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
+
   const { settings } = useEdbSettings()
   const { session } = useEdbAuth()
   const [, setSigninState] = useAtom(signinStateAtom)
   //const { loginWithRedirect } = useAuth0()
   const { signOut } = useSignOut()
+  const { open: openDialog } = useDialogs()
 
   const [state, setState] = useState<IRedirectState>(DEFAULT_REDIRECT_STATE)
 
@@ -473,17 +471,15 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
     initials = initials.toUpperCase().slice(0, 3)
   }
 
-  let menu: ReactNode = null
-
   if (isSignedIn) {
-    menu = (
+    return (
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
           render={
             <HeaderIconButton
               id="edb-signin-button"
               checked={open}
-              rounded="full"
+              //rounded="full"
               // ripple={false}
               title={isSignedIn ? TEXT_MY_ACCOUNT : TEXT_SIGN_IN}
             >
@@ -512,7 +508,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
           //onEscapeKeyDown={() => setOpen(false)}
           //onInteractOutside={() => setOpen(false)}
           align="end"
-          className="w-96 gap-y-4"
+          className="w-96 gap-y-4 flex flex-col"
           variant="header"
         >
           <BaseRow className="gap-x-4">
@@ -532,7 +528,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
               </VCenterRow>
             )}
 
-            <BaseCol className="gap-y-3">
+            <BaseCol className="gap-y-2">
               <BaseCol className="gap-y-0.5">
                 <span className="font-semibold truncate">{name}</span>
                 <span className="truncate">{cachedUserInfo.email}</span>
@@ -553,7 +549,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
                 // </DropdownMenuItem>
 
                 <ThemeLink href="/admin/users" aria-label="Users">
-                  User Admin
+                  Admin
                 </ThemeLink>
               )}
             </BaseCol>
@@ -562,8 +558,9 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
           <BaseCol className="gap-y-2">
             {IS_DEV_MODE && (
               <>
-                <Auth0SignInButton state={state} />
-
+                <AuthProvider>
+                  <Auth0SignInButton state={state} />
+                </AuthProvider>
                 <CognitoSignInButton state={state} />
 
                 {/* <ClerkSignInButton state={state} /> */}
@@ -591,7 +588,18 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
               size="lg"
               aria-label={TEXT_SIGN_OUT}
               onClick={() =>
-                setShowDialog({ id: randId('signout'), params: {} })
+                openDialog({
+                  type: 'warning',
+                  payload: {
+                    title: TEXT_SIGN_OUT,
+                    content: 'Are you sure you want to sign out?',
+                    callback: r => {
+                      if (r === TEXT_OK && state) {
+                        signOut(state)
+                      }
+                    },
+                  },
+                })
               }
             >
               <SignOutIcon stroke="" />
@@ -609,7 +617,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
         checked={open}
         // ripple={false}
         title={TEXT_SIGN_IN}
-        rounded="full"
+        //rounded="full"
       >
         <UserIcon
           className={cn(
@@ -624,7 +632,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
 
     switch (signInMode) {
       case 'api':
-        menu = (
+        return (
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger render={button} />
 
@@ -638,9 +646,9 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
             </PopoverContent>
           </Popover>
         )
-        break
+
       default:
-        menu = (
+        return (
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger render={button} />
 
@@ -655,7 +663,9 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
                 <span className="font-bold text-xl text-center text-foreground/75">
                   {TEXT_SIGN_IN}
                 </span>
-                <Auth0SignInButton state={state} />
+                <AuthProvider>
+                  <Auth0SignInButton state={state} />
+                </AuthProvider>
 
                 <StrikeThroughMenuItem>Or</StrikeThroughMenuItem>
 
@@ -687,7 +697,18 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
                   size="lg"
                   aria-label={TEXT_SIGN_OUT}
                   onClick={() => {
-                    setShowDialog({ id: randId('signout'), params: {} })
+                    openDialog({
+                      type: 'warning',
+                      payload: {
+                        title: TEXT_SIGN_OUT,
+                        content: 'Are you sure you want to sign out?',
+                        callback: r => {
+                          if (r === TEXT_OK && state) {
+                            signOut(state)
+                          }
+                        },
+                      },
+                    })
                   }}
                 >
                   {TEXT_SIGN_OUT}
@@ -696,35 +717,6 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
             </PopoverContent>
           </Popover>
         )
-        break
     }
   }
-
-  return (
-    <>
-      <OKCancelDialog
-        open={showDialog.id.startsWith('signout')}
-        title={config.appName}
-        //contentVariant="glass"
-        //bodyVariant="card"
-        modalType="Warning"
-        onResponse={r => {
-          if (r === TEXT_OK) {
-            //const url = addRedirectStateToUrl(SIGN_OUT_ROUTE, state)
-            //redirect(url)
-
-            if (state) {
-              signOut(state)
-            }
-          }
-
-          setShowDialog({ ...NO_DIALOG })
-        }}
-      >
-        Are you sure you want to {TEXT_SIGN_OUT}?
-      </OKCancelDialog>
-
-      {menu}
-    </>
-  )
 }

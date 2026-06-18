@@ -1,29 +1,22 @@
 import { VCenterRow } from '@/layout/v-center-row'
 
-import { useState, type Dispatch, type SetStateAction } from 'react'
-
 import { PropsPanel } from '@/components/props-panel'
 import {
-  NO_DIALOG,
   TEXT_CLEAR,
   TEXT_NAME,
   TEXT_OK,
   TEXT_SHOW,
   TEXT_UNLABELLED,
-  type IDialogParams,
 } from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
 import { PlusIcon } from '@/icons/plus-icon'
-import { SaveIcon } from '@/icons/save-icon'
 import { TrashIcon } from '@/icons/trash-icon'
 import { downloadJson } from '@/lib/download-utils'
-import { makeUuid, randId } from '@/lib/id'
+import { makeUuid } from '@/lib/id'
 import { cn } from '@/lib/shadcn-utils'
 import { TRANS_COLOR_CLS } from '@/theme'
 import { Button } from '@/themed/v2/button'
 import { Input } from '@/themed/v2/input'
 
-import { OpenIcon } from '@/components/icons/open-icon'
 import { PopoverTrigger } from '@/components/shadcn/ui/themed/v2/popover'
 import { SortableItem } from '@/components/sortable-item'
 import { ThreeColorMenu } from '@/components/three-color-menu'
@@ -48,18 +41,20 @@ import { produce } from 'immer'
 
 import { useLollipopSettings } from './lollipop-settings-store'
 
-import { CheckPropRow } from '@/components/dialog/check-prop-row'
-import { PropRow } from '@/components/dialog/prop-row'
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { DownloadIcon } from '@/components/icons/download-icon'
+import { UploadIcon } from '@/components/icons/upload-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import {
   onTextFileChange,
-  OpenFiles,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { VScrollPanel } from '@/components/v-scroll-panel'
+import { CheckPropRow } from '@/dialogs/check-prop-row'
+import { PropRow } from '@/dialogs/prop-row'
 import { TRACK_ITEM_BUTTONS_CLS } from '../../genomic/seq-browser/track-items/seq-track-item'
 import { useLollipopStore } from './lollipop-store'
 import { type IDomain } from './lollipop-utils'
@@ -70,9 +65,9 @@ function Trigger({ domain }: { domain: IDomain }) {
       title="Change colors"
       className="rounded-full shrink-0 aspect-square font-bold w-6 h-6 overflow-hidden border-2"
       style={{
-        backgroundColor: domain.fill.color,
-        borderColor: domain.border.color,
-        color: domain.text.color,
+        backgroundColor: domain.fill.value,
+        borderColor: domain.border.value,
+        color: domain.text.font.fill.value,
       }}
     >
       A
@@ -82,7 +77,7 @@ function Trigger({ domain }: { domain: IDomain }) {
 
 interface IDomainProps {
   domain: IDomain
-  setDelDomain: Dispatch<SetStateAction<IDomain | null>>
+  setDelDomain: (domain: IDomain | null) => void
 }
 
 function DomainElem({ domain, setDelDomain }: IDomainProps) {
@@ -105,12 +100,13 @@ function DomainElem({ domain, setDelDomain }: IDomainProps) {
           <button
             className={cn(
               TRANS_COLOR_CLS,
-              'stroke-foreground/50 hover:stroke-red-400'
+              'stroke-foreground/50 hover:text-destructive hover:stroke-destructive'
             )}
             onClick={() => setDelDomain(domain)}
             title="Delete domain"
+            //className="hover:text-destructive focus-visible:text-destructive trans-color"
           >
-            <TrashIcon stroke="" w="w-4" />
+            <TrashIcon stroke="" />
           </button>
         </VCenterRow>
       }
@@ -126,103 +122,130 @@ function DomainElem({ domain, setDelDomain }: IDomainProps) {
         }
       />
       <ThreeColorMenu
-        tooltips={['Text', 'Border', 'Fill']}
-        color1={domain.text.color}
-        color2={domain.border.color}
-        color3={domain.fill.color}
-        showColor2={domain.border.show}
-        onShowColor1={show => {
-          setDomain(
-            produce(domain, draft => {
-              draft.text.show = show
-            })
-          )
+        colors={[
+          {
+            tooltip: 'Text',
+            color: domain.text.font.fill.value,
+            font: domain.text,
+            onColorChange: (color, opacity) => {
+              setDomain(
+                produce(domain, draft => {
+                  draft.text.font.fill.value = color
+                  draft.text.font.fill.opacity = opacity
+                })
+              )
 
-          setGlobalDomain(
-            produce(globalDomain, draft => {
-              draft.text.show = show
-            })
-          )
-        }}
-        onShowColor2={show => {
-          setDomain(
-            produce(domain, draft => {
-              draft.border.show = show
-            })
-          )
+              setGlobalDomain(
+                produce(globalDomain, draft => {
+                  draft.text.font.fill.value = color
+                  draft.text.font.fill.opacity = opacity
+                })
+              )
+            },
+            onShowColor: show => {
+              setDomain(
+                produce(domain, draft => {
+                  draft.text.show = show
+                })
+              )
 
-          setGlobalDomain(
-            produce(globalDomain, draft => {
-              draft.border.show = show
-            })
-          )
-        }}
-        onColor2Change={color => {
-          setDomain(
-            produce(domain, draft => {
-              draft.border.color = color
-            })
-          )
+              setGlobalDomain(
+                produce(globalDomain, draft => {
+                  draft.text.show = show
+                })
+              )
+            },
+            onFontChange: font => {
+              setDomain(
+                produce(domain, draft => {
+                  draft.text = font
+                })
+              )
 
-          setGlobalDomain(
-            produce(globalDomain, draft => {
-              draft.border.color = color
-            })
-          )
-        }}
-        width2={domain.border.width}
-        onWidthChange2={width => {
-          setDomain(
-            produce(domain, draft => {
-              draft.border.width = width
-            })
-          )
+              setGlobalDomain(
+                produce(globalDomain, draft => {
+                  draft.text = font
+                })
+              )
+            },
+          },
+          {
+            tooltip: 'Border',
+            color: domain.border.value,
 
-          setGlobalDomain(
-            produce(globalDomain, draft => {
-              draft.border.width = width
-            })
-          )
-        }}
-        onShowColor3={show => {
-          setDomain(
-            produce(domain, draft => {
-              draft.fill.show = show
-            })
-          )
+            onShowColor: show => {
+              setDomain(
+                produce(domain, draft => {
+                  draft.border.show = show
+                })
+              )
 
-          setGlobalDomain(
-            produce(globalDomain, draft => {
-              draft.fill.show = show
-            })
-          )
-        }}
-        onColor3Change={color => {
-          setDomain(
-            produce(domain, draft => {
-              draft.fill.color = color
-            })
-          )
+              setGlobalDomain(
+                produce(globalDomain, draft => {
+                  draft.border.show = show
+                })
+              )
+            },
+            onColorChange: (color, opacity, width) => {
+              setDomain(
+                produce(domain, draft => {
+                  draft.border.value = color
+                  draft.border.opacity = opacity
+                  draft.border.width = width
+                })
+              )
 
-          setGlobalDomain(
-            produce(globalDomain, draft => {
-              draft.fill.color = color
-            })
-          )
-        }}
-        onColor1Change={color => {
-          setDomain(
-            produce(domain, draft => {
-              draft.text.color = color
-            })
-          )
+              setGlobalDomain(
+                produce(globalDomain, draft => {
+                  draft.border.value = color
+                  draft.border.opacity = opacity
+                  draft.border.width = width
+                })
+              )
+            },
+            width: domain.border.width,
+          },
+          {
+            tooltip: 'Fill',
+            color: domain.fill.value,
 
-          setGlobalDomain(
-            produce(globalDomain, draft => {
-              draft.text.color = color
-            })
-          )
-        }}
+            onShowColor: show => {
+              setDomain(
+                produce(domain, draft => {
+                  draft.fill.show = show
+                })
+              )
+
+              setGlobalDomain(
+                produce(globalDomain, draft => {
+                  draft.fill.show = show
+                })
+              )
+            },
+            onColorChange: (color, opacity) => {
+              setDomain(
+                produce(domain, draft => {
+                  draft.fill.value = color
+                  draft.fill.opacity = opacity
+                })
+              )
+
+              setGlobalDomain(
+                produce(globalDomain, draft => {
+                  draft.fill.value = color
+                  draft.fill.opacity = opacity
+                })
+              )
+
+              setGlobalDomain(
+                produce(globalDomain, draft => {
+                  draft.fill.value = color
+                  draft.fill.opacity = opacity
+                })
+              )
+            },
+          },
+        ]}
       >
         <Trigger domain={domain} />
       </ThreeColorMenu>
@@ -281,7 +304,8 @@ export function DomainPropsPanel({ ref }: IDivProps) {
     setDomains: setFeatures,
   } = useLollipopStore()
   //const [delFeature, setDelFeature] = useState<IProteinFeature | null>(null)
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
+
+  const { open: openDialog } = useDialogs()
 
   const {
     domain: feature,
@@ -312,68 +336,28 @@ export function DomainPropsPanel({ ref }: IDivProps) {
     }
   }
 
+  console.log('features', feature)
+
   return (
     <>
-      {showDialog.id.startsWith('open') && (
-        <OpenFiles
-          //onOpenChange={() => setOpen("")}
-          onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
-              openFeatureFiles(files)
-            })
-          }
-          fileTypes={['json']}
-        />
-      )}
-
-      {showDialog.id.includes('clear') && (
-        <OKCancelDialog
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              //onGroupsChange?.([])
-              setFeatures([])
-            }
-
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        >
-          Are you sure you want to clear all features?
-        </OKCancelDialog>
-      )}
-
-      {showDialog.id.includes('delete') && (
-        <OKCancelDialog
-          //open={delFeature !== null}
-          showClose={true}
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              setFeatures(
-                features.filter(
-                  feature =>
-                    feature.id !== (showDialog.params!.feature! as IDomain).id
-                )
-              )
-            }
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        >
-          {`Are you sure you want to delete ${
-            (showDialog.params!.feature! as IDomain).name
-              ? (showDialog.params!.feature! as IDomain).name
-              : TEXT_UNLABELLED
-          }?`}
-        </OKCancelDialog>
-      )}
-
       <PropsPanel ref={ref} className="pr-1 gap-y-2">
         <h2 className="font-semibold text-lg">Domains</h2>
         <VCenterRow className="justify-between gap-x-2">
           <VCenterRow className="items-stretch">
             <IconButton
-              onClick={() => setShowDialog({ id: randId('open'), params: {} })}
+              onClick={() =>
+                openDialog({
+                  type: 'open',
+                  payload: {
+                    fileTypes: ['json'],
+                    callback: (message, files) =>
+                      onTextFileChange(message, files, openFeatureFiles),
+                  },
+                })
+              }
               title="Open features"
             >
-              <OpenIcon />
+              <UploadIcon />
             </IconButton>
 
             <IconButton
@@ -381,7 +365,7 @@ export function DomainPropsPanel({ ref }: IDivProps) {
               onClick={() => downloadJson(features, 'features.json')}
               title="Save features"
             >
-              <SaveIcon />
+              <DownloadIcon />
             </IconButton>
 
             <ToolbarSeparator />
@@ -410,9 +394,21 @@ export function DomainPropsPanel({ ref }: IDivProps) {
           {features.length > 0 && (
             <Button
               variant="link"
-              size="sm"
+              //size="sm"
               // ripple={false}
-              onClick={() => setShowDialog({ id: randId('clear'), params: {} })}
+              onClick={() => {
+                openDialog({
+                  type: 'warning',
+                  payload: {
+                    content: 'Are you sure you want to clear all features?',
+                    callback: response => {
+                      if (response === TEXT_OK) {
+                        setFeatures([])
+                      }
+                    },
+                  },
+                })
+              }}
               //aria-label="Clear All"
               title="Clear all groups"
             >
@@ -449,68 +445,85 @@ export function DomainPropsPanel({ ref }: IDivProps) {
 
           <PropRow title="All feature colors">
             <ThreeColorMenu
-              tooltips={['Text', 'Border', 'Fill']}
-              color2={feature.border.color}
-              color3={feature.fill.color}
-              color1={feature.text.color}
-              showColor2={feature.border.show}
-              onShowColor2={show => {
-                setFeatures(
-                  produce(features, draft => {
-                    for (const f of draft) {
-                      f.border.show = show
-                    }
-                  })
-                )
+              colors={[
+                {
+                  tooltip: 'Text',
+                  color: feature.text.font.fill.value,
+                  onColorChange: (color, opacity) => {
+                    setFeatures(
+                      produce(features, draft => {
+                        for (const f of draft) {
+                          f.text.font.fill.value = color
+                          f.text.font.fill.opacity = opacity
+                        }
+                      })
+                    )
+                    setGlobalFeature(
+                      produce(feature, draft => {
+                        draft.text.font.fill.value = color
+                        draft.text.font.fill.opacity = opacity
+                      })
+                    )
+                  },
+                },
+                {
+                  tooltip: 'Border',
+                  color: feature.border.value,
 
-                setGlobalFeature(
-                  produce(feature, draft => {
-                    draft.border.show = show
-                  })
-                )
-              }}
-              onColor1Change={color => {
-                setFeatures(
-                  produce(features, draft => {
-                    for (const f of draft) {
-                      f.text.color = color
-                    }
-                  })
-                )
-                setGlobalFeature(
-                  produce(feature, draft => {
-                    draft.text.color = color
-                  })
-                )
-              }}
-              onColor2Change={color => {
-                setFeatures(
-                  produce(features, draft => {
-                    for (const f of draft) {
-                      f.border.color = color
-                    }
-                  })
-                )
-                setGlobalFeature(
-                  produce(feature, draft => {
-                    draft.border.color = color
-                  })
-                )
-              }}
-              onColor3Change={color => {
-                setFeatures(
-                  produce(features, draft => {
-                    for (const f of draft) {
-                      f.fill.color = color
-                    }
-                  })
-                )
-                setGlobalFeature(
-                  produce(feature, draft => {
-                    draft.fill.color = color
-                  })
-                )
-              }}
+                  onShowColor: show => {
+                    setFeatures(
+                      produce(features, draft => {
+                        for (const f of draft) {
+                          f.border.show = show
+                        }
+                      })
+                    )
+
+                    setGlobalFeature(
+                      produce(feature, draft => {
+                        draft.border.show = show
+                      })
+                    )
+                  },
+                  onColorChange: (color, opacity) => {
+                    setFeatures(
+                      produce(features, draft => {
+                        for (const f of draft) {
+                          f.border.value = color
+                          f.border.opacity = opacity
+                        }
+                      })
+                    )
+                    setGlobalFeature(
+                      produce(feature, draft => {
+                        draft.border.value = color
+                        draft.border.opacity = opacity
+                      })
+                    )
+                  },
+                },
+                {
+                  tooltip: 'Fill',
+                  color: feature.fill.value,
+
+                  onColorChange: (color, opacity) => {
+                    setFeatures(
+                      produce(features, draft => {
+                        for (const f of draft) {
+                          f.fill.value = color
+                          f.fill.opacity = opacity
+                        }
+                      })
+                    )
+                    setGlobalFeature(
+                      produce(feature, draft => {
+                        draft.fill.value = color
+                        draft.fill.opacity = opacity
+                      })
+                    )
+                  },
+                },
+              ]}
             >
               <Trigger domain={feature} />
             </ThreeColorMenu>
@@ -545,12 +558,26 @@ export function DomainPropsPanel({ ref }: IDivProps) {
                     <DomainElem
                       key={feature.id}
                       domain={feature}
-                      setDelDomain={feature =>
-                        setShowDialog({
-                          id: randId('delete'),
-                          params: { feature },
+                      setDelDomain={fd => {
+                        if (!fd) {
+                          return
+                        }
+                        openDialog({
+                          type: 'warning',
+                          payload: {
+                            content: `Are you sure you want to delete the ${
+                              fd.name ? fd.name : TEXT_UNLABELLED
+                            } domain?`,
+                            callback: response => {
+                              if (response === TEXT_OK) {
+                                setFeatures(
+                                  features.filter(f => f.id !== fd.id)
+                                )
+                              }
+                            },
+                          },
                         })
-                      }
+                      }}
                     />
                   )
                 })}

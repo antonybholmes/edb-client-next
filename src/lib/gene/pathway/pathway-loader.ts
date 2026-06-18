@@ -1,13 +1,13 @@
 import { randomHexColor } from '@/lib/color/color'
 
-import type { IGeneset } from '@/lib/gsea/geneset'
+import type { IGeneSet } from '@/lib/gsea/geneset'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { makeUuid } from '@/lib/id'
 import { textToLines } from '@/lib/text/lines'
 import type { IGeneSetFile } from './pathway'
 
-export async function loadGMT(file: IGeneSetFile): Promise<IGeneset[]> {
-  const geneSets: IGeneset[] = []
+export async function loadGMT(file: IGeneSetFile): Promise<IGeneSet[]> {
+  const geneSets: IGeneSet[] = []
 
   try {
     //const content = await fetchData(file.url)
@@ -23,7 +23,7 @@ export async function loadGMT(file: IGeneSetFile): Promise<IGeneset[]> {
 
       geneSets.push({
         id: makeUuid(),
-        type: 'geneset',
+        //type: 'geneset',
         name: tokens[0]!,
         genes: tokens.slice(2),
         color: randomHexColor(),

@@ -3,7 +3,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { X } from 'lucide-react'
 
 export function CloseIcon({
-  w = 'w-5 h-5',
+  size = 'w-5 h-5',
   stroke = 'stroke-foreground',
   className,
   strokeWidth = 2,
@@ -13,7 +13,7 @@ export function CloseIcon({
     // <svg
     //   viewBox="0 0 16 16"
     //   xmlns="http://www.w3.org/2000/svg"
-    //   className={cn(ICON_CLS, w, stroke, fill, className)}
+    //   className={cn(ICON_CLS, size, stroke, fill, className)}
     //   style={{ ...style, strokeLinecap: 'round', strokeLinejoin: 'round' }}
     //   data-checked={selected}
     // >
@@ -21,7 +21,7 @@ export function CloseIcon({
     // </svg>
 
     <X
-      className={cn(ICON_CLS, stroke, w, className)}
+      className={cn(ICON_CLS, stroke, size, className)}
       strokeWidth={strokeWidth}
     />
   )

@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
+import { SunIcon } from '@/components/icons/sun-icon'
 import { ComputerIcon } from '@/icons/computer'
 import { MoonIcon } from '@/icons/moon-icon'
-import { SunIcon } from '@/icons/sun'
 import { Button } from '@/themed/v2/button'
 
 import { useTheme, type Theme } from '@/lib/edb/theme'

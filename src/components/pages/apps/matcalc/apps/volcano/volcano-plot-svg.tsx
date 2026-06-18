@@ -7,17 +7,23 @@ import { COLOR_BLACK } from '@/lib/color/color'
 import { cellStr } from '@/lib/dataframe/cell'
 
 import { Axis, YAxis } from '../../../../../plot/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '../../../../../plot/axis-svg'
-import { usePlot, type VolcanoPlot } from '../../history/history-store'
+import { AxisBottomSvg, AxisLeftSvg } from '../../../../../plot/svg-axis'
+import { type VolcanoPlot } from '../../history/history-store'
 
-import { BaseSvg } from '@/components/base-svg'
+import { SvgBase } from '@/components/plot/svg-base'
+import {
+  DEFAULT_STROKE_PROPS,
+  type IStrokeProps,
+} from '@/components/plot/svg-props'
 import type { ISVGProps } from '@/interfaces/svg-props'
-import type { SeriesData } from '@/lib/dataframe'
+
+import type { SeriesData } from '@/lib/dataframe/series-data'
 import {
   DEFAULT_SCATTER_PROPS,
   type IScatterDisplayOptions,
 } from '../../../../../plot/scatter/scatter-plot-svg'
 import type { ITooltip } from '../heatmap/heatmap-svg'
+import { useVolcanoContext } from './volcano-provider'
 
 const MARGIN = { top: 100, right: 100, bottom: 100, left: 100 }
 
@@ -30,11 +36,7 @@ const TOOLTIP_OFFSET = 10
 // ])
 
 export interface IVolcanoDisplayOptions extends IScatterDisplayOptions {
-  border: {
-    show: boolean
-    color: string
-    strokeWidth: number
-  }
+  border: IStrokeProps
   logP: {
     show: boolean
     threshold: number
@@ -128,11 +130,7 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
     },
     values: [],
   },
-  border: {
-    show: false,
-    color: COLOR_BLACK,
-    strokeWidth: 2,
-  },
+  border: { ...DEFAULT_STROKE_PROPS, width: 2, show: false },
 }
 
 function getColor(logFc: number, logP: number, props: IVolcanoDisplayOptions) {
@@ -158,7 +156,6 @@ function getColor(logFc: number, logP: number, props: IVolcanoDisplayOptions) {
 }
 
 interface IProps extends ISVGProps {
-  plotAddr: string
   x: string
   y: string
   size?: string
@@ -174,9 +171,8 @@ export function VolcanoPlotSvg({
   size,
   //displayOptions = { ...DEFAULT_VOLCANO_PROPS },
   sizeFunc = (x: number) => x,
-  plotAddr,
 }: IProps) {
-  const plot = usePlot(plotAddr)! as VolcanoPlot
+  const { plot } = useVolcanoContext()
 
   const displayOptions: IVolcanoDisplayOptions = (plot! as VolcanoPlot).props
 
@@ -224,7 +220,7 @@ export function VolcanoPlotSvg({
       .map(v => v[1])
 
     return (
-      <BaseSvg
+      <SvgBase
         ref={ref}
         width={width}
         height={height}
@@ -328,8 +324,8 @@ export function VolcanoPlotSvg({
             <rect
               width={innerWidth}
               height={innerHeight}
-              stroke={displayOptions.border.color}
-              strokeWidth={displayOptions.border.strokeWidth}
+              stroke={displayOptions.border.value}
+              strokeWidth={displayOptions.border.width}
               fill="none"
             />
           </g>
@@ -351,7 +347,7 @@ export function VolcanoPlotSvg({
           title={x}
           color={displayOptions.axes.xaxis.color}
         />
-      </BaseSvg>
+      </SvgBase>
     )
   }, [sheet, y, displayOptions, sizeFunc])
 

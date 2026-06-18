@@ -52,9 +52,9 @@ export function BaseSignInCallbackPage({
   return (
     <CenterLayout signinRequired={false} innerCls="gap-y-2">
       {error ? (
-        <p className="text-red-500">{error}</p>
+        <p className="text-destructive">{error}</p>
       ) : (
-        <AuthModal title={`Signing in to ${config.appName}...`}>
+        <AuthModal title={`Signing in to ${config.name}...`}>
           {_state && (
             <p>
               You will be redirected to{' '}

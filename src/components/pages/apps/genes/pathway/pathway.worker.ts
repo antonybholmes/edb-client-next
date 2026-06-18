@@ -1,22 +1,25 @@
-import {
-  PathwayOverlap,
-  type IDataset,
-} from '../../../../../lib/gene/pathway/pathway'
-import type { IGeneset } from '../../../../../lib/gsea/geneset'
+import type { SeriesData } from '../../../../../lib/dataframe/series-data'
+import { PathwayOverlap } from '../../../../../lib/gene/pathway/pathway'
+import type { ICollection, IGeneSet } from '../../../../../lib/gsea/geneset'
 
-self.onmessage = function (
-  e: MessageEvent<{
-    genesets: IGeneset[]
-    datasets: IDataset[]
-    genesInUniverse: number
-  }>
-) {
-  const { genesets, datasets, genesInUniverse } = e.data
+export interface IPathwayWorkerMessage {
+  genesets: IGeneSet[]
+  collections: ICollection[]
+  genesInUniverse: number
+}
+
+export interface IPathwayWorkerResult {
+  data: SeriesData[][]
+  columns: string[]
+}
+
+self.onmessage = function (e: MessageEvent<IPathwayWorkerMessage>) {
+  const { genesets, collections, genesInUniverse } = e.data
 
   const overlap = new PathwayOverlap(genesInUniverse)
 
-  for (const dataset of datasets) {
-    overlap.addDataset(dataset)
+  for (const collection of collections) {
+    overlap.addDataset(collection)
   }
 
   const [data, columns] = overlap.test(genesets)
@@ -27,5 +30,5 @@ self.onmessage = function (
   // )
   // data = idx.map(i => data[i])
 
-  self.postMessage({ data, columns })
+  self.postMessage({ data, columns } as IPathwayWorkerResult)
 }

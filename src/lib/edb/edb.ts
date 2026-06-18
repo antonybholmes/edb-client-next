@@ -1,13 +1,18 @@
-import { config } from '@/config'
+import { config } from '../../config'
 
-import type { UndefNullStr } from '@/lib/text/text'
+import type { UndefNullStr } from '../text/text'
 
-//import { useUserStore } from "@/stores/account-store"
-
-import type { IDBEntity } from '@/interfaces/db-entity'
 import Cookies from 'js-cookie'
 import { jwtDecode, type JwtPayload } from 'jwt-decode'
+import type { IDBEntity } from '../../interfaces/db-entity'
 //import { CSRF_COOKIE_NAME } from './edb-auth'
+
+export interface INewUser extends IEdbUser {
+  password: string
+  // we need to track selected groups  as strings
+  // to make toggle group work
+  selectedGroups: string[]
+}
 
 export interface IAuthProvider extends IDBEntity {
   updatedAt: string
@@ -79,12 +84,13 @@ export interface IEdbUser extends IBasicEdbUser {
   isLocked: boolean
 }
 
-export const DEFAULT_EDB_USER: IEdbUser = {
+export const DEFAULT_EDB_USER: INewUser = {
   ...DEFAULT_BASIC_EDB_USER,
   id: '',
   isLocked: false,
   apiKeys: [],
-  //id: 0,
+  password: '',
+  selectedGroups: [],
 }
 
 export const EPOCH_DATE = new Date('1970-01-01T00:00:00Z')
@@ -284,6 +290,7 @@ export const API_SCRNA_DATASETS_URL = `${API_SCRNA_URL}/datasets`
 export const API_MOTIFS_URL = `${EDB_API_URL}/modules/motifs`
 export const API_MOTIF_DATASETS_URL = `${API_MOTIFS_URL}/datasets`
 export const API_MOTIF_SEARCH_URL = `${API_MOTIFS_URL}/search`
+export const API_MOTIF_TO_GENES_URL = `${API_MOTIFS_URL}/genes`
 
 export const API_SEQS_URL = `${EDB_API_URL}/modules/seqs`
 //export const API_SEQS_SEARCH_URL = `${API_SEQS_URL}/search`
@@ -296,6 +303,7 @@ export const API_BEDS_REGIONS_URL = `${API_BEDS_URL}/regions`
 export const API_PATHWAY_URL = `${EDB_API_URL}/modules/pathway`
 export const API_PATHWAY_GENES_URL = `${API_PATHWAY_URL}/genes`
 export const API_PATHWAY_DATASET_URL = `${API_PATHWAY_URL}/dataset`
+export const API_PATHWAY_COLLECTIONS_URL = `${API_PATHWAY_URL}/collections`
 export const API_PATHWAY_DATASETS_URL = `${API_PATHWAY_URL}/datasets`
 export const API_PATHWAY_OVERLAP_URL = `${API_PATHWAY_URL}/overlap`
 
@@ -347,6 +355,8 @@ export const APP_RESET_PASSWORD_URL = `${APP_URL}/account/password/reset`
 export const APP_UPDATE_EMAIL_URL = `${APP_URL}/account/email/update`
 
 export const COOKIE_EXPIRE_DAYS = 365
+
+export const EDB_SEP = '|'
 
 // export function validateRefreshToken(): boolean {
 //   //check token exists

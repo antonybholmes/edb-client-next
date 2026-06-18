@@ -16,8 +16,6 @@ import {
   shapesEqual,
   StringIndex,
   type IndexFromType,
-  type IndexId,
-  type SeriesData,
   type Shape,
 } from './index'
 import {
@@ -26,6 +24,7 @@ import {
   type ISeriesOptions,
   type SeriesFromType,
 } from './series'
+import type { IndexId, SeriesData } from './series-data'
 
 export interface IColFrameOptions extends ISeriesOptions {
   index?: Index

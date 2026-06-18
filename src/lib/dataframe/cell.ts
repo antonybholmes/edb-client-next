@@ -1,7 +1,13 @@
 import { DEFAULT_DATE_FORMAT } from '@/consts'
 import { format, parseISO } from 'date-fns'
-import type { SeriesData } from '.'
-import { formatNumber } from '../text/text'
+
+import {
+  DEFAULT_LOCALE,
+  formatNumber,
+  NA,
+  type IFormatNumOpts,
+} from '../text/text'
+import type { SeriesData } from './series-data'
 
 //export const NA_REGEX = /^(NA|#?N\/A)$/i
 //export const NUMBER_REGEX = /^-?\d*\.?\d+([eE][-+]?\d+)?$/ ///^-?\d+\.?\d*$/
@@ -60,8 +66,7 @@ export function makeCells(...args: SeriesData[]): SeriesData[] {
   return args.map(arg => makeCell(arg))
 }
 
-interface ICellStrOpts {
-  dp?: number
+interface ICellStrOpts extends IFormatNumOpts {
   defaultValue?: string
 }
 
@@ -74,13 +79,18 @@ interface ICellStrOpts {
  * @returns
  */
 export function cellStr(cell: SeriesData, options: ICellStrOpts = {}): string {
-  const { dp = 4, defaultValue = 'NA' } = { ...options }
+  const {
+    commas = true,
+    dp = 4,
+    defaultValue = NA,
+    locale = DEFAULT_LOCALE,
+  } = options
 
   if (typeof cell === 'number') {
     if (Number.isNaN(cell)) {
       return defaultValue
     } else {
-      return formatNumber(cell, dp)
+      return formatNumber(cell, { dp, commas, locale })
     }
   } else if (cell instanceof Date) {
     return format(cell, DEFAULT_DATE_FORMAT)

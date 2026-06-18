@@ -1,32 +1,31 @@
-import type { IChildrenProps } from '@/interfaces/children-props'
-import { createContext } from 'react'
-
 import {
-  DEFAULT_FONT_PROPS,
+  DEFAULT_CENTERED_TEXT_PROPS,
+  DEFAULT_COLOR_PROPS,
   DEFAULT_STROKE_PROPS,
-  OPAQUE_FILL_PROPS,
-  type IColorProps,
-  type IFontProps,
+  DEFAULT_TEXT_PROPS,
   type IMarginProps,
+  type IPaintProps,
   type IStrokeProps,
+  type ITextProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
+import { getAppName } from '@/lib/app-info'
 import {
   COLOR_BLACK,
   COLOR_CORNFLOWER_BLUE,
   COLOR_NAVY_BLUE,
 } from '@/lib/color/color'
+
 import {
   parseGenomicLocation,
   type IGenomicLocation,
-} from '@/lib/genomic/genomic'
-import { getModuleName } from '@/lib/module-info'
+} from '@/lib/genomic/genomic-location'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import MODULE_INFO from './module.json'
+import APP_INFO from './manifest.json'
 import type { BandStyle, GeneArrowStyle } from './tracks-provider'
 
-const SETTINGS_KEY = `${config.appId}:app:${getModuleName(MODULE_INFO.name)}:settings:v92`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v102`
 
 const DEFAULT_LOCATIONS = [
   parseGenomicLocation('chr3:187441954-187466041'),
@@ -57,54 +56,79 @@ export const GENE_DISPLAY_OPTIONS = [
 
 export interface ISeqBrowserSettings {
   plot: { width: number; gap: number }
-  assembly: string
+
   zoom: number
   reverse: boolean
   locations: IGenomicLocation[]
-  cytobands: {
-    height: number
-    band: { height: number }
-    style: BandStyle
-    labels: {
-      skip: { on: boolean; auto: boolean; x: number }
-      font: IFontProps
-      show: boolean
+  tracks: {
+    seqs: {
+      bins: { autoSize: boolean; size: BinSize }
+      smoothing: {
+        // whether to smooth lines or not. This controls if the smoothing factor is applied
+        on: boolean
+        // a multiplier between 0 and 1 to control smoothing appearance
+        factor: number
+      }
+
+      scale: {
+        mode: ReadScaleMode
+      }
+      globalY: {
+        on: boolean
+        auto: boolean
+        ymax: number
+      }
     }
-  }
-  scale: { autoSize: boolean; bp: number }
-  ruler: { autoSize: boolean; bp: number }
-  genes: {
-    labels: {
-      show: boolean
-      showGeneId: boolean
-      font: IFontProps
-      offset: number
+    beds: {
+      style: BandStyle
+      height: number
+      band: { height: number }
+      collapsed: boolean
     }
-    stroke: IStrokeProps
-    transcripts: { show: boolean; fill: IColorProps; height: number }
-    exons: { show: boolean; fill: IColorProps; height: number }
-    cds: { show: boolean; fill: IColorProps; height: number }
-    utrs: { show: boolean; fill: IColorProps; height: number }
-    endArrows: {
-      fill: IColorProps
-      firstTranscriptOnly: boolean
-      show: boolean
+    cytobands: {
+      height: number
+      band: { height: number }
+      style: BandStyle
+      labels: {
+        skip: { on: boolean; auto: boolean; x: number }
+        text: ITextProps
+      }
+    }
+    scale: { autoSize: boolean; bp: number }
+    ruler: { autoSize: boolean; bp: number }
+    genes: {
+      labels: {
+        text: ITextProps
+        showGeneId: boolean
+
+        offset: number
+      }
       stroke: IStrokeProps
+      transcripts: { show: boolean; fill: IPaintProps; height: number }
+      exons: { show: boolean; fill: IPaintProps; height: number }
+      cds: { show: boolean; fill: IPaintProps; height: number }
+      utrs: { show: boolean; fill: IPaintProps; height: number }
+      endArrows: {
+        fill: IPaintProps
+        firstTranscriptOnly: boolean
+        show: boolean
+        stroke: IStrokeProps
+      }
+      arrows: {
+        style: GeneArrowStyle
+        show: boolean
+      }
+      canonical: {
+        only: boolean
+        isColored: boolean
+        fill: IPaintProps
+      }
+      display: GeneDisplay
+      view: GeneView
+      types: GeneType
+      offset: number
+      gap: number
     }
-    arrows: {
-      style: GeneArrowStyle
-      show: boolean
-    }
-    canonical: {
-      only: boolean
-      isColored: boolean
-      fill: IColorProps
-    }
-    display: GeneDisplay
-    view: GeneView
-    types: GeneType
-    offset: number
-    gap: number
   }
   margin: IMarginProps
   axes: {
@@ -120,30 +144,7 @@ export interface ISeqBrowserSettings {
     height: number
     position: TrackTitlePosition
   }
-  seqs: {
-    bins: { autoSize: boolean; size: BinSize }
-    smoothing: {
-      // whether to smooth lines or not. This controls if the smoothing factor is applied
-      on: boolean
-      // a multiplier between 0 and 1 to control smoothing appearance
-      factor: number
-    }
 
-    scale: {
-      mode: ReadScaleMode
-    }
-    globalY: {
-      on: boolean
-      auto: boolean
-      ymax: number
-    }
-  }
-  beds: {
-    style: BandStyle
-    height: number
-    band: { height: number }
-    collapsed: boolean
-  }
   apiKey: string
 }
 
@@ -161,108 +162,109 @@ export const DEFAULT_TRACKS_DISPLAY_PROPS: ISeqBrowserSettings = {
       color: COLOR_BLACK,
     },
   },
-  seqs: {
-    smoothing: {
-      on: true,
-      factor: 0.5,
-    },
-    scale: {
-      mode: 'Count',
-    },
-    globalY: {
-      auto: true,
-      ymax: 10,
-      on: true,
-    },
-    bins: {
-      autoSize: true,
-      size: 50,
-    },
-  },
-  beds: {
-    height: 16,
-    collapsed: false,
-    band: {
-      height: 10,
-    },
-    style: 'Square',
-  },
-  genes: {
-    canonical: {
-      only: false,
-      isColored: true,
-      fill: { ...OPAQUE_FILL_PROPS, color: COLOR_CORNFLOWER_BLUE },
-    },
-    arrows: {
-      show: true,
-      style: 'lines',
-    },
-    endArrows: {
-      show: false,
-      firstTranscriptOnly: true,
-      stroke: { ...DEFAULT_STROKE_PROPS, color: COLOR_NAVY_BLUE },
-      fill: { ...OPAQUE_FILL_PROPS, color: COLOR_NAVY_BLUE },
-    },
-
-    stroke: { ...DEFAULT_STROKE_PROPS, color: COLOR_NAVY_BLUE },
-    transcripts: {
-      show: true,
-      height: 16,
-      fill: { ...OPAQUE_FILL_PROPS, color: COLOR_NAVY_BLUE },
-    },
-    exons: {
-      show: false,
-      height: 16,
-      fill: { ...OPAQUE_FILL_PROPS, color: COLOR_NAVY_BLUE },
-    },
-    cds: {
-      show: true,
-      height: 16,
-      fill: { ...OPAQUE_FILL_PROPS, color: COLOR_NAVY_BLUE },
-    },
-    utrs: {
-      show: true,
-      height: 8,
-      fill: { ...OPAQUE_FILL_PROPS, color: COLOR_NAVY_BLUE },
-    },
-    display: 'full',
-    view: 'features',
-    types: 'protein-coding',
-    offset: 16,
-    labels: {
-      show: true,
-      offset: 6,
-      font: { ...DEFAULT_FONT_PROPS, size: 'x-small' },
-      showGeneId: false,
-    },
-    gap: 3,
-  },
-  scale: {
-    autoSize: true,
-    bp: 5000,
-  },
-  ruler: {
-    autoSize: true,
-    bp: 5000,
-  },
-  apiKey: '',
-  cytobands: {
-    style: 'Rounded',
-    labels: {
-      show: true,
-      font: { ...DEFAULT_FONT_PROPS, size: 'x-small' },
-      skip: {
+  tracks: {
+    seqs: {
+      smoothing: {
         on: true,
-        x: 50,
+        factor: 0.5,
+      },
+      scale: {
+        mode: 'Count',
+      },
+      globalY: {
         auto: true,
+        ymax: 10,
+        on: true,
+      },
+      bins: {
+        autoSize: true,
+        size: 50,
       },
     },
-    height: 20,
-    band: {
-      height: 12,
+    beds: {
+      height: 16,
+      collapsed: false,
+      band: {
+        height: 10,
+      },
+      style: 'square',
+    },
+    genes: {
+      canonical: {
+        only: false,
+        isColored: true,
+        fill: { ...DEFAULT_COLOR_PROPS, value: COLOR_CORNFLOWER_BLUE },
+      },
+      arrows: {
+        show: true,
+        style: 'lines',
+      },
+      endArrows: {
+        show: false,
+        firstTranscriptOnly: true,
+        stroke: { ...DEFAULT_STROKE_PROPS, value: COLOR_NAVY_BLUE },
+        fill: { ...DEFAULT_COLOR_PROPS, value: COLOR_NAVY_BLUE },
+      },
+
+      stroke: { ...DEFAULT_STROKE_PROPS, value: COLOR_NAVY_BLUE },
+      transcripts: {
+        show: true,
+        height: 16,
+        fill: { ...DEFAULT_COLOR_PROPS, value: COLOR_NAVY_BLUE },
+      },
+      exons: {
+        show: false,
+        height: 16,
+        fill: { ...DEFAULT_COLOR_PROPS, value: COLOR_NAVY_BLUE },
+      },
+      cds: {
+        show: true,
+        height: 16,
+        fill: { ...DEFAULT_COLOR_PROPS, value: COLOR_NAVY_BLUE },
+      },
+      utrs: {
+        show: true,
+        height: 8,
+        fill: { ...DEFAULT_COLOR_PROPS, value: COLOR_NAVY_BLUE },
+      },
+      display: 'full',
+      view: 'features',
+      types: 'protein-coding',
+      offset: 16,
+      labels: {
+        text: { ...DEFAULT_TEXT_PROPS },
+        offset: 6,
+
+        showGeneId: false,
+      },
+      gap: 3,
+    },
+    scale: {
+      autoSize: true,
+      bp: 5000,
+    },
+    ruler: {
+      autoSize: true,
+      bp: 5000,
+    },
+    cytobands: {
+      style: 'rounded',
+      labels: {
+        text: { ...DEFAULT_CENTERED_TEXT_PROPS },
+        skip: {
+          on: true,
+          x: 50,
+          auto: true,
+        },
+      },
+      height: 24,
+      band: {
+        height: 12,
+      },
     },
   },
-  assembly: 'hg19',
+  apiKey: '',
+
   plot: {
     width: 500,
     gap: 200,
@@ -347,24 +349,24 @@ export function useSeqBrowserSettings(): {
   return { settings, updateSettings, resetSettings }
 }
 
-export const SeqBrowserSettingsContext = createContext<{
-  settings: ISeqBrowserSettings
-  updateSettings: (settings: ISeqBrowserSettings) => void
-  resetSettings: () => void
-}>({
-  settings: { ...DEFAULT_TRACKS_DISPLAY_PROPS },
-  updateSettings: () => {},
-  resetSettings: () => {},
-})
+// export const SeqBrowserSettingsContext = createContext<{
+//   settings: ISeqBrowserSettings
+//   updateSettings: (settings: ISeqBrowserSettings) => void
+//   resetSettings: () => void
+// }>({
+//   settings: { ...DEFAULT_TRACKS_DISPLAY_PROPS },
+//   updateSettings: () => {},
+//   resetSettings: () => {},
+// })
 
-export function SeqBrowserSettingsProvider({ children }: IChildrenProps) {
-  const { settings, updateSettings, resetSettings } = useSeqBrowserSettings()
+// export function SeqBrowserSettingsProvider({ children }: IChildrenProps) {
+//   const { settings, updateSettings, resetSettings } = useSeqBrowserSettings()
 
-  return (
-    <SeqBrowserSettingsContext.Provider
-      value={{ settings, updateSettings, resetSettings }}
-    >
-      {children}
-    </SeqBrowserSettingsContext.Provider>
-  )
-}
+//   return (
+//     <SeqBrowserSettingsContext.Provider
+//       value={{ settings, updateSettings, resetSettings }}
+//     >
+//       {children}
+//     </SeqBrowserSettingsContext.Provider>
+//   )
+// }

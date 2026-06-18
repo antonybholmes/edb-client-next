@@ -74,7 +74,7 @@ export function HeaderLinks({ onClick, className }: IProps) {
           <li key={sectionIndex}>
             <h2 className="text-xs font-bold">{section.name}</h2>
             <ul className="mt-1 grid grid-cols-2 gap-2">
-              {section.modules
+              {section.apps
                 .filter(
                   module =>
                     module.mode !== 'dev' ||

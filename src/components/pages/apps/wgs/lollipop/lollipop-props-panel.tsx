@@ -7,8 +7,7 @@ import { useState } from 'react'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import { PropRow } from '@/components/dialog/prop-row'
+} from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
 import {
   DropdownMenu,
@@ -23,6 +22,7 @@ import {
   PopoverTrigger,
 } from '@/components/shadcn/ui/themed/v2/popover'
 import { VScrollPanel } from '@/components/v-scroll-panel'
+import { PropRow } from '@/dialogs/prop-row'
 import type { IDivProps } from '@/interfaces/div-props'
 import { IconButton } from '@/themed/icon-button'
 import { NumericalInput } from '@/themed/numerical-input'
@@ -43,12 +43,14 @@ import {
   type AAColorScheme,
 } from './variants'
 
-import { CheckPropRow } from '@/components/dialog/check-prop-row'
+import { FontPopover } from '@/components/plot/font/font-popover'
 import {
   ResizablePanel,
   ResizablePanelGroup,
-  ThinVLineHandle,
+  ThinVResizeHandle,
 } from '@/components/shadcn/ui/themed/resizable'
+import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
+import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { ProteinPanel } from './protein-panel'
 
 // export async function searchUniprot(
@@ -153,18 +155,36 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
         >
           <ProteinPanel />
         </ResizablePanel>
-        <ThinVLineHandle />
+        <ThinVResizeHandle />
         <ResizablePanel minSize="10%" defaultSize="70%" collapsible={true}>
           <ScrollAccordion
             value={tabs}
             onValueChange={v => setTabs(v as string[])}
-            variant="sidebar"
             className="grow h-full"
           >
             <AccordionItem value="plot">
-              <AccordionTrigger variant="sidebar">Plot</AccordionTrigger>
+              <AccordionTrigger
+                rightChildren={
+                  <FontPopover
+                    fonts={[
+                      {
+                        title: 'Title',
+                        textProps: displayProps.title.text,
+                        update: font =>
+                          setDisplayProps(
+                            produce(displayProps, draft => {
+                              draft.title.text = font
+                            })
+                          ),
+                      },
+                    ]}
+                  />
+                }
+              >
+                Plot
+              </AccordionTrigger>
 
-              <AccordionContent variant="sidebar">
+              <AccordionContent>
                 <PropRow title="Width">
                   <NumericalInput
                     id="w"
@@ -216,17 +236,17 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
               />
             </PropRow> */}
 
-                <CheckPropRow
+                {/* <CheckPropRow
                   title="Title"
-                  checked={displayProps.title.show}
+                  checked={displayProps.title.text.show}
                   onCheckedChange={state =>
                     setDisplayProps(
                       produce(displayProps, draft => {
-                        draft.title.show = state
+                        draft.title.text.show = state
                       })
                     )
                   }
-                />
+                /> */}
 
                 <CheckPropRow
                   title="Legend"
@@ -256,19 +276,51 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
             </AccordionItem>
 
             <AccordionItem value="x-axis">
-              <AccordionTrigger variant="sidebar">X-Axis</AccordionTrigger>
-              <AccordionContent variant="sidebar">
-                <CheckPropRow
-                  title="Show"
-                  checked={displayProps.axes.x.show}
-                  onCheckedChange={state =>
-                    setDisplayProps(
-                      produce(displayProps, draft => {
-                        draft.axes.x.show = state
-                      })
-                    )
-                  }
-                />
+              <AccordionTrigger
+                rightChildren={
+                  <>
+                    <FontPopover
+                      fonts={[
+                        {
+                          title: 'Axes Title',
+                          textProps: displayProps.axes.title,
+                          update: font =>
+                            setDisplayProps(
+                              produce(displayProps, draft => {
+                                draft.axes.title = font
+                              })
+                            ),
+                        },
+
+                        {
+                          title: 'Axes Labels',
+                          textProps: displayProps.axes.labels,
+                          update: font =>
+                            setDisplayProps(
+                              produce(displayProps, draft => {
+                                draft.axes.labels = font
+                              })
+                            ),
+                        },
+                      ]}
+                    />
+
+                    <Switch
+                      checked={displayProps.axes.x.show}
+                      onCheckedChange={state =>
+                        setDisplayProps(
+                          produce(displayProps, draft => {
+                            draft.axes.x.show = state
+                          })
+                        )
+                      }
+                    />
+                  </>
+                }
+              >
+                X-Axis
+              </AccordionTrigger>
+              <AccordionContent>
                 <CheckPropRow
                   className="ml-4"
                   title="Last tick"
@@ -286,19 +338,25 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
             </AccordionItem>
 
             <AccordionItem value="y-axis">
-              <AccordionTrigger variant="sidebar">Y-Axis</AccordionTrigger>
-              <AccordionContent variant="sidebar">
-                <CheckPropRow
-                  title="Show"
-                  checked={displayProps.axes.y.show}
-                  onCheckedChange={state =>
-                    setDisplayProps(
-                      produce(displayProps, draft => {
-                        draft.axes.y.show = state
-                      })
-                    )
-                  }
-                />
+              <AccordionTrigger
+                rightChildren={
+                  <>
+                    <Switch
+                      checked={displayProps.axes.y.show}
+                      onCheckedChange={state =>
+                        setDisplayProps(
+                          produce(displayProps, draft => {
+                            draft.axes.y.show = state
+                          })
+                        )
+                      }
+                    />
+                  </>
+                }
+              >
+                Y-Axis
+              </AccordionTrigger>
+              <AccordionContent>
                 <CheckPropRow
                   title="Tick lines"
                   checked={displayProps.axes.y.ticks.lines.show}
@@ -327,21 +385,40 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
             </AccordionItem>
 
             <AccordionItem value="aa">
-              <AccordionTrigger variant="sidebar">Amino Acids</AccordionTrigger>
+              <AccordionTrigger
+                rightChildren={
+                  <>
+                    <FontPopover
+                      fonts={[
+                        {
+                          title: 'Font',
+                          textProps: displayProps.seq.text,
+                          update: font =>
+                            setDisplayProps(
+                              produce(displayProps, draft => {
+                                draft.seq.text = font
+                              })
+                            ),
+                        },
+                      ]}
+                    />
+                    <Switch
+                      checked={displayProps.seq.show}
+                      onCheckedChange={state =>
+                        setDisplayProps(
+                          produce(displayProps, draft => {
+                            draft.seq.show = state
+                          })
+                        )
+                      }
+                    />
+                  </>
+                }
+              >
+                Amino Acids
+              </AccordionTrigger>
 
-              <AccordionContent variant="sidebar">
-                <CheckPropRow
-                  title="Show"
-                  checked={displayProps.seq.show}
-                  onCheckedChange={state =>
-                    setDisplayProps(
-                      produce(displayProps, draft => {
-                        draft.seq.show = state
-                      })
-                    )
-                  }
-                />
-
+              <AccordionContent>
                 <CheckPropRow
                   title="Colors"
                   checked={aaColor.show}
@@ -417,14 +494,17 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                                 </span>
                               </VCenterRow>
                               <ColorPickerButton
-                                color={aaColor.scheme[aa]!}
-                                onColorChange={color =>
-                                  setAAColor(
-                                    produce(aaColor, draft => {
-                                      draft.scheme[aa] = color
-                                    })
-                                  )
-                                }
+                                colors={[
+                                  {
+                                    color: aaColor.scheme[aa]!,
+                                    onColorChange: color =>
+                                      setAAColor(
+                                        produce(aaColor, draft => {
+                                          draft.scheme[aa] = color
+                                        })
+                                      ),
+                                  },
+                                ]}
                                 className={SIMPLE_COLOR_EXT_CLS}
                               />
                             </li>

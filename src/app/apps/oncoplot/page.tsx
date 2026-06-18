@@ -1,4 +1,4 @@
-import MODULE_INFO from '@/components/pages/apps/wgs/oncoplot/module.json'
+import MODULE_INFO from '@/components/pages/apps/wgs/oncoplot/manifest.json'
 import { OncoplotQueryPage } from '@/components/pages/apps/wgs/oncoplot/oncoplot-page'
 import { makeMetaDataFromModule } from '@/lib/metadata'
 

@@ -1,6 +1,11 @@
-import type { IDivProps } from '@/interfaces/div-props'
 import { type IRect } from '@/interfaces/rect'
-import { createContext, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+  type ReactNode,
+} from 'react'
 
 // export interface ITabIndicatorPos {
 //   rect: IRect
@@ -13,184 +18,103 @@ export interface ITabIndicatorPos extends IRect {
   tabs: number
 }
 
-export interface ITabIndicatorContext {
-  position: ITabIndicatorPos | undefined
-  //scale: number
-  selectedPosition: ITabIndicatorPos | undefined
-  //selectedScale: number
-  //scale: number
-  //index: number
-  //setIndex: (index: number, scale: number) => void
-  setPosition: (pos: Partial<ITabIndicatorPos> | undefined) => void
-  //setScale: (scale: number) => void
-  setSelectedPosition: (pos: Partial<ITabIndicatorPos> | undefined) => void
-  //setSelectedScale: (scale: number) => void
-  //setScale: (scale: number) => void
+const DEFAULT_TAB: ITabIndicatorPos = {
+  x: 0,
+  y: 0,
+  w: 0,
+  h: 0,
+  animate: true,
+  scale: 1,
+  index: 0,
+  tabs: 0,
 }
 
-export const TabIndicatorContext = createContext<ITabIndicatorContext>({
-  position: undefined,
-  //scale: 1,
-  selectedPosition: undefined,
-
-  //selectedScale: 1,
-  //index: 0,
-  //setIndex: () => {},
-  //  scale: 0,
-  // setScale: () => {},
-  setPosition: () => {},
-  //setScale: () => {},
-  setSelectedPosition: () => {},
-  //setSelectedScale: () => {},
-})
-
-interface IProps extends IDivProps {
-  //index?: number
-  position?: ITabIndicatorPos | undefined
-  //scale?: number
-  selectedPosition?: ITabIndicatorPos | undefined
-  //selectedScale?: number
-}
-
-export function TabIndicatorProvider({
-  //index = 0,
-  position = undefined,
-  //scale = 1,
-  selectedPosition = undefined,
-  //selectedScale = 1,
-  //scale = 1,
-  children,
-}: IProps) {
-  //const [_index, setIndex] = useState(index)
-  //const [_scale, setScale] = useState(scale)
-
-  const [_position, setPosition] = useState<ITabIndicatorPos | undefined>(
-    position
+function posChanged(
+  a: ITabIndicatorPos | undefined,
+  b: ITabIndicatorPos | undefined
+): boolean {
+  if (a === b) return false
+  if (!a || !b) return true
+  return (
+    a.x !== b.x ||
+    a.y !== b.y ||
+    a.w !== b.w ||
+    a.h !== b.h ||
+    a.scale !== b.scale
   )
-  //const [_scale, setScale] = useState<number>(scale)
-  const [_selectedPosition, setSelectedPosition] = useState<
+}
+
+interface ITabIndicatorContext {
+  position: ITabIndicatorPos | undefined
+  selectedPosition: ITabIndicatorPos | undefined
+  setPosition: (pos: Partial<ITabIndicatorPos> | undefined) => void
+  setSelectedPosition: (pos: Partial<ITabIndicatorPos> | undefined) => void
+}
+
+const TabIndicatorContext = createContext<ITabIndicatorContext | undefined>(
+  undefined
+)
+
+export function TabIndicatorProvider({ children }: { children: ReactNode }) {
+  const [position, setPosition] = useState<ITabIndicatorPos | undefined>(
+    undefined
+  )
+  const [selectedPosition, setSelectedPosition] = useState<
     ITabIndicatorPos | undefined
-  >(selectedPosition)
-  //const [_selectedScale, setSelectedScale] = useState<number>(selectedScale)
+  >(undefined)
 
-  // useEffect(() => {
-  //   setPosition(position)
-  // }, [position.x, position.y, position.w, position.h])
-
-  // useEffect(() => {
-  //   setIndex(index)
-  // }, [index])
-
-  // useEffect(() => {
-  //   setScale(scale)
-  // }, [scale])
-
-  // function setPos(index: number, scale: number) {
-  //   // this method is only for when tabs are of fixed
-  //   // size. This prevents it interfering with free size
-  //   // tabs that use setTabIndicatorPos directly
-  //   if (size === 0) {
-  //     return
-  //   }
-
-  //   const s = size * scale
-  //   const x = (index + 0.5) * size - s * 0.5
-
-  //   //const width = tabs[selectedTab.index].size ?? defaultWidth
-
-  //   setTabIndicatorPos({ x, size: s })
-  // }
-
-  // function _setIndex(index: number, scale: number) {
-  //   setIndex(index)
-  //   setScale(scale)
-  //   setPos(index, scale)
-  // }
-
-  // useEffect(() => {
-  //   if (selectedTab) {
-  //     _setIndex(selectedTab.index, _scale)
-  //   }
-  // }, [selectedTab])
-
-  // useEffect(() => {
-  //   _setIndex(index, _scale)
-  // }, [index])
-
-  // useEffect(() => {
-  //   _setIndex(_index, scale)
-  // }, [scale])
-
-  // useEffect(() => {
-  //   setPos(_index, _scale)
-  // }, [_index, _scale, size])
-
-  function _setPosition(pos: Partial<ITabIndicatorPos> | undefined) {
-    if (pos !== undefined) {
+  const _setPosition = useCallback(
+    (pos: Partial<ITabIndicatorPos> | undefined) => {
       setPosition(prev => {
-        if (prev) {
-          return { ...prev, ...pos }
-        } else {
-          return {
-            x: 0,
-            y: 0,
-            w: 0,
-            h: 0,
-            animate: true,
-            scale: 1,
-            index: 0,
-            tabs: 0,
-            ...pos,
-          }
-        }
+        const newPos = pos
+          ? prev
+            ? { ...prev, ...pos }
+            : { ...DEFAULT_TAB, ...pos }
+          : undefined
+        if (!posChanged(prev, newPos)) return prev
+        return newPos
       })
-    } else {
-      setPosition(undefined)
-    }
-  }
+    },
+    []
+  )
 
-  function _setSelectedPosition(pos: Partial<ITabIndicatorPos> | undefined) {
-    if (pos !== undefined) {
+  const _setSelectedPosition = useCallback(
+    (pos: Partial<ITabIndicatorPos> | undefined) => {
       setSelectedPosition(prev => {
-        if (prev) {
-          return { ...prev, ...pos }
-        } else {
-          return {
-            x: 0,
-            y: 0,
-            w: 0,
-            h: 0,
-            animate: true,
-            scale: 1,
-            index: 0,
-            tabs: 0,
-            ...pos,
-          }
-        }
+        const newPos = pos
+          ? prev
+            ? { ...prev, ...pos }
+            : { ...DEFAULT_TAB, ...pos }
+          : undefined
+        if (!posChanged(prev, newPos)) return prev
+        return newPos
       })
-    } else {
-      setSelectedPosition(undefined)
-    }
-  }
+    },
+    []
+  )
 
   return (
     <TabIndicatorContext.Provider
       value={{
-        position: _position,
-        //scale: _scale,
-        selectedPosition: _selectedPosition,
-        //selectedScale: _selectedScale,
-        //index: _index,
-        //scale: _scale,
-        //setIndex,
-        //setScale,
+        position,
+        selectedPosition,
         setPosition: _setPosition,
-        //setScale,
-        setSelectedPosition: pos => _setSelectedPosition(pos),
-        //setSelectedScale,
+        setSelectedPosition: _setSelectedPosition,
       }}
     >
       {children}
     </TabIndicatorContext.Provider>
   )
+}
+
+export function useTabIndicators() {
+  const ctx = useContext(TabIndicatorContext)
+
+  if (!ctx) {
+    throw new Error(
+      'useTabIndicators must be used within a TabIndicatorProvider'
+    )
+  }
+
+  return ctx
 }

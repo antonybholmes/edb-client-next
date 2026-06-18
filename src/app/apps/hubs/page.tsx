@@ -1,5 +1,5 @@
 import { HubsQueryPage } from '@/components/pages/apps/hubs/hubs-page'
-import MODULE_INFO from '@/components/pages/apps/hubs/module.json'
+import MODULE_INFO from '@/components/pages/apps/hubs/manifest.json'
 import { makeMetaDataFromModule } from '@/lib/metadata'
 
 export const metadata = makeMetaDataFromModule(MODULE_INFO)

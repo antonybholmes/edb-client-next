@@ -1,12 +1,11 @@
-// 'use client'
+'use client'
 
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
-import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
+import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
-import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
 import { ArrowRightArrowLeftIcon } from '@/icons/arrow-right-arrow-left-icon'
 import { SearchIcon } from '@/icons/search-icon'
@@ -15,9 +14,6 @@ import { getDataFrameInfo } from '@/lib/dataframe/dataframe-utils'
 
 import { useEffect, useRef, useState } from 'react'
 
-import type { ISaveAsFormat } from '@/components/pages/save-as-dialog'
-import { SaveImageDialog } from '@/components/pages/save-image-dialog'
-import { SaveTxtDialog } from '@/components/pages/save-txt-dialog'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import {
   NO_DIALOG,
@@ -31,6 +27,9 @@ import {
   TEXT_SAVE_TABLE,
   type IDialogParams,
 } from '@/consts'
+import type { ISaveAsFileType } from '@/dialogs/save-as-dialog'
+import { SaveImageDialog } from '@/dialogs/save-image-dialog'
+import { SaveTxtDialog } from '@/dialogs/save-txt-dialog'
 import { useZoom } from '@/providers/zoom-provider'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -73,7 +72,7 @@ import { MotifsPropsPanel } from './motifs-props-panel'
 
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { CoreProviders } from '@/providers/core-providers'
-import MODULE_INFO from './module.json'
+import APP_INFO from './manifest.json'
 import { useMotifSettings, type Mode } from './motifs-settings'
 
 const PLOT_ZOOM_CHANNEL = 'bio-draw-plot-zoom'
@@ -109,12 +108,12 @@ export function BioDrawPage() {
   const df = sheet as AnnotationDataFrame
 
   useEffect(() => {
-    openApp(MODULE_INFO.name)
+    openApp(APP_INFO.name)
   }, [])
 
   useEffect(() => {
     updateSettings(
-      produce(settings, draft => {
+      produce(settings, (draft) => {
         draft.zoom = zoom
       })
     )
@@ -230,7 +229,7 @@ export function BioDrawPage() {
         <>
           <ToolbarTabGroup title="File">
             {/* <ToolbarOpenFile
-              onOpenChange={open => {
+              onOpen={() => {
                 if (open) {
                   
                 }
@@ -250,15 +249,13 @@ export function BioDrawPage() {
             </ToolbarIconButton>
           </ToolbarTabGroup>
 
-          <ToolbarSeparator />
-
           <ToolbarTabGroup title="Options" className="gap-x-1">
             <ToggleButtons
               tabs={[{ id: 'Prob' }, { id: 'Bits' }]}
               value={settings.mode}
-              onTabChange={selectedTab => {
+              onTabChange={(selectedTab) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.mode = selectedTab.tab.id as Mode
                   })
                 )
@@ -272,7 +269,7 @@ export function BioDrawPage() {
               onClick={() => {
                 console.log('revComp', settings.revComp)
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.revComp = !settings.revComp
                   })
                 )
@@ -282,7 +279,6 @@ export function BioDrawPage() {
               <ArrowRightArrowLeftIcon />
             </ToolbarIconButton>
           </ToolbarTabGroup>
-          <ToolbarSeparator />
         </>
       ),
     },
@@ -378,7 +374,7 @@ export function BioDrawPage() {
             if (response !== TEXT_CANCEL) {
               const d = data as {
                 name: string
-                format: ISaveAsFormat
+                format: ISaveAsFileType
               }
 
               save(d.name as string, d.format.ext as string)
@@ -451,7 +447,7 @@ export function BioDrawPage() {
                 <TabbedDataFrames
                   selectedSheet={sheet?.id ?? ''}
                   dataFrames={sheets as AnnotationDataFrame[]}
-                  onTabChange={selectedTab => {
+                  onTabChange={(selectedTab) => {
                     goto({ app, file, sheet: selectedTab.tab })
                   }}
                   className="relative grow"
@@ -461,11 +457,11 @@ export function BioDrawPage() {
           </ResizablePanelGroup>
         </TabSlideBar>
 
-        <ToolbarFooterPortal className="justify-between">
+        <FooterPortal className="justify-between">
           <div>{getDataFrameInfo(df)}</div>
           <></>
           <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
-        </ToolbarFooterPortal>
+        </FooterPortal>
       </ShortcutLayout>
     </>
   )

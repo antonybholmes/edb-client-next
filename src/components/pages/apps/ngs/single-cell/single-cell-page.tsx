@@ -4,24 +4,15 @@ import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
 import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
-import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
+import { FooterPortal } from '@/components/toolbar/footer-portal'
 
 import { BaseCol } from '@/layout/base-col'
-import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
-import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import {
   downloadDataFrame,
   getFormattedShape,
 } from '@/lib/dataframe/dataframe-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
-
-import {
-  onTextFileChange,
-  OpenFiles,
-  type IParseOptions,
-  type ITextFileOpen,
-} from '@/components/pages/open-files'
 
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 import { produce } from 'immer'
@@ -34,14 +25,10 @@ import { downloadSvgAutoFormat } from '@/lib/image-utils'
 
 import { LayersIcon } from '@/icons/layers-icon'
 
-import { OpenDialog } from '@/components/pages/apps/matcalc/open-dialog'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { type ITab } from '@/components/tabs/tab-provider'
 import {
-  NO_DIALOG,
-  TEXT_ADD,
-  TEXT_CANCEL,
   TEXT_DISPLAY,
   TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_PNG,
@@ -51,19 +38,16 @@ import {
   TEXT_SAVE_AS,
   TEXT_SAVE_IMAGE,
   TEXT_SAVE_TABLE,
-  type IDialogParams,
 } from '@/consts'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { makeUuid, randId } from '@/lib/id'
-import { textToLines } from '@/lib/text/lines'
-import { truncate } from '@/lib/text/text'
+import { makeUuid } from '@/lib/id'
 import { useZoom } from '@/providers/zoom-provider'
 import { Card } from '@/themed/card'
 
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
+import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
-import { ModuleInfoButton } from '@/components/header/module-info-button'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { SlidersIcon } from '@/components/icons/sliders-icon'
 import { BaseRow } from '@/components/layout/base-row'
@@ -76,7 +60,6 @@ import {
 
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
-import { SaveImageDialog } from '../../../save-image-dialog'
 import { ShowSideButton } from '../../../show-side-button'
 import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 import {
@@ -88,24 +71,24 @@ import {
 } from '../../matcalc/history/history-store'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { ClusterPropsPanel } from './cluster-props-panel'
-import MODULE_INFO from './module.json'
+import APP_INFO from './manifest.json'
 import { PlotsPropsPanel } from './plots-props-panel'
 
 import { ExportIcon } from '@/components/icons/export-icon'
 import { FileIcon } from '@/components/icons/file-icon'
-import { Button } from '@/themed/v2/button'
 
-import { DownloadImageIcon } from '@/components/icons/download-image-icon'
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { AppHeaderIcon } from '@/components/header/app-header-icon'
+import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
 import { useStableId } from '@/hooks/stable-id'
-import { useEdbSettings } from '@/lib/edb/edb-settings'
+import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
 import { CoreProviders } from '@/providers/core-providers'
 import { SelectItem, SelectList } from '@/themed/v2/select'
-import {
-  OPTS_SIDEBAR_ID,
-  ShowOptsSidebarBtn,
-} from '../../matcalc/data/data-panel'
+import { CirclePlus } from 'lucide-react'
+import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 import { DisplayPropsPanel } from './display-props-panel'
 import { usePlotGrid } from './plot-grid-store'
+import { SingleCellDialogsRoot } from './single-cell-dialogs'
 import { useSingleCellSettings, type GeneSetMode } from './single-cell-settings'
 import { UmapPlotSvg } from './umap-plot-svg'
 
@@ -114,22 +97,14 @@ const PLOT_ZOOM_CHANNEL = 'single-cell-plot-zoom'
 export function SingleCellPage() {
   const _id = useStableId('single-cell-page')
 
-  const { goto, openFile } = useHistory()
+  const { goto } = useHistory()
 
   const app = useApp()!
   const file = useFile()!
   const sheets = useSheets()
   const sheet = useSheet()
 
-  //const [clusterFrame, setClusterFrame] = useState<BaseDataFrame | null>(null)
-  //const [cmap, setCMap] = useState<ColorMap>(BRIGHT_20_CMAP) //BWR_CMAP)
-
-  //const [genome] = useState<IGenome>(GENOMES[0]!)
-  //const [datasets, setDatasets] = useState<IScrnaDataset[]>([])
-
-  //const [metadata, setMetadata] = useState<IScrnaDatasetMetadata | null>(null)
-
-  //const [gexData, setGexData] = useState<Record<string, number[]>>({})
+  const { open: openDialog } = useDialogs()
 
   const [showSideBar, setShowSideBar] = useState(true)
 
@@ -140,7 +115,7 @@ export function SingleCellPage() {
     new Map<string, boolean>()
   )
 
-  const [search, setSearch] = useState('=aicda')
+  //const [search, setSearch] = useState('=aicda')
 
   const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
 
@@ -158,17 +133,11 @@ export function SingleCellPage() {
   //const [scale, setScale] = useState(1)
 
   const { settings, updateSettings } = useSingleCellSettings()
+  const { setAppInfo } = useAppInfo()
 
-  const { settings: edbSettings, updateSettings: updateEdbSettings } =
-    useEdbSettings()
+  const { settings: edbSettings } = useEdbSettings()
 
   const [showFileMenu, setShowFileMenu] = useState(false)
-
-  const [showDialog, setShowDialog] = useState<IDialogParams>(NO_DIALOG)
-
-  //const [showLoadingDialog, setShowLoadingDialog] = useState(false)
-
-  const [filesToOpen, setFilesToOpen] = useState<ITextFileOpen[]>([])
 
   //const { fetchAccessToken } = useEdbAuth()
 
@@ -195,43 +164,9 @@ export function SingleCellPage() {
   //   settings.genesets,
   // ])
 
-  function openFiles(files: ITextFileOpen[], options: IParseOptions) {
-    if (files.length < 1) {
-      return
-    }
-
-    const file = files[0]!
-    const name = file.name
-
-    const { indexCols, colNames } = options
-
-    const lines = textToLines(file.text)
-
-    const sep = name.endsWith('csv') ? ',' : '\t'
-
-    const table = new DataFrameReader()
-      .delimiter(sep)
-      .colNames(colNames!)
-      .indexCols(indexCols!)
-      .read(lines)
-
-    //resolve({ ...table, name: file.name })
-
-    openFile(name, {
-      sheets: [table.setName(truncate(name, { length: 16 }))],
-    })
-
-    // historyState.current = {
-    //   step: 0,
-    //   history: [{ title: `Load ${name}`, df: [table.setName(name)] }],
-    // }
-
-    //setShowLoadingDialog(false)
-
-    setShowFileMenu(false)
-
-    setFilesToOpen([])
-  }
+  useEffect(() => {
+    setAppInfo(APP_INFO)
+  }, [setAppInfo])
 
   useEffect(() => {
     updateSettings(
@@ -241,7 +176,7 @@ export function SingleCellPage() {
     )
   }, [zoom])
 
-  function save(format: 'txt' | 'csv') {
+  function save(format: string) {
     if (!sheet) {
       return
     }
@@ -262,245 +197,53 @@ export function SingleCellPage() {
 
   const tabs: ITab[] = [
     {
-      //id: nanoid(),
       id: 'Home',
       content: (
         <>
           <ToolbarTabGroup title="File">
-            {/* <ToolbarOpenFile
-                
-                onOpenChange={open => setShowDialog(open ? "open" : "")}
-                onFileChange={onFileChange}
-                multiple={true}
-              /> */}
-
-            {/* <ToolbarButton
-                arial-label="Save matrix to local file"
-                onClick={() => save("txt")}
-              >
-                <FloppyDiskIcon className="-scale-100 fill-blue-400" />
-                Save
-              </ToolbarButton>
-
-              {selectedTab === 1 && (
-                <ToolbarSaveSvg
-                  svgRef={svgRef}
-                />
-              )} */}
-
             <ToolbarIconButton
               title={TEXT_SAVE_IMAGE}
-              onClick={() =>
-                setShowDialog({
-                  id: randId(`save-plot`),
+              onClick={() => {
+                openDialog({
+                  type: 'save-image',
+                  payload: {
+                    name: 'umap',
+                    svgRef,
+                  },
                 })
-              }
+              }}
             >
-              <DownloadImageIcon />
+              <DownloadIcon />
             </ToolbarIconButton>
           </ToolbarTabGroup>
-          {/* <ToolbarSeparator />
-          <ToolbarTabGroup title="UMAP">
-            <ToolbarButton
-              arial-label="Create UMAP"
-              onClick={() => loadClusters()}
-            >
-              <PlayIcon />
-              Cluster
-            </ToolbarButton>
-          </ToolbarTabGroup> */}
-          <ToolbarSeparator />
         </>
       ),
     },
-    // {
-    //   //id: nanoid(),
-    //   id: 'Chart',
-    //   content: (
-    //     <>
-    //       <ToolbarOptionalDropdownButton
-    //         icon="Right"
-    //         onMainClick={() => dfLog(sheet!, addStep, 2, 1)}
-    //       >
-    //         <DropdownMenuItem
-    //           aria-label="Top"
-    //           onClick={() => dfLog(sheet!, addStep, 2, 0)}
-    //         >
-    //           Top
-    //         </DropdownMenuItem>
-
-    //         <DropdownMenuItem
-    //           aria-label="Add 1 to matrix then log2"
-    //           onClick={() => dfLog(sheet!, addStep, 2, 1)}
-    //         >
-    //           Left
-    //         </DropdownMenuItem>
-
-    //         <DropdownMenuItem
-    //           aria-label="Log10"
-    //           onClick={() => dfLog(sheet!, addStep, 10, 0)}
-    //         >
-    //           Bottom
-    //         </DropdownMenuItem>
-
-    //         <DropdownMenuItem
-    //           aria-label="Add 1 to matrix then log10"
-    //           onClick={() => dfLog(sheet!, addStep, 10, 1)}
-    //         >
-    //           Right
-    //         </DropdownMenuItem>
-    //       </ToolbarOptionalDropdownButton>
-    //     </>
-    //   ),
-    // },
   ]
 
   const rightTabs: ITab[] = [
     {
-      //id: nanoid(),
       id: TEXT_DISPLAY,
       icon: <SlidersIcon />,
       content: <DisplayPropsPanel />,
     },
     {
-      //id: nanoid(),
-      icon: <LayersIcon />,
       id: 'Plots',
+      icon: <LayersIcon />,
+
       content: <PlotsPropsPanel datasetId={dataset?.id ?? ''} />,
     },
     {
-      //id: nanoid(),
-      icon: <LayersIcon />,
       id: 'Clusters',
+      icon: <LayersIcon />,
       content: <ClusterPropsPanel />,
     },
-    // {
-    //   //id: nanoid(),
-    //   icon: <ClockIcon />,
-    //   id: 'History',
-    //   content: <HistoryPanel />,
-    // },
   ]
 
-  //const plotTabs: ITab[] = useMemo(() => [], [filterRowMode, state, groups])
-
-  // const sideTabs: ITab[] = [
-  //   {
-  //     //id: nanoid(),
-  //     icon: <TableIcon className={cn(TOOLBAR_BUTTON_ICON_CLS)} />,
-  //     id: 'Data',
-  //     content: (
-  //       <>
-  //         <TabSlideBar
-  //           id="umap"
-  //           side="Right"
-  //           key="sidebar-table"
-  //           tabs={rightTabs}
-  //           value={selectedPlotTab}
-  //           onTabChange={selectedTab => setSelectedPlotTab(selectedTab.tab.id)}
-  //         >
-  //           <TabbedDataFrames
-  //             key="tabbed-data-frames"
-  //             selectedSheet={sheet?.id ?? ''}
-  //             dataFrames={sheets as AnnotationDataFrame[]}
-  //             onTabChange={selectedTab => {
-  //               gotoSheet(selectedTab.tab.id)
-  //             }}
-  //             className={SHEET_PANEL_CLS}
-  //           />
-  //         </TabSlideBar>
-
-  //         <ToolbarFooterPortal className="justify-between">
-  //           <>{getFormattedShape(sheet)} </>
-  //           <></>
-  //           <ZoomSlider />
-  //         </ToolbarFooterPortal>
-  //       </>
-  //     ),
-  //   },
-  //   {
-  //     //id: nanoid(),
-  //     icon: <LineChartIcon className={cn(TOOLBAR_BUTTON_ICON_CLS)} />,
-  //     id: 'Chart',
-  //     content: (
-  //       <>
-  //         <TabSlideBar
-  //           id="umap-table"
-  //           side="Right"
-  //           key="sidebar-table"
-  //           tabs={rightTabs}
-  //           value={selectedPlotTab}
-  //           onTabChange={selectedTab => setSelectedPlotTab(selectedTab.tab.id)}
-  //         >
-  //           <Card variant="content" className="ml-2">
-  //             <div
-  //               key="scatter"
-  //               className={'relative overflow-scroll custom-scrollbar grow'}
-  //             >
-  //               {clusterFrame && (
-  //                 <ScatterPlotCanvas
-  //                   df={clusterFrame}
-  //                   cmap={cmap}
-  //                   x="UMAP1"
-  //                   y="UMAP2"
-  //                   hue="Hue"
-  //                   displayProps={settings}
-  //                   className="absolute bottom-0 left-0 right-0 top-0"
-  //                 />
-  //               )}
-  //             </div>
-  //           </Card>
-  //         </TabSlideBar>
-
-  //         <ToolbarFooterPortal className="justify-between">
-  //           <></>
-
-  //           <></>
-  //           <ZoomSlider
-  //             className={cn([selectedTab === 'Chart', 'visible', 'invisible'])}
-  //           />
-  //         </ToolbarFooterPortal>
-  //       </>
-  //     ),
-  //   },
-  // ]
-
   const fileMenuTabs: ITab[] = [
-    // {
-    //   //id: nanoid(),
-    //   id: 'Open',
-    //   icon: <OpenIcon className="fill-white" w="w-5" />,
-    //   content: (
-    //     <BaseCol className="gap-y-6 p-6">
-    //       <h1 className="text-2xl">Open</h1>
-
-    //       <ul className="flex flex-col gap-y-2 text-xs">
-    //         <li>
-    //           <MenuButton
-    //             aria-label="Open file on your computer"
-    //             onClick={() => setShowDialog({ id: randId('open') })}
-    //           >
-    //             <OpenIcon className="text-amber-300" />
-    //             <p>
-    //               <span className={FILE_MENU_ITEM_HEADING_CLS}>
-    //                 Open local file
-    //               </span>
-    //               <br />
-    //               <span className={FILE_MENU_ITEM_DESC_CLS}>
-    //                 Open a local file on your computer.
-    //               </span>
-    //             </p>
-    //           </MenuButton>
-    //         </li>
-    //       </ul>
-    //     </BaseCol>
-    //   ),
-    // },
-
     {
-      //id: nanoid(),
       id: TEXT_SAVE_AS,
-      icon: <DownloadIcon stroke="stroke-theme" />,
+      icon: <DownloadIcon />,
       content: (
         <>
           <DropdownMenuItem
@@ -519,9 +262,7 @@ export function SingleCellPage() {
         </>
       ),
     },
-
     {
-      //id: nanoid(),
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
       content: (
@@ -548,122 +289,26 @@ export function SingleCellPage() {
     },
   ]
 
-  // const sideContent = useMemo(() => {
-  //   return (
-  //     <BaseCol className="px-2 grow">
-  //       <VScrollPanel className="grow">
-  //         {datasets?.map(dataset => {
-  //           return (
-  //             <Checkbox
-  //               key={dataset.name}
-  //               checked={dataset.name === selectedDataset?.name}
-  //               onClick={() => setSelectedDataset(dataset)}
-  //             >
-  //               {dataset.name}
-  //             </Checkbox>
-  //           )
-  //         })}
-  //       </VScrollPanel>
-  //     </BaseCol>
-  //   )
-  // }, [datasets, selectedDataset])
-
   function handleSearch(value: string) {
-    setSearch(value)
-
-    // const lc = value.toLowerCase()
-
-    // setSearchGenes(
-    //   genes.filter(
-    //     g =>
-    //       g.sym.toLowerCase().startsWith(lc) ||
-    //       g.ens.toLowerCase().startsWith(lc)
-    //   )
-    // )
+    console.log('search', value)
+    updateSettings({ search: value })
   }
 
   return (
     <>
-      {filesToOpen && (
-        <OpenDialog
-          files={filesToOpen}
-          openFiles={openFiles}
-          onCancel={() => setFilesToOpen([])}
-        />
-      )}
-
-      {showDialog.id.includes('open') && (
-        <OpenFiles
-          //open={showDialog}
-          //onOpenChange={open => setShowDialog(open ? "open" : "")}
-          onFileChange={(message, files) =>
-            onTextFileChange(message, files, (files) => setFilesToOpen(files))
-          }
-        />
-      )}
-
-      {/* <SaveImageDialog
-        open={showDialog.id.includes('save-plot')}
-        name="umap"
-        onResponse={(response, data) => {
-          if (response !== TEXT_CANCEL) {
-            downloadCanvasAsPng(canvasRef, data!.name as string)
-          }
-
-          setShowDialog({ ...NO_DIALOG })
-        }}
-        formats={[PNG_FILE_FORMAT]}
-      /> */}
-
-      {showDialog.id.startsWith('save') && (
-        <SaveImageDialog
-          open={showDialog.id.startsWith('save')}
-          name="umap"
-          onResponse={(response, data) => {
-            if (response !== TEXT_CANCEL) {
-              const d = data as { name: string }
-              downloadSvgAutoFormat(svgRef, d.name)
-            }
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        />
-      )}
-
       <HeaderPortal>
-        <ModuleInfoButton info={MODULE_INFO} />
-
+        <>
+          <AppHeaderIcon />
+          <AppInfoButton />
+        </>
         <Autocomplete
-          value={search}
+          value={settings.search}
+          clear={() => updateSettings({ search: '' })}
           onTextChange={handleSearch}
-          className="w-3/4 lg:w-1/2 text-sm"
-        >
-          {searchGenes?.map((g) => {
-            return (
-              <AutocompleteLi key={g.geneId}>
-                <Checkbox
-                  aria-label={`Select ${g.geneSymbol}`}
-                  checked={genesForUse.get(g.geneId) ?? false}
-                  onCheckedChange={() => {
-                    setGenesForUse(
-                      new Map<string, boolean>([
-                        ...genesForUse.entries(),
-                        [g.geneId, !genesForUse.get(g.geneId)],
-                      ])
-                    )
-                  }}
-                />
-
-                <span className="grow text-xs truncate">{g.geneSymbol}</span>
-
-                <span className="truncate shrink  opacity-50 text-xxs">
-                  {g.geneId}
-                </span>
-              </AutocompleteLi>
-            )
-          })}
-
-          <li className="flex items-center justify-end pt-2 px-2" key="add">
-            <Button
+          className="w-3/4 lg:w-3/5 text-sm"
+          rightChildren={
+            <button
+              title="Add selected genes"
               onClick={() => {
                 const selectedGenes =
                   searchGenes?.filter(
@@ -683,15 +328,36 @@ export function SingleCellPage() {
                     ]
                   })
                 )
-
-                // clear selections
-                //setGenesForUse(new Map<string, boolean>())
-                //setSearch('')
               }}
             >
-              {TEXT_ADD}
-            </Button>
-          </li>
+              <CirclePlus size={16} />
+            </button>
+          }
+        >
+          {searchGenes?.map((g) => {
+            return (
+              <AutocompleteLi key={g.geneId}>
+                <Checkbox
+                  aria-label={`Select ${g.geneSymbol}`}
+                  checked={genesForUse.get(g.geneId) ?? false}
+                  onCheckedChange={() => {
+                    setGenesForUse(
+                      new Map<string, boolean>([
+                        ...genesForUse.entries(),
+                        [g.geneId, !genesForUse.get(g.geneId)],
+                      ])
+                    )
+                  }}
+                />
+
+                <span className="grow text-xs truncate">{g.geneSymbol}</span>
+
+                <span className="truncate shrink opacity-50 text-xxs">
+                  {g.geneId}
+                </span>
+              </AutocompleteLi>
+            )
+          })}
         </Autocomplete>
 
         <SelectList
@@ -702,15 +368,17 @@ export function SingleCellPage() {
           }}
           // make display nicer
           items={datasets.map((d) => ({ value: d.id, label: d.name })) || []}
-          className="text-sm"
+          className="text-xs"
         >
           {datasets.map((dataset) => (
-            <SelectItem key={dataset.id} value={dataset.id} variant="theme">
+            <SelectItem key={dataset.id} value={dataset.id}>
               {dataset.name}
             </SelectItem>
           ))}
         </SelectList>
       </HeaderPortal>
+
+      <SingleCellDialogsRoot />
 
       <ShortcutLayout
         signinRequired={false}
@@ -742,34 +410,14 @@ export function SingleCellPage() {
             groupId={_id}
             tabs={tabs}
             tabShortcutMenu={
-              <ShowOptsSidebarBtn
-                open={edbSettings.sidebar.show}
-                onClick={(open) => {
-                  updateEdbSettings(
-                    produce(edbSettings, (draft) => {
-                      draft.sidebar.show = open
-                    })
-                  )
-                }}
-              />
+              <OptsSidebarMenu open={edbSettings.sidebar.show} />
             }
           />
         </Toolbar>
 
-        {/* <SlideBar
-          id="matcalc-folders"
-          open={foldersIsOpen}
-          onOpenChange={setFoldersIsOpen}
-          limits={[10, 50]}
-          hideLimit={1}
-          initialPosition={15}
-          side="left"
-          className="grow"
-        > */}
         <TabSlideBar
           id={OPTS_SIDEBAR_ID}
           side="right"
-          key="sidebar-table"
           tabs={rightTabs}
           //value={selectedPlotTab}
           //onTabChange={selectedTab => setSelectedPlotTab(selectedTab.tab.id)}
@@ -811,11 +459,17 @@ export function SingleCellPage() {
                 <BaseCol className="shrink-0">
                   <IconButton
                     title={TEXT_SAVE_TABLE}
-                    onClick={() =>
-                      setShowDialog({
-                        id: randId(`save-table`),
+                    onClick={() => {
+                      openDialog({
+                        type: 'save',
+                        payload: {
+                          name: sheet?.name ?? 'table',
+                          callback: (data) => {
+                            save(data.format.ext)
+                          },
+                        },
                       })
-                    }
+                    }}
                   >
                     <DownloadIcon />
                   </IconButton>
@@ -836,11 +490,11 @@ export function SingleCellPage() {
         {/* <>{sideContent}</> */}
         {/* </SlideBar> */}
 
-        <ToolbarFooterPortal className="justify-between">
+        <FooterPortal className="justify-between">
           <>{getFormattedShape(sheet as AnnotationDataFrame)} </>
           <></>
           <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
-        </ToolbarFooterPortal>
+        </FooterPortal>
       </ShortcutLayout>
     </>
   )

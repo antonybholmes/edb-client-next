@@ -1,0 +1,10 @@
+{
+  "name": "Lollipop",
+  "description": "Create lollipop plots.",
+  "color": "#DA70D6",
+  "version": "27.4.6",
+  "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
+  "modified": "2026-06-18T02:16:34.010Z",
+  "hash": "b69201c61c6f336769832aa1c7da106e52c6f4a36f17fb47325b56a2150d2ba6",
+  "build": 1030
+}

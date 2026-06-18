@@ -4,7 +4,7 @@ import {
   TEXT_SELECT_ALL,
   TEXT_UNSELECT_ALL,
 } from '@/consts'
-import { type IModalProps } from '@/dialog/ok-cancel-dialog'
+import { type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
 import { SearchBox } from '@/components/search-box'
 import {
@@ -13,16 +13,15 @@ import {
   DropdownMenuTrigger,
   DropdownSortOrderGroup,
 } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { CheckPropRow } from '@/dialog/check-prop-row'
+import { CheckPropRow } from '@/dialogs/check-prop-row'
 import {
   getAccordionId,
   SettingsAccordionItem,
-} from '@/dialog/settings/settings-dialog'
+} from '@/dialogs/settings/settings-dialog'
 import { MultiSelectIcon } from '@/icons/multi-select-icon'
 import { BaseCol } from '@/layout/base-col'
 import { VCenterRow } from '@/layout/v-center-row'
 import { ScrollAccordion } from '@/themed/v2/accordion'
-import { Button } from '@/themed/v2/button'
 import { Checkbox } from '@/themed/v2/check-box'
 
 import { ExternalLinkIcon } from '@/components/icons/external-link'
@@ -30,53 +29,57 @@ import { PlusIcon } from '@/components/icons/plus-icon'
 import { TrashIcon } from '@/components/icons/trash-icon'
 import { CenterCol } from '@/components/layout/center-col'
 import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
-import { GlassSideDialog } from '@/dialog/glass-side-dialog'
+import { GlassSideDialog } from '@/dialogs/glass-side-dialog'
 import { BoolSearchQuery } from '@/lib/search'
 import { cn } from '@/lib/shadcn-utils'
 import { IconButton } from '@/themed/icon-button'
 
 import { DialogTitle } from '@/components/shadcn/ui/themed/v2/dialog'
 import { useEffect, useMemo, useState } from 'react'
-import { useSeqBrowserSettings } from '../seq-browser-settings'
-import { type IDBTrack } from '../tracks-provider'
+import { type ISeqDBTrack } from '../tracks-provider'
 import { useTracks } from '../tracks-store'
 
 import { appsConfig } from '@/config/apps'
-import { ArrowDownUp } from 'lucide-react'
+import { useEdbSettings } from '@/lib/edb/edb-settings'
+import { normalizeAssemblyName } from '@/lib/edb/genome'
+import { ArrowDownUp, ShoppingCart } from 'lucide-react'
 
-function makeUcscUrl(seq: IDBTrack): string {
+function makeUcscUrl(seq: ISeqDBTrack): string {
   return `https://genome.ucsc.edu/cgi-bin/hgTracks?db=${seq.assembly}&hgct_customText=track%20type=bigWig%20name=%22${seq.name}%22%20visibility=full%20bigDataUrl=${seq.url}`
 }
 
-export interface IProps extends IModalProps {
+export interface IProps extends IModalProps<{
+  tracks: ISeqDBTrack[]
+  combine: boolean
+}> {
   technology: string
-  callback?: (tracks: IDBTrack[], combine: boolean) => void
 }
 
 export function SeqsDialog({
   open = true,
-  //onOpenChange = () => {},
   technology,
-  callback,
-  onResponse = () => {},
+  onResponse,
   className,
 }: IProps) {
   const { trackDb } = useTracks()
-  const { settings } = useSeqBrowserSettings()
+  const { settings } = useEdbSettings()
   const [error, setError] = useState('')
   const [search, setSearch] = useState('')
   const [searchSelectAll, setSearchSelectAll] = useState(false)
   const [addedSelectAll, setAddedSelectAll] = useState(false)
   const [combine, setCombine] = useState(false)
   const [asc, setAsc] = useState(true)
-  const [searchedDb, setSearchedDb] = useState<IDBTrack[]>([])
+  const [searchedDb, setSearchedDb] = useState<ISeqDBTrack[]>([])
 
   const seqs = useMemo(
     () =>
-      trackDb.filter(
-        t => t.assembly === settings.assembly && t.technology === technology
-      ),
-    [trackDb, settings.assembly, technology]
+      (trackDb ?? []).filter(
+        t =>
+          normalizeAssemblyName(t.assembly) ===
+            normalizeAssemblyName(settings.genomic.assembly) &&
+          t.technology === technology
+      ) as ISeqDBTrack[],
+    [trackDb, settings.genomic.assembly, technology]
   )
 
   const [selectedMap, setSelectedMap] = useState<Map<string, boolean>>(
@@ -131,19 +134,19 @@ export function SeqsDialog({
       open={open}
       //onOpenChange={onOpenChange}
       className={cn('h-3/5', className)}
-      onResponse={(response, data) => {
+      onResponse={response => {
         if (response === TEXT_OK) {
           const selectedTracks = seqs.filter(
             track => addedMap.get(track.id) ?? false
           )
 
           if (selectedTracks.length > 0) {
-            callback?.(selectedTracks, combine)
+            onResponse?.(TEXT_OK, { tracks: selectedTracks, combine })
           } else {
             setError('You must add at least one track to the cart')
           }
         } else {
-          onResponse?.(response, data)
+          onResponse?.(response)
         }
       }}
       buttons={[TEXT_OK]}
@@ -169,9 +172,9 @@ export function SeqsDialog({
 
         <VCenterRow className="gap-x-2 justify-between">
           <VCenterRow>
-            <Button
-              variant="ios"
-              //size="icon"
+            <IconButton
+              //variant="ios"
+
               // ripple={false}
               onClick={() => {
                 setAddedMap(
@@ -182,65 +185,64 @@ export function SeqsDialog({
                   ])
                 )
               }}
-              aria-label="Add to Cart"
+              title="Add to Cart"
             >
-              <PlusIcon />
-              <span>Add to Cart</span>
-            </Button>
-
-            <IconButton
-              // ripple={false}
-              variant="ios"
-              onClick={() => {
-                setSelectedMap(
-                  new Map<string, boolean>([
-                    ...[...selectedMap.entries()],
-                    ...searchedDb.map(
-                      t => [t.id, !searchSelectAll] as [string, boolean]
-                    ),
-                  ])
-                )
-
-                setSearchSelectAll(!searchSelectAll)
-              }}
-              title={searchSelectAll ? TEXT_UNSELECT_ALL : TEXT_SELECT_ALL}
-            >
-              <MultiSelectIcon checked={!searchSelectAll} />
+              <ShoppingCart size={20} strokeWidth={1.5} />
             </IconButton>
-          </VCenterRow>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <IconButton
-                  variant="ios"
-                  // ripple={false}
-                  /* onClick={() => {
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <IconButton
+                    //variant="ios"
+                    // ripple={false}
+                    /* onClick={() => {
                     setAddedMap(new Map<string, boolean>(selectedMap.entries()))
                   }} */
-                  title="Sort Items"
-                >
-                  <ArrowDownUp size={20} strokeWidth={1.5} />
-                </IconButton>
-              }
-            />
-            <DropdownMenuContent
-              //side="right"
-              // onEscapeKeyDown={() => {
-              //   setMenuOpen(false)
-              // }}
-              // onInteractOutside={() => {
-              //   setMenuOpen(false)
-              // }}
-              // onPointerDownOutside={() => {
-              //   setMenuOpen(false)
-              // }}
-              align="start"
-              //className="fill-foreground"
-            >
-              <DropdownSortOrderGroup asc={asc} setAsc={setAsc} />
-            </DropdownMenuContent>
-          </DropdownMenu>
+                    title="Sort Items"
+                  >
+                    <ArrowDownUp size={20} strokeWidth={1.5} />
+                  </IconButton>
+                }
+              />
+              <DropdownMenuContent
+                //side="right"
+                // onEscapeKeyDown={() => {
+                //   setMenuOpen(false)
+                // }}
+                // onInteractOutside={() => {
+                //   setMenuOpen(false)
+                // }}
+                // onPointerDownOutside={() => {
+                //   setMenuOpen(false)
+                // }}
+                align="start"
+                //className="fill-foreground"
+              >
+                <DropdownSortOrderGroup asc={asc} setAsc={setAsc} />
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </VCenterRow>
+
+          <IconButton
+            // ripple={false}
+            //variant="flat"
+            onClick={() => {
+              setSelectedMap(
+                new Map<string, boolean>([
+                  ...[...selectedMap.entries()],
+                  ...searchedDb.map(
+                    t => [t.id, !searchSelectAll] as [string, boolean]
+                  ),
+                ])
+              )
+
+              setSearchSelectAll(!searchSelectAll)
+            }}
+            title={searchSelectAll ? TEXT_UNSELECT_ALL : TEXT_SELECT_ALL}
+          >
+            <MultiSelectIcon checked={!searchSelectAll} />
+          </IconButton>
         </VCenterRow>
 
         <ItemsInStore
@@ -297,7 +299,7 @@ export function SeqsDialog({
                 )
               }}
             >
-              <TrashIcon className="w-4" />
+              <TrashIcon />
             </IconButton>
           </VCenterRow>
         </VCenterRow>
@@ -323,7 +325,7 @@ function ItemsInStore({
   setSelectedMap,
   asc,
 }: {
-  searchedDb: IDBTrack[]
+  searchedDb: ISeqDBTrack[]
   addedMap: Map<string, boolean>
   setAddedMap: (selected: Map<string, boolean>) => void
   selectedMap: Map<string, boolean>
@@ -373,7 +375,7 @@ function ItemsInStore({
     )
   }, [searchedDb, asc])
 
-  const displayDatasets: IDBTrack[][] = searchDatasetNames.map(dataset => {
+  const displayDatasets: ISeqDBTrack[][] = searchDatasetNames.map(dataset => {
     let ret = searchedDb.filter(track => track.dataset === dataset)
 
     if (!asc) {
@@ -418,7 +420,7 @@ function ItemsInStore({
                     <BaseCol className="grow overflow-hidden">
                       <p className="truncate">{seq.name}</p>
                       <p className="text-xs text-secondary-foreground truncate">
-                        {`${seq.technology}, ${seq.assembly}${seq.type === 'Seq' ? ` (${seq.reads.toLocaleString()} reads)` : ''}`}
+                        {`${seq.technology}, ${seq.assembly}${seq.type === 'Seq' ? ` (${seq.reads!.toLocaleString()} reads)` : ''}`}
                       </p>
                     </BaseCol>
 
@@ -445,7 +447,7 @@ function ItemsInStore({
                       }}
                       title="Add to Cart"
                     >
-                      <PlusIcon w="w-4" stroke="" />
+                      <PlusIcon stroke="" />
                     </button>
                   </li>
                 )
@@ -466,7 +468,7 @@ function CartItems({
   setSelectedMap,
   asc,
 }: {
-  searchedDb: IDBTrack[]
+  searchedDb: ISeqDBTrack[]
   addedMap: Map<string, boolean>
   setAddedMap: (selected: Map<string, boolean>) => void
   selectedMap: Map<string, boolean>
@@ -481,7 +483,7 @@ function CartItems({
     datasets = datasets.toReversed()
   }
 
-  const allDatasets: IDBTrack[][] = datasets.map(dataset => {
+  const allDatasets: ISeqDBTrack[][] = datasets.map(dataset => {
     let ret = searchedDb.filter(track => track.dataset === dataset)
 
     if (!asc) {
@@ -497,7 +499,7 @@ function CartItems({
         return (
           <SettingsAccordionItem title={dataset} key={dataseti}>
             <ul className="flex flex-col ">
-              {allDatasets[dataseti]!.map((seq, ti) => {
+              {allDatasets[dataseti]!.map((track, ti) => {
                 return (
                   <li
                     key={ti}
@@ -506,42 +508,42 @@ function CartItems({
                     <VCenterRow className="p-2.5 gap-x-2 grow group-hover:bg-muted overflow-hidden rounded-theme">
                       <Checkbox
                         className={cn([
-                          !selectedMap.get(seq.id),
+                          !selectedMap.get(track.id),
                           'invisible group-hover:visible',
                         ])}
-                        checked={selectedMap.get(seq.id) ?? false}
+                        checked={selectedMap.get(track.id) ?? false}
                         onCheckedChange={state => {
                           setSelectedMap(
                             new Map<string, boolean>([
                               ...selectedMap.entries(),
-                              [seq.id, state],
+                              [track.id, state],
                             ])
                           )
                         }}
                       />
                       <BaseCol>
-                        <span className="truncate">{seq.name}</span>
+                        <span className="truncate">{track.name}</span>
                         <span className="text-xs text-secondary-foreground">
-                          {seq.type === 'Seq'
-                            ? `${seq.reads.toLocaleString()} reads,`
+                          {track.type === 'Seq'
+                            ? `${track.reads!.toLocaleString()} reads,`
                             : ''}
-                          {seq.technology}, {seq.assembly}
+                          {track.technology}, {track.assembly}
                         </span>
                       </BaseCol>
                     </VCenterRow>
                     <button
-                      className="invisible group-hover:visible stroke-foreground/50 hover:stroke-red-500"
+                      className="invisible group-hover:visible stroke-foreground/50 hover:stroke-destructive"
                       onClick={() => {
                         setAddedMap(
                           new Map<string, boolean>([
                             ...[...addedMap.entries()],
-                            [seq.id, false] as [string, boolean],
+                            [track.id, false] as [string, boolean],
                           ])
                         )
                       }}
                       title={TEXT_REMOVE_FROM_CART}
                     >
-                      <TrashIcon className="w-5" stroke="" />
+                      <TrashIcon stroke="" />
                     </button>
                   </li>
                 )

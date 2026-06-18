@@ -1,16 +1,16 @@
 import { BaseCol } from '@/layout/base-col'
 import { VCenterRow } from '@/layout/v-center-row'
 
+import { DoubleNumericalInput } from '@/components/double-numerical-input'
+import { type IVolcanoDisplayOptions } from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import { DoubleNumericalInput } from '@/components/double-numerical-input'
-import { type IVolcanoDisplayOptions } from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
+} from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
 import { TEXT_CLEAR } from '@/consts'
-import { PropRow } from '@/dialog/prop-row'
-import { SwitchPropRow } from '@/dialog/switch-prop-row'
+import { PropRow } from '@/dialogs/prop-row'
+import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { TagIcon } from '@/icons/tag-icon'
 import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { textToLines } from '@/lib/text/lines'
@@ -23,11 +23,7 @@ import {
 } from '@/themed/v2/accordion'
 import { Button } from '@/themed/v2/button'
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
-import {
-  useHistory,
-  usePlot,
-  type VolcanoPlot,
-} from '../../history/history-store'
+import { useHistory } from '../../history/history-store'
 
 import { getNumCol } from '@/lib/dataframe/dataframe-utils'
 import { range } from '@/lib/math/range'
@@ -35,16 +31,15 @@ import { IconButton } from '@/themed/icon-button'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
 import { useState } from 'react'
+import { useVolcanoContext } from './volcano-provider'
 
 export interface IProps {
-  plotAddr: string
-
   x: string
   y: string
   //plotId: string
 }
 
-export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
+export function VolcanoPropsPanel({ x, y }: IProps) {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
 
   // const plot = plotsState.plotMap[plotId]
@@ -55,7 +50,7 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
 
   const { updatePlot } = useHistory()
 
-  const plot = usePlot(plotAddr)! as VolcanoPlot
+  const { plot } = useVolcanoContext()
 
   const sheet = plot!.dataframes['main'] as BaseDataFrame
 
@@ -71,8 +66,7 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
     updatePlot(
       produce(plot, draft => {
         draft.props.labels.values = values
-      }),
-      { file: plotAddr }
+      })
     )
   }
 
@@ -115,8 +109,7 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
     updatePlot(
       produce(plot, draft => {
         draft.props.labels.values = values
-      }),
-      { file: plotAddr }
+      })
     )
   }
 
@@ -125,7 +118,7 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
       <ScrollAccordion value={['plot', 'fold-change', 'p-value', 'labels']}>
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
-          <AccordionContent variant="sidebar">
+          <AccordionContent>
             <PropRow title="Size">
               <DoubleNumericalInput
                 v1={displayProps.axes.xaxis.length}
@@ -136,16 +129,14 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
                   updatePlot(
                     produce(plot, draft => {
                       draft.props.axes.xaxis.length = v
-                    }),
-                    { file: plotAddr }
+                    })
                   )
                 }}
                 onNumChanged2={v => {
                   updatePlot(
                     produce(plot, draft => {
                       draft.props.axes.yaxis.length = v
-                    }),
-                    { file: plotAddr }
+                    })
                   )
                 }}
               />
@@ -167,8 +158,7 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
                         v,
                         draft.props.axes.xaxis.domain[1],
                       ]
-                    }),
-                    { file: plotAddr }
+                    })
                   )
                 }}
                 onNumChanged2={v => {
@@ -178,8 +168,7 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
                         draft.props.axes.xaxis.domain[0],
                         v,
                       ]
-                    }),
-                    { file: plotAddr }
+                    })
                   )
                 }}
               />
@@ -197,8 +186,7 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
                   updatePlot(
                     produce(plot, draft => {
                       draft.props.axes.yaxis.domain = [0, v]
-                    }),
-                    { file: plotAddr }
+                    })
                   )
                 }}
               />
@@ -215,22 +203,23 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
                   updatePlot(
                     produce(plot, draft => {
                       draft.props.dots.size = v
-                    }),
-                    { file: plotAddr }
+                    })
                   )
                 }}
               />
 
               <ColorPickerButton
-                color={displayProps.dots.color}
-                onColorChange={v =>
-                  updatePlot(
-                    produce(plot, draft => {
-                      draft.props.dots.color = v
-                    }),
-                    { file: plotAddr }
-                  )
-                }
+                colors={[
+                  {
+                    color: displayProps.dots.color,
+                    onColorChange: v =>
+                      updatePlot(
+                        produce(plot, draft => {
+                          draft.props.dots.color = v
+                        })
+                      ),
+                  },
+                ]}
                 className={SIMPLE_COLOR_EXT_CLS}
               />
             </PropRow>
@@ -242,21 +231,22 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
                 updatePlot(
                   produce(plot, draft => {
                     draft.props.border.show = v
-                  }),
-                  { file: plotAddr }
+                  })
                 )
               }}
             >
               <ColorPickerButton
-                color={displayProps.border.color}
-                onColorChange={v =>
-                  updatePlot(
-                    produce(plot, draft => {
-                      draft.props.border.color = v
-                    }),
-                    { file: plotAddr }
-                  )
-                }
+                colors={[
+                  {
+                    color: displayProps.border.value,
+                    onColorChange: v =>
+                      updatePlot(
+                        produce(plot, draft => {
+                          draft.props.border.value = v
+                        })
+                      ),
+                  },
+                ]}
                 className={SIMPLE_COLOR_EXT_CLS}
               />
             </SwitchPropRow>
@@ -265,7 +255,7 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
 
         <AccordionItem value="fold-change">
           <AccordionTrigger>Fold change</AccordionTrigger>
-          <AccordionContent variant="sidebar">
+          <AccordionContent>
             <SwitchPropRow
               title="Filter"
               checked={displayProps.logFc.show}
@@ -273,8 +263,7 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
                 updatePlot(
                   produce(plot, draft => {
                     draft.props.logFc.show = v
-                  }),
-                  { file: plotAddr }
+                  })
                 )
               }}
             >
@@ -288,8 +277,7 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
                   updatePlot(
                     produce(plot, draft => {
                       draft.props.logFc.threshold = v
-                    }),
-                    { file: plotAddr }
+                    })
                   )
                 }}
               />
@@ -297,29 +285,33 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
 
             <PropRow title="Highlight">
               <ColorPickerButton
-                color={displayProps.logFc.neg.color}
-                onColorChange={v =>
-                  updatePlot(
-                    produce(plot, draft => {
-                      draft.props.logFc.neg.color = v
-                    }),
-                    { file: plotAddr }
-                  )
-                }
+                colors={[
+                  {
+                    color: displayProps.logFc.neg.color,
+                    onColorChange: v =>
+                      updatePlot(
+                        produce(plot, draft => {
+                          draft.props.logFc.neg.color = v
+                        })
+                      ),
+                  },
+                ]}
                 className={SIMPLE_COLOR_EXT_CLS}
                 title="Points &lt; 0"
               />
 
               <ColorPickerButton
-                color={displayProps.logFc.pos.color}
-                onColorChange={v =>
-                  updatePlot(
-                    produce(plot, draft => {
-                      draft.props.logFc.pos.color = v
-                    }),
-                    { file: plotAddr }
-                  )
-                }
+                colors={[
+                  {
+                    color: displayProps.logFc.pos.color,
+                    onColorChange: v =>
+                      updatePlot(
+                        produce(plot, draft => {
+                          draft.props.logFc.pos.color = v
+                        })
+                      ),
+                  },
+                ]}
                 className={SIMPLE_COLOR_EXT_CLS}
                 title="Points &ge; 0"
               />
@@ -329,7 +321,7 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
 
         <AccordionItem value="p-value">
           <AccordionTrigger>P-value</AccordionTrigger>
-          <AccordionContent variant="sidebar">
+          <AccordionContent>
             <SwitchPropRow
               title="Filter"
               checked={displayProps.logP.show}
@@ -337,8 +329,7 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
                 updatePlot(
                   produce(plot, draft => {
                     draft.props.logP.show = v
-                  }),
-                  { file: plotAddr }
+                  })
                 )
               }}
             >
@@ -352,8 +343,7 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
                   updatePlot(
                     produce(plot, draft => {
                       draft.props.logP.threshold = -Math.log10(v)
-                    }),
-                    { file: plotAddr }
+                    })
                   )
                 }}
               />
@@ -366,8 +356,7 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
                 updatePlot(
                   produce(plot, draft => {
                     draft.props.logP.line.show = v
-                  }),
-                  { file: plotAddr }
+                  })
                 )
               }}
             />
@@ -376,7 +365,7 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
 
         <AccordionItem value="labels">
           <AccordionTrigger>Labels</AccordionTrigger>
-          <AccordionContent variant="sidebar">
+          <AccordionContent>
             <BaseCol className="gap-y-1">
               <Textarea
                 id="labels"
@@ -407,15 +396,14 @@ export function VolcanoPropsPanel({ x, y, plotAddr }: IProps) {
 
                 <Button
                   variant="link"
-                  size="sm"
+                  //size="sm"
                   onClick={() => {
                     setText('')
 
                     updatePlot(
                       produce(plot, draft => {
                         draft.props.labels.values = []
-                      }),
-                      { file: plotAddr }
+                      })
                     )
                   }}
                 >

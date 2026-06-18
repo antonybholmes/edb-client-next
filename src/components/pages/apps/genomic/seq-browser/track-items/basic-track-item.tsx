@@ -1,3 +1,4 @@
+import { TruncateSpan } from '@/components/truncate-span'
 import { VCenterRow } from '@/layout/v-center-row'
 import type { NullStr } from '@/lib/text/text'
 import type { ITrackGroup } from '../tracks-provider'
@@ -33,7 +34,11 @@ export function BasicTrackItem({
         </VCenterRow>
       }
     >
-      <span className="font-semibold grow truncate w-full">{track.name}</span>
+      {/* <span className="font-semibold grow truncate w-full">{track.name}</span> */}
+
+      <TruncateSpan className="font-semibold grow h-8">
+        {track.name}
+      </TruncateSpan>
     </BaseTrackItem>
   )
 }

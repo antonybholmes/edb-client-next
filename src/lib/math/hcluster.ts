@@ -6,6 +6,7 @@ import type { AnnotationDataFrame } from '../dataframe/annotation-dataframe'
 import { pearsond } from './distance'
 import { numSort } from './math'
 import { range, rangeMap } from './range'
+import { zeros } from './zeros'
 
 export interface ICluster {
   id: number
@@ -79,7 +80,7 @@ function _linkage(
 ): number {
   const cardinality = c1.indices.length * c2.indices.length
 
-  const distances = Array(cardinality).fill(0)
+  const distances = zeros(cardinality)
   let di = 0
 
   for (const c1i of c1.indices) {
@@ -97,7 +98,7 @@ function _linkage(
   // if (!dcache.get(c1.id)!.has(c2.id)) {
   //   const cardinality = c1.indices.length * c2.indices.length
 
-  //   const distances = Array(cardinality).fill(0)
+  //   const distances = vfill(0, cardinality) //zeros(cardinality)
   //   let di = 0
 
   //   for (const c1i of c1.indices) {

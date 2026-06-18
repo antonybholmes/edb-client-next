@@ -46,7 +46,13 @@ export function MotifsSvg({ xax, pos = ZERO_POS }: { xax: Axis; pos?: IPos }) {
     }
 
     return motifLocs
-  }, [dna])
+  }, [
+    dna,
+    settings.motifs.show,
+    settings.motifs.patterns,
+    settings.location.start,
+    xax,
+  ])
 
   const innerWidth = (dna?.seq.length ?? 0) * BASE_W
 

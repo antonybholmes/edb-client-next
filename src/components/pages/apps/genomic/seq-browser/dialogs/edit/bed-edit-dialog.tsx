@@ -1,32 +1,31 @@
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
+} from '@/components/plot/color-picker-popover'
 import { LabelContainer } from '@/components/shadcn/ui/themed/v2/label'
-import { TEXT_NAME, TEXT_OK } from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
-import { PropRow } from '@/dialog/prop-row'
-import { SwitchPropRow } from '@/dialog/switch-prop-row'
-import { addAlphaToHex } from '@/lib/color/color'
+import { TEXT_CANCEL, TEXT_NAME, TEXT_OK } from '@/consts'
+import { type IModalProps, OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
+import { PropRow } from '@/dialogs/prop-row'
+import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { NumericalInput } from '@/themed/numerical-input'
 import { Input } from '@/themed/v2/input'
 import { produce } from 'immer'
 import { useState } from 'react'
 import type {
-  IBedTrack,
+  IBedDBDataTrack,
   ILocalBedTrack,
   ITrackGroup,
 } from '../../tracks-provider'
 
-export interface IProps {
+export interface IProps extends IModalProps<{
   group: ITrackGroup
-  track: IBedTrack | ILocalBedTrack
-  callback?: (group: ITrackGroup, track: IBedTrack | ILocalBedTrack) => void
-
-  onCancel: () => void
+  track: IBedDBDataTrack | ILocalBedTrack
+}> {
+  group: ITrackGroup
+  track: IBedDBDataTrack | ILocalBedTrack
 }
 
-export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
+export function BedEditDialog({ group, track, onResponse }: IProps) {
   const [_track, setTrack] = useState(track)
 
   return (
@@ -36,24 +35,8 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
       // contentVariant="glass"
       //bodyVariant="card"
       onResponse={() => {
-        onCancel()
+        onResponse?.(TEXT_CANCEL, undefined)
       }}
-      // leftHeaderChildren={
-      //   <ColorPickerButton
-      //     color={_track.displayOptions.stroke.color}
-      //     disabled={!_track.displayOptions.stroke.show}
-      //     onColorChange={color => {
-      //       const newTrack = produce(_track, draft => {
-      //         draft.displayOptions.stroke.color = color
-      //       })
-
-      //       callback?.(group, newTrack)
-      //       setTrack(newTrack)
-      //     }}
-      //     className={SIMPLE_COLOR_EXT_CLS}
-      //     title="Color"
-      //   />
-      // }
     >
       <LabelContainer label={TEXT_NAME}>
         <Input
@@ -65,7 +48,7 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
               name: e.target.value,
             }
 
-            callback?.(group, newTrack)
+            onResponse?.(TEXT_OK, { group, track: newTrack })
             setTrack(newTrack)
           }}
           placeholder="Track name"
@@ -94,17 +77,20 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
         title={
           <>
             <ColorPickerButton
-              color={_track.displayOptions.stroke.color}
-              disabled={!_track.displayOptions.fill.show}
-              allowAlpha={true}
-              onColorChange={v => {
-                const newTrack = produce(_track, draft => {
-                  draft.displayOptions.stroke.color = v
-                })
+              colors={[
+                {
+                  color: _track.displayOptions.stroke.value,
+                  onColorChange: v => {
+                    const newTrack = produce(_track, draft => {
+                      draft.displayOptions.stroke.value = v
+                    })
 
-                callback?.(group, newTrack)
-                setTrack(newTrack)
-              }}
+                    onResponse?.(TEXT_OK, { group, track: newTrack })
+                    setTrack(newTrack)
+                  },
+                },
+              ]}
+              disabled={!_track.displayOptions.fill.show}
               className={SIMPLE_COLOR_EXT_CLS}
               title="Stroke color"
             />
@@ -117,7 +103,7 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
             draft.displayOptions.stroke.show = state
           })
 
-          callback?.(group, newTrack)
+          onResponse?.(TEXT_OK, { group, track: newTrack })
           setTrack(newTrack)
         }}
       >
@@ -132,7 +118,7 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
                 draft.displayOptions.stroke.width = v
               })
 
-              callback?.(group, newTrack)
+              onResponse?.(TEXT_OK, { group, track: newTrack })
               setTrack(newTrack)
             }}
           />
@@ -143,21 +129,20 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
         title={
           <>
             <ColorPickerButton
-              color={addAlphaToHex(
-                _track.displayOptions.fill.color,
-                _track.displayOptions.fill.opacity
-              )}
-              disabled={!_track.displayOptions.fill.show}
-              allowAlpha={true}
-              onColorChange={(v, alpha) => {
-                const newTrack = produce(_track, draft => {
-                  draft.displayOptions.fill.color = v
-                  draft.displayOptions.fill.opacity = alpha
-                })
+              colors={[
+                {
+                  color: _track.displayOptions.fill.value,
+                  onColorChange: (v, alpha) => {
+                    const newTrack = produce(_track, draft => {
+                      draft.displayOptions.fill.value = v
+                      draft.displayOptions.fill.opacity = alpha
+                    })
 
-                callback?.(group, newTrack)
-                setTrack(newTrack)
-              }}
+                    onResponse?.(TEXT_OK, { group, track: newTrack })
+                    setTrack(newTrack)
+                  },
+                },
+              ]}
               className={SIMPLE_COLOR_EXT_CLS}
               title="Fill color"
             />
@@ -170,7 +155,7 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
             draft.displayOptions.fill.show = state
           })
 
-          callback?.(group, newTrack)
+          onResponse?.(TEXT_OK, { group, track: newTrack })
           setTrack(newTrack)
         }}
       >
@@ -187,7 +172,7 @@ export function BedEditDialog({ group, track, callback, onCancel }: IProps) {
                 draft.displayOptions.fill.opacity = v
               })
 
-              callback?.(group, newTrack)
+              onResponse?.(TEXT_OK, { group, track: newTrack })
               setTrack(newTrack)
             }}
           />

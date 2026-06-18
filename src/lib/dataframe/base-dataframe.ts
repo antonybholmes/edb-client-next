@@ -2,13 +2,14 @@
 
 import { range, rangeMap } from '@/lib/math/range'
 
-import type { Index, IndexFromType, IndexId, SeriesData, Shape } from '.'
+import type { Index, IndexFromType, Shape } from '.'
 
 import { cellStr } from './cell'
 
 import { makeUuid } from '../id'
 import { whereStartsWith } from '../math/where'
 import { BaseSeries, DataSeries, type SeriesFromType } from './series'
+import type { IndexId, SeriesData } from './series-data'
 
 // The default name of a sheet and useful for checking if
 // table has been properly initialized with real data
@@ -193,8 +194,8 @@ export abstract class BaseDataFrame {
    * @param _f
    * @returns a list of T the size of the number of rows.
    */
-  rowMap<T>(_f: AxisMapFunc<T>): T[] {
-    return []
+  rowMap<T>(f: AxisMapFunc<T>): T[] {
+    return this.values.map((row, ri) => f(row, ri))
   }
 
   rowApply(f: ApplyRowFunc): BaseSeries {
@@ -219,8 +220,8 @@ export abstract class BaseDataFrame {
    * @param _f
    * @returns
    */
-  colMap<T>(_f: AxisMapFunc<T>): T[] {
-    return []
+  colMap<T>(f: AxisMapFunc<T>): T[] {
+    return this.t.rowMap(f)
   }
 
   iloc({}: {

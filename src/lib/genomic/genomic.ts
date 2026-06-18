@@ -5,36 +5,14 @@ import { range } from '@/lib/math/range'
 import { makeUuid } from '../id'
 import { zip } from '../utils'
 import { formatChr } from './dna'
-
-export type Feature = 'gene' | 'transcript' | 'exon'
-
-/**
- * This is useful for api calls that return locations
- * but as JSON rather than objects. Largely interchangable
- * with the GenomicLocation object.
- */
-export interface IGenomicLocation {
-  chr: string
-  start: number
-  end: number
-  strand: string
-}
-
-/**
- * Test if object is a genomic location
- * @param o
- * @returns
- */
-export function isGenomicLocation(o: any): boolean {
-  return (
-    typeof o === 'object' &&
-    o !== null &&
-    typeof o.chr === 'string' &&
-    typeof o.start === 'number' &&
-    typeof o.end === 'number' &&
-    typeof o.strand === 'string'
-  )
-}
+import {
+  LOC_REGEX,
+  newGenomicLocation,
+  parseGenomicLocation,
+  STANDARDIZED_LOC_REGEX,
+  type IGenomicLocation,
+  type Strand,
+} from './genomic-location'
 
 /**
  * Genomic location class representing a region on a genome.
@@ -47,13 +25,13 @@ export class GenLoc {
   private _chr: string
   private _start: number
   private _end: number
-  private _strand: string
+  private _strand: Strand
 
   constructor(
     chr: string | number,
     start: number,
     end: number,
-    strand: string = '.'
+    strand: Strand = '.'
   ) {
     this._chr = formatChr(chr)
     // start must be 1 since locations use 1 based counting
@@ -62,11 +40,11 @@ export class GenLoc {
     // A location will always resolve so chrX:1-1 at worst.
     this._start = Math.max(1, Math.round(Math.min(start, end)))
     // end must be greater equal to start
-    this._end = Math.max(this._start, Math.round(Math.max(start, end)))
+    this._end = Math.round(Math.max(this._start, end))
     this._strand = strand
     // create a unique id for this location which consists of
     // location and a uuid to ensure uniqueness
-    this._id = `${chr}|${start}|${end}|${strand}|${makeUuid()}`
+    this._id = `${this._chr}|${this._start}|${this._end}|${this._strand}|${makeUuid()}`
   }
 
   /**
@@ -90,7 +68,7 @@ export class GenLoc {
     return this._end
   }
 
-  get strand(): string {
+  get strand(): Strand {
     return this._strand
   }
 
@@ -115,7 +93,12 @@ export class GenLoc {
   }
 
   toJson() {
-    return { chr: this._chr, start: this._start, end: this._end }
+    return {
+      chr: this._chr,
+      start: this._start,
+      end: this._end,
+      strand: this._strand,
+    }
   }
 
   /** Convert to IGenomicLocation */
@@ -124,11 +107,11 @@ export class GenLoc {
   }
 }
 
-export const NO_LOCATION = new GenLoc('chr0', 0, 0)
+export const NO_LOC = new GenLoc('chr0', 0, 0)
 
 export interface ILocationFile {
   fid: string
-  locations: GenLoc[]
+  locations: IGenomicLocation[]
 }
 
 /**
@@ -140,7 +123,7 @@ export interface ILocationFile {
  * @returns
  */
 export function locStr(
-  loc: GenLoc | IGenomicLocation | null | undefined
+  loc: IGenomicLocation | GenLoc | null | undefined
 ): string {
   if (!loc) {
     return ''
@@ -194,37 +177,6 @@ export function isChr(location: string): boolean {
 //   }
 // }
 
-//export const NULL_LOCATION: Location = new Location("chr-", -1, -1)
-export const LOC_REGEX = /(chr.+):(\d+)-(\d+)/
-
-const STANDARDIZED_LOC_REGEX = /(chr.+)-(\d+)-(\d+)/
-
-export function parseGenomicLocation(
-  location: string,
-  padding5p: number = 0,
-  padding3p: number = 0
-): IGenomicLocation {
-  const matcher = location
-    .replaceAll(',', '')
-    .replaceAll(':', '-')
-    .match(STANDARDIZED_LOC_REGEX)
-
-  if (!matcher) {
-    throw new Error('invalid location')
-  }
-
-  const chr = matcher[1]!
-  const start = parseInt(matcher[2]!)
-  const end = parseInt(matcher[3]!)
-
-  return {
-    chr: chr,
-    start: start - padding5p,
-    end: end + padding3p,
-    strand: '.',
-  }
-}
-
 export function parseGenLoc(
   location: string,
   padding5p: number = 0,
@@ -272,8 +224,8 @@ export function toGenomicLocation(
 }
 
 export function overlapFraction(
-  location1: GenLoc | IGenomicLocation | undefined,
-  location2: GenLoc | IGenomicLocation | undefined
+  location1: IGenomicLocation | GenLoc | undefined,
+  location2: IGenomicLocation | GenLoc | undefined
 ): number {
   if (!location1 || !location2) {
     return 0
@@ -321,7 +273,7 @@ export function overlapFraction(
 //   return new GenomicLocation(tokens[0]!, start, end)
 // }
 
-export function parseLocations(lines: string[]): GenLoc[] {
+export function parseGenLocs(lines: string[]): GenLoc[] {
   const ret: GenLoc[] = []
   let location: GenLoc
 
@@ -349,7 +301,7 @@ export function parseLocations(lines: string[]): GenLoc[] {
 }
 
 export function convertDFToLocationFile(df: BaseDataFrame): ILocationFile {
-  const ret: { fid: string; locations: GenLoc[] } = {
+  const ret: { fid: string; locations: IGenomicLocation[] } = {
     fid: df.name,
     locations: [],
   }
@@ -365,7 +317,7 @@ export function convertDFToLocationFile(df: BaseDataFrame): ILocationFile {
     ).map(v => new GenLoc(v[0] as string, v[1] as number, v[2] as number))
   } else {
     // first col is treated as location
-    ret.locations = df.col(0).values.map(v => parseGenLoc(v as string))
+    ret.locations = df.col(0).values.map(v => parseGenomicLocation(v as string))
   }
 
   // keep them sorted
@@ -421,8 +373,8 @@ export function convertDataFrameToLocationFiles(
  * @param loc2
  */
 export function locWithin(
-  loc1: GenLoc | IGenomicLocation,
-  loc2: GenLoc | IGenomicLocation
+  loc1: IGenomicLocation | GenLoc,
+  loc2: IGenomicLocation | GenLoc
 ) {
   if (loc1.chr !== loc2.chr) {
     return false
@@ -440,8 +392,8 @@ export function locWithin(
  * @returns
  */
 export function overlaps(
-  loc1: GenLoc | IGenomicLocation | undefined,
-  loc2: GenLoc | IGenomicLocation | undefined
+  loc1: IGenomicLocation | GenLoc | undefined,
+  loc2: IGenomicLocation | GenLoc | undefined
 ): GenLoc | null {
   if (loc1 === undefined || loc2 === undefined) {
     return null
@@ -462,34 +414,34 @@ export function overlaps(
 }
 
 export function joinLocations(
-  loc1: GenLoc | IGenomicLocation,
-  loc2: GenLoc | IGenomicLocation
-): GenLoc {
-  return new GenLoc(
+  loc1: IGenomicLocation | GenLoc,
+  loc2: IGenomicLocation | GenLoc
+): IGenomicLocation {
+  return newGenomicLocation(
     loc1.chr,
     Math.min(loc1.start, loc2.start),
     Math.max(loc1.end, loc2.end)
   )
 }
 
-export function locWidth(loc: GenLoc | IGenomicLocation) {
+export function locWidth(loc: IGenomicLocation | GenLoc) {
   return loc.end - loc.start + 1
 }
 
 export class LocationBinMap {
   private _binSize: number
-  private _binMap: Map<string, Map<number, GenLoc[]>>
+  private _binMap: Map<string, Map<number, IGenomicLocation[]>>
 
-  constructor(locations: GenLoc[], binSize: number = 1000) {
+  constructor(locations: IGenomicLocation[], binSize: number = 1000) {
     this._binSize = binSize
-    this._binMap = new Map<string, Map<number, GenLoc[]>>()
+    this._binMap = new Map<string, Map<number, IGenomicLocation[]>>()
 
     locations.forEach(location => {
       const s = Math.floor(location.start / binSize)
       const e = Math.floor(location.end / binSize)
 
       if (!this._binMap.has(location.chr)) {
-        this._binMap.set(location.chr, new Map<number, GenLoc[]>())
+        this._binMap.set(location.chr, new Map<number, IGenomicLocation[]>())
       }
 
       range(s, e + 1).forEach(b => {
@@ -509,8 +461,8 @@ export class LocationBinMap {
    * @param location location to search for
    * @returns
    */
-  search(location: GenLoc | IGenomicLocation): GenLoc[] {
-    const ret: GenLoc[] = []
+  search(location: IGenomicLocation | GenLoc): IGenomicLocation[] {
+    const ret: IGenomicLocation[] = []
 
     if (this._binMap.has(location.chr)) {
       const s = Math.floor(location.start / this._binSize)
@@ -534,7 +486,7 @@ export class LocationBinMap {
   }
 }
 
-export function sortLocations<T extends GenLoc | IGenomicLocation>(
+export function sortLocations<T extends IGenomicLocation | GenLoc>(
   locations: T[]
 ): T[] {
   return locations.sort((a, b) => {
@@ -552,27 +504,4 @@ export function sortLocations<T extends GenLoc | IGenomicLocation>(
 
     return a.end - b.end
   })
-}
-
-export interface IGenomicFeature {
-  loc: IGenomicLocation
-  type: string // e.g. gene, transcript
-  biotype: string // e.g protein coding
-
-  geneId?: string
-  geneSymbol?: string
-  transcriptId?: string
-  isCanonical?: boolean
-  isLongest?: boolean
-  label?: string
-  tssDist?: number
-
-  exonId?: string
-  exonNumber?: number
-  //children?: IGenomicFeature[]
-  //transcripts?: IGenomicFeature[]
-  children?: IGenomicFeature[] // for exons, utrs cds etc
-  //exons?: IGenomicFeature[]
-  //cds?: IGenomicFeature[]
-  //utrs?: IGenomicFeature[]
 }

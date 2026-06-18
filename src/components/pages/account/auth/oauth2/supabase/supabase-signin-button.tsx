@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { Button } from '@/themed/v2/button'
 

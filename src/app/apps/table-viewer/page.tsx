@@ -1,4 +1,4 @@
-import MODULE_INFO from '@/components/pages/apps/table-viewer/module.json'
+import MODULE_INFO from '@/components/pages/apps/table-viewer/manifest.json'
 import { TableViewerQueryPage } from '@/components/pages/apps/table-viewer/table-viewer-page'
 import { makeMetaDataFromModule } from '@/lib/metadata'
 import { Suspense } from 'react'

@@ -2,29 +2,19 @@ import { type IDivProps } from '@/interfaces/div-props'
 
 import { API_BEDS_REGIONS_URL } from '@/lib/edb/edb'
 import { useEdbAuth } from '@/lib/edb/edb-auth'
-import { type IGenomicLocation } from '@/lib/genomic/genomic'
+import { locStr, type IGenomicLocation } from '@/lib/genomic/genomic'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { queryClient } from '@/query'
-import { BigBed } from '@gmod/bbi'
-import { RemoteFile } from 'generic-filehandle2'
 import { useContext, useEffect, useState } from 'react'
 
 import { BedReader } from '../readers/bed/bed-reader'
-import { BigBedReader } from '../readers/bed/bigbed-reader'
 
 import {
   EMPTY_BED_READER,
   type BaseBedReader,
 } from '../readers/bed/base-bed-reader'
-import {
-  LocationContext,
-  type AllBedTrackTypes,
-  type IBedTrack,
-  type ILocalBedTrack,
-  type ILocalBigBedTrack,
-  type IRemoteBigBedTrack,
-} from '../tracks-provider'
+import { LocationContext, type IPeakTrack } from '../tracks-provider'
 import { BaseBedTrackSvg } from './base-bed-track-svg'
 
 export interface IBedRegion {
@@ -40,7 +30,7 @@ export interface ISampleBedFeatures {
 }
 
 interface IProps extends IDivProps {
-  tracks: AllBedTrackTypes[]
+  tracks: IPeakTrack[]
   titleHeight: number
 }
 
@@ -51,7 +41,7 @@ export function BedTrackSvg({ tracks, titleHeight }: IProps) {
 
   const [coreTracks, setCoreTracks] = useState<
     {
-      track: IBedTrack | ILocalBedTrack | IRemoteBigBedTrack | ILocalBigBedTrack
+      track: IPeakTrack
       positions: IGenomicLocation[]
     }[]
   >([])
@@ -80,7 +70,7 @@ export function BedTrackSvg({ tracks, titleHeight }: IProps) {
   useEffect(() => {
     async function getFeatures() {
       let coreTracks: {
-        track: AllBedTrackTypes
+        track: IPeakTrack
         positions: IGenomicLocation[]
       }[] = []
 
@@ -90,17 +80,17 @@ export function BedTrackSvg({ tracks, titleHeight }: IProps) {
 
       for (const t of tracks) {
         switch (t.type) {
-          case 'Remote BigBed':
-          case 'Local BigBed':
-          case 'Local BED':
-            reader =
-              t.type === 'Remote BigBed'
-                ? new BigBedReader(
-                    new BigBed({
-                      filehandle: new RemoteFile(t.url),
-                    })
-                  )
-                : t.reader
+          // case 'Remote BigBed':
+          //   reader = new BigBedReader(
+          //     new BigBed({
+          //       filehandle: new RemoteFile(t.url),
+          //     })
+          //   )
+          //   break
+          case 'RemoteBigBed':
+          case 'LocalBigBed':
+          case 'LocalBED':
+            reader = t.reader
             break
           default:
             // we have the tracks to display in this block and all
@@ -112,13 +102,13 @@ export function BedTrackSvg({ tracks, titleHeight }: IProps) {
               const accessToken = await fetchAccessToken()
 
               const res = await queryClient.fetchQuery({
-                queryKey: ['BED', t.id, location.loc],
+                queryKey: ['BED', t.id, locStr(location)],
                 queryFn: async () => {
                   const res = await httpFetch.postJson<{
                     data: ISampleBedFeatures[]
                   }>(API_BEDS_REGIONS_URL, {
                     body: {
-                      location: location.loc,
+                      location: locStr(location),
                       samples: [t.id],
                     },
 

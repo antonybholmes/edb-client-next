@@ -1,27 +1,20 @@
 import { BaseCol } from '@/layout/base-col'
 
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
-import { Input } from '@/themed/v2/input'
+import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
-import { Label } from '@/components/shadcn/ui/themed/v2/label'
-import {
-  ToggleButtonTriggers,
-  ToggleButtons,
-} from '@/components/toggle-buttons'
-import { TEXT_CANCEL } from '@/consts'
+import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
-import type { ISelectionRange } from '@/providers/selection-range'
-import { RadioGroup, RadioGroupItem } from '@/themed/v2/radio-group'
-
-import { DataFrame } from '@/lib/dataframe/dataframe'
-import { API_GENECONV_URL } from '@/lib/edb/edb'
-import { NA } from '@/lib/text/text'
+import { useSelectionRange } from '@/providers/selection-range'
 
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 
-import type { SeriesData } from '@/lib/dataframe'
-import { httpFetch } from '@/lib/http/http-fetch'
-import { range } from '@/lib/math/range'
+import { HCenterRow } from '@/components/layout/h-center-row'
+import {
+  GroupToggle,
+  ToggleGroup,
+} from '@/components/shadcn/ui/themed/v2/toggle-group'
+import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { createGeneConvTable, type Species } from '@/lib/gene/geneconv'
 import {
   Accordion,
   AccordionContent,
@@ -29,37 +22,25 @@ import {
   AccordionTrigger,
 } from '@/themed/v2/accordion'
 import { Checkbox } from '@/themed/v2/check-box'
-import { useQueryClient } from '@tanstack/react-query'
 import { produce } from 'immer'
+import { Rat, User } from 'lucide-react'
 import { useEffect } from 'react'
 import { useHistory, useSheet } from '../../history/history-store'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 
-const OUTPUT_TYPES = [
-  { name: 'Symbol' },
-  { name: 'Entrez' },
-  { name: 'RefSeq' },
-  { name: 'Ensembl' },
-]
+// const OUTPUT_TYPES = [
+//   { name: 'Symbol' },
+//   { name: 'Entrez' },
+//   { name: 'RefSeq' },
+//   { name: 'Ensembl' },
+// ]
 
-export interface IProps {
-  open?: boolean
-  //df: BaseDataFrame | null
-  selection: ISelectionRange
-  onConversion: () => void
-  onCancel?: () => void
-}
+export interface IProps extends IModalProps<BaseDataFrame> {}
 
-export function GeneConvertDialog({
-  open = true,
-  //df,
-  selection,
-  onConversion,
-  onCancel,
-}: IProps) {
-  const queryClient = useQueryClient()
-
+export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
   const { settings, updateSettings } = useMatcalcSettings()
+
+  const { selection } = useSelectionRange()
 
   //const [outputSymbols, setOutputSymbols] = useState("Symbol")
   //const [useIndex, setUseIndex] = useState(false)
@@ -75,16 +56,21 @@ export function GeneConvertDialog({
   const df = sheet as AnnotationDataFrame
 
   useEffect(() => {
+    if (!selection) {
+      return
+    }
+
     updateSettings(
       produce(settings, draft => {
-        draft.apps.geneConvert.convertIndex = selection.start.col === -1
-        draft.apps.geneConvert.useSelectedColumns = selection.start.col !== -1
+        //draft.apps.geneconv.convertIndex = !selection.cols
+        draft.apps.geneconv.useSelectedColumns = !!selection.cols
       })
     )
-  }, [sheet, selection])
+  }, [selection])
 
   async function convert() {
     if (!df || df.size === 0) {
+      onResponse?.(TEXT_CANCEL)
       return
     }
 
@@ -103,199 +89,98 @@ export function GeneConvertDialog({
     const exact = true
 
     try {
-      let searches: string[]
+      // let searches: string[]
 
-      if (settings.apps.geneConvert.convertIndex) {
-        // convert index
-        searches = df.index.strs
-        //range(df.shape[0]).map(i => {
-        //   const g = df.index.getName(i)
+      // if (settings.apps.geneconv.convertIndex) {
+      //   // convert index
+      //   searches = df.index.strs
+      //   //range(df.shape[0]).map(i => {
+      //   //   const g = df.index.getName(i)
 
-        //   if (g in data) {
-        //     return data[g].join(delimiter)
-        //   } else {
-        //     return "----"
-        //   }
-        // })
-      } else {
-        searches = df.col(
-          settings.apps.geneConvert.useSelectedColumns ? selection.start.col : 0
-        )!.strs
-      }
+      //   //   if (g in data) {
+      //   //     return data[g].join(delimiter)
+      //   //   } else {
+      //   //     return "----"
+      //   //   }
+      //   // })
+      // } else {
+      //   const col =
+      //     settings.apps.geneconv.useSelectedColumns &&
+      //     selection &&
+      //     selection.cols
+      //       ? selection.cols.start
+      //       : 0
+      //   searches = df.col(col)!.strs
+      // }
 
-      const res = await queryClient.fetchQuery({
-        queryKey: ['geneconvert'],
-        queryFn: () =>
-          httpFetch.postJson<{
-            data:
-              | {
-                  conversions: {
-                    entrez: string
-                    refseq: string[]
-                    ensembl: string[]
-                    symbol: string
-                  }[][]
-                }
-              | {
-                  entrez: string
-                  refseq: string[]
-                  ensembl: string[]
-                  symbol: string
-                }[][]
-          }>(
-            `${API_GENECONV_URL}/convert/${settings.apps.geneConvert.fromSpecies.toLowerCase()}/${settings.apps.geneConvert.toSpecies.toLowerCase()}`,
-            {
-              body: {
-                searches,
-                exact,
-              },
-            }
-          ),
+      const dfOut = await createGeneConvTable(df, {
+        fromSpecies: settings.apps.geneconv.fromSpecies,
+        toSpecies: settings.apps.geneconv.toSpecies,
+        exact,
       })
-
-      let data: {
-        entrez: string
-        refseq: string[]
-        ensembl: string[]
-        symbol: string
-      }[][]
-
-      // conversions store data in conversions entry,
-      // but the entries are the same as for gene info
-      // so we can just step 1 deeper into structure
-      // and continue as normal
-      if (
-        settings.apps.geneConvert.fromSpecies !=
-        settings.apps.geneConvert.toSpecies
-      ) {
-        data = (
-          res.data as {
-            conversions: {
-              entrez: string
-              refseq: string[]
-              ensembl: string[]
-              symbol: string
-            }[][]
-          }
-        ).conversions
-      } else {
-        data = res.data as {
-          entrez: string
-          refseq: string[]
-          ensembl: string[]
-          symbol: string
-        }[][]
-      }
-
-      const rename: string[] = []
-
-      for (const [ri] of searches.entries()) {
-        const conv = data[ri]!
-
-        // let symbol = ""
-        // let entrez = -1
-        // let refseq = ""
-        // let ensembl = ""
-
-        // if (conv.genes.length > 0) {
-        //   symbol = conv.genes[0].symbol
-        //   entrez = conv.genes[0].entrez
-        //   refseq = conv.genes[0].refseq.join("|")
-        //   ensembl = conv.genes[0].ensembl.join("|")
-        // }
-        if (conv.length > 0) {
-          switch (settings.apps.geneConvert.outputSymbols) {
-            case 'Entrez':
-              rename.push(conv[0]!.entrez)
-              break
-            case 'RefSeq':
-              rename.push(
-                conv[0]!.refseq.join(settings.apps.geneConvert.delimiter)
-              )
-              break
-            case 'Ensembl':
-              rename.push(
-                conv[0]!.ensembl.join(settings.apps.geneConvert.delimiter)
-              )
-              break
-            default:
-              rename.push(conv[0]!.symbol)
-              break
-          }
-        } else {
-          //table.push(row.concat(symbol, entrez, refseq, ensembl))
-
-          rename.push(NA)
-        }
-      }
 
       //return new DataFrame({ data: table, columns: header })
 
-      const outName = `${settings.apps.geneConvert.fromSpecies} to ${settings.apps.geneConvert.toSpecies}`
+      const outName = `${settings.apps.geneconv.fromSpecies} to ${settings.apps.geneconv.toSpecies}`
 
-      let df_out = df
-        .copy()
-        .setName(outName)
-        .setCol(settings.apps.geneConvert.toSpecies, rename, true)
+      dfOut.setName(outName, true)
 
-      if (settings.apps.geneConvert.duplicateRows) {
-        const d: SeriesData[][] = []
+      // if (settings.apps.geneConvert.duplicateRows) {
+      //   const d: SeriesData[][] = []
 
-        const idCol = df_out
-          .col(settings.apps.geneConvert.toSpecies)!
-          .values.map(v => v.toString())
-        console.log(idCol)
+      //   const idCol = dfOut
+      //     .col(settings.apps.geneConvert.toSpecies)!
+      //     .values.map(v => v.toString())
+      //   console.log(idCol)
 
-        let columns = df_out.columns
-        if (settings.apps.geneConvert.convertIndex) {
-          columns = ['', ...columns]
-        }
+      //   let columns = dfOut.columns
+      //   if (settings.apps.geneConvert.convertIndex) {
+      //     columns = ['', ...columns]
+      //   }
 
-        for (const rowid of range(df_out.shape[0])) {
-          const ids = idCol[rowid]!.split(settings.apps.geneConvert.delimiter)
+      //   for (const rowid of range(dfOut.shape[0])) {
+      //     const ids = idCol[rowid]!.split(settings.apps.geneConvert.delimiter)
 
-          let origRow = df_out.row(rowid)!.values
+      //     let origRow = dfOut.row(rowid)!.values
 
-          if (settings.apps.geneConvert.convertIndex) {
-            origRow = [df_out.rowName(rowid), ...origRow]
-          }
+      //     if (settings.apps.geneConvert.convertIndex) {
+      //       origRow = [dfOut.rowName(rowid), ...origRow]
+      //     }
 
-          for (const id of ids) {
-            // copy row
-            const rc = origRow.slice()
-            rc[rc.length - 1] = id
+      //     for (const id of ids) {
+      //       // copy row
+      //       const rc = origRow.slice()
+      //       rc[rc.length - 1] = id
 
-            d.push(rc)
-          }
-        }
-        console.log(df_out.columns)
+      //       d.push(rc)
+      //     }
+      //   }
+      //   console.log(dfOut.columns)
 
-        df_out = new DataFrame({ data: d, columns }).setName(outName)
-      }
+      //   dfOut = new DataFrame({ data: d, columns }).setName(outName)
+      // }
 
-      addSheets([df_out], { name: outName })
+      addSheets([dfOut], { name: outName })
 
-      //data.push(row.concat([dj.data.dna]))
+      onResponse?.(TEXT_OK, dfOut)
     } catch (error) {
       console.log(error)
+      onResponse?.(TEXT_CANCEL)
     }
-
-    onConversion?.()
   }
 
   return (
     <OKCancelDialog
-      open={open}
       title="Gene Conversion"
       onResponse={r => {
         if (r === TEXT_CANCEL) {
-          onCancel?.()
+          onResponse?.(TEXT_CANCEL)
         } else {
           convert()
         }
       }}
-      contentVariant="glass"
-      bodyVariant="card"
+      //contentVariant="glass"
+      //bodyVariant="card"
     >
       <Accordion multiple={true} defaultValue={['species', 'output', 'input']}>
         <AccordionItem
@@ -303,64 +188,106 @@ export function GeneConvertDialog({
           //className="bg-background p-2 rounded-lg mb-4"
         >
           <AccordionTrigger variant="settings">Species</AccordionTrigger>
-          <AccordionContent variant="sidebar" innerCls="flex flex-col gap-y-2">
-            <VCenterRow className="gap-x-4">
-              <VCenterRow className="gap-x-2">
-                <span>From</span>
-                <ToggleButtons
-                  className="rounded-theme overflow-hidden"
-                  tabs={[{ id: 'Human' }, { id: 'Mouse' }]}
-                  value={settings.apps.geneConvert.fromSpecies}
-                  onTabChange={selectedTab => {
-                    updateSettings(
-                      produce(settings, draft => {
-                        draft.apps.geneConvert.fromSpecies = selectedTab.tab.id
-                      })
-                    )
-                  }}
-                >
-                  <ToggleButtonTriggers variant="tab" />
-                </ToggleButtons>
+          <AccordionContent innerCls="flex flex-col gap-y-2">
+            <HCenterRow className="gap-x-6">
+              <VCenterRow className="gap-x-3">
+                <h2 className="font-semibold text-center">From</h2>
+                <VCenterRow className="gap-x-2">
+                  <ToggleGroup
+                    className="gap-x-1"
+                    value={[settings.apps.geneconv.fromSpecies]}
+                    onValueChange={value =>
+                      updateSettings(
+                        produce(settings, draft => {
+                          draft.apps.geneconv.fromSpecies = value[0]! as Species
+                        })
+                      )
+                    }
+                    variant="app-theme"
+                    rounded="lg"
+                  >
+                    <GroupToggle
+                      value="human"
+                      aria-label="Toggle human"
+                      //className="flex flex-col gap-y-2 items-center"
+                      size="colorful"
+                    >
+                      <User
+                        className="w-6 h-6 aspect-square shrink-0"
+                        strokeWidth={1.5}
+                      />
+                      <span>Human</span>
+                    </GroupToggle>
+                    <GroupToggle
+                      value="mouse"
+                      aria-label="Toggle mouse"
+                      size="colorful"
+                    >
+                      <Rat
+                        className="w-6 h-6 aspect-square shrink-0"
+                        strokeWidth={1.5}
+                      />
+                      <span>Mouse</span>
+                    </GroupToggle>
+                  </ToggleGroup>
+                </VCenterRow>
               </VCenterRow>
-              <VCenterRow className="gap-x-2">
-                <span>To</span>
-                <ToggleButtons
-                  className="rounded-theme overflow-hidden"
-                  tabs={[{ id: 'Human' }, { id: 'Mouse' }]}
-                  value={settings.apps.geneConvert.toSpecies}
-                  onTabChange={selectedTab => {
-                    updateSettings(
-                      produce(settings, draft => {
-                        draft.apps.geneConvert.toSpecies = selectedTab.tab.id
-                      })
-                    )
-                  }}
-                >
-                  <ToggleButtonTriggers variant="tab" />
-                </ToggleButtons>
+
+              <VCenterRow className="gap-x-3">
+                <h2 className="font-semibold text-center">To</h2>
+                <VCenterRow className="gap-x-2">
+                  <ToggleGroup
+                    className="gap-x-1"
+                    value={[settings.apps.geneconv.toSpecies]}
+                    onValueChange={value =>
+                      updateSettings(
+                        produce(settings, draft => {
+                          draft.apps.geneconv.toSpecies = value[0]! as Species
+                        })
+                      )
+                    }
+                    variant="app-theme"
+                    rounded="lg"
+                  >
+                    <GroupToggle
+                      value="human"
+                      aria-label="Toggle human"
+                      //className="flex flex-col gap-y-2 items-center"
+                      size="colorful"
+                    >
+                      <User
+                        className="w-6 h-6 aspect-square shrink-0"
+                        strokeWidth={1.5}
+                      />
+                      <span>Human</span>
+                    </GroupToggle>
+                    <GroupToggle
+                      value="mouse"
+                      aria-label="Toggle mouse"
+                      size="colorful"
+                    >
+                      <Rat
+                        className="w-6 h-6 aspect-square shrink-0"
+                        strokeWidth={1.5}
+                      />
+                      <span>Mouse</span>
+                    </GroupToggle>
+                  </ToggleGroup>
+                </VCenterRow>
               </VCenterRow>
-            </VCenterRow>
+            </HCenterRow>
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem
-          value="output"
-          //className="bg-background p-2 rounded-lg mb-4"
-        >
+        {/* <AccordionItem value="output">
           <AccordionTrigger variant="settings">Output</AccordionTrigger>
-          <AccordionContent variant="sidebar" innerCls="flex flex-col gap-y-2">
-            {/* <ToggleButtons
-            tabs={OUTPUT_TYPES}
-            value={outputSymbols}
-            onValueChange={setOutputSymbols}
-          /> */}
-
+          <AccordionContent innerCls="flex flex-col gap-y-2">
             <RadioGroup
-              value={settings.apps.geneConvert.outputSymbols}
+              value={settings.apps.geneconv.outputSymbols}
               onValueChange={v => {
                 updateSettings(
                   produce(settings, draft => {
-                    draft.apps.geneConvert.outputSymbols = v as string
+                    draft.apps.geneconv.outputSymbols = v as string
                   })
                 )
               }}
@@ -377,35 +304,35 @@ export function GeneConvertDialog({
               ))}
             </RadioGroup>
           </AccordionContent>
-        </AccordionItem>
+        </AccordionItem> */}
 
         <AccordionItem value="input">
           <AccordionTrigger variant="settings">Input</AccordionTrigger>
-          <AccordionContent variant="sidebar" innerCls="flex flex-col gap-y-2">
-            <VCenterRow>
+          <AccordionContent innerCls="flex flex-col gap-y-2">
+            {/* <VCenterRow>
               <span className="w-28">Delimiter</span>
               <Input
-                value={settings.apps.geneConvert.delimiter}
+                value={settings.apps.geneconv.delimiter}
                 onChange={e => {
                   //console.log(index, e.target.value)
 
                   updateSettings(
                     produce(settings, draft => {
-                      draft.apps.geneConvert.delimiter = e.target.value
+                      draft.apps.geneconv.delimiter = e.target.value
                     })
                   )
                 }}
                 className="w-24 rounded-theme"
                 placeholder="Delimiter..."
               />
-            </VCenterRow>
+            </VCenterRow> */}
             <BaseCol className="gap-y-1">
               <Checkbox
-                checked={settings.apps.geneConvert.convertIndex}
+                checked={settings.apps.geneconv.convertIndex}
                 onCheckedChange={v =>
                   updateSettings(
                     produce(settings, draft => {
-                      draft.apps.geneConvert.convertIndex = v
+                      draft.apps.geneconv.convertIndex = v
                     })
                   )
                 }
@@ -414,11 +341,11 @@ export function GeneConvertDialog({
               </Checkbox>
 
               <Checkbox
-                checked={settings.apps.geneConvert.useSelectedColumns}
+                checked={settings.apps.geneconv.useSelectedColumns}
                 onCheckedChange={v =>
                   updateSettings(
                     produce(settings, draft => {
-                      draft.apps.geneConvert.useSelectedColumns = v
+                      draft.apps.geneconv.useSelectedColumns = v
                     })
                   )
                 }
@@ -426,18 +353,18 @@ export function GeneConvertDialog({
                 Convert selected column
               </Checkbox>
 
-              <Checkbox
-                checked={settings.apps.geneConvert.duplicateRows}
+              {/* <Checkbox
+                checked={settings.apps.geneconv.duplicateRows}
                 onCheckedChange={v =>
                   updateSettings(
                     produce(settings, draft => {
-                      draft.apps.geneConvert.duplicateRows = v
+                      draft.apps.geneconv.duplicateRows = v
                     })
                   )
                 }
               >
                 Duplicate rows for multiple conversions
-              </Checkbox>
+              </Checkbox> */}
             </BaseCol>
           </AccordionContent>
         </AccordionItem>

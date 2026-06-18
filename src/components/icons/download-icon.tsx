@@ -1,18 +1,36 @@
-import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
+import {
+  ICON_CLS,
+  VECTOR_ICON_CLS,
+  type IIconProps,
+} from '@/interfaces/icon-props'
 import { cn } from '@/lib/shadcn-utils'
+import { cva, type VariantProps } from 'class-variance-authority'
 import { ArrowDownToLine } from 'lucide-react'
 
+export const variants = cva(VECTOR_ICON_CLS, {
+  variants: {
+    variant: {
+      none: '',
+      default: 'stroke-foreground',
+      app: 'stroke-app-theme',
+    },
+  },
+  defaultVariants: {
+    variant: 'app',
+  },
+})
+
 export function DownloadIcon({
-  w = 'w-5 h-5',
-  stroke = 'stroke-foreground',
+  size = 20,
   className,
+  variant,
   strokeWidth = 1.5,
-}: IIconProps) {
+}: IIconProps & VariantProps<typeof variants>) {
   return (
     // <svg
     //   xmlns="http://www.w3.org/2000/svg"
     //   viewBox="0 0 24 24"
-    //   className={cn(ICON_CLS, stroke, fill, w, className)}
+    //   className={cn(ICON_CLS, stroke, fill, size, className)}
     //   style={{
     //     strokeLinecap: 'round',
     //     strokeLinejoin: 'round',
@@ -27,8 +45,12 @@ export function DownloadIcon({
     // </svg>
 
     <ArrowDownToLine
-      className={cn(ICON_CLS, stroke, w, className)}
+      className={variants({
+        variant,
+        className: cn(ICON_CLS, className),
+      })}
       strokeWidth={strokeWidth}
+      size={size}
       stroke=""
     />
   )

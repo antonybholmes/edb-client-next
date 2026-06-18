@@ -5,10 +5,10 @@ import {
   type IHeatMapDisplayOptions,
 } from '@/components/plot/heatmap/heatmap-svg-props'
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
-import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
+import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { Accordion } from '@/themed/v2/accordion'
 
-import { SettingsAccordionItem } from '@/dialog/settings/settings-dialog'
+import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import {
   getColIdxFromGroup,
@@ -23,12 +23,12 @@ import {
 } from '@/lib/math/hcluster'
 import { useEffect, useState } from 'react'
 
-import { CheckPropRow } from '@/components/dialog/check-prop-row'
 import { WarningIcon } from '@/components/icons/warning-icon'
 import { HCenterRow } from '@/components/layout/h-center-row'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
 import { VScrollPanel } from '@/components/v-scroll-panel'
+import { CheckPropRow } from '@/dialogs/check-prop-row'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeUuid } from '@/lib/id'
 import { cumulativeSteps } from '@/lib/math/quartile'
@@ -44,9 +44,9 @@ import {
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { MAX_CLUSTER_ITEMS, MAX_HEATMAP_DIM } from './heatmap-dialog'
 
-export interface IProps extends IModalProps {
+export interface IProps extends IModalProps<HistoryPlot> {
   open?: boolean
-  isClusterMap?: boolean
+  isClusterMap?: boolean | undefined
   minThreshold?: number
 }
 
@@ -76,7 +76,7 @@ export function DotPlotDialog({
 
   function makeDotPlot() {
     if (!sheet) {
-      onResponse?.(TEXT_CANCEL)
+      onResponse?.(TEXT_CANCEL, undefined)
       return
     }
 
@@ -152,7 +152,7 @@ export function DotPlotDialog({
       : groupMeanDf
 
     if (!dfZ) {
-      onResponse?.(TEXT_CANCEL)
+      onResponse?.(TEXT_CANCEL, undefined)
       return
     }
 
@@ -236,7 +236,7 @@ export function DotPlotDialog({
     const dfZ = settings.heatmap.applyRowZscore ? rowZScore(dfLog) : dfLog
 
     if (!dfZ) {
-      onResponse?.(TEXT_CANCEL)
+      onResponse?.(TEXT_CANCEL, undefined)
       return
     }
 
@@ -298,7 +298,7 @@ export function DotPlotDialog({
         mode: dotplotMode,
         sizes: sizes.map((s, si) => ({
           size: (si + 1) / 4,
-          value: formatNumber(s, DEFAULT_HEATMAP_PROPS.cells.values.dp),
+          value: formatNumber(s, { dp: DEFAULT_HEATMAP_PROPS.cells.values.dp }),
         })),
         //sizes: sizes.map(s => ({ size: s, value: s })),
         lim: [min, max],
@@ -328,7 +328,7 @@ export function DotPlotDialog({
       title="Dot Plot"
       onResponse={r => {
         if (r === TEXT_CANCEL) {
-          onResponse?.(r)
+          onResponse?.(r, undefined)
         } else {
           makeDotPlot()
         }
@@ -337,7 +337,7 @@ export function DotPlotDialog({
     >
       {error && (
         <VCenterRow className="text-destructive gap-x-2  rounded-theme p-2 bg-destructive/10">
-          <WarningIcon stroke="stroke-destructive" w="w-5" />
+          <WarningIcon stroke="stroke-destructive" size="w-5" />
           <span>{error}</span>
         </VCenterRow>
       )}

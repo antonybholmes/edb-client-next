@@ -29,7 +29,7 @@ export function formatString(text: string): string {
   text = text.replaceAll('${CURRENT_YEAR}', CURRENT_YEAR.toString())
 
   // replace (C) with copyright symbol
-  text = text.replaceAll('(C)', '©')
+  text = text.replace(/\((?:C|c)\)/g, '©')
 
   return text
 }

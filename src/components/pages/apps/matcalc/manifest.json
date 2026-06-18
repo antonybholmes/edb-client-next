@@ -1,0 +1,10 @@
+{
+  "name": "Matcalc",
+  "description": "Tabular data analysis.",
+  "color": "#40bf80",
+  "version": "46.6.6",
+  "copyright": "(C) ${START_YEAR:2023} Antony Holmes",
+  "modified": "2026-06-17T16:11:38.389Z",
+  "hash": "a4376c14b66b7dc284f9465f6bce3d065ddd4352afdd2b33134d246a004a9060",
+  "build": 1610
+}

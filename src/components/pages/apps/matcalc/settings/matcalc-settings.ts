@@ -1,12 +1,13 @@
 import { config } from '@/config'
-import { getModuleName } from '@/lib/module-info'
+import { getAppName } from '@/lib/app-info'
 import { create } from 'zustand'
 import type { HumanReadableDelimiter } from '../../../open-files'
-import MODULE_INFO from '../module.json'
+import APP_INFO from '../manifest.json'
 
+import type { Species } from '@/lib/gene/geneconv'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:${getModuleName(MODULE_INFO.name)}:settings:v48`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v58`
 
 export interface IMatcalcSettings {
   dot: { size: { useOriginalValuesForSizes: boolean } }
@@ -22,16 +23,15 @@ export interface IMatcalcSettings {
     clusterCols: boolean
     filterRows: boolean
   }
-
   apps: {
-    geneConvert: {
+    geneconv: {
       duplicateRows: boolean
       convertIndex: boolean
       useSelectedColumns: boolean
       delimiter: string
       outputSymbols: string
-      fromSpecies: string
-      toSpecies: string
+      fromSpecies: Species
+      toSpecies: Species
     }
     kmeans: {
       showHeatmap: boolean
@@ -51,6 +51,7 @@ export interface IMatcalcSettings {
       genome: string
       gexType: string
       addGroup: boolean
+      useOfficialGeneSymbol: boolean
       addSampleMetadataToColumns: boolean
       addAltNames: boolean
       technology: string
@@ -83,11 +84,20 @@ export interface IMatcalcSettings {
     multiFileView: boolean
   }
 
+  view: {
+    dp: number
+    commas: boolean
+    defaultFileFormat: string
+  }
+
   sidebar: {
     show: boolean
   }
 
   groups: {
+    match: {
+      exact: boolean
+    }
     filter: {
       mode: 'keep' | 'hide' | 'ignore'
     }
@@ -135,12 +145,12 @@ export const DEFAULT_SETTINGS: IMatcalcSettings = {
   },
 
   apps: {
-    geneConvert: {
-      fromSpecies: 'Human',
-      toSpecies: 'Mouse',
+    geneconv: {
+      fromSpecies: 'human',
+      toSpecies: 'mouse',
       outputSymbols: 'Symbol',
       delimiter: ' /// ',
-      convertIndex: true,
+      convertIndex: false,
       useSelectedColumns: false,
       duplicateRows: false,
     },
@@ -159,6 +169,7 @@ export const DEFAULT_SETTINGS: IMatcalcSettings = {
     },
     gex: {
       addGroup: true,
+      useOfficialGeneSymbol: true,
       addSampleMetadataToColumns: false,
       addAltNames: false,
       technology: 'RNA-seq',
@@ -174,7 +185,16 @@ export const DEFAULT_SETTINGS: IMatcalcSettings = {
     },
   },
 
+  view: {
+    dp: 4,
+    commas: true,
+    defaultFileFormat: 'txt',
+  },
+
   groups: {
+    match: {
+      exact: true,
+    },
     filter: {
       mode: 'ignore',
     },
@@ -182,14 +202,14 @@ export const DEFAULT_SETTINGS: IMatcalcSettings = {
 }
 
 export interface IMatcalcStore extends IMatcalcSettings {
-  updateSettings: (settings: Partial<IMatcalcSettings>) => void
+  update: (settings: Partial<IMatcalcSettings>) => void
 }
 
 export const useMatcalcStore = create<IMatcalcStore>()(
   persist(
     set => ({
       ...DEFAULT_SETTINGS,
-      updateSettings: (settings: Partial<IMatcalcSettings>) => {
+      update: (settings: Partial<IMatcalcSettings>) => {
         set(state => ({ ...state, ...settings }))
       },
     }),
@@ -225,8 +245,8 @@ export function useMatcalcSettings(): {
   resetSettings: () => void
 } {
   const settings = useMatcalcStore(state => state)
-  const updateSettings = useMatcalcStore(state => state.updateSettings)
-  const resetSettings = () => updateSettings({ ...DEFAULT_SETTINGS })
+  const update = useMatcalcStore(state => state.update)
+  const resetSettings = () => update({ ...DEFAULT_SETTINGS })
 
-  return { settings, updateSettings, resetSettings }
+  return { settings, updateSettings: update, resetSettings }
 }

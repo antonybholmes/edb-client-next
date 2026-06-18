@@ -1,13 +1,17 @@
+import { VCenterRow } from '@/components/layout/v-center-row'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import { VCenterRow } from '@/components/layout/v-center-row'
+} from '@/components/plot/color-picker-popover'
 import { BasicHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
 import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
-import { PropRow } from '@/dialog/prop-row'
-import { SettingsAccordionItem } from '@/dialog/settings/settings-dialog'
-import { SwitchPropRow } from '@/dialog/switch-prop-row'
+import {
+  GroupToggle,
+  ToggleGroup,
+} from '@/components/shadcn/ui/themed/v2/toggle-group'
+import { PropRow } from '@/dialogs/prop-row'
+import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
+import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { capitalCase } from '@/lib/text/capital-case'
 import { NumericalInput } from '@/themed/numerical-input'
 import { Accordion } from '@/themed/v2/accordion'
@@ -20,6 +24,7 @@ import {
   SelectValue,
 } from '@/themed/v2/select'
 import { produce } from 'immer'
+import { Circle, Square } from 'lucide-react'
 import {
   useSeqBrowserSettings,
   type BinSize,
@@ -47,10 +52,10 @@ export function SettingsTracksPanel() {
         <SettingsAccordionItem title="Signals">
           <SwitchPropRow
             title="Global Y"
-            checked={settings.seqs.globalY.on}
+            checked={settings.tracks.seqs.globalY.on}
             onCheckedChange={v => {
               const newOptions = produce(settings, draft => {
-                draft.seqs.globalY.on = v
+                draft.tracks.seqs.globalY.on = v
               })
 
               updateSettings(newOptions)
@@ -59,10 +64,10 @@ export function SettingsTracksPanel() {
 
           <SwitchPropRow
             title="Auto"
-            checked={settings.seqs.globalY.auto}
+            checked={settings.tracks.seqs.globalY.auto}
             onCheckedChange={v => {
               const newOptions = produce(settings, draft => {
-                draft.seqs.globalY.auto = v
+                draft.tracks.seqs.globalY.auto = v
               })
 
               updateSettings(newOptions)
@@ -71,13 +76,13 @@ export function SettingsTracksPanel() {
           >
             <NumericalInput
               w="xs"
-              value={settings.seqs.globalY.ymax}
-              disabled={settings.seqs.globalY.auto}
+              value={settings.tracks.seqs.globalY.ymax}
+              disabled={settings.tracks.seqs.globalY.auto}
               placeholder="Y-max"
               limit={[1, 1000]}
               onNumChange={v => {
                 const newOptions = produce(settings, draft => {
-                  draft.seqs.globalY.ymax = v
+                  draft.tracks.seqs.globalY.ymax = v
                 })
 
                 updateSettings(newOptions)
@@ -97,10 +102,10 @@ export function SettingsTracksPanel() {
           >
             <SelectList
               w="sm"
-              value={settings.seqs.scale.mode}
+              value={settings.tracks.seqs.scale.mode}
               onValueChange={v => {
                 const newOptions = produce(settings, draft => {
-                  draft.seqs.scale.mode = v as ReadScaleMode
+                  draft.tracks.seqs.scale.mode = v as ReadScaleMode
                 })
 
                 updateSettings(newOptions)
@@ -113,24 +118,24 @@ export function SettingsTracksPanel() {
           </PropRow>
           <SwitchPropRow
             title="Smooth lines"
-            checked={settings.seqs.smoothing.on}
+            checked={settings.tracks.seqs.smoothing.on}
             onCheckedChange={v => {
               const newOptions = produce(settings, draft => {
-                draft.seqs.smoothing.on = v
+                draft.tracks.seqs.smoothing.on = v
               })
 
               updateSettings(newOptions)
             }}
           >
             <NumericalInput
-              value={settings.seqs.smoothing.factor}
+              value={settings.tracks.seqs.smoothing.factor}
               placeholder="Smoothing factor"
               limit={[0, 1]}
               step={0.01}
               dp={2}
               onNumChange={v => {
                 const newOptions = produce(settings, draft => {
-                  draft.seqs.smoothing.factor = v
+                  draft.tracks.seqs.smoothing.factor = v
                 })
 
                 updateSettings(newOptions)
@@ -144,10 +149,10 @@ export function SettingsTracksPanel() {
 
           <PropRow title="Bin size">
             <Switch
-              checked={settings.seqs.bins.autoSize}
+              checked={settings.tracks.seqs.bins.autoSize}
               onCheckedChange={v => {
                 const newOptions = produce(settings, draft => {
-                  draft.seqs.bins.autoSize = v
+                  draft.tracks.seqs.bins.autoSize = v
                 })
 
                 updateSettings(newOptions)
@@ -157,11 +162,11 @@ export function SettingsTracksPanel() {
             </Switch>
             <SelectList
               w="sm"
-              value={settings.seqs.bins.size.toString()}
-              disabled={settings.seqs.bins.autoSize}
+              value={settings.tracks.seqs.bins.size.toString()}
+              disabled={settings.tracks.seqs.bins.autoSize}
               onValueChange={v => {
                 const newOptions = produce(settings, draft => {
-                  draft.seqs.bins.size = Number(v) as BinSize
+                  draft.tracks.seqs.bins.size = Number(v) as BinSize
                 })
 
                 updateSettings(newOptions)
@@ -183,11 +188,33 @@ export function SettingsTracksPanel() {
 
         <SettingsAccordionItem title="Peaks">
           <PropRow title="Style">
-            <SelectList
-              value={settings.beds.style}
+            <ToggleGroup
+              direction="row"
+              className="overflow-hidden rounded-theme"
+              rounded="none"
+              value={[settings.tracks.beds.style]}
               onValueChange={v => {
                 const newOptions = produce(settings, draft => {
-                  draft.beds.style = v as BandStyle
+                  draft.tracks.beds.style = v[0] as BandStyle
+                })
+
+                updateSettings(newOptions)
+              }}
+            >
+              <GroupToggle value="rounded" className="px-2" title="Rounded">
+                <Circle size={16} />
+              </GroupToggle>
+
+              <GroupToggle value="square" className="px-2" title="Square">
+                <Square size={16} />
+              </GroupToggle>
+            </ToggleGroup>
+
+            {/* <SelectList
+              value={settings.tracks.beds.style}
+              onValueChange={v => {
+                const newOptions = produce(settings, draft => {
+                  draft.tracks.beds.style = v as BandStyle
                 })
 
                 updateSettings(newOptions)
@@ -195,16 +222,16 @@ export function SettingsTracksPanel() {
             >
               <SelectItem value="rounded-theme">Rounded</SelectItem>
               <SelectItem value="Square">Square</SelectItem>
-            </SelectList>
+            </SelectList> */}
           </PropRow>
           <PropRow title="Height">
             <NumericalInput
-              value={settings.beds.band.height}
+              value={settings.tracks.beds.band.height}
               placeholder="height"
               limit={[1, 1000]}
               onNumChange={v => {
                 const newOptions = produce(settings, draft => {
-                  draft.beds.band.height = v
+                  draft.tracks.beds.band.height = v
                 })
 
                 updateSettings(newOptions)
@@ -223,10 +250,10 @@ export function SettingsTracksPanel() {
                 </BasicHoverCard>
               </VCenterRow>
             }
-            checked={settings.beds.collapsed}
+            checked={settings.tracks.beds.collapsed}
             onCheckedChange={v => {
               const newOptions = produce(settings, draft => {
-                draft.beds.collapsed = v
+                draft.tracks.beds.collapsed = v
               })
 
               updateSettings(newOptions)
@@ -237,21 +264,21 @@ export function SettingsTracksPanel() {
         <SettingsAccordionItem title="Genes">
           <SwitchPropRow
             title="Arrows"
-            checked={settings.genes.arrows.show}
+            checked={settings.tracks.genes.arrows.show}
             onCheckedChange={v => {
               const newOptions = produce(settings, draft => {
-                draft.genes.arrows.show = v
+                draft.tracks.genes.arrows.show = v
               })
 
               updateSettings(newOptions)
             }}
           >
             <Select
-              value={settings.genes.arrows.style}
-              disabled={!settings.genes.arrows.show}
+              value={settings.tracks.genes.arrows.style}
+              disabled={!settings.tracks.genes.arrows.show}
               onValueChange={v => {
                 const newOptions = produce(settings, draft => {
-                  draft.genes.arrows.style = v as GeneArrowStyle
+                  draft.tracks.genes.arrows.style = v as GeneArrowStyle
                 })
 
                 updateSettings(newOptions)
@@ -259,7 +286,7 @@ export function SettingsTracksPanel() {
             >
               <SelectTrigger>
                 <SelectValue data-placeholder="Choose arrow style">
-                  {capitalCase(settings.genes.arrows.style)}
+                  {capitalCase(settings.tracks.genes.arrows.style)}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -271,21 +298,21 @@ export function SettingsTracksPanel() {
 
           <SwitchPropRow
             title="End arrows"
-            checked={settings.genes.endArrows.show}
+            checked={settings.tracks.genes.endArrows.show}
             onCheckedChange={v => {
               const newOptions = produce(settings, draft => {
-                draft.genes.endArrows.show = v
+                draft.tracks.genes.endArrows.show = v
               })
 
               updateSettings(newOptions)
             }}
           >
             <Switch
-              checked={settings.genes.endArrows.firstTranscriptOnly}
-              disabled={!settings.genes.endArrows.show}
+              checked={settings.tracks.genes.endArrows.firstTranscriptOnly}
+              disabled={!settings.tracks.genes.endArrows.show}
               onCheckedChange={v => {
                 const newOptions = produce(settings, draft => {
-                  draft.genes.endArrows.firstTranscriptOnly = v
+                  draft.tracks.genes.endArrows.firstTranscriptOnly = v
                 })
 
                 updateSettings(newOptions)
@@ -295,16 +322,19 @@ export function SettingsTracksPanel() {
             </Switch>
 
             <ColorPickerButton
-              color={settings.genes.endArrows.stroke.color}
-              disabled={!settings.genes.endArrows.show}
-              onColorChange={v => {
-                const newOptions = produce(settings, draft => {
-                  draft.genes.endArrows.stroke.color = v
-                  draft.genes.endArrows.fill.color = v
-                })
+              colors={[
+                {
+                  color: settings.tracks.genes.endArrows.stroke.value,
+                  onColorChange: v => {
+                    const newOptions = produce(settings, draft => {
+                      draft.tracks.genes.endArrows.stroke.value = v
+                      draft.tracks.genes.endArrows.fill.value = v
+                    })
 
-                updateSettings(newOptions)
-              }}
+                    updateSettings(newOptions)
+                  },
+                },
+              ]}
               className={SIMPLE_COLOR_EXT_CLS}
               title="Stroke color"
             />
@@ -312,10 +342,10 @@ export function SettingsTracksPanel() {
 
           <SwitchPropRow
             title="Exons"
-            checked={settings.genes.exons.show}
+            checked={settings.tracks.genes.exons.show}
             onCheckedChange={v => {
               const newOptions = produce(settings, draft => {
-                draft.genes.exons.show = v
+                draft.tracks.genes.exons.show = v
               })
 
               updateSettings(newOptions)
@@ -332,10 +362,10 @@ export function SettingsTracksPanel() {
                 </BasicHoverCard>
               </VCenterRow>
             }
-            checked={settings.genes.canonical.only}
+            checked={settings.tracks.genes.canonical.only}
             onCheckedChange={v => {
               const newOptions = produce(settings, draft => {
-                draft.genes.canonical.only = v
+                draft.tracks.genes.canonical.only = v
               })
 
               updateSettings(newOptions)
@@ -352,25 +382,28 @@ export function SettingsTracksPanel() {
                 </BasicHoverCard>
               </VCenterRow>
             }
-            checked={settings.genes.canonical.isColored}
+            checked={settings.tracks.genes.canonical.isColored}
             onCheckedChange={v => {
               const newOptions = produce(settings, draft => {
-                draft.genes.canonical.isColored = v
+                draft.tracks.genes.canonical.isColored = v
               })
 
               updateSettings(newOptions)
             }}
           >
             <ColorPickerButton
-              color={settings.genes.canonical.fill.color}
-              disabled={!settings.genes.canonical.isColored}
-              onColorChange={v => {
-                const newOptions = produce(settings, draft => {
-                  draft.genes.canonical.fill.color = v
-                })
+              colors={[
+                {
+                  color: settings.tracks.genes.canonical.fill.value,
+                  onColorChange: v => {
+                    const newOptions = produce(settings, draft => {
+                      draft.tracks.genes.canonical.fill.value = v
+                    })
 
-                updateSettings(newOptions)
-              }}
+                    updateSettings(newOptions)
+                  },
+                },
+              ]}
               className={SIMPLE_COLOR_EXT_CLS}
               title="Canonical color"
             />
@@ -379,11 +412,33 @@ export function SettingsTracksPanel() {
 
         <SettingsAccordionItem title="Cytobands">
           <PropRow title="Style">
-            <SelectList
-              value={settings.cytobands.style}
+            <ToggleGroup
+              direction="row"
+              className="overflow-hidden rounded-theme"
+              rounded="none"
+              value={[settings.tracks.cytobands.style]}
               onValueChange={v => {
                 const newOptions = produce(settings, draft => {
-                  draft.cytobands.style = v as BandStyle
+                  draft.tracks.cytobands.style = v[0] as BandStyle
+                })
+
+                updateSettings(newOptions)
+              }}
+            >
+              <GroupToggle value="rounded" className="px-2" title="Rounded">
+                <Circle size={16} />
+              </GroupToggle>
+
+              <GroupToggle value="square" className="px-2" title="Square">
+                <Square size={16} />
+              </GroupToggle>
+            </ToggleGroup>
+
+            {/* <SelectList
+              value={settings.tracks.cytobands.style}
+              onValueChange={v => {
+                const newOptions = produce(settings, draft => {
+                  draft.tracks.cytobands.style = v as BandStyle
                 })
 
                 updateSettings(newOptions)
@@ -391,17 +446,17 @@ export function SettingsTracksPanel() {
             >
               <SelectItem value="Rounded">Rounded</SelectItem>
               <SelectItem value="Square">Square</SelectItem>
-            </SelectList>
+            </SelectList> */}
           </PropRow>
 
           <PropRow title="Height">
             <NumericalInput
-              value={settings.cytobands.band.height}
+              value={settings.tracks.cytobands.band.height}
               placeholder="height"
               limit={[1, 1000]}
               onNumChange={v => {
                 const newOptions = produce(settings, draft => {
-                  draft.cytobands.band.height = v
+                  draft.tracks.cytobands.band.height = v
                 })
 
                 updateSettings(newOptions)
@@ -412,10 +467,10 @@ export function SettingsTracksPanel() {
 
           <SwitchPropRow
             title="Labels"
-            checked={settings.cytobands.labels.show}
+            checked={settings.tracks.cytobands.labels.text.show}
             onCheckedChange={v => {
               const newOptions = produce(settings, draft => {
-                draft.cytobands.labels.show = v
+                draft.tracks.cytobands.labels.text.show = v
               })
 
               updateSettings(newOptions)
@@ -432,11 +487,11 @@ export function SettingsTracksPanel() {
               </VCenterRow>
             }
             className="ml-4"
-            disabled={!settings.cytobands.labels.show}
-            checked={settings.cytobands.labels.skip.on}
+            disabled={!settings.tracks.cytobands.labels.text.show}
+            checked={settings.tracks.cytobands.labels.skip.on}
             onCheckedChange={v => {
               const newOptions = produce(settings, draft => {
-                draft.cytobands.labels.skip.on = v
+                draft.tracks.cytobands.labels.skip.on = v
               })
 
               updateSettings(newOptions)
@@ -447,10 +502,10 @@ export function SettingsTracksPanel() {
         <SettingsAccordionItem title="Scale">
           <SwitchPropRow
             title="Auto size (bp)"
-            checked={settings.scale.autoSize}
+            checked={settings.tracks.scale.autoSize}
             onCheckedChange={v => {
               const newOptions = produce(settings, draft => {
-                draft.scale.autoSize = v
+                draft.tracks.scale.autoSize = v
               })
 
               updateSettings(newOptions)
@@ -459,13 +514,13 @@ export function SettingsTracksPanel() {
             <NumericalInput
               limit={[1, 1000000]}
               step={1000}
-              value={settings.scale.bp}
-              disabled={settings.scale.autoSize}
+              value={settings.tracks.scale.bp}
+              disabled={settings.tracks.scale.autoSize}
               placeholder="BP"
               w="sm"
               onNumChanged={v => {
                 const newOptions = produce(settings, draft => {
-                  draft.scale.bp = v
+                  draft.tracks.scale.bp = v
                 })
 
                 updateSettings(newOptions)

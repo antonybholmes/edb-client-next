@@ -3,12 +3,13 @@ import { BottomBar } from '@/toolbar/bottom-bar'
 import { type ITab, type ITabChange } from '@/components/tabs/tab-provider'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { cn } from '@/lib/shadcn-utils'
+import type { UndefStr } from '@/lib/text/text'
 import type { TabsProps } from '@radix-ui/react-tabs'
 import { useState } from 'react'
 import type { IFileDropProps } from '../file-drop-panel'
 import type { ITabReorder } from '../tabs/reorder-tabs'
 import type { ITabMenu } from '../tabs/underline-tabs'
-import { VirtualDataFrame } from './virtual-dataframe'
+import { VirtualDataFrame } from './virtual-dataframe/virtual-dataframe'
 //import { VirtualizedDataFrame } from './virtualized-dataframe'
 
 const MAX_NAME_CHARS = 15
@@ -16,10 +17,13 @@ const MAX_NAME_CHARS = 15
 interface IProps
   extends TabsProps, ITabChange, IFileDropProps, ITabMenu, ITabReorder {
   dataFrames: AnnotationDataFrame[]
-  selectedSheet?: string | undefined
+  selectedSheet?: UndefStr
   editable?: boolean
   allowReorder?: boolean
   zoom?: number | undefined
+  // decimal places for formatting numbers in the table, -1 for auto
+  dp?: number
+  commas?: boolean
 }
 
 export function TabbedDataFrames({
@@ -34,6 +38,8 @@ export function TabbedDataFrames({
   onReorder = () => {},
   allowReorder = false,
   zoom = 1,
+  dp = 4,
+  commas = true,
   className,
   style,
 }: IProps) {
@@ -61,7 +67,14 @@ export function TabbedDataFrames({
         //   className={contentClassName}
         // />
 
-        <VirtualDataFrame df={df} key={i} editable={editable} zoom={zoom} />
+        <VirtualDataFrame
+          df={df}
+          key={i}
+          editable={editable}
+          zoom={zoom}
+          dp={dp}
+          commas={commas}
+        />
       ),
     }
   })

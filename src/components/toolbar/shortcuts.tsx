@@ -12,9 +12,10 @@ import { FOCUS_INSET_RING_CLS } from '@/theme'
 import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
 import { SimpleTooltip } from '../shadcn/ui/themed/v2/tooltip'
 import { TabIndicatorFollowV } from '../tabs/tab-indicator-follow-v'
+
 import {
-  TabIndicatorContext,
   TabIndicatorProvider,
+  useTabIndicators,
 } from '../tabs/tab-indicator-provider'
 import { type IToolbarProps } from './toolbar'
 
@@ -30,31 +31,6 @@ interface IShortcutProps extends IToolbarProps {
   gap?: number
 }
 
-export function Shortcuts({
-  value = '',
-  onTabChange = () => {},
-  tabs = [],
-  defaultWidth = 2.5,
-  gap = 0.25,
-}: IShortcutProps) {
-  return (
-    <TabProvider value={value} onTabChange={onTabChange} tabs={tabs}>
-      <TabIndicatorProvider
-        selectedPosition={{
-          ...EMPTY_RECT,
-          h: defaultWidth,
-          scale: 0.4,
-          animate: true,
-          index: 0,
-          tabs: 0,
-        }}
-      >
-        <ShortcutContent gap={gap} />
-      </TabIndicatorProvider>
-    </TabProvider>
-  )
-}
-
 interface IShortcutsProps extends IDivProps, ITooltipSide {
   gap?: number
 }
@@ -68,8 +44,7 @@ export function ShortcutContent({
 
   const _id = useStableId('shortcut-tabs')
 
-  const { position, setPosition: setTabIndicatorPos } =
-    useContext(TabIndicatorContext)
+  const { position, setPosition: setTabIndicatorPos } = useTabIndicators()
   const pressed = useRef(false)
 
   function _scale(index: number, scale: number) {
@@ -156,5 +131,30 @@ export function ShortcutContent({
         <TabIndicatorFollowV groupId={_id} />
       </TabsList>
     </Tabs>
+  )
+}
+
+export function Shortcuts({
+  value = '',
+  onTabChange = () => {},
+  tabs = [],
+  defaultWidth = 2.5,
+  gap = 0.25,
+}: IShortcutProps) {
+  return (
+    <TabProvider value={value} onTabChange={onTabChange} tabs={tabs}>
+      <TabIndicatorProvider
+      // selectedPosition={{
+      //   ...EMPTY_RECT,
+      //   h: defaultWidth,
+      //   scale: 0.4,
+      //   animate: true,
+      //   index: 0,
+      //   tabs: 0,
+      // }}
+      >
+        <ShortcutContent gap={gap} />
+      </TabIndicatorProvider>
+    </TabProvider>
   )
 }

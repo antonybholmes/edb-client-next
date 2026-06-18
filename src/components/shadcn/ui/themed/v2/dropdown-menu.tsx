@@ -4,7 +4,7 @@ import { VCenterRow } from '@/components/layout/v-center-row'
 import { ChevronRightIcon } from '@/icons/chevron-right-icon'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { cn } from '@/lib/shadcn-utils'
-import { BUTTON_MD_H_CLS, ROUNDED_CLS } from '@/theme'
+import { ROUNDED_CLS } from '@/theme'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { Check, Dot } from 'lucide-react'
 import {
@@ -17,6 +17,7 @@ import {
 } from 'react'
 import { GLASS_CLS } from '../glass'
 import {
+  APP_ACCENT_MENU_CLS,
   BASE_MENU_CLS,
   DROPDOWN_MENU_ICON_CONTAINER_CLS,
   THEME_MENU_CLS,
@@ -39,17 +40,14 @@ export const DROPDOWN_MENU_ITEM_CLS = cn(
 
 export const DROPDOWN_MENU_CONTENT_CLS = cn(
   'rounded-lg border border-border/50 shadow-xl',
-  'flex flex-col text-xs min-h-0',
-  'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
-  'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
-  'data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2',
-  'data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2'
+  'flex flex-col text-xs min-h-0'
+  // 'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
+  // 'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+  // 'data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2',
+  // 'data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2'
 )
 
 const BASE_TRIGGER_CLS = 'data-[state=open]:bg-muted flex-row items-center'
-
-const THEME_TRIGGER_CLS =
-  'data-popup-open:bg-theme/50 data-popup-open:text-white data-popup-open:stroke-white'
 
 const DropdownMenu = DropdownMenuPrimitive.Root
 
@@ -65,14 +63,27 @@ const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
 
 const DropdownMenuPrimitiveItem = DropdownMenuPrimitive.Item
 
+export const POSITIONER_CLS = cn(
+  'h-[--positioner-height] w-[--positioner-width] max-w-[--available-width]',
+  'transition-[top,left,right,bottom,transform] duration-[0.3s]',
+  'ease-out data-instant:transition-none'
+)
+
+// https://base-ui.com/react/components/popover#animating-the-popover
+export const POPOVER_CLS = cn(
+  ' h-(--popup-height,auto) w-(--popup-width,auto) origin-(--transform-origin)',
+  'transition-[height,opacity,scale] duration-[0.3s] ease-out data-ending-style:scale-95',
+  'data-ending-style:opacity-0 data-instant:transition-none data-starting-style:scale-95 data-starting-style:opacity-0'
+)
+
 export const dropdownContentVariants = cva(DROPDOWN_MENU_CONTENT_CLS, {
   variants: {
     variant: {
       none: 'bg-background',
-      default: 'bg-background px-1 py-1.5 min-w-48',
+      default: 'bg-background px-1 py-1.5 min-w-50',
       content: 'bg-background p-2',
       header: 'bg-background p-4',
-      glass: cn(GLASS_CLS, 'p-1.5'),
+      glass: cn(GLASS_CLS, 'p-2'),
     },
     defaultVariants: {
       variant: 'default',
@@ -97,10 +108,14 @@ export function DropdownMenuContent({
         side={side}
         sideOffset={sideOffset}
         align={align}
+        className={POSITIONER_CLS}
       >
         <DropdownMenuPrimitive.Popup
           ref={ref}
-          className={dropdownContentVariants({ variant, className })}
+          className={dropdownContentVariants({
+            variant,
+            className: cn(POPOVER_CLS, className),
+          })}
           {...props}
         />
       </DropdownMenuPrimitive.Positioner>
@@ -114,6 +129,7 @@ export const dropdownMenuItemVariants = cva(DROPDOWN_MENU_ITEM_CLS, {
       none: '',
       default: BASE_MENU_CLS,
       theme: THEME_MENU_CLS,
+      'app-theme': APP_ACCENT_MENU_CLS,
     },
     rounded: {
       default: 'rounded-theme',
@@ -166,7 +182,7 @@ export function DropdownMenuItemContent({ children }: IChildrenProps) {
 
 export function DropdownMenuItem({
   ref,
-  variant = 'theme',
+  variant = 'app-theme',
   className,
   children,
   ...props
@@ -220,7 +236,7 @@ export function DropdownMenuAnchorItem({
 
 export function DropdownMenuCheckboxItem({
   ref,
-  variant = 'theme',
+  variant = 'app-theme',
   rounded = 'default',
   className = '',
   children,
@@ -273,8 +289,7 @@ const DropdownMenuRadioItem = forwardRef<
     ref={ref}
     className={cn(
       ROUNDED_CLS,
-      BUTTON_MD_H_CLS,
-      'relative flex cursor-default select-none items-center text-xs outline-hidden focus:bg-muted focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50',
+      'h-button-md relative flex cursor-default select-none items-center text-xs outline-hidden focus:bg-muted focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50',
       className
     )}
     {...props}
@@ -311,7 +326,7 @@ export function LineSeparator({
   return (
     <DropdownMenuPrimitive.Separator
       ref={ref}
-      className={cn('my-2 h-px bg-border/50', className)}
+      className={cn('my-1 h-px bg-border/50', className)}
       {...props}
     />
   )
@@ -354,22 +369,22 @@ const DropdownMenuShortcut = ({
 }
 DropdownMenuShortcut.displayName = 'DropdownMenuShortcut'
 
-export const dropdownMenuSubTriggerVariants = cva('', {
-  variants: {
-    variant: {
-      none: '',
-      default: BASE_TRIGGER_CLS,
-      theme: THEME_TRIGGER_CLS,
-    },
-    defaultVariants: {
-      variant: 'default',
-    },
-  },
-})
+// export const dropdownMenuSubTriggerVariants = cva('', {
+//   variants: {
+//     variant: {
+//       none: '',
+//       default: BASE_TRIGGER_CLS,
+//       theme: THEME_TRIGGER_CLS,
+//     },
+//     defaultVariants: {
+//       variant: 'default',
+//     },
+//   },
+// })
 
 export function DropdownMenuSubTrigger({
   ref,
-  variant = 'theme',
+  variant = 'app-theme',
   rounded = 'default',
   className,
   inset,
@@ -386,10 +401,7 @@ export function DropdownMenuSubTrigger({
       className={dropdownMenuItemVariants({
         variant,
         rounded,
-        className: dropdownMenuSubTriggerVariants({
-          variant,
-          className: cn(BASE_TRIGGER_CLS, inset && 'pl-8', className),
-        }),
+        className: cn(BASE_TRIGGER_CLS, inset && 'pl-8', className),
       })}
       {...props}
     >
@@ -402,7 +414,7 @@ export function DropdownMenuSubTrigger({
       )}
 
       <span className={DROPDOWN_MENU_ICON_CONTAINER_CLS}>
-        <ChevronRightIcon w="w-4" stroke="" />
+        <ChevronRightIcon size="w-4" stroke="" />
       </span>
     </DropdownMenuPrimitive.SubmenuTrigger>
   )

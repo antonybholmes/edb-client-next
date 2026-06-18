@@ -21,13 +21,13 @@ export function FeaturePropsPanel() {
       orientation="vertical"
       className="flex flex-col grow text-xs pr-1"
     >
-      <TabsContent value="domains" className="grow overflow-hidden">
+      <TabsContent value="domains">
         <DomainPropsPanel />
       </TabsContent>
-      <TabsContent value="variants" className="grow overflow-hidden">
+      <TabsContent value="variants">
         <VariantPropsPanel />
       </TabsContent>
-      <TabsContent value="labels" className="grow overflow-hidden">
+      <TabsContent value="labels">
         <LabelPropsPanel />
       </TabsContent>
       <TabsList className="py-1">

@@ -1,6 +1,4 @@
 import {
-  type IBasicEdbUser,
-  type IEdbSession,
   SESSION_API_KEY_SIGNIN_URL,
   SESSION_AUTH0_SIGNIN_URL,
   SESSION_AUTH_OTP_SEND_URL,
@@ -13,6 +11,8 @@ import {
   SESSION_SIGNOUT_URL,
   SESSION_SUPABASE_SIGNIN_URL,
   validateToken,
+  type IBasicEdbUser,
+  type IEdbSession,
 } from '@/lib/edb/edb'
 import { httpFetch } from '@/lib/http/http-fetch'
 import {
@@ -30,12 +30,14 @@ import { logger } from '../logger'
 import { useEdbSettings, useEdbSettingsStore } from './edb-settings'
 
 import { persist } from 'zustand/middleware'
-import { csrfService } from './csrf-service'
+
+import { getCSRFToken } from './csrf'
 import {
   DEFAULT_AUDIENCE,
-  sessionTokenService,
+  getAccessToken,
+  getUpdateToken,
   type TokenOpts,
-} from './session-token-service'
+} from './session'
 
 type SigninMethod =
   | 'google'
@@ -231,7 +233,7 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
    * @returns
    */
   refreshSession: async () => {
-    let csrfToken = await csrfService.getToken() //token
+    let csrfToken = await getCSRFToken() //token
 
     // If the CSRF token is not available, attempt to fetch it.
     //if (!csrfToken) {
@@ -282,7 +284,7 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
       return accessToken
     }
 
-    accessToken = await sessionTokenService.getAccessToken(opts)
+    accessToken = await getAccessToken(opts)
 
     set(
       produce(state => {
@@ -341,7 +343,7 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
   }, [autoRefresh])
 
   async function fetchUpdateToken(opts: TokenOpts = {}): Promise<string> {
-    return await sessionTokenService.getUpdateToken(opts)
+    return await getUpdateToken(opts)
   }
 
   async function signInWithApiKey(apiKey: string) {
@@ -449,7 +451,7 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
   }
 
   async function signout() {
-    const csrfToken = await csrfService.getToken()
+    const csrfToken = await getCSRFToken()
 
     await httpFetch.post(SESSION_SIGNOUT_URL, {
       headers: csfrHeaders(csrfToken),

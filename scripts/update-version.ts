@@ -1,4 +1,4 @@
-import { format } from 'date-fns'
+import type { IAppInfo } from '@/lib/app-info'
 import fs from 'fs'
 import path from 'path'
 
@@ -22,49 +22,78 @@ function getAllFiles(dir: string, files: string[] = []) {
 const files: string[] = []
 getAllFiles('src/', files)
 
-const info = JSON.parse(fs.readFileSync('./version.json', 'utf-8'))
+const info = JSON.parse(
+  fs.readFileSync('./src/config/manifest.json', 'utf-8')
+) as IAppInfo
 
-const currentDate = info.modified ? new Date(info.modified) : undefined
+const currentDate = info.modified ? new Date(info.modified) : new Date()
 
-// find largest mod time by recursively checking all files
-const [, modDate] = files
-  .filter((f) => f.match(/(\.ts|\.tsx|\.js|\.jsx|\.astro)/))
-  .map((f) => {
+// find all manifest files
+const manifestFiles = files
+  .filter(
+    f => f.includes('manifest.json') && !f.includes('src/config/manifest.json')
+  )
+  .map(f => {
     const stats = fs.lstatSync(f)
-    return [f, stats.mtime] as [string, Date]
+    return { f, mtime: stats.mtime } as { f: string; mtime: Date }
   })
-  .sort((a, b) => b[1]!.getTime() - a[1]!.getTime())[0]!
+  .sort((a, b) => b.mtime.getTime() - a.mtime.getTime())
 
-if (!currentDate || modDate.getTime() > currentDate.getTime()) {
+const manifestFile = manifestFiles[0]!
+
+console.log('Latest manifest file modification date:', manifestFile)
+
+console.log(info)
+console.log(manifestFile)
+
+if (true || manifestFile.mtime.getTime() > currentDate.getTime()) {
+  let build = info.build
   const currentVersion = info.version
-  let [major, minor, patch, build] = currentVersion.split('.')
-  major = parseInt(major)
-  minor = parseInt(minor)
-  patch = parseInt(patch)
-  build = parseInt(build)
 
+  const v = currentVersion.split('.')
+
+  let major = parseInt(v[0]!)
+  let minor = parseInt(v[1]!)
+  let patch = parseInt(v[2]!)
+
+  console.log(`Current version: ${currentVersion}`)
+  console.log(`Parsed version: major=${major}, minor=${minor}, patch=${patch}`)
+  console.log(`Current build: ${build}`)
+
+  //console.log(info)
+
+  console.log(`Incrementing build from ${build} to ${build + INC}.`)
   build += INC
 
-  //if (build % 10 === 0) {
-  patch += INC
-  //}
+  if (build % 10 === 0) {
+    console.log(`Build reached ${build}, incrementing patch to ${patch + INC}.`)
+    patch += INC
 
-  if (patch > 9) {
-    patch = 0
-    minor += INC
-  }
+    if (patch % 10 === 0) {
+      console.log(
+        `Patch reached ${patch}, incrementing minor to ${minor + INC}, resetting patch to 0.`
+      )
+      patch = 0
+      minor += INC
 
-  if (minor > 9) {
-    minor = 0
-    major += INC
+      if (minor % 10 === 0) {
+        console.log(
+          `Minor reached ${minor}, incrementing major to ${major + INC}, resetting minor to 0.`
+        )
+        minor = 0
+        major += INC
+      }
+    }
   }
 
   // update version and modified date to latest file modification date
-  const newVersion = `${major}.${minor}.${patch}.${build}`
+  const newVersion = `${major}.${minor}.${patch}`
+  //console.log(`New version: ${newVersion}`)
   info.version = newVersion
-  info.updated = format(new Date(), 'LLL dd, yyyy')
-  info.modified = modDate.toISOString()
-  fs.writeFileSync('./version.json', JSON.stringify(info, null, 2))
+  info.build = build
+  //info.updated = format(new Date(), 'LLL dd, yyyy')
+  info.modified = manifestFile.mtime.toISOString()
+  //fs.writeFileSync('./src/config/manifest.json', JSON.stringify(info, null, 2))
 
   console.log()
   console.log(`---- Version Update ----`)

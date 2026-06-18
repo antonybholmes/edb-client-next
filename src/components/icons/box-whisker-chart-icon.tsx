@@ -3,7 +3,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { CandlestickChart } from 'lucide-react'
 
 export function BoxWhiskerChartIcon({
-  w = 'w-5 h-5',
+  size = 'w-5 h-5',
   stroke = 'stroke-foreground',
   className,
   strokeWidth = 1.5,
@@ -12,7 +12,7 @@ export function BoxWhiskerChartIcon({
     // <svg
     //   xmlns="http://www.w3.org/2000/svg"
     //   viewBox="0 0 24 24"
-    //   className={cn(ICON_CLS, stroke, fill, w, className)}
+    //   className={cn(ICON_CLS, stroke, fill, size, className)}
     //   style={{
     //     strokeLinecap: 'round',
     //     strokeLinejoin: 'round',
@@ -27,7 +27,7 @@ export function BoxWhiskerChartIcon({
     // </svg>
 
     <CandlestickChart
-      className={cn(ICON_CLS, stroke, w, className)}
+      className={cn(ICON_CLS, stroke, size, className)}
       strokeWidth={strokeWidth}
       stroke=""
     />

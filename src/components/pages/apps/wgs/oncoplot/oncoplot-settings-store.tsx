@@ -9,7 +9,7 @@ import {
   type IOncoplotDisplayProps,
 } from './oncoplot-utils'
 
-const SETTINGS_KEY = `${config.appId}:app:oncoplot:v24`
+const SETTINGS_KEY = `${config.appId}:app:oncoplot:v30`
 
 export interface IPlotState {
   mutations: IMutation[]

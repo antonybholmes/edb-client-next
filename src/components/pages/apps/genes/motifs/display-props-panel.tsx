@@ -1,9 +1,8 @@
-import { ColorPickerPopover } from '@/components/color/color-picker-button'
-import { OKCancelDialog } from '@/components/dialog/ok-cancel-dialog'
-import { BASE_IDS } from '@/components/pages/apps/genes/motifs/motif-svg'
+import { BASE_IDS } from '@/components/pages/apps/genes/motifs/motifs-svg'
+import { ColorPickerPopover } from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
-import { NO_DIALOG, TEXT_OK, TEXT_RESET, type IDialogParams } from '@/consts'
-import { PropRow } from '@/dialog/prop-row'
+import { TEXT_OK, TEXT_RESET } from '@/consts'
+import { PropRow } from '@/dialogs/prop-row'
 import { VCenterRow } from '@/layout/v-center-row'
 import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_RING_CLS, PILL_BUTTON_CLS } from '@/theme'
@@ -16,47 +15,69 @@ import {
   ScrollAccordion,
 } from '@/themed/v2/accordion'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { FontPopover } from '@/components/plot/font/font-popover'
 import { PopoverTrigger } from '@/components/shadcn/ui/themed/v2/popover'
+import { ResizableSidebarHeaderPortal } from '@/components/slide-bar/resizable-sidebar'
+import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { produce } from 'immer'
-import { useState } from 'react'
 import { useMotifSettings, type DNABase } from './motifs-settings'
 
 export function DisplayPropsPanel() {
   const { settings, updateSettings, resetSettings } = useMotifSettings()
 
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
+  const { open: openDialog } = useDialogs()
 
   return (
     <>
-      {showDialog.id.startsWith('reset') && (
-        <OKCancelDialog
-          //open={delGroup !== -1}
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              resetSettings()
-            }
-            setShowDialog({ ...NO_DIALOG })
+      <ResizableSidebarHeaderPortal side="right">
+        <LinkButton
+          onClick={() => {
+            openDialog({
+              type: 'warning',
+              payload: {
+                title: 'Reset to default',
+                content: 'Are you sure you want to reset all settings?',
+                callback: response => {
+                  if (response === TEXT_OK) {
+                    resetSettings()
+                  }
+                },
+              },
+            })
           }}
+          title="Reset settings to default"
+          className="text-xs"
         >
-          Are you sure you want to reset all settings?
-        </OKCancelDialog>
-      )}
+          {TEXT_RESET}
+        </LinkButton>
+      </ResizableSidebarHeaderPortal>
 
       <PropsPanel className="gap-y-2 pr-1">
-        <VCenterRow className="justify-end">
-          <LinkButton
-            onClick={() => {
-              setShowDialog({ id: 'reset', params: {} })
-            }}
-            title="Reset settings to default"
-          >
-            {TEXT_RESET}
-          </LinkButton>
-        </VCenterRow>
-        <ScrollAccordion value={['plot', 'colors']} variant="sidebar">
+        <VCenterRow className="justify-end"></VCenterRow>
+        <ScrollAccordion value={['plot', 'colors']}>
           <AccordionItem value="plot">
-            <AccordionTrigger variant="sidebar">Plot</AccordionTrigger>
-            <AccordionContent variant="sidebar">
+            <AccordionTrigger
+              rightChildren={
+                <FontPopover
+                  fonts={[
+                    {
+                      title: 'Title',
+                      textProps: settings.title.text,
+                      update: font =>
+                        updateSettings(
+                          produce(settings, draft => {
+                            draft.title.text = font
+                          })
+                        ),
+                    },
+                  ]}
+                />
+              }
+            >
+              Plot
+            </AccordionTrigger>
+            <AccordionContent>
               <PropRow title="Base width">
                 <NumericalInput
                   limit={[1, 100]}
@@ -101,49 +122,89 @@ export function DisplayPropsPanel() {
                   }}
                 />
               </PropRow>
+              <SwitchPropRow
+                title="Axes"
+                checked={settings.axes.show}
+                onCheckedChange={checked =>
+                  updateSettings(
+                    produce(settings, draft => {
+                      draft.axes.show = checked
+                    })
+                  )
+                }
+              >
+                <FontPopover
+                  fonts={[
+                    {
+                      title: 'Axes Title',
+                      textProps: settings.axes.title,
+                      update: font =>
+                        updateSettings(
+                          produce(settings, draft => {
+                            draft.axes.title = font
+                          })
+                        ),
+                    },
+
+                    {
+                      title: 'Axes Labels',
+                      textProps: settings.axes.labels,
+                      update: font =>
+                        updateSettings(
+                          produce(settings, draft => {
+                            draft.axes.labels = font
+                            draft.axes.ticks.show = font.show
+                          })
+                        ),
+                    },
+                  ]}
+                />
+              </SwitchPropRow>
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="colors">
-            <AccordionTrigger variant="sidebar">Base Colors</AccordionTrigger>
-            <AccordionContent variant="sidebar">
+            <AccordionTrigger>Base Colors</AccordionTrigger>
+            <AccordionContent>
               <VCenterRow className="gap-x-2">
                 {BASE_IDS.map(base => (
                   <ColorPickerPopover
                     key={base}
-                    color={
-                      settings.baseColors[base.toLowerCase() as DNABase]!.color
-                    }
-                    opacity={
-                      settings.baseColors[base.toLowerCase() as DNABase]!
-                        .opacity
-                    }
-                    onColorChange={(color, alpha) =>
-                      updateSettings(
-                        produce(settings, draft => {
-                          draft.baseColors[
-                            base.toLowerCase() as DNABase
-                          ]!.color = color
-                          draft.baseColors[
-                            base.toLowerCase() as DNABase
-                          ]!.opacity = alpha
-                        })
-                      )
-                    }
+                    colors={[
+                      {
+                        color:
+                          settings.bases[base.toLowerCase() as DNABase]!.font
+                            .fill.value,
+                        opacity:
+                          settings.bases[base.toLowerCase() as DNABase]!.font
+                            .fill.opacity,
+                        onColorChange: (color, alpha) =>
+                          updateSettings(
+                            produce(settings, draft => {
+                              draft.bases[
+                                base.toLowerCase() as DNABase
+                              ]!.font.fill.value = color
+                              draft.bases[
+                                base.toLowerCase() as DNABase
+                              ]!.font.fill.opacity = alpha
+                            })
+                          ),
+                      },
+                    ]}
                     //keepAlphaChannel={true}
-                    allowAlpha={true}
+                    //allowAlpha={true}
                     className={cn(PILL_BUTTON_CLS, FOCUS_RING_CLS)}
                     align="end"
                   >
-                    <PopoverTrigger className="bg-background rounded-full aspect-square w-8 flex flex-row justify-center items-center border border-border/50 hover:border-border data-popup-open:border-border trans-color">
+                    <PopoverTrigger className="bg-background rounded-full aspect-square w-button-md flex flex-row justify-center items-center border border-border/50 hover:border-border data-popup-open:border-border trans-color">
                       <span
                         className="font-bold text-xl"
                         style={{
                           color:
-                            settings.baseColors[base.toLowerCase() as DNABase]!
-                              .color,
+                            settings.bases[base.toLowerCase() as DNABase]!.font
+                              .fill.value,
                           opacity:
-                            settings.baseColors[base.toLowerCase() as DNABase]!
-                              .opacity,
+                            settings.bases[base.toLowerCase() as DNABase]!.font
+                              .fill.opacity,
                         }}
                       >
                         {base}

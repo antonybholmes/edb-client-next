@@ -1,9 +1,7 @@
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import { CheckPropRow } from '@/components/dialog/check-prop-row'
-import { PropRow } from '@/components/dialog/prop-row'
+} from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
 import {
   ResizablePanel,
@@ -16,6 +14,8 @@ import { SortableItem } from '@/components/sortable-item'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { TEXT_BORDER, TEXT_RESET } from '@/consts'
+import { CheckPropRow } from '@/dialogs/check-prop-row'
+import { PropRow } from '@/dialogs/prop-row'
 import type { IDivProps } from '@/interfaces/div-props'
 import { COLOR_TRANSPARENT } from '@/lib/color/color'
 import { LinkButton } from '@/themed/link-button'
@@ -129,17 +129,20 @@ export function VariantPropsPanel({ ref }: IDivProps) {
             title={TEXT_BORDER}
           >
             <ColorPickerButton
-              color={displayProps.variants.plot.border.color}
-              allowNoColor={true}
-              onColorChange={color =>
-                setDisplayProps(
-                  produce(displayProps, draft => {
-                    draft.variants.plot.border.color = color
-                    draft.variants.plot.border.show =
-                      color !== COLOR_TRANSPARENT
-                  })
-                )
-              }
+              colors={[
+                {
+                  color: displayProps.variants.plot.border.value,
+                  allowNoColor: true,
+                  onColorChange: color =>
+                    setDisplayProps(
+                      produce(displayProps, draft => {
+                        draft.variants.plot.border.value = color
+                        draft.variants.plot.border.show =
+                          color !== COLOR_TRANSPARENT
+                      })
+                    ),
+                },
+              ]}
               className={SIMPLE_COLOR_EXT_CLS}
             />
           </CheckPropRow>
@@ -194,20 +197,22 @@ export function VariantPropsPanel({ ref }: IDivProps) {
                           }
                         />
                         <ColorPickerButton
-                          color={
-                            displayProps.variants.colorMap[mutation] ??
-                            DEFAULT_MUTATION_COLOR
-                          }
-                          onColorChange={color => {
-                            setDisplayProps(
-                              produce(displayProps, draft => {
-                                draft.variants.colorMap = {
-                                  ...draft.variants.colorMap,
-                                  [mutation]: color,
-                                }
-                              })
-                            )
-                          }}
+                          colors={[
+                            {
+                              color:
+                                displayProps.variants.colorMap[mutation] ??
+                                DEFAULT_MUTATION_COLOR,
+                              onColorChange: color =>
+                                setDisplayProps(
+                                  produce(displayProps, draft => {
+                                    draft.variants.colorMap = {
+                                      ...draft.variants.colorMap,
+                                      [mutation]: color,
+                                    }
+                                  })
+                                ),
+                            },
+                          ]}
                           className={SIMPLE_COLOR_EXT_CLS}
                         />
                         <TruncateSpan className="grow h-8">

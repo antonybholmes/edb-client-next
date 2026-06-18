@@ -6,12 +6,16 @@ import { COLOR_BLACK } from '@/lib/color/color'
 
 import type { ILim } from '@/lib/math/math'
 import {
+  DEFAULT_BOLD_FONT_PROPS,
+  DEFAULT_BOLD_TEXT_PROPS,
   DEFAULT_FONT_PROPS,
   DEFAULT_STROKE_PROPS,
+  DEFAULT_TEXT_PROPS,
   type ColorBarPos,
   type IFontProps,
   type ILabelProps,
   type IStrokeProps,
+  type ITextProps,
   type LegendPos,
   type TopBottomPos,
 } from '../svg-props'
@@ -56,7 +60,7 @@ export const DEFAULT_TREE_PROPS: ITreeProps = {
 export type HeatmapMode = 'heatmap' | 'dot'
 
 export interface IHeatMapDisplayOptions {
-  title: IFontProps & { text: string; offset: number }
+  title: ITextProps & { text: string; offset: number }
   cells: {
     values: {
       color: string
@@ -105,12 +109,18 @@ export interface IHeatMapDisplayOptions {
   }
   legend: {
     show: boolean
+    font: IFontProps
     position: LegendPos
     width: number
     stroke: IStrokeProps
     title: {
       show: boolean
+      font: IFontProps
       text: string
+    }
+    icon: {
+      shape: 's' | 'c' | 'l'
+      size: number
     }
   }
   dot: {
@@ -144,27 +154,26 @@ export interface IHeatMapDisplayOptions {
 export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
   //margin: { top: 20, right: 20, bottom: 20, left: 20 },
   blockSize: BLOCK_SIZE,
-  grid: { ...DEFAULT_STROKE_PROPS, color: '#EEEEEE' },
+  grid: {
+    ...DEFAULT_STROKE_PROPS,
+    value: '#EEEEEE',
+  },
   border: { ...DEFAULT_STROKE_PROPS },
   range: [-2, 2],
   mode: 'heatmap',
-  title: { ...DEFAULT_FONT_PROPS, text: '', offset: 20 },
+  title: { ...DEFAULT_BOLD_TEXT_PROPS, text: '', offset: 20 },
   actions: { show: true },
   rowLabels: {
+    ...DEFAULT_TEXT_PROPS,
     position: 'right',
     width: 120,
-    show: true,
-    color: COLOR_BLACK,
     showMetadata: true,
-    opacity: 1,
   },
   colLabels: {
+    ...DEFAULT_TEXT_PROPS,
     position: 'top',
     width: 150,
     isColored: true,
-    show: true,
-    color: COLOR_BLACK,
-    opacity: 1,
   },
   colorbar: {
     position: 'right',
@@ -178,7 +187,10 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
     height: GROUPS_SIZE.h,
     keepUnused: false,
     border: { ...DEFAULT_STROKE_PROPS },
-    grid: { ...DEFAULT_STROKE_PROPS, show: false },
+    grid: {
+      ...DEFAULT_STROKE_PROPS,
+      show: false,
+    },
   },
   legend: {
     position: 'upper-right',
@@ -188,6 +200,12 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
     title: {
       show: true,
       text: 'Groups',
+      font: { ...DEFAULT_BOLD_FONT_PROPS },
+    },
+    font: { ...DEFAULT_FONT_PROPS },
+    icon: {
+      shape: 's',
+      size: 16,
     },
   },
   dot: {
@@ -231,7 +249,10 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
         threshold: 150,
       },
     },
-    border: { ...DEFAULT_STROKE_PROPS, show: false },
+    border: {
+      ...DEFAULT_STROKE_PROPS,
+      show: false,
+    },
   },
   tooltip: {
     show: true,

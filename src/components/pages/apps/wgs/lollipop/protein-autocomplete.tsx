@@ -126,7 +126,7 @@ export function ProteinAutocomplete() {
       content = searchProteins.map((searchProtein, pi) => (
         <li key={pi}>
           <button
-            className="flex flex-row px-3 items-center gap-x-2 justify-between text-left grow hover:bg-muted/60 min-h-9 w-full"
+            className="flex flex-row px-3 items-center gap-x-2 justify-between text-left grow hover:bg-muted/50 min-h-9 w-full rounded-sm"
             onClick={() => {
               //makeLollipopPlot(searchProtein)
               setProtein(searchProtein)

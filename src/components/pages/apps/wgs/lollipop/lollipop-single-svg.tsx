@@ -1,5 +1,5 @@
 import { Axis, YAxis } from '@/components/plot/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis-svg'
+import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
 import {
@@ -11,10 +11,11 @@ import {
   type RefObject,
 } from 'react'
 
-import { BaseSvg } from '@/components/base-svg'
 import type { IBlock } from '@/components/plot/heatmap/heatmap-svg-props'
+import { SvgBase } from '@/components/plot/svg-base'
+import { SvgText } from '@/components/plot/svg-text'
 import type { ISVGProps } from '@/interfaces/svg-props'
-import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
+import { COLOR_WHITE } from '@/lib/color/color'
 import { range } from '@/lib/math/range'
 import { forceCollide, forceSimulation } from 'd3'
 import { gsap } from 'gsap'
@@ -209,7 +210,7 @@ function ColGraphsSvg({
                   displayProps.variants.colorMap[mutType!] ??
                   DEFAULT_MUTATION_COLOR
                 }
-                stroke={displayProps.variants.plot.border.color}
+                stroke={displayProps.variants.plot.border.value}
                 strokeOpacity={displayProps.variants.plot.border.opacity}
                 opacity={displayProps.variants.plot.opacity}
                 strokeWidth={
@@ -569,29 +570,28 @@ export function LollipopSingleSvg({ ref }: ISVGProps) {
 
   const svg = (
     <>
-      <BaseSvg
+      <SvgBase
         ref={innerRef}
         width={width}
         height={height}
         scale={displayProps.scale}
         //shapeRendering={SVG_CRISP_EDGES}
         //onMouseMove={onMouseMove}
-        className="absolute"
+        //className="absolute"
       >
-        {displayProps.title.show && (
+        {displayProps.title.text.show && (
           <g
             id="title"
             transform={`translate(${marginLeft + gridWidth / 2}, ${top - displayProps.title.offset})`}
           >
-            <text
-              fill={COLOR_BLACK}
+            <SvgText
               dominantBaseline="central"
               //fontSize="large"
               textAnchor="middle"
-              fontWeight="bold"
+              font={displayProps.title.text}
             >
               {protein.name}
-            </text>
+            </SvgText>
           </g>
         )}
 
@@ -690,7 +690,7 @@ export function LollipopSingleSvg({ ref }: ISVGProps) {
               <g>{legendSvg(datasets, blockSize, displayProps)}</g>
             </g>
           )}
-      </BaseSvg>
+      </SvgBase>
 
       <Tooltip
         ref={tooltipRef}

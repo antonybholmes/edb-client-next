@@ -43,7 +43,7 @@ export function ModuleButtonLink({
 export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
   // sort alphabetically and ignore sections
   const items = HEADER_LINKS.map(section => {
-    return section.modules.filter(
+    return section.apps.filter(
       module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })

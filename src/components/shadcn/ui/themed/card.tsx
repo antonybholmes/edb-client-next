@@ -1,3 +1,4 @@
+import type { IDivProps } from '@/interfaces/div-props'
 import { BaseCol } from '@/layout/base-col'
 import { ContentDiv } from '@/layout/content-div'
 
@@ -59,22 +60,26 @@ export const variants = cva('border border-border/25', {
   defaultVariants: {
     variant: 'default',
     gap: 'default',
-    rounded: 'lg',
+    rounded: 'xl',
     shadow: 'none',
   },
 })
 
-const Card = forwardRef<
-  HTMLDivElement,
-  HTMLAttributes<HTMLDivElement> & VariantProps<typeof variants>
->(({ variant, gap, rounded, shadow, className, ...props }, ref) => (
-  <BaseCol
-    ref={ref}
-    className={variants({ variant, gap, rounded, shadow, className })}
-    {...props}
-  />
-))
-Card.displayName = 'Card'
+export function Card({
+  variant,
+  gap,
+  rounded,
+  shadow,
+  className,
+  ...props
+}: IDivProps & VariantProps<typeof variants>) {
+  return (
+    <BaseCol
+      className={variants({ variant, gap, rounded, shadow, className })}
+      {...props}
+    />
+  )
+}
 
 const SecondaryCard = forwardRef<
   HTMLDivElement,
@@ -138,7 +143,6 @@ const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
 CardFooter.displayName = 'CardFooter'
 
 export {
-  Card,
   CardContent,
   CardDescription,
   CardFooter,

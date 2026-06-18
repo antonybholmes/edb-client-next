@@ -7,7 +7,7 @@ export interface ICheckProps extends IIconProps {
 
 export function CheckIcon({
   checked = true,
-  w = 'w-4 h-4',
+  size = 'w-4 h-4',
   stroke = 'stroke-foreground',
   style,
   className,
@@ -17,7 +17,7 @@ export function CheckIcon({
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      className={cn(ICON_CLS, stroke, w, className)}
+      className={cn(ICON_CLS, stroke, size, className)}
       style={{
         strokeLinecap: 'round',
         strokeLinejoin: 'round',

@@ -1,8 +1,8 @@
 import { YAxis, type Axis } from '@/components/plot/axis'
 import type { IBlock } from '@/components/plot/heatmap/heatmap-svg-props'
+import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
 import type { IPos } from '@/interfaces/pos'
-import { COLOR_BLACK } from '@/lib/color/color'
 import type { ReactNode } from 'react'
 import type { ClinicalDataTrack } from './clinical-utils'
 import {
@@ -32,14 +32,13 @@ function numberTrackSvg(
           0.5 * displayProps.clinical.height
         })`}
       >
-        <text
+        <SvgText
           dominantBaseline="central"
-          fontSize="smaller"
           textAnchor="end"
-          fontWeight="bold"
+          font={displayProps.title}
         >
           {track.name}
-        </text>
+        </SvgText>
       </g>
       <g id="sample">
         {samples.map((sample, si) => {
@@ -58,11 +57,11 @@ function numberTrackSvg(
               height={height}
               //stroke={color}
               fill={color}
-              stroke={displayProps.clinical.border.color}
+              stroke={displayProps.clinical.border.value}
               strokeOpacity={displayProps.clinical.border.opacity}
               strokeWidth={
                 displayProps.clinical.border.show
-                  ? displayProps.clinical.border.strokeWidth
+                  ? displayProps.clinical.border.width
                   : 0
               }
               shapeRendering={SVG_CRISP_EDGES}
@@ -89,14 +88,13 @@ function categoryTrackSvg(
           0.5 * displayProps.clinical.height
         })`}
       >
-        <text
+        <SvgText
           dominantBaseline="central"
-          fontSize="smaller"
           textAnchor="end"
-          fontWeight="bold"
+          font={displayProps.title}
         >
           {track.name}
-        </text>
+        </SvgText>
       </g>
       <g id="sample">
         {samples.map((sample, si) => {
@@ -114,11 +112,11 @@ function categoryTrackSvg(
                 height={displayProps.clinical.height}
                 //stroke={color}
                 fill={color}
-                stroke={displayProps.clinical.border.color}
+                stroke={displayProps.clinical.border.value}
                 strokeOpacity={displayProps.clinical.border.opacity}
                 strokeWidth={
                   displayProps.clinical.border.show
-                    ? displayProps.clinical.border.strokeWidth
+                    ? displayProps.clinical.border.width
                     : 0
                 }
                 shapeRendering={SVG_CRISP_EDGES}
@@ -164,14 +162,13 @@ function distTrackSvg(
           0.5 * displayProps.clinical.height
         })`}
       >
-        <text
+        <SvgText
           dominantBaseline="central"
-          fontSize="smaller"
           textAnchor="end"
-          fontWeight="bold"
+          font={displayProps.title}
         >
           {track.name}
-        </text>
+        </SvgText>
       </g>
       <g id="sample">
         {samples.map((sample, si) => {
@@ -209,11 +206,11 @@ function distTrackSvg(
                   height={h}
                   //stroke={color}
                   fill={color}
-                  stroke={displayProps.clinical.border.color}
+                  stroke={displayProps.clinical.border.value}
                   strokeOpacity={displayProps.clinical.border.opacity}
                   strokeWidth={
                     displayProps.clinical.border.show
-                      ? displayProps.clinical.border.strokeWidth
+                      ? displayProps.clinical.border.width
                       : 0
                   }
                   shapeRendering={SVG_CRISP_EDGES}
@@ -302,7 +299,7 @@ export function clinicalTracksSvg(
                 y1={0}
                 x2={x}
                 y2={h}
-                stroke={displayProps.clinicalTracks.border.color}
+                stroke={displayProps.clinicalTracks.border.value}
                 strokeOpacity={displayProps.clinicalTracks.border.opacity}
                 shapeRendering={SVG_CRISP_EDGES}
               />
@@ -329,14 +326,13 @@ export function hClinicalLegendSvg(
           0.5 * displayProps.grid.cell.h
         })`}
       >
-        <text
+        <SvgText
           dominantBaseline="central"
-          fontSize="smaller"
+          font={displayProps.legend.title}
           textAnchor="end"
-          fontWeight="bold"
         >
           {track.name}
-        </text>
+        </SvgText>
       </g>
 
       {track.categoriesInUse.map((c, ci) => {
@@ -354,16 +350,14 @@ export function hClinicalLegendSvg(
               shapeRendering={SVG_CRISP_EDGES}
             />
 
-            <text
+            <SvgText
               x={blockSize.w + 5}
               y={0.5 * blockSize.h}
-              fill={COLOR_BLACK}
               dominantBaseline="central"
-              fontSize="smaller"
-              //textAnchor="end"
+              font={displayProps.legend}
             >
               {c}
-            </text>
+            </SvgText>
           </g>
         )
       })}
@@ -380,14 +374,9 @@ export function vClinicalLegendSvg(
   return (
     <g id={`legend-clinical-${track.name}`}>
       <g transform={`translate(0, 0)`}>
-        <text
-          dominantBaseline="central"
-          fontSize="smaller"
-          //textAnchor="end"
-          fontWeight="bold"
-        >
+        <SvgText dominantBaseline="central" font={displayProps.legend.title}>
           {track.name}
-        </text>
+        </SvgText>
       </g>
       <g transform={`translate(0, ${displayProps.legend.title.height})`}>
         {track.categoriesInUse.map((c, ci) => {
@@ -429,16 +418,14 @@ export function vClinicalLegendSvg(
                 shapeRendering={SVG_CRISP_EDGES}
               />
 
-              <text
+              <SvgText
                 x={blockSize.w + 5}
                 y={0.5 * blockSize.h}
-                fill={COLOR_BLACK}
                 dominantBaseline="central"
-                fontSize="smaller"
-                //textAnchor="end"
+                font={displayProps.legend}
               >
                 {c}
-              </text>
+              </SvgText>
             </g>
           )
         })}

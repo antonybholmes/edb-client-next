@@ -43,10 +43,11 @@ import { Textarea } from '@/themed/textarea'
 import { formattedList } from '@/lib/text/text'
 import { CoreProviders } from '@/providers/core-providers'
 
-import { SettingsAccordionItem } from '@/components/dialog/settings/settings-dialog'
 import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
+import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
 import { CenterLayout } from '@/layouts/center-layout'
-import { csrfService } from '@/lib/edb/csrf-service'
+
+import { fetchCSRFTokenFromServer, getCSRFToken } from '@/lib/edb/csrf'
 import { makeUuid } from '@/lib/id'
 import { IconButton } from '@/themed/icon-button'
 import { Toast } from '@base-ui/react/toast'
@@ -108,12 +109,6 @@ export const UserFormSchema = z.object({
 })
 
 export function MyAccountPage() {
-  //const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
-
-  //const [password, setPassword] = useState("")
-
-  //const [account, accountDispatch] = useContext(AccountContext)
-
   const btnRef = useRef<HTMLButtonElement>(null)
 
   const { add: addToast } = Toast.useToastManager()
@@ -169,7 +164,7 @@ export function MyAccountPage() {
 
   useEffect(() => {
     async function fetchToken() {
-      const token = await csrfService.getToken()
+      const token = await getCSRFToken()
 
       setCsrf(token)
     }
@@ -195,7 +190,7 @@ export function MyAccountPage() {
 
       console.log('update token', updateToken)
 
-      const csrfToken = await csrfService.getToken()
+      const csrfToken = await getCSRFToken()
 
       await httpFetch.post(SESSION_UPDATE_USER_URL, {
         body: {
@@ -321,39 +316,6 @@ export function MyAccountPage() {
                   />
                 </div>
 
-                {/* <Label className="font-medium" htmlFor="username">
-                    Username
-                  </Label>
-                  <FormField
-                    control={form.control}
-                    name="username"
-                    rules={{
-                      required: {
-                        value: true,
-                        message: TEXT_USERNAME_REQUIRED,
-                      },
-                      pattern: {
-                        value: USERNAME_PATTERN,
-                        message: TEXT_USERNAME_DESCRIPTION,
-                      },
-                    }}
-                    render={({ field }) => (
-                      <FormItem className="col-span-1 md:col-span-3">
-                        <Input
-                          id="username"
-                          placeholder="Username..."
-                          readOnly={session?.user.isLocked}
-                          variant="underline"
-                          autoComplete="username"
-                          {...field}
-                        />
-                        <FormInputError
-                          error={form.formState.errors.username}
-                        />
-                      </FormItem>
-                    )}
-                  />
-                  <div /> */}
                 <Label className="font-medium" htmlFor="email">
                   Email
                 </Label>
@@ -567,7 +529,7 @@ export function MyAccountPage() {
         <SettingsAccordionItem title="Session">
           {authProviders.length > 0 && (
             <>
-              <p>
+              <p className="text-sm">
                 {TEXT_SIGNED_IN} using{' '}
                 <strong>
                   {SIGNIN_METHOD_MAP[
@@ -582,7 +544,7 @@ export function MyAccountPage() {
                   )}
                 </strong>
               </p>
-              <p>
+              <p className="text-sm">
                 Session expires{' '}
                 <strong>
                   {format(session?.expiresAt ?? now, 'MMM, dd yyyy')}{' '}
@@ -599,7 +561,7 @@ export function MyAccountPage() {
           )}
 
           {IS_DEV_MODE && (
-            <VCenterRow className="gap-x-2 justify-between">
+            <VCenterRow className="gap-x-2 justify-between text-sm">
               <span>
                 CSRF Token: <strong>{csrf}</strong>
               </span>
@@ -607,7 +569,7 @@ export function MyAccountPage() {
               <IconButton
                 rounded="full"
                 onClick={async () => {
-                  setCsrf(await csrfService.getToken())
+                  setCsrf(await fetchCSRFTokenFromServer())
                 }}
                 title="Generate a new CSRF token"
               >

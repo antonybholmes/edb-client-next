@@ -120,7 +120,7 @@ export function Slider({
     <BaseRow className={cn('hidden gap-x-1 md:flex md:gap-x-3')}>
       <ToolbarFooterButton className={BUTTON_CLS} onClick={decrement}>
         <MinusIcon
-          w="w-3"
+          size="w-3"
           stroke="stroke-muted-foreground stroke-2"
           shapeRendering={SVG_CRISP_EDGES}
         />
@@ -171,7 +171,7 @@ export function Slider({
       </div>
       <ToolbarFooterButton className={BUTTON_CLS} onClick={increment}>
         <PlusIcon
-          w="w-3"
+          size="w-3"
           className="fill-foreground/50"
           shapeRendering={SVG_CRISP_EDGES}
         />

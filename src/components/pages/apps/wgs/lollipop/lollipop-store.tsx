@@ -19,15 +19,12 @@ import { parseVariant } from './variants'
 
 export interface ILollipopStore extends ILollipop {
   set(
-    //protein: IProtein,
     aaStats: ILollipopStats[],
     datasets: string[],
     datasetsForUse: Record<string, boolean>
   ): void
-  //setProtein(protein: IProtein): void
   setDomain(domain: IDomain): void
-  //setFeatures(features: Partial<IProteinFeature>[]): void
-  setDomains(domain: IDomain[]): void
+  setDomains(domains: IDomain[]): void
   setLabels(labels: IProteinLabel[]): void
   setDatasets(datasets: string[]): void
   setDatasetsForUse(dbs: Record<string, boolean>): void
@@ -93,7 +90,7 @@ export const useLollipopStore = create<ILollipopStore>(set => ({
       domain.start = start
       domain.end = end
 
-      domain.fill.color = color
+      domain.fill.value = color
       domains.push(domain)
     }
 
@@ -128,115 +125,114 @@ export const useLollipopStore = create<ILollipopStore>(set => ({
 
   lollipopFromTable: (mutDf: BaseDataFrame): string[] => {
     const errors: string[] = []
-    try {
-      const datasets = new Set<string>()
 
-      let geneCol = findCol(mutDf, 'Hugo_Symbol')
+    const datasets = new Set<string>()
 
-      let sampleCol = findCol(mutDf, 'Sample')
+    let geneCol = findCol(mutDf, 'Hugo_Symbol')
 
-      if (sampleCol === -1) {
-        sampleCol = findCol(mutDf, 'Tumor_Sample_Barcode') // try another name
-      }
+    let sampleCol = findCol(mutDf, 'Sample')
 
-      let datasetCol = findCol(mutDf, 'Dataset')
+    if (sampleCol === -1) {
+      sampleCol = findCol(mutDf, 'Tumor_Sample_Barcode') // try another name
+    }
 
-      if (datasetCol === -1) {
-        datasetCol = findCol(mutDf, 'Database') // try another name
-      }
+    let datasetCol = findCol(mutDf, 'Dataset')
 
-      if (datasetCol === -1) {
-        throw new Error('Dataset column not found')
-      }
+    if (datasetCol === -1) {
+      datasetCol = findCol(mutDf, 'Database') // try another name
+    }
 
-      const colMap: ILollipopColumns = {
-        gene: geneCol,
-        sample: sampleCol,
-        dataset: datasetCol,
-        aa: findCol(mutDf, 'protein_change'),
-        variant: findCol(mutDf, 'Variant_Classification'),
-      }
+    console.log(mutDf.columns)
 
-      const aaChanges: IAAVar[] = []
+    if (datasetCol === -1) {
+      throw new Error(
+        'You must include a column named either "Dataset" or "Database" with no blank values in your table.'
+      )
+    }
 
-      for (let row = 0; row < mutDf.shape[0]; row++) {
-        const dataset = mutDf.get(row, colMap.dataset).toString()
+    const colMap: ILollipopColumns = {
+      gene: geneCol,
+      sample: sampleCol,
+      dataset: datasetCol,
+      aa: findCol(mutDf, 'protein_change'),
+      variant: findCol(mutDf, 'Variant_Classification'),
+    }
 
-        datasets.add(dataset)
+    const aaChanges: IAAVar[] = []
 
-        const sample = mutDf.get(row, colMap.sample).toString()
+    for (let row = 0; row < mutDf.shape[0]; row++) {
+      const dataset = mutDf.get(row, colMap.dataset).toString()
 
-        const change = mutDf.get(row, colMap.aa).toString()
+      datasets.add(dataset)
 
-        const variantClass = parseVariantClassification(
-          mutDf.get(row, colMap.variant).toString()
-        )
+      const sample = mutDf.get(row, colMap.sample).toString()
 
-        try {
-          const variant = parseVariant(change)
+      const change = mutDf.get(row, colMap.aa).toString()
 
-          aaChanges.push({
-            variant,
-            variantClass,
-            dataset,
-            sample,
-          })
-        } catch (error) {
-          console.warn(`Could not parse row: ${row}`, error)
-        }
-      }
-
-      let length = Math.max(...aaChanges.map(ac => ac.variant.position))
-
-      // if (protein) {
-      //   length = protein.sequence.length
-      // } else {
-      //   // determine length from data
-      //   length = Math.max(...aaChanges.map(ac => ac.position))
-      // }
-
-      const aaStats: ILollipopStats[] = range(length).map(i =>
-        newAAStats(i + 1)
+      const variantClass = parseVariantClassification(
+        mutDf.get(row, colMap.variant).toString()
       )
 
-      // basically a histogram of amino acid changes
-      for (const aaChange of aaChanges) {
-        aaSet(
-          aaChange.variantClass,
-          aaChange.dataset,
-          aaChange.sample,
-          aaChange.variant.raw,
-          aaStats[aaChange.variant.position - 1]!
-        )
+      try {
+        const variant = parseVariant(change)
+
+        aaChanges.push({
+          variant,
+          variantClass,
+          dataset,
+          sample,
+        })
+      } catch (error) {
+        console.warn(`Could not parse row: ${row}`, error)
       }
-
-      //console.log('Parsed lollipop data:', aaStats)
-
-      set(state => ({
-        ...state,
-        aaStats,
-        datasets: [...datasets].sort(),
-        datasetsForUse: Object.fromEntries([...datasets].map(db => [db, true])),
-      }))
-
-      //   const d: SeriesType[][] = df.rowMap((row: SeriesType[], index: number) => {
-      //     const n = df.index.get(index) as SeriesType
-      //     return [n, n].concat(row)
-      //   })
-
-      //   // const d = df.values.map((r, ri) => {
-      //   //   const n = df.index.get(ri)
-
-      //   //   return [n, n].concat(r as )
-      //   // })
-
-      //   return new DataFrame({
-      //     name: "GCT",
-      //     data: [l1, l2, l3].concat(d),
-      //   })
-    } catch (error) {
-      console.error('Error parsing lollipop data:', error)
     }
+
+    let length = Math.max(...aaChanges.map(ac => ac.variant.position))
+
+    // if (protein) {
+    //   length = protein.sequence.length
+    // } else {
+    //   // determine length from data
+    //   length = Math.max(...aaChanges.map(ac => ac.position))
+    // }
+
+    const aaStats: ILollipopStats[] = range(length).map(i => newAAStats(i + 1))
+
+    // basically a histogram of amino acid changes
+    for (const aaChange of aaChanges) {
+      aaSet(
+        aaChange.variantClass,
+        aaChange.dataset,
+        aaChange.sample,
+        aaChange.variant.raw,
+        aaStats[aaChange.variant.position - 1]!
+      )
+    }
+
+    //console.log('Parsed lollipop data:', aaStats)
+
+    set(state => ({
+      ...state,
+      aaStats,
+      datasets: [...datasets].sort(),
+      datasetsForUse: Object.fromEntries([...datasets].map(db => [db, true])),
+    }))
+
+    //   const d: SeriesType[][] = df.rowMap((row: SeriesType[], index: number) => {
+    //     const n = df.index.get(index) as SeriesType
+    //     return [n, n].concat(row)
+    //   })
+
+    //   // const d = df.values.map((r, ri) => {
+    //   //   const n = df.index.get(ri)
+
+    //   //   return [n, n].concat(r as )
+    //   // })
+
+    //   return new DataFrame({
+    //     name: "GCT",
+    //     data: [l1, l2, l3].concat(d),
+    //   })
 
     return errors
   },

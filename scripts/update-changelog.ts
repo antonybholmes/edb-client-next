@@ -1,4 +1,5 @@
 // update-changelog.js
+import type { IAppInfo } from '@/lib/app-info'
 import fs from 'fs'
 
 const args = process.argv.slice(2) // Skip first two: node and script name
@@ -11,13 +12,15 @@ const type = args[1]!
 const now = new Date()
 
 // read version file
-const info = JSON.parse(fs.readFileSync('./version.json', 'utf-8'))
+const info = JSON.parse(
+  fs.readFileSync('./src/config/manifest.json', 'utf-8')
+) as IAppInfo
 
-let [major, minor, patch, build] = info.version.split('.')
-major = parseInt(major)
-minor = parseInt(minor)
-patch = parseInt(patch)
-build = parseInt(build)
+const v = info.version.split('.')
+const major = parseInt(v[0]!)
+const minor = parseInt(v[1]!)
+//const patch = parseInt(v[2]!)
+//const build = info.build
 
 const version = `${major}.${minor}`
 
@@ -62,9 +65,9 @@ if (!changelog[changelog.length - 1].messages[type]) {
 
 // don't add duplicate messages
 if (
-  changelog[changelog.length - 1].messages[type][
-    changelog[changelog.length - 1].messages[type].length - 1
-  ]?.msg !== msg
+  !changelog[changelog.length - 1].messages[type].some(
+    (m: any) => m.msg === msg
+  )
 ) {
   changelog[changelog.length - 1].messages[type].push({
     msg,

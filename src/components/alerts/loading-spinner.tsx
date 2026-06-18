@@ -8,20 +8,24 @@ interface ILoadingSpinnerProps extends IIconProps {
 }
 
 export function LoadingSpinner({
-  w = 'w-6',
+  size = 'w-6',
   gradient = 'from-background from-25% to-theme dark:to-foreground to-90%',
   className,
 }: ILoadingSpinnerProps) {
   const boxRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    gsap.to(boxRef.current, {
-      rotation: 360,
-      duration: 1.5,
-      repeat: -1, // infinite
-      ease: 'none', // linear motion
-      transformOrigin: '50% 50%', // optional: set rotation center
-    })
+    const ctx = gsap.context(() => {
+      gsap.to(boxRef.current, {
+        rotation: 360,
+        duration: 1.5,
+        repeat: -1, // infinite
+        ease: 'linear', // linear motion
+        transformOrigin: '50% 50%', // optional: set rotation center
+      })
+    }, boxRef)
+
+    return () => ctx.revert()
   }, [])
 
   return (
@@ -29,14 +33,12 @@ export function LoadingSpinner({
       ref={boxRef}
       className={cn(
         ICON_CLS,
-        'flex flex-row items-center justify-center rounded-full bg-conic relative p-1',
+        size,
+        'flex flex-row items-center justify-center rounded-full border-2 border-transparent border-t-foreground/50 relative p-1',
         gradient,
-        w,
+
         className
       )}
-    >
-      <span className="bg-background   rounded-full w-full h-full z-10 relative" />
-      <span className="absolute rounded-full w-1 h-1 aspect-square top-0 left-1/2 -translate-x-1/2 z-0 bg-linear-to-r bg-theme dark:bg-foreground" />
-    </span>
+    ></span>
   )
 }

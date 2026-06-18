@@ -5,7 +5,7 @@ export function ToolbarFooterButton({
   ref,
   variant = 'flat',
   size = 'xs',
-  rounded: rounding = 'none',
+  rounded = 'sm',
   pad = 'none',
   className,
   children,
@@ -19,7 +19,7 @@ export function ToolbarFooterButton({
       ref={ref}
       variant={variant}
       size={size}
-      rounded={rounding}
+      rounded={rounded}
       pad={pad}
       className={cn('gap-x-2', className)}
       {...props}

@@ -13,13 +13,15 @@ import { download } from '@/lib/download-utils'
 import type { IClusterGroup } from '../cluster-group'
 import { cellNum, cellStr } from './cell'
 
-import { DataIndex, type IndexId, type SeriesData } from '.'
 import { euclidean, type DistFunc, type Point } from '../math/distance'
 import { KMeans } from '../math/kmeans'
 import { AnnotationDataFrame } from './annotation-dataframe'
 import { DataFrame } from './dataframe'
 
+import { DataIndex, strs } from '.'
+import { vfill } from '../fill'
 import { DataFrameWriter, type IDataFrameWriterOpts } from './dataframe-writer'
+import type { IndexId, SeriesData } from './series-data'
 
 export type AxisDim = 0 | 1
 
@@ -298,6 +300,17 @@ export function getFormattedShape(
   return `${s[0].toLocaleString()} rows x ${s[1].toLocaleString()} cols`
 }
 
+export function getFormattedShapeSmall(
+  df: BaseDataFrame | null | undefined
+): string {
+  if (!df) {
+    return ''
+  }
+
+  const s = df.shape
+  return `${s[0].toLocaleString()} x ${s[1].toLocaleString()}`
+}
+
 // export function getSize(df: IDataFrame): number {
 //   return df.data.length * (df.data.length > 0 ? df.data[0].length : 0)
 // }
@@ -548,17 +561,17 @@ export function colZScore(df: BaseDataFrame): BaseDataFrame {
 export function makeGCT(df: BaseDataFrame): BaseDataFrame {
   const s = df.shape
 
-  const l1 = new Array(s[1] + 2).fill('')
+  const l1 = vfill('', s[1] + 2) // new Array(s[1] + 2).fill('')
   l1[0] = '#1.2'
-  const l2 = new Array(s[1] + 2).fill('')
+  const l2 = vfill('', s[1] + 2)
   l2[0] = s[0].toString()
   l2[1] = s[1].toString()
 
   const l3 = ['Name', 'Description'].concat(df.columns)
 
-  const d: SeriesData[][] = df.rowMap((row: SeriesData[], index: number) => {
-    const n = df.index.get(index) as SeriesData
-    return [n, n].concat(row)
+  const d: string[][] = df.rowMap((row: SeriesData[], index: number) => {
+    const n = df.index.str(index)
+    return [n, n].concat(strs(row))
   })
 
   // const d = df.values.map((r, ri) => {
@@ -612,28 +625,29 @@ interface IDownloadOptions extends IDataFrameWriterOpts {
 
 export function downloadDataFrame(
   df: AnnotationDataFrame | null | undefined,
-
   options: IDownloadOptions = {}
 ) {
   if (!df) {
     return
   }
 
-  const { file, sep, hasHeader, hasIndex } = {
-    file: 'table.txt',
-    sep: '\t',
-    hasHeader: true,
-    hasIndex: true,
-    ...options,
-  }
+  const {
+    file = 'table.txt',
+    sep = '\t',
+    hasHeader = true,
+    hasIndex = true,
+    dp = 4,
+  } = options
 
   //const f = new DataFrameWriter({ sep, hasHeader, hasIndex }).toString(df)
 
-  const f = new DataFrameWriter({ sep, hasHeader, hasIndex }).toString(df)
+  const f = new DataFrameWriter({ sep, hasHeader, hasIndex, dp }).toString(df)
 
   if (!f) {
     return
   }
+
+  console.log({ f })
 
   download(f, file)
 }

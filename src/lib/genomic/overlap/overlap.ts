@@ -6,7 +6,7 @@ import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeCell, makeCells } from '@/lib/dataframe/cell'
 import { DataFrame } from '@/lib/dataframe/dataframe'
 
-import type { SeriesData } from '@/lib/dataframe'
+import type { SeriesData } from '@/lib/dataframe/series-data'
 import { range } from '@/lib/math/range'
 import {
   GenLoc,
@@ -16,16 +16,23 @@ import {
   locStr,
   overlapFraction,
   overlaps,
-  parseGenLoc,
   sortLocations,
   type ILocationFile,
 } from '../genomic'
+import {
+  newGenomicLocation,
+  parseGenomicLocation,
+  type IGenomicLocation,
+} from '../genomic-location'
 
 export const BIN_SIZE = 1000
 
 export type OVERLAP_MODE = 'mcr' | 'max'
 
-function makeGenomicUniqueId(sid: string, loc: GenLoc | null | undefined) {
+function makeGenomicUniqueId(
+  sid: string,
+  loc: IGenomicLocation | GenLoc | null | undefined
+) {
   return `${sid}=${loc ? locStr(loc) : 'none'}`
 }
 
@@ -35,7 +42,7 @@ function parseGenomicUid(uid: string): string[] {
 
 function getTestUids(
   uid1: string,
-  loc1: GenLoc,
+  loc1: IGenomicLocation,
   binToUidsMap: Map<number, Set<string>>
 ): Set<string> {
   const testLocations = new Set<string>()
@@ -67,7 +74,7 @@ function getTestUids(
  */
 function _minMaxRegions(
   uids: string[],
-  uidToLocMap: Map<string, GenLoc>,
+  uidToLocMap: Map<string, IGenomicLocation>,
   binToUidsMap: Map<number, Set<string>>
 ): Map<string, Map<string, string>> {
   // lets see what overlaps
@@ -81,8 +88,8 @@ function _minMaxRegions(
 
   //console.warn(`Processing ${uids.length}...`)
 
-  let loc1: GenLoc
-  let loc2: GenLoc
+  let loc1: IGenomicLocation
+  let loc2: IGenomicLocation
 
   // keep track of all locations that have been allocated at least once
   const allocated = new Set<string>()
@@ -141,7 +148,7 @@ function _minMaxRegions(
       // sid is a sample id
       const [sid] = parseGenomicUid(uid)
 
-      locationCoreMap.get(loc1.loc)?.set(sid!, uid)
+      locationCoreMap.get(locStr(loc1))?.set(sid!, uid)
 
       allocated.add(uid)
     }
@@ -163,7 +170,7 @@ function _minMaxRegions(
  */
 function _mcr(
   uids: string[],
-  uidToLocMap: Map<string, GenLoc>,
+  uidToLocMap: Map<string, IGenomicLocation>,
   binToUidsMap: Map<number, Set<string>>
 ): Map<string, Map<string, string>> {
   // lets see what overlaps
@@ -177,8 +184,8 @@ function _mcr(
 
   //console.warn(`Processing ${uids.length}...`)
 
-  let loc1: GenLoc
-  let loc2: GenLoc
+  let loc1: IGenomicLocation
+  let loc2: IGenomicLocation
 
   //let overlapLocation: string
 
@@ -249,7 +256,7 @@ function _mcr(
 
           if (sid) {
             // .add(location)
-            locationCoreMap.get(loc1.loc)?.set(sid, uid)
+            locationCoreMap.get(locStr(loc1))?.set(sid, uid)
 
             used.add(uid)
             allocated.add(uid)
@@ -259,7 +266,7 @@ function _mcr(
         if (!allocated.has(uid1)) {
           // add single locations, only if they have not been
           // allocated elsewhere
-          locationCoreMap.get(loc1.loc)?.set(sid1!, uid1)
+          locationCoreMap.get(locStr(loc1))?.set(sid1!, uid1)
           allocated.add(uid1)
         }
 
@@ -278,9 +285,9 @@ function _mcr(
 export function overlappingPeaks(
   fids: ILocationFile[],
   mode: OVERLAP_MODE = 'mcr'
-): [Map<string, Map<string, string>>, Map<string, GenLoc>] {
+): [Map<string, Map<string, string>>, Map<string, IGenomicLocation>] {
   const sampleIdMap = new Map<string, string>()
-  const uidToLocMap = new Map<string, GenLoc>()
+  const uidToLocMap = new Map<string, IGenomicLocation>()
   const binToUidsMap = new Map<number, Set<string>>()
   const uids: string[] = []
 
@@ -367,7 +374,7 @@ export function createOverlapTable(
   const coreLocations = [...locationCoreMap.keys()].sort()
 
   for (const coreLocation of coreLocations) {
-    const overlapLocation = parseGenLoc(coreLocation)!
+    const overlapLocation = parseGenomicLocation(coreLocation)!
 
     // size of the overlap in bp
     const overlap = overlapLocation.end - overlapLocation.start + 1
@@ -394,7 +401,7 @@ export function createOverlapTable(
       row.push(locationCoreMap.get(coreLocation)?.get(fid) || NA)
     }
 
-    const locs: GenLoc[] = []
+    const locs: IGenomicLocation[] = []
 
     for (const fid of fids) {
       const uid = locationCoreMap.get(coreLocation)?.get(fid) || NA
@@ -428,9 +435,9 @@ export function createOverlapTable(
     const start = Math.min(...locs.map(loc => loc.start)) //[loc.start for loc in locs])
     const end = Math.max(...locs.map(loc => loc.end))
 
-    const region = new GenLoc(locs[0]!.chr, start, end)
+    const region = newGenomicLocation(locs[0]!.chr, start, end)
 
-    row.push(region.loc)
+    row.push(locStr(region))
     data.push(row)
   }
 

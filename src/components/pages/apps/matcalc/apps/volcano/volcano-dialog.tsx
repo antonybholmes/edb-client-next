@@ -1,16 +1,20 @@
 import { Form, FormField } from '@/components/shadcn/ui/themed/v2/form'
 import { TEXT_OK } from '@/consts'
-import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
+import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { findCols, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { SelectItem, SelectList } from '@/themed/v2/select'
-import { newVolcanoPlot, useSheet } from '../../history/history-store'
+import {
+  newVolcanoPlot,
+  useSheet,
+  type HistoryPlot,
+} from '../../history/history-store'
 
 import { DataFrame } from '@/lib/dataframe/dataframe'
 import { filterNA, subset, zip } from '@/lib/dataframe/dataframe-utils'
 import { range } from '@/lib/math/range'
 
-import { CheckPropRow } from '@/components/dialog/check-prop-row'
-import { PropRow } from '@/components/dialog/prop-row'
+import { CheckPropRow } from '@/dialogs/check-prop-row'
+import { PropRow } from '@/dialogs/prop-row'
 
 import type { SeriesData } from '@/lib/dataframe'
 import { produce } from 'immer'
@@ -59,7 +63,7 @@ function findPValueCol(df: BaseDataFrame | null) {
   return cols[0]
 }
 
-export interface IProps extends IModalProps {
+export interface IProps extends IModalProps<HistoryPlot> {
   open?: boolean
   //df: BaseDataFrame
 
@@ -181,7 +185,7 @@ export function VolcanoDialog({
         if (r === TEXT_OK) {
           btnRef.current?.click()
         } else {
-          onResponse?.(r)
+          onResponse?.(r, undefined)
         }
       }}
       //contentVariant="glass"

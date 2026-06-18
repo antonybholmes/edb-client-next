@@ -2,6 +2,7 @@ import type { LeftRightPos } from '@/components/side'
 import { SVG_CRISP_EDGES } from '@/consts'
 import { ZERO_POS } from '@/interfaces/pos'
 import { range } from 'd3'
+import { SvgText } from '../svg-text'
 import type { IColLabelsSvgProps, ITreeSvgProps } from './col-svg'
 
 export function RowTreeSvg({
@@ -33,7 +34,7 @@ export function RowTreeSvg({
             strokeLinecap="round"
             strokeLinejoin="round"
             fill="none"
-            stroke={props.rowTree.stroke.color}
+            stroke={props.rowTree.stroke.value}
             strokeWidth={props.rowTree.stroke.width}
           />
         )
@@ -60,18 +61,17 @@ export function RowLabelsSvg({
     <g transform={`translate(${pos.x}, ${pos.y})`}>
       {leaves.map((row, ri) => {
         return (
-          <text
+          <SvgText
             key={row}
             id={`row-label-${row}`}
             x={0}
             y={ri * blockSize.h + halfH}
-            fill={props.rowLabels.color}
+            font={props.rowLabels}
             dominantBaseline="central"
-            fontSize="smaller"
             textAnchor={isLeft ? 'end' : 'start'}
           >
             {rowMetaN.map(rmi => df.rowObs.str(row, rmi)).join(', ')}
-          </text>
+          </SvgText>
         )
       })}
     </g>

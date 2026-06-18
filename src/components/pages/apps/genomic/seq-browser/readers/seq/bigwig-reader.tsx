@@ -1,10 +1,10 @@
-import { locStr, type IGenomicLocation } from '@/lib/genomic/genomic'
+import { locStr } from '@/lib/genomic/genomic'
+import type { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import type { BigWig } from '@gmod/bbi'
 import { type ISeqPos } from '../../svg/base-seq-track-svg'
 import { BaseSeqReader, makeBins } from './base-seq-reader'
 
 export class BigWigReader extends BaseSeqReader {
-  //private _track: IRemoteBigWigTrack | ILocalBigWigTrack
   private _points: Promise<ISeqPos[]> | null = null
   private _loc: string = ''
 

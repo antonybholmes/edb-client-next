@@ -51,7 +51,7 @@ export function CountText({ id, center, setItems }: ICountTextProps) {
     color = settings.isFilled ? COLOR_WHITE : COLOR_BLACK
   } else {
     color =
-      settings.isFilled && !isLightColor(circles[id]!.fill.color)
+      settings.isFilled && !isLightColor(circles[id]!.fill.value)
         ? COLOR_WHITE
         : COLOR_BLACK
   }
@@ -170,7 +170,7 @@ export function TitleText({
       fontFamily={settings.fonts.title.family}
       fill={
         settings.fonts.title.colored
-          ? circles[id]?.fill.color
+          ? circles[id]?.fill.value
           : settings.fonts.title.color
       }
       //fillOpacity={settings.fonts.title.colored ? circles[id]?.fill.opacity : 1}
@@ -203,10 +203,10 @@ export function Circle({ circle, ref, loc }: ICircleProps) {
       cx={loc[0]!}
       cy={loc[1]!}
       r={settings.radius}
-      fill={settings.isFilled && circle.fill.show ? circle.fill.color : 'none'}
+      fill={settings.isFilled && circle.fill.show ? circle.fill.value : 'none'}
       fillOpacity={circle.fill.opacity}
       stroke={
-        settings.isOutlined && circle.stroke.show ? circle.stroke.color : 'none'
+        settings.isOutlined && circle.stroke.show ? circle.stroke.value : 'none'
       }
       strokeOpacity={circle.stroke.opacity}
     />

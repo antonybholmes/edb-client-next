@@ -9,14 +9,12 @@ import { cn } from '@/lib/shadcn-utils'
 import {
   BASE_BUTTON_CLS,
   BASE_ICON_BUTTON_CLS,
-  BUTTON_LG_H_CLS,
-  BUTTON_MD_H_CLS,
-  BUTTON_SM_H_CLS,
   BUTTON_XL_H_CLS,
   BUTTON_XS_H_CLS,
   CENTERED_ROW_CLS,
+  CORE_APP_ACCENT_BUTTON_CLS,
   CORE_PRIMARY_BUTTON_CLS,
-  CORE_PRIMARY_COLOR_BUTTON_CLS,
+  CORE_THEME_BUTTON_CLS,
   DESTRUCTIVE_CLS,
   DROPDOWN_BUTTON_CLS,
   DROPDOWN_WITH_ICON_BUTTON_CLS,
@@ -24,11 +22,8 @@ import {
   ICON_BUTTON_CLS,
   LARGE_ICON_BUTTON_CLS,
   SM_ICON_BUTTON_CLS,
-  TOOLBAR_BUTTON_H_CLS,
   TOOLBAR_DROPDOWN_BUTTON_CLS,
   TRANS_COLOR_CLS,
-  XL_ICON_BUTTON_CLS,
-  XS_ICON_BUTTON_CLS,
 } from '@/theme'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { gsap } from 'gsap'
@@ -44,7 +39,7 @@ export const BASE_OUTLINE_CLS = cn(
 )
 
 export const BASE_IOS_CLS = cn(
-  'border border-transparent hover:border-border/75 hover:bg-background/75',
+  'border border-transparent hover:border-border/25 hover:bg-background/75',
   'data-[checked=true]:bg-background/75 data-[checked=true]:border-border/75',
   'data-popup-open:bg-background/75 data-popup-open:border-border/75'
 )
@@ -65,9 +60,6 @@ export const BASE_FLAT_BUTTON_CLS = cn(
   'hover:bg-muted/50 data-[checked=false]:hover:bg-muted/50',
   'data-[checked=true]:bg-muted/50 data-[state=open]:bg-muted/50',
   'aria-[expanded=true]:bg-muted/50 data-popup-open:bg-muted/50'
-  //'border border-transparent',
-  //'data-[checked=true]:border-border data-[checked=true]:hover:border-transparent',
-  //'data-popup-open:border-border data-popup-open:hover:border-transparent'
 )
 
 export const BASE_MUTED_LIGHT_CLS = cn(
@@ -106,16 +98,24 @@ export const BASE_MENU_CLS = cn(
   //'data-[state=checked]:bg-muted/60 data-[state=checked]:border-border'
 )
 
-export const THEME_MENU_CLS = cn(
-  'focus:bg-theme/50',
+export const BASE_THEME_MENU_CLS = cn(
   'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
   'fill-foreground stroke-foreground',
-  'hover:bg-theme/50',
-  //'data-[checked=true]:bg-theme/60 data-[checked=true]:stroke-white data-[checked=true]:text-white',
+  'border border-transparent',
+  'data-[selected=true]:bg-muted/50 data-[selected=true]:border-border/50',
+  'data-[selected=true]:text-foreground data-[selected=true]:stroke-foreground'
+)
+
+export const THEME_MENU_CLS = cn(
+  BASE_THEME_MENU_CLS,
   'focus:text-white focus:fill-white focus:stroke-white',
-  'hover:text-white hover:fill-white hover:stroke-white'
-  //'data-[state=checked]:bg-theme/40 data-[state=checked]:stroke-white data-[state=checked]:text-white',
-  //'data-[checked=true]:bg-theme/40 data-[checked=true]:stroke-white data-[checked=true]:text-white'
+  'hover:text-white hover:fill-white hover:stroke-white',
+  'focus:bg-theme/50 hover:bg-theme/50 data-[popup-open]:bg-theme/50'
+)
+
+export const APP_ACCENT_MENU_CLS = cn(
+  BASE_THEME_MENU_CLS,
+  'focus:bg-app-theme/30 hover:bg-app-theme/30 data-[popup-open]:bg-app-theme/30'
 )
 
 export const DROPDOWN_MENU_ICON_CONTAINER_CLS =
@@ -123,295 +123,24 @@ export const DROPDOWN_MENU_ICON_CONTAINER_CLS =
 
 const LINK_CLS = cn(
   FOCUS_RING_CLS,
-  'text-theme underline-offset-4 hover:underline'
+  'text-app-theme underline-offset-4 hover:underline'
 )
 
 const RED_LINK_CLS = cn(
   FOCUS_RING_CLS,
-  'text-red-500 underline-offset-4 hover:underline'
+  'text-destructive underline-offset-4 hover:underline'
 )
 
 export const RIPPLE_CLS =
   'pointer-events-none absolute z-0 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-0 w-4 h-4'
-
-// export const buttonVariants = cva(BASE_BUTTON_CLS, {
-//   variants: {
-//     variant: {
-//       none: "",
-//       default: CORE_PRIMARY_BUTTON_CLS,
-//       primary: CORE_PRIMARY_BUTTON_CLS,
-//       "theme": CORE_PRIMARY_COLOR_BUTTON_CLS,
-//       destructive: DESTRUCTIVE_CLS,
-//       trans: "hover:bg-white/25 data-[checked=true]:bg-white/25",
-//       outline: OUTLINE_BUTTON_CLS,
-//       ghost: BASE_GHOST_CLS,
-//       muted: BASE_MUTED_CLS,
-//       accent: BASE_ACCENT_CLS,
-//       toolbar: BASE_TOOLBAR_CLS,
-//       side: "hover:bg-background",
-//       menu: BASE_MENU_CLS,
-//       link: LINK_CLS,
-//       footer: "hover:bg-primary/20 data-[checked=true]:bg-primary/20",
-//     },
-//     font: {
-//       none: "",
-//       default: "font-normal",
-//       normal: "font-normal",
-//       medium: "font-medium",
-//       semibold: "font-semibold",
-//     },
-//     rounded: {
-//       none: "",
-//       default: "rounded-sm",
-//       xs: "rounded-xs",
-//       sm: "rounded-xs",
-//       md: "rounded-md",
-//       lg: "rounded-lg",
-//       full: "rounded-full ",
-//     },
-//     ring: {
-//       default: "ring-offset-1",
-//       "offset-1": "ring-offset-1",
-//       "offset-2": "ring-offset-2",
-//       inset: "ring-inset",
-//     },
-//     items: {
-//       default: "items-center",
-//       center: "items-center",
-//       start: "items-start",
-//       end: "items-end",
-//     },
-//     justify: {
-//       default: "justify-center",
-//       center: "justify-center",
-//       start: "justify-start",
-//       end: "justify-end",
-//     },
-//     size: {
-//       default: BUTTON_MD_H_CLS,
-//       base: BUTTON_MD_H_CLS,
-//       //narrow: cn(BUTTON_MD_H_CLS, "w-5 justify-center"),
-//       tab: "px-2 h-7 justify-center",
-//       sm: SMALL_BUTTON_H_CLS,
-//       md: MEDIUM_BUTTON_H_CLS,
-//       lg: LARGE_BUTTON_H_CLS,
-//       xl: BUTTON_XL_H_CLS,
-//       xxl: XBUTTON_XL_H_CLS,
-//       icon: cn(ICON_BUTTON_CLS, "justify-center"),
-//       "icon-lg": cn(
-//         BASE_ICON_BUTTON_CLS,
-//         CENTERED_ROW_CLS,
-//         LARGE_ICON_BUTTON_CLS,
-//       ),
-//       "icon-md": cn(
-//         BASE_ICON_BUTTON_CLS,
-//         CENTERED_ROW_CLS,
-//         MEDIUM_BUTTON_H_CLS,
-//       ),
-//       "icon-sm": SM_ICON_BUTTON_CLS,
-//       "icon-xs": XS_ICON_BUTTON_CLS,
-//       none: "",
-//     },
-//     pad: {
-//       none: "",
-//       default: "px-4",
-//       md: "px-3",
-//       sm: "px-2",
-//       xs: "px-1",
-//     },
-//     gap: {
-//       none: "",
-//       default: "gap-x-2",
-//       sm: "gap-x-1",
-//       xs: "gap-x-0.5",
-//     },
-//     animation: {
-//       default: TRANS_COLOR_CLS,
-//       color: TRANS_COLOR_CLS,
-//       none: "",
-//     },
-//   },
-// defaultVariants: {
-//   variant: "primary",
-//   justify: "center",
-//   items: "center",
-//   gap: "base",
-//   size: "base",
-//   font: "normal",
-//   ring: "offset-1",
-//   rounded: "base",
-//   pad: "base",
-//   animation: "default",
-// },
-// })
-
-// export const buttonVariants2 = cv(BASE_BUTTON_CLS, {
-//   variants: {
-//     variant: {
-//       none: '',
-//       primary: CORE_PRIMARY_BUTTON_CLS,
-//       theme: CORE_PRIMARY_COLOR_BUTTON_CLS,
-//       destructive: DESTRUCTIVE_CLS,
-//       trans: 'hover:bg-white/20 data-[checked=true]:bg-white/20',
-//       //header: 'hover:bg-black/15 data-[checked=true]:bg-black/15',
-//       secondary: SECONDARY_BUTTON_CLS,
-//       ghost: BASE_GHOST_CLS,
-//       muted: BASE_MUTED_CLS,
-//       //'theme-muted': BASE_MUTED_THEME_CLS,
-//       accent: BASE_ACCENT_CLS,
-//       side: 'hover:bg-background',
-//       menu: BASE_MENU_CLS,
-//       link: LINK_CLS,
-//       'red-link': RED_LINK_CLS,
-//       footer: 'hover:bg-primary/20 data-[checked=true]:bg-primary/20',
-//     },
-//     font: {
-//       none: '',
-//       normal: 'font-normal',
-//       medium: 'font-medium',
-//       semibold: 'font-semibold',
-//     },
-//     rounded: {
-//       none: '',
-//       base: 'rounded-theme',
-//       xs: 'rounded-xs',
-//       sm: 'rounded-xs',
-//       md: 'rounded-md',
-//       lg: 'rounded-lg',
-//       full: 'rounded-full ',
-//     },
-//     ring: {
-//       'offset-1': 'ring-offset-1',
-//       'offset-2': 'ring-offset-2',
-//       inset: 'ring-inset',
-//     },
-//     items: {
-//       center: 'items-center',
-//       start: 'items-start',
-//       end: 'items-end',
-//     },
-//     justify: {
-//       center: 'justify-center',
-//       start: 'justify-start',
-//       end: 'justify-end',
-//     },
-//     size: {
-//       base: BUTTON_MD_H_CLS,
-//       //narrow: cn(BUTTON_MD_H_CLS, "w-5 justify-center"),
-//       tab: 'px-2 h-7 justify-center',
-//       sm: BUTTON_SM_H_CLS,
-//       md: BUTTON_MD_H_CLS,
-//       lg: BUTTON_LG_H_CLS,
-//       xl: BUTTON_XL_H_CLS,
-//       '2xl': XBUTTON_XL_H_CLS,
-//       icon: cn(ICON_BUTTON_CLS, 'justify-center'),
-//       'icon-lg': cn(
-//         BASE_ICON_BUTTON_CLS,
-//         CENTERED_ROW_CLS,
-//         LARGE_ICON_BUTTON_CLS
-//       ),
-//       'icon-md': cn(BASE_ICON_BUTTON_CLS, CENTERED_ROW_CLS, BUTTON_MD_H_CLS),
-//       'icon-sm': SM_ICON_BUTTON_CLS,
-//       'icon-xs': XS_ICON_BUTTON_CLS,
-//       dropdown: DROPDOWN_BUTTON_CLS,
-//       'toolbar-dropdown': TOOLBAR_DROPDOWN_BUTTON_CLS,
-//       header: 'w-11 h-11 aspect-square',
-//       none: '',
-//     },
-//     pad: {
-//       none: '',
-//       lg: 'px-4',
-//       base: 'px-3',
-//       sm: 'px-2',
-//       xs: 'px-1',
-//     },
-//     gap: {
-//       none: '',
-//       base: 'gap-x-2',
-//       sm: 'gap-x-1',
-//       xs: 'gap-x-0.5',
-//     },
-//     animation: {
-//       default: TRANS_COLOR_CLS,
-//       color: TRANS_COLOR_CLS,
-//       none: '',
-//     },
-//   },
-//   defaultVariants: {
-//     variant: 'primary',
-//     justify: 'center',
-//     items: 'center',
-//     gap: 'sm',
-//     size: 'default',
-//     font: 'none',
-//     ring: 'offset-1',
-//     rounded: 'default',
-//     pad: 'default',
-//     animation: 'default',
-//   },
-//   multiProps: {
-//     icon: {
-//       size: 'icon',
-//       pad: 'none',
-//     },
-//     'icon-sm': {
-//       size: 'icon-sm',
-//       pad: 'none',
-//     },
-//     'icon-md': {
-//       size: 'icon-md',
-//       pad: 'none',
-//     },
-//     lg: {
-//       size: 'lg',
-//       pad: 'lg',
-//       rounded: 'md',
-//     },
-//     toolbar: {
-//       variant: 'accent',
-//       rounded: 'md',
-//       size: 'default',
-//       pad: 'sm',
-//     },
-//     'toolbar-tab': {
-//       variant: 'flat',
-//       rounded: 'md',
-//       size: 'sm',
-//       pad: 'sm',
-//     },
-//     dropdown: {
-//       variant: 'accent',
-//       pad: 'none',
-//       rounded: 'md',
-//       size: 'dropdown',
-//     },
-//     'toolbar-dropdown': {
-//       variant: 'accent',
-//       pad: 'none',
-//       rounded: 'md',
-//       size: 'toolbar-dropdown',
-//     },
-//     link: {
-//       variant: 'link',
-//       pad: 'none',
-//       size: 'none',
-//       justify: 'start',
-//     },
-//     'red-link': {
-//       variant: 'red-link',
-//       pad: 'none',
-//       size: 'none',
-//       justify: 'start',
-//     },
-//   },
-// })
 
 export const buttonVariants = cva(BASE_BUTTON_CLS, {
   variants: {
     variant: {
       none: '',
       primary: CORE_PRIMARY_BUTTON_CLS,
-      theme: CORE_PRIMARY_COLOR_BUTTON_CLS,
+      theme: CORE_THEME_BUTTON_CLS,
+      'app-theme': CORE_APP_ACCENT_BUTTON_CLS,
       destructive: DESTRUCTIVE_CLS,
       trans: 'hover:bg-white/20 data-[checked=true]:bg-white/20',
       secondary: BASE_SECONDARY_CLS,
@@ -471,11 +200,12 @@ export const buttonVariants = cva(BASE_BUTTON_CLS, {
     },
     size: {
       xs: BUTTON_XS_H_CLS,
-      sm: BUTTON_SM_H_CLS,
-      md: BUTTON_MD_H_CLS,
-      toolbar: TOOLBAR_BUTTON_H_CLS,
+      //sm: BUTTON_SM_H_CLS,
+      md: 'h-button-md',
+      toolbar: 'h-toolbar-button',
+      'toolbar-dropdown': TOOLBAR_DROPDOWN_BUTTON_CLS,
       //'toolbar-icon': cn(TOOLBAR_BUTTON_W_CLS, TOOLBAR_BUTTON_H_CLS),
-      lg: BUTTON_LG_H_CLS,
+      lg: 'h-button-lg',
       xl: BUTTON_XL_H_CLS,
       '2xl': BUTTON_XL_H_CLS,
       icon: cn(ICON_BUTTON_CLS, 'justify-center'),
@@ -484,13 +214,11 @@ export const buttonVariants = cva(BASE_BUTTON_CLS, {
         CENTERED_ROW_CLS,
         LARGE_ICON_BUTTON_CLS
       ),
-      'icon-xl': cn(BASE_ICON_BUTTON_CLS, CENTERED_ROW_CLS, XL_ICON_BUTTON_CLS),
-      'icon-md': cn(BASE_ICON_BUTTON_CLS, CENTERED_ROW_CLS, BUTTON_MD_H_CLS),
+
       'icon-sm': SM_ICON_BUTTON_CLS,
-      'icon-xs': XS_ICON_BUTTON_CLS,
+      //'icon-xs': XS_ICON_BUTTON_CLS,
       dropdown: DROPDOWN_BUTTON_CLS,
       'dropdown-with-icon': DROPDOWN_WITH_ICON_BUTTON_CLS,
-      'toolbar-dropdown': TOOLBAR_DROPDOWN_BUTTON_CLS,
       // header: 'h-header',
       none: '',
     },
@@ -515,7 +243,7 @@ export const buttonVariants = cva(BASE_BUTTON_CLS, {
     },
   },
   defaultVariants: {
-    variant: 'primary',
+    variant: 'theme',
     justify: 'center',
     items: 'center',
     flow: 'row',
@@ -550,12 +278,9 @@ export interface IExtButtonProps
   extends
     ComponentProps<'button'>,
     VariantProps<typeof buttonVariants>,
-    //Component<typeof buttonVariants2>,
-    //IButtonVariantProps,
     ITooltipSide {
   checked?: boolean
-  open?: boolean // for dropdowns
-  //state?: ButtonState
+  open?: boolean
   ripple?: boolean
 }
 

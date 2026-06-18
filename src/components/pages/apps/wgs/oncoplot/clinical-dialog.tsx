@@ -1,5 +1,5 @@
 import { TEXT_OK } from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
 import { VCenterRow } from '@/layout/v-center-row'
 
 import { Label } from '@/components/shadcn/ui/themed/v2/label'
@@ -9,7 +9,7 @@ import { useOncoplotSettings } from './oncoplot-settings-store'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
+} from '@/components/plot/color-picker-popover'
 import type { ClinicalDataTrack } from './clinical-utils'
 import { NO_ALTERATION_COLOR } from './oncoplot-utils'
 
@@ -42,25 +42,29 @@ export function ClinicalDialog({
       {track.categoriesInUse.map((category, ci) => (
         <VCenterRow className="gap-x-2" key={ci}>
           <ColorPickerButton
-            color={
-              trackProps.categoryColors[category.toLowerCase()] ??
-              NO_ALTERATION_COLOR
-            }
-            onColorChange={color => {
-              const newTracksProps = produce(
-                displayProps.legend.clinical.tracks,
-                draft => {
-                  draft[track.name]!.categoryColors[category.toLowerCase()] =
-                    color
-                }
-              )
+            colors={[
+              {
+                color:
+                  trackProps.categoryColors[category.toLowerCase()] ??
+                  NO_ALTERATION_COLOR,
+                onColorChange: color => {
+                  const newTracksProps = produce(
+                    displayProps.legend.clinical.tracks,
+                    draft => {
+                      draft[track.name]!.categoryColors[
+                        category.toLowerCase()
+                      ] = color
+                    }
+                  )
 
-              setDisplayProps(
-                produce(displayProps, draft => {
-                  draft.legend.clinical.tracks = newTracksProps
-                })
-              )
-            }}
+                  setDisplayProps(
+                    produce(displayProps, draft => {
+                      draft.legend.clinical.tracks = newTracksProps
+                    })
+                  )
+                },
+              },
+            ]}
             className={SIMPLE_COLOR_EXT_CLS}
           />
           <Label>{category}</Label>

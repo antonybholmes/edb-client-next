@@ -16,13 +16,14 @@ export const variants = cva(VECTOR_ICON_CLS, {
 })
 
 export function OpenIcon({
-  w = 'h-5 w-5',
+  size = 20,
   variant,
   className,
 }: IIconProps & VariantProps<typeof variants>) {
   return (
     <FolderOpen
-      className={variants({ variant, className: cn(w, className) })}
+      className={variants({ variant, className: cn(className) })}
+      size={size}
     />
   )
 }

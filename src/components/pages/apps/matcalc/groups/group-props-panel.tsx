@@ -1,26 +1,20 @@
 import {
   onTextFileChange,
-  OpenFiles,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 
 import { makeNewGroup, type IClusterGroup } from '@/lib/cluster-group'
-
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
 
 import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
 import { useSelectionRange } from '@/providers/selection-range'
 
 import { download, downloadJson } from '@/lib/download-utils'
-import { randId } from '@/lib/id'
 import { range } from '@/lib/math/range'
 import { useState } from 'react'
 import { GroupDialog } from './group-dialog'
 
 import { FileDropZonePanel } from '@/components/file-dropzone-panel'
-import { OpenIcon } from '@/icons/open-icon'
-import { SaveIcon } from '@/icons/save-icon'
 import { TrashIcon } from '@/icons/trash-icon'
 import { VCenterCol } from '@/layout/v-center-col'
 import { randomHexColor } from '@/lib/color/color'
@@ -57,16 +51,18 @@ import {
   useHistory,
   useSheet,
 } from '../history/history-store'
-import MODULE_INFO from '../module.json'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { DownloadIcon } from '@/components/icons/download-icon'
+import { UploadIcon } from '@/components/icons/upload-icon'
+import { BaseCol } from '@/components/layout/base-col'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import { BaseCol } from '@/components/layout/base-col'
-import type { ISaveAsResponse } from '@/components/pages/save-as-dialog'
+} from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { ResizableSidebarHeaderPortal } from '@/components/slide-bar/resizable-sidebar'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { PlusIcon } from '@/icons/plus-icon'
@@ -75,7 +71,6 @@ import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { cn } from '@/lib/shadcn-utils'
 import { Input } from '@/themed/v2/input'
 import { Settings2 } from 'lucide-react'
-import { SaveGroupsDialog } from './save-groups-dialog'
 
 export const GROUP_CLS = `group rounded-theme group gap-x-1 opacity-80 py-1 px-2
 hover:opacity-100 trans-opacity hover:bg-muted/60 data-[focus=true]:bg-muted/60`
@@ -87,13 +82,13 @@ export const GROUP_CONTENT_CLS = `flex flex-row items-center grow relative
 function GroupItem({
   group,
   editGroup,
-  setDelGroup,
 }: {
   group: IClusterGroup
   editGroup: (group: IClusterGroup, title?: string) => void
-  setDelGroup: (group: IClusterGroup) => void
 }) {
-  const { updateGroup } = useHistory()
+  const { removeGroups, updateGroup } = useHistory()
+
+  const { open: openDialog } = useDialogs()
 
   const sheet = useSheet()
 
@@ -105,10 +100,22 @@ function GroupItem({
       key={group.id}
       extChildren={
         <button
-          onClick={() => setDelGroup(group)}
+          onClick={() =>
+            openDialog({
+              type: 'warning',
+              payload: {
+                content: `Are you sure you want to delete the ${group.name} group?`,
+                callback: response => {
+                  if (response === TEXT_OK) {
+                    removeGroups([group!.id])
+                  }
+                },
+              },
+            })
+          }
           className={cn(
             DRAG_HANDLE_APPEAR_CLS,
-            'hover:text-red-500 focus-visible:text-red-500 trans-color'
+            'stroke-foreground/50 hover:stroke-destructive focus-visible:stroke-destructive trans-color'
           )}
           // style={{
           //   stroke: group.color,
@@ -117,7 +124,7 @@ function GroupItem({
           //onMouseEnter={() => setDelHover(true)}
           //onMouseLeave={() => setDelHover(false)}
         >
-          <TrashIcon w="w-4" className={DRAG_ICON_ANIM_CLS} />
+          <TrashIcon stroke="" className={DRAG_ICON_ANIM_CLS} />
         </button>
       }
     >
@@ -128,10 +135,12 @@ function GroupItem({
         }}
       />
       <ColorPickerButton
-        color={group.color}
-        onColorChange={v => {
-          updateGroup({ ...group, color: v })
-        }}
+        colors={[
+          {
+            color: group.color,
+            onColorChange: color => updateGroup({ ...group, color }),
+          },
+        ]}
         // onOpenChanged={open => {
         //   if (!open) {
         //     addGroups(groups.map(g => (g.id === group.id ? { ...g, color } : g)), pathJoin(app))
@@ -184,14 +193,11 @@ export interface IGroupCallback {
 }
 
 export function GroupPropsPanel() {
-  const [open, setOpen] = useState('')
-  const [confirmClear, setConfirmClear] = useState(false)
-  const [showSaveDialog, setShowSaveDialog] = useState(false)
-  const [delGroup, setDelGroup] = useState<IClusterGroup | null>(null)
-
   //const [activeId, setActiveId] = useState<string | null>(null)
 
-  const { addGroups, removeGroups, reorderGroups } = useHistory()
+  const { open: openDialog } = useDialogs()
+
+  const { addGroups, reorderGroups } = useHistory()
 
   const groups = useGroups()
   const groupsName = useGroupName()
@@ -283,7 +289,6 @@ export function GroupPropsPanel() {
   }
 
   function addGroup() {
-    // edit a new group
     editGroup(makeNewGroup(), 'New group')
   }
 
@@ -292,11 +297,12 @@ export function GroupPropsPanel() {
       return
     }
 
-    if (selection.start.col !== -1) {
-      // if a column is selected, suggest its name as what the user wants to
-      // to group
-      group.search = range(selection.start.col, selection.end.col + 1).map(i =>
-        (sheet as AnnotationDataFrame).colName(i)
+    // if a column is selected, suggest its name as what the user wants to
+    // to group
+
+    if (selection && selection.cols) {
+      group.search = range(selection.cols.start, selection.cols.end + 1).map(
+        i => (sheet as AnnotationDataFrame).colName(i)
       )
     }
 
@@ -368,97 +374,80 @@ export function GroupPropsPanel() {
         <GroupDialog
           title={openGroupDialog?.title}
           group={openGroupDialog?.group}
-          callback={openGroupDialog?.callback}
-          onResponse={() => setOpenGroupDialog(undefined)}
-        />
-      )}
-
-      {confirmClear && (
-        <OKCancelDialog
-          title={MODULE_INFO.name}
-          //contentVariant="glass"
-          //bodyVariant="card"
-          modalType="Warning"
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              //onGroupsChange?.([])
-              addGroups([], { mode: 'set' })
+          onResponse={(response, group) => {
+            if (response === TEXT_OK && group) {
+              openGroupDialog?.callback?.(group)
+            } else {
+              setOpenGroupDialog(undefined)
             }
-
-            setConfirmClear(false)
-          }}
-        >
-          Are you sure you want to clear all groups?
-        </OKCancelDialog>
-      )}
-
-      {delGroup !== null && (
-        <OKCancelDialog
-          showClose={true}
-          title={MODULE_INFO.name}
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              removeGroups([delGroup!.id])
-              // onGroupsChange &&
-              //   onGroupsChange([
-              //     ...groups.slice(0, delId),
-              //     ...groups.slice(delId + 1),
-              //   ])
-            }
-            setDelGroup(null)
-          }}
-        >
-          {`Are you sure you want to delete the ${
-            delGroup !== null ? delGroup.name : 'selected'
-          } group?`}
-        </OKCancelDialog>
-      )}
-
-      {showSaveDialog && (
-        <SaveGroupsDialog
-          onResponse={(_, data) => {
-            const d = data as ISaveAsResponse
-
-            switch (d.format.ext) {
-              case 'json':
-                downloadJson(groups, d.name)
-                break
-              case 'cls':
-                downloadCls(d.name)
-                break
-              default:
-                break
-            }
-
-            setShowSaveDialog(false)
           }}
         />
       )}
+
+      <ResizableSidebarHeaderPortal>
+        <h2 className="font-bold opacity-80">Groups</h2>
+      </ResizableSidebarHeaderPortal>
 
       <PropsPanel className="gap-y-1">
-        <h2 className="font-semibold text-base opacity-80 mb-2">Groups</h2>
         <VCenterRow className="justify-between">
-          <StretchRow>
+          <StretchRow className="gap-x-1">
             <VCenterRow>
               <IconButton
                 //rounded="full"
                 // ripple={false}
-                onClick={() => setOpen(randId('open'))}
+                onClick={() =>
+                  openDialog({
+                    type: 'open',
+                    payload: {
+                      fileTypes: ['json', 'cls'],
+                      callback: (message, files) => {
+                        onTextFileChange(message, files, files => {
+                          openGroupFiles(files)
+                        })
+                      },
+                    },
+                  })
+                }
                 title="Open Groups"
                 //className="fill-foreground/50 hover:fill-foreground"
               >
-                <OpenIcon />
+                <UploadIcon />
               </IconButton>
 
               <IconButton
                 //rounded="full"
                 // ripple={false}
-                onClick={() => setShowSaveDialog(true)}
+                onClick={() => {
+                  openDialog({
+                    type: 'save',
+                    payload: {
+                      title: 'Save Groups As',
+                      name: 'groups',
+                      fileTypes: [
+                        { ext: 'json', name: 'JSON' },
+                        { ext: 'cls', name: 'CLS' },
+                      ],
+                      callback: data => {
+                        switch (data.format.ext) {
+                          case 'json':
+                            downloadJson(groups, data.name)
+                            break
+                          case 'cls':
+                            downloadCls(data.name)
+                            break
+                          default:
+                            break
+                        }
+                      },
+                    },
+                  })
+                }}
                 title="Save Groups"
               >
-                <SaveIcon />
+                <DownloadIcon />
               </IconButton>
             </VCenterRow>
+
             <ToolbarSeparator />
 
             <IconButton
@@ -482,7 +471,19 @@ export function GroupPropsPanel() {
             // </Button>
 
             <LinkButton
-              onClick={() => setConfirmClear(true)}
+              onClick={() =>
+                openDialog({
+                  type: 'warning',
+                  payload: {
+                    content: 'Are you sure you want to clear all groups?',
+                    callback: response => {
+                      if (response === TEXT_OK) {
+                        addGroups([], { mode: 'set' })
+                      }
+                    },
+                  },
+                })
+              }
               title="Clear all groups"
             >
               {TEXT_CLEAR}
@@ -546,7 +547,6 @@ export function GroupPropsPanel() {
                         group={group}
                         key={group.id}
                         editGroup={editGroup}
-                        setDelGroup={setDelGroup}
                       />
                     )
                   })}
@@ -566,19 +566,6 @@ export function GroupPropsPanel() {
           {/* </VScrollPanel> */}
         </FileDropZonePanel>
       </PropsPanel>
-
-      {open.includes('open') && (
-        <OpenFiles
-          message={open}
-          //onOpenChange={() => setOpen("")}
-          onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
-              openGroupFiles(files)
-            })
-          }
-          fileTypes={['json', 'cls']}
-        />
-      )}
     </>
   )
 }

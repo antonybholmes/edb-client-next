@@ -1,22 +1,23 @@
 import { range } from '@/lib/math/range'
-import { overlaps, type GenLoc } from '../genomic'
+import { overlaps } from '../genomic'
+import type { IGenomicLocation } from '../genomic-location'
 
 export class BlockSearch<T> {
   private _binSize: number
-  private _blockMap: Map<string, Map<number, [GenLoc, T][]>>
+  private _blockMap: Map<string, Map<number, [IGenomicLocation, T][]>>
 
   constructor(binSize = 1000) {
     this._binSize = binSize
-    this._blockMap = new Map<string, Map<number, [GenLoc, T][]>>()
+    this._blockMap = new Map<string, Map<number, [IGenomicLocation, T][]>>()
   }
 
-  addFeature(loc: GenLoc, feature: T) {
+  addFeature(loc: IGenomicLocation, feature: T) {
     const bs = Math.floor(loc.start / this._binSize)
     const be = Math.floor(loc.end / this._binSize)
 
     for (const b of range(bs, be + 1)) {
       if (!this._blockMap.has(loc.chr)) {
-        this._blockMap.set(loc.chr, new Map<number, [GenLoc, T][]>())
+        this._blockMap.set(loc.chr, new Map<number, [IGenomicLocation, T][]>())
       }
 
       if (!this._blockMap.get(loc.chr)?.has(b)) {
@@ -27,7 +28,7 @@ export class BlockSearch<T> {
     }
   }
 
-  getOverlappingFeatures(loc: GenLoc): T[] {
+  getOverlappingFeatures(loc: IGenomicLocation): T[] {
     const ret: T[] = []
     const used = new Set<string>()
 

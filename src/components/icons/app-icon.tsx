@@ -1,14 +1,14 @@
 import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
 import { cn } from '@/lib/shadcn-utils'
 
-export function AppIcon({ w = 1.5, className }: IIconProps) {
-  const s = `${w}rem`
+export function AppIcon({ size = 1.5, className }: IIconProps) {
+  const s = `${size}rem`
   return (
     <svg
       version="1.1"
       viewBox="0 0 14.5 14.5"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn(ICON_CLS, w, className)}
+      className={cn(ICON_CLS, size, className)}
       style={{ width: s, height: s }}
     >
       <g transform="translate(-33.407 -100.86)" id="g12">

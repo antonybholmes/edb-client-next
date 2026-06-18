@@ -1,11 +1,14 @@
 import {
-  DEFAULT_FILL_PROPS,
+  DEFAULT_CENTERD_FONT_PROPS,
+  DEFAULT_CENTERED_TEXT_PROPS,
+  DEFAULT_COLOR_PROPS,
   DEFAULT_FONT_PROPS,
   DEFAULT_STROKE_PROPS,
-  OPAQUE_FILL_PROPS,
-  type IColorProps,
+  DEFAULT_TEXT_PROPS,
   type IFontProps,
+  type IPaintProps,
   type IStrokeProps,
+  type ITextProps,
 } from '@/components/plot/svg-props'
 import {
   COLOR_BLACK,
@@ -13,22 +16,30 @@ import {
   COLOR_NAVY_BLUE,
   COLOR_RED,
 } from '@/lib/color/color'
-import {
-  GenLoc,
-  NO_LOCATION,
-  parseGenLoc,
-  type IGenomicFeature,
-  type IGenomicLocation,
-} from '@/lib/genomic/genomic'
+
 import { makeUuid } from '@/lib/id'
 import { produce } from 'immer'
 
 import { Axis } from '@/components/plot/axis'
+import type { IChildrenProps } from '@/interfaces/children-props'
 import type { IDBEntity } from '@/interfaces/db-entity'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
-import { createContext } from 'react'
+import type { IGenomicFeature } from '@/lib/genomic/genomic-feature'
+import {
+  NO_LOCATION,
+  parseGenomicLocation,
+  type IGenomicLocation,
+} from '@/lib/genomic/genomic-location'
+import { createContext, useContext } from 'react'
 import type { BaseBedReader } from './readers/bed/base-bed-reader'
 import type { BaseSeqReader } from './readers/seq/base-seq-reader'
+import type { ReadScaleMode } from './seq-browser-settings'
+
+export const DEFAULT_GENOMIC_LOCATION = parseGenomicLocation(
+  'chr3:187441954-187466041'
+)
+
+export const MIN_Y = 1
 
 export interface ITrack {
   /** A randomly assigned id for the track */
@@ -36,6 +47,22 @@ export interface ITrack {
 
   /** A human readable name for the track, e.g. Ruler */
   name: string
+}
+
+export interface ITag {
+  name: string
+  value: string
+}
+
+export interface ISeqTrackDisplayOptions {
+  smooth: boolean
+  autoY: boolean
+  useGlobalY: boolean
+  ymax: number
+  axes: { show: boolean }
+  stroke: IStrokeProps
+  fill: IPaintProps
+  height: number
 }
 
 export interface IDBTrack extends ITrack {
@@ -46,10 +73,10 @@ export interface IDBTrack extends ITrack {
   technology: string
   institution: string
   dataset: string
-  reads: number
+  reads?: number
   type: string
-  url: string
-  tags: string[]
+  url?: string
+  tags: ITag[]
 }
 
 // export interface IDBSignalTrack extends IDBTrack {
@@ -72,44 +99,55 @@ export interface IDBTrack extends ITrack {
 //   platforms: ITrackPlatforms[]
 // }
 
-export const DEFAULT_GENOMIC_LOCATION = parseGenLoc('chr3:187441954-187466041')
-
-export interface ISignalTrack extends IDBTrack {
+export interface ISeqTrack extends IDBTrack {
   type: 'Seq'
   displayOptions: ISeqTrackDisplayOptions
 }
 
-export interface IRemoteBigWigTrack extends IDBTrack {
-  type: 'Remote BigWig'
+export interface IBaseBigWigTrack {
   scale: string
-  //reader: BaseSeqReader
-  //index: GenomicFeatureIndex<GenomicLocation>
   displayOptions: ISeqTrackDisplayOptions
 }
 
-export interface ILocalBigWigTrack extends ITrack {
-  type: 'Local BigWig'
-  scale: string
+export interface IBigWigTrack extends IDBTrack, IBaseBigWigTrack {
+  type: 'BigWig'
+}
 
+export interface IBaseRemoteBigWigTrack extends IBaseBigWigTrack {
   reader: BaseSeqReader
-  //index: GenomicFeatureIndex<GenomicLocation>
-  displayOptions: ISeqTrackDisplayOptions
 }
 
-export interface ISeqTrackDisplayOptions {
-  smooth: boolean
-  autoY: boolean
-  useGlobalY: boolean
-  ymax: number
-  axes: { show: boolean }
-  stroke: IStrokeProps
-  fill: IColorProps
-  height: number
+export interface IRemoteBigWigTrack extends IDBTrack, IBaseRemoteBigWigTrack {
+  type: 'RemoteBigWig'
 }
+
+export interface ILocalBigWigTrack extends ITrack, IBaseRemoteBigWigTrack {
+  type: 'LocalBigWig'
+}
+
+// These are tracks that the api can return signal
+// data directly. Other types require specialized
+// bigwig or local readers to get the data for display
+export type ISeqDBDataTrack = ISeqTrack | IBigWigTrack
+
+// The signal tracks that the seq db app can return
+export type ISeqDBTrack = ISeqDBDataTrack | IRemoteBigWigTrack
+
+// All the signal track types including being able to load from local files
+export type SignalTrack = ISeqDBTrack | ILocalBigWigTrack
+
+// The peak tracks that the peak db app can return
+export type IBedDBTrack = IBedDBDataTrack | IRemoteBigBedTrack
+
+// All the peak track types including being able to load from local files
+export type IPeakTrack = IBedDBTrack | ILocalBigBedTrack | ILocalBedTrack
 
 export const DEFAULT_SEQ_TRACK_DISPLAY_OPTIONS: ISeqTrackDisplayOptions = {
-  stroke: { ...DEFAULT_STROKE_PROPS, color: COLOR_RED },
-  fill: { ...DEFAULT_FILL_PROPS },
+  stroke: {
+    ...DEFAULT_STROKE_PROPS,
+    value: COLOR_RED,
+  },
+  fill: { ...DEFAULT_COLOR_PROPS, value: COLOR_RED, opacity: 0.2 },
   height: 60,
   axes: {
     show: true,
@@ -122,7 +160,6 @@ export const DEFAULT_SEQ_TRACK_DISPLAY_OPTIONS: ISeqTrackDisplayOptions = {
 
 export interface IGeneTrack extends ITrack {
   type: 'Gene'
-  //index: GenomicFeatureIndex<GenomicLocation>
   displayOptions: IGeneTrackDisplayOptions
 }
 
@@ -148,7 +185,7 @@ export interface IGeneTrackDisplayOptions {
     style: GeneArrowStyle
     show: boolean
     stroke: IStrokeProps
-    fill: IColorProps
+    fill: IPaintProps
     gap: number
     x: number
     y: number
@@ -157,7 +194,7 @@ export interface IGeneTrackDisplayOptions {
     firstTranscriptOnly: boolean
     show: boolean
     stroke: IStrokeProps
-    fill: IColorProps
+    fill: IPaintProps
   }
   canonical: {
     isColored: boolean
@@ -167,8 +204,11 @@ export interface IGeneTrackDisplayOptions {
 
 export const DEFAULT_GENE_TRACK_DISPLAY_OPTIONS: IGeneTrackDisplayOptions = {
   arrows: {
-    stroke: { ...DEFAULT_STROKE_PROPS, color: COLOR_NAVY_BLUE },
-    fill: { ...OPAQUE_FILL_PROPS, color: COLOR_NAVY_BLUE },
+    stroke: {
+      ...DEFAULT_STROKE_PROPS,
+      value: COLOR_NAVY_BLUE,
+    },
+    fill: { ...DEFAULT_COLOR_PROPS, value: COLOR_NAVY_BLUE },
     gap: 16,
     x: 2,
     y: 3,
@@ -178,18 +218,23 @@ export const DEFAULT_GENE_TRACK_DISPLAY_OPTIONS: IGeneTrackDisplayOptions = {
   endArrows: {
     show: true,
     firstTranscriptOnly: true,
-    stroke: { ...DEFAULT_STROKE_PROPS, color: COLOR_BLACK },
-    fill: { ...OPAQUE_FILL_PROPS, color: COLOR_BLACK },
+    stroke: {
+      ...DEFAULT_STROKE_PROPS,
+      value: COLOR_BLACK,
+    },
+    fill: { ...DEFAULT_COLOR_PROPS, value: COLOR_BLACK },
   },
   canonical: {
     isColored: true,
-    stroke: { ...DEFAULT_STROKE_PROPS, color: COLOR_CORNFLOWER_BLUE },
+    stroke: {
+      ...DEFAULT_STROKE_PROPS,
+      value: COLOR_CORNFLOWER_BLUE,
+    },
   },
 }
 
 export interface IScaleTrack extends ITrack {
   type: 'Scale'
-  //index: GenomicFeatureIndex<GenomicLocation>
   displayOptions: IScaleTrackDisplayOptions
 }
 
@@ -202,24 +247,23 @@ export interface IScaleTrackDisplayOptions {
     height: number
   }
   stroke: IStrokeProps
-  font: IFontProps
+  text: ITextProps
 }
 
 export const DEFAULT_SCALE_TRACK_DISPLAY_OPTIONS: IScaleTrackDisplayOptions = {
-  height: 30,
+  height: 32,
   caps: {
     height: 6,
     show: true,
   },
   stroke: { ...DEFAULT_STROKE_PROPS },
-  font: { ...DEFAULT_FONT_PROPS, size: 'small' },
+  text: { ...DEFAULT_TEXT_PROPS },
   autoSize: true,
   bp: 10000,
 }
 
 export interface IRulerTrack extends ITrack {
   type: 'Ruler'
-  //index: GenomicFeatureIndex<GenomicLocation>
   displayOptions: IRulerTrackDisplayOptions
 }
 
@@ -236,11 +280,11 @@ export interface IRulerTrackDisplayOptions {
     height: number
   }
   stroke: IStrokeProps
-  font: IFontProps
+  text: ITextProps
 }
 
 export const DEFAULT_RULER_TRACK_DISPLAY_OPTIONS: IRulerTrackDisplayOptions = {
-  height: 20,
+  height: 24,
   minorTicks: {
     height: 6,
     show: true,
@@ -250,118 +294,111 @@ export const DEFAULT_RULER_TRACK_DISPLAY_OPTIONS: IRulerTrackDisplayOptions = {
     show: true,
   },
   stroke: { ...DEFAULT_STROKE_PROPS },
-  font: { ...DEFAULT_FONT_PROPS, size: 'x-small' },
+  text: { ...DEFAULT_CENTERED_TEXT_PROPS },
   autoSize: true,
   bp: 10000,
 }
 
 export interface ILocationTrack extends ITrack {
   type: 'Location'
-  //index: GenomicFeatureIndex<GenomicLocation>
   displayOptions: ILocationTrackDisplayOptions
 }
 
 export interface ILocationTrackDisplayOptions {
-  font: { weight: string | number }
+  text: ITextProps
   height: number
 }
 
 export const DEFAULT_LOCATION_TRACK_DISPLAY_OPTIONS: ILocationTrackDisplayOptions =
   {
-    height: 20,
-    font: {
-      weight: 600,
-    },
+    height: 24,
+    text: {
+      ...DEFAULT_CENTERED_TEXT_PROPS,
+      font: { ...DEFAULT_CENTERD_FONT_PROPS, fontWeight: 'bold' },
+    } as ITextProps,
   }
 
 export interface ICytobandsTrack extends ITrack {
   type: 'Cytobands'
-  //index: GenomicFeatureIndex<GenomicLocation>
   displayOptions: ICytobandsTrackDisplayOptions
 }
 
-export type BandStyle = 'Rounded' | 'Square'
+export type BandStyle = 'rounded' | 'square'
 
 export interface ICytobandsTrackDisplayOptions {
-  //band: { height: number }
   labels: {
     skip: { on: boolean; x: number }
     font: IFontProps
     show: boolean
   }
   style: BandStyle
-  //height: number
-  //height: number
   stroke: IStrokeProps
   location: {
     stroke: IStrokeProps
-    fill: IColorProps
+    fill: IPaintProps
   }
   center: {
-    fill: IColorProps
+    fill: IPaintProps
   }
 }
 
 export const DEFAULT_CYTOBANDS_TRACK_DISPLAY_OPTIONS: ICytobandsTrackDisplayOptions =
   {
-    //height: 50,
     stroke: { ...DEFAULT_STROKE_PROPS },
-    //height: 24,
-
     location: {
-      stroke: { ...DEFAULT_STROKE_PROPS, color: COLOR_RED },
-      fill: { ...DEFAULT_FILL_PROPS, color: COLOR_RED },
+      stroke: {
+        ...DEFAULT_STROKE_PROPS,
+        value: COLOR_RED,
+      },
+      fill: { ...DEFAULT_COLOR_PROPS, value: COLOR_RED },
     },
     center: {
-      fill: { ...OPAQUE_FILL_PROPS, color: '#FA5F55' },
+      fill: { ...DEFAULT_COLOR_PROPS, value: '#FA5F55' },
     },
-    style: 'Rounded',
+    style: 'rounded',
     labels: {
       show: true,
-      font: { ...DEFAULT_FONT_PROPS, size: 'x-small' },
+      font: { ...DEFAULT_FONT_PROPS },
       skip: {
         on: true,
         x: 50,
       },
     },
-    // band: {
-    //   height: 16,
-    // },
   }
 
-export interface IBedTrack extends IDBTrack {
-  type: 'BED'
-  regions: number
-
-  //index: GenomicFeatureIndex<GenomicLocation>
+/**
+ * Can return data directly from the database for display, or can be used
+ * to load data from a local file or remote url using a reader.
+ */
+export interface IBedDBDataTrack extends IDBTrack {
+  type: 'BED' | 'BigBed'
+  regions?: number
   displayOptions: IBedTrackDisplayOptions
 }
 
-export interface IRemoteBigBedTrack extends IDBTrack {
-  type: 'Remote BigBed'
-  displayOptions: IBedTrackDisplayOptions
-}
-
-export interface ILocalBigBedTrack extends ITrack {
-  type: 'Local BigBed'
-
+export interface IBaseBedTrack extends ITrack {
   reader: BaseBedReader
-  //index: GenomicFeatureIndex<GenomicLocation>
   displayOptions: IBedTrackDisplayOptions
 }
 
-export interface ILocalBedTrack extends ITrack {
-  type: 'Local BED'
-  reader: BaseBedReader
-  //index: GenomicFeatureIndex<GenomicLocation>
-  displayOptions: IBedTrackDisplayOptions
+export interface IRemoteBigBedTrack extends IBaseBedTrack {
+  type: 'RemoteBigBed'
+  url: string
+}
+
+export interface ILocalBigBedTrack extends IBaseBedTrack {
+  type: 'LocalBigBed'
+}
+
+export interface ILocalBedTrack extends IBaseBedTrack {
+  type: 'LocalBED'
 }
 
 export interface IBedTrackDisplayOptions {
   band: { height: number }
   height: number
   stroke: IStrokeProps
-  fill: IColorProps
+  fill: IPaintProps
 }
 
 export const DEFAULT_BED_TRACK_DISPLAY_OPTIONS: IBedTrackDisplayOptions = {
@@ -370,78 +407,61 @@ export const DEFAULT_BED_TRACK_DISPLAY_OPTIONS: IBedTrackDisplayOptions = {
   band: {
     height: 12,
   },
-  fill: { ...OPAQUE_FILL_PROPS },
+  fill: { ...DEFAULT_COLOR_PROPS },
 }
-
-export type AllDBSignalTrackTypes = ISignalTrack | IRemoteBigWigTrack
-
-export type AllSignalTrackTypes = AllDBSignalTrackTypes | ILocalBigWigTrack
-
-export type AllDBBedTrackTypes = IBedTrack | IRemoteBigBedTrack
-
-export type AllBedTrackTypes =
-  | AllDBBedTrackTypes
-  | ILocalBedTrack
-  | ILocalBigBedTrack
 
 /**
  * All track types that represent sequenced data either as signal or regions.
  */
-export type AllSeqTrackTypes = AllSignalTrackTypes | AllBedTrackTypes
+export type SignalOrPeakTrack = SignalTrack | IPeakTrack
 
 export type TrackPlot =
-  | AllSignalTrackTypes
-  | AllBedTrackTypes
+  | SignalTrack
+  | IPeakTrack
   | IGeneTrack
   | IScaleTrack
   | IRulerTrack
   | ILocationTrack
   | ICytobandsTrack
 
-// export const EMPTY_TRACK_DB: ITracksDB = {
-//   name: '',
-//   platforms: [],
-// }
-
-// export function trackStr(track: ITrack): string {
-//   return `${track.platform}:${track.genome}:${track.name}`
-// }
-
 // start, end, count
 export interface ISeqBin {
+  // start coordinate of bin (1-based)
   s: number
+  // end coordinate of bin (1-based)
   e: number
+  // Count value of bin
   c: number
 }
 
 /**
  * The bins for a track
  */
-export interface ISampleBinCounts extends IDBEntity {
-  // the public id of a sample
-
+export interface ISampleSearchResult extends IDBEntity {
   binSize: number
-  //track: IDBTrack
-
-  //reads: number
-  //start: number
-  bins: ISeqBin[] //ISeqBin[]
+  bins: ISeqBin[]
   ymax: number
-  //bpmScaleFactor: number
-  reads: number
-  binReads: number
+  binReads?: number
 }
 
 /**
  * The search results for a given location which
  * will contain the bins for
  */
-export interface ILocTrackBins {
-  /** The location for which to display track data */
+export interface ISeqSearchResult {
+  // The location for which to display track data
   location: IGenomicLocation
 
-  /** Represents all the tracks requested in the order requested */
-  samples: ISampleBinCounts[]
+  // Represents all the tracks requested in the order requested
+  samples: ISampleSearchResult[]
+}
+
+export interface ISeqSearchResultMap {
+  // The location for which to display track data
+  location: IGenomicLocation
+
+  // Represents all the tracks requested in the order requested
+  samples: Record<string, ISampleSearchResult>
 }
 
 export type ITrackAction =
@@ -458,11 +478,6 @@ export type ITrackAction =
       group: ITrackGroup
       track: TrackPlot
     }
-  // | {
-  //     type: 'update-display-props'
-  //     id: string
-  //     displayOptions: ISeqTrackDisplayOptions
-  //   }
   | {
       type: 'order'
       order: string[]
@@ -490,13 +505,9 @@ export type ITrackAction =
 
 export interface ITrackGroup {
   id: string
-  type: 'Track Group' //optional, but useful for debugging
+  type: 'Track Group'
   name: string
-  //order: string[]
-  tracks: TrackPlot[] //{ [key: string]: TrackPlot } //Map<string, TrackPlot>
-
-  //childOrder?: string[]
-  //children?: { [key: string]: TrackPlot } // Map<string, ITrackGroup>
+  tracks: TrackPlot[]
 }
 
 export function newTrackGroup(tracks: TrackPlot[]): ITrackGroup {
@@ -504,14 +515,12 @@ export function newTrackGroup(tracks: TrackPlot[]): ITrackGroup {
     id: makeUuid(),
     type: 'Track Group',
     name: tracks[0]!.name,
-    //order: tracks.map(t => t.id),
-    tracks: [...tracks], //: Object.fromEntries(tracks.map(t => [t.id, t])),
+    tracks: [...tracks],
   }
 }
 
 export interface IPlotGroup {
-  //order: string[]
-  groups: ITrackGroup[] //Record<string, ITrackGroup> //Map<string, ITrackGroup>
+  groups: ITrackGroup[]
 }
 
 export interface IPlotsState extends IPlotGroup {
@@ -532,25 +541,14 @@ export function trackReducer(
 
   switch (action.type) {
     case 'add':
-      groups = action.tracks //.map(ts => newTrackGroup(ts))
-
+      groups = action.tracks
       return produce(state, draft => {
-        // draft.groups = Object.fromEntries([
-        //   ...Object.entries(state.groups),
-        //   ...groups.map(g => [g.id, g] as [string, ITrackGroup]),
-        // ])
-        // draft.order = [...state.order, ...groups.map(g => g.id)]
-
         draft.groups = [...state.groups, ...groups]
       })
     case 'set':
       groups = action.tracks //.map(ts => newTrackGroup(ts))
 
       return produce(state, draft => {
-        // draft.groups = Object.fromEntries(
-        //   groups.map(g => [g.id, g] as [string, ITrackGroup])
-        // )
-        // draft.order = groups.map(g => g.id)
         draft.groups = [...state.groups, ...groups]
         draft.selected = {}
       })
@@ -565,9 +563,6 @@ export function trackReducer(
             : e
         )
       })
-
-    // case 'order':
-    //   return { ...state, order: action.order }
     case 'remove-groups':
       //modify the steps, but do not
       removeIds = new Set(action.ids)
@@ -575,9 +570,6 @@ export function trackReducer(
       return {
         ...state,
         groups: state.groups.filter(e => !removeIds.has(e.id)),
-
-        // see ifunknown groups were removed for having not tracks
-        //order: state.order.filter(id => !removeIds.has(id)),
       }
     case 'remove-tracks':
       //modify the steps, but do not
@@ -663,61 +655,13 @@ export function trackReducer(
   }
 }
 
-// export function useMotifState(): {
-//   state: ITracksState
-//   dispatch: Dispatch<ITrackAction>
-// } {
-//   const [state, dispatch] = useReducer(trackReducer, {
-//     tracks: [],
-//     trackOrder: [],
-//   })
-
-//   return { state, dispatch }
-// }
-
-// const [DEFAULT_HISTORY, DEFAULT_HISTORY_DISPATCH] = useReducer(
-//   historyReducer,
-//   new HistoryState(0, DEFAULT_HISTORY_STEPS),
-// )
-
-// export const MotifsDBContext = createContext<TrieNode<number> | undefined>(
-//   undefined,
-// )
-
-// export const MotifSearchContext = createContext<string | undefined>(undefined)
-// export const MotifUpdateSearchContext = createContext<
-//   Dispatch<SetStateAction<string>> | undefined
-// >(undefined)
-
-// export const MotifSearchIdsContext = createContext<IMotifState | undefined>(
-//   undefined,
-// )
-
-// export const MotifSearchIdsDispatchContext = createContext<
-//   Dispatch<IMotifsAction> | undefined
-// >(undefined)
-
-// export const OrderedMotifSearchIdsContext = createContext<
-//   IMotifState | undefined
-// >(undefined)
-
-// export const OrderedMotifSearchIdsDispatchContext = createContext<
-//   Dispatch<IMotifsAction> | undefined
-// >(undefined)
-
-// const DEFAULT_STATE: IPlotsState = {
-//   groups: {},
-//   order: [],
-//   selected: {},
-// }
-
 /**
  * Return a bin size for a given region on display
  *
  * @param location
  * @returns
  */
-export function autoBinSize(location: GenLoc) {
+export function autoBinSize(location: IGenomicLocation) {
   const w = location.end - location.start + 1
 
   // if (w / 50 < 1000) {
@@ -765,30 +709,174 @@ export function autoBinSize(location: GenLoc) {
   // }
 }
 
-export const LocationContext = createContext<{
+/**
+ * Scans across tracks and locations to find the largest y value
+ * for setting a global y than works for all samples.
+ *
+ * @param tracks
+ * @param seqSearchResults
+ * @param binSizes
+ * @param scaleMode
+ * @param ymin
+ * @returns
+ */
+export async function getYMax(
+  tracks: SignalTrack[],
+  seqSearchResults: ISeqSearchResultMap[],
+  binSizes: number[],
+  scaleMode: ReadScaleMode,
+  ymin: number = 0
+): Promise<number> {
+  let ymax = MIN_Y
+
+  for (const track of tracks) {
+    switch (track.type) {
+      case 'Seq':
+        {
+          // for all locations, filter to just have the samples matching
+          // our track of interest then test bins in that
+          const trackSpecificBins: ISampleSearchResult[] = seqSearchResults.map(
+            ltb => ltb.samples[track.id]!
+          )
+
+          switch (scaleMode) {
+            case 'BPM':
+              // const bpm = trackSpecificBins
+              //   .map(sample =>
+              //     sample.bins.map(b => (b.c / sample.binReads!) * 1000000)
+              //   )
+              //   .flat()
+
+              const bpm = trackSpecificBins
+                .map(sample => (sample.ymax / sample.binReads!) * 1000000)
+                .flat()
+
+              ymax = Math.max(ymax, ...bpm)
+
+              break
+            case 'CPM':
+              // take the large
+              const cpm = trackSpecificBins
+                .map(sample => (sample.ymax / track.reads!) * 1000000)
+                .flat()
+
+              // const cpm = trackSpecificBins
+              //   .map(sample =>
+              //     sample.bins.map(b => (b.c / track.reads!) * 1000000)
+              //   )
+              //   .flat()
+
+              ymax = Math.max(ymax, ...cpm)
+              break
+            default:
+              ymax = Math.max(
+                ymax,
+                ...trackSpecificBins.map(sample => sample.ymax)
+              )
+              break
+          }
+        }
+        break
+      case 'BigWig':
+        {
+          // for all locations, filter to just have the samples matching
+          // our track of interest then test bins in that
+          // const trackSpecificBins: ISeqSearchResult[] = seqSearchResults.map(
+          //   ltb => ({
+          //     ...ltb,
+          //     samples: ltb.samples.filter(t => t.id === track.id),
+          //   })
+          // )
+          const trackSpecificBins: ISampleSearchResult[] = seqSearchResults.map(
+            ltb => ltb.samples[track.id]!
+          )
+
+          //console.log('trackSpecificBins', trackSpecificBins)
+
+          ymax = Math.max(ymax, ...trackSpecificBins.map(sample => sample.ymax))
+        }
+        break
+      case 'RemoteBigWig':
+      case 'LocalBigWig':
+        for (const [li, ltb] of seqSearchResults.entries()) {
+          const data = await track.reader.getRealYPoints(
+            ltb.location,
+            binSizes[li]!
+          )
+
+          ymax = Math.max(ymax, ...data.map(p => p.realY))
+        }
+        break
+      default:
+        console.warn('Unknown track type for auto y calculation', track)
+        break
+    }
+  }
+
+  ymax = Math.ceil(ymax) // / 2) * 2
+
+  // make it an even number for nicer y axis ticks
+  if (ymax % 2 === 1) {
+    ymax += 1
+  }
+
+  // the yaxis must be above zero, otherwise we get
+  // errors calculating limits and ticks since the
+  // axis must represent a real space
+  return Math.max(ymin, ymax)
+}
+
+interface ILocationContextProps {
   xax: Axis
-  locTrackBins: ILocTrackBins | undefined
-  globalY: number
+  seqSearchResult: ISeqSearchResultMap | undefined
+
   binSize: number
-  location: GenLoc
+  location: IGenomicLocation
   pos: IPos
   genes: IGenomicFeature[]
   geneYMap: Map<string, number>
-  setLocation: (location: GenLoc) => void
-}>({
+  height: number
+  trackY: number[]
+  setLocation: (location: IGenomicLocation) => void
+}
+
+export const LocationContext = createContext<ILocationContextProps>({
   xax: new Axis(),
-  locTrackBins: {
+  seqSearchResult: {
     location: NO_LOCATION,
-    samples: [],
+    samples: {},
   },
-  globalY: 1,
+
   binSize: 10,
   location: NO_LOCATION,
   pos: { ...ZERO_POS },
   genes: [],
   geneYMap: new Map<string, number>(),
+  height: 0,
+  trackY: [], // for determining where tracks are for mouse events
   setLocation: () => {},
 })
+
+export function LocationProvider({
+  value,
+  children,
+}: { value: ILocationContextProps } & IChildrenProps) {
+  return (
+    <LocationContext.Provider value={value}>
+      {children}
+    </LocationContext.Provider>
+  )
+}
+
+export function useLocation() {
+  const ctx = useContext(LocationContext)
+
+  if (!ctx) {
+    throw new Error('useLocation must be used within a LocationProvider')
+  }
+
+  return ctx
+}
 
 interface IMouseEventContext {
   pos: IPos
@@ -797,3 +885,24 @@ interface IMouseEventContext {
 export const MouseEventContext = createContext<IMouseEventContext>({
   pos: { ...ZERO_POS },
 })
+
+export function MouseEventProvider({
+  value,
+  children,
+}: { value: IMouseEventContext } & IChildrenProps) {
+  return (
+    <MouseEventContext.Provider value={value}>
+      {children}
+    </MouseEventContext.Provider>
+  )
+}
+
+export function useMouseEvent() {
+  const ctx = useContext(MouseEventContext)
+
+  if (!ctx) {
+    throw new Error('useMouseEvent must be used within a MouseEventProvider')
+  }
+
+  return ctx
+}

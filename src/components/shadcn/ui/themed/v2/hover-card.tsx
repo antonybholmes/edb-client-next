@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { InfoIcon } from '@/components/icons/info-icon'
 import type { IChildrenProps } from '@/interfaces/children-props'

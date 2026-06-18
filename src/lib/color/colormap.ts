@@ -97,7 +97,7 @@ export class ColorMap {
       this._cmap[upper]!,
       idx - lower
     )
-
+    //console.log('color', t, color)
     return color
     //return `rgba(${color.join(',')})`;
   }

@@ -1,27 +1,30 @@
-import { SIMPLE_COLOR_EXT_CLS } from '@/components/color/color-picker-button'
-import { ColorPropRow } from '@/components/dialog/color-prop-row'
-import { SettingsAccordionItem } from '@/components/dialog/settings/settings-dialog'
+import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
+import { FontPopover } from '@/components/plot/font/font-popover'
 import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
-import { TEXT_OK } from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
-import { SwitchPropRow } from '@/dialog/switch-prop-row'
+import { TEXT_CANCEL, TEXT_OK } from '@/consts'
+import { ColorPropRow } from '@/dialogs/color-prop-row'
+import { type IModalProps, OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
+import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
+import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
 import { useState } from 'react'
 import { useSeqBrowserSettings } from '../../seq-browser-settings'
 import type { IScaleTrack, ITrackGroup } from '../../tracks-provider'
+import { useTracks } from '../../tracks-store'
 
-export interface IProps {
+export interface IProps extends IModalProps<{
   group: ITrackGroup
   track: IScaleTrack
-  callback?: (group: ITrackGroup, track: IScaleTrack) => void
-
-  onCancel: () => void
+}> {
+  group: ITrackGroup
+  track: IScaleTrack
 }
 
-export function ScaleEditDialog({ group, track, callback, onCancel }: IProps) {
+export function ScaleEditDialog({ group, track, onResponse }: IProps) {
   const [_track, setTrack] = useState(track)
   const { settings, updateSettings } = useSeqBrowserSettings()
+  const { dispatch } = useTracks()
 
   return (
     <OKCancelDialog
@@ -29,59 +32,60 @@ export function ScaleEditDialog({ group, track, callback, onCancel }: IProps) {
       title={_track.name}
       //contentVariant="glass"
       onResponse={() => {
-        onCancel()
+        onResponse?.(TEXT_CANCEL)
       }}
-      //contentVariant="glass"
-      //bodyVariant="card"
-      // leftHeaderChildren={
-      //   <ColorPickerButton
-      //     color={_track.displayOptions.stroke.color}
-      //     disabled={!_track.displayOptions.stroke.show}
-      //     onColorChange={v => {
-      //       const newTrack = produce(_track, draft => {
-      //         draft.displayOptions.stroke.color = v
-      //       })
-
-      //       callback?.(group, newTrack)
-      //       setTrack(newTrack)
-      //     }}
-      //     className={SIMPLE_COLOR_EXT_CLS}
-      //     title="Color"
-      //   />
-      // }
     >
       <ScrollAccordion
         value={['style', 'size']}
         variant="settings"
-        className="h-72"
+        className="h-50"
       >
         <SettingsAccordionItem
           title="Style"
           description="Configure how the scale bar is displayed."
           showBorder={false}
+          rightChildren={
+            <FontPopover
+              fonts={[
+                {
+                  title: 'Scale Labels',
+                  textProps: _track.displayOptions.text,
+                  update: textProps => {
+                    const newTrack = produce(_track, draft => {
+                      draft.displayOptions.text = textProps
+                    })
+
+                    //onResponse?.(TEXT_OK, { group, track: newTrack })
+                    setTrack(newTrack)
+
+                    dispatch({
+                      type: 'update',
+                      group,
+                      track: newTrack,
+                    })
+                  },
+                },
+              ]}
+            />
+          }
         >
           <ColorPropRow
             title="Color"
             //side="left"
-            color={_track.displayOptions.stroke.color}
+            color={_track.displayOptions.stroke.value}
             onColorChange={v => {
               const newTrack = produce(_track, draft => {
-                draft.displayOptions.stroke.color = v
+                draft.displayOptions.stroke.value = v
               })
 
-              callback?.(group, newTrack)
+              onResponse?.(TEXT_OK, { group, track: newTrack })
               setTrack(newTrack)
             }}
             className={SIMPLE_COLOR_EXT_CLS}
           />
-        </SettingsAccordionItem>
 
-        <SettingsAccordionItem
-          title="Size"
-          description="Configure the size of the scale bar."
-        >
           <SwitchPropRow
-            title="Height"
+            title="Caps"
             side="right"
             checked={_track.displayOptions.caps.show}
             onCheckedChange={v => {
@@ -89,7 +93,7 @@ export function ScaleEditDialog({ group, track, callback, onCancel }: IProps) {
                 draft.displayOptions.caps.show = v
               })
 
-              callback?.(group, newTrack)
+              onResponse?.(TEXT_OK, { group, track: newTrack })
               setTrack(newTrack)
             }}
           >
@@ -102,7 +106,7 @@ export function ScaleEditDialog({ group, track, callback, onCancel }: IProps) {
                   draft.displayOptions.caps.height = v
                 })
 
-                callback?.(group, newTrack)
+                onResponse?.(TEXT_OK, { group, track: newTrack })
                 setTrack(newTrack)
               }}
               w="sm"
@@ -112,10 +116,10 @@ export function ScaleEditDialog({ group, track, callback, onCancel }: IProps) {
           <SwitchPropRow
             title="Auto size (bp)"
             side="right"
-            checked={settings.scale.autoSize}
+            checked={settings.tracks.scale.autoSize}
             onCheckedChange={v => {
               const newOptions = produce(settings, draft => {
-                draft.scale.autoSize = v
+                draft.tracks.scale.autoSize = v
               })
 
               updateSettings(newOptions)
@@ -124,14 +128,14 @@ export function ScaleEditDialog({ group, track, callback, onCancel }: IProps) {
             <NumericalInput
               limit={[1, 1000000]}
               step={1000}
-              value={settings.scale.bp}
-              disabled={settings.scale.autoSize}
+              value={settings.tracks.scale.bp}
+              disabled={settings.tracks.scale.autoSize}
               placeholder="BP"
               className="rounded-theme"
               w="sm"
               onNumChanged={v => {
                 const newOptions = produce(settings, draft => {
-                  draft.scale.bp = v
+                  draft.tracks.scale.bp = v
                 })
 
                 updateSettings(newOptions)

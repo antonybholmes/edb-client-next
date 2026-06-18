@@ -1,10 +1,11 @@
 import { Axis, YAxis } from '@/components/plot/axis'
-import { AxisLeftSvg, AxisTopSvg } from '@/components/plot/axis-svg'
+import { AxisLeftSvg, AxisTopSvg } from '@/components/plot/svg-axis'
 import { type ICell } from '@/interfaces/cell'
 import { type IPos } from '@/interfaces/pos'
 
-import { BaseSvg } from '@/components/base-svg'
 import type { IBlock } from '@/components/plot/heatmap/heatmap-svg-props'
+import { SvgBase } from '@/components/plot/svg-base'
+import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { COLOR_BLACK } from '@/lib/color/color'
@@ -199,7 +200,7 @@ function makeGrid(
             y1={y}
             x2={gridWidth}
             y2={y}
-            stroke={displayProps.grid.color}
+            stroke={displayProps.grid.value}
             shapeRendering={SVG_CRISP_EDGES}
             pointerEvents="none"
           />
@@ -213,7 +214,7 @@ function makeGrid(
             y1={0}
             x2={x}
             y2={gridHeight}
-            stroke={displayProps.grid.color}
+            stroke={displayProps.grid.value}
             shapeRendering={SVG_CRISP_EDGES}
             pointerEvents="none"
           />
@@ -231,7 +232,7 @@ function makeGrid(
               y1={y}
               x2={x}
               y2={y + blockSize.h}
-              stroke={displayProps.grid.color}
+              stroke={displayProps.grid.value}
               strokeOpacity={displayProps.grid.opacity}
               shapeRendering={SVG_CRISP_EDGES}
               pointerEvents="none"
@@ -251,9 +252,9 @@ function makeGrid(
               y={y}
               width={blockSize.w}
               height={blockSize.h}
-              stroke={displayProps.border.color}
+              stroke={displayProps.border.value}
               strokeOpacity={displayProps.border.opacity}
-              strokeWidth={displayProps.border.strokeWidth}
+              strokeWidth={displayProps.border.width}
               fill="none"
               shapeRendering={SVG_CRISP_EDGES}
               pointerEvents="none"
@@ -273,7 +274,7 @@ function makeGrid(
         y={0}
         width={gridWidth}
         height={gridHeight}
-        stroke={displayProps.border.color}
+        stroke={displayProps.border.value}
         fill="none"
         shapeRendering={SVG_CRISP_EDGES}
         pointerEvents="none"
@@ -299,7 +300,9 @@ function colGraphs(
       <g transform={`translate(${-5}, 0)`}>
         <AxisLeftSvg
           ax={yax}
-          strokeWidth={displayProps.samples.graphs.border.strokeWidth}
+          strokeWidth={displayProps.samples.graphs.border.width}
+          labelFont={displayProps.title}
+          font={displayProps.text}
         />
       </g>
       <g>
@@ -327,12 +330,12 @@ function colGraphs(
                 width={blockSize.w}
                 height={h}
                 fill={colorMap[name] ?? NO_ALTERATION_COLOR}
-                stroke={displayProps.samples.graphs.border.color}
+                stroke={displayProps.samples.graphs.border.value}
                 strokeOpacity={displayProps.samples.graphs.border.opacity}
                 opacity={displayProps.samples.graphs.opacity}
                 strokeWidth={
                   displayProps.samples.graphs.border.show
-                    ? displayProps.samples.graphs.border.strokeWidth
+                    ? displayProps.samples.graphs.border.width
                     : 0
                 }
                 shapeRendering={SVG_CRISP_EDGES}
@@ -362,17 +365,15 @@ function rowGraphs(
         <g>
           {df.geneStats.map((stats, ri) => {
             return (
-              <text
+              <SvgText
                 key={ri}
                 x={0}
                 y={ri * (blockSize.h + spacing.y) + 0.5 * blockSize.h}
-                fill={COLOR_BLACK}
                 dominantBaseline="central"
-                fontSize="smaller"
-                //textAnchor="end"
+                font={displayProps.text}
               >
                 {((stats.sum / df.sampleStats.length) * 100).toFixed(1)}%
-              </text>
+              </SvgText>
             )
           })}
         </g>
@@ -387,7 +388,9 @@ function rowGraphs(
       >
         <AxisTopSvg
           ax={xax}
-          strokeWidth={displayProps.features.graphs.border.strokeWidth}
+          strokeWidth={displayProps.features.graphs.border.width}
+          labelFont={displayProps.title}
+          font={displayProps.text}
         />
       </g>
 
@@ -425,12 +428,12 @@ function rowGraphs(
                 height={blockSize.h}
                 fill={colorMap[count.name] ?? NO_ALTERATION_COLOR}
                 shapeRendering={SVG_CRISP_EDGES}
-                stroke={displayProps.features.graphs.border.color}
+                stroke={displayProps.features.graphs.border.value}
                 strokeOpacity={displayProps.features.graphs.border.opacity}
                 opacity={displayProps.features.graphs.opacity}
                 strokeWidth={
                   displayProps.features.graphs.border.show
-                    ? displayProps.features.graphs.border.strokeWidth
+                    ? displayProps.features.graphs.border.width
                     : 0
                 }
               />
@@ -442,83 +445,83 @@ function rowGraphs(
   )
 }
 
-function legendSvg(
-  mutationsInUse: string[],
-  colorMap: Record<string, string>,
-  blockSize: IBlock,
-  displayProps: IOncoplotDisplayProps
-) {
-  return (
-    <>
-      <g
-        transform={`translate(${-displayProps.axisOffset}, ${
-          0.5 * displayProps.clinical.height
-        })`}
-      >
-        <text
-          dominantBaseline="central"
-          fontSize="smaller"
-          textAnchor="end"
-          fontWeight="bold"
-        >
-          {displayProps.legend.variants.label}
-        </text>
-      </g>
+// function legendSvg(
+//   mutationsInUse: string[],
+//   colorMap: Record<string, string>,
+//   blockSize: IBlock,
+//   displayProps: IOncoplotDisplayProps
+// ) {
+//   return (
+//     <>
+//       <g
+//         transform={`translate(${-displayProps.axisOffset}, ${
+//           0.5 * displayProps.clinical.height
+//         })`}
+//       >
+//         <text
+//           dominantBaseline="central"
+//           fontSize="smaller"
+//           textAnchor="end"
+//           fontWeight="bold"
+//         >
+//           {displayProps.legend.variants.label}
+//         </text>
+//       </g>
 
-      {mutationsInUse.map((name, ni) => {
-        const fill: string = colorMap[name] ?? colorMap[OTHER_MUTATION]!
+//       {mutationsInUse.map((name, ni) => {
+//         const fill: string = colorMap[name] ?? colorMap[OTHER_MUTATION]!
 
-        return (
-          <g
-            key={ni}
-            transform={`translate(${ni * displayProps.legend.width}, 0)`}
-          >
-            <rect
-              width={blockSize.w}
-              height={blockSize.h}
-              fill={fill}
-              shapeRendering={SVG_CRISP_EDGES}
-            />
+//         return (
+//           <g
+//             key={ni}
+//             transform={`translate(${ni * displayProps.legend.width}, 0)`}
+//           >
+//             <rect
+//               width={blockSize.w}
+//               height={blockSize.h}
+//               fill={fill}
+//               shapeRendering={SVG_CRISP_EDGES}
+//             />
 
-            <text
-              x={blockSize.w + 5}
-              y={0.5 * blockSize.h}
-              fill={COLOR_BLACK}
-              dominantBaseline="central"
-              fontSize="smaller"
-              //textAnchor="end"
-            >
-              {name}
-            </text>
-          </g>
-        )
-      })}
-      <g
-        transform={`translate(${
-          mutationsInUse.length * displayProps.legend.width
-        }, 0)`}
-      >
-        <rect
-          width={blockSize.w}
-          height={blockSize.h}
-          fill={NO_ALTERATION_COLOR}
-          shapeRendering={SVG_CRISP_EDGES}
-        />
+//             <text
+//               x={blockSize.w + 5}
+//               y={0.5 * blockSize.h}
+//               fill={COLOR_BLACK}
+//               dominantBaseline="central"
+//               fontSize="smaller"
+//               //textAnchor="end"
+//             >
+//               {name}
+//             </text>
+//           </g>
+//         )
+//       })}
+//       <g
+//         transform={`translate(${
+//           mutationsInUse.length * displayProps.legend.width
+//         }, 0)`}
+//       >
+//         <rect
+//           width={blockSize.w}
+//           height={blockSize.h}
+//           fill={NO_ALTERATION_COLOR}
+//           shapeRendering={SVG_CRISP_EDGES}
+//         />
 
-        <text
-          x={blockSize.w + 5}
-          y={0.5 * blockSize.h}
-          fill={COLOR_BLACK}
-          dominantBaseline="central"
-          fontSize="smaller"
-          //textAnchor="end"
-        >
-          {NO_ALTERATIONS_TEXT}
-        </text>
-      </g>
-    </>
-  )
-}
+//         <text
+//           x={blockSize.w + 5}
+//           y={0.5 * blockSize.h}
+//           fill={COLOR_BLACK}
+//           dominantBaseline="central"
+//           fontSize="smaller"
+//           //textAnchor="end"
+//         >
+//           {NO_ALTERATIONS_TEXT}
+//         </text>
+//       </g>
+//     </>
+//   )
+// }
 
 function vLegendSvg(
   mutationsInUse: string[],
@@ -528,14 +531,9 @@ function vLegendSvg(
 ) {
   return (
     <>
-      <text
-        dominantBaseline="central"
-        fontSize="smaller"
-        //textAnchor="end"
-        fontWeight="bold"
-      >
+      <SvgText dominantBaseline="central" font={displayProps.legend.title}>
         {displayProps.legend.variants.label}
-      </text>
+      </SvgText>
 
       <g transform={`translate(0, ${displayProps.legend.title.height})`}>
         {mutationsInUse.map((name, ni) => {
@@ -553,16 +551,17 @@ function vLegendSvg(
                 shapeRendering={SVG_CRISP_EDGES}
               />
 
-              <text
+              <SvgText
                 x={blockSize.w + 5}
                 y={0.5 * blockSize.h}
                 fill={COLOR_BLACK}
                 dominantBaseline="central"
-                fontSize="smaller"
+                font={displayProps.legend}
+
                 //textAnchor="end"
               >
                 {name}
-              </text>
+              </SvgText>
             </g>
           )
         })}
@@ -578,16 +577,15 @@ function vLegendSvg(
             shapeRendering={SVG_CRISP_EDGES}
           />
 
-          <text
+          <SvgText
             x={blockSize.w + 5}
             y={0.5 * blockSize.h}
-            fill={COLOR_BLACK}
             dominantBaseline="central"
-            fontSize="smaller"
+            font={displayProps.legend}
             //textAnchor="end"
           >
             {NO_ALTERATIONS_TEXT}
-          </text>
+          </SvgText>
         </g>
       </g>
     </>
@@ -643,8 +641,6 @@ export function OncoplotSvg({ ref }: ISVGProps) {
   const { mutationFrame: mf, mutationsInUse, clinicalTracks } = useOncoplot()
 
   const colorMap = mutationColorMapFromMutations(mutations)
-
-  console.log('oncoProps in OncoplotSvg:', displayProps)
 
   const blockSize: IBlock = displayProps.grid.cell
   const spacing = displayProps.grid.spacing
@@ -761,14 +757,14 @@ export function OncoplotSvg({ ref }: ISVGProps) {
   //const legend = oncoProps.plotorder.filter(id => allEventsInUse.has(id))
 
   const svg = (
-    <BaseSvg
+    <SvgBase
       ref={innerRef}
       width={width}
       height={height}
       scale={displayProps.scale}
       //shapeRendering={SVG_CRISP_EDGES}
       onMouseMove={onMouseMove}
-      className="absolute"
+      //className="absolute"
     >
       {/* clinical tracks */}
       {displayProps.clinical.show && (
@@ -852,17 +848,16 @@ export function OncoplotSvg({ ref }: ISVGProps) {
       >
         {mf.geneStats.map((stats, ri) => {
           return (
-            <text
+            <SvgText
               key={ri}
               x={0}
               y={ri * (blockSize.h + spacing.y) + halfBlockSize.h}
-              fill={COLOR_BLACK}
               dominantBaseline="central"
-              fontSize="smaller"
               textAnchor="end"
+              font={displayProps.title}
             >
               {stats.feature}
-            </text>
+            </SvgText>
           )
         })}
       </g>
@@ -890,7 +885,7 @@ export function OncoplotSvg({ ref }: ISVGProps) {
           </g>
         </g>
       )}
-    </BaseSvg>
+    </SvgBase>
   )
 
   //const inBlock = highlightCol[0] > -1 && highlightCol[1] > -1

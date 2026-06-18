@@ -2,7 +2,7 @@ import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
 import { cn } from '@/lib/shadcn-utils'
 
 export function TableIcon({
-  w = 'w-4.5 h-4.5',
+  size = 'w-4.5 h-4.5',
   stroke = 'stroke-foreground/75',
   fill = 'fill-none',
   className,
@@ -28,7 +28,7 @@ export function TableIcon({
 
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className={cn(ICON_CLS, w, stroke, className)}
+      className={cn(ICON_CLS, size, stroke, className)}
       viewBox="0 0 24 24"
       strokeWidth={strokeWidth}
       strokeLinecap="round"

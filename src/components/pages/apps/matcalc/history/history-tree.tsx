@@ -16,11 +16,11 @@ export function HistoryTree({
 }: {
   onTabChange: (tab: ITab) => void
 }) {
-  const { store, state } = useHistory()
+  const { store, state, hydrated } = useHistory()
 
   const tree: ITab = useMemo(() => {
     const appsTab: ITab = {
-      id: 'apps',
+      id: makeUuid(),
       name: 'Apps',
       children: [],
     }
@@ -34,7 +34,16 @@ export function HistoryTree({
         type: 'app',
       }
 
-      for (const file of getFiles(store, state, app.id)) {
+      const filesTab: ITab = {
+        id: makeUuid(),
+        name: 'Files',
+        type: 'folder',
+        children: [],
+      }
+
+      appTab.children = [filesTab]
+
+      for (const file of getFiles(store, state, { app })) {
         const fileTab: ITab = {
           id: file.id,
           name: file.name,
@@ -59,7 +68,7 @@ export function HistoryTree({
           children: [],
         }
 
-        for (const sheet of getSheets(store, state, file)) {
+        for (const sheet of getSheets(store, state, { file })) {
           const sheetTab: ITab = {
             id: sheet.id,
 
@@ -73,7 +82,7 @@ export function HistoryTree({
           sheetsTab.children!.push(sheetTab)
         }
 
-        for (const plot of getPlots(store, state, file)) {
+        for (const plot of getPlots(store, state, { file })) {
           const plotTab: ITab = {
             id: plot.id,
             path: pathJoin(app, file, plot),
@@ -88,7 +97,7 @@ export function HistoryTree({
 
         fileTab.children = [sheetsTab, plotsTab]
 
-        appTab.children!.push(fileTab)
+        filesTab.children!.push(fileTab)
       }
 
       appsTab.children!.push(appTab)
@@ -97,10 +106,14 @@ export function HistoryTree({
     return appsTab
   }, [state])
 
+  if (!hydrated) {
+    return null
+  }
+
   return (
     <FileTree
       tab={tree}
-      onValueChange={t => {
+      onValueChange={(t) => {
         onTabChange(t)
       }}
     />

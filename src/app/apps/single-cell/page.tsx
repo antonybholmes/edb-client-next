@@ -1,4 +1,4 @@
-import MODULE_INFO from '@/components/pages/apps/ngs/single-cell/module.json'
+import MODULE_INFO from '@/components/pages/apps/ngs/single-cell/manifest.json'
 import { SingleCellQueryPage } from '@/components/pages/apps/ngs/single-cell/single-cell-page'
 import { makeMetaDataFromModule } from '@/lib/metadata'
 

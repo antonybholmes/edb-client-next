@@ -11,10 +11,12 @@ import {
 } from '@/lib/dataframe/dataframe-reader'
 import { DEFAULT_INDEX_NAME } from '@/lib/dataframe/series'
 import { API_XLSX_TO_JSON_URL } from '@/lib/edb/edb'
-import { fill } from '@/lib/fill'
+import { vfill } from '@/lib/fill'
 import { httpFetch } from '@/lib/http/http-fetch'
+import { randId } from '@/lib/id'
 import { range } from '@/lib/math/range'
 import { textToLines } from '@/lib/text/lines'
+import type { UndefStr } from '@/lib/text/text'
 import { Buffer } from 'buffer'
 import { useEffect, useRef, type ChangeEvent } from 'react'
 
@@ -92,7 +94,7 @@ export const DEFAULT_PARSE_OPTS: IParseOptions = {
 function getFileTypes(fileTypes: string[]) {
   return fileTypes
     .sort()
-    .map((t) => `.${t}`)
+    .map(t => `.${t}`)
     .join(', ')
 }
 
@@ -112,16 +114,16 @@ export function arrayBufferToBase64(buffer: ArrayBuffer): string {
 }
 
 interface IProps {
-  message?: string
+  message?: UndefStr
   //onOpenChange?: (message: string) => void
-  onFileChange?: (message: string, files: FileList | null) => void
+  onFileChange?: (message: string, files: FileList | []) => void
   dirMode?: boolean
   multiple?: boolean
-  fileTypes?: string[]
+  fileTypes?: string[] | undefined
 }
 
 export function OpenFiles({
-  message = 'open',
+  message = '',
   //onOpenChange,
   onFileChange,
   dirMode = false,
@@ -130,22 +132,45 @@ export function OpenFiles({
 }: IProps) {
   const ref = useRef<HTMLInputElement>(null)
 
+  // To force the file input to trigger on every click,
+  // even if the same file is selected multiple times,
+  // we append a random ID to the message.
+  // This way, the onFileChange callback will be
+  // triggered every time, and we can handle the file selection accordingly.
+  const _message = randId(message)
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function _onFileChange(e: ChangeEvent<HTMLInputElement>) {
     const { files } = e.target
 
-    onFileChange?.(message, files)
+    onFileChange?.(message, files ?? [])
 
     // force clear selection so we can keep selecting file if we want.
     e.target.value = ''
   }
 
   useEffect(() => {
+    // finally able to cope with user canceling file selection.
+    // We have to listen for the cancel event on the input element
+    // and then trigger the onFileChange callback with null files
+    // to indicate cancellation
+    const handleCancel = () => {
+      console.log('File selection canceled')
+      onFileChange?.(message, [])
+    }
+
+    ref.current?.addEventListener('cancel', handleCancel)
+
+    return () => {
+      ref.current?.removeEventListener('cancel', handleCancel)
+    }
+  }, [message, onFileChange])
+
+  useEffect(() => {
+    console.log('Triggering file input click with message:', _message)
     // simulate user clicking open button whenever open changes
     ref.current?.click()
-
-    //onOpenChange?.("")
-  }, [message])
+  }, [_message])
 
   if (dirMode) {
     return (
@@ -215,13 +240,13 @@ export function readFile(file: File): Promise<string> {
     const reader = new FileReader()
 
     // Define error callback
-    reader.onerror = (error) => reject(error)
+    reader.onerror = error => reject(error)
 
     // Read the file as text (can be changed to readAsDataURL or others based on your needs)
     //reader.readAsText(file);
 
     if (file.name.includes('xlsx')) {
-      reader.onload = (e) => {
+      reader.onload = e => {
         const result = e.target?.result
 
         if (result) {
@@ -306,7 +331,7 @@ export function onBinaryFileChange(
   try {
     const fileReader = new FileReader()
 
-    fileReader.onload = (e) => {
+    fileReader.onload = e => {
       const result = e.target?.result
 
       if (result) {
@@ -333,7 +358,7 @@ export function onBinaryFileChange(
 interface IFilesToDataFrameProps {
   parseOpts?: IParseOptions
   onSuccess?: (tables: AnnotationDataFrame[]) => void
-  onFailure?: (message: string, files: ITextFileOpen[]) => void
+  onError?: (message: string, files: ITextFileOpen[]) => void
 }
 /**
  * Convert text files to dataframes.
@@ -348,7 +373,7 @@ export async function filesToDataFrames(
   options: IFilesToDataFrameProps = {}
 ) {
   if (files.length === 0) {
-    options?.onFailure?.('no files', files)
+    options?.onError?.('no files', files)
     return
   }
 
@@ -403,7 +428,7 @@ export async function filesToDataFrames(
 
         // try some type conversion on the raw data
         const data = t.data.map((row: string[]) =>
-          row.map((c) => makeCell(c, keepDefaultNA))
+          row.map(c => makeCell(c, keepDefaultNA))
         )
 
         let rowIndex: BaseDataFrame | undefined = undefined
@@ -412,11 +437,11 @@ export async function filesToDataFrames(
           const columns =
             t.indexNames.length > 0
               ? t.indexNames
-              : range(indexCols).map((i) => `${DEFAULT_INDEX_NAME} ${i + 1}`)
+              : range(indexCols).map(i => `${DEFAULT_INDEX_NAME} ${i + 1}`)
 
           rowIndex = new DataFrame({
             data: t.index.map((row: string[]) =>
-              row.map((c) => makeCell(c, keepDefaultNA))
+              row.map(c => makeCell(c, keepDefaultNA))
             ),
             columns,
           })
@@ -427,7 +452,7 @@ export async function filesToDataFrames(
         if (t.columns.length > 0) {
           colIndex = new DataFrame({
             data: t.columns.map((col: string[]) =>
-              col.map((c) => makeCell(c, keepDefaultNA))
+              col.map(c => makeCell(c, keepDefaultNA))
             ),
             columns: [DEFAULT_COLUMN_INDEX_NAME],
           })
@@ -460,7 +485,7 @@ export async function filesToDataFrames(
         table = table.setColNames([
           ...['chr', 'start', 'end'],
           //...range(table.shape[1] - 3).map(i => `data ${i + 1}`),
-          ...fill('', table.shape[1] - 3),
+          ...vfill('', table.shape[1] - 3),
         ]) as AnnotationDataFrame
       }
 
@@ -474,7 +499,7 @@ export async function filesToDataFrames(
     console.log(err)
 
     if (err instanceof Error) {
-      options?.onFailure?.(err.message, files)
+      options?.onError?.(err.message, files)
     }
   }
 }

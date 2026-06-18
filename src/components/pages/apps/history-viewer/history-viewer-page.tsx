@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { HeaderLayout } from '@/layouts/header-layout'
 import { CoreProviders } from '@/providers/core-providers'

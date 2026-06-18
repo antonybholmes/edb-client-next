@@ -84,10 +84,10 @@ export const contentVariants = cva(
   }
 )
 
-export const dialogHeaderVariants = cva('px-6 py-4', {
+export const dialogHeaderVariants = cva('pl-6 pr-3', {
   variants: {
     headerVariant: {
-      default: '',
+      default: '-mt-2',
       opaque: 'bg-background m-4',
     },
   },
@@ -112,7 +112,7 @@ export const dialogBodyVariants = cva('', {
 export const dialogFooterVariants = cva('', {
   variants: {
     footerVariant: {
-      default: 'p-6 pt-10',
+      default: 'px-6',
       line: 'mt-10 mx-5 py-5 border-t border-border/50',
       opaque: 'bg-background',
     },
@@ -217,7 +217,7 @@ const DialogTitle = forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn('text-base font-bold leading-none truncate', className)}
+    className={cn('text-base font-bold truncate', className)}
     {...props}
   />
 ))

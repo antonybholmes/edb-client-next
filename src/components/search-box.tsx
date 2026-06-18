@@ -63,11 +63,11 @@ export function SearchBox({
       data-variant={variant}
       data-mode={variant}
       placeholder={placeholder}
-      onTextChange={(v) => {
+      onTextChange={v => {
         setValue(v)
         onTextChange?.(v)
       }}
-      onTextChanged={(v) => {
+      onTextChanged={v => {
         onTextChanged?.(v)
       }}
       leftChildren={
@@ -94,7 +94,7 @@ export function SearchBox({
             className={BUTTON_CLS}
             title={deleteLabel}
           >
-            <CloseIcon stroke="" w="w-4 h-4" />
+            <CloseIcon stroke="" size="w-4 h-4" />
           </button>
         ) : null
       }

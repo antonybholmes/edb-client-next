@@ -2,13 +2,13 @@ import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
 import { COLOR_WHITE } from '@/lib/color/color'
 import { cn } from '@/lib/shadcn-utils'
 
-export function HeightIcon({ w = 'w-4', className }: IIconProps) {
+export function HeightIcon({ size = 'w-4', className }: IIconProps) {
   return (
     <svg
       version="1.1"
       viewBox="0 0 19.399 19.521"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn(ICON_CLS, w, className)}
+      className={cn(ICON_CLS, size, className)}
     >
       <g
         transform="translate(-66.969 -81.521)"

@@ -1,4 +1,4 @@
-import MODULE_INFO from '@/components/pages/apps/genes/motifs/module.json'
+import MODULE_INFO from '@/components/pages/apps/genes/motifs/manifest.json'
 import { MotifsQueryPage } from '@/components/pages/apps/genes/motifs/motifs-page'
 import { makeMetaDataFromModule } from '@/lib/metadata'
 

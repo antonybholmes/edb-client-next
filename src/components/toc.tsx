@@ -33,7 +33,7 @@ export function TableOfContents({
 
     const onScroll = () => {
       const scrollPosition = window.scrollY + 100 // offset for better detection
-      let current = headingData[0]?.id
+      let current = headingData[0]?.id || null
 
       for (const heading of headingData) {
         const element = document.getElementById(heading.id)

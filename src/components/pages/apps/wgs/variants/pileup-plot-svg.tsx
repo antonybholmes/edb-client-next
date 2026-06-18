@@ -1,5 +1,6 @@
-import { BaseSvg } from '@/components/base-svg'
 import { Axis } from '@/components/plot/axis'
+import { SvgBase } from '@/components/plot/svg-base'
+import { SvgText } from '@/components/plot/svg-text'
 import { useMergeRefs } from '@/hooks/merge-refs'
 import type { IPos } from '@/interfaces/pos'
 import type { ISVGProps } from '@/interfaces/svg-props'
@@ -249,7 +250,7 @@ export function PileupPlotSvg({ ref }: ISVGProps) {
                         }}
                         onMouseLeave={handleVariantLeave}
                       />
-                      <text
+                      <SvgText
                         x={v.type.includes('INS') ? HALF_BASE_W : 0}
                         y={h + (v.type.includes('INS') ? 0 : 0)}
                         key={vi}
@@ -257,10 +258,11 @@ export function PileupPlotSvg({ ref }: ISVGProps) {
                         alignmentBaseline="middle"
                         //fontWeight="bold"
                         pointerEvents="none"
+                        font={settings.dna.text}
                         fill={color}
                       >
                         {v.type.includes('INS') ? '^' : v.tum[0]}
-                      </text>
+                      </SvgText>
                     </Fragment>
                   )
                 })}
@@ -289,17 +291,17 @@ export function PileupPlotSvg({ ref }: ISVGProps) {
 
   return (
     <>
-      <BaseSvg
+      <SvgBase
         ref={setRefs}
         width={width} //* settings.scale}
         height={height} //* settings.scale}
         scale={settings.scale}
         //shapeRendering={SVG_CRISP_EDGES}
-        className="absolute z-20"
+        //className="absolute z-20"
         onMouseLeave={() => setToolTipInfo(null)}
       >
         {svgContent}
-      </BaseSvg>
+      </SvgBase>
 
       {settings.tooltips.show &&
         toolTipInfo &&

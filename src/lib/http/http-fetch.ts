@@ -1,4 +1,5 @@
-import type { IFieldMap } from '@/interfaces/field-map'
+// web workers cannot use @
+import type { IFieldMap } from '../../interfaces/field-map'
 import { fetchInstance, type IFetchOptions, type IHttpRequest } from './request'
 
 export type RequestType = 'GET' | 'POST'

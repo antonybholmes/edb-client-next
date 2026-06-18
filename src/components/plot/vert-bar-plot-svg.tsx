@@ -5,14 +5,14 @@ import { BLUES_CMAP, ColorMap } from '@/lib/color/colormap'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
 import { Axis, YAxis, type TickLabel } from './axis'
-import { AxisBottomSvg, AxisLeftSvg } from './axis-svg'
 import { VColorBarSvg } from './color-bar-svg'
+import { AxisBottomSvg, AxisLeftSvg } from './svg-axis'
 
 import type { ISVGProps } from '@/interfaces/svg-props'
-import { fill } from '@/lib/fill'
+import { vfill } from '@/lib/fill'
 import type { ILim } from '@/lib/math/math'
 import { ones } from '@/lib/math/ones'
-import { BaseSvg } from '../base-svg'
+import { SvgBase } from './svg-base'
 
 const margin = { top: 100, right: 100, bottom: 100, left: 200 }
 
@@ -122,7 +122,7 @@ export function VertBarPlotSvg({
         cmap.getHexColor(hue_norm(x))
       )
     } else {
-      huedata = fill('cornflowerblue', xdata.length)
+      huedata = vfill('cornflowerblue', xdata.length)
     }
 
     return (
@@ -344,7 +344,7 @@ export function VertBarPlotSvg({
   // }, [dataFile, search])
 
   return (
-    <BaseSvg
+    <SvgBase
       ref={ref}
       width={width}
       height={height}
@@ -353,6 +353,6 @@ export function VertBarPlotSvg({
       className="absolute"
     >
       {svg}
-    </BaseSvg>
+    </SvgBase>
   )
 }

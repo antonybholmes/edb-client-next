@@ -1,28 +1,16 @@
 import { VCenterRow } from '@/layout/v-center-row'
 
-import { useState } from 'react'
-
 import { PropsPanel } from '@/components/props-panel'
-import {
-  NO_DIALOG,
-  TEXT_NAME,
-  TEXT_OK,
-  TEXT_RESET,
-  TEXT_UNLABELLED,
-  type IDialogParams,
-} from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { TEXT_NAME, TEXT_OK, TEXT_RESET, TEXT_UNLABELLED } from '@/consts'
 import { PlusIcon } from '@/icons/plus-icon'
-import { SaveIcon } from '@/icons/save-icon'
 import { TrashIcon } from '@/icons/trash-icon'
 import { downloadJson } from '@/lib/download-utils'
-import { makeUuid, randId } from '@/lib/id'
+import { makeUuid } from '@/lib/id'
 import { cn } from '@/lib/shadcn-utils'
 import { TRANS_COLOR_CLS } from '@/theme'
 import { Button } from '@/themed/v2/button'
 import { Input } from '@/themed/v2/input'
 
-import { OpenIcon } from '@/components/icons/open-icon'
 import {
   DRAG_HANDLE_APPEAR_CLS,
   SortableItem,
@@ -45,15 +33,17 @@ import {
 } from '@dnd-kit/sortable'
 import { produce } from 'immer'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { DownloadIcon } from '@/components/icons/download-icon'
+import { UploadIcon } from '@/components/icons/upload-icon'
+import {
+  onTextFileChange,
+  type ITextFileOpen,
+} from '@/components/pages/open-files'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import {
-  onTextFileChange,
-  OpenFiles,
-  type ITextFileOpen,
-} from '@/components/pages/open-files'
+} from '@/components/plot/color-picker-popover'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { randomHexColor } from '@/lib/color/color'
 import { useOncoplotSettings } from './oncoplot-settings-store'
@@ -71,17 +61,21 @@ function MutationElem({ mutation, setDelMutation }: IMutationElemProps) {
     <SortableItem key={mutation.id} id={mutation.id}>
       <ColorPickerButton
         className={SIMPLE_COLOR_EXT_CLS}
-        color={mutation.color}
-        onColorChange={color => {
-          setMutations(
-            produce(mutations, draft => {
-              const mut = draft.find(m => m.id === mutation.id)
-              if (mut) {
-                mut.color = color
-              }
-            })
-          )
-        }}
+        colors={[
+          {
+            color: mutation.color,
+            onColorChange: color => {
+              setMutations(
+                produce(mutations, draft => {
+                  const mut = draft.find(m => m.id === mutation.id)
+                  if (mut) {
+                    mut.color = color
+                  }
+                })
+              )
+            },
+          },
+        ]}
       />
 
       <Input
@@ -123,7 +117,7 @@ function MutationElem({ mutation, setDelMutation }: IMutationElemProps) {
           onClick={() => setDelMutation?.(mutation)}
           title="Delete feature"
         >
-          <TrashIcon stroke="" w="w-4" />
+          <TrashIcon stroke="" />
         </button>
       </VCenterRow>
     </SortableItem>
@@ -132,7 +126,8 @@ function MutationElem({ mutation, setDelMutation }: IMutationElemProps) {
 
 export function VariantPropsPanel({ ref }: IDivProps) {
   //const [delFeature, setDelFeature] = useState<IProteinFeature | null>(null)
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
+
+  const { open: openDialog } = useDialogs()
 
   const { mutations, setMutations } = useOncoplotSettings()
 
@@ -160,74 +155,35 @@ export function VariantPropsPanel({ ref }: IDivProps) {
 
   return (
     <>
-      {showDialog.id.startsWith('open') && (
-        <OpenFiles
-          //onOpenChange={() => setOpen("")}
-          onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
-              openFeatureFiles(files)
-            })
-          }
-          fileTypes={['json']}
-        />
-      )}
-
-      {showDialog.id.includes('reset') && (
-        <OKCancelDialog
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              //onGroupsChange?.([])
-              setMutations([...DEFAULT_MUTATIONS])
-            }
-
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        >
-          Are you sure you want to reset all mutations?
-        </OKCancelDialog>
-      )}
-
-      {showDialog.id.includes('delete') && (
-        <OKCancelDialog
-          //open={delFeature !== null}
-          showClose={true}
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              setMutations(
-                mutations.filter(
-                  mutation =>
-                    mutation.id !==
-                    (showDialog.params!.mutation! as IMutation).id
-                )
-              )
-            }
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        >
-          {`Are you sure you want to delete the ${
-            (showDialog.params!.mutation! as IMutation).name
-              ? (showDialog.params!.mutation! as IMutation).name
-              : TEXT_UNLABELLED
-          } mutation?`}
-        </OKCancelDialog>
-      )}
-
       <PropsPanel ref={ref} className="gap-y-2 pr-1">
         <VCenterRow className="justify-between gap-x-2">
           <VCenterRow>
             <IconButton
-              onClick={() => setShowDialog({ id: randId('open'), params: {} })}
+              onClick={() =>
+                openDialog({
+                  type: 'open',
+                  payload: {
+                    message: 'Select mutation file to open',
+                    fileTypes: ['json'],
+                    callback: (message, files) => {
+                      onTextFileChange(message, files, files => {
+                        openFeatureFiles(files)
+                      })
+                    },
+                  },
+                })
+              }
               title="Open mutations"
             >
-              <OpenIcon />
+              <UploadIcon />
             </IconButton>
 
             <IconButton
               // ripple={false}
-              onClick={() => downloadJson(mutations, 'mutations.json')}
-              title="Save mutations"
+              onClick={() => downloadJson(mutations, 'variants.json')}
+              title="Save variants"
             >
-              <SaveIcon />
+              <DownloadIcon />
             </IconButton>
 
             <IconButton
@@ -253,9 +209,21 @@ export function VariantPropsPanel({ ref }: IDivProps) {
 
           <Button
             variant="link"
-            size="sm"
+            //size="sm"
             // ripple={false}
-            onClick={() => setShowDialog({ id: randId('reset'), params: {} })}
+            onClick={() => {
+              openDialog({
+                type: 'warning',
+                payload: {
+                  content: 'Are you sure you want to reset all mutations?',
+                  callback: response => {
+                    if (response === TEXT_OK) {
+                      setMutations([...DEFAULT_MUTATIONS])
+                    }
+                  },
+                },
+              })
+            }}
             //aria-label="Clear All"
             title="Reset mutations"
           >
@@ -290,12 +258,23 @@ export function VariantPropsPanel({ ref }: IDivProps) {
                     <MutationElem
                       key={mutation.id}
                       mutation={mutation}
-                      setDelMutation={mutation =>
-                        setShowDialog({
-                          id: randId('delete'),
-                          params: { mutation },
+                      setDelMutation={mutation => {
+                        openDialog({
+                          type: 'warning',
+                          payload: {
+                            content: `Are you sure you want to delete the ${
+                              mutation.name ? mutation.name : TEXT_UNLABELLED
+                            } mutation?`,
+                            callback: response => {
+                              if (response === TEXT_OK) {
+                                setMutations(
+                                  mutations.filter(m => m.id !== mutation.id)
+                                )
+                              }
+                            },
+                          },
                         })
-                      }
+                      }}
                     />
                   )
                 })}

@@ -1,7 +1,9 @@
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
-import { type ITabIndicatorPos } from './tab-indicator-provider'
-import { useTabIndicators } from './tab-indicator-store'
+import {
+  useTabIndicators,
+  type ITabIndicatorPos,
+} from './tab-indicator-provider'
 
 /**
  * A horizontal line that can be used to follow the mouse
@@ -12,13 +14,12 @@ import { useTabIndicators } from './tab-indicator-store'
  * @returns
  */
 export function TabIndicatorFollowH({
-  groupId,
   h = 2,
 }: {
   groupId: string
   h?: number
 }) {
-  const { position } = useTabIndicators(groupId) //useContext(TabIndicatorContext)
+  const { position } = useTabIndicators() //groupId) //useContext(TabIndicatorContext)
 
   // we use this to track transitions between 0 width and non-zero width
   // to determine animation duration. If item was previously 0 width, we want

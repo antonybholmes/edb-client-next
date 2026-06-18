@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { AppIcon } from '@/components/icons/app-icon'
 import { CenterCol } from '@/components/layout/center-col'
@@ -22,7 +22,7 @@ export function AuthModal({ title, className, children }: IProps) {
   return (
     <CenterCol className={cn('gap-y-2', className)}>
       <VCenterRow className="gap-x-3">
-        <AppIcon w="w-12" />
+        <AppIcon size="w-12" />
         <p className="font-bold text-lg">{title}</p>
       </VCenterRow>
 

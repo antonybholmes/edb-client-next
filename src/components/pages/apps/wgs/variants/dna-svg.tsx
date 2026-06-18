@@ -1,3 +1,4 @@
+import { SvgText } from '@/components/plot/svg-text'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { range } from '@/lib/math/range'
@@ -13,7 +14,7 @@ export function DNASvg({ pos = ZERO_POS }: { pos?: IPos }) {
   const { settings } = useVariantSettings()
   let { dna } = useVariants()
 
-  if (!dna || !settings.dna.show) {
+  if (!dna || !settings.dna.text.show) {
     return null
   }
 
@@ -47,19 +48,19 @@ export function DNASvg({ pos = ZERO_POS }: { pos?: IPos }) {
 
   return (
     <g transform={`translate(${pos.x}, ${pos.y})`}>
-      {settings.dna.index.show && (
+      {settings.dna.index.text.show && (
         <g transform={`translate(0, ${-BASE_H})`}>
           {dna.seq.split('').map((_, bi) => (
-            <text
+            <SvgText
               x={bi * BASE_W}
               y={1}
               key={bi}
               textAnchor="middle"
               alignmentBaseline="middle"
-              fontSize="x-small"
+              font={settings.dna.index.text}
             >
               {bi + 1}
-            </text>
+            </SvgText>
           ))}
         </g>
       )}
@@ -81,17 +82,17 @@ export function DNASvg({ pos = ZERO_POS }: { pos?: IPos }) {
 
       <g>
         {dna.seq.split('').map((base, bi) => (
-          <text
+          <SvgText
             x={bi * BASE_W}
             y={1}
             key={bi}
             textAnchor="middle"
             alignmentBaseline="middle"
-            //fontWeight="bold"
+            font={settings.dna.text}
             fill={fgColors.get(bi) ?? COLOR_BLACK}
           >
             {base}
-          </text>
+          </SvgText>
         ))}
       </g>
 
@@ -102,7 +103,7 @@ export function DNASvg({ pos = ZERO_POS }: { pos?: IPos }) {
             y1={-HALF_BASE_H}
             y2={-HALF_BASE_H}
             x2={innerWidth}
-            stroke={settings.dna.border.color}
+            stroke={settings.dna.border.value}
             strokeWidth={settings.dna.border.width}
           />
           <line
@@ -110,7 +111,7 @@ export function DNASvg({ pos = ZERO_POS }: { pos?: IPos }) {
             y1={HALF_BASE_H}
             y2={HALF_BASE_H}
             x2={innerWidth}
-            stroke={settings.dna.border.color}
+            stroke={settings.dna.border.value}
             strokeWidth={settings.dna.border.width}
           />
         </g>

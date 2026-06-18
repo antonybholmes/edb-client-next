@@ -15,20 +15,26 @@ import {
   DropdownMenuTrigger,
   MenuSeparator,
 } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import type { IModuleInfo } from '@/lib/module-info'
 
 import type { ITab } from '@/components/tabs/tab-provider'
 import { TEXT_FILE, TEXT_OPTIONS, TEXT_SETTINGS } from '@/consts'
 import type { VariantProps } from 'class-variance-authority'
-import { useSettingsTabs } from '../dialog/settings/setting-tabs-store'
+import { useSettingsTabs } from '../dialogs/settings/setting-tabs-store'
 import { CookieIcon } from '../icons/cookie-icon'
 
+import { useAppInfo } from '@/lib/edb/edb-settings'
+import { format } from 'date-fns'
 import { Globe } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { useDialogs } from '../dialogs/dialogs'
+import { AppInfoContent } from '../header/app-info-button'
 import { HelpIcon } from '../icons/help-icon'
 import { InfoIcon } from '../icons/info-icon'
 import { OptionsIcon } from '../icons/options-icon'
+import { BaseCol } from '../layout/base-col'
+import { VCenterRow } from '../layout/v-center-row'
 import { BLANK_TARGET } from '../link/base-link'
+import { LinkButton } from '../shadcn/ui/themed/link-button'
 import { Button } from '../shadcn/ui/themed/v2/button'
 
 export const SIDE_OVERLAY_CLS = cn(
@@ -39,8 +45,52 @@ export const SIDE_OVERLAY_CLS = cn(
 interface IFileMenu
   extends IDivProps, IOpenChange, VariantProps<typeof dropdownContentVariants> {
   tabs?: ITab[]
-  info?: IModuleInfo
   extMenus?: Record<string, ReactNode>
+}
+
+function AppInfo() {
+  const { appInfo } = useAppInfo()
+
+  const { open: openDialog } = useDialogs()
+
+  if (!appInfo) {
+    return null
+  }
+
+  return (
+    <>
+      <BaseCol className="text-xxs tracking-wide p-2 gap-y-2">
+        <VCenterRow className="justify-between gap-x-1">
+          <p className="font-bold">{appInfo?.name} Info</p>
+          <LinkButton
+            onClick={() => {
+              openDialog({
+                type: 'alert',
+                payload: {
+                  type: 'default',
+                  title: `About ${appInfo?.name}`,
+                  content: <AppInfoContent />,
+                },
+              })
+            }}
+          >
+            More
+          </LinkButton>
+        </VCenterRow>
+
+        <BaseCol className="gap-y-1">
+          <p>{appInfo?.description}</p>
+          <p>
+            Build {appInfo.version}.{appInfo.build}
+          </p>
+          <p>Updated {format(appInfo.modified, 'MMM dd, yyyy')}</p>
+          {/* <p>{formatString(appInfo?.copyright)}</p> */}
+        </BaseCol>
+      </BaseCol>
+
+      <MenuSeparator />
+    </>
+  )
 }
 
 export function FileMenu({
@@ -50,7 +100,7 @@ export function FileMenu({
   extMenus = {},
   variant = 'default',
 }: IFileMenu) {
-  const { setSettingsVisible } = useSettingsTabs()
+  const { openSettings } = useSettingsTabs()
 
   return (
     <DropdownMenu open={open} onOpenChange={onOpenChange}>
@@ -64,11 +114,7 @@ export function FileMenu({
             pad="sm"
             onClick={() => onOpenChange?.(true)}
           >
-            <span
-              data-checked={open}
-              aria-label={TEXT_FILE}
-              //className={UNDERLINE_LABEL_CLS}
-            >
+            <span data-checked={open} aria-label={TEXT_FILE}>
               {TEXT_FILE}
             </span>
           </Button>
@@ -113,11 +159,12 @@ export function FileMenu({
             <DropdownMenuSubContent variant={variant}>
               {extMenus['info'] && (
                 <>
-                  {' '}
                   {extMenus['info']}
                   <MenuSeparator />
                 </>
               )}
+
+              <AppInfo />
 
               <DropdownMenuItem
                 onClick={() => {
@@ -149,7 +196,7 @@ export function FileMenu({
           <DropdownMenuPortal>
             <DropdownMenuSubContent variant={variant}>
               <DropdownMenuItem
-                onClick={() => setSettingsVisible(true)}
+                onClick={() => openSettings()}
                 aria-label="Show options"
               >
                 <Globe

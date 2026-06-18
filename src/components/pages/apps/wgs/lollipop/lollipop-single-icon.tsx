@@ -2,7 +2,7 @@ import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
 import { cn } from '@/lib/shadcn-utils'
 
 export function LollipopSingleIcon({
-  w = 'w-4',
+  size = 'w-4',
   fill = 'fill-background',
   stroke = 'stroke-foreground',
   className,
@@ -11,7 +11,7 @@ export function LollipopSingleIcon({
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      className={cn(ICON_CLS, w, className)}
+      className={cn(ICON_CLS, size, className)}
     >
       <line
         x1="4"

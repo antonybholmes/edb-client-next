@@ -1,19 +1,23 @@
 import { TEXT_OPEN } from '@/consts'
 import type { IDivProps } from '@/interfaces/div-props'
-import { OpenIcon } from '../icons/open-icon'
-import { ToolbarIconButton } from './toolbar-icon-button'
+import { UploadIcon } from '../icons/upload-icon'
+import { ToolbarColButton } from './toolbar-col-button'
 
 interface IProps extends IDivProps {
-  onOpenChange?: (open: boolean) => void
+  onOpen?: () => void
   showText?: boolean
   multiple?: boolean
 }
 
-export function ToolbarOpenFile({ onOpenChange, showText = false }: IProps) {
+export function ToolbarOpenFile({ onOpen }: IProps) {
   return (
-    <ToolbarIconButton onClick={() => onOpenChange?.(true)} title="Open File">
-      <OpenIcon />
-      {showText && <span>{TEXT_OPEN}</span>}
-    </ToolbarIconButton>
+    <ToolbarColButton
+      onClick={() => onOpen?.()}
+      icon={<UploadIcon />}
+      title="Open local file"
+    >
+      <UploadIcon size={24} strokeWidth={1} />
+      {TEXT_OPEN}
+    </ToolbarColButton>
   )
 }

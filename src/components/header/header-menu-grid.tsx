@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { type IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
@@ -26,12 +26,15 @@ import {
 import { HeaderIconButton } from '@/layouts/header-icon-button'
 import gsap from 'gsap'
 import { HelpCircle, Info, LayoutGrid } from 'lucide-react'
+import { CenterCol } from '../layout/center-col'
 import { VCenterCol } from '../layout/v-center-col'
 import { ButtonLink } from '../link/button-link'
 import { SearchBox } from '../search-box'
 import { Button } from '../shadcn/ui/themed/v2/button'
 import { LineSeparator } from '../shadcn/ui/themed/v2/dropdown-menu'
 import { VScrollPanel } from '../v-scroll-panel'
+
+import { AppIcon } from './app-icon'
 import type { IHeaderLinksProps } from './header-menu'
 
 export const SIDE_OVERLAY_CLS = cn(
@@ -41,23 +44,38 @@ export const SIDE_OVERLAY_CLS = cn(
 
 export const BASE_MUTED_THEME_CLS = cn(
   FOCUS_INSET_RING_CLS,
-  'flex flex-col items-center shrink-0 grow-0 justify-center gap-2 group',
-  'rounded-lg border border-transparent hover:shadow-xl hover:border-border/20 aspect-11/10',
-  'hover:bg-background'
+  'flex flex-col items-center shrink-0 grow-0 justify-center gap-3 group',
+  'aspect-10/9 relative'
   //'transition duration-300 ease-in-out'
 )
 
-const ICON_CLS = `flex w-9 h-9 aspect-11/10 shrink-0 flex-row 
-  items-center justify-center rounded-full text-sm trans-all`
+const MODULE_BG_CLS = cn(
+  'absolute rounded-2xl w-full h-full duration-300 ease-out transition-all',
+  'pointer-events-none origin-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
+  'data-[hover=true]:scale-105 data-[hover=true]:bg-muted/50 rounded-xl'
+)
+
+const ICON_CLS = `flex w-9 h-9 aspect-square shrink-0 flex-row  
+  items-center justify-center rounded-2xl text-sm gap-x-0.25`
 
 export function ModuleButtonLink({
   className,
   children,
   ...props
 }: ILinkProps) {
+  const [hover, setHover] = useState(false)
+
   return (
-    <BaseLink className={cn(BASE_MUTED_THEME_CLS, className)} {...props}>
-      {children}
+    <BaseLink
+      className={cn(BASE_MUTED_THEME_CLS, className)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      {...props}
+    >
+      <span className={MODULE_BG_CLS} data-hover={hover} />
+      <CenterCol className="grow w-full h-full z-10 relative gap-3">
+        {children}
+      </CenterCol>
     </BaseLink>
   )
 }
@@ -72,7 +90,7 @@ export function HeaderLinks({
 
   // sort alphabetically and ignore sections
   let items = HEADER_LINKS.map((section) => {
-    return section.modules.filter(
+    return section.apps.filter(
       (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
@@ -85,16 +103,6 @@ export function HeaderLinks({
     )
     .sort((modA, modB) => modA.name.localeCompare(modB.name))
     .map((module, moduleIndex) => {
-      let abbr = ''
-
-      if (module.abbr) {
-        abbr = module.abbr
-      } else {
-        const words = module.name.split(' ')
-
-        abbr = `${words[0]![0]!.toUpperCase()}${words[words.length - 1]![words.length > 1 ? 0 : 1]!.toLowerCase()}`
-      }
-
       return (
         <li key={moduleIndex}>
           <ModuleButtonLink
@@ -102,25 +110,11 @@ export function HeaderLinks({
             onClick={handleClick}
             aria-label={module.name}
             target={
-              settings.modules.links.openInNewWindow ? BLANK_TARGET : undefined
+              settings.apps.links.openInNewWindow ? BLANK_TARGET : undefined
             }
             title={module.description}
           >
-            <div
-              className={ICON_CLS}
-              style={{
-                //color: module.color ?? 'lightslategray',
-                backgroundColor: module.color ?? 'lightslategray',
-                //backgroundColor: `${module.color}cc`
-              }}
-            >
-              <span className="font-bold text-white">
-                {abbr[0]!.toUpperCase()}
-              </span>
-              <span className="font-base text-white/90">
-                {abbr[1]!.toLowerCase()}
-              </span>
-            </div>
+            <AppIcon appInfo={module} />
 
             <p className="text-[0.7rem] text-center truncate font-medium">
               {module.name}
@@ -140,7 +134,7 @@ export function HeaderLinks({
 
   return (
     <ul
-      className={cn('grid grid-cols-5 gap-1', className)}
+      className={cn('grid grid-cols-5 mt-2', className)}
       style={{ width, minHeight: '6rem' }}
     >
       {items}
@@ -159,7 +153,7 @@ export function SearchHeaderLinks({
 
   // sort alphabetically and ignore sections
   let items = HEADER_LINKS.map((section) => {
-    return section.modules.filter(
+    return section.apps.filter(
       (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
@@ -190,7 +184,7 @@ export function SearchHeaderLinks({
             onClick={() => handleClick()}
             aria-label={module.name}
             target={
-              settings.modules.links.openInNewWindow ? BLANK_TARGET : undefined
+              settings.apps.links.openInNewWindow ? BLANK_TARGET : undefined
             }
             title={module.description}
             className="w-full justify-start gap-3 h-14"
@@ -200,16 +194,13 @@ export function SearchHeaderLinks({
               style={{
                 //color: module.color ?? 'lightslategray',
                 backgroundColor: module.color ?? 'lightslategray',
-
                 //backgroundColor: `${module.color}cc`
               }}
             >
               <span className="font-bold text-white/95">
                 {abbr[0]!.toUpperCase()}
               </span>
-              <span className="font-thin text-white/80">
-                {abbr[1]!.toLowerCase()}
-              </span>
+              <span className="text-white/80">{abbr[1]!.toLowerCase()}</span>
             </div>
 
             <p className="text-[0.7rem] text-center truncate font-medium">
@@ -222,7 +213,7 @@ export function SearchHeaderLinks({
 
   return (
     <VScrollPanel
-      className="absolute left-0 top-0 w-full bottom-2 bg-background translate-x-1/4 z-100 opacity-0 invisible pointer-events-none"
+      className="absolute left-0 top-0 right-1 bottom-2 bg-background translate-x-1/4 z-100 opacity-0 invisible pointer-events-none"
       ref={ref}
     >
       {items.length > 0 ? (
@@ -258,7 +249,6 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
         .timeline()
         .to(
           gridRef.current,
-
           {
             x: '-25%',
             opacity: 0,
@@ -271,7 +261,6 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
         )
         .to(
           searchRef.current,
-
           {
             x: '0%',
             opacity: 1,
@@ -363,31 +352,27 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
 
             <LineSeparator />
 
-            <ul className="grid grid-cols-5 gap-1" style={{ width }}>
+            <ul className="grid grid-cols-5" style={{ width }}>
               <li>
                 <Button
                   variant="flat"
                   flow="column"
                   size="none"
                   rounded="xl"
-                  className="p-2 gap-3 aspect-11/10 w-full h-full"
+                  className="p-2 gap-3 aspect-10/9 w-full h-full"
                   onClick={() => {
                     window.open(
                       DOCS_URL,
                       'HelpWindow',
                       'width=1080,height=720,toolbar=no,status=no,menubar=no,scrollbars=yes,resizable=yes'
                     )
-
-                    //close()
                   }}
                   aria-label="Help"
                 >
                   <div
                     className={ICON_CLS}
                     style={{
-                      //color: 'lightslategray',
                       backgroundColor: 'lightslategray',
-                      //backgroundColor: `${module.color}cc`
                     }}
                   >
                     <HelpCircle className="text-white/95" />
@@ -402,12 +387,12 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
                   flow="column"
                   size="none"
                   rounded="xl"
-                  className="p-2 gap-3 aspect-11/10 w-full h-full"
+                  className="p-2 gap-3 aspect-10/9 w-full h-full"
                   href="/about"
                   onClick={() => setOpen(false)}
                   aria-label="About"
                   target={
-                    settings.modules.links.openInNewWindow
+                    settings.apps.links.openInNewWindow
                       ? BLANK_TARGET
                       : undefined
                   }
@@ -432,8 +417,4 @@ export function HeaderMenuGrid({ tab = '' }: IFileMenu) {
       </PopoverContent>
     </Popover>
   )
-  // } else {
-  //   // if the window is small, use the sheet overlay instead
-  //   return <HeaderMenuSheet />
-  // }
 }

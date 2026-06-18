@@ -20,7 +20,7 @@ import { ToolbarIconButton } from './toolbar-icon-button'
 const CONTAINER_CLS = cn(
   TRANS_COLOR_CLS,
   ROUNDED_CLS,
-  //BUTTON_MD_H_CLS,
+
   'overflow-hidden'
   //[open, "border-border", "border-transparent hover:border-border"],
 )
@@ -69,7 +69,7 @@ export function ToolbarOptionalDropdownButton({
             aria-label="Show dropdown menu"
             onClick={() => setOpen(true)}
           >
-            <ChevronRightIcon className="rotate-90" w="w-4" />
+            <ChevronRightIcon className="rotate-90" size="w-4" />
           </ToolbarIconButton>
         </VCenterRow>
         <DropdownMenuTrigger className="invisible w-full h-0" />

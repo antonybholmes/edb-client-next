@@ -5,13 +5,13 @@ import { CSS } from '@dnd-kit/utilities'
 
 import type { IClassProps } from '@/interfaces/class-props'
 import { cn } from '@/lib/shadcn-utils'
+import { Ellipsis, EllipsisVertical } from 'lucide-react'
 import type {
   ComponentPropsWithoutRef,
   CSSProperties,
   ElementType,
   ReactNode,
 } from 'react'
-import { EllipsisIcon } from './icons/ellipsis-icon'
 import { VerticalGripIcon } from './icons/vertical-grip-icon'
 import { HCenterRow } from './layout/h-center-row'
 
@@ -92,14 +92,14 @@ export function SortableItem<T extends ElementType = 'li'>({
       as={as ?? 'li'}
       id={id}
       className={cn(
-        'flex flex-row items-center gap-x-2 grow min-w-0',
+        'flex flex-row items-center gap-x-1.5 grow min-w-0',
         className
       )}
       style={{ minWidth: 0 }}
     >
       <VCenterRow
         className={cn(
-          'gap-x-1.5 pl-1.5 pr-1.5 py-1 h-full hover:bg-muted/30 grow rounded-theme min-h-10',
+          'gap-x-2 pl-1 pr-1.5 py-1 h-full hover:bg-muted/30 grow rounded-theme min-h-10',
           innerCls
         )}
       >
@@ -123,13 +123,17 @@ export function DragHandle({
 
   return (
     <VCenterRow
-      className={cn('group cursor-ns-resize w-4.5 justify-center', className)}
+      className={cn('group cursor-ns-resize w-4  justify-start', className)}
       data-dragging={isDragging}
       {...listeners}
       {...attributes}
       {...props}
     >
-      <VerticalGripIcon w={16} style={style} className={DRAG_ICON_ANIM_CLS} />
+      <VerticalGripIcon
+        size={16}
+        style={style}
+        className={DRAG_ICON_ANIM_CLS}
+      />
     </VCenterRow>
   )
 }
@@ -152,7 +156,7 @@ export function SmallDragHandle({
       {...attributes}
       {...props}
     >
-      <EllipsisIcon className="rotate-90" />
+      <EllipsisVertical />
     </span>
   )
 }
@@ -173,7 +177,7 @@ export function HDragHandle({
       {...attributes}
       {...props}
     >
-      <EllipsisIcon
+      <Ellipsis
         className={cn('absolute -translate-y-1/2 top-1/2', className)}
         style={style}
       />

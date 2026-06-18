@@ -1,4 +1,4 @@
-import { range, rangeMap } from '../lib/math/range'
+import { range, rangeMap } from './math/range'
 
 /**
  * #move - Moves an array item from one position in an array to another.
@@ -35,7 +35,7 @@ export function result<T>(f: () => T | null | undefined) {
 
 export function zip<T = unknown>(...cols: T[][]): T[][] {
   return rangeMap(
-    i => range(cols.length).map(j => cols[j]![i]!),
+    (i) => range(cols.length).map((j) => cols[j]![i]!),
     cols[0]!.length
   )
 }
@@ -98,7 +98,7 @@ export function deepFreeze<T extends object>(obj: T): T {
   //   }
   // })
 
-  Reflect.ownKeys(obj).forEach(key => {
+  Reflect.ownKeys(obj).forEach((key) => {
     const value = (obj as any)[key]
     if (value && typeof value === 'object') {
       deepFreeze(value)

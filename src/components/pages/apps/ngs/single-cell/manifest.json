@@ -1,0 +1,10 @@
+{
+  "name": "Single Cell",
+  "description": "Explore Single Cell data.",
+  "color": "#9966ff",
+  "version": "26.2.8",
+  "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
+  "modified": "2026-06-17T16:11:38.390Z",
+  "hash": "1b8a1473b442a53194af19858cddf575145e1013f8a5c88b5110fcb3f97c6af9",
+  "build": 778
+}

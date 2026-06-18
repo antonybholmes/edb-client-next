@@ -1,6 +1,7 @@
 import { type IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
-import { CENTERED_ROW_CLS } from '@/theme'
+
+export const CENTERED_ROW_CLS = 'flex flex-row items-center justify-center grow'
 
 export function CenterRow({ ref, className, children, ...props }: IDivProps) {
   return (

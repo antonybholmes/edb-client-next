@@ -1,6 +1,6 @@
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
-import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
+import { FooterPortal } from '@/components/toolbar/footer-portal'
 
 //import { ZoomSlider } from "@/toolbar/zoom-slider"
 import {
@@ -14,12 +14,12 @@ import { useEffect, useState } from 'react'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 
-import type { ISaveAsFormat } from '@/components/pages/save-as-dialog'
-import { SaveTxtDialog } from '@/components/pages/save-txt-dialog'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { TEXT_CANCEL } from '@/consts'
+import type { ISaveAsFileType } from '@/dialogs/save-as-dialog'
+import { SaveTxtDialog } from '@/dialogs/save-txt-dialog'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { useMessages } from '@/providers/message-provider'
+import { useMessages } from '@/providers/messages'
 
 import { MESSAGE_CHANNEL } from '../../matcalc/data/data-panel'
 import { HistoryPanel } from '../../matcalc/history/history-panel'
@@ -30,6 +30,7 @@ import {
 } from '../../matcalc/history/history-store'
 
 export function DataPanel() {
+  // the current file, sheet and all sheets from the history context
   const file = useFile()
   const sheet = useSheet()
   const sheets = useSheets()
@@ -43,7 +44,7 @@ export function DataPanel() {
 
   //const [scaleIndex, setScaleIndex] = useState(3)
 
-  const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'onco-data-panel')
+  const { messages, removeMessages } = useMessages(MESSAGE_CHANNEL) //'onco-data-panel')
 
   const [showSave, setShowSave] = useState('')
 
@@ -76,22 +77,25 @@ export function DataPanel() {
     )
 
     for (const message of filteredMessages) {
-      if (message.data.includes('save')) {
-        let format = 'txt'
+      if (typeof message.data === 'string') {
+        if (message.data.includes('save')) {
+          let format = 'txt'
 
-        if (message.data.includes(':')) {
-          format = message.data.split(':')[1]!
+          if (message.data.includes(':')) {
+            format = message.data.split(':')[1]!
+          }
+
+          setShowSave(format)
         }
 
-        setShowSave(format)
+        if (message.data.includes('show-sidebar')) {
+          setShowSideBar(!showSideBar)
+        }
       }
-
-      if (message.data.includes('show-sidebar')) {
-        setShowSideBar(!showSideBar)
-      }
-
-      removeMessage(message.id)
     }
+
+    // bulk remove messages after processing
+    removeMessages(messages.map(m => m.id))
   }, [messages])
 
   const rightTabs: ITab[] = [
@@ -110,7 +114,7 @@ export function DataPanel() {
           name="oncoplot"
           onResponse={(response, data) => {
             if (response !== TEXT_CANCEL) {
-              const d = data as { name: string; format: ISaveAsFormat }
+              const d = data as { name: string; format: ISaveAsFileType }
               save(d.name, d.format.ext)
             }
 
@@ -138,16 +142,9 @@ export function DataPanel() {
         />
       </TabSlideBar>
 
-      <ToolbarFooterPortal className="justify-end">
+      <FooterPortal className="justify-end">
         <span>{getFormattedShape(df)}</span>
-        <></>
-        <>
-          {/* <ZoomSlider
-              scaleIndex={scaleIndex}
-              onZoomChange={index => setScaleIndex(index)}
-            /> */}
-        </>
-      </ToolbarFooterPortal>
+      </FooterPortal>
     </>
   )
 }

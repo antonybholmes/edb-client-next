@@ -1,15 +1,10 @@
 import { VCenterRow } from '@/layout/v-center-row'
 
-import { useState } from 'react'
-
 import { PropsPanel } from '@/components/props-panel'
-import { NO_DIALOG, TEXT_NAME, type IDialogParams } from '@/consts'
-import { SaveIcon } from '@/icons/save-icon'
+import { TEXT_NAME } from '@/consts'
 import { downloadJson } from '@/lib/download-utils'
-import { randId } from '@/lib/id'
 import { Input } from '@/themed/v2/input'
 
-import { OpenIcon } from '@/components/icons/open-icon'
 import { SortableItem } from '@/components/sortable-item'
 import { IconButton } from '@/themed/icon-button'
 import {
@@ -28,15 +23,17 @@ import {
 } from '@dnd-kit/sortable'
 import { produce } from 'immer'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { DownloadIcon } from '@/components/icons/download-icon'
+import { UploadIcon } from '@/components/icons/upload-icon'
+import {
+  onTextFileChange,
+  type ITextFileOpen,
+} from '@/components/pages/open-files'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import {
-  onTextFileChange,
-  OpenFiles,
-  type ITextFileOpen,
-} from '@/components/pages/open-files'
+} from '@/components/plot/color-picker-popover'
 import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import {
@@ -48,83 +45,46 @@ import {
 
 interface IGeneElemProps {
   color: ICMAPColor
-
-  //setDelGene?: (gene: IOncoGene) => void
-  //setShowDialog: (params: IDialogParams) => void
 }
 
 function SortableGeneElem({ color }: IGeneElemProps) {
   const { settings, updateSettings } = useVariantSettings()
   return (
-    <SortableItem
-      key={color.id}
-      id={color.id}
-      // extChildren={
-      //   <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
-      //     <button
-      //       className={cn(
-      //         TRANS_COLOR_CLS,
-      //         'stroke-foreground/50 hover:stroke-red-400'
-      //       )}
-      //       onClick={() => {
-      //         //setGenes(genes.filter(m => m.id !== gene.id))
-
-      //         setShowDialog({
-      //           id: 'delete',
-      //           params: { gene },
-      //         })
-      //       }}
-      //       title="Delete gene"
-      //     >
-      //       <TrashIcon stroke="" w="w-4" />
-      //     </button>
-      //   </VCenterRow>
-      // }
-    >
-      {/* <Checkbox
-        checked={gene.show}
-        onCheckedChange={v =>
-          setGenes(
-            produce(genes, draft => {
-              const mut = draft.find(m => m.id === gene.id)
-              if (mut) {
-                mut.show = v
-              }
-            })
-          )
-        }
-      /> */}
-
+    <SortableItem key={color.id} id={color.id}>
       <ColorPickerButton
         className={SIMPLE_COLOR_EXT_CLS}
-        color={color.color}
-        onColorChange={v => {
-          updateSettings(
-            produce(settings, draft => {
-              const colToUpdate = draft.variants.cmap.colors.find(
-                c => c.id === color.id
+        colors={[
+          {
+            color: color.color,
+            onColorChange: v => {
+              updateSettings(
+                produce(settings, draft => {
+                  const colToUpdate = draft.variants.cmap.colors.find(
+                    c => c.id === color.id
+                  )
+                  if (colToUpdate) {
+                    colToUpdate.color = v
+                  }
+
+                  // if this color is used in a predefined cmap, update the color there as well
+                  // so that the change is reflected in the UI immediately
+                  if (draft.variants.colorBy in draft.cmaps) {
+                    const cmapToUpdate =
+                      draft.cmaps[draft.variants.colorBy as PredefinedCMAP]
+
+                    const colToUpdateInCmap = cmapToUpdate.colors.find(
+                      c => c.id === color.id
+                    )
+
+                    if (colToUpdateInCmap) {
+                      colToUpdateInCmap.color = v
+                    }
+                  }
+                })
               )
-              if (colToUpdate) {
-                colToUpdate.color = v
-              }
-
-              // if this color is used in a predefined cmap, update the color there as well
-              // so that the change is reflected in the UI immediately
-              if (draft.variants.colorBy in draft.cmaps) {
-                const cmapToUpdate =
-                  draft.cmaps[draft.variants.colorBy as PredefinedCMAP]
-
-                const colToUpdateInCmap = cmapToUpdate.colors.find(
-                  c => c.id === color.id
-                )
-
-                if (colToUpdateInCmap) {
-                  colToUpdateInCmap.color = v
-                }
-              }
-            })
-          )
-        }}
+            },
+          },
+        ]}
       />
 
       <Input
@@ -150,9 +110,10 @@ function SortableGeneElem({ color }: IGeneElemProps) {
 
 export function ColormapPropsPanel() {
   //const [delFeature, setDelFeature] = useState<IProteinFeature | null>(null)
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
   const { settings, updateSettings } = useVariantSettings()
+
+  const { open: openDialog } = useDialogs()
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -179,76 +140,39 @@ export function ColormapPropsPanel() {
   }
 
   return (
-    <>
-      {showDialog.id.startsWith('open') && (
-        <OpenFiles
-          //onOpenChange={() => setOpen("")}
-          onFileChange={(message, files) =>
-            onTextFileChange(message, files, files => {
-              openFeatureFiles(files)
-            })
-          }
-          fileTypes={['json']}
-        />
-      )}
+    <PropsPanel className="gap-y-2 pr-1">
+      <VCenterRow className="justify-between gap-x-2">
+        <VCenterRow>
+          <IconButton
+            onClick={() => {
+              openDialog({
+                type: 'open',
+                payload: {
+                  fileTypes: ['json'],
+                  callback: (message, files) => {
+                    onTextFileChange(message, files, files => {
+                      openFeatureFiles(files)
+                    })
+                  },
+                },
+              })
+            }}
+            title="Open colormap"
+          >
+            <UploadIcon />
+          </IconButton>
 
-      {/* {showDialog.id.includes('reset') && (
-        <OKCancelDialog
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              //onGroupsChange?.([])
-              setGenes([...DEFAULT_MUTATIONS])
+          <IconButton
+            // ripple={false}
+            onClick={() =>
+              downloadJson(settings.variants.cmap, 'colormap.json')
             }
+            title="Save colormap"
+          >
+            <DownloadIcon />
+          </IconButton>
 
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        >
-          Are you sure you want to reset all mutations?
-        </OKCancelDialog>
-      )} */}
-
-      {/* {showDialog.id.includes('delete') && (
-        <OKCancelDialog
-          //open={delFeature !== null}
-          showClose={true}
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              setGenes(
-                genes.filter(
-                  gene => gene.id !== (showDialog.params!.gene! as IOncoGene).id
-                )
-              )
-            }
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        >
-          {`Are you sure you want to delete ${
-            (showDialog.params!.gene! as IOncoGene).name
-          }?`}
-        </OKCancelDialog>
-      )} */}
-
-      <PropsPanel className="gap-y-2 pr-1">
-        <VCenterRow className="justify-between gap-x-2">
-          <VCenterRow>
-            <IconButton
-              onClick={() => setShowDialog({ id: randId('open'), params: {} })}
-              title="Open colormap"
-            >
-              <OpenIcon />
-            </IconButton>
-
-            <IconButton
-              // ripple={false}
-              onClick={() =>
-                downloadJson(settings.variants.cmap, 'colormap.json')
-              }
-              title="Save colormap"
-            >
-              <SaveIcon />
-            </IconButton>
-
-            {/* <IconButton
+          {/* <IconButton
               // ripple={false}
               onClick={() =>
                 setGenes(
@@ -266,70 +190,52 @@ export function ColormapPropsPanel() {
             >
               <PlusIcon fill="stroke-foreground" />
             </IconButton> */}
-          </VCenterRow>
-
-          {/* <Button
-            variant="link"
-            size="sm"
-            // ripple={false}
-            onClick={() => setShowDialog({ id: randId('reset'), params: {} })}
-            //aria-label="Clear All"
-            title="Reset genes"
-          >
-            {TEXT_RESET}
-          </Button> */}
         </VCenterRow>
+      </VCenterRow>
 
-        <MenuSeparator />
+      <MenuSeparator />
 
-        <VScrollPanel>
-          <DndContext
-            sensors={sensors}
-            modifiers={[restrictToVerticalAxis]}
-            //onDragStart={event => setActiveId(event.active.id as string)}
-            onDragEnd={event => {
-              const { active, over } = event
+      <VScrollPanel>
+        <DndContext
+          sensors={sensors}
+          modifiers={[restrictToVerticalAxis]}
+          //onDragStart={event => setActiveId(event.active.id as string)}
+          onDragEnd={event => {
+            const { active, over } = event
 
-              if (over && active.id !== over?.id) {
-                const oldIndex = settings.variants.cmap.colors.findIndex(
-                  c => c.id === active.id
-                )
-                const newIndex = settings.variants.cmap.colors.findIndex(
-                  c => c.id === over.id
-                )
-                const newOrder = arrayMove(
-                  settings.variants.cmap.colors,
-                  oldIndex,
-                  newIndex
-                )
+            if (over && active.id !== over?.id) {
+              const oldIndex = settings.variants.cmap.colors.findIndex(
+                c => c.id === active.id
+              )
+              const newIndex = settings.variants.cmap.colors.findIndex(
+                c => c.id === over.id
+              )
+              const newOrder = arrayMove(
+                settings.variants.cmap.colors,
+                oldIndex,
+                newIndex
+              )
 
-                updateSettings(
-                  produce(settings, draft => {
-                    draft.variants.cmap.colors = newOrder
-                  })
-                )
-              }
-            }}
+              updateSettings(
+                produce(settings, draft => {
+                  draft.variants.cmap.colors = newOrder
+                })
+              )
+            }
+          }}
+        >
+          <SortableContext
+            items={settings.variants.cmap.colors.map(color => color.id)}
+            strategy={verticalListSortingStrategy}
           >
-            <SortableContext
-              items={settings.variants.cmap.colors.map(color => color.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <ul className="flex flex-col  ">
-                {settings.variants.cmap.colors.map(color => {
-                  return (
-                    <SortableGeneElem
-                      key={color.id}
-                      color={color}
-                      //setShowDialog={setShowDialog}
-                    />
-                  )
-                })}
-              </ul>
-            </SortableContext>
-          </DndContext>
-        </VScrollPanel>
-      </PropsPanel>
-    </>
+            <ul className="flex flex-col  ">
+              {settings.variants.cmap.colors.map(color => {
+                return <SortableGeneElem key={color.id} color={color} />
+              })}
+            </ul>
+          </SortableContext>
+        </DndContext>
+      </VScrollPanel>
+    </PropsPanel>
   )
 }

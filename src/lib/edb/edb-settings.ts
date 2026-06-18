@@ -1,10 +1,11 @@
-import { config } from '@/config'
-import type { IBasicEdbUser } from '@/lib/edb/edb'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { config } from '../../config'
+import type { IAppInfo } from '../app-info'
+import type { IBasicEdbUser } from './edb'
 import { useTheme } from './theme'
 
-const SETTINGS_KEY = `${config.appId}:settings:v22`
+const SETTINGS_KEY = `${config.appId}:settings:v36`
 
 export type ToolbarStyle = 'classic' | 'single'
 
@@ -19,14 +20,25 @@ export interface IEdbSettings {
   staySignedIn: boolean
   toolbars: {
     ribbon: { style: ToolbarStyle }
-    groups: { labels: { show: boolean } }
+    groups: { labels: { mode: 'auto' | 'show' | 'hide' } }
   }
-  modules: { links: { openInNewWindow: boolean } }
+  apps: { links: { openInNewWindow: boolean }; useAccentColors: boolean }
   sidebar: { show: boolean }
   history: {
     sidebar: {
       show: boolean
     }
+  }
+  save: {
+    filetypes: {
+      txt: {
+        delimiter: 'tab' | 'comma'
+        name: string
+      }
+    }
+  }
+  genomic: {
+    assembly: string
   }
 }
 
@@ -38,23 +50,35 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
   toolbars: {
     groups: {
       labels: {
-        show: true,
+        mode: 'auto',
       },
     },
     ribbon: {
       style: 'single',
     },
   },
-  modules: {
+  apps: {
     links: {
-      openInNewWindow: false,
+      openInNewWindow: true,
     },
+    useAccentColors: true,
   },
   sidebar: { show: true },
   history: {
     sidebar: {
       show: false,
     },
+  },
+  save: {
+    filetypes: {
+      txt: {
+        delimiter: 'tab',
+        name: 'data',
+      },
+    },
+  },
+  genomic: {
+    assembly: 'grch37',
   },
 }
 
@@ -64,7 +88,7 @@ export interface IEdbSettingsStore extends IEdbSettings {
 
 export const useEdbSettingsStore = create<IEdbSettingsStore>()(
   persist(
-    set => ({
+    (set) => ({
       ...DEFAULT_EDB_SETTINGS,
       updateSettings: (settings: Partial<IEdbSettings>) => {
         set({
@@ -86,8 +110,8 @@ export function useEdbSettings(): {
   toggleHistorySidebar: () => void
   historySidebarOpen: (open: boolean) => void
 } {
-  const settings = useEdbSettingsStore(state => state)
-  const updateSettings = useEdbSettingsStore(state => state.updateSettings)
+  const settings = useEdbSettingsStore((state) => state)
+  const updateSettings = useEdbSettingsStore((state) => state.updateSettings)
   const { resetTheme } = useTheme()
 
   function resetSettings() {
@@ -111,10 +135,61 @@ export function useEdbSettings(): {
 
   return {
     settings,
-
     updateSettings,
     resetSettings,
     toggleHistorySidebar,
     historySidebarOpen,
+  }
+}
+
+export interface IAppInfoStore {
+  appInfo: IAppInfo | undefined
+  setAppInfo: (app: IAppInfo) => void
+}
+
+export const useAppInfoStore = create<IAppInfoStore>()((set) => ({
+  appInfo: undefined,
+
+  setAppInfo: (appInfo: IAppInfo) => {
+    set({
+      appInfo,
+    })
+  },
+}))
+
+/**
+ * Set the app globally so that it can be used to
+ * render accent colors based on the app.
+ *
+ * @returns
+ */
+export function useAppInfo(): {
+  appInfo: IAppInfo | undefined
+  setAppInfo: (
+    appInfo: IAppInfo,
+    opts?: { updateAccentColor?: boolean }
+  ) => void
+} {
+  const { settings } = useEdbSettings()
+  const appInfo = useAppInfoStore((state) => state.appInfo)
+
+  const setAppInfo = useAppInfoStore((state) => state.setAppInfo)
+
+  function _setAppInfo(
+    appInfo: IAppInfo,
+    opts: { updateAccentColor?: boolean } = {}
+  ) {
+    const { updateAccentColor = true } = opts
+    if (appInfo.color && updateAccentColor && settings.apps.useAccentColors) {
+      // 1. Grab the root HTML element
+      const root = document.documentElement
+      root.style.setProperty('--edb-app-theme', appInfo.color)
+    }
+    setAppInfo(appInfo)
+  }
+
+  return {
+    appInfo,
+    setAppInfo: _setAppInfo,
   }
 }

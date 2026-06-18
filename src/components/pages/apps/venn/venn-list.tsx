@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { BaseCol } from '@/layout/base-col'
 
@@ -12,11 +12,11 @@ import { Input } from '@/themed/v2/input'
 import { TEXT_CLEAR } from '@/consts'
 import { cn } from '@/lib/shadcn-utils'
 
+import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
+} from '@/components/plot/color-picker-popover'
 import { DEFAULT_DEBOUNCE_DELAY_MS, useDebounce } from '@/hooks/debounce'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
@@ -79,10 +79,10 @@ export function VennList({ vennList }: IProps) {
         <Input
           id={`label${vennList.id}`}
           value={vennList.name ?? ''}
-          onChange={e => {
+          onChange={(e) => {
             //console.log(index, e.target.value)
             setVennLists(
-              produce(vennLists, draft => {
+              produce(vennLists, (draft) => {
                 draft[vennList.id]!.name = e.target.value
               })
             )
@@ -92,32 +92,35 @@ export function VennList({ vennList }: IProps) {
         />
         <VCenterRow className={cn('shrink-0 gap-x-1 pr-1')}>
           <ColorPickerButton
-            allowAlpha={true}
-            color={circles[vennList.id]!.fill.color}
-            opacity={circles[vennList.id]!.fill.opacity}
-            onColorChange={(color, opacity) => {
-              console.log('color', color, opacity)
-              updateCircles(
-                produce(circles, draft => {
-                  draft[vennList.id]!.fill.color = color
-                  draft[vennList.id]!.fill.opacity = opacity
-                })
-              )
-            }}
+            colors={[
+              {
+                color: circles[vennList.id]!.fill.value,
+                onColorChange: (color, opacity) =>
+                  updateCircles(
+                    produce(circles, (draft) => {
+                      draft[vennList.id]!.fill.value = color
+                      draft[vennList.id]!.fill.opacity = opacity
+                    })
+                  ),
+              },
+            ]}
             title="Fill color"
             className={SIMPLE_COLOR_EXT_CLS}
           />
           <ColorPickerButton
-            allowAlpha={true}
-            color={circles[vennList.id]!.stroke.color}
-            onColorChange={(color, alpha) =>
-              updateCircles(
-                produce(circles, draft => {
-                  draft[vennList.id]!.stroke.color = color
-                  draft[vennList.id]!.stroke.opacity = alpha
-                })
-              )
-            }
+            colors={[
+              {
+                color: circles[vennList.id]!.stroke.value,
+                opacity: circles[vennList.id]!.stroke.opacity,
+                onColorChange: (color, opacity) =>
+                  updateCircles(
+                    produce(circles, (draft) => {
+                      draft[vennList.id]!.stroke.value = color
+                      draft[vennList.id]!.stroke.opacity = opacity
+                    })
+                  ),
+              },
+            ]}
             title="Line color"
             className={SIMPLE_COLOR_EXT_CLS}
           />
@@ -143,7 +146,7 @@ export function VennList({ vennList }: IProps) {
         aria-label={`Set ${vennList.id}`}
         //placeholder={listLabelMap[index] ?? ''}
         value={text}
-        onTextChange={v => {
+        onTextChange={(v) => {
           setText(v)
           // setVennLists(
           //   produce(vennLists, (draft) => {

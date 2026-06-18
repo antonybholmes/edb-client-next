@@ -10,7 +10,7 @@ import {
 } from './lollipop-utils'
 import { AA_RASMOL_COLORS } from './variants'
 
-const SETTINGS_KEY = `${config.appId}:app:lollipop:v38`
+const SETTINGS_KEY = `${config.appId}:app:lollipop:v42`
 
 export interface IAAColor {
   show: boolean

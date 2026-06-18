@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
   DropdownSortOrderGroup,
 } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { SkeletonRows } from '@/components/shadcn/ui/themed/v2/skeleton'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { V_SCROLL_CHILD_CLS, VScrollPanel } from '@/components/v-scroll-panel'
 import { appsConfig } from '@/config/apps'
@@ -132,69 +133,75 @@ export function DatasetPanel() {
   return (
     <ResizablePanelGroup orientation="vertical" className="pl-2">
       <ResizablePanel className="flex flex-col" defaultSize="50%" minSize="10%">
-        <VCenterRow className="justify-end">
-          <IconButton
-            title="Select"
-            onClick={() => {
-              setDatasetsInUse(
-                Object.fromEntries(
-                  datasets.map(dataset => [dataset.id, !selectAll])
-                )
-              )
+        {datasets.length === 0 ? (
+          <SkeletonRows className="w-3/4 mx-auto" />
+        ) : (
+          <>
+            <VCenterRow className="justify-end">
+              <IconButton
+                title="Select"
+                onClick={() => {
+                  setDatasetsInUse(
+                    Object.fromEntries(
+                      datasets.map(dataset => [dataset.id, !selectAll])
+                    )
+                  )
 
-              setSelectAll(!selectAll)
-            }}
-          >
-            <MultiSelectIcon checked={selectAll} />
-          </IconButton>
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <IconButton
-                  // ripple={false}
-                  /* onClick={() => {
+                  setSelectAll(!selectAll)
+                }}
+              >
+                <MultiSelectIcon checked={selectAll} />
+              </IconButton>
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <IconButton
+                      // ripple={false}
+                      /* onClick={() => {
                     setAddedMap(new Map<string, boolean>(selectedMap.entries()))
                   }} */
-                  title="Sort Items"
-                >
-                  <ArrowDownUp size={20} strokeWidth={1.5} />
-                </IconButton>
-              }
-            />
-            <DropdownMenuContent align="start">
-              <DropdownSortOrderGroup
-                asc={settings.datasets.sort.asc}
-                setAsc={v =>
-                  updateSettings(
-                    produce(settings, draft => {
-                      draft.datasets.sort.asc = v
-                    })
-                  )
-                }
-              />
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </VCenterRow>
-        <VScrollPanel>
-          <CollapseTree
-            tab={foldersTab}
-            //value={tab!}
-            // onValueChange={t => {
-            //   // only use tabs from the tree that have content, otherwise
-            //   // the ui will appear empty
-            //   setTab(t)
-            // }}
-            onCheckedChange={(tab: ITab, state: boolean) => {
-              const tabId = tab.id //getTabId(tab)
+                      title="Sort Items"
+                    >
+                      <ArrowDownUp size={20} strokeWidth={1.5} />
+                    </IconButton>
+                  }
+                />
+                <DropdownMenuContent align="start">
+                  <DropdownSortOrderGroup
+                    asc={settings.datasets.sort.asc}
+                    setAsc={v =>
+                      updateSettings(
+                        produce(settings, draft => {
+                          draft.datasets.sort.asc = v
+                        })
+                      )
+                    }
+                  />
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </VCenterRow>
+            <VScrollPanel>
+              <CollapseTree
+                tab={foldersTab}
+                //value={tab!}
+                // onValueChange={t => {
+                //   // only use tabs from the tree that have content, otherwise
+                //   // the ui will appear empty
+                //   setTab(t)
+                // }}
+                onCheckedChange={(tab: ITab, state: boolean) => {
+                  const tabId = tab.id //getTabId(tab)
 
-              setDatasetsInUse({
-                ...datasetUseMap,
-                [tabId]: state,
-              })
-            }}
-            showRoot={false}
-          />
-        </VScrollPanel>
+                  setDatasetsInUse({
+                    ...datasetUseMap,
+                    [tabId]: state,
+                  })
+                }}
+                showRoot={false}
+              />
+            </VScrollPanel>
+          </>
+        )}
       </ResizablePanel>
       <ThinVResizeHandle />
       <ResizablePanel
@@ -202,30 +209,36 @@ export function DatasetPanel() {
         defaultSize="50%"
         minSize="10%"
         collapsible={true}
-        className="flex flex-col bg-background/75 py-3 rounded-theme overflow-hidden mb-2 border border-border/50"
+        className="flex flex-col"
       >
-        <VCenterRow className="px-3 pb-2 border-b border-border/50 justify-between text-xs">
-          <span>{samples.length} samples</span>
-        </VCenterRow>
-        <VScrollPanel asChild={true}>
-          <ul className={V_SCROLL_CHILD_CLS}>
-            {samples.map((sample, si) => {
-              return (
-                <li
-                  key={si}
-                  className="flex flex-row items-start text-xs gap-x-3 px-3 py-2 border-b border-border"
-                >
-                  <BaseCol>
-                    <p className="font-semibold">{sample.name}</p>
-                    <p>
-                      {sample.coo}, {sample.lymphgenClass}
-                    </p>
-                  </BaseCol>
-                </li>
-              )
-            })}
-          </ul>
-        </VScrollPanel>
+        {datasets.length === 0 ? (
+          <SkeletonRows className="w-3/4 mx-auto" />
+        ) : (
+          <BaseCol className="bg-background/75 py-3 rounded-theme overflow-hidden mb-2 border border-border/50 grow">
+            <VCenterRow className="px-3 pb-2 border-b border-border/50 justify-between text-xs">
+              <span>{samples.length} samples</span>
+            </VCenterRow>
+            <VScrollPanel asChild={true}>
+              <ul className={V_SCROLL_CHILD_CLS}>
+                {samples.map((sample, si) => {
+                  return (
+                    <li
+                      key={si}
+                      className="flex flex-row items-start text-xs gap-x-3 px-3 py-2 border-b border-border"
+                    >
+                      <BaseCol>
+                        <p className="font-semibold">{sample.name}</p>
+                        <p>
+                          {sample.coo}, {sample.lymphgenClass}
+                        </p>
+                      </BaseCol>
+                    </li>
+                  )
+                })}
+              </ul>
+            </VScrollPanel>
+          </BaseCol>
+        )}
       </ResizablePanel>
     </ResizablePanelGroup>
   )

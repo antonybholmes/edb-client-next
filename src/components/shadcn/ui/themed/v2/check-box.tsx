@@ -25,9 +25,10 @@ export const TICK_CLS = cn(
   FOCUS_INSET_RING_CLS,
   CENTERED_ROW_CLS,
   'rounded-sm aspect-square w-4.5 h-4.5 shrink-0 border trans-color',
-  'group-data-unchecked:bg-background group-data-unchecked:border-border/70 group-data-unchecked:group-hover:border-ring',
-  'group-data-checked:bg-theme/80 group-data-checked:border-transparent',
-  'group-data-checked:hover:bg-theme'
+  'group-data-unchecked:bg-background group-data-unchecked:border-border/70',
+  'group-data-unchecked:group-hover:border-app-theme/30',
+  'group-data-checked:bg-app-theme/80 group-data-checked:border-transparent',
+  'group-data-checked:hover:bg-app-theme'
 )
 
 export function Checkbox({
@@ -45,7 +46,7 @@ export function Checkbox({
       checked={checked}
       //defaultChecked={checked}
       onCheckedChange={onCheckedChange}
-      className={cn(CHECK_CLS)}
+      className={CHECK_CLS}
       disabled={disabled}
       {...props}
     >
@@ -55,11 +56,11 @@ export function Checkbox({
         data-enabled={!disabled}
       >
         {checked ? (
-          <Check className="stroke-white" size={16} strokeWidth={2} />
+          <Check className="stroke-white" size={14} strokeWidth={3} />
         ) : (
           <Check
-            className="stroke-theme/30 mt-px group-hover:visible invisible"
-            size={16}
+            className="stroke-app-theme/30 mt-px group-hover:visible invisible"
+            size={14}
             strokeWidth={3}
           />
         )}
@@ -70,7 +71,7 @@ export function Checkbox({
   if (children) {
     ret = (
       <Field.Root>
-        <Field.Label className="flex flex-row items-center gap-x-2">
+        <Field.Label className="flex flex-row items-center gap-x-1.5">
           {ret}
           {children}
         </Field.Label>

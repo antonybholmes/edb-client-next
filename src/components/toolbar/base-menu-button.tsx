@@ -22,11 +22,11 @@ export function BaseMenuButton({
       style={{ justifyContent: 'start' }}
       {...props}
     >
-      <span className="w-8 shrink-0">{c.length > 1 && c[0]}</span>
+      <span className="w-button-md shrink-0">{c.length > 1 && c[0]}</span>
 
       {c[c.length - 1]}
 
-      <span className="w-8 shrink-0" />
+      <span className="w-button-md shrink-0" />
     </Button>
   )
 }

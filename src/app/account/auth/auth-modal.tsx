@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 
 import { AppIcon } from '@/components/icons/app-icon'
 import { CenterCol } from '@/components/layout/center-col'

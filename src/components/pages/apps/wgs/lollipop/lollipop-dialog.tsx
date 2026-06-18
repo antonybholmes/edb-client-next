@@ -1,7 +1,7 @@
 import { BaseCol } from '@/layout/base-col'
 
 import { TEXT_CANCEL } from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
 import { VCenterRow } from '@/layout/v-center-row'
 import { useState } from 'react'
 

@@ -1,11 +1,6 @@
-import {
-  Index,
-  makeIndex,
-  type IIndexOptions,
-  type IndexFromType,
-  type SeriesData,
-} from '.'
+import { Index, makeIndex, type IIndexOptions, type IndexFromType } from '.'
 import { BaseIndex } from './base-index'
+import type { SeriesData } from './series-data'
 
 export type SeriesFromType = BaseSeries | IndexFromType
 

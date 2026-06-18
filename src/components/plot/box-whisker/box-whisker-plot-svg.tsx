@@ -6,7 +6,7 @@ import { Axis, YAxis } from '@/components/plot/axis'
 import {
   DEFAULT_STROKE_PROPS,
   NO_FILL_PROPS,
-  type IColorProps,
+  type IPaintProps,
   type IStrokeProps,
 } from '@/components/plot/svg-props'
 import type { LeftRightPos } from '@/components/side'
@@ -24,7 +24,7 @@ interface IProps extends IDivProps {
   height?: number
   stroke?: IStrokeProps
   medianStroke?: IStrokeProps
-  fill?: IColorProps
+  fill?: IPaintProps
   mode?: IBoxWhiskerMode
 }
 
@@ -37,7 +37,7 @@ export function BoxWhiskerPlotSvg({
   width = 50,
   height = 500,
   stroke = { ...DEFAULT_STROKE_PROPS, width: 1.5 },
-  medianStroke = { ...DEFAULT_STROKE_PROPS, color: COLOR_RED, width: 1.5 },
+  medianStroke = { ...DEFAULT_STROKE_PROPS, value: COLOR_RED, width: 1.5 },
   fill = NO_FILL_PROPS,
   mode = 'full',
 }: IProps) {
@@ -83,7 +83,7 @@ export function BoxWhiskerPlotSvg({
           y1={y1}
           y2={y2}
           strokeWidth={stroke?.width ?? 0}
-          stroke={stroke?.color ?? 'none'}
+          stroke={stroke?.value ?? 'none'}
         />
         <line
           x1={x1}
@@ -91,7 +91,7 @@ export function BoxWhiskerPlotSvg({
           y1={y1}
           y2={y1}
           strokeWidth={stroke?.width ?? 0}
-          stroke={stroke?.color ?? 'none'}
+          stroke={stroke?.value ?? 'none'}
         />
         <line
           x1={x1}
@@ -99,7 +99,7 @@ export function BoxWhiskerPlotSvg({
           y1={y2}
           y2={y2}
           strokeWidth={stroke?.width ?? 0}
-          stroke={stroke?.color ?? 'none'}
+          stroke={stroke?.value ?? 'none'}
         />
 
         {/* iqr */}
@@ -109,8 +109,8 @@ export function BoxWhiskerPlotSvg({
           height={yq1 - yq3}
           width={x2 - x1}
           strokeWidth={stroke?.width ?? 0}
-          stroke={stroke?.color ?? 'none'}
-          fill={fill?.color ?? 'none'}
+          stroke={stroke?.value ?? 'none'}
+          fill={fill?.value ?? 'none'}
           fillOpacity={fill?.opacity ?? 0}
         />
 
@@ -121,7 +121,7 @@ export function BoxWhiskerPlotSvg({
           y1={ymed}
           y2={ymed}
           strokeWidth={medianStroke?.width ?? 0}
-          stroke={medianStroke?.color ?? 'none'}
+          stroke={medianStroke?.value ?? 'none'}
         />
       </>
     )

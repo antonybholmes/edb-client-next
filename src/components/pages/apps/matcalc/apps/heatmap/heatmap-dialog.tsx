@@ -1,5 +1,5 @@
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
-import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
+import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import {
   HCluster,
   averageLinkage,
@@ -19,12 +19,12 @@ import {
   pearsond as pearsonDist,
 } from '@/lib/math/distance'
 
-import { CheckPropRow } from '@/components/dialog/check-prop-row'
-import { PropRow } from '@/components/dialog/prop-row'
-import { SettingsAccordionItem } from '@/components/dialog/settings/settings-dialog'
 import { DEFAULT_HEATMAP_PROPS } from '@/components/plot/heatmap/heatmap-svg-props'
 import { Accordion } from '@/components/shadcn/ui/themed/v2/accordion'
 import { VScrollPanel } from '@/components/v-scroll-panel'
+import { CheckPropRow } from '@/dialogs/check-prop-row'
+import { PropRow } from '@/dialogs/prop-row'
+import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
 import { HelpButton } from '@/help/help-button'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
@@ -45,6 +45,7 @@ import {
   useGroupName,
   useGroups,
   useSheet,
+  type DataFrameType,
   type HistoryPlot,
 } from '../../history/history-store'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
@@ -63,29 +64,26 @@ const DISTANCE_METRIC_MAP: { [k: string]: IDistFunc } = {
   Euclidean: euclideanDist,
 }
 
-export interface IProps extends IModalProps {
-  //df: BaseDataFrame | null
-  isClusterMap?: boolean
+export interface IProps extends IModalProps<HistoryPlot> {
+  sheet?: DataFrameType | undefined
+  isClusterMap?: boolean | undefined
 }
 
 export function HeatMapDialog({
+  sheet,
   open = true,
-  //df,
   isClusterMap = false,
   onResponse,
 }: IProps) {
-  //const [linkage, setLinkage] = useState("Average")
-  //const [distanceMetric, setDistanceMetric] = useState("Correlation")
-
   //const file = useFile()
-  const sheet = useSheet()
+
   const groups = useGroups()
   const groupName = useGroupName()
 
   //const [topRows, setTopRows] = useState(1000)
   const [error, setError] = useState('')
 
-  let df = sheet as BaseDataFrame
+  let df = (sheet ?? useSheet()) as BaseDataFrame
 
   const { settings, updateSettings } = useMatcalcSettings()
 
@@ -108,7 +106,7 @@ export function HeatMapDialog({
   function makeCluster() {
     console.log('make cluster', df)
     if (!df) {
-      onResponse?.(TEXT_CANCEL)
+      onResponse?.(TEXT_CANCEL, undefined)
       return
     }
 
@@ -154,7 +152,7 @@ export function HeatMapDialog({
       }
 
       if (!dfToPlot) {
-        onResponse?.(TEXT_CANCEL)
+        onResponse?.(TEXT_CANCEL, undefined)
         return
       }
     }
@@ -210,7 +208,7 @@ export function HeatMapDialog({
     }
 
     if (!dfToPlot) {
-      onResponse?.(TEXT_CANCEL)
+      onResponse?.(TEXT_CANCEL, undefined)
       return
     }
 
@@ -271,7 +269,7 @@ export function HeatMapDialog({
       onResponse={r => {
         console.log('heatmap dialog response', r)
         if (r === TEXT_CANCEL) {
-          onResponse?.(r)
+          onResponse?.(r, undefined)
         } else {
           makeCluster()
         }
@@ -320,7 +318,7 @@ export function HeatMapDialog({
 
                   updateSettings(newSettings)
                 }}
-                w="sm"
+                w="xs"
               />
               <span className="shrink-0">rows using</span>
               <SelectList
@@ -334,7 +332,7 @@ export function HeatMapDialog({
                     updateSettings(newSettings)
                   }
                 }}
-                w="md"
+                w="sm"
               >
                 <SelectItem value="Stdev">Stdev</SelectItem>
                 <SelectItem value="Mean">Mean</SelectItem>

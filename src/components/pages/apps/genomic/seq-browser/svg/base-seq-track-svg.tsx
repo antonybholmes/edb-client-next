@@ -1,14 +1,14 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
 import { type Axis } from '@/components/plot/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/axis-svg'
+import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/svg-axis'
 import type { IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { formattedList, truncate } from '@/lib/text/text'
 import * as d3 from 'd3'
 import { useContext, useMemo } from 'react'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
-import { MouseEventContext, type AllSignalTrackTypes } from '../tracks-provider'
+import { MouseEventContext, type SignalTrack } from '../tracks-provider'
 import { NO_TRACK_TOOLTIP } from '../use-tooltip'
 
 export interface ISeqPos extends IPos {
@@ -21,7 +21,7 @@ export interface ISeqPos extends IPos {
 
 interface IProps extends IDivProps {
   tracks: {
-    track: AllSignalTrackTypes
+    track: SignalTrack
     positions: ISeqPos[]
   }[]
 
@@ -206,7 +206,7 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
             .x((d: IPos) => d.x)
             .y((d: IPos) => d.y)
 
-          if (settings.seqs.smoothing.on) {
+          if (settings.tracks.seqs.smoothing.on) {
             line = line.curve(d3.curveBasis)
           }
 
@@ -220,7 +220,7 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
             .y0(yax.domainToRange(0))
             .y1((d: IPos) => d.y)
 
-          if (settings.seqs.smoothing.on) {
+          if (settings.tracks.seqs.smoothing.on) {
             area = area.curve(d3.curveBasis)
           }
 
@@ -273,7 +273,7 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
               {t.track.displayOptions.fill.show && (
                 <path
                   d={fillCoords}
-                  fill={t.track.displayOptions.fill.color}
+                  fill={t.track.displayOptions.fill.value}
                   stroke="none"
                   fillOpacity={t.track.displayOptions.fill.opacity}
                 />
@@ -283,7 +283,7 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
                 <path
                   d={coords}
                   fill="none"
-                  stroke={t.track.displayOptions.stroke.color}
+                  stroke={t.track.displayOptions.stroke.value}
                   strokeWidth={t.track.displayOptions.stroke.width}
                 />
               )}

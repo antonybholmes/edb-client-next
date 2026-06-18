@@ -1,5 +1,4 @@
-import Image from 'next/image'
-import { ComponentProps } from 'react'
+import type { ComponentProps } from 'react'
 
 export function getSizes(size: [number, number]): [number, number][] {
   return [
@@ -20,7 +19,7 @@ export function getSrcSet(
   sizes: [number, number][]
 ): string {
   return sizes
-    .map((s) => `${dir}/opt/${name}-${s[0]}x${s[1]}.${ext} ${s[0]}w`)
+    .map(s => `${dir}/opt/${name}-${s[0]}x${s[1]}.${ext} ${s[0]}w`)
     .join(', ')
 }
 
@@ -44,6 +43,6 @@ export function getPlaceholderSrc(
 export function BaseImage({
   alt = 'Interesting Image',
   ...props
-}: ComponentProps<typeof Image>) {
-  return <Image alt={alt} {...props} />
+}: ComponentProps<'img'>) {
+  return <img alt={alt} {...props} />
 }

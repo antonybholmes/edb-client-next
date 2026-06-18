@@ -42,7 +42,7 @@ export function Breadcrumb({ crumbs, className }: IBreadcrumbProps) {
     ret.push(
       <li key={`divider-${i}`} className="group flex flex-row gap-x-2">
         <ChevronRightIcon
-          w="w-3"
+          size="w-3"
           className="trans-300 transition-all stroke-theme group-hover:translate-x-0.5 group-hover:stroke-theme dark:group-hover:stroke-white"
           stroke=""
         />

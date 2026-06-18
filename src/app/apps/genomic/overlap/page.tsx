@@ -1,4 +1,4 @@
-import MODULE_INFO from '@/components/pages/apps/genomic/overlap/module.json'
+import MODULE_INFO from '@/components/pages/apps/genomic/overlap/manifest.json'
 import { OverlapQueryPage } from '@/components/pages/apps/genomic/overlap/overlap-page'
 import { makeMetaDataFromModule } from '@/lib/metadata'
 

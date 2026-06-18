@@ -1,6 +1,6 @@
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { cn } from '@/lib/shadcn-utils'
-import { BUTTON_MD_H_CLS } from '@/theme'
+
 import { createContext, useContext, useState } from 'react'
 import { ChevronRightIcon } from '../icons/chevron-right-icon'
 import { VCenterRow } from '../layout/v-center-row'
@@ -98,7 +98,7 @@ function _HelpTreeNode({ level, node }: { level: number; node: ITopicTree }) {
 
   return (
     <li className="flex flex-col gap-y-0.5">
-      <VCenterRow className={cn(BUTTON_MD_H_CLS, 'gap-x-1')}>
+      <VCenterRow className="h-button-md gap-x-1">
         <span
           className="data-[checked=true]:bg-theme w-1 h-5 rounded-full shrink-0"
           data-checked={isSelected}

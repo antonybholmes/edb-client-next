@@ -178,7 +178,7 @@ function TabItem({
       {checked && (
         <span
           ref={lineRef}
-          className="absolute bottom-0 w-full bg-theme h-0.5"
+          className="absolute bottom-0 w-full bg-app-theme h-0.5"
         />
       )}
     </TabsTrigger>

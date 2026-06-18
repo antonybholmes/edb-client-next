@@ -1,17 +1,18 @@
-import { SIMPLE_COLOR_EXT_CLS } from '@/components/color/color-picker-button'
-import { ColorPropRow } from '@/components/dialog/color-prop-row'
-import { SettingsAccordionItem } from '@/components/dialog/settings/settings-dialog'
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
+import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
+import { FontUI } from '@/components/plot/font/font-ui'
 import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
 import { LabelContainer } from '@/components/shadcn/ui/themed/v2/label'
 import {
-  RadioGroup,
-  RadioGroupItem,
-} from '@/components/shadcn/ui/themed/v2/radio-group'
-import { TEXT_OK } from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
-import { PropRow } from '@/dialog/prop-row'
-import { SwitchPropRow } from '@/dialog/switch-prop-row'
+  GroupToggle,
+  ToggleGroup,
+} from '@/components/shadcn/ui/themed/v2/toggle-group'
+import { TEXT_CANCEL, TEXT_OK } from '@/consts'
+import { ColorPropRow } from '@/dialogs/color-prop-row'
+import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
+import { PropRow } from '@/dialogs/prop-row'
+import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
+import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { NumericalInput } from '@/themed/numerical-input'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 import { produce } from 'immer'
@@ -24,81 +25,31 @@ import {
 } from '../../seq-browser-settings'
 import type { IGeneTrack, ITrackGroup } from '../../tracks-provider'
 
-export interface IProps {
+export interface IProps extends IModalProps<{
   group: ITrackGroup
   track: IGeneTrack
-  callback?: (group: ITrackGroup, track: IGeneTrack) => void
-
-  onCancel: () => void
+}> {
+  group: ITrackGroup
+  track: IGeneTrack
 }
 
-export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
+export function GenesEditDialog({ group, track, onResponse }: IProps) {
   const [_track, setTrack] = useState(track)
   const { settings, updateSettings } = useSeqBrowserSettings()
-
-  // const [showAxes, setShowAxes] = useState(true)
-
-  // const [strokeShow, setStrokeShow] = useState(true)
-  // const [strokeWidth, setStrokeWidth] = useState(0)
-  // const [strokeColor, setStrokeColor] = useState(COLOR_BLACK) //`#${Math.floor(Math.random() * 16777215).toString(16)}`,
-
-  // const [fillShow, setFillShow] = useState(true)
-  // const [fillOpacity, setFillOpacity] = useState(0)
-  // const [fillColor, setFillColor] = useState(COLOR_BLACK)
-
-  // useEffect(() => {
-  //   // if group provided, set defaults
-
-  //   setName(_track.name)
-
-  //   setShowAxes(_track.displayOptions.axes.show)
-
-  //   setStrokeShow(_track.displayOptions.stroke.show)
-  //   setStrokeWidth(_track.displayOptions.stroke.width)
-  //   setStrokeColor(_track.displayOptions.stroke.color)
-
-  //   setFillShow(_track.displayOptions.fill.show)
-  //   setFillOpacity(_track.displayOptions.fill.opacity)
-  //   setFillColor(_track.displayOptions.fill.color)
-  // }, [track])
-
-  // function updateTrack() {
-  //   // return modified group
-  //   callback?.({
-  //     ...track,
-  //     name,
-  //     displayOptions: {
-  //       ..._track.displayOptions,
-  //       axes: { ..._track.displayOptions.axes, show: showAxes },
-  //       stroke: {
-  //         ..._track.displayOptions.stroke,
-  //         show: strokeShow,
-  //         width: strokeWidth,
-  //         color: strokeColor,
-  //       },
-  //       fill: {
-  //         ..._track.displayOptions.fill,
-  //         show: fillShow,
-  //         opacity: fillOpacity,
-  //         color: fillColor,
-  //       },
-  //     },
-  //   })
-  // }
 
   return (
     <OKCancelDialog
       buttons={[TEXT_OK]}
       title={_track.name}
       onResponse={() => {
-        onCancel()
+        onResponse?.(TEXT_CANCEL, undefined)
       }}
       //contentVariant="glass"
       //bodyVariant="card"
       //overlayColor="trans"
     >
       <ScrollAccordion
-        value={['labels', 'genes', 'canonical-genes', 'display-density']}
+        value={['labels', 'appearance', 'canonical-genes', 'display-density']}
         variant="settings"
         className="h-80"
       >
@@ -107,52 +58,48 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
           description="Configure how genes are labelled"
           showBorder={false}
         >
-          <SwitchPropRow
-            title="Show labels"
-            side="right"
-            checked={settings.genes.labels.show}
-            onCheckedChange={v => {
-              // const newTrack = produce(_track, draft => {
-              //   draft.displayOptions.labels.show = v
-              // })
+          <PropRow title="Font" side="right">
+            <FontUI
+              title="Gene Labels"
+              view="compact"
+              showAlign={false}
+              showColor={false}
+              textProps={settings.tracks.genes.labels.text}
+              update={textProps => {
+                const newSettings = produce(settings, draft => {
+                  draft.tracks.genes.labels.text = textProps
+                })
 
-              // callback?.(group, newTrack)
-              // setTrack(newTrack)
-
-              const newSettings = produce(settings, draft => {
-                draft.genes.labels.show = v
-              })
-
-              updateSettings(newSettings)
-            }}
-            className="grow"
-          />
+                updateSettings(newSettings)
+              }}
+            />
+          </PropRow>
 
           <SwitchPropRow
             title="Add gene Id"
             side="right"
-            disabled={!settings.genes.labels.show}
-            checked={settings.genes.labels.showGeneId}
+            disabled={!settings.tracks.genes.labels.text.show}
+            checked={settings.tracks.genes.labels.showGeneId}
             onCheckedChange={v => {
               const newSettings = produce(settings, draft => {
-                draft.genes.labels.showGeneId = v
+                draft.tracks.genes.labels.showGeneId = v
               })
 
               updateSettings(newSettings)
             }}
-            className="grow ml-4"
+            className="grow ml-3"
           />
         </SettingsAccordionItem>
 
         <SettingsAccordionItem
-          title="Genes"
+          title="Appearance"
           description="Customize the appearance of genes."
         >
           <SwitchPropRow
-            checked={settings.genes.stroke.show}
+            checked={settings.tracks.genes.stroke.show}
             onCheckedChange={v => {
               const newSettings = produce(settings, draft => {
-                draft.genes.stroke.show = v
+                draft.tracks.genes.stroke.show = v
               })
 
               updateSettings(newSettings)
@@ -162,11 +109,11 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
               <ColorPropRow
                 title="Stroke"
                 side="left"
-                color={settings.genes.stroke.color}
+                color={settings.tracks.genes.stroke.value}
                 onColorChange={v => {
                   updateSettings(
                     produce(settings, draft => {
-                      draft.genes.stroke.color = v
+                      draft.tracks.genes.stroke.value = v
                     })
                   )
                 }}
@@ -176,13 +123,13 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
           >
             <LabelContainer label="W">
               <NumericalInput
-                value={settings.genes.stroke.width}
-                disabled={!settings.genes.stroke.show}
+                value={settings.tracks.genes.stroke.width}
+                disabled={!settings.tracks.genes.stroke.show}
                 placeholder="Stroke..."
                 w="xxs"
                 onNumChange={v => {
                   const newSettings = produce(settings, draft => {
-                    draft.genes.stroke.width = v
+                    draft.tracks.genes.stroke.width = v
                   })
 
                   updateSettings(newSettings)
@@ -192,10 +139,10 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
           </SwitchPropRow>
 
           <SwitchPropRow
-            checked={settings.genes.exons.show}
+            checked={settings.tracks.genes.exons.show}
             onCheckedChange={v => {
               const newSettings = produce(settings, draft => {
-                draft.genes.exons.show = v
+                draft.tracks.genes.exons.show = v
               })
 
               updateSettings(newSettings)
@@ -205,11 +152,11 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
               <ColorPropRow
                 title="Exons"
                 side="left"
-                color={settings.genes.exons.fill.color}
+                color={settings.tracks.genes.exons.fill.value}
                 onColorChange={v => {
                   updateSettings(
                     produce(settings, draft => {
-                      draft.genes.exons.fill.color = v
+                      draft.tracks.genes.exons.fill.value = v
                     })
                   )
                 }}
@@ -219,13 +166,13 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
           >
             <LabelContainer label="H">
               <NumericalInput
-                value={settings.genes.exons.height}
-                disabled={!settings.genes.exons.show}
+                value={settings.tracks.genes.exons.height}
+                disabled={!settings.tracks.genes.exons.show}
                 placeholder="Height..."
                 w="xxs"
                 onNumChange={v => {
                   const newSettings = produce(settings, draft => {
-                    draft.genes.exons.height = v
+                    draft.tracks.genes.exons.height = v
                   })
 
                   updateSettings(newSettings)
@@ -235,10 +182,10 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
           </SwitchPropRow>
 
           <SwitchPropRow
-            checked={settings.genes.cds.show}
+            checked={settings.tracks.genes.cds.show}
             onCheckedChange={v => {
               const newSettings = produce(settings, draft => {
-                draft.genes.cds.show = v
+                draft.tracks.genes.cds.show = v
               })
 
               updateSettings(newSettings)
@@ -248,11 +195,11 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
               <ColorPropRow
                 title="CDS"
                 side="left"
-                color={settings.genes.cds.fill.color}
+                color={settings.tracks.genes.cds.fill.value}
                 onColorChange={v => {
                   updateSettings(
                     produce(settings, draft => {
-                      draft.genes.cds.fill.color = v
+                      draft.tracks.genes.cds.fill.value = v
                     })
                   )
                 }}
@@ -262,13 +209,13 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
           >
             <LabelContainer label="H">
               <NumericalInput
-                value={settings.genes.cds.height}
-                disabled={!settings.genes.cds.show}
+                value={settings.tracks.genes.cds.height}
+                disabled={!settings.tracks.genes.cds.show}
                 placeholder="Height..."
                 w="xxs"
                 onNumChange={v => {
                   const newSettings = produce(settings, draft => {
-                    draft.genes.cds.height = v
+                    draft.tracks.genes.cds.height = v
                   })
 
                   updateSettings(newSettings)
@@ -278,10 +225,10 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
           </SwitchPropRow>
 
           <SwitchPropRow
-            checked={settings.genes.utrs.show}
+            checked={settings.tracks.genes.utrs.show}
             onCheckedChange={v => {
               const newSettings = produce(settings, draft => {
-                draft.genes.utrs.show = v
+                draft.tracks.genes.utrs.show = v
               })
 
               updateSettings(newSettings)
@@ -291,11 +238,11 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
               <ColorPropRow
                 title="UTRs"
                 side="left"
-                color={settings.genes.utrs.fill.color}
+                color={settings.tracks.genes.utrs.fill.value}
                 onColorChange={v => {
                   updateSettings(
                     produce(settings, draft => {
-                      draft.genes.utrs.fill.color = v
+                      draft.tracks.genes.utrs.fill.value = v
                     })
                   )
                 }}
@@ -305,13 +252,13 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
           >
             <LabelContainer label="H">
               <NumericalInput
-                value={settings.genes.utrs.height}
-                disabled={!settings.genes.utrs.show}
+                value={settings.tracks.genes.utrs.height}
+                disabled={!settings.tracks.genes.utrs.show}
                 placeholder="Height..."
                 w="xxs"
                 onNumChange={v => {
                   const newSettings = produce(settings, draft => {
-                    draft.genes.utrs.height = v
+                    draft.tracks.genes.utrs.height = v
                   })
 
                   updateSettings(newSettings)
@@ -321,10 +268,10 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
           </SwitchPropRow>
 
           <SwitchPropRow
-            checked={settings.genes.arrows.show}
+            checked={settings.tracks.genes.arrows.show}
             onCheckedChange={v => {
               const newSettings = produce(settings, draft => {
-                draft.genes.arrows.show = v
+                draft.tracks.genes.arrows.show = v
               })
 
               updateSettings(newSettings)
@@ -334,13 +281,13 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
               <ColorPropRow
                 title="Arrows"
                 side="left"
-                color={_track.displayOptions.arrows.stroke.color}
+                color={_track.displayOptions.arrows.stroke.value}
                 onColorChange={v => {
                   const newTrack = produce(_track, draft => {
-                    draft.displayOptions.arrows.stroke.color = v
+                    draft.displayOptions.arrows.stroke.value = v
                   })
 
-                  callback?.(group, newTrack)
+                  onResponse?.(TEXT_OK, { group, track: newTrack })
                   setTrack(newTrack)
                 }}
                 className={SIMPLE_COLOR_EXT_CLS}
@@ -358,7 +305,7 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
                   draft.displayOptions.arrows.x = v
                 })
 
-                callback?.(group, newTrack)
+                onResponse?.(TEXT_OK, { group, track: newTrack })
                 setTrack(newTrack)
               }}
               onNumChange2={v => {
@@ -366,7 +313,7 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
                   draft.displayOptions.arrows.y = v
                 })
 
-                callback?.(group, newTrack)
+                onResponse?.(TEXT_OK, { group, track: newTrack })
                 setTrack(newTrack)
               }}
             />
@@ -378,10 +325,10 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
           description="Canonical genes can be displayed differently to other genes."
         >
           <SwitchPropRow
-            checked={settings.genes.canonical.isColored}
+            checked={settings.tracks.genes.canonical.isColored}
             onCheckedChange={v => {
               const newSettings = produce(settings, draft => {
-                draft.genes.canonical.isColored = v
+                draft.tracks.genes.canonical.isColored = v
               })
 
               updateSettings(newSettings)
@@ -391,11 +338,11 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
               <ColorPropRow
                 title="Highlight canonical genes"
                 side="left"
-                color={settings.genes.canonical.fill.color}
+                color={settings.tracks.genes.canonical.fill.value}
                 onColorChange={v => {
                   updateSettings(
                     produce(settings, draft => {
-                      draft.genes.canonical.fill.color = v
+                      draft.tracks.genes.canonical.fill.value = v
                     })
                   )
                 }}
@@ -405,10 +352,10 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
           />
 
           <SwitchPropRow
-            checked={settings.genes.canonical.only}
+            checked={settings.tracks.genes.canonical.only}
             onCheckedChange={v => {
               const newSettings = produce(settings, draft => {
-                draft.genes.canonical.only = v
+                draft.tracks.genes.canonical.only = v
               })
 
               updateSettings(newSettings)
@@ -420,15 +367,15 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
         </SettingsAccordionItem>
 
         <SettingsAccordionItem
-          title="Display density"
+          title="Display Density"
           description="Control the appearance of genes to affect the display density."
         >
           <PropRow title="Display">
             <SelectList
-              value={settings.genes.display}
+              value={settings.tracks.genes.display}
               onValueChange={v => {
                 const newSettings = produce(settings, draft => {
-                  draft.genes.display = v as GeneDisplay
+                  draft.tracks.genes.display = v as GeneDisplay
                 })
 
                 updateSettings(newSettings)
@@ -444,11 +391,11 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
             </SelectList>
           </PropRow>
           <PropRow title="View" className="items-start">
-            <RadioGroup
-              value={settings.genes.view}
+            {/* <RadioGroup
+              value={settings.tracks.genes.view}
               onValueChange={v => {
                 const newSettings = produce(settings, draft => {
-                  draft.genes.view = v as GeneView
+                  draft.tracks.genes.view = v as GeneView
                 })
 
                 updateSettings(newSettings)
@@ -457,7 +404,27 @@ export function GenesEditDialog({ group, track, callback, onCancel }: IProps) {
             >
               <RadioGroupItem value="transcript">Transcripts</RadioGroupItem>
               <RadioGroupItem value="features">Features</RadioGroupItem>
-            </RadioGroup>
+            </RadioGroup> */}
+
+            <ToggleGroup
+              value={[settings.tracks.genes.view]}
+              onValueChange={v => {
+                const newSettings = produce(settings, draft => {
+                  draft.tracks.genes.view = v[0] as GeneView
+                })
+
+                updateSettings(newSettings)
+              }}
+              size="toolbar"
+              className="rounded-theme overflow-hidden gap-x-px"
+            >
+              <GroupToggle value="transcript" className="w-24" rounded="none">
+                Transcripts
+              </GroupToggle>
+              <GroupToggle value="features" className="w-24" rounded="none">
+                Features
+              </GroupToggle>
+            </ToggleGroup>
           </PropRow>
         </SettingsAccordionItem>
       </ScrollAccordion>

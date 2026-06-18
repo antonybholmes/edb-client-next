@@ -1,11 +1,12 @@
 import { type ITab } from '@/components/tabs/tab-provider'
 import { useTabs } from '@/components/tabs/tab-store'
 import type { IClassProps } from '@/interfaces/class-props'
+import type { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
-import { BUTTON_MD_H_CLS, FOCUS_RING_CLS } from '@/theme'
+import { FOCUS_RING_CLS } from '@/theme'
 import { Tabs as TabsPrimitive } from '@base-ui/react/tabs'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { memo } from 'react'
+import { Activity, memo } from 'react'
 
 import {
   forwardRef,
@@ -28,9 +29,8 @@ export const BASE_TRIGGER_CLS = cn(
 
 export const TRIGGER_CLS = cn(
   FOCUS_RING_CLS,
-  BUTTON_MD_H_CLS,
   BASE_TRIGGER_CLS,
-  'data-active:bg-muted/50'
+  'h-button-md data-active:bg-muted/50'
 )
 
 export const SIDEBAR_CLS = cn(
@@ -105,7 +105,6 @@ export const TabsList = forwardRef<
     ref={ref}
     className={tabVariants({
       variant,
-
       className,
     })}
     {...props}
@@ -178,7 +177,7 @@ export function TabsContent({
   return (
     <TabsPrimitive.Panel
       ref={ref}
-      className={cn('outline-none grow flex', className)}
+      className={cn('outline-none grow flex h-full', className)}
       {...props}
     />
   )
@@ -230,15 +229,25 @@ export const TabContentPanel = memo(function TabContentPanel({
 //   return <Activity mode={active ? 'visible' : 'hidden'}>{children}</Activity>
 // })
 
-interface ITabContentPanelsProps extends IClassProps {
+interface ITabContentPanelsProps extends IDivProps {
   groupId: string
   tabs: ITab[]
+  contentCls?: string
 }
 
+/**
+ * Render each ITab as a TabsContent panel, and control visibility with
+ * the Tabs value.
+ *
+ * @param param0
+ * @returns
+ */
 export function TabContentPanels({
   groupId,
   tabs,
   className,
+  contentCls,
+  ...props
 }: ITabContentPanelsProps) {
   const { tab: selectedTab } = useTabs(groupId)
 
@@ -251,11 +260,16 @@ export function TabContentPanels({
     <Tabs
       value={selectedTab?.id ?? ''}
       onValueChange={() => {}}
-      id={groupId}
+      //id={groupId}
       className={className}
+      {...props}
     >
       {tabs.map((tab, ti) => (
-        <TabsContent value={tab.id} key={ti} className="grow h-full">
+        <TabsContent
+          value={tab.id}
+          key={ti}
+          className={cn('h-full', contentCls)}
+        >
           {tab.content}
         </TabsContent>
       ))}
@@ -263,15 +277,15 @@ export function TabContentPanels({
   )
 }
 
-// export function TabContentForceMountPanels({
-//   groupId,
-//   tabs,
-// }: ITabContentPanelsProps) {
-//   const { tab: selectedTab } = useTabs(groupId)
+export function TabContentForceMountPanels({
+  groupId,
+  tabs,
+}: ITabContentPanelsProps) {
+  const { tab: selectedTab } = useTabs(groupId)
 
-//   return tabs.map((tab, ti) => (
-//     <Activity mode={ti == selectedTab?.index ? 'visible' : 'hidden'} key={ti}>
-//       {tab.content}
-//     </Activity>
-//   ))
-// }
+  return tabs.map((tab, ti) => (
+    <Activity mode={ti == selectedTab?.index ? 'visible' : 'hidden'} key={ti}>
+      {tab.content}
+    </Activity>
+  ))
+}

@@ -10,7 +10,7 @@ import {
 
 import { COLOR_REGEX } from '@/lib/color/color'
 
-import type { SeriesData } from '@/lib/dataframe'
+import type { SeriesData } from '@/lib/dataframe/series-data'
 import { range } from '@/lib/math/range'
 
 const LABEL_SEP_REGEX = /[\/\|]/

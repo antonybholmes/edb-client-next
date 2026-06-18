@@ -11,7 +11,7 @@ import {
   DRAG_ICON_ANIM_CLS,
   SortableItem,
 } from '@/components/sortable-item'
-import { NO_DIALOG, TEXT_CLEAR, TEXT_OK, type IDialogParams } from '@/consts'
+import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { LinkButton } from '@/themed/link-button'
 import { DndContext } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
@@ -21,10 +21,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { produce } from 'immer'
-import { useState } from 'react'
-import { PlotDialog } from './plot-dialog'
 
-import { OKCancelDialog } from '@/components/dialog/ok-cancel-dialog'
 import { PlusIcon } from '@/components/icons/plus-icon'
 import {
   DropdownMenuItem,
@@ -32,12 +29,13 @@ import {
 } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { DropdownButton } from '@/components/toolbar/dropdown-button'
 import { VScrollPanel } from '@/components/v-scroll-panel'
-import { makeUuid, randId } from '@/lib/id'
+import { makeUuid } from '@/lib/id'
 import { cn } from '@/lib/shadcn-utils'
 import { Settings2 } from 'lucide-react'
 import { TRACK_ITEM_BUTTONS_CLS } from '../../genomic/seq-browser/track-items/seq-track-item'
-import { AddGenesDialog } from './add-genes-dialog'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { useSingleCellDialogs } from './single-cell-dialogs'
 import { useSingleCellSettings, type IGeneSet } from './single-cell-settings'
 
 export const GROUP_BG_CLS = 'rounded-theme group gap-x-1'
@@ -46,32 +44,10 @@ export const GROUP_CLS = `flex flex-row items-center grow relative
   w-full overflow-hidden py-2 pl-1 pr-2 gap-x-2 rounded-theme 
   data-[hover=true]:bg-muted data-[drag=true]:shadow-md group`
 
-function PlotItem({
-  geneset,
-  setShowDialog,
-}: {
-  geneset: IGeneSet
-  setShowDialog: (params: IDialogParams) => void
-}) {
-  //const { isDragging } = useContext(SortableItemContext)
-  //const [isDragging, setIsDragging] = useState(false)
-
-  // const ref = useRef<HTMLDivElement>(null
-
-  // function handleMouseDown() {
-  //   function onMouseUp() {
-  //     setIsDragging(false)
-
-  //     document.removeEventListener('mouseup', onMouseUp)
-  //   }
-
-  //   console.log('Sdfsdfsdfsdf')
-  //   setIsDragging(true)
-
-  //   document.addEventListener('mouseup', onMouseUp)
-  // }
-
-  //useMouseDownListener(handleMouseDown)
+function PlotItem({ geneset }: { geneset: IGeneSet }) {
+  const { open: openDialog } = useDialogs()
+  const { open: openSingleCellDialog } = useSingleCellDialogs()
+  const { updateSettings, settings } = useSingleCellSettings()
 
   return (
     <SortableItem
@@ -81,35 +57,44 @@ function PlotItem({
         <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
           <button
             onClick={() => {
-              //setPlots(plots.filter(p => p.id !== plot.id))
-              setShowDialog({
-                id: 'delete',
-                params: { geneset },
+              openDialog({
+                type: 'warning',
+                payload: {
+                  title: 'Delete Plot',
+                  content: `Are you sure you want to delete the ${geneset.name} plot?`,
+                  callback: response => {
+                    if (response === TEXT_OK) {
+                      updateSettings(
+                        produce(settings, draft => {
+                          draft.genesets = draft.genesets.filter(
+                            g => g.id !== geneset.id
+                          )
+                        })
+                      )
+                    }
+                  },
+                },
               })
             }}
-            className="stroke-foreground/50 hover:stroke-red-500"
+            className="stroke-foreground/50 hover:stroke-destructive"
             title="Delete location"
           >
-            <TrashIcon stroke="" w="w-4" />
+            <TrashIcon stroke="" />
           </button>
         </VCenterRow>
       }
     >
-      <VCenterCol
-        className="overflow-hidden grow gap-y-1"
-        //style={{ color: group.color, fill: group.color }}
-      >
+      <VCenterCol className="overflow-hidden grow gap-y-1">
         <p className="truncate font-semibold">{geneset.name}</p>
       </VCenterCol>
 
-      <VCenterRow
-        className={DRAG_HANDLE_APPEAR_CLS}
-        //data-drag={isDragging}
-      >
+      <VCenterRow className={DRAG_HANDLE_APPEAR_CLS}>
         <button
           title={`Edit ${geneset.name}`}
           className="opacity-50 hover:opacity-100"
-          onClick={() => setShowDialog({ id: 'edit', params: { geneset } })}
+          onClick={() => {
+            openSingleCellDialog({ type: 'edit-plot', payload: { geneset } })
+          }}
         >
           <Settings2 className={cn(DRAG_ICON_ANIM_CLS, 'w-4')} />
         </button>
@@ -121,190 +106,131 @@ function PlotItem({
 export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
   const { settings, updateSettings, resetSettings } = useSingleCellSettings()
 
-  //const [text, setText] = useState('')
-  //const [makeSignature, setMakeSignature] = useState(false)
-  //const [openTabs, setOpenTabs] = useState<string[]>(['plots'])
-
+  const { open: openDialog } = useDialogs()
+  const { open: openSingleCellDialog } = useSingleCellDialogs()
   const genesets = settings.genesets
 
-  // const plots = useMemo(
-  //   () => allPlots.filter(p => p.mode.includes('gex')),
-  //   [allPlots]
-  // )
-
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
-
   return (
-    <>
-      {showDialog.id.includes('edit') && (
-        <PlotDialog
-          open={true}
-          geneset={showDialog.params!['geneset']! as IGeneSet}
-          onResponse={() => setShowDialog({ ...NO_DIALOG })}
-        />
-      )}
-
-      {showDialog.id.includes('add-genes') && (
-        <AddGenesDialog
-          open={true}
-          datasetId={datasetId}
-          onResponse={() => setShowDialog({ ...NO_DIALOG })}
-        />
-      )}
-
-      {showDialog.id.startsWith('reset') && (
-        <OKCancelDialog
-          //open={delGroup !== -1}
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              resetSettings()
-            }
-            setShowDialog({ ...NO_DIALOG })
+    <PropsPanel className="gap-y-2">
+      <VCenterRow className="justify-between pr-2">
+        <DropdownButton
+          size="dropdown-with-icon"
+          icon={<PlusIcon withCircle={true} />}
+          title="Add Plot"
+          onMainClick={() => {
+            openSingleCellDialog({ type: 'add-genes', payload: { datasetId } })
           }}
+          //align="end"
         >
-          Are you sure you want to reset the plot view?
-        </OKCancelDialog>
-      )}
+          <DropdownMenuItem
+            aria-label="Genes"
+            onClick={() =>
+              openSingleCellDialog({
+                type: 'add-genes',
+                payload: { datasetId },
+              })
+            }
+          >
+            Genes
+          </DropdownMenuItem>
 
-      {showDialog.id.startsWith('delete') && (
-        <OKCancelDialog
-          //open={delGroup !== -1}
-          onResponse={r => {
-            if (r === TEXT_OK) {
-              const geneset = showDialog.params!['geneset']! as IGeneSet
+          <MenuSeparator />
+
+          <DropdownMenuItem
+            aria-label="Clusters"
+            onClick={() => {
               updateSettings(
                 produce(settings, draft => {
-                  draft.genesets = draft.genesets.filter(
-                    g => g.id !== geneset.id
+                  draft.genesets.push({
+                    id: makeUuid(),
+                    name: 'Clusters',
+                    genes: [],
+                    mode: 'clusters',
+                  })
+                })
+              )
+            }}
+          >
+            Clusters
+          </DropdownMenuItem>
+        </DropdownButton>
+
+        <LinkButton
+          onClick={() => {
+            openDialog({
+              type: 'warning',
+              payload: {
+                title: 'Reset Plots',
+                content:
+                  'Are you sure you want to reset the plots to default view?',
+                callback: response => {
+                  if (response === TEXT_OK) {
+                    resetSettings()
+                  }
+                },
+              },
+            })
+          }}
+          title="Reset plots to default view"
+        >
+          {TEXT_CLEAR}
+        </LinkButton>
+      </VCenterRow>
+
+      <VScrollPanel>
+        <DndContext
+          modifiers={[restrictToVerticalAxis]}
+          //onDragStart={event => setActiveId(event.active.id as string)}
+          //for the moment do not allow to be re-arranged as it messes up
+          //cluster color rendering
+          onDragEnd={event => {
+            const { active, over } = event
+
+            if (over && active.id !== over?.id) {
+              const oldIndex = genesets.findIndex(plot => plot.id === active.id)
+
+              const newIndex = genesets.findIndex(plot => plot.id === over.id)
+
+              const newOrder = arrayMove(
+                genesets.map(plot => plot.id),
+                oldIndex,
+                newIndex
+              )
+
+              // setPlots(
+              //   newOrder.map(id => plots.find(plot => plot.id === id)!)
+              // )
+
+              updateSettings(
+                produce(settings, draft => {
+                  draft.genesets = newOrder.map(
+                    id => settings.genesets.find(g => g.id === id)!
                   )
+
+                  console.error('draft.genesets', draft.genesets)
                 })
               )
             }
-            setShowDialog({ ...NO_DIALOG })
+
+            //setActiveId(null)
           }}
         >
-          Are you sure you want to delete the{' '}
-          {(showDialog.params!['geneset']! as IGeneSet).name} plot?
-        </OKCancelDialog>
-      )}
-
-      <PropsPanel className="gap-y-2">
-        <VCenterRow className="justify-between pr-2">
-          <DropdownButton
-            size="dropdown-with-icon"
-            icon={<PlusIcon withCircle={true} />}
-            title="Add Plot"
-            onMainClick={() =>
-              setShowDialog({
-                id: randId('add-genes'),
-                params: {},
-              })
-            }
-            //align="end"
+          <SortableContext
+            items={genesets.map(p => p.id)}
+            strategy={verticalListSortingStrategy}
           >
-            <DropdownMenuItem
-              aria-label="Genes"
-              onClick={() =>
-                setShowDialog({
-                  id: randId('add-genes'),
-                  params: {},
-                })
-              }
-            >
-              Genes
-            </DropdownMenuItem>
-
-            <MenuSeparator />
-
-            <DropdownMenuItem
-              aria-label="Clusters"
-              onClick={() => {
-                updateSettings(
-                  produce(settings, draft => {
-                    draft.genesets.push({
-                      id: makeUuid(),
-                      name: 'Clusters',
-                      genes: [],
-                      mode: 'clusters',
-                    })
-                  })
+            <ul className="flex flex-col">
+              {genesets.map(gs => {
+                return (
+                  // <BaseSortableItem key={gs.id} id={gs.id}>
+                  <PlotItem key={gs.id} geneset={gs} />
+                  // </BaseSortableItem>
                 )
-              }}
-            >
-              Clusters
-            </DropdownMenuItem>
-          </DropdownButton>
+              })}
+            </ul>
+          </SortableContext>
 
-          <LinkButton
-            onClick={() => {
-              setShowDialog({ id: 'reset', params: {} })
-            }}
-            title="Reset plots to default view"
-          >
-            {TEXT_CLEAR}
-          </LinkButton>
-        </VCenterRow>
-
-        <VScrollPanel>
-          <DndContext
-            modifiers={[restrictToVerticalAxis]}
-            //onDragStart={event => setActiveId(event.active.id as string)}
-            //for the moment do not allow to be re-arranged as it messes up
-            //cluster color rendering
-            onDragEnd={event => {
-              const { active, over } = event
-
-              if (over && active.id !== over?.id) {
-                const oldIndex = genesets.findIndex(
-                  plot => plot.id === active.id
-                )
-
-                const newIndex = genesets.findIndex(plot => plot.id === over.id)
-
-                const newOrder = arrayMove(
-                  genesets.map(plot => plot.id),
-                  oldIndex,
-                  newIndex
-                )
-
-                // setPlots(
-                //   newOrder.map(id => plots.find(plot => plot.id === id)!)
-                // )
-
-                updateSettings(
-                  produce(settings, draft => {
-                    draft.genesets = newOrder.map(
-                      id => settings.genesets.find(g => g.id === id)!
-                    )
-
-                    console.error('draft.genesets', draft.genesets)
-                  })
-                )
-              }
-
-              //setActiveId(null)
-            }}
-          >
-            <SortableContext
-              items={genesets.map(p => p.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <ul className="flex flex-col">
-                {genesets.map(gs => {
-                  return (
-                    // <BaseSortableItem key={gs.id} id={gs.id}>
-                    <PlotItem
-                      key={gs.id}
-                      geneset={gs}
-                      setShowDialog={setShowDialog}
-                    />
-                    // </BaseSortableItem>
-                  )
-                })}
-              </ul>
-            </SortableContext>
-
-            {/* <DragOverlay>
+          {/* <DragOverlay>
                 {activeId ? (
                   <TrackItem
                     index={-1}
@@ -314,9 +240,8 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
                   />
                 ) : null}
               </DragOverlay> */}
-          </DndContext>
-        </VScrollPanel>
-      </PropsPanel>
-    </>
+        </DndContext>
+      </VScrollPanel>
+    </PropsPanel>
   )
 }

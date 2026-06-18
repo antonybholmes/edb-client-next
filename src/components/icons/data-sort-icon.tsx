@@ -3,7 +3,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { ArrowUpWideNarrow } from 'lucide-react'
 
 export function DataSortIcon({
-  w = 'w-5 h-5',
+  size = 'w-5 h-5',
   stroke = 'stroke-foreground',
   className,
   strokeWidth = 2,
@@ -12,7 +12,7 @@ export function DataSortIcon({
     // <svg
     //   xmlns="http://www.w3.org/2000/svg"
     //   viewBox="0 0 24 24"
-    //   className={cn(ICON_CLS, 'stroke-3', stroke, w, className)}
+    //   className={cn(ICON_CLS, 'stroke-3', stroke, size, className)}
     //   style={{ strokeLinecap: 'round', strokeLinejoin: 'round', fill: 'none' }}
     // >
     //   <path d="M 6,7 L 12,1 L 18,7" />
@@ -21,7 +21,7 @@ export function DataSortIcon({
     // </svg>
 
     <ArrowUpWideNarrow
-      className={cn(ICON_CLS, stroke, w, className)}
+      className={cn(ICON_CLS, stroke, size, className)}
       stroke=""
       strokeWidth={strokeWidth}
     />

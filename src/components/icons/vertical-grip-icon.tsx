@@ -17,7 +17,7 @@ interface IProps extends IIconProps {
 }
 
 export function VerticalGripIcon({
-  w = 16,
+  size = 16,
   className,
   strokeWidth = 1.5,
   ...props
@@ -26,7 +26,7 @@ export function VerticalGripIcon({
     // <svg
     //   viewBox="0 0 20 40"
     //   xmlns="http://www.w3.org/2000/svg"
-    //   className={cn(BASE_ICON_CLS, w, className)}
+    //   className={cn(BASE_ICON_CLS, size, className)}
     //   style={{ ...style, strokeLinecap: "round", strokeLinejoin: "round" }}
     //   //shapeRendering={SVG_CRISP_EDGES}
     // >
@@ -49,7 +49,7 @@ export function VerticalGripIcon({
     <GripVertical
       className={cn(ICON_CLS, className)}
       strokeWidth={strokeWidth}
-      size={w}
+      size={size}
       {...props}
     />
   )

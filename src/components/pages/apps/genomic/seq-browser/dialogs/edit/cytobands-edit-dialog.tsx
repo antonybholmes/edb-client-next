@@ -1,49 +1,80 @@
-import { SettingsAccordionItem } from '@/components/dialog/settings/settings-dialog'
-import { SwitchPropRow } from '@/components/dialog/switch-prop-row'
+import { FontPopover } from '@/components/plot/font/font-popover'
 import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
 import { BasicHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/shadcn/ui/themed/v2/select'
+  GroupToggle,
+  ToggleGroup,
+} from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { TEXT_OK } from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
-import { PropRow } from '@/dialog/prop-row'
+import { type IModalProps, OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
+import { PropRow } from '@/dialogs/prop-row'
+import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
+import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
+import { Circle, Square } from 'lucide-react'
 import { useSeqBrowserSettings } from '../../seq-browser-settings'
 import type { BandStyle } from '../../tracks-provider'
 
-export interface IProps {
-  onCancel: () => void
-}
-
-export function CytobandsEditDialog({ onCancel }: IProps) {
+export function CytobandsEditDialog({ onResponse }: IModalProps) {
   const { settings, updateSettings } = useSeqBrowserSettings()
 
   return (
     <OKCancelDialog
       buttons={[TEXT_OK]}
       title="Cytobands"
-      onResponse={() => {
-        onCancel()
-      }}
+      onResponse={onResponse}
     >
-      <ScrollAccordion value={['style']} className="h-72">
+      <ScrollAccordion value={['style']} className="h-50">
         <SettingsAccordionItem
           title="Style"
           description="Configure the style of the cytobands."
           showBorder={false}
+          rightChildren={
+            <FontPopover
+              fonts={[
+                {
+                  textProps: settings.tracks.cytobands.labels.text,
+                  update: textProps => {
+                    const newOptions = produce(settings, draft => {
+                      draft.tracks.cytobands.labels.text = textProps
+                    })
+
+                    updateSettings(newOptions)
+                  },
+                },
+              ]}
+            />
+          }
         >
           <PropRow title="Shape">
-            <Select
-              value={settings.cytobands.style}
+            <ToggleGroup
+              direction="row"
+              className="overflow-hidden rounded-theme"
+              rounded="none"
+              value={[settings.tracks.cytobands.style]}
               onValueChange={v => {
                 const newOptions = produce(settings, draft => {
-                  draft.cytobands.style = v as BandStyle
+                  draft.tracks.cytobands.style = v[0] as BandStyle
+                })
+
+                updateSettings(newOptions)
+              }}
+            >
+              <GroupToggle value="rounded" className="px-2" title="Rounded">
+                <Circle size={16} />
+              </GroupToggle>
+
+              <GroupToggle value="square" className="px-2" title="Square">
+                <Square size={16} />
+              </GroupToggle>
+            </ToggleGroup>
+
+            {/* <Select
+              value={settings.tracks.cytobands.style}
+              onValueChange={v => {
+                const newOptions = produce(settings, draft => {
+                  draft.tracks.cytobands.style = v as BandStyle
                 })
 
                 updateSettings(newOptions)
@@ -56,17 +87,17 @@ export function CytobandsEditDialog({ onCancel }: IProps) {
                 <SelectItem value="Rounded">Rounded</SelectItem>
                 <SelectItem value="Square">Square</SelectItem>
               </SelectContent>
-            </Select>
+            </Select> */}
           </PropRow>
 
           <PropRow title="Height">
             <NumericalInput
-              value={settings.cytobands.band.height}
+              value={settings.tracks.cytobands.band.height}
               placeholder="height"
               limit={[1, 1000]}
               onNumChange={v => {
                 const newOptions = produce(settings, draft => {
-                  draft.cytobands.band.height = v
+                  draft.tracks.cytobands.band.height = v
                 })
 
                 updateSettings(newOptions)
@@ -76,26 +107,13 @@ export function CytobandsEditDialog({ onCancel }: IProps) {
           </PropRow>
 
           <SwitchPropRow
-            title="Labels"
-            side="right"
-            checked={settings.cytobands.labels.show}
-            onCheckedChange={v => {
-              const newOptions = produce(settings, draft => {
-                draft.cytobands.labels.show = v
-              })
-
-              updateSettings(newOptions)
-            }}
-          />
-          <SwitchPropRow
             title="Reduced labels"
-            className="ml-4"
             side="right"
-            disabled={!settings.cytobands.labels.show}
-            checked={settings.cytobands.labels.skip.on}
+            disabled={!settings.tracks.cytobands.labels.text.show}
+            checked={settings.tracks.cytobands.labels.skip.on}
             onCheckedChange={v => {
               const newOptions = produce(settings, draft => {
-                draft.cytobands.labels.skip.on = v
+                draft.tracks.cytobands.labels.skip.on = v
               })
 
               updateSettings(newOptions)
@@ -103,7 +121,7 @@ export function CytobandsEditDialog({ onCancel }: IProps) {
           >
             <BasicHoverCard>
               Reduces the number of labels shown to make figures look less
-              clustered.
+              cluttered.
             </BasicHoverCard>
           </SwitchPropRow>
         </SettingsAccordionItem>

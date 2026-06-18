@@ -4,7 +4,7 @@ import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
 
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
-import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
+import { FooterPortal } from '@/components/toolbar/footer-portal'
 
 import {
   ShowOptionsMenu,
@@ -12,25 +12,21 @@ import {
   ToolbarMenu,
   ToolbarPanel,
 } from '@/toolbar/toolbar'
-import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
 import { ToolbarButton } from '@/toolbar/toolbar-button'
 
 import {
   onTextFileChange,
-  OpenFiles,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 
-import { BasicAlertDialog } from '@/dialog/basic-alert-dialog'
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
 import { OpenIcon } from '@/icons/open-icon'
 
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import {
-  NO_DIALOG,
   TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_FILE,
@@ -38,7 +34,6 @@ import {
   TEXT_OPEN_FILE,
   TEXT_SAVE_AS,
   TEXT_SAVE_TABLE,
-  type IDialogParams,
 } from '@/consts'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -46,9 +41,7 @@ import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { UploadIcon } from '@/icons/upload-icon'
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
-import { randId } from '@/lib/id'
 
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
 import { DeleteIcon } from '@/icons/delete-icon'
 import { FileIcon } from '@/icons/file-icon'
 import { SettingsIcon } from '@/icons/settings-icon'
@@ -64,17 +57,20 @@ import {
 } from '@/lib/genomic/overlap/overlap'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 
-import { HeaderSlotPortal } from '@/components/header/header-slot-portal'
-import { ModuleInfoButton } from '@/components/header/module-info-button'
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { AppHeaderIcon } from '@/components/header/app-header-icon'
+import { AppInfoButton } from '@/components/header/app-info-button'
+import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { useStableId } from '@/hooks/stable-id'
+import { useAppInfo } from '@/lib/edb/edb-settings'
 import { reorder } from '@/lib/math/reorder'
 import { where } from '@/lib/math/where'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { FilesPropsPanel } from './files-props-panel'
-import MODULE_INFO from './module.json'
+import APP_INFO from './manifest.json'
 import { OverlapContext, OverlapProvider } from './overlap-provider'
 
 function OverlapPage() {
@@ -83,12 +79,17 @@ function OverlapPage() {
   const { dfs, setDfs, selected, setSelected, openOverlapFiles } =
     useContext(OverlapContext)
 
+  const { setAppInfo } = useAppInfo()
+
   //const [rightTab, setRightTab] = useState('Options')
   const [showSideBar, setShowSideBar] = useState(true)
 
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
-
+  const { open: openDialog } = useDialogs()
   const [showFileMenu, setShowFileMenu] = useState(false)
+
+  useEffect(() => {
+    setAppInfo(APP_INFO)
+  }, [setAppInfo])
 
   function openFiles(files: ITextFileOpen[]) {
     openOverlapFiles(files)
@@ -143,12 +144,15 @@ function OverlapPage() {
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
-              onOpenChange={(open) => {
-                if (open) {
-                  setShowDialog({
-                    id: randId('open'),
-                  })
-                }
+              onOpen={() => {
+                openDialog({
+                  type: 'open',
+                  payload: {
+                    callback: (message, files) => {
+                      onTextFileChange(message, files, openFiles)
+                    },
+                  },
+                })
               }}
               multiple={true}
             />
@@ -160,8 +164,6 @@ function OverlapPage() {
               <DownloadIcon />
             </ToolbarIconButton>
           </ToolbarTabGroup>
-
-          <ToolbarSeparator />
 
           <ToolbarTabGroup title="Overlap">
             <ToolbarButton
@@ -177,8 +179,6 @@ function OverlapPage() {
               Min/max
             </ToolbarButton>
           </ToolbarTabGroup>
-
-          <ToolbarSeparator />
 
           <ToolbarTabGroup title="One Way">
             <ToolbarButton
@@ -208,127 +208,6 @@ function OverlapPage() {
     // },
   ]
 
-  // const sidebar: ITab[] = [
-  //   {
-  //     icon: <TableIcon className={TOOLBAR_BUTTON_ICON_CLS} />,
-  //     label: "Table View",
-  //     content: (
-  //       <ResizablePanelGroup orientation="horizontal">
-  //         <ResizablePanel
-  //           id="tables"
-  //           defaultSize="75%"
-  //           minSize="50%"
-  //           className="flex flex-col"
-  //         >
-  //           <TabbedDataFrames
-  //             selectedSheet={history.step.sheetIndex}
-  //             dataFrames={history.step.dataframes}
-  //             onTabChange={(tab: number) => {
-  //               historyDispatch({ type: "goto-sheet", index: tab })
-  //             }}
-  //             onSelectionChange={setSelection}
-  //           />
-  //         </ResizablePanel>
-  //         <HResizeHandle />
-  //         <ResizablePanel
-  //           className="flex flex-col"
-  //           id="right-tabs"
-  //           defaultSize="25%"
-  //           minSize="0%"
-  //           collapsible={true}
-  //         >
-  //           <SideBar side="Right"
-  //             tabs={rightTabs}
-  //             activeTabIndex={selectedRightTab}
-  //             onTabChange={setSelectedRightTab}
-  //           />
-  //         </ResizablePanel>
-  //       </ResizablePanelGroup>
-
-  //     ),
-  //   },
-  // ]
-
-  // const fileMenuTabs: ITab[] = [
-  //   {
-  //     id: nanoid(),
-  //     name: "Open",
-  //     icon: <OpenIcon fill="" w="w-5" />,
-  //     content: (
-  //       <BaseCol className="gap-y-6 p-6">
-  //         <h1 className="text-2xl">Open</h1>
-
-  //         <ul className="flex flex-col gap-y-2 text-xs">
-  //           <li>
-  //             <MenuButton
-  //               aria-label="Open file on your computer"
-  //               onClick={() =>
-  //                 setShowDialog({ name: makeRandId("open"), params: {} })
-  //               }
-  //             >
-  //               <OpenIcon className="w-6" />
-  //               <p>
-  //                 <span className={FILE_MENU_ITEM_HEADING_CLS}>
-  //                   Open local file
-  //                 </span>
-  //                 <br />
-  //                 <span className={FILE_MENU_ITEM_DESC_CLS}>
-  //                   Open a local file on your computer.
-  //                 </span>
-  //               </p>
-  //             </MenuButton>
-  //           </li>
-  //         </ul>
-  //       </BaseCol>
-  //     ),
-  //   },
-  //   {
-  //     id: nanoid(),
-  //     name: TEXT_SAVE_AS,
-  //     content: (
-  //       <BaseCol className="gap-y-6 p-6">
-  //         <h1 className="text-2xl">{TEXT_SAVE_AS}</h1>
-
-  //         <ul className="flex flex-col gap-y-1 text-xs">
-  //           <li>
-  //             <MenuButton
-  //               aria-label="Save text file"
-  //               onClick={() => save("txt")}
-  //             >
-  //               <FileLinesIcon className="w-6" />
-  //               <p>
-  //                 <span className={FILE_MENU_ITEM_HEADING_CLS}>
-  //                   Download as TXT
-  //                 </span>
-  //                 <br />
-  //                 <span className={FILE_MENU_ITEM_DESC_CLS}>
-  //                   Save table as a tab-delimited text file.
-  //                 </span>
-  //               </p>
-  //             </MenuButton>
-  //           </li>
-  //           <li>
-  //             <MenuButton
-  //               aria-label="Save CSV file"
-  //               onClick={() => save("csv")}
-  //             >
-  //               <p>
-  //                 <span className={FILE_MENU_ITEM_HEADING_CLS}>
-  //                   Download as CSV
-  //                 </span>
-  //                 <br />
-  //                 <span className={FILE_MENU_ITEM_DESC_CLS}>
-  //                   Save table as a comma separated text file.
-  //                 </span>
-  //               </p>
-  //             </MenuButton>
-  //           </li>
-  //         </ul>
-  //       </BaseCol>
-  //     ),
-  //   },
-  // ]
-
   const fileMenuTabs: ITab[] = [
     {
       //id: nanoid(),
@@ -337,7 +216,16 @@ function OverlapPage() {
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
+          onClick={() =>
+            openDialog({
+              type: 'open',
+              payload: {
+                callback: (message, files) => {
+                  onTextFileChange(message, files, openFiles)
+                },
+              },
+            })
+          }
         >
           <UploadIcon stroke="" />
 
@@ -371,28 +259,11 @@ function OverlapPage() {
 
   return (
     <>
-      {showDialog.id === 'alert' && (
-        <BasicAlertDialog onResponse={() => setShowDialog({ ...NO_DIALOG })}>
-          {showDialog.params!.message as string}
-        </BasicAlertDialog>
-      )}
+      {/* <DialogsRoot /> */}
 
-      {showDialog.id.startsWith('delete-sheet') && (
-        <OKCancelDialog
-          //open={delGroup !== -1}
-          onResponse={(r) => {
-            if (r === TEXT_OK) {
-              setDfs(dfs.filter((df) => df.id !== showDialog.params!.id))
-            }
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        >
-          Are you sure you want to delete this sheet?
-        </OKCancelDialog>
-      )}
-
-      <HeaderSlotPortal>
-        <ModuleInfoButton info={MODULE_INFO} />
+      <HeaderSlotPortal slot="header-left">
+        <AppHeaderIcon />
+        <AppInfoButton />
       </HeaderSlotPortal>
 
       <ShortcutLayout signinRequired={false}>
@@ -449,9 +320,16 @@ function OverlapPage() {
               ]}
               menuCallback={(tab: ITab, action: string) => {
                 if (action === 'Delete') {
-                  setShowDialog({
-                    id: randId('delete-sheet'),
-                    params: { id: tab.id },
+                  openDialog({
+                    type: 'warning',
+                    payload: {
+                      content: 'Are you sure you want to delete this sheet?',
+                      callback: (response) => {
+                        if (response === TEXT_OK) {
+                          setDfs(dfs.filter((df) => df.id !== tab.id))
+                        }
+                      },
+                    },
                   })
                 }
               }}
@@ -475,22 +353,11 @@ function OverlapPage() {
           </>
         </TabSlideBar>
 
-        <ToolbarFooterPortal className="justify-end">
+        <FooterPortal className="justify-end">
           <span>{getFormattedShape(dfs[0]!)}</span>
           <></>
           <ZoomSlider />
-        </ToolbarFooterPortal>
-
-        {showDialog.id.includes('open') && (
-          <OpenFiles
-            message={showDialog.id}
-            multiple={true}
-            //onOpenChange={() => setShowDialog({...NO_DIALOG})}
-            onFileChange={(message, files) =>
-              onTextFileChange(message, files, (files) => openFiles(files))
-            }
-          />
-        )}
+        </FooterPortal>
       </ShortcutLayout>
     </>
   )

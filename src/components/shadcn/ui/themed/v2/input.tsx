@@ -2,7 +2,8 @@ import { WarningIcon } from '@/icons/warning-icon'
 import type { IDivProps } from '@/interfaces/div-props'
 import { VCenterRow } from '@/layout/v-center-row'
 import { cn } from '@/lib/shadcn-utils'
-import { BUTTON_MD_H_CLS, BUTTON_XL_H_CLS, FOCUS_INSET_RING_CLS } from '@/theme'
+import type { UndefStr } from '@/lib/text/text'
+import { BUTTON_XL_H_CLS, FOCUS_INSET_RING_CLS } from '@/theme'
 import { Input as InputPrimitive } from '@base-ui/react/input'
 import { cva, type VariantProps } from 'class-variance-authority'
 import {
@@ -33,12 +34,12 @@ export const inputVariants = cva(PLACEHOLDER_CLS, {
         hover:bg-background hover:shadow-xs hover:border-border
         data-[focus=true]:bg-background data-[focus=true]:shadow-xs data-[focus=true]:border-border
         trans-color`,
-      alt: 'bg-muted/60 hover:bg-muted/80 px-2 stroke-foreground rounded-theme border-2 border-transparent data-[focus=true]:border-ring',
+      alt: 'bg-muted/50 hover:bg-muted/70 px-2 stroke-foreground rounded-theme border-2 border-transparent data-[focus=true]:border-ring',
       underline: 'bg-background border-b border-border hover:border-ring px-1',
     },
     h: {
       sm: 'h-7',
-      md: BUTTON_MD_H_CLS,
+      md: 'h-button-md',
       //dialog: 'h-9',
       lg: 'h-9',
       xl: BUTTON_XL_H_CLS,
@@ -76,8 +77,8 @@ export const INPUT_CLS = cn(
 )
 
 export interface IPlaceholderProps extends IDivProps {
-  id: string | undefined
-  placeholder?: string | undefined
+  id: UndefStr
+  placeholder?: UndefStr
   focus?: boolean
   hover?: boolean
   value: string | number | readonly string[] | undefined
@@ -85,14 +86,16 @@ export interface IPlaceholderProps extends IDivProps {
 }
 
 export interface IInputProps
-  extends ComponentProps<'input'>, VariantProps<typeof inputVariants> {
+  extends
+    ComponentProps<typeof InputPrimitive>,
+    VariantProps<typeof inputVariants> {
   error?: boolean
   inputCls?: string
   inputStyle?: CSSProperties
   leftChildren?: ReactNode
   rightChildren?: ReactNode
   otherChildren?: ReactNode
-  //label?: string | undefined
+  //label?: UndefStr
   //labelPos?: 'left' | 'top'
   //labelW?: string
 
@@ -113,20 +116,15 @@ export function Input({
   inputStyle = {},
   error = false,
   autoComplete = 'off',
-  //label,
-  //labelPos = 'top',
-  //labelW = 'min-w-24',
   variant = 'default',
   w,
-  h = 'lg',
+  h = 'md',
   gap = 'sm',
-  //w = 'grow',
   disabled,
   readOnly = false,
   onChange,
   onTextChange,
   onTextChanged,
-  style = {},
   className,
   'aria-label': ariaLabel,
   ...props
@@ -158,7 +156,6 @@ export function Input({
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
       data-focus={focus}
-      style={style}
     >
       {leftChildren && leftChildren}
 
@@ -181,12 +178,12 @@ export function Input({
         disabled={disabled}
         readOnly={readOnly}
         autoComplete={autoComplete}
-        onChange={(e) => {
+        onChange={e => {
           setValue(e.currentTarget.value)
           onTextChange?.(e.currentTarget.value)
           onChange?.(e)
         }}
-        onKeyDown={(e) => {
+        onKeyDown={e => {
           //console.log(e)
           if (e.key === 'Enter') {
             onTextChanged?.(e.currentTarget.value)
@@ -196,7 +193,7 @@ export function Input({
       />
 
       {rightChildren && rightChildren}
-      {error && <WarningIcon stroke="stroke-destructive" w="w-4 h-4" />}
+      {error && <WarningIcon stroke="stroke-destructive" size="w-4 h-4" />}
     </VCenterRow>
   )
 }

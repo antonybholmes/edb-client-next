@@ -4,7 +4,7 @@ import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
 
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
-import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
+import { FooterPortal } from '@/components/toolbar/footer-portal'
 
 import { PlayIcon } from '@/icons/play-icon'
 import {
@@ -13,7 +13,6 @@ import {
   ToolbarMenu,
   ToolbarPanel,
 } from '@/toolbar/toolbar'
-import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
 import {
   downloadDataFrame,
@@ -24,50 +23,46 @@ import {
   DEFAULT_PARSE_OPTS,
   filesToDataFrames,
   onTextFileChange,
-  OpenFiles,
   type IParseOptions,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 
-import { BasicAlertDialog } from '@/dialog/basic-alert-dialog'
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
-import { ClockRotateLeftIcon } from '@/icons/clock-rotate-left-icon'
 import { OpenIcon } from '@/icons/open-icon'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
-  NO_DIALOG,
   TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_OPEN_FILE,
   TEXT_SAVE_AS,
   TEXT_SAVE_TABLE,
-  type IDialogParams,
 } from '@/consts'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { UploadIcon } from '@/icons/upload-icon'
-import { createGeneConvTable } from '@/lib/gene/geneconv'
+import { createGeneConvTable, type Species } from '@/lib/gene/geneconv'
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
-import { randId } from '@/lib/id'
 
 import type { ITab } from '@/components/tabs/tab-provider'
 import { FileIcon } from '@/icons/file-icon'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
-import { useQueryClient } from '@tanstack/react-query'
 
-import { HeaderSlotPortal } from '@/components/header/header-slot-portal'
-import { ModuleInfoButton } from '@/components/header/module-info-button'
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { AppHeaderIcon } from '@/components/header/app-header-icon'
+import { AppInfoButton } from '@/components/header/app-info-button'
+import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { DownloadIcon } from '@/components/icons/download-icon'
-import { Toggle } from '@/components/shadcn/ui/themed/v2/toggle'
 import { useStableId } from '@/hooks/stable-id'
 import { HeaderButton } from '@/layouts/header-button'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
+
+import { useAppInfo } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
 import { CoreProviders } from '@/providers/core-providers'
@@ -76,7 +71,6 @@ import {
   HistoryLayout,
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
-import { HistoryPanel } from '../../matcalc/history/history-panel'
 import {
   useApp,
   useFile,
@@ -85,12 +79,10 @@ import {
   useSheets,
 } from '../../matcalc/history/history-store'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
-import MODULE_INFO from './module.json'
+import APP_INFO from './manifest.json'
 
 export function GeneConvPage() {
   const _id = useStableId('gene-convert-page')
-
-  const queryClient = useQueryClient()
 
   const { openFile, goto, addSheets } = useHistory()
 
@@ -99,20 +91,25 @@ export function GeneConvPage() {
   const sheet = useSheet()!
   const sheets = useSheets()
 
-  //const [filesToOpen, setFilesToOpen] = useState<IFileOpen[]>([])
+  const { setAppInfo } = useAppInfo()
 
-  const [fromSpecies, setFromSpecies] = useState('Human')
-  const [toSpecies, setToSpecies] = useState('Mouse')
+  const [fromSpecies, setFromSpecies] = useState<Species>('human')
+  const [toSpecies, setToSpecies] = useState<Species>('mouse')
   const [exact] = useState(true)
 
-  const [rightTab, setRightTab] = useState('Options')
+  const { open: openDialog } = useDialogs()
   const [showSideBar, setShowSideBar] = useState(true)
-
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 
-  const speciesTabs = [{ id: 'Human' }, { id: 'Mouse' }]
+  const speciesTabs = [
+    { id: 'human', name: 'Human' },
+    { id: 'mouse', name: 'Mouse' },
+  ]
+
+  useEffect(() => {
+    setAppInfo(APP_INFO)
+  }, [])
 
   function openFiles(
     files: ITextFileOpen[],
@@ -137,22 +134,18 @@ export function GeneConvPage() {
       return
     }
 
-    console.log('from', fromSpecies, toSpecies)
-
-    const dfa = await createGeneConvTable(
-      queryClient,
-      sheet as AnnotationDataFrame,
+    const dfa = await createGeneConvTable(sheet as AnnotationDataFrame, {
       fromSpecies,
       toSpecies,
-      exact
-    )
+      exact,
+    })
 
     if (dfa) {
       addSheets([dfa], { name: `Gene Conversion` })
     }
   }
 
-  function save(format: 'txt' | 'csv') {
+  function save(format: string) {
     if (!sheet) {
       return
     }
@@ -198,24 +191,38 @@ export function GeneConvPage() {
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
-              onOpenChange={(open) => {
-                if (open) {
-                  setShowDialog({
-                    id: randId('open'),
-                  })
-                }
+              onOpen={() => {
+                openDialog({
+                  type: 'open',
+                  payload: {
+                    callback: (message, files) => {
+                      onTextFileChange(message, files, (files) =>
+                        openFiles(files)
+                      )
+                    },
+                  },
+                })
               }}
               multiple={true}
             />
 
             <ToolbarIconButton
-              onClick={() => save('txt')}
+              onClick={() => {
+                openDialog({
+                  type: 'save',
+                  payload: {
+                    callback: (data) => {
+                      save(data.format.ext)
+                    },
+                  },
+                })
+              }}
               title={TEXT_SAVE_TABLE}
             >
               <DownloadIcon />
             </ToolbarIconButton>
           </ToolbarTabGroup>
-          <ToolbarSeparator />
+
           <ToolbarTabGroup title="Convert">
             <ToolbarIconButton
               aria-label="Convert"
@@ -225,89 +232,44 @@ export function GeneConvPage() {
               <PlayIcon />
             </ToolbarIconButton>
           </ToolbarTabGroup>
-          <ToolbarSeparator />
+
           <ToolbarTabGroup className="gap-x-2 mr-1" title="From">
             <ToggleGroup
               //variant="outline"
 
               value={[fromSpecies]}
               onValueChange={(v) => {
-                setFromSpecies(v[0]!)
+                setFromSpecies(v[0]! as Species)
               }}
               size="toolbar"
-              className="rounded-theme overflow-hidden gap-x-px"
+              direction="toolbar"
             >
               {speciesTabs.map((tab) => (
-                <GroupToggle
-                  key={tab.id}
-                  value={tab.id}
-                  className="w-14"
-                  rounded="none"
-                >
-                  {tab.id}
+                <GroupToggle key={tab.id} value={tab.id}>
+                  {tab.name}
                 </GroupToggle>
               ))}
             </ToggleGroup>
           </ToolbarTabGroup>
-          <ToolbarSeparator />
+
           <ToolbarTabGroup className="gap-x-2 ml-1" title="To">
             <ToggleGroup
               value={[toSpecies]}
               onValueChange={(v) => {
-                setToSpecies(v[0]!)
+                setToSpecies(v[0]! as Species)
               }}
               size="toolbar"
-              className="rounded-theme overflow-hidden gap-x-px"
+              direction="toolbar"
             >
               {speciesTabs.map((tab) => (
-                <Toggle
-                  key={tab.id}
-                  value={tab.id}
-                  className="w-14"
-                  rounded="none"
-                >
-                  {tab.id}
-                </Toggle>
+                <GroupToggle key={tab.id} value={tab.id}>
+                  {tab.name}
+                </GroupToggle>
               ))}
             </ToggleGroup>
-
-            {/* <ToggleButtons
-              tabs={speciesTabs}
-              value={toSpecies}
-              onTabChange={(selectedTab) => {
-                setToSpecies(selectedTab.tab.id)
-              }}
-              className="rounded-theme overflow-hidden"
-            >
-              <ToggleButtonTriggers defaultWidth={4.5} variant="tab" />
-            </ToggleButtons> */}
           </ToolbarTabGroup>
-          <ToolbarSeparator />
         </>
       ),
-    },
-  ]
-
-  const rightTabs: ITab[] = [
-    // {
-    //   //id: nanoid(),
-    //   icon: <SlidersIcon />,
-    //   name: "Options",
-    //   content: (
-    //     <GeneConvertPropsPanel
-    //       fromSpecies={fromSpecies}
-    //       toSpecies={toSpecies}
-    //       exact={exact}
-    //       setFromSpecies={setFromSpecies}
-    //       setToSpecies={setToSpecies}
-    //       setExact={setExact}
-    //     />
-    //   ),
-    // },
-    {
-      icon: <ClockRotateLeftIcon />,
-      id: 'History',
-      content: <HistoryPanel />,
     },
   ]
 
@@ -318,7 +280,16 @@ export function GeneConvPage() {
       content: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
-          onClick={() => setShowDialog({ id: randId('open'), params: {} })}
+          onClick={() => {
+            openDialog({
+              type: 'open',
+              payload: {
+                callback: (message, files) => {
+                  onTextFileChange(message, files, (files) => openFiles(files))
+                },
+              },
+            })
+          }}
         >
           <UploadIcon stroke="" />
 
@@ -351,21 +322,16 @@ export function GeneConvPage() {
 
   return (
     <>
-      {showDialog.id === 'alert' && (
-        <BasicAlertDialog onResponse={() => setShowDialog({ ...NO_DIALOG })}>
-          {showDialog.params!.message as string}
-        </BasicAlertDialog>
-      )}
-
       <HeaderSlotPortal>
-        <ModuleInfoButton info={MODULE_INFO} />
+        <AppHeaderIcon />
+        <AppInfoButton />
       </HeaderSlotPortal>
 
       <HeaderSlotPortal slot="header-right">
         <HeaderButton
           className="text-xs"
           onClick={() => loadTestData()}
-          title="Load test data to use features."
+          title="Load test data."
         >
           Test data
         </HeaderButton>
@@ -422,22 +388,12 @@ export function GeneConvPage() {
 
           {/* </TabSlideBar> */}
         </HistoryLayout>
-        <ToolbarFooterPortal className="justify-end">
+        <FooterPortal className="justify-end">
           <span>{getFormattedShape(sheet as AnnotationDataFrame)}</span>
 
           <></>
           <ZoomSlider />
-        </ToolbarFooterPortal>
-
-        {showDialog.id.includes('open') && (
-          <OpenFiles
-            message={showDialog.id}
-            //onOpenChange={() => setShowDialog({...NO_DIALOG})}
-            onFileChange={(message, files) =>
-              onTextFileChange(message, files, (files) => openFiles(files))
-            }
-          />
-        )}
+        </FooterPortal>
       </ShortcutLayout>
     </>
   )

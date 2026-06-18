@@ -1,39 +1,35 @@
+import { FileDropZonePanel } from '@/components/file-dropzone-panel'
+import { VCenterCol } from '@/components/layout/v-center-col'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import { FileDropZonePanel } from '@/components/file-dropzone-panel'
-import { VCenterCol } from '@/components/layout/v-center-col'
+} from '@/components/plot/color-picker-popover'
 import { TEXT_OK } from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { COLOR_BLACK } from '@/lib/color/color'
 import { indexBed } from '@/lib/genomic/bed'
-import type { IGenomicLocation } from '@/lib/genomic/genomic'
+
 import type { GenomicFeatureIndex } from '@/lib/genomic/genomic-index'
+import type { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { textToLines } from '@/lib/text/lines'
-import { BigBed, BigWig } from '@gmod/bbi'
-import { BlobFile } from 'generic-filehandle2'
+
 import { useState } from 'react'
 
-export type LocalFileType =
-  | GenomicFeatureIndex<IGenomicLocation>
-  | BigWig
-  | BigBed
+export type LocalFileType = GenomicFeatureIndex<IGenomicLocation>
+//| BigWig
+//| BigBed
 
 export interface ILocalFile {
   name: string
   data: LocalFileType
 }
 
-export interface IProps {
-  callback?: (name: string, color: string, files: ILocalFile[]) => void
-  onCancel: () => void
-}
-
-export function AddLocalFilesDialog({ callback, onCancel }: IProps) {
+export function AddLocalFilesDialog({
+  onResponse,
+}: IModalProps<{ name: string; color: string; files: ILocalFile[] }>) {
   const [name, setName] = useState('')
   const [color, setColor] = useState(COLOR_BLACK)
-  const [error, setError] = useState('')
+  //const [error, setError] = useState('')
   const [files, setFiles] = useState<ILocalFile[]>([])
 
   // const [showAxes, setShowAxes] = useState(true)
@@ -55,7 +51,7 @@ export function AddLocalFilesDialog({ callback, onCancel }: IProps) {
 
   //   setStrokeShow(_track.displayOptions.stroke.show)
   //   setStrokeWidth(_track.displayOptions.stroke.width)
-  //   setStrokeColor(_track.displayOptions.stroke.color)
+  //   setStrokeColor(_track.displayOptions.stroke.value)
 
   //   setFillShow(_track.displayOptions.fill.show)
   //   setFillOpacity(_track.displayOptions.fill.opacity)
@@ -95,20 +91,24 @@ export function AddLocalFilesDialog({ callback, onCancel }: IProps) {
       onResponse={response => {
         if (response === TEXT_OK) {
           if (files.length > 0) {
-            callback?.(name, color, files)
+            onResponse?.(TEXT_OK, { name, color, files })
           }
         } else {
-          onCancel()
+          onResponse?.(response)
         }
       }}
       showClose={true}
-      leftFooterChildren={
-        <>{error && <span className="text-destructive">{error}</span>}</>
-      }
+      // leftFooterChildren={
+      //   <>{error && <span className="text-destructive">{error}</span>}</>
+      // }
       leftHeaderChildren={
         <ColorPickerButton
-          color={color}
-          onColorChange={setColor}
+          colors={[
+            {
+              color,
+              onColorChange: setColor,
+            },
+          ]}
           className={SIMPLE_COLOR_EXT_CLS}
           title="Set color"
         />
@@ -134,41 +134,39 @@ export function AddLocalFilesDialog({ callback, onCancel }: IProps) {
           console.log('files', files)
 
           if (files.length > 0) {
-            console.log('files', files)
             setName(files.map(f => f.name).join(', '))
-
-            // const bw = new BigWig({
-            //   filehandle: new BlobFile(files[0]!),
-            // })
 
             const ret: ILocalFile[] = []
 
             for (const file of files) {
               switch (file.name.split('.').pop()?.toLowerCase()) {
-                case 'bb':
-                case 'bigbed':
-                  ret.push({
-                    name: file.name,
-                    data: new BigBed({
-                      filehandle: new BlobFile(file),
-                    }),
-                  })
-                  break
-                case 'bw':
-                case 'bigwig':
-                  ret.push({
-                    name: file.name,
-                    data: new BigWig({
-                      filehandle: new BlobFile(file),
-                    }),
-                  })
-                  break
-                default:
+                // case 'bb':
+                // case 'bigbed':
+                //   ret.push({
+                //     name: file.name,
+                //     data: new BigBed({
+                //       filehandle: new BlobFile(file),
+                //     }),
+                //   })
+                //   break
+                // case 'bw':
+                // case 'bigwig':
+                //   ret.push({
+                //     name: file.name,
+                //     data: new BigWig({
+                //       filehandle: new BlobFile(file),
+                //     }),
+                //   })
+                //   break
+                case 'bed':
                   // Handle BED files
                   ret.push({
                     name: file.name,
                     data: indexBed(name, textToLines(await file.text()))!,
                   })
+                  break
+                default:
+                  console.warn('Unsupported file type', file.name)
                   break
               }
             }

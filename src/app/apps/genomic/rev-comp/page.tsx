@@ -1,4 +1,4 @@
-import MODULE_INFO from '@/components/pages/apps/genomic/rev-comp/module.json'
+import MODULE_INFO from '@/components/pages/apps/genomic/rev-comp/manifest.json'
 import { RevCompPage } from '@/components/pages/apps/genomic/rev-comp/rev-comp-page'
 import { makeMetaDataFromModule } from '@/lib/metadata'
 

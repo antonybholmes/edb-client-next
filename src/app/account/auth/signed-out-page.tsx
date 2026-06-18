@@ -32,7 +32,7 @@ function SignedOutPage() {
 
   return (
     <CenterLayout signinRequired={false} innerCls="gap-y-8">
-      <AuthModal title={`You are signed out of ${config.appName}`}>
+      <AuthModal title={`You are signed out of ${config.name}`}>
         <p>It's a good idea to close all browser windows.</p>
 
         {state && state.target.title && state.target.path && (

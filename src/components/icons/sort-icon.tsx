@@ -4,7 +4,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { ArrowDownNarrowWide, ArrowUpWideNarrow } from 'lucide-react'
 
 export function SortIcon({
-  w = 'w-4.5',
+  size = 'w-4.5',
   sortOrder = 'asc',
   stroke = 'stroke-foreground',
   className,
@@ -12,13 +12,13 @@ export function SortIcon({
 }: IIconProps & { sortOrder: SortOrder }) {
   return sortOrder === 'asc' ? (
     <ArrowUpWideNarrow
-      className={cn(stroke, w, className)}
+      className={cn(stroke, size, className)}
       stroke=""
       strokeWidth={strokeWidth}
     />
   ) : (
     <ArrowDownNarrowWide
-      className={cn(stroke, w, className)}
+      className={cn(stroke, size, className)}
       stroke=""
       strokeWidth={strokeWidth}
     />

@@ -1,69 +1,91 @@
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 
-import {
-  LEGEND_BLOCK_SIZE,
-  type IHeatMapDisplayOptions,
-} from '@/components/plot/heatmap/heatmap-svg-props'
+import { LEGEND_BLOCK_SIZE } from '@/components/plot/heatmap/heatmap-svg-props'
+import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
 import type { IClusterGroup } from '@/lib/cluster-group'
 import { COLOR_BLACK } from '@/lib/color/color'
+import type { ReactNode } from 'react'
+import { useHeatmapContext } from './heatmap-provider'
 
 export interface ILegendSvgProps {
   groups: IClusterGroup[]
-  props: IHeatMapDisplayOptions
   pos?: IPos
 }
 
 export function LegendRightSvg({
   groups,
-  props,
   pos = { ...ZERO_POS },
 }: ILegendSvgProps) {
-  //const { groups } = useHistory()
+  const { plot } = useHeatmapContext()
+  const props = plot.props
 
-  //const groupsToPlot = groups.filter(g => g.group.show)
-
-  const legendBlockSize = LEGEND_BLOCK_SIZE.h
-  const cx = 0.5 * legendBlockSize
+  //const legendBlockSize = LEGEND_BLOCK_SIZE.h
+  const cx = 0.5 * props.legend.icon.size
 
   return (
     <g transform={`translate(${pos.x}, ${pos.y})`}>
       {props.legend.title.show && (
-        <text fontSize="small" fontWeight="bold" y={-cx}>
+        <SvgText font={props.legend.title} fontWeight="bold" y={-cx}>
           {props.legend.title.text}
-        </text>
+        </SvgText>
       )}
       {groups.map((g, gi) => {
         //const cg = g.group
         // looks more visually appealing when gap is smaller
-        const y = (legendBlockSize + props.padding / 2) * gi
+        const y = (props.legend.icon.size + props.padding / 2) * gi
+
+        let shape: ReactNode
+
+        switch (props.legend.icon.shape) {
+          case 'c':
+            shape = (
+              <circle
+                cx={props.legend.icon.size / 2}
+                cy={props.legend.icon.size / 2}
+                r={props.legend.icon.size / 2}
+                fill={g.color}
+                stroke={
+                  props.legend.stroke.show ? props.legend.stroke.value : 'none'
+                }
+                strokeWidth={
+                  props.legend.stroke.show ? props.legend.stroke.width : 0
+                }
+              />
+            )
+            break
+          default:
+            shape = (
+              <rect
+                x={0}
+                y={0}
+                width={props.legend.icon.size}
+                height={props.legend.icon.size}
+                fill={g.color}
+                stroke={
+                  props.legend.stroke.show ? props.legend.stroke.value : 'none'
+                }
+                strokeWidth={
+                  props.legend.stroke.show ? props.legend.stroke.width : 0
+                }
+                shapeRendering={SVG_CRISP_EDGES}
+              />
+            )
+        }
 
         return (
           <g key={`group:${gi}`} transform={`translate(0, ${y})`}>
-            <rect
-              x={0}
-              y={0}
-              width={legendBlockSize}
-              height={legendBlockSize}
-              fill={g.color}
-              stroke={
-                props.legend.stroke.show ? props.legend.stroke.color : 'none'
-              }
-              strokeWidth={
-                props.legend.stroke.show ? props.legend.stroke.width : 0
-              }
-              shapeRendering={SVG_CRISP_EDGES}
-            />
+            {shape}
 
-            <text
-              x={legendBlockSize + props.padding}
-              y={0.5 * legendBlockSize}
+            <SvgText
+              x={props.legend.icon.size + props.padding}
+              y={0.5 * props.legend.icon.size}
               fill={COLOR_BLACK}
               dominantBaseline="central"
-              fontSize="small"
+              font={props.legend}
             >
               {g.name}
-            </text>
+            </SvgText>
           </g>
         )
       })}
@@ -73,9 +95,11 @@ export function LegendRightSvg({
 
 export function LegendBottomSvg({
   groups,
-  props,
+
   pos = { ...ZERO_POS },
 }: ILegendSvgProps) {
+  const { plot } = useHeatmapContext()
+  const props = plot.props
   //const { groups } = useHistory()
   const legendBlockSize = LEGEND_BLOCK_SIZE.h
 
@@ -94,21 +118,20 @@ export function LegendBottomSvg({
               height={legendBlockSize}
               fill={g.color}
               stroke={
-                props.legend.stroke.show ? props.legend.stroke.color : 'none'
+                props.legend.stroke.show ? props.legend.stroke.value : 'none'
               }
               strokeWidth={props.legend.stroke.width}
               shapeRendering={SVG_CRISP_EDGES}
             />
 
-            <text
+            <SvgText
               x={legendBlockSize + props.padding}
               y={0.5 * legendBlockSize}
-              fill={COLOR_BLACK}
               dominantBaseline="central"
-              fontSize="smaller"
+              font={props.legend}
             >
               {g.name}
-            </text>
+            </SvgText>
           </g>
         )
       })}
@@ -116,7 +139,11 @@ export function LegendBottomSvg({
   )
 }
 
-export function DotLegend({ props, pos = { ...ZERO_POS } }: ILegendSvgProps) {
+export function DotLegend({ pos = { ...ZERO_POS } }: ILegendSvgProps) {
+  const { plot } = useHeatmapContext()
+
+  const props = plot.props
+
   const legendBlockSize = Math.min(props.blockSize.w, props.blockSize.h) //  LEGEND_BLOCK_SIZE.h
   const halfW = legendBlockSize / 2
   //const suffix = props.dot.mode === 'groups' ? '%' : ''
@@ -127,9 +154,9 @@ export function DotLegend({ props, pos = { ...ZERO_POS } }: ILegendSvgProps) {
   return (
     <g transform={`translate(${pos.x}, ${pos.y})`}>
       {props.dot.legend.title.show && (
-        <text fontSize="small" fontWeight="bold" y={-cx}>
+        <SvgText font={props.legend.title} y={-cx}>
           {props.dot.legend.title.text}
-        </text>
+        </SvgText>
       )}
       <g>
         {props.dot.sizes.map((ds, dsi) => {
@@ -140,17 +167,16 @@ export function DotLegend({ props, pos = { ...ZERO_POS } }: ILegendSvgProps) {
             <g key={`dot:${dsi}`} transform={`translate(0, ${y})`}>
               <circle cx={cx} cy={cx} r={r} fill="gray" />
 
-              <text
+              <SvgText
                 x={legendBlockSize + props.padding}
                 y={cx}
-                fill={COLOR_BLACK}
                 dominantBaseline="central"
-                fontSize="smaller"
+                font={props.legend}
               >
                 {/* {`${formatNumber(ds, props.cells.values.dp)}${suffix ? suffix : ''}`} */}
                 {/* {`${ds.value}${suffix ? suffix : ''}`} */}
                 {ds.value}
-              </text>
+              </SvgText>
             </g>
           )
         })}

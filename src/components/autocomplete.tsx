@@ -1,25 +1,40 @@
 import { useClickListener } from '@/hooks/click-listener'
 import { useKeyDownListener } from '@/hooks/keydown-listener'
+import { useStableId } from '@/hooks/stable-id'
 import { cn } from '@/lib/shadcn-utils'
-import { Children, useRef, useState, type ComponentProps } from 'react'
+import {
+  Children,
+  useRef,
+  useState,
+  type ComponentProps,
+  type ReactNode,
+} from 'react'
 import { BaseCol } from './layout/base-col'
 import { VCenterRow } from './layout/v-center-row'
 import { SearchBox, type ISearchBoxProps } from './search-box'
+import { ToolbarSeparator } from './toolbar/toolbar-separator'
 
-export function Autocomplete({
-  id,
-
-  isOpen,
-  autoOpen = true,
-  asList = true,
-  className,
-  children,
-  ...props
-}: ISearchBoxProps & {
+type IProps = ISearchBoxProps & {
   asList?: boolean
   isOpen?: boolean
   autoOpen?: boolean
-}) {
+  footer?: ReactNode
+}
+
+export function Autocomplete({
+  id,
+  isOpen,
+  autoOpen = true,
+  asList = true,
+  rightChildren,
+  className,
+  children,
+  value,
+  footer,
+  ...props
+}: IProps) {
+  const _id = id || useStableId('autocomplete')
+
   const c = Children.toArray(children)
 
   //const [isOpen, setIsOpen] = useState(false)
@@ -51,11 +66,14 @@ export function Autocomplete({
   const _isOpen =
     isOpen !== undefined ? isOpen : autoOpen && hasFocus && c.length > 0
 
+  const hasRightChildren = !!rightChildren
+
   return (
     <BaseCol
       id={id}
       data-open={_isOpen}
-      className={cn('relative group', className)}
+      data-has-right-children={hasRightChildren}
+      className={cn('relative', className)}
       ref={ref}
 
       // onBlur={() => {
@@ -65,7 +83,8 @@ export function Autocomplete({
     >
       <VCenterRow
         data-open={_isOpen}
-        className={`z-20 data-[open=true]:z-40 mx-3 h-9 border-b 
+        data-has-right-children={hasRightChildren}
+        className={`z-20 data-[open=true]:z-40 ml-3 mr-3 data-[has-right-children=true]:mr-2 h-10 border-b gap-x-1
           data-[open=true]:border-border/50 
           data-[open=false]:border-transparent`}
         onFocus={() => {
@@ -75,16 +94,26 @@ export function Autocomplete({
         //   setFocus(false)
         // }}
       >
+        <label htmlFor={_id} className="sr-only">
+          Search
+        </label>
         <SearchBox
-          //value={value}
+          id={_id}
+          value={value}
           //onTextChange={handleSearch}
           //onTextChanged={handleSearch}
           //onSearch={handleSearch}
           variant="plain"
-          h="lg"
           className="grow"
           {...props}
         />
+
+        {rightChildren && (
+          <VCenterRow className="gap-x-1">
+            <ToolbarSeparator />
+            {rightChildren}
+          </VCenterRow>
+        )}
       </VCenterRow>
 
       {/* z order is adjusted so that when open, it will be on top of other autocomplete elements
@@ -95,7 +124,7 @@ export function Autocomplete({
         //data-focus={focus}
         className={`absolute  
           rounded-theme border border-border/50 data-[open=true]:shadow-lg bg-background
-          w-full min-h-9 data-[open=true]:pt-11 data-[open=true]:pb-3 
+          w-full min-h-10 data-[open=true]:pt-11 data-[open=true]:pb-3 
           z-10 data-[open=true]:z-30 top-0 
           overflow-hidden`}
       >
@@ -103,7 +132,7 @@ export function Autocomplete({
           id="autocomplete-list"
           data-open={_isOpen}
           className={cn(
-            'grow overflow-y-auto max-h-42 custom-scrollbar hidden data-[open=true]:flex'
+            'grow overflow-y-auto max-h-42 custom-scrollbar hidden data-[open=true]:flex mx-0.5'
           )}
         >
           {asList ? (
@@ -114,13 +143,21 @@ export function Autocomplete({
             c
           )}
         </BaseCol>
+        {footer && (
+          <VCenterRow
+            data-open={_isOpen}
+            className="px-2 pt-2 justify-end hidden data-[open=true]:flex"
+          >
+            {footer}
+          </VCenterRow>
+        )}
       </BaseCol>
     </BaseCol>
   )
 }
 
 const AUTOCOMPLETE_LI_CLS = cn(
-  'flex flex-row items-center hover:bg-muted/50 min-h-9',
+  'flex flex-row items-center hover:bg-muted/50 min-h-9 rounded-sm',
   'focus-visible:bg-muted/50 data-[focus=true]:bg-muted/50',
   'outline-none flex flex-row items-center px-4 gap-x-2 overflow-hidden'
 )

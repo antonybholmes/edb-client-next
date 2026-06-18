@@ -22,7 +22,7 @@ export const accordionVariants = cva('flex flex-col', {
   variants: {
     variant: {
       default: 'gap-y-0.5',
-      settings: 'gap-y-8 pr-4',
+      settings: 'gap-y-8',
       sidebar: 'mt-1 gap-y-2',
     },
   },
@@ -131,7 +131,7 @@ const accordionItemVariants = cva('flex flex-col', {
     },
   },
   defaultVariants: {
-    variant: 'default',
+    variant: 'sidebar',
   },
 })
 
@@ -155,25 +155,44 @@ export function AccordionItem({
 }
 
 const TRIGGER_CLS = cn(
-  'group relative outline-2 outline-transparent focus-visible:outline-ring data-[focus=true]:outline-ring -outline-offset-2',
+  'group relative outline-2 outline-transparent',
+  'focus-visible:outline-ring data-[focus=true]:outline-ring -outline-offset-2',
   'flex flex-row grow items-center font-semibold'
 )
 
 //  [&>div]:pl-2
-export const accordionTriggerVariants = cva(
-  'group flex flex-row items-center gap-x-1',
+export const accordionHeaderVariants = cva(
+  'group flex flex-row items-center gap-x-1.5',
   {
     variants: {
       variant: {
         default: '',
         settings:
           'text-base py-1 data-[show-border=true]:pt-4 data-[show-border=true]:border-t data-[show-border=true]:border-border/50',
-        sidebar: 'px-0.5 text-sm h-7 rounded-theme hover:bg-muted/30 text-xs',
+        sidebar:
+          'text-sm h-7 rounded-theme overflow-hidden data-[hover=true]:bg-muted/50 text-xs trans-color pr-1.5',
         none: '',
       },
     },
     defaultVariants: {
-      variant: 'default',
+      variant: 'sidebar',
+    },
+  }
+)
+
+export const accordionTriggerVariants = cva(
+  'flex flex-row items-center grow gap-x-1 truncate h-full',
+  {
+    variants: {
+      variant: {
+        default: '',
+        settings: '',
+        sidebar: 'px-1',
+        none: '',
+      },
+    },
+    defaultVariants: {
+      variant: 'sidebar',
     },
   }
 )
@@ -187,11 +206,11 @@ export function AccordionTrigger({
   leftChildren,
   rightChildren,
   children,
-  variant = 'default',
+  variant,
 
   ...props
 }: ComponentProps<typeof AccordionPrimitive.Trigger> &
-  VariantProps<typeof accordionTriggerVariants> & {
+  VariantProps<typeof accordionHeaderVariants> & {
     leftChildren?: ReactNode
     rightChildren?: ReactNode
     side?: 'left' | 'right'
@@ -200,32 +219,38 @@ export function AccordionTrigger({
     arrowStyle?: CSSProperties
   }) {
   const showBorder = props['data-show-border']
+  const [hover, setHover] = useState(false)
 
   return (
     <AccordionPrimitive.Header
-      className={cn('grow w-full flex flex-row items-center', {
-        'justify-between': side === 'right',
+      data-show-border={showBorder}
+      data-is-first={isFirst}
+      data-hover={hover}
+      className={accordionHeaderVariants({
+        className: cn(TRIGGER_CLS, className),
+        variant,
       })}
+      // className={cn('grow w-full flex flex-row items-center', {
+      //   'justify-between': side === 'right',
+      // },className)}
     >
       {leftChildren && leftChildren}
 
       <AccordionPrimitive.Trigger
         ref={ref}
-        data-show-border={showBorder}
-        data-is-first={isFirst}
-        className={accordionTriggerVariants({
-          className: cn(
-            TRIGGER_CLS,
-
-            className
-          ),
-          variant,
-        })}
+        className={accordionTriggerVariants({ variant })}
+        data-hover={hover}
+        // className={accordionTriggerVariants({
+        //   className: cn(TRIGGER_CLS, className),
+        //   variant,
+        // })}
+        onMouseOver={() => setHover(true)}
+        onMouseOut={() => setHover(false)}
         {...props}
       >
         {side === 'right' && children}
         <ChevronRight
-          className="trans-transform group-data-panel-open:rotate-90"
+          className="trans-transform group-data-open:rotate-90"
           style={arrowStyle}
           size={16}
         />
@@ -243,11 +268,11 @@ export const accordionContentVariants = cva('flex flex-col', {
     variant: {
       default: 'py-1 gap-y-1',
       settings: 'gap-y-2',
-      sidebar: 'gap-y-1 py-1 pl-2',
+      sidebar: 'gap-y-1 pt-1 pb-2 mb-1 px-1.5 border-b border-border/50',
     },
   },
   defaultVariants: {
-    variant: 'default',
+    variant: 'sidebar',
   },
 })
 

@@ -6,7 +6,7 @@ interface IProps extends IIconProps {
 }
 
 export function RightSideIcon({
-  w = 'w-5',
+  size = 'w-5',
   showSide = true,
   className,
 }: IProps) {
@@ -16,7 +16,7 @@ export function RightSideIcon({
         ICON_CLS,
         'aspect-square rounded-xs border border-foreground',
         [showSide, 'border-r-[5px]'],
-        w,
+        size,
         className
       )}
     />

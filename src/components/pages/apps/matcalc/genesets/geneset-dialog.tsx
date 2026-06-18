@@ -3,23 +3,22 @@ import { BaseCol } from '@/layout/base-col'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
-} from '@/components/color/color-picker-button'
-import { TEXT_CANCEL, TEXT_NAME } from '@/consts'
-import { OKCancelDialog, type IModalProps } from '@/dialog/ok-cancel-dialog'
+} from '@/components/plot/color-picker-popover'
+import { TEXT_CANCEL, TEXT_NAME, TEXT_OK } from '@/consts'
+import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
-import { PropRow } from '@/components/dialog/prop-row'
-import type { IGeneset } from '@/lib/gsea/geneset'
+import { PropRow } from '@/dialogs/prop-row'
+import type { IGeneSet } from '@/lib/gsea/geneset'
 import { textToLines } from '@/lib/text/lines'
 import { Textarea } from '@/themed/textarea'
 import { Input } from '@/themed/v2/input'
 import { useEffect, useState } from 'react'
 
-export interface IProps extends IModalProps {
-  geneset: IGeneset
-  callback?: (geneset: IGeneset) => void
+export interface IProps extends IModalProps<IGeneSet> {
+  geneset: IGeneSet
 }
 
-export function GenesetDialog({ geneset, callback, onResponse }: IProps) {
+export function GenesetDialog({ geneset, onResponse }: IProps) {
   const [name, setName] = useState('')
   const [search, setSearch] = useState('')
   const [color, setColor] = useState('#6495ED') //`#${Math.floor(Math.random() * 16777215).toString(16)}`,
@@ -29,14 +28,14 @@ export function GenesetDialog({ geneset, callback, onResponse }: IProps) {
 
     setName(geneset.name)
     setSearch(geneset.genes.join('\n'))
-    if (geneset.color.match(/#[0-9a-fA-F]+/)) {
+    if (geneset.color && geneset.color.match(/#[0-9a-fA-F]+/)) {
       setColor(geneset.color)
     }
   }, [geneset])
 
   function makeGroup() {
     // return modified group
-    callback?.({
+    onResponse?.(TEXT_OK, {
       ...geneset,
       name,
       genes: textToLines(search),
@@ -54,7 +53,7 @@ export function GenesetDialog({ geneset, callback, onResponse }: IProps) {
       }
       onResponse={r => {
         if (r === TEXT_CANCEL) {
-          onResponse?.(r)
+          onResponse?.(r, undefined)
         } else {
           makeGroup()
         }
@@ -74,8 +73,12 @@ export function GenesetDialog({ geneset, callback, onResponse }: IProps) {
         // />
 
         <ColorPickerButton
-          color={color}
-          onColorChange={setColor}
+          colors={[
+            {
+              color,
+              onColorChange: color => setColor(color),
+            },
+          ]}
           className={SIMPLE_COLOR_EXT_CLS}
         />
       }

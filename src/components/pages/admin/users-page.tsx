@@ -16,8 +16,7 @@ import {
 import { useEffect, useState } from 'react'
 
 import { PaginationComponent } from '@/components/pagination-component'
-import { NO_DIALOG, TEXT_OK, type IDialogParams } from '@/consts'
-import { OKCancelDialog } from '@/dialog/ok-cancel-dialog'
+import { TEXT_OK } from '@/consts'
 import { PenIcon } from '@/icons/pen-icon'
 import { PlusIcon } from '@/icons/plus-icon'
 import { TrashIcon } from '@/icons/trash-icon'
@@ -50,10 +49,12 @@ import { csfrWithTokenHeaders } from '@/lib/http/urls'
 import { logger } from '@/lib/logger'
 import { CoreProviders } from '@/providers/core-providers'
 
-import { csrfService } from '@/lib/edb/csrf-service'
+import { useDialogs } from '@/components/dialogs/dialogs'
+import { getCSRFToken } from '@/lib/edb/csrf'
 import { makeUuid } from '@/lib/id'
 import { Toast } from '@base-ui/react/toast'
-import { EditUserDialog, type INewUser } from './edit-user-dialog'
+import { type INewUser } from './edit-user-dialog'
+import { UsersDialogsRoot, useUserDialogs } from './users-dialogs'
 
 interface IUserStats {
   users: number
@@ -74,7 +75,8 @@ export function AdminUsersPage() {
 
   const { add: addToast } = Toast.useToastManager()
 
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
+  const { open: openDialogs } = useDialogs()
+  const { open: openUserDialog } = useUserDialogs()
 
   useEffect(() => {
     async function loadUserStats() {
@@ -84,7 +86,7 @@ export function AdminUsersPage() {
         return
       }
 
-      const csrfToken = await csrfService.getToken()
+      const csrfToken = await getCSRFToken()
 
       const res = await httpFetch.getJson<{ data: IUserStats }>(
         API_ADMIN_USER_STATS_URL,
@@ -105,7 +107,7 @@ export function AdminUsersPage() {
         return
       }
 
-      const csrfToken = await csrfService.getToken()
+      const csrfToken = await getCSRFToken()
 
       const res = await httpFetch.getJson<{ data: IRBACGroup[] }>(
         API_ADMIN_GROUPS_URL,
@@ -133,7 +135,7 @@ export function AdminUsersPage() {
       return
     }
 
-    const csrfToken = await csrfService.getToken()
+    const csrfToken = await getCSRFToken()
 
     const res = await httpFetch.postJson<{ data: IEdbUser[] }>(
       API_ADMIN_USERS_URL,
@@ -236,11 +238,16 @@ export function AdminUsersPage() {
           <button
             title="Edit user"
             onClick={() => {
-              //setUser(props.getValue())
-
-              setShowDialog({
-                id: 'edit',
-                params: { title: 'Edit User', user: props.getValue() },
+              openUserDialog({
+                type: 'edit-user',
+                payload: {
+                  title: 'Edit User',
+                  user: props.getValue(),
+                  groups,
+                  callback: (user: INewUser) => {
+                    updateUser(user)
+                  },
+                },
               })
             }}
             className="group"
@@ -254,17 +261,25 @@ export function AdminUsersPage() {
           <button
             title="Delete user"
             onClick={() => {
-              setShowDialog({
-                id: 'delete',
-                params: { user: props.getValue() },
+              openDialogs({
+                type: 'warning',
+                payload: {
+                  title: 'Delete User',
+                  content: `Are you sure you want to delete user ${props.getValue().username} (${props.getValue().id})?`,
+                  callback: (r) => {
+                    if (r === TEXT_OK) {
+                      deleteUser(props.getValue())
+                    }
+                  },
+                },
               })
             }}
             className="group"
           >
             <TrashIcon
               stroke="stroke-foreground/25"
-              className="group-hover:stroke-red-500"
-              w="w-4"
+              className="group-hover:stroke-destructive"
+              size="w-4"
             />
           </button>
         </VCenterRow>
@@ -309,11 +324,16 @@ export function AdminUsersPage() {
           <button
             title="Edit user"
             onClick={() => {
-              //setUser(props.getValue())
-
-              setShowDialog({
-                id: 'edit',
-                params: { title: 'Edit User', user: props.getValue() },
+              openUserDialog({
+                type: 'edit-user',
+                payload: {
+                  title: 'Edit User',
+                  user: props.getValue(),
+                  groups,
+                  callback: (user: INewUser) => {
+                    updateUser(user)
+                  },
+                },
               })
             }}
             className="group"
@@ -324,19 +344,10 @@ export function AdminUsersPage() {
             />
           </button>
 
-          <button
-            title="Delete user"
-            onClick={() => {
-              setShowDialog({
-                id: 'delete',
-                params: { user: props.getValue() },
-              })
-            }}
-            className="group"
-          >
+          <button title="Delete user" onClick={() => {}} className="group">
             <TrashIcon
               stroke="stroke-foreground/25"
-              className="group-hover:stroke-red-500"
+              className="group-hover:stroke-destructive"
             />
           </button>
         </VCenterRow>
@@ -357,7 +368,7 @@ export function AdminUsersPage() {
       return
     }
 
-    const csrfToken = await csrfService.getToken()
+    const csrfToken = await getCSRFToken()
 
     try {
       await httpFetch.post(API_ADMIN_ADD_USER_URL, {
@@ -379,7 +390,7 @@ export function AdminUsersPage() {
       return
     }
 
-    const csrfToken = await csrfService.getToken()
+    const csrfToken = await getCSRFToken()
 
     console.log(
       'updating user',
@@ -415,7 +426,7 @@ export function AdminUsersPage() {
       return
     }
 
-    const csrfToken = await csrfService.getToken()
+    const csrfToken = await getCSRFToken()
 
     try {
       await httpFetch.delete(`${API_ADMIN_USERS_URL}/${user.id}/delete`, {
@@ -436,50 +447,7 @@ export function AdminUsersPage() {
 
   return (
     <>
-      {showDialog.id === 'delete' && (
-        <OKCancelDialog
-          onResponse={(r) => {
-            if (r === TEXT_OK) {
-              deleteUser(showDialog.params!.user as IEdbUser)
-            }
-
-            setShowDialog({ ...NO_DIALOG })
-          }}
-        >
-          Are you sure you want to delete user{' '}
-          {(showDialog.params!.user as IEdbUser).username} (
-          {(showDialog.params!.user as IEdbUser).id})?
-        </OKCancelDialog>
-      )}
-
-      {showDialog.id === 'new' && (
-        <EditUserDialog
-          title={showDialog.params!.title as string}
-          user={showDialog.params!.user as INewUser}
-          setUser={(user: INewUser | undefined) => {
-            if (user) {
-              newUser(user)
-            }
-
-            setShowDialog({ ...NO_DIALOG })
-          }}
-          groups={groups}
-        />
-      )}
-
-      {showDialog.id === 'edit' && (
-        <EditUserDialog
-          user={showDialog.params!.user as INewUser}
-          setUser={(user: INewUser | undefined) => {
-            if (user) {
-              updateUser(user)
-            }
-
-            setShowDialog({ ...NO_DIALOG })
-          }}
-          groups={groups}
-        />
-      )}
+      <UsersDialogsRoot />
 
       <AdminLayout title="Users">
         <CenterCol className="grow">
@@ -487,20 +455,24 @@ export function AdminUsersPage() {
             <BaseCol className="flex flex-col gap-y-4">
               <VCenterRow>
                 <Button
-                  variant="theme"
+                  //variant="theme"
                   //rounded="full"
                   onClick={() => {
-                    setShowDialog({
-                      id: 'new',
-                      params: {
+                    openUserDialog({
+                      type: 'edit-user',
+                      payload: {
                         title: 'New User',
                         user: { ...DEFAULT_EDB_USER },
+                        groups,
+                        callback: (user: INewUser) => {
+                          newUser(user)
+                        },
                       },
                     })
                   }}
                   className="text-sm px-3"
                 >
-                  <PlusIcon stroke="stroke-white" /> <span>New User</span>
+                  <PlusIcon /> <span>New User</span>
                 </Button>
               </VCenterRow>
               <Card className="hidden xl:flex text-xs" variant="content">

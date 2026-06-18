@@ -4,7 +4,7 @@ import { Command as CommandPrimitive } from 'cmdk'
 import { SearchIcon } from '@/icons/search-icon'
 import { VCenterRow } from '@/layout/v-center-row'
 import { cn } from '@/lib/shadcn-utils'
-import { BUTTON_MD_H_CLS } from '@/theme'
+
 import { Dialog, DialogContent } from '@/themed/v2/dialog'
 import type { VariantProps } from 'class-variance-authority'
 import { Check } from 'lucide-react'
@@ -52,8 +52,7 @@ const CommandInput = forwardRef<
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
-        BUTTON_MD_H_CLS,
-        'flex bg-transparent text-sm outline-hidden placeholder:text-foreground/50 disabled:cursor-not-allowed disabled:opacity-50',
+        'h-button-md flex bg-transparent text-sm outline-hidden placeholder:text-foreground/50 disabled:cursor-not-allowed disabled:opacity-50',
         className
       )}
       {...props}

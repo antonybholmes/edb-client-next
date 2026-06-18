@@ -8,9 +8,9 @@ export const ROUNDED_FULL_CLS = 'rounded-full'
 export const BASE_FOCUS_RING_CLS = 'outline-hidden'
 
 export const FOCUS_RING_CLS = `outline-2 outline-transparent 
-  group-focus-visible:outline-ring 
-  focus-visible:outline-ring  
-  data-[focus=true]:outline-ring
+  group-focus-visible:outline-app-theme/30 
+  focus-visible:outline-app-theme/30  
+  data-[focus=true]:outline-app-theme/30
   data-[error=true]:outline-destructive`
 
 export const FOCUS_INSET_RING_CLS = cn(FOCUS_RING_CLS, '-outline-offset-2')
@@ -33,43 +33,34 @@ export const DRAG_OUTLINE_CLS =
 export const BUTTON_XS_W_CLS = 'w-6'
 export const BUTTON_XS_H_CLS = 'h-6'
 
-export const BUTTON_SM_W_CLS = 'w-7'
-export const BUTTON_SM_H_CLS = 'h-7'
+//export const BUTTON_SM_W_CLS = 'w-7'
+//export const BUTTON_SM_H_CLS = 'h-7'
 //export const BUTTON_TOOLBAR_H_CLS = 'h-8'
-export const BUTTON_MD_H_CLS = 'h-8'
-export const BUTTON_MD_W_CLS = 'w-8'
+//export const BUTTON_MD_H_CLS = 'h-8'
+//export const BUTTON_MD_W_CLS = 'w-8'
 export const BUTTON_LG_W_CLS = 'w-10'
-export const BUTTON_LG_H_CLS = 'h-10'
+//export const BUTTON_LG_H_CLS = 'h-10'
 export const BUTTON_XL_W_CLS = 'w-11'
 export const BUTTON_XL_H_CLS = 'h-11'
-
-//export const TOOLBAR_BUTTON_W_CLS = 'w-7' //BUTTON_SM_W_CLS //BUTTON_MD_W_CLS
-export const TOOLBAR_BUTTON_H_CLS = 'h-7.5' //BUTTON_SM_H_CLS //BUTTON_MD_H_CLS
 
 export const BASE_ICON_BUTTON_CLS = 'shrink-0 grow-0 aspect-square'
 
 export const ICON_BUTTON_CLS = cn(
   BASE_ICON_BUTTON_CLS,
-  BUTTON_MD_W_CLS,
-  BUTTON_MD_H_CLS
+  'w-button-md h-button-md'
 )
 
-export const DROPDOWN_BUTTON_CLS = cn(
-  BASE_ICON_BUTTON_CLS,
-  'w-4.5',
-  BUTTON_MD_H_CLS
-)
+export const DROPDOWN_BUTTON_CLS = cn(BASE_ICON_BUTTON_CLS, 'w-5 h-button-md')
 
 export const DROPDOWN_WITH_ICON_BUTTON_CLS = cn(
   BASE_ICON_BUTTON_CLS,
-  'w-12',
-  BUTTON_MD_H_CLS
+  'w-12 h-button-md'
 )
 
 export const TOOLBAR_DROPDOWN_BUTTON_CLS = cn(
   BASE_ICON_BUTTON_CLS,
   'w-5',
-  TOOLBAR_BUTTON_H_CLS
+  'h-toolbar-button'
 )
 
 export const LARGE_ICON_BUTTON_CLS = cn(BASE_ICON_BUTTON_CLS, BUTTON_LG_W_CLS)
@@ -82,31 +73,26 @@ export const CENTERED_ROW_CLS = 'flex flex-row items-center justify-center'
 
 export const COL_BUTTON_CLS = 'flex flex-col'
 
-export const XS_ICON_BUTTON_CLS = cn(
-  BASE_ICON_BUTTON_CLS,
-  CENTERED_ROW_CLS,
-  BUTTON_XS_W_CLS,
-  BUTTON_XS_H_CLS
-)
+// export const XS_ICON_BUTTON_CLS = cn(
+//   BASE_ICON_BUTTON_CLS,
+//   CENTERED_ROW_CLS,
+//   BUTTON_XS_W_CLS,
+//   BUTTON_XS_H_CLS
+// )
 
 export const SM_ICON_BUTTON_CLS = cn(
   BASE_ICON_BUTTON_CLS,
   CENTERED_ROW_CLS,
-  BUTTON_SM_W_CLS,
-  BUTTON_SM_H_CLS
+  'w-button-sm h-button-sm'
 )
 
-export const SMALL_BUTTON_CLS = cn(BUTTON_SM_H_CLS, 'px-2')
+//export const SMALL_BUTTON_CLS = cn(BUTTON_SM_H_CLS, 'px-2')
 
 export const PRIMARY_BUTTON_W_CLS = 'min-w-24'
-export const DEFAULT_BUTTON_SIZE_CLS = cn(BUTTON_MD_H_CLS, 'px-3')
-export const LARGE_BUTTON_SIZE_CLS = cn(BUTTON_LG_H_CLS, 'min-w-20 px-4')
+export const DEFAULT_BUTTON_SIZE_CLS = 'h-button-md px-3'
+export const LARGE_BUTTON_SIZE_CLS = 'h-button-lg min-w-20 px-4'
 
-export const HEADER_ICON_SIZE_CLS = cn(
-  'shrink-0',
-  BUTTON_LG_W_CLS,
-  BUTTON_LG_H_CLS
-)
+export const HEADER_ICON_SIZE_CLS = cn('h-button-lg shrink-0', BUTTON_LG_W_CLS)
 
 export const GROUP_FOCUS_RING_CLS =
   'group-focus-visible:ring-2 group-focus-visible:ring-ring group-focus-visible:ring-inset'
@@ -142,26 +128,30 @@ export const CORE_PRIMARY_BUTTON_CLS = cn(
 // export const PRIMARY_TEXT_CLS = 'text-primary'
 // export const PRIMARY_LINK_CLS = cn(PRIMARY_TEXT_CLS, 'hover:text-primary')
 
-export const BASE_PRIMARY_COLOR_BUTTON_CLS =
+export const BASE_THEME_BUTTON_CLS =
   'text-primary-foreground bg-theme hover:bg-theme-alt data-[checked=true]:bg-theme-alt data-[state=open]:bg-theme-alt'
 
-export const CORE_PRIMARY_COLOR_BUTTON_CLS = cn(
-  BASE_PRIMARY_COLOR_BUTTON_CLS,
+export const CORE_THEME_BUTTON_CLS = cn(BASE_THEME_BUTTON_CLS, FOCUS_RING_CLS)
+
+export const BASE_APP_ACCENT_BUTTON_CLS =
+  'text-primary-foreground bg-app-theme/90 hover:bg-app-theme data-[checked=true]:bg-app-theme data-[state=open]:bg-app-theme'
+
+export const CORE_APP_ACCENT_BUTTON_CLS = cn(
+  BASE_APP_ACCENT_BUTTON_CLS,
   FOCUS_RING_CLS
 )
 
 export const BASE_TOOLBAR_BUTTON_CLS = cn(
-  BUTTON_MD_H_CLS,
   CENTERED_ROW_CLS,
   FOCUS_INSET_RING_CLS,
-  'hover:bg-muted'
+  'hover:bg-muted h-button-md'
 )
 
 export const TOOLBAR_ICON_BUTTON_CLS = cn(
   BASE_TOOLBAR_BUTTON_CLS,
-  BUTTON_MD_W_CLS,
+
   ROUNDED_LG_CLS,
-  'justify-center'
+  'w-button-md justify-center'
 )
 
 export const TOOLBAR_BUTTON_CLS = cn(

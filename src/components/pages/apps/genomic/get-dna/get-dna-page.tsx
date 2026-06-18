@@ -1,22 +1,18 @@
-'use client'
-
 import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
 
-import { ToolbarFooterPortal } from '@/toolbar/toolbar-footer-portal'
+import { FooterPortal } from '@/components/toolbar/footer-portal'
 
 import { PlayIcon } from '@/icons/play-icon'
 import { BaseCol } from '@/layout/base-col'
 import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
-import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 
 import { ToolbarButton } from '@/toolbar/toolbar-button'
 
 import { download } from '@/lib/download-utils'
 
-import { OpenFiles, onTextFileChange } from '@/components/pages/open-files'
+import { onTextFileChange } from '@/components/pages/open-files'
 import { MenuButton } from '@/toolbar/menu-button'
 
-import { BasicAlertDialog } from '@/dialog/basic-alert-dialog'
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
 import { FileLinesIcon } from '@/icons/file-lines-icon'
@@ -29,12 +25,7 @@ import {
 } from '@/theme'
 import { useEffect, useState } from 'react'
 
-import {
-  NO_DIALOG,
-  TEXT_SAVE_AS,
-  TEXT_SETTINGS,
-  type IDialogParams,
-} from '@/consts'
+import { TEXT_SAVE_AS, TEXT_SETTINGS } from '@/consts'
 
 import {
   ResizablePanel,
@@ -51,19 +42,22 @@ import {
   ToggleButtons,
 } from '@/components/toggle-buttons'
 import { VCenterRow } from '@/layout/v-center-row'
-import { GenLoc, parseGenLoc } from '@/lib/genomic/genomic'
 
 import { Label } from '@/components/shadcn/ui/themed/v2/label'
 import { Input } from '@/themed/v2/input'
 
 import { Textarea } from '@/themed/textarea'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { useStableId } from '@/hooks/stable-id'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { dnaToJson, fetchDNA, type IDNA } from '@/lib/genomic/dna'
+import {
+  parseGenomicLocation,
+  type IGenomicLocation,
+} from '@/lib/genomic/genomic-location'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { randId } from '@/lib/id'
 import { textToLines } from '@/lib/text/lines'
 import { CoreProviders } from '@/providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
@@ -80,11 +74,11 @@ export function GetDNAPage() {
   const [modeRev, setModeRev] = useState(true)
   const [modeComp, setModeComp] = useState(true)
 
-  const [showDialog, setShowDialog] = useState<IDialogParams>({ ...NO_DIALOG })
-
   const [showFileMenu, setShowFileMenu] = useState(false)
 
   const id = useStableId('get-dna-page')
+
+  const { open: openDialog } = useDialogs()
 
   // function openFiles(files: IFileOpen[]) {
   //   setShowFileMenu(false)
@@ -93,12 +87,12 @@ export function GetDNAPage() {
   async function getDNA() {
     const lines = textToLines(text)
 
-    const seqs: GenLoc[] = []
+    const seqs: IGenomicLocation[] = []
 
     for (let line of lines) {
       line = line.trim()
       if (line.startsWith('>')) {
-        const loc = parseGenLoc(line.substring(1))
+        const loc = parseGenomicLocation(line.substring(1))
         if (loc) {
           seqs.push(loc)
         }
@@ -109,7 +103,7 @@ export function GetDNAPage() {
 
     const dnaseqs: (IDNA | null)[] = await Promise.all(
       seqs.map(
-        async (loc) =>
+        async loc =>
           await fetchDNA(queryClient, loc, {
             reverse: modeRev,
             complement: modeComp,
@@ -117,7 +111,7 @@ export function GetDNAPage() {
       )
     )
 
-    setOutputSeqs(dnaseqs.filter((x) => x !== null) as IDNA[])
+    setOutputSeqs(dnaseqs.filter(x => x !== null) as IDNA[])
   }
 
   function save(format = 'fasta') {
@@ -132,7 +126,7 @@ export function GetDNAPage() {
       default:
         download(
           outputSeqs
-            .map((seq) => `>${seq.location.toString()}\n${seq.seq}`)
+            .map(seq => `>${seq.location.toString()}\n${seq.seq}`)
             .join('\n'),
           'dna.fasta'
         )
@@ -157,7 +151,7 @@ export function GetDNAPage() {
         default:
           setOutput(
             outputSeqs
-              .map((seq) => `>${seq.location.toString()}\n${seq.seq}`)
+              .map(seq => `>${seq.location.toString()}\n${seq.seq}`)
               .join('\n')
           )
           break
@@ -171,14 +165,19 @@ export function GetDNAPage() {
       id: 'Home',
       content: (
         <>
-          <ToolbarTabGroup>
+          <ToolbarTabGroup title="File">
             <ToolbarOpenFile
-              onOpenChange={(open) => {
-                if (open) {
-                  setShowDialog({
-                    id: randId('open'),
-                  })
-                }
+              onOpen={() => {
+                openDialog({
+                  type: 'open',
+                  payload: {
+                    callback: (message, files) => {
+                      onTextFileChange(message, files, files => {
+                        setText(files[0]!.text)
+                      })
+                    },
+                  },
+                })
               }}
               multiple={true}
             />
@@ -197,12 +196,12 @@ export function GetDNAPage() {
             </ToolbarButton>
           )} */}
 
-          <ToolbarSeparator />
-
-          <ToolbarButton title="Reverse Complement" onClick={getDNA}>
-            <PlayIcon />
-            <span>Convert</span>
-          </ToolbarButton>
+          <ToolbarTabGroup title="Run">
+            <ToolbarButton title="Reverse Complement" onClick={getDNA}>
+              <PlayIcon />
+              <span>Convert</span>
+            </ToolbarButton>
+          </ToolbarTabGroup>
 
           {/* <ToolbarSeparator />
 
@@ -243,35 +242,7 @@ export function GetDNAPage() {
   ]
 
   const fileMenuTabs: ITab[] = [
-    // {
-    //   tab: "Open",
-    //   icon: <OpenIcon fill="" w="w-5" />,
-    //   content: (
-    //     <BaseCol className="gap-y-6 p-6 ">
-    //       <h1 className="text-2xl">Open</h1>
-
-    //       <ul className="flex flex-col gap-y-2 text-xs">
-    //         <li>
-    //           <MenuButton
-    //             aria-label="Open file on your computer"
-    //             onClick={() => setShowDialog({ name: "open", params: {} })}
-    //           >
-    //             <OpenIcon className="w-6 fill-amber-300" />
-    //             <p>
-    //               <span className={FILE_MENU_ITEM_HEADING_CLS}>
-    //                 Open local file
-    //               </span>
-    //               <br />
-    //               <span>Open a local file on your computer.</span>
-    //             </p>
-    //           </MenuButton>
-    //         </li>
-    //       </ul>
-    //     </BaseCol>
-    //   ),
-    // },
     {
-      //id: nanoid(),
       id: TEXT_SAVE_AS,
       content: (
         <BaseCol className="gap-y-6 p-6">
@@ -319,11 +290,7 @@ export function GetDNAPage() {
 
   return (
     <>
-      {showDialog.id === 'alert' && (
-        <BasicAlertDialog onResponse={() => setShowDialog({ ...NO_DIALOG })}>
-          {showDialog.params!.message as string}
-        </BasicAlertDialog>
-      )}
+      {/* <DialogsRoot /> */}
 
       <ShortcutLayout>
         <Toolbar>
@@ -337,7 +304,7 @@ export function GetDNAPage() {
               <ToolbarButton
                 onClick={() => loadTestData()}
                 role="button"
-                title="Load test data to use features."
+                title="Load test data."
               >
                 Test data
               </ToolbarButton>
@@ -365,7 +332,7 @@ export function GetDNAPage() {
                   className="grow whitespace-pre"
                   placeholder=">chr3:187453454-187454415"
                   value={text}
-                  onChange={(e) => {
+                  onChange={e => {
                     setText(e.target.value)
                   }}
                 />
@@ -409,14 +376,14 @@ export function GetDNAPage() {
               <CollapseBlock name="Output">
                 <Switch
                   checked={modeRev}
-                  onCheckedChange={(state) => setModeRev(state)}
+                  onCheckedChange={state => setModeRev(state)}
                 >
                   Reverse
                 </Switch>
 
                 <Switch
                   checked={modeComp}
-                  onCheckedChange={(state) => setModeComp(state)}
+                  onCheckedChange={state => setModeComp(state)}
                 >
                   Complement
                 </Switch>
@@ -436,7 +403,7 @@ export function GetDNAPage() {
                       },
                     ]}
                     value={outputMode}
-                    onTabChange={(selectedTab) =>
+                    onTabChange={selectedTab =>
                       setOutputMode(selectedTab.tab.id)
                     }
                   >
@@ -448,20 +415,7 @@ export function GetDNAPage() {
           </ResizablePanel>
         </ResizablePanelGroup>
 
-        <ToolbarFooterPortal className="justify-end"></ToolbarFooterPortal>
-
-        {showDialog.id.includes('open') && (
-          <OpenFiles
-            message={showDialog.id}
-            //onOpenChange={() => setShowDialog({...NO_DIALOG})}
-            onFileChange={(_, files) =>
-              onTextFileChange(_, files, (files) => {
-                setText(files[0]!.text)
-              })
-            }
-            fileTypes={['fasta']}
-          />
-        )}
+        <FooterPortal className="justify-end"></FooterPortal>
       </ShortcutLayout>
     </>
   )

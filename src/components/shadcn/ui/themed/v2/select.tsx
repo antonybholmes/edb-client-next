@@ -1,14 +1,7 @@
 import { cn } from '@/lib/shadcn-utils'
-import {
-  BUTTON_LG_H_CLS,
-  BUTTON_SM_H_CLS,
-  BUTTON_XS_H_CLS,
-  FOCUS_INSET_RING_CLS,
-  TOOLBAR_BUTTON_H_CLS,
-} from '@/theme'
+import { BUTTON_XS_H_CLS } from '@/theme'
 import { Select as SelectPrimitive } from '@base-ui/react/select'
 
-import { ChevronRightIcon } from '@/components/icons/chevron-right-icon'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { Check, ChevronDown, ChevronUp } from 'lucide-react'
 import { type ComponentProps } from 'react'
@@ -19,6 +12,8 @@ import {
 import {
   dropdownContentVariants,
   dropdownMenuItemVariants,
+  POPOVER_CLS,
+  POSITIONER_CLS,
 } from '../v2/dropdown-menu'
 
 export const Select = SelectPrimitive.Root
@@ -27,33 +22,40 @@ export const SelectGroup = SelectPrimitive.Group
 
 export const SelectValue = SelectPrimitive.Value
 
-const triggerVariants = cva(
+export const BaseSelectTrigger = SelectPrimitive.Trigger
+
+export const triggerVariants = cva(
   cn(
-    FOCUS_INSET_RING_CLS,
-    'flex items-center gap-x-1 justify-between whitespace-nowrap trans-color',
-    'disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 px-2'
+    //FOCUS_INSET_RING_CLS,
+    'flex flex-row items-center gap-x-1 justify-between trans-color',
+    'disabled:cursor-not-allowed disabled:opacity-50 overflow-hidden'
   ),
   {
     variants: {
       variant: {
         default: cn(
-          'bg-background stroke-foreground border border-border/50 focus:border-ring hover:border-ring',
-          'data-[state=open]:border-ring placeholder:text-foreground/50 rounded-theme h-9'
+          'bg-background  pl-2 pr-1 stroke-foreground border border-border/50 hover:border-app-theme/50',
+          'data-[popup-open]:border-app-theme/50 placeholder:text-foreground/50 rounded-theme'
         ),
         toolbar: cn(
-          TOOLBAR_BUTTON_H_CLS,
-          'rounded-theme border border-transparent focus:border-border/60',
-          'hover:border-border/60 data-[state=open]:border-border/60 aria-[expanded=true]:border-border/60'
+          'h-toolbar-button rounded-theme border border-transparent focus:border-app-theme/50 pl-2 pr-1',
+          'hover:border-border/60 data-[popup-open]:border-border/60 aria-[expanded=true]:border-border/60'
         ),
-        button: cn(BASE_FLAT_BUTTON_CLS, BUTTON_SM_H_CLS, 'rounded-theme'),
+        button: cn(BASE_FLAT_BUTTON_CLS, 'h-button rounded-theme'),
         footer: cn(BASE_FLAT_BUTTON_CLS, BUTTON_XS_H_CLS),
-        header: cn(BASE_FLAT_BUTTON_CLS, BUTTON_LG_H_CLS, 'rounded-theme'),
+        header: cn(BASE_FLAT_BUTTON_CLS, 'h-button-lg px-2 pl-3 rounded-theme'),
         glass: '',
+      },
+      h: {
+        footer: 'h-6',
+        default: 'h-8',
+        full: 'h-full',
       },
       w: {
         auto: '',
-        xxxs: 'w-12',
-        xxs: 'w-16',
+        xxxxs: 'w-12',
+        xxxs: 'w-14',
+        xxs: 'w-18',
         xs: 'w-20',
         sm: 'w-24',
         md: 'w-32',
@@ -64,7 +66,8 @@ const triggerVariants = cva(
     },
     defaultVariants: {
       variant: 'default',
-      w: 'md',
+      w: 'auto',
+      h: 'default',
     },
   }
 )
@@ -73,6 +76,7 @@ export function SelectTrigger({
   ref,
   variant,
   w,
+  h,
   title,
   showIcon = true,
   className,
@@ -94,7 +98,7 @@ export function SelectTrigger({
   return (
     <SelectPrimitive.Trigger
       ref={ref}
-      className={triggerVariants({ variant, w, className })}
+      className={triggerVariants({ variant, w, h, className })}
       title={title}
       {...props}
     >
@@ -102,9 +106,7 @@ export function SelectTrigger({
 
       {showIcon && (
         <SelectPrimitive.Icon>
-          {/* <CaretSortIcon className="h-4 w-4 opacity-50" /> */}
-          {/* <ChevronUpDownIcon className="opacity-50" w="w-4" /> */}
-          <ChevronRightIcon className="opacity-50 rotate-90" w="w-4" />
+          <ChevronDown size={16} />
         </SelectPrimitive.Icon>
       )}
     </SelectPrimitive.Trigger>
@@ -120,7 +122,7 @@ export function SelectScrollUpButton({
     <SelectPrimitive.ScrollUpArrow
       ref={ref}
       className={cn(
-        'flex cursor-default items-center justify-center py-1',
+        'flex cursor-default items-center justify-center py-1 w-full border',
         className
       )}
       {...props}
@@ -139,7 +141,7 @@ export function SelectScrollDownButton({
     <SelectPrimitive.ScrollDownArrow
       ref={ref}
       className={cn(
-        'flex cursor-default items-center justify-center py-1',
+        'flex cursor-default items-center justify-center w-full py-1',
         className
       )}
       {...props}
@@ -183,23 +185,19 @@ export function SelectContent({
         //   //  'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
         //   className
         // )}
-        className={dropdownContentVariants({
-          variant,
-          className,
-        })}
+
         //position={position}
+        className={POSITIONER_CLS}
       >
-        <SelectScrollUpButton />
         <SelectPrimitive.Popup
-        // className={cn(
-        //   'px-0.5 py-1.5',
-        //   position === 'popper' &&
-        //     'h-[var(--radix-select-trigger-height)] min-w-[var(--radix-select-trigger-width)]'
-        // )}
+          className={dropdownContentVariants({
+            variant,
+            className: cn(POPOVER_CLS, 'border', className),
+          })}
         >
-          {children}
+          <SelectPrimitive.List>{children}</SelectPrimitive.List>
+          <SelectScrollDownButton />
         </SelectPrimitive.Popup>
-        <SelectScrollDownButton />
       </SelectPrimitive.Positioner>
     </SelectPrimitive.Portal>
   )
@@ -213,7 +211,10 @@ export function SelectLabel({
   return (
     <SelectPrimitive.Value
       ref={ref}
-      className={cn('px-9 py-1 text-xs font-semibold block', className)}
+      className={cn(
+        'px-8 h-7 flex flex-row items-center text-xs font-semibold',
+        className
+      )}
       {...props}
     />
   )
@@ -221,7 +222,7 @@ export function SelectLabel({
 
 export function SelectItem({
   ref,
-  variant = 'theme',
+  variant = 'app-theme',
   rounded = 'default',
   className,
   children,
@@ -261,7 +262,7 @@ export function SelectSeparator({
   return (
     <SelectPrimitive.Separator
       ref={ref}
-      className={cn('-mx-1 my-1 h-px bg-muted', className)}
+      className={cn('mx-1 my-1 h-px bg-muted', className)}
       {...props}
     />
   )

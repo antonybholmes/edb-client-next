@@ -11,9 +11,17 @@ export function useDebouncedComponentSize(
   ref: RefObject<HTMLElement | null>,
   opts: IDebounceOptions<IRect> = {}
 ): IRect {
+  const { delayMs = 50 } = opts
+
   const size = useComponentSize(ref)
 
-  const debouncedSetSize = useDebounce(size, { ...opts, equalityFn: rectEqual })
+  // only fire when size changes, not on every resize event, to avoid excessive re-renders.
+  // Use rectEqual to compare previous and current size.
+  const debouncedSetSize = useDebounce(size, {
+    ...opts,
+    delayMs,
+    equalityFn: rectEqual,
+  })
 
   return debouncedSetSize
 }

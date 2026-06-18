@@ -35,11 +35,11 @@ export interface ISearchFiltersStore extends IFilters {
 
 export const useSearchFiltersStore = create<ISearchFiltersStore>()(
   persist(
-    (set) => ({
+    set => ({
       ...DEFAULT_FILTERS,
 
       updateSettings: (settings: Partial<IFilters>) => {
-        set((state) => ({
+        set(state => ({
           ...state,
           ...settings,
         }))
@@ -59,8 +59,8 @@ export function useSearchFilters(): {
   resetRowFilters: () => void
   resetColFilters: () => void
 } {
-  const settings = useSearchFiltersStore((state) => state)
-  const updateSettings = useSearchFiltersStore((state) => state.updateSettings)
+  const settings = useSearchFiltersStore(state => state)
+  const updateSettings = useSearchFiltersStore(state => state.updateSettings)
 
   function reset() {
     updateSettings({ ...DEFAULT_FILTERS })

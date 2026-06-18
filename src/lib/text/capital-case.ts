@@ -14,18 +14,25 @@ export function capitalCase(text: string): string {
     .replaceAll(/_/g, ' ')
     .replaceAll(/ +/g, ' ')
     .split(' ')
-    .filter((word) => word.length > 0)
-    .map((word) => word[0]!.toUpperCase() + word.substring(1))
+    .filter(word => word.length > 0)
+    .map(word => word[0]!.toUpperCase() + word.substring(1))
     .join(' ')
     .replaceAll('* ', '-')
 }
 
+/**
+ * Capitalizes the first letter of the first word in a string for
+ * display purposes, e.g. to make an error message more readable.
+ *
+ * @param text
+ * @returns
+ */
 export function capitalizeFirstWord(text: string): string {
   if (!text || text.length === 0) {
     return text
   }
 
-  return text[0]!.toUpperCase() + text.substring(1).toLowerCase()
+  return text[0]!.toUpperCase() + text.substring(1) //.toLowerCase()
 }
 
 export function addPeriod(text: string): string {

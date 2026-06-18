@@ -1,11 +1,11 @@
 import type { Axis } from '@/components/plot/axis'
-import type { IGenomicLocation } from '@/lib/genomic/genomic'
+
+import type { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { range } from '@/lib/math/range'
 import { type ISeqPos } from '../../svg/base-seq-track-svg'
 
 export interface IGetPointOptions {
   mode?: 'CPM' | 'BPM' | 'Count'
-  //smooth?: boolean
   accessToken?: string
   smoothingFactor?: number
 }

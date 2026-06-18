@@ -16,7 +16,7 @@ export const variants = cva(VECTOR_ICON_CLS, {
 })
 
 export function HelpIcon({
-  w = 'h-5 w-5',
+  size = 'h-5 w-5',
   variant = 'colorful',
   className,
 }: IIconProps & VariantProps<typeof variants>) {
@@ -24,7 +24,7 @@ export function HelpIcon({
     // <svg
     //   xmlns="http://www.w3.org/2000/svg"
     //   viewBox="0 0 20 20"
-    //   className={cn(ICON_CLS, w, fill, className)}
+    //   className={cn(ICON_CLS, size, fill, className)}
     // >
     //   <text
     //     textAnchor="middle"
@@ -40,7 +40,7 @@ export function HelpIcon({
     // </svg>
 
     <CircleHelp
-      className={variants({ variant, className: cn(w, className) })}
+      className={variants({ variant, className: cn(size, className) })}
     />
   )
 }

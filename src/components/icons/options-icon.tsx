@@ -2,7 +2,7 @@ import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
 import { cn } from '@/lib/shadcn-utils'
 
 export function OptionsIcon({
-  w = 'w-5 h-5',
+  size = 'w-5 h-5',
   stroke = 'stroke-foreground',
   className,
   strokeWidth = 1,
@@ -14,7 +14,7 @@ export function OptionsIcon({
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={strokeWidth}
-      className={cn(ICON_CLS, stroke, w, className)}
+      className={cn(ICON_CLS, stroke, size, className)}
     >
       <line x1="2" y1="6" x2="22" y2="6" />
       <circle cx="15" cy="6" r="3.5" fill="white" />

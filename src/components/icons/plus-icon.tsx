@@ -3,7 +3,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { Plus, PlusCircle } from 'lucide-react'
 
 export function PlusIcon({
-  w = 'w-5 h-5',
+  size = 20,
   fill,
   stroke = 'stroke-foreground',
   withCircle = true,
@@ -20,7 +20,7 @@ export function PlusIcon({
   // <svg
   //   xmlns="http://www.w3.org/2000/svg"
   //   viewBox="0 0 24 24"
-  //   className={cn(ICON_CLS, stroke, fill, w, className)}
+  //   className={cn(ICON_CLS, stroke, fill, size, className)}
   //   style={{
   //     strokeLinecap: 'round',
   //     strokeLinejoin: 'round',
@@ -34,7 +34,8 @@ export function PlusIcon({
   if (withCircle) {
     return (
       <PlusCircle
-        className={cn(ICON_CLS, fill, stroke, w, className)}
+        className={cn(ICON_CLS, fill, stroke, className)}
+        size={size}
         strokeWidth={strokeWidth}
         stroke=""
       />
@@ -42,7 +43,8 @@ export function PlusIcon({
   } else {
     return (
       <Plus
-        className={cn(ICON_CLS, fill, stroke, w, className)}
+        size={size}
+        className={cn(ICON_CLS, fill, stroke, className)}
         strokeWidth={strokeWidth}
         stroke=""
       />
