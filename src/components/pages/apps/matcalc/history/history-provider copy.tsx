@@ -22,7 +22,7 @@ import type { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
 import { PATH_SEP } from '@/lib/http/urls'
 import type { IClusterFrame } from '@/lib/math/hcluster'
 import { formattedList, type UndefNullStr } from '@/lib/text/text'
-import { createContext, useContext, useMemo, useReducer } from 'react'
+import { createContext, useContext, useState } from 'react'
 import {
   DEFAULT_BOX_PLOT_DISPLAY_PROPS,
   type IBoxPlotDisplayOptions,
@@ -614,581 +614,6 @@ function dataStoreView(state: IHistoryData): IHistoryDataStore {
 
 const historyManager = new HistoryManager<IHistoryState>()
 
-type IHistoryFilesContext = {
-  file: string
-  fileOrder: string[]
-  files: Record<string, IHistoryComp>
-}
-
-const FilesContext = createContext<IHistoryFilesContext | undefined>(undefined)
-
-export function useFileContext(): IHistoryFilesContext {
-  const ctx = useContext(FilesContext)
-  if (!ctx) {
-    throw new Error('useFiles must be used within a HistoryProvider')
-  }
-
-  return ctx
-}
-
-export function useFiles(): IHistoryComp[] {
-  const ctx = useContext(FilesContext)
-  if (!ctx) {
-    throw new Error('useFiles must be used within a HistoryProvider')
-  }
-
-  return useMemo(
-    () => ctx.fileOrder.map((id) => ctx.files[id]!),
-    [ctx.fileOrder, ctx.files]
-  )
-}
-
-export function useFile(): IHistoryComp {
-  const ctx = useFileContext()
-
-  return useMemo(() => ctx.files[ctx.file], [ctx.file, ctx.files])
-}
-
-type ISheetsContext = {
-  sheet: string
-  sheetOrder: string[]
-  sheets: Record<string, DataFrameType>
-}
-
-const SheetsContext = createContext<ISheetsContext | undefined>(undefined)
-
-export function useSheetsContext(): ISheetsContext {
-  const ctx = useContext(SheetsContext)
-  if (!ctx) {
-    throw new Error('useSheets must be used within a HistoryProvider')
-  }
-
-  return ctx
-}
-
-export function useSheets(): DataFrameType[] {
-  const ctx = useContext(SheetsContext)
-  if (!ctx) {
-    throw new Error('useSheets must be used within a HistoryProvider')
-  }
-
-  return useMemo(
-    () => ctx.sheetOrder.map((id) => ctx.sheets[id]!),
-    [ctx.sheetOrder, ctx.sheets]
-  )
-}
-
-export function useSheet(): DataFrameType {
-  const ctx = useSheetsContext()
-
-  return useMemo(() => ctx.sheets[ctx.sheet], [ctx.sheet, ctx.sheets])
-}
-
-type IPlotsContext = {
-  plot: string | undefined
-  plotOrder: string[]
-  plots: Record<string, HistoryPlot>
-}
-
-const PlotsContext = createContext<IPlotsContext | undefined>(undefined)
-
-export function usePlotsContext(): IPlotsContext {
-  const ctx = useContext(PlotsContext)
-  if (!ctx) {
-    throw new Error('usePlots must be used within a HistoryProvider')
-  }
-
-  return ctx
-}
-
-export function usePlots(): HistoryPlot[] {
-  const ctx = useContext(PlotsContext)
-  if (!ctx) {
-    throw new Error('usePlots must be used within a HistoryProvider')
-  }
-
-  return useMemo(
-    () => ctx.plotOrder.map((id) => ctx.plots[id]!),
-    [ctx.plotOrder, ctx.plots]
-  )
-}
-
-export function usePlot(): HistoryPlot | undefined {
-  const ctx = usePlotsContext()
-
-  return useMemo(
-    () => (ctx.plot ? ctx.plots[ctx.plot] : undefined),
-    [ctx.plot, ctx.plots]
-  )
-}
-
-type HistoryAction =
-  | { type: 'reset' }
-  | { type: 'undo' }
-  | { type: 'redo' }
-  | { type: 'seek'; step: number | string }
-  | {
-      type: 'openFile'
-      file: IHistoryComp
-      sheets: BaseDataFrame[]
-      plots: HistoryPlot[]
-      groups: IClusterGroup[]
-      genesets: IGeneSet[]
-      groupsName: string
-      mode: AppendMode
-    }
-  | { type: 'addSheets'; sheets: BaseDataFrame[]; opts: ISheetOps }
-  | { type: 'addPlots'; plots: HistoryPlot[]; opts: ISheetOps }
-  | { type: 'remove'; paths: HistoryPath[] }
-  | { type: 'removeFiles'; paths: FilePath[] }
-  | { type: 'reorderSheets'; ids: string[]; opts: ISheetOps }
-  | { type: 'reorderPlots'; ids: string[]; opts: ISheetOps }
-  | { type: 'updatePlot'; plot: HistoryPlot }
-  | { type: 'addGroups'; groups: IClusterGroup[]; opts: IGroupOps }
-  | { type: 'updateGroup'; group: IClusterGroup; opts: IGroupOps }
-  | { type: 'removeGroups'; ids: string[]; opts: IGroupOps }
-  | { type: 'reorderGroups'; ids: string[]; opts: IGroupOps }
-  | { type: 'addGenesets'; genesets: IGeneSet[]; opts: IGroupOps }
-  | { type: 'updateGeneset'; geneset: IGeneSet }
-  | { type: 'removeGenesets'; ids: string[]; opts: IGroupOps }
-  | { type: 'reorderGenesets'; ids: string[]; opts: IGroupOps }
-  | { type: 'goto'; path: HistoryPath }
-
-function applyHistoryUpdate(
-  state: IHistoryData,
-  name: string,
-  description: string,
-  updateHistory: (
-    state: IHistoryState,
-    store: Readonly<IHistoryDataStore>
-  ) => void,
-  updateStore?: (store: IHistoryDataStore) => void
-): IHistoryData {
-  const result = historyManager.applyUpdate(
-    state,
-    name,
-    description,
-    (draft: IHistoryState) => {
-      updateHistory(draft, dataStoreView(state) as Readonly<IHistoryDataStore>)
-    }
-  )
-
-  if (result === state) {
-    return state
-  }
-
-  const newState = {
-    ...state,
-    ...result,
-  }
-
-  if (updateStore) {
-    updateStore(dataStoreView(newState))
-  }
-
-  return newState
-}
-
-function historyReducer(
-  state: IHistoryData,
-  action: HistoryAction
-): IHistoryData {
-  switch (action.type) {
-    case 'reset':
-      return init()
-    case 'undo':
-      return {
-        ...state,
-        ...historyManager.undo(state),
-      }
-    case 'redo':
-      return {
-        ...state,
-        ...historyManager.redo(state),
-      }
-    case 'seek':
-      return {
-        ...state,
-        ...historyManager.goto(state, action.step),
-      }
-    case 'openFile': {
-      return applyHistoryUpdate(
-        state,
-        `Open file ${action.file.name}`,
-        getFormattedShapeSmall(action.sheets[0]),
-        (draft: IHistoryState) => {
-          if (action.mode === 'append') {
-            const files = draft.fileOrder.filter((id) => id !== DEFAULT_FILE.id)
-            draft.fileOrder = [...files, action.file.id]
-          } else {
-            draft.fileOrder = [action.file.id]
-          }
-
-          draft.sheetOrder[action.file.id] = action.sheets.map((s) => s.id)
-          draft.plotOrder[action.file.id] = action.plots.map((p) => p.id)
-          draft.groupOrder[action.file.id] = action.groups.map((g) => g.id)
-          draft.genesetOrder[action.file.id] = action.genesets.map((g) => g.id)
-
-          draft.currentFile = action.file.id
-          draft.currentSheet = action.sheets[action.sheets.length - 1]!.id
-          draft.currentPlot =
-            action.plots.length > 0
-              ? action.plots[action.plots.length - 1]!.id
-              : draft.currentPlot
-          draft.currentSelections = [{ type: 'sheet', id: draft.currentSheet }]
-        },
-        (store: IHistoryDataStore) => {
-          store.files[action.file.id] = action.file
-          for (const sheet of action.sheets) {
-            store.sheets[sheet.id] = sheet
-          }
-          for (const plot of action.plots) {
-            store.plots[plot.id] = plot
-          }
-          for (const group of action.groups) {
-            store.groups[group.id] = group
-          }
-          for (const geneset of action.genesets) {
-            store.genesets[geneset.id] = geneset
-          }
-          if (action.groupsName) {
-            store.groupNames[action.file.id] = action.groupsName
-          }
-        }
-      )
-    }
-    case 'addSheets': {
-      const { sheets, opts } = action
-      const { name = '', mode = 'set', file = state.present.currentFile } = opts
-      if (sheets.length === 0 || file === DEFAULT_FILE.id) {
-        return state
-      }
-
-      const title =
-        name ||
-        (sheets.length === 1
-          ? `Add sheet ${sheets[0]!.name}`
-          : `Add ${sheets.length} sheets`)
-
-      return applyHistoryUpdate(
-        state,
-        title,
-        getFormattedShape(sheets[0]!),
-        (draft: IHistoryState) => {
-          const ids = sheets.map((s) => s.id)
-
-          if (mode === 'append') {
-            const existing = (draft.sheetOrder[file] || []).filter(
-              (id) => id !== DEFAULT_SHEET.id
-            )
-            draft.sheetOrder[file] = [...existing, ...ids]
-          } else {
-            draft.sheetOrder[file] = ids
-          }
-
-          draft.currentSheet = sheets[sheets.length - 1]!.id
-          draft.currentSelections = [{ type: 'sheet', id: draft.currentSheet }]
-        },
-        (store: IHistoryDataStore) => {
-          for (const sheet of sheets) {
-            store.sheets[sheet.id] = sheet
-          }
-        }
-      )
-    }
-    case 'addPlots': {
-      const { plots, opts } = action
-      const {
-        name = '',
-        mode = 'append',
-        file = state.present.currentFile,
-      } = opts || {}
-      if (plots.length === 0 || file === DEFAULT_FILE.id) {
-        return state
-      }
-
-      return applyHistoryUpdate(
-        state,
-        name ||
-          (plots.length === 1
-            ? `Add plot ${plots[0]!.name}`
-            : `Add ${plots.length} plots`),
-        '',
-        (draft: IHistoryState) => {
-          if (mode === 'append') {
-            draft.plotOrder[file]?.push(...plots.map((p) => p.id))
-          } else {
-            draft.plotOrder[file] = plots.map((p) => p.id)
-          }
-          draft.currentPlot = plots[plots.length - 1]!.id
-          draft.currentSelections = [{ type: 'plot', id: draft.currentPlot }]
-        },
-        (store: IHistoryDataStore) => {
-          for (const plot of plots) {
-            store.plots[plot.id] = plot
-          }
-        }
-      )
-    }
-    case 'remove': {
-      if (action.paths.length === 0) {
-        return state
-      }
-
-      const pathIds = action.paths.map(toPathId)
-      return applyHistoryUpdate(
-        state,
-        `Remove objects`,
-        '',
-        (draft: IHistoryState) => {
-          for (const p of pathIds) {
-            if (isFileOnly(p)) {
-              removeFile(draft, p)
-            } else if (isSheet(p)) {
-              removeSheet(draft, p)
-            } else if (isPlot(p)) {
-              removePlot(draft, p)
-            } else if (isGroup(p)) {
-              removeGroup(draft, p)
-            } else if (isGeneset(p)) {
-              removeGeneset(draft, p)
-            }
-          }
-        }
-      )
-    }
-    case 'removeFiles': {
-      if (action.paths.length === 0) {
-        return state
-      }
-
-      const pathIds = action.paths.map(toPathId)
-      return applyHistoryUpdate(
-        state,
-        `Remove ${pathIds.length} file${pathIds.length > 1 ? 's' : ''}`,
-        '',
-        (draft: IHistoryState) => {
-          for (const p of pathIds) {
-            removeFile(draft, p)
-          }
-        },
-        (store: IHistoryDataStore) => {
-          for (const p of pathIds) {
-            if (Object.keys(store.files).length > 1) {
-              delete store.files[p.file]
-            }
-          }
-        }
-      )
-    }
-    case 'reorderSheets': {
-      const { ids, opts } = action
-      const { file = state.present.currentFile } = opts
-      if (ids.length === 0 || file === DEFAULT_FILE.id) {
-        return state
-      }
-
-      return applyHistoryUpdate(state, 'Reorder sheets', '', (draft) => {
-        draft.sheetOrder[file] = ids
-      })
-    }
-    case 'reorderPlots': {
-      const { ids, opts } = action
-      const { file = state.present.currentFile } = opts
-      if (ids.length === 0 || file === DEFAULT_FILE.id) {
-        return state
-      }
-
-      return applyHistoryUpdate(state, 'Reorder plots', '', (draft) => {
-        draft.plotOrder[file] = ids
-      })
-    }
-    case 'updatePlot': {
-      return {
-        ...state,
-        plots: {
-          ...state.plots,
-          [action.plot.id]: action.plot,
-        },
-      }
-    }
-    case 'addGroups': {
-      const { groups, opts } = action
-      const {
-        mode = 'append',
-        name = '',
-        file = state.present.currentFile,
-      } = opts
-      if (groups.length === 0 || file === DEFAULT_FILE.id) {
-        return state
-      }
-
-      return applyHistoryUpdate(
-        state,
-        `Add ${formattedList(groups.map((gs) => gs.name))} group${
-          groups.length > 1 ? 's' : ''
-        }`,
-        '',
-        (draft: IHistoryState) => {
-          if (mode === 'append') {
-            draft.groupOrder[file]?.push(...groups.map((g) => g.id))
-          } else {
-            draft.groupOrder[file] = groups.map((g) => g.id)
-          }
-        },
-        (store: IHistoryDataStore) => {
-          for (const group of groups) {
-            store.groups[group.id] = group
-          }
-          if (name) {
-            store.groupNames[file] = name
-          }
-        }
-      )
-    }
-    case 'updateGroup': {
-      const { group } = action
-      return {
-        ...state,
-        groups: {
-          ...state.groups,
-          [group.id]: group,
-        },
-      }
-    }
-    case 'removeGroups': {
-      const { ids, opts } = action
-      const { file = state.present.currentFile } = opts
-      if (ids.length === 0 || file === DEFAULT_FILE.id) {
-        return state
-      }
-
-      return applyHistoryUpdate(state, 'Remove groups', '', (draft) => {
-        draft.groupOrder[file] = draft.groupOrder[file]!.filter(
-          (id) => !ids.includes(id)
-        )
-      })
-    }
-    case 'reorderGroups': {
-      const { ids, opts } = action
-      const { file = state.present.currentFile } = opts
-      if (ids.length === 0 || file === DEFAULT_FILE.id) {
-        return state
-      }
-
-      return applyHistoryUpdate(state, 'Reorder groups', '', (draft) => {
-        draft.groupOrder[file] = ids
-      })
-    }
-    case 'addGenesets': {
-      const { genesets, opts } = action
-      const { mode = 'append', file = state.present.currentFile } = opts
-      if (genesets.length === 0 || file === DEFAULT_FILE.id) {
-        return state
-      }
-
-      return applyHistoryUpdate(
-        state,
-        `Add ${formattedList(genesets.map((gs) => gs.name))} geneset${
-          genesets.length > 1 ? 's' : ''
-        }`,
-        '',
-        (draft: IHistoryState) => {
-          if (mode === 'append') {
-            draft.genesetOrder[file]?.push(...genesets.map((g) => g.id))
-          } else {
-            draft.genesetOrder[file] = genesets.map((g) => g.id)
-          }
-        },
-        (store: IHistoryDataStore) => {
-          for (const geneset of genesets) {
-            store.genesets[geneset.id] = geneset
-          }
-        }
-      )
-    }
-    case 'updateGeneset': {
-      return {
-        ...state,
-        genesets: {
-          ...state.genesets,
-          [action.geneset.id]: action.geneset,
-        },
-      }
-    }
-    case 'removeGenesets': {
-      const { ids, opts } = action
-      const { file = state.present.currentFile } = opts
-      if (ids.length === 0 || file === DEFAULT_FILE.id) {
-        return state
-      }
-
-      return applyHistoryUpdate(
-        state,
-        `Remove ${ids.join(', ')} geneset${ids.length > 1 ? 's' : ''}`,
-        '',
-        (draft: IHistoryState) => {
-          draft.genesetOrder[file] = draft.genesetOrder[file]!.filter(
-            (id) => !ids.includes(id)
-          )
-        }
-      )
-    }
-    case 'reorderGenesets': {
-      const { ids, opts } = action
-      const { file = state.present.currentFile } = opts
-      if (ids.length === 0 || file === DEFAULT_FILE.id) {
-        return state
-      }
-
-      return applyHistoryUpdate(
-        state,
-        `Reorder ${ids.join(', ')} geneset${ids.length > 1 ? 's' : ''}`,
-        '',
-        (draft: IHistoryState) => {
-          draft.genesetOrder[file] = ids
-        }
-      )
-    }
-    case 'goto': {
-      const { path } = action
-      const { app, file, sheet, plot } = toPathId(path)
-      return applyHistoryUpdate(
-        state,
-        `Goto ${
-          Boolean(plot)
-            ? `plot ${plot}`
-            : Boolean(sheet)
-              ? `sheet ${sheet}`
-              : Boolean(file)
-                ? `file ${file}`
-                : `app ${app}`
-        }`,
-        '',
-        (draft: IHistoryState, store: Readonly<IHistoryDataStore>) => {
-          if (file in store.files) {
-            draft.currentFile = file
-          }
-
-          if (sheet in store.sheets) {
-            draft.currentSheet = sheet
-            draft.currentSelections = [
-              { type: 'sheet', id: draft.currentSheet },
-            ]
-          }
-
-          if (plot in store.plots) {
-            draft.currentPlot = plot
-            draft.currentSelections = [{ type: 'plot', id: draft.currentPlot }]
-          }
-        }
-      )
-    }
-    default:
-      return state
-  }
-}
-
 const HistoryContext = createContext<IHistoryStore | undefined>(undefined)
 
 export function useHistory() {
@@ -1201,22 +626,99 @@ export function useHistory() {
 }
 
 export function HistoryProvider({ children }: IChildrenProps) {
-  const [state, dispatch] = useReducer(historyReducer, init())
+  const [state, setState] = useState(init())
+
+  function addAction(
+    name: string,
+    description: string,
+    updateHistory: (
+      state: IHistoryState,
+      store: Readonly<IHistoryDataStore>
+    ) => void,
+    updateStore?: (store: IHistoryDataStore) => void
+  ) {
+    // use the current state for producing the next state. Inverse
+    // patches are used for undo functionality.
+
+    setState((state) => {
+      const result = historyManager.applyUpdate(
+        state,
+        name,
+        description,
+        (draft: IHistoryState) => {
+          // draft` is mutable here — Immer handles producing the next state
+          // `state as Readonly<IDataStore>` ensures that updateHistory cannot accidentally mutate
+          // the rest of the store.
+          updateHistory(
+            draft,
+            dataStoreView(state) as Readonly<IHistoryDataStore>
+          )
+        }
+      )
+
+      const newState = {
+        ...state,
+        ...result,
+      }
+
+      // side effects can safely mutate the returned store
+      if (updateStore) {
+        updateStore(dataStoreView(newState))
+      }
+
+      // the returned object becomes the new state
+      return newState
+    })
+  }
 
   function reset() {
-    dispatch({ type: 'reset' })
+    setState((state) =>
+      produce(state, (draft) => {
+        draft.present = {
+          ...state.present,
+          ...resetState(state.present),
+        }
+
+        const historyEntry: IHistoryEntry<IHistoryState> = {
+          id: makeUuid(),
+          name: 'Initialize history',
+          description: '',
+          createdAt: Date.now(),
+          state: draft.present,
+          type: 'snapshot',
+        }
+
+        draft.history = [historyEntry]
+        draft.cursor = 0
+      })
+    )
   }
 
   function undo() {
-    dispatch({ type: 'undo' })
+    // the past becomes the present, the current present becomes the future
+    // and the past loses an entry
+    setState((state) => ({
+      ...state,
+      ...historyManager.undo(state),
+    }))
   }
 
   function redo() {
-    dispatch({ type: 'redo' })
+    // the past becomes the present, the current present becomes the future
+    // and the past loses an entry
+    setState((state) => ({
+      ...state,
+      ...historyManager.redo(state),
+    }))
   }
 
   function seek(step: number | string) {
-    dispatch({ type: 'seek', step })
+    // the past becomes the present, the current present becomes the future
+    // and the past loses an entry
+    setState((state) => ({
+      ...state,
+      ...historyManager.goto(state, step),
+    }))
   }
 
   function openFile(name: string, opts: IFileOps = {}) {
@@ -1224,6 +726,7 @@ export function HistoryProvider({ children }: IChildrenProps) {
       sheets = [DEFAULT_SHEET],
       plots = [],
       mode = 'append',
+
       groupsName = '',
       groups = [],
       genesets = [],
@@ -1232,160 +735,521 @@ export function HistoryProvider({ children }: IChildrenProps) {
     if (sheets.length === 0) {
       return
     }
+
     if (!name) {
       name = sheets[0]!.name
     }
 
     const file = newHistoryFile(name)
 
-    dispatch({
-      type: 'openFile',
-      file,
-      sheets,
-      plots,
-      groups,
-      genesets,
-      groupsName,
-      mode,
-    })
+    addAction(
+      `Open file ${name}`,
+      getFormattedShapeSmall(sheets[0]),
+      (state: IHistoryState) => {
+        // these actions are logged to the history
+
+        if (mode === 'append') {
+          // remove default file if it exists. Default file
+          // must always be first
+          const files = state.fileOrder.filter((id) => id !== DEFAULT_FILE.id)
+
+          state.fileOrder = [...files, file.id]
+        } else {
+          // Replace existing files with the new file
+          state.fileOrder = [file.id] // [state.fileOrder[appId]![0]!, file.id]
+        }
+
+        state.sheetOrder[file.id] = sheets.map((s) => s.id)
+
+        state.plotOrder[file.id] = plots.map((p) => p.id)
+        state.groupOrder[file.id] = groups.map((g) => g.id)
+        state.genesetOrder[file.id] = genesets.map((g) => g.id)
+
+        state.currentFile = file.id
+        state.currentSheet = sheets[sheets.length - 1]!.id
+        state.currentPlot =
+          plots.length > 0 ? plots[plots.length - 1]!.id : state.currentPlot
+        state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]
+      },
+      (store: IHistoryDataStore) => {
+        // these actions are not logged to the history,
+        // but are used to update the store with the new file, sheets, and plots.
+        // We separate them because we don't want to log the entire file and sheet data
+        // to the history, just the action of opening a file with a certain name and shape.
+        // this is so objects are stored once, but operations on them are logged to the history,
+        // which is more efficient and makes the history easier to understand.
+
+        store.files[file.id] = file
+
+        for (const sheet of sheets) {
+          store.sheets[sheet.id] = sheet
+        }
+
+        for (const plot of plots) {
+          store.plots[plot.id] = plot
+        }
+
+        for (const group of groups) {
+          store.groups[group.id] = group
+        }
+
+        for (const geneset of genesets) {
+          store.genesets[geneset.id] = geneset
+        }
+
+        if (groupsName) {
+          store.groupNames[file.id] = groupsName
+        }
+      }
+    )
   }
 
   function addSheets(sheets: BaseDataFrame[], opts: ISheetOps = {}) {
-    dispatch({ type: 'addSheets', sheets, opts })
+    if (sheets.length === 0) {
+      return
+    }
+
+    let { name = '', mode = 'set', file = state.present.currentFile } = opts
+
+    // the default file is a special case because it's created by default when the app is created
+    // and can't be removed, so we don't want to allow adding sheets
+    // to it since it should always have the default sheet
+
+    // cannot add to default file
+    if (file === DEFAULT_FILE.id) {
+      return
+    }
+
+    name =
+      name ||
+      (sheets.length === 1
+        ? `Add sheet ${sheets[0]!.name}`
+        : `Add ${sheets.length} sheets`)
+
+    addAction(
+      name,
+      getFormattedShape(sheets[0]!),
+      (state: IHistoryState) => {
+        // user cannot add default sheet
+        const ids = sheets.map((s) => s.id) //.filter(id => id !== DEFAULT_SHEET.id)
+
+        if (mode === 'append') {
+          console.log('Appending sheets:', ids)
+          // when appending, remove default sheet if it exists to avoid confusion, but keep it at the beginning of the order if it's still there since it's a special sheet that should always be available
+          const sheets = (state.sheetOrder[file] || []).filter(
+            (id) => id !== DEFAULT_SHEET.id
+          )
+          state.sheetOrder[file] = [...sheets, ...ids]
+        } else {
+          // There must be a default sheet
+          // state.sheetOrder[file] = [
+          //   state.sheetOrder[file]![0]!,
+          //   ...sheets.map(s => s.id),
+          // ]
+
+          state.sheetOrder[file] = ids
+        }
+
+        state.currentSheet = sheets[sheets.length - 1]!.id
+        state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]
+      },
+      (store: IHistoryDataStore) => {
+        for (const sheet of sheets) {
+          store.sheets[sheet.id] = sheet
+        }
+      }
+    )
   }
 
   function addPlots(plots: HistoryPlot[], opts: ISheetOps = {}) {
-    dispatch({ type: 'addPlots', plots, opts })
+    if (plots.length === 0) {
+      return
+    }
+
+    const {
+      name = '',
+      mode = 'append',
+      file = state.present.currentFile,
+    } = opts || {}
+
+    // Plots cannot be added to the default file since it's meant to be a simple starting point
+    // with just a default sheet, and allowing plots to be added to it could
+    // complicate the user experience and the logic for managing the default file's contents.
+    if (file === DEFAULT_FILE.id) {
+      return
+    }
+
+    addAction(
+      name ||
+        (plots.length === 1
+          ? `Add plot ${plots[0]!.name}`
+          : `Add ${plots.length} plots`),
+      '',
+      (state: IHistoryState) => {
+        if (mode === 'append') {
+          state.plotOrder[file]?.push(...plots.map((p) => p.id))
+        } else {
+          state.plotOrder[file] = plots.map((p) => p.id)
+        }
+
+        state.currentPlot = plots[plots.length - 1]!.id
+        state.currentSelections = [{ type: 'plot', id: state.currentPlot }]
+      },
+      (store: IHistoryDataStore) => {
+        for (const plot of plots) {
+          store.plots[plot.id] = plot
+        }
+      }
+    )
   }
 
   function remove(paths: HistoryPath[]) {
-    dispatch({ type: 'remove', paths })
+    if (paths.length === 0) {
+      return
+    }
+
+    const pathIds: PathId[] = paths.map((path) => {
+      return toPathId(path)
+    })
+
+    console.log(
+      'Removing paths',
+      pathIds,
+      isAppOnly(pathIds[0]!),
+      isFileOnly(pathIds[0]!),
+      isSheet(pathIds[0]!)
+    )
+
+    addAction(`Remove objects`, '', (state: IHistoryState) => {
+      for (const p of pathIds) {
+        console.log('Removing path', p, state)
+
+        if (isFileOnly(p)) {
+          removeFile(state, p)
+        } else if (isSheet(p)) {
+          console.log('Removing sheet', p)
+          removeSheet(state, p)
+        } else if (isPlot(p)) {
+          removePlot(state, p)
+        } else if (isGroup(p)) {
+          removeGroup(state, p)
+        } else if (isGeneset(p)) {
+          removeGeneset(state, p)
+        } else {
+          // do nothing if the path is invalid
+        }
+      }
+    })
   }
 
   function removeFiles(paths: FilePath[]) {
-    dispatch({ type: 'removeFiles', paths })
+    if (paths.length === 0) {
+      return
+    }
+
+    const pathIds: PathId[] = paths.map((path) => {
+      return toPathId(path)
+    })
+
+    addAction(
+      `Remove ${pathIds.length} file${pathIds.length > 1 ? 's' : ''}`,
+      '',
+      (state: IHistoryState) => {
+        for (const p of pathIds) {
+          removeFile(state, p)
+        }
+      },
+      (store: IHistoryDataStore) => {
+        for (const p of pathIds) {
+          if (Object.keys(store.files).length > 1) {
+            delete store.files[p.file]
+          }
+        }
+      }
+    )
   }
 
   function reorderSheets(ids: string[], opts: ISheetOps = {}) {
-    dispatch({ type: 'reorderSheets', ids, opts })
+    if (ids.length === 0) {
+      return
+    }
+
+    const { file = state.present.currentFile } = opts
+
+    if (file === DEFAULT_FILE.id) {
+      return
+    }
+
+    addAction(
+      'Reorder sheets',
+      '',
+
+      (state: IHistoryState) => {
+        state.sheetOrder[file] = ids
+      }
+    )
   }
 
   function reorderPlots(ids: string[], opts: ISheetOps = {}) {
-    dispatch({ type: 'reorderPlots', ids, opts })
+    if (ids.length === 0) {
+      return
+    }
+
+    const { file = state.present.currentFile } = opts
+
+    if (file === DEFAULT_FILE.id) {
+      return
+    }
+
+    addAction('Reorder plots', '', (state: IHistoryState) => {
+      state.plotOrder[file] = ids
+    })
   }
 
   function updatePlot(plot: HistoryPlot) {
-    dispatch({ type: 'updatePlot', plot })
+    addAction(
+      `Update plot ${plot.id}`,
+      '',
+      () => {},
+      (store: IHistoryDataStore) => {
+        store.plots[plot.id] = plot
+      }
+    )
   }
 
   function addGroups(groups: IClusterGroup[], opts: IGroupOps = {}) {
-    dispatch({ type: 'addGroups', groups, opts })
+    if (groups.length === 0) {
+      return
+    }
+
+    const {
+      mode = 'append',
+      name = '',
+      file = state.present.currentFile,
+    } = opts
+
+    if (file === DEFAULT_FILE.id) {
+      return
+    }
+
+    addAction(
+      `Add ${formattedList(groups.map((gs) => gs.name))} group${groups.length > 1 ? 's' : ''}`,
+      '',
+
+      (state: IHistoryState) => {
+        if (mode === 'append') {
+          state.groupOrder[file]?.push(...groups.map((g) => g.id))
+        } else {
+          state.groupOrder[file] = groups.map((g) => g.id)
+        }
+      },
+      (store: IHistoryDataStore) => {
+        for (const group of groups) {
+          store.groups[group.id] = group
+        }
+
+        if (name) {
+          store.groupNames[file] = name
+        }
+      }
+    )
   }
 
   function updateGroup(group: IClusterGroup, opts: IGroupOps = {}) {
-    dispatch({ type: 'updateGroup', group, opts })
+    const { file = state.present.currentFile } = opts
+
+    if (file === DEFAULT_FILE.id) {
+      return
+    }
+
+    console.log('Updating group', group.id, 'in file', file)
+
+    addAction(
+      ` Update group ${group.id}`,
+      '',
+
+      () => {},
+      (store: IHistoryDataStore) => {
+        store.groups[group.id] = group
+      }
+    )
   }
 
   function removeGroups(ids: string[], opts: IGroupOps = {}) {
-    dispatch({ type: 'removeGroups', ids, opts })
+    if (ids.length === 0) {
+      return
+    }
+
+    const { file = state.present.currentFile } = opts
+
+    if (file === DEFAULT_FILE.id) {
+      return
+    }
+
+    addAction(`Remove groups`, '', (state: IHistoryState) => {
+      state.groupOrder[file] = state.groupOrder[file]!.filter(
+        (id) => !ids.includes(id)
+      )
+    })
   }
 
   function reorderGroups(ids: string[], opts: IGroupOps = {}) {
-    dispatch({ type: 'reorderGroups', ids, opts })
+    if (ids.length === 0) {
+      return
+    }
+
+    const { file = state.present.currentFile } = opts
+
+    if (file === DEFAULT_FILE.id) {
+      return
+    }
+
+    addAction('Reorder groups', '', (state: IHistoryState) => {
+      state.groupOrder[file] = ids
+    })
   }
 
   function addGenesets(genesets: IGeneSet[], opts: IGroupOps = {}) {
-    dispatch({ type: 'addGenesets', genesets, opts })
+    if (genesets.length === 0) {
+      return
+    }
+
+    const { mode = 'append', file = state.present.currentFile } = opts
+
+    if (file === DEFAULT_FILE.id) {
+      return
+    }
+
+    addAction(
+      `Add ${formattedList(genesets.map((gs) => gs.name))} geneset${genesets.length > 1 ? 's' : ''}`,
+      '',
+      (state: IHistoryState) => {
+        if (mode === 'append') {
+          state.genesetOrder[file]?.push(...genesets.map((g) => g.id))
+        } else {
+          state.genesetOrder[file] = genesets.map((g) => g.id)
+        }
+      },
+      (store: IHistoryDataStore) => {
+        for (const geneset of genesets) {
+          store.genesets[geneset.id] = geneset
+        }
+      }
+    )
   }
 
   function updateGeneset(geneset: IGeneSet) {
-    dispatch({ type: 'updateGeneset', geneset })
+    addAction(
+      `Update geneset ${geneset.id}`,
+      '',
+      () => {},
+      (store: IHistoryDataStore) => {
+        store.genesets[geneset.id] = geneset
+      }
+    )
   }
 
   function removeGenesets(ids: string[], opts: IGroupOps = {}) {
-    dispatch({ type: 'removeGenesets', ids, opts })
+    if (ids.length === 0) {
+      return
+    }
+
+    const { file = state.present.currentFile } = opts
+
+    if (file === DEFAULT_FILE.id) {
+      return
+    }
+
+    addAction(
+      `Remove ${ids.join(', ')} geneset${ids.length > 1 ? 's' : ''}`,
+      '',
+      (state: IHistoryState) => {
+        state.genesetOrder[file] = state.genesetOrder[file]!.filter(
+          (id) => !ids.includes(id)
+        )
+      }
+    )
   }
 
   function reorderGenesets(ids: string[], opts: IGroupOps = {}) {
-    dispatch({ type: 'reorderGenesets', ids, opts })
+    const { file = state.present.currentFile } = opts
+
+    if (file === DEFAULT_FILE.id) {
+      return
+    }
+
+    addAction(
+      `Reorder ${ids.join(', ')} geneset${ids.length > 1 ? 's' : ''}`,
+      '',
+      (state: IHistoryState) => {
+        state.genesetOrder[file] = ids
+      }
+    )
   }
 
   function goto(path: HistoryPath) {
-    dispatch({ type: 'goto', path })
+    const { app, file, sheet, plot } = toPathId(path)
+
+    addAction(
+      `Goto ${Boolean(plot) ? `plot ${plot}` : Boolean(sheet) ? `sheet ${sheet}` : Boolean(file) ? `file ${file}` : `app ${app}`}`,
+      '',
+      (state: IHistoryState, store: Readonly<IHistoryDataStore>) => {
+        if (file in store.files) {
+          state.currentFile = file
+        }
+
+        if (sheet in store.sheets) {
+          state.currentSheet = sheet
+          state.currentSelections = [
+            {
+              type: 'sheet',
+              id: state.currentSheet,
+            },
+          ]
+        }
+
+        if (plot in store.plots) {
+          state.currentPlot = plot
+          state.currentSelections = [
+            {
+              type: 'plot',
+              id: state.currentPlot,
+            },
+          ]
+        }
+      }
+    )
   }
 
-  const filesContextValue = useMemo(
-    () => ({
-      file: state.present.currentFile,
-      fileOrder: state.present.fileOrder,
-      files: state.files,
-    }),
-    [state.present.currentFile, state.present.fileOrder, state.files]
-  )
-
-  const sheetsContextValue = useMemo(
-    () => ({
-      sheet: state.present.currentSheet,
-      sheetOrder: state.present.sheetOrder[state.present.currentFile] || [],
-      sheets: state.sheets,
-    }),
-    [
-      state.present.currentSheet,
-      state.present.sheetOrder,
-      state.present.currentFile,
-      state.sheets,
-    ]
-  )
-
-  const plotsContextValue = useMemo(
-    () => ({
-      plot: state.present.currentPlot,
-      plotOrder: state.present.plotOrder[state.present.currentFile] || [],
-      plots: state.plots,
-    }),
-    [
-      state.present.currentPlot,
-      state.present.plotOrder,
-      state.present.currentFile,
-      state.plots,
-    ]
-  )
-
   return (
-    <FilesContext.Provider value={filesContextValue}>
-      <SheetsContext.Provider value={sheetsContextValue}>
-        <PlotsContext.Provider value={plotsContextValue}>
-          <HistoryContext.Provider
-            value={{
-              ...state,
-              reset,
-              undo,
-              redo,
-              seek,
-              openFile,
-              remove,
-              removeFiles,
-              addSheets,
-              reorderSheets,
-              addPlots,
-              reorderPlots,
-              updatePlot,
-              addGroups,
-              reorderGroups,
-              removeGroups,
-              updateGroup,
-              addGenesets,
-              reorderGenesets,
-              removeGenesets,
-              updateGeneset,
-              goto,
-            }}
-          >
-            {children}
-          </HistoryContext.Provider>
-        </PlotsContext.Provider>
-      </SheetsContext.Provider>
-    </FilesContext.Provider>
+    <HistoryContext.Provider
+      value={{
+        ...state,
+        reset,
+        undo,
+        redo,
+        seek,
+        openFile,
+        remove,
+        removeFiles,
+        addSheets,
+        reorderSheets,
+        addPlots,
+        reorderPlots,
+        updatePlot,
+        addGroups,
+        reorderGroups,
+        removeGroups,
+        updateGroup,
+        addGenesets,
+        reorderGenesets,
+        removeGenesets,
+        updateGeneset,
+        goto,
+      }}
+    >
+      {children}
+    </HistoryContext.Provider>
   )
 }
 
@@ -1406,6 +1270,40 @@ interface ISheetOps {
   //path?: string
 }
 
+// export function pathSplit(path: string): string[] {
+//   if (!path) {
+//     return []
+//   }
+
+//   if (path.startsWith(PATH_SEP)) {
+//     path = path.slice(1)
+//   }
+
+//   return path.split(PATH_SEP).map(part => part.trim())
+// }
+
+export function useFiles(): IHistoryComp[] {
+  const { present, files } = useHistory()
+
+  return present.fileOrder.map((id) => files[id]!)
+}
+
+/**
+ * Returns a file from an app. If no id is given, returns the
+ * current file in none given.
+ *
+ * @param path
+ * @param id
+ * @returns
+ */
+export function useFile(
+  file: OptStrOrIdObj = undefined
+): IHistoryComp | undefined {
+  const { present, files } = useHistory()
+  const fid = getFileId(present, { file })
+  return files[fid]
+}
+
 export function useGroups(file: OptStrOrIdObj = undefined): IClusterGroup[] {
   const { present, groups } = useHistory()
   const fid = getFileId(present, { file })
@@ -1422,6 +1320,44 @@ export function useGenesets(file: OptStrOrIdObj = undefined): IGeneSet[] {
   const { present, genesets } = useHistory()
   const fid = getFileId(present, { file })
   return (present.genesetOrder[fid] || []).map((id) => genesets[id]!)
+}
+
+export function useSheet(
+  sheet: OptStrOrIdObj = undefined
+): DataFrameType | undefined {
+  const { present, sheets } = useHistory()
+
+  const sid = getSheetId(present, { sheet })
+  return sheets[sid]
+}
+
+export function useSheets(
+  opts: { file?: OptStrOrIdObj; removeDefaultSheets?: boolean } = {}
+): DataFrameType[] {
+  const { file } = opts
+  const { present, sheets } = useHistory()
+
+  const fid = getFileId(present, { file })
+  const sheetIds = present.sheetOrder[fid] || []
+
+  return sheetIds
+    .map((id) => sheets[id]!)
+    .filter((s) => !(opts.removeDefaultSheets && s.id === DEFAULT_SHEET.id))
+}
+
+export function usePlots(file: OptStrOrIdObj = undefined): HistoryPlot[] {
+  const { present, plots } = useHistory()
+  const fid = getFileId(present, { file })
+  const plotIds = present.plotOrder[fid] || []
+  return plotIds.map((id) => plots[id]!)
+}
+
+export function usePlot(
+  plot: OptStrOrIdObj = undefined
+): HistoryPlot | undefined {
+  const { present, plots } = useHistory()
+  const pid = getPlotId(present, { plot })
+  return pid ? plots[pid] : undefined
 }
 
 function getFileId(
