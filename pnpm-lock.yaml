@@ -21,8 +21,8 @@ importers:
         specifier: ^5.61.3
         version: 5.61.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@clerk/react':
-        specifier: ^6.10.0
-        version: 6.10.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^6.10.3
+        version: 6.10.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@clerk/types':
         specifier: ^4.101.20
         version: 4.101.20(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -569,8 +569,8 @@ packages:
       react: ^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0
       react-dom: ^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0
 
-  '@clerk/react@6.10.0':
-    resolution: {integrity: sha512-ixEFt0mq0DL2uXcR/h71oqhUQAM3aAelbyO4WCO8aeeg18Urf+nnghed8FhHGDwSDMbfzyix4F7jHxSr0U7qpg==}
+  '@clerk/react@6.10.3':
+    resolution: {integrity: sha512-TmDvfbJfcKBOqQDJgfHEZK1Agh8ehBl5LkZVWppCYS7mM9uHQK4Bchv94OoavlziY7Vpp31M9Ky3GoY9oiYKvQ==}
     engines: {node: '>=20.9.0'}
     peerDependencies:
       react: ^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0
@@ -588,8 +588,8 @@ packages:
       react-dom:
         optional: true
 
-  '@clerk/shared@4.18.0':
-    resolution: {integrity: sha512-WHqnq1dUUjBFrrnptQEpRpoP3H2Pag00E2MP6+aHfJICNjqSSZU3NecOpcKeizYr77hFG38jqV9jcIyB5UpmBQ==}
+  '@clerk/shared@4.19.1':
+    resolution: {integrity: sha512-0VDUXJ47FRDwPyu61uYTNy7HLMUrDAo7ig8JVqyKWb07ysUw7miXk1MKOsIEQ3Nm0g8lzj13LBv43J7o870GUw==}
     engines: {node: '>=20.9.0'}
     peerDependencies:
       react: ^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0
@@ -5435,9 +5435,9 @@ snapshots:
       react-dom: 19.2.7(react@19.2.7)
       tslib: 2.8.1
 
-  '@clerk/react@6.10.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@clerk/react@6.10.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
-      '@clerk/shared': 4.18.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@clerk/shared': 4.19.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
       tslib: 2.8.1
@@ -5454,7 +5454,7 @@ snapshots:
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
 
-  '@clerk/shared@4.18.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@clerk/shared@4.19.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@tanstack/query-core': 5.101.0
       dequal: 2.0.3

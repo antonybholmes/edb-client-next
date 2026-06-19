@@ -14,10 +14,12 @@ export const HeatmapContext = createContext<
 export function useHeatmapContext() {
   const ctx = useContext(HeatmapContext)
 
-  if (!ctx)
+  if (!ctx) {
     throw new Error(
       'useHeatmapContext must be used within a HeatmapContext.Provider'
     )
+  }
+
   return ctx
 }
 

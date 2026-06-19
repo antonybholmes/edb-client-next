@@ -1,3 +1,4 @@
+import { IChildrenProps } from '@/interfaces/children-props'
 import type { IDim } from '@/interfaces/dim'
 import {
   createContext,
@@ -5,7 +6,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type ReactNode,
   type RefObject,
 } from 'react'
 import type { IScrollPosition } from './ext-scrollbars'
@@ -52,11 +52,7 @@ export function useExtScrollContext() {
   return ctx
 }
 
-interface ExtScrollProviderProps {
-  children: ReactNode
-}
-
-export function ExtScrollProvider({ children }: ExtScrollProviderProps) {
+export function ExtScrollProvider({ children }: IChildrenProps) {
   const hScrollRef = useRef<HTMLDivElement>(null)
   const vScrollRef = useRef<HTMLDivElement>(null)
 

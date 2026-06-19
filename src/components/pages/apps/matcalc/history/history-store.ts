@@ -834,20 +834,28 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
       }))
     },
 
-    openApp: (name: string) => {
-      const app = newHistoryApp(name)
-
-      const nl = name.toLowerCase()
+    openApp: (id: string) => {
+      const la = id.toLowerCase()
 
       // check if app with this name already exists. If it does, we don't want to create a new app, just switch to it
-      const exists = Object.values(get().apps).some(
-        (a) => a.name.toLowerCase() === nl || a.id.toLowerCase() === nl
+      const appExists = Object.values(get().apps).some(
+        (a) => a.name.toLowerCase() === la || a.id.toLowerCase() === la
       )
 
-      console.log('all aps', get().apps)
+      if (appExists) {
+        addAction(`Open ${id} app`, '', (state: IHistoryState) => {
+          //const { branch } = newDefaultBranch()
+
+          // switch to the new app
+          state.currentApp = app.id
+        })
+        return
+      }
+
+      const app = newHistoryApp(id)
 
       addAction(
-        `Open ${name} app`,
+        `Open ${id} app`,
         '',
         (state: IHistoryState) => {
           //const { branch } = newDefaultBranch()
@@ -855,20 +863,10 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
           // switch to the new app
           state.currentApp = app.id
 
-          if (!state.appOrder.includes(state.currentApp)) {
-            state.appOrder.push(app.id)
-          }
+          state.appOrder.push(app.id)
 
           state.fileOrder[state.currentApp] = [DEFAULT_FILE.id]
           state.sheetOrder[DEFAULT_FILE.id] = [DEFAULT_SHEET.id]
-
-          console.log(
-            'b',
-            exists,
-            name,
-            app.id,
-            state.fileOrder[state.currentApp]
-          )
 
           const files = state.fileOrder[state.currentApp]!
           state.currentFile = files[files.length - 1]!
@@ -881,10 +879,8 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
           state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]
         },
         (store: IHistoryDataStore) => {
-          if (!exists) {
-            // after opening the app, we want to make sure the default file and sheet are added to the store
-            store.apps[app.id] = app
-          }
+          // after opening the app, we want to make sure the default file and sheet are added to the store
+          store.apps[app.id] = app
         }
       )
     },
@@ -912,23 +908,35 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
 
       //const defaultSheet = createDefaultSheet()
 
+      const la = app.toLowerCase()
+
+      const appExists = Object.values(get().apps).some(
+        (a) => a.name.toLowerCase() === la || a.id === la
+      )
+
+      const appObj = appExists ? null : newHistoryApp(app)
+
       addAction(
         `Open file ${name}`,
         getFormattedShapeSmall(sheets[0]),
         (state: IHistoryState) => {
           // these actions are logged to the history
 
+          if (appObj) {
+            state.currentApp = appObj.id
+          }
+
           if (mode === 'append') {
             // remove default file if it exists. Default file
             // must always be first
-            const files = (state.fileOrder[app] || []).filter(
+            const files = (state.fileOrder[state.currentApp] || []).filter(
               (id) => id !== DEFAULT_FILE.id
             )
 
-            state.fileOrder[app] = [...files, file.id]
+            state.fileOrder[state.currentApp] = [...files, file.id]
           } else {
             // Replace existing files with the new file
-            state.fileOrder[app] = [file.id] // [state.fileOrder[appId]![0]!, file.id]
+            state.fileOrder[state.currentApp] = [file.id] // [state.fileOrder[appId]![0]!, file.id]
           }
 
           state.sheetOrder[file.id] = sheets.map((s) => s.id)
@@ -951,10 +959,11 @@ export const useHistoryStore = create<IHistoryStore>((set, get) => {
           // this is so objects are stored once, but operations on them are logged to the history,
           // which is more efficient and makes the history easier to understand.
 
-          store.files[file.id] = file
+          if (appObj) {
+            store.apps[appObj.id] = appObj
+          }
 
-          // add the default sheet for this file
-          //store.sheets[DEFAULT_SHEET.id] = DEFAULT_SHEET
+          store.files[file.id] = file
 
           for (const sheet of sheets) {
             store.sheets[sheet.id] = sheet
@@ -1460,7 +1469,7 @@ export function useHistory(): {
   hydrated: boolean
   reset: () => void
   resetApp: (app: OptStrOrIdObj) => void
-  openApp: (name: string) => void
+  //openApp: (name: string) => void
 
   // openBranch: (
   //   name: string,

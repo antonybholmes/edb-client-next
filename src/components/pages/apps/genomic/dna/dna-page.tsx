@@ -101,7 +101,7 @@ import APP_INFO from './manifest.json'
 
 export function DNAPage() {
   const _id = useStableId('dna-page')
-  const { openApp, goto, openFile, addSheets } = useHistory()
+  const { goto, openFile, addSheets } = useHistory()
   const app = useApp()!
   const file = useFile()!
   const sheets = useSheets()
@@ -122,7 +122,7 @@ export function DNAPage() {
 
   useEffect(() => {
     setAppInfo(APP_INFO)
-    openApp(APP_INFO.name)
+    //openApp(APP_INFO.name)
   }, [])
 
   function openFiles(

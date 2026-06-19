@@ -72,7 +72,6 @@ import { MotifsPropsPanel } from './motifs-props-panel'
 
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { CoreProviders } from '@/providers/core-providers'
-import APP_INFO from './manifest.json'
 import { useMotifSettings, type Mode } from './motifs-settings'
 
 const PLOT_ZOOM_CHANNEL = 'bio-draw-plot-zoom'
@@ -98,7 +97,7 @@ export function BioDrawPage() {
 
   const { settings, updateSettings } = useMotifSettings()
 
-  const { openApp, goto } = useHistory()
+  const { goto } = useHistory()
 
   const app = useApp()!
   const file = useFile()!
@@ -107,9 +106,9 @@ export function BioDrawPage() {
 
   const df = sheet as AnnotationDataFrame
 
-  useEffect(() => {
-    openApp(APP_INFO.name)
-  }, [])
+  // useEffect(() => {
+  //   openApp(APP_INFO.name)
+  // }, [])
 
   useEffect(() => {
     updateSettings(

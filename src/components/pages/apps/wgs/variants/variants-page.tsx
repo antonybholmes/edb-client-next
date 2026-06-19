@@ -127,7 +127,7 @@ export function VariantsPage() {
 
   const { open: openDialog } = useDialogs()
 
-  const { openApp, openFile, goto } = useHistory()
+  const { openFile, goto } = useHistory()
   const app = useApp()!
   const file = useFile()!
   const sheets = useSheets()
@@ -137,7 +137,7 @@ export function VariantsPage() {
 
   useEffect(() => {
     setAppInfo(APP_INFO)
-    openApp(APP_INFO.name)
+    //openApp(APP_INFO.name)
   }, [])
 
   useEffect(() => {

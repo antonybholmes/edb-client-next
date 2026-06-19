@@ -112,7 +112,7 @@ export function MotifsPage() {
 
   const { settings: edbSettings } = useEdbSettings()
 
-  const { openApp, openFile, goto } = useHistory()
+  const { openFile, goto } = useHistory()
 
   const app = useApp()!
   const file = useFile()!
@@ -126,7 +126,7 @@ export function MotifsPage() {
 
   useEffect(() => {
     setAppInfo(APP_INFO)
-    openApp(APP_INFO.name)
+    //openApp(APP_INFO.name)
   }, [])
 
   // // sync local query state when the global search query changes

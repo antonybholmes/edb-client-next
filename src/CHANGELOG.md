@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added history provider for scoping history to each app.
 - Compiles with all recent updates.
 - Bug fixes and updates.
 - Updated to match Astro version.

@@ -117,6 +117,7 @@ import { useExtGseaWorker } from './apps/ext-gsea/ext-gsea-worker'
 import { HeatmapProvider } from './apps/heatmap/heatmap-provider'
 import { VolcanoProvider } from './apps/volcano/volcano-provider'
 import { OptsSidebarMenu } from './data/opts-sidebar-menu'
+import { HistoryProvider } from './history/history-provider'
 import {
   getAllPlots,
   newExtGseaPlot,
@@ -200,7 +201,7 @@ export function MatcalcPage() {
     currentApp,
     currentFile,
     currentSelection,
-    openApp,
+
     openFile,
     addSheets,
     addPlots,
@@ -287,7 +288,7 @@ export function MatcalcPage() {
 
   useEffect(() => {
     // open a dedicated history app for this module
-    openApp(APP_INFO.name)
+    //openApp(APP_INFO.name)
     setAppInfo(APP_INFO)
 
     // custom settings for the global settings app
@@ -1368,7 +1369,9 @@ export function MatcalcQueryPage() {
       {/* <GroupsProvider> */}
       {/* <GenesetsProvider> */}
       {/* <MessagesProvider> */}
-      <MatcalcPage />
+      <HistoryProvider>
+        <MatcalcPage />
+      </HistoryProvider>
       {/* </MessagesProvider> */}
       {/* </GenesetsProvider> */}
       {/* </GroupsProvider> */}

@@ -5,18 +5,18 @@
     "color": "#FA8072",
     "version": "20.6.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-18T19:27:55.579Z",
-    "hash": "16193811b25591ca96195d48003c52be7341b7d2fad48908fffa201a35fb583f",
-    "build": 812
+    "modified": "2026-06-19T03:57:32.945Z",
+    "hash": "c8e027ac23e16f6ba67762fda5e516dece84256f15ae8884ec1a0e2a2edb23e3",
+    "build": 814
   },
   {
     "name": "Bio Draw",
     "description": "Biological diagrams",
     "version": "16.4.8",
     "copyright": "© 2025-2026 Antony Holmes",
-    "modified": "2026-06-18T19:27:55.578Z",
-    "hash": "7016cf7dc91d5911066380461044dd2f6a031e2c4e9770531ef05db80011daa9",
-    "build": 494
+    "modified": "2026-06-19T03:57:32.943Z",
+    "hash": "c21507e49ba8ce906660a0317eef3bb7457a047badf2ba26fb3d79ebbacee986",
+    "build": 496
   },
   {
     "name": "Convert",
@@ -32,11 +32,11 @@
     "name": "DNA",
     "description": "Get DNA sequences",
     "color": "#FF4500",
-    "version": "20.4.6",
+    "version": "20.4.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-18T20:31:51.853Z",
-    "hash": "f3cec6074d8f136f711b2a7d914094fa3db7e460f00eb345f740416f18cfb1a0",
-    "build": 788
+    "modified": "2026-06-19T03:57:32.946Z",
+    "hash": "5ab17da7639b8ab2d890c478bc0e66d5e33b9fcf1857d47571125494ef3e3495",
+    "build": 790
   },
   {
     "name": "Get DNA",
@@ -111,19 +111,19 @@
     "color": "#40bf80",
     "version": "46.6.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-06-18T21:46:55.005Z",
-    "hash": "b602b061e3a9ef72d5b06a2ba9c24e5a41c95d201e91d8952ae44d4ca009b2af",
-    "build": 1620
+    "modified": "2026-06-19T03:57:32.955Z",
+    "hash": "d87ec9c031f3c4f577b02f7e2a1be259f21ee9162ef90ad7f79fe755b26ee240",
+    "build": 1622
   },
   {
     "name": "Motifs",
     "description": "View motif logo plots.",
     "color": "#009933",
-    "version": "48.0.8",
+    "version": "48.2.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-18T19:27:55.579Z",
-    "hash": "85978716bc44ade77f5436558b2c9e5d6660c0b9977c8627148b37bf21dfb320",
-    "build": 918
+    "modified": "2026-06-19T03:57:32.944Z",
+    "hash": "5726938fc7b9f9f6b3a7932f1e264c8fc27608c3ad9036e4be09cd9074b65765",
+    "build": 920
   },
   {
     "name": "Oncoplot",
@@ -151,9 +151,9 @@
     "color": "#6495ED",
     "version": "36.0.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-18T19:27:55.579Z",
-    "hash": "05b8454a2d7739ff07969578861f2f28037c08ba26d599989baa25d798f2d002",
-    "build": 850
+    "modified": "2026-06-19T03:57:32.945Z",
+    "hash": "80d2a9a42cbdbfa4043fae0827dc7c5f56e4fe6b901b43f35fde5c0b64fce24e",
+    "build": 852
   },
   {
     "name": "Rev Comp",
@@ -201,9 +201,9 @@
     "color": "#FA8072",
     "version": "26.4.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-18T19:27:55.584Z",
-    "hash": "c641008e5efa49f7fb6ff03f27a16d97bf762142a0d4aad6b6109930bc4d51f9",
-    "build": 956
+    "modified": "2026-06-19T03:57:32.959Z",
+    "hash": "0ad7d5019dcb3cd757e56e7b3670621b3b97e43978b3be0c4c6ed5d791224380",
+    "build": 958
   },
   {
     "name": "Venn",

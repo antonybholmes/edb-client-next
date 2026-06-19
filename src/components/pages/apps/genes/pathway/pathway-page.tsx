@@ -126,7 +126,7 @@ export function PathwayPage() {
 
   const [indicatorMessage, setIndicatorMessage] = useState<string | null>(null)
 
-  const { openApp, openFile, goto, addSheets } = useHistory()
+  const { openFile, goto, addSheets } = useHistory()
   const app = useApp()!
   const file = useFile()!
   const sheets = useSheets()
@@ -141,7 +141,7 @@ export function PathwayPage() {
 
   useEffect(() => {
     setAppInfo(APP_INFO)
-    openApp(APP_INFO.name)
+    //openApp(APP_INFO.name)
   }, [])
 
   /**

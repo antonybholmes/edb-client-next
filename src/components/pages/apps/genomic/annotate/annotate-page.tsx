@@ -94,7 +94,7 @@ import APP_INFO from './manifest.json'
 export function AnnotationPage() {
   const _id = useStableId('annotate-page')
 
-  const { goto, openApp, openFile, addSheets } = useHistory()
+  const { goto, openFile, addSheets } = useHistory()
   const app = useApp()!
   const file = useFile()!
   const sheets = useSheets()
@@ -117,7 +117,7 @@ export function AnnotationPage() {
 
   useEffect(() => {
     setAppInfo(APP_INFO)
-    openApp(APP_INFO.name)
+    //openApp(APP_INFO.name)
   }, [])
 
   function onFileChange(_message: string, files: FileList | []) {
