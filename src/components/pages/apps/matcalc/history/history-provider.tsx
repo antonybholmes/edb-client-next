@@ -615,9 +615,8 @@ function dataStoreView(state: IHistoryData): IHistoryDataStore {
 const historyManager = new HistoryManager<IHistoryState>()
 
 type IHistoryFilesContext = {
-  file: string
-  fileOrder: string[]
-  files: Record<string, IHistoryComp>
+  file: IHistoryComp
+  files: IHistoryComp[]
 }
 
 const FilesContext = createContext<IHistoryFilesContext | undefined>(undefined)
@@ -631,28 +630,9 @@ export function useFileContext(): IHistoryFilesContext {
   return ctx
 }
 
-export function useFiles(): IHistoryComp[] {
-  const ctx = useContext(FilesContext)
-  if (!ctx) {
-    throw new Error('useFiles must be used within a HistoryProvider')
-  }
-
-  return useMemo(
-    () => ctx.fileOrder.map((id) => ctx.files[id]!),
-    [ctx.fileOrder, ctx.files]
-  )
-}
-
-export function useFile(): IHistoryComp {
-  const ctx = useFileContext()
-
-  return useMemo(() => ctx.files[ctx.file], [ctx.file, ctx.files])
-}
-
 type ISheetsContext = {
-  sheet: string
-  sheetOrder: string[]
-  sheets: Record<string, DataFrameType>
+  sheet: DataFrameType
+  sheets: DataFrameType[]
 }
 
 const SheetsContext = createContext<ISheetsContext | undefined>(undefined)
@@ -666,28 +646,9 @@ export function useSheetsContext(): ISheetsContext {
   return ctx
 }
 
-export function useSheets(): DataFrameType[] {
-  const ctx = useContext(SheetsContext)
-  if (!ctx) {
-    throw new Error('useSheets must be used within a HistoryProvider')
-  }
-
-  return useMemo(
-    () => ctx.sheetOrder.map((id) => ctx.sheets[id]!),
-    [ctx.sheetOrder, ctx.sheets]
-  )
-}
-
-export function useSheet(): DataFrameType {
-  const ctx = useSheetsContext()
-
-  return useMemo(() => ctx.sheets[ctx.sheet], [ctx.sheet, ctx.sheets])
-}
-
 type IPlotsContext = {
-  plot: string | undefined
-  plotOrder: string[]
-  plots: Record<string, HistoryPlot>
+  plot: HistoryPlot | undefined
+  plots: HistoryPlot[]
 }
 
 const PlotsContext = createContext<IPlotsContext | undefined>(undefined)
@@ -699,27 +660,6 @@ export function usePlotsContext(): IPlotsContext {
   }
 
   return ctx
-}
-
-export function usePlots(): HistoryPlot[] {
-  const ctx = useContext(PlotsContext)
-  if (!ctx) {
-    throw new Error('usePlots must be used within a HistoryProvider')
-  }
-
-  return useMemo(
-    () => ctx.plotOrder.map((id) => ctx.plots[id]!),
-    [ctx.plotOrder, ctx.plots]
-  )
-}
-
-export function usePlot(): HistoryPlot | undefined {
-  const ctx = usePlotsContext()
-
-  return useMemo(
-    () => (ctx.plot ? ctx.plots[ctx.plot] : undefined),
-    [ctx.plot, ctx.plots]
-  )
 }
 
 type HistoryAction =
@@ -942,16 +882,25 @@ function historyReducer(
         '',
         (draft: IHistoryState) => {
           for (const p of pathIds) {
-            if (isFileOnly(p)) {
-              removeFile(draft, p)
-            } else if (isSheet(p)) {
-              removeSheet(draft, p)
-            } else if (isPlot(p)) {
-              removePlot(draft, p)
-            } else if (isGroup(p)) {
-              removeGroup(draft, p)
-            } else if (isGeneset(p)) {
-              removeGeneset(draft, p)
+            switch (getPathType(p)) {
+              case 'file':
+                removeFile(draft, p)
+                break
+              case 'sheet':
+                removeSheet(draft, p)
+                break
+              case 'plot':
+                removePlot(draft, p)
+                break
+              case 'group':
+                removeGroup(draft, p)
+                break
+              case 'geneset':
+                removeGeneset(draft, p)
+                break
+              default:
+                console.warn(`Unknown path type for ${p}`)
+                break
             }
           }
         }
@@ -1316,18 +1265,18 @@ export function HistoryProvider({ children }: IChildrenProps) {
 
   const filesContextValue = useMemo(
     () => ({
-      file: state.present.currentFile,
-      fileOrder: state.present.fileOrder,
-      files: state.files,
+      file: state.files[state.present.currentFile]!,
+      files: state.present.fileOrder.map((id) => state.files[id]!),
     }),
     [state.present.currentFile, state.present.fileOrder, state.files]
   )
 
   const sheetsContextValue = useMemo(
     () => ({
-      sheet: state.present.currentSheet,
-      sheetOrder: state.present.sheetOrder[state.present.currentFile] || [],
-      sheets: state.sheets,
+      sheet: state.sheets[state.present.currentSheet]!,
+      sheets: state.present.sheetOrder[state.present.currentFile].map(
+        (id) => state.sheets[id]!
+      ),
     }),
     [
       state.present.currentSheet,
@@ -1339,9 +1288,15 @@ export function HistoryProvider({ children }: IChildrenProps) {
 
   const plotsContextValue = useMemo(
     () => ({
-      plot: state.present.currentPlot,
-      plotOrder: state.present.plotOrder[state.present.currentFile] || [],
-      plots: state.plots,
+      plot: state.present.currentPlot
+        ? state.plots[state.present.currentPlot]
+        : undefined,
+
+      plots: state.present.currentPlot
+        ? state.present.plotOrder[state.present.currentFile].map(
+            (id) => state.plots[id]!
+          )
+        : [],
     }),
     [
       state.present.currentPlot,
@@ -1406,6 +1361,14 @@ interface ISheetOps {
   //path?: string
 }
 
+function getFileId(
+  state: IHistoryState,
+  opts: { file?: OptStrOrIdObj } = {}
+): string {
+  const { file } = opts
+  return (typeof file === 'string' ? file : file?.id) || state.currentFile
+}
+
 export function useGroups(file: OptStrOrIdObj = undefined): IClusterGroup[] {
   const { present, groups } = useHistory()
   const fid = getFileId(present, { file })
@@ -1422,30 +1385,6 @@ export function useGenesets(file: OptStrOrIdObj = undefined): IGeneSet[] {
   const { present, genesets } = useHistory()
   const fid = getFileId(present, { file })
   return (present.genesetOrder[fid] || []).map((id) => genesets[id]!)
-}
-
-function getFileId(
-  state: IHistoryState,
-  opts: { file?: OptStrOrIdObj } = {}
-): string {
-  const { file } = opts
-  return (typeof file === 'string' ? file : file?.id) || state.currentFile
-}
-
-function getSheetId(
-  state: IHistoryState,
-  opts: { sheet?: OptStrOrIdObj } = {}
-): string {
-  const { sheet } = opts
-  return (typeof sheet === 'string' ? sheet : sheet?.id) || state.currentSheet
-}
-
-function getPlotId(
-  state: IHistoryState,
-  opts: { plot?: OptStrOrIdObj } = {}
-): string | undefined {
-  const { plot } = opts
-  return (typeof plot === 'string' ? plot : plot?.id) || state.currentPlot
 }
 
 export function getFiles(
@@ -1641,35 +1580,18 @@ function removeGeneset(state: IHistoryState, p: PathId) {
   )
 }
 
-function isAppOnly(p: PathId): boolean {
-  return (
-    Boolean(p.app) && !p.file && !p.sheet && !p.plot && !p.group && !p.geneset
-  )
-}
-
-function isFileOnly(p: PathId): boolean {
-  return (
-    Boolean(p.app) &&
-    Boolean(p.file) &&
-    !p.sheet &&
-    !p.plot &&
-    !p.group &&
-    !p.geneset
-  )
-}
-
-function isSheet(p: PathId): boolean {
-  return Boolean(p.file) && Boolean(p.sheet)
-}
-
-function isPlot(p: PathId): boolean {
-  return Boolean(p.file) && Boolean(p.plot)
-}
-
-function isGroup(p: PathId): boolean {
-  return Boolean(p.file) && Boolean(p.group)
-}
-
-function isGeneset(p: PathId): boolean {
-  return Boolean(p.file) && Boolean(p.geneset)
+function getPathType(
+  path: PathId
+): 'file' | 'sheet' | 'plot' | 'group' | 'geneset' {
+  if ('group' in path) {
+    return 'group'
+  } else if ('geneset' in path) {
+    return 'geneset'
+  } else if ('plot' in path) {
+    return 'plot'
+  } else if ('sheet' in path) {
+    return 'sheet'
+  } else {
+    return 'file'
+  }
 }
