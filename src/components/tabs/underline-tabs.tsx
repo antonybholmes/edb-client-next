@@ -23,10 +23,10 @@ import {
 
 import { useTabs } from './tab-store'
 
-export const UNDERLINE_LABEL_CLS = `boldable-text-tab data-[checked=true]:font-semibold data-[hover=true]:text-foreground
+export const UNDERLINE_LABEL_CLS = `boldable-text-tab data-[checked=true]:font-medium data-[hover=true]:text-foreground
 data-[checked=true]:text-foreground text-alt-foreground truncate relative pointer-events-none select-none`
 
-export const UNDERLINE_HOVER_LABEL_CLS = `z-40 opacity-0 font-semibold data-[hover=true]:opacity-100
+export const UNDERLINE_HOVER_LABEL_CLS = `z-40 opacity-0 font-medium data-[hover=true]:opacity-100
 data-[checked=true]:opacity-100 group-focus-visible:opacity-100 trans-opacity absolute 
 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 truncate pointer-events-none select-none`
 
@@ -176,7 +176,7 @@ function Trigger({
   return (
     <span
       data-selected={selected}
-      ref={el => {
+      ref={(el) => {
         ref.current = el
         buttonsRef.current[ti] = el!
       }}

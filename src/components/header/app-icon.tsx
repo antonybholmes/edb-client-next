@@ -26,8 +26,10 @@ export function AppIcon({
         //backgroundColor: `${appInfo.color}cc`
       }}
     >
-      <span className="font-bold text-white/95">{abbr[0]!.toUpperCase()}</span>
-      <span className="text-white/95">{abbr[1]!.toLowerCase()}</span>
+      <span className="font-medium text-white/95">
+        {abbr[0]!.toUpperCase()}
+      </span>
+      <span className="font-light text-white/95">{abbr[1]!.toLowerCase()}</span>
     </div>
   )
 }
