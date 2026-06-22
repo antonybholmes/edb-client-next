@@ -9,8 +9,9 @@ import { IHistoryData, IHistoryDataStore, IHistoryState } from './history-types'
 export const DEFAULT_FILE = newHistoryFile('Default')
 export const DEFAULT_SHEET = DATAFRAME_100x26
 
-export function resetStore(): IHistoryDataStore {
+export function resetStore(app: string): IHistoryDataStore {
   return {
+    app,
     files: { [DEFAULT_FILE.id]: DEFAULT_FILE },
     sheets: { [DEFAULT_SHEET.id]: DEFAULT_SHEET },
     plots: {},
@@ -21,7 +22,7 @@ export function resetStore(): IHistoryDataStore {
 }
 
 // that stores IHistoryState snapshots and patches for undo/redo functionality.
-export function init(): IHistoryData {
+export function init(app: string): IHistoryData {
   const id = makeUuid()
 
   let state: IHistoryState = {
@@ -41,7 +42,7 @@ export function init(): IHistoryData {
   }
 
   return {
-    ...resetStore(),
+    ...resetStore(app),
 
     present: state,
     history: [historyEntry],

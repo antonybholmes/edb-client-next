@@ -23,7 +23,7 @@ import {
   SIMPLE_COLOR_EXT_CLS,
 } from '../../../../../plot/color-picker-popover'
 
-import { usePlot } from '../../history/history-provider/history-hooks'
+import { getPlot } from '../../history/history-provider/history-hooks'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { ExtGseaPlot } from '../../history/history-provider/history-types'
 import { DEFAULT_EXT_GSEA_PROPS } from './ext-gsea-store'
@@ -46,7 +46,7 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
 
   const { updatePlot } = useHistory()
 
-  const plot = usePlot(plotAddr)! as ExtGseaPlot
+  const plot = getPlot(plotAddr)! as ExtGseaPlot
 
   const displayOptions = plot!.props
 

@@ -11,7 +11,7 @@ import {
 } from '@/themed/v2/accordion'
 import { produce } from 'immer'
 
-import { usePlot } from '../../history/history-provider/history-hooks'
+import { getPlot } from '../../history/history-provider/history-hooks'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { BoxPlot } from '../../history/history-provider/history-types'
 import type { IBoxPlotDisplayOptions } from './boxplot-plot-svg'
@@ -25,7 +25,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
 
   const { updatePlot } = useHistory()
 
-  const plot = usePlot(plotAddr)! as BoxPlot
+  const plot = getPlot(plotAddr)! as BoxPlot
 
   const displayOptions: IBoxPlotDisplayOptions = plot.props
 

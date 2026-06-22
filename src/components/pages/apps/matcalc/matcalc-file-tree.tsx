@@ -16,7 +16,7 @@ import {
   useCurrentSelections,
   useFiles,
 } from './history/history-provider/history-contexts'
-import { usePlots, useSheets } from './history/history-provider/history-hooks'
+import { getPlots, getSheets } from './history/history-provider/history-hooks'
 import { useHistory } from './history/history-provider/history-provider'
 import { HistoryPlot } from './history/history-provider/history-types'
 
@@ -30,7 +30,7 @@ const DATA_TABLES_TAB: ITab = Object.freeze({
 })
 
 export function MatcalcFileTree() {
-  const { goto, remove, removeFiles } = useHistory()
+  const { present, sheets, plots, goto, remove, removeFiles } = useHistory()
   //const [treeRootTab, setTreeRootTab] = useState<ITab>(TREE_ROOT_TAB)
   const [selectedPanelTab, setSelectedPanelTab] = useState<string>('')
 
@@ -46,10 +46,10 @@ export function MatcalcFileTree() {
     const allPlots: HistoryPlot[] = []
 
     for (const [fi, file] of files.entries()) {
-      const sheets = useSheets({ file })
+      const s = getSheets(present, sheets, { file })
 
       // a file must have at least one sheet
-      const sheet = sheets.length > 1 ? sheets[1]! : sheets[0]! // history.sheetMap[step.sheets[0]!]!
+      const sheet = s.length > 1 ? s[1]! : s[0]! // history.sheetMap[step.sheets[0]!]!
 
       const fileNode: ITab = {
         id: sheet.id,
@@ -66,10 +66,10 @@ export function MatcalcFileTree() {
         },
       }
 
-      const plots = usePlots({ file })
+      const p = getPlots(present, plots, { file })
       const plotNodes: ITab[] = []
 
-      for (const [pi, plot] of plots.entries()) {
+      for (const [pi, plot] of p.entries()) {
         const plotNode: ITab = {
           id: plot.id, //file.id,
           name: plot?.name ?? `Plot ${pi + 1}`,
@@ -111,7 +111,7 @@ export function MatcalcFileTree() {
 
       tableChildrenTabs.push(fileFolderNode)
 
-      allPlots.push(...usePlots({ file }))
+      allPlots.push(...getPlots(present, plots, { file }))
     }
 
     return {

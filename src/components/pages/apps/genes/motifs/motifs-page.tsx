@@ -63,13 +63,7 @@ import {
 } from '@/themed/resizable'
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 import { produce } from 'immer'
-import {
-  useApp,
-  useFile,
-  useHistory,
-  useSheet,
-  useSheets,
-} from '../../matcalc/history/history-store'
+
 import APP_INFO from './manifest.json'
 import { MotifsSvg } from './motifs-svg'
 
@@ -83,6 +77,14 @@ import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 import { ArrowLeftRight, ArrowUpDown } from 'lucide-react'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
+import {
+  useCurrentSheets,
+  useFiles,
+} from '../../matcalc/history/history-provider/history-contexts'
+import {
+  HistoryProvider,
+  useHistory,
+} from '../../matcalc/history/history-provider/history-provider'
 import { DatasetFilter } from './dataset-filter'
 import { DisplayPropsPanel } from './display-props-panel'
 import { MotifsPropsPanel } from './motifs-props-panel'
@@ -114,10 +116,8 @@ export function MotifsPage() {
 
   const { openFile, goto } = useHistory()
 
-  const app = useApp()!
-  const file = useFile()!
-  const sheet = useSheet()
-  const sheets = useSheets()
+  const { file } = useFiles()
+  const { sheet, sheets } = useCurrentSheets()
 
   //const [q, setQ] = useState<string>(search.query)
 
@@ -646,7 +646,7 @@ export function MotifsPage() {
                   selectedSheet={sheet?.id ?? ''}
                   dataFrames={sheets as AnnotationDataFrame[]}
                   onTabChange={(selectedTab) => {
-                    goto({ app, file, sheet: selectedTab.tab })
+                    goto({ file, sheet: selectedTab.tab })
                   }}
                   className="relative grow"
                 />
@@ -668,7 +668,9 @@ export function MotifsPage() {
 export function MotifsQueryPage() {
   return (
     <CoreProviders>
-      <MotifsPage />
+      <HistoryProvider app={APP_INFO.name}>
+        <MotifsPage />
+      </HistoryProvider>
     </CoreProviders>
   )
 }

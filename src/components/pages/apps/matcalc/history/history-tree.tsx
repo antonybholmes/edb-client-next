@@ -4,22 +4,18 @@ import { makeUuid } from '@/lib/id'
 import { useMemo } from 'react'
 import { pathJoin } from './history-provider/history-actions'
 import { useFiles } from './history-provider/history-contexts'
-import { usePlots, useSheets } from './history-provider/history-hooks'
+import { getPlots, getSheets } from './history-provider/history-hooks'
+import { useHistory } from './history-provider/history-provider'
 
 export function HistoryTree({
   onTabChange,
 }: {
   onTabChange: (tab: ITab) => void
 }) {
+  const { present, sheets, plots } = useHistory()
   const { files } = useFiles()
 
   const tree: ITab = useMemo(() => {
-    const appsTab: ITab = {
-      id: makeUuid(),
-      name: 'Apps',
-      children: [],
-    }
-
     const filesTab: ITab = {
       id: makeUuid(),
       name: 'Files',
@@ -52,7 +48,7 @@ export function HistoryTree({
         children: [],
       }
 
-      for (const sheet of useSheets({ file })) {
+      for (const sheet of getSheets(present, sheets, { file })) {
         const sheetTab: ITab = {
           id: sheet.id,
 
@@ -66,7 +62,7 @@ export function HistoryTree({
         sheetsTab.children!.push(sheetTab)
       }
 
-      for (const plot of usePlots({ file })) {
+      for (const plot of getPlots(present, plots, { file })) {
         const plotTab: ITab = {
           id: plot.id,
           path: pathJoin(file, plot),

@@ -2,6 +2,10 @@
 
 ## 85.0 (Jun, 2026)
 
+### Added
+
+- History provider to replace history store.
+
 ### Changed
 
 - Bottombar no longer triggers stack overflow.

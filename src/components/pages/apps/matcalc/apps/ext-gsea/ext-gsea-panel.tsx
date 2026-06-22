@@ -23,7 +23,7 @@ import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
-import { usePlot } from '../../history/history-provider/history-hooks'
+import { getPlot } from '../../history/history-provider/history-hooks'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { ExtGseaPlot } from '../../history/history-provider/history-types'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
@@ -54,7 +54,7 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
 
   const { updatePlot } = useHistory()
 
-  const plot = usePlot(plotAddr)! as ExtGseaPlot
+  const plot = getPlot(plotAddr)! as ExtGseaPlot
 
   //const sheet = plot!.dataframes['main']! as AnnotationDataFrame
 

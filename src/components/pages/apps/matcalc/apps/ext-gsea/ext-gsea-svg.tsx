@@ -17,7 +17,7 @@ import { COLOR_BLACK } from '@/lib/color/color'
 import type { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
 import { end, type ILim } from '@/lib/math/math'
 import { where } from '@/lib/math/where'
-import { usePlot } from '../../history/history-provider/history-hooks'
+import { getPlot } from '../../history/history-provider/history-hooks'
 import { ExtGseaPlot } from '../../history/history-provider/history-types'
 
 interface IProps extends ISVGProps {
@@ -25,7 +25,7 @@ interface IProps extends ISVGProps {
 }
 
 export function ExtGseaSvg({ ref, plotAddr }: IProps) {
-  const plot = usePlot(plotAddr)! as ExtGseaPlot
+  const plot = getPlot(plotAddr)! as ExtGseaPlot
 
   const displayProps = plot!.props
 

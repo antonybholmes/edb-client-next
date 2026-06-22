@@ -25,7 +25,8 @@ import {
 } from './history-types'
 
 export type HistoryAction =
-  | { type: 'reset' }
+  | { type: 'reset'; app: string }
+  | { type: 'init'; app: string }
   | { type: 'undo' }
   | { type: 'redo' }
   | { type: 'seek'; step: number | string }
@@ -60,6 +61,7 @@ const historyManager = new HistoryManager<IHistoryState>()
 
 export function dataStoreView(state: IHistoryData): IHistoryDataStore {
   return {
+    app: state.app,
     files: state.files,
     sheets: state.sheets,
     plots: state.plots,
@@ -686,7 +688,7 @@ export function historyReducer(
 ): IHistoryData {
   switch (action.type) {
     case 'reset':
-      return init()
+      return init(action.app)
     case 'undo':
       return {
         ...state,

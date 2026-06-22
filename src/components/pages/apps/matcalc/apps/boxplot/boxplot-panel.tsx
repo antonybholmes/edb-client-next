@@ -22,7 +22,7 @@ import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
-import { usePlot } from '../../history/history-provider/history-hooks'
+import { getPlot } from '../../history/history-provider/history-hooks'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { BoxPlot } from '../../history/history-provider/history-types'
 import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
@@ -42,7 +42,7 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
   const { updatePlot } = useHistory()
   const { sheet } = useCurrentSheets()
 
-  const plot = usePlot(plotAddr)! as BoxPlot
+  const plot = getPlot(plotAddr)! as BoxPlot
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'box-plot')
 

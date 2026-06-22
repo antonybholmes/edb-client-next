@@ -1888,6 +1888,12 @@
           "msg": "Bottombar no longer triggers stack overflow",
           "date": "2026-06-22T15:46:51.267Z"
         }
+      ],
+      "Added": [
+        {
+          "msg": "History provider to replace history store",
+          "date": "2026-06-22T22:46:19.027Z"
+        }
       ]
     },
     "author": "Antony Holmes",

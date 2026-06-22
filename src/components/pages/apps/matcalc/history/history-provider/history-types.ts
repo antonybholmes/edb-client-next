@@ -94,7 +94,7 @@ export type HistoryUpdateProps = (
   prop: unknown
 ) => void
 
-interface IAppSlice {
+interface IFileSlice {
   openFile: (name: string, opts: IFileOps) => void
   //updateGroupsName: (name: string, path: AppPath | string) => void
 }
@@ -211,6 +211,7 @@ export interface IHistoryState extends IHistoryComp {
 
 // Stores all objects by ID for easy access and immutability
 export interface IHistoryDataStore {
+  app: string
   files: Record<string, IHistoryComp>
   sheets: Record<string, DataFrameType>
   plots: Record<string, HistoryPlot>
@@ -224,7 +225,7 @@ export type IHistoryData = IUndoState<IHistoryState> & IHistoryDataStore
 export interface IHistoryStore
   extends
     IHistorySlice,
-    IAppSlice,
+    IFileSlice,
     ISheetSlice,
     IPlotSlice,
     IGroupSlice,

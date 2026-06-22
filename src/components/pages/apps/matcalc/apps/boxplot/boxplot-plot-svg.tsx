@@ -29,7 +29,7 @@ import {
   type LegendPos,
 } from '../../../../../plot/svg-props'
 
-import { usePlot } from '../../history/history-provider/history-hooks'
+import { getPlot } from '../../history/history-provider/history-hooks'
 import { BoxPlot } from '../../history/history-provider/history-types'
 
 /**
@@ -134,7 +134,7 @@ interface IProps extends ISVGProps {
 export function BoxPlotSvg({ ref, plotAddr }: IProps) {
   //const { plotsState } = useContext(PlotsContext)
 
-  const plot = usePlot(plotAddr)! as BoxPlot
+  const plot = getPlot(plotAddr)! as BoxPlot
 
   //const)
 

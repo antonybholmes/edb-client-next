@@ -1358,7 +1358,7 @@ export function MatcalcQueryPage() {
       {/* <GroupsProvider> */}
       {/* <GenesetsProvider> */}
       {/* <MessagesProvider> */}
-      <HistoryProvider>
+      <HistoryProvider app={APP_INFO.name}>
         <MatcalcPage />
       </HistoryProvider>
       {/* </MessagesProvider> */}
