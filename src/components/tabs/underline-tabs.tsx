@@ -324,7 +324,7 @@ export function _UnderlineTabs({
         {tabs.map((tab, ti) => {
           return (
             <TabsTrigger
-              variant="base"
+              variant="none"
               key={tab.id}
               value={tab.id}
               id={tab.id}

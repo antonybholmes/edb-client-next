@@ -22,8 +22,8 @@ export const TRIGGER_SELECTED_CLS =
 
 export const BASE_TRIGGER_CLS = cn(
   FOCUS_RING_CLS,
-  'flex flex-row items-center rounded-theme',
-  'disabled:opacity-50 hover:bg-muted/25',
+  'flex flex-row items-center',
+  'disabled:opacity-50 hover:bg-muted/50',
   'data-active:font-semibold overflow-hidden'
 )
 
@@ -35,7 +35,7 @@ export const TRIGGER_CLS = cn(
 
 export const SIDEBAR_CLS = cn(
   BASE_TRIGGER_CLS,
-  'px-3 h-8 data-active:bg-muted/60'
+  'px-3 h-8 data-active:bg-muted/60 rounded-theme'
 )
 
 export const PLAIN_CLS = cn(
@@ -128,7 +128,8 @@ TabsList.displayName = 'TabsList' //TabsPrimitive.List.displayName
 const triggerVariants = cva('relative', {
   variants: {
     variant: {
-      base: FOCUS_RING_CLS,
+      none: FOCUS_RING_CLS,
+      base: BASE_TRIGGER_CLS,
       default: TRIGGER_CLS,
       menu: MENU_CLS,
       plain: PLAIN_CLS,

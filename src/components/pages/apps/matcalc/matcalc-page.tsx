@@ -117,7 +117,7 @@ import { useExtGseaWorker } from './apps/ext-gsea/ext-gsea-worker'
 import { HeatmapProvider } from './apps/heatmap/heatmap-provider'
 import { VolcanoProvider } from './apps/volcano/volcano-provider'
 import { OptsSidebarMenu } from './data/opts-sidebar-menu'
-import { HistoryProvider } from './history/history-provider'
+import { HistoryProvider } from './history/history-provider/history-provider'
 import {
   getAllPlots,
   newExtGseaPlot,

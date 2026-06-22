@@ -24,6 +24,12 @@ import {
 import { cva, type VariantProps } from 'class-variance-authority'
 import { gsap } from 'gsap'
 import { VCenterRow } from '../layout/v-center-row'
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from '../shadcn/ui/themed/v2/context-menu'
 import { BaseSortableItem, SmallDragHandle } from '../sortable-item'
 import { UNDERLINE_LABEL_CLS, type ITabMenu } from './underline-tabs'
 
@@ -32,6 +38,7 @@ export const tabVariants = cva(
   {
     variants: {
       variant: {
+        none: '',
         default:
           'rounded-theme overflow-hidden mb-1 focus-visible:bg-muted hover:bg-muted data-[checked=true]:bg-muted px-2 py-1',
         sheet:
@@ -45,8 +52,9 @@ export const tabVariants = cva(
 export const tabButtonVariants = cva('group', {
   variants: {
     variant: {
+      none: '',
       default: 'px-2 py-1',
-      sheet: 'py-1.5 hover:bg-muted/50 trans-color',
+      sheet: 'py-1.5 trans-color',
       tab: 'border',
     },
   },
@@ -121,7 +129,6 @@ function TabItem({
           setNodeRef(el as HTMLButtonElement)
         }}
         id={tab.id}
-        variant="base"
         value={tab.id}
         key={tab.id}
         aria-label={name}
@@ -129,6 +136,7 @@ function TabItem({
           variant,
           className: 'flex flex-row items-center relative',
         })}
+        variant="base"
         style={{ paddingRight: allowReorder ? '1rem' : '0.5rem' }}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
@@ -160,25 +168,25 @@ function TabItem({
     </BaseSortableItem>
   )
 
-  // if (menuActions && menuActions.length > 0 && menuCallback) {
-  //   content = (
-  //     <ContextMenu>
-  //       <ContextMenuTrigger render={content} />
-  //       <ContextMenuContent>
-  //         {menuActions.map((menuAction, ai) => (
-  //           <ContextMenuItem
-  //             key={ai}
-  //             onClick={() => menuCallback?.(tab, menuAction.action)}
-  //             aria-label={menuAction.action}
-  //           >
-  //             {menuAction.icon && menuAction.icon}
-  //             <span>{menuAction.action}</span>
-  //           </ContextMenuItem>
-  //         ))}
-  //       </ContextMenuContent>
-  //     </ContextMenu>
-  //   )
-  // }
+  if (menuActions && menuActions.length > 0 && menuCallback) {
+    content = (
+      <ContextMenu>
+        <ContextMenuTrigger render={content} />
+        <ContextMenuContent>
+          {menuActions.map((menuAction, ai) => (
+            <ContextMenuItem
+              key={ai}
+              onClick={() => menuCallback?.(tab, menuAction.action)}
+              aria-label={menuAction.action}
+            >
+              {menuAction.icon && menuAction.icon}
+              <span>{menuAction.action}</span>
+            </ContextMenuItem>
+          ))}
+        </ContextMenuContent>
+      </ContextMenu>
+    )
+  }
 
   return content
 }
@@ -203,7 +211,7 @@ export function ReorderTabs({
   ref,
   value,
   tabs,
-  variant = 'default',
+  variant,
   className,
   menuCallback = () => {},
   menuActions = [],

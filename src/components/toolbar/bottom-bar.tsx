@@ -86,13 +86,13 @@ export function BottomBar({
       value={selectedTabId}
       onValueChange={_onValueChange}
       className={cn(
-        'flex grow flex-col border border-green-300',
+        'flex grow flex-col overflow-hidden',
         [onFileDrop !== undefined, DRAG_OUTLINE_CLS],
         className
       )}
       style={style}
     >
-      {tabs.map(tab => (
+      {tabs.map((tab) => (
         <TabsContent value={tab.id} key={tab.id}>
           {tab.content}
         </TabsContent>
@@ -109,8 +109,8 @@ export function BottomBar({
               onClick={() => {
                 const selectedTabIndex = tabs
                   .map((t, ti) => [t, ti] as [ITab, number])
-                  .filter(t => t[0]!.id === selectedTab.tab.id)
-                  .map(t => t[1]!)[0]!
+                  .filter((t) => t[0]!.id === selectedTab.tab.id)
+                  .map((t) => t[1]!)[0]!
 
                 const i =
                   selectedTabIndex === 0
@@ -140,8 +140,8 @@ export function BottomBar({
 
                 const selectedTabIndex = tabs
                   .map((t, ti) => [t, ti] as [ITab, number])
-                  .filter(t => t[0]!.id === selectedTab.tab.id)
-                  .map(t => t[1]!)[0]!
+                  .filter((t) => t[0]!.id === selectedTab.tab.id)
+                  .map((t) => t[1]!)[0]!
 
                 const i = Math.max(
                   0,
@@ -166,7 +166,7 @@ export function BottomBar({
                 }
               />
               <DropdownMenuContent align="start">
-                {tabs.map(tab => (
+                {tabs.map((tab) => (
                   <DropdownMenuCheckboxItem
                     id={tab.id}
                     key={tab.id}
