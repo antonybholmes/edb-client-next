@@ -31,9 +31,10 @@ const currentDate = info.modified ? new Date(info.modified) : new Date()
 // find all manifest files
 const manifestFiles = files
   .filter(
-    f => f.includes('manifest.json') && !f.includes('src/config/manifest.json')
+    (f) =>
+      f.includes('manifest.json') && !f.includes('src/config/manifest.json')
   )
-  .map(f => {
+  .map((f) => {
     const stats = fs.lstatSync(f)
     return { f, mtime: stats.mtime } as { f: string; mtime: Date }
   })
@@ -43,8 +44,8 @@ const manifestFile = manifestFiles[0]!
 
 console.log('Latest manifest file modification date:', manifestFile)
 
-console.log(info)
-console.log(manifestFile)
+//console.log(info)
+//console.log(manifestFile)
 
 if (true || manifestFile.mtime.getTime() > currentDate.getTime()) {
   let build = info.build

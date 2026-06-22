@@ -1883,6 +1883,10 @@
         {
           "msg": "Moved changelog src file",
           "date": "2026-06-22T12:38:50.408Z"
+        },
+        {
+          "msg": "Bottombar no longer triggers stack overflow",
+          "date": "2026-06-22T15:46:51.267Z"
         }
       ]
     },

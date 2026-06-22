@@ -1879,6 +1879,10 @@
         {
           "msg": "Added history provider for scoping history to each app",
           "date": "2026-06-19T03:57:35.176Z"
+        },
+        {
+          "msg": "Moved changelog src file",
+          "date": "2026-06-22T12:38:50.408Z"
         }
       ]
     },

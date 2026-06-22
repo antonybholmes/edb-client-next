@@ -123,7 +123,7 @@ export function DragHandle({
 
   return (
     <VCenterRow
-      className={cn('group cursor-ns-resize w-4  justify-start', className)}
+      className={cn('group cursor-ns-resize w-4 justify-start', className)}
       data-dragging={isDragging}
       {...listeners}
       {...attributes}
@@ -140,16 +140,16 @@ export function DragHandle({
 
 export function SmallDragHandle({
   id,
-  className = 'cursor-ns-resize',
+  className,
   ...props
-}: IDivProps & { id: string }) {
+}: IClassProps & { id: string }) {
   //const { id } = useContext(SortableItemContext)
   const { attributes, listeners } = useSortable({ id })
 
   return (
     <span
       className={cn(
-        'inline-flex flex-row items-center justify-center',
+        'inline-flex flex-row items-center justify-center cursor-ns-resize',
         className
       )}
       {...listeners}
