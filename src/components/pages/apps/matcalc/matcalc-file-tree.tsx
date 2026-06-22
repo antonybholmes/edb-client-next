@@ -121,7 +121,7 @@ export function MatcalcFileTree() {
         //{ ...PLOTS_TAB, children: plotChildrenTabs },
       ],
     }
-  }, [files])
+  }, [files, plots])
 
   // decide what to highlight in tree
   useEffect(() => {
