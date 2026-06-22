@@ -52,9 +52,9 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
   //   return null
   // }
 
-  const { updatePlot } = useHistory()
+  const { updatePlot, present, plots } = useHistory()
 
-  const plot = getPlot(plotAddr)! as ExtGseaPlot
+  const plot = getPlot(present, plots, plotAddr)! as ExtGseaPlot
 
   //const sheet = plot!.dataframes['main']! as AnnotationDataFrame
 

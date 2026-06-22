@@ -44,9 +44,8 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
   // const IExtGseaDisplayOptions =
   //   plot!.displayOptions as IExtGseaDisplayOptions
 
-  const { updatePlot } = useHistory()
-
-  const plot = getPlot(plotAddr)! as ExtGseaPlot
+  const { updatePlot, present, plots } = useHistory()
+  const plot = getPlot(present, plots, plotAddr)! as ExtGseaPlot
 
   const displayOptions = plot!.props
 

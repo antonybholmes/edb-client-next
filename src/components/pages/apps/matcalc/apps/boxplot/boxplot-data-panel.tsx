@@ -29,7 +29,8 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
 
   const { updatePlot } = useHistory()
-  const plot = getPlot(plotAddr)! as BoxPlot
+  const { present, plots } = useHistory()
+  const plot = getPlot(present, plots, plotAddr)! as BoxPlot
 
   const singlePlotDisplayOptions = plot.singlePlotDisplayOptions as {
     [key: string]: {

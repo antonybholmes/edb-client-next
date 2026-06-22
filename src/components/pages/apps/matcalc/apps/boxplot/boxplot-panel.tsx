@@ -39,10 +39,10 @@ interface IPanelProps extends IDivProps {
 
 export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
-  const { updatePlot } = useHistory()
+  const { present, plots, updatePlot } = useHistory()
   const { sheet } = useCurrentSheets()
 
-  const plot = getPlot(plotAddr)! as BoxPlot
+  const plot = getPlot(present, plots, plotAddr)! as BoxPlot
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'box-plot')
 

@@ -23,9 +23,8 @@ export interface IProps {
 export function BoxPlotPropsPanel({ plotAddr }: IProps) {
   //const { plotsState, historyDispatch } = useContext(PlotsContext)
 
-  const { updatePlot } = useHistory()
-
-  const plot = getPlot(plotAddr)! as BoxPlot
+  const { updatePlot, present, plots } = useHistory()
+  const plot = getPlot(present, plots, plotAddr)! as BoxPlot
 
   const displayOptions: IBoxPlotDisplayOptions = plot.props
 
