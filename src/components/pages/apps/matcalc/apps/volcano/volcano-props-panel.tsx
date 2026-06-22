@@ -23,7 +23,6 @@ import {
 } from '@/themed/v2/accordion'
 import { Button } from '@/themed/v2/button'
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
-import { useHistory } from '../../history/history-store'
 
 import { getNumCol } from '@/lib/dataframe/dataframe-utils'
 import { range } from '@/lib/math/range'
@@ -31,6 +30,7 @@ import { IconButton } from '@/themed/icon-button'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
 import { useState } from 'react'
+import { useHistory } from '../../history/history-provider/history-provider'
 import { useVolcanoContext } from './volcano-provider'
 
 export interface IProps {
@@ -64,7 +64,7 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
     const values: string[] = textToLines(text, { trim: true })
 
     updatePlot(
-      produce(plot, draft => {
+      produce(plot, (draft) => {
         draft.props.labels.values = values
       })
     )
@@ -97,17 +97,17 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
     const ydata = getNumCol(sheet, findCol(sheet, y))
 
     const idx = new Set(
-      range(sheet.shape[0]).filter(i => getShouldLabel(xdata[i]!, ydata[i]!))
+      range(sheet.shape[0]).filter((i) => getShouldLabel(xdata[i]!, ydata[i]!))
     )
 
     const values = sheet.index.values
       .filter((_v, i) => idx.has(i))
-      .map(l => l.toString())
+      .map((l) => l.toString())
 
     setText(values.join('\n'))
 
     updatePlot(
-      produce(plot, draft => {
+      produce(plot, (draft) => {
         draft.props.labels.values = values
       })
     )
@@ -125,16 +125,16 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
                 v2={displayProps.axes.yaxis.length}
                 limit={[1, 1000]}
                 dp={0}
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.axes.xaxis.length = v
                     })
                   )
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.axes.yaxis.length = v
                     })
                   )
@@ -151,9 +151,9 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
                 dp={0}
                 limit={[-10000, 10000]}
                 className="w-16 rounded-theme"
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.axes.xaxis.domain = [
                         v,
                         draft.props.axes.xaxis.domain[1],
@@ -161,9 +161,9 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
                     })
                   )
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.axes.xaxis.domain = [
                         draft.props.axes.xaxis.domain[0],
                         v,
@@ -182,9 +182,9 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
                 dp={0}
                 limit={[1, 10000]}
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.axes.yaxis.domain = [0, v]
                     })
                   )
@@ -199,9 +199,9 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
                 placeholder="Size..."
                 dp={0}
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.dots.size = v
                     })
                   )
@@ -212,9 +212,9 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
                 colors={[
                   {
                     color: displayProps.dots.color,
-                    onColorChange: v =>
+                    onColorChange: (v) =>
                       updatePlot(
-                        produce(plot, draft => {
+                        produce(plot, (draft) => {
                           draft.props.dots.color = v
                         })
                       ),
@@ -227,9 +227,9 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
             <SwitchPropRow
               title="Border"
               checked={displayProps.border.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 updatePlot(
-                  produce(plot, draft => {
+                  produce(plot, (draft) => {
                     draft.props.border.show = v
                   })
                 )
@@ -239,9 +239,9 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
                 colors={[
                   {
                     color: displayProps.border.value,
-                    onColorChange: v =>
+                    onColorChange: (v) =>
                       updatePlot(
-                        produce(plot, draft => {
+                        produce(plot, (draft) => {
                           draft.props.border.value = v
                         })
                       ),
@@ -259,9 +259,9 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
             <SwitchPropRow
               title="Filter"
               checked={displayProps.logFc.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 updatePlot(
-                  produce(plot, draft => {
+                  produce(plot, (draft) => {
                     draft.props.logFc.show = v
                   })
                 )
@@ -273,9 +273,9 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
                 dp={2}
                 placeholder="Max..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.logFc.threshold = v
                     })
                   )
@@ -288,9 +288,9 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
                 colors={[
                   {
                     color: displayProps.logFc.neg.color,
-                    onColorChange: v =>
+                    onColorChange: (v) =>
                       updatePlot(
-                        produce(plot, draft => {
+                        produce(plot, (draft) => {
                           draft.props.logFc.neg.color = v
                         })
                       ),
@@ -304,9 +304,9 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
                 colors={[
                   {
                     color: displayProps.logFc.pos.color,
-                    onColorChange: v =>
+                    onColorChange: (v) =>
                       updatePlot(
-                        produce(plot, draft => {
+                        produce(plot, (draft) => {
                           draft.props.logFc.pos.color = v
                         })
                       ),
@@ -325,9 +325,9 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
             <SwitchPropRow
               title="Filter"
               checked={displayProps.logP.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 updatePlot(
-                  produce(plot, draft => {
+                  produce(plot, (draft) => {
                     draft.props.logP.show = v
                   })
                 )
@@ -339,9 +339,9 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
                 dp={2}
                 placeholder="Max..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.logP.threshold = -Math.log10(v)
                     })
                   )
@@ -352,9 +352,9 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
             <SwitchPropRow
               title="Line"
               checked={displayProps.logP.line.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 updatePlot(
-                  produce(plot, draft => {
+                  produce(plot, (draft) => {
                     draft.props.logP.line.show = v
                   })
                 )
@@ -371,7 +371,7 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
                 id="labels"
                 aria-label="Labels"
                 value={text}
-                onChange={e => setText(e.target.value)}
+                onChange={(e) => setText(e.target.value)}
                 placeholder="List data labels to highlight"
                 className="h-48"
               />
@@ -401,7 +401,7 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
                     setText('')
 
                     updatePlot(
-                      produce(plot, draft => {
+                      produce(plot, (draft) => {
                         draft.props.labels.values = []
                       })
                     )

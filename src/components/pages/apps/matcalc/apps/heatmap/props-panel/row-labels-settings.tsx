@@ -13,7 +13,8 @@ import type { LeftRightPos } from '@/components/side'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
 import { produce } from 'immer'
-import { useHistory } from '../../../history/history-store'
+
+import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export function RowLabelsSettingsPanel() {
@@ -58,9 +59,9 @@ export function RowLabelsSettingsPanel() {
                 {
                   title: 'Font',
                   textProps: displayProps.rowLabels,
-                  update: f => {
+                  update: (f) => {
                     updatePlot(
-                      produce(plot, draft => {
+                      produce(plot, (draft) => {
                         draft.props.rowLabels.font = f.font
                         draft.props.rowLabels.show = f.show
                       })
@@ -78,9 +79,9 @@ export function RowLabelsSettingsPanel() {
         <CheckPropRow
           title="Metadata"
           checked={displayProps.rowLabels.showMetadata}
-          onCheckedChange={v => {
+          onCheckedChange={(v) => {
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props.rowLabels.showMetadata = v
               })
             )
@@ -91,9 +92,9 @@ export function RowLabelsSettingsPanel() {
           <RadioGroup
             value={displayProps.rowLabels.position}
             disabled={!displayProps.rowLabels.show}
-            onValueChange={v =>
+            onValueChange={(v) =>
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.rowLabels.position = v as LeftRightPos
                 })
               )
@@ -128,9 +129,9 @@ export function RowLabelsSettingsPanel() {
             limit={[1, 200]}
             placeholder="Row label size..."
             className="rounded-theme"
-            onNumChanged={v => {
+            onNumChanged={(v) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.rowLabels.width = v
                 })
               )

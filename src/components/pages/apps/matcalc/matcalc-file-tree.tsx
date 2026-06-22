@@ -13,14 +13,12 @@ import { FileChartColumnIncreasing, FileSpreadsheet } from 'lucide-react'
 
 import { makeUuid } from '@/lib/id'
 import {
-  getPlots,
-  getSheets,
-  useApp,
+  useCurrentSelections,
   useFiles,
-  useHistory,
-  usePlots,
-  type HistoryPlot,
-} from './history/history-store'
+} from './history/history-provider/history-contexts'
+import { usePlots, useSheets } from './history/history-provider/history-hooks'
+import { useHistory } from './history/history-provider/history-provider'
+import { HistoryPlot } from './history/history-provider/history-types'
 
 export const TAB_DATA_TABLES = 'Data Tables'
 
@@ -32,14 +30,13 @@ const DATA_TABLES_TAB: ITab = Object.freeze({
 })
 
 export function MatcalcFileTree() {
-  const { store, state, currentSelection, goto, remove, removeFiles } =
-    useHistory()
+  const { goto, remove, removeFiles } = useHistory()
   //const [treeRootTab, setTreeRootTab] = useState<ITab>(TREE_ROOT_TAB)
   const [selectedPanelTab, setSelectedPanelTab] = useState<string>('')
 
-  const app = useApp()!
-  const files = useFiles()
-  const plots = usePlots()
+  const { selection: currentSelection } = useCurrentSelections()
+
+  const { files } = useFiles()
 
   const treeRootTab = useMemo(() => {
     //const lastHistoryAction = historyActions[historyActions.length - 1]!
@@ -49,7 +46,7 @@ export function MatcalcFileTree() {
     const allPlots: HistoryPlot[] = []
 
     for (const [fi, file] of files.entries()) {
-      const sheets = getSheets(store, state, { file })
+      const sheets = useSheets({ file })
 
       // a file must have at least one sheet
       const sheet = sheets.length > 1 ? sheets[1]! : sheets[0]! // history.sheetMap[step.sheets[0]!]!
@@ -62,14 +59,14 @@ export function MatcalcFileTree() {
         onClick: () => {
           setSelectedPanelTab(sheet.id) //file.id)
 
-          goto({ app, file, sheet }) //, 'branch')
+          goto({ file, sheet }) //, 'branch')
         },
         onDelete: () => {
-          removeFiles([{ app, file }]) //file.id], 'file')
+          removeFiles([{ file }]) //file.id], 'file')
         },
       }
 
-      const plots = getPlots(store, state, { file })
+      const plots = usePlots({ file })
       const plotNodes: ITab[] = []
 
       for (const [pi, plot] of plots.entries()) {
@@ -82,10 +79,10 @@ export function MatcalcFileTree() {
           onClick: () => {
             setSelectedPanelTab(plot.id) //file.id)
 
-            goto({ app, file, sheet, plot }) //, 'branch')
+            goto({ file, sheet, plot }) //, 'branch')
           },
           onDelete: () => {
-            remove([{ app, file, plot }])
+            remove([{ file, plot }])
           },
         }
 
@@ -114,7 +111,7 @@ export function MatcalcFileTree() {
 
       tableChildrenTabs.push(fileFolderNode)
 
-      allPlots.push(...getPlots(store, state, { file }))
+      allPlots.push(...usePlots({ file }))
     }
 
     return {
@@ -124,7 +121,7 @@ export function MatcalcFileTree() {
         //{ ...PLOTS_TAB, children: plotChildrenTabs },
       ],
     }
-  }, [state, files, plots])
+  }, [files])
 
   // decide what to highlight in tree
   useEffect(() => {

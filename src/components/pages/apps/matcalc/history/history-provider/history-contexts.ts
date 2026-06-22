@@ -1,9 +1,12 @@
 import { IClusterGroup } from '@/lib/cluster-group'
+
+import { IGeneSet } from '@/lib/gsea/geneset'
 import { createContext, useContext } from 'react'
 import {
   DataFrameType,
   HistoryPlot,
   IHistoryFilesContext,
+  ISelectionPath,
 } from './history-types'
 
 export const FilesContext = createContext<IHistoryFilesContext | undefined>(
@@ -28,10 +31,10 @@ export const SheetsContext = createContext<ISheetsContext | undefined>(
   undefined
 )
 
-export function useSheets(): ISheetsContext {
+export function useCurrentSheets(): ISheetsContext {
   const ctx = useContext(SheetsContext)
   if (!ctx) {
-    throw new Error('useSheets must be used within a HistoryProvider')
+    throw new Error('useCurrentSheets must be used within a HistoryProvider')
   }
 
   return ctx
@@ -44,10 +47,10 @@ export type IPlotsContext = {
 
 export const PlotsContext = createContext<IPlotsContext | undefined>(undefined)
 
-export function usePlots(): IPlotsContext {
+export function useCurrentPlots(): IPlotsContext {
   const ctx = useContext(PlotsContext)
   if (!ctx) {
-    throw new Error('usePlots must be used within a HistoryProvider')
+    throw new Error('useCurrentPlots must be used within a HistoryProvider')
   }
 
   return ctx
@@ -55,16 +58,38 @@ export function usePlots(): IPlotsContext {
 
 export type IGroupsContext = {
   groups: IClusterGroup[]
+  genesets: IGeneSet[]
+  groupsName: string
 }
 
 export const GroupsContext = createContext<IGroupsContext | undefined>(
   undefined
 )
 
-export function useGroups(): IGroupsContext {
+export function useCurrentGroups(): IGroupsContext {
   const ctx = useContext(GroupsContext)
   if (!ctx) {
-    throw new Error('useGroups must be used within a HistoryProvider')
+    throw new Error('useCurrentGroups must be used within a HistoryProvider')
+  }
+
+  return ctx
+}
+
+export type ISelectionsContext = {
+  selection: ISelectionPath | undefined
+  selections: ISelectionPath[]
+}
+
+export const SelectionsContext = createContext<ISelectionsContext | undefined>(
+  undefined
+)
+
+export function useCurrentSelections(): ISelectionsContext {
+  const ctx = useContext(SelectionsContext)
+  if (!ctx) {
+    throw new Error(
+      'useCurrentSelections must be used within a HistoryProvider'
+    )
   }
 
   return ctx

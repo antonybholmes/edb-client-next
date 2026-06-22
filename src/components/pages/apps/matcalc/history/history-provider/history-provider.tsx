@@ -4,7 +4,13 @@ import { IChildrenProps } from '@/interfaces/children-props'
 import type { IClusterGroup } from '@/lib/cluster-group'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import type { IGeneSet } from '@/lib/gsea/geneset'
-import { createContext, useContext, useMemo, useReducer } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useReducer,
+} from 'react'
 
 enablePatches()
 
@@ -13,6 +19,7 @@ import {
   FilesContext,
   GroupsContext,
   PlotsContext,
+  SelectionsContext,
   SheetsContext,
 } from './history-contexts'
 import { newHistoryFile } from './history-factories'
@@ -33,38 +40,6 @@ export const DEFAULT_APP_NAME = 'Default'
 
 export const DEFAULT_STEP_NAME = 'Load sheet'
 
-// function createDefaultSheet(): BaseDataFrame {
-//   return create100x26Df()
-// }
-
-// function resetState(
-//   state: IHistoryState
-// ): Omit<IHistoryState, 'id' | 'name' | 'createdAt'> {
-//   const defaultSheet = state.sheetOrder[DEFAULT_FILE.id]![0]!
-
-//   return {
-//     fileOrder: [DEFAULT_FILE.id],
-//     sheetOrder: { [DEFAULT_FILE.id]: [defaultSheet] },
-//     plotOrder: { [DEFAULT_FILE.id]: [] },
-//     groupOrder: { [DEFAULT_FILE.id]: [] },
-//     genesetOrder: { [DEFAULT_FILE.id]: [] },
-//     currentFile: DEFAULT_FILE.id,
-//     currentSheet: defaultSheet,
-//     currentPlot: '',
-//     currentSelections: [{ type: 'sheet', id: defaultSheet }],
-//   }
-// }
-
-// const DEFAULT_HISTORY_STORE: IHistoryDataStore = {
-//   apps: { [DEFAULT_APP.id]: DEFAULT_APP },
-//   files: { [DEFAULT_FILE.id]: DEFAULT_FILE },
-//   sheets: { [DEFAULT_SHEET.id]: DEFAULT_SHEET },
-//   plots: {},
-//   groups: {},
-//   groupNames: { [DEFAULT_FILE.id]: 'Groups' },
-//   genesets: {},
-// }
-
 const HistoryContext = createContext<IHistoryStore | undefined>(undefined)
 
 export function useHistory() {
@@ -79,116 +54,170 @@ export function useHistory() {
 export function HistoryProvider({ children }: IChildrenProps) {
   const [state, dispatch] = useReducer(historyReducer, init())
 
-  function reset() {
+  const reset = useCallback(() => {
     dispatch({ type: 'reset' })
-  }
+  }, [dispatch])
 
-  function undo() {
+  const undo = useCallback(() => {
     dispatch({ type: 'undo' })
-  }
+  }, [dispatch])
 
-  function redo() {
+  const redo = useCallback(() => {
     dispatch({ type: 'redo' })
-  }
+  }, [dispatch])
 
-  function seek(step: number | string) {
-    dispatch({ type: 'seek', step })
-  }
+  const seek = useCallback(
+    (step: number | string) => {
+      dispatch({ type: 'seek', step })
+    },
+    [dispatch]
+  )
 
-  function openFile(name: string, opts: IFileOps = {}) {
-    let {
-      sheets = [DEFAULT_SHEET],
-      plots = [],
-      mode = 'append',
-      groupsName = '',
-      groups = [],
-      genesets = [],
-    } = opts
+  const openFile = useCallback(
+    (name: string, opts: IFileOps = {}) => {
+      let {
+        sheets = [DEFAULT_SHEET],
+        plots = [],
+        mode = 'append',
+        groupsName = '',
+        groups = [],
+        genesets = [],
+      } = opts
 
-    if (sheets.length === 0) {
-      return
-    }
-    if (!name) {
-      name = sheets[0]!.name
-    }
+      if (sheets.length === 0) {
+        return
+      }
+      if (!name) {
+        name = sheets[0]!.name
+      }
 
-    const file = newHistoryFile(name)
+      const file = newHistoryFile(name)
 
-    dispatch({
-      type: 'openFile',
-      file,
-      sheets,
-      plots,
-      groups,
-      genesets,
-      groupsName,
-      mode,
-    })
-  }
+      dispatch({
+        type: 'openFile',
+        file,
+        sheets,
+        plots,
+        groups,
+        genesets,
+        groupsName,
+        mode,
+      })
+    },
+    [dispatch]
+  )
 
-  function addSheets(sheets: BaseDataFrame[], opts: ISheetOps = {}) {
-    dispatch({ type: 'addSheets', sheets, opts })
-  }
+  const addSheets = useCallback(
+    (sheets: BaseDataFrame[], opts: ISheetOps = {}) => {
+      dispatch({ type: 'addSheets', sheets, opts })
+    },
+    [dispatch]
+  )
 
-  function addPlots(plots: HistoryPlot[], opts: ISheetOps = {}) {
-    dispatch({ type: 'addPlots', plots, opts })
-  }
+  const addPlots = useCallback(
+    (plots: HistoryPlot[], opts: ISheetOps = {}) => {
+      dispatch({ type: 'addPlots', plots, opts })
+    },
+    [dispatch]
+  )
 
-  function remove(paths: HistoryPath[]) {
-    dispatch({ type: 'remove', paths })
-  }
+  const remove = useCallback(
+    (paths: HistoryPath[]) => {
+      dispatch({ type: 'remove', paths })
+    },
+    [dispatch]
+  )
 
-  function removeFiles(paths: FilePath[]) {
-    dispatch({ type: 'removeFiles', paths })
-  }
+  const removeFiles = useCallback(
+    (paths: FilePath[]) => {
+      dispatch({ type: 'removeFiles', paths })
+    },
+    [dispatch]
+  )
 
-  function reorderSheets(ids: string[], opts: ISheetOps = {}) {
-    dispatch({ type: 'reorderSheets', ids, opts })
-  }
+  const reorderSheets = useCallback(
+    (ids: string[], opts: ISheetOps = {}) => {
+      dispatch({ type: 'reorderSheets', ids, opts })
+    },
+    [dispatch]
+  )
 
-  function reorderPlots(ids: string[], opts: ISheetOps = {}) {
-    dispatch({ type: 'reorderPlots', ids, opts })
-  }
+  const reorderPlots = useCallback(
+    (ids: string[], opts: ISheetOps = {}) => {
+      dispatch({ type: 'reorderPlots', ids, opts })
+    },
+    [dispatch]
+  )
 
-  function updatePlot(plot: HistoryPlot) {
-    dispatch({ type: 'updatePlot', plot })
-  }
+  const updatePlot = useCallback(
+    (plot: HistoryPlot) => {
+      dispatch({ type: 'updatePlot', plot })
+    },
+    [dispatch]
+  )
 
-  function addGroups(groups: IClusterGroup[], opts: IGroupOps = {}) {
-    dispatch({ type: 'addGroups', groups, opts })
-  }
+  const addGroups = useCallback(
+    (groups: IClusterGroup[], opts: IGroupOps = {}) => {
+      dispatch({ type: 'addGroups', groups, opts })
+    },
+    [dispatch]
+  )
 
-  function updateGroup(group: IClusterGroup, opts: IGroupOps = {}) {
-    dispatch({ type: 'updateGroup', group, opts })
-  }
+  const updateGroup = useCallback(
+    (group: IClusterGroup, opts: IGroupOps = {}) => {
+      dispatch({ type: 'updateGroup', group, opts })
+    },
+    [dispatch]
+  )
 
-  function removeGroups(ids: string[], opts: IGroupOps = {}) {
-    dispatch({ type: 'removeGroups', ids, opts })
-  }
+  const removeGroups = useCallback(
+    (ids: string[], opts: IGroupOps = {}) => {
+      dispatch({ type: 'removeGroups', ids, opts })
+    },
+    [dispatch]
+  )
 
-  function reorderGroups(ids: string[], opts: IGroupOps = {}) {
-    dispatch({ type: 'reorderGroups', ids, opts })
-  }
+  const reorderGroups = useCallback(
+    (ids: string[], opts: IGroupOps = {}) => {
+      dispatch({ type: 'reorderGroups', ids, opts })
+    },
+    [dispatch]
+  )
 
-  function addGenesets(genesets: IGeneSet[], opts: IGroupOps = {}) {
-    dispatch({ type: 'addGenesets', genesets, opts })
-  }
+  const addGenesets = useCallback(
+    (genesets: IGeneSet[], opts: IGroupOps = {}) => {
+      dispatch({ type: 'addGenesets', genesets, opts })
+    },
+    [dispatch]
+  )
 
-  function updateGeneset(geneset: IGeneSet) {
-    dispatch({ type: 'updateGeneset', geneset })
-  }
+  const updateGeneset = useCallback(
+    (geneset: IGeneSet) => {
+      dispatch({ type: 'updateGeneset', geneset })
+    },
+    [dispatch]
+  )
 
-  function removeGenesets(ids: string[], opts: IGroupOps = {}) {
-    dispatch({ type: 'removeGenesets', ids, opts })
-  }
+  const removeGenesets = useCallback(
+    (ids: string[], opts: IGroupOps = {}) => {
+      dispatch({ type: 'removeGenesets', ids, opts })
+    },
+    [dispatch]
+  )
 
-  function reorderGenesets(ids: string[], opts: IGroupOps = {}) {
-    dispatch({ type: 'reorderGenesets', ids, opts })
-  }
+  const reorderGenesets = useCallback(
+    (ids: string[], opts: IGroupOps = {}) => {
+      dispatch({ type: 'reorderGenesets', ids, opts })
+    },
+    [dispatch]
+  )
 
-  function goto(path: HistoryPath) {
-    dispatch({ type: 'goto', path })
-  }
+  const goto = useCallback(
+    (path: HistoryPath) => {
+      dispatch({ type: 'goto', path })
+    },
+    [dispatch]
+  )
 
   const filesContextValue = useMemo(
     () => ({
@@ -238,8 +267,80 @@ export function HistoryProvider({ children }: IChildrenProps) {
       groups: (state.present.groupOrder[state.present.currentFile] || []).map(
         (id) => state.groups[id]!
       ),
+      genesets: (
+        state.present.genesetOrder[state.present.currentFile] || []
+      ).map((id) => state.genesets[id]!),
+      groupsName: state.groupNames[state.present.currentFile] || '',
     }),
-    [state.present.currentFile, state.present.groupOrder, state.groups]
+    [
+      state.present.currentFile,
+      state.present.groupOrder,
+      state.groups,
+      state.present.genesetOrder,
+      state.genesets,
+    ]
+  )
+
+  const selectionsContextValue = useMemo(
+    () => ({
+      selection:
+        state.present.currentSelections.length > 0
+          ? state.present.currentSelections[0]
+          : undefined,
+      selections: state.present.currentSelections,
+    }),
+    [state.present.currentSelections]
+  )
+
+  const historyContextValue = useMemo(
+    () => ({
+      ...state,
+      reset,
+      undo,
+      redo,
+      seek,
+      openFile,
+      remove,
+      removeFiles,
+      addSheets,
+      reorderSheets,
+      addPlots,
+      reorderPlots,
+      updatePlot,
+      addGroups,
+      reorderGroups,
+      removeGroups,
+      updateGroup,
+      addGenesets,
+      reorderGenesets,
+      removeGenesets,
+      updateGeneset,
+      goto,
+    }),
+    [
+      state,
+      reset,
+      undo,
+      redo,
+      seek,
+      openFile,
+      remove,
+      removeFiles,
+      addSheets,
+      reorderSheets,
+      addPlots,
+      reorderPlots,
+      updatePlot,
+      addGroups,
+      reorderGroups,
+      removeGroups,
+      updateGroup,
+      addGenesets,
+      reorderGenesets,
+      removeGenesets,
+      updateGeneset,
+      goto,
+    ]
   )
 
   return (
@@ -247,34 +348,11 @@ export function HistoryProvider({ children }: IChildrenProps) {
       <SheetsContext.Provider value={sheetsContextValue}>
         <PlotsContext.Provider value={plotsContextValue}>
           <GroupsContext.Provider value={groupsContextValue}>
-            <HistoryContext.Provider
-              value={{
-                ...state,
-                reset,
-                undo,
-                redo,
-                seek,
-                openFile,
-                remove,
-                removeFiles,
-                addSheets,
-                reorderSheets,
-                addPlots,
-                reorderPlots,
-                updatePlot,
-                addGroups,
-                reorderGroups,
-                removeGroups,
-                updateGroup,
-                addGenesets,
-                reorderGenesets,
-                removeGenesets,
-                updateGeneset,
-                goto,
-              }}
-            >
-              {children}
-            </HistoryContext.Provider>
+            <SelectionsContext.Provider value={selectionsContextValue}>
+              <HistoryContext.Provider value={historyContextValue}>
+                {children}
+              </HistoryContext.Provider>
+            </SelectionsContext.Provider>
           </GroupsContext.Provider>
         </PlotsContext.Provider>
       </SheetsContext.Provider>

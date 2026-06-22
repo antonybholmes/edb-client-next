@@ -31,7 +31,7 @@ export function newHeatMapPlot(
 
   return {
     id: makeUuid(),
-    //path: '',
+
     style,
     name,
     dataframes,
@@ -63,7 +63,7 @@ export function newBoxPlot(
 
   return {
     id: makeUuid(),
-    //path: '',
+
     style,
     name,
     dataframes,
@@ -108,29 +108,8 @@ export function newVolcanoPlot(
   }
 }
 
-// export function newLollipopPlot(
-//   name: string,
-//   dataframes: Record<string, DataFrameType> = {},
-//   opts: Partial<LollipopPlot> = {}
-// ): LollipopPlot {
-//   const { actions = [], groups = [] } = opts
-
-//   return {
-//     id: makeUuid(),
-//     path: '',
-//     style: 'lollipop',
-//     name,
-//     dataframes,
-//     groups,
-//     actions,
-//     type: 'plot',
-//     createdAt: Date.now(),
-//   }
-// }
-
 export function newExtGseaPlot(
   name: string,
-  //dataframes: Record<string, DataFrameType> = {},
 
   opts: Partial<ExtGseaPlot> = {}
 ): ExtGseaPlot {
@@ -171,18 +150,6 @@ export interface IHistoryFileDesc {
   file: string
   node: string
   type: 'app' | 'file' | 'sheet' | 'plot'
-}
-
-export function newHistoryApp(name: string): IHistoryApp {
-  const id = makeUuid()
-
-  return {
-    id,
-    //path,
-    name,
-    type: 'app',
-    createdAt: Date.now(),
-  }
 }
 
 export function newHistoryFile(name: string): IHistoryComp {

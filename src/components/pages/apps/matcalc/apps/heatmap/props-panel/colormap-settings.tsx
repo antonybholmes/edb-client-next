@@ -21,7 +21,8 @@ import { PropRow } from '@/dialogs/prop-row'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 import { produce } from 'immer'
 import { ColorMapMenu } from '../../../color-map-menu'
-import { useHistory } from '../../../history/history-store'
+
+import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export function ColormapSettingsPanel() {
@@ -34,9 +35,9 @@ export function ColormapSettingsPanel() {
         rightChildren={
           <Switch
             checked={displayProps.colorbar.show}
-            onCheckedChange={v => {
+            onCheckedChange={(v) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.colorbar.show = v
                 })
               )
@@ -51,9 +52,9 @@ export function ColormapSettingsPanel() {
           <ColorMapMenu
             align="end"
             cmap={COLOR_MAPS[displayProps.cmap]!}
-            onChange={cmap =>
+            onChange={(cmap) =>
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.cmap = cmap.name
                 })
               )
@@ -70,9 +71,9 @@ export function ColormapSettingsPanel() {
             dp={1}
             placeholder="Max..."
             className="rounded-theme"
-            onNumChanged={v => {
+            onNumChanged={(v) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.range = [-v, v]
                 })
               )
@@ -84,9 +85,9 @@ export function ColormapSettingsPanel() {
           <RadioGroup
             value={displayProps.colorbar.position}
             disabled={!displayProps.colorbar.show}
-            onValueChange={v =>
+            onValueChange={(v) =>
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.colorbar.position = v as ColorBarPos
                 })
               )
@@ -123,16 +124,16 @@ export function ColormapSettingsPanel() {
             inputCls="rounded-theme"
             limit={[1, 1000]}
             dp={0}
-            onNumChanged1={v => {
+            onNumChanged1={(v) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.colorbar.size.w = v
                 })
               )
             }}
-            onNumChanged2={v => {
+            onNumChanged2={(v) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.colorbar.size.h = v
                 })
               )
@@ -144,9 +145,9 @@ export function ColormapSettingsPanel() {
           title={TEXT_BORDER}
           checked={displayProps.colorbar.stroke.show}
           disabled={!displayProps.colorbar.show}
-          onCheckedChange={v => {
+          onCheckedChange={(v) => {
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props.colorbar.stroke.show = v
               })
             )
@@ -161,7 +162,7 @@ export function ColormapSettingsPanel() {
                 opacity: displayProps.colorbar.stroke.opacity,
                 onColorChange: (color, opacity, width) =>
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.colorbar.stroke.value = color
                       draft.props.colorbar.stroke.opacity = opacity
                       draft.props.colorbar.stroke.width = width

@@ -13,7 +13,8 @@ import { Checkbox } from '@/themed/v2/check-box'
 import { Input } from '@/themed/v2/input'
 import { produce } from 'immer'
 import { useEffect, useState } from 'react'
-import { useSheet } from '../history/history-store'
+
+import { useCurrentSheets } from '../history/history-provider/history-contexts'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
 
 export interface IProps extends IModalProps<IClusterGroup> {
@@ -28,7 +29,7 @@ export function GroupDialog({ group, onResponse }: IProps) {
 
   const [cols, setCols] = useState<string[]>([])
 
-  const sheet = useSheet()
+  const { sheet } = useCurrentSheets()
 
   const [color, setColor] = useState('#6495ED') //`#${Math.floor(Math.random() * 16777215).toString(16)}`,
 
@@ -50,7 +51,7 @@ export function GroupDialog({ group, onResponse }: IProps) {
     const g = {
       ...group,
       name,
-      search: search.split(',').map(x => x.trim().toLowerCase()),
+      search: search.split(',').map((x) => x.trim().toLowerCase()),
 
       exactMatch: settings.groups.match.exact,
     }
@@ -63,7 +64,7 @@ export function GroupDialog({ group, onResponse }: IProps) {
     onResponse?.(TEXT_OK, {
       ...group,
       name,
-      search: search.split(',').map(x => x.trim().toLowerCase()),
+      search: search.split(',').map((x) => x.trim().toLowerCase()),
       color,
       exactMatch: settings.groups.match.exact,
     })
@@ -76,7 +77,7 @@ export function GroupDialog({ group, onResponse }: IProps) {
           {name.length > 0 ? `Edit ${name}` : 'New group'}
         </span>
       }
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onResponse?.(r, undefined)
         } else {
@@ -87,7 +88,7 @@ export function GroupDialog({ group, onResponse }: IProps) {
       //className="w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4"
       leftHeaderChildren={
         <ColorPickerButton
-          colors={[{ color, onColorChange: color => setColor(color) }]}
+          colors={[{ color, onColorChange: (color) => setColor(color) }]}
           className={SIMPLE_COLOR_EXT_CLS}
         />
       }
@@ -103,12 +104,12 @@ export function GroupDialog({ group, onResponse }: IProps) {
         <Input
           id="name"
           value={name}
-          onChange={e => setName(e.target.value)}
+          onChange={(e) => setName(e.target.value)}
           placeholder="Group Name"
           className="col-span-4"
           rightChildren={
             <ColorPickerButton
-              colors={[{ color, onColorChange: color => setColor(color) }]}
+              colors={[{ color, onColorChange: (color) => setColor(color) }]}
               className={SIMPLE_COLOR_EXT_CLS}
             />
           }
@@ -119,7 +120,7 @@ export function GroupDialog({ group, onResponse }: IProps) {
         <Input
           id="search"
           value={search}
-          onTextChange={e => setSearch(e)}
+          onTextChange={(e) => setSearch(e)}
           placeholder="Matches..."
           rightChildren={
             <InfoHoverCard>
@@ -133,9 +134,9 @@ export function GroupDialog({ group, onResponse }: IProps) {
         <VCenterRow className="col-span-4">
           <Checkbox
             checked={settings.groups.match.exact}
-            onCheckedChange={v => {
+            onCheckedChange={(v) => {
               updateSettings(
-                produce(settings, draft => {
+                produce(settings, (draft) => {
                   draft.groups.match.exact = v
                 })
               )

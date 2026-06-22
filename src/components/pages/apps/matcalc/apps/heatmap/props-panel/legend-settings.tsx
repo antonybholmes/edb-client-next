@@ -19,7 +19,8 @@ import { TEXT_SHOW, TEXT_TITLE } from '@/consts'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
 import { produce } from 'immer'
-import { useHistory } from '../../../history/history-store'
+
+import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export function LegendSettingsPanel() {
@@ -36,9 +37,9 @@ export function LegendSettingsPanel() {
                 {
                   title: 'Title',
                   textProps: displayProps.legend.title,
-                  update: f => {
+                  update: (f) => {
                     updatePlot(
-                      produce(plot, draft => {
+                      produce(plot, (draft) => {
                         draft.props.legend.title.font = f.font
                         draft.props.legend.title.show = f.show
                       })
@@ -49,9 +50,9 @@ export function LegendSettingsPanel() {
                 {
                   title: 'Labels',
                   textProps: displayProps.legend,
-                  update: f => {
+                  update: (f) => {
                     updatePlot(
-                      produce(plot, draft => {
+                      produce(plot, (draft) => {
                         draft.props.legend.font = f.font
                         draft.props.legend.show = f.show
                       })
@@ -65,9 +66,9 @@ export function LegendSettingsPanel() {
             <Switch
               title={TEXT_SHOW}
               checked={displayProps.legend.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 updatePlot(
-                  produce(plot, draft => {
+                  produce(plot, (draft) => {
                     draft.props.legend.show = v
                   })
                 )
@@ -83,9 +84,9 @@ export function LegendSettingsPanel() {
           <RadioGroup
             value={displayProps.legend.position}
             disabled={!displayProps.legend.show}
-            onValueChange={v =>
+            onValueChange={(v) =>
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.legend.position = v as LegendPos
                 })
               )
@@ -120,9 +121,9 @@ export function LegendSettingsPanel() {
           title={TEXT_TITLE}
           checked={displayProps.legend.title.show}
           disabled={!displayProps.legend.show}
-          onCheckedChange={v => {
+          onCheckedChange={(v) => {
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props.legend.title.show = v
               })
             )
@@ -131,9 +132,9 @@ export function LegendSettingsPanel() {
           <Input
             value={displayProps.legend.title.text}
             disabled={!displayProps.legend.show}
-            onTextChanged={v => {
+            onTextChanged={(v) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.legend.title.text = v
                 })
               )
@@ -145,9 +146,9 @@ export function LegendSettingsPanel() {
           title="Border"
           checked={displayProps.legend.stroke.show}
           disabled={!displayProps.legend.show}
-          onCheckedChange={v => {
+          onCheckedChange={(v) => {
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props.legend.stroke.show = v
               })
             )
@@ -162,7 +163,7 @@ export function LegendSettingsPanel() {
                 opacity: displayProps.legend.stroke.opacity,
                 onColorChange: (color, opacity, width) =>
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.legend.stroke.value = color
                       draft.props.legend.stroke.opacity = opacity
                       draft.props.legend.stroke.width = width

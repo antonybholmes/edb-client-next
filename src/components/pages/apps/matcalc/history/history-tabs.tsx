@@ -13,7 +13,7 @@ import {
 import { TabIndicatorSelectedV } from '@/components/tabs/tab-indicator-selected-v'
 
 import { cn } from '@/lib/shadcn-utils'
-import { useHistory } from './history-store'
+import { useHistory } from './history-provider/history-provider'
 
 const TRIGGER_CLS = cn(
   'flex flex-row px-2.5 h-11 items-center gap-x-1 ml-2 justify-between',
@@ -76,7 +76,7 @@ function HistoryTabsContent() {
   return (
     <Tabs
       value={cursor}
-      onValueChange={v => {
+      onValueChange={(v) => {
         seek(v)
       }}
       //className="flex flex-col shrink-0"
@@ -100,7 +100,7 @@ function HistoryTabsContent() {
               data-selected={isSelected}
               value={step.id}
               key={hi}
-              ref={el => {
+              ref={(el) => {
                 buttonsRef.current[hi] = el!
               }}
               onMouseEnter={() => {

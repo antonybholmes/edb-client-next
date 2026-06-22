@@ -13,7 +13,8 @@ import {
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
 import { produce } from 'immer'
-import { useHistory } from '../../../history/history-store'
+
+import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export function ColLabelsSettingsPanel() {
@@ -57,9 +58,9 @@ export function ColLabelsSettingsPanel() {
                 {
                   title: 'Font',
                   textProps: displayProps.colLabels,
-                  update: f => {
+                  update: (f) => {
                     updatePlot(
-                      produce(plot, draft => {
+                      produce(plot, (draft) => {
                         draft.props.colLabels.font = f.font
                         draft.props.colLabels.show = f.show
                       })
@@ -78,9 +79,9 @@ export function ColLabelsSettingsPanel() {
           <RadioGroup
             value={displayProps.colLabels.position}
             disabled={!displayProps.colLabels.show}
-            onValueChange={v =>
+            onValueChange={(v) =>
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.colLabels.position = v as TopBottomPos
                 })
               )
@@ -115,9 +116,9 @@ export function ColLabelsSettingsPanel() {
             limit={[1, 200]}
             placeholder="Column label size..."
             className="rounded-theme"
-            onNumChanged={v => {
+            onNumChanged={(v) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.colLabels.width = v
                 })
               )
@@ -129,9 +130,9 @@ export function ColLabelsSettingsPanel() {
           title="Color By Group"
           disabled={!displayProps.colLabels.show}
           checked={displayProps.colLabels.isColored}
-          onCheckedChange={v =>
+          onCheckedChange={(v) =>
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props.colLabels.isColored = v
               })
             )

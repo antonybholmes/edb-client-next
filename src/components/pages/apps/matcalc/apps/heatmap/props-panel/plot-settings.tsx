@@ -15,7 +15,9 @@ import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
 import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
-import { useHistory, type HeatMapPlot } from '../../../history/history-store'
+
+import { useHistory } from '../../../history/history-provider/history-provider'
+import { HeatMapPlot } from '../../../history/history-provider/history-types'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export interface PlotSettingsPanelProps {
@@ -39,9 +41,9 @@ export function PlotSettingsPanel() {
               {
                 title: 'Font',
                 textProps: displayProps.title,
-                update: f => {
+                update: (f) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.title.font = f.font
                       draft.props.title.show = f.show
                     })
@@ -56,10 +58,10 @@ export function PlotSettingsPanel() {
             disabled={!displayProps.title.show}
             placeholder="Title..."
             className="rounded-theme"
-            onChange={e => {
+            onChange={(e) => {
               const val = e.target.value
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.title.text = val
                 })
               )
@@ -73,16 +75,16 @@ export function PlotSettingsPanel() {
             v2={displayProps.blockSize.h}
             inputCls="rounded-theme"
             dp={0}
-            onNumChanged1={v => {
+            onNumChanged1={(v) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.blockSize.w = v
                 })
               )
             }}
-            onNumChanged2={v => {
+            onNumChanged2={(v) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.blockSize.h = v
                 })
               )
@@ -96,9 +98,9 @@ export function PlotSettingsPanel() {
             value={displayProps.padding}
             placeholder="Padding..."
             className="rounded-theme"
-            onNumChanged={v => {
+            onNumChanged={(v) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.padding = v
                 })
               )
@@ -109,9 +111,9 @@ export function PlotSettingsPanel() {
         <CheckPropRow
           title="Grid"
           checked={displayProps.grid.show}
-          onCheckedChange={v =>
+          onCheckedChange={(v) =>
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props.grid.show = v
               })
             )
@@ -126,7 +128,7 @@ export function PlotSettingsPanel() {
                 opacity: displayProps.grid.opacity,
                 onColorChange: (color, opacity, width) =>
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.grid.value = color
                       draft.props.grid.opacity = opacity
                       draft.props.grid.width = width
@@ -158,9 +160,9 @@ export function PlotSettingsPanel() {
         <CheckPropRow
           title="Border"
           checked={displayProps.border.show}
-          onCheckedChange={v =>
+          onCheckedChange={(v) =>
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props.border.show = v
               })
             )
@@ -175,7 +177,7 @@ export function PlotSettingsPanel() {
                 opacity: displayProps.border.opacity,
                 onColorChange: (color, opacity, width) =>
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.border.value = color
                       draft.props.border.opacity = opacity
                       draft.props.border.width = width
@@ -206,9 +208,9 @@ export function PlotSettingsPanel() {
         <CheckPropRow
           title="Actions list"
           checked={displayProps.actions.show}
-          onCheckedChange={v =>
+          onCheckedChange={(v) =>
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props.actions.show = v
               })
             )

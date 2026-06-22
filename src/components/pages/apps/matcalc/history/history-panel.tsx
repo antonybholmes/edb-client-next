@@ -10,7 +10,8 @@ import { LinkButton } from '@/themed/link-button'
 import { IconToggle } from '@/themed/v2/toggle'
 import { FolderTree } from 'lucide-react'
 import { useState } from 'react'
-import { useApp, useHistory } from './history-store'
+
+import { useHistory } from './history-provider/history-provider'
 import { HistoryTabs } from './history-tabs'
 
 interface IProps extends IDivProps {
@@ -19,8 +20,6 @@ interface IProps extends IDivProps {
 
 export function HistoryPanel({ ref }: IProps) {
   const { reset } = useHistory()
-
-  const app = useApp()
 
   const [tab, setTab] = useState('list')
   const { open: openDialog } = useDialogs()
@@ -33,7 +32,7 @@ export function HistoryPanel({ ref }: IProps) {
         <IconToggle
           title="View history tree"
           pressed={tab === 'tree'}
-          onPressedChange={pressed => setTab(pressed ? 'tree' : 'list')}
+          onPressedChange={(pressed) => setTab(pressed ? 'tree' : 'list')}
         >
           <FolderTree className="w-4" />
         </IconToggle>
@@ -41,20 +40,18 @@ export function HistoryPanel({ ref }: IProps) {
         <LinkButton
           // ripple={false}
           onClick={() => {
-            if (app) {
-              openDialog({
-                type: 'warning',
-                payload: {
-                  title: 'Clear History',
-                  content: 'Are you sure you want to clear the history?',
-                  callback: r => {
-                    if (r === TEXT_OK) {
-                      reset()
-                    }
-                  },
+            openDialog({
+              type: 'warning',
+              payload: {
+                title: 'Clear History',
+                content: 'Are you sure you want to clear the history?',
+                callback: (r) => {
+                  if (r === TEXT_OK) {
+                    reset()
+                  }
                 },
-              })
-            }
+              },
+            })
           }}
           title="Clear History"
         >

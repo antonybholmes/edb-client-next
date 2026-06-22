@@ -21,7 +21,8 @@ import { capitalizeFirstWord } from '@/lib/text/capital-case'
 import { useAnnotations } from '../../../genomic/annotate/annotate-store'
 import { useAnnotateWorker } from '../../../genomic/annotate/annotate-worker'
 import { DFColSelect } from '../../df-col-select'
-import { useHistory, useSheet } from '../../history/history-store'
+import { useCurrentSheets } from '../../history/history-provider/history-contexts'
+import { useHistory } from '../../history/history-provider/history-provider'
 
 export interface IProps extends IModalProps<BaseDataFrame> {
   selection: ISelectionRange
@@ -38,7 +39,7 @@ export function AnnotateDialog({ selection, onResponse }: IProps) {
   } = useAnnotations()
   const { open: openDialog } = useDialogs()
   const { run: runAnnotate } = useAnnotateWorker()
-  const sheet = useSheet()
+  const { sheet } = useCurrentSheets()
 
   const [indicatorMessage, setIndicatorMessage] = useState<string | null>(null)
 
@@ -69,7 +70,7 @@ export function AnnotateDialog({ selection, onResponse }: IProps) {
         tss: annotationSettings.tss,
         useOfficialGenes: annotationSettings.useOfficialGenes,
       },
-      data => {
+      (data) => {
         const { error, table, header } = data
 
         setIndicatorMessage(null)
@@ -99,7 +100,7 @@ export function AnnotateDialog({ selection, onResponse }: IProps) {
           Annotate Locations
         </RunningIndicator>
       }
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onResponse?.(TEXT_CANCEL)
         } else {
@@ -118,7 +119,7 @@ export function AnnotateDialog({ selection, onResponse }: IProps) {
       <NumericalPropRow
         title="Closest genes"
         value={annotationSettings.closest}
-        onNumChange={value =>
+        onNumChange={(value) =>
           updateAnnotationSettings({ ...annotationSettings, closest: value })
         }
         limit={[0, 10]}
@@ -135,14 +136,14 @@ export function AnnotateDialog({ selection, onResponse }: IProps) {
           dp={0}
           v1={annotationSettings.tss.prom3p}
           w="xs"
-          onNumChange1={value =>
+          onNumChange1={(value) =>
             updateAnnotationSettings({
               ...annotationSettings,
               tss: { ...annotationSettings.tss, prom5p: value },
             })
           }
           v2={annotationSettings.tss.prom3p}
-          onNumChange2={value =>
+          onNumChange2={(value) =>
             updateAnnotationSettings({
               ...annotationSettings,
               tss: { ...annotationSettings.tss, prom3p: value },
@@ -155,7 +156,7 @@ export function AnnotateDialog({ selection, onResponse }: IProps) {
       <CheckPropRow
         title="Use official gene symbols"
         checked={annotationSettings.useOfficialGenes}
-        onCheckedChange={value =>
+        onCheckedChange={(value) =>
           updateAnnotationSettings({
             ...annotationSettings,
             useOfficialGenes: value,

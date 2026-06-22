@@ -1,5 +1,6 @@
 import { createContext, useContext, type ReactNode } from 'react'
-import { type VolcanoPlot } from '../../history/history-store'
+
+import { VolcanoPlot } from '../../history/history-provider/history-types'
 import type { IVolcanoDisplayOptions } from './volcano-plot-svg'
 
 export interface VolcanoPropsContextType {

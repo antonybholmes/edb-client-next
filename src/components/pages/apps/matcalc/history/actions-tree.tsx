@@ -2,7 +2,7 @@ import { FileTree } from '@/components/file-tree'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { FileClock } from 'lucide-react'
 import { useMemo } from 'react'
-import { useHistory } from './history-store'
+import { useHistory } from './history-provider/history-provider'
 
 export function ActionsTree({
   onTabChange,
@@ -42,7 +42,7 @@ export function ActionsTree({
   return (
     <FileTree
       tab={tree}
-      onValueChange={t => {
+      onValueChange={(t) => {
         onTabChange(t)
         seek(t.id)
       }}

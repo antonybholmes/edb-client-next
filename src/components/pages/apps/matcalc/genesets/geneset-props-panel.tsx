@@ -51,7 +51,8 @@ import { randomHexColor } from '@/lib/color/color'
 import { cn } from '@/lib/shadcn-utils'
 import type { UndefStr } from '@/lib/text/text'
 import { Settings2 } from 'lucide-react'
-import { useGenesets, useHistory } from '../history/history-store'
+import { useCurrentGroups } from '../history/history-provider/history-contexts'
+import { useHistory } from '../history/history-provider/history-provider'
 
 function GenesetItem({
   geneset,
@@ -82,7 +83,7 @@ function GenesetItem({
               payload: {
                 title: 'Delete Gene Set',
                 content: `Are you sure you want to delete the ${geneset.name} gene set?`,
-                callback: response => {
+                callback: (response) => {
                   if (response === TEXT_OK) {
                     removeGenesets([geneset.id])
                   }
@@ -106,10 +107,10 @@ function GenesetItem({
         colors={[
           {
             color,
-            onColorChange: color => setColor(color),
+            onColorChange: (color) => setColor(color),
           },
         ]}
-        onOpenChanged={open => {
+        onOpenChanged={(open) => {
           if (!open) {
             updateGeneset({ ...geneset, color })
           }
@@ -160,7 +161,7 @@ export function GenesetPropsPanel() {
 
   const { addGenesets, updateGeneset, reorderGenesets } = useHistory()
 
-  const genesets = useGenesets()
+  const { genesets } = useCurrentGroups()
 
   const { open: openDialog } = useDialogs()
 
@@ -197,7 +198,7 @@ export function GenesetPropsPanel() {
         const name = df.columns[i]
         const gs = makeNewGeneset(name)
 
-        gs.genes = df.col(i).strs.filter(x => x.length > 0)
+        gs.genes = df.col(i).strs.filter((x) => x.length > 0)
 
         genesets.push(gs)
       }
@@ -218,7 +219,7 @@ export function GenesetPropsPanel() {
       callback: (geneset: IGeneSet) => {
         //const indices = getColIdxFromGroup(df, group)
 
-        if (genesets.some(g => g.id === geneset.id)) {
+        if (genesets.some((g) => g.id === geneset.id)) {
           // we modified and existing group so clone list, but replace existing
           // group with new group when they have the same id
           updateGeneset(geneset)
@@ -266,7 +267,7 @@ export function GenesetPropsPanel() {
                       message: 'Select gene set file to open',
                       fileTypes: ['json', 'tsv', 'txt', 'gmx', 'gmt'],
                       callback: (message, files) => {
-                        onTextFileChange(message, files, files => {
+                        onTextFileChange(message, files, (files) => {
                           openGenesetFiles(files)
                         })
                       },
@@ -316,7 +317,7 @@ export function GenesetPropsPanel() {
                   payload: {
                     title: 'Clear Gene Sets',
                     content: 'Are you sure you want to clear all gene sets?',
-                    callback: response => {
+                    callback: (response) => {
                       if (response === TEXT_OK) {
                         //onGroupsChange?.([])
                         addGenesets([], { mode: 'set' })
@@ -333,7 +334,7 @@ export function GenesetPropsPanel() {
         </VCenterRow>
 
         <FileDropZonePanel
-          onFileDrop={files => {
+          onFileDrop={(files) => {
             if (files.length > 0) {
               //setDroppedFile(files[0]);
               console.log('Dropped file:', files[0])
@@ -346,19 +347,19 @@ export function GenesetPropsPanel() {
           <DndContext
             modifiers={[restrictToVerticalAxis]}
             //onDragStart={event => setActiveId(event.active.id as string)}
-            onDragEnd={event => {
+            onDragEnd={(event) => {
               const { active, over } = event
 
               if (over && active.id !== over?.id) {
                 const oldIndex = genesets.findIndex(
-                  g => g.id === (active.id as string)
+                  (g) => g.id === (active.id as string)
                 )
 
                 const newIndex = genesets.findIndex(
-                  g => g.id === (over.id as string)
+                  (g) => g.id === (over.id as string)
                 )
                 const newOrder = arrayMove(
-                  genesets.map(g => g.id),
+                  genesets.map((g) => g.id),
                   oldIndex,
                   newIndex
                 )
@@ -370,12 +371,12 @@ export function GenesetPropsPanel() {
             }}
           >
             <SortableContext
-              items={genesets.map(g => g.id)}
+              items={genesets.map((g) => g.id)}
               strategy={verticalListSortingStrategy}
             >
               <VScrollPanel className="grow h-full">
                 <ul className="flex flex-col">
-                  {genesets.map(geneset => {
+                  {genesets.map((geneset) => {
                     //const cols = getColNamesFromGroup(df, group)
 
                     return (

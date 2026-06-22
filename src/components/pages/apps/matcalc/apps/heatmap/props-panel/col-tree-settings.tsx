@@ -11,7 +11,8 @@ import {
 import { PropRow } from '@/dialogs/prop-row'
 import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { produce } from 'immer'
-import { useHistory } from '../../../history/history-store'
+
+import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export function ColTreeSettingsPanel() {
@@ -25,9 +26,9 @@ export function ColTreeSettingsPanel() {
         <SwitchPropRow
           title="Show tree"
           checked={displayProps.colTree.show}
-          onCheckedChange={v => {
+          onCheckedChange={(v) => {
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props.colTree.show = v
               })
             )
@@ -42,7 +43,7 @@ export function ColTreeSettingsPanel() {
                 opacity: displayProps.colTree.stroke.opacity,
                 onColorChange: (color, opacity, width) =>
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.colTree.stroke.value = color
                       draft.props.colTree.stroke.opacity = opacity
                       draft.props.colTree.stroke.width = width
@@ -63,9 +64,9 @@ export function ColTreeSettingsPanel() {
             disabled={!displayProps.colTree.show}
             placeholder="Stroke..."
             className="rounded-theme"
-            onNumChanged={v => {
+            onNumChanged={(v) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.colTree.stroke.width = v
                 })
               )
@@ -81,9 +82,9 @@ export function ColTreeSettingsPanel() {
             limit={[1, 200]}
             placeholder="Tree size..."
             className="rounded-theme"
-            onNumChanged={v => {
+            onNumChanged={(v) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.colTree.width = v
                 })
               )

@@ -117,21 +117,23 @@ import { useExtGseaWorker } from './apps/ext-gsea/ext-gsea-worker'
 import { HeatmapProvider } from './apps/heatmap/heatmap-provider'
 import { VolcanoProvider } from './apps/volcano/volcano-provider'
 import { OptsSidebarMenu } from './data/opts-sidebar-menu'
-import { HistoryProvider } from './history/history-provider/history-provider'
 import {
-  getAllPlots,
-  newExtGseaPlot,
-  pathJoin,
-  useFile,
-  useGenesets,
-  useGroups,
-  //newLollipopPlot,
+  HistoryProvider,
   useHistory,
-  usePlot,
-  useSheet,
-  useSheets,
-  type HistoryPlot,
-} from './history/history-store'
+} from './history/history-provider/history-provider'
+
+import { pathJoin } from './history/history-provider/history-actions'
+
+import {
+  useCurrentGroups,
+  useCurrentPlots,
+  useCurrentSelections,
+  useCurrentSheets,
+  useFiles,
+} from './history/history-provider/history-contexts'
+import { newExtGseaPlot } from './history/history-provider/history-factories'
+import { useAllPlots } from './history/history-provider/history-hooks'
+import { HistoryPlot } from './history/history-provider/history-types'
 import { UndoShortcuts } from './history/undo-shortcuts'
 import { MatcalcDialogsRoot, useMatcalcDialogs } from './matcalc-dialogs'
 import { MatcalcFileTree } from './matcalc-file-tree'
@@ -195,17 +197,7 @@ function plotElem(plot: HistoryPlot): ReactElement {
 }
 
 export function MatcalcPage() {
-  const {
-    store,
-    state,
-    currentApp,
-    currentFile,
-    currentSelection,
-
-    openFile,
-    addSheets,
-    addPlots,
-  } = useHistory()
+  const { openFile, addSheets, addPlots } = useHistory()
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
 
   //const {toast} = useToast()
@@ -241,25 +233,23 @@ export function MatcalcPage() {
 
   //const appPath = `/${app?.id}`
   //const files = useFiles()
-  const file = useFile()
+  const { file } = useFiles()
 
   //const currentFile = `${appPath}/${file?.id}`
 
-  const groups = useGroups()
-  const genesets = useGenesets()
+  const { groups, genesets } = useCurrentGroups()
 
-  const sheet = useSheet()
-  const sheets = useSheets()
-  const plot = usePlot()
+  const { sheet, sheets } = useCurrentSheets()
+
+  const { plot } = useCurrentPlots()
+
+  const { selection: currentSelection } = useCurrentSelections()
   //const plots = usePlots()
 
   // we need all plots from all files in the current app to be
   // able to display them in the file tree and access
   // them when clicking on a plot tab
-  const plots = useMemo(
-    () => getAllPlots(store, state),
-    [store, state, currentApp]
-  )
+  const plots = useAllPlots()
 
   //console.log('plots', plots)
 
@@ -383,9 +373,8 @@ export function MatcalcPage() {
   }
 
   function _addPlots(plots: HistoryPlot[]) {
-    console.log('adding plots', plots, currentFile)
     addPlots(plots)
-    setSelectedPanelTab(pathJoin(currentFile, plots[0]!))
+    setSelectedPanelTab(pathJoin(file, plots[0]!))
   }
 
   async function loadGeneTestData() {

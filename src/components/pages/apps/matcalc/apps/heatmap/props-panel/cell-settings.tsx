@@ -13,7 +13,8 @@ import { PropRow } from '@/dialogs/prop-row'
 import { ExtTitle } from '@/dialogs/switch-prop-row'
 import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
-import { useHistory } from '../../../history/history-store'
+
+import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export function CellSettingsPanel() {
@@ -27,9 +28,9 @@ export function CellSettingsPanel() {
         <CheckPropRow
           title="Values"
           checked={displayProps.cells.values.show}
-          onCheckedChange={v => {
+          onCheckedChange={(v) => {
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props.cells.values.show = v
               })
             )
@@ -42,9 +43,9 @@ export function CellSettingsPanel() {
             //disabled={!displayProps.cells.values.show}
             placeholder="Decimals"
             className="rounded-theme"
-            onNumChanged={v => {
+            onNumChanged={(v) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.cells.values.dp = v
                 })
               )
@@ -59,9 +60,9 @@ export function CellSettingsPanel() {
             colors={[
               {
                 color: displayProps.cells.values.color,
-                onColorChange: v =>
+                onColorChange: (v) =>
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.cells.values.color = v
                       draft.props.cells.values.autoColor.on = false
                     })
@@ -78,9 +79,9 @@ export function CellSettingsPanel() {
           title="Auto-threshold"
           checked={displayProps.cells.values.autoColor.on}
           disabled={!displayProps.cells.values.show}
-          onCheckedChange={v => {
+          onCheckedChange={(v) => {
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props.cells.values.autoColor.on = v
               })
             )
@@ -98,9 +99,9 @@ export function CellSettingsPanel() {
           title="Only Values &ge;"
           checked={displayProps.cells.values.filter.on}
           disabled={!displayProps.cells.values.show}
-          onCheckedChange={v => {
+          onCheckedChange={(v) => {
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props.cells.values.filter.on = v
               })
             )
@@ -116,9 +117,9 @@ export function CellSettingsPanel() {
             }
             placeholder="Filter"
             className="rounded-theme"
-            onNumChanged={v => {
+            onNumChanged={(v) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.cells.values.filter.value = v
                 })
               )
@@ -129,9 +130,9 @@ export function CellSettingsPanel() {
         <CheckPropRow
           title="Border"
           checked={displayProps.cells.border.show}
-          onCheckedChange={v => {
+          onCheckedChange={(v) => {
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props.cells.border.show = v
               })
             )
@@ -146,7 +147,7 @@ export function CellSettingsPanel() {
                 opacity: displayProps.cells.border.opacity,
                 onColorChange: (color, opacity, width) =>
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.cells.border.value = color
                       draft.props.cells.border.opacity = opacity
                       draft.props.cells.border.width = width
@@ -176,9 +177,9 @@ export function CellSettingsPanel() {
         <CheckPropRow
           title="Tooltips"
           checked={displayProps.tooltip.show}
-          onCheckedChange={v => {
+          onCheckedChange={(v) => {
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props.tooltip.show = v
               })
             )

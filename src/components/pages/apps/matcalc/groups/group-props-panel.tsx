@@ -45,12 +45,6 @@ import {
   DRAG_ICON_ANIM_CLS,
   SortableItem,
 } from '../../../../sortable-item'
-import {
-  useGroupName,
-  useGroups,
-  useHistory,
-  useSheet,
-} from '../history/history-store'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { DownloadIcon } from '@/components/icons/download-icon'
@@ -71,6 +65,11 @@ import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { cn } from '@/lib/shadcn-utils'
 import { Input } from '@/themed/v2/input'
 import { Settings2 } from 'lucide-react'
+import {
+  useCurrentGroups,
+  useCurrentSheets,
+} from '../history/history-provider/history-contexts'
+import { useHistory } from '../history/history-provider/history-provider'
 
 export const GROUP_CLS = `group rounded-theme group gap-x-1 opacity-80 py-1 px-2
 hover:opacity-100 trans-opacity hover:bg-muted/60 data-[focus=true]:bg-muted/60`
@@ -90,7 +89,7 @@ function GroupItem({
 
   const { open: openDialog } = useDialogs()
 
-  const sheet = useSheet()
+  const { sheet } = useCurrentSheets()
 
   const cols = getColNamesFromGroup(sheet as AnnotationDataFrame, group)
 
@@ -105,7 +104,7 @@ function GroupItem({
               type: 'warning',
               payload: {
                 content: `Are you sure you want to delete the ${group.name} group?`,
-                callback: response => {
+                callback: (response) => {
                   if (response === TEXT_OK) {
                     removeGroups([group!.id])
                   }
@@ -130,7 +129,7 @@ function GroupItem({
     >
       <Checkbox
         checked={group.show}
-        onCheckedChange={v => {
+        onCheckedChange={(v) => {
           updateGroup({ ...group, show: v })
         }}
       />
@@ -138,7 +137,7 @@ function GroupItem({
         colors={[
           {
             color: group.color,
-            onColorChange: color => updateGroup({ ...group, color }),
+            onColorChange: (color) => updateGroup({ ...group, color }),
           },
         ]}
         // onOpenChanged={open => {
@@ -199,9 +198,9 @@ export function GroupPropsPanel() {
 
   const { addGroups, reorderGroups } = useHistory()
 
-  const groups = useGroups()
-  const groupsName = useGroupName()
-  const sheet = useSheet()
+  const { groups, groupsName } = useCurrentGroups()
+
+  const { sheet } = useCurrentSheets()
 
   const { selection } = useSelectionRange()
 
@@ -253,7 +252,7 @@ export function GroupPropsPanel() {
       //const indexMap = new Map<string, number[]>()
 
       // store lowercase for case insensitive searching
-      const columnNames = lines[2]?.split(/[ \t]/).map(x => x.toLowerCase())
+      const columnNames = lines[2]?.split(/[ \t]/).map((x) => x.toLowerCase())
 
       if (!columnNames) {
         return
@@ -302,7 +301,7 @@ export function GroupPropsPanel() {
 
     if (selection && selection.cols) {
       group.search = range(selection.cols.start, selection.cols.end + 1).map(
-        i => (sheet as AnnotationDataFrame).colName(i)
+        (i) => (sheet as AnnotationDataFrame).colName(i)
       )
     }
 
@@ -312,10 +311,10 @@ export function GroupPropsPanel() {
       callback: (group: IClusterGroup) => {
         //const indices = getColIdxFromGroup(df, group)
 
-        if (groups.some(g => g.id === group.id)) {
+        if (groups.some((g) => g.id === group.id)) {
           // we modified and existing group so clone list, but replace existing
           // group with new group when they have the same id
-          addGroups(groups.map(g => (g.id === group.id ? group : g)))
+          addGroups(groups.map((g) => (g.id === group.id ? group : g)))
         } else {
           // append new group
           addGroups([...groups, group])
@@ -333,9 +332,9 @@ export function GroupPropsPanel() {
 
     const groupMap = Object.fromEntries(
       groups
-        .map(group => {
+        .map((group) => {
           return getColIdxFromGroup(sheet as AnnotationDataFrame, group).map(
-            col => [col, group.name]
+            (col) => [col, group.name]
           )
         })
         .flat()
@@ -401,7 +400,7 @@ export function GroupPropsPanel() {
                     payload: {
                       fileTypes: ['json', 'cls'],
                       callback: (message, files) => {
-                        onTextFileChange(message, files, files => {
+                        onTextFileChange(message, files, (files) => {
                           openGroupFiles(files)
                         })
                       },
@@ -427,7 +426,7 @@ export function GroupPropsPanel() {
                         { ext: 'json', name: 'JSON' },
                         { ext: 'cls', name: 'CLS' },
                       ],
-                      callback: data => {
+                      callback: (data) => {
                         switch (data.format.ext) {
                           case 'json':
                             downloadJson(groups, data.name)
@@ -476,7 +475,7 @@ export function GroupPropsPanel() {
                   type: 'warning',
                   payload: {
                     content: 'Are you sure you want to clear all groups?',
-                    callback: response => {
+                    callback: (response) => {
                       if (response === TEXT_OK) {
                         addGroups([], { mode: 'set' })
                       }
@@ -494,12 +493,12 @@ export function GroupPropsPanel() {
         <Input
           placeholder="Groups..."
           value={groupsName}
-          onTextChange={v => addGroups(groups, { name: v })}
+          onTextChange={(v) => addGroups(groups, { name: v })}
           className="max-h-8 text-xs"
         />
 
         <FileDropZonePanel
-          onFileDrop={files => {
+          onFileDrop={(files) => {
             if (files.length > 0) {
               //setDroppedFile(files[0]);
               console.log('Dropped file:', files[0])
@@ -513,18 +512,18 @@ export function GroupPropsPanel() {
             sensors={sensors}
             modifiers={[restrictToVerticalAxis]}
             // onDragStart={event => setActiveId(event.active.id as string)}
-            onDragEnd={event => {
+            onDragEnd={(event) => {
               const { active, over } = event
 
               if (over && active.id !== over?.id) {
                 const oldIndex = groups.findIndex(
-                  group => group.id === (active.id as string)
+                  (group) => group.id === (active.id as string)
                 )
                 const newIndex = groups.findIndex(
-                  group => group.id === (over.id as string)
+                  (group) => group.id === (over.id as string)
                 )
                 const newOrder = arrayMove(
-                  groups.map(group => group.id),
+                  groups.map((group) => group.id),
                   oldIndex,
                   newIndex
                 )
@@ -536,12 +535,12 @@ export function GroupPropsPanel() {
             }}
           >
             <SortableContext
-              items={groups.map(group => group.id)}
+              items={groups.map((group) => group.id)}
               strategy={verticalListSortingStrategy}
             >
               <VScrollPanel className="grow">
                 <ul className="flex flex-col">
-                  {groups.map(group => {
+                  {groups.map((group) => {
                     return (
                       <GroupItem
                         group={group}

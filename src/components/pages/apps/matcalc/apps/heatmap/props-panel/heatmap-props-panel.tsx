@@ -15,7 +15,8 @@ import { LinkButton } from '@/themed/link-button'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import type { IDivProps } from '@/interfaces/div-props'
 import { produce } from 'immer'
-import { useHistory } from '../../../history/history-store'
+
+import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 import { CellSettingsPanel } from './cell-settings'
 import { ColGroupsSettingsPanel } from './col-group-settings'
@@ -52,7 +53,7 @@ export function HeatmapPropsPanel({ ref }: IDivProps) {
     }
 
     updatePlot(
-      produce(plot, draft => {
+      produce(plot, (draft) => {
         draft.props = props
       })
     )
@@ -68,7 +69,7 @@ export function HeatmapPropsPanel({ ref }: IDivProps) {
               payload: {
                 title: 'Reset to default',
                 content: 'Are you sure you want to reset all settings?',
-                callback: response => {
+                callback: (response) => {
                   if (response === TEXT_OK) {
                     reset()
                   }
@@ -83,7 +84,7 @@ export function HeatmapPropsPanel({ ref }: IDivProps) {
       </VCenterRow>
       <ScrollAccordion
         value={openTabs}
-        onValueChange={v => setOpenTabs(v as string[])}
+        onValueChange={(v) => setOpenTabs(v as string[])}
         //multiple={false}
       >
         <PlotSettingsPanel />

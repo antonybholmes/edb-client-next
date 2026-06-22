@@ -40,14 +40,16 @@ import { makeUuid } from '@/lib/id'
 import { NumericalInput } from '@/themed/numerical-input'
 import { Checkbox } from '@/themed/v2/check-box'
 import { produce } from 'immer'
+
 import {
-  newHeatMapPlot,
-  useGroupName,
-  useGroups,
-  useSheet,
-  type DataFrameType,
-  type HistoryPlot,
-} from '../../history/history-store'
+  useCurrentGroups,
+  useCurrentSheets,
+} from '../../history/history-provider/history-contexts'
+import { newHeatMapPlot } from '../../history/history-provider/history-factories'
+import {
+  DataFrameType,
+  HistoryPlot,
+} from '../../history/history-provider/history-types'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 
 export const MAX_HEATMAP_DIM = 10000
@@ -77,13 +79,13 @@ export function HeatMapDialog({
 }: IProps) {
   //const file = useFile()
 
-  const groups = useGroups()
-  const groupName = useGroupName()
+  const { groups, groupsName } = useCurrentGroups()
+  const { sheet: currentSheet } = useCurrentSheets()
 
   //const [topRows, setTopRows] = useState(1000)
   const [error, setError] = useState('')
 
-  let df = (sheet ?? useSheet()) as BaseDataFrame
+  let df = (sheet ?? currentSheet) as BaseDataFrame
 
   const { settings, updateSettings } = useMatcalcSettings()
 
@@ -96,7 +98,7 @@ export function HeatMapDialog({
       // })
 
       updateSettings(
-        produce(settings, draft => {
+        produce(settings, (draft) => {
           draft.heatmap.clusterCols = isClusterMap
         })
       )
@@ -113,14 +115,14 @@ export function HeatMapDialog({
     let dfToPlot = df
 
     const groupsToPlot = groups.filter(
-      g => g.show || settings.groups.filter.mode === 'keep'
+      (g) => g.show || settings.groups.filter.mode === 'keep'
     )
 
     if (groupsToPlot.length > 0 && settings.groups.filter.mode === 'ignore') {
       console.log(df.shape)
 
       const idx = groupsToPlot
-        .map(group => getColIdxFromGroup(df, group))
+        .map((group) => getColIdxFromGroup(df, group))
         .flat()
 
       // if user has chosen to ignore unselected groups, we need to remove them from the dataframe before filtering/clustering
@@ -240,8 +242,8 @@ export function HeatMapDialog({
       df: dfToPlot as AnnotationDataFrame,
     }
 
-    const displayOptions = produce(DEFAULT_HEATMAP_PROPS, draft => {
-      draft.legend.title.text = groupName
+    const displayOptions = produce(DEFAULT_HEATMAP_PROPS, (draft) => {
+      draft.legend.title.text = groupsName
     })
 
     const plot: HistoryPlot = newHeatMapPlot(
@@ -266,7 +268,7 @@ export function HeatMapDialog({
     <OKCancelDialog
       open={open}
       title="Heatmap"
-      onResponse={r => {
+      onResponse={(r) => {
         console.log('heatmap dialog response', r)
         if (r === TEXT_CANCEL) {
           onResponse?.(r, undefined)
@@ -299,8 +301,8 @@ export function HeatMapDialog({
             <CheckPropRow
               title="Top"
               checked={settings.heatmap.filterRows}
-              onCheckedChange={v => {
-                const newSettings = produce(settings, draft => {
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.heatmap.filterRows = v
                 })
 
@@ -311,8 +313,8 @@ export function HeatMapDialog({
                 id="top-rows"
                 limit={[0, 5000]}
                 value={settings.heatmap.topRows}
-                onNumChange={v => {
-                  const newSettings = produce(settings, draft => {
+                onNumChange={(v) => {
+                  const newSettings = produce(settings, (draft) => {
                     draft.heatmap.topRows = v
                   })
 
@@ -323,9 +325,9 @@ export function HeatMapDialog({
               <span className="shrink-0">rows using</span>
               <SelectList
                 value={settings.heatmap.rowFilterMethod}
-                onValueChange={v => {
+                onValueChange={(v) => {
                   if (v) {
-                    const newSettings = produce(settings, draft => {
+                    const newSettings = produce(settings, (draft) => {
                       draft.heatmap.rowFilterMethod = v as string
                     })
 
@@ -346,9 +348,9 @@ export function HeatMapDialog({
             >
               <SelectList
                 value={settings.groups.filter.mode}
-                onValueChange={v => {
+                onValueChange={(v) => {
                   if (v) {
-                    const newSettings = produce(settings, draft => {
+                    const newSettings = produce(settings, (draft) => {
                       draft.groups.filter.mode = v as 'keep' | 'hide' | 'ignore'
                     })
 
@@ -375,8 +377,8 @@ export function HeatMapDialog({
           >
             <Checkbox
               checked={settings.heatmap.applyLog2}
-              onCheckedChange={v => {
-                const newSettings = produce(settings, draft => {
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.heatmap.applyLog2 = v
                 })
 
@@ -388,8 +390,8 @@ export function HeatMapDialog({
 
             <Checkbox
               checked={settings.heatmap.applyRowZscore}
-              onCheckedChange={v => {
-                const newSettings = produce(settings, draft => {
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.heatmap.applyRowZscore = v
                 })
 
@@ -401,8 +403,8 @@ export function HeatMapDialog({
 
             <Checkbox
               checked={settings.heatmap.applyTranspose}
-              onCheckedChange={v => {
-                const newSettings = produce(settings, draft => {
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.heatmap.applyTranspose = v
                 })
 
@@ -419,8 +421,8 @@ export function HeatMapDialog({
           >
             <Checkbox
               checked={settings.heatmap.clusterRows}
-              onCheckedChange={v => {
-                const newSettings = produce(settings, draft => {
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.heatmap.clusterRows = v
                 })
 
@@ -432,8 +434,8 @@ export function HeatMapDialog({
 
             <Checkbox
               checked={settings.heatmap.clusterCols}
-              onCheckedChange={v => {
-                const newSettings = produce(settings, draft => {
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.heatmap.clusterCols = v
                 })
 
@@ -446,9 +448,9 @@ export function HeatMapDialog({
             <PropRow title="Linkage">
               <SelectList
                 value={settings.heatmap.linkage}
-                onValueChange={v => {
+                onValueChange={(v) => {
                   if (v) {
-                    const newSettings = produce(settings, draft => {
+                    const newSettings = produce(settings, (draft) => {
                       draft.heatmap.linkage = v as string
                     })
 
@@ -466,9 +468,9 @@ export function HeatMapDialog({
             <PropRow title="Distance">
               <SelectList
                 value={settings.heatmap.distance}
-                onValueChange={v => {
+                onValueChange={(v) => {
                   if (v) {
-                    const newSettings = produce(settings, draft => {
+                    const newSettings = produce(settings, (draft) => {
                       draft.heatmap.distance = v as string
                     })
 

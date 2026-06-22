@@ -22,11 +22,10 @@ import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
 } from '../../../../../plot/color-picker-popover'
-import {
-  useHistory,
-  usePlot,
-  type ExtGseaPlot,
-} from '../../history/history-store'
+
+import { usePlot } from '../../history/history-provider/history-hooks'
+import { useHistory } from '../../history/history-provider/history-provider'
+import { ExtGseaPlot } from '../../history/history-provider/history-types'
 import { DEFAULT_EXT_GSEA_PROPS } from './ext-gsea-store'
 
 export interface IProps extends IDivProps {
@@ -64,7 +63,7 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
         <LinkButton
           onClick={() =>
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props = { ...DEFAULT_EXT_GSEA_PROPS }
               })
             )
@@ -76,7 +75,7 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
       </VCenterRow>
       <ScrollAccordion
         value={openTabs}
-        onValueChange={v => setOpenTabs(v as string[])}
+        onValueChange={(v) => setOpenTabs(v as string[])}
       >
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
@@ -88,9 +87,9 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
                 limit={[1, 1000]}
                 placeholder="Width..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.axes.x.length = v
                     })
                   )
@@ -110,9 +109,9 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
                 limit={[1, 1000]}
                 placeholder="Height..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.es.axes.y.length = v
                     })
                   )
@@ -123,9 +122,9 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
             <SwitchPropRow
               title="Line"
               checked={displayOptions.es.gs1.line.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 updatePlot(
-                  produce(plot, draft => {
+                  produce(plot, (draft) => {
                     draft.props.es.gs1.line.show = state
                     draft.props.es.gs2.line.show = state
                   })
@@ -139,9 +138,9 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
                 disabled={!displayOptions.es.gs1.line.show}
                 placeholder="Stroke..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.es.gs1.line.width = v
                       draft.props.es.gs2.line.width = v
                     })
@@ -153,9 +152,9 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
             <SwitchPropRow
               title="Leading edge"
               checked={displayOptions.es.gs1.leadingEdge.fill.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 updatePlot(
-                  produce(plot, draft => {
+                  produce(plot, (draft) => {
                     draft.props.es.gs1.leadingEdge.fill.show = v
                     draft.props.es.gs2.leadingEdge.fill.show = v
                   })
@@ -172,9 +171,9 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
                 limit={[0, 1]}
                 placeholder="Opacity..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.es.gs1.leadingEdge.fill.opacity = v
                       draft.props.es.gs2.leadingEdge.fill.opacity = v
                     })
@@ -190,9 +189,9 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
             rightChildren={
               <Switch
                 checked={displayOptions.genes.line.show}
-                onCheckedChange={v =>
+                onCheckedChange={(v) =>
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.genes.line.show = v
                     })
                   )
@@ -209,9 +208,9 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
                 value={displayOptions.genes.line.width}
                 placeholder="Stroke..."
                 className="w-16 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.genes.line.width = v
                     })
                   )
@@ -225,9 +224,9 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
                   {
                     title: 'Font',
                     textProps: displayOptions.genes.labels.font,
-                    update: textProps =>
+                    update: (textProps) =>
                       updatePlot(
-                        produce(plot, draft => {
+                        produce(plot, (draft) => {
                           draft.props.genes.labels.font = textProps
                         })
                       ),
@@ -240,9 +239,9 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
                           !displayOptions.genes.labels.font.show
                         }
                         checked={displayOptions.genes.labels.isColored}
-                        onCheckedChange={state =>
+                        onCheckedChange={(state) =>
                           updatePlot(
-                            produce(plot, draft => {
+                            produce(plot, (draft) => {
                               draft.props.genes.labels.isColored = state
                             })
                           )
@@ -277,9 +276,9 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
             rightChildren={
               <Switch
                 checked={displayOptions.ranking.show}
-                onCheckedChange={v =>
+                onCheckedChange={(v) =>
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.ranking.show = v
                     })
                   )
@@ -299,9 +298,9 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
                 limit={[0, 1]}
                 step={0.1}
                 dp={1}
-                onNumChanged={v =>
+                onNumChanged={(v) =>
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.ranking.fill.opacity = v
                     })
                   )
@@ -314,9 +313,9 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
                   {
                     color: displayOptions.ranking.fill.value,
 
-                    onColorChange: color =>
+                    onColorChange: (color) =>
                       updatePlot(
-                        produce(plot, draft => {
+                        produce(plot, (draft) => {
                           draft.props.ranking.fill.value = color
                         })
                       ),
@@ -332,9 +331,9 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
               title="Zero crossing"
               checked={displayOptions.ranking.zeroCross.show}
               disabled={!displayOptions.ranking.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 updatePlot(
-                  produce(plot, draft => {
+                  produce(plot, (draft) => {
                     draft.props.ranking.zeroCross.show = v
                   })
                 )

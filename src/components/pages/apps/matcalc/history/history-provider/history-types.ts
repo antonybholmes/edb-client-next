@@ -59,10 +59,7 @@ export interface BoxPlot extends BasePlot {
   hue: string
   xOrder: string[]
   hueOrder: string[]
-  // singlePlotDisplayOptions: Record<
-  //   string,
-  //   Record<string, IBoxPlotDisplayOptions>
-  // >
+
   singlePlotDisplayOptions: object
 }
 
@@ -81,12 +78,7 @@ export interface ExtGseaPlot extends BasePlot {
   gseaRes2: IGseaResult
 }
 
-export type HistoryPlot =
-  | HeatMapPlot
-  | VolcanoPlot
-  //| LollipopPlot
-  | ExtGseaPlot
-  | BoxPlot
+export type HistoryPlot = HeatMapPlot | VolcanoPlot | ExtGseaPlot | BoxPlot
 
 export type HistoryNode = IHistoryApp | HistoryPlot
 
@@ -124,17 +116,14 @@ export type IdObj = { id: string }
 export type StrOrIdObj = string | IdObj
 export type OptStrOrIdObj = StrOrIdObj | undefined
 
-export type AppPath = { app: StrOrIdObj }
+export type FilePath = { file: StrOrIdObj }
 
-export type BaseFilePath = { file: StrOrIdObj }
-export type FilePath = AppPath & BaseFilePath
 export type SheetPath = FilePath & { sheet: StrOrIdObj } // omit file
 export type PlotPath = FilePath & { plot: StrOrIdObj }
 export type GroupPath = FilePath & { group: StrOrIdObj }
 export type GenesetPath = FilePath & { geneset: StrOrIdObj }
 
 export type HistoryPath =
-  | AppPath
   | FilePath
   | SheetPath
   | PlotPath
@@ -263,7 +252,6 @@ export type IHistoryFilesContext = {
 }
 
 export type PathId = {
-  app: string
   file: string
   sheet: string
   plot: string

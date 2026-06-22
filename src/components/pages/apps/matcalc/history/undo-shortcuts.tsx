@@ -1,9 +1,9 @@
 import { OptionalDropdownButton } from '@/toolbar/optional-dropdown-button'
-import { useHistory } from './history-store'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { useKeyDownListener } from '@/hooks/keydown-listener'
 import { Redo2, Undo2 } from 'lucide-react'
+import { useHistory } from './history-provider/history-provider'
 
 export function UndoShortcuts() {
   const { history, undo: historyUndo, redo: historyRedo } = useHistory()

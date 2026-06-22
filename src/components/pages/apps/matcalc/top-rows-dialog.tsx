@@ -10,7 +10,8 @@ import {
 } from '@/lib/dataframe/dataframe-utils'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 import { useState } from 'react'
-import { useHistory, useSheet } from './history/history-store'
+import { useCurrentSheets } from './history/history-provider/history-contexts'
+import { useHistory } from './history/history-provider/history-provider'
 
 export function TopRowsDialog({
   //df,
@@ -19,7 +20,7 @@ export function TopRowsDialog({
   const [topRows, setTopRows] = useState(300)
   const [method, setMethod] = useState('Stdev')
   const { addSheets } = useHistory()
-  const sheet = useSheet()!
+  const { sheet } = useCurrentSheets()
 
   let df = sheet as BaseDataFrame
 
@@ -63,7 +64,7 @@ export function TopRowsDialog({
   return (
     <OKCancelDialog
       title="Top Rows"
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_OK) {
           applyFilter()
         } else {
@@ -81,14 +82,14 @@ export function TopRowsDialog({
           value={topRows}
           limit={[1, Number.MAX_SAFE_INTEGER]}
           step={1}
-          onChange={e => setTopRows(Number.parseInt(e.target.value))}
+          onChange={(e) => setTopRows(Number.parseInt(e.target.value))}
           w="xs"
           placeholder="Top rows..."
         />
         <span>rows using row</span>
         <SelectList
           value={method}
-          onValueChange={v => {
+          onValueChange={(v) => {
             if (v) {
               setMethod(v as string)
             }

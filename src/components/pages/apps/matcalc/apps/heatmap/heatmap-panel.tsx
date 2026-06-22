@@ -20,7 +20,8 @@ import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
-import { useHistory } from '../../history/history-store'
+
+import { useHistory } from '../../history/history-provider/history-provider'
 import { useHeatmapContext } from './heatmap-provider'
 import { HeatMapSvg } from './heatmap-svg'
 import { HeatmapPropsPanel } from './props-panel/heatmap-props-panel'
@@ -84,7 +85,7 @@ export function HeatmapPanel() {
       return
     }
     updatePlot(
-      produce(plot, draft => {
+      produce(plot, (draft) => {
         draft.props.zoom = zoom
       })
     )

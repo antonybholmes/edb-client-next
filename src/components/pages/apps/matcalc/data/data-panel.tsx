@@ -32,13 +32,12 @@ import {
   OPTS_SIDEBAR_ID,
   ResizableSidebar,
 } from '@/components/slide-bar/resizable-sidebar'
+
 import {
-  useApp,
-  useFile,
-  useHistory,
-  useSheet,
-  useSheets,
-} from '../history/history-store'
+  useCurrentSheets,
+  useFiles,
+} from '../history/history-provider/history-contexts'
+import { useHistory } from '../history/history-provider/history-provider'
 import { useMatcalcDialogs } from '../matcalc-dialogs'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
 import { DataPropsPanel } from './data-props-panel'
@@ -54,10 +53,9 @@ export const MESSAGE_CHANNEL = 'matcalc'
 export function DataPanel() {
   const { openFile, remove, goto, reorderSheets } = useHistory()
 
-  const app = useApp()!
-  const file = useFile()!
-  const sheet = useSheet()!
-  const sheets = useSheets()
+  const { file } = useFiles()
+
+  const { sheet, sheets } = useCurrentSheets()
   const { settings } = useMatcalcSettings()
 
   const { zoom } = useZoom(DATA_ZOOM_CHANNEL)
@@ -108,7 +106,7 @@ export function DataPanel() {
           openDialog({
             type: 'save',
             payload: {
-              callback: data => {
+              callback: (data) => {
                 save(data.name, data.format.ext)
               },
             },
@@ -144,7 +142,7 @@ export function DataPanel() {
   function openFiles(files: ITextFileOpen[], options: IParseOptions) {
     filesToDataFrames(files, {
       parseOpts: options,
-      onSuccess: tables => {
+      onSuccess: (tables) => {
         if (tables.length > 0) {
           openFile(tables[0]!.name, { sheets: tables })
         }
@@ -170,11 +168,11 @@ export function DataPanel() {
           selectedSheet={sheet?.id ?? ''}
           dataFrames={sheets as AnnotationDataFrame[]}
           onTabChange={(selectedTab: ISelectedTab) => {
-            goto({ app, file, sheet: selectedTab.tab }) //, 'sheet')
+            goto({ file, sheet: selectedTab.tab }) //, 'sheet')
           }}
-          onFileDrop={files => {
+          onFileDrop={(files) => {
             if (files.length > 0) {
-              onTextFileChange('Open from drag', files, files => {
+              onTextFileChange('Open from drag', files, (files) => {
                 openMatcalcDialog({
                   type: 'open-table-file',
                   payload: {
@@ -186,7 +184,7 @@ export function DataPanel() {
             }
           }}
           className="relative"
-          onReorder={order => {
+          onReorder={(order) => {
             console.log('reorder', order)
             reorderSheets(order, file)
           }}
@@ -201,11 +199,11 @@ export function DataPanel() {
                 payload: {
                   title: 'Delete sheet',
                   content: `Are you sure you want to delete ${tab.name}?`,
-                  callback: response => {
+                  callback: (response) => {
                     if (response === TEXT_OK) {
                       if (sheets.length > 1) {
                         //remove(tab.id, 'sheet')
-                        remove([{ app: app.id, file: file.id, sheet: tab.id }])
+                        remove([{ file: file.id, sheet: tab.id }])
                       } else {
                         // if user is removing the only remaining sheet, load an empty
                         // sheet into the UI

@@ -10,7 +10,10 @@ import {
   ScrollAccordion,
 } from '@/themed/v2/accordion'
 import { produce } from 'immer'
-import { useHistory, usePlot, type BoxPlot } from '../../history/history-store'
+
+import { usePlot } from '../../history/history-provider/history-hooks'
+import { useHistory } from '../../history/history-provider/history-provider'
+import { BoxPlot } from '../../history/history-provider/history-types'
 import type { IBoxPlotDisplayOptions } from './boxplot-plot-svg'
 
 export interface IProps {
@@ -39,16 +42,16 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
                 inputCls="w-16 rounded-theme"
                 dp={0}
                 limit={[0, 1000]}
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.plot.w = v
                     })
                   )
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.plot.h = v
                     })
                   )
@@ -62,9 +65,9 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
                 className="w-16 rounded-theme"
                 dp={0}
                 limit={[0, 1000]}
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.padding.plot = v
                     })
                   )
@@ -77,9 +80,9 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
                 className="w-16 rounded-theme"
                 dp={0}
                 limit={[0, 1000]}
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.padding.hue = v
                     })
                   )
@@ -90,9 +93,9 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
             <SwitchPropRow
               title="Split"
               checked={displayOptions.split}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 updatePlot(
-                  produce(plot, draft => {
+                  produce(plot, (draft) => {
                     draft.props.split = v
                   })
                 )
@@ -108,9 +111,9 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
             <SwitchPropRow
               title="Show"
               checked={displayOptions.violin.show}
-              onCheckedChange={state => {
+              onCheckedChange={(state) => {
                 updatePlot(
-                  produce(plot, draft => {
+                  produce(plot, (draft) => {
                     draft.props.violin.show = state
                   })
                 )
@@ -122,9 +125,9 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
                 value={displayOptions.violin.stroke.width}
                 placeholder="Stroke..."
                 className="w-14 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.violin.stroke.width = v
                     })
                   )
@@ -141,9 +144,9 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
             <SwitchPropRow
               title="Show"
               checked={displayOptions.box.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 updatePlot(
-                  produce(plot, draft => {
+                  produce(plot, (draft) => {
                     draft.props.box.show = v
                   })
                 )
@@ -155,9 +158,9 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
                 value={displayOptions.box.stroke.width}
                 placeholder="Stroke..."
                 className="w-14 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.box.stroke.width = v
                     })
                   )
@@ -169,9 +172,9 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
                 value={displayOptions.box.width}
                 placeholder="Width..."
                 className="w-14 rounded-theme"
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.box.width = v
                     })
                   )
@@ -188,9 +191,9 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
             <SwitchPropRow
               title="Show"
               checked={displayOptions.swarm.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 updatePlot(
-                  produce(plot, draft => {
+                  produce(plot, (draft) => {
                     draft.props.swarm.show = v
                   })
                 )

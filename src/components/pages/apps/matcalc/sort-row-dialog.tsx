@@ -14,7 +14,11 @@ import { Textarea } from '@/themed/textarea'
 import { Button } from '@/themed/v2/button'
 import { useEffect } from 'react'
 
-import { useGroups, useHistory, useSheet } from './history/history-store'
+import {
+  useCurrentGroups,
+  useCurrentSheets,
+} from './history/history-provider/history-contexts'
+import { useHistory } from './history/history-provider/history-provider'
 import { useMatcalcSettings } from './settings/matcalc-settings'
 
 export interface IProps extends IModalProps<BaseDataFrame> {
@@ -27,8 +31,8 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
   //const [text, setText] = useState<string>("")
   const { settings, updateSettings } = useMatcalcSettings()
   const { addSheets } = useHistory()
-  const sheet = useSheet()
-  const groups = useGroups()
+  const { sheet } = useCurrentSheets()
+  const { groups } = useCurrentGroups()
 
   const df = sheet as BaseDataFrame
 

@@ -19,11 +19,10 @@ import { DataFrame } from '@/lib/dataframe/dataframe'
 import { range } from '@/lib/math/range'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
-import {
-  newBoxPlot,
-  useSheet,
-  type HistoryPlot,
-} from '../../history/history-store'
+
+import { useCurrentSheets } from '../../history/history-provider/history-contexts'
+import { newBoxPlot } from '../../history/history-provider/history-factories'
+import { HistoryPlot } from '../../history/history-provider/history-types'
 import { cleanHue } from './boxplot-plot-svg'
 
 const MAX_COLS = 30
@@ -44,7 +43,7 @@ export function BoxWhiskersDialog({
   //df,
   onResponse,
 }: IProps) {
-  const sheet = useSheet()
+  const { sheet } = useCurrentSheets()
 
   //const branch = findBranch(branchAddr, history)[0]
   //const step = currentStep(branch)[0]
@@ -92,7 +91,7 @@ export function BoxWhiskersDialog({
       xOrder = uniqueInOrder(df.columns)
 
       const data = range(df.shape[0])
-        .map(col => df.col(col).numsNoNA.map(v => [df.columns[col]!, v]))
+        .map((col) => df.col(col).numsNoNA.map((v) => [df.columns[col]!, v]))
         .flat()
 
       boxDf = new DataFrame({ data, columns: ['Category', 'Datum'] })
@@ -104,7 +103,7 @@ export function BoxWhiskersDialog({
       if (data.hueCol !== '<none>') {
         hueCol = data.hueCol
         if (findCol(df, hueCol) !== -1) {
-          hueOrder = uniqueInOrder(df.col(hueCol).strs).map(v => cleanHue(v))
+          hueOrder = uniqueInOrder(df.col(hueCol).strs).map((v) => cleanHue(v))
         }
       } else {
         hueCol = xCol
@@ -115,7 +114,7 @@ export function BoxWhiskersDialog({
     }
 
     const singlePlotDisplayOptions = Object.fromEntries(
-      xOrder.map(x => [
+      xOrder.map((x) => [
         x,
         Object.fromEntries(
           hueOrder.map((hue, huei) => {
@@ -188,7 +187,7 @@ export function BoxWhiskersDialog({
     <OKCancelDialog
       open={open}
       title="Box Plot"
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_OK) {
           btnRef.current?.click()
         } else {

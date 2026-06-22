@@ -24,8 +24,6 @@ export function resetStore(): IHistoryDataStore {
 export function init(): IHistoryData {
   const id = makeUuid()
 
-  //const defaultSheet = createDefaultSheet()
-
   let state: IHistoryState = {
     id,
     name: 'History',

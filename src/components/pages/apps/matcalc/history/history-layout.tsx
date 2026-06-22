@@ -16,7 +16,8 @@ import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { History } from 'lucide-react'
 import { useEffect, useRef } from 'react'
-import { useApp, useHistory } from './history-store'
+
+import { useHistory } from './history-provider/history-provider'
 import { HistoryTabs } from './history-tabs'
 
 export interface IProps extends IChildrenProps {}
@@ -32,8 +33,7 @@ export interface IProps extends IChildrenProps {}
 export function HistoryLayout({ children }: IProps) {
   const leftPanelRef = useRef(null)
 
-  const { resetApp } = useHistory()
-  const app = useApp()!
+  const { reset } = useHistory()
 
   const { settings, historySidebarOpen } = useEdbSettings()
 
@@ -66,7 +66,7 @@ export function HistoryLayout({ children }: IProps) {
         maxSize="40%"
         collapsible={true}
         minSize="5%"
-        onResize={size => {
+        onResize={(size) => {
           // size is percentage
           if (size.asPercentage <= 0.01) {
             historySidebarOpen(false)
@@ -89,20 +89,18 @@ export function HistoryLayout({ children }: IProps) {
             <LinkButton
               // ripple={false}
               onClick={() => {
-                if (app) {
-                  openDialog({
-                    type: 'warning',
-                    payload: {
-                      title: 'Clear History',
-                      content: 'Are you sure you want to clear the history?',
-                      callback: response => {
-                        if (response === TEXT_OK) {
-                          resetApp(app)
-                        }
-                      },
+                openDialog({
+                  type: 'warning',
+                  payload: {
+                    title: 'Clear History',
+                    content: 'Are you sure you want to clear the history?',
+                    callback: (response) => {
+                      if (response === TEXT_OK) {
+                        reset()
+                      }
                     },
-                  })
-                }
+                  },
+                })
               }}
               title="Clear History"
             >

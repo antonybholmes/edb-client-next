@@ -15,7 +15,9 @@ import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import type { SeriesData } from '@/lib/dataframe/series-data'
 import { DFColSelect } from '../../df-col-select'
-import { useHistory, useSheet } from '../../history/history-store'
+
+import { useCurrentSheets } from '../../history/history-provider/history-contexts'
+import { useHistory } from '../../history/history-provider/history-provider'
 import { useMotifsToGenesWorker } from './motifs-to-genes-worker'
 
 export interface IProps extends IModalProps<BaseDataFrame> {
@@ -30,7 +32,7 @@ export function MotifToGeneDialog({ selection, onResponse }: IProps) {
 
   const { addSheets } = useHistory()
   const { run: runMotifsToGenes } = useMotifsToGenesWorker()
-  const sheet = useSheet()
+  const { sheet } = useCurrentSheets()
 
   const [indicatorMessage, setIndicatorMessage] = useState<string | null>(null)
 
@@ -55,7 +57,7 @@ export function MotifToGeneDialog({ selection, onResponse }: IProps) {
 
     let ids: string[] = df.col(col)!.strs
 
-    runMotifsToGenes({ ids }, result => {
+    runMotifsToGenes({ ids }, (result) => {
       const { genes } = result
 
       const table: SeriesData[][] = []
@@ -88,7 +90,7 @@ export function MotifToGeneDialog({ selection, onResponse }: IProps) {
   return (
     <OKCancelDialog
       title="Motif To Gene"
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onResponse?.(TEXT_CANCEL)
         } else {

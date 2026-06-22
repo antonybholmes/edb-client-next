@@ -3,11 +3,6 @@ import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { findCols, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { SelectItem, SelectList } from '@/themed/v2/select'
-import {
-  newVolcanoPlot,
-  useSheet,
-  type HistoryPlot,
-} from '../../history/history-store'
 
 import { DataFrame } from '@/lib/dataframe/dataframe'
 import { filterNA, subset, zip } from '@/lib/dataframe/dataframe-utils'
@@ -20,6 +15,9 @@ import { SeriesData } from '@/lib/dataframe/series-data'
 import { produce } from 'immer'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
+import { useCurrentSheets } from '../../history/history-provider/history-contexts'
+import { newVolcanoPlot } from '../../history/history-provider/history-factories'
+import { HistoryPlot } from '../../history/history-provider/history-types'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 
 const MAX_COLS = 10
@@ -76,7 +74,7 @@ export function VolcanoDialog({
   onResponse,
 }: IProps) {
   const { settings, updateSettings } = useMatcalcSettings()
-  const sheet = useSheet()
+  const { sheet } = useCurrentSheets()
 
   const btnRef = useRef<HTMLButtonElement>(null)
 

@@ -17,7 +17,9 @@ import {
 } from '@/themed/v2/accordion'
 import { produce } from 'immer'
 import { Reorder } from 'motion/react'
-import { useHistory, usePlot, type BoxPlot } from '../../history/history-store'
+import { usePlot } from '../../history/history-provider/history-hooks'
+import { useHistory } from '../../history/history-provider/history-provider'
+import { BoxPlot } from '../../history/history-provider/history-types'
 
 export interface IProps {
   plotAddr: string
@@ -53,7 +55,7 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
         values={xOrder}
         onReorder={(order: unknown) => {
           updatePlot(
-            produce(plot, draft => {
+            produce(plot, (draft) => {
               draft.xOrder = order as string[]
             })
           )
@@ -84,7 +86,7 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
             values={hueOrder}
             onReorder={(order: unknown) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.hueOrder = order as string[]
                 })
               )
@@ -109,17 +111,17 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
       )}
 
       <SubAccordion value={[]}>
-        {typeOrder.map(t => (
+        {typeOrder.map((t) => (
           <AccordionItem value={t} key={t}>
             <AccordionTrigger>{capitalCase(t)}</AccordionTrigger>
             <AccordionContent>
               <SubAccordion value={[]}>
-                {xOrder.map(x => (
+                {xOrder.map((x) => (
                   <AccordionItem value={x} key={x}>
                     <AccordionTrigger>{x}</AccordionTrigger>
                     <AccordionContent>
                       <SubAccordion value={[]}>
-                        {hueOrder.map(hue => (
+                        {hueOrder.map((hue) => (
                           <AccordionItem value={hue} key={hue}>
                             <AccordionTrigger>
                               {capitalCase(hue)}
@@ -172,9 +174,9 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
                                         singlePlotDisplayOptions[x]![hue]![t]!
                                           .stroke.value,
 
-                                      onColorChange: color =>
+                                      onColorChange: (color) =>
                                         updatePlot(
-                                          produce(plot, draft => {
+                                          produce(plot, (draft) => {
                                             ;(
                                               draft.singlePlotDisplayOptions as any
                                             )[x]![hue]![t]!.stroke.value = color
@@ -195,9 +197,9 @@ export function BoxPlotDataPanel({ plotAddr }: IProps) {
                                       color:
                                         singlePlotDisplayOptions[x]![hue]![t]!
                                           .fill.value,
-                                      onColorChange: color =>
+                                      onColorChange: (color) =>
                                         updatePlot(
-                                          produce(plot, draft => {
+                                          produce(plot, (draft) => {
                                             ;(
                                               draft.singlePlotDisplayOptions as any
                                             )[x]![hue]![t]!.fill.color = color

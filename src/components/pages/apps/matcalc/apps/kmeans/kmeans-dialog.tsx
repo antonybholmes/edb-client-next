@@ -28,7 +28,9 @@ import { NumericalInput } from '@/themed/numerical-input'
 import { ScrollAccordion } from '@/themed/v2/accordion'
 import { Checkbox } from '@/themed/v2/check-box'
 import { produce } from 'immer'
-import { useHistory, useSheet } from '../../history/history-store'
+
+import { useCurrentSheets } from '../../history/history-provider/history-contexts'
+import { useHistory } from '../../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 
 export const MAX_HEATMAP_DIM = 10000
@@ -59,7 +61,7 @@ export function KmeansDialog({
 
   const { settings, updateSettings } = useMatcalcSettings()
   const { addSheets } = useHistory()
-  const sheet = useSheet()
+  const { sheet } = useCurrentSheets()
 
   //const branch = findBranch(branchAddr, history)[0]
   //const step = currentStep(branch)[0]
@@ -156,7 +158,7 @@ export function KmeansDialog({
     <OKCancelDialog
       open={open}
       title="K-means"
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onResponse?.(r, undefined)
         } else {
@@ -176,8 +178,8 @@ export function KmeansDialog({
           <VCenterRow className="gap-x-2">
             <Checkbox
               checked={settings.apps.kmeans.filterRows}
-              onCheckedChange={v => {
-                const newSettings = produce(settings, draft => {
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.apps.kmeans.filterRows = v
                 })
 
@@ -190,8 +192,8 @@ export function KmeansDialog({
               value={settings.apps.kmeans.topRows}
               limit={[0, 10000]}
               step={1}
-              onNumChange={v => {
-                const newSettings = produce(settings, draft => {
+              onNumChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.apps.kmeans.topRows = v
                 })
 
@@ -202,9 +204,9 @@ export function KmeansDialog({
             <span className="shrink-0">rows using</span>
             <SelectList
               value={settings.apps.kmeans.rowFilterMethod}
-              onValueChange={v => {
+              onValueChange={(v) => {
                 if (v) {
-                  const newSettings = produce(settings, draft => {
+                  const newSettings = produce(settings, (draft) => {
                     draft.apps.kmeans.rowFilterMethod = v as string
                   })
 
@@ -224,8 +226,8 @@ export function KmeansDialog({
           <CheckPropRow
             title="Log2(data+1)"
             checked={settings.apps.kmeans.applyLog2}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.apps.kmeans.applyLog2 = v
               })
 
@@ -236,8 +238,8 @@ export function KmeansDialog({
           <CheckPropRow
             title="Z-score"
             checked={settings.apps.kmeans.applyZscore}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.apps.kmeans.applyZscore = v
               })
 
@@ -252,8 +254,8 @@ export function KmeansDialog({
               value={settings.apps.kmeans.clusters}
               limit={[0, 1000]}
               step={1}
-              onNumChange={v => {
-                const newSettings = produce(settings, draft => {
+              onNumChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.apps.kmeans.clusters = v
                 })
 
@@ -266,9 +268,9 @@ export function KmeansDialog({
           <PropRow title="Distance">
             <SelectList
               value={settings.apps.kmeans.distance}
-              onValueChange={v => {
+              onValueChange={(v) => {
                 if (v) {
-                  const newSettings = produce(settings, draft => {
+                  const newSettings = produce(settings, (draft) => {
                     draft.apps.kmeans.distance = v as string
                   })
 
@@ -311,8 +313,8 @@ export function KmeansDialog({
           <CheckPropRow
             title="Sort by cluster"
             checked={settings.apps.kmeans.sortByCluster}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.apps.kmeans.sortByCluster = v
               })
 
@@ -323,8 +325,8 @@ export function KmeansDialog({
           <CheckPropRow
             title="Show heatmap"
             checked={settings.apps.kmeans.showHeatmap}
-            onCheckedChange={v => {
-              const newSettings = produce(settings, draft => {
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.apps.kmeans.showHeatmap = v
               })
 

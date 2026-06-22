@@ -7,11 +7,6 @@ import { type ITab } from '@/components/tabs/tab-provider'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
-import {
-  useHistory,
-  usePlot,
-  type ExtGseaPlot,
-} from '../../history/history-store'
 
 import {
   DEFAULT_HEATMAP_PROPS,
@@ -28,6 +23,9 @@ import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
+import { usePlot } from '../../history/history-provider/history-hooks'
+import { useHistory } from '../../history/history-provider/history-provider'
+import { ExtGseaPlot } from '../../history/history-provider/history-types'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { ExtGseaPropsPanel } from './ext-gsea-props-panel'
@@ -70,7 +68,7 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
 
   useEffect(() => {
     const filteredMessages = messages.filter(
-      message => message.target === plot?.id
+      (message) => message.target === plot?.id
     )
 
     for (const message of filteredMessages) {
@@ -91,7 +89,7 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
 
   useEffect(() => {
     updatePlot(
-      produce(plot, draft => {
+      produce(plot, (draft) => {
         draft.props.page.scale = zoom
       })
     )
@@ -166,8 +164,8 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
         //onValueChange={setSelectedTab}
         //value={selectedTab}
         open={settings.sidebar.show}
-        onOpenChange={v => {
-          const newSettings = produce(settings, draft => {
+        onOpenChange={(v) => {
+          const newSettings = produce(settings, (draft) => {
             draft.sidebar.show = v
           })
 

@@ -13,7 +13,8 @@ import { TEXT_BORDER, TEXT_HEIGHT, TEXT_SHOW } from '@/consts'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
 import { produce } from 'immer'
-import { useHistory } from '../../../history/history-store'
+
+import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export function ColGroupsSettingsPanel() {
@@ -27,9 +28,9 @@ export function ColGroupsSettingsPanel() {
           <Switch
             title={TEXT_SHOW}
             checked={displayProps.groups.show}
-            onCheckedChange={v =>
+            onCheckedChange={(v) =>
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.groups.show = v
                 })
               )
@@ -48,9 +49,9 @@ export function ColGroupsSettingsPanel() {
             limit={[1, 100]}
             placeholder="Height..."
             className="rounded-theme"
-            onNumChanged={v => {
+            onNumChanged={(v) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.groups.height = v
                 })
               )
@@ -62,9 +63,9 @@ export function ColGroupsSettingsPanel() {
           title="Grid"
           disabled={!displayProps.groups.show}
           checked={displayProps.groups.grid.show}
-          onCheckedChange={v =>
+          onCheckedChange={(v) =>
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props.groups.grid.show = v
               })
             )
@@ -79,7 +80,7 @@ export function ColGroupsSettingsPanel() {
                 opacity: displayProps.groups.grid.opacity,
                 onColorChange: (color, opacity, width) =>
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.groups.grid.value = color
                       draft.props.groups.grid.opacity = opacity
                       draft.props.groups.grid.width = width
@@ -114,9 +115,9 @@ export function ColGroupsSettingsPanel() {
           title={TEXT_BORDER}
           disabled={!displayProps.groups.show}
           checked={displayProps.groups.border.show}
-          onCheckedChange={v =>
+          onCheckedChange={(v) =>
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props.groups.border.show = v
               })
             )
@@ -131,7 +132,7 @@ export function ColGroupsSettingsPanel() {
                 opacity: displayProps.groups.border.opacity,
                 onColorChange: (color, opacity, width) =>
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.groups.border.value = color
                       draft.props.groups.border.opacity = opacity
                       draft.props.groups.border.width = width

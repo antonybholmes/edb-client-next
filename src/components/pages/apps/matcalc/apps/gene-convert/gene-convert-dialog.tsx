@@ -25,7 +25,9 @@ import { Checkbox } from '@/themed/v2/check-box'
 import { produce } from 'immer'
 import { Rat, User } from 'lucide-react'
 import { useEffect } from 'react'
-import { useHistory, useSheet } from '../../history/history-store'
+
+import { useCurrentSheets } from '../../history/history-provider/history-contexts'
+import { useHistory } from '../../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 
 // const OUTPUT_TYPES = [
@@ -51,7 +53,7 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
 
   const { addSheets } = useHistory()
 
-  const sheet = useSheet()
+  const { sheet } = useCurrentSheets()
 
   const df = sheet as AnnotationDataFrame
 
@@ -61,7 +63,7 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
     }
 
     updateSettings(
-      produce(settings, draft => {
+      produce(settings, (draft) => {
         //draft.apps.geneconv.convertIndex = !selection.cols
         draft.apps.geneconv.useSelectedColumns = !!selection.cols
       })
@@ -172,7 +174,7 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
   return (
     <OKCancelDialog
       title="Gene Conversion"
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onResponse?.(TEXT_CANCEL)
         } else {
@@ -196,9 +198,9 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
                   <ToggleGroup
                     className="gap-x-1"
                     value={[settings.apps.geneconv.fromSpecies]}
-                    onValueChange={value =>
+                    onValueChange={(value) =>
                       updateSettings(
-                        produce(settings, draft => {
+                        produce(settings, (draft) => {
                           draft.apps.geneconv.fromSpecies = value[0]! as Species
                         })
                       )
@@ -239,9 +241,9 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
                   <ToggleGroup
                     className="gap-x-1"
                     value={[settings.apps.geneconv.toSpecies]}
-                    onValueChange={value =>
+                    onValueChange={(value) =>
                       updateSettings(
-                        produce(settings, draft => {
+                        produce(settings, (draft) => {
                           draft.apps.geneconv.toSpecies = value[0]! as Species
                         })
                       )
@@ -329,9 +331,9 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
             <BaseCol className="gap-y-1">
               <Checkbox
                 checked={settings.apps.geneconv.convertIndex}
-                onCheckedChange={v =>
+                onCheckedChange={(v) =>
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.apps.geneconv.convertIndex = v
                     })
                   )
@@ -342,9 +344,9 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
 
               <Checkbox
                 checked={settings.apps.geneconv.useSelectedColumns}
-                onCheckedChange={v =>
+                onCheckedChange={(v) =>
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.apps.geneconv.useSelectedColumns = v
                     })
                   )

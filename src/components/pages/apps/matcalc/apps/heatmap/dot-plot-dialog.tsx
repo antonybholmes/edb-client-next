@@ -35,12 +35,13 @@ import { cumulativeSteps } from '@/lib/math/quartile'
 import { formatNumber } from '@/lib/text/text'
 import { GroupToggle, ToggleGroup } from '@/themed/v2/toggle-group'
 import { produce } from 'immer'
+
 import {
-  newHeatMapPlot,
-  useGroups,
-  useSheet,
-  type HistoryPlot,
-} from '../../history/history-store'
+  useCurrentGroups,
+  useCurrentSheets,
+} from '../../history/history-provider/history-contexts'
+import { newHeatMapPlot } from '../../history/history-provider/history-factories'
+import { HistoryPlot } from '../../history/history-provider/history-types'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { MAX_CLUSTER_ITEMS, MAX_HEATMAP_DIM } from './heatmap-dialog'
 
@@ -61,8 +62,8 @@ export function DotPlotDialog({
   const [dotplotMode, setDotPlotMode] = useState<DotPlotMode>('size')
   const [error, setError] = useState('')
 
-  const sheet = useSheet()
-  const groups = useGroups()
+  const { sheet } = useCurrentSheets()
+  const { groups } = useCurrentGroups()
 
   useEffect(() => {
     // In cluster mode, force column clustering
@@ -106,7 +107,7 @@ export function DotPlotDialog({
     const means: number[][] = []
     const percents: number[][] = []
     const groupsToPlot = groups.filter(
-      g => g.show || settings.groups.filter.mode === 'keep'
+      (g) => g.show || settings.groups.filter.mode === 'keep'
     )
 
     for (const group of groupsToPlot) {
@@ -117,14 +118,14 @@ export function DotPlotDialog({
 
       // percentage in each group
       const p: number[] = df.rowMap(
-        row =>
-          (row as number[]).filter(x => x > minThreshold).length / row.length
+        (row) =>
+          (row as number[]).filter((x) => x > minThreshold).length / row.length
       )
 
       percents.push(p)
     }
 
-    const index = groupsToPlot.map(g => g.name)
+    const index = groupsToPlot.map((g) => g.name)
 
     // build group mean row centric then transpose
     const groupMeanDf = new AnnotationDataFrame({
@@ -222,7 +223,7 @@ export function DotPlotDialog({
     let max = dfLog.max()
     let range = max - min
 
-    const size = dfLog.map(v => ((v as number) - min) / range)
+    const size = dfLog.map((v) => ((v as number) - min) / range)
 
     const sizeDf = new AnnotationDataFrame({
       name: 'Size',
@@ -246,7 +247,7 @@ export function DotPlotDialog({
     max = dfLog!.max()
     range = max - min
 
-    let sizes = cumulativeSteps(range, 4).map(s => s + min)
+    let sizes = cumulativeSteps(range, 4).map((s) => s + min)
     //.slice(0, 4)
 
     // if data is logged, but user wants to see
@@ -255,7 +256,7 @@ export function DotPlotDialog({
       settings.dot.size.useOriginalValuesForSizes &&
       settings.heatmap.applyLog2
     ) {
-      sizes = sizes.map(s => Math.round(Math.pow(2, s)))
+      sizes = sizes.map((s) => Math.round(Math.pow(2, s)))
     }
 
     // console.log(
@@ -326,7 +327,7 @@ export function DotPlotDialog({
     <OKCancelDialog
       open={open}
       title="Dot Plot"
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onResponse?.(r, undefined)
         } else {
@@ -347,7 +348,7 @@ export function DotPlotDialog({
           //variant="outline"
 
           value={[dotplotMode]}
-          onValueChange={v => setDotPlotMode(v[0] as DotPlotMode)}
+          onValueChange={(v) => setDotPlotMode(v[0] as DotPlotMode)}
           className="overflow-hidden rounded-theme flex flex-row border border-border"
           rounded="none"
           //size="lg"
@@ -368,8 +369,8 @@ export function DotPlotDialog({
             <CheckPropRow
               title="Use original data for sizes"
               checked={settings.dot.size.useOriginalValuesForSizes}
-              onCheckedChange={v => {
-                const newSettings = produce(settings, draft => {
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.dot.size.useOriginalValuesForSizes = v
                 })
 
@@ -395,8 +396,8 @@ export function DotPlotDialog({
             <CheckPropRow
               title="Log2(data + 1)"
               checked={settings.heatmap.applyLog2}
-              onCheckedChange={value => {
-                const newSettings = produce(settings, draft => {
+              onCheckedChange={(value) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.heatmap.applyLog2 = value
                 })
 
@@ -407,8 +408,8 @@ export function DotPlotDialog({
             <CheckPropRow
               title="Z-score rows"
               checked={settings.heatmap.applyRowZscore}
-              onCheckedChange={value => {
-                const newSettings = produce(settings, draft => {
+              onCheckedChange={(value) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.heatmap.applyRowZscore = value
                 })
 
@@ -424,8 +425,8 @@ export function DotPlotDialog({
             <CheckPropRow
               title="Rows"
               checked={settings.heatmap.clusterRows}
-              onCheckedChange={value => {
-                const newSettings = produce(settings, draft => {
+              onCheckedChange={(value) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.heatmap.clusterRows = value
                 })
 
@@ -436,8 +437,8 @@ export function DotPlotDialog({
             <CheckPropRow
               title="Columns"
               checked={settings.heatmap.clusterCols}
-              onCheckedChange={value => {
-                const newSettings = produce(settings, draft => {
+              onCheckedChange={(value) => {
+                const newSettings = produce(settings, (draft) => {
                   draft.heatmap.clusterCols = value
                 })
 

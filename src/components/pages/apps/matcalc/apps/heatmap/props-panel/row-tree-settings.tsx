@@ -17,7 +17,8 @@ import { TEXT_SHOW } from '@/consts'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
 import { produce } from 'immer'
-import { useHistory } from '../../../history/history-store'
+
+import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
 export function RowTreeSettingsPanel() {
@@ -31,9 +32,9 @@ export function RowTreeSettingsPanel() {
         <CheckPropRow
           title={TEXT_SHOW}
           checked={displayProps.rowTree.show}
-          onCheckedChange={v => {
+          onCheckedChange={(v) => {
             updatePlot(
-              produce(plot, draft => {
+              produce(plot, (draft) => {
                 draft.props.rowTree.show = v
               })
             )
@@ -42,9 +43,9 @@ export function RowTreeSettingsPanel() {
           <RadioGroup
             value={displayProps.rowTree.position}
             disabled={!displayProps.rowTree.show}
-            onValueChange={v =>
+            onValueChange={(v) =>
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.rowTree.position = v as LeftRightPos
                 })
               )
@@ -70,9 +71,9 @@ export function RowTreeSettingsPanel() {
             colors={[
               {
                 color: displayProps.rowTree.stroke.value,
-                onColorChange: v =>
+                onColorChange: (v) =>
                   updatePlot(
-                    produce(plot, draft => {
+                    produce(plot, (draft) => {
                       draft.props.rowTree.stroke.value = v
                     })
                   ),
@@ -90,9 +91,9 @@ export function RowTreeSettingsPanel() {
             disabled={!displayProps.rowTree.show}
             placeholder="Stroke..."
             className="rounded-theme"
-            onNumChanged={v => {
+            onNumChanged={(v) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.rowTree.stroke.width = v
                 })
               )
@@ -108,9 +109,9 @@ export function RowTreeSettingsPanel() {
             limit={[1, 200]}
             placeholder="Tree size..."
             className="rounded-theme"
-            onNumChanged={v => {
+            onNumChanged={(v) => {
               updatePlot(
-                produce(plot, draft => {
+                produce(plot, (draft) => {
                   draft.props.rowTree.width = v
                 })
               )

@@ -22,7 +22,6 @@ import { PropRow } from '@/dialogs/prop-row'
 import { DataFrame } from '@/lib/dataframe/dataframe'
 
 import { Textarea } from '@/themed/textarea'
-import { useHistory } from '../../history/history-store'
 
 import { getAccordionId } from '@/dialogs/settings/settings-dialog'
 import { HelpButton } from '@/help/help-button'
@@ -35,6 +34,7 @@ import { SampleDataTypeCombo } from './sample-datatype-combo'
 import { appsConfig } from '@/config/apps'
 import type { UndefStr } from '@/lib/text/text'
 import { useQuery } from '@tanstack/react-query'
+import { useHistory } from '../../history/history-provider/history-provider'
 import { GexDialogSidePanel, TECHNOLOGIES } from './gex-dialog-side-panel'
 // const DEFAULT_SAMPLE_DATA_TYPES = ['COO', 'Lymphgen']
 
@@ -141,11 +141,11 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
     async function loadDatasets() {
       try {
         // convert data to translate certain strings to numbers
-        const datasets = datasetData!.map(dataset => {
-          return produce(dataset, draft => {
-            draft.samples = dataset.samples.map(sample => {
-              return produce(sample, draftSample => {
-                const entries = sample.metadata.map(m => {
+        const datasets = datasetData!.map((dataset) => {
+          return produce(dataset, (draft) => {
+            draft.samples = dataset.samples.map((sample) => {
+              return produce(sample, (draftSample) => {
+                const entries = sample.metadata.map((m) => {
                   const v = Number(m.value)
 
                   return {
@@ -165,14 +165,14 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
 
         setDatasetMap(
           new Map<string, IGexDataset>(
-            datasets.map(dataset => [dataset.id, dataset])
+            datasets.map((dataset) => [dataset.id, dataset])
           )
         )
 
         if (datasets.length > 0) {
           // check if the datasets the user already chose are selected
 
-          const previouslySelected = datasets.filter(dataset =>
+          const previouslySelected = datasets.filter((dataset) =>
             settings.apps.gex.selectedDatasets.includes(dataset.id)
           )
 
@@ -203,20 +203,20 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
         const institutions = [
           ...[...instituteMap.keys()]
             .filter(
-              inst => inst === appsConfig.matcalc.apps.gex.defaultInstitution
+              (inst) => inst === appsConfig.matcalc.apps.gex.defaultInstitution
             )
             .sort(),
 
           ...[...instituteMap.keys()]
             .filter(
-              inst => inst !== appsConfig.matcalc.apps.gex.defaultInstitution
+              (inst) => inst !== appsConfig.matcalc.apps.gex.defaultInstitution
             )
             .sort(),
         ]
 
         setInstituteMap(instituteMap)
         setInstitutions(institutions)
-        setAccordionValues(institutions.map(ins => getAccordionId(ins)))
+        setAccordionValues(institutions.map((ins) => getAccordionId(ins)))
       } catch {
         console.error('error loading datasets from remote')
       }
@@ -228,7 +228,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
   }, [datasetData])
 
   useEffect(() => {
-    const defaultTechnologies = TECHNOLOGIES.filter(t =>
+    const defaultTechnologies = TECHNOLOGIES.filter((t) =>
       t.includes(settings.apps.gex.technology)
     )
 
@@ -242,13 +242,13 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
       return
     }
 
-    let defaultGexTypes = dataset.exprTypes.filter(t =>
+    let defaultGexTypes = dataset.exprTypes.filter((t) =>
       t.name.includes(settings.apps.gex.gexType)
     )
 
     if (defaultGexTypes.length === 0) {
       // Can't find the type in the technology, so see if we have tpm
-      defaultGexTypes = dataset.exprTypes.filter(t => t.name.includes('TPM'))
+      defaultGexTypes = dataset.exprTypes.filter((t) => t.name.includes('TPM'))
 
       if (defaultGexTypes.length === 0) {
         // No TPM, so just pick the first one
@@ -256,7 +256,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
       }
 
       updateSettings(
-        produce(settings, draft => {
+        produce(settings, (draft) => {
           draft.apps.gex.gexType = defaultGexTypes[0]!.name
         })
       )
@@ -266,7 +266,9 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
 
     const types = [
       ...new Set(
-        dataset.samples.map(sample => sample.metadata.map(m => m.name)).flat()
+        dataset.samples
+          .map((sample) => sample.metadata.map((m) => m.name))
+          .flat()
       ),
     ].sort()
 
@@ -353,7 +355,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
         {
           body: {
             genes,
-            datasets: selectedDatasets.map(dataset => dataset.id),
+            datasets: selectedDatasets.map((dataset) => dataset.id),
           },
 
           headers: bearerHeaders(accessToken),
@@ -373,7 +375,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
       // )
 
       const data: number[][] = searchResults[0]!.probes.map(
-        probeResult => probeResult.values
+        (probeResult) => probeResult.values
       )
 
       let columns: string[] = []
@@ -386,7 +388,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
             const labels = [sample.name]
 
             for (const datatype of sampleDataTypes.filter(
-              t => sampleDataTypeUseMap.get(t) ?? false
+              (t) => sampleDataTypeUseMap.get(t) ?? false
             )) {
               for (const m of sample.metadata) {
                 if (m.name === datatype) {
@@ -401,10 +403,10 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
         }
       } else {
         columns = searchResults
-          .map(datasetResult =>
+          .map((datasetResult) =>
             datasetMap
               .get(datasetResult.dataset.id)!
-              .samples.map(sample => sample.name)
+              .samples.map((sample) => sample.name)
           )
           .flat()
       }
@@ -420,7 +422,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
         rowObsCols = ['Gene Symbol', 'Ensembl', 'RefSeq'] //'Gene Id',
       }
 
-      geneData = geneResults.map(geneResult => {
+      geneData = geneResults.map((geneResult) => {
         // if user wants official symbol use that if available,
         // otherwise use the original symbol from the dataset
         // which may not be standardized
@@ -494,11 +496,11 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
       // add the sample meta data
 
       for (const datatype of sampleDataTypes.filter(
-        t => sampleDataTypeUseMap.get(t) ?? false
+        (t) => sampleDataTypeUseMap.get(t) ?? false
       )) {
         const labels = searchResults
-          .map(datasetResult =>
-            datasetMap.get(datasetResult.dataset.id)!.samples.map(sample => {
+          .map((datasetResult) =>
+            datasetMap.get(datasetResult.dataset.id)!.samples.map((sample) => {
               let ret = ''
 
               for (const m of sample.metadata) {
@@ -559,7 +561,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
         // construct groups in order of appearance with
         // anything not in a group being pushed to the end in the NA group
         groups = [...orderedGroupNames, TEXT_NA]
-          .filter(groupName => groupsMap.has(groupName))
+          .filter((groupName) => groupsMap.has(groupName))
           .map((groupName, gi) => {
             const cidx = gi % DEFAULT_PALETTE.length
 
@@ -609,7 +611,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
 
       // cache the genes so user doesn't have to keep re-entering them
       updateSettings(
-        produce(settings, draft => {
+        produce(settings, (draft) => {
           draft.apps.gex.genes = genes
         })
       )
@@ -671,7 +673,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
               aria-label="Genes"
               label="Genes"
               value={text}
-              onChange={e => setText(e.target.value)}
+              onChange={(e) => setText(e.target.value)}
               className="grow h-50" // rounded-theme border border-border overflow-hidden outline-hidden placeholder:text-muted-foreground"
               // labelChildren={
               //   <InfoHoverCard title="Genes">
@@ -685,16 +687,16 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
             <SelectList
               w="lg"
               value={exprType}
-              onValueChange={value => {
+              onValueChange={(value) => {
                 if (dataset) {
                   const matches = dataset.exprTypes.filter(
-                    t => t.name === value
+                    (t) => t.name === value
                   )
 
                   if (matches.length > 0) {
                     setExprType(matches[0]!.name)
                     updateSettings(
-                      produce(settings, draft => {
+                      produce(settings, (draft) => {
                         draft.apps.gex.gexType = matches[0]!.name
                       })
                     )
@@ -717,7 +719,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
           <PropRow title="Sample Info">
             <SampleDataTypeCombo
               selectedValues={sampleDataTypes.filter(
-                t => sampleDataTypeUseMap.get(t) ?? false
+                (t) => sampleDataTypeUseMap.get(t) ?? false
               )}
               values={sampleDataTypes}
               setValue={(value, selected) => {
@@ -735,9 +737,9 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
           <CheckPropRow
             title="Create groups"
             checked={settings.apps.gex.addGroup}
-            onCheckedChange={v => {
+            onCheckedChange={(v) => {
               updateSettings(
-                produce(settings, draft => {
+                produce(settings, (draft) => {
                   draft.apps.gex.addGroup = v
                 })
               )
@@ -747,7 +749,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
             <SampleDataTypeCombo
               selectedValues={groupSampleDataType}
               values={sampleDataTypes}
-              setValue={value => {
+              setValue={(value) => {
                 setGroupSampleDataType([value])
               }}
               className="w-48"
@@ -758,9 +760,9 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
             title="Use official gene symbol"
             info="Use the official gene symbol in place of the original symbol if available."
             checked={settings.apps.gex.useOfficialGeneSymbol}
-            onCheckedChange={v => {
+            onCheckedChange={(v) => {
               updateSettings(
-                produce(settings, draft => {
+                produce(settings, (draft) => {
                   draft.apps.gex.useOfficialGeneSymbol = v
                 })
               )
@@ -770,9 +772,9 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
           <CheckPropRow
             title="Add sample info to column names"
             checked={settings.apps.gex.addSampleMetadataToColumns}
-            onCheckedChange={v => {
+            onCheckedChange={(v) => {
               updateSettings(
-                produce(settings, draft => {
+                produce(settings, (draft) => {
                   draft.apps.gex.addSampleMetadataToColumns = v
                 })
               )
@@ -782,9 +784,9 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
           <CheckPropRow
             title="Add alternative names to columns"
             checked={settings.apps.gex.addAltNames}
-            onCheckedChange={v => {
+            onCheckedChange={(v) => {
               updateSettings(
-                produce(settings, draft => {
+                produce(settings, (draft) => {
                   draft.apps.gex.addAltNames = v
                 })
               )

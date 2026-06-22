@@ -9,13 +9,6 @@ import { getFormattedShape } from '@/lib/dataframe/dataframe-utils'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
-import {
-  useHistory,
-  usePlot,
-  useSheet,
-  type BoxPlot,
-} from '../../history/history-store'
-
 import { messageImageFileFormat, useMessages } from '@/providers/messages'
 import { useZoom } from '@/providers/zoom-provider'
 
@@ -28,6 +21,10 @@ import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
+import { useCurrentSheets } from '../../history/history-provider/history-contexts'
+import { usePlot } from '../../history/history-provider/history-hooks'
+import { useHistory } from '../../history/history-provider/history-provider'
+import { BoxPlot } from '../../history/history-provider/history-types'
 import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { BoxPlotDataPanel } from './boxplot-data-panel'
 import { BoxPlotSvg } from './boxplot-plot-svg'
@@ -43,7 +40,7 @@ interface IPanelProps extends IDivProps {
 export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
   const { updatePlot } = useHistory()
-  const sheet = useSheet()
+  const { sheet } = useCurrentSheets()
 
   const plot = usePlot(plotAddr)! as BoxPlot
 
@@ -98,7 +95,7 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
     // })
 
     updatePlot(
-      produce(plot, draft => {
+      produce(plot, (draft) => {
         draft.props.page.scale = zoom
       })
     )
