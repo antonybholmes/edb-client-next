@@ -596,17 +596,15 @@ function LollipopPage() {
 
   return (
     <>
-      {/* <DialogsRoot /> */}
+      <HeaderPortal>
+        <>
+          <AppHeaderIcon />
+          <AppInfoButton />
+        </>
+        <ProteinAutocomplete />
+      </HeaderPortal>
 
       <ShortcutLayout signinRequired={false}>
-        <HeaderPortal>
-          <>
-            <AppHeaderIcon />
-            <AppInfoButton />
-          </>
-          <ProteinAutocomplete />
-        </HeaderPortal>
-
         <Toolbar>
           <ToolbarMenu
             groupId={_id}

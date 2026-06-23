@@ -46,6 +46,7 @@ import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import {
   APP_ACCOUNT_AUTH_SIGNED_OUT_URL,
+  APP_ADMIN_USERS_ROUTE,
   DEFAULT_BASIC_EDB_USER,
   hasAdminPermission,
   MYACCOUNT_PATH,
@@ -464,7 +465,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
       // use first letters of part of name
       initials = initials
         .split(' ')
-        .map(word => word[0])
+        .map((word) => word[0])
         .join('')
     }
 
@@ -548,7 +549,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
                 //   Users
                 // </DropdownMenuItem>
 
-                <ThemeLink href="/admin/users" aria-label="Users">
+                <ThemeLink href={APP_ADMIN_USERS_ROUTE} aria-label="Users">
                   Admin
                 </ThemeLink>
               )}
@@ -593,7 +594,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
                   payload: {
                     title: TEXT_SIGN_OUT,
                     content: 'Are you sure you want to sign out?',
-                    callback: r => {
+                    callback: (r) => {
                       if (r === TEXT_OK && state) {
                         signOut(state)
                       }
@@ -702,7 +703,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
                       payload: {
                         title: TEXT_SIGN_OUT,
                         content: 'Are you sure you want to sign out?',
-                        callback: r => {
+                        callback: (r) => {
                           if (r === TEXT_OK && state) {
                             signOut(state)
                           }

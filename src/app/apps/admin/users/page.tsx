@@ -1,4 +1,4 @@
-import { AdminUsersQueryPage } from '@/components/pages/admin/users-page'
+import { AdminUsersQueryPage } from '@/components/pages/apps/admin/users/users-page'
 import { makeMetaData } from '@/lib/metadata'
 
 export const metadata = makeMetaData('Users')

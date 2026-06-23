@@ -19,6 +19,9 @@ export const TEXT_MIN_PASSWORD_LENGTH =
   'A password must contain at least 8 characters'
 export const PASSWORD_PATTERN = /^[\w!@#$%^&*.?]{8,}/
 
+export const TEXT_PASSWORD_PATTERN_DESCRIPTION =
+  'A password must contain at least 8 characters, which can be letters, numbers, and special characters like !@#$%^&*.?'
+
 export const TEXT_PASSWORD_DESCRIPTION =
   'For security, a link to change your password will be sent to your current email address.'
 
@@ -136,7 +139,7 @@ export function PasswordDialog({
       //contentVariant="glass"
       //bodyVariant="card"
       onOpenChange={onOpenChange}
-      onResponse={response => {
+      onResponse={(response) => {
         switch (response) {
           case TEXT_OK:
             //update()

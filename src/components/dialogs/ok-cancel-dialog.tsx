@@ -138,7 +138,6 @@ export function OKCancelDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        //onEscapeKeyDown={() => _resp(TEXT_CANCEL)}
         className={cn('text-sm flex flex-col py-6 gap-y-4', className)}
         {...props}
       >

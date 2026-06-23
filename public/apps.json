@@ -101,9 +101,9 @@
     "color": "#DA70D6",
     "version": "27.4.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-23T13:48:07.175Z",
-    "hash": "fb4382522a60e354e49f53912c97b487d32c67e5a00eb54577f28567c342e5cc",
-    "build": 1036
+    "modified": "2026-06-23T14:07:09.776Z",
+    "hash": "af1f01d6aa8ca1f5414c14e94787e6af397df11ba0b4a0541b2fb4ef59f20b74",
+    "build": 1038
   },
   {
     "name": "Matcalc",
@@ -194,6 +194,15 @@
     "modified": "2026-06-23T13:48:07.174Z",
     "hash": "0c383b4be2e536c075669864efb643bcae34063baefd51b7e94ae356c578abf9",
     "build": 454
+  },
+  {
+    "name": "Users",
+    "description": "User dashboard for admins.",
+    "version": "1.0.0",
+    "copyright": "© 2024-2026 Antony Holmes",
+    "modified": "2026-06-23T14:07:09.771Z",
+    "hash": "9cd3e9c38a2b79a58bf211a8c07c19b906cbad8487d1e2fab74cf3c9e475a90f",
+    "build": 4
   },
   {
     "name": "Variants",

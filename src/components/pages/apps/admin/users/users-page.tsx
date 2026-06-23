@@ -51,10 +51,14 @@ import { logger } from '@/lib/logger'
 import { CoreProviders } from '@/providers/core-providers'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
+import { AppHeaderIcon } from '@/components/header/app-header-icon'
+import { AppInfoButton } from '@/components/header/app-info-button'
+import { HeaderPortal } from '@/components/header/header-portal'
 import { getCSRFToken } from '@/lib/edb/csrf'
+import { useAppInfo } from '@/lib/edb/edb-settings'
 import { makeUuid } from '@/lib/id'
 import { Toast } from '@base-ui/react/toast'
-
+import APP_INFO from './manifest.json'
 import { UsersDialogsRoot, useUserDialogs } from './users-dialogs'
 
 interface IUserStats {
@@ -78,6 +82,7 @@ export function AdminUsersPage() {
 
   const { open: openDialogs } = useDialogs()
   const { open: openUserDialog } = useUserDialogs()
+  const { setAppInfo } = useAppInfo()
 
   useEffect(() => {
     async function loadUserStats() {
@@ -121,6 +126,8 @@ export function AdminUsersPage() {
       setGroups(res.data)
       loadUserStats()
     }
+
+    setAppInfo(APP_INFO)
 
     try {
       loadRoles()
@@ -280,7 +287,6 @@ export function AdminUsersPage() {
             <TrashIcon
               stroke="stroke-foreground/25"
               className="group-hover:stroke-destructive"
-              size="w-4"
             />
           </button>
         </VCenterRow>
@@ -448,6 +454,13 @@ export function AdminUsersPage() {
 
   return (
     <>
+      <HeaderPortal>
+        <>
+          <AppHeaderIcon />
+          <AppInfoButton />
+        </>
+      </HeaderPortal>
+
       <UsersDialogsRoot />
 
       <AdminLayout title="Users">

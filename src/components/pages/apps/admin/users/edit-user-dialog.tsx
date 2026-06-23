@@ -18,8 +18,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
-import { TEXT_PASSWORD_PATTERN_DESCRIPTION } from '../account/myaccount/password-card'
-import { PASSWORD_PATTERN } from '../account/password-email-dialog'
+
+import {
+  PASSWORD_PATTERN,
+  TEXT_PASSWORD_PATTERN_DESCRIPTION,
+} from '@/components/pages/account/password-email-dialog'
 
 const UserFormSchema = z.object({
   id: z.string().regex(PUBLIC_ID_REGEX, {
@@ -126,7 +129,7 @@ export function EditUserDialog({
       apiKeys: [],
       isLocked: false,
       groups: [],
-      selectedGroups: user?.groups.map(g => g.id) || [],
+      selectedGroups: user?.groups.map((g) => g.id) || [],
       ...user,
     },
   })
@@ -137,7 +140,7 @@ export function EditUserDialog({
     <OKCancelDialog
       open={open}
       title={title}
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_OK) {
           btnRef.current?.click()
         } else {
@@ -297,7 +300,7 @@ export function EditUserDialog({
                   onValueChange={field.onChange}
                   className="gap-x-1"
                 >
-                  {groups.map(group => {
+                  {groups.map((group) => {
                     return (
                       <GroupToggle
                         value={group.id}
@@ -317,7 +320,7 @@ export function EditUserDialog({
             control={form.control}
             name="authProviders"
             render={({ field }) => (
-              <span>{field.value?.map(p => p.name).join(', ')}</span>
+              <span>{field.value?.map((p) => p.name).join(', ')}</span>
             )}
           />
 

@@ -29,15 +29,15 @@ import z from 'zod'
 
 export const MIN_PASSWORD_LENGTH = 8
 
-export const PASSWORD_PATTERN = /^[\w!@#$%^&*.?]{8,}/
+//export const PASSWORD_PATTERN = /^[\w!@#$%^&*.?]{8,}/
 
-export const TEXT_PASSWORD_PATTERN_DESCRIPTION =
-  'A password must contain at least 8 characters, which can be letters, numbers, and special characters like !@#$%^&*.?'
+//export const TEXT_PASSWORD_PATTERN_DESCRIPTION =
+//  'A password must contain at least 8 characters, which can be letters, numbers, and special characters like !@#$%^&*.?'
 
-export const TEXT_PASSWORD_DESCRIPTION =
-  'For security, a link to change your password will be sent to your current email address.'
+// export const TEXT_PASSWORD_DESCRIPTION =
+//   'For security, a link to change your password will be sent to your current email address.'
 
-export const TEXT_PASSWORD_REQUIRED = 'A password is required'
+// export const TEXT_PASSWORD_REQUIRED = 'A password is required'
 
 export type IPasswordAction =
   | {

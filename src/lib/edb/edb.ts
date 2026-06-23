@@ -131,6 +131,8 @@ export const TEXT_SERVER_ISSUE =
 
 export const ACCOUNT_PATH = '/account'
 
+export const APPS_ROUTE = `/apps`
+
 //export const SIGNEDIN_ROUTE = '/account/signedin'
 export const MYACCOUNT_PATH = '/account/myaccount'
 export const SIGN_UP_PATH = `${ACCOUNT_PATH}/signup`
@@ -177,6 +179,8 @@ export const EDB_USER_COOKIE = `${config.appId}.user-v1`
 
 export const AUTH0_TOOLKIT_LOGIN_ROUTE = '/auth/login'
 export const AUTH0_TOOLKIT_LOGOUT_ROUTE = '/auth/logout'
+
+export const APP_ADMIN_USERS_ROUTE = `${APPS_ROUTE}/admin/users`
 
 //export const EDB_REFRESH_TOKEN_COOKIE = "edb-refresh-token"
 
@@ -229,7 +233,7 @@ export const APP_ACCOUNT_OAUTH2_CALLBACK_URL = `${APP_ACCOUNT_OAUTH2_URL}/callba
 export const APP_ACCOUNT_OAUTH2_SIGN_OUT_URL = `${APP_ACCOUNT_OAUTH2_URL}/sign-out`
 //export const APP_ACCOUNT_OAUTH2_SIGNED_OUT_URL = `${APP_ACCOUNT_OAUTH2_URL}/signedout`
 
-export const APP_ADMIN_USERS_URL = `${APP_URL}/admin/users`
+export const APP_ADMIN_USERS_URL = `${APP_URL}/apps/admin/users`
 
 export const API_ABOUT_URL = `${EDB_API_URL}/about`
 export const API_AUTH_URL = `${EDB_API_URL}/auth`

@@ -1,0 +1,9 @@
+{
+  "name": "Users",
+  "description": "User dashboard for admins.",
+  "version": "1.0.0",
+  "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
+  "modified": "2026-06-23T14:07:09.771Z",
+  "hash": "9cd3e9c38a2b79a58bf211a8c07c19b906cbad8487d1e2fab74cf3c9e475a90f",
+  "build": 4
+}
