@@ -116,7 +116,7 @@ export function HeaderLinks({
           >
             <AppIcon appInfo={module} />
 
-            <p className="  text-center truncate ">{module.name}</p>
+            <p className="text-[0.7rem] text-center truncate">{module.name}</p>
           </ModuleButtonLink>
         </li>
       )

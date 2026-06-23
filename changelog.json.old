@@ -1895,6 +1895,10 @@
         {
           "msg": "AppInfo now a provider rather than a store",
           "date": "2026-06-23T13:48:08.126Z"
+        },
+        {
+          "msg": "Refined theme manager to work with next and added inline script to set theme",
+          "date": "2026-06-23T14:41:47.802Z"
         }
       ],
       "Added": [
