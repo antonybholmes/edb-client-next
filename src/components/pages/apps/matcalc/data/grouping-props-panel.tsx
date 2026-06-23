@@ -19,9 +19,9 @@ export function GroupingPropsPanel() {
     const tabs = [
       {
         id: 'Groups',
-        content: <GroupPropsPanel />,
+        content: () => <GroupPropsPanel />,
       },
-      { id: 'Gene Sets', content: <GenesetPropsPanel /> },
+      { id: 'Gene Sets', content: () => <GenesetPropsPanel /> },
     ]
 
     setTabs(tabs)

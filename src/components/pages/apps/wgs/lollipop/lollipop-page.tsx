@@ -71,7 +71,7 @@ import { useAppInfo } from '@/lib/edb/edb-settings'
 import { useZoom } from '@/providers/zoom-provider'
 import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 
-import { useTabs } from '@/components/tabs/tab-store'
+import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
 import {
   useCurrentSheets,
   useFiles,
@@ -114,7 +114,7 @@ function LollipopPage() {
   //   id: nanoid(),
   //   icon: <TableIcon />,
   //   name: 'Table 1',
-  //   content: <DataPanel />,
+  //   content: ()=> <DataPanel />,
   //   isOpen: true,
   // }
 
@@ -147,7 +147,8 @@ function LollipopPage() {
 
   const { open: openDialog } = useDialogs()
 
-  const { setTabs: setToolbarTabs } = useTabs(TOOLBAR_TABS)
+  const { setTabs: setToolbarTabs } = useToolbarTabs()
+  const { setTabs: setSideTabs } = useSideTabs()
 
   async function loadTestData() {
     const gene = 'BTG1'
@@ -215,7 +216,7 @@ function LollipopPage() {
         ////name: nanoid(),
         id: 'Home',
         //size: 2.1,
-        content: (
+        render: () => (
           <>
             <ToolbarTabGroup title="File">
               <ToolbarOpenFile
@@ -313,6 +314,28 @@ function LollipopPage() {
       },
     ]
     setToolbarTabs(tabs)
+
+    const rightTabs: ITab[] = [
+      // {
+      //   //id: nanoid(),
+      //   icon: <LayersIcon />,
+      //   id: 'Protein',
+      //   content: ()=> <ProteinPropsPanel />,
+      // },
+      {
+        //id: nanoid(),
+        icon: <SlidersIcon />,
+        id: 'Display',
+        render: () => <LollipopPropsPanel />,
+      },
+      {
+        //id: nanoid(),
+        icon: <SlidersIcon />,
+        id: 'Features',
+        render: () => <FeaturePropsPanel />,
+      },
+    ]
+    setSideTabs(rightTabs)
   }, [])
 
   useEffect(() => {
@@ -446,7 +469,7 @@ function LollipopPage() {
   //     // id: randId(),
   //     icon: <LayerIcon />,
   //     name: "Groups",
-  //     content: (
+  //     content: ()=>(
   //       <GroupsPanel
   //         df={history.step.dataframe}
   //         groups={groups}
@@ -459,7 +482,7 @@ function LollipopPage() {
   //     // id: randId(),
   //     icon: <FilterIcon />,
   //     name: "Filter Table",
-  //     content: (
+  //     content: ()=>(
   //       <FilterPanel
   //         df={history.step.dataframe}
 
@@ -470,7 +493,7 @@ function LollipopPage() {
   //     // id: randId(),
   //     icon: <ClockRotateLeftIcon />,
   //     name: "History",
-  //     content: (
+  //     content: ()=>(
   //       <HistoryPanel />
   //     ),
   //   },
@@ -480,7 +503,7 @@ function LollipopPage() {
   //   {
   //     icon: <SlidersIcon />,
   //     label: "Display",
-  //     content: (
+  //     content: ()=>(
   //       <DisplayPropsPanel
   //         cf={clusterFrame.cf}
   //         displayProps={displayProps}
@@ -511,7 +534,7 @@ function LollipopPage() {
   //     id: nanoid(),
   //     icon: <TableIcon className="fill-theme" />,
   //     name: "Data",
-  //     content: (
+  //     content: ()=>(
   //       <DataPanel />
 
   //     ),
@@ -524,7 +547,7 @@ function LollipopPage() {
   //     name: plot.name,
   //     icon: <ChartIcon className="fill-theme" />,
   //     onDelete: () => plotDispatch({ type: "remove", id: plot.id }),
-  //     content: (
+  //     content: ()=>(
   //       <LollipopPanelWrapper
   //         panelId={plot.name}
   //         df={plot.df}
@@ -533,32 +556,11 @@ function LollipopPage() {
   //   })
   // })
 
-  const rightTabs: ITab[] = [
-    // {
-    //   //id: nanoid(),
-    //   icon: <LayersIcon />,
-    //   id: 'Protein',
-    //   content: <ProteinPropsPanel />,
-    // },
-    {
-      //id: nanoid(),
-      icon: <SlidersIcon />,
-      id: 'Display',
-      content: <LollipopPropsPanel />,
-    },
-    {
-      //id: nanoid(),
-      icon: <SlidersIcon />,
-      id: 'Features',
-      content: <FeaturePropsPanel />,
-    },
-  ]
-
   const fileMenuTabs: ITab[] = [
     {
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      content: (
+      render: () => (
         <DropdownMenuItem
           aria-label="Open file on your computer"
           onClick={() => _open('variants')}
@@ -574,7 +576,7 @@ function LollipopPage() {
     },
     {
       id: 'Export',
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
@@ -611,8 +613,6 @@ function LollipopPage() {
       <ShortcutLayout signinRequired={false}>
         <Toolbar>
           <ToolbarMenu
-            groupId={_id}
-            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
@@ -631,8 +631,6 @@ function LollipopPage() {
             }
           />
           <ToolbarPanel
-            groupId={_id}
-            tabs={tabs}
             tabShortcutMenu={
               <ShowOptionsMenu
                 show={showSideBar}
@@ -645,9 +643,7 @@ function LollipopPage() {
         </Toolbar>
 
         <TabSlideBar
-          id="lollipop-data-panel"
           side="right"
-          tabs={rightTabs}
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >

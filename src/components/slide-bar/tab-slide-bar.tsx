@@ -1,19 +1,15 @@
-import { TabContentPanels } from '../shadcn/ui/themed/v2/tabs'
-
-import { type ITabProvider } from '../tabs/tab-provider'
-
 import { TabIndicatorFollowBlock } from '../tabs/tab-indicator-follow-block'
 import { TabIndicatorSelectedH } from '../tabs/tab-indicator-selected-h'
+import { OPTS_SIDEBAR_ID, useTabs } from '../tabs/tab-store'
 import { getSelectedMouseOverSize, UnderlineTabs } from '../tabs/underline-tabs'
 import {
-  OPTS_SIDEBAR_ID,
   ResizableSidebar,
   ResizableSidebarHeaderPortal,
   useResizableSidebarContext,
 } from './resizable-sidebar'
 import { type ISlideBarProps } from './slide-bar'
 
-interface IProps extends ITabProvider, ISlideBarProps {
+interface IProps extends ISlideBarProps {
   showCloseButton?: boolean
   limits?: [number, number]
   display?: 'block' | 'flex'
@@ -21,6 +17,14 @@ interface IProps extends ITabProvider, ISlideBarProps {
 
 export function SideBarTabs() {
   const { id } = useResizableSidebarContext() // Assuming useResizableSidebar is a hook to get the id of the ResizableSidebar
+
+  const { tab } = useTabs(id)
+
+  const TabContentComponent = tab?.render
+
+  if (!TabContentComponent) {
+    return null
+  }
 
   return (
     <>
@@ -42,7 +46,7 @@ export function SideBarTabs() {
         </UnderlineTabs>
       </ResizableSidebarHeaderPortal>
 
-      <TabContentPanels groupId={id} className="flex-col grow" />
+      <TabContentComponent />
     </>
   )
 }

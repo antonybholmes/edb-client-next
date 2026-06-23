@@ -1903,6 +1903,10 @@
         {
           "msg": "Tabs scoped to apps. More UI controlled through tabs context rather than passing by props",
           "date": "2026-06-23T20:11:27.098Z"
+        },
+        {
+          "msg": "Added support for tabs to take component refs and render on the fly",
+          "date": "2026-06-23T23:17:16.143Z"
         }
       ],
       "Added": [

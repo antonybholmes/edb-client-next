@@ -3,17 +3,12 @@
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
-import {
-  Toolbar,
-  TOOLBAR_TABS,
-  ToolbarMenu,
-  ToolbarPanel,
-} from '@/toolbar/toolbar'
+import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 
 import { SearchIcon } from '@/icons/search-icon'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import {
@@ -80,8 +75,7 @@ import { useDialogs } from '../../../../dialogs/dialogs'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
-import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
-import { useTabs } from '@/components/tabs/tab-store'
+import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
 import { AssemblySelect } from '@/lib/edb/assembly-select'
 import { locStr } from '@/lib/genomic/genomic'
 import {
@@ -116,7 +110,8 @@ function SeqBrowserPage() {
 
   const { setSettingsTabs, setDefaultSettingsTab } = useSettingsTabs()
 
-  const { setTabs: setToolbarTabs } = useTabs(TOOLBAR_TABS)
+  const { setTabs: setToolbarTabs } = useToolbarTabs()
+  const { setTabs: setSideTabs } = useSideTabs()
 
   const { query, setQuery } = useSearch()
 
@@ -164,12 +159,12 @@ function SeqBrowserPage() {
           {
             id: 'Plot',
             icon: <CompassIcon />,
-            content: <SettingsPlotPanel />,
+            render: () => <SettingsPlotPanel />,
           },
           {
             id: 'Tracks',
             icon: <LayersIcon />,
-            content: <SettingsTracksPanel />,
+            render: () => <SettingsTracksPanel />,
           },
         ],
       },
@@ -182,7 +177,7 @@ function SeqBrowserPage() {
       {
         //id: nanoid(),
         id: 'Home',
-        content: (
+        render: () => (
           <>
             <ToolbarTabGroup title={TEXT_FILE}>
               <ToolbarIconButton
@@ -408,6 +403,26 @@ function SeqBrowserPage() {
 
     setToolbarTabs(tabs)
 
+    const chartTabs: ITab[] = [
+      {
+        id: 'Tracks',
+        icon: <SearchIcon />,
+        render: () => <TracksPropsPanel />,
+      },
+      {
+        id: 'Locations',
+        icon: <SettingsIcon />,
+        render: () => <LocationsPropsPanel />,
+      },
+      // {
+      //   id: TEXT_ACCOUNT,
+      //   icon: <SlidersIcon />,
+      //   content: ()=> <AccountPropsPanel />,
+      // },
+    ]
+
+    setSideTabs(chartTabs)
+
     setQuery(['chr3:187441954-187466041'])
   }, [])
 
@@ -469,7 +484,7 @@ function SeqBrowserPage() {
       //id: nanoid(),
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
@@ -492,27 +507,6 @@ function SeqBrowserPage() {
       ),
     },
   ]
-
-  const chartTabs: ITab[] = useMemo(
-    () => [
-      {
-        id: 'Tracks',
-        icon: <SearchIcon />,
-        content: <TracksPropsPanel />,
-      },
-      {
-        id: 'Locations',
-        icon: <SettingsIcon />,
-        content: <LocationsPropsPanel />,
-      },
-      // {
-      //   id: TEXT_ACCOUNT,
-      //   icon: <SlidersIcon />,
-      //   content: <AccountPropsPanel />,
-      // },
-    ],
-    []
-  )
 
   return (
     <>
@@ -579,8 +573,6 @@ function SeqBrowserPage() {
         </Toolbar>
 
         <TabSlideBar
-          id={OPTS_SIDEBAR_ID}
-          tabs={chartTabs}
           limits={[50, 85]}
           side="right"
           open={showSideBar}

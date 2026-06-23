@@ -30,7 +30,7 @@ import { RowLabelsSettingsPanel } from './row-labels-settings'
 import { RowTreeSettingsPanel } from './row-tree-settings'
 
 export interface IProps extends IDivProps {
-  plotAddr: string
+  plot: string
 }
 
 export function HeatmapPropsPanel({ ref }: IDivProps) {

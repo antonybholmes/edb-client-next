@@ -63,7 +63,7 @@ export function ShortcutContent({
   return (
     <Tabs
       orientation="vertical"
-      value={tab.id ?? ''}
+      value={tab?.id ?? ''}
       onValueChange={(v) => {
         //const idx = where(tabs, (t) => t.id === v)
         //if (idx.length > 0) {
@@ -81,7 +81,7 @@ export function ShortcutContent({
         {...props}
       >
         {tabs.map((t, ti) => {
-          const selected = t.id === tab.id
+          const selected = t.id === tab?.id
           return (
             <SimpleTooltip content={t.id} key={ti} side="right">
               <TabsTrigger

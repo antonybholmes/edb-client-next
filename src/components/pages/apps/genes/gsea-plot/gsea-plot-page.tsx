@@ -47,7 +47,6 @@ import { HeaderPortal } from '@/components/header/header-portal'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { ThemeLink } from '@/components/link/theme-link'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
-import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ZoomSlider } from '@/components/toolbar/zoom-slider'
@@ -65,6 +64,7 @@ import Fuse from 'fuse.js'
 import { produce } from 'immer'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { GeneSetsPropsPanel } from './geneset-props-panel'
@@ -121,8 +121,121 @@ export function GseaPlotPage() {
 
   const { open: openDialog } = useDialogs()
 
+  const { setTabs: setToolbarTabs } = useToolbarTabs()
+  const { setTabs: setSideTabs } = useSideTabs()
+
   useEffect(() => {
     setAppInfo(APP_INFO)
+
+    const tabs: ITab[] = [
+      {
+        id: 'Home',
+        render: () => (
+          <>
+            <ToolbarTabGroup title={TEXT_FILE}>
+              <ToolbarOpenFile
+                onOpen={() => {
+                  openDialog({
+                    type: 'open',
+                    payload: {
+                      callback: (message, files) => {
+                        onBinaryFileChange(message, files, loadGseaZip)
+                      },
+                    },
+                  })
+                }}
+                multiple={true}
+              />
+
+              {selectedTab === 0 && (
+                <ToolbarIconButton
+                  title={TEXT_SAVE_IMAGE}
+                  onClick={() => {
+                    openDialog({
+                      type: 'save-image',
+                      payload: {
+                        name: 'gsea',
+                        svgRef,
+                      },
+                    })
+                  }}
+                >
+                  <DownloadIcon />
+                </ToolbarIconButton>
+              )}
+            </ToolbarTabGroup>
+
+            <ToolbarTabGroup title="Plot Size">
+              <DoubleNumericalInput
+                h="md"
+                v1={settings.axes.x.length}
+                placeholder="Width"
+                limit={[1, 1000]}
+                dp={0}
+                onNumChange1={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.axes.x.length = v
+                    })
+                  )
+                }}
+                v2={settings.es.axes.y.length}
+                onNumChange2={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.es.axes.y.length = v
+                    })
+                  )
+                }}
+              />
+            </ToolbarTabGroup>
+
+            <ToolbarTabGroup title="Columns">
+              <NumericalInput
+                value={settings.page.columns}
+                h="md"
+                placeholder="Opacity"
+                limit={[1, 100]}
+                step={1}
+                onNumChanged={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.page.columns = v
+                    })
+                  )
+                }}
+                className="w-16 rounded-theme"
+              />
+            </ToolbarTabGroup>
+          </>
+        ),
+      },
+      {
+        id: 'Help',
+        render: () => (
+          <>
+            <ToolbarHelpTabGroup url={HELP_URL} />
+          </>
+        ),
+      },
+    ]
+
+    setToolbarTabs(tabs)
+
+    const rightTabs: ITab[] = [
+      {
+        //icon: <LayersIcon />,
+        id: 'Gene Sets',
+        render: () => <GeneSetsPropsPanel />,
+      },
+      {
+        id: TEXT_DISPLAY,
+        //icon: <SlidersIcon />,
+        render: () => <GseaDisplayPropsPanel />,
+      },
+    ]
+
+    setSideTabs(rightTabs)
   }, [])
 
   useEffect(() => {
@@ -144,120 +257,12 @@ export function GseaPlotPage() {
     })
   }, [reportsMap])
 
-  const tabs: ITab[] = [
-    {
-      id: 'Home',
-      content: (
-        <>
-          <ToolbarTabGroup title={TEXT_FILE}>
-            <ToolbarOpenFile
-              onOpen={() => {
-                openDialog({
-                  type: 'open',
-                  payload: {
-                    callback: (message, files) => {
-                      onBinaryFileChange(message, files, loadGseaZip)
-                    },
-                  },
-                })
-              }}
-              multiple={true}
-            />
-
-            {selectedTab === 0 && (
-              <ToolbarIconButton
-                title={TEXT_SAVE_IMAGE}
-                onClick={() => {
-                  openDialog({
-                    type: 'save-image',
-                    payload: {
-                      name: 'gsea',
-                      svgRef,
-                    },
-                  })
-                }}
-              >
-                <DownloadIcon />
-              </ToolbarIconButton>
-            )}
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title="Plot Size">
-            <DoubleNumericalInput
-              h="md"
-              v1={settings.axes.x.length}
-              placeholder="Width"
-              limit={[1, 1000]}
-              dp={0}
-              onNumChange1={(v) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.axes.x.length = v
-                  })
-                )
-              }}
-              v2={settings.es.axes.y.length}
-              onNumChange2={(v) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.es.axes.y.length = v
-                  })
-                )
-              }}
-            />
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title="Columns">
-            <NumericalInput
-              value={settings.page.columns}
-              h="md"
-              placeholder="Opacity"
-              limit={[1, 100]}
-              step={1}
-              onNumChanged={(v) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.page.columns = v
-                  })
-                )
-              }}
-              className="w-16 rounded-theme"
-            />
-          </ToolbarTabGroup>
-        </>
-      ),
-    },
-    {
-      id: 'Help',
-      content: (
-        <>
-          <ToolbarHelpTabGroup url={HELP_URL} />
-        </>
-      ),
-    },
-  ]
-
-  const rightTabs: ITab[] = useMemo(() => {
-    return [
-      {
-        //icon: <LayersIcon />,
-        id: 'Gene Sets',
-        content: <GeneSetsPropsPanel />,
-      },
-      {
-        id: TEXT_DISPLAY,
-        //icon: <SlidersIcon />,
-        content: <GseaDisplayPropsPanel />,
-      },
-    ]
-  }, [datasetsForUse, reportTabs])
-
   const fileMenuTabs: ITab[] = [
     {
       //id: nanoid(),
       id: TEXT_OPEN,
       icon: <OpenIcon variant="colorful" />,
-      content: (
+      render: () => (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -281,7 +286,7 @@ export function GseaPlotPage() {
     {
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
@@ -405,8 +410,6 @@ export function GseaPlotPage() {
       <ShortcutLayout signinRequired={false}>
         <Toolbar>
           <ToolbarMenu
-            groupId="gsea-toolbar"
-            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             value={toolbarTab}
@@ -425,15 +428,13 @@ export function GseaPlotPage() {
             }
           />
           <ToolbarPanel
-            groupId="gsea-toolbar"
-            tabs={tabs}
             tabShortcutMenu={
               <OptsSidebarMenu open={edbSettings.sidebar.show} />
             }
           />
         </Toolbar>
 
-        <TabSlideBar id={OPTS_SIDEBAR_ID} side="right" tabs={rightTabs}>
+        <TabSlideBar side="right">
           {rankedGenes.length > 0 ? (
             <FileDropZonePanel
               onFileDrop={(files) => {

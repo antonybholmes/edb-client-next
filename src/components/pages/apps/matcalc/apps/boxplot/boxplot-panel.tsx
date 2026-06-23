@@ -13,14 +13,13 @@ import { messageImageFileFormat, useMessages } from '@/providers/messages'
 import { useZoom } from '@/providers/zoom-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import type { ITab } from '@/components/tabs/tab-provider'
 import type { IDivProps } from '@/interfaces/div-props'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { Card } from '@/themed/card'
 import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
-import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
+import { useSideTabs } from '@/components/tabs/tab-store'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
 import { getPlot } from '../../history/history-provider/history-hooks'
 import { useHistory } from '../../history/history-provider/history-provider'
@@ -55,6 +54,23 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
   const [showSideBar, setShowSideBar] = useState(true)
 
   const df = sheet as AnnotationDataFrame
+
+  const { setTabs: setSideTabs } = useSideTabs()
+
+  useEffect(() => {
+    setSideTabs([
+      {
+        id: 'Display',
+        icon: <SlidersIcon />,
+        render: () => <BoxPlotPropsPanel plotAddr={plotAddr} />,
+      },
+      {
+        id: 'Data',
+        icon: <SlidersIcon />,
+        render: () => <BoxPlotDataPanel plotAddr={plotAddr} />,
+      },
+    ])
+  }, [])
 
   useEffect(() => {
     //const filteredMessages = messages.filter(m => m.target === plot?.id)
@@ -101,23 +117,6 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
     )
   }, [zoom])
 
-  const plotRightTabs: ITab[] = [
-    {
-      //id: nanoid(),
-      id: 'Display',
-      icon: <SlidersIcon />,
-
-      content: <BoxPlotPropsPanel plotAddr={plotAddr} />,
-    },
-    {
-      //id: nanoid(),
-      id: 'Data',
-      icon: <SlidersIcon />,
-
-      content: <BoxPlotDataPanel plotAddr={plotAddr} />,
-    },
-  ]
-
   return (
     <>
       {/* <DialogsRoot /> */}
@@ -161,9 +160,7 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
         </ResizablePanelGroup> */}
 
         <TabSlideBar
-          id={OPTS_SIDEBAR_ID}
           side="right"
-          tabs={plotRightTabs}
           //onValueChange={setSelectedTab}
           //value={selectedTab}
           open={showSideBar}

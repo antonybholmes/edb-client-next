@@ -7,12 +7,7 @@ import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 
 import { PlayIcon } from '@/icons/play-icon'
-import {
-  Toolbar,
-  TOOLBAR_TABS,
-  ToolbarMenu,
-  ToolbarPanel,
-} from '@/toolbar/toolbar'
+import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
@@ -85,7 +80,7 @@ import {
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
 
-import { useTabs } from '@/components/tabs/tab-store'
+import { useToolbarTabs } from '@/components/tabs/tab-store'
 import {
   useCurrentSheets,
   useFiles,
@@ -119,7 +114,7 @@ export function AnnotationPage() {
 
   const [indicatorMessage, setIndicatorMessage] = useState<string | null>(null)
 
-  const { setTabs: setToolbarTabs } = useTabs(TOOLBAR_TABS)
+  const { setTabs: setToolbarTabs } = useToolbarTabs()
 
   useEffect(() => {
     setAppInfo(APP_INFO)
@@ -127,7 +122,7 @@ export function AnnotationPage() {
       {
         //id: nanoid(),
         id: 'Home',
-        content: (
+        render: () => (
           <>
             <ToolbarTabGroup title={TEXT_FILE} className="items-start">
               <ToolbarOpenFile
@@ -413,7 +408,7 @@ export function AnnotationPage() {
       //id: nanoid(),
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      content: (
+      render: () => (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -436,7 +431,7 @@ export function AnnotationPage() {
     {
       //id: nanoid(),
       id: TEXT_SAVE_AS,
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label="Save text file"

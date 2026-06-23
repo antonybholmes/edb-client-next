@@ -28,10 +28,7 @@ import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import {
-  OPTS_SIDEBAR_ID,
-  ResizableSidebar,
-} from '@/components/slide-bar/resizable-sidebar'
+import { ResizableSidebar } from '@/components/slide-bar/resizable-sidebar'
 
 import {
   useCurrentSheets,
@@ -125,13 +122,13 @@ export function DataPanel() {
   //   {
   //     id: 'Labels',
   //     icon: <LayersIcon />,
-  //     content: <DataPropsPanel />,
+  //     content: ()=> <DataPropsPanel />,
   //   },
   //   {
   //     id: 'Filter',
   //     icon: <FilterIcon />,
 
-  //     content: (
+  //     content: ()=>(
   //       <PropsPanel className="gap-y-2">
   //         <FilterPropsPanel />
   //       </PropsPanel>
@@ -163,7 +160,7 @@ export function DataPanel() {
 
   return (
     <>
-      <ResizableSidebar id={OPTS_SIDEBAR_ID} side="right">
+      <ResizableSidebar side="right">
         <TabbedDataFrames
           selectedSheet={sheet?.id ?? ''}
           dataFrames={sheets as AnnotationDataFrame[]}

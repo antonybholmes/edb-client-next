@@ -151,7 +151,7 @@ export function GseaWebPage() {
   const tabs: ITab[] = [
     {
       id: 'Home',
-      content: (
+      render: () => (
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
@@ -233,31 +233,29 @@ export function GseaWebPage() {
     },
     {
       id: 'Help',
-      content: <ToolbarHelpTabGroup url={HELP_URL} />,
+      render: () => <ToolbarHelpTabGroup url={HELP_URL} />,
     },
   ]
 
-  const rightTabs: ITab[] = useMemo(() => {
-    return [
-      {
-        icon: <LayersIcon />,
-        id: 'Gene Sets',
-        content: <GeneSetsPropsPanel />,
-      },
-      {
-        id: TEXT_DISPLAY,
-        icon: <SlidersIcon />,
-        content: <GseaDisplayPropsPanel />,
-      },
-    ]
-  }, [datasetsForUse, reportTabs])
+  const rightTabs: ITab[] = [
+    {
+      icon: <LayersIcon />,
+      id: 'Gene Sets',
+      render: () => <GeneSetsPropsPanel />,
+    },
+    {
+      id: TEXT_DISPLAY,
+      icon: <SlidersIcon />,
+      render: () => <GseaDisplayPropsPanel />,
+    },
+  ]
 
   const fileMenuTabs: ITab[] = [
     {
       //id: nanoid(),
       id: TEXT_OPEN,
       icon: <OpenIcon variant="colorful" />,
-      content: (
+      render: () => (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -281,7 +279,7 @@ export function GseaWebPage() {
     {
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

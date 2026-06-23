@@ -3,7 +3,7 @@ import type { ISaveAsFileType, ISaveAsResponse } from '@/dialogs/save-as-dialog'
 import { SaveImageDialog } from '@/dialogs/save-image-dialog'
 import { makeUuid } from '@/lib/id'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
-import type { ReactNode, RefObject } from 'react'
+import type { ComponentType, ReactNode, RefObject } from 'react'
 import { create } from 'zustand'
 import { OpenFiles } from '../pages/open-files'
 import { BasicAlertDialog } from './basic-alert-dialog'
@@ -38,6 +38,7 @@ type DialogTypeMap = {
   alert: {
     title?: string
     content?: ReactNode
+    component?: ComponentType<{}>
     type?: ModalType
     callback?: (response: string) => void
   }
@@ -106,29 +107,29 @@ interface IDialogStore {
 //   return { ...dialog, time: Date.now() } as IDialog<T>
 // }
 
-export const useDialogStore = create<IDialogStore>(set => ({
+export const useDialogStore = create<IDialogStore>((set) => ({
   stack: [], //{ type: 'none', id: makeUuid(), time: Date.now() },
 
-  open: d => {
+  open: (d) => {
     const id = makeUuid()
     const dialog = { ...d, id, time: Date.now() }
     console.log('Opening dialog', dialog.type, id)
 
-    set(state => ({
+    set((state) => ({
       stack: [...state.stack.slice(-MAX_DIALOGS + 1), dialog],
     }))
 
     return {
       id,
       close: () =>
-        set(state => ({
-          stack: state.stack.filter(d => d.id !== id),
+        set((state) => ({
+          stack: state.stack.filter((d) => d.id !== id),
         })),
     }
   },
   bringToFront: (id: string) =>
-    set(state => {
-      const dialog = state.stack.find(d => d.id === id)
+    set((state) => {
+      const dialog = state.stack.find((d) => d.id === id)
 
       if (!dialog) {
         return state
@@ -136,24 +137,24 @@ export const useDialogStore = create<IDialogStore>(set => ({
 
       return {
         stack: [
-          ...state.stack.filter(d => d.id !== id),
+          ...state.stack.filter((d) => d.id !== id),
           { ...dialog, time: Date.now() },
         ],
       }
     }),
   close: (id: string) =>
-    set(state => ({
+    set((state) => ({
       // if id is provided, remove that dialog. If not, remove the top dialog.
       stack: id
-        ? state.stack.filter(d => d.id !== id)
+        ? state.stack.filter((d) => d.id !== id)
         : state.stack.slice(0, -1),
     })),
   clear: () => set({ stack: [] }),
 }))
 
 export function useDialogs() {
-  const open = useDialogStore(s => s.open)
-  const close = useDialogStore(s => s.close)
+  const open = useDialogStore((s) => s.open)
+  const close = useDialogStore((s) => s.close)
 
   //const { open, close } = useDialogStore(
   //  useShallow(s => ({ open: s.open, close: s.close }))
@@ -219,20 +220,24 @@ function DialogRenderer({
     case 'alert': {
       const {
         title,
-        content: message,
+        content,
+        component,
         type = 'warning',
         callback,
       } = dialog.payload
+
+      const Component = component
       return (
         <BasicAlertDialog
           title={title}
           modalType={type}
-          onResponse={r => {
+          onResponse={(r) => {
             close(dialog.id)
             callback?.(r)
           }}
         >
-          {message}
+          {content && content}
+          {Component && <Component />}
         </BasicAlertDialog>
       )
     }
@@ -242,7 +247,7 @@ function DialogRenderer({
         <OKCancelDialog
           title={title}
           modalType={type}
-          onResponse={response => {
+          onResponse={(response) => {
             close(dialog.id)
             callback?.(response)
           }}
@@ -257,7 +262,7 @@ function DialogRenderer({
         <OKCancelDialog
           title={title}
           modalType="warning"
-          onResponse={response => {
+          onResponse={(response) => {
             close(dialog.id)
             callback?.(response)
           }}
@@ -270,7 +275,7 @@ function DialogRenderer({
       const { callback } = dialog.payload
       return (
         <SettingsDialog
-          onResponse={response => {
+          onResponse={(response) => {
             close(dialog.id)
             callback?.(response)
           }}
@@ -292,8 +297,8 @@ interface IProps {
 }
 
 export function DialogsRoot({ filter = [] }: IProps) {
-  const stack = useDialogStore(s => s.stack)
-  const close = useDialogStore(s => s.close)
+  const stack = useDialogStore((s) => s.stack)
+  const close = useDialogStore((s) => s.close)
   const dialog = stack.at(-1) as Dialog | undefined // top dialog is still a discriminated union for rendering
 
   if (!dialog || (filter.length > 0 && !filter.includes(dialog.type))) {

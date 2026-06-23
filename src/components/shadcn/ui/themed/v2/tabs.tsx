@@ -6,7 +6,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_RING_CLS } from '@/theme'
 import { Tabs as TabsPrimitive } from '@base-ui/react/tabs'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { Activity, memo } from 'react'
+import { Activity } from 'react'
 
 import {
   forwardRef,
@@ -184,7 +184,7 @@ export function TabsContent({
   )
 }
 
-export const TabContentPanel = memo(function TabContentPanel({
+export function TabContentPanel({
   tabIndex,
   tabs,
 }: IClassProps & {
@@ -205,14 +205,28 @@ export const TabContentPanel = memo(function TabContentPanel({
     return null
   }
 
+  if (selectedTab.component) {
+    const TabContentComponent = selectedTab.component
+
+    return <TabContentComponent />
+  }
+
+  if (selectedTab.render) {
+    // forced React to turn your anonymous render function into an official
+    // component element by rendering it as a JSX tag (<TabContentComponent />).
+    const TabContentComponent = selectedTab.render
+
+    return <TabContentComponent />
+  }
+
+  return null
+
   // return (
   //   <BaseCol className="h-full grow overflow-hidden">
   //     {selectedTab.content}
   //   </BaseCol>
   // )
-
-  return selectedTab.content
-})
+}
 
 // interface ITabPanelProps extends IChildrenProps {
 //   active: boolean
@@ -261,19 +275,26 @@ export function TabContentPanels({
     <Tabs
       value={selectedTab?.id ?? ''}
       onValueChange={() => {}}
-      //id={groupId}
       className={className}
       {...props}
     >
-      {tabs.map((tab, ti) => (
-        <TabsContent
-          value={tab.id}
-          key={ti}
-          className={cn('h-full', contentCls)}
-        >
-          {tab.content}
-        </TabsContent>
-      ))}
+      {tabs.map((tab, ti) => {
+        const TabContentComponent = tab.render
+
+        if (!TabContentComponent) {
+          return null
+        }
+
+        return (
+          <TabsContent
+            value={tab.id}
+            key={ti}
+            className={cn('h-full', contentCls)}
+          >
+            <TabContentComponent />
+          </TabsContent>
+        )
+      })}
     </Tabs>
   )
 }
@@ -283,9 +304,12 @@ export function TabContentForceMountPanels({
 }: ITabContentPanelsProps) {
   const { tabs, selectedTabIndex } = useTabs(groupId)
 
-  return tabs.map((tab, ti) => (
-    <Activity mode={ti == selectedTabIndex ? 'visible' : 'hidden'} key={ti}>
-      {tab.content}
-    </Activity>
-  ))
+  return tabs.map((tab, ti) => {
+    const TabContentComponent = tab.render
+    return (
+      <Activity mode={ti == selectedTabIndex ? 'visible' : 'hidden'} key={ti}>
+        {TabContentComponent ? <TabContentComponent /> : null}
+      </Activity>
+    )
+  })
 }

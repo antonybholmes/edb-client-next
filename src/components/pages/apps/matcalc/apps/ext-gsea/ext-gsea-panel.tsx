@@ -3,7 +3,6 @@ import { SlidersIcon } from '@/icons/sliders-icon'
 import { useEffect, useRef, useState } from 'react'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
-import { type ITab } from '@/components/tabs/tab-provider'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
@@ -22,7 +21,7 @@ import { produce } from 'immer'
 
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
-import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
+import { useSideTabs } from '@/components/tabs/tab-store'
 import { getPlot } from '../../history/history-provider/history-hooks'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { ExtGseaPlot } from '../../history/history-provider/history-types'
@@ -66,6 +65,18 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'ext-gsea')
   const { settings, updateSettings } = useMatcalcSettings()
 
+  const { setTabs: setSideTabs } = useSideTabs()
+
+  useEffect(() => {
+    setSideTabs([
+      {
+        id: TEXT_DISPLAY,
+        icon: <SlidersIcon />,
+        render: () => <ExtGseaPropsPanel plotAddr={plotAddr} />,
+      },
+    ])
+  }, [])
+
   useEffect(() => {
     const filteredMessages = messages.filter(
       (message) => message.target === plot?.id
@@ -94,15 +105,6 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
       })
     )
   }, [zoom])
-
-  const plotRightTabs: ITab[] = [
-    {
-      //id: nanoid(),
-      id: TEXT_DISPLAY,
-      icon: <SlidersIcon />,
-      content: <ExtGseaPropsPanel plotAddr={plotAddr} />,
-    },
-  ]
 
   return (
     <>
@@ -157,8 +159,6 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
         </ResizablePanelGroup> */}
 
       <TabSlideBar
-        id={OPTS_SIDEBAR_ID}
-        tabs={plotRightTabs}
         side="right"
         //tabs={plotRightTabs}
         //onValueChange={setSelectedTab}

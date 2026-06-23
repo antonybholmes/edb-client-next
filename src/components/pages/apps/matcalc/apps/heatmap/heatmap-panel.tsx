@@ -1,5 +1,3 @@
-import { SlidersIcon } from '@/icons/sliders-icon'
-
 import { useEffect, useRef } from 'react'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
@@ -19,8 +17,7 @@ import { useZoom } from '@/providers/zoom-provider'
 import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
-import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
-
+import { useSideTabs } from '@/components/tabs/tab-store'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useHeatmapContext } from './heatmap-provider'
 import { HeatMapSvg } from './heatmap-svg'
@@ -50,6 +47,22 @@ export function HeatmapPanel() {
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'heatmap')
 
   const { open: openDialog } = useDialogs()
+
+  const { setTabs: setSideTabs } = useSideTabs()
+
+  const plotRightTabs: ITab[] = [
+    {
+      //id: nanoid(),
+      id: TEXT_DISPLAY,
+
+      //content: () => <HeatmapPropsPanel />,
+      component: HeatmapPropsPanel,
+    },
+  ]
+
+  useEffect(() => {
+    setSideTabs(plotRightTabs)
+  }, [])
 
   useEffect(() => {
     // const filteredMessages = messages.filter(
@@ -91,20 +104,6 @@ export function HeatmapPanel() {
     )
   }, [plot, zoom])
 
-  const plotRightTabs: ITab[] = [
-    {
-      //id: nanoid(),
-      id: TEXT_DISPLAY,
-      icon: <SlidersIcon />,
-      content: (
-        <HeatmapPropsPanel
-
-        //cf={plot?.customProps.cf as IClusterFrame}
-        />
-      ),
-    },
-  ]
-
   // const svg = useMemo(
   //   () => (
   //     <Card variant="content" className="mx-2 mb-2 grow">
@@ -125,8 +124,6 @@ export function HeatmapPanel() {
       {/* <DialogsRoot /> */}
 
       <TabSlideBar
-        id={OPTS_SIDEBAR_ID}
-        tabs={plotRightTabs}
         side="right"
         //tabs={plotRightTabs}
         //onValueChange={setSelectedTab}

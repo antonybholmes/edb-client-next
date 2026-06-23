@@ -1,5 +1,5 @@
 import type { UndefStr } from '@/lib/text/text'
-import { type ReactNode } from 'react'
+import { ComponentType, type ReactNode } from 'react'
 
 export type NodeType = 'folder' | 'file'
 export type OpenState = boolean | 'auto'
@@ -20,7 +20,8 @@ export interface ITab {
   // alternative icon when tab is open
   openIcon?: ReactNode
   //showIcon?: boolean
-  content?: ReactNode
+  render?: () => ReactNode
+  component?: ComponentType<{}>
   data?: unknown
   size?: number
   isOpen?: OpenState

@@ -22,13 +22,12 @@ import { messageImageFileFormat, useMessages } from '@/providers/messages'
 import { useZoom } from '@/providers/zoom-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import type { ITab } from '@/components/tabs/tab-provider'
 import type { IDivProps } from '@/interfaces/div-props'
 import { Card } from '@/themed/card'
 import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
-import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
+import { useSideTabs } from '@/components/tabs/tab-store'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
@@ -105,19 +104,18 @@ export function VolcanoPanel({
   const { open: openDialog } = useDialogs()
 
   const { settings, updateSettings } = useMatcalcSettings()
+  const { setTabs: setSideTabs } = useSideTabs()
+  useEffect(() => {
+    setSideTabs([
+      {
+        //id: nanoid(),
+        id: 'Display',
+        icon: <SlidersIcon />,
 
-  //const df = plot.customProps.df
-
-  // const [displayProps, setDisplayProps] = useState<IVolcanoProps>(() => {
-  //   const xdata = getNumCol(df, findCol(df, x))
-
-  //   const ydata = y ? getNumCol(df, findCol(df, y)) : range(df.shape[0])
-
-  //   const xlim = autoLim([Math.min(...xdata), Math.max(...xdata)])
-  //   const ylim = autoLim([Math.min(...ydata), Math.max(...ydata)])
-
-  //   return makeDefaultVolcanoProps(xlim, ylim)
-  // })
+        render: () => <VolcanoPropsPanel x={x} y={y} />,
+      },
+    ])
+  }, [])
 
   useEffect(() => {
     //const filteredMessage = messages.filter(m => m.target === plot?.id)
@@ -155,22 +153,10 @@ export function VolcanoPanel({
     )
   }, [zoom])
 
-  const plotRightTabs: ITab[] = [
-    {
-      //id: nanoid(),
-      id: 'Display',
-      icon: <SlidersIcon />,
-
-      content: <VolcanoPropsPanel x={x} y={y} />,
-    },
-  ]
-
   return (
     <BaseCol ref={ref} className="h-full overflow-hidden grow">
       <TabSlideBar
-        id={OPTS_SIDEBAR_ID}
         side="right"
-        tabs={plotRightTabs}
         open={settings.sidebar.show}
         onOpenChange={(v) => {
           const newSettings = produce(settings, (draft) => {

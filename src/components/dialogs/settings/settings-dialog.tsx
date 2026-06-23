@@ -95,17 +95,17 @@ const DEFAULT_TABS: ITab[] = [
             id: 'Dark Mode',
             description:
               'Dark mode is a popular feature for reducing eye strain and improving readability in low-light environments.',
-            content: <SettingsDarkModePanel />,
+            render: () => <SettingsDarkModePanel />,
           },
           {
             id: 'Toolbars',
             description: 'Customize toolbar settings.',
-            content: <SettingsToolbarPanel />,
+            render: () => <SettingsToolbarPanel />,
           },
           {
             id: 'Apps',
             description: 'Manage and configure apps.',
-            content: <AppsToolbarPanel />,
+            render: () => <AppsToolbarPanel />,
           },
         ],
       },
@@ -183,7 +183,7 @@ export function SettingsDialog({
                   {tab.children?.map((childTab, childi) => {
                     return (
                       <Fragment key={childi}>
-                        {childTab.content && childTab.content}
+                        {childTab.render && childTab.render}
 
                         {/* Show sub blocks with a consistent UI */}
                         {childTab.children &&
@@ -193,7 +193,7 @@ export function SettingsDialog({
                                 title={getTabName(g)}
                                 key={gi}
                               >
-                                {g.content}
+                                {g.render}
                               </SettingsAccordionItem>
                             )
                           })}
@@ -265,7 +265,7 @@ export function SettingsDialog({
                     key={gi}
                     showBorder={gi > 0}
                   >
-                    {g.content}
+                    {g.render}
                   </SettingsAccordionItem>
                 )
               })}
@@ -273,7 +273,7 @@ export function SettingsDialog({
           )}
 
           {/* To show custom ui boxes */}
-          {subSelectedTab.content && subSelectedTab.content}
+          {subSelectedTab.render && subSelectedTab.render}
         </VScrollPanel>
       </GlassSideDialog>
     )

@@ -226,7 +226,7 @@ function RevCompPage() {
     {
       //id: nanoid(),
       id: 'Home',
-      content: (
+      render: () => (
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
@@ -282,7 +282,7 @@ function RevCompPage() {
       //id: nanoid(),
       id: TEXT_OPEN,
       icon: <OpenIcon variant="colorful" />,
-      content: (
+      render: () => (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -308,7 +308,7 @@ function RevCompPage() {
     {
       //id: nanoid(),
       id: TEXT_SAVE_AS,
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label="Save FASTA file"
@@ -334,7 +334,7 @@ function RevCompPage() {
       //id: nanoid(),
       icon: <SlidersIcon />,
       id: 'Settings',
-      content: (
+      render: () => (
         <PropsPanel className="pr-2">
           <ScrollAccordion value={['output']}>
             <AccordionItem value="output">

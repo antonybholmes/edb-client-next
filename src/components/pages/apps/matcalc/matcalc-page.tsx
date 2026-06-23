@@ -289,12 +289,12 @@ export function MatcalcPage() {
         children: [
           // {
           //   id: 'User Interface',
-          //   content: <SettingsPanel />,
+          //   content: ()=> <SettingsPanel />,
           // },
           {
             id: 'Apps',
             //icon: <LayersIcon />,
-            content: <SettingsAppsPanel />,
+            render: () => <SettingsAppsPanel />,
           },
         ],
       },
@@ -662,7 +662,7 @@ export function MatcalcPage() {
         //id: nanoid(),
         id: TEXT_HOME,
         //size: 2.1,
-        content: (
+        render: () => (
           <>
             <ToolbarTabGroup title="File" className="items-start">
               <ToolbarOpenFile
@@ -810,7 +810,7 @@ export function MatcalcPage() {
       {
         id: 'Data',
 
-        content: (
+        render: () => (
           <>
             <ToolbarTabGroup title="Matrix">
               <ToolbarIconButton
@@ -1035,7 +1035,7 @@ export function MatcalcPage() {
       },
       {
         id: 'Gene',
-        content: (
+        render: () => (
           <>
             <ToolbarTabGroup title="Annotation">
               <ToolbarCol>
@@ -1096,7 +1096,7 @@ export function MatcalcPage() {
       },
       {
         id: 'Genomic',
-        content: (
+        render: () => (
           <>
             <ToolbarTabGroup title="Overlap">
               <ToolbarButton
@@ -1142,7 +1142,7 @@ export function MatcalcPage() {
       },
       {
         id: 'Help',
-        content: <ToolbarHelpTabGroup url={HELP_URL} />,
+        render: () => <ToolbarHelpTabGroup url={HELP_URL} />,
       },
     ]
 
@@ -1155,7 +1155,7 @@ export function MatcalcPage() {
         //id: nanoid(),
         id: 'Open',
         icon: <OpenIcon variant="colorful" />,
-        content: (
+        content: () => (
           <DropdownMenuItem
             aria-label={TEXT_OPEN_FILE}
             onClick={() => {
@@ -1179,7 +1179,7 @@ export function MatcalcPage() {
       {
         id: TEXT_SAVE_AS,
         icon: <DownloadIcon />,
-        content: (
+        content: () => (
           <>
             <DropdownMenuItem
               aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -1216,7 +1216,7 @@ export function MatcalcPage() {
       {
         id: TEXT_EXPORT,
         icon: <ExportIcon />,
-        content: (
+        content: () => (
           <>
             <DropdownMenuItem
               aria-label={TEXT_DOWNLOAD_AS_PNG}

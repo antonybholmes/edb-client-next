@@ -54,13 +54,15 @@ export function BottomBar({
   menuCallback = () => {},
   menuActions = [],
 }: IBottomBarProps) {
-  //const _id = useStableId('bottom-bar')
+  // fix complaints about possible nulls
+  tabs = tabs ?? []
+
   const [mounted, setMounted] = useState(false)
   const selectedTab = useMemo(() => getTabFromValue(value, tabs), [value, tabs])
 
   function _onValueChange(value: string) {
     //const [name, index] = parseTabId(value)
-    const selectedTab = getTabFromValue(value, tabs)
+    const selectedTab = getTabFromValue(value, tabs!)
 
     if (selectedTab?.tab.id) {
       onValueChange?.(selectedTab?.tab.id)
@@ -80,6 +82,8 @@ export function BottomBar({
 
   const selectedTabId = selectedTab.tab.id //getTabId(selectedTab.tab)
 
+  console.log('selectedTabId:', selectedTab)
+
   let content: ReactNode = (
     <Tabs
       id="bottom-bar"
@@ -92,11 +96,19 @@ export function BottomBar({
       )}
       style={style}
     >
-      {tabs.map((tab) => (
-        <TabsContent value={tab.id} key={tab.id}>
-          {tab.content}
-        </TabsContent>
-      ))}
+      {tabs.map((tab) => {
+        const TabContentComponent = tab.render
+
+        if (!TabContentComponent) {
+          return null
+        }
+
+        return (
+          <TabsContent value={tab.id} key={tab.id}>
+            <TabContentComponent />
+          </TabsContent>
+        )
+      })}
 
       <VCenterRow className="shrink-0 justify-between text-xs">
         <VCenterRow className="gap-x-2">
@@ -107,7 +119,7 @@ export function BottomBar({
               size="icon-sm"
               //rounded="full"
               onClick={() => {
-                const selectedTabIndex = tabs
+                const selectedTabIndex = tabs!
                   .map((t, ti) => [t, ti] as [ITab, number])
                   .filter((t) => t[0]!.id === selectedTab.tab.id)
                   .map((t) => t[1]!)[0]!

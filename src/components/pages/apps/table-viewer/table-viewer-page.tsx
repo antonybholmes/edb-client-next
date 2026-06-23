@@ -54,6 +54,8 @@ import { HistoryPanel } from '../matcalc/history/history-panel'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { BaseCol } from '@/components/layout/base-col'
+
+import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { formatString } from '@/lib/text/format-string'
 import {
@@ -76,8 +78,47 @@ export function TableViewerPage() {
 
   const { open: openDialog } = useDialogs()
 
+  const { setTabs: setToolbarTabs } = useToolbarTabs()
+  const { setTabs: setSideTabs } = useSideTabs()
+
   useEffect(() => {
     setAppInfo(APP_INFO)
+
+    const tabs: ITab[] = [
+      {
+        id: 'Home',
+        render: () => (
+          <>
+            <ToolbarTabGroup title={TEXT_FILE}>
+              <ToolbarIconButton
+                title={TEXT_SAVE_TABLE}
+                onClick={() =>
+                  openDialog({
+                    type: 'save',
+                    payload: {
+                      name: friendlyFilename(sheet?.name ?? 'table'),
+                    },
+                  })
+                }
+              >
+                <DownloadIcon />
+              </ToolbarIconButton>
+            </ToolbarTabGroup>
+          </>
+        ),
+      },
+    ]
+
+    setToolbarTabs(tabs)
+
+    const rightTabs: ITab[] = [
+      {
+        id: 'History',
+        icon: <ClockRotateLeftIcon />,
+        render: () => <HistoryPanel />,
+      },
+    ]
+    setSideTabs(rightTabs)
 
     const urlParams = new URLSearchParams(window.location.search)
     const key = urlParams.get('key')
@@ -131,43 +172,10 @@ export function TableViewerPage() {
     setShowFileMenu(false)
   }
 
-  const tabs: ITab[] = [
-    {
-      id: 'Home',
-      content: (
-        <>
-          <ToolbarTabGroup title={TEXT_FILE}>
-            <ToolbarIconButton
-              title={TEXT_SAVE_TABLE}
-              onClick={() =>
-                openDialog({
-                  type: 'save',
-                  payload: {
-                    name: friendlyFilename(sheet?.name ?? 'table'),
-                  },
-                })
-              }
-            >
-              <DownloadIcon />
-            </ToolbarIconButton>
-          </ToolbarTabGroup>
-        </>
-      ),
-    },
-  ]
-
-  const rightTabs: ITab[] = [
-    {
-      id: 'History',
-      icon: <ClockRotateLeftIcon />,
-      content: <HistoryPanel />,
-    },
-  ]
-
   const fileMenuTabs: ITab[] = [
     {
       id: TEXT_SAVE_AS,
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label="Save text file"
@@ -196,8 +204,6 @@ export function TableViewerPage() {
     <ShortcutLayout showHeader={false} signinRequired={false}>
       <Toolbar>
         <ToolbarMenu
-          groupId={_id}
-          tabs={tabs}
           open={showFileMenu}
           onOpenChange={setShowFileMenu}
           fileMenuTabs={fileMenuTabs}
@@ -215,8 +221,6 @@ export function TableViewerPage() {
           }}
         />
         <ToolbarPanel
-          groupId={_id}
-          tabs={tabs}
           tabShortcutMenu={
             <ShowOptionsMenu
               show={showSideBar}
@@ -229,11 +233,7 @@ export function TableViewerPage() {
       </Toolbar>
 
       <TabSlideBar
-        id="table-viewer"
         side="right"
-        tabs={rightTabs}
-        value={rightTab}
-        onTabChange={(selectedTab) => setRightTab(selectedTab.tab.id)}
         open={showSideBar}
         onOpenChange={setShowSideBar}
       >

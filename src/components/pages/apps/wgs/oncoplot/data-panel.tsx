@@ -100,7 +100,7 @@ export function DataPanel() {
       ////name: nanoid(),
       icon: <ClockRotateLeftIcon />,
       id: 'History',
-      content: <HistoryPanel />,
+      render: () => <HistoryPanel />,
     },
   ]
 

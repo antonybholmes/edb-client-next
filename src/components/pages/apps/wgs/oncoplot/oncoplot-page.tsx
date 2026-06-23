@@ -100,7 +100,7 @@ function OncoplotPage() {
   //   //name: nanoid(),
   //   icon: <TableIcon />,
   //   id: 'Table 1',
-  //   content: <DataPanel />,
+  //   content: ()=> <DataPanel />,
   //   isOpen: true,
   // }
   //const [foldersTab, setFoldersTab] = useState<ITab>(dataTab)
@@ -382,7 +382,7 @@ function OncoplotPage() {
   const tabs: ITab[] = [
     {
       id: 'Home',
-      content: (
+      render: () => (
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
@@ -539,7 +539,7 @@ function OncoplotPage() {
     {
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      content: (
+      render: () => (
         <DropdownMenuItem
           aria-label="Open file on your computer"
           onClick={() => _open('variants')}
@@ -555,7 +555,7 @@ function OncoplotPage() {
     },
     {
       id: TEXT_SAVE_AS,
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -593,7 +593,7 @@ function OncoplotPage() {
     {
       //id: nanoid(),
       id: 'Export',
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

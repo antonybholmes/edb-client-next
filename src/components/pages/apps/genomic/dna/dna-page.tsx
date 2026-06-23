@@ -214,7 +214,7 @@ export function DNAPage() {
     {
       //id: nanoid(),
       id: 'Home',
-      content: (
+      render: () => (
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
@@ -289,7 +289,7 @@ export function DNAPage() {
       //id: nanoid(),
       icon: <SlidersIcon />,
       id: 'Settings',
-      content: (
+      render: () => (
         <PropsPanel className="pr-2">
           <ScrollAccordion value={['assembly', 'letters', 'mask', 'strand']}>
             {/* <AccordionItem value="assembly">
@@ -400,7 +400,7 @@ export function DNAPage() {
     //   //id: nanoid(),
     //   icon: <ClockRotateLeftIcon />,
     //   id: 'History',
-    //   content: <HistoryPanel />,
+    //   content: ()=> <HistoryPanel />,
     // },
   ]
 
@@ -409,7 +409,7 @@ export function DNAPage() {
       //id: nanoid(),
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      content: (
+      render: () => (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -432,7 +432,7 @@ export function DNAPage() {
     {
       //id: nanoid(),
       id: TEXT_SAVE_AS,
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label="Save text file"

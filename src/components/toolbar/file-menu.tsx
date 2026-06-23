@@ -69,7 +69,7 @@ function AppInfo() {
                 payload: {
                   type: 'default',
                   title: `About ${appInfo?.name}`,
-                  content: <AppInfoContent />,
+                  content: () => <AppInfoContent />,
                 },
               })
             }}
@@ -141,7 +141,7 @@ export function FileMenu({
               </DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent variant={variant}>
-                  {tab.content && tab.content}
+                  {tab.render && tab.render}
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
             </DropdownMenuSub>

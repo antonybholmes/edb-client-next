@@ -60,7 +60,7 @@ export function AppInfoButton({
           payload: {
             type: 'default',
             title: `About ${appInfo?.name}`,
-            content: <AppInfoContent />,
+            component:  AppInfoContent ,
             callback: () => setModalVisible(false),
           },
         })

@@ -26,9 +26,8 @@ import {
 } from '../shadcn/ui/themed/resizable'
 import type { IButtonProps } from '../shadcn/ui/themed/v2/button'
 import type { LeftRightPos } from '../side'
+import { OPTS_SIDEBAR_ID } from '../tabs/tab-store'
 import { useSlideBar, useSlideBarStore } from './slide-bar-store'
-
-export const OPTS_SIDEBAR_ID = 'opts-sidebar'
 
 export function CloseButton({ className, ...props }: IButtonProps) {
   return (
@@ -247,11 +246,11 @@ function _ResizableSidebar({
  * @returns
  */
 export function ResizableSidebar({
-  id,
+  id = OPTS_SIDEBAR_ID,
   side = 'left',
   showCloseButton = true,
   children,
-}: ISlideBarProps & { id: string }) {
+}: ISlideBarProps & { id?: string }) {
   return (
     <ResizableSidebarProvider id={id}>
       <_ResizableSidebar side={side} showCloseButton={showCloseButton}>

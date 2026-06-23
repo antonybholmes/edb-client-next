@@ -445,7 +445,7 @@ function VennPage() {
     {
       //id: nanoid(),
       id: 'Home',
-      content: (
+      render: () => (
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
@@ -491,7 +491,7 @@ function VennPage() {
       id: 'Lists',
       icon: <LayersIcon />,
 
-      content: (
+      render: () => (
         <PropsPanel>
           <ScrollAccordion value={VENN_LIST_IDS.map((vl) => `List ${vl}`)}>
             {VENN_LIST_IDS.map((vi) => {
@@ -514,7 +514,7 @@ function VennPage() {
       //id: nanoid(),
       id: TEXT_SETTINGS,
       icon: <SlidersIcon />,
-      content: <VennPropsPanel />,
+      render: () => <VennPropsPanel />,
     },
   ]
 
@@ -538,7 +538,7 @@ function VennPage() {
       id: 'List view',
       icon: <ListIcon className={TOOLBAR_BUTTON_ICON_CLS} size="w-4" />,
 
-      content: (
+      render: () => (
         <Textarea
           ref={overlapRef}
           id="text-overlap"
@@ -558,7 +558,7 @@ function VennPage() {
       id: 'Table view',
       icon: <TableIcon />,
 
-      content: (
+      render: () => (
         <BaseRow className="grow mt-2 gap-x-1">
           <BaseCol className="text-xs">
             <ToolbarIconButton
@@ -587,7 +587,7 @@ function VennPage() {
       //id: nanoid(),
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      content: (
+      render: () => (
         <DropdownMenuItem
           aria-label="Open file on your computer"
           onClick={() => {
@@ -613,7 +613,7 @@ function VennPage() {
     {
       //id: nanoid(),
       id: TEXT_SAVE_AS,
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -638,7 +638,7 @@ function VennPage() {
     {
       //id: nanoid(),
       id: 'Export',
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

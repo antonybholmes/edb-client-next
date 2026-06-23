@@ -2,9 +2,9 @@
   "name": "Hubs",
   "description": "Load UCSC Genome Browser hubs.",
   "color": "#0000ff",
-  "version": "22.0.8",
+  "version": "22.2.0",
   "copyright": "(C) ${START_YEAR:2025} Antony Holmes",
-  "modified": "2026-06-23T13:48:07.172Z",
-  "hash": "7a312dc2fff7f0e7fee6a282b38ef0415e24d1609599c5d629413e2e9c8dc3e3",
-  "build": 488
+  "modified": "2026-06-23T23:17:15.268Z",
+  "hash": "1019dc66f3384acfbf4d6947cb1df12c4ac4e64bd75147c04a5201de4a5c7f9f",
+  "build": 490
 }

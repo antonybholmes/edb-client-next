@@ -105,13 +105,13 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
       //name: nanoid(),
       //icon: <SlidersIcon />,
       id: 'Display',
-      content: <DisplayPropsPanel />,
+      render: () => <DisplayPropsPanel />,
     },
     {
       //name: nanoid(),
       //icon: <SlidersIcon />,
       id: 'Features',
-      content: <FeaturePropsPanel />,
+      render: () => <FeaturePropsPanel />,
     },
   ]
 

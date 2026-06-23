@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Added support for tabs to take component refs and render on the fly.
 - Tabs scoped to apps. More UI controlled through tabs context rather than passing by props.
 - Refined theme manager to work with next and added inline script to set theme.
 - AppInfo now a provider rather than a store.

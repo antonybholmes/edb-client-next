@@ -9,7 +9,6 @@ import { FooterPortal } from '@/components/toolbar/footer-portal'
 import {
   ShowOptionsMenu,
   Toolbar,
-  TOOLBAR_TABS,
   ToolbarMenu,
   ToolbarPanel,
 } from '@/toolbar/toolbar'
@@ -64,7 +63,7 @@ import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import type { ITab } from '@/components/tabs/tab-provider'
-import { useTabs } from '@/components/tabs/tab-store'
+import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
 import { useStableId } from '@/hooks/stable-id'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { reorder } from '@/lib/math/reorder'
@@ -89,7 +88,8 @@ function OverlapPage() {
 
   const { open: openDialog } = useDialogs()
   const [showFileMenu, setShowFileMenu] = useState(false)
-  const { setTabs: setToolbarTabs } = useTabs(TOOLBAR_TABS)
+  const { setTabs: setToolbarTabs } = useToolbarTabs()
+  const { setTabs: setSideTabs } = useSideTabs()
 
   useEffect(() => {
     setAppInfo(APP_INFO)
@@ -98,7 +98,7 @@ function OverlapPage() {
       {
         //id: nanoid(),
         id: 'Home',
-        content: (
+        render: () => (
           <>
             <ToolbarTabGroup title={TEXT_FILE}>
               <ToolbarOpenFile
@@ -152,6 +152,23 @@ function OverlapPage() {
     ]
 
     setToolbarTabs(tabs)
+
+    const rightTabs: ITab[] = [
+      {
+        //id: nanoid(),
+        icon: <SettingsIcon />,
+        id: 'Files',
+        render: () => <FilesPropsPanel />,
+      },
+      // {
+      //   //id: nanoid(),
+      //   icon: <ClockRotateLeftIcon />,
+      //   id: 'History',
+      //   content: ()=> <HistoryPanel />,
+      // },
+    ]
+
+    setSideTabs(rightTabs)
   }, [setAppInfo])
 
   function openFiles(files: ITextFileOpen[]) {
@@ -199,27 +216,12 @@ function OverlapPage() {
     setShowFileMenu(false)
   }
 
-  const rightTabs: ITab[] = [
-    {
-      //id: nanoid(),
-      icon: <SettingsIcon />,
-      id: 'Files',
-      content: <FilesPropsPanel />,
-    },
-    // {
-    //   //id: nanoid(),
-    //   icon: <ClockRotateLeftIcon />,
-    //   id: 'History',
-    //   content: <HistoryPanel />,
-    // },
-  ]
-
   const fileMenuTabs: ITab[] = [
     {
       //id: nanoid(),
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      content: (
+      render: () => (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() =>
@@ -242,7 +244,7 @@ function OverlapPage() {
     {
       //id: nanoid(),
       id: TEXT_SAVE_AS,
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label="Save text file"
@@ -291,9 +293,7 @@ function OverlapPage() {
         </Toolbar>
 
         <TabSlideBar
-          id="overlap-sidebar"
           side="right"
-          tabs={rightTabs}
           //value={rightTab}
           //onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
           open={showSideBar}

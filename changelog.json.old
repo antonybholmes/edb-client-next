@@ -1899,6 +1899,10 @@
         {
           "msg": "Refined theme manager to work with next and added inline script to set theme",
           "date": "2026-06-23T14:41:47.802Z"
+        },
+        {
+          "msg": "Tabs scoped to apps. More UI controlled through tabs context rather than passing by props",
+          "date": "2026-06-23T20:11:27.098Z"
         }
       ],
       "Added": [

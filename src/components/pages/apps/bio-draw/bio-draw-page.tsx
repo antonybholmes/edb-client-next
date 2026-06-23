@@ -174,7 +174,7 @@ export function BioDrawPage() {
     {
       //id: nanoid(),
       id: TEXT_SAVE_AS,
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label="Download as TXT"
@@ -200,7 +200,7 @@ export function BioDrawPage() {
       //id: nanoid(),
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
@@ -228,7 +228,7 @@ export function BioDrawPage() {
     {
       //id: nanoid(),
       id: 'Home',
-      content: (
+      render: () => (
         <>
           <ToolbarTabGroup title="File">
             {/* <ToolbarOpenFile
@@ -292,7 +292,7 @@ export function BioDrawPage() {
   //     //id: nanoid(),
   //     id: 'History',
   //     icon: <ClockRotateLeftIcon />,
-  //     content: <HistoryPanel />,
+  //     content: ()=> <HistoryPanel />,
   //   },
   // ]
 
@@ -300,12 +300,12 @@ export function BioDrawPage() {
     {
       id: 'Motifs',
       icon: <SearchIcon />,
-      content: <MotifsPropsPanel />,
+      render: () => <MotifsPropsPanel />,
     },
     {
       id: 'Display',
       icon: <SlidersIcon />,
-      content: <DisplayPropsPanel />,
+      render: () => <DisplayPropsPanel />,
     },
   ]
 
@@ -313,7 +313,7 @@ export function BioDrawPage() {
   //   {
   //     id: 'Plot',
   //     icon: <ChartIcon stroke="" />,
-  //     content: (
+  //     content: ()=>(
   //       <TabSlideBar tabs={chartTabs} side="Right">
   //         <Card className="ml-2 mb-2 grow" variant="content">
   //           <div className={PLOT_CLS}>
@@ -336,7 +336,7 @@ export function BioDrawPage() {
   //       />
   //     ),
 
-  //     content: (
+  //     content: ()=>(
   //       <TabSlideBar tabs={rightTabs} side="Right">
   //         <BaseCol className="ml-2  grow">
   //           <TabbedDataFrames

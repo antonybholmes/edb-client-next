@@ -58,7 +58,7 @@ export function TabbedDataFrames({
     return {
       id: df.id, //sheetId, //nanoid(),
       name,
-      content: (
+      render: () => (
         // <DataFrameCanvas
         //   df={df}
         //   key={i}
@@ -93,7 +93,7 @@ export function TabbedDataFrames({
       tabs={tabs}
       maxNameLength={MAX_NAME_CHARS}
       onValueChange={onValueChange}
-      onTabChange={selectedTab => {
+      onTabChange={(selectedTab) => {
         // historyDispatch({
         //   type: 'goto-sheet',
         //   sheetId: selectedTab.index,

@@ -111,37 +111,37 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
     //   //id: nanoid(),
     //   icon: <LayersIcon />,
     //   id: 'Protein',
-    //   content: <ProteinPropsPanel />,
+    //   content: ()=> <ProteinPropsPanel />,
     // },
     {
       //id: nanoid(),
       icon: <SlidersIcon />,
       id: 'Display',
-      content: <LollipopPropsPanel />,
+      render: () => <LollipopPropsPanel />,
     },
     {
       //id: nanoid(),
       icon: <LayersIcon />,
       id: 'Databases',
-      content: <VariantPropsPanel />,
+      render: () => <VariantPropsPanel />,
     },
     {
       //id: nanoid(),
       icon: <LayersIcon />,
       id: 'Features',
-      content: <DomainPropsPanel />,
+      render: () => <DomainPropsPanel />,
     },
     {
       //id: nanoid(),
       icon: <LayersIcon />,
       id: 'Labels',
-      content: <LabelPropsPanel />,
+      render: () => <LabelPropsPanel />,
     },
     // {
     //   //id: nanoid(),
     //   icon: <ClockRotateLeftIcon />,
     //   id: 'History',
-    //   content: <HistoryPanel branchId={branch?.id ?? ''} />,
+    //   content: ()=> <HistoryPanel branchId={branch?.id ?? ''} />,
     // },
   ]
 

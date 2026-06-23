@@ -73,7 +73,7 @@ import { FileIcon } from '@/components/icons/file-icon'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
-import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
+import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
 import { useStableId } from '@/hooks/stable-id'
 import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
 import { CoreProviders } from '@/providers/core-providers'
@@ -136,6 +136,9 @@ export function SingleCellPage() {
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 
+  const { setTabs: setToolbarTabs } = useToolbarTabs()
+  const { setTabs: setSideTabs } = useSideTabs()
+
   //const { fetchAccessToken } = useEdbAuth()
 
   // useEffect(() => {
@@ -163,7 +166,54 @@ export function SingleCellPage() {
 
   useEffect(() => {
     setAppInfo(APP_INFO)
-  }, [setAppInfo])
+
+    const tabs: ITab[] = [
+      {
+        id: 'Home',
+        render: () => (
+          <>
+            <ToolbarTabGroup title="File">
+              <ToolbarIconButton
+                title={TEXT_SAVE_IMAGE}
+                onClick={() => {
+                  openDialog({
+                    type: 'save-image',
+                    payload: {
+                      name: 'umap',
+                      svgRef,
+                    },
+                  })
+                }}
+              >
+                <DownloadIcon />
+              </ToolbarIconButton>
+            </ToolbarTabGroup>
+          </>
+        ),
+      },
+    ]
+    setToolbarTabs(tabs)
+
+    const rightTabs: ITab[] = [
+      {
+        id: TEXT_DISPLAY,
+        icon: <SlidersIcon />,
+        render: () => <DisplayPropsPanel />,
+      },
+      {
+        id: 'Plots',
+        icon: <LayersIcon />,
+
+        render: () => <PlotsPropsPanel datasetId={dataset?.id ?? ''} />,
+      },
+      {
+        id: 'Clusters',
+        icon: <LayersIcon />,
+        render: () => <ClusterPropsPanel />,
+      },
+    ]
+    setSideTabs(rightTabs)
+  }, [])
 
   useEffect(() => {
     updateSettings(
@@ -192,56 +242,11 @@ export function SingleCellPage() {
     setShowFileMenu(false)
   }
 
-  const tabs: ITab[] = [
-    {
-      id: 'Home',
-      content: (
-        <>
-          <ToolbarTabGroup title="File">
-            <ToolbarIconButton
-              title={TEXT_SAVE_IMAGE}
-              onClick={() => {
-                openDialog({
-                  type: 'save-image',
-                  payload: {
-                    name: 'umap',
-                    svgRef,
-                  },
-                })
-              }}
-            >
-              <DownloadIcon />
-            </ToolbarIconButton>
-          </ToolbarTabGroup>
-        </>
-      ),
-    },
-  ]
-
-  const rightTabs: ITab[] = [
-    {
-      id: TEXT_DISPLAY,
-      icon: <SlidersIcon />,
-      content: <DisplayPropsPanel />,
-    },
-    {
-      id: 'Plots',
-      icon: <LayersIcon />,
-
-      content: <PlotsPropsPanel datasetId={dataset?.id ?? ''} />,
-    },
-    {
-      id: 'Clusters',
-      icon: <LayersIcon />,
-      content: <ClusterPropsPanel />,
-    },
-  ]
-
   const fileMenuTabs: ITab[] = [
     {
       id: TEXT_SAVE_AS,
       icon: <DownloadIcon />,
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -262,7 +267,7 @@ export function SingleCellPage() {
     {
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
@@ -389,8 +394,6 @@ export function SingleCellPage() {
       >
         <Toolbar>
           <ToolbarMenu
-            groupId={_id}
-            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
@@ -404,8 +407,6 @@ export function SingleCellPage() {
             }
           />
           <ToolbarPanel
-            groupId={_id}
-            tabs={tabs}
             tabShortcutMenu={
               <OptsSidebarMenu open={edbSettings.sidebar.show} />
             }
@@ -413,9 +414,7 @@ export function SingleCellPage() {
         </Toolbar>
 
         <TabSlideBar
-          id={OPTS_SIDEBAR_ID}
           side="right"
-          tabs={rightTabs}
           //value={selectedPlotTab}
           //onTabChange={selectedTab => setSelectedPlotTab(selectedTab.tab.id)}
           open={showSideBar}

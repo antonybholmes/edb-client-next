@@ -41,15 +41,13 @@ import { TabContentPanels } from '../shadcn/ui/themed/v2/tabs'
 import { TabIndicatorFollowH } from '../tabs/tab-indicator-follow-h'
 import { TabIndicatorSelectedH } from '../tabs/tab-indicator-selected-h'
 import { type ITab, type ITabProvider } from '../tabs/tab-provider'
-import { useTabs } from '../tabs/tab-store'
+import { TOOLBAR_TABS, useTabs } from '../tabs/tab-store'
 import { UnderlineTabs } from '../tabs/underline-tabs'
 import { ToolbarIconButton } from './toolbar-icon-button'
 
 export const TAB_LINE_CLS = 'stroke-theme'
 
 export const LINE_CLS = 'stroke-theme'
-
-export const TOOLBAR_TABS = 'toolbar'
 
 export function ShowOptionsButton({
   ref,

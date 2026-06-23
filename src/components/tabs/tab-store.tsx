@@ -185,7 +185,10 @@ export function useTabs(id: string) {
   const tabState = useMemo(() => getTabs(id), [id, getTabs])
 
   const tab = useMemo(
-    () => tabState.tabs[tabState.selectedTabIndex ?? 0],
+    () =>
+      tabState.tabs.length > 0
+        ? tabState.tabs[tabState.selectedTabIndex ?? 0]
+        : undefined,
     [tabState]
   )
 
@@ -211,6 +214,18 @@ export function useTabs(id: string) {
     setTab: setGroupTab,
     setTabs: setGroupsTab,
   }
+}
+
+export const TOOLBAR_TABS = 'toolbar'
+
+export function useToolbarTabs() {
+  return useTabs(TOOLBAR_TABS)
+}
+
+export const OPTS_SIDEBAR_ID = 'opts-sidebar'
+
+export function useSideTabs() {
+  return useTabs(OPTS_SIDEBAR_ID)
 }
 
 export function TabProvider({ children }: IChildrenProps) {

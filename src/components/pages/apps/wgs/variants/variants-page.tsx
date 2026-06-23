@@ -81,7 +81,7 @@ import {
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
 
-import { useTabs } from '@/components/tabs/tab-store'
+import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
 import {
   useCurrentSheets,
   useFiles,
@@ -131,7 +131,8 @@ export function VariantsPage() {
 
   const { file } = useFiles()
   const { sheet, sheets } = useCurrentSheets()
-  const { setTabs: setToolbarTabs } = useTabs('toolbar')
+  const { setTabs: setToolbarTabs } = useToolbarTabs()
+  const { setTabs: setSideTabs } = useSideTabs()
 
   const df = sheet as AnnotationDataFrame
 
@@ -141,7 +142,7 @@ export function VariantsPage() {
     const tabs: ITab[] = [
       {
         id: 'Home',
-        content: (
+        render: () => (
           <>
             <ToolbarTabGroup title="File">
               <ToolbarIconButton
@@ -188,6 +189,19 @@ export function VariantsPage() {
       },
     ]
     setToolbarTabs(tabs)
+
+    const rightTabs: ITab[] = [
+      {
+        id: 'Display',
+        render: () => <PileupPropsPanel />,
+      },
+
+      {
+        id: 'Features',
+        render: () => <FeaturePropsPanel />,
+      },
+    ]
+    setSideTabs(rightTabs)
   }, [])
 
   useEffect(() => {
@@ -373,23 +387,11 @@ export function VariantsPage() {
     setShowFileMenu(false)
   }
 
-  const rightTabs: ITab[] = [
-    {
-      id: 'Display',
-      content: <PileupPropsPanel />,
-    },
-
-    {
-      id: 'Features',
-      content: <FeaturePropsPanel />,
-    },
-  ]
-
   const fileMenuTabs: ITab[] = [
     {
       //name: nanoid(),
       id: TEXT_SAVE_AS,
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -413,7 +415,7 @@ export function VariantsPage() {
     },
     {
       id: 'Export',
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
@@ -495,9 +497,7 @@ export function VariantsPage() {
         <HistoryLayout>
           <ResizableSidebar id="variants-folders" side="left" className="grow">
             <TabSlideBar
-              id="variants"
               side="right"
-              tabs={rightTabs}
               open={showSideBar}
               onOpenChange={setShowSideBar}
             >

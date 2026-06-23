@@ -70,9 +70,9 @@ import { MotifsSvg } from './motifs-svg'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
-import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
+
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
-import { useTabs } from '@/components/tabs/tab-store'
+import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
 import { SelectItem, SelectList } from '@/themed/v2/select'
@@ -117,8 +117,8 @@ export function MotifsPage() {
   const { file } = useFiles()
   const { sheet, sheets } = useCurrentSheets()
 
-  const { setTabs: setToolbarTabs } = useTabs('toolbar')
-  const { setTabs: setSideTabs } = useTabs(OPTS_SIDEBAR_ID)
+  const { setTabs: setToolbarTabs } = useToolbarTabs()
+  const { setTabs: setSideTabs } = useSideTabs()
 
   useEffect(() => {
     setAppInfo(APP_INFO)
@@ -127,7 +127,7 @@ export function MotifsPage() {
       {
         //id: nanoid(),
         id: 'Home',
-        content: (
+        render: () => (
           <>
             <ToolbarTabGroup title="File">
               <ToolbarIconButton
@@ -246,12 +246,12 @@ export function MotifsPage() {
       {
         id: 'Tracks',
         //icon: <SearchIcon />,
-        content: <MotifsPropsPanel />,
+        render: () => <MotifsPropsPanel />,
       },
       {
         id: 'Display',
         //icon: <SettingsIcon />,
-        content: <DisplayPropsPanel />,
+        render: () => <DisplayPropsPanel />,
       },
     ]
     setSideTabs(rightTabs)
@@ -365,7 +365,7 @@ export function MotifsPage() {
     {
       //id: nanoid(),
       id: TEXT_SAVE_AS,
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label="Download as TXT"
@@ -391,7 +391,7 @@ export function MotifsPage() {
       //id: nanoid(),
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      content: (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
@@ -420,7 +420,7 @@ export function MotifsPage() {
   //     //id: nanoid(),
   //     id: 'History',
   //     icon: <ClockRotateLeftIcon />,
-  //     content: <HistoryPanel />,
+  //     content: ()=> <HistoryPanel />,
   //   },
   // ]
 
@@ -428,7 +428,7 @@ export function MotifsPage() {
   //   {
   //     id: 'Plot',
   //     icon: <ChartIcon stroke="" />,
-  //     content: (
+  //     content: ()=>(
   //       <TabSlideBar tabs={chartTabs} side="Right">
   //         <Card className="ml-2 mb-2 grow" variant="content">
   //           <div className={PLOT_CLS}>
@@ -451,7 +451,7 @@ export function MotifsPage() {
   //       />
   //     ),
 
-  //     content: (
+  //     content: ()=>(
   //       <TabSlideBar tabs={rightTabs} side="Right">
   //         <BaseCol className="ml-2  grow">
   //           <TabbedDataFrames
@@ -584,7 +584,7 @@ export function MotifsPage() {
           />
         </Toolbar>
 
-        <TabSlideBar id={OPTS_SIDEBAR_ID} side="right">
+        <TabSlideBar side="right">
           <ResizablePanelGroup
             orientation="vertical"
             className="px-2 h-full"

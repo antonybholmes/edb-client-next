@@ -165,7 +165,7 @@ export function GetDNAPage() {
     {
       //id: nanoid(),
       id: 'Home',
-      content: (
+      render: () => (
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
@@ -246,7 +246,7 @@ export function GetDNAPage() {
   const fileMenuTabs: ITab[] = [
     {
       id: TEXT_SAVE_AS,
-      content: (
+      render: () => (
         <BaseCol className="gap-y-6 p-6">
           <h1 className="text-2xl">{TEXT_SAVE_AS}</h1>
 
