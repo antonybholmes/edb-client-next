@@ -1,11 +1,13 @@
 //'use client'
 
 //import { IS_DEV_MODE } from '@/consts'
+import { HistoryProvider } from '@/components/pages/apps/matcalc/history/history-provider/history-provider'
 import {
   StackedToasts,
   Provider as ToastProvider,
 } from '@/components/shadcn/ui/themed/v2/toast'
 import type { IChildrenProps } from '@/interfaces/children-props'
+import { AppInfoProvider } from '@/lib/edb/edb-settings'
 import { QCP } from '@/qcp'
 
 //const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
@@ -36,23 +38,25 @@ export function CoreProviders({ children }: IChildrenProps) {
       {/* <EdbAuthProvider cacheSession={cacheSession}> */}
 
       {/* <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/"> */}
-      {/* <HistoryProvider> */}
-      {/* <SelectionRangeProvider>*/}
+      <AppInfoProvider>
+        <HistoryProvider>
+          {/* <SelectionRangeProvider>*/}
 
-      {/* <ZoomProvider> */}
+          {/* <ZoomProvider> */}
 
-      <ToastProvider>
-        <StackedToasts />
-        {children}
-      </ToastProvider>
-      {/* </ZoomProvider> */}
+          <ToastProvider>
+            <StackedToasts />
+            {children}
+          </ToastProvider>
+          {/* </ZoomProvider> */}
 
-      {/* </SelectionRangeProvider> */}
-      {/* </HistoryProvider> */}
+          {/* </SelectionRangeProvider> */}
+        </HistoryProvider>
+      </AppInfoProvider>
       {/* </ClerkProvider> */}
       {/* </EdbAuthProvider> */}
-      {/* </SelectionRangeProvider> */}
-      {/* </HistoryProvider> */}
+      {/* </SelectionRangeProvider> 
+      {/* {/* </HistoryProvider> */}
       {/* </ClerkProvider> */}
       {/* </EdbAuthProvider> */}
       {/* </AuthProvider> */}

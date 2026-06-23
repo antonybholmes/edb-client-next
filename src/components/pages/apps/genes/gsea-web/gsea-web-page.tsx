@@ -79,7 +79,6 @@ import {
 
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
-import { HistoryProvider } from '../../matcalc/history/history-provider/history-provider'
 import { GseaSvg } from '../gsea-plot/gsea-svg'
 import APP_INFO from './manifest.json'
 
@@ -518,9 +517,9 @@ export function GseaWebPage() {
 export function GseaWebQueryPage() {
   return (
     <CoreProviders>
-      <HistoryProvider app={APP_INFO.name}>
-        <GseaWebPage />
-      </HistoryProvider>
+      {/* <HistoryProvider app={APP_INFO.name}> */}
+      <GseaWebPage />
+      {/* </HistoryProvider> */}
     </CoreProviders>
   )
 }

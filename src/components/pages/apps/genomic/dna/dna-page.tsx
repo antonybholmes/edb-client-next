@@ -94,10 +94,7 @@ import {
   useCurrentSheets,
   useFiles,
 } from '../../matcalc/history/history-provider/history-contexts'
-import {
-  HistoryProvider,
-  useHistory,
-} from '../../matcalc/history/history-provider/history-provider'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import APP_INFO from './manifest.json'
 
@@ -548,9 +545,9 @@ export function DNAPage() {
 export function DNAQueryPage() {
   return (
     <CoreProviders>
-      <HistoryProvider app={APP_INFO.name}>
-        <DNAPage />
-      </HistoryProvider>
+      {/* <HistoryProvider app={APP_INFO.name}> */}
+      <DNAPage />
+      {/* </HistoryProvider> */}
     </CoreProviders>
   )
 }

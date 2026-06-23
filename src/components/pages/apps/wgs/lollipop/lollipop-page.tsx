@@ -75,10 +75,7 @@ import {
   useCurrentSheets,
   useFiles,
 } from '../../matcalc/history/history-provider/history-contexts'
-import {
-  HistoryProvider,
-  useHistory,
-} from '../../matcalc/history/history-provider/history-provider'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { FeaturePropsPanel } from './feature-props-panel'
 import { LollipopCountIcon } from './lollipop-count-icon'
@@ -707,9 +704,9 @@ function LollipopPage() {
 export function LollipopQueryPage() {
   return (
     <CoreProviders>
-      <HistoryProvider app={APP_INFO.name}>
-        <LollipopPage />
-      </HistoryProvider>
+      {/* <HistoryProvider app={APP_INFO.name}> */}
+      <LollipopPage />
+      {/* </HistoryProvider> */}
     </CoreProviders>
   )
 }

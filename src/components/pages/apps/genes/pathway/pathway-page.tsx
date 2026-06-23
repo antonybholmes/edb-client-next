@@ -99,10 +99,7 @@ import {
   useCurrentSheets,
   useFiles,
 } from '../../matcalc/history/history-provider/history-contexts'
-import {
-  HistoryProvider,
-  useHistory,
-} from '../../matcalc/history/history-provider/history-provider'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { PathwayPropsPage } from './pathway-props-panel'
 import { usePathways } from './pathway-store'
@@ -659,9 +656,9 @@ export function PathwayPage() {
 export function PathwayQueryPage() {
   return (
     <CoreProviders>
-      <HistoryProvider app={APP_INFO.name}>
-        <PathwayPage />
-      </HistoryProvider>
+      {/* <HistoryProvider app={APP_INFO.name}> */}
+      <PathwayPage />
+      {/* </HistoryProvider> */}
     </CoreProviders>
   )
 }

@@ -81,10 +81,7 @@ import {
   useCurrentSheets,
   useFiles,
 } from '../../matcalc/history/history-provider/history-contexts'
-import {
-  HistoryProvider,
-  useHistory,
-} from '../../matcalc/history/history-provider/history-provider'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { DatasetFilter } from './dataset-filter'
 import { DisplayPropsPanel } from './display-props-panel'
 import { MotifsPropsPanel } from './motifs-props-panel'
@@ -659,9 +656,7 @@ export function MotifsPage() {
 export function MotifsQueryPage() {
   return (
     <CoreProviders>
-      <HistoryProvider app={APP_INFO.name}>
-        <MotifsPage />
-      </HistoryProvider>
+      <MotifsPage />
     </CoreProviders>
   )
 }

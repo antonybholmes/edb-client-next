@@ -63,9 +63,6 @@ import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
 import { CoreProviders } from '@/providers/core-providers'
 import { useQueryClient } from '@tanstack/react-query'
-import { HistoryProvider } from '../../matcalc/history/history-provider/history-provider'
-
-import APP_INFO from './manifest.json'
 
 export function GetDNAPage() {
   const queryClient = useQueryClient()
@@ -429,9 +426,9 @@ export function GetDNAPage() {
 export function GetDNAQueryPage() {
   return (
     <CoreProviders>
-      <HistoryProvider app={APP_INFO.name}>
-        <GetDNAPage />
-      </HistoryProvider>
+      {/* <HistoryProvider app={APP_INFO.name}> */}
+      <GetDNAPage />
+      {/* </HistoryProvider> */}
     </CoreProviders>
   )
 }

@@ -1,6 +1,7 @@
 import { FileTree } from '@/components/file-tree'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { useIsMounted } from '@/hooks/mounted'
+import { useAppInfo } from '@/lib/edb/edb-settings'
 import { makeUuid } from '@/lib/id'
 import { useMemo } from 'react'
 import { pathJoin } from './history-provider/history-actions'
@@ -16,8 +17,16 @@ export function HistoryTree({
   const isMounted = useIsMounted()
   const { present, sheets, plots } = useHistory()
   const { files } = useFiles()
+  const { appInfo } = useAppInfo()
 
   const tree: ITab = useMemo(() => {
+    const appTab: ITab = {
+      id: makeUuid(),
+      name: appInfo?.name ?? 'Default',
+      type: 'folder',
+      children: [],
+    }
+
     const filesTab: ITab = {
       id: makeUuid(),
       name: 'Files',
@@ -81,8 +90,11 @@ export function HistoryTree({
 
       filesTab.children!.push(fileTab)
     }
-    return filesTab
-  }, [files])
+
+    appTab.children!.push(filesTab)
+
+    return appTab
+  }, [files, appInfo])
 
   if (!isMounted) {
     return null

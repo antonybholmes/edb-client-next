@@ -66,10 +66,7 @@ import { MotifsPropsPanel } from './motifs-props-panel'
 
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { CoreProviders } from '@/providers/core-providers'
-import {
-  HistoryProvider,
-  useHistory,
-} from '../matcalc/history/history-provider/history-provider'
+import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { useMotifSettings, type Mode } from './motifs-settings'
 
 const PLOT_ZOOM_CHANNEL = 'bio-draw-plot-zoom'
@@ -483,9 +480,9 @@ export function BioDrawPage() {
 export function BioDrawQueryPage() {
   return (
     <CoreProviders>
-      <HistoryProvider app={APP_INFO.name}>
-        <BioDrawPage />
-      </HistoryProvider>
+      {/* <HistoryProvider app={APP_INFO.name}> */}
+      <BioDrawPage />
+      {/* </HistoryProvider> */}
     </CoreProviders>
   )
 }

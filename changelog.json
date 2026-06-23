@@ -1891,6 +1891,10 @@
         {
           "msg": "Implemented history provider across apps",
           "date": "2026-06-23T02:55:50.320Z"
+        },
+        {
+          "msg": "AppInfo now a provider rather than a store",
+          "date": "2026-06-23T13:48:08.126Z"
         }
       ],
       "Added": [

@@ -1,3 +1,5 @@
+import { IChildrenProps } from '@/interfaces/children-props'
+import { createContext, useContext, useState } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { config } from '../../config'
@@ -147,15 +149,15 @@ export interface IAppInfoStore {
   setAppInfo: (app: IAppInfo) => void
 }
 
-export const useAppInfoStore = create<IAppInfoStore>()((set) => ({
-  appInfo: undefined,
+// export const useAppInfoStore = create<IAppInfoStore>()((set) => ({
+//   appInfo: undefined,
 
-  setAppInfo: (appInfo: IAppInfo) => {
-    set({
-      appInfo,
-    })
-  },
-}))
+//   setAppInfo: (appInfo: IAppInfo) => {
+//     set({
+//       appInfo,
+//     })
+//   },
+// }))
 
 /**
  * Set the app globally so that it can be used to
@@ -163,33 +165,63 @@ export const useAppInfoStore = create<IAppInfoStore>()((set) => ({
  *
  * @returns
  */
-export function useAppInfo(): {
-  appInfo: IAppInfo | undefined
-  setAppInfo: (
-    appInfo: IAppInfo,
-    opts?: { updateAccentColor?: boolean }
-  ) => void
-} {
-  const { settings } = useEdbSettings()
-  const appInfo = useAppInfoStore((state) => state.appInfo)
+// export function useAppInfo(): {
+//   appInfo: IAppInfo | undefined
+//   setAppInfo: (
+//     appInfo: IAppInfo,
+//     opts?: { updateAccentColor?: boolean }
+//   ) => void
+// } {
+//   const { settings } = useEdbSettings()
+//   const appInfo = useAppInfoStore((state) => state.appInfo)
 
-  const setAppInfo = useAppInfoStore((state) => state.setAppInfo)
+//   const setAppInfo = useAppInfoStore((state) => state.setAppInfo)
 
-  function _setAppInfo(
-    appInfo: IAppInfo,
-    opts: { updateAccentColor?: boolean } = {}
-  ) {
-    const { updateAccentColor = true } = opts
-    if (appInfo.color && updateAccentColor && settings.apps.useAccentColors) {
-      // 1. Grab the root HTML element
-      const root = document.documentElement
-      root.style.setProperty('--edb-app-theme', appInfo.color)
-    }
-    setAppInfo(appInfo)
+//   function _setAppInfo(
+//     appInfo: IAppInfo,
+//     opts: { updateAccentColor?: boolean } = {}
+//   ) {
+//     const { updateAccentColor = true } = opts
+//     if (appInfo.color && updateAccentColor && settings.apps.useAccentColors) {
+//       // 1. Grab the root HTML element
+//       const root = document.documentElement
+//       root.style.setProperty('--edb-app-theme', appInfo.color)
+//     }
+//     setAppInfo(appInfo)
+//   }
+
+//   return {
+//     appInfo,
+//     setAppInfo: _setAppInfo,
+//   }
+// }
+
+const AppInfoContext = createContext<IAppInfoStore | undefined>(undefined)
+
+export function useAppInfo() {
+  const ctx = useContext(AppInfoContext)
+  if (!ctx) {
+    throw new Error('useAppInfo must be used within an AppInfoProvider')
   }
 
-  return {
-    appInfo,
-    setAppInfo: _setAppInfo,
-  }
+  return ctx
 }
+
+export function AppInfoProvider({ children }: IChildrenProps) {
+  const [appInfo, setAppInfo] = useState<IAppInfo | undefined>(undefined)
+
+  return (
+    <AppInfoContext.Provider value={{ appInfo, setAppInfo }}>
+      {children}
+    </AppInfoContext.Provider>
+  )
+}
+
+//   const [appInfo, setAppInfo] = useState<IAppInfo | undefined>(undefined)
+
+//   return (
+//     <AppInfoContext.Provider value={{  appInfo, setAppInfo  }}>
+//       {children}
+//     </AppInfoContext.Provider>
+//   )
+// }

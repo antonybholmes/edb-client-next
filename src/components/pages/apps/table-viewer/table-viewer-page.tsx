@@ -54,20 +54,19 @@ import { HistoryPanel } from '../matcalc/history/history-panel'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { BaseCol } from '@/components/layout/base-col'
+import { useAppInfo } from '@/lib/edb/edb-settings'
 import { formatString } from '@/lib/text/format-string'
 import {
   useCurrentSheets,
   useFiles,
 } from '../matcalc/history/history-provider/history-contexts'
-import {
-  HistoryProvider,
-  useHistory,
-} from '../matcalc/history/history-provider/history-provider'
+import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import APP_INFO from './manifest.json'
 
 export function TableViewerPage() {
   const _id = useStableId('table-viewer-page')
   const { openFile, goto } = useHistory()
+  const { setAppInfo } = useAppInfo()
 
   const { file } = useFiles()
   const { sheet } = useCurrentSheets()
@@ -78,6 +77,8 @@ export function TableViewerPage() {
   const { open: openDialog } = useDialogs()
 
   useEffect(() => {
+    setAppInfo(APP_INFO)
+
     const urlParams = new URLSearchParams(window.location.search)
     const key = urlParams.get('key')
 
@@ -258,9 +259,7 @@ export function TableViewerPage() {
 export function TableViewerQueryPage() {
   return (
     <CoreProviders>
-      <HistoryProvider app={APP_INFO.name}>
-        <TableViewerPage />
-      </HistoryProvider>
+      <TableViewerPage />
     </CoreProviders>
   )
 }

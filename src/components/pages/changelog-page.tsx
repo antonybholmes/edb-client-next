@@ -3,7 +3,6 @@
 import { HeaderLayout } from '@/layouts/header-layout'
 import { CoreProviders } from '@/providers/core-providers'
 import { MarkdownContent } from '../markdown-content'
-import { HistoryProvider } from './apps/matcalc/history/history-provider/history-provider'
 
 export function ChangelogPage({ contentHtml }: { contentHtml: string }) {
   return (
@@ -21,9 +20,7 @@ export function ChangelogPage({ contentHtml }: { contentHtml: string }) {
 export function ChangelogQueryPage({ contentHtml }: { contentHtml: string }) {
   return (
     <CoreProviders>
-      <HistoryProvider app="Change Log">
-        <ChangelogPage contentHtml={contentHtml} />
-      </HistoryProvider>
+      <ChangelogPage contentHtml={contentHtml} />
     </CoreProviders>
   )
 }

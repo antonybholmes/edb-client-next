@@ -8,6 +8,7 @@
 
 ### Changed
 
+- AppInfo now a provider rather than a store.
 - Implemented history provider across apps.
 - Bottombar no longer triggers stack overflow.
 - Moved changelog src file.

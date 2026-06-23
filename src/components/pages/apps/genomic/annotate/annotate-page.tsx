@@ -84,10 +84,7 @@ import {
   useCurrentSheets,
   useFiles,
 } from '../../matcalc/history/history-provider/history-contexts'
-import {
-  HistoryProvider,
-  useHistory,
-} from '../../matcalc/history/history-provider/history-provider'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { useAnnotations } from './annotate-store'
 import { useAnnotateWorker } from './annotate-worker'
@@ -540,9 +537,9 @@ export function AnnotationPage() {
 export function AnnotationQueryPage() {
   return (
     <CoreProviders>
-      <HistoryProvider app={APP_INFO.name}>
-        <AnnotationPage />
-      </HistoryProvider>
+      {/* <HistoryProvider app={APP_INFO.name}> */}
+      <AnnotationPage />
+      {/* </HistoryProvider> */}
     </CoreProviders>
   )
 }

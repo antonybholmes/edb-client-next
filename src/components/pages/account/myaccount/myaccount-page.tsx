@@ -55,7 +55,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 import z from 'zod'
-import { HistoryProvider } from '../../apps/matcalc/history/history-provider/history-provider'
 import { PasswordCard } from './password-card'
 
 export const UserFormSchema = z.object({
@@ -587,9 +586,7 @@ export function MyAccountPage() {
 export function MyAccountQueryPage() {
   return (
     <CoreProviders>
-      <HistoryProvider app={TEXT_MY_ACCOUNT}>
-        <MyAccountPage />
-      </HistoryProvider>
+      <MyAccountPage />
     </CoreProviders>
   )
 }

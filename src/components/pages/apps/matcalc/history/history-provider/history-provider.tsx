@@ -51,15 +51,12 @@ export function useHistory() {
   return ctx
 }
 
-export function HistoryProvider({
-  app,
-  children,
-}: IChildrenProps & { app: string }) {
-  const [state, dispatch] = useReducer(historyReducer, init(app))
+export function HistoryProvider({ children }: IChildrenProps) {
+  const [state, dispatch] = useReducer(historyReducer, init())
 
   const reset = useCallback(() => {
-    dispatch({ type: 'reset', app })
-  }, [dispatch, app])
+    dispatch({ type: 'reset' })
+  }, [dispatch])
 
   const undo = useCallback(() => {
     dispatch({ type: 'undo' })
@@ -298,7 +295,6 @@ export function HistoryProvider({
   const historyContextValue = useMemo(
     () => ({
       ...state,
-      app,
       reset,
       undo,
       redo,

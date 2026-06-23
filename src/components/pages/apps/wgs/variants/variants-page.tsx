@@ -85,10 +85,7 @@ import {
   useCurrentSheets,
   useFiles,
 } from '../../matcalc/history/history-provider/history-contexts'
-import {
-  HistoryProvider,
-  useHistory,
-} from '../../matcalc/history/history-provider/history-provider'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { DatasetPanel } from './dataset-panel'
 import { useDatasets } from './dataset-store'
 import { FeaturePropsPanel } from './feature-props-panel'
@@ -595,9 +592,9 @@ export function VariantsPage() {
 export function VariantsQueryPage() {
   return (
     <CoreProviders>
-      <HistoryProvider app={APP_INFO.name}>
-        <VariantsPage />
-      </HistoryProvider>
+      {/* <HistoryProvider app={APP_INFO.name}> */}
+      <VariantsPage />
+      {/* </HistoryProvider> */}
     </CoreProviders>
   )
 }

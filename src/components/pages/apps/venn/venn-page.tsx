@@ -98,10 +98,7 @@ import { Card } from '@/themed/card'
 import { Textarea } from '@/themed/textarea'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import { MonitorDown } from 'lucide-react'
-import {
-  HistoryProvider,
-  useHistory,
-} from '../matcalc/history/history-provider/history-provider'
+import { useHistory } from '../matcalc/history/history-provider/history-provider'
 
 import {
   useCurrentSheets,
@@ -848,9 +845,9 @@ function VennPage() {
 export function VennPageQuery() {
   return (
     <CoreProviders>
-      <HistoryProvider app={APP_INFO.name}>
-        <VennPage />
-      </HistoryProvider>
+      {/* <HistoryProvider app={APP_INFO.name}> */}
+      <VennPage />
+      {/* </HistoryProvider> */}
     </CoreProviders>
   )
 }

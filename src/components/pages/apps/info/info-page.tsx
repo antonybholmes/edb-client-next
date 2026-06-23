@@ -28,7 +28,6 @@ import { HCenterCol } from '../../../layout/h-center-col'
 import { VCenterCol } from '../../../layout/v-center-col'
 import { BaseLink, BLANK_TARGET } from '../../../link/base-link'
 import { ThemeIndexLink } from '../../../link/theme-index-link'
-import { HistoryProvider } from '../matcalc/history/history-provider/history-provider'
 
 export function InfoPage({ children }: IChildrenProps) {
   const { data: serverInfo } = useQuery({
@@ -169,9 +168,7 @@ export function InfoPage({ children }: IChildrenProps) {
 export function InfoQueryPage({ children }: IChildrenProps) {
   return (
     <CoreProviders>
-      <HistoryProvider app={config.name}>
-        <InfoPage>{children}</InfoPage>
-      </HistoryProvider>
+      <InfoPage>{children}</InfoPage>
     </CoreProviders>
   )
 }

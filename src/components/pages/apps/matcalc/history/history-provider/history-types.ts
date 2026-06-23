@@ -211,7 +211,6 @@ export interface IHistoryState extends IHistoryComp {
 
 // Stores all objects by ID for easy access and immutability
 export interface IHistoryDataStore {
-  app: string
   files: Record<string, IHistoryComp>
   sheets: Record<string, DataFrameType>
   plots: Record<string, HistoryPlot>

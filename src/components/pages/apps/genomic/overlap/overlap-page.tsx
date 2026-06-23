@@ -67,8 +67,8 @@ import { useStableId } from '@/hooks/stable-id'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { reorder } from '@/lib/math/reorder'
 import { where } from '@/lib/math/where'
+import { CoreProviders } from '@/providers/core-providers'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
-import { HistoryProvider } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { FilesPropsPanel } from './files-props-panel'
 import APP_INFO from './manifest.json'
@@ -260,8 +260,6 @@ function OverlapPage() {
 
   return (
     <>
-      {/* <DialogsRoot /> */}
-
       <HeaderSlotPortal slot="header-left">
         <AppHeaderIcon />
         <AppInfoButton />
@@ -366,10 +364,10 @@ function OverlapPage() {
 
 export function OverlapQueryPage() {
   return (
-    <OverlapProvider>
-      <HistoryProvider app={APP_INFO.name}>
+    <CoreProviders>
+      <OverlapProvider>
         <OverlapPage />
-      </HistoryProvider>
-    </OverlapProvider>
+      </OverlapProvider>
+    </CoreProviders>
   )
 }

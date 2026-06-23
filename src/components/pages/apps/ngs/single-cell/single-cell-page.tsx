@@ -84,10 +84,7 @@ import {
   useCurrentSheets,
   useFiles,
 } from '../../matcalc/history/history-provider/history-contexts'
-import {
-  HistoryProvider,
-  useHistory,
-} from '../../matcalc/history/history-provider/history-provider'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { DisplayPropsPanel } from './display-props-panel'
 import { usePlotGrid } from './plot-grid-store'
 import { SingleCellDialogsRoot } from './single-cell-dialogs'
@@ -503,9 +500,9 @@ export function SingleCellPage() {
 export function SingleCellQueryPage() {
   return (
     <CoreProviders>
-      <HistoryProvider app={APP_INFO.name}>
-        <SingleCellPage />
-      </HistoryProvider>
+      {/* <HistoryProvider app={APP_INFO.name}> */}
+      <SingleCellPage />
+      {/* </HistoryProvider> */}
     </CoreProviders>
   )
 }

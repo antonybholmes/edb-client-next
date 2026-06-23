@@ -117,10 +117,7 @@ import { useExtGseaWorker } from './apps/ext-gsea/ext-gsea-worker'
 import { HeatmapProvider } from './apps/heatmap/heatmap-provider'
 import { VolcanoProvider } from './apps/volcano/volcano-provider'
 import { OptsSidebarMenu } from './data/opts-sidebar-menu'
-import {
-  HistoryProvider,
-  useHistory,
-} from './history/history-provider/history-provider'
+import { useHistory } from './history/history-provider/history-provider'
 
 import { pathJoin } from './history/history-provider/history-actions'
 
@@ -1353,19 +1350,7 @@ export function MatcalcPage() {
 export function MatcalcQueryPage() {
   return (
     <CoreProviders>
-      {/* <MatcalcSettingsProvider> */}
-      {/* <SearchFilterProvider> */}
-      {/* <GroupsProvider> */}
-      {/* <GenesetsProvider> */}
-      {/* <MessagesProvider> */}
-      <HistoryProvider app={APP_INFO.name}>
-        <MatcalcPage />
-      </HistoryProvider>
-      {/* </MessagesProvider> */}
-      {/* </GenesetsProvider> */}
-      {/* </GroupsProvider> */}
-      {/* </SearchFilterProvider> */}
-      {/* </MatcalcSettingsProvider> */}
+      <MatcalcPage />
     </CoreProviders>
   )
 }
