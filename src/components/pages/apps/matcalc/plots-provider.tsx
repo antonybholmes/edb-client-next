@@ -7,7 +7,7 @@ import { deepFreeze } from '@/lib/utils'
 import type { IBoxPlotDisplayOptions } from './apps/boxplot/boxplot-plot-svg'
 import type { IExtGseaDisplayOptions } from './apps/ext-gsea/ext-gsea-store'
 import type { IVolcanoDisplayOptions } from './apps/volcano/volcano-plot-svg'
-import { type HistoryPlot } from './history/history-store'
+import { HistoryPlot } from './history/history-provider/history-types'
 
 export type IPlotDisplayOptions =
   | IHeatMapDisplayOptions

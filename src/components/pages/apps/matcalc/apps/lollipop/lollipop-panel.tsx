@@ -27,7 +27,9 @@ import { VariantPropsPanel } from '../../../wgs/lollipop/variant-props-panel'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
-import { usePlot } from '../../history/history-store'
+
+import { getPlot } from '../../history/history-provider/history-hooks'
+import { useHistory } from '../../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 
@@ -46,7 +48,8 @@ interface ILollipopPanelProps {
 }
 
 function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
-  const plot = usePlot(plotAddr)!
+  const { present, plots } = useHistory()
+  const plot = getPlot(present, plots, plotAddr)!
 
   //const [selectedTab, setSelectedTab] = useState('Display')
   const svgRef = useRef<SVGSVGElement>(null)
@@ -67,7 +70,7 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
 
   useEffect(() => {
     const filteredMessages = messages.filter(
-      message => message.target === plot?.id
+      (message) => message.target === plot?.id
     )
 
     for (const message of filteredMessages) {
@@ -91,7 +94,7 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
 
   useEffect(() => {
     setDisplayProps(
-      produce(displayProps, draft => {
+      produce(displayProps, (draft) => {
         draft.scale = zoom
       })
     )
@@ -151,8 +154,8 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
         //onTabChange={selectedTab => setSelectedTab(selectedTab.tab.id)}
         //value={selectedTab}
         open={settings.sidebar.show}
-        onOpenChange={v => {
-          const newSettings = produce(settings, draft => {
+        onOpenChange={(v) => {
+          const newSettings = produce(settings, (draft) => {
             draft.sidebar.show = v
           })
 

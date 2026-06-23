@@ -20,7 +20,11 @@ import { HeatMapDialog } from './apps/heatmap/heatmap-dialog'
 import { KmeansDialog } from './apps/kmeans/kmeans-dialog'
 import { MotifToGeneDialog } from './apps/motifs-to-genes/motif-to-gene-dialog'
 import { VolcanoDialog } from './apps/volcano/volcano-dialog'
-import type { DataFrameType, HistoryPlot } from './history/history-store'
+
+import {
+  DataFrameType,
+  HistoryPlot,
+} from './history/history-provider/history-types'
 import { OpenTableDialog } from './open-table-dialog'
 import { SortRowDialog } from './sort-row-dialog'
 import { TopRowsDialog } from './top-rows-dialog'
@@ -101,7 +105,7 @@ interface IMatcalcDialogStore {
   clear: () => void
 }
 
-export const useMatcalcDialogStore = create<IMatcalcDialogStore>(set => ({
+export const useMatcalcDialogStore = create<IMatcalcDialogStore>((set) => ({
   stack: [], //{ type: 'none', id: makeUuid(), time: Date.now() },
 
   open: (d: InputDialog) => {
@@ -109,21 +113,21 @@ export const useMatcalcDialogStore = create<IMatcalcDialogStore>(set => ({
     const dialog = { ...d, id, time: Date.now() }
     console.log('Opening dialog', dialog.type, id)
 
-    set(state => ({
+    set((state) => ({
       stack: [...state.stack.slice(-MAX_DIALOGS + 1), dialog],
     }))
 
     return {
       id,
       close: () =>
-        set(state => ({
-          stack: state.stack.filter(d => d.id !== id),
+        set((state) => ({
+          stack: state.stack.filter((d) => d.id !== id),
         })),
     }
   },
   bringToFront: (id: string) =>
-    set(state => {
-      const dialog = state.stack.find(d => d.id === id)
+    set((state) => {
+      const dialog = state.stack.find((d) => d.id === id)
 
       if (!dialog) {
         return state
@@ -131,22 +135,22 @@ export const useMatcalcDialogStore = create<IMatcalcDialogStore>(set => ({
 
       return {
         stack: [
-          ...state.stack.filter(d => d.id !== id),
+          ...state.stack.filter((d) => d.id !== id),
           { ...dialog, time: Date.now() },
         ],
       }
     }),
   close: (id: string) =>
-    set(state => ({
+    set((state) => ({
       // if id is provided, remove that dialog. If not, remove the top dialog.
-      stack: state.stack.filter(d => d.id !== id),
+      stack: state.stack.filter((d) => d.id !== id),
     })),
   clear: () => set({ stack: [] }),
 }))
 
 export function useMatcalcDialogs() {
-  const open = useMatcalcDialogStore(s => s.open)
-  const close = useMatcalcDialogStore(s => s.close)
+  const open = useMatcalcDialogStore((s) => s.open)
+  const close = useMatcalcDialogStore((s) => s.close)
 
   return { open, close }
 }
@@ -387,8 +391,8 @@ function DialogRenderer({
 }
 
 export function MatcalcDialogsRoot() {
-  const stack = useMatcalcDialogStore(s => s.stack)
-  const close = useMatcalcDialogStore(s => s.close)
+  const stack = useMatcalcDialogStore((s) => s.stack)
+  const close = useMatcalcDialogStore((s) => s.close)
   const dialog = stack.at(-1) as Dialog | undefined // top dialog is still a discriminated union for rendering
 
   if (!dialog) {

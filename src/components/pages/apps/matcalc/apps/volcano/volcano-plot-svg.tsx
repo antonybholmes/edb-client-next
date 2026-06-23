@@ -8,7 +8,6 @@ import { cellStr } from '@/lib/dataframe/cell'
 
 import { Axis, YAxis } from '../../../../../plot/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '../../../../../plot/svg-axis'
-import { type VolcanoPlot } from '../../history/history-store'
 
 import { SvgBase } from '@/components/plot/svg-base'
 import {
@@ -22,6 +21,7 @@ import {
   DEFAULT_SCATTER_PROPS,
   type IScatterDisplayOptions,
 } from '../../../../../plot/scatter/scatter-plot-svg'
+import { VolcanoPlot } from '../../history/history-provider/history-types'
 import type { ITooltip } from '../heatmap/heatmap-svg'
 import { useVolcanoContext } from './volcano-provider'
 
@@ -212,12 +212,12 @@ export function VolcanoPlotSvg({
 
     // matching is case insensitive
     const labelSet = new Set<string>(
-      displayOptions.labels.values.map(x => x.toLowerCase())
+      displayOptions.labels.values.map((x) => x.toLowerCase())
     )
     const labelIdx = sheet.index.values
       .map((v, vi) => [v, vi] as [SeriesData, number])
-      .filter(v => labelSet.has((v[0] as string).toLowerCase()))
-      .map(v => v[1])
+      .filter((v) => labelSet.has((v[0] as string).toLowerCase()))
+      .map((v) => v[1])
 
     return (
       <SvgBase
@@ -264,7 +264,7 @@ export function VolcanoPlotSvg({
         </g>
 
         <g transform={`translate(${MARGIN.left}, ${MARGIN.top})`}>
-          {labelIdx.map(i => {
+          {labelIdx.map((i) => {
             const p = points[i]!
             const x1 = xax!.domainToRange(p.x)
             const y1 = yax!.domainToRange(p.y)

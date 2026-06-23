@@ -9,15 +9,14 @@ import { VCenterRow } from '@/layout/v-center-row'
 import { LinkButton } from '@/themed/link-button'
 import { History } from 'lucide-react'
 import { useState } from 'react'
-import { useApp, useHistory } from './history-store'
+
+import { useHistory } from './history-provider/history-provider'
 import { HistoryTabs } from './history-tabs'
 
 export function HistoryDrawer() {
   const { open: openDialog } = useDialogs()
 
   const { reset } = useHistory()
-
-  const app = useApp()
 
   const [tab] = useState('list')
 
@@ -33,20 +32,18 @@ export function HistoryDrawer() {
       <VCenterRow className="justify-end gap-x-2 px-2 h-8">
         <LinkButton
           onClick={() => {
-            if (app) {
-              openDialog({
-                type: 'warning',
-                payload: {
-                  title: 'Clear History',
-                  content: 'Are you sure you want to clear the history?',
-                  callback: response => {
-                    if (response === TEXT_OK) {
-                      reset()
-                    }
-                  },
+            openDialog({
+              type: 'warning',
+              payload: {
+                title: 'Clear History',
+                content: 'Are you sure you want to clear the history?',
+                callback: (response) => {
+                  if (response === TEXT_OK) {
+                    reset()
+                  }
                 },
-              })
-            }
+              },
+            })
           }}
           title="Clear History"
         >

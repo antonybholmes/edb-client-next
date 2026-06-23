@@ -24,17 +24,14 @@ import { useMessages } from '@/providers/messages'
 import { MESSAGE_CHANNEL } from '../../matcalc/data/data-panel'
 import { HistoryPanel } from '../../matcalc/history/history-panel'
 import {
-  useFile,
-  useSheet,
-  useSheets,
-} from '../../matcalc/history/history-store'
+  useCurrentSheets,
+  useFiles,
+} from '../../matcalc/history/history-provider/history-contexts'
 
 export function DataPanel() {
   // the current file, sheet and all sheets from the history context
-  const file = useFile()
-  const sheet = useSheet()
-  const sheets = useSheets()
-
+  const { file } = useFiles()
+  const { sheet, sheets } = useCurrentSheets()
   //const [working, setWorking] = useState(false)
   //const [tableData, setTableData] = useState<object[]>(DEFAULT_TABLE_ROWS)
   //const [tableH, setTableH] = useState<IReactTableCol[]>(DEFAULT_TABLE_HEADER)
@@ -73,7 +70,7 @@ export function DataPanel() {
 
   useEffect(() => {
     const filteredMessages = messages.filter(
-      message => message.target === file?.id
+      (message) => message.target === file?.id
     )
 
     for (const message of filteredMessages) {
@@ -95,7 +92,7 @@ export function DataPanel() {
     }
 
     // bulk remove messages after processing
-    removeMessages(messages.map(m => m.id))
+    removeMessages(messages.map((m) => m.id))
   }, [messages])
 
   const rightTabs: ITab[] = [
@@ -127,7 +124,7 @@ export function DataPanel() {
         id="onco-data-panel"
         side="right"
         tabs={rightTabs}
-        onTabChange={selectedTab => setSelectedTab(selectedTab.tab.id)}
+        onTabChange={(selectedTab) => setSelectedTab(selectedTab.tab.id)}
         value={selectedTab}
         open={showSideBar}
         onOpenChange={setShowSideBar}
@@ -135,7 +132,7 @@ export function DataPanel() {
         <TabbedDataFrames
           selectedSheet={sheet?.id ?? ''}
           dataFrames={sheets as AnnotationDataFrame[]}
-          onTabChange={selectedTab => {
+          onTabChange={(selectedTab) => {
             setSelectedTab(selectedTab.tab.id)
           }}
           //className={DATA_PANEL_CLS}

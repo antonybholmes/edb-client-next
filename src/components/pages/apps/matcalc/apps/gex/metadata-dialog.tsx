@@ -22,11 +22,10 @@ import { VScrollPanel } from '@/components/v-scroll-panel'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { GlassSideDialog } from '@/dialogs/glass-side-dialog'
 
-import { useHistory } from '../../history/history-store'
-
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { makeUuid } from '@/lib/id'
 import { Toast } from '@base-ui/react/toast'
+import { useHistory } from '../../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import type { IGexDataset, IGexTechnology } from './gex-store'
 
