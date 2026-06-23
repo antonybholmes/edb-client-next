@@ -50,7 +50,7 @@ export const BASE_MUTED_THEME_CLS = cn(
 )
 
 const MODULE_BG_CLS = cn(
-  'absolute rounded-2xl w-full h-full duration-300 ease-out transition-all',
+  'absolute rounded-2xl w-full h-full duration-300 ease-out transition-all bg-background',
   'pointer-events-none origin-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
   'data-[hover=true]:scale-105 data-[hover=true]:bg-muted/50 rounded-xl'
 )
@@ -116,9 +116,7 @@ export function HeaderLinks({
           >
             <AppIcon appInfo={module} />
 
-            <p className="text-[0.7rem] text-center truncate font-medium">
-              {module.name}
-            </p>
+            <p className="  text-center truncate ">{module.name}</p>
           </ModuleButtonLink>
         </li>
       )

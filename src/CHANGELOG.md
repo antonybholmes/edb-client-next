@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Refined theme manager to work with next and added inline script to set theme.
 - AppInfo now a provider rather than a store.
 - Implemented history provider across apps.
 - Bottombar no longer triggers stack overflow.
