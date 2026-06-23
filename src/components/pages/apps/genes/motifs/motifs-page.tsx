@@ -126,7 +126,6 @@ export function MotifsPage() {
 
   useEffect(() => {
     setAppInfo(APP_INFO)
-    //openApp(APP_INFO.name)
   }, [])
 
   // // sync local query state when the global search query changes
