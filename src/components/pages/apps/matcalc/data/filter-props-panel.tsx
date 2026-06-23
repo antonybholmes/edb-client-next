@@ -114,6 +114,9 @@ export function FilterPropsPanel() {
 
   return (
     <>
+      <ResizableSidebarHeaderPortal>
+        <h2>Filter</h2>
+      </ResizableSidebarHeaderPortal>
       <ResizableSidebarHeaderPortal side="right">
         <LinkButton
           onClick={() => {

@@ -383,7 +383,31 @@ export function GroupPropsPanel() {
         />
       )}
 
-      <ResizableSidebarHeaderPortal>
+      {groups.length > 0 && (
+        <ResizableSidebarHeaderPortal side="right">
+          <LinkButton
+            onClick={() =>
+              openDialog({
+                type: 'warning',
+                payload: {
+                  content: 'Are you sure you want to clear all groups?',
+                  callback: (response) => {
+                    if (response === TEXT_OK) {
+                      addGroups([], { mode: 'set' })
+                    }
+                  },
+                },
+              })
+            }
+            title="Clear all groups"
+            className="text-xs"
+          >
+            {TEXT_CLEAR}
+          </LinkButton>
+        </ResizableSidebarHeaderPortal>
+      )}
+
+      <PropsPanel className="gap-y-1">
         <StretchRow className="gap-x-1">
           <VCenterRow>
             <IconButton
@@ -452,32 +476,7 @@ export function GroupPropsPanel() {
             <PlusIcon />
           </IconButton>
         </StretchRow>
-      </ResizableSidebarHeaderPortal>
 
-      {groups.length > 0 && (
-        <ResizableSidebarHeaderPortal side="right">
-          <LinkButton
-            onClick={() =>
-              openDialog({
-                type: 'warning',
-                payload: {
-                  content: 'Are you sure you want to clear all groups?',
-                  callback: (response) => {
-                    if (response === TEXT_OK) {
-                      addGroups([], { mode: 'set' })
-                    }
-                  },
-                },
-              })
-            }
-            title="Clear all groups"
-          >
-            {TEXT_CLEAR}
-          </LinkButton>
-        </ResizableSidebarHeaderPortal>
-      )}
-
-      <PropsPanel className="gap-y-1">
         <Input
           placeholder="Groups..."
           value={groupsName}

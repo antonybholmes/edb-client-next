@@ -72,6 +72,7 @@ import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { useTabs } from '@/components/tabs/tab-store'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
 import { SelectItem, SelectList } from '@/themed/v2/select'
@@ -116,13 +117,144 @@ export function MotifsPage() {
   const { file } = useFiles()
   const { sheet, sheets } = useCurrentSheets()
 
-  //const [q, setQ] = useState<string>(search.query)
-
-  // so we don't trigger search on every keystroke
-  //const debouncedQ = useDebounce(q, DEBOUNCE_DELAY_MS)
+  const { setTabs: setToolbarTabs } = useTabs('toolbar')
+  const { setTabs: setSideTabs } = useTabs(OPTS_SIDEBAR_ID)
 
   useEffect(() => {
     setAppInfo(APP_INFO)
+
+    const tabs: ITab[] = [
+      {
+        //id: nanoid(),
+        id: 'Home',
+        content: (
+          <>
+            <ToolbarTabGroup title="File">
+              <ToolbarIconButton
+                title={TEXT_SAVE_IMAGE}
+                onClick={() => {
+                  openDialog({
+                    type: 'save-image',
+                    payload: {
+                      name: 'motifs',
+                      svgRef,
+                    },
+                  })
+                }}
+              >
+                <DownloadIcon />
+              </ToolbarIconButton>
+            </ToolbarTabGroup>
+
+            <ToolbarTabGroup title="Display" className="gap-x-1">
+              {/* <Tabs
+              value={settings.mode}
+              onValueChange={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.mode = v as Mode
+                  })
+                )
+              }}
+            >
+              <IOSTabsList
+                defaultWidth="64px"
+                value={settings.mode}
+                tabs={[
+                  { id: 'prob', name: 'Prob' },
+                  { id: 'bits', name: 'Bits' },
+                ]}
+              />
+            </Tabs> */}
+
+              <ToggleGroup
+                //variant="outline"
+
+                value={[settings.mode]}
+                onValueChange={(v) => {
+                  if (v) {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.mode = v[0] as Mode
+                      })
+                    )
+                  }
+                }}
+                size="toolbar"
+                //rounded="none"
+                //className="rounded-theme overflow-hidden"
+              >
+                <GroupToggle
+                  value="prob"
+                  className="w-12"
+                  aria-label="Probability view"
+                >
+                  Prob
+                </GroupToggle>
+
+                <GroupToggle
+                  value="bits"
+                  className="w-12"
+                  aria-label="Bits view"
+                >
+                  Bits
+                </GroupToggle>
+              </ToggleGroup>
+
+              <ToolbarIconButton
+                checked={settings.revComp}
+                onClick={() => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.revComp = !settings.revComp
+                    })
+                  )
+                }}
+                title="Reverse Complement"
+              >
+                <ArrowLeftRight className="w-4.5" />
+              </ToolbarIconButton>
+            </ToolbarTabGroup>
+
+            <ToolbarTabGroup title={TEXT_SEARCH} className="gap-x-1">
+              <ToolbarButton
+                checked={search.mode === 'advanced'}
+                onClick={() => {
+                  updateSearch(
+                    produce(search, (draft) => {
+                      if (search.mode === 'advanced') {
+                        draft.mode = 'basic'
+                      } else {
+                        draft.mode = 'advanced'
+                      }
+                    })
+                  )
+                }}
+                aria-label="Advanced Search"
+              >
+                Advanced
+              </ToolbarButton>
+            </ToolbarTabGroup>
+          </>
+        ),
+      },
+    ]
+
+    setToolbarTabs(tabs)
+
+    const rightTabs: ITab[] = [
+      {
+        id: 'Tracks',
+        //icon: <SearchIcon />,
+        content: <MotifsPropsPanel />,
+      },
+      {
+        id: 'Display',
+        //icon: <SettingsIcon />,
+        content: <DisplayPropsPanel />,
+      },
+    ]
+    setSideTabs(rightTabs)
   }, [])
 
   // // sync local query state when the global search query changes
@@ -283,119 +415,6 @@ export function MotifsPage() {
     },
   ]
 
-  const tabs: ITab[] = [
-    {
-      //id: nanoid(),
-      id: 'Home',
-      content: (
-        <>
-          <ToolbarTabGroup title="File">
-            <ToolbarIconButton
-              title={TEXT_SAVE_IMAGE}
-              onClick={() => {
-                openDialog({
-                  type: 'save-image',
-                  payload: {
-                    name: 'motifs',
-                    svgRef,
-                  },
-                })
-              }}
-            >
-              <DownloadIcon />
-            </ToolbarIconButton>
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title="Display" className="gap-x-1">
-            {/* <Tabs
-              value={settings.mode}
-              onValueChange={(v) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.mode = v as Mode
-                  })
-                )
-              }}
-            >
-              <IOSTabsList
-                defaultWidth="64px"
-                value={settings.mode}
-                tabs={[
-                  { id: 'prob', name: 'Prob' },
-                  { id: 'bits', name: 'Bits' },
-                ]}
-              />
-            </Tabs> */}
-
-            <ToggleGroup
-              //variant="outline"
-
-              value={[settings.mode]}
-              onValueChange={(v) => {
-                if (v) {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.mode = v[0] as Mode
-                    })
-                  )
-                }
-              }}
-              size="toolbar"
-              //rounded="none"
-              //className="rounded-theme overflow-hidden"
-            >
-              <GroupToggle
-                value="prob"
-                className="w-12"
-                aria-label="Probability view"
-              >
-                Prob
-              </GroupToggle>
-
-              <GroupToggle value="bits" className="w-12" aria-label="Bits view">
-                Bits
-              </GroupToggle>
-            </ToggleGroup>
-
-            <ToolbarIconButton
-              checked={settings.revComp}
-              onClick={() => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.revComp = !settings.revComp
-                  })
-                )
-              }}
-              title="Reverse Complement"
-            >
-              <ArrowLeftRight className="w-4.5" />
-            </ToolbarIconButton>
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title={TEXT_SEARCH} className="gap-x-1">
-            <ToolbarButton
-              checked={search.mode === 'advanced'}
-              onClick={() => {
-                updateSearch(
-                  produce(search, (draft) => {
-                    if (search.mode === 'advanced') {
-                      draft.mode = 'basic'
-                    } else {
-                      draft.mode = 'advanced'
-                    }
-                  })
-                )
-              }}
-              aria-label="Advanced Search"
-            >
-              Advanced
-            </ToolbarButton>
-          </ToolbarTabGroup>
-        </>
-      ),
-    },
-  ]
-
   // const rightTabs: ITab[] = [
   //   {
   //     //id: nanoid(),
@@ -404,19 +423,6 @@ export function MotifsPage() {
   //     content: <HistoryPanel />,
   //   },
   // ]
-
-  const rightTabs: ITab[] = [
-    {
-      id: 'Tracks',
-      //icon: <SearchIcon />,
-      content: <MotifsPropsPanel />,
-    },
-    {
-      id: 'Display',
-      //icon: <SettingsIcon />,
-      content: <DisplayPropsPanel />,
-    },
-  ]
 
   // const sideTabs: ITab[] = [
   //   {
@@ -510,8 +516,6 @@ export function MotifsPage() {
       <ShortcutLayout signinRequired={false}>
         <Toolbar>
           <ToolbarMenu
-            groupId={_id}
-            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
@@ -574,15 +578,13 @@ export function MotifsPage() {
             }
           />
           <ToolbarPanel
-            groupId={_id}
-            tabs={tabs}
             tabShortcutMenu={
               <OptsSidebarMenu open={edbSettings.sidebar.show} />
             }
           />
         </Toolbar>
 
-        <TabSlideBar id={OPTS_SIDEBAR_ID} side="right" tabs={rightTabs}>
+        <TabSlideBar id={OPTS_SIDEBAR_ID} side="right">
           <ResizablePanelGroup
             orientation="vertical"
             className="px-2 h-full"

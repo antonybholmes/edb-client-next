@@ -1,6 +1,5 @@
-import type { IDivProps } from '@/interfaces/div-props'
 import type { UndefStr } from '@/lib/text/text'
-import { createContext, useState, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 export type NodeType = 'folder' | 'file'
 export type OpenState = boolean | 'auto'
@@ -53,7 +52,7 @@ export interface ITabChange {
 
 export interface ITabProvider extends ITabChange {
   value?: string
-  tabs: ITab[]
+  tabs?: ITab[]
 }
 
 export interface ITabContext extends ITabChange {
@@ -116,7 +115,7 @@ export function getTabFromValue(
   let selectedTab = tabs
     .entries()
     .map(([ti, tab]) => ({ index: ti, tab }))
-    .find(t => {
+    .find((t) => {
       return t.tab.id.includes(value) || t.tab.name?.includes(value)
     })
 
@@ -125,50 +124,5 @@ export function getTabFromValue(
     selectedTab = { index: 0, tab: tabs[0]! } //undefined
   }
 
-  // for (const [ti, tab] of tabs.entries()) {
-  //   const tabId = tab.id //getTabId(tab)
-
-  //   if (tabId.includes(value) || tab.name?.includes(value)) {
-  //     selectedTab = { index: ti, tab }
-  //     break
-  //   }
-  // }
-
   return selectedTab
-}
-
-export const TabContext = createContext<ITabContext>({
-  value: '',
-  selectedTab: null,
-  tabs: [],
-})
-
-interface IProps extends ITabProvider, IDivProps {}
-
-export function TabProvider({ value, onTabChange, tabs, children }: IProps) {
-  const [_value, setValue] = useState('')
-
-  function _onTabChange(selectedTab: ISelectedTab) {
-    setValue(selectedTab.tab.id)
-
-    onTabChange?.(selectedTab)
-  }
-
-  const v = value !== undefined ? value : _value
-
-  const selectedTab = getTabFromValue(v, tabs)
-
-  //console.log("eh", value.length, tabs, selectedTab)
-
-  if (!selectedTab) {
-    return null
-  }
-
-  return (
-    <TabContext.Provider
-      value={{ value: v, selectedTab, onTabChange: _onTabChange, tabs }}
-    >
-      {children}
-    </TabContext.Provider>
-  )
 }

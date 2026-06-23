@@ -4,9 +4,8 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/shadcn/ui/themed/v2/tabs'
-import { GenesetPropsPanel } from '../genesets/geneset-props-panel'
-import { GroupPropsPanel } from '../groups/group-props-panel'
 import { FilterPropsPanel } from './filter-props-panel'
+import { GroupingPropsPanel } from './grouping-props-panel'
 
 // const TAB_CLS =
 //   'w-4.5 stroke-foreground/75 group-hover:stroke-foreground group-data-[selected=true]:stroke-foreground'
@@ -15,11 +14,11 @@ export function DataPropsPanel() {
   return (
     <Tabs orientation="vertical" className="flex flex-col grow text-xs pr-1">
       <TabsContent value="groups">
-        <GroupPropsPanel />
+        <GroupingPropsPanel />
       </TabsContent>
-      <TabsContent value="genesets">
+      {/* <TabsContent value="genesets">
         <GenesetPropsPanel />
-      </TabsContent>
+      </TabsContent> */}
       <TabsContent value="filter">
         <FilterPropsPanel />
       </TabsContent>
@@ -27,9 +26,9 @@ export function DataPropsPanel() {
         <TabsTrigger value="groups" className="grow" variant="sidebar">
           Groups
         </TabsTrigger>
-        <TabsTrigger value="genesets" className="grow" variant="sidebar">
+        {/* <TabsTrigger value="genesets" className="grow" variant="sidebar">
           Gene Sets
-        </TabsTrigger>
+        </TabsTrigger> */}
         <TabsTrigger value="filter" className="grow" variant="sidebar">
           Filter
         </TabsTrigger>

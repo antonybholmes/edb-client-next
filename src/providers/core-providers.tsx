@@ -6,6 +6,7 @@ import {
   StackedToasts,
   Provider as ToastProvider,
 } from '@/components/shadcn/ui/themed/v2/toast'
+import { TabProvider } from '@/components/tabs/tab-store'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { AppInfoProvider } from '@/lib/edb/edb-settings'
 import { QCP } from '@/qcp'
@@ -40,14 +41,12 @@ export function CoreProviders({ children }: IChildrenProps) {
       {/* <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/"> */}
       <AppInfoProvider>
         <HistoryProvider>
-          {/* <SelectionRangeProvider>*/}
-
-          {/* <ZoomProvider> */}
-
-          <ToastProvider>
-            <StackedToasts />
-            {children}
-          </ToastProvider>
+          <TabProvider>
+            <ToastProvider>
+              <StackedToasts />
+              {children}
+            </ToastProvider>
+          </TabProvider>
           {/* </ZoomProvider> */}
 
           {/* </SelectionRangeProvider> */}

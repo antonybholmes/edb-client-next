@@ -664,7 +664,6 @@ function OncoplotPage() {
         <Toolbar>
           <ToolbarMenu
             groupId={_id}
-            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
@@ -676,7 +675,6 @@ function OncoplotPage() {
           />
           <ToolbarPanel
             groupId={_id}
-            tabs={tabs}
             tabShortcutMenu={
               <ShowOptionsMenu
                 onClick={() => {

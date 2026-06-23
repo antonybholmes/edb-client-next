@@ -4,7 +4,7 @@ import { type IDivProps } from '@/interfaces/div-props'
 import { type IOpenChange } from '@/interfaces/open-change'
 import { cn } from '@/lib/shadcn-utils'
 
-import { useEffect, useState, type ComponentProps, type ReactNode } from 'react'
+import { useState, type ComponentProps, type ReactNode } from 'react'
 import { FileMenu } from './file-menu'
 
 import { type IAppInfo } from '@/lib/app-info'
@@ -48,6 +48,8 @@ import { ToolbarIconButton } from './toolbar-icon-button'
 export const TAB_LINE_CLS = 'stroke-theme'
 
 export const LINE_CLS = 'stroke-theme'
+
+export const TOOLBAR_TABS = 'toolbar'
 
 export function ShowOptionsButton({
   ref,
@@ -166,8 +168,8 @@ export interface ITabDimProps {
 }
 
 interface IToolbarMenuProps extends IOpenChange, TabsProps {
-  groupId: string
-  tabs: ITab[]
+  groupId?: string
+
   fileMenuTabs?: ITab[]
   info?: IAppInfo
   leftShortcuts?: ReactNode
@@ -177,8 +179,8 @@ interface IToolbarMenuProps extends IOpenChange, TabsProps {
 }
 
 export function ToolbarMenu({
-  groupId,
-  tabs = [],
+  groupId = TOOLBAR_TABS,
+
   open = false,
   onOpenChange = () => {},
   fileMenuTabs = [],
@@ -204,9 +206,8 @@ export function ToolbarMenu({
 
         <UnderlineTabs
           groupId={groupId}
-          tabs={tabs}
           tabListCls="gap-x-3"
-          //tabButtonProps={{ variant: 'toolbar' }}
+          //tabButtonProps={{ variant: TOOLBAR_TABS }}
         >
           <TabIndicatorFollowH groupId={groupId} />
           <TabIndicatorSelectedH groupId={groupId} />
@@ -235,12 +236,14 @@ export function ToolbarMenu({
 }
 
 interface IToolbarPanelProps {
-  groupId: string
-  tabs: ITab[]
+  groupId?: string
+
   tabShortcutMenu?: ReactNode
 }
 
-export function ToolbarTabContentPanel({ groupId, tabs }: IToolbarPanelProps) {
+export function ToolbarTabContentPanel({
+  groupId = TOOLBAR_TABS,
+}: IToolbarPanelProps) {
   // change default if it does match a tab id
 
   const { settings } = useEdbSettings()
@@ -252,7 +255,7 @@ export function ToolbarTabContentPanel({ groupId, tabs }: IToolbarPanelProps) {
       id="ribbon"
       data-ribbon={settings.toolbars.ribbon.style}
       groupId={groupId}
-      tabs={tabs}
+      //tabs={tabs}
       className="group"
       contentCls="gap-x-1"
     />
@@ -269,21 +272,21 @@ const TAB_CONTENT_PANEL_CLS = cn(
 )
 
 export function ToolbarPanel({
-  groupId,
-  tabs,
+  groupId = TOOLBAR_TABS,
+
   tabShortcutMenu,
 }: IToolbarPanelProps) {
   // change default if it does match a tab id
 
-  const { setTab } = useTabs(groupId)
+  const { tabs, setTab } = useTabs(groupId)
 
   const { settings, updateSettings } = useEdbSettings()
 
   const [showDropdown, setShowDropdown] = useState(false)
 
-  useEffect(() => {
-    setTab({ id: tabs[0]!.id ?? '', index: 0 })
-  }, []) //tabs.map(tab => tab.id).join('|'), setTab])
+  // useEffect(() => {
+  //   setTab({ id: tabs[0]!.id ?? '', index: 0 })
+  // }, []) //tabs.map(tab => tab.id).join('|'), setTab])
 
   return (
     <BaseRow
@@ -292,7 +295,7 @@ export function ToolbarPanel({
       data-show-labels={settings.toolbars.groups.labels.mode}
     >
       <BaseRow className={TAB_CONTENT_PANEL_CLS}>
-        <ToolbarTabContentPanel groupId={groupId} tabs={tabs} />
+        <ToolbarTabContentPanel groupId={groupId} />
 
         {/* <TabContentForceMountPanels
           groupId={groupId}
@@ -315,7 +318,7 @@ export function ToolbarPanel({
                 <DropdownMenuCheckboxItem
                   checked={settings.toolbars.ribbon.style === 'classic'}
                   onCheckedChange={() => {
-                    const newSettings = produce(settings, draft => {
+                    const newSettings = produce(settings, (draft) => {
                       draft.toolbars.ribbon.style = 'classic'
                     })
 
@@ -327,7 +330,7 @@ export function ToolbarPanel({
                 <DropdownMenuCheckboxItem
                   checked={settings.toolbars.ribbon.style === 'single'}
                   onCheckedChange={() => {
-                    const newSettings = produce(settings, draft => {
+                    const newSettings = produce(settings, (draft) => {
                       draft.toolbars.ribbon.style = 'single'
                     })
 
@@ -346,7 +349,7 @@ export function ToolbarPanel({
                     <DropdownMenuCheckboxItem
                       checked={settings.toolbars.groups.labels.mode === 'auto'}
                       onCheckedChange={() => {
-                        const newSettings = produce(settings, draft => {
+                        const newSettings = produce(settings, (draft) => {
                           draft.toolbars.groups.labels.mode = 'auto'
                         })
 
@@ -359,7 +362,7 @@ export function ToolbarPanel({
                     <DropdownMenuCheckboxItem
                       checked={settings.toolbars.groups.labels.mode === 'show'}
                       onCheckedChange={() => {
-                        const newSettings = produce(settings, draft => {
+                        const newSettings = produce(settings, (draft) => {
                           draft.toolbars.groups.labels.mode = 'show'
                         })
 
@@ -372,7 +375,7 @@ export function ToolbarPanel({
                     <DropdownMenuCheckboxItem
                       checked={settings.toolbars.groups.labels.mode === 'hide'}
                       onCheckedChange={() => {
-                        const newSettings = produce(settings, draft => {
+                        const newSettings = produce(settings, (draft) => {
                           draft.toolbars.groups.labels.mode = 'hide'
                         })
 

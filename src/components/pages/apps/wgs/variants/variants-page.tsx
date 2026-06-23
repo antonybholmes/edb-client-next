@@ -81,6 +81,7 @@ import {
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
 
+import { useTabs } from '@/components/tabs/tab-store'
 import {
   useCurrentSheets,
   useFiles,
@@ -130,12 +131,63 @@ export function VariantsPage() {
 
   const { file } = useFiles()
   const { sheet, sheets } = useCurrentSheets()
+  const { setTabs: setToolbarTabs } = useTabs('toolbar')
 
   const df = sheet as AnnotationDataFrame
 
   useEffect(() => {
     setAppInfo(APP_INFO)
-    //openApp(APP_INFO.name)
+
+    const tabs: ITab[] = [
+      {
+        id: 'Home',
+        content: (
+          <>
+            <ToolbarTabGroup title="File">
+              <ToolbarIconButton
+                title="Download image to local file"
+                onClick={() => {
+                  openDialog({
+                    type: 'save-image',
+                    payload: {
+                      name: 'variants',
+                      svgRef,
+                    },
+                  })
+                }}
+              >
+                <DownloadIcon />
+              </ToolbarIconButton>
+            </ToolbarTabGroup>
+
+            <ToolbarTabGroup title="View">
+              <ToggleGroup
+                value={[settings.view]}
+                onValueChange={(v) => {
+                  console.log('view change', v)
+                  if (v.length > 0) {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.view = v[0] as 'pileup' | 'maf'
+                      })
+                    )
+                  }
+                }}
+                size="toolbar"
+                justify="start"
+                direction="toolbar"
+                //multiple={true}
+              >
+                <GroupToggle value="pileup">Pileup</GroupToggle>
+
+                <GroupToggle value="maf">MAF</GroupToggle>
+              </ToggleGroup>
+            </ToolbarTabGroup>
+          </>
+        ),
+      },
+    ]
+    setToolbarTabs(tabs)
   }, [])
 
   useEffect(() => {
@@ -321,56 +373,6 @@ export function VariantsPage() {
     setShowFileMenu(false)
   }
 
-  const tabs: ITab[] = [
-    {
-      id: 'Home',
-      content: (
-        <>
-          <ToolbarTabGroup title="File">
-            <ToolbarIconButton
-              title="Download image to local file"
-              onClick={() => {
-                openDialog({
-                  type: 'save-image',
-                  payload: {
-                    name: 'variants',
-                    svgRef,
-                  },
-                })
-              }}
-            >
-              <DownloadIcon />
-            </ToolbarIconButton>
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title="View">
-            <ToggleGroup
-              value={[settings.view]}
-              onValueChange={(v) => {
-                console.log('view change', v)
-                if (v.length > 0) {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.view = v[0] as 'pileup' | 'maf'
-                    })
-                  )
-                }
-              }}
-              size="toolbar"
-              justify="start"
-              direction="toolbar"
-              //multiple={true}
-            >
-              <GroupToggle value="pileup">Pileup</GroupToggle>
-
-              <GroupToggle value="maf">MAF</GroupToggle>
-            </ToggleGroup>
-          </ToolbarTabGroup>
-        </>
-      ),
-    },
-  ]
-
   const rightTabs: ITab[] = [
     {
       id: 'Display',
@@ -471,8 +473,6 @@ export function VariantsPage() {
       <ShortcutLayout signinRequired={false}>
         <Toolbar>
           <ToolbarMenu
-            groupId={_id}
-            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
@@ -482,8 +482,6 @@ export function VariantsPage() {
             rightShortcuts={<HistoryShowButton />}
           />
           <ToolbarPanel
-            groupId={_id}
-            tabs={tabs}
             tabShortcutMenu={
               <ShowOptionsMenu
                 show={showSideBar}

@@ -1,22 +1,18 @@
 import { type IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
-import { useContext, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { type ITooltipSide } from '@/interfaces/tooltip-side-props'
 
-import { TabContext, TabProvider } from '@/components/tabs/tab-provider'
 import { useStableId } from '@/hooks/stable-id'
 import { EMPTY_RECT } from '@/interfaces/rect'
-import { where } from '@/lib/math/where'
 import { FOCUS_INSET_RING_CLS } from '@/theme'
 import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
 import { SimpleTooltip } from '../shadcn/ui/themed/v2/tooltip'
 import { TabIndicatorFollowV } from '../tabs/tab-indicator-follow-v'
 
-import {
-  TabIndicatorProvider,
-  useTabIndicators,
-} from '../tabs/tab-indicator-provider'
+import { useTabIndicators } from '../tabs/tab-indicator-provider'
+import { useTabs } from '../tabs/tab-store'
 import { type IToolbarProps } from './toolbar'
 
 const BUTTON_CLS = cn(
@@ -40,9 +36,9 @@ export function ShortcutContent({
   className,
   ...props
 }: IShortcutsProps) {
-  const { selectedTab, onTabChange, tabs } = useContext(TabContext)!
-
   const _id = useStableId('shortcut-tabs')
+
+  const { tab, selectedTabIndex, setTab, tabs } = useTabs(_id)
 
   const { position, setPosition: setTabIndicatorPos } = useTabIndicators()
   const pressed = useRef(false)
@@ -59,22 +55,20 @@ export function ShortcutContent({
   }
 
   useEffect(() => {
-    if (selectedTab) {
-      _scale(selectedTab.index, pressed.current ? 0.6 : 0.4)
-    }
-  }, [selectedTab])
+    _scale(selectedTabIndex, pressed.current ? 0.6 : 0.4)
+  }, [selectedTabIndex])
 
   const w = `${position?.h || 0}rem`
 
   return (
     <Tabs
       orientation="vertical"
-      value={selectedTab?.tab.id ?? ''}
-      onValueChange={v => {
-        const idx = where(tabs, t => t.id === v)
-        if (idx.length > 0) {
-          onTabChange?.({ index: idx[0]!, tab: tabs[idx[0]!]! })
-        }
+      value={tab.id ?? ''}
+      onValueChange={(v) => {
+        //const idx = where(tabs, (t) => t.id === v)
+        //if (idx.length > 0) {
+        setTab(v) //{ index: idx[0]!, tab: tabs[idx[0]!]! })
+        //}
       }}
     >
       <TabsList
@@ -86,15 +80,15 @@ export function ShortcutContent({
         style={{ rowGap: `${gap}rem` }}
         {...props}
       >
-        {tabs.map((tab, ti) => {
-          const selected = ti === selectedTab?.index
+        {tabs.map((t, ti) => {
+          const selected = t.id === tab.id
           return (
-            <SimpleTooltip content={tab.id} key={ti} side="right">
+            <SimpleTooltip content={t.id} key={ti} side="right">
               <TabsTrigger
                 variant="base"
                 key={ti}
-                value={tab.id}
-                aria-label={tab.id}
+                value={t.id}
+                aria-label={t.id}
                 data-checked={selected}
                 // onClick={() => {
                 //   onTabChange?.({ index: ti, tab })
@@ -104,7 +98,7 @@ export function ShortcutContent({
                 }}
                 onMouseEnter={() => {
                   if (selected) {
-                    _scale(selectedTab.index, 0.6)
+                    _scale(ti, 0.6)
                   }
                 }}
                 // onMouseDown={() => {
@@ -116,13 +110,13 @@ export function ShortcutContent({
                 }}
                 onMouseLeave={() => {
                   if (selected) {
-                    _scale(selectedTab.index, 0.4)
+                    _scale(ti, 0.4)
                   }
                 }}
                 style={{ width: w, height: w }}
                 className={BUTTON_CLS}
               >
-                {tab.icon}
+                {t.icon}
               </TabsTrigger>
             </SimpleTooltip>
           )
@@ -141,20 +135,5 @@ export function Shortcuts({
   defaultWidth = 2.5,
   gap = 0.25,
 }: IShortcutProps) {
-  return (
-    <TabProvider value={value} onTabChange={onTabChange} tabs={tabs}>
-      <TabIndicatorProvider
-      // selectedPosition={{
-      //   ...EMPTY_RECT,
-      //   h: defaultWidth,
-      //   scale: 0.4,
-      //   animate: true,
-      //   index: 0,
-      //   tabs: 0,
-      // }}
-      >
-        <ShortcutContent gap={gap} />
-      </TabIndicatorProvider>
-    </TabProvider>
-  )
+  return <ShortcutContent gap={gap} />
 }

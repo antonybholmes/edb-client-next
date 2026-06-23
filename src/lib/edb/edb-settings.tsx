@@ -210,8 +210,24 @@ export function useAppInfo() {
 export function AppInfoProvider({ children }: IChildrenProps) {
   const [appInfo, setAppInfo] = useState<IAppInfo | undefined>(undefined)
 
+  const { settings } = useEdbSettings()
+
+  function _setAppInfo(
+    appInfo: IAppInfo,
+    opts: { updateAccentColor?: boolean } = {}
+  ) {
+    const { updateAccentColor = true } = opts
+    if (appInfo.color && updateAccentColor && settings.apps.useAccentColors) {
+      // 1. Grab the root HTML element
+      const root = document.documentElement
+      // Set the CSS variable for the app theme color
+      root.style.setProperty('--edb-app-theme', appInfo.color)
+    }
+    setAppInfo(appInfo)
+  }
+
   return (
-    <AppInfoContext.Provider value={{ appInfo, setAppInfo }}>
+    <AppInfoContext.Provider value={{ appInfo, setAppInfo: _setAppInfo }}>
       {children}
     </AppInfoContext.Provider>
   )

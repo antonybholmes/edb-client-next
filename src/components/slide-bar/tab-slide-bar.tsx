@@ -1,12 +1,9 @@
-import { useEffect } from 'react'
-
 import { TabContentPanels } from '../shadcn/ui/themed/v2/tabs'
 
 import { type ITabProvider } from '../tabs/tab-provider'
 
 import { TabIndicatorFollowBlock } from '../tabs/tab-indicator-follow-block'
 import { TabIndicatorSelectedH } from '../tabs/tab-indicator-selected-h'
-import { useTabs } from '../tabs/tab-store'
 import { getSelectedMouseOverSize, UnderlineTabs } from '../tabs/underline-tabs'
 import {
   OPTS_SIDEBAR_ID,
@@ -22,14 +19,14 @@ interface IProps extends ITabProvider, ISlideBarProps {
   display?: 'block' | 'flex'
 }
 
-function SideBar({ tabs }: ITabProvider) {
+export function SideBarTabs() {
   const { id } = useResizableSidebarContext() // Assuming useResizableSidebar is a hook to get the id of the ResizableSidebar
+
   return (
     <>
       <ResizableSidebarHeaderPortal>
         <UnderlineTabs
           groupId={id}
-          tabs={tabs}
           selectedMouseOverSize={getSelectedMouseOverSize}
           tabButtonProps={{ variant: 'default' }}
           //onTabChange={onTabChange}
@@ -45,14 +42,14 @@ function SideBar({ tabs }: ITabProvider) {
         </UnderlineTabs>
       </ResizableSidebarHeaderPortal>
 
-      <TabContentPanels tabs={tabs} groupId={id} className="flex-col grow" />
+      <TabContentPanels groupId={id} className="flex-col grow" />
     </>
   )
 }
 
 export function TabSlideBar({
   id = OPTS_SIDEBAR_ID,
-  tabs,
+
   //showCloseButton = true,
   //onTabChange,
   side = 'left',
@@ -60,15 +57,13 @@ export function TabSlideBar({
 }: IProps) {
   //const [ , setHover] = useState(false)
 
-  const { setTab } = useTabs(id)
-
   // set default tab on mount
-  useEffect(() => {
-    if (tabs.length === 0) {
-      return
-    }
-    setTab({ id: tabs[0]!.id, index: 0 })
-  }, [])
+  // useEffect(() => {
+  //   if (tabs.length === 0) {
+  //     return
+  //   }
+  //   setTab({ id: tabs[0]!.id, index: 0 })
+  // }, [])
 
   //const isOpen: boolean = open !== undefined ? open : _open
 
@@ -99,7 +94,7 @@ export function TabSlideBar({
     <ResizableSidebar id={id} side={side}>
       <>{children}</>
 
-      <SideBar tabs={tabs} />
+      <SideBarTabs />
 
       {/* <BaseCol className="gap-y-4 grow overflow-x-hidden">
         <UnderlineTabs

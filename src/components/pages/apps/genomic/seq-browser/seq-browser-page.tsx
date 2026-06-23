@@ -3,7 +3,12 @@
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
-import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
+import {
+  Toolbar,
+  TOOLBAR_TABS,
+  ToolbarMenu,
+  ToolbarPanel,
+} from '@/toolbar/toolbar'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 
 import { SearchIcon } from '@/icons/search-icon'
@@ -76,6 +81,7 @@ import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
+import { useTabs } from '@/components/tabs/tab-store'
 import { AssemblySelect } from '@/lib/edb/assembly-select'
 import { locStr } from '@/lib/genomic/genomic'
 import {
@@ -109,6 +115,8 @@ function SeqBrowserPage() {
   const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
 
   const { setSettingsTabs, setDefaultSettingsTab } = useSettingsTabs()
+
+  const { setTabs: setToolbarTabs } = useTabs(TOOLBAR_TABS)
 
   const { query, setQuery } = useSearch()
 
@@ -170,93 +178,7 @@ function SeqBrowserPage() {
     setSettingsTabs(settingsTabs)
     setDefaultSettingsTab(APP_INFO.name)
 
-    setQuery(['chr3:187441954-187466041'])
-  }, [])
-
-  useEffect(
-    () =>
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.zoom = zoom
-        })
-      ),
-    [zoom]
-  )
-
-  useEffect(() => {
-    // When the genome changes, reset tracks and locations
-    dispatch({ type: 'reset' })
-  }, [edbSettings.genomic.assembly])
-
-  // when the user changes the locations, update the query
-  // to match. Essentially syncing the two. The search box
-  // shows the first location being viewed.
-  useEffect(() => {
-    setQuery(
-      locations.map((location) => {
-        return locStr(location)
-      })
-    )
-  }, [locations])
-
-  // get the available GTF annotations available
-  // const gtfQuery = useQuery({
-  //   queryKey: ['genomes'],
-  //   queryFn: async () => {
-  //     //const token = await loadAccessToken()
-
-  //     const res = await httpFetch.getJson<{ data: IGenomeAnnotation[] }>(
-  //       API_GENOME_GTFS_URL
-  //     )
-
-  //     return res.data
-  //   },
-  // })
-
-  // const gtfMap: GtfInfoMap = useMemo(
-  //   () =>
-  //     Object.fromEntries(
-  //       gtfQuery.data
-  //         ? gtfQuery.data.map(
-  //             (g: IGenomeAnnotation) =>
-  //               [g.assembly, g] as [string, IGenomeAnnotation]
-  //           )
-  //         : []
-  //     ),
-  //   [gtfQuery.data]
-  // )
-
-  const fileMenuTabs: ITab[] = [
-    {
-      //id: nanoid(),
-      id: TEXT_EXPORT,
-      icon: <ExportIcon />,
-      content: (
-        <>
-          <DropdownMenuItem
-            aria-label={TEXT_DOWNLOAD_AS_PNG}
-            onClick={() => {
-              downloadSvgAutoFormat(svgRef, `tracks.png`)
-            }}
-          >
-            <FileImageIcon stroke="" />
-            <span>{TEXT_DOWNLOAD_AS_PNG}</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            aria-label={TEXT_DOWNLOAD_AS_SVG}
-            onClick={() => {
-              downloadSvgAutoFormat(svgRef, `tracks.svg`)
-            }}
-          >
-            <span>{TEXT_DOWNLOAD_AS_SVG}</span>
-          </DropdownMenuItem>
-        </>
-      ),
-    },
-  ]
-
-  const tabs: ITab[] = useMemo(
-    () => [
+    const tabs: ITab[] = [
       {
         //id: nanoid(),
         id: 'Home',
@@ -482,9 +404,94 @@ function SeqBrowserPage() {
           </>
         ),
       },
-    ],
-    [settings, locations, isCtrlPressed, zoom]
+    ]
+
+    setToolbarTabs(tabs)
+
+    setQuery(['chr3:187441954-187466041'])
+  }, [])
+
+  useEffect(
+    () =>
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.zoom = zoom
+        })
+      ),
+    [zoom]
   )
+
+  useEffect(() => {
+    // When the genome changes, reset tracks and locations
+    dispatch({ type: 'reset' })
+  }, [edbSettings.genomic.assembly])
+
+  // when the user changes the locations, update the query
+  // to match. Essentially syncing the two. The search box
+  // shows the first location being viewed.
+  useEffect(() => {
+    setQuery(
+      locations.map((location) => {
+        return locStr(location)
+      })
+    )
+  }, [locations])
+
+  // get the available GTF annotations available
+  // const gtfQuery = useQuery({
+  //   queryKey: ['genomes'],
+  //   queryFn: async () => {
+  //     //const token = await loadAccessToken()
+
+  //     const res = await httpFetch.getJson<{ data: IGenomeAnnotation[] }>(
+  //       API_GENOME_GTFS_URL
+  //     )
+
+  //     return res.data
+  //   },
+  // })
+
+  // const gtfMap: GtfInfoMap = useMemo(
+  //   () =>
+  //     Object.fromEntries(
+  //       gtfQuery.data
+  //         ? gtfQuery.data.map(
+  //             (g: IGenomeAnnotation) =>
+  //               [g.assembly, g] as [string, IGenomeAnnotation]
+  //           )
+  //         : []
+  //     ),
+  //   [gtfQuery.data]
+  // )
+
+  const fileMenuTabs: ITab[] = [
+    {
+      //id: nanoid(),
+      id: TEXT_EXPORT,
+      icon: <ExportIcon />,
+      content: (
+        <>
+          <DropdownMenuItem
+            aria-label={TEXT_DOWNLOAD_AS_PNG}
+            onClick={() => {
+              downloadSvgAutoFormat(svgRef, `tracks.png`)
+            }}
+          >
+            <FileImageIcon stroke="" />
+            <span>{TEXT_DOWNLOAD_AS_PNG}</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            aria-label={TEXT_DOWNLOAD_AS_SVG}
+            onClick={() => {
+              downloadSvgAutoFormat(svgRef, `tracks.svg`)
+            }}
+          >
+            <span>{TEXT_DOWNLOAD_AS_SVG}</span>
+          </DropdownMenuItem>
+        </>
+      ),
+    },
+  ]
 
   const chartTabs: ITab[] = useMemo(
     () => [
@@ -560,15 +567,11 @@ function SeqBrowserPage() {
 
         <Toolbar>
           <ToolbarMenu
-            groupId={_id}
-            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
           />
           <ToolbarPanel
-            groupId={_id}
-            tabs={tabs}
             tabShortcutMenu={
               <OptsSidebarMenu open={edbSettings.sidebar.show} />
             }

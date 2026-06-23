@@ -121,6 +121,7 @@ import { useHistory } from './history/history-provider/history-provider'
 
 import { pathJoin } from './history/history-provider/history-actions'
 
+import { useTabs } from '@/components/tabs/tab-store'
 import {
   useCurrentGroups,
   useCurrentPlots,
@@ -217,6 +218,8 @@ export function MatcalcPage() {
   const { sendMessage } = useMessages(MESSAGE_CHANNEL)
 
   const { selection } = useSelectionRange()
+
+  const { setTabs: setToolbarTabs } = useTabs('toolbar')
 
   //const [toolbarTabName, setToolbarTab] = useState('Home')
 
@@ -653,26 +656,27 @@ export function MatcalcPage() {
     })
   }
 
-  const tabs: ITab[] = [
-    {
-      //id: nanoid(),
-      id: TEXT_HOME,
-      //size: 2.1,
-      content: (
-        <>
-          <ToolbarTabGroup title="File" className="items-start">
-            <ToolbarOpenFile
-              onOpen={() => {
-                openDialog({
-                  type: 'open',
-                  payload: {
-                    callback: _open,
-                  },
-                })
-              }}
-            />
+  useEffect(() => {
+    const tabs: ITab[] = [
+      {
+        //id: nanoid(),
+        id: TEXT_HOME,
+        //size: 2.1,
+        content: (
+          <>
+            <ToolbarTabGroup title="File" className="items-start">
+              <ToolbarOpenFile
+                onOpen={() => {
+                  openDialog({
+                    type: 'open',
+                    payload: {
+                      callback: _open,
+                    },
+                  })
+                }}
+              />
 
-            {/* <ToolbarColSmallButton
+              {/* <ToolbarColSmallButton
               title="Download current table locally"
               onClick={() => {
                 console.log('save', file?.id ?? '')
@@ -688,164 +692,138 @@ export function MatcalcPage() {
               {TEXT_DOWNLOAD}
             </ToolbarColSmallButton> */}
 
-            <ToolbarIconButton
-              title="Download current table to device"
-              onClick={() => {
-                console.log('save', file?.id ?? '')
-                sendMessage({
-                  type: 'info',
-                  source: 'matcalc',
-                  target: file?.id ?? '',
-                  data: 'save',
-                })
-              }}
-            >
-              <DownloadIcon />
-            </ToolbarIconButton>
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title="Plot" className="items-start">
-            <ToolbarCol>
-              <ToolbarButton
-                onClick={() => makeClusterMap(false)}
-                aria-label={TEXT_HEATMAP}
-              >
-                {TEXT_HEATMAP}
-              </ToolbarButton>
-              <ToolbarButton
-                onClick={() => makeDotPlot(false)}
-                aria-label={TEXT_DOT_PLOT}
-              >
-                Dot
-              </ToolbarButton>
-            </ToolbarCol>
-            <ToolbarCol>
-              <ToolbarButton
-                title="Create Volcano Plot from Table"
-                onClick={() => {
-                  openMatcalcDialog({
-                    type: 'volcano-plot',
-                    payload: {
-                      callback: (plot) => _addPlots([plot]),
-                    },
-                  })
-                }}
-              >
-                Volcano
-              </ToolbarButton>
-
-              <ToolbarButton
-                title="Create Box Plot from Table"
-                onClick={() => {
-                  openMatcalcDialog({
-                    type: 'box-whiskers',
-                    payload: {
-                      callback: (plot) => _addPlots([plot]),
-                    },
-                  })
-                }}
-              >
-                Box
-              </ToolbarButton>
-            </ToolbarCol>
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title="Gene Expression">
-            <ToolbarButton
-              title="Download Gene Expression Data"
-              onClick={() => openMatcalcDialog({ type: 'gex', payload: {} })}
-            >
-              Gene Expression
-            </ToolbarButton>
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title="Number" className="items-start">
-            <ToolbarIconButton
-              checked={settings.view.commas}
-              title="Comma"
-              onClick={() =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.view.commas = !draft.view.commas
-                  })
-                )
-              }
-            >
-              <CommaIcon />
-            </ToolbarIconButton>
-            <ToolbarCol>
               <ToolbarIconButton
-                title="Decrease Decimal"
+                title="Download current table to device"
+                onClick={() => {
+                  console.log('save', file?.id ?? '')
+                  sendMessage({
+                    type: 'info',
+                    source: 'matcalc',
+                    target: file?.id ?? '',
+                    data: 'save',
+                  })
+                }}
+              >
+                <DownloadIcon />
+              </ToolbarIconButton>
+            </ToolbarTabGroup>
+
+            <ToolbarTabGroup title="Plot" className="items-start">
+              <ToolbarCol>
+                <ToolbarButton
+                  onClick={() => makeClusterMap(false)}
+                  aria-label={TEXT_HEATMAP}
+                >
+                  {TEXT_HEATMAP}
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() => makeDotPlot(false)}
+                  aria-label={TEXT_DOT_PLOT}
+                >
+                  Dot
+                </ToolbarButton>
+              </ToolbarCol>
+              <ToolbarCol>
+                <ToolbarButton
+                  title="Create Volcano Plot from Table"
+                  onClick={() => {
+                    openMatcalcDialog({
+                      type: 'volcano-plot',
+                      payload: {
+                        callback: (plot) => _addPlots([plot]),
+                      },
+                    })
+                  }}
+                >
+                  Volcano
+                </ToolbarButton>
+
+                <ToolbarButton
+                  title="Create Box Plot from Table"
+                  onClick={() => {
+                    openMatcalcDialog({
+                      type: 'box-whiskers',
+                      payload: {
+                        callback: (plot) => _addPlots([plot]),
+                      },
+                    })
+                  }}
+                >
+                  Box
+                </ToolbarButton>
+              </ToolbarCol>
+            </ToolbarTabGroup>
+
+            <ToolbarTabGroup title="Gene Expression">
+              <ToolbarButton
+                title="Download Gene Expression Data"
+                onClick={() => openMatcalcDialog({ type: 'gex', payload: {} })}
+              >
+                Gene Expression
+              </ToolbarButton>
+            </ToolbarTabGroup>
+
+            <ToolbarTabGroup title="Number" className="items-start">
+              <ToolbarIconButton
+                checked={settings.view.commas}
+                title="Comma"
                 onClick={() =>
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.view.dp = Math.max(draft.view.dp - 1, 0)
+                      draft.view.commas = !draft.view.commas
                     })
                   )
                 }
               >
-                <DecimalsArrowLeft strokeWidth={1.5} size={20} />
+                <CommaIcon />
               </ToolbarIconButton>
-              <ToolbarIconButton
-                title="Increase Decimal"
-                onClick={() =>
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.view.dp = Math.min(draft.view.dp + 1, 10)
-                    })
-                  )
-                }
-              >
-                <DecimalsArrowRight strokeWidth={1.5} size={20} />
-              </ToolbarIconButton>
-            </ToolbarCol>
-          </ToolbarTabGroup>
-        </>
-      ),
-    },
-    {
-      id: 'Data',
-
-      content: (
-        <>
-          <ToolbarTabGroup title="Matrix">
-            <ToolbarIconButton
-              title="Transpose Table"
-              onClick={() => transpose()}
-            >
-              <TransposeIcon />
-            </ToolbarIconButton>
-
-            <ToolbarOptionalDropdownButton
-              //size="md"
-              icon="Log2(x)"
-              onMainClick={() => {
-                addSheets(
-                  [log(sheet! as AnnotationDataFrame, 2, 1)],
-
-                  {
-                    name: 'Log2(x+1)',
+              <ToolbarCol>
+                <ToolbarIconButton
+                  title="Decrease Decimal"
+                  onClick={() =>
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.view.dp = Math.max(draft.view.dp - 1, 0)
+                      })
+                    )
                   }
-                )
-              }}
-            >
-              <DropdownMenuItem
-                aria-label="Log2(x)"
-                onClick={() =>
-                  addSheets(
-                    [log(sheet! as AnnotationDataFrame, 2, 0)],
+                >
+                  <DecimalsArrowLeft strokeWidth={1.5} size={20} />
+                </ToolbarIconButton>
+                <ToolbarIconButton
+                  title="Increase Decimal"
+                  onClick={() =>
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.view.dp = Math.min(draft.view.dp + 1, 10)
+                      })
+                    )
+                  }
+                >
+                  <DecimalsArrowRight strokeWidth={1.5} size={20} />
+                </ToolbarIconButton>
+              </ToolbarCol>
+            </ToolbarTabGroup>
+          </>
+        ),
+      },
+      {
+        id: 'Data',
 
-                    {
-                      name: 'Log2(x)',
-                    }
-                  )
-                }
+        content: (
+          <>
+            <ToolbarTabGroup title="Matrix">
+              <ToolbarIconButton
+                title="Transpose Table"
+                onClick={() => transpose()}
               >
-                Log2(x)
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                aria-label="Log2(x+1)"
-                onClick={() =>
+                <TransposeIcon />
+              </ToolbarIconButton>
+
+              <ToolbarOptionalDropdownButton
+                //size="md"
+                icon="Log2(x)"
+                onMainClick={() => {
                   addSheets(
                     [log(sheet! as AnnotationDataFrame, 2, 1)],
 
@@ -853,294 +831,323 @@ export function MatcalcPage() {
                       name: 'Log2(x+1)',
                     }
                   )
-                }
-              >
-                Log2(x+1)
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                aria-label="Log10(x)"
-                onClick={() =>
-                  addSheets(
-                    [log(sheet! as AnnotationDataFrame, 10, 0)],
-
-                    {
-                      name: 'Log10(x)',
-                    }
-                  )
-                }
-              >
-                Log10(x)
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                aria-label="Log10(x+1)"
-                onClick={() =>
-                  addSheets(
-                    [log(sheet! as AnnotationDataFrame, 10, 1)],
-
-                    {
-                      name: 'Log10(x+1)',
-                    }
-                  )
-                }
-              >
-                Log10(x+1)
-              </DropdownMenuItem>
-            </ToolbarOptionalDropdownButton>
-
-            <ToolbarDropdownButton icon="Z-score">
-              <DropdownMenuItem
-                aria-label="Z-score rows"
-                onClick={() => {
-                  addSheets(
-                    [
-                      rowZScore(
-                        sheet! as AnnotationDataFrame
-                      ) as AnnotationDataFrame,
-                    ],
-
-                    { name: 'Z-score rows' }
-                  )
                 }}
               >
-                Z-score rows
-              </DropdownMenuItem>
+                <DropdownMenuItem
+                  aria-label="Log2(x)"
+                  onClick={() =>
+                    addSheets(
+                      [log(sheet! as AnnotationDataFrame, 2, 0)],
 
-              <DropdownMenuItem
-                aria-label="Z-score columns"
-                onClick={() => {
-                  if (sheet) {
-                    const df = colZScore(sheet! as AnnotationDataFrame)
-
-                    addSheets([df as AnnotationDataFrame], {
-                      name: 'Z-score columns',
-                    })
+                      {
+                        name: 'Log2(x)',
+                      }
+                    )
                   }
-                }}
-              >
-                Z-score columns
-              </DropdownMenuItem>
+                >
+                  Log2(x)
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  aria-label="Log2(x+1)"
+                  onClick={() =>
+                    addSheets(
+                      [log(sheet! as AnnotationDataFrame, 2, 1)],
 
-              <DropdownMenuItem
-                aria-label="Z-score table"
-                onClick={() => {
-                  if (sheet) {
-                    const df = zscore(sheet! as AnnotationDataFrame)
-
-                    addSheets([df as AnnotationDataFrame], {
-                      name: 'Z-score table',
-                    })
+                      {
+                        name: 'Log2(x+1)',
+                      }
+                    )
                   }
-                }}
-              >
-                Z-score table
-              </DropdownMenuItem>
-            </ToolbarDropdownButton>
-          </ToolbarTabGroup>
+                >
+                  Log2(x+1)
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  aria-label="Log10(x)"
+                  onClick={() =>
+                    addSheets(
+                      [log(sheet! as AnnotationDataFrame, 10, 0)],
 
-          <ToolbarTabGroup title="Cluster">
-            <ToolbarButton
-              title="K-means Clustering"
-              onClick={() => {
-                openMatcalcDialog({
-                  type: 'kmeans',
-                  payload: {
-                    callback: (data: {
-                      df: AnnotationDataFrame
-                      drawHeatmap: boolean
-                    }) => {
-                      openMatcalcDialog({
-                        type: 'heatmap',
-                        payload: {
-                          sheet: data.df,
-                          callback: (plot) => _addPlots([plot]),
-                        },
+                      {
+                        name: 'Log10(x)',
+                      }
+                    )
+                  }
+                >
+                  Log10(x)
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  aria-label="Log10(x+1)"
+                  onClick={() =>
+                    addSheets(
+                      [log(sheet! as AnnotationDataFrame, 10, 1)],
+
+                      {
+                        name: 'Log10(x+1)',
+                      }
+                    )
+                  }
+                >
+                  Log10(x+1)
+                </DropdownMenuItem>
+              </ToolbarOptionalDropdownButton>
+
+              <ToolbarDropdownButton icon="Z-score">
+                <DropdownMenuItem
+                  aria-label="Z-score rows"
+                  onClick={() => {
+                    addSheets(
+                      [
+                        rowZScore(
+                          sheet! as AnnotationDataFrame
+                        ) as AnnotationDataFrame,
+                      ],
+
+                      { name: 'Z-score rows' }
+                    )
+                  }}
+                >
+                  Z-score rows
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  aria-label="Z-score columns"
+                  onClick={() => {
+                    if (sheet) {
+                      const df = colZScore(sheet! as AnnotationDataFrame)
+
+                      addSheets([df as AnnotationDataFrame], {
+                        name: 'Z-score columns',
                       })
-                    },
-                  },
-                })
-              }}
-            >
-              K-means
-            </ToolbarButton>
-          </ToolbarTabGroup>
+                    }
+                  }}
+                >
+                  Z-score columns
+                </DropdownMenuItem>
 
-          <ToolbarTabGroup title="Rows">
-            <ToolbarIconButton
-              title="Filter Top Rows using Statistics"
-              onClick={() => {
-                openMatcalcDialog({
-                  type: 'top-rows',
-                  payload: {},
-                })
-              }}
-            >
-              <FilterIcon />
-            </ToolbarIconButton>
+                <DropdownMenuItem
+                  aria-label="Z-score table"
+                  onClick={() => {
+                    if (sheet) {
+                      const df = zscore(sheet! as AnnotationDataFrame)
 
-            <ToolbarIconButton
-              title="Sort Columns by Specific Rows"
-              onClick={() => {
-                if (selection) {
+                      addSheets([df as AnnotationDataFrame], {
+                        name: 'Z-score table',
+                      })
+                    }
+                  }}
+                >
+                  Z-score table
+                </DropdownMenuItem>
+              </ToolbarDropdownButton>
+            </ToolbarTabGroup>
+
+            <ToolbarTabGroup title="Cluster">
+              <ToolbarButton
+                title="K-means Clustering"
+                onClick={() => {
                   openMatcalcDialog({
-                    type: 'sort-rows',
+                    type: 'kmeans',
                     payload: {
-                      selection,
+                      callback: (data: {
+                        df: AnnotationDataFrame
+                        drawHeatmap: boolean
+                      }) => {
+                        openMatcalcDialog({
+                          type: 'heatmap',
+                          payload: {
+                            sheet: data.df,
+                            callback: (plot) => _addPlots([plot]),
+                          },
+                        })
+                      },
                     },
                   })
-                }
-              }}
-            >
-              <DataSortIcon />
-            </ToolbarIconButton>
+                }}
+              >
+                K-means
+              </ToolbarButton>
+            </ToolbarTabGroup>
 
-            <ToolbarButton
-              title="Add Row Standard Deviation Column"
-              onClick={() => {
-                const sd = rowStdev(sheet! as AnnotationDataFrame)
-
-                const df = (
-                  sheet! as AnnotationDataFrame
-                ).copy() as AnnotationDataFrame
-                df.rowObs.setCol('Row Stdev', sd, true)
-
-                //df.setCol('Row Stdev', sd, true)
-
-                addSheets([df], { name: 'Row Standard Deviation' })
-                //addStep(df.name, [log(sheet!, 2, 1)])
-              }}
-            >
-              Stdev
-            </ToolbarButton>
-          </ToolbarTabGroup>
-
-          {process.env.NODE_ENV !== 'development' && (
-            <>
-              <ToolbarTabGroup title="Clinical">
-                <ToolbarButton
-                  title="Add row standard deviation column to table"
-                  onClick={() => logrankExample()}
-                >
-                  Survival
-                </ToolbarButton>
-              </ToolbarTabGroup>
-            </>
-          )}
-        </>
-      ),
-    },
-    {
-      id: 'Gene',
-      content: (
-        <>
-          <ToolbarTabGroup title="Annotation">
-            <ToolbarCol>
-              <ToolbarButton
-                title="Convert Gene Symbols between Human and Mouse"
+            <ToolbarTabGroup title="Rows">
+              <ToolbarIconButton
+                title="Filter Top Rows using Statistics"
                 onClick={() => {
                   openMatcalcDialog({
-                    type: 'gene-species-convert',
+                    type: 'top-rows',
                     payload: {},
                   })
                 }}
               >
-                Convert Species
-              </ToolbarButton>
+                <FilterIcon />
+              </ToolbarIconButton>
 
-              <ToolbarButton
-                title="Convert Motifs to Gene Symbols"
+              <ToolbarIconButton
+                title="Sort Columns by Specific Rows"
                 onClick={() => {
                   if (selection) {
                     openMatcalcDialog({
-                      type: 'motif-to-gene',
+                      type: 'sort-rows',
                       payload: {
                         selection,
-                        // callback: (response, data) => {
-                        //   if (response === TEXT_OK && data) {
-                        //     addSheets([data])
-                        //   }
-                        // },
                       },
                     })
                   }
                 }}
               >
-                Motif To Gene
-              </ToolbarButton>
-            </ToolbarCol>
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title="GSEA">
-            <ToolbarCol>
-              <ToolbarButton
-                aria-label="Run Extended GSEA"
-                onClick={() => runExtGsea()}
-              >
-                Extended GSEA
-              </ToolbarButton>
+                <DataSortIcon />
+              </ToolbarIconButton>
 
               <ToolbarButton
-                title="Convert Matrix to GSEA GCT Format"
-                onClick={() => gct()}
-              >
-                GCT
-              </ToolbarButton>
-            </ToolbarCol>
-          </ToolbarTabGroup>
-        </>
-      ),
-    },
-    {
-      id: 'Genomic',
-      content: (
-        <>
-          <ToolbarTabGroup title="Overlap">
-            <ToolbarButton
-              title="Minimum Common Regions of Genomic Locations"
-              onClick={() => overlapGenomicLocations('mcr')}
-            >
-              MCR
-            </ToolbarButton>
-            <ToolbarButton
-              title="Maximum Overlap Regions of Genomic Locations"
-              onClick={() => overlapGenomicLocations('max')}
-            >
-              Min/Max
-            </ToolbarButton>
-
-            <ToolbarButton
-              title="One Way Overlap of Genomic Locations in Files"
-              onClick={() => overlapOneWay()}
-            >
-              One Way
-            </ToolbarButton>
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title="Annotation">
-            <ToolbarCol>
-              <ToolbarButton
-                title="Annotate Locations"
+                title="Add Row Standard Deviation Column"
                 onClick={() => {
-                  openMatcalcDialog({
-                    type: 'annotate',
-                    payload: {
-                      selection: selection!,
-                    },
-                  })
+                  const sd = rowStdev(sheet! as AnnotationDataFrame)
+
+                  const df = (
+                    sheet! as AnnotationDataFrame
+                  ).copy() as AnnotationDataFrame
+                  df.rowObs.setCol('Row Stdev', sd, true)
+
+                  //df.setCol('Row Stdev', sd, true)
+
+                  addSheets([df], { name: 'Row Standard Deviation' })
+                  //addStep(df.name, [log(sheet!, 2, 1)])
                 }}
               >
-                Annotate
+                Stdev
               </ToolbarButton>
-            </ToolbarCol>
-          </ToolbarTabGroup>
-        </>
-      ),
-    },
-    {
-      id: 'Help',
-      content: <ToolbarHelpTabGroup url={HELP_URL} />,
-    },
-  ]
+            </ToolbarTabGroup>
+
+            {process.env.NODE_ENV !== 'development' && (
+              <>
+                <ToolbarTabGroup title="Clinical">
+                  <ToolbarButton
+                    title="Add row standard deviation column to table"
+                    onClick={() => logrankExample()}
+                  >
+                    Survival
+                  </ToolbarButton>
+                </ToolbarTabGroup>
+              </>
+            )}
+          </>
+        ),
+      },
+      {
+        id: 'Gene',
+        content: (
+          <>
+            <ToolbarTabGroup title="Annotation">
+              <ToolbarCol>
+                <ToolbarButton
+                  title="Convert Gene Symbols between Human and Mouse"
+                  onClick={() => {
+                    openMatcalcDialog({
+                      type: 'gene-species-convert',
+                      payload: {},
+                    })
+                  }}
+                >
+                  Convert Species
+                </ToolbarButton>
+
+                <ToolbarButton
+                  title="Convert Motifs to Gene Symbols"
+                  onClick={() => {
+                    if (selection) {
+                      openMatcalcDialog({
+                        type: 'motif-to-gene',
+                        payload: {
+                          selection,
+                          // callback: (response, data) => {
+                          //   if (response === TEXT_OK && data) {
+                          //     addSheets([data])
+                          //   }
+                          // },
+                        },
+                      })
+                    }
+                  }}
+                >
+                  Motif To Gene
+                </ToolbarButton>
+              </ToolbarCol>
+            </ToolbarTabGroup>
+
+            <ToolbarTabGroup title="GSEA">
+              <ToolbarCol>
+                <ToolbarButton
+                  aria-label="Run Extended GSEA"
+                  onClick={() => runExtGsea()}
+                >
+                  Extended GSEA
+                </ToolbarButton>
+
+                <ToolbarButton
+                  title="Convert Matrix to GSEA GCT Format"
+                  onClick={() => gct()}
+                >
+                  GCT
+                </ToolbarButton>
+              </ToolbarCol>
+            </ToolbarTabGroup>
+          </>
+        ),
+      },
+      {
+        id: 'Genomic',
+        content: (
+          <>
+            <ToolbarTabGroup title="Overlap">
+              <ToolbarButton
+                title="Minimum Common Regions of Genomic Locations"
+                onClick={() => overlapGenomicLocations('mcr')}
+              >
+                MCR
+              </ToolbarButton>
+              <ToolbarButton
+                title="Maximum Overlap Regions of Genomic Locations"
+                onClick={() => overlapGenomicLocations('max')}
+              >
+                Min/Max
+              </ToolbarButton>
+
+              <ToolbarButton
+                title="One Way Overlap of Genomic Locations in Files"
+                onClick={() => overlapOneWay()}
+              >
+                One Way
+              </ToolbarButton>
+            </ToolbarTabGroup>
+
+            <ToolbarTabGroup title="Annotation">
+              <ToolbarCol>
+                <ToolbarButton
+                  title="Annotate Locations"
+                  onClick={() => {
+                    openMatcalcDialog({
+                      type: 'annotate',
+                      payload: {
+                        selection: selection!,
+                      },
+                    })
+                  }}
+                >
+                  Annotate
+                </ToolbarButton>
+              </ToolbarCol>
+            </ToolbarTabGroup>
+          </>
+        ),
+      },
+      {
+        id: 'Help',
+        content: <ToolbarHelpTabGroup url={HELP_URL} />,
+      },
+    ]
+
+    setToolbarTabs(tabs)
+  }, [])
 
   const fileMenuTabs: ITab[] = useMemo(
     () => [
@@ -1306,8 +1313,6 @@ export function MatcalcPage() {
       <ShortcutLayout signinRequired={false}>
         <Toolbar>
           <ToolbarMenu
-            groupId="matcalc-toolbar"
-            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
@@ -1326,8 +1331,6 @@ export function MatcalcPage() {
             rightShortcuts={<HistoryShowButton />}
           />
           <ToolbarPanel
-            groupId="matcalc-toolbar"
-            tabs={tabs}
             tabShortcutMenu={<OptsSidebarMenu open={settings.sidebar.show} />}
           />
         </Toolbar>

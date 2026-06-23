@@ -4,12 +4,7 @@ import type { IChildrenProps } from '@/interfaces/children-props'
 import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
 
 import { cn } from '@/lib/shadcn-utils'
-import {
-  getTabFromValue,
-  getTabName,
-  type ITab,
-  type ITabProvider,
-} from './tab-provider'
+import { getTabName, type ITab, type ITabProvider } from './tab-provider'
 
 import { cva, type VariantProps } from 'class-variance-authority'
 
@@ -200,7 +195,7 @@ function Trigger({
 }
 
 interface IProps extends ITabProvider, IChildrenProps, ITabMenu {
-  groupId: string
+  groupId?: string
   buttonClassName?: string
   maxNameLength?: number
   tabButtonProps?: VariantProps<typeof tabButtonVariants>
@@ -209,8 +204,7 @@ interface IProps extends ITabProvider, IChildrenProps, ITabMenu {
 }
 
 export function _UnderlineTabs({
-  groupId,
-  tabs,
+  groupId = 'toolbar',
   maxNameLength = -1,
   tabButtonProps = { variant: 'toolbar' },
   onTabChange,
@@ -221,11 +215,7 @@ export function _UnderlineTabs({
   const tabListRef = useRef<HTMLDivElement>(null)
   const buttonsRef = useRef<HTMLElement[]>([])
   const initial = useRef(true)
-  const { tab: selectedTab, setTab } = useTabs(groupId)
-  // const {
-  //   setPosition: setTabPosition,
-  //   setSelectedPosition: setSelectedTabPosition,
-  // } = useTabIndicators(groupId)
+  const { tab: selectedTab, selectedTabIndex, tabs, setTab } = useTabs(groupId)
 
   const {
     setPosition: setTabPosition,
@@ -261,20 +251,22 @@ export function _UnderlineTabs({
   const defaultValue = useRef(tabs[0]?.id ?? '')
 
   function _onValueChange(value: string) {
-    const selectedTab = getTabFromValue(value, tabs)
+    //const selectedTab = getTabFromValue(value, tabs)
 
-    if (selectedTab) {
-      setTab({ id: selectedTab.tab.id, index: selectedTab.index })
+    console.log('aha', value)
 
-      onTabChange?.(selectedTab)
-    }
+    //if (selectedTab) {
+    setTab(value) //{ id: selectedTab.tab.id, index: selectedTab.index })
+
+    //onTabChange?.(selectedTab)
+    //}
   }
 
   //resize if ui element changes size
   useEffect(() => {
     if (
       !selectedTab ||
-      !buttonsRef.current[selectedTab.index] ||
+      !buttonsRef.current[selectedTabIndex] ||
       !tabListRef.current
     ) {
       return
@@ -282,19 +274,19 @@ export function _UnderlineTabs({
 
     const observer = new ResizeObserver(() => {
       updateSelectedTabSize(
-        selectedTab.index,
-        buttonsRef.current[selectedTab.index]!,
+        selectedTabIndex,
+        buttonsRef.current[selectedTabIndex]!,
         false
       )
     })
 
-    observer.observe(buttonsRef.current[selectedTab.index]!)
+    observer.observe(buttonsRef.current[selectedTabIndex]!)
     //observe parent container too
     observer.observe(tabListRef.current)
 
     updateSelectedTabSize(
-      selectedTab.index,
-      buttonsRef.current[selectedTab.index]!,
+      selectedTabIndex,
+      buttonsRef.current[selectedTabIndex]!,
       !initial.current
     )
 
@@ -303,7 +295,7 @@ export function _UnderlineTabs({
     return () => {
       observer.disconnect()
     }
-  }, [selectedTab?.index])
+  }, [selectedTabIndex, tabs])
 
   return (
     <Tabs

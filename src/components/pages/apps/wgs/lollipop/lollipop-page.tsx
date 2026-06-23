@@ -71,6 +71,7 @@ import { useAppInfo } from '@/lib/edb/edb-settings'
 import { useZoom } from '@/providers/zoom-provider'
 import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 
+import { useTabs } from '@/components/tabs/tab-store'
 import {
   useCurrentSheets,
   useFiles,
@@ -146,6 +147,8 @@ function LollipopPage() {
 
   const { open: openDialog } = useDialogs()
 
+  const { setTabs: setToolbarTabs } = useTabs(TOOLBAR_TABS)
+
   async function loadTestData() {
     const gene = 'BTG1'
 
@@ -206,6 +209,110 @@ function LollipopPage() {
 
   useEffect(() => {
     setAppInfo(APP_INFO)
+
+    const tabs: ITab[] = [
+      {
+        ////name: nanoid(),
+        id: 'Home',
+        //size: 2.1,
+        content: (
+          <>
+            <ToolbarTabGroup title="File">
+              <ToolbarOpenFile
+                onOpen={() => {
+                  console.log('open file menu')
+                  _open('variants')
+                }}
+                multiple={true}
+              />
+
+              <ToolbarIconButton
+                aria-label="Save image"
+                onClick={() => {
+                  openDialog({
+                    type: 'save-image',
+                    payload: {
+                      name: 'lollipop',
+                      svgRef,
+                    },
+                  })
+                }}
+              >
+                <DownloadIcon />
+              </ToolbarIconButton>
+            </ToolbarTabGroup>
+
+            <ToolbarTabGroup title="View" className="gap-x-1 items-start">
+              <ToolbarCol>
+                <ToolbarIconButton
+                  title="Create a stacked lollipop plot"
+                  //className="rounded-r-none"
+                  checked={plotStyle === 'stack'}
+                  onClick={() => {
+                    setPlotStyle('stack')
+                  }}
+                >
+                  <LollipopStackIcon />
+                </ToolbarIconButton>
+                <ToolbarIconButton
+                  title="Create a single lollipop plot"
+                  //className="rounded-l-none"
+                  checked={plotStyle === 'single'}
+                  onClick={() => {
+                    setPlotStyle('single')
+                  }}
+                >
+                  <LollipopSingleIcon />
+                </ToolbarIconButton>
+              </ToolbarCol>
+
+              <ToolbarCol>
+                <ToolbarButton
+                  title="Show only maximum variant"
+                  checked={showMaxVariantOnly}
+                  onClick={() => {
+                    setShowMaxVariantOnly(!showMaxVariantOnly)
+                  }}
+                >
+                  Max variant
+                </ToolbarButton>
+
+                <ToolbarButton
+                  title="Lollipop sizes are proportional to the number of variants"
+                  checked={displayProps.variants.plot.proportional}
+                  onClick={() => {
+                    setDisplayProps(
+                      produce(displayProps, (draft) => {
+                        draft.variants.plot.proportional =
+                          !draft.variants.plot.proportional
+                      })
+                    )
+                  }}
+                >
+                  Proportional
+                </ToolbarButton>
+              </ToolbarCol>
+
+              <ToolbarIconButton
+                title="Show mutation counts on single lollipop plot"
+                checked={displayProps.variants.plot.showCounts}
+                onClick={() => {
+                  setDisplayProps(
+                    produce(displayProps, (draft) => {
+                      draft.variants.plot.showCounts =
+                        !draft.variants.plot.showCounts
+                    })
+                  )
+                }}
+              >
+                <LollipopCountIcon />
+              </ToolbarIconButton>
+            </ToolbarTabGroup>
+          </>
+        ),
+      },
+    ]
+    setToolbarTabs(tabs)
   }, [])
 
   useEffect(() => {
@@ -333,109 +440,6 @@ function LollipopPage() {
   //   lollipopFromTable(mutDf, protein)
 
   // }
-
-  const tabs: ITab[] = [
-    {
-      ////name: nanoid(),
-      id: 'Home',
-      //size: 2.1,
-      content: (
-        <>
-          <ToolbarTabGroup title="File">
-            <ToolbarOpenFile
-              onOpen={() => {
-                console.log('open file menu')
-                _open('variants')
-              }}
-              multiple={true}
-            />
-
-            <ToolbarIconButton
-              aria-label="Save image"
-              onClick={() => {
-                openDialog({
-                  type: 'save-image',
-                  payload: {
-                    name: 'lollipop',
-                    svgRef,
-                  },
-                })
-              }}
-            >
-              <DownloadIcon />
-            </ToolbarIconButton>
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title="View" className="gap-x-1 items-start">
-            <ToolbarCol>
-              <ToolbarIconButton
-                title="Create a stacked lollipop plot"
-                //className="rounded-r-none"
-                checked={plotStyle === 'stack'}
-                onClick={() => {
-                  setPlotStyle('stack')
-                }}
-              >
-                <LollipopStackIcon />
-              </ToolbarIconButton>
-              <ToolbarIconButton
-                title="Create a single lollipop plot"
-                //className="rounded-l-none"
-                checked={plotStyle === 'single'}
-                onClick={() => {
-                  setPlotStyle('single')
-                }}
-              >
-                <LollipopSingleIcon />
-              </ToolbarIconButton>
-            </ToolbarCol>
-
-            <ToolbarCol>
-              <ToolbarButton
-                title="Show only maximum variant"
-                checked={showMaxVariantOnly}
-                onClick={() => {
-                  setShowMaxVariantOnly(!showMaxVariantOnly)
-                }}
-              >
-                Max variant
-              </ToolbarButton>
-
-              <ToolbarButton
-                title="Lollipop sizes are proportional to the number of variants"
-                checked={displayProps.variants.plot.proportional}
-                onClick={() => {
-                  setDisplayProps(
-                    produce(displayProps, (draft) => {
-                      draft.variants.plot.proportional =
-                        !draft.variants.plot.proportional
-                    })
-                  )
-                }}
-              >
-                Proportional
-              </ToolbarButton>
-            </ToolbarCol>
-
-            <ToolbarIconButton
-              title="Show mutation counts on single lollipop plot"
-              checked={displayProps.variants.plot.showCounts}
-              onClick={() => {
-                setDisplayProps(
-                  produce(displayProps, (draft) => {
-                    draft.variants.plot.showCounts =
-                      !draft.variants.plot.showCounts
-                  })
-                )
-              }}
-            >
-              <LollipopCountIcon />
-            </ToolbarIconButton>
-          </ToolbarTabGroup>
-        </>
-      ),
-    },
-  ]
 
   // const rightTabs: ITab[] = [
   //   {

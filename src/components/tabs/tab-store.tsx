@@ -1,113 +1,292 @@
-// tabStore.ts
-import { useCallback } from 'react'
+import { IChildrenProps } from '@/interfaces/children-props'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { create } from 'zustand'
+import { ITab } from './tab-provider'
 
 export const DEFAULT_GROUP_ID = 'default'
 
-export interface ITab {
+interface ITabGroup {
   id: string
-  index: number
+  tabs: ITab[]
+  selectedTabIndex: number
 }
 
-type TabStore = {
-  tabState: {
-    //tabs: Record<string, ITab[]>
-    selectedTabs: Record<string, { id: string; index: number }>
-  }
-  //setTabs: (groupId: string, tabs: ITab[]) => void
-  setTab: (groupId: string, tab: Partial<ITab>) => void
-  //getTabs: (groupId: string) => ITab[]
-  //getTab: (groupId: string) => ISelectedTab | null
+export const DEFAULT_TAB_GROUP: ITabGroup = {
+  id: DEFAULT_GROUP_ID,
+  tabs: [],
+  selectedTabIndex: 0,
+}
+
+interface ITabsStore {
+  tabs: Record<string, ITabGroup>
+  initTabs: (groupId: string) => void
+  setTabs: (groupId: string, tabs: ITab[]) => void
+  setTab: (groupId: string, tab: string | number) => void
   getTab: (groupId: string) => ITab | undefined
 }
 
-export const useTabStore = create<TabStore>((set, get) => ({
-  tabState: { tabs: {}, selectedTabs: {} },
-  // setTabs: (groupId, tabs) => {
-  //   console.log('setTabs', groupId, tabs)
-  //   set(state => ({
-  //     tabState: {
-  //       ...state.tabState,
-  //       tabs: { ...state.tabState.tabs, [groupId]: [...tabs] },
-  //     },
-  //   }))
-  // },
-  setTab: (groupId, tab) => {
-    const { id = '', index = 0 } = tab
+export const useTabStore = create<ITabsStore>((set, get) => ({
+  tabs: {},
+  initTabs: (groupId) => {
+    if (groupId in get().tabs) {
+      return
+    }
 
-    set(state => ({
+    set((state) => ({
       ...state,
-      tabState: {
-        ...state.tabState,
-        selectedTabs: {
-          ...state.tabState.selectedTabs,
-          [groupId]: { id, index },
+      tabs: {
+        ...state.tabs,
+        [groupId]: state.tabs[groupId] ?? { ...DEFAULT_TAB_GROUP, id: groupId },
+      },
+    }))
+  },
+  setTabs: (groupId, tabs) => {
+    set((state) => ({
+      ...state,
+      tabs: {
+        ...state.tabs,
+        [groupId]: {
+          ...state.tabs[groupId],
+          id: groupId,
+          tabs: [...tabs],
+          selectedTabIndex: 0,
         },
       },
     }))
   },
-  // getTabs: groupId => {
-  //   const tabs = get().tabState.tabs[groupId]
+  setTab: (groupId, tab) => {
+    if (!(groupId in get().tabs)) {
+      return
+    }
 
-  //   if (tabs === undefined) {
-  //     return []
-  //   }
+    set((state) => {
+      const tabs = state.tabs[groupId]?.tabs ?? []
 
-  //   return tabs ?? []
-  // },
-  // getTab: groupId => {
-  //   const index = get().tabState.selectedTabs[groupId]
+      let index = 0
 
-  //   if (index === undefined) {
-  //     return null
-  //   }
+      if (typeof tab === 'number') {
+        index = tab
+      } else if (typeof tab === 'string') {
+        const lt = tab.toLowerCase()
+        const idx = tabs.findIndex(
+          (t) => t.id.toLowerCase() === lt || t.name?.toLowerCase() === lt
+        )
 
-  //   const tab = get().tabState.tabs[groupId]?.[index]
+        if (idx !== -1) {
+          index = idx
+        }
+      }
 
-  //   if (tab === undefined) {
-  //     return null
-  //   }
+      return {
+        ...state,
 
-  //   return { index, tab }
-  // },
-  getTab: groupId => {
-    const tab = get().tabState.selectedTabs[groupId]
+        tabs: {
+          ...state.tabs,
+          [groupId]: {
+            ...state.tabs[groupId],
+            id: groupId,
+            tabs,
+            selectedTabIndex: index,
+          },
+        },
+      }
+    })
+  },
 
-    return tab
+  getTab: (groupId) => {
+    if (!(groupId in get().tabs)) {
+      return undefined
+    }
+
+    const tabs = get().tabs[groupId]?.tabs ?? []
+
+    return tabs[get().tabs[groupId]?.selectedTabIndex ?? 0]
   },
 }))
 
-// export function useTabs(): {
-//   tabState: Record<string, ISelectedTab>
-//   getTab: (groupId: string) => ISelectedTab | undefined
-//   setTab: (groupId: string, tabValue: ISelectedTab) => void
-// } {
-//   const tabState = useTabStore(state => state.tabState)
-
-//   const getTab = useTabStore(state => state.getTab)
-
-//   const setTab = useTabStore(state => state.setTab)
-
-//   return { tabState, getTab, setTab }
-// }
-
-export function useTabs(groupId: string) {
+export function useTabs2(groupId: string) {
   groupId = groupId ?? DEFAULT_GROUP_ID
 
-  const tab = useTabStore(s => s.tabState.selectedTabs[groupId])
-  //const getTabs = useTabStore(s => s.getTabs)
-  const setTab = useTabStore(s => s.setTab)
-  //const setTabs = useTabStore(s => s.setTabs)
+  const tabState = useTabStore((s) => s.tabs[groupId] ?? DEFAULT_TAB_GROUP)
 
-  //const tab = useMemo(() => getTab(groupId), [groupId])
+  const initTabs = useTabStore((s) => s.initTabs)
+
+  const tab = useMemo(
+    () => tabState.tabs[tabState.selectedTabIndex ?? 0],
+    [tabState]
+  )
+  //const getTabs = useTabStore(s => s.getTabs)
+  const setTab = useTabStore((s) => s.setTab)
+  const setTabs = useTabStore((s) => s.setTabs)
+
+  // create initial tabs for the group if they don't exist
+  useEffect(() => {
+    initTabs(groupId)
+  }, [groupId, initTabs])
+
+  const setGroupsTab = useCallback(
+    (tabs: ITab[]) => {
+      setTabs(groupId, tabs)
+    },
+    [groupId, setTabs]
+  )
 
   const setGroupTab = useCallback(
-    (tab: ITab) => {
+    (tab: number | string) => {
       setTab(groupId, tab)
     },
     [groupId, setTab]
   )
 
   //return { setTab: setGroupTab, tabIndex: tabIndex ?? -1 }
-  return { setTab: setGroupTab, tab }
+  return {
+    tab,
+    tabs: tabState.tabs,
+    selectedTabIndex: tabState.selectedTabIndex,
+    setTab: setGroupTab,
+    setTabs: setGroupsTab,
+  }
+}
+
+interface ITabsContext {
+  tabs: Record<string, ITabGroup>
+  getTabs: (id: string) => ITabGroup
+  setTabs: (id: string, tabs: ITab[]) => void
+  setTab: (id: string, tab: number | string) => void
+}
+
+export const TabsContext = createContext<ITabsContext>({
+  tabs: {},
+  getTabs: (id: string) => ({ ...DEFAULT_TAB_GROUP, id }),
+  setTabs: () => {},
+  setTab: () => {},
+})
+
+export const useTabContext = () => {
+  const ctx = useContext(TabsContext)
+  if (!ctx) {
+    throw new Error('useTabContext must be used within a TabContext.Provider')
+  }
+  return ctx
+}
+
+export function useTabs(id: string) {
+  const { getTabs, setTabs, setTab } = useTabContext()
+
+  id = id ?? DEFAULT_GROUP_ID
+
+  const tabState = useMemo(() => getTabs(id), [id, getTabs])
+
+  const tab = useMemo(
+    () => tabState.tabs[tabState.selectedTabIndex ?? 0],
+    [tabState]
+  )
+
+  const setGroupsTab = useCallback(
+    (tabs: ITab[]) => {
+      setTabs(id, tabs)
+    },
+    [id, setTabs]
+  )
+
+  const setGroupTab = useCallback(
+    (tab: number | string) => {
+      setTab(id, tab)
+    },
+    [id, setTab]
+  )
+
+  //return { setTab: setGroupTab, tabIndex: tabIndex ?? -1 }
+  return {
+    tab,
+    tabs: tabState.tabs,
+    selectedTabIndex: tabState.selectedTabIndex,
+    setTab: setGroupTab,
+    setTabs: setGroupsTab,
+  }
+}
+
+export function TabProvider({ children }: IChildrenProps) {
+  const [tabs, setTabs] = useState<Record<string, ITabGroup>>({})
+
+  function getTabs(id: string) {
+    //if (id in tabs) {
+    return tabs[id] ?? { ...DEFAULT_TAB_GROUP, id }
+    //}
+
+    // const tabGroup = { ...DEFAULT_TAB_GROUP, id }
+
+    // setTabs((prev) => ({
+    //   ...prev,
+    //   [id]: tabGroup,
+    // }))
+
+    // return tabGroup
+  }
+
+  function _setTabs(id: string, tabs: ITab[]) {
+    setTabs((prev) => {
+      let currentTab = prev[id] ?? { ...DEFAULT_TAB_GROUP, id }
+
+      return {
+        ...prev,
+        [id]: { ...currentTab, tabs, selectedTabIndex: 0 },
+      }
+    })
+  }
+
+  function _setTab(id: string, tab: number | string) {
+    setTabs((prev) => {
+      let currentTab = prev[id] ?? { ...DEFAULT_TAB_GROUP, id }
+
+      let index = 0
+
+      if (typeof tab === 'number') {
+        index = tab
+      } else if (typeof tab === 'string') {
+        const lt = tab.toLowerCase()
+
+        const idx = currentTab.tabs.findIndex(
+          (t) => t.id.toLowerCase() === lt || t.name?.toLowerCase() === lt
+        )
+        if (idx !== -1) {
+          index = idx
+        }
+      }
+
+      // don't update the state if the selected tab index hasn't changed
+      if (index === currentTab.selectedTabIndex) {
+        return prev
+      }
+
+      return {
+        ...prev,
+        [id]: {
+          id,
+          tabs: currentTab.tabs,
+          selectedTabIndex: index,
+        },
+      }
+    })
+  }
+
+  return (
+    <TabsContext.Provider
+      value={{
+        tabs,
+        getTabs,
+        setTabs: _setTabs,
+        setTab: _setTab,
+      }}
+    >
+      {children}
+    </TabsContext.Provider>
+  )
 }

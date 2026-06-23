@@ -7,7 +7,12 @@ import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 
 import { PlayIcon } from '@/icons/play-icon'
-import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
+import {
+  Toolbar,
+  TOOLBAR_TABS,
+  ToolbarMenu,
+  ToolbarPanel,
+} from '@/toolbar/toolbar'
 
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
@@ -80,6 +85,7 @@ import {
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
 
+import { useTabs } from '@/components/tabs/tab-store'
 import {
   useCurrentSheets,
   useFiles,
@@ -113,9 +119,117 @@ export function AnnotationPage() {
 
   const [indicatorMessage, setIndicatorMessage] = useState<string | null>(null)
 
+  const { setTabs: setToolbarTabs } = useTabs(TOOLBAR_TABS)
+
   useEffect(() => {
     setAppInfo(APP_INFO)
-    //openApp(APP_INFO.name)
+    const tabs: ITab[] = [
+      {
+        //id: nanoid(),
+        id: 'Home',
+        content: (
+          <>
+            <ToolbarTabGroup title={TEXT_FILE} className="items-start">
+              <ToolbarOpenFile
+                onOpen={() => {
+                  openDialog({
+                    type: 'open',
+                    payload: {
+                      callback: (message, files) => {
+                        onFileChange(message, files)
+                      },
+                    },
+                  })
+                }}
+                multiple={true}
+              />
+              <ToolbarCol>
+                <ToolbarRow>
+                  <ToolbarColSmallButton
+                    title="Download table to device"
+                    onClick={() =>
+                      openDialog({
+                        type: 'save',
+                        payload: {
+                          callback: (data) => {
+                            save(data.name, data.format.ext)
+                          },
+                        },
+                      })
+                    }
+                    icon={<DownloadIcon />}
+                  >
+                    {TEXT_DOWNLOAD}
+                  </ToolbarColSmallButton>
+                </ToolbarRow>
+                <ToolbarRow>
+                  <ToolbarColSmallButton
+                    title="Annotate locations"
+                    onClick={annotate}
+                    icon={<PlayIcon />}
+                  >
+                    Annotate
+                  </ToolbarColSmallButton>
+                </ToolbarRow>
+              </ToolbarCol>
+            </ToolbarTabGroup>
+
+            <ToolbarTabGroup title="TSS" className="gap-x-2">
+              <DoubleNumericalInput
+                h="sm"
+                v1={settings.tss.prom5p}
+                v2={settings.tss.prom3p}
+                limit={[0, 1000000]}
+                dp={0}
+                inc={1000}
+                onNumChange1={(value) =>
+                  updateSettings({
+                    ...settings,
+                    tss: { ...settings.tss, prom5p: value },
+                  })
+                }
+                onNumChange2={(value) =>
+                  updateSettings({
+                    ...settings,
+                    tss: { ...settings.tss, prom3p: value },
+                  })
+                }
+              />
+            </ToolbarTabGroup>
+
+            <ToolbarTabGroup title="Options" className="gap-x-2">
+              <ToolbarCol gap="gap-x-2">
+                <VCenterRow className="gap-x-1">
+                  <span>Closest genes:</span>
+                  <NumericalInput
+                    h="sm"
+                    value={settings.closest}
+                    onNumChange={(value) =>
+                      updateSettings({ ...settings, closest: value })
+                    }
+                    limit={[0, 10]}
+                    dp={0}
+                    step={1}
+                  />
+                </VCenterRow>
+                <ToolbarRow>
+                  <Checkbox
+                    checked={settings.useOfficialGenes}
+                    onCheckedChange={(value) =>
+                      updateSettings({ ...settings, useOfficialGenes: value })
+                    }
+                  >
+                    Official genes
+                  </Checkbox>
+                </ToolbarRow>
+              </ToolbarCol>
+            </ToolbarTabGroup>
+          </>
+        ),
+      },
+    ]
+
+    setToolbarTabs(tabs)
   }, [])
 
   function onFileChange(_message: string, files: FileList | []) {
@@ -294,112 +408,6 @@ export function AnnotationPage() {
   //     break
   // }
 
-  const tabs: ITab[] = [
-    {
-      //id: nanoid(),
-      id: 'Home',
-      content: (
-        <>
-          <ToolbarTabGroup title={TEXT_FILE} className="items-start">
-            <ToolbarOpenFile
-              onOpen={() => {
-                openDialog({
-                  type: 'open',
-                  payload: {
-                    callback: (message, files) => {
-                      onFileChange(message, files)
-                    },
-                  },
-                })
-              }}
-              multiple={true}
-            />
-            <ToolbarCol>
-              <ToolbarRow>
-                <ToolbarColSmallButton
-                  title="Download table to device"
-                  onClick={() =>
-                    openDialog({
-                      type: 'save',
-                      payload: {
-                        callback: (data) => {
-                          save(data.name, data.format.ext)
-                        },
-                      },
-                    })
-                  }
-                  icon={<DownloadIcon />}
-                >
-                  {TEXT_DOWNLOAD}
-                </ToolbarColSmallButton>
-              </ToolbarRow>
-              <ToolbarRow>
-                <ToolbarColSmallButton
-                  title="Annotate locations"
-                  onClick={annotate}
-                  icon={<PlayIcon />}
-                >
-                  Annotate
-                </ToolbarColSmallButton>
-              </ToolbarRow>
-            </ToolbarCol>
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title="TSS" className="gap-x-2">
-            <DoubleNumericalInput
-              h="sm"
-              v1={settings.tss.prom5p}
-              v2={settings.tss.prom3p}
-              limit={[0, 1000000]}
-              dp={0}
-              inc={1000}
-              onNumChange1={(value) =>
-                updateSettings({
-                  ...settings,
-                  tss: { ...settings.tss, prom5p: value },
-                })
-              }
-              onNumChange2={(value) =>
-                updateSettings({
-                  ...settings,
-                  tss: { ...settings.tss, prom3p: value },
-                })
-              }
-            />
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title="Options" className="gap-x-2">
-            <ToolbarCol gap="gap-x-2">
-              <VCenterRow className="gap-x-1">
-                <span>Closest genes:</span>
-                <NumericalInput
-                  h="sm"
-                  value={settings.closest}
-                  onNumChange={(value) =>
-                    updateSettings({ ...settings, closest: value })
-                  }
-                  limit={[0, 10]}
-                  dp={0}
-                  step={1}
-                />
-              </VCenterRow>
-              <ToolbarRow>
-                <Checkbox
-                  checked={settings.useOfficialGenes}
-                  onCheckedChange={(value) =>
-                    updateSettings({ ...settings, useOfficialGenes: value })
-                  }
-                >
-                  Official genes
-                </Checkbox>
-              </ToolbarRow>
-            </ToolbarCol>
-          </ToolbarTabGroup>
-        </>
-      ),
-    },
-  ]
-
   const fileMenuTabs: ITab[] = [
     {
       //id: nanoid(),
@@ -464,8 +472,6 @@ export function AnnotationPage() {
 
         <Toolbar>
           <ToolbarMenu
-            groupId={_id}
-            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
@@ -482,7 +488,7 @@ export function AnnotationPage() {
               </>
             }
           />
-          <ToolbarPanel groupId={_id} tabs={tabs} />
+          <ToolbarPanel />
         </Toolbar>
 
         <HistoryLayout>

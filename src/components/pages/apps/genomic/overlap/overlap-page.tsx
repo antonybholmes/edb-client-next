@@ -9,6 +9,7 @@ import { FooterPortal } from '@/components/toolbar/footer-portal'
 import {
   ShowOptionsMenu,
   Toolbar,
+  TOOLBAR_TABS,
   ToolbarMenu,
   ToolbarPanel,
 } from '@/toolbar/toolbar'
@@ -63,6 +64,7 @@ import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import type { ITab } from '@/components/tabs/tab-provider'
+import { useTabs } from '@/components/tabs/tab-store'
 import { useStableId } from '@/hooks/stable-id'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { reorder } from '@/lib/math/reorder'
@@ -87,9 +89,69 @@ function OverlapPage() {
 
   const { open: openDialog } = useDialogs()
   const [showFileMenu, setShowFileMenu] = useState(false)
+  const { setTabs: setToolbarTabs } = useTabs(TOOLBAR_TABS)
 
   useEffect(() => {
     setAppInfo(APP_INFO)
+
+    const tabs: ITab[] = [
+      {
+        //id: nanoid(),
+        id: 'Home',
+        content: (
+          <>
+            <ToolbarTabGroup title={TEXT_FILE}>
+              <ToolbarOpenFile
+                onOpen={() => {
+                  openDialog({
+                    type: 'open',
+                    payload: {
+                      callback: (message, files) => {
+                        onTextFileChange(message, files, openFiles)
+                      },
+                    },
+                  })
+                }}
+                multiple={true}
+              />
+
+              <ToolbarIconButton
+                onClick={() => save('txt')}
+                title={TEXT_SAVE_TABLE}
+              >
+                <DownloadIcon />
+              </ToolbarIconButton>
+            </ToolbarTabGroup>
+
+            <ToolbarTabGroup title="Overlap">
+              <ToolbarButton
+                title="Calculate minimum common regions for columns of genomic coordinates"
+                onClick={() => overlapGenomicLocations('mcr')}
+              >
+                MCR
+              </ToolbarButton>
+              <ToolbarButton
+                aria-label="Calculate maximum overlap regions for columns of genomic coordinates"
+                onClick={() => overlapGenomicLocations('max')}
+              >
+                Min/max
+              </ToolbarButton>
+            </ToolbarTabGroup>
+
+            <ToolbarTabGroup title="One Way">
+              <ToolbarButton
+                title="Calculate minimum common regions for columns of genomic coordinates"
+                onClick={() => overlapOneWay()}
+              >
+                One Way
+              </ToolbarButton>
+            </ToolbarTabGroup>
+          </>
+        ),
+      },
+    ]
+
+    setToolbarTabs(tabs)
   }, [setAppInfo])
 
   function openFiles(files: ITextFileOpen[]) {
@@ -136,63 +198,6 @@ function OverlapPage() {
 
     setShowFileMenu(false)
   }
-
-  const tabs: ITab[] = [
-    {
-      //id: nanoid(),
-      id: 'Home',
-      content: (
-        <>
-          <ToolbarTabGroup title={TEXT_FILE}>
-            <ToolbarOpenFile
-              onOpen={() => {
-                openDialog({
-                  type: 'open',
-                  payload: {
-                    callback: (message, files) => {
-                      onTextFileChange(message, files, openFiles)
-                    },
-                  },
-                })
-              }}
-              multiple={true}
-            />
-
-            <ToolbarIconButton
-              onClick={() => save('txt')}
-              title={TEXT_SAVE_TABLE}
-            >
-              <DownloadIcon />
-            </ToolbarIconButton>
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title="Overlap">
-            <ToolbarButton
-              title="Calculate minimum common regions for columns of genomic coordinates"
-              onClick={() => overlapGenomicLocations('mcr')}
-            >
-              MCR
-            </ToolbarButton>
-            <ToolbarButton
-              aria-label="Calculate maximum overlap regions for columns of genomic coordinates"
-              onClick={() => overlapGenomicLocations('max')}
-            >
-              Min/max
-            </ToolbarButton>
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title="One Way">
-            <ToolbarButton
-              title="Calculate minimum common regions for columns of genomic coordinates"
-              onClick={() => overlapOneWay()}
-            >
-              One Way
-            </ToolbarButton>
-          </ToolbarTabGroup>
-        </>
-      ),
-    },
-  ]
 
   const rightTabs: ITab[] = [
     {
@@ -268,16 +273,12 @@ function OverlapPage() {
       <ShortcutLayout signinRequired={false}>
         <Toolbar>
           <ToolbarMenu
-            groupId={_id}
-            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
             leftShortcuts={<UndoShortcuts />}
           />
           <ToolbarPanel
-            groupId={_id}
-            tabs={tabs}
             tabShortcutMenu={
               <ShowOptionsMenu
                 show={showSideBar}

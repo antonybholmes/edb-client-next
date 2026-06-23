@@ -231,8 +231,8 @@ export const TabContentPanel = memo(function TabContentPanel({
 // })
 
 interface ITabContentPanelsProps extends IDivProps {
-  groupId: string
-  tabs: ITab[]
+  groupId?: string
+  //tabs: ITab[]
   contentCls?: string
 }
 
@@ -244,13 +244,13 @@ interface ITabContentPanelsProps extends IDivProps {
  * @returns
  */
 export function TabContentPanels({
-  groupId,
-  tabs,
+  groupId = 'toolbar',
+
   className,
   contentCls,
   ...props
 }: ITabContentPanelsProps) {
-  const { tab: selectedTab } = useTabs(groupId)
+  const { tab: selectedTab, tabs } = useTabs(groupId)
 
   // set the first tab as default on mount
   // useEffect(() => {
@@ -279,13 +279,12 @@ export function TabContentPanels({
 }
 
 export function TabContentForceMountPanels({
-  groupId,
-  tabs,
+  groupId = 'toolbar',
 }: ITabContentPanelsProps) {
-  const { tab: selectedTab } = useTabs(groupId)
+  const { tabs, selectedTabIndex } = useTabs(groupId)
 
   return tabs.map((tab, ti) => (
-    <Activity mode={ti == selectedTab?.index ? 'visible' : 'hidden'} key={ti}>
+    <Activity mode={ti == selectedTabIndex ? 'visible' : 'hidden'} key={ti}>
       {tab.content}
     </Activity>
   ))

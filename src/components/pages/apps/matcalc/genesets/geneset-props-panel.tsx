@@ -249,7 +249,33 @@ export function GenesetPropsPanel() {
         />
       )}
 
-      <ResizableSidebarHeaderPortal>
+      {genesets.length > 0 && (
+        <ResizableSidebarHeaderPortal side="right">
+          <LinkButton
+            onClick={() => {
+              openDialog({
+                type: 'warning',
+                payload: {
+                  title: 'Clear Gene Sets',
+                  content: 'Are you sure you want to clear all gene sets?',
+                  callback: (response) => {
+                    if (response === TEXT_OK) {
+                      //onGroupsChange?.([])
+                      addGenesets([], { mode: 'set' })
+                    }
+                  },
+                },
+              })
+            }}
+            title="Clear all gene sets"
+            className="text-xs"
+          >
+            {TEXT_CLEAR}
+          </LinkButton>
+        </ResizableSidebarHeaderPortal>
+      )}
+
+      <PropsPanel className="gap-y-1">
         <StretchRow className="gap-x-1">
           <VCenterRow>
             <IconButton
@@ -294,34 +320,6 @@ export function GenesetPropsPanel() {
             <PlusIcon />
           </IconButton>
         </StretchRow>
-      </ResizableSidebarHeaderPortal>
-
-      {genesets.length > 0 && (
-        <ResizableSidebarHeaderPortal side="right">
-          <LinkButton
-            onClick={() => {
-              openDialog({
-                type: 'warning',
-                payload: {
-                  title: 'Clear Gene Sets',
-                  content: 'Are you sure you want to clear all gene sets?',
-                  callback: (response) => {
-                    if (response === TEXT_OK) {
-                      //onGroupsChange?.([])
-                      addGenesets([], { mode: 'set' })
-                    }
-                  },
-                },
-              })
-            }}
-            title="Clear all gene sets"
-          >
-            {TEXT_CLEAR}
-          </LinkButton>
-        </ResizableSidebarHeaderPortal>
-      )}
-
-      <PropsPanel className="gap-y-1">
         <FileDropZonePanel
           onFileDrop={(files) => {
             if (files.length > 0) {
