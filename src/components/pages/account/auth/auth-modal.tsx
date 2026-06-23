@@ -21,9 +21,9 @@ interface IProps extends IChildrenProps {
 export function AuthModal({ title, className, children }: IProps) {
   return (
     <CenterCol className={cn('gap-y-2', className)}>
-      <VCenterRow className="gap-x-3">
-        <AppIcon size="w-12" />
-        <p className="font-bold text-lg">{title}</p>
+      <VCenterRow className="gap-x-2">
+        <AppIcon size={10} />
+        <p className="font-semibold text-lg text-nowrap">{title}</p>
       </VCenterRow>
 
       {children}

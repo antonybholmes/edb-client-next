@@ -51,24 +51,26 @@ import { DownloadIcon } from '@/icons/download-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { CoreProviders } from '@/providers/core-providers'
 import { HistoryPanel } from '../matcalc/history/history-panel'
-import {
-  useApp,
-  useFile,
-  useHistory,
-  useSheet,
-} from '../matcalc/history/history-store'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { BaseCol } from '@/components/layout/base-col'
 import { formatString } from '@/lib/text/format-string'
+import {
+  useCurrentSheets,
+  useFiles,
+} from '../matcalc/history/history-provider/history-contexts'
+import {
+  HistoryProvider,
+  useHistory,
+} from '../matcalc/history/history-provider/history-provider'
 import APP_INFO from './manifest.json'
 
 export function TableViewerPage() {
   const _id = useStableId('table-viewer-page')
   const { openFile, goto } = useHistory()
-  const app = useApp()!
-  const file = useFile()!
-  const sheet = useSheet()
+
+  const { file } = useFiles()
+  const { sheet } = useCurrentSheets()
 
   const [showSideBar, setShowSideBar] = useState(false)
   const [rightTab, setRightTab] = useState(TEXT_HISTORY)
@@ -238,7 +240,7 @@ export function TableViewerPage() {
           selectedSheet={sheet?.id}
           dataFrames={[sheet as AnnotationDataFrame]}
           onTabChange={(selectedTab) => {
-            goto({ app, file, sheet: selectedTab.tab })
+            goto({ file, sheet: selectedTab.tab })
           }}
           className="mx-2 mt-2"
         />
@@ -256,7 +258,9 @@ export function TableViewerPage() {
 export function TableViewerQueryPage() {
   return (
     <CoreProviders>
-      <TableViewerPage />
+      <HistoryProvider app={APP_INFO.name}>
+        <TableViewerPage />
+      </HistoryProvider>
     </CoreProviders>
   )
 }

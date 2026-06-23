@@ -67,17 +67,7 @@ export function SignInRequired({ children }: ISignInLayoutProps) {
   if (!session) {
     return (
       <AuthModal title={`${TEXT_SIGN_IN} Required`}>
-        {/* <Card className="shadow-2xl w-lg text-sm">
-          <CardHeader className="text-xl">
-            <VCenterRow className="gap-x-2">
-              <AppIcon w="w-10" />
-              <CardTitle>{TEXT_SIGN_IN} Required</CardTitle>
-            </VCenterRow>
-          </CardHeader>
-          <p>You need to sign in to view this page.</p>
-        </Card> */}
-
-        <p>You need to sign in to view this page.</p>
+        <p className="text-center">You need to sign in to view this page.</p>
       </AuthModal>
     )
   } else {

@@ -55,6 +55,7 @@ import { getCSRFToken } from '@/lib/edb/csrf'
 import { makeUuid } from '@/lib/id'
 import { Toast } from '@base-ui/react/toast'
 
+import { HistoryProvider } from '../apps/matcalc/history/history-provider/history-provider'
 import { UsersDialogsRoot, useUserDialogs } from './users-dialogs'
 
 interface IUserStats {
@@ -569,7 +570,9 @@ export function AdminUsersPage() {
 export function AdminUsersQueryPage() {
   return (
     <CoreProviders>
-      <AdminUsersPage />
+      <HistoryProvider app="Users">
+        <AdminUsersPage />
+      </HistoryProvider>
     </CoreProviders>
   )
 }
