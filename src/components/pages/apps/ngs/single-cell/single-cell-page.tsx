@@ -62,13 +62,7 @@ import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ShowSideButton } from '../../../show-side-button'
 import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
-import {
-  useApp,
-  useFile,
-  useHistory,
-  useSheet,
-  useSheets,
-} from '../../matcalc/history/history-store'
+
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { ClusterPropsPanel } from './cluster-props-panel'
 import APP_INFO from './manifest.json'
@@ -86,6 +80,14 @@ import { CoreProviders } from '@/providers/core-providers'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 import { CirclePlus } from 'lucide-react'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
+import {
+  useCurrentSheets,
+  useFiles,
+} from '../../matcalc/history/history-provider/history-contexts'
+import {
+  HistoryProvider,
+  useHistory,
+} from '../../matcalc/history/history-provider/history-provider'
 import { DisplayPropsPanel } from './display-props-panel'
 import { usePlotGrid } from './plot-grid-store'
 import { SingleCellDialogsRoot } from './single-cell-dialogs'
@@ -99,10 +101,8 @@ export function SingleCellPage() {
 
   const { goto } = useHistory()
 
-  const app = useApp()!
-  const file = useFile()!
-  const sheets = useSheets()
-  const sheet = useSheet()
+  const { file } = useFiles()
+  const { sheet, sheets } = useCurrentSheets()
 
   const { open: openDialog } = useDialogs()
 
@@ -478,7 +478,7 @@ export function SingleCellPage() {
                   selectedSheet={sheet?.id ?? ''}
                   dataFrames={sheets.map((s) => s) as AnnotationDataFrame[]}
                   onTabChange={(selectedTab) => {
-                    goto({ app, file, sheet: selectedTab.tab })
+                    goto({ file, sheet: selectedTab.tab })
                   }}
                   className="relative grow"
                 />
@@ -503,9 +503,9 @@ export function SingleCellPage() {
 export function SingleCellQueryPage() {
   return (
     <CoreProviders>
-      {/* <PlotGridProvider> */}
-      <SingleCellPage />
-      {/* </PlotGridProvider> */}
+      <HistoryProvider app={APP_INFO.name}>
+        <SingleCellPage />
+      </HistoryProvider>
     </CoreProviders>
   )
 }

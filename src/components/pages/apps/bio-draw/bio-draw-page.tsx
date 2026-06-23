@@ -59,22 +59,30 @@ import {
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 import { produce } from 'immer'
 import { PLOT_CLS } from '../matcalc/apps/heatmap/heatmap-panel'
-import {
-  useApp,
-  useFile,
-  useHistory,
-  useSheet,
-  useSheets,
-} from '../matcalc/history/history-store'
+
 import { BioDrawSvg } from './bio-draw-canvas'
 import { DisplayPropsPanel } from './display-props-panel'
 import { MotifsPropsPanel } from './motifs-props-panel'
 
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { CoreProviders } from '@/providers/core-providers'
+import {
+  HistoryProvider,
+  useHistory,
+} from '../matcalc/history/history-provider/history-provider'
 import { useMotifSettings, type Mode } from './motifs-settings'
 
 const PLOT_ZOOM_CHANNEL = 'bio-draw-plot-zoom'
+
+import { AppHeaderIcon } from '@/components/header/app-header-icon'
+import { AppInfoButton } from '@/components/header/app-info-button'
+import { HeaderPortal } from '@/components/header/header-portal'
+import { useAppInfo } from '@/lib/edb/edb-settings'
+import {
+  useCurrentSheets,
+  useFiles,
+} from '../matcalc/history/history-provider/history-contexts'
+import APP_INFO from './manifest.json'
 
 export function BioDrawPage() {
   //const _id = useStableId('bio-draw-page')
@@ -99,16 +107,15 @@ export function BioDrawPage() {
 
   const { goto } = useHistory()
 
-  const app = useApp()!
-  const file = useFile()!
-  const sheets = useSheets()
-  const sheet = useSheet()
+  const { file } = useFiles()
+  const { sheet, sheets } = useCurrentSheets()
+  const { setAppInfo } = useAppInfo()
 
   const df = sheet as AnnotationDataFrame
 
-  // useEffect(() => {
-  //   openApp(APP_INFO.name)
-  // }, [])
+  useEffect(() => {
+    setAppInfo(APP_INFO)
+  }, [])
 
   useEffect(() => {
     updateSettings(
@@ -384,6 +391,13 @@ export function BioDrawPage() {
         />
       )}
 
+      <HeaderPortal>
+        <>
+          <AppHeaderIcon />
+          <AppInfoButton />
+        </>
+      </HeaderPortal>
+
       <ShortcutLayout signinRequired={false}>
         {/* <TabProvider
           value={selectedTab}
@@ -447,7 +461,7 @@ export function BioDrawPage() {
                   selectedSheet={sheet?.id ?? ''}
                   dataFrames={sheets as AnnotationDataFrame[]}
                   onTabChange={(selectedTab) => {
-                    goto({ app, file, sheet: selectedTab.tab })
+                    goto({ file, sheet: selectedTab.tab })
                   }}
                   className="relative grow"
                 />
@@ -469,7 +483,9 @@ export function BioDrawPage() {
 export function BioDrawQueryPage() {
   return (
     <CoreProviders>
-      <BioDrawPage />
+      <HistoryProvider app={APP_INFO.name}>
+        <BioDrawPage />
+      </HistoryProvider>
     </CoreProviders>
   )
 }

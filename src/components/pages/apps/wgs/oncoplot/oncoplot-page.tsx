@@ -78,7 +78,11 @@ import {
 } from '@/themed/v2/select'
 import { produce } from 'immer'
 import { HistoryShowButton } from '../../matcalc/history/history-layout'
-import { useHistory } from '../../matcalc/history/history-store'
+
+import {
+  HistoryProvider,
+  useHistory,
+} from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import APP_INFO from './manifest.json'
 import { OncoplotDialogsRoot } from './oncoplot-dialogs'
@@ -702,7 +706,9 @@ function OncoplotPage() {
 export function OncoplotQueryPage() {
   return (
     <CoreProviders>
-      <OncoplotPage />
+      <HistoryProvider app={APP_INFO.name}>
+        <OncoplotPage />
+      </HistoryProvider>
     </CoreProviders>
   )
 }

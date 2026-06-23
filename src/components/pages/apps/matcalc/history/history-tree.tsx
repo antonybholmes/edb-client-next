@@ -1,5 +1,6 @@
 import { FileTree } from '@/components/file-tree'
 import type { ITab } from '@/components/tabs/tab-provider'
+import { useIsMounted } from '@/hooks/mounted'
 import { makeUuid } from '@/lib/id'
 import { useMemo } from 'react'
 import { pathJoin } from './history-provider/history-actions'
@@ -12,6 +13,7 @@ export function HistoryTree({
 }: {
   onTabChange: (tab: ITab) => void
 }) {
+  const isMounted = useIsMounted()
   const { present, sheets, plots } = useHistory()
   const { files } = useFiles()
 
@@ -81,6 +83,10 @@ export function HistoryTree({
     }
     return filesTab
   }, [files])
+
+  if (!isMounted) {
+    return null
+  }
 
   return (
     <FileTree

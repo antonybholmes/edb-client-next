@@ -6,7 +6,6 @@ import {
   DataFrameType,
   HistoryPlot,
   IHistoryState,
-  IHistoryStore,
   OptStrOrIdObj,
 } from './history-types'
 
@@ -89,16 +88,16 @@ export function getGroupsName(
 
 export function getGenesets(
   present: IHistoryState,
-  store: IHistoryStore,
+  genesets: Record<string, IGeneSet>,
   opts: { file?: OptStrOrIdObj } = {}
 ): IGeneSet[] {
   const fid = getFileId(present, opts)
-  return (present.genesetOrder[fid] || []).map((id) => store.genesets[id]!)
+  return (present.genesetOrder[fid] || []).map((id) => genesets[id]!)
 }
 
 export function findSheet(
   present: IHistoryState,
-  store: IHistoryStore,
+  sheets: Record<string, DataFrameType>,
   q: string,
   opts: { file?: OptStrOrIdObj } = {}
 ): DataFrameType | undefined {
@@ -107,6 +106,6 @@ export function findSheet(
   const lid = q.toLowerCase()
 
   return (present.sheetOrder[fid] || [])
-    .map((id) => store.sheets[id]!)
+    .map((id) => sheets[id]!)
     .find((s) => s.id === q || s.name.toLowerCase() === lid)
 }

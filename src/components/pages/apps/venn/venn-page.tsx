@@ -99,12 +99,14 @@ import { Textarea } from '@/themed/textarea'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import { MonitorDown } from 'lucide-react'
 import {
-  useApp,
-  useFile,
+  HistoryProvider,
   useHistory,
-  useSheet,
-  useSheets,
-} from '../matcalc/history/history-store'
+} from '../matcalc/history/history-provider/history-provider'
+
+import {
+  useCurrentSheets,
+  useFiles,
+} from '../matcalc/history/history-provider/history-contexts'
 import APP_INFO from './manifest.json'
 import { SVGFourWayVenn } from './svg-four-way-venn'
 import { SVGOneWayVenn } from './svg-one-way-venn'
@@ -197,10 +199,8 @@ function VennPage() {
 
   const { openFile, goto } = useHistory()
 
-  const app = useApp()!
-  const file = useFile()!
-  const sheet = useSheet()
-  const sheets = useSheets()
+  const { file } = useFiles()
+  const { sheet, sheets } = useCurrentSheets()
 
   //useWindowScrollListener((e: unknown) => console.log(e))
 
@@ -577,7 +577,7 @@ function VennPage() {
             selectedSheet={sheet?.id ?? ''}
             dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
             onTabChange={(selectedTab) => {
-              goto({ app, file, sheet: selectedTab.tab })
+              goto({ file, sheet: selectedTab.tab })
             }}
           />
         </BaseRow>
@@ -848,7 +848,9 @@ function VennPage() {
 export function VennPageQuery() {
   return (
     <CoreProviders>
-      <VennPage />
+      <HistoryProvider app={APP_INFO.name}>
+        <VennPage />
+      </HistoryProvider>
     </CoreProviders>
   )
 }

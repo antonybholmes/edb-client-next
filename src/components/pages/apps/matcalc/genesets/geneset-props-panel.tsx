@@ -250,89 +250,78 @@ export function GenesetPropsPanel() {
       )}
 
       <ResizableSidebarHeaderPortal>
-        <h2 className="font-bold opacity-80">Gene Sets</h2>
-      </ResizableSidebarHeaderPortal>
-
-      <PropsPanel className="gap-y-1">
-        <VCenterRow className="justify-between">
-          <StretchRow className="gap-x-1">
-            <VCenterRow>
-              <IconButton
-                //rounded="full"
-                // ripple={false}
-                onClick={() =>
-                  openDialog({
-                    type: 'open',
-                    payload: {
-                      message: 'Select gene set file to open',
-                      fileTypes: ['json', 'tsv', 'txt', 'gmx', 'gmt'],
-                      callback: (message, files) => {
-                        onTextFileChange(message, files, (files) => {
-                          openGenesetFiles(files)
-                        })
-                      },
-                    },
-                  })
-                }
-                title="Open Gene Sets"
-              >
-                <UploadIcon />
-              </IconButton>
-
-              <IconButton
-                onClick={() => {
-                  downloadJson(genesets, 'genesets.json')
-                }}
-                title="Save Gene Sets"
-              >
-                <DownloadIcon />
-              </IconButton>
-            </VCenterRow>
-            <ToolbarSeparator />
-
+        <StretchRow className="gap-x-1">
+          <VCenterRow>
             <IconButton
+              //rounded="full"
               // ripple={false}
-              onClick={() => addGeneset()}
-              title="New Gene Set"
-              checked={openGenesetDialog !== undefined}
-            >
-              <PlusIcon />
-            </IconButton>
-          </StretchRow>
-          {genesets.length > 0 && (
-            // <Button
-            //   variant="accent"
-            //   multiProps="icon"
-            //   // ripple={false}
-            //   onClick={() => setConfirmClear(true)}
-            //   title="Clear all groups"
-            // >
-            //   <TrashIcon />
-            // </Button>
-
-            <LinkButton
-              onClick={() => {
+              onClick={() =>
                 openDialog({
-                  type: 'warning',
+                  type: 'open',
                   payload: {
-                    title: 'Clear Gene Sets',
-                    content: 'Are you sure you want to clear all gene sets?',
-                    callback: (response) => {
-                      if (response === TEXT_OK) {
-                        //onGroupsChange?.([])
-                        addGenesets([], { mode: 'set' })
-                      }
+                    message: 'Select gene set file to open',
+                    fileTypes: ['json', 'tsv', 'txt', 'gmx', 'gmt'],
+                    callback: (message, files) => {
+                      onTextFileChange(message, files, (files) => {
+                        openGenesetFiles(files)
+                      })
                     },
                   },
                 })
-              }}
-              title="Clear all gene sets"
+              }
+              title="Open Gene Sets"
             >
-              {TEXT_CLEAR}
-            </LinkButton>
-          )}
-        </VCenterRow>
+              <UploadIcon />
+            </IconButton>
 
+            <IconButton
+              onClick={() => {
+                downloadJson(genesets, 'genesets.json')
+              }}
+              title="Save Gene Sets"
+            >
+              <DownloadIcon />
+            </IconButton>
+          </VCenterRow>
+          <ToolbarSeparator />
+
+          <IconButton
+            // ripple={false}
+            onClick={() => addGeneset()}
+            title="New Gene Set"
+            checked={openGenesetDialog !== undefined}
+          >
+            <PlusIcon />
+          </IconButton>
+        </StretchRow>
+      </ResizableSidebarHeaderPortal>
+
+      {genesets.length > 0 && (
+        <ResizableSidebarHeaderPortal side="right">
+          <LinkButton
+            onClick={() => {
+              openDialog({
+                type: 'warning',
+                payload: {
+                  title: 'Clear Gene Sets',
+                  content: 'Are you sure you want to clear all gene sets?',
+                  callback: (response) => {
+                    if (response === TEXT_OK) {
+                      //onGroupsChange?.([])
+                      addGenesets([], { mode: 'set' })
+                    }
+                  },
+                },
+              })
+            }}
+            title="Clear all gene sets"
+          >
+            {TEXT_CLEAR}
+          </LinkButton>
+        </ResizableSidebarHeaderPortal>
+      )}
+
+      <PropsPanel className="gap-y-1">
         <FileDropZonePanel
           onFileDrop={(files) => {
             if (files.length > 0) {

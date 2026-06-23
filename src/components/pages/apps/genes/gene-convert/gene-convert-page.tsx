@@ -71,13 +71,15 @@ import {
   HistoryLayout,
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
+
 import {
-  useApp,
-  useFile,
+  useCurrentSheets,
+  useFiles,
+} from '../../matcalc/history/history-provider/history-contexts'
+import {
+  HistoryProvider,
   useHistory,
-  useSheet,
-  useSheets,
-} from '../../matcalc/history/history-store'
+} from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import APP_INFO from './manifest.json'
 
@@ -86,10 +88,8 @@ export function GeneConvPage() {
 
   const { openFile, goto, addSheets } = useHistory()
 
-  const app = useApp()!
-  const file = useFile()!
-  const sheet = useSheet()!
-  const sheets = useSheets()
+  const { file } = useFiles()
+  const { sheet, sheets } = useCurrentSheets()
 
   const { setAppInfo } = useAppInfo()
 
@@ -381,7 +381,7 @@ export function GeneConvPage() {
             selectedSheet={sheet?.id ?? ''}
             dataFrames={sheets as AnnotationDataFrame[]}
             onTabChange={(selectedTab) => {
-              goto({ app, file, sheet: selectedTab.tab })
+              goto({ file, sheet: selectedTab.tab })
             }}
             className="mx-2"
           />
@@ -402,7 +402,9 @@ export function GeneConvPage() {
 export function GeneConvQueryPage() {
   return (
     <CoreProviders>
-      <GeneConvPage />
+      <HistoryProvider app={APP_INFO.name}>
+        <GeneConvPage />
+      </HistoryProvider>
     </CoreProviders>
   )
 }

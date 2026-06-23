@@ -1,23 +1,26 @@
 [
   {
-    "id": "0199745c-8684-75fe-a7a1-96a667affc9a",
+    "id": "019cc39f-d84c-7bba-aff6-314feca20a23",
     "name": "het",
     "search": ["het"],
     "color": "#ff0000",
-    "indices": [0, 1, 2]
+    "indices": [0, 1, 2],
+    "show": true
   },
   {
-    "id": "0199745d-177b-73ed-9993-2af390aa7922",
+    "id": "019cc39f-f386-7b36-9716-26484f101633",
     "name": "ko",
     "search": ["ko"],
     "color": "#0070ff",
-    "indices": [3, 4, 5, 6]
+    "indices": [3, 4, 5, 6],
+    "show": true
   },
   {
-    "id": "0199745d-31fb-7424-9db1-5aa9cde7bd1e",
+    "id": "019cc3a0-000a-7453-b04f-0d340f7a4fdc",
     "name": "wt",
     "search": ["wt"],
     "color": "#1ecf6b",
-    "indices": [7, 8, 9, 10]
+    "indices": [7, 8, 9, 10],
+    "show": true
   }
 ]

@@ -384,112 +384,100 @@ export function GroupPropsPanel() {
       )}
 
       <ResizableSidebarHeaderPortal>
-        <h2 className="font-bold opacity-80">Groups</h2>
-      </ResizableSidebarHeaderPortal>
-
-      <PropsPanel className="gap-y-1">
-        <VCenterRow className="justify-between">
-          <StretchRow className="gap-x-1">
-            <VCenterRow>
-              <IconButton
-                //rounded="full"
-                // ripple={false}
-                onClick={() =>
-                  openDialog({
-                    type: 'open',
-                    payload: {
-                      fileTypes: ['json', 'cls'],
-                      callback: (message, files) => {
-                        onTextFileChange(message, files, (files) => {
-                          openGroupFiles(files)
-                        })
-                      },
-                    },
-                  })
-                }
-                title="Open Groups"
-                //className="fill-foreground/50 hover:fill-foreground"
-              >
-                <UploadIcon />
-              </IconButton>
-
-              <IconButton
-                //rounded="full"
-                // ripple={false}
-                onClick={() => {
-                  openDialog({
-                    type: 'save',
-                    payload: {
-                      title: 'Save Groups As',
-                      name: 'groups',
-                      fileTypes: [
-                        { ext: 'json', name: 'JSON' },
-                        { ext: 'cls', name: 'CLS' },
-                      ],
-                      callback: (data) => {
-                        switch (data.format.ext) {
-                          case 'json':
-                            downloadJson(groups, data.name)
-                            break
-                          case 'cls':
-                            downloadCls(data.name)
-                            break
-                          default:
-                            break
-                        }
-                      },
-                    },
-                  })
-                }}
-                title="Save Groups"
-              >
-                <DownloadIcon />
-              </IconButton>
-            </VCenterRow>
-
-            <ToolbarSeparator />
-
+        <StretchRow className="gap-x-1">
+          <VCenterRow>
             <IconButton
+              //rounded="full"
               // ripple={false}
-              onClick={() => addGroup()}
-              title="New Group"
-              checked={openGroupDialog !== undefined}
-            >
-              <PlusIcon />
-            </IconButton>
-          </StretchRow>
-          {groups.length > 0 && (
-            // <Button
-            //   variant="accent"
-            //   multiProps="icon"
-            //   // ripple={false}
-            //   onClick={() => setConfirmClear(true)}
-            //   title="Clear all groups"
-            // >
-            //   <TrashIcon />
-            // </Button>
-
-            <LinkButton
               onClick={() =>
                 openDialog({
-                  type: 'warning',
+                  type: 'open',
                   payload: {
-                    content: 'Are you sure you want to clear all groups?',
-                    callback: (response) => {
-                      if (response === TEXT_OK) {
-                        addGroups([], { mode: 'set' })
-                      }
+                    fileTypes: ['json', 'cls'],
+                    callback: (message, files) => {
+                      onTextFileChange(message, files, (files) => {
+                        openGroupFiles(files)
+                      })
                     },
                   },
                 })
               }
-              title="Clear all groups"
+              title="Open Groups"
+              //className="fill-foreground/50 hover:fill-foreground"
             >
-              {TEXT_CLEAR}
-            </LinkButton>
-          )}
-        </VCenterRow>
+              <UploadIcon />
+            </IconButton>
 
+            <IconButton
+              //rounded="full"
+              // ripple={false}
+              onClick={() => {
+                openDialog({
+                  type: 'save',
+                  payload: {
+                    title: 'Save Groups As',
+                    name: 'groups',
+                    fileTypes: [
+                      { ext: 'json', name: 'JSON' },
+                      { ext: 'cls', name: 'CLS' },
+                    ],
+                    callback: (data) => {
+                      switch (data.format.ext) {
+                        case 'json':
+                          downloadJson(groups, data.name)
+                          break
+                        case 'cls':
+                          downloadCls(data.name)
+                          break
+                        default:
+                          break
+                      }
+                    },
+                  },
+                })
+              }}
+              title="Save Groups"
+            >
+              <DownloadIcon />
+            </IconButton>
+          </VCenterRow>
+          <ToolbarSeparator />
+
+          <IconButton
+            // ripple={false}
+            onClick={() => addGroup()}
+            title="New Group"
+            checked={openGroupDialog !== undefined}
+          >
+            <PlusIcon />
+          </IconButton>
+        </StretchRow>
+      </ResizableSidebarHeaderPortal>
+
+      {groups.length > 0 && (
+        <ResizableSidebarHeaderPortal side="right">
+          <LinkButton
+            onClick={() =>
+              openDialog({
+                type: 'warning',
+                payload: {
+                  content: 'Are you sure you want to clear all groups?',
+                  callback: (response) => {
+                    if (response === TEXT_OK) {
+                      addGroups([], { mode: 'set' })
+                    }
+                  },
+                },
+              })
+            }
+            title="Clear all groups"
+          >
+            {TEXT_CLEAR}
+          </LinkButton>
+        </ResizableSidebarHeaderPortal>
+      )}
+
+      <PropsPanel className="gap-y-1">
         <Input
           placeholder="Groups..."
           value={groupsName}

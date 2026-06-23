@@ -94,13 +94,15 @@ import {
   HistoryLayout,
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
+
 import {
-  useApp,
-  useFile,
+  useCurrentSheets,
+  useFiles,
+} from '../../matcalc/history/history-provider/history-contexts'
+import {
+  HistoryProvider,
   useHistory,
-  useSheet,
-  useSheets,
-} from '../../matcalc/history/history-store'
+} from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { PathwayPropsPage } from './pathway-props-panel'
 import { usePathways } from './pathway-store'
@@ -127,10 +129,9 @@ export function PathwayPage() {
   const [indicatorMessage, setIndicatorMessage] = useState<string | null>(null)
 
   const { openFile, goto, addSheets } = useHistory()
-  const app = useApp()!
-  const file = useFile()!
-  const sheets = useSheets()
-  const sheet = useSheet()
+
+  const { file } = useFiles()
+  const { sheet, sheets } = useCurrentSheets()
   const { open: openDialog } = useDialogs()
 
   const df = sheet as AnnotationDataFrame
@@ -626,7 +627,7 @@ export function PathwayPage() {
               selectedSheet={df?.id ?? ''}
               dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
               onTabChange={(selectedTab) => {
-                goto({ app, file, sheet: selectedTab.tab })
+                goto({ file, sheet: selectedTab.tab })
               }}
               onFileDrop={(files) => {
                 if (files.length > 0) {
@@ -658,7 +659,9 @@ export function PathwayPage() {
 export function PathwayQueryPage() {
   return (
     <CoreProviders>
-      <PathwayPage />
+      <HistoryProvider app={APP_INFO.name}>
+        <PathwayPage />
+      </HistoryProvider>
     </CoreProviders>
   )
 }

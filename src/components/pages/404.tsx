@@ -8,6 +8,7 @@ import { DinoIcon } from '../icons/dino-icon'
 import { BaseCol } from '../layout/base-col'
 import { VCenterRow } from '../layout/v-center-row'
 import { ThemeIndexLink } from '../link/theme-index-link'
+import { HistoryProvider } from './apps/matcalc/history/history-provider/history-provider'
 
 export function Error404Page() {
   const ref = useRef<HTMLDivElement>(null)
@@ -127,7 +128,9 @@ export function Error404Page() {
 export function Error404QueryPage() {
   return (
     <CoreProviders>
-      <Error404Page />
+      <HistoryProvider app="Error 404">
+        <Error404Page />
+      </HistoryProvider>
     </CoreProviders>
   )
 }

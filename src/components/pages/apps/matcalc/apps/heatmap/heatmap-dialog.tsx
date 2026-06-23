@@ -82,6 +82,8 @@ export function HeatMapDialog({
   const { groups, groupsName } = useCurrentGroups()
   const { sheet: currentSheet } = useCurrentSheets()
 
+  console.log('heatmap dialog', groups, groupsName)
+
   //const [topRows, setTopRows] = useState(1000)
   const [error, setError] = useState('')
 
@@ -92,11 +94,6 @@ export function HeatMapDialog({
   useEffect(() => {
     // In cluster mode, force column clustering
     if (isClusterMap) {
-      // updateSettings({
-      //   ...settings,
-      //   heatmap: { ...settings.heatmap, clusterCols: isClusterMap },
-      // })
-
       updateSettings(
         produce(settings, (draft) => {
           draft.heatmap.clusterCols = isClusterMap
@@ -106,7 +103,6 @@ export function HeatMapDialog({
   }, [isClusterMap])
 
   function makeCluster() {
-    console.log('make cluster', df)
     if (!df) {
       onResponse?.(TEXT_CANCEL, undefined)
       return
@@ -195,8 +191,6 @@ export function HeatMapDialog({
       actions.push('Log2')
     }
 
-    console.log('df to plot', dfToPlot.shape)
-
     if (settings.heatmap.applyRowZscore) {
       dfToPlot = rowZScore(dfToPlot!) //dfRowZScore(df, historyDispatch)
       actions.push('Row z-score')
@@ -245,6 +239,8 @@ export function HeatMapDialog({
     const displayOptions = produce(DEFAULT_HEATMAP_PROPS, (draft) => {
       draft.legend.title.text = groupsName
     })
+
+    console.log('heatmap dialog plot', groupsToPlot)
 
     const plot: HistoryPlot = newHeatMapPlot(
       `Heatmap`,

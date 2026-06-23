@@ -1,7 +1,6 @@
 import { onTextFileChange } from '@/components/pages/open-files'
 import { BaseCol } from '@/layout/base-col'
 
-import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
 
 import { PropsPanel } from '@/components/props-panel'
@@ -29,6 +28,8 @@ import { Checkbox } from '@/themed/v2/check-box'
 import { Toast } from '@base-ui/react/toast'
 import { useEffect, useState } from 'react'
 
+import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
+import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { useCurrentSheets } from '../history/history-provider/history-contexts'
 import { useHistory } from '../history/history-provider/history-provider'
 import APP_INFO from '../manifest.json'
@@ -113,8 +114,32 @@ export function FilterPropsPanel() {
 
   return (
     <>
-      <ResizableSidebarHeaderPortal>
-        <h2 className="font-bold opacity-80">Filter</h2>
+      <ResizableSidebarHeaderPortal side="right">
+        <LinkButton
+          onClick={() => {
+            openDialog({
+              type: 'warning',
+              payload: {
+                title: 'Clear filter',
+                content: 'Are you sure you want to clear the filter?',
+                callback: (response) => {
+                  if (response === TEXT_OK) {
+                    setText('')
+
+                    if (filterMode.includes('Rows')) {
+                      resetRowFilters()
+                    } else {
+                      resetColFilters()
+                    }
+                  }
+                },
+              },
+            })
+          }}
+          className="text-xs"
+        >
+          {TEXT_CLEAR}
+        </LinkButton>
       </ResizableSidebarHeaderPortal>
 
       <PropsPanel className="gap-y-2">
@@ -159,84 +184,58 @@ export function FilterPropsPanel() {
             className="grow flex flex-col gap-y-3 overflow-hidden"
             id="filter"
           >
-            <VCenterRow className="gap-x-1 justify-between overflow-hidden">
-              <VCenterRow className="gap-x-1 items-stretch">
-                <Button
-                  size="icon"
-                  // ripple={false}
-                  onClick={() =>
-                    openDialog({
-                      type: 'open',
-                      payload: {
-                        callback: (message, files) => {
-                          onTextFileChange(message, files, (files) => {
-                            if (files.length > 0) {
-                              setText(files[0]!.text)
-                            }
-                          })
-                        },
-                      },
-                    })
-                  }
-                  className="fill-foreground"
-                  title="Open list of Ids from file"
-                >
-                  <UploadIcon />
-                </Button>
-
-                <ToolbarSeparator />
-
-                <ToggleGroup
-                  //variant="outline"
-                  rounded="none"
-                  value={[filterMode]}
-                  onValueChange={(v) => {
-                    setFilterMode(v[0] ?? 'Rows')
-                  }}
-                  //rounded="none"
-                  className="rounded-theme overflow-hidden gap-x-px"
-                >
-                  <GroupToggle
-                    value="Rows"
-                    className="w-12"
-                    aria-label="Filter rows"
-                  >
-                    Rows
-                  </GroupToggle>
-
-                  <GroupToggle
-                    value="Cols"
-                    className="w-12"
-                    aria-label="Filter columns"
-                  >
-                    Cols
-                  </GroupToggle>
-                </ToggleGroup>
-              </VCenterRow>
+            <VCenterRow className="gap-x-1 items-stretch">
               <Button
-                onClick={() => {
+                size="icon"
+                // ripple={false}
+                onClick={() =>
                   openDialog({
-                    type: 'warning',
+                    type: 'open',
                     payload: {
-                      title: 'Clear filter',
-                      content: 'Are you sure you want to clear the filter?',
-                      callback: (response) => {
-                        if (response === TEXT_OK) {
-                          setText('')
-
-                          if (filterMode.includes('Rows')) {
-                            resetRowFilters()
-                          } else {
-                            resetColFilters()
+                      callback: (message, files) => {
+                        onTextFileChange(message, files, (files) => {
+                          if (files.length > 0) {
+                            setText(files[0]!.text)
                           }
-                        }
+                        })
                       },
                     },
                   })
-                }}
+                }
+                className="fill-foreground"
+                title="Open list of Ids from file"
               >
-                {TEXT_CLEAR}
+                <UploadIcon />
               </Button>
+
+              <ToolbarSeparator />
+
+              <ToggleGroup
+                //variant="outline"
+                rounded="none"
+                value={[filterMode]}
+                onValueChange={(v) => {
+                  setFilterMode(v[0] ?? 'Rows')
+                }}
+                //rounded="none"
+                className="rounded-theme overflow-hidden gap-x-px"
+              >
+                <GroupToggle
+                  value="Rows"
+                  className="w-12"
+                  aria-label="Filter rows"
+                >
+                  Rows
+                </GroupToggle>
+
+                <GroupToggle
+                  value="Cols"
+                  className="w-12"
+                  aria-label="Filter columns"
+                >
+                  Cols
+                </GroupToggle>
+              </ToggleGroup>
             </VCenterRow>
 
             <BaseCol className="justify-between gap-y-1 shrink-0">

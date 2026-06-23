@@ -61,6 +61,7 @@ import { httpFetch } from '@/lib/http/http-fetch'
 import { CoreProviders } from '@/providers/core-providers'
 import { Textarea } from '@/themed/textarea'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
+import { HistoryProvider } from '../../matcalc/history/history-provider/history-provider'
 import APP_INFO from './manifest.json'
 
 export type DNABase = 'A' | 'C' | 'G' | 'T' | 'a' | 'c' | 'g' | 't'
@@ -90,7 +91,7 @@ interface IRevCompSeq extends ISeq {
   rev: string
 }
 
-export function RevCompPage() {
+function RevCompPage() {
   const _id = useStableId('rev-comp-page')
 
   const [text, setText] = useState('')
@@ -459,7 +460,9 @@ export function RevCompPage() {
 export function RevCompQueryPage() {
   return (
     <CoreProviders>
-      <RevCompPage />
+      <HistoryProvider app={APP_INFO.name}>
+        <RevCompPage />
+      </HistoryProvider>
     </CoreProviders>
   )
 }

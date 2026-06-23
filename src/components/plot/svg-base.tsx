@@ -18,7 +18,7 @@ export const FONTS = [
   { label: 'Verdana', value: 'Verdana, Geneva, sans-serif' },
 ]
 
-const FONT_MAP = Object.fromEntries(FONTS.map(f => [f.label, f.value]))
+const FONT_MAP = Object.fromEntries(FONTS.map((f) => [f.label, f.value]))
 
 /**
  * Maps a font family name to a CSS font-family string. If the name is not recognized, it is returned as-is.
@@ -46,16 +46,6 @@ export function SvgBase({
   height?: number
   scale?: number
 }) {
-  console.log(
-    'rendering svg with width',
-    width,
-    'height',
-    height,
-    'scale',
-    scale,
-    width * scale,
-    height * scale
-  )
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

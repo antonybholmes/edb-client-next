@@ -468,8 +468,6 @@ export function MotifsPage() {
 
   return (
     <>
-      {/* <DialogsRoot /> */}
-
       <HeaderPortal>
         <>
           <AppHeaderIcon />
@@ -510,12 +508,6 @@ export function MotifsPage() {
             <SelectItem value="20">20</SelectItem>
             <SelectItem value="50">50</SelectItem>
           </SelectList>
-
-          {/* {searchResult.total > 0 && (
-            <span className="text-xs px-3 bg-muted/60 rounded-full py-1.5 mx-4">
-              {searchResult.total} results
-            </span>
-          )} */}
         </>
       </HeaderPortal>
 

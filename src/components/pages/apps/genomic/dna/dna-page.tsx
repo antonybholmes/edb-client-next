@@ -89,23 +89,24 @@ import {
   HistoryLayout,
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
+
 import {
-  useApp,
-  useFile,
+  useCurrentSheets,
+  useFiles,
+} from '../../matcalc/history/history-provider/history-contexts'
+import {
+  HistoryProvider,
   useHistory,
-  useSheet,
-  useSheets,
-} from '../../matcalc/history/history-store'
+} from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import APP_INFO from './manifest.json'
 
 export function DNAPage() {
   const _id = useStableId('dna-page')
   const { goto, openFile, addSheets } = useHistory()
-  const app = useApp()!
-  const file = useFile()!
-  const sheets = useSheets()
-  const sheet = useSheet()
+
+  const { file } = useFiles()
+  const { sheet, sheets } = useCurrentSheets()
   const { setAppInfo } = useAppInfo()
   const [showSideBar, setShowSideBar] = useState(true)
   const { settings } = useEdbSettings()
@@ -526,7 +527,7 @@ export function DNAPage() {
               selectedSheet={sheet?.id ?? ''}
               dataFrames={sheets as AnnotationDataFrame[]}
               onTabChange={(selectedTab) => {
-                goto({ app, file, sheet: selectedTab.tab })
+                goto({ file, sheet: selectedTab.tab })
               }}
               className="mx-2"
             />
@@ -547,7 +548,9 @@ export function DNAPage() {
 export function DNAQueryPage() {
   return (
     <CoreProviders>
-      <DNAPage />
+      <HistoryProvider app={APP_INFO.name}>
+        <DNAPage />
+      </HistoryProvider>
     </CoreProviders>
   )
 }

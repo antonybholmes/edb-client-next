@@ -26,13 +26,12 @@ import { messageImageFileFormat, useMessages } from '@/providers/messages'
 import { useZoom } from '@/providers/zoom-provider'
 import { produce } from 'immer'
 import { HistoryLayout } from '../../matcalc/history/history-layout'
+
 import {
-  useApp,
-  useFile,
-  useHistory,
-  useSheet,
-  useSheets,
-} from '../../matcalc/history/history-store'
+  useCurrentSheets,
+  useFiles,
+} from '../../matcalc/history/history-provider/history-contexts'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { FeaturePropsPanel } from './feature-props-panel'
 import { useOncoplotSettings } from './oncoplot-settings-store'
 
@@ -48,11 +47,10 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const { zoom } = useZoom() //PLOT_ZOOM_CHANNEL) //Ctx()
   const { goto } = useHistory()
-  const app = useApp()!
-  const file = useFile()!
 
-  const sheet = useSheet()
-  const sheets = useSheets()
+  const { file } = useFiles()
+
+  const { sheet, sheets } = useCurrentSheets()
 
   const [activeSideTab, setActiveSideTab] = useState(TEXT_SETTINGS)
 
@@ -63,7 +61,7 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
 
   useEffect(() => {
     const filteredMessages = messages.filter(
-      message => message.target === panelId
+      (message) => message.target === panelId
     )
 
     for (const message of filteredMessages) {
@@ -96,7 +94,7 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
 
   useEffect(() => {
     setDisplayProps(
-      produce(displayProps, draft => {
+      produce(displayProps, (draft) => {
         draft.scale = zoom
       })
     )
@@ -126,7 +124,7 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
           id="oncoplot-panel-tabs"
           side="right"
           tabs={plotRightTabs}
-          onTabChange={selectedTab => setActiveSideTab(selectedTab.tab.id)}
+          onTabChange={(selectedTab) => setActiveSideTab(selectedTab.tab.id)}
           value={activeSideTab}
           open={showSideBar}
           onOpenChange={setShowSideBar}
@@ -154,8 +152,8 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
               <TabbedDataFrames
                 selectedSheet={sheet?.id ?? ''}
                 dataFrames={sheets as AnnotationDataFrame[]}
-                onTabChange={selectedTab => {
-                  goto({ app, file, sheet: selectedTab.tab })
+                onTabChange={(selectedTab) => {
+                  goto({ file, sheet: selectedTab.tab })
                 }}
                 zoom={1}
                 //className={DATA_PANEL_CLS}

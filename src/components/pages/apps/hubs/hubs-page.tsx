@@ -38,6 +38,7 @@ import {
   ScrollAccordion,
 } from '@/themed/v2/accordion'
 import { useQuery } from '@tanstack/react-query'
+import { HistoryProvider } from '../matcalc/history/history-provider/history-provider'
 import APP_INFO from './manifest.json'
 
 const BASE_URL = 'http://genome.ucsc.edu/cgi-bin/hgTracks' //https://genome.ucsc.edu/goldenPath/help/examples/hubDirectory/hub.txt
@@ -293,9 +294,9 @@ export function HubsPage() {
 export function HubsQueryPage() {
   return (
     <CoreProviders>
-      {/* <SearchProvider> */}
-      <HubsPage />
-      {/* </SearchProvider> */}
+      <HistoryProvider app={APP_INFO.name}>
+        <HubsPage />
+      </HistoryProvider>
     </CoreProviders>
   )
 }

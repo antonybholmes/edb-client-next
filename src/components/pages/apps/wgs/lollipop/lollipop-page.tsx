@@ -70,13 +70,15 @@ import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { useZoom } from '@/providers/zoom-provider'
 import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
+
 import {
-  useApp,
-  useFile,
+  useCurrentSheets,
+  useFiles,
+} from '../../matcalc/history/history-provider/history-contexts'
+import {
+  HistoryProvider,
   useHistory,
-  useSheet,
-  useSheets,
-} from '../../matcalc/history/history-store'
+} from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { FeaturePropsPanel } from './feature-props-panel'
 import { LollipopCountIcon } from './lollipop-count-icon'
@@ -94,10 +96,9 @@ function LollipopPage() {
   const _id = useStableId('lollipop-page')
 
   const { goto, openFile, addSheets, undo } = useHistory()
-  const app = useApp()!
-  const file = useFile()!
-  const sheet = useSheet()
-  const sheets = useSheets()
+
+  const { file } = useFiles()
+  const { sheet, sheets } = useCurrentSheets()
 
   const { protein, displayProps, setDisplayProps, setProtein } =
     useLollipopSettings()
@@ -683,7 +684,7 @@ function LollipopPage() {
                 selectedSheet={sheet?.id ?? ''}
                 dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
                 onTabChange={(selectedTab) => {
-                  goto({ app, file, sheet: selectedTab.tab })
+                  goto({ file, sheet: selectedTab.tab })
                 }}
                 //zoom={1}
                 //className={DATA_PANEL_CLS}
@@ -706,7 +707,9 @@ function LollipopPage() {
 export function LollipopQueryPage() {
   return (
     <CoreProviders>
-      <LollipopPage />
+      <HistoryProvider app={APP_INFO.name}>
+        <LollipopPage />
+      </HistoryProvider>
     </CoreProviders>
   )
 }

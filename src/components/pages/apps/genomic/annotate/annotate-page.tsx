@@ -79,13 +79,15 @@ import {
   HistoryLayout,
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
+
 import {
-  useApp,
-  useFile,
+  useCurrentSheets,
+  useFiles,
+} from '../../matcalc/history/history-provider/history-contexts'
+import {
+  HistoryProvider,
   useHistory,
-  useSheet,
-  useSheets,
-} from '../../matcalc/history/history-store'
+} from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { useAnnotations } from './annotate-store'
 import { useAnnotateWorker } from './annotate-worker'
@@ -95,10 +97,9 @@ export function AnnotationPage() {
   const _id = useStableId('annotate-page')
 
   const { goto, openFile, addSheets } = useHistory()
-  const app = useApp()!
-  const file = useFile()!
-  const sheets = useSheets()
-  const sheet = useSheet()!
+
+  const { file } = useFiles()
+  const { sheet, sheets } = useCurrentSheets()
   const { setAppInfo } = useAppInfo()
   const { settings, updateSettings } = useAnnotations()
   //const [rightTab, setRightTab] = useState(TEXT_SETTINGS)
@@ -492,7 +493,7 @@ export function AnnotationPage() {
             selectedSheet={sheet?.id ?? ''}
             dataFrames={sheets as AnnotationDataFrame[]}
             onTabChange={(selectedTab) => {
-              goto({ app, file, sheet: selectedTab.tab })
+              goto({ file, sheet: selectedTab.tab })
             }}
             className="mx-2"
             zoom={zoom}
@@ -539,7 +540,9 @@ export function AnnotationPage() {
 export function AnnotationQueryPage() {
   return (
     <CoreProviders>
-      <AnnotationPage />
+      <HistoryProvider app={APP_INFO.name}>
+        <AnnotationPage />
+      </HistoryProvider>
     </CoreProviders>
   )
 }

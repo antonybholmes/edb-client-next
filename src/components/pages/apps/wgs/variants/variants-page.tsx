@@ -80,13 +80,15 @@ import {
   HistoryLayout,
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
+
 import {
-  useApp,
-  useFile,
+  useCurrentSheets,
+  useFiles,
+} from '../../matcalc/history/history-provider/history-contexts'
+import {
+  HistoryProvider,
   useHistory,
-  useSheet,
-  useSheets,
-} from '../../matcalc/history/history-store'
+} from '../../matcalc/history/history-provider/history-provider'
 import { DatasetPanel } from './dataset-panel'
 import { useDatasets } from './dataset-store'
 import { FeaturePropsPanel } from './feature-props-panel'
@@ -128,10 +130,9 @@ export function VariantsPage() {
   const { open: openDialog } = useDialogs()
 
   const { openFile, goto } = useHistory()
-  const app = useApp()!
-  const file = useFile()!
-  const sheets = useSheets()
-  const sheet = useSheet()
+
+  const { file } = useFiles()
+  const { sheet, sheets } = useCurrentSheets()
 
   const df = sheet as AnnotationDataFrame
 
@@ -570,7 +571,7 @@ export function VariantsPage() {
                       selectedSheet={sheet?.id ?? ''}
                       dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
                       onTabChange={(selectedTab) => {
-                        goto({ app, file, sheet: selectedTab.tab })
+                        goto({ file, sheet: selectedTab.tab })
                       }}
                     />
                   </BaseRow>
@@ -594,7 +595,9 @@ export function VariantsPage() {
 export function VariantsQueryPage() {
   return (
     <CoreProviders>
-      <VariantsPage />
+      <HistoryProvider app={APP_INFO.name}>
+        <VariantsPage />
+      </HistoryProvider>
     </CoreProviders>
   )
 }

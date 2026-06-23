@@ -66,6 +66,7 @@ import { produce } from 'immer'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
+import { HistoryProvider } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { GeneSetsPropsPanel } from './geneset-props-panel'
 import { GseaDisplayPropsPanel } from './gsea-display-props-panel'
@@ -508,7 +509,9 @@ export function GseaPlotPage() {
 export function GseaPlotQueryPage() {
   return (
     <CoreProviders>
-      <GseaPlotPage />
+      <HistoryProvider app={APP_INFO.name}>
+        <GseaPlotPage />
+      </HistoryProvider>
     </CoreProviders>
   )
 }

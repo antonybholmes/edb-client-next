@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Implemented history provider across apps.
 - Bottombar no longer triggers stack overflow.
 - Moved changelog src file.
 - Added history provider for scoping history to each app.

@@ -1887,6 +1887,10 @@
         {
           "msg": "Bottombar no longer triggers stack overflow",
           "date": "2026-06-22T15:46:51.267Z"
+        },
+        {
+          "msg": "Implemented history provider across apps",
+          "date": "2026-06-23T02:55:50.320Z"
         }
       ],
       "Added": [

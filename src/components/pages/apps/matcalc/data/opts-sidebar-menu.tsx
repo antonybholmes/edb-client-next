@@ -4,21 +4,6 @@ import { ShowOptionsMenu } from '@/components/toolbar/toolbar'
 import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { produce } from 'immer'
 
-// export function ShowSideMenu({
-//   ref,
-//   show = false,
-//   onClick = () => {},
-// }: ComponentProps<typeof DropdownMenuItem> & { show?: boolean }) {
-//   //const [menuOpen, setMenuOpen] = useState(false)
-
-//   return (
-//     <DropdownMenuItem ref={ref} onClick={onClick}>
-//       {show ? <SidebarCloseIcon stroke="" /> : <SidebarOpenIcon stroke="" />}
-//       <span>{show ? 'Hide Pane' : 'Show Pane'}</span>
-//     </DropdownMenuItem>
-//   )
-// }
-
 export function OptsSidebarMenu({
   id = OPTS_SIDEBAR_ID,
   open = true,
@@ -37,7 +22,7 @@ export function OptsSidebarMenu({
       show={slideBarOpen}
       onClick={() => {
         updateEdbSettings(
-          produce(edbSettings, draft => {
+          produce(edbSettings, (draft) => {
             draft.sidebar.show = slideBarOpen
           })
         )

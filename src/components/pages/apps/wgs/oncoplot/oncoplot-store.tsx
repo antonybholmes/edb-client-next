@@ -4,11 +4,10 @@ import { randomHexColor } from '@/lib/color/color'
 import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeUuid } from '@/lib/id'
 import { useEffect } from 'react'
-import {
-  findSheet,
-  useFile,
-  useHistory,
-} from '../../matcalc/history/history-store'
+
+import { useFiles } from '../../matcalc/history/history-provider/history-contexts'
+import { findSheet } from '../../matcalc/history/history-provider/history-hooks'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import type { ClinicalDataTrack } from './clinical-utils'
 import { useOncoplotSettings } from './oncoplot-settings-store'
 import {
@@ -33,7 +32,7 @@ export interface IOncoplotStore extends IPlotState {
   setClinicalTracks(clinicalTracks: ClinicalDataTrack[]): void
 }
 
-export const useOncoplotStore = create<IOncoplotStore>(set => ({
+export const useOncoplotStore = create<IOncoplotStore>((set) => ({
   mutationFrame: null,
   mutationsInUse: [],
   genes: [],
@@ -41,25 +40,25 @@ export const useOncoplotStore = create<IOncoplotStore>(set => ({
   trackOrder: [],
 
   setMutationFrame: (mutationFrame: OncoplotFrame) =>
-    set(state => ({
+    set((state) => ({
       ...state,
       mutationFrame,
     })),
   setVariantsInUse: (mutationsInUse: string[]) =>
-    set(state => ({
+    set((state) => ({
       ...state,
       mutationsInUse: [...mutationsInUse],
     })),
   setGenes: (genes: IOncoGene[]) =>
-    set(state => ({
+    set((state) => ({
       ...state,
       genes: [...genes],
     })),
   setGenesFromTable: (df: BaseDataFrame) =>
-    set(state => {
+    set((state) => {
       const genes = [...new Set(df.col('Gene')?.strs)].sort()
 
-      const genesInUse: IOncoGene[] = genes.map(g => ({
+      const genesInUse: IOncoGene[] = genes.map((g) => ({
         id: makeUuid(),
         name: g,
         color: randomHexColor(),
@@ -72,25 +71,25 @@ export const useOncoplotStore = create<IOncoplotStore>(set => ({
       }
     }),
   setClinicalTracks: (clinicalTracks: ClinicalDataTrack[]) =>
-    set(state => ({
+    set((state) => ({
       ...state,
       clinicalTracks,
-      trackOrder: clinicalTracks.map(track => track.name),
+      trackOrder: clinicalTracks.map((track) => track.name),
     })),
 }))
 
 export function useOncoplot(): IOncoplotStore {
-  const mutationFrame = useOncoplotStore(state => state.mutationFrame)
-  const mutationsInUse = useOncoplotStore(state => state.mutationsInUse)
-  const genes = useOncoplotStore(state => state.genes)
-  const clinicalTracks = useOncoplotStore(state => state.clinicalTracks)
+  const mutationFrame = useOncoplotStore((state) => state.mutationFrame)
+  const mutationsInUse = useOncoplotStore((state) => state.mutationsInUse)
+  const genes = useOncoplotStore((state) => state.genes)
+  const clinicalTracks = useOncoplotStore((state) => state.clinicalTracks)
 
-  const setMutationFrame = useOncoplotStore(state => state.setMutationFrame)
-  const setVariantsInUse = useOncoplotStore(state => state.setVariantsInUse)
+  const setMutationFrame = useOncoplotStore((state) => state.setMutationFrame)
+  const setVariantsInUse = useOncoplotStore((state) => state.setVariantsInUse)
 
   const { mutations, displayProps, setMutations } = useOncoplotSettings()
-  const { store, state } = useHistory()
-  const file = useFile()
+  const { present, sheets } = useHistory()
+  const { file } = useFiles()
 
   useEffect(() => {
     function oncoplot() {
@@ -99,7 +98,7 @@ export function useOncoplot(): IOncoplotStore {
       }
 
       // Assume first sheet is
-      const sheet = findSheet(store, state, 'Variants', { file })
+      const sheet = findSheet(present, sheets, 'Variants', { file })
 
       if (!sheet) {
         return
@@ -182,9 +181,9 @@ export function useOncoplot(): IOncoplotStore {
 
     setMutationFrame,
     setVariantsInUse,
-    setClinicalTracks: useOncoplotStore(state => state.setClinicalTracks),
-    setGenes: useOncoplotStore(state => state.setGenes),
-    setGenesFromTable: useOncoplotStore(state => state.setGenesFromTable),
+    setClinicalTracks: useOncoplotStore((state) => state.setClinicalTracks),
+    setGenes: useOncoplotStore((state) => state.setGenes),
+    setGenesFromTable: useOncoplotStore((state) => state.setGenesFromTable),
   }
 }
 

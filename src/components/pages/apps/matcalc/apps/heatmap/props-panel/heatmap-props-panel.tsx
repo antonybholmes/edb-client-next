@@ -9,13 +9,13 @@ import {
   type IHeatMapDisplayOptions,
 } from '@/components/plot/heatmap/heatmap-svg-props'
 import { TEXT_OK, TEXT_RESET } from '@/consts'
-import { VCenterRow } from '@/layout/v-center-row'
 import { LinkButton } from '@/themed/link-button'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import type { IDivProps } from '@/interfaces/div-props'
 import { produce } from 'immer'
 
+import { ResizableSidebarHeaderPortal } from '@/components/slide-bar/resizable-sidebar'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 import { CellSettingsPanel } from './cell-settings'
@@ -60,8 +60,8 @@ export function HeatmapPropsPanel({ ref }: IDivProps) {
   }
 
   return (
-    <PropsPanel ref={ref} className="pr-1 gap-y-2">
-      <VCenterRow className="justify-end px-1">
+    <>
+      <ResizableSidebarHeaderPortal side="right">
         <LinkButton
           onClick={() => {
             openDialog({
@@ -78,26 +78,30 @@ export function HeatmapPropsPanel({ ref }: IDivProps) {
             })
           }}
           title="Reset Properties to Defaults"
+          className="text-xs"
         >
           {TEXT_RESET}
         </LinkButton>
-      </VCenterRow>
-      <ScrollAccordion
-        value={openTabs}
-        onValueChange={(v) => setOpenTabs(v as string[])}
-        //multiple={false}
-      >
-        <PlotSettingsPanel />
-        <CellSettingsPanel />
-        <LegendSettingsPanel />
-        {plot.style === 'dot' && <DotLegendSettingsPanel />}
-        <ColormapSettingsPanel />
-        <RowLabelsSettingsPanel />
-        {cf?.rowTree && <RowTreeSettingsPanel />}
-        <ColLabelsSettingsPanel />
-        <ColGroupsSettingsPanel />
-        {cf?.colTree && <ColTreeSettingsPanel />}
-      </ScrollAccordion>
-    </PropsPanel>
+      </ResizableSidebarHeaderPortal>
+
+      <PropsPanel ref={ref} className="pr-1 gap-y-2">
+        <ScrollAccordion
+          value={openTabs}
+          onValueChange={(v) => setOpenTabs(v as string[])}
+          //multiple={false}
+        >
+          <PlotSettingsPanel />
+          <CellSettingsPanel />
+          <LegendSettingsPanel />
+          {plot.style === 'dot' && <DotLegendSettingsPanel />}
+          <ColormapSettingsPanel />
+          <RowLabelsSettingsPanel />
+          {cf?.rowTree && <RowTreeSettingsPanel />}
+          <ColLabelsSettingsPanel />
+          <ColGroupsSettingsPanel />
+          {cf?.colTree && <ColTreeSettingsPanel />}
+        </ScrollAccordion>
+      </PropsPanel>
+    </>
   )
 }

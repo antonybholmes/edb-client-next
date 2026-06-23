@@ -83,6 +83,7 @@ import {
   parseGenomicLocation,
   type IGenomicLocation,
 } from '@/lib/genomic/genomic-location'
+import { HistoryProvider } from '../../matcalc/history/history-provider/history-provider'
 import { LocationAutocomplete } from './location-autocomplete'
 import { LocationsPropsPanel } from './locations/locations-props-panel'
 import { SeqbrowserDialogsRoot } from './seq-browser-dialogs'
@@ -658,8 +659,9 @@ function SeqBrowserPage() {
 export function SeqBrowserQueryPage() {
   return (
     <CoreProviders>
-      {/* <TracksProvider> */}
-      <SeqBrowserPage />
+      <HistoryProvider app={APP_INFO.name}>
+        <SeqBrowserPage />
+      </HistoryProvider>
       {/* </TracksProvider> */}
     </CoreProviders>
   )
