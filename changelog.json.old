@@ -1911,6 +1911,10 @@
         {
           "msg": "heatmap panel now uses resizable sidebar to get rid of heatmapcontext error using tabs",
           "date": "2026-06-24T15:35:56.336Z"
+        },
+        {
+          "msg": "Add more usecallbacks in contexts to stabilize functions",
+          "date": "2026-06-24T16:21:39.334Z"
         }
       ],
       "Added": [
