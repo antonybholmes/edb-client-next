@@ -2,6 +2,7 @@ import type { IBinaryFileOpen } from '@/components/pages/open-files'
 import { makeUuid } from '@/lib/id'
 import { textToTokens } from '@/lib/text/lines'
 import { unzipSync } from 'fflate'
+import { RefObject } from 'react'
 
 import { create } from 'zustand'
 
@@ -38,13 +39,14 @@ export interface IGseaPlotStore {
   resultsMap: Record<string, IGseaResult>
   reports: IGseaPathway[]
   allowSelectAll: boolean
+  svgRef: RefObject<SVGSVGElement | null>
   setDatasetsForUse: (datasetsForUse: Record<string, boolean>) => void
   setAllowSelectAll: (allowSelectAll: boolean) => void
   setReports: (reports: IGseaPathway[]) => void
   loadGseaZip: (files: IBinaryFileOpen[]) => void
 }
 
-export const useGseaPlotStore = create<IGseaPlotStore>()(set => ({
+export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
   phenotypes: [],
   rankedGenes: [],
   searchResults: [],
@@ -53,7 +55,7 @@ export const useGseaPlotStore = create<IGseaPlotStore>()(set => ({
   resultsMap: {},
   reports: [],
   allowSelectAll: false,
-
+  svgRef: { current: null },
   setDatasetsForUse: (datasetsForUse: Record<string, boolean>) =>
     set({ datasetsForUse }),
 
@@ -82,18 +84,18 @@ export const useGseaPlotStore = create<IGseaPlotStore>()(set => ({
       const text = new TextDecoder().decode(content)
       let lines = textToTokens(text)
       const headings = lines[0]!
-      const rows = lines.slice(1).filter(tokens => tokens.length > 0)
+      const rows = lines.slice(1).filter((tokens) => tokens.length > 0)
 
       if (filename.includes('ranked_gene_list')) {
         // Check if the entry is a file, not a directory
 
-        let geneIdx = headings.findIndex(h => h === 'NAME')
+        let geneIdx = headings.findIndex((h) => h === 'NAME')
 
         if (geneIdx === -1) {
-          geneIdx = headings.findIndex(h => h === 'GENE_SYMBOL')
+          geneIdx = headings.findIndex((h) => h === 'GENE_SYMBOL')
         }
 
-        const scoreIdx = headings.findIndex(h => h === 'SCORE')
+        const scoreIdx = headings.findIndex((h) => h === 'SCORE')
 
         rankedGenes = rows.map((tokens, ti) => ({
           gene: tokens[geneIdx]!,
@@ -108,7 +110,7 @@ export const useGseaPlotStore = create<IGseaPlotStore>()(set => ({
       if (filename.endsWith('rpt')) {
         // Check if the entry is a file, not a directory
 
-        lines = lines.filter(tokens => tokens.includes('cls'))
+        lines = lines.filter((tokens) => tokens.includes('cls'))
 
         if (lines.length > 0) {
           let tokens = lines[0]![2]!.split('#')
@@ -139,10 +141,10 @@ export const useGseaPlotStore = create<IGseaPlotStore>()(set => ({
             reportsMap[phen] = []
           }
 
-          const sizeIdx = headings.findIndex(h => h === 'SIZE')
-          const nesIdx = headings.findIndex(h => h === 'NES')
-          const qIdx = headings.findIndex(h => h === 'FDR q-val')
-          const rankIdx = headings.findIndex(h => h === 'RANK AT MAX')
+          const sizeIdx = headings.findIndex((h) => h === 'SIZE')
+          const nesIdx = headings.findIndex((h) => h === 'NES')
+          const qIdx = headings.findIndex((h) => h === 'FDR q-val')
+          const rankIdx = headings.findIndex((h) => h === 'RANK AT MAX')
 
           const report: IGseaPathway = {
             id: makeUuid(),
@@ -171,11 +173,11 @@ export const useGseaPlotStore = create<IGseaPlotStore>()(set => ({
           .replace('.xls', '')
           .replace('.tsv', '')
 
-        const rankIdx = headings.findIndex(h => h === 'RANK IN GENE LIST')
-        const leadingIdx = headings.findIndex(h => h === 'CORE ENRICHMENT')
-        const scoreIdx = headings.findIndex(h => h === 'RUNNING ES')
+        const rankIdx = headings.findIndex((h) => h === 'RANK IN GENE LIST')
+        const leadingIdx = headings.findIndex((h) => h === 'CORE ENRICHMENT')
+        const scoreIdx = headings.findIndex((h) => h === 'RUNNING ES')
 
-        const es: IGseaGeneRankScore[] = rows.map(tokens => {
+        const es: IGseaGeneRankScore[] = rows.map((tokens) => {
           return {
             gene: tokens[1]!,
             rank: Number(tokens[rankIdx]!),
@@ -189,8 +191,8 @@ export const useGseaPlotStore = create<IGseaPlotStore>()(set => ({
     }
 
     const reports: IGseaPathway[] = phenotypes
-      .filter(phen => phen in reportsMap)
-      .map(phen => reportsMap[phen]!)
+      .filter((phen) => phen in reportsMap)
+      .map((phen) => reportsMap[phen]!)
       .flat()
 
     //console.log('Phenotypes: %o', phenotypes)
@@ -198,7 +200,7 @@ export const useGseaPlotStore = create<IGseaPlotStore>()(set => ({
     //console.log('Results map: %o', resultsMap)
 
     const datasetsForUse: Record<string, boolean> = Object.fromEntries(
-      reports.map(report => [report.id, true] as [string, boolean])
+      reports.map((report) => [report.id, true] as [string, boolean])
     )
 
     // for (const [rpi, rp] of reportPromises.entries()) {
@@ -256,14 +258,15 @@ export const useGseaPlotStore = create<IGseaPlotStore>()(set => ({
 }))
 
 export function useGsea(): IGseaPlotStore {
-  const phenotypes = useGseaPlotStore(state => state.phenotypes)
-  const rankedGenes = useGseaPlotStore(state => state.rankedGenes)
-  const searchResults = useGseaPlotStore(state => state.searchResults)
-  const reportsMap = useGseaPlotStore(state => state.reportsMap)
-  const datasetsForUse = useGseaPlotStore(state => state.datasetsForUse)
-  const resultsMap = useGseaPlotStore(state => state.resultsMap)
-  const reports = useGseaPlotStore(state => state.reports)
-  const allowSelectAll = useGseaPlotStore(state => state.allowSelectAll)
+  const phenotypes = useGseaPlotStore((state) => state.phenotypes)
+  const rankedGenes = useGseaPlotStore((state) => state.rankedGenes)
+  const searchResults = useGseaPlotStore((state) => state.searchResults)
+  const reportsMap = useGseaPlotStore((state) => state.reportsMap)
+  const datasetsForUse = useGseaPlotStore((state) => state.datasetsForUse)
+  const resultsMap = useGseaPlotStore((state) => state.resultsMap)
+  const reports = useGseaPlotStore((state) => state.reports)
+  const allowSelectAll = useGseaPlotStore((state) => state.allowSelectAll)
+  const svgRef = useGseaPlotStore((state) => state.svgRef)
 
   return {
     phenotypes,
@@ -274,9 +277,11 @@ export function useGsea(): IGseaPlotStore {
     resultsMap,
     reports,
     allowSelectAll,
-    setDatasetsForUse: useGseaPlotStore(state => state.setDatasetsForUse),
-    setAllowSelectAll: useGseaPlotStore(state => state.setAllowSelectAll),
-    setReports: useGseaPlotStore(state => state.setReports),
-    loadGseaZip: useGseaPlotStore(state => state.loadGseaZip),
+    svgRef,
+    setDatasetsForUse: useGseaPlotStore((state) => state.setDatasetsForUse),
+    setAllowSelectAll: useGseaPlotStore((state) => state.setAllowSelectAll),
+    setReports: useGseaPlotStore((state) => state.setReports),
+
+    loadGseaZip: useGseaPlotStore((state) => state.loadGseaZip),
   }
 }

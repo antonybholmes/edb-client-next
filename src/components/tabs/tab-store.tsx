@@ -231,22 +231,15 @@ export function useSideTabs() {
 export function TabProvider({ children }: IChildrenProps) {
   const [tabs, setTabs] = useState<Record<string, ITabGroup>>({})
 
-  function getTabs(id: string) {
-    //if (id in tabs) {
-    return tabs[id] ?? { ...DEFAULT_TAB_GROUP, id }
-    //}
+  const getTabs = useCallback(
+    (id: string) => {
+      //if (id in tabs) {
+      return tabs[id] ?? { ...DEFAULT_TAB_GROUP, id }
+    },
+    [tabs]
+  )
 
-    // const tabGroup = { ...DEFAULT_TAB_GROUP, id }
-
-    // setTabs((prev) => ({
-    //   ...prev,
-    //   [id]: tabGroup,
-    // }))
-
-    // return tabGroup
-  }
-
-  function _setTabs(id: string, tabs: ITab[]) {
+  const _setTabs = useCallback((id: string, tabs: ITab[]) => {
     setTabs((prev) => {
       let currentTab = prev[id] ?? { ...DEFAULT_TAB_GROUP, id }
 
@@ -255,9 +248,9 @@ export function TabProvider({ children }: IChildrenProps) {
         [id]: { ...currentTab, tabs, selectedTabIndex: 0 },
       }
     })
-  }
+  }, [])
 
-  function _setTab(id: string, tab: number | string) {
+  const _setTab = useCallback((id: string, tab: number | string) => {
     setTabs((prev) => {
       let currentTab = prev[id] ?? { ...DEFAULT_TAB_GROUP, id }
 
@@ -290,7 +283,7 @@ export function TabProvider({ children }: IChildrenProps) {
         },
       }
     })
-  }
+  }, [])
 
   return (
     <TabsContext.Provider

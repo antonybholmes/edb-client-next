@@ -52,6 +52,7 @@ import { Textarea } from '@/themed/textarea'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import type { ITab } from '@/components/tabs/tab-provider'
+import { useToolbarTabs } from '@/components/tabs/tab-store'
 import { useStableId } from '@/hooks/stable-id'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { dnaToJson, fetchDNA, type IDNA } from '@/lib/genomic/dna'
@@ -82,9 +83,7 @@ export function GetDNAPage() {
 
   const { open: openDialog } = useDialogs()
 
-  // function openFiles(files: IFileOpen[]) {
-  //   setShowFileMenu(false)
-  // }
+  const { setTabs: setToolbarTabs } = useToolbarTabs()
 
   async function getDNA() {
     const lines = textToLines(text)
@@ -145,6 +144,47 @@ export function GetDNAPage() {
   }
 
   useEffect(() => {
+    const tabs: ITab[] = [
+      {
+        id: 'Home',
+        component: () => (
+          <>
+            <ToolbarTabGroup title="File">
+              <ToolbarOpenFile
+                onOpen={() => {
+                  openDialog({
+                    type: 'open',
+                    payload: {
+                      callback: (message, files) => {
+                        onTextFileChange(message, files, (files) => {
+                          setText(files[0]!.text)
+                        })
+                      },
+                    },
+                  })
+                }}
+                multiple={true}
+              />
+
+              <ToolbarButton title="Save to local file" onClick={() => save()}>
+                <SaveIcon className="-scale-100 fill-blue-400" />
+              </ToolbarButton>
+            </ToolbarTabGroup>
+
+            <ToolbarTabGroup title="Run">
+              <ToolbarButton title="Reverse Complement" onClick={getDNA}>
+                <PlayIcon />
+                <span>Convert</span>
+              </ToolbarButton>
+            </ToolbarTabGroup>
+          </>
+        ),
+      },
+    ]
+    setToolbarTabs(tabs)
+  }, [])
+
+  useEffect(() => {
     if (outputSeqs.length > 0) {
       switch (outputMode) {
         case 'JSON':
@@ -160,88 +200,6 @@ export function GetDNAPage() {
       }
     }
   }, [outputSeqs])
-
-  const tabs: ITab[] = [
-    {
-      //id: nanoid(),
-      id: 'Home',
-      component: () => (
-        <>
-          <ToolbarTabGroup title="File">
-            <ToolbarOpenFile
-              onOpen={() => {
-                openDialog({
-                  type: 'open',
-                  payload: {
-                    callback: (message, files) => {
-                      onTextFileChange(message, files, (files) => {
-                        setText(files[0]!.text)
-                      })
-                    },
-                  },
-                })
-              }}
-              multiple={true}
-            />
-
-            <ToolbarButton title="Save to local file" onClick={() => save()}>
-              <SaveIcon className="-scale-100 fill-blue-400" />
-            </ToolbarButton>
-          </ToolbarTabGroup>
-          {/* {resultsDF && (
-            <ToolbarButton
-              aria-label="Download pathway table"
-              onClick={() => downloadFile(resultsDF)}
-            >
-              <SaveIcon className="-scale-100 text-blue-400" />
-              Save
-            </ToolbarButton>
-          )} */}
-
-          <ToolbarTabGroup title="Run">
-            <ToolbarButton title="Reverse Complement" onClick={getDNA}>
-              <PlayIcon />
-              <span>Convert</span>
-            </ToolbarButton>
-          </ToolbarTabGroup>
-
-          {/* <ToolbarSeparator />
-
-          <ToolbarTabGroup>
-            <ToolbarButton
-              checked={modeRev}
-              onClick={() => setModeRev(!modeRev)}
-            >
-              Reverse
-            </ToolbarButton>
-            <ToolbarButton
-              checked={modeComp}
-              onClick={() => setModeComp(!modeComp)}
-            >
-              Complement
-            </ToolbarButton>
-          </ToolbarTabGroup> */}
-
-          {/* <ToolbarSeparator />
-
-          <ToolbarTabGroup>
-            <ToolbarButton
-              checked={outputMode === "fasta"}
-              onClick={() => setOutputMode("fasta")}
-            >
-              FASTA
-            </ToolbarButton>
-            <ToolbarButton
-              checked={outputMode === "json"}
-              onClick={() => setOutputMode("json")}
-            >
-              JSON
-            </ToolbarButton>
-          </ToolbarTabGroup> */}
-        </>
-      ),
-    },
-  ]
 
   const fileMenuTabs: ITab[] = [
     {
@@ -297,8 +255,6 @@ export function GetDNAPage() {
       <ShortcutLayout>
         <Toolbar>
           <ToolbarMenu
-            groupId={id}
-            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
@@ -312,7 +268,7 @@ export function GetDNAPage() {
               </ToolbarButton>
             }
           />
-          <ToolbarPanel groupId={id} tabs={tabs} />
+          <ToolbarPanel />
         </Toolbar>
 
         <ResizablePanelGroup orientation="horizontal" className="h-full pl-2">

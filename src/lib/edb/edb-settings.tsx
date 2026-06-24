@@ -1,5 +1,5 @@
 import { IChildrenProps } from '@/interfaces/children-props'
-import { createContext, useContext, useState } from 'react'
+import { createContext, useCallback, useContext, useState } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { config } from '../../config'
@@ -212,19 +212,19 @@ export function AppInfoProvider({ children }: IChildrenProps) {
 
   const { settings } = useEdbSettings()
 
-  function _setAppInfo(
-    appInfo: IAppInfo,
-    opts: { updateAccentColor?: boolean } = {}
-  ) {
-    const { updateAccentColor = true } = opts
-    if (appInfo.color && updateAccentColor && settings.apps.useAccentColors) {
-      // 1. Grab the root HTML element
-      const root = document.documentElement
-      // Set the CSS variable for the app theme color
-      root.style.setProperty('--edb-app-theme', appInfo.color)
-    }
-    setAppInfo(appInfo)
-  }
+  const _setAppInfo = useCallback(
+    (appInfo: IAppInfo, opts: { updateAccentColor?: boolean } = {}) => {
+      const { updateAccentColor = true } = opts
+      if (appInfo.color && updateAccentColor && settings.apps.useAccentColors) {
+        // 1. Grab the root HTML element
+        const root = document.documentElement
+        // Set the CSS variable for the app theme color
+        root.style.setProperty('--edb-app-theme', appInfo.color)
+      }
+      setAppInfo(appInfo)
+    },
+    [settings.apps.useAccentColors, setAppInfo]
+  )
 
   return (
     <AppInfoContext.Provider value={{ appInfo, setAppInfo: _setAppInfo }}>

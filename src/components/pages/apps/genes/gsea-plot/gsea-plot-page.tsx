@@ -1,15 +1,11 @@
 'use client'
 
-import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
-
 import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
 import {
   onBinaryFileChange,
   type IBinaryFileOpen,
 } from '@/components/pages/open-files'
-
-import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
 import { OpenIcon } from '@/icons/open-icon'
 
@@ -22,35 +18,28 @@ import {
   TEXT_DOWNLOAD_AS_PNG,
   TEXT_DOWNLOAD_AS_SVG,
   TEXT_EXPORT,
-  TEXT_FILE,
   TEXT_OPEN,
   TEXT_OPEN_FILE,
-  TEXT_SAVE_IMAGE,
 } from '@/consts'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 
 import type { ITab } from '@/components/tabs/tab-provider'
 
 import { Checkbox } from '@/themed/v2/check-box'
-import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { FileDropZonePanel } from '@/components/file-dropzone-panel'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
-import { DownloadIcon } from '@/components/icons/download-icon'
 import { ThemeLink } from '@/components/link/theme-link'
-import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ZoomSlider } from '@/components/toolbar/zoom-slider'
-import { ToolbarHelpTabGroup } from '@/help/toolbar-help-tab-group'
 import { ExportIcon } from '@/icons/export-icon'
 import { FileImageIcon } from '@/icons/file-image-icon'
 import { SearchIcon } from '@/icons/search-icon'
@@ -77,6 +66,7 @@ import {
 import { useGseaSettings } from './gsea-settings-store'
 import { GseaSvg } from './gsea-svg'
 import APP_INFO from './manifest.json'
+import { HomeToolbar } from './toolbars/home'
 
 const HELP_URL = DOCS_URL + '/apps/gsea'
 
@@ -90,9 +80,6 @@ export function GseaPlotPage() {
   const { settings, updateSettings } = useGseaSettings()
   const { setAppInfo } = useAppInfo()
 
-  const [rightTab, setRightTab] = useState('Gene Sets')
-  const [showSideBar, setShowSideBar] = useState(true)
-
   const [search, setSearch] = useState('')
 
   const {
@@ -100,19 +87,16 @@ export function GseaPlotPage() {
     rankedGenes,
     reportsMap,
     datasetsForUse,
+    svgRef,
     setDatasetsForUse,
     loadGseaZip,
   } = useGseaPlotStore()
 
   const [searchResults, setSearchResults] = useState<IGseaPathway[]>([])
 
-  const svgRef = useRef<SVGSVGElement>(null)
-
   const [toolbarTab, setToolbarTab] = useState('Home')
 
   const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
-
-  const [selectedTab] = useState(0)
 
   const [showFileMenu, setShowFileMenu] = useState(false)
   //const [selectAllDatasets, setSelectAllDatasets] = useState(true)
@@ -130,94 +114,16 @@ export function GseaPlotPage() {
     const tabs: ITab[] = [
       {
         id: 'Home',
-        component: () => (
-          <>
-            <ToolbarTabGroup title={TEXT_FILE}>
-              <ToolbarOpenFile
-                onOpen={() => {
-                  openDialog({
-                    type: 'open',
-                    payload: {
-                      callback: (message, files) => {
-                        onBinaryFileChange(message, files, loadGseaZip)
-                      },
-                    },
-                  })
-                }}
-                multiple={true}
-              />
-
-              {selectedTab === 0 && (
-                <ToolbarIconButton
-                  title={TEXT_SAVE_IMAGE}
-                  onClick={() => {
-                    openDialog({
-                      type: 'save-image',
-                      payload: {
-                        name: 'gsea',
-                        svgRef,
-                      },
-                    })
-                  }}
-                >
-                  <DownloadIcon />
-                </ToolbarIconButton>
-              )}
-            </ToolbarTabGroup>
-
-            <ToolbarTabGroup title="Plot Size">
-              <DoubleNumericalInput
-                h="md"
-                v1={settings.axes.x.length}
-                placeholder="Width"
-                limit={[1, 1000]}
-                dp={0}
-                onNumChange1={(v) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.axes.x.length = v
-                    })
-                  )
-                }}
-                v2={settings.es.axes.y.length}
-                onNumChange2={(v) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.es.axes.y.length = v
-                    })
-                  )
-                }}
-              />
-            </ToolbarTabGroup>
-
-            <ToolbarTabGroup title="Columns">
-              <NumericalInput
-                value={settings.page.columns}
-                h="md"
-                placeholder="Opacity"
-                limit={[1, 100]}
-                step={1}
-                onNumChanged={(v) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.page.columns = v
-                    })
-                  )
-                }}
-                className="w-16 rounded-theme"
-              />
-            </ToolbarTabGroup>
-          </>
-        ),
+        component: HomeToolbar,
       },
-      {
-        id: 'Help',
-        component: () => (
-          <>
-            <ToolbarHelpTabGroup url={HELP_URL} />
-          </>
-        ),
-      },
+      // {
+      //   id: 'Help',
+      //   component: () => (
+      //     <>
+      //       <ToolbarHelpTabGroup url={HELP_URL} />
+      //     </>
+      //   ),
+      // },
     ]
 
     setToolbarTabs(tabs)
@@ -226,17 +132,17 @@ export function GseaPlotPage() {
       {
         //icon: <LayersIcon />,
         id: 'Gene Sets',
-        component: () => <GeneSetsPropsPanel />,
+        component: GeneSetsPropsPanel,
       },
       {
         id: TEXT_DISPLAY,
         //icon: <SlidersIcon />,
-        component: () => <GseaDisplayPropsPanel />,
+        component: GseaDisplayPropsPanel,
       },
     ]
 
     setSideTabs(rightTabs)
-  }, [])
+  }, [setAppInfo, setToolbarTabs, setSideTabs])
 
   useEffect(() => {
     setReportTabs(['gsea-results', ...phenotypes])
