@@ -20,6 +20,7 @@ export interface ITab {
   // alternative icon when tab is open
   openIcon?: ReactNode
   //showIcon?: boolean
+  render?: () => ReactNode
   component?: ComponentType<{}> //() => ReactNode
   //component?: ComponentType<{}>
   data?: unknown

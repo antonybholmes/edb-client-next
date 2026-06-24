@@ -25,7 +25,7 @@ import { useCurrentSheets } from '../../history/history-provider/history-context
 import { useHistory } from '../../history/history-provider/history-provider'
 
 export interface IProps extends IModalProps<BaseDataFrame> {
-  selection: ISelectionRange
+  selection?: ISelectionRange | undefined
 }
 
 export function AnnotateDialog({ selection, onResponse }: IProps) {

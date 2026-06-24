@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Refactored matcalc toolbars into own components.
 - Add more usecallbacks in contexts to stabilize functions.
 - heatmap panel now uses resizable sidebar to get rid of heatmapcontext error using tabs.
 - Added support for tabs to take component refs and render on the fly.

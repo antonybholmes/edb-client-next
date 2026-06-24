@@ -7,8 +7,6 @@ import {
   type IBinaryFileOpen,
 } from '@/components/pages/open-files'
 
-import { LayersIcon } from '@/icons/layers-icon'
-
 import { OpenIcon } from '@/icons/open-icon'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -44,7 +42,6 @@ import { ZoomSlider } from '@/components/toolbar/zoom-slider'
 import { ExportIcon } from '@/icons/export-icon'
 import { FileImageIcon } from '@/icons/file-image-icon'
 import { SearchIcon } from '@/icons/search-icon'
-import { SlidersIcon } from '@/icons/sliders-icon'
 import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
@@ -117,7 +114,9 @@ export function GseaWebPage() {
 
   useEffect(() => {
     setAppInfo(APP_INFO)
+  }, [setAppInfo])
 
+  useEffect(() => {
     const tabs: ITab[] = [
       {
         id: 'Home',
@@ -125,27 +124,31 @@ export function GseaWebPage() {
       },
       // {
       //   id: 'Help',
-      //   component: () => <ToolbarHelpTabGroup url={HELP_URL} />,
+      //   component: () => (
+      //     <>
+      //       <ToolbarHelpTabGroup url={HELP_URL} />
+      //     </>
+      //   ),
       // },
     ]
 
     setToolbarTabs(tabs)
+  }, [setToolbarTabs])
 
+  useEffect(() => {
     const rightTabs: ITab[] = [
       {
-        icon: <LayersIcon />,
         id: 'Gene Sets',
         component: GeneSetsPropsPanel,
       },
       {
         id: TEXT_DISPLAY,
-        icon: <SlidersIcon />,
         component: GseaDisplayPropsPanel,
       },
     ]
 
     setSideTabs(rightTabs)
-  }, [setAppInfo, setToolbarTabs, setSideTabs])
+  }, [setSideTabs])
 
   useEffect(() => {
     setReportTabs(['gsea-results', ...phenotypes])

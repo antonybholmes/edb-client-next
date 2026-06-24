@@ -7,7 +7,7 @@ import APP_INFO from '../manifest.json'
 import type { Species } from '@/lib/gene/geneconv'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v58`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v60`
 
 export interface IMatcalcSettings {
   dot: { size: { useOriginalValuesForSizes: boolean } }
@@ -88,6 +88,14 @@ export interface IMatcalcSettings {
     dp: number
     commas: boolean
     defaultFileFormat: string
+    panels: {
+      tab: string
+    }
+    menus: {
+      file: {
+        show: boolean
+      }
+    }
   }
 
   sidebar: {
@@ -189,6 +197,14 @@ export const DEFAULT_SETTINGS: IMatcalcSettings = {
     dp: 4,
     commas: true,
     defaultFileFormat: 'txt',
+    panels: {
+      tab: '',
+    },
+    menus: {
+      file: {
+        show: false,
+      },
+    },
   },
 
   groups: {
@@ -207,10 +223,10 @@ export interface IMatcalcStore extends IMatcalcSettings {
 
 export const useMatcalcStore = create<IMatcalcStore>()(
   persist(
-    set => ({
+    (set) => ({
       ...DEFAULT_SETTINGS,
       update: (settings: Partial<IMatcalcSettings>) => {
-        set(state => ({ ...state, ...settings }))
+        set((state) => ({ ...state, ...settings }))
       },
     }),
     {
@@ -244,8 +260,8 @@ export function useMatcalcSettings(): {
   updateSettings: (settings: Partial<IMatcalcSettings>) => void
   resetSettings: () => void
 } {
-  const settings = useMatcalcStore(state => state)
-  const update = useMatcalcStore(state => state.update)
+  const settings = useMatcalcStore((state) => state)
+  const update = useMatcalcStore((state) => state.update)
   const resetSettings = () => update({ ...DEFAULT_SETTINGS })
 
   return { settings, updateSettings: update, resetSettings }

@@ -110,7 +110,9 @@ export function GseaPlotPage() {
 
   useEffect(() => {
     setAppInfo(APP_INFO)
+  }, [setAppInfo])
 
+  useEffect(() => {
     const tabs: ITab[] = [
       {
         id: 'Home',
@@ -127,22 +129,22 @@ export function GseaPlotPage() {
     ]
 
     setToolbarTabs(tabs)
+  }, [setToolbarTabs])
 
+  useEffect(() => {
     const rightTabs: ITab[] = [
       {
-        //icon: <LayersIcon />,
         id: 'Gene Sets',
         component: GeneSetsPropsPanel,
       },
       {
         id: TEXT_DISPLAY,
-        //icon: <SlidersIcon />,
         component: GseaDisplayPropsPanel,
       },
     ]
 
     setSideTabs(rightTabs)
-  }, [setAppInfo, setToolbarTabs, setSideTabs])
+  }, [setSideTabs])
 
   useEffect(() => {
     setReportTabs(['gsea-results', ...phenotypes])

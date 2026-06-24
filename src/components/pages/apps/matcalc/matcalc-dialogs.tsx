@@ -68,7 +68,7 @@ type DialogTypeMap = {
     callback?: ModalResponse<BaseDataFrame>
   }
   annotate: {
-    selection: ISelectionRange
+    selection?: ISelectionRange | undefined
     callback?: ModalResponse<BaseDataFrame>
   }
   gex: {}

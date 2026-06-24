@@ -1915,6 +1915,10 @@
         {
           "msg": "Add more usecallbacks in contexts to stabilize functions",
           "date": "2026-06-24T16:21:39.334Z"
+        },
+        {
+          "msg": "Refactored matcalc toolbars into own components",
+          "date": "2026-06-24T18:11:19.246Z"
         }
       ],
       "Added": [
