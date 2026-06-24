@@ -1,6 +1,6 @@
 'use client'
 
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 import { useEffect, useState } from 'react'
 
 import {

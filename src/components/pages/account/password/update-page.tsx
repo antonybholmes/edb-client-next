@@ -29,7 +29,7 @@ import {
   USERNAME_PATTERN,
 } from '@/layouts/signin-layout'
 
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 
 import { Button } from '@/components/shadcn/ui/themed/v2/button'
 

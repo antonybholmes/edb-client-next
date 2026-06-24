@@ -30,7 +30,7 @@ import {
 import type { ISaveAsFileType } from '@/dialogs/save-as-dialog'
 import { SaveImageDialog } from '@/dialogs/save-image-dialog'
 import { SaveTxtDialog } from '@/dialogs/save-txt-dialog'
-import { useZoom } from '@/providers/zoom-provider'
+import { useZoom } from '@/providers/zoom'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { type ITab } from '@/components/tabs/tab-provider'
@@ -65,7 +65,7 @@ import { DisplayPropsPanel } from './display-props-panel'
 import { MotifsPropsPanel } from './motifs-props-panel'
 
 import { DownloadIcon } from '@/components/icons/download-icon'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { useMotifSettings, type Mode } from './motifs-settings'
 

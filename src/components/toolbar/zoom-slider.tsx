@@ -11,7 +11,7 @@ import {
 } from '@/themed/v2/select'
 import { useState } from 'react'
 // import { Slider } from "../toolbar/slider"
-import { DEFAULT_ZOOM_CHANNEL_NAME, useZoom } from '@/providers/zoom-provider'
+import { DEFAULT_ZOOM_CHANNEL_NAME, useZoom } from '@/providers/zoom'
 import { Slider } from '@/themed/v2/slider'
 
 import { ChevronDown, Minus, Plus } from 'lucide-react'
@@ -92,7 +92,7 @@ export function ZoomSelect({
       <Input
         variant="plain"
         value={formatZoom(zoom)}
-        onTextChanged={v => {
+        onTextChanged={(v) => {
           const parsed = parseInt(v.replace('%', ''))
 
           if (!isNaN(parsed)) {
@@ -105,7 +105,7 @@ export function ZoomSelect({
         open={open}
         onOpenChange={setOpen}
         value={zoom}
-        onValueChange={value => {
+        onValueChange={(value) => {
           if (value !== null) {
             _setValue(value)
           }
@@ -125,7 +125,7 @@ export function ZoomSelect({
             {levels
               .map((l, li) => ({ index: li, value: l }))
               .sort((a, b) => b.index - a.index)
-              .map(v => (
+              .map((v) => (
                 <SelectItem value={v.value} key={v.index}>
                   {formatZoom(v.value)}
                 </SelectItem>

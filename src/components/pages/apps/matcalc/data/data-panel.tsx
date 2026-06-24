@@ -16,13 +16,13 @@ import {
 } from '@/components/pages/open-files'
 import { type ISelectedTab } from '@/components/tabs/tab-provider'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import {
-  downloadDataFrame,
-  getFormattedShape,
-} from '@/lib/dataframe/dataframe-utils'
+import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
 import { friendlyFilename, replaceFileExt } from '@/lib/path'
-import { messageTextFileFormat, useMessages } from '@/providers/messages'
-import { useZoom } from '@/providers/zoom-provider'
+import {
+  messageTextFileFormat,
+  useMessages,
+} from '@/providers/message-provider'
+import { useZoom } from '@/providers/zoom'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
@@ -30,6 +30,8 @@ import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { ResizableSidebar } from '@/components/slide-bar/resizable-sidebar'
 
+import { makeUuid } from '@/lib/id'
+import { useFooter } from '@/providers/footer-provider'
 import {
   useCurrentSheets,
   useFiles,
@@ -38,6 +40,7 @@ import { useHistory } from '../history/history-provider/history-provider'
 import { useMatcalcDialogs } from '../matcalc-dialogs'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
 import { DataPropsPanel } from './data-props-panel'
+import { FooterDFSize } from './footer-df-size'
 
 export const DEFAULT_PANEL_ID = 'Table 1'
 
@@ -58,6 +61,8 @@ export function DataPanel() {
   const { zoom } = useZoom(DATA_ZOOM_CHANNEL)
   const { open: openDialog } = useDialogs()
   const { open: openMatcalcDialog } = useMatcalcDialogs()
+
+  const { set: setFooter } = useFooter()
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //)//'data-panel' + nanoid())
 
@@ -83,6 +88,10 @@ export function DataPanel() {
 
     //setShowFileMenu(false)
   }
+
+  useEffect(() => {
+    setFooter('left', { id: makeUuid(), component: FooterDFSize })
+  }, [sheet, setFooter])
 
   useEffect(() => {
     //const filteredMessages = messages.filter(m => m.target === branch?.id)
@@ -228,7 +237,7 @@ export function DataPanel() {
         <DataPropsPanel />
       </ResizableSidebar>
       <FooterPortal>
-        <span>{getFormattedShape(sheet as AnnotationDataFrame)}</span>
+        <></>
         <></>
         <ZoomSlider channel={DATA_ZOOM_CHANNEL} />
       </FooterPortal>

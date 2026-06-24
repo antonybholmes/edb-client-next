@@ -53,7 +53,7 @@ import { DownloadIcon } from '@/components/icons/download-icon'
 import { ShowSideButton } from '@/components/pages/show-side-button'
 import { ZoomSlider } from '@/components/toolbar/zoom-slider'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'

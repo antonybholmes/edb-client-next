@@ -1,6 +1,7 @@
 import { cn } from '@/lib/shadcn-utils'
 
 import type { IChildrenProps } from '@/interfaces/children-props'
+import { useFooter } from '@/providers/footer-provider'
 import { CENTERED_ROW_CLS } from '@/theme'
 import { VCenterRow } from '../layout/v-center-row'
 
@@ -12,11 +13,17 @@ export const TOOLBAR_FOOTER_CLS = cn(
 )
 
 export function Footer({ className }: IChildrenProps) {
+  const { left: Left, center: Center, right: Right } = useFooter()
+
   return (
     <footer className={cn(TOOLBAR_FOOTER_CLS, className)} id="footer">
-      <VCenterRow id="footer-left" />
-      <VCenterRow id="footer-center" className="justify-center col-span-2" />
-      <VCenterRow id="footer-right" className="justify-end" />
+      <VCenterRow id="footer-left">{Left && <Left />}</VCenterRow>
+      <VCenterRow id="footer-center" className="justify-center col-span-2">
+        {Center && <Center />}
+      </VCenterRow>
+      <VCenterRow id="footer-right" className="justify-end">
+        {Right && <Right />}
+      </VCenterRow>
     </footer>
   )
 }

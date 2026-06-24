@@ -18,8 +18,11 @@ import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { range } from '@/lib/math/range'
 
-import { messageImageFileFormat, useMessages } from '@/providers/messages'
-import { useZoom } from '@/providers/zoom-provider'
+import {
+  messageImageFileFormat,
+  useMessages,
+} from '@/providers/message-provider'
+import { useZoom } from '@/providers/zoom'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import type { IDivProps } from '@/interfaces/div-props'

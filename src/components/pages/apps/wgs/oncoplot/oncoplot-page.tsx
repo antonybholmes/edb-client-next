@@ -67,8 +67,8 @@ import { HeaderButton } from '@/layouts/header-button'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
-import { CoreProviders } from '@/providers/core-providers'
-import { useMessages } from '@/providers/messages'
+import { CoreProviders } from '@/providers/core-provider'
+import { useMessages } from '@/providers/message-provider'
 import {
   Select,
   SelectContent,

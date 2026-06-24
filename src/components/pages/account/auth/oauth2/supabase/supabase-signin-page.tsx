@@ -1,7 +1,7 @@
 import { TEXT_SIGN_IN } from '@/consts'
 import { CenterLayout } from '@/layouts/center-layout'
 import { MYACCOUNT_PATH } from '@/lib/edb/edb'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 import { SupabaseSignIn } from './supabase-signin'
 
 export function SignInPage({

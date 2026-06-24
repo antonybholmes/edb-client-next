@@ -20,7 +20,7 @@ import {
 } from '@/lib/edb/edb'
 
 import { httpFetch } from '@/lib/http/http-fetch'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 import Cookies from 'js-cookie'
 import { jwtDecode, type JwtPayload } from 'jwt-decode'
 import { useEffect, useState } from 'react'

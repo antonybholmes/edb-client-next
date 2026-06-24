@@ -1,7 +1,7 @@
 'use client'
 
 import { HeaderLayout } from '@/layouts/header-layout'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 import { MarkdownContent } from '../markdown-content'
 
 export function ChangelogPage({ contentHtml }: { contentHtml: string }) {

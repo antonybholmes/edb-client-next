@@ -83,7 +83,7 @@ import { useStableId } from '@/hooks/stable-id'
 import { DownloadIcon } from '@/icons/download-icon'
 import { AssemblySelect } from '@/lib/edb/assembly-select'
 import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 import { GroupToggle, ToggleGroup } from '@/themed/v2/toggle-group'
 import {
   HistoryLayout,

@@ -69,7 +69,7 @@ import {
 
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { useZoom } from '@/providers/zoom-provider'
+import { useZoom } from '@/providers/zoom'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
@@ -96,7 +96,7 @@ import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { vfill } from '@/lib/fill'
 import { textToLines } from '@/lib/text/lines'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 import { Card } from '@/themed/card'
 import { Textarea } from '@/themed/textarea'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'

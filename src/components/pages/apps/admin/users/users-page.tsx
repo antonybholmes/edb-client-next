@@ -48,7 +48,7 @@ import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { csfrWithTokenHeaders } from '@/lib/http/urls'
 import { logger } from '@/lib/logger'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'

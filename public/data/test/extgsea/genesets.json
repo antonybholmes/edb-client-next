@@ -1,6 +1,6 @@
 [
   {
-    "id": "nxewur7iurk5",
+    "id": "019efb59-eab6-7da6-95a1-687b2efc3e3c",
     "name": "CbpRH_DOWN_3v3_218",
     "genes": [
       "A3galt2",
@@ -220,10 +220,11 @@
       "Zfpm1",
       "Zkscan16"
     ],
-    "color": "#ff0000"
+    "color": "#ff0000",
+    "show": true
   },
   {
-    "id": "ql3o2vvfdp4y",
+    "id": "019efb5a-0b55-7e19-827e-d567275d7774",
     "name": "CbpRH_UP_3v3_138",
     "genes": [
       "Adgrl2",
@@ -365,6 +366,7 @@
       "Zfp358",
       "Zfyve21"
     ],
-    "color": "#0000ff"
+    "color": "#0000ff",
+    "show": true
   }
 ]

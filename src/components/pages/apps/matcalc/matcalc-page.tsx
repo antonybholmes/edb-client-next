@@ -2,10 +2,7 @@
 
 import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
-import { ToolbarButton } from '@/toolbar/toolbar-button'
-
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
-import { makeGCT } from '@/lib/dataframe/dataframe-utils'
 
 import { onTextFileChange } from '@/components/pages/open-files'
 import {
@@ -25,7 +22,6 @@ import {
   TEXT_OPEN_FILE,
   TEXT_SAVE_AS,
 } from '@/consts'
-import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
 import { type IClusterFrame } from '@/lib/math/hcluster'
 
@@ -33,7 +29,6 @@ import { useEffect, useMemo, type ReactElement } from 'react'
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
-import { makeUuid } from '@/lib/id'
 import { useSelectionRange } from '@/providers/selection-range'
 
 import { VolcanoPanel } from './apps/volcano/volcano-panel'
@@ -49,7 +44,6 @@ import { ShowSideButton } from '@/components/pages/show-side-button'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import { type ITab } from '@/components/tabs/tab-provider'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { snrRankGenes } from '@/lib/gsea/gsea2'
 import { textToLines } from '@/lib/text/lines'
 import { produce } from 'immer'
 
@@ -68,21 +62,18 @@ import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { ResizableSidebar } from '@/components/slide-bar/resizable-sidebar'
 import { useSlideBar } from '@/components/slide-bar/slide-bar-store'
-import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { HeaderButton } from '@/layouts/header-button'
 import type { IClusterGroup } from '@/lib/cluster-group'
 import type { IGeneSet } from '@/lib/gsea/geneset'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { CoreProviders } from '@/providers/core-providers'
-import { Toast } from '@base-ui/react/toast'
+import { CoreProviders } from '@/providers/core-provider'
 import { HeatmapPanel } from './apps/heatmap/heatmap-panel'
 import { HistoryLayout, HistoryShowButton } from './history/history-layout'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useAppInfo } from '@/lib/edb/edb-settings'
-import { useMessages } from '@/providers/messages'
-import { useExtGseaWorker } from './apps/ext-gsea/ext-gsea-worker'
+import { useMessages } from '@/providers/message-provider'
 import { HeatmapProvider } from './apps/heatmap/heatmap-provider'
 import { VolcanoProvider } from './apps/volcano/volcano-provider'
 import { OptsSidebarMenu } from './data/opts-sidebar-menu'
@@ -91,14 +82,15 @@ import { useHistory } from './history/history-provider/history-provider'
 import { pathJoin } from './history/history-provider/history-actions'
 
 import { useTabs } from '@/components/tabs/tab-store'
+import { useFooter } from '@/providers/footer-provider'
 import {
+  useCurrentGenesets,
   useCurrentGroups,
   useCurrentPlots,
   useCurrentSelections,
   useCurrentSheets,
   useFiles,
 } from './history/history-provider/history-contexts'
-import { newExtGseaPlot } from './history/history-provider/history-factories'
 import { useAllPlots } from './history/history-provider/history-hooks'
 import { HistoryPlot } from './history/history-provider/history-types'
 import { UndoShortcuts } from './history/undo-shortcuts'
@@ -107,9 +99,10 @@ import { MatcalcDialogsRoot, useMatcalcDialogs } from './matcalc-dialogs'
 import { MatcalcFileTree } from './matcalc-file-tree'
 import { useMatcalcSettings } from './settings/matcalc-settings'
 import { SettingsAppsPanel } from './settings/settings-apps-panel'
-import { DataToolbar } from './toolbars/data'
-import { GenomicToolbar } from './toolbars/genomic'
-import { HomeToolbar } from './toolbars/home'
+import { DataToolbar } from './toolbars/data-toolbar'
+import { GeneToolbar } from './toolbars/gene-toolbar'
+import { GenomicToolbar } from './toolbars/genomic-toolbar'
+import { HomeToolbar } from './toolbars/home-toolbar'
 
 interface IClusterFrameProps {
   cf: IClusterFrame | null
@@ -193,6 +186,8 @@ export function MatcalcPage() {
 
   const { setTabs: setToolbarTabs } = useTabs('toolbar')
 
+  const { remove: removeFooter, addIndicator } = useFooter()
+
   //const [toolbarTabName, setToolbarTab] = useState('Home')
 
   //const [dataSetHeaders, setDataSetHeaders] = useState<any[]>([])
@@ -209,7 +204,8 @@ export function MatcalcPage() {
 
   const { openFiles } = useOpenFiles()
 
-  const { groups, genesets } = useCurrentGroups()
+  const { groups } = useCurrentGroups()
+  const { genesets } = useCurrentGenesets()
 
   const { sheet } = useCurrentSheets()
 
@@ -223,7 +219,7 @@ export function MatcalcPage() {
   // them when clicking on a plot tab
   const plots = useAllPlots()
 
-  //console.log('plots', plots)
+  console.log('gggggg', groups)
 
   const { setSettingsTabs, setDefaultSettingsTab } = useSettingsTabs()
 
@@ -234,10 +230,6 @@ export function MatcalcPage() {
   const { open, setOpen } = useSlideBar(folderId) //) //'matcalc') //useContext(MessageContext)
 
   //const extGseaWorkerRef = useRef<Worker | null>(null)
-
-  const { run: runExtGseaWorker } = useExtGseaWorker()
-
-  const { add: addToast, close: closeToast } = Toast.useToastManager()
 
   //const {setTab: setToolbarTab} = useTabs(TOOLBAR_GROUP_ID)
 
@@ -250,27 +242,26 @@ export function MatcalcPage() {
     // open a dedicated history app for this module
     //openApp(APP_INFO.name)
     setAppInfo(APP_INFO)
+  }, [setAppInfo])
 
-    // custom settings for the global settings app
-    const settingsTabs: ITab[] = [
+  useEffect(() => {
+    // open a dedicated history app for this module
+    //openApp(APP_INFO.name)
+    setAppInfo(APP_INFO)
+
+    setSettingsTabs([
       {
         id: APP_INFO.name,
         icon: <CubeIcon fill="" />,
         children: [
-          // {
-          //   id: 'User Interface',
-          //   content: ()=> <SettingsPanel />,
-          // },
           {
             id: 'Apps',
             //icon: <LayersIcon />,
-            component: () => <SettingsAppsPanel />,
+            component: SettingsAppsPanel,
           },
         ],
       },
-    ]
-
-    setSettingsTabs(settingsTabs)
+    ])
     setDefaultSettingsTab(APP_INFO.name)
     //setSelectedPanelTab(branch.id)
 
@@ -280,7 +271,7 @@ export function MatcalcPage() {
     //     type: 'module',
     //   }
     // )
-  }, [setAppInfo, setSettingsTabs, setDefaultSettingsTab])
+  }, [setSettingsTabs, setDefaultSettingsTab])
 
   useEffect(() => {
     const tabs: ITab[] = [
@@ -294,64 +285,7 @@ export function MatcalcPage() {
       },
       {
         id: 'Gene',
-        component: () => (
-          <>
-            <ToolbarTabGroup title="Annotation">
-              <ToolbarCol>
-                <ToolbarButton
-                  title="Convert Gene Symbols between Human and Mouse"
-                  onClick={() => {
-                    openMatcalcDialog({
-                      type: 'gene-species-convert',
-                      payload: {},
-                    })
-                  }}
-                >
-                  Convert Species
-                </ToolbarButton>
-
-                <ToolbarButton
-                  title="Convert Motifs to Gene Symbols"
-                  onClick={() => {
-                    if (selection) {
-                      openMatcalcDialog({
-                        type: 'motif-to-gene',
-                        payload: {
-                          selection,
-                          // callback: (response, data) => {
-                          //   if (response === TEXT_OK && data) {
-                          //     addSheets([data])
-                          //   }
-                          // },
-                        },
-                      })
-                    }
-                  }}
-                >
-                  Motif To Gene
-                </ToolbarButton>
-              </ToolbarCol>
-            </ToolbarTabGroup>
-
-            <ToolbarTabGroup title="GSEA">
-              <ToolbarCol>
-                <ToolbarButton
-                  aria-label="Run Extended GSEA"
-                  onClick={() => runExtGsea()}
-                >
-                  Extended GSEA
-                </ToolbarButton>
-
-                <ToolbarButton
-                  title="Convert Matrix to GSEA GCT Format"
-                  onClick={() => gct()}
-                >
-                  GCT
-                </ToolbarButton>
-              </ToolbarCol>
-            </ToolbarTabGroup>
-          </>
-        ),
+        component: GeneToolbar,
       },
       {
         id: 'Genomic',
@@ -482,135 +416,13 @@ export function MatcalcPage() {
       '/data/test/extgsea/genesets.json'
     )
 
+    console.log(genesets)
+
     openFile(`Ext GSEA Test`, {
       groups,
       genesets,
       sheets: [table.setName('Ext GSEA Test') as AnnotationDataFrame],
     })
-  }
-
-  function gct() {
-    if (!sheet) {
-      return
-    }
-
-    const df = makeGCT(sheet as AnnotationDataFrame) as AnnotationDataFrame
-
-    addSheets([df])
-
-    // history.current = ({
-    //   step: history.current.step + 1,
-    //   history: [{ title: df.name, df: [df] }],
-    // })
-  }
-
-  function runExtGsea() {
-    if (!sheet) {
-      return
-    }
-
-    if (groups.length < 2) {
-      addToast({
-        id: makeUuid(),
-        title: 'Extended GSEA',
-        description: 'You need to create 2 groups/phenotypes.',
-        type: 'destructive',
-      })
-      return
-    }
-
-    if (genesets.length < 2) {
-      addToast({
-        id: makeUuid(),
-        title: 'Extended GSEA',
-        description: 'You need to create 2 gene sets.',
-        type: 'destructive',
-      })
-      return
-    }
-
-    /* const { dismiss: dismissSpinnerToast } = toast({
-      title: 'Extended GSEA',
-      description: (
-        <ToastSpinner>
-          Running extended GSEA, please do not refresh your browser window...
-        </ToastSpinner>
-      ),
-      durationMs: 60000,
-    })
-
-    setTimeout(() => {
-      const group1 = groupState.groups[groupState.order[0]!]!
-      const group2 = groupState.groups[groupState.order[1]!]!
-
-      const rankedGenes = rankGenes(df, group1, group2)
-
-      const extGsea = new ExtGSEA(rankedGenes)
-
-      const gs1 = genesetState.genesets[genesetState.order[0]!]!
-      const gs2 = genesetState.genesets[genesetState.order[1]!]!
-
-      // run and cache results
-      extGsea.runExtGsea(gs1, gs2)
-
-      dismissSpinnerToast()
-
-      plotsDispatch({
-        type: 'add',
-        style: 'Extended GSEA',
-        //cf: { df },
-        customProps: { extGsea },
-      })
-    }, 1000) */
-
-    const id = makeUuid()
-
-    addToast({
-      id,
-      title: APP_INFO.name,
-      description:
-        'Running Extended GSEA, please do not refresh your browser window...',
-
-      timeout: 60000,
-    })
-
-    const group1 = groups[0]! //groupState.groups[groupState.order[0]!]!
-    const group2 = groups[1]! //groupState.groups[groupState.order[1]!]!
-
-    const rankedGenes = snrRankGenes(
-      sheet as AnnotationDataFrame,
-      group1,
-      group2
-    )
-
-    const gs1 = genesets[0]! // genesets[genesetState.order[0]!]!
-    const gs2 = genesets[1]! // genesetState.genesets[genesetState.order[1]!]!
-
-    runExtGseaWorker(
-      {
-        rankedGenes,
-        gs1,
-        gs2,
-      },
-      (data) => {
-        const { extGseaRes, gseaRes1, gseaRes2 } = data
-
-        const plot = {
-          ...newExtGseaPlot('Extended GSEA', {
-            rankedGenes,
-            gs1: gs1,
-            gs2: gs2,
-            extGseaRes,
-            gseaRes1,
-            gseaRes2,
-          }),
-        }
-
-        _addPlots([plot])
-        // we've finished so get rid of the animations
-        closeToast(id)
-      }
-    )
   }
 
   // function makeLollipop() {

@@ -58,7 +58,7 @@ export function useCurrentPlots(): IPlotsContext {
 
 export type IGroupsContext = {
   groups: IClusterGroup[]
-  genesets: IGeneSet[]
+
   groupsName: string
 }
 
@@ -70,6 +70,23 @@ export function useCurrentGroups(): IGroupsContext {
   const ctx = useContext(GroupsContext)
   if (!ctx) {
     throw new Error('useCurrentGroups must be used within a HistoryProvider')
+  }
+
+  return ctx
+}
+
+export type IGenesetsContext = {
+  genesets: IGeneSet[]
+}
+
+export const GenesetsContext = createContext<IGenesetsContext | undefined>(
+  undefined
+)
+
+export function useCurrentGenesets(): IGenesetsContext {
+  const ctx = useContext(GenesetsContext)
+  if (!ctx) {
+    throw new Error('useCurrentGenesets  must be used within a HistoryProvider')
   }
 
   return ctx

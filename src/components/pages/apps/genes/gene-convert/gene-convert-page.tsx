@@ -65,7 +65,7 @@ import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 import { GroupToggle, ToggleGroup } from '@/themed/v2/toggle-group'
 import {
   HistoryLayout,

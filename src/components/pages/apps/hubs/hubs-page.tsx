@@ -30,7 +30,7 @@ import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 import {
   AccordionContent,
   AccordionItem,

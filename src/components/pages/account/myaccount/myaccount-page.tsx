@@ -41,7 +41,7 @@ import { ReloadIcon } from '@/icons/reload-icon'
 import { Textarea } from '@/themed/textarea'
 
 import { formattedList } from '@/lib/text/text'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 
 import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
 import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'

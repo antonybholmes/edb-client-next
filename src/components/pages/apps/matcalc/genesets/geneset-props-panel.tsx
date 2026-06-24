@@ -51,7 +51,7 @@ import { randomHexColor } from '@/lib/color/color'
 import { cn } from '@/lib/shadcn-utils'
 import type { UndefStr } from '@/lib/text/text'
 import { Settings2 } from 'lucide-react'
-import { useCurrentGroups } from '../history/history-provider/history-contexts'
+import { useCurrentGenesets } from '../history/history-provider/history-contexts'
 import { useHistory } from '../history/history-provider/history-provider'
 
 function GenesetItem({
@@ -161,7 +161,7 @@ export function GenesetPropsPanel() {
 
   const { addGenesets, updateGeneset, reorderGenesets } = useHistory()
 
-  const { genesets } = useCurrentGroups()
+  const { genesets } = useCurrentGenesets()
 
   const { open: openDialog } = useDialogs()
 

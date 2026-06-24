@@ -1,4 +1,4 @@
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
 

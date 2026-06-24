@@ -2,7 +2,7 @@
 
 import { BaseCol } from '@/layout/base-col'
 import { ContentDiv } from '@/layout/content-div'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 
 import { HeaderLayout } from '@/layouts/header-layout'
 

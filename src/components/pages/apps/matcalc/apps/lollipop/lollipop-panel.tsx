@@ -11,10 +11,13 @@ import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { Card } from '@/themed/card'
 
 import { LayersIcon } from '@/components/icons/layers-icon'
-import { messageImageFileFormat, useMessages } from '@/providers/messages'
+import {
+  messageImageFileFormat,
+  useMessages,
+} from '@/providers/message-provider'
 import { produce } from 'immer'
 
-import { useZoom } from '@/providers/zoom-provider'
+import { useZoom } from '@/providers/zoom'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { DomainPropsPanel } from '../../../wgs/lollipop/domain-props-panel'

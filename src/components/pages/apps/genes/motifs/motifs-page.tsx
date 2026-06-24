@@ -29,8 +29,8 @@ import {
   TEXT_SORT_BY,
 } from '@/consts'
 import { useStableId } from '@/hooks/stable-id'
-import { CoreProviders } from '@/providers/core-providers'
-import { useZoom } from '@/providers/zoom-provider'
+import { CoreProviders } from '@/providers/core-provider'
+import { useZoom } from '@/providers/zoom'
 import { GroupToggle, ToggleGroup } from '@/themed/v2/toggle-group'
 
 import {

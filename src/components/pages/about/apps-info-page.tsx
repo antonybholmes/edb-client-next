@@ -1,7 +1,7 @@
 'use client'
 
 import { BaseCol } from '@/layout/base-col'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 
 import { CenterLayout } from '@/layouts/center-layout'
 import type { IAppInfo } from '@/lib/app-info'

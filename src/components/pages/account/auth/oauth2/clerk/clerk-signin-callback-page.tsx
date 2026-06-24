@@ -3,7 +3,7 @@
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 
 import { signinStateAtom } from '@/lib/edb/signin/edb-signin'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 import { useAuth } from '@clerk/react'
 import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'

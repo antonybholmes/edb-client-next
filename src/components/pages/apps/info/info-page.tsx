@@ -16,7 +16,7 @@ import { VCenterRow } from '@/layout/v-center-row'
 import { SignInLayout } from '@/layouts/signin-layout'
 import { API_ABOUT_URL } from '@/lib/edb/edb'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 import { useQuery } from '@tanstack/react-query'
 
 import { CenterRow } from '@/components/layout/center-row'

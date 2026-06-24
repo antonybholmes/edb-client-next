@@ -8,7 +8,7 @@ import {
   type IRedirectState,
 } from '@/lib/edb/signin/edb-signin'
 import { logger } from '@/lib/logger'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { BaseSignInCallbackPage } from '../../signin-callback-page'

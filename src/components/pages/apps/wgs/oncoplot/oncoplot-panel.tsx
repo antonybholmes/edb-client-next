@@ -22,8 +22,11 @@ import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { TEXT_SETTINGS } from '@/consts'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { messageImageFileFormat, useMessages } from '@/providers/messages'
-import { useZoom } from '@/providers/zoom-provider'
+import {
+  messageImageFileFormat,
+  useMessages,
+} from '@/providers/message-provider'
+import { useZoom } from '@/providers/zoom'
 import { produce } from 'immer'
 import { HistoryLayout } from '../../matcalc/history/history-layout'
 

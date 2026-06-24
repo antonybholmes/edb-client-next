@@ -17,6 +17,7 @@ enablePatches()
 import { historyReducer } from './history-actions'
 import {
   FilesContext,
+  GenesetsContext,
   GroupsContext,
   PlotsContext,
   SelectionsContext,
@@ -267,18 +268,19 @@ export function HistoryProvider({ children }: IChildrenProps) {
       groups: (state.present.groupOrder[state.present.currentFile] || []).map(
         (id) => state.groups[id]!
       ),
+
+      groupsName: state.groupNames[state.present.currentFile] || '',
+    }),
+    [state.present.currentFile, state.present.groupOrder, state.groups]
+  )
+
+  const genesetsContextValue = useMemo(
+    () => ({
       genesets: (
         state.present.genesetOrder[state.present.currentFile] || []
       ).map((id) => state.genesets[id]!),
-      groupsName: state.groupNames[state.present.currentFile] || '',
     }),
-    [
-      state.present.currentFile,
-      state.present.groupOrder,
-      state.groups,
-      state.present.genesetOrder,
-      state.genesets,
-    ]
+    [state.present.currentFile, state.present.genesetOrder, state.genesets]
   )
 
   const selectionsContextValue = useMemo(
@@ -291,6 +293,8 @@ export function HistoryProvider({ children }: IChildrenProps) {
     }),
     [state.present.currentSelections]
   )
+
+  console.log('groups', groupsContextValue)
 
   const historyContextValue = useMemo(
     () => ({
@@ -348,11 +352,13 @@ export function HistoryProvider({ children }: IChildrenProps) {
       <SheetsContext.Provider value={sheetsContextValue}>
         <PlotsContext.Provider value={plotsContextValue}>
           <GroupsContext.Provider value={groupsContextValue}>
-            <SelectionsContext.Provider value={selectionsContextValue}>
-              <HistoryContext.Provider value={historyContextValue}>
-                {children}
-              </HistoryContext.Provider>
-            </SelectionsContext.Provider>
+            <GenesetsContext.Provider value={genesetsContextValue}>
+              <SelectionsContext.Provider value={selectionsContextValue}>
+                <HistoryContext.Provider value={historyContextValue}>
+                  {children}
+                </HistoryContext.Provider>
+              </SelectionsContext.Provider>
+            </GenesetsContext.Provider>
           </GroupsContext.Provider>
         </PlotsContext.Provider>
       </SheetsContext.Provider>

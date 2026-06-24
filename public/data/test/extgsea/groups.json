@@ -1,18 +1,16 @@
 [
   {
-    "id": "4duwsnlt23p0",
+    "id": "019efb59-b8aa-7565-9cd8-44d2695cd3a3",
     "name": "WT",
-    "search": [
-      "cbp_wt"
-    ],
-    "color": "#ff0000"
+    "search": ["cbp_wt"],
+    "color": "#ff0000",
+    "show": true
   },
   {
-    "id": "akhioxb1k0si",
+    "id": "019efb59-cef3-7492-98af-6092b026d343",
     "name": "CBP_KO",
-    "search": [
-      "cbp_ko"
-    ],
-    "color": "#0000ff"
+    "search": ["cbp_ko"],
+    "color": "#0000ff",
+    "show": true
   }
 ]

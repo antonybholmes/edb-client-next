@@ -49,7 +49,7 @@ import type { ITab } from '@/components/tabs/tab-provider'
 import { useStableId } from '@/hooks/stable-id'
 import { DownloadIcon } from '@/icons/download-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 import { HistoryPanel } from '../matcalc/history/history-panel'
 
 import { useDialogs } from '@/components/dialogs/dialogs'

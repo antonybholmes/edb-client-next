@@ -1,6 +1,6 @@
 'use client'
 
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { useEffect, useState } from 'react'

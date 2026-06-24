@@ -55,7 +55,7 @@ import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { useGenomes } from '@/lib/edb/genome'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 
 import { useStableId } from '@/hooks/stable-id'
 
@@ -74,7 +74,7 @@ import { AssemblySelect } from '@/lib/edb/assembly-select'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { makeUuid } from '@/lib/id'
 import { capitalizeFirstWord } from '@/lib/text/capital-case'
-import { useZoom } from '@/providers/zoom-provider'
+import { useZoom } from '@/providers/zoom'
 import {
   HistoryLayout,
   HistoryShowButton,

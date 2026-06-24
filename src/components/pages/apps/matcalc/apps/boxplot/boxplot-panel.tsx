@@ -9,8 +9,11 @@ import { getFormattedShape } from '@/lib/dataframe/dataframe-utils'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
-import { messageImageFileFormat, useMessages } from '@/providers/messages'
-import { useZoom } from '@/providers/zoom-provider'
+import {
+  messageImageFileFormat,
+  useMessages,
+} from '@/providers/message-provider'
+import { useZoom } from '@/providers/zoom'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import type { IDivProps } from '@/interfaces/div-props'

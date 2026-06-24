@@ -17,7 +17,7 @@ import { TEXT_CANCEL } from '@/consts'
 import type { ISaveAsFileType } from '@/dialogs/save-as-dialog'
 import { SaveTxtDialog } from '@/dialogs/save-txt-dialog'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { useMessages } from '@/providers/messages'
+import { useMessages } from '@/providers/message-provider'
 
 import { useSideTabs } from '@/components/tabs/tab-store'
 import { MESSAGE_CHANNEL } from '../../matcalc/data/data-panel'

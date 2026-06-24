@@ -14,8 +14,11 @@ import {
 import { TEXT_CANCEL, TEXT_DISPLAY } from '@/consts'
 import { SaveImageDialog } from '@/dialogs/save-image-dialog'
 
-import { messageImageFileFormat, useMessages } from '@/providers/messages'
-import { useZoom } from '@/providers/zoom-provider'
+import {
+  messageImageFileFormat,
+  useMessages,
+} from '@/providers/message-provider'
+import { useZoom } from '@/providers/zoom'
 import { Card } from '@/themed/card'
 import { produce } from 'immer'
 

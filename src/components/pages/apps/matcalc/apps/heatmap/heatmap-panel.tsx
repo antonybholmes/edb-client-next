@@ -8,8 +8,11 @@ import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import type { IClusterFrame } from '@/lib/math/hcluster'
-import { messageImageFileFormat, useMessages } from '@/providers/messages'
-import { useZoom } from '@/providers/zoom-provider'
+import {
+  messageImageFileFormat,
+  useMessages,
+} from '@/providers/message-provider'
+import { useZoom } from '@/providers/zoom'
 import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 

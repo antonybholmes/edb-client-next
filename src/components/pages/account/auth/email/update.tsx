@@ -36,7 +36,7 @@ import {
   TEXT_EMAIL_ERROR,
 } from '@/layouts/signin-layout'
 import { bearerHeaders, redirect } from '@/lib/http/urls'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 
 import { httpFetch } from '@/lib/http/http-fetch'
 import { makeUuid } from '@/lib/id'

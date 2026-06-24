@@ -84,7 +84,7 @@ import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { ToolbarHelpTabGroup } from '@/help/toolbar-help-tab-group'
 import { useStableId } from '@/hooks/stable-id'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'

@@ -62,7 +62,7 @@ import {
 } from '@/lib/genomic/genomic-location'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 import { useQueryClient } from '@tanstack/react-query'
 
 export function GetDNAPage() {

@@ -3,7 +3,7 @@ import {
   signOutStateAtom,
   type IRedirectState,
 } from '@/lib/edb/signin/edb-signin'
-import { CoreProviders } from '@/providers/core-providers'
+import { CoreProviders } from '@/providers/core-provider'
 import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { BaseSignOutPage } from '../sign-out-page'

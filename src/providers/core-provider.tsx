@@ -10,6 +10,7 @@ import { TabProvider } from '@/components/tabs/tab-store'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { AppInfoProvider } from '@/lib/edb/edb-settings'
 import { QCP } from '@/qcp'
+import { FooterProvider } from './footer-provider'
 
 //const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 
@@ -42,10 +43,12 @@ export function CoreProviders({ children }: IChildrenProps) {
       <AppInfoProvider>
         <HistoryProvider>
           <TabProvider>
-            <ToastProvider>
-              <StackedToasts />
-              {children}
-            </ToastProvider>
+            <FooterProvider>
+              <ToastProvider>
+                <StackedToasts />
+                {children}
+              </ToastProvider>
+            </FooterProvider>
           </TabProvider>
           {/* </ZoomProvider> */}
 
