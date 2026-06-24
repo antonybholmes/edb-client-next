@@ -16,8 +16,7 @@ import {
 } from '@/components/pages/open-files'
 import { type ISelectedTab } from '@/components/tabs/tab-provider'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
-import { friendlyFilename, replaceFileExt } from '@/lib/path'
+import { replaceFileExt } from '@/lib/path'
 import {
   messageTextFileFormat,
   useMessages,
@@ -37,6 +36,7 @@ import {
   useFiles,
 } from '../history/history-provider/history-contexts'
 import { useHistory } from '../history/history-provider/history-provider'
+import { useSave } from '../hooks/save'
 import { useMatcalcDialogs } from '../matcalc-dialogs'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
 import { DataPropsPanel } from './data-props-panel'
@@ -66,28 +66,30 @@ export function DataPanel() {
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //)//'data-panel' + nanoid())
 
-  function save(name: string, format: string) {
-    if (!sheet) {
-      return
-    }
+  const { save } = useSave()
 
-    name = friendlyFilename(name)
+  // function save(name: string, format: string) {
+  //   if (!sheet) {
+  //     return
+  //   }
 
-    const sep = format === 'csv' ? ',' : '\t'
-    const hasHeader = !sheet.name.includes('GCT')
-    const hasIndex = !sheet.name.includes('GCT')
+  //   name = friendlyFilename(name)
 
-    downloadDataFrame(sheet as AnnotationDataFrame, {
-      hasHeader,
-      hasIndex,
-      file: name,
-      sep,
-      dp: settings.view.dp,
-      commas: settings.view.commas,
-    })
+  //   const sep = format === 'csv' ? ',' : '\t'
+  //   const hasHeader = !sheet.name.includes('GCT')
+  //   const hasIndex = !sheet.name.includes('GCT')
 
-    //setShowFileMenu(false)
-  }
+  //   downloadDataFrame(sheet as AnnotationDataFrame, {
+  //     hasHeader,
+  //     hasIndex,
+  //     file: name,
+  //     sep,
+  //     dp: settings.view.dp,
+  //     commas: settings.view.commas,
+  //   })
+
+  //   //setShowFileMenu(false)
+  // }
 
   useEffect(() => {
     setFooter('left', { id: makeUuid(), component: FooterDFSize })

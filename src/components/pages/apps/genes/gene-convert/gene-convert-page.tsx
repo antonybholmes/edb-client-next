@@ -158,7 +158,7 @@ export function GeneConvPage() {
         <>
           <DropdownMenuItem
             aria-label="Save text file"
-            onClick={() => save('txt')}
+            onClick={() => save('gene-convert', 'txt')}
           >
             <FileIcon stroke="" />
             <span>{TEXT_DOWNLOAD_AS_TXT}</span>
@@ -166,7 +166,7 @@ export function GeneConvPage() {
 
           <DropdownMenuItem
             aria-label="Save CSV file"
-            onClick={() => save('csv')}
+            onClick={() => save('gene-convert', 'csv')}
           >
             <span>{TEXT_DOWNLOAD_AS_CSV}</span>
           </DropdownMenuItem>

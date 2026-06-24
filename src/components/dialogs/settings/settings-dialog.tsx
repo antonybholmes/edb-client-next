@@ -182,37 +182,34 @@ export function SettingsDialog({
             {_tabs.map((tab, tabi) => {
               return (
                 <Fragment key={tabi}>
-                  {tab.children?.map((childTab, childi) => {
-                    const Component = childTab.component
+                  {tab.children
+                    ?.filter((c) => !!c.component)
+                    .map((childTab, childi) => {
+                      const Component = childTab.component!
 
-                    if (!Component) {
-                      return null
-                    }
+                      return (
+                        <Fragment key={childi}>
+                          <Component />
 
-                    return (
-                      <Fragment key={childi}>
-                        <Component />
+                          {/* Show sub blocks with a consistent UI */}
+                          {childTab.children &&
+                            childTab.children
+                              .filter((c) => !!c.component)
+                              .map((g, gi) => {
+                                const Component = g.component!
 
-                        {/* Show sub blocks with a consistent UI */}
-                        {childTab.children &&
-                          childTab.children.map((g, gi) => {
-                            const Component = g.component
-                            if (!Component) {
-                              return null
-                            }
-
-                            return (
-                              <SettingsAccordionItem
-                                title={getTabName(g)}
-                                key={gi}
-                              >
-                                <Component />
-                              </SettingsAccordionItem>
-                            )
-                          })}
-                      </Fragment>
-                    )
-                  })}
+                                return (
+                                  <SettingsAccordionItem
+                                    title={getTabName(g)}
+                                    key={gi}
+                                  >
+                                    <Component />
+                                  </SettingsAccordionItem>
+                                )
+                              })}
+                        </Fragment>
+                      )
+                    })}
                 </Fragment>
               )
             })}

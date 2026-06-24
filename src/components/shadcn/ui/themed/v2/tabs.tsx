@@ -304,12 +304,14 @@ export function TabContentForceMountPanels({
 }: ITabContentPanelsProps) {
   const { tabs, selectedTabIndex } = useTabs(groupId)
 
-  return tabs.map((tab, ti) => {
-    const TabContentComponent = tab.component
-    return (
-      <Activity mode={ti == selectedTabIndex ? 'visible' : 'hidden'} key={ti}>
-        {TabContentComponent ? <TabContentComponent /> : null}
-      </Activity>
-    )
-  })
+  return tabs
+    .filter((tab) => !!tab.component)
+    .map((tab, ti) => {
+      const TabContentComponent = tab.component!
+      return (
+        <Activity mode={ti == selectedTabIndex ? 'visible' : 'hidden'} key={ti}>
+          <TabContentComponent />
+        </Activity>
+      )
+    })
 }

@@ -69,7 +69,7 @@ function AppInfo() {
                 payload: {
                   type: 'default',
                   title: `About ${appInfo?.name}`,
-                  content: () => <AppInfoContent />,
+                  component: AppInfoContent,
                 },
               })
             }}
@@ -133,6 +133,8 @@ export function FileMenu({
             return <MenuSeparator key={ti} />
           }
 
+          const Component = tab.component
+
           return (
             <DropdownMenuSub key={ti}>
               <DropdownMenuSubTrigger>
@@ -141,7 +143,7 @@ export function FileMenu({
               </DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent variant={variant}>
-                  {tab.component && tab.component}
+                  {Component && <Component />}
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
             </DropdownMenuSub>

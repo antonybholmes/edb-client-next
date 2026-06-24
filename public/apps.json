@@ -24,9 +24,9 @@
     "color": "#20B2AA",
     "version": "20.0.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-24T21:40:53.511Z",
-    "hash": "39fe4272cbf61d3e39b9c69ca2905d576dbf2d5275a7db0defbf927c9ff15617",
-    "build": 784
+    "modified": "2026-06-24T21:51:25.890Z",
+    "hash": "b9e153410c4b14d7b71aa958494daaa824983dff242fdbc13bdb92d346f83770",
+    "build": 786
   },
   {
     "name": "DNA",
@@ -109,11 +109,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "46.8.4",
+    "version": "46.8.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-06-24T21:40:53.514Z",
-    "hash": "75bc0f442b1008880f29d70f641a4279aeba40c379c336110d29921c1efe35b1",
-    "build": 1658
+    "modified": "2026-06-24T21:51:25.894Z",
+    "hash": "ec7b5de88c98a08eb07d3360f2ce5511711808f82e7dfd2cc02b667a457eeacd",
+    "build": 1660
   },
   {
     "name": "Motifs",
