@@ -7,21 +7,17 @@ import { GenesetPropsPanel } from '../genesets/geneset-props-panel'
 import { GroupPropsPanel } from '../groups/group-props-panel'
 
 export function GroupingPropsPanel() {
-  //const [activeId, setActiveId] = useState<string | null>(null)
-
   const { id } = useResizableSidebarContext()
 
-  const { selectedTabIndex, setTabs } = useTabs(id)
-
-  console.log(selectedTabIndex)
+  const { setTabs } = useTabs(id)
 
   useEffect(() => {
     const tabs = [
       {
         id: 'Groups',
-        content: () => <GroupPropsPanel />,
+        component: GroupPropsPanel,
       },
-      { id: 'Gene Sets', content: () => <GenesetPropsPanel /> },
+      { id: 'Gene Sets', component: GenesetPropsPanel },
     ]
 
     setTabs(tabs)

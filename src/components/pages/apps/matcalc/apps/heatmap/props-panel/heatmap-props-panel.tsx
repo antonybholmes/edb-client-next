@@ -12,7 +12,6 @@ import { TEXT_OK, TEXT_RESET } from '@/consts'
 import { LinkButton } from '@/themed/link-button'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import type { IDivProps } from '@/interfaces/div-props'
 import { produce } from 'immer'
 
 import { ResizableSidebarHeaderPortal } from '@/components/slide-bar/resizable-sidebar'
@@ -29,11 +28,9 @@ import { PlotSettingsPanel } from './plot-settings'
 import { RowLabelsSettingsPanel } from './row-labels-settings'
 import { RowTreeSettingsPanel } from './row-tree-settings'
 
-export interface IProps extends IDivProps {
-  plot: string
-}
+ 
 
-export function HeatmapPropsPanel({ ref }: IDivProps) {
+export function HeatmapPropsPanel( ) {
   const { updatePlot } = useHistory()
 
   const { open: openDialog } = useDialogs()
@@ -84,7 +81,7 @@ export function HeatmapPropsPanel({ ref }: IDivProps) {
         </LinkButton>
       </ResizableSidebarHeaderPortal>
 
-      <PropsPanel ref={ref} className="pr-1 gap-y-2">
+      <PropsPanel  className="pr-1 gap-y-2">
         <ScrollAccordion
           value={openTabs}
           onValueChange={(v) => setOpenTabs(v as string[])}

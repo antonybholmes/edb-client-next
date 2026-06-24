@@ -60,7 +60,7 @@ import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
 import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
 import { SvgBase } from '@/components/plot/svg-base'
-import { TabContentPanel } from '@/components/shadcn/ui/themed/v2/tabs'
+import { TabContentPanels } from '@/components/shadcn/ui/themed/v2/tabs'
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -68,7 +68,6 @@ import {
 } from '@/themed/resizable'
 
 import { AppInfoButton } from '@/components/header/app-info-button'
-import { useStableId } from '@/hooks/stable-id'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { useZoom } from '@/providers/zoom-provider'
 
@@ -80,7 +79,11 @@ import { BaseRow } from '@/components/layout/base-row'
 import { TabIndicatorFollowBlock } from '@/components/tabs/tab-indicator-follow-block'
 import { TabIndicatorSelectedH } from '@/components/tabs/tab-indicator-selected-h'
 import { type ITab } from '@/components/tabs/tab-provider'
-import { useTabs } from '@/components/tabs/tab-store'
+import {
+  useSideTabs,
+  useTabs,
+  useToolbarTabs,
+} from '@/components/tabs/tab-store'
 import {
   getSelectedMouseOverSize,
   UnderlineTabs,
@@ -121,18 +124,15 @@ import {
 const PLOT_ZOOM_CHANNEL = 'venn-plot-zoom'
 
 function VennPage() {
-  const _id = useStableId('venn-page')
-
-  //const [activeSideTab, setActiveSideTab] = useState('Items')
-  const [rightTab, setSelectedRightTab] = useState('Lists')
-
   const { selectedItems } = useVenn()
 
-  const { setTab: setSideTab } = useTabs('venn-side-tabs')
+  const { setTabs: setSideTabs } = useSideTabs()
+  const { setTabs: setToolbarTabs } = useToolbarTabs()
+  const { setTabs: setViewTabs } = useTabs('venn-side-tabs')
 
   //const [scale, setScale] = useState(1)
 
-  const [selectedSideTab, setSelectedSideTab] = useState(0)
+  //const [selectedSideTab, setSelectedSideTab] = useState(0)
 
   const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
 
@@ -316,9 +316,98 @@ function VennPage() {
   useEffect(() => {
     setAppInfo(APP_INFO)
 
-    if (tabs.length > 0) {
-      setSideTab({ id: sidebarTabs[0]!.id, index: 0 })
-    }
+    const tabs: ITab[] = [
+      {
+        id: 'Home',
+        render: () => (
+          <>
+            <ToolbarTabGroup title={TEXT_FILE}>
+              <ToolbarOpenFile
+                onOpen={() => {
+                  openDialog({
+                    type: 'open',
+                    payload: {
+                      callback: (message, files) =>
+                        onTextFileChange(message, files, openFiles),
+                    },
+                  })
+                }}
+                multiple={true}
+              />
+
+              <ToolbarIconButton
+                title={TEXT_SAVE_IMAGE}
+                onClick={() => {
+                  openDialog({
+                    type: 'save-image',
+                    payload: {
+                      name: 'venn',
+                      svgRef,
+                    },
+                  })
+                }}
+              >
+                <DownloadIcon />
+              </ToolbarIconButton>
+            </ToolbarTabGroup>
+          </>
+        ),
+      },
+    ]
+
+    setToolbarTabs(tabs)
+
+    const viewTabs: ITab[] = [
+      {
+        //id: nanoid(),
+        id: 'List view',
+        icon: <ListIcon className={TOOLBAR_BUTTON_ICON_CLS} size="w-4" />,
+
+        render: () => (
+          <Textarea
+            ref={overlapRef}
+            id="text-overlap"
+            aria-label="Overlaps"
+            className="h-full text-sm my-2 grow"
+            placeholder="A list of the items in each Venn subset will appear here when you click on the diagram..."
+            readOnly
+            value={[
+              selectedItems.name,
+              ...selectedItems.items.sort().map((s) => originalNames[s] || s),
+            ].join('\n')}
+          />
+        ),
+      },
+      {
+        //id: nanoid(),
+        id: 'Table view',
+        icon: <TableIcon />,
+
+        render: () => (
+          <BaseRow className="grow mt-2 gap-x-1">
+            <BaseCol className="text-xs">
+              <ToolbarIconButton
+                title="Download pathway table"
+                onClick={() => save('txt')}
+              >
+                <MonitorDown size={20} strokeWidth={1.5} />
+              </ToolbarIconButton>
+            </BaseCol>
+
+            <TabbedDataFrames
+              key="tabbed-data-frames"
+              selectedSheet={sheet?.id ?? ''}
+              dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
+              onTabChange={(selectedTab) => {
+                goto({ file, sheet: selectedTab.tab })
+              }}
+            />
+          </BaseRow>
+        ),
+      },
+    ]
+
+    setViewTabs(viewTabs)
   }, [])
 
   useEffect(() => {
@@ -441,50 +530,6 @@ function VennPage() {
     setShowFileMenu(false)
   }
 
-  const tabs: ITab[] = [
-    {
-      //id: nanoid(),
-      id: 'Home',
-      render: () => (
-        <>
-          <ToolbarTabGroup title={TEXT_FILE}>
-            <ToolbarOpenFile
-              onOpen={() => {
-                openDialog({
-                  type: 'open',
-                  payload: {
-                    callback: (message, files) =>
-                      onTextFileChange(message, files, openFiles),
-                  },
-                })
-              }}
-              multiple={true}
-            />
-
-            <ToolbarIconButton
-              title={TEXT_SAVE_IMAGE}
-              onClick={() => {
-                openDialog({
-                  type: 'save-image',
-                  payload: {
-                    name: 'venn',
-                    svgRef,
-                  },
-                })
-              }}
-            >
-              <DownloadIcon />
-            </ToolbarIconButton>
-
-            {/* <ToolbarSaveSvg
-              svgRef={svgRef}
-            /> */}
-          </ToolbarTabGroup>
-        </>
-      ),
-    },
-  ]
-
   const vennRightTabs: ITab[] = [
     {
       //id: nanoid(),
@@ -531,56 +576,6 @@ function VennPage() {
   //     )
   //   }
   // }
-
-  const sidebarTabs: ITab[] = [
-    {
-      //id: nanoid(),
-      id: 'List view',
-      icon: <ListIcon className={TOOLBAR_BUTTON_ICON_CLS} size="w-4" />,
-
-      render: () => (
-        <Textarea
-          ref={overlapRef}
-          id="text-overlap"
-          aria-label="Overlaps"
-          className="h-full text-sm my-2 grow"
-          placeholder="A list of the items in each Venn subset will appear here when you click on the diagram..."
-          readOnly
-          value={[
-            selectedItems.name,
-            ...selectedItems.items.sort().map((s) => originalNames[s] || s),
-          ].join('\n')}
-        />
-      ),
-    },
-    {
-      //id: nanoid(),
-      id: 'Table view',
-      icon: <TableIcon />,
-
-      render: () => (
-        <BaseRow className="grow mt-2 gap-x-1">
-          <BaseCol className="text-xs">
-            <ToolbarIconButton
-              title="Download pathway table"
-              onClick={() => save('txt')}
-            >
-              <MonitorDown size={20} strokeWidth={1.5} />
-            </ToolbarIconButton>
-          </BaseCol>
-
-          <TabbedDataFrames
-            key="tabbed-data-frames"
-            selectedSheet={sheet?.id ?? ''}
-            dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
-            onTabChange={(selectedTab) => {
-              goto({ file, sheet: selectedTab.tab })
-            }}
-          />
-        </BaseRow>
-      ),
-    },
-  ]
 
   const fileMenuTabs: ITab[] = [
     {
@@ -676,8 +671,6 @@ function VennPage() {
       <ShortcutLayout signinRequired={false}>
         <Toolbar>
           <ToolbarMenu
-            groupId={_id}
-            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
@@ -693,8 +686,6 @@ function VennPage() {
             }
           />
           <ToolbarPanel
-            groupId={_id}
-            tabs={tabs}
             tabShortcutMenu={
               <ShowOptionsMenu
                 show={showSideBar}
@@ -707,12 +698,8 @@ function VennPage() {
         </Toolbar>
 
         <TabSlideBar
-          id="venn-sidebar"
           limits={[50, 85]}
           side="right"
-          tabs={vennRightTabs}
-          onTabChange={(selectedTab) => setSelectedRightTab(selectedTab.tab.id)}
-          value={rightTab}
           open={showSideBar}
           onOpenChange={setShowSideBar}
           className="mx-2"
@@ -793,13 +780,8 @@ function VennPage() {
 
               <UnderlineTabs
                 groupId="venn-side-tabs"
-                tabs={sidebarTabs}
                 selectedMouseOverSize={getSelectedMouseOverSize}
                 tabButtonProps={{ variant: 'default' }}
-                onTabChange={(v) => {
-                  console.log(v, 'selected side tab')
-                  setSelectedSideTab(v.index)
-                }}
 
                 //tabListCls="gap-x-0.5"
               >
@@ -822,10 +804,7 @@ function VennPage() {
                 }}
               /> */}
 
-              <TabContentPanel
-                tabIndex={selectedSideTab ?? 0}
-                tabs={sidebarTabs}
-              />
+              <TabContentPanels groupId="venn-side-tabs" />
             </ResizablePanel>
           </ResizablePanelGroup>
         </TabSlideBar>

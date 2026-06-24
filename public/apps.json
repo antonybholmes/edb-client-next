@@ -109,11 +109,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "46.8.2",
+    "version": "46.8.4",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-06-23T23:17:15.270Z",
-    "hash": "1931ef9b4c1863841508d5802f5234226761255093a00fbbc371cd0c74b22f89",
-    "build": 1648
+    "modified": "2026-06-24T03:54:03.783Z",
+    "hash": "05b0291886bad5414c69f39e7a60a2e3628fd0db9feedfc236ba4eb773deeca7",
+    "build": 1650
   },
   {
     "name": "Motifs",
@@ -131,9 +131,9 @@
     "color": "#ff99cc",
     "version": "28.8.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-23T23:17:15.271Z",
-    "hash": "b725925156bd4abea7cb11896854bfc17902bd8d186b6a05dc170ee96dc47751",
-    "build": 1040
+    "modified": "2026-06-24T03:54:03.785Z",
+    "hash": "513d96d5aa5591acf79e3e0c01ef2292f74d9a9305c148902604005ea69a2c9a",
+    "build": 1042
   },
   {
     "name": "Overlap",
@@ -218,10 +218,10 @@
     "name": "Venn",
     "description": "Make Venn diagrams.",
     "color": "#00008B",
-    "version": "26.2.2",
+    "version": "26.2.4",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-06-23T23:17:15.270Z",
-    "hash": "fd99c8a22f52c9e8e0fb63fd9ba5390b848001847450dcccb611ddf7a0f870d1",
-    "build": 838
+    "modified": "2026-06-24T03:54:03.784Z",
+    "hash": "8a9a71e88b65eda3b038d17fa02c7fe182efe7c36f859a38f0e7026b4fee5629",
+    "build": 840
   }
 ]

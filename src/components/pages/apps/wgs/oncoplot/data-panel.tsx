@@ -8,8 +8,6 @@ import {
   getFormattedShape,
 } from '@/lib/dataframe/dataframe-utils'
 
-import { ClockRotateLeftIcon } from '@/icons/clock-rotate-left-icon'
-
 import { useEffect, useState } from 'react'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
@@ -21,6 +19,7 @@ import { SaveTxtDialog } from '@/dialogs/save-txt-dialog'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { useMessages } from '@/providers/messages'
 
+import { useSideTabs } from '@/components/tabs/tab-store'
 import { MESSAGE_CHANNEL } from '../../matcalc/data/data-panel'
 import { HistoryPanel } from '../../matcalc/history/history-panel'
 import {
@@ -37,7 +36,7 @@ export function DataPanel() {
   //const [tableH, setTableH] = useState<IReactTableCol[]>(DEFAULT_TABLE_HEADER)
   //const [selectedSheet, setSelectedSheet] = useState(0)
 
-  const [selectedTab, setSelectedTab] = useState('Clinical Tracks')
+  //const [selectedTab, setSelectedTab] = useState('Clinical Tracks')
 
   //const [scaleIndex, setScaleIndex] = useState(3)
 
@@ -46,6 +45,8 @@ export function DataPanel() {
   const [showSave, setShowSave] = useState('')
 
   const [showSideBar, setShowSideBar] = useState(true)
+
+  const { setTabs: setSideTabs } = useSideTabs()
 
   const df = sheet as AnnotationDataFrame
 
@@ -64,9 +65,18 @@ export function DataPanel() {
       file: name,
       sep,
     })
-
-    //setShowFileMenu(false)
   }
+
+  useEffect(() => {
+    const sideTabs: ITab[] = [
+      {
+        id: 'History',
+        render: () => <HistoryPanel />,
+      },
+    ]
+
+    setSideTabs(sideTabs)
+  }, [])
 
   useEffect(() => {
     const filteredMessages = messages.filter(
@@ -95,15 +105,6 @@ export function DataPanel() {
     removeMessages(messages.map((m) => m.id))
   }, [messages])
 
-  const rightTabs: ITab[] = [
-    {
-      ////name: nanoid(),
-      icon: <ClockRotateLeftIcon />,
-      id: 'History',
-      render: () => <HistoryPanel />,
-    },
-  ]
-
   return (
     <>
       {showSave && (
@@ -121,21 +122,13 @@ export function DataPanel() {
       )}
 
       <TabSlideBar
-        id="onco-data-panel"
         side="right"
-        tabs={rightTabs}
-        onTabChange={(selectedTab) => setSelectedTab(selectedTab.tab.id)}
-        value={selectedTab}
         open={showSideBar}
         onOpenChange={setShowSideBar}
       >
         <TabbedDataFrames
           selectedSheet={sheet?.id ?? ''}
           dataFrames={sheets as AnnotationDataFrame[]}
-          onTabChange={(selectedTab) => {
-            setSelectedTab(selectedTab.tab.id)
-          }}
-          //className={DATA_PANEL_CLS}
         />
       </TabSlideBar>
 

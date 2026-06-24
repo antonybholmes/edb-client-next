@@ -44,31 +44,23 @@ export function HeatmapPanel() {
 
   const svgRef = useRef<SVGSVGElement>(null)
 
-  const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'heatmap')
+  const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL)
 
   const { open: openDialog } = useDialogs()
 
   const { setTabs: setSideTabs } = useSideTabs()
 
-  const plotRightTabs: ITab[] = [
-    {
-      //id: nanoid(),
-      id: TEXT_DISPLAY,
-
-      //content: () => <HeatmapPropsPanel />,
-      component: HeatmapPropsPanel,
-    },
-  ]
-
   useEffect(() => {
+    const plotRightTabs: ITab[] = [
+      {
+        id: TEXT_DISPLAY,
+        component: HeatmapPropsPanel,
+      },
+    ]
     setSideTabs(plotRightTabs)
   }, [])
 
   useEffect(() => {
-    // const filteredMessages = messages.filter(
-    //   message => message.target === plot?.id
-    // )
-
     for (const message of messages) {
       if (typeof message.data === 'string') {
         if (message.data.includes('save')) {
@@ -104,47 +96,13 @@ export function HeatmapPanel() {
     )
   }, [plot, zoom])
 
-  // const svg = useMemo(
-  //   () => (
-  //     <Card variant="content" className="mx-2 mb-2 grow">
-  //       <div className={PLOT_CLS}>
-  //         <HeatMapSvg ref={svgRef}  />
-  //       </div>
-  //     </Card>
-  //   ),
-  //   [plot, groupState.groups, displayOptions]
-  // )
-
   if (!plot || !cf) {
     return null
   }
 
   return (
     <>
-      {/* <DialogsRoot /> */}
-
-      <TabSlideBar
-        side="right"
-        //tabs={plotRightTabs}
-        //onValueChange={setSelectedTab}
-        //value={selectedTab}
-        // open={settings.sidebar.show}
-        // onOpenChange={v => {
-        //   const newSettings = produce(settings, draft => {
-        //     draft.sidebar.show = v
-        //   })
-
-        //   updateSettings(newSettings)
-        // }}
-      >
-        {/* {svg} */}
-
-        {/* <Card variant="content" className="mx-2 mb-2 grow">
-          <div className={PLOT_CLS}>
-            <HeatMapSvg ref={svgRef} />
-          </div>
-        </Card> */}
-
+      <TabSlideBar side="right">
         <ExtScrollCard>
           <HeatMapSvg ref={svgRef} />
         </ExtScrollCard>
@@ -160,7 +118,3 @@ export function HeatmapPanel() {
     </>
   )
 }
-
-// export function HeatmapPanelQuery({ { file: plotAddr } }: IHeatMapPanelProps) {
-//   return <HeatMapPanel { file: plotAddr }={{ file: plotAddr }} />
-// }

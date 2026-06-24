@@ -1,12 +1,10 @@
-import { type ITab } from '@/components/tabs/tab-provider'
 import { useTabs } from '@/components/tabs/tab-store'
-import type { IClassProps } from '@/interfaces/class-props'
 import type { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_RING_CLS } from '@/theme'
 import { Tabs as TabsPrimitive } from '@base-ui/react/tabs'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { Activity } from 'react'
+import { Activity, ComponentType } from 'react'
 
 import {
   forwardRef,
@@ -184,49 +182,33 @@ export function TabsContent({
   )
 }
 
-export function TabContentPanel({
-  tabIndex,
-  tabs,
-}: IClassProps & {
-  tabIndex: number
-  tabs: ITab[]
-}) {
-  // change default if it does match a tab id
+// export function TabContentPanel({
+//   tabIndex,
+//   tabs,
+// }: IClassProps & {
+//   tabIndex: number
+//   tabs: ITab[]
+// }) {
+//   const selectedTab = tabs[tabIndex]
 
-  //const { tabIndex } = useTabs(groupId)
+//   if (!selectedTab) {
+//     return null
+//   }
 
-  // if (!selectedTab) {
-  //   return null
-  // }
+//   if (selectedTab.component) {
+//     const TabContentComponent = selectedTab.component
 
-  const selectedTab = tabs[tabIndex] //getTabFromValue(value, tabs)
+//     return <TabContentComponent />
+//   }
 
-  if (!selectedTab) {
-    return null
-  }
+//   if (selectedTab.render) {
+//     const TabContentComponent = selectedTab.render
 
-  if (selectedTab.component) {
-    const TabContentComponent = selectedTab.component
+//     return <TabContentComponent />
+//   }
 
-    return <TabContentComponent />
-  }
-
-  if (selectedTab.render) {
-    // forced React to turn your anonymous render function into an official
-    // component element by rendering it as a JSX tag (<TabContentComponent />).
-    const TabContentComponent = selectedTab.render
-
-    return <TabContentComponent />
-  }
-
-  return null
-
-  // return (
-  //   <BaseCol className="h-full grow overflow-hidden">
-  //     {selectedTab.content}
-  //   </BaseCol>
-  // )
-}
+//   return null
+// }
 
 // interface ITabPanelProps extends IChildrenProps {
 //   active: boolean
@@ -259,27 +241,46 @@ interface ITabContentPanelsProps extends IDivProps {
  */
 export function TabContentPanels({
   groupId = 'toolbar',
-
   className,
   contentCls,
   ...props
 }: ITabContentPanelsProps) {
   const { tab: selectedTab, tabs } = useTabs(groupId)
 
-  // set the first tab as default on mount
-  // useEffect(() => {
-  //   setTab({ id: tabs[0]?.id ?? '', index: 0 })
-  // }, [tabs.map(tab => tab.id).join('|'), selectedTab?.id])
+  // if (!selectedTab) {
+  //   return null
+  // }
+
+  // const TabContentComponent: ComponentType<{}> | undefined =
+  //   selectedTab.component || selectedTab.render
+
+  // console.log(
+  //   'TabContentPanels selectedTab',
+  //   selectedTab,
+  //   'TabContentComponent',
+  //   TabContentComponent
+  // )
+
+  // if (!TabContentComponent) {
+  //   return null
+  // }
+
+  // return (
+  //   <div className={cn('flex', contentCls, className)} {...props}>
+  //     <TabContentComponent />
+  //   </div>
+  // )
 
   return (
     <Tabs
       value={selectedTab?.id ?? ''}
-      onValueChange={() => {}}
+      //onValueChange={() => {}}
       className={className}
       {...props}
     >
       {tabs.map((tab, ti) => {
-        const TabContentComponent = tab.render
+        const TabContentComponent: ComponentType<{}> | undefined =
+          tab.component || tab.render
 
         if (!TabContentComponent) {
           return null
