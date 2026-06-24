@@ -294,7 +294,7 @@ export function MatcalcPage() {
           {
             id: 'Apps',
             //icon: <LayersIcon />,
-            render: () => <SettingsAppsPanel />,
+            component: () => <SettingsAppsPanel />,
           },
         ],
       },
@@ -662,7 +662,7 @@ export function MatcalcPage() {
         //id: nanoid(),
         id: TEXT_HOME,
         //size: 2.1,
-        render: () => (
+        component: () => (
           <>
             <ToolbarTabGroup title="File" className="items-start">
               <ToolbarOpenFile
@@ -810,7 +810,7 @@ export function MatcalcPage() {
       {
         id: 'Data',
 
-        render: () => (
+        component: () => (
           <>
             <ToolbarTabGroup title="Matrix">
               <ToolbarIconButton
@@ -1035,7 +1035,7 @@ export function MatcalcPage() {
       },
       {
         id: 'Gene',
-        render: () => (
+        component: () => (
           <>
             <ToolbarTabGroup title="Annotation">
               <ToolbarCol>
@@ -1096,7 +1096,7 @@ export function MatcalcPage() {
       },
       {
         id: 'Genomic',
-        render: () => (
+        component: () => (
           <>
             <ToolbarTabGroup title="Overlap">
               <ToolbarButton
@@ -1142,7 +1142,7 @@ export function MatcalcPage() {
       },
       {
         id: 'Help',
-        render: () => <ToolbarHelpTabGroup url={HELP_URL} />,
+        component: () => <ToolbarHelpTabGroup url={HELP_URL} />,
       },
     ]
 

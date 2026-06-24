@@ -159,12 +159,12 @@ function SeqBrowserPage() {
           {
             id: 'Plot',
             icon: <CompassIcon />,
-            render: () => <SettingsPlotPanel />,
+            component: () => <SettingsPlotPanel />,
           },
           {
             id: 'Tracks',
             icon: <LayersIcon />,
-            render: () => <SettingsTracksPanel />,
+            component: () => <SettingsTracksPanel />,
           },
         ],
       },
@@ -177,7 +177,7 @@ function SeqBrowserPage() {
       {
         //id: nanoid(),
         id: 'Home',
-        render: () => (
+        component: () => (
           <>
             <ToolbarTabGroup title={TEXT_FILE}>
               <ToolbarIconButton
@@ -407,12 +407,12 @@ function SeqBrowserPage() {
       {
         id: 'Tracks',
         icon: <SearchIcon />,
-        render: () => <TracksPropsPanel />,
+        component: () => <TracksPropsPanel />,
       },
       {
         id: 'Locations',
         icon: <SettingsIcon />,
-        render: () => <LocationsPropsPanel />,
+        component: () => <LocationsPropsPanel />,
       },
       // {
       //   id: TEXT_ACCOUNT,
@@ -484,7 +484,7 @@ function SeqBrowserPage() {
       //id: nanoid(),
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

@@ -87,7 +87,7 @@ export function TableViewerPage() {
     const tabs: ITab[] = [
       {
         id: 'Home',
-        render: () => (
+        component: () => (
           <>
             <ToolbarTabGroup title={TEXT_FILE}>
               <ToolbarIconButton
@@ -115,7 +115,7 @@ export function TableViewerPage() {
       {
         id: 'History',
         icon: <ClockRotateLeftIcon />,
-        render: () => <HistoryPanel />,
+        component: () => <HistoryPanel />,
       },
     ]
     setSideTabs(rightTabs)
@@ -175,7 +175,7 @@ export function TableViewerPage() {
   const fileMenuTabs: ITab[] = [
     {
       id: TEXT_SAVE_AS,
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label="Save text file"

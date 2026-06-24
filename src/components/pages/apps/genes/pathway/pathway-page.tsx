@@ -443,7 +443,7 @@ export function PathwayPage() {
     {
       //id: nanoid(),
       id: 'Home',
-      render: () => (
+      component: () => (
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
@@ -497,7 +497,7 @@ export function PathwayPage() {
     },
     {
       id: 'Help',
-      render: () => <ToolbarHelpTabGroup url={HELP_URL} />,
+      component: () => <ToolbarHelpTabGroup url={HELP_URL} />,
     },
   ]
 
@@ -506,7 +506,7 @@ export function PathwayPage() {
       //id: nanoid(),
       icon: <LayersIcon />,
       id: 'Gene Sets',
-      render: () => <PathwayPropsPage />,
+      component: () => <PathwayPropsPage />,
     },
     // {
     //   //id: nanoid(),
@@ -521,7 +521,7 @@ export function PathwayPage() {
       //id: nanoid(),
       id: TEXT_OPEN,
       icon: <OpenIcon variant="colorful" />,
-      render: () => (
+      component: () => (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -542,7 +542,7 @@ export function PathwayPage() {
     {
       //id: nanoid(),
       id: TEXT_SAVE_AS,
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label="Save text file"

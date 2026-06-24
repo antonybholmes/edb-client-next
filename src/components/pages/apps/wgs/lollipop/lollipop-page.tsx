@@ -216,7 +216,7 @@ function LollipopPage() {
         ////name: nanoid(),
         id: 'Home',
         //size: 2.1,
-        render: () => (
+        component: () => (
           <>
             <ToolbarTabGroup title="File">
               <ToolbarOpenFile
@@ -326,13 +326,13 @@ function LollipopPage() {
         //id: nanoid(),
         icon: <SlidersIcon />,
         id: 'Display',
-        render: () => <LollipopPropsPanel />,
+        component: () => <LollipopPropsPanel />,
       },
       {
         //id: nanoid(),
         icon: <SlidersIcon />,
         id: 'Features',
-        render: () => <FeaturePropsPanel />,
+        component: () => <FeaturePropsPanel />,
       },
     ]
     setSideTabs(rightTabs)
@@ -560,7 +560,7 @@ function LollipopPage() {
     {
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      render: () => (
+      component: () => (
         <DropdownMenuItem
           aria-label="Open file on your computer"
           onClick={() => _open('variants')}
@@ -576,7 +576,7 @@ function LollipopPage() {
     },
     {
       id: 'Export',
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

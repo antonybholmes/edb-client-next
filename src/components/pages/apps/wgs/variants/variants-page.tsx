@@ -142,7 +142,7 @@ export function VariantsPage() {
     const tabs: ITab[] = [
       {
         id: 'Home',
-        render: () => (
+        component: () => (
           <>
             <ToolbarTabGroup title="File">
               <ToolbarIconButton
@@ -193,12 +193,12 @@ export function VariantsPage() {
     const rightTabs: ITab[] = [
       {
         id: 'Display',
-        render: () => <PileupPropsPanel />,
+        component: () => <PileupPropsPanel />,
       },
 
       {
         id: 'Features',
-        render: () => <FeaturePropsPanel />,
+        component: () => <FeaturePropsPanel />,
       },
     ]
     setSideTabs(rightTabs)
@@ -391,7 +391,7 @@ export function VariantsPage() {
     {
       //name: nanoid(),
       id: TEXT_SAVE_AS,
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -415,7 +415,7 @@ export function VariantsPage() {
     },
     {
       id: 'Export',
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

@@ -1907,6 +1907,10 @@
         {
           "msg": "Added support for tabs to take component refs and render on the fly",
           "date": "2026-06-23T23:17:16.143Z"
+        },
+        {
+          "msg": "heatmap panel now uses resizable sidebar to get rid of heatmapcontext error using tabs",
+          "date": "2026-06-24T15:35:56.336Z"
         }
       ],
       "Added": [

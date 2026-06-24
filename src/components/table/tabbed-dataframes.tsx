@@ -58,7 +58,7 @@ export function TabbedDataFrames({
     return {
       id: df.id, //sheetId, //nanoid(),
       name,
-      render: () => (
+      component: () => (
         // <DataFrameCanvas
         //   df={df}
         //   key={i}

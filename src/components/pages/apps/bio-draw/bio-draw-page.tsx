@@ -174,7 +174,7 @@ export function BioDrawPage() {
     {
       //id: nanoid(),
       id: TEXT_SAVE_AS,
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label="Download as TXT"
@@ -200,7 +200,7 @@ export function BioDrawPage() {
       //id: nanoid(),
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
@@ -228,7 +228,7 @@ export function BioDrawPage() {
     {
       //id: nanoid(),
       id: 'Home',
-      render: () => (
+      component: () => (
         <>
           <ToolbarTabGroup title="File">
             {/* <ToolbarOpenFile
@@ -300,12 +300,12 @@ export function BioDrawPage() {
     {
       id: 'Motifs',
       icon: <SearchIcon />,
-      render: () => <MotifsPropsPanel />,
+      component: () => <MotifsPropsPanel />,
     },
     {
       id: 'Display',
       icon: <SlidersIcon />,
-      render: () => <DisplayPropsPanel />,
+      component: () => <DisplayPropsPanel />,
     },
   ]
 

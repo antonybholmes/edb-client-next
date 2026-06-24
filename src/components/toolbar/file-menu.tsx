@@ -141,7 +141,7 @@ export function FileMenu({
               </DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent variant={variant}>
-                  {tab.render && tab.render}
+                  {tab.component && tab.component}
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
             </DropdownMenuSub>

@@ -2,9 +2,9 @@
   "name": "Convert",
   "description": "Convert gene symbols.",
   "color": "#20B2AA",
-  "version": "18.8.8",
+  "version": "20.0.0",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-06-23T23:17:15.267Z",
-  "hash": "d7373bee5c2fe2b6334d2894c69b0b73723543da251b15ae515fbdc2de61f06f",
-  "build": 778
+  "modified": "2026-06-24T15:35:55.380Z",
+  "hash": "92368ab4dbb73782dfdd2df14f9b274429bdf278f36cae0b6333c0d92c2eaf9e",
+  "build": 780
 }

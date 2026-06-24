@@ -170,7 +170,7 @@ export function SingleCellPage() {
     const tabs: ITab[] = [
       {
         id: 'Home',
-        render: () => (
+        component: () => (
           <>
             <ToolbarTabGroup title="File">
               <ToolbarIconButton
@@ -198,18 +198,18 @@ export function SingleCellPage() {
       {
         id: TEXT_DISPLAY,
         icon: <SlidersIcon />,
-        render: () => <DisplayPropsPanel />,
+        component: () => <DisplayPropsPanel />,
       },
       {
         id: 'Plots',
         icon: <LayersIcon />,
 
-        render: () => <PlotsPropsPanel datasetId={dataset?.id ?? ''} />,
+        component: () => <PlotsPropsPanel datasetId={dataset?.id ?? ''} />,
       },
       {
         id: 'Clusters',
         icon: <LayersIcon />,
-        render: () => <ClusterPropsPanel />,
+        component: () => <ClusterPropsPanel />,
       },
     ]
     setSideTabs(rightTabs)
@@ -246,7 +246,7 @@ export function SingleCellPage() {
     {
       id: TEXT_SAVE_AS,
       icon: <DownloadIcon />,
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -267,7 +267,7 @@ export function SingleCellPage() {
     {
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

@@ -62,12 +62,12 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
       {
         id: 'Display',
         icon: <SlidersIcon />,
-        render: () => <BoxPlotPropsPanel plotAddr={plotAddr} />,
+        component: () => <BoxPlotPropsPanel plotAddr={plotAddr} />,
       },
       {
         id: 'Data',
         icon: <SlidersIcon />,
-        render: () => <BoxPlotDataPanel plotAddr={plotAddr} />,
+        component: () => <BoxPlotDataPanel plotAddr={plotAddr} />,
       },
     ])
   }, [])

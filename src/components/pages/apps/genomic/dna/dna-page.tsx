@@ -214,7 +214,7 @@ export function DNAPage() {
     {
       //id: nanoid(),
       id: 'Home',
-      render: () => (
+      component: () => (
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
@@ -289,7 +289,7 @@ export function DNAPage() {
       //id: nanoid(),
       icon: <SlidersIcon />,
       id: 'Settings',
-      render: () => (
+      component: () => (
         <PropsPanel className="pr-2">
           <ScrollAccordion value={['assembly', 'letters', 'mask', 'strand']}>
             {/* <AccordionItem value="assembly">
@@ -409,7 +409,7 @@ export function DNAPage() {
       //id: nanoid(),
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      render: () => (
+      component: () => (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -432,7 +432,7 @@ export function DNAPage() {
     {
       //id: nanoid(),
       id: TEXT_SAVE_AS,
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label="Save text file"

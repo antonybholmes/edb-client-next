@@ -319,7 +319,7 @@ function VennPage() {
     const tabs: ITab[] = [
       {
         id: 'Home',
-        render: () => (
+        component: () => (
           <>
             <ToolbarTabGroup title={TEXT_FILE}>
               <ToolbarOpenFile
@@ -363,7 +363,7 @@ function VennPage() {
         id: 'List view',
         icon: <ListIcon className={TOOLBAR_BUTTON_ICON_CLS} size="w-4" />,
 
-        render: () => (
+        component: () => (
           <Textarea
             ref={overlapRef}
             id="text-overlap"
@@ -383,7 +383,7 @@ function VennPage() {
         id: 'Table view',
         icon: <TableIcon />,
 
-        render: () => (
+        component: () => (
           <BaseRow className="grow mt-2 gap-x-1">
             <BaseCol className="text-xs">
               <ToolbarIconButton
@@ -536,7 +536,7 @@ function VennPage() {
       id: 'Lists',
       icon: <LayersIcon />,
 
-      render: () => (
+      component: () => (
         <PropsPanel>
           <ScrollAccordion value={VENN_LIST_IDS.map((vl) => `List ${vl}`)}>
             {VENN_LIST_IDS.map((vi) => {
@@ -559,7 +559,7 @@ function VennPage() {
       //id: nanoid(),
       id: TEXT_SETTINGS,
       icon: <SlidersIcon />,
-      render: () => <VennPropsPanel />,
+      component: () => <VennPropsPanel />,
     },
   ]
 
@@ -582,7 +582,7 @@ function VennPage() {
       //id: nanoid(),
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      render: () => (
+      component: () => (
         <DropdownMenuItem
           aria-label="Open file on your computer"
           onClick={() => {
@@ -608,7 +608,7 @@ function VennPage() {
     {
       //id: nanoid(),
       id: TEXT_SAVE_AS,
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -633,7 +633,7 @@ function VennPage() {
     {
       //id: nanoid(),
       id: 'Export',
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

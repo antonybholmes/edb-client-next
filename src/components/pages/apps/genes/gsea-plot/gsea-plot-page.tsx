@@ -130,7 +130,7 @@ export function GseaPlotPage() {
     const tabs: ITab[] = [
       {
         id: 'Home',
-        render: () => (
+        component: () => (
           <>
             <ToolbarTabGroup title={TEXT_FILE}>
               <ToolbarOpenFile
@@ -212,7 +212,7 @@ export function GseaPlotPage() {
       },
       {
         id: 'Help',
-        render: () => (
+        component: () => (
           <>
             <ToolbarHelpTabGroup url={HELP_URL} />
           </>
@@ -226,12 +226,12 @@ export function GseaPlotPage() {
       {
         //icon: <LayersIcon />,
         id: 'Gene Sets',
-        render: () => <GeneSetsPropsPanel />,
+        component: () => <GeneSetsPropsPanel />,
       },
       {
         id: TEXT_DISPLAY,
         //icon: <SlidersIcon />,
-        render: () => <GseaDisplayPropsPanel />,
+        component: () => <GseaDisplayPropsPanel />,
       },
     ]
 
@@ -262,7 +262,7 @@ export function GseaPlotPage() {
       //id: nanoid(),
       id: TEXT_OPEN,
       icon: <OpenIcon variant="colorful" />,
-      render: () => (
+      component: () => (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -286,7 +286,7 @@ export function GseaPlotPage() {
     {
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

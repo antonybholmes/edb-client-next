@@ -71,7 +71,7 @@ export function DataPanel() {
     const sideTabs: ITab[] = [
       {
         id: 'History',
-        render: () => <HistoryPanel />,
+        component: () => <HistoryPanel />,
       },
     ]
 

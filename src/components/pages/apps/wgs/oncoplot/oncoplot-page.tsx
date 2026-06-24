@@ -382,7 +382,7 @@ function OncoplotPage() {
   const tabs: ITab[] = [
     {
       id: 'Home',
-      render: () => (
+      component: () => (
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
@@ -539,7 +539,7 @@ function OncoplotPage() {
     {
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      render: () => (
+      component: () => (
         <DropdownMenuItem
           aria-label="Open file on your computer"
           onClick={() => _open('variants')}
@@ -555,7 +555,7 @@ function OncoplotPage() {
     },
     {
       id: TEXT_SAVE_AS,
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -593,7 +593,7 @@ function OncoplotPage() {
     {
       //id: nanoid(),
       id: 'Export',
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

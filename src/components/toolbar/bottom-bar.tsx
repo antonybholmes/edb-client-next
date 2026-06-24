@@ -97,7 +97,7 @@ export function BottomBar({
       style={style}
     >
       {tabs.map((tab) => {
-        const TabContentComponent = tab.render
+        const TabContentComponent = tab.component
 
         if (!TabContentComponent) {
           return null

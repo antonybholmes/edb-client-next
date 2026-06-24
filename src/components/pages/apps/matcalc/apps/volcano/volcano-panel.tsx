@@ -112,7 +112,7 @@ export function VolcanoPanel({
         id: 'Display',
         icon: <SlidersIcon />,
 
-        render: () => <VolcanoPropsPanel x={x} y={y} />,
+        component: () => <VolcanoPropsPanel x={x} y={y} />,
       },
     ])
   }, [])

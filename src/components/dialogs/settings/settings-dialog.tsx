@@ -95,17 +95,17 @@ const DEFAULT_TABS: ITab[] = [
             id: 'Dark Mode',
             description:
               'Dark mode is a popular feature for reducing eye strain and improving readability in low-light environments.',
-            render: () => <SettingsDarkModePanel />,
+            component: () => <SettingsDarkModePanel />,
           },
           {
             id: 'Toolbars',
             description: 'Customize toolbar settings.',
-            render: () => <SettingsToolbarPanel />,
+            component: () => <SettingsToolbarPanel />,
           },
           {
             id: 'Apps',
             description: 'Manage and configure apps.',
-            render: () => <AppsToolbarPanel />,
+            component: () => <AppsToolbarPanel />,
           },
         ],
       },
@@ -183,7 +183,7 @@ export function SettingsDialog({
                   {tab.children?.map((childTab, childi) => {
                     return (
                       <Fragment key={childi}>
-                        {childTab.render && childTab.render}
+                        {childTab.component && childTab.component}
 
                         {/* Show sub blocks with a consistent UI */}
                         {childTab.children &&
@@ -193,7 +193,7 @@ export function SettingsDialog({
                                 title={getTabName(g)}
                                 key={gi}
                               >
-                                {g.render}
+                                {g.component}
                               </SettingsAccordionItem>
                             )
                           })}
@@ -265,7 +265,7 @@ export function SettingsDialog({
                     key={gi}
                     showBorder={gi > 0}
                   >
-                    {g.render}
+                    {g.component}
                   </SettingsAccordionItem>
                 )
               })}
@@ -273,7 +273,7 @@ export function SettingsDialog({
           )}
 
           {/* To show custom ui boxes */}
-          {subSelectedTab.render && subSelectedTab.render}
+          {subSelectedTab.component && subSelectedTab.component}
         </VScrollPanel>
       </GlassSideDialog>
     )

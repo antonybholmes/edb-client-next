@@ -2,9 +2,9 @@
   "name": "Overlap",
   "description": "Overlap sets of genomic coordinates.",
   "color": "#008080",
-  "version": "18.6.2",
+  "version": "18.6.4",
   "copyright": "(C) ${START_YEAR:2025} Antony Holmes",
-  "modified": "2026-06-23T23:17:15.268Z",
-  "hash": "66138d6b782d964732c01ca7d320681204beaac416ed37e2c3f4ac6d92f14b16",
-  "build": 528
+  "modified": "2026-06-24T15:35:55.381Z",
+  "hash": "52ae7c1d3fc140b33ed447ed4548c448fc952803461708d1d76f918f792718c9",
+  "build": 530
 }

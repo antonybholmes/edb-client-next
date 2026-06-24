@@ -98,7 +98,7 @@ function OverlapPage() {
       {
         //id: nanoid(),
         id: 'Home',
-        render: () => (
+        component: () => (
           <>
             <ToolbarTabGroup title={TEXT_FILE}>
               <ToolbarOpenFile
@@ -158,7 +158,7 @@ function OverlapPage() {
         //id: nanoid(),
         icon: <SettingsIcon />,
         id: 'Files',
-        render: () => <FilesPropsPanel />,
+        component: () => <FilesPropsPanel />,
       },
       // {
       //   //id: nanoid(),
@@ -221,7 +221,7 @@ function OverlapPage() {
       //id: nanoid(),
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      render: () => (
+      component: () => (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() =>
@@ -244,7 +244,7 @@ function OverlapPage() {
     {
       //id: nanoid(),
       id: TEXT_SAVE_AS,
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label="Save text file"

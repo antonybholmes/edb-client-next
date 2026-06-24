@@ -158,7 +158,7 @@ export function HubsPage() {
     {
       id: 'Options',
       icon: <SlidersIcon />,
-      render: () => <HubsPropsPanel />,
+      component: () => <HubsPropsPanel />,
     },
   ]
 

@@ -72,7 +72,7 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
       {
         id: TEXT_DISPLAY,
         icon: <SlidersIcon />,
-        render: () => <ExtGseaPropsPanel plotAddr={plotAddr} />,
+        component: () => <ExtGseaPropsPanel plotAddr={plotAddr} />,
       },
     ])
   }, [])

@@ -122,7 +122,7 @@ export function AnnotationPage() {
       {
         //id: nanoid(),
         id: 'Home',
-        render: () => (
+        component: () => (
           <>
             <ToolbarTabGroup title={TEXT_FILE} className="items-start">
               <ToolbarOpenFile
@@ -408,7 +408,7 @@ export function AnnotationPage() {
       //id: nanoid(),
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      render: () => (
+      component: () => (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -431,7 +431,7 @@ export function AnnotationPage() {
     {
       //id: nanoid(),
       id: TEXT_SAVE_AS,
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label="Save text file"

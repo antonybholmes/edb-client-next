@@ -1,13 +1,9 @@
 import { useEffect, useRef } from 'react'
 
-import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
-import { type ITab } from '@/components/tabs/tab-provider'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { getFormattedShape } from '@/lib/dataframe/dataframe-utils'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
-
-import { TEXT_DISPLAY } from '@/consts'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
@@ -17,7 +13,7 @@ import { useZoom } from '@/providers/zoom-provider'
 import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
-import { useSideTabs } from '@/components/tabs/tab-store'
+import { ResizableSidebar } from '@/components/slide-bar/resizable-sidebar'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useHeatmapContext } from './heatmap-provider'
 import { HeatMapSvg } from './heatmap-svg'
@@ -47,18 +43,6 @@ export function HeatmapPanel() {
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL)
 
   const { open: openDialog } = useDialogs()
-
-  const { setTabs: setSideTabs } = useSideTabs()
-
-  useEffect(() => {
-    const plotRightTabs: ITab[] = [
-      {
-        id: TEXT_DISPLAY,
-        component: HeatmapPropsPanel,
-      },
-    ]
-    setSideTabs(plotRightTabs)
-  }, [])
 
   useEffect(() => {
     for (const message of messages) {
@@ -102,11 +86,12 @@ export function HeatmapPanel() {
 
   return (
     <>
-      <TabSlideBar side="right">
+      <ResizableSidebar side="right">
         <ExtScrollCard>
           <HeatMapSvg ref={svgRef} />
         </ExtScrollCard>
-      </TabSlideBar>
+        <HeatmapPropsPanel />
+      </ResizableSidebar>
 
       <FooterPortal className="shrink-0 grow-0 ">
         <span>{getFormattedShape(cf.df)} </span>

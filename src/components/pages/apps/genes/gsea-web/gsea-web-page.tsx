@@ -151,7 +151,7 @@ export function GseaWebPage() {
   const tabs: ITab[] = [
     {
       id: 'Home',
-      render: () => (
+      component: () => (
         <>
           <ToolbarTabGroup title={TEXT_FILE}>
             <ToolbarOpenFile
@@ -233,7 +233,7 @@ export function GseaWebPage() {
     },
     {
       id: 'Help',
-      render: () => <ToolbarHelpTabGroup url={HELP_URL} />,
+      component: () => <ToolbarHelpTabGroup url={HELP_URL} />,
     },
   ]
 
@@ -241,12 +241,12 @@ export function GseaWebPage() {
     {
       icon: <LayersIcon />,
       id: 'Gene Sets',
-      render: () => <GeneSetsPropsPanel />,
+      component: () => <GeneSetsPropsPanel />,
     },
     {
       id: TEXT_DISPLAY,
       icon: <SlidersIcon />,
-      render: () => <GseaDisplayPropsPanel />,
+      component: () => <GseaDisplayPropsPanel />,
     },
   ]
 
@@ -255,7 +255,7 @@ export function GseaWebPage() {
       //id: nanoid(),
       id: TEXT_OPEN,
       icon: <OpenIcon variant="colorful" />,
-      render: () => (
+      component: () => (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -279,7 +279,7 @@ export function GseaWebPage() {
     {
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

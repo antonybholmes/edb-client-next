@@ -184,7 +184,7 @@ export function GeneConvPage() {
     {
       //id: nanoid(),
       id: 'Home',
-      render: () => (
+      component: () => (
         <>
           <ToolbarTabGroup title="File">
             <ToolbarOpenFile
@@ -274,7 +274,7 @@ export function GeneConvPage() {
     {
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      render: () => (
+      component: () => (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -296,7 +296,7 @@ export function GeneConvPage() {
     },
     {
       id: TEXT_SAVE_AS,
-      render: () => (
+      component: () => (
         <>
           <DropdownMenuItem
             aria-label="Save text file"
