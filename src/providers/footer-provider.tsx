@@ -1,3 +1,4 @@
+import { FooterDFSize } from '@/components/pages/apps/matcalc/data/footer-df-size'
 import { ITab } from '@/components/tabs/tab-provider'
 import { RunningIndicator } from '@/components/toolbar/running-indicator'
 import { IChildrenProps } from '@/interfaces/children-props'
@@ -24,6 +25,7 @@ type FooterContextValue = {
    * This ID can be used to remove the indicator later.
    */
   addIndicator: (message?: string) => string
+  addDFSize: () => string
 }
 
 type FooterSlot = 'left' | 'right' | 'center'
@@ -92,9 +94,17 @@ export function FooterProvider({ children }: IChildrenProps) {
     return id
   }, [])
 
+  const addDFSize = useCallback(() => {
+    const id = makeUuid()
+
+    add('left', { id, component: FooterDFSize })
+
+    return id
+  }, [])
+
   return (
     <FooterContext.Provider
-      value={{ left, center, right, add, remove, set, addIndicator }}
+      value={{ left, center, right, add, remove, set, addIndicator, addDFSize }}
     >
       {children}
     </FooterContext.Provider>

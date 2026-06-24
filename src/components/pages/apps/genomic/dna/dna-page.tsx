@@ -1,12 +1,9 @@
 'use client'
 
-import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
-
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 
-import { PlayIcon } from '@/icons/play-icon'
 import {
   ShowOptionsMenu,
   Toolbar,
@@ -22,38 +19,21 @@ import {
   getFormattedShape,
 } from '@/lib/dataframe/dataframe-utils'
 
-import {
-  DEFAULT_PARSE_OPTS,
-  filesToDataFrames,
-  onTextFileChange,
-  type IParseOptions,
-  type ITextFileOpen,
-} from '@/components/pages/open-files'
-
-import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
+import { onTextFileChange } from '@/components/pages/open-files'
 
 import { OpenIcon } from '@/icons/open-icon'
 
-import { queryClient } from '@/qcp'
 import { useEffect, useState } from 'react'
 
 import {
   TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_TXT,
-  TEXT_FILE,
   TEXT_OPEN_FILE,
-  TEXT_RUN,
   TEXT_SAVE_AS,
-  TEXT_SAVE_TABLE,
 } from '@/consts'
 
-import { PropsPanel } from '@/components/props-panel'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
-import { SlidersIcon } from '@/icons/sliders-icon'
 import { UploadIcon } from '@/icons/upload-icon'
-import { createDNATable, type FORMAT_TYPE } from '@/lib/genomic/dna'
-import { Checkbox } from '@/themed/v2/check-box'
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
@@ -62,13 +42,6 @@ import { FileIcon } from '@/icons/file-icon'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
-import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-  ScrollAccordion,
-} from '@/themed/v2/accordion'
-import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
@@ -78,18 +51,16 @@ import {
   HeaderPortal,
   HeaderSlotPortal,
 } from '@/components/header/header-portal'
-import { BaseCol } from '@/components/layout/base-col'
 import { useStableId } from '@/hooks/stable-id'
-import { DownloadIcon } from '@/icons/download-icon'
 import { AssemblySelect } from '@/lib/edb/assembly-select'
-import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
+import { useAppInfo } from '@/lib/edb/edb-settings'
 import { CoreProviders } from '@/providers/core-provider'
-import { GroupToggle, ToggleGroup } from '@/themed/v2/toggle-group'
 import {
   HistoryLayout,
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
 
+import { useToolbarTabs } from '@/components/tabs/tab-store'
 import {
   useCurrentSheets,
   useFiles,
@@ -97,6 +68,8 @@ import {
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import APP_INFO from './manifest.json'
+import { HomeToolbar } from './toolbars/home'
+import { useOpen } from './use-open'
 
 export function DNAPage() {
   const _id = useStableId('dna-page')
@@ -106,56 +79,26 @@ export function DNAPage() {
   const { sheet, sheets } = useCurrentSheets()
   const { setAppInfo } = useAppInfo()
   const [showSideBar, setShowSideBar] = useState(true)
-  const { settings } = useEdbSettings()
 
-  //const [assembly, setAssembly] = useState('grch38')
-  const [reverse, setReverse] = useState(false)
-  const [complement, setComplement] = useState(false)
-  const [format, setFormat] = useState<FORMAT_TYPE>('auto')
-  const [mask, setMask] = useState<'' | 'lower' | 'n'>('')
-
+  const { setTabs: setToolbarTabs } = useToolbarTabs()
   const [showFileMenu, setShowFileMenu] = useState(false)
 
   const { open: openDialog } = useDialogs()
+  const { openFiles } = useOpen()
 
   useEffect(() => {
     setAppInfo(APP_INFO)
     //openApp(APP_INFO.name)
   }, [])
 
-  function openFiles(
-    files: ITextFileOpen[],
-    parseOpts: IParseOptions = { ...DEFAULT_PARSE_OPTS }
-  ) {
-    filesToDataFrames(files, {
-      ...parseOpts,
-      onSuccess: (tables) => {
-        if (tables.length > 0) {
-          openFile(tables[0]!.name, { sheets: tables })
-        }
-      },
-    })
-
-    setShowFileMenu(false)
-  }
-
-  async function addDNA() {
-    const dfa = await createDNATable(
-      queryClient,
-      sheet as AnnotationDataFrame,
+  useEffect(() => {
+    setToolbarTabs([
       {
-        assembly: settings.genomic.assembly,
-        format,
-        mask,
-        reverse,
-        complement,
-      }
-    )
-
-    if (dfa) {
-      addSheets([dfa], { name: `DNA` })
-    }
-  }
+        id: 'Home',
+        component: HomeToolbar,
+      },
+    ])
+  }, [setToolbarTabs])
 
   function save(name: string, format: string) {
     if (!sheet) {
@@ -209,200 +152,6 @@ export function DNAPage() {
   //     return res.data
   //   },
   // })
-
-  const tabs: ITab[] = [
-    {
-      //id: nanoid(),
-      id: 'Home',
-      component: () => (
-        <>
-          <ToolbarTabGroup title={TEXT_FILE}>
-            <ToolbarOpenFile
-              onOpen={() => {
-                openDialog({
-                  type: 'open',
-                  payload: {
-                    callback: (message, files) => {
-                      onTextFileChange(message, files, openFiles)
-                    },
-                  },
-                })
-              }}
-              multiple={true}
-            />
-
-            <ToolbarIconButton
-              title={TEXT_SAVE_TABLE}
-              onClick={() =>
-                openDialog({
-                  type: 'save',
-                  payload: {
-                    callback: (data) => {
-                      save(data.name, data.format!.ext! as string)
-                    },
-                  },
-                })
-              }
-            >
-              <DownloadIcon />
-            </ToolbarIconButton>
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title={TEXT_RUN}>
-            <ToolbarButton title="Add DNA" onClick={addDNA}>
-              <PlayIcon />
-              <span>Add DNA</span>
-            </ToolbarButton>
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title="Letters">
-            <ToggleGroup
-              direction="toolbar"
-              className="overflow-hidden rounded-theme"
-              //rounded="none"
-              size="toolbar"
-              value={[format]}
-              onValueChange={(v) => {
-                setFormat(v[0] as FORMAT_TYPE)
-              }}
-            >
-              <GroupToggle value="auto" className="px-2">
-                Auto
-              </GroupToggle>
-
-              <GroupToggle value="upper" className="px-2">
-                Upper
-              </GroupToggle>
-
-              <GroupToggle value="lower" className="px-2">
-                Lower
-              </GroupToggle>
-            </ToggleGroup>
-          </ToolbarTabGroup>
-        </>
-      ),
-    },
-  ]
-
-  const rightTabs: ITab[] = [
-    {
-      //id: nanoid(),
-      icon: <SlidersIcon />,
-      id: 'Settings',
-      component: () => (
-        <PropsPanel className="pr-2">
-          <ScrollAccordion value={['assembly', 'letters', 'mask', 'strand']}>
-            {/* <AccordionItem value="assembly">
-              <AccordionTrigger>Assembly</AccordionTrigger>
-              <AccordionContent>
-                {genomesQuery.data && (
-                  <RadioGroup
-                    defaultValue={assembly ?? genomesQuery.data[0]}
-                    className="flex flex-col gap-y-1.5"
-                  >
-                    {genomesQuery.data.map((assembly: string, dbi: number) => (
-                      <RadioGroupItem
-                        key={dbi}
-                        value={assembly}
-                        onClick={() => setAssembly(assembly)}
-                      >
-                        <Label>{assembly}</Label>
-                      </RadioGroupItem>
-                    ))}
-                  </RadioGroup>
-                )}
-              </AccordionContent>
-            </AccordionItem> */}
-
-            {/* <AccordionItem value="letters">
-              <AccordionTrigger>Letters</AccordionTrigger>
-              <AccordionContent>
-                <ToggleGroup
-                  direction="row"
-                  className="overflow-hidden rounded-theme"
-                  rounded="none"
-                  value={[format]}
-                  onValueChange={v => {
-                    setFormat(v[0] as FORMAT_TYPE)
-                  }}
-                >
-                  <GroupToggle value="auto" className="px-2">
-                    Auto
-                  </GroupToggle>
-
-                  <GroupToggle value="upper" className="px-2">
-                    Upper
-                  </GroupToggle>
-
-                  <GroupToggle value="lower" className="px-2">
-                    Lower
-                  </GroupToggle>
-                </ToggleGroup>
-              </AccordionContent>
-            </AccordionItem> */}
-
-            <AccordionItem value="mask">
-              <AccordionTrigger>Mask</AccordionTrigger>
-              <AccordionContent>
-                <BaseCol className="gap-y-1">
-                  <Checkbox
-                    checked={mask === 'n'}
-                    onCheckedChange={() => {
-                      if (mask != 'n') {
-                        setMask('n')
-                      } else {
-                        setMask('')
-                      }
-                    }}
-                  >
-                    N
-                  </Checkbox>
-
-                  <Checkbox
-                    checked={mask === 'lower'}
-                    onCheckedChange={() => {
-                      if (mask != 'lower') {
-                        setMask('lower')
-                      } else {
-                        setMask('')
-                      }
-                    }}
-                  >
-                    Lowercase
-                  </Checkbox>
-                </BaseCol>
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="strand">
-              <AccordionTrigger>Strand</AccordionTrigger>
-              <AccordionContent>
-                <BaseCol className="gap-y-1">
-                  <Checkbox
-                    checked={reverse}
-                    onCheckedChange={() => setReverse(!reverse)}
-                  >
-                    <span>Reverse</span>
-                  </Checkbox>
-                  <Checkbox
-                    checked={complement}
-                    onCheckedChange={() => setComplement(!complement)}
-                  >
-                    <span>Complement</span>
-                  </Checkbox>
-                </BaseCol>
-              </AccordionContent>
-            </AccordionItem>
-          </ScrollAccordion>
-        </PropsPanel>
-      ),
-    },
-    // {
-    //   //id: nanoid(),
-    //   icon: <ClockRotateLeftIcon />,
-    //   id: 'History',
-    //   content: ()=> <HistoryPanel />,
-    // },
-  ]
 
   const fileMenuTabs: ITab[] = [
     {
@@ -471,8 +220,6 @@ export function DNAPage() {
 
         <Toolbar>
           <ToolbarMenu
-            groupId={_id}
-            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
@@ -492,8 +239,6 @@ export function DNAPage() {
             }
           />
           <ToolbarPanel
-            groupId={_id}
-            tabs={tabs}
             tabShortcutMenu={
               <ShowOptionsMenu
                 show={showSideBar}
@@ -506,30 +251,14 @@ export function DNAPage() {
         </Toolbar>
 
         <HistoryLayout>
-          <TabSlideBar
-            id="dna"
-            side="right"
-            tabs={rightTabs}
-            //value={rightTab}
-            //onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
-            open={showSideBar}
-            onOpenChange={setShowSideBar}
-          >
-            {/* <Card
-            variant="content"
-            className="mx-2 pb-0"
-            style={{ marginBottom: '-2px' }}
-          > */}
-            <TabbedDataFrames
-              selectedSheet={sheet?.id ?? ''}
-              dataFrames={sheets as AnnotationDataFrame[]}
-              onTabChange={(selectedTab) => {
-                goto({ file, sheet: selectedTab.tab })
-              }}
-              className="mx-2"
-            />
-            {/* </Card> */}
-          </TabSlideBar>
+          <TabbedDataFrames
+            selectedSheet={sheet?.id ?? ''}
+            dataFrames={sheets as AnnotationDataFrame[]}
+            onTabChange={(selectedTab) => {
+              goto({ file, sheet: selectedTab.tab })
+            }}
+            className="mx-2"
+          />
         </HistoryLayout>
       </ShortcutLayout>
 

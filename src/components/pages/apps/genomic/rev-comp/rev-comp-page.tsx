@@ -30,7 +30,6 @@ import {
 import { PropsPanel } from '@/components/props-panel'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
-import { SlidersIcon } from '@/icons/sliders-icon'
 import { Checkbox } from '@/themed/v2/check-box'
 
 import type { ITab } from '@/components/tabs/tab-provider'
@@ -57,13 +56,12 @@ import { FileIcon } from '@/icons/file-icon'
 import { UploadIcon } from '@/icons/upload-icon'
 import { HeaderButton } from '@/layouts/header-button'
 import { useAppInfo } from '@/lib/edb/edb-settings'
+import { DNABase } from '@/lib/genomic/dna'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { CoreProviders } from '@/providers/core-provider'
 import { Textarea } from '@/themed/textarea'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import APP_INFO from './manifest.json'
-
-export type DNABase = 'A' | 'C' | 'G' | 'T' | 'a' | 'c' | 'g' | 't'
 
 const REV_MAP: { [K in DNABase]: DNABase } = {
   A: 'T',
@@ -224,7 +222,6 @@ function RevCompPage() {
 
   const tabs: ITab[] = [
     {
-      //id: nanoid(),
       id: 'Home',
       component: () => (
         <>
@@ -279,7 +276,6 @@ function RevCompPage() {
 
   const fileMenuTabs: ITab[] = [
     {
-      //id: nanoid(),
       id: TEXT_OPEN,
       icon: <OpenIcon variant="colorful" />,
       component: () => (
@@ -306,7 +302,6 @@ function RevCompPage() {
       ),
     },
     {
-      //id: nanoid(),
       id: TEXT_SAVE_AS,
       component: () => (
         <>
@@ -331,8 +326,6 @@ function RevCompPage() {
 
   const rightTabs: ITab[] = [
     {
-      //id: nanoid(),
-      icon: <SlidersIcon />,
       id: 'Settings',
       component: () => (
         <PropsPanel className="pr-2">
@@ -363,8 +356,6 @@ function RevCompPage() {
 
   return (
     <>
-      {/* <DialogsRoot /> */}
-
       <HeaderSlotPortal>
         <AppHeaderIcon />
         <AppInfoButton />

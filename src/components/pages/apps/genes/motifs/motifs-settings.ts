@@ -14,7 +14,6 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 export type Mode = 'prob' | 'bits'
-export type DNABase = 'a' | 'c' | 'g' | 't'
 
 export const LW = 45
 
@@ -110,10 +109,10 @@ export interface IMotifStore extends IMotifSettings {
 
 export const useMotifStore = create<IMotifStore>()(
   persist(
-    set => ({
+    (set) => ({
       ...DEFAULT_SETTINGS,
       updateSettings: (settings: Partial<IMotifSettings>) => {
-        set(state => ({ ...state, ...settings }))
+        set((state) => ({ ...state, ...settings }))
       },
     }),
     {
@@ -147,8 +146,8 @@ export function useMotifSettings(): {
   updateSettings: (settings: Partial<IMotifSettings>) => void
   resetSettings: () => void
 } {
-  const settings = useMotifStore(state => state)
-  const updateSettings = useMotifStore(state => state.updateSettings)
+  const settings = useMotifStore((state) => state)
+  const updateSettings = useMotifStore((state) => state.updateSettings)
   const resetSettings = () =>
     updateSettings({
       ...DEFAULT_SETTINGS,

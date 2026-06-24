@@ -12,6 +12,8 @@ import { httpFetch } from '../http/http-fetch'
 import { GenLoc, locStr } from './genomic'
 import type { IGenomicLocation } from './genomic-location'
 
+export type DNABase = 'A' | 'C' | 'G' | 'T' | 'a' | 'c' | 'g' | 't'
+
 export const CHR_INDEX_MAP: { [key: string]: number } = {
   chr1: 1,
   chr2: 2,
@@ -87,7 +89,6 @@ interface IDNAOptions {
 }
 
 export async function createDNATable(
-  queryClient: QueryClient,
   df: BaseDataFrame,
   params: IDNAOptions = {}
 ): Promise<AnnotationDataFrame | null> {
@@ -122,24 +123,19 @@ export async function createDNATable(
   //const a = assemblyCol !== -1 ? df.col(assemblyCol).strs : vfill(assembly, locs.length)
 
   try {
-    const res = await queryClient.fetchQuery({
-      queryKey: ['dna'],
-      queryFn: () => {
-        const params = new URLSearchParams([
-          ['format', format.toLowerCase()],
-          ['mask', mask],
-          ['rev', reverse.toString()],
-          ['comp', complement.toString()],
-        ])
+    const params = new URLSearchParams([
+      ['format', format.toLowerCase()],
+      ['mask', mask],
+      ['rev', reverse.toString()],
+      ['comp', complement.toString()],
+    ])
 
-        return httpFetch.postJson<{ data: { seqs: { seq: string }[] } }>(
-          `${API_DNA_URL}/${assembly}?${params}`,
-          {
-            body: { locations: locs },
-          }
-        )
-      },
-    })
+    const res = await httpFetch.postJson<{ data: { seqs: { seq: string }[] } }>(
+      `${API_DNA_URL}/${assembly}?${params}`,
+      {
+        body: { locations: locs },
+      }
+    )
 
     const data = res.data
 
@@ -265,7 +261,7 @@ export function useDNAQuery(
 
 export function dnaToJson(seqs: IDNA[]): string {
   return JSON.stringify(
-    seqs.map(seq => ({
+    seqs.map((seq) => ({
       chr: seq.location.chr,
       start: seq.location.start,
       end: seq.location.end,

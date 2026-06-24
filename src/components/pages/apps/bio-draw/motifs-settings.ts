@@ -7,7 +7,6 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 export type Mode = 'prob' | 'bits'
-export type DNABase = 'a' | 'c' | 'g' | 't'
 
 export const LW = 45
 
@@ -56,10 +55,10 @@ export interface IMotifSettingsStore extends IMotifSettings {
 
 export const useMotifSettingsStore = create<IMotifSettingsStore>()(
   persist(
-    set => ({
+    (set) => ({
       ...DEFAULT_SETTINGS,
       updateSettings: (settings: Partial<IMotifSettings>) => {
-        set(state => ({ ...state, ...settings }))
+        set((state) => ({ ...state, ...settings }))
       },
     }),
     {
@@ -93,8 +92,8 @@ export function useMotifSettings(): {
   updateSettings: (settings: Partial<IMotifSettings>) => void
   resetSettings: () => void
 } {
-  const settings = useMotifSettingsStore(state => state)
-  const updateSettings = useMotifSettingsStore(state => state.updateSettings)
+  const settings = useMotifSettingsStore((state) => state)
+  const updateSettings = useMotifSettingsStore((state) => state.updateSettings)
   const resetSettings = () => updateSettings({ ...DEFAULT_SETTINGS })
 
   //console.log('use matcalc settings')
