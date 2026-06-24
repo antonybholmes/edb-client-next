@@ -14,9 +14,9 @@
     "description": "Biological diagrams",
     "version": "16.6.0",
     "copyright": "© 2025-2026 Antony Holmes",
-    "modified": "2026-06-24T20:56:37.398Z",
-    "hash": "2515a1e906dc2a099c8a8cc4d40d815ff4b9dca336f1d90fedbf3e4a19285594",
-    "build": 506
+    "modified": "2026-06-24T21:40:53.509Z",
+    "hash": "73e27ba625cbfc10cac04e5793b23c20d11e3e6acd0bced79056dec72a8519f4",
+    "build": 508
   },
   {
     "name": "Convert",
@@ -24,9 +24,9 @@
     "color": "#20B2AA",
     "version": "20.0.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-24T20:56:37.398Z",
-    "hash": "c7204c7f09e36c0e76b0de30fc328204817bc5ff3ef90a68a30227ed50370331",
-    "build": 782
+    "modified": "2026-06-24T21:40:53.511Z",
+    "hash": "39fe4272cbf61d3e39b9c69ca2905d576dbf2d5275a7db0defbf927c9ff15617",
+    "build": 784
   },
   {
     "name": "DNA",
@@ -43,9 +43,9 @@
     "description": "Get DNA for genomic locations.",
     "version": "19.0.4",
     "copyright": "© 2022-2026 Antony Holmes",
-    "modified": "2026-06-24T20:56:37.399Z",
-    "hash": "e8fbdb6a138627599d57f5ef1efe3e656058d9d7ff1d988702297ab6020d8bc4",
-    "build": 682
+    "modified": "2026-06-24T21:40:53.511Z",
+    "hash": "91df01cd817c57b455cb82a1a1343697e31f2c277bf8cb303228549331f91bbf",
+    "build": 684
   },
   {
     "name": "GSEA Plot",
@@ -111,9 +111,9 @@
     "color": "#40bf80",
     "version": "46.8.4",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-06-24T20:56:37.402Z",
-    "hash": "a94d4965341715be4ac52a2544c9feae7fae42f4c450ff01d2774312269ff6ee",
-    "build": 1656
+    "modified": "2026-06-24T21:40:53.514Z",
+    "hash": "75bc0f442b1008880f29d70f641a4279aeba40c379c336110d29921c1efe35b1",
+    "build": 1658
   },
   {
     "name": "Motifs",

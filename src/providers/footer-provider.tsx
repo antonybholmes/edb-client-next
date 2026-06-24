@@ -1,3 +1,4 @@
+import { ITab } from '@/components/tabs/tab-provider'
 import { RunningIndicator } from '@/components/toolbar/running-indicator'
 import { IChildrenProps } from '@/interfaces/children-props'
 import { makeUuid } from '@/lib/id'
@@ -10,18 +11,18 @@ import {
   useState,
 } from 'react'
 
-type FooterEntry = {
-  id: string
-  component: ComponentType<{}>
-}
-
 type FooterContextValue = {
   left: ComponentType<{}> | undefined
   center: ComponentType<{}> | undefined
   right: ComponentType<{}> | undefined
-  add: (slot: FooterSlot, entry: FooterEntry) => void
+  add: (slot: FooterSlot, entry: ITab) => void
   remove: (slot: FooterSlot, id: string) => void
-  set: (slot: FooterSlot, entry: FooterEntry) => void
+  set: (slot: FooterSlot, entry: ITab) => void
+  /**
+   * Adds a running indicator to the left slot of the footer.
+   * The indicator displays a message (default: 'Running...') and returns a unique ID.
+   * This ID can be used to remove the indicator later.
+   */
   addIndicator: (message?: string) => string
 }
 
@@ -40,14 +41,14 @@ export function useFooter() {
 }
 
 export function FooterProvider({ children }: IChildrenProps) {
-  const [stack, setStack] = useState<Record<FooterSlot, FooterEntry[]>>({
+  const [stack, setStack] = useState<Record<FooterSlot, ITab[]>>({
     left: [],
     right: [],
     center: [],
   })
 
   const [defaults, setDefaults] = useState<
-    Record<FooterSlot, FooterEntry | undefined>
+    Record<FooterSlot, ITab | undefined>
   >({
     left: undefined,
     right: undefined,
@@ -62,14 +63,14 @@ export function FooterProvider({ children }: IChildrenProps) {
     }
   }, [stack, defaults])
 
-  const set = useCallback((slot: FooterSlot, entry: FooterEntry) => {
+  const set = useCallback((slot: FooterSlot, entry: ITab) => {
     setDefaults((prev) => ({
       ...prev,
       [slot]: entry,
     }))
   }, [])
 
-  const add = useCallback((slot: FooterSlot, entry: FooterEntry) => {
+  const add = useCallback((slot: FooterSlot, entry: ITab) => {
     setStack((prev) => ({
       ...prev,
       [slot]: [...prev[slot], entry],

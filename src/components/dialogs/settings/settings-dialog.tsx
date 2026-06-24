@@ -146,6 +146,8 @@ export function SettingsDialog({
   const activeSideTab = getTabName(selectedTab)
   const activeSubSideTab = getTabName(subSelectedTab)
 
+  const SubSelectedTab = subSelectedTab.component
+
   if (winSize.w < TAILWIND_MEDIA_LG) {
     const accordionValues: string[] = _tabs
       .filter((tab) => tab.children)
@@ -181,19 +183,30 @@ export function SettingsDialog({
               return (
                 <Fragment key={tabi}>
                   {tab.children?.map((childTab, childi) => {
+                    const Component = childTab.component
+
+                    if (!Component) {
+                      return null
+                    }
+
                     return (
                       <Fragment key={childi}>
-                        {childTab.component && childTab.component}
+                        <Component />
 
                         {/* Show sub blocks with a consistent UI */}
                         {childTab.children &&
                           childTab.children.map((g, gi) => {
+                            const Component = g.component
+                            if (!Component) {
+                              return null
+                            }
+
                             return (
                               <SettingsAccordionItem
                                 title={getTabName(g)}
                                 key={gi}
                               >
-                                {g.component}
+                                <Component />
                               </SettingsAccordionItem>
                             )
                           })}
@@ -224,7 +237,7 @@ export function SettingsDialog({
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 grow text-xs">
           <BaseCol className="md:gap-4 px-2 col-span-1">
-            <h1 className="text-base font-bold">{TEXT_SETTINGS}</h1>
+            <h1 className="text-base font-semibold">{TEXT_SETTINGS}</h1>
 
             <SideTabs
               tabs={_tabs}
@@ -257,23 +270,27 @@ export function SettingsDialog({
               multiple={true}
               variant="settings"
             >
-              {subSelectedTab.children.map((g, gi) => {
-                return (
-                  <SettingsAccordionItem
-                    title={getTabName(g)}
-                    description={g.description}
-                    key={gi}
-                    showBorder={gi > 0}
-                  >
-                    {g.component}
-                  </SettingsAccordionItem>
-                )
-              })}
+              {subSelectedTab.children
+                .filter((g) => !!g.component)
+                .map((g, gi) => {
+                  const Component = g.component!
+
+                  return (
+                    <SettingsAccordionItem
+                      title={getTabName(g)}
+                      description={g.description}
+                      key={gi}
+                      showBorder={gi > 0}
+                    >
+                      <Component />
+                    </SettingsAccordionItem>
+                  )
+                })}
             </Accordion>
           )}
 
           {/* To show custom ui boxes */}
-          {subSelectedTab.component && subSelectedTab.component}
+          {SubSelectedTab && <SubSelectedTab />}
         </VScrollPanel>
       </GlassSideDialog>
     )

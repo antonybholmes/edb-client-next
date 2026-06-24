@@ -84,8 +84,6 @@ import { pathJoin } from './history/history-provider/history-actions'
 import { useTabs } from '@/components/tabs/tab-store'
 import { useFooter } from '@/providers/footer-provider'
 import {
-  useCurrentGenesets,
-  useCurrentGroups,
   useCurrentPlots,
   useCurrentSelections,
   useCurrentSheets,
@@ -204,9 +202,6 @@ export function MatcalcPage() {
 
   const { openFiles } = useOpenFiles()
 
-  const { groups } = useCurrentGroups()
-  const { genesets } = useCurrentGenesets()
-
   const { sheet } = useCurrentSheets()
 
   const { plot } = useCurrentPlots()
@@ -218,8 +213,6 @@ export function MatcalcPage() {
   // able to display them in the file tree and access
   // them when clicking on a plot tab
   const plots = useAllPlots()
-
-  console.log('gggggg', groups)
 
   const { setSettingsTabs, setDefaultSettingsTab } = useSettingsTabs()
 
@@ -256,7 +249,7 @@ export function MatcalcPage() {
         children: [
           {
             id: 'Apps',
-            //icon: <LayersIcon />,
+
             component: SettingsAppsPanel,
           },
         ],

@@ -1,5 +1,6 @@
+import { IDivProps } from '@/interfaces/div-props'
 import type { UndefStr } from '@/lib/text/text'
-import { ComponentType, type ReactNode } from 'react'
+import { ComponentType, createContext, useState, type ReactNode } from 'react'
 
 export type NodeType = 'folder' | 'file'
 export type OpenState = boolean | 'auto'
@@ -127,4 +128,50 @@ export function getTabFromValue(
   }
 
   return selectedTab
+}
+
+export const TabContext = createContext<ITabContext>({
+  value: '',
+  selectedTab: null,
+  tabs: [],
+})
+
+interface IProps extends ITabProvider, IDivProps {}
+
+/**
+ * Single use tab provider for things like toggle buttons
+ * @param param0
+ * @returns
+ */
+export function TabProvider({ value, onTabChange, tabs, children }: IProps) {
+  const [_value, setValue] = useState('')
+
+  function _onTabChange(selectedTab: ISelectedTab) {
+    setValue(selectedTab.tab.id)
+
+    onTabChange?.(selectedTab)
+  }
+
+  const v = value !== undefined ? value : _value
+
+  const selectedTab = getTabFromValue(v, tabs ?? [])
+
+  //console.log("eh", value.length, tabs, selectedTab)
+
+  if (!selectedTab) {
+    return null
+  }
+
+  return (
+    <TabContext.Provider
+      value={{
+        value: v,
+        selectedTab,
+        onTabChange: _onTabChange,
+        tabs: tabs ?? [],
+      }}
+    >
+      {children}
+    </TabContext.Provider>
+  )
 }

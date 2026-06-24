@@ -2,7 +2,6 @@ import { cn } from '@/lib/shadcn-utils'
 import { useEffect, useRef } from 'react'
 
 import { getTabFromValue, getTabName } from '@/components/tabs/tab-provider'
-import { useStableId } from '@/hooks/stable-id'
 import { EMPTY_RECT } from '@/interfaces/rect'
 import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
 import { type IToolbarProps } from '../toolbar/toolbar'
@@ -23,18 +22,15 @@ interface IShortcutProps extends IToolbarProps {
 }
 
 function _SideTabs({
-  id,
+  id = 'side-tabs',
   onTabChange = undefined,
-  tabs = [],
+
   defaultHeight = 1.9,
   showIcons = true,
   showLabels = true,
   className,
 }: IShortcutProps) {
-  const _id = id || useStableId('side-tabs')
-
-  console.log('render side tabs', _id, tabs)
-  const { tab: selectedTab, setTab } = useTabs(_id)
+  const { tabs, tab: selectedTab, selectedTabIndex, setTab } = useTabs(id)
 
   console.log('selectedTab', selectedTab)
 
@@ -55,13 +51,13 @@ function _SideTabs({
 
     //setValue(value)
 
-    console.log('_onValueChange', value, tab, _id)
+    console.log('_onValueChange', value, tab, id)
 
     //onValueChange?.(name)
     if (tab) {
       //setTabIndex(selectedTab.index)
 
-      setTab({ id: tab.tab.id, index: tab.index })
+      setTab(value)
 
       onTabChange?.(tab)
     }
@@ -90,17 +86,17 @@ function _SideTabs({
     console.log('side tabs useEffect', selectedTab, buttonsRef.current)
     if (
       !selectedTab ||
-      !buttonsRef.current[selectedTab.index] ||
+      !buttonsRef.current[selectedTabIndex] ||
       !tabListRef.current
     ) {
       return
     }
 
-    const ref = buttonsRef.current[selectedTab.index]!
+    const ref = buttonsRef.current[selectedTabIndex]!
 
     console.log(
       'asdasd',
-      selectedTab.index,
+      selectedTabIndex,
       buttonsRef.current.length,
       tabs.length
     )
@@ -116,7 +112,7 @@ function _SideTabs({
       updateSelectedSize(ref)
       return
     }
-  }, [selectedTab?.index, tabs])
+  }, [selectedTabIndex, tabs])
 
   useEffect(() => {
     if (!tabs || tabs.length === 0) {
@@ -126,7 +122,7 @@ function _SideTabs({
     // force selection of first tab on mount, to set initial position of indicator
     _onValueChange(getTabName(tabs[0]!))
     //updateSelectedSize(buttonsRef.current[0]!)
-  }, [tabs.map(t => t.id).join('|')])
+  }, [tabs.map((t) => t.id).join('|')])
 
   function _scale(index: number, isSelected: boolean) {
     if (!isSelected) {
@@ -169,7 +165,7 @@ function _SideTabs({
               id={tab.id}
               key={tab.id}
               data-selected={isSelected}
-              ref={el => {
+              ref={(el) => {
                 buttonsRef.current[ti] = el
               }}
               onMouseEnter={() => {
@@ -178,7 +174,7 @@ function _SideTabs({
                     scale: 0.6,
                   })
                 }
-                _scale(selectedTab?.index || 0, isSelected)
+                _scale(selectedTabIndex || 0, isSelected)
               }}
               onMouseLeave={() => {
                 if (isSelected) {

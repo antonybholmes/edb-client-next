@@ -1919,6 +1919,10 @@
         {
           "msg": "Refactored matcalc toolbars into own components",
           "date": "2026-06-24T18:11:19.246Z"
+        },
+        {
+          "msg": "Added footer context to make footer manipulation easier. More matcalc functionality moved to specific toolbars",
+          "date": "2026-06-24T20:56:38.430Z"
         }
       ],
       "Added": [

@@ -352,11 +352,9 @@ export function GetDNAPage() {
                   <ToggleButtons
                     tabs={[
                       {
-                        //name: nanoid(),
                         id: 'FASTA',
                       },
                       {
-                        //name: nanoid(),
                         id: 'JSON',
                       },
                     ]}

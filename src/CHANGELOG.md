@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Gsea convert has refined tab changes.
 - Added footer context to make footer manipulation easier. More matcalc functionality moved to specific toolbars.
 - Refactored matcalc toolbars into own components.
 - Add more usecallbacks in contexts to stabilize functions.

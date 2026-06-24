@@ -74,6 +74,7 @@ const PLOT_ZOOM_CHANNEL = 'bio-draw-plot-zoom'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
+import { useSideTabs } from '@/components/tabs/tab-store'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import {
   useCurrentSheets,
@@ -110,9 +111,26 @@ export function BioDrawPage() {
 
   const df = sheet as AnnotationDataFrame
 
+  const { setTabs: setSideTabs } = useSideTabs()
+
   useEffect(() => {
     setAppInfo(APP_INFO)
   }, [])
+
+  useEffect(() => {
+    setSideTabs([
+      {
+        id: 'Motifs',
+        icon: <SearchIcon />,
+        component: MotifsPropsPanel,
+      },
+      {
+        id: 'Display',
+        icon: <SlidersIcon />,
+        component: DisplayPropsPanel,
+      },
+    ])
+  }, [setSideTabs])
 
   useEffect(() => {
     updateSettings(
@@ -296,19 +314,6 @@ export function BioDrawPage() {
   //   },
   // ]
 
-  const chartTabs: ITab[] = [
-    {
-      id: 'Motifs',
-      icon: <SearchIcon />,
-      component: () => <MotifsPropsPanel />,
-    },
-    {
-      id: 'Display',
-      icon: <SlidersIcon />,
-      component: () => <DisplayPropsPanel />,
-    },
-  ]
-
   // const sideTabs: ITab[] = [
   //   {
   //     id: 'Plot',
@@ -406,12 +411,7 @@ export function BioDrawPage() {
           </BaseCol>
         </TabProvider> */}
 
-        <TabSlideBar
-          tabs={chartTabs}
-          side="right"
-          id="motifs"
-          limits={[50, 85]}
-        >
+        <TabSlideBar side="right" limits={[50, 85]}>
           <ResizablePanelGroup
             orientation="vertical"
             className="px-2"

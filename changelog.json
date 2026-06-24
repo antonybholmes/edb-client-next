@@ -1923,6 +1923,10 @@
         {
           "msg": "Added footer context to make footer manipulation easier. More matcalc functionality moved to specific toolbars",
           "date": "2026-06-24T20:56:38.430Z"
+        },
+        {
+          "msg": "Gsea convert has refined tab changes",
+          "date": "2026-06-24T21:40:54.412Z"
         }
       ],
       "Added": [
