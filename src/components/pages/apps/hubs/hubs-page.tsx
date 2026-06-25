@@ -8,13 +8,9 @@ import { BaseCol } from '@/layout/base-col'
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
-import { SlidersIcon } from '@/icons/sliders-icon'
-
 import { HubsPropsPanel } from './hubs-props-panel'
 
 import { useHubs, type IDataset } from './hubs-store'
-
-import { type ITab } from '@/components/tabs/tab-provider'
 
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
@@ -23,6 +19,7 @@ import { HeaderPortal } from '@/components/header/header-portal'
 import { IndexArrowIcon } from '@/components/icons/index-arrow-icon'
 import { BLANK_TARGET } from '@/components/link/base-link'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { useSideTabs } from '@/components/tabs/tab-store'
 import { TIME_5_MINUTES_MS } from '@/consts'
 import { useSearch } from '@/hooks/search'
 import { AssemblySelect } from '@/lib/edb/assembly-select'
@@ -63,7 +60,7 @@ export function HubsPage() {
     new Map<string, Map<string, IDataset[]>>()
   )
 
-  //const { toast } = useToast()
+  const { setTabs: setSideTabs } = useSideTabs()
 
   const { fetchAccessToken } = useEdbAuth()
 
@@ -84,7 +81,16 @@ export function HubsPage() {
 
   useEffect(() => {
     setAppInfo(APP_INFO)
-  }, [])
+  }, [setAppInfo])
+
+  useEffect(() => {
+    setSideTabs([
+      {
+        id: 'Options',
+        component: HubsPropsPanel,
+      },
+    ])
+  }, [setSideTabs])
 
   useEffect(() => {
     async function loadHubs() {
@@ -153,14 +159,6 @@ export function HubsPage() {
       setSearchTechnologyMap(technologyMap)
     }
   }, [query, technologyMap])
-
-  const rightTabs: ITab[] = [
-    {
-      id: 'Options',
-      icon: <SlidersIcon />,
-      component: () => <HubsPropsPanel />,
-    },
-  ]
 
   function HubsPanel() {
     return (
@@ -275,9 +273,7 @@ export function HubsPage() {
       </HeaderPortal>
 
       <TabSlideBar
-        id="hubs"
         side="right"
-        tabs={rightTabs}
         //value={rightTab}
         //onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
         open={showSideBar}

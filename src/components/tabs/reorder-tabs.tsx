@@ -229,13 +229,16 @@ export function ReorderTabs({
 
   //const { setTabIndicatorPos } = useContext(TabIndicatorContext)
 
-  const selectedTab = useMemo(() => getTabFromValue(value, tabs), [value, tabs])
+  const selectedTab = useMemo(
+    () => getTabFromValue(value, tabs ?? []),
+    [value, tabs]
+  )
 
   if (!selectedTab) {
     return null
   }
 
-  const tabIds = tabs.map((tab) => tab.id)
+  const tabIds = tabs?.map((tab) => tab.id) ?? []
 
   return (
     <VCenterRow className={cn('justify-between gap-x-1', className)} ref={ref}>
@@ -246,8 +249,11 @@ export function ReorderTabs({
           const { active, over } = event
 
           if (allowReorder && over && active.id !== over?.id) {
-            const oldIndex = where(tabs, (tab) => tab.id === active.id)[0]!
-            const newIndex = where(tabs, (tab) => tab.id === over.id)[0]! //genesetState.order.indexOf(over.id as string)
+            const oldIndex = where(
+              tabs ?? [],
+              (tab) => tab.id === active.id
+            )[0]!
+            const newIndex = where(tabs ?? [], (tab) => tab.id === over.id)[0]! //genesetState.order.indexOf(over.id as string)
             const newOrder = arrayMove(tabIds, oldIndex, newIndex)
 
             onReorder?.(newOrder)
@@ -261,7 +267,7 @@ export function ReorderTabs({
             items={tabIds}
             strategy={horizontalListSortingStrategy}
           >
-            {tabs.map((tab) => {
+            {tabs?.map((tab) => {
               const selected = tab.id === selectedTab.tab.id
 
               return (

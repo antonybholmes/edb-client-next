@@ -47,6 +47,7 @@ import { UploadIcon } from '@/components/icons/upload-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import {
   onTextFileChange,
+  openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
@@ -113,9 +114,9 @@ function DomainElem({ domain, setDelDomain }: IDomainProps) {
     >
       <Checkbox
         checked={domain.show}
-        onCheckedChange={state =>
+        onCheckedChange={(state) =>
           setDomain(
-            produce(domain, draft => {
+            produce(domain, (draft) => {
               draft.show = state
             })
           )
@@ -129,41 +130,41 @@ function DomainElem({ domain, setDelDomain }: IDomainProps) {
             font: domain.text,
             onColorChange: (color, opacity) => {
               setDomain(
-                produce(domain, draft => {
+                produce(domain, (draft) => {
                   draft.text.font.fill.value = color
                   draft.text.font.fill.opacity = opacity
                 })
               )
 
               setGlobalDomain(
-                produce(globalDomain, draft => {
+                produce(globalDomain, (draft) => {
                   draft.text.font.fill.value = color
                   draft.text.font.fill.opacity = opacity
                 })
               )
             },
-            onShowColor: show => {
+            onShowColor: (show) => {
               setDomain(
-                produce(domain, draft => {
+                produce(domain, (draft) => {
                   draft.text.show = show
                 })
               )
 
               setGlobalDomain(
-                produce(globalDomain, draft => {
+                produce(globalDomain, (draft) => {
                   draft.text.show = show
                 })
               )
             },
-            onFontChange: font => {
+            onFontChange: (font) => {
               setDomain(
-                produce(domain, draft => {
+                produce(domain, (draft) => {
                   draft.text = font
                 })
               )
 
               setGlobalDomain(
-                produce(globalDomain, draft => {
+                produce(globalDomain, (draft) => {
                   draft.text = font
                 })
               )
@@ -173,22 +174,22 @@ function DomainElem({ domain, setDelDomain }: IDomainProps) {
             tooltip: 'Border',
             color: domain.border.value,
 
-            onShowColor: show => {
+            onShowColor: (show) => {
               setDomain(
-                produce(domain, draft => {
+                produce(domain, (draft) => {
                   draft.border.show = show
                 })
               )
 
               setGlobalDomain(
-                produce(globalDomain, draft => {
+                produce(globalDomain, (draft) => {
                   draft.border.show = show
                 })
               )
             },
             onColorChange: (color, opacity, width) => {
               setDomain(
-                produce(domain, draft => {
+                produce(domain, (draft) => {
                   draft.border.value = color
                   draft.border.opacity = opacity
                   draft.border.width = width
@@ -196,7 +197,7 @@ function DomainElem({ domain, setDelDomain }: IDomainProps) {
               )
 
               setGlobalDomain(
-                produce(globalDomain, draft => {
+                produce(globalDomain, (draft) => {
                   draft.border.value = color
                   draft.border.opacity = opacity
                   draft.border.width = width
@@ -209,36 +210,36 @@ function DomainElem({ domain, setDelDomain }: IDomainProps) {
             tooltip: 'Fill',
             color: domain.fill.value,
 
-            onShowColor: show => {
+            onShowColor: (show) => {
               setDomain(
-                produce(domain, draft => {
+                produce(domain, (draft) => {
                   draft.fill.show = show
                 })
               )
 
               setGlobalDomain(
-                produce(globalDomain, draft => {
+                produce(globalDomain, (draft) => {
                   draft.fill.show = show
                 })
               )
             },
             onColorChange: (color, opacity) => {
               setDomain(
-                produce(domain, draft => {
+                produce(domain, (draft) => {
                   draft.fill.value = color
                   draft.fill.opacity = opacity
                 })
               )
 
               setGlobalDomain(
-                produce(globalDomain, draft => {
+                produce(globalDomain, (draft) => {
                   draft.fill.value = color
                   draft.fill.opacity = opacity
                 })
               )
 
               setGlobalDomain(
-                produce(globalDomain, draft => {
+                produce(globalDomain, (draft) => {
                   draft.fill.value = color
                   draft.fill.opacity = opacity
                 })
@@ -254,9 +255,9 @@ function DomainElem({ domain, setDelDomain }: IDomainProps) {
         <Input
           placeholder={TEXT_NAME}
           value={domain.name}
-          onTextChange={v =>
+          onTextChange={(v) =>
             setDomain(
-              produce(domain, draft => {
+              produce(domain, (draft) => {
                 draft.name = v
               })
             )
@@ -268,9 +269,9 @@ function DomainElem({ domain, setDelDomain }: IDomainProps) {
             value={domain.start}
             limit={[1, n]}
             placeholder="Start"
-            onNumChange={v => {
+            onNumChange={(v) => {
               setDomain(
-                produce(domain, draft => {
+                produce(domain, (draft) => {
                   draft.start = Math.min(Math.max(1, v), n)
                   draft.end = Math.min(Math.max(draft.start + 1, draft.end), n)
                 })
@@ -282,10 +283,10 @@ function DomainElem({ domain, setDelDomain }: IDomainProps) {
             value={domain.end}
             limit={[domain.start + 1, n]}
             placeholder="End"
-            onNumChange={v => {
+            onNumChange={(v) => {
               console.log('end', v, Math.min(Math.max(domain.start + 1, v)))
               setDomain(
-                produce(domain, draft => {
+                produce(domain, (draft) => {
                   draft.end = Math.min(Math.max(domain.start + 1, v), n)
                 })
               )
@@ -346,13 +347,10 @@ export function DomainPropsPanel({ ref }: IDivProps) {
           <VCenterRow className="items-stretch">
             <IconButton
               onClick={() =>
-                openDialog({
-                  type: 'open',
-                  payload: {
-                    fileTypes: ['json'],
-                    callback: (message, files) =>
-                      onTextFileChange(message, files, openFeatureFiles),
-                  },
+                openFilesDialog({
+                  fileTypes: ['json'],
+                  onFileChange: (message, files) =>
+                    onTextFileChange(message, files, openFeatureFiles),
                 })
               }
               title="Open features"
@@ -374,7 +372,7 @@ export function DomainPropsPanel({ ref }: IDivProps) {
               // ripple={false}
               onClick={() =>
                 setFeatures(
-                  produce(features, draft => {
+                  produce(features, (draft) => {
                     draft.push({
                       ...feature,
                       id: makeUuid(),
@@ -401,7 +399,7 @@ export function DomainPropsPanel({ ref }: IDivProps) {
                   type: 'warning',
                   payload: {
                     content: 'Are you sure you want to clear all features?',
-                    callback: response => {
+                    callback: (response) => {
                       if (response === TEXT_OK) {
                         setFeatures([])
                       }
@@ -421,9 +419,9 @@ export function DomainPropsPanel({ ref }: IDivProps) {
           <CheckPropRow
             title={TEXT_SHOW}
             checked={displayProps.features.show}
-            onCheckedChange={state =>
+            onCheckedChange={(state) =>
               setDisplayProps(
-                produce(displayProps, draft => {
+                produce(displayProps, (draft) => {
                   draft.features.show = state
                 })
               )
@@ -434,9 +432,9 @@ export function DomainPropsPanel({ ref }: IDivProps) {
             title="Positions"
             disabled={!displayProps.features.show}
             checked={displayProps.features.positions.show}
-            onCheckedChange={state =>
+            onCheckedChange={(state) =>
               setDisplayProps(
-                produce(displayProps, draft => {
+                produce(displayProps, (draft) => {
                   draft.features.positions.show = state
                 })
               )
@@ -451,7 +449,7 @@ export function DomainPropsPanel({ ref }: IDivProps) {
                   color: feature.text.font.fill.value,
                   onColorChange: (color, opacity) => {
                     setFeatures(
-                      produce(features, draft => {
+                      produce(features, (draft) => {
                         for (const f of draft) {
                           f.text.font.fill.value = color
                           f.text.font.fill.opacity = opacity
@@ -459,7 +457,7 @@ export function DomainPropsPanel({ ref }: IDivProps) {
                       })
                     )
                     setGlobalFeature(
-                      produce(feature, draft => {
+                      produce(feature, (draft) => {
                         draft.text.font.fill.value = color
                         draft.text.font.fill.opacity = opacity
                       })
@@ -470,9 +468,9 @@ export function DomainPropsPanel({ ref }: IDivProps) {
                   tooltip: 'Border',
                   color: feature.border.value,
 
-                  onShowColor: show => {
+                  onShowColor: (show) => {
                     setFeatures(
-                      produce(features, draft => {
+                      produce(features, (draft) => {
                         for (const f of draft) {
                           f.border.show = show
                         }
@@ -480,14 +478,14 @@ export function DomainPropsPanel({ ref }: IDivProps) {
                     )
 
                     setGlobalFeature(
-                      produce(feature, draft => {
+                      produce(feature, (draft) => {
                         draft.border.show = show
                       })
                     )
                   },
                   onColorChange: (color, opacity) => {
                     setFeatures(
-                      produce(features, draft => {
+                      produce(features, (draft) => {
                         for (const f of draft) {
                           f.border.value = color
                           f.border.opacity = opacity
@@ -495,7 +493,7 @@ export function DomainPropsPanel({ ref }: IDivProps) {
                       })
                     )
                     setGlobalFeature(
-                      produce(feature, draft => {
+                      produce(feature, (draft) => {
                         draft.border.value = color
                         draft.border.opacity = opacity
                       })
@@ -508,7 +506,7 @@ export function DomainPropsPanel({ ref }: IDivProps) {
 
                   onColorChange: (color, opacity) => {
                     setFeatures(
-                      produce(features, draft => {
+                      produce(features, (draft) => {
                         for (const f of draft) {
                           f.fill.value = color
                           f.fill.opacity = opacity
@@ -516,7 +514,7 @@ export function DomainPropsPanel({ ref }: IDivProps) {
                       })
                     )
                     setGlobalFeature(
-                      produce(feature, draft => {
+                      produce(feature, (draft) => {
                         draft.fill.value = color
                         draft.fill.opacity = opacity
                       })
@@ -535,12 +533,12 @@ export function DomainPropsPanel({ ref }: IDivProps) {
           sensors={sensors}
           modifiers={[restrictToVerticalAxis]}
           //onDragStart={event => setActiveId(event.active.id as string)}
-          onDragEnd={event => {
+          onDragEnd={(event) => {
             const { active, over } = event
 
             if (over && active.id !== over?.id) {
-              const oldIndex = features.findIndex(t => t.id === active.id)
-              const newIndex = features.findIndex(t => t.id === over.id)
+              const oldIndex = features.findIndex((t) => t.id === active.id)
+              const newIndex = features.findIndex((t) => t.id === over.id)
               const newOrder = arrayMove(features, oldIndex, newIndex)
 
               setFeatures(newOrder)
@@ -553,12 +551,12 @@ export function DomainPropsPanel({ ref }: IDivProps) {
           >
             <VScrollPanel className="grow h-full">
               <ul className="flex flex-col">
-                {features.map(feature => {
+                {features.map((feature) => {
                   return (
                     <DomainElem
                       key={feature.id}
                       domain={feature}
-                      setDelDomain={fd => {
+                      setDelDomain={(fd) => {
                         if (!fd) {
                           return
                         }
@@ -568,10 +566,10 @@ export function DomainPropsPanel({ ref }: IDivProps) {
                             content: `Are you sure you want to delete the ${
                               fd.name ? fd.name : TEXT_UNLABELLED
                             } domain?`,
-                            callback: response => {
+                            callback: (response) => {
                               if (response === TEXT_OK) {
                                 setFeatures(
-                                  features.filter(f => f.id !== fd.id)
+                                  features.filter((f) => f.id !== fd.id)
                                 )
                               }
                             },

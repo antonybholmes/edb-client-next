@@ -1,5 +1,6 @@
 import {
   onTextFileChange,
+  openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 
@@ -414,15 +415,12 @@ export function GroupPropsPanel() {
               //rounded="full"
               // ripple={false}
               onClick={() =>
-                openDialog({
-                  type: 'open',
-                  payload: {
-                    fileTypes: ['json', 'cls'],
-                    callback: (message, files) => {
-                      onTextFileChange(message, files, (files) => {
-                        openGroupFiles(files)
-                      })
-                    },
+                openFilesDialog({
+                  fileTypes: ['json', 'cls'],
+                  onFileChange: (message, files) => {
+                    onTextFileChange(message, files, (files) => {
+                      openGroupFiles(files)
+                    })
                   },
                 })
               }

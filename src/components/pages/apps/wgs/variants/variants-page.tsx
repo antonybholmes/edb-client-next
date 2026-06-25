@@ -8,7 +8,6 @@ import {
   ToolbarMenu,
   ToolbarPanel,
 } from '@/toolbar/toolbar'
-import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 
 import {
   TEXT_DOWNLOAD_AS_CSV,
@@ -20,7 +19,7 @@ import {
 import { getDataFrameInfo } from '@/lib/dataframe/dataframe-utils'
 
 import { locStr } from '@/lib/genomic/genomic'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { formatChr } from '@/lib/genomic/dna'
 
@@ -49,7 +48,6 @@ import { FileIcon } from '@/icons/file-icon'
 
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
-import { DownloadIcon } from '@/components/icons/download-icon'
 import { ShowSideButton } from '@/components/pages/show-side-button'
 import { ZoomSlider } from '@/components/toolbar/zoom-slider'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
@@ -62,17 +60,12 @@ import { BaseCol } from '@/components/layout/base-col'
 import { BaseRow } from '@/components/layout/base-row'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
-import {
-  GroupToggle,
-  ToggleGroup,
-} from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { ResizableSidebar } from '@/components/slide-bar/resizable-sidebar'
 import { useSlideBar } from '@/components/slide-bar/slide-bar-store'
 import { TAB10_PALETTE } from '@/lib/color/palette'
 import { AssemblySelect } from '@/lib/edb/assembly-select'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { parseGenomicLocation } from '@/lib/genomic/genomic-location'
-import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 import { produce } from 'immer'
 import { MonitorDown } from 'lucide-react'
 import { LocationAutocomplete } from '../../genomic/seq-browser/location-autocomplete'
@@ -82,6 +75,7 @@ import {
 } from '../../matcalc/history/history-layout'
 
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
+import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import {
   useCurrentSheets,
   useFiles,
@@ -92,6 +86,7 @@ import { useDatasets } from './dataset-store'
 import { FeaturePropsPanel } from './feature-props-panel'
 import { MAFPanel } from './maf-panel'
 import APP_INFO from './manifest.json'
+import { HomeToolbar } from './toolbars/home-toolbar'
 import {
   CMAP_NONE,
   useVariantSettings,
@@ -104,8 +99,6 @@ export function VariantsPage() {
   //const [fileStore, filesDispatch] = useReducer(filesReducer, { files: [] })
   //const [fileData, setFileData] = useState<{ [key: string]: string[] }>({})
 
-  const _id = 'variants-page'
-
   const { settings, updateSettings } = useVariantSettings()
   const { setAppInfo } = useAppInfo()
   const { datasets, datasetMap, sampleMap } = useDatasets()
@@ -117,11 +110,7 @@ export function VariantsPage() {
 
   const { open, setOpen } = useSlideBar('variants-folders')
 
-  //const [addChrPrefix, setAddChrPrefix] = useState(true)
-
   const [showSideBar, setShowSideBar] = useState(true)
-
-  const svgRef = useRef<SVGSVGElement>(null)
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 
@@ -133,76 +122,36 @@ export function VariantsPage() {
   const { sheet, sheets } = useCurrentSheets()
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
+  const { svgRef } = useSVG()
 
   const df = sheet as AnnotationDataFrame
 
   useEffect(() => {
     setAppInfo(APP_INFO)
+  }, [setAppInfo])
 
-    const tabs: ITab[] = [
+  useEffect(() => {
+    setToolbarTabs([
       {
         id: 'Home',
-        component: () => (
-          <>
-            <ToolbarTabGroup title="File">
-              <ToolbarIconButton
-                title="Download image to local file"
-                onClick={() => {
-                  openDialog({
-                    type: 'save-image',
-                    payload: {
-                      name: 'variants',
-                      svgRef,
-                    },
-                  })
-                }}
-              >
-                <DownloadIcon />
-              </ToolbarIconButton>
-            </ToolbarTabGroup>
-
-            <ToolbarTabGroup title="View">
-              <ToggleGroup
-                value={[settings.view]}
-                onValueChange={(v) => {
-                  console.log('view change', v)
-                  if (v.length > 0) {
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.view = v[0] as 'pileup' | 'maf'
-                      })
-                    )
-                  }
-                }}
-                size="toolbar"
-                justify="start"
-                direction="toolbar"
-                //multiple={true}
-              >
-                <GroupToggle value="pileup">Pileup</GroupToggle>
-
-                <GroupToggle value="maf">MAF</GroupToggle>
-              </ToggleGroup>
-            </ToolbarTabGroup>
-          </>
-        ),
+        component: HomeToolbar,
       },
-    ]
-    setToolbarTabs(tabs)
+    ])
+  }, [setToolbarTabs])
 
-    const rightTabs: ITab[] = [
+  useEffect(() => {
+    setSideTabs([
       {
         id: 'Display',
-        component: () => <PileupPropsPanel />,
+        component: PileupPropsPanel,
       },
 
       {
         id: 'Features',
-        component: () => <FeaturePropsPanel />,
+        component: FeaturePropsPanel,
       },
-    ]
-    setSideTabs(rightTabs)
-  }, [])
+    ])
+  }, [setSideTabs])
 
   useEffect(() => {
     let cmap: ICMAP = { ...CMAP_NONE }
@@ -590,9 +539,9 @@ export function VariantsPage() {
 export function VariantsQueryPage() {
   return (
     <CoreProviders>
-      {/* <HistoryProvider app={APP_INFO.name}> */}
-      <VariantsPage />
-      {/* </HistoryProvider> */}
+      <SVGProvider>
+        <VariantsPage />
+      </SVGProvider>
     </CoreProviders>
   )
 }

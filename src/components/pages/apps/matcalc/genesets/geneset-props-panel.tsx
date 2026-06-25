@@ -1,5 +1,6 @@
 import {
   onTextFileChange,
+  openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 
@@ -282,16 +283,13 @@ export function GenesetPropsPanel() {
               //rounded="full"
               // ripple={false}
               onClick={() =>
-                openDialog({
-                  type: 'open',
-                  payload: {
-                    message: 'Select gene set file to open',
-                    fileTypes: ['json', 'tsv', 'txt', 'gmx', 'gmt'],
-                    callback: (message, files) => {
-                      onTextFileChange(message, files, (files) => {
-                        openGenesetFiles(files)
-                      })
-                    },
+                openFilesDialog({
+                  message: 'Select gene set file to open',
+                  fileTypes: ['json', 'tsv', 'txt', 'gmx', 'gmt'],
+                  onFileChange: (message, files) => {
+                    onTextFileChange(message, files, (files) => {
+                      openGenesetFiles(files)
+                    })
                   },
                 })
               }

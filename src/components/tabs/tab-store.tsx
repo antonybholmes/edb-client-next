@@ -218,14 +218,14 @@ export function useTabs(id: string) {
 
 export const TOOLBAR_TABS = 'toolbar'
 
-export function useToolbarTabs() {
-  return useTabs(TOOLBAR_TABS)
+export function useToolbarTabs(id: string = TOOLBAR_TABS) {
+  return useTabs(id)
 }
 
 export const OPTS_SIDEBAR_ID = 'opts-sidebar'
 
-export function useSideTabs() {
-  return useTabs(OPTS_SIDEBAR_ID)
+export function useSideTabs(id: string = OPTS_SIDEBAR_ID) {
+  return useTabs(id)
 }
 
 export function TabProvider({ children }: IChildrenProps) {

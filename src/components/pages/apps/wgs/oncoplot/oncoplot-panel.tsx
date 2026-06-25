@@ -1,6 +1,6 @@
 import { OncoplotSvg } from './oncoplot-svg'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { DisplayPropsPanel } from './display-props-panel'
 
@@ -19,8 +19,6 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
-import type { ITab } from '@/components/tabs/tab-provider'
-import { TEXT_SETTINGS } from '@/consts'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import {
   messageImageFileFormat,
@@ -30,6 +28,8 @@ import { useZoom } from '@/providers/zoom'
 import { produce } from 'immer'
 import { HistoryLayout } from '../../matcalc/history/history-layout'
 
+import { useSideTabs } from '@/components/tabs/tab-store'
+import { useSVG } from '@/providers/svg-provider'
 import {
   useCurrentSheets,
   useFiles,
@@ -47,7 +47,6 @@ interface IOncoplotPanelProps {
 }
 
 export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
-  const svgRef = useRef<SVGSVGElement>(null)
   const { zoom } = useZoom() //PLOT_ZOOM_CHANNEL) //Ctx()
   const { goto } = useHistory()
 
@@ -55,12 +54,13 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
 
   const { sheet, sheets } = useCurrentSheets()
 
-  const [activeSideTab, setActiveSideTab] = useState(TEXT_SETTINGS)
+  const { svgRef } = useSVG()
 
   const { open: openDialog } = useDialogs()
   const { messages, removeMessage } = useMessages('oncoplot') //'onco-panel')
   const { displayProps, setDisplayProps } = useOncoplotSettings()
   const [showSideBar, setShowSideBar] = useState(true)
+  const { setTabs: setSideTabs } = useSideTabs()
 
   useEffect(() => {
     const filteredMessages = messages.filter(
@@ -103,20 +103,18 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
     )
   }, [zoom])
 
-  const plotRightTabs: ITab[] = [
-    {
-      //name: nanoid(),
-      //icon: <SlidersIcon />,
-      id: 'Display',
-      component: () => <DisplayPropsPanel />,
-    },
-    {
-      //name: nanoid(),
-      //icon: <SlidersIcon />,
-      id: 'Features',
-      component: () => <FeaturePropsPanel />,
-    },
-  ]
+  useEffect(() => {
+    setSideTabs([
+      {
+        id: 'Display',
+        component: DisplayPropsPanel,
+      },
+      {
+        id: 'Features',
+        component: FeaturePropsPanel,
+      },
+    ])
+  }, [setSideTabs])
 
   return (
     <>
@@ -124,11 +122,7 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
 
       <HistoryLayout>
         <TabSlideBar
-          id="oncoplot-panel-tabs"
           side="right"
-          tabs={plotRightTabs}
-          onTabChange={(selectedTab) => setActiveSideTab(selectedTab.tab.id)}
-          value={activeSideTab}
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
@@ -169,9 +163,8 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
       <FooterPortal className="shrink-0 grow-0 justify-end">
         <></>
         <></>
-        <>
-          <ZoomSlider />
-        </>
+
+        <ZoomSlider />
       </FooterPortal>
     </>
   )

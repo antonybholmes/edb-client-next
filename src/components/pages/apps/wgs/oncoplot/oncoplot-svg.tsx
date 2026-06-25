@@ -46,13 +46,13 @@ function makeMatrix(
   blockSize: IBlock,
   spacing: IPos
 ): ReactNode {
-  const lcMutationsInUse = mutationsInUse.map(m => m.toLowerCase())
+  const lcMutationsInUse = mutationsInUse.map((m) => m.toLowerCase())
   return (
     <>
-      {range(df.shape[0]).map(ri => {
+      {range(df.shape[0]).map((ri) => {
         const y = ri * (blockSize.h + spacing.y)
 
-        return range(df.shape[1]).map(ci => {
+        return range(df.shape[1]).map((ci) => {
           const x = ci * (blockSize.w + spacing.x)
 
           const stats = df.data(ri, ci)
@@ -62,7 +62,7 @@ function makeMatrix(
             // and user has specified a multi mode
 
             if (displayProps.multi === 'equal-bars') {
-              const names = lcMutationsInUse.filter(name =>
+              const names = lcMutationsInUse.filter((name) =>
                 stats.countMap.has(name)
               )
 
@@ -192,7 +192,7 @@ function makeGrid(
   // no spacing so simple grid
   if (displayProps.grid.show) {
     if (displayProps.grid.spacing.x + displayProps.grid.spacing.y === 0) {
-      range(blockSize.h, gridHeight, blockSize.h).forEach(y => {
+      range(blockSize.h, gridHeight, blockSize.h).forEach((y) => {
         gridElem.push(
           <line
             key={y}
@@ -206,7 +206,7 @@ function makeGrid(
           />
         )
       })
-      range(blockSize.w, gridWidth, blockSize.w).forEach(x => {
+      range(blockSize.w, gridWidth, blockSize.w).forEach((x) => {
         gridElem.push(
           <line
             key={x}
@@ -223,8 +223,8 @@ function makeGrid(
     } else if (displayProps.grid.spacing.x === 0) {
       // grids for row blocks
 
-      range(0, gridHeight, blockSize.h + spacing.y).forEach(y => {
-        range(blockSize.w, gridWidth, blockSize.w).forEach(x => {
+      range(0, gridHeight, blockSize.h + spacing.y).forEach((y) => {
+        range(blockSize.w, gridWidth, blockSize.w).forEach((x) => {
           gridElem.push(
             <line
               key={`${x}:${y}`}
@@ -243,8 +243,8 @@ function makeGrid(
     } else {
       // draw border around every element
 
-      range(0, gridWidth, blockSize.w + spacing.x).forEach(x => {
-        range(0, gridHeight, blockSize.h + spacing.y).forEach(y => {
+      range(0, gridWidth, blockSize.w + spacing.x).forEach((x) => {
+        range(0, gridHeight, blockSize.h + spacing.y).forEach((y) => {
           gridElem.push(
             <rect
               key={`${x}:${y}`}
@@ -294,7 +294,7 @@ function colGraphs(
   spacing: IPos,
   displayProps: IOncoplotDisplayProps
 ) {
-  const lcMutationsInUse = mutationsInUse.map(m => m.toLowerCase())
+  const lcMutationsInUse = mutationsInUse.map((m) => m.toLowerCase())
   return (
     <>
       <g transform={`translate(${-5}, 0)`}>
@@ -309,11 +309,11 @@ function colGraphs(
         {df.sampleStats.map((stats, ci) => {
           const coords = [0]
 
-          const names = lcMutationsInUse.filter(name =>
+          const names = lcMutationsInUse.filter((name) =>
             stats.countMap.has(name)
           )
 
-          names.map(name => {
+          names.map((name) => {
             coords.push(coords[coords.length - 1]! + stats.countMap.get(name)!)
           })
 
@@ -357,7 +357,7 @@ function rowGraphs(
   spacing: IPos,
   displayProps: IOncoplotDisplayProps
 ) {
-  const lcMutationsInUse = mutationsInUse.map(m => m.toLowerCase())
+  const lcMutationsInUse = mutationsInUse.map((m) => m.toLowerCase())
 
   return (
     <>
@@ -404,13 +404,13 @@ function rowGraphs(
         {df.geneStats.map((stats, ri) => {
           const coords = [0]
 
-          const names = lcMutationsInUse.filter(name =>
+          const names = lcMutationsInUse.filter((name) =>
             stats.countMap.has(name)
           )
           // get the non zero counts
           const counts = stats.countDist(names)
 
-          counts.map(count => {
+          counts.map((count) => {
             coords.push(coords[coords.length - 1]! + count.value)
           })
 
@@ -676,7 +676,7 @@ export function OncoplotSvg({ ref }: ISVGProps) {
         : 0) +
       (displayProps.clinical.show
         ? clinicalTracks.filter(
-            track =>
+            (track) =>
               displayProps.legend.clinical.tracks[track.name]?.show ?? false
           ).length *
             (displayProps.clinical.height + displayProps.clinical.gap) +
@@ -685,14 +685,20 @@ export function OncoplotSvg({ ref }: ISVGProps) {
   )
 
   // width of max clinical tracks
-  let clinicalTracksWidth = 0
+  // let clinicalTracksWidth = 0
 
-  for (const track of clinicalTracks) {
-    clinicalTracksWidth = Math.max(
-      clinicalTracksWidth,
-      track.categoriesInUse.length * displayProps.legend.width
-    )
-  }
+  // for (const track of clinicalTracks) {
+  //   console.log(
+  //     'track',
+  //     track.name,
+  //     track.categoriesInUse.length,
+  //     displayProps.legend.width
+  //   )
+  //   clinicalTracksWidth = Math.max(
+  //     clinicalTracksWidth,
+  //     track.categoriesInUse.length * displayProps.legend.width
+  //   )
+  // }
 
   let bottom = displayProps.margin.bottom
 
@@ -715,19 +721,28 @@ export function OncoplotSvg({ ref }: ISVGProps) {
   const rows = mf?.shape[0] ?? 0
   const gridHeight = rows * blockSize.h + (rows - 1) * spacing.y
 
-  const width =
-    Math.max(gridWidth, clinicalTracksWidth) + marginLeft + marginRight
+  const width = gridWidth + marginLeft + marginRight
+
+  console.log(
+    'oncoplot width',
+    width,
+    gridWidth,
+
+    marginLeft,
+    marginRight
+  )
+
   const height = gridHeight + top + bottom
 
   if (!mf) {
     return null
   }
 
-  const samples: string[] = mf.sampleStats.map(stats => stats.sample)
+  const samples: string[] = mf.sampleStats.map((stats) => stats.sample)
 
   // keep things simple and use ints for the graph limits
   const maxSampleCount = Math.round(
-    Math.max(...mf.sampleStats.map(stats => stats.sum))
+    Math.max(...mf.sampleStats.map((stats) => stats.sum))
   )
 
   const yax = new YAxis()
@@ -737,7 +752,7 @@ export function OncoplotSvg({ ref }: ISVGProps) {
     .setTicks([0, maxSampleCount])
 
   const maxGeneCount = Math.round(
-    Math.max(...mf.geneStats.map(stats => stats.sum))
+    Math.max(...mf.geneStats.map((stats) => stats.sum))
   )
 
   const xax = new Axis()

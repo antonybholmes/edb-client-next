@@ -1,16 +1,12 @@
-import { SlidersIcon } from '@/icons/sliders-icon'
-
 import { useEffect, useRef } from 'react'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
-import { type ITab } from '@/components/tabs/tab-provider'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { Card } from '@/themed/card'
 
-import { LayersIcon } from '@/components/icons/layers-icon'
 import {
   messageImageFileFormat,
   useMessages,
@@ -29,8 +25,7 @@ import { useLollipopStore } from '../../../wgs/lollipop/lollipop-store'
 import { VariantPropsPanel } from '../../../wgs/lollipop/variant-props-panel'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
-import { OPTS_SIDEBAR_ID } from '@/components/slide-bar/resizable-sidebar'
-
+import { useSideTabs } from '@/components/tabs/tab-store'
 import { getPlot } from '../../history/history-provider/history-hooks'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
@@ -71,6 +66,8 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
 
   const { open: openDialog } = useDialogs()
 
+  const { setTabs: setSideTabs } = useSideTabs()
+
   useEffect(() => {
     const filteredMessages = messages.filter(
       (message) => message.target === plot?.id
@@ -109,51 +106,43 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
   //   lollipopFromTable(df, protein)
   // }, [])
 
-  const rightTabs: ITab[] = [
-    // {
-    //   //id: nanoid(),
-    //   icon: <LayersIcon />,
-    //   id: 'Protein',
-    //   content: ()=> <ProteinPropsPanel />,
-    // },
-    {
-      //id: nanoid(),
-      icon: <SlidersIcon />,
-      id: 'Display',
-      component: () => <LollipopPropsPanel />,
-    },
-    {
-      //id: nanoid(),
-      icon: <LayersIcon />,
-      id: 'Databases',
-      component: () => <VariantPropsPanel />,
-    },
-    {
-      //id: nanoid(),
-      icon: <LayersIcon />,
-      id: 'Features',
-      component: () => <DomainPropsPanel />,
-    },
-    {
-      //id: nanoid(),
-      icon: <LayersIcon />,
-      id: 'Labels',
-      component: () => <LabelPropsPanel />,
-    },
-    // {
-    //   //id: nanoid(),
-    //   icon: <ClockRotateLeftIcon />,
-    //   id: 'History',
-    //   content: ()=> <HistoryPanel branchId={branch?.id ?? ''} />,
-    // },
-  ]
+  useEffect(() => {
+    setSideTabs([
+      // {
+      //   //id: nanoid(),
+      //   icon: <LayersIcon />,
+      //   id: 'Protein',
+      //   content: ()=> <ProteinPropsPanel />,
+      // },
+      {
+        id: 'Display',
+        component: LollipopPropsPanel,
+      },
+      {
+        id: 'Databases',
+        component: VariantPropsPanel,
+      },
+      {
+        id: 'Features',
+        component: DomainPropsPanel,
+      },
+      {
+        id: 'Labels',
+        component: LabelPropsPanel,
+      },
+      // {
+      //   //id: nanoid(),
+      //   icon: <ClockRotateLeftIcon />,
+      //   id: 'History',
+      //   content: ()=> <HistoryPanel branchId={branch?.id ?? ''} />,
+      // },
+    ])
+  }, [setSideTabs])
 
   return (
     <>
       <TabSlideBar
-        id={OPTS_SIDEBAR_ID}
         side="right"
-        tabs={rightTabs}
         //onTabChange={selectedTab => setSelectedTab(selectedTab.tab.id)}
         //value={selectedTab}
         open={settings.sidebar.show}

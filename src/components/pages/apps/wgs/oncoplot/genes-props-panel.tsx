@@ -32,6 +32,7 @@ import { TrashIcon } from '@/components/icons/trash-icon'
 import { UploadIcon } from '@/components/icons/upload-icon'
 import {
   onTextFileChange,
+  openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 import {
@@ -77,9 +78,9 @@ function SortableGeneElem({ gene }: IGeneElemProps) {
                 type: 'warning',
                 payload: {
                   content: `Are you sure you want to delete ${gene.name}?`,
-                  callback: response => {
+                  callback: (response) => {
                     if (response === TEXT_OK) {
-                      setGenes(genes.filter(m => m.id !== gene.id))
+                      setGenes(genes.filter((m) => m.id !== gene.id))
                     }
                   },
                 },
@@ -94,10 +95,10 @@ function SortableGeneElem({ gene }: IGeneElemProps) {
     >
       <Checkbox
         checked={gene.show}
-        onCheckedChange={v =>
+        onCheckedChange={(v) =>
           setGenes(
-            produce(genes, draft => {
-              const mut = draft.find(m => m.id === gene.id)
+            produce(genes, (draft) => {
+              const mut = draft.find((m) => m.id === gene.id)
               if (mut) {
                 mut.show = v
               }
@@ -111,10 +112,10 @@ function SortableGeneElem({ gene }: IGeneElemProps) {
         colors={[
           {
             color: gene.color,
-            onColorChange: color => {
+            onColorChange: (color) => {
               setGenes(
-                produce(genes, draft => {
-                  const g = draft.find(m => m.id === gene.id)
+                produce(genes, (draft) => {
+                  const g = draft.find((m) => m.id === gene.id)
                   if (g) {
                     g.color = color
                   }
@@ -129,10 +130,10 @@ function SortableGeneElem({ gene }: IGeneElemProps) {
         placeholder={TEXT_NAME}
         value={gene.name}
         className="grow min-w-0"
-        onTextChange={v =>
+        onTextChange={(v) =>
           setGenes(
-            produce(genes, draft => {
-              const mut = draft.find(m => m.id === gene.id)
+            produce(genes, (draft) => {
+              const mut = draft.find((m) => m.id === gene.id)
               if (mut) {
                 mut.name = v
               }
@@ -179,15 +180,12 @@ export function GenePropsPanel({ ref }: IDivProps) {
         <VCenterRow>
           <IconButton
             onClick={() => {
-              openDialog({
-                type: 'open',
-                payload: {
-                  fileTypes: ['json'],
-                  callback: (message, files) =>
-                    onTextFileChange(message, files, files => {
-                      openFeatureFiles(files)
-                    }),
-                },
+              openFilesDialog({
+                fileTypes: ['json'],
+                onFileChange: (message, files) =>
+                  onTextFileChange(message, files, (files) => {
+                    openFeatureFiles(files)
+                  }),
               })
             }}
             title="Open mutations"
@@ -209,7 +207,7 @@ export function GenePropsPanel({ ref }: IDivProps) {
             // ripple={false}
             onClick={() =>
               setGenes(
-                produce(genes, draft => {
+                produce(genes, (draft) => {
                   draft.push({
                     id: makeUuid(),
                     name: 'New gene',
@@ -233,12 +231,12 @@ export function GenePropsPanel({ ref }: IDivProps) {
           sensors={sensors}
           modifiers={[restrictToVerticalAxis]}
           //onDragStart={event => setActiveId(event.active.id as string)}
-          onDragEnd={event => {
+          onDragEnd={(event) => {
             const { active, over } = event
 
             if (over && active.id !== over?.id) {
-              const oldIndex = genes.findIndex(t => t.id === active.id)
-              const newIndex = genes.findIndex(t => t.id === over.id)
+              const oldIndex = genes.findIndex((t) => t.id === active.id)
+              const newIndex = genes.findIndex((t) => t.id === over.id)
               const newOrder = arrayMove(genes, oldIndex, newIndex)
 
               setGenes(newOrder)
@@ -246,11 +244,11 @@ export function GenePropsPanel({ ref }: IDivProps) {
           }}
         >
           <SortableContext
-            items={genes.map(gene => gene.id)}
+            items={genes.map((gene) => gene.id)}
             strategy={verticalListSortingStrategy}
           >
             <ul className="flex flex-col  ">
-              {genes.map(gene => {
+              {genes.map((gene) => {
                 return <SortableGeneElem key={gene.id} gene={gene} />
               })}
             </ul>

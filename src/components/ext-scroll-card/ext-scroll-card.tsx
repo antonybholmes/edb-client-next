@@ -22,25 +22,31 @@ function _ExtScrollCard({
   children,
   className,
 }: ExtScrollCardProps) {
-  const { scrollLeft, scrollTop, vScrollRef, setSize } = useExtScrollContext()
+  const { size, scrollLeft, scrollTop, vScrollRef, setSize } =
+    useExtScrollContext()
 
-  const [maxScroll, setMaxScroll] = useState<IDim>({ w: 0, h: 0 })
+  const [scrollableArea, setScrollableArea] = useState<IDim>({ w: 0, h: 0 })
   const ref = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   function _setSize(size: IDim) {
-    console.log('setting size ext', size)
     setSize(size)
+
+    if (containerRef.current) {
+      const { clientWidth, clientHeight } = containerRef.current
+      _setScrollableArea({ w: clientWidth, h: clientHeight }, size)
+    }
   }
 
-  function _setContainerSize(size: IDim) {
-    if (containerRef.current) {
-      const { scrollWidth, scrollHeight } = containerRef.current
-      setMaxScroll({
-        w: scrollWidth - size.w,
-        h: scrollHeight - size.h,
-      })
-    }
+  function _setContainerSize(containerSize: IDim) {
+    _setScrollableArea(containerSize, size)
+  }
+
+  function _setScrollableArea(clientSize: IDim, contentSize: IDim) {
+    setScrollableArea({
+      w: Math.max(contentSize.w - clientSize.w, 0),
+      h: Math.max(contentSize.h - clientSize.h, 0),
+    })
   }
 
   useSizeObserver(containerRef, _setContainerSize)
@@ -63,7 +69,7 @@ function _ExtScrollCard({
               ref={ref}
               className="absolute left-0 top-0"
               style={{
-                transform: `translate3d(${-scrollLeft.normalized * maxScroll.w}px, ${-scrollTop.normalized * maxScroll.h}px, 0)`,
+                transform: `translate3d(${-scrollLeft.normalized * scrollableArea.w}px, ${-scrollTop.normalized * scrollableArea.h}px, 0)`,
               }}
             >
               {children}

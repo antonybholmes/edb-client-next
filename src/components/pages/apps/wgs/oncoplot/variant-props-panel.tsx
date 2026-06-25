@@ -38,6 +38,7 @@ import { DownloadIcon } from '@/components/icons/download-icon'
 import { UploadIcon } from '@/components/icons/upload-icon'
 import {
   onTextFileChange,
+  openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 import {
@@ -64,10 +65,10 @@ function MutationElem({ mutation, setDelMutation }: IMutationElemProps) {
         colors={[
           {
             color: mutation.color,
-            onColorChange: color => {
+            onColorChange: (color) => {
               setMutations(
-                produce(mutations, draft => {
-                  const mut = draft.find(m => m.id === mutation.id)
+                produce(mutations, (draft) => {
+                  const mut = draft.find((m) => m.id === mutation.id)
                   if (mut) {
                     mut.color = color
                   }
@@ -82,10 +83,10 @@ function MutationElem({ mutation, setDelMutation }: IMutationElemProps) {
         placeholder={TEXT_NAME}
         value={mutation.name}
         className="grow min-w-0"
-        onTextChange={v =>
+        onTextChange={(v) =>
           setMutations(
-            produce(mutations, draft => {
-              const mut = draft.find(m => m.id === mutation.id)
+            produce(mutations, (draft) => {
+              const mut = draft.find((m) => m.id === mutation.id)
               if (mut) {
                 mut.name = v
               }
@@ -160,16 +161,13 @@ export function VariantPropsPanel({ ref }: IDivProps) {
           <VCenterRow>
             <IconButton
               onClick={() =>
-                openDialog({
-                  type: 'open',
-                  payload: {
-                    message: 'Select mutation file to open',
-                    fileTypes: ['json'],
-                    callback: (message, files) => {
-                      onTextFileChange(message, files, files => {
-                        openFeatureFiles(files)
-                      })
-                    },
+                openFilesDialog({
+                  message: 'Select mutation file to open',
+                  fileTypes: ['json'],
+                  onFileChange: (message, files) => {
+                    onTextFileChange(message, files, (files) => {
+                      openFeatureFiles(files)
+                    })
                   },
                 })
               }
@@ -190,7 +188,7 @@ export function VariantPropsPanel({ ref }: IDivProps) {
               // ripple={false}
               onClick={() =>
                 setMutations(
-                  produce(mutations, draft => {
+                  produce(mutations, (draft) => {
                     draft.push({
                       id: makeUuid(),
                       name: 'New mutation',
@@ -216,7 +214,7 @@ export function VariantPropsPanel({ ref }: IDivProps) {
                 type: 'warning',
                 payload: {
                   content: 'Are you sure you want to reset all mutations?',
-                  callback: response => {
+                  callback: (response) => {
                     if (response === TEXT_OK) {
                       setMutations([...DEFAULT_MUTATIONS])
                     }
@@ -236,12 +234,12 @@ export function VariantPropsPanel({ ref }: IDivProps) {
             sensors={sensors}
             modifiers={[restrictToVerticalAxis]}
             //onDragStart={event => setActiveId(event.active.id as string)}
-            onDragEnd={event => {
+            onDragEnd={(event) => {
               const { active, over } = event
 
               if (over && active.id !== over?.id) {
-                const oldIndex = mutations.findIndex(t => t.id === active.id)
-                const newIndex = mutations.findIndex(t => t.id === over.id)
+                const oldIndex = mutations.findIndex((t) => t.id === active.id)
+                const newIndex = mutations.findIndex((t) => t.id === over.id)
                 const newOrder = arrayMove(mutations, oldIndex, newIndex)
 
                 setMutations(newOrder)
@@ -249,26 +247,26 @@ export function VariantPropsPanel({ ref }: IDivProps) {
             }}
           >
             <SortableContext
-              items={mutations.map(mutation => mutation.id)}
+              items={mutations.map((mutation) => mutation.id)}
               strategy={verticalListSortingStrategy}
             >
               <ul className="flex flex-col  ">
-                {mutations.map(mutation => {
+                {mutations.map((mutation) => {
                   return (
                     <MutationElem
                       key={mutation.id}
                       mutation={mutation}
-                      setDelMutation={mutation => {
+                      setDelMutation={(mutation) => {
                         openDialog({
                           type: 'warning',
                           payload: {
                             content: `Are you sure you want to delete the ${
                               mutation.name ? mutation.name : TEXT_UNLABELLED
                             } mutation?`,
-                            callback: response => {
+                            callback: (response) => {
                               if (response === TEXT_OK) {
                                 setMutations(
-                                  mutations.filter(m => m.id !== mutation.id)
+                                  mutations.filter((m) => m.id !== mutation.id)
                                 )
                               }
                             },

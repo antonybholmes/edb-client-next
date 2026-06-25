@@ -28,6 +28,7 @@ import { DownloadIcon } from '@/components/icons/download-icon'
 import { UploadIcon } from '@/components/icons/upload-icon'
 import {
   onTextFileChange,
+  openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 import {
@@ -56,11 +57,11 @@ function SortableGeneElem({ color }: IGeneElemProps) {
         colors={[
           {
             color: color.color,
-            onColorChange: v => {
+            onColorChange: (v) => {
               updateSettings(
-                produce(settings, draft => {
+                produce(settings, (draft) => {
                   const colToUpdate = draft.variants.cmap.colors.find(
-                    c => c.id === color.id
+                    (c) => c.id === color.id
                   )
                   if (colToUpdate) {
                     colToUpdate.color = v
@@ -73,7 +74,7 @@ function SortableGeneElem({ color }: IGeneElemProps) {
                       draft.cmaps[draft.variants.colorBy as PredefinedCMAP]
 
                     const colToUpdateInCmap = cmapToUpdate.colors.find(
-                      c => c.id === color.id
+                      (c) => c.id === color.id
                     )
 
                     if (colToUpdateInCmap) {
@@ -91,11 +92,11 @@ function SortableGeneElem({ color }: IGeneElemProps) {
         placeholder={TEXT_NAME}
         value={color.name}
         className="grow min-w-0"
-        onTextChange={v =>
+        onTextChange={(v) =>
           updateSettings(
-            produce(settings, draft => {
+            produce(settings, (draft) => {
               const colToUpdate = draft.variants.cmap.colors.find(
-                c => c.id === color.id
+                (c) => c.id === color.id
               )
               if (colToUpdate) {
                 colToUpdate.name = v
@@ -132,7 +133,7 @@ export function ColormapPropsPanel() {
       const data = JSON.parse(file.text)
 
       updateSettings(
-        produce(settings, draft => {
+        produce(settings, (draft) => {
           draft.variants.cmap = data as ICMAP
         })
       )
@@ -145,15 +146,13 @@ export function ColormapPropsPanel() {
         <VCenterRow>
           <IconButton
             onClick={() => {
-              openDialog({
-                type: 'open',
-                payload: {
-                  fileTypes: ['json'],
-                  callback: (message, files) => {
-                    onTextFileChange(message, files, files => {
-                      openFeatureFiles(files)
-                    })
-                  },
+              openFilesDialog({
+                message: 'Select colormap file to open',
+                fileTypes: ['json'],
+                onFileChange: (message, files) => {
+                  onTextFileChange(message, files, (files) => {
+                    openFeatureFiles(files)
+                  })
                 },
               })
             }}
@@ -200,15 +199,15 @@ export function ColormapPropsPanel() {
           sensors={sensors}
           modifiers={[restrictToVerticalAxis]}
           //onDragStart={event => setActiveId(event.active.id as string)}
-          onDragEnd={event => {
+          onDragEnd={(event) => {
             const { active, over } = event
 
             if (over && active.id !== over?.id) {
               const oldIndex = settings.variants.cmap.colors.findIndex(
-                c => c.id === active.id
+                (c) => c.id === active.id
               )
               const newIndex = settings.variants.cmap.colors.findIndex(
-                c => c.id === over.id
+                (c) => c.id === over.id
               )
               const newOrder = arrayMove(
                 settings.variants.cmap.colors,
@@ -217,7 +216,7 @@ export function ColormapPropsPanel() {
               )
 
               updateSettings(
-                produce(settings, draft => {
+                produce(settings, (draft) => {
                   draft.variants.cmap.colors = newOrder
                 })
               )
@@ -225,11 +224,11 @@ export function ColormapPropsPanel() {
           }}
         >
           <SortableContext
-            items={settings.variants.cmap.colors.map(color => color.id)}
+            items={settings.variants.cmap.colors.map((color) => color.id)}
             strategy={verticalListSortingStrategy}
           >
             <ul className="flex flex-col  ">
-              {settings.variants.cmap.colors.map(color => {
+              {settings.variants.cmap.colors.map((color) => {
                 return <SortableGeneElem key={color.id} color={color} />
               })}
             </ul>

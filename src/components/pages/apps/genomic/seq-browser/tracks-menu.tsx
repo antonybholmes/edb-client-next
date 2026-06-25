@@ -6,6 +6,7 @@ import { useTracks } from './tracks-store'
 import { OpenIcon } from '@/components/icons/open-icon'
 import {
   onTextFileChange,
+  openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 import {
@@ -156,15 +157,12 @@ export function NewTrackMenu() {
 
       <DropdownMenuItem
         onClick={() => {
-          openDialog({
-            type: 'open',
-            payload: {
-              fileTypes: ['json'],
-              callback: (message, files) =>
-                onTextFileChange(message, files, files => {
-                  openTrackFiles(files)
-                }),
-            },
+          openFilesDialog({
+            fileTypes: ['json'],
+            onFileChange: (message, files) =>
+              onTextFileChange(message, files, (files) => {
+                openTrackFiles(files)
+              }),
           })
         }}
       >

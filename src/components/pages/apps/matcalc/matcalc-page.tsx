@@ -4,7 +4,10 @@ import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 
-import { onTextFileChange } from '@/components/pages/open-files'
+import {
+  onTextFileChange,
+  openFilesDialog,
+} from '@/components/pages/open-files'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -412,17 +415,15 @@ export function MatcalcPage() {
           <DropdownMenuItem
             aria-label={TEXT_OPEN_FILE}
             onClick={() => {
-              openDialog({
-                type: 'open',
-                payload: {
-                  callback: (message, files) => {
-                    onTextFileChange(message, files, (files) => {
-                      openMatcalcDialog({
-                        type: 'open-table-file',
-                        payload: { files, callback: openDataFrames },
-                      })
+              openFilesDialog({
+                fileTypes: ['json', 'cls'],
+                onFileChange: (message, files) => {
+                  onTextFileChange(message, files, (files) => {
+                    openMatcalcDialog({
+                      type: 'open-table-file',
+                      payload: { files, callback: openDataFrames },
                     })
-                  },
+                  })
                 },
               })
             }}

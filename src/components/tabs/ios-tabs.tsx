@@ -54,7 +54,10 @@ export function IOSTabsList({
   const buttonsRef = useRef<HTMLButtonElement[]>([])
   const [focus, setFocus] = useState(false)
 
-  const selectedTab = useMemo(() => getTabFromValue(value, tabs), [value, tabs])
+  const selectedTab = useMemo(
+    () => getTabFromValue(value, tabs ?? []),
+    [value, tabs]
+  )
 
   const initial = useRef(true)
 
@@ -85,7 +88,7 @@ export function IOSTabsList({
     () =>
       selectedTab?.index === 0
         ? 'start'
-        : selectedTab?.index === tabs.length - 1
+        : selectedTab?.index === (tabs?.length ?? 0) - 1
           ? 'end'
           : 'middle',
     [selectedTab?.index]
@@ -100,7 +103,7 @@ export function IOSTabsList({
       onBlur={() => setFocus(false)}
       className="relative bg-muted/90 hover:bg-muted trans-color rounded-full p-0.5"
     >
-      {tabs.map((tab, ti) => {
+      {tabs?.map((tab, ti) => {
         //const id = makeTabId(tab, ti)
         //const w = tab.size ?? defaultWidth
         const selected = tab.id === selectedTab?.tab.id // tab.id === selectedTab?.tab.id
@@ -117,7 +120,7 @@ export function IOSTabsList({
             id={tab.id}
             key={tab.id}
             data-checked={selected}
-            ref={el => {
+            ref={(el) => {
               buttonsRef.current[ti] = el as HTMLButtonElement
             }}
             className={cn('z-20 data-[checked=true]:font-semibold h-7.5')}

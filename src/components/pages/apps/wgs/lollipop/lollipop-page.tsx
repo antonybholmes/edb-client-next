@@ -7,27 +7,16 @@ import {
   ToolbarPanel,
 } from '@/toolbar/toolbar'
 
-import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
-
-import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
-
 import { OpenIcon } from '@/icons/open-icon'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 
-import {
-  filesToDataFrames,
-  onTextFileChange,
-  type IParseOptions,
-  type ITextFileOpen,
-} from '@/components/pages/open-files'
 import { TEXT_DOWNLOAD_AS_PNG } from '@/consts'
-import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
 import { FileImageIcon } from '@/icons/file-image-icon'
 
 import { ToolbarButton } from '@/toolbar/toolbar-button'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
@@ -40,8 +29,6 @@ import { textToLines } from '@/lib/text/lines'
 
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
-import { DownloadIcon } from '@/components/icons/download-icon'
-import { SlidersIcon } from '@/components/icons/sliders-icon'
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -57,8 +44,6 @@ import { produce } from 'immer'
 
 import { useLollipopSettings } from './lollipop-settings-store'
 
-import { ToolbarCol } from '@/components/toolbar/toolbar-col'
-import { useStableId } from '@/hooks/stable-id'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { CoreProviders } from '@/providers/core-provider'
@@ -72,6 +57,7 @@ import { useZoom } from '@/providers/zoom'
 import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
+import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import {
   useCurrentSheets,
   useFiles,
@@ -79,31 +65,27 @@ import {
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { FeaturePropsPanel } from './feature-props-panel'
-import { LollipopCountIcon } from './lollipop-count-icon'
 import { LollipopPropsPanel } from './lollipop-props-panel'
-import { LollipopSingleIcon } from './lollipop-single-icon'
 import { LollipopSingleSvg } from './lollipop-single-svg'
-import { LollipopStackIcon } from './lollipop-stack-icon'
 import { LollipopStackSvg } from './lollipop-stack-svg'
 import { useLollipopStore } from './lollipop-store'
 import APP_INFO from './manifest.json'
 import { ProteinAutocomplete } from './protein-autocomplete'
 import { useProteins } from './protein-store'
+import { HomeToolbar } from './toolbars/home-toolbar'
+import { useOpen } from './use-open'
 
 function LollipopPage() {
-  const _id = useStableId('lollipop-page')
-
   const { goto, openFile, addSheets, undo } = useHistory()
 
   const { file } = useFiles()
   const { sheet, sheets } = useCurrentSheets()
 
-  const { protein, displayProps, setDisplayProps, setProtein } =
-    useLollipopSettings()
-
   const { setAppInfo } = useAppInfo()
 
   const { zoom } = useZoom()
+
+  const { open } = useOpen()
 
   //const [working, setWorking] = useState(false)
   //const [tableData, setTableData] = useState<object[]>(DEFAULT_TABLE_ROWS)
@@ -118,8 +100,7 @@ function LollipopPage() {
   //   isOpen: true,
   // }
 
-  const svgRef = useRef<SVGSVGElement>(null)
-
+  const { svgRef } = useSVG()
   //const [foldersTab, setFoldersTab] = useState<ITab>(dataTab)
   //const [tab, setTab] = useState<ITab | undefined>(dataTab)
 
@@ -136,8 +117,14 @@ function LollipopPage() {
 
   //const [proteinState, proteinDispatch] = useContext(ProteinContext)
 
-  const { plotStyle, setPlotStyle, showMaxVariantOnly, setShowMaxVariantOnly } =
-    useLollipopSettings()
+  const {
+    plotStyle,
+
+    protein,
+    displayProps,
+    setDisplayProps,
+    setProtein,
+  } = useLollipopSettings()
 
   const { aaStats, lollipopFromTable, featuresFromTable } = useLollipopStore() // useContext(LollipopContext)!
 
@@ -210,112 +197,20 @@ function LollipopPage() {
 
   useEffect(() => {
     setAppInfo(APP_INFO)
+  }, [setAppInfo])
 
+  useEffect(() => {
     const tabs: ITab[] = [
       {
-        ////name: nanoid(),
         id: 'Home',
-        //size: 2.1,
-        component: () => (
-          <>
-            <ToolbarTabGroup title="File">
-              <ToolbarOpenFile
-                onOpen={() => {
-                  console.log('open file menu')
-                  _open('variants')
-                }}
-                multiple={true}
-              />
-
-              <ToolbarIconButton
-                aria-label="Save image"
-                onClick={() => {
-                  openDialog({
-                    type: 'save-image',
-                    payload: {
-                      name: 'lollipop',
-                      svgRef,
-                    },
-                  })
-                }}
-              >
-                <DownloadIcon />
-              </ToolbarIconButton>
-            </ToolbarTabGroup>
-
-            <ToolbarTabGroup title="View" className="gap-x-1 items-start">
-              <ToolbarCol>
-                <ToolbarIconButton
-                  title="Create a stacked lollipop plot"
-                  //className="rounded-r-none"
-                  checked={plotStyle === 'stack'}
-                  onClick={() => {
-                    setPlotStyle('stack')
-                  }}
-                >
-                  <LollipopStackIcon />
-                </ToolbarIconButton>
-                <ToolbarIconButton
-                  title="Create a single lollipop plot"
-                  //className="rounded-l-none"
-                  checked={plotStyle === 'single'}
-                  onClick={() => {
-                    setPlotStyle('single')
-                  }}
-                >
-                  <LollipopSingleIcon />
-                </ToolbarIconButton>
-              </ToolbarCol>
-
-              <ToolbarCol>
-                <ToolbarButton
-                  title="Show only maximum variant"
-                  checked={showMaxVariantOnly}
-                  onClick={() => {
-                    setShowMaxVariantOnly(!showMaxVariantOnly)
-                  }}
-                >
-                  Max variant
-                </ToolbarButton>
-
-                <ToolbarButton
-                  title="Lollipop sizes are proportional to the number of variants"
-                  checked={displayProps.variants.plot.proportional}
-                  onClick={() => {
-                    setDisplayProps(
-                      produce(displayProps, (draft) => {
-                        draft.variants.plot.proportional =
-                          !draft.variants.plot.proportional
-                      })
-                    )
-                  }}
-                >
-                  Proportional
-                </ToolbarButton>
-              </ToolbarCol>
-
-              <ToolbarIconButton
-                title="Show mutation counts on single lollipop plot"
-                checked={displayProps.variants.plot.showCounts}
-                onClick={() => {
-                  setDisplayProps(
-                    produce(displayProps, (draft) => {
-                      draft.variants.plot.showCounts =
-                        !draft.variants.plot.showCounts
-                    })
-                  )
-                }}
-              >
-                <LollipopCountIcon />
-              </ToolbarIconButton>
-            </ToolbarTabGroup>
-          </>
-        ),
+        component: HomeToolbar,
       },
     ]
     setToolbarTabs(tabs)
+  }, [setToolbarTabs])
 
-    const rightTabs: ITab[] = [
+  useEffect(() => {
+    setSideTabs([
       // {
       //   //id: nanoid(),
       //   icon: <LayersIcon />,
@@ -323,20 +218,15 @@ function LollipopPage() {
       //   content: ()=> <ProteinPropsPanel />,
       // },
       {
-        //id: nanoid(),
-        icon: <SlidersIcon />,
         id: 'Display',
-        component: () => <LollipopPropsPanel />,
+        component: LollipopPropsPanel,
       },
       {
-        //id: nanoid(),
-        icon: <SlidersIcon />,
         id: 'Features',
-        component: () => <FeaturePropsPanel />,
+        component: FeaturePropsPanel,
       },
-    ]
-    setSideTabs(rightTabs)
-  }, [])
+    ])
+  }, [setSideTabs])
 
   useEffect(() => {
     if (!sheet || sheet.name !== 'Variants' || !protein) {
@@ -371,79 +261,6 @@ function LollipopPage() {
       })
     )
   }, [zoom])
-
-  function parseFiles(message: string, files: ITextFileOpen[]) {
-    if (files.length === 0) {
-      return
-    }
-
-    const file = files[0]!
-    const name = file.name
-    const text = file.text
-
-    if (message.includes('locations')) {
-      const lines = textToLines(text)
-
-      const locationTable = new DataFrameReader()
-        .keepDefaultNA(false)
-        .read(lines)
-
-      addSheets([locationTable.setName('Locations')], { mode: 'append' })
-    } else {
-      //setFilesToOpen([
-      //  { name: "Variants", text, ext: name.split(".").pop() || "" },
-      //])
-
-      openFiles(
-        [
-          {
-            name: 'Variants',
-            text,
-            ext: name.split('.').pop() || '',
-          },
-        ],
-        {
-          colNames: 1,
-          indexCols: 0,
-          delimiter: '\t',
-          keepDefaultNA: false,
-          skipRows: 0,
-        }
-      )
-    }
-    // historyState.current = {
-    //   step: 0,
-    //   history: [{ title: `Load ${name}`, df: [table.setName(name)] }],
-    // }
-  }
-
-  function openFiles(files: ITextFileOpen[], options: IParseOptions) {
-    console.log('Opening files:', files)
-    filesToDataFrames(files, {
-      parseOpts: options,
-      onSuccess: (tables) => {
-        if (tables.length > 0) {
-          openFile(tables[0]!.name, { sheets: tables })
-        }
-      },
-    })
-
-    setShowFileMenu(false)
-  }
-
-  function _open(message: string) {
-    openDialog({
-      type: 'open',
-      payload: {
-        message,
-        callback: (message, files) => {
-          onTextFileChange(message, files, (files) =>
-            parseFiles(message, files)
-          )
-        },
-      },
-    })
-  }
 
   // useEffect(() => {
   //   if (step) {
@@ -563,7 +380,7 @@ function LollipopPage() {
       component: () => (
         <DropdownMenuItem
           aria-label="Open file on your computer"
-          onClick={() => _open('variants')}
+          onClick={() => open('variants')}
         >
           <UploadIcon fill="" />
 
@@ -702,9 +519,9 @@ function LollipopPage() {
 export function LollipopQueryPage() {
   return (
     <CoreProviders>
-      {/* <HistoryProvider app={APP_INFO.name}> */}
-      <LollipopPage />
-      {/* </HistoryProvider> */}
+      <SVGProvider>
+        <LollipopPage />
+      </SVGProvider>
     </CoreProviders>
   )
 }

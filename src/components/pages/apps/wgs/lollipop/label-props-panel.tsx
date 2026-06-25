@@ -8,6 +8,7 @@ import { UploadIcon } from '@/components/icons/upload-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import {
   onTextFileChange,
+  openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 import {
@@ -97,15 +98,12 @@ export function LabelPropsPanel({ ref }: IDivProps) {
           <VCenterRow>
             <IconButton
               onClick={() => {
-                openDialog({
-                  type: 'open',
-                  payload: {
-                    fileTypes: ['json'],
-                    callback: (message, files) =>
-                      onTextFileChange(message, files, files => {
-                        openLabelFiles(files)
-                      }),
-                  },
+                openFilesDialog({
+                  fileTypes: ['json'],
+                  onFileChange: (message, files) =>
+                    onTextFileChange(message, files, (files) => {
+                      openLabelFiles(files)
+                    }),
                 })
               }}
               title="Open labels"
@@ -143,9 +141,9 @@ export function LabelPropsPanel({ ref }: IDivProps) {
           <ToolbarSeparator />
           <Checkbox
             checked={displayProps.labels.show}
-            onCheckedChange={state =>
+            onCheckedChange={(state) =>
               setDisplayProps(
-                produce(displayProps, draft => {
+                produce(displayProps, (draft) => {
                   draft.labels.show = state
                 })
               )
@@ -165,7 +163,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                 type: 'warning',
                 payload: {
                   content: 'Are you sure you want to clear all labels?',
-                  callback: response => {
+                  callback: (response) => {
                     if (response === TEXT_OK) {
                       setLabels([])
                     }
@@ -186,12 +184,12 @@ export function LabelPropsPanel({ ref }: IDivProps) {
           placeholder="Positions"
           className="grow shrink-0 text-center rounded-theme"
           value={positions}
-          onChange={e => setPositions(e.currentTarget.value)}
+          onChange={(e) => setPositions(e.currentTarget.value)}
         />
         <Button
           variant="theme"
           onClick={() => {
-            const used = new Set<number>(labels.map(label => label.start))
+            const used = new Set<number>(labels.map((label) => label.start))
 
             const newLabels: IProteinLabel[] = positions
               .trim()
@@ -207,7 +205,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                   show: true,
                 }
               })
-              .filter(label => !used.has(label.start))
+              .filter((label) => !used.has(label.start))
 
             if (newLabels.length > 0) {
               setLabels([...labels, ...newLabels])
@@ -261,10 +259,10 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                               payload: {
                                 content:
                                   'Are you sure you want to delete this label?',
-                                callback: response => {
+                                callback: (response) => {
                                   if (response === TEXT_OK) {
                                     setLabels(
-                                      labels.filter(l => l.id !== label.id)
+                                      labels.filter((l) => l.id !== label.id)
                                     )
                                   }
                                 },
@@ -280,9 +278,9 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                   >
                     <Checkbox
                       checked={label.show}
-                      onCheckedChange={state =>
+                      onCheckedChange={(state) =>
                         setLabels(
-                          produce(labels, draft => {
+                          produce(labels, (draft) => {
                             draft[li]!.show = state
                           })
                         )
@@ -293,9 +291,9 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                       colors={[
                         {
                           color: label.color,
-                          onColorChange: color =>
+                          onColorChange: (color) =>
                             setLabels(
-                              produce(labels, draft => {
+                              produce(labels, (draft) => {
                                 draft[li]!.color = color
                               })
                             ),
@@ -310,9 +308,9 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                         placeholder={TEXT_NAME}
                         value={label.name}
                         w="grow"
-                        onTextChange={v => {
+                        onTextChange={(v) => {
                           setLabels(
-                            produce(labels, draft => {
+                            produce(labels, (draft) => {
                               draft[li]!.name = v
                             })
                           )
@@ -323,9 +321,9 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                         <NumericalInput
                           value={label.start}
                           placeholder="Start"
-                          onNumChange={v => {
+                          onNumChange={(v) => {
                             setLabels(
-                              produce(labels, draft => {
+                              produce(labels, (draft) => {
                                 draft[li]!.start = Math.max(
                                   1,
                                   Math.min(v, aaStats.length)

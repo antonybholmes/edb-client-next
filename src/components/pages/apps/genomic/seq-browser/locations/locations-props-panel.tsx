@@ -1,5 +1,6 @@
 import {
   onTextFileChange,
+  openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 import { TEXT_OK } from '@/consts'
@@ -52,7 +53,7 @@ function TrackItem({
       type: 'warning',
       payload: {
         content: 'Are you sure you want to remove this location?',
-        callback: response => {
+        callback: (response) => {
           if (response === TEXT_OK) {
             setLocations(locations.filter((_, i) => i !== index))
           }
@@ -95,7 +96,7 @@ function TrackItem({
     >
       <LocationAutocomplete
         value={locStr(location)}
-        onTextChanged={loc => {
+        onTextChanged={(loc) => {
           if (loc.length > 0) {
             setLocations(locations.map((l, li) => (li === index ? loc : l)))
           } else {
@@ -108,7 +109,7 @@ function TrackItem({
             }
           }
         }}
-        onLocationChanged={l => {
+        onLocationChanged={(l) => {
           // replace the location at index
           setLocations(locations.map((loc, li) => (li === index ? l : loc)))
         }}
@@ -145,13 +146,10 @@ export function LocationsPropsPanel() {
       <VCenterRow className="items-stretch">
         <IconButton
           onClick={() => {
-            openDialog({
-              type: 'open',
-              payload: {
-                fileTypes: ['json'],
-                callback: (message, files) =>
-                  onTextFileChange(message, files, openLocationFiles),
-              },
+            openFilesDialog({
+              fileTypes: ['json'],
+              onFileChange: (message, files) =>
+                onTextFileChange(message, files, openLocationFiles),
             })
           }}
           title="Open Locations"
@@ -180,7 +178,7 @@ export function LocationsPropsPanel() {
       </VCenterRow>
 
       <FileDropZonePanel
-        onFileDrop={files => {
+        onFileDrop={(files) => {
           if (files.length > 0) {
             onTextFileChange('Open dropped file', files, openLocationFiles)
           }
@@ -188,12 +186,12 @@ export function LocationsPropsPanel() {
       >
         <DndContext
           modifiers={[restrictToVerticalAxis]}
-          onDragEnd={event => {
+          onDragEnd={(event) => {
             const { active, over } = event
 
             if (over && active.id !== over?.id) {
-              const oldIndex = where(locations, l => l.id === active.id)[0]! // locations.indexOf(active.id as string)
-              const newIndex = where(locations, l => l.id === over.id)[0]! //locations.indexOf(over.id as string)
+              const oldIndex = where(locations, (l) => l.id === active.id)[0]! // locations.indexOf(active.id as string)
+              const newIndex = where(locations, (l) => l.id === over.id)[0]! //locations.indexOf(over.id as string)
               const newOrder = arrayMove(locations, oldIndex, newIndex)
 
               setLocations(newOrder) //newOrder.map(l => parseLocation(l)))
@@ -201,7 +199,7 @@ export function LocationsPropsPanel() {
           }}
         >
           <SortableContext
-            items={locations.map(l => l.id)}
+            items={locations.map((l) => l.id)}
             strategy={verticalListSortingStrategy}
           >
             <VScrollPanel className="grow h-full">

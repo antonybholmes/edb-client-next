@@ -7,21 +7,10 @@ import {
   ToolbarPanel,
 } from '@/toolbar/toolbar'
 
-import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
-
-import { ToolbarButton } from '@/toolbar/toolbar-button'
-import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
-
 import { OpenIcon } from '@/icons/open-icon'
 
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 
-import {
-  filesToDataFrames,
-  onTextFileChange,
-  type IParseOptions,
-  type ITextFileOpen,
-} from '@/components/pages/open-files'
 import {
   TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_PNG,
@@ -29,15 +18,12 @@ import {
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_SAVE_AS,
 } from '@/consts'
-import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
 import { FileImageIcon } from '@/icons/file-image-icon'
 
 import { useEffect, useState } from 'react'
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
-
-import { MULTI_MODE_MAP, type MultiMode } from './oncoplot-utils'
 
 import {
   DropdownMenu,
@@ -46,22 +32,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { UploadIcon } from '@/icons/upload-icon'
-import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { makeClinicalTracks } from './clinical-utils'
 import { OncoplotPanel, PANEL_ID } from './oncoplot-panel'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
-import { DownloadIcon } from '@/components/icons/download-icon'
-import {
-  GroupToggle,
-  ToggleGroup,
-} from '@/components/shadcn/ui/themed/v2/toggle-group'
 import type { ITab } from '@/components/tabs/tab-provider'
-import { ToolbarCol } from '@/components/toolbar/toolbar-col'
-import { useStableId } from '@/hooks/stable-id'
 import { FileIcon } from '@/icons/file-icon'
 import { HeaderButton } from '@/layouts/header-button'
 import { useAppInfo } from '@/lib/edb/edb-settings'
@@ -69,26 +45,19 @@ import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
 import { CoreProviders } from '@/providers/core-provider'
 import { useMessages } from '@/providers/message-provider'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/themed/v2/select'
-import { produce } from 'immer'
 import { HistoryShowButton } from '../../matcalc/history/history-layout'
 
+import { useToolbarTabs } from '@/components/tabs/tab-store'
+import { SVGProvider } from '@/providers/svg-provider'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import APP_INFO from './manifest.json'
 import { OncoplotDialogsRoot } from './oncoplot-dialogs'
-import { useOncoplotSettings } from './oncoplot-settings-store'
 import { useOncoplot } from './oncoplot-store'
+import { HomeToolbar } from './toolbars/home-toolbar'
+import { useOpen } from './use-open'
 
 function OncoplotPage() {
-  const _id = useStableId('oncoplot-page')
-
   const { addSheets, openFile } = useHistory()
 
   //const [working, setWorking] = useState(false)
@@ -112,8 +81,6 @@ function OncoplotPage() {
 
   //const [search] = useState<string[]>([])
 
-  const { displayProps, setDisplayProps } = useOncoplotSettings()
-
   const { setClinicalTracks, setGenesFromTable } = useOncoplot()
 
   //const [locations, setLocations] = useState<GenomicLocation[]>([])
@@ -126,12 +93,22 @@ function OncoplotPage() {
 
   const { sendMessage } = useMessages('oncoplot') //'onco')
 
-  const { open: openDialog } = useDialogs()
+  const { open, setClinicalData } = useOpen()
   const { setAppInfo } = useAppInfo()
+  const { setTabs: setToolbarTabs } = useToolbarTabs()
 
   useEffect(() => {
     setAppInfo(APP_INFO)
   }, [])
+
+  useEffect(() => {
+    setToolbarTabs([
+      {
+        id: 'Home',
+        component: HomeToolbar,
+      },
+    ])
+  }, [setToolbarTabs])
 
   //const [clusterFrame, setClusterFrame] = useState<IClusterFrameProps>(NO_CF)
 
@@ -246,24 +223,6 @@ function OncoplotPage() {
     }
   }
 
-  function setClinicalData(clinicalTable: BaseDataFrame) {
-    const [clinicalTracks, tracksProps] = makeClinicalTracks(clinicalTable)
-
-    setClinicalTracks(clinicalTracks)
-
-    setDisplayProps(
-      produce(displayProps, (draft) => {
-        draft.legend.clinical.tracks = tracksProps
-        draft.legend.clinical.trackOrder = clinicalTracks.map(
-          (track) => track.name
-        )
-      })
-    )
-
-    // show sheet in UI
-    addSheets([clinicalTable.setName('Clinical')], { mode: 'append' })
-  }
-
   // useEffect(() => {
   //   loadDefaultSheet(historyDispatch)
   // }, [])
@@ -290,250 +249,19 @@ function OncoplotPage() {
   //   },
   // })
 
-  function parseFiles(message: string, files: ITextFileOpen[]) {
-    if (files.length === 0) {
-      return
-    }
-
-    const file = files[0]!
-    const name = file.name
-    const text = file.text
-
-    if (message.includes('clinical')) {
-      const lines = textToLines(text)
-
-      const clinicalTable = new DataFrameReader()
-        .keepDefaultNA(false)
-        .read(lines)
-
-      setClinicalData(clinicalTable)
-    } else if (message.includes('locations')) {
-      const lines = textToLines(text)
-
-      const locationTable = new DataFrameReader()
-        .keepDefaultNA(false)
-        .read(lines)
-
-      addSheets([locationTable.setName('Locations')], { mode: 'append' })
-    } else {
-      //setFilesToOpen([
-      //  { name: "Variants", text, ext: name.split(".").pop() || "" },
-      //])
-
-      openFiles(
-        [{ name: 'Variants', text, ext: name.split('.').pop() || '' }],
-        {
-          colNames: 1,
-          indexCols: 0,
-          delimiter: '\t',
-          keepDefaultNA: false,
-          skipRows: 0,
-        }
-      )
-    }
-    // historyState.current = {
-    //   step: 0,
-    //   history: [{ title: `Load ${name}`, df: [table.setName(name)] }],
-    // }
-  }
-
-  function openFiles(files: ITextFileOpen[], options: IParseOptions) {
-    //filesToDataFrames(files, historyDispatch, options)
-
-    console.log('Parsing files with options:', files)
-
-    filesToDataFrames(files, {
-      parseOpts: options,
-      onSuccess: (tables) => {
-        if (tables.length > 0) {
-          openFile(tables[0]!.name, { sheets: tables })
-
-          setGenesFromTable(tables[0]!)
-        }
-      },
-      onError: (error) => {
-        console.log('Error parsing files:', error)
-        openDialog({
-          type: 'alert',
-          payload: {
-            content: `${error}. Please check the file format and try again.`,
-          },
-        })
-      },
-    })
-
-    setShowFileMenu(false)
-  }
-
-  function _open(message: string) {
-    openDialog({
-      type: 'open',
-      payload: {
-        message,
-        callback: (message, files) => {
-          onTextFileChange(message, files, (files) =>
-            parseFiles(message, files)
-          )
-        },
-      },
-    })
-  }
-
-  const tabs: ITab[] = [
-    {
-      id: 'Home',
-      component: () => (
-        <>
-          <ToolbarTabGroup title="File">
-            <ToolbarOpenFile
-              onOpen={() => {
-                _open('variants')
-              }}
-              multiple={true}
-            />
-
-            <ToolbarIconButton
-              title="Save image"
-              onClick={() => {
-                //save("txt")
-                sendMessage({
-                  type: 'info',
-                  source: APP_INFO.name,
-                  target: PANEL_ID,
-                  data: 'save',
-                })
-              }}
-            >
-              <DownloadIcon />
-            </ToolbarIconButton>
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title="Data">
-            <ToolbarCol>
-              <ToolbarButton
-                aria-label="Open clinical information"
-                onClick={() => {
-                  _open('clinical')
-                }}
-              >
-                Clinical
-              </ToolbarButton>
-              <ToolbarButton
-                aria-label="Open location data"
-                onClick={() => {
-                  _open('locations')
-                }}
-              >
-                Locations
-              </ToolbarButton>
-            </ToolbarCol>
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup
-            title="Plot"
-            className="gap-x-4"
-            style={{ alignItems: 'flex-start' }}
-          >
-            <ToggleGroup
-              value={[
-                displayProps.sort.sortGenes ? ['rows'] : [],
-                displayProps.sort.sortSamples ? ['columns'] : [],
-              ].flat()}
-              onValueChange={(v) => {
-                const newSettings = produce(displayProps, (draft) => {
-                  draft.sort.sortGenes = v.includes('rows')
-
-                  draft.sort.sortSamples = v.includes('columns')
-                })
-
-                setDisplayProps(newSettings)
-              }}
-              size="toolbar"
-              justify="start"
-              direction="toolbar"
-              multiple={true}
-              className="gap-x-0.5"
-            >
-              <GroupToggle value="rows">Sort rows</GroupToggle>
-
-              <GroupToggle value="columns">Sort columns</GroupToggle>
-            </ToggleGroup>
-
-            {/* <ToolbarCol>
-              <ToolbarButton
-                checked={displayProps.sort.sortGenes}
-                onClick={() => {
-                  setDisplayProps(
-                    produce(displayProps, draft => {
-                      draft.sort.sortGenes = !displayProps.sort.sortGenes
-                    })
-                  )
-                }}
-                //className="w-16"
-              >
-                Sort rows
-              </ToolbarButton>
-              <ToolbarButton
-                // /className="w-16"
-                checked={displayProps.sort.sortSamples}
-                onClick={() => {
-                  setDisplayProps(
-                    produce(displayProps, draft => {
-                      draft.sort.sortSamples = !displayProps.sort.sortSamples
-                    })
-                  )
-                }}
-              >
-                Sort columns
-              </ToolbarButton>
-            </ToolbarCol> */}
-
-            <ToolbarCol>
-              <Select
-                defaultValue={displayProps.multi}
-                onValueChange={(v) => {
-                  setDisplayProps(
-                    produce(displayProps, (draft) => {
-                      draft.multi = v as MultiMode
-                    })
-                  )
-                }}
-              >
-                <SelectTrigger
-                  className="w-28"
-                  id="plot-mode-select"
-                  variant="toolbar"
-                >
-                  <SelectValue data-placeholder="Select a mode">
-                    {(value: MultiMode) => <span>{MULTI_MODE_MAP[value]}</span>}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="multi">Multi</SelectItem>
-                  <SelectItem value="equal-bars">Equal bars</SelectItem>
-                  <SelectItem value="stacked-bars">Stacked bars</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <ToolbarButton
-                checked={displayProps.removeEmptySamples}
-                onClick={() => {
-                  setDisplayProps(
-                    produce(displayProps, (draft) => {
-                      draft.removeEmptySamples =
-                        !displayProps.removeEmptySamples
-                    })
-                  )
-                }}
-              >
-                No empty samples
-              </ToolbarButton>
-            </ToolbarCol>
-          </ToolbarTabGroup>
-        </>
-      ),
-    },
-  ]
+  // function _open(message: string) {
+  //   openDialog({
+  //     type: 'open',
+  //     payload: {
+  //       message,
+  //       callback: (message, files) => {
+  //         onTextFileChange(message, files, (files) =>
+  //           parseFiles(message, files)
+  //         )
+  //       },
+  //     },
+  //   })
+  // }
 
   const fileMenuTabs: ITab[] = [
     {
@@ -542,7 +270,7 @@ function OncoplotPage() {
       component: () => (
         <DropdownMenuItem
           aria-label="Open file on your computer"
-          onClick={() => _open('variants')}
+          onClick={() => open('variants')}
         >
           <UploadIcon stroke="" />
 
@@ -663,7 +391,6 @@ function OncoplotPage() {
       <ShortcutLayout signinRequired={false}>
         <Toolbar>
           <ToolbarMenu
-            groupId={_id}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
@@ -674,11 +401,9 @@ function OncoplotPage() {
             rightShortcuts={<HistoryShowButton />}
           />
           <ToolbarPanel
-            groupId={_id}
             tabShortcutMenu={
               <ShowOptionsMenu
                 onClick={() => {
-                  //save("txt")
                   sendMessage({
                     type: 'info',
                     source: APP_INFO.name,
@@ -701,9 +426,9 @@ function OncoplotPage() {
 export function OncoplotQueryPage() {
   return (
     <CoreProviders>
-      {/* <HistoryProvider app={APP_INFO.name}> */}
-      <OncoplotPage />
-      {/* </HistoryProvider> */}
+      <SVGProvider>
+        <OncoplotPage />
+      </SVGProvider>
     </CoreProviders>
   )
 }

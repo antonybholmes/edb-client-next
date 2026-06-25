@@ -8,6 +8,7 @@
 
 ### Changed
 
+- All apps now compile.
 - open files now uses document.createelement to make custom input as more reliable than old method of using input with a ref and triggering click.
 - Gsea convert has refined tab changes.
 - Added footer context to make footer manipulation easier. More matcalc functionality moved to specific toolbars.

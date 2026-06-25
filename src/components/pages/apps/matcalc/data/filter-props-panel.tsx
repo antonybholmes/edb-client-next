@@ -1,4 +1,7 @@
-import { onTextFileChange } from '@/components/pages/open-files'
+import {
+  onTextFileChange,
+  openFilesDialog,
+} from '@/components/pages/open-files'
 import { BaseCol } from '@/layout/base-col'
 
 import { VCenterRow } from '@/layout/v-center-row'
@@ -192,16 +195,13 @@ export function FilterPropsPanel() {
                 size="icon"
                 // ripple={false}
                 onClick={() =>
-                  openDialog({
-                    type: 'open',
-                    payload: {
-                      callback: (message, files) => {
-                        onTextFileChange(message, files, (files) => {
-                          if (files.length > 0) {
-                            setText(files[0]!.text)
-                          }
-                        })
-                      },
+                  openFilesDialog({
+                    onFileChange: (message, files) => {
+                      onTextFileChange(message, files, (files) => {
+                        if (files.length > 0) {
+                          setText(files[0]!.text)
+                        }
+                      })
                     },
                   })
                 }
