@@ -52,3 +52,42 @@ export function useSaveAs() {
     },
   })
 }
+
+export function useBasicSaveAs() {
+  const { sheet } = useCurrentSheets()
+  const { open: openDialog } = useDialogs()
+
+  function save(name: string, format: string) {
+    if (!sheet) {
+      return
+    }
+
+    const sep = format === 'csv' ? ',' : '\t'
+
+    downloadDataFrame(sheet as AnnotationDataFrame, {
+      hasHeader: true,
+      hasIndex: false,
+      file: name,
+      sep,
+    })
+
+    //setShowFileMenu(false)
+  }
+
+  function saveAs(name: string = 'table') {
+    openDialog({
+      type: 'save',
+      payload: {
+        name,
+        callback: (data) => {
+          save(data.name, data.format.ext)
+        },
+      },
+    })
+  }
+
+  return {
+    save,
+    saveAs,
+  }
+}

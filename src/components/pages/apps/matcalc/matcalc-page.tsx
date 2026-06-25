@@ -260,7 +260,7 @@ export function MatcalcPage() {
   }, [setSettingsTabs, setDefaultSettingsTab])
 
   useEffect(() => {
-    const tabs: ITab[] = [
+    setToolbarTabs([
       {
         id: TEXT_HOME,
         component: HomeToolbar,
@@ -281,9 +281,7 @@ export function MatcalcPage() {
       //   id: 'Help',
       //   component: () => <ToolbarHelpTabGroup url={HELP_URL} />,
       // },
-    ]
-
-    setToolbarTabs(tabs)
+    ])
   }, [setToolbarTabs])
 
   useEffect(() => {

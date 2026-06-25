@@ -43,11 +43,13 @@ import { Textarea } from '@/themed/textarea'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { useToolbarTabs } from '@/components/tabs/tab-store'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
+import { useAppInfo } from '@/lib/edb/edb-settings'
 import { dnaToJson } from '@/lib/genomic/dna'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { CoreProviders } from '@/providers/core-provider'
 import { produce } from 'immer'
 import { useDNA } from './dna-store'
+import APP_INFO from './manifest.json'
 import { HomeToolbar } from './toolbars/home-toolbar'
 import { useSave } from './use-save'
 
@@ -62,6 +64,7 @@ export function GetDNAPage() {
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
   const { save } = useSave()
+  const { setAppInfo } = useAppInfo()
 
   async function loadTestData() {
     const res = await httpFetch.getText('/data/test/get-dna.txt')
@@ -74,14 +77,17 @@ export function GetDNAPage() {
   }
 
   useEffect(() => {
-    const tabs: ITab[] = [
+    setAppInfo(APP_INFO)
+  }, [setAppInfo])
+
+  useEffect(() => {
+    setToolbarTabs([
       {
         id: 'Home',
         component: HomeToolbar,
       },
-    ]
-    setToolbarTabs(tabs)
-  }, [])
+    ])
+  }, [setToolbarTabs])
 
   useEffect(() => {
     if (settings.outputSeqs.length > 0) {
@@ -149,8 +155,6 @@ export function GetDNAPage() {
 
   return (
     <>
-      {/* <DialogsRoot /> */}
-
       <ShortcutLayout>
         <Toolbar>
           <ToolbarMenu

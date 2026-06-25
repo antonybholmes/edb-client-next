@@ -62,12 +62,12 @@ function PlotItem({ geneset }: { geneset: IGeneSet }) {
                 payload: {
                   title: 'Delete Plot',
                   content: `Are you sure you want to delete the ${geneset.name} plot?`,
-                  callback: response => {
+                  callback: (response) => {
                     if (response === TEXT_OK) {
                       updateSettings(
-                        produce(settings, draft => {
+                        produce(settings, (draft) => {
                           draft.genesets = draft.genesets.filter(
-                            g => g.id !== geneset.id
+                            (g) => g.id !== geneset.id
                           )
                         })
                       )
@@ -103,7 +103,7 @@ function PlotItem({ geneset }: { geneset: IGeneSet }) {
   )
 }
 
-export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
+export function PlotsPropsPanel() {
   const { settings, updateSettings, resetSettings } = useSingleCellSettings()
 
   const { open: openDialog } = useDialogs()
@@ -118,7 +118,7 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
           icon={<PlusIcon withCircle={true} />}
           title="Add Plot"
           onMainClick={() => {
-            openSingleCellDialog({ type: 'add-genes', payload: { datasetId } })
+            openSingleCellDialog({ type: 'add-genes', payload: {} })
           }}
           //align="end"
         >
@@ -127,7 +127,7 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
             onClick={() =>
               openSingleCellDialog({
                 type: 'add-genes',
-                payload: { datasetId },
+                payload: {},
               })
             }
           >
@@ -140,7 +140,7 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
             aria-label="Clusters"
             onClick={() => {
               updateSettings(
-                produce(settings, draft => {
+                produce(settings, (draft) => {
                   draft.genesets.push({
                     id: makeUuid(),
                     name: 'Clusters',
@@ -163,7 +163,7 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
                 title: 'Reset Plots',
                 content:
                   'Are you sure you want to reset the plots to default view?',
-                callback: response => {
+                callback: (response) => {
                   if (response === TEXT_OK) {
                     resetSettings()
                   }
@@ -183,16 +183,18 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
           //onDragStart={event => setActiveId(event.active.id as string)}
           //for the moment do not allow to be re-arranged as it messes up
           //cluster color rendering
-          onDragEnd={event => {
+          onDragEnd={(event) => {
             const { active, over } = event
 
             if (over && active.id !== over?.id) {
-              const oldIndex = genesets.findIndex(plot => plot.id === active.id)
+              const oldIndex = genesets.findIndex(
+                (plot) => plot.id === active.id
+              )
 
-              const newIndex = genesets.findIndex(plot => plot.id === over.id)
+              const newIndex = genesets.findIndex((plot) => plot.id === over.id)
 
               const newOrder = arrayMove(
-                genesets.map(plot => plot.id),
+                genesets.map((plot) => plot.id),
                 oldIndex,
                 newIndex
               )
@@ -202,9 +204,9 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
               // )
 
               updateSettings(
-                produce(settings, draft => {
+                produce(settings, (draft) => {
                   draft.genesets = newOrder.map(
-                    id => settings.genesets.find(g => g.id === id)!
+                    (id) => settings.genesets.find((g) => g.id === id)!
                   )
 
                   console.error('draft.genesets', draft.genesets)
@@ -216,11 +218,11 @@ export function PlotsPropsPanel({ datasetId }: { datasetId: string }) {
           }}
         >
           <SortableContext
-            items={genesets.map(p => p.id)}
+            items={genesets.map((p) => p.id)}
             strategy={verticalListSortingStrategy}
           >
             <ul className="flex flex-col">
-              {genesets.map(gs => {
+              {genesets.map((gs) => {
                 return (
                   // <BaseSortableItem key={gs.id} id={gs.id}>
                   <PlotItem key={gs.id} geneset={gs} />

@@ -15,23 +15,21 @@ import { Textarea } from '@/themed/textarea'
 import { Checkbox } from '@/themed/v2/check-box'
 import { useState } from 'react'
 
-import type { PlotMode } from './plot-grid-store'
+import { usePlotGrid, type PlotMode } from './plot-grid-store'
 import {
   useSingleCellSettings,
   type IGeneSet,
   type IScrnaGene,
 } from './single-cell-settings'
 
-export interface IProps extends IModalProps {
-  datasetId: string
-}
-
-export function AddGenesDialog({ datasetId, onResponse }: IProps) {
+export function AddGenesDialog({ onResponse }: IModalProps) {
   const { settings, updateSettings } = useSingleCellSettings()
   const { fetchAccessToken } = useEdbAuth()
 
   const [text, setText] = useState('')
   const [makeSignature, setMakeSignature] = useState(false)
+
+  const { dataset } = usePlotGrid()
 
   async function search() {
     const ids = textToLines(text, { trim: true, splitOnPunctuation: true })
@@ -48,7 +46,7 @@ export function AddGenesDialog({ datasetId, onResponse }: IProps) {
 
       for (const id of sig) {
         const res = await queryClient.fetchQuery({
-          queryKey: ['genes', datasetId, id],
+          queryKey: ['genes', dataset?.id, id],
           queryFn: async () => {
             const accessToken = await fetchAccessToken()
 
@@ -57,7 +55,7 @@ export function AddGenesDialog({ datasetId, onResponse }: IProps) {
             }
 
             const res = await httpFetch.getJson<{ data: IScrnaGene[] }>(
-              `${API_SCRNA_DATASETS_URL}/${datasetId}/genes?q=${encodeURIComponent(id)}`,
+              `${API_SCRNA_DATASETS_URL}/${dataset?.id}/genes?q=${encodeURIComponent(id)}`,
 
               { headers: bearerHeaders(accessToken) }
             )

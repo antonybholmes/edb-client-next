@@ -52,7 +52,7 @@ export interface IGeneSet extends IDBEntity {
   genes: IScrnaGene[]
 }
 
-const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:v28`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:v30`
 
 // GEX - each plot use its own scale, Global GEX - all plots use the same scale, Cluster - draw clusters rather than GEX
 
@@ -242,10 +242,10 @@ export interface ISingleCellSettingsStore extends ISingleCellSettings {
 
 export const useSingleCellSettingsStore = create<ISingleCellSettingsStore>()(
   persist(
-    set => ({
+    (set) => ({
       ...DEFAULT_SETTINGS,
       updateSettings: (settings: Partial<ISingleCellSettings>) => {
-        set(state => ({ ...state, ...settings }))
+        set((state) => ({ ...state, ...settings }))
       },
     }),
     {
@@ -279,9 +279,9 @@ export function useSingleCellSettings(): {
   updateSettings: (settings: Partial<ISingleCellSettings>) => void
   resetSettings: () => void
 } {
-  const settings = useSingleCellSettingsStore(state => state)
+  const settings = useSingleCellSettingsStore((state) => state)
   const updateSettings = useSingleCellSettingsStore(
-    state => state.updateSettings
+    (state) => state.updateSettings
   )
   const resetSettings = () => updateSettings({ ...DEFAULT_SETTINGS })
 

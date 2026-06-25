@@ -76,7 +76,7 @@ import {
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { PathwayPropsPage } from './pathway-props-panel'
-import { HomeToolbar } from './toolbars/home'
+import { HomeToolbar } from './toolbars/home-toolbar'
 import { useOpen } from './use-open'
 
 const HELP_URL = DOCS_URL + '/apps/pathway'

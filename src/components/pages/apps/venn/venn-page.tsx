@@ -233,14 +233,12 @@ function VennPage() {
   }, [setAppInfo])
 
   useEffect(() => {
-    const tabs: ITab[] = [
+    setToolbarTabs([
       {
         id: 'Home',
         component: HomeToolbar,
       },
-    ]
-
-    setToolbarTabs(tabs)
+    ])
   }, [setToolbarTabs])
 
   useEffect(() => {

@@ -14,7 +14,6 @@ import {
 } from '@/lib/dataframe/dataframe-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
-import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 import { produce } from 'immer'
 
 import { useEffect, useRef, useState } from 'react'
@@ -22,8 +21,6 @@ import { useEffect, useRef, useState } from 'react'
 import { FileImageIcon } from '@/icons/file-image-icon'
 
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
-
-import { LayersIcon } from '@/icons/layers-icon'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
@@ -36,7 +33,6 @@ import {
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_EXPORT,
   TEXT_SAVE_AS,
-  TEXT_SAVE_IMAGE,
   TEXT_SAVE_TABLE,
 } from '@/consts'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
@@ -49,7 +45,6 @@ import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
 import { DownloadIcon } from '@/components/icons/download-icon'
-import { SlidersIcon } from '@/components/icons/sliders-icon'
 import { BaseRow } from '@/components/layout/base-row'
 import { IconButton } from '@/themed/icon-button'
 import {
@@ -59,7 +54,6 @@ import {
 } from '@/themed/resizable'
 
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
-import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ShowSideButton } from '../../../show-side-button'
 import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 
@@ -89,6 +83,7 @@ import { DisplayPropsPanel } from './display-props-panel'
 import { usePlotGrid } from './plot-grid-store'
 import { SingleCellDialogsRoot } from './single-cell-dialogs'
 import { useSingleCellSettings, type GeneSetMode } from './single-cell-settings'
+import { HomeToolbar } from './toolbars/home-toolbar'
 import { UmapPlotSvg } from './umap-plot-svg'
 
 const PLOT_ZOOM_CHANNEL = 'single-cell-plot-zoom'
@@ -166,54 +161,34 @@ export function SingleCellPage() {
 
   useEffect(() => {
     setAppInfo(APP_INFO)
+  }, [setAppInfo])
 
-    const tabs: ITab[] = [
+  useEffect(() => {
+    setToolbarTabs([
       {
         id: 'Home',
-        component: () => (
-          <>
-            <ToolbarTabGroup title="File">
-              <ToolbarIconButton
-                title={TEXT_SAVE_IMAGE}
-                onClick={() => {
-                  openDialog({
-                    type: 'save-image',
-                    payload: {
-                      name: 'umap',
-                      svgRef,
-                    },
-                  })
-                }}
-              >
-                <DownloadIcon />
-              </ToolbarIconButton>
-            </ToolbarTabGroup>
-          </>
-        ),
+        component: HomeToolbar,
       },
-    ]
-    setToolbarTabs(tabs)
+    ])
+  }, [setToolbarTabs])
 
-    const rightTabs: ITab[] = [
+  useEffect(() => {
+    setSideTabs([
       {
         id: TEXT_DISPLAY,
-        icon: <SlidersIcon />,
-        component: () => <DisplayPropsPanel />,
+
+        component: DisplayPropsPanel,
       },
       {
         id: 'Plots',
-        icon: <LayersIcon />,
-
-        component: () => <PlotsPropsPanel datasetId={dataset?.id ?? ''} />,
+        component: PlotsPropsPanel,
       },
       {
         id: 'Clusters',
-        icon: <LayersIcon />,
-        component: () => <ClusterPropsPanel />,
+        component: ClusterPropsPanel,
       },
-    ]
-    setSideTabs(rightTabs)
-  }, [])
+    ])
+  }, [setSideTabs])
 
   useEffect(() => {
     updateSettings(

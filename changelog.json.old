@@ -1931,6 +1931,10 @@
         {
           "msg": "open files now uses document.createelement to make custom input as more reliable than old method of using input with a ref and triggering click",
           "date": "2026-06-25T15:24:12.156Z"
+        },
+        {
+          "msg": "All apps now compile",
+          "date": "2026-06-25T20:52:46.764Z"
         }
       ],
       "Added": [

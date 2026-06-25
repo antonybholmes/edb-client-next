@@ -10,7 +10,7 @@ import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 
 import { getDataFrameInfo } from '@/lib/dataframe/dataframe-utils'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Autocomplete } from '@/components/autocomplete'
 import { AppInfoButton } from '@/components/header/app-info-button'
@@ -23,15 +23,11 @@ import {
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_EXPORT,
   TEXT_SAVE_AS,
-  TEXT_SAVE_IMAGE,
   TEXT_SAVE_TABLE,
-  TEXT_SEARCH,
   TEXT_SORT_BY,
 } from '@/consts'
-import { useStableId } from '@/hooks/stable-id'
 import { CoreProviders } from '@/providers/core-provider'
 import { useZoom } from '@/providers/zoom'
-import { GroupToggle, ToggleGroup } from '@/themed/v2/toggle-group'
 
 import {
   DropdownMenu,
@@ -61,7 +57,6 @@ import {
   ResizablePanelGroup,
   ThinVResizeHandle,
 } from '@/themed/resizable'
-import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 import { produce } from 'immer'
 
 import APP_INFO from './manifest.json'
@@ -73,10 +68,10 @@ import { AppHeaderIcon } from '@/components/header/app-header-icon'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
-import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
+import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { SelectItem, SelectList } from '@/themed/v2/select'
-import { ArrowLeftRight, ArrowUpDown } from 'lucide-react'
+import { ArrowUpDown } from 'lucide-react'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 import {
   useCurrentSheets,
@@ -86,21 +81,15 @@ import { useHistory } from '../../matcalc/history/history-provider/history-provi
 import { DatasetFilter } from './dataset-filter'
 import { DisplayPropsPanel } from './display-props-panel'
 import { MotifsPropsPanel } from './motifs-props-panel'
-import { useMotifSettings, type Mode } from './motifs-settings'
+import { useMotifSettings } from './motifs-settings'
 import { useMotifs } from './motifs-store'
+import { HomeToolbar } from './toolbars/home-toolbar'
 
 const PLOT_ZOOM_CHANNEL = 'motifs-plot-zoom'
 
 export function MotifsPage() {
-  //const [fileStore, filesDispatch] = useReducer(filesReducer, { files: [] })
-  //const [fileData, setFileData] = useState<{ [key: string]: string[] }>({})
-
-  const _id = useStableId('motifs-page')
-
   const { search, searchResult, updateSearch } = useMotifs()
   const { setAppInfo } = useAppInfo()
-
-  const svgRef = useRef<SVGSVGElement>(null)
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 
@@ -119,119 +108,33 @@ export function MotifsPage() {
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
+  const { svgRef } = useSVG()
 
   useEffect(() => {
     setAppInfo(APP_INFO)
+  }, [setAppInfo])
 
-    const tabs: ITab[] = [
+  useEffect(() => {
+    setToolbarTabs([
       {
-        //id: nanoid(),
         id: 'Home',
-        component: () => (
-          <>
-            <ToolbarTabGroup title="File">
-              <ToolbarIconButton
-                title={TEXT_SAVE_IMAGE}
-                onClick={() => {
-                  openDialog({
-                    type: 'save-image',
-                    payload: {
-                      name: 'motifs',
-                      svgRef,
-                    },
-                  })
-                }}
-              >
-                <DownloadIcon />
-              </ToolbarIconButton>
-            </ToolbarTabGroup>
-
-            <ToolbarTabGroup title="Display" className="gap-x-1">
-              <ToggleGroup
-                value={[settings.mode]}
-                onValueChange={(v) => {
-                  if (v) {
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.mode = v[0] as Mode
-                      })
-                    )
-                  }
-                }}
-                size="toolbar"
-              >
-                <GroupToggle
-                  value="prob"
-                  className="w-12"
-                  aria-label="Probability view"
-                >
-                  Prob
-                </GroupToggle>
-
-                <GroupToggle
-                  value="bits"
-                  className="w-12"
-                  aria-label="Bits view"
-                >
-                  Bits
-                </GroupToggle>
-              </ToggleGroup>
-
-              <ToolbarIconButton
-                checked={settings.revComp}
-                onClick={() => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.revComp = !settings.revComp
-                    })
-                  )
-                }}
-                title="Reverse Complement"
-              >
-                <ArrowLeftRight className="w-4.5" />
-              </ToolbarIconButton>
-            </ToolbarTabGroup>
-
-            <ToolbarTabGroup title={TEXT_SEARCH} className="gap-x-1">
-              <ToolbarButton
-                checked={search.mode === 'advanced'}
-                onClick={() => {
-                  updateSearch(
-                    produce(search, (draft) => {
-                      if (search.mode === 'advanced') {
-                        draft.mode = 'basic'
-                      } else {
-                        draft.mode = 'advanced'
-                      }
-                    })
-                  )
-                }}
-                aria-label="Advanced Search"
-              >
-                Advanced
-              </ToolbarButton>
-            </ToolbarTabGroup>
-          </>
-        ),
+        component: HomeToolbar,
       },
-    ]
+    ])
+  }, [setToolbarTabs])
 
-    setToolbarTabs(tabs)
-
-    const rightTabs: ITab[] = [
+  useEffect(() => {
+    setSideTabs([
       {
         id: 'Tracks',
-        //icon: <SearchIcon />,
-        component: () => <MotifsPropsPanel />,
+        component: MotifsPropsPanel,
       },
       {
         id: 'Display',
-        //icon: <SettingsIcon />,
-        component: () => <DisplayPropsPanel />,
+        component: DisplayPropsPanel,
       },
-    ]
-    setSideTabs(rightTabs)
-  }, [])
+    ])
+  }, [setSideTabs])
 
   // // sync local query state when the global search query changes
   // useEffect(() => {
@@ -634,7 +537,9 @@ export function MotifsPage() {
 export function MotifsQueryPage() {
   return (
     <CoreProviders>
-      <MotifsPage />
+      <SVGProvider>
+        <MotifsPage />
+      </SVGProvider>
     </CoreProviders>
   )
 }

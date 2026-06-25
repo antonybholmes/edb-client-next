@@ -16,19 +16,12 @@ import {
   getFormattedShape,
 } from '@/lib/dataframe/dataframe-utils'
 
-import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
-
-import { ClockRotateLeftIcon } from '@/icons/clock-rotate-left-icon'
-
 import { useEffect, useState } from 'react'
 
 import {
   TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_TXT,
-  TEXT_FILE,
-  TEXT_HISTORY,
   TEXT_SAVE_AS,
-  TEXT_SAVE_TABLE,
 } from '@/consts'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -41,18 +34,14 @@ import {
 } from '@/lib/dataframe/annotation-dataframe'
 import { DataFrame } from '@/lib/dataframe/dataframe'
 import { friendlyFilename } from '@/lib/path'
-import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import type { ITab } from '@/components/tabs/tab-provider'
 
-import { useStableId } from '@/hooks/stable-id'
-import { DownloadIcon } from '@/icons/download-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { CoreProviders } from '@/providers/core-provider'
 import { HistoryPanel } from '../matcalc/history/history-panel'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { BaseCol } from '@/components/layout/base-col'
 
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
@@ -64,9 +53,9 @@ import {
 } from '../matcalc/history/history-provider/history-contexts'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import APP_INFO from './manifest.json'
+import { HomeToolbar } from './toolbars/home-toolbar'
 
 export function TableViewerPage() {
-  const _id = useStableId('table-viewer-page')
   const { openFile, goto } = useHistory()
   const { setAppInfo } = useAppInfo()
 
@@ -74,52 +63,34 @@ export function TableViewerPage() {
   const { sheet } = useCurrentSheets()
 
   const [showSideBar, setShowSideBar] = useState(false)
-  const [rightTab, setRightTab] = useState(TEXT_HISTORY)
-
-  const { open: openDialog } = useDialogs()
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
 
   useEffect(() => {
     setAppInfo(APP_INFO)
+  }, [setAppInfo])
 
-    const tabs: ITab[] = [
+  useEffect(() => {
+    setToolbarTabs([
       {
         id: 'Home',
-        component: () => (
-          <>
-            <ToolbarTabGroup title={TEXT_FILE}>
-              <ToolbarIconButton
-                title={TEXT_SAVE_TABLE}
-                onClick={() =>
-                  openDialog({
-                    type: 'save',
-                    payload: {
-                      name: friendlyFilename(sheet?.name ?? 'table'),
-                    },
-                  })
-                }
-              >
-                <DownloadIcon />
-              </ToolbarIconButton>
-            </ToolbarTabGroup>
-          </>
-        ),
+        component: HomeToolbar,
       },
-    ]
+    ])
+  }, [setToolbarTabs])
 
-    setToolbarTabs(tabs)
-
-    const rightTabs: ITab[] = [
+  useEffect(() => {
+    setSideTabs([
       {
         id: 'History',
-        icon: <ClockRotateLeftIcon />,
-        component: () => <HistoryPanel />,
-      },
-    ]
-    setSideTabs(rightTabs)
 
+        component: HistoryPanel,
+      },
+    ])
+  }, [setSideTabs])
+
+  useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const key = urlParams.get('key')
 

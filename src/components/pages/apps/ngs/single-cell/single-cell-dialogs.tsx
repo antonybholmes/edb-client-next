@@ -17,9 +17,7 @@ type DialogTypeMap = {
     geneset: IGeneSet
   }
 
-  'add-genes': {
-    datasetId: string
-  }
+  'add-genes': {}
 
   'edit-cluster': {
     cluster: IScrnaCluster
@@ -57,51 +55,53 @@ interface ISingleCellDialogStore {
   clear: () => void
 }
 
-export const useSingleCellDialogStore = create<ISingleCellDialogStore>(set => ({
-  stack: [],
+export const useSingleCellDialogStore = create<ISingleCellDialogStore>(
+  (set) => ({
+    stack: [],
 
-  open: d => {
-    const id = makeUuid()
-    const dialog = { ...d, id, time: Date.now() }
+    open: (d) => {
+      const id = makeUuid()
+      const dialog = { ...d, id, time: Date.now() }
 
-    set(state => ({
-      stack: [...state.stack.slice(-MAX_DIALOGS + 1), dialog],
-    }))
-
-    return {
-      id,
-      close: () =>
-        set(state => ({
-          stack: state.stack.filter(d => d.id !== id),
-        })),
-    }
-  },
-  bringToFront: (id: string) =>
-    set(state => {
-      const dialog = state.stack.find(d => d.id === id)
-
-      if (!dialog) {
-        return state
-      }
+      set((state) => ({
+        stack: [...state.stack.slice(-MAX_DIALOGS + 1), dialog],
+      }))
 
       return {
-        stack: [
-          ...state.stack.filter(d => d.id !== id),
-          { ...dialog, time: Date.now() },
-        ],
+        id,
+        close: () =>
+          set((state) => ({
+            stack: state.stack.filter((d) => d.id !== id),
+          })),
       }
-    }),
-  close: (id: string) =>
-    set(state => ({
-      // if id is provided, remove that dialog. If not, remove the top dialog.
-      stack: state.stack.filter(d => d.id !== id),
-    })),
-  clear: () => set({ stack: [] }),
-}))
+    },
+    bringToFront: (id: string) =>
+      set((state) => {
+        const dialog = state.stack.find((d) => d.id === id)
+
+        if (!dialog) {
+          return state
+        }
+
+        return {
+          stack: [
+            ...state.stack.filter((d) => d.id !== id),
+            { ...dialog, time: Date.now() },
+          ],
+        }
+      }),
+    close: (id: string) =>
+      set((state) => ({
+        // if id is provided, remove that dialog. If not, remove the top dialog.
+        stack: state.stack.filter((d) => d.id !== id),
+      })),
+    clear: () => set({ stack: [] }),
+  })
+)
 
 export function useSingleCellDialogs() {
-  const open = useSingleCellDialogStore(s => s.open)
-  const close = useSingleCellDialogStore(s => s.close)
+  const open = useSingleCellDialogStore((s) => s.open)
+  const close = useSingleCellDialogStore((s) => s.close)
 
   return { open, close }
 }
@@ -130,10 +130,8 @@ function AddGenesDialogRenderer({
   dialog,
   close,
 }: IDialogRenderer<'add-genes'>) {
-  const { datasetId } = dialog.payload
   return (
     <AddGenesDialog
-      datasetId={datasetId}
       onResponse={() => {
         close(dialog.id)
       }}
@@ -177,8 +175,8 @@ function DialogRenderer({
 }
 
 export function SingleCellDialogsRoot() {
-  const stack = useSingleCellDialogStore(s => s.stack)
-  const close = useSingleCellDialogStore(s => s.close)
+  const stack = useSingleCellDialogStore((s) => s.stack)
+  const close = useSingleCellDialogStore((s) => s.close)
   const dialog = stack.at(-1) as Dialog | undefined // top dialog is still a discriminated union for rendering
 
   if (!dialog) {

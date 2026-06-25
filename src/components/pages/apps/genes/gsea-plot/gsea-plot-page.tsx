@@ -113,22 +113,12 @@ export function GseaPlotPage() {
   }, [setAppInfo])
 
   useEffect(() => {
-    const tabs: ITab[] = [
+    setToolbarTabs([
       {
         id: 'Home',
         component: HomeToolbar,
       },
-      // {
-      //   id: 'Help',
-      //   component: () => (
-      //     <>
-      //       <ToolbarHelpTabGroup url={HELP_URL} />
-      //     </>
-      //   ),
-      // },
-    ]
-
-    setToolbarTabs(tabs)
+    ])
   }, [setToolbarTabs])
 
   useEffect(() => {
