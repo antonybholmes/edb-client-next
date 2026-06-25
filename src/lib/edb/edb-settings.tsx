@@ -7,7 +7,7 @@ import type { IAppInfo } from '../app-info'
 import type { IBasicEdbUser } from './edb'
 import { useTheme } from './theme'
 
-const SETTINGS_KEY = `${config.appId}:settings:v38`
+const SETTINGS_KEY = `${config.appId}:settings:v40`
 
 export type ToolbarStyle = 'classic' | 'single'
 
@@ -37,6 +37,10 @@ export interface IEdbSettings {
         delimiter: 'tab' | 'comma'
         name: string
       }
+    }
+    table: {
+      hasHeader: boolean
+      hasIndex: boolean
     }
   }
   genomic: {
@@ -77,6 +81,10 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
         delimiter: 'tab',
         name: 'data',
       },
+    },
+    table: {
+      hasHeader: true,
+      hasIndex: true,
     },
   },
   genomic: {

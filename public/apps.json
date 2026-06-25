@@ -14,9 +14,9 @@
     "description": "Biological diagrams",
     "version": "16.6.2",
     "copyright": "© 2025-2026 Antony Holmes",
-    "modified": "2026-06-24T22:44:53.000Z",
-    "hash": "21d4210f7cd0c00f997ef730eda058371f867329dbc33e78132e57775f8b2383",
-    "build": 510
+    "modified": "2026-06-25T02:23:17.670Z",
+    "hash": "ec26fcdef9325746b056225a17f13e9866a9bb6fbad2b18deccb4313baf961d0",
+    "build": 512
   },
   {
     "name": "Convert",
@@ -111,19 +111,19 @@
     "color": "#40bf80",
     "version": "46.8.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-06-24T21:51:25.894Z",
-    "hash": "ec7b5de88c98a08eb07d3360f2ce5511711808f82e7dfd2cc02b667a457eeacd",
-    "build": 1660
+    "modified": "2026-06-25T02:23:17.693Z",
+    "hash": "87f6d40a10f92e5a9648a3ebeb68aeba22aa86aa5309ab51c8486c0b2b27c059",
+    "build": 1662
   },
   {
     "name": "Motifs",
     "description": "View motif logo plots.",
     "color": "#009933",
-    "version": "48.2.2",
+    "version": "48.2.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-24T22:44:53.002Z",
-    "hash": "bba48748aa531ce2796eef88140c3068c96c8c4b22d8cfc09583097b8a2df61d",
-    "build": 938
+    "modified": "2026-06-25T02:23:17.674Z",
+    "hash": "dacc44b171669b29474159b1bc205c9745a310a2ffb5efabbc97252ab695f5f7",
+    "build": 940
   },
   {
     "name": "Oncoplot",
@@ -161,9 +161,9 @@
     "color": "#808080",
     "version": "17.8.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-24T22:44:53.003Z",
-    "hash": "fa613061cd72d6274b46bf76f5137f4a01cc757b2bdd2283ef36e6f49d4a3918",
-    "build": 602
+    "modified": "2026-06-25T02:23:17.677Z",
+    "hash": "ace2d42de5f5a7566b75b41d08d3212be8e91e2009f9c1af92d0a4ba47508765",
+    "build": 604
   },
   {
     "name": "Seq Browser",

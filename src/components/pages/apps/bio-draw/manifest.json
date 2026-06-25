@@ -3,7 +3,7 @@
   "description": "Biological diagrams",
   "version": "16.6.2",
   "copyright": "(C) ${START_YEAR:2025} Antony Holmes",
-  "modified": "2026-06-24T22:44:53.000Z",
-  "hash": "21d4210f7cd0c00f997ef730eda058371f867329dbc33e78132e57775f8b2383",
-  "build": 510
+  "modified": "2026-06-25T02:23:17.670Z",
+  "hash": "ec26fcdef9325746b056225a17f13e9866a9bb6fbad2b18deccb4313baf961d0",
+  "build": 512
 }

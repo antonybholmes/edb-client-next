@@ -5,7 +5,6 @@ import {
   SaveAsDialog,
   type ISaveAsDialogProps,
   type ISaveAsFileType,
-  type ISaveAsResponse,
 } from './save-as-dialog'
 
 export const FILE_FORMAT_JSON = { name: 'JSON', ext: 'json' }
@@ -17,13 +16,18 @@ export const TXT_FILE_FORMATS: ISaveAsFileType[] = [
   CSV_FORMAT,
 ]
 
+interface ISaveTxtDialogProps extends ISaveAsDialogProps {
+  tableMode?: boolean
+}
+
 export function SaveTxtDialog({
   open = true,
   title = TEXT_SAVE_AS,
   name,
   fileTypes = TXT_FILE_FORMATS,
   onResponse = () => {},
-}: ISaveAsDialogProps) {
+  tableMode = false,
+}: ISaveTxtDialogProps) {
   const { settings, updateSettings } = useEdbSettings()
 
   return (
@@ -32,11 +36,12 @@ export function SaveTxtDialog({
       title={title}
       name={name ?? settings.save.filetypes.txt.name}
       fileTypes={fileTypes}
+      ext={tableMode ? 'Table' : undefined}
       onResponse={(response, data) => {
         if (response !== TEXT_CANCEL) {
-          const name = (data as ISaveAsResponse).name.split('.')[0]!
+          const name = data!.name.split('.')[0]
           updateSettings(
-            produce(settings, draft => {
+            produce(settings, (draft) => {
               draft.save.filetypes.txt.name = name
             })
           )

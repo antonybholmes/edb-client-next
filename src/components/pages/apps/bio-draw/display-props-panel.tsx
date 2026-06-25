@@ -3,6 +3,7 @@ import { ColorPickerButton } from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
 import { PropRow } from '@/dialogs/prop-row'
 import { VCenterRow } from '@/layout/v-center-row'
+import { DNABase } from '@/lib/genomic/dna'
 import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_RING_CLS, PILL_BUTTON_CLS } from '@/theme'
 import { NumericalInput } from '@/themed/numerical-input'
@@ -13,7 +14,7 @@ import {
   ScrollAccordion,
 } from '@/themed/v2/accordion'
 import { produce } from 'immer'
-import { useMotifSettings, type DNABase } from './motifs-settings'
+import { useMotifSettings } from './motifs-settings'
 
 export function DisplayPropsPanel() {
   const { settings, updateSettings } = useMotifSettings()
@@ -29,9 +30,9 @@ export function DisplayPropsPanel() {
                 limit={[1, 100]}
                 value={settings.letterWidth}
                 placeholder="Letter width..."
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.letterWidth = v
                     })
                   )
@@ -44,9 +45,9 @@ export function DisplayPropsPanel() {
                 limit={[1, 200]}
                 value={settings.plotHeight}
                 placeholder="Plot height..."
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.plotHeight = v
                     })
                   )
@@ -59,7 +60,7 @@ export function DisplayPropsPanel() {
           <AccordionTrigger>Colors</AccordionTrigger>
           <AccordionContent>
             <VCenterRow className="gap-x-3">
-              {BASE_IDS.map(base => (
+              {BASE_IDS.map((base) => (
                 <ColorPickerButton
                   key={base}
                   colors={[
@@ -67,9 +68,9 @@ export function DisplayPropsPanel() {
                       color: settings.baseColors[
                         base.toLowerCase() as DNABase
                       ] as string,
-                      onColorChange: color =>
+                      onColorChange: (color) =>
                         updateSettings(
-                          produce(settings, draft => {
+                          produce(settings, (draft) => {
                             draft.baseColors[base.toLowerCase() as DNABase] =
                               color
                           })

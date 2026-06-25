@@ -1,3 +1,4 @@
+import { useDialogs } from '@/components/dialogs/dialogs'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
 import { friendlyFilename } from '@/lib/path'
@@ -13,19 +14,6 @@ export function useSave() {
   const { settings } = useMatcalcSettings()
 
   function save(name: string, format: string) {
-    // if (!sheet) {
-    //   return
-    // }
-
-    // const sep = format === 'csv' ? ',' : '\t'
-
-    // downloadDataFrame(sheet as AnnotationDataFrame, {
-    //   hasHeader: true,
-    //   hasIndex: false,
-    //   file: `table.${format}`,
-    //   sep,
-    // })
-
     if (!sheet) {
       return
     }
@@ -49,4 +37,18 @@ export function useSave() {
   return {
     save,
   }
+}
+
+export function useSaveAs() {
+  const { save } = useSave()
+  const { open: openDialog } = useDialogs()
+
+  openDialog({
+    type: 'save',
+    payload: {
+      callback: (data) => {
+        save(data.name, data.format.ext)
+      },
+    },
+  })
 }

@@ -29,8 +29,6 @@ import { useEffect, useMemo, type ReactElement } from 'react'
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
-import { useSelectionRange } from '@/providers/selection-range'
-
 import { VolcanoPanel } from './apps/volcano/volcano-panel'
 import { type PlotStyle } from './plots-provider'
 
@@ -79,8 +77,6 @@ import { VolcanoProvider } from './apps/volcano/volcano-provider'
 import { OptsSidebarMenu } from './data/opts-sidebar-menu'
 import { useHistory } from './history/history-provider/history-provider'
 
-import { pathJoin } from './history/history-provider/history-actions'
-
 import { useTabs } from '@/components/tabs/tab-store'
 import { useFooter } from '@/providers/footer-provider'
 import {
@@ -122,6 +118,8 @@ export const TAB_PLOTS = 'Plots'
 
 export const TEXT_HEATMAP = 'Heatmap'
 export const TEXT_DOT_PLOT = 'Dot Plot'
+
+const FOLDER_ID = 'matcalc-folders'
 
 // const DEFAULT_DATA_TABLE_TAB: ITab = {
 //   //id: nanoid(),
@@ -176,11 +174,7 @@ export function MatcalcPage() {
   //const [dataTableTab, setDataTableTab] = useState<ITab | undefined>(undefined)
   //const [branch?.id??'', setbranch?.id??''] = useState('')
 
-  const folderId = 'matcalc-folders'
-
   const { sendMessage } = useMessages(MESSAGE_CHANNEL)
-
-  const { selection } = useSelectionRange()
 
   const { setTabs: setToolbarTabs } = useTabs('toolbar')
 
@@ -220,7 +214,7 @@ export function MatcalcPage() {
 
   const { open: openMatcalcDialog } = useMatcalcDialogs()
 
-  const { open, setOpen } = useSlideBar(folderId) //) //'matcalc') //useContext(MessageContext)
+  const { open, setOpen } = useSlideBar(FOLDER_ID) //) //'matcalc') //useContext(MessageContext)
 
   //const extGseaWorkerRef = useRef<Worker | null>(null)
 
@@ -238,10 +232,6 @@ export function MatcalcPage() {
   }, [setAppInfo])
 
   useEffect(() => {
-    // open a dedicated history app for this module
-    //openApp(APP_INFO.name)
-    setAppInfo(APP_INFO)
-
     setSettingsTabs([
       {
         id: APP_INFO.name,
@@ -314,10 +304,6 @@ export function MatcalcPage() {
       '/data/test/groups.json'
     )
 
-    //console.log('groups', res.data)
-
-    console.log('open file', table.id)
-
     openFile(`Z Test`, {
       //mode: 'append',
       groups: resg,
@@ -355,16 +341,6 @@ export function MatcalcPage() {
     openFile(`Test locations`, {
       sheets: [table.setName('Test Locations') as AnnotationDataFrame],
     })
-  }
-
-  function _addPlots(plots: HistoryPlot[]) {
-    addPlots(plots)
-
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.view.panels.tab = pathJoin(file, plots[0]!)
-      })
-    )
   }
 
   async function loadGeneTestData() {
@@ -408,8 +384,6 @@ export function MatcalcPage() {
     const genesets = await httpFetch.getJson<IGeneSet[]>(
       '/data/test/extgsea/genesets.json'
     )
-
-    console.log(genesets)
 
     openFile(`Ext GSEA Test`, {
       groups,
@@ -628,7 +602,7 @@ export function MatcalcPage() {
         </Toolbar>
         <HistoryLayout>
           <ResizableSidebar
-            id={folderId}
+            id={FOLDER_ID}
             side="left"
             className="grow"
             showCloseButton={false}

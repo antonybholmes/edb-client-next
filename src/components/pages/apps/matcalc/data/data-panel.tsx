@@ -68,29 +68,6 @@ export function DataPanel() {
 
   const { save } = useSave()
 
-  // function save(name: string, format: string) {
-  //   if (!sheet) {
-  //     return
-  //   }
-
-  //   name = friendlyFilename(name)
-
-  //   const sep = format === 'csv' ? ',' : '\t'
-  //   const hasHeader = !sheet.name.includes('GCT')
-  //   const hasIndex = !sheet.name.includes('GCT')
-
-  //   downloadDataFrame(sheet as AnnotationDataFrame, {
-  //     hasHeader,
-  //     hasIndex,
-  //     file: name,
-  //     sep,
-  //     dp: settings.view.dp,
-  //     commas: settings.view.commas,
-  //   })
-
-  //   //setShowFileMenu(false)
-  // }
-
   useEffect(() => {
     setFooter('left', { id: makeUuid(), component: FooterDFSize })
   }, [sheet, setFooter])

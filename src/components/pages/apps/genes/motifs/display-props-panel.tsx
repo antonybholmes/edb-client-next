@@ -20,8 +20,9 @@ import { FontPopover } from '@/components/plot/font/font-popover'
 import { PopoverTrigger } from '@/components/shadcn/ui/themed/v2/popover'
 import { ResizableSidebarHeaderPortal } from '@/components/slide-bar/resizable-sidebar'
 import { SwitchPropRow } from '@/dialogs/switch-prop-row'
+import { DNABase } from '@/lib/genomic/dna'
 import { produce } from 'immer'
-import { useMotifSettings, type DNABase } from './motifs-settings'
+import { useMotifSettings } from './motifs-settings'
 
 export function DisplayPropsPanel() {
   const { settings, updateSettings, resetSettings } = useMotifSettings()
@@ -38,7 +39,7 @@ export function DisplayPropsPanel() {
               payload: {
                 title: 'Reset to default',
                 content: 'Are you sure you want to reset all settings?',
-                callback: response => {
+                callback: (response) => {
                   if (response === TEXT_OK) {
                     resetSettings()
                   }
@@ -64,9 +65,9 @@ export function DisplayPropsPanel() {
                     {
                       title: 'Title',
                       textProps: settings.title.text,
-                      update: font =>
+                      update: (font) =>
                         updateSettings(
-                          produce(settings, draft => {
+                          produce(settings, (draft) => {
                             draft.title.text = font
                           })
                         ),
@@ -83,9 +84,9 @@ export function DisplayPropsPanel() {
                   limit={[1, 100]}
                   value={settings.letterWidth}
                   placeholder="Base width..."
-                  onNumChanged={v => {
+                  onNumChanged={(v) => {
                     updateSettings(
-                      produce(settings, draft => {
+                      produce(settings, (draft) => {
                         draft.letterWidth = v
                       })
                     )
@@ -98,9 +99,9 @@ export function DisplayPropsPanel() {
                   limit={[1, 200]}
                   value={settings.plotHeight}
                   placeholder="Plot height..."
-                  onNumChanged={v => {
+                  onNumChanged={(v) => {
                     updateSettings(
-                      produce(settings, draft => {
+                      produce(settings, (draft) => {
                         draft.plotHeight = v
                       })
                     )
@@ -113,9 +114,9 @@ export function DisplayPropsPanel() {
                   limit={[1, 100]}
                   value={settings.cols}
                   placeholder="Cols..."
-                  onNumChanged={v => {
+                  onNumChanged={(v) => {
                     updateSettings(
-                      produce(settings, draft => {
+                      produce(settings, (draft) => {
                         draft.cols = v
                       })
                     )
@@ -125,9 +126,9 @@ export function DisplayPropsPanel() {
               <SwitchPropRow
                 title="Axes"
                 checked={settings.axes.show}
-                onCheckedChange={checked =>
+                onCheckedChange={(checked) =>
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.axes.show = checked
                     })
                   )
@@ -138,9 +139,9 @@ export function DisplayPropsPanel() {
                     {
                       title: 'Axes Title',
                       textProps: settings.axes.title,
-                      update: font =>
+                      update: (font) =>
                         updateSettings(
-                          produce(settings, draft => {
+                          produce(settings, (draft) => {
                             draft.axes.title = font
                           })
                         ),
@@ -149,9 +150,9 @@ export function DisplayPropsPanel() {
                     {
                       title: 'Axes Labels',
                       textProps: settings.axes.labels,
-                      update: font =>
+                      update: (font) =>
                         updateSettings(
-                          produce(settings, draft => {
+                          produce(settings, (draft) => {
                             draft.axes.labels = font
                             draft.axes.ticks.show = font.show
                           })
@@ -166,7 +167,7 @@ export function DisplayPropsPanel() {
             <AccordionTrigger>Base Colors</AccordionTrigger>
             <AccordionContent>
               <VCenterRow className="gap-x-2">
-                {BASE_IDS.map(base => (
+                {BASE_IDS.map((base) => (
                   <ColorPickerPopover
                     key={base}
                     colors={[
@@ -179,7 +180,7 @@ export function DisplayPropsPanel() {
                             .fill.opacity,
                         onColorChange: (color, alpha) =>
                           updateSettings(
-                            produce(settings, draft => {
+                            produce(settings, (draft) => {
                               draft.bases[
                                 base.toLowerCase() as DNABase
                               ]!.font.fill.value = color

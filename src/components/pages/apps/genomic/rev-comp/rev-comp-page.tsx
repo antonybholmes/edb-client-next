@@ -1,8 +1,5 @@
 'use client'
 
-import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
-
-import { PlayIcon } from '@/icons/play-icon'
 import {
   ShowOptionsMenu,
   Toolbar,
@@ -10,13 +7,9 @@ import {
   ToolbarPanel,
 } from '@/toolbar/toolbar'
 
-import { ToolbarButton } from '@/toolbar/toolbar-button'
-
 import { download } from '@/lib/download-utils'
 
 import { onTextFileChange } from '@/components/pages/open-files'
-
-import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
 import { useEffect, useState } from 'react'
 
@@ -29,14 +22,11 @@ import {
 
 import { PropsPanel } from '@/components/props-panel'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
-import { Checkbox } from '@/themed/v2/check-box'
 
 import type { ITab } from '@/components/tabs/tab-provider'
 import { OpenIcon } from '@/icons/open-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { cn } from '@/lib/shadcn-utils'
-import { textToLines } from '@/lib/text/lines'
 import {
   AccordionContent,
   AccordionItem,
@@ -48,127 +38,36 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
-import { DownloadIcon } from '@/components/icons/download-icon'
-import type { ISaveAsFileType } from '@/dialogs/save-as-dialog'
-import { FILE_FORMAT_JSON } from '@/dialogs/save-txt-dialog'
-import { useStableId } from '@/hooks/stable-id'
+import { useToolbarTabs } from '@/components/tabs/tab-store'
 import { FileIcon } from '@/icons/file-icon'
 import { UploadIcon } from '@/icons/upload-icon'
 import { HeaderButton } from '@/layouts/header-button'
 import { useAppInfo } from '@/lib/edb/edb-settings'
-import { DNABase } from '@/lib/genomic/dna'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { CoreProviders } from '@/providers/core-provider'
 import { Textarea } from '@/themed/textarea'
-import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import APP_INFO from './manifest.json'
-
-const REV_MAP: { [K in DNABase]: DNABase } = {
-  A: 'T',
-  C: 'G',
-  G: 'C',
-  T: 'A',
-  a: 't',
-  c: 'g',
-  g: 'c',
-  t: 'a',
-}
-
-const FASTA_FILE_TYPE: ISaveAsFileType = {
-  name: 'FASTA',
-  ext: 'fasta',
-}
-
-interface ISeq {
-  id: string
-  seq: string
-}
-
-interface IRevCompSeq extends ISeq {
-  rev: string
-}
+import { HomeToolbar } from './toolbars/home'
 
 function RevCompPage() {
-  const _id = useStableId('rev-comp-page')
-
   const [text, setText] = useState('')
 
   const [output, setOutput] = useState('')
   const [outputMode] = useState('FASTA')
   const [outputSeqs, setOutputSeqs] = useState<IRevCompSeq[]>([])
   const { setAppInfo } = useAppInfo()
-  const [modeRev, setModeRev] = useState(true)
-  const [modeComp, setModeComp] = useState(true)
+
   const [showSideBar, setShowSideBar] = useState(true)
 
   const [showFileMenu, setShowFileMenu] = useState(false)
+
+  const { setTabs: setToolbarTabs } = useToolbarTabs()
 
   const { open: openDialog } = useDialogs()
 
   // function openFiles(files: IFileOpen[]) {
   //   setShowFileMenu(false)
   // }
-
-  function revComp(seq: ISeq): string {
-    let bases: DNABase[] = seq.seq.split('') as DNABase[]
-
-    if (modeComp) {
-      bases = bases.map((c) => REV_MAP[c] ?? c)
-    }
-
-    if (modeRev) {
-      bases = bases.toReversed()
-    }
-
-    return bases.join('')
-  }
-
-  function applyRevComp() {
-    const lines = textToLines(text)
-
-    let name: string | null = null
-    let buffer = ''
-    const seqs: ISeq[] = []
-
-    for (let line of lines) {
-      line = line.trim()
-      if (line.length === 0) {
-        if (buffer.length > 0) {
-          seqs.push({ id: name ?? `seq${seqs.length + 1}`, seq: buffer })
-        }
-
-        // space so reset
-        name = null
-        buffer = ''
-      } else if (line.startsWith('>')) {
-        if (buffer.length > 0) {
-          seqs.push({ id: name ?? `seq${seqs.length + 1}`, seq: buffer })
-        }
-
-        name = line.substring(1)
-      } else {
-        buffer += line
-      }
-    }
-
-    if (buffer.length > 0) {
-      seqs.push({ id: name ?? `seq${seqs.length + 1}`, seq: buffer })
-    }
-
-    if (seqs.length === 0) {
-      return
-    }
-
-    const revSeqs = seqs.map((s) => ({
-      id: s.id,
-      seq: s.seq,
-      rev: revComp(s),
-    }))
-
-    console.log(revSeqs)
-
-    setOutputSeqs(revSeqs)
-  }
 
   function save(name: string, format: string) {
     if (outputSeqs.length === 0) {
@@ -203,7 +102,16 @@ function RevCompPage() {
 
   useEffect(() => {
     setAppInfo(APP_INFO)
-  }, [])
+  }, [setAppInfo])
+
+  useEffect(() => {
+    setToolbarTabs([
+      {
+        id: 'Home',
+        component: HomeToolbar,
+      },
+    ])
+  }, [setToolbarTabs])
 
   useEffect(() => {
     if (outputSeqs.length > 0) {
@@ -219,60 +127,6 @@ function RevCompPage() {
       }
     }
   }, [outputSeqs])
-
-  const tabs: ITab[] = [
-    {
-      id: 'Home',
-      component: () => (
-        <>
-          <ToolbarTabGroup title="File">
-            <ToolbarOpenFile
-              onOpen={() => {
-                openDialog({
-                  type: 'open',
-                  payload: {
-                    fileTypes: ['fasta'],
-                    callback: (message, files) => {
-                      onTextFileChange(message, files, (files) => {
-                        setText(files[0]!.text)
-                      })
-                    },
-                  },
-                })
-              }}
-              multiple={true}
-            />
-
-            <ToolbarIconButton
-              arial-label="Save to local file"
-              onClick={() => {
-                openDialog({
-                  type: 'save',
-                  payload: {
-                    name: 'rev-comp',
-                    fileTypes: [FASTA_FILE_TYPE, FILE_FORMAT_JSON],
-                    callback: (data) => {
-                      save(data.name, data.format.ext)
-                    },
-                  },
-                })
-              }}
-              title="Save sequences"
-            >
-              <DownloadIcon />
-            </ToolbarIconButton>
-          </ToolbarTabGroup>
-
-          <ToolbarTabGroup title="Convert">
-            <ToolbarButton title="Convert" onClick={applyRevComp}>
-              <PlayIcon />
-              <span>Convert</span>
-            </ToolbarButton>
-          </ToolbarTabGroup>
-        </>
-      ),
-    },
-  ]
 
   const fileMenuTabs: ITab[] = [
     {
@@ -332,21 +186,7 @@ function RevCompPage() {
           <ScrollAccordion value={['output']}>
             <AccordionItem value="output">
               <AccordionTrigger>Output</AccordionTrigger>
-              <AccordionContent>
-                <Checkbox
-                  checked={modeRev}
-                  onCheckedChange={(state) => setModeRev(state)}
-                >
-                  Reverse
-                </Checkbox>
-
-                <Checkbox
-                  checked={modeComp}
-                  onCheckedChange={(state) => setModeComp(state)}
-                >
-                  Complement
-                </Checkbox>
-              </AccordionContent>
+              <AccordionContent></AccordionContent>
             </AccordionItem>
           </ScrollAccordion>
         </PropsPanel>
@@ -375,8 +215,6 @@ function RevCompPage() {
       <ShortcutLayout signinRequired={false}>
         <Toolbar>
           <ToolbarMenu
-            groupId={_id}
-            tabs={tabs}
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
@@ -384,8 +222,6 @@ function RevCompPage() {
         </Toolbar>
 
         <ToolbarPanel
-          groupId={_id}
-          tabs={tabs}
           tabShortcutMenu={
             <ShowOptionsMenu
               show={showSideBar}
@@ -396,52 +232,43 @@ function RevCompPage() {
           }
         />
 
-        <TabSlideBar
-          id="rev-comp"
-          side="right"
-          tabs={rightTabs}
-          open={showSideBar}
-          onOpenChange={setShowSideBar}
-          className="px-2"
+        <ResizablePanelGroup
+          orientation="vertical"
+          //autoSaveId="rev-comp-vert"
         >
-          <ResizablePanelGroup
-            orientation="vertical"
-            //autoSaveId="rev-comp-vert"
+          <ResizablePanel
+            id="dna"
+            defaultSize="50%"
+            minSize="0%"
+            className={cn('flex flex-col text-sm p-2')}
+            collapsible={true}
           >
-            <ResizablePanel
-              id="dna"
-              defaultSize="50%"
-              minSize="0%"
-              className={cn('flex flex-col text-sm p-2')}
-              collapsible={true}
-            >
-              <Textarea
-                className="grow whitespace-pre"
-                placeholder="FASTA/DNA sequences"
-                value={text}
-                onChange={(e) => {
-                  console.log(e.target.value)
-                  setText(e.target.value)
-                }}
-              />
-            </ResizablePanel>
-            <ThinVResizeHandle />
-            <ResizablePanel
-              className={cn('flex flex-col text-sm p-2')}
-              id="output"
-              defaultSize="50%"
-              minSize="0%"
-              collapsible={true}
-            >
-              <Textarea
-                className="grow whitespace-pre "
-                placeholder="Output"
-                value={output}
-                readOnly
-              />
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        </TabSlideBar>
+            <Textarea
+              className="grow whitespace-pre"
+              placeholder="FASTA/DNA sequences"
+              value={text}
+              onChange={(e) => {
+                console.log(e.target.value)
+                setText(e.target.value)
+              }}
+            />
+          </ResizablePanel>
+          <ThinVResizeHandle />
+          <ResizablePanel
+            className={cn('flex flex-col text-sm p-2')}
+            id="output"
+            defaultSize="50%"
+            minSize="0%"
+            collapsible={true}
+          >
+            <Textarea
+              className="grow whitespace-pre "
+              placeholder="Output"
+              value={output}
+              readOnly
+            />
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </ShortcutLayout>
     </>
   )
@@ -450,9 +277,7 @@ function RevCompPage() {
 export function RevCompQueryPage() {
   return (
     <CoreProviders>
-      {/* <HistoryProvider app={APP_INFO.name}> */}
       <RevCompPage />
-      {/* </HistoryProvider> */}
     </CoreProviders>
   )
 }
