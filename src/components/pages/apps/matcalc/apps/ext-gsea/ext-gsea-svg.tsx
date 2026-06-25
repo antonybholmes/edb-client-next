@@ -17,19 +17,14 @@ import { COLOR_BLACK } from '@/lib/color/color'
 import type { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
 import { end, type ILim } from '@/lib/math/math'
 import { where } from '@/lib/math/where'
-import { getPlot } from '../../history/history-provider/history-hooks'
 import { useHistory } from '../../history/history-provider/history-provider'
-import { ExtGseaPlot } from '../../history/history-provider/history-types'
+import { useExtGseaContext } from './ext-gsea-provider'
+import { IExtGseaDisplayOptions } from './ext-gsea-store'
 
-interface IProps extends ISVGProps {
-  plotAddr: string
-}
-
-export function ExtGseaSvg({ ref, plotAddr }: IProps) {
+export function ExtGseaSvg({ ref }: ISVGProps) {
   const { present, plots } = useHistory()
-  const plot = getPlot(present, plots, plotAddr)! as ExtGseaPlot
-
-  const displayProps = plot!.props
+  const { plot } = useExtGseaContext()
+  const displayProps: IExtGseaDisplayOptions = plot.props
 
   const rankedGenes: IRankedGenes = plot.rankedGenes
   const gs1: IGeneSet = plot.gs1

@@ -145,7 +145,6 @@ export function VariantsPage() {
         id: 'Display',
         component: PileupPropsPanel,
       },
-
       {
         id: 'Features',
         component: FeaturePropsPanel,

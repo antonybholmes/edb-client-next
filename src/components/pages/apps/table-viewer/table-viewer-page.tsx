@@ -84,7 +84,6 @@ export function TableViewerPage() {
     setSideTabs([
       {
         id: 'History',
-
         component: HistoryPanel,
       },
     ])

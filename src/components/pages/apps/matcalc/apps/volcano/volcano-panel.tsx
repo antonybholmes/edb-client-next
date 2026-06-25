@@ -1,5 +1,3 @@
-import { SlidersIcon } from '@/icons/sliders-icon'
-
 import { useEffect, useRef } from 'react'
 
 import {
@@ -25,7 +23,6 @@ import {
 import { useZoom } from '@/providers/zoom'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import type { IDivProps } from '@/interfaces/div-props'
 import { Card } from '@/themed/card'
 import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
@@ -72,19 +69,7 @@ export function makeDefaultVolcanoProps(
   return props
 }
 
-interface IPanelProps extends IDivProps {
-  //plotId: string
-
-  x?: string
-  y?: string
-}
-
-export function VolcanoPanel({
-  ref,
-
-  x = 'Log2 fold change',
-  y = '-log10 p-value',
-}: IPanelProps) {
+export function VolcanoPanel() {
   // const { plotsState, plotsDispatch } = useContext(PlotsContext)
 
   // const plot = plotsState.plotMap[plotId]
@@ -97,7 +82,7 @@ export function VolcanoPanel({
 
   const { updatePlot } = useHistory()
   const { plot } = useVolcanoContext()
-
+  const displayProps: IVolcanoDisplayOptions = plot.props
   const sheet = plot?.dataframes['main'] as BaseDataFrame
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
@@ -111,11 +96,8 @@ export function VolcanoPanel({
   useEffect(() => {
     setSideTabs([
       {
-        //id: nanoid(),
         id: 'Display',
-        icon: <SlidersIcon />,
-
-        component: () => <VolcanoPropsPanel x={x} y={y} />,
+        component: VolcanoPropsPanel,
       },
     ])
   }, [])
@@ -157,7 +139,7 @@ export function VolcanoPanel({
   }, [zoom])
 
   return (
-    <BaseCol ref={ref} className="h-full overflow-hidden grow">
+    <BaseCol className="h-full overflow-hidden grow">
       <TabSlideBar
         side="right"
         open={settings.sidebar.show}
@@ -174,8 +156,8 @@ export function VolcanoPanel({
             <VolcanoPlotSvg
               ref={svgRef}
               //displayProps={displayOptions}
-              x={x}
-              y={y}
+              x={displayProps.axes.xaxis.name}
+              y={displayProps.axes.yaxis.name}
             />
           </div>
         </Card>

@@ -176,7 +176,6 @@ export function SingleCellPage() {
     setSideTabs([
       {
         id: TEXT_DISPLAY,
-
         component: DisplayPropsPanel,
       },
       {

@@ -122,7 +122,7 @@ export function GseaPlotPage() {
   }, [setToolbarTabs])
 
   useEffect(() => {
-    const rightTabs: ITab[] = [
+    setSideTabs([
       {
         id: 'Gene Sets',
         component: GeneSetsPropsPanel,
@@ -131,9 +131,7 @@ export function GseaPlotPage() {
         id: TEXT_DISPLAY,
         component: GseaDisplayPropsPanel,
       },
-    ]
-
-    setSideTabs(rightTabs)
+    ])
   }, [setSideTabs])
 
   useEffect(() => {

@@ -33,13 +33,7 @@ import { useState } from 'react'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useVolcanoContext } from './volcano-provider'
 
-export interface IProps {
-  x: string
-  y: string
-  //plotId: string
-}
-
-export function VolcanoPropsPanel({ x, y }: IProps) {
+export function VolcanoPropsPanel() {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
 
   // const plot = plotsState.plotMap[plotId]
@@ -92,9 +86,9 @@ export function VolcanoPropsPanel({ x, y }: IProps) {
   }
 
   function loadHighlightedLabels() {
-    const xdata = getNumCol(sheet, findCol(sheet, x))
+    const xdata = getNumCol(sheet, findCol(sheet, displayProps.axes.xaxis.name))
 
-    const ydata = getNumCol(sheet, findCol(sheet, y))
+    const ydata = getNumCol(sheet, findCol(sheet, displayProps.axes.yaxis.name))
 
     const idx = new Set(
       range(sheet.shape[0]).filter((i) => getShouldLabel(xdata[i]!, ydata[i]!))

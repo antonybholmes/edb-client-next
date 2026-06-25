@@ -16,7 +16,6 @@ import {
 import { useZoom } from '@/providers/zoom'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import type { IDivProps } from '@/interfaces/div-props'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { Card } from '@/themed/card'
 import { produce } from 'immer'
@@ -24,27 +23,22 @@ import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { useSideTabs } from '@/components/tabs/tab-store'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
-import { getPlot } from '../../history/history-provider/history-hooks'
 import { useHistory } from '../../history/history-provider/history-provider'
-import { BoxPlot } from '../../history/history-provider/history-types'
 import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { BoxPlotDataPanel } from './boxplot-data-panel'
 import { BoxPlotSvg } from './boxplot-plot-svg'
 import { BoxPlotPropsPanel } from './boxplot-props-panel'
+import { useBoxPlotContext } from './boxplot-provider'
 
 export const VOLCANO_X = 'Log2 fold change'
 export const VOLCANO_Y = '-log10 p-value'
 
-interface IPanelProps extends IDivProps {
-  plotAddr: string
-}
-
-export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
+export function BoxPlotPanel() {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
   const { present, plots, updatePlot } = useHistory()
   const { sheet } = useCurrentSheets()
 
-  const plot = getPlot(present, plots, plotAddr)! as BoxPlot
+  const { plot } = useBoxPlotContext()
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'box-plot')
 
@@ -64,13 +58,12 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
     setSideTabs([
       {
         id: 'Display',
-        icon: <SlidersIcon />,
-        component: () => <BoxPlotPropsPanel plotAddr={plotAddr} />,
+        component: BoxPlotPropsPanel,
       },
       {
         id: 'Data',
         icon: <SlidersIcon />,
-        component: () => <BoxPlotDataPanel plotAddr={plotAddr} />,
+        component: BoxPlotDataPanel,
       },
     ])
   }, [])
@@ -124,7 +117,7 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
     <>
       {/* <DialogsRoot /> */}
 
-      <BaseCol ref={ref} className="h-full overflow-hidden grow">
+      <BaseCol className="h-full overflow-hidden grow">
         {/* <ResizablePanelGroup
           orientation="horizontal"
           id="volcano-resizable-panels"
@@ -171,7 +164,7 @@ export function BoxPlotPanel({ ref, plotAddr }: IPanelProps) {
         >
           <Card variant="content" className="mx-2 mb-2 grow">
             <div className={PLOT_CLS}>
-              <BoxPlotSvg ref={svgRef} plotAddr={plotAddr} />
+              <BoxPlotSvg ref={svgRef} />
             </div>
           </Card>
         </TabSlideBar>

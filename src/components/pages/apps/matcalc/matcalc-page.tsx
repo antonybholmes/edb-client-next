@@ -48,7 +48,6 @@ import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { textToLines } from '@/lib/text/lines'
 import { produce } from 'immer'
 
-import { BoxPlotPanel } from './apps/boxplot/boxplot-panel'
 import APP_INFO from './manifest.json'
 
 import { useSettingsTabs } from '@/dialogs/settings/setting-tabs-store'
@@ -56,7 +55,6 @@ import { useSettingsTabs } from '@/dialogs/settings/setting-tabs-store'
 import { CubeIcon } from '@/icons/cube-icon'
 import { ExportIcon } from '@/icons/export-icon'
 
-import { ExtGseaPanelQuery } from './apps/ext-gsea/ext-gsea-panel'
 import { DataPanel, MESSAGE_CHANNEL } from './data/data-panel'
 
 import { AppInfoButton } from '@/components/header/app-info-button'
@@ -81,7 +79,10 @@ import { OptsSidebarMenu } from './data/opts-sidebar-menu'
 import { useHistory } from './history/history-provider/history-provider'
 
 import { useTabs } from '@/components/tabs/tab-store'
-import { useFooter } from '@/providers/footer-provider'
+import { BoxPlotPanel } from './apps/boxplot/boxplot-panel'
+import { BoxPlotProvider } from './apps/boxplot/boxplot-provider'
+import { ExtGseaPanel } from './apps/ext-gsea/ext-gsea-panel'
+import { ExtGseaProvider } from './apps/ext-gsea/ext-gsea-provider'
 import {
   useCurrentPlots,
   useCurrentSelections,
@@ -147,9 +148,17 @@ function plotElem(plot: HistoryPlot): ReactElement {
         </VolcanoProvider>
       )
     case 'box':
-      return <BoxPlotPanel plotAddr={plot.id} />
+      return (
+        <BoxPlotProvider plot={plot}>
+          <BoxPlotPanel />
+        </BoxPlotProvider>
+      )
     case 'ext-gsea':
-      return <ExtGseaPanelQuery plotAddr={plot.id} />
+      return (
+        <ExtGseaProvider plot={plot}>
+          <ExtGseaPanel />
+        </ExtGseaProvider>
+      )
     // case 'lollipop':
     //   return (
     //     <LollipopPanelQuery key={plot.id} id={plot.id} plotAddr={plot.id} />
@@ -160,41 +169,16 @@ function plotElem(plot: HistoryPlot): ReactElement {
 }
 
 export function MatcalcPage() {
-  const { openFile, addSheets, addPlots } = useHistory()
-  //const { plotsState, plotsDispatch } = useContext(PlotsContext)
-
-  //const {toast} = useToast()
-
-  //const [working, setWorking] = useState(false)
-  //const [tableData, setTableData] = useState<object[]>(DEFAULT_TABLE_ROWS)
-  //const [tableH, setTableH] = useState<IReactTableCol[]>(DEFAULT_TABLE_HEADER)
-  //const [selectedSheet, setSelectedSheet] = useState(0)
+  const { openFile } = useHistory()
 
   const { setAppInfo } = useAppInfo()
 
   const { settings, updateSettings } = useMatcalcSettings()
 
-  //const [dataTableTab, setDataTableTab] = useState<ITab | undefined>(undefined)
-  //const [branch?.id??'', setbranch?.id??''] = useState('')
-
   const { sendMessage } = useMessages(MESSAGE_CHANNEL)
 
   const { setTabs: setToolbarTabs } = useTabs('toolbar')
 
-  const { remove: removeFooter, addIndicator } = useFooter()
-
-  //const [toolbarTabName, setToolbarTab] = useState('Home')
-
-  //const [dataSetHeaders, setDataSetHeaders] = useState<any[]>([])
-  //const [dataSetRows, setDataSetRows] = useState<any[]>([])
-  //const svgRef = useRef<SVGSVGElement>(null)
-
-  // const [displayProps, setDisplayProps] = useState<IHeatMapProps>(
-  //   DEFAULT_DISPLAY_PROPS,
-  // )
-
-  //const appPath = `/${app?.id}`
-  //const files = useFiles()
   const { file } = useFiles()
 
   const { openDataFrames } = useOpenFiles()

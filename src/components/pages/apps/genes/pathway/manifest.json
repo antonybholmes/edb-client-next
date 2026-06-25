@@ -2,9 +2,9 @@
   "name": "Pathway",
   "description": "Pathway enrichment",
   "color": "#6495ED",
-  "version": "36.0.8",
+  "version": "36.2.0",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-06-25T21:36:01.347Z",
-  "hash": "274893abff65136bd6742c8cc791afbae4e833a61d951998874f59fb33aad79c",
-  "build": 868
+  "modified": "2026-06-25T22:48:08.163Z",
+  "hash": "60e2f11ab1f8303ac167729d5eb92927f476192e4483022404126f62e62dd42d",
+  "build": 870
 }

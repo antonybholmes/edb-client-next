@@ -15,7 +15,6 @@ import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
 import { FileImageIcon } from '@/icons/file-image-icon'
-import { LayersIcon } from '@/icons/layers-icon'
 
 import { downloadSvg, downloadSvgAsPng } from '@/lib/image-utils'
 
@@ -245,14 +244,11 @@ function VennPage() {
     setSideTabs([
       {
         id: 'Lists',
-        icon: <LayersIcon />,
-
         component: VennLists,
       },
       {
         //id: nanoid(),
         id: TEXT_SETTINGS,
-
         component: VennPropsPanel,
       },
     ])

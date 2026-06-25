@@ -1,5 +1,3 @@
-import { SlidersIcon } from '@/icons/sliders-icon'
-
 import { useEffect, useRef, useState } from 'react'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
@@ -25,12 +23,12 @@ import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { useSideTabs } from '@/components/tabs/tab-store'
-import { getPlot } from '../../history/history-provider/history-hooks'
 import { useHistory } from '../../history/history-provider/history-provider'
-import { ExtGseaPlot } from '../../history/history-provider/history-types'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { ExtGseaPropsPanel } from './ext-gsea-props-panel'
+import { useExtGseaContext } from './ext-gsea-provider'
+import { IExtGseaDisplayOptions } from './ext-gsea-store'
 import { ExtGseaSvg } from './ext-gsea-svg'
 
 export function makeDefaultHeatmapProps(mode: string): IHeatMapDisplayOptions {
@@ -40,12 +38,7 @@ export function makeDefaultHeatmapProps(mode: string): IHeatMapDisplayOptions {
   }
 }
 
-interface IExtGseaPanelProps {
-  //plotId: string
-  plotAddr: string
-}
-
-function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
+export function ExtGseaPanel() {
   // const { plotsState, plotsDispatch } = useContext(PlotsContext)
 
   // const plot = plotsState.plotMap[plotId]
@@ -54,9 +47,10 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
   //   return null
   // }
 
-  const { updatePlot, present, plots } = useHistory()
+  const { updatePlot } = useHistory()
 
-  const plot = getPlot(present, plots, plotAddr)! as ExtGseaPlot
+  const { plot } = useExtGseaContext()
+  const displayProps: IExtGseaDisplayOptions = plot.props
 
   //const sheet = plot!.dataframes['main']! as AnnotationDataFrame
 
@@ -74,8 +68,7 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
     setSideTabs([
       {
         id: TEXT_DISPLAY,
-        icon: <SlidersIcon />,
-        component: () => <ExtGseaPropsPanel plotAddr={plotAddr} />,
+        component: ExtGseaPropsPanel,
       },
     ])
   }, [])
@@ -179,7 +172,7 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
           <div className={PLOT_CLS}>
             <ExtGseaSvg
               ref={svgRef}
-              plotAddr={plotAddr}
+
               //extGsea={extGsea}
               //displayOptions={displayOptions}
             />
@@ -196,8 +189,4 @@ function ExtGseaPanel({ plotAddr }: IExtGseaPanelProps) {
       </FooterPortal>
     </>
   )
-}
-
-export function ExtGseaPanelQuery({ plotAddr }: IExtGseaPanelProps) {
-  return <ExtGseaPanel plotAddr={plotAddr} />
 }

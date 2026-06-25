@@ -70,6 +70,8 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
   padding: 10,
   axes: {
     xaxis: {
+      name: 'Log2 fold change',
+
       domain: [-20, 20],
       length: 500,
       ticks: [],
@@ -79,6 +81,7 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
       color: COLOR_BLACK,
     },
     yaxis: {
+      name: '-log10 p-value',
       domain: [0, 10],
       length: 400,
       ticks: [],

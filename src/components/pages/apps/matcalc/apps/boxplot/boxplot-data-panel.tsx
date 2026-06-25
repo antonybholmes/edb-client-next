@@ -17,20 +17,15 @@ import {
 } from '@/themed/v2/accordion'
 import { produce } from 'immer'
 import { Reorder } from 'motion/react'
-import { getPlot } from '../../history/history-provider/history-hooks'
 import { useHistory } from '../../history/history-provider/history-provider'
-import { BoxPlot } from '../../history/history-provider/history-types'
+import { useBoxPlotContext } from './boxplot-provider'
 
-export interface IProps {
-  plotAddr: string
-}
-
-export function BoxPlotDataPanel({ plotAddr }: IProps) {
+export function BoxPlotDataPanel() {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
 
   const { updatePlot } = useHistory()
-  const { present, plots } = useHistory()
-  const plot = getPlot(present, plots, plotAddr)! as BoxPlot
+
+  const { plot } = useBoxPlotContext()
 
   const singlePlotDisplayOptions = plot.singlePlotDisplayOptions as {
     [key: string]: {

@@ -12,7 +12,6 @@ import { useEffect, useState } from 'react'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 
-import type { ITab } from '@/components/tabs/tab-provider'
 import { TEXT_CANCEL } from '@/consts'
 import type { ISaveAsFileType } from '@/dialogs/save-as-dialog'
 import { SaveTxtDialog } from '@/dialogs/save-txt-dialog'
@@ -68,14 +67,12 @@ export function DataPanel() {
   }
 
   useEffect(() => {
-    const sideTabs: ITab[] = [
+    setSideTabs([
       {
         id: 'History',
-        component: () => <HistoryPanel />,
+        component: HistoryPanel,
       },
-    ]
-
-    setSideTabs(sideTabs)
+    ])
   }, [])
 
   useEffect(() => {

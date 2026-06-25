@@ -11,22 +11,14 @@ import {
 } from '@/themed/v2/accordion'
 import { produce } from 'immer'
 
-import { getPlot } from '../../history/history-provider/history-hooks'
 import { useHistory } from '../../history/history-provider/history-provider'
-import { BoxPlot } from '../../history/history-provider/history-types'
-import type { IBoxPlotDisplayOptions } from './boxplot-plot-svg'
+import { useBoxPlotContext } from './boxplot-provider'
 
-export interface IProps {
-  plotAddr: string
-}
-
-export function BoxPlotPropsPanel({ plotAddr }: IProps) {
+export function BoxPlotPropsPanel() {
   //const { plotsState, historyDispatch } = useContext(PlotsContext)
 
-  const { updatePlot, present, plots } = useHistory()
-  const plot = getPlot(present, plots, plotAddr)! as BoxPlot
-
-  const displayOptions: IBoxPlotDisplayOptions = plot.props
+  const { updatePlot } = useHistory()
+  const { plot, displayProps } = useBoxPlotContext()
 
   return (
     <PropsPanel>
@@ -36,8 +28,8 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
           <AccordionContent>
             <PropRow title="Plot size">
               <DoubleNumericalInput
-                v1={displayOptions.plot!.w}
-                v2={displayOptions.plot!.h}
+                v1={displayProps.plot!.w}
+                v2={displayProps.plot!.h}
                 inputCls="w-16 rounded-theme"
                 dp={0}
                 limit={[0, 1000]}
@@ -60,7 +52,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
 
             <PropRow title="X gap">
               <NumericalInput
-                value={displayOptions.padding.plot}
+                value={displayProps.padding.plot}
                 className="w-16 rounded-theme"
                 dp={0}
                 limit={[0, 1000]}
@@ -75,7 +67,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
             </PropRow>
             <PropRow title="Hue gap">
               <NumericalInput
-                value={displayOptions.padding.hue}
+                value={displayProps.padding.hue}
                 className="w-16 rounded-theme"
                 dp={0}
                 limit={[0, 1000]}
@@ -91,7 +83,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
 
             <SwitchPropRow
               title="Split"
-              checked={displayOptions.split}
+              checked={displayProps.split}
               onCheckedChange={(v) => {
                 updatePlot(
                   produce(plot, (draft) => {
@@ -109,7 +101,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
           <AccordionContent>
             <SwitchPropRow
               title="Show"
-              checked={displayOptions.violin.show}
+              checked={displayProps.violin.show}
               onCheckedChange={(state) => {
                 updatePlot(
                   produce(plot, (draft) => {
@@ -121,7 +113,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
 
             <PropRow title="Stroke">
               <NumericalInput
-                value={displayOptions.violin.stroke.width}
+                value={displayProps.violin.stroke.width}
                 placeholder="Stroke..."
                 className="w-14 rounded-theme"
                 onNumChanged={(v) => {
@@ -142,7 +134,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
           <AccordionContent>
             <SwitchPropRow
               title="Show"
-              checked={displayOptions.box.show}
+              checked={displayProps.box.show}
               onCheckedChange={(v) => {
                 updatePlot(
                   produce(plot, (draft) => {
@@ -154,7 +146,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
 
             <PropRow title="Stroke">
               <NumericalInput
-                value={displayOptions.box.stroke.width}
+                value={displayProps.box.stroke.width}
                 placeholder="Stroke..."
                 className="w-14 rounded-theme"
                 onNumChanged={(v) => {
@@ -168,7 +160,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
             </PropRow>
             <PropRow title="Width">
               <NumericalInput
-                value={displayOptions.box.width}
+                value={displayProps.box.width}
                 placeholder="Width..."
                 className="w-14 rounded-theme"
                 onNumChanged={(v) => {
@@ -189,7 +181,7 @@ export function BoxPlotPropsPanel({ plotAddr }: IProps) {
           <AccordionContent>
             <SwitchPropRow
               title="Show"
-              checked={displayOptions.swarm.show}
+              checked={displayProps.swarm.show}
               onCheckedChange={(v) => {
                 updatePlot(
                   produce(plot, (draft) => {

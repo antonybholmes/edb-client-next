@@ -17,6 +17,7 @@ import { AxisBottomSvg, AxisLeftSvg } from '../svg-axis'
 const margin = { top: 100, right: 100, bottom: 100, left: 100 }
 
 export interface IDisplayAxis {
+  name: string
   domain: ILim
   length: number
   ticks: number[]
@@ -27,6 +28,7 @@ export interface IDisplayAxis {
 }
 
 export const DEFAULT_AXIS_PROPS: IDisplayAxis = {
+  name: '',
   domain: [-20, 20],
   length: 600,
   ticks: [],
@@ -175,12 +177,12 @@ export function ScatterPlotSvg({
 
     // matching is case insensitive
     const labelSet = new Set<string>(
-      _displayProps.labels.values.map(x => x.toLowerCase())
+      _displayProps.labels.values.map((x) => x.toLowerCase())
     )
     const labelIdx = df.index.values
       .map((v, vi) => [v, vi] as [SeriesData, number])
-      .filter(v => labelSet.has(v[0].toString().toLowerCase()))
-      .map(v => v[1])
+      .filter((v) => labelSet.has(v[0].toString().toLowerCase()))
+      .map((v) => v[1])
 
     return (
       <SvgBase
@@ -219,7 +221,7 @@ export function ScatterPlotSvg({
         </g>
 
         <g transform={`translate(${margin.left}, ${margin.top})`}>
-          {labelIdx.map(i => {
+          {labelIdx.map((i) => {
             const x1 = xax!.domainToRange(xdata[i]!)
             const y1 = yax!.domainToRange(ydata[i]!)
 

@@ -13,7 +13,6 @@ import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { TEXT_RESET } from '@/consts'
 import { PropRow } from '@/dialogs/prop-row'
 import { SwitchPropRow } from '@/dialogs/switch-prop-row'
-import type { IDivProps } from '@/interfaces/div-props'
 import { VCenterRow } from '@/layout/v-center-row'
 import { LinkButton } from '@/themed/link-button'
 import { NumericalInput } from '@/themed/numerical-input'
@@ -23,16 +22,11 @@ import {
   SIMPLE_COLOR_EXT_CLS,
 } from '../../../../../plot/color-picker-popover'
 
-import { getPlot } from '../../history/history-provider/history-hooks'
 import { useHistory } from '../../history/history-provider/history-provider'
-import { ExtGseaPlot } from '../../history/history-provider/history-types'
+import { useExtGseaContext } from './ext-gsea-provider'
 import { DEFAULT_EXT_GSEA_PROPS } from './ext-gsea-store'
 
-export interface IProps extends IDivProps {
-  plotAddr: string
-}
-
-export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
+export function ExtGseaPropsPanel() {
   // const { plotsState, historyDispatch } = useContext(PlotsContext)
 
   // const plot = plotsState.plotMap[plotId]
@@ -44,8 +38,8 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
   // const IExtGseaDisplayOptions =
   //   plot!.displayOptions as IExtGseaDisplayOptions
 
-  const { updatePlot, present, plots } = useHistory()
-  const plot = getPlot(present, plots, plotAddr)! as ExtGseaPlot
+  const { updatePlot } = useHistory()
+  const { plot } = useExtGseaContext()
 
   const displayOptions = plot!.props
 
@@ -57,7 +51,7 @@ export function ExtGseaPropsPanel({ ref, plotAddr }: IProps) {
   ])
 
   return (
-    <PropsPanel ref={ref} className="pr-1">
+    <PropsPanel className="pr-1">
       <VCenterRow className="justify-end pb-2">
         <LinkButton
           onClick={() =>

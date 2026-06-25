@@ -29,9 +29,8 @@ import {
   type LegendPos,
 } from '../../../../../plot/svg-props'
 
-import { getPlot } from '../../history/history-provider/history-hooks'
 import { useHistory } from '../../history/history-provider/history-provider'
-import { BoxPlot } from '../../history/history-provider/history-types'
+import { useBoxPlotContext } from './boxplot-provider'
 
 /**
  * If strings are '0' and '1' for example, replace with 'No' and 'Yes' for
@@ -132,14 +131,10 @@ interface IProps extends ISVGProps {
   plotAddr: string
 }
 
-export function BoxPlotSvg({ ref, plotAddr }: IProps) {
+export function BoxPlotSvg({ ref }: ISVGProps) {
   //const { plotsState } = useContext(PlotsContext)
   const { present, plots } = useHistory()
-  const plot = getPlot(present, plots, plotAddr)! as BoxPlot
-
-  //const)
-
-  const displayOptions: IBoxPlotDisplayOptions = plot.props
+  const { plot, displayProps } = useBoxPlotContext()
 
   const singlePlotDisplayOptions = plot.singlePlotDisplayOptions as {
     [key: string]: {
@@ -167,7 +162,7 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
 
     //console.log('hue', hueOrder)
 
-    let split = displayOptions.split
+    let split = displayProps.split
 
     // if (!xOrder) {
     //   xOrder = [...new Set(xCol)].sort()
@@ -218,25 +213,25 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
 
     const globalYAxis = new YAxis()
       .autoDomain([Math.min(...values), Math.max(...values)])
-      .setLength(displayOptions.plot!.h)
+      .setLength(displayProps.plot!.h)
 
     //
     // how big is the canvas
     //
-    const margin = displayOptions.margin
+    const margin = displayProps.margin
 
     const innerWidth =
       xOrder!.length *
       ((!split && hueOrder!.length < 3 ? hueOrder!.length : 1) *
-        (displayOptions.plot!.w + displayOptions.padding.hue) +
-        displayOptions.padding.plot)
+        (displayProps.plot!.w + displayProps.padding.hue) +
+        displayProps.padding.plot)
 
     //const innerWidth =
     // result.datasets.length * displayProps.plot!.bar.width + (result.datasets.length-1)*displayProps.plot!.gap
     //const innerHeight = displayProps.plot!.height
     const width =
-      innerWidth + displayOptions.margin.left + displayOptions.margin.right
-    const height = displayOptions.plot!.h + margin.top + margin.bottom
+      innerWidth + displayProps.margin.left + displayProps.margin.right
+    const height = displayProps.plot!.h + margin.top + margin.bottom
 
     const yax = globalYAxis
 
@@ -269,27 +264,27 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
     return (
       <SvgBase
         ref={ref}
-        scale={displayOptions.page.scale}
+        scale={displayProps.page.scale}
         width={width}
         height={height}
         //shapeRendering={SVG_CRISP_EDGES}
         className="absolute"
       >
         <g
-          transform={`translate(${displayOptions.margin.left}, ${displayOptions.margin.top})`}
+          transform={`translate(${displayProps.margin.left}, ${displayProps.margin.top})`}
         >
           {xOrder.map((x, xi) => {
             // get the min/max height
             const blockWidth =
               (split && hueOrder!.length < 3 ? 1 : hueOrder!.length) *
-              (displayOptions.plot!.w + displayOptions.padding.hue)
+              (displayProps.plot!.w + displayProps.padding.hue)
 
-            const xX = xi * (blockWidth + displayOptions.padding.plot)
+            const xX = xi * (blockWidth + displayProps.padding.plot)
 
             return (
               <g transform={`translate(${xX}, 0)`} key={x}>
                 <g
-                  transform={`translate(${blockWidth / 2}, -${displayOptions.title.offset})`}
+                  transform={`translate(${blockWidth / 2}, -${displayProps.title.offset})`}
                 >
                   <text textAnchor="middle">{x}</text>
                 </g>
@@ -301,8 +296,7 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
                     hueX = 0
                   } else {
                     hueX =
-                      huei *
-                      (displayOptions.plot!.w + displayOptions.padding.hue)
+                      huei * (displayProps.plot!.w + displayProps.padding.hue)
                   }
 
                   const values: number[] = dataMap.get(x)!.get(hue)!
@@ -318,50 +312,50 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
                   const plotOptions = singlePlotDisplayOptions[x]![hue]!
 
                   const violinStroke = {
-                    ...displayOptions.violin.stroke,
+                    ...displayProps.violin.stroke,
                     color: plotOptions.violin!.stroke.value,
                   }
                   const violinFill = {
-                    ...displayOptions.violin.fill,
+                    ...displayProps.violin.fill,
                     color: plotOptions.violin!.fill.value,
                   }
 
                   const boxStroke = {
-                    ...displayOptions.box.stroke,
+                    ...displayProps.box.stroke,
                     color: plotOptions.box!.stroke.value,
                   }
                   const boxFill = {
-                    ...displayOptions.box.fill,
+                    ...displayProps.box.fill,
                     color: plotOptions.box!.fill.value,
                   }
                   // const boxMedianStroke = {
-                  //   ...displayOptions.box.median.stroke,
+                  //   ...displayProps.box.median.stroke,
                   //   color: plotOptions.box!.median.stroke.value,
                   // }
 
                   const swarmStroke = {
-                    ...displayOptions.swarm.stroke,
+                    ...displayProps.swarm.stroke,
                     color: plotOptions.swarm!.stroke.value,
                   }
                   const swarmFill = {
-                    ...displayOptions.swarm.fill,
+                    ...displayProps.swarm.fill,
                     color: plotOptions.swarm!.fill.value,
                   }
 
                   return (
                     <g
-                      transform={`translate(${hueX + 0.5 * displayOptions.plot!.w}, 0)`}
+                      transform={`translate(${hueX + 0.5 * displayProps.plot!.w}, 0)`}
                       key={`${x}:${hue}`}
                     >
-                      {displayOptions.violin.show && (
+                      {displayProps.violin.show && (
                         <ViolinPlotSvg
                           data={values}
                           //xsmooth={xsmoothed}
                           ysmooth={ysmoothed}
                           globalXMax={globalXsmoothedMax}
                           yax={yax}
-                          width={displayOptions.plot!.w}
-                          height={displayOptions.plot!.h}
+                          width={displayProps.plot!.w}
+                          height={displayProps.plot!.h}
                           stroke={violinStroke}
                           fill={violinFill}
                           mode={
@@ -370,15 +364,15 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
                         />
                       )}
 
-                      {displayOptions.box.show && (
+                      {displayProps.box.show && (
                         <BoxWhiskerPlotSvg
                           data={values}
                           q1={q1}
                           median={m}
                           q3={q3}
                           yax={yax}
-                          width={displayOptions.box.width}
-                          height={displayOptions.plot!.h}
+                          width={displayProps.box.width}
+                          height={displayProps.plot!.h}
                           fill={boxFill}
                           stroke={boxStroke}
                           //medianStroke={boxMedianStroke}
@@ -388,13 +382,13 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
                         />
                       )}
 
-                      {displayOptions.swarm.show && (
+                      {displayProps.swarm.show && (
                         <SwarmPlotSvg
                           data={values}
                           yax={yax}
-                          width={displayOptions.plot!.w}
-                          height={displayOptions.plot!.h}
-                          r={displayOptions.swarm.r}
+                          width={displayProps.plot!.w}
+                          height={displayProps.plot!.h}
+                          r={displayProps.swarm.r}
                           fill={swarmFill}
                           stroke={swarmStroke}
                           mode={
@@ -409,15 +403,15 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
             )
           })}
 
-          <g transform={`translate(-${displayOptions.padding.hue}, 0)`}>
+          <g transform={`translate(-${displayProps.padding.hue}, 0)`}>
             <AxisLeftSvg ax={yax} title={y} strokeWidth={2} />
-            <g transform={`translate(0, ${displayOptions.plot!.h})`}>
+            <g transform={`translate(0, ${displayProps.plot!.h})`}>
               <line x2={innerWidth} stroke={COLOR_BLACK} strokeWidth={2} />
             </g>
           </g>
 
           <g
-            transform={`translate(${innerWidth + displayOptions.padding.plot}, 0)`}
+            transform={`translate(${innerWidth + displayProps.padding.plot}, 0)`}
           >
             {hueOrder.map((hue, huei) => (
               <g transform={`translate(0, ${huei * 25})`} key={huei}>
@@ -453,7 +447,7 @@ export function BoxPlotSvg({ ref, plotAddr }: IProps) {
         </g>
       </SvgBase>
     )
-  }, [displayOptions, plot])
+  }, [displayProps, plot])
 
   return (
     <>

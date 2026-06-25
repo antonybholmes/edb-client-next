@@ -8,8 +8,6 @@ import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 
 import { ArrowRightArrowLeftIcon } from '@/icons/arrow-right-arrow-left-icon'
-import { SearchIcon } from '@/icons/search-icon'
-import { SlidersIcon } from '@/icons/sliders-icon'
 import { getDataFrameInfo } from '@/lib/dataframe/dataframe-utils'
 
 import { useEffect, useRef, useState } from 'react'
@@ -121,12 +119,10 @@ export function BioDrawPage() {
     setSideTabs([
       {
         id: 'Motifs',
-        icon: <SearchIcon />,
         component: MotifsPropsPanel,
       },
       {
         id: 'Display',
-        icon: <SlidersIcon />,
         component: DisplayPropsPanel,
       },
     ])

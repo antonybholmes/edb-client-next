@@ -2,9 +2,9 @@
   "name": "Venn",
   "description": "Make Venn diagrams.",
   "color": "#00008B",
-  "version": "26.2.4",
+  "version": "26.2.6",
   "copyright": "(C) ${START_YEAR:2023} Antony Holmes",
-  "modified": "2026-06-25T21:36:01.351Z",
-  "hash": "9d20972035b8580bbee08d80dc71b0d8b16a8cda7f8838be2604584dc216dd39",
-  "build": 848
+  "modified": "2026-06-25T22:48:08.166Z",
+  "hash": "a0958b001894442b7ea82fc5368a303660ea842924425924aee1995dc46e3a51",
+  "build": 850
 }

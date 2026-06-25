@@ -24,7 +24,6 @@ import {
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 
-import { LayersIcon } from '@/icons/layers-icon'
 import { OpenIcon } from '@/icons/open-icon'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -113,7 +112,6 @@ export function PathwayPage() {
   useEffect(() => {
     setToolbarTabs([
       {
-        //id: nanoid(),
         id: 'Home',
         component: HomeToolbar,
       },
@@ -127,8 +125,6 @@ export function PathwayPage() {
   useEffect(() => {
     setSideTabs([
       {
-        //id: nanoid(),
-        icon: <LayersIcon />,
         id: 'Gene Sets',
         component: PathwayPropsPage,
       },
