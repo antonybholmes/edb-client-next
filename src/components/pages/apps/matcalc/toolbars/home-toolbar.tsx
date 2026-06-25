@@ -4,7 +4,10 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { CommaIcon } from '@/components/icons/comma-icon'
 import { DownloadIcon } from '@/components/icons/download-icon'
-import { onTextFileChange } from '@/components/pages/open-files'
+import {
+  onTextFileChange,
+  openFilesDialog,
+} from '@/components/pages/open-files'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
@@ -15,7 +18,8 @@ import { MESSAGE_CHANNEL } from '../data/data-panel'
 import { useFiles } from '../history/history-provider/history-contexts'
 import { useHistory } from '../history/history-provider/history-provider'
 import { HistoryPlot } from '../history/history-provider/history-types'
-import { pathJoin } from '../history/history-store'
+
+import { pathJoin } from '../history/history-provider/history-actions'
 import { useOpenFiles } from '../hooks/open'
 import { useMatcalcDialogs } from '../matcalc-dialogs'
 import { TEXT_DOT_PLOT, TEXT_HEATMAP } from '../matcalc-page'
@@ -27,11 +31,11 @@ export function HomeToolbar() {
   const { file } = useFiles()
   const { sendMessage } = useMessages(MESSAGE_CHANNEL)
 
-  const { openFile, addPlots } = useHistory()
+  const { addPlots } = useHistory()
 
   const { settings, updateSettings } = useMatcalcSettings()
 
-  const { openFiles } = useOpenFiles()
+  const { openDataFrames } = useOpenFiles()
 
   function _addPlots(plots: HistoryPlot[]) {
     addPlots(plots)
@@ -67,18 +71,15 @@ export function HomeToolbar() {
     <>
       <ToolbarTabGroup title="File" className="items-start">
         <ToolbarOpenFile
-          onOpen={() => {
-            openDialog({
-              type: 'open',
-              payload: {
-                callback: (message, files) => {
-                  onTextFileChange(message, files, (files) => {
-                    openMatcalcDialog({
-                      type: 'open-table-file',
-                      payload: { files, callback: openFiles },
-                    })
+          onClick={() => {
+            openFilesDialog({
+              onFileChange: (message, files) => {
+                onTextFileChange(message, files, (files) => {
+                  openMatcalcDialog({
+                    type: 'open-table-file',
+                    payload: { files, callback: openDataFrames },
                   })
-                },
+                })
               },
             })
           }}

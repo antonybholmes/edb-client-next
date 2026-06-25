@@ -69,9 +69,9 @@ export class ColFrame extends BaseDataFrame {
     // }
 
     // if an element is a series, then all elements must be series and we will create the dataframe column wise
-    const isSeries = data.some(d => d instanceof BaseSeries)
+    const isSeries = data.some((d) => d instanceof BaseSeries)
 
-    if (isSeries && !data.every(d => d instanceof BaseSeries)) {
+    if (isSeries && !data.every((d) => d instanceof BaseSeries)) {
       throw new Error(
         'All columns must be a series if the first column is a series'
       )
@@ -81,10 +81,10 @@ export class ColFrame extends BaseDataFrame {
       // array of series to be made column wise
 
       if (!columns) {
-        columns = new StringIndex(data.map(c => (c as BaseSeries).name))
+        columns = new StringIndex(data.map((c) => (c as BaseSeries).name))
       }
 
-      this._data = data.map(c => (c as BaseSeries).values)
+      this._data = data.map((c) => (c as BaseSeries).values)
 
       // all columns must have the same length
       const colLengths = new Array(this._data.length)
@@ -96,7 +96,7 @@ export class ColFrame extends BaseDataFrame {
 
       const length = colLengths[0] ?? 0
 
-      if (colLengths.some(l => l !== length)) {
+      if (colLengths.some((l) => l !== length)) {
         throw new Error('All columns must have the same length')
       }
     } else {
@@ -148,13 +148,13 @@ export class ColFrame extends BaseDataFrame {
     }
   }
 
-  override setName(name: string, inplace = true): BaseDataFrame {
-    const df: ColFrame = inplace ? this : (this.copy() as ColFrame)
+  // override setName(name: string, inplace = true): BaseDataFrame {
+  //   const df: ColFrame = inplace ? this : (this.copy() as ColFrame)
 
-    df._name = name
+  //   df._name = name
 
-    return df
-  }
+  //   return df
+  // }
 
   override setCol(
     col: IndexId,
@@ -534,7 +534,7 @@ export class ColFrame extends BaseDataFrame {
   override copy(): BaseDataFrame {
     return new ColFrame({
       name: this.name,
-      data: this.cols.map(c => c.copy()),
+      data: this.cols.map((c) => c.copy()),
       index: this._index.copy(),
       columns: this._columns.copy(),
     })

@@ -20,19 +20,12 @@ import {
   ThinVResizeHandle,
 } from '@/themed/resizable'
 
-import { PropsPanel } from '@/components/props-panel'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 
 import type { ITab } from '@/components/tabs/tab-provider'
 import { OpenIcon } from '@/icons/open-icon'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { cn } from '@/lib/shadcn-utils'
-import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-  ScrollAccordion,
-} from '@/themed/v2/accordion'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
@@ -47,7 +40,7 @@ import { httpFetch } from '@/lib/http/http-fetch'
 import { CoreProviders } from '@/providers/core-provider'
 import { Textarea } from '@/themed/textarea'
 import APP_INFO from './manifest.json'
-import { HomeToolbar } from './toolbars/home'
+import { HomeToolbar } from './toolbars/home-toolbar'
 
 function RevCompPage() {
   const [text, setText] = useState('')
@@ -174,22 +167,6 @@ function RevCompPage() {
             <span>Download as JSON</span>
           </DropdownMenuItem>
         </>
-      ),
-    },
-  ]
-
-  const rightTabs: ITab[] = [
-    {
-      id: 'Settings',
-      component: () => (
-        <PropsPanel className="pr-2">
-          <ScrollAccordion value={['output']}>
-            <AccordionItem value="output">
-              <AccordionTrigger>Output</AccordionTrigger>
-              <AccordionContent></AccordionContent>
-            </AccordionItem>
-          </ScrollAccordion>
-        </PropsPanel>
       ),
     },
   ]

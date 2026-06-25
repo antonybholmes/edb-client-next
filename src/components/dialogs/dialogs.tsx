@@ -5,7 +5,7 @@ import { makeUuid } from '@/lib/id'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import type { ComponentType, ReactNode, RefObject } from 'react'
 import { create } from 'zustand'
-import { OpenFiles } from '../pages/open-files'
+import { openFilesDialog } from '../pages/open-files'
 import { BasicAlertDialog } from './basic-alert-dialog'
 import { OKCancelDialog, type ModalType } from './ok-cancel-dialog'
 import { SaveTxtDialog } from './save-txt-dialog'
@@ -172,19 +172,18 @@ function DialogRenderer({
 }) {
   switch (dialog.type) {
     case 'open': {
-      const { message, fileTypes, callback } = dialog.payload
+      const { fileTypes, callback } = dialog.payload
+      console.log('open dialog')
 
-      return (
-        <OpenFiles
-          message={message}
-          fileTypes={fileTypes}
-          onFileChange={(message, files) => {
-            callback?.(message, files)
+      openFilesDialog({
+        fileTypes,
+        onFileChange: (message, files) => {
+          callback?.(message, files)
 
-            close(dialog.id)
-          }}
-        />
-      )
+          close(dialog.id)
+        },
+      })
+      return null
     }
     case 'save': {
       const { title, name, fileTypes, callback } = dialog.payload

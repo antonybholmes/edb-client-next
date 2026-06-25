@@ -123,7 +123,7 @@ export class DataFrameReader {
       .split(this._delimiter)
 
     if (this._trimWhitespace) {
-      tokens = tokens.map(t => t.trim())
+      tokens = tokens.map((t) => t.trim())
     }
 
     //console.log(tokens)
@@ -151,7 +151,7 @@ export class DataFrameReader {
         : []
 
     if (this._trimWhitespace) {
-      indexNames = indexNames.map(t => t.trim())
+      indexNames = indexNames.map((t) => t.trim())
     }
 
     for (const [li, line] of lines
@@ -162,7 +162,7 @@ export class DataFrameReader {
         tokens = line.replaceAll('"', '').split(this._delimiter)
 
         if (this._trimWhitespace) {
-          tokens = tokens.map(t => t.trim())
+          tokens = tokens.map((t) => t.trim())
         }
 
         if (tokens.length > 0) {
@@ -206,7 +206,7 @@ export class DataFrameReader {
               indexNames.length > 0
                 ? indexNames
                 : range(this._indexCols).map(
-                    i => `${DEFAULT_INDEX_NAME} ${i + 1}`
+                    (i) => `${DEFAULT_INDEX_NAME} ${i + 1}`
                   ),
           })
         : undefined
@@ -214,10 +214,12 @@ export class DataFrameReader {
     const colIndex =
       colNames.length > 0
         ? new DataFrame({
-            data: colNames.map(v => [v]),
+            data: colNames.map((v) => [v]),
             columns: [DEFAULT_COLUMN_INDEX_NAME],
           })
         : undefined
+
+    //console.log(data, rowIndex, colIndex)
 
     const ret = new AnnotationDataFrame({
       data,

@@ -52,7 +52,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
       this._rowObs = rowObs
     } else {
       this._rowObs = new ColFrame({
-        data: makeIndex(index, this._data.shape[0]).map(v => [v]),
+        data: makeIndex(index, this._data.shape[0]).map((v) => [v]),
         columns: [indexName ?? DEFAULT_INDEX_NAME],
       })
     }
@@ -61,7 +61,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
       this._colVars = colVars
     } else {
       this._colVars = new ColFrame({
-        data: makeColumns(columns, this._data.shape[1]).map(v => [v]),
+        data: makeColumns(columns, this._data.shape[1]).map((v) => [v]),
         columns: [DEFAULT_COLUMN_INDEX_NAME],
       })
     }
@@ -78,6 +78,7 @@ export class AnnotationDataFrame extends BaseDataFrame {
   override setName(name: string, inplace = true): BaseDataFrame {
     const df = (inplace ? this : this.copy()) as AnnotationDataFrame
 
+    console.log('setName', name)
     df._data.setName(name, true)
 
     return df

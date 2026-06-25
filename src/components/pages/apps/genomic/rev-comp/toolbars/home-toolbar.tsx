@@ -60,7 +60,6 @@ export function HomeToolbar() {
   const [mask, setMask] = useState<'' | 'lower' | 'n'>('')
   const [modeRev, setModeRev] = useState(true)
   const [modeComp, setModeComp] = useState(true)
-  const { openFiles } = useOpen()
 
   async function addDNA() {
     const dfa = await createDNATable(sheet as AnnotationDataFrame, {

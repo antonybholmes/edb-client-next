@@ -194,7 +194,7 @@ export function MatcalcPage() {
   //const files = useFiles()
   const { file } = useFiles()
 
-  const { openFiles } = useOpenFiles()
+  const { openDataFrames } = useOpenFiles()
 
   const { sheet } = useCurrentSheets()
 
@@ -419,7 +419,7 @@ export function MatcalcPage() {
                     onTextFileChange(message, files, (files) => {
                       openMatcalcDialog({
                         type: 'open-table-file',
-                        payload: { files, callback: openFiles },
+                        payload: { files, callback: openDataFrames },
                       })
                     })
                   },

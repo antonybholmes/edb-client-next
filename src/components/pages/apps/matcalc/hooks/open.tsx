@@ -5,7 +5,8 @@ import {
   ITextFileOpen,
 } from '@/components/pages/open-files'
 import { produce } from 'immer'
-import { useHistory } from '../history/history-store'
+
+import { useHistory } from '../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
 
 export function useOpenFiles() {
@@ -15,7 +16,7 @@ export function useOpenFiles() {
 
   const { settings, updateSettings } = useMatcalcSettings()
 
-  function openFiles(files: ITextFileOpen[], options: IParseOptions = {}) {
+  function openDataFrames(files: ITextFileOpen[], options: IParseOptions = {}) {
     filesToDataFrames(files, {
       parseOpts: options,
       onSuccess: (tables) => {
@@ -47,6 +48,6 @@ export function useOpenFiles() {
   }
 
   return {
-    openFiles,
+    openDataFrames,
   }
 }

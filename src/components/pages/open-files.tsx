@@ -13,12 +13,9 @@ import { DEFAULT_INDEX_NAME } from '@/lib/dataframe/series'
 import { API_XLSX_TO_JSON_URL } from '@/lib/edb/edb'
 import { vfill } from '@/lib/fill'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { randId } from '@/lib/id'
 import { range } from '@/lib/math/range'
 import { textToLines } from '@/lib/text/lines'
-import type { UndefStr } from '@/lib/text/text'
 import { Buffer } from 'buffer'
-import { useEffect, useRef, type ChangeEvent } from 'react'
 
 export const XLSX_EXT = 'xlsx'
 
@@ -94,7 +91,7 @@ export const DEFAULT_PARSE_OPTS: IParseOptions = {
 function getFileTypes(fileTypes: string[]) {
   return fileTypes
     .sort()
-    .map(t => `.${t}`)
+    .map((t) => `.${t}`)
     .join(', ')
 }
 
@@ -114,7 +111,7 @@ export function arrayBufferToBase64(buffer: ArrayBuffer): string {
 }
 
 interface IProps {
-  message?: UndefStr
+  message?: string
   //onOpenChange?: (message: string) => void
   onFileChange?: (message: string, files: FileList | []) => void
   dirMode?: boolean
@@ -122,7 +119,7 @@ interface IProps {
   fileTypes?: string[] | undefined
 }
 
-export function OpenFiles({
+export function openFilesDialog({
   message = '',
   //onOpenChange,
   onFileChange,
@@ -130,145 +127,131 @@ export function OpenFiles({
   multiple = false,
   fileTypes = ['txt', 'tsv', 'vst', 'xlsx'],
 }: IProps) {
-  const ref = useRef<HTMLInputElement>(null)
+  const input = document.createElement('input')
 
-  // To force the file input to trigger on every click,
-  // even if the same file is selected multiple times,
-  // we append a random ID to the message.
-  // This way, the onFileChange callback will be
-  // triggered every time, and we can handle the file selection accordingly.
-  const _message = randId(message)
+  input.type = 'file'
+  input.multiple = multiple
+  input.accept = !dirMode ? getFileTypes(fileTypes) : ''
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function _onFileChange(e: ChangeEvent<HTMLInputElement>) {
-    const { files } = e.target
-
-    onFileChange?.(message, files ?? [])
-
-    // force clear selection so we can keep selecting file if we want.
-    e.target.value = ''
+  input.onchange = () => {
+    onFileChange?.(message, input.files ?? [])
+    input.remove()
   }
 
-  useEffect(() => {
-    // finally able to cope with user canceling file selection.
-    // We have to listen for the cancel event on the input element
-    // and then trigger the onFileChange callback with null files
-    // to indicate cancellation
-    const handleCancel = () => {
-      console.log('File selection canceled')
-      onFileChange?.(message, [])
-    }
-
-    ref.current?.addEventListener('cancel', handleCancel)
-
-    return () => {
-      ref.current?.removeEventListener('cancel', handleCancel)
-    }
-  }, [message, onFileChange])
-
-  useEffect(() => {
-    console.log('Triggering file input click with message:', _message)
-    // simulate user clicking open button whenever open changes
-    ref.current?.click()
-  }, [_message])
-
-  if (dirMode) {
-    return (
-      <form className="hidden">
-        <input
-          ref={ref}
-          type="file"
-          id="file"
-          onChange={_onFileChange}
-          //multiple
-          //accept={getFileTypes(fileTypes)}
-        />
-      </form>
-    )
-  } else if (multiple) {
-    return (
-      <form className="hidden">
-        <input
-          ref={ref}
-          type="file"
-          id="file"
-          onChange={_onFileChange}
-          multiple
-          accept={getFileTypes(fileTypes)}
-        />
-      </form>
-    )
-  } else {
-    return (
-      <form className="hidden">
-        <input
-          ref={ref}
-          type="file"
-          id="file"
-          onChange={_onFileChange}
-          accept={getFileTypes(fileTypes)}
-        />
-      </form>
-    )
+  input.oncancel = () => {
+    onFileChange?.(message, [])
+    input.remove()
   }
+
+  input.click()
+
+  // const ref = useRef<HTMLInputElement>(null)
+
+  // // To force the file input to trigger on every click,
+  // // even if the same file is selected multiple times,
+  // // we append a random ID to the message.
+  // // This way, the onFileChange callback will be
+  // // triggered every time, and we can handle the file selection accordingly.
+  // //const _message = useStableId(message)
+
+  // // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // async function _onFileChange(e: ChangeEvent<HTMLInputElement>) {
+  //   const { files } = e.target
+
+  //   onFileChange?.(message, files ?? [])
+
+  //   console.log('on file change', files)
+
+  //   // force clear selection so we can keep selecting file if we want.
+  //   e.target.value = ''
+  // }
+
+  // useEffect(() => {
+  //   console.log('MOUNT', message)
+
+  //   return () => {
+  //     console.log('UNMOUNT', message)
+  //   }
+  // }, [])
+
+  // useEffect(() => {
+  //   // finally able to cope with user canceling file selection.
+  //   // We have to listen for the cancel event on the input element
+  //   // and then trigger the onFileChange callback with null files
+  //   // to indicate cancellation
+  //   const handleCancel = () => {
+  //     console.log('File selection canceled')
+  //     onFileChange?.(message, [])
+  //   }
+
+  //   ref.current?.addEventListener('cancel', handleCancel)
+
+  //   return () => {
+  //     ref.current?.removeEventListener('cancel', handleCancel)
+  //   }
+  // }, [message, onFileChange])
+
+  // useEffect(() => {
+  //   console.log('Triggering file input click with message:', message)
+  //   // simulate user clicking open button whenever open changes
+  //   ref.current?.click()
+  // }, [message])
+
+  // console.log('message xxx', message)
+
   // return (
-  //   <form className="hidden">
-  //     {multiple ? (
-  //       <input
-  //         ref={ref}
-  //         type="file"
-  //         id="file"
-  //         onChange={_onFileChange}
-  //         multiple
-  //         accept={getFileTypes(fileTypes)}
-  //       />
-  //     ) : (
-  //       <input
-  //         ref={ref}
-  //         type="file"
-  //         id="file"
-  //         onChange={_onFileChange}
-  //         accept={getFileTypes(fileTypes)}
-  //       />
-  //     )}
-  //   </form>
+  //   <input
+  //     id="file-open"
+  //     ref={ref}
+  //     type="file"
+  //     className="hidden"
+  //     onChange={_onFileChange}
+  //     accept={!dirMode ? getFileTypes(fileTypes) : undefined}
+  //     multiple={multiple}
+  //   />
   // )
 }
 
-export function readFile(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
+export async function readFile(file: File): Promise<string> {
+  if (file.name.includes('xlsx')) {
+    return arrayBufferToBase64(await file.arrayBuffer())
+  } else {
+    return await file.text()
+  }
 
-    // Define error callback
-    reader.onerror = error => reject(error)
+  // return new Promise((resolve, reject) => {
+  //   const reader = new FileReader()
 
-    // Read the file as text (can be changed to readAsDataURL or others based on your needs)
-    //reader.readAsText(file);
+  //   // Define error callback
+  //   reader.onerror = (error) => reject(error)
 
-    if (file.name.includes('xlsx')) {
-      reader.onload = e => {
-        const result = e.target?.result
+  //   // Read the file as text (can be changed to readAsDataURL or others based on your needs)
+  //   //reader.readAsText(file);
 
-        if (result) {
-          // since this seems to block rendering, delay by a second so that the
-          // animation has time to start to indicate something is happening and
-          // then finish processing the file
+  //   if (file.name.includes('xlsx')) {
+  //     reader.onload = (e) => {
+  //       const result = e.target?.result
 
-          const buffer: ArrayBuffer = result as ArrayBuffer
+  //       if (result) {
+  //         // since this seems to block rendering, delay by a second so that the
+  //         // animation has time to start to indicate something is happening and
+  //         // then finish processing the file
 
-          resolve(arrayBufferToBase64(buffer))
-        } else {
-          reject('no data')
-        }
-      }
+  //         const buffer: ArrayBuffer = result as ArrayBuffer
 
-      reader.readAsArrayBuffer(file)
-    } else {
-      reader.onload = () => resolve(reader.result as string)
+  //         resolve(arrayBufferToBase64(buffer))
+  //       } else {
+  //         reject('no data')
+  //       }
+  //     }
 
-      reader.readAsText(file)
-    }
-  })
+  //     reader.readAsArrayBuffer(file)
+  //   } else {
+  //     reader.onload = () => resolve(reader.result as string)
+
+  //     reader.readAsText(file)
+  //   }
+  // })
 }
 
 export async function readFiles(files: FileList | File[]): Promise<string[]> {
@@ -298,14 +281,12 @@ export async function onTextFileChange(
     return
   }
 
-  //const file = files[0]!
-  //const name = file.name
+  // force into a list of files since FileList is kinda useless
+  const fileList = [...files]
 
-  files = [...files]
+  const textFiles = await readFiles(fileList)
 
-  const textFiles = await readFiles(files)
-
-  const ret = files.map((file, fi) => ({
+  const ret = fileList.map((file, fi) => ({
     name: file.name,
     text: textFiles[fi]!,
     ext: file.name.split('.').pop() || '',
@@ -331,7 +312,7 @@ export function onBinaryFileChange(
   try {
     const fileReader = new FileReader()
 
-    fileReader.onload = e => {
+    fileReader.onload = (e) => {
       const result = e.target?.result
 
       if (result) {
@@ -372,6 +353,8 @@ export async function filesToDataFrames(
   files: ITextFileOpen[],
   options: IFilesToDataFrameProps = {}
 ) {
+  const { parseOpts, onSuccess, onError } = options
+
   if (files.length === 0) {
     options?.onError?.('no files', files)
     return
@@ -384,7 +367,7 @@ export async function filesToDataFrames(
     skipRows = 0,
     trimWhitespace = true,
   } = {
-    ...options?.parseOpts,
+    ...parseOpts,
   }
 
   // colNames: 1,
@@ -428,7 +411,7 @@ export async function filesToDataFrames(
 
         // try some type conversion on the raw data
         const data = t.data.map((row: string[]) =>
-          row.map(c => makeCell(c, keepDefaultNA))
+          row.map((c) => makeCell(c, keepDefaultNA))
         )
 
         let rowIndex: BaseDataFrame | undefined = undefined
@@ -437,11 +420,11 @@ export async function filesToDataFrames(
           const columns =
             t.indexNames.length > 0
               ? t.indexNames
-              : range(indexCols).map(i => `${DEFAULT_INDEX_NAME} ${i + 1}`)
+              : range(indexCols).map((i) => `${DEFAULT_INDEX_NAME} ${i + 1}`)
 
           rowIndex = new DataFrame({
             data: t.index.map((row: string[]) =>
-              row.map(c => makeCell(c, keepDefaultNA))
+              row.map((c) => makeCell(c, keepDefaultNA))
             ),
             columns,
           })
@@ -452,7 +435,7 @@ export async function filesToDataFrames(
         if (t.columns.length > 0) {
           colIndex = new DataFrame({
             data: t.columns.map((col: string[]) =>
-              col.map(c => makeCell(c, keepDefaultNA))
+              col.map((c) => makeCell(c, keepDefaultNA))
             ),
             columns: [DEFAULT_COLUMN_INDEX_NAME],
           })
@@ -468,6 +451,8 @@ export async function filesToDataFrames(
         // regular text so we can parse in browser
 
         const lines = textToLines(file.text)
+
+        //console.log('lines', lines, name)
 
         const sep = name.endsWith('csv') ? ',' : '\t'
 
@@ -494,12 +479,12 @@ export async function filesToDataFrames(
       }
     }
 
-    options?.onSuccess?.(tables)
+    onSuccess?.(tables)
   } catch (err) {
     console.log(err)
 
     if (err instanceof Error) {
-      options?.onError?.(err.message, files)
+      onError?.(err.message, files)
     }
   }
 }
