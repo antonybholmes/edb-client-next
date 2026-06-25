@@ -13,7 +13,10 @@ import {
 
 import { getFormattedShape } from '@/lib/dataframe/dataframe-utils'
 
-import { onTextFileChange } from '@/components/pages/open-files'
+import {
+  onTextFileChange,
+  openFilesDialog,
+} from '@/components/pages/open-files'
 
 import { OpenIcon } from '@/icons/open-icon'
 
@@ -82,7 +85,7 @@ export function GeneConvPage() {
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
 
-  const { openFiles } = useOpenFiles()
+  const { openDataFrames } = useOpenFiles()
   const { save } = useSave()
 
   useEffect(() => {
@@ -136,12 +139,11 @@ export function GeneConvPage() {
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
-            openDialog({
-              type: 'open',
-              payload: {
-                callback: (message, files) => {
-                  onTextFileChange(message, files, (files) => openFiles(files))
-                },
+            openFilesDialog({
+              onFileChange: (message, files) => {
+                onTextFileChange(message, files, (files) =>
+                  openDataFrames(files)
+                )
               },
             })
           }}
@@ -176,15 +178,13 @@ export function GeneConvPage() {
   ]
 
   useEffect(() => {
-    const tabs: ITab[] = [
+    setToolbarTabs([
       {
         //id: nanoid(),
         id: 'Home',
         component: HomeToolbar,
       },
-    ]
-
-    setToolbarTabs(tabs)
+    ])
   }, [setToolbarTabs])
 
   return (

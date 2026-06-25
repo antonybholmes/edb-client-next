@@ -19,7 +19,10 @@ import {
   getFormattedShape,
 } from '@/lib/dataframe/dataframe-utils'
 
-import { onTextFileChange } from '@/components/pages/open-files'
+import {
+  onTextFileChange,
+  openFilesDialog,
+} from '@/components/pages/open-files'
 
 import { OpenIcon } from '@/icons/open-icon'
 
@@ -44,14 +47,12 @@ import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import {
   HeaderPortal,
   HeaderSlotPortal,
 } from '@/components/header/header-portal'
-import { useStableId } from '@/hooks/stable-id'
 import { AssemblySelect } from '@/lib/edb/assembly-select'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { CoreProviders } from '@/providers/core-provider'
@@ -72,8 +73,7 @@ import { HomeToolbar } from './toolbars/home'
 import { useOpen } from './use-open'
 
 export function DNAPage() {
-  const _id = useStableId('dna-page')
-  const { goto, openFile, addSheets } = useHistory()
+  const { goto, openFile } = useHistory()
 
   const { file } = useFiles()
   const { sheet, sheets } = useCurrentSheets()
@@ -83,13 +83,11 @@ export function DNAPage() {
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const [showFileMenu, setShowFileMenu] = useState(false)
 
-  const { open: openDialog } = useDialogs()
   const { openFiles } = useOpen()
 
   useEffect(() => {
     setAppInfo(APP_INFO)
-    //openApp(APP_INFO.name)
-  }, [])
+  }, [setAppInfo])
 
   useEffect(() => {
     setToolbarTabs([
@@ -162,12 +160,9 @@ export function DNAPage() {
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
-            openDialog({
-              type: 'open',
-              payload: {
-                callback: (message, files) => {
-                  onTextFileChange(message, files, openFiles)
-                },
+            openFilesDialog({
+              onFileChange: (message, files) => {
+                onTextFileChange(message, files, openFiles)
               },
             })
           }}

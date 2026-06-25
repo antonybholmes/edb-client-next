@@ -147,29 +147,7 @@ export function MotifsPage() {
             </ToolbarTabGroup>
 
             <ToolbarTabGroup title="Display" className="gap-x-1">
-              {/* <Tabs
-              value={settings.mode}
-              onValueChange={(v) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.mode = v as Mode
-                  })
-                )
-              }}
-            >
-              <IOSTabsList
-                defaultWidth="64px"
-                value={settings.mode}
-                tabs={[
-                  { id: 'prob', name: 'Prob' },
-                  { id: 'bits', name: 'Bits' },
-                ]}
-              />
-            </Tabs> */}
-
               <ToggleGroup
-                //variant="outline"
-
                 value={[settings.mode]}
                 onValueChange={(v) => {
                   if (v) {
@@ -181,8 +159,6 @@ export function MotifsPage() {
                   }
                 }}
                 size="toolbar"
-                //rounded="none"
-                //className="rounded-theme overflow-hidden"
               >
                 <GroupToggle
                   value="prob"

@@ -4,35 +4,24 @@ import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
-import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 
-import { SearchIcon } from '@/icons/search-icon'
-
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import {
   TEXT_DOWNLOAD_AS_PNG,
   TEXT_DOWNLOAD_AS_SVG,
   TEXT_EXPORT,
-  TEXT_FILE,
-  TEXT_SAVE_IMAGE,
 } from '@/consts'
-import { ChevronRightIcon } from '@/icons/chevron-right-icon'
 
 import {
   Select,
   SelectContent,
   SelectItem,
-  SelectList,
   SelectTrigger,
 } from '@/themed/v2/select'
-import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
-import {
-  DropdownMenuCheckboxItem,
-  DropdownMenuItem,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { type ITab } from '@/components/tabs/tab-provider'
 import { FileImageIcon } from '@/icons/file-image-icon'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
@@ -46,32 +35,21 @@ import { LayersIcon } from '@/icons/layers-icon'
 
 import { useKeyDownListener } from '@/hooks/keydown-listener'
 import { useKeyUpListener } from '@/hooks/keyup-listener'
-import { ArrowLeftRightIcon } from '@/icons/arrow-left-right-icon'
-import { SettingsIcon } from '@/icons/settings-icon'
-import { ZoomInIcon } from '@/icons/zoom-in-icon'
-import { ZoomOutIcon } from '@/icons/zoom-out-icon'
 import { VCenterRow } from '@/layout/v-center-row'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { useZoom } from '@/providers/zoom'
 
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
-import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { useSettingsTabs } from '@/dialogs/settings/setting-tabs-store'
 import { useSearch } from '@/hooks/search'
-import { useStableId } from '@/hooks/stable-id'
 import { ExportIcon } from '@/icons/export-icon'
 import { CoreProviders } from '@/providers/core-provider'
-import { GroupToggle, ToggleGroup } from '@/themed/v2/toggle-group'
 import { produce } from 'immer'
 
-import { DownloadIcon } from '@/components/icons/download-icon'
-import { ToolbarDropdownButton } from '@/components/toolbar/toolbar-dropdown-button'
 import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
 
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
-import { ListChevronsUpDownIcon } from 'lucide-react'
-import { useDialogs } from '../../../../dialogs/dialogs'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
@@ -79,34 +57,29 @@ import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
 import { AssemblySelect } from '@/lib/edb/assembly-select'
 import { locStr } from '@/lib/genomic/genomic'
 import {
-  newGenomicLocation,
   parseGenomicLocation,
   type IGenomicLocation,
 } from '@/lib/genomic/genomic-location'
+import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { LocationAutocomplete } from './location-autocomplete'
 import { LocationsPropsPanel } from './locations/locations-props-panel'
 import { SeqbrowserDialogsRoot } from './seq-browser-dialogs'
-import {
-  useSeqBrowserSettings,
-  type BinSize,
-  type GeneView,
-  type ReadScaleMode,
-} from './seq-browser-settings'
+import { useSeqBrowserSettings, type BinSize } from './seq-browser-settings'
 import { SettingsPlotPanel } from './settings/settings-plot-panel'
 import { SettingsTracksPanel } from './settings/settings-tracks-panel'
 import { TracksView } from './svg/tracks-view'
+import { HomeToolbar } from './toolbars/home-toolbar'
 import { useTracks } from './tracks-store'
 
 const PLOT_ZOOM_CHANNEL = 'seq-browser-zoom'
 
 function SeqBrowserPage() {
-  const _id = useStableId('seq-browser-page')
   const { locations, binSizes, setLocations, dispatch } = useTracks()
   const { settings: edbSettings } = useEdbSettings()
   const { setAppInfo } = useAppInfo()
   const { settings, updateSettings } = useSeqBrowserSettings()
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
+  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
 
   const { setSettingsTabs, setDefaultSettingsTab } = useSettingsTabs()
 
@@ -115,29 +88,13 @@ function SeqBrowserPage() {
 
   const { query, setQuery } = useSearch()
 
-  const svgRef = useRef<SVGSVGElement>(null)
-
   const [showFileMenu, setShowFileMenu] = useState(false)
-
-  const { open: openDialog } = useDialogs()
 
   const [showSideBar, setShowSideBar] = useState(true)
 
   const [isCtrlPressed, setIsCtrlPressed] = useState(false)
 
-  function setLocationZoom(scale: number) {
-    setLocations(
-      locations.map((location) => {
-        const w = Math.round(
-          Math.max(100, (location.end - location.start + 1) * scale)
-        )
-
-        const s = Math.round((location.start + location.end) / 2 - w / 2)
-
-        return newGenomicLocation(location.chr, s, s + w)
-      })
-    )
-  }
+  const { svgRef } = useSVG()
 
   useKeyDownListener((e) => {
     if ((e as KeyboardEvent).ctrlKey) {
@@ -151,6 +108,9 @@ function SeqBrowserPage() {
 
   useEffect(() => {
     setAppInfo(APP_INFO)
+  }, [setAppInfo])
+
+  useEffect(() => {
     const settingsTabs: ITab[] = [
       {
         id: APP_INFO.name,
@@ -159,12 +119,12 @@ function SeqBrowserPage() {
           {
             id: 'Plot',
             icon: <CompassIcon />,
-            component: () => <SettingsPlotPanel />,
+            component: SettingsPlotPanel,
           },
           {
             id: 'Tracks',
             icon: <LayersIcon />,
-            component: () => <SettingsTracksPanel />,
+            component: SettingsTracksPanel,
           },
         ],
       },
@@ -172,259 +132,40 @@ function SeqBrowserPage() {
 
     setSettingsTabs(settingsTabs)
     setDefaultSettingsTab(APP_INFO.name)
+  }, [setSettingsTabs, setDefaultSettingsTab])
 
-    const tabs: ITab[] = [
+  useEffect(() => {
+    setToolbarTabs([
       {
-        //id: nanoid(),
         id: 'Home',
-        component: () => (
-          <>
-            <ToolbarTabGroup title={TEXT_FILE}>
-              <ToolbarIconButton
-                title={TEXT_SAVE_IMAGE}
-                onClick={() => {
-                  openDialog({
-                    type: 'save-image',
-                    payload: { svgRef, name: 'tracks' },
-                  })
-                }}
-              >
-                <DownloadIcon />
-              </ToolbarIconButton>
-            </ToolbarTabGroup>
-
-            <ToolbarTabGroup title="View" className="gap-x-0.5">
-              <ToolbarCol>
-                <VCenterRow>
-                  <ToolbarIconButton
-                    title="Zoom In"
-                    onClick={() => setLocationZoom(0.5)}
-                  >
-                    <ZoomInIcon />
-                  </ToolbarIconButton>
-
-                  <ToolbarIconButton
-                    title="Zoom Out"
-                    onClick={() => setLocationZoom(2)}
-                  >
-                    <ZoomOutIcon />
-                  </ToolbarIconButton>
-                </VCenterRow>
-
-                <VCenterRow>
-                  <ToolbarIconButton
-                    title="Move Left"
-                    onClick={() => {
-                      setLocations(
-                        locations.map((location) => {
-                          const w = location.end - location.start + 1
-                          const s =
-                            location.start -
-                            Math.pow(
-                              10,
-                              Math.max(2, Math.floor(Math.log10(w)) - 1)
-                            ) *
-                              2
-
-                          return newGenomicLocation(location.chr, s, s + w)
-                        })
-                      )
-                    }}
-                  >
-                    <ChevronRightIcon className="-scale-100" />
-                  </ToolbarIconButton>
-                  <ToolbarIconButton
-                    title="Move Right"
-                    onClick={() => {
-                      setLocations(
-                        locations.map((location) => {
-                          const w = location.end - location.start + 1
-                          const s =
-                            location.start +
-                            Math.pow(
-                              10,
-                              Math.max(2, Math.floor(Math.log10(w)) - 1)
-                            ) *
-                              2
-
-                          return newGenomicLocation(location.chr, s, s + w)
-                        })
-                      )
-                    }}
-                  >
-                    <ChevronRightIcon />
-                  </ToolbarIconButton>
-                </VCenterRow>
-              </ToolbarCol>
-            </ToolbarTabGroup>
-
-            <ToolbarTabGroup title="Display" className="gap-x-1 items-stretch">
-              <ToggleGroup
-                value={[settings.tracks.genes.view]}
-                onValueChange={(v) => {
-                  if (v[0]) {
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.tracks.genes.view = v[0] as GeneView
-                      })
-                    )
-                  }
-                }}
-                size="toolbar"
-                justify="start"
-                direction="toolbar"
-              >
-                <GroupToggle
-                  key="transcript"
-                  value="transcript"
-                  className="px-2"
-                >
-                  Transcript
-                </GroupToggle>
-
-                <GroupToggle key="features" value="features" className="px-2">
-                  Features
-                </GroupToggle>
-              </ToggleGroup>
-
-              <ToolbarCol>
-                <ToolbarDropdownButton
-                  icon={<ListChevronsUpDownIcon size={18} strokeWidth={1.5} />}
-                  //icon={<span>Gene View</span>}
-                  title="Gene display mode"
-                  showArrow={false}
-                >
-                  <DropdownMenuCheckboxItem
-                    checked={settings.tracks.genes.display === 'dense'}
-                    onClick={() => {
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.tracks.genes.display = 'dense'
-                        })
-                      )
-                    }}
-                  >
-                    Dense
-                  </DropdownMenuCheckboxItem>
-
-                  <DropdownMenuCheckboxItem
-                    checked={settings.tracks.genes.display === 'pack'}
-                    onClick={() => {
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.tracks.genes.display = 'pack'
-                        })
-                      )
-                    }}
-                  >
-                    Pack
-                  </DropdownMenuCheckboxItem>
-
-                  <DropdownMenuCheckboxItem
-                    checked={settings.tracks.genes.display === 'full'}
-                    onClick={() => {
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.tracks.genes.display = 'full'
-                        })
-                      )
-                    }}
-                  >
-                    Full
-                  </DropdownMenuCheckboxItem>
-                </ToolbarDropdownButton>
-
-                <ToolbarIconButton
-                  title="Reverse"
-                  checked={settings.reverse}
-                  onClick={() => {
-                    const newOptions = produce(settings, (draft) => {
-                      draft.reverse = !draft.reverse
-                    })
-
-                    updateSettings(newOptions)
-                  }}
-                >
-                  <ArrowLeftRightIcon />
-                </ToolbarIconButton>
-              </ToolbarCol>
-
-              <ToggleGroup
-                value={[
-                  settings.tracks.genes.canonical.only ? ['canonical'] : [],
-                  settings.tracks.genes.types === 'protein-coding'
-                    ? ['protein-coding']
-                    : [],
-                ].flat()}
-                onValueChange={(v) => {
-                  const newSettings = produce(settings, (draft) => {
-                    draft.tracks.genes.canonical.only = v.includes('canonical')
-
-                    draft.tracks.genes.types = v.includes('protein-coding')
-                      ? 'protein-coding'
-                      : 'all'
-                  })
-
-                  updateSettings(newSettings)
-                }}
-                size="toolbar"
-                //justify="start"
-                direction="toolbar"
-                multiple={true}
-              >
-                <GroupToggle value="canonical">Canonical</GroupToggle>
-
-                <GroupToggle value="protein-coding">Protein coding</GroupToggle>
-              </ToggleGroup>
-            </ToolbarTabGroup>
-
-            <ToolbarTabGroup title="Scale">
-              <SelectList
-                variant="toolbar"
-                w="xs"
-                value={settings.tracks.seqs.scale.mode}
-                onValueChange={(v) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.tracks.seqs.scale.mode = v as ReadScaleMode
-                    })
-                  )
-                }}
-              >
-                <SelectItem value="Count">Count</SelectItem>
-                <SelectItem value="BPM">BPM</SelectItem>
-                <SelectItem value="CPM">CPM</SelectItem>
-              </SelectList>
-            </ToolbarTabGroup>
-          </>
-        ),
+        component: HomeToolbar,
       },
-    ]
+    ])
+  }, [setToolbarTabs])
 
-    setToolbarTabs(tabs)
-
-    const chartTabs: ITab[] = [
+  useEffect(() => {
+    setSideTabs([
       {
         id: 'Tracks',
-        icon: <SearchIcon />,
-        component: () => <TracksPropsPanel />,
+        component: TracksPropsPanel,
       },
       {
         id: 'Locations',
-        icon: <SettingsIcon />,
-        component: () => <LocationsPropsPanel />,
+        component: LocationsPropsPanel,
       },
       // {
       //   id: TEXT_ACCOUNT,
       //   icon: <SlidersIcon />,
       //   content: ()=> <AccountPropsPanel />,
       // },
-    ]
+    ])
+  }, [setSideTabs])
 
-    setSideTabs(chartTabs)
+  useEffect(() => {
+    // set initial location
 
     setQuery(['chr3:187441954-187466041'])
-  }, [])
+  }, [setQuery])
 
   useEffect(
     () =>
@@ -653,10 +394,9 @@ function SeqBrowserPage() {
 export function SeqBrowserQueryPage() {
   return (
     <CoreProviders>
-      {/* <HistoryProvider app={APP_INFO.name}> */}
-      <SeqBrowserPage />
-      {/* </HistoryProvider> */}
-      {/* </TracksProvider> */}
+      <SVGProvider>
+        <SeqBrowserPage />
+      </SVGProvider>
     </CoreProviders>
   )
 }

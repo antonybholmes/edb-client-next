@@ -5,6 +5,7 @@ import {
   DEFAULT_PARSE_OPTS,
   filesToDataFrames,
   onTextFileChange,
+  openFilesDialog,
 } from '@/components/pages/open-files'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
@@ -199,7 +200,6 @@ export function HomeToolbar() {
         addSheets([dfOut], { name: 'Pathway' })
 
         // we've finished so get rid of the animations
-
         removeFooter('left', iid)
       }
     )
@@ -209,15 +209,11 @@ export function HomeToolbar() {
     <>
       <ToolbarTabGroup title="File">
         <ToolbarOpenFile
-          onOpen={() => {
-            openDialog({
-              type: 'open',
-              payload: {
-                callback: _open,
-              },
+          onClick={() => {
+            openFilesDialog({
+              onFileChange: _open,
             })
           }}
-          multiple={true}
         />
 
         <ToolbarIconButton

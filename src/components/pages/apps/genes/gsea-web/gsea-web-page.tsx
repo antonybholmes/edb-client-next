@@ -4,6 +4,7 @@ import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
 import {
   onBinaryFileChange,
+  openFilesDialog,
   type IBinaryFileOpen,
 } from '@/components/pages/open-files'
 
@@ -31,7 +32,6 @@ import type { ITab } from '@/components/tabs/tab-provider'
 import { Checkbox } from '@/themed/v2/check-box'
 
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { FileDropZonePanel } from '@/components/file-dropzone-panel'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
@@ -65,6 +65,7 @@ import {
 
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
+import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { GseaSvg } from '../gsea-plot/gsea-svg'
 import APP_INFO from './manifest.json'
 import { HomeToolbar } from './toolbars/home'
@@ -91,7 +92,7 @@ export function GseaWebPage() {
     rankedGenes,
     reportsMap,
     datasetsForUse,
-    svgRef,
+
     setDatasetsForUse,
     loadGseaZip,
   } = useGseaWebStore()
@@ -107,7 +108,7 @@ export function GseaWebPage() {
 
   const [reportTabs, setReportTabs] = useState<string[]>([])
 
-  const { open: openDialog } = useDialogs()
+  const { svgRef } = useSVG()
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
@@ -178,12 +179,10 @@ export function GseaWebPage() {
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
-            openDialog({
-              type: 'open',
-              payload: {
-                callback: (message, files) => {
-                  onBinaryFileChange(message, files, loadGseaZip)
-                },
+            openFilesDialog({
+              message: TEXT_OPEN_FILE,
+              onFileChange: (message, files) => {
+                onBinaryFileChange(message, files, loadGseaZip)
               },
             })
           }}
@@ -426,9 +425,9 @@ export function GseaWebPage() {
 export function GseaWebQueryPage() {
   return (
     <CoreProviders>
-      {/* <HistoryProvider app={APP_INFO.name}> */}
-      <GseaWebPage />
-      {/* </HistoryProvider> */}
+      <SVGProvider>
+        <GseaWebPage />
+      </SVGProvider>
     </CoreProviders>
   )
 }

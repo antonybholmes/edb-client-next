@@ -2,7 +2,6 @@ import type { IBinaryFileOpen } from '@/components/pages/open-files'
 import { makeUuid } from '@/lib/id'
 import { textToTokens } from '@/lib/text/lines'
 import { unzipSync } from 'fflate'
-import { RefObject } from 'react'
 
 import { create } from 'zustand'
 
@@ -39,7 +38,7 @@ export interface IGseaWebStore {
   resultsMap: Record<string, IGseaResult>
   reports: IGseaPathway[]
   allowSelectAll: boolean
-  svgRef: RefObject<SVGSVGElement | null>
+
   setDatasetsForUse: (datasetsForUse: Record<string, boolean>) => void
   setAllowSelectAll: (allowSelectAll: boolean) => void
   setReports: (reports: IGseaPathway[]) => void
@@ -267,7 +266,6 @@ export function useGsea(): IGseaWebStore {
   const resultsMap = useGseaWebStore((state) => state.resultsMap)
   const reports = useGseaWebStore((state) => state.reports)
   const allowSelectAll = useGseaWebStore((state) => state.allowSelectAll)
-  const svgRef = useGseaWebStore((state) => state.svgRef)
 
   return {
     phenotypes,
@@ -278,7 +276,7 @@ export function useGsea(): IGseaWebStore {
     resultsMap,
     reports,
     allowSelectAll,
-    svgRef,
+
     setDatasetsForUse: useGseaWebStore((state) => state.setDatasetsForUse),
     setAllowSelectAll: useGseaWebStore((state) => state.setAllowSelectAll),
     setReports: useGseaWebStore((state) => state.setReports),

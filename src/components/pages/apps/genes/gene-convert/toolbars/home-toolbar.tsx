@@ -3,7 +3,10 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
-import { onTextFileChange } from '@/components/pages/open-files'
+import {
+  onTextFileChange,
+  openFilesDialog,
+} from '@/components/pages/open-files'
 import {
   GroupToggle,
   ToggleGroup,
@@ -35,7 +38,7 @@ export function HomeToolbar() {
   const [toSpecies, setToSpecies] = useState<Species>('mouse')
   const [exact] = useState(true)
 
-  const { openFiles } = useOpenFiles()
+  const { openDataFrames } = useOpenFiles()
 
   function save(format: string) {
     if (!sheet) {
@@ -77,17 +80,15 @@ export function HomeToolbar() {
     <>
       <ToolbarTabGroup title="File">
         <ToolbarOpenFile
-          onOpen={() => {
-            openDialog({
-              type: 'open',
-              payload: {
-                callback: (message, files) => {
-                  onTextFileChange(message, files, (files) => openFiles(files))
-                },
+          onClick={() => {
+            openFilesDialog({
+              onFileChange: (message, files) => {
+                onTextFileChange(message, files, (files) =>
+                  openDataFrames(files)
+                )
               },
             })
           }}
-          multiple={true}
         />
 
         <ToolbarIconButton

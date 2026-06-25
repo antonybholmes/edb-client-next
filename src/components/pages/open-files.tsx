@@ -119,12 +119,22 @@ interface IProps {
   fileTypes?: string[] | undefined
 }
 
+/**
+ * Create a file input dialog to open files. This function creates
+ * an invisible file input element, configures it based on the provided options,
+ * and programmatically triggers a click event to open the file selection dialog.
+ * When files are selected or the dialog is canceled, the appropriate callback is invoked.
+ * It is not a traditional React component, but rather a utility function that can be called to open the file dialog
+ * since browsers do not allow programmatically opening file dialogs without user interaction.
+ *
+ * @param param0
+ */
 export function openFilesDialog({
   message = '',
   //onOpenChange,
   onFileChange,
   dirMode = false,
-  multiple = false,
+  multiple = true,
   fileTypes = ['txt', 'tsv', 'vst', 'xlsx'],
 }: IProps) {
   const input = document.createElement('input')

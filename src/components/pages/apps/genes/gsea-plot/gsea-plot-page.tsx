@@ -4,6 +4,7 @@ import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
 import {
   onBinaryFileChange,
+  openFilesDialog,
   type IBinaryFileOpen,
 } from '@/components/pages/open-files'
 
@@ -30,7 +31,6 @@ import type { ITab } from '@/components/tabs/tab-provider'
 import { Checkbox } from '@/themed/v2/check-box'
 
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { FileDropZonePanel } from '@/components/file-dropzone-panel'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
@@ -54,6 +54,7 @@ import { produce } from 'immer'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
+import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { GeneSetsPropsPanel } from './geneset-props-panel'
@@ -87,7 +88,7 @@ export function GseaPlotPage() {
     rankedGenes,
     reportsMap,
     datasetsForUse,
-    svgRef,
+
     setDatasetsForUse,
     loadGseaZip,
   } = useGseaPlotStore()
@@ -103,8 +104,7 @@ export function GseaPlotPage() {
 
   const [reportTabs, setReportTabs] = useState<string[]>([])
 
-  const { open: openDialog } = useDialogs()
-
+  const { svgRef } = useSVG()
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
 
@@ -174,12 +174,9 @@ export function GseaPlotPage() {
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
-            openDialog({
-              type: 'open',
-              payload: {
-                callback: (message, files) => {
-                  onBinaryFileChange(message, files, loadGseaZip)
-                },
+            openFilesDialog({
+              onFileChange: (message, files) => {
+                onBinaryFileChange(message, files, loadGseaZip)
               },
             })
           }}
@@ -417,9 +414,9 @@ export function GseaPlotPage() {
 export function GseaPlotQueryPage() {
   return (
     <CoreProviders>
-      {/* <HistoryProvider app={APP_INFO.name}> */}
-      <GseaPlotPage />
-      {/* </HistoryProvider> */}
+      <SVGProvider>
+        <GseaPlotPage />
+      </SVGProvider>
     </CoreProviders>
   )
 }

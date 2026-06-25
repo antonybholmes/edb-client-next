@@ -2,7 +2,6 @@ import type { IBinaryFileOpen } from '@/components/pages/open-files'
 import { makeUuid } from '@/lib/id'
 import { textToTokens } from '@/lib/text/lines'
 import { unzipSync } from 'fflate'
-import { RefObject } from 'react'
 
 import { create } from 'zustand'
 
@@ -39,7 +38,7 @@ export interface IGseaPlotStore {
   resultsMap: Record<string, IGseaResult>
   reports: IGseaPathway[]
   allowSelectAll: boolean
-  svgRef: RefObject<SVGSVGElement | null>
+
   setDatasetsForUse: (datasetsForUse: Record<string, boolean>) => void
   setAllowSelectAll: (allowSelectAll: boolean) => void
   setReports: (reports: IGseaPathway[]) => void
@@ -55,7 +54,7 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
   resultsMap: {},
   reports: [],
   allowSelectAll: false,
-  svgRef: { current: null },
+
   setDatasetsForUse: (datasetsForUse: Record<string, boolean>) =>
     set({ datasetsForUse }),
 
@@ -266,7 +265,6 @@ export function useGsea(): IGseaPlotStore {
   const resultsMap = useGseaPlotStore((state) => state.resultsMap)
   const reports = useGseaPlotStore((state) => state.reports)
   const allowSelectAll = useGseaPlotStore((state) => state.allowSelectAll)
-  const svgRef = useGseaPlotStore((state) => state.svgRef)
 
   return {
     phenotypes,
@@ -277,7 +275,7 @@ export function useGsea(): IGseaPlotStore {
     resultsMap,
     reports,
     allowSelectAll,
-    svgRef,
+
     setDatasetsForUse: useGseaPlotStore((state) => state.setDatasetsForUse),
     setAllowSelectAll: useGseaPlotStore((state) => state.setAllowSelectAll),
     setReports: useGseaPlotStore((state) => state.setReports),

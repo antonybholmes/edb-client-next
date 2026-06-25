@@ -20,6 +20,7 @@ import {
   DEFAULT_PARSE_OPTS,
   filesToDataFrames,
   onTextFileChange,
+  openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
 
@@ -247,11 +248,8 @@ export function PathwayPage() {
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
-            openDialog({
-              type: 'open',
-              payload: {
-                callback: openLocalFile,
-              },
+            openFilesDialog({
+              onFileChange: openLocalFile,
             })
           }}
         >

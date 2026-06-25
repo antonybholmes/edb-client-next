@@ -9,7 +9,10 @@ import {
 
 import { download } from '@/lib/download-utils'
 
-import { onTextFileChange } from '@/components/pages/open-files'
+import {
+  onTextFileChange,
+  openFilesDialog,
+} from '@/components/pages/open-files'
 
 import { useEffect, useState } from 'react'
 
@@ -39,15 +42,15 @@ import { useAppInfo } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { CoreProviders } from '@/providers/core-provider'
 import { Textarea } from '@/themed/textarea'
+import { produce } from 'immer'
 import APP_INFO from './manifest.json'
+import { useRevComp } from './rev-comp-store'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
 function RevCompPage() {
-  const [text, setText] = useState('')
-
   const [output, setOutput] = useState('')
   const [outputMode] = useState('FASTA')
-  const [outputSeqs, setOutputSeqs] = useState<IRevCompSeq[]>([])
+  const { settings, updateSettings } = useRevComp()
   const { setAppInfo } = useAppInfo()
 
   const [showSideBar, setShowSideBar] = useState(true)
@@ -63,18 +66,18 @@ function RevCompPage() {
   // }
 
   function save(name: string, format: string) {
-    if (outputSeqs.length === 0) {
+    if (settings.outputSeqs.length === 0) {
       return
     }
 
     switch (format) {
       case 'json':
-        download(JSON.stringify(outputSeqs), name)
+        download(JSON.stringify(settings.outputSeqs), name)
         break
       default:
         //fasta
         download(
-          outputSeqs.map((seq) => `>${seq.id}\n${seq.rev}`).join('\n'),
+          settings.outputSeqs.map((seq) => `>${seq.id}\n${seq.rev}`).join('\n'),
           name
         )
         break
@@ -87,7 +90,11 @@ function RevCompPage() {
     try {
       const res = await httpFetch.getText('/data/test/rev-comp.fasta')
 
-      setText(res)
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.text = res
+        })
+      )
     } catch (e) {
       console.error(e)
     }
@@ -107,19 +114,21 @@ function RevCompPage() {
   }, [setToolbarTabs])
 
   useEffect(() => {
-    if (outputSeqs.length > 0) {
+    if (settings.outputSeqs.length > 0) {
       switch (outputMode) {
         case 'json':
-          setOutput(JSON.stringify(outputSeqs))
+          setOutput(JSON.stringify(settings.outputSeqs))
           break
         default:
           setOutput(
-            outputSeqs.map((seq) => `>${seq.id}\n${seq.rev}`).join('\n')
+            settings.outputSeqs
+              .map((seq) => `>${seq.id}\n${seq.rev}`)
+              .join('\n')
           )
           break
       }
     }
-  }, [outputSeqs])
+  }, [settings.outputSeqs])
 
   const fileMenuTabs: ITab[] = [
     {
@@ -129,15 +138,16 @@ function RevCompPage() {
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
-            openDialog({
-              type: 'open',
-              payload: {
-                fileTypes: ['fasta'],
-                callback: (message, files) => {
-                  onTextFileChange(message, files, (files) => {
-                    setText(files[0]!.text)
-                  })
-                },
+            openFilesDialog({
+              fileTypes: ['fasta'],
+              onFileChange: (message, files) => {
+                onTextFileChange(message, files, (files) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.text = files[0]!.text
+                    })
+                  )
+                })
               },
             })
           }}
@@ -223,10 +233,13 @@ function RevCompPage() {
             <Textarea
               className="grow whitespace-pre"
               placeholder="FASTA/DNA sequences"
-              value={text}
+              value={settings.text}
               onChange={(e) => {
-                console.log(e.target.value)
-                setText(e.target.value)
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.text = e.target.value
+                  })
+                )
               }}
             />
           </ResizablePanel>

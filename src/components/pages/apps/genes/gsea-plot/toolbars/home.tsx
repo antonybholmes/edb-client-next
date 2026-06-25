@@ -1,12 +1,16 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { DownloadIcon } from '@/components/icons/download-icon'
-import { onBinaryFileChange } from '@/components/pages/open-files'
+import {
+  onBinaryFileChange,
+  openFilesDialog,
+} from '@/components/pages/open-files'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
+import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 import { useGseaPlotStore } from '../gsea-plot-store'
 import { useGseaSettings } from '../gsea-settings-store'
@@ -14,23 +18,20 @@ import { useGseaSettings } from '../gsea-settings-store'
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
   const { settings, updateSettings } = useGseaSettings()
-  const { svgRef, loadGseaZip } = useGseaPlotStore()
+  const { loadGseaZip } = useGseaPlotStore()
+  const { svgRef } = useSVG()
 
   return (
     <>
       <ToolbarTabGroup title={TEXT_FILE}>
         <ToolbarOpenFile
-          onOpen={() => {
-            openDialog({
-              type: 'open',
-              payload: {
-                callback: (message, files) => {
-                  onBinaryFileChange(message, files, loadGseaZip)
-                },
+          onClick={() => {
+            openFilesDialog({
+              onFileChange: (message, files) => {
+                onBinaryFileChange(message, files, loadGseaZip)
               },
             })
           }}
-          multiple={true}
         />
 
         <ToolbarIconButton

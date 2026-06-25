@@ -1,79 +1,33 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
-import { onTextFileChange } from '@/components/pages/open-files'
+import {
+  onTextFileChange,
+  openFilesDialog,
+} from '@/components/pages/open-files'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
-import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { useEdbSettings } from '@/lib/edb/edb-settings'
-import { createDNATable, DNABase, FORMAT_TYPE } from '@/lib/genomic/dna'
+import { DNABase } from '@/lib/genomic/dna'
 import { useState } from 'react'
-import { useCurrentSheets } from '../../../matcalc/history/history-provider/history-contexts'
-import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
 import { useSave } from '../../../matcalc/hooks/save'
 
-import { ISaveAsFileType } from '@/components/dialogs/save-as-dialog'
 import { FILE_FORMAT_JSON } from '@/components/dialogs/save-txt-dialog'
 import { Checkbox } from '@/components/shadcn/ui/themed/v1/check-box'
 
 import { textToLines } from '@/lib/text/lines'
-
-const FASTA_FILE_TYPE: ISaveAsFileType = {
-  name: 'FASTA',
-  ext: 'fasta',
-}
-
-const REV_MAP: { [K in DNABase]: DNABase } = {
-  A: 'T',
-  C: 'G',
-  G: 'C',
-  T: 'A',
-  a: 't',
-  c: 'g',
-  g: 'c',
-  t: 'a',
-}
-
-interface ISeq {
-  id: string
-  seq: string
-}
-
-interface IRevCompSeq extends ISeq {
-  rev: string
-}
+import { produce } from 'immer'
+import { FASTA_FILE_TYPE, ISeq, REV_MAP, useRevComp } from '../rev-comp-store'
 
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
   const { save } = useSave()
-  const { sheet } = useCurrentSheets()
 
-  const { openFile, addSheets } = useHistory()
-
-  const { settings } = useEdbSettings()
-  //const [assembly, setAssembly] = useState('grch38')
-  const [reverse, setReverse] = useState(false)
-  const [complement, setComplement] = useState(false)
-  const [format, setFormat] = useState<FORMAT_TYPE>('auto')
-  const [mask, setMask] = useState<'' | 'lower' | 'n'>('')
   const [modeRev, setModeRev] = useState(true)
   const [modeComp, setModeComp] = useState(true)
 
-  async function addDNA() {
-    const dfa = await createDNATable(sheet as AnnotationDataFrame, {
-      assembly: settings.genomic.assembly,
-      format,
-      mask,
-      reverse,
-      complement,
-    })
-
-    if (dfa) {
-      addSheets([dfa], { name: `DNA` })
-    }
-  }
+  const { settings, updateSettings } = useRevComp()
 
   function revComp(seq: ISeq): string {
     let bases: DNABase[] = seq.seq.split('') as DNABase[]
@@ -90,7 +44,7 @@ export function HomeToolbar() {
   }
 
   function applyRevComp() {
-    const lines = textToLines(text)
+    const lines = textToLines(settings.text)
 
     let name: string | null = null
     let buffer = ''
@@ -133,27 +87,31 @@ export function HomeToolbar() {
 
     console.log(revSeqs)
 
-    setOutputSeqs(revSeqs)
+    updateSettings(
+      produce(settings, (draft) => {
+        draft.outputSeqs = revSeqs
+      })
+    )
   }
 
   return (
     <>
       <ToolbarTabGroup title="File">
         <ToolbarOpenFile
-          onOpen={() => {
-            openDialog({
-              type: 'open',
-              payload: {
-                fileTypes: ['fasta'],
-                callback: (message, files) => {
-                  onTextFileChange(message, files, (files) => {
-                    setText(files[0]!.text)
-                  })
-                },
+          onClick={() => {
+            openFilesDialog({
+              onFileChange: (message, files) => {
+                onTextFileChange(message, files, (files) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.text = files[0]!.text
+                    })
+                  )
+                })
               },
             })
           }}
-          multiple={true}
+          //multiple={true}
         />
 
         <ToolbarIconButton
@@ -183,7 +141,7 @@ export function HomeToolbar() {
         </ToolbarButton>
       </ToolbarTabGroup>
 
-      <ToolbarTabGroup title="Settings">
+      <ToolbarTabGroup title="Settings" className="gap-x-2 items-center">
         <Checkbox
           checked={modeRev}
           onCheckedChange={(state) => setModeRev(state)}

@@ -4,7 +4,7 @@ import {
   onTextFileChange,
 } from '@/components/pages/open-files'
 import { truncate } from '@/lib/text/text'
-import { useHistory } from '../../matcalc/history/history-store'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 
 export function useOpen() {
   const { openFile } = useHistory()

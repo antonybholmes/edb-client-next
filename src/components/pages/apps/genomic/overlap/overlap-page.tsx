@@ -1,7 +1,5 @@
 'use client'
 
-import { ToolbarOpenFile } from '@/toolbar/toolbar-open-files'
-
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
@@ -13,14 +11,11 @@ import {
   ToolbarPanel,
 } from '@/toolbar/toolbar'
 
-import { ToolbarButton } from '@/toolbar/toolbar-button'
-
 import {
   onTextFileChange,
+  openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
-
-import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
 import { OpenIcon } from '@/icons/open-icon'
 
@@ -29,11 +24,9 @@ import { useContext, useEffect, useState } from 'react'
 import {
   TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_TXT,
-  TEXT_FILE,
   TEXT_OK,
   TEXT_OPEN_FILE,
   TEXT_SAVE_AS,
-  TEXT_SAVE_TABLE,
 } from '@/consts'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -44,42 +37,31 @@ import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
 import { DeleteIcon } from '@/icons/delete-icon'
 import { FileIcon } from '@/icons/file-icon'
-import { SettingsIcon } from '@/icons/settings-icon'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import {
-  downloadDataFrame,
-  getFormattedShape,
-} from '@/lib/dataframe/dataframe-utils'
-import { oneWayFromDataframes } from '@/lib/genomic/overlap/one-way-overlap'
-import {
-  createOverlapTableFromDataframes,
-  type OVERLAP_MODE,
-} from '@/lib/genomic/overlap/overlap'
-import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
+import { getFormattedShape } from '@/lib/dataframe/dataframe-utils'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
-import { DownloadIcon } from '@/components/icons/download-icon'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
-import { useStableId } from '@/hooks/stable-id'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { reorder } from '@/lib/math/reorder'
-import { where } from '@/lib/math/where'
 import { CoreProviders } from '@/providers/core-provider'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { FilesPropsPanel } from './files-props-panel'
 import APP_INFO from './manifest.json'
 import { OverlapContext, OverlapProvider } from './overlap-provider'
+import { HomeToolbar } from './toolbars/home-toolbar'
+import { useSave } from './use-save'
 
 function OverlapPage() {
-  const _id = useStableId('overlap-page')
-
   const { dfs, setDfs, selected, setSelected, openOverlapFiles } =
     useContext(OverlapContext)
+
+  const { save } = useSave()
 
   const { setAppInfo } = useAppInfo()
 
@@ -93,72 +75,22 @@ function OverlapPage() {
 
   useEffect(() => {
     setAppInfo(APP_INFO)
+  }, [setAppInfo])
 
-    const tabs: ITab[] = [
+  useEffect(() => {
+    setToolbarTabs([
       {
-        //id: nanoid(),
         id: 'Home',
-        component: () => (
-          <>
-            <ToolbarTabGroup title={TEXT_FILE}>
-              <ToolbarOpenFile
-                onOpen={() => {
-                  openDialog({
-                    type: 'open',
-                    payload: {
-                      callback: (message, files) => {
-                        onTextFileChange(message, files, openFiles)
-                      },
-                    },
-                  })
-                }}
-                multiple={true}
-              />
-
-              <ToolbarIconButton
-                onClick={() => save('txt')}
-                title={TEXT_SAVE_TABLE}
-              >
-                <DownloadIcon />
-              </ToolbarIconButton>
-            </ToolbarTabGroup>
-
-            <ToolbarTabGroup title="Overlap">
-              <ToolbarButton
-                title="Calculate minimum common regions for columns of genomic coordinates"
-                onClick={() => overlapGenomicLocations('mcr')}
-              >
-                MCR
-              </ToolbarButton>
-              <ToolbarButton
-                aria-label="Calculate maximum overlap regions for columns of genomic coordinates"
-                onClick={() => overlapGenomicLocations('max')}
-              >
-                Min/max
-              </ToolbarButton>
-            </ToolbarTabGroup>
-
-            <ToolbarTabGroup title="One Way">
-              <ToolbarButton
-                title="Calculate minimum common regions for columns of genomic coordinates"
-                onClick={() => overlapOneWay()}
-              >
-                One Way
-              </ToolbarButton>
-            </ToolbarTabGroup>
-          </>
-        ),
+        component: HomeToolbar,
       },
-    ]
+    ])
+  }, [setToolbarTabs])
 
-    setToolbarTabs(tabs)
-
-    const rightTabs: ITab[] = [
+  useEffect(() => {
+    setSideTabs([
       {
-        //id: nanoid(),
-        icon: <SettingsIcon />,
         id: 'Files',
-        component: () => <FilesPropsPanel />,
+        component: FilesPropsPanel,
       },
       // {
       //   //id: nanoid(),
@@ -166,52 +98,11 @@ function OverlapPage() {
       //   id: 'History',
       //   content: ()=> <HistoryPanel />,
       // },
-    ]
-
-    setSideTabs(rightTabs)
-  }, [setAppInfo])
+    ])
+  }, [setSideTabs])
 
   function openFiles(files: ITextFileOpen[]) {
     openOverlapFiles(files)
-
-    setShowFileMenu(false)
-  }
-
-  function overlapGenomicLocations(mode: OVERLAP_MODE = 'mcr') {
-    //const dataframes = order.map(id => dfMap.get(id)!)
-
-    const dfOverlaps = createOverlapTableFromDataframes(dfs, mode)
-
-    if (dfOverlaps) {
-      setDfs([...dfs, dfOverlaps])
-      setSelected(dfOverlaps.id)
-    }
-  }
-
-  function overlapOneWay() {
-    //const dataframes = order.map(id => dfMap.get(id)!)
-
-    const dfOverlaps = oneWayFromDataframes(dfs)
-
-    if (dfOverlaps) {
-      setDfs([...dfs, dfOverlaps])
-      setSelected(dfOverlaps.id)
-    }
-  }
-
-  function save(format: 'txt' | 'csv') {
-    const sep = format === 'csv' ? ',' : '\t'
-
-    const idx = where(dfs, (df) => df.id === selected)
-
-    if (idx.length > 0) {
-      downloadDataFrame(dfs[idx[0]!]! as AnnotationDataFrame, {
-        hasHeader: true,
-        hasIndex: false,
-        file: `table.${format}`,
-        sep,
-      })
-    }
 
     setShowFileMenu(false)
   }
@@ -225,12 +116,9 @@ function OverlapPage() {
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() =>
-            openDialog({
-              type: 'open',
-              payload: {
-                callback: (message, files) => {
-                  onTextFileChange(message, files, openFiles)
-                },
+            openFilesDialog({
+              onFileChange: (message, files) => {
+                onTextFileChange(message, files, openFiles)
               },
             })
           }

@@ -1,7 +1,10 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
-import { onTextFileChange } from '@/components/pages/open-files'
+import {
+  onTextFileChange,
+  openFilesDialog,
+} from '@/components/pages/open-files'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import {
   GroupToggle,
@@ -55,17 +58,13 @@ export function HomeToolbar() {
     <>
       <ToolbarTabGroup title={TEXT_FILE}>
         <ToolbarOpenFile
-          onOpen={() => {
-            openDialog({
-              type: 'open',
-              payload: {
-                callback: (message, files) => {
-                  onTextFileChange(message, files, openFiles)
-                },
+          onClick={() => {
+            openFilesDialog({
+              onFileChange: (message, files) => {
+                onTextFileChange(message, files, openFiles)
               },
             })
           }}
-          multiple={true}
         />
 
         <ToolbarIconButton

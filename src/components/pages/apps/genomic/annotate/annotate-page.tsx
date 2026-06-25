@@ -20,6 +20,7 @@ import {
 import {
   filesToDataFrames,
   onTextFileChange,
+  openFilesDialog,
 } from '@/components/pages/open-files'
 
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
@@ -126,17 +127,13 @@ export function AnnotationPage() {
           <>
             <ToolbarTabGroup title={TEXT_FILE} className="items-start">
               <ToolbarOpenFile
-                onOpen={() => {
-                  openDialog({
-                    type: 'open',
-                    payload: {
-                      callback: (message, files) => {
-                        onFileChange(message, files)
-                      },
+                onClick={() => {
+                  openFilesDialog({
+                    onFileChange: (message, files) => {
+                      onFileChange(message, files)
                     },
                   })
                 }}
-                multiple={true}
               />
               <ToolbarCol>
                 <ToolbarRow>
@@ -412,12 +409,9 @@ export function AnnotationPage() {
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
-            openDialog({
-              type: 'open',
-              payload: {
-                callback: (message, files) => {
-                  onFileChange(message, files)
-                },
+            openFilesDialog({
+              onFileChange: (message, files) => {
+                onFileChange(message, files)
               },
             })
           }}

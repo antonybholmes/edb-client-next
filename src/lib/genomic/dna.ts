@@ -4,7 +4,7 @@ import { API_DNA_URL } from '@/lib/edb/edb'
 
 import { TIME_5_MINUTES_MS } from '@/consts'
 
-import { QueryClient, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 
 import { AnnotationDataFrame } from '../dataframe/annotation-dataframe'
 import type { SeriesData } from '../dataframe/series-data'
@@ -156,7 +156,6 @@ export async function createDNATable(
 }
 
 export async function fetchDNA(
-  queryClient: QueryClient,
   location: IGenomicLocation,
   params: IDNAOptions = {}
 ): Promise<IDNA> {
@@ -174,42 +173,26 @@ export async function fetchDNA(
   }
 
   try {
-    const res = await queryClient.fetchQuery({
-      queryKey: [
-        'dna',
-        assembly,
-        location.toString(),
-        format,
-        mask,
-        reverse,
-        complement,
-      ],
-      staleTime: TIME_5_MINUTES_MS,
-      queryFn: async () => {
-        const params = new URLSearchParams([
-          ['format', format],
-          ['mask', mask],
-          ['rev', reverse.toString()],
-          ['comp', complement.toString()],
-        ])
+    const params = new URLSearchParams([
+      ['format', format],
+      ['mask', mask],
+      ['rev', reverse.toString()],
+      ['comp', complement.toString()],
+    ])
 
-        //console.log({ locations: [location.toString()] })
+    //console.log({ locations: [location.toString()] })
 
-        const res = await httpFetch.postJson<{
-          data: { seqs: { seq: string }[] }
-        }>(`${API_DNA_URL}/${assembly}?${params}`, {
-          body: { locations: [location.toString()] },
-        })
-
-        return res.data
-      },
+    const res = await httpFetch.postJson<{
+      data: { seqs: { seq: string }[] }
+    }>(`${API_DNA_URL}/${assembly}?${params}`, {
+      body: { locations: [location.toString()] },
     })
 
     //console.log(data)
 
     return {
       location,
-      seq: res.seqs[0]!.seq,
+      seq: res.data.seqs[0]!.seq,
       //rev: data.isRev,
       //comp: data.isComp,
     }
