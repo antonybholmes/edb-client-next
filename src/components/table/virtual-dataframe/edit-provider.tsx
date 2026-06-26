@@ -6,7 +6,7 @@ import {
   useState,
   type ChangeEvent,
 } from 'react'
-import { useSelectionRange } from '../../../providers/selection-range'
+import { useSelectionRange } from '../../../providers/selection-range-provider'
 import { useVirtualDataFrameContext } from './virtual-dataframe-provider'
 
 const BASE_FONT_SIZE = 0.75

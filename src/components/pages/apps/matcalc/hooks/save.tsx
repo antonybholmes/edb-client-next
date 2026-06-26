@@ -1,6 +1,7 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
+import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { friendlyFilename } from '@/lib/path'
 import { useCurrentSheets } from '../history/history-provider/history-contexts'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
@@ -12,6 +13,7 @@ import { useMatcalcSettings } from '../settings/matcalc-settings'
 export function useSave() {
   const { sheet } = useCurrentSheets()
   const { settings } = useMatcalcSettings()
+  const { settings: edbSettings } = useEdbSettings()
 
   function save(name: string, format: string) {
     if (!sheet) {
@@ -21,8 +23,15 @@ export function useSave() {
     name = friendlyFilename(name)
 
     const sep = format === 'csv' ? ',' : '\t'
-    const hasHeader = !sheet.name.includes('GCT')
-    const hasIndex = !sheet.name.includes('GCT')
+
+    let { hasHeader, hasIndex } = edbSettings.save.table
+
+    console.log('save', name, format, hasHeader, hasIndex)
+
+    if (name.toLowerCase().includes('gct') || format.toLowerCase() === 'gct') {
+      hasHeader = false
+      hasIndex = false
+    }
 
     downloadDataFrame(sheet as AnnotationDataFrame, {
       hasHeader,

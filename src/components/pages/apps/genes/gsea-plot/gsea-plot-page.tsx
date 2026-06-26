@@ -48,7 +48,7 @@ import { httpFetch } from '@/lib/http/http-fetch'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { BoolSearchQuery } from '@/lib/search'
 import { CoreProviders } from '@/providers/core-provider'
-import { useZoom } from '@/providers/zoom'
+import { useZoom } from '@/providers/zoom-provider'
 import Fuse from 'fuse.js'
 import { produce } from 'immer'
 

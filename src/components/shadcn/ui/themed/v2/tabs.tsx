@@ -4,7 +4,6 @@ import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_RING_CLS } from '@/theme'
 import { Tabs as TabsPrimitive } from '@base-ui/react/tabs'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { Activity } from 'react'
 
 import {
   forwardRef,
@@ -233,8 +232,11 @@ interface ITabContentPanelsProps extends IDivProps {
 }
 
 /**
- * Render each ITab as a TabsContent panel, and control visibility with
- * the Tabs value.
+ * Render each ITab as a TabsContent panel, using the
+ * base-ui Tabs component. This will unmount the content
+ * of each tab when it is not selected.
+ * Should use ITab component property to render the content of each tab
+ * where it should be a component reference that can be rendered. If the component is not provided, the tab will not be rendered.
  *
  * @param param0
  * @returns
@@ -247,71 +249,40 @@ export function TabContentPanels({
 }: ITabContentPanelsProps) {
   const { tab: selectedTab, tabs } = useTabs(groupId)
 
-  // if (!selectedTab) {
-  //   return null
-  // }
-
-  // const TabContentComponent: ComponentType<{}> | undefined =
-  //   selectedTab.component || selectedTab.render
-
-  // console.log(
-  //   'TabContentPanels selectedTab',
-  //   selectedTab,
-  //   'TabContentComponent',
-  //   TabContentComponent
-  // )
-
-  // if (!TabContentComponent) {
-  //   return null
-  // }
-
-  // return (
-  //   <div className={cn('flex', contentCls, className)} {...props}>
-  //     <TabContentComponent />
-  //   </div>
-  // )
-
   return (
-    <Tabs
-      value={selectedTab?.id ?? ''}
-      //onValueChange={() => {}}
-      className={className}
-      {...props}
-    >
-      {tabs.map((tab, ti) => {
-        const TabContentComponent = tab.component
+    <Tabs value={selectedTab?.id ?? ''} className={className} {...props}>
+      {tabs
+        .filter((c) => !!c.component)
+        .map((tab, ti) => {
+          const TabContentComponent = tab.component!
 
-        if (!TabContentComponent) {
-          return null
-        }
-
-        return (
-          <TabsContent
-            value={tab.id}
-            key={ti}
-            className={cn('h-full', contentCls)}
-          >
-            <TabContentComponent />
-          </TabsContent>
-        )
-      })}
+          return (
+            <TabsContent
+              value={tab.id}
+              key={ti}
+              className={cn('h-full', contentCls)}
+            >
+              <TabContentComponent />
+            </TabsContent>
+          )
+        })}
     </Tabs>
   )
 }
 
-export function TabContentForceMountPanels({
-  groupId = 'toolbar',
-}: ITabContentPanelsProps) {
-  const { tabs, selectedTabIndex } = useTabs(groupId)
+// export function TabContentForceMountPanels({
+//   groupId = 'toolbar',
+// }: ITabContentPanelsProps) {
+//   const { tabs, selectedTabIndex } = useTabs(groupId)
 
-  return tabs
-    .filter((tab) => !!tab.component)
-    .map((tab, ti) => {
-      const TabContentComponent = tab.component!
-      return (
-        <Activity mode={ti == selectedTabIndex ? 'visible' : 'hidden'} key={ti}>
-          <TabContentComponent />
-        </Activity>
-      )
-    })
-}
+//   return tabs
+//     .filter((tab) => !!tab.component)
+//     .map((tab, ti) => {
+//       const TabContentComponent = tab.component!
+//       return (
+//         <Activity mode={ti == selectedTabIndex ? 'visible' : 'hidden'} key={ti}>
+//           <TabContentComponent />
+//         </Activity>
+//       )
+//     })
+// }

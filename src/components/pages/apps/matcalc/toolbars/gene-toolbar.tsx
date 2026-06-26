@@ -6,7 +6,7 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { snrRankGenes } from '@/lib/gsea/gsea2'
 import { useFooter } from '@/providers/footer-provider'
-import { useSelectionRange } from '@/providers/selection-range'
+import { useSelectionRange } from '@/providers/selection-range-provider'
 import { produce } from 'immer'
 import { useExtGseaWorker } from '../apps/ext-gsea/ext-gsea-worker'
 import {

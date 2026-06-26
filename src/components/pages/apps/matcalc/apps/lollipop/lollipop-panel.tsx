@@ -13,7 +13,7 @@ import {
 } from '@/providers/message-provider'
 import { produce } from 'immer'
 
-import { useZoom } from '@/providers/zoom'
+import { useZoom } from '@/providers/zoom-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { DomainPropsPanel } from '../../../wgs/lollipop/domain-props-panel'

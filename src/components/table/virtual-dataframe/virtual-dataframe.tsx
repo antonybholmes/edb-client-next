@@ -8,7 +8,7 @@ import { type AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { cellStr } from '@/lib/dataframe/cell'
 import { range } from '@/lib/math/range'
 import { useEffect, useRef, useState } from 'react'
-import { useSelectionRange } from '../../../providers/selection-range'
+import { useSelectionRange } from '../../../providers/selection-range-provider'
 import { BaseCol } from '../../layout/base-col'
 import { BaseRow } from '../../layout/base-row'
 import { VCenterRow } from '../../layout/v-center-row'
@@ -114,14 +114,14 @@ function _VirtualDataFrame({ editable = false }: IVirtualDataFrameProps) {
 
             // first the headings
             const out: string[][] = [
-              [...df.rowObs.columns, ...cols.map(col => df.columns[col]!)],
+              [...df.rowObs.columns, ...cols.map((col) => df.columns[col]!)],
 
               // now add the selected rows
-              ...rows.map(row => [
-                ...indexCols.map(col =>
+              ...rows.map((row) => [
+                ...indexCols.map((col) =>
                   cellStr(df.rowObs.get(row, col), { dp, commas })
                 ),
-                ...cols.map(col =>
+                ...cols.map((col) =>
                   cellStr(df.get(row, col), {
                     dp,
                     commas,
@@ -130,7 +130,7 @@ function _VirtualDataFrame({ editable = false }: IVirtualDataFrameProps) {
               ]),
             ]
 
-            const s = out.map(r => r.join('\t')).join('\n')
+            const s = out.map((r) => r.join('\t')).join('\n')
 
             navigator.clipboard.writeText(s)
           }

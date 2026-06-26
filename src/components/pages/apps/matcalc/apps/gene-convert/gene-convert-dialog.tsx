@@ -4,7 +4,7 @@ import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
-import { useSelectionRange } from '@/providers/selection-range'
+import { useSelectionRange } from '@/providers/selection-range-provider'
 
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 

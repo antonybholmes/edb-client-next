@@ -52,7 +52,7 @@ import {
 
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { useZoom } from '@/providers/zoom'
+import { useZoom } from '@/providers/zoom-provider'
 
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { HeaderSlotPortal } from '@/components/header/header-portal'

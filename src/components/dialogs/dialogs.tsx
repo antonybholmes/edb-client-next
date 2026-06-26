@@ -7,6 +7,7 @@ import type { ComponentType, ReactNode, RefObject } from 'react'
 import { create } from 'zustand'
 import { BasicAlertDialog } from './basic-alert-dialog'
 import { OKCancelDialog, type ModalType } from './ok-cancel-dialog'
+import { SaveTableDialog } from './save-table-dialog'
 import { SaveTxtDialog } from './save-txt-dialog'
 import { SettingsDialog } from './settings/settings-dialog'
 
@@ -29,6 +30,12 @@ type DialogTypeMap = {
     svgRef: RefObject<SVGSVGElement | null>
   }
   save: {
+    title?: string
+    name?: string
+    fileTypes?: ISaveAsFileType[]
+    callback?: (data: ISaveAsResponse) => void
+  }
+  'save-table': {
     title?: string
     name?: string
     fileTypes?: ISaveAsFileType[]
@@ -200,6 +207,22 @@ function DialogRenderer({
         />
       )
     }
+    case 'save-table': {
+      const { title, name, fileTypes, callback } = dialog.payload
+      return (
+        <SaveTableDialog
+          title={title}
+          name={name}
+          fileTypes={fileTypes}
+          onResponse={(response, data) => {
+            if (response !== TEXT_CANCEL) {
+              callback?.(data!)
+            }
+            close(dialog.id)
+          }}
+        />
+      )
+    }
     case 'save-image': {
       const { title, name, svgRef } = dialog.payload
       return (
@@ -225,6 +248,7 @@ function DialogRenderer({
       } = dialog.payload
 
       const Component = component
+
       return (
         <BasicAlertDialog
           title={title}

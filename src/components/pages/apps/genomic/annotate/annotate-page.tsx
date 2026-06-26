@@ -48,7 +48,7 @@ import { AppHeaderIcon } from '@/components/header/app-header-icon'
 
 import { AssemblySelect } from '@/lib/edb/assembly-select'
 import { useAppInfo } from '@/lib/edb/edb-settings'
-import { useZoom } from '@/providers/zoom'
+import { useZoom } from '@/providers/zoom-provider'
 import {
   HistoryLayout,
   HistoryShowButton,

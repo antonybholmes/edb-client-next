@@ -28,7 +28,7 @@ import {
 
 import { type IClusterFrame } from '@/lib/math/hcluster'
 
-import { useEffect, useMemo, type ReactElement } from 'react'
+import { useEffect, type ReactElement } from 'react'
 
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
@@ -387,119 +387,114 @@ export function MatcalcPage() {
   //   _addPlots([plot])
   // }
 
-  const fileMenuTabs: ITab[] = useMemo(
-    () => [
-      {
-        //id: nanoid(),
-        id: 'Open',
-        icon: <OpenIcon variant="colorful" />,
-        content: () => (
-          <DropdownMenuItem
-            aria-label={TEXT_OPEN_FILE}
-            onClick={() => {
-              openFilesDialog({
-                fileTypes: ['json', 'cls'],
-                onFileChange: (message, files) => {
-                  onTextFileChange(message, files, (files) => {
-                    openMatcalcDialog({
-                      type: 'open-table-file',
-                      payload: { files, callback: openDataFrames },
-                    })
+  const fileMenuTabs: ITab[] = [
+    {
+      id: 'Open',
+      icon: <OpenIcon variant="colorful" />,
+      component: () => (
+        <DropdownMenuItem
+          aria-label={TEXT_OPEN_FILE}
+          onClick={() => {
+            openFilesDialog({
+              fileTypes: ['json', 'cls'],
+              onFileChange: (message, files) => {
+                onTextFileChange(message, files, (files) => {
+                  openMatcalcDialog({
+                    type: 'open-table-file',
+                    payload: { files, callback: openDataFrames },
                   })
-                },
+                })
+              },
+            })
+          }}
+        >
+          <UploadIcon />
+
+          <span>{TEXT_OPEN_FILE}</span>
+        </DropdownMenuItem>
+      ),
+    },
+    {
+      id: '<divider>',
+    },
+    {
+      id: TEXT_SAVE_AS,
+      icon: <DownloadIcon />,
+      component: () => (
+        <>
+          <DropdownMenuItem
+            aria-label={TEXT_DOWNLOAD_AS_TXT}
+            onClick={() => {
+              sendMessage({
+                type: 'info',
+                source: 'matcalc',
+                target: file?.id ?? '',
+                data: 'save:txt',
               })
+              // save("txt")}
             }}
           >
-            <UploadIcon />
-
-            <span>{TEXT_OPEN_FILE}</span>
+            <FileIcon stroke="" />
+            <span>{TEXT_DOWNLOAD_AS_TXT}</span>
           </DropdownMenuItem>
-        ),
-      },
-      {
-        id: '<divider>',
-      },
-      {
-        id: TEXT_SAVE_AS,
-        icon: <DownloadIcon />,
-        content: () => (
-          <>
-            <DropdownMenuItem
-              aria-label={TEXT_DOWNLOAD_AS_TXT}
-              onClick={() => {
-                sendMessage({
-                  type: 'info',
-                  source: 'matcalc',
-                  target: file?.id ?? '',
-                  data: 'save:txt',
-                })
-                // save("txt")}
-              }}
-            >
-              <FileIcon stroke="" />
-              <span>{TEXT_DOWNLOAD_AS_TXT}</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              aria-label={TEXT_DOWNLOAD_AS_CSV}
-              onClick={() => {
-                sendMessage({
-                  type: 'info',
-                  source: 'matcalc',
-                  target: file?.id ?? '',
-                  data: 'save:csv',
-                })
-                // save("txt")}
-              }}
-            >
-              <span>{TEXT_DOWNLOAD_AS_CSV}</span>
-            </DropdownMenuItem>
-          </>
-        ),
-      },
-      {
-        id: TEXT_EXPORT,
-        icon: <ExportIcon />,
-        content: () => (
-          <>
-            <DropdownMenuItem
-              aria-label={TEXT_DOWNLOAD_AS_PNG}
-              onClick={() => {
-                sendMessage({
-                  type: 'info',
-                  source: 'matcalc',
-                  target: plot?.id ?? '',
-                  data: 'save:png',
-                })
-                // save("txt")}
-              }}
-            >
-              <FileImageIcon stroke="" />
-              <span>{TEXT_DOWNLOAD_AS_PNG}</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              aria-label={TEXT_DOWNLOAD_AS_SVG}
-              onClick={() => {
-                sendMessage({
-                  type: 'info',
-                  source: 'matcalc',
-                  target: plot?.id ?? '',
-                  data: 'save:svg',
-                })
-                // save("txt")}
-              }}
-            >
-              <span>{TEXT_DOWNLOAD_AS_SVG}</span>
-            </DropdownMenuItem>
-          </>
-        ),
-      },
-    ],
-    [file?.id, plot?.id, sendMessage]
-  )
+          <DropdownMenuItem
+            aria-label={TEXT_DOWNLOAD_AS_CSV}
+            onClick={() => {
+              sendMessage({
+                type: 'info',
+                source: 'matcalc',
+                target: file?.id ?? '',
+                data: 'save:csv',
+              })
+              // save("txt")}
+            }}
+          >
+            <span>{TEXT_DOWNLOAD_AS_CSV}</span>
+          </DropdownMenuItem>
+        </>
+      ),
+    },
+    {
+      id: TEXT_EXPORT,
+      icon: <ExportIcon />,
+      component: () => (
+        <>
+          <DropdownMenuItem
+            aria-label={TEXT_DOWNLOAD_AS_PNG}
+            onClick={() => {
+              sendMessage({
+                type: 'info',
+                source: 'matcalc',
+                target: plot?.id ?? '',
+                data: 'save:png',
+              })
+              // save("txt")}
+            }}
+          >
+            <FileImageIcon stroke="" />
+            <span>{TEXT_DOWNLOAD_AS_PNG}</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            aria-label={TEXT_DOWNLOAD_AS_SVG}
+            onClick={() => {
+              sendMessage({
+                type: 'info',
+                source: 'matcalc',
+                target: plot?.id ?? '',
+                data: 'save:svg',
+              })
+              // save("txt")}
+            }}
+          >
+            <span>{TEXT_DOWNLOAD_AS_SVG}</span>
+          </DropdownMenuItem>
+        </>
+      ),
+    },
+  ]
 
   const mainContent = (
     <Tabs
-      //defaultValue={selectedTab.id}
       value={settings.view.panels.tab}
       className="min-h-0 h-full flex flex-col grow"
     >

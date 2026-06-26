@@ -21,7 +21,7 @@ import {
   messageTextFileFormat,
   useMessages,
 } from '@/providers/message-provider'
-import { useZoom } from '@/providers/zoom'
+import { useZoom } from '@/providers/zoom-provider'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
@@ -89,7 +89,7 @@ export function DataPanel() {
           )
         } else if (message.data === 'save') {
           openDialog({
-            type: 'save',
+            type: 'save-table',
             payload: {
               callback: (data) => {
                 save(data.name, data.format.ext)

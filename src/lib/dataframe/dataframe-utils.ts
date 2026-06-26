@@ -33,7 +33,7 @@ export interface ILineFile {
 export type IApplyFunc = (x: number) => number
 
 export function add(df: BaseDataFrame, a = 0): BaseDataFrame {
-  return df.apply(x => (x as number) + a)
+  return df.apply((x) => (x as number) + a)
 }
 
 export function getNumCol(df: BaseDataFrame, col: IndexId = 0): number[] {
@@ -47,7 +47,7 @@ export function getStrCol(df: BaseDataFrame, col = 0): string[] {
 }
 
 export function getNumRow(df: BaseDataFrame, row: number = 0): number[] {
-  return df.cols.map(col => cellNum(col.get(row)))
+  return df.cols.map((col) => cellNum(col.get(row)))
 }
 
 /**
@@ -58,21 +58,21 @@ export function getNumRow(df: BaseDataFrame, row: number = 0): number[] {
 export function filterNA(data: SeriesData[]): number[] {
   return data
     .map((v, vi) => [v, vi] as [SeriesData, number])
-    .filter(v => typeof v[0] !== 'number' || !isNaN(v[0] as number))
-    .map(v => v[1])
+    .filter((v) => typeof v[0] !== 'number' || !isNaN(v[0] as number))
+    .map((v) => v[1])
 }
 
 export function subset<T = SeriesData[] | SeriesData[]>(
   data: T[],
   idx: number[]
 ): T[] {
-  return idx.map(i => data[i]!)
+  return idx.map((i) => data[i]!)
 }
 
 export function zip(...cols: SeriesData[][]): SeriesData[][] {
   const colIdx = range(cols.length)
 
-  return range(cols[0]!.length).map(i => colIdx.map(j => cols[j]![i]!))
+  return range(cols[0]!.length).map((i) => colIdx.map((j) => cols[j]![i]!))
 }
 
 /**
@@ -106,8 +106,8 @@ export function rowDiv(df: BaseDataFrame, values: number[]): BaseDataFrame {
 }
 
 export function colSums(df: BaseDataFrame): number[] {
-  return df.cols.map(col =>
-    col.values.map(v => cellNum(v)).reduce((a, b) => a + b)
+  return df.cols.map((col) =>
+    col.values.map((v) => cellNum(v)).reduce((a, b) => a + b)
   )
 }
 
@@ -234,10 +234,10 @@ function findIndices(
 
   let idx: number[] = []
 
-  const lids = ids.map(id => (caseSensitive ? id : id.toLowerCase()))
+  const lids = ids.map((id) => (caseSensitive ? id : id.toLowerCase()))
 
   if (!caseSensitive) {
-    index = index.map(s => s.toLowerCase())
+    index = index.map((s) => s.toLowerCase())
   }
 
   if (keepOrder) {
@@ -245,14 +245,14 @@ function findIndices(
       const rowMap = Object.fromEntries(index.map((v, i) => [v, i]))
 
       idx = lids
-        .map(lid => {
+        .map((lid) => {
           if (lid in rowMap) {
             return rowMap[lid]!
           } else {
             return -1
           }
         })
-        .filter(x => x !== -1)
+        .filter((x) => x !== -1)
     } else {
       // slower partial matching
 
@@ -318,10 +318,10 @@ export function getFormattedShapeSmall(
 export function rowJoinDataFrames(dataFrames: DataFrame[]): DataFrame {
   const countMap: { [key: string]: number } = {}
 
-  dataFrames.forEach(df => {
+  dataFrames.forEach((df) => {
     const cols = range(df.shape[1])
 
-    cols.forEach(c => {
+    cols.forEach((c) => {
       const id = df.colName(c)
       countMap[id] = (countMap[id] ?? 0) + 1
     })
@@ -329,66 +329,66 @@ export function rowJoinDataFrames(dataFrames: DataFrame[]): DataFrame {
 
   const ids = new Set(
     Object.entries(countMap)
-      .filter(entry => entry[1] === dataFrames.length)
-      .map(entry => entry[0])
+      .filter((entry) => entry[1] === dataFrames.length)
+      .map((entry) => entry[0])
   )
 
   // get the ids in order from first table
-  const orderedIds = dataFrames[0]!.columns.filter(c => ids.has(c))
+  const orderedIds = dataFrames[0]!.columns.filter((c) => ids.has(c))
 
   // sort other tables using these ids
-  dataFrames = dataFrames.map(df => {
+  dataFrames = dataFrames.map((df) => {
     const indexMap = Object.fromEntries(
       df.columns.map((colId, ci) => [colId, ci])
     )
 
-    const indices = orderedIds.map(id => indexMap[id]!)
+    const indices = orderedIds.map((id) => indexMap[id]!)
 
     return df.iloc({ cols: indices }) as DataFrame
   })
 
   return new DataFrame({
-    data: dataFrames.map(df => df._data).flat(),
+    data: dataFrames.map((df) => df._data).flat(),
     columns: dataFrames[0]!.columns,
-    index: new DataIndex(dataFrames.map(df => df._index.values).flat()),
+    index: new DataIndex(dataFrames.map((df) => df._index.values).flat()),
   })
 }
 
 export function colJoinDataFrames(dataFrames: DataFrame[]): DataFrame {
   const countMap: { [key: string]: number } = {}
 
-  dataFrames.forEach(df => {
-    df.rowNames.forEach(id => {
+  dataFrames.forEach((df) => {
+    df.rowNames.forEach((id) => {
       countMap[id] = (countMap[id] || 0) + 1
     })
   })
 
   const ids = new Set(
     Object.entries(countMap)
-      .filter(entry => entry[1] === dataFrames.length)
-      .map(entry => entry[0])
+      .filter((entry) => entry[1] === dataFrames.length)
+      .map((entry) => entry[0])
   )
 
   // get the ids in order from first table
-  const orderedIds = dataFrames[0]!.rowNames.filter(rowId => ids.has(rowId))
+  const orderedIds = dataFrames[0]!.rowNames.filter((rowId) => ids.has(rowId))
 
   // sort other tables using these ids
-  dataFrames = dataFrames.map(df => {
+  dataFrames = dataFrames.map((df) => {
     const indexMap = Object.fromEntries(
       df.rowNames.map((rowId, rowi) => [rowId, rowi])
     )
 
-    const indices = orderedIds.map(id => indexMap[id]!)
+    const indices = orderedIds.map((id) => indexMap[id]!)
 
     return df.iloc({ rows: indices }) as DataFrame //filterRows(df, indices)
   })
 
   return new DataFrame({
-    data: range(dataFrames[0]!.shape[0]).map(r =>
-      dataFrames.map(df => df._data[r]!).flat()
+    data: range(dataFrames[0]!.shape[0]).map((r) =>
+      dataFrames.map((df) => df._data[r]!).flat()
     ),
     index: dataFrames[0]!.index,
-    columns: new DataIndex(dataFrames.map(df => df.columns).flat()),
+    columns: new DataIndex(dataFrames.map((df) => df.columns).flat()),
   })
 }
 
@@ -417,7 +417,7 @@ export function kmeans(
   // we use use clusters starting from 1
   ret.rowObs.setCol(
     'Cluster',
-    assignments.map(c => `c${c + 1}`),
+    assignments.map((c) => `c${c + 1}`),
     true
   )
 
@@ -444,27 +444,27 @@ export function log(
 }
 
 export function log2(df: BaseDataFrame, a = 0): BaseDataFrame {
-  return df.apply(v => Math.log2((v as number) + a))
+  return df.apply((v) => Math.log2((v as number) + a))
 }
 
 export function log10(df: BaseDataFrame, a = 0): BaseDataFrame {
-  return df.apply(v => Math.log10((v as number) + a))
+  return df.apply((v) => Math.log10((v as number) + a))
 }
 
 export function ln(df: BaseDataFrame, a = 0): BaseDataFrame {
-  return df.apply(v => Math.log((v as number) + a))
+  return df.apply((v) => Math.log((v as number) + a))
 }
 
 export function rowStdev(df: BaseDataFrame): number[] {
-  return df.rowMap(row => populationStd(row as number[]))
+  return df.rowMap((row) => populationStd(row as number[]))
 }
 
 export function rowMean(df: BaseDataFrame): number[] {
-  return df.rowMap(row => mean(row as number[]))
+  return df.rowMap((row) => mean(row as number[]))
 }
 
 export function rowMedian(df: BaseDataFrame): number[] {
-  return df.rowMap(row => median(row as number[])[0])
+  return df.rowMap((row) => median(row as number[])[0])
 }
 
 /**
@@ -474,7 +474,7 @@ export function rowMedian(df: BaseDataFrame): number[] {
  * @returns
  */
 export function colMean(df: BaseDataFrame): number[] {
-  return df.colMap(col => mean(col as number[]))
+  return df.colMap((col) => mean(col as number[]))
 }
 
 export function stdevFilter(df: BaseDataFrame, top = 1000) {
@@ -525,7 +525,7 @@ export function medianFilter(df: BaseDataFrame, top = 1000) {
 export function zscore(df: BaseDataFrame): BaseDataFrame {
   const z = new ZScore().fit(df.values.flat() as number[])
 
-  return df.replace(df.values.map(row => z.transform(row as number[])))
+  return df.replace(df.values.map((row) => z.transform(row as number[])))
 
   // return new AnnotationDataFrame({
   //   name: 'Row Z-score',
@@ -536,7 +536,7 @@ export function zscore(df: BaseDataFrame): BaseDataFrame {
 }
 
 export function rowZScore(df: BaseDataFrame): BaseDataFrame {
-  const z = df.values.map(row => new ZScore().fitTransform(row as number[]))
+  const z = df.values.map((row) => new ZScore().fitTransform(row as number[]))
 
   const ret = df.replace(z)
 
@@ -669,11 +669,13 @@ export function getColIdxFromGroup(
     return []
   }
 
-  const lcSearch = caseSensitive ? g.search : g.search.map(s => s.toLowerCase())
+  const lcSearch = caseSensitive
+    ? g.search
+    : g.search.map((s) => s.toLowerCase())
 
   return df.columns
     .map((col, ci) => ({ col: ci, name: col.toLowerCase() }))
-    .filter(c => {
+    .filter((c) => {
       if (g.columns && g.columns.length > 0) {
         // search via cls so use the cls definitions of columns
         // and check that the search, .e.g het
@@ -715,7 +717,7 @@ export function getColIdxFromGroup(
       }
       return false
     })
-    .map(c => c.col)
+    .map((c) => c.col)
 }
 
 /**
@@ -735,5 +737,5 @@ export function getColNamesFromGroup(
     return []
   }
 
-  return getColIdxFromGroup(df, g, caseSensitive).map(i => df.colName(i))
+  return getColIdxFromGroup(df, g, caseSensitive).map((i) => df.colName(i))
 }

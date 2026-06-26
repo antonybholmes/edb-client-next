@@ -88,7 +88,6 @@ export function HomeToolbar() {
         <ToolbarIconButton
           title="Download current table to device"
           onClick={() => {
-            console.log('save', file?.id ?? '')
             sendMessage({
               type: 'info',
               source: 'matcalc',

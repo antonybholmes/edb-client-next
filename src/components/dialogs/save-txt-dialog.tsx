@@ -16,18 +16,13 @@ export const TXT_FILE_FORMATS: ISaveAsFileType[] = [
   CSV_FORMAT,
 ]
 
-interface ISaveTxtDialogProps extends ISaveAsDialogProps {
-  tableMode?: boolean
-}
-
 export function SaveTxtDialog({
   open = true,
   title = TEXT_SAVE_AS,
   name,
   fileTypes = TXT_FILE_FORMATS,
   onResponse = () => {},
-  tableMode = false,
-}: ISaveTxtDialogProps) {
+}: ISaveAsDialogProps) {
   const { settings, updateSettings } = useEdbSettings()
 
   return (
@@ -36,7 +31,6 @@ export function SaveTxtDialog({
       title={title}
       name={name ?? settings.save.filetypes.txt.name}
       fileTypes={fileTypes}
-      ext={tableMode ? 'Table' : undefined}
       onResponse={(response, data) => {
         if (response !== TEXT_CANCEL) {
           const name = data!.name.split('.')[0]

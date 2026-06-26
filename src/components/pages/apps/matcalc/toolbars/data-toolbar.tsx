@@ -17,7 +17,7 @@ import {
   zscore,
 } from '@/lib/dataframe/dataframe-utils'
 import { logrankExample } from '@/lib/math/logrank'
-import { useSelectionRange } from '@/providers/selection-range'
+import { useSelectionRange } from '@/providers/selection-range-provider'
 import { produce } from 'immer'
 import { pathJoin } from '../history/history-provider/history-actions'
 import {

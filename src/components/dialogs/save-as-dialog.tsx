@@ -2,7 +2,7 @@ import { TEXT_CANCEL, TEXT_NAME, TEXT_SAVE_AS } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
 import type { UndefStr } from '@/lib/text/text'
-import { ReactNode, useState } from 'react'
+import { useState } from 'react'
 import { TextPropRow } from './text-prop-row'
 
 export interface ISaveAsFileType {
@@ -18,7 +18,6 @@ export interface ISaveAsResponse {
 export interface ISaveAsDialogProps extends IModalProps<ISaveAsResponse> {
   name?: UndefStr
   fileTypes?: readonly ISaveAsFileType[] | undefined
-  ext?: ReactNode
 }
 
 export function SaveAsDialog({
@@ -26,8 +25,8 @@ export function SaveAsDialog({
   title = TEXT_SAVE_AS,
   name = 'file',
   fileTypes = [],
-  ext,
   onResponse,
+  children,
 }: ISaveAsDialogProps) {
   const [text, setText] = useState(name)
 
@@ -62,7 +61,8 @@ export function SaveAsDialog({
           setText(e)
         }}
       />
-      {ext && ext}
+
+      {children && children}
     </OKCancelDialog>
   )
 }

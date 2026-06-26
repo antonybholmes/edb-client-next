@@ -11,7 +11,7 @@ import {
 } from '@/themed/v2/select'
 import { useState } from 'react'
 // import { Slider } from "../toolbar/slider"
-import { DEFAULT_ZOOM_CHANNEL_NAME, useZoom } from '@/providers/zoom'
+import { DEFAULT_ZOOM_CHANNEL_NAME, useZoom } from '@/providers/zoom-provider'
 import { Slider } from '@/themed/v2/slider'
 
 import { ChevronDown, Minus, Plus } from 'lucide-react'

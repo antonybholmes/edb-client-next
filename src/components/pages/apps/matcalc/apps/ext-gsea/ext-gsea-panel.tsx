@@ -16,7 +16,7 @@ import {
   messageImageFileFormat,
   useMessages,
 } from '@/providers/message-provider'
-import { useZoom } from '@/providers/zoom'
+import { useZoom } from '@/providers/zoom-provider'
 import { Card } from '@/themed/card'
 import { produce } from 'immer'
 

@@ -8,7 +8,7 @@ import {
   createOverlapTableFromDataframes,
   OVERLAP_MODE,
 } from '@/lib/genomic/overlap/overlap'
-import { useSelectionRange } from '@/providers/selection-range'
+import { useSelectionRange } from '@/providers/selection-range-provider'
 import { useCurrentSheets } from '../history/history-provider/history-contexts'
 import { useHistory } from '../history/history-provider/history-provider'
 import { useMatcalcDialogs } from '../matcalc-dialogs'

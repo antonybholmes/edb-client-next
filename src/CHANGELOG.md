@@ -4,6 +4,7 @@
 
 ### Added
 
+- Added save table dialog.
 - History provider to replace history store.
 
 ### Changed

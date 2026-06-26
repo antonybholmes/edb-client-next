@@ -180,7 +180,6 @@ export function GeneConvPage() {
   useEffect(() => {
     setToolbarTabs([
       {
-        //id: nanoid(),
         id: 'Home',
         component: HomeToolbar,
       },

@@ -37,7 +37,7 @@ import { useKeyDownListener } from '@/hooks/keydown-listener'
 import { useKeyUpListener } from '@/hooks/keyup-listener'
 import { VCenterRow } from '@/layout/v-center-row'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
-import { useZoom } from '@/providers/zoom'
+import { useZoom } from '@/providers/zoom-provider'
 
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'

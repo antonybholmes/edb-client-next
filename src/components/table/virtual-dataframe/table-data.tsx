@@ -8,7 +8,7 @@ import { range } from '@/lib/math/range'
 import {
   useSelectionRange,
   type ISelectionRange,
-} from '@/providers/selection-range'
+} from '@/providers/selection-range-provider'
 import { useEffect, useMemo, useRef } from 'react'
 import { useEditContext } from './edit-provider'
 import { useSelectionContext, type ISelectionPos } from './selection-provider'
@@ -528,17 +528,17 @@ export function TableData() {
       // }}
       // onBlur={() => window.removeEventListener('keydown', onKeyDown)}
       onKeyDown={onDataKeyDown}
-      onWheel={e => {
+      onWheel={(e) => {
         if (vScrollRef.current) {
           vScrollRef.current.scrollTop += e.deltaY
         }
       }}
       tabIndex={0}
     >
-      {rowVirtualizer.getVirtualItems().map(row => {
+      {rowVirtualizer.getVirtualItems().map((row) => {
         const ry = row.start - scrollOffset.top
 
-        return columnVirtualizer.getVirtualItems().map(col => {
+        return columnVirtualizer.getVirtualItems().map((col) => {
           const rx = col.start - scrollOffset.left
 
           const v = df.get(row.index, col.index)
@@ -594,7 +594,7 @@ export function TableData() {
             //pointerEvents: showTextCell ? 'auto' : 'none',
           }}
           value={editText}
-          onChange={e => {
+          onChange={(e) => {
             onEditChange(e)
             e.stopPropagation()
           }}

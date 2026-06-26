@@ -38,7 +38,7 @@ import {
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { makeUuid } from '@/lib/id'
-import { useZoom } from '@/providers/zoom'
+import { useZoom } from '@/providers/zoom-provider'
 import { Card } from '@/themed/card'
 
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
@@ -394,11 +394,7 @@ export function SingleCellPage() {
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
-          <ResizablePanelGroup
-            orientation="vertical"
-            className="px-2"
-            //autoSaveId="rev-comp-vert"
-          >
+          <ResizablePanelGroup orientation="vertical" className="px-2">
             <ResizablePanel
               id="chart"
               defaultSize="75%"

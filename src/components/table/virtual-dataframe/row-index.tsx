@@ -7,7 +7,7 @@ import { cellStr } from '@/lib/dataframe/cell'
 import { DEFAULT_INDEX_NAME } from '@/lib/dataframe/series'
 import { range } from '@/lib/math/range'
 import { cn } from '@/lib/shadcn-utils'
-import { useSelectionRange } from '@/providers/selection-range'
+import { useSelectionRange } from '@/providers/selection-range-provider'
 import type { VirtualItem } from '@tanstack/react-virtual'
 import { useEditContext } from './edit-provider'
 import { useSelectionContext } from './selection-provider'
@@ -91,7 +91,7 @@ function RowIndex({ row }: { row: VirtualItem }) {
         transform: `translate3d(0, ${row.start - scrollOffset.top}px, 0)`,
       }}
     >
-      {range(df.rowObs.shape[1]).map(col => {
+      {range(df.rowObs.shape[1]).map((col) => {
         const v = df.rowObs.get(row.index, col)
 
         return (
@@ -176,14 +176,14 @@ export function RowIndexContainer() {
         style={{
           width: indexWidth,
         }}
-        onWheel={e => {
+        onWheel={(e) => {
           // the independent scroll refs
           if (vScrollRef.current) {
             vScrollRef.current.scrollTop += e.deltaY
           }
         }}
       >
-        {rowVirtualizer.getVirtualItems().map(row => (
+        {rowVirtualizer.getVirtualItems().map((row) => (
           <RowIndex row={row} key={row.key} />
         ))}
 

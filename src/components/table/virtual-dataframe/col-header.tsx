@@ -6,7 +6,7 @@ import { VCenterRow } from '@/components/layout/v-center-row'
 import { cellStr } from '@/lib/dataframe/cell'
 import { range } from '@/lib/math/range'
 import { cn } from '@/lib/shadcn-utils'
-import { useSelectionRange } from '@/providers/selection-range'
+import { useSelectionRange } from '@/providers/selection-range-provider'
 import type { VirtualItem } from '@tanstack/react-virtual'
 import { useState } from 'react'
 import { useEditContext } from './edit-provider'
@@ -164,7 +164,7 @@ export function ColHeader({ col }: { col: VirtualItem }) {
       }}
       onMouseDown={() => handleHeaderMouseDown(col.index)}
     >
-      {range(df.colVars.shape[1]).map(metaDataCol => {
+      {range(df.colVars.shape[1]).map((metaDataCol) => {
         // const v = (df.colMetaData as DataFrame)._data[col.index]![
         //   metaDataCol
         // ]!
@@ -187,7 +187,7 @@ export function ColHeader({ col }: { col: VirtualItem }) {
 
       <VCenterRow
         className={RESIZE_CLS}
-        onMouseDown={e => {
+        onMouseDown={(e) => {
           // don't want parent thinking we are changing selection
           e.stopPropagation()
           e.preventDefault()
@@ -223,13 +223,13 @@ export function ColHeaderContainer() {
         // Since this parent does not have borders, it can be precisely sized without extra pixels for the border
         height: headerHeight,
       }}
-      onWheel={e => {
+      onWheel={(e) => {
         if (hScrollRef.current) {
           hScrollRef.current.scrollLeft += e.deltaY
         }
       }}
     >
-      {columnVirtualizer.getVirtualItems().map(col => (
+      {columnVirtualizer.getVirtualItems().map((col) => (
         <ColHeader col={col} key={col.key} />
       ))}
 

@@ -24,7 +24,7 @@ import {
   messageImageFileFormat,
   useMessages,
 } from '@/providers/message-provider'
-import { useZoom } from '@/providers/zoom'
+import { useZoom } from '@/providers/zoom-provider'
 import { produce } from 'immer'
 import { HistoryLayout } from '../../matcalc/history/history-layout'
 

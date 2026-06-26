@@ -27,7 +27,7 @@ import {
   TEXT_SORT_BY,
 } from '@/consts'
 import { CoreProviders } from '@/providers/core-provider'
-import { useZoom } from '@/providers/zoom'
+import { useZoom } from '@/providers/zoom-provider'
 
 import {
   DropdownMenu,

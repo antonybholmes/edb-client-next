@@ -41,7 +41,7 @@ import { TabContentPanels } from '../shadcn/ui/themed/v2/tabs'
 import { TabIndicatorFollowH } from '../tabs/tab-indicator-follow-h'
 import { TabIndicatorSelectedH } from '../tabs/tab-indicator-selected-h'
 import { type ITab, type ITabProvider } from '../tabs/tab-provider'
-import { TOOLBAR_TABS, useTabs } from '../tabs/tab-store'
+import { TOOLBAR_TABS } from '../tabs/tab-store'
 import { UnderlineTabs } from '../tabs/underline-tabs'
 import { ToolbarIconButton } from './toolbar-icon-button'
 
@@ -253,7 +253,6 @@ export function ToolbarTabContentPanel({
       id="ribbon"
       data-ribbon={settings.toolbars.ribbon.style}
       groupId={groupId}
-      //tabs={tabs}
       className="group"
       contentCls="gap-x-1"
     />
@@ -271,13 +270,8 @@ const TAB_CONTENT_PANEL_CLS = cn(
 
 export function ToolbarPanel({
   groupId = TOOLBAR_TABS,
-
   tabShortcutMenu,
 }: IToolbarPanelProps) {
-  // change default if it does match a tab id
-
-  const { tabs, setTab } = useTabs(groupId)
-
   const { settings, updateSettings } = useEdbSettings()
 
   const [showDropdown, setShowDropdown] = useState(false)
@@ -294,12 +288,6 @@ export function ToolbarPanel({
     >
       <BaseRow className={TAB_CONTENT_PANEL_CLS}>
         <ToolbarTabContentPanel groupId={groupId} />
-
-        {/* <TabContentForceMountPanels
-          groupId={groupId}
-          tabs={tabs}
-          className="flex-row gap-x-1 group"
-        /> */}
 
         <BaseCol className="justify-end">
           <DropdownMenu>

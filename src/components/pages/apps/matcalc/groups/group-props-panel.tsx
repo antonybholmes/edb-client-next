@@ -8,7 +8,7 @@ import { makeNewGroup, type IClusterGroup } from '@/lib/cluster-group'
 
 import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
-import { useSelectionRange } from '@/providers/selection-range'
+import { useSelectionRange } from '@/providers/selection-range-provider'
 
 import { download, downloadJson } from '@/lib/download-utils'
 import { range } from '@/lib/math/range'

@@ -2,7 +2,7 @@ import type { ICell } from '@/interfaces/cell'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import type { IPos } from '@/interfaces/pos'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { useSelectionRange } from '../../../providers/selection-range'
+import { useSelectionRange } from '../../../providers/selection-range-provider'
 import { useVirtualDataFrameContext } from './virtual-dataframe-provider'
 
 export interface ISelectionPos {
