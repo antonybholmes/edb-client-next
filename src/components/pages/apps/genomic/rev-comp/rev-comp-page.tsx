@@ -1,26 +1,26 @@
 'use client'
 
 import {
-    ShowOptionsMenu,
-    Toolbar,
-    ToolbarMenu,
-    ToolbarPanel,
+  ShowOptionsMenu,
+  Toolbar,
+  ToolbarMenu,
+  ToolbarPanel,
 } from '@/toolbar/toolbar'
 
 import { download } from '@/lib/download-utils'
 
 import {
-    onTextFileChange,
-    openFilesDialog,
+  onTextFileChange,
+  openFilesDialog,
 } from '@/components/pages/open-files'
 
 import { useEffect, useState } from 'react'
 
 import { TEXT_OPEN, TEXT_OPEN_FILE, TEXT_SAVE_AS } from '@/consts'
 import {
-    ResizablePanel,
-    ResizablePanelGroup,
-    ThinVResizeHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+  ThinVResizeHandle,
 } from '@/themed/resizable'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -134,7 +134,7 @@ function RevCompPage() {
     {
       id: TEXT_OPEN,
       icon: <OpenIcon variant="colorful" />,
-      component: () => (
+      component: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -160,7 +160,7 @@ function RevCompPage() {
     },
     {
       id: TEXT_SAVE_AS,
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label="Save FASTA file"

@@ -17,12 +17,14 @@ export function Footer({ className }: IChildrenProps) {
 
   return (
     <footer className={cn(TOOLBAR_FOOTER_CLS, className)} id="footer">
-      <VCenterRow id="footer-left">{Left && <Left />}</VCenterRow>
+      <VCenterRow id="footer-left">
+        {Left && <>{typeof Left === 'function' ? <Left /> : Left}</>}
+      </VCenterRow>
       <VCenterRow id="footer-center" className="justify-center col-span-2">
-        {Center && <Center />}
+        {Center && <>{typeof Center === 'function' ? <Center /> : Center}</>}
       </VCenterRow>
       <VCenterRow id="footer-right" className="justify-end">
-        {Right && <Right />}
+        {Right && <>{typeof Right === 'function' ? <Right /> : Right}</>}
       </VCenterRow>
     </footer>
   )

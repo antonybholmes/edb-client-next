@@ -173,7 +173,7 @@ export function BioDrawPage() {
     {
       //id: nanoid(),
       id: TEXT_SAVE_AS,
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label="Download as TXT"
@@ -199,7 +199,7 @@ export function BioDrawPage() {
       //id: nanoid(),
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
@@ -225,9 +225,8 @@ export function BioDrawPage() {
 
   const tabs: ITab[] = [
     {
-      //id: nanoid(),
       id: 'Home',
-      component: () => (
+      component: (
         <>
           <ToolbarTabGroup title="File">
             {/* <ToolbarOpenFile

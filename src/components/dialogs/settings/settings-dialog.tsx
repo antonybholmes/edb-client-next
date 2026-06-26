@@ -95,17 +95,17 @@ const DEFAULT_TABS: ITab[] = [
             id: 'Dark Mode',
             description:
               'Dark mode is a popular feature for reducing eye strain and improving readability in low-light environments.',
-            component: () => <SettingsDarkModePanel />,
+            component: SettingsDarkModePanel,
           },
           {
             id: 'Toolbars',
             description: 'Customize toolbar settings.',
-            component: () => <SettingsToolbarPanel />,
+            component: SettingsToolbarPanel,
           },
           {
             id: 'Apps',
             description: 'Manage and configure apps.',
-            component: () => <AppsToolbarPanel />,
+            component: AppsToolbarPanel,
           },
         ],
       },
@@ -189,7 +189,11 @@ export function SettingsDialog({
 
                       return (
                         <Fragment key={childi}>
-                          <Component />
+                          {typeof Component === 'function' ? (
+                            <Component />
+                          ) : (
+                            Component
+                          )}
 
                           {/* Show sub blocks with a consistent UI */}
                           {childTab.children &&
@@ -203,7 +207,11 @@ export function SettingsDialog({
                                     title={getTabName(g)}
                                     key={gi}
                                   >
-                                    <Component />
+                                    {typeof Component === 'function' ? (
+                                      <Component />
+                                    ) : (
+                                      Component
+                                    )}
                                   </SettingsAccordionItem>
                                 )
                               })}
@@ -279,7 +287,11 @@ export function SettingsDialog({
                       key={gi}
                       showBorder={gi > 0}
                     >
-                      <Component />
+                      {typeof Component === 'function' ? (
+                        <Component />
+                      ) : (
+                        Component
+                      )}
                     </SettingsAccordionItem>
                   )
                 })}
@@ -287,7 +299,15 @@ export function SettingsDialog({
           )}
 
           {/* To show custom ui boxes */}
-          {SubSelectedTab && <SubSelectedTab />}
+          {SubSelectedTab && (
+            <>
+              {typeof SubSelectedTab === 'function' ? (
+                <SubSelectedTab />
+              ) : (
+                SubSelectedTab
+              )}
+            </>
+          )}
         </VScrollPanel>
       </GlassSideDialog>
     )

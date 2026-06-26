@@ -155,10 +155,9 @@ export function GseaPlotPage() {
 
   const fileMenuTabs: ITab[] = [
     {
-      //id: nanoid(),
       id: TEXT_OPEN,
       icon: <OpenIcon variant="colorful" />,
-      component: () => (
+      component: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -179,7 +178,7 @@ export function GseaPlotPage() {
     {
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

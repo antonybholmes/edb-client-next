@@ -445,7 +445,7 @@ function VennPage() {
     {
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      component: () => (
+      component: (
         <DropdownMenuItem
           aria-label="Open file on your computer"
           onClick={() => {
@@ -466,7 +466,7 @@ function VennPage() {
     },
     {
       id: TEXT_SAVE_AS,
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -490,7 +490,7 @@ function VennPage() {
     },
     {
       id: 'Export',
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

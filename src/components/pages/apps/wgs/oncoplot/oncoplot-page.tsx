@@ -1,10 +1,10 @@
 'use client'
 
 import {
-    ShowOptionsMenu,
-    Toolbar,
-    ToolbarMenu,
-    ToolbarPanel,
+  ShowOptionsMenu,
+  Toolbar,
+  ToolbarMenu,
+  ToolbarPanel,
 } from '@/toolbar/toolbar'
 
 import { OpenIcon } from '@/icons/open-icon'
@@ -12,11 +12,11 @@ import { OpenIcon } from '@/icons/open-icon'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 
 import {
-    TEXT_DOWNLOAD_AS_CSV,
-    TEXT_DOWNLOAD_AS_PNG,
-    TEXT_DOWNLOAD_AS_SVG,
-    TEXT_DOWNLOAD_AS_TXT,
-    TEXT_SAVE_AS,
+  TEXT_DOWNLOAD_AS_CSV,
+  TEXT_DOWNLOAD_AS_PNG,
+  TEXT_DOWNLOAD_AS_SVG,
+  TEXT_DOWNLOAD_AS_TXT,
+  TEXT_SAVE_AS,
 } from '@/consts'
 
 import { FileImageIcon } from '@/icons/file-image-icon'
@@ -26,10 +26,10 @@ import { useEffect, useState } from 'react'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { UploadIcon } from '@/icons/upload-icon'
 import { OncoplotPanel, PANEL_ID } from './oncoplot-panel'
@@ -267,7 +267,7 @@ function OncoplotPage() {
     {
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      component: () => (
+      component: (
         <DropdownMenuItem
           aria-label="Open file on your computer"
           onClick={() => open('variants')}
@@ -283,7 +283,7 @@ function OncoplotPage() {
     },
     {
       id: TEXT_SAVE_AS,
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -319,9 +319,8 @@ function OncoplotPage() {
       ),
     },
     {
-      //id: nanoid(),
       id: 'Export',
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
@@ -359,8 +358,6 @@ function OncoplotPage() {
 
   return (
     <>
-      {/* <DialogsRoot filter={['open', 'alert', 'ok-cancel']} /> */}
-
       <HeaderSlotPortal>
         <AppHeaderIcon />
         <AppInfoButton />

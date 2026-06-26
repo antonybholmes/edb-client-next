@@ -235,10 +235,9 @@ export function PathwayPage() {
 
   const fileMenuTabs: ITab[] = [
     {
-      //id: nanoid(),
       id: TEXT_OPEN,
       icon: <OpenIcon variant="colorful" />,
-      component: () => (
+      component: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -254,9 +253,8 @@ export function PathwayPage() {
       ),
     },
     {
-      //id: nanoid(),
       id: TEXT_SAVE_AS,
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label="Save text file"

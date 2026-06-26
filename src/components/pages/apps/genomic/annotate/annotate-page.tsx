@@ -119,10 +119,9 @@ export function AnnotationPage() {
 
   const fileMenuTabs: ITab[] = [
     {
-      //id: nanoid(),
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      component: () => (
+      component: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -140,7 +139,7 @@ export function AnnotationPage() {
     {
       //id: nanoid(),
       id: TEXT_SAVE_AS,
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label="Save text file"

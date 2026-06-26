@@ -206,7 +206,7 @@ export function SingleCellPage() {
     {
       id: TEXT_SAVE_AS,
       icon: <DownloadIcon />,
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -227,7 +227,7 @@ export function SingleCellPage() {
     {
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
@@ -252,7 +252,6 @@ export function SingleCellPage() {
   ]
 
   function handleSearch(value: string) {
-    console.log('search', value)
     updateSettings({ search: value })
   }
 

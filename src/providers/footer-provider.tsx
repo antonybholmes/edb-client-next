@@ -6,6 +6,7 @@ import { makeUuid } from '@/lib/id'
 import {
   ComponentType,
   createContext,
+  ReactNode,
   useCallback,
   useContext,
   useMemo,
@@ -13,9 +14,9 @@ import {
 } from 'react'
 
 type FooterContextValue = {
-  left: ComponentType<{}> | undefined
-  center: ComponentType<{}> | undefined
-  right: ComponentType<{}> | undefined
+  left: ComponentType<{}> | ReactNode | undefined
+  center: ComponentType<{}> | ReactNode | undefined
+  right: ComponentType<{}> | ReactNode | undefined
   add: (slot: FooterSlot, entry: ITab) => void
   remove: (slot: FooterSlot, id: string) => void
   set: (slot: FooterSlot, entry: ITab) => void
@@ -89,7 +90,7 @@ export function FooterProvider({ children }: IChildrenProps) {
   const addIndicator = useCallback((message: string = 'Running...') => {
     const id = makeUuid()
 
-    add('left', { id, component: () => <RunningIndicator message={message} /> })
+    add('left', { id, component: <RunningIndicator message={message} /> })
 
     return id
   }, [])

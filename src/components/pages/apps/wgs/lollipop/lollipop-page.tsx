@@ -375,7 +375,7 @@ function LollipopPage() {
     {
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      component: () => (
+      component: (
         <DropdownMenuItem
           aria-label="Open file on your computer"
           onClick={() => open('variants')}
@@ -391,7 +391,7 @@ function LollipopPage() {
     },
     {
       id: 'Export',
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

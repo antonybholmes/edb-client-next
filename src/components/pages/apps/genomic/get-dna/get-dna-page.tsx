@@ -12,26 +12,26 @@ import { MenuButton } from '@/toolbar/menu-button'
 import { FileLinesIcon } from '@/icons/file-lines-icon'
 
 import {
-    FILE_MENU_ITEM_DESC_CLS,
-    FILE_MENU_ITEM_HEADING_CLS,
-    H2_CLS,
+  FILE_MENU_ITEM_DESC_CLS,
+  FILE_MENU_ITEM_HEADING_CLS,
+  H2_CLS,
 } from '@/theme'
 import { useEffect, useState } from 'react'
 
 import { TEXT_SAVE_AS, TEXT_SETTINGS } from '@/consts'
 
 import {
-    ResizablePanel,
-    ResizablePanelGroup,
-    ThinHResizeHandle,
-    ThinVResizeHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+  ThinHResizeHandle,
+  ThinVResizeHandle,
 } from '@/themed/resizable'
 
 import { CollapseBlock } from '@/components/collapse-block'
 
 import {
-    ToggleButtonTriggers,
-    ToggleButtons,
+  ToggleButtonTriggers,
+  ToggleButtons,
 } from '@/components/toggle-buttons'
 import { VCenterRow } from '@/layout/v-center-row'
 
@@ -109,7 +109,7 @@ export function GetDNAPage() {
   const fileMenuTabs: ITab[] = [
     {
       id: TEXT_SAVE_AS,
-      component: () => (
+      component: (
         <BaseCol className="gap-y-6 p-6">
           <h1 className="text-2xl">{TEXT_SAVE_AS}</h1>
 

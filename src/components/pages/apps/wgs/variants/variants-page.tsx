@@ -322,9 +322,8 @@ export function VariantsPage() {
 
   const fileMenuTabs: ITab[] = [
     {
-      //name: nanoid(),
       id: TEXT_SAVE_AS,
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -348,7 +347,7 @@ export function VariantsPage() {
     },
     {
       id: 'Export',
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
