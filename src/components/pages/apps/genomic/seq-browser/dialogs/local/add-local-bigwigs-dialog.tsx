@@ -50,7 +50,7 @@
 //         />
 //       }
 //     >
-//       <FileDropZonePanel
+//       <FileDropZonePanel className="grow"
 //         fileTypes={{ 'application/octet-stream': ['.bw', '.bigWig'] }}
 //         onFileDrop={files => {
 //           console.log('files', files)

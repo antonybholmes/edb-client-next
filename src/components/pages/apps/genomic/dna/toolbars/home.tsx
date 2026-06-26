@@ -27,9 +27,9 @@ import { useOpen } from '../use-open'
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
   const { save } = useSave()
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
-  const { openFile, addSheets } = useHistory()
+  const { addSheets } = useHistory()
 
   const { settings } = useEdbSettings()
   //const [assembly, setAssembly] = useState('grch38')
@@ -41,7 +41,7 @@ export function HomeToolbar() {
   const { openFiles } = useOpen()
 
   async function addDNA() {
-    const dfa = await createDNATable(sheet as AnnotationDataFrame, {
+    const dfa = await createDNATable(sheets[0] as AnnotationDataFrame, {
       assembly: settings.genomic.assembly,
       format,
       mask,

@@ -11,8 +11,6 @@ import {
   ToolbarPanel,
 } from '@/toolbar/toolbar'
 
-import { getFormattedShape } from '@/lib/dataframe/dataframe-utils'
-
 import {
   onTextFileChange,
   openFilesDialog,
@@ -56,7 +54,8 @@ import {
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
 
-import { useToolbarTabs } from '@/components/tabs/tab-store'
+import { useToolbarTabs } from '@/components/tabs/tab-provider'
+import { useFooter } from '@/providers/footer-provider'
 import {
   useCurrentSheets,
   useFiles,
@@ -71,10 +70,10 @@ import { HomeToolbar } from './toolbars/home-toolbar'
 export function GeneConvPage() {
   const _id = useStableId('gene-convert-page')
 
-  const { openFile, goto, addSheets } = useHistory()
+  const { openFile, goto } = useHistory()
 
   const { file } = useFiles()
-  const { sheet, sheets } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
   const { setAppInfo } = useAppInfo()
 
@@ -87,6 +86,11 @@ export function GeneConvPage() {
 
   const { openDataFrames } = useOpenFiles()
   const { save } = useSave()
+  const { addDFSize } = useFooter()
+
+  useEffect(() => {
+    addDFSize()
+  }, [addDFSize])
 
   useEffect(() => {
     setAppInfo(APP_INFO)
@@ -240,18 +244,18 @@ export function GeneConvPage() {
           > */}
 
           <TabbedDataFrames
-            selectedSheet={sheet?.id ?? ''}
+            //selectedSheet={sheet?.id ?? ''}
             dataFrames={sheets as AnnotationDataFrame[]}
-            onTabChange={(selectedTab) => {
-              goto({ file, sheet: selectedTab.tab })
-            }}
+            // onTabChange={(selectedTab) => {
+            //   goto({ file, sheet: selectedTab.tab })
+            // }}
             className="mx-2"
           />
 
           {/* </TabSlideBar> */}
         </HistoryLayout>
         <FooterPortal className="justify-end">
-          <span>{getFormattedShape(sheet as AnnotationDataFrame)}</span>
+          <> </>
 
           <></>
           <ZoomSlider />
@@ -264,9 +268,7 @@ export function GeneConvPage() {
 export function GeneConvQueryPage() {
   return (
     <CoreProviders>
-      {/* <HistoryProvider app={APP_INFO.name}> */}
       <GeneConvPage />
-      {/* </HistoryProvider> */}
     </CoreProviders>
   )
 }

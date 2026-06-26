@@ -25,9 +25,8 @@ import { useLollipopStore } from '../../../wgs/lollipop/lollipop-store'
 import { VariantPropsPanel } from '../../../wgs/lollipop/variant-props-panel'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
-import { useSideTabs } from '@/components/tabs/tab-store'
-import { getPlot } from '../../history/history-provider/history-hooks'
-import { useHistory } from '../../history/history-provider/history-provider'
+import { useSideTabs } from '@/components/tabs/tab-provider'
+//import { getPlot } from '../../history/history-provider/history-hooks'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 
@@ -40,15 +39,7 @@ export const PLOT_CLS = 'relative overflow-scroll custom-scrollbar grow'
 //   }
 // }
 
-interface ILollipopPanelProps {
-  id: string
-  plotAddr: string
-}
-
-function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
-  const { present, plots } = useHistory()
-  const plot = getPlot(present, plots, plotAddr)!
-
+function LollipopPanel() {
   //const [selectedTab, setSelectedTab] = useState('Display')
   const svgRef = useRef<SVGSVGElement>(null)
 
@@ -69,11 +60,7 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
   const { setTabs: setSideTabs } = useSideTabs()
 
   useEffect(() => {
-    const filteredMessages = messages.filter(
-      (message) => message.target === plot?.id
-    )
-
-    for (const message of filteredMessages) {
+    for (const message of messages) {
       if (typeof message.data === 'string' && message.data.includes('save')) {
         if (message.data.includes(':')) {
           downloadSvgAutoFormat(
@@ -174,6 +161,6 @@ function LollipopPanel({ plotAddr }: ILollipopPanelProps) {
   )
 }
 
-export function LollipopPanelQuery({ id, plotAddr }: ILollipopPanelProps) {
-  return <LollipopPanel id={id} plotAddr={plotAddr} />
+export function LollipopPanelQuery() {
+  return <LollipopPanel />
 }

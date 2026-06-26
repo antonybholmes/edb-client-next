@@ -10,7 +10,7 @@ import { useCurrentSheets } from '../../matcalc/history/history-provider/history
 
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
   return (
     <>
@@ -21,7 +21,7 @@ export function HomeToolbar() {
             openDialog({
               type: 'save',
               payload: {
-                name: friendlyFilename(sheet?.name ?? 'table'),
+                name: friendlyFilename(sheets[0].name),
               },
             })
           }

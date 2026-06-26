@@ -14,10 +14,6 @@ import {
 import { ToolbarButton } from '@/toolbar/toolbar-button'
 
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
-import {
-  downloadDataFrame,
-  getFormattedShape,
-} from '@/lib/dataframe/dataframe-utils'
 
 import {
   onTextFileChange,
@@ -61,22 +57,20 @@ import {
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
 
-import { useToolbarTabs } from '@/components/tabs/tab-store'
-import {
-  useCurrentSheets,
-  useFiles,
-} from '../../matcalc/history/history-provider/history-contexts'
+import { useToolbarTabs } from '@/components/tabs/tab-provider'
+import { useFooter } from '@/providers/footer-provider'
+import { useCurrentSheets } from '../../matcalc/history/history-provider/history-contexts'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
+import { useSave } from '../../matcalc/hooks/save'
 import APP_INFO from './manifest.json'
 import { HomeToolbar } from './toolbars/home'
 import { useOpen } from './use-open'
 
 export function DNAPage() {
-  const { goto, openFile } = useHistory()
+  const { openFile } = useHistory()
 
-  const { file } = useFiles()
-  const { sheet, sheets } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
   const { setAppInfo } = useAppInfo()
   const [showSideBar, setShowSideBar] = useState(true)
 
@@ -84,6 +78,13 @@ export function DNAPage() {
   const [showFileMenu, setShowFileMenu] = useState(false)
 
   const { openFiles } = useOpen()
+  const { save } = useSave()
+
+  const { addDFSize } = useFooter()
+
+  useEffect(() => {
+    addDFSize()
+  }, [addDFSize])
 
   useEffect(() => {
     setAppInfo(APP_INFO)
@@ -98,22 +99,22 @@ export function DNAPage() {
     ])
   }, [setToolbarTabs])
 
-  function save(name: string, format: string) {
-    if (!sheet) {
-      return
-    }
+  // function save(name: string, format: string) {
+  //   if (!sheet) {
+  //     return
+  //   }
 
-    const sep = format === 'csv' ? ',' : '\t'
+  //   const sep = format === 'csv' ? ',' : '\t'
 
-    downloadDataFrame(sheet as AnnotationDataFrame, {
-      hasHeader: true,
-      hasIndex: false,
-      file: name,
-      sep,
-    })
+  //   downloadDataFrame(sheet as AnnotationDataFrame, {
+  //     hasHeader: true,
+  //     hasIndex: false,
+  //     file: name,
+  //     sep,
+  //   })
 
-    setShowFileMenu(false)
-  }
+  //   setShowFileMenu(false)
+  // }
 
   // Load a default sheet
   // useEffect(() => {
@@ -247,18 +248,18 @@ export function DNAPage() {
 
         <HistoryLayout>
           <TabbedDataFrames
-            selectedSheet={sheet?.id ?? ''}
+            //selectedSheet={sheet?.id ?? ''}
             dataFrames={sheets as AnnotationDataFrame[]}
-            onTabChange={(selectedTab) => {
-              goto({ file, sheet: selectedTab.tab })
-            }}
+            // onTabChange={(selectedTab) => {
+            //   goto({ file, sheet: selectedTab.tab })
+            // }}
             className="mx-2"
           />
         </HistoryLayout>
       </ShortcutLayout>
 
       <FooterPortal className="justify-end">
-        <span>{getFormattedShape(sheet as AnnotationDataFrame)}</span>
+        <></>
         <></>
         <ZoomSlider />
       </FooterPortal>

@@ -23,7 +23,7 @@ export function useFiles(): IHistoryFilesContext {
 }
 
 type ISheetsContext = {
-  sheet: DataFrameType
+  //sheet: DataFrameType
   sheets: DataFrameType[]
 }
 
@@ -41,7 +41,7 @@ export function useCurrentSheets(): ISheetsContext {
 }
 
 export type IPlotsContext = {
-  plot: HistoryPlot | undefined
+  //plot: HistoryPlot | undefined
   plots: HistoryPlot[]
 }
 

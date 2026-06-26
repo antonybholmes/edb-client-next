@@ -1,6 +1,5 @@
 import { IClusterGroup } from '@/lib/cluster-group'
 import { IGeneSet } from '@/lib/gsea/geneset'
-import { strOrIdToStr } from './history-actions'
 import { useHistory } from './history-provider'
 import {
   DataFrameType,
@@ -54,19 +53,19 @@ export function getPlots(
   return (present.plotOrder[fid] || []).map((id) => plots[id]!)
 }
 
-export function getPlot(
-  present: IHistoryState,
-  plots: Record<string, HistoryPlot>,
-  plot: OptStrOrIdObj = undefined
-): HistoryPlot | undefined {
-  if (!plot) {
-    return plots[present.currentPlot!]
-  }
+// export function getPlot(
+//   present: IHistoryState,
+//   plots: Record<string, HistoryPlot>,
+//   plot: OptStrOrIdObj = undefined
+// ): HistoryPlot | undefined {
+//   if (!plot) {
+//     return plots[present.currentPlot!]
+//   }
 
-  const id = strOrIdToStr(plot)
+//   const id = strOrIdToStr(plot)
 
-  return plots[id]
-}
+//   return plots[id]
+// }
 
 export function getGroups(
   present: IHistoryState,

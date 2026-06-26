@@ -54,7 +54,7 @@ import {
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
 
-import { useToolbarTabs } from '@/components/tabs/tab-store'
+import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useFooter } from '@/providers/footer-provider'
 import {
   useCurrentSheets,
@@ -69,10 +69,10 @@ import { HomeToolbar } from './toolbars/home-toolbar'
 import { useOpen } from './use-open'
 
 export function AnnotationPage() {
-  const { goto, openFile, addSheets } = useHistory()
+  const { goto, openFile } = useHistory()
 
   const { file } = useFiles()
-  const { sheet, sheets } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
   const { setAppInfo } = useAppInfo()
   const { settings } = useAnnotations()
   const { save } = useBasicSaveAs()
@@ -197,11 +197,11 @@ export function AnnotationPage() {
 
         <HistoryLayout>
           <TabbedDataFrames
-            selectedSheet={sheet?.id ?? ''}
+            //selectedSheet={sheet?.id ?? ''}
             dataFrames={sheets as AnnotationDataFrame[]}
-            onTabChange={(selectedTab) => {
-              goto({ file, sheet: selectedTab.tab })
-            }}
+            // onTabChange={(selectedTab) => {
+            //   goto({ file, sheet: selectedTab.tab })
+            // }}
             className="mx-2"
             zoom={zoom}
             onFileDrop={(files) => {

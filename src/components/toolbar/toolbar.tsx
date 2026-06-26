@@ -9,7 +9,6 @@ import { FileMenu } from './file-menu'
 
 import { type IAppInfo } from '@/lib/app-info'
 
-import type { IChildrenProps } from '@/interfaces/children-props'
 import type { TabsProps } from '@radix-ui/react-tabs'
 
 import {
@@ -40,8 +39,8 @@ import { IconButton } from '../shadcn/ui/themed/icon-button'
 import { TabContentPanels } from '../shadcn/ui/themed/v2/tabs'
 import { TabIndicatorFollowH } from '../tabs/tab-indicator-follow-h'
 import { TabIndicatorSelectedH } from '../tabs/tab-indicator-selected-h'
-import { type ITab, type ITabProvider } from '../tabs/tab-provider'
-import { TOOLBAR_TABS } from '../tabs/tab-store'
+
+import { ITab, TOOLBAR_TABS } from '../tabs/tab-provider'
 import { UnderlineTabs } from '../tabs/underline-tabs'
 import { ToolbarIconButton } from './toolbar-icon-button'
 
@@ -178,7 +177,6 @@ interface IToolbarMenuProps extends IOpenChange, TabsProps {
 
 export function ToolbarMenu({
   groupId = TOOLBAR_TABS,
-
   open = false,
   onOpenChange = () => {},
   fileMenuTabs = [],
@@ -401,8 +399,6 @@ export function ToolbarPanel({
     </BaseRow>
   )
 }
-
-export interface IToolbarProps extends ITabProvider, IChildrenProps {}
 
 export function Toolbar({ className, children }: IDivProps) {
   return <BaseCol className={cn('gap-y-1', className)}>{children}</BaseCol>

@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 import { useResizableSidebarContext } from '@/components/slide-bar/resizable-sidebar'
 import { SideBarTabs } from '@/components/slide-bar/tab-slide-bar'
-import { useTabs } from '@/components/tabs/tab-store'
+import { useTabs } from '@/components/tabs/tab-provider'
 import { GenesetPropsPanel } from '../genesets/geneset-props-panel'
 import { GroupPropsPanel } from '../groups/group-props-panel'
 

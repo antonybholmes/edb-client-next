@@ -29,7 +29,7 @@ export function GroupDialog({ group, onResponse }: IProps) {
 
   const [cols, setCols] = useState<string[]>([])
 
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
   const [color, setColor] = useState('#6495ED') //`#${Math.floor(Math.random() * 16777215).toString(16)}`,
 
@@ -56,7 +56,7 @@ export function GroupDialog({ group, onResponse }: IProps) {
       exactMatch: settings.groups.match.exact,
     }
 
-    setCols(getColNamesFromGroup(sheet as AnnotationDataFrame, g))
+    setCols(getColNamesFromGroup(sheets[0] as AnnotationDataFrame, g))
   }, [name, search, settings.groups.match.exact])
 
   function makeGroup() {

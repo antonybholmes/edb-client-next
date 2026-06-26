@@ -50,7 +50,7 @@
 //         />
 //       }
 //     >
-//       <FileDropZonePanel
+//       <FileDropZonePanel className="grow"
 //         fileTypes={{ 'application/octet-stream': ['.bb', '.bigBed'] }}
 //         onFileDrop={files => {
 //           if (files.length > 0) {

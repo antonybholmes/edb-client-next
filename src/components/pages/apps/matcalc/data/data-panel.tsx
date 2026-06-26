@@ -1,4 +1,7 @@
-import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
+import {
+  DATAFRAME_TABS,
+  TabbedDataFrames,
+} from '@/components/table/tabbed-dataframes'
 
 //import { ZoomSlider } from "@/toolbar/zoom-slider"
 
@@ -14,7 +17,7 @@ import {
   type IParseOptions,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
-import { type ISelectedTab } from '@/components/tabs/tab-provider'
+import { useTabs } from '@/components/tabs/tab-provider'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { replaceFileExt } from '@/lib/path'
 import {
@@ -51,11 +54,11 @@ export const DATA_ZOOM_CHANNEL = 'matcalc-data'
 export const MESSAGE_CHANNEL = 'matcalc'
 
 export function DataPanel() {
-  const { openFile, remove, goto, reorderSheets } = useHistory()
+  const { openFile, remove } = useHistory()
 
   const { file } = useFiles()
 
-  const { sheet, sheets } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
   const { settings } = useMatcalcSettings()
 
   const { zoom } = useZoom(DATA_ZOOM_CHANNEL)
@@ -68,9 +71,15 @@ export function DataPanel() {
 
   const { save } = useSave()
 
+  const { tabs: dfTabs } = useTabs(DATAFRAME_TABS)
+
+  // useEffect(() => {
+  //   reorderSheets(dfTabs.map((t) => t.id))
+  // }, [dfTabs])
+
   useEffect(() => {
     setFooter('left', { id: makeUuid(), component: FooterDFSize })
-  }, [sheet, setFooter])
+  }, [setFooter])
 
   useEffect(() => {
     //const filteredMessages = messages.filter(m => m.target === branch?.id)
@@ -79,11 +88,11 @@ export function DataPanel() {
       console.log(message)
 
       if (typeof message.data === 'string') {
-        if (message.data.includes('save:')) {
+        if (message.data.includes('save:') && sheets.length > 0) {
           const ext = messageTextFileFormat(message)
           save(
-            sheet && sheet.name
-              ? replaceFileExt(sheet.name, ext)
+            sheets[0].name
+              ? replaceFileExt(sheets[0].name, ext)
               : replaceFileExt('table', ext),
             ext
           )
@@ -150,11 +159,11 @@ export function DataPanel() {
     <>
       <ResizableSidebar side="right">
         <TabbedDataFrames
-          selectedSheet={sheet?.id ?? ''}
+          //selectedSheet={sheet?.id ?? ''}
           dataFrames={sheets as AnnotationDataFrame[]}
-          onTabChange={(selectedTab: ISelectedTab) => {
-            goto({ file, sheet: selectedTab.tab }) //, 'sheet')
-          }}
+          // onTabChange={(selectedTab: ISelectedTab) => {
+          //   goto({ file, sheet: selectedTab.tab }) //, 'sheet')
+          // }}
           onFileDrop={(files) => {
             if (files.length > 0) {
               onTextFileChange('Open from drag', files, (files) => {
@@ -169,10 +178,10 @@ export function DataPanel() {
             }
           }}
           className="relative"
-          onReorder={(order) => {
-            console.log('reorder', order)
-            reorderSheets(order, file)
-          }}
+          // onReorder={(order) => {
+          //   console.log('reorder', order)
+          //   reorderSheets(order, file)
+          // }}
           allowReorder={true}
           menuActions={[
             { action: TEXT_DELETE, icon: <DeleteIcon stroke="" /> },

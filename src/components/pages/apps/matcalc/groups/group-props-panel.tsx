@@ -90,9 +90,11 @@ function GroupItem({
 
   const { open: openDialog } = useDialogs()
 
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
-  const cols = getColNamesFromGroup(sheet as AnnotationDataFrame, group)
+  const cols = getColNamesFromGroup(sheets[0] as AnnotationDataFrame, group)
+
+  console.log('group', group, 'cols', cols)
 
   return (
     <SortableItem
@@ -169,8 +171,6 @@ function GroupItem({
         )}
       </VCenterCol>
       <BaseCol
-        //data-drag={isDragging}
-
         className={cn(DRAG_HANDLE_APPEAR_CLS, 'gap-x-1 items-center shrink-0')}
       >
         <button
@@ -201,9 +201,11 @@ export function GroupPropsPanel() {
 
   const { groups, groupsName } = useCurrentGroups()
 
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
   const { selection } = useSelectionRange()
+
+  console.log('groups', groups)
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -293,16 +295,12 @@ export function GroupPropsPanel() {
   }
 
   function editGroup(group: IClusterGroup, title: string = 'Edit Group') {
-    if (!sheet) {
-      return
-    }
-
     // if a column is selected, suggest its name as what the user wants to
     // to group
 
     if (selection && selection.cols) {
       group.search = range(selection.cols.start, selection.cols.end + 1).map(
-        (i) => (sheet as AnnotationDataFrame).colName(i)
+        (i) => (sheets[0] as AnnotationDataFrame).colName(i)
       )
     }
 
@@ -327,16 +325,17 @@ export function GroupPropsPanel() {
   }
 
   function downloadCls(name: string) {
-    if (!sheet || groups.length < 1) {
+    if (groups.length < 1) {
       return
     }
 
     const groupMap = Object.fromEntries(
       groups
         .map((group) => {
-          return getColIdxFromGroup(sheet as AnnotationDataFrame, group).map(
-            (col) => [col, group.name]
-          )
+          return getColIdxFromGroup(
+            sheets[0] as AnnotationDataFrame,
+            group
+          ).map((col) => [col, group.name])
         })
         .flat()
     )
@@ -351,7 +350,7 @@ export function GroupPropsPanel() {
     const names: string[] = []
     const used: string[] = []
 
-    range((sheet as AnnotationDataFrame).shape[1]).forEach((c: number) => {
+    range((sheets[0] as AnnotationDataFrame).shape[1]).forEach((c: number) => {
       const n = groupMap[c]
       names.push(n)
       if (!used.includes(n)) {
@@ -360,7 +359,7 @@ export function GroupPropsPanel() {
     })
 
     const text: string = [
-      `${(sheet as AnnotationDataFrame).shape[1]} ${groups.length} 1`,
+      `${(sheets[0] as AnnotationDataFrame).shape[1]} ${groups.length} 1`,
       `# ${used.join(' ')}`,
       `${names.join(' ')}`,
     ].join('\n')
@@ -483,6 +482,7 @@ export function GroupPropsPanel() {
         />
 
         <FileDropZonePanel
+          className="grow"
           onFileDrop={(files) => {
             if (files.length > 0) {
               //setDroppedFile(files[0]);

@@ -44,7 +44,6 @@ import { BaseCol } from '@/layout/base-col'
 import { BaseRow } from '@/layout/base-row'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
 import { randId } from '@/lib/id'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { Card } from '@/themed/card'
@@ -72,12 +71,13 @@ const PLOT_ZOOM_CHANNEL = 'bio-draw-plot-zoom'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
-import { useSideTabs } from '@/components/tabs/tab-store'
+import { useSideTabs } from '@/components/tabs/tab-provider'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import {
   useCurrentSheets,
   useFiles,
 } from '../matcalc/history/history-provider/history-contexts'
+import { useSave } from '../matcalc/hooks/save'
 import APP_INFO from './manifest.json'
 
 export function BioDrawPage() {
@@ -104,10 +104,12 @@ export function BioDrawPage() {
   const { goto } = useHistory()
 
   const { file } = useFiles()
-  const { sheet, sheets } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
   const { setAppInfo } = useAppInfo()
 
-  const df = sheet as AnnotationDataFrame
+  const { save } = useSave()
+
+  const df = sheets[0] as AnnotationDataFrame
 
   const { setTabs: setSideTabs } = useSideTabs()
 
@@ -135,23 +137,6 @@ export function BioDrawPage() {
       })
     )
   }, [zoom])
-
-  function save(name: string, format: string) {
-    if (!sheet) {
-      return
-    }
-
-    const sep = format === 'csv' ? ',' : '\t'
-
-    downloadDataFrame(df, {
-      hasHeader: true,
-      hasIndex: true,
-      file: name,
-      sep,
-    })
-
-    //setShowFileMenu(false)
-  }
 
   // const datasetsQuery = useQuery({
   //   queryKey: ['datasets'],
@@ -284,7 +269,6 @@ export function BioDrawPage() {
             <ToolbarIconButton
               checked={settings.revComp}
               onClick={() => {
-                console.log('revComp', settings.revComp)
                 updateSettings(
                   produce(settings, (draft) => {
                     draft.revComp = !settings.revComp
@@ -451,11 +435,11 @@ export function BioDrawPage() {
                   </IconButton>
                 </BaseCol>
                 <TabbedDataFrames
-                  selectedSheet={sheet?.id ?? ''}
+                  //selectedSheet={sheet?.id ?? ''}
                   dataFrames={sheets as AnnotationDataFrame[]}
-                  onTabChange={(selectedTab) => {
-                    goto({ file, sheet: selectedTab.tab })
-                  }}
+                  // onTabChange={(selectedTab) => {
+                  //   goto({ file, sheet: selectedTab.tab })
+                  // }}
                   className="relative grow"
                 />
               </BaseRow>

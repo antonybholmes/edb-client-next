@@ -32,11 +32,11 @@ export function MotifToGeneDialog({ selection, onResponse }: IProps) {
 
   const { addSheets } = useHistory()
   const { run: runMotifsToGenes } = useMotifsToGenesWorker()
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
   const [indicatorMessage, setIndicatorMessage] = useState<string | null>(null)
 
-  const df = sheet as DataFrame
+  const df = sheets[0] as DataFrame
 
   useEffect(() => {
     //setUseIndex(selection.start.col === -1)
@@ -101,7 +101,11 @@ export function MotifToGeneDialog({ selection, onResponse }: IProps) {
     >
       <BaseCol className="gap-y-2 text-sm">
         <PropRow title="Motif column">
-          <DFColSelect df={sheet as DataFrame} value={col} onChange={setCol} />
+          <DFColSelect
+            df={sheets[0] as DataFrame}
+            value={col}
+            onChange={setCol}
+          />
         </PropRow>
       </BaseCol>
     </OKCancelDialog>

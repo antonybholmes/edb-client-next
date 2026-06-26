@@ -2,9 +2,9 @@
   "name": "Single Cell",
   "description": "Explore Single Cell data.",
   "color": "#9966ff",
-  "version": "26.4.2",
+  "version": "26.4.4",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-06-26T02:14:02.925Z",
-  "hash": "cb6fbd7c0804a64d8019fcf581f7b7a077d4b3efe8fbb3a419bb8934353f60c1",
-  "build": 798
+  "modified": "2026-06-26T17:52:51.305Z",
+  "hash": "1fb7dfbb7f0196b0f0c9d767e8604495035a7e58e90d46a549441100849203f1",
+  "build": 800
 }

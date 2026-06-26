@@ -8,8 +8,6 @@ import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 
-import { getDataFrameInfo } from '@/lib/dataframe/dataframe-utils'
-
 import { useEffect, useState } from 'react'
 
 import { Autocomplete } from '@/components/autocomplete'
@@ -49,7 +47,6 @@ import { BaseRow } from '@/layout/base-row'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { IconButton } from '@/themed/icon-button'
 import {
@@ -67,17 +64,16 @@ import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
-import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
+import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
+import { useFooter } from '@/providers/footer-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 import { ArrowUpDown } from 'lucide-react'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
-import {
-  useCurrentSheets,
-  useFiles,
-} from '../../matcalc/history/history-provider/history-contexts'
+import { useCurrentSheets } from '../../matcalc/history/history-provider/history-contexts'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
+import { useSave } from '../../matcalc/hooks/save'
 import { DatasetFilter } from './dataset-filter'
 import { DisplayPropsPanel } from './display-props-panel'
 import { MotifsPropsPanel } from './motifs-props-panel'
@@ -103,12 +99,30 @@ export function MotifsPage() {
 
   const { openFile, goto } = useHistory()
 
-  const { file } = useFiles()
-  const { sheet, sheets } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
   const { svgRef } = useSVG()
+
+  const { save } = useSave()
+  const { addDFSize } = useFooter()
+
+  useEffect(() => {
+    addDFSize()
+  }, [addDFSize])
+
+  // useEffect(() => {
+  //   if (dfTab?.id) {
+  //     //goto({ file, sheet: dfTab.id }) //, 'sheet')
+  //   }
+  // }, [dfTab?.id])
+
+  // useEffect(() => {
+  //   if (sheet.id) {
+  //     setDFTab(sheet.id)
+  //   }
+  // }, [sheet.id, setDFTab])
 
   useEffect(() => {
     setAppInfo(APP_INFO)
@@ -166,22 +180,22 @@ export function MotifsPage() {
   //   })
   // }
 
-  function save(name: string, format: string) {
-    if (!sheet) {
-      return
-    }
+  // function save(name: string, format: string) {
+  //   if (!sheet) {
+  //     return
+  //   }
 
-    const sep = format === 'csv' ? ',' : '\t'
+  //   const sep = format === 'csv' ? ',' : '\t'
 
-    downloadDataFrame(sheet as AnnotationDataFrame, {
-      hasHeader: true,
-      hasIndex: true,
-      file: name,
-      sep,
-    })
+  //   downloadDataFrame(sheet as AnnotationDataFrame, {
+  //     hasHeader: true,
+  //     hasIndex: true,
+  //     file: name,
+  //     sep,
+  //   })
 
-    //setShowFileMenu(false)
-  }
+  //   //setShowFileMenu(false)
+  // }
 
   // const datasetsQuery = useQuery({
   //   queryKey: ['datasets'],
@@ -512,11 +526,11 @@ export function MotifsPage() {
                   </IconButton>
                 </BaseCol>
                 <TabbedDataFrames
-                  selectedSheet={sheet?.id ?? ''}
+                  //selectedSheet={sheet?.id ?? ''}
                   dataFrames={sheets as AnnotationDataFrame[]}
-                  onTabChange={(selectedTab) => {
-                    goto({ file, sheet: selectedTab.tab })
-                  }}
+                  // onTabChange={(selectedTab) => {
+                  //   goto({ file, sheet: selectedTab.tab })
+                  // }}
                   className="relative grow"
                 />
               </BaseRow>
@@ -525,7 +539,7 @@ export function MotifsPage() {
         </TabSlideBar>
 
         <FooterPortal className="justify-between">
-          <div>{getDataFrameInfo(sheet as AnnotationDataFrame)}</div>
+          <></>
           <>{searchResult.total > 0 ? `${searchResult.total} results` : null}</>
           <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
         </FooterPortal>

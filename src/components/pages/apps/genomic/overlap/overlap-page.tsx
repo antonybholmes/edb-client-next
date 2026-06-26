@@ -1,6 +1,9 @@
 'use client'
 
-import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
+import {
+  DATAFRAME_TABS,
+  TabbedDataFrames,
+} from '@/components/table/tabbed-dataframes'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 
@@ -45,9 +48,12 @@ import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
 import type { ITab } from '@/components/tabs/tab-provider'
-import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
+import {
+  useSideTabs,
+  useTabs,
+  useToolbarTabs,
+} from '@/components/tabs/tab-provider'
 import { useAppInfo } from '@/lib/edb/edb-settings'
-import { reorder } from '@/lib/math/reorder'
 import { CoreProviders } from '@/providers/core-provider'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
@@ -72,6 +78,20 @@ function OverlapPage() {
   const [showFileMenu, setShowFileMenu] = useState(false)
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
+
+  const { tabs: dfTabs } = useTabs(DATAFRAME_TABS)
+
+  useEffect(() => {
+    setDfs(
+      dfTabs
+        .map((tab) => {
+          const df = dfs.find((df) => df.id === tab.id)
+
+          return df
+        })
+        .filter((df) => !!df)
+    )
+  }, [setAppInfo])
 
   useEffect(() => {
     setAppInfo(APP_INFO)
@@ -194,7 +214,7 @@ function OverlapPage() {
             style={{ marginBottom: '-2px' }}
           > */}
             <TabbedDataFrames
-              selectedSheet={selected}
+              //selectedSheet={selected}
               dataFrames={dfs as AnnotationDataFrame[]}
               // onTabChange={selectedTab => {
               //   historyDispatch({
@@ -221,12 +241,12 @@ function OverlapPage() {
                   })
                 }
               }}
-              onTabChange={(v) => {
-                setSelected(v.tab.id)
-              }}
-              onReorder={(order) => {
-                setDfs(reorder(dfs, order, (df, id) => df.id === id))
-              }}
+              // onTabChange={(v) => {
+              //   setSelected(v.tab.id)
+              // }}
+              // onReorder={(order) => {
+              //   setDfs(reorder(dfs, order, (df, id) => df.id === id))
+              // }}
               allowReorder={true}
               onFileDrop={(files) => {
                 if (files.length > 0) {

@@ -4,30 +4,80 @@ import { rangeMap } from '@/lib/math/range'
 import { sum } from '@/lib/math/sum'
 import { cn } from '@/lib/shadcn-utils'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { BaseCol } from './layout/base-col'
 import { type toggleVariants } from './shadcn/ui/themed/v2/toggle'
 import { GroupToggle, ToggleGroup } from './shadcn/ui/themed/v2/toggle-group'
 import {
   getTabFromValue,
   getTabName,
-  TabContext,
-  TabProvider,
-  type ITab,
-  type TabChange,
+  ISelectedTab,
+  ITab,
+  ITabChange,
+  TabChange,
 } from './tabs/tab-provider'
 
-// const BUTTON_CLS = cn(
-//   FOCUS_RING_CLS,
-//   'trans-color data-[state=active]:font-medium relative justify-center items-center boldable-text-tab z-10'
-// )
+export interface ITabProvider extends ITabChange {
+  value?: string
+  tabs?: ITab[]
+}
 
-// const TOGGLE_VARIANT_DEFAULT_BUTTON_CLS = cn(
-//   BUTTON_CLS,
-//   'data-[state=inactive]:hover:bg-background/90 h-full rounded-sm'
-// )
+export interface ITabContext extends ITabChange {
+  value: string
+  selectedTab: ISelectedTab | null
+  tabs: ITab[]
+}
 
-//const TOGGLE_VARIANT_TOOLBAR_BUTTON_CLS = cn(BUTTON_CLS)
+export const TabContext = createContext<ITabContext>({
+  value: '',
+  selectedTab: null,
+  tabs: [],
+})
+
+interface ITabProviderProps extends ITabProvider, IDivProps {}
+
+/**
+ * Single use tab provider for things like toggle buttons
+ * @param param0
+ * @returns
+ */
+export function TabProvider({
+  value,
+  onTabChange,
+  tabs,
+  children,
+}: ITabProviderProps) {
+  const [_value, setValue] = useState('')
+
+  function _onTabChange(selectedTab: ISelectedTab) {
+    setValue(selectedTab.tab.id)
+
+    onTabChange?.(selectedTab)
+  }
+
+  const v = value !== undefined ? value : _value
+
+  const selectedTab = getTabFromValue(v, tabs ?? [])
+
+  //console.log("eh", value.length, tabs, selectedTab)
+
+  if (!selectedTab) {
+    return null
+  }
+
+  return (
+    <TabContext.Provider
+      value={{
+        value: v,
+        selectedTab,
+        onTabChange: _onTabChange,
+        tabs: tabs ?? [],
+      }}
+    >
+      {children}
+    </TabContext.Provider>
+  )
+}
 
 interface IToggleButtonsProps extends IChildrenProps {
   value?: string

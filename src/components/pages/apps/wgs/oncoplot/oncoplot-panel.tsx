@@ -28,7 +28,7 @@ import { useZoom } from '@/providers/zoom-provider'
 import { produce } from 'immer'
 import { HistoryLayout } from '../../matcalc/history/history-layout'
 
-import { useSideTabs } from '@/components/tabs/tab-store'
+import { useSideTabs } from '@/components/tabs/tab-provider'
 import { useSVG } from '@/providers/svg-provider'
 import {
   useCurrentSheets,
@@ -52,7 +52,7 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
 
   const { file } = useFiles()
 
-  const { sheet, sheets } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
   const { svgRef } = useSVG()
 
@@ -147,11 +147,11 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
               collapsible={true}
             >
               <TabbedDataFrames
-                selectedSheet={sheet?.id ?? ''}
+                //selectedSheet={sheet?.id ?? ''}
                 dataFrames={sheets as AnnotationDataFrame[]}
-                onTabChange={(selectedTab) => {
-                  goto({ file, sheet: selectedTab.tab })
-                }}
+                // onTabChange={(selectedTab) => {
+                //   goto({ file, sheet: selectedTab.tab })
+                // }}
                 zoom={1}
                 //className={DATA_PANEL_CLS}
               />

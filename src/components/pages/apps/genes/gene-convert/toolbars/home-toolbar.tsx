@@ -31,7 +31,7 @@ const speciesTabs = [
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
 
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
   const { addSheets } = useHistory()
 
   const [fromSpecies, setFromSpecies] = useState<Species>('human')
@@ -41,13 +41,9 @@ export function HomeToolbar() {
   const { openDataFrames } = useOpenFiles()
 
   function save(format: string) {
-    if (!sheet) {
-      return
-    }
-
     const sep = format === 'csv' ? ',' : '\t'
 
-    downloadDataFrame(sheet as AnnotationDataFrame, {
+    downloadDataFrame(sheets[0] as AnnotationDataFrame, {
       hasHeader: true,
       hasIndex: false,
       file: `table.${format}`,
@@ -58,12 +54,9 @@ export function HomeToolbar() {
   }
 
   async function convertGenes() {
-    console.log('Converting genes...', sheet)
-    if (!sheet) {
-      return
-    }
+    console.log('Converting genes...', sheets[0])
 
-    const dfa = await createGeneConvTable(sheet as AnnotationDataFrame, {
+    const dfa = await createGeneConvTable(sheets[0] as AnnotationDataFrame, {
       fromSpecies,
       toSpecies,
       exact,

@@ -36,14 +36,16 @@ import { usePathwayWorker } from '../pathway-worker'
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
   const { save } = useSave()
-  const { sheet } = useCurrentSheets()
-  const df = sheet as AnnotationDataFrame
+  const { sheets } = useCurrentSheets()
+
   const { openFile, addSheets } = useHistory()
   const { run: runPathway } = usePathwayWorker()
   const [validGeneSet, setValidGeneSet] = useState(new Set<string>())
   const { datasets, collectionsInUse, genesInUniverse } = usePathways()
 
   const { addIndicator, remove: removeFooter } = useFooter()
+
+  const df = sheets[0] as AnnotationDataFrame
 
   function _open(message: string, files: FileList | []) {
     onTextFileChange(message, files, (files) => {
@@ -96,7 +98,7 @@ export function HomeToolbar() {
   async function runLocal() {
     //setIsRunning(true)
 
-    if (!sheet) {
+    if (!df) {
       return
     }
 

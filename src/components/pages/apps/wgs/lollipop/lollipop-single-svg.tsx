@@ -170,7 +170,7 @@ function ColGraphsSvg({
           return (
             <line
               transform={`translate(${entry.rect.x}, 0)`}
-              ref={el => {
+              ref={(el) => {
                 linesRef.current[ei] = el
               }}
               key={entry.id}
@@ -195,7 +195,7 @@ function ColGraphsSvg({
 
           return (
             <g
-              ref={el => {
+              ref={(el) => {
                 circlesRef.current[ei] = el
               }}
               key={entry.id}
@@ -303,10 +303,8 @@ export function LollipopSingleSvg({ ref }: ISVGProps) {
   // keep things simple and use ints for the graph limits
 
   const maxSampleCount = Math.round(
-    Math.max(...aaStats.map(stats => aaSum(stats)))
+    Math.max(...aaStats.map((stats) => aaSum(stats)))
   )
-
-  console.log('masx', maxSampleCount)
 
   const graphHeight = maxSampleCount * blockSize.w //blockSize.w
 
@@ -362,21 +360,21 @@ export function LollipopSingleSvg({ ref }: ISVGProps) {
     const filteredDatasetsForUse = new Set<string>(
       Object.entries(datasetsForUse)
 
-        .filter(e => e[1])
-        .map(e => e[0])
+        .filter((e) => e[1])
+        .map((e) => e[0])
     )
 
     const filteredMutationsForUse = new Set<string>(
       Object.entries(mutationsForUse)
-        .filter(e => e[1])
-        .map(e => e[0])
+        .filter((e) => e[1])
+        .map((e) => e[0])
     )
 
     for (const stats of aaStats) {
       const variantTypes = displayProps.variants.types
         .toReversed()
         .filter(
-          mutType =>
+          (mutType) =>
             mutType in stats.countMap && filteredMutationsForUse.has(mutType)
         )
 
@@ -386,7 +384,7 @@ export function LollipopSingleSvg({ ref }: ISVGProps) {
       for (const variantType of variantTypes) {
         for (const db of Object.keys(stats.countMap[variantType]!)
           .sort()
-          .filter(db => filteredDatasetsForUse.has(db))) {
+          .filter((db) => filteredDatasetsForUse.has(db))) {
           for (const aaInfo of [...stats.countMap[variantType]![db]!].sort()) {
             if (!(stats.position in pileups)) {
               pileups[stats.position] = {} as Record<VariantClass, IAAData[]>
@@ -432,9 +430,9 @@ export function LollipopSingleSvg({ ref }: ISVGProps) {
           const y2 = yax.domainToRange(aaData.length) // 0.5 * blockSize.h
 
           // count protein changes
-          const changes = [...new Set(aaData.map(aa => aa.aa))]
+          const changes = [...new Set(aaData.map((aa) => aa.aa))]
             .sort()
-            .map(aa => `${aa} (${aaData.filter(a => a.aa === aa).length})`)
+            .map((aa) => `${aa} (${aaData.filter((a) => a.aa === aa).length})`)
             .join(', ')
 
           const mutations = `${aaData.length} mutation${aaData.length === 1 ? '' : 's'}`
@@ -475,7 +473,7 @@ export function LollipopSingleSvg({ ref }: ISVGProps) {
 
     if (displayProps.variants.plot.proportional) {
       const maxMutations = Math.max(
-        ...flattenedPileups.map(e => e.mutations.length)
+        ...flattenedPileups.map((e) => e.mutations.length)
       )
 
       for (const entry of flattenedPileups) {
@@ -489,13 +487,13 @@ export function LollipopSingleSvg({ ref }: ISVGProps) {
       }
     }
 
-    const simNodes = flattenedPileups.map(e => e.rect)
-    const ys = simNodes.map(n => n.y)
+    const simNodes = flattenedPileups.map((e) => e.rect)
+    const ys = simNodes.map((n) => n.y)
 
     const sim = forceSimulation(simNodes)
       .force(
         'collide',
-        forceCollide(d => Math.max(d.width, d.height) / 8)
+        forceCollide((d) => Math.max(d.width, d.height) / 8)
       )
       .stop()
 

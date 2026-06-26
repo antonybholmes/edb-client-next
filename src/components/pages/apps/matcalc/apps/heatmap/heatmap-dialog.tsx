@@ -80,14 +80,14 @@ export function HeatMapDialog({
   //const file = useFile()
 
   const { groups, groupsName } = useCurrentGroups()
-  const { sheet: currentSheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
   console.log('heatmap dialog', groups, groupsName)
 
   //const [topRows, setTopRows] = useState(1000)
   const [error, setError] = useState('')
 
-  let df = (sheet ?? currentSheet) as BaseDataFrame
+  let df = (sheet ?? sheets[0]) as BaseDataFrame
 
   const { settings, updateSettings } = useMatcalcSettings()
 

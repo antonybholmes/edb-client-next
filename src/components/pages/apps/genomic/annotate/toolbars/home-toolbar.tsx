@@ -29,7 +29,7 @@ export function HomeToolbar() {
   const { run: runAnnotate } = useAnnotateWorker()
 
   const { onFileChange } = useOpen()
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
   const { addSheets } = useHistory()
   const { saveAs } = useBasicSaveAs()
   const { gtf } = useGenomes()
@@ -37,7 +37,7 @@ export function HomeToolbar() {
   const { addIndicator, remove: removeFooter } = useFooter()
 
   async function annotate() {
-    if (!sheet || !gtf) {
+    if (!gtf) {
       return
     }
     const id = addIndicator('Running....')
@@ -45,8 +45,8 @@ export function HomeToolbar() {
     runAnnotate(
       {
         id: makeUuid(),
-        df: (sheet as AnnotationDataFrame).values,
-        columns: (sheet as AnnotationDataFrame).columns,
+        df: (sheets[0] as AnnotationDataFrame).values,
+        columns: (sheets[0] as AnnotationDataFrame).columns,
         assembly: gtf.assembly,
         closest: settings.closest,
         tss: settings.tss,

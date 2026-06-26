@@ -1,13 +1,5 @@
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 
-import { FooterPortal } from '@/components/toolbar/footer-portal'
-
-//import { ZoomSlider } from "@/toolbar/zoom-slider"
-import {
-  downloadDataFrame,
-  getFormattedShape,
-} from '@/lib/dataframe/dataframe-utils'
-
 import { useEffect, useState } from 'react'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
@@ -18,18 +10,20 @@ import { SaveTxtDialog } from '@/dialogs/save-txt-dialog'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { useMessages } from '@/providers/message-provider'
 
-import { useSideTabs } from '@/components/tabs/tab-store'
+import { useSideTabs } from '@/components/tabs/tab-provider'
+import { useFooter } from '@/providers/footer-provider'
 import { MESSAGE_CHANNEL } from '../../matcalc/data/data-panel'
 import { HistoryPanel } from '../../matcalc/history/history-panel'
 import {
   useCurrentSheets,
   useFiles,
 } from '../../matcalc/history/history-provider/history-contexts'
+import { useSave } from '../../matcalc/hooks/save'
 
 export function DataPanel() {
   // the current file, sheet and all sheets from the history context
   const { file } = useFiles()
-  const { sheet, sheets } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
   //const [working, setWorking] = useState(false)
   //const [tableData, setTableData] = useState<object[]>(DEFAULT_TABLE_ROWS)
   //const [tableH, setTableH] = useState<IReactTableCol[]>(DEFAULT_TABLE_HEADER)
@@ -47,24 +41,13 @@ export function DataPanel() {
 
   const { setTabs: setSideTabs } = useSideTabs()
 
-  const df = sheet as AnnotationDataFrame
+  const { save } = useSave()
 
-  function save(name: string, format: string) {
-    if (!sheet) {
-      return
-    }
+  const { addDFSize } = useFooter()
 
-    const sep = format === 'csv' ? ',' : '\t'
-    const hasHeader = !sheet.name.includes('GCT')
-    const hasIndex = !sheet.name.includes('GCT')
-
-    downloadDataFrame(df, {
-      hasHeader,
-      hasIndex,
-      file: name,
-      sep,
-    })
-  }
+  useEffect(() => {
+    addDFSize()
+  }, [addDFSize])
 
   useEffect(() => {
     setSideTabs([
@@ -124,14 +107,14 @@ export function DataPanel() {
         onOpenChange={setShowSideBar}
       >
         <TabbedDataFrames
-          selectedSheet={sheet?.id ?? ''}
+          //selectedSheet={sheet?.id ?? ''}
           dataFrames={sheets as AnnotationDataFrame[]}
         />
       </TabSlideBar>
 
-      <FooterPortal className="justify-end">
+      {/* <FooterPortal className="justify-end">
         <span>{getFormattedShape(df)}</span>
-      </FooterPortal>
+      </FooterPortal> */}
     </>
   )
 }

@@ -62,7 +62,7 @@ export function DotPlotDialog({
   const [dotplotMode, setDotPlotMode] = useState<DotPlotMode>('size')
   const [error, setError] = useState('')
 
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
   const { groups } = useCurrentGroups()
 
   useEffect(() => {
@@ -76,12 +76,7 @@ export function DotPlotDialog({
   }, [isClusterMap])
 
   function makeDotPlot() {
-    if (!sheet) {
-      onResponse?.(TEXT_CANCEL, undefined)
-      return
-    }
-
-    if ((sheet as BaseDataFrame).shape[0] > MAX_HEATMAP_DIM) {
+    if ((sheets[0] as BaseDataFrame).shape[0] > MAX_HEATMAP_DIM) {
       setError(
         `You can plot up to ${MAX_HEATMAP_DIM.toLocaleString()} rows. Please reduce the number of rows in your table.`
       )
@@ -101,7 +96,7 @@ export function DotPlotDialog({
       return
     }
 
-    const df = sheet as BaseDataFrame
+    const df = sheets[0] as BaseDataFrame
 
     // get group means
     const means: number[][] = []
@@ -132,14 +127,14 @@ export function DotPlotDialog({
       name: 'Group means',
       data: means,
       index,
-      columns: (sheet as BaseDataFrame).index,
+      columns: (sheets[0] as BaseDataFrame).index,
     }).t
 
     const groupPercentDf = new AnnotationDataFrame({
       name: DOT_PLOT_PERCENT_TABLE,
       data: percents,
       index,
-      columns: (sheet as BaseDataFrame).index,
+      columns: (sheets[0] as BaseDataFrame).index,
     }).t
 
     // historyDispatch({
@@ -214,7 +209,7 @@ export function DotPlotDialog({
     // want 4 points equally spaced within range but not covering the
     //extremes
 
-    const df = sheet as BaseDataFrame
+    const df = sheets[0] as BaseDataFrame
 
     const dfLog = settings.heatmap.applyLog2 ? log2(df, 1) : df
 

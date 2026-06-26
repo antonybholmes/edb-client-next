@@ -3,10 +3,10 @@
 //import { IS_DEV_MODE } from '@/consts'
 import { HistoryProvider } from '@/components/pages/apps/matcalc/history/history-provider/history-provider'
 import {
-  StackedToasts,
-  Provider as ToastProvider,
+    StackedToasts,
+    Provider as ToastProvider,
 } from '@/components/shadcn/ui/themed/v2/toast'
-import { TabProvider } from '@/components/tabs/tab-store'
+import { TabProvider } from '@/components/tabs/tab-provider'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { AppInfoProvider } from '@/lib/edb/edb-settings'
 import { QCP } from '@/qcp'

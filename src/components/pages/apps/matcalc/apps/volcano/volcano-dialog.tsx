@@ -74,13 +74,13 @@ export function VolcanoDialog({
   onResponse,
 }: IProps) {
   const { settings, updateSettings } = useMatcalcSettings()
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
   const btnRef = useRef<HTMLButtonElement>(null)
 
   //const branch = findBranch(branchAddr, history)[0]
   //const step = currentStep(branch)[0]
-  let df = sheet as BaseDataFrame //currentSheet(step)[0] as AnnotationDataFrame
+  let df = sheets[0] as BaseDataFrame //currentSheet(step)[0] as AnnotationDataFrame
 
   //console.log('vdialog', df, df.colNames)
 

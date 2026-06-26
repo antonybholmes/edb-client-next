@@ -93,7 +93,7 @@ export function FileDropZonePanel({
   })
 
   return (
-    <BaseCol {...getRootProps({ className: cn('grow relative', className) })}>
+    <BaseCol {...getRootProps({ className: cn('relative', className) })}>
       <input {...getInputProps()} aria-label="Drop files here" />
       {isDragActive && dragComp}
       {c[0]}

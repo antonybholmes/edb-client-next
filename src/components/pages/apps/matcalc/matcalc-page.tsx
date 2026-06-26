@@ -78,7 +78,7 @@ import { VolcanoProvider } from './apps/volcano/volcano-provider'
 import { OptsSidebarMenu } from './data/opts-sidebar-menu'
 import { useHistory } from './history/history-provider/history-provider'
 
-import { useTabs } from '@/components/tabs/tab-store'
+import { useTabs } from '@/components/tabs/tab-provider'
 import { BoxPlotPanel } from './apps/boxplot/boxplot-panel'
 import { BoxPlotProvider } from './apps/boxplot/boxplot-provider'
 import { ExtGseaPanel } from './apps/ext-gsea/ext-gsea-panel'
@@ -183,9 +183,9 @@ export function MatcalcPage() {
 
   const { openDataFrames } = useOpenFiles()
 
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
-  const { plot } = useCurrentPlots()
+  const { plots } = useCurrentPlots()
 
   const { selection: currentSelection } = useCurrentSelections()
   //const plots = usePlots()
@@ -193,7 +193,7 @@ export function MatcalcPage() {
   // we need all plots from all files in the current app to be
   // able to display them in the file tree and access
   // them when clicking on a plot tab
-  const plots = useAllPlots()
+  const allPlots = useAllPlots()
 
   const { setSettingsTabs, setDefaultSettingsTab } = useSettingsTabs()
 
@@ -226,7 +226,6 @@ export function MatcalcPage() {
         children: [
           {
             id: 'Apps',
-
             component: SettingsAppsPanel,
           },
         ],
@@ -465,7 +464,7 @@ export function MatcalcPage() {
               sendMessage({
                 type: 'info',
                 source: 'matcalc',
-                target: plot?.id ?? '',
+                target: 'plot', //plot?.id ?? '',
                 data: 'save:png',
               })
               // save("txt")}
@@ -480,7 +479,7 @@ export function MatcalcPage() {
               sendMessage({
                 type: 'info',
                 source: 'matcalc',
-                target: plot?.id ?? '',
+                target: 'plot',
                 data: 'save:svg',
               })
               // save("txt")}
@@ -499,11 +498,11 @@ export function MatcalcPage() {
       className="min-h-0 h-full flex flex-col grow"
     >
       {/* Shows the current sheet so tab needs id of current sheet. If no sheet, show empty data panel */}
-      <TabsContent value={sheet?.id ?? ''}>
+      <TabsContent value={sheets[0]?.id ?? ''}>
         <DataPanel />
       </TabsContent>
 
-      {plots.map((plot) => {
+      {allPlots.map((plot) => {
         return (
           <TabsContent key={plot.id} value={plot.id}>
             {plotElem(plot)}

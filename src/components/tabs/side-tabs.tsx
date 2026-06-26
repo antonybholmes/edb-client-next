@@ -1,20 +1,24 @@
 import { cn } from '@/lib/shadcn-utils'
 import { useEffect, useRef } from 'react'
 
-import { getTabFromValue, getTabName } from '@/components/tabs/tab-provider'
+import {
+  getTabFromValue,
+  getTabName,
+  useTabs,
+} from '@/components/tabs/tab-provider'
 import { EMPTY_RECT } from '@/interfaces/rect'
 import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
-import { type IToolbarProps } from '../toolbar/toolbar'
+
 import { TabIndicatorFollowV } from './tab-indicator-follow-v'
 import { TabIndicatorSelectedV } from './tab-indicator-selected-v'
 
+import { IClassProps } from '@/interfaces/class-props'
 import {
   TabIndicatorProvider,
   useTabIndicators,
 } from './tab-indicator-provider'
-import { useTabs } from './tab-store'
 
-interface IShortcutProps extends IToolbarProps {
+interface IShortcutProps extends IClassProps {
   id?: string
   defaultHeight?: number
   showIcons?: boolean
@@ -23,14 +27,14 @@ interface IShortcutProps extends IToolbarProps {
 
 function _SideTabs({
   id = 'side-tabs',
-  onTabChange = undefined,
+  //onTabChange = undefined,
 
   defaultHeight = 1.9,
   showIcons = true,
   showLabels = true,
   className,
 }: IShortcutProps) {
-  const { tabs, tab: selectedTab, selectedTabIndex, setTab } = useTabs(id)
+  const { tabs, selectedTab, selectedTabIndex, setTab } = useTabs(id)
 
   console.log('selectedTab', selectedTab)
 
@@ -59,7 +63,7 @@ function _SideTabs({
 
       setTab(value)
 
-      onTabChange?.(tab)
+      //onTabChange?.(tab)
     }
   }
 

@@ -1,6 +1,14 @@
-import { IDivProps } from '@/interfaces/div-props'
+import { IChildrenProps } from '@/interfaces/children-props'
 import type { UndefStr } from '@/lib/text/text'
-import { ComponentType, createContext, useState, type ReactNode } from 'react'
+import {
+  ComponentType,
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react'
 
 export type NodeType = 'folder' | 'file'
 export type OpenState = boolean | 'auto'
@@ -47,21 +55,24 @@ export interface ISelectedTab {
   tab: ITab
 }
 
+export const DEFAULT_GROUP_ID = 'default'
+
+export interface ITabGroup {
+  id: string
+  tabs: ITab[]
+  selectedTabIndex: number
+}
+
+export const DEFAULT_TAB_GROUP: ITabGroup = {
+  id: DEFAULT_GROUP_ID,
+  tabs: [],
+  selectedTabIndex: 0,
+}
+
 export type TabChange = (selectedTab: ISelectedTab) => void
 
 export interface ITabChange {
   onTabChange?: TabChange | undefined
-}
-
-export interface ITabProvider extends ITabChange {
-  value?: string
-  tabs?: ITab[]
-}
-
-export interface ITabContext extends ITabChange {
-  value: string
-  selectedTab: ISelectedTab | null
-  tabs: ITab[]
 }
 
 // export interface ITabContext extends ITabProvider, ITabChange {
@@ -130,48 +141,147 @@ export function getTabFromValue(
   return selectedTab
 }
 
-export const TabContext = createContext<ITabContext>({
-  value: '',
-  selectedTab: null,
-  tabs: [],
+interface ITabsContext {
+  tabs: Record<string, ITabGroup>
+  getTabs: (id: string) => ITabGroup
+  setTabs: (id: string, tabs: ITab[]) => void
+  setTab: (id: string, tab: number | string) => void
+}
+
+export const TabsContext = createContext<ITabsContext>({
+  tabs: {},
+  getTabs: (id: string) => ({ ...DEFAULT_TAB_GROUP, id }),
+  setTabs: () => {},
+  setTab: () => {},
 })
 
-interface IProps extends ITabProvider, IDivProps {}
-
-/**
- * Single use tab provider for things like toggle buttons
- * @param param0
- * @returns
- */
-export function TabProvider({ value, onTabChange, tabs, children }: IProps) {
-  const [_value, setValue] = useState('')
-
-  function _onTabChange(selectedTab: ISelectedTab) {
-    setValue(selectedTab.tab.id)
-
-    onTabChange?.(selectedTab)
+export const useTabContext = () => {
+  const ctx = useContext(TabsContext)
+  if (!ctx) {
+    throw new Error('useTabContext must be used within a TabContext.Provider')
   }
+  return ctx
+}
 
-  const v = value !== undefined ? value : _value
+export function useTabs(id: string) {
+  const { getTabs, setTabs, setTab } = useTabContext()
 
-  const selectedTab = getTabFromValue(v, tabs ?? [])
+  id = id ?? DEFAULT_GROUP_ID
 
-  //console.log("eh", value.length, tabs, selectedTab)
+  const tabState = useMemo(() => getTabs(id), [id, getTabs])
 
-  if (!selectedTab) {
-    return null
+  const selectedTab = useMemo(
+    () =>
+      tabState.tabs.length > 0
+        ? tabState.tabs[tabState.selectedTabIndex ?? 0]
+        : undefined,
+    [tabState]
+  )
+
+  const setGroupsTab = useCallback(
+    (tabs: ITab[]) => {
+      setTabs(id, tabs)
+    },
+    [id, setTabs]
+  )
+
+  const setGroupTab = useCallback(
+    (tab: number | string) => {
+      setTab(id, tab)
+    },
+    [id, setTab]
+  )
+
+  return {
+    selectedTab,
+    tabs: tabState.tabs,
+    selectedTabIndex: tabState.selectedTabIndex,
+    setTab: setGroupTab,
+    setTabs: setGroupsTab,
   }
+}
+
+export const TOOLBAR_TABS = 'toolbar'
+
+export function useToolbarTabs(id: string = TOOLBAR_TABS) {
+  return useTabs(id)
+}
+
+export const OPTS_SIDEBAR_ID = 'opts-sidebar'
+
+export function useSideTabs(id: string = OPTS_SIDEBAR_ID) {
+  return useTabs(id)
+}
+
+export function TabProvider({ children }: IChildrenProps) {
+  const [tabs, setTabs] = useState<Record<string, ITabGroup>>({})
+
+  const getTabs = useCallback(
+    (id: string) => {
+      //if (id in tabs) {
+      return tabs[id] ?? { ...DEFAULT_TAB_GROUP, id }
+    },
+    [tabs]
+  )
+
+  const _setTabs = useCallback((id: string, tabs: ITab[]) => {
+    setTabs((prev) => {
+      let currentTab = prev[id] ?? { ...DEFAULT_TAB_GROUP, id }
+
+      return {
+        ...prev,
+        [id]: { ...currentTab, tabs, selectedTabIndex: 0 },
+      }
+    })
+  }, [])
+
+  const _setTab = useCallback((id: string, tab: number | string) => {
+    setTabs((prev) => {
+      let currentTab = prev[id] ?? { ...DEFAULT_TAB_GROUP, id }
+
+      let index = 0
+
+      if (typeof tab === 'number') {
+        index = tab
+      } else if (typeof tab === 'string') {
+        const lt = tab.toLowerCase()
+
+        const idx = currentTab.tabs.findIndex(
+          (t) => t.id.toLowerCase() === lt || t.name?.toLowerCase() === lt
+        )
+        if (idx !== -1) {
+          index = idx
+        }
+      }
+
+      // don't update the state if the selected tab index hasn't changed
+      if (index === currentTab.selectedTabIndex) {
+        return prev
+      }
+
+      console.log('set tab', id, tab, index)
+
+      return {
+        ...prev,
+        [id]: {
+          id,
+          tabs: currentTab.tabs,
+          selectedTabIndex: index,
+        },
+      }
+    })
+  }, [])
 
   return (
-    <TabContext.Provider
+    <TabsContext.Provider
       value={{
-        value: v,
-        selectedTab,
-        onTabChange: _onTabChange,
-        tabs: tabs ?? [],
+        tabs,
+        getTabs,
+        setTabs: _setTabs,
+        setTab: _setTab,
       }}
     >
       {children}
-    </TabContext.Provider>
+    </TabsContext.Provider>
   )
 }

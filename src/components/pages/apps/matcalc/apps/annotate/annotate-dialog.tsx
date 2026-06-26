@@ -4,7 +4,7 @@ import type { ISelectionRange } from '@/providers/selection-range-provider'
 
 import { DataFrame } from '@/lib/dataframe/dataframe'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { useDialogs } from '@/components/dialogs/dialogs'
@@ -39,18 +39,13 @@ export function AnnotateDialog({ selection, onResponse }: IProps) {
   } = useAnnotations()
   const { open: openDialog } = useDialogs()
   const { run: runAnnotate } = useAnnotateWorker()
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
   const [indicatorMessage, setIndicatorMessage] = useState<string | null>(null)
 
-  const df = sheet as DataFrame
+  const df = sheets[0] as DataFrame
 
   //const [closest, setClosest] = useState<number>(5)
-
-  useEffect(() => {
-    //setUseIndex(selection.start.col === -1)
-    //setUseColumns(selection.start.col !== -1)
-  }, [sheet, selection])
 
   function annotate() {
     if (!df || !df.columns.length) {
@@ -62,8 +57,8 @@ export function AnnotateDialog({ selection, onResponse }: IProps) {
     runAnnotate(
       {
         id: makeUuid(),
-        df: (sheet as AnnotationDataFrame).values,
-        columns: (sheet as AnnotationDataFrame).columns,
+        df: df.values,
+        columns: df.columns,
         col,
         assembly: settings.genomic.assembly,
         closest: annotationSettings.closest,
@@ -110,7 +105,7 @@ export function AnnotateDialog({ selection, onResponse }: IProps) {
       //leftFooterChildren={<RunningIndicator message={indicatorMessage} />}
     >
       <PropRow title="Location column">
-        <DFColSelect df={sheet as DataFrame} value={col} onChange={setCol} />
+        <DFColSelect df={df} value={col} onChange={setCol} />
       </PropRow>
       <PropRow title="Assembly">
         <AssemblySelect variant="default" />

@@ -53,9 +53,9 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
 
   const { addSheets } = useHistory()
 
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
-  const df = sheet as AnnotationDataFrame
+  const df = sheets[0] as AnnotationDataFrame
 
   useEffect(() => {
     if (!selection) {

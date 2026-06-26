@@ -8,10 +8,6 @@ import { FooterPortal } from '@/components/toolbar/footer-portal'
 
 import { BaseCol } from '@/layout/base-col'
 
-import {
-  downloadDataFrame,
-  getFormattedShape,
-} from '@/lib/dataframe/dataframe-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { produce } from 'immer'
@@ -67,10 +63,11 @@ import { FileIcon } from '@/components/icons/file-icon'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
-import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
+import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useStableId } from '@/hooks/stable-id'
 import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
 import { CoreProviders } from '@/providers/core-provider'
+import { useFooter } from '@/providers/footer-provider'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 import { CirclePlus } from 'lucide-react'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
@@ -79,6 +76,7 @@ import {
   useFiles,
 } from '../../matcalc/history/history-provider/history-contexts'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
+import { useSave } from '../../matcalc/hooks/save'
 import { DisplayPropsPanel } from './display-props-panel'
 import { usePlotGrid } from './plot-grid-store'
 import { SingleCellDialogsRoot } from './single-cell-dialogs'
@@ -94,7 +92,7 @@ export function SingleCellPage() {
   const { goto } = useHistory()
 
   const { file } = useFiles()
-  const { sheet, sheets } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
   const { open: openDialog } = useDialogs()
 
@@ -133,6 +131,14 @@ export function SingleCellPage() {
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
+
+  const { save } = useSave()
+
+  const { addDFSize } = useFooter()
+
+  useEffect(() => {
+    addDFSize()
+  }, [addDFSize])
 
   //const { fetchAccessToken } = useEdbAuth()
 
@@ -197,25 +203,6 @@ export function SingleCellPage() {
     )
   }, [zoom])
 
-  function save(format: string) {
-    if (!sheet) {
-      return
-    }
-
-    const sep = format === 'csv' ? ',' : '\t'
-    const hasHeader = !sheet.name.includes('GCT')
-    const hasIndex = !sheet.name.includes('GCT')
-
-    downloadDataFrame(sheet as AnnotationDataFrame, {
-      hasHeader,
-      hasIndex,
-      file: `table.${format}`,
-      sep,
-    })
-
-    setShowFileMenu(false)
-  }
-
   const fileMenuTabs: ITab[] = [
     {
       id: TEXT_SAVE_AS,
@@ -224,14 +211,14 @@ export function SingleCellPage() {
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
-            onClick={() => save('txt')}
+            onClick={() => save('single-cell', 'txt')}
           >
             <FileIcon stroke="" />
             <span>{TEXT_DOWNLOAD_AS_TXT}</span>
           </DropdownMenuItem>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_CSV}
-            onClick={() => save('csv')}
+            onClick={() => save('single-cell', 'csv')}
           >
             <span>{TEXT_DOWNLOAD_AS_CSV}</span>
           </DropdownMenuItem>
@@ -429,9 +416,9 @@ export function SingleCellPage() {
                       openDialog({
                         type: 'save',
                         payload: {
-                          name: sheet?.name ?? 'table',
+                          name: sheets[0].name,
                           callback: (data) => {
-                            save(data.format.ext)
+                            save('single-cell', data.format.ext)
                           },
                         },
                       })
@@ -441,11 +428,11 @@ export function SingleCellPage() {
                   </IconButton>
                 </BaseCol>
                 <TabbedDataFrames
-                  selectedSheet={sheet?.id ?? ''}
+                  //selectedSheet={sheet?.id ?? ''}
                   dataFrames={sheets.map((s) => s) as AnnotationDataFrame[]}
-                  onTabChange={(selectedTab) => {
-                    goto({ file, sheet: selectedTab.tab })
-                  }}
+                  // onTabChange={(selectedTab) => {
+                  //   goto({ file, sheet: selectedTab.tab })
+                  // }}
                   className="relative grow"
                 />
               </BaseRow>
@@ -457,7 +444,7 @@ export function SingleCellPage() {
         {/* </SlideBar> */}
 
         <FooterPortal className="justify-between">
-          <>{getFormattedShape(sheet as AnnotationDataFrame)} </>
+          <> </>
           <></>
           <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
         </FooterPortal>

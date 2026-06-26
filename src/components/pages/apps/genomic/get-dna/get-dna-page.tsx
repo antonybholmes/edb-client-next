@@ -12,26 +12,26 @@ import { MenuButton } from '@/toolbar/menu-button'
 import { FileLinesIcon } from '@/icons/file-lines-icon'
 
 import {
-  FILE_MENU_ITEM_DESC_CLS,
-  FILE_MENU_ITEM_HEADING_CLS,
-  H2_CLS,
+    FILE_MENU_ITEM_DESC_CLS,
+    FILE_MENU_ITEM_HEADING_CLS,
+    H2_CLS,
 } from '@/theme'
 import { useEffect, useState } from 'react'
 
 import { TEXT_SAVE_AS, TEXT_SETTINGS } from '@/consts'
 
 import {
-  ResizablePanel,
-  ResizablePanelGroup,
-  ThinHResizeHandle,
-  ThinVResizeHandle,
+    ResizablePanel,
+    ResizablePanelGroup,
+    ThinHResizeHandle,
+    ThinVResizeHandle,
 } from '@/themed/resizable'
 
 import { CollapseBlock } from '@/components/collapse-block'
 
 import {
-  ToggleButtonTriggers,
-  ToggleButtons,
+    ToggleButtonTriggers,
+    ToggleButtons,
 } from '@/components/toggle-buttons'
 import { VCenterRow } from '@/layout/v-center-row'
 
@@ -41,7 +41,7 @@ import { Input } from '@/themed/v2/input'
 import { Textarea } from '@/themed/textarea'
 
 import type { ITab } from '@/components/tabs/tab-provider'
-import { useToolbarTabs } from '@/components/tabs/tab-store'
+import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { dnaToJson } from '@/lib/genomic/dna'

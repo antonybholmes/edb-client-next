@@ -56,7 +56,7 @@ import { useAppInfo } from '@/lib/edb/edb-settings'
 import { useZoom } from '@/providers/zoom-provider'
 import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 
-import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
+import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import {
   useCurrentSheets,
@@ -79,7 +79,7 @@ function LollipopPage() {
   const { goto, openFile, addSheets, undo } = useHistory()
 
   const { file } = useFiles()
-  const { sheet, sheets } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
   const { setAppInfo } = useAppInfo()
 
@@ -228,13 +228,13 @@ function LollipopPage() {
   }, [setSideTabs])
 
   useEffect(() => {
-    if (!sheet || sheet.name !== 'Variants' || !protein) {
+    if (sheets[0].name !== 'Variants' || !protein) {
       return
     }
-    console.log('Updating lollipop plot with sheet:', sheet.name)
+    console.log('Updating lollipop plot with sheet:', sheets[0].name)
 
     try {
-      lollipopFromTable(sheet as BaseDataFrame, protein)
+      lollipopFromTable(sheets[0] as BaseDataFrame, protein)
     } catch (error) {
       //remove([{ app, file, sheet } as SheetPath]) // remove the offending sheet to prevent repeated errors
 
@@ -251,7 +251,7 @@ function LollipopPage() {
         },
       })
     }
-  }, [sheet, protein])
+  }, [sheets, protein])
 
   useEffect(() => {
     setDisplayProps(
@@ -492,11 +492,11 @@ function LollipopPage() {
               collapsible={true}
             >
               <TabbedDataFrames
-                selectedSheet={sheet?.id ?? ''}
+                //selectedSheet={sheet?.id ?? ''}
                 dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
-                onTabChange={(selectedTab) => {
-                  goto({ file, sheet: selectedTab.tab })
-                }}
+                // onTabChange={(selectedTab) => {
+                //   goto({ file, sheet: selectedTab.tab })
+                // }}
                 //zoom={1}
                 //className={DATA_PANEL_CLS}
               />

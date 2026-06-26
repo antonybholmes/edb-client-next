@@ -647,8 +647,6 @@ export function downloadDataFrame(
     return
   }
 
-  console.log({ f })
-
   download(f, file)
 }
 

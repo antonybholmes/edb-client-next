@@ -57,8 +57,11 @@ import { useZoom } from '@/providers/zoom-provider'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { BaseRow } from '@/components/layout/base-row'
-import { type ITab } from '@/components/tabs/tab-provider'
-import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
+import {
+  useSideTabs,
+  useToolbarTabs,
+  type ITab,
+} from '@/components/tabs/tab-provider'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { FileIcon } from '@/icons/file-icon'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
@@ -166,7 +169,7 @@ function VennPage() {
   const { openFile, goto } = useHistory()
 
   const { file } = useFiles()
-  const { sheet, sheets } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
   //useWindowScrollListener((e: unknown) => console.log(e))
 
@@ -410,13 +413,9 @@ function VennPage() {
   }, [zoom])
 
   function save(format: 'txt' | 'csv') {
-    if (!sheet) {
-      return
-    }
-
     const sep = format === 'csv' ? ',' : '\t'
 
-    const df = sheet as AnnotationDataFrame
+    const df = sheets[0] as AnnotationDataFrame
 
     downloadDataFrame(df, {
       hasHeader: true,
@@ -613,11 +612,11 @@ function VennPage() {
 
                 <TabbedDataFrames
                   key="tabbed-data-frames"
-                  selectedSheet={sheet?.id ?? ''}
+                  //selectedSheet={sheet?.id ?? ''}
                   dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
-                  onTabChange={(selectedTab) => {
-                    goto({ file, sheet: selectedTab.tab })
-                  }}
+                  // onTabChange={(selectedTab) => {
+                  //   goto({ file, sheet: selectedTab.tab })
+                  // }}
                 />
               </BaseRow>
             </ResizablePanel>

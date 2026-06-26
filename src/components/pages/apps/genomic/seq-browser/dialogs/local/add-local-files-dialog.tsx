@@ -88,7 +88,7 @@ export function AddLocalFilesDialog({
       //buttons={[TEXT_OK]}
       title="Load Files From Device"
       bodyCls="gap-y-4"
-      onResponse={response => {
+      onResponse={(response) => {
         if (response === TEXT_OK) {
           if (files.length > 0) {
             onResponse?.(TEXT_OK, { name, color, files })
@@ -126,15 +126,16 @@ export function AddLocalFilesDialog({
       /> */}
 
       <FileDropZonePanel
+        className="grow"
         fileTypes={{
           'text/plain': ['.bed'],
           'application/octet-stream': ['.bw', '.bigWig', '.bb', '.bigBed'],
         }}
-        onFileDrop={async files => {
+        onFileDrop={async (files) => {
           console.log('files', files)
 
           if (files.length > 0) {
-            setName(files.map(f => f.name).join(', '))
+            setName(files.map((f) => f.name).join(', '))
 
             const ret: ILocalFile[] = []
 

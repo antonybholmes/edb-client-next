@@ -19,7 +19,7 @@ import { HeaderPortal } from '@/components/header/header-portal'
 import { IndexArrowIcon } from '@/components/icons/index-arrow-icon'
 import { BLANK_TARGET } from '@/components/link/base-link'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
-import { useSideTabs } from '@/components/tabs/tab-store'
+import { useSideTabs } from '@/components/tabs/tab-provider'
 import { TIME_5_MINUTES_MS } from '@/consts'
 import { useSearch } from '@/hooks/search'
 import { AssemblySelect } from '@/lib/edb/assembly-select'
@@ -29,10 +29,10 @@ import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { CoreProviders } from '@/providers/core-provider'
 import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-  ScrollAccordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+    ScrollAccordion,
 } from '@/themed/v2/accordion'
 import { useQuery } from '@tanstack/react-query'
 import APP_INFO from './manifest.json'

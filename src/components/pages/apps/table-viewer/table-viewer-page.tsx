@@ -44,23 +44,19 @@ import { HistoryPanel } from '../matcalc/history/history-panel'
 
 import { BaseCol } from '@/components/layout/base-col'
 
-import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
+import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { formatString } from '@/lib/text/format-string'
-import {
-  useCurrentSheets,
-  useFiles,
-} from '../matcalc/history/history-provider/history-contexts'
+import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import APP_INFO from './manifest.json'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
 export function TableViewerPage() {
-  const { openFile, goto } = useHistory()
+  const { openFile } = useHistory()
   const { setAppInfo } = useAppInfo()
 
-  const { file } = useFiles()
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
   const [showSideBar, setShowSideBar] = useState(false)
 
@@ -126,13 +122,9 @@ export function TableViewerPage() {
   const [showFileMenu, setShowFileMenu] = useState(false)
 
   function save(name: string, format: string) {
-    if (!sheet) {
-      return
-    }
-
     const sep = format === 'csv' ? ',' : '\t'
 
-    downloadDataFrame(sheet as AnnotationDataFrame, {
+    downloadDataFrame(sheets[0] as AnnotationDataFrame, {
       hasHeader: true,
       hasIndex: false,
       file: name,
@@ -150,7 +142,7 @@ export function TableViewerPage() {
           <DropdownMenuItem
             aria-label="Save text file"
             onClick={() =>
-              save(`${friendlyFilename(sheet?.name ?? 'table')}.txt`, 'txt')
+              save(`${friendlyFilename(sheets[0]?.name ?? 'table')}.txt`, 'txt')
             }
           >
             <FileIcon stroke="" />
@@ -160,7 +152,7 @@ export function TableViewerPage() {
           <DropdownMenuItem
             aria-label="Save CSV file"
             onClick={() =>
-              save(`${friendlyFilename(sheet?.name ?? 'table')}.csv`, 'csv')
+              save(`${friendlyFilename(sheets[0]?.name ?? 'table')}.csv`, 'csv')
             }
           >
             <span>{TEXT_DOWNLOAD_AS_CSV}</span>
@@ -208,17 +200,17 @@ export function TableViewerPage() {
         onOpenChange={setShowSideBar}
       >
         <TabbedDataFrames
-          selectedSheet={sheet?.id}
-          dataFrames={[sheet as AnnotationDataFrame]}
-          onTabChange={(selectedTab) => {
-            goto({ file, sheet: selectedTab.tab })
-          }}
+          //selectedSheet={sheets[0]?.id}
+          dataFrames={[sheets[0] as AnnotationDataFrame]}
+          //onTabChange={(selectedTab) => {
+          //  goto({ file, sheet: selectedTab.tab })
+          //}}
           className="mx-2 mt-2"
         />
       </TabSlideBar>
 
       <FooterPortal className="justify-end">
-        <span>{getFormattedShape(sheet as AnnotationDataFrame)}</span>
+        <span>{getFormattedShape(sheets[0] as AnnotationDataFrame)}</span>
         <></>
         <ZoomSlider />
       </FooterPortal>

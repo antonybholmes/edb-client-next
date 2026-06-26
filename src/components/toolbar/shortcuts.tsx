@@ -12,8 +12,7 @@ import { SimpleTooltip } from '../shadcn/ui/themed/v2/tooltip'
 import { TabIndicatorFollowV } from '../tabs/tab-indicator-follow-v'
 
 import { useTabIndicators } from '../tabs/tab-indicator-provider'
-import { useTabs } from '../tabs/tab-store'
-import { type IToolbarProps } from './toolbar'
+import { useTabs } from '../tabs/tab-provider'
 
 const BUTTON_CLS = cn(
   FOCUS_INSET_RING_CLS,
@@ -22,7 +21,7 @@ const BUTTON_CLS = cn(
   'data-[checked=false]:hover:bg-background trans-color rounded-theme'
 )
 
-interface IShortcutProps extends IToolbarProps {
+interface IShortcutProps {
   defaultWidth?: number
   gap?: number
 }
@@ -38,7 +37,7 @@ export function ShortcutContent({
 }: IShortcutsProps) {
   const _id = useStableId('shortcut-tabs')
 
-  const { tab, selectedTabIndex, setTab, tabs } = useTabs(_id)
+  const { selectedTab, selectedTabIndex, setTab, tabs } = useTabs(_id)
 
   const { position, setPosition: setTabIndicatorPos } = useTabIndicators()
   const pressed = useRef(false)
@@ -63,7 +62,7 @@ export function ShortcutContent({
   return (
     <Tabs
       orientation="vertical"
-      value={tab?.id ?? ''}
+      value={selectedTab?.id ?? ''}
       onValueChange={(v) => {
         //const idx = where(tabs, (t) => t.id === v)
         //if (idx.length > 0) {
@@ -81,7 +80,7 @@ export function ShortcutContent({
         {...props}
       >
         {tabs.map((t, ti) => {
-          const selected = t.id === tab?.id
+          const selected = t.id === selectedTab?.id
           return (
             <SimpleTooltip content={t.id} key={ti} side="right">
               <TabsTrigger
@@ -128,12 +127,6 @@ export function ShortcutContent({
   )
 }
 
-export function Shortcuts({
-  value = '',
-  onTabChange = () => {},
-  tabs = [],
-  defaultWidth = 2.5,
-  gap = 0.25,
-}: IShortcutProps) {
+export function Shortcuts({ gap = 0.25 }: IShortcutProps) {
   return <ShortcutContent gap={gap} />
 }

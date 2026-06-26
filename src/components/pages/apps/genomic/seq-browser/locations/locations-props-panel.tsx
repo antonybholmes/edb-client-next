@@ -178,6 +178,7 @@ export function LocationsPropsPanel() {
       </VCenterRow>
 
       <FileDropZonePanel
+        className="grow"
         onFileDrop={(files) => {
           if (files.length > 0) {
             onTextFileChange('Open dropped file', files, openLocationFiles)

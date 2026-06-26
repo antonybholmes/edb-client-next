@@ -53,7 +53,7 @@ import Fuse from 'fuse.js'
 import { produce } from 'immer'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
-import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
+import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
@@ -330,6 +330,7 @@ export function GseaPlotPage() {
         <TabSlideBar side="right">
           {rankedGenes.length > 0 ? (
             <FileDropZonePanel
+              className="grow"
               onFileDrop={(files) => {
                 if (files.length > 0) {
                   onBinaryFileChange('Open zip', files, loadGseaZip)
@@ -342,6 +343,7 @@ export function GseaPlotPage() {
             </FileDropZonePanel>
           ) : (
             <FileDropZonePanel
+              className="grow"
               onFileDrop={(files) => {
                 if (files.length > 0) {
                   //setDroppedFile(files[0]);

@@ -61,11 +61,11 @@ export function KmeansDialog({
 
   const { settings, updateSettings } = useMatcalcSettings()
   const { addSheets } = useHistory()
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
   //const branch = findBranch(branchAddr, history)[0]
   //const step = currentStep(branch)[0]
-  let df = sheet as AnnotationDataFrame
+  let df = sheets[0] as AnnotationDataFrame
 
   const [error] = useState('')
 

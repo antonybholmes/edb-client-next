@@ -1,17 +1,11 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 
-import { TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
+import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
 
 import { cn } from '@/lib/shadcn-utils'
-import {
-  getTabFromValue,
-  getTabName,
-  type ITab,
-  type ITabProvider,
-} from './tab-provider'
+import { getTabName, type ITab } from './tab-provider'
 
-import type { IDivProps } from '@/interfaces/div-props'
-import { where } from '@/lib/math/where'
+import { IChildrenProps } from '@/interfaces/children-props'
 import { type NullStr } from '@/lib/text/text'
 import { DndContext } from '@dnd-kit/core'
 import { restrictToHorizontalAxis } from '@dnd-kit/modifiers'
@@ -31,6 +25,7 @@ import {
   ContextMenuTrigger,
 } from '../shadcn/ui/themed/v2/context-menu'
 import { BaseSortableItem, SmallDragHandle } from '../sortable-item'
+import { useTabs } from './tab-provider'
 import { UNDERLINE_LABEL_CLS, type ITabMenu } from './underline-tabs'
 
 export const tabVariants = cva(
@@ -196,52 +191,34 @@ export interface ITabReorder {
 }
 
 interface IProps
-  extends
-    ITabProvider,
-    IDivProps,
-    VariantProps<typeof tabVariants>,
-    ITabMenu,
-    ITabReorder {
+  extends IChildrenProps, VariantProps<typeof tabVariants>, ITabMenu {
+  groupId?: string
   buttonClassName?: string
   maxNameLength?: number
   allowReorder?: boolean
 }
 
 export function ReorderTabs({
-  ref,
-  value,
-  tabs,
+  groupId = 'reorder-tabs',
   variant,
   className,
   menuCallback = () => {},
   menuActions = [],
-  onReorder = () => {},
+
   allowReorder = true,
   children,
 }: IProps) {
-  const tabListRef = useRef<HTMLDivElement>(null)
+  const { selectedTab, selectedTabIndex, tabs, setTabs, setTab } =
+    useTabs(groupId)
 
-  // const itemsRef = useRef<Map<string, HTMLSpanElement>>(
-  //   new Map<string, HTMLSpanElement>()
-  // )
+  const tabListRef = useRef<HTMLDivElement>(null)
 
   const [activeId, setActiveId] = useState<string | null>(null)
 
-  //const { setTabIndicatorPos } = useContext(TabIndicatorContext)
-
-  const selectedTab = useMemo(
-    () => getTabFromValue(value, tabs ?? []),
-    [value, tabs]
-  )
-
-  if (!selectedTab) {
-    return null
-  }
-
-  const tabIds = tabs?.map((tab) => tab.id) ?? []
+  const tabIds = tabs.map((tab) => tab.id)
 
   return (
-    <VCenterRow className={cn('justify-between gap-x-1', className)} ref={ref}>
+    <VCenterRow className={cn('justify-between gap-x-1', className)}>
       <DndContext
         modifiers={[restrictToHorizontalAxis]}
         onDragStart={(event) => setActiveId(event.active.id as string)}
@@ -249,42 +226,58 @@ export function ReorderTabs({
           const { active, over } = event
 
           if (allowReorder && over && active.id !== over?.id) {
-            const oldIndex = where(
-              tabs ?? [],
-              (tab) => tab.id === active.id
-            )[0]!
-            const newIndex = where(tabs ?? [], (tab) => tab.id === over.id)[0]! //genesetState.order.indexOf(over.id as string)
+            const oldIndex = tabIds.indexOf(active.id as string) //where(tabs ?? [], tab => tab.id === (active.id as string))[0]!
+            const newIndex = tabIds.indexOf(over.id as string) //where(tabs ?? [], (tab) => tab.id === over.id)[0]! //genesetState.order.indexOf(over.id as string)
             const newOrder = arrayMove(tabIds, oldIndex, newIndex)
 
-            onReorder?.(newOrder)
+            const orderMap = Object.fromEntries(
+              newOrder.map((id, i) => [id, i])
+            )
+
+            // sort based on new order
+            const newTabs = tabs.slice().sort((a, b) => {
+              const aOrder = orderMap[a.id] ?? 0
+              const bOrder = orderMap[b.id] ?? 0
+
+              return aOrder - bOrder
+            })
+
+            setTabs(newTabs)
           }
 
           setActiveId(null)
         }}
       >
-        <TabsList className="text-xs" ref={tabListRef}>
-          <SortableContext
-            items={tabIds}
-            strategy={horizontalListSortingStrategy}
-          >
-            {tabs?.map((tab) => {
-              const selected = tab.id === selectedTab.tab.id
+        <Tabs
+          value={selectedTab?.id}
+          onValueChange={(id) => {
+            console.log('change tab', id)
+            setTab(id)
+          }}
+        >
+          <TabsList className="text-xs" ref={tabListRef}>
+            <SortableContext
+              items={tabIds}
+              strategy={horizontalListSortingStrategy}
+            >
+              {tabs.map((tab) => {
+                const selected = tab.id === selectedTab?.id
 
-              return (
-                <TabItem
-                  tab={tab}
-                  key={tab.id}
-                  checked={selected}
-                  active={activeId}
-                  variant={variant}
-                  allowReorder={allowReorder}
-                  menuActions={menuActions}
-                  menuCallback={menuCallback}
-                />
-              )
-            })}
+                return (
+                  <TabItem
+                    tab={tab}
+                    key={tab.id}
+                    checked={selected}
+                    active={activeId}
+                    variant={variant}
+                    allowReorder={allowReorder}
+                    menuActions={menuActions}
+                    menuCallback={menuCallback}
+                  />
+                )
+              })}
 
-            {/* <DragOverlay>
+              {/* <DragOverlay>
               {activeId ? (
                 <TabItem
                   tab={tabs.filter((tab) => tab.id === activeId)[0]!}
@@ -293,8 +286,9 @@ export function ReorderTabs({
                 />
               ) : null}
             </DragOverlay> */}
-          </SortableContext>
-        </TabsList>
+            </SortableContext>
+          </TabsList>
+        </Tabs>
       </DndContext>
 
       {/* <Reorder.Group

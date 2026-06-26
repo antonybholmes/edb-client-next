@@ -32,13 +32,13 @@ import { useMatcalcSettings } from '../settings/matcalc-settings'
 export function DataToolbar() {
   const { open: openMatcalcDialog } = useMatcalcDialogs()
   const { file } = useFiles()
-  const { sheet, sheets } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
   const { addSheets, addPlots } = useHistory()
   const { selection } = useSelectionRange()
   const { settings, updateSettings } = useMatcalcSettings()
 
   function transpose() {
-    const df = (sheet! as AnnotationDataFrame).t.setName('Transpose')
+    const df = (sheets[0] as AnnotationDataFrame).t.setName('Transpose')
 
     addSheets([df as AnnotationDataFrame])
   }
@@ -65,7 +65,7 @@ export function DataToolbar() {
           icon="Log2(x)"
           onMainClick={() => {
             addSheets(
-              [log(sheet! as AnnotationDataFrame, 2, 1)],
+              [log(sheets[0] as AnnotationDataFrame, 2, 1)],
 
               {
                 name: 'Log2(x+1)',
@@ -77,7 +77,7 @@ export function DataToolbar() {
             aria-label="Log2(x)"
             onClick={() =>
               addSheets(
-                [log(sheet! as AnnotationDataFrame, 2, 0)],
+                [log(sheets[0] as AnnotationDataFrame, 2, 0)],
 
                 {
                   name: 'Log2(x)',
@@ -91,7 +91,7 @@ export function DataToolbar() {
             aria-label="Log2(x+1)"
             onClick={() =>
               addSheets(
-                [log(sheet! as AnnotationDataFrame, 2, 1)],
+                [log(sheets[0] as AnnotationDataFrame, 2, 1)],
 
                 {
                   name: 'Log2(x+1)',
@@ -105,7 +105,7 @@ export function DataToolbar() {
             aria-label="Log10(x)"
             onClick={() =>
               addSheets(
-                [log(sheet! as AnnotationDataFrame, 10, 0)],
+                [log(sheets[0] as AnnotationDataFrame, 10, 0)],
 
                 {
                   name: 'Log10(x)',
@@ -120,7 +120,7 @@ export function DataToolbar() {
             aria-label="Log10(x+1)"
             onClick={() =>
               addSheets(
-                [log(sheet! as AnnotationDataFrame, 10, 1)],
+                [log(sheets[0] as AnnotationDataFrame, 10, 1)],
 
                 {
                   name: 'Log10(x+1)',
@@ -139,7 +139,7 @@ export function DataToolbar() {
               addSheets(
                 [
                   rowZScore(
-                    sheet! as AnnotationDataFrame
+                    sheets[0] as AnnotationDataFrame
                   ) as AnnotationDataFrame,
                 ],
 
@@ -153,13 +153,11 @@ export function DataToolbar() {
           <DropdownMenuItem
             aria-label="Z-score columns"
             onClick={() => {
-              if (sheet) {
-                const df = colZScore(sheet! as AnnotationDataFrame)
+              const df = colZScore(sheets[0] as AnnotationDataFrame)
 
-                addSheets([df as AnnotationDataFrame], {
-                  name: 'Z-score columns',
-                })
-              }
+              addSheets([df as AnnotationDataFrame], {
+                name: 'Z-score columns',
+              })
             }}
           >
             Z-score columns
@@ -168,13 +166,11 @@ export function DataToolbar() {
           <DropdownMenuItem
             aria-label="Z-score table"
             onClick={() => {
-              if (sheet) {
-                const df = zscore(sheet! as AnnotationDataFrame)
+              const df = zscore(sheets[0] as AnnotationDataFrame)
 
-                addSheets([df as AnnotationDataFrame], {
-                  name: 'Z-score table',
-                })
-              }
+              addSheets([df as AnnotationDataFrame], {
+                name: 'Z-score table',
+              })
             }}
           >
             Z-score table
@@ -241,10 +237,10 @@ export function DataToolbar() {
         <ToolbarButton
           title="Add Row Standard Deviation Column"
           onClick={() => {
-            const sd = rowStdev(sheet! as AnnotationDataFrame)
+            const sd = rowStdev(sheets[0] as AnnotationDataFrame)
 
             const df = (
-              sheet! as AnnotationDataFrame
+              sheets[0] as AnnotationDataFrame
             ).copy() as AnnotationDataFrame
             df.rowObs.setCol('Row Stdev', sd, true)
 

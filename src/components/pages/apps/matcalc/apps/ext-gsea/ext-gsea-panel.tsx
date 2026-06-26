@@ -6,15 +6,15 @@ import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import {
-  DEFAULT_HEATMAP_PROPS,
-  type IHeatMapDisplayOptions,
+    DEFAULT_HEATMAP_PROPS,
+    type IHeatMapDisplayOptions,
 } from '@/components/plot/heatmap/heatmap-svg-props'
 import { TEXT_CANCEL, TEXT_DISPLAY } from '@/consts'
 import { SaveImageDialog } from '@/dialogs/save-image-dialog'
 
 import {
-  messageImageFileFormat,
-  useMessages,
+    messageImageFileFormat,
+    useMessages,
 } from '@/providers/message-provider'
 import { useZoom } from '@/providers/zoom-provider'
 import { Card } from '@/themed/card'
@@ -22,7 +22,7 @@ import { produce } from 'immer'
 
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
-import { useSideTabs } from '@/components/tabs/tab-store'
+import { useSideTabs } from '@/components/tabs/tab-provider'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'

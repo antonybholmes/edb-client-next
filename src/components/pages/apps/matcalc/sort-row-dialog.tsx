@@ -31,13 +31,13 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
   //const [text, setText] = useState<string>("")
   const { settings, updateSettings } = useMatcalcSettings()
   const { addSheets } = useHistory()
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
   const { groups } = useCurrentGroups()
 
-  const df = sheet as BaseDataFrame
+  const df = sheets[0] as BaseDataFrame
 
   useEffect(() => {
-    if (sheet && selection.rows && selection.rows.start > -1) {
+    if (selection.rows && selection.rows.start > -1) {
       updateSettings({
         ...settings,
         sortByRow: {
@@ -51,11 +51,6 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
   }, [selection])
 
   function sortDataFrame() {
-    if (!sheet) {
-      onResponse?.(TEXT_CANCEL, undefined)
-      return
-    }
-
     let idx: number[]
     let sortDf: BaseDataFrame
 

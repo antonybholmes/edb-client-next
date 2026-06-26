@@ -35,7 +35,6 @@ import {
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
-import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
 import { makeUuid } from '@/lib/id'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 
@@ -74,13 +73,14 @@ import {
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
 
-import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
+import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import {
   useCurrentSheets,
   useFiles,
 } from '../../matcalc/history/history-provider/history-contexts'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
+import { useSave } from '../../matcalc/hooks/save'
 import { DatasetPanel } from './dataset-panel'
 import { useDatasets } from './dataset-store'
 import { FeaturePropsPanel } from './feature-props-panel'
@@ -119,12 +119,14 @@ export function VariantsPage() {
   const { openFile, goto } = useHistory()
 
   const { file } = useFiles()
-  const { sheet, sheets } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
   const { svgRef } = useSVG()
 
-  const df = sheet as AnnotationDataFrame
+  const { save } = useSave()
+
+  const df = sheets[0] as AnnotationDataFrame
 
   useEffect(() => {
     setAppInfo(APP_INFO)
@@ -318,23 +320,6 @@ export function VariantsPage() {
     openFile('Variants', { sheets: [df.setName('Variants')] })
   }, [settings, variants])
 
-  function save(name: string, format: string) {
-    if (!sheet) {
-      return
-    }
-
-    const sep = format === 'csv' ? ',' : '\t'
-
-    downloadDataFrame(df, {
-      hasHeader: true,
-      hasIndex: false,
-      file: name,
-      sep,
-    })
-
-    setShowFileMenu(false)
-  }
-
   const fileMenuTabs: ITab[] = [
     {
       //name: nanoid(),
@@ -511,11 +496,11 @@ export function VariantsPage() {
 
                     <TabbedDataFrames
                       key="tabbed-data-frames"
-                      selectedSheet={sheet?.id ?? ''}
+                      //selectedSheet={sheet?.id ?? ''}
                       dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
-                      onTabChange={(selectedTab) => {
-                        goto({ file, sheet: selectedTab.tab })
-                      }}
+                      // onTabChange={(selectedTab) => {
+                      //   goto({ file, sheet: selectedTab.tab })
+                      // }}
                     />
                   </BaseRow>
                 </ResizablePanel>

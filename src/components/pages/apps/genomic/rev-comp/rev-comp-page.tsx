@@ -1,26 +1,26 @@
 'use client'
 
 import {
-  ShowOptionsMenu,
-  Toolbar,
-  ToolbarMenu,
-  ToolbarPanel,
+    ShowOptionsMenu,
+    Toolbar,
+    ToolbarMenu,
+    ToolbarPanel,
 } from '@/toolbar/toolbar'
 
 import { download } from '@/lib/download-utils'
 
 import {
-  onTextFileChange,
-  openFilesDialog,
+    onTextFileChange,
+    openFilesDialog,
 } from '@/components/pages/open-files'
 
 import { useEffect, useState } from 'react'
 
 import { TEXT_OPEN, TEXT_OPEN_FILE, TEXT_SAVE_AS } from '@/consts'
 import {
-  ResizablePanel,
-  ResizablePanelGroup,
-  ThinVResizeHandle,
+    ResizablePanel,
+    ResizablePanelGroup,
+    ThinVResizeHandle,
 } from '@/themed/resizable'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -34,7 +34,7 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
-import { useToolbarTabs } from '@/components/tabs/tab-store'
+import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { FileIcon } from '@/icons/file-icon'
 import { UploadIcon } from '@/icons/upload-icon'
 import { HeaderButton } from '@/layouts/header-button'

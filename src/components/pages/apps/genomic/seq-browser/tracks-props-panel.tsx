@@ -138,10 +138,10 @@ export function TracksPropsPanel() {
       <SelectAll
         className="pl-1"
         selectAll={false}
-        setSelectAll={v => {
+        setSelectAll={(v) => {
           dispatch({
             type: 'select',
-            ids: groups.map(g => g.id),
+            ids: groups.map((g) => g.id),
             selected: v,
           })
         }}
@@ -160,13 +160,13 @@ export function TracksPropsPanel() {
                     title: APP_INFO.name,
                     content:
                       'Are you sure you want to delete the selected groups?',
-                    callback: response => {
+                    callback: (response) => {
                       if (response === TEXT_OK) {
                         dispatch({
                           type: 'remove-groups',
                           ids: groups
-                            .map(g => g.id)
-                            .filter(id => selectedGroups[id] ?? false),
+                            .map((g) => g.id)
+                            .filter((id) => selectedGroups[id] ?? false),
                         })
                       }
                     },
@@ -189,8 +189,10 @@ export function TracksPropsPanel() {
               // serialize those
               const saveTracks = groups
 
-                .map(g => {
-                  const tracks = g.tracks.filter(t => !t.type.includes('Local'))
+                .map((g) => {
+                  const tracks = g.tracks.filter(
+                    (t) => !t.type.includes('Local')
+                  )
 
                   return {
                     ...g,
@@ -198,7 +200,7 @@ export function TracksPropsPanel() {
                   }
                 })
                 // remove groups with no tracks left
-                .filter(g => g.tracks.length > 0)
+                .filter((g) => g.tracks.length > 0)
 
               downloadJson(saveTracks, 'tracks.json')
             }}
@@ -210,16 +212,19 @@ export function TracksPropsPanel() {
       </SelectAll>
 
       <FileDropZonePanel
+        className="grow"
         fileTypes={{
           'text/plain': ['.bed'],
           'application/octet-stream': ['.bw', '.bigWig', '.bb', '.bigBed'],
           'application/json': ['.json'],
         }}
-        onFileDrop={async files => {
+        onFileDrop={async (files) => {
           if (files.length > 0) {
             // first bed files
 
-            let filteredFiles = files.filter(file => file.name.endsWith('.bed'))
+            let filteredFiles = files.filter((file) =>
+              file.name.endsWith('.bed')
+            )
 
             for (const file of filteredFiles) {
               const textFile = await readFile(file)
@@ -247,7 +252,8 @@ export function TracksPropsPanel() {
             // Next bigwigs
 
             filteredFiles = files.filter(
-              file => file.name.endsWith('.bw') || file.name.endsWith('.bigWig')
+              (file) =>
+                file.name.endsWith('.bw') || file.name.endsWith('.bigWig')
             )
 
             for (const file of filteredFiles) {
@@ -275,7 +281,8 @@ export function TracksPropsPanel() {
             // finally bigbeds
 
             filteredFiles = files.filter(
-              file => file.name.endsWith('.bb') || file.name.endsWith('.bigBed')
+              (file) =>
+                file.name.endsWith('.bb') || file.name.endsWith('.bigBed')
             )
 
             for (const file of filteredFiles) {
@@ -301,7 +308,7 @@ export function TracksPropsPanel() {
 
             onTextFileChange(
               'Open dropped file',
-              files.filter(file => file.name.endsWith('.json')),
+              files.filter((file) => file.name.endsWith('.json')),
               openTrackFiles
             )
           }
@@ -310,12 +317,12 @@ export function TracksPropsPanel() {
         <DndContext
           modifiers={[restrictToVerticalAxis]}
           //onDragStart={event => setActiveId(event.active.id as string)}
-          onDragEnd={event => {
+          onDragEnd={(event) => {
             const { active, over } = event
 
             if (over && active.id !== over?.id) {
-              const oldIndex = groups.findIndex(g => g.id === active.id)
-              const newIndex = groups.findIndex(g => g.id === over.id)
+              const oldIndex = groups.findIndex((g) => g.id === active.id)
+              const newIndex = groups.findIndex((g) => g.id === over.id)
               const newOrder = arrayMove(groups, oldIndex, newIndex)
 
               dispatch({
@@ -333,7 +340,7 @@ export function TracksPropsPanel() {
           >
             <VScrollPanel>
               <ul className="flex flex-col">
-                {groups.map(tg => {
+                {groups.map((tg) => {
                   return (
                     <TrackItem
                       multiselect={multiselect}

@@ -1,23 +1,23 @@
 import { BottomBar } from '@/toolbar/bottom-bar'
 
-import { type ITab, type ITabChange } from '@/components/tabs/tab-provider'
+import { useTabs, type ITab } from '@/components/tabs/tab-provider'
+import { IClassProps } from '@/interfaces/class-props'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { cn } from '@/lib/shadcn-utils'
-import type { UndefStr } from '@/lib/text/text'
-import type { TabsProps } from '@radix-ui/react-tabs'
-import { useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import type { IFileDropProps } from '../file-drop-panel'
-import type { ITabReorder } from '../tabs/reorder-tabs'
+import { BaseCol } from '../layout/base-col'
 import type { ITabMenu } from '../tabs/underline-tabs'
 import { VirtualDataFrame } from './virtual-dataframe/virtual-dataframe'
-//import { VirtualizedDataFrame } from './virtualized-dataframe'
+
+export const DATAFRAME_TABS = 'dataframe-tabs'
 
 const MAX_NAME_CHARS = 15
 
-interface IProps
-  extends TabsProps, ITabChange, IFileDropProps, ITabMenu, ITabReorder {
+interface IProps extends IFileDropProps, ITabMenu, IClassProps {
+  groupId?: string
   dataFrames: AnnotationDataFrame[]
-  selectedSheet?: UndefStr
+  //selectedSheet?: UndefStr
   editable?: boolean
   allowReorder?: boolean
   zoom?: number | undefined
@@ -27,15 +27,16 @@ interface IProps
 }
 
 export function TabbedDataFrames({
-  selectedSheet,
+  groupId = DATAFRAME_TABS,
+  //selectedSheet,
   dataFrames,
   editable = false,
-  onValueChange = () => {},
-  onTabChange = () => {},
+  //onValueChange = () => {},
+  //onTabChange = () => {},
   onFileDrop = undefined,
   menuActions = [],
   menuCallback = () => {},
-  onReorder = () => {},
+  //onReorder = () => {},
   allowReorder = false,
   zoom = 1,
   dp = 4,
@@ -43,73 +44,73 @@ export function TabbedDataFrames({
   className,
   style,
 }: IProps) {
-  const [_selectedSheet, setSelectedSheet] = useState(
-    dataFrames && dataFrames.length > 0 ? dataFrames[0]!.id : ''
-  )
+  const { selectedTab, tabs, setTabs } = useTabs(groupId)
 
   /* useEffect(() => {
     setSelectedSheet(dataFrames[0]!.id)
   }, []) */
 
-  const tabs: ITab[] = dataFrames.map((df, i) => {
-    const sheetId = `Sheet ${i + 1}`
-    const name = df.name !== '' ? df.name : sheetId
+  useEffect(() => {
+    const tabs: ITab[] = dataFrames.map((df, i) => {
+      const sheetId = `Sheet ${i + 1}`
+      const name = df.name !== '' ? df.name : sheetId
 
-    return {
-      id: df.id, //sheetId, //nanoid(),
-      name,
-      component: () => (
-        // <DataFrameCanvas
-        //   df={df}
-        //   key={i}
-        //   scale={scale}
-        //   editable={editable}
-        //   className={contentClassName}
-        // />
+      return {
+        id: df.id, //sheetId, //nanoid(),
+        name,
+        // component: () => (
+        //   <VirtualDataFrame
+        //     df={df}
+        //     key={i}
+        //     editable={editable}
+        //     zoom={zoom}
+        //     dp={dp}
+        //     commas={commas}
+        //   />
+        // ),
+      }
+    })
 
-        <VirtualDataFrame
-          df={df}
-          key={i}
-          editable={editable}
-          zoom={zoom}
-          dp={dp}
-          commas={commas}
-        />
-      ),
-    }
-  })
+    setTabs(tabs)
+  }, [dataFrames])
+
+  const df = useMemo(() => {
+    const dfs = dataFrames.filter((df) => df.id === selectedTab?.id)
+
+    return dfs.length > 0 ? dfs[0] : undefined
+  }, [selectedTab, dataFrames])
 
   if (tabs.length === 0) {
     return null
   }
 
-  const sheet = selectedSheet ? selectedSheet : _selectedSheet
-
   // transition between index based tabs and value selection
   // tables, possibly move to entirely name based tabs in the future
   return (
-    <BottomBar
-      value={sheet}
-      tabs={tabs}
-      maxNameLength={MAX_NAME_CHARS}
-      onValueChange={onValueChange}
-      onTabChange={(selectedTab) => {
-        // historyDispatch({
-        //   type: 'goto-sheet',
-        //   sheetId: selectedTab.index,
-        // })
-
-        setSelectedSheet(selectedTab.tab.id)
-
-        onTabChange?.(selectedTab)
-      }}
-      onFileDrop={onFileDrop}
-      className={cn('gap-y-0.5', className)}
-      style={style}
-      menuActions={menuActions}
-      menuCallback={menuCallback}
-      allowReorder={allowReorder}
-      onReorder={onReorder}
-    />
+    <BaseCol className={cn('grow', className)} style={style}>
+      <BaseCol className="grow" id="dataframe-container">
+        {df && (
+          <VirtualDataFrame
+            df={df}
+            key={df.id}
+            editable={editable}
+            zoom={zoom}
+            dp={dp}
+            commas={commas}
+          />
+        )}
+      </BaseCol>
+      <BottomBar
+        groupId={groupId}
+        maxNameLength={MAX_NAME_CHARS}
+        //onValueChange={onValueChange}
+        onFileDrop={onFileDrop}
+        //style={style}
+        menuActions={menuActions}
+        menuCallback={menuCallback}
+        allowReorder={allowReorder}
+        //onReorder={onReorder}
+      />
+    </BaseCol>
   )
 }

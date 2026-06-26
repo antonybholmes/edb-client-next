@@ -20,9 +20,9 @@ export function TopRowsDialog({
   const [topRows, setTopRows] = useState(300)
   const [method, setMethod] = useState('Stdev')
   const { addSheets } = useHistory()
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
-  let df = sheet as BaseDataFrame
+  let df = sheets[0] as BaseDataFrame
 
   function applyFilter() {
     if (!df) {

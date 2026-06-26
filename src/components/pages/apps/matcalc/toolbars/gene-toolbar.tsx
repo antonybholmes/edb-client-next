@@ -27,7 +27,7 @@ import { useMatcalcSettings } from '../settings/matcalc-settings'
 export function GeneToolbar() {
   const { open: openMatcalcDialog } = useMatcalcDialogs()
 
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
   const { groups } = useCurrentGroups()
   const { genesets } = useCurrentGenesets()
   const { remove: removeFooter, addIndicator } = useFooter()
@@ -50,11 +50,7 @@ export function GeneToolbar() {
   }
 
   function gct() {
-    if (!sheet) {
-      return
-    }
-
-    const df = makeGCT(sheet as AnnotationDataFrame) as AnnotationDataFrame
+    const df = makeGCT(sheets[0] as AnnotationDataFrame) as AnnotationDataFrame
 
     addSheets([df])
 
@@ -140,7 +136,7 @@ export function GeneToolbar() {
     const group2 = groups[1]! //groupState.groups[groupState.order[1]!]!
 
     const rankedGenes = snrRankGenes(
-      sheet as AnnotationDataFrame,
+      sheets[0] as AnnotationDataFrame,
       group1,
       group2
     )

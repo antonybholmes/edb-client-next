@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react'
 
 import {
-  DEFAULT_VOLCANO_PROPS,
-  VolcanoPlotSvg,
-  type IVolcanoDisplayOptions,
+    DEFAULT_VOLCANO_PROPS,
+    VolcanoPlotSvg,
+    type IVolcanoDisplayOptions,
 } from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
 import { autoLim } from '@/components/plot/axis'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
@@ -17,8 +17,8 @@ import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { range } from '@/lib/math/range'
 
 import {
-  messageImageFileFormat,
-  useMessages,
+    messageImageFileFormat,
+    useMessages,
 } from '@/providers/message-provider'
 import { useZoom } from '@/providers/zoom-provider'
 
@@ -27,7 +27,7 @@ import { Card } from '@/themed/card'
 import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
-import { useSideTabs } from '@/components/tabs/tab-store'
+import { useSideTabs } from '@/components/tabs/tab-provider'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'

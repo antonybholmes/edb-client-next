@@ -14,7 +14,6 @@ import { ToolbarButton } from '@/toolbar/toolbar-button'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
-import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
 
 import {
   DEFAULT_PARSE_OPTS,
@@ -58,7 +57,6 @@ import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { CoreProviders } from '@/providers/core-provider'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import {
@@ -66,7 +64,7 @@ import {
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
 
-import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
+import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useFooter } from '@/providers/footer-provider'
 import {
   useCurrentSheets,
@@ -74,6 +72,7 @@ import {
 } from '../../matcalc/history/history-provider/history-contexts'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
+import { useSave } from '../../matcalc/hooks/save'
 import { PathwayPropsPage } from './pathway-props-panel'
 import { HomeToolbar } from './toolbars/home-toolbar'
 import { useOpen } from './use-open'
@@ -93,17 +92,16 @@ export function PathwayPage() {
   const { openFile, goto } = useHistory()
 
   const { file } = useFiles()
-  const { sheet, sheets } = useCurrentSheets()
-  const { open: openDialog } = useDialogs()
+  const { sheets } = useCurrentSheets()
 
   const { open: openLocalFile } = useOpen()
 
-  const df = sheet as AnnotationDataFrame
+  const df = sheets[0] as AnnotationDataFrame
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
   const { addDFSize } = useFooter()
-
+  const { save } = useSave()
   useEffect(() => {
     setAppInfo(APP_INFO)
     //openApp(APP_INFO.name)
@@ -186,22 +184,22 @@ export function PathwayPage() {
     }
   }
 
-  function save(name: string, format: string) {
-    if (!sheet) {
-      return
-    }
+  // function save(name: string, format: string) {
+  //   if (sheets.length === 0) {
+  //     return
+  //   }
 
-    const sep = format === 'csv' ? ',' : '\t'
+  //   const sep = format === 'csv' ? ',' : '\t'
 
-    downloadDataFrame(df, {
-      hasHeader: true,
-      hasIndex: false,
-      file: name,
-      sep,
-    })
+  //   downloadDataFrame(df, {
+  //     hasHeader: true,
+  //     hasIndex: false,
+  //     file: name,
+  //     sep,
+  //   })
 
-    setShowFileMenu(false)
-  }
+  //   setShowFileMenu(false)
+  // }
 
   // useEffect(() => {
   //   setDatasetsForUse(
@@ -329,11 +327,11 @@ export function PathwayPage() {
           >
             {/* <Card variant="content" className="mx-2 pb-0"> */}
             <TabbedDataFrames
-              selectedSheet={df?.id ?? ''}
+              //selectedSheet={df?.id ?? ''}
               dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
-              onTabChange={(selectedTab) => {
-                goto({ file, sheet: selectedTab.tab })
-              }}
+              //onTabChange={(selectedTab) => {
+              //  goto({ file, sheet: selectedTab.tab })
+              //}}
               onFileDrop={(files) => {
                 if (files.length > 0) {
                   //setDroppedFile(files[0]);

@@ -8,7 +8,11 @@ import { useCurrentSheets } from '../history/history-provider/history-contexts'
  * @returns
  */
 export function FooterDFSize() {
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
-  return <span>{getFormattedShape(sheet as AnnotationDataFrame)}</span>
+  if (sheets.length === 0) {
+    return <span>No table.</span>
+  }
+
+  return <span>{getFormattedShape(sheets[0] as AnnotationDataFrame)}</span>
 }

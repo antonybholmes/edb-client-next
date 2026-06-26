@@ -237,21 +237,21 @@ export function SettingsDialog({
             <h1 className="text-base font-semibold">{TEXT_SETTINGS}</h1>
 
             <SideTabs
-              tabs={_tabs}
-              value={activeSideTab}
-              onTabChange={(t) => {
-                setSelectedTab(t.tab)
-              }}
+              //tabs={_tabs}
+              //value={activeSideTab}
+              // onTabChange={(t) => {
+              //   setSelectedTab(t.tab)
+              // }}
               showIcons={false}
             />
           </BaseCol>
 
           <SideTabs
-            tabs={selectedTab.children!}
-            value={activeSubSideTab}
-            onTabChange={(t) => {
-              setSubSelectedTab(t.tab)
-            }}
+            //tabs={selectedTab.children!}
+            //value={activeSubSideTab}
+            // onTabChange={(t) => {
+            //   setSubSelectedTab(t.tab)
+            // }}
             showIcons={false}
             className="h-full"
           />

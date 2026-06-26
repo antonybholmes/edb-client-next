@@ -64,7 +64,7 @@ import {
 } from './gsea-web-store'
 
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
-import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
+import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { GseaSvg } from '../gsea-plot/gsea-svg'
 import APP_INFO from './manifest.json'
@@ -341,6 +341,7 @@ export function GseaWebPage() {
         >
           {rankedGenes.length > 0 ? (
             <FileDropZonePanel
+              className="grow"
               onFileDrop={(files) => {
                 if (files.length > 0) {
                   onBinaryFileChange('Open zip', files, loadGseaZip)
@@ -355,6 +356,7 @@ export function GseaWebPage() {
             </FileDropZonePanel>
           ) : (
             <FileDropZonePanel
+              className="grow"
               onFileDrop={(files) => {
                 if (files.length > 0) {
                   //setDroppedFile(files[0]);

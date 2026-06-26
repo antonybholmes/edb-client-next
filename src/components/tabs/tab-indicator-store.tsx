@@ -2,7 +2,7 @@
 import { useCallback } from 'react'
 import { create } from 'zustand'
 import type { ITabIndicatorPos } from './tab-indicator-provider'
-import { DEFAULT_GROUP_ID } from './tab-store'
+import { DEFAULT_GROUP_ID } from './tab-provider'
 
 const DEFAULT_TAB: ITabIndicatorPos = {
   x: 0,
@@ -72,7 +72,7 @@ export const useTabIndicatorStore = create<TabIndicatorStore>((set, get) => ({
       : undefined
 
     if (posChanged(prev, newPos)) {
-      set(state => ({
+      set((state) => ({
         tabState: {
           ...state.tabState,
           hoverTabs: { ...state.tabState.hoverTabs, [groupId]: newPos },
@@ -90,7 +90,7 @@ export const useTabIndicatorStore = create<TabIndicatorStore>((set, get) => ({
       : undefined
 
     if (posChanged(prev, newPos)) {
-      set(state => ({
+      set((state) => ({
         tabState: {
           ...state.tabState,
           selectedTabs: { ...state.tabState.selectedTabs, [groupId]: newPos },
@@ -99,12 +99,12 @@ export const useTabIndicatorStore = create<TabIndicatorStore>((set, get) => ({
     }
   },
 
-  getPosition: groupId => {
+  getPosition: (groupId) => {
     const pos = get().tabState.hoverTabs[groupId]
 
     return pos
   },
-  getSelectedPosition: groupId => {
+  getSelectedPosition: (groupId) => {
     const pos = get().tabState.selectedTabs[groupId]
 
     return pos
@@ -115,12 +115,12 @@ export function useTabIndicators(groupId: string) {
   const id = groupId ?? DEFAULT_GROUP_ID
 
   const selectedPosition = useTabIndicatorStore(
-    s => s.tabState.selectedTabs[id]
+    (s) => s.tabState.selectedTabs[id]
   )
-  const position = useTabIndicatorStore(s => s.tabState.hoverTabs[id])
+  const position = useTabIndicatorStore((s) => s.tabState.hoverTabs[id])
 
-  const setPosition = useTabIndicatorStore(s => s.setPosition)
-  const setSelectedPosition = useTabIndicatorStore(s => s.setSelectedPosition)
+  const setPosition = useTabIndicatorStore((s) => s.setPosition)
+  const setSelectedPosition = useTabIndicatorStore((s) => s.setSelectedPosition)
 
   const setGroupPosition = useCallback(
     (pos?: Partial<ITabIndicatorPos>) => {

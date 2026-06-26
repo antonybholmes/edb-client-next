@@ -107,7 +107,7 @@ interface IFileSlice {
 
 export interface IPlotSlice {
   addPlots: (plot: HistoryPlot[], opts?: ISheetOps) => void
-  reorderPlots: (plotIds: string[], opts?: ISheetOps) => void
+  //reorderPlots: (plotIds: string[], opts?: ISheetOps) => void
   updatePlot: (plot: HistoryPlot) => void
 }
 
@@ -163,11 +163,11 @@ export interface ISheetSlice {
 
     opts?: ISheetOps
   ) => void
-  reorderSheets: (
-    sheets: string[],
+  // reorderSheets: (
+  //   sheets: string[],
 
-    opts?: ISheetOps
-  ) => void
+  //   opts?: ISheetOps
+  // ) => void
 }
 
 export interface IFileOps {
@@ -204,8 +204,8 @@ export interface IHistoryState extends IHistoryComp {
   genesetOrder: Record<string, string[]> // fileId -> geneset IDs
 
   currentFile: string
-  currentSheet: string
-  currentPlot: string | undefined
+  //currentSheet: string
+  //currentPlot: string | undefined
   currentSelections: ISelectionPath[]
 }
 

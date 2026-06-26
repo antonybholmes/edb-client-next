@@ -1,4 +1,4 @@
-import { useTabs } from '@/components/tabs/tab-store'
+import { useTabs } from '@/components/tabs/tab-provider'
 import type { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_RING_CLS } from '@/theme'
@@ -247,7 +247,7 @@ export function TabContentPanels({
   contentCls,
   ...props
 }: ITabContentPanelsProps) {
-  const { tab: selectedTab, tabs } = useTabs(groupId)
+  const { selectedTab, tabs } = useTabs(groupId)
 
   return (
     <Tabs value={selectedTab?.id ?? ''} className={className} {...props}>

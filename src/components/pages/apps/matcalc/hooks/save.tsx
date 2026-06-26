@@ -11,15 +11,11 @@ import { useMatcalcSettings } from '../settings/matcalc-settings'
  * @returns
  */
 export function useSave() {
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
   const { settings } = useMatcalcSettings()
   const { settings: edbSettings } = useEdbSettings()
 
   function save(name: string, format: string) {
-    if (!sheet) {
-      return
-    }
-
     name = friendlyFilename(name)
 
     const sep = format === 'csv' ? ',' : '\t'
@@ -33,7 +29,7 @@ export function useSave() {
       hasIndex = false
     }
 
-    downloadDataFrame(sheet as AnnotationDataFrame, {
+    downloadDataFrame(sheets[0] as AnnotationDataFrame, {
       hasHeader,
       hasIndex,
       file: name,
@@ -63,17 +59,13 @@ export function useSaveAs() {
 }
 
 export function useBasicSaveAs() {
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
   const { open: openDialog } = useDialogs()
 
   function save(name: string, format: string) {
-    if (!sheet) {
-      return
-    }
-
     const sep = format === 'csv' ? ',' : '\t'
 
-    downloadDataFrame(sheet as AnnotationDataFrame, {
+    downloadDataFrame(sheets[0] as AnnotationDataFrame, {
       hasHeader: true,
       hasIndex: false,
       file: name,

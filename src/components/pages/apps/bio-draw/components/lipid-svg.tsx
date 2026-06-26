@@ -136,10 +136,10 @@ export function LipidSvg({ svgRef, exportRef, lipid }: IProps) {
   }
 
   const updateBBox = () => {
-    const controlPoints = points.current.filter(p => p.type === 'control')
+    const controlPoints = points.current.filter((p) => p.type === 'control')
 
-    const xs = controlPoints.map(p => p.x)
-    const ys = controlPoints.map(p => p.y)
+    const xs = controlPoints.map((p) => p.x)
+    const ys = controlPoints.map((p) => p.y)
     const x = Math.min(...xs)
     const y = Math.min(...ys)
     const width = Math.max(...xs) - x
@@ -251,7 +251,6 @@ export function LipidSvg({ svgRef, exportRef, lipid }: IProps) {
       }
     }
 
-    console.log(newAngles)
     angles.current = newAngles
 
     //console.log('rebound')
@@ -382,7 +381,7 @@ export function LipidSvg({ svgRef, exportRef, lipid }: IProps) {
       console.log(direction, 'c')
 
       if (direction === 'move') {
-        newPoints = originalPoints.map(p => ({
+        newPoints = originalPoints.map((p) => ({
           ...p,
           x: p.x + dx,
           y: p.y + dy,
@@ -409,7 +408,7 @@ export function LipidSvg({ svgRef, exportRef, lipid }: IProps) {
 
         //console.log(dx, dy)
 
-        newPoints = originalPoints.map(p => ({
+        newPoints = originalPoints.map((p) => ({
           ...p,
           x: anchorX + (p.x - anchorX) * scaleX,
           y: anchorY + (p.y - anchorY) * scaleY,
@@ -492,7 +491,7 @@ export function LipidSvg({ svgRef, exportRef, lipid }: IProps) {
   // somewhat similar to https://github.com/ariutta/catmullrom2bezier/blob/master/catmullrom2bezier.js
   // https://pomax.github.io/bezierinfo/#catmullconv
   function getCatmullRomSplinePath(pts: IPoint[], tension: number = 1) {
-    pts = pts.filter(pt => pt.type === 'control')
+    pts = pts.filter((pt) => pt.type === 'control')
 
     const F = 6 * tension
 
@@ -853,7 +852,7 @@ export function LipidSvg({ svgRef, exportRef, lipid }: IProps) {
           fill={pt.type === 'control' ? 'cornflowerblue' : 'white'}
           stroke="cornflowerblue"
           strokeWidth={2}
-          onMouseDown={e => {
+          onMouseDown={(e) => {
             e.stopPropagation()
             handleMouseDown(i, pt)
           }}

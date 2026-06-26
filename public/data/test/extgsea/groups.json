@@ -1,13 +1,13 @@
 [
   {
-    "id": "019efb59-b8aa-7565-9cd8-44d2695cd3a3",
+    "id": "019cc3a0-fa2c-718b-8877-48593c65fb98",
     "name": "WT",
     "search": ["cbp_wt"],
     "color": "#ff0000",
     "show": true
   },
   {
-    "id": "019efb59-cef3-7492-98af-6092b026d343",
+    "id": "019cc3a1-0be6-776f-989d-9b1e85081539",
     "name": "CBP_KO",
     "search": ["cbp_ko"],
     "color": "#0000ff",

@@ -2,18 +2,14 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 
 import { TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
 
-import {
-  getTabFromValue,
-  getTabName,
-  type ITab,
-  type ITabProvider,
-} from './tab-provider'
+import { getTabFromValue, getTabName, type ITab } from './tab-provider'
 
 import { ANIMATION_DURATION_S } from '@/consts'
 import { cn } from '@/lib/shadcn-utils'
 import { truncate } from '@/lib/text/text'
 import type { TabsProps } from '@radix-ui/react-tabs'
 import gsap from 'gsap'
+import { ITabProvider } from '../toggle-buttons'
 
 // export function ToolbarTabLine({ tabPos }: { tabPos: ITabPos }) {
 //   return (

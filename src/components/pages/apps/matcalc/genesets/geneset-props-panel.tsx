@@ -319,6 +319,7 @@ export function GenesetPropsPanel() {
           </IconButton>
         </StretchRow>
         <FileDropZonePanel
+          className="grow"
           onFileDrop={(files) => {
             if (files.length > 0) {
               //setDroppedFile(files[0]);

@@ -4,7 +4,7 @@ import type { IChildrenProps } from '@/interfaces/children-props'
 import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
 
 import { cn } from '@/lib/shadcn-utils'
-import { getTabName, type ITab, type ITabProvider } from './tab-provider'
+import { getTabName, useTabs, type ITab } from './tab-provider'
 
 import { cva, type VariantProps } from 'class-variance-authority'
 
@@ -15,8 +15,6 @@ import {
   useTabIndicators,
   type ITabIndicatorPos,
 } from './tab-indicator-provider'
-
-import { useTabs } from './tab-store'
 
 export const UNDERLINE_LABEL_CLS = `boldable-text-tab data-[checked=true]:font-medium data-[hover=true]:text-foreground
 data-[checked=true]:text-foreground text-alt-foreground truncate relative pointer-events-none select-none`
@@ -194,7 +192,7 @@ function Trigger({
   )
 }
 
-interface IProps extends ITabProvider, IChildrenProps, ITabMenu {
+interface IProps extends IChildrenProps, ITabMenu {
   groupId?: string
   buttonClassName?: string
   maxNameLength?: number
@@ -207,7 +205,7 @@ export function _UnderlineTabs({
   groupId = 'toolbar',
   maxNameLength = -1,
   tabButtonProps = { variant: 'toolbar' },
-  onTabChange,
+  //onTabChange,
   tabListCls,
   className,
   children,
@@ -215,7 +213,7 @@ export function _UnderlineTabs({
   const tabListRef = useRef<HTMLDivElement>(null)
   const buttonsRef = useRef<HTMLElement[]>([])
   const initial = useRef(true)
-  const { tab: selectedTab, selectedTabIndex, tabs, setTab } = useTabs(groupId)
+  const { selectedTab, selectedTabIndex, tabs, setTab } = useTabs(groupId)
 
   const {
     setPosition: setTabPosition,
@@ -252,8 +250,6 @@ export function _UnderlineTabs({
 
   function _onValueChange(value: string) {
     //const selectedTab = getTabFromValue(value, tabs)
-
-    console.log('aha', value)
 
     //if (selectedTab) {
     setTab(value) //{ id: selectedTab.tab.id, index: selectedTab.index })

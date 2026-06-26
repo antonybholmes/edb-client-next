@@ -84,7 +84,7 @@ export function AddLocalBedFilesDialog({ callback, onCancel }: IProps) {
       //buttons={[TEXT_OK]}
       title="Load BED Files From Device"
       bodyCls="gap-y-4"
-      onResponse={response => {
+      onResponse={(response) => {
         if (response === TEXT_OK) {
           if (lines.length === 0) {
             setError('This file appears to be empty')
@@ -92,8 +92,10 @@ export function AddLocalBedFilesDialog({ callback, onCancel }: IProps) {
           }
 
           const indexes = lines
-            .map(l => indexBed(name, l))
-            .filter(i => i !== null) as GenomicFeatureIndex<IGenomicLocation>[]
+            .map((l) => indexBed(name, l))
+            .filter(
+              (i) => i !== null
+            ) as GenomicFeatureIndex<IGenomicLocation>[]
 
           callback?.(color, indexes)
         } else {
@@ -129,12 +131,13 @@ export function AddLocalBedFilesDialog({ callback, onCancel }: IProps) {
       /> */}
 
       <FileDropZonePanel
-        onFileDrop={files => {
+        className="grow"
+        onFileDrop={(files) => {
           if (files.length > 0) {
-            onTextFileChange('Open filter list', files, files => {
+            onTextFileChange('Open filter list', files, (files) => {
               if (files.length > 0) {
-                setName(files.map(f => f.name).join(', '))
-                setLines(files.map(f => textToLines(f.text)))
+                setName(files.map((f) => f.name).join(', '))
+                setLines(files.map((f) => textToLines(f.text)))
               }
             })
           }

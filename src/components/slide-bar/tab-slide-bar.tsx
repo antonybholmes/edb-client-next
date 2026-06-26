@@ -1,7 +1,8 @@
 import { TabContentPanels } from '../shadcn/ui/themed/v2/tabs'
 import { TabIndicatorFollowBlock } from '../tabs/tab-indicator-follow-block'
 import { TabIndicatorSelectedH } from '../tabs/tab-indicator-selected-h'
-import { OPTS_SIDEBAR_ID } from '../tabs/tab-store'
+import { OPTS_SIDEBAR_ID } from '../tabs/tab-provider'
+
 import { getSelectedMouseOverSize, UnderlineTabs } from '../tabs/underline-tabs'
 import {
   ResizableSidebar,

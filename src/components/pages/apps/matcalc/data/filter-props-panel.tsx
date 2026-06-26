@@ -39,7 +39,7 @@ import APP_INFO from '../manifest.json'
 
 export function FilterPropsPanel() {
   const { addSheets } = useHistory()
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
   const { open: openDialog } = useDialogs()
 
@@ -62,21 +62,17 @@ export function FilterPropsPanel() {
   function filterTable() {
     const queries = textToLines(text, { trim: true })
 
-    if (!sheet) {
-      return
-    }
-
     let df: BaseDataFrame
 
     if (filterMode.includes('Rows')) {
-      df = findRows(sheet as BaseDataFrame, queries, {
+      df = findRows(sheets[0] as BaseDataFrame, queries, {
         caseSensitive: settings.rows.caseSensitive,
         matchEntireCell: settings.rows.matchEntireCell,
         keepOrder: settings.rows.keepOrder,
       }).setName('Row Filter')
     } else {
       console.log('Filtering cols with queries', queries)
-      df = findCols(sheet as BaseDataFrame, queries, {
+      df = findCols(sheets[0] as BaseDataFrame, queries, {
         caseSensitive: settings.cols.caseSensitive,
         matchEntireCell: settings.cols.matchEntireCell,
         keepOrder: settings.cols.keepOrder,
@@ -161,6 +157,7 @@ export function FilterPropsPanel() {
             id="filter-text"
           >
             <FileDropZonePanel
+              className="grow"
               onFileDrop={(files) => {
                 if (files.length > 0) {
                   onTextFileChange('Open filter list', files, (files) => {

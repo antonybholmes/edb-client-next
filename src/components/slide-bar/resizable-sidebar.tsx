@@ -27,7 +27,8 @@ import {
 } from '../shadcn/ui/themed/resizable'
 import type { IButtonProps } from '../shadcn/ui/themed/v2/button'
 import type { LeftRightPos } from '../side'
-import { OPTS_SIDEBAR_ID } from '../tabs/tab-store'
+
+import { OPTS_SIDEBAR_ID } from '../tabs/tab-provider'
 import { useSlideBar, useSlideBarStore } from './slide-bar-store'
 
 export function CloseButton({ className, ...props }: IButtonProps) {

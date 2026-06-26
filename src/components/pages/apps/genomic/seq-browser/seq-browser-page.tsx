@@ -9,16 +9,16 @@ import { useEffect, useState } from 'react'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import {
-  TEXT_DOWNLOAD_AS_PNG,
-  TEXT_DOWNLOAD_AS_SVG,
-  TEXT_EXPORT,
+    TEXT_DOWNLOAD_AS_PNG,
+    TEXT_DOWNLOAD_AS_SVG,
+    TEXT_EXPORT,
 } from '@/consts'
 
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
 } from '@/themed/v2/select'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -53,12 +53,12 @@ import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
-import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-store'
+import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { AssemblySelect } from '@/lib/edb/assembly-select'
 import { locStr } from '@/lib/genomic/genomic'
 import {
-  parseGenomicLocation,
-  type IGenomicLocation,
+    parseGenomicLocation,
+    type IGenomicLocation,
 } from '@/lib/genomic/genomic-location'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { LocationAutocomplete } from './location-autocomplete'

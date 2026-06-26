@@ -21,7 +21,7 @@ import { Card } from '@/themed/card'
 import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
-import { useSideTabs } from '@/components/tabs/tab-store'
+import { useSideTabs } from '@/components/tabs/tab-provider'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
@@ -35,8 +35,8 @@ export const VOLCANO_Y = '-log10 p-value'
 
 export function BoxPlotPanel() {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
-  const { present, plots, updatePlot } = useHistory()
-  const { sheet } = useCurrentSheets()
+  const { updatePlot } = useHistory()
+  const { sheets } = useCurrentSheets()
 
   const { plot } = useBoxPlotContext()
 
@@ -50,7 +50,7 @@ export function BoxPlotPanel() {
 
   const [showSideBar, setShowSideBar] = useState(true)
 
-  const df = sheet as AnnotationDataFrame
+  const df = sheets[0] as AnnotationDataFrame
 
   const { setTabs: setSideTabs } = useSideTabs()
 

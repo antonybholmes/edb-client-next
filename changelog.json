@@ -1935,6 +1935,10 @@
         {
           "msg": "All apps now compile",
           "date": "2026-06-25T20:52:46.764Z"
+        },
+        {
+          "msg": "Removal of history reorder of sheets and plots",
+          "date": "2026-06-26T17:52:52.236Z"
         }
       ],
       "Added": [

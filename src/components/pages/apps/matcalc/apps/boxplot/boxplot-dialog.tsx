@@ -43,11 +43,11 @@ export function BoxWhiskersDialog({
   //df,
   onResponse,
 }: IProps) {
-  const { sheet } = useCurrentSheets()
+  const { sheets } = useCurrentSheets()
 
   //const branch = findBranch(branchAddr, history)[0]
   //const step = currentStep(branch)[0]
-  let df = sheet as AnnotationDataFrame
+  let df = sheets[0] as AnnotationDataFrame
 
   function _resp(resp: string) {
     onResponse?.(resp, undefined)
