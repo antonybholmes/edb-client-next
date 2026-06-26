@@ -59,18 +59,16 @@ import {
 
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useFooter } from '@/providers/footer-provider'
-import { useCurrentSheets } from '../../matcalc/history/history-provider/history-contexts'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { useSave } from '../../matcalc/hooks/save'
 import APP_INFO from './manifest.json'
-import { HomeToolbar } from './toolbars/home'
+import { HomeToolbar } from './toolbars/home-toolbar'
 import { useOpen } from './use-open'
 
 export function DNAPage() {
   const { openFile } = useHistory()
 
-  const { sheets } = useCurrentSheets()
   const { setAppInfo } = useAppInfo()
   const [showSideBar, setShowSideBar] = useState(true)
 

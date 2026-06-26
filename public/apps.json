@@ -34,9 +34,9 @@
     "color": "#FF4500",
     "version": "20.6.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-26T20:27:29.835Z",
-    "hash": "b5945577852e0f947e13f7bb0769e6368849100ea33f19fb0121d0f8ca9ccbac",
-    "build": 810
+    "modified": "2026-06-26T22:54:00.921Z",
+    "hash": "e4f51a85e4257cd22df9089a8de3f67651c6dfced7c500250da7f3cb8a662654",
+    "build": 812
   },
   {
     "name": "Get DNA",
@@ -80,11 +80,11 @@
     "name": "Hubs",
     "description": "Load UCSC Genome Browser hubs.",
     "color": "#0000ff",
-    "version": "22.2.0",
+    "version": "22.2.2",
     "copyright": "© 2025-2026 Antony Holmes",
-    "modified": "2026-06-26T17:52:51.303Z",
-    "hash": "a0507a0bc1d5087cd6d126b1164b6f30d0822470e93611fd71026a81e6f14355",
-    "build": 498
+    "modified": "2026-06-26T22:54:00.922Z",
+    "hash": "66485d8174106dbc0ec3b0d057cd02d9b3f596dc40a92afa578220ff40bbf6ad",
+    "build": 500
   },
   {
     "name": "Info",

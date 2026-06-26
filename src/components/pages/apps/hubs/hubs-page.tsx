@@ -29,10 +29,10 @@ import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { CoreProviders } from '@/providers/core-provider'
 import {
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-    ScrollAccordion,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
 } from '@/themed/v2/accordion'
 import { useQuery } from '@tanstack/react-query'
 import APP_INFO from './manifest.json'
@@ -94,7 +94,7 @@ export function HubsPage() {
 
   useEffect(() => {
     async function loadHubs() {
-      //setHubs(hubs)
+      console.log('Loading hubs', hubData)
 
       const technologyMap = new Map<string, Map<string, IDataset[]>>()
 
@@ -162,7 +162,7 @@ export function HubsPage() {
 
   function HubsPanel() {
     return (
-      <ScrollAccordion
+      <Accordion
         multiple={true}
         value={institutions}
         variant="settings"
@@ -178,7 +178,7 @@ export function HubsPage() {
               <AccordionTrigger variant="none" className="p-4">
                 {institution}
               </AccordionTrigger>
-              <AccordionContent>
+              <AccordionContent variant="default">
                 {[...searchTechnologyMap.get(institution)!.keys()]
                   .sort()
                   .map((platform) => {
@@ -241,7 +241,7 @@ export function HubsPage() {
             </AccordionItem>
           )
         })}
-      </ScrollAccordion>
+      </Accordion>
     )
   }
 
@@ -289,9 +289,7 @@ export function HubsPage() {
 export function HubsQueryPage() {
   return (
     <CoreProviders>
-      {/* <HistoryProvider app={APP_INFO.name}> */}
       <HubsPage />
-      {/* </HistoryProvider> */}
     </CoreProviders>
   )
 }

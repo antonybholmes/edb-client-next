@@ -11,6 +11,7 @@ import {
   ToggleGroup,
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
+import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
@@ -32,7 +33,7 @@ export function HomeToolbar() {
   const { addSheets } = useHistory()
 
   const { settings } = useEdbSettings()
-  //const [assembly, setAssembly] = useState('grch38')
+
   const [reverse, setReverse] = useState(false)
   const [complement, setComplement] = useState(false)
   const [format, setFormat] = useState<FORMAT_TYPE>('auto')
@@ -93,7 +94,7 @@ export function HomeToolbar() {
 
       <ToolbarTabGroup title="Letters">
         <ToggleGroup
-          direction="toolbar"
+          //direction="toolbar"
           className="overflow-hidden rounded-theme"
           //rounded="none"
           size="toolbar"
@@ -116,44 +117,49 @@ export function HomeToolbar() {
         </ToggleGroup>
       </ToolbarTabGroup>
 
-      <ToolbarTabGroup title="Options">
-        <Checkbox
-          checked={mask === 'n'}
-          onCheckedChange={() => {
-            if (mask != 'n') {
-              setMask('n')
-            } else {
-              setMask('')
-            }
-          }}
-        >
-          N
-        </Checkbox>
+      <ToolbarTabGroup title="Options" className="gap-x-1">
+        <ToolbarCol className="h-full">
+          <Checkbox
+            checked={mask === 'n'}
+            onCheckedChange={() => {
+              if (mask != 'n') {
+                setMask('n')
+              } else {
+                setMask('')
+              }
+            }}
+          >
+            N
+          </Checkbox>
 
-        <Checkbox
-          checked={mask === 'lower'}
-          onCheckedChange={() => {
-            if (mask != 'lower') {
-              setMask('lower')
-            } else {
-              setMask('')
-            }
-          }}
-        >
-          Lowercase
-        </Checkbox>
-        <Checkbox
-          checked={reverse}
-          onCheckedChange={() => setReverse(!reverse)}
-        >
-          <span>Reverse</span>
-        </Checkbox>
-        <Checkbox
-          checked={complement}
-          onCheckedChange={() => setComplement(!complement)}
-        >
-          <span>Complement</span>
-        </Checkbox>
+          <Checkbox
+            checked={mask === 'lower'}
+            onCheckedChange={() => {
+              if (mask != 'lower') {
+                setMask('lower')
+              } else {
+                setMask('')
+              }
+            }}
+          >
+            Lowercase
+          </Checkbox>
+        </ToolbarCol>
+
+        <ToolbarCol className="h-full">
+          <Checkbox
+            checked={reverse}
+            onCheckedChange={() => setReverse(!reverse)}
+          >
+            <span>Reverse</span>
+          </Checkbox>
+          <Checkbox
+            checked={complement}
+            onCheckedChange={() => setComplement(!complement)}
+          >
+            <span>Complement</span>
+          </Checkbox>
+        </ToolbarCol>
       </ToolbarTabGroup>
     </>
   )
