@@ -1,4 +1,9 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
+import { ArrowLeftRightIcon } from '@/components/icons/arrow-left-right-icon'
+import { ChevronRightIcon } from '@/components/icons/chevron-right-icon'
+import { DownloadIcon } from '@/components/icons/download-icon'
+import { ZoomInIcon } from '@/components/icons/zoom-in-icon'
+import { ZoomOutIcon } from '@/components/icons/zoom-out-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { DropdownMenuCheckboxItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
@@ -14,14 +19,7 @@ import { TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
 import { newGenomicLocation } from '@/lib/genomic/genomic-location'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
-import {
-  ArrowLeftRightIcon,
-  ChevronRightIcon,
-  DownloadIcon,
-  ListChevronsUpDownIcon,
-  ZoomInIcon,
-  ZoomOutIcon,
-} from 'lucide-react'
+import { ListChevronsUpDownIcon } from 'lucide-react'
 import {
   GeneView,
   ReadScaleMode,
@@ -231,7 +229,6 @@ export function HomeToolbar() {
             updateSettings(newSettings)
           }}
           size="toolbar"
-          //justify="start"
           direction="toolbar"
           multiple={true}
         >

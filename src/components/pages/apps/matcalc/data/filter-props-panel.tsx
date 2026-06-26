@@ -118,7 +118,7 @@ export function FilterPropsPanel() {
   return (
     <>
       <ResizableSidebarHeaderPortal>
-        <h2>Filter</h2>
+        <h2 className="text-sm font-medium">Filter</h2>
       </ResizableSidebarHeaderPortal>
       <ResizableSidebarHeaderPortal side="right">
         <LinkButton

@@ -17,6 +17,7 @@ import { createPortal } from 'react-dom'
 import { usePanelRef } from 'react-resizable-panels'
 import { ChevronRightIcon } from '../icons/chevron-right-icon'
 import { VCenterRow } from '../layout/v-center-row'
+import { PropsPanel } from '../props-panel'
 import { IconButton } from '../shadcn/ui/themed/icon-button'
 import {
   ResizablePanel,
@@ -118,25 +119,28 @@ export function SidePanel({
       minSize={`${sideLimits[0]}%`}
       maxSize={`${sideLimits[1]}%`}
       collapsible={true}
-      className="flex flex-col relative gap-y-2"
+      //className="flex flex-col relative gap-y-2"
     >
-      {showCloseButton && (
-        <VCenterRow className="gap-x-1 justify-between min-h-8">
-          <VCenterRow
-            id={`resizable-sidebar-header-left-${id}`}
-            className="gap-x-2"
-          />
-
-          <VCenterRow className="gap-x-2 justify-end">
+      {/* Seems to need inner div to make overflow work properly, otherwise scrollbars appear */}
+      <PropsPanel className="flex flex-col gap-y-2">
+        {showCloseButton && (
+          <VCenterRow className="gap-x-1 justify-between min-h-8 ">
             <VCenterRow
-              id={`resizable-sidebar-header-right-${id}`}
+              id={`resizable-sidebar-header-left-${id}`}
               className="gap-x-2"
             />
-            <CloseButton onClick={() => setOpen(false)} />
+
+            <VCenterRow className="gap-x-2 justify-end">
+              <VCenterRow
+                id={`resizable-sidebar-header-right-${id}`}
+                className="gap-x-2"
+              />
+              <CloseButton onClick={() => setOpen(false)} />
+            </VCenterRow>
           </VCenterRow>
-        </VCenterRow>
-      )}
-      {children}
+        )}
+        {children}
+      </PropsPanel>
     </ResizablePanel>
   )
 }

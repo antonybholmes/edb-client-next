@@ -49,7 +49,7 @@ export const propRowVariants = cva('flex flex-row ', {
 
   defaultVariants: {
     align: 'center',
-    gap: 'none',
+    gap: 'default',
   },
 })
 

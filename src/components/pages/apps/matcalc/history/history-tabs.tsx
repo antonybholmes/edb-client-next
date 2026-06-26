@@ -120,7 +120,7 @@ function HistoryTabsContent() {
               }}
               className={TRIGGER_CLS}
             >
-              <span className="font-semibold text-left truncate">
+              <span className="font-medium text-left truncate">
                 {`${hi + 1}. ${step.name}`}
               </span>
 

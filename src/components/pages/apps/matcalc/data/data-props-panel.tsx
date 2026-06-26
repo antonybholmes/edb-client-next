@@ -12,13 +12,11 @@ import { GroupingPropsPanel } from './grouping-props-panel'
 
 export function DataPropsPanel() {
   return (
-    <Tabs orientation="vertical" className="flex flex-col grow text-xs pr-1">
+    <Tabs orientation="vertical" className="flex flex-col grow text-xs pr-1 ">
       <TabsContent value="groups">
         <GroupingPropsPanel />
       </TabsContent>
-      {/* <TabsContent value="genesets">
-        <GenesetPropsPanel />
-      </TabsContent> */}
+
       <TabsContent value="filter">
         <FilterPropsPanel />
       </TabsContent>

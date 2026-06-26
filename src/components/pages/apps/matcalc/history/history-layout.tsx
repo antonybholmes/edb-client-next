@@ -76,7 +76,7 @@ export function HistoryLayout({ children }: IProps) {
       >
         {/* <BaseCol className="mx-2 mb-2 p-2 rounded-xl bg-background/75 hover:bg-background trans-color grow border border-border/30 hover:border-border/50 gap-y-2 h-full"> */}
         <VCenterRow className="justify-between gap-x-2 h-8 px-1">
-          <h2 className="font-bold">History</h2>
+          <h2 className="font-medium">History</h2>
           <VCenterRow className="gap-x-2">
             {/* <IconToggle
                   title="View history tree"

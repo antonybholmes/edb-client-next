@@ -38,7 +38,6 @@ export function HistoryPanel({ ref }: IProps) {
         </IconToggle>
 
         <LinkButton
-          // ripple={false}
           onClick={() => {
             openDialog({
               type: 'warning',

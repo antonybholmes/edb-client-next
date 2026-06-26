@@ -1941,6 +1941,10 @@
         {
           "msg": "History provider to replace history store",
           "date": "2026-06-22T22:46:19.027Z"
+        },
+        {
+          "msg": "Added save table dialog",
+          "date": "2026-06-26T02:14:05.238Z"
         }
       ]
     },
