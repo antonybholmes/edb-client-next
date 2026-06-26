@@ -1,6 +1,6 @@
 'use client'
 
-import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
+import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 
 import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
@@ -32,7 +32,6 @@ import {
   TEXT_SAVE_TABLE,
 } from '@/consts'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
-import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { makeUuid } from '@/lib/id'
 import { useZoom } from '@/providers/zoom-provider'
 import { Card } from '@/themed/card'
@@ -429,7 +428,7 @@ export function SingleCellPage() {
                 </BaseCol>
                 <TabbedDataFrames
                   //selectedSheet={sheet?.id ?? ''}
-                  dataFrames={sheets.map((s) => s) as AnnotationDataFrame[]}
+                  //dataFrames=sheets.map((s) => s) as AnnotationDataFrame[]}
                   // onTabChange={(selectedTab) => {
                   //   goto({ file, sheet: selectedTab.tab })
                   // }}

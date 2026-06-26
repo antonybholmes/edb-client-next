@@ -1,22 +1,21 @@
-import { BottomBar } from '@/toolbar/bottom-bar'
+import { BottomBar } from '@/components/pages/apps/matcalc/bottom-bar'
 
-import { useTabs, type ITab } from '@/components/tabs/tab-provider'
 import { IClassProps } from '@/interfaces/class-props'
-import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { cn } from '@/lib/shadcn-utils'
-import { useEffect, useMemo } from 'react'
-import type { IFileDropProps } from '../file-drop-panel'
-import { BaseCol } from '../layout/base-col'
-import type { ITabMenu } from '../tabs/underline-tabs'
-import { VirtualDataFrame } from './virtual-dataframe/virtual-dataframe'
+import type { IFileDropProps } from '../../../file-drop-panel'
+import { BaseCol } from '../../../layout/base-col'
+import { VirtualDataFrame } from '../../../table/virtual-dataframe/virtual-dataframe'
+import type { ITabMenu } from '../../../tabs/underline-tabs'
+import { useCurrentSheets } from './history/history-provider/history-contexts'
 
 export const DATAFRAME_TABS = 'dataframe-tabs'
 
 const MAX_NAME_CHARS = 15
 
 interface IProps extends IFileDropProps, ITabMenu, IClassProps {
-  groupId?: string
-  dataFrames: AnnotationDataFrame[]
+  //groupId?: string
+  //dataFrames: AnnotationDataFrame[]
   //selectedSheet?: UndefStr
   editable?: boolean
   allowReorder?: boolean
@@ -27,9 +26,9 @@ interface IProps extends IFileDropProps, ITabMenu, IClassProps {
 }
 
 export function TabbedDataFrames({
-  groupId = DATAFRAME_TABS,
+  ///groupId = DATAFRAME_TABS,
   //selectedSheet,
-  dataFrames,
+  //dataFrames,
   editable = false,
   //onValueChange = () => {},
   //onTabChange = () => {},
@@ -44,55 +43,55 @@ export function TabbedDataFrames({
   className,
   style,
 }: IProps) {
-  const { selectedTab, tabs, setTabs } = useTabs(groupId)
+  const { sheet } = useCurrentSheets()
 
   /* useEffect(() => {
     setSelectedSheet(dataFrames[0]!.id)
   }, []) */
 
-  useEffect(() => {
-    const tabs: ITab[] = dataFrames.map((df, i) => {
-      const sheetId = `Sheet ${i + 1}`
-      const name = df.name !== '' ? df.name : sheetId
+  // useEffect(() => {
+  //   const tabs: ITab[] = sheets.map((df, i) => {
+  //     const sheetId = `Sheet ${i + 1}`
+  //     const name = df.name !== '' ? df.name : sheetId
 
-      return {
-        id: df.id, //sheetId, //nanoid(),
-        name,
-        // component: () => (
-        //   <VirtualDataFrame
-        //     df={df}
-        //     key={i}
-        //     editable={editable}
-        //     zoom={zoom}
-        //     dp={dp}
-        //     commas={commas}
-        //   />
-        // ),
-      }
-    })
+  //     return {
+  //       id: df.id, //sheetId, //nanoid(),
+  //       name,
+  //       // component: () => (
+  //       //   <VirtualDataFrame
+  //       //     df={df}
+  //       //     key={i}
+  //       //     editable={editable}
+  //       //     zoom={zoom}
+  //       //     dp={dp}
+  //       //     commas={commas}
+  //       //   />
+  //       // ),
+  //     }
+  //   })
 
-    setTabs(tabs)
-  }, [dataFrames])
+  //   setTabs(tabs)
+  // }, [dataFrames])
 
-  const df = useMemo(() => {
-    const dfs = dataFrames.filter((df) => df.id === selectedTab?.id)
+  // const df = useMemo(() => {
+  //   const dfs = dataFrames.filter((df) => df.id === selectedTab?.id)
 
-    return dfs.length > 0 ? dfs[0] : undefined
-  }, [selectedTab, dataFrames])
+  //   return dfs.length > 0 ? dfs[0] : undefined
+  // }, [selectedTab, dataFrames])
 
-  if (tabs.length === 0) {
-    return null
-  }
+  // if (tabs.length === 0) {
+  //   return null
+  // }
 
   // transition between index based tabs and value selection
   // tables, possibly move to entirely name based tabs in the future
   return (
     <BaseCol className={cn('grow', className)} style={style}>
       <BaseCol className="grow" id="dataframe-container">
-        {df && (
+        {sheet && (
           <VirtualDataFrame
-            df={df}
-            key={df.id}
+            df={sheet as AnnotationDataFrame}
+            key={sheet.id}
             editable={editable}
             zoom={zoom}
             dp={dp}
@@ -101,7 +100,7 @@ export function TabbedDataFrames({
         )}
       </BaseCol>
       <BottomBar
-        groupId={groupId}
+        //groupId={groupId}
         maxNameLength={MAX_NAME_CHARS}
         //onValueChange={onValueChange}
         onFileDrop={onFileDrop}

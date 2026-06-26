@@ -1,7 +1,4 @@
-import {
-  DATAFRAME_TABS,
-  TabbedDataFrames,
-} from '@/components/table/tabbed-dataframes'
+import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 
 //import { ZoomSlider } from "@/toolbar/zoom-slider"
 
@@ -17,8 +14,6 @@ import {
   type IParseOptions,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
-import { useTabs } from '@/components/tabs/tab-provider'
-import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { replaceFileExt } from '@/lib/path'
 import {
   messageTextFileFormat,
@@ -70,8 +65,6 @@ export function DataPanel() {
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //)//'data-panel' + nanoid())
 
   const { save } = useSave()
-
-  const { tabs: dfTabs } = useTabs(DATAFRAME_TABS)
 
   // useEffect(() => {
   //   reorderSheets(dfTabs.map((t) => t.id))
@@ -160,7 +153,7 @@ export function DataPanel() {
       <ResizableSidebar side="right">
         <TabbedDataFrames
           //selectedSheet={sheet?.id ?? ''}
-          dataFrames={sheets as AnnotationDataFrame[]}
+          ////dataFrames=sheets as AnnotationDataFrame[]}
           // onTabChange={(selectedTab: ISelectedTab) => {
           //   goto({ file, sheet: selectedTab.tab }) //, 'sheet')
           // }}

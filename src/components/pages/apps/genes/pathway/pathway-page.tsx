@@ -1,6 +1,6 @@
 'use client'
 
-import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
+import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 
 import {
@@ -328,7 +328,7 @@ export function PathwayPage() {
             {/* <Card variant="content" className="mx-2 pb-0"> */}
             <TabbedDataFrames
               //selectedSheet={df?.id ?? ''}
-              dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
+              //dataFrames=sheets.map((s) => s as AnnotationDataFrame)}
               //onTabChange={(selectedTab) => {
               //  goto({ file, sheet: selectedTab.tab })
               //}}

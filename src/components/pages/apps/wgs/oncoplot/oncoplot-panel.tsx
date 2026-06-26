@@ -17,9 +17,8 @@ import {
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
+import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
-import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
-import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import {
   messageImageFileFormat,
   useMessages,
@@ -148,7 +147,7 @@ export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
             >
               <TabbedDataFrames
                 //selectedSheet={sheet?.id ?? ''}
-                dataFrames={sheets as AnnotationDataFrame[]}
+                //dataFrames=sheets as AnnotationDataFrame[]}
                 // onTabChange={(selectedTab) => {
                 //   goto({ file, sheet: selectedTab.tab })
                 // }}

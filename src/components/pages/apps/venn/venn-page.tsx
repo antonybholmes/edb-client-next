@@ -12,7 +12,7 @@ import {
 
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
-import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
+import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 
 import { FileImageIcon } from '@/icons/file-image-icon'
 
@@ -299,7 +299,7 @@ function VennPage() {
   //           <TabbedDataFrames
   //             key="tabbed-data-frames"
   //             selectedSheet={sheet?.id ?? ''}
-  //             dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
+  //             //dataFrames=sheets.map((s) => s as AnnotationDataFrame)}
   //             onTabChange={(selectedTab) => {
   //               goto({ file, sheet: selectedTab.tab })
   //             }}
@@ -613,7 +613,7 @@ function VennPage() {
                 <TabbedDataFrames
                   key="tabbed-data-frames"
                   //selectedSheet={sheet?.id ?? ''}
-                  dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
+                  //dataFrames=sheets.map((s) => s as AnnotationDataFrame)}
                   // onTabChange={(selectedTab) => {
                   //   goto({ file, sheet: selectedTab.tab })
                   // }}

@@ -58,8 +58,8 @@ export function initState(): Omit<IHistoryState, 'id' | 'name' | 'createdAt'> {
     genesetOrder: { [DEFAULT_FILE.id]: [] },
 
     currentFile: DEFAULT_FILE.id,
-    //currentSheet: DEFAULT_SHEET.id,
-    //currentPlot: '',
+    currentSheet: DEFAULT_SHEET.id,
+    currentPlot: '',
     currentSelections: [{ type: 'sheet', id: DEFAULT_SHEET.id }],
   }
 }

@@ -5,18 +5,18 @@
     "color": "#FA8072",
     "version": "20.6.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-26T17:52:51.302Z",
-    "hash": "0bb2caa8bf579f77380374b75d56fded0161717f336459d53c9205cadcf4affd",
-    "build": 834
+    "modified": "2026-06-26T20:17:56.162Z",
+    "hash": "f122826f7ed9bdf08797513e146a2ed89e21ededdab608f6439e5cecedb8a761",
+    "build": 836
   },
   {
     "name": "Bio Draw",
     "description": "Biological diagrams",
-    "version": "16.6.2",
+    "version": "16.6.4",
     "copyright": "© 2025-2026 Antony Holmes",
-    "modified": "2026-06-26T17:52:51.301Z",
-    "hash": "dbff04862c4b7cbd9288413af5ab34e541765c63558be9d11b8086688d6931de",
-    "build": 518
+    "modified": "2026-06-26T20:17:56.161Z",
+    "hash": "365743bf22ae6bcad13671fafeec2b02cd745247dbf57a20575788ea9bfda26c",
+    "build": 520
   },
   {
     "name": "Convert",
@@ -24,9 +24,9 @@
     "color": "#20B2AA",
     "version": "20.0.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-26T17:52:51.301Z",
-    "hash": "8d8bd4ffb68dff09f39823ff002fdfbe1cc16a72a6a67b722422f79da3968ee4",
-    "build": 792
+    "modified": "2026-06-26T20:17:56.161Z",
+    "hash": "0dac91b0271986389d5d3d5a1c0ca1395819fc048e5cab800a1307dcf03ca627",
+    "build": 794
   },
   {
     "name": "DNA",
@@ -34,9 +34,9 @@
     "color": "#FF4500",
     "version": "20.6.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-26T17:52:51.302Z",
-    "hash": "b6b2afb9cad5def8b2a22b76db0264bee76a06bfa3e686d6753efe3df5cff1e8",
-    "build": 806
+    "modified": "2026-06-26T20:17:56.162Z",
+    "hash": "2d1efe1661d75d7e8d12ba02b7f6ec9d83ba5a525d1b0ec1b2033757c20da2f3",
+    "build": 808
   },
   {
     "name": "Get DNA",
@@ -101,9 +101,9 @@
     "color": "#DA70D6",
     "version": "27.6.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-26T17:52:51.306Z",
-    "hash": "3a32c200ee943e6b0b2387789fed3c48d636965845975013205423ba30a9e13d",
-    "build": 1054
+    "modified": "2026-06-26T20:17:56.166Z",
+    "hash": "2617b649881955e6e6f1cd23a2d3e164b7651abdd275689a439440cbc88f1832",
+    "build": 1056
   },
   {
     "name": "Matcalc",
@@ -111,19 +111,19 @@
     "color": "#40bf80",
     "version": "46.8.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-06-26T17:52:51.305Z",
-    "hash": "396764e39427046d2d3ba2246111826af712040217fc5a6a90418baceef7e11a",
-    "build": 1676
+    "modified": "2026-06-26T20:17:56.165Z",
+    "hash": "718801a90f9f587733c902bf78e223d5b9969d51493b14f2c71c16f084889d3e",
+    "build": 1678
   },
   {
     "name": "Motifs",
     "description": "View motif logo plots.",
     "color": "#009933",
-    "version": "48.2.4",
+    "version": "48.2.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-26T17:52:51.301Z",
-    "hash": "dc0d9ba41cdccaf126d7250567b81f6d4c6108276706d2e4703659993ad678d7",
-    "build": 948
+    "modified": "2026-06-26T20:17:56.162Z",
+    "hash": "314dadd581b62cb6e6a996a61ac1bb8875fcc53091b6e27b28b53a9c46c6998e",
+    "build": 950
   },
   {
     "name": "Oncoplot",
@@ -131,9 +131,9 @@
     "color": "#ff99cc",
     "version": "28.8.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-26T17:52:51.306Z",
-    "hash": "3fa7d26df44b0da4a9777ca3fbc66432f779f0d69f7f028404d9717cd2a419be",
-    "build": 1054
+    "modified": "2026-06-26T20:17:56.166Z",
+    "hash": "9ec704f9d09e1f2056331eb31397f646c4f79e83c0d2bf0b2c2f01412bbac390",
+    "build": 1056
   },
   {
     "name": "Overlap",
@@ -141,9 +141,9 @@
     "color": "#008080",
     "version": "18.6.4",
     "copyright": "© 2025-2026 Antony Holmes",
-    "modified": "2026-06-26T17:52:51.302Z",
-    "hash": "47a2a90083f9decb5223dcdb769d34b66adfa4d2bab094b257b6522c83b643bd",
-    "build": 536
+    "modified": "2026-06-26T20:17:56.162Z",
+    "hash": "03e248d607a7799c535feb95927a6019521ae760c2e69ce89633db2cd8b41009",
+    "build": 538
   },
   {
     "name": "Pathway",
@@ -151,9 +151,9 @@
     "color": "#6495ED",
     "version": "36.2.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-26T17:52:51.301Z",
-    "hash": "2d8f212eff991caf65cbec6cef95bb22394a31aa994930ddb056e1df2baac9a2",
-    "build": 872
+    "modified": "2026-06-26T20:17:56.162Z",
+    "hash": "73040b2973207b2360f19b276a7e2be865836a9694815bbaf531b9c19582a983",
+    "build": 874
   },
   {
     "name": "Rev Comp",
@@ -181,9 +181,9 @@
     "color": "#9966ff",
     "version": "26.4.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-26T17:52:51.305Z",
-    "hash": "1fb7dfbb7f0196b0f0c9d767e8604495035a7e58e90d46a549441100849203f1",
-    "build": 800
+    "modified": "2026-06-26T20:17:56.165Z",
+    "hash": "699e2abf5c5bde6792a279d9a149e139729524e537c70696e0d6769b800884ed",
+    "build": 802
   },
   {
     "name": "Table Viewer",
@@ -191,9 +191,9 @@
     "version": "14.6.6",
     "color": "#c0c0c0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-26T17:52:51.305Z",
-    "hash": "d8072c9c6545d120767d39e49be2b98be2611a9165e111aca95d9f8e28cc23fe",
-    "build": 466
+    "modified": "2026-06-26T20:17:56.165Z",
+    "hash": "5cfede855c874228d7fcf8954e2bfda6a3dce7087f1e2d7796b23432f371731f",
+    "build": 468
   },
   {
     "name": "Users",
@@ -210,9 +210,9 @@
     "color": "#FA8072",
     "version": "26.6.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-26T17:52:51.306Z",
-    "hash": "d508b2d8f11296b6f85ad3ed626d372dc2f9c6c510cf2e1891e13c79cad5cd49",
-    "build": 976
+    "modified": "2026-06-26T20:17:56.166Z",
+    "hash": "d361850c461bdce8628cda664eef2a6720388f80138ee87d8df194e3c44af33c",
+    "build": 978
   },
   {
     "name": "Venn",
@@ -220,8 +220,8 @@
     "color": "#00008B",
     "version": "26.2.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-06-26T17:52:51.305Z",
-    "hash": "3030e19af2ac7acdca1308ceafebb0431483b2dd6aa15234e4891273116f8276",
-    "build": 854
+    "modified": "2026-06-26T20:17:56.166Z",
+    "hash": "c52a73faacf7d9994b252a20688f1d0809ac26fc1315ab4329e3890923abfa30",
+    "build": 856
   }
 ]

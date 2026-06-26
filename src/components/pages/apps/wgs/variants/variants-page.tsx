@@ -32,8 +32,8 @@ import {
   ThinVResizeHandle,
 } from '@/themed/resizable'
 
+import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
-import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { makeUuid } from '@/lib/id'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
@@ -497,7 +497,7 @@ export function VariantsPage() {
                     <TabbedDataFrames
                       key="tabbed-data-frames"
                       //selectedSheet={sheet?.id ?? ''}
-                      dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
+                      //dataFrames=sheets.map((s) => s as AnnotationDataFrame)}
                       // onTabChange={(selectedTab) => {
                       //   goto({ file, sheet: selectedTab.tab })
                       // }}

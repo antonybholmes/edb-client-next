@@ -1,6 +1,6 @@
 'use client'
 
-import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
+import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
@@ -71,7 +71,6 @@ import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 import { ArrowUpDown } from 'lucide-react'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
-import { useCurrentSheets } from '../../matcalc/history/history-provider/history-contexts'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { useSave } from '../../matcalc/hooks/save'
 import { DatasetFilter } from './dataset-filter'
@@ -97,9 +96,7 @@ export function MotifsPage() {
 
   const { settings: edbSettings } = useEdbSettings()
 
-  const { openFile, goto } = useHistory()
-
-  const { sheets } = useCurrentSheets()
+  const { openFile, addSheets } = useHistory()
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
@@ -111,6 +108,10 @@ export function MotifsPage() {
   useEffect(() => {
     addDFSize()
   }, [addDFSize])
+
+  useEffect(() => {
+    openFile('Motifs')
+  }, [openFile])
 
   // useEffect(() => {
   //   if (dfTab?.id) {
@@ -250,15 +251,15 @@ export function MotifsPage() {
     })
 
     if (dataframes.length > 0) {
-      openFile(`Motifs`, { sheets: dataframes })
+      console.log('Opening motifs in table view', dataframes)
+      addSheets(dataframes)
     }
   }, [searchResult.motifs])
 
   const fileMenuTabs: ITab[] = [
     {
-      //id: nanoid(),
       id: TEXT_SAVE_AS,
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label="Download as TXT"
@@ -281,10 +282,9 @@ export function MotifsPage() {
       ),
     },
     {
-      //id: nanoid(),
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
@@ -349,7 +349,7 @@ export function MotifsPage() {
   //         <BaseCol className="ml-2  grow">
   //           <TabbedDataFrames
   //             selectedSheet={sheet?.id ?? ''}
-  //             dataFrames={sheets as AnnotationDataFrame[]}
+  //             //dataFrames=sheets as AnnotationDataFrame[]}
   //             onTabChange={selectedTab => {
   //               gotoSheet(selectedTab.tab.id)
   //             }}
@@ -527,7 +527,7 @@ export function MotifsPage() {
                 </BaseCol>
                 <TabbedDataFrames
                   //selectedSheet={sheet?.id ?? ''}
-                  dataFrames={sheets as AnnotationDataFrame[]}
+                  //dataFrames=sheets as AnnotationDataFrame[]}
                   // onTabChange={(selectedTab) => {
                   //   goto({ file, sheet: selectedTab.tab })
                   // }}

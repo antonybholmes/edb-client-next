@@ -16,7 +16,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { useHistory } from './history-provider/history-provider'
 
 const TRIGGER_CLS = cn(
-  'flex flex-row px-2.5 h-11 items-center gap-x-1 ml-2 justify-between',
+  'flex flex-col px-2.5 h-11 items-start gap-x-1 ml-2  justify-center',
   'relative shrink-0 data-[selected=false]:hover:bg-muted/25',
   'data-[selected=true]:bg-muted/50 rounded-theme'
 )
@@ -24,8 +24,6 @@ const TRIGGER_CLS = cn(
 function HistoryTabsContent() {
   const { history, cursor, seek } = useHistory()
 
-  //const { tabIndex, setTab } = useTabs(_id)
-  //const pressed = useRef(false)
   const tabListRef = useRef<HTMLDivElement>(null)
   const buttonsRef = useRef<HTMLElement[]>([])
   const initial = useRef(true)
@@ -123,7 +121,6 @@ function HistoryTabsContent() {
               <span className="font-medium text-left truncate">
                 {`${hi + 1}. ${step.name}`}
               </span>
-
               <span className="text-left text-foreground/50 truncate">
                 {step.description}
               </span>

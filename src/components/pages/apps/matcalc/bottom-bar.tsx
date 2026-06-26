@@ -1,27 +1,31 @@
 import { ChevronRightIcon } from '@/icons/chevron-right-icon'
 import { VCenterRow } from '@/layout/v-center-row'
 import { type ReactNode } from 'react'
-import { ToolbarIconButton } from './toolbar-icon-button'
+import { ToolbarIconButton } from '../../../toolbar/toolbar-icon-button'
 
 import { type IFileDropProps } from '@/components/file-drop-panel'
 import { IClassProps } from '@/interfaces/class-props'
 import { Select as SelectPrimitive } from '@base-ui/react/select'
-import { FileDropZonePanel } from '../file-dropzone-panel'
-import { HamburgerIcon } from '../icons/hamburger-icon'
-import { IconButton } from '../shadcn/ui/themed/icon-button'
+import { FileDropZonePanel } from '../../../file-dropzone-panel'
+import { HamburgerIcon } from '../../../icons/hamburger-icon'
+import { IconButton } from '../../../shadcn/ui/themed/icon-button'
 import {
   Select,
   SelectContent,
   SelectItem,
-} from '../shadcn/ui/themed/v2/select'
-import { ReorderTabs } from '../tabs/reorder-tabs'
-import { getTabName, useTabs } from '../tabs/tab-provider'
-import { type ITabMenu } from '../tabs/underline-tabs'
+} from '../../../shadcn/ui/themed/v2/select'
+import { getTabName } from '../../../tabs/tab-provider'
+import { type ITabMenu } from '../../../tabs/underline-tabs'
+import {
+  useCurrentSheets,
+  useFiles,
+} from './history/history-provider/history-contexts'
+import { useHistory } from './history/history-provider/history-provider'
+import { ReorderTabs } from './reorder-tabs'
 // const LINE_CLS =
 //   "tab-line absolute bottom-0 left-0 block h-0.5 bg-theme"
 
 interface IBottomBarProps extends IFileDropProps, ITabMenu, IClassProps {
-  groupId?: string
   maxNameLength?: number
   padding?: number
   scale?: number
@@ -31,8 +35,6 @@ interface IBottomBarProps extends IFileDropProps, ITabMenu, IClassProps {
 }
 
 export function BottomBar({
-  groupId = 'bottom-bar',
-
   maxNameLength = 16,
   rightContent,
   onFileDrop = undefined,
@@ -43,20 +45,12 @@ export function BottomBar({
   menuCallback = () => {},
   menuActions = [],
 }: IBottomBarProps) {
-  const { selectedTab, tabs, setTab } = useTabs(groupId)
+  const { goto } = useHistory()
+  const { file } = useFiles()
+
+  const { sheet, sheets } = useCurrentSheets()
 
   let content: ReactNode = (
-    // <Tabs
-    //   id="bottom-bar"
-
-    //   className={cn(
-    //     'flex grow flex-col overflow-hidden',
-    //     [onFileDrop !== undefined, DRAG_OUTLINE_CLS],
-    //     className
-    //   )}
-    //   style={style}
-    // >
-
     <VCenterRow className="shrink-0 justify-between text-xs">
       <VCenterRow className="gap-x-2">
         <VCenterRow>
@@ -66,15 +60,17 @@ export function BottomBar({
             size="icon-sm"
             //rounded="full"
             onClick={() => {
-              let selectedTabIndex = tabs!
+              let selectedTabIndex = sheets
                 .map((t, ti) => ({ tab: t, index: ti }))
-                .filter((t) => t.tab.id === selectedTab?.id)
+                .filter((t) => t.tab.id === sheet?.id)
                 .map((t) => t.index)[0]!
 
               selectedTabIndex =
-                selectedTabIndex === 0 ? tabs.length - 1 : selectedTabIndex - 1
+                selectedTabIndex === 0
+                  ? sheets.length - 1
+                  : selectedTabIndex - 1
 
-              setTab(tabs[selectedTabIndex]!.id)
+              goto({ file, sheet: sheets[selectedTabIndex]?.id })
             }}
           >
             <ChevronRightIcon size="w-4" className="-scale-x-100" />
@@ -84,22 +80,24 @@ export function BottomBar({
             size="icon-sm"
             //rounded="full"
             onClick={() => {
-              const selectedTabIndex = tabs
+              const selectedTabIndex = sheets
                 .map((t, ti) => ({ tab: t, index: ti }))
-                .filter((t) => t.tab.id === selectedTab?.id)
+                .filter((t) => t.tab.id === sheet?.id)
                 .map((t) => t.index)[0]!
 
-              const nextTabIndex = (selectedTabIndex + 1) % tabs.length
-              setTab(tabs[nextTabIndex]!.id)
+              const nextTabIndex = (selectedTabIndex + 1) % sheets.length
+              goto({ file, sheet: sheets[nextTabIndex]?.id })
             }}
           >
             <ChevronRightIcon size="w-4" />
           </ToolbarIconButton>
 
           <Select
-            value={selectedTab?.id ?? ''}
+            value={sheet?.id ?? ''}
             onValueChange={(v) => {
-              setTab(v ?? '')
+              if (v) {
+                goto({ file, sheet: v })
+              }
             }}
           >
             <SelectPrimitive.Trigger
@@ -111,9 +109,9 @@ export function BottomBar({
             />
 
             <SelectContent side="top" align="start">
-              {tabs.map((tab) => (
-                <SelectItem key={tab.id} value={tab.id}>
-                  {getTabName(tab)}
+              {sheets.map((sheet) => (
+                <SelectItem key={sheet.id} value={sheet.id}>
+                  {getTabName(sheet)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -121,12 +119,10 @@ export function BottomBar({
         </VCenterRow>
 
         <ReorderTabs
-          groupId={groupId}
           maxNameLength={maxNameLength}
           variant="sheet"
           menuCallback={menuCallback}
           menuActions={menuActions}
-          //onReorder={onReorder}
           allowReorder={allowReorder}
         />
       </VCenterRow>

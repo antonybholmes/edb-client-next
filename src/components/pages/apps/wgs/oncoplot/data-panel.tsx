@@ -1,4 +1,4 @@
-import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
+import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 
 import { useEffect, useState } from 'react'
 
@@ -7,7 +7,6 @@ import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { TEXT_CANCEL } from '@/consts'
 import type { ISaveAsFileType } from '@/dialogs/save-as-dialog'
 import { SaveTxtDialog } from '@/dialogs/save-txt-dialog'
-import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { useMessages } from '@/providers/message-provider'
 
 import { useSideTabs } from '@/components/tabs/tab-provider'
@@ -107,8 +106,8 @@ export function DataPanel() {
         onOpenChange={setShowSideBar}
       >
         <TabbedDataFrames
-          //selectedSheet={sheet?.id ?? ''}
-          dataFrames={sheets as AnnotationDataFrame[]}
+        //selectedSheet={sheet?.id ?? ''}
+        //dataFrames=sheets as AnnotationDataFrame[]}
         />
       </TabSlideBar>
 

@@ -109,8 +109,6 @@ export function HistoryLayout({ children }: IProps) {
           </VCenterRow>
         </VCenterRow>
 
-        {/* <Tabs value={tab} className="flex flex-col grow">
-              <TabsContent value="list" className="grow flex flex-col"> */}
         <BaseCol className="p-2 rounded-xl bg-background/75 hover:bg-background trans-color grow border border-border/30">
           <VScrollPanel className="h-full">
             <HistoryTabs />

@@ -9,6 +9,7 @@
 
 ### Changed
 
+- Tabbed dataframes now uses history to render. Lots of UI fixes for new layout system.
 - Removal of history reorder of sheets and plots.
 - All apps now compile.
 - open files now uses document.createelement to make custom input as more reliable than old method of using input with a ref and triggering click.

@@ -16,39 +16,16 @@ export function HistoryDevPanel() {
   const [selectedTab, setSelectedTab] = useState<ITab | null>(null)
 
   return (
-    // <ResizablePanelGroup
-    //   orientation="horizontal"
-    //   className="px-2 grow"
-    //   //autoSaveId="rev-comp-vert"
-    // >
-    //   <ResizablePanel
-    //     id="chart"
-    //     defaultSize="40%"
-    //     minSize="0%"
-    //     className="flex flex-col text-sm"
-    //     collapsible={true}
-    //   >
-
     <ResizablePanelGroup orientation="vertical" className="h-full text-xs">
       <ResizablePanel defaultSize="60%" className="p-1">
         <VScrollPanel className="grow h-full">
           <HistoryTree
-            onTabChange={t => {
+            onTabChange={(t) => {
               console.log('Selected tab:', t)
               if (SELECTABLE_TYPES.has(t.type ?? '')) {
                 setSelectedTab(t)
               }
             }}
-            //className="text-sm"
-
-            //value={tab!}
-            // onValueChange={t => {
-            //   if (t && t.content) {
-            //     // only use tabs from the tree that have content, otherwise
-            //     // the ui will appear empty
-            //     setTab(t)
-            //   }
-            // }}
           />
         </VScrollPanel>
       </ResizablePanel>

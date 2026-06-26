@@ -30,7 +30,7 @@ export interface ITab {
   openIcon?: ReactNode
   //showIcon?: boolean
   render?: () => ReactNode
-  component?: ComponentType<{}> //() => ReactNode
+  component?: ComponentType<{}> | ReactNode
   //component?: ComponentType<{}>
   data?: unknown
   size?: number

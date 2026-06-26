@@ -390,7 +390,7 @@ export function MatcalcPage() {
     {
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      component: () => (
+      component: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -419,7 +419,7 @@ export function MatcalcPage() {
     {
       id: TEXT_SAVE_AS,
       icon: <DownloadIcon />,
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -456,7 +456,7 @@ export function MatcalcPage() {
     {
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      component: () => (
+      component: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

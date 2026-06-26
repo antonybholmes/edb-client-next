@@ -1,6 +1,6 @@
 'use client'
 
-import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
+import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 
@@ -201,7 +201,7 @@ export function TableViewerPage() {
       >
         <TabbedDataFrames
           //selectedSheet={sheets[0]?.id}
-          dataFrames={[sheets[0] as AnnotationDataFrame]}
+          //dataFrames=[sheets[0] as AnnotationDataFrame]}
           //onTabChange={(selectedTab) => {
           //  goto({ file, sheet: selectedTab.tab })
           //}}

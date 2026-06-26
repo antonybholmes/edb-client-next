@@ -1939,6 +1939,10 @@
         {
           "msg": "Removal of history reorder of sheets and plots",
           "date": "2026-06-26T17:52:52.236Z"
+        },
+        {
+          "msg": "Tabbed dataframes now uses history to render. Lots of UI fixes for new layout system",
+          "date": "2026-06-26T20:17:57.161Z"
         }
       ],
       "Added": [

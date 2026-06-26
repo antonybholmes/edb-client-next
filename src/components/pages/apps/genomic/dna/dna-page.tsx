@@ -1,6 +1,6 @@
 'use client'
 
-import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
+import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 
@@ -249,7 +249,7 @@ export function DNAPage() {
         <HistoryLayout>
           <TabbedDataFrames
             //selectedSheet={sheet?.id ?? ''}
-            dataFrames={sheets as AnnotationDataFrame[]}
+            //dataFrames=sheets as AnnotationDataFrame[]}
             // onTabChange={(selectedTab) => {
             //   goto({ file, sheet: selectedTab.tab })
             // }}

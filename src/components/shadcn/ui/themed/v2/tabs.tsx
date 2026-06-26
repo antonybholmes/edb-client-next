@@ -19,20 +19,19 @@ export const TRIGGER_SELECTED_CLS =
 
 export const BASE_TRIGGER_CLS = cn(
   FOCUS_RING_CLS,
-  'flex flex-row items-center',
-  'disabled:opacity-50 hover:bg-muted/50',
+  'flex disabled:opacity-50 hover:bg-muted/50',
   'data-active:font-semibold overflow-hidden'
 )
 
 export const TRIGGER_CLS = cn(
   FOCUS_RING_CLS,
   BASE_TRIGGER_CLS,
-  'h-button-md data-active:bg-muted/50'
+  'flex-row h-button-md data-active:bg-muted/50 items-center'
 )
 
 export const SIDEBAR_CLS = cn(
   BASE_TRIGGER_CLS,
-  'px-3 h-8 data-active:bg-muted/60 rounded-theme'
+  'flex-row items-center px-3 h-8 data-active:bg-muted/50 rounded-theme'
 )
 
 export const PLAIN_CLS = cn(
@@ -262,7 +261,11 @@ export function TabContentPanels({
               key={ti}
               className={cn('h-full', contentCls)}
             >
-              <TabContentComponent />
+              {typeof TabContentComponent === 'function' ? (
+                <TabContentComponent />
+              ) : (
+                TabContentComponent
+              )}
             </TabsContent>
           )
         })}

@@ -35,10 +35,9 @@ import {
   ThinVResizeHandle,
 } from '@/themed/resizable'
 
-import { TabbedDataFrames } from '@/components/table/tabbed-dataframes'
+import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/components/toolbar/zoom-slider'
-import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { produce } from 'immer'
 
@@ -492,13 +491,13 @@ function LollipopPage() {
               collapsible={true}
             >
               <TabbedDataFrames
-                //selectedSheet={sheet?.id ?? ''}
-                dataFrames={sheets.map((s) => s as AnnotationDataFrame)}
-                // onTabChange={(selectedTab) => {
-                //   goto({ file, sheet: selectedTab.tab })
-                // }}
-                //zoom={1}
-                //className={DATA_PANEL_CLS}
+              //selectedSheet={sheet?.id ?? ''}
+              //dataFrames=sheets.map((s) => s as AnnotationDataFrame)}
+              // onTabChange={(selectedTab) => {
+              //   goto({ file, sheet: selectedTab.tab })
+              // }}
+              //zoom={1}
+              //className={DATA_PANEL_CLS}
               />
             </ResizablePanel>
           </ResizablePanelGroup>

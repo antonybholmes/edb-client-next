@@ -3,7 +3,7 @@
 import {
   DATAFRAME_TABS,
   TabbedDataFrames,
-} from '@/components/table/tabbed-dataframes'
+} from '@/components/pages/apps/matcalc/tabbed-dataframes'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 
@@ -40,7 +40,6 @@ import { ShortcutLayout } from '@/layouts/shortcut-layout'
 
 import { DeleteIcon } from '@/icons/delete-icon'
 import { FileIcon } from '@/icons/file-icon'
-import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { getFormattedShape } from '@/lib/dataframe/dataframe-utils'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
@@ -215,7 +214,7 @@ function OverlapPage() {
           > */}
             <TabbedDataFrames
               //selectedSheet={selected}
-              dataFrames={dfs as AnnotationDataFrame[]}
+              //dataFrames=dfs as AnnotationDataFrame[]}
               // onTabChange={selectedTab => {
               //   historyDispatch({
               //     type: 'goto-sheet',
