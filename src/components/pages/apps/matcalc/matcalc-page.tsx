@@ -69,7 +69,6 @@ import { CoreProviders } from '@/providers/core-provider'
 import { HeatmapPanel } from './apps/heatmap/heatmap-panel'
 import { HistoryLayout, HistoryShowButton } from './history/history-layout'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { useMessages } from '@/providers/message-provider'
@@ -79,6 +78,7 @@ import { OptsSidebarMenu } from './data/opts-sidebar-menu'
 import { useHistory } from './history/history-provider/history-provider'
 
 import { useTabs } from '@/components/tabs/tab-provider'
+import { makeUuid } from '@/lib/id'
 import { BoxPlotPanel } from './apps/boxplot/boxplot-panel'
 import { BoxPlotProvider } from './apps/boxplot/boxplot-provider'
 import { ExtGseaPanel } from './apps/ext-gsea/ext-gsea-panel'
@@ -195,9 +195,8 @@ export function MatcalcPage() {
   // them when clicking on a plot tab
   const allPlots = useAllPlots()
 
-  const { setSettingsTabs, setDefaultSettingsTab } = useSettingsTabs()
-
-  const { open: openDialog } = useDialogs()
+  const { setSettingsTabs, setDefaultTab: setDefaultSettingsTab } =
+    useSettingsTabs()
 
   const { open: openMatcalcDialog } = useMatcalcDialogs()
 
@@ -221,25 +220,13 @@ export function MatcalcPage() {
   useEffect(() => {
     setSettingsTabs([
       {
-        id: APP_INFO.name,
+        id: makeUuid(),
+        name: APP_INFO.name,
         icon: <CubeIcon fill="" />,
-        children: [
-          {
-            id: 'Apps',
-            component: SettingsAppsPanel,
-          },
-        ],
+        component: SettingsAppsPanel,
       },
     ])
     setDefaultSettingsTab(APP_INFO.name)
-    //setSelectedPanelTab(branch.id)
-
-    // extGseaWorkerRef.current = new Worker(
-    //   new URL('./apps/ext-gsea/ext-gsea.worker.ts', import.meta.url),
-    //   {
-    //     type: 'module',
-    //   }
-    // )
   }, [setSettingsTabs, setDefaultSettingsTab])
 
   useEffect(() => {

@@ -19,16 +19,17 @@ export function SettingsAppsPanel() {
     settings.apps
   ).sort() as (keyof typeof settings.apps)[]
 
-  const friendlyAppNames = appKeys.map(k =>
+  const friendlyAppNames = appKeys.map((k) =>
     capitalCase(splitOnCapitalLetters(k))
   )
 
   return (
     <>
       <Accordion
-        defaultValue={friendlyAppNames.map(n => getAccordionId(n))}
+        defaultValue={friendlyAppNames.map((n) => getAccordionId(n))}
         multiple={true}
         variant="settings"
+        className="w-full"
       >
         {friendlyAppNames.map((appName, appI) => {
           const appKey = appKeys[appI]!
@@ -39,7 +40,7 @@ export function SettingsAppsPanel() {
             appSettings
           ).sort() as (keyof typeof appSettings)[]
 
-          const friendlySettingsNames = settingKeys.map(k =>
+          const friendlySettingsNames = settingKeys.map((k) =>
             capitalCase(splitOnCapitalLetters(k))
           )
 
@@ -56,8 +57,8 @@ export function SettingsAppsPanel() {
                       key={settingName}
                       title={settingName}
                       value={setting}
-                      onTextChange={v => {
-                        const newOptions = produce(settings, draft => {
+                      onTextChange={(v) => {
+                        const newOptions = produce(settings, (draft) => {
                           // the compiler refuses to get the correct type so we have to
                           // force it to behave
                           draft.apps[appKey][settingKey] = v as never
@@ -75,8 +76,8 @@ export function SettingsAppsPanel() {
                       key={settingName}
                       title={settingName}
                       value={setting}
-                      onNumChange={v => {
-                        const newOptions = produce(settings, draft => {
+                      onNumChange={(v) => {
+                        const newOptions = produce(settings, (draft) => {
                           // the compiler refuses to get the correct type so we have to
                           // force it to behave
                           draft.apps[appKey][settingKey] = v as never
@@ -93,8 +94,8 @@ export function SettingsAppsPanel() {
                       key={settingName}
                       title={settingName}
                       checked={setting}
-                      onCheckedChange={v => {
-                        const newOptions = produce(settings, draft => {
+                      onCheckedChange={(v) => {
+                        const newOptions = produce(settings, (draft) => {
                           // the compiler refuses to get the correct type so we have to
                           // force it to behave
                           draft.apps[appKey][settingKey] = v as never
@@ -110,8 +111,8 @@ export function SettingsAppsPanel() {
                       key={settingName}
                       title={settingName}
                       lines={setting}
-                      onLinesChange={v => {
-                        const newOptions = produce(settings, draft => {
+                      onLinesChange={(v) => {
+                        const newOptions = produce(settings, (draft) => {
                           // the compiler refuses to get the correct type so we have to
                           // force it to behave
                           draft.apps[appKey][settingKey] = v as never

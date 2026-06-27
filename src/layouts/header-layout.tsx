@@ -83,14 +83,7 @@ export function HeaderLayout({
 
       {/* <Toaster /> */}
       <SonnerToaster position="top-right" />
-
-      {/* {visible && (
-        <SettingsDialog
-          //open={tabStat.visible}
-          onOpenChange={setSettingsVisible}
-          onResponse={() => setSettingsVisible(false)}
-        />
-      )} */}
+ 
 
       {/* Show standardized dialogs at the root of the app to avoid nesting issues 
       with portals and z-index */}

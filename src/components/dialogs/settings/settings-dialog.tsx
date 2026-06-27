@@ -1,35 +1,27 @@
 'use client'
 
-import { BaseCol } from '@/layout/base-col'
-
-import { Dialog, DialogContent, DialogTitle } from '@/themed/v2/dialog'
-
-import { VScrollPanel } from '@/components/v-scroll-panel'
-import { TEXT_SETTINGS } from '@/consts'
-import { TAILWIND_MEDIA_LG, useWindowSize } from '@/hooks/window-size'
-
 import type { IChildrenProps } from '@/interfaces/children-props'
-import { VCenterRow } from '@/layout/v-center-row'
 import {
-  Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  ScrollAccordion,
 } from '@/themed/v2/accordion'
 
-import { SettingsIcon } from '@/components/icons/settings-icon'
 // import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/shadcn/ui/themed/v2/tabs'
+import { VScrollPanel } from '@/components/v-scroll-panel'
 import type { UndefStr } from '@/lib/text/text'
-import { Fragment, useEffect, useState, type ReactNode } from 'react'
-import { SideTabs } from '../../tabs/side-tabs'
+import { ComponentType, useMemo, type ReactNode } from 'react'
 import { getTabName, type ITab } from '../../tabs/tab-provider'
 import { GlassSideDialog } from '../glass-side-dialog'
 import type { IOKCancelDialogProps } from '../ok-cancel-dialog'
 import { useSettingsTabs } from './setting-tabs-store'
-import { SettingsDarkModePanel } from './settings-dark-mode-panel'
-import { AppsToolbarPanel } from './settings-modules-panel'
-import { SettingsToolbarPanel } from './settings-toolbar-panel'
+import { SettingsAccordionPanel } from './settings-accordion-panel'
 
 export function getAccordionId(name: string): string {
   return name.toLowerCase().replaceAll(' ', '-')
@@ -82,233 +74,158 @@ export function SettingsAccordionItem({
 //   )
 // }
 
-// These tabs always appear in the UI
-const DEFAULT_TABS: ITab[] = [
-  {
-    id: 'General',
-    icon: <SettingsIcon stroke="" size="w-4.5" strokeWidth={2} />,
-    children: [
-      {
-        id: 'Appearance',
-        children: [
-          {
-            id: 'Dark Mode',
-            description:
-              'Dark mode is a popular feature for reducing eye strain and improving readability in low-light environments.',
-            component: SettingsDarkModePanel,
-          },
-          {
-            id: 'Toolbars',
-            description: 'Customize toolbar settings.',
-            component: SettingsToolbarPanel,
-          },
-          {
-            id: 'Apps',
-            description: 'Manage and configure apps.',
-            component: AppsToolbarPanel,
-          },
-        ],
-      },
-    ],
-  },
-]
-
 export function SettingsDialog({
-  open = true,
-
   onOpenChange = () => {},
   onResponse = () => {},
 }: IOKCancelDialogProps) {
-  const { tabs } = useSettingsTabs()
+  const { tabs, defaultTab, setDefaultTab } = useSettingsTabs()
 
-  let _tabs: ITab[] = [
-    ...DEFAULT_TABS,
-    ...tabs.filter((tab) => getTabName(tab).toLowerCase() !== 'general'),
-  ]
+  let _tabs: ITab[] = useMemo(
+    () => [
+      ...tabs,
+      // general is reserved for the default tab,
+      // so we move it to the top and merge its children with the other tabs
+      //...tabs.filter((tab) => getTabName(tab).toLowerCase() !== 'general'),
+    ],
+    [tabs]
+  )
 
-  // update general
-  for (const tab of tabs.filter(
-    (tab) => getTabName(tab).toLowerCase() === 'general'
-  )) {
-    _tabs[0]?.children?.push(tab)
-  }
+  // // update general
+  // for (const tab of tabs.filter(
+  //   (tab) => getTabName(tab).toLowerCase() === 'general'
+  // )) {
+  //   _tabs[0]?.children?.push(tab)
+  // }
 
-  const [selectedTab, setSelectedTab] = useState(_tabs[0]!) //= useMemo(() => getTabFromValue(value, tabs), [value, tabs])
-  const [subSelectedTab, setSubSelectedTab] = useState(_tabs[0]!.children![0]!)
+  //const winSize = useWindowSize()
 
-  useEffect(() => {
-    setSubSelectedTab(selectedTab.children![0]!)
-  }, [selectedTab])
+  console.log('SettingsDialog tabs:', _tabs)
 
-  const winSize = useWindowSize()
+  // if (winSize.w < TAILWIND_MEDIA_LG) {
+  //   const accordionValues: string[] = _tabs
+  //     .filter((tab) => tab.children)
+  //     .map((tab) =>
+  //       tab
+  //         .children!.filter((childTab) => childTab.children)
+  //         .map((childTab) =>
+  //           childTab.children!.map((g) => getAccordionId(getTabName(g)))
+  //         )
+  //         .flat()
+  //     )
+  //     .flat()
 
-  const activeSideTab = getTabName(selectedTab)
-  const activeSubSideTab = getTabName(subSelectedTab)
+  //   console.log('Accordion Values:', _tabs)
 
-  const SubSelectedTab = subSelectedTab.component
+  //   return (
+  //     <Dialog onOpenChange={onOpenChange}>
+  //       <DialogContent
+  //         //onEscapeKeyDown={() => _resp(TEXT_CANCEL)}
+  //         className="text-sm flex flex-col w-9/10 h-1/2"
+  //       >
+  //         <VCenterRow className="p-3 justify-between">
+  //           <DialogTitle className="text-xl">dd</DialogTitle>
+  //         </VCenterRow>
+  //         <ScrollAccordion
+  //           value={accordionValues}
+  //           className="grow"
+  //           variant="settings"
+  //         >
+  //           {_tabs.map((tab, tabi) => {
+  //             return (
+  //               <Fragment key={tabi}>
+  //                 {tab.children
+  //                   ?.filter((c) => !!c.component)
+  //                   .map((childTab, childi) => {
+  //                     return (
+  //                       <Fragment key={childi}>
+  //                         {renderTab(childTab)}
 
-  if (winSize.w < TAILWIND_MEDIA_LG) {
-    const accordionValues: string[] = _tabs
-      .filter((tab) => tab.children)
-      .map((tab) =>
-        tab
-          .children!.filter((childTab) => childTab.children)
-          .map((childTab) =>
-            childTab.children!.map((g) => getAccordionId(getTabName(g)))
-          )
-          .flat()
-      )
-      .flat()
+  //                         {/* Show sub blocks with a consistent UI */}
+  //                         {childTab.children &&
+  //                           childTab.children
+  //                             .filter((c) => !!c.component)
+  //                             .map((c, gi) => {
+  //                               return (
+  //                                 <SettingsAccordionItem
+  //                                   title={getTabName(c)}
+  //                                   key={gi}
+  //                                 >
+  //                                   {renderTab(c)}
+  //                                 </SettingsAccordionItem>
+  //                               )
+  //                             })}
+  //                       </Fragment>
+  //                     )
+  //                   })}
+  //               </Fragment>
+  //             )
+  //           })}
+  //         </ScrollAccordion>
 
-    console.log('Accordion Values:', accordionValues)
-
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent
-          //onEscapeKeyDown={() => _resp(TEXT_CANCEL)}
-          className="text-sm flex flex-col w-9/10 h-1/2"
-        >
-          <VCenterRow className="p-3 justify-between">
-            <DialogTitle className="text-xl">
-              {getTabName(subSelectedTab)}
-            </DialogTitle>
-          </VCenterRow>
-          <ScrollAccordion
-            value={accordionValues}
-            className="grow"
-            variant="settings"
-          >
-            {_tabs.map((tab, tabi) => {
-              return (
-                <Fragment key={tabi}>
-                  {tab.children
-                    ?.filter((c) => !!c.component)
-                    .map((childTab, childi) => {
-                      const Component = childTab.component!
-
-                      return (
-                        <Fragment key={childi}>
-                          {typeof Component === 'function' ? (
-                            <Component />
-                          ) : (
-                            Component
-                          )}
-
-                          {/* Show sub blocks with a consistent UI */}
-                          {childTab.children &&
-                            childTab.children
-                              .filter((c) => !!c.component)
-                              .map((g, gi) => {
-                                const Component = g.component!
-
-                                return (
-                                  <SettingsAccordionItem
-                                    title={getTabName(g)}
-                                    key={gi}
-                                  >
-                                    {typeof Component === 'function' ? (
-                                      <Component />
-                                    ) : (
-                                      Component
-                                    )}
-                                  </SettingsAccordionItem>
-                                )
-                              })}
-                        </Fragment>
-                      )
-                    })}
-                </Fragment>
-              )
-            })}
-          </ScrollAccordion>
-
-          {/* <VisuallyHidden asChild>
-            <DialogDescription>Application settings</DialogDescription>
-          </VisuallyHidden> */}
-        </DialogContent>
-      </Dialog>
-    )
-  } else {
-    return (
-      <GlassSideDialog
-        title={getTabName(subSelectedTab)}
-        //span={7}
-        cols={3}
-        open={open}
-        onOpenChange={onOpenChange}
-        onResponse={onResponse}
-        overlayColor="trans"
+  //         {/* <VisuallyHidden asChild>
+  //           <DialogDescription>Application settings</DialogDescription>
+  //         </VisuallyHidden> */}
+  //       </DialogContent>
+  //     </Dialog>
+  //   )
+  // } else {
+  return (
+    <GlassSideDialog
+      title={defaultTab}
+      cols={4}
+      onOpenChange={onOpenChange}
+      onResponse={onResponse}
+      overlayColor="trans"
+    >
+      <Tabs
+        value={defaultTab}
+        onValueChange={(v) => {
+          setDefaultTab(v)
+        }}
+        orientation="vertical"
+        className="flex flex-col grow text-xs pr-1"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-2 grow text-xs">
-          <BaseCol className="md:gap-4 px-2 col-span-1">
-            <h1 className="text-base font-semibold">{TEXT_SETTINGS}</h1>
+        <TabsList className="py-1">
+          {_tabs.map((tab, ti) => {
+            const name = getTabName(tab)
+            return (
+              <TabsTrigger
+                value={name}
+                key={ti}
+                className="grow"
+                variant="sidebar"
+              >
+                {name}
+              </TabsTrigger>
+            )
+          })}
+        </TabsList>
+      </Tabs>
 
-            <SideTabs
-              //tabs={_tabs}
-              //value={activeSideTab}
-              // onTabChange={(t) => {
-              //   setSelectedTab(t.tab)
-              // }}
-              showIcons={false}
-            />
-          </BaseCol>
-
-          <SideTabs
-            //tabs={selectedTab.children!}
-            //value={activeSubSideTab}
-            // onTabChange={(t) => {
-            //   setSubSelectedTab(t.tab)
-            // }}
-            showIcons={false}
-            className="h-full"
-          />
-        </div>
-
-        <VScrollPanel className="grow">
-          {/* Show sub blocks with a consistent UI */}
-          {subSelectedTab.children && (
-            <Accordion
-              defaultValue={subSelectedTab.children.map((g) =>
-                getAccordionId(getTabName(g))
-              )}
-              multiple={true}
-              variant="settings"
-            >
-              {subSelectedTab.children
-                .filter((g) => !!g.component)
-                .map((g, gi) => {
-                  const Component = g.component!
-
-                  return (
-                    <SettingsAccordionItem
-                      title={getTabName(g)}
-                      description={g.description}
-                      key={gi}
-                      showBorder={gi > 0}
-                    >
-                      {typeof Component === 'function' ? (
-                        <Component />
-                      ) : (
-                        Component
-                      )}
-                    </SettingsAccordionItem>
-                  )
-                })}
-            </Accordion>
-          )}
-
-          {/* To show custom ui boxes */}
-          {SubSelectedTab && (
-            <>
-              {typeof SubSelectedTab === 'function' ? (
-                <SubSelectedTab />
-              ) : (
-                SubSelectedTab
-              )}
-            </>
-          )}
-        </VScrollPanel>
-      </GlassSideDialog>
-    )
-  }
+      <VScrollPanel className="grow">
+        <Tabs
+          value={defaultTab}
+          orientation="vertical"
+          className="flex flex-col grow text-xs pr-1"
+        >
+          {_tabs.map((tab, ti) => {
+            const Component = tab.component
+              ? (tab.component as ComponentType<{}>)
+              : undefined
+            return (
+              <TabsContent value={getTabName(tab)} key={ti}>
+                {Component && <Component />}
+                {tab.children && tab.children.length > 0 && (
+             
+                    <SettingsAccordionPanel tabs={tab.children} />
+                  
+                )}
+              </TabsContent>
+            )
+          })}
+        </Tabs>
+      </VScrollPanel>
+    </GlassSideDialog>
+  )
+  //}
 }

@@ -1,4 +1,4 @@
-import { useTabs } from '@/components/tabs/tab-provider'
+import { renderTab, useTabs } from '@/components/tabs/tab-provider'
 import type { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_RING_CLS } from '@/theme'
@@ -253,19 +253,13 @@ export function TabContentPanels({
       {tabs
         .filter((c) => !!c.component)
         .map((tab, ti) => {
-          const TabContentComponent = tab.component!
-
           return (
             <TabsContent
               value={tab.id}
               key={ti}
               className={cn('h-full', contentCls)}
             >
-              {typeof TabContentComponent === 'function' ? (
-                <TabContentComponent />
-              ) : (
-                TabContentComponent
-              )}
+              {renderTab(tab)}
             </TabsContent>
           )
         })}

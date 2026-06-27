@@ -9,16 +9,16 @@ import { useEffect, useState } from 'react'
 
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import {
-    TEXT_DOWNLOAD_AS_PNG,
-    TEXT_DOWNLOAD_AS_SVG,
-    TEXT_EXPORT,
+  TEXT_DOWNLOAD_AS_PNG,
+  TEXT_DOWNLOAD_AS_SVG,
+  TEXT_EXPORT,
 } from '@/consts'
 
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
 } from '@/themed/v2/select'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -57,14 +57,15 @@ import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { AssemblySelect } from '@/lib/edb/assembly-select'
 import { locStr } from '@/lib/genomic/genomic'
 import {
-    parseGenomicLocation,
-    type IGenomicLocation,
+  parseGenomicLocation,
+  type IGenomicLocation,
 } from '@/lib/genomic/genomic-location'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { LocationAutocomplete } from './location-autocomplete'
 import { LocationsPropsPanel } from './locations/locations-props-panel'
 import { SeqbrowserDialogsRoot } from './seq-browser-dialogs'
 import { useSeqBrowserSettings, type BinSize } from './seq-browser-settings'
+import { SettingsCytobandPanel } from './settings/settings-cytoband-panel'
 import { SettingsPlotPanel } from './settings/settings-plot-panel'
 import { SettingsTracksPanel } from './settings/settings-tracks-panel'
 import { TracksView } from './svg/tracks-view'
@@ -81,7 +82,8 @@ function SeqBrowserPage() {
 
   const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
 
-  const { setSettingsTabs, setDefaultSettingsTab } = useSettingsTabs()
+  const { setSettingsTabs, setDefaultTab: setDefaultSettingsTab } =
+    useSettingsTabs()
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
@@ -125,6 +127,12 @@ function SeqBrowserPage() {
             id: 'Tracks',
             icon: <LayersIcon />,
             component: SettingsTracksPanel,
+          },
+          {
+            id: 'Cytobands',
+            description: 'Cytoband display settings',
+            icon: <LayersIcon />,
+            component: SettingsCytobandPanel,
           },
         ],
       },

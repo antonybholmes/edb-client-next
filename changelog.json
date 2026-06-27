@@ -1943,6 +1943,10 @@
         {
           "msg": "Tabbed dataframes now uses history to render. Lots of UI fixes for new layout system",
           "date": "2026-06-26T20:17:57.161Z"
+        },
+        {
+          "msg": "Refined settings dialog",
+          "date": "2026-06-27T23:05:28.471Z"
         }
       ],
       "Added": [

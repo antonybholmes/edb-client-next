@@ -4,6 +4,7 @@ import type { IChildrenProps } from '@/interfaces/children-props'
 import { useFooter } from '@/providers/footer-provider'
 import { CENTERED_ROW_CLS } from '@/theme'
 import { VCenterRow } from '../layout/v-center-row'
+import { renderTab } from '../tabs/tab-provider'
 
 export const TOOLBAR_FOOTER_CLS = cn(
   CENTERED_ROW_CLS,
@@ -17,14 +18,12 @@ export function Footer({ className }: IChildrenProps) {
 
   return (
     <footer className={cn(TOOLBAR_FOOTER_CLS, className)} id="footer">
-      <VCenterRow id="footer-left">
-        {Left && <>{typeof Left === 'function' ? <Left /> : Left}</>}
-      </VCenterRow>
+      <VCenterRow id="footer-left">{Left && renderTab(Left)}</VCenterRow>
       <VCenterRow id="footer-center" className="justify-center col-span-2">
-        {Center && <>{typeof Center === 'function' ? <Center /> : Center}</>}
+        {Center && renderTab(Center)}
       </VCenterRow>
       <VCenterRow id="footer-right" className="justify-end">
-        {Right && <>{typeof Right === 'function' ? <Right /> : Right}</>}
+        {Right && renderTab(Right)}
       </VCenterRow>
     </footer>
   )

@@ -46,6 +46,25 @@ export interface ITab {
   createdAt?: string | number | Date
 }
 
+export function renderTab(
+  tab: ITab | ComponentType<{}> | ReactNode
+): ReactNode {
+  if (!tab) {
+    return null
+  }
+
+  if (typeof tab === 'function') {
+    const Component = tab
+    return <Component />
+  }
+
+  if (typeof tab === 'object' && 'component' in tab) {
+    return renderTab(tab.component)
+  }
+
+  return tab as ReactNode
+}
+
 export interface IUrlTab extends ITab {
   url?: string
 }

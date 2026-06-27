@@ -10,6 +10,7 @@
 
 ### Changed
 
+- Refined settings dialog.
 - Tabbed dataframes now uses history to render. Lots of UI fixes for new layout system.
 - Removal of history reorder of sheets and plots.
 - All apps now compile.

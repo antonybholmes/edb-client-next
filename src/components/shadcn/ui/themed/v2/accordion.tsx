@@ -18,7 +18,7 @@ import {
 
 //const Accordion = AccordionPrimitive.Root
 
-export const accordionVariants = cva('flex flex-col', {
+export const accordionVariants = cva('flex flex-col w-full', {
   variants: {
     variant: {
       default: 'gap-y-0.5',
@@ -109,7 +109,7 @@ export const SubAccordion = forwardRef<HTMLDivElement, IScrollAccordionProps>(
         value={v}
         // if user species onChange, let them handle which
         // accordions are open, otherwise we'll do it internally
-        onValueChange={v =>
+        onValueChange={(v) =>
           onValueChange?.(v as string[]) ?? setValue(v as string[])
         }
         className={cn('flex flex-col gap-y-0.5', className)}

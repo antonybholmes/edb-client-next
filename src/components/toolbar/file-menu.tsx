@@ -16,7 +16,7 @@ import {
   MenuSeparator,
 } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 
-import type { ITab } from '@/components/tabs/tab-provider'
+import { renderTab, type ITab } from '@/components/tabs/tab-provider'
 import { TEXT_FILE, TEXT_OPTIONS, TEXT_SETTINGS } from '@/consts'
 import type { VariantProps } from 'class-variance-authority'
 import { useSettingsTabs } from '../dialogs/settings/setting-tabs-store'
@@ -135,8 +135,6 @@ export function FileMenu({
               return <MenuSeparator key={ti} />
             }
 
-            const Component = tab.component
-
             return (
               <DropdownMenuSub key={ti}>
                 <DropdownMenuSubTrigger>
@@ -145,12 +143,7 @@ export function FileMenu({
                 </DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
                   <DropdownMenuSubContent variant={variant}>
-                    {Component &&
-                      (typeof Component === 'function' ? (
-                        <Component />
-                      ) : (
-                        Component
-                      ))}
+                    {renderTab(tab)}
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
               </DropdownMenuSub>
