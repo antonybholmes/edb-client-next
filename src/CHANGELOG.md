@@ -4,6 +4,7 @@
 
 ### Added
 
+- Added X in Y filter.
 - Added save table dialog.
 - History provider to replace history store.
 

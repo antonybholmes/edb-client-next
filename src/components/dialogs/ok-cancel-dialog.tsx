@@ -29,6 +29,7 @@ import { osName } from 'react-device-detect'
 import { CloseIcon } from '../icons/close-icon'
 import { ErrorIcon } from '../icons/error-icon'
 import { WarningIcon } from '../icons/warning-icon'
+import { HCenterRow } from '../layout/h-center-row'
 // Try to determine the operating system
 const OS = osName
 
@@ -89,6 +90,8 @@ export interface IModalProps<T = unknown> extends IOpenChange, IChildrenProps {
   buttonOrder?: 'auto' | 'primary-first' | 'primary-last'
   modalType?: ModalType | undefined
   bodyCls?: UndefStr
+  w?: string | number
+  h?: string | number
 }
 
 export interface IOKCancelDialogProps<T = unknown>
@@ -103,6 +106,7 @@ export interface IOKCancelDialogProps<T = unknown>
   headerChildren?: ReactNode
   leftHeaderChildren?: ReactNode
   rightHeaderChildren?: ReactNode
+  centerHeaderChildren?: ReactNode
   headerStyle?: CSSProperties
   leftFooterChildren?: ReactNode
 }
@@ -121,13 +125,16 @@ export function OKCancelDialog({
   footerVariant = 'default',
   bodyCls = 'gap-y-1',
   modalType = 'default',
-  className = 'w-11/12 sm:w-3/4 md:w-8/12 xl:w-2/5 2xl:w-1/3',
+  w = 'w-11/12 sm:w-3/4 md:w-8/12 xl:w-2/5 2xl:w-1/3',
+  h,
   style = {},
   headerChildren,
   leftHeaderChildren,
   rightHeaderChildren,
+  centerHeaderChildren,
   headerStyle,
   leftFooterChildren,
+  className,
   children,
   ...props
 }: IOKCancelDialogProps) {
@@ -138,14 +145,14 @@ export function OKCancelDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={cn('text-sm flex flex-col py-6 gap-y-4', className)}
+        className={cn('text-sm flex flex-col py-6 gap-y-4', w, h, className)}
         {...props}
       >
         <DialogHeader
           style={headerStyle}
           className={dialogHeaderVariants({ headerVariant })}
         >
-          <VCenterRow className="gap-x-2">
+          <VCenterRow className="gap-x-2 pl-2">
             {leftHeaderChildren && leftHeaderChildren}
             <DialogTitle>{title}</DialogTitle>
             {headerChildren && headerChildren}
@@ -154,11 +161,16 @@ export function OKCancelDialog({
             {rightHeaderChildren && rightHeaderChildren}
             {showClose && (
               <CloseButton
-                onClick={() => _resp(TEXT_CANCEL)}
-                //className="-mr-3"
+              // onClick={() => _resp(TEXT_CANCEL)}
+              //className="-mr-3"
               />
             )}
           </VCenterRow>
+          {centerHeaderChildren && (
+            <HCenterRow className="left-1/2 -translate-x-1/2 absolute">
+              {centerHeaderChildren}
+            </HCenterRow>
+          )}
         </DialogHeader>
 
         {modalType === 'error' && (

@@ -1953,6 +1953,10 @@
         {
           "msg": "Added save table dialog",
           "date": "2026-06-26T02:14:05.238Z"
+        },
+        {
+          "msg": "Added X in Y filter",
+          "date": "2026-06-27T02:09:44.258Z"
         }
       ]
     },

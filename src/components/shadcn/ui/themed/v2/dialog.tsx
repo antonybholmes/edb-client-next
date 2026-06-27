@@ -84,10 +84,10 @@ export const contentVariants = cva(
   }
 )
 
-export const dialogHeaderVariants = cva('pl-6 pr-3', {
+export const dialogHeaderVariants = cva('relative px-3', {
   variants: {
     headerVariant: {
-      default: '-mt-2',
+      default: '-mt-3',
       opaque: 'bg-background m-4',
     },
   },

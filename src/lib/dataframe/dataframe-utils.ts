@@ -20,6 +20,7 @@ import { DataFrame } from './dataframe'
 
 import { DataIndex, strs } from '.'
 import { vfill } from '../fill'
+import { where } from '../math/where'
 import { DataFrameWriter, type IDataFrameWriterOpts } from './dataframe-writer'
 import type { IndexId, SeriesData } from './series-data'
 
@@ -520,6 +521,23 @@ export function medianFilter(df: BaseDataFrame, top = 1000) {
   return df
     .iloc({ rows: topIdx })
     .setName(`Filter rows using median, top ${top}`, true)
+}
+
+export function xInY(
+  df: BaseDataFrame,
+  exp: number = 1,
+  samples: number = 3
+): BaseDataFrame {
+  const dfBin = df.apply((v) => ((v as number) >= exp ? 1 : 0))
+
+  const s = rowSums(dfBin)
+
+  const idx = where(s, (v) => v >= samples)
+
+  // return a filtered matrix
+  return df
+    .iloc({ rows: idx })
+    .setName(`Exp ${exp} in ${samples} samples`, true)
 }
 
 export function zscore(df: BaseDataFrame): BaseDataFrame {
