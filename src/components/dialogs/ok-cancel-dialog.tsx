@@ -167,7 +167,7 @@ export function OKCancelDialog({
             )}
           </VCenterRow>
           {centerHeaderChildren && (
-            <HCenterRow className="left-1/2 -translate-x-1/2 absolute">
+            <HCenterRow className="left-1/2 top-1/2 -translate-1/2 absolute">
               {centerHeaderChildren}
             </HCenterRow>
           )}

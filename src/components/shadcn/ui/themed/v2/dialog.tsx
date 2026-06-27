@@ -84,17 +84,20 @@ export const contentVariants = cva(
   }
 )
 
-export const dialogHeaderVariants = cva('relative px-3', {
-  variants: {
-    headerVariant: {
-      default: '-mt-3',
-      opaque: 'bg-background m-4',
+export const dialogHeaderVariants = cva(
+  'relative px-3 flex flex-row items-center',
+  {
+    variants: {
+      headerVariant: {
+        default: '-mt-3',
+        opaque: 'bg-background m-4',
+      },
     },
-  },
-  defaultVariants: {
-    headerVariant: 'default',
-  },
-})
+    defaultVariants: {
+      headerVariant: 'default',
+    },
+  }
+)
 
 export const dialogBodyVariants = cva('', {
   variants: {
@@ -167,7 +170,7 @@ const DialogContent = forwardRef<
         overlayVariant={overlayVariant}
         overlayColor={overlayColor}
       />
-      {/* <DialogPrimitive.Viewport> */}
+
       <DialogPrimitive.Popup
         ref={ref}
         className={cn(
@@ -184,12 +187,7 @@ const DialogContent = forwardRef<
         {...props}
       >
         {children}
-        {/* <DialogPrimitive.Close className="absolute right-4 top-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-open:bg-muted data-open:text-foreground/50">
-        <Cross2Icon className="h-4 w-4" />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close> */}
       </DialogPrimitive.Popup>
-      {/* </DialogPrimitive.Viewport> */}
     </DialogPortal>
   )
 )

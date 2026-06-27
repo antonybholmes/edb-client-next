@@ -118,7 +118,6 @@ export function SettingsDialog({
 
   onOpenChange = () => {},
   onResponse = () => {},
-  //className = 'w-11/12 xl:w-3/4 3xl:w-7/12 h-2/3',
 }: IOKCancelDialogProps) {
   const { tabs } = useSettingsTabs()
 

@@ -79,31 +79,33 @@ export function TopRowsPanel({
   }))
 
   return (
-    <VCenterRow className="gap-x-3">
-      <span>Keep top</span>
-      <NumericalInput
-        id="top-rows"
-        value={topRows}
-        limit={[1, Number.MAX_SAFE_INTEGER]}
-        step={1}
-        onChange={(e) => setTopRows(Number.parseInt(e.target.value))}
-        w="xs"
-        placeholder="Top rows..."
-      />
-      <span>rows using row</span>
-      <SelectList
-        value={method}
-        onValueChange={(v) => {
-          if (v) {
-            setMethod(v as string)
-          }
-        }}
-      >
-        <SelectItem value="Stdev">Stdev</SelectItem>
-        <SelectItem value="Mean">Mean</SelectItem>
-        <SelectItem value="Median">Median</SelectItem>
-      </SelectList>
-    </VCenterRow>
+    <HCenterRow className="gap-x-3">
+      <VCenterRow className="gap-x-3">
+        <span>Keep top</span>
+        <NumericalInput
+          id="top-rows"
+          value={topRows}
+          limit={[1, Number.MAX_SAFE_INTEGER]}
+          step={1}
+          onChange={(e) => setTopRows(Number.parseInt(e.target.value))}
+          w="xs"
+          placeholder="Top rows..."
+        />
+        <span>rows using row</span>
+        <SelectList
+          value={method}
+          onValueChange={(v) => {
+            if (v) {
+              setMethod(v as string)
+            }
+          }}
+        >
+          <SelectItem value="Stdev">Stdev</SelectItem>
+          <SelectItem value="Mean">Mean</SelectItem>
+          <SelectItem value="Median">Median</SelectItem>
+        </SelectList>
+      </VCenterRow>
+    </HCenterRow>
   )
 }
 
@@ -113,7 +115,7 @@ export function XInYPanel({
 }: IModalProps<BaseDataFrame> & { ref: RefObject<IRef | null> }) {
   const [exp, setExp] = useState(1)
   const [samples, setSamples] = useState(3)
-  const [method, setMethod] = useState('Stdev')
+
   const { addSheets } = useHistory()
   const { sheets } = useCurrentSheets()
 
@@ -169,7 +171,7 @@ export function XInYPanel({
   )
 }
 
-export function TopRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
+export function FilterRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
   const [tab, setTab] = useState('top-rows')
 
   const ref = useRef<IRef | null>(null)
@@ -192,7 +194,7 @@ export function TopRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
           onValueChange={(v) => {
             setTab(v[0]! as string)
           }}
-          //size="toolbar"
+          size="lg"
           //direction="toolbar"
           rounded="none"
           className="rounded-theme overflow-hidden"
@@ -201,14 +203,14 @@ export function TopRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
             <GroupToggle
               key={tab.id}
               value={tab.id}
-              className="w-20 font-medium"
+              className="w-24 font-medium"
             >
               {tab.name}
             </GroupToggle>
           ))}
         </ToggleGroup>
       }
-      h="h-64"
+      h="h-56"
     >
       {tab === 'top-rows' && <TopRowsPanel ref={ref} onResponse={onResponse} />}
       {tab === 'x-in-y' && <XInYPanel ref={ref} onResponse={onResponse} />}

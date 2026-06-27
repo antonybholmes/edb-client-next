@@ -21,13 +21,13 @@ import { KmeansDialog } from './apps/kmeans/kmeans-dialog'
 import { MotifToGeneDialog } from './apps/motifs-to-genes/motif-to-gene-dialog'
 import { VolcanoDialog } from './apps/volcano/volcano-dialog'
 
+import { FilterRowsDialog } from './filter-rows-dialog'
 import {
   DataFrameType,
   HistoryPlot,
 } from './history/history-provider/history-types'
 import { OpenTableDialog } from './open-table-dialog'
 import { SortRowDialog } from './sort-row-dialog'
-import { TopRowsDialog } from './top-rows-dialog'
 
 type DialogTypeMap = {
   'open-table-file': {
@@ -56,7 +56,7 @@ type DialogTypeMap = {
     selection: ISelectionRange
     callback?: ModalResponse<BaseDataFrame>
   }
-  'top-rows': {
+  'filter-rows': {
     callback?: ModalResponse<BaseDataFrame>
   }
   'motif-to-gene': {
@@ -276,10 +276,13 @@ function SortRowsDialogRenderer({
   )
 }
 
-function TopRowsDialogRenderer({ dialog, close }: IDialogRenderer<'top-rows'>) {
+function FilterRowsDialogRenderer({
+  dialog,
+  close,
+}: IDialogRenderer<'filter-rows'>) {
   const { callback } = dialog.payload
   return (
-    <TopRowsDialog
+    <FilterRowsDialog
       onResponse={(response, data) => {
         if (response === TEXT_OK && data) {
           callback?.(response, data)
@@ -375,8 +378,8 @@ function DialogRenderer({
       return <KmeansDialogRenderer dialog={dialog} close={close} />
     case 'sort-rows':
       return <SortRowsDialogRenderer dialog={dialog} close={close} />
-    case 'top-rows':
-      return <TopRowsDialogRenderer dialog={dialog} close={close} />
+    case 'filter-rows':
+      return <FilterRowsDialogRenderer dialog={dialog} close={close} />
     case 'motif-to-gene':
       return <MotifToGeneDialogRenderer dialog={dialog} close={close} />
     case 'gex':

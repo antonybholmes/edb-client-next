@@ -207,10 +207,10 @@ export function DataToolbar() {
 
       <ToolbarTabGroup title="Rows">
         <ToolbarIconButton
-          title="Filter Top Rows using Statistics"
+          title="Filter Rows"
           onClick={() => {
             openMatcalcDialog({
-              type: 'top-rows',
+              type: 'filter-rows',
               payload: {},
             })
           }}
