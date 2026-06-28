@@ -20,7 +20,7 @@ export const TRIGGER_SELECTED_CLS =
 export const BASE_TRIGGER_CLS = cn(
   FOCUS_RING_CLS,
   'flex disabled:opacity-50 hover:bg-muted/50',
-  'data-active:font-semibold overflow-hidden'
+  'data-active:font-medium overflow-hidden'
 )
 
 export const TRIGGER_CLS = cn(
@@ -31,7 +31,7 @@ export const TRIGGER_CLS = cn(
 
 export const SIDEBAR_CLS = cn(
   BASE_TRIGGER_CLS,
-  'flex-row items-center px-3 h-8 data-active:bg-muted/50 rounded-theme'
+  'flex-row items-center px-3 h-8.5 data-active:bg-muted/50 rounded-theme'
 )
 
 export const PLAIN_CLS = cn(
@@ -60,22 +60,6 @@ export const UNDERLINE_CLS = cn(
 export function Tabs({ ...props }: ComponentProps<typeof TabsPrimitive.Root>) {
   return <TabsPrimitive.Root {...props} />
 }
-
-// export const BaseTabsList = forwardRef<
-//   ComponentRef<typeof TabsPrimitive.List>,
-//   ComponentPropsWithoutRef<typeof TabsPrimitive.List>
-// >(({ className, ...props }, ref) => (
-//   <TabsPrimitive.List
-//     id="tabs-list"
-//     ref={ref}
-//     className={cn(
-//       'flex data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col',
-//       className
-//     )}
-//     {...props}
-//   />
-// ))
-// BaseTabsList.displayName = 'BaseTabsList' //TabsPrimitive.List.displayName
 
 const tabVariants = cva('flex relative', {
   variants: {
@@ -107,19 +91,6 @@ export const TabsList = forwardRef<
   />
 ))
 TabsList.displayName = 'TabsList' //TabsPrimitive.List.displayName
-
-// export const BaseTabsTrigger = forwardRef<
-//   ComponentRef<typeof TabsPrimitive.Trigger>,
-//   IBaseTabsTrigger
-// >(({ selected = false, className, ...props }, ref) => (
-//   <TabsPrimitive.Trigger
-//     ref={ref}
-//     className={className}
-//     data-checked={selected}
-//     {...props}
-//   />
-// ))
-// BaseTabsTrigger.displayName = 'BaseTabsTrigger' //TabsPrimitive.Trigger.displayName
 
 const triggerVariants = cva('relative', {
   variants: {

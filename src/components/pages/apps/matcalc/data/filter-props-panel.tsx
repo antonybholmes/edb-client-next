@@ -144,11 +144,7 @@ export function FilterPropsPanel() {
       </ResizableSidebarHeaderPortal>
 
       <PropsPanel className="gap-y-2">
-        <ResizablePanelGroup
-          orientation="vertical"
-          className="grow"
-          //autoSaveId="venn-resizable-panels-v"
-        >
+        <ResizablePanelGroup orientation="vertical" className="grow">
           <ResizablePanel
             defaultSize="30%"
             minSize="0%"

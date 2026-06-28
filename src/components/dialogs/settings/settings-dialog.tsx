@@ -108,7 +108,7 @@ export function SettingsDialog({
         orientation="vertical"
         className="flex flex-col grow text-xs pr-1"
       >
-        <TabsList className="py-1">
+        <TabsList className="py-1 gap-y-px">
           {_tabs.map((tab, ti) => {
             const name = getTabName(tab)
             return (

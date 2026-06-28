@@ -147,17 +147,14 @@ export function SmallDragHandle({
   const { attributes, listeners } = useSortable({ id })
 
   return (
-    <span
-      className={cn(
-        'inline-flex flex-row items-center justify-center cursor-ns-resize',
-        className
-      )}
+    <VCenterRow
+      className={cn('justify-center overflow-hidden', className)}
       {...listeners}
       {...attributes}
       {...props}
     >
-      <EllipsisVertical />
-    </span>
+      <EllipsisVertical size={16} className="shrink-0 pointer-events-none" />
+    </VCenterRow>
   )
 }
 

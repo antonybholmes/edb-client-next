@@ -67,7 +67,9 @@ export function ScrollAccordion({
   const [_value, setValue] = useState<AccordionValue | undefined>(value)
 
   useEffect(() => {
-    setValue(value)
+    if ((value?.length ?? 0) > 0) {
+      setValue(value)
+    }
   }, [value])
 
   // if user doesn't supply a change monitor, we'll monitor

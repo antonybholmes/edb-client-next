@@ -109,11 +109,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "48.0.0",
+    "version": "48.0.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-06-28T03:36:53.100Z",
-    "hash": "61c3b434e16887d89e243461ba2923f22cb9875acc2113fd1b03cb4855ae5981",
-    "build": 1688
+    "modified": "2026-06-28T04:07:40.165Z",
+    "hash": "c74cdde969be3ce37e7b8aec5c5a71bb2fb3e111f047bf66eae1565a1a249e95",
+    "build": 1690
   },
   {
     "name": "Motifs",
@@ -131,9 +131,9 @@
     "color": "#ff99cc",
     "version": "28.8.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-28T02:10:33.604Z",
-    "hash": "de0f695f0492f82f1a49525dfc969ade455d673491d6e1c30c1f87d425de1577",
-    "build": 1060
+    "modified": "2026-06-28T04:07:40.169Z",
+    "hash": "1a1b7e14a077234ab20e5ec544ffbbc8c802fb19a34512906140b07af58c4a2c",
+    "build": 1062
   },
   {
     "name": "Overlap",

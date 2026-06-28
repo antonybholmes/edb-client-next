@@ -31,7 +31,7 @@ export function FeaturePropsPanel() {
       <TabsContent value="clinical">
         <ClinicalPropsPanel />
       </TabsContent>
-      <TabsList className="py-1">
+      <TabsList className="py-1 gap-y-px">
         <TabsTrigger value="genes" className="grow" variant="sidebar">
           Genes
         </TabsTrigger>

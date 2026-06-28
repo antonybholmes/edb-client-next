@@ -140,16 +140,16 @@ function SheetItem({
         aria-label={name}
         className={tabButtonVariants({
           variant,
-          className: 'flex flex-row items-center relative',
+          className: 'flex flex-row items-center relative pr-4',
         })}
         variant="base"
-        style={{ paddingRight: allowReorder ? '1rem' : '0.5rem' }}
+
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
       >
         <SmallDragHandle
           id={sheet.id}
-          className="cursor-ew-resize w-4 opacity-0 group-hover:opacity-100 trans-opacity"
+          className="w-4 h-6 cursor-ew-resize opacity-0 group-hover:opacity-100 trans-opacity"
           aria-label="Drag sheet to move"
         />
         <span
