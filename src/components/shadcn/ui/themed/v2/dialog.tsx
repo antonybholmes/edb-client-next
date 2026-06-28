@@ -215,7 +215,7 @@ const DialogTitle = forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn('text-base font-bold truncate', className)}
+    className={cn('text-base font-semibold truncate', className)}
     {...props}
   />
 ))

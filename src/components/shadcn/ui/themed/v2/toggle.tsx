@@ -21,13 +21,14 @@ export const toggleVariants = cva(TOGGLE_CLS, {
         'hover:bg-muted/50 data-pressed:bg-muted/50'
       ),
       outline:
-        'border border-transparent bg-transparent data-pressed:font-semibold text-xs data-pressed:bg-background data-pressed:shadow-xs data-pressed:border-border/75 rounded-theme overflow-hidden',
-      gray: 'border border-transparent bg-transparent data-[state=off]:hover:bg-faint data-pressed:font-semibold text-xs data-pressed:bg-faint data-pressed:border-border overflow-hidden',
+        'border border-transparent bg-transparent data-pressed:font-semibold text-xs data-pressed:bg-background data-pressed:shadow-xs data-pressed:border-border/75 rounded-theme',
+      gray: 'border border-transparent bg-transparent data-[state=off]:hover:bg-faint data-pressed:font-semibold text-xs data-pressed:bg-faint data-pressed:border-border',
       tab: 'overflow-hidden text-xs rounded-theme data-[state=off]:hover:bg-faint data-pressed:bg-theme/25 data-pressed:font-semibold',
       'app-theme':
         'flex flex-col gap-y-2 items-center p-2 border-2 border-border border-transparent hover:border-app-theme/25 data-pressed:shadow-xs data-pressed:border-app-theme/50 data-pressed:bg-app-theme/10',
       group:
         'hover:bg-muted/60 data-pressed:text-theme focus-visible:z-10 focus:z-10 outline-2 -outline-offset-2 outline-transparent focus-visible:outline-ring border border-border data-pressed:font-semibold',
+      ios: 'hover:bg-background/50 data-pressed:bg-background focus-visible:outline-ring data-pressed:font-medium data-pressed:shadow-sm',
     },
     size: {
       sm: 'h-7',

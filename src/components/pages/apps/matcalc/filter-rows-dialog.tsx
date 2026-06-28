@@ -45,20 +45,14 @@ export function TopRowsPanel({
 
     switch (method) {
       case 'Mean':
-        //mean
-        //dfMean(df, historyDispatch)
-
         df = meanFilter(df, topRows)
 
         break
       case 'Median':
-        //dfMedian(df, historyDispatch)
-
-        df = df = medianFilter(df, topRows)
+        df = medianFilter(df, topRows)
         break
       default:
         // stdev
-        //dfStdev(df, historyDispatch)
 
         df = stdevFilter(df, topRows)
         break
@@ -188,22 +182,24 @@ export function FilterRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
       }}
       centerHeaderChildren={
         <ToggleGroup
-          //variant="outline"
+          variant="ios"
 
           value={[tab]}
           onValueChange={(v) => {
             setTab(v[0]! as string)
           }}
-          size="lg"
+          //size="lg"
           //direction="toolbar"
-          rounded="none"
-          className="rounded-theme overflow-hidden"
+          //rounded="none"
+          className="rounded-lg gap-x-0.5 overflow-hidden text-xs bg-muted/50 p-0.5"
         >
-          {TABS.map((tab) => (
+          {TABS.map((tab, ti) => (
             <GroupToggle
               key={tab.id}
               value={tab.id}
-              className="w-24 font-medium"
+              data-is-first={ti === 0}
+              data-is-last={ti === TABS.length - 1}
+              className="w-22"
             >
               {tab.name}
             </GroupToggle>

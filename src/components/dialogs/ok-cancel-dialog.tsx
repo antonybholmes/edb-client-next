@@ -161,8 +161,8 @@ export function OKCancelDialog({
             {rightHeaderChildren && rightHeaderChildren}
             {showClose && (
               <CloseButton
-              // onClick={() => _resp(TEXT_CANCEL)}
-              //className="-mr-3"
+                onClick={() => _resp(TEXT_CANCEL)}
+                //className="-mr-3"
               />
             )}
           </VCenterRow>

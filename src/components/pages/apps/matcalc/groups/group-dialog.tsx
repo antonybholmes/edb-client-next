@@ -78,6 +78,7 @@ export function GroupDialog({ group, onResponse }: IProps) {
         </span>
       }
       onResponse={(r) => {
+        console.log('GroupDialog onResponse', r, name, search, color)
         if (r === TEXT_CANCEL) {
           onResponse?.(r, undefined)
         } else {

@@ -52,7 +52,7 @@ export function GlassSideDialog({
       {c[0]!}
 
       <>
-        <DialogHeader className="flex flex-row justify-between pl-2">
+        <DialogHeader className="flex flex-row justify-between p-1 pl-2">
           {typeof title === 'string' && <DialogTitle>{title}</DialogTitle>}
           {title && typeof title !== 'string' && title}
 
