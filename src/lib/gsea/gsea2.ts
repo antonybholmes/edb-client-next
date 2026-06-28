@@ -17,19 +17,17 @@ export function snrRankGenes(
   epsilon: number = 1e-100
 ): IRankedGenes {
   // split table for each group
-  const tables = [group1, group2].map(group => {
+  const tables = [group1, group2].map((group) => {
     const colIdx = getColIdxFromGroup(df, group)
-    console.log('colIdx', colIdx, df.iloc({ cols: colIdx }))
+
     return df.iloc({ cols: colIdx })
   })
 
   const names = df.index.strs
 
-  console.log('names', names)
+  const means = tables.map((df) => rowMean(df))
 
-  const means = tables.map(df => rowMean(df))
-
-  const sds = tables.map(df => rowStdev(df))
+  const sds = tables.map((df) => rowStdev(df))
 
   const meanDiffs = sub(means[0]!, means[1]!)
 
@@ -38,10 +36,6 @@ export function snrRankGenes(
   const snr = div(meanDiffs, sdSum)
 
   const idx = argsort(snr).toReversed()
-
-  console.log('group1', group1)
-  console.log('group2', group2)
-  console.log('tables', means)
 
   return {
     group1,

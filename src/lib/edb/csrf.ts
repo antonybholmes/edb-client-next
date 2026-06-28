@@ -49,7 +49,6 @@ export const CSRF_COOKIE_NAME = 'csrf-token'
 //   },
 
 //   fetchTokenFromServer: async () => {
-//     console.log('Fetching CSRF token from server...')
 
 //     const res = await httpFetch.getJson<{ data: { csrfToken: string } }>(
 //       SESSION_REFRESH_CSRF_TOKENS_URL,
@@ -57,8 +56,6 @@ export const CSRF_COOKIE_NAME = 'csrf-token'
 //     )
 
 //     const token = res.data.csrfToken
-
-//     console.log('CSRF token fetched:', token)
 
 //     // cache in store
 //     set({ token })

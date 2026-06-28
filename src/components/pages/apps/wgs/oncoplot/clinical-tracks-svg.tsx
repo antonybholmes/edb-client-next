@@ -237,7 +237,9 @@ export function clinicalTracksSvg(
   return (
     <g>
       {clinicalTracks
-        .filter(track => displayProps.legend.clinical.tracks[track.name]!.show)
+        .filter(
+          (track) => displayProps.legend.clinical.tracks[track.name]!.show
+        )
         .map((track, ti) => {
           let node: ReactNode = null
 
@@ -317,8 +319,6 @@ export function hClinicalLegendSvg(
   blockSize: IBlock,
   displayProps: IOncoplotDisplayProps
 ): ReactNode {
-  console.log('clinicalLegendSvg', track, trackProps, track.categories)
-
   return (
     <g id={`legend-clinical-${track.name}`}>
       <g
@@ -446,7 +446,7 @@ export function clinicalLegendSvgs(
     <>
       {tracks
         .filter(
-          track =>
+          (track) =>
             (track.type === 'dist' || track.type === 'category') &&
             displayProps.legend.clinical.tracks[track.name]!.show
         )

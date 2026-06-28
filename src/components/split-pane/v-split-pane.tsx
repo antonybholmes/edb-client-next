@@ -57,13 +57,8 @@ export function VSplitPane({
     const rect = ref.current.getBoundingClientRect()
 
     let cp = y / rect.height
-    //const ydiff = y - dragging.current.y
-    //const ydiffp = ydiff / rect.height
-    //const p = dragging.current.p + ydiffp
 
-    //console.log(y, cp, dragging.current.p, rect.height)
-
-    const rcp = sticky.filter(x => Math.abs(cp - x) < STICKY_SENSITIVITY)
+    const rcp = sticky.filter((x) => Math.abs(cp - x) < STICKY_SENSITIVITY)
 
     if (rcp.length > 0) {
       cp = rcp[0]!
@@ -130,8 +125,6 @@ export function VSplitPane({
   }
 
   function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
-    //console.log(e.code)
-
     if (!focus) {
       return
     }
@@ -150,7 +143,7 @@ export function VSplitPane({
     }
   }
 
-  useMouseMoveListener(e => onMouseMove(e as MouseEvent))
+  useMouseMoveListener((e) => onMouseMove(e as MouseEvent))
   useMouseUpListener(onMouseUp)
 
   if (panels.length < 2) {

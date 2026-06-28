@@ -111,7 +111,6 @@ export const useMatcalcDialogStore = create<IMatcalcDialogStore>((set) => ({
   open: (d: InputDialog) => {
     const id = makeUuid()
     const dialog = { ...d, id, time: Date.now() }
-    console.log('Opening dialog', dialog.type, id)
 
     set((state) => ({
       stack: [...state.stack.slice(-MAX_DIALOGS + 1), dialog],

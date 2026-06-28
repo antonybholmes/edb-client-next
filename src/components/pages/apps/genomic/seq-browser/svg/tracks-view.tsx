@@ -71,7 +71,7 @@ export function TracksView({ ref, className, style }: ISVGProps) {
   useImperativeHandle(ref, () => innerRef.current!)
 
   const axes = useMemo(() => {
-    return locations.map(location => {
+    return locations.map((location) => {
       let xax = new Axis().setLength(settings.plot.width)
 
       if (settings.reverse) {
@@ -264,7 +264,7 @@ export function TracksView({ ref, className, style }: ISVGProps) {
         )
 
         setLocations(
-          produce(locations, draft => {
+          produce(locations, (draft) => {
             draft[column.current.col] = {
               id: makeUuid(),
               search: locStr(newLocation),
@@ -332,7 +332,7 @@ export function TracksView({ ref, className, style }: ISVGProps) {
 
   //const allLocTrackBins: ILocTrackBins[] = binsQuery.data ? binsQuery.data : []
 
-  const orderedTracks = groups.map(t => t.tracks)
+  const orderedTracks = groups.map((t) => t.tracks)
 
   const titleHeightUsingPosition =
     settings.titles.position === 'top' ? settings.titles.height : 0
@@ -360,7 +360,6 @@ export function TracksView({ ref, className, style }: ISVGProps) {
     let h = 0
 
     for (const track of orderedTracks) {
-      //console.log('Calculating height for track type:', track[0]!.type, track)
       switch (track[0]!.type) {
         case 'Seq':
         case 'BigWig':
@@ -390,7 +389,6 @@ export function TracksView({ ref, className, style }: ISVGProps) {
             trackHeights[i]!.push(h)
           }
 
-          //console.log('Scale/Location track height:', h, trackHeights)
           break
         case 'Ruler':
         case 'Cytobands':
@@ -455,14 +453,7 @@ export function TracksView({ ref, className, style }: ISVGProps) {
       }
     }
 
-    const trackYs = trackHeights.map(h => cumsum([0, ...h]))
-
-    //console.log('Calculated track heights:', trackHeights)
-    //console.log(
-    //  'Calculated track Ys:',
-    //  trackYs,
-    //  orderedTracks.map(t => t[0]!.type)
-    //)
+    const trackYs = trackHeights.map((h) => cumsum([0, ...h]))
 
     return { geneYMaps, innerHeight, locationHeights, trackYs }
   }, [
@@ -500,7 +491,7 @@ export function TracksView({ ref, className, style }: ISVGProps) {
       width={width}
       height={height}
       style={style}
-      onMouseMove={e => {
+      onMouseMove={(e) => {
         const rect = e.currentTarget.getBoundingClientRect()
         const x = e.clientX - rect.left - settings.margin.left
         const y = e.clientY - rect.top - settings.margin.top
@@ -529,12 +520,12 @@ export function TracksView({ ref, className, style }: ISVGProps) {
                 geneYMap: geneYMaps[li] || new Map(),
                 height: locationHeights?.[li]! || 0,
                 trackY: trackYs?.[li]! || [],
-                setLocation: location => {
+                setLocation: (location) => {
                   // for individual tracks, we can update their location
                   // using, for example, the ruler to propogate its
                   // changes back to here, where they can be subsequently
                   // used to update the global locations
-                  const newLocations = produce(locations, draft => {
+                  const newLocations = produce(locations, (draft) => {
                     draft[li] = {
                       id: makeUuid(),
                       search: locStr(location),

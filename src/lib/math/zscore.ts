@@ -14,14 +14,11 @@ export class ZScore {
     this._mean = mean(data)
     this._std = populationStd(data, this._mean) // std(data, this._mean)
 
-    //console.log('ZScore fit', data, this._mean)
-
     return this
   }
 
   transform(data: number[]): number[] {
-    //console.log('ZScore transform', this._mean, this._std)
-    return data.map(v => (this._std !== 0 ? (v - this._mean) / this._std : 0))
+    return data.map((v) => (this._std !== 0 ? (v - this._mean) / this._std : 0))
   }
 
   /**
@@ -33,18 +30,3 @@ export class ZScore {
     return this.fit(data).transform(data)
   }
 }
-
-// function pickBy(dataItem: { [key: string]: number|undefined }, predicate: (v:unknown)=>boolean):{ [key: string]: number} {
-// 	return Object.fromEntries(Object.entries(dataItem).filter(([, v]) => predicate(v)))
-// }
-
-// function stdDev(values: number[], mean: number) {
-//   return Math.sqrt(variance(values, mean))
-// }
-
-// function variance(values: number[], mean: number) {
-//   values = _.map(values, value => {
-//     return Math.pow(value - mean, 2)
-//   })
-//   return _.sum(values) / values.length
-// }

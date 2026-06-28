@@ -254,15 +254,6 @@ export function DotPlotDialog({
       sizes = sizes.map((s) => Math.round(Math.pow(2, s)))
     }
 
-    // console.log(
-    //   sizes,
-    //   cumulativeSteps(1, 4),
-    //   sizes.map((s, si) => ({
-    //     size: (si + 1) / 4,
-    //     value: formatNumber(s, DEFAULT_HEATMAP_PROPS.cells.values.dp),
-    //   }))
-    // )
-
     const hc = new HCluster()
 
     let rowC: IClusterTree | undefined = undefined

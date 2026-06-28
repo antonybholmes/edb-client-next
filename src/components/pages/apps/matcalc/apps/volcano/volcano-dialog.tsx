@@ -36,8 +36,6 @@ function findFoldChangeCol(df: BaseDataFrame) {
     return 'Log2 Fold Change'
   }
 
-  console.log(df.columns)
-
   const cols = df.columns.filter((c) => FOLD_REGEX.test(c.toLowerCase()))
 
   if (cols.length === 0) {
@@ -81,8 +79,6 @@ export function VolcanoDialog({
   //const branch = findBranch(branchAddr, history)[0]
   //const step = currentStep(branch)[0]
   let df = sheets[0] as BaseDataFrame //currentSheet(step)[0] as AnnotationDataFrame
-
-  //console.log('vdialog', df, df.colNames)
 
   const form = useForm<IFormInput>({
     defaultValues: {

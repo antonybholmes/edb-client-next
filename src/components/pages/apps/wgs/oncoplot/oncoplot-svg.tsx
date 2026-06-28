@@ -70,10 +70,6 @@ function makeMatrix(
 
               const h = blockSize.h / names.length
 
-              // if (stats.sample == 'SP59368') {
-              //   console.log( stats.sample, events)
-              // }
-
               return names.map((id, idi) => {
                 const fill: string = colorMap[id] ?? colorMap[OTHER_MUTATION]!
 
@@ -684,22 +680,6 @@ export function OncoplotSvg({ ref }: ISVGProps) {
         : 0)
   )
 
-  // width of max clinical tracks
-  // let clinicalTracksWidth = 0
-
-  // for (const track of clinicalTracks) {
-  //   console.log(
-  //     'track',
-  //     track.name,
-  //     track.categoriesInUse.length,
-  //     displayProps.legend.width
-  //   )
-  //   clinicalTracksWidth = Math.max(
-  //     clinicalTracksWidth,
-  //     track.categoriesInUse.length * displayProps.legend.width
-  //   )
-  // }
-
   let bottom = displayProps.margin.bottom
 
   bottom = Math.max(
@@ -722,15 +702,6 @@ export function OncoplotSvg({ ref }: ISVGProps) {
   const gridHeight = rows * blockSize.h + (rows - 1) * spacing.y
 
   const width = gridWidth + marginLeft + marginRight
-
-  console.log(
-    'oncoplot width',
-    width,
-    gridWidth,
-
-    marginLeft,
-    marginRight
-  )
 
   const height = gridHeight + top + bottom
 

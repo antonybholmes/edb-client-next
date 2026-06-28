@@ -81,9 +81,8 @@ export class PathwayOverlap {
   }
 
   get pathways(): number {
-    console.log(this._collections)
     if (this._npathways === -1) {
-      this._npathways = sum(this._collections.map(gcs => gcs.genesets.length))
+      this._npathways = sum(this._collections.map((gcs) => gcs.genesets.length))
     }
 
     return this._npathways
@@ -92,23 +91,17 @@ export class PathwayOverlap {
   test(genesets: IGeneSet[]): [SeriesData[][], string[]] {
     let allData: SeriesData[][] = []
 
-    genesets.forEach(geneset => {
+    genesets.forEach((geneset) => {
       const genes = new Set<string>(geneset.genes)
       const K = genes.size
       let c = 0
       const data: SeriesData[][] = []
 
-      //console.log(tgs.name)
-
-      this._collections.forEach(collection => {
-        //console.log(gcs.name)
+      this._collections.forEach((collection) => {
         collection.genesets.forEach((pathway, pi) => {
           const pathwayGenes = new Set<string>(pathway.genes)
 
           const n = pathwayGenes.size
-
-          //console.log(genes)
-          //console.log(pathwayGenes)
 
           const overlappingGenes = intersect1d(genes, pathwayGenes)
 
@@ -159,9 +152,7 @@ export class PathwayOverlap {
       // fdr
       //
 
-      //console.log("plo", data.length, npathways, c)
-
-      const pvalues: number[] = data.map(row => row[8] as number)
+      const pvalues: number[] = data.map((row) => row[8] as number)
       const idx = argsort(pvalues)
 
       const i0: number = idx[0]!
@@ -171,9 +162,7 @@ export class PathwayOverlap {
       data[i0]![9] = Math.min(1, Math.max(0, q))
       //data[idx[0]][12] = 1
 
-      //console.log(data)
-
-      range(1, c).forEach(i => {
+      range(1, c).forEach((i) => {
         const rank = i + 1
         const q = (pvalues[idx[i]!]! * data.length) / rank
         data[idx[i]!]![9] = Math.min(
@@ -184,7 +173,7 @@ export class PathwayOverlap {
         //data[idx[i]][12] = rank
       })
 
-      range(data.length).forEach(i => {
+      range(data.length).forEach((i) => {
         // log10 of q
         data[i]![10] = -Math.log10(<number>data[i]![9])
       })

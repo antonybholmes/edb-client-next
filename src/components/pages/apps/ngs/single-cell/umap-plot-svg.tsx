@@ -132,8 +132,6 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
           ? settings.legend.colorbar.size.w + 4 * settings.legend.gap
           : 0)
 
-      //console.log('rows =>', rows, 'cols =>', cols, plots.length)
-
       const height =
         Math.max(
           umapContainer.h * rows + settings.margin.top + settings.margin.bottom,
@@ -166,17 +164,17 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
         let cdata: number[]
 
         if (plot.mode === 'clusters') {
-          plotdata = clusterInfo?.order.map(i => points[i]!) || []
+          plotdata = clusterInfo?.order.map((i) => points[i]!) || []
           //plotYdata = clusterInfo.order.map(i => ydata[i]!)
-          hue = clusterInfo?.order.map(i => clusterInfo.cdata[i]!) || []
+          hue = clusterInfo?.order.map((i) => clusterInfo.cdata[i]!) || []
           cdata = hue
         } else {
-          plotdata = plot.gex.hueOrder.map(i => points[i]!)
+          plotdata = plot.gex.hueOrder.map((i) => points[i]!)
           //plotYdata = plot.gex.hueOrder.map(i => ydata[i]!)
 
           // in gex mode we need to normalize for range
           hue = normalize(
-            plot.gex.hueOrder.map(i => plot.gex.hue[i]!),
+            plot.gex.hueOrder.map((i) => plot.gex.hue[i]!),
             range
           )
 
@@ -194,7 +192,7 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
           //   return cluster && cluster.show ? c : 0
           // })
 
-          cdata = plot.gex.hueOrder.map(i => {
+          cdata = plot.gex.hueOrder.map((i) => {
             const c = clusterInfo?.cdata[i] || 0
 
             return c
@@ -202,8 +200,6 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
         }
 
         const canvas = document.createElement('canvas')
-
-        //console.log(hue, plotdata)
 
         drawUmap(
           canvas,
@@ -279,8 +275,8 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
                 {settings.umap.clusters.show && (
                   <g id="cluster-labels">
                     {displayClusters
-                      .filter(c => c.show && c.display.label.show)
-                      .map(cluster => {
+                      .filter((c) => c.show && c.display.label.show)
+                      .map((cluster) => {
                         //cluster.pos will be the centroid of the cluster points
                         const x1 = xax.domainToRange(cluster.pos[0])
                         const y1 = yax.domainToRange(cluster.pos[1])
@@ -336,7 +332,7 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
             <LegendSvg />
 
             {settings.legend.colorbar.show &&
-              settings.genesets.some(g => g.mode !== 'clusters') && (
+              settings.genesets.some((g) => g.mode !== 'clusters') && (
                 <g
                   id="colorbar"
                   transform={`translate(-${settings.legend.colorbar.size.h / 2}, ${legendHeight + 4 * settings.legend.gap})`}
@@ -357,7 +353,6 @@ export function UmapPlotSvg({ ref, size = undefined }: IProps) {
       setSvg({ svg, dim: { w: svgWidth, h: height } })
     }
 
-    //console.log('rendering umap svg', plots)
     render(plots)
   }, [points, settings, plots, size, clusterInfo])
 
@@ -380,7 +375,7 @@ function getDisplayClusters(
   showUndetClusters: boolean
 ): IScrnaCluster[] {
   return clusters.filter(
-    cluster =>
+    (cluster) =>
       cluster.metadata['scClass'] !== '' &&
       (!cluster.metadata['scClass']?.includes('undet') || showUndetClusters)
   )

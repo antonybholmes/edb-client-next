@@ -39,14 +39,14 @@ export interface ILollipopStore extends ILollipop {
  * non-persistent state such as user loading a file. Lollipop settings store
  * is used for persistent settings.
  */
-export const useLollipopStore = create<ILollipopStore>(set => ({
+export const useLollipopStore = create<ILollipopStore>((set) => ({
   ...DEFAULT_LOLLIPOP,
   set: (
     aaStats: ILollipopStats[],
     datasets: string[],
     datasetsForUse: Record<string, boolean>
   ) =>
-    set(state => ({
+    set((state) => ({
       ...state,
       aaStats,
       datasets,
@@ -54,13 +54,13 @@ export const useLollipopStore = create<ILollipopStore>(set => ({
     })),
 
   setDomain: (domain: IDomain) =>
-    set(state => ({
+    set((state) => ({
       ...state,
-      domains: state.domains.map(f => (f.id === domain.id ? domain : f)),
+      domains: state.domains.map((f) => (f.id === domain.id ? domain : f)),
     })),
 
   setDomains: (domains: IDomain[]) =>
-    set(state => ({
+    set((state) => ({
       ...state,
       domains,
     })),
@@ -97,28 +97,28 @@ export const useLollipopStore = create<ILollipopStore>(set => ({
     // use setfeatures so that reactivity is triggered
     // and unspecified props are correctly set to defaults
     //get().setFeatures(features)
-    set(state => ({
+    set((state) => ({
       ...state,
       domains,
     }))
   },
   setLabels: (labels: IProteinLabel[]) =>
-    set(state => ({
+    set((state) => ({
       ...state,
       labels: [...labels],
     })),
   setDatasets: (datasets: string[]) =>
-    set(state => ({
+    set((state) => ({
       ...state,
       datasets: [...datasets],
     })),
   setDatasetsForUse: (dbs: Record<string, boolean>) =>
-    set(state => ({
+    set((state) => ({
       ...state,
       datasetsForUse: dbs,
     })),
   setMutationsForUse: (mutations: Record<string, boolean>) =>
-    set(state => ({
+    set((state) => ({
       ...state,
       mutationsForUse: mutations,
     })),
@@ -141,8 +141,6 @@ export const useLollipopStore = create<ILollipopStore>(set => ({
     if (datasetCol === -1) {
       datasetCol = findCol(mutDf, 'Database') // try another name
     }
-
-    console.log(mutDf.columns)
 
     if (datasetCol === -1) {
       throw new Error(
@@ -187,7 +185,7 @@ export const useLollipopStore = create<ILollipopStore>(set => ({
       }
     }
 
-    let length = Math.max(...aaChanges.map(ac => ac.variant.position))
+    let length = Math.max(...aaChanges.map((ac) => ac.variant.position))
 
     // if (protein) {
     //   length = protein.sequence.length
@@ -196,7 +194,9 @@ export const useLollipopStore = create<ILollipopStore>(set => ({
     //   length = Math.max(...aaChanges.map(ac => ac.position))
     // }
 
-    const aaStats: ILollipopStats[] = range(length).map(i => newAAStats(i + 1))
+    const aaStats: ILollipopStats[] = range(length).map((i) =>
+      newAAStats(i + 1)
+    )
 
     // basically a histogram of amino acid changes
     for (const aaChange of aaChanges) {
@@ -209,13 +209,11 @@ export const useLollipopStore = create<ILollipopStore>(set => ({
       )
     }
 
-    //console.log('Parsed lollipop data:', aaStats)
-
-    set(state => ({
+    set((state) => ({
       ...state,
       aaStats,
       datasets: [...datasets].sort(),
-      datasetsForUse: Object.fromEntries([...datasets].map(db => [db, true])),
+      datasetsForUse: Object.fromEntries([...datasets].map((db) => [db, true])),
     }))
 
     //   const d: SeriesType[][] = df.rowMap((row: SeriesType[], index: number) => {
@@ -240,13 +238,13 @@ export const useLollipopStore = create<ILollipopStore>(set => ({
 
 export function useLollipop(): ILollipopStore {
   //const protein = useLollipopStore(state => state.protein)
-  const aaStats = useLollipopStore(state => state.aaStats)
-  const datasets = useLollipopStore(state => state.datasets)
-  const datasetsForUse = useLollipopStore(state => state.datasetsForUse)
-  const mutationsForUse = useLollipopStore(state => state.mutationsForUse)
+  const aaStats = useLollipopStore((state) => state.aaStats)
+  const datasets = useLollipopStore((state) => state.datasets)
+  const datasetsForUse = useLollipopStore((state) => state.datasetsForUse)
+  const mutationsForUse = useLollipopStore((state) => state.mutationsForUse)
 
-  const domains = useLollipopStore(state => state.domains)
-  const labels = useLollipopStore(state => state.labels)
+  const domains = useLollipopStore((state) => state.domains)
+  const labels = useLollipopStore((state) => state.labels)
 
   return {
     aaStats,
@@ -255,15 +253,15 @@ export function useLollipop(): ILollipopStore {
     mutationsForUse,
     domains,
     labels,
-    set: useLollipopStore(state => state.set),
-    setDomain: useLollipopStore(state => state.setDomain),
-    setDomains: useLollipopStore(state => state.setDomains),
-    setLabels: useLollipopStore(state => state.setLabels),
-    setDatasets: useLollipopStore(state => state.setDatasets),
-    setDatasetsForUse: useLollipopStore(state => state.setDatasetsForUse),
-    setMutationsForUse: useLollipopStore(state => state.setMutationsForUse),
+    set: useLollipopStore((state) => state.set),
+    setDomain: useLollipopStore((state) => state.setDomain),
+    setDomains: useLollipopStore((state) => state.setDomains),
+    setLabels: useLollipopStore((state) => state.setLabels),
+    setDatasets: useLollipopStore((state) => state.setDatasets),
+    setDatasetsForUse: useLollipopStore((state) => state.setDatasetsForUse),
+    setMutationsForUse: useLollipopStore((state) => state.setMutationsForUse),
     //setProtein: useLollipopStore(state => state.setProtein),
-    lollipopFromTable: useLollipopStore(state => state.lollipopFromTable),
-    featuresFromTable: useLollipopStore(state => state.featuresFromTable),
+    lollipopFromTable: useLollipopStore((state) => state.lollipopFromTable),
+    featuresFromTable: useLollipopStore((state) => state.featuresFromTable),
   }
 }

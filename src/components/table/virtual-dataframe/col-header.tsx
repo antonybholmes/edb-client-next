@@ -61,8 +61,6 @@ export function ColHeader({ col }: { col: VirtualItem }) {
         MIN_CELL_WIDTH
       )
 
-      //console.log(index, 'newWidth', newWidth)
-
       setColWidth(col, newWidth)
     }
 

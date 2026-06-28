@@ -64,8 +64,6 @@ import { ProteinPanel } from './protein-panel'
 //   const query = `gene:${gene} AND reviewed:true`
 //   const url = `https://rest.uniprot.org/uniprotkb/search?query=${encodeURIComponent(query)}&format=json&size=${max}&fields=accession,gene_primary,protein_name,organism_name`
 
-//   console.log(url)
-
 //   let res = await queryClient.fetchQuery({
 //     queryKey: ['uniprot', gene],
 //     queryFn: () => {
@@ -89,8 +87,6 @@ import { ProteinPanel } from './protein-panel'
 //     },
 //   })
 
-//   //console.log('r', res.results)
-
 //   const ret: IProtein[] = []
 
 //   for (const p of res.results) {
@@ -103,8 +99,6 @@ import { ProteinPanel } from './protein-panel'
 
 //     const officialGeneName = p.genes[0]?.geneName.value ?? gene
 
-//     console.log(officialGeneName, accession, name)
-
 //     // now get the sequence
 
 //     res = await queryClient.fetchQuery({
@@ -114,8 +108,6 @@ import { ProteinPanel } from './protein-panel'
 //           `https://rest.uniprot.org/uniprotkb/${accession}.json`
 //         ),
 //     })
-
-//     console.log(res)
 
 //     ret.push({
 //       gene: officialGeneName,
@@ -159,7 +151,7 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
         <ResizablePanel minSize="10%" defaultSize="70%" collapsible={true}>
           <ScrollAccordion
             value={tabs}
-            onValueChange={v => setTabs(v as string[])}
+            onValueChange={(v) => setTabs(v as string[])}
             className="grow h-full"
           >
             <AccordionItem value="plot">
@@ -170,9 +162,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                       {
                         title: 'Title',
                         textProps: displayProps.title.text,
-                        update: font =>
+                        update: (font) =>
                           setDisplayProps(
-                            produce(displayProps, draft => {
+                            produce(displayProps, (draft) => {
                               draft.title.text = font
                             })
                           ),
@@ -190,9 +182,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                     id="w"
                     value={displayProps.axes.x.width}
                     limit={[1, 10000]}
-                    onNumChange={v =>
+                    onNumChange={(v) =>
                       setDisplayProps(
-                        produce(displayProps, draft => {
+                        produce(displayProps, (draft) => {
                           draft.axes.x.width = v
                         })
                       )
@@ -203,9 +195,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                   <NumericalInput
                     id="cell"
                     value={displayProps.grid.cell.w}
-                    onNumChange={v =>
+                    onNumChange={(v) =>
                       setDisplayProps(
-                        produce(displayProps, draft => {
+                        produce(displayProps, (draft) => {
                           draft.grid.cell.w = v
                           draft.grid.cell.h = v
                         })
@@ -251,9 +243,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                 <CheckPropRow
                   title="Legend"
                   checked={displayProps.legend.show}
-                  onCheckedChange={state =>
+                  onCheckedChange={(state) =>
                     setDisplayProps(
-                      produce(displayProps, draft => {
+                      produce(displayProps, (draft) => {
                         draft.legend.show = state
                       })
                     )
@@ -263,9 +255,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                     w="grow"
                     id="legend-mutations-label"
                     value={displayProps.legend.variants.label}
-                    onTextChange={v =>
+                    onTextChange={(v) =>
                       setDisplayProps(
-                        produce(displayProps, draft => {
+                        produce(displayProps, (draft) => {
                           draft.legend.variants.label = v
                         })
                       )
@@ -284,9 +276,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                         {
                           title: 'Axes Title',
                           textProps: displayProps.axes.title,
-                          update: font =>
+                          update: (font) =>
                             setDisplayProps(
-                              produce(displayProps, draft => {
+                              produce(displayProps, (draft) => {
                                 draft.axes.title = font
                               })
                             ),
@@ -295,9 +287,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                         {
                           title: 'Axes Labels',
                           textProps: displayProps.axes.labels,
-                          update: font =>
+                          update: (font) =>
                             setDisplayProps(
-                              produce(displayProps, draft => {
+                              produce(displayProps, (draft) => {
                                 draft.axes.labels = font
                               })
                             ),
@@ -307,9 +299,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
 
                     <Switch
                       checked={displayProps.axes.x.show}
-                      onCheckedChange={state =>
+                      onCheckedChange={(state) =>
                         setDisplayProps(
-                          produce(displayProps, draft => {
+                          produce(displayProps, (draft) => {
                             draft.axes.x.show = state
                           })
                         )
@@ -326,9 +318,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                   title="Last tick"
                   disabled={!displayProps.axes.x.show}
                   checked={displayProps.axes.x.showEndTick}
-                  onCheckedChange={state =>
+                  onCheckedChange={(state) =>
                     setDisplayProps(
-                      produce(displayProps, draft => {
+                      produce(displayProps, (draft) => {
                         draft.axes.x.showEndTick = state
                       })
                     )
@@ -343,9 +335,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                   <>
                     <Switch
                       checked={displayProps.axes.y.show}
-                      onCheckedChange={state =>
+                      onCheckedChange={(state) =>
                         setDisplayProps(
-                          produce(displayProps, draft => {
+                          produce(displayProps, (draft) => {
                             draft.axes.y.show = state
                           })
                         )
@@ -360,9 +352,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                 <CheckPropRow
                   title="Tick lines"
                   checked={displayProps.axes.y.ticks.lines.show}
-                  onCheckedChange={state =>
+                  onCheckedChange={(state) =>
                     setDisplayProps(
-                      produce(displayProps, draft => {
+                      produce(displayProps, (draft) => {
                         draft.axes.y.ticks.lines.show = state
                       })
                     )
@@ -373,9 +365,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                   title="Zero line"
                   disabled={!displayProps.axes.y.ticks.lines.show}
                   checked={displayProps.axes.y.ticks.lines.showZeroLine}
-                  onCheckedChange={state =>
+                  onCheckedChange={(state) =>
                     setDisplayProps(
-                      produce(displayProps, draft => {
+                      produce(displayProps, (draft) => {
                         draft.axes.y.ticks.lines.showZeroLine = state
                       })
                     )
@@ -393,9 +385,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                         {
                           title: 'Font',
                           textProps: displayProps.seq.text,
-                          update: font =>
+                          update: (font) =>
                             setDisplayProps(
-                              produce(displayProps, draft => {
+                              produce(displayProps, (draft) => {
                                 draft.seq.text = font
                               })
                             ),
@@ -404,9 +396,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                     />
                     <Switch
                       checked={displayProps.seq.show}
-                      onCheckedChange={state =>
+                      onCheckedChange={(state) =>
                         setDisplayProps(
-                          produce(displayProps, draft => {
+                          produce(displayProps, (draft) => {
                             draft.seq.show = state
                           })
                         )
@@ -422,9 +414,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                 <CheckPropRow
                   title="Colors"
                   checked={aaColor.show}
-                  onCheckedChange={state =>
+                  onCheckedChange={(state) =>
                     setAAColor(
-                      produce(aaColor, draft => {
+                      produce(aaColor, (draft) => {
                         draft.show = state
                       })
                     )
@@ -461,7 +453,7 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                           <DropdownMenuContent align="end">
                             {Object.keys(AA_COLOR_SCHEMES)
                               .sort()
-                              .map(key => (
+                              .map((key) => (
                                 <DropdownMenuItem
                                   key={key}
                                   onClick={() =>
@@ -497,9 +489,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                                 colors={[
                                   {
                                     color: aaColor.scheme[aa]!,
-                                    onColorChange: color =>
+                                    onColorChange: (color) =>
                                       setAAColor(
-                                        produce(aaColor, draft => {
+                                        produce(aaColor, (draft) => {
                                           draft.scheme[aa] = color
                                         })
                                       ),
@@ -542,9 +534,9 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                 <CheckPropRow
                   title="Invert"
                   checked={aaColor.invert}
-                  onCheckedChange={state =>
+                  onCheckedChange={(state) =>
                     setAAColor(
-                      produce(aaColor, draft => {
+                      produce(aaColor, (draft) => {
                         draft.invert = state
                       })
                     )

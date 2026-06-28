@@ -66,8 +66,6 @@ export function MotifToGeneDialog({ selection, onResponse }: IProps) {
         table.push([...row, genes[ri]!.genes.sort().join(',')])
       }
 
-      console.log(table, 'table')
-
       const header: string[] = [...df.columns, 'Motif to gene']
 
       const df_out = new AnnotationDataFrame({
@@ -76,9 +74,6 @@ export function MotifToGeneDialog({ selection, onResponse }: IProps) {
         columns: header,
         name: 'Motif to gene',
       })
-
-      console.log(df)
-      console.log(df_out.shape)
 
       addSheets([df_out])
 

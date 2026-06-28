@@ -10,7 +10,6 @@ export function generateStaticParams() {
 export default async function Page({ params }: PageProps<'/posts/[slug]'>) {
   const { slug } = await params
 
-  console.log('Fetching post for slug:', slug)
   const post = await getPostBySlug(slug)
 
   return (

@@ -79,14 +79,12 @@ export function cdf(k: number, N: number, K: number, n: number): number {
 
   let cdf = 0
   for (let i = 0; i <= k; i++) {
-    //console.log(i, hypGeomPMF(i, N, K, n))
     cdf += pmf(i, N, K, n)
   }
   return Math.min(cdf, 1)
 }
 
 export class Hypergeometric {
-  //private _N: number
   private _K: number
   private _n: number
   private _denominator: number
@@ -123,7 +121,6 @@ export class Hypergeometric {
     let cdf = 0
 
     for (let i = 0; i <= k; i++) {
-      //console.log(i, hypGeomPMF(i, N, K, n))
       cdf += this.pmf(i)
     }
 

@@ -56,13 +56,8 @@ export function HSplitPane({
     const rect = ref.current.getBoundingClientRect()
 
     let cp = x / rect.width
-    //const xdiff = x - dragging.current.x
-    //const xdiffp = xdiff / rect.width
-    //const p = dragging.current.p + xdiffp
 
-    //console.log(x, p, cp, dragging.current.p)
-
-    const rcp = sticky.filter(x => Math.abs(cp - x) < STICKY_SENSITIVITY)
+    const rcp = sticky.filter((x) => Math.abs(cp - x) < STICKY_SENSITIVITY)
 
     if (rcp.length > 0) {
       cp = rcp[0]!
@@ -129,8 +124,6 @@ export function HSplitPane({
   }
 
   function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
-    //console.log(e.code)
-
     if (!focus) {
       return
     }
@@ -149,7 +142,7 @@ export function HSplitPane({
     }
   }
 
-  useMouseMoveListener(e => onMouseMove(e as MouseEvent))
+  useMouseMoveListener((e) => onMouseMove(e as MouseEvent))
   useMouseUpListener(onMouseUp)
 
   return (

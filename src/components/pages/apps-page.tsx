@@ -119,7 +119,6 @@ function GridView({ view }: { view: string }) {
   const [colsClass, setColsClass] = useState('grid-cols-1')
 
   useEffect(() => {
-    //console.log('size changed', size, view)
     switch (view) {
       case 'compact':
         setColsClass('grid-cols-2 gap-x-4 gap-y-2')

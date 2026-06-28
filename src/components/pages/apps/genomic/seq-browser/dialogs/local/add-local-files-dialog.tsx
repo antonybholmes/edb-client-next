@@ -132,8 +132,6 @@ export function AddLocalFilesDialog({
           'application/octet-stream': ['.bw', '.bigWig', '.bb', '.bigBed'],
         }}
         onFileDrop={async (files) => {
-          console.log('files', files)
-
           if (files.length > 0) {
             setName(files.map((f) => f.name).join(', '))
 

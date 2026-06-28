@@ -437,10 +437,6 @@ export function LollipopSingleSvg({ ref }: ISVGProps) {
 
           const mutations = `${aaData.length} mutation${aaData.length === 1 ? '' : 's'}`
 
-          console.log(
-            `${variantType}|${mutations}|${changes}|x:${i}, y:${aaData.length}`
-          )
-
           return {
             id: `${variantType}|${mutations}|${changes}|x:${i}, y:${aaData.length}`,
             p: i,

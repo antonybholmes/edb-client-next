@@ -92,8 +92,6 @@ export function SettingsDialog({
 
   //const winSize = useWindowSize()
 
-  console.log('SettingsDialog tabs:', _tabs)
-
   return (
     <GlassSideDialog
       title={defaultTab}

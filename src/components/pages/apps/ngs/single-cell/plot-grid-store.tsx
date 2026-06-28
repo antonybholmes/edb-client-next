@@ -159,7 +159,7 @@ export interface IPlotGridStore extends IPlotGridStoreProps {
   clear: () => void
 }
 
-export const usePlotGridStore = create<IPlotGridStore>()(set => ({
+export const usePlotGridStore = create<IPlotGridStore>()((set) => ({
   plots: [],
 
   dataset: null,
@@ -177,8 +177,8 @@ export const usePlotGridStore = create<IPlotGridStore>()(set => ({
   },
 
   setDatasetInfo: (points: IPos[], clusterInfo: IClusterInfo) => {
-    set(state =>
-      produce(state, draft => {
+    set((state) =>
+      produce(state, (draft) => {
         draft.points = points
         draft.clusterInfo = clusterInfo
         draft.plots = []
@@ -187,9 +187,9 @@ export const usePlotGridStore = create<IPlotGridStore>()(set => ({
   },
 
   updatePlot: (plot: IUmapPlot) => {
-    set(state =>
-      produce(state, draft => {
-        const idx = draft.plots.findIndex(p => p.id === plot.id)
+    set((state) =>
+      produce(state, (draft) => {
+        const idx = draft.plots.findIndex((p) => p.id === plot.id)
         if (idx !== -1) {
           draft.plots[idx] = plot
         }
@@ -202,9 +202,9 @@ export const usePlotGridStore = create<IPlotGridStore>()(set => ({
     })
   },
   setPalette: (palette: ColorMap) => {
-    set(state =>
-      produce(state, draft => {
-        draft.plots = draft.plots.map(p => ({
+    set((state) =>
+      produce(state, (draft) => {
+        draft.plots = draft.plots.map((p) => ({
           ...p,
           palette,
         }))
@@ -212,8 +212,8 @@ export const usePlotGridStore = create<IPlotGridStore>()(set => ({
     )
   },
   updateClusterInfo: (clusterInfo: IClusterInfo) => {
-    set(state =>
-      produce(state, draft => {
+    set((state) =>
+      produce(state, (draft) => {
         draft.clusterInfo = clusterInfo
       })
     )
@@ -245,22 +245,17 @@ export function usePlotGrid() {
   const { fetchAccessToken } = useEdbAuth()
   const { settings, updateSettings } = useSingleCellSettings()
 
-  const dataset = usePlotGridStore(s => s.dataset)
+  const dataset = usePlotGridStore((s) => s.dataset)
 
-  const plots = usePlotGridStore(s => s.plots)
-  const points = usePlotGridStore(s => s.points)
-  const clusterInfo = usePlotGridStore(s => s.clusterInfo)
+  const plots = usePlotGridStore((s) => s.plots)
+  const points = usePlotGridStore((s) => s.points)
+  const clusterInfo = usePlotGridStore((s) => s.clusterInfo)
 
-  const setDataset = usePlotGridStore(s => s.setDataset)
-  const setPlots = usePlotGridStore(s => s.setPlots)
-  const setDatasetInfo = usePlotGridStore(s => s.setDatasetInfo)
-  const updateClusterInfo = usePlotGridStore(s => s.updateClusterInfo)
-  const setPalette = usePlotGridStore(s => s.setPalette)
-
-  // useEffect(() => {
-  //   console.log('Loading GEX for new settings', settings.genesets)
-  //   loadGex(store.dataset, settings.genesets)
-  // }, [settings.genesets, store.dataset])
+  const setDataset = usePlotGridStore((s) => s.setDataset)
+  const setPlots = usePlotGridStore((s) => s.setPlots)
+  const setDatasetInfo = usePlotGridStore((s) => s.setDatasetInfo)
+  const updateClusterInfo = usePlotGridStore((s) => s.updateClusterInfo)
+  const setPalette = usePlotGridStore((s) => s.setPalette)
 
   const { data: searchGenes } = useQuery({
     queryKey: ['genes', settings.search, dataset],
@@ -324,8 +319,6 @@ export function usePlotGrid() {
         return null
       }
 
-      //console.log('fetching metadata', dataset)
-
       const res = await httpFetch.getJson<{ data: IScrnaDatasetMetadata }>(
         `${API_SCRNA_DATASETS_URL}/${dataset.id}/metadata`,
         { headers: bearerHeaders(accessToken) }
@@ -344,17 +337,17 @@ export function usePlotGrid() {
         return
       }
 
-      const points = metadata!.cells.map(m => ({ x: m.x, y: m.y }))
+      const points = metadata!.cells.map((m) => ({ x: m.x, y: m.y }))
 
-      const clusters: IScrnaCluster[] = metadata!.clusters.map(c => {
-        const idx = where(metadata!.cells, cell => cell.cluster === c.label)
+      const clusters: IScrnaCluster[] = metadata!.clusters.map((c) => {
+        const idx = where(metadata!.cells, (cell) => cell.cluster === c.label)
 
         const xc = ordered(
-          points.map(p => p.x),
+          points.map((p) => p.x),
           idx
         )
         const yc = ordered(
-          points.map(p => p.y),
+          points.map((p) => p.y),
           idx
         )
         const pos = findCenter(xc, yc)
@@ -374,9 +367,7 @@ export function usePlotGrid() {
         }
       })
 
-      //console.log(clusters)
-
-      let hue = metadata!.cells.map(c => c.cluster) //metadata.cells.map(c => normMap[c.clusterId]!)
+      let hue = metadata!.cells.map((c) => c.cluster) //metadata.cells.map(c => normMap[c.clusterId]!)
 
       // if we sort by hue, we are sorting by color norm and
       // therefore cluster, so all points in a cluster will
@@ -385,20 +376,18 @@ export function usePlotGrid() {
 
       const clusterInfo = {
         clusters,
-        cdata: metadata!.cells.map(c => c.cluster),
+        cdata: metadata!.cells.map((c) => c.cluster),
         order: idx,
         //map: Object.fromEntries(clusters.map((c, ci) => [c.clusterId, ci])),
         roundel: { show: true },
       }
 
-      //console.log('Setting dataset', dataset, metadata, clusterInfo)
-
       setDatasetInfo(points, clusterInfo)
 
       updateSettings(
-        produce(settings, draft => {
-          draft.axes.xaxis.domain = makeDomain(points.map(p => p.x))
-          draft.axes.yaxis.domain = makeDomain(points.map(p => p.y))
+        produce(settings, (draft) => {
+          draft.axes.xaxis.domain = makeDomain(points.map((p) => p.x))
+          draft.axes.yaxis.domain = makeDomain(points.map((p) => p.y))
         })
       )
     }
@@ -411,7 +400,6 @@ export function usePlotGrid() {
     queryKey: ['gex', dataset, settings.genesets],
     staleTime: TIME_10_MINUTES_MS, // 5 minutes
     queryFn: async () => {
-      console.log('Loading GEX for', settings.genesets, dataset)
       const accessToken = await fetchAccessToken()
 
       if (!accessToken || !dataset || settings.genesets.length === 0) {
@@ -419,8 +407,8 @@ export function usePlotGrid() {
       }
 
       const genes = settings.genesets
-        .filter(g => g.mode !== 'clusters')
-        .map(g => g.genes.map(gene => gene.geneId))
+        .filter((g) => g.mode !== 'clusters')
+        .map((g) => g.genes.map((gene) => gene.geneId))
         .flat()
 
       if (genes.length === 0) {
@@ -443,7 +431,7 @@ export function usePlotGrid() {
 
       // make some empty arrays to store the gene data
       const gexData = Object.fromEntries(
-        genes.map(g => [g, zeros(store.dataset!.cells ?? 0)])
+        genes.map((g) => [g, zeros(store.dataset!.cells ?? 0)])
       )
 
       for (const gene of results.genes) {
@@ -475,11 +463,11 @@ export function usePlotGrid() {
       let globalMax = 0
 
       const clusterMap = new Map<number, IScrnaCluster>(
-        store.clusterInfo.clusters.map(c => [c.label, c])
+        store.clusterInfo.clusters.map((c) => [c.label, c])
       )
 
       // create a mask for cells that are in shown clusters
-      const mask = store.clusterInfo.cdata.map(c => {
+      const mask = store.clusterInfo.cdata.map((c) => {
         const cluster = clusterMap.get(c)
         return cluster && cluster.show
       })
@@ -510,14 +498,12 @@ export function usePlotGrid() {
         const useMean = geneset.genes.length > 1
 
         if (useMean) {
-          avg = range(0, store.dataset.cells ?? 0).map(cellIdx =>
-            mean(geneset.genes.map(gene => gexData[gene.geneId]![cellIdx]!))
+          avg = range(0, store.dataset.cells ?? 0).map((cellIdx) =>
+            mean(geneset.genes.map((gene) => gexData[gene.geneId]![cellIdx]!))
           )
         } else {
           avg = gexData[geneset.genes[0]!.geneId]!
         }
-
-        //console.log(avg)
 
         //let nz: number[]
         //let plotRange: ILim
@@ -527,13 +513,13 @@ export function usePlotGrid() {
         if (settings.gex.log.on) {
           switch (settings.gex.log.mode) {
             case 'log2':
-              avg = avg.map(v => Math.log2(v + 1))
+              avg = avg.map((v) => Math.log2(v + 1))
               break
             case 'log10':
-              avg = avg.map(v => Math.log10(v + 1))
+              avg = avg.map((v) => Math.log10(v + 1))
               break
             case 'ln':
-              avg = avg.map(v => Math.log1p(v))
+              avg = avg.map((v) => Math.log1p(v))
               break
           }
         }
@@ -545,7 +531,7 @@ export function usePlotGrid() {
 
         // get max regardless of min max using only the visible clusters
         max = Math.ceil(
-          Math.max(...avg.filter((_, i) => mask[i]).map(x => Math.abs(x)))
+          Math.max(...avg.filter((_, i) => mask[i]).map((x) => Math.abs(x)))
         )
 
         // i like even numbers
@@ -577,7 +563,7 @@ export function usePlotGrid() {
 
           name: useMean
             ? truncate(
-                `Mean of ${geneset.name}: ${geneset.genes.map(g => g.geneSymbol).join(', ')}`
+                `Mean of ${geneset.name}: ${geneset.genes.map((g) => g.geneSymbol).join(', ')}`
               )
             : geneset.genes[0]!.geneSymbol,
 
@@ -611,9 +597,8 @@ export function usePlotGrid() {
       setPlots(plots)
 
       if (settings.gex.autoRange) {
-        //console.log('Setting global range to ', [-globalMax, globalMax])
         updateSettings(
-          produce(settings, draft => {
+          produce(settings, (draft) => {
             if (settings.gex.zscore.on) {
               draft.gex.zscore.range = [-globalMax, globalMax]
             } else {

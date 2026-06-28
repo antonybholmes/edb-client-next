@@ -25,14 +25,10 @@ export function SignInCallbackPage() {
       try {
         const token = await getToken({ template: TEMPLATE })
 
-        console.log('token', token)
-
         if (token) {
           // create session with token
           await signInWithClerk(token)
         }
-
-        console.log('Redirect state from Clerk signin:', signinState)
 
         // force user to be refreshed
         //setUser(await refreshEdbUser())

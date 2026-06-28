@@ -470,7 +470,7 @@ export class EventCountMap {
   get events(): IEvent[] {
     return [...this._countMap.entries()]
       .sort((a, b) => a[0].localeCompare(b[0]))
-      .map(event => ({ name: event[0], value: event[1] }))
+      .map((event) => ({ name: event[0], value: event[1] }))
   }
 
   /**
@@ -490,7 +490,7 @@ export class EventCountMap {
 
   get sum(): number {
     return [...this._countMap.entries()]
-      .map(event => event[1])
+      .map((event) => event[1])
       .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
   }
 
@@ -505,13 +505,11 @@ export class EventCountMap {
    */
   countDist(ids: string[], keepZeros: boolean = true): IEvent[] {
     const dist = ids
-      .map(id => ({
+      .map((id) => ({
         name: id,
         value: this._countMap.get(id.toLowerCase()) ?? 0,
       }))
       .filter((x: IEvent) => keepZeros || x.value > 0)
-
-    //console.log('dist', dist)
 
     return dist
   }
@@ -527,7 +525,7 @@ export class EventCountMap {
   normCountDist(ids: string[], keepZeros: boolean = true): IEvent[] {
     const total = this.sum
 
-    return this.countDist(ids, keepZeros).map(x => {
+    return this.countDist(ids, keepZeros).map((x) => {
       return { name: x.name, value: x.value / total }
     })
   }
@@ -569,7 +567,9 @@ export function getEventLabel(
 ): string {
   //const lcMutationsInUse = mutationsInUse.map(m => m.toLowerCase())
 
-  const names = mutationsInUse.filter(m => stats.countMap.has(m.toLowerCase()))
+  const names = mutationsInUse.filter((m) =>
+    stats.countMap.has(m.toLowerCase())
+  )
 
   //const events = [...stats.countMap.keys()].sort()
 
@@ -623,8 +623,8 @@ export class OncoplotFrame {
     )
 
     const geneOrder = genes
-      .filter(gene => originalGeneOrder.has(gene))
-      .map(gene => originalGeneOrder.get(gene)!)
+      .filter((gene) => originalGeneOrder.has(gene))
+      .map((gene) => originalGeneOrder.get(gene)!)
 
     return this.setGeneOrder(geneOrder)
   }
@@ -655,8 +655,8 @@ export class OncoplotFrame {
     )
 
     const sampleOrder = samples
-      .filter(sample => originalSampleOrder.has(sample))
-      .map(sample => originalSampleOrder.get(sample)!)
+      .filter((sample) => originalSampleOrder.has(sample))
+      .map((sample) => originalSampleOrder.get(sample)!)
 
     return this.setSampleOrder(sampleOrder)
   }
@@ -711,11 +711,11 @@ export class OncoplotFrame {
   }
 
   get geneStats(): OncoCellStats[] {
-    return this._geneOrder.map(i => this._geneStats[i]!)
+    return this._geneOrder.map((i) => this._geneStats[i]!)
   }
 
   get sampleStats(): OncoCellStats[] {
-    return this._sampleOrder.map(i => this._sampleStats[i]!)
+    return this._sampleOrder.map((i) => this._sampleStats[i]!)
   }
 
   // get sampleOrder(): number[] {
@@ -840,8 +840,6 @@ export function makeOncoPlot(
   genes: IOncoGene[],
   clinicalTracks: ClinicalDataTrack[]
 ): OncoplotResult {
-  console.log('columns', columns)
-
   let samples: string[] = [...new Set(df.col(columns.sample)?.strs)].sort()
 
   // const genesInTable: string[] =
@@ -851,7 +849,7 @@ export function makeOncoPlot(
   //         .sort()
   //     : []
 
-  const genesInUse = genes.filter(g => g.show).map(g => g.name)
+  const genesInUse = genes.filter((g) => g.show).map((g) => g.name)
 
   const geneIndexMap = new Map<string, number>(
     genesInUse.map((gene, si) => [gene, si])
@@ -865,16 +863,16 @@ export function makeOncoPlot(
 
   for (const gene of genesInUse) {
     // each location needs a representation of each sample
-    oncotable.push(samples.map(sample => new OncoCellStats(gene, sample)))
+    oncotable.push(samples.map((sample) => new OncoCellStats(gene, sample)))
   }
 
   // we need row and column stats
   const geneMarginalStats: OncoCellStats[] = genesInUse.map(
-    gene => new OncoCellStats(gene, gene)
+    (gene) => new OncoCellStats(gene, gene)
   )
 
   let sampleMarginalStats: OncoCellStats[] = samples.map(
-    sample => new OncoCellStats(sample, sample)
+    (sample) => new OncoCellStats(sample, sample)
   )
 
   let sample: string
@@ -898,8 +896,6 @@ export function makeOncoPlot(
       continue
     }
 
-    //console.log('processing row', row, sample, gene, geneIndex)
-
     mutType = df.col(columns.type).str(row)
 
     oncotable[geneIndex]![sampleIndex]!.add(mutType)
@@ -913,25 +909,23 @@ export function makeOncoPlot(
     // keep only samples that have an event i.e are associated with a region
 
     const keepSamples = new Set<number>(
-      range(samples.length).filter(si => {
+      range(samples.length).filter((si) => {
         return sampleMarginalStats[si]!.sum > 0
       })
     )
 
     samples = samples.filter((_, si) => keepSamples.has(si))
 
-    //console.log(samples.join(","))
-
     //filter table
-    oncotable = oncotable.map(row => row.filter((_, ci) => keepSamples.has(ci)))
+    oncotable = oncotable.map((row) =>
+      row.filter((_, ci) => keepSamples.has(ci))
+    )
 
     //filter colstats
     sampleMarginalStats = sampleMarginalStats.filter((_, si) =>
       keepSamples.has(si)
     )
   }
-
-  //console.log('samples after filter', sampleMarginalStats)
 
   let ret = new OncoplotFrame(oncotable, geneMarginalStats, sampleMarginalStats)
 
@@ -1005,17 +999,17 @@ export function makeLocationOncoPlot(
   for (const loc of features) {
     // each location needs a representation of each sample
     oncotable.push(
-      samples.map(sample => new OncoCellStats(loc.toString(), sample))
+      samples.map((sample) => new OncoCellStats(loc.toString(), sample))
     )
   }
 
   // we need row and column stats
   const featureStats: OncoCellStats[] = features.map(
-    loc => new OncoCellStats(loc.toString(), loc.toString())
+    (loc) => new OncoCellStats(loc.toString(), loc.toString())
   )
 
   let sampleStats: OncoCellStats[] = samples.map(
-    sample => new OncoCellStats(sample, sample)
+    (sample) => new OncoCellStats(sample, sample)
   )
 
   let sample: string
@@ -1102,17 +1096,17 @@ export function makeLocationOncoPlot(
     // keep only samples that have an event i.e are associated with a region
 
     const keepSamples = new Set<number>(
-      range(samples.length).filter(si => {
+      range(samples.length).filter((si) => {
         return sampleStats[si]!.sum > 0
       })
     )
 
     samples = samples.filter((_, si) => keepSamples.has(si))
 
-    //console.log(samples.join(","))
-
     //filter table
-    oncotable = oncotable.map(row => row.filter((_, ci) => keepSamples.has(ci)))
+    oncotable = oncotable.map((row) =>
+      row.filter((_, ci) => keepSamples.has(ci))
+    )
 
     //filter colstats
     sampleStats = sampleStats.filter((_, si) => keepSamples.has(si))
@@ -1178,7 +1172,7 @@ function getNewMutations(
   //orderEvents(allEventsInUse, oncoProps)
 
   const lcAllEventsInUse = new Set<string>(
-    [...allEventsInUse].map(event => event.toLowerCase())
+    [...allEventsInUse].map((event) => event.toLowerCase())
   )
 
   // make a list of mutation types in use that have already been
@@ -1188,13 +1182,13 @@ function getNewMutations(
   for (const m of mutations) {
     if (
       lcAllEventsInUse.has(m.name.toLowerCase()) ||
-      m.aliases.map(a => a.toLowerCase()).some(a => lcAllEventsInUse.has(a))
+      m.aliases.map((a) => a.toLowerCase()).some((a) => lcAllEventsInUse.has(a))
     ) {
       mutationsInUse.push(m.name)
     }
   }
 
-  const lcMutationsInUse = new Set(mutationsInUse.map(m => m.toLowerCase()))
+  const lcMutationsInUse = new Set(mutationsInUse.map((m) => m.toLowerCase()))
 
   const newMutations: IMutation[] = []
 
@@ -1202,8 +1196,6 @@ function getNewMutations(
   for (const m of ordered) {
     if (!lcMutationsInUse.has(m.toLowerCase())) {
       mutationsInUse.push(m)
-
-      console.log('found new mutation', m)
 
       newMutations.push({
         id: makeUuid(),
@@ -1240,7 +1232,7 @@ export function memoSort(
   const geneOrder = df._geneStats
     .map((stats, si) => [si, stats.sum])
     .sort((a, b) => b[1]! - a[1]!)
-    .map(x => x[0]!)
+    .map((x) => x[0]!)
 
   // sort rows first
   // let newTable: OncoplotDataframe = {
@@ -1265,7 +1257,7 @@ export function memoSort(
 
   const sampleScores: { name: string; value: bigint }[][] = []
 
-  const samples = df._sampleStats.map(s => s.sample)
+  const samples = df._sampleStats.map((s) => s.sample)
 
   for (let col = 0; col < df.shape[1]; ++col) {
     // find all non zero rows and use a bit flag to set whether
@@ -1308,13 +1300,13 @@ export function memoSort(
       }
     }
 
-    for (const track of clinicalTracks.filter(c => c.type === 'category')) {
+    for (const track of clinicalTracks.filter((c) => c.type === 'category')) {
       const score = { name: track.name, value: BigInt(0) }
 
       const maxEvent = track.getEvents(samples[col]!).maxEvent.name
 
       const catIndex = track.categories.findIndex(
-        x => x.toLowerCase() === maxEvent.toLowerCase()
+        (x) => x.toLowerCase() === maxEvent.toLowerCase()
       )
 
       score!.value |= BIG1 << BigInt(track.categories.length - catIndex)
@@ -1363,7 +1355,7 @@ export function memoSort(
       // if all scores are the same, keep the original order
       return -1
     })
-    .map(x => x.index)
+    .map((x) => x.index)
 
   // newTable = {
   //   data: newTable.data.map(row => sampleOrder.map(c => row[c])),

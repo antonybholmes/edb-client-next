@@ -198,7 +198,6 @@ export function HomeToolbar() {
           'Pathways'
         )
 
-        console.log('Pathway analysis result:', dfOut)
         addSheets([dfOut], { name: 'Pathway' })
 
         // we've finished so get rid of the animations

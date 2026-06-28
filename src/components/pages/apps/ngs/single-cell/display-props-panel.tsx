@@ -53,7 +53,7 @@ export function DisplayPropsPanel() {
               payload: {
                 title: 'Reset Settings',
                 content: 'Are you sure you want to reset all settings?',
-                callback: response => {
+                callback: (response) => {
                   if (response === TEXT_OK) {
                     resetSettings()
                   }
@@ -68,7 +68,7 @@ export function DisplayPropsPanel() {
       </VCenterRow>
       <ScrollAccordion
         value={openTabs}
-        onValueChange={v => setOpenTabs(v as string[])}
+        onValueChange={(v) => setOpenTabs(v as string[])}
       >
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
@@ -88,10 +88,9 @@ export function DisplayPropsPanel() {
                 }
                 limit={[100, 10000]}
                 dp={0}
-                onNumChanged1={v => {
-                  console.log(v)
+                onNumChanged1={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       if (settings.grid.on) {
                         draft.grid.axes.xaxis.length = v
                       } else {
@@ -100,9 +99,9 @@ export function DisplayPropsPanel() {
                     })
                   )
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       if (settings.grid.on) {
                         draft.grid.axes.yaxis.length = v
                       } else {
@@ -117,9 +116,9 @@ export function DisplayPropsPanel() {
               breakpoint={200}
               title="Grid columns"
               checked={settings.grid.on}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.grid.on = v
                   })
                 )
@@ -129,9 +128,9 @@ export function DisplayPropsPanel() {
                 id="cols-input"
                 className="rounded-theme"
                 value={settings.grid.cols}
-                onNumChanged={v => {
+                onNumChanged={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.grid.cols = v
                     })
                   )
@@ -142,9 +141,9 @@ export function DisplayPropsPanel() {
             <SwitchPropRow
               title="Titles"
               checked={settings.grid.titles.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.grid.titles.show = v
                   })
                 )
@@ -154,9 +153,9 @@ export function DisplayPropsPanel() {
             <SwitchPropRow
               title="Auto axes"
               checked={settings.autoAxes}
-              onCheckedChange={checked => {
+              onCheckedChange={(checked) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.autoAxes = checked
                   })
                 )
@@ -171,9 +170,9 @@ export function DisplayPropsPanel() {
                 inputCls="rounded-theme"
                 limit={[-1000, 1000]}
                 dp={0}
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.axes.xaxis.domain = [
                         v,
                         settings.axes.xaxis.domain[1],
@@ -181,9 +180,9 @@ export function DisplayPropsPanel() {
                     })
                   )
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.axes.xaxis.domain = [
                         settings.axes.xaxis.domain[0],
                         v,
@@ -204,9 +203,9 @@ export function DisplayPropsPanel() {
                 inputCls="rounded-theme"
                 limit={[-1000, 1000]}
                 dp={0}
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.axes.yaxis.domain = [
                         v,
                         settings.axes.yaxis.domain[1],
@@ -214,9 +213,9 @@ export function DisplayPropsPanel() {
                     })
                   )
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.axes.yaxis.domain = [
                         settings.axes.yaxis.domain[0],
                         v,
@@ -237,9 +236,9 @@ export function DisplayPropsPanel() {
             <SwitchPropRow
               title="Log2 scale"
               checked={settings.gex.log.on}
-              onCheckedChange={checked => {
+              onCheckedChange={(checked) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.gex.log.on = checked
                   })
                 )
@@ -248,9 +247,9 @@ export function DisplayPropsPanel() {
             <SwitchPropRow
               title="Z-score"
               checked={settings.gex.zscore.on}
-              onCheckedChange={checked => {
+              onCheckedChange={(checked) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.gex.zscore.on = checked
                   })
                 )
@@ -259,9 +258,9 @@ export function DisplayPropsPanel() {
             <SwitchPropRow
               title="Auto range"
               checked={settings.gex.autoRange}
-              onCheckedChange={checked => {
+              onCheckedChange={(checked) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.gex.autoRange = checked
                   })
                 )
@@ -284,9 +283,9 @@ export function DisplayPropsPanel() {
                 inc={1}
                 dp={1}
                 placeholder="Max..."
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       if (settings.gex.zscore.on) {
                         draft.gex.zscore.range[0] = v
                       } else {
@@ -314,9 +313,9 @@ export function DisplayPropsPanel() {
                   //   })
                   // )
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       if (settings.gex.zscore.on) {
                         draft.gex.zscore.range[1] = v
                       } else {
@@ -353,9 +352,9 @@ export function DisplayPropsPanel() {
               title="Expression sort"
               tooltip="Draw more highly expressed cells are on top so they are easier to see"
               checked={settings.gex.sortByExpr}
-              onCheckedChange={checked => {
+              onCheckedChange={(checked) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.gex.sortByExpr = checked
                   })
                 )
@@ -369,9 +368,9 @@ export function DisplayPropsPanel() {
                 colors={[
                   {
                     color: settings.dots.color,
-                    onColorChange: color =>
+                    onColorChange: (color) =>
                       updateSettings(
-                        produce(settings, draft => {
+                        produce(settings, (draft) => {
                           draft.dots.color = color
                         })
                       ),
@@ -389,9 +388,9 @@ export function DisplayPropsPanel() {
             <SwitchPropRow
               title="Labels"
               checked={settings.umap.clusters.show}
-              onCheckedChange={checked => {
+              onCheckedChange={(checked) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.umap.clusters.show = checked
                   })
                 )
@@ -401,9 +400,9 @@ export function DisplayPropsPanel() {
               title="Roundels"
               checked={settings.umap.clusters.roundel.show}
               disabled={!settings.umap.clusters.show}
-              onCheckedChange={checked => {
+              onCheckedChange={(checked) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.umap.clusters.roundel.show = checked
                   })
                 )
@@ -413,13 +412,10 @@ export function DisplayPropsPanel() {
             <PropRow title="Hidden mode">
               <Select
                 value={settings.gex.hiddenClusterDisplayMode}
-                onValueChange={v => {
-                  const newSettings = produce(settings, draft => {
+                onValueChange={(v) => {
+                  const newSettings = produce(settings, (draft) => {
                     draft.gex.hiddenClusterDisplayMode = v as
-                      | 'min'
-                      | 'max'
-                      | 'hidden'
-                      | 'default'
+                      'min' | 'max' | 'hidden' | 'default'
                   })
 
                   updateSettings(newSettings)
@@ -447,10 +443,10 @@ export function DisplayPropsPanel() {
               <ColorMapMenu
                 align="end"
                 cmap={getColorMap(settings.cmap)} // COLOR_MAPS[settings.cmap]!}
-                onChange={cmap => {
+                onChange={(cmap) => {
                   // store the cmap the user likes
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.cmap = cmap.name
                     })
                   )
@@ -485,9 +481,9 @@ export function DisplayPropsPanel() {
             <SwitchPropRow
               title="Color bar"
               checked={settings.legend.colorbar.show}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.legend.colorbar.show = v
                   })
                 )
@@ -497,9 +493,9 @@ export function DisplayPropsPanel() {
             <SwitchPropRow
               title="Cluster ID"
               checked={settings.legend.showClusterId}
-              onCheckedChange={v => {
+              onCheckedChange={(v) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.legend.showClusterId = v
                   })
                 )

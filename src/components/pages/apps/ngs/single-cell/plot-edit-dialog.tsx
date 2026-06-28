@@ -58,12 +58,12 @@ export function PlotEditDialog({ geneset, onResponse }: IProps) {
         <Input
           id="name"
           value={_geneset.name}
-          onTextChange={e => {
+          onTextChange={(e) => {
             //updatePlot({ ..._geneset, name: e })
 
             updateSettings(
-              produce(settings, draft => {
-                draft.genesets = draft.genesets.map(g => {
+              produce(settings, (draft) => {
+                draft.genesets = draft.genesets.map((g) => {
                   if (g.id === _geneset.id) {
                     return { ...g, name: e }
                   }
@@ -82,8 +82,8 @@ export function PlotEditDialog({ geneset, onResponse }: IProps) {
         <PropRow title="Mode">
           <Select
             value={_geneset.mode}
-            onValueChange={v => {
-              const newGeneSet = produce(_geneset, draft => {
+            onValueChange={(v) => {
+              const newGeneSet = produce(_geneset, (draft) => {
                 draft.mode = v as 'global-gex' | 'gex' | 'clusters'
 
                 if (draft.mode === 'clusters') {
@@ -91,13 +91,11 @@ export function PlotEditDialog({ geneset, onResponse }: IProps) {
                 }
               })
 
-              console.log(newGeneSet)
-
               setGeneSet(newGeneSet)
 
               updateSettings(
-                produce(settings, draft => {
-                  draft.genesets = draft.genesets.map(g => {
+                produce(settings, (draft) => {
+                  draft.genesets = draft.genesets.map((g) => {
                     if (g.id === _geneset.id) {
                       return { ...newGeneSet }
                     }
@@ -160,7 +158,7 @@ export function PlotEditDialog({ geneset, onResponse }: IProps) {
                       // resort clusters by clusterId
                       draft.clusters.sort((a, b) => a.id - b.id)
 
-                      console.log('Updated clusters:', draft.clusters)
+    
                     })
                     updatePlot(newPlot)
                     setPlot(newPlot)

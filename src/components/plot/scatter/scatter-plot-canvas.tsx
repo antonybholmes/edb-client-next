@@ -41,8 +41,6 @@ export function drawScatter(
 ) {
   const { hue, size = 1, palette = BWR_CMAP_V2, labels } = options
 
-  //hue  && console.log(df,getStrCol(df, findCol(df, hue)), hue)
-
   const xax = new Axis()
     //.setDomain([Math.min(...xdata), Math.max(...xdata)])
     .setDomain(displayProps.axes.xaxis.domain)

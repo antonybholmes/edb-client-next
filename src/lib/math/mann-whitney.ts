@@ -70,8 +70,8 @@ export function mannWhitneyU(
 
   // Combine the two groups and create a list of all values with their group labels
   let combined = [
-    ...xs.map(val => ({ value: val, group: 1 })),
-    ...ys.map(val => ({ value: val, group: 2 })),
+    ...xs.map((val) => ({ value: val, group: 1 })),
+    ...ys.map((val) => ({ value: val, group: 2 })),
   ]
 
   // Sort the combined values by their actual values
@@ -109,11 +109,9 @@ export function mannWhitneyU(
     }
   }
 
-  //console.log('rankMap:', adjustedRanks)
-
   // Calculate the sum of ranks for each group
   const rankSum1 = ranks
-    .filter(r => r.group === 1)
+    .filter((r) => r.group === 1)
     .reduce((sum, r) => sum + adjustedRanks.get(r.rank)!, 0)
 
   let tie_term = 0
@@ -136,9 +134,6 @@ export function mannWhitneyU(
 
   const U1 = rankSum1 - (n1 * (n1 + 1)) / 2
   const U2 = n1n2 - U1 // rankSum2 - (n2 * (n2 + 1)) / 2
-
-  console.log('U1:', U1)
-  console.log('U2:', U2)
 
   // since u1 + u2 = n1n2, we take the largest value in case either u1 or u2 are 0
   const U = Math.max(U1, U2)

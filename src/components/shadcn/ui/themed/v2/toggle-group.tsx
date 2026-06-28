@@ -78,8 +78,6 @@ export function GroupToggle({
 }: ComponentProps<typeof Toggle>) {
   const context = useContext(ToggleGroupContext)
 
-  //console.log('GroupToggle context:', context)
-
   return (
     <Toggle
       variant={context.variant ?? variant}

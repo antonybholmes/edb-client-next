@@ -114,8 +114,6 @@ export function PasswordCard() {
         description: 'An email will be sent to your address.',
       })
     } catch (err) {
-      console.log('update err', err)
-
       addToast({
         id: makeUuid(),
         title: 'Your password could not be updated',
@@ -139,8 +137,6 @@ export function PasswordCard() {
     e: BaseSyntheticEvent | undefined
   ) {
     e?.preventDefault()
-
-    console.log('onSubmit', data)
 
     if (data.newPassword !== data.retypePassword) {
       form.setError('retypePassword', {

@@ -57,8 +57,6 @@ class FetchRequest implements IHttpRequest {
   }
 
   async get(url: string, options: IFetchOptions = {}): Promise<Response> {
-    //console.log(url, JSON.stringify(body), headers)
-
     const {
       headers = undefined,
       withCredentials = false,
@@ -70,8 +68,6 @@ class FetchRequest implements IHttpRequest {
     const credentials = this.credentials(withCredentials)
 
     //const throwError = options?.throwError ?? true
-
-    //console.log('url', url)
 
     const response = await fetch(url, {
       method: 'GET',
@@ -101,8 +97,6 @@ class FetchRequest implements IHttpRequest {
 
     const ret = await response.json()
 
-    //console.log(response, ret)
-
     if (!response.ok) {
       throw new ApiError(ret.message || 'API Error', response.status)
     }
@@ -111,7 +105,6 @@ class FetchRequest implements IHttpRequest {
   }
 
   async post(url: string, options: IFetchOptions = {}): Promise<Response> {
-    //console.log(url, JSON.stringify(body), headers)
     let {
       headers = {},
       body = null,

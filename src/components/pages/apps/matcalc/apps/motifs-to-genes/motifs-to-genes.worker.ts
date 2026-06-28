@@ -33,8 +33,6 @@ self.onmessage = async function (e: MessageEvent<IMotifsToGenesWorkerMessage>) {
     // so we increment the index by the actual number of records returned to avoid skipping records.
     const pageIds = ids.slice(idx, idx + pageSize)
 
-    console.log('annotating page', idx, pageIds.length)
-
     const res = await httpFetch.postJson<{
       data: IMotifToGene[]
     }>(API_MOTIF_TO_GENES_URL, {

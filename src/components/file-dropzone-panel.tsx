@@ -78,11 +78,6 @@ export function FileDropZonePanel({
   const dragComp = c.length > 1 ? c[1] : <FileDrag />
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    // Handle the accepted files
-    // acceptedFiles.forEach(file => {
-    //   console.log(file)
-    // })
-
     onFileDrop?.(acceptedFiles)
   }, [])
 

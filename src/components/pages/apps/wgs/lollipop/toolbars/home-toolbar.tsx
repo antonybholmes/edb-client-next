@@ -33,7 +33,6 @@ export function HomeToolbar() {
       <ToolbarTabGroup title="File">
         <ToolbarOpenFile
           onClick={() => {
-            console.log('open file menu')
             open('variants')
           }}
         />

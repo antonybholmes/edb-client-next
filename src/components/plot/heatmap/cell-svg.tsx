@@ -41,11 +41,9 @@ export function CellsSvg({
 
   const cmap = COLOR_MAPS[props.cmap]!
 
-  const colors = rowLeaves.map(row => {
-    return colLeaves.map(col => {
+  const colors = rowLeaves.map((row) => {
+    return colLeaves.map((col) => {
       const v = df.get(row, col) as number
-
-      //console.log(row, col, v)
 
       const fill: string = !isNaN(v)
         ? cmap.getHexColor(normalize(v, props.range), false)
@@ -54,7 +52,7 @@ export function CellsSvg({
     })
   })
 
-  const uniqueColorRects = [...new Set(colors.flat())].sort().map(color => {
+  const uniqueColorRects = [...new Set(colors.flat())].sort().map((color) => {
     const id = getUseRectId(color)
 
     return (
@@ -68,8 +66,6 @@ export function CellsSvg({
       />
     )
   })
-
-  //console.log(colLeaves)
 
   return (
     <>
@@ -275,11 +271,11 @@ export function GridSvg({
   const blockSize = props.blockSize
 
   const hlines = range(blockSize.h, height, blockSize.h)
-    .map(y => `M 0,${y} L ${width},${y}`)
+    .map((y) => `M 0,${y} L ${width},${y}`)
     .join(' ')
 
   const vlines = range(blockSize.w, width, blockSize.w)
-    .map(x => `M ${x},0 L ${x},${height}`)
+    .map((x) => `M ${x},0 L ${x},${height}`)
     .join(' ')
 
   return (

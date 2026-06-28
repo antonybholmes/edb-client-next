@@ -59,8 +59,6 @@ export function TabProvider({
 
   const selectedTab = getTabFromValue(v, tabs ?? [])
 
-  //console.log("eh", value.length, tabs, selectedTab)
-
   if (!selectedTab) {
     return null
   }

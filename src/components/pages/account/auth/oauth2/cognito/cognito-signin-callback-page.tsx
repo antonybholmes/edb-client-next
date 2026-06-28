@@ -23,8 +23,6 @@ export function SignInCallbackPage() {
     async function parse() {
       const result = await handleCognitoCallback()
 
-      console.log('Redirect URL from appState:', result)
-
       if (!result?.tokens) {
         return
       }

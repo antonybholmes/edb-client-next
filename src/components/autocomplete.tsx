@@ -75,11 +75,6 @@ export function Autocomplete({
       data-has-right-children={hasRightChildren}
       className={cn('relative', className)}
       ref={ref}
-
-      // onBlur={() => {
-      //   console.log('blur')
-      //   setFocus(false)
-      // }}
     >
       <VCenterRow
         data-open={_isOpen}

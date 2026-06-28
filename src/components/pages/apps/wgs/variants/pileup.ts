@@ -58,7 +58,7 @@ export function pileup(results: IVariantResults): IPileupResults {
   // put together by position, type, tum
 
   const pileups = range(l).map(
-    i =>
+    (i) =>
       ({
         start: start + i,
         pos: i,
@@ -210,8 +210,6 @@ export function sortByCOO(
     const acoo = sortOrderMap[sampleMap[a.sample]?.coo ?? ''] ?? 100
     const bcoo = sortOrderMap[sampleMap[b.sample]?.coo ?? ''] ?? 100
 
-    //console.log('aSample', sampleMap[a.sample]?.coo, acoo)
-
     s = acoo - bcoo
 
     if (s !== 0) {
@@ -261,8 +259,6 @@ export function sortByLymphgen(
         break
       }
     }
-
-    //console.log('aSample', sampleMap[a.sample]?.lymphgenClass, acoo)
 
     s = acoo - bcoo
 
@@ -328,25 +324,11 @@ export function sortByDataset(
       return s
     }
 
-    // const adatasets = a.datasets.map(d => datasetMap[d]?.name ?? '').sort()
-    // const bdatasets = b.datasets.map(d => datasetMap[d]?.name ?? '').sort()
-
-    // const len = Math.min(adatasets.length, bdatasets.length)
-
-    // for (let i = 0; i < len; i++) {
-    //   const c = adatasets[i]!.localeCompare(bdatasets[i]!)
-    //   if (c !== 0) {
-    //     return c
-    //   }
-    // }
-
-    console.log(sortOrderMap)
-
     const ad = Math.min(
-      ...a.datasets.map(d => sortOrderMap[datasetMap[d]?.name ?? ''] ?? 100)
+      ...a.datasets.map((d) => sortOrderMap[datasetMap[d]?.name ?? ''] ?? 100)
     )
     const bd = Math.min(
-      ...b.datasets.map(d => sortOrderMap[datasetMap[d]?.name ?? ''] ?? 100)
+      ...b.datasets.map((d) => sortOrderMap[datasetMap[d]?.name ?? ''] ?? 100)
     )
 
     s = ad - bd

@@ -57,8 +57,6 @@ export function rgba2hex(rgba: IRGBA): string {
     .toString(16)
     .padStart(2, '0')
 
-  //console.log('rgba2hex', rgba, hex, alphaHex)
-
   // alpha
   hex += alphaHex
 
@@ -152,8 +150,6 @@ export function textColorShouldBeDark(
 
   // Calculate the YIQ (luminance)
   const yiq = rgb[0] * 0.299 + rgb[1] * 0.587 + rgb[2] * 0.114
-
-  //console.log(color, rgb, yiq, threshold)
 
   return yiq >= threshold
 }

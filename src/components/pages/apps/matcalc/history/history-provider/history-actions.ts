@@ -166,8 +166,6 @@ function removeSheet(state: IHistoryState, p: PathId) {
     (id) => id !== p.sheet
   )
 
-  console.log('Removing sheet', p.sheet, 'from file', p.file)
-
   const sheets = state.sheetOrder[p.file]!
   state.currentSheet = sheets[0]!
   state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]

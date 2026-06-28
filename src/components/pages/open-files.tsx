@@ -170,19 +170,9 @@ export function openFilesDialog({
 
   //   onFileChange?.(message, files ?? [])
 
-  //   console.log('on file change', files)
-
   //   // force clear selection so we can keep selecting file if we want.
   //   e.target.value = ''
   // }
-
-  // useEffect(() => {
-  //   console.log('MOUNT', message)
-
-  //   return () => {
-  //     console.log('UNMOUNT', message)
-  //   }
-  // }, [])
 
   // useEffect(() => {
   //   // finally able to cope with user canceling file selection.
@@ -190,7 +180,7 @@ export function openFilesDialog({
   //   // and then trigger the onFileChange callback with null files
   //   // to indicate cancellation
   //   const handleCancel = () => {
-  //     console.log('File selection canceled')
+
   //     onFileChange?.(message, [])
   //   }
 
@@ -202,12 +192,10 @@ export function openFilesDialog({
   // }, [message, onFileChange])
 
   // useEffect(() => {
-  //   console.log('Triggering file input click with message:', message)
+
   //   // simulate user clicking open button whenever open changes
   //   ref.current?.click()
   // }, [message])
-
-  // console.log('message xxx', message)
 
   // return (
   //   <input
@@ -417,8 +405,6 @@ export async function filesToDataFrames(
 
         const t = res.data.table
 
-        //console.log(t)
-
         // try some type conversion on the raw data
         const data = t.data.map((row: string[]) =>
           row.map((c) => makeCell(c, keepDefaultNA))
@@ -461,8 +447,6 @@ export async function filesToDataFrames(
         // regular text so we can parse in browser
 
         const lines = textToLines(file.text)
-
-        //console.log('lines', lines, name)
 
         const sep = name.endsWith('csv') ? ',' : '\t'
 

@@ -58,7 +58,7 @@ export function PileupPlotSvg({ ref }: ISVGProps) {
 
   // turn cmap into a map from token to color for easier access in getColor
   const cmap: Record<string, string> = Object.fromEntries(
-    settings.variants.cmap.colors.map(c => [c.name, c.color])
+    settings.variants.cmap.colors.map((c) => [c.name, c.color])
   )
 
   const pileupResults = useMemo(() => {
@@ -129,12 +129,10 @@ export function PileupPlotSvg({ ref }: ISVGProps) {
   const maxHeightMap = new Map<number, number>()
 
   pileupResults.pileup.forEach((p, pi) => {
-    const y = Math.max(...p.variants.map(v => v.y))
+    const y = Math.max(...p.variants.map((v) => v.y))
     maxH = Math.max(maxH, y)
     maxHeightMap.set(pi, y)
   })
-
-  //console.log(maxHeightMap)
 
   const innerWidth = dna.seq.length * BASE_W
   const plotHeight = (1 + maxH) * BASE_H
@@ -374,8 +372,6 @@ function getColor(
       return cmap[sampleMap[variant.sample]?.coo ?? ''] ?? defaultColor
     case 'lymphgen':
       const lymphgenClass = sampleMap[variant.sample]?.lymphgenClass ?? ''
-
-      //console.log('lymphgenClass', lymphgenClass)
 
       for (const token of lymphgenClass.split('/')) {
         if (token in cmap) {

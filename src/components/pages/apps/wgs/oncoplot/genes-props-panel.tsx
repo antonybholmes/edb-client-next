@@ -72,8 +72,6 @@ function SortableGeneElem({ gene }: IGeneElemProps) {
               'stroke-foreground/50 hover:stroke-red-400'
             )}
             onClick={() => {
-              //setGenes(genes.filter(m => m.id !== gene.id))
-              console.log('Opening delete dialog for gene', gene)
               openDialog({
                 type: 'warning',
                 payload: {

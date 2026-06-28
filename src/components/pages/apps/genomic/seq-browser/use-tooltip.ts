@@ -29,7 +29,7 @@ export function addListener(listener: (tooltip: ISeqPos) => void) {
   globalState.listeners.push(listener)
   // Return a function to remove the listener
   return () => {
-    globalState.listeners = globalState.listeners.filter(l => l !== listener)
+    globalState.listeners = globalState.listeners.filter((l) => l !== listener)
   }
 }
 
@@ -42,8 +42,6 @@ export function useTooltip(): {
   useEffect(() => {
     // Add this component as a listener to the global state
     const removeListener = addListener((tooltip: ISeqPos) => {
-      //console.log(id, messages)
-
       // By using the spread operator ([...]), you're ensuring that you're not mutating
       // the original array (newMessages). Instead, you're creating a new array. This
       // new array has a new reference, and React can detect that the state has changed.

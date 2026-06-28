@@ -8,8 +8,6 @@ interface IProps extends IButtonProps {
 }
 
 export function HelpButton({ url, title = 'Show Help' }: IProps) {
-  //console.log('open', url)
-
   return (
     <button
       onClick={() => {

@@ -110,8 +110,6 @@ export function KmeansDialog({
     const distFunc: IDistFunc =
       DISTANCE_METRIC_MAP[settings.apps.kmeans.distance]!
 
-    //console.log(distanceMetric, distFunc)
-
     let clusters: number[]
 
     if (settings.apps.kmeans.clusterRows) {

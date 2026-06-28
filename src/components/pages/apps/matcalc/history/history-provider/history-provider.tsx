@@ -292,8 +292,6 @@ export function HistoryProvider({ children }: IChildrenProps) {
     [state.present.currentSelections]
   )
 
-  console.log('groups', groupsContextValue)
-
   const historyContextValue = useMemo(
     () => ({
       ...state,

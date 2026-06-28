@@ -334,11 +334,10 @@ export interface IVariantSettingsStore extends IPileupProps {
 
 export const useVariantSettingsStore = create<IVariantSettingsStore>()(
   persist(
-    set => ({
+    (set) => ({
       ...DEFAULT_PILEUP_PROPS,
 
       updateSettings: (settings: IPileupProps) => {
-        console.log('updating settings', settings)
         set({
           ...settings,
         })
@@ -356,8 +355,10 @@ export function useVariantSettings(): {
   updateSettings: (settings: IVariantSettingsStore) => void
   resetSettings: () => void
 } {
-  const settings = useVariantSettingsStore(state => state)
-  const updateSettings = useVariantSettingsStore(state => state.updateSettings)
+  const settings = useVariantSettingsStore((state) => state)
+  const updateSettings = useVariantSettingsStore(
+    (state) => state.updateSettings
+  )
 
   function resetSettings() {
     updateSettings({ ...DEFAULT_PILEUP_PROPS })

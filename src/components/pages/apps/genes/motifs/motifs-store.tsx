@@ -61,7 +61,7 @@ export interface IMotifStore {
 
 export const useMotifStore = create<IMotifStore>()(
   persist(
-    set => ({
+    (set) => ({
       searchResult: { motifs: [], total: 0, paging: { page: 1, pageSize: 10 } },
       motifsInUse: {},
       search: {
@@ -95,20 +95,20 @@ export const useMotifStore = create<IMotifStore>()(
 export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> {
   const { settings } = useMotifSettings()
 
-  const search = useMotifStore(state => state.search)
-  const updateSearch = useMotifStore(state => state.updateSearch)
-  const searchResult = useMotifStore(state => state.searchResult)
-  const motifsInUse = useMotifStore(state => state.motifsInUse)
+  const search = useMotifStore((state) => state.search)
+  const updateSearch = useMotifStore((state) => state.updateSearch)
+  const searchResult = useMotifStore((state) => state.searchResult)
+  const motifsInUse = useMotifStore((state) => state.motifsInUse)
   //const search = useMotifStore(state => state.search)
   //const setSearch = useMotifStore(state => state.setSearch)
-  const datasets = useMotifStore(state => state.datasets)
-  const datasetMap = useMotifStore(state => state.datasetMap)
-  const datasetsInUse = useMotifStore(state => state.datasetsInUse)
-  const setDatasets = useMotifStore(state => state.setDatasets)
-  const setDatasetMap = useMotifStore(state => state.setDatasetMap)
-  const setDatasetsInUse = useMotifStore(state => state.setDatasetsInUse)
-  const setSearchResult = useMotifStore(state => state.setSearchResult)
-  const setMotifsInUse = useMotifStore(state => state.setMotifsInUse)
+  const datasets = useMotifStore((state) => state.datasets)
+  const datasetMap = useMotifStore((state) => state.datasetMap)
+  const datasetsInUse = useMotifStore((state) => state.datasetsInUse)
+  const setDatasets = useMotifStore((state) => state.setDatasets)
+  const setDatasetMap = useMotifStore((state) => state.setDatasetMap)
+  const setDatasetsInUse = useMotifStore((state) => state.setDatasetsInUse)
+  const setSearchResult = useMotifStore((state) => state.setSearchResult)
+  const setMotifsInUse = useMotifStore((state) => state.setMotifsInUse)
 
   // reduce the number of searches sent to server by debouncing the search query
   const debouncedQuery = useDebounce(search.query, {
@@ -140,9 +140,9 @@ export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> {
     }
 
     setDatasets(datasetData)
-    setDatasetMap(Object.fromEntries(datasetData.map(d => [d.id, d])))
+    setDatasetMap(Object.fromEntries(datasetData.map((d) => [d.id, d])))
     const newDatasetsInUse = Object.fromEntries(
-      datasetData.map(d => [d.id, datasetsInUse[d.id] ?? true])
+      datasetData.map((d) => [d.id, datasetsInUse[d.id] ?? true])
     )
 
     setDatasetsInUse(newDatasetsInUse)
@@ -166,10 +166,8 @@ export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> {
         // split on commas or whitespace or newlines or pipes
         const queries = debouncedQuery
           .split(/[\s,|\n]+/)
-          .filter(q => q.length > 0)
-          .map(q => q.trim())
-
-        console.log('basic queries', queries)
+          .filter((q) => q.length > 0)
+          .map((q) => q.trim())
 
         // q accepts comma separated queries
         queryParam = queries.join(',')
@@ -210,8 +208,6 @@ export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> {
     // sort
 
     const sortBy = settings.sort.by + ',' + settings.sort.asc
-
-    console.log('Sorting motifs by ', sortBy)
 
     switch (settings.sort.by + ',' + (settings.sort.asc ? 'asc' : 'desc')) {
       case 'motif-id,asc':
@@ -287,7 +283,10 @@ export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> {
     setSearchResult(searchData)
 
     const newMotifsInUse: Record<string, boolean> = Object.fromEntries(
-      searchData.motifs.map(motif => [motif.id, motifsInUse[motif.id] ?? true])
+      searchData.motifs.map((motif) => [
+        motif.id,
+        motifsInUse[motif.id] ?? true,
+      ])
     )
 
     setMotifsInUse(newMotifsInUse)

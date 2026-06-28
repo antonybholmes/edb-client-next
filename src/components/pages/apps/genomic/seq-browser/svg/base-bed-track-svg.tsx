@@ -25,8 +25,6 @@ export function getBedTrackHeight(
     ? tracks[0]!.displayOptions.height
     : sum(tracks.map((track) => track.displayOptions.height))
 
-  console.log('Calculated bed track height:', h)
-
   return h
 }
 

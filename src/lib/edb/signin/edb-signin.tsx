@@ -124,8 +124,6 @@ export function useSignOut(): {
   const [, setLogoutState] = useAtom(signOutStateAtom)
 
   async function signOut(state: IRedirectState) {
-    console.log('Signing out using method:', signinMethod)
-
     try {
       await signout()
     } catch (error) {
@@ -155,8 +153,6 @@ export function useSignOut(): {
         path = OAUTH2_AUTH0_SIGN_OUT_PATH
         break
     }
-
-    console.log('Redirecting to logout URL:', path, state)
 
     if (path) {
       path = addRedirectStateToUrl(path, state)

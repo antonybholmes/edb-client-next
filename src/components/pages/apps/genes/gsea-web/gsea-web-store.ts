@@ -80,7 +80,6 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
     const entries = unzipSync(file.data)
 
     for (const [filename, content] of Object.entries(entries)) {
-      //console.log('Processing file: %s', filename)
       const text = new TextDecoder().decode(content)
       let lines = textToTokens(text)
       const headings = lines[0]!
@@ -103,8 +102,6 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
           score: Number(tokens[scoreIdx]!),
           leading: false,
         }))
-
-        //console.log(content)
       }
 
       if (filename.endsWith('rpt')) {
@@ -124,8 +121,6 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
 
           phenotypes = [phen1, phen2]
         }
-
-        //console.log(content)
       }
 
       const matcher = filename.match(/.*gsea_report_for_(.+)_\d+\.(?:tsv|xls)/)
@@ -155,8 +150,6 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
             q: Number(tokens[qIdx]!),
             rank: Number(tokens[rankIdx]!),
           }
-
-          //console.log('Parsed report: %o', report)
 
           reportsMap[phen]!.push(report)
         }
@@ -194,10 +187,6 @@ export const useGseaWebStore = create<IGseaWebStore>()((set) => ({
       .filter((phen) => phen in reportsMap)
       .map((phen) => reportsMap[phen]!)
       .flat()
-
-    //console.log('Phenotypes: %o', phenotypes)
-    //console.log('Reports: %o', reports)
-    //console.log('Results map: %o', resultsMap)
 
     const datasetsForUse: Record<string, boolean> = Object.fromEntries(
       reports.map((report) => [report.id, true] as [string, boolean])

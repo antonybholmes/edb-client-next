@@ -21,7 +21,6 @@ export function HistoryDevPanel() {
         <VScrollPanel className="grow h-full">
           <HistoryTree
             onTabChange={(t) => {
-              console.log('Selected tab:', t)
               if (SELECTABLE_TYPES.has(t.type ?? '')) {
                 setSelectedTab(t)
               }

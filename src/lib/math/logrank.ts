@@ -61,17 +61,6 @@ function logRankTest(group1: DataPoint[], group2: DataPoint[]): number {
       varianceGroup2 = EPSILON
     }
 
-    // console.log(
-    //   observedGroup1,
-    //   totalAtRisk,
-    //   totalAtRiskGroup1,
-    //   totalAtRiskGroup2,
-    //   varianceGroup1,
-    //   varianceGroup2,
-    //   Math.pow(observedGroup1 - expectedGroup1, 2) / varianceGroup1,
-    //   Math.pow(observedGroup2 - expectedGroup2, 2) / varianceGroup2
-    // )
-
     // Update the Log-Rank statistic
     logRankStatistic +=
       Math.pow(observedGroup1 - expectedGroup1, 2) / varianceGroup1 +
@@ -103,8 +92,6 @@ export function logrankExample() {
   // Split the data into two groups: Group 1 (event = 1), Group 2 (event = 0)
   const group1 = TEST_DATA.filter((d) => d.group === 1) // Group 1
   const group2 = TEST_DATA.filter((d) => d.group === 2) // Group 2
-
-  //console.log(group1, group2)
 
   // Perform the Log-Rank Test
   const logRankStatistic = logRankTest(group1, group2)

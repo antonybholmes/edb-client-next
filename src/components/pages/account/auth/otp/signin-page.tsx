@@ -92,8 +92,6 @@ export function SignInPage() {
     try {
       await signInWithEmailOTP(data.email, data.otp)
 
-      console.log('redirectUrl', state)
-
       // if (
       //   redirectUrl &&
       //   redirectUrl.length > 0 &&
@@ -102,8 +100,6 @@ export function SignInPage() {
       //   redirectUrl.startsWith('/')
 
       let url = state?.target.path ?? MYACCOUNT_PATH
-
-      console.log('Sign-in successful, redirecting to:', state)
 
       if (!isSafeRelativeUrl(url)) {
         url = MYACCOUNT_PATH
@@ -164,8 +160,6 @@ export function SignInPage() {
 
     const isValid = await form.trigger('email')
 
-    console.log('isValid', isValid, form.getValues('email'))
-
     if (isValid) {
       try {
         await sendOTP(form.getValues('email'))
@@ -179,8 +173,6 @@ export function SignInPage() {
             'If the email address is valid, you will receive a 6-digit code.',
         })
       } catch (error) {
-        console.log('Error sending OTP: ', error)
-
         addToast({
           id: makeUuid(),
           title: 'We were unable to send you a code',

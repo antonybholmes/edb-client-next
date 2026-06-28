@@ -149,8 +149,6 @@ export function DotLegend({ pos = { ...ZERO_POS } }: ILegendSvgProps) {
   //const suffix = props.dot.mode === 'groups' ? '%' : ''
   const cx = 0.5 * legendBlockSize
 
-  //console.log('props in dot legend',props)
-
   return (
     <g transform={`translate(${pos.x}, ${pos.y})`}>
       {props.dot.legend.title.show && (

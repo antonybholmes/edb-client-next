@@ -206,11 +206,9 @@ function ColGraphsSvg({
       {flattenedPileups.map((entry, ei) => {
         const [mutType] = entry.id.split('|')
 
-        //console.log('rendering entry', entry.rect.x)
-
         return (
           <g
-            ref={el => {
+            ref={(el) => {
               circlesRef.current[ei] = el
             }}
             key={entry.id}
@@ -306,7 +304,7 @@ export function labelsSvg(
   return (
     <g>
       {labels
-        .filter(label => label.show)
+        .filter((label) => label.show)
         .map((label, li) => {
           const x = xax.domainToRange(label.start) // (label.start - 1) * blockSize.w
           return (
@@ -348,9 +346,7 @@ export function featuresSvg(
   blockSize: IBlock,
   displayProps: ILollipopDisplayProps
 ) {
-  const filteredFeatures = features.filter(f => f.show).toReversed() // [...df.features].sort((a, b) => a.z - b.z)
-
-  //console.log('features', df.features, features)
+  const filteredFeatures = features.filter((f) => f.show).toReversed() // [...df.features].sort((a, b) => a.z - b.z)
 
   return (
     <g transform={`translate(${-0 * blockSize.w}, 0)`}>
@@ -376,8 +372,6 @@ export function featuresSvg(
         const x = xax.domainToRange(feature.start) // (feature.start - 1) * blockSize.w
         const x2 = xax.domainToRange(feature.end) // (feature.end - 1) * blockSize.w
         const width = Math.max(0, x2 - x)
-
-        //console.log(width, feature.start, feature.end, x, x2)
 
         return (
           <g key={fi} transform={`translate(${x}, 0)`}>
@@ -674,7 +668,7 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
   // keep things simple and use ints for the graph limits
 
   const maxSampleCount = Math.round(
-    Math.max(...aaStats.map(stats => aaSum(stats)))
+    Math.max(...aaStats.map((stats) => aaSum(stats)))
   )
 
   const graphHeight = maxSampleCount * blockSize.w //blockSize.w
@@ -700,13 +694,6 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
   }, [blockSize.w, aaStats])
 
   const xax = useMemo(() => {
-    // console.log(
-    //   'xax n, gridWidth, showEndTick',
-    //   n,
-    //   gridWidth,
-    //   displayProps.axes.x.showEndTick
-    // )
-
     let xax = new Axis()
       .setDomain([1, n])
       .setLength(gridWidth) //(n - 1) * blockSize.w)
@@ -735,21 +722,21 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
     const filteredDatasetsForUse = new Set<string>(
       Object.entries(datasetsForUse)
 
-        .filter(e => e[1])
-        .map(e => e[0])
+        .filter((e) => e[1])
+        .map((e) => e[0])
     )
 
     const filteredMutationsForUse = new Set<string>(
       Object.entries(mutationsForUse)
-        .filter(e => e[1])
-        .map(e => e[0])
+        .filter((e) => e[1])
+        .map((e) => e[0])
     )
 
     for (const stats of aaStats) {
       const mutTypes = displayProps.variants.types
         .toReversed()
         .filter(
-          mutType =>
+          (mutType) =>
             mutType in stats.countMap && filteredMutationsForUse.has(mutType)
         )
 
@@ -763,7 +750,7 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
 
         for (const db of Object.keys(stats.countMap[mutType]!)
           .sort()
-          .filter(db => filteredDatasetsForUse.has(db))) {
+          .filter((db) => filteredDatasetsForUse.has(db))) {
           for (const aaInfo of [...stats.countMap[mutType]![db]!].sort()) {
             pileup[pileup.length - 1]!.mutations.push(
               `${mutType}|${db}|${aaInfo.sample}|${aaInfo.aa}`
@@ -773,8 +760,8 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
       }
 
       if (showMaxVariantOnly) {
-        const max = Math.max(...pileup.map(p => p.mutations.length))
-        pileup = pileup.filter(p => p.mutations.length === max)
+        const max = Math.max(...pileup.map((p) => p.mutations.length))
+        pileup = pileup.filter((p) => p.mutations.length === max)
       }
 
       pileups.push(pileup)
@@ -819,8 +806,6 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
       }
     }
 
-    //console.log(flattenedPileups)
-
     return flattenedPileups
   }, [
     aaStats,
@@ -843,8 +828,6 @@ export function LollipopStackSvg({ ref }: ISVGProps) {
     bottom +
     displayProps.margin.top +
     displayProps.margin.bottom
-
-  //console.log(height)
 
   if (!protein) {
     return null

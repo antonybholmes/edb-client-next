@@ -106,8 +106,6 @@ export function GexMetadataDialog({
         },
       })
 
-      console.log(res.data)
-
       // convert data to translate certain strings to numbers
       datasets = res.data.map((dataset) => {
         return produce(dataset, (draft) => {
@@ -291,9 +289,6 @@ export function GexMetadataDialog({
     // }
 
     const columns = selectedDataset.samples[0]!.metadata.map((m) => m.name)
-
-    console.log(columns, 'columns')
-    console.log(data, 'data')
 
     const df = new AnnotationDataFrame({
       data,

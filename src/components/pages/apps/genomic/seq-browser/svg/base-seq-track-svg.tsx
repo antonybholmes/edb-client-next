@@ -119,8 +119,6 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
   const tooltip = useMemo(() => {
     const pos = findClosestSeqPos(mousePos.x, tracks[0]!.positions)
 
-    //console.log(pos, relativeX, 'tooltip', e.target)
-
     return {
       start: pos.start,
       end: pos.start,
@@ -186,7 +184,7 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
               {truncate(
                 formattedList(
                   tracks.map(
-                    t =>
+                    (t) =>
                       `${t.track.name} ${'platform' in t.track ? `(${t.track.platform})` : ''}`
                   )
                 ),
@@ -209,8 +207,6 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
           if (settings.tracks.seqs.smoothing.on) {
             line = line.curve(d3.curveBasis)
           }
-
-          //console.log(points.filter(p => p.realY === 0))
 
           const coords = line(points) ?? ''
 
@@ -241,8 +237,6 @@ export function BaseSeqTrackSvg({ tracks, xax, yax, titleHeight }: IProps) {
           //     .map((p, pi) => `${pi === 0 ? 'M' : 'L'}${p.x},${p.y}`)
           //     .join(' ')
           // }
-
-          // console.log(smoothedPoints)
 
           //similar to points, but we add zero ends to ensure a nice polygon can be
           // formed

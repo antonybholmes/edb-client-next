@@ -50,7 +50,6 @@ export function ThreeColorPicker({
 
   tooltips = [],
 }: IProps) {
-  //console.log(fgColor, bgColor)
   return (
     <div className="h-8 w-10 shrink-0 relative">
       <div className="absolute bg-background aspect-square w-5 h-5 p-px z-20 overflow-hidden rounded-xs">
@@ -60,10 +59,10 @@ export function ThreeColorPicker({
               color: color1,
               allowNoColor: allowNoColor,
               showColor: showColor1,
-              onShowColor: show => onShowColor1?.(show),
+              onShowColor: (show) => onShowColor1?.(show),
               defaultColor: COLOR_TRANSPARENT,
               keepAlphaChannel: true,
-              onColorChange: color => onColor1Change?.(color),
+              onColorChange: (color) => onColor1Change?.(color),
             },
           ]}
           onCancel={onCancel}
@@ -78,10 +77,10 @@ export function ThreeColorPicker({
               color: color2,
               allowNoColor: allowNoColor,
               showColor: showColor2,
-              onShowColor: show => onShowColor2?.(show),
+              onShowColor: (show) => onShowColor2?.(show),
               defaultColor: COLOR_TRANSPARENT,
               keepAlphaChannel: true,
-              onColorChange: color => onColor2Change?.(color),
+              onColorChange: (color) => onColor2Change?.(color),
             },
           ]}
           onCancel={onCancel}
@@ -96,10 +95,10 @@ export function ThreeColorPicker({
               color: color3,
               allowNoColor: allowNoColor,
               showColor: showColor3,
-              onShowColor: show => onShowColor3?.(show),
+              onShowColor: (show) => onShowColor3?.(show),
               defaultColor: COLOR_TRANSPARENT,
               keepAlphaChannel: true,
-              onColorChange: color => onColor3Change?.(color),
+              onColorChange: (color) => onColor3Change?.(color),
             },
           ]}
           onCancel={onCancel}

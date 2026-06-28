@@ -180,15 +180,11 @@ export async function fetchDNA(
       ['comp', complement.toString()],
     ])
 
-    //console.log({ locations: [location.toString()] })
-
     const res = await httpFetch.postJson<{
       data: { seqs: { seq: string }[] }
     }>(`${API_DNA_URL}/${assembly}?${params}`, {
       body: { locations: [location.toString()] },
     })
-
-    //console.log(data)
 
     return {
       location,
@@ -227,8 +223,6 @@ export function useDNAQuery(
         ['rev', reverse.toString()],
         ['comp', complement.toString()],
       ])
-
-      //console.log({ locations: [location.toString()] })
 
       const res = await httpFetch.postJson<IDNAResp>(
         `${API_DNA_URL}/${assembly}?${params}`,

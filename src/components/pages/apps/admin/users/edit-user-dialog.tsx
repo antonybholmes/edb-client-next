@@ -115,8 +115,6 @@ export function EditUserDialog({
   //   },
   // })
 
-  console.log('EditUserDialog user', user)
-
   const form = useForm({
     resolver: zodResolver(UserFormSchema),
     defaultValues: {

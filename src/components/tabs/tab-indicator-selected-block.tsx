@@ -112,8 +112,6 @@ export function TabIndicatorSelectedBlock({
     previousPos.current = position
   }, [position?.x, position?.h, position?.y, position?.w])
 
-  console.log(position)
-
   return (
     <span
       ref={blockRef}

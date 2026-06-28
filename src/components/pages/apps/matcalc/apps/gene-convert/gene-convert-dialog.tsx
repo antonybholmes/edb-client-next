@@ -85,7 +85,7 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
     //const conv = mouseToHuman ? ["mouse", "human"] : ["human", "mouse"]
     //const output = outputSymbols ? "symbols" : "entrez"
     //const f = `/modules/mouse_human/${conv}_${output}.json.gz`
-    //console.log(f)
+
     //const data = await fetchJson(f)
 
     const exact = true
@@ -133,7 +133,6 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
       //   const idCol = dfOut
       //     .col(settings.apps.geneConvert.toSpecies)!
       //     .values.map(v => v.toString())
-      //   console.log(idCol)
 
       //   let columns = dfOut.columns
       //   if (settings.apps.geneConvert.convertIndex) {
@@ -157,7 +156,6 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
       //       d.push(rc)
       //     }
       //   }
-      //   console.log(dfOut.columns)
 
       //   dfOut = new DataFrame({ data: d, columns }).setName(outName)
       // }
@@ -166,7 +164,6 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
 
       onResponse?.(TEXT_OK, dfOut)
     } catch (error) {
-      console.log(error)
       onResponse?.(TEXT_CANCEL)
     }
   }
@@ -311,23 +308,6 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
         <AccordionItem value="input">
           <AccordionTrigger variant="settings">Input</AccordionTrigger>
           <AccordionContent innerCls="flex flex-col gap-y-2">
-            {/* <VCenterRow>
-              <span className="w-28">Delimiter</span>
-              <Input
-                value={settings.apps.geneconv.delimiter}
-                onChange={e => {
-                  //console.log(index, e.target.value)
-
-                  updateSettings(
-                    produce(settings, draft => {
-                      draft.apps.geneconv.delimiter = e.target.value
-                    })
-                  )
-                }}
-                className="w-24 rounded-theme"
-                placeholder="Delimiter..."
-              />
-            </VCenterRow> */}
             <BaseCol className="gap-y-1">
               <Checkbox
                 checked={settings.apps.geneconv.convertIndex}

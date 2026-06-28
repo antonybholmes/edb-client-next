@@ -33,7 +33,7 @@ export function GseaSvg({ ref }: ISVGProps) {
   // suitable q values. If q == 1, unlikely GSEA generated it
   // so we cannot plot it
   const pathways = reports.filter(
-    report =>
+    (report) =>
       (datasetsForUse[report.id] ?? false) &&
       report.q < 1 &&
       report.name in resultsMap
@@ -54,7 +54,7 @@ export function GseaSvg({ ref }: ISVGProps) {
     phenotypes.map((phen, i) => [phen, i])
   )
 
-  const plots = pathways.map(pathway => {
+  const plots = pathways.map((pathway) => {
     const col = ploti % settings.page.columns
     const row = Math.floor(ploti / settings.page.columns)
     const x =
@@ -66,11 +66,7 @@ export function GseaSvg({ ref }: ISVGProps) {
 
     const phenotypei = phenIndexMap.get(pathway.phen)!
 
-    //console.log(pi, row, col, x, y)
-
     const results = resultsMap[pathway.name]!
-
-    //console.log(pathway.name, results)
 
     let xax = new Axis()
       .setDomain([0, rankedGenes.length - 1])
@@ -78,15 +74,15 @@ export function GseaSvg({ ref }: ISVGProps) {
 
     xax = xax.setTicks(xax.ticks.slice(1))
 
-    let yMin = Math.min(...results.es.map(e => e.score))
-    let yMax = Math.max(...results.es.map(e => e.score))
+    let yMin = Math.min(...results.es.map((e) => e.score))
+    let yMax = Math.max(...results.es.map((e) => e.score))
 
     let yax = new YAxis()
       .autoDomain([yMin, yMax])
       //.setDomain([0, plot.dna.seq.length])
       .setLength(settings.es.axes.y.length)
 
-    const points = results.es.map(e => [
+    const points = results.es.map((e) => [
       xax.domainToRange(e.rank),
       yax.domainToRange(e.score),
     ])
@@ -108,9 +104,9 @@ export function GseaSvg({ ref }: ISVGProps) {
       ]
     }
 
-    const leadingEdge = results.es.filter(e => e.leading)
+    const leadingEdge = results.es.filter((e) => e.leading)
 
-    let leadingPoints = leadingEdge.map(e => [
+    let leadingPoints = leadingEdge.map((e) => [
       xax.domainToRange(e.rank),
       yax.domainToRange(e.score),
     ]) as [number, number][]
@@ -141,7 +137,7 @@ export function GseaSvg({ ref }: ISVGProps) {
         <g>
           {settings.es.leadingEdge.show && (
             <polygon
-              points={leadingPoints.map(p => `${p[0]},${p[1]}`).join(' ')}
+              points={leadingPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
               fill={settings.es.leadingEdge.fill.value}
               stroke="none"
               fillOpacity={settings.es.leadingEdge.fill.opacity}
@@ -149,7 +145,7 @@ export function GseaSvg({ ref }: ISVGProps) {
           )}
 
           <polyline
-            points={displayPoints.map(p => `${p[0]},${p[1]}`).join(' ')}
+            points={displayPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
             fill="none"
             stroke={settings.es.line.value}
             opacity={settings.es.line.opacity}
@@ -242,7 +238,7 @@ export function GseaSvg({ ref }: ISVGProps) {
       plotY += settings.es.axes.y.length + 2 * settings.plot.gap.y
     }
 
-    const crossIndex = end(where(rankedGenes, gene => gene.score > 0)) + 1
+    const crossIndex = end(where(rankedGenes, (gene) => gene.score > 0)) + 1
     const crossingX = xax.domainToRange(crossIndex)
 
     let genesSvg: ReactNode | null = null
@@ -321,14 +317,14 @@ export function GseaSvg({ ref }: ISVGProps) {
     let rankingSvg: ReactNode | null = null
 
     if (settings.ranking.show) {
-      yMin = Math.min(...rankedGenes.map(e => e.score))
-      yMax = Math.max(...rankedGenes.map(e => e.score))
+      yMin = Math.min(...rankedGenes.map((e) => e.score))
+      yMax = Math.max(...rankedGenes.map((e) => e.score))
       yax = new YAxis()
         .autoDomain([yMin, yMax])
         //.setDomain([0, plot.dna.seq.length])
         .setLength(settings.ranking.axes.y.length)
 
-      const points = rankedGenes.map(e => [
+      const points = rankedGenes.map((e) => [
         xax.domainToRange(e.rank),
         yax.domainToRange(e.score),
       ])
@@ -349,7 +345,7 @@ export function GseaSvg({ ref }: ISVGProps) {
       rankingSvg = (
         <g transform={`translate(0, ${plotY})`}>
           <polygon
-            points={displayPoints.map(p => `${p[0]},${p[1]}`).join(' ')}
+            points={displayPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
             fill={settings.ranking.fill.value}
             stroke="none"
             fillOpacity={settings.ranking.fill.opacity}

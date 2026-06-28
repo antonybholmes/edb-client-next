@@ -52,8 +52,6 @@ export async function createAnnotationTable(
 
   const url = `${API_GENOME_URL}/gtfs/${assembly}/annotate?promoter=${tss.prom5p},${tss.prom3p}&closest=${closest}&use_official=${useOfficialGenes ? 1 : 0}`
 
-  console.log(url, 'url')
-
   // split into pages to avoid overloading the server. Note that
   // server has its own internal limits, so even if you send a large batch, it may not return all results.
 
@@ -63,8 +61,6 @@ export async function createAnnotationTable(
     // Attempt to annotate a batch of locations. The server may return fewer results than requested,
     // so we increment the index by the actual number of records returned to avoid skipping records.
     const locs = locations.slice(idx, idx + pageSize)
-
-    console.log('annotating page', idx, locs.length)
 
     const res = await httpFetch.postJson<{
       data: {
@@ -117,7 +113,7 @@ export async function createAnnotationTable(
 
     newRow = newRow.concat(
       ann.closestGenes
-        .map(g => [
+        .map((g) => [
           g.geneId!,
           g.symbol!,
           g.loc.strand!,
@@ -134,8 +130,6 @@ export async function createAnnotationTable(
     table.push(newRow)
   }
 
-  //console.log(table, 'table')
-
   let header: string[] = df.columns.concat([
     'Assembly',
     'Gene Id',
@@ -149,7 +143,7 @@ export async function createAnnotationTable(
   if (hasClosest) {
     header = header.concat(
       range(closest)
-        .map(i => [
+        .map((i) => [
           `#${i + 1} Closest Id`,
           `#${i + 1} Closest Gene Symbol`,
           `#${i + 1} Closest Gene Strand`,
@@ -159,8 +153,6 @@ export async function createAnnotationTable(
         .flat()
     )
   }
-
-  console.log(header.length, table[0]?.length, 'header')
 
   return new AnnotationDataFrame({ data: table, columns: header })
 }
@@ -189,5 +181,5 @@ export async function createAnnotationFile(
     return null
   }
 
-  return table.values.map(row => row.join('\t')).join('\n')
+  return table.values.map((row) => row.join('\t')).join('\n')
 }

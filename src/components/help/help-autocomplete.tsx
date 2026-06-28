@@ -42,11 +42,9 @@ function HelpAutocomplete({ className }: IClassProps) {
       return
     }
 
-    //console.log(query)
-
     const results = searchIndex.search(query)
 
-    setResults(results.map(result => result.item))
+    setResults(results.map((result) => result.item))
   }
 
   return (

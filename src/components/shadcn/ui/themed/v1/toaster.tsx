@@ -28,11 +28,9 @@ function ToastViewport({
 export function Toaster() {
   const { toasts } = useToast()
 
-  console.log(toasts)
-
   return (
     <ToastProvider>
-      {toasts.map(toast => {
+      {toasts.map((toast) => {
         const id: string = toast.id.toString() ?? ''
         return (
           <Toast

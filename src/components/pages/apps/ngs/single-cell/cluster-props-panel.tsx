@@ -63,14 +63,14 @@ function ClusterItem({
     >
       <Checkbox
         checked={cluster.show}
-        onCheckedChange={checked => {
+        onCheckedChange={(checked) => {
           if (!clusterInfo) {
             return
           }
 
           updateClusterInfo(
-            produce(clusterInfo, draft => {
-              draft.clusters.find(c => c.label === cluster.label)!.show =
+            produce(clusterInfo, (draft) => {
+              draft.clusters.find((c) => c.label === cluster.label)!.show =
                 checked
             })
           )
@@ -81,17 +81,17 @@ function ClusterItem({
         colors={[
           {
             color,
-            onColorChange: color => setColor(color),
+            onColorChange: (color) => setColor(color),
           },
         ]}
-        onOpenChanged={open => {
+        onOpenChanged={(open) => {
           if (!open) {
             if (!clusterInfo) {
               return
             }
             updateClusterInfo(
-              produce(clusterInfo, draft => {
-                draft.clusters.find(c => c.label === cluster.label)!.color =
+              produce(clusterInfo, (draft) => {
+                draft.clusters.find((c) => c.label === cluster.label)!.color =
                   color
               })
             )
@@ -160,8 +160,6 @@ export function ClusterPropsPanel() {
         //       newIndex
         //     )
 
-        //     console.log(newOrder)
-
         //     updateSettings(
         //       produce(settings, draft => {
         //         draft.clusters = newOrder.map(
@@ -175,12 +173,12 @@ export function ClusterPropsPanel() {
         // }}
       >
         <SortableContext
-          items={clusterInfo?.clusters.map(c => c.label) || []}
+          items={clusterInfo?.clusters.map((c) => c.label) || []}
           strategy={verticalListSortingStrategy}
         >
           <VScrollPanel>
             <ul className="flex flex-col">
-              {clusterInfo?.clusters.map(c => {
+              {clusterInfo?.clusters.map((c) => {
                 return (
                   // <BaseSortableItem key={c.id} id={c.id.toString()}>
                   <ClusterItem key={c.label} cluster={c} />

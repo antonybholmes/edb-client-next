@@ -55,7 +55,7 @@ export interface IGenomeStore {
   setGtf: (gtf: IGTFInfo) => void
 }
 
-export const useGenomesStore = create<IGenomeStore>()(set => ({
+export const useGenomesStore = create<IGenomeStore>()((set) => ({
   gtfs: [],
   gtfMap: {},
   gtf: null,
@@ -71,11 +71,11 @@ export const useGenomesStore = create<IGenomeStore>()(set => ({
 
 export function useGenomes() {
   const { settings } = useEdbSettings()
-  const gtfMap = useGenomesStore(state => state.gtfMap)
-  const gtfs = useGenomesStore(state => state.gtfs)
-  const gtf = useGenomesStore(state => state.gtf)
-  const setGtfs = useGenomesStore(state => state.setGtfs)
-  const setGtf = useGenomesStore(state => state.setGtf)
+  const gtfMap = useGenomesStore((state) => state.gtfMap)
+  const gtfs = useGenomesStore((state) => state.gtfs)
+  const gtf = useGenomesStore((state) => state.gtf)
+  const setGtfs = useGenomesStore((state) => state.setGtfs)
+  const setGtf = useGenomesStore((state) => state.setGtf)
 
   // get the available GTF annotations available
   const gtfQuery = useQuery({
@@ -118,8 +118,6 @@ export function useGenomes() {
     if ('grcm39' in gtfMap) {
       gtfMap['mm39'] = gtfMap['grcm39']
     }
-
-    //console.log('GTF Map:', gtfMap)
 
     setGtfs(gtfQuery.data, gtfMap)
   }, [gtfQuery.data])
@@ -167,8 +165,6 @@ export function useGeneQuery(
         }>(
           `${API_GENOME_GTFS_URL}/${assembly}/search?q=${query}&feature=${feature}` //&mode=fuzzy`
         )
-
-        console.log('gene search result', res.data)
 
         return res.data
       } catch (e) {

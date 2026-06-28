@@ -174,7 +174,6 @@ export function MyAccountPage() {
 
   useEffect(() => {
     if (session) {
-      //console.log('set form session user', session.user)
       form.reset({
         ...session.user,
       })
@@ -187,8 +186,6 @@ export function MyAccountPage() {
 
     try {
       const updateToken = await fetchUpdateToken()
-
-      console.log('update token', updateToken)
 
       const csrfToken = await getCSRFToken()
 
@@ -216,8 +213,6 @@ export function MyAccountPage() {
         description: 'You will receive a confirmation email shortly.',
       })
     } catch (err) {
-      console.log('update err', err)
-
       addToast({
         id: makeUuid(),
         title: 'Your account information could not be updated',

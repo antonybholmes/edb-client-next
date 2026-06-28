@@ -58,7 +58,7 @@ export function OpenTableDialog({ files, openFiles, onCancel }: IProps) {
           : 'Open File'
       }
       //contentVariant="glass"
-      onResponse={resp => {
+      onResponse={(resp) => {
         if (resp === TEXT_OK) {
           openFiles(files, {
             colNames: settings.openFile.firstRowIsHeader ? 1 : 0,
@@ -81,8 +81,8 @@ export function OpenTableDialog({ files, openFiles, onCancel }: IProps) {
       <CheckPropRow
         title="Has header"
         checked={settings.openFile.firstRowIsHeader}
-        onCheckedChange={v => {
-          const newSettings = produce(settings, draft => {
+        onCheckedChange={(v) => {
+          const newSettings = produce(settings, (draft) => {
             draft.openFile.firstRowIsHeader = v
           })
           updateSettings(newSettings)
@@ -91,8 +91,8 @@ export function OpenTableDialog({ files, openFiles, onCancel }: IProps) {
       <CheckPropRow
         title="Has row index"
         checked={settings.openFile.index.hasIndex}
-        onCheckedChange={v => {
-          const newSettings = produce(settings, draft => {
+        onCheckedChange={(v) => {
+          const newSettings = produce(settings, (draft) => {
             draft.openFile.index.hasIndex = v
           })
           updateSettings(newSettings)
@@ -104,11 +104,11 @@ export function OpenTableDialog({ files, openFiles, onCancel }: IProps) {
             disabled={!settings.openFile.index.hasIndex}
             placeholder="Columns..."
             className="w-16 rounded-theme"
-            onNumChange={v => {
-              const newSettings = produce(settings, draft => {
+            onNumChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.openFile.index.cols = v
               })
-              console.log(newSettings)
+
               updateSettings(newSettings)
             }}
           />
@@ -123,8 +123,8 @@ export function OpenTableDialog({ files, openFiles, onCancel }: IProps) {
             limit={[0, 1000]}
             placeholder="Rows..."
             className="w-16 rounded-theme"
-            onNumChange={v => {
-              const newSettings = produce(settings, draft => {
+            onNumChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
                 draft.openFile.skipRows = v
               })
 
@@ -152,8 +152,8 @@ export function OpenTableDialog({ files, openFiles, onCancel }: IProps) {
 
         <Select
           defaultValue={settings.openFile.delimiter}
-          onValueChange={v => {
-            const newSettings = produce(settings, draft => {
+          onValueChange={(v) => {
+            const newSettings = produce(settings, (draft) => {
               draft.openFile.delimiter = v as HumanReadableDelimiter
             })
             updateSettings(newSettings)
@@ -173,8 +173,8 @@ export function OpenTableDialog({ files, openFiles, onCancel }: IProps) {
           title="Trim spaces"
           tooltip="If enabled, leading and trailing whitespace will be removed from each cell."
           checked={settings.openFile.trimWhitespace}
-          onCheckedChange={v => {
-            const newSettings = produce(settings, draft => {
+          onCheckedChange={(v) => {
+            const newSettings = produce(settings, (draft) => {
               draft.openFile.trimWhitespace = v
             })
             updateSettings(newSettings)
@@ -185,8 +185,8 @@ export function OpenTableDialog({ files, openFiles, onCancel }: IProps) {
       <SwitchPropRow
         title="Keep default NA"
         checked={settings.openFile.keepDefaultNA}
-        onCheckedChange={v => {
-          const newSettings = produce(settings, draft => {
+        onCheckedChange={(v) => {
+          const newSettings = produce(settings, (draft) => {
             draft.openFile.keepDefaultNA = v
           })
           updateSettings(newSettings)

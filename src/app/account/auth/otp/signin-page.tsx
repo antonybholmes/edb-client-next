@@ -92,18 +92,7 @@ export function SignInPage() {
     try {
       await signInWithEmailOTP(data.email, data.otp)
 
-      console.log('redirectUrl', state)
-
-      // if (
-      //   redirectUrl &&
-      //   redirectUrl.length > 0 &&
-      //   redirectUrl !== '/' &&
-      //   redirectUrl !== OTP_SIGN_IN_ROUTE &&
-      //   redirectUrl.startsWith('/')
-
       let url = state?.target.path ?? MYACCOUNT_PATH
-
-      console.log('Sign-in successful, redirecting to:', state)
 
       if (!isSafeRelativeUrl(url)) {
         url = MYACCOUNT_PATH
@@ -112,16 +101,6 @@ export function SignInPage() {
       //router.push(url)
       safeRedirect(url)
     } catch (error) {
-      console.log('Error signing in: ', error)
-
-      //setOTPSent(false)
-
-      // try {
-      //   await signout()
-      // } catch (e) {
-      //   console.log('Error signing out: ', e)
-      // }
-
       addToast({
         id: makeUuid(),
         title: config.name,
@@ -164,8 +143,6 @@ export function SignInPage() {
 
     const isValid = await form.trigger('email')
 
-    console.log('isValid', isValid, form.getValues('email'))
-
     if (isValid) {
       try {
         await sendOTP(form.getValues('email'))
@@ -179,8 +156,6 @@ export function SignInPage() {
             'If the email address is valid, you will receive a 6-digit code.',
         })
       } catch (error) {
-        console.log('Error sending OTP: ', error)
-
         addToast({
           id: makeUuid(),
           title: 'We were unable to send you a code',
@@ -304,24 +279,6 @@ export function SignInPage() {
             </form>
 
             <BaseCol className="gap-y-2">
-              {/* {session && session.user && (
-                <Button
-                  variant="theme"
-                  size="xl"
-                  //disabled={otpSent && (!form.watch('email') || !form.watch('otp'))}
-                  onClick={() => {
-                    console.log('redirectUrl', state)
-                    redirect(state?.target.path ?? MYACCOUNT_ROUTE)
-                  }}
-                  className="group"
-                >
-                  <div className="group-hover:w-5 group-hover:opacity-100 group-focus:w-5 group-focus:opacity-100 opacity-0 w-0 overflow-hidden trans-all">
-                    <ArrowRight className="w-5" />
-                  </div>
-                  <span>Go to {state?.target.title ?? TEXT_MY_ACCOUNT}</span>
-                </Button>
-              )} */}
-
               <Button
                 variant={session && session.user ? 'secondary' : 'theme'}
                 size="xl"

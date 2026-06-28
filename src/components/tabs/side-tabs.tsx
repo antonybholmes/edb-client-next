@@ -36,8 +36,6 @@ function _SideTabs({
 }: IShortcutProps) {
   const { tabs, selectedTab, selectedTabIndex, setTab } = useTabs(id)
 
-  console.log('selectedTab', selectedTab)
-
   //const pressed = useRef(false)
   const tabListRef = useRef<HTMLDivElement>(null)
   const buttonsRef = useRef<(HTMLElement | null)[]>([])
@@ -51,19 +49,9 @@ function _SideTabs({
 
   function _onValueChange(value: string) {
     const tab = getTabFromValue(value, tabs)
-    //const [name, index] = parseTabId(value)
 
-    //setValue(value)
-
-    console.log('_onValueChange', value, tab, id)
-
-    //onValueChange?.(name)
     if (tab) {
-      //setTabIndex(selectedTab.index)
-
       setTab(value)
-
-      //onTabChange?.(tab)
     }
   }
 
@@ -75,8 +63,6 @@ function _SideTabs({
     const y = clientRect.top - containerRect.top
     const h = clientRect.height
 
-    console.log('updateSize', y, h, buttonRef)
-
     setSelectedTabPosition({
       ...(selectedPosition || EMPTY_RECT),
       y,
@@ -87,7 +73,6 @@ function _SideTabs({
   }
 
   useEffect(() => {
-    console.log('side tabs useEffect', selectedTab, buttonsRef.current)
     if (
       !selectedTab ||
       !buttonsRef.current[selectedTabIndex] ||
@@ -97,13 +82,6 @@ function _SideTabs({
     }
 
     const ref = buttonsRef.current[selectedTabIndex]!
-
-    console.log(
-      'asdasd',
-      selectedTabIndex,
-      buttonsRef.current.length,
-      tabs.length
-    )
 
     if (initial.current) {
       initial.current = false

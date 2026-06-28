@@ -40,9 +40,9 @@ export function ClinicalPropsPanel({ ref }: IDivProps) {
         <CheckPropRow
           title="Show"
           checked={displayProps.clinical.show}
-          onCheckedChange={state =>
+          onCheckedChange={(state) =>
             setDisplayProps(
-              produce(displayProps, draft => {
+              produce(displayProps, (draft) => {
                 draft.clinical.show = state
               })
             )
@@ -52,9 +52,9 @@ export function ClinicalPropsPanel({ ref }: IDivProps) {
         <CheckPropRow
           title="Border"
           checked={displayProps.clinical.border.show}
-          onCheckedChange={v =>
+          onCheckedChange={(v) =>
             setDisplayProps(
-              produce(displayProps, draft => {
+              produce(displayProps, (draft) => {
                 draft.clinical.border.show = v
               })
             )
@@ -64,9 +64,9 @@ export function ClinicalPropsPanel({ ref }: IDivProps) {
             colors={[
               {
                 color: displayProps.clinical.border.value,
-                onColorChange: v =>
+                onColorChange: (v) =>
                   setDisplayProps(
-                    produce(displayProps, draft => {
+                    produce(displayProps, (draft) => {
                       draft.clinical.border.value = v
                     })
                   ),
@@ -81,9 +81,9 @@ export function ClinicalPropsPanel({ ref }: IDivProps) {
             id="y"
             value={displayProps.clinical.height}
             className="w-16 rounded-theme"
-            onNumChanged={v => {
+            onNumChanged={(v) => {
               setDisplayProps(
-                produce(displayProps, draft => {
+                produce(displayProps, (draft) => {
                   draft.clinical.height = v
                 })
               )
@@ -97,22 +97,22 @@ export function ClinicalPropsPanel({ ref }: IDivProps) {
       <DndContext
         modifiers={[restrictToVerticalAxis]}
         //onDragStart={(event) => setActiveId(event.active.id as string)}
-        onDragEnd={event => {
+        onDragEnd={(event) => {
           const { active, over } = event
 
           if (over && active.id !== over?.id) {
-            const oldIndex = clinicalTracks.findIndex(c => c.name === active.id)
-            const newIndex = clinicalTracks.findIndex(c => c.name === over.id) //clinicalTracks.findIndex(c=>c.name === over.id)
+            const oldIndex = clinicalTracks.findIndex(
+              (c) => c.name === active.id
+            )
+            const newIndex = clinicalTracks.findIndex((c) => c.name === over.id) //clinicalTracks.findIndex(c=>c.name === over.id)
             const newOrder = arrayMove(clinicalTracks, oldIndex, newIndex)
-
-            console.log(newOrder)
 
             setClinicalTracks(newOrder)
           }
         }}
       >
         <SortableContext
-          items={clinicalTracks.map(track => track.name)}
+          items={clinicalTracks.map((track) => track.name)}
           strategy={verticalListSortingStrategy}
         >
           <VScrollPanel>
@@ -128,16 +128,16 @@ export function ClinicalPropsPanel({ ref }: IDivProps) {
                       title={track.name}
                       key={ti}
                       checked={trackProps.show}
-                      onCheckedChange={state => {
+                      onCheckedChange={(state) => {
                         const newTracksProps = produce(
                           displayProps.legend.clinical.tracks,
-                          draft => {
+                          (draft) => {
                             draft[track.name]!.show = state
                           }
                         )
 
                         setDisplayProps(
-                          produce(displayProps, draft => {
+                          produce(displayProps, (draft) => {
                             draft.legend.clinical.tracks = newTracksProps
                           })
                         )

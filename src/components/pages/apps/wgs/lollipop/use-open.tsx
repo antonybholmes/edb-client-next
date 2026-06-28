@@ -13,7 +13,6 @@ export function useOpen() {
   const { openFile, addSheets } = useHistory()
 
   function openFiles(files: ITextFileOpen[], options: IParseOptions) {
-    console.log('Opening files:', files)
     filesToDataFrames(files, {
       parseOpts: options,
       onSuccess: (tables) => {

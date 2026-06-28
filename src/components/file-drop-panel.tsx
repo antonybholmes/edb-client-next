@@ -56,18 +56,18 @@ export function FileDrag({
         className
       )}
       data-drag={true}
-      onDrop={event => {
+      onDrop={(event) => {
         event.preventDefault()
 
         onFileDrop?.(Array.from(event.dataTransfer.files))
       }}
-      onDragOver={event => {
+      onDragOver={(event) => {
         event.preventDefault()
       }}
-      onDragEnter={event => {
+      onDragEnter={(event) => {
         event.preventDefault()
       }}
-      onDragLeave={event => {
+      onDragLeave={(event) => {
         event.preventDefault()
 
         onDragLeave?.(event)
@@ -91,7 +91,7 @@ export function FileDrag({
 //   const [animate, setAnimate] = useState(false)
 
 //   // const onDrop = useCallback((acceptedFiles: File[]) => {
-//   //   console.log(acceptedFiles)
+
 //   // }, [])
 
 //   const { getRootProps, getInputProps } = useDropzone({
@@ -172,20 +172,19 @@ export function FileDropPanel({
   }
 
   function _onFileDrop(files: File[]) {
-    console.log('drag over')
     _onDragLeave()
     onFileDrop?.(files)
   }
 
   return (
     <BaseCol
-      onDrop={event => {
+      onDrop={(event) => {
         event.preventDefault()
       }}
-      onDragOver={event => {
+      onDragOver={(event) => {
         event.preventDefault()
       }}
-      onDragEnter={event => {
+      onDragEnter={(event) => {
         if (isDragging) {
           return
         }
@@ -193,7 +192,7 @@ export function FileDropPanel({
         setIsDragging(true)
         setRegisterDragging(true)
       }}
-      onDragLeave={event => {
+      onDragLeave={(event) => {
         event.preventDefault()
       }}
       className={cn('grow relative', className)}

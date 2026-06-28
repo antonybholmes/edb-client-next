@@ -54,15 +54,11 @@ export function HomeToolbar() {
   }
 
   async function convertGenes() {
-    console.log('Converting genes...', sheets[0])
-
     const dfa = await createGeneConvTable(sheets[0] as AnnotationDataFrame, {
       fromSpecies,
       toSpecies,
       exact,
     })
-
-    console.log('Converted genes:', dfa)
 
     if (dfa) {
       addSheets([dfa], { name: `Gene Conversion` })

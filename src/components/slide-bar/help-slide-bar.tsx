@@ -10,40 +10,6 @@ interface IHelpFrameProps {
 }
 
 function HelpIFrame({ helpUrl }: IHelpFrameProps) {
-  // const iframeRef = useRef<HTMLIFrameElement>(null)
-  // const [height, setHeight] = useState('0px')
-  // useEffect(() => {
-  //   iframeRef.current!.style.height = iframeRef.current!.contentWindow!.document.body.scrollHeight + 'px';
-
-  //   // set the width of the iframe as the
-  //   // width of the iframe content
-  //   //iframeRef.current!.style.width  = iframeRef.current!.contentWindow!.document.body.scrollWidth + 'px';
-  // },[])
-
-  // console.log(height, helpUrl)
-
-  // return (
-  //   <div
-  //     className="border"
-  //   >
-  //     <iframe
-  //       ref={iframeRef}
-  //       src={helpUrl}
-  //       className="w-full h-64 bg-destructive "
-  //       scrolling="auto"
-
-  //       // onLoad={() => {
-  //       //   console.log("onload")
-  //       //   setHeight(
-  //       //     iframeRef.current!.contentWindow!.document.body.scrollHeight + 'px'
-  //       //   )
-
-  //       // iframeRef.current!.style.height =
-  //       //   iframeRef.current!.contentWindow!.document.body.scrollHeight + 'px'
-  //       //}}
-  //     />
-  //   </div>
-
   const { data } = useQuery({
     queryKey: ['help'],
     queryFn: async () => {

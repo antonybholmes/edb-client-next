@@ -38,7 +38,6 @@ class AxiosRequest implements IHttpRequest {
   }
 
   async get(url: string, options: IFetchOptions = {}): Promise<Response> {
-    //console.log(url, JSON.stringify(body), headers)
     return axios.get(url, {
       headers: (options?.headers as RawAxiosRequestHeaders) ?? {},
       withCredentials: options?.withCredentials ?? false,
@@ -46,7 +45,6 @@ class AxiosRequest implements IHttpRequest {
   }
 
   async delete(url: string, options: IFetchOptions = {}): Promise<Response> {
-    //console.log(url, JSON.stringify(body), headers)
     return axios.delete(url, {
       headers: (options?.headers as RawAxiosRequestHeaders) ?? {},
       withCredentials: options?.withCredentials ?? false,

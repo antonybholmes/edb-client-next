@@ -176,11 +176,8 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
             settings.apps.gex.selectedDatasets.includes(dataset.id)
           )
 
-          console.log('previously selected datasets', previouslySelected)
-
           if (previouslySelected.length > 0) {
             // we found one the use already selected, so highlight that
-            console.log('previously selected datasets', previouslySelected)
 
             setDataset(previouslySelected[0]!)
           } else {
@@ -305,8 +302,6 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
 
     const genes = textToLines(text, { trim: true })
 
-    //console.log(genes)
-
     if (genes.length === 0) {
       addToast({
         id: makeUuid(),
@@ -361,8 +356,6 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
           headers: bearerHeaders(accessToken),
         }
       )
-
-      //console.log('searched', res.data)
 
       const searchResults: IGexSearchResult[] = res.data
 
@@ -452,8 +445,6 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
         data: geneData,
         columns: rowObsCols,
       })
-
-      //console.log('data', data, columns, rowObs)
 
       const df = new AnnotationDataFrame({
         data,
@@ -594,8 +585,6 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
 
             return group
           })
-
-        //console.log('groups', groups)
       }
 
       // if user does not want to add groups, then we need to

@@ -38,25 +38,6 @@ export abstract class BaseSeqReader {
 
     const points = await this.getRealYPoints(location, binSize, { mode })
 
-    //if (this._mode === 'Cache X') {
-    //for (const b of this._points) {
-    //  b.x = xax.domainToRange(b.start!)
-    //}
-
-    //this._mode = 'Collapse'
-    //}
-
-    //if (this._mode === 'Collapse') {
-    //this._points = collapsePoints(this._points, xax, binSize, smooth)
-
-    // for (const b of this._points) {
-    //   console.log(yax.domainToRange(b.realY), yax.domain)
-    //   b.y = yax.domainToRange(b.realY)
-    // }
-
-    //this._mode = 'Fully Cached'
-    //}
-
     return collapsePoints(points, xax, yax)
   }
 }
@@ -86,7 +67,7 @@ export function makeBins(
   const start = Math.floor(location.start / binSize) * binSize // Math.max(1, location.start + 4 * binSize)
   const end = Math.ceil(location.end / binSize) * binSize
 
-  return range(start, end, binSize).map(b => {
+  return range(start, end, binSize).map((b) => {
     // one based start
     const s = b + 1
     return {
@@ -111,7 +92,7 @@ export function makePoints(
   const start = Math.floor(location.start / binSize) * binSize // Math.max(1, location.start + 4 * binSize)
   const end = Math.ceil(location.end / binSize) * binSize
 
-  return range(start, end, binSize).map(b => {
+  return range(start, end, binSize).map((b) => {
     const s = b + 1
     const e = s + binSize
     return {
@@ -136,9 +117,6 @@ export function collapsePoints(
   if (points.length === 0) {
     return []
   }
-
-  //console.log(points)
-  // filter down to remove duplicate x coordinates etc
 
   // fill the gaps
 
@@ -177,8 +155,6 @@ export function collapsePoints(
       pointsWithoutGaps.push(p2)
     }
   }
-
-  //console.log(pointsWithoutGaps, 'fill', smoothingFactor)
 
   // if (smoothingFactor > 0) {
   //   // increase size of zero regions to mean of flanking regions so that dips are not

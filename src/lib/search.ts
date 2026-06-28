@@ -102,7 +102,6 @@ export function toRPN(input: string): ISearchNode[] {
     }
   }
 
-  //console.log(result)
   let topOfOpStack: StackOp | undefined
 
   for (const token of result) {
@@ -148,8 +147,6 @@ export function toRPN(input: string): ISearchNode[] {
     output.push({ v: '', op: opStack.pop() ?? 'AND' })
   }
 
-  //console.log(output)
-
   return output
 }
 
@@ -166,8 +163,6 @@ export class BoolSearchQuery {
     this._caseSensitive = caseSensitive
     this._exact = exact
     this._rpn = toRPN(caseSensitive ? exp : exp.toLowerCase())
-
-    //console.log(this._rpn)
   }
 
   match(query: string): boolean {

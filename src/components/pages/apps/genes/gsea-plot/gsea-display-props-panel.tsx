@@ -56,7 +56,7 @@ export function GseaDisplayPropsPanel() {
                 title: APP_INFO.name,
 
                 content: 'Are you sure you want to reset all settings?',
-                callback: response => {
+                callback: (response) => {
                   if (response === TEXT_OK) {
                     reset()
                   }
@@ -90,9 +90,9 @@ export function GseaDisplayPropsPanel() {
                       {
                         title: 'Titles',
                         textProps: settings.title,
-                        update: f =>
+                        update: (f) =>
                           updateSettings(
-                            produce(settings, draft => {
+                            produce(settings, (draft) => {
                               draft.title.font = f.font
                               draft.title.show = f.show
                             })
@@ -112,9 +112,9 @@ export function GseaDisplayPropsPanel() {
                     {
                       title: 'Labels',
                       textProps: settings.axes.labels,
-                      update: f =>
+                      update: (f) =>
                         updateSettings(
-                          produce(settings, draft => {
+                          produce(settings, (draft) => {
                             draft.axes.labels = f
                           })
                         ),
@@ -122,9 +122,9 @@ export function GseaDisplayPropsPanel() {
                     {
                       title: 'Ticks',
                       textProps: settings.axes.ticks,
-                      update: f =>
+                      update: (f) =>
                         updateSettings(
-                          produce(settings, draft => {
+                          produce(settings, (draft) => {
                             draft.axes.ticks = f
                           })
                         ),
@@ -144,9 +144,9 @@ export function GseaDisplayPropsPanel() {
                       {
                         title: 'Labels',
                         textProps: settings.es.labels,
-                        update: f => {
+                        update: (f) => {
                           updateSettings(
-                            produce(settings, draft => {
+                            produce(settings, (draft) => {
                               draft.es.labels = f
                             })
                           )
@@ -155,9 +155,9 @@ export function GseaDisplayPropsPanel() {
                       {
                         title: 'Phenotypes',
                         textProps: settings.es.phenotypes,
-                        update: f => {
+                        update: (f) => {
                           updateSettings(
-                            produce(settings, draft => {
+                            produce(settings, (draft) => {
                               draft.es.phenotypes = f
                             })
                           )
@@ -168,9 +168,9 @@ export function GseaDisplayPropsPanel() {
                   <Switch
                     title="Show"
                     checked={settings.es.show}
-                    onCheckedChange={state => {
+                    onCheckedChange={(state) => {
                       updateSettings(
-                        produce(settings, draft => {
+                        produce(settings, (draft) => {
                           draft.es.show = state
                         })
                       )
@@ -190,7 +190,7 @@ export function GseaDisplayPropsPanel() {
                       opacity: settings.es.line.opacity,
                       onColorChange: (color, alpha) => {
                         updateSettings(
-                          produce(settings, draft => {
+                          produce(settings, (draft) => {
                             draft.es.line.value = color
                             draft.es.line.opacity = alpha
                           })
@@ -206,9 +206,9 @@ export function GseaDisplayPropsPanel() {
               <CheckPropRow
                 title="Leading Edge"
                 checked={settings.es.leadingEdge.show}
-                onCheckedChange={state => {
+                onCheckedChange={(state) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.es.leadingEdge.show = state
                     })
                   )
@@ -221,7 +221,7 @@ export function GseaDisplayPropsPanel() {
                       opacity: settings.es.leadingEdge.fill.opacity,
                       onColorChange: (color, alpha) => {
                         updateSettings(
-                          produce(settings, draft => {
+                          produce(settings, (draft) => {
                             draft.es.leadingEdge.fill.value = color
                             draft.es.leadingEdge.fill.opacity = alpha
                           })
@@ -241,9 +241,9 @@ export function GseaDisplayPropsPanel() {
                 <Switch
                   title="Show"
                   checked={settings.genes.show}
-                  onCheckedChange={state => {
+                  onCheckedChange={(state) => {
                     updateSettings(
-                      produce(settings, draft => {
+                      produce(settings, (draft) => {
                         draft.genes.show = state
                       })
                     )
@@ -261,9 +261,9 @@ export function GseaDisplayPropsPanel() {
                   placeholder="Height"
                   limit={[1, 100]}
                   step={1}
-                  onNumChange={v => {
+                  onNumChange={(v) => {
                     updateSettings(
-                      produce(settings, draft => {
+                      produce(settings, (draft) => {
                         draft.genes.height = v
                       })
                     )
@@ -275,9 +275,9 @@ export function GseaDisplayPropsPanel() {
               <CheckPropRow
                 title="Colors"
                 checked={settings.genes.color.on}
-                onCheckedChange={state => {
+                onCheckedChange={(state) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.genes.color.on = state
                     })
                   )
@@ -292,7 +292,7 @@ export function GseaDisplayPropsPanel() {
                       opacity: settings.genes.pos.opacity,
                       onColorChange: (color, alpha) => {
                         updateSettings(
-                          produce(settings, draft => {
+                          produce(settings, (draft) => {
                             draft.genes.pos.value = color
                             draft.genes.pos.opacity = alpha
                           })
@@ -305,9 +305,8 @@ export function GseaDisplayPropsPanel() {
                       color: settings.genes.neg.value,
                       opacity: settings.genes.neg.opacity,
                       onColorChange: (color, alpha) => {
-                        console.log('neg color change', { color, alpha })
                         updateSettings(
-                          produce(settings, draft => {
+                          produce(settings, (draft) => {
                             draft.genes.neg.value = color
                             draft.genes.neg.opacity = alpha
                           })
@@ -323,9 +322,9 @@ export function GseaDisplayPropsPanel() {
               <CheckPropRow
                 title="Gradient"
                 checked={settings.genes.gradient.on}
-                onCheckedChange={state => {
+                onCheckedChange={(state) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.genes.gradient.on = state
                     })
                   )
@@ -340,9 +339,9 @@ export function GseaDisplayPropsPanel() {
                   limit={[0, 1]}
                   step={0.1}
                   dp={1}
-                  onNumChange={v => {
+                  onNumChange={(v) => {
                     updateSettings(
-                      produce(settings, draft => {
+                      produce(settings, (draft) => {
                         draft.genes.gradient.alpha = v
                       })
                     )
@@ -365,7 +364,7 @@ export function GseaDisplayPropsPanel() {
                         opacity: settings.ranking.fill.opacity,
                         onColorChange: (color, alpha) => {
                           updateSettings(
-                            produce(settings, draft => {
+                            produce(settings, (draft) => {
                               draft.ranking.fill.value = color
                               draft.ranking.fill.opacity = alpha
                             })
@@ -380,9 +379,9 @@ export function GseaDisplayPropsPanel() {
                   <Switch
                     title="Show"
                     checked={settings.ranking.show}
-                    onCheckedChange={state => {
+                    onCheckedChange={(state) => {
                       updateSettings(
-                        produce(settings, draft => {
+                        produce(settings, (draft) => {
                           draft.ranking.show = state
                         })
                       )
@@ -398,9 +397,9 @@ export function GseaDisplayPropsPanel() {
                 title="Zero crossing"
                 checked={settings.ranking.zeroCross.show}
                 disabled={!settings.ranking.show}
-                onCheckedChange={state =>
+                onCheckedChange={(state) =>
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.ranking.zeroCross.show = state
                     })
                   )
@@ -414,7 +413,7 @@ export function GseaDisplayPropsPanel() {
                       opacity: settings.ranking.zeroCross.line.opacity,
                       onColorChange: (color, alpha) => {
                         updateSettings(
-                          produce(settings, draft => {
+                          produce(settings, (draft) => {
                             draft.ranking.zeroCross.line.value = color
                             draft.ranking.zeroCross.line.opacity = alpha
                           })

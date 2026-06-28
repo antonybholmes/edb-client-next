@@ -178,7 +178,6 @@ function EditSeqDialogRenderer({ dialog, close }: IDialogRenderer<'edit-seq'>) {
       track={track}
       onResponse={(response, data) => {
         if (response === TEXT_OK && data) {
-          console.log('EditSeqDialog response', response, data)
           callback?.(data)
         }
         close(dialog.id)
@@ -195,7 +194,6 @@ function EditBedDialogRenderer({ dialog, close }: IDialogRenderer<'edit-bed'>) {
       track={track}
       onResponse={(response, data) => {
         if (response === TEXT_OK && data) {
-          console.log('EditSeqDialog response', response, data)
           callback?.(data)
         }
         close(dialog.id)

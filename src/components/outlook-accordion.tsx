@@ -128,8 +128,6 @@ export function OutlookAccordionContent({ children }: IDivProps) {
       duration: 0.3,
       ease: 'power3.inOut',
     })
-
-    //console.log('selectedId', selectedId, id)
   }, [selectedId, id, ref.current])
 
   return (

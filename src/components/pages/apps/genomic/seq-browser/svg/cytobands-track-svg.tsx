@@ -465,8 +465,6 @@ function LabelSvg({
     return { x, name }
   })
 
-  //console.log(labels)
-
   const displayLabels: { x: number; name: string }[] = []
 
   let minX = -1000

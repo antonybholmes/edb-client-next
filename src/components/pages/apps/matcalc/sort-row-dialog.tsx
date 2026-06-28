@@ -65,8 +65,6 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
           // all indices for this group from full table
           const idx = getColIdxFromGroup(df, group)
 
-          console.log(group, idx)
-
           // subset table
           sortDf = df.iloc({ cols: idx }) as BaseDataFrame
 
@@ -103,14 +101,10 @@ export function SortRowDialog({ open = true, selection, onResponse }: IProps) {
       // get col means
       const sortDf = df.iloc({ rows: idx }) as BaseDataFrame
 
-      console.log(sortDf.shape, idx.length, 'blob')
-
       const mean = colMean(sortDf)
 
       idx = argsort(mean)
       const ret = df.iloc({ cols: idx }) as BaseDataFrame
-
-      console.log(sortDf.shape, idx.length, 'blob2')
 
       addSheets([ret], { name: 'Sort by row' })
 

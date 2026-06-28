@@ -8,8 +8,6 @@ export function makeMetaData(
 ): Metadata {
   const fullTitle = `${title} | ${config.name}`
 
-  console.log(config)
-
   return {
     metadataBase: new URL(config.url),
     title: fullTitle,

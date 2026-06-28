@@ -42,7 +42,7 @@ export const useProteinStore = create<IProteinStore>()(
       query: '',
       proteins: [],
       addProtein: (protein: IProtein) =>
-        set(state => ({
+        set((state) => ({
           proteins: [...state.proteins, protein],
         })),
 
@@ -63,14 +63,13 @@ export const useProteinStore = create<IProteinStore>()(
         const queryLower = query.toLowerCase()
 
         const existing = get().proteins.filter(
-          p =>
+          (p) =>
             p.geneSymbol.toLowerCase().includes(queryLower) ||
             p.name.toLowerCase().includes(queryLower) ||
             p.accession.toLowerCase().includes(queryLower)
         )
 
         if (existing.length > 0) {
-          //console.log('Found existing proteins:', existing)
           return existing
         }
 
@@ -83,11 +82,7 @@ export const useProteinStore = create<IProteinStore>()(
         const uniProtQuery = `gene:${query} AND reviewed:true`
         const url = `https://rest.uniprot.org/uniprotkb/search?query=${encodeURIComponent(uniProtQuery)}&format=json&size=${MAX_RESULTS}&fields=accession,gene_primary,protein_name,organism_name`
 
-        console.log(url)
-
         let searchRes = await httpFetch.getJson<IUniprotResp>(url)
-
-        console.log('r', searchRes.results)
 
         const ret: IProtein[] = []
 
@@ -102,15 +97,11 @@ export const useProteinStore = create<IProteinStore>()(
           const officialGeneSymbol =
             p.genes[0]?.geneName.value ?? p.genes[0]?.geneSymbol.value ?? query
 
-          console.log('official', officialGeneSymbol, accession, name)
-
           // now get the sequence
 
           const accessionRes = await httpFetch.getJson<{
             sequence: { value: string }
           }>(`https://rest.uniprot.org/uniprotkb/${accession}.json`)
-
-          console.log(accessionRes)
 
           ret.push({
             geneSymbol: officialGeneSymbol,
@@ -126,13 +117,13 @@ export const useProteinStore = create<IProteinStore>()(
         ret.sort((a, b) => a.organism.localeCompare(b.organism))
 
         // add only those that are not already in the store
-        set(state => {
+        set((state) => {
           const proteins = [
             ...state.proteins,
             ...ret.filter(
-              p =>
+              (p) =>
                 !state.proteins.some(
-                  existing => existing.accession === p.accession
+                  (existing) => existing.accession === p.accession
                 )
             ),
           ].slice(-MAX_CACHE_SIZE)
@@ -147,15 +138,15 @@ export const useProteinStore = create<IProteinStore>()(
       },
 
       removeProtein: (id: string) =>
-        set(state => ({
+        set((state) => ({
           proteins: state.proteins.filter(
-            p => p.geneSymbol.toLowerCase() === id.toLowerCase()
+            (p) => p.geneSymbol.toLowerCase() === id.toLowerCase()
           ),
         })),
       clear: () => set({ proteins: [] }),
       getProtein: (id: string) =>
         get().proteins.find(
-          p => p.geneSymbol.toLowerCase() === id.toLowerCase()
+          (p) => p.geneSymbol.toLowerCase() === id.toLowerCase()
         ),
     }),
     {
@@ -166,14 +157,14 @@ export const useProteinStore = create<IProteinStore>()(
 )
 
 export function useProteins(): IProteinStore {
-  const query = useProteinStore(state => state.query)
-  const proteins = useProteinStore(state => state.proteins)
-  const addProtein = useProteinStore(state => state.addProtein)
-  const removeProtein = useProteinStore(state => state.removeProtein)
-  const searchUniprot = useProteinStore(state => state.searchUniprot)
+  const query = useProteinStore((state) => state.query)
+  const proteins = useProteinStore((state) => state.proteins)
+  const addProtein = useProteinStore((state) => state.addProtein)
+  const removeProtein = useProteinStore((state) => state.removeProtein)
+  const searchUniprot = useProteinStore((state) => state.searchUniprot)
   //const search = useProteinStore(state => state.search)
-  const clear = useProteinStore(state => state.clear)
-  const getProtein = useProteinStore(state => state.getProtein)
+  const clear = useProteinStore((state) => state.clear)
+  const getProtein = useProteinStore((state) => state.getProtein)
 
   return {
     query,

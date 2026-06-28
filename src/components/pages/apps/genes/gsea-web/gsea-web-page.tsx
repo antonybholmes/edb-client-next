@@ -229,8 +229,6 @@ export function GseaWebPage() {
       return
     }
 
-    //console.log('q', query)
-
     //const results = searchIndex.search(query)
 
     if (query === '') {
@@ -358,9 +356,6 @@ export function GseaWebPage() {
               className="grow"
               onFileDrop={(files) => {
                 if (files.length > 0) {
-                  //setDroppedFile(files[0]);
-                  console.log('Dropped file:', files[0])
-
                   onBinaryFileChange('Open zip', files, loadGseaZip)
                 }
               }}

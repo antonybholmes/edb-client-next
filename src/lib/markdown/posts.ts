@@ -80,7 +80,7 @@ export function getAllPosts(): PostMeta[] {
 // 📄 Get single post
 export async function getPostBySlug(slug: string): Promise<Post> {
   const filePath = path.join(postsDir, `${slug}.md`)
-  console.log(`Reading post from: ${filePath}`)
+
   const fileContent = fs.readFileSync(filePath, 'utf8')
 
   const { data, content } = matter(fileContent)

@@ -347,8 +347,6 @@
 //         MIN_CELL_WIDTH
 //       )
 
-//       //console.log(index, 'newWidth', newWidth)
-
 //       setColWidths(
 //         new Map<number, number>([...[...colWidths.entries()], [col, newWidth]])
 //       )
@@ -613,7 +611,6 @@
 //   }
 
 //   function onKeyDown(e: KeyboardEvent | React.KeyboardEvent) {
-//     //console.log(e.code, e.shiftKey)
 
 //     const d = tableRef.current
 
@@ -630,7 +627,7 @@
 //       switch (e.code) {
 //         // ctrl+c copy to clipboard
 //         case 'KeyC':
-//           console.log('copy', selection)
+
 //           if (
 //             selection.start !== NO_SELECTION &&
 //             selection.end !== NO_SELECTION
@@ -654,8 +651,6 @@
 //             ]
 
 //             const s = out.map(r => r.join('\t')).join('\n')
-
-//             //console.log(s)
 
 //             navigator.clipboard.writeText(s)
 //           }
@@ -953,7 +948,6 @@
 //   ])
 
 //   const currentCellPos: IPos = useMemo(() => {
-//     //console.log('currentCellPos', selection)
 
 //     const { x } = getColX(currentCell.col)
 

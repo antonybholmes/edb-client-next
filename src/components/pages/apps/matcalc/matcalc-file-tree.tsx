@@ -133,8 +133,6 @@ export function MatcalcFileTree() {
     }
   }, [currentSelection])
 
-  //console.log('Tree root tab', treeRootTab, selectedPanelTab)
-
   return (
     <BaseCol className="pl-1 grow">
       <VScrollPanel className="grow">

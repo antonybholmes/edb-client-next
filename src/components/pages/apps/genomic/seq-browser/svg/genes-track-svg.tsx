@@ -152,8 +152,6 @@ export function getGeneTrackHeight(
     )
   }
 
-  //console.log('geneYMap', geneYMap)
-
   return geneYMap
 }
 
@@ -402,8 +400,6 @@ export function GenesStructureTrackSvg({
   //   queryFn: async () => {
   //     const res = await httpFetch.getJson(`${API_GENES_DB_URL}/${genome}`)
 
-  //     //console.log('test genes', res.data)
-
   //     return res.data
   //   },
   // })
@@ -414,15 +410,9 @@ export function GenesStructureTrackSvg({
   //   ? genesQuery.data
   //   : DEFAULT_DB_VERSION
 
-  //console.log(info)
-
   let x1: number
   let x2: number
   let w: number
-
-  // const geneHeights: number[] = genes.map(gene =>
-  //   getGeneHeight(track, gene, settings)
-  // )
 
   // const geneY = cumsum([0, ...geneHeights])
 

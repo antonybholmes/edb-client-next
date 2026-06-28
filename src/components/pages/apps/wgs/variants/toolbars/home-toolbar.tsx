@@ -40,7 +40,6 @@ export function HomeToolbar() {
         <ToggleGroup
           value={[settings.view]}
           onValueChange={(v) => {
-            console.log('view change', v)
             if (v.length > 0) {
               updateSettings(
                 produce(settings, (draft) => {

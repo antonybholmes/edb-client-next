@@ -173,8 +173,6 @@ export function SignIn({ allowPassword = false, visitUrl }: ISignInProps) {
       return
     }
 
-    //console.log(form.formState.errors)
-
     if (!settings.passwordless && data.password1.length < MIN_PASSWORD_LENGTH) {
       toast({
         title: TEXT_MIN_PASSWORD_LENGTH,
@@ -185,8 +183,6 @@ export function SignIn({ allowPassword = false, visitUrl }: ISignInProps) {
 
     try {
       // to activate passwordless, simply use a blank password
-
-      console.log(SESSION_AUTH_SIGNIN_URL)
 
       const res = await httpFetch.postJson<{ message: string }>(
         SESSION_AUTH_SIGNIN_URL,
@@ -234,7 +230,7 @@ export function SignIn({ allowPassword = false, visitUrl }: ISignInProps) {
           {allowPassword && (
             <Switch
               checked={settings.passwordless}
-              onCheckedChange={state => {
+              onCheckedChange={(state) => {
                 updateSettings({ passwordless: state })
               }}
             >
@@ -330,7 +326,7 @@ export function SignIn({ allowPassword = false, visitUrl }: ISignInProps) {
                   <FormItem className="flex flex-row items-center gap-x-2">
                     <Switch
                       checked={field.value}
-                      onCheckedChange={state => {
+                      onCheckedChange={(state) => {
                         updateSettings({
                           ...settings,
                           staySignedIn: state,

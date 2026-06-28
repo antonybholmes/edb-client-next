@@ -105,16 +105,15 @@ export function PeaksDialog({
 
   useEffect(() => {
     if (data) {
-      //console.log('got beds', data)
       let beds: IBedDBDataTrack[] = data
 
-      beds = beds.filter(bed => bed.technology === technology)
+      beds = beds.filter((bed) => bed.technology === technology)
 
       setTrackDb(beds)
 
       setSelectedMap(
         new Map<string, boolean>(
-          beds.map(b => [b.id, false] as [string, boolean])
+          beds.map((b) => [b.id, false] as [string, boolean])
         )
       )
     }
@@ -126,7 +125,7 @@ export function PeaksDialog({
     } else {
       const sq = new BoolSearchQuery(search)
 
-      setSearchedDb(trackDb.filter(track => sq.match(track.name)))
+      setSearchedDb(trackDb.filter((track) => sq.match(track.name)))
     }
   }, [trackDb, search])
 
@@ -139,7 +138,7 @@ export function PeaksDialog({
           <SearchBox
             id="search"
             value={search}
-            onTextChange={v => setSearch(v)}
+            onTextChange={(v) => setSearch(v)}
             placeholder="Search samples..."
             className="w-3/5"
           />
@@ -147,10 +146,10 @@ export function PeaksDialog({
       }
       open={open}
       onOpenChange={onOpenChange}
-      onResponse={response => {
+      onResponse={(response) => {
         if (response === TEXT_OK) {
           const selectedTracks = trackDb.filter(
-            track => addedMap.get(track.id) ?? false
+            (track) => addedMap.get(track.id) ?? false
           )
 
           if (selectedTracks.length > 0) {
@@ -242,7 +241,7 @@ export function PeaksDialog({
                 new Map<string, boolean>([
                   ...[...selectedMap.entries()],
                   ...searchedDb.map(
-                    t => [t.id, !searchSelectAll] as [string, boolean]
+                    (t) => [t.id, !searchSelectAll] as [string, boolean]
                   ),
                 ])
               )
@@ -280,7 +279,7 @@ export function PeaksDialog({
                   new Map<string, boolean>([
                     ...[...addedSelectedMap.entries()],
                     ...searchedDb.map(
-                      t => [t.id, !addedSelectAll] as [string, boolean]
+                      (t) => [t.id, !addedSelectAll] as [string, boolean]
                     ),
                   ])
                 )
@@ -301,14 +300,18 @@ export function PeaksDialog({
                 setAddedMap(
                   new Map<string, boolean>([
                     ...[...addedMap.entries()],
-                    ...[...keys].map(key => [key, false] as [string, boolean]),
+                    ...[...keys].map(
+                      (key) => [key, false] as [string, boolean]
+                    ),
                   ])
                 )
 
                 setAddedSelectedMap(
                   new Map<string, boolean>([
                     ...[...addedSelectedMap.entries()],
-                    ...[...keys].map(key => [key, false] as [string, boolean]),
+                    ...[...keys].map(
+                      (key) => [key, false] as [string, boolean]
+                    ),
                   ])
                 )
               }}
@@ -355,18 +358,18 @@ function StoreItems({
         ...new Set(
           searchedDb
             .filter(
-              t => t.institution === appsConfig.seqbrowser.defaultInstitution
+              (t) => t.institution === appsConfig.seqbrowser.defaultInstitution
             )
-            .map(t => t.dataset)
+            .map((t) => t.dataset)
         ),
       ].sort(),
       ...[
         ...new Set(
           searchedDb
             .filter(
-              t => t.institution !== appsConfig.seqbrowser.defaultInstitution
+              (t) => t.institution !== appsConfig.seqbrowser.defaultInstitution
             )
-            .map(t => t.dataset)
+            .map((t) => t.dataset)
         ),
       ].sort(),
     ]
@@ -379,14 +382,14 @@ function StoreItems({
 
     setAccordionValues(
       searchedDb.length < 50
-        ? searchDatasets.map(dataset => getAccordionId(dataset))
+        ? searchDatasets.map((dataset) => getAccordionId(dataset))
         : []
     )
   }, [searchedDb, reverseSort])
 
   const displayDatasets: IBedDBDataTrack[][] = searchDatasetNames.map(
-    dataset => {
-      let ret = searchedDb.filter(track => track.dataset === dataset)
+    (dataset) => {
+      let ret = searchedDb.filter((track) => track.dataset === dataset)
 
       if (reverseSort) {
         ret = ret.toReversed()
@@ -399,7 +402,7 @@ function StoreItems({
   return (
     <ScrollAccordion
       value={accordionValues}
-      onValueChange={v => setAccordionValues(v as string[])}
+      onValueChange={(v) => setAccordionValues(v as string[])}
     >
       {searchDatasetNames.map((dataset, dataseti) => {
         return (
@@ -417,7 +420,7 @@ function StoreItems({
                   >
                     <Checkbox
                       checked={selectedMap.get(seq.id) ?? false}
-                      onCheckedChange={state => {
+                      onCheckedChange={(state) => {
                         setSelectedMap(
                           new Map<string, boolean>([
                             ...selectedMap.entries(),
@@ -474,16 +477,16 @@ function CartItems({
   setSelectedMap: (selected: Map<string, boolean>) => void
   reverseSort: boolean
 }) {
-  searchedDb = searchedDb.filter(t => addedMap.get(t.id) ?? false)
+  searchedDb = searchedDb.filter((t) => addedMap.get(t.id) ?? false)
 
-  let datasets = [...new Set(searchedDb.map(t => t.dataset))].sort()
+  let datasets = [...new Set(searchedDb.map((t) => t.dataset))].sort()
 
   if (reverseSort) {
     datasets = datasets.toReversed()
   }
 
-  const allDatasets: IBedDBDataTrack[][] = datasets.map(dataset => {
-    let ret = searchedDb.filter(track => track.dataset === dataset)
+  const allDatasets: IBedDBDataTrack[][] = datasets.map((dataset) => {
+    let ret = searchedDb.filter((track) => track.dataset === dataset)
 
     if (reverseSort) {
       ret = ret.toReversed()
@@ -493,7 +496,7 @@ function CartItems({
   })
 
   return (
-    <ScrollAccordion value={datasets.map(dataset => getAccordionId(dataset))}>
+    <ScrollAccordion value={datasets.map((dataset) => getAccordionId(dataset))}>
       {datasets.map((dataset, dataseti) => {
         return (
           <SettingsAccordionItem title={dataset} key={dataseti}>
@@ -511,7 +514,7 @@ function CartItems({
                           'invisible group-hover:visible',
                         ])}
                         checked={selectedMap.get(seq.id) ?? false}
-                        onCheckedChange={state => {
+                        onCheckedChange={(state) => {
                           setSelectedMap(
                             new Map<string, boolean>([
                               ...selectedMap.entries(),

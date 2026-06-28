@@ -2,7 +2,6 @@ import { factorialBigInt, factorialLn as lnFactorial } from './factorial'
 import { MAX_SAFE_INTEGER } from './math'
 
 export function lnBinomial(n: number, k: number): number {
-  //console.log(factorialLn(n), factorialLn(k), factorialLn(n - k), n, k)
   return lnFactorial(n) - lnFactorial(k) - lnFactorial(n - k)
 }
 

@@ -123,8 +123,6 @@ export function SupabaseSignIn() {
       type: 'email',
     })
 
-    console.log(data.session, error)
-
     if (error) {
       const { data, error } = await supabase.auth.getSession()
 
@@ -147,19 +145,14 @@ export function SupabaseSignIn() {
     }
 
     try {
-      console.log('here', session)
       await signInWithSupabase(session?.access_token ?? '')
       //setState(result.state)
-
-      console.log('sup sign')
     } catch (error) {
       console.error(error)
     }
   }
 
   async function handleOAuth(provider: Provider) {
-    console.log('handleOAuth', provider)
-
     await signout()
 
     const { error } = await supabase.auth.signInWithOAuth({

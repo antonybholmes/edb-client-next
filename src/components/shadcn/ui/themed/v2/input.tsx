@@ -178,13 +178,12 @@ export function Input({
         disabled={disabled}
         readOnly={readOnly}
         autoComplete={autoComplete}
-        onChange={e => {
+        onChange={(e) => {
           setValue(e.currentTarget.value)
           onTextChange?.(e.currentTarget.value)
           onChange?.(e)
         }}
-        onKeyDown={e => {
-          //console.log(e)
+        onKeyDown={(e) => {
           if (e.key === 'Enter') {
             onTextChanged?.(e.currentTarget.value)
           }

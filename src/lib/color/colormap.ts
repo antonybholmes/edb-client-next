@@ -53,7 +53,7 @@ export class ColorMap {
 
   constructor(name: string, cmap: (string | IRGBA)[]) {
     this._name = name
-    this._cmap = cmap.map(c => {
+    this._cmap = cmap.map((c) => {
       if (typeof c === 'string') {
         return hexToRgba(c)
       } else {
@@ -82,10 +82,6 @@ export class ColorMap {
   }
 
   getRGBAColor(v: number): IRGBA {
-    //const p = Math.max(0, Math.min(1, v))
-    //console.log(p, Math.floor(p * this._n), this._n)
-    //return this._cmap[p * this._n]!
-
     const t = Math.max(0, Math.min(1, v))
 
     const idx = t * this._maxIndex
@@ -97,9 +93,8 @@ export class ColorMap {
       this._cmap[upper]!,
       idx - lower
     )
-    //console.log('color', t, color)
+
     return color
-    //return `rgba(${color.join(',')})`;
   }
 
   getHexColor(v: number, keepAlpha: boolean = true): string {

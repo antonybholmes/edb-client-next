@@ -62,15 +62,12 @@ export class BigWigReader extends BaseSeqReader {
       }
 
       this._loc = loc
-      this._points = new Promise<ISeqPos[]>(resolve => {
+      this._points = new Promise<ISeqPos[]>((resolve) => {
         resolve(points)
       })
     }
 
     return this._points
-
-    //console.log(location, binSize)
-    //console.log(points)
 
     // make up the bins from the reference bin starts
     // const points = binLoc.bins.map(b => ({ ...b }))

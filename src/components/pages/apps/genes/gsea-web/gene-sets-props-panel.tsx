@@ -60,7 +60,6 @@ export function GeneSetsPropsPanel() {
       <SelectAll
         className="pl-1"
         setSelectAll={(v) => {
-          console.log('select all datasets', v)
           setSelectAllDatasets(v)
         }}
       />

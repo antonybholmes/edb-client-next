@@ -542,19 +542,19 @@ export function trackReducer(
   switch (action.type) {
     case 'add':
       groups = action.tracks
-      return produce(state, draft => {
+      return produce(state, (draft) => {
         draft.groups = [...state.groups, ...groups]
       })
     case 'set':
       groups = action.tracks //.map(ts => newTrackGroup(ts))
 
-      return produce(state, draft => {
+      return produce(state, (draft) => {
         draft.groups = [...state.groups, ...groups]
         draft.selected = {}
       })
     case 'update':
-      return produce(state, draft => {
-        draft.groups = state.groups.map(e =>
+      return produce(state, (draft) => {
+        draft.groups = state.groups.map((e) =>
           e.id === action.group.id
             ? {
                 ...e,
@@ -569,7 +569,7 @@ export function trackReducer(
 
       return {
         ...state,
-        groups: state.groups.filter(e => !removeIds.has(e.id)),
+        groups: state.groups.filter((e) => !removeIds.has(e.id)),
       }
     case 'remove-tracks':
       //modify the steps, but do not
@@ -577,11 +577,11 @@ export function trackReducer(
 
       return {
         ...state,
-        groups: state.groups.map(e =>
+        groups: state.groups.map((e) =>
           e.id === action.group.id
             ? {
                 ...e,
-                tracks: e.tracks.filter(e => !removeIds.has(e.id)),
+                tracks: e.tracks.filter((e) => !removeIds.has(e.id)),
                 //order: e  .order.filter(id => !removeIds.has(id)),
               }
             : e
@@ -592,7 +592,7 @@ export function trackReducer(
         ...state,
         selected: Object.fromEntries([
           ...Object.entries(state.selected),
-          ...action.ids.map(id => [id, action.selected] as [string, boolean]),
+          ...action.ids.map((id) => [id, action.selected] as [string, boolean]),
         ]),
       }
 
@@ -643,7 +643,7 @@ export function trackReducer(
         },
       ]
 
-      groups = tracks.map(t => ({ ...newTrackGroup([t]), name: t.name }))
+      groups = tracks.map((t) => ({ ...newTrackGroup([t]), name: t.name }))
 
       return {
         ...state,
@@ -736,7 +736,7 @@ export async function getYMax(
           // for all locations, filter to just have the samples matching
           // our track of interest then test bins in that
           const trackSpecificBins: ISampleSearchResult[] = seqSearchResults.map(
-            ltb => ltb.samples[track.id]!
+            (ltb) => ltb.samples[track.id]!
           )
 
           switch (scaleMode) {
@@ -748,7 +748,7 @@ export async function getYMax(
               //   .flat()
 
               const bpm = trackSpecificBins
-                .map(sample => (sample.ymax / sample.binReads!) * 1000000)
+                .map((sample) => (sample.ymax / sample.binReads!) * 1000000)
                 .flat()
 
               ymax = Math.max(ymax, ...bpm)
@@ -757,7 +757,7 @@ export async function getYMax(
             case 'CPM':
               // take the large
               const cpm = trackSpecificBins
-                .map(sample => (sample.ymax / track.reads!) * 1000000)
+                .map((sample) => (sample.ymax / track.reads!) * 1000000)
                 .flat()
 
               // const cpm = trackSpecificBins
@@ -771,7 +771,7 @@ export async function getYMax(
             default:
               ymax = Math.max(
                 ymax,
-                ...trackSpecificBins.map(sample => sample.ymax)
+                ...trackSpecificBins.map((sample) => sample.ymax)
               )
               break
           }
@@ -788,12 +788,13 @@ export async function getYMax(
           //   })
           // )
           const trackSpecificBins: ISampleSearchResult[] = seqSearchResults.map(
-            ltb => ltb.samples[track.id]!
+            (ltb) => ltb.samples[track.id]!
           )
 
-          //console.log('trackSpecificBins', trackSpecificBins)
-
-          ymax = Math.max(ymax, ...trackSpecificBins.map(sample => sample.ymax))
+          ymax = Math.max(
+            ymax,
+            ...trackSpecificBins.map((sample) => sample.ymax)
+          )
         }
         break
       case 'RemoteBigWig':
@@ -804,7 +805,7 @@ export async function getYMax(
             binSizes[li]!
           )
 
-          ymax = Math.max(ymax, ...data.map(p => p.realY))
+          ymax = Math.max(ymax, ...data.map((p) => p.realY))
         }
         break
       default:

@@ -28,8 +28,6 @@ export function SignOutCallbackPage() {
     parse()
   }, [logoutState])
 
-  console.log('SignOutCallbackPage, logoutState:', logoutState)
-
   return <BaseSignOutPage state={state} />
 }
 

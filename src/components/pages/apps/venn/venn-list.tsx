@@ -80,7 +80,6 @@ export function VennList({ vennList }: IProps) {
           id={`label${vennList.id}`}
           value={vennList.name ?? ''}
           onChange={(e) => {
-            //console.log(index, e.target.value)
             setVennLists(
               produce(vennLists, (draft) => {
                 draft[vennList.id]!.name = e.target.value

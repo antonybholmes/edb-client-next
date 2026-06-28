@@ -122,7 +122,6 @@ export function AdminUsersPage() {
         }
       )
 
-      //console.log('roles', res.data)
       setGroups(res.data)
       loadUserStats()
     }
@@ -398,13 +397,6 @@ export function AdminUsersPage() {
     }
 
     const csrfToken = await getCSRFToken()
-
-    console.log(
-      'updating user',
-      user,
-      user.selectedGroups,
-      API_ADMIN_UPDATE_USER_URL
-    )
 
     try {
       await httpFetch.post(

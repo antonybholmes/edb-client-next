@@ -72,9 +72,9 @@ interface IEdbSignInStore {
 
 export const useEdbSignInStore = create<IEdbSignInStore>()(
   persist(
-    set => ({
+    (set) => ({
       signinMethod: 'auth0',
-      setSignInMethod: method => set({ signinMethod: method }),
+      setSignInMethod: (method) => set({ signinMethod: method }),
       clearSignInMethod: () => set({ signinMethod: '' }),
     }),
     {
@@ -95,9 +95,9 @@ interface ISigninHook extends IEdbSignInStore {
 }
 
 export function useEdbSignIn(): ISigninHook {
-  const signinMethod = useEdbSignInStore(s => s.signinMethod)
-  const setSignInMethod = useEdbSignInStore(s => s.setSignInMethod)
-  const clearSignInMethod = useEdbSignInStore(s => s.clearSignInMethod)
+  const signinMethod = useEdbSignInStore((s) => s.signinMethod)
+  const setSignInMethod = useEdbSignInStore((s) => s.setSignInMethod)
+  const clearSignInMethod = useEdbSignInStore((s) => s.clearSignInMethod)
 
   return {
     signinMethod,
@@ -188,7 +188,6 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
     // After refreshing the session, we can fetch the session info
     // to ensure we have the latest user information.
     // This is useful if the user has updated their profile or roles.
-    //console.log('fetching session info after refresh')
 
     try {
       const res = await httpFetch.getJson<{ data: IEdbSession }>(
@@ -200,8 +199,6 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
       )
 
       s = res.data
-
-      //console.log('Session info fetched:', s)
 
       set({ session: s, loaded: true, error: '' })
 
@@ -287,7 +284,7 @@ export const useEdbAuthStore = create<IEdbAuthStore>((set, get) => ({
     accessToken = await getAccessToken(opts)
 
     set(
-      produce(state => {
+      produce((state) => {
         state.accessTokens[audience] = accessToken
       })
     )
@@ -316,24 +313,22 @@ export interface IEdbAuthHook extends Omit<
 }
 
 export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
-  const session = useEdbAuthStore(state => state.session)
-  const invalidateSession = useEdbAuthStore(state => state.invalidateSession)
-  const loaded = useEdbAuthStore(state => state.loaded)
-  const fetchSession = useEdbAuthStore(state => state.fetchSession)
-  const refreshSession = useEdbAuthStore(state => state.refreshSession)
+  const session = useEdbAuthStore((state) => state.session)
+  const invalidateSession = useEdbAuthStore((state) => state.invalidateSession)
+  const loaded = useEdbAuthStore((state) => state.loaded)
+  const fetchSession = useEdbAuthStore((state) => state.fetchSession)
+  const refreshSession = useEdbAuthStore((state) => state.refreshSession)
 
-  const error = useEdbAuthStore(state => state.error)
+  const error = useEdbAuthStore((state) => state.error)
 
   const { setSignInMethod } = useEdbSignInStore()
 
-  const fetchAccessToken = useEdbAuthStore(state => state.fetchAccessToken)
+  const fetchAccessToken = useEdbAuthStore((state) => state.fetchAccessToken)
 
   const { settings, updateSettings } = useEdbSettings()
 
   useEffect(() => {
     async function setup() {
-      //console.log('useEdbAuth autoRefresh', autoRefresh)
-
       if (autoRefresh) {
         await fetchSession()
       }
@@ -399,8 +394,6 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
       withCredentials: true,
     })
 
-    console.log('Signed in with Auth0, fetching session...')
-
     const session = await fetchSession()
     setSignInMethod('auth0')
 
@@ -415,7 +408,6 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
 
     const session = await fetchSession()
 
-    console.log('Signed in with Cognito:', session)
     setSignInMethod('cognito')
 
     return session
@@ -462,7 +454,7 @@ export function useEdbAuth(autoRefresh: boolean = true): IEdbAuthHook {
 
     // remove user from cache
     updateSettings(
-      produce(settings, draft => {
+      produce(settings, (draft) => {
         draft.users = []
       })
     )

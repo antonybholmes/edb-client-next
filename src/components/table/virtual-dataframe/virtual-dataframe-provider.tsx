@@ -139,7 +139,7 @@ export function VirtualDataFrameProvider({
     horizontal: true,
     count: df.shape[1],
     getScrollElement: () => hScrollRef.current,
-    estimateSize: i => getColWidth(i),
+    estimateSize: (i) => getColWidth(i),
     overscan: 1,
   })
 
@@ -151,7 +151,7 @@ export function VirtualDataFrameProvider({
   })
 
   function setColWidth(index: number, width: number) {
-    setColWidths(prev => ({ ...prev, [index]: width }))
+    setColWidths((prev) => ({ ...prev, [index]: width }))
 
     // trigger layout recalculation
     columnVirtualizer.measure()
@@ -175,7 +175,7 @@ export function VirtualDataFrameProvider({
 
   useEffect(() => {
     // trigger layout recalculation when props change
-    //console.log('zoom changed:', zoom)
+
     rowVirtualizer.measure()
     columnVirtualizer.measure()
   }, [zoom])
@@ -200,7 +200,7 @@ export function VirtualDataFrameProvider({
   // we have to calculate this ourselves since the scroll area is separate
   // from the table container and unlike an image,
   // the table doesn't have an intrinsic size that we can use for the scroll area
-  useSizeObserver(tableDataRef, size => {
+  useSizeObserver(tableDataRef, (size) => {
     setTableScrollableSize({
       w: columnVirtualizer.getTotalSize() - size.w,
       h: rowVirtualizer.getTotalSize() - size.h,

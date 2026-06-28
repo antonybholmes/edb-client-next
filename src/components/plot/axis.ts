@@ -106,8 +106,6 @@ export class Axis {
       .nice()
       .range([0, a._scale.range()[1]!])
 
-    //console.log('autoDomain', lim, a._scale.domain())
-
     return a
   }
 
@@ -144,26 +142,26 @@ export class Axis {
 
     const a = this.copy()
 
-    if (ticks.every(item => typeof item === 'number')) {
+    if (ticks.every((item) => typeof item === 'number')) {
       if (!a._format) {
         // auto format the ticks if not set
         a._format = this._scale.tickFormat(ticks.length)! //  d3.format('.2f')
       }
 
       // if ticks are just numbers, convert to TickItem
-      a._ticks = ticks.map(v => ({
+      a._ticks = ticks.map((v) => ({
         v,
         label: a._format!(v),
       }))
-    } else if (ticks.every(item => typeof item === 'string')) {
+    } else if (ticks.every((item) => typeof item === 'string')) {
       // if ticks are just strings, convert to TickItem
-      a._ticks = ticks.map(v => ({
+      a._ticks = ticks.map((v) => ({
         v: parseFloat(v),
         label: v,
       }))
     } else if (
       ticks.every(
-        item => typeof item === 'object' && 'v' in item && 'label' in item
+        (item) => typeof item === 'object' && 'v' in item && 'label' in item
       )
     ) {
       a._ticks = ticks
@@ -209,7 +207,7 @@ export class Axis {
     // if ticks are not set, generate them from the scale
     if (!this._ticks) {
       this._ticks =
-        this._scale.ticks(this._numTicks).map(v => ({
+        this._scale.ticks(this._numTicks).map((v) => ({
           v,
           label: this._scale.tickFormat?.()(v) ?? String(v),
         })) ?? []
@@ -260,8 +258,6 @@ export class Axis {
    */
   rangeToDomain(x: number): number {
     let n = this._scale.invert(x)
-
-    //console.log('rangeToDomain', x, n, this.domain)
 
     if (this._clip) {
       if (n < this.domain[0]) {
@@ -337,8 +333,6 @@ export function autoLim(lim: ILim, interval?: number): ILim {
   if (!interval) {
     interval = autoTickInterval(lim)
   }
-
-  //console.log("interval", interval, lim)
 
   return [
     Math.floor(lim[0] / interval) * interval,
@@ -480,8 +474,6 @@ export function makeTicks(lim: ILim, interval?: number): number[] {
 //       interval = autoTickInterval(lim!)
 //     }
 
-//     //console.log("auto", autoLim(lim, interval))
-
 //     return a.setDomain(autoLim(lim, interval), interval)
 //   }
 
@@ -590,8 +582,6 @@ export function makeTicks(lim: ILim, interval?: number): number[] {
 //       (this.domain[0] > this.domain[1]
 //         ? this.domain[0] - x
 //         : x - this.domain[0]) / this._domainDiff
-
-//     //console.log(x, s, this.domain)
 
 //     if (this._clip || clip) {
 //       s = Math.max(0, Math.min(s, 1))

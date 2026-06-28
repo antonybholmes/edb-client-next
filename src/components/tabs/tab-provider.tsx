@@ -115,7 +115,6 @@ export interface ITabChange {
  * @returns
  */
 export function getTabName(tab: ITab): string {
-  //console.log(tab)
   return tab?.name ?? tab.id ?? ''
 }
 
@@ -277,8 +276,6 @@ export function TabProvider({ children }: IChildrenProps) {
       if (index === currentTab.selectedTabIndex) {
         return prev
       }
-
-      console.log('set tab', id, tab, index)
 
       return {
         ...prev,

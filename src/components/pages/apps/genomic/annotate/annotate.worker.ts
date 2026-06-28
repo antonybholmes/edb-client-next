@@ -37,8 +37,7 @@ export interface IAnnotationResultError {
 }
 
 export type IAnnotationResult =
-  | IAnnotationResultSuccess
-  | IAnnotationResultError
+  IAnnotationResultSuccess | IAnnotationResultError
 
 self.onmessage = async function (e: MessageEvent<IAnnotateWorkerMessage>) {
   const {
@@ -55,7 +54,7 @@ self.onmessage = async function (e: MessageEvent<IAnnotateWorkerMessage>) {
 
   try {
     //const locations:Location[] = df.col(col)!.values.map(l=>parseLocation(l as string)!)
-    const locations: string[] = df.map(row => row[col] as string)
+    const locations: string[] = df.map((row) => row[col] as string)
 
     const allData: {
       withinGenes: IGenomicFeature[]
@@ -63,8 +62,6 @@ self.onmessage = async function (e: MessageEvent<IAnnotateWorkerMessage>) {
     }[] = []
 
     const url = `${API_GENOME_URL}/gtfs/${assembly}/annotate?promoter=${tss.prom5p},${tss.prom3p}&closest=${closest}&use_official=${useOfficialGenes ? 1 : 0}`
-
-    console.log(url, 'url')
 
     // split into pages to avoid overloading the server. Note that
     // server has its own internal limits, so even if you send a large batch, it may not return all results.
@@ -75,8 +72,6 @@ self.onmessage = async function (e: MessageEvent<IAnnotateWorkerMessage>) {
       // Attempt to annotate a batch of locations. The server may return fewer results than requested,
       // so we increment the index by the actual number of records returned to avoid skipping records.
       const locs = locations.slice(idx, idx + pageSize)
-
-      console.log('annotating page', idx, locs.length)
 
       const res = await httpFetch.postJson<{
         data: {
@@ -129,7 +124,7 @@ self.onmessage = async function (e: MessageEvent<IAnnotateWorkerMessage>) {
 
       newRow = newRow.concat(
         ann.closestGenes
-          .map(g => [
+          .map((g) => [
             g.geneId!,
             g.symbol!,
             g.loc.strand!,
@@ -146,8 +141,6 @@ self.onmessage = async function (e: MessageEvent<IAnnotateWorkerMessage>) {
       table.push(newRow)
     }
 
-    //console.log(table, 'table')
-
     let header: string[] = columns.concat([
       'Assembly',
       'Gene Id',
@@ -161,7 +154,7 @@ self.onmessage = async function (e: MessageEvent<IAnnotateWorkerMessage>) {
     if (hasClosest) {
       header = header.concat(
         range(closest)
-          .map(i => [
+          .map((i) => [
             `#${i + 1} Closest Id`,
             `#${i + 1} Closest Gene Symbol`,
             `#${i + 1} Closest Gene Strand`,
@@ -171,8 +164,6 @@ self.onmessage = async function (e: MessageEvent<IAnnotateWorkerMessage>) {
           .flat()
       )
     }
-
-    console.log(header.length, table[0]?.length, 'header')
 
     self.postMessage({ id, error: null, header, table } as IAnnotationResult)
   } catch (error) {

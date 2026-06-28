@@ -122,7 +122,6 @@ export function ProteinAutocomplete() {
     )
   } else {
     if (searchProteins.length > 0) {
-      console.log('Search results:', searchProteins)
       content = searchProteins.map((searchProtein, pi) => (
         <li key={pi}>
           <button
@@ -166,17 +165,11 @@ export function ProteinAutocomplete() {
       ref={ref}
       placeholder={TEXT_NAME}
       value={search}
-      onTextChange={v => {
-        console.log('Setting protein name:', v)
+      onTextChange={(v) => {
         setSearch(v)
         setIsSearching(true)
-        //setSearchProteins(searchCache(v))
       }}
-      // onTextChanged={v => {
-      //   console.log('Searching for protein:', v)
 
-      //   searchForProtein(v)
-      // }}
       onFocus={() => setAutoOpen(true)}
       autoOpen={autoOpen}
       aria-label="Protein name"

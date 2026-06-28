@@ -71,12 +71,6 @@ export function SignUpPage({ allowPassword = false }: ISignupProps) {
 
   async function onSubmit(data: IFormInput, e: BaseSyntheticEvent | undefined) {
     e?.preventDefault()
-    // if (password1 !== password2) {
-    //   setMessage({ message: "Your passwords do not match", type: "error" })
-    //   return
-    // }
-
-    //console.log(API_SIGNUP_URL)
 
     if (!settings.passwordless && data.password1.length < MIN_PASSWORD_LENGTH) {
       addToast({
@@ -123,7 +117,7 @@ export function SignUpPage({ allowPassword = false }: ISignupProps) {
                 {allowPassword && (
                   <Switch
                     checked={settings.passwordless}
-                    onCheckedChange={state => {
+                    onCheckedChange={(state) => {
                       updateSettings({ passwordless: state })
                     }}
                   >

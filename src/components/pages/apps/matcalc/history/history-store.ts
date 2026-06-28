@@ -878,14 +878,6 @@
 //         return toPathId(path)
 //       })
 
-//       console.log(
-//         'Removing paths',
-//         pathIds,
-//         isAppOnly(pathIds[0]!),
-//         isFileOnly(pathIds[0]!),
-//         isSheet(pathIds[0]!)
-//       )
-
 //       addAction(
 //         `Remove objects`,
 //         '',
@@ -1051,8 +1043,6 @@
 //       if (file === DEFAULT_FILE.id) {
 //         return
 //       }
-
-//       console.log('Updating group', group.id, 'in file', file)
 
 //       addAction(
 //         ` Update group ${group.id}`,
@@ -1550,8 +1540,6 @@
 //   store: IHistoryDataStore,
 //   state: IHistoryState
 // ): IHistoryApp[] {
-//   console.log('order', state.appOrder)
-//   console.log('apps', store.apps)
 
 //   return state.appOrder
 //     .filter((id) => id in store.apps)
@@ -1727,8 +1715,6 @@
 //   state.sheetOrder[p.file] = state.sheetOrder[p.file]!.filter(
 //     (id) => id !== p.sheet
 //   )
-
-//   console.log('Removing sheet', p.sheet, 'from file', p.file)
 
 //   const sheets = state.sheetOrder[p.file]!
 //   state.currentSheet = sheets[sheets.length - 1]!

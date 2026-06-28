@@ -40,8 +40,6 @@ export function SwarmPlotSvg({
 
     const d = r * 2
 
-    //console.log(maxHeightMap)
-
     if (!yax) {
       yax = new YAxis()
         .autoDomain([0, Math.max(...data)])
@@ -60,7 +58,7 @@ export function SwarmPlotSvg({
     return (
       <>
         {hist
-          .filter(bin => bin.values.length > 0)
+          .filter((bin) => bin.values.length > 0)
           .map((bin, bi) => {
             // width required for all circles in bin
             let w = bin.values.length * d
@@ -92,9 +90,9 @@ export function SwarmPlotSvg({
             // other value offset by 1 and reverse it to create a
             // v shape of dots around the center of the plot
             values = [
-              ...range(0, values.length, 2).map(i => values[i]!),
+              ...range(0, values.length, 2).map((i) => values[i]!),
               ...range(1, values.length, 2)
-                .map(i => values[i]!)
+                .map((i) => values[i]!)
                 .toReversed(),
             ]
 

@@ -50,8 +50,6 @@ interface IProps extends ISVGProps {
 export function HeatMapSvg({ ref }: IProps) {
   const { plot } = useHeatmapContext()
 
-  //console.log(plot)
-
   const cf = plot.dataframes['main'] as IClusterFrame
 
   const groups = plot.groups || []
@@ -203,14 +201,16 @@ export function HeatMapSvg({ ref }: IProps) {
       // if we are not clustering columns, but have groups,
       // order by groups
 
-      colLeaves = groups.map(group => getColIdxFromGroup(dfMain, group)).flat()
+      colLeaves = groups
+        .map((group) => getColIdxFromGroup(dfMain, group))
+        .flat()
 
       const used = new Set<number>(colLeaves)
 
       // add unused indices in the order encountered at the end of the list
       // so we don't lose any data but move the unclassified to the end
       if (displayOptions.groups.keepUnused) {
-        colLeaves = [...colLeaves, ...range(s[1]).filter(i => !used.has(i))]
+        colLeaves = [...colLeaves, ...range(s[1]).filter((i) => !used.has(i))]
       }
     } else {
       // no clustering or groups, just show in original order
@@ -220,9 +220,9 @@ export function HeatMapSvg({ ref }: IProps) {
 
     const colColorMap = new Map<number, string>(
       groups
-        .map(group =>
+        .map((group) =>
           getColIdxFromGroup(dfMain, group).map(
-            c => [c, group.color] as [number, string]
+            (c) => [c, group.color] as [number, string]
           )
         )
         .flat()
@@ -550,8 +550,6 @@ export function HeatMapSvg({ ref }: IProps) {
           )}
       </>
     )
-
-    //console.log('rendering heatmap svg')
 
     return { svg, width, height }
   }, [cf, displayOptions, groups])

@@ -132,8 +132,7 @@ export interface IColorPickerProps {
   font?: ITextProps | undefined
 
   onColorChange?:
-    | ((color: string, opacity: number, width: number) => void)
-    | undefined
+    ((color: string, opacity: number, width: number) => void) | undefined
 
   //onWidthChange?: ((width: number) => void) | undefined
 
@@ -189,8 +188,6 @@ export function ColorPickerButton({
   if (!ariaLabel) {
     ariaLabel = 'Choose color'
   }
-
-  //console.log('color', color, lightMode, textColor)
 
   // if (tooltip) {
   //   button = <Tooltip content={tooltip}>{button}</Tooltip>
@@ -276,10 +273,8 @@ export function ColorPickerPopover({
   //   button = <Tooltip content={tooltip}>{button}</Tooltip>
   // }
 
-  //console.log(color)
-
   return (
-    <Popover open={o} onOpenChange={v => _openChanged(v)}>
+    <Popover open={o} onOpenChange={(v) => _openChanged(v)}>
       {children}
 
       <PopoverContent
@@ -377,7 +372,7 @@ export function ColorPickerUI({
       {opacity !== undefined ? (
         <HexAlphaColorPicker
           color={_colorWithAlpha ?? COLOR_BLACK}
-          onChange={v => {
+          onChange={(v) => {
             const a = hexToRgba(v)[3]
 
             _onColorChange(v, a, width ?? 1)
@@ -413,7 +408,7 @@ export function ColorPickerUI({
               dp={2}
               value={opacity}
               className="w-16"
-              onNumChanged={v => {
+              onNumChanged={(v) => {
                 const a = Math.max(0, Math.min(1, v))
 
                 // if keepAlphaChannel is true, we need to reconstruct the color
@@ -439,7 +434,7 @@ export function ColorPickerUI({
             <span>R</span>
             <NumericalInput
               value={_rgba[0]}
-              onNumChange={v => {
+              onNumChange={(v) => {
                 const rgba: IRGBA = [..._rgba]
                 rgba[0] = v
                 _onColorChange(rgba2hex(rgba), rgba[3], _width)
@@ -455,7 +450,7 @@ export function ColorPickerUI({
             <span>G</span>
             <NumericalInput
               value={_rgba[1]}
-              onNumChange={v => {
+              onNumChange={(v) => {
                 const rgba: IRGBA = [..._rgba]
                 rgba[1] = v
                 _onColorChange(rgba2hex(rgba), rgba[3], _width)
@@ -471,7 +466,7 @@ export function ColorPickerUI({
             <span>B</span>
             <NumericalInput
               value={_rgba[2]}
-              onNumChange={v => {
+              onNumChange={(v) => {
                 const rgba: IRGBA = [..._rgba]
                 rgba[2] = v
                 _onColorChange(rgba2hex(rgba), rgba[3], _width)
@@ -489,7 +484,7 @@ export function ColorPickerUI({
       {showPresets && (
         <VCenterRow className="gap-x-2">
           <div className="grid grid-cols-10 gap-1 items-center justify-center">
-            {PRESET_COLORS.map(presetColor => {
+            {PRESET_COLORS.map((presetColor) => {
               const prgb = hexToRgba(presetColor)
               const ps = prgb[0] + prgb[1] + prgb[2]
 
@@ -535,7 +530,7 @@ export function ColorPickerUI({
           <span className="w-10">Width</span>
           <NumericalInput
             value={width}
-            onNumChange={v => _onColorChange(color, _opacity, v)}
+            onNumChange={(v) => _onColorChange(color, _opacity, v)}
             min={0}
             step={1}
             max={1000}
@@ -548,7 +543,7 @@ export function ColorPickerUI({
         <CheckPropRow
           title="Show"
           checked={_show}
-          onCheckedChange={v => {
+          onCheckedChange={(v) => {
             setShow(v)
             onShowColor?.(v)
           }}

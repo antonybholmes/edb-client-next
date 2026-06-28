@@ -111,13 +111,12 @@ export function Textarea({
         ref={ref}
         value={lines ? lines.join('\n') : value}
         readOnly={readOnly}
-        onChange={e => {
+        onChange={(e) => {
           onTextChange?.(e.currentTarget.value)
           onLinesChange?.(toLines(e.currentTarget.value))
           onChange?.(e)
         }}
-        onKeyDown={e => {
-          //console.log(e)
+        onKeyDown={(e) => {
           if (e.key === 'Enter') {
             onTextChanged?.(e.currentTarget.value)
             onLinesChanged?.(toLines(e.currentTarget.value))

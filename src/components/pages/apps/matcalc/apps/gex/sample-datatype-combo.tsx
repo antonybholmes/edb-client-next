@@ -34,8 +34,6 @@ export function SampleDataTypeCombo({
 }: IProp) {
   const [open, setOpen] = useState(false)
 
-  //console.log('SampleDataTypeCombo: selectedValues', selectedValues)
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger className={cn(CLS, className)} w="lg">
@@ -53,13 +51,12 @@ export function SampleDataTypeCombo({
           <CommandList>
             <CommandEmpty>No sample info found.</CommandEmpty>
 
-            {values.map(v => (
+            {values.map((v) => (
               <CheckedCommandItem
                 key={v}
                 value={v}
                 checked={selectedValues.includes(v)}
-                onSelect={currentValue => {
-                  console.log(currentValue)
+                onSelect={(currentValue) => {
                   setValue?.(
                     currentValue,
                     !selectedValues.includes(currentValue)

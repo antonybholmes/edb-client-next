@@ -15,8 +15,6 @@ export function ToolbarHelpTabGroup({
   title = 'Show Help',
   children,
 }: IProps) {
-  //console.log('open', url)
-
   return (
     <ToolbarTabGroup title={TEXT_HELP}>
       <HelpButton url={url} title={title} />
@@ -26,9 +24,7 @@ export function ToolbarHelpTabGroup({
 }
 
 function HelpButton({ url, title = 'Show Help' }: IProps) {
-  const openHelp = useHelpWidgetStore(s => s.openHelp)
-
-  //console.log('open', url)
+  const openHelp = useHelpWidgetStore((s) => s.openHelp)
 
   return (
     <ToolbarButton onClick={() => openHelp(url)} title={title}>

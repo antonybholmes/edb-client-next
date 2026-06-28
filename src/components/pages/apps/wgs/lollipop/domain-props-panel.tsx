@@ -284,7 +284,6 @@ function DomainElem({ domain, setDelDomain }: IDomainProps) {
             limit={[domain.start + 1, n]}
             placeholder="End"
             onNumChange={(v) => {
-              console.log('end', v, Math.min(Math.max(domain.start + 1, v)))
               setDomain(
                 produce(domain, (draft) => {
                   draft.end = Math.min(Math.max(domain.start + 1, v), n)
@@ -336,8 +335,6 @@ export function DomainPropsPanel({ ref }: IDivProps) {
       }
     }
   }
-
-  console.log('features', feature)
 
   return (
     <>

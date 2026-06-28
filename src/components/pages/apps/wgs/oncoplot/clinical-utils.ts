@@ -74,20 +74,19 @@ export class ClinicalDataTrack {
   get events(): IEvent[] {
     return [
       ...new Set(
-        [...this._samples.entries()].map(entry => entry[1].events).flat()
+        [...this._samples.entries()].map((entry) => entry[1].events).flat()
       ),
     ].sort()
   }
 
   get eventsInUse(): IEvent[] {
-    return this.events.filter(event => event.value > 0)
+    return this.events.filter((event) => event.value > 0)
   }
 
   /**
    * The ordered categories to plot
    */
   get categories(): string[] {
-    //console.log(this._name, this._categories.length > 0, this.events)
     return this._categories
   }
 
@@ -95,11 +94,9 @@ export class ClinicalDataTrack {
    * Return the ordered categories that are in use
    */
   get categoriesInUse(): string[] {
-    const events = new Set(this.eventsInUse.map(event => event.name))
+    const events = new Set(this.eventsInUse.map((event) => event.name))
 
-    //console.log('categoriesInUse:', this._name, events, this.categories)
-
-    return this.categories.filter(category =>
+    return this.categories.filter((category) =>
       events.has(category.toLowerCase())
     )
   }
@@ -134,7 +131,7 @@ export class ClinicalDataTrack {
   get maxEvent(): IEvent {
     // scan all samples and find highest n
     return [...this._samples.entries()]
-      .map(entry => entry[1].maxEvent)
+      .map((entry) => entry[1].maxEvent)
       .sort((a, b) => b.value - a.value)[0]!
   }
 
@@ -243,17 +240,15 @@ export function makeClinicalTracks(
       show: true,
       color: color,
       categoryColors: Object.fromEntries(
-        categories.map(c => [c.name.toLowerCase(), c.color])
+        categories.map((c) => [c.name.toLowerCase(), c.color])
       ),
       name: name,
     }
 
-    console.log(categories, df, 'getting closer')
-
     return new ClinicalDataTrack(
       type,
       name,
-      categories.map(c => c.name)
+      categories.map((c) => c.name)
     )
   })
 
@@ -291,7 +286,7 @@ export function makeClinicalTracks(
               tokens.push('0')
             }
 
-            const counts: number[] = tokens.map(x => Number(x))
+            const counts: number[] = tokens.map((x) => Number(x))
 
             if (multi && counts.length > 1) {
               // ignore multiple labels and label them multi
@@ -349,8 +344,6 @@ export function makeClinicalTracks(
   //   //   }
   //   // }
   // }
-
-  console.log('Made clinical tracks:', tracks)
 
   return [tracks, tracksProps]
 }

@@ -79,7 +79,6 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
     const entries = unzipSync(file.data)
 
     for (const [filename, content] of Object.entries(entries)) {
-      //console.log('Processing file: %s', filename)
       const text = new TextDecoder().decode(content)
       let lines = textToTokens(text)
       const headings = lines[0]!
@@ -102,8 +101,6 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
           score: Number(tokens[scoreIdx]!),
           leading: false,
         }))
-
-        //console.log(content)
       }
 
       if (filename.endsWith('rpt')) {
@@ -123,8 +120,6 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
 
           phenotypes = [phen1, phen2]
         }
-
-        //console.log(content)
       }
 
       const matcher = filename.match(/.*gsea_report_for_(.+)_\d+\.(?:tsv|xls)/)
@@ -154,8 +149,6 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
             q: Number(tokens[qIdx]!),
             rank: Number(tokens[rankIdx]!),
           }
-
-          //console.log('Parsed report: %o', report)
 
           reportsMap[phen]!.push(report)
         }
@@ -194,40 +187,9 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
       .map((phen) => reportsMap[phen]!)
       .flat()
 
-    //console.log('Phenotypes: %o', phenotypes)
-    //console.log('Reports: %o', reports)
-    //console.log('Results map: %o', resultsMap)
-
     const datasetsForUse: Record<string, boolean> = Object.fromEntries(
       reports.map((report) => [report.id, true] as [string, boolean])
     )
-
-    // for (const [rpi, rp] of reportPromises.entries()) {
-    //   // Check if the entry is a file, not a directory
-    //   const content = await rp
-
-    //   textToTokens(content)
-    //     .slice(1)
-    //     .filter(tokens => tokens.length > 7)
-    //     .forEach(tokens => {
-    //       const name = tokens[0]!
-    //       const phen = reportNames[rpi]!
-
-    //       if (!(phen in reports)) {
-    //         reports[phen] = []
-    //       }
-
-    //       reports[phen]!.push({
-    //         id: makeUuid(),
-    //         name,
-    //         phen: reportNames[rpi]!,
-    //         size: Number(tokens[3]),
-    //         nes: Number(tokens[5]),
-    //         q: Number(tokens[7]),
-    //         rank: Number(tokens[9]),
-    //       })
-    //     })
-    // }
 
     set({
       reportsMap,
@@ -237,22 +199,6 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
       reports,
       datasetsForUse,
     })
-
-    // setDatasetsForUse(
-    //   new Map<string, boolean>(
-    //     [...reports.keys()]
-    //       .sort()
-    //       .map(report =>
-    //         reports
-    //           .get(report)!
-    //           .map(
-    //             pathway =>
-    //               [pathway.id, selectAllDatasets] as [string, boolean]
-    //           )
-    //       )
-    //       .flat()
-    //   )
-    // )
   },
 }))
 

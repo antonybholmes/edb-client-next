@@ -94,8 +94,6 @@ export function HubsPage() {
 
   useEffect(() => {
     async function loadHubs() {
-      console.log('Loading hubs', hubData)
-
       const technologyMap = new Map<string, Map<string, IDataset[]>>()
 
       for (const hub of hubData!.data) {

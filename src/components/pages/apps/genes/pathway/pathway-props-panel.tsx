@@ -67,7 +67,6 @@ export function PathwayPropsPage() {
       <SelectAll
         className="pl-1.5"
         setSelectAll={(v) => {
-          console.log('select all collections', v)
           setSelectAllCollections(v)
         }}
       />

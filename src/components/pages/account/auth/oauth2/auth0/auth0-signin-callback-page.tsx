@@ -29,15 +29,9 @@ export function CallbackPage() {
         // seems to be needed to complete the auth0 login process
         await handleRedirectCallback()
 
-        console.log('Handling Auth0 redirect callback')
-
         const auth0Token = await getAccessTokenSilently()
         const idTokenClaims = await getIdTokenClaims()
         const idToken = idTokenClaims?.__raw ?? ''
-
-        console.log('auth0Token', auth0Token)
-
-        console.log('id token', idToken)
 
         await signInWithAuth0(idToken) //auth0Token)
 
@@ -50,15 +44,11 @@ export function CallbackPage() {
         // let s: IRedirectState =
         //   appState?.[STATE_PARAM] || DEFAULT_REDIRECT_STATE
 
-        // console.log('Redirect URL from appState:', appState)
-
         // if (!isSafeRelativeUrl(s.target.path)) {
         //   // if login triggered from signout page, do not redirect back to it.
         //   // Instead goto account page. This stops login with immediate log out.
         //   s.target = DEFAULT_REDIRECT_TARGET
         // }
-
-        console.log('Redirect state from Auth0 appState:', signinState)
 
         setAllowRedirect(true)
       } catch (error) {

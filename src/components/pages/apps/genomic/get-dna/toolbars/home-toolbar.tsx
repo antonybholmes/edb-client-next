@@ -43,8 +43,6 @@ export function HomeToolbar() {
       }
     }
 
-    console.log(seqs)
-
     const dnaseqs: (IDNA | null)[] = await Promise.all(
       seqs.map(
         async (loc) =>

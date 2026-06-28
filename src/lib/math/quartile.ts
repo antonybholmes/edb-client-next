@@ -31,16 +31,6 @@ export function HLQuartile(p: number, values: number[]): [number, number] {
   const q = n * p + 0.5
   const qi = Math.floor(q)
 
-  // console.log(
-  //   'q',
-  //   p,
-  //   q,
-  //   qi,
-  //   0.5 * (values[qi]! + values[Math.min(n, qi + 1)]!),
-  //   values[qi]!,
-  //   values[Math.min(n, qi + 1)]!
-  // )
-
   if (Number.isInteger(q)) {
     return [values[qi]!, qi]
   } else {

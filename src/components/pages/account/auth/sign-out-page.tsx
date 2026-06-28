@@ -38,7 +38,6 @@ export function BaseSignOutPage({
 
   useEffect(() => {
     if (allowRedirect && _state && _state.target.path) {
-      console.log('Redirecting to signout target:', _state)
       redirect(_state.target.path)
     }
   }, [_state, allowRedirect])
@@ -65,8 +64,6 @@ export function SignOutPage() {
   const { signout } = useEdbAuth()
   const [state, setState] = useState<IRedirectState | null>(null)
   const [, setLogoutState] = useAtom(signOutStateAtom)
-
-  console.log('Signing out using method:', signinMethod)
 
   useEffect(() => {
     async function completeSignout() {
@@ -98,8 +95,6 @@ export function SignOutPage() {
           // default to auth0 as this is most common
           url = APP_ACCOUNT_OAUTH2_AUTH0_SIGN_OUT_URL
       }
-
-      console.log('Signout redirect URL before encoding:', url, state)
 
       if (url) {
         url = addRedirectStateToUrl(url, state)

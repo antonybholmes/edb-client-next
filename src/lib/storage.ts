@@ -35,14 +35,12 @@ export function storeItem(
 
   // If storage exceeds the limit, remove the oldest item (or evict based on some strategy)
   if (currentStorageSize + data.length > maxStorageSize) {
-    console.log('Storage limit reached, evicting the oldest item...')
     // Here we just remove the first item in the storage, but you could use a more sophisticated eviction strategy
     localStorage.removeItem(localStorage.key(0)!)
   }
 
   // Store the new item
   localStorage.setItem(randomKey, data)
-  console.log(`Stored item with key: ${randomKey}`)
 
   return randomKey
 }
@@ -55,8 +53,6 @@ export function storeItem(
 //     }
 //     return initialValue
 //   }
-
-//   console.log('atomWithLocalStorage', key, getInitialValue())
 
 //   const baseAtom = atom(getInitialValue())
 //   const derivedAtom = atom(

@@ -321,14 +321,6 @@ export function MatcalcPage() {
 
     const table = new DataFrameReader().read(lines)
 
-    console.log(table)
-
-    //resolve({ ...table, name: file.name })
-
-    // openBranch(`Load "Gene Test"`, [
-    //   table.setName('Gene Test') as AnnotationDataFrame,
-    // ])
-
     openFile(`Gene Test`, {
       //mode: 'append',
       sheets: [table.setName('Gene Test') as AnnotationDataFrame],
@@ -367,8 +359,6 @@ export function MatcalcPage() {
   //   const plot = newLollipopPlot('Lollipop', {
   //     main: sheet!.df as AnnotationDataFrame,
   //   })
-
-  //   //console.log('aha', plot, history)
 
   //   _addPlots([plot])
   // }

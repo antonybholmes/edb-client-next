@@ -40,7 +40,7 @@ export function AxisLeftSvg({
   //use tick labels to guess an appropriate offset
   const _titleOffset =
     titleOffset ??
-    3 * tickSize + 10 * Math.max(...ax.ticks.map(t => t.label.length))
+    3 * tickSize + 10 * Math.max(...ax.ticks.map((t) => t.label.length))
 
   return (
     <g
@@ -85,7 +85,6 @@ export function AxisLeftSvg({
           {showTickLabels && (
             <g transform={`translate(-${tickSize * 2}, 0)`}>
               {ax.ticks.map((tick, ticki) => {
-                //console.log(ax, tick, ax.tickLabels[ticki], ax.domainToRange(tick))
                 return (
                   <SvgText
                     key={ticki}

@@ -42,8 +42,6 @@ export function SaveAsDialog({
             (f) => f.ext.toUpperCase() === response
           )[0]!
 
-          //console.log('Save as...', text, format)
-
           onResponse?.(response, {
             name: `${text.split('.')[0]}.${response.toLowerCase()}`,
             format,

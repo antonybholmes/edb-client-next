@@ -91,14 +91,8 @@ export function PlotGridProvider({ children }: IChildrenProps) {
   const { fetchAccessToken } = useEdbAuth()
   const { settings, updateSettings } = useSingleCellSettings()
 
-  // useEffect(() => {
-  //   console.log('Loading GEX for new settings', settings.genesets)
-  //   loadGex(store.dataset, settings.genesets)
-  // }, [settings.genesets, store.dataset])
-
   useEffect(() => {
     async function setupGexPlots(dataset: IScrnaDataset, genesets: IGeneSet[]) {
-      console.log('Setting up gex plots', genesets)
       if (!dataset || genesets.length === 0) {
         return
       }
@@ -154,8 +148,6 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         } else {
           avg = gexData[geneset.genes[0]!.geneId]!
         }
-
-        //console.log(avg)
 
         //let nz: number[]
         //let plotRange: ILim
@@ -246,8 +238,6 @@ export function PlotGridProvider({ children }: IChildrenProps) {
       //let ydata = metadata!.cells.map(m => m.umapY)
       //ydata = ordered(ydata, idx)
 
-      console.log('Setting up gex plots', store.plots)
-
       setStore(
         produce(store, (draft) => {
           // replace existing plots of the same name
@@ -260,7 +250,6 @@ export function PlotGridProvider({ children }: IChildrenProps) {
       )
 
       if (settings.gex.autoRange) {
-        console.log('Setting global range to ', [-globalMax, globalMax])
         updateSettings(
           produce(settings, (draft) => {
             if (settings.gex.zscore.on) {
@@ -274,7 +263,6 @@ export function PlotGridProvider({ children }: IChildrenProps) {
     }
 
     if (store.dataset) {
-      console.log('Setting up GEX plots due to settings change', settings)
       setupGexPlots(store.dataset, settings.genesets)
     }
   }, [
@@ -322,8 +310,6 @@ export function PlotGridProvider({ children }: IChildrenProps) {
       }
     })
 
-    console.log(clusters)
-
     let hue = metadata.cells.map((c) => c.cluster) //metadata.cells.map(c => normMap[c.clusterId]!)
 
     // if we sort by hue, we are sorting by color norm and
@@ -339,8 +325,6 @@ export function PlotGridProvider({ children }: IChildrenProps) {
       roundel: { show: true },
     }
 
-    console.log('Setting dataset', dataset, metadata, clusterInfo)
-
     setStore(
       produce(store, (draft) => {
         draft.dataset = dataset
@@ -349,9 +333,6 @@ export function PlotGridProvider({ children }: IChildrenProps) {
         draft.plots = []
       })
     )
-
-    //console.log('Loading GEX for new dataset', settings.genesets)
-    //loadGex(settings.genesets)
   }
 
   // function setMode(mode: PlotMode) {
@@ -379,7 +360,6 @@ export function PlotGridProvider({ children }: IChildrenProps) {
   }
 
   async function loadGex(dataset: IScrnaDataset | null, genesets: IGeneSet[]) {
-    console.log('Loading GEX for', genesets, dataset)
     if (!dataset || genesets.length === 0) {
       return
     }
@@ -394,8 +374,6 @@ export function PlotGridProvider({ children }: IChildrenProps) {
       .filter((g) => g.mode !== 'clusters')
       .map((g) => g.genes.map((gene) => gene.geneId))
       .flat()
-
-    console.log('Loading GEX for', dataset.id, genes)
 
     const res = await queryClient.fetchQuery({
       queryKey: ['gex', dataset.id, genes],

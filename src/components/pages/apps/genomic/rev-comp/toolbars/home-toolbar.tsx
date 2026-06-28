@@ -85,8 +85,6 @@ export function HomeToolbar() {
       rev: revComp(s),
     }))
 
-    console.log(revSeqs)
-
     updateSettings(
       produce(settings, (draft) => {
         draft.outputSeqs = revSeqs

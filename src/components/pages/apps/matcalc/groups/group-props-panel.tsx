@@ -94,8 +94,6 @@ function GroupItem({
 
   const cols = getColNamesFromGroup(sheets[0] as AnnotationDataFrame, group)
 
-  console.log('group', group, 'cols', cols)
-
   return (
     <SortableItem
       id={group.id}
@@ -204,8 +202,6 @@ export function GroupPropsPanel() {
   const { sheets } = useCurrentSheets()
 
   const { selection } = useSelectionRange()
-
-  console.log('groups', groups)
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -485,9 +481,6 @@ export function GroupPropsPanel() {
           className="grow"
           onFileDrop={(files) => {
             if (files.length > 0) {
-              //setDroppedFile(files[0]);
-              console.log('Dropped file:', files[0])
-
               onTextFileChange('Open dropped file', files, openGroupFiles)
             }
           }}

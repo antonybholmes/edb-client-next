@@ -79,7 +79,6 @@ export function ZoomSelect({
   const { zoom, levels, setZoom } = useZoom(channel)
 
   function _setValue(value: number) {
-    console.log('Setting zoom to', value)
     setZoom(value)
     setOpen(false)
   }

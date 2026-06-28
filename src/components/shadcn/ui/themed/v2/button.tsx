@@ -362,7 +362,6 @@ export function Button({
   }
 
   function _onMouseDown(e: React.MouseEvent<HTMLButtonElement>) {
-    //console.log(e.nativeEvent.offsetX, e.nativeEvent.offsetY)
     if (ripple) {
       setClickProps({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })
     }

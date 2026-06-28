@@ -170,7 +170,7 @@ export function CollapseTree({
   return (
     <CollapseTreeProvider
       value={value}
-      onValueChange={t => {
+      onValueChange={(t) => {
         onValueChange?.(t)
       }}
       onCheckedChange={(tab: ITab, state: boolean) => {
@@ -178,7 +178,7 @@ export function CollapseTree({
       }}
     >
       <ul className={LIST_CLS}>
-        {children.map(child => (
+        {children.map((child) => (
           <CollapseTreeNode
             key={child.id}
             tab={child}
@@ -335,15 +335,13 @@ function CollapseTreeNode({
         data-root={level === 0}
         data-focus={focus}
         onClick={() => {
-          console.log('focus', path)
-
           setFocus(true)
         }}
         onFocus={() => {
           setValue?.(path)
         }}
         onBlur={() => setFocus(false)}
-        onKeyDown={e => {
+        onKeyDown={(e) => {
           if (e.key === 'Enter') {
             // Invert openings
             if (tab.children) {
@@ -401,7 +399,7 @@ function CollapseTreeNode({
           {tab.checked !== undefined && (
             <Checkbox
               checked={tab.checked}
-              onCheckedChange={state => {
+              onCheckedChange={(state) => {
                 onCheckedChange?.(tab, state)
                 //tab.onClick?.()
                 onValueChange?.(tab)
@@ -449,8 +447,7 @@ function CollapseTreeNode({
                       content: `Are you sure you want to delete the ${tab.name} ${
                         hasChildren ? 'folder and all its contents' : tab.type
                       }?`,
-                      callback: response => {
-                        console.log('response', response, tab)
+                      callback: (response) => {
                         if (response === TEXT_OK) {
                           tab.onDelete?.()
                         }

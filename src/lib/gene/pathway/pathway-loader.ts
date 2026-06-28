@@ -16,9 +16,7 @@ export async function loadGMT(file: IGeneSetFile): Promise<IGeneSet[]> {
 
     const lines: string[] = textToLines(res)
 
-    console.log('loaded from', file.url, lines.length)
-
-    lines.forEach(line => {
+    lines.forEach((line) => {
       const tokens = line.split('\t')
 
       geneSets.push({

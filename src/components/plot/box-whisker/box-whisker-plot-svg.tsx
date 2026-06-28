@@ -47,11 +47,9 @@ export function BoxWhiskerPlotSvg({
     const q0 = q1 - iqr15
     const q4 = q3 + iqr15
 
-    const w1 = data.filter(x => x >= q0)
+    const w1 = data.filter((x) => x >= q0)
     // reverse copy of array
-    const w2 = data.toReversed().filter(x => x <= q4)
-
-    //console.log(maxHeightMap)
+    const w2 = data.toReversed().filter((x) => x <= q4)
 
     if (!yax) {
       yax = new YAxis()
@@ -66,9 +64,6 @@ export function BoxWhiskerPlotSvg({
 
     const y1 = yax.domainToRange(w1[0]!)
     const y2 = yax.domainToRange(w2[0]!)
-
-    //console.log('med', q1, q3, median, iqr, q4, 'x', w1, w2)
-    // console.log("med", y1, y2)
 
     const yq1 = yax.domainToRange(q1)
     const yq3 = yax.domainToRange(q3)

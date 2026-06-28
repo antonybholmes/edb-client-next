@@ -84,7 +84,7 @@ export function checkAA(amino: string): string {
   return amino
     .toUpperCase()
     .split('')
-    .map(a => (AMINO_ACIDS.includes(a) ? a : 'X'))
+    .map((a) => (AMINO_ACIDS.includes(a) ? a : 'X'))
     .join('')
 }
 
@@ -184,11 +184,7 @@ export const SUB_V2_REGEX = /(\d)([^\d]+)>([^\d])/g
 export const SUB_SPLICE_REGEX = /X(\d+)/g
 
 export type VariantLevel =
-  | 'genomic'
-  | 'cdna'
-  | 'protein'
-  | 'rna'
-  | 'mitochondrial'
+  'genomic' | 'cdna' | 'protein' | 'rna' | 'mitochondrial'
 
 export function toVariantLevel(prefix: string): VariantLevel {
   if (!prefix) {
@@ -249,8 +245,6 @@ export function parseVariant(raw: string): IVariant {
     // strip off the prefix
     aa = aa.slice(2)
   }
-
-  //console.log('Parsing variant:', raw, 'at level:', level)
 
   if (level === 'protein') {
     match = aa.match(/^([A-Z]+)(\d+)/i)
@@ -339,8 +333,6 @@ export function parseVariant(raw: string): IVariant {
       stopOffset,
       raw,
     } as IVariant
-
-    //console.log('Parsed variant:', raw, 'to', ret)
 
     return ret
   }

@@ -106,8 +106,6 @@ export function useOncoplot(): IOncoplotStore {
 
       const df = sheet as BaseDataFrame
 
-      console.log('Generating oncoplot from df:', df, mutations)
-
       const colMap: IOncoColumns = {
         sample: findCol(df, 'Sample'),
         chr: findCol(df, 'Chromosome'),
@@ -142,15 +140,6 @@ export function useOncoplot(): IOncoplotStore {
 
       setMutationFrame(oncoFrame)
       setVariantsInUse(mutationsInUse)
-
-      //console.log('Variants in use:', mutationsInUse)
-
-      // setDisplayProps(
-      //   produce(displayProps, draft => {
-      //     draft.legend.mutations.names = legend.names
-      //     draft.legend.mutations.colorMap = legend.colorMap
-      //   })
-      // )
 
       if (newMutations.length > 0) {
         setMutations([...mutations, ...newMutations])

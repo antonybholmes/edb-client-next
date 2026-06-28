@@ -251,7 +251,6 @@ export function MotifsPage() {
     })
 
     if (dataframes.length > 0) {
-      console.log('Opening motifs in table view', dataframes)
       addSheets(dataframes)
     }
   }, [searchResult.motifs])
@@ -443,7 +442,6 @@ export function MotifsPage() {
                         onClick={() =>
                           updateSettings(
                             produce(settings, (draft) => {
-                              console.log('Setting sort by motif-id')
                               draft.sort.by = 'motif-id'
                             })
                           )

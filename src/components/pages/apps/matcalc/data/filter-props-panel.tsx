@@ -71,7 +71,6 @@ export function FilterPropsPanel() {
         keepOrder: settings.rows.keepOrder,
       }).setName('Row Filter')
     } else {
-      console.log('Filtering cols with queries', queries)
       df = findCols(sheets[0] as BaseDataFrame, queries, {
         caseSensitive: settings.cols.caseSensitive,
         matchEntireCell: settings.cols.matchEntireCell,

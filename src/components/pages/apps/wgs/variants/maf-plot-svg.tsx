@@ -25,11 +25,9 @@ export function MAFPlotSVG({ ref }: ISVGProps) {
 
   // need to split multiple snps and format insertions deletions
 
-  const maxCount = Math.max(...(results?.mafs.map(m => m.count) ?? [0]))
+  const maxCount = Math.max(...(results?.mafs.map((m) => m.count) ?? [0]))
 
   const maxY = maxCount / (results?.alleles ?? 1)
-
-  //console.log(maxHeightMap)
 
   const innerWidth = ((dna?.seq.length ?? 0) - 1) * BASE_W
   const plotHeight = settings.mafs.plot.height
@@ -69,13 +67,13 @@ export function MAFPlotSVG({ ref }: ISVGProps) {
     // get unique x positions
     const xs = numSort([
       ...new Set(
-        range(settings.location.start, settings.location.end + 1).map(pos =>
+        range(settings.location.start, settings.location.end + 1).map((pos) =>
           xax.domainToRange(pos)
         )
       ),
     ])
 
-    const points = xs.map(x => {
+    const points = xs.map((x) => {
       if (yMap.has(x)) {
         return [x, yMap.get(x)!]
       } else {
@@ -110,8 +108,6 @@ export function MAFPlotSVG({ ref }: ISVGProps) {
   const pathD = points
     .map((p, i) => (i === 0 ? `M${p[0]},${p[1]}` : `L${p[0]},${p[1]}`))
     .join(' ')
-
-  //console.log('points', points)
 
   if (!results || results.mafs.length === 0 || !dna) {
     return null

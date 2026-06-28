@@ -159,8 +159,6 @@ export function BoxWhiskersDialog({
       }
     )
 
-    //console.log('add plot', plot)
-
     //addPlots([plot])
 
     // plotsDispatch({

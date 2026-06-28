@@ -44,9 +44,7 @@ export function SidebarResizablePanel({
       //minSize={15}
       collapsible={collapsible}
       collapsedSize={collapsedSize}
-      onResize={size => {
-        //console.log('Sidebar size:', size, size.asPercentage < 5)
-
+      onResize={(size) => {
         setCollapsed(size.asPercentage < 5)
       }}
       {...props}

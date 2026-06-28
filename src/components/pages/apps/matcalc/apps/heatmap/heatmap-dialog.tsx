@@ -82,8 +82,6 @@ export function HeatMapDialog({
   const { groups, groupsName } = useCurrentGroups()
   const { sheets } = useCurrentSheets()
 
-  console.log('heatmap dialog', groups, groupsName)
-
   //const [topRows, setTopRows] = useState(1000)
   const [error, setError] = useState('')
 
@@ -115,8 +113,6 @@ export function HeatMapDialog({
     )
 
     if (groupsToPlot.length > 0 && settings.groups.filter.mode === 'ignore') {
-      console.log(df.shape)
-
       const idx = groupsToPlot
         .map((group) => getColIdxFromGroup(df, group))
         .flat()
@@ -196,8 +192,6 @@ export function HeatMapDialog({
       actions.push('Row z-score')
     }
 
-    console.log('df to plot1', dfToPlot)
-
     if (settings.heatmap.applyTranspose) {
       dfToPlot = dfToPlot!.t //dfTranspose(df, historyDispatch)
       actions.push('Transpose')
@@ -210,8 +204,6 @@ export function HeatMapDialog({
 
     const linkageFunc: ILinkage = LINKAGE_MAP[settings.heatmap.linkage]!
     const distFunc: IDistFunc = DISTANCE_METRIC_MAP[settings.heatmap.distance]!
-
-    //console.log(distanceMetric, distFunc)
 
     const hc = new HCluster(linkageFunc, distFunc)
 
@@ -240,8 +232,6 @@ export function HeatMapDialog({
       draft.legend.title.text = groupsName
     })
 
-    console.log('heatmap dialog plot', groupsToPlot)
-
     const plot: HistoryPlot = newHeatMapPlot(
       `Heatmap`,
       { main: cf },
@@ -253,10 +243,6 @@ export function HeatMapDialog({
       }
     )
 
-    console.log('aha', plot, history)
-
-    //_addPlots([plot])
-
     onResponse?.(TEXT_OK, plot)
   }
 
@@ -265,7 +251,6 @@ export function HeatMapDialog({
       open={open}
       title="Heatmap"
       onResponse={(r) => {
-        console.log('heatmap dialog response', r)
         if (r === TEXT_CANCEL) {
           onResponse?.(r, undefined)
         } else {

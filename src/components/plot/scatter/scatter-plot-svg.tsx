@@ -146,8 +146,6 @@ export function ScatterPlotSvg({
       return null
     }
 
-    console.log(df.columns, x)
-
     const xdata = getNumCol(df, findCol(df, x))
 
     const ydata = y ? getNumCol(df, findCol(df, y)) : range(df.shape[0])
@@ -280,12 +278,6 @@ export function ScatterPlotSvg({
   //     }
 
   //     df = sliceCols(sliceRows(df))
-
-  //     // Labels of row and columns -> unique identifier of the column called 'group' and 'variable'
-  //     // var myGroups = d3.map(data, (d, i) => {
-  //     //   console.log("dd", d.group)
-  //     //   return d.group
-  //     // })
 
   //     const myGroups: string[] = range(df.data[0].length).map(i => `col${i}`) //data.colIndex //Array.from(
   //     // new Set(data.colIndex)) //.map((d, i) => d.group || "").filter(x => x !== ""))

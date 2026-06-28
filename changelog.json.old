@@ -1961,6 +1961,10 @@
         {
           "msg": "Added X in Y filter",
           "date": "2026-06-27T02:09:44.258Z"
+        },
+        {
+          "msg": "Fix default theme color when no color specified",
+          "date": "2026-06-28T00:37:05.176Z"
         }
       ]
     },

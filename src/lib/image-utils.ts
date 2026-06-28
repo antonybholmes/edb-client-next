@@ -109,8 +109,6 @@ export async function downloadSvgAsPng(
     name += '.png'
   }
 
-  //console.log(source)
-
   // create a virtual instance of the svg,
   // then load into an image so the browser
   // will internally render it as a bitmap and
@@ -152,8 +150,7 @@ export async function downloadSvgAsPng(
       // Render image in Canvas
       ctx.drawImage(img, 0, 0, newWidth, newHeight)
 
-      canvas.toBlob(blob => {
-        console.log(blob)
+      canvas.toBlob((blob) => {
         if (blob) {
           const pngUrl = window.URL.createObjectURL(blob)
 
@@ -170,7 +167,7 @@ export async function downloadSvgAsPng(
     }
   }
 
-  img.onerror = e => {
+  img.onerror = (e) => {
     console.error('Image load error', e)
     URL.revokeObjectURL(svgUrl)
   }

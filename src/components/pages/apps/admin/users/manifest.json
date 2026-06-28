@@ -3,7 +3,7 @@
   "description": "User dashboard for admins.",
   "version": "1.0.0",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-06-24T20:56:37.397Z",
-  "hash": "9f6d1d860c4ed0f86e26e1289cbecfab8c9ddd1edfe6b607373661b321adb742",
-  "build": 6
+  "modified": "2026-06-28T02:10:33.579Z",
+  "hash": "86d173b2a97502c8554643a629854193a5e9fc820d993aba1964a76a86d882b5",
+  "build": 8
 }

@@ -63,14 +63,9 @@ export class TrieNode<T> {
     const words = key
       .replaceAll(/[^A-Za-z0-9]/g, ' ')
       .split(' ')
-      .filter(word => word.length > MIN_DEPTH_STORE_VARIABLES)
+      .filter((word) => word.length > MIN_DEPTH_STORE_VARIABLES)
 
-    //if (key.includes("BCL6")) {
-    // console.log(words)
-    //}
-
-    words.forEach(word => {
-      //console.log("add", key.slice(i))
+    words.forEach((word) => {
       TrieNode._addNodesRec(parent, word, value)
     })
 
@@ -79,7 +74,7 @@ export class TrieNode<T> {
     // if we want to search for L6 in BCL6, we
     // can
     // range(key.length - 1).forEach(i => {
-    //   //console.log("add", key.slice(i))
+
     //   this._add(key.slice(i), value)
     // })
   }
@@ -104,8 +99,6 @@ export class TrieNode<T> {
     if (child._depth > MIN_DEPTH_STORE_VARIABLES) {
       child._values.add(value)
     }
-
-    //console.log(c, key.slice(1), parent, parent._parent, parent._depth)
 
     // recursively build tree using tail of key
 

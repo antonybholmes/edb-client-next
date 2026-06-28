@@ -401,7 +401,7 @@ export function VolcanoPlotSvg({
 
   //     // Labels of row and columns -> unique identifier of the column called 'group' and 'variable'
   //     // var myGroups = d3.map(data, (d, i) => {
-  //     //   console.log("dd", d.group)
+
   //     //   return d.group
   //     // })
 

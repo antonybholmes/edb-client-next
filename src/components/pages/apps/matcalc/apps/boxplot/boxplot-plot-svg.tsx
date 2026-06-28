@@ -160,8 +160,6 @@ export function BoxPlotSvg({ ref }: ISVGProps) {
         ? df.col(hue).strs.map((v) => cleanHue(v))
         : vfill(emptyHueColName, df.shape[0])
 
-    //console.log('hue', hueOrder)
-
     let split = displayProps.split
 
     // if (!xOrder) {
@@ -199,8 +197,6 @@ export function BoxPlotSvg({ ref }: ISVGProps) {
 
       dataMap.get(x)?.get(hue)?.push(y)
     }
-
-    //console.log(dataMap)
 
     // for all results calculate the max number of significant
     // comparisons. This can be used to work out how much space
@@ -243,7 +239,6 @@ export function BoxPlotSvg({ ref }: ISVGProps) {
       // get the min/max height
 
       for (const hue of hueOrder) {
-        //console.log(x, hue)
         const values: number[] = dataMap.get(x)!.get(hue)!
 
         const kde = new KDE(values)
@@ -306,8 +301,6 @@ export function BoxPlotSvg({ ref }: ISVGProps) {
                   const q1: number = q25(values)[0]
 
                   const q3: number = q75(values)[0]
-
-                  //console.log("medians", medians, q1s, q3s)
 
                   const plotOptions = singlePlotDisplayOptions[x]![hue]!
 

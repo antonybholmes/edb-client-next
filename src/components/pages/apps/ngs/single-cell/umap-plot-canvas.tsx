@@ -64,11 +64,10 @@ export function drawUmap(
       //ctx.translate(displayProps.margin.left, displayProps.margin.top)
 
       const clusterMap: Map<number, IScrnaCluster> = new Map(
-        clusterInfo.clusters.map(c => [c.label, c])
+        clusterInfo.clusters.map((c) => [c.label, c])
       )
 
       // cluster data for gex will be ordered by the hue
-      //console.log(cdata)
 
       for (const [xi, p] of points.entries()) {
         //const y = ydata[xi]!

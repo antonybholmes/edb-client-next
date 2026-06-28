@@ -12,8 +12,7 @@ export function BioDrawSvg() {
   )
 
   const handleExportAll = () => {
-    const allStates = childRefs.current.map(ref => ref.current?.exportState())
-    console.log('Exported states:', JSON.stringify(allStates))
+    const allStates = childRefs.current.map((ref) => ref.current?.exportState())
   }
 
   const lipid: ILipid = {

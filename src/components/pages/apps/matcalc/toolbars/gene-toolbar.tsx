@@ -61,8 +61,6 @@ export function GeneToolbar() {
   }
 
   function runExtGsea() {
-    console.log(groups)
-
     if (groups.length < 2) {
       openDialog({
         type: 'alert',

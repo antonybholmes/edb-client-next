@@ -171,8 +171,6 @@ function VennPage() {
   const { file } = useFiles()
   const { sheets } = useCurrentSheets()
 
-  //useWindowScrollListener((e: unknown) => console.log(e))
-
   // function onFileChange(_message: string, files: FileList | null) {
   //   if (!files) {
   //     return
@@ -314,8 +312,6 @@ function VennPage() {
   useEffect(() => {
     const vennSetList: IVennList[] = []
     let inUse: number = 0
-
-    //console.log(vennLists, 'vennLists')
 
     for (const [i, id] of VENN_LIST_IDS.entries()) {
       const vl = vennLists[id]!

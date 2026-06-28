@@ -35,12 +35,9 @@ export function BaseSignInCallbackPage({
     : null
 
   useEffect(() => {
-    console.log('e', _state, allowRedirect, error)
     if (!_state || !allowRedirect || error) {
       return
     }
-
-    console.log('Redirecting to sign-in target:', _state)
 
     try {
       safeRedirect(_state.target.path)
@@ -76,8 +73,6 @@ export function CallbackPage() {
     async function processCallback() {
       try {
         const state = getRedirectStateFromURI()
-
-        //console.log('Redirect URL from appState:', url, invalidRedirectUrl(url))
 
         setState(state)
       } catch (error) {

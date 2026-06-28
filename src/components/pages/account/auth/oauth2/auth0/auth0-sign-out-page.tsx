@@ -17,8 +17,6 @@ export function SignOutPage() {
   const [state, setState] = useState<IRedirectState | null>(null)
 
   useEffect(() => {
-    console.log('Auth0 logout redirect URL:', APP_ACCOUNT_AUTH_SIGNED_OUT_URL)
-
     logout({
       logoutParams: {
         returnTo: APP_ACCOUNT_AUTH_SIGNED_OUT_URL,

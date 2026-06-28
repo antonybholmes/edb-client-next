@@ -24,8 +24,6 @@ export function useOpen() {
   function openFiles(files: ITextFileOpen[], options: IParseOptions) {
     //filesToDataFrames(files, historyDispatch, options)
 
-    console.log('Parsing files with options:', files)
-
     filesToDataFrames(files, {
       parseOpts: options,
       onSuccess: (tables) => {
@@ -36,7 +34,6 @@ export function useOpen() {
         }
       },
       onError: (error) => {
-        console.log('Error parsing files:', error)
         openDialog({
           type: 'alert',
           payload: {

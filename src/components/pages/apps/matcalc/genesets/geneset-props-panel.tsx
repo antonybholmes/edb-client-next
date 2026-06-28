@@ -322,9 +322,6 @@ export function GenesetPropsPanel() {
           className="grow"
           onFileDrop={(files) => {
             if (files.length > 0) {
-              //setDroppedFile(files[0]);
-              console.log('Dropped file:', files[0])
-
               onTextFileChange('Open dropped file', files, openGenesetFiles)
             }
           }}

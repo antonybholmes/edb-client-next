@@ -30,21 +30,19 @@ export function oneWayFromDataframes(
   let locs: IGenomicLocation[] = []
 
   if (ret.get(0, 0).toString().match(LOC_REGEX)) {
-    locs = ret.col(0).values.map(v => parseGenomicLocation(v as string))
+    locs = ret.col(0).values.map((v) => parseGenomicLocation(v as string))
   } else {
     // assume 3 col bed format
 
-    locs = zip(ret.col(0).values, ret.col(1).values, ret.col(2).values).map(v =>
-      newGenomicLocation(v[0] as string, v[1] as number, v[2] as number)
+    locs = zip(ret.col(0).values, ret.col(1).values, ret.col(2).values).map(
+      (v) => newGenomicLocation(v[0] as string, v[1] as number, v[2] as number)
     )
   }
-
-  //console.log(locs)
 
   for (const table of overlapTables) {
     const blockSearch = new BlockSearch<SeriesData[]>()
 
-    const colNames = table.columns.map(name => `${table.name} ${name}`)
+    const colNames = table.columns.map((name) => `${table.name} ${name}`)
 
     for (const i of range(table.shape[0])) {
       let loc: IGenomicLocation
@@ -73,7 +71,7 @@ export function oneWayFromDataframes(
         // if there are multiple features, concatenate each one
         for (const ci of range(newCols.length)) {
           const text = range(features.length)
-            .map(fi => features[fi]![ci]!)
+            .map((fi) => features[fi]![ci]!)
             .join(';')
 
           newCols[ci]![ri]! = text

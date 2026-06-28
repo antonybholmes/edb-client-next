@@ -142,9 +142,6 @@ export function cognitoSignout(): string {
     `${COGNITO_DOMAIN}/logout?client_id=${CLIENT_ID}` +
     `&logout_uri=${encodeURIComponent(APP_ACCOUNT_AUTH_SIGNED_OUT_URL)}`
 
-  console.log('Signing out, redirecting to Cognito logout', url)
-  //redirect(url)
-
   return url
 }
 
@@ -153,11 +150,7 @@ export function cognitoSignout(): string {
 
 //   const stateRaw = params.get('state')
 
-//   console.log('Cognito signout callback, state:', params)
-
 //   let target: IRedirectState = decodeState(stateRaw) ?? DEFAULT_REDIRECT_URL
-
-//   console.log('Cognito signout callback, target:', target)
 
 //   return { target }
 // }

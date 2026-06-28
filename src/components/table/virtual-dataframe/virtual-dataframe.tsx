@@ -97,12 +97,9 @@ function _VirtualDataFrame({ editable = false }: IVirtualDataFrameProps) {
   // }, [selection])
 
   function onKeyDown(e: KeyboardEvent | React.KeyboardEvent) {
-    console.log(e.code, e.shiftKey, 'dsfsd')
-
     switch (e.code) {
       case 'KeyC':
         if (e.ctrlKey) {
-          console.log('copy', selection)
           if (selection) {
             const cols = selection.cols
               ? range(selection.cols.start, selection.cols.end + 1)

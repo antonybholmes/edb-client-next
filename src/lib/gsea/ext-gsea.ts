@@ -70,8 +70,6 @@ export class ExtGSEA {
     this._np = permutations
     this._rankedGenes = rankedGenes
 
-    console.log('rankedGenes', rankedGenes)
-
     const l = rankedGenes.genes.length
 
     // the negative versions are for the second gene set
@@ -145,9 +143,6 @@ export class ExtGSEA {
     const ids1 = new Set(gs1.genes)
     const ids2 = new Set(gs2.genes)
 
-    console.log('ids1', ids1)
-    console.log('ids2', ids2)
-
     for (const i of range(l)) {
       if (
         (this._pn[i]! > 0 && ids1.has(this._rkc[i]!)) ||
@@ -190,7 +185,6 @@ export class ExtGSEA {
         .filter((_, gi) => isEnriched[gi] === 1 && isInGeneset[gi] === 1)
         .reverse()
     } else {
-      console.log('es > 0', this._esAllGenes)
       const ixpk = where(this._esAllGenes, (x) => x === maxEs)[0]!
 
       for (const i of range(ixpk + 1)) {

@@ -8,7 +8,3 @@ export function* combinations<T>(arr: T[], k: number): Generator<T[]> {
 
 // const array = [1, 2, 3, 4]
 // const k = 2
-
-// for (const combo of combinations(array, k)) {
-//   console.log(combo)
-// }

@@ -53,8 +53,8 @@ export class KMeans {
     points: Point[],
     centroids: Point[]
   ): number[] {
-    return points.map(point => {
-      const distances = centroids.map(c => this._dist(point, c))
+    return points.map((point) => {
+      const distances = centroids.map((c) => this._dist(point, c))
 
       return argMin(distances)
     })
@@ -95,7 +95,7 @@ export class KMeans {
     for (let centroidi = 0; centroidi < this._k; centroidi++) {
       if (count[centroidi]! > 0) {
         newCentroids[centroidi] = newCentroids[centroidi]!.map(
-          sum => sum / count[centroidi]!
+          (sum) => sum / count[centroidi]!
         )
       }
     }
@@ -123,7 +123,6 @@ export class KMeans {
 
       // Check for convergence
       if (this.hasConverged(centroids, newCentroids)) {
-        console.log(`Converged after ${iteration + 1} iterations`)
         break
       }
 
@@ -146,6 +145,3 @@ export class KMeans {
 
 // const kMeans = new KMeans(2, euclidean) // 2 clusters
 // const result = kMeans.fit(points)
-
-// console.log('Centroids:', result.centroids)
-// console.log('Assignments:', result.assignments)

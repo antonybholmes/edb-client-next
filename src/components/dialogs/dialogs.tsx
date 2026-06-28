@@ -119,7 +119,6 @@ export const useDialogStore = create<IDialogStore>((set) => ({
   open: (d) => {
     const id = makeUuid()
     const dialog = { ...d, id, time: Date.now() }
-    console.log('Opening dialog', dialog.type, id)
 
     set((state) => ({
       stack: [...state.stack.slice(-MAX_DIALOGS + 1), dialog],
@@ -179,7 +178,6 @@ function DialogRenderer({
   switch (dialog.type) {
     // case 'open': {
     //   const { fileTypes, callback } = dialog.payload
-    //   console.log('open dialog')
 
     //   openFilesDialog({
     //     fileTypes,

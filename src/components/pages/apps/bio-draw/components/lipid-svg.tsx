@@ -253,7 +253,6 @@ export function LipidSvg({ svgRef, exportRef, lipid }: IProps) {
 
     angles.current = newAngles
 
-    //console.log('rebound')
     //const box = pathRef.current.getBBox()
     // setBBox(box)
 
@@ -292,8 +291,6 @@ export function LipidSvg({ svgRef, exportRef, lipid }: IProps) {
     //   x: mouse.x + offsetX,
     //   y: mouse.y + offsetY,
     // }
-
-    console.log(direction)
 
     resizeDragging.current = {
       mouseStart: mouse,
@@ -351,8 +348,6 @@ export function LipidSvg({ svgRef, exportRef, lipid }: IProps) {
       //     ? -PADDING
       //     : 0
 
-      // console.log(direction, offsetX, offsetY)
-
       // const logicalMouse = {
       //   x: mouse.x + offsetX,
       //   y: mouse.y + offsetY,
@@ -377,8 +372,6 @@ export function LipidSvg({ svgRef, exportRef, lipid }: IProps) {
       }) */
 
       let newPoints: IPoint[] = []
-
-      console.log(direction, 'c')
 
       if (direction === 'move') {
         newPoints = originalPoints.map((p) => ({
@@ -405,8 +398,6 @@ export function LipidSvg({ svgRef, exportRef, lipid }: IProps) {
         const anchorY = direction.includes('n')
           ? originalBBox!.y + originalBBox!.height
           : originalBBox!.y
-
-        //console.log(dx, dy)
 
         newPoints = originalPoints.map((p) => ({
           ...p,
@@ -754,8 +745,6 @@ export function LipidSvg({ svgRef, exportRef, lipid }: IProps) {
 
     return points
   }
-
-  //console.log('rep check')
 
   return (
     <>

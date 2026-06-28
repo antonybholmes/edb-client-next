@@ -96,7 +96,6 @@ export function useMotifSettings(): {
   const updateSettings = useMotifSettingsStore((state) => state.updateSettings)
   const resetSettings = () => updateSettings({ ...DEFAULT_SETTINGS })
 
-  //console.log('use matcalc settings')
   // first load in the default values from the store
   // const [settings, setSettings] = useState<ISettings>({
   //   passwordless: localStore.passwordless === TRUE,

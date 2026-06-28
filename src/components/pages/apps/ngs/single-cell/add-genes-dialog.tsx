@@ -60,15 +60,11 @@ export function AddGenesDialog({ onResponse }: IModalProps) {
               { headers: bearerHeaders(accessToken) }
             )
 
-            //console.log(res.data)
-
             return res.data
           },
         })
 
         const genes: IScrnaGene[] = res
-
-        console.log(genes)
 
         newGenes.push(...genes)
       }

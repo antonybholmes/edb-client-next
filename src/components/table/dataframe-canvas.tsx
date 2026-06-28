@@ -289,8 +289,6 @@
 //     //   scaledDim[1] / maxScaledDim[1],
 //     // ]
 
-//     //console.log(scrollFactor, scaledDim, maxScaledDim)
-
 //     setDFProps({
 //       dim,
 //       scaledDim,
@@ -313,8 +311,6 @@
 //     }
 
 //     const d = scrollRef.current
-
-//     //console.log('focus', shape.scaledCellSize)
 
 //     const x1 = focusCell.col * dfProps.scaledCellSize[0]
 //     const x2 = x1 + dfProps.scaledCellSize[0]
@@ -1033,16 +1029,12 @@
 //     const [w, h] = getSize(d)
 //     const [l, t, normLeft, normTop] = getScrollProps(lastScroll.current)
 
-//     //console.log("draw", l, t, normLeft, normTop, dfProps.maxScaledDim)
-
 //     // const hScrollDir = l - scrollPos.current[0]
 //     // const vSCrollDir = t - scrollPos.current[1]
 //     // scrollPos.current = [l, t]
 
 //     const rowRange = getRowRange(t, h)
 //     const colRange = getColRange(l, w)
-
-//     //console.log(lastScroll.current, l, t, normLeft, normTop, colRange)
 
 //     //const selCtx = selectionCanvasRef.current?.getContext("2d")
 //     //const intCtx = gridCanvasRef.current?.getContext("2d")
@@ -1087,8 +1079,6 @@
 //     if (ignoreScroll.current || !vSourceRef.current || !hSourceRef.current) {
 //       return
 //     }
-
-//     //console.log("scroll", vSourceRef, hSourceRef, targetVRef, targetHRef)
 
 //     const vSource = vSourceRef.current
 //     const hSource = hSourceRef.current
@@ -1196,8 +1186,6 @@
 //       return
 //     }
 
-//     //console.log(e.target, e.target === ref.current)
-
 //     // const d = scrollRef.current
 
 //     // if (!d) {
@@ -1234,8 +1222,6 @@
 //     if (isMouseDown.current === 'header') {
 //       // if the mouse is pressed, see if we are dragging
 //       // a columns
-
-//       //console.log(e.target, e.target === ref.current)
 
 //       // const d = scrollRef.current
 
@@ -1470,8 +1456,6 @@
 //       )
 //     )
 
-//     //console.log(row, col)
-
 //     return { row: row, col: col }
 //   }
 
@@ -1532,8 +1516,6 @@
 //   //   //const x = e.nativeEvent.offsetX
 //   //   const y = e.nativeEvent.offsetY
 
-//   //   console.log(y, e.nativeEvent, y <= dfProps.scaledCellSize[1])
-
 //   //   if (y <= dfProps.scaledCellSize[1]) {
 //   //     // wheel scrolls left and right
 //   //     scrollElem.scrollBy(e.deltaY, 0)
@@ -1553,8 +1535,6 @@
 //         ref.current.classList.remove('cursor-ew-resize')
 //       }
 //     }
-
-//     // console.log(isMouseDown.current)
 
 //     if (isMouseDown.current !== 'table') {
 //       return
@@ -1581,7 +1561,6 @@
 //   }
 
 //   function onKeyDown(e: KeyboardEvent) {
-//     //console.log(e.code, e.shiftKey)
 
 //     const d = scrollRef.current
 

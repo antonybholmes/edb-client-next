@@ -50,8 +50,6 @@ export function SearchBox({
 
   const v = value ?? _value
 
-  //console.log('search box value', v)
-
   return (
     <Input
       id={_id}
@@ -63,11 +61,11 @@ export function SearchBox({
       data-variant={variant}
       data-mode={variant}
       placeholder={placeholder}
-      onTextChange={v => {
+      onTextChange={(v) => {
         setValue(v)
         onTextChange?.(v)
       }}
-      onTextChanged={v => {
+      onTextChanged={(v) => {
         onTextChanged?.(v)
       }}
       leftChildren={

@@ -114,7 +114,7 @@ const DEFAULT_TRACKS: TrackPlot[] = [
   },
 ]
 
-const DEFAULT_GROUPS = DEFAULT_TRACKS.map(t => ({
+const DEFAULT_GROUPS = DEFAULT_TRACKS.map((t) => ({
   ...newTrackGroup([t]),
   name: t.name,
 }))
@@ -139,19 +139,19 @@ export interface ITracksStore {
   dispatch: (action: ITrackAction) => void
 }
 
-export const useTracksStore = create<ITracksStore>()(set => ({
+export const useTracksStore = create<ITracksStore>()((set) => ({
   groups: [],
   //order: [],
   selectedGroups: {},
   trackDb: [],
-  locations: useSeqBrowserStore.getState().locations.map(l => ({
+  locations: useSeqBrowserStore.getState().locations.map((l) => ({
     ...l,
     id: makeUuid(),
     search: locStr(l),
   })),
   binSizes: [100],
 
-  setLocations: async locs => {
+  setLocations: async (locs) => {
     const settings = useEdbSettingsStore.getState()
 
     const locations: ISeqLocation[] = []
@@ -182,9 +182,7 @@ export const useTracksStore = create<ITracksStore>()(set => ({
           }
 
           // could be a gene name, so search for it and use the first result if found
-          console.log(
-            `${API_GENOME_URL}/assemblies/${settings.genomic.assembly}/search?q=${loc}&feature=gene`
-          )
+
           const res = await httpFetch.getJson<{
             data: IGenomicFeature[]
           }>(
@@ -209,17 +207,15 @@ export const useTracksStore = create<ITracksStore>()(set => ({
       }
     }
 
-    locations.map(location => {
+    locations.map((location) => {
       const start = Math.max(1, Math.round(location.start))
       const end = Math.max(
         start + 10,
         Math.min(300000000, Math.round(location.end))
       )
-      //console.log(start, end)
+
       return newGenomicLocation(location.chr, start, end)
     })
-
-    console.log('set locations', locations)
 
     // remove duplicates
     // const used = new Set<string>()
@@ -243,15 +239,15 @@ export const useTracksStore = create<ITracksStore>()(set => ({
     set({ locations })
   },
 
-  dispatch: action => {
+  dispatch: (action) => {
     let groups: ITrackGroup[]
 
     switch (action.type) {
       case 'add':
         groups = action.tracks //.map(ts => newTrackGroup(ts))
 
-        set(state =>
-          produce(state, draft => {
+        set((state) =>
+          produce(state, (draft) => {
             draft.groups.push(...groups)
           })
         )
@@ -259,8 +255,8 @@ export const useTracksStore = create<ITracksStore>()(set => ({
       case 'set':
         groups = action.tracks //.map(ts => newTrackGroup(ts))
 
-        set(state =>
-          produce(state, draft => {
+        set((state) =>
+          produce(state, (draft) => {
             draft.groups = [...groups]
             draft.selectedGroups = {}
           })
@@ -268,17 +264,16 @@ export const useTracksStore = create<ITracksStore>()(set => ({
 
         break
       case 'update':
-        set(state =>
-          produce(state, draft => {
+        set((state) =>
+          produce(state, (draft) => {
             const group =
               draft.groups[
-                draft.groups.findIndex(g => g.id === action.group.id)
+                draft.groups.findIndex((g) => g.id === action.group.id)
               ]
 
             if (group) {
-              console.log('update track', action.track)
               const trackIndex = group.tracks.findIndex(
-                t => t.id === action.track.id
+                (t) => t.id === action.track.id
               )
 
               if (trackIndex !== -1) {
@@ -293,9 +288,9 @@ export const useTracksStore = create<ITracksStore>()(set => ({
         {
           const removeIds = new Set(action.ids)
 
-          set(state =>
-            produce(state, draft => {
-              draft.groups = state.groups.filter(g => !removeIds.has(g.id))
+          set((state) =>
+            produce(state, (draft) => {
+              draft.groups = state.groups.filter((g) => !removeIds.has(g.id))
             })
           )
         }
@@ -304,22 +299,22 @@ export const useTracksStore = create<ITracksStore>()(set => ({
         {
           const removeIds = new Set(action.ids)
 
-          set(state =>
-            produce(state, draft => {
-              const group = draft.groups.find(g => g.id === action.group.id)!
+          set((state) =>
+            produce(state, (draft) => {
+              const group = draft.groups.find((g) => g.id === action.group.id)!
 
-              group.tracks = group.tracks.filter(t => !removeIds.has(t.id))
+              group.tracks = group.tracks.filter((t) => !removeIds.has(t.id))
             })
           )
         }
         break
       case 'select':
-        set(state =>
-          produce(state, draft => {
+        set((state) =>
+          produce(state, (draft) => {
             draft.selectedGroups = Object.fromEntries([
               ...Object.entries(draft.selectedGroups),
               ...action.ids.map(
-                id => [id, action.selected] as [string, boolean]
+                (id) => [id, action.selected] as [string, boolean]
               ),
             ])
           })
@@ -327,15 +322,15 @@ export const useTracksStore = create<ITracksStore>()(set => ({
 
         break
       case 'clear':
-        set(state =>
-          produce(state, draft => {
+        set((state) =>
+          produce(state, (draft) => {
             draft.groups = []
           })
         )
         break
       case 'reset':
-        set(state =>
-          produce(state, draft => {
+        set((state) =>
+          produce(state, (draft) => {
             draft.groups = [...DEFAULT_GROUPS]
 
             draft.selectedGroups = {}
@@ -351,19 +346,22 @@ export const useTracksStore = create<ITracksStore>()(set => ({
 export function useTracks() {
   const { settings: edbSettings } = useEdbSettings()
   const { settings } = useSeqBrowserSettings()
-  const locations = useTracksStore(state => state.locations)
+  const locations = useTracksStore((state) => state.locations)
 
-  const setLocations = useTracksStore(state => state.setLocations)
-  const groups = useTracksStore(state => state.groups)
-  const selectedGroups = useTracksStore(state => state.selectedGroups)
-  const dispatch = useTracksStore(state => state.dispatch)
+  const setLocations = useTracksStore((state) => state.setLocations)
+  const groups = useTracksStore((state) => state.groups)
+  const selectedGroups = useTracksStore((state) => state.selectedGroups)
+  const dispatch = useTracksStore((state) => state.dispatch)
 
   //const { gtf } = useGenomes()
   const { fetchAccessToken } = useEdbAuth()
 
   //const [tooltip, setTooltip] = useState<ITrackTooltip>(NO_TRACK_TOOLTIP)
 
-  const locationStrs = useMemo(() => locations.map(l => locStr(l)), [locations])
+  const locationStrs = useMemo(
+    () => locations.map((l) => locStr(l)),
+    [locations]
+  )
 
   const { data: locationFeatures = [] } = useQuery({
     queryKey: [
@@ -424,7 +422,7 @@ export function useTracks() {
   const binSizes = useMemo(
     () =>
       settings.tracks.seqs.bins.autoSize
-        ? locations.map(location => autoBinSize(location))
+        ? locations.map((location) => autoBinSize(location))
         : vfill(settings.tracks.seqs.bins.size, locations.length),
 
     [
@@ -437,9 +435,9 @@ export function useTracks() {
   const tracks = useMemo(
     () =>
       groups
-        .map(g => g.tracks)
+        .map((g) => g.tracks)
         .flat()
-        .filter(t => SEQ_TRACK_TYPES.has(t.type)) as ISeqTrack[],
+        .filter((t) => SEQ_TRACK_TYPES.has(t.type)) as ISeqTrack[],
     [groups]
   )
 
@@ -447,14 +445,19 @@ export function useTracks() {
   const seqDBDataTracks = useMemo(
     () =>
       tracks.filter(
-        t => t.type === 'Seq' || t.type === 'BigWig'
+        (t) => t.type === 'Seq' || t.type === 'BigWig'
       ) as ISeqDBDataTrack[],
     [tracks]
   )
 
   // force updates when seqs, location or bin size change
   const { data: seqSearchResults = [] } = useQuery({
-    queryKey: ['bins', seqDBDataTracks.map(t => t.id), locationStrs, binSizes],
+    queryKey: [
+      'bins',
+      seqDBDataTracks.map((t) => t.id),
+      locationStrs,
+      binSizes,
+    ],
     staleTime: TIME_5_MINUTES_MS,
     placeholderData: [],
     queryFn: async () => {
@@ -466,7 +469,7 @@ export function useTracks() {
           body: {
             locations: locationStrs,
             binSizes,
-            samples: seqDBDataTracks.map(t => t.id),
+            samples: seqDBDataTracks.map((t) => t.id),
           },
 
           headers: bearerHeaders(accessToken),
@@ -475,12 +478,12 @@ export function useTracks() {
 
       return res.data
     },
-    select: data => {
+    select: (data) => {
       // transform into map view
-      return data.map(d => {
+      return data.map((d) => {
         return {
           location: d.location,
-          samples: Object.fromEntries(d.samples.map(s => [s.id, s])),
+          samples: Object.fromEntries(d.samples.map((s) => [s.id, s])),
         }
       }) as ISeqSearchResultMap[]
     },
@@ -489,8 +492,8 @@ export function useTracks() {
   const { data: globalY = settings.tracks.seqs.globalY.ymax } = useQuery({
     queryKey: [
       'globalY',
-      seqSearchResults?.map(r => locStr(r.location)),
-      tracks.map(t => t.id),
+      seqSearchResults?.map((r) => locStr(r.location)),
+      tracks.map((t) => t.id),
       binSizes,
       settings.tracks.seqs.scale.mode,
       settings.tracks.seqs.globalY.auto,
@@ -530,8 +533,6 @@ export function useTracks() {
   //       binSizes,
   //       settings.seqs.scale.mode
   //     )
-
-  //     console.log('global y', y, 'd')
 
   //     setGlobalY(y)
   //   }

@@ -28,7 +28,6 @@ import { useAtom } from 'jotai'
 //     [STATE_PARAM]: { target },
 //   }
 
-//   console.log('EDBSignIn: loginWithRedirect state', newState)
 //   loginWithRedirect({ appState: newState })
 // }
 
@@ -49,7 +48,7 @@ export function Auth0SignInButton({
       aria-label={TEXT_SIGN_IN}
       onClick={() => {
         setSigninState(state)
-        console.log('Auth0SignInButton, state:', state)
+
         loginWithRedirect({ appState: state })
       }}
     >

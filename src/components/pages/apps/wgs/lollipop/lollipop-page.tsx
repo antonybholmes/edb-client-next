@@ -230,7 +230,6 @@ function LollipopPage() {
     if (sheets[0].name !== 'Variants' || !protein) {
       return
     }
-    console.log('Updating lollipop plot with sheet:', sheets[0].name)
 
     try {
       lollipopFromTable(sheets[0] as BaseDataFrame, protein)
@@ -267,7 +266,7 @@ function LollipopPage() {
   // }, [step])
 
   // function lollipopPlot() {
-  //   console.log('lollipopPlot')
+
   //   const mutDf = findSheet(step!, 'Variants')
 
   //   if (!mutDf) {

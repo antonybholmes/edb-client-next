@@ -39,8 +39,6 @@ export class BlockSearch<T> {
       if (this._blockMap.get(loc.chr)?.get(b)) {
         const items = this._blockMap.get(loc.chr)!.get(b)!
 
-        //console.log(loc, items, this._blockMap.get(loc.chr)!)
-
         for (const item of items) {
           if (overlaps(loc, item[0]!)) {
             const s = JSON.stringify(item[1]!)

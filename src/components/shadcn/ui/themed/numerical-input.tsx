@@ -224,8 +224,6 @@ export function NumericalInput({
     stopUpdating()
   }
 
-  //console.log('_value', _value)
-
   return (
     <Input
       id={id}
@@ -241,57 +239,12 @@ export function NumericalInput({
       className={className}
       variant={variant}
       inputCls="text-right"
-      onKeyDown={e => {
-        //console.log(e)
+      onKeyDown={(e) => {
         if (e.key === 'Enter') {
-          //const v = Number(e.currentTarget.value)
-
-          // only called when user presses enter,
-          // this is for when you don't want to respond
-          // on every change, (e.g. it taxes the ui to keep
-          // redrawing quickly, so only respond once user
-          // has made a final choice
-          //if (!Number.isNaN(v)) {
           _onChange(e.currentTarget.value, 'changed') //onNumChanged?.(Math.min(limit[1], Math.max(limit[0], v)))
-          //}
         }
-
-        // else {
-        //   // respond to arrow keys when ctrl pressed
-        //   if (e.ctrlKey) {
-        //     switch (e.key) {
-        //       case 'ArrowUp':
-        //       case 'ArrowRight':
-        //         console.log('up')
-        //         _onNumChanged(_n.current + step)
-        //         break
-        //       case 'ArrowDown':
-        //       case 'ArrowLeft':
-        //         _onNumChanged(_n.current - step)
-        //         break
-        //       default:
-        //         break
-        //     }
-        //   }
-        // }
       }}
-      // onKeyUp={e => {
-      //   switch (e.key) {
-      //     case 'ArrowUp':
-      //     case 'ArrowRight':
-      //     case 'ArrowDown':
-      //     case 'ArrowLeft':
-      //       // trigger event when arrow key is released
-      //       // the numerical input triggers updates automatically
-      //       // but we want to notify that the user has finished changing
-      //       // since some components do not listen for every change
-      //       // and instead are designed to respond once user has finished
-      //       _onNumChanged(_n.current)
-      //       break
-      //     default:
-      //       break
-      //   }
-      // }}
+
       onTextChange={setTextValue}
       placeholder={placeholder}
       rightChildren={
@@ -306,7 +259,7 @@ export function NumericalInput({
             onMouseDown={() => startUpdating(step)}
             onMouseUp={stopUpdating}
             onMouseLeave={stopUpdating}
-            onKeyDown={e => handleKeyDown(e, step)}
+            onKeyDown={(e) => handleKeyDown(e, step)}
             onKeyUp={handleKeyUp}
             aria-label="Increase value"
           >
@@ -332,7 +285,7 @@ export function NumericalInput({
             onMouseDown={() => startUpdating(-step)}
             onMouseUp={stopUpdating}
             onMouseLeave={stopUpdating}
-            onKeyDown={e => handleKeyDown(e, -step)}
+            onKeyDown={(e) => handleKeyDown(e, -step)}
             onKeyUp={handleKeyUp}
             aria-label="Decrease value"
           >

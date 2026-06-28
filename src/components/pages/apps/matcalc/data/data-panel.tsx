@@ -78,8 +78,6 @@ export function DataPanel() {
     //const filteredMessages = messages.filter(m => m.target === branch?.id)
 
     for (const message of messages) {
-      console.log(message)
-
       if (typeof message.data === 'string') {
         if (message.data.includes('save:') && sheets.length > 0) {
           const ext = messageTextFileFormat(message)
@@ -171,10 +169,7 @@ export function DataPanel() {
             }
           }}
           className="relative"
-          // onReorder={(order) => {
-          //   console.log('reorder', order)
-          //   reorderSheets(order, file)
-          // }}
+
           allowReorder={true}
           menuActions={[
             { action: TEXT_DELETE, icon: <DeleteIcon stroke="" /> },

@@ -284,7 +284,7 @@ export interface ISeqBrowserStore extends ISeqBrowserSettings {
 
 export const useSeqBrowserStore = create<ISeqBrowserStore>()(
   persist(
-    set => ({
+    (set) => ({
       ...DEFAULT_TRACKS_DISPLAY_PROPS,
       updateSettings: (settings: Partial<ISeqBrowserSettings>) => {
         set({ ...settings })
@@ -321,18 +321,10 @@ export function useSeqBrowserSettings(): {
   updateSettings: (settings: Partial<ISeqBrowserSettings>) => void
   resetSettings: () => void
 } {
-  const settings = useSeqBrowserStore(state => state)
-  const updateSettings = useSeqBrowserStore(state => state.updateSettings)
+  const settings = useSeqBrowserStore((state) => state)
+  const updateSettings = useSeqBrowserStore((state) => state.updateSettings)
   const resetSettings = () =>
     updateSettings({ ...DEFAULT_TRACKS_DISPLAY_PROPS })
-
-  //console.log('use matcalc settings')
-  // first load in the default values from the store
-  // const [settings, setSettings] = useState<ISettings>({
-  //   passwordless: localStore.passwordless === TRUE,
-  //   staySignedIn: localStore.staySignedIn === TRUE,
-  //   theme: localStore.theme as Theme,
-  // })
 
   // when the in memory store is updated, trigger a write to localstorage.
   // There may be an unnecessary write at the start where the localstorage

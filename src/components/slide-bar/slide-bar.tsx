@@ -82,8 +82,6 @@ export function SlideBar({
     mode: 'auto',
   })
 
-  //console.log('id', id, divOffset)
-
   //const isFixed = useRef(false) // false = percent mode
 
   // we need to track when use starts messing around with ui
@@ -172,8 +170,6 @@ export function SlideBar({
       document.removeEventListener('mouseup', onMouseUp)
       document.removeEventListener('mousemove', onMouseMove)
 
-      console.log('done dragging')
-
       setDragDir('')
     }
 
@@ -192,8 +188,6 @@ export function SlideBar({
         mode === 'horizontal'
           ? e.pageX - dragState.pos.x
           : e.pageY - dragState.pos.y
-
-      //console.log('dragging h', dx)
 
       //const p =
       //  ((dragState.divPos.y + dy - clientRect.top) / clientRect.width) * 100
@@ -311,8 +305,6 @@ export function SlideBar({
     // hide limit. This is done to prevent the sidebar from
     // jumping around when the user is dragging it
 
-    //console.log('hiding', p, x1, w - x2, side === 'left' ? x1 : w - x2)
-
     if (allowHiding && p <= (side === 'left' ? x1 : w - x2) / 2) {
       p = MIN_SIZE_PX //(w * (100 - hideLimit!)) / 100
     } else {
@@ -411,8 +403,6 @@ export function SlideBar({
 
       const clientRect = containerRef.current.getBoundingClientRect()
 
-      //console.log('resize', isFixed.current, cachedOffset)
-
       const w = mode === 'horizontal' ? clientRect.width : clientRect.height
       let newPx = (w * initialPosition) / 100
 
@@ -428,14 +418,12 @@ export function SlideBar({
     return () => observer.disconnect()
   }, [divOffset.mode])
 
-  useResizeObserver<HTMLDivElement>(containerRef, entry => {
+  useResizeObserver<HTMLDivElement>(containerRef, (entry) => {
     if (divOffset.mode === 'fixed') {
       return
     }
 
     const clientRect = entry.contentRect //target.getBoundingClientRect()
-
-    //console.log('resize', isFixed.current, cachedOffset)
 
     const w = mode === 'horizontal' ? clientRect.width : clientRect.height
     let newPx = (w * initialPosition) / 100
@@ -466,7 +454,7 @@ export function SlideBar({
         id="divider-hitbox"
         ref={hHitBoxRef}
         className={HANDLE_CLS}
-        onMouseDown={e => onMouseDown(e)}
+        onMouseDown={(e) => onMouseDown(e)}
         onClick={() => {
           hHitBoxRef.current!.focus()
         }}

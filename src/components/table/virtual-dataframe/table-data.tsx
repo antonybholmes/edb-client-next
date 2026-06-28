@@ -349,8 +349,6 @@ export function TableData() {
   }
 
   function onDataKeyDown(e: KeyboardEvent | React.KeyboardEvent) {
-    console.log(e.code, e.shiftKey, 'd')
-
     const d = tableDataRef.current
 
     if (!d) {
@@ -361,7 +359,6 @@ export function TableData() {
       case 'ArrowLeft':
       case 'ArrowRight':
       case 'Tab':
-        console.log('here', selection, selection?.cols)
         if (selection && selection.cols) {
           const dir = e.code === 'ArrowLeft' ? -1 : 1
 
@@ -393,8 +390,6 @@ export function TableData() {
               dir === 1
                 ? Math.min(selection.cols.start + 1, df.shape[1] - 1)
                 : Math.max(0, selection.cols.start - 1)
-
-            console.log('hmm', col)
 
             updateSelection({
               rows: { start: row, end: row },
@@ -521,12 +516,7 @@ export function TableData() {
       id="table-data"
       className="relative grow overflow-hidden bg-background outline-none"
       ref={tableDataRef}
-      //tabIndex={0}
-      // onFocusCapture={() => {
-      //   console.log('added v listener')
-      //   window.addEventListener('keydown', onKeyDown)
-      // }}
-      // onBlur={() => window.removeEventListener('keydown', onKeyDown)}
+ 
       onKeyDown={onDataKeyDown}
       onWheel={(e) => {
         if (vScrollRef.current) {
@@ -599,15 +589,7 @@ export function TableData() {
             e.stopPropagation()
           }}
           onKeyDown={handleCellKeyDown}
-          //   onClick={e => {
-          //     e.stopPropagation()
-          //   }}
-          //   onDoubleClick={e => {
-          //     console.log('double click vv')
-          //     e.stopPropagation()
-          //     //setShowTextCell(true)
-          //   }}
-          //   onMouseDown={e => e.stopPropagation()}
+ 
           ref={editRef}
         />
       )}

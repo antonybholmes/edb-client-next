@@ -126,8 +126,6 @@ export class DataFrameReader {
       tokens = tokens.map((t) => t.trim())
     }
 
-    //console.log(tokens)
-
     // how many columns are in the file
     const columns = tokens.length - this._indexCols
 
@@ -196,8 +194,6 @@ export class DataFrameReader {
       }
     }
 
-    //console.log(data)
-
     const rowIndex =
       index.length > 0
         ? new DataFrame({
@@ -218,8 +214,6 @@ export class DataFrameReader {
             columns: [DEFAULT_COLUMN_INDEX_NAME],
           })
         : undefined
-
-    //console.log(data, rowIndex, colIndex)
 
     const ret = new AnnotationDataFrame({
       data,

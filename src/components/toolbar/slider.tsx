@@ -135,8 +135,7 @@ export function Slider({
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
         onMouseDown={onMouseDown}
-        onKeyDown={e => {
-          //console.log(e)
+        onKeyDown={(e) => {
           switch (e.code) {
             case 'ArrowUp':
             case 'ArrowLeft':

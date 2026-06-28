@@ -42,7 +42,6 @@ export function ScaleTrackItem({
           title={`Edit ${track.name}`}
           className="opacity-50 hover:opacity-100 trans-opacity"
           onClick={() => {
-            console.log('edit scale track', track)
             openDialog({
               type: 'edit-scale',
               payload: {

@@ -78,7 +78,6 @@ export class AnnotationDataFrame extends BaseDataFrame {
   override setName(name: string, inplace = true): BaseDataFrame {
     const df = (inplace ? this : this.copy()) as AnnotationDataFrame
 
-    console.log('setName', name)
     df._data.setName(name, true)
 
     return df

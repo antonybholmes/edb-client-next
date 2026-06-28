@@ -30,7 +30,6 @@ export function FgBgColorPicker({
   onCancel = () => {},
   allowNoColor = false,
 }: IProps) {
-  //console.log(fgColor, bgColor)
   return (
     <div className={cn(ICON_BUTTON_CLS, 'shrink-0 relative')}>
       <div className="absolute bg-background aspect-square w-5 h-5 p-px left-0 top-0 z-10 overflow-hidden rounded-xs">
@@ -40,7 +39,7 @@ export function FgBgColorPicker({
               color: fgColor,
               defaultColor: defaultFgColor,
               keepAlphaChannel: true,
-              onColorChange: color => onFgColorChange?.(color),
+              onColorChange: (color) => onFgColorChange?.(color),
               allowNoColor: allowNoColor,
             },
           ]}
@@ -55,7 +54,7 @@ export function FgBgColorPicker({
               color: bgColor,
               defaultColor: defaultBgColor,
               keepAlphaChannel: true,
-              onColorChange: color => onBgColorChange?.(color),
+              onColorChange: (color) => onBgColorChange?.(color),
               allowNoColor: allowNoColor,
             },
           ]}

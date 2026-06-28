@@ -22,8 +22,6 @@ export function useSave() {
 
     let { hasHeader, hasIndex } = edbSettings.save.table
 
-    console.log('save', name, format, hasHeader, hasIndex)
-
     if (name.toLowerCase().includes('gct') || format.toLowerCase() === 'gct') {
       hasHeader = false
       hasIndex = false
