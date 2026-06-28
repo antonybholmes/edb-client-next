@@ -62,7 +62,7 @@ export function renderTab(
     return renderTab(tab.component)
   }
 
-  return tab as ReactNode
+  return null //tab as ReactNode
 }
 
 export interface IUrlTab extends ITab {

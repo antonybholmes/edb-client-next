@@ -113,10 +113,11 @@ function SeqBrowserPage() {
   }, [setAppInfo])
 
   useEffect(() => {
-    const settingsTabs: ITab[] = [
+    setSettingsTabs([
       {
         id: APP_INFO.name,
         icon: <CubeIcon fill="" />,
+
         children: [
           {
             id: 'Plot',
@@ -136,9 +137,7 @@ function SeqBrowserPage() {
           },
         ],
       },
-    ]
-
-    setSettingsTabs(settingsTabs)
+    ])
     setDefaultSettingsTab(APP_INFO.name)
   }, [setSettingsTabs, setDefaultSettingsTab])
 

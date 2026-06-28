@@ -4,9 +4,7 @@ import { RunningIndicator } from '@/components/toolbar/running-indicator'
 import { IChildrenProps } from '@/interfaces/children-props'
 import { makeUuid } from '@/lib/id'
 import {
-  ComponentType,
   createContext,
-  ReactNode,
   useCallback,
   useContext,
   useMemo,
@@ -14,9 +12,9 @@ import {
 } from 'react'
 
 type FooterContextValue = {
-  left: ComponentType<{}> | ReactNode | undefined
-  center: ComponentType<{}> | ReactNode | undefined
-  right: ComponentType<{}> | ReactNode | undefined
+  left: ITab | undefined
+  center: ITab | undefined
+  right: ITab | undefined
   add: (slot: FooterSlot, entry: ITab) => void
   remove: (slot: FooterSlot, id: string) => void
   set: (slot: FooterSlot, entry: ITab) => void
@@ -60,9 +58,9 @@ export function FooterProvider({ children }: IChildrenProps) {
 
   const { left, center, right } = useMemo(() => {
     return {
-      left: stack.left.at(-1)?.component ?? defaults.left?.component,
-      center: stack.center.at(-1)?.component ?? defaults.center?.component,
-      right: stack.right.at(-1)?.component ?? defaults.right?.component,
+      left: stack.left.at(-1) ?? defaults.left,
+      center: stack.center.at(-1) ?? defaults.center,
+      right: stack.right.at(-1) ?? defaults.right,
     }
   }, [stack, defaults])
 

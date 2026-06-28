@@ -5,6 +5,7 @@ import { makeUuid } from '@/lib/id'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import type { ComponentType, ReactNode, RefObject } from 'react'
 import { create } from 'zustand'
+import { renderTab } from '../tabs/tab-provider'
 import { BasicAlertDialog } from './basic-alert-dialog'
 import { OKCancelDialog, type ModalType } from './ok-cancel-dialog'
 import { SaveTableDialog } from './save-table-dialog'
@@ -245,8 +246,6 @@ function DialogRenderer({
         callback,
       } = dialog.payload
 
-      const Component = component
-
       return (
         <BasicAlertDialog
           title={title}
@@ -257,7 +256,7 @@ function DialogRenderer({
           }}
         >
           {content && content}
-          {Component && <Component />}
+          {renderTab(component)}
         </BasicAlertDialog>
       )
     }

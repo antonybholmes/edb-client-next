@@ -11,6 +11,7 @@
 
 ### Changed
 
+- tabrenderer no longer supports ReactNode since too annoying to detect when it is an ITab or ReactNode.
 - Remove lots of console.log statements.
 - Refined settings dialog.
 - Tabbed dataframes now uses history to render. Lots of UI fixes for new layout system.

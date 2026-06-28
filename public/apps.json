@@ -169,11 +169,11 @@
     "name": "Seq Browser",
     "description": "Plot NGS data and make figures.",
     "color": "#FF0000",
-    "version": "32.0.2",
+    "version": "32.0.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-28T02:14:06.262Z",
-    "hash": "fa06f735206afba82e527f138594a1b9904f536646cf61e3a375f38ff75dc721",
-    "build": 1038
+    "modified": "2026-06-28T16:52:11.686Z",
+    "hash": "3bc530dd31321c86bc47a1dfabe8c18fddeb12c065d8c3c623c1e29c31abc64b",
+    "build": 1040
   },
   {
     "name": "Single Cell",

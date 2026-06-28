@@ -14,16 +14,16 @@ export const TOOLBAR_FOOTER_CLS = cn(
 )
 
 export function Footer({ className }: IChildrenProps) {
-  const { left: Left, center: Center, right: Right } = useFooter()
+  const { left, center, right } = useFooter()
 
   return (
     <footer className={cn(TOOLBAR_FOOTER_CLS, className)} id="footer">
-      <VCenterRow id="footer-left">{Left && renderTab(Left)}</VCenterRow>
+      <VCenterRow id="footer-left">{left && renderTab(left)}</VCenterRow>
       <VCenterRow id="footer-center" className="justify-center col-span-2">
-        {Center && renderTab(Center)}
+        {center && renderTab(center)}
       </VCenterRow>
       <VCenterRow id="footer-right" className="justify-end">
-        {Right && renderTab(Right)}
+        {right && renderTab(right)}
       </VCenterRow>
     </footer>
   )

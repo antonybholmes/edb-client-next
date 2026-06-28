@@ -17,7 +17,7 @@ import {
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import type { UndefStr } from '@/lib/text/text'
 import { ComponentType, useMemo, type ReactNode } from 'react'
-import { getTabName, type ITab } from '../../tabs/tab-provider'
+import { getTabName, renderTab, type ITab } from '../../tabs/tab-provider'
 import { GlassSideDialog } from '../glass-side-dialog'
 import type { IOKCancelDialogProps } from '../ok-cancel-dialog'
 import { useSettingsTabs } from './setting-tabs-store'
@@ -135,9 +135,12 @@ export function SettingsDialog({
             const Component = tab.component
               ? (tab.component as ComponentType<{}>)
               : undefined
+
+            console.log(tab, 'tab')
+
             return (
               <TabsContent value={getTabName(tab)} key={ti}>
-                {Component && <Component />}
+                {renderTab(tab)}
                 {tab.children && tab.children.length > 0 && (
                   <SettingsAccordionPanel tabs={tab.children} />
                 )}

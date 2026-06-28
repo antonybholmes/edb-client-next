@@ -1951,6 +1951,10 @@
         {
           "msg": "Remove lots of console.log statements",
           "date": "2026-06-28T02:10:35.701Z"
+        },
+        {
+          "msg": "tabrenderer no longer supports ReactNode since too annoying to detect when it is an ITab or ReactNode",
+          "date": "2026-06-28T16:52:14.067Z"
         }
       ],
       "Added": [
