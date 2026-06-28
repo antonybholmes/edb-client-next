@@ -132,8 +132,6 @@ export function EditUserDialog({
     },
   })
 
-  console.log('EditUserDialog user', user, form.formState.errors)
-
   return (
     <OKCancelDialog
       open={open}

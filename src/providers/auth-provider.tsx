@@ -31,9 +31,6 @@ export function AuthProvider({ children }: IChildrenProps) {
         // the default social login page is shown
         //connection: 'email',
       }}
-      // onRedirectCallback={appState => {
-      //   console.log('Redirecting to:', appState?.targetUrl)
-      // }}
     >
       {children}
     </Auth0Provider>

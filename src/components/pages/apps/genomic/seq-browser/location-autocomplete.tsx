@@ -60,8 +60,6 @@ export function LocationAutocomplete({
     feature
   )
 
-  //console.log('geneData=', geneData, debouncedQuery, settings.genome, feature)
-
   useEffect(() => {
     if (geneData) {
       setResults(geneData)

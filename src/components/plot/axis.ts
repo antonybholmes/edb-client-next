@@ -597,7 +597,7 @@ export function makeTicks(lim: ILim, interval?: number): number[] {
 //    * @returns the value in range space (i.e. the pixel coordinate)
 //    */
 //   domainToRange(x: number, clip: boolean = false): number {
-//     //console.log('d', this.range[0], this.domainNorm(x, clip))
+
 //     return this.domainNorm(x, clip) * this._range //this._length
 //   }
 

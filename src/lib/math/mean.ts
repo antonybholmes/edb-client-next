@@ -9,7 +9,5 @@ export function mean(values: number[]): number {
     return values[0]!
   }
 
-  //console.log("mean", sum(values), values.length)
-
   return sum(values) / values.length
 }
