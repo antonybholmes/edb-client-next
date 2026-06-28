@@ -85,11 +85,11 @@ export default function Layout({
         {/* <CsrfProvider>{children}</CsrfProvider> */}
         {/* <CoreProviders>{children}</CoreProviders> */}
 
-        {/* Added for base-ui to render dialogs */}
         <ThemeProvider>
-          <BaseCol className="root isolate grow">
-            <Auth0Provider>{children}</Auth0Provider>
-          </BaseCol>
+          <Auth0Provider>
+            {/* Added for base-ui to render dialogs */}
+            <BaseCol className="root isolate grow">{children}</BaseCol>
+          </Auth0Provider>
         </ThemeProvider>
       </body>
     </html>
