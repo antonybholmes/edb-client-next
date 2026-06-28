@@ -4,6 +4,7 @@ import { FOCUS_RING_CLS } from '@/theme'
 import { Field } from '@base-ui/react/field'
 import { Switch as SwitchPrimitives } from '@base-ui/react/switch'
 import gsap from 'gsap'
+import { Check } from 'lucide-react'
 import {
   useEffect,
   useRef,
@@ -58,7 +59,8 @@ const TOGGLE_CLS = cn(
 const THUMB_CLS = cn(
   'absolute pointer-events-none aspect-square shrink-0',
   'cursor-pointer rounded-full bg-white z-30 left-[2px]',
-  'top-1/2 -translate-y-1/2 data-[checked=false]:left-[2px] data-[checked=true]:right-[2px]'
+  'top-1/2 -translate-y-1/2 data-[checked=false]:left-[2px] data-[checked=true]:right-[2px]',
+  'flex flex-row justify-center items-center'
 )
 
 // const HIGHLIGHT_THUMB_CLS = cn(
@@ -121,34 +123,6 @@ export function Switch({
       0
     )
 
-    // if not disabled, animate the highlight ring too
-    // if (highlightThumbRef.current) {
-    //   tl.to(
-    //     highlightThumbRef.current,
-    //     {
-    //       transform: checked
-    //         ? `translate(10px, -50%) scale(${hover ? 1.8 : 1})`
-    //         : `translate(0, -50%) scale(${hover ? 1.8 : 1})`,
-    //       duration,
-    //       ease: 'power2.inOut',
-    //     },
-    //     0
-    //   )
-    // }
-
-    //tl.play()
-    // .to(
-    //   pressedThumbRef.current,
-    //   {
-    //     transform: checked
-    //       ? `translate(0.625rem, -50%) scale(${pressed ? "1.8" : "1"})`
-    //       : `translate(0, -50%) scale(${pressed ? "1.8" : "1"})`,
-    //     duration,
-    //     ease: "power2.inOut",
-    //   },
-    //   0,
-    // )
-
     initial.current = false
   }, [checked, hover, pressed])
 
@@ -160,7 +134,7 @@ export function Switch({
       data-enabled={!disabled}
       //onCheckedChange={_onClick}
       className={TOGGLE_CLS}
-      style={{ height: 20, width: 34 }}
+      style={{ height: 20, width: 30 }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       onMouseDown={() => setPressed(true)}
@@ -178,8 +152,12 @@ export function Switch({
         ref={thumbRef}
         data-enabled={!disabled}
         data-checked={checked}
-        style={{ height: 16, width: 20 }}
-      />
+        style={{ height: 16, width: 16 }}
+      >
+        {checked && (
+          <Check strokeWidth={3} size={10} className="text-app-theme/50" />
+        )}
+      </span>
       {/* {!disabled && (
         <>
           <span

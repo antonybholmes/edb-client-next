@@ -56,7 +56,7 @@ import {
   SIMPLE_COLOR_EXT_CLS,
 } from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
-import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { ResizableSidebarHeaderPortal } from '@/components/slide-bar/resizable-sidebar'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
@@ -128,7 +128,7 @@ function GroupItem({
         </button>
       }
     >
-      <Checkbox
+      <Switch
         checked={group.show}
         onCheckedChange={(v) => {
           updateGroup({ ...group, show: v })

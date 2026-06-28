@@ -196,7 +196,7 @@ export function DisplayPropsPanel() {
                     className={cn(PILL_BUTTON_CLS, FOCUS_RING_CLS)}
                     align="end"
                   >
-                    <PopoverTrigger className="bg-background rounded-full aspect-square w-button-md flex flex-row justify-center items-center border border-border/50 hover:border-border data-popup-open:border-border trans-color">
+                    <PopoverTrigger className="bg-background rounded-full aspect-square w-button-md flex flex-row justify-center items-center border border-border/30 shadow-lg trans-color">
                       <span
                         className="font-bold text-xl"
                         style={{
