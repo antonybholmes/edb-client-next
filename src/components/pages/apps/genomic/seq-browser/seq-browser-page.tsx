@@ -130,7 +130,7 @@ function SeqBrowserPage() {
           },
           {
             id: 'Cytobands',
-            description: 'Cytoband display settings',
+            description: 'Cytoband display settings.',
             icon: <LayersIcon />,
             component: SettingsCytobandPanel,
           },

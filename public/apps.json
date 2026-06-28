@@ -91,9 +91,9 @@
     "description": "Information about Experiments web client.",
     "version": "3.4.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-06-24T20:56:37.400Z",
-    "hash": "622540223a82d4006652a857e5182622bdbc8e51be5304a54ae4b6df31dc2699",
-    "build": 86
+    "modified": "2026-06-28T00:37:03.274Z",
+    "hash": "ee180cc4e24ce999c582d71fe6b0cdd1a123ca3957cec1f448c55b74ad63a3e4",
+    "build": 88
   },
   {
     "name": "Lollipop",
@@ -171,9 +171,9 @@
     "color": "#FF0000",
     "version": "32.0.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-06-27T23:05:26.089Z",
-    "hash": "d650d584eda78fe4c66192751fca7ef551d9932319552a059784835976d87218",
-    "build": 1032
+    "modified": "2026-06-28T00:37:03.272Z",
+    "hash": "742cc788468b1855cfcecd8449dd6bc3020aad36f10347da3d665e39f35b5902",
+    "build": 1034
   },
   {
     "name": "Single Cell",

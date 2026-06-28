@@ -52,7 +52,7 @@ export function GlassSideDialog({
       {c[0]!}
 
       <>
-        <DialogHeader className="flex flex-row -mt-2 -mr-3 justify-between">
+        <DialogHeader className="flex flex-row justify-between pl-2">
           {typeof title === 'string' && <DialogTitle>{title}</DialogTitle>}
           {title && typeof title !== 'string' && title}
 
@@ -62,19 +62,21 @@ export function GlassSideDialog({
           </VCenterRow>
         </DialogHeader>
 
-        <BaseCol className="grow mt-2">{c[1]!}</BaseCol>
+        <BaseCol className="grow">{c[1]!}</BaseCol>
 
-        <DialogFooter className="justify-between gap-x-2">
-          <VCenterRow className="grow">
-            {leftFooterChildren && leftFooterChildren}
-          </VCenterRow>
+        {(buttons.length > 0 || leftFooterChildren) && (
+          <DialogFooter className="justify-between gap-x-2 p-1">
+            <VCenterRow className="grow">
+              {leftFooterChildren && leftFooterChildren}
+            </VCenterRow>
 
-          <DialogButtons
-            buttons={buttons}
-            buttonOrder={buttonOrder}
-            onResponse={onResponse}
-          />
-        </DialogFooter>
+            <DialogButtons
+              buttons={buttons}
+              buttonOrder={buttonOrder}
+              onResponse={onResponse}
+            />
+          </DialogFooter>
+        )}
       </>
     </BaseGlassSideDialog>
   )

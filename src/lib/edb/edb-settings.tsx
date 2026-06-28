@@ -223,12 +223,17 @@ export function AppInfoProvider({ children }: IChildrenProps) {
   const _setAppInfo = useCallback(
     (appInfo: IAppInfo, opts: { updateAccentColor?: boolean } = {}) => {
       const { updateAccentColor = true } = opts
+      const root = document.documentElement
+
       if (appInfo.color && updateAccentColor && settings.apps.useAccentColors) {
-        // 1. Grab the root HTML element
-        const root = document.documentElement
         // Set the CSS variable for the app theme color
         root.style.setProperty('--edb-app-theme', appInfo.color)
+      } else {
+        // reset to default theme color if no app color is provided
+        // or accent colors are disabled
+        root.style.setProperty('--edb-app-theme', 'var(--edb-theme)')
       }
+
       setAppInfo(appInfo)
     },
     [settings.apps.useAccentColors, setAppInfo]

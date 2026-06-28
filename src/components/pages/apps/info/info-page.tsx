@@ -4,8 +4,6 @@ import { ThemeLink } from '@/components/link/theme-link'
 import { BaseCol } from '@/layout/base-col'
 
 import LINKS from '@/about-links.json'
-import { AppInfoButton } from '@/components/header/app-info-button'
-import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { AutoRowCol } from '@/components/layout/auto-row-col'
 import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 
@@ -21,15 +19,20 @@ import { useQuery } from '@tanstack/react-query'
 
 import { CenterRow } from '@/components/layout/center-row'
 import { IS_DEV_MODE } from '@/consts'
+import { useAppInfo } from '@/lib/edb/edb-settings'
 import { formatString } from '@/lib/text/format-string'
 import { format } from 'date-fns'
+import { useEffect } from 'react'
 import { BaseImage } from '../../../base-image'
 import { HCenterCol } from '../../../layout/h-center-col'
 import { VCenterCol } from '../../../layout/v-center-col'
 import { BaseLink, BLANK_TARGET } from '../../../link/base-link'
 import { ThemeIndexLink } from '../../../link/theme-index-link'
+import APP_INFO from './manifest.json'
 
 export function InfoPage({ children }: IChildrenProps) {
+  const { setAppInfo } = useAppInfo()
+
   const { data: serverInfo } = useQuery({
     queryKey: ['server-about'],
     queryFn: () =>
@@ -38,13 +41,15 @@ export function InfoPage({ children }: IChildrenProps) {
       ),
   })
 
-  //if (isPending) return "Loading..."
+  useEffect(() => {
+    setAppInfo(APP_INFO)
+  }, [setAppInfo])
 
   return (
     <>
-      <HeaderSlotPortal>
+      {/* <HeaderSlotPortal>
         <AppInfoButton />
-      </HeaderSlotPortal>
+      </HeaderSlotPortal> */}
 
       <SignInLayout title="Info" signinRequired={false}>
         <HCenterCol className="w-9/10 md:w-3/4 lg:w-1/2 2xl:w-1/3 mx-auto gap-y-12 mt-16">

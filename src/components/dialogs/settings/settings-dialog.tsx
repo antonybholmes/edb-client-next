@@ -90,85 +90,10 @@ export function SettingsDialog({
     [tabs]
   )
 
-  // // update general
-  // for (const tab of tabs.filter(
-  //   (tab) => getTabName(tab).toLowerCase() === 'general'
-  // )) {
-  //   _tabs[0]?.children?.push(tab)
-  // }
-
   //const winSize = useWindowSize()
 
   console.log('SettingsDialog tabs:', _tabs)
 
-  // if (winSize.w < TAILWIND_MEDIA_LG) {
-  //   const accordionValues: string[] = _tabs
-  //     .filter((tab) => tab.children)
-  //     .map((tab) =>
-  //       tab
-  //         .children!.filter((childTab) => childTab.children)
-  //         .map((childTab) =>
-  //           childTab.children!.map((g) => getAccordionId(getTabName(g)))
-  //         )
-  //         .flat()
-  //     )
-  //     .flat()
-
-  //   console.log('Accordion Values:', _tabs)
-
-  //   return (
-  //     <Dialog onOpenChange={onOpenChange}>
-  //       <DialogContent
-  //         //onEscapeKeyDown={() => _resp(TEXT_CANCEL)}
-  //         className="text-sm flex flex-col w-9/10 h-1/2"
-  //       >
-  //         <VCenterRow className="p-3 justify-between">
-  //           <DialogTitle className="text-xl">dd</DialogTitle>
-  //         </VCenterRow>
-  //         <ScrollAccordion
-  //           value={accordionValues}
-  //           className="grow"
-  //           variant="settings"
-  //         >
-  //           {_tabs.map((tab, tabi) => {
-  //             return (
-  //               <Fragment key={tabi}>
-  //                 {tab.children
-  //                   ?.filter((c) => !!c.component)
-  //                   .map((childTab, childi) => {
-  //                     return (
-  //                       <Fragment key={childi}>
-  //                         {renderTab(childTab)}
-
-  //                         {/* Show sub blocks with a consistent UI */}
-  //                         {childTab.children &&
-  //                           childTab.children
-  //                             .filter((c) => !!c.component)
-  //                             .map((c, gi) => {
-  //                               return (
-  //                                 <SettingsAccordionItem
-  //                                   title={getTabName(c)}
-  //                                   key={gi}
-  //                                 >
-  //                                   {renderTab(c)}
-  //                                 </SettingsAccordionItem>
-  //                               )
-  //                             })}
-  //                       </Fragment>
-  //                     )
-  //                   })}
-  //               </Fragment>
-  //             )
-  //           })}
-  //         </ScrollAccordion>
-
-  //         {/* <VisuallyHidden asChild>
-  //           <DialogDescription>Application settings</DialogDescription>
-  //         </VisuallyHidden> */}
-  //       </DialogContent>
-  //     </Dialog>
-  //   )
-  // } else {
   return (
     <GlassSideDialog
       title={defaultTab}
@@ -206,7 +131,7 @@ export function SettingsDialog({
         <Tabs
           value={defaultTab}
           orientation="vertical"
-          className="flex flex-col grow text-xs pr-1"
+          className="flex flex-col grow text-xs px-2"
         >
           {_tabs.map((tab, ti) => {
             const Component = tab.component
@@ -216,9 +141,7 @@ export function SettingsDialog({
               <TabsContent value={getTabName(tab)} key={ti}>
                 {Component && <Component />}
                 {tab.children && tab.children.length > 0 && (
-             
-                    <SettingsAccordionPanel tabs={tab.children} />
-                  
+                  <SettingsAccordionPanel tabs={tab.children} />
                 )}
               </TabsContent>
             )

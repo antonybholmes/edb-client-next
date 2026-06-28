@@ -157,7 +157,7 @@ export function AccordionItem({
 const TRIGGER_CLS = cn(
   'group relative outline-2 outline-transparent',
   'focus-visible:outline-ring data-[focus=true]:outline-ring -outline-offset-2',
-  'flex flex-row grow items-center font-semibold'
+  'flex flex-row grow items-center font-medium'
 )
 
 //  [&>div]:pl-2
