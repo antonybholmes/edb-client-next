@@ -4,7 +4,10 @@ import {
   TEXT_SELECT_ALL,
   TEXT_UNSELECT_ALL,
 } from '@/consts'
-import { type IModalProps } from '@/dialogs/ok-cancel-dialog'
+import {
+  DIALOG_HEADER_BUTTON_CLS,
+  type IModalProps,
+} from '@/dialogs/ok-cancel-dialog'
 
 import { SearchBox } from '@/components/search-box'
 import {
@@ -172,7 +175,7 @@ export function SeqsDialog({
 
         <VCenterRow className="gap-x-2 justify-between">
           <VCenterRow>
-            <IconButton
+            <button
               //variant="ios"
 
               // ripple={false}
@@ -186,9 +189,10 @@ export function SeqsDialog({
                 )
               }}
               title="Add to Cart"
+              className={DIALOG_HEADER_BUTTON_CLS}
             >
-              <ShoppingCart size={20} strokeWidth={1.5} />
-            </IconButton>
+              <ShoppingCart size={20} strokeWidth={1.5} stroke="" />
+            </button>
 
             <DropdownMenu>
               <DropdownMenuTrigger

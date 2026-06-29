@@ -1959,6 +1959,10 @@
         {
           "msg": "Added render prop to ITab to separate rendering JSX directly or through component ref",
           "date": "2026-06-29T17:30:19.167Z"
+        },
+        {
+          "msg": "UI fixes",
+          "date": "2026-06-29T18:04:59.526Z"
         }
       ],
       "Added": [
