@@ -37,7 +37,7 @@ import {
 
 const TOGGLE_CLS = cn(
   FOCUS_RING_CLS,
-  'relative shrink-0 rounded-full cursor-pointer',
+  'relative shrink-0 rounded-full cursor-pointer group',
   'data-[enabled=true]:data-[checked]:bg-app-theme/80',
   'data-[enabled=true]:data-[checked]:hover:bg-app-theme',
   'data-[enabled=true]:data-[unchecked]:bg-muted',
@@ -155,7 +155,12 @@ export function Switch({
         style={{ height: 16, width: 16 }}
       >
         {checked && (
-          <Check strokeWidth={3} size={10} className="text-app-theme/50" />
+          <Check
+            data-hover={hover}
+            strokeWidth={3}
+            size={10}
+            className="text-app-theme/50 data-[hover=true]:text-app-theme/80 trans-color"
+          />
         )}
       </span>
       {/* {!disabled && (

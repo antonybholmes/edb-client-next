@@ -476,7 +476,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
             <HeaderIconButton
               id="edb-signin-button"
               checked={open}
-              //rounded="full"
+              rounded="full"
               // ripple={false}
               title={isSignedIn ? TEXT_MY_ACCOUNT : TEXT_SIGN_IN}
             >
@@ -614,7 +614,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
         checked={open}
         // ripple={false}
         title={TEXT_SIGN_IN}
-        //rounded="full"
+        rounded="full"
       >
         <UserIcon
           className={cn(

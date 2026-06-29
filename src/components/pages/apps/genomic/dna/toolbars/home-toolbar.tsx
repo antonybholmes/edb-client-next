@@ -117,8 +117,8 @@ export function HomeToolbar() {
         </ToggleGroup>
       </ToolbarTabGroup>
 
-      <ToolbarTabGroup title="Options" className="gap-x-1">
-        <ToolbarCol className="h-full">
+      <ToolbarTabGroup title="Options" className="gap-x-2">
+        <ToolbarCol className="h-full gap-x-2">
           <Checkbox
             checked={mask === 'n'}
             onCheckedChange={() => {
@@ -146,7 +146,7 @@ export function HomeToolbar() {
           </Checkbox>
         </ToolbarCol>
 
-        <ToolbarCol className="h-full">
+        <ToolbarCol className="h-full gap-x-2">
           <Checkbox
             checked={reverse}
             onCheckedChange={() => setReverse(!reverse)}

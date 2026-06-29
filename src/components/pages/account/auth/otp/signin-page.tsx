@@ -182,7 +182,6 @@ export function SignInPage() {
     <CenterLayout
       title={TEXT_SIGN_IN}
       signinRequired={false}
-      //
       innerCls="gap-y-8"
     >
       {session && session.user && (
