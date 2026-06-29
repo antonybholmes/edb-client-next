@@ -137,7 +137,7 @@ export function TableViewerPage() {
   const fileMenuTabs: ITab[] = [
     {
       id: TEXT_SAVE_AS,
-      render: () => (
+      render: (
         <>
           <DropdownMenuItem
             aria-label="Save text file"

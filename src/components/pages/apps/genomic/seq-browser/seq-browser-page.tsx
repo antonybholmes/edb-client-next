@@ -232,7 +232,7 @@ function SeqBrowserPage() {
       //id: nanoid(),
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      render: () => (
+      render: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
