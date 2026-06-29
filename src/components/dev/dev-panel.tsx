@@ -65,7 +65,7 @@ function _DevPanel() {
               key={tab.id}
               value={tab.id}
               variant="plain"
-              ref={el => {
+              ref={(el) => {
                 buttonsRef.current[ti] = el!
               }}
               onClick={() => {
@@ -114,7 +114,7 @@ function _DevPanel() {
             setMessage(randId('collapse'))
           }}
         >
-          <CloseIcon size="w-4" />
+          <CloseIcon size={20} />
         </button>
       </VCenterRow>
 

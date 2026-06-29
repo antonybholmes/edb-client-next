@@ -3,7 +3,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { X } from 'lucide-react'
 
 export function CloseIcon({
-  size = 'w-5 h-5',
+  size = 20,
   stroke = 'stroke-foreground',
   className,
   strokeWidth = 2,
@@ -21,8 +21,9 @@ export function CloseIcon({
     // </svg>
 
     <X
-      className={cn(ICON_CLS, stroke, size, className)}
+      className={cn(ICON_CLS, stroke, className)}
       strokeWidth={strokeWidth}
+      size={size}
     />
   )
 }

@@ -92,7 +92,7 @@ export function SearchBox({
             className={BUTTON_CLS}
             title={deleteLabel}
           >
-            <CloseIcon stroke="" size="w-4 h-4" />
+            <CloseIcon />
           </button>
         ) : null
       }

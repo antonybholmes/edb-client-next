@@ -84,46 +84,46 @@ export const contentVariants = cva(
   }
 )
 
-export const dialogHeaderVariants = cva(
-  'relative px-3 flex flex-row items-center',
-  {
-    variants: {
-      headerVariant: {
-        default: '-mt-3',
-        opaque: 'bg-background m-4',
-      },
-    },
-    defaultVariants: {
-      headerVariant: 'default',
-    },
-  }
-)
+// export const dialogHeaderVariants = cva(
+//   'relative px-3 flex flex-row items-center',
+//   {
+//     variants: {
+//       headerVariant: {
+//         default: '-mt-3',
+//         opaque: 'bg-background m-4',
+//       },
+//     },
+//     defaultVariants: {
+//       headerVariant: 'default',
+//     },
+//   }
+// )
 
-export const dialogBodyVariants = cva('', {
-  variants: {
-    bodyVariant: {
-      default: 'px-6',
-      opaque: 'bg-background',
-      card: 'mx-5 p-5 bg-background rounded-card border border-border/50',
-    },
-  },
-  defaultVariants: {
-    bodyVariant: 'default',
-  },
-})
+// export const dialogBodyVariants = cva('', {
+//   variants: {
+//     bodyVariant: {
+//       default: '',
+//       opaque: 'bg-background',
+//       card: 'mx-5 p-5 bg-background rounded-card border border-border/50',
+//     },
+//   },
+//   defaultVariants: {
+//     bodyVariant: 'default',
+//   },
+// })
 
-export const dialogFooterVariants = cva('', {
-  variants: {
-    footerVariant: {
-      default: 'px-6',
-      line: 'mt-10 mx-5 py-5 border-t border-border/50',
-      opaque: 'bg-background',
-    },
-  },
-  defaultVariants: {
-    footerVariant: 'default',
-  },
-})
+// export const dialogFooterVariants = cva('', {
+//   variants: {
+//     footerVariant: {
+//       default: '',
+//       line: 'mt-10 mx-5 py-5 border-t border-border/50',
+//       opaque: 'bg-background',
+//     },
+//   },
+//   defaultVariants: {
+//     footerVariant: 'default',
+//   },
+// })
 
 const DialogOverlay = forwardRef<
   ComponentRef<typeof DialogPrimitive.Backdrop>,
@@ -197,7 +197,10 @@ const DialogHeader = ({
   className,
   ...props
 }: HTMLAttributes<HTMLDivElement>) => (
-  <VCenterRow className={cn('justify-between', className)} {...props} />
+  <VCenterRow
+    className={cn('relative min-h-10 justify-between', className)}
+    {...props}
+  />
 )
 DialogHeader.displayName = 'DialogHeader'
 

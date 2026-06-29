@@ -77,7 +77,7 @@ export function ToastContent({
         <ToastPrimitive.Description />
       </BaseCol>
       <ToastPrimitive.Close aria-label={TEXT_CLOSE}>
-        <CloseIcon stroke="" size="w-4" />
+        <CloseIcon />
       </ToastPrimitive.Close>
     </ToastPrimitive.Content>
   )

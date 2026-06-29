@@ -69,7 +69,7 @@ export function BaseGlassSideDialog({
         </BaseCol>
 
         <BaseCol
-          className="bg-background rounded-r-lg border-l border-border/30 p-2 pb-3 gap-y-3 relative"
+          className="bg-background rounded-r-lg border-l border-border/30 p-3   gap-y-3 relative"
           style={{ gridColumn: `span ${cols - span} / span ${cols - span}` }}
         >
           {c[1]!}

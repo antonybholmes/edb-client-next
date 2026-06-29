@@ -188,7 +188,7 @@ export function FilterRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
           onValueChange={(v) => {
             setTab(v[0]! as string)
           }}
-          //size="lg"
+          size="sm"
           //direction="toolbar"
           //rounded="none"
           className="rounded-lg gap-x-0.5 overflow-hidden text-xs bg-muted/50 p-0.5"

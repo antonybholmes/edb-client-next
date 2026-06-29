@@ -40,9 +40,7 @@ export const DoubleInput = forwardRef<HTMLDivElement, InputProps>(
     const [focus, setFocus] = useState(false)
 
     if (!children) {
-      children = (
-        <CloseIcon className="-mb-0.5 fill-foreground/50" size="w-2 " />
-      )
+      children = <CloseIcon className="-mb-0.5 fill-foreground/50" />
     }
 
     return (
@@ -55,7 +53,7 @@ export const DoubleInput = forwardRef<HTMLDivElement, InputProps>(
           onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
             onKeyDown1?.(e)
           }}
-          onChange={e => setText1(e.currentTarget.value)}
+          onChange={(e) => setText1(e.currentTarget.value)}
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}
           style={{
@@ -72,7 +70,7 @@ export const DoubleInput = forwardRef<HTMLDivElement, InputProps>(
           onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
             onKeyDown2?.(e)
           }
-          onChange={e => setText2(e.currentTarget.value)}
+          onChange={(e) => setText2(e.currentTarget.value)}
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}
           style={{

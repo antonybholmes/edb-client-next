@@ -4,12 +4,9 @@ import { Button, type IButtonProps } from '@/themed/v2/button'
 import {
   contentVariants,
   Dialog,
-  dialogBodyVariants,
   DialogContent,
   DialogFooter,
-  dialogFooterVariants,
   DialogHeader,
-  dialogHeaderVariants,
   DialogTitle,
   overlayVariants,
 } from '@/themed/v2/dialog'
@@ -64,15 +61,13 @@ export function OSButtonRow({
 
 export function CloseButton({ ...props }: IButtonProps) {
   return (
-    <Button
-      variant="flat"
-      size="icon-lg"
-      rounded="full"
+    <button
       title={TEXT_CLOSE}
+      className="opacity-70 hover:opacity-100 trans-opacity"
       {...props}
     >
-      <CloseIcon />
-    </Button>
+      <CloseIcon size={24} />
+    </button>
   )
 }
 
@@ -98,10 +93,7 @@ export interface IOKCancelDialogProps<T = unknown>
   extends
     IModalProps<T>,
     VariantProps<typeof contentVariants>,
-    VariantProps<typeof overlayVariants>,
-    VariantProps<typeof dialogHeaderVariants>,
-    VariantProps<typeof dialogBodyVariants>,
-    VariantProps<typeof dialogFooterVariants> {
+    VariantProps<typeof overlayVariants> {
   showClose?: boolean
   headerChildren?: ReactNode
   leftHeaderChildren?: ReactNode
@@ -120,9 +112,9 @@ export function OKCancelDialog({
   showClose = true,
   buttons = [TEXT_OK, TEXT_CANCEL],
   buttonOrder = 'auto',
-  headerVariant = 'default',
-  bodyVariant = 'default',
-  footerVariant = 'default',
+  // headerVariant = 'default',
+  // bodyVariant = 'default',
+  // footerVariant = 'default',
   bodyCls = 'gap-y-1',
   modalType = 'default',
   w = 'w-11/12 sm:w-3/4 md:w-8/12 xl:w-2/5 2xl:w-1/3',
@@ -145,14 +137,14 @@ export function OKCancelDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={cn('text-sm flex flex-col py-6 gap-y-4', w, h, className)}
+        className={cn('text-sm flex flex-col p-4 gap-y-4', w, h, className)}
         {...props}
       >
         <DialogHeader
           style={headerStyle}
-          className={dialogHeaderVariants({ headerVariant })}
+          className="h-8" //dialogHeaderVariants({ headerVariant })}
         >
-          <VCenterRow className="gap-x-2 pl-2">
+          <VCenterRow className="gap-x-2">
             {leftHeaderChildren && leftHeaderChildren}
             <DialogTitle>{title}</DialogTitle>
             {headerChildren && headerChildren}
@@ -174,37 +166,24 @@ export function OKCancelDialog({
         </DialogHeader>
 
         {modalType === 'error' && (
-          <VCenterRow
-            className={cn('gap-x-4 grow', dialogBodyVariants({ bodyVariant }))}
-          >
+          <VCenterRow className={cn('gap-x-4 grow')}>
             <ErrorIcon />
             <BaseCol className={cn('grow', bodyCls)}>{children}</BaseCol>
           </VCenterRow>
         )}
 
         {modalType === 'warning' && (
-          <VCenterRow
-            className={cn('gap-x-4 grow', dialogBodyVariants({ bodyVariant }))}
-          >
+          <VCenterRow className={cn('gap-x-4 grow')}>
             <WarningIcon />
             <BaseCol className={cn('grow', bodyCls)}>{children}</BaseCol>
           </VCenterRow>
         )}
 
         {modalType === 'default' && (
-          <BaseCol
-            className={cn('grow', dialogBodyVariants({ bodyVariant }), bodyCls)}
-          >
-            {children}
-          </BaseCol>
+          <BaseCol className={cn('grow', bodyCls)}>{children}</BaseCol>
         )}
 
-        <DialogFooter
-          className={dialogFooterVariants({
-            footerVariant,
-            className: 'justify-between gap-x-2',
-          })}
-        >
+        <DialogFooter>
           <VCenterRow className="grow">
             {leftFooterChildren && leftFooterChildren}
           </VCenterRow>
