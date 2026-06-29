@@ -113,6 +113,7 @@ export const toggleButtonVariants = cva('relative flex flex-row', {
       'app-theme': '',
       tab: 'gap-x-0.5',
       group: 'rounded-theme bg-background',
+      'ios':''
     },
   },
 })
