@@ -65,7 +65,7 @@ import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useStableId } from '@/hooks/stable-id'
 import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { useFooter } from '@/providers/footer-provider'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 import { CirclePlus } from 'lucide-react'
@@ -206,7 +206,7 @@ export function SingleCellPage() {
     {
       id: TEXT_SAVE_AS,
       icon: <DownloadIcon />,
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -227,7 +227,7 @@ export function SingleCellPage() {
     {
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

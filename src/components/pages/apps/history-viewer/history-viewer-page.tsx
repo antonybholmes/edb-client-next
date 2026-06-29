@@ -1,7 +1,7 @@
 'use client'
 
 import { HeaderLayout } from '@/layouts/header-layout'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { HistoryDevPanel } from '../matcalc/history/history-dev-panel'
 
 export function HistoryViewerPage() {

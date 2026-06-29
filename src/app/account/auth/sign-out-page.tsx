@@ -1,22 +1,22 @@
 import { ThemeLink } from '@/components/link/theme-link'
 import { CenterLayout } from '@/layouts/center-layout'
 import {
-  APP_ACCOUNT_OAUTH2_AUTH0_SIGN_OUT_URL,
-  APP_ACCOUNT_OAUTH2_CLERK_SIGN_OUT_URL,
-  APP_ACCOUNT_OAUTH2_COGNITO_SIGN_OUT_URL,
-  APP_ACCOUNT_OAUTH2_SUPABASE_SIGN_OUT_URL,
+    APP_ACCOUNT_OAUTH2_AUTH0_SIGN_OUT_URL,
+    APP_ACCOUNT_OAUTH2_CLERK_SIGN_OUT_URL,
+    APP_ACCOUNT_OAUTH2_COGNITO_SIGN_OUT_URL,
+    APP_ACCOUNT_OAUTH2_SUPABASE_SIGN_OUT_URL,
 } from '@/lib/edb/edb'
 import { useEdbAuth, useEdbSignIn } from '@/lib/edb/edb-auth'
 import {
-  addRedirectStateToUrl,
-  DEFAULT_REDIRECT_STATE,
-  getRedirectStateFromURI,
-  isSafeRelativeUrl,
-  signOutStateAtom,
-  type IRedirectState,
+    addRedirectStateToUrl,
+    DEFAULT_REDIRECT_STATE,
+    getRedirectStateFromURI,
+    isSafeRelativeUrl,
+    signOutStateAtom,
+    type IRedirectState,
 } from '@/lib/edb/signin/edb-signin'
 import { redirect } from '@/lib/http/urls'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { AuthModal } from './auth-modal'

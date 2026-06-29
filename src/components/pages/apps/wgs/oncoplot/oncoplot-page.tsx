@@ -43,7 +43,7 @@ import { HeaderButton } from '@/layouts/header-button'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { useMessages } from '@/providers/message-provider'
 import { HistoryShowButton } from '../../matcalc/history/history-layout'
 
@@ -267,7 +267,7 @@ function OncoplotPage() {
     {
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      component: (
+      render: (
         <DropdownMenuItem
           aria-label="Open file on your computer"
           onClick={() => open('variants')}
@@ -283,7 +283,7 @@ function OncoplotPage() {
     },
     {
       id: TEXT_SAVE_AS,
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -320,7 +320,7 @@ function OncoplotPage() {
     },
     {
       id: 'Export',
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

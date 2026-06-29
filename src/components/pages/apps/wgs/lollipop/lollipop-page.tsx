@@ -45,7 +45,7 @@ import { useLollipopSettings } from './lollipop-settings-store'
 
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
@@ -374,7 +374,7 @@ function LollipopPage() {
     {
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      component: (
+      render: (
         <DropdownMenuItem
           aria-label="Open file on your computer"
           onClick={() => open('variants')}
@@ -390,7 +390,7 @@ function LollipopPage() {
     },
     {
       id: 'Export',
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

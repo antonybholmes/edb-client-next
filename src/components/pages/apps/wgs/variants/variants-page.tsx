@@ -50,7 +50,7 @@ import { HeaderPortal } from '@/components/header/header-portal'
 import { ShowSideButton } from '@/components/pages/show-side-button'
 import { ZoomSlider } from '@/components/toolbar/zoom-slider'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
@@ -323,7 +323,7 @@ export function VariantsPage() {
   const fileMenuTabs: ITab[] = [
     {
       id: TEXT_SAVE_AS,
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -347,7 +347,7 @@ export function VariantsPage() {
     },
     {
       id: 'Export',
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

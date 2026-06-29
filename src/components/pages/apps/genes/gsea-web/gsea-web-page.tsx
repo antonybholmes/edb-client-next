@@ -46,7 +46,7 @@ import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { BoolSearchQuery } from '@/lib/search'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { useZoom } from '@/providers/zoom-provider'
 import { Card } from '@/themed/card'
 import Fuse from 'fuse.js'
@@ -162,7 +162,7 @@ export function GseaWebPage() {
     {
       id: TEXT_OPEN,
       icon: <OpenIcon variant="colorful" />,
-      component: (
+      render: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -184,7 +184,7 @@ export function GseaWebPage() {
     {
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

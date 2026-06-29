@@ -11,6 +11,7 @@
 
 ### Changed
 
+- Added render prop to ITab to separate rendering JSX directly or through component ref.
 - tabrenderer no longer supports ReactNode since too annoying to detect when it is an ITab or ReactNode.
 - Remove lots of console.log statements.
 - Refined settings dialog.

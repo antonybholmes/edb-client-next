@@ -5,9 +5,9 @@ import { FormInputError } from '@/components/input-error'
 import { BaseCol } from '@/components/layout/base-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import {
-  Form,
-  FormField,
-  FormItem,
+    Form,
+    FormField,
+    FormItem,
 } from '@/components/shadcn/ui/themed/v2/form'
 import { Label } from '@/components/shadcn/ui/themed/v2/label'
 import { TEXT_SIGN_IN } from '@/consts'
@@ -26,14 +26,14 @@ import { ArrowRight } from 'lucide-react'
 import { ThemeLink } from '@/components/link/theme-link'
 import { config } from '@/config'
 import {
-  getRedirectStateFromURI,
-  isSafeRelativeUrl,
-  safeRedirect,
-  type IRedirectState,
+    getRedirectStateFromURI,
+    isSafeRelativeUrl,
+    safeRedirect,
+    type IRedirectState,
 } from '@/lib/edb/signin/edb-signin'
 import { makeUuid } from '@/lib/id'
 import { addPeriod, capitalizeFirstWord } from '@/lib/text/capital-case'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { Toast } from '@base-ui/react/toast'
 import { useEffect, useRef, useState, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'

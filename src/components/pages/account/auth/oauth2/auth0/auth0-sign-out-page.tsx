@@ -1,11 +1,11 @@
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
 
 import { APP_ACCOUNT_AUTH_SIGNED_OUT_URL } from '@/lib/edb/edb'
 import {
-  signOutStateAtom,
-  type IRedirectState,
+    signOutStateAtom,
+    type IRedirectState,
 } from '@/lib/edb/signin/edb-signin'
 import { useAtom } from 'jotai'
 import { BaseSignOutPage } from '../../sign-out-page'

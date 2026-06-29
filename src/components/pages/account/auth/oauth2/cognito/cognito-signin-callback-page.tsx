@@ -1,13 +1,13 @@
 'use client'
 
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { useEffect, useState } from 'react'
 
 import {
-  signinStateAtom,
-  type IRedirectState,
+    signinStateAtom,
+    type IRedirectState,
 } from '@/lib/edb/signin/edb-signin'
 import { useAtom } from 'jotai'
 import { BaseSignInCallbackPage } from '../../signin-callback-page'

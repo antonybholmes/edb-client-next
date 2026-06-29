@@ -46,7 +46,7 @@ import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { dnaToJson } from '@/lib/genomic/dna'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { produce } from 'immer'
 import { useDNA } from './dna-store'
 import APP_INFO from './manifest.json'
@@ -109,7 +109,7 @@ export function GetDNAPage() {
   const fileMenuTabs: ITab[] = [
     {
       id: TEXT_SAVE_AS,
-      component: (
+      render: (
         <BaseCol className="gap-y-6 p-6">
           <h1 className="text-2xl">{TEXT_SAVE_AS}</h1>
 

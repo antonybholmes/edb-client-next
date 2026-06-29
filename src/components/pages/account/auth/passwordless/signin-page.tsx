@@ -1,8 +1,8 @@
 'use client'
 
 import {
-  EDB_TOKEN_PARAM as EDB_JWT_PARAM,
-  SESSION_AUTH_PASSWORDLESS_VALIDATE_URL,
+    EDB_TOKEN_PARAM as EDB_JWT_PARAM,
+    SESSION_AUTH_PASSWORDLESS_VALIDATE_URL,
 } from '@/lib/edb/edb'
 
 import { jwtDecode } from 'jwt-decode'
@@ -11,7 +11,7 @@ import { SignIn } from '@/components/pages/account/auth/passwordless/signin'
 import { CenterLayout } from '@/layouts/center-layout'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders, redirect } from '@/lib/http/urls'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 
 import { makeUuid } from '@/lib/id'
 import { Toast } from '@base-ui/react/toast'

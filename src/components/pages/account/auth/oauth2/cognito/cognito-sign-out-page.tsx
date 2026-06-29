@@ -1,11 +1,11 @@
 'use client'
 
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { useEffect, useState } from 'react'
 
 import {
-  signOutStateAtom,
-  type IRedirectState,
+    signOutStateAtom,
+    type IRedirectState,
 } from '@/lib/edb/signin/edb-signin'
 import { useAtom } from 'jotai'
 import { BaseSignOutPage } from '../../sign-out-page'

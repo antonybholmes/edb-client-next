@@ -1,28 +1,28 @@
 'use client'
 
 import {
-  EMAIL_PATTERN,
-  NAME_PATTERN,
-  TEXT_EMAIL_ERROR,
-  TEXT_USERNAME_REQUIRED,
+    EMAIL_PATTERN,
+    NAME_PATTERN,
+    TEXT_EMAIL_ERROR,
+    TEXT_USERNAME_REQUIRED,
 } from '@/layouts/signin-layout'
 
 import {
-  DEFAULT_EDB_USER,
-  flattenRoles,
-  SESSION_UPDATE_USER_URL,
-  TEXT_MY_ACCOUNT,
-  type IAuthProvider,
-  type IEdbUser,
+    DEFAULT_EDB_USER,
+    flattenRoles,
+    SESSION_UPDATE_USER_URL,
+    TEXT_MY_ACCOUNT,
+    type IAuthProvider,
+    type IEdbUser,
 } from '@/lib/edb/edb'
 
 import { useEffect, useRef, useState, type BaseSyntheticEvent } from 'react'
 
 import { FormInputError } from '@/components/input-error'
 import {
-  Form,
-  FormField,
-  FormItem,
+    Form,
+    FormField,
+    FormItem,
 } from '@/components/shadcn/ui/themed/v2/form'
 import { VCenterRow } from '@/layout/v-center-row'
 import { Button } from '@/themed/v2/button'
@@ -41,7 +41,7 @@ import { ReloadIcon } from '@/icons/reload-icon'
 import { Textarea } from '@/themed/textarea'
 
 import { formattedList } from '@/lib/text/text'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 
 import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
 import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'

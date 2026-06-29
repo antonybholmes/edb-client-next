@@ -44,7 +44,7 @@ import { HeaderPortal } from '@/components/header/header-portal'
 import { useSettingsTabs } from '@/dialogs/settings/setting-tabs-store'
 import { useSearch } from '@/hooks/search'
 import { ExportIcon } from '@/icons/export-icon'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { produce } from 'immer'
 
 import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
@@ -232,7 +232,7 @@ function SeqBrowserPage() {
       //id: nanoid(),
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      component: () => (
+      render: () => (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

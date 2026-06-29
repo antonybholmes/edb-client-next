@@ -1955,6 +1955,10 @@
         {
           "msg": "tabrenderer no longer supports ReactNode since too annoying to detect when it is an ITab or ReactNode",
           "date": "2026-06-28T16:52:14.067Z"
+        },
+        {
+          "msg": "Added render prop to ITab to separate rendering JSX directly or through component ref",
+          "date": "2026-06-29T17:30:19.167Z"
         }
       ],
       "Added": [

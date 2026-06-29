@@ -88,7 +88,7 @@ export function FooterProvider({ children }: IChildrenProps) {
   const addIndicator = useCallback((message: string = 'Running...') => {
     const id = makeUuid()
 
-    add('left', { id, component: <RunningIndicator message={message} /> })
+    add('left', { id, render: <RunningIndicator message={message} /> })
 
     return id
   }, [])

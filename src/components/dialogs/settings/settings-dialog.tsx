@@ -16,7 +16,7 @@ import {
 } from '@/components/shadcn/ui/themed/v2/tabs'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import type { UndefStr } from '@/lib/text/text'
-import { ComponentType, useMemo, type ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { getTabName, renderTab, type ITab } from '../../tabs/tab-provider'
 import { GlassSideDialog } from '../glass-side-dialog'
 import type { IOKCancelDialogProps } from '../ok-cancel-dialog'
@@ -132,12 +132,6 @@ export function SettingsDialog({
           className="flex flex-col grow text-xs px-2"
         >
           {_tabs.map((tab, ti) => {
-            const Component = tab.component
-              ? (tab.component as ComponentType<{}>)
-              : undefined
-
-            console.log(tab, 'tab')
-
             return (
               <TabsContent value={getTabName(tab)} key={ti}>
                 {renderTab(tab)}

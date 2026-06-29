@@ -4,11 +4,11 @@ import { supabase } from '@/lib/auth/supabase'
 
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 import {
-  signinStateAtom,
-  type IRedirectState,
+    signinStateAtom,
+    type IRedirectState,
 } from '@/lib/edb/signin/edb-signin'
 import { logger } from '@/lib/logger'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { BaseSignInCallbackPage } from '../../signin-callback-page'

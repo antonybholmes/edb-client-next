@@ -51,7 +51,7 @@ import {
 } from '@/components/header/header-portal'
 import { AssemblySelect } from '@/lib/edb/assembly-select'
 import { useAppInfo } from '@/lib/edb/edb-settings'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import {
   HistoryLayout,
   HistoryShowButton,
@@ -154,7 +154,7 @@ export function DNAPage() {
     {
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      component: (
+      render: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -173,7 +173,7 @@ export function DNAPage() {
     },
     {
       id: TEXT_SAVE_AS,
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label="Save text file"
@@ -196,8 +196,6 @@ export function DNAPage() {
 
   return (
     <>
-      {/* <DialogsRoot /> */}
-
       <HeaderPortal>
         <>
           <AppHeaderIcon />

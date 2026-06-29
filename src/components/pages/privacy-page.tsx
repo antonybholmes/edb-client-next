@@ -2,7 +2,7 @@
 
 import { BaseCol } from '@/layout/base-col'
 import { ContentDiv } from '@/layout/content-div'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 
 import { HeaderLayout } from '@/layouts/header-layout'
 
@@ -45,7 +45,8 @@ export function PrivacyPage() {
             This is done over a secure connection and your data is discarded
             once it has been processed and sent back to you. If you wish data to
             remain local, you can convert the Excel file to a tab delimited text
-            file yourself since this can be loaded directly into the browser.
+            file yourself as these are loaded directly into the browser using
+            client only APIs.
           </p>
         </BaseCol>
         <></>

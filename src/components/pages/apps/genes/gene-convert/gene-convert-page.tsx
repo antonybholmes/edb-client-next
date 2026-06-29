@@ -48,7 +48,7 @@ import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import {
   HistoryLayout,
   HistoryShowButton,
@@ -139,7 +139,7 @@ export function GeneConvPage() {
     {
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      component: (
+      render: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -160,7 +160,7 @@ export function GeneConvPage() {
     },
     {
       id: TEXT_SAVE_AS,
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label="Save text file"

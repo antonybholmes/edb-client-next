@@ -55,7 +55,7 @@ import APP_INFO from './manifest.json'
 //import { toast } from '@/themed/use-toast'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useAppInfo } from '@/lib/edb/edb-settings'
@@ -115,7 +115,7 @@ export function PathwayPage() {
       },
       // {
       //   id: 'Help',
-      //   component: () => <ToolbarHelpTabGroup url={HELP_URL} />,
+      //   render: () => <ToolbarHelpTabGroup url={HELP_URL} />,
       // },
     ])
   }, [setToolbarTabs])
@@ -237,7 +237,7 @@ export function PathwayPage() {
     {
       id: TEXT_OPEN,
       icon: <OpenIcon variant="colorful" />,
-      component: (
+      render: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -254,7 +254,7 @@ export function PathwayPage() {
     },
     {
       id: TEXT_SAVE_AS,
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label="Save text file"

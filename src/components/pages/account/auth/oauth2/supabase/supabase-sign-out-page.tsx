@@ -4,11 +4,11 @@ import { SIGNED_OUT_PATH } from '@/lib/edb/edb'
 import { useEffect, useState } from 'react'
 
 import {
-  signOutStateAtom,
-  type IRedirectState,
+    signOutStateAtom,
+    type IRedirectState,
 } from '@/lib/edb/signin/edb-signin'
 import { redirect } from '@/lib/http/urls'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { useAtom } from 'jotai'
 import { BaseSignOutPage } from '../../sign-out-page'
 

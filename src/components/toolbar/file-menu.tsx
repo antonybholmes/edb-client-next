@@ -128,27 +128,25 @@ export function FileMenu({
         className="w-full"
         variant={variant}
       >
-        {tabs
-          .filter((t) => !!t.component)
-          .map((tab, ti) => {
-            if (tab.id === '<divider>') {
-              return <MenuSeparator key={ti} />
-            }
+        {tabs.map((tab, ti) => {
+          if (tab.id === '<divider>') {
+            return <MenuSeparator key={ti} />
+          }
 
-            return (
-              <DropdownMenuSub key={ti}>
-                <DropdownMenuSubTrigger>
-                  {tab.icon && tab.icon}
-                  <span>{tab.id}</span>
-                </DropdownMenuSubTrigger>
-                <DropdownMenuPortal>
-                  <DropdownMenuSubContent variant={variant}>
-                    {renderTab(tab)}
-                  </DropdownMenuSubContent>
-                </DropdownMenuPortal>
-              </DropdownMenuSub>
-            )
-          })}
+          return (
+            <DropdownMenuSub key={ti}>
+              <DropdownMenuSubTrigger>
+                {tab.icon && tab.icon}
+                <span>{tab.id}</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent variant={variant}>
+                  {renderTab(tab)}
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
+          )
+        })}
 
         <MenuSeparator />
 

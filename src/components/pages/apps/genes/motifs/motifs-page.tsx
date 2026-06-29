@@ -24,7 +24,7 @@ import {
   TEXT_SAVE_TABLE,
   TEXT_SORT_BY,
 } from '@/consts'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { useZoom } from '@/providers/zoom-provider'
 
 import {
@@ -258,7 +258,7 @@ export function MotifsPage() {
   const fileMenuTabs: ITab[] = [
     {
       id: TEXT_SAVE_AS,
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label="Download as TXT"
@@ -283,7 +283,7 @@ export function MotifsPage() {
     {
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

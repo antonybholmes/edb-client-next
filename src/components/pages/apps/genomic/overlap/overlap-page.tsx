@@ -53,7 +53,7 @@ import {
   useToolbarTabs,
 } from '@/components/tabs/tab-provider'
 import { useAppInfo } from '@/lib/edb/edb-settings'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { FilesPropsPanel } from './files-props-panel'
@@ -130,7 +130,7 @@ function OverlapPage() {
     {
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      component: (
+      render: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() =>
@@ -150,7 +150,7 @@ function OverlapPage() {
     {
       //id: nanoid(),
       id: TEXT_SAVE_AS,
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label="Save text file"

@@ -1,26 +1,26 @@
 import { ThemeIndexLink } from '@/components/link/theme-index-link'
 import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  CenteredCardContainer,
+    Card,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+    CenteredCardContainer,
 } from '@/themed/card'
 
 import { HeaderLayout } from '@/layouts/header-layout'
 import { bearerHeaders } from '@/lib/http/urls'
 
 import {
-  API_EMAIL_VERIFIED_URL,
-  EDB_ACCESS_TOKEN_COOKIE,
-  EDB_TOKEN_PARAM,
-  SIGN_UP_PATH,
-  TEXT_SIGN_UP,
+    API_EMAIL_VERIFIED_URL,
+    EDB_ACCESS_TOKEN_COOKIE,
+    EDB_TOKEN_PARAM,
+    SIGN_UP_PATH,
+    TEXT_SIGN_UP,
 } from '@/lib/edb/edb'
 
 import { httpFetch } from '@/lib/http/http-fetch'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import Cookies from 'js-cookie'
 import { jwtDecode, type JwtPayload } from 'jwt-decode'
 import { useEffect, useState } from 'react'

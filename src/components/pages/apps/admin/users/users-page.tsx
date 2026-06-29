@@ -1,17 +1,17 @@
 'use client'
 
 import {
-  API_ADMIN_ADD_USER_URL,
-  API_ADMIN_GROUPS_URL,
-  API_ADMIN_UPDATE_USER_URL,
-  API_ADMIN_USER_STATS_URL,
-  API_ADMIN_USERS_URL,
-  DEFAULT_EDB_USER,
-  flattenGroups,
-  flattenRoles,
-  INewUser,
-  type IEdbUser,
-  type IRBACGroup,
+    API_ADMIN_ADD_USER_URL,
+    API_ADMIN_GROUPS_URL,
+    API_ADMIN_UPDATE_USER_URL,
+    API_ADMIN_USER_STATS_URL,
+    API_ADMIN_USERS_URL,
+    DEFAULT_EDB_USER,
+    flattenGroups,
+    flattenRoles,
+    INewUser,
+    type IEdbUser,
+    type IRBACGroup,
 } from '@/lib/edb/edb'
 
 import { useEffect, useState } from 'react'
@@ -23,19 +23,19 @@ import { PlusIcon } from '@/icons/plus-icon'
 import { TrashIcon } from '@/icons/trash-icon'
 import { VCenterRow } from '@/layout/v-center-row'
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from '@/themed/table'
 import { Button } from '@/themed/v2/button'
 import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
+    createColumnHelper,
+    flexRender,
+    getCoreRowModel,
+    useReactTable,
 } from '@tanstack/react-table'
 
 import { CenterCol } from '@/components/layout/center-col'
@@ -48,7 +48,7 @@ import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { csfrWithTokenHeaders } from '@/lib/http/urls'
 import { logger } from '@/lib/logger'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'

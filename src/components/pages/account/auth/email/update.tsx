@@ -1,27 +1,27 @@
 import {
-  API_UPDATE_EMAIL_URL,
-  EDB_TOKEN_PARAM,
-  MYACCOUNT_PATH,
-  getJwtContents,
-  type IResetJwtPayload,
+    API_UPDATE_EMAIL_URL,
+    EDB_TOKEN_PARAM,
+    MYACCOUNT_PATH,
+    getJwtContents,
+    type IResetJwtPayload,
 } from '@/lib/edb/edb'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  CenteredCardContainer,
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+    CenteredCardContainer,
 } from '@/themed/card'
 
 import { useRef, useState, type BaseSyntheticEvent } from 'react'
 
 import { FormInputError } from '@/components/input-error'
 import {
-  Form,
-  FormField,
-  FormItem,
+    Form,
+    FormField,
+    FormItem,
 } from '@/components/shadcn/ui/themed/v2/form'
 import { TEXT_CANCEL, TEXT_CONFIRM } from '@/consts'
 
@@ -30,13 +30,13 @@ import { VCenterRow } from '@/layout/v-center-row'
 import { WarningButtonLink } from '@/components/link/warning-button-link'
 import { Label } from '@/components/shadcn/ui/themed/v2/label'
 import {
-  EMAIL_PATTERN,
-  FORWARD_DELAY_MS,
-  SignInLayout,
-  TEXT_EMAIL_ERROR,
+    EMAIL_PATTERN,
+    FORWARD_DELAY_MS,
+    SignInLayout,
+    TEXT_EMAIL_ERROR,
 } from '@/layouts/signin-layout'
 import { bearerHeaders, redirect } from '@/lib/http/urls'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 
 import { httpFetch } from '@/lib/http/http-fetch'
 import { makeUuid } from '@/lib/id'

@@ -57,7 +57,7 @@ export function TabbedDataFrames({
   //     return {
   //       id: df.id, //sheetId, //nanoid(),
   //       name,
-  //       // component: () => (
+  //       // render: () => (
   //       //   <VirtualDataFrame
   //       //     df={df}
   //       //     key={i}

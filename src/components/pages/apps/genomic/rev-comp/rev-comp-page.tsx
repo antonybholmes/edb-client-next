@@ -40,7 +40,7 @@ import { UploadIcon } from '@/icons/upload-icon'
 import { HeaderButton } from '@/layouts/header-button'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
 import APP_INFO from './manifest.json'
@@ -134,7 +134,7 @@ function RevCompPage() {
     {
       id: TEXT_OPEN,
       icon: <OpenIcon variant="colorful" />,
-      component: (
+      render: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -160,7 +160,7 @@ function RevCompPage() {
     },
     {
       id: TEXT_SAVE_AS,
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label="Save FASTA file"

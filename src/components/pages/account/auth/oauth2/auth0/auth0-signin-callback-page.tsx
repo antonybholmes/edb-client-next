@@ -3,11 +3,11 @@
 import { useEdbAuth } from '@/lib/edb/edb-auth'
 
 import {
-  signinStateAtom,
-  type IRedirectState,
+    signinStateAtom,
+    type IRedirectState,
 } from '@/lib/edb/signin/edb-signin'
 import { AuthProvider } from '@/providers/auth-provider'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'

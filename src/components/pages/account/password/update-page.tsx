@@ -4,32 +4,32 @@ import { HCenterRow } from '@/layout/h-center-row'
 import { HeaderLayout } from '@/layouts/header-layout'
 import { API_UPDATE_PASSWORD_URL } from '@/lib/edb/edb'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
 } from '@/themed/card'
 
 import { useRef, useState, type BaseSyntheticEvent } from 'react'
 
 import { FormInputError } from '@/components/input-error'
 import {
-  Form,
-  FormField,
-  FormItem,
+    Form,
+    FormField,
+    FormItem,
 } from '@/components/shadcn/ui/themed/v2/form'
 import { TEXT_CONTINUE } from '@/consts'
 import { WarningIcon } from '@/icons/warning-icon'
 
 import {
-  TEXT_USERNAME_DESCRIPTION,
-  TEXT_USERNAME_REQUIRED,
-  USERNAME_PATTERN,
+    TEXT_USERNAME_DESCRIPTION,
+    TEXT_USERNAME_REQUIRED,
+    USERNAME_PATTERN,
 } from '@/layouts/signin-layout'
 
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 
 import { Button } from '@/components/shadcn/ui/themed/v2/button'
 
@@ -42,10 +42,10 @@ import { Input } from '@/themed/v2/input'
 import { Toast } from '@base-ui/react/toast'
 import { useForm } from 'react-hook-form'
 import {
-  MIN_PASSWORD_LENGTH,
-  PASSWORD_PATTERN,
-  TEXT_MIN_PASSWORD_LENGTH,
-  TEXT_PASSWORD_DESCRIPTION,
+    MIN_PASSWORD_LENGTH,
+    PASSWORD_PATTERN,
+    TEXT_MIN_PASSWORD_LENGTH,
+    TEXT_PASSWORD_DESCRIPTION,
 } from '../password-email-dialog'
 
 interface IFormInput {

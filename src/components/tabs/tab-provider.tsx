@@ -29,8 +29,21 @@ export interface ITab {
   // alternative icon when tab is open
   openIcon?: ReactNode
   //showIcon?: boolean
-  render?: () => ReactNode
-  component?: ComponentType<{}> | ReactNode
+
+  /**
+   * Use this field for tabs that want to directly render JSX content. This is useful for simple tabs that don't need the full flexibility of a component, for example if you just want to render some text or a simple element. For more complex tabs that require state or lifecycle methods, it's better to use the `component` field with a React component.
+   * If both `render` and `component` are provided, `render` will take precedence and `component` will be ignored.
+   * Note: This field is intended for simple content. If you find yourself needing to use hooks or manage state, it's a sign that you should be using the `component` field instead.
+   */
+  render?: ReactNode
+
+  /**
+   * Use this field to specify a React component that should be rendered when the tab is active. This is ideal for more complex tabs that require their own state, effects, or lifecycle methods. The component will receive no props by default, but you can extend this interface to include props if needed.
+   * If both `render` and `component` are provided, the `render` field will take precedence and the `component` will be ignored. This allows for quick overrides of the component with simple content when necessary.
+   * Note: This field is intended for more complex content. If your tab content is simple and doesn't require hooks or state management, consider using the `render` field instead for simplicity.
+   * Ideally use component where possible with self contained component references.
+   */
+  component?: ComponentType<{}>
   //component?: ComponentType<{}>
   data?: unknown
   size?: number
@@ -46,20 +59,55 @@ export interface ITab {
   createdAt?: string | number | Date
 }
 
+/**
+ * Resolves ITabs and component references to renderable ReactNodes.
+ * This function takes an ITab object or a React component reference and returns the
+ * appropriate ReactNode to be rendered. If the input is a function,
+ * it is treated as a React component and rendered accordingly.
+ * If the input is an object, it checks for the presence of `render` and
+ * `component` properties to determine what to render. `render` is
+ *  used in preference to `component` for one-off cases.
+ * If `render` is not provided, it then checks for the `component`
+ * property and renders it as a React component.
+ * If neither is provided, it returns null.
+ * @param tab
+ * @returns
+ */
 export function renderTab(
-  tab: ITab | ComponentType<{}> | ReactNode
+  tab: ITab | ComponentType<{}> | undefined
 ): ReactNode {
   if (!tab) {
     return null
   }
 
+  // if tab appears to be a render function component,
+  // render it directly
   if (typeof tab === 'function') {
     const Component = tab
     return <Component />
   }
 
-  if (typeof tab === 'object' && 'component' in tab) {
-    return renderTab(tab.component)
+  // Assume we are an ITab object, and use the
+  // render and component properties to determine what to render.
+  // If render is provided, this will take precedence over component
+  // and be rendered directly. If component is provided without render,
+  // the component will be rendered as a React component.
+  // If neither is provided, null will be returned.
+  if (typeof tab === 'object') {
+    // if the tab has a render property, use that in preference
+    // to component for one off cases
+    if ('render' in tab && tab.render) {
+      return tab.render
+    }
+
+    // Ideally tabs should use the component property with a
+    // self contained component reference, but for quick one off cases,
+    // render can be used to directly render JSX content.
+    // If both are provided, render will take precedence and
+    // component will be ignored.
+    if ('component' in tab) {
+      return renderTab(tab.component)
+    }
   }
 
   return null //tab as ReactNode

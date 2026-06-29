@@ -65,7 +65,7 @@ import { HeaderButton } from '@/layouts/header-button'
 import type { IClusterGroup } from '@/lib/cluster-group'
 import type { IGeneSet } from '@/lib/gsea/geneset'
 import { httpFetch } from '@/lib/http/http-fetch'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { HeatmapPanel } from './apps/heatmap/heatmap-panel'
 import { HistoryLayout, HistoryShowButton } from './history/history-layout'
 
@@ -249,7 +249,7 @@ export function MatcalcPage() {
       },
       // {
       //   id: 'Help',
-      //   component: () => <ToolbarHelpTabGroup url={HELP_URL} />,
+      //   render: () => <ToolbarHelpTabGroup url={HELP_URL} />,
       // },
     ])
   }, [setToolbarTabs])
@@ -367,7 +367,7 @@ export function MatcalcPage() {
     {
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      component: (
+      render: (
         <DropdownMenuItem
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
@@ -396,7 +396,7 @@ export function MatcalcPage() {
     {
       id: TEXT_SAVE_AS,
       icon: <DownloadIcon />,
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -433,7 +433,7 @@ export function MatcalcPage() {
     {
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

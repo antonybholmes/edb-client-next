@@ -2,10 +2,10 @@ import { ThemeIndexLink } from '@/components/link/theme-index-link'
 import { config } from '@/config'
 import { CenterLayout } from '@/layouts/center-layout'
 import {
-  signOutStateAtom,
-  type IRedirectState,
+    signOutStateAtom,
+    type IRedirectState,
 } from '@/lib/edb/signin/edb-signin'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { AuthModal } from './auth-modal'

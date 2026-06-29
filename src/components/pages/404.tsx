@@ -1,7 +1,7 @@
 'use client'
 
 import { CenterLayout } from '@/layouts/center-layout'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { gsap } from 'gsap'
 import { useEffect, useRef } from 'react'
 import { DinoIcon } from '../icons/dino-icon'

@@ -68,7 +68,7 @@ import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
 import { useAppInfo } from '@/lib/edb/edb-settings'
 import { vfill } from '@/lib/fill'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { Card } from '@/themed/card'
 import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import { MonitorDown } from 'lucide-react'
@@ -263,7 +263,7 @@ function VennPage() {
   //       id: 'List view',
   //       icon: <ListIcon className={TOOLBAR_BUTTON_ICON_CLS} size="w-4" />,
 
-  //       component: () => (
+  //       render: () => (
   //         <Textarea
   //           ref={overlapRef}
   //           id="text-overlap"
@@ -283,7 +283,7 @@ function VennPage() {
   //       id: 'Table view',
   //       icon: <TableIcon />,
 
-  //       component: () => (
+  //       render: () => (
   //         <BaseRow className="grow mt-2 gap-x-1">
   //           <BaseCol className="text-xs">
   //             <ToolbarIconButton
@@ -441,7 +441,7 @@ function VennPage() {
     {
       id: 'Open',
       icon: <OpenIcon variant="colorful" />,
-      component: (
+      render: (
         <DropdownMenuItem
           aria-label="Open file on your computer"
           onClick={() => {
@@ -462,7 +462,7 @@ function VennPage() {
     },
     {
       id: TEXT_SAVE_AS,
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_TXT}
@@ -486,7 +486,7 @@ function VennPage() {
     },
     {
       id: 'Export',
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}

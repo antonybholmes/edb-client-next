@@ -62,7 +62,7 @@ import { DisplayPropsPanel } from './display-props-panel'
 import { MotifsPropsPanel } from './motifs-props-panel'
 
 import { DownloadIcon } from '@/components/icons/download-icon'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { useMotifSettings, type Mode } from './motifs-settings'
 
@@ -173,7 +173,7 @@ export function BioDrawPage() {
     {
       //id: nanoid(),
       id: TEXT_SAVE_AS,
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label="Download as TXT"
@@ -199,7 +199,7 @@ export function BioDrawPage() {
       //id: nanoid(),
       id: TEXT_EXPORT,
       icon: <ExportIcon />,
-      component: (
+      render: (
         <>
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
@@ -226,7 +226,7 @@ export function BioDrawPage() {
   const tabs: ITab[] = [
     {
       id: 'Home',
-      component: (
+      render: (
         <>
           <ToolbarTabGroup title="File">
             {/* <ToolbarOpenFile

@@ -5,13 +5,13 @@ import { ThemeLink } from '@/components/link/theme-link'
 import { config } from '@/config'
 import { CenterLayout } from '@/layouts/center-layout'
 import {
-  DEFAULT_REDIRECT_STATE,
-  getRedirectStateFromURI,
-  isSafeRelativeUrl,
-  safeRedirect,
-  type IRedirectState,
+    DEFAULT_REDIRECT_STATE,
+    getRedirectStateFromURI,
+    isSafeRelativeUrl,
+    safeRedirect,
+    type IRedirectState,
 } from '@/lib/edb/signin/edb-signin'
-import { CoreProviders } from '@/providers/core-provider'
+import { CoreProviders } from '@/providers/core-providers'
 import { useEffect, useState } from 'react'
 import { AuthModal } from './auth-modal'
 
