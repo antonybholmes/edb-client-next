@@ -7,6 +7,7 @@ import { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
 import { IClusterFrame } from '@/lib/math/hcluster'
 import { IBoxPlotDisplayOptions } from '../../apps/boxplot/boxplot-plot-svg'
 import { IExtGseaDisplayOptions } from '../../apps/ext-gsea/ext-gsea-store'
+import { ISankeyDisplayOptions } from '../../apps/sankey/sankey-provider'
 import { IVolcanoDisplayOptions } from '../../apps/volcano/volcano-plot-svg'
 import { IUndoState } from '../history-manager'
 
@@ -42,6 +43,12 @@ export interface HeatMapPlot extends BasePlot {
   style: 'heatmap' | 'dot'
   dataframes: Record<string, DataFrameType>
   props: IHeatMapDisplayOptions
+}
+
+export interface SankeyPlot extends BasePlot {
+  style: 'sankey'
+  dataframes: Record<string, DataFrameType>
+  props: ISankeyDisplayOptions
 }
 
 export interface VolcanoPlot extends BasePlot {

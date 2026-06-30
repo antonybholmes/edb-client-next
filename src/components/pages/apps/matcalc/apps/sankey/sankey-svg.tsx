@@ -31,10 +31,11 @@ import { COLOR_MAPS } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { createPortal } from 'react-dom'
-import { ActionListSvg } from './action-list-svg'
-import { useHeatmapContext } from './heatmap-provider'
-import { DotLegend, LegendBottomSvg, LegendRightSvg } from './legend-svg'
  
+import { useSankeyContext } from './sankey-provider'
+
+
+
 
 export interface ITooltip {
   pos: IPos
@@ -42,14 +43,14 @@ export interface ITooltip {
 }
 
 interface IProps extends ISVGProps {
-  //cf: IClusterFrame
+ 
   maxRows?: number
   maxCols?: number
-  //plotAddr: IHistItemAddr
+ 
 }
 
 export function SankeySvg({ ref }: IProps) {
-  const { plot } = useHeatmapContext()
+  const { plot } = useSankeyContext()
 
   const cf = plot.dataframes['main'] as IClusterFrame
 
@@ -62,8 +63,8 @@ export function SankeySvg({ ref }: IProps) {
   const blockSize = displayOptions.blockSize
 
   const scaledBlockSize = {
-    w: blockSize.w * displayOptions.zoom,
-    h: blockSize.h * displayOptions.zoom,
+    w: blockSize.w * displayOptions.scale,
+    h: blockSize.h * displayOptions.scale,
   }
 
   const innerRef = useRef<SVGSVGElement>(null)

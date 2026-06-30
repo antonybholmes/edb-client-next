@@ -32,12 +32,7 @@ import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 
 export const PLOT_CLS = 'relative overflow-scroll custom-scrollbar grow'
 
-// export function makeDefaultHeatmapProps(style: string): IHeatMapDisplayOptions {
-//   return {
-//     ...DEFAULT_HEATMAP_PROPS,
-//     mode: style.toLowerCase().includes('dot') ? 'dot' : 'heatmap',
-//   }
-// }
+ 
 
 function LollipopPanel() {
   //const [selectedTab, setSelectedTab] = useState('Display')
