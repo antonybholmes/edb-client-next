@@ -1,6 +1,7 @@
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
+import { sankey } from 'd3-sankey'
 import { useRef } from 'react'
 import { HistoryPlot } from '../../history/history-provider/history-types'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
@@ -31,6 +32,31 @@ export function SankeyDialog({
   function makeSankeyPlot() {
     onResponse?.(TEXT_OK, { ...DEFAULT_PLOT })
   }
+
+  const layout = sankey<
+    { id: string },
+    { source: string; target: string; value: number }
+  >()
+    .nodeId((d) => d.id) // need to specify id accessor since our nodes are not in the default format
+    .nodeWidth(20)
+    .nodePadding(10)
+    .extent([
+      [0, 0],
+      [10, 10],
+    ])
+
+  const nodes: { id: string }[] = [{ id: 'A' }, { id: 'B' }]
+
+  const links: { source: string; target: string; value: number }[] = [
+    { source: 'A', target: 'B', value: 10 },
+  ]
+
+  const graph = layout({
+    nodes: nodes.map((d) => ({ ...d })),
+    links: links.map((d) => ({ ...d })),
+  })
+
+  console.log('d3 sankey layout', graph)
 
   return (
     <OKCancelDialog

@@ -16,6 +16,7 @@ import {
 } from '@/components/plot/svg-props'
 import type { ISVGProps } from '@/interfaces/svg-props'
 
+import { SvgMargin } from '@/components/plot/svg-margin'
 import type { SeriesData } from '@/lib/dataframe/series-data'
 import {
   DEFAULT_SCATTER_PROPS,
@@ -266,7 +267,7 @@ export function VolcanoPlotSvg({
           })}
         </g>
 
-        <g transform={`translate(${MARGIN.left}, ${MARGIN.top})`}>
+        <SvgMargin margin={MARGIN}>
           {labelIdx.map((i) => {
             const p = points[i]!
             const x1 = xax!.domainToRange(p.x)
@@ -307,10 +308,10 @@ export function VolcanoPlotSvg({
               </g>
             )
           })}
-        </g>
+        </SvgMargin>
 
         {displayOptions.logP.line.show && (
-          <g transform={`translate(${MARGIN.left}, ${MARGIN.top})`}>
+          <SvgMargin margin={MARGIN}>
             <line
               x1={xax!.domainToRange(xax!.domain[0])}
               y1={yax!.domainToRange(displayOptions.logP.threshold)}
@@ -319,11 +320,11 @@ export function VolcanoPlotSvg({
               stroke={displayOptions.logP.line.color}
               strokeDasharray={displayOptions.logP.line.dash}
             />
-          </g>
+          </SvgMargin>
         )}
 
         {displayOptions.border.show && (
-          <g transform={`translate(${MARGIN.left}, ${MARGIN.top})`}>
+          <SvgMargin margin={MARGIN}>
             <rect
               width={innerWidth}
               height={innerHeight}
@@ -331,7 +332,7 @@ export function VolcanoPlotSvg({
               strokeWidth={displayOptions.border.width}
               fill="none"
             />
-          </g>
+          </SvgMargin>
         )}
 
         <AxisLeftSvg

@@ -9,6 +9,7 @@ import { sum } from '@/lib/math/sum'
 import { Axis, YAxis } from '@/components/plot/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
+import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
 import { LW, useMotifSettings } from './motifs-settings'
@@ -66,7 +67,7 @@ export function MotifsSvg({ ref, className }: ComponentProps<'svg'>) {
   const { settings } = useMotifSettings()
 
   const motifsToPlot = searchResult.motifs.filter(
-    motif => motifsInUse[motif.id] ?? true
+    (motif) => motifsInUse[motif.id] ?? true
   )
 
   if (motifsToPlot.length === 0) {
@@ -77,7 +78,7 @@ export function MotifsSvg({ ref, className }: ComponentProps<'svg'>) {
 
   // standardize width of every plot to the largest motif in
   // the list
-  const maxN = Math.max(...motifsToPlot.map(motif => motif.weights.length))
+  const maxN = Math.max(...motifsToPlot.map((motif) => motif.weights.length))
 
   // A plots dimensions include the gap to the right and bottom,
   // but the plot is rendered at (0,0) within its plot area
@@ -138,7 +139,7 @@ export function MotifsSvg({ ref, className }: ComponentProps<'svg'>) {
           .setDomain([0, motif.weights.length])
           .setLength(w)
           .setTicks(
-            range(1, n + 1).map(x => ({
+            range(1, n + 1).map((x) => ({
               v: x - 0.5,
               label: x.toLocaleString(),
             }))
@@ -149,10 +150,10 @@ export function MotifsSvg({ ref, className }: ComponentProps<'svg'>) {
     // normalize
 
     const normalizedWeights: number[][] = useMemo(() => {
-      const weights = motif.weights.map(pw => {
-        const pw2 = pw.map(w => w + MIN_ADJ)
+      const weights = motif.weights.map((pw) => {
+        const pw2 = pw.map((w) => w + MIN_ADJ)
         const s = sum(pw2)
-        return pw2.map(w => w / s)
+        return pw2.map((w) => w / s)
       })
 
       if (settings.revComp) {
@@ -176,7 +177,7 @@ export function MotifsSvg({ ref, className }: ComponentProps<'svg'>) {
         id={motif.id}
         motif-id={motif.motifId}
       >
-        {range(n).map(r => {
+        {range(n).map((r) => {
           const npw = normalizedWeights[r]!
           // we want largest probs on top
           const idx = argsort(npw) //dft.row(r)!.values)
@@ -186,9 +187,9 @@ export function MotifsSvg({ ref, className }: ComponentProps<'svg'>) {
           if (settings.mode === 'bits') {
             // sum of p * log2(p)
             const U = -idx
-              .map(c => npw[c]!)
-              .filter(p => p > 0)
-              .map(p => p * Math.log2(p))
+              .map((c) => npw[c]!)
+              .filter((p) => p > 0)
+              .map((p) => p * Math.log2(p))
               .reduce((a, b) => a + b)
 
             ic_final = IC_TOTAL - U
@@ -207,7 +208,7 @@ export function MotifsSvg({ ref, className }: ComponentProps<'svg'>) {
               }, 0)`}
               key={r}
             >
-              {idx.map(c => {
+              {idx.map((c) => {
                 const base: string = BASE_IDS[c]!
                 const font = settings.bases[base.toLowerCase()]!
                 const p: number = npw[c]! //dft.get(r, c) as number
@@ -273,14 +274,15 @@ export function MotifsSvg({ ref, className }: ComponentProps<'svg'>) {
       height={height}
       shapeRendering={SVG_CRISP_EDGES}
     >
-      <g
-        transform={`translate(${settings.margin.left}, ${settings.margin.top})`}
+      <SvgMargin
+        margin={settings.margin}
+
         id="inner-plot"
       >
         {motifsToPlot.map((motif, index) => {
           return <MotifPlot key={motif.id} index={index} motif={motif} />
         })}
-      </g>
+      </SvgMargin>
     </SvgBase>
   )
 

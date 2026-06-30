@@ -1,86 +1,186 @@
 import { SvgBase } from '@/components/plot/svg-base'
+import { SvgMargin } from '@/components/plot/svg-margin'
+import { SvgText } from '@/components/plot/svg-text'
 import { ISVGProps } from '@/interfaces/svg-props'
-import { ISankeyNode, useSankey } from './sankey-provider'
-import { useSankeySettings } from './sankey-settings-store'
+import { useMemo } from 'react'
+import {
+  ILayoutNode,
+  ISankey,
+  ISankeyLink,
+  ISankeyNode,
+  useSankey,
+} from './sankey-provider'
+import { ISankeySettings, useSankeySettings } from './sankey-settings-store'
 
-interface ILayoutNode extends ISankeyNode {
-  x: number
-  y: number
-  h: number
-}
+const DEFAULT_NODE_COLOR = '#4F46E5'
 
 export function SankeySvg({ ref }: ISVGProps) {
-  const { plot } = useSankey()
+  const { plot, layoutMap, scale, byColumn, numCols } = useSankey()
   const { settings } = useSankeySettings()
 
-  const nodeMap = new Map(plot.nodes.map((n) => [n.id, n]))
+  const w = useMemo(
+    () => settings.width + settings.margin.left + settings.margin.right,
+    [settings.width, settings.margin.left, settings.margin.right]
+  )
 
-  const numCols = Math.max(...plot.nodes.map((n) => n.column)) + 1
-  const xSpacing =
-    numCols > 1 ? (settings.width - settings.nodeWidth) / (numCols - 1) : 0
+  const h = useMemo(
+    () => settings.height + settings.margin.top + settings.margin.bottom,
+    [settings.height, settings.margin.top, settings.margin.bottom]
+  )
 
-  // Compute node totals
-  const nodeMaxTotalMap = new Map<string, number>()
+  return (
+    <SvgBase width={w} height={h} ref={ref}>
+      {/* Define gradients for links */}
+      {settings.links.color === 'gradient' &&
+        gradientDefs(plot, layoutMap, settings)}
 
-  // for each node, compute the total incoming and outgoing flow and
-  // take the max of the two to determine the node height
-  for (const node of plot.nodes) {
-    const incoming = plot.links
-      .filter((l) => l.target === node.id)
-      .reduce((a, b) => a + b.value, 0)
+      <SvgMargin margin={settings.margin}>
+        {linkPaths(numCols, byColumn, layoutMap, plot, settings, scale)}
 
-    const outgoing = plot.links
-      .filter((l) => l.source === node.id)
-      .reduce((a, b) => a + b.value, 0)
+        {Array.from(layoutMap.values()).map((node) => (
+          <g key={node.id} id={`node-${node.id}`}>
+            {settings.nodes.shape === 'rect' && (
+              <rect
+                x={node.x - settings.nodeWidth / 2}
+                y={node.y}
+                width={settings.nodeWidth}
+                height={node.h}
+                rx={settings.nodes.rounding}
+                fill={node.color ?? DEFAULT_NODE_COLOR}
+              />
+            )}
+            {settings.nodes.shape === 'circle' && (
+              <circle
+                cx={node.x}
+                cy={node.y + node.h / 2}
+                r={Math.max(settings.nodeWidth, node.h) / 2}
+                fill={node.color ?? DEFAULT_NODE_COLOR}
+              />
+            )}
+            {settings.nodes.labels.font.show && label(node, settings)}
+          </g>
+        ))}
+      </SvgMargin>
+    </SvgBase>
+  )
+}
 
-    nodeMaxTotalMap.set(node.id, Math.max(incoming, outgoing))
-  }
+function label(node: ILayoutNode, settings: ISankeySettings) {
+  const x =
+    node.x +
+    (settings.nodes.labels.position === 'left'
+      ? -(settings.nodeWidth / 2 + 8)
+      : settings.nodes.labels.position === 'right'
+        ? settings.nodeWidth / 2 + 8
+        : 0)
 
-  // Compute scaling
+  const y =
+    node.y +
+    (settings.nodes.labels.position === 'top'
+      ? -8
+      : settings.nodes.labels.position === 'bottom'
+        ? node.h + 8
+        : node.h / 2)
 
-  // Arrange nodes by column
-  const byColumn = new Map<number, ISankeyNode[]>()
+  const anchor =
+    settings.nodes.labels.position === 'left'
+      ? 'end'
+      : settings.nodes.labels.position === 'right'
+        ? 'start'
+        : 'middle'
 
-  for (let i = 0; i < numCols; i++) {
-    byColumn.set(i, [])
-  }
+  return (
+    <SvgText x={x} y={y} textAnchor={anchor} font={settings.nodes.labels.font}>
+      {node.label}
+    </SvgText>
+  )
+}
 
-  for (const node of plot.nodes) {
-    byColumn.get(node.column)!.push(node)
-  }
+function gradientDefs(
+  plot: ISankey,
+  layoutMap: Map<string, ILayoutNode>,
+  settings: ISankeySettings,
+  offsetPercent: number = 5
+) {
+  return (
+    <defs>
+      {plot.links.map((link) => {
+        const source = layoutMap.get(link.source)!
+        const target = layoutMap.get(link.target)!
+        const id = `gradient-${link.source}-${link.target}`
+        return (
+          <linearGradient
+            key={id}
+            id={id}
+            gradientUnits="userSpaceOnUse"
+            x1={source.x}
+            y1={0}
+            x2={target.x}
+            y2={0}
+          >
+            <stop offset={`${offsetPercent}%`} stopColor={source.color} />
+            <stop offset={`${100 - offsetPercent}%`} stopColor={target.color} />
+          </linearGradient>
+        )
+      })}
+    </defs>
+  )
+}
 
-  let scale = Infinity
+function linkPaths(
+  cols: number,
+  byColumn: Map<number, ISankeyNode[]>,
+  layoutMap: Map<string, ILayoutNode>,
+  plot: ISankey,
+  settings: ISankeySettings,
+  scale: number
+) {
+  // reorder links by source and target position to ensure consistent layering
+  const sortedLinks: ISankeyLink[] = []
 
-  for (const column of byColumn.values()) {
-    let total = 0
+  const linkMap = new Map<string, ISankeyLink[]>()
 
-    for (const node of column) {
-      total += nodeMaxTotalMap.get(node.id) ?? 0
+  for (const link of plot.links) {
+    const source = layoutMap.get(link.source)!
+
+    if (!linkMap.has(source.id)) {
+      linkMap.set(source.id, [])
     }
 
-    // Allow for padding between nodes
-    total += (column.length - 1) * settings.padding
-
-    scale = Math.min(scale, settings.height / total)
+    linkMap.get(source.id)!.push(link)
   }
 
-  const layout = new Map<string, ILayoutNode>()
+  const sourceTargetLinkMap = new Map<string, ISankeyLink>(
+    plot.links.map((link) => [`${link.source}-${link.target}`, link])
+  )
 
-  // Vertical layout
-  for (let c = 0; c < numCols; c++) {
-    let y = 0
+  for (let col = 0; col < cols - 1; col++) {
+    const nodes = byColumn.get(col)
 
-    for (const node of byColumn.get(c)!) {
-      const h = (nodeMaxTotalMap.get(node.id) ?? 0) * scale
+    if (nodes) {
+      // sort by layout y position so smaller y (higher up) are rendered first
+      const sortedSources = nodes.slice().sort((a, b) => {
+        const la = layoutMap.get(a.id)!
+        const lb = layoutMap.get(b.id)!
 
-      layout.set(node.id, {
-        ...node,
-        x: c * xSpacing,
-        y,
-        h,
+        return la.y - lb.y
       })
 
-      y += h + settings.padding
+      for (const source of sortedSources) {
+        // see what we point to
+        const links = linkMap.get(source.id)!
+        const targets = links.map((l) => l.target)
+
+        const sortedTargets = targets
+          .map((t) => layoutMap.get(t)!)
+          .sort((a, b) => a.y - b.y)
+
+        for (const target of sortedTargets) {
+          const link = sourceTargetLinkMap.get(`${source.id}-${target.id}`)
+          console.log('dsdsfsfd', `${source.id}-${target.id}`)
+          sortedLinks.push(link!)
+        }
+      }
     }
   }
 
@@ -88,11 +188,11 @@ export function SankeySvg({ ref }: ISVGProps) {
   const targetOffset = new Map<string, number>()
 
   return (
-    <SvgBase width={settings.width} height={settings.height} ref={ref}>
-      {/* Links */}
-      {plot.links.map((link, i) => {
-        const source = layout.get(link.source)!
-        const target = layout.get(link.target)!
+    <>
+      {sortedLinks.map((link, i) => {
+        const source = layoutMap.get(link.source)!
+        const target = layoutMap.get(link.target)!
+        const gradientId = `gradient-${link.source}-${link.target}`
 
         const thickness = link.value * scale
 
@@ -110,15 +210,19 @@ export function SankeySvg({ ref }: ISVGProps) {
           (targetOffset.get(target.id) ?? 0) + thickness
         )
 
-        const x0 = source.x + settings.nodeWidth
+        const x0 = source.x
         const x1 = target.x
         const cx = (x0 + x1) / 2
 
+        const r1 = Math.min(settings.nodeWidth, source.h)
+        const r2 = Math.min(settings.nodeWidth, target.h)
+        console.log({ r1, r2 })
+
         const d = `
           M ${x0} ${sy}
-          C ${cx} ${sy},
-            ${cx} ${ty},
-            ${x1} ${ty}
+          
+          C ${cx} ${sy}, ${cx} ${ty}, ${x1 - r2} ${ty}
+          L ${x1} ${ty}
         `
 
         return (
@@ -126,35 +230,13 @@ export function SankeySvg({ ref }: ISVGProps) {
             key={i}
             d={d}
             fill="none"
-            stroke={link.color ?? '#5B8FF9'}
+            //stroke={link.color ?? '#5B8FF9'}
+            stroke={`url(#${gradientId})`}
             strokeWidth={thickness}
-            strokeOpacity={0.4}
+            strokeOpacity={settings.links.opacity}
           />
         )
       })}
-
-      {/* Nodes */}
-      {Array.from(layout.values()).map((node) => (
-        <g key={node.id}>
-          <rect
-            x={node.x}
-            y={node.y}
-            width={settings.nodeWidth}
-            height={node.h}
-            rx={3}
-            fill="#4F46E5"
-          />
-          <text
-            x={node.x + settings.nodeWidth + 8}
-            y={node.y + node.h / 2}
-            dominantBaseline="middle"
-            fontSize={13}
-            fontFamily="sans-serif"
-          >
-            {node.label}
-          </text>
-        </g>
-      ))}
-    </SvgBase>
+    </>
   )
 }

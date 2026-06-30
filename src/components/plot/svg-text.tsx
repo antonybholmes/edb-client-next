@@ -1,4 +1,7 @@
-import type { ITextProps } from '@/components/plot/svg-props'
+import {
+  DEFAULT_TEXT_PROPS,
+  type ITextProps,
+} from '@/components/plot/svg-props'
 import type { SVGProps } from 'react'
 import { getFontFamilies } from './svg-base'
 
@@ -22,7 +25,7 @@ export function SvgText({
   textAnchor,
   opacity,
   dominantBaseline = 'middle',
-  font,
+  font = { ...DEFAULT_TEXT_PROPS },
   ...props
 }: ISvgTextProps) {
   if (!font?.show) {

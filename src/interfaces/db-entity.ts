@@ -9,6 +9,6 @@ export interface IDBEntity {
   id: string
   name: string
   description?: string
-  createdAt?: string
-  updatedAt?: string
+  createdAt?: string // ISO 8601 UTC
+  updatedAt?: string // ISO 8601 UTC
 }

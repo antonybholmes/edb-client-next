@@ -4,6 +4,7 @@ import { Axis, YAxis } from '@/components/plot/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgLine } from '@/components/plot/svg-line'
+import { SvgMargin } from '@/components/plot/svg-margin'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { addAlphaToHex, COLOR_BLACK } from '@/lib/color/color'
 import { ColorMap } from '@/lib/color/colormap'
@@ -410,15 +411,13 @@ export function GseaSvg({ ref }: ISVGProps) {
           </SvgText>
         )}
 
-        <g
-          transform={`translate(${settings.plot.margin.left}, ${settings.plot.margin.top})`}
-        >
+        <SvgMargin margin={settings.plot.margin}>
           {esSvg}
 
           {genesSvg && genesSvg}
 
           {rankingSvg && rankingSvg}
-        </g>
+        </SvgMargin>
       </g>
     )
   })

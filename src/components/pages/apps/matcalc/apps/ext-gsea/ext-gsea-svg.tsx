@@ -10,6 +10,7 @@ import { zip } from '@/lib/utils'
 
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgLine } from '@/components/plot/svg-line'
+import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgPolyLine } from '@/components/plot/svg-poly-line'
 import { SvgText } from '@/components/plot/svg-text'
 import type { ISVGProps } from '@/interfaces/svg-props'
@@ -402,9 +403,7 @@ export function ExtGseaSvg({ ref }: ISVGProps) {
         //shapeRendering={SVG_CRISP_EDGES}
         className="absolute"
       >
-        <g
-          transform={`translate(${displayProps.plot!.margin.left}, ${displayProps.plot!.margin.top})`}
-        >
+        <SvgMargin margin={displayProps.plot!.margin}>
           <g>
             {leadingEdge1Svg && leadingEdge1Svg}
             {line1Svg && line1Svg}
@@ -475,7 +474,7 @@ export function ExtGseaSvg({ ref }: ISVGProps) {
           {genesSvg && genesSvg}
 
           {rankingSvg && rankingSvg}
-        </g>
+        </SvgMargin>
       </SvgBase>
     )
   }, [displayProps])

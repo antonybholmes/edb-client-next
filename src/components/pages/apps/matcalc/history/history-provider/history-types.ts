@@ -1,4 +1,5 @@
 import { IHeatMapDisplayOptions } from '@/components/plot/heatmap/heatmap-svg-props'
+import { IDBEntity } from '@/interfaces/db-entity'
 import { IClusterGroup } from '@/lib/cluster-group'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
@@ -20,16 +21,11 @@ export interface ISelectionPath {
   id: string
 }
 
-export interface IHistoryComp {
-  id: string
-  //path: string
-  name: string
-  createdAt: number
-}
+//export interface IHistoryComp extends IDBEntity {}
 
 export type DataFrameType = BaseDataFrame | AnnotationDataFrame | IClusterFrame
 
-export interface BasePlot extends IHistoryComp {
+export interface BasePlot extends IDBEntity {
   //style: PlotStyle
   // groups to make plots so that they are independent
   // of history such that if user moves groups around
@@ -84,7 +80,7 @@ export type HistoryPlot =
 
 export type HistoryNode = IHistoryApp | HistoryPlot
 
-export interface IHistoryApp extends IHistoryComp {
+export interface IHistoryApp extends IDBEntity {
   type: 'app'
 }
 
@@ -188,7 +184,7 @@ export interface ISheetOps {
  * the current selection will be set to that plot, and the ui will show the plot.
  * If user clicks on a sheet, the current selection will be set to that sheet, and the ui will show the sheet.
  */
-export interface IHistoryState extends IHistoryComp {
+export interface IHistoryState extends IDBEntity {
   // order maps to preserve hierarchy
 
   fileOrder: string[] // appId -> file IDs
@@ -205,7 +201,7 @@ export interface IHistoryState extends IHistoryComp {
 
 // Stores all objects by ID for easy access and immutability
 export interface IHistoryDataStore {
-  files: Record<string, IHistoryComp>
+  files: Record<string, IDBEntity>
   sheets: Record<string, DataFrameType>
   plots: Record<string, HistoryPlot>
   groupNames: Record<string, string>
@@ -241,8 +237,8 @@ export interface IHistoryStore
 }
 
 export type IHistoryFilesContext = {
-  file: IHistoryComp
-  files: IHistoryComp[]
+  file: IDBEntity
+  files: IDBEntity[]
 }
 
 export type PathId = {

@@ -54,7 +54,7 @@ export function DoubleNumericalInput({
   const id2 = `${_id}:2`
 
   if (!children) {
-    children = <CloseIcon />
+    children = <CloseIcon size={16} />
   }
 
   return (

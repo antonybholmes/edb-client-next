@@ -8,13 +8,13 @@ import { type IClusterFrame } from '@/lib/math/hcluster'
 import { HColorBarSvg, VColorBarSvg } from '@/components/plot/color-bar-svg'
 import { CellsSvg, DotsSvg, GridSvg } from '@/components/plot/heatmap/cell-svg'
 import {
-    ColGroupsSvg,
-    ColLabelsSvg,
-    ColTreeTopSvg,
+  ColGroupsSvg,
+  ColLabelsSvg,
+  ColTreeTopSvg,
 } from '@/components/plot/heatmap/col-svg'
 import {
-    LEGEND_BLOCK_SIZE,
-    MIN_INNER_HEIGHT,
+  LEGEND_BLOCK_SIZE,
+  MIN_INNER_HEIGHT,
 } from '@/components/plot/heatmap/heatmap-svg-props'
 
 import { RowLabelsSvg, RowTreeSvg } from '@/components/plot/heatmap/row-svg'
@@ -30,7 +30,7 @@ import { COLOR_MAPS } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { createPortal } from 'react-dom'
-import { SvgTitle } from '../../../../../plot/svg-title-svg'
+import { SvgTitle } from '../../../../../plot/svg-title'
 import { ActionListSvg } from './action-list-svg'
 import { useHeatmapContext } from './heatmap-provider'
 import { DotLegend, LegendBottomSvg, LegendRightSvg } from './legend-svg'
