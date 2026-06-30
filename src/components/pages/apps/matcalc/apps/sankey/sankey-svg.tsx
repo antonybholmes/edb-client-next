@@ -8,13 +8,13 @@ import { type IClusterFrame } from '@/lib/math/hcluster'
 import { HColorBarSvg, VColorBarSvg } from '@/components/plot/color-bar-svg'
 import { CellsSvg, DotsSvg, GridSvg } from '@/components/plot/heatmap/cell-svg'
 import {
-    ColGroupsSvg,
-    ColLabelsSvg,
-    ColTreeTopSvg,
+  ColGroupsSvg,
+  ColLabelsSvg,
+  ColTreeTopSvg,
 } from '@/components/plot/heatmap/col-svg'
 import {
-    LEGEND_BLOCK_SIZE,
-    MIN_INNER_HEIGHT,
+  LEGEND_BLOCK_SIZE,
+  MIN_INNER_HEIGHT,
 } from '@/components/plot/heatmap/heatmap-svg-props'
 
 import { RowLabelsSvg, RowTreeSvg } from '@/components/plot/heatmap/row-svg'
@@ -25,15 +25,16 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 
 import { SvgBase } from '@/components/plot/svg-base'
 import type { IMarginProps } from '@/components/plot/svg-props'
+import { SvgTitle } from '@/components/plot/svg-title-svg'
 import { useMergeRefs } from '@/hooks/merge-refs'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { svgPointToScreen } from '@/lib/graphics/svg'
 import { createPortal } from 'react-dom'
-import { SvgTitle } from '../../../../../plot/svg-title-svg'
 import { ActionListSvg } from './action-list-svg'
 import { useHeatmapContext } from './heatmap-provider'
 import { DotLegend, LegendBottomSvg, LegendRightSvg } from './legend-svg'
+ 
 
 export interface ITooltip {
   pos: IPos
@@ -47,7 +48,7 @@ interface IProps extends ISVGProps {
   //plotAddr: IHistItemAddr
 }
 
-export function HeatMapSvg({ ref }: IProps) {
+export function SankeySvg({ ref }: IProps) {
   const { plot } = useHeatmapContext()
 
   const cf = plot.dataframes['main'] as IClusterFrame
