@@ -38,7 +38,7 @@ export interface SankeyPropsContextType {
 
 export const DEFAULT_PLOT: SankeyPlot = {
   id: makeUuid(),
-  name: 'Sankey Plot',
+  name: 'Sankey',
   style: 'sankey',
   groups: [],
   actions: [],

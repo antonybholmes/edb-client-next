@@ -146,7 +146,7 @@ export function HomeToolbar() {
         </ToolbarCol>
         <ToolbarCol>
           <ToolbarButton
-            title="Sankey Plot"
+            title="Sankey"
             onClick={() => {
               console.log('Opening Sankey Dialog')
               openMatcalcDialog({
