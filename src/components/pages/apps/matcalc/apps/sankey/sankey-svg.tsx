@@ -163,7 +163,7 @@ export function SankeySvg({ ref }: IProps) {
 
       setToolTipInfo({ pos: screen, cell })
     },
-    [margin.left, margin.top, blockSize, displayOptions.zoom]
+    [margin.left, margin.top, blockSize, displayOptions.scale]
   )
 
   const handleVariantLeave = useCallback(() => {
