@@ -83,6 +83,8 @@ import { BoxPlotPanel } from './apps/boxplot/boxplot-panel'
 import { BoxPlotProvider } from './apps/boxplot/boxplot-provider'
 import { ExtGseaPanel } from './apps/ext-gsea/ext-gsea-panel'
 import { ExtGseaProvider } from './apps/ext-gsea/ext-gsea-provider'
+import { SankeyPanel } from './apps/sankey/sankey-panel'
+import { SankeyProvider } from './apps/sankey/sankey-provider'
 import {
   useCurrentPlots,
   useCurrentSelections,
@@ -159,10 +161,14 @@ function plotElem(plot: HistoryPlot): ReactElement {
           <ExtGseaPanel />
         </ExtGseaProvider>
       )
-    // case 'lollipop':
-    //   return (
-    //     <LollipopPanelQuery key={plot.id} id={plot.id} plotAddr={plot.id} />
-    //   )
+    case 'sankey':
+      console.log('rendering sankey plot', plot)
+      return (
+        <SankeyProvider plot={plot}>
+          <SankeyPanel />
+        </SankeyProvider>
+      )
+
     default:
       return <></>
   }

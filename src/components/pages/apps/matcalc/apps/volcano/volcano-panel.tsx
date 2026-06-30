@@ -1,24 +1,24 @@
 import { useEffect, useRef } from 'react'
 
 import {
-    DEFAULT_VOLCANO_PROPS,
-    VolcanoPlotSvg,
-    type IVolcanoDisplayOptions,
+  DEFAULT_VOLCANO_PROPS,
+  VolcanoPlotSvg,
+  type IVolcanoDisplayOptions,
 } from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
 import { autoLim } from '@/components/plot/axis'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { BaseCol } from '@/layout/base-col'
 import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
-import { getFormattedShape, getNumCol } from '@/lib/dataframe/dataframe-utils'
+import { getNumCol } from '@/lib/dataframe/dataframe-utils'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { range } from '@/lib/math/range'
 
 import {
-    messageImageFileFormat,
-    useMessages,
+  messageImageFileFormat,
+  useMessages,
 } from '@/providers/message-provider'
 import { useZoom } from '@/providers/zoom-provider'
 
@@ -164,11 +164,9 @@ export function VolcanoPanel() {
       </TabSlideBar>
 
       <FooterPortal className="shrink-0 grow-0 justify-end">
-        <span>{getFormattedShape(sheet)}</span>
         <></>
-        <>
-          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
-        </>
+        <></>
+        <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
       </FooterPortal>
     </BaseCol>
   )

@@ -7,7 +7,7 @@ import { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
 import { IClusterFrame } from '@/lib/math/hcluster'
 import { IBoxPlotDisplayOptions } from '../../apps/boxplot/boxplot-plot-svg'
 import { IExtGseaDisplayOptions } from '../../apps/ext-gsea/ext-gsea-store'
-import { ISankeyDisplayOptions } from '../../apps/sankey/sankey-provider'
+import { SankeyPlot } from '../../apps/sankey/sankey-provider'
 import { IVolcanoDisplayOptions } from '../../apps/volcano/volcano-plot-svg'
 import { IUndoState } from '../history-manager'
 
@@ -45,12 +45,6 @@ export interface HeatMapPlot extends BasePlot {
   props: IHeatMapDisplayOptions
 }
 
-export interface SankeyPlot extends BasePlot {
-  style: 'sankey'
-  dataframes: Record<string, DataFrameType>
-  props: ISankeyDisplayOptions
-}
-
 export interface VolcanoPlot extends BasePlot {
   style: 'volcano'
   dataframes: Record<string, BaseDataFrame>
@@ -85,7 +79,8 @@ export interface ExtGseaPlot extends BasePlot {
   gseaRes2: IGseaResult
 }
 
-export type HistoryPlot = HeatMapPlot | VolcanoPlot | ExtGseaPlot | BoxPlot
+export type HistoryPlot =
+  HeatMapPlot | VolcanoPlot | ExtGseaPlot | BoxPlot | SankeyPlot
 
 export type HistoryNode = IHistoryApp | HistoryPlot
 
@@ -131,11 +126,7 @@ export type GroupPath = FilePath & { group: StrOrIdObj }
 export type GenesetPath = FilePath & { geneset: StrOrIdObj }
 
 export type HistoryPath =
-  | FilePath
-  | SheetPath
-  | PlotPath
-  | GroupPath
-  | GenesetPath
+  FilePath | SheetPath | PlotPath | GroupPath | GenesetPath
 
 export interface IGroupOps {
   name?: string

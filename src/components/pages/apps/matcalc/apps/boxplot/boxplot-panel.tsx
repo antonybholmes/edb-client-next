@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from 'react'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { BaseCol } from '@/layout/base-col'
-import { getFormattedShape } from '@/lib/dataframe/dataframe-utils'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
@@ -53,6 +52,8 @@ export function BoxPlotPanel() {
   const df = sheets[0] as AnnotationDataFrame
 
   const { setTabs: setSideTabs } = useSideTabs()
+
+  //const {addDFSize} = useFooter()
 
   useEffect(() => {
     setSideTabs([
@@ -115,50 +116,10 @@ export function BoxPlotPanel() {
 
   return (
     <>
-      {/* <DialogsRoot /> */}
-
       <BaseCol className="h-full overflow-hidden grow">
-        {/* <ResizablePanelGroup
-          orientation="horizontal"
-          id="volcano-resizable-panels"
-          className="overflow-hidden"
-          //autoSaveId="volcano-resizable-panels"
-        >
-          <ResizablePanel
-            id="volcano-svg"
-            order={1}
-            defaultSize="75%"
-            minSize="50%"
-            className="flex grow flex-col pt-2 pb-2 pl-2"
-          >
-            <div className="custom-scrollbar relative grow overflow-scroll rounded-lg border bg-white">
-              <VolcanoPlotSvg
-                ref={svgRef}
-                df={plot.cf.dataframes[MAIN_CLUSTER_FRAME]}
-                displayProps={displayProps}
-                x={x}
-                y={y}
-              />
-            </div>
-          </ResizablePanel>
-          <ThinHResizeHandle />
-          <ResizablePanel
-            id="volcano-svg-right"
-            order={2}
-            className="flex flex-col overflow-hidden"
-            defaultSize="25%"
-            minSize="15%"
-            collapsedSize={0}
-            collapsible={true}
-          >
-            <SideBarTextTabs tabs={plotRightTabs} />
-          </ResizablePanel>
-        </ResizablePanelGroup> */}
-
         <TabSlideBar
           side="right"
-          //onValueChange={setSelectedTab}
-          //value={selectedTab}
+
           open={showSideBar}
           onOpenChange={setShowSideBar}
         >
@@ -170,11 +131,9 @@ export function BoxPlotPanel() {
         </TabSlideBar>
 
         <FooterPortal className="shrink-0 grow-0 justify-end">
-          <span>{getFormattedShape(df)}</span>
           <></>
-          <>
-            <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
-          </>
+          <></>
+          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
         </FooterPortal>
       </BaseCol>
     </>

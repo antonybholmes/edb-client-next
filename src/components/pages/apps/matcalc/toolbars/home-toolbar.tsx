@@ -144,6 +144,25 @@ export function HomeToolbar() {
             Box
           </ToolbarButton>
         </ToolbarCol>
+        <ToolbarCol>
+          <ToolbarButton
+            title="Sankey Plot"
+            onClick={() => {
+              console.log('Opening Sankey Dialog')
+              openMatcalcDialog({
+                type: 'sankey-plot',
+                payload: {
+                  callback: (plot) => {
+                    console.log('Sankey dialog returned plot', plot)
+                    _addPlots([plot])
+                  },
+                },
+              })
+            }}
+          >
+            Sankey
+          </ToolbarButton>
+        </ToolbarCol>
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Gene Expression">

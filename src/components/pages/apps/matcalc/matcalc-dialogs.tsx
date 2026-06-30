@@ -21,6 +21,7 @@ import { KmeansDialog } from './apps/kmeans/kmeans-dialog'
 import { MotifToGeneDialog } from './apps/motifs-to-genes/motif-to-gene-dialog'
 import { VolcanoDialog } from './apps/volcano/volcano-dialog'
 
+import { SankeyDialog } from './apps/sankey/sankey-dialog'
 import { FilterRowsDialog } from './filter-rows-dialog'
 import {
   DataFrameType,
@@ -47,6 +48,9 @@ type DialogTypeMap = {
     callback: (plot: HistoryPlot) => void
   }
   'box-whiskers': {
+    callback: (plot: HistoryPlot) => void
+  }
+  'sankey-plot': {
     callback: (plot: HistoryPlot) => void
   }
   kmeans: {
@@ -224,6 +228,24 @@ function VolcanoPlotDialogRenderer({
   )
 }
 
+function SankeyPlotDialogRenderer({
+  dialog,
+  close,
+}: IDialogRenderer<'sankey-plot'>) {
+  const { callback } = dialog.payload
+  return (
+    <SankeyDialog
+      onResponse={(response, data) => {
+        if (response === TEXT_OK && data) {
+          console.log('sankey dialog response', response, data)
+          callback(data)
+        }
+        close(dialog.id)
+      }}
+    />
+  )
+}
+
 function BoxWhiskersDialogRenderer({
   dialog,
   close,
@@ -371,8 +393,11 @@ function DialogRenderer({
       return <DotPlotDialogRenderer dialog={dialog} close={close} />
     case 'volcano-plot':
       return <VolcanoPlotDialogRenderer dialog={dialog} close={close} />
+    case 'sankey-plot':
+      return <SankeyPlotDialogRenderer dialog={dialog} close={close} />
     case 'box-whiskers':
       return <BoxWhiskersDialogRenderer dialog={dialog} close={close} />
+
     case 'kmeans':
       return <KmeansDialogRenderer dialog={dialog} close={close} />
     case 'sort-rows':
