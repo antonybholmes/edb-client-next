@@ -164,6 +164,13 @@ export function HistoryProvider({ children }: IChildrenProps) {
     [dispatch]
   )
 
+  const clearGroups = useCallback(
+    (opts: IGroupOps = {}) => {
+      dispatch({ type: 'clearGroups', opts })
+    },
+    [dispatch]
+  )
+
   const updateGroup = useCallback(
     (group: IClusterGroup, opts: IGroupOps = {}) => {
       dispatch({ type: 'updateGroup', group, opts })
@@ -188,6 +195,13 @@ export function HistoryProvider({ children }: IChildrenProps) {
   const addGenesets = useCallback(
     (genesets: IGeneSet[], opts: IGroupOps = {}) => {
       dispatch({ type: 'addGenesets', genesets, opts })
+    },
+    [dispatch]
+  )
+
+  const clearGenesets = useCallback(
+    (opts: IGroupOps = {}) => {
+      dispatch({ type: 'clearGenesets', opts })
     },
     [dispatch]
   )
@@ -308,10 +322,12 @@ export function HistoryProvider({ children }: IChildrenProps) {
       reorderPlots,
       updatePlot,
       addGroups,
+      clearGroups,
       reorderGroups,
       removeGroups,
       updateGroup,
       addGenesets,
+      clearGenesets,
       reorderGenesets,
       removeGenesets,
       updateGeneset,

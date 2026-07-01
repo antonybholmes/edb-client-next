@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Added clear genesets and groups feature.
 - Resizable sidebar now uses slot system similar to footer to allow placement of components in header. This seems more robust than the portal method.
 - Bug fixes and updates.
 - Sankey now uses sliders in UI.

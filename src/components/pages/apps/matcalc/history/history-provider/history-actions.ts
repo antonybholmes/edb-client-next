@@ -48,10 +48,12 @@ export type HistoryAction =
   | { type: 'reorderPlots'; ids: string[]; opts: ISheetOps }
   | { type: 'updatePlot'; plot: HistoryPlot }
   | { type: 'addGroups'; groups: IClusterGroup[]; opts: IGroupOps }
+  | { type: 'clearGroups'; opts: IGroupOps }
   | { type: 'updateGroup'; group: IClusterGroup; opts: IGroupOps }
   | { type: 'removeGroups'; ids: string[]; opts: IGroupOps }
   | { type: 'reorderGroups'; ids: string[]; opts: IGroupOps }
   | { type: 'addGenesets'; genesets: IGeneSet[]; opts: IGroupOps }
+  | { type: 'clearGenesets'; opts: IGroupOps }
   | { type: 'updateGeneset'; geneset: IGeneSet }
   | { type: 'removeGenesets'; ids: string[]; opts: IGroupOps }
   | { type: 'reorderGenesets'; ids: string[]; opts: IGroupOps }
@@ -501,11 +503,16 @@ function handleAddGroups(
     return state
   }
 
+  const title =
+    groups.length > 0
+      ? `Add ${formattedList(groups.map((gs) => gs.name))} group${
+          groups.length > 1 ? 's' : ''
+        }`
+      : 'Remove groups'
+
   return applyHistoryUpdate(
     state,
-    `Add ${formattedList(groups.map((gs) => gs.name))} group${
-      groups.length > 1 ? 's' : ''
-    }`,
+    title,
     '',
     (draft: IHistoryState) => {
       if (mode === 'append') {
@@ -521,6 +528,28 @@ function handleAddGroups(
       if (name) {
         store.groupNames[file] = name
       }
+    }
+  )
+}
+
+function handleClearGroups(
+  state: IHistoryData,
+  action: Extract<HistoryAction, { type: 'clearGroups' }>
+): IHistoryData {
+  const { opts } = action
+  const { file = state.present.currentFile } = opts
+
+  // cannot add groups to default file and empty groups array does not require update
+  if (file === DEFAULT_FILE.id) {
+    return state
+  }
+
+  return applyHistoryUpdate(
+    state,
+    'Clear groups',
+    '',
+    (draft: IHistoryState) => {
+      draft.groupOrder[file] = []
     }
   )
 }
@@ -581,7 +610,7 @@ function handleAddGenesets(
   const { mode = 'append', file = state.present.currentFile } = opts
 
   // cannot add genesets to default file and empty genesets array does not require update
-  if (genesets.length === 0 || file === DEFAULT_FILE.id) {
+  if (file === DEFAULT_FILE.id) {
     return state
   }
 
@@ -617,6 +646,28 @@ function handleUpdateGeneset(
       [action.geneset.id]: action.geneset,
     },
   }
+}
+
+function handleClearGenesets(
+  state: IHistoryData,
+  action: Extract<HistoryAction, { type: 'clearGenesets' }>
+): IHistoryData {
+  const { opts } = action
+  const { file = state.present.currentFile } = opts
+
+  // cannot add genesets to default file and empty genesets array does not require update
+  if (file === DEFAULT_FILE.id) {
+    return state
+  }
+
+  return applyHistoryUpdate(
+    state,
+    'Clear genesets',
+    '',
+    (draft: IHistoryState) => {
+      draft.genesetOrder[file] = []
+    }
+  )
 }
 
 function handleRemoveGenesets(
@@ -738,6 +789,8 @@ export function historyReducer(
       return handleUpdatePlot(state, action)
     case 'addGroups':
       return handleAddGroups(state, action)
+    case 'clearGroups':
+      return handleClearGroups(state, action)
     case 'updateGroup':
       return handleUpdateGroup(state, action)
     case 'removeGroups':
@@ -746,6 +799,8 @@ export function historyReducer(
       return handleReorderGroups(state, action)
     case 'addGenesets':
       return handleAddGenesets(state, action)
+    case 'clearGenesets':
+      return handleClearGenesets(state, action)
     case 'updateGeneset':
       return handleUpdateGeneset(state, action)
     case 'removeGenesets':

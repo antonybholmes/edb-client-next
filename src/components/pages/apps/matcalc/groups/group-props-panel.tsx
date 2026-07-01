@@ -12,7 +12,7 @@ import { useSelectionRange } from '@/providers/selection-range-provider'
 
 import { download, downloadJson } from '@/lib/download-utils'
 import { range } from '@/lib/math/range'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { GroupDialog } from './group-dialog'
 
 import { FileDropZonePanel } from '@/components/file-dropzone-panel'
@@ -25,7 +25,6 @@ import {
 } from '@/lib/dataframe/dataframe-utils'
 import { textToLines } from '@/lib/text/lines'
 import { IconButton } from '@/themed/icon-button'
-import { LinkButton } from '@/themed/link-button'
 import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 import {
   DndContext,
@@ -56,8 +55,9 @@ import {
   SIMPLE_COLOR_EXT_CLS,
 } from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
+import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
-import { ResizableSidebarHeaderPortal } from '@/components/slide-bar/resizable-sidebar'
+import { useResizableSidebarContext } from '@/components/slide-bar/resizable-sidebar'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { PlusIcon } from '@/icons/plus-icon'
@@ -195,13 +195,46 @@ export function GroupPropsPanel() {
 
   const { open: openDialog } = useDialogs()
 
-  const { addGroups, reorderGroups } = useHistory()
+  const { addGroups, clearGroups, reorderGroups } = useHistory()
 
   const { groups, groupsName } = useCurrentGroups()
 
   const { sheets } = useCurrentSheets()
 
   const { selection } = useSelectionRange()
+
+  const { set } = useResizableSidebarContext()
+
+  useEffect(() => {
+    if (groups.length < 1) {
+      return
+    }
+    set('right', {
+      id: 'clear',
+      render: (
+        <LinkButton
+          onClick={() =>
+            openDialog({
+              type: 'warning',
+              payload: {
+                content: 'Are you sure you want to clear all groups?',
+                callback: (response) => {
+                  if (response === TEXT_OK) {
+                    console.log('Clearing groups')
+                    clearGroups()
+                  }
+                },
+              },
+            })
+          }
+          title="Clear all groups"
+          className="text-xs"
+        >
+          {TEXT_CLEAR}
+        </LinkButton>
+      ),
+    })
+  }, [groups.length, openDialog, clearGroups, set])
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -377,30 +410,6 @@ export function GroupPropsPanel() {
             }
           }}
         />
-      )}
-
-      {groups.length > 0 && (
-        <ResizableSidebarHeaderPortal side="right">
-          <LinkButton
-            onClick={() =>
-              openDialog({
-                type: 'warning',
-                payload: {
-                  content: 'Are you sure you want to clear all groups?',
-                  callback: (response) => {
-                    if (response === TEXT_OK) {
-                      addGroups([], { mode: 'set' })
-                    }
-                  },
-                },
-              })
-            }
-            title="Clear all groups"
-            className="text-xs"
-          >
-            {TEXT_CLEAR}
-          </LinkButton>
-        </ResizableSidebarHeaderPortal>
       )}
 
       <PropsPanel className="gap-y-1">

@@ -43,7 +43,7 @@ import {
   SIMPLE_COLOR_EXT_CLS,
 } from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
-import { ResizableSidebarHeaderPortal } from '@/components/slide-bar/resizable-sidebar'
+import { useResizableSidebarContext } from '@/components/slide-bar/resizable-sidebar'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { PlusIcon } from '@/icons/plus-icon'
@@ -160,15 +160,49 @@ export interface IGenesetCallback {
 export function GenesetPropsPanel() {
   //const [activeId, setActiveId] = useState<string | null>(null)
 
-  const { addGenesets, updateGeneset, reorderGenesets } = useHistory()
+  const { addGenesets, updateGeneset, clearGenesets, reorderGenesets } =
+    useHistory()
 
   const { genesets } = useCurrentGenesets()
 
   const { open: openDialog } = useDialogs()
 
+  const { set } = useResizableSidebarContext()
+
   const [openGenesetDialog, setOpenGroupDialog] = useState<
     IGenesetCallback | undefined
   >(undefined)
+
+  useEffect(() => {
+    if (genesets.length < 1) {
+      return
+    }
+    set('right', {
+      id: 'clear',
+      render: (
+        <LinkButton
+          onClick={() =>
+            openDialog({
+              type: 'warning',
+              payload: {
+                content: 'Are you sure you want to clear all gene sets?',
+                callback: (response) => {
+                  if (response === TEXT_OK) {
+                    console.log('Clearing gene sets')
+                    clearGenesets()
+                  }
+                },
+              },
+            })
+          }
+          title="Clear all groups"
+          className="text-xs"
+        >
+          {TEXT_CLEAR}
+        </LinkButton>
+      ),
+    })
+  }, [genesets.length, openDialog, clearGenesets, set])
 
   function openGenesetFiles(files: ITextFileOpen[]) {
     if (files.length === 0) {
@@ -248,32 +282,6 @@ export function GenesetPropsPanel() {
             }
           }}
         />
-      )}
-
-      {genesets.length > 0 && (
-        <ResizableSidebarHeaderPortal side="right">
-          <LinkButton
-            onClick={() => {
-              openDialog({
-                type: 'warning',
-                payload: {
-                  title: 'Clear Gene Sets',
-                  content: 'Are you sure you want to clear all gene sets?',
-                  callback: (response) => {
-                    if (response === TEXT_OK) {
-                      //onGroupsChange?.([])
-                      addGenesets([], { mode: 'set' })
-                    }
-                  },
-                },
-              })
-            }}
-            title="Clear all gene sets"
-            className="text-xs"
-          >
-            {TEXT_CLEAR}
-          </LinkButton>
-        </ResizableSidebarHeaderPortal>
       )}
 
       <PropsPanel className="gap-y-1">

@@ -309,8 +309,6 @@ export function ResizableSidebarHeaderPortal({
 
   const slot = `resizable-sidebar-header-${side}-${id}`
 
-  console.log('ResizableSidebarHeaderPortal target slot:', slot)
-
   useEffect(() => {
     setTarget(document.getElementById(slot))
   }, [slot])

@@ -139,6 +139,7 @@ export interface IHistorySlice {
 
 export interface IGroupSlice {
   addGroups: (groups: IClusterGroup[], opts?: IGroupOps) => void
+  clearGroups: () => void
   reorderGroups: (ids: string[], opts?: IGroupOps) => void
   removeGroups: (ids: string[], opts?: IGroupOps) => void
   updateGroup: (group: IClusterGroup, opts?: IGroupOps) => void
@@ -146,6 +147,7 @@ export interface IGroupSlice {
 
 export interface IGenesetSlice {
   addGenesets: (genesets: IGeneSet[], opts?: IGroupOps) => void
+  clearGenesets: () => void
   reorderGenesets: (ids: string[], opts?: IGroupOps) => void
   removeGenesets: (ids: string[], opts?: IGroupOps) => void
   updateGeneset: (geneset: IGeneSet) => void
