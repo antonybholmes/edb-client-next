@@ -106,6 +106,11 @@ export function newSankeyPlot(
 ): ISankeyPlot {
   const { actions = [], groups = [] } = opts
 
+  // Add sankey to name if not already present for better file naming when saving images
+  if (!name.toLowerCase().includes('sankey')) {
+    name = `Sankey ${name}`
+  }
+
   return {
     id: makeUuid(),
 

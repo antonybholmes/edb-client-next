@@ -65,7 +65,6 @@ const info = JSON.parse(
 ) as IAppInfo
 
 const currentHash: string = info.hash
-const currentDate = info.modified ? new Date(info.modified) : new Date()
 
 // // find all manifest files
 // const manifestFiles = files

@@ -109,11 +109,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "48.0.6",
+    "version": "48.0.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-01T20:33:45.452Z",
-    "hash": "a9179756965e9fcb4d0ab049ec389444025df6ce7e847a2bd97de9fb97e7a3c3",
-    "build": 1718
+    "modified": "2026-07-01T21:08:29.919Z",
+    "hash": "1d9e8143fbb201e706c2df36fed9fb6cc5a22b2da8e9f557521b0b3a900b3cee",
+    "build": 1720
   },
   {
     "name": "Motifs",

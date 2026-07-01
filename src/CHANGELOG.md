@@ -2,6 +2,10 @@
 
 ## 85.2 (Jul, 2026)
 
+### Added
+
+- Sankey dialog now allows for col selection.
+
 ### Changed
 
 - Bug fixes and updates.

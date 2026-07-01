@@ -99,7 +99,7 @@ export function MotifToGeneDialog({ selection, onResponse }: IProps) {
           <DFColSelect
             df={sheets[0] as DataFrame}
             value={col}
-            onChange={setCol}
+            onChange={({ index }) => setCol(index)}
           />
         </PropRow>
       </BaseCol>

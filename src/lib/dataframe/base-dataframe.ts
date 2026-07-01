@@ -13,7 +13,7 @@ import type { IndexId, SeriesData } from './series-data'
 
 // The default name of a sheet and useful for checking if
 // table has been properly initialized with real data
-export const DEFAULT_SHEET_NAME = 'Sheet1'
+export const DEFAULT_SHEET_NAME = 'Sheet 1'
 //export const DEFAULT_TABLE_NAME = 'Table 1'
 
 export const DEFAULT_COLUMN_INDEX_NAME = 'Column Names'
@@ -145,7 +145,7 @@ export abstract class BaseDataFrame {
   }
 
   get rowNames(): string[] {
-    return rangeMap(c => this.rowName(c), 0, this.shape[0])
+    return rangeMap((c) => this.rowName(c), 0, this.shape[0])
   }
 
   //abstract get columns(): Index
@@ -160,7 +160,7 @@ export abstract class BaseDataFrame {
    * Get the names of the columns
    */
   get columns(): string[] {
-    return range(this.shape[1]).map(c => this.colName(c))
+    return range(this.shape[1]).map((c) => this.colName(c))
   }
 
   abstract setColNames(index: IndexFromType, inplace: boolean): BaseDataFrame
@@ -271,7 +271,7 @@ function dfToStr(df: BaseDataFrame, options: IDFToStrOpts = {}): string {
   for (let i = 0; i < df.shape[0]; i++) {
     ret[i] = [
       ...(index ? [df.rowName(i)] : []),
-      ...df.row(i)!.values.map(v => cellStr(v, { dp })),
+      ...df.row(i)!.values.map((v) => cellStr(v, { dp })),
     ].join(sep)
   }
   // } else {

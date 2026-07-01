@@ -105,7 +105,11 @@ export function AnnotateDialog({ selection, onResponse }: IProps) {
       //leftFooterChildren={<RunningIndicator message={indicatorMessage} />}
     >
       <PropRow title="Location column">
-        <DFColSelect df={df} value={col} onChange={setCol} />
+        <DFColSelect
+          df={df}
+          value={col}
+          onChange={({ index }) => setCol(index)}
+        />
       </PropRow>
       <PropRow title="Assembly">
         <AssemblySelect variant="default" />

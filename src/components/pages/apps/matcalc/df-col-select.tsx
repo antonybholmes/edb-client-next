@@ -14,31 +14,36 @@ import type { VariantProps } from 'class-variance-authority'
  */
 export function DFColSelect({
   df,
-  value,
+  value = '',
   variant = 'default',
   limit = 10,
   onChange,
 }: {
   df: BaseDataFrame
-  value?: number
+  value?: string | number
   limit?: number
-  onChange?: (value: number) => void
+  onChange?: ({ value, index }: { value: string; index: number }) => void
 } & VariantProps<typeof triggerVariants>) {
   const cols = limit > -1 ? df.columns.slice(0, limit) : df.columns
 
-  const items = cols.map((c, ci) => ({ label: c, value: ci }))
+  const colMap = new Map(cols.map((c, i) => [c, i]))
+
+  const items = cols.map((c, ci) => ({ label: c, value: c }))
+
+  const v = typeof value === 'number' ? df.columns[value] : value
+
   return (
     <SelectList
       variant={variant}
       w="md"
       className="text-xs"
-      value={value}
+      value={v}
       items={items}
-      onValueChange={v => {
-        onChange?.(Number(v))
+      onValueChange={(v) => {
+        onChange?.({ value: v as string, index: colMap.get(v as string) ?? 0 })
       }}
     >
-      {items.map(v => (
+      {items.map((v) => (
         <SelectItem key={v.value} value={v.value}>
           {v.label}
         </SelectItem>

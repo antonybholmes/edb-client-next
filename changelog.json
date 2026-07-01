@@ -2019,6 +2019,12 @@
           "msg": "Bug fixes and updates.",
           "date": "2026-07-01T20:33:46.472Z"
         }
+      ],
+      "Added": [
+        {
+          "msg": "Sankey dialog now allows for col selection",
+          "date": "2026-07-01T21:08:31.014Z"
+        }
       ]
     },
     "author": "Antony Holmes",

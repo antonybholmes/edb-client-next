@@ -18,6 +18,7 @@ import {
  * - source color (optional): the color of the source node
  * - target color (optional): the color of the target node
  * - link color (optional): the color of the link
+ *
  * @param df
  * @param opts
  * @returns
@@ -94,6 +95,7 @@ export function DFToSankeyGraph(
         color: sourceColor || undefined,
       }
     }
+
     if (!nodesMap[target]) {
       nodesMap[target] = {
         id: makeUuid(),
@@ -113,7 +115,7 @@ export function DFToSankeyGraph(
 
   const nodes = Object.values(nodesMap)
 
-  const plot = newSankeyPlot('Sankey', nodes, links)
+  const plot = newSankeyPlot(df.name, nodes, links)
 
   return plot
 }
