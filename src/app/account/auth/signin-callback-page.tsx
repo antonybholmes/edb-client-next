@@ -2,49 +2,49 @@
 
 import { ThemeLink } from '@/components/link/theme-link'
 
+import {
+  getRedirectStateFromURI,
+  safeRedirect,
+} from '@/components/edb/auth/edb-signin'
+import {
+  HOME_REDIRECT_TARGET,
+  IRedirectTarget,
+  isSafeRelativeUrl,
+  useEdbSession,
+} from '@/components/edb/auth/session'
 import { config } from '@/config'
 import { CenterLayout } from '@/layouts/center-layout'
-import {
-    DEFAULT_REDIRECT_STATE,
-    getRedirectStateFromURI,
-    isSafeRelativeUrl,
-    safeRedirect,
-    type IRedirectState,
-} from '@/lib/edb/signin/edb-signin'
 import { CoreProviders } from '@/providers/core-providers'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { AuthModal } from './auth-modal'
 
 interface IBaseSignInCallbackPageProps {
-  state?: IRedirectState | null
+  target?: IRedirectTarget | null
   error?: string | null
   allowRedirect?: boolean
 }
 
 export function BaseSignInCallbackPage({
-  state = null,
+  target = null,
   error = null,
   allowRedirect = true,
 }: IBaseSignInCallbackPageProps) {
   // if state is set to something, validate it
   // and default to home if unsafe, otherwise null
-  const _state = state
-    ? isSafeRelativeUrl(state?.target.path || '')
-      ? state
-      : DEFAULT_REDIRECT_STATE
-    : null
+  const _target =
+    target && isSafeRelativeUrl(target.path) ? target : HOME_REDIRECT_TARGET
 
   useEffect(() => {
-    if (!_state || !allowRedirect || error) {
+    if (!_target || !allowRedirect || error) {
       return
     }
 
     try {
-      safeRedirect(_state.target.path)
+      safeRedirect(_target.path)
     } catch (err) {
       console.error('Error during redirect:', err)
     }
-  }, [_state, allowRedirect, error])
+  }, [_target, allowRedirect, error])
 
   return (
     <CenterLayout signinRequired={false} innerCls="gap-y-2">
@@ -52,12 +52,10 @@ export function BaseSignInCallbackPage({
         <p className="text-red-500">{error}</p>
       ) : (
         <AuthModal title={`Signing in to ${config.name}...`}>
-          {_state && (
+          {_target && (
             <p>
               You will be redirected to{' '}
-              <ThemeLink href={_state.target.path}>
-                {_state.target.title}
-              </ThemeLink>
+              <ThemeLink href={_target.path}>{_target.title}</ThemeLink>
             </p>
           )}
         </AuthModal>
@@ -67,14 +65,14 @@ export function BaseSignInCallbackPage({
 }
 
 export function CallbackPage() {
-  const [state, setState] = useState<IRedirectState | null>(null)
+  const { redirectTarget, setRedirect } = useEdbSession()
 
   useEffect(() => {
     async function processCallback() {
       try {
         const state = getRedirectStateFromURI()
 
-        setState(state)
+        setRedirect(state.target)
       } catch (error) {
         console.error('Error handling redirect callback:', error)
       }
@@ -83,7 +81,7 @@ export function CallbackPage() {
     processCallback()
   }, [])
 
-  return <BaseSignInCallbackPage state={state} />
+  return <BaseSignInCallbackPage target={redirectTarget} />
 }
 
 export function CallbackQueryPage() {

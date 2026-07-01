@@ -1,4 +1,7 @@
-import { API_MOTIF_DATASETS_URL, API_MOTIF_SEARCH_URL } from '@/lib/edb/edb'
+import {
+  API_MOTIF_DATASETS_URL,
+  API_MOTIF_SEARCH_URL,
+} from '@/components/edb/edb'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { useQuery } from '@tanstack/react-query'
 import APP_INFO from './manifest.json'

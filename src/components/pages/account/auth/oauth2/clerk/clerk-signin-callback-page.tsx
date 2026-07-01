@@ -1,11 +1,10 @@
 'use client'
 
-import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 
-import { signinStateAtom } from '@/lib/edb/signin/edb-signin'
+import { useEdbSession } from '@/components/edb/auth/session'
 import { CoreProviders } from '@/providers/core-providers'
 import { useAuth } from '@clerk/react'
-import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { BaseSignInCallbackPage } from '../../signin-callback-page'
 
@@ -16,8 +15,8 @@ export function SignInCallbackPage() {
   const { getToken, isSignedIn } = useAuth()
   const { signInWithClerk } = useEdbAuth()
 
-  const [signinState] = useAtom(signinStateAtom)
-  const [state, setState] = useState<typeof signinState | null>(null)
+  const { redirectTarget } = useEdbSession()
+
   const [allowRedirect, setAllowRedirect] = useState(false)
 
   useEffect(() => {
@@ -44,13 +43,12 @@ export function SignInCallbackPage() {
     }
   }, [isSignedIn])
 
-  useEffect(() => {
-    if (signinState.target.path) {
-      setState(signinState)
-    }
-  }, [signinState])
-
-  return <BaseSignInCallbackPage state={state} allowRedirect={allowRedirect} />
+  return (
+    <BaseSignInCallbackPage
+      target={redirectTarget}
+      allowRedirect={allowRedirect}
+    />
+  )
 }
 
 export function SignInCallbackQueryPage() {

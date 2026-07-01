@@ -2,7 +2,7 @@ import {
   TOOLBAR_STYLE_MAP,
   useEdbSettings,
   type ToolbarStyle,
-} from '@/lib/edb/edb-settings'
+} from '@/components/edb/edb-settings'
 import { capitalCase } from '@/lib/text/capital-case'
 import {
   Select,
@@ -22,8 +22,8 @@ export function SettingsToolbarPanel() {
       <PropRow title="Group Labels">
         <Select
           value={settings.toolbars.groups.labels.mode}
-          onValueChange={v => {
-            const newSettings = produce(settings, draft => {
+          onValueChange={(v) => {
+            const newSettings = produce(settings, (draft) => {
               draft.toolbars.groups.labels.mode = v as 'auto' | 'show' | 'hide'
             })
 
@@ -32,7 +32,7 @@ export function SettingsToolbarPanel() {
         >
           <SelectTrigger>
             <SelectValue data-placeholder="Choose group labels mode">
-              {value => <span>{capitalCase(value)}</span>}
+              {(value) => <span>{capitalCase(value)}</span>}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
@@ -46,8 +46,8 @@ export function SettingsToolbarPanel() {
       <PropRow title="Ribbon style">
         <Select
           value={settings.toolbars.ribbon.style}
-          onValueChange={v => {
-            const newSettings = produce(settings, draft => {
+          onValueChange={(v) => {
+            const newSettings = produce(settings, (draft) => {
               draft.toolbars.ribbon.style = v as ToolbarStyle
             })
 

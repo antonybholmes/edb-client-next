@@ -1,9 +1,9 @@
 'use client'
 
 import {
-    EDB_TOKEN_PARAM as EDB_JWT_PARAM,
-    SESSION_AUTH_PASSWORDLESS_VALIDATE_URL,
-} from '@/lib/edb/edb'
+  EDB_TOKEN_PARAM as EDB_JWT_PARAM,
+  SESSION_AUTH_PASSWORDLESS_VALIDATE_URL,
+} from '@/components/edb/edb'
 
 import { jwtDecode } from 'jwt-decode'
 

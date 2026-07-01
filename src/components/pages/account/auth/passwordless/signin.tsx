@@ -18,7 +18,7 @@ import {
   SIGN_UP_PATH,
   TEXT_PASSWORDLESS,
   TEXT_SIGN_UP,
-} from '@/lib/edb/edb'
+} from '@/components/edb/edb'
 
 import { ThemeIndexLink } from '@/components/link/theme-index-link'
 import {
@@ -46,9 +46,9 @@ import type { IDivProps } from '@/interfaces/div-props'
 
 import { TEXT_SIGN_IN } from '@/consts'
 
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { AppIcon } from '@/components/icons/app-icon'
 import { config } from '@/config'
-import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { useForm } from 'react-hook-form'
 import { toast } from '../../../../shadcn/ui/themed/v1/use-toast'

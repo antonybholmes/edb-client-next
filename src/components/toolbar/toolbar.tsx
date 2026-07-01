@@ -31,7 +31,7 @@ import { Button } from '@/themed/v2/button'
 
 import { produce } from 'immer'
 
-import { useEdbSettings } from '@/lib/edb/edb-settings'
+import { useEdbSettings } from '@/components/edb/edb-settings'
 
 import { SidebarCloseIcon, SidebarOpenIcon } from 'lucide-react'
 import { BaseCol } from '../layout/base-col'

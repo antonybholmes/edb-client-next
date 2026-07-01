@@ -1,6 +1,6 @@
 import { findCols, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
-import { API_DNA_URL } from '@/lib/edb/edb'
+import { API_DNA_URL } from '@/components/edb/edb'
 
 import { TIME_5_MINUTES_MS } from '@/consts'
 

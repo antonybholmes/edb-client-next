@@ -1,4 +1,8 @@
 import { BaseImage } from '@/components/base-image'
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
+
+import { APP_ACCOUNT_OAUTH2_SUPABASE_SIGNIN_CALLBACK_URL } from '@/components/edb/edb'
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { AppIcon } from '@/components/icons/app-icon'
 import { FormInputError } from '@/components/input-error'
 import { BaseCol } from '@/components/layout/base-col'
@@ -12,10 +16,6 @@ import {
 } from '@/components/shadcn/ui/themed/v2/form'
 import { TEXT_SIGN_IN } from '@/consts'
 import { supabase } from '@/lib/auth/supabase'
-import { APP_ACCOUNT_OAUTH2_SUPABASE_SIGNIN_CALLBACK_URL } from '@/lib/edb/edb'
-import { useEdbAuth } from '@/lib/edb/edb-auth'
-import { useEdbSettings } from '@/lib/edb/edb-settings'
-import { signinStateAtom } from '@/lib/edb/signin/edb-signin'
 import { makeUuid } from '@/lib/id'
 import { Card, CardHeader, CardTitle } from '@/themed/card'
 
@@ -25,7 +25,6 @@ import { Input } from '@/themed/v2/input'
 import { Toast } from '@base-ui/react/toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Provider, Session } from '@supabase/supabase-js'
-import { useAtom } from 'jotai'
 import { ArrowRight } from 'lucide-react'
 import { useRef, useState, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
@@ -44,7 +43,7 @@ export function SupabaseSignIn() {
   const { settings } = useEdbSettings()
   const { signInWithSupabase } = useEdbAuth()
   const [mode, setMode] = useState<'send' | 'verify'>('send')
-  const [signinState] = useAtom(signinStateAtom)
+  //const [signinState] = useAtom(signinStateAtom)
 
   const btnRef = useRef<HTMLButtonElement>(null)
   // const [email, setEmail] = useState(

@@ -43,14 +43,14 @@ import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
+import { AssemblySelect } from '@/components/edb/assembly-select'
+import { useAppInfo } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import {
   HeaderPortal,
   HeaderSlotPortal,
 } from '@/components/header/header-portal'
-import { AssemblySelect } from '@/lib/edb/assembly-select'
-import { useAppInfo } from '@/lib/edb/edb-settings'
 import { CoreProviders } from '@/providers/core-providers'
 import {
   HistoryLayout,

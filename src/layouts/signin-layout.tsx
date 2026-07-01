@@ -1,14 +1,14 @@
 import { HeaderLayout, type IHeaderLayoutProps } from '@/layouts/header-layout'
 
-import { SIGN_UP_PATH, TEXT_SIGN_UP } from '@/lib/edb/edb'
+import { SIGN_UP_PATH, TEXT_SIGN_UP } from '@/components/edb/edb'
 
 import { ThemeIndexLink } from '@/components/link/theme-index-link'
 import { type ReactNode } from 'react'
 
 import { TEXT_SIGN_IN } from '@/consts'
 
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 import { AuthModal } from '@/components/pages/account/auth/auth-modal'
-import { useEdbAuth } from '@/lib/edb/edb-auth'
 
 export const FORWARD_DELAY_MS = 2000
 

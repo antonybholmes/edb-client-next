@@ -1,5 +1,5 @@
+import { APP_HELP_API_URL } from '@/components/edb/edb'
 import type { IClassProps } from '@/interfaces/class-props'
-import { APP_HELP_API_URL } from '@/lib/edb/edb'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { QCP } from '@/qcp'
 import { useQuery } from '@tanstack/react-query'

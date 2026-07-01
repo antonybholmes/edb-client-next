@@ -12,6 +12,7 @@
 
 ### Changed
 
+- Fixed signout workflow. Auth redirects now handled via edbsession store.
 - Sankey now uses d3-sankey.
 - Added d3-sankey to do layout for me.
 - UI fixes.

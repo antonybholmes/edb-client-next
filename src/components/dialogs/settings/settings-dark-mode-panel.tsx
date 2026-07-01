@@ -1,4 +1,4 @@
-import { useTheme } from '@/lib/edb/theme'
+import { useTheme } from '@/components/edb/theme'
 import { Monitor, MoonStar, Sun } from 'lucide-react'
 import {
   GroupToggle,
@@ -12,7 +12,7 @@ export function SettingsDarkModePanel() {
     <ToggleGroup
       className="gap-x-1"
       value={[theme]}
-      onValueChange={value =>
+      onValueChange={(value) =>
         setTheme(value[0] as 'dark' | 'light' | 'automatic')
       }
       variant="app-theme"

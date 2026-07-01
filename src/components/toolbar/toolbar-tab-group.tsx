@@ -1,7 +1,7 @@
 import { VCenterRow } from '@/layout/v-center-row'
 
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { type IDivProps } from '@/interfaces/div-props'
-import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { cn } from '@/lib/shadcn-utils'
 import { type ReactNode } from 'react'
 import { BaseRow } from '../layout/base-row'

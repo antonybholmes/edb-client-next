@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
-import { API_HUBS_URL } from '@/lib/edb/edb'
+import { API_HUBS_URL } from '@/components/edb/edb'
 
 import { BaseCol } from '@/layout/base-col'
 
@@ -13,6 +13,9 @@ import { HubsPropsPanel } from './hubs-props-panel'
 import { useHubs, type IDataset } from './hubs-store'
 
 import { Autocomplete, AutocompleteLi } from '@/components/autocomplete'
+import { AssemblySelect } from '@/components/edb/assembly-select'
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
+import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
@@ -22,9 +25,6 @@ import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { useSideTabs } from '@/components/tabs/tab-provider'
 import { TIME_5_MINUTES_MS } from '@/consts'
 import { useSearch } from '@/hooks/search'
-import { AssemblySelect } from '@/lib/edb/assembly-select'
-import { useEdbAuth } from '@/lib/edb/edb-auth'
-import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { CoreProviders } from '@/providers/core-providers'

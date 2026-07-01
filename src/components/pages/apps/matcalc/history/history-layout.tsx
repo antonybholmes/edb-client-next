@@ -7,13 +7,13 @@ import {
 import type { IChildrenProps } from '@/interfaces/children-props'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { BaseCol } from '@/components/layout/base-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { TEXT_CLEAR, TEXT_OK } from '@/consts'
-import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { History } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 

@@ -2,22 +2,19 @@
 
 import { CoreProviders } from '@/providers/core-providers'
 
-import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 import { useEffect, useState } from 'react'
 
-import {
-    signinStateAtom,
-    type IRedirectState,
-} from '@/lib/edb/signin/edb-signin'
-import { useAtom } from 'jotai'
+import { useEdbSession } from '@/components/edb/auth/session'
 import { BaseSignInCallbackPage } from '../../signin-callback-page'
 import { handleCognitoCallback } from './cognito-signin-button'
 
 export function SignInCallbackPage() {
   const { signInWithCognito } = useEdbAuth()
-  const [state, setState] = useState<IRedirectState | null>(null)
-  const [signinState] = useAtom(signinStateAtom)
+
   const [allowRedirect, setAllowRedirect] = useState(false)
+
+  const { redirectTarget } = useEdbSession()
 
   useEffect(() => {
     async function parse() {
@@ -45,13 +42,12 @@ export function SignInCallbackPage() {
     parse()
   }, [])
 
-  useEffect(() => {
-    if (signinState.target.path) {
-      setState(signinState)
-    }
-  }, [signinState])
-
-  return <BaseSignInCallbackPage state={state} allowRedirect={allowRedirect} />
+  return (
+    <BaseSignInCallbackPage
+      target={redirectTarget}
+      allowRedirect={allowRedirect}
+    />
+  )
 }
 
 export function SignInCallbackQueryPage() {

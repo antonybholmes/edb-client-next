@@ -42,9 +42,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { type ISeqDBTrack } from '../tracks-provider'
 import { useTracks } from '../tracks-store'
 
+import { useEdbSettings } from '@/components/edb/edb-settings'
+import { normalizeAssemblyName } from '@/components/edb/genome'
 import { appsConfig } from '@/config/apps'
-import { useEdbSettings } from '@/lib/edb/edb-settings'
-import { normalizeAssemblyName } from '@/lib/edb/genome'
 import { ArrowDownUp, ShoppingCart } from 'lucide-react'
 
 function makeUcscUrl(seq: ISeqDBTrack): string {

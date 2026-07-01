@@ -1,4 +1,8 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
+import {
+  API_PATHWAY_COLLECTIONS_URL,
+  API_PATHWAY_GENES_URL,
+} from '@/components/edb/edb'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
 import {
@@ -15,10 +19,6 @@ import { TEXT_RUN, TEXT_SAVE_TABLE } from '@/consts'
 import { randomHexColor } from '@/lib/color/color'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { DEFAULT_SHEET_NAME } from '@/lib/dataframe/base-dataframe'
-import {
-  API_PATHWAY_COLLECTIONS_URL,
-  API_PATHWAY_GENES_URL,
-} from '@/lib/edb/edb'
 import { ICollection, IDataset, IGeneSet } from '@/lib/gsea/geneset'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { makeUuid } from '@/lib/id'

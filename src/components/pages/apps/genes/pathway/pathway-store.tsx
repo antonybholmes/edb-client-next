@@ -4,9 +4,9 @@ import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { create } from 'zustand'
 
+import { API_PATHWAY_DATASETS_URL } from '@/components/edb/edb'
 import { TIME_5_MINUTES_MS } from '@/consts'
 import type { IDBEntity } from '@/interfaces/db-entity'
-import { API_PATHWAY_DATASETS_URL } from '@/lib/edb/edb'
 import { GENES_IN_UNIVERSE } from '@/lib/gene/pathway/pathway'
 
 export interface ICollectionInfo extends IDBEntity {
@@ -35,22 +35,22 @@ export const LOCAL_DATASET: IDatsetInfo = {
   collections: [],
 }
 
-export const usePathwayStore = create<IPathwayStore>()(set => ({
+export const usePathwayStore = create<IPathwayStore>()((set) => ({
   datasets: [{ ...LOCAL_DATASET }],
   collectionsInUse: {},
 
   genesInUniverse: GENES_IN_UNIVERSE,
   setDatasets: (datasets: IDatsetInfo[]) =>
-    set(state => ({ ...state, datasets: [state.datasets[0]!, ...datasets] })),
+    set((state) => ({ ...state, datasets: [state.datasets[0]!, ...datasets] })),
   setCollectionsInUse: (collectionsInUse: Record<string, boolean>) =>
     set({ collectionsInUse }),
   setSelectAllCollections: (selectAll: boolean) => {
-    set(state => ({
+    set((state) => ({
       collectionsInUse: Object.fromEntries(
         state.datasets
-          .map(dataset => dataset.collections)
+          .map((dataset) => dataset.collections)
           .flat()
-          .map(ds => [ds.id, selectAll])
+          .map((ds) => [ds.id, selectAll])
       ),
     }))
   },
@@ -60,19 +60,21 @@ export const usePathwayStore = create<IPathwayStore>()(set => ({
 export function usePathways(opts: { selectAll?: boolean } = {}): IPathwayStore {
   const { selectAll = true } = opts
 
-  const datasets = usePathwayStore(state => state.datasets)
-  const collectionsInUse = usePathwayStore(state => state.collectionsInUse)
+  const datasets = usePathwayStore((state) => state.datasets)
+  const collectionsInUse = usePathwayStore((state) => state.collectionsInUse)
 
-  const genesInUniverse = usePathwayStore(state => state.genesInUniverse)
+  const genesInUniverse = usePathwayStore((state) => state.genesInUniverse)
 
-  const setDatasets = usePathwayStore(state => state.setDatasets)
+  const setDatasets = usePathwayStore((state) => state.setDatasets)
   const setCollectionsInUse = usePathwayStore(
-    state => state.setCollectionsInUse
+    (state) => state.setCollectionsInUse
   )
   const setSelectAllCollections = usePathwayStore(
-    state => state.setSelectAllCollections
+    (state) => state.setSelectAllCollections
   )
-  const setGenesInUniverse = usePathwayStore(state => state.setGenesInUniverse)
+  const setGenesInUniverse = usePathwayStore(
+    (state) => state.setGenesInUniverse
+  )
 
   const { data: datasetsDb } = useQuery({
     queryKey: ['datasets'],
@@ -94,9 +96,9 @@ export function usePathways(opts: { selectAll?: boolean } = {}): IPathwayStore {
       setCollectionsInUse(
         Object.fromEntries(
           datasetsDb
-            .map(dataset => dataset.collections)
+            .map((dataset) => dataset.collections)
             .flat()
-            .map(ds => [ds.id, selectAll])
+            .map((ds) => [ds.id, selectAll])
         )
       )
     }

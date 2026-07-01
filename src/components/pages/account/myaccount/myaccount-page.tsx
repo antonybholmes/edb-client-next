@@ -1,28 +1,28 @@
 'use client'
 
 import {
-    EMAIL_PATTERN,
-    NAME_PATTERN,
-    TEXT_EMAIL_ERROR,
-    TEXT_USERNAME_REQUIRED,
+  EMAIL_PATTERN,
+  NAME_PATTERN,
+  TEXT_EMAIL_ERROR,
+  TEXT_USERNAME_REQUIRED,
 } from '@/layouts/signin-layout'
 
 import {
-    DEFAULT_EDB_USER,
-    flattenRoles,
-    SESSION_UPDATE_USER_URL,
-    TEXT_MY_ACCOUNT,
-    type IAuthProvider,
-    type IEdbUser,
-} from '@/lib/edb/edb'
+  DEFAULT_EDB_USER,
+  flattenRoles,
+  SESSION_UPDATE_USER_URL,
+  TEXT_MY_ACCOUNT,
+  type IAuthProvider,
+  type IEdbUser,
+} from '@/components/edb/edb'
 
 import { useEffect, useRef, useState, type BaseSyntheticEvent } from 'react'
 
 import { FormInputError } from '@/components/input-error'
 import {
-    Form,
-    FormField,
-    FormItem,
+  Form,
+  FormField,
+  FormItem,
 } from '@/components/shadcn/ui/themed/v2/form'
 import { VCenterRow } from '@/layout/v-center-row'
 import { Button } from '@/themed/v2/button'
@@ -30,7 +30,7 @@ import { Button } from '@/themed/v2/button'
 import { Label } from '@/components/shadcn/ui/themed/v2/label'
 import { Input } from '@/themed/v2/input'
 
-import { SIGNIN_METHOD_MAP, useEdbAuth } from '@/lib/edb/edb-auth'
+import { SIGNIN_METHOD_MAP, useEdbAuth } from '@/components/edb/auth/edb-auth'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { csfrHeaders } from '@/lib/http/urls'
 
@@ -47,7 +47,10 @@ import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
 import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
 import { CenterLayout } from '@/layouts/center-layout'
 
-import { fetchCSRFTokenFromServer, getCSRFToken } from '@/lib/edb/csrf'
+import {
+  fetchCSRFTokenFromServer,
+  getCSRFToken,
+} from '@/components/edb/auth/csrf'
 import { makeUuid } from '@/lib/id'
 import { IconButton } from '@/themed/icon-button'
 import { Toast } from '@base-ui/react/toast'

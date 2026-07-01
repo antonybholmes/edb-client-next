@@ -6,8 +6,8 @@ import {
 import { makeUuid } from '@/lib/id'
 import { create } from 'zustand'
 
+import { INewUser, type IEdbUser, type IRBACGroup } from '@/components/edb/edb'
 import { TEXT_OK } from '@/consts'
-import { INewUser, type IEdbUser, type IRBACGroup } from '@/lib/edb/edb'
 import { EditUserDialog } from './edit-user-dialog'
 
 type DialogTypeMap = {

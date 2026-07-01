@@ -13,7 +13,7 @@ import {
   validateToken,
   type IBasicEdbUser,
   type IEdbSession,
-} from '@/lib/edb/edb'
+} from '@/components/edb/edb'
 import { httpFetch } from '@/lib/http/http-fetch'
 import {
   bearerHeaders,
@@ -26,8 +26,8 @@ import {
 import { produce } from 'immer'
 import { useEffect } from 'react'
 import { create } from 'zustand'
-import { logger } from '../logger'
-import { useEdbSettings, useEdbSettingsStore } from './edb-settings'
+import { logger } from '../../../lib/logger'
+import { useEdbSettings, useEdbSettingsStore } from '../edb-settings'
 
 import { persist } from 'zustand/middleware'
 

@@ -1,3 +1,4 @@
+import { IDBEntity } from '@/interfaces/db-entity'
 import type { IClusterGroup } from '@/lib/cluster-group'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import {
@@ -15,7 +16,6 @@ import {
   HistoryPath,
   HistoryPlot,
   IGroupOps,
-  IHistoryComp,
   IHistoryData,
   IHistoryDataStore,
   IHistoryState,
@@ -32,7 +32,7 @@ export type HistoryAction =
   | { type: 'seek'; step: number | string }
   | {
       type: 'openFile'
-      file: IHistoryComp
+      file: IDBEntity
       sheets: BaseDataFrame[]
       plots: HistoryPlot[]
       groups: IClusterGroup[]

@@ -1,5 +1,5 @@
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { TEXT_CANCEL, TEXT_NAME } from '@/consts'
-import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { UndefStr } from '@/lib/text/text'
 import { produce } from 'immer'
 import { useEffect, useState } from 'react'

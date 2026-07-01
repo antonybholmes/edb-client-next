@@ -1,20 +1,20 @@
 'use client'
 
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
+import { MYACCOUNT_PATH, TEXT_MY_ACCOUNT } from '@/components/edb/edb'
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { AppIcon } from '@/components/icons/app-icon'
 import { FormInputError } from '@/components/input-error'
 import { BaseCol } from '@/components/layout/base-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import {
-    Form,
-    FormField,
-    FormItem,
+  Form,
+  FormField,
+  FormItem,
 } from '@/components/shadcn/ui/themed/v2/form'
 import { Label } from '@/components/shadcn/ui/themed/v2/label'
 import { TEXT_SIGN_IN } from '@/consts'
 import { CenterLayout } from '@/layouts/center-layout'
-import { MYACCOUNT_PATH, TEXT_MY_ACCOUNT } from '@/lib/edb/edb'
-import { useEdbAuth } from '@/lib/edb/edb-auth'
-import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { Card, CardHeader, CardTitle } from '@/themed/card'
 
 import { Button } from '@/themed/v2/button'
@@ -23,14 +23,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 import { ArrowRight } from 'lucide-react'
 
+import { safeRedirect } from '@/components/edb/auth/edb-signin'
+import { isSafeRelativeUrl, useEdbSession } from '@/components/edb/auth/session'
 import { ThemeLink } from '@/components/link/theme-link'
 import { config } from '@/config'
-import {
-    getRedirectStateFromURI,
-    isSafeRelativeUrl,
-    safeRedirect,
-    type IRedirectState,
-} from '@/lib/edb/signin/edb-signin'
 import { makeUuid } from '@/lib/id'
 import { addPeriod, capitalizeFirstWord } from '@/lib/text/capital-case'
 import { CoreProviders } from '@/providers/core-providers'
@@ -52,7 +48,7 @@ export function SignInPage() {
   const [otpSent, setOTPSent] = useState(false)
   const { settings } = useEdbSettings()
   const { sendOTP, signInWithEmailOTP, session } = useEdbAuth()
-  const [state, setState] = useState<IRedirectState | null>(null)
+  let { redirectTarget } = useEdbSession()
 
   const btnRef = useRef<HTMLButtonElement>(null)
 
@@ -65,14 +61,6 @@ export function SignInPage() {
       otp: '',
     },
   })
-
-  useEffect(() => {
-    setState(
-      getRedirectStateFromURI({
-        target: { title: TEXT_MY_ACCOUNT, path: MYACCOUNT_PATH },
-      })
-    )
-  }, [])
 
   useEffect(() => {
     if (settings.users.length! > 0) {
@@ -99,7 +87,7 @@ export function SignInPage() {
       //   redirectUrl !== OTP_SIGN_IN_ROUTE &&
       //   redirectUrl.startsWith('/')
 
-      let url = state?.target.path ?? MYACCOUNT_PATH
+      let url = redirectTarget?.path || MYACCOUNT_PATH
 
       if (!isSafeRelativeUrl(url)) {
         url = MYACCOUNT_PATH
@@ -194,9 +182,9 @@ export function SignInPage() {
             , you are already signed in.
           </p>
           <p>
-            {state?.target && (
-              <ThemeLink href={state.target.path} className="hover:underline">
-                Go to {state.target.title ?? TEXT_MY_ACCOUNT}
+            {redirectTarget && (
+              <ThemeLink href={redirectTarget.path} className="hover:underline">
+                Go to {redirectTarget.title ?? TEXT_MY_ACCOUNT}
               </ThemeLink>
             )}
           </p>

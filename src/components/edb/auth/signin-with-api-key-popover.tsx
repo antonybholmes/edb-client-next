@@ -11,7 +11,7 @@ import { Button } from '@/themed/v2/button'
 import { Label } from '@/components/shadcn/ui/themed/v2/label'
 import { Input } from '@/themed/v2/input'
 
-import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 
 import { useForm } from 'react-hook-form'
 

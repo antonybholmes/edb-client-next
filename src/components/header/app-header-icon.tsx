@@ -7,7 +7,7 @@ import {
 } from '@/interfaces/icon-props'
 import { cn } from '@/lib/shadcn-utils'
 
-import { useAppInfo } from '@/lib/edb/edb-settings'
+import { useAppInfo } from '@/components/edb/edb-settings'
 import { HomeIcon } from '../icons/home-icon'
 import { VCenterRow } from '../layout/v-center-row'
 import { BaseLink } from '../link/base-link'

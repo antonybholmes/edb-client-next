@@ -3,7 +3,7 @@ import { createContext, useCallback, useContext, useState } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { config } from '../../config'
-import type { IAppInfo } from '../app-info'
+import type { IAppInfo } from '../../lib/app-info'
 import type { IBasicEdbUser } from './edb'
 import { useTheme } from './theme'
 

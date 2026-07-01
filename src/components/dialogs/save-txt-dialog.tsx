@@ -1,5 +1,5 @@
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { TEXT_CANCEL, TEXT_SAVE_AS } from '@/consts'
-import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { produce } from 'immer'
 import {
   SaveAsDialog,

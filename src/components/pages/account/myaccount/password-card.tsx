@@ -1,6 +1,4 @@
-import { SESSION_UPDATE_PASSWORD_URL } from '@/lib/edb/edb'
-
-//import { AccountSettingsContext } from "@/context/account-settings-context"
+import { SESSION_UPDATE_PASSWORD_URL } from '@/components/edb/edb'
 
 import { useRef, type BaseSyntheticEvent } from 'react'
 
@@ -19,8 +17,9 @@ import { Input } from '@/themed/v2/input'
 
 import { VCenterRow } from '@/components/layout/v-center-row'
 
-import { getCSRFToken } from '@/lib/edb/csrf'
-import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
+
+import { getCSRFToken } from '@/components/edb/auth/csrf'
 import { csfrHeaders } from '@/lib/http/urls'
 import { makeUuid } from '@/lib/id'
 import { Toast } from '@base-ui/react/toast'

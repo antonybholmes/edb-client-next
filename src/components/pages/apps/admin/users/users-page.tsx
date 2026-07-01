@@ -1,18 +1,18 @@
 'use client'
 
 import {
-    API_ADMIN_ADD_USER_URL,
-    API_ADMIN_GROUPS_URL,
-    API_ADMIN_UPDATE_USER_URL,
-    API_ADMIN_USER_STATS_URL,
-    API_ADMIN_USERS_URL,
-    DEFAULT_EDB_USER,
-    flattenGroups,
-    flattenRoles,
-    INewUser,
-    type IEdbUser,
-    type IRBACGroup,
-} from '@/lib/edb/edb'
+  API_ADMIN_ADD_USER_URL,
+  API_ADMIN_GROUPS_URL,
+  API_ADMIN_UPDATE_USER_URL,
+  API_ADMIN_USER_STATS_URL,
+  API_ADMIN_USERS_URL,
+  DEFAULT_EDB_USER,
+  flattenGroups,
+  flattenRoles,
+  INewUser,
+  type IEdbUser,
+  type IRBACGroup,
+} from '@/components/edb/edb'
 
 import { useEffect, useState } from 'react'
 
@@ -23,19 +23,19 @@ import { PlusIcon } from '@/icons/plus-icon'
 import { TrashIcon } from '@/icons/trash-icon'
 import { VCenterRow } from '@/layout/v-center-row'
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/themed/table'
 import { Button } from '@/themed/v2/button'
 import {
-    createColumnHelper,
-    flexRender,
-    getCoreRowModel,
-    useReactTable,
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
 } from '@tanstack/react-table'
 
 import { CenterCol } from '@/components/layout/center-col'
@@ -43,19 +43,20 @@ import { CenterCol } from '@/components/layout/center-col'
 import { BaseCol } from '@/layout/base-col'
 import { Card } from '@/themed/card'
 
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 import { AdminLayout } from '@/layouts/admin-layout'
-import { useEdbAuth } from '@/lib/edb/edb-auth'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { csfrWithTokenHeaders } from '@/lib/http/urls'
 import { logger } from '@/lib/logger'
 import { CoreProviders } from '@/providers/core-providers'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
+
+import { getCSRFToken } from '@/components/edb/auth/csrf'
+import { useAppInfo } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
-import { getCSRFToken } from '@/lib/edb/csrf'
-import { useAppInfo } from '@/lib/edb/edb-settings'
 import { makeUuid } from '@/lib/id'
 import { Toast } from '@base-ui/react/toast'
 import APP_INFO from './manifest.json'

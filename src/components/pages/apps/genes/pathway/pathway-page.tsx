@@ -57,8 +57,8 @@ import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { CoreProviders } from '@/providers/core-providers'
 
+import { useAppInfo } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
-import { useAppInfo } from '@/lib/edb/edb-settings'
 import {
   HistoryLayout,
   HistoryShowButton,

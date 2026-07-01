@@ -1,13 +1,16 @@
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
+import {
+  API_RESET_PASSWORD_URL,
+  APP_RESET_PASSWORD_URL,
+} from '@/components/edb/edb'
 import { TEXT_OK } from '@/consts'
-import { API_RESET_PASSWORD_URL, APP_RESET_PASSWORD_URL } from '@/lib/edb/edb'
 
 //import { AccountSettingsContext } from "@/context/account-settings-context"
 
 import { useState } from 'react'
 
-import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 import { bearerHeaders } from '@/lib/http/urls'
 
 import { httpFetch } from '@/lib/http/http-fetch'

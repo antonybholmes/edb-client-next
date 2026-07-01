@@ -2,22 +2,21 @@
 
 import { Button } from '@/themed/v2/button'
 
-import { TEXT_SIGN_IN } from '@/consts'
+import { encodeRedirectState } from '@/components/edb/auth/edb-signin'
+import {
+  HOME_REDIRECT_STATE,
+  HOME_REDIRECT_TARGET,
+  IRedirectState,
+  IRedirectTarget,
+  isSafeRelativeUrl,
+  useEdbSession,
+} from '@/components/edb/auth/session'
 import {
   APP_ACCOUNT_AUTH_SIGNED_OUT_URL,
   APP_ACCOUNT_OAUTH2_COGNITO_SIGNIN_CALLBACK_URL,
-} from '@/lib/edb/edb'
-import {
-  DEFAULT_REDIRECT_STATE,
-  DEFAULT_REDIRECT_TARGET,
-  encodeRedirectState,
-  isSafeRelativeUrl,
-  signinStateAtom,
-  type IRedirectState,
-  type IRedirectTarget,
-} from '@/lib/edb/signin/edb-signin'
+} from '@/components/edb/edb'
+import { TEXT_SIGN_IN } from '@/consts'
 import { redirect } from '@/lib/http/urls'
-import { useAtom } from 'jotai'
 import {} from '../../signin-callback-page'
 
 const COGNITO_DOMAIN = process.env.NEXT_PUBLIC_COGNITO_DOMAIN
@@ -33,7 +32,7 @@ function base64UrlEncode(buf: Uint8Array) {
 }
 
 export async function cognitoSignIn(
-  state: IRedirectState = DEFAULT_REDIRECT_STATE
+  state: IRedirectState = HOME_REDIRECT_STATE
 ) {
   const verifier = base64UrlEncode(crypto.getRandomValues(new Uint8Array(32)))
   localStorage.setItem('pkce_verifier', verifier)
@@ -96,20 +95,19 @@ export async function handleCognitoCallback(): Promise<{
   localStorage.removeItem('pkce_verifier')
 
   // Decode state
-  let target: IRedirectTarget = DEFAULT_REDIRECT_TARGET
+  let target: IRedirectTarget = HOME_REDIRECT_TARGET
 
   if (stateRaw) {
     try {
       target =
-        JSON.parse(decodeURIComponent(stateRaw))?.target ||
-        DEFAULT_REDIRECT_TARGET
+        JSON.parse(decodeURIComponent(stateRaw))?.target || HOME_REDIRECT_TARGET
     } catch {
       console.warn('Invalid signout state')
     }
   }
 
   if (!isSafeRelativeUrl(target.path)) {
-    target = DEFAULT_REDIRECT_TARGET
+    target = HOME_REDIRECT_TARGET
   }
 
   return { tokens, state: { target } }
@@ -161,11 +159,13 @@ export function cognitoSignout(): string {
 // }
 
 export function CognitoSignInButton({
-  state = DEFAULT_REDIRECT_STATE,
+  state = HOME_REDIRECT_STATE,
 }: {
   state: IRedirectState
 }) {
-  const [, setState] = useAtom(signinStateAtom)
+  //const [, setState] = useAtom(signinStateAtom)
+
+  const { setRedirect } = useEdbSession()
 
   // Allow users to signin
   return (
@@ -174,7 +174,7 @@ export function CognitoSignInButton({
       //className="w-full"
       size="lg"
       onClick={() => {
-        setState(state)
+        setRedirect(state.target)
         cognitoSignIn(state)
       }}
       aria-label={TEXT_SIGN_IN}

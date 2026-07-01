@@ -47,14 +47,14 @@ import { ExportIcon } from '@/icons/export-icon'
 import { CoreProviders } from '@/providers/core-providers'
 import { produce } from 'immer'
 
-import { useAppInfo, useEdbSettings } from '@/lib/edb/edb-settings'
+import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
 
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 
+import { AssemblySelect } from '@/components/edb/assembly-select'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
-import { AssemblySelect } from '@/lib/edb/assembly-select'
 import { locStr } from '@/lib/genomic/genomic'
 import {
   parseGenomicLocation,

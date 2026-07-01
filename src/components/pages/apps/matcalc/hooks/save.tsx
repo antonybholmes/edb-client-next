@@ -1,7 +1,7 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
-import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { friendlyFilename } from '@/lib/path'
 import { useCurrentSheets } from '../history/history-provider/history-contexts'
 import { useMatcalcSettings } from '../settings/matcalc-settings'

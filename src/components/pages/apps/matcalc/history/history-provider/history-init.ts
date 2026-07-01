@@ -27,7 +27,7 @@ export function init(): IHistoryData {
   let state: IHistoryState = {
     id,
     name: 'History',
-    createdAt: Date.now(),
+    createdAt: new Date().toISOString(),
     ...initState(),
   }
 

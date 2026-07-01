@@ -1,6 +1,6 @@
+import { httpFetch } from '@/lib/http/http-fetch'
 import Cookies from 'js-cookie'
-import { httpFetch } from '../http/http-fetch'
-import { EDB_SEP, SESSION_URL } from './edb'
+import { EDB_SEP, SESSION_URL } from '../edb'
 
 export const SESSION_REFRESH_CSRF_TOKENS_URL = `${SESSION_URL}/csrf`
 export const CSRF_COOKIE_NAME = 'csrf-token'

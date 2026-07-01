@@ -42,8 +42,6 @@ import { Button } from '@/themed/v2/button'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { AuthProvider } from '@/providers/auth-provider'
-import { useAtom } from 'jotai'
-import { atomWithStorage } from 'jotai/utils'
 import {
   APP_ACCOUNT_AUTH_SIGNED_OUT_URL,
   APP_ADMIN_USERS_ROUTE,
@@ -59,8 +57,16 @@ import {
   TEXT_MY_ACCOUNT,
   type IBasicEdbUser,
 } from '../edb'
-import { useEdbAuth, useEdbSignIn } from '../edb-auth'
 import { useEdbSettings } from '../edb-settings'
+import { useEdbAuth, useEdbSignIn } from './edb-auth'
+import {
+  HOME_REDIRECT_STATE,
+  HOME_REDIRECT_TARGET,
+  IRedirectState,
+  IRedirectTarget,
+  isSafeRelativeUrl,
+  useEdbSession,
+} from './session'
 import { SignInWithApiKeyPopover } from './signin-with-api-key-popover'
 
 export type SignInMode = 'username-password' | 'api' | 'auth0' | 'oauth2'
@@ -69,44 +75,30 @@ export const STATE_PARAM = 'state'
 export const REDIRECT_PARAM = 'redirect'
 export const TITLE_PARAM = 'title'
 
-export interface IRedirectTarget {
-  title: string // display title
-  path: string // relative path
-}
+// export const NULL_REDIRECT_TARGET: IRedirectTarget = {
+//   title: '',
+//   path: '',
+// }
 
-export interface IRedirectState {
-  target: IRedirectTarget
-}
+// export const DEFAULT_REDIRECT_STATE: IRedirectState = {
+//   target: DEFAULT_REDIRECT_TARGET,
+// }
 
-export const DEFAULT_REDIRECT_TARGET: IRedirectTarget = {
-  title: 'Home',
-  path: '/',
-}
-
-export const NULL_REDIRECT_TARGET: IRedirectTarget = {
-  title: '',
-  path: '',
-}
-
-export const DEFAULT_REDIRECT_STATE: IRedirectState = {
-  target: DEFAULT_REDIRECT_TARGET,
-}
-
-export const NULL_REDIRECT_STATE: IRedirectState = {
-  target: NULL_REDIRECT_TARGET,
-}
+// export const NULL_REDIRECT_STATE: IRedirectState = {
+//   target: NULL_REDIRECT_TARGET,
+// }
 
 // Create an atom synced with sessionStorage
-export const signinStateAtom = atomWithStorage<IRedirectState>(
-  'edb:auth:signin-state',
-  NULL_REDIRECT_STATE
-)
+// export const signinStateAtom = atomWithStorage<IRedirectState>(
+//   'edb:auth:signin-state',
+//   NULL_REDIRECT_STATE
+// )
 
-// Create an atom synced with sessionStorage
-export const signOutStateAtom = atomWithStorage<IRedirectState>(
-  'edb:auth:sign-out-state',
-  NULL_REDIRECT_STATE
-)
+// // Create an atom synced with sessionStorage
+// export const signOutStateAtom = atomWithStorage<IRedirectState>(
+//   'edb:auth:sign-out-state',
+//   NULL_REDIRECT_STATE
+// )
 
 /**
  * Hook for triggering sign out process. It will sign out the user
@@ -121,7 +113,8 @@ export function useSignOut(): {
 } {
   const { signinMethod } = useEdbSignIn()
   const { signout } = useEdbAuth()
-  const [, setLogoutState] = useAtom(signOutStateAtom)
+  const { setRedirect } = useEdbSession()
+  //const [, setLogoutState] = useAtom(signOutStateAtom)
 
   async function signOut(state: IRedirectState) {
     try {
@@ -131,11 +124,11 @@ export function useSignOut(): {
     }
 
     if (!isSafeRelativeUrl(state.target.path)) {
-      state.target = DEFAULT_REDIRECT_TARGET
+      state.target = HOME_REDIRECT_TARGET
     }
 
     // Cache state for post-logout
-    setLogoutState(state)
+    setRedirect(state.target)
 
     // Determine provider logout URL
     let path = ''
@@ -170,7 +163,7 @@ export function useSignOut(): {
  * @returns
  */
 export function makeSignedOutRedirectUri(
-  state: IRedirectState = DEFAULT_REDIRECT_STATE
+  state: IRedirectState = HOME_REDIRECT_STATE
 ): IRedirectState {
   return {
     target: {
@@ -186,7 +179,7 @@ export function makeSignedOutRedirectUri(
  * @returns
  */
 export function makeSignedOutRedirectRoute(
-  state: IRedirectState = DEFAULT_REDIRECT_STATE
+  state: IRedirectState = HOME_REDIRECT_STATE
 ): IRedirectState {
   return {
     target: {
@@ -203,7 +196,7 @@ export function makeSignedOutRedirectRoute(
  * @returns The validated redirect URL.
  */
 export function getRedirectStateFromURI(
-  defaultState: IRedirectState = DEFAULT_REDIRECT_STATE
+  defaultState: IRedirectState = HOME_REDIRECT_STATE
 ): IRedirectState {
   const params = new URLSearchParams(window.location.search)
 
@@ -321,73 +314,6 @@ export function decodeRedirectState(
 //   )
 // }
 
-export function isSafeRelativeUrl(url: string): boolean {
-  // Empty is not valid
-  if (!url) return false
-
-  // // Reject protocol-relative URLs (e.g. "//evil.com")
-  // if (value.startsWith('//')) {
-  //   return false
-  // }
-
-  // // Reject absolute URLs (e.g. "http://...", "https://...", "ftp://...")
-  // // Detect any scheme-like pattern: "<letters>:" before a slash
-  // if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(value)) {
-  //   return false
-  // }
-
-  // Reject encoded attempts to hide a scheme (e.g. "%2f%2fevil.com")
-  // %2f = "/", so after decoding it might start with "//"
-  let decoded: string
-
-  try {
-    decoded = decodeURIComponent(url)
-  } catch {
-    return false // bad encoding → reject
-  }
-
-  // Reject URLs with spaces
-  if (/\s/.test(decoded)) {
-    return false
-  }
-
-  // Reject ASCII control characters
-  if (/[\u0000-\u001F]/.test(decoded)) {
-    return false
-  }
-
-  // Reject absolute URLs
-  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(decoded)) {
-    return false
-  }
-
-  // Allow ONLY URLs starting with a slash
-  if (!decoded.startsWith('/')) {
-    return false
-  }
-
-  // Reject protocol-relative URLs like //evil.com
-  if (decoded.startsWith('//')) {
-    return false
-  }
-
-  const ld = decoded.toLowerCase()
-
-  if (
-    ld.includes('signin') || // prevent sign-in URLs
-    ld.includes('signout') || // prevent sign-in/sign-out URLs
-    ld.includes('sign-out') || // prevent sign-in/sign-out URLs
-    ld.includes('signedout') || // prevent signedout URLs
-    ld.includes('signed-out') || // prevent signedout URLs
-    ld.includes('callback')
-  ) {
-    // prevent callback URLs
-    return false
-  }
-
-  return true
-}
-
 /**
  * Safely redirects to a given URL after validating it, i.e. needs to be
  * a safe relative URL.
@@ -414,12 +340,13 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
 
   const { settings } = useEdbSettings()
   const { session } = useEdbAuth()
-  const [, setSigninState] = useAtom(signinStateAtom)
+  //const [, setSigninState] = useAtom(signinStateAtom)
   //const { loginWithRedirect } = useAuth0()
   const { signOut } = useSignOut()
   const { open: openDialog } = useDialogs()
+  const { setRedirect } = useEdbSession()
 
-  const [state, setState] = useState<IRedirectState>(DEFAULT_REDIRECT_STATE)
+  const [state, setState] = useState<IRedirectState>(HOME_REDIRECT_STATE)
 
   //const [pathname, setPathName] = useState('/')
 
@@ -569,7 +496,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
                   size="lg"
                   aria-label={TEXT_SIGN_IN}
                   onClick={() => {
-                    setSigninState(state)
+                    setRedirect(state.target)
                     redirect(addRedirectStateToUrl(OTP_SIGN_IN_PATH, state))
                   }}
                 >
@@ -679,7 +606,7 @@ export function EDBSignIn({ apiKey = '', signInMode = 'auth0' }: IProps) {
                   size="lg"
                   aria-label={TEXT_SIGN_IN}
                   onClick={() => {
-                    setSigninState(state)
+                    setRedirect(state.target)
                     redirect(addRedirectStateToUrl(OTP_SIGN_IN_PATH, state))
                   }}
                 >

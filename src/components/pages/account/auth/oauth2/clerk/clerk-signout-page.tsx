@@ -1,21 +1,17 @@
 import { CoreProviders } from '@/providers/core-providers'
 
-import { APP_ACCOUNT_AUTH_SIGNED_OUT_URL } from '@/lib/edb/edb'
+import { APP_ACCOUNT_AUTH_SIGNED_OUT_URL } from '@/components/edb/edb'
 import { useClerk } from '@clerk/react'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
-import {
-    signOutStateAtom,
-    type IRedirectState,
-} from '@/lib/edb/signin/edb-signin'
-import { useAtom } from 'jotai'
+import {} from '@/components/edb/auth/edb-signin'
+import { useEdbSession } from '@/components/edb/auth/session'
 import { BaseSignOutPage } from '../../sign-out-page'
 
 export function SignOutPage() {
   const { signOut } = useClerk()
-  const [logoutState] = useAtom(signOutStateAtom)
 
-  const [state, setState] = useState<IRedirectState | null>(null)
+  const { redirectTarget } = useEdbSession()
 
   useEffect(() => {
     signOut({
@@ -23,13 +19,7 @@ export function SignOutPage() {
     })
   }, [])
 
-  useEffect(() => {
-    if (logoutState && logoutState.target.path) {
-      setState(logoutState)
-    }
-  }, [logoutState])
-
-  return <BaseSignOutPage state={state} allowRedirect={false} />
+  return <BaseSignOutPage target={redirectTarget} allowRedirect={false} />
 }
 
 export function SignOutQueryPage() {

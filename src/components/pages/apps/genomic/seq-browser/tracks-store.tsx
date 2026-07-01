@@ -1,5 +1,5 @@
-import { API_SEQS_BINS_URL, API_SEQS_URL } from '@/lib/edb/edb'
-import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
+import { API_SEQS_BINS_URL, API_SEQS_URL } from '@/components/edb/edb'
 
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
@@ -12,9 +12,12 @@ import {
   useSeqBrowserStore,
 } from './seq-browser-settings'
 
+import {
+  useEdbSettings,
+  useEdbSettingsStore,
+} from '@/components/edb/edb-settings'
+import { API_GENOME_GTFS_URL, API_GENOME_URL } from '@/components/edb/genome'
 import { TIME_5_MINUTES_MS } from '@/consts'
-import { useEdbSettings, useEdbSettingsStore } from '@/lib/edb/edb-settings'
-import { API_GENOME_GTFS_URL, API_GENOME_URL } from '@/lib/edb/genome'
 import { GenLoc, locStr, toGenomicLocation } from '@/lib/genomic/genomic'
 import type { IGenomicFeature } from '@/lib/genomic/genomic-feature'
 import {

@@ -1,34 +1,31 @@
-import {
-    makeSignedOutRedirectRoute,
-    signOutStateAtom,
-    type IRedirectState,
-} from '@/lib/edb/signin/edb-signin'
+import {} from '@/components/edb/auth/edb-signin'
+import { useEdbSession } from '@/components/edb/auth/session'
 import { CoreProviders } from '@/providers/core-providers'
-import { useAtom } from 'jotai'
-import { useEffect, useState } from 'react'
 import { BaseSignOutPage } from '../sign-out-page'
 
 export function SignOutCallbackPage() {
-  const [state, setState] = useState<IRedirectState | null>(null)
-  const [logoutState] = useAtom(signOutStateAtom)
+  const { redirectTarget } = useEdbSession()
 
-  useEffect(() => {
-    async function parse() {
-      //const result = getRedirectStateFromURI()
+  //const [state, setState] = useState<IRedirectState | null>(null)
+  //const [logoutState] = useAtom(signOutStateAtom)
 
-      // could go directly to target, but better to go via signedout page
+  // useEffect(() => {
+  //   async function parse() {
+  //     //const result = getRedirectStateFromURI()
 
-      if (logoutState.target.path) {
-        const state = makeSignedOutRedirectRoute(logoutState)
+  //     // could go directly to target, but better to go via signedout page
 
-        setState(state)
-      }
-    }
+  //     if (logoutState.target.path) {
+  //       const state = makeSignedOutRedirectRoute(logoutState)
 
-    parse()
-  }, [logoutState])
+  //       setState(state)
+  //     }
+  //   }
 
-  return <BaseSignOutPage state={state} />
+  //   parse()
+  // }, [logoutState])
+
+  return <BaseSignOutPage target={redirectTarget} allowRedirect={false} />
 }
 
 export function SignOutCallbackQueryPage() {

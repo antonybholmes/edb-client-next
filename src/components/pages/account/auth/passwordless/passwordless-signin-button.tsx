@@ -1,6 +1,6 @@
 'use client'
 
-import { SESSION_AUTH_SIGNIN_URL } from '@/lib/edb/edb'
+import { SESSION_AUTH_SIGNIN_URL } from '@/components/edb/edb'
 
 import { Button } from '@/themed/v2/button'
 

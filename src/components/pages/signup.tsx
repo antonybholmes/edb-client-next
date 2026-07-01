@@ -15,19 +15,19 @@ import {
   API_SIGNUP_URL,
   APP_VERIFY_EMAIL_URL,
   TEXT_PASSWORDLESS,
-} from '@/lib/edb/edb'
+} from '@/components/edb/edb'
 
 import { useRef, type BaseSyntheticEvent } from 'react'
 
 import { VCenterRow } from '@/layout/v-center-row'
 
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import {
   Form,
   FormField,
   FormItem,
 } from '@/components/shadcn/ui/themed/v2/form'
 import { Label } from '@/components/shadcn/ui/themed/v2/label'
-import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { Button } from '@/themed/v2/button'
 import { Input } from '@/themed/v2/input'

@@ -1,9 +1,9 @@
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { type ColorMap } from '@/lib/color/colormap'
 //import { API_SCRNA_GEX_URL } from '@/lib/edb/edb'
-import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 
-import { API_SCRNA_DATASETS_URL } from '@/lib/edb/edb'
+import { API_SCRNA_DATASETS_URL } from '@/components/edb/edb'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { makeUuid } from '@/lib/id'

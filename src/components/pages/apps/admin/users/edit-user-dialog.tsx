@@ -1,8 +1,8 @@
+import type { IEdbUser, INewUser, IRBACGroup } from '@/components/edb/edb'
 import { FormInputError } from '@/components/input-error'
 import { Form, FormField } from '@/components/shadcn/ui/themed/v2/form'
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
-import type { IEdbUser, INewUser, IRBACGroup } from '@/lib/edb/edb'
 
 import { PropRow } from '@/components/dialogs/prop-row'
 import {

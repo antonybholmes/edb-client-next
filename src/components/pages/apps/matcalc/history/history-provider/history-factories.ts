@@ -1,4 +1,5 @@
 import { DEFAULT_HEATMAP_PROPS } from '@/components/plot/heatmap/heatmap-svg-props'
+import { IDBEntity } from '@/interfaces/db-entity'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { IExtGseaResult, IGseaResult } from '@/lib/gsea/ext-gsea'
 import { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
@@ -13,7 +14,6 @@ import {
   ExtGseaPlot,
   HeatMapPlot,
   IHistoryApp,
-  IHistoryComp,
   VolcanoPlot,
 } from './history-types'
 
@@ -39,7 +39,7 @@ export function newHeatMapPlot(
     props,
     actions,
     type: 'plot',
-    createdAt: Date.now(),
+    createdAt: new Date().toISOString(),
   }
 }
 
@@ -77,7 +77,7 @@ export function newBoxPlot(
     hueOrder,
     singlePlotDisplayOptions,
     type: 'plot',
-    createdAt: Date.now(),
+    createdAt: new Date().toISOString(),
   }
 }
 
@@ -104,7 +104,7 @@ export function newVolcanoPlot(
     props,
     actions,
     type: 'plot',
-    createdAt: Date.now(),
+    createdAt: new Date().toISOString(),
   }
 }
 
@@ -141,7 +141,7 @@ export function newExtGseaPlot(
     props,
     actions,
     type: 'plot',
-    createdAt: Date.now(),
+    createdAt: new Date().toISOString(),
   }
 }
 
@@ -152,11 +152,11 @@ export interface IHistoryFileDesc {
   type: 'app' | 'file' | 'sheet' | 'plot'
 }
 
-export function newHistoryFile(name: string): IHistoryComp {
+export function newHistoryFile(name: string): IDBEntity {
   return {
     id: makeUuid(),
     name,
-    createdAt: Date.now(),
+    createdAt: new Date().toISOString(),
   }
 }
 

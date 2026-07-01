@@ -1,7 +1,7 @@
 import { type IDivProps } from '@/interfaces/div-props'
 
-import { API_BEDS_REGIONS_URL } from '@/lib/edb/edb'
-import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
+import { API_BEDS_REGIONS_URL } from '@/components/edb/edb'
 import { locStr } from '@/lib/genomic/genomic'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'

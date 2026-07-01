@@ -40,10 +40,10 @@ import { Input } from '@/themed/v2/input'
 
 import { Textarea } from '@/themed/textarea'
 
+import { useAppInfo } from '@/components/edb/edb-settings'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
-import { useAppInfo } from '@/lib/edb/edb-settings'
 import { dnaToJson } from '@/lib/genomic/dna'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { CoreProviders } from '@/providers/core-providers'

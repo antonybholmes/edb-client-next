@@ -44,8 +44,8 @@ import { HistoryPanel } from '../matcalc/history/history-panel'
 
 import { BaseCol } from '@/components/layout/base-col'
 
+import { useAppInfo } from '@/components/edb/edb-settings'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
-import { useAppInfo } from '@/lib/edb/edb-settings'
 import { formatString } from '@/lib/text/format-string'
 import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'

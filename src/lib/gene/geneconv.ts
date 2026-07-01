@@ -1,6 +1,6 @@
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
-import { API_GENECONV_URL } from '@/lib/edb/edb'
+import { API_GENECONV_URL } from '@/components/edb/edb'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { capitalCase } from '@/lib/text/capital-case'
 

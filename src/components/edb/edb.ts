@@ -1,6 +1,6 @@
 import { config } from '../../config'
 
-import type { UndefNullStr } from '../text/text'
+import type { UndefNullStr } from '../../lib/text/text'
 
 import Cookies from 'js-cookie'
 import { jwtDecode, type JwtPayload } from 'jwt-decode'

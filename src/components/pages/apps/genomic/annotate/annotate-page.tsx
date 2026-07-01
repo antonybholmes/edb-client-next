@@ -46,8 +46,8 @@ import { CoreProviders } from '@/providers/core-providers'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 
-import { AssemblySelect } from '@/lib/edb/assembly-select'
-import { useAppInfo } from '@/lib/edb/edb-settings'
+import { AssemblySelect } from '@/components/edb/assembly-select'
+import { useAppInfo } from '@/components/edb/edb-settings'
 import { useZoom } from '@/providers/zoom-provider'
 import {
   HistoryLayout,

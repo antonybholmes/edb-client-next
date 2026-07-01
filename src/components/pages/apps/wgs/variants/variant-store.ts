@@ -1,7 +1,7 @@
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
+import { API_WGS_URL } from '@/components/edb/edb'
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { TIME_5_MINUTES_MS } from '@/consts'
-import { API_WGS_URL } from '@/lib/edb/edb'
-import { useEdbAuth } from '@/lib/edb/edb-auth'
-import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { useDNAQuery, type IDNA } from '@/lib/genomic/dna'
 import { locStr } from '@/lib/genomic/genomic'
 import type { IGenomicLocation } from '@/lib/genomic/genomic-location'
@@ -44,7 +44,7 @@ export function makeAssemblyMutationMap(
 ): Map<string, IVariantDataset[]> {
   const ret = new Map<string, IVariantDataset[]>()
 
-  datasets.forEach(dataset => {
+  datasets.forEach((dataset) => {
     if (!ret.has(dataset.assembly)) {
       ret.set(dataset.assembly, [])
     }
@@ -62,7 +62,7 @@ export interface IVariantStore {
   setDNA: (dna: IDNA) => void
 }
 
-export const useVariantsStore = create<IVariantStore>()(set => ({
+export const useVariantsStore = create<IVariantStore>()((set) => ({
   variants: null,
   dna: null,
   setVariants: (variants: IVariantResults) => set({ variants }),
@@ -75,17 +75,17 @@ export function useVariants(): Omit<IVariantStore, 'setVariants' | 'setDNA'> {
   const { settings } = useVariantSettings()
   const { datasetsInUse } = useDatasets()
 
-  const dna = useVariantsStore(state => state.dna)
-  const variants = useVariantsStore(state => state.variants)
+  const dna = useVariantsStore((state) => state.dna)
+  const variants = useVariantsStore((state) => state.variants)
 
-  const setDNA = useVariantsStore(state => state.setDNA)
-  const setVariants = useVariantsStore(state => state.setVariants)
+  const setDNA = useVariantsStore((state) => state.setDNA)
+  const setVariants = useVariantsStore((state) => state.setVariants)
 
   const { data: variantData } = useQuery({
     queryKey: [
       'variants',
       locStr(settings.location),
-      datasetsInUse.map(d => d.id).join(','),
+      datasetsInUse.map((d) => d.id).join(','),
       edbSettings.genomic.assembly,
     ],
     staleTime: TIME_5_MINUTES_MS,
@@ -97,7 +97,7 @@ export function useVariants(): Omit<IVariantStore, 'setVariants' | 'setDNA'> {
         {
           body: {
             locations: [locStr(settings.location)],
-            datasets: datasetsInUse.map(dataset => dataset.id),
+            datasets: datasetsInUse.map((dataset) => dataset.id),
           },
 
           headers: bearerHeaders(accessToken),

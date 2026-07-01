@@ -1,3 +1,4 @@
+import { API_XLSX_TO_JSON_URL } from '@/components/edb/edb'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import {
   BaseDataFrame,
@@ -10,7 +11,6 @@ import {
   type Delimiter,
 } from '@/lib/dataframe/dataframe-reader'
 import { DEFAULT_INDEX_NAME } from '@/lib/dataframe/series'
-import { API_XLSX_TO_JSON_URL } from '@/lib/edb/edb'
 import { vfill } from '@/lib/fill'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { range } from '@/lib/math/range'

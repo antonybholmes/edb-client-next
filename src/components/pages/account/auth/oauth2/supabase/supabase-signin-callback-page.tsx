@@ -2,23 +2,19 @@
 
 import { supabase } from '@/lib/auth/supabase'
 
-import { useEdbAuth } from '@/lib/edb/edb-auth'
-import {
-    signinStateAtom,
-    type IRedirectState,
-} from '@/lib/edb/signin/edb-signin'
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
+
+import { useEdbSession } from '@/components/edb/auth/session'
 import { logger } from '@/lib/logger'
 import { CoreProviders } from '@/providers/core-providers'
-import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { BaseSignInCallbackPage } from '../../signin-callback-page'
 
 export function SignInCallbackPage() {
-  const [state, setState] = useState<IRedirectState | null>(null)
   const [error, setError] = useState('')
   const { signInWithSupabase } = useEdbAuth()
   const [allowRedirect, setAllowRedirect] = useState(false)
-  const [signinState] = useAtom(signinStateAtom)
+  const { redirectTarget } = useEdbSession()
 
   useEffect(() => {
     async function load() {
@@ -51,15 +47,15 @@ export function SignInCallbackPage() {
     load()
   }, [])
 
-  useEffect(() => {
-    if (signinState.target.path) {
-      setState(signinState)
-    }
-  }, [signinState])
+  // useEffect(() => {
+  //   if (signinState.target.path) {
+  //     setState(signinState)
+  //   }
+  // }, [signinState])
 
   return (
     <BaseSignInCallbackPage
-      state={state}
+      target={redirectTarget}
       error={error}
       allowRedirect={allowRedirect}
     />

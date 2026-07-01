@@ -45,7 +45,7 @@ import { useStableId } from '@/hooks/stable-id'
 import { HeaderButton } from '@/layouts/header-button'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 
-import { useAppInfo } from '@/lib/edb/edb-settings'
+import { useAppInfo } from '@/components/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
 import { CoreProviders } from '@/providers/core-providers'

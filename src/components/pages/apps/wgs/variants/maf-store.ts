@@ -1,7 +1,7 @@
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
+import { API_WGS_URL } from '@/components/edb/edb'
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { TIME_5_MINUTES_MS } from '@/consts'
-import { API_WGS_URL } from '@/lib/edb/edb'
-import { useEdbAuth } from '@/lib/edb/edb-auth'
-import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { locStr } from '@/lib/genomic/genomic'
 import type { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { httpFetch } from '@/lib/http/http-fetch'
@@ -31,7 +31,7 @@ export interface IMAFStore {
   setMAFs: (mafs: IMAFResults) => void
 }
 
-export const useMAFStore = create<IMAFStore>()(set => ({
+export const useMAFStore = create<IMAFStore>()((set) => ({
   mafs: null,
   setMAFs: (mafs: IMAFResults) => set({ mafs }),
 }))
@@ -44,14 +44,14 @@ export function useMAFs(): Omit<IMAFStore, 'setMAFs'> & {
   const { settings: edbSettings } = useEdbSettings()
   const { datasetsInUse } = useDatasets()
 
-  const mafs = useMAFStore(state => state.mafs)
-  const setMAFs = useMAFStore(state => state.setMAFs)
+  const mafs = useMAFStore((state) => state.mafs)
+  const setMAFs = useMAFStore((state) => state.setMAFs)
 
   const { data: mafData } = useQuery({
     queryKey: [
       'mafs',
       locStr(settings.location),
-      datasetsInUse.map(d => d.id).join(','),
+      datasetsInUse.map((d) => d.id).join(','),
       edbSettings.genomic.assembly,
     ],
     staleTime: TIME_5_MINUTES_MS,
@@ -63,7 +63,7 @@ export function useMAFs(): Omit<IMAFStore, 'setMAFs'> & {
         {
           body: {
             locations: [locStr(settings.location)],
-            datasets: datasetsInUse.map(dataset => dataset.id),
+            datasets: datasetsInUse.map((dataset) => dataset.id),
           },
 
           headers: bearerHeaders(accessToken),

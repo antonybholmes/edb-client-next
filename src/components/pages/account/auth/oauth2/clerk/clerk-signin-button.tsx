@@ -2,24 +2,26 @@
 
 import { Button } from '@/themed/v2/button'
 
-import { TEXT_SIGN_IN } from '@/consts'
-import { APP_ACCOUNT_OAUTH2_CLERK_SIGNIN_CALLBACK_URL } from '@/lib/edb/edb'
+import {} from '@/components/edb/auth/edb-signin'
 import {
-  DEFAULT_REDIRECT_STATE,
-  signinStateAtom,
-  type IRedirectState,
-} from '@/lib/edb/signin/edb-signin'
+  HOME_REDIRECT_STATE,
+  IRedirectState,
+  useEdbSession,
+} from '@/components/edb/auth/session'
+import { APP_ACCOUNT_OAUTH2_CLERK_SIGNIN_CALLBACK_URL } from '@/components/edb/edb'
+import { TEXT_SIGN_IN } from '@/consts'
 import { useClerk } from '@clerk/react'
-import { useAtom } from 'jotai'
 
 export function ClerkSignInButton({
-  state = DEFAULT_REDIRECT_STATE,
+  state = HOME_REDIRECT_STATE,
 }: {
   state: IRedirectState
 }) {
   //const { openSignIn } = useClerk()
   const { redirectToSignIn } = useClerk()
-  const [, setState] = useAtom(signinStateAtom)
+  //const [, setState] = useAtom(signinStateAtom)
+
+  const { setRedirect } = useEdbSession()
 
   // Allow users to signin
   return (
@@ -28,7 +30,7 @@ export function ClerkSignInButton({
       //className="w-full"
       size="lg"
       onClick={() => {
-        setState(state)
+        setRedirect(state.target)
         // openSignIn({
         //   fallbackRedirectUrl: state.target.path || APP_MYACCOUNT_URL,
         // })

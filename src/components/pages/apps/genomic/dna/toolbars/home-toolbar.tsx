@@ -1,4 +1,5 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
 import {
@@ -17,7 +18,6 @@ import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { TEXT_FILE, TEXT_RUN, TEXT_SAVE_TABLE } from '@/consts'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { createDNATable, FORMAT_TYPE } from '@/lib/genomic/dna'
 import { useState } from 'react'
 import { useCurrentSheets } from '../../../matcalc/history/history-provider/history-contexts'

@@ -1,6 +1,6 @@
 // workers need relative paths to import modules
-import { API_MOTIF_TO_GENES_URL } from '../../../../../../lib/edb/edb'
 import { httpFetch } from '../../../../../../lib/http/http-fetch'
+import { API_MOTIF_TO_GENES_URL } from '../../../../../edb/edb'
 
 const PAGE_SIZE = 100
 

@@ -1,20 +1,17 @@
 import { supabase } from '@/lib/auth/supabase'
 
-import { SIGNED_OUT_PATH } from '@/lib/edb/edb'
-import { useEffect, useState } from 'react'
+import { SIGNED_OUT_PATH } from '@/components/edb/edb'
+import { useEffect } from 'react'
 
-import {
-    signOutStateAtom,
-    type IRedirectState,
-} from '@/lib/edb/signin/edb-signin'
+import { useEdbSession } from '@/components/edb/auth/session'
 import { redirect } from '@/lib/http/urls'
 import { CoreProviders } from '@/providers/core-providers'
-import { useAtom } from 'jotai'
 import { BaseSignOutPage } from '../../sign-out-page'
 
 export function SignOutPage() {
-  const [state, setState] = useState<IRedirectState | null>(null)
-  const [logoutState] = useAtom(signOutStateAtom)
+  //const [state, setState] = useState<IRedirectState | null>(null)
+  //const [logoutState] = useAtom(signOutStateAtom)
+  const { redirectTarget } = useEdbSession()
 
   useEffect(() => {
     async function completeSignout() {
@@ -29,13 +26,13 @@ export function SignOutPage() {
     completeSignout()
   }, [])
 
-  useEffect(() => {
-    if (logoutState && logoutState.target.path) {
-      setState(logoutState)
-    }
-  }, [logoutState])
+  // useEffect(() => {
+  //   if (logoutState && logoutState.target.path) {
+  //     setState(logoutState)
+  //   }
+  // }, [logoutState])
 
-  return <BaseSignOutPage state={state} allowRedirect={false} />
+  return <BaseSignOutPage target={redirectTarget} allowRedirect={false} />
 }
 
 export function SignOutQueryPage() {

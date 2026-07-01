@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { httpFetch } from '../http/http-fetch'
+import { httpFetch } from '../../lib/http/http-fetch'
 import { EDB_API_URL } from './edb'
 
 export const API_GENOME_URL = `${EDB_API_URL}/modules/genome`
@@ -13,7 +13,10 @@ import { useEffect } from 'react'
 import { create } from 'zustand'
 import { TIME_5_MINUTES_MS } from '../../consts'
 
-import type { Feature, IGenomicFeature } from '../genomic/genomic-feature'
+import type {
+  Feature,
+  IGenomicFeature,
+} from '../../lib/genomic/genomic-feature'
 import { useEdbSettings } from './edb-settings'
 
 export interface IGTFInfo {

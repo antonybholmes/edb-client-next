@@ -2,10 +2,13 @@ import { type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { useEffect, useState } from 'react'
 
 import {
+  API_GEX_DATASETS_URL,
+  API_GEX_TECHNOLOGIES_URL,
+} from '@/components/edb/edb'
+import {
   ToggleButtons,
   ToggleButtonTriggers,
 } from '@/components/toggle-buttons'
-import { API_GEX_DATASETS_URL, API_GEX_TECHNOLOGIES_URL } from '@/lib/edb/edb'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { queryClient } from '@/qcp'
@@ -22,7 +25,7 @@ import { VScrollPanel } from '@/components/v-scroll-panel'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { GlassSideDialog } from '@/dialogs/glass-side-dialog'
 
-import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 import { makeUuid } from '@/lib/id'
 import { Toast } from '@base-ui/react/toast'
 import { useHistory } from '../../history/history-provider/history-provider'

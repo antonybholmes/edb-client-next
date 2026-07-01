@@ -2,9 +2,9 @@ import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 
 import { range } from '@/lib/math/range'
 
+import { API_GENOME_URL } from '../../components/edb/genome'
 import { AnnotationDataFrame } from '../dataframe/annotation-dataframe'
 import type { SeriesData } from '../dataframe/series-data'
-import { API_GENOME_URL } from '../edb/genome'
 import { httpFetch } from '../http/http-fetch'
 import type { IGenomicFeature } from './genomic-feature'
 

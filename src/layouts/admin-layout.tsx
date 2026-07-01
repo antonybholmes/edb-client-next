@@ -4,8 +4,8 @@ import { HCenterRow } from '@/layout/h-center-row'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/themed/card'
 
-import { hasAdminPermission } from '@/lib/edb/edb'
-import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
+import { hasAdminPermission } from '@/components/edb/edb'
 import { SignInLayout, type ISignInLayoutProps } from './signin-layout'
 
 function notAllowedContent() {

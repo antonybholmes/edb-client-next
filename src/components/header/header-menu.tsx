@@ -5,10 +5,10 @@ import { BaseLink, BLANK_TARGET } from '@/components/link/base-link'
 import { ThemeLink } from '@/components/link/theme-link'
 import { HEADER_LINKS } from '@/menus'
 
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { TAILWIND_MEDIA_SM, useWindowSize } from '@/hooks/window-size'
 import type { ILinkProps } from '@/interfaces/link-props'
 import { VCenterRow } from '@/layout/v-center-row'
-import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { FOCUS_RING_CLS } from '@/theme'
 import { useState } from 'react'
 import { GripIcon } from '../icons/grip-icon'
@@ -55,9 +55,9 @@ export function HeaderLinks({ handleClick, className }: IHeaderLinksProps) {
   const { settings } = useEdbSettings()
 
   // sort alphabetically and ignore sections
-  const items = HEADER_LINKS.map(section => {
+  const items = HEADER_LINKS.map((section) => {
     return section.apps.filter(
-      module => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
+      (module) => module.mode !== 'dev' || process.env.NODE_ENV !== 'production'
     )
   })
     .flat()

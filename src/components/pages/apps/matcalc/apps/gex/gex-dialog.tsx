@@ -1,8 +1,8 @@
 import { type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { useEffect, useState } from 'react'
 
-import { API_GEX_DATASETS_URL, API_GEX_URL } from '@/lib/edb/edb'
-import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
+import { API_GEX_DATASETS_URL, API_GEX_URL } from '@/components/edb/edb'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 

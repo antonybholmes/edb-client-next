@@ -1,7 +1,7 @@
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
+import { API_RESET_EMAIL_URL, APP_UPDATE_EMAIL_URL } from '@/components/edb/edb'
 import { TEXT_OK } from '@/consts'
-import { API_RESET_EMAIL_URL, APP_UPDATE_EMAIL_URL } from '@/lib/edb/edb'
 
 import { FormInputError } from '@/components/input-error'
 import {
@@ -13,7 +13,7 @@ import { Input } from '@/themed/v2/input'
 //import { AccountContext } from "@/hooks/use-account"
 import { EMAIL_PATTERN } from '@/layouts/signin-layout'
 
-import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 import { bearerHeaders } from '@/lib/http/urls'
 
 import { httpFetch } from '@/lib/http/http-fetch'
@@ -121,7 +121,7 @@ export function EmailDialog({
       onOpenChange={onOpenChange}
       //contentVariant="glass"
       //buttons={[TEXT_SAVE, TEXT_CANCEL]}
-      onResponse={response => {
+      onResponse={(response) => {
         switch (response) {
           case TEXT_OK:
             //update()

@@ -1,7 +1,7 @@
+import { useAppInfo } from '@/components/edb/edb-settings'
 import { FileTree } from '@/components/file-tree'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { useIsMounted } from '@/hooks/mounted'
-import { useAppInfo } from '@/lib/edb/edb-settings'
 import { makeUuid } from '@/lib/id'
 import { useMemo } from 'react'
 import { pathJoin } from './history-provider/history-actions'

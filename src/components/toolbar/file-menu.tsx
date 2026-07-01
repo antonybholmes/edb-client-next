@@ -22,7 +22,7 @@ import type { VariantProps } from 'class-variance-authority'
 import { useSettingsTabs } from '../dialogs/settings/setting-tabs-store'
 import { CookieIcon } from '../icons/cookie-icon'
 
-import { useAppInfo } from '@/lib/edb/edb-settings'
+import { useAppInfo } from '@/components/edb/edb-settings'
 import { format } from 'date-fns'
 import { Globe } from 'lucide-react'
 import type { ReactNode } from 'react'

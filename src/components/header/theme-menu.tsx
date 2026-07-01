@@ -5,7 +5,7 @@ import { ComputerIcon } from '@/icons/computer'
 import { MoonIcon } from '@/icons/moon-icon'
 import { Button } from '@/themed/v2/button'
 
-import { useTheme, type Theme } from '@/lib/edb/theme'
+import { useTheme, type Theme } from '@/components/edb/theme'
 import {
   DropdownMenu,
   DropdownMenuContent,

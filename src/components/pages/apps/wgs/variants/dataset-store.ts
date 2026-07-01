@@ -1,8 +1,8 @@
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
+import { API_WGS_URL } from '@/components/edb/edb'
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { TIME_5_MINUTES_MS } from '@/consts'
 import type { IDBEntity } from '@/interfaces/db-entity'
-import { API_WGS_URL } from '@/lib/edb/edb'
-import { useEdbAuth } from '@/lib/edb/edb-auth'
-import { useEdbSettings } from '@/lib/edb/edb-settings'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { useQuery } from '@tanstack/react-query'
@@ -61,21 +61,21 @@ export const useVariantSettingsStore = create<IDatasetStore>()((set, get) => ({
   dna: null,
   setDatasets: (datasets: IVariantDataset[]) => {
     const datasetMap = Object.fromEntries(
-      datasets.map(dataset => [dataset.id, dataset])
+      datasets.map((dataset) => [dataset.id, dataset])
     )
 
     const sampleMap = Object.fromEntries(
       datasets
-        .map(dataset =>
+        .map((dataset) =>
           dataset.samples.map(
-            sample => [sample.id, sample] as [string, IVariantSample]
+            (sample) => [sample.id, sample] as [string, IVariantSample]
           )
         )
         .flat()
     )
 
     const datasetUseMap = Object.fromEntries(
-      datasets.map(dataset => [dataset.id, true])
+      datasets.map((dataset) => [dataset.id, true])
     )
 
     set({
@@ -88,7 +88,7 @@ export const useVariantSettingsStore = create<IDatasetStore>()((set, get) => ({
   },
   setDatasetsInUse: (datasetUseMap: Record<string, boolean>) => {
     const datasetsInUse = get().datasets.filter(
-      dataset => datasetUseMap[dataset.id] ?? false
+      (dataset) => datasetUseMap[dataset.id] ?? false
     )
     set({ datasetsInUse, datasetUseMap })
   },
@@ -98,15 +98,15 @@ export function useDatasets(): Omit<IDatasetStore, 'setDatasets'> {
   const { fetchAccessToken } = useEdbAuth()
   const { settings } = useEdbSettings()
 
-  const datasets = useVariantSettingsStore(state => state.datasets)
-  const datasetsInUse = useVariantSettingsStore(state => state.datasetsInUse)
-  const datasetMap = useVariantSettingsStore(state => state.datasetMap)
-  const datasetUseMap = useVariantSettingsStore(state => state.datasetUseMap)
-  const sampleMap = useVariantSettingsStore(state => state.sampleMap)
+  const datasets = useVariantSettingsStore((state) => state.datasets)
+  const datasetsInUse = useVariantSettingsStore((state) => state.datasetsInUse)
+  const datasetMap = useVariantSettingsStore((state) => state.datasetMap)
+  const datasetUseMap = useVariantSettingsStore((state) => state.datasetUseMap)
+  const sampleMap = useVariantSettingsStore((state) => state.sampleMap)
 
-  const setDatasets = useVariantSettingsStore(state => state.setDatasets)
+  const setDatasets = useVariantSettingsStore((state) => state.setDatasets)
   const setDatasetsInUse = useVariantSettingsStore(
-    state => state.setDatasetsInUse
+    (state) => state.setDatasetsInUse
   )
 
   const { data: datasetData } = useQuery({

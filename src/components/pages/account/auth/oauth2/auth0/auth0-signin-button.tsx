@@ -4,14 +4,14 @@ import { useAuth0 } from '@auth0/auth0-react'
 
 import { Button } from '@/themed/v2/button'
 
+import {} from '@/components/edb/auth/edb-signin'
+import {
+  HOME_REDIRECT_STATE,
+  IRedirectState,
+  useEdbSession,
+} from '@/components/edb/auth/session'
 import { SignInIcon } from '@/components/icons/sign-in-icon'
 import { TEXT_SIGN_IN } from '@/consts'
-import {
-  DEFAULT_REDIRECT_STATE,
-  signinStateAtom,
-  type IRedirectState,
-} from '@/lib/edb/signin/edb-signin'
-import { useAtom } from 'jotai'
 
 // export function auth0SignIn(
 //   loginWithRedirect: (options?: {
@@ -32,11 +32,12 @@ import { useAtom } from 'jotai'
 // }
 
 export function Auth0SignInButton({
-  state = DEFAULT_REDIRECT_STATE,
+  state = HOME_REDIRECT_STATE,
 }: {
   state: IRedirectState
 }) {
-  const [, setSigninState] = useAtom(signinStateAtom)
+  //const [, setSigninState] = useAtom(signinStateAtom)
+  const { setRedirect } = useEdbSession()
 
   const { loginWithRedirect } = useAuth0()
 
@@ -47,7 +48,7 @@ export function Auth0SignInButton({
       size="lg"
       aria-label={TEXT_SIGN_IN}
       onClick={() => {
-        setSigninState(state)
+        setRedirect(state.target)
 
         loginWithRedirect({ appState: state })
       }}

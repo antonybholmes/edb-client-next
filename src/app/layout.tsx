@@ -1,8 +1,8 @@
 //import { Geist, Geist_Mono } from "next/font/google";
 
+import { THEME_KEY, ThemeProvider } from '@/components/edb/theme'
 import { BaseCol } from '@/components/layout/base-col'
-import { THEME_KEY, ThemeProvider } from '@/lib/edb/theme'
-import { Auth0Provider } from '@auth0/nextjs-auth0/client'
+//import { Auth0Provider } from '@auth0/nextjs-auth0/client'
 import { Geist } from 'next/font/google'
 import { ReactNode } from 'react'
 import './globals.css'
@@ -86,10 +86,10 @@ export default function Layout({
         {/* <CoreProviders>{children}</CoreProviders> */}
 
         <ThemeProvider>
-          <Auth0Provider>
-            {/* Added for base-ui to render dialogs */}
-            <BaseCol className="root isolate grow">{children}</BaseCol>
-          </Auth0Provider>
+          {/* <Auth0Provider> */}
+          {/* Added for base-ui to render dialogs */}
+          <BaseCol className="root isolate grow">{children}</BaseCol>
+          {/* </Auth0Provider> */}
         </ThemeProvider>
       </body>
     </html>

@@ -1,10 +1,10 @@
 import type { IPos } from '@/interfaces/pos'
 //import { API_SCRNA_GEX_URL } from '@/lib/edb/edb'
-import { useEdbAuth } from '@/lib/edb/edb-auth'
+import { useEdbAuth } from '@/components/edb/auth/edb-auth'
 
+import { API_SCRNA_DATASETS_URL, API_SCRNA_URL } from '@/components/edb/edb'
 import type { IDBEntity } from '@/interfaces/db-entity'
 import type { ColorMap } from '@/lib/color/colormap'
-import { API_SCRNA_DATASETS_URL, API_SCRNA_URL } from '@/lib/edb/edb'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { makeUuid } from '@/lib/id'

@@ -6,8 +6,8 @@ import { range } from '@/lib/math/range'
 import { sign } from '@/lib/math/sign'
 import { useContext } from 'react'
 
+import { useGenomes } from '@/components/edb/genome'
 import { SvgText } from '@/components/plot/svg-text'
-import { useGenomes } from '@/lib/edb/genome'
 import { IGenomicFeature } from '@/lib/genomic/genomic-feature'
 import {
   useSeqBrowserSettings,

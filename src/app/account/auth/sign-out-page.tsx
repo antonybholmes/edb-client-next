@@ -1,57 +1,53 @@
+import { useEdbAuth, useEdbSignIn } from '@/components/edb/auth/edb-auth'
+import {
+  addRedirectStateToUrl,
+  getRedirectStateFromURI,
+} from '@/components/edb/auth/edb-signin'
+import {
+  HOME_REDIRECT_TARGET,
+  IRedirectState,
+  IRedirectTarget,
+  isSafeRelativeUrl,
+  useEdbSession,
+} from '@/components/edb/auth/session'
+import {
+  APP_ACCOUNT_OAUTH2_AUTH0_SIGN_OUT_URL,
+  APP_ACCOUNT_OAUTH2_CLERK_SIGN_OUT_URL,
+  APP_ACCOUNT_OAUTH2_COGNITO_SIGN_OUT_URL,
+  APP_ACCOUNT_OAUTH2_SUPABASE_SIGN_OUT_URL,
+} from '@/components/edb/edb'
 import { ThemeLink } from '@/components/link/theme-link'
 import { CenterLayout } from '@/layouts/center-layout'
-import {
-    APP_ACCOUNT_OAUTH2_AUTH0_SIGN_OUT_URL,
-    APP_ACCOUNT_OAUTH2_CLERK_SIGN_OUT_URL,
-    APP_ACCOUNT_OAUTH2_COGNITO_SIGN_OUT_URL,
-    APP_ACCOUNT_OAUTH2_SUPABASE_SIGN_OUT_URL,
-} from '@/lib/edb/edb'
-import { useEdbAuth, useEdbSignIn } from '@/lib/edb/edb-auth'
-import {
-    addRedirectStateToUrl,
-    DEFAULT_REDIRECT_STATE,
-    getRedirectStateFromURI,
-    isSafeRelativeUrl,
-    signOutStateAtom,
-    type IRedirectState,
-} from '@/lib/edb/signin/edb-signin'
 import { redirect } from '@/lib/http/urls'
 import { CoreProviders } from '@/providers/core-providers'
-import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { AuthModal } from './auth-modal'
 
 interface BaseSignOutPageProps {
-  state?: IRedirectState | null
+  target?: IRedirectTarget | null
   allowRedirect?: boolean
 }
 
 export function BaseSignOutPage({
-  state = null,
+  target = null,
   allowRedirect = true,
 }: BaseSignOutPageProps) {
-  const _state = state
-    ? isSafeRelativeUrl(state.target.path)
-      ? state
-      : DEFAULT_REDIRECT_STATE
-    : null
+  const _target =
+    target && isSafeRelativeUrl(target.path) ? target : HOME_REDIRECT_TARGET
 
   useEffect(() => {
-    if (allowRedirect && _state && _state.target.path) {
-      redirect(_state.target.path)
+    if (allowRedirect && _target && _target.path) {
+      redirect(_target.path)
     }
-  }, [_state, allowRedirect])
+  }, [_target, allowRedirect])
 
   return (
     <CenterLayout signinRequired={false}>
       <AuthModal title="Signing out...">
-        {_state && (
+        {_target && (
           <p>
             You will be redirected to the{' '}
-            <ThemeLink href={_state.target.path}>
-              {_state.target.title}
-            </ThemeLink>{' '}
-            page.
+            <ThemeLink href={_target.path}>{_target.title}</ThemeLink> page.
           </p>
         )}
       </AuthModal>
@@ -63,7 +59,8 @@ export function SignOutPage() {
   const { signinMethod } = useEdbSignIn()
   const { signout } = useEdbAuth()
   const [state, setState] = useState<IRedirectState | null>(null)
-  const [, setLogoutState] = useAtom(signOutStateAtom)
+
+  const { redirectTarget, setRedirect } = useEdbSession()
 
   useEffect(() => {
     async function completeSignout() {
@@ -77,7 +74,7 @@ export function SignOutPage() {
 
       // cache where to go after signout since
       // some providers lose state during signout
-      setLogoutState(state)
+      setRedirect(state.target)
 
       let url = ''
 
@@ -106,7 +103,7 @@ export function SignOutPage() {
     completeSignout()
   }, [])
 
-  return <BaseSignOutPage state={state} />
+  return <BaseSignOutPage target={redirectTarget} />
 }
 
 export function SignOutQueryPage() {

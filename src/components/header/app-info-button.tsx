@@ -1,9 +1,9 @@
 import { cn } from '@/lib/shadcn-utils'
 import { type IButtonProps } from '@/themed/v2/button'
 
+import { useAppInfo } from '@/components/edb/edb-settings'
 import { IS_DEV_MODE } from '@/consts'
 import { HeaderButton } from '@/layouts/header-button'
-import { useAppInfo } from '@/lib/edb/edb-settings'
 import { formatString } from '@/lib/text/format-string'
 import { format } from 'date-fns'
 import { useState } from 'react'
@@ -60,7 +60,7 @@ export function AppInfoButton({
           payload: {
             type: 'default',
             title: `About ${appInfo?.name}`,
-            component:  AppInfoContent ,
+            component: AppInfoContent,
             callback: () => setModalVisible(false),
           },
         })

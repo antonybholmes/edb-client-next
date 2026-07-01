@@ -43,6 +43,7 @@ import { FileIcon } from '@/icons/file-icon'
 import { getFormattedShape } from '@/lib/dataframe/dataframe-utils'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
+import { useAppInfo } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
@@ -52,7 +53,6 @@ import {
   useTabs,
   useToolbarTabs,
 } from '@/components/tabs/tab-provider'
-import { useAppInfo } from '@/lib/edb/edb-settings'
 import { CoreProviders } from '@/providers/core-providers'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'

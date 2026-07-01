@@ -1,13 +1,13 @@
 import { useSettingsTabs } from '@/dialogs/settings/setting-tabs-store'
 
 import { DialogsRoot } from '@/components/dialogs/dialogs'
+import { EDBSignIn, type SignInMode } from '@/components/edb/auth/edb-signin'
 import { Header, type IHeaderChildrenProps } from '@/components/header/header'
 import { SettingsIcon } from '@/components/icons/settings-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import { TEXT_SETTINGS } from '@/consts'
 import { HelpWidget } from '@/help/help'
 import { type ILayoutProps } from '@/interfaces/layout-props'
-import { EDBSignIn, type SignInMode } from '@/lib/edb/signin/edb-signin'
 import { cn } from '@/lib/shadcn-utils'
 
 import { Footer } from '@/components/toolbar/footer'
@@ -83,7 +83,6 @@ export function HeaderLayout({
 
       {/* <Toaster /> */}
       <SonnerToaster position="top-right" />
- 
 
       {/* Show standardized dialogs at the root of the app to avoid nesting issues 
       with portals and z-index */}

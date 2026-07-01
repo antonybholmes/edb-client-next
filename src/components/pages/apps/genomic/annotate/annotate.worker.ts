@@ -1,6 +1,6 @@
 // workers need relative paths to import modules
 import type { SeriesData } from '../../../../../lib/dataframe/series-data'
-import { EDB_API_URL } from '../../../../../lib/edb/edb'
+import { EDB_API_URL } from '../../../../edb/edb'
 
 import type { IGenomicFeature } from '../../../../../lib/genomic/genomic-feature'
 import { httpFetch } from '../../../../../lib/http/http-fetch'

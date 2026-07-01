@@ -2,22 +2,20 @@
 
 import { Button } from '@/themed/v2/button'
 
-import { TEXT_SIGN_IN } from '@/consts'
-import { OAUTH2_SUPABASE_SIGN_IN_PATH } from '@/lib/edb/edb'
 import {
-  DEFAULT_REDIRECT_STATE,
-  signinStateAtom,
-  type IRedirectState,
-} from '@/lib/edb/signin/edb-signin'
+  HOME_REDIRECT_STATE,
+  IRedirectState,
+} from '@/components/edb/auth/session'
+import { OAUTH2_SUPABASE_SIGN_IN_PATH } from '@/components/edb/edb'
+import { TEXT_SIGN_IN } from '@/consts'
 import { redirect } from '@/lib/http/urls'
-import { useAtom } from 'jotai'
 
 export function SupabaseSignInButton({
-  state = DEFAULT_REDIRECT_STATE,
+  state = HOME_REDIRECT_STATE,
 }: {
   state: IRedirectState
 }) {
-  const [, setState] = useAtom(signinStateAtom)
+  //const { redirect: redirectTo } = useEdbSession()
 
   // Allow users to signin
   return (
@@ -26,7 +24,7 @@ export function SupabaseSignInButton({
       //className="w-full"
       size="lg"
       onClick={() => {
-        setState(state)
+        // setState(state)
         // openSignIn({
         //   fallbackRedirectUrl: state.target.path || APP_MYACCOUNT_URL,
         // })

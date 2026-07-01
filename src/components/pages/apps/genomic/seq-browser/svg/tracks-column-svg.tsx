@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 
-import { useEdbSettings } from '@/lib/edb/edb-settings'
+import { useEdbSettings } from '@/components/edb/edb-settings'
 import { locStr } from '@/lib/genomic/genomic'
 import { useSeqBrowserSettings } from '../seq-browser-settings'
 import {
@@ -34,7 +34,7 @@ export function TracksColumnSvg() {
 
   const [colMousePos, setColMousePos] = useState({ x: -1, y: -1 })
 
-  const tracks = groups.map(g => g.tracks)
+  const tracks = groups.map((g) => g.tracks)
 
   const titleHeightUsingPosition =
     settings.titles.position === 'top' ? settings.titles.height : 0

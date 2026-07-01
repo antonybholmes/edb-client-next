@@ -68,11 +68,11 @@ import { useMotifSettings, type Mode } from './motifs-settings'
 
 const PLOT_ZOOM_CHANNEL = 'bio-draw-plot-zoom'
 
+import { useAppInfo } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
 import { useSideTabs } from '@/components/tabs/tab-provider'
-import { useAppInfo } from '@/lib/edb/edb-settings'
 import {
   useCurrentSheets,
   useFiles,
