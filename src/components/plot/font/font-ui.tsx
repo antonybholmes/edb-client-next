@@ -242,10 +242,7 @@ function FontRotation({
   return (
     <>
       <ToolbarSeparator />
-      <IconButton
-        title="Rotate Font"
-        onClick={() => onChange((value + 90) % 360)}
-      >
+      <IconButton title="Rotate" onClick={() => onChange((value + 90) % 360)}>
         <RotateCw size={16} />
       </IconButton>
     </>

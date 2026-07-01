@@ -503,16 +503,11 @@ function handleAddGroups(
     return state
   }
 
-  const title =
-    groups.length > 0
-      ? `Add ${formattedList(groups.map((gs) => gs.name))} group${
-          groups.length > 1 ? 's' : ''
-        }`
-      : 'Remove groups'
-
   return applyHistoryUpdate(
     state,
-    title,
+    `Add ${formattedList(groups.map((gs) => gs.name))} group${
+      groups.length > 1 ? 's' : ''
+    }`,
     '',
     (draft: IHistoryState) => {
       if (mode === 'append') {

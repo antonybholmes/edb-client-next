@@ -2,7 +2,7 @@ import { SvgBase } from '@/components/plot/svg-base'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
 import { ISVGProps } from '@/interfaces/svg-props'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { IOutputGraph, IOutputNode } from './sankey-layout'
 import { ILayoutNode, useSankey } from './sankey-provider'
 import { ISankeySettings, useSankeySettings } from './sankey-settings-store'
@@ -12,6 +12,30 @@ const DEFAULT_NODE_COLOR = '#4F46E5'
 export function SankeySvg({ ref }: ISVGProps) {
   const { plot, layoutMap, graph } = useSankey()
   const { settings } = useSankeySettings()
+  const [dragging, setDragging] = useState(false)
+  const [pos, setPos] = useState({ x: 100, y: 100 })
+
+  function handlePointerUp() {
+    setDragging(false)
+  }
+
+  function handlePointerMove(e: React.PointerEvent<SVGSVGElement>) {
+    if (!dragging) return
+
+    const svg = e.currentTarget
+    const pt = svg.createSVGPoint()
+    pt.x = e.clientX
+    pt.y = e.clientY
+
+    const p = pt.matrixTransform(svg.getScreenCTM()!.inverse())
+
+    console.log('pointer move', p)
+
+    setPos({
+      x: p.x,
+      y: p.y,
+    })
+  }
 
   const w = useMemo(
     () => settings.width + settings.margin.left + settings.margin.right,
@@ -29,8 +53,62 @@ export function SankeySvg({ ref }: ISVGProps) {
 
   const nodes = graph.nodes as ILayoutNode[]
 
+  function SVGNode({
+    node,
+    settings,
+  }: {
+    node: ILayoutNode
+    settings: ISankeySettings
+  }) {
+    function handlePointerDown(
+      e: React.PointerEvent<SVGCircleElement | SVGRectElement>
+    ) {
+      e.currentTarget.setPointerCapture(e.pointerId)
+      setDragging(true)
+    }
+
+    const w = node.x1 - node.x0
+    const h = node.y1 - node.y0
+    return (
+      <g key={node.id} id={`node-${node.id}`}>
+        {settings.nodes.shape === 'rect' && (
+          <rect
+            x={node.x0 - settings.nodes.width / 2}
+            y={node.y0}
+            width={settings.nodes.width}
+            height={node.y1 - node.y0}
+            rx={settings.nodes.rounding}
+            fill={node.color ?? DEFAULT_NODE_COLOR}
+            fillOpacity={settings.nodes.opacity}
+            onPointerDown={handlePointerDown}
+          />
+        )}
+        {settings.nodes.shape === 'circle' && (
+          <circle
+            cx={node.x0}
+            cy={node.y0 + (node.y1 - node.y0) / 2}
+            r={Math.max(w, h) / 2}
+            fill={node.color ?? DEFAULT_NODE_COLOR}
+            fillOpacity={settings.nodes.opacity}
+            onPointerDown={handlePointerDown}
+          />
+        )}
+        {settings.nodes.labels.font.show && (
+          <SVGLabel node={node} settings={settings} />
+        )}
+      </g>
+    )
+  }
+
   return (
-    <SvgBase width={w} height={h} ref={ref} scale={settings.scale}>
+    <SvgBase
+      width={w}
+      height={h}
+      ref={ref}
+      scale={settings.scale}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+    >
       {/* Define gradients for links */}
       {settings.links.colorMode === 'gradient' &&
         gradientDefs(graph, layoutMap, settings)}
@@ -39,40 +117,20 @@ export function SankeySvg({ ref }: ISVGProps) {
         {linkPaths(graph, layoutMap, settings)}
 
         {nodes.map((node) => {
-          const w = node.x1 - node.x0
-          const h = node.y1 - node.y0
-          return (
-            <g key={node.id} id={`node-${node.id}`}>
-              {settings.nodes.shape === 'rect' && (
-                <rect
-                  x={node.x0 - settings.nodes.width / 2}
-                  y={node.y0}
-                  width={settings.nodes.width}
-                  height={node.y1 - node.y0}
-                  rx={settings.nodes.rounding}
-                  fill={node.color ?? DEFAULT_NODE_COLOR}
-                  fillOpacity={settings.nodes.opacity}
-                />
-              )}
-              {settings.nodes.shape === 'circle' && (
-                <circle
-                  cx={node.x0}
-                  cy={node.y0 + (node.y1 - node.y0) / 2}
-                  r={Math.max(w, h) / 2}
-                  fill={node.color ?? DEFAULT_NODE_COLOR}
-                  fillOpacity={settings.nodes.opacity}
-                />
-              )}
-              {settings.nodes.labels.font.show && label(node, settings)}
-            </g>
-          )
+          return <SVGNode key={node.id} node={node} settings={settings} />
         })}
       </SvgMargin>
     </SvgBase>
   )
 }
 
-function label(node: ILayoutNode, settings: ISankeySettings) {
+function SVGLabel({
+  node,
+  settings,
+}: {
+  node: ILayoutNode
+  settings: ISankeySettings
+}) {
   const w = node.x1 - node.x0
   const x =
     node.x0 +
