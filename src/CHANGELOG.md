@@ -1,5 +1,12 @@
 # Changelog
 
+## 85.2 (Jul, 2026)
+
+### Changed
+
+- Sankey can now create plots from sheet. Matcalc file tree simplified. Fonts now support rotation.
+
+
 ## 85.0 (Jun, 2026)
 
 ### Added

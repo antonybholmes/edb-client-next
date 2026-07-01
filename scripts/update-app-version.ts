@@ -15,6 +15,7 @@ function shouldIgnore(path: string) {
     path.includes('out') ||
     path.includes('public') ||
     path.includes('assets') ||
+    path.includes('scripts') ||
     path.includes('manifest.json') // we only want to update the manifest in the root of each app, not in subfolders
   )
 }
@@ -32,7 +33,9 @@ function hashFile(filePath: string) {
 function hasManifest(dir: string) {
   const entries = fs.readdirSync(dir, { withFileTypes: true })
 
-  return entries.some(entry => entry.isFile() && entry.name === 'manifest.json')
+  return entries.some(
+    (entry) => entry.isFile() && entry.name === 'manifest.json'
+  )
 }
 
 function getManifestDirs(dir: string, manifestDirs: string[] = []) {
@@ -70,8 +73,9 @@ function getAllFiles(dir: string, files: string[] = []) {
 export function hashFolder(folder: string): string {
   let files: string[] = []
   getAllFiles(folder, files)
-  files = files.filter(f => !shouldIgnore(f)).sort() // critical for deterministic output
+  files = files.filter((f) => !shouldIgnore(f)).sort() // critical for deterministic output
 
+  // hash each file and combine the hashes into a single hash for the folder
   const fileHashes = files.map(hashFile)
 
   return createHash('sha256').update(fileHashes.join('\n')).digest('hex')

@@ -1971,6 +1971,10 @@
         {
           "msg": "Sankey now uses d3-sankey",
           "date": "2026-07-01T02:43:24.174Z"
+        },
+        {
+          "msg": "Fixed signout workflow. Auth redirects now handled via edbsession store",
+          "date": "2026-07-01T16:18:40.150Z"
         }
       ],
       "Added": [

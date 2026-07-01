@@ -20,7 +20,7 @@ import {
 } from 'react'
 import { TrashIcon } from './icons/trash-icon'
 
-import { TEXT_OK, TEXT_REMOVE } from '@/consts'
+import { TEXT_DELETE, TEXT_OK } from '@/consts'
 import { FOCUS_INSET_RING_CLS } from '@/theme'
 import { gsap } from 'gsap'
 import { Ellipsis, File, Folder, FolderOpen } from 'lucide-react'
@@ -459,7 +459,7 @@ function CollapseTreeNode({
                 <TrashIcon />
 
                 <span>
-                  {TEXT_REMOVE} {hasChildren ? 'folder' : tab.type}
+                  {TEXT_DELETE} {hasChildren ? 'folder' : tab.type}
                 </span>
               </DropdownMenuItem>
             </DropdownMenuContent>

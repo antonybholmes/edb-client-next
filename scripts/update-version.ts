@@ -1,8 +1,23 @@
 import type { IAppInfo } from '@/lib/app-info'
+import { createHash } from 'crypto'
 import fs from 'fs'
 import path from 'path'
 
 const INC = 2
+
+function shouldIgnore(path: string) {
+  return (
+    path.includes('node_modules') ||
+    path.includes('dist') ||
+    path.includes('.git') ||
+    path.includes('build') ||
+    path.includes('out') ||
+    path.includes('public') ||
+    path.includes('assets') ||
+    path.includes('scripts') ||
+    path.includes('manifest.json') // we only want to update the manifest in the root of each app, not in subfolders
+  )
+}
 
 function getAllFiles(dir: string, files: string[] = []) {
   const entries = fs.readdirSync(dir, { withFileTypes: true })
@@ -19,35 +34,60 @@ function getAllFiles(dir: string, files: string[] = []) {
   return files
 }
 
-const files: string[] = []
-getAllFiles('src/', files)
+function hashFile(filePath: string) {
+  const content = fs.readFileSync(filePath, 'utf-8')
+
+  return createHash('sha256')
+    .update(filePath)
+    .update('\n')
+    .update(content)
+    .digest('hex')
+}
+
+export function hashFolder(folder: string): string {
+  let files: string[] = []
+  getAllFiles(folder, files)
+  files = files.filter((f) => !shouldIgnore(f)).sort() // critical for deterministic output
+
+  // hash each file and combine the hashes into a single hash for the folder
+  const fileHashes = files.map(hashFile)
+
+  return createHash('sha256').update(fileHashes.join('\n')).digest('hex')
+}
+
+const newHash = hashFolder('src/')
+
+//const files: string[] = []
+//getAllFiles('src/', files)
 
 const info = JSON.parse(
   fs.readFileSync('./src/config/manifest.json', 'utf-8')
 ) as IAppInfo
 
+const currentHash: string = info.hash
 const currentDate = info.modified ? new Date(info.modified) : new Date()
 
-// find all manifest files
-const manifestFiles = files
-  .filter(
-    (f) =>
-      f.includes('manifest.json') && !f.includes('src/config/manifest.json')
-  )
-  .map((f) => {
-    const stats = fs.lstatSync(f)
-    return { f, mtime: stats.mtime } as { f: string; mtime: Date }
-  })
-  .sort((a, b) => b.mtime.getTime() - a.mtime.getTime())
+// // find all manifest files
+// const manifestFiles = files
+//   .filter(
+//     (f) =>
+//       f.includes('manifest.json') && !f.includes('src/config/manifest.json')
+//   )
+//   .map((f) => {
+//     const stats = fs.lstatSync(f)
+//     return { f, mtime: stats.mtime } as { f: string; mtime: Date }
+//   })
+//   .sort((a, b) => b.mtime.getTime() - a.mtime.getTime())
 
-const manifestFile = manifestFiles[0]!
+// const manifestFile = manifestFiles[0]!
 
-console.log('Latest manifest file modification date:', manifestFile)
+// console.log('Latest manifest file modification date:', manifestFile)
 
 //console.log(info)
-//console.log(manifestFile)
+console.log(`Current hash: ${currentHash}`)
+console.log(`New hash:     ${newHash}`)
 
-if (true || manifestFile.mtime.getTime() > currentDate.getTime()) {
+if (newHash !== currentHash) {
   let build = info.build
   const currentVersion = info.version
 
@@ -93,8 +133,9 @@ if (true || manifestFile.mtime.getTime() > currentDate.getTime()) {
   info.version = newVersion
   info.build = build
   //info.updated = format(new Date(), 'LLL dd, yyyy')
-  info.modified = manifestFile.mtime.toISOString()
-  //fs.writeFileSync('./src/config/manifest.json', JSON.stringify(info, null, 2))
+  info.hash = newHash
+  info.modified = new Date().toISOString()
+  fs.writeFileSync('./src/config/manifest.json', JSON.stringify(info, null, 2))
 
   console.log()
   console.log(`---- Version Update ----`)

@@ -1,12 +1,21 @@
 // The store is a datastore of files and an undo state
 
+import { IDBEntity } from '@/interfaces/db-entity'
 import { DATAFRAME_100x26 } from '@/lib/dataframe/annotation-dataframe'
 import { makeUuid } from '@/lib/id'
 import { IHistoryEntry } from '../history-manager'
-import { newHistoryFile } from './history-factories'
 import { IHistoryData, IHistoryDataStore, IHistoryState } from './history-types'
 
-export const DEFAULT_FILE = newHistoryFile('Default')
+// The history store is initialized with a default file and
+// sheet to ensure that there is always a valid current file and sheet,
+// which simplifies the logic for other parts of the app that rely on these values.
+// The default file and sheet cannot be edited.
+export const DEFAULT_FILE: IDBEntity = {
+  id: '019f1f0d-87c5-75fd-a25f-3e7dbef278e3',
+  name: 'Default File',
+  createdAt: '2026-07-01T18:59:41.291Z',
+}
+
 export const DEFAULT_SHEET = DATAFRAME_100x26
 
 export function resetStore(): IHistoryDataStore {

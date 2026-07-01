@@ -31,7 +31,6 @@ export function newHeatMapPlot(
 
   return {
     id: makeUuid(),
-
     style,
     name,
     dataframes,

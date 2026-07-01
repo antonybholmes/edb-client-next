@@ -21,6 +21,7 @@ export interface ISankeySettings {
     colorMode: 'gradient' | 'source' | 'target' | 'static'
     color: string
     opacity: number
+    gradientOffset: number
   }
   nodes: {
     rounding: number
@@ -52,6 +53,7 @@ const DEFAULT_SETTINGS: ISankeySettings = {
     colorMode: 'gradient',
     color: '#4F46E5',
     opacity: 0.5,
+    gradientOffset: 0.2,
   },
   nodes: {
     rounding: 3,

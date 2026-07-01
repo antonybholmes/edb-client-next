@@ -6,6 +6,7 @@ import {
   SIMPLE_COLOR_EXT_CLS,
 } from '@/components/plot/color-picker-popover'
 import type { IFontProps, ITextProps } from '@/components/plot/svg-props'
+import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { PopoverTrigger } from '@/components/shadcn/ui/themed/v2/popover'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
@@ -17,6 +18,7 @@ import {
   AArrowUp,
   Bold,
   Italic,
+  RotateCw,
   TextAlignCenter,
   TextAlignEnd,
   TextAlignStart,
@@ -62,7 +64,7 @@ function FontAlignToggles({
       <ToolbarSeparator />
       <ToggleGroup
         value={[value]}
-        onValueChange={v => onChange(v[0]!)}
+        onValueChange={(v) => onChange(v[0]!)}
         size="toolbar"
         aspect="icon"
       >
@@ -83,6 +85,7 @@ function FontAlignToggles({
     </>
   )
 }
+
 // Extracted font family select
 function FontFamilySelect({
   value,
@@ -92,8 +95,12 @@ function FontFamilySelect({
   onChange: (v: string) => void
 }) {
   return (
-    <SelectList value={value} onValueChange={v => onChange(v as string)} w="md">
-      {FONTS.map(font => (
+    <SelectList
+      value={value}
+      onValueChange={(v) => onChange(v as string)}
+      w="md"
+    >
+      {FONTS.map((font) => (
         <SelectItem key={font.label} value={font.label}>
           {font.label}
         </SelectItem>
@@ -112,20 +119,20 @@ function FontSizeSelect({
 }) {
   const idx = Math.max(
     0,
-    FONT_SIZES.findIndex(s => s.value === value)
+    FONT_SIZES.findIndex((s) => s.value === value)
   )
   return (
     <VCenterRow className="gap-x-1">
       <SelectList
         w="xxxs"
         value={value}
-        onValueChange={v => {
+        onValueChange={(v) => {
           let val = v
           if (!isNaN(Number(val))) val = Number(val)
           onChange(val as number)
         }}
       >
-        {FONT_SIZES.map(size => (
+        {FONT_SIZES.map((size) => (
           <SelectItem key={size.value} value={size.value}>
             {size.label}
           </SelectItem>
@@ -206,7 +213,7 @@ function FontStyleToggles({
           colors={[
             {
               color: font.fill.value,
-              onColorChange: color =>
+              onColorChange: (color) =>
                 update?.({ ...font, fill: { ...font.fill, value: color } }),
             },
           ]}
@@ -225,6 +232,26 @@ function FontStyleToggles({
   )
 }
 
+function FontRotation({
+  value,
+  onChange,
+}: {
+  value: number
+  onChange: (v: number) => void
+}) {
+  return (
+    <>
+      <ToolbarSeparator />
+      <IconButton
+        title="Rotate Font"
+        onClick={() => onChange((value + 90) % 360)}
+      >
+        <RotateCw size={16} />
+      </IconButton>
+    </>
+  )
+}
+
 interface FontUIProps {
   title?: UndefStr
   textProps: ITextProps
@@ -235,6 +262,7 @@ interface FontUIProps {
   showFontFamily?: boolean
   showFontSize?: boolean
   showStyle?: boolean
+  showRotation?: boolean
   view?: 'compact' | 'multi-line'
 }
 
@@ -248,6 +276,7 @@ export function FontUI({
   showStyle = true,
   showColor = true,
   showAlign = true,
+  showRotation = false,
   view = 'multi-line',
 }: FontUIProps) {
   //let titleNode: ReactNode | null = null
@@ -284,9 +313,9 @@ export function FontUI({
       {showFontFamily && (
         <FontFamilySelect
           value={textProps.font.fontFamily}
-          onChange={v =>
+          onChange={(v) =>
             update?.(
-              produce(textProps, draft => {
+              produce(textProps, (draft) => {
                 draft.font.fontFamily = v as IFontProps['fontFamily']
               })
             )
@@ -297,9 +326,9 @@ export function FontUI({
       {showFontSize && (
         <FontSizeSelect
           value={textProps.font.fontSize}
-          onChange={v =>
+          onChange={(v) =>
             update?.(
-              produce(textProps, draft => {
+              produce(textProps, (draft) => {
                 draft.font.fontSize = v as IFontProps['fontSize']
               })
             )
@@ -315,7 +344,7 @@ export function FontUI({
         <SwitchPropRow
           title={title}
           checked={textProps.show}
-          onCheckedChange={state => update?.({ ...textProps, show: state })}
+          onCheckedChange={(state) => update?.({ ...textProps, show: state })}
           className="font-bold"
         />
       )}
@@ -343,9 +372,9 @@ export function FontUI({
         {showStyle && (
           <FontStyleToggles
             font={textProps.font}
-            update={font =>
+            update={(font) =>
               update?.(
-                produce(textProps, draft => {
+                produce(textProps, (draft) => {
                   draft.font = font
                 })
               )
@@ -357,10 +386,23 @@ export function FontUI({
         {showAlign && (
           <FontAlignToggles
             value={textProps.font.textAnchor}
-            onChange={v =>
+            onChange={(v) =>
               update?.(
-                produce(textProps, draft => {
+                produce(textProps, (draft) => {
                   draft.font.textAnchor = v as IFontProps['textAnchor']
+                })
+              )
+            }
+          />
+        )}
+
+        {showRotation && (
+          <FontRotation
+            value={textProps.rotation ?? 0}
+            onChange={(v) =>
+              update?.(
+                produce(textProps, (draft) => {
+                  draft.rotation = v
                 })
               )
             }
@@ -370,7 +412,7 @@ export function FontUI({
         {view === 'compact' && showEnabled && (
           <Switch
             checked={textProps.show}
-            onCheckedChange={state => update?.({ ...textProps, show: state })}
+            onCheckedChange={(state) => update?.({ ...textProps, show: state })}
             className="font-bold"
           />
         )}

@@ -72,6 +72,7 @@ export interface ITextProps {
   show: boolean
   //text: string
   font: IFontProps
+  rotation?: number
 }
 
 export const DEFAULT_TEXT_PROPS: ITextProps = {

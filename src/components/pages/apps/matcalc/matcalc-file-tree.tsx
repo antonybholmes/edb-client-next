@@ -11,7 +11,6 @@ import { VScrollPanel } from '@/components/v-scroll-panel'
 
 import { FileChartColumnIncreasing, FileSpreadsheet } from 'lucide-react'
 
-import { makeUuid } from '@/lib/id'
 import {
   useCurrentSelections,
   useFiles,
@@ -23,8 +22,15 @@ import { HistoryPlot } from './history/history-provider/history-types'
 export const TAB_DATA_TABLES = 'Data Tables'
 
 const DATA_TABLES_TAB: ITab = Object.freeze({
-  id: makeUuid(),
+  id: '019f1f1d-c97a-7e70-9b9e-de3b247ee64c',
   name: TAB_DATA_TABLES,
+  type: 'folder',
+  children: [],
+})
+
+const PLOTS_TAB: ITab = Object.freeze({
+  id: '019f1f1d-e590-78ec-bf6a-c8135b33f128',
+  name: 'Plots',
   type: 'folder',
   children: [],
 })
@@ -42,6 +48,7 @@ export function MatcalcFileTree() {
     //const lastHistoryAction = historyActions[historyActions.length - 1]!
 
     const tableChildrenTabs: ITab[] = []
+    const plotChildrenTabs: ITab[] = []
 
     const allPlots: HistoryPlot[] = []
 
@@ -53,17 +60,19 @@ export function MatcalcFileTree() {
 
       const fileNode: ITab = {
         id: sheet.id,
-        name: 'Sheet', //sheet?.name ?? `File ${fi + 1}`, //'Sheet', //sheet?.name ?? `File ${fi + 1}`,
+        name: sheet?.name ?? `File ${fi + 1}`, //'Sheet', //sheet?.name ?? `File ${fi + 1}`,
         icon: <FileSpreadsheet strokeWidth={1.5} size={18} />,
         children: [],
         onClick: () => {
-          setSelectedPanelTab(sheet.id) //file.id)
+          setSelectedPanelTab(sheet.id)
 
-          goto({ file, sheet }) //, 'branch')
+          goto({ file, sheet })
         },
+
         onDelete: () => {
           removeFiles([{ file }]) //file.id], 'file')
         },
+        type: 'file',
       }
 
       const p = getPlots(present, plots, { file })
@@ -77,9 +86,9 @@ export function MatcalcFileTree() {
           icon: <FileChartColumnIncreasing strokeWidth={1.5} size={18} />,
 
           onClick: () => {
-            setSelectedPanelTab(plot.id) //file.id)
+            setSelectedPanelTab(plot.id)
 
-            goto({ file, sheet, plot }) //, 'branch')
+            goto({ file, sheet, plot })
           },
           onDelete: () => {
             remove([{ file, plot }])
@@ -87,29 +96,30 @@ export function MatcalcFileTree() {
         }
 
         plotNodes.push(plotNode)
+        plotChildrenTabs.push(plotNode)
       }
 
-      if (plotNodes.length > 0) {
-        const plotFolderNode: ITab = {
-          id: sheet.id + '-plot-folder',
-          name: 'Plots',
-          type: 'folder',
-          //icon: <FileChartColumnIncreasing strokeWidth={1.5} size={20} />,
-          children: plotNodes,
-        }
+      // if (plotNodes.length > 0) {
+      //   const plotFolderNode: ITab = {
+      //     id: sheet.id + '-plot-folder',
+      //     name: 'Plots',
+      //     type: 'folder',
 
-        fileNode.children = [plotFolderNode]
-      }
+      //     children: plotNodes,
+      //   }
 
-      const fileFolderNode: ITab = {
-        id: sheet.id + '-file-folder',
-        name: sheet?.name ?? `File ${fi + 1}`,
-        type: 'folder',
-        //icon: <FileSpreadsheet strokeWidth={1.5} size={20} />,
-        children: [fileNode],
-      }
+      //   fileNode.children = [plotFolderNode]
+      // }
 
-      tableChildrenTabs.push(fileFolderNode)
+      // const fileFolderNode: ITab = {
+      //   id: sheet.id + '-file-folder',
+      //   name: sheet?.name ?? `File ${fi + 1}`,
+      //   type: 'folder',
+      //   //icon: <FileSpreadsheet strokeWidth={1.5} size={20} />,
+      //   children: [fileNode],
+      // }
+
+      tableChildrenTabs.push(fileNode)
 
       allPlots.push(...getPlots(present, plots, { file }))
     }
@@ -118,7 +128,7 @@ export function MatcalcFileTree() {
       ...ROOT_NODE,
       children: [
         { ...DATA_TABLES_TAB, children: tableChildrenTabs },
-        //{ ...PLOTS_TAB, children: plotChildrenTabs },
+        { ...PLOTS_TAB, children: plotChildrenTabs },
       ],
     }
   }, [files, plots])

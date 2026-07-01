@@ -1,0 +1,6 @@
+source	source column	target	target column	value	source color	target color	link color
+Input A	1	Process	2	5			
+Input B	1	Process		3			
+Input Z	1	Process		1			
+Process		Output 1	3	4			
+Process		Output 2	3	5			

@@ -13,6 +13,9 @@ type Config = {
     email: string
     github: string
   }
+  settings: {
+    version: number
+  }
 } & IAppInfo
 
 export const config: Config = {
@@ -29,5 +32,9 @@ export const config: Config = {
     url: 'https://www.antonyholmes.dev',
     email: 'hello@antonyholmes.dev',
     github: 'https://github.com/antonybholmes',
+  },
+
+  settings: {
+    version: 100,
   },
 }

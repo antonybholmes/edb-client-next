@@ -8,7 +8,7 @@ import { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
 import { IClusterFrame } from '@/lib/math/hcluster'
 import { IBoxPlotDisplayOptions } from '../../apps/boxplot/boxplot-plot-svg'
 import { IExtGseaDisplayOptions } from '../../apps/ext-gsea/ext-gsea-store'
-import { SankeyPlot } from '../../apps/sankey/sankey-provider'
+import { ISankeyPlot } from '../../apps/sankey/sankey-provider'
 import { IVolcanoDisplayOptions } from '../../apps/volcano/volcano-plot-svg'
 import { IUndoState } from '../history-manager'
 
@@ -76,7 +76,7 @@ export interface ExtGseaPlot extends BasePlot {
 }
 
 export type HistoryPlot =
-  HeatMapPlot | VolcanoPlot | ExtGseaPlot | BoxPlot | SankeyPlot
+  HeatMapPlot | VolcanoPlot | ExtGseaPlot | BoxPlot | ISankeyPlot
 
 export type HistoryNode = IHistoryApp | HistoryPlot
 

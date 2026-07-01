@@ -10,6 +10,10 @@ import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
+import {
+  ColorPickerButton,
+  SIMPLE_COLOR_EXT_CLS,
+} from '@/components/plot/color-picker-popover'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { produce } from 'immer'
@@ -121,6 +125,7 @@ export function SankeyPropsPanel() {
                 fonts={[
                   {
                     textProps: settings.nodes.labels.font,
+                    showRotation: true,
                     update: (f) =>
                       updateSettings(
                         produce(settings, (draft) => {
@@ -177,6 +182,24 @@ export function SankeyPropsPanel() {
               title="Opacity"
             />
             <PropRow title="Color">
+              <ColorPickerButton
+                colors={[
+                  {
+                    color: settings.links.color,
+                    //opacity: settings.links.opacity,
+                    onColorChange: (color, alpha) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.links.color = color
+                          //draft.links.opacity = alpha
+                        })
+                      )
+                    },
+                  },
+                ]}
+                className={SIMPLE_COLOR_EXT_CLS}
+              />
+
               <SelectList
                 items={[
                   { value: 'gradient', label: 'Gradient' },
@@ -203,6 +226,21 @@ export function SankeyPropsPanel() {
                 <SelectItem value="target">Target</SelectItem>
               </SelectList>
             </PropRow>
+
+            <NumericalPropRow
+              value={settings.links.gradientOffset}
+              limit={[0, 1]}
+              dp={1}
+              step={0.1}
+              onNumChange={(value) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.links.gradientOffset = value
+                  })
+                )
+              }}
+              title="Gradient offset"
+            />
           </AccordionContent>
         </AccordionItem>
       </ScrollAccordion>

@@ -3,7 +3,7 @@ import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
 import { ISVGProps } from '@/interfaces/svg-props'
 import { useMemo } from 'react'
-import { IOutputGraph, IOutputNode } from './layout'
+import { IOutputGraph, IOutputNode } from './sankey-layout'
 import { ILayoutNode, useSankey } from './sankey-provider'
 import { ISankeySettings, useSankeySettings } from './sankey-settings-store'
 
@@ -107,8 +107,7 @@ function label(node: ILayoutNode, settings: ISankeySettings) {
 function gradientDefs(
   graph: IOutputGraph,
   layoutMap: Map<string, ILayoutNode>,
-  settings: ISankeySettings,
-  offsetPercent: number = 20
+  settings: ISankeySettings
 ) {
   return (
     <defs>
@@ -131,8 +130,14 @@ function gradientDefs(
             x2={target.x0}
             y2={0}
           >
-            <stop offset={`${offsetPercent}%`} stopColor={source.color} />
-            <stop offset={`${100 - offsetPercent}%`} stopColor={target.color} />
+            <stop
+              offset={`${settings.links.gradientOffset * 100}%`}
+              stopColor={source.color}
+            />
+            <stop
+              offset={`${100 - settings.links.gradientOffset * 100}%`}
+              stopColor={target.color}
+            />
           </linearGradient>
         )
       })}

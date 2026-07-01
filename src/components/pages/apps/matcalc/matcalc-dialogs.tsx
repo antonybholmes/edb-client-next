@@ -22,6 +22,7 @@ import { MotifToGeneDialog } from './apps/motifs-to-genes/motif-to-gene-dialog'
 import { VolcanoDialog } from './apps/volcano/volcano-dialog'
 
 import { SankeyDialog } from './apps/sankey/sankey-dialog'
+import { ISankeyPlot } from './apps/sankey/sankey-provider'
 import { FilterRowsDialog } from './filter-rows-dialog'
 import {
   DataFrameType,
@@ -51,7 +52,7 @@ type DialogTypeMap = {
     callback: (plot: HistoryPlot) => void
   }
   'sankey-plot': {
-    callback: (plot: HistoryPlot) => void
+    callback: (plot: ISankeyPlot) => void
   }
   kmeans: {
     callback: (data: { df: AnnotationDataFrame; drawHeatmap: boolean }) => void

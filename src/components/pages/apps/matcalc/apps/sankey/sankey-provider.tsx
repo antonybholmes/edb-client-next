@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { BasePlot } from '../../history/history-provider/history-types'
-import { IOutputGraph, useSankeyLayout } from './layout'
+import { IOutputGraph, useSankeyLayout } from './sankey-layout'
 import { useSankeySettings } from './sankey-settings-store'
 
 export interface ISankeyNode {
@@ -59,13 +59,13 @@ export const DEFAULT_SETTINGS: ISankeyDisplayOptions = {
   scale: 1,
 }
 
-export interface SankeyPlot extends BasePlot, ISankey {
+export interface ISankeyPlot extends BasePlot, ISankey {
   style: 'sankey'
 
   props: ISankeyDisplayOptions
 }
 
-export const DEFAULT_PLOT: SankeyPlot = {
+export const DEFAULT_PLOT: ISankeyPlot = {
   id: makeUuid(),
   name: 'Sankey',
   style: 'sankey',
@@ -102,19 +102,14 @@ export function newSankeyPlot(
   name: string,
   nodes: ISankeyNode[] = [],
   links: ISankeyLink[] = [],
-  opts: Partial<SankeyPlot> = {}
-): SankeyPlot {
-  const {
-    style = 'sankey',
-    props = { ...DEFAULT_SETTINGS },
-    actions = [],
-    groups = [],
-  } = opts
+  opts: Partial<ISankeyPlot> = {}
+): ISankeyPlot {
+  const { props = { ...DEFAULT_SETTINGS }, actions = [], groups = [] } = opts
 
   return {
     id: makeUuid(),
-    ////path: '',
-    style,
+
+    style: 'sankey',
     name,
     nodes,
     links,
@@ -128,7 +123,7 @@ export function newSankeyPlot(
 
 export interface SankeyPropsContextType {
   displayProps: ISankeyDisplayOptions
-  plot: SankeyPlot
+  plot: ISankeyPlot
   layoutMap: Map<string, ILayoutNode>
   // byColumn: Map<number, ISankeyNode[]>
   //numCols: number
@@ -156,7 +151,7 @@ export function SankeyProvider({
   plot = DEFAULT_PLOT,
   children,
 }: {
-  plot?: SankeyPlot
+  plot?: ISankeyPlot
   children: ReactNode
 }) {
   const { createSankeyLayout } = useSankeyLayout()

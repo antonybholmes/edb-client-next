@@ -1,11 +1,10 @@
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
-import { sankey } from 'd3-sankey'
-import { useRef } from 'react'
-import { HistoryPlot } from '../../history/history-provider/history-types'
-import { useMatcalcSettings } from '../../settings/matcalc-settings'
-import { DEFAULT_PLOT } from './sankey-provider'
+import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { useCurrentSheets } from '../../history/history-provider/history-contexts'
+import { DFToSankeyGraph } from './sankey-parser'
+import { ISankeyPlot } from './sankey-provider'
 
 interface IFormInput {
   foldChangeCol: string
@@ -14,7 +13,7 @@ interface IFormInput {
   applyLog10ToPValue: boolean
 }
 
-export interface IProps extends IModalProps<HistoryPlot> {
+export interface IProps extends IModalProps<ISankeyPlot> {
   open?: boolean
 
   minThreshold?: number
@@ -25,38 +24,15 @@ export function SankeyDialog({
 
   onResponse,
 }: IProps) {
-  const { settings, updateSettings } = useMatcalcSettings()
-
-  const btnRef = useRef<HTMLButtonElement>(null)
+  const { sheet } = useCurrentSheets()
 
   function makeSankeyPlot() {
-    onResponse?.(TEXT_OK, { ...DEFAULT_PLOT })
+    const plot = DFToSankeyGraph(sheet as BaseDataFrame)
+
+    console.log('Generated sankey plot', plot)
+
+    onResponse?.(TEXT_OK, plot)
   }
-
-  const layout = sankey<
-    { id: string },
-    { source: string; target: string; value: number }
-  >()
-    .nodeId((d) => d.id) // need to specify id accessor since our nodes are not in the default format
-    .nodeWidth(20)
-    .nodePadding(10)
-    .extent([
-      [0, 0],
-      [10, 10],
-    ])
-
-  const nodes: { id: string }[] = [{ id: 'A' }, { id: 'B' }]
-
-  const links: { source: string; target: string; value: number }[] = [
-    { source: 'A', target: 'B', value: 10 },
-  ]
-
-  const graph = layout({
-    nodes: nodes.map((d) => ({ ...d })),
-    links: links.map((d) => ({ ...d })),
-  })
-
-  console.log('d3 sankey layout', graph)
 
   return (
     <OKCancelDialog

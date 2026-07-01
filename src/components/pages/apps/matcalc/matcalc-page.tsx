@@ -308,6 +308,20 @@ export function MatcalcPage() {
     })
   }
 
+  async function loadSankeyTestData() {
+    const res = await httpFetch.getText('/data/test/sankey.txt')
+
+    const lines = textToLines(res)
+
+    const table = new DataFrameReader().read(lines)
+
+    openFile(`Sankey Test`, {
+      //mode: 'append',
+
+      sheets: [table.setName('Sankey Test') as AnnotationDataFrame],
+    })
+  }
+
   async function loadAnnotateTestData() {
     const res = await httpFetch.getText('/data/test/annotate.txt')
 
@@ -525,6 +539,9 @@ export function MatcalcPage() {
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => loadAnnotateTestData()}>
               Annotate
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => loadSankeyTestData()}>
+              Sankey
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

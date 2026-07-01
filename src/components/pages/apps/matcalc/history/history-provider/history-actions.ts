@@ -132,9 +132,9 @@ function toPathId(path: Record<string, StrOrIdObj>): PathId {
 }
 
 function removeFile(state: IHistoryState, p: PathId) {
-  if ((state.fileOrder.length || 0) < 2) {
-    return
-  }
+  // if ((state.fileOrder.length || 0) < 2) {
+  //   return
+  // }
 
   state.fileOrder = state.fileOrder.filter((fileId) => fileId !== p.file)
 
@@ -142,6 +142,11 @@ function removeFile(state: IHistoryState, p: PathId) {
   delete state.plotOrder[p.file]
   delete state.groupOrder[p.file]
   delete state.genesetOrder[p.file]
+
+  if (state.fileOrder.length === 0) {
+    // if there are no files left, reset to initial state
+    state.fileOrder = [DEFAULT_FILE.id]
+  }
 
   // select previous sheet/plot
 
@@ -415,6 +420,8 @@ function handleRemoveFiles(
     return state
   }
 
+  console.log('Removing files with paths', action.paths)
+
   const pathIds = action.paths.map(toPathId)
   return applyHistoryUpdate(
     state,
@@ -441,6 +448,8 @@ function handleReorderSheets(
 ): IHistoryData {
   const { ids, opts } = action
   const { file = state.present.currentFile } = opts
+
+  // default file cannot be reordered
   if (ids.length === 0 || file === DEFAULT_FILE.id) {
     return state
   }
@@ -456,6 +465,8 @@ function handleReorderPlots(
 ): IHistoryData {
   const { ids, opts } = action
   const { file = state.present.currentFile } = opts
+
+  // default file cannot be reordered
   if (ids.length === 0 || file === DEFAULT_FILE.id) {
     return state
   }
@@ -484,6 +495,8 @@ function handleAddGroups(
 ): IHistoryData {
   const { groups, opts } = action
   const { mode = 'append', name = '', file = state.present.currentFile } = opts
+
+  // cannot add groups to default file and empty groups array does not require update
   if (groups.length === 0 || file === DEFAULT_FILE.id) {
     return state
   }
@@ -531,6 +544,7 @@ function handleRemoveGroups(
 ): IHistoryData {
   const { ids, opts } = action
   const { file = state.present.currentFile } = opts
+  // cannot remove groups from default file and empty ids array does not require update
   if (ids.length === 0 || file === DEFAULT_FILE.id) {
     return state
   }
@@ -548,6 +562,8 @@ function handleReorderGroups(
 ): IHistoryData {
   const { ids, opts } = action
   const { file = state.present.currentFile } = opts
+
+  // default file cannot be reordered
   if (ids.length === 0 || file === DEFAULT_FILE.id) {
     return state
   }
@@ -563,6 +579,8 @@ function handleAddGenesets(
 ): IHistoryData {
   const { genesets, opts } = action
   const { mode = 'append', file = state.present.currentFile } = opts
+
+  // cannot add genesets to default file and empty genesets array does not require update
   if (genesets.length === 0 || file === DEFAULT_FILE.id) {
     return state
   }
@@ -607,6 +625,7 @@ function handleRemoveGenesets(
 ): IHistoryData {
   const { ids, opts } = action
   const { file = state.present.currentFile } = opts
+  // cannot remove genesets from default file and empty ids array does not require update
   if (ids.length === 0 || file === DEFAULT_FILE.id) {
     return state
   }
@@ -629,6 +648,7 @@ function handleReorderGenesets(
 ): IHistoryData {
   const { ids, opts } = action
   const { file = state.present.currentFile } = opts
+  // default file cannot be reordered and empty ids array does not require update
   if (ids.length === 0 || file === DEFAULT_FILE.id) {
     return state
   }

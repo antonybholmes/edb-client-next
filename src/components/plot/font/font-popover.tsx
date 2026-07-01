@@ -58,6 +58,7 @@ interface IFontPopoverProps {
     update: (textProps: ITextProps) => void
     showEnabled?: boolean
     showAlign?: boolean
+    showRotation?: boolean
     ext?: ReactNode
   }[]
 
@@ -93,6 +94,7 @@ export function FontPopover({ fonts = [], icon }: IFontPopoverProps) {
             update={f.update}
             showEnabled={f.showEnabled ?? true}
             showAlign={f.showAlign ?? true}
+            showRotation={f.showRotation ?? false}
           />
           {f.ext && f.ext}
         </Fragment>
