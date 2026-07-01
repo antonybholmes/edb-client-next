@@ -35,20 +35,19 @@ export interface ISankeySettings {
       position: 'center' | 'right' | 'left' | 'top' | 'bottom'
     }
   }
-  optimization: {
-    on: boolean
-    steps: number
-    relaxation: {
-      alpha: number
-      decay: number
-    }
-  }
+  // optimization: {
+  //   on: boolean
+  //   steps: number
+  //   relaxation: {
+  //     alpha: number
+  //     decay: number
+  //   }
+  // }
 }
 
 const DEFAULT_SETTINGS: ISankeySettings = {
-  //padding: 50,
-  width: 900,
-  height: 500,
+  width: 800,
+  height: 400,
   scale: 1,
   margin: { ...DEFAULT_MARGIN },
   links: {
@@ -69,14 +68,14 @@ const DEFAULT_SETTINGS: ISankeySettings = {
       position: 'center',
     },
   },
-  optimization: {
-    on: true,
-    steps: 32,
-    relaxation: {
-      alpha: 0.9,
-      decay: 0.9,
-    },
-  },
+  // optimization: {
+  //   on: true,
+  //   steps: 32,
+  //   relaxation: {
+  //     alpha: 0.9,
+  //     decay: 0.9,
+  //   },
+  // },
 }
 
 export interface ISankeySettingsStore extends ISankeySettings {
