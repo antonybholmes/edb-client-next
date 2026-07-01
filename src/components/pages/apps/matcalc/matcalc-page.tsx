@@ -162,7 +162,6 @@ function plotElem(plot: HistoryPlot): ReactElement {
         </ExtGseaProvider>
       )
     case 'sankey':
-      console.log('rendering sankey plot', plot)
       return (
         <SankeyProvider plot={plot}>
           <SankeyPanel />

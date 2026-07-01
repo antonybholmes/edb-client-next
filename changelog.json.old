@@ -2002,5 +2002,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-06-18T19:24:32.131Z"
+  },
+  {
+    "version": "85.2",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Sankey can now create plots from sheet. Matcalc file tree simplified. Fonts now support rotation",
+          "date": "2026-07-01T19:37:22.869Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-07-01T19:37:22.869Z"
   }
 ]

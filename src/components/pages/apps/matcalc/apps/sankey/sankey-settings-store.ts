@@ -12,10 +12,10 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 const SETTINGS_KEY = `${config.appId}:app:matcalc:sankey:v2`
 
 export interface ISankeySettings {
-  padding: number
+  //padding: number
   width: number
   height: number
-
+  scale: number
   margin: IMarginProps
   links: {
     colorMode: 'gradient' | 'source' | 'target' | 'static'
@@ -24,10 +24,12 @@ export interface ISankeySettings {
     gradientOffset: number
   }
   nodes: {
+    gap: number
     rounding: number
     width: number
     useColumns: boolean // Whether to use the column property of nodes for layout
     shape: 'rect' | 'circle'
+    opacity: number
     labels: {
       font: ITextProps
       position: 'center' | 'right' | 'left' | 'top' | 'bottom'
@@ -44,10 +46,10 @@ export interface ISankeySettings {
 }
 
 const DEFAULT_SETTINGS: ISankeySettings = {
-  padding: 50,
+  //padding: 50,
   width: 900,
   height: 500,
-
+  scale: 1,
   margin: { ...DEFAULT_MARGIN },
   links: {
     colorMode: 'gradient',
@@ -56,8 +58,10 @@ const DEFAULT_SETTINGS: ISankeySettings = {
     gradientOffset: 0.2,
   },
   nodes: {
+    gap: 50,
     rounding: 3,
     width: 20,
+    opacity: 1,
     useColumns: true, // Whether to use the column property of nodes for layout
     shape: 'rect',
     labels: {

@@ -7,7 +7,7 @@ import { useState, type ComponentProps } from 'react'
 const THUMB_CLS = cn(
   FOCUS_RING_CLS,
   'h-3.5 w-3.5 aspect-square shrink-0 rounded-full border border-app-theme/70 bg-background select-none',
-  'group-hover:border-app-theme disabled:pointer-events-none disabled:opacity-50 cursor-pointer z-120'
+  'group-hover:border-app-theme disabled:pointer-events-none disabled:opacity-50 cursor-pointer'
 )
 
 export function Slider({
@@ -20,7 +20,7 @@ export function Slider({
     <SliderPrimitive.Root {...props}>
       <SliderPrimitive.Control
         className={cn(
-          'relative flex touch-none select-none flex-row items-center group  ',
+          'relative flex touch-none select-none flex-row items-center group min-h-5 shrink-0',
           className
         )}
       >

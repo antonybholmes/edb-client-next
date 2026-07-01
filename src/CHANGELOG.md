@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Sankey now uses sliders in UI.
 - Sankey can now create plots from sheet. Matcalc file tree simplified. Fonts now support rotation.
 
 

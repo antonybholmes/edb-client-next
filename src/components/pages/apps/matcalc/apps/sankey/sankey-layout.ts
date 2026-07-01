@@ -198,7 +198,7 @@ export function useSankeyLayout() {
     let layout = sankey<ISankeyNode, ISankeyLink>()
       .nodeId((d) => d.id)
       .nodeWidth(settings.nodes.width)
-      .nodePadding(settings.padding)
+      .nodePadding(settings.nodes.gap)
       .extent([
         [0, 0],
         [settings.width, settings.height],
@@ -210,14 +210,10 @@ export function useSankeyLayout() {
       })
     }
 
-    console.log('nodes for d3 sankey', sp)
-
     const graph = layout({
       nodes: nodes.map((d) => ({ ...d })),
       links: sp.links.map((d) => ({ ...d })),
     }) as IOutputGraph
-
-    console.log('d3 sankey layout', graph)
 
     const layoutMap = new Map<string, ILayoutNode>(
       graph.nodes.map((n) => [n.id, n] as [string, ILayoutNode])

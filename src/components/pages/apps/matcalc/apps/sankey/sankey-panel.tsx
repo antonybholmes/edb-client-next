@@ -19,7 +19,8 @@ import { ResizableSidebar } from '@/components/slide-bar/resizable-sidebar'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { SankeyPropsPanel } from './sankey-props-panel'
-import { ISankeyDisplayOptions, useSankey } from './sankey-provider'
+import { useSankey } from './sankey-provider'
+import { useSankeySettings } from './sankey-settings-store'
 import { SankeySvg } from './sankey-svg'
 
 export function SankeyPanel() {
@@ -35,7 +36,7 @@ export function SankeyPanel() {
 
   const { updatePlot } = useHistory()
   const { plot } = useSankey()
-  const displayProps: ISankeyDisplayOptions = plot.props
+  const { settings, updateSettings } = useSankeySettings()
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
 
@@ -51,12 +52,12 @@ export function SankeyPanel() {
         if (message.data.includes(':')) {
           downloadSvgAutoFormat(
             svgRef,
-            `volcano.${messageImageFileFormat(message)}`
+            `sankey.${messageImageFileFormat(message)}`
           )
         } else {
           openDialog({
             type: 'save-image',
-            payload: { svgRef, name: `volcano` },
+            payload: { svgRef, name: `sankey` },
           })
         }
       }
@@ -74,7 +75,13 @@ export function SankeyPanel() {
 
     updatePlot(
       produce(plot, (draft) => {
-        draft.props.scale = zoom
+        console.log('Updating zoom to', zoom)
+        //draft.props.scale = zoom
+        updateSettings(
+          produce(settings, (draft) => {
+            draft.scale = zoom
+          })
+        )
       })
     )
   }, [zoom])

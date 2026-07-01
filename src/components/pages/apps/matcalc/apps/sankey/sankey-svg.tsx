@@ -30,7 +30,7 @@ export function SankeySvg({ ref }: ISVGProps) {
   const nodes = graph.nodes as ILayoutNode[]
 
   return (
-    <SvgBase width={w} height={h} ref={ref}>
+    <SvgBase width={w} height={h} ref={ref} scale={settings.scale}>
       {/* Define gradients for links */}
       {settings.links.colorMode === 'gradient' &&
         gradientDefs(graph, layoutMap, settings)}
@@ -51,6 +51,7 @@ export function SankeySvg({ ref }: ISVGProps) {
                   height={node.y1 - node.y0}
                   rx={settings.nodes.rounding}
                   fill={node.color ?? DEFAULT_NODE_COLOR}
+                  fillOpacity={settings.nodes.opacity}
                 />
               )}
               {settings.nodes.shape === 'circle' && (
@@ -59,6 +60,7 @@ export function SankeySvg({ ref }: ISVGProps) {
                   cy={node.y0 + (node.y1 - node.y0) / 2}
                   r={Math.max(w, h) / 2}
                   fill={node.color ?? DEFAULT_NODE_COLOR}
+                  fillOpacity={settings.nodes.opacity}
                 />
               )}
               {settings.nodes.labels.font.show && label(node, settings)}
@@ -117,7 +119,7 @@ function gradientDefs(
         const source = layoutMap.get(sourceId)!
         const target = layoutMap.get(targetId)!
 
-        console.log(layoutMap, link, 'source', source, 'target', target)
+        //console.log(layoutMap, link, 'source', source, 'target', target)
 
         const id = `gradient-${sourceId}-${targetId}`
         return (
@@ -242,19 +244,20 @@ function linkPaths(
             ? settings.nodes.width
             : (target.y1 - target.y0) / 4
 
-        const cx = (x0 + x1 - r1 - r2) / 2
+        const cx = (x0 + x1 - settings.nodes.width) / 2
+
+        // const d = `
+        //   M ${x0} ${link.y0}
+        //   L ${x0 + r1} ${link.y0}
+        //   C ${cx} ${link.y0}, ${cx} ${link.y1}, ${x1 - r2} ${link.y1}
+        //   L ${x1} ${link.y1}
+        // `
 
         const d = `
           M ${x0} ${link.y0}
-          L ${x0 + r1} ${link.y0}
-          C ${cx} ${link.y0}, ${cx} ${link.y1}, ${x1 - r2} ${link.y1}
-          L ${x1} ${link.y1}
+          C ${cx} ${link.y0}, ${cx} ${link.y1}, ${x1} ${link.y1}
+  
         `
-        console.log(
-          'link path',
-
-          link
-        )
 
         let color = settings.links.color
 

@@ -1,6 +1,7 @@
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
 import { DFToSankeyGraph } from './sankey-parser'
@@ -25,19 +26,28 @@ export function SankeyDialog({
   onResponse,
 }: IProps) {
   const { sheet } = useCurrentSheets()
+  const { open: openDialog } = useDialogs()
 
   function makeSankeyPlot() {
-    const plot = DFToSankeyGraph(sheet as BaseDataFrame)
+    try {
+      const plot = DFToSankeyGraph(sheet as BaseDataFrame)
 
-    console.log('Generated sankey plot', plot)
-
-    onResponse?.(TEXT_OK, plot)
+      onResponse?.(TEXT_OK, plot)
+    } catch (e) {
+      openDialog({
+        type: 'alert',
+        payload: {
+          title: 'Error creating Sankey Plot',
+          content: (e as Error).message,
+        },
+      })
+    }
   }
 
   return (
     <OKCancelDialog
       open={open}
-      title="Sankey Plot"
+      title="Sankey"
       onResponse={(r) => {
         if (r === TEXT_OK) {
           makeSankeyPlot()

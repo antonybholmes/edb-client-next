@@ -51,18 +51,18 @@ export interface ISankey extends IDBEntity {
   links: ISankeyLink[]
 }
 
-export interface ISankeyDisplayOptions {
-  scale: number
-}
+// export interface ISankeyDisplayOptions {
+//   scale: number
+//}
 
-export const DEFAULT_SETTINGS: ISankeyDisplayOptions = {
-  scale: 1,
-}
+// export const DEFAULT_SETTINGS: ISankeyDisplayOptions = {
+//   scale: 1,
+// }
 
 export interface ISankeyPlot extends BasePlot, ISankey {
   style: 'sankey'
 
-  props: ISankeyDisplayOptions
+  //props: ISankeyDisplayOptions
 }
 
 export const DEFAULT_PLOT: ISankeyPlot = {
@@ -74,9 +74,9 @@ export const DEFAULT_PLOT: ISankeyPlot = {
   type: 'plot',
   createdAt: new Date().toISOString(),
 
-  props: {
-    scale: 1,
-  },
+  // props: {
+  //   scale: 1,
+  // },
 
   nodes: [
     { id: 'A', label: 'Input A', column: 0 },
@@ -104,7 +104,7 @@ export function newSankeyPlot(
   links: ISankeyLink[] = [],
   opts: Partial<ISankeyPlot> = {}
 ): ISankeyPlot {
-  const { props = { ...DEFAULT_SETTINGS }, actions = [], groups = [] } = opts
+  const { actions = [], groups = [] } = opts
 
   return {
     id: makeUuid(),
@@ -114,7 +114,7 @@ export function newSankeyPlot(
     nodes,
     links,
     groups,
-    props,
+    //props,
     actions,
     type: 'plot',
     createdAt: new Date().toISOString(),
@@ -122,7 +122,7 @@ export function newSankeyPlot(
 }
 
 export interface SankeyPropsContextType {
-  displayProps: ISankeyDisplayOptions
+  //displayProps: ISankeyDisplayOptions
   plot: ISankeyPlot
   layoutMap: Map<string, ILayoutNode>
   // byColumn: Map<number, ISankeyNode[]>
@@ -176,7 +176,7 @@ export function SankeyProvider({
   return (
     <SankeyContext.Provider
       value={{
-        displayProps: plot.props,
+        //displayProps: plot.props,
         plot,
         layoutMap,
         //byColumn,

@@ -6,7 +6,6 @@ import {
   ScrollAccordion,
 } from '@/themed/v2/accordion'
 
-import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
@@ -16,6 +15,7 @@ import {
 } from '@/components/plot/color-picker-popover'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import { Slider } from '@/components/shadcn/ui/themed/v2/slider'
 import { produce } from 'immer'
 import { useSankeySettings } from './sankey-settings-store'
 
@@ -59,7 +59,7 @@ export function SankeyPropsPanel() {
               />
             </PropRow>
 
-            <NumericalPropRow
+            {/* <NumericalPropRow
               value={settings.optimization.steps}
               onNumChange={(value) => {
                 updateSettings(
@@ -69,9 +69,9 @@ export function SankeyPropsPanel() {
                 )
               }}
               title="Iterations"
-            />
+            /> */}
 
-            <CheckPropRow
+            {/* <CheckPropRow
               checked={settings.optimization.on}
               onCheckedChange={(checked) => {
                 updateSettings(
@@ -81,7 +81,7 @@ export function SankeyPropsPanel() {
                 )
               }}
               title="Optimize Layout"
-            />
+            /> */}
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="nodes">
@@ -120,6 +120,50 @@ export function SankeyPropsPanel() {
                 )
               }}
             />
+            <NumericalPropRow
+              title="Gap"
+              limit={[0, 1000]}
+              value={settings.nodes.gap}
+              onNumChange={(value) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.nodes.gap = value
+                  })
+                )
+              }}
+            />
+            {/* <NumericalPropRow
+              value={settings.nodes.opacity}
+              limit={[0, 1]}
+              dp={1}
+              step={0.1}
+              onNumChange={(value) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.nodes.opacity = value
+                  })
+                )
+              }}
+              title="Opacity"
+            /> */}
+
+            <PropRow title="Opacity" contentCls="pr-2">
+              <Slider
+                value={settings.nodes.opacity}
+                min={0}
+                max={1}
+                onValueChange={(value: number | readonly number[]) => {
+                  const newValue = Array.isArray(value) ? value[0]! : value
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.nodes.opacity = newValue
+                    })
+                  )
+                }}
+                step={0.05}
+                className="w-20"
+              />
+            </PropRow>
             <PropRow title="Labels">
               <FontPopover
                 fonts={[
@@ -167,7 +211,7 @@ export function SankeyPropsPanel() {
         <AccordionItem value="links">
           <AccordionTrigger>Links</AccordionTrigger>
           <AccordionContent>
-            <NumericalPropRow
+            {/* <NumericalPropRow
               value={settings.links.opacity}
               limit={[0, 1]}
               dp={1}
@@ -180,7 +224,8 @@ export function SankeyPropsPanel() {
                 )
               }}
               title="Opacity"
-            />
+            /> */}
+
             <PropRow title="Color">
               <ColorPickerButton
                 colors={[
@@ -226,8 +271,41 @@ export function SankeyPropsPanel() {
                 <SelectItem value="target">Target</SelectItem>
               </SelectList>
             </PropRow>
-
-            <NumericalPropRow
+            <PropRow title="Opacity" contentCls="pr-2">
+              <Slider
+                value={settings.links.opacity}
+                min={0}
+                max={1}
+                onValueChange={(value: number | readonly number[]) => {
+                  const newValue = Array.isArray(value) ? value[0]! : value
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.links.opacity = newValue
+                    })
+                  )
+                }}
+                step={0.05}
+                className="w-20"
+              />
+            </PropRow>
+            <PropRow title="Gradient Offset" contentCls="pr-2">
+              <Slider
+                value={settings.links.gradientOffset}
+                min={0}
+                max={1}
+                onValueChange={(value: number | readonly number[]) => {
+                  const newValue = Array.isArray(value) ? value[0]! : value
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.links.gradientOffset = newValue
+                    })
+                  )
+                }}
+                step={0.05}
+                className="w-20"
+              />
+            </PropRow>
+            {/* <NumericalPropRow
               value={settings.links.gradientOffset}
               limit={[0, 1]}
               dp={1}
@@ -240,7 +318,7 @@ export function SankeyPropsPanel() {
                 )
               }}
               title="Gradient offset"
-            />
+            /> */}
           </AccordionContent>
         </AccordionItem>
       </ScrollAccordion>

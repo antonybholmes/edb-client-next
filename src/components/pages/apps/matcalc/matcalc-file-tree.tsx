@@ -81,7 +81,7 @@ export function MatcalcFileTree() {
       for (const [pi, plot] of p.entries()) {
         const plotNode: ITab = {
           id: plot.id, //file.id,
-          name: plot?.name ?? `Plot ${pi + 1}`,
+          name: `${plot?.name ?? 'Plot'} ${pi + 1}`,
           type: 'plot',
           icon: <FileChartColumnIncreasing strokeWidth={1.5} size={18} />,
 

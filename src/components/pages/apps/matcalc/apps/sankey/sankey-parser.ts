@@ -65,7 +65,9 @@ export function DFToSankeyGraph(
     targetColorIdx === -1 ||
     linkColorIdx === -1
   ) {
-    throw new Error('Source, target, or value column not found in DataFrame')
+    throw new Error(
+      'DataFrame must have columns: source, source column, target, target column, value, source color, target color, link color.'
+    )
   }
 
   const nodesMap: Record<string, ISankeyNode> = {}
@@ -111,7 +113,7 @@ export function DFToSankeyGraph(
 
   const nodes = Object.values(nodesMap)
 
-  const plot = newSankeyPlot('Sankey Plot', nodes, links)
+  const plot = newSankeyPlot('Sankey', nodes, links)
 
   return plot
 }

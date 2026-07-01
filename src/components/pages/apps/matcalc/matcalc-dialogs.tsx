@@ -238,7 +238,6 @@ function SankeyPlotDialogRenderer({
     <SankeyDialog
       onResponse={(response, data) => {
         if (response === TEXT_OK && data) {
-          console.log('sankey dialog response', response, data)
           callback(data)
         }
         close(dialog.id)

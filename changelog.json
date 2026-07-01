@@ -2010,6 +2010,10 @@
         {
           "msg": "Sankey can now create plots from sheet. Matcalc file tree simplified. Fonts now support rotation",
           "date": "2026-07-01T19:37:22.869Z"
+        },
+        {
+          "msg": "Sankey now uses sliders in UI",
+          "date": "2026-07-01T20:30:01.828Z"
         }
       ]
     },
