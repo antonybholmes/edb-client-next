@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Resizable sidebar now uses slot system similar to footer to allow placement of components in header. This seems more robust than the portal method.
 - Bug fixes and updates.
 - Sankey now uses sliders in UI.
 - Sankey can now create plots from sheet. Matcalc file tree simplified. Fonts now support rotation.

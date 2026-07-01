@@ -5,6 +5,7 @@ import {
   ITextProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
+import { useCallback } from 'react'
 
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
@@ -108,9 +109,9 @@ export function useSankeySettings(): {
   const settings = useSankeySettingsStore((state) => state)
   const updateSettings = useSankeySettingsStore((state) => state.updateSettings)
 
-  function resetSettings() {
+  const resetSettings = useCallback(() => {
     updateSettings({ ...DEFAULT_SETTINGS })
-  }
+  }, [updateSettings])
 
   return {
     settings,

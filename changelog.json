@@ -2018,6 +2018,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2026-07-01T20:33:46.472Z"
+        },
+        {
+          "msg": "Resizable sidebar now uses slot system similar to footer to allow placement of components in header. This seems more robust than the portal method",
+          "date": "2026-07-01T21:47:02.591Z"
         }
       ],
       "Added": [

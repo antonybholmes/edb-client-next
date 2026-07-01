@@ -1,6 +1,7 @@
 import {
   Children,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -16,7 +17,6 @@ import { useHydration } from '@/stores/hydration'
 import { createPortal } from 'react-dom'
 import { usePanelRef } from 'react-resizable-panels'
 import { ChevronRightIcon } from '../icons/chevron-right-icon'
-import { VCenterRow } from '../layout/v-center-row'
 import { PropsPanel } from '../props-panel'
 import { IconButton } from '../shadcn/ui/themed/icon-button'
 import {
@@ -28,7 +28,8 @@ import {
 import type { IButtonProps } from '../shadcn/ui/themed/v2/button'
 import type { LeftRightPos } from '../side'
 
-import { OPTS_SIDEBAR_ID } from '../tabs/tab-provider'
+import { VCenterRow } from '../layout/v-center-row'
+import { ITab, OPTS_SIDEBAR_ID } from '../tabs/tab-provider'
 import { useSlideBar, useSlideBarStore } from './slide-bar-store'
 
 export function CloseButton({ className, ...props }: IButtonProps) {
@@ -47,10 +48,19 @@ export function CloseButton({ className, ...props }: IButtonProps) {
 
 interface IResizableSidebarContext {
   id: string
+  left: ITab | undefined
+  center: ITab | undefined
+  right: ITab | undefined
+  set: (slot: Slot, entry: ITab) => void
 }
+type Slot = 'left' | 'right' | 'center'
 
 const ResizableSidebarContext = createContext<IResizableSidebarContext>({
   id: '',
+  left: undefined,
+  center: undefined,
+  right: undefined,
+  set: () => {},
 })
 
 export function useResizableSidebarContext() {
@@ -69,10 +79,31 @@ function ResizableSidebarProvider({
 }: IChildrenProps & { id: string }) {
   //id = useStableId(id)
 
+  const [left, setLeft] = useState<ITab | undefined>(undefined)
+  const [center, setCenter] = useState<ITab | undefined>(undefined)
+  const [right, setRight] = useState<ITab | undefined>(undefined)
+
+  const set = useCallback(
+    (slot: Slot, entry: ITab) => {
+      if (slot === 'left') {
+        setLeft(entry)
+      } else if (slot === 'center') {
+        setCenter(entry)
+      } else if (slot === 'right') {
+        setRight(entry)
+      }
+    },
+    [setLeft, setCenter, setRight]
+  )
+
   return (
     <ResizableSidebarContext.Provider
       value={{
         id,
+        left,
+        center,
+        right,
+        set,
       }}
     >
       {children}
@@ -87,7 +118,7 @@ export function SidePanel({
   // need to wait for hydration to get the correct initial
   // size from the store, otherwise it will always start at 50%
 
-  const { id } = useResizableSidebarContext()
+  const { id, left, right } = useResizableSidebarContext()
 
   const hydrated = useHydration(useSlideBarStore)
 
@@ -124,22 +155,25 @@ export function SidePanel({
     >
       {/* Seems to need inner div to make overflow work properly, otherwise scrollbars appear */}
       <PropsPanel className="flex flex-col gap-y-2">
-        {showCloseButton && (
-          <VCenterRow className="gap-x-1 justify-between min-h-8 ">
+        <VCenterRow className="gap-x-1 min-h-8">
+          <VCenterRow className="grow min-h-8">
             <VCenterRow
               id={`resizable-sidebar-header-left-${id}`}
-              className="gap-x-2"
-            />
+              className="gap-x-2 grow"
+            >
+              {left && left.render && left.render}
+            </VCenterRow>
 
-            <VCenterRow className="gap-x-2 justify-end">
-              <VCenterRow
-                id={`resizable-sidebar-header-right-${id}`}
-                className="gap-x-2"
-              />
-              <CloseButton onClick={() => setOpen(false)} />
+            <VCenterRow
+              id={`resizable-sidebar-header-right-${id}`}
+              className="gap-x-2 grow justify-end"
+            >
+              {right && right.render && right.render}
             </VCenterRow>
           </VCenterRow>
-        )}
+          {showCloseButton && <CloseButton onClick={() => setOpen(false)} />}
+        </VCenterRow>
+
         {children}
       </PropsPanel>
     </ResizablePanel>
@@ -274,6 +308,8 @@ export function ResizableSidebarHeaderPortal({
   const [target, setTarget] = useState<HTMLElement | null>(null)
 
   const slot = `resizable-sidebar-header-${side}-${id}`
+
+  console.log('ResizableSidebarHeaderPortal target slot:', slot)
 
   useEffect(() => {
     setTarget(document.getElementById(slot))
