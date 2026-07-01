@@ -15,14 +15,17 @@ export interface ISankeySettings {
   padding: number
   width: number
   height: number
-  nodeWidth: number
+
   margin: IMarginProps
   links: {
-    color: 'gradient' | 'source' | 'target' | 'static'
+    colorMode: 'gradient' | 'source' | 'target' | 'static'
+    color: string
     opacity: number
   }
   nodes: {
     rounding: number
+    width: number
+    useColumns: boolean // Whether to use the column property of nodes for layout
     shape: 'rect' | 'circle'
     labels: {
       font: ITextProps
@@ -40,17 +43,20 @@ export interface ISankeySettings {
 }
 
 const DEFAULT_SETTINGS: ISankeySettings = {
-  padding: 10,
+  padding: 50,
   width: 900,
   height: 500,
-  nodeWidth: 20,
+
   margin: { ...DEFAULT_MARGIN },
   links: {
-    color: 'gradient',
+    colorMode: 'gradient',
+    color: '#4F46E5',
     opacity: 0.5,
   },
   nodes: {
     rounding: 3,
+    width: 20,
+    useColumns: true, // Whether to use the column property of nodes for layout
     shape: 'rect',
     labels: {
       font: { ...DEFAULT_TEXT_PROPS },

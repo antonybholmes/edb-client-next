@@ -176,6 +176,33 @@ export function SankeyPropsPanel() {
               }}
               title="Opacity"
             />
+            <PropRow title="Color">
+              <SelectList
+                items={[
+                  { value: 'gradient', label: 'Gradient' },
+                  { value: 'static', label: 'Static' },
+                  { value: 'source', label: 'Source' },
+                  { value: 'target', label: 'Target' },
+                ]}
+                value={settings.links.colorMode}
+                onValueChange={(value) => {
+                  const color = value as
+                    'gradient' | 'static' | 'source' | 'target'
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.links.colorMode = color
+                    })
+                  )
+                }}
+
+                w="xs"
+              >
+                <SelectItem value="gradient">Gradient</SelectItem>
+                <SelectItem value="static">Static</SelectItem>
+                <SelectItem value="source">Source</SelectItem>
+                <SelectItem value="target">Target</SelectItem>
+              </SelectList>
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
       </ScrollAccordion>

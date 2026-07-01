@@ -12,6 +12,7 @@
 
 ### Changed
 
+- Sankey now uses d3-sankey.
 - Added d3-sankey to do layout for me.
 - UI fixes.
 - Added render prop to ITab to separate rendering JSX directly or through component ref.

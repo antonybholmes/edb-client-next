@@ -3,19 +3,14 @@ import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
 import { ISVGProps } from '@/interfaces/svg-props'
 import { useMemo } from 'react'
-import {
-  ILayoutNode,
-  ISankey,
-  ISankeyLink,
-  ISankeyNode,
-  useSankey,
-} from './sankey-provider'
+import { IOutputGraph, IOutputNode } from './layout'
+import { ILayoutNode, useSankey } from './sankey-provider'
 import { ISankeySettings, useSankeySettings } from './sankey-settings-store'
 
 const DEFAULT_NODE_COLOR = '#4F46E5'
 
 export function SankeySvg({ ref }: ISVGProps) {
-  const { plot, layoutMap, scale, byColumn, numCols } = useSankey()
+  const { plot, layoutMap, graph } = useSankey()
   const { settings } = useSankeySettings()
 
   const w = useMemo(
@@ -28,59 +23,72 @@ export function SankeySvg({ ref }: ISVGProps) {
     [settings.height, settings.margin.top, settings.margin.bottom]
   )
 
+  if (!graph) {
+    return null
+  }
+
+  const nodes = graph.nodes as ILayoutNode[]
+
   return (
     <SvgBase width={w} height={h} ref={ref}>
       {/* Define gradients for links */}
-      {settings.links.color === 'gradient' &&
-        gradientDefs(plot, layoutMap, settings)}
+      {settings.links.colorMode === 'gradient' &&
+        gradientDefs(graph, layoutMap, settings)}
 
       <SvgMargin margin={settings.margin}>
-        {linkPaths(numCols, byColumn, layoutMap, plot, settings, scale)}
+        {linkPaths(graph, layoutMap, settings)}
 
-        {Array.from(layoutMap.values()).map((node) => (
-          <g key={node.id} id={`node-${node.id}`}>
-            {settings.nodes.shape === 'rect' && (
-              <rect
-                x={node.x - settings.nodeWidth / 2}
-                y={node.y}
-                width={settings.nodeWidth}
-                height={node.h}
-                rx={settings.nodes.rounding}
-                fill={node.color ?? DEFAULT_NODE_COLOR}
-              />
-            )}
-            {settings.nodes.shape === 'circle' && (
-              <circle
-                cx={node.x}
-                cy={node.y + node.h / 2}
-                r={Math.max(settings.nodeWidth, node.h) / 2}
-                fill={node.color ?? DEFAULT_NODE_COLOR}
-              />
-            )}
-            {settings.nodes.labels.font.show && label(node, settings)}
-          </g>
-        ))}
+        {nodes.map((node) => {
+          const w = node.x1 - node.x0
+          const h = node.y1 - node.y0
+          return (
+            <g key={node.id} id={`node-${node.id}`}>
+              {settings.nodes.shape === 'rect' && (
+                <rect
+                  x={node.x0 - settings.nodes.width / 2}
+                  y={node.y0}
+                  width={settings.nodes.width}
+                  height={node.y1 - node.y0}
+                  rx={settings.nodes.rounding}
+                  fill={node.color ?? DEFAULT_NODE_COLOR}
+                />
+              )}
+              {settings.nodes.shape === 'circle' && (
+                <circle
+                  cx={node.x0}
+                  cy={node.y0 + (node.y1 - node.y0) / 2}
+                  r={Math.max(w, h) / 2}
+                  fill={node.color ?? DEFAULT_NODE_COLOR}
+                />
+              )}
+              {settings.nodes.labels.font.show && label(node, settings)}
+            </g>
+          )
+        })}
       </SvgMargin>
     </SvgBase>
   )
 }
 
 function label(node: ILayoutNode, settings: ISankeySettings) {
+  const w = node.x1 - node.x0
   const x =
-    node.x +
+    node.x0 +
     (settings.nodes.labels.position === 'left'
-      ? -(settings.nodeWidth / 2 + 8)
+      ? -(w / 2 + 8)
       : settings.nodes.labels.position === 'right'
-        ? settings.nodeWidth / 2 + 8
+        ? w / 2 + 8
         : 0)
 
+  const h = node.y1 - node.y0
+
   const y =
-    node.y +
+    node.y0 +
     (settings.nodes.labels.position === 'top'
       ? -8
       : settings.nodes.labels.position === 'bottom'
-        ? node.h + 8
-        : node.h / 2)
+        ? h + 8
+        : h / 2)
 
   const anchor =
     settings.nodes.labels.position === 'left'
@@ -97,25 +105,30 @@ function label(node: ILayoutNode, settings: ISankeySettings) {
 }
 
 function gradientDefs(
-  plot: ISankey,
+  graph: IOutputGraph,
   layoutMap: Map<string, ILayoutNode>,
   settings: ISankeySettings,
-  offsetPercent: number = 5
+  offsetPercent: number = 20
 ) {
   return (
     <defs>
-      {plot.links.map((link) => {
-        const source = layoutMap.get(link.source)!
-        const target = layoutMap.get(link.target)!
-        const id = `gradient-${link.source}-${link.target}`
+      {graph.links.map((link) => {
+        const sourceId = (link.source as IOutputNode).id
+        const targetId = (link.target as IOutputNode).id
+        const source = layoutMap.get(sourceId)!
+        const target = layoutMap.get(targetId)!
+
+        console.log(layoutMap, link, 'source', source, 'target', target)
+
+        const id = `gradient-${sourceId}-${targetId}`
         return (
           <linearGradient
             key={id}
             id={id}
             gradientUnits="userSpaceOnUse"
-            x1={source.x}
+            x1={source.x0}
             y1={0}
-            x2={target.x}
+            x2={target.x0}
             y2={0}
           >
             <stop offset={`${offsetPercent}%`} stopColor={source.color} />
@@ -128,102 +141,134 @@ function gradientDefs(
 }
 
 function linkPaths(
-  cols: number,
-  byColumn: Map<number, ISankeyNode[]>,
+  graph: IOutputGraph,
   layoutMap: Map<string, ILayoutNode>,
-  plot: ISankey,
-  settings: ISankeySettings,
-  scale: number
+
+  settings: ISankeySettings
 ) {
   // reorder links by source and target position to ensure consistent layering
-  const sortedLinks: ISankeyLink[] = []
+  // const sortedLinks: ISankeyLink[] = []
 
-  const linkMap = new Map<string, ISankeyLink[]>()
+  // const linkMap = new Map<string, ISankeyLink[]>()
 
-  for (const link of plot.links) {
-    const source = layoutMap.get(link.source)!
+  // for (const link of plot.links) {
+  //   const source = layoutMap.get(link.source)!
 
-    if (!linkMap.has(source.id)) {
-      linkMap.set(source.id, [])
-    }
+  //   if (!linkMap.has(source.id)) {
+  //     linkMap.set(source.id, [])
+  //   }
 
-    linkMap.get(source.id)!.push(link)
-  }
+  //   linkMap.get(source.id)!.push(link)
+  // }
 
-  const sourceTargetLinkMap = new Map<string, ISankeyLink>(
-    plot.links.map((link) => [`${link.source}-${link.target}`, link])
-  )
+  // const sourceTargetLinkMap = new Map<string, ISankeyLink>(
+  //   plot.links.map((link) => [`${link.source}-${link.target}`, link])
+  // )
 
-  for (let col = 0; col < cols - 1; col++) {
-    const nodes = byColumn.get(col)
+  // for (let col = 0; col < cols - 1; col++) {
+  //   const nodes = byColumn.get(col)
 
-    if (nodes) {
-      // sort by layout y position so smaller y (higher up) are rendered first
-      const sortedSources = nodes.slice().sort((a, b) => {
-        const la = layoutMap.get(a.id)!
-        const lb = layoutMap.get(b.id)!
+  //   if (nodes) {
+  //     // sort by layout y position so smaller y (higher up) are rendered first
+  //     const sortedSources = nodes.slice().sort((a, b) => {
+  //       const la = layoutMap.get(a.id)!
+  //       const lb = layoutMap.get(b.id)!
 
-        return la.y - lb.y
-      })
+  //       return la.y - lb.y
+  //     })
 
-      for (const source of sortedSources) {
-        // see what we point to
-        const links = linkMap.get(source.id)!
-        const targets = links.map((l) => l.target)
+  //     for (const source of sortedSources) {
+  //       // see what we point to
+  //       const links = linkMap.get(source.id)!
+  //       const targets = links.map((l) => l.target)
 
-        const sortedTargets = targets
-          .map((t) => layoutMap.get(t)!)
-          .sort((a, b) => a.y - b.y)
+  //       const sortedTargets = targets
+  //         .map((t) => layoutMap.get(t)!)
+  //         .sort((a, b) => a.y - b.y)
 
-        for (const target of sortedTargets) {
-          const link = sourceTargetLinkMap.get(`${source.id}-${target.id}`)
-          console.log('dsdsfsfd', `${source.id}-${target.id}`)
-          sortedLinks.push(link!)
-        }
-      }
-    }
-  }
+  //       for (const target of sortedTargets) {
+  //         const link = sourceTargetLinkMap.get(`${source.id}-${target.id}`)
+  //         console.log('dsdsfsfd', `${source.id}-${target.id}`)
+  //         sortedLinks.push(link!)
+  //       }
+  //     }
+  //   }
+  // }
 
-  const sourceOffset = new Map<string, number>()
-  const targetOffset = new Map<string, number>()
+  //const sourceOffset = new Map<string, number>()
+  //const targetOffset = new Map<string, number>()
 
   return (
     <>
-      {sortedLinks.map((link, i) => {
-        const source = layoutMap.get(link.source)!
-        const target = layoutMap.get(link.target)!
-        const gradientId = `gradient-${link.source}-${link.target}`
+      {graph.links.map((link, i) => {
+        const sourceId = (link.source as IOutputNode).id
+        const targetId = (link.target as IOutputNode).id
 
-        const thickness = link.value * scale
+        const source = layoutMap.get(sourceId)!
+        const target = layoutMap.get(targetId)!
+        const gradientId = `gradient-${sourceId}-${targetId}`
 
-        const sy = source.y + (sourceOffset.get(source.id) ?? 0) + thickness / 2
+        // const thickness = link.value * scale
 
-        const ty = target.y + (targetOffset.get(target.id) ?? 0) + thickness / 2
+        // const sy = source.y0 + (sourceOffset.get(source.id) ?? 0) + thickness / 2
 
-        sourceOffset.set(
-          source.id,
-          (sourceOffset.get(source.id) ?? 0) + thickness
-        )
+        // const ty = target.y + (targetOffset.get(target.id) ?? 0) + thickness / 2
 
-        targetOffset.set(
-          target.id,
-          (targetOffset.get(target.id) ?? 0) + thickness
-        )
+        // sourceOffset.set(
+        //   source.id,
+        //   (sourceOffset.get(source.id) ?? 0) + thickness
+        // )
 
-        const x0 = source.x
-        const x1 = target.x
-        const cx = (x0 + x1) / 2
+        // targetOffset.set(
+        //   target.id,
+        //   (targetOffset.get(target.id) ?? 0) + thickness
+        // )
 
-        const r1 = Math.min(settings.nodeWidth, source.h)
-        const r2 = Math.min(settings.nodeWidth, target.h)
-        console.log({ r1, r2 })
+        const x0 = source.x0
+        const x1 = target.x0
+
+        const r1 =
+          settings.nodes.shape === 'rect'
+            ? settings.nodes.width
+            : (source.y1 - source.y0) / 4
+
+        const r2 =
+          settings.nodes.shape === 'rect'
+            ? settings.nodes.width
+            : (target.y1 - target.y0) / 4
+
+        const cx = (x0 + x1 - r1 - r2) / 2
 
         const d = `
-          M ${x0} ${sy}
-          
-          C ${cx} ${sy}, ${cx} ${ty}, ${x1 - r2} ${ty}
-          L ${x1} ${ty}
+          M ${x0} ${link.y0}
+          L ${x0 + r1} ${link.y0}
+          C ${cx} ${link.y0}, ${cx} ${link.y1}, ${x1 - r2} ${link.y1}
+          L ${x1} ${link.y1}
         `
+        console.log(
+          'link path',
+
+          link
+        )
+
+        let color = settings.links.color
+
+        switch (settings.links.colorMode) {
+          case 'gradient':
+            color = `url(#${gradientId})`
+            break
+
+            break
+          case 'source':
+            color = source.color ?? settings.links.color
+            break
+          case 'target':
+            color = target.color ?? settings.links.color
+            break
+          default:
+            color = settings.links.color
+            break
+        }
 
         return (
           <path
@@ -231,8 +276,8 @@ function linkPaths(
             d={d}
             fill="none"
             //stroke={link.color ?? '#5B8FF9'}
-            stroke={`url(#${gradientId})`}
-            strokeWidth={thickness}
+            stroke={color}
+            strokeWidth={link.width}
             strokeOpacity={settings.links.opacity}
           />
         )

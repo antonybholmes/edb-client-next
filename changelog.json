@@ -1967,6 +1967,10 @@
         {
           "msg": "Added d3-sankey to do layout for me",
           "date": "2026-06-30T23:08:46.287Z"
+        },
+        {
+          "msg": "Sankey now uses d3-sankey",
+          "date": "2026-07-01T02:43:24.174Z"
         }
       ],
       "Added": [
