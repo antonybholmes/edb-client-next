@@ -79,12 +79,12 @@ import { useHistory } from './history/history-provider/history-provider'
 
 import { useTabs } from '@/components/tabs/tab-provider'
 import { makeUuid } from '@/lib/id'
+import { SankeyPanel } from '../sankey/sankey-panel'
+import { SankeyProvider } from '../sankey/sankey-provider'
 import { BoxPlotPanel } from './apps/boxplot/boxplot-panel'
 import { BoxPlotProvider } from './apps/boxplot/boxplot-provider'
 import { ExtGseaPanel } from './apps/ext-gsea/ext-gsea-panel'
 import { ExtGseaProvider } from './apps/ext-gsea/ext-gsea-provider'
-import { SankeyPanel } from './apps/sankey/sankey-panel'
-import { SankeyProvider } from './apps/sankey/sankey-provider'
 import {
   useCurrentPlots,
   useCurrentSelections,

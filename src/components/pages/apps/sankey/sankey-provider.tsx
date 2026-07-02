@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { BasePlot } from '../../history/history-provider/history-types'
+import { BasePlot } from '../matcalc/history/history-provider/history-types'
 import {
   IOutputGraph,
   IOutputLink,
@@ -70,38 +70,38 @@ export interface ISankeyPlot extends BasePlot, ISankey {
   //props: ISankeyDisplayOptions
 }
 
-export const DEFAULT_PLOT: ISankeyPlot = {
-  id: makeUuid(),
-  name: 'Sankey',
-  style: 'sankey',
-  groups: [],
-  actions: [],
-  type: 'plot',
-  createdAt: new Date().toISOString(),
+// export const DEFAULT_PLOT: ISankeyPlot = {
+//   id: makeUuid(),
+//   name: 'Sankey',
+//   style: 'sankey',
+//   groups: [],
+//   actions: [],
+//   type: 'plot',
+//   createdAt: new Date().toISOString(),
 
-  // props: {
-  //   scale: 1,
-  // },
+//   // props: {
+//   //   scale: 1,
+//   // },
 
-  nodes: [
-    { id: 'A', label: 'Input A', column: 0 },
-    { id: 'B', label: 'Input B', column: 0 },
-    { id: 'Z', label: 'Input Z', column: 0 },
-    { id: 'C', label: 'Process', column: 1 },
-    { id: 'CC', label: 'Blob', column: 1 },
-    { id: 'D', label: 'Output 1', column: 2 },
-    { id: 'E', label: 'Output 2', column: 2 },
-  ],
+//   nodes: [
+//     { id: 'A', label: 'Input A', column: 0 },
+//     { id: 'B', label: 'Input B', column: 0 },
+//     { id: 'Z', label: 'Input Z', column: 0 },
+//     { id: 'C', label: 'Process', column: 1 },
+//     { id: 'CC', label: 'Blob', column: 1 },
+//     { id: 'D', label: 'Output 1', column: 2 },
+//     { id: 'E', label: 'Output 2', column: 2 },
+//   ],
 
-  links: [
-    { source: 'A', target: 'C', value: 5 },
-    { source: 'B', target: 'C', value: 3 },
-    { source: 'Z', target: 'C', value: 1 },
-    { source: 'C', target: 'D', value: 4 },
-    { source: 'C', target: 'E', value: 5 },
-    { source: 'CC', target: 'E', value: 1 },
-  ],
-}
+//   links: [
+//     { source: 'A', target: 'C', value: 5 },
+//     { source: 'B', target: 'C', value: 3 },
+//     { source: 'Z', target: 'C', value: 1 },
+//     { source: 'C', target: 'D', value: 4 },
+//     { source: 'C', target: 'E', value: 5 },
+//     { source: 'CC', target: 'E', value: 1 },
+//   ],
+// }
 
 export function newSankeyPlot(
   name: string,
@@ -132,9 +132,10 @@ export function newSankeyPlot(
 }
 
 export interface SankeyPropsContextType {
-  plot: ISankeyPlot
+  plot: ISankeyPlot | undefined
 
-  graph: IOutputGraph | null
+  graph: IOutputGraph | undefined
+  setPlot: (plot: ISankeyPlot) => void
   updateNode: (node: IOutputNode) => void
   updateLink: (link: IOutputLink) => void
   updateLinks: (node: IOutputNode, links: IOutputLink[]) => void
@@ -157,7 +158,7 @@ export function useSankey() {
 }
 
 export function SankeyProvider({
-  plot = DEFAULT_PLOT,
+  plot,
   children,
 }: {
   plot?: ISankeyPlot
@@ -166,18 +167,26 @@ export function SankeyProvider({
   const { createSankeyLayout } = useSankeyLayout()
   const { settings } = useSankeySettings()
 
-  //const [layoutMap, setLayoutMap] = useState(new Map<string, IOutputNode>())
+  const [_plot, setPlot] = useState<ISankeyPlot | undefined>(plot)
 
-  const [graph, setGraph] = useState<IOutputGraph | null>(null)
+  const [graph, setGraph] = useState<IOutputGraph | undefined>(undefined)
 
   useEffect(() => {
-    const { graph } = createSankeyLayout(plot)
+    setPlot(plot)
+  }, [plot])
+
+  useEffect(() => {
+    if (!_plot || !_plot.nodes || !_plot.links) {
+      return
+    }
+
+    const { graph } = createSankeyLayout(_plot)
 
     //setLayoutMap(layoutMap)
 
     setGraph(graph)
     //setLayoutMap(layoutMap)
-  }, [plot.nodes, plot.links, settings]) // we want to recalculate the layout when the nodes or links change, but also when the optimization settings change, since that affects the layout
+  }, [_plot?.nodes, _plot?.links, settings]) // we want to recalculate the layout when the nodes or links change, but also when the optimization settings change, since that affects the layout
 
   function updateNode(node: IOutputNode) {
     if (!graph) {
@@ -240,9 +249,10 @@ export function SankeyProvider({
   return (
     <SankeyContext.Provider
       value={{
-        plot,
+        plot: _plot,
 
         graph,
+        setPlot,
         updateNode,
         updateLink,
         updateLinks,

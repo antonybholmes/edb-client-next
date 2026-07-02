@@ -1,0 +1,10 @@
+{
+  "name": "Sankey",
+  "description": "View motif logo plots.",
+  "color": "#009933",
+  "version": "1.0.0",
+  "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
+  "modified": "2026-07-02T22:53:31.964Z",
+  "hash": "2b3cfc355b21b45d4a2d3d01565db6dee18e0e177f65ed34a3cffc4b11ebb00b",
+  "build": 4
+}

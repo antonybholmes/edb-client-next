@@ -71,20 +71,6 @@ export function HomeToolbar() {
         removeFooter('left', id)
       }
     )
-
-    // const dfa = await createAnnotationTable(
-    //   sheet as AnnotationDataFrame,
-    //   gtf.assembly,
-    //   {
-    //     closest: settings.closest,
-    //     tss: settings.tss,
-    //     useOfficialGenes: settings.useOfficialGenes,
-    //   }
-    // )
-
-    // if (dfa) {
-    //   addSheets([dfa], { name: `Annotated` })
-    // }
   }
 
   return (

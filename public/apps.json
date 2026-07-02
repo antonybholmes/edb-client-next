@@ -5,9 +5,9 @@
     "color": "#FA8072",
     "version": "20.6.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-02T21:25:15.021Z",
-    "hash": "51363a202121cbd647452db7d77d302aebe67df562e1c571408e122055b55f71",
-    "build": 846
+    "modified": "2026-07-02T22:53:31.957Z",
+    "hash": "caa3710492d457f35a9259dc0f5704dc03176fc07b1799a4cbd0d7e0536827bc",
+    "build": 848
   },
   {
     "name": "Bio Draw",
@@ -111,9 +111,9 @@
     "color": "#40bf80",
     "version": "48.2.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-02T21:31:25.848Z",
-    "hash": "8ce372218c7707e0f2db5d97725c8d6548dabf116f149b9f36b0453ce31ddc9b",
-    "build": 1740
+    "modified": "2026-07-02T22:53:31.963Z",
+    "hash": "208e061178c83b135108546ef5eb358bac39070d542e3be2148a7a2c29aa9226",
+    "build": 1742
   },
   {
     "name": "Motifs",
@@ -164,6 +164,16 @@
     "modified": "2026-07-02T21:25:15.022Z",
     "hash": "d1286ce86b3b8866f6341b7f429a20b7c5400e7e77efb9de84644776d76be20e",
     "build": 620
+  },
+  {
+    "name": "Sankey",
+    "description": "View motif logo plots.",
+    "color": "#009933",
+    "version": "1.0.0",
+    "copyright": "© 2024-2026 Antony Holmes",
+    "modified": "2026-07-02T22:53:31.964Z",
+    "hash": "2b3cfc355b21b45d4a2d3d01565db6dee18e0e177f65ed34a3cffc4b11ebb00b",
+    "build": 4
   },
   {
     "name": "Seq Browser",

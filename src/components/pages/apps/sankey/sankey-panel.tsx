@@ -12,12 +12,12 @@ import { useZoom } from '@/providers/zoom-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { produce } from 'immer'
-import { MESSAGE_CHANNEL } from '../../data/data-panel'
+import { MESSAGE_CHANNEL } from '../matcalc/data/data-panel'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/slide-bar/resizable-sidebar'
-import { useHistory } from '../../history/history-provider/history-provider'
-import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
+import { PLOT_ZOOM_CHANNEL } from '../matcalc/apps/heatmap/heatmap-panel'
+import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { SankeyPropsPanel } from './props-panel/sankey-props-panel'
 import { useSankey } from './sankey-provider'
 import { useSankeySettings } from './sankey-settings-store'
@@ -73,15 +73,9 @@ export function SankeyPanel() {
       displayOptions: { ...displayProps, scale },
     }) */
 
-    updatePlot(
-      produce(plot, (draft) => {
-        console.log('Updating zoom to', zoom)
-        //draft.props.scale = zoom
-        updateSettings(
-          produce(settings, (draft) => {
-            draft.scale = zoom
-          })
-        )
+    updateSettings(
+      produce(settings, (draft) => {
+        draft.scale = zoom
       })
     )
   }, [zoom])
