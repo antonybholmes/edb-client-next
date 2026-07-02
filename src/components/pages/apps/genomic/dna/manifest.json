@@ -2,9 +2,9 @@
   "name": "DNA",
   "description": "Get DNA sequences",
   "color": "#FF4500",
-  "version": "20.6.2",
+  "version": "20.6.4",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-07-01T16:18:39.047Z",
-  "hash": "9dc5e1a8e49f1c0697f80434361561515453319af24afa3b6ea868bf1d809462",
-  "build": 818
+  "modified": "2026-07-02T21:25:15.022Z",
+  "hash": "023a4126873e23c6d6e22c362193b337de58d890b2683dbf549c7fbd9fad7fb0",
+  "build": 820
 }

@@ -1,3 +1,4 @@
+import { BaseCol } from '../layout/base-col'
 import { TabContentPanels } from '../shadcn/ui/themed/v2/tabs'
 import { TabIndicatorFollowBlock } from '../tabs/tab-indicator-follow-block'
 import { TabIndicatorSelectedH } from '../tabs/tab-indicator-selected-h'
@@ -6,7 +7,6 @@ import { OPTS_SIDEBAR_ID } from '../tabs/tab-provider'
 import { getSelectedMouseOverSize, UnderlineTabs } from '../tabs/underline-tabs'
 import {
   ResizableSidebar,
-  ResizableSidebarHeaderPortal,
   useResizableSidebarContext,
 } from './resizable-sidebar'
 import { type ISlideBarProps } from './slide-bar'
@@ -21,27 +21,27 @@ export function SideBarTabs() {
   const { id } = useResizableSidebarContext() // Assuming useResizableSidebar is a hook to get the id of the ResizableSidebar
 
   return (
-    <>
-      <ResizableSidebarHeaderPortal>
-        <UnderlineTabs
+    <BaseCol className="gap-y-2 h-full">
+      {/* <ResizableSidebarHeaderPortal> */}
+      <UnderlineTabs
+        groupId={id}
+        selectedMouseOverSize={getSelectedMouseOverSize}
+        tabButtonProps={{ variant: 'default' }}
+        //onTabChange={onTabChange}
+        //tabListCls="gap-x-0.5"
+        className="text-xs"
+      >
+        <TabIndicatorFollowBlock
           groupId={id}
-          selectedMouseOverSize={getSelectedMouseOverSize}
-          tabButtonProps={{ variant: 'default' }}
-          //onTabChange={onTabChange}
-          //tabListCls="gap-x-0.5"
-          className="text-xs"
-        >
-          <TabIndicatorFollowBlock
-            groupId={id}
-            rounded={false}
-            //color="bg-background"
-          />
-          <TabIndicatorSelectedH groupId={id} />
-        </UnderlineTabs>
-      </ResizableSidebarHeaderPortal>
+          rounded={false}
+          //color="bg-background"
+        />
+        <TabIndicatorSelectedH groupId={id} />
+      </UnderlineTabs>
+      {/* </ResizableSidebarHeaderPortal> */}
 
       <TabContentPanels groupId={id} className="grow" />
-    </>
+    </BaseCol>
   )
 }
 

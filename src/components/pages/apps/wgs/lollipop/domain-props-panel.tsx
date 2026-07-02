@@ -339,7 +339,7 @@ export function DomainPropsPanel({ ref }: IDivProps) {
   return (
     <>
       <PropsPanel ref={ref} className="pr-1 gap-y-2">
-        <h2 className="font-semibold text-lg">Domains</h2>
+        {/* <h2 className="font-semibold text-lg">Domains</h2> */}
         <VCenterRow className="justify-between gap-x-2">
           <VCenterRow className="items-stretch">
             <IconButton

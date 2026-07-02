@@ -131,7 +131,7 @@ export function AddLocalBedFilesDialog({ callback, onCancel }: IProps) {
       /> */}
 
       <FileDropZonePanel
-        className="grow"
+        className="grow h-full"
         onFileDrop={(files) => {
           if (files.length > 0) {
             onTextFileChange('Open filter list', files, (files) => {

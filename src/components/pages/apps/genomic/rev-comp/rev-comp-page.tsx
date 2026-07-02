@@ -1,11 +1,6 @@
 'use client'
 
-import {
-  ShowOptionsMenu,
-  Toolbar,
-  ToolbarMenu,
-  ToolbarPanel,
-} from '@/toolbar/toolbar'
+import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
 import { download } from '@/lib/download-utils'
 
@@ -208,16 +203,7 @@ function RevCompPage() {
           />
         </Toolbar>
 
-        <ToolbarPanel
-          tabShortcutMenu={
-            <ShowOptionsMenu
-              show={showSideBar}
-              onClick={() => {
-                setShowSideBar(!showSideBar)
-              }}
-            />
-          }
-        />
+        <ToolbarPanel />
 
         <ResizablePanelGroup
           orientation="vertical"

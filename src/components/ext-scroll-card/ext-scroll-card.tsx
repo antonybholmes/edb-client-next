@@ -53,7 +53,7 @@ function _ExtScrollCard({
   useSizeObserver(ref, _setSize)
 
   return (
-    <BaseRow className={cn('grow', className)}>
+    <BaseRow className={cn('grow h-full', className)}>
       <BaseCol className="grow">
         <Card
           className={cn('grow', cardCls)}

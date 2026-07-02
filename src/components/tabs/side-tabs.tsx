@@ -127,7 +127,7 @@ function _SideTabs({
     <Tabs
       value={selectedTab?.id ?? ''}
       onValueChange={_onValueChange}
-      className="flex flex-col shrink-0"
+      //className="flex flex-col shrink-0"
       orientation="vertical"
     >
       <TabsList

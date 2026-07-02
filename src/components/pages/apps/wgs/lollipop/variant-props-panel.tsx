@@ -62,7 +62,7 @@ export function VariantPropsPanel({ ref }: IDivProps) {
 
   return (
     <PropsPanel ref={ref} className="pr-1 gap-y-2">
-      <h2 className="font-semibold text-lg">Variants</h2>
+      {/* <h2 className="font-semibold text-lg">Variants</h2> */}
 
       <ResizablePanelGroup
         orientation="vertical"
@@ -82,7 +82,7 @@ export function VariantPropsPanel({ ref }: IDivProps) {
                   <CheckPropRow
                     title={db}
                     checked={datasetsForUse[db] ?? false}
-                    onCheckedChange={v =>
+                    onCheckedChange={(v) =>
                       setDatasetsForUse({
                         ...datasetsForUse,
                         [db]: v,
@@ -105,7 +105,7 @@ export function VariantPropsPanel({ ref }: IDivProps) {
             <LinkButton
               onClick={() => {
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.variants.types = [...DEFAULT_VARIANT_LEGEND_ORDER]
                     draft.variants.colorMap = { ...DEFAULT_COLOR_MAP }
                   })
@@ -119,9 +119,9 @@ export function VariantPropsPanel({ ref }: IDivProps) {
 
           <CheckPropRow
             checked={displayProps.variants.plot.border.show}
-            onCheckedChange={v =>
+            onCheckedChange={(v) =>
               setDisplayProps(
-                produce(displayProps, draft => {
+                produce(displayProps, (draft) => {
                   draft.variants.plot.border.show = v
                 })
               )
@@ -133,9 +133,9 @@ export function VariantPropsPanel({ ref }: IDivProps) {
                 {
                   color: displayProps.variants.plot.border.value,
                   allowNoColor: true,
-                  onColorChange: color =>
+                  onColorChange: (color) =>
                     setDisplayProps(
-                      produce(displayProps, draft => {
+                      produce(displayProps, (draft) => {
                         draft.variants.plot.border.value = color
                         draft.variants.plot.border.show =
                           color !== COLOR_TRANSPARENT
@@ -153,15 +153,15 @@ export function VariantPropsPanel({ ref }: IDivProps) {
             sensors={sensors}
             modifiers={[restrictToVerticalAxis]}
             //onDragStart={event => setActiveId(event.active.id as string)}
-            onDragEnd={event => {
+            onDragEnd={(event) => {
               const { active, over } = event
 
               if (over && active.id !== over?.id) {
                 const oldIndex = displayProps.variants.types.findIndex(
-                  t => t === (active.id as string)
+                  (t) => t === (active.id as string)
                 )
                 const newIndex = displayProps.variants.types.findIndex(
-                  t => t === (over.id as string)
+                  (t) => t === (over.id as string)
                 )
                 const newOrder = arrayMove(
                   displayProps.variants.types,
@@ -170,7 +170,7 @@ export function VariantPropsPanel({ ref }: IDivProps) {
                 )
 
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.variants.types = newOrder
                   })
                 )
@@ -183,13 +183,13 @@ export function VariantPropsPanel({ ref }: IDivProps) {
             >
               <VScrollPanel className="grow h-full">
                 <ul className="flex flex-col">
-                  {displayProps.variants.types.map(mutation => {
+                  {displayProps.variants.types.map((mutation) => {
                     const id = mutation
                     return (
                       <SortableItem key={id} id={id}>
                         <Checkbox
                           checked={mutationsForUse[mutation] ?? false}
-                          onCheckedChange={v =>
+                          onCheckedChange={(v) =>
                             setMutationsForUse({
                               ...mutationsForUse,
                               [mutation]: v,
@@ -202,9 +202,9 @@ export function VariantPropsPanel({ ref }: IDivProps) {
                               color:
                                 displayProps.variants.colorMap[mutation] ??
                                 DEFAULT_MUTATION_COLOR,
-                              onColorChange: color =>
+                              onColorChange: (color) =>
                                 setDisplayProps(
-                                  produce(displayProps, draft => {
+                                  produce(displayProps, (draft) => {
                                     draft.variants.colorMap = {
                                       ...draft.variants.colorMap,
                                       [mutation]: color,

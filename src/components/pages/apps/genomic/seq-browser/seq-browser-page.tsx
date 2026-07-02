@@ -328,7 +328,7 @@ function SeqBrowserPage() {
         >
           <ExtScrollCard
             variant="content"
-            className="mx-2 mb-2"
+            className="px-2 pb-2"
             style={{
               userSelect: isCtrlPressed ? 'none' : 'auto',
             }}

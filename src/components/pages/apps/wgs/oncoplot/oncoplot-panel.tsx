@@ -29,11 +29,6 @@ import { HistoryLayout } from '../../matcalc/history/history-layout'
 
 import { useSideTabs } from '@/components/tabs/tab-provider'
 import { useSVG } from '@/providers/svg-provider'
-import {
-  useCurrentSheets,
-  useFiles,
-} from '../../matcalc/history/history-provider/history-contexts'
-import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { FeaturePropsPanel } from './feature-props-panel'
 import { useOncoplotSettings } from './oncoplot-settings-store'
 
@@ -47,11 +42,6 @@ interface IOncoplotPanelProps {
 
 export function OncoplotPanel({ panelId = PANEL_ID }: IOncoplotPanelProps) {
   const { zoom } = useZoom() //PLOT_ZOOM_CHANNEL) //Ctx()
-  const { goto } = useHistory()
-
-  const { file } = useFiles()
-
-  const { sheets } = useCurrentSheets()
 
   const { svgRef } = useSVG()
 

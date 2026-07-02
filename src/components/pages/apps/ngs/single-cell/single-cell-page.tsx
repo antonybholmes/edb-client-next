@@ -67,6 +67,7 @@ import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useStableId } from '@/hooks/stable-id'
 import { CoreProviders } from '@/providers/core-providers'
 import { useFooter } from '@/providers/footer-provider'
+import { SVGProvider } from '@/providers/svg-provider'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 import { CirclePlus } from 'lucide-react'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
@@ -454,9 +455,9 @@ export function SingleCellPage() {
 export function SingleCellQueryPage() {
   return (
     <CoreProviders>
-      {/* <HistoryProvider app={APP_INFO.name}> */}
-      <SingleCellPage />
-      {/* </HistoryProvider> */}
+      <SVGProvider>
+        <SingleCellPage />
+      </SVGProvider>
     </CoreProviders>
   )
 }

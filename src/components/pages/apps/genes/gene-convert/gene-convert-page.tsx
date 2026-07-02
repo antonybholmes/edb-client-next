@@ -4,12 +4,7 @@ import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-datafra
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 
-import {
-  ShowOptionsMenu,
-  Toolbar,
-  ToolbarMenu,
-  ToolbarPanel,
-} from '@/toolbar/toolbar'
+import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
 import {
   onTextFileChange,
@@ -220,16 +215,7 @@ export function GeneConvPage() {
               </>
             }
           />
-          <ToolbarPanel
-            tabShortcutMenu={
-              <ShowOptionsMenu
-                show={showSideBar}
-                onClick={() => {
-                  setShowSideBar(!showSideBar)
-                }}
-              />
-            }
-          />
+          <ToolbarPanel />
         </Toolbar>
 
         <HistoryLayout>

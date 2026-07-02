@@ -3,12 +3,7 @@
 import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 
-import {
-  ShowOptionsMenu,
-  Toolbar,
-  ToolbarMenu,
-  ToolbarPanel,
-} from '@/toolbar/toolbar'
+import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
 import { ToolbarButton } from '@/toolbar/toolbar-button'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
@@ -26,7 +21,6 @@ import {
 import { OpenIcon } from '@/icons/open-icon'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { UploadIcon } from '@/icons/upload-icon'
 
 import {
@@ -47,7 +41,6 @@ import type { ITab } from '@/components/tabs/tab-provider'
 
 import { FileIcon } from '@/icons/file-icon'
 
-import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { textToLines } from '@/lib/text/lines'
 
@@ -57,23 +50,21 @@ import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { CoreProviders } from '@/providers/core-providers'
 
-import { useAppInfo } from '@/components/edb/edb-settings'
+import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import {
   HistoryLayout,
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
 
-import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
+import { ResizableSidebar } from '@/components/slide-bar/resizable-sidebar'
+import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useFooter } from '@/providers/footer-provider'
-import {
-  useCurrentSheets,
-  useFiles,
-} from '../../matcalc/history/history-provider/history-contexts'
+import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { useSave } from '../../matcalc/hooks/save'
-import { PathwayPropsPage } from './pathway-props-panel'
+import { PathwayPropsPanel } from './pathway-props-panel'
 import { HomeToolbar } from './toolbars/home-toolbar'
 import { useOpen } from './use-open'
 
@@ -82,29 +73,22 @@ const HELP_URL = DOCS_URL + '/apps/pathway'
 export function PathwayPage() {
   const { setAppInfo } = useAppInfo()
 
-  const [showSideBar, setShowSideBar] = useState(true)
-  //const [showHelp, setShowHelp] = useState(false)
+  const { settings } = useEdbSettings()
 
   const [toolbarTab, setToolbarTab] = useState('Home')
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 
-  const { openFile, goto } = useHistory()
-
-  const { file } = useFiles()
-  const { sheets } = useCurrentSheets()
+  const { openFile } = useHistory()
 
   const { open: openLocalFile } = useOpen()
 
-  const df = sheets[0] as AnnotationDataFrame
-
   const { setTabs: setToolbarTabs } = useToolbarTabs()
-  const { setTabs: setSideTabs } = useSideTabs()
+
   const { addDFSize } = useFooter()
   const { save } = useSave()
   useEffect(() => {
     setAppInfo(APP_INFO)
-    //openApp(APP_INFO.name)
   }, [setAppInfo])
 
   useEffect(() => {
@@ -119,15 +103,6 @@ export function PathwayPage() {
       // },
     ])
   }, [setToolbarTabs])
-
-  useEffect(() => {
-    setSideTabs([
-      {
-        id: 'Gene Sets',
-        component: PathwayPropsPage,
-      },
-    ])
-  }, [setSideTabs])
 
   useEffect(() => {
     addDFSize()
@@ -306,23 +281,13 @@ export function PathwayPage() {
               </>
             }
           />
+
           <ToolbarPanel
-            tabShortcutMenu={
-              <ShowOptionsMenu
-                show={showSideBar}
-                onClick={() => {
-                  setShowSideBar(!showSideBar)
-                }}
-              />
-            }
+            tabShortcutMenu={<OptsSidebarMenu open={settings.sidebar.show} />}
           />
         </Toolbar>
         <HistoryLayout>
-          <TabSlideBar
-            side="right"
-            open={showSideBar}
-            onOpenChange={setShowSideBar}
-          >
+          <ResizableSidebar side="right">
             {/* <Card variant="content" className="mx-2 pb-0"> */}
             <TabbedDataFrames
               //selectedSheet={df?.id ?? ''}
@@ -337,8 +302,8 @@ export function PathwayPage() {
               }}
               className="mx-2"
             />
-            {/* </Card> */}
-          </TabSlideBar>
+            <PathwayPropsPanel />
+          </ResizableSidebar>
         </HistoryLayout>
         <FooterPortal className="justify-end">
           <></>

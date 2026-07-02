@@ -48,10 +48,8 @@ import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { BoolSearchQuery } from '@/lib/search'
 import { CoreProviders } from '@/providers/core-providers'
 import { useZoom } from '@/providers/zoom-provider'
-import { Card } from '@/themed/card'
 import Fuse from 'fuse.js'
 import { produce } from 'immer'
-import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { GeneSetsPropsPanel } from './gene-sets-props-panel'
@@ -63,6 +61,7 @@ import {
   type IGseaPathway,
 } from './gsea-web-store'
 
+import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
@@ -338,22 +337,20 @@ export function GseaWebPage() {
         >
           {rankedGenes.length > 0 ? (
             <FileDropZonePanel
-              className="grow"
+              className="grow h-full"
               onFileDrop={(files) => {
                 if (files.length > 0) {
                   onBinaryFileChange('Open zip', files, loadGseaZip)
                 }
               }}
             >
-              <Card variant="content" className="mx-2 mb-2 grow">
-                <div className={PLOT_CLS}>
-                  <GseaSvg ref={svgRef} />
-                </div>
-              </Card>
+              <ExtScrollCard className="px-2 pb-2">
+                <GseaSvg ref={svgRef} />
+              </ExtScrollCard>
             </FileDropZonePanel>
           ) : (
             <FileDropZonePanel
-              className="grow"
+              className="grow h-full"
               onFileDrop={(files) => {
                 if (files.length > 0) {
                   onBinaryFileChange('Open zip', files, loadGseaZip)

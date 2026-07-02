@@ -325,20 +325,20 @@ export function GseaPlotPage() {
         <TabSlideBar side="right">
           {rankedGenes.length > 0 ? (
             <FileDropZonePanel
-              className="grow"
+              className="grow h-full"
               onFileDrop={(files) => {
                 if (files.length > 0) {
                   onBinaryFileChange('Open zip', files, loadGseaZip)
                 }
               }}
             >
-              <ExtScrollCard className="mx-2 mb-2 grow">
+              <ExtScrollCard className="px-2 pb-2">
                 <GseaSvg ref={svgRef} />
               </ExtScrollCard>
             </FileDropZonePanel>
           ) : (
             <FileDropZonePanel
-              className="grow"
+              className="grow h-full"
               onFileDrop={(files) => {
                 if (files.length > 0) {
                   onBinaryFileChange('Open zip', files, loadGseaZip)

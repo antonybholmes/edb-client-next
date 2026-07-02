@@ -16,8 +16,8 @@ export interface ISvgTextProps extends SVGProps<SVGTextElement> {
  * @returns
  */
 export function SvgText({
-  x,
-  y,
+  x = 0,
+  y = 0,
   fill,
   fontFamily,
   fontSize,

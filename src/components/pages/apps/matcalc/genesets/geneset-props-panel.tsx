@@ -327,7 +327,7 @@ export function GenesetPropsPanel() {
           </IconButton>
         </StretchRow>
         <FileDropZonePanel
-          className="grow"
+          className="grow h-full"
           onFileDrop={(files) => {
             if (files.length > 0) {
               onTextFileChange('Open dropped file', files, openGenesetFiles)

@@ -86,7 +86,7 @@ export function TabbedDataFrames({
   // transition between index based tabs and value selection
   // tables, possibly move to entirely name based tabs in the future
   return (
-    <BaseCol className={cn('grow', className)} style={style}>
+    <BaseCol className={cn('grow h-full', className)} style={style}>
       <BaseCol className="grow" id="dataframe-container">
         {sheet && (
           <VirtualDataFrame
@@ -100,15 +100,13 @@ export function TabbedDataFrames({
         )}
       </BaseCol>
       <BottomBar
-        //groupId={groupId}
         maxNameLength={MAX_NAME_CHARS}
-        //onValueChange={onValueChange}
+
         onFileDrop={onFileDrop}
-        //style={style}
+
         menuActions={menuActions}
         menuCallback={menuCallback}
         allowReorder={allowReorder}
-        //onReorder={onReorder}
       />
     </BaseCol>
   )

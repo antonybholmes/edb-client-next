@@ -15,9 +15,9 @@ import { PropsPanel } from '@/components/props-panel'
 
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
-import { PropRow } from '@/dialogs/prop-row'
 import { useEffect, useMemo, useState } from 'react'
 
+import { VCenterRow } from '@/components/layout/v-center-row'
 import { SelectAll } from '@/components/select-all'
 import {
   usePathways,
@@ -25,7 +25,7 @@ import {
   type IDatsetInfo,
 } from './pathway-store'
 
-export function PathwayPropsPage() {
+export function PathwayPropsPanel() {
   const {
     datasets,
     collectionsInUse,
@@ -50,7 +50,9 @@ export function PathwayPropsPage() {
 
   return (
     <PropsPanel className="gap-y-2 pr-1 text-xs">
-      <PropRow title="Genes">
+      <VCenterRow className="gap-x-2">
+        <span>Genes</span>
+
         <NumericalInput
           value={genesInUniverse}
           onNumChange={setGenesInUniverse}
@@ -62,7 +64,7 @@ export function PathwayPropsPage() {
         <InfoHoverCard>
           The background set of genes used for the hypergeometric test.
         </InfoHoverCard>
-      </PropRow>
+      </VCenterRow>
 
       <SelectAll
         className="pl-1.5"

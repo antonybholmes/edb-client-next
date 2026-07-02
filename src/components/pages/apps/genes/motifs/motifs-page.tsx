@@ -13,7 +13,6 @@ import { useEffect, useState } from 'react'
 import { Autocomplete } from '@/components/autocomplete'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
-import { DownloadIcon } from '@/components/icons/download-icon'
 import {
   TEXT_DOWNLOAD_AS_CSV,
   TEXT_DOWNLOAD_AS_PNG,
@@ -42,13 +41,10 @@ import { type ITab } from '@/components/tabs/tab-provider'
 import { ExportIcon } from '@/icons/export-icon'
 import { FileIcon } from '@/icons/file-icon'
 import { FileImageIcon } from '@/icons/file-image-icon'
-import { BaseCol } from '@/layout/base-col'
-import { BaseRow } from '@/layout/base-row'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
-import { IconButton } from '@/themed/icon-button'
 import {
   ResizablePanel,
   ResizablePanelGroup,
@@ -64,6 +60,10 @@ import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 
 import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
+import { DownloadIcon } from '@/components/icons/download-icon'
+import { BaseCol } from '@/components/layout/base-col'
+import { BaseRow } from '@/components/layout/base-row'
+import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useFooter } from '@/providers/footer-provider'
@@ -498,13 +498,13 @@ export function MotifsPage() {
             </ResizablePanel>
             <ThinVResizeHandle />
             <ResizablePanel
-              className="flex flex-col text-sm"
+              //className="flex flex-col text-sm"
               id="output"
               defaultSize="30%"
               minSize="0%"
               collapsible={true}
             >
-              <BaseRow className="gap-x-2 grow">
+              <BaseRow className="gap-x-2 grow h-full">
                 <BaseCol className="shrink-0">
                   <IconButton
                     title={TEXT_SAVE_TABLE}
@@ -523,14 +523,7 @@ export function MotifsPage() {
                     <DownloadIcon />
                   </IconButton>
                 </BaseCol>
-                <TabbedDataFrames
-                  //selectedSheet={sheet?.id ?? ''}
-                  //dataFrames=sheets as AnnotationDataFrame[]}
-                  // onTabChange={(selectedTab) => {
-                  //   goto({ file, sheet: selectedTab.tab })
-                  // }}
-                  className="relative grow"
-                />
+                <TabbedDataFrames className="relative grow overflow-hidden" />
               </BaseRow>
             </ResizablePanel>
           </ResizablePanelGroup>

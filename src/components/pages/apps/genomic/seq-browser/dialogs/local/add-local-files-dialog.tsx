@@ -126,7 +126,7 @@ export function AddLocalFilesDialog({
       /> */}
 
       <FileDropZonePanel
-        className="grow"
+        className="grow h-full"
         fileTypes={{
           'text/plain': ['.bed'],
           'application/octet-stream': ['.bw', '.bigWig', '.bb', '.bigBed'],

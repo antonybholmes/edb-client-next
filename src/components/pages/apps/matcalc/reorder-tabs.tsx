@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 
 import { Tabs, TabsList, TabsTrigger } from '../../../shadcn/ui/themed/v2/tabs'
 
-import { cn } from '@/lib/shadcn-utils'
 import { getTabName } from '../../../tabs/tab-provider'
 
 import { useIsMounted } from '@/hooks/mounted'
@@ -18,7 +17,6 @@ import {
 } from '@dnd-kit/sortable'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { gsap } from 'gsap'
-import { VCenterRow } from '../../../layout/v-center-row'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -236,65 +234,65 @@ export function ReorderTabs({
   }
 
   return (
-    <VCenterRow className={cn('justify-between gap-x-1', className)}>
-      <DndContext
-        modifiers={[restrictToHorizontalAxis]}
-        onDragStart={(event) => setActiveId(event.active.id as string)}
-        onDragEnd={(event) => {
-          const { active, over } = event
+    <DndContext
+      modifiers={[restrictToHorizontalAxis]}
+      onDragStart={(event) => setActiveId(event.active.id as string)}
+      onDragEnd={(event) => {
+        const { active, over } = event
 
-          if (allowReorder && over && active.id !== over?.id) {
-            const oldIndex = tabIds.indexOf(active.id as string) //where(tabs ?? [], tab => tab.id === (active.id as string))[0]!
-            const newIndex = tabIds.indexOf(over.id as string) //where(tabs ?? [], (tab) => tab.id === over.id)[0]! //genesetState.order.indexOf(over.id as string)
-            const newOrder = arrayMove(tabIds, oldIndex, newIndex)
+        if (allowReorder && over && active.id !== over?.id) {
+          const oldIndex = tabIds.indexOf(active.id as string) //where(tabs ?? [], tab => tab.id === (active.id as string))[0]!
+          const newIndex = tabIds.indexOf(over.id as string) //where(tabs ?? [], (tab) => tab.id === over.id)[0]! //genesetState.order.indexOf(over.id as string)
+          const newOrder = arrayMove(tabIds, oldIndex, newIndex)
 
-            // const orderMap = Object.fromEntries(
-            //   newOrder.map((id, i) => [id, i])
-            // )
+          // const orderMap = Object.fromEntries(
+          //   newOrder.map((id, i) => [id, i])
+          // )
 
-            // sort based on new order
-            // const newSheets = sheets.slice().sort((a, b) => {
-            //   const aOrder = orderMap[a.id] ?? 0
-            //   const bOrder = orderMap[b.id] ?? 0
+          // sort based on new order
+          // const newSheets = sheets.slice().sort((a, b) => {
+          //   const aOrder = orderMap[a.id] ?? 0
+          //   const bOrder = orderMap[b.id] ?? 0
 
-            //   return aOrder - bOrder
-            // })
+          //   return aOrder - bOrder
+          // })
 
-            reorderSheets(newOrder)
-          }
+          reorderSheets(newOrder)
+        }
 
-          setActiveId(null)
+        setActiveId(null)
+      }}
+    >
+      <Tabs
+        value={sheet?.id ?? ''}
+        onValueChange={(id) => {
+          goto({ file, sheet: id })
         }}
+        className="overflow-hidden grow"
       >
-        <Tabs
-          value={sheet?.id ?? ''}
-          onValueChange={(id) => {
-            goto({ file, sheet: id })
-          }}
-        >
-          <TabsList className="text-xs" ref={tabListRef}>
-            <SortableContext
-              items={tabIds}
-              strategy={horizontalListSortingStrategy}
-            >
-              {sheets.map((s) => {
-                const selected = s.id === sheet?.id
+        <TabsList className="text-xs overflow-hidden" ref={tabListRef}>
+          <SortableContext
+            items={tabIds}
+            strategy={horizontalListSortingStrategy}
+          >
+            {sheets.map((s) => {
+              const selected = s.id === sheet?.id
 
-                return (
-                  <SheetItem
-                    sheet={s}
-                    key={s.id}
-                    checked={selected}
-                    active={activeId}
-                    variant={variant}
-                    allowReorder={allowReorder}
-                    menuActions={menuActions}
-                    menuCallback={menuCallback}
-                  />
-                )
-              })}
+              return (
+                <SheetItem
+                  sheet={s}
+                  key={s.id}
+                  checked={selected}
+                  active={activeId}
+                  variant={variant}
+                  allowReorder={allowReorder}
+                  menuActions={menuActions}
+                  menuCallback={menuCallback}
+                />
+              )
+            })}
 
-              {/* <DragOverlay>
+            {/* <DragOverlay>
               {activeId ? (
                 <TabItem
                   tab={tabs.filter((tab) => tab.id === activeId)[0]!}
@@ -303,103 +301,9 @@ export function ReorderTabs({
                 />
               ) : null}
             </DragOverlay> */}
-            </SortableContext>
-          </TabsList>
-        </Tabs>
-      </DndContext>
-
-      {/* <Reorder.Group
-          axis="x"
-          values={tabs.map(tab => tab.id)}
-          onReorder={onReorder}
-          className="flex flex-row"
-          ref={tabListRef}
-        >
-          {tabs.map(tab => {
-            //const id = makeTabId(tab, ti)
-            //const w = tab.size ?? defaultWidth
-            const selected = tab.id === selectedTab.tab.id // tab.id === selectedTab?.tab.id
-
-            const name = getTabName(tab)
-            const truncatedName = truncate(name, {
-              length: maxNameLength,
-            })
-
-            return (
-              <Reorder.Item
-                id={tab.id}
-                key={tab.id}
-                value={tab.id}
-                className={tabVariants({
-                  variant,
-                  className: 'flex flex-row relative',
-                })}
-                aria-label={name}
-                ref={el => {
-                  buttonsRef.current.set(tab.id, el!)
-                }}
-              >
-                <BaseTabsTrigger
-                  id={tab.id}
-                  value={tab.id}
-                  key={tab.id}
-                  aria-label={name}
-                  className={tabButtonVariants({ variant })}
-                >
-                  <span
-                    //data-checked={selected}
-                    aria-label={truncatedName}
-                    className={UNDERLINE_LABEL_CLS}
-                    ref={el => {
-                      itemsRef.current.set(tab.id, el!)
-                    }}
-                    title={name}
-                  >
-                    {truncatedName}
-                  </span>
-                </BaseTabsTrigger>
-
-                {menuActions && menuActions.length > 0 && menuCallback && (
-                  <DropdownMenu
-                    open={show.get(tab.id) ?? false}
-                    onOpenChange={v => {
-                      setShow(
-                        new Map<string, boolean>([
-                          ...show.entries(),
-                          [tab.id, v],
-                        ])
-                      )
-                    }}
-                  >
-                    <DropdownMenuTrigger className="mr-1">
-                      <ChevronRightIcon className="rotate-90" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                      {menuActions.map((menuAction, ai) => (
-                        <DropdownMenuItem
-                          key={ai}
-                          onClick={() => menuCallback?.(tab, menuAction.action)}
-                          aria-label={menuAction.action}
-                        >
-                          {menuAction.icon && menuAction.icon}
-                          <span>{menuAction.action}</span>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
-
-                {selected && (
-                  <span className="absolute bottom-0 w-full left-0 bg-theme h-0.5" />
-                )}
-              </Reorder.Item>
-            )
-          })}
-        </Reorder.Group> */}
-
-      {/* <TabIndicatorH /> */}
-
-      {children && children}
-    </VCenterRow>
+          </SortableContext>
+        </TabsList>
+      </Tabs>
+    </DndContext>
   )
 }

@@ -201,7 +201,7 @@ export function AnnotationPage() {
             // onTabChange={(selectedTab) => {
             //   goto({ file, sheet: selectedTab.tab })
             // }}
-            className="mx-2"
+
             zoom={zoom}
             onFileDrop={(files) => {
               if (files.length > 0) {

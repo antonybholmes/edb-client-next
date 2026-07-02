@@ -21,8 +21,7 @@ import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
 import { IndexArrowIcon } from '@/components/icons/index-arrow-icon'
 import { BLANK_TARGET } from '@/components/link/base-link'
-import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
-import { useSideTabs } from '@/components/tabs/tab-provider'
+import { ResizableSidebar } from '@/components/slide-bar/resizable-sidebar'
 import { TIME_5_MINUTES_MS } from '@/consts'
 import { useSearch } from '@/hooks/search'
 import { httpFetch } from '@/lib/http/http-fetch'
@@ -60,8 +59,6 @@ export function HubsPage() {
     new Map<string, Map<string, IDataset[]>>()
   )
 
-  const { setTabs: setSideTabs } = useSideTabs()
-
   const { fetchAccessToken } = useEdbAuth()
 
   const { data: hubData } = useQuery({
@@ -82,15 +79,6 @@ export function HubsPage() {
   useEffect(() => {
     setAppInfo(APP_INFO)
   }, [setAppInfo])
-
-  useEffect(() => {
-    setSideTabs([
-      {
-        id: 'Options',
-        component: HubsPropsPanel,
-      },
-    ])
-  }, [setSideTabs])
 
   useEffect(() => {
     async function loadHubs() {
@@ -270,16 +258,14 @@ export function HubsPage() {
         <AssemblySelect />
       </HeaderPortal>
 
-      <TabSlideBar
+      <ResizableSidebar
         side="right"
         //value={rightTab}
         //onTabChange={selectedTab => setRightTab(selectedTab.tab.id)}
-        open={showSideBar}
-        showCloseButton={false}
-        onOpenChange={setShowSideBar}
       >
         <HubsPanel />
-      </TabSlideBar>
+        <HubsPropsPanel />
+      </ResizableSidebar>
     </ShortcutLayout>
   )
 }

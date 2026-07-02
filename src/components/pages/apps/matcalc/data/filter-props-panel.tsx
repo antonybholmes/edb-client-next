@@ -24,7 +24,6 @@ import { useSearchFilters } from '@/stores/search-filter-store'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { UploadIcon } from '@/components/icons/upload-icon'
-import { ResizableSidebarHeaderPortal } from '@/components/slide-bar/resizable-sidebar'
 import { Textarea } from '@/themed/textarea'
 import { Button } from '@/themed/v2/button'
 import { Checkbox } from '@/themed/v2/check-box'
@@ -112,47 +111,45 @@ export function FilterPropsPanel() {
 
   return (
     <>
-      <ResizableSidebarHeaderPortal>
-        <h2 className="text-sm font-medium">Filter</h2>
-      </ResizableSidebarHeaderPortal>
-      <ResizableSidebarHeaderPortal side="right">
-        <LinkButton
-          onClick={() => {
-            openDialog({
-              type: 'warning',
-              payload: {
-                title: 'Clear filter',
-                content: 'Are you sure you want to clear the filter?',
-                callback: (response) => {
-                  if (response === TEXT_OK) {
-                    setText('')
-
-                    if (filterMode.includes('Rows')) {
-                      resetRowFilters()
-                    } else {
-                      resetColFilters()
-                    }
-                  }
-                },
-              },
-            })
-          }}
-          className="text-xs"
-        >
-          {TEXT_CLEAR}
-        </LinkButton>
-      </ResizableSidebarHeaderPortal>
-
       <PropsPanel className="gap-y-2">
+        <VCenterRow className="gap-x-4 h-8  ">
+          <h2 className="text-sm font-medium">Filter</h2>
+          <LinkButton
+            onClick={() => {
+              openDialog({
+                type: 'warning',
+                payload: {
+                  title: 'Clear filter',
+                  content: 'Are you sure you want to clear the filter?',
+                  callback: (response) => {
+                    if (response === TEXT_OK) {
+                      setText('')
+
+                      if (filterMode.includes('Rows')) {
+                        resetRowFilters()
+                      } else {
+                        resetColFilters()
+                      }
+                    }
+                  },
+                },
+              })
+            }}
+            className="text-xs"
+          >
+            {TEXT_CLEAR}
+          </LinkButton>
+        </VCenterRow>
+
         <ResizablePanelGroup orientation="vertical" className="grow">
           <ResizablePanel
             defaultSize="30%"
             minSize="0%"
-            className="grow flex flex-col gap-y-2 overflow-hidden"
+            className="grow flex flex-col overflow-hidden"
             id="filter-text"
           >
             <FileDropZonePanel
-              className="grow"
+              className="grow h-full"
               onFileDrop={(files) => {
                 if (files.length > 0) {
                   onTextFileChange('Open filter list', files, (files) => {

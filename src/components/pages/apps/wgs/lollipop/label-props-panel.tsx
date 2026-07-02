@@ -91,7 +91,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
 
   return (
     <PropsPanel ref={ref} className="gap-y-2 pr-1">
-      <h2 className="font-semibold text-lg">Labels</h2>
+      {/* <h2 className="font-semibold text-lg">Labels</h2> */}
 
       <VCenterRow className="justify-between gap-x-2 items-stretch">
         <VCenterRow className="gap-x-2">
@@ -187,7 +187,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
           onChange={(e) => setPositions(e.currentTarget.value)}
         />
         <Button
-          variant="theme"
+          variant="app-theme"
           onClick={() => {
             const used = new Set<number>(labels.map((label) => label.start))
 
