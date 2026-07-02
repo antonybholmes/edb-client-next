@@ -118,13 +118,11 @@ export function newSankeyPlot(
 
   return {
     id: makeUuid(),
-
     style: 'sankey',
     name,
     nodes,
     links,
     groups,
-
     actions,
     type: 'plot',
     createdAt: new Date().toISOString(),
@@ -250,7 +248,6 @@ export function SankeyProvider({
     <SankeyContext.Provider
       value={{
         plot: _plot,
-
         graph,
         setPlot,
         updateNode,

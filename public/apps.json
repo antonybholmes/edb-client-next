@@ -171,9 +171,9 @@
     "color": "#009933",
     "version": "1.0.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-02T22:53:31.964Z",
-    "hash": "2b3cfc355b21b45d4a2d3d01565db6dee18e0e177f65ed34a3cffc4b11ebb00b",
-    "build": 4
+    "modified": "2026-07-02T22:58:40.123Z",
+    "hash": "37276cd9f45aec27d19c4cf9bbab6a5bf8735e357435d20b7a7808145ffe03cf",
+    "build": 6
   },
   {
     "name": "Seq Browser",
