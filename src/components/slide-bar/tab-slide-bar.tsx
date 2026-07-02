@@ -21,7 +21,7 @@ export function SideBarTabs() {
   const { id } = useResizableSidebarContext() // Assuming useResizableSidebar is a hook to get the id of the ResizableSidebar
 
   return (
-    <BaseCol className="gap-y-2 h-full">
+    <BaseCol className="gap-y-2 h-full grow">
       {/* <ResizableSidebarHeaderPortal> */}
       <UnderlineTabs
         groupId={id}

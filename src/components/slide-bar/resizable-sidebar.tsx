@@ -116,7 +116,7 @@ export function SidePanel({
   // need to wait for hydration to get the correct initial
   // size from the store, otherwise it will always start at 50%
 
-  const { id, left, right } = useResizableSidebarContext()
+  const { id } = useResizableSidebarContext()
 
   const hydrated = useHydration(useSlideBarStore)
 

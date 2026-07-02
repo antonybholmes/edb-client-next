@@ -13,11 +13,11 @@ import { GroupingPropsPanel } from './grouping-props-panel'
 export function DataPropsPanel() {
   return (
     <Tabs orientation="vertical" className="flex flex-col grow text-xs pr-1">
-      <TabsContent value="groups">
+      <TabsContent value="groups" className="grow">
         <GroupingPropsPanel />
       </TabsContent>
 
-      <TabsContent value="filter">
+      <TabsContent value="filter" className="grow">
         <FilterPropsPanel />
       </TabsContent>
       <TabsList className="py-1 gap-y-px">

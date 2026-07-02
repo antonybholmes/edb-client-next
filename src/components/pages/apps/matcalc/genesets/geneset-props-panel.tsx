@@ -23,7 +23,6 @@ import { makeNewGeneset, type IGeneSet } from '@/lib/gsea/geneset'
 import { range } from '@/lib/math/range'
 import { textToLines } from '@/lib/text/lines'
 import { IconButton } from '@/themed/icon-button'
-import { LinkButton } from '@/themed/link-button'
 import { DndContext } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import {
@@ -43,7 +42,7 @@ import {
   SIMPLE_COLOR_EXT_CLS,
 } from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
-import { useResizableSidebarContext } from '@/components/slide-bar/resizable-sidebar'
+import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { PlusIcon } from '@/icons/plus-icon'
@@ -167,42 +166,9 @@ export function GenesetPropsPanel() {
 
   const { open: openDialog } = useDialogs()
 
-  const { set } = useResizableSidebarContext()
-
   const [openGenesetDialog, setOpenGroupDialog] = useState<
     IGenesetCallback | undefined
   >(undefined)
-
-  useEffect(() => {
-    if (genesets.length < 1) {
-      return
-    }
-    set('right', {
-      id: 'clear',
-      render: (
-        <LinkButton
-          onClick={() =>
-            openDialog({
-              type: 'warning',
-              payload: {
-                content: 'Are you sure you want to clear all gene sets?',
-                callback: (response) => {
-                  if (response === TEXT_OK) {
-                    console.log('Clearing gene sets')
-                    clearGenesets()
-                  }
-                },
-              },
-            })
-          }
-          title="Clear all groups"
-          className="text-xs"
-        >
-          {TEXT_CLEAR}
-        </LinkButton>
-      ),
-    })
-  }, [genesets.length, openDialog, clearGenesets, set])
 
   function openGenesetFiles(files: ITextFileOpen[]) {
     if (files.length === 0) {
@@ -284,9 +250,9 @@ export function GenesetPropsPanel() {
         />
       )}
 
-      <PropsPanel className="gap-y-1">
-        <StretchRow className="gap-x-1">
-          <VCenterRow>
+      <PropsPanel className="gap-y-1 w-full">
+        <StretchRow className="gap-x-1 justify-between w-full">
+          <VCenterRow className="gap-x-1">
             <IconButton
               //rounded="full"
               // ripple={false}
@@ -314,17 +280,38 @@ export function GenesetPropsPanel() {
             >
               <DownloadIcon />
             </IconButton>
-          </VCenterRow>
-          <ToolbarSeparator />
 
-          <IconButton
-            // ripple={false}
-            onClick={() => addGeneset()}
-            title="New Gene Set"
-            checked={openGenesetDialog !== undefined}
+            <ToolbarSeparator />
+
+            <IconButton
+              // ripple={false}
+              onClick={() => addGeneset()}
+              title="New Gene Set"
+              checked={openGenesetDialog !== undefined}
+            >
+              <PlusIcon />
+            </IconButton>
+          </VCenterRow>
+          <LinkButton
+            onClick={() =>
+              openDialog({
+                type: 'warning',
+                payload: {
+                  content: 'Are you sure you want to clear all gene sets?',
+                  callback: (response) => {
+                    if (response === TEXT_OK) {
+                      console.log('Clearing gene sets')
+                      clearGenesets()
+                    }
+                  },
+                },
+              })
+            }
+            title="Clear all groups"
+            className="text-xs"
           >
-            <PlusIcon />
-          </IconButton>
+            {TEXT_CLEAR}
+          </LinkButton>
         </StretchRow>
         <FileDropZonePanel
           className="grow h-full"
@@ -334,10 +321,9 @@ export function GenesetPropsPanel() {
             }
           }}
         >
-          {/* <VScrollPanel> */}
           <DndContext
             modifiers={[restrictToVerticalAxis]}
-            //onDragStart={event => setActiveId(event.active.id as string)}
+
             onDragEnd={(event) => {
               const { active, over } = event
 
@@ -357,8 +343,6 @@ export function GenesetPropsPanel() {
 
                 reorderGenesets(newOrder)
               }
-
-              //setActiveId(null)
             }}
           >
             <SortableContext
@@ -368,16 +352,12 @@ export function GenesetPropsPanel() {
               <VScrollPanel className="grow h-full">
                 <ul className="flex flex-col">
                   {genesets.map((geneset) => {
-                    //const cols = getColNamesFromGroup(df, group)
-
                     return (
-                      // <BaseSortableItem key={id} id={id}>
                       <GenesetItem
                         geneset={geneset}
                         key={geneset.id}
                         editGeneset={editGeneset}
                       />
-                      // </BaseSortableItem>
                     )
                   })}
                 </ul>

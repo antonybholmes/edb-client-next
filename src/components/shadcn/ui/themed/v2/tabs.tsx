@@ -145,7 +145,7 @@ export function TabsContent({
   return (
     <TabsPrimitive.Panel
       ref={ref}
-      className={cn('outline-none grow flex h-full', className)}
+      className={cn('outline-none grow flex w-full   h-full', className)}
       {...props}
     />
   )
