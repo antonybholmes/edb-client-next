@@ -231,7 +231,7 @@ export function MatcalcPage() {
         component: SettingsAppsPanel,
       },
     ])
-    setDefaultSettingsTab(APP_INFO.name)
+    //setDefaultSettingsTab(APP_INFO.name)
   }, [setSettingsTabs, setDefaultSettingsTab])
 
   useEffect(() => {

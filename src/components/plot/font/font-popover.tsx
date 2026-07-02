@@ -74,7 +74,7 @@ export function FontPopover({ fonts = [], icon }: IFontPopoverProps) {
 
   // create a pleasing icon if one is not set
   if (!icon) {
-    icon = <CaseSensitive size={18} stroke={font.textProps.font.fill.value} />
+    icon = <CaseSensitive size={18} /> // stroke={font.textProps.font.fill.value} />
   }
 
   return (

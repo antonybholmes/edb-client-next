@@ -1,3 +1,4 @@
+import { VCenterRow } from '@/components/layout/v-center-row'
 import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_RING_CLS } from '@/theme'
 import { Slider as SliderPrimitive } from '@base-ui/react/slider'
@@ -42,5 +43,32 @@ export function Slider({
         </SliderPrimitive.Track>
       </SliderPrimitive.Control>
     </SliderPrimitive.Root>
+  )
+}
+
+export function SliderWithValue({
+  value,
+  className = '',
+  side = 'left',
+  dp = 0,
+  ...props
+}: ComponentProps<typeof SliderPrimitive.Root> & {
+  side?: 'left' | 'right'
+  dp?: number
+}) {
+  const v = Array.isArray(value) ? value[0] : value || 0
+
+  return (
+    <VCenterRow className="gap-x-2">
+      {side === 'left' && (
+        <span className="bg-muted/50 py-1 rounded-sm text-center min-w-10">
+          {v.toFixed(dp)}
+        </span>
+      )}
+      <Slider {...props} value={value} className={className} />
+      {side === 'right' && (
+        <span className="ml-2 min-w-8">{v.toFixed(dp)}</span>
+      )}
+    </VCenterRow>
   )
 }

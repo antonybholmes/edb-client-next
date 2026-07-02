@@ -151,15 +151,15 @@ export function SankeySvg({ ref }: ISVGProps) {
     }
 
     const w = node.x1 - node.x0
-    const h = node.y1 - node.y0
+    const h = node.y1 - node.y0 + settings.nodes.oversize
     return (
       <g key={node.id} id={`node-${node.id}`} onPointerDown={handlePointerDown}>
         {settings.nodes.shape === 'rect' && (
           <rect
             x={node.x0 - settings.nodes.width / 2}
-            y={node.y0}
+            y={node.y0 - settings.nodes.oversize / 2}
             width={settings.nodes.width}
-            height={node.y1 - node.y0}
+            height={h}
             rx={settings.nodes.rounding}
             fill={node.color ?? DEFAULT_NODE_COLOR}
             fillOpacity={settings.nodes.opacity}
@@ -168,8 +168,8 @@ export function SankeySvg({ ref }: ISVGProps) {
         {settings.nodes.shape === 'circle' && (
           <circle
             cx={node.x0}
-            cy={node.y0 + (node.y1 - node.y0) / 2}
-            r={Math.max(w, h) / 2}
+            cy={node.y0 + (node.y1 - node.y0 + settings.nodes.oversize) / 2}
+            r={(Math.max(w, h) + settings.nodes.oversize) / 2}
             fill={node.color ?? DEFAULT_NODE_COLOR}
             fillOpacity={settings.nodes.opacity}
             //onPointerDown={handlePointerDown}

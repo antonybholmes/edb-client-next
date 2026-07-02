@@ -16,8 +16,8 @@ import {
 } from '@/components/plot/color-picker-popover'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
+import { BarSlider } from '@/components/shadcn/ui/themed/v2/bar-slider'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
-import { Slider } from '@/components/shadcn/ui/themed/v2/slider'
 import { useResizableSidebarContext } from '@/components/slide-bar/resizable-sidebar'
 import { TEXT_OK, TEXT_RESET } from '@/consts'
 import { produce } from 'immer'
@@ -114,6 +114,18 @@ export function SankeyPropsPanel() {
               </SelectList>
             </PropRow>
             <NumericalPropRow
+              title="Width"
+              limit={[1, 1000]}
+              value={settings.nodes.width}
+              onNumChange={(value) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.nodes.width = value
+                  })
+                )
+              }}
+            />
+            {/* <NumericalPropRow
               title="Rounding"
               limit={[0, 100]}
               value={settings.nodes.rounding}
@@ -124,7 +136,43 @@ export function SankeyPropsPanel() {
                   })
                 )
               }}
-            />
+            /> */}
+            <PropRow title="Rounding">
+              <BarSlider
+                value={settings.nodes.rounding}
+                min={0}
+                max={100}
+                format={(v) => v.toString()}
+                onValueChange={(value: number | readonly number[]) => {
+                  const newValue = Array.isArray(value) ? value[0]! : value
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.nodes.rounding = newValue
+                    })
+                  )
+                }}
+                step={1}
+                className="w-20"
+              />
+            </PropRow>
+            <PropRow title="Oversize">
+              <BarSlider
+                value={settings.nodes.oversize}
+                min={0}
+                max={100}
+                format={(v) => v.toString()}
+                onValueChange={(value: number | readonly number[]) => {
+                  const newValue = Array.isArray(value) ? value[0]! : value
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.nodes.oversize = newValue
+                    })
+                  )
+                }}
+                step={1}
+                className="w-20"
+              />
+            </PropRow>
             <NumericalPropRow
               title="Gap"
               limit={[0, 1000]}
@@ -138,11 +186,12 @@ export function SankeyPropsPanel() {
               }}
             />
 
-            <PropRow title="Opacity" contentCls="pr-2">
-              <Slider
+            <PropRow title="Opacity">
+              <BarSlider
                 value={settings.nodes.opacity}
                 min={0}
                 max={1}
+
                 onValueChange={(value: number | readonly number[]) => {
                   const newValue = Array.isArray(value) ? value[0]! : value
                   updateSettings(
@@ -246,11 +295,12 @@ export function SankeyPropsPanel() {
                 <SelectItem value="target">Target</SelectItem>
               </SelectList>
             </PropRow>
-            <PropRow title="Opacity" contentCls="pr-2">
-              <Slider
+            <PropRow title="Opacity">
+              <BarSlider
                 value={settings.links.opacity}
                 min={0}
                 max={1}
+
                 onValueChange={(value: number | readonly number[]) => {
                   const newValue = Array.isArray(value) ? value[0]! : value
                   updateSettings(
@@ -263,11 +313,12 @@ export function SankeyPropsPanel() {
                 className="w-20"
               />
             </PropRow>
-            <PropRow title="Gradient Offset" contentCls="pr-2">
-              <Slider
+            <PropRow title="Gradient Offset">
+              <BarSlider
                 value={settings.links.gradientOffset}
                 min={0}
                 max={1}
+
                 onValueChange={(value: number | readonly number[]) => {
                   const newValue = Array.isArray(value) ? value[0]! : value
                   updateSettings(

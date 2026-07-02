@@ -138,7 +138,7 @@ function SeqBrowserPage() {
         ],
       },
     ])
-    setDefaultSettingsTab(APP_INFO.name)
+    //setDefaultSettingsTab(APP_INFO.name)
   }, [setSettingsTabs, setDefaultSettingsTab])
 
   useEffect(() => {

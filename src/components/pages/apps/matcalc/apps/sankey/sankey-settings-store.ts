@@ -28,6 +28,7 @@ export interface ISankeySettings {
     gap: number
     rounding: number
     width: number
+    oversize: number
     useColumns: boolean // Whether to use the column property of nodes for layout
     shape: 'rect' | 'circle'
     opacity: number
@@ -62,6 +63,7 @@ const DEFAULT_SETTINGS: ISankeySettings = {
     rounding: 3,
     width: 20,
     opacity: 1,
+    oversize: 0,
     useColumns: true, // Whether to use the column property of nodes for layout
     shape: 'rect',
     labels: {
