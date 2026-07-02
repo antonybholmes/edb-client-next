@@ -20,9 +20,11 @@ import {
   SIMPLE_COLOR_EXT_CLS,
 } from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
+import { useResizableSidebarContext } from '@/components/slide-bar/resizable-sidebar'
 import { SortableItem } from '@/components/sortable-item'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
+import { useEffect } from 'react'
 import { IOutputLink, IOutputNode } from '../sankey-layout'
 import { useSankey } from '../sankey-provider'
 import { useSankeySettings } from '../sankey-settings-store'
@@ -48,6 +50,15 @@ function linkName(link: IOutputLink, nodes: Map<string, IOutputNode>) {
 function LinkItem({ link }: { link: IOutputLink }) {
   const { graph, updateLink } = useSankey()
   const { settings } = useSankeySettings()
+
+  const { set } = useResizableSidebarContext()
+
+  useEffect(() => {
+    set('left', {
+      id: 'links',
+      render: <h2 className="font-semibold text-base">Links</h2>,
+    })
+  }, [set])
 
   const linkId = `${link.source.id}-${link.target.id}`
 

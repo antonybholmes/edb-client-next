@@ -2,15 +2,18 @@ import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
+import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
 import { SettingsAccordionItem } from '@/components/dialogs/settings/settings-dialog'
 import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
+import { produce } from 'immer'
 import { useState } from 'react'
 import { DFColSelect } from '../../df-col-select'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
 import { DFToSankeyGraph } from './sankey-parser'
 import { ISankeyPlot } from './sankey-provider'
+import { useSankeySettings } from './sankey-settings-store'
 
 interface IFormInput {
   foldChangeCol: string
@@ -32,6 +35,7 @@ export function SankeyDialog({
 }: IProps) {
   const { sheet } = useCurrentSheets()
   const { open: openDialog } = useDialogs()
+  const { settings, updateSettings } = useSankeySettings()
 
   const [sourceCol, setSourceCol] = useState('source')
   const [sourceColCol, setSourceColCol] = useState('source column')
@@ -84,8 +88,21 @@ export function SankeyDialog({
           onResponse?.(r, undefined)
         }
       }}
-      //contentVariant="glass"
+      bodyCls="gap-y-4"
     >
+      <NumericalPropRow
+        title="Node gap"
+        limit={[0, 1000]}
+        value={settings.nodes.gap}
+        onNumChange={(value) => {
+          updateSettings(
+            produce(settings, (draft) => {
+              draft.nodes.gap = value
+            })
+          )
+        }}
+      />
+
       <ScrollAccordion
         value={accordionValues}
         onValueChange={(v) => setAccordionValues(v as string[])}

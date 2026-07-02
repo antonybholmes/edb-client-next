@@ -32,38 +32,67 @@ export function PlotPropsPanel() {
   const { set } = useResizableSidebarContext()
 
   useEffect(() => {
-    set('right', {
-      id: 'reset',
-      render: (
-        <LinkButton
-          onClick={() => {
-            openDialog({
-              type: 'warning',
-              payload: {
-                title: 'Reset to default',
-                content: 'Are you sure you want to reset all settings?',
-                callback: (response) => {
-                  if (response === TEXT_OK) {
-                    resetSettings()
-                  }
-                },
-              },
-            })
-          }}
-          title="Reset Properties to Defaults"
-          className="text-xs"
-        >
-          {TEXT_RESET}
-        </LinkButton>
-      ),
+    // set('right', {
+    //   id: 'reset',
+    //   render: (
+    //     <LinkButton
+    //       onClick={() => {
+    //         openDialog({
+    //           type: 'warning',
+    //           payload: {
+    //             title: 'Reset to default',
+    //             content: 'Are you sure you want to reset all settings?',
+    //             callback: (response) => {
+    //               if (response === TEXT_OK) {
+    //                 resetSettings()
+    //               }
+    //             },
+    //           },
+    //         })
+    //       }}
+    //       title="Reset Properties to Defaults"
+    //       className="text-xs"
+    //     >
+    //       {TEXT_RESET}
+    //     </LinkButton>
+    //   ),
+    // })
+    set('left', {
+      id: 'plot',
+      render: <h2 className="font-semibold text-base">Plot</h2>,
     })
-  }, [set, openDialog, resetSettings])
+  }, [set])
 
   return (
     <PropsPanel>
       <ScrollAccordion value={['plot', 'nodes', 'links']}>
         <AccordionItem value="plot">
-          <AccordionTrigger>Plot</AccordionTrigger>
+          <AccordionTrigger
+            rightChildren={
+              <LinkButton
+                onClick={() => {
+                  openDialog({
+                    type: 'warning',
+                    payload: {
+                      title: 'Reset to default',
+                      content: 'Are you sure you want to reset all settings?',
+                      callback: (response) => {
+                        if (response === TEXT_OK) {
+                          resetSettings()
+                        }
+                      },
+                    },
+                  })
+                }}
+                title="Reset Properties to Defaults"
+                className="text-xs"
+              >
+                {TEXT_RESET}
+              </LinkButton>
+            }
+          >
+            Plot
+          </AccordionTrigger>
           <AccordionContent>
             <PropRow title="Size">
               <DoubleNumericalInput
@@ -90,7 +119,56 @@ export function PlotPropsPanel() {
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="nodes">
-          <AccordionTrigger>Nodes</AccordionTrigger>
+          <AccordionTrigger
+            rightChildren={
+              <FontPopover
+                fonts={[
+                  {
+                    textProps: settings.nodes.labels.font,
+                    showRotation: true,
+                    update: (f) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.nodes.labels.font = f
+                        })
+                      ),
+                    ext: (
+                      <PropRow title="Position">
+                        <SelectList
+                          items={[
+                            { value: 'left', label: 'Left' },
+                            { value: 'right', label: 'Right' },
+                            { value: 'center', label: 'Center' },
+                            { value: 'top', label: 'Top' },
+                            { value: 'bottom', label: 'Bottom' },
+                          ]}
+                          value={settings.nodes.labels.position}
+                          onValueChange={(value) => {
+                            const position = value as
+                              'left' | 'right' | 'center' | 'top' | 'bottom'
+                            updateSettings(
+                              produce(settings, (draft) => {
+                                draft.nodes.labels.position = position
+                              })
+                            )
+                          }}
+                          w="sm"
+                        >
+                          <SelectItem value="left">Left</SelectItem>
+                          <SelectItem value="right">Right</SelectItem>
+                          <SelectItem value="center">Center</SelectItem>
+                          <SelectItem value="top">Top</SelectItem>
+                          <SelectItem value="bottom">Bottom</SelectItem>
+                        </SelectList>
+                      </PropRow>
+                    ),
+                  },
+                ]}
+              />
+            }
+          >
+            Nodes
+          </AccordionTrigger>
           <AccordionContent>
             <PropRow title="Shape">
               <SelectList
@@ -125,18 +203,7 @@ export function PlotPropsPanel() {
                 )
               }}
             />
-            {/* <NumericalPropRow
-              title="Rounding"
-              limit={[0, 100]}
-              value={settings.nodes.rounding}
-              onNumChange={(value) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.nodes.rounding = value
-                  })
-                )
-              }}
-            /> */}
+
             <PropRow title="Rounding">
               <BarSlider
                 value={settings.nodes.rounding}
@@ -155,7 +222,10 @@ export function PlotPropsPanel() {
                 //className="w-20"
               />
             </PropRow>
-            <PropRow title="Oversize">
+            <PropRow
+              title="Oversize"
+              tooltip="Allow nodes to be larger than their links"
+            >
               <BarSlider
                 value={settings.nodes.oversize}
                 min={0}
@@ -202,54 +272,11 @@ export function PlotPropsPanel() {
                 step={0.05}
               />
             </PropRow>
-            <PropRow title="Labels">
-              <FontPopover
-                fonts={[
-                  {
-                    textProps: settings.nodes.labels.font,
-                    showRotation: true,
-                    update: (f) =>
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.nodes.labels.font = f
-                        })
-                      ),
-                  },
-                ]}
-              />
-              <SelectList
-                items={[
-                  { value: 'left', label: 'Left' },
-                  { value: 'right', label: 'Right' },
-                  { value: 'center', label: 'Center' },
-                  { value: 'top', label: 'Top' },
-                  { value: 'bottom', label: 'Bottom' },
-                ]}
-                value={settings.nodes.labels.position}
-                onValueChange={(value) => {
-                  const position = value as
-                    'left' | 'right' | 'center' | 'top' | 'bottom'
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.nodes.labels.position = position
-                    })
-                  )
-                }}
-                w="xs"
-              >
-                <SelectItem value="left">Left</SelectItem>
-                <SelectItem value="right">Right</SelectItem>
-                <SelectItem value="center">Center</SelectItem>
-                <SelectItem value="top">Top</SelectItem>
-                <SelectItem value="bottom">Bottom</SelectItem>
-              </SelectList>
-            </PropRow>
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="links">
-          <AccordionTrigger>Links</AccordionTrigger>
-          <AccordionContent>
-            <PropRow title="Color">
+          <AccordionTrigger
+            rightChildren={
               <ColorPickerButton
                 colors={[
                   {
@@ -265,8 +292,14 @@ export function PlotPropsPanel() {
                   },
                 ]}
                 className={SIMPLE_COLOR_EXT_CLS}
+                title="Set default color"
               />
-
+            }
+          >
+            Links
+          </AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Color mode">
               <SelectList
                 items={[
                   { value: 'gradient', label: 'Gradient' },
@@ -285,7 +318,7 @@ export function PlotPropsPanel() {
                   )
                 }}
 
-                w="xs"
+                w="sm"
               >
                 <SelectItem value="gradient">Gradient</SelectItem>
                 <SelectItem value="static">Static</SelectItem>

@@ -9,6 +9,7 @@
 
 ### Changed
 
+- Refined sankey UI.
 - Added mousemove code to sankey.
 - Added clear genesets and groups feature.
 - Resizable sidebar now uses slot system similar to footer to allow placement of components in header. This seems more robust than the portal method.

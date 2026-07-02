@@ -21,10 +21,13 @@ import {
 } from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
 import { Input } from '@/components/shadcn/ui/themed/v2/input'
+import { useResizableSidebarContext } from '@/components/slide-bar/resizable-sidebar'
 import { SortableItem } from '@/components/sortable-item'
 import { VScrollPanel } from '@/components/v-scroll-panel'
+import { useEffect } from 'react'
 import { IOutputNode } from '../sankey-layout'
 import { useSankey } from '../sankey-provider'
+import { useSankeySettings } from '../sankey-settings-store'
 
 export const GROUP_CLS = `group rounded-theme group gap-x-1 opacity-80 py-1 px-2
 hover:opacity-100 trans-opacity hover:bg-muted/60 data-[focus=true]:bg-muted/60`
@@ -67,6 +70,16 @@ export interface IGroupCallback {
 
 export function NodePropsPanel() {
   const { graph } = useSankey()
+  const { settings, updateSettings } = useSankeySettings()
+
+  const { set } = useResizableSidebarContext()
+
+  useEffect(() => {
+    set('left', {
+      id: 'nodes',
+      render: <h2 className="font-semibold text-base">Nodes</h2>,
+    })
+  }, [set])
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -82,6 +95,150 @@ export function NodePropsPanel() {
   return (
     <>
       <PropsPanel className="gap-y-1">
+        {/* <PropRow title="Shape">
+          <SelectList
+            items={[
+              { value: 'rect', label: 'Rectangle' },
+              { value: 'circle', label: 'Circle' },
+            ]}
+            value={settings.nodes.shape}
+            onValueChange={(value) => {
+              const shape = value as 'rect' | 'circle'
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.nodes.shape = shape
+                })
+              )
+            }}
+            w="sm"
+          >
+            <SelectItem value="rect">Rectangle</SelectItem>
+            <SelectItem value="circle">Circle</SelectItem>
+          </SelectList>
+        </PropRow>
+        <NumericalPropRow
+          title="Width"
+          limit={[1, 1000]}
+          value={settings.nodes.width}
+          onNumChange={(value) => {
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.nodes.width = value
+              })
+            )
+          }}
+        />
+
+        <PropRow title="Rounding">
+          <BarSlider
+            value={settings.nodes.rounding}
+            min={0}
+            max={100}
+            format={(v) => v.toString()}
+            onValueChange={(value: number | readonly number[]) => {
+              const newValue = Array.isArray(value) ? value[0]! : value
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.nodes.rounding = newValue
+                })
+              )
+            }}
+            step={1}
+            //className="w-20"
+          />
+        </PropRow>
+        <PropRow title="Oversize">
+          <BarSlider
+            value={settings.nodes.oversize}
+            min={0}
+            max={100}
+            format={(v) => v.toString()}
+            onValueChange={(value: number | readonly number[]) => {
+              const newValue = Array.isArray(value) ? value[0]! : value
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.nodes.oversize = newValue
+                })
+              )
+            }}
+            step={1}
+          />
+        </PropRow>
+        <NumericalPropRow
+          title="Gap"
+          limit={[0, 1000]}
+          value={settings.nodes.gap}
+          onNumChange={(value) => {
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.nodes.gap = value
+              })
+            )
+          }}
+        />
+
+        <PropRow title="Opacity">
+          <BarSlider
+            value={settings.nodes.opacity}
+            min={0}
+            max={1}
+
+            onValueChange={(value: number | readonly number[]) => {
+              const newValue = Array.isArray(value) ? value[0]! : value
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.nodes.opacity = newValue
+                })
+              )
+            }}
+            step={0.05}
+          />
+        </PropRow>
+        <PropRow title="Labels">
+          <FontPopover
+            fonts={[
+              {
+                textProps: settings.nodes.labels.font,
+                showRotation: true,
+                update: (f) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.nodes.labels.font = f
+                    })
+                  ),
+              },
+            ]}
+          />
+          <SelectList
+            items={[
+              { value: 'left', label: 'Left' },
+              { value: 'right', label: 'Right' },
+              { value: 'center', label: 'Center' },
+              { value: 'top', label: 'Top' },
+              { value: 'bottom', label: 'Bottom' },
+            ]}
+            value={settings.nodes.labels.position}
+            onValueChange={(value) => {
+              const position = value as
+                'left' | 'right' | 'center' | 'top' | 'bottom'
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.nodes.labels.position = position
+                })
+              )
+            }}
+            w="xs"
+          >
+            <SelectItem value="left">Left</SelectItem>
+            <SelectItem value="right">Right</SelectItem>
+            <SelectItem value="center">Center</SelectItem>
+            <SelectItem value="top">Top</SelectItem>
+            <SelectItem value="bottom">Bottom</SelectItem>
+          </SelectList>
+        </PropRow>
+
+        <LineSeparator /> */}
+
         <DndContext
           sensors={sensors}
           modifiers={[restrictToVerticalAxis]}

@@ -78,6 +78,7 @@ export function PropRow({
   side = 'right',
   h,
   info,
+  tooltip,
   className,
   children,
 }: IProps) {
@@ -86,7 +87,7 @@ export function PropRow({
       <Field.Label className={propRowVariants({ align, gap, className })}>
         {side === 'right' && (
           <VCenterRow className="gap-x-1.5">
-            <span className={labelVariants({ labelW, h })}>
+            <span className={labelVariants({ labelW, h })} title={tooltip}>
               {title && title}
             </span>
             {info && <InfoHoverCard>{info}</InfoHoverCard>}

@@ -2030,6 +2030,10 @@
         {
           "msg": "Added mousemove code to sankey",
           "date": "2026-07-01T22:44:49.288Z"
+        },
+        {
+          "msg": "Refined sankey UI",
+          "date": "2026-07-02T18:00:23.147Z"
         }
       ],
       "Added": [

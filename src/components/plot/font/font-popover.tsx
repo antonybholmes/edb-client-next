@@ -59,6 +59,9 @@ interface IFontPopoverProps {
     showEnabled?: boolean
     showAlign?: boolean
     showRotation?: boolean
+    /**
+     * extended UI can be rendered here, for example to set font size with a slider
+     */
     ext?: ReactNode
   }[]
 

@@ -349,7 +349,6 @@ function linkPaths(
           case 'gradient':
             color = `url(#${gradientId})`
             break
-
           case 'source':
             color = source.color || settings.links.color
             break
@@ -357,7 +356,7 @@ function linkPaths(
             color = target.color || settings.links.color
             break
           default:
-            color = settings.links.color
+            color = link.color || settings.links.color
             break
         }
 
