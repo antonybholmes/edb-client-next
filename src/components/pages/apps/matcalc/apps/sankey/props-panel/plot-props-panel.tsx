@@ -10,6 +10,7 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
+import { VCenterRow } from '@/components/layout/v-center-row'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
@@ -18,10 +19,8 @@ import { FontPopover } from '@/components/plot/font/font-popover'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { BarSlider } from '@/components/shadcn/ui/themed/v2/bar-slider'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
-import { useResizableSidebarContext } from '@/components/slide-bar/resizable-sidebar'
 import { TEXT_OK, TEXT_RESET } from '@/consts'
 import { produce } from 'immer'
-import { useEffect } from 'react'
 import { useSankeySettings } from '../sankey-settings-store'
 
 export function PlotPropsPanel() {
@@ -29,70 +28,33 @@ export function PlotPropsPanel() {
 
   const { settings, updateSettings, resetSettings } = useSankeySettings()
 
-  const { set } = useResizableSidebarContext()
-
-  useEffect(() => {
-    // set('right', {
-    //   id: 'reset',
-    //   render: (
-    //     <LinkButton
-    //       onClick={() => {
-    //         openDialog({
-    //           type: 'warning',
-    //           payload: {
-    //             title: 'Reset to default',
-    //             content: 'Are you sure you want to reset all settings?',
-    //             callback: (response) => {
-    //               if (response === TEXT_OK) {
-    //                 resetSettings()
-    //               }
-    //             },
-    //           },
-    //         })
-    //       }}
-    //       title="Reset Properties to Defaults"
-    //       className="text-xs"
-    //     >
-    //       {TEXT_RESET}
-    //     </LinkButton>
-    //   ),
-    // })
-    set('left', {
-      id: 'plot',
-      render: <h2 className="font-semibold text-base">Plot</h2>,
-    })
-  }, [set])
-
   return (
     <PropsPanel>
+      <VCenterRow className="h-8">
+        <LinkButton
+          onClick={() => {
+            openDialog({
+              type: 'warning',
+              payload: {
+                title: 'Reset settings',
+                content: 'Are you sure you want to reset all Sankey settings?',
+                callback: (response) => {
+                  if (response === TEXT_OK) {
+                    resetSettings()
+                  }
+                },
+              },
+            })
+          }}
+          title="Reset Properties to Defaults"
+          className="text-xs"
+        >
+          {TEXT_RESET}
+        </LinkButton>
+      </VCenterRow>
       <ScrollAccordion value={['plot', 'nodes', 'links']}>
         <AccordionItem value="plot">
-          <AccordionTrigger
-            rightChildren={
-              <LinkButton
-                onClick={() => {
-                  openDialog({
-                    type: 'warning',
-                    payload: {
-                      title: 'Reset to default',
-                      content: 'Are you sure you want to reset all settings?',
-                      callback: (response) => {
-                        if (response === TEXT_OK) {
-                          resetSettings()
-                        }
-                      },
-                    },
-                  })
-                }}
-                title="Reset Properties to Defaults"
-                className="text-xs"
-              >
-                {TEXT_RESET}
-              </LinkButton>
-            }
-          >
-            Plot
-          </AccordionTrigger>
+          <AccordionTrigger>Plot</AccordionTrigger>
           <AccordionContent>
             <PropRow title="Size">
               <DoubleNumericalInput

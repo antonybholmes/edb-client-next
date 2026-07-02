@@ -20,11 +20,9 @@ import {
   SIMPLE_COLOR_EXT_CLS,
 } from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
-import { useResizableSidebarContext } from '@/components/slide-bar/resizable-sidebar'
 import { SortableItem } from '@/components/sortable-item'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
-import { useEffect } from 'react'
 import { IOutputLink, IOutputNode } from '../sankey-layout'
 import { useSankey } from '../sankey-provider'
 import { useSankeySettings } from '../sankey-settings-store'
@@ -48,17 +46,8 @@ function linkName(link: IOutputLink, nodes: Map<string, IOutputNode>) {
 }
 
 function LinkItem({ link }: { link: IOutputLink }) {
-  const { graph, updateLink } = useSankey()
+  const { updateLink } = useSankey()
   const { settings } = useSankeySettings()
-
-  const { set } = useResizableSidebarContext()
-
-  useEffect(() => {
-    set('left', {
-      id: 'links',
-      render: <h2 className="font-semibold text-base">Links</h2>,
-    })
-  }, [set])
 
   const linkId = `${link.source.id}-${link.target.id}`
 
@@ -112,49 +101,48 @@ export function LinkPropsPanel() {
     }) || []
 
   return (
-    <>
-      <PropsPanel className="gap-y-1">
-        <DndContext
-          sensors={sensors}
-          modifiers={[restrictToVerticalAxis]}
-          // onDragStart={event => setActiveId(event.active.id as string)}
-          onDragEnd={(event) => {
-            const { active, over } = event
+    <PropsPanel className="gap-y-1 mt-8">
+      <DndContext
+        sensors={sensors}
+        modifiers={[restrictToVerticalAxis]}
+        // onDragStart={event => setActiveId(event.active.id as string)}
+        onDragEnd={(event) => {
+          const { active, over } = event
 
-            // if (over && active.id !== over?.id) {
-            //   const oldIndex = groups.findIndex(
-            //     (group) => group.id === (active.id as string)
-            //   )
-            //   const newIndex = groups.findIndex(
-            //     (group) => group.id === (over.id as string)
-            //   )
-            //   const newOrder = arrayMove(
-            //     groups.map((group) => group.id),
-            //     oldIndex,
-            //     newIndex
-            //   )
+          // if (over && active.id !== over?.id) {
+          //   const oldIndex = groups.findIndex(
+          //     (group) => group.id === (active.id as string)
+          //   )
+          //   const newIndex = groups.findIndex(
+          //     (group) => group.id === (over.id as string)
+          //   )
+          //   const newOrder = arrayMove(
+          //     groups.map((group) => group.id),
+          //     oldIndex,
+          //     newIndex
+          //   )
 
-            //   reorderGroups(newOrder)
-            // }
+          //   reorderGroups(newOrder)
+          // }
 
-            //setActiveId(null)
-          }}
+          //setActiveId(null)
+        }}
+      >
+        <SortableContext
+          items={links.map((link) => `${link.source.id}-${link.target.id}`)}
+          strategy={verticalListSortingStrategy}
         >
-          <SortableContext
-            items={links.map((link) => `${link.source.id}-${link.target.id}`)}
-            strategy={verticalListSortingStrategy}
-          >
-            <VScrollPanel className="grow">
-              <ul className="flex flex-col">
-                {links.map((link) => {
-                  const linkId = `${link.source.id}-${link.target.id}`
-                  return <LinkItem link={link} key={linkId} />
-                })}
-              </ul>
-            </VScrollPanel>
-          </SortableContext>
+          <VScrollPanel className="grow">
+            <ul className="flex flex-col">
+              {links.map((link) => {
+                const linkId = `${link.source.id}-${link.target.id}`
+                return <LinkItem link={link} key={linkId} />
+              })}
+            </ul>
+          </VScrollPanel>
+        </SortableContext>
 
-          {/* <DragOverlay>
+        {/* <DragOverlay>
               {activeId ? (
                 <GroupItem
                   group={groups.find(group => group.id === activeId)!.group}
@@ -162,8 +150,7 @@ export function LinkPropsPanel() {
                 />
               ) : null}
             </DragOverlay> */}
-        </DndContext>
-      </PropsPanel>
-    </>
+      </DndContext>
+    </PropsPanel>
   )
 }

@@ -21,13 +21,10 @@ import {
 } from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
 import { Input } from '@/components/shadcn/ui/themed/v2/input'
-import { useResizableSidebarContext } from '@/components/slide-bar/resizable-sidebar'
 import { SortableItem } from '@/components/sortable-item'
 import { VScrollPanel } from '@/components/v-scroll-panel'
-import { useEffect } from 'react'
 import { IOutputNode } from '../sankey-layout'
 import { useSankey } from '../sankey-provider'
-import { useSankeySettings } from '../sankey-settings-store'
 
 export const GROUP_CLS = `group rounded-theme group gap-x-1 opacity-80 py-1 px-2
 hover:opacity-100 trans-opacity hover:bg-muted/60 data-[focus=true]:bg-muted/60`
@@ -70,16 +67,6 @@ export interface IGroupCallback {
 
 export function NodePropsPanel() {
   const { graph } = useSankey()
-  const { settings, updateSettings } = useSankeySettings()
-
-  const { set } = useResizableSidebarContext()
-
-  useEffect(() => {
-    set('left', {
-      id: 'nodes',
-      render: <h2 className="font-semibold text-base">Nodes</h2>,
-    })
-  }, [set])
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -93,9 +80,8 @@ export function NodePropsPanel() {
   )
 
   return (
-    <>
-      <PropsPanel className="gap-y-1">
-        {/* <PropRow title="Shape">
+    <PropsPanel className="mt-8 gap-y-1">
+      {/* <PropRow title="Shape">
           <SelectList
             items={[
               { value: 'rect', label: 'Rectangle' },
@@ -239,46 +225,46 @@ export function NodePropsPanel() {
 
         <LineSeparator /> */}
 
-        <DndContext
-          sensors={sensors}
-          modifiers={[restrictToVerticalAxis]}
-          // onDragStart={event => setActiveId(event.active.id as string)}
-          onDragEnd={(event) => {
-            const { active, over } = event
+      <DndContext
+        sensors={sensors}
+        modifiers={[restrictToVerticalAxis]}
+        // onDragStart={event => setActiveId(event.active.id as string)}
+        onDragEnd={(event) => {
+          const { active, over } = event
 
-            // if (over && active.id !== over?.id) {
-            //   const oldIndex = groups.findIndex(
-            //     (group) => group.id === (active.id as string)
-            //   )
-            //   const newIndex = groups.findIndex(
-            //     (group) => group.id === (over.id as string)
-            //   )
-            //   const newOrder = arrayMove(
-            //     groups.map((group) => group.id),
-            //     oldIndex,
-            //     newIndex
-            //   )
+          // if (over && active.id !== over?.id) {
+          //   const oldIndex = groups.findIndex(
+          //     (group) => group.id === (active.id as string)
+          //   )
+          //   const newIndex = groups.findIndex(
+          //     (group) => group.id === (over.id as string)
+          //   )
+          //   const newOrder = arrayMove(
+          //     groups.map((group) => group.id),
+          //     oldIndex,
+          //     newIndex
+          //   )
 
-            //   reorderGroups(newOrder)
-            // }
+          //   reorderGroups(newOrder)
+          // }
 
-            //setActiveId(null)
-          }}
+          //setActiveId(null)
+        }}
+      >
+        <SortableContext
+          items={nodes.map((node) => node.id)}
+          strategy={verticalListSortingStrategy}
         >
-          <SortableContext
-            items={nodes.map((node) => node.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            <VScrollPanel className="grow">
-              <ul className="flex flex-col">
-                {nodes.map((node) => {
-                  return <NodeItem node={node} key={node.id} />
-                })}
-              </ul>
-            </VScrollPanel>
-          </SortableContext>
+          <VScrollPanel className="grow">
+            <ul className="flex flex-col">
+              {nodes.map((node) => {
+                return <NodeItem node={node} key={node.id} />
+              })}
+            </ul>
+          </VScrollPanel>
+        </SortableContext>
 
-          {/* <DragOverlay>
+        {/* <DragOverlay>
               {activeId ? (
                 <GroupItem
                   group={groups.find(group => group.id === activeId)!.group}
@@ -286,8 +272,7 @@ export function NodePropsPanel() {
                 />
               ) : null}
             </DragOverlay> */}
-        </DndContext>
-      </PropsPanel>
-    </>
+      </DndContext>
+    </PropsPanel>
   )
 }
