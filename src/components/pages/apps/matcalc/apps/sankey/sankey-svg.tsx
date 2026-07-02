@@ -3,14 +3,22 @@ import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
 import { ISVGProps } from '@/interfaces/svg-props'
 import { useMemo, useRef } from 'react'
-import { IOutputGraph, IOutputNode } from './sankey-layout'
+import { IOutputGraph, IOutputLink, IOutputNode } from './sankey-layout'
 import { useSankey } from './sankey-provider'
 import { ISankeySettings, useSankeySettings } from './sankey-settings-store'
 
 const DEFAULT_NODE_COLOR = '#4F46E5'
 
+const NO_DRAG = Object.freeze({
+  element: null,
+  startX: 0,
+  startY: 0,
+  node: null,
+  links: [],
+})
+
 export function SankeySvg({ ref }: ISVGProps) {
-  const { plot, layoutMap, graph, updateNode } = useSankey()
+  const { graph, updateLinks } = useSankey()
   const { settings } = useSankeySettings()
   //const [dragging, setDragging] = useState(false)
 
@@ -18,30 +26,19 @@ export function SankeySvg({ ref }: ISVGProps) {
 
   const dragRef = useRef<{
     element: SVGCircleElement | SVGRectElement | SVGGElement | null
-    startX: number
-    startY: number
-    nodePos: {
-      x0: number
-      y0: number
-      x1: number
-      y1: number
-    }
-  }>({
-    element: null,
-    startX: 0,
-    startY: 0,
-    nodePos: { x0: 0, y0: 0, x1: 0, y1: 0 },
-  })
+    startX: number // for tracking mouse dx
+    startY: number // for tracking mouse dy
+    // store the original node position at the start of drag to calculate new position during dragging
+    node: IOutputNode | null
+    links: IOutputLink[]
+  }>(NO_DRAG)
 
   function handlePointerUp() {
-    dragRef.current.element = null
-    dragRef.current.startX = 0
-    dragRef.current.startY = 0
-    dragRef.current.nodePos = { x0: 0, y0: 0, x1: 0, y1: 0 }
+    dragRef.current = NO_DRAG // { ...NO_DRAG }
   }
 
   function handlePointerMove(e: React.PointerEvent<SVGSVGElement>) {
-    if (!dragRef.current.element) {
+    if (!dragRef.current.element || !graph) {
       return
     }
 
@@ -58,25 +55,40 @@ export function SankeySvg({ ref }: ISVGProps) {
 
     const id = dragRef.current.element.id.replace('node-', '')
     console.log('dragging node', id)
-    const node = layoutMap.get(id)
-    console.log(layoutMap)
 
-    console.log('dragging node', node)
+    const node = dragRef.current.node!
 
-    const y0 = dragRef.current.nodePos.y0 + d.y
-    const y1 = dragRef.current.nodePos.y1 + d.y
+    const y0 = node.y0 + d.y
+    const y1 = node.y1 + d.y
 
-    if (node) {
-      const newNode = {
-        ...node,
-        x0: dragRef.current.nodePos.x0 + d.x,
-        x1: dragRef.current.nodePos.x1 + d.x,
-        y0,
-        y1,
+    const newNode = {
+      ...node,
+      x0: node.x0 + d.x,
+      x1: node.x1 + d.x,
+      y0,
+      y1,
+    }
+
+    //updateNode(newNode)
+
+    // we need all links connected to this node to also update their positions,
+    // since link positions are derived from node positions
+
+    const newLinks = dragRef.current.links.map((link) => {
+      const newLink = { ...link }
+
+      if (link.source.id === node.id) {
+        newLink.y0! += d.y
+      } else {
+        newLink.y1! += d.y
       }
 
-      updateNode(newNode)
-    }
+      return newLink
+    })
+
+    console.log('updating connected links', newLinks)
+
+    updateLinks(newNode, newLinks)
   }
 
   const w = useMemo(
@@ -93,7 +105,7 @@ export function SankeySvg({ ref }: ISVGProps) {
     return null
   }
 
-  const nodes = graph.nodes as IOutputNode[]
+  const nodes = Array.from(graph.nodes.values())
 
   function SVGNode({
     node,
@@ -105,6 +117,10 @@ export function SankeySvg({ ref }: ISVGProps) {
     function handlePointerDown(
       e: React.PointerEvent<SVGCircleElement | SVGRectElement>
     ) {
+      if (!svgRef.current || !graph) {
+        return
+      }
+
       e.currentTarget.setPointerCapture(e.pointerId)
 
       const start = getSvgPoint(svgRef.current!, e.clientX, e.clientY)
@@ -113,18 +129,24 @@ export function SankeySvg({ ref }: ISVGProps) {
 
       const id = e.currentTarget.id.replace('node-', '')
 
-      const node = layoutMap.get(id)
+      const node = graph.nodes.get(id)
+
+      if (!node) {
+        return
+      }
+
+      const connectedLinks = graph.links.filter(
+        (l) => l.source.id === node.id || l.target.id === node.id
+      )
 
       dragRef.current = {
         element: e.currentTarget,
         startX: start.x,
         startY: start.y,
-        nodePos: {
-          x0: node?.x0 ?? 0,
-          y0: node?.y0 ?? 0,
-          x1: node?.x1 ?? 0,
-          y1: node?.y1 ?? 0,
-        },
+        // we must clone the node and links here to avoid mutating the graph state directly during dragging,
+        // which would cause issues with React's rendering and state management
+        node: { ...node },
+        links: connectedLinks.map((l) => ({ ...l })),
       }
     }
 
@@ -178,11 +200,10 @@ export function SankeySvg({ ref }: ISVGProps) {
       onPointerUp={handlePointerUp}
     >
       {/* Define gradients for links */}
-      {settings.links.colorMode === 'gradient' &&
-        gradientDefs(graph, layoutMap, settings)}
+      {settings.links.colorMode === 'gradient' && gradientDefs(graph, settings)}
 
       <SvgMargin margin={settings.margin}>
-        {linkPaths(graph, layoutMap, settings)}
+        {linkPaths(graph, settings)}
 
         {nodes.map((node) => {
           return <SVGNode key={node.id} node={node} settings={settings} />
@@ -234,7 +255,7 @@ function SVGLabel({
 
 function gradientDefs(
   graph: IOutputGraph,
-  layoutMap: Map<string, IOutputNode>,
+
   settings: ISankeySettings
 ) {
   return (
@@ -242,8 +263,8 @@ function gradientDefs(
       {graph.links.map((link) => {
         const sourceId = (link.source as IOutputNode).id
         const targetId = (link.target as IOutputNode).id
-        const source = layoutMap.get(sourceId)!
-        const target = layoutMap.get(targetId)!
+        const source = graph.nodes.get(sourceId)!
+        const target = graph.nodes.get(targetId)!
 
         const id = `gradient-${sourceId}-${targetId}`
         return (
@@ -273,7 +294,7 @@ function gradientDefs(
 
 function linkPaths(
   graph: IOutputGraph,
-  layoutMap: Map<string, IOutputNode>,
+
   settings: ISankeySettings
 ) {
   return (
@@ -282,8 +303,8 @@ function linkPaths(
         const sourceId = (link.source as IOutputNode).id
         const targetId = (link.target as IOutputNode).id
 
-        const source = layoutMap.get(sourceId)!
-        const target = layoutMap.get(targetId)!
+        const source = graph.nodes.get(sourceId)!
+        const target = graph.nodes.get(targetId)!
         const gradientId = `gradient-${sourceId}-${targetId}`
 
         // const thickness = link.value * scale

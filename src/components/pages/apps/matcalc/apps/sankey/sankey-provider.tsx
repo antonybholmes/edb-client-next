@@ -8,7 +8,12 @@ import {
   type ReactNode,
 } from 'react'
 import { BasePlot } from '../../history/history-provider/history-types'
-import { IOutputGraph, IOutputNode, useSankeyLayout } from './sankey-layout'
+import {
+  IOutputGraph,
+  IOutputLink,
+  IOutputNode,
+  useSankeyLayout,
+} from './sankey-layout'
 import { useSankeySettings } from './sankey-settings-store'
 
 export interface ISankeyNode {
@@ -128,10 +133,10 @@ export function newSankeyPlot(
 
 export interface SankeyPropsContextType {
   plot: ISankeyPlot
-  layoutMap: Map<string, IOutputNode>
 
   graph: IOutputGraph | null
-  updateNode: (node: IOutputNode) => void
+  //updateNode: (node: IOutputNode) => void
+  updateLinks: (node: IOutputNode, links: IOutputLink[]) => void
 }
 
 export const SankeyContext = createContext<SankeyPropsContextType | undefined>(
@@ -160,40 +165,66 @@ export function SankeyProvider({
   const { createSankeyLayout } = useSankeyLayout()
   const { settings } = useSankeySettings()
 
-  const [layoutMap, setLayoutMap] = useState(new Map<string, IOutputNode>())
+  //const [layoutMap, setLayoutMap] = useState(new Map<string, IOutputNode>())
 
   const [graph, setGraph] = useState<IOutputGraph | null>(null)
 
   useEffect(() => {
-    const { graph, layoutMap } = createSankeyLayout(plot)
+    const { graph } = createSankeyLayout(plot)
 
-    setLayoutMap(layoutMap)
+    //setLayoutMap(layoutMap)
 
     setGraph(graph)
-    setLayoutMap(layoutMap)
+    //setLayoutMap(layoutMap)
   }, [plot.nodes, plot.links, settings]) // we want to recalculate the layout when the nodes or links change, but also when the optimization settings change, since that affects the layout
 
-  function updateNode(node: IOutputNode) {
+  // function updateNode(node: IOutputNode) {
+  //   if (!graph) {
+  //     return
+  //   }
+
+  //   setGraph({
+  //     ...graph,
+
+  //   })
+
+  //   //setLayoutMap((prev) => new Map(prev).set(node.id, node))
+  // }
+
+  function updateLinks(node: IOutputNode, links: IOutputLink[]) {
     if (!graph) {
       return
     }
 
-    setGraph({
-      ...graph,
-      nodes: graph.nodes.map((n) => (n.id === node.id ? node : n)),
+    // we need to replace the updated links with the new ones, but keep the source and target nodes the same (since they contain the layout information)
+
+    // Make a map of the new links for easy lookup
+    const newLinkMap = new Map<string, IOutputLink>()
+    for (const link of links) {
+      newLinkMap.set(`${link.source.id}-${link.target.id}`, link)
+    }
+
+    // Create a new array of links by replacing the old links with the new ones
+    const updatedLinks = graph.links.map((link) => {
+      const key = `${link.source.id}-${link.target.id}`
+      return newLinkMap.get(key) || link
     })
 
-    setLayoutMap((prev) => new Map(prev).set(node.id, node))
+    setGraph({
+      ...graph,
+      nodes: new Map(graph.nodes).set(node.id, node),
+      links: updatedLinks,
+    })
   }
 
   return (
     <SankeyContext.Provider
       value={{
         plot,
-        layoutMap,
 
         graph,
-        updateNode,
+
+        updateLinks,
       }}
     >
       {children}

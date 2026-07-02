@@ -1,5 +1,5 @@
 import { TAB10_PALETTE } from '@/lib/color/palette'
-import { sankey, SankeyGraph, SankeyLink, SankeyNode } from 'd3-sankey'
+import { sankey, SankeyLink, SankeyNode } from 'd3-sankey'
 import { ISankey, ISankeyLink, ISankeyNode } from './sankey-provider'
 import { useSankeySettings } from './sankey-settings-store'
 
@@ -10,9 +10,15 @@ export type IOutputNode = SankeyNode<ISankeyNode, ISankeyLink> & {
   y1: number
   height: number
 }
-export type IOutputLink = SankeyLink<ISankeyNode, ISankeyLink>
+export type IOutputLink = SankeyLink<ISankeyNode, ISankeyLink> & {
+  source: IOutputNode
+  target: IOutputNode
+}
 
-export type IOutputGraph = SankeyGraph<IOutputNode, IOutputLink>
+export interface IOutputGraph {
+  nodes: Map<string, IOutputNode>
+  links: IOutputLink[]
+}
 
 export function useSankeyLayout() {
   const { settings } = useSankeySettings()
@@ -166,7 +172,7 @@ export function useSankeyLayout() {
   //   }
   // }
 
-  function createSankeyLayout(sp: ISankey) {
+  function createSankeyLayout(sp: ISankey): { graph: IOutputGraph } {
     // const { scale, nodeMaxTotalMap, byColumn, xSpacing, numCols } =
     //   initialLayout(sp, opts)
 
@@ -209,13 +215,13 @@ export function useSankeyLayout() {
     const graph = layout({
       nodes: nodes.map((d) => ({ ...d })),
       links: sp.links.map((d) => ({ ...d })),
-    }) as IOutputGraph
+    })
 
-    const layoutMap = new Map<string, IOutputNode>(
+    const nodeMap = new Map<string, IOutputNode>(
       graph.nodes.map((n) => [n.id, n] as [string, IOutputNode])
     )
 
-    return { graph, layoutMap }
+    return { graph: { nodes: nodeMap, links: graph.links as IOutputLink[] } }
   }
 
   return { createSankeyLayout }

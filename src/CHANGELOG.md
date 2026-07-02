@@ -4,6 +4,7 @@
 
 ### Added
 
+- Added ability to move sankey nodes with mouse.
 - Sankey dialog now allows for col selection.
 
 ### Changed
