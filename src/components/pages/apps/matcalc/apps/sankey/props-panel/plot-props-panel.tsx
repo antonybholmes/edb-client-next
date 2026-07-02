@@ -22,9 +22,9 @@ import { useResizableSidebarContext } from '@/components/slide-bar/resizable-sid
 import { TEXT_OK, TEXT_RESET } from '@/consts'
 import { produce } from 'immer'
 import { useEffect } from 'react'
-import { useSankeySettings } from './sankey-settings-store'
+import { useSankeySettings } from '../sankey-settings-store'
 
-export function SankeyPropsPanel() {
+export function PlotPropsPanel() {
   const { open: openDialog } = useDialogs()
 
   const { settings, updateSettings, resetSettings } = useSankeySettings()
@@ -152,7 +152,7 @@ export function SankeyPropsPanel() {
                   )
                 }}
                 step={1}
-                className="w-20"
+                //className="w-20"
               />
             </PropRow>
             <PropRow title="Oversize">
@@ -170,7 +170,6 @@ export function SankeyPropsPanel() {
                   )
                 }}
                 step={1}
-                className="w-20"
               />
             </PropRow>
             <NumericalPropRow
@@ -201,7 +200,6 @@ export function SankeyPropsPanel() {
                   )
                 }}
                 step={0.05}
-                className="w-20"
               />
             </PropRow>
             <PropRow title="Labels">
@@ -310,7 +308,6 @@ export function SankeyPropsPanel() {
                   )
                 }}
                 step={0.05}
-                className="w-20"
               />
             </PropRow>
             <PropRow title="Gradient Offset">
@@ -328,7 +325,6 @@ export function SankeyPropsPanel() {
                   )
                 }}
                 step={0.05}
-                className="w-20"
               />
             </PropRow>
           </AccordionContent>

@@ -170,7 +170,7 @@ export const accordionHeaderVariants = cva(
       variant: {
         default: '',
         settings:
-          'text-base py-1 data-[show-border=true]:pt-4 data-[show-border=true]:border-t data-[show-border=true]:border-border/50',
+          'text-base  data-[show-border=true]:pt-4 data-[show-border=true]:border-t data-[show-border=true]:border-border/50',
         sidebar:
           'text-sm h-7 rounded-theme overflow-hidden data-[hover=true]:bg-muted/50 text-xs trans-color pr-1.5',
         none: '',

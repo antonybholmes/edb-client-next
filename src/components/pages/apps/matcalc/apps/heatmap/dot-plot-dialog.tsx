@@ -24,7 +24,6 @@ import {
 import { useEffect, useState } from 'react'
 
 import { WarningIcon } from '@/components/icons/warning-icon'
-import { HCenterRow } from '@/components/layout/h-center-row'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
 import { VScrollPanel } from '@/components/v-scroll-panel'
@@ -321,6 +320,38 @@ export function DotPlotDialog({
         }
       }}
       bodyCls="gap-y-4"
+      className="h-128"
+      centerHeaderChildren={
+        <ToggleGroup
+          variant="ios"
+          size="sm"
+          value={[dotplotMode]}
+          onValueChange={(v) => setDotPlotMode(v[0] as DotPlotMode)}
+          //className="overflow-hidden rounded-theme flex flex-row border border-border"
+          //rounded="none"
+          className="rounded-lg gap-x-0.5 overflow-hidden text-xs bg-muted/50 p-0.5"
+        >
+          <GroupToggle
+            key="size"
+            value="size"
+            className="w-20"
+            //data-is-first={true}
+            // data-is-last={false}
+          >
+            Size
+          </GroupToggle>
+
+          <GroupToggle
+            key="groups"
+            value="groups"
+            className="w-20"
+            //data-is-first={false}
+            //data-is-last={true}
+          >
+            Groups
+          </GroupToggle>
+        </ToggleGroup>
+      }
     >
       {error && (
         <VCenterRow className="text-destructive gap-x-2  rounded-theme p-2 bg-destructive/10">
@@ -328,26 +359,6 @@ export function DotPlotDialog({
           <span>{error}</span>
         </VCenterRow>
       )}
-
-      <HCenterRow>
-        <ToggleGroup
-          //variant="outline"
-
-          value={[dotplotMode]}
-          onValueChange={(v) => setDotPlotMode(v[0] as DotPlotMode)}
-          className="overflow-hidden rounded-theme flex flex-row border border-border"
-          rounded="none"
-          //size="lg"
-        >
-          <GroupToggle key="size" value="size" className="w-20">
-            Size
-          </GroupToggle>
-
-          <GroupToggle key="groups" value="groups" className="w-20">
-            Groups
-          </GroupToggle>
-        </ToggleGroup>
-      </HCenterRow>
 
       <VScrollPanel className="grow h-72" innerCls="flex flex-col gap-y-4">
         {dotplotMode === 'size' && (

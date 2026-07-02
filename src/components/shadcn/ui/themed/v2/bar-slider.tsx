@@ -38,7 +38,7 @@ export function BarSlider({
     >
       <SliderPrimitive.Control
         className={cn(
-          'relative flex touch-none select-none flex-row items-center group rounded-sm overflow-hidden shrink-0',
+          'relative flex touch-none select-none flex-row items-center group rounded-sm overflow-hidden shrink-0 min-w-16',
           className
         )}
       >

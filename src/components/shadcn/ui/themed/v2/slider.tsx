@@ -21,7 +21,7 @@ export function Slider({
     <SliderPrimitive.Root {...props}>
       <SliderPrimitive.Control
         className={cn(
-          'relative flex touch-none select-none flex-row items-center group min-h-5 shrink-0',
+          'relative flex touch-none select-none flex-row items-center group min-h-5 shrink-0 min-w-16',
           className
         )}
       >

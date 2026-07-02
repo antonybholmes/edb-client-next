@@ -9,6 +9,7 @@ export type IOutputNode = SankeyNode<ISankeyNode, ISankeyLink> & {
   y0: number
   y1: number
   height: number
+  color: string
 }
 export type IOutputLink = SankeyLink<ISankeyNode, ISankeyLink> & {
   source: IOutputNode

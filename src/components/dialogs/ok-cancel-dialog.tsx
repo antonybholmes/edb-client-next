@@ -60,7 +60,7 @@ export function OSButtonRow({
 }
 
 export const DIALOG_HEADER_BUTTON_CLS =
-  'stroke-alt-foreground hover:stroke-foreground trans-color aspect-square p-1 rounded focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none data-[variant=none]:bg-transparent data-[variant=none]:hover:bg-transparent data-[variant=none]:focus-visible:bg-transparent'
+  'stroke-alt-foreground hover:stroke-foreground trans-color aspect-square focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none data-[variant=none]:bg-transparent data-[variant=none]:hover:bg-transparent data-[variant=none]:focus-visible:bg-transparent'
 
 export function CloseButton({ ...props }: IButtonProps) {
   return (

@@ -135,7 +135,8 @@ export interface SankeyPropsContextType {
   plot: ISankeyPlot
 
   graph: IOutputGraph | null
-  //updateNode: (node: IOutputNode) => void
+  updateNode: (node: IOutputNode) => void
+  updateLink: (link: IOutputLink) => void
   updateLinks: (node: IOutputNode, links: IOutputLink[]) => void
 }
 
@@ -178,18 +179,37 @@ export function SankeyProvider({
     //setLayoutMap(layoutMap)
   }, [plot.nodes, plot.links, settings]) // we want to recalculate the layout when the nodes or links change, but also when the optimization settings change, since that affects the layout
 
-  // function updateNode(node: IOutputNode) {
-  //   if (!graph) {
-  //     return
-  //   }
+  function updateNode(node: IOutputNode) {
+    if (!graph) {
+      return
+    }
 
-  //   setGraph({
-  //     ...graph,
+    setGraph({
+      ...graph,
+      nodes: new Map(graph.nodes).set(node.id, node),
+    })
+  }
 
-  //   })
+  function updateLink(link: IOutputLink) {
+    if (!graph) {
+      return
+    }
 
-  //   //setLayoutMap((prev) => new Map(prev).set(node.id, node))
-  // }
+    // we need to replace the updated link with the new one, but keep the source and target nodes the same (since they contain the layout information)
+
+    const updatedLinks = graph.links.map((l) => {
+      if (l.source.id === link.source.id && l.target.id === link.target.id) {
+        return link
+      }
+
+      return l
+    })
+
+    setGraph({
+      ...graph,
+      links: updatedLinks,
+    })
+  }
 
   function updateLinks(node: IOutputNode, links: IOutputLink[]) {
     if (!graph) {
@@ -223,7 +243,8 @@ export function SankeyProvider({
         plot,
 
         graph,
-
+        updateNode,
+        updateLink,
         updateLinks,
       }}
     >
