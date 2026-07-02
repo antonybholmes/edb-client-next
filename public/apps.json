@@ -167,7 +167,7 @@
   },
   {
     "name": "Sankey",
-    "description": "View motif logo plots.",
+    "description": "Create Sankey plots.",
     "color": "#009933",
     "version": "1.0.0",
     "copyright": "© 2024-2026 Antony Holmes",

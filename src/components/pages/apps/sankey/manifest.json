@@ -1,6 +1,6 @@
 {
   "name": "Sankey",
-  "description": "View motif logo plots.",
+  "description": "Create Sankey plots.",
   "color": "#009933",
   "version": "1.0.0",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
