@@ -2,39 +2,81 @@ import { SvgBase } from '@/components/plot/svg-base'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
 import { ISVGProps } from '@/interfaces/svg-props'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import { IOutputGraph, IOutputNode } from './sankey-layout'
-import { ILayoutNode, useSankey } from './sankey-provider'
+import { useSankey } from './sankey-provider'
 import { ISankeySettings, useSankeySettings } from './sankey-settings-store'
 
 const DEFAULT_NODE_COLOR = '#4F46E5'
 
 export function SankeySvg({ ref }: ISVGProps) {
-  const { plot, layoutMap, graph } = useSankey()
+  const { plot, layoutMap, graph, updateNode } = useSankey()
   const { settings } = useSankeySettings()
-  const [dragging, setDragging] = useState(false)
-  const [pos, setPos] = useState({ x: 100, y: 100 })
+  //const [dragging, setDragging] = useState(false)
+
+  const svgRef = useRef<SVGSVGElement>(null)
+
+  const dragRef = useRef<{
+    element: SVGCircleElement | SVGRectElement | SVGGElement | null
+    startX: number
+    startY: number
+    nodePos: {
+      x0: number
+      y0: number
+      x1: number
+      y1: number
+    }
+  }>({
+    element: null,
+    startX: 0,
+    startY: 0,
+    nodePos: { x0: 0, y0: 0, x1: 0, y1: 0 },
+  })
 
   function handlePointerUp() {
-    setDragging(false)
+    dragRef.current.element = null
+    dragRef.current.startX = 0
+    dragRef.current.startY = 0
+    dragRef.current.nodePos = { x0: 0, y0: 0, x1: 0, y1: 0 }
   }
 
   function handlePointerMove(e: React.PointerEvent<SVGSVGElement>) {
-    if (!dragging) return
+    if (!dragRef.current.element) {
+      return
+    }
 
-    const svg = e.currentTarget
-    const pt = svg.createSVGPoint()
-    pt.x = e.clientX
-    pt.y = e.clientY
+    console.log('pointer move', dragRef.current)
 
-    const p = pt.matrixTransform(svg.getScreenCTM()!.inverse())
+    const p = getSvgPoint(svgRef.current!, e.clientX, e.clientY)
 
-    console.log('pointer move', p)
+    const d = {
+      x: p.x - dragRef.current.startX,
+      y: p.y - dragRef.current.startY,
+    }
 
-    setPos({
-      x: p.x,
-      y: p.y,
-    })
+    console.log('pointer move', d)
+
+    const id = dragRef.current.element.id.replace('node-', '')
+    console.log('dragging node', id)
+    const node = layoutMap.get(id)
+    console.log(layoutMap)
+
+    console.log('dragging node', node)
+
+    const y0 = dragRef.current.nodePos.y0 + d.y
+    const y1 = dragRef.current.nodePos.y1 + d.y
+
+    if (node) {
+      const newNode = {
+        ...node,
+        x0: dragRef.current.nodePos.x0 + d.x,
+        x1: dragRef.current.nodePos.x1 + d.x,
+        y0,
+        y1,
+      }
+
+      updateNode(newNode)
+    }
   }
 
   const w = useMemo(
@@ -51,26 +93,45 @@ export function SankeySvg({ ref }: ISVGProps) {
     return null
   }
 
-  const nodes = graph.nodes as ILayoutNode[]
+  const nodes = graph.nodes as IOutputNode[]
 
   function SVGNode({
     node,
     settings,
   }: {
-    node: ILayoutNode
+    node: IOutputNode
     settings: ISankeySettings
   }) {
     function handlePointerDown(
       e: React.PointerEvent<SVGCircleElement | SVGRectElement>
     ) {
       e.currentTarget.setPointerCapture(e.pointerId)
-      setDragging(true)
+
+      const start = getSvgPoint(svgRef.current!, e.clientX, e.clientY)
+
+      console.log('pointer down', e, e.currentTarget)
+
+      const id = e.currentTarget.id.replace('node-', '')
+
+      const node = layoutMap.get(id)
+
+      dragRef.current = {
+        element: e.currentTarget,
+        startX: start.x,
+        startY: start.y,
+        nodePos: {
+          x0: node?.x0 ?? 0,
+          y0: node?.y0 ?? 0,
+          x1: node?.x1 ?? 0,
+          y1: node?.y1 ?? 0,
+        },
+      }
     }
 
     const w = node.x1 - node.x0
     const h = node.y1 - node.y0
     return (
-      <g key={node.id} id={`node-${node.id}`}>
+      <g key={node.id} id={`node-${node.id}`} onPointerDown={handlePointerDown}>
         {settings.nodes.shape === 'rect' && (
           <rect
             x={node.x0 - settings.nodes.width / 2}
@@ -80,7 +141,6 @@ export function SankeySvg({ ref }: ISVGProps) {
             rx={settings.nodes.rounding}
             fill={node.color ?? DEFAULT_NODE_COLOR}
             fillOpacity={settings.nodes.opacity}
-            onPointerDown={handlePointerDown}
           />
         )}
         {settings.nodes.shape === 'circle' && (
@@ -90,7 +150,7 @@ export function SankeySvg({ ref }: ISVGProps) {
             r={Math.max(w, h) / 2}
             fill={node.color ?? DEFAULT_NODE_COLOR}
             fillOpacity={settings.nodes.opacity}
-            onPointerDown={handlePointerDown}
+            //onPointerDown={handlePointerDown}
           />
         )}
         {settings.nodes.labels.font.show && (
@@ -104,7 +164,15 @@ export function SankeySvg({ ref }: ISVGProps) {
     <SvgBase
       width={w}
       height={h}
-      ref={ref}
+      ref={(r) => {
+        svgRef.current = r
+
+        if (typeof ref === 'function') {
+          ref(r)
+        } else if (ref) {
+          ref.current = r
+        }
+      }}
       scale={settings.scale}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -128,7 +196,7 @@ function SVGLabel({
   node,
   settings,
 }: {
-  node: ILayoutNode
+  node: IOutputNode
   settings: ISankeySettings
 }) {
   const w = node.x1 - node.x0
@@ -166,7 +234,7 @@ function SVGLabel({
 
 function gradientDefs(
   graph: IOutputGraph,
-  layoutMap: Map<string, ILayoutNode>,
+  layoutMap: Map<string, IOutputNode>,
   settings: ISankeySettings
 ) {
   return (
@@ -176,8 +244,6 @@ function gradientDefs(
         const targetId = (link.target as IOutputNode).id
         const source = layoutMap.get(sourceId)!
         const target = layoutMap.get(targetId)!
-
-        //console.log(layoutMap, link, 'source', source, 'target', target)
 
         const id = `gradient-${sourceId}-${targetId}`
         return (
@@ -207,62 +273,9 @@ function gradientDefs(
 
 function linkPaths(
   graph: IOutputGraph,
-  layoutMap: Map<string, ILayoutNode>,
-
+  layoutMap: Map<string, IOutputNode>,
   settings: ISankeySettings
 ) {
-  // reorder links by source and target position to ensure consistent layering
-  // const sortedLinks: ISankeyLink[] = []
-
-  // const linkMap = new Map<string, ISankeyLink[]>()
-
-  // for (const link of plot.links) {
-  //   const source = layoutMap.get(link.source)!
-
-  //   if (!linkMap.has(source.id)) {
-  //     linkMap.set(source.id, [])
-  //   }
-
-  //   linkMap.get(source.id)!.push(link)
-  // }
-
-  // const sourceTargetLinkMap = new Map<string, ISankeyLink>(
-  //   plot.links.map((link) => [`${link.source}-${link.target}`, link])
-  // )
-
-  // for (let col = 0; col < cols - 1; col++) {
-  //   const nodes = byColumn.get(col)
-
-  //   if (nodes) {
-  //     // sort by layout y position so smaller y (higher up) are rendered first
-  //     const sortedSources = nodes.slice().sort((a, b) => {
-  //       const la = layoutMap.get(a.id)!
-  //       const lb = layoutMap.get(b.id)!
-
-  //       return la.y - lb.y
-  //     })
-
-  //     for (const source of sortedSources) {
-  //       // see what we point to
-  //       const links = linkMap.get(source.id)!
-  //       const targets = links.map((l) => l.target)
-
-  //       const sortedTargets = targets
-  //         .map((t) => layoutMap.get(t)!)
-  //         .sort((a, b) => a.y - b.y)
-
-  //       for (const target of sortedTargets) {
-  //         const link = sourceTargetLinkMap.get(`${source.id}-${target.id}`)
-  //         console.log('dsdsfsfd', `${source.id}-${target.id}`)
-  //         sortedLinks.push(link!)
-  //       }
-  //     }
-  //   }
-  // }
-
-  //const sourceOffset = new Map<string, number>()
-  //const targetOffset = new Map<string, number>()
-
   return (
     <>
       {graph.links.map((link, i) => {
@@ -292,16 +305,6 @@ function linkPaths(
         const x0 = source.x0
         const x1 = target.x0
 
-        const r1 =
-          settings.nodes.shape === 'rect'
-            ? settings.nodes.width
-            : (source.y1 - source.y0) / 4
-
-        const r2 =
-          settings.nodes.shape === 'rect'
-            ? settings.nodes.width
-            : (target.y1 - target.y0) / 4
-
         const cx = (x0 + x1 - settings.nodes.width) / 2
 
         // const d = `
@@ -311,10 +314,12 @@ function linkPaths(
         //   L ${x1} ${link.y1}
         // `
 
+        const y0 = link.y0
+        const y1 = link.y1
+
         const d = `
-          M ${x0} ${link.y0}
-          C ${cx} ${link.y0}, ${cx} ${link.y1}, ${x1} ${link.y1}
-  
+          M ${x0} ${y0}
+          C ${cx} ${y0}, ${cx} ${y1}, ${x1} ${y1}
         `
 
         let color = settings.links.color
@@ -350,4 +355,12 @@ function linkPaths(
       })}
     </>
   )
+}
+
+function getSvgPoint(svg: SVGSVGElement, clientX: number, clientY: number) {
+  const pt = svg.createSVGPoint()
+  pt.x = clientX
+  pt.y = clientY
+
+  return pt.matrixTransform(svg.getScreenCTM()!.inverse())
 }

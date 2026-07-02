@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { BasePlot } from '../../history/history-provider/history-types'
-import { IOutputGraph, useSankeyLayout } from './sankey-layout'
+import { IOutputGraph, IOutputNode, useSankeyLayout } from './sankey-layout'
 import { useSankeySettings } from './sankey-settings-store'
 
 export interface ISankeyNode {
@@ -18,16 +18,16 @@ export interface ISankeyNode {
   color?: string
 }
 
-export interface ILayoutNode extends ISankeyNode {
-  // x: number
-  // y: number
-  // h: number
-  x0: number
-  x1: number
-  y0: number
-  y1: number
-  height: number
-}
+// export interface ILayoutNode extends ISankeyNode {
+//   // x: number
+//   // y: number
+//   // h: number
+//   x0: number
+//   x1: number
+//   y0: number
+//   y1: number
+//   height: number
+// }
 
 export interface ISankeyLink {
   source: string
@@ -119,7 +119,7 @@ export function newSankeyPlot(
     nodes,
     links,
     groups,
-    //props,
+
     actions,
     type: 'plot',
     createdAt: new Date().toISOString(),
@@ -127,13 +127,11 @@ export function newSankeyPlot(
 }
 
 export interface SankeyPropsContextType {
-  //displayProps: ISankeyDisplayOptions
   plot: ISankeyPlot
-  layoutMap: Map<string, ILayoutNode>
-  // byColumn: Map<number, ISankeyNode[]>
-  //numCols: number
-  //scale: number
+  layoutMap: Map<string, IOutputNode>
+
   graph: IOutputGraph | null
+  updateNode: (node: IOutputNode) => void
 }
 
 export const SankeyContext = createContext<SankeyPropsContextType | undefined>(
@@ -162,32 +160,40 @@ export function SankeyProvider({
   const { createSankeyLayout } = useSankeyLayout()
   const { settings } = useSankeySettings()
 
-  //const [scale, setScale] = useState(1)
-  const [layoutMap, setLayoutMap] = useState(new Map<string, ILayoutNode>())
-  //const [byColumn, setByColumn] = useState(new Map<number, ISankeyNode[]>())
-  //const [numCols, setNumCols] = useState(0)
+  const [layoutMap, setLayoutMap] = useState(new Map<string, IOutputNode>())
+
   const [graph, setGraph] = useState<IOutputGraph | null>(null)
 
   useEffect(() => {
     const { graph, layoutMap } = createSankeyLayout(plot)
-    //setScale(scale)
+
     setLayoutMap(layoutMap)
-    //setByColumn(byColumn)
-    //setNumCols(numCols)
+
     setGraph(graph)
     setLayoutMap(layoutMap)
   }, [plot.nodes, plot.links, settings]) // we want to recalculate the layout when the nodes or links change, but also when the optimization settings change, since that affects the layout
 
+  function updateNode(node: IOutputNode) {
+    if (!graph) {
+      return
+    }
+
+    setGraph({
+      ...graph,
+      nodes: graph.nodes.map((n) => (n.id === node.id ? node : n)),
+    })
+
+    setLayoutMap((prev) => new Map(prev).set(node.id, node))
+  }
+
   return (
     <SankeyContext.Provider
       value={{
-        //displayProps: plot.props,
         plot,
         layoutMap,
-        //byColumn,
-        //scale,
-        //numCols,
+
         graph,
+        updateNode,
       }}
     >
       {children}

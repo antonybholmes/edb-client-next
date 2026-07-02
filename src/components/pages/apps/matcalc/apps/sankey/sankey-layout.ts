@@ -1,14 +1,15 @@
 import { TAB10_PALETTE } from '@/lib/color/palette'
 import { sankey, SankeyGraph, SankeyLink, SankeyNode } from 'd3-sankey'
-import {
-  ILayoutNode,
-  ISankey,
-  ISankeyLink,
-  ISankeyNode,
-} from './sankey-provider'
+import { ISankey, ISankeyLink, ISankeyNode } from './sankey-provider'
 import { useSankeySettings } from './sankey-settings-store'
 
-export type IOutputNode = SankeyNode<ISankeyNode, ISankeyLink>
+export type IOutputNode = SankeyNode<ISankeyNode, ISankeyLink> & {
+  x0: number
+  x1: number
+  y0: number
+  y1: number
+  height: number
+}
 export type IOutputLink = SankeyLink<ISankeyNode, ISankeyLink>
 
 export type IOutputGraph = SankeyGraph<IOutputNode, IOutputLink>
@@ -165,12 +166,7 @@ export function useSankeyLayout() {
   //   }
   // }
 
-  function createSankeyLayout(
-    sp: ISankey,
-    opts: {
-      steps?: { removeZeroValueLinks?: boolean; relaxationFactor?: number }
-    } = {}
-  ) {
+  function createSankeyLayout(sp: ISankey) {
     // const { scale, nodeMaxTotalMap, byColumn, xSpacing, numCols } =
     //   initialLayout(sp, opts)
 
@@ -215,8 +211,8 @@ export function useSankeyLayout() {
       links: sp.links.map((d) => ({ ...d })),
     }) as IOutputGraph
 
-    const layoutMap = new Map<string, ILayoutNode>(
-      graph.nodes.map((n) => [n.id, n] as [string, ILayoutNode])
+    const layoutMap = new Map<string, IOutputNode>(
+      graph.nodes.map((n) => [n.id, n] as [string, IOutputNode])
     )
 
     return { graph, layoutMap }
