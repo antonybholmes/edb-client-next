@@ -135,6 +135,7 @@ function _SideTabs({
         {tabs.map((tab, ti) => {
           const isSelected = selectedTab?.id === tab.id
           const name = getTabName(tab)
+
           return (
             <TabsTrigger
               variant="base"
