@@ -15,7 +15,7 @@ import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../matcalc/data/data-panel'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
-import { ResizableSidebar } from '@/components/slide-bar/resizable-sidebar'
+import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { PLOT_ZOOM_CHANNEL } from '../matcalc/apps/heatmap/heatmap-panel'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { SankeyPropsPanel } from './props-panel/sankey-props-panel'

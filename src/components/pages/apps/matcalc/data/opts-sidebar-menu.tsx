@@ -1,5 +1,5 @@
 import { useEdbSettings } from '@/components/edb/edb-settings'
-import { useSlideBar } from '@/components/slide-bar/slide-bar-store'
+import { useSlideBar } from '@/components/sidebar/slide-bar-store'
 import { OPTS_SIDEBAR_ID } from '@/components/tabs/tab-provider'
 import { ShowOptionsMenu } from '@/components/toolbar/toolbar'
 import { produce } from 'immer'

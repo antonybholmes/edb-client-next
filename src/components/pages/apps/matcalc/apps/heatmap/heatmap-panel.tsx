@@ -16,7 +16,7 @@ import { useZoom } from '@/providers/zoom-provider'
 import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
-import { ResizableSidebar } from '@/components/slide-bar/resizable-sidebar'
+import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useHeatmapContext } from './heatmap-provider'
 import { HeatMapSvg } from './heatmap-svg'

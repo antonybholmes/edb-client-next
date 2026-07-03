@@ -51,7 +51,7 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { useAppInfo } from '@/components/edb/edb-settings'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
-import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { useZoom } from '@/providers/zoom-provider'
 import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 

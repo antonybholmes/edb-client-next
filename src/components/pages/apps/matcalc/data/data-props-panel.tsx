@@ -4,6 +4,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/shadcn/ui/themed/v2/tabs'
+import { useState } from 'react'
 import { FilterPropsPanel } from './filter-props-panel'
 import { GroupingPropsPanel } from './grouping-props-panel'
 
@@ -11,8 +12,15 @@ import { GroupingPropsPanel } from './grouping-props-panel'
 //   'w-4.5 stroke-foreground/75 group-hover:stroke-foreground group-data-[selected=true]:stroke-foreground'
 
 export function DataPropsPanel() {
+  const [value, setValue] = useState('groups')
+
   return (
-    <Tabs orientation="vertical" className="flex flex-col grow text-xs pr-1">
+    <Tabs
+      value={value}
+      onValueChange={setValue}
+      orientation="vertical"
+      className="flex flex-col grow text-xs pr-1"
+    >
       <TabsContent value="groups" className="grow">
         <GroupingPropsPanel />
       </TabsContent>
@@ -20,7 +28,7 @@ export function DataPropsPanel() {
       <TabsContent value="filter" className="grow">
         <FilterPropsPanel />
       </TabsContent>
-      <TabsList className="py-1 gap-y-px">
+      <TabsList className="gap-y-px">
         <TabsTrigger value="groups" className="grow" variant="sidebar">
           Groups
         </TabsTrigger>

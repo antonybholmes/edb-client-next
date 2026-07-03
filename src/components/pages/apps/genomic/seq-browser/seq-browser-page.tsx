@@ -7,7 +7,7 @@ import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
 import { useEffect, useState } from 'react'
 
-import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import {
   TEXT_DOWNLOAD_AS_PNG,
   TEXT_DOWNLOAD_AS_SVG,

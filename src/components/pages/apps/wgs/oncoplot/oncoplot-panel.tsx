@@ -18,7 +18,7 @@ import {
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
-import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import {
   messageImageFileFormat,
   useMessages,

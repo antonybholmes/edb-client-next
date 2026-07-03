@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
@@ -31,8 +31,6 @@ import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 
 export const PLOT_CLS = 'relative overflow-scroll custom-scrollbar grow'
-
- 
 
 function LollipopPanel() {
   //const [selectedTab, setSelectedTab] = useState('Display')

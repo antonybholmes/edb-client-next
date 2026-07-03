@@ -52,7 +52,7 @@ import { useZoom } from '@/providers/zoom-provider'
 import Fuse from 'fuse.js'
 import { produce } from 'immer'
 
-import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'

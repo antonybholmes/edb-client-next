@@ -52,7 +52,7 @@ import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useFooter } from '@/providers/footer-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 
-import { ResizableSidebar } from '@/components/slide-bar/resizable-sidebar'
+import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { OptsSidebarMenu } from '../matcalc/data/opts-sidebar-menu'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import { useSave } from '../matcalc/hooks/save'

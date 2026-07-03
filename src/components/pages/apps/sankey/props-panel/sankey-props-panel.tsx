@@ -24,7 +24,7 @@ export function SankeyPropsPanel() {
         <LinkPropsPanel />
       </TabsContent>
 
-      <TabsList className="py-1 gap-y-px">
+      <TabsList>
         <TabsTrigger value="plot" className="grow" variant="sidebar">
           Plot
         </TabsTrigger>

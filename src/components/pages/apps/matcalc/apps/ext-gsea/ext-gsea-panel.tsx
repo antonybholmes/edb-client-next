@@ -1,20 +1,20 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import {
-    DEFAULT_HEATMAP_PROPS,
-    type IHeatMapDisplayOptions,
+  DEFAULT_HEATMAP_PROPS,
+  type IHeatMapDisplayOptions,
 } from '@/components/plot/heatmap/heatmap-svg-props'
 import { TEXT_CANCEL, TEXT_DISPLAY } from '@/consts'
 import { SaveImageDialog } from '@/dialogs/save-image-dialog'
 
 import {
-    messageImageFileFormat,
-    useMessages,
+  messageImageFileFormat,
+  useMessages,
 } from '@/providers/message-provider'
 import { useZoom } from '@/providers/zoom-provider'
 import { Card } from '@/themed/card'

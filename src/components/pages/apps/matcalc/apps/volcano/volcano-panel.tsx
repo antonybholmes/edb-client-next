@@ -6,7 +6,7 @@ import {
   type IVolcanoDisplayOptions,
 } from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
 import { autoLim } from '@/components/plot/axis'
-import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { BaseCol } from '@/layout/base-col'
 import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'

@@ -2,7 +2,7 @@ import { SlidersIcon } from '@/icons/sliders-icon'
 
 import { useEffect, useRef, useState } from 'react'
 
-import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { BaseCol } from '@/layout/base-col'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'

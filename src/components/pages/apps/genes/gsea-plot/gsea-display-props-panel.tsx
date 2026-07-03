@@ -19,7 +19,7 @@ import { LinkButton } from '@/themed/link-button'
 import { NumericalInput } from '@/themed/numerical-input'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { ResizableSidebarHeaderPortal } from '@/components/slide-bar/resizable-sidebar'
+import { ResizableSidebarHeaderPortal } from '@/components/sidebar/resizable-sidebar'
 import { produce } from 'immer'
 import { FontPopover } from '../../../../plot/font/font-popover'
 import { MarginPopover } from '../../../../plot/margin-popover'

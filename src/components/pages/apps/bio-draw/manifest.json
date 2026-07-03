@@ -1,9 +1,9 @@
 {
   "name": "Bio Draw",
   "description": "Biological diagrams",
-  "version": "16.6.4",
+  "version": "16.6.6",
   "copyright": "(C) ${START_YEAR:2025} Antony Holmes",
-  "modified": "2026-07-01T16:18:39.045Z",
-  "hash": "98ccc6d70cfefc5a0d3c3b5348780a0628491ce2d9f0bbc27bbe6133edcc0133",
-  "build": 528
+  "modified": "2026-07-03T14:46:20.321Z",
+  "hash": "4915838352ca8e8e456d93b9527b7179485253a35486de06447003ef2944d79d",
+  "build": 530
 }

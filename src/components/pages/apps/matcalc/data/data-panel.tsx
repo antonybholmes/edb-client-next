@@ -25,7 +25,7 @@ import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { ResizableSidebar } from '@/components/slide-bar/resizable-sidebar'
+import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 
 import { makeUuid } from '@/lib/id'
 import { useFooter } from '@/providers/footer-provider'

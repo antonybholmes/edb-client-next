@@ -19,7 +19,7 @@ import { FileImageIcon } from '@/icons/file-image-icon'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { type ITab } from '@/components/tabs/tab-provider'
 import {
   TEXT_DISPLAY,

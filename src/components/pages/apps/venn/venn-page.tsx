@@ -27,7 +27,7 @@ import {
   openFilesDialog,
 } from '@/components/pages/open-files'
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { UploadIcon } from '@/icons/upload-icon'
 
 import {

@@ -25,7 +25,7 @@ import {
 } from '@/consts'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 
 import { FileIcon } from '@/icons/file-icon'
 import {

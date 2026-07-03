@@ -12,7 +12,7 @@ import { getDataFrameInfo } from '@/lib/dataframe/dataframe-utils'
 
 import { useEffect, useRef, useState } from 'react'
 
-import { TabSlideBar } from '@/components/slide-bar/tab-slide-bar'
+import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import {
   NO_DIALOG,
   TEXT_CANCEL,

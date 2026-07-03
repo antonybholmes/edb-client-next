@@ -57,7 +57,7 @@ import {
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
 
-import { ResizableSidebar } from '@/components/slide-bar/resizable-sidebar'
+import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useFooter } from '@/providers/footer-provider'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
