@@ -31,7 +31,7 @@ export const TRIGGER_CLS = cn(
 
 export const SIDEBAR_CLS = cn(
   BASE_TRIGGER_CLS,
-  'flex-row items-center px-3 h-8.5 border-l-2 border-transparent data-active:bg-app-theme/15 data-active:border-app-theme'
+  'flex-row items-center px-2 h-9 data-active:bg-app-theme/15'
 )
 
 export const PLAIN_CLS = cn(

@@ -1,11 +1,7 @@
 import { cn } from '@/lib/shadcn-utils'
 import { useEffect, useRef } from 'react'
 
-import {
-  getTabFromValue,
-  getTabName,
-  useTabs,
-} from '@/components/tabs/tab-provider'
+import { getTabName, useTabs } from '@/components/tabs/tab-provider'
 import { EMPTY_RECT } from '@/interfaces/rect'
 
 import {
@@ -13,7 +9,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/shadcn/ui/themed/v2/tabs'
-import { TabIndicatorFollowV } from '@/components/tabs/tab-indicator-follow-v'
 import {
   TabIndicatorProvider,
   useTabIndicators,
@@ -47,14 +42,6 @@ function _SidebarTabs({
     setPosition: setTabPosition,
     setSelectedPosition: setSelectedTabPosition,
   } = useTabIndicators()
-
-  function _onValueChange(value: string) {
-    const tab = getTabFromValue(value, tabs)
-
-    if (tab) {
-      setTab(value)
-    }
-  }
 
   function updateSelectedSize(buttonRef: HTMLElement, animate = true) {
     const containerRect = tabListRef.current!.getBoundingClientRect()
@@ -103,8 +90,8 @@ function _SidebarTabs({
     }
 
     // force selection of first tab on mount, to set initial position of indicator
-    _onValueChange(getTabName(tabs[0]!))
-  }, [tabs.map((t) => t.id).join('|')])
+    setTab(tabs[0].id)
+  }, [tabs])
 
   function _scale(index: number, isSelected: boolean) {
     if (!isSelected) {
@@ -126,11 +113,11 @@ function _SidebarTabs({
   return (
     <Tabs
       value={selectedTab?.id ?? ''}
-      onValueChange={_onValueChange}
+      onValueChange={setTab}
       orientation="vertical"
     >
       <TabsList
-        className={cn('relative shrink-0 pl-1.5 pr-1', className)}
+        className={cn('relative shrink-0 pl-2 gap-y-px', className)}
         ref={tabListRef}
         onMouseLeave={() => {
           setTabPosition(undefined)
@@ -140,9 +127,11 @@ function _SidebarTabs({
           const isSelected = selectedTab?.id === tab.id
           const name = getTabName(tab)
 
+          console.log('SidebarTabs', tab, isSelected, name, selectedTab)
+
           return (
             <TabsTrigger
-              variant="base"
+              variant="sidebar"
               value={tab.id}
               id={tab.id}
               key={tab.id}
@@ -180,13 +169,13 @@ function _SidebarTabs({
                   {tab.icon}
                 </span>
               )}
-              {showLabels && <span className="px-2">{name}</span>}
+              {showLabels && <span>{name}</span>}
             </TabsTrigger>
           )
         })}
 
         <TabIndicatorSelectedV />
-        <TabIndicatorFollowV />
+        {/* <TabIndicatorFollowV /> */}
       </TabsList>
     </Tabs>
   )

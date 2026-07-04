@@ -4,6 +4,7 @@
 
 ### Added
 
+- Added animation to sidebar tabs.
 - Added Sankey app and moved sankey code to this.
 - Added ability to move sankey nodes with mouse.
 - Sankey dialog now allows for col selection.
