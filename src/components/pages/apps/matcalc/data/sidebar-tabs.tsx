@@ -25,7 +25,7 @@ interface IShortcutProps extends IClassProps {
 
 function _SidebarTabs({
   id = 'side-tabs',
-  defaultHeight = 1.9,
+  defaultHeight = 2,
   showIcons = true,
   showLabels = true,
   className,
@@ -131,8 +131,6 @@ function _SidebarTabs({
         {tabs.map((tab, ti) => {
           const isSelected = selectedTab?.id === tab.id
           const name = getTabName(tab)
-
-          console.log('SidebarTabs', tab, isSelected, name, selectedTab)
 
           return (
             <TabsTrigger

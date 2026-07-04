@@ -1,7 +1,8 @@
 import { cn } from '@/lib/shadcn-utils'
 import { Slider as SliderPrimitive } from '@base-ui/react/slider'
 
-import { useState, type ComponentProps } from 'react'
+import { gsap } from 'gsap'
+import { useEffect, useRef, useState, type ComponentProps } from 'react'
 
 // const THUMB_CLS = cn(
 //   FOCUS_RING_CLS,
@@ -23,9 +24,22 @@ export function BarSlider({
   format?: (value: number) => string
 }) {
   const [focus, setFocus] = useState(false)
+  const [hover, setHover] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
   const v = Array.isArray(value) ? value[0] : value || 0
 
   const pc = (v / (max - min)) * 100
+
+  useEffect(() => {
+    if (ref.current) {
+      gsap.to(ref.current, {
+        height: hover || focus ? 24 : 20,
+        duration: 0.2,
+        ease: 'power3.out',
+      })
+    }
+  }, [hover, focus])
 
   return (
     <SliderPrimitive.Root
@@ -35,6 +49,8 @@ export function BarSlider({
       {...props}
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
     >
       <SliderPrimitive.Control
         className={cn(
@@ -43,8 +59,9 @@ export function BarSlider({
         )}
       >
         <SliderPrimitive.Track
+          ref={ref}
           data-focus={focus}
-          className="relative h-6 grow bg-muted/50 group-hover:bg-muted/70 data-[focus=true]:bg-muted/70 trans-color"
+          className="relative   transition-all tra grow bg-muted/50 group-hover:bg-muted/70 data-[focus=true]:bg-muted/70 trans-color"
         >
           <SliderPrimitive.Indicator
             data-focus={focus}

@@ -111,9 +111,9 @@
     "color": "#40bf80",
     "version": "48.2.4",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-04T16:38:13.425Z",
-    "hash": "c2abe2e0c3c49c036870a887527cb14aa64916a2eb9fc7140c000e8ea9bfd9a3",
-    "build": 1752
+    "modified": "2026-07-04T18:51:53.569Z",
+    "hash": "e6c83a2300b59630dcbefa8ac6cc48cd9887b651b5a682d1c132433a116c55cb",
+    "build": 1754
   },
   {
     "name": "Motifs",
@@ -131,9 +131,9 @@
     "color": "#ff99cc",
     "version": "28.8.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-03T14:46:20.353Z",
-    "hash": "c6a0c8bd828821c64fef5bef3ce4964dab4861d9a4944b06908ea5a82b313fcf",
-    "build": 1070
+    "modified": "2026-07-04T18:51:53.574Z",
+    "hash": "0c322a2e3f52e118fa9aef6faeae7a27f300969c3301ff0d0ebe285cecfa4fda",
+    "build": 1072
   },
   {
     "name": "Overlap",
@@ -171,9 +171,9 @@
     "color": "#ff9900",
     "version": "1.0.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-04T16:38:13.428Z",
-    "hash": "6082b134ba44b16163f849ae893b7b1915020df1ad6622d86c83eddc4f719143",
-    "build": 10
+    "modified": "2026-07-04T18:51:53.571Z",
+    "hash": "a994c679ef3349b8698edd28d25e9b5c39bc52b0ec7f6428f5a61e0fe3ff20ee",
+    "build": 12
   },
   {
     "name": "Seq Browser",
@@ -218,11 +218,11 @@
     "name": "Variants",
     "description": "WGS variant data explorer.",
     "color": "#FA8072",
-    "version": "26.6.2",
+    "version": "26.6.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-03T14:46:20.354Z",
-    "hash": "7668359198b71d953ab4d463b19941ab8558249370b6587c0a07fe41cddef44f",
-    "build": 988
+    "modified": "2026-07-04T18:51:53.575Z",
+    "hash": "1ab501d70d96b989be50344a8440f0a8e5f7e009cb9acd06a61c1b6a1997226a",
+    "build": 990
   },
   {
     "name": "Venn",

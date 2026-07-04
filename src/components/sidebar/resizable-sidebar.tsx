@@ -172,7 +172,7 @@ export function SidePanel({
         {showCloseButton && (
           <CloseButton
             onClick={() => setOpen(false)}
-            className="absolute right-0 top-0.5"
+            className="absolute right-0 top-0.5 z-100"
           />
         )}
         {/* </VCenterRow> */}

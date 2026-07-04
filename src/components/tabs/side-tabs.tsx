@@ -103,7 +103,12 @@ function _SideTabs({
   }, [tabs.map((t) => t.id).join('|')])
 
   function _scale(index: number, isSelected: boolean) {
-    if (!isSelected) {
+    if (
+      !isSelected ||
+      !buttonsRef.current[index] ||
+      !tabListRef.current ||
+      !position
+    ) {
       return
     }
 
@@ -112,7 +117,7 @@ function _SideTabs({
     const clientRect = buttonsRef.current[index]!.getBoundingClientRect()
 
     setTabPosition({
-      ...(position || EMPTY_RECT),
+      ...position,
       y: clientRect.top - containerRect.top,
       h: clientRect.height,
       scale: 0.6,
