@@ -7,16 +7,19 @@ import {
   useTabs,
 } from '@/components/tabs/tab-provider'
 import { EMPTY_RECT } from '@/interfaces/rect'
-import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
 
-import { TabIndicatorFollowV } from './tab-indicator-follow-v'
-import { TabIndicatorSelectedV } from './tab-indicator-selected-v'
-
-import { IClassProps } from '@/interfaces/class-props'
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+} from '@/components/shadcn/ui/themed/v2/tabs'
+import { TabIndicatorFollowV } from '@/components/tabs/tab-indicator-follow-v'
 import {
   TabIndicatorProvider,
   useTabIndicators,
-} from './tab-indicator-provider'
+} from '@/components/tabs/tab-indicator-provider'
+import { TabIndicatorSelectedV } from '@/components/tabs/tab-indicator-selected-v'
+import { IClassProps } from '@/interfaces/class-props'
 
 interface IShortcutProps extends IClassProps {
   id?: string
@@ -25,7 +28,7 @@ interface IShortcutProps extends IClassProps {
   showLabels?: boolean
 }
 
-function _SideTabs({
+function _SidebarTabs({
   id = 'side-tabs',
   defaultHeight = 1.9,
   showIcons = true,
@@ -37,6 +40,7 @@ function _SideTabs({
   const tabListRef = useRef<HTMLDivElement>(null)
   const buttonsRef = useRef<(HTMLElement | null)[]>([])
   const initial = useRef(true)
+
   const {
     position,
     selectedPosition,
@@ -188,10 +192,10 @@ function _SideTabs({
   )
 }
 
-export function SideTabs(props: IShortcutProps) {
+export function SidebarTabs(props: IShortcutProps) {
   return (
     <TabIndicatorProvider>
-      <_SideTabs {...props} />
+      <_SidebarTabs {...props} />
     </TabIndicatorProvider>
   )
 }
