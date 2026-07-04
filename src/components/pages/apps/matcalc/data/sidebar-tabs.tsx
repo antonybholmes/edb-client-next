@@ -33,7 +33,7 @@ function _SidebarTabs({
   const { tabs, selectedTab, selectedTabIndex, setTab } = useTabs(id)
 
   const tabListRef = useRef<HTMLDivElement>(null)
-  const buttonsRef = useRef<(HTMLElement | null)[]>([])
+  const buttonsRef = useRef<HTMLElement[]>([])
   const initial = useRef(true)
 
   const {
@@ -94,7 +94,12 @@ function _SidebarTabs({
   }, [tabs])
 
   function _scale(index: number, isSelected: boolean) {
-    if (!isSelected) {
+    if (
+      !isSelected ||
+      !buttonsRef.current[index] ||
+      !tabListRef.current ||
+      !position
+    ) {
       return
     }
 
@@ -103,7 +108,7 @@ function _SidebarTabs({
     const clientRect = buttonsRef.current[index]!.getBoundingClientRect()
 
     setTabPosition({
-      ...(position || EMPTY_RECT),
+      ...position,
       y: clientRect.top - containerRect.top,
       h: clientRect.height,
       scale: 0.6,
@@ -137,7 +142,9 @@ function _SidebarTabs({
               key={tab.id}
               data-selected={isSelected}
               ref={(el) => {
-                buttonsRef.current[ti] = el
+                if (el) {
+                  buttonsRef.current[ti] = el
+                }
               }}
               onMouseEnter={() => {
                 if (isSelected) {

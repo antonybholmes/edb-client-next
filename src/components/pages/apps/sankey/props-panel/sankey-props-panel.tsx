@@ -1,9 +1,8 @@
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/shadcn/ui/themed/v2/tabs'
+import { BaseCol } from '@/components/layout/base-col'
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
+import { useTabs } from '@/components/tabs/tab-provider'
+import { useEffect } from 'react'
+import { SidebarTabs } from '../../matcalc/data/sidebar-tabs'
 import { LinkPropsPanel } from './link-props-panel'
 import { NodePropsPanel } from './node-props-panel'
 import { PlotPropsPanel } from './plot-props-panel'
@@ -12,19 +11,43 @@ import { PlotPropsPanel } from './plot-props-panel'
 //   'w-4.5 stroke-foreground/75 group-hover:stroke-foreground group-data-[selected=true]:stroke-foreground'
 
 export function SankeyPropsPanel() {
-  return (
-    <Tabs orientation="vertical" className="flex flex-col grow text-xs pr-1">
-      <TabsContent value="plot">
-        <PlotPropsPanel />
-      </TabsContent>
-      <TabsContent value="nodes">
-        <NodePropsPanel />
-      </TabsContent>
-      <TabsContent value="links">
-        <LinkPropsPanel />
-      </TabsContent>
+  const { selectedTab, setTabs } = useTabs('sankey-props-panel')
 
-      <TabsList>
+  useEffect(() => {
+    setTabs([
+      {
+        id: 'plot',
+        name: 'Plot',
+      },
+      {
+        id: 'nodes',
+        name: 'Nodes',
+      },
+      {
+        id: 'links',
+        name: 'Links',
+      },
+    ])
+  }, [setTabs])
+
+  return (
+    <BaseCol className="grow">
+      <Tabs
+        orientation="vertical"
+        className="grow"
+        value={selectedTab?.id ?? ''}
+      >
+        <TabsContent value="plot">
+          <PlotPropsPanel />
+        </TabsContent>
+        <TabsContent value="nodes">
+          <NodePropsPanel />
+        </TabsContent>
+        <TabsContent value="links">
+          <LinkPropsPanel />
+        </TabsContent>
+
+        {/* <TabsList>
         <TabsTrigger value="plot" className="grow" variant="sidebar">
           Plot
         </TabsTrigger>
@@ -34,7 +57,10 @@ export function SankeyPropsPanel() {
         <TabsTrigger value="links" className="grow" variant="sidebar">
           Links
         </TabsTrigger>
-      </TabsList>
-    </Tabs>
+      </TabsList> */}
+      </Tabs>
+
+      <SidebarTabs id="sankey-props-panel" />
+    </BaseCol>
   )
 }

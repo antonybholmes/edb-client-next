@@ -2048,6 +2048,10 @@
         {
           "msg": "Added Sankey app and moved sankey code to this",
           "date": "2026-07-02T22:53:32.986Z"
+        },
+        {
+          "msg": "Added animation to sidebar tabs",
+          "date": "2026-07-04T16:18:49.714Z"
         }
       ]
     },

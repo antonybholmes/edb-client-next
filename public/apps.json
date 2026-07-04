@@ -99,11 +99,11 @@
     "name": "Lollipop",
     "description": "Create lollipop plots.",
     "color": "#DA70D6",
-    "version": "27.6.2",
+    "version": "27.6.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-03T14:46:20.352Z",
-    "hash": "884df2f8913b6299bbecb843e7791625cb6a848aef3bc254b8ebd7c8c5722c0e",
-    "build": 1068
+    "modified": "2026-07-04T16:38:13.431Z",
+    "hash": "88694b40baca48bfff0dceb7bdd2befcb4ae99ef04dbdf50b8b6c5a2951708fe",
+    "build": 1070
   },
   {
     "name": "Matcalc",
@@ -111,9 +111,9 @@
     "color": "#40bf80",
     "version": "48.2.4",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-04T16:18:47.622Z",
-    "hash": "648cae6b5a256c5b9e35684b3edaf0ad0818f8757d17a58d706f459985325b09",
-    "build": 1750
+    "modified": "2026-07-04T16:38:13.425Z",
+    "hash": "c2abe2e0c3c49c036870a887527cb14aa64916a2eb9fc7140c000e8ea9bfd9a3",
+    "build": 1752
   },
   {
     "name": "Motifs",
@@ -169,11 +169,11 @@
     "name": "Sankey",
     "description": "Create Sankey plots.",
     "color": "#ff9900",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-03T14:46:20.351Z",
-    "hash": "8ee920a8aa55739c7c49cb7900e65173e3bdb05b1441b5829e17d7a5e287f338",
-    "build": 8
+    "modified": "2026-07-04T16:38:13.428Z",
+    "hash": "6082b134ba44b16163f849ae893b7b1915020df1ad6622d86c83eddc4f719143",
+    "build": 10
   },
   {
     "name": "Seq Browser",
