@@ -61,13 +61,14 @@ export function Tabs({ ...props }: ComponentProps<typeof TabsPrimitive.Root>) {
   return <TabsPrimitive.Root {...props} />
 }
 
-const tabVariants = cva('flex relative', {
+export const tabVariants = cva('flex relative', {
   variants: {
     variant: {
       default:
         'data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col',
       muted: TABS_CLS,
       sidebar: '',
+      ios: '[flex-row bg-muted/50 rounded-full p-px',
     },
   },
   defaultVariants: {
@@ -145,7 +146,7 @@ export function TabsContent({
   return (
     <TabsPrimitive.Panel
       ref={ref}
-      className={cn('outline-none grow flex w-full   h-full', className)}
+      className={cn('outline-none grow flex w-full h-full', className)}
       {...props}
     />
   )

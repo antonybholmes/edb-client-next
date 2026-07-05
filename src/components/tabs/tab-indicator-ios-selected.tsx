@@ -1,13 +1,9 @@
-import { cn } from '@/lib/shadcn-utils'
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
 import {
   useTabIndicators,
   type ITabIndicatorPos,
 } from './tab-indicator-provider'
-
-const LINE_CLS =
-  'absolute left-0 top-0 pointer-events-none select-none shrink-0'
 
 /**
  * A horizontal line that can be used to follow the mouse
@@ -17,19 +13,20 @@ const LINE_CLS =
  * @param param0
  * @returns
  */
-export function TabIndicatorSelectedV({
-  w = 2,
+export function TabIndicatorIosSelected({
+  color = undefined,
 }: {
-  groupId?: string
-  w?: number
+  h?: number
+  color?: string | undefined
 }) {
-  const { selectedPosition } = useTabIndicators() //groupId)
+  const { selectedPosition } = useTabIndicators() //groupId) //useContext(TabIndicatorContext)
 
   // we use this to track transitions between 0 width and non-zero width
   // to determine animation duration. If item was previously 0 width, we want
   // to set duration to 0 so it appears instantly rather than animating
   // from 0 width to full width which looks odd. Also, if the width is going
   // from non-zero to zero, we want to set duration to 0 so it disappears instantly.
+
   const previousSelectedPos = useRef<ITabIndicatorPos | undefined>(undefined)
 
   const selectedLineRef = useRef<HTMLSpanElement>(null)
@@ -46,26 +43,16 @@ export function TabIndicatorSelectedV({
     }
 
     if (selectedPosition) {
-      if (previousSelectedPos.current) {
-        selectedTimelineRef.current = gsap
-          .timeline()
-          .to(selectedLineRef.current, {
-            y: selectedPosition.y,
-            height: selectedPosition.h,
-            duration: 0.5,
-            scaleY: selectedPosition.scale || 1,
-            ease: 'power3.out',
-          })
-      } else {
-        selectedTimelineRef.current = gsap
-          .timeline()
-          .set(selectedLineRef.current, {
-            y: selectedPosition.y,
-            height: selectedPosition.h,
-            width: w,
-            scaleY: selectedPosition.scale || 1,
-          })
-      }
+      //if (previousSelectedPos.current) {
+      selectedTimelineRef.current = gsap
+        .timeline()
+        .to(selectedLineRef.current, {
+          x: selectedPosition.x,
+          width: selectedPosition.w,
+          duration: 1,
+          scaleX: selectedPosition.scale ?? 1,
+          ease: 'back.out',
+        })
     } else {
       selectedTimelineRef.current = gsap
         .timeline()
@@ -75,19 +62,18 @@ export function TabIndicatorSelectedV({
     }
 
     previousSelectedPos.current = selectedPosition
-  }, [selectedPosition?.y, selectedPosition?.h, selectedPosition?.scale])
+  }, [selectedPosition?.x, selectedPosition?.w, selectedPosition?.scale])
 
   return (
     <span
       ref={selectedLineRef}
-      className={cn(LINE_CLS, 'bg-app-theme z-10')}
-      // animate={{
-      //   x: tabIndicatorPos.x,
-      //   width: tabIndicatorPos.size,
-      // }}
-      style={{ width: w }}
-      //initial={false}
-      //transition={{ ease: 'easeOut', duration: 0.25 }}
+      className="absolute left-0 top-0 z-20 bg-background rounded-full pointer-events-none select-none"
+
+      style={{
+        height: selectedPosition?.h,
+        top: selectedPosition?.y,
+        backgroundColor: color,
+      }}
     />
   )
 }

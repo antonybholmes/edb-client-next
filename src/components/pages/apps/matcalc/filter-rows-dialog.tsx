@@ -1,9 +1,8 @@
 import { HCenterRow } from '@/components/layout/h-center-row'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
-import {
-  GroupToggle,
-  ToggleGroup,
-} from '@/components/shadcn/ui/themed/v2/toggle-group'
+import { IOSTabs } from '@/components/tabs/ios-tabs'
+import { TabIndicatorProvider } from '@/components/tabs/tab-indicator-provider'
+import { useTabs } from '@/components/tabs/tab-provider'
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { VCenterRow } from '@/layout/v-center-row'
@@ -15,7 +14,13 @@ import {
   xInY,
 } from '@/lib/dataframe/dataframe-utils'
 import { SelectItem, SelectList } from '@/themed/v2/select'
-import { RefObject, useImperativeHandle, useRef, useState } from 'react'
+import {
+  RefObject,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 import { useCurrentSheets } from './history/history-provider/history-contexts'
 import { useHistory } from './history/history-provider/history-provider'
 
@@ -166,13 +171,19 @@ export function XInYPanel({
 }
 
 export function FilterRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
-  const [tab, setTab] = useState('top-rows')
+  const { selectedTab, setTabs } = useTabs('matcalc-top-rows')
 
   const ref = useRef<IRef | null>(null)
 
+  useEffect(() => {
+    setTabs(TABS.map((t) => ({ ...t })))
+  }, [setTabs])
+
+  console.log('FilterRowsDialog selectedTab', selectedTab)
+
   return (
     <OKCancelDialog
-      title={TABS.find((t) => t.id === tab)?.name}
+      title={TABS.find((t) => t.id === selectedTab?.id)?.name}
       onResponse={(r) => {
         if (r === TEXT_OK) {
           ref.current?.applyFilter()
@@ -181,35 +192,18 @@ export function FilterRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
         }
       }}
       centerHeaderChildren={
-        <ToggleGroup
-          variant="ios"
-
-          value={[tab]}
-          onValueChange={(v) => {
-            setTab(v[0]! as string)
-          }}
-          size="sm"
-          //direction="toolbar"
-          //rounded="none"
-          className="rounded-lg gap-x-0.5 overflow-hidden text-xs bg-muted/50 p-0.5"
-        >
-          {TABS.map((tab, ti) => (
-            <GroupToggle
-              key={tab.id}
-              value={tab.id}
-              data-is-first={ti === 0}
-              data-is-last={ti === TABS.length - 1}
-              className="w-22"
-            >
-              {tab.name}
-            </GroupToggle>
-          ))}
-        </ToggleGroup>
+        <TabIndicatorProvider>
+          <IOSTabs id="matcalc-top-rows" />
+        </TabIndicatorProvider>
       }
       h="h-56"
     >
-      {tab === 'top-rows' && <TopRowsPanel ref={ref} onResponse={onResponse} />}
-      {tab === 'x-in-y' && <XInYPanel ref={ref} onResponse={onResponse} />}
+      {selectedTab?.id === 'top-rows' && (
+        <TopRowsPanel ref={ref} onResponse={onResponse} />
+      )}
+      {selectedTab?.id === 'x-in-y' && (
+        <XInYPanel ref={ref} onResponse={onResponse} />
+      )}
     </OKCancelDialog>
   )
 }

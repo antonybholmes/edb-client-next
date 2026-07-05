@@ -1,27 +1,15 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 
-import { TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
+import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
 
-import { getTabFromValue, getTabName, type ITab } from './tab-provider'
+import { getTabName, useTabs, type ITab } from './tab-provider'
 
-import { ANIMATION_DURATION_S } from '@/consts'
 import { cn } from '@/lib/shadcn-utils'
 import { truncate } from '@/lib/text/text'
-import type { TabsProps } from '@radix-ui/react-tabs'
-import gsap from 'gsap'
-import { ITabProvider } from '../toggle-buttons'
-
-// export function ToolbarTabLine({ tabPos }: { tabPos: ITabPos }) {
-//   return (
-//     <motion.span
-//       className="absolute bottom-0 h-0.5 z-0 bg-theme"
-//       animate={{ ...tabPos }}
-//       transition={{ ease: 'easeInOut', duration: ANIMATION_DURATION_S }}
-//       initial={false}
-//       //transition={{ type: "spring" }}
-//     />
-//   )
-// }
+import { VariantProps } from 'class-variance-authority'
+import { toggleGroupVariants } from '../shadcn/ui/themed/v2/toggle-group'
+import { TabIndicatorIosSelected } from './tab-indicator-ios-selected'
+import { useTabIndicators } from './tab-indicator-provider'
 
 export interface IMenuAction {
   action: string
@@ -33,108 +21,112 @@ export interface ITabMenu {
   menuActions?: IMenuAction[]
 }
 
-interface IProps extends ITabProvider, ITabMenu, TabsProps {
+interface IProps extends ITabMenu, VariantProps<typeof toggleGroupVariants> {
+  id?: string
   buttonClassName?: string
   maxNameLength?: number
   defaultWidth?: string
 }
 
-export function IOSTabsList({
-  value,
-  tabs,
+export function IOSTabs({
+  id = 'ios-tabs',
   maxNameLength = -1,
   defaultWidth = '80px',
 }: IProps) {
+  const { tabs, selectedTab, selectedTabIndex, setTab } = useTabs(id)
+  const { selectedPosition, setSelectedPosition } = useTabIndicators()
+
   const tabListRef = useRef<HTMLDivElement>(null)
-  const indicatorRef = useRef<HTMLSpanElement>(null)
+
   const buttonsRef = useRef<HTMLButtonElement[]>([])
   const [focus, setFocus] = useState(false)
 
-  const selectedTab = useMemo(
-    () => getTabFromValue(value, tabs ?? []),
-    [value, tabs]
-  )
-
-  const initial = useRef(true)
-
   useEffect(() => {
-    if (!selectedTab) {
+    if (!buttonsRef.current[selectedTabIndex] || !tabListRef.current) {
       return
     }
 
     const containerRect = tabListRef.current!.getBoundingClientRect()
 
-    const clientRef = buttonsRef.current[selectedTab.index]!
+    const clientRef = buttonsRef.current[selectedTabIndex]!
 
     const clientRect = clientRef.getBoundingClientRect()
 
-    const duration = initial.current ? 0 : ANIMATION_DURATION_S
+    console.log(clientRect)
 
-    gsap.to(indicatorRef.current, {
-      x: clientRect.left - containerRect.left, // + paddingLeft,
-      //width: clientRect.width,
-      duration: duration,
-      ease: 'power2.inOut',
+    const h = clientRect.height
+
+    setSelectedPosition({
+      ...selectedPosition,
+      x: clientRect.left - containerRect.left,
+      y: 1,
+      w: clientRect.width,
+      h,
+
+      //scale: 0.6,
     })
-
-    initial.current = false
-  }, [selectedTab?.index])
-
-  const segment = useMemo(
-    () =>
-      selectedTab?.index === 0
-        ? 'start'
-        : selectedTab?.index === (tabs?.length ?? 0) - 1
-          ? 'end'
-          : 'middle',
-    [selectedTab?.index]
-  )
+  }, [selectedTabIndex])
 
   return (
-    <TabsList
-      ref={tabListRef}
-      variant="default"
-      data-focus={focus}
-      onFocus={() => setFocus(true)}
-      onBlur={() => setFocus(false)}
-      className="relative bg-muted/90 hover:bg-muted trans-color rounded-full p-0.5"
+    <Tabs
+      value={selectedTab?.id ?? ''}
+      onValueChange={setTab}
+      orientation="horizontal"
     >
-      {tabs?.map((tab, ti) => {
-        //const id = makeTabId(tab, ti)
-        //const w = tab.size ?? defaultWidth
-        const selected = tab.id === selectedTab?.tab.id // tab.id === selectedTab?.tab.id
+      <TabsList
+        ref={tabListRef}
 
-        const name = getTabName(tab)
-        const truncatedName = truncate(name, {
-          length: maxNameLength,
-        })
+        data-focus={focus}
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}
+        className="relative"
+        variant="ios"
+      >
+        {tabs?.map((tab, ti) => {
+          //const id = makeTabId(tab, ti)
+          //const w = tab.size ?? defaultWidth
+          const isSelected = tab.id === selectedTab?.id // tab.id === selectedTab?.tab.id
 
-        return (
-          <TabsTrigger
-            variant="base"
-            value={tab.id}
-            id={tab.id}
-            key={tab.id}
-            data-checked={selected}
-            ref={(el) => {
-              buttonsRef.current[ti] = el as HTMLButtonElement
-            }}
-            className={cn('z-20 data-[checked=true]:font-semibold h-7.5')}
-            style={{ width: defaultWidth }}
-          >
-            {truncatedName}
-          </TabsTrigger>
+          const name = getTabName(tab)
+          const truncatedName = truncate(name, {
+            length: maxNameLength,
+          })
 
-          // <TabsTrigger key={tab.id} value={tab.id}>{tab.id}</TabsTrigger>
-        )
-      })}
+          return (
+            <TabsTrigger
+              variant="none"
+              value={tab.id}
+              id={tab.id}
+              key={tab.id}
+              data-checked={isSelected}
+              ref={(el) => {
+                buttonsRef.current[ti] = el as HTMLButtonElement
+              }}
+              className={cn('z-30 data-[checked=true]:font-semibold h-8')}
+              style={{ width: defaultWidth }}
+              // onMouseEnter={() => {
+              //   if (isSelected) {
+              //     setSelectedPosition({
+              //       scale: 0.6,
+              //     })
+              //   }
+              // }}
+              // onMouseLeave={() => {
+              //   if (isSelected) {
+              //     setSelectedPosition({
+              //       scale: 0.8,
+              //     })
+              //   }
+              // }}
+            >
+              {truncatedName}
+            </TabsTrigger>
 
-      <span
-        data-segment={segment}
-        ref={indicatorRef}
-        className="bg-background z-10 left-0 top-1/2 -translate-y-1/2 absolute rounded-full"
-        style={{ width: defaultWidth, height: 'calc(100% - 4px)' }}
-      />
-    </TabsList>
+            // <TabsTrigger key={tab.id} value={tab.id}>{tab.id}</TabsTrigger>
+          )
+        })}
+        <TabIndicatorIosSelected />
+      </TabsList>
+    </Tabs>
   )
 }

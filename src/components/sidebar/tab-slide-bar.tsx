@@ -36,7 +36,7 @@ export function SideBarTabs() {
           rounded={false}
           //color="bg-background"
         />
-        <TabIndicatorSelectedH groupId={id} />
+        <TabIndicatorSelectedH />
       </UnderlineTabs>
       {/* </ResizableSidebarHeaderPortal> */}
 

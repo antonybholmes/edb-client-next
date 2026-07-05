@@ -28,7 +28,7 @@ export const toggleVariants = cva(TOGGLE_CLS, {
         'flex flex-col gap-y-2 items-center p-2 border-2 border-border border-transparent hover:border-app-theme/25 data-pressed:shadow-xs data-pressed:border-app-theme/50 data-pressed:bg-app-theme/10',
       group:
         'hover:bg-muted/60 data-pressed:text-theme focus-visible:z-10 focus:z-10 outline-2 -outline-offset-2 outline-transparent focus-visible:outline-ring border border-border data-pressed:font-semibold',
-      ios: 'hover:bg-background/50 data-pressed:bg-background focus-visible:outline-ring data-pressed:font-semibold data-pressed:shadow-sm',
+      ios: 'hover:bg-background/50 data-pressed:bg-background focus-visible:outline-ring data-pressed:font-semibold data-pressed:text-app-theme',
     },
     size: {
       sm: 'h-7',

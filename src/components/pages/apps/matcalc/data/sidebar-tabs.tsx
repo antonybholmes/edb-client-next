@@ -2,7 +2,6 @@ import { cn } from '@/lib/shadcn-utils'
 import { useEffect, useRef } from 'react'
 
 import { getTabName, useTabs } from '@/components/tabs/tab-provider'
-import { EMPTY_RECT } from '@/interfaces/rect'
 
 import {
   Tabs,
@@ -44,6 +43,10 @@ function _SidebarTabs({
   } = useTabIndicators()
 
   function updateSelectedSize(buttonRef: HTMLElement, animate = true) {
+    if (!tabListRef.current || !buttonRef || !selectedPosition) {
+      return
+    }
+
     const containerRect = tabListRef.current!.getBoundingClientRect()
 
     const clientRect = buttonRef.getBoundingClientRect()
@@ -52,7 +55,7 @@ function _SidebarTabs({
     const h = clientRect.height
 
     setSelectedTabPosition({
-      ...(selectedPosition || EMPTY_RECT),
+      ...selectedPosition,
       y,
       h,
       animate,

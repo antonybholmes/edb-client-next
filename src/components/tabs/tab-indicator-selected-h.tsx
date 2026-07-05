@@ -17,7 +17,6 @@ export function TabIndicatorSelectedH({
   h = 2,
   color = undefined,
 }: {
-  groupId?: string
   h?: number
   color?: string | undefined
 }) {
@@ -61,7 +60,7 @@ export function TabIndicatorSelectedH({
           .set(selectedLineRef.current, {
             x: selectedPosition.x,
             width: selectedPosition.w,
-            height: `${h}px`,
+
             scaleX: selectedPosition.scale ?? 1,
           })
       }
@@ -80,16 +79,11 @@ export function TabIndicatorSelectedH({
     <span
       ref={selectedLineRef}
       className="absolute left-0 bottom-0 z-10 bg-app-theme pointer-events-none select-none"
-      // animate={{
-      //   x: tabIndicatorPos.x,
-      //   width: tabIndicatorPos.size,
-      // }}
+
       style={{
-        height: `${h}px`,
+        height: h,
         backgroundColor: color,
       }}
-      //initial={false}
-      //transition={{ ease: 'easeOut', duration: 0.25 }}
     />
   )
 }
