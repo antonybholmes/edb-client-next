@@ -43,7 +43,7 @@ function _SidebarTabs({
   } = useTabIndicators()
 
   function updateSelectedSize(buttonRef: HTMLElement, animate = true) {
-    if (!tabListRef.current || !buttonRef || !selectedPosition) {
+    if (!tabListRef.current || !buttonRef) {
       return
     }
 
@@ -59,7 +59,7 @@ function _SidebarTabs({
       y,
       h,
       animate,
-      scale: 0.8,
+      scale: 0.7,
     })
   }
 
@@ -74,17 +74,11 @@ function _SidebarTabs({
 
     const ref = buttonsRef.current[selectedTabIndex]!
 
-    if (initial.current) {
-      initial.current = false
-      const timeout = setTimeout(() => {
-        updateSelectedSize(ref, false)
-      }, 100)
+    //if (!initial.current) {
+    updateSelectedSize(ref, false)
+    //}
 
-      return () => clearTimeout(timeout) // Cleanup
-    } else {
-      updateSelectedSize(ref)
-      return
-    }
+    initial.current = false
   }, [selectedTabIndex, tabs])
 
   useEffect(() => {
@@ -114,7 +108,7 @@ function _SidebarTabs({
       ...position,
       y: clientRect.top - containerRect.top,
       h: clientRect.height,
-      scale: 0.6,
+      scale: 0.5,
     })
   }
 
@@ -127,9 +121,6 @@ function _SidebarTabs({
       <TabsList
         className={cn('relative shrink-0 pl-2 gap-y-px', className)}
         ref={tabListRef}
-        onMouseLeave={() => {
-          setTabPosition(undefined)
-        }}
       >
         {tabs.map((tab, ti) => {
           const isSelected = selectedTab?.id === tab.id
@@ -150,7 +141,7 @@ function _SidebarTabs({
               onMouseEnter={() => {
                 if (isSelected) {
                   setSelectedTabPosition({
-                    scale: 0.6,
+                    scale: 0.5,
                   })
                 }
                 _scale(selectedTabIndex || 0, isSelected)
@@ -158,7 +149,7 @@ function _SidebarTabs({
               onMouseLeave={() => {
                 if (isSelected) {
                   setSelectedTabPosition({
-                    scale: 0.8,
+                    scale: 0.7,
                   })
                 }
               }}

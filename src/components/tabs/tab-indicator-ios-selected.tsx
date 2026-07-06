@@ -14,10 +14,9 @@ import {
  * @returns
  */
 export function TabIndicatorIosSelected({
-  color = undefined,
+  defaultWidth = '80px',
 }: {
-  h?: number
-  color?: string | undefined
+  defaultWidth?: string
 }) {
   const { selectedPosition } = useTabIndicators() //groupId) //useContext(TabIndicatorContext)
 
@@ -33,8 +32,10 @@ export function TabIndicatorIosSelected({
 
   const selectedTimelineRef = useRef<GSAPTimeline | null>(null)
 
+  const isFirstRender = useRef(true)
+
   useEffect(() => {
-    if (!selectedLineRef.current) {
+    if (!selectedLineRef.current || !selectedPosition) {
       return
     }
 
@@ -42,38 +43,36 @@ export function TabIndicatorIosSelected({
       selectedTimelineRef.current.kill()
     }
 
-    if (selectedPosition) {
-      //if (previousSelectedPos.current) {
-      selectedTimelineRef.current = gsap
-        .timeline()
-        .to(selectedLineRef.current, {
+    if (!isFirstRender.current) {
+      selectedTimelineRef.current = gsap.timeline().to(
+        selectedLineRef.current,
+        {
           x: selectedPosition.x,
           width: selectedPosition.w,
-          duration: 1,
-          scaleX: selectedPosition.scale ?? 1,
+          scale: selectedPosition.scale || 1,
+          duration: 0.8,
           ease: 'back.out',
-        })
-    } else {
-      selectedTimelineRef.current = gsap
-        .timeline()
-        .set(selectedLineRef.current, {
-          width: 0,
-        })
+        },
+        0
+      )
     }
 
     previousSelectedPos.current = selectedPosition
-  }, [selectedPosition?.x, selectedPosition?.w, selectedPosition?.scale])
+    isFirstRender.current = false
+  }, [selectedPosition])
 
   return (
     <span
       ref={selectedLineRef}
-      className="absolute left-0 top-0 z-20 bg-background rounded-full pointer-events-none select-none"
-
+      className="absolute left-0 top-0 z-20 h-full bg-background rounded-full pointer-events-none select-none"
       style={{
-        height: selectedPosition?.h,
-        top: selectedPosition?.y,
-        backgroundColor: color,
+        width: defaultWidth,
       }}
+      // style={{
+      //   //height: selectedPosition?.h,
+      //   //top: selectedPosition?.y,
+      //   backgroundColor: color,
+      // }}
     />
   )
 }

@@ -12,7 +12,7 @@ import { TAILWIND_MEDIA_SM, useWindowSize } from '@/hooks/window-size'
 
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { cn } from '@/lib/shadcn-utils'
-import { useHydration } from '@/stores/hydration'
+import { useStoreHydration } from '@/stores/hydration'
 import { createPortal } from 'react-dom'
 import { usePanelRef } from 'react-resizable-panels'
 import { ChevronRightIcon } from '../icons/chevron-right-icon'
@@ -118,7 +118,7 @@ export function SidePanel({
 
   const { id } = useResizableSidebarContext()
 
-  const hydrated = useHydration(useSlideBarStore)
+  const hydrated = useStoreHydration(useSlideBarStore)
 
   const { open, size, sideLimits, setOpen } = useSlideBar(id)
 
@@ -199,7 +199,7 @@ function _ResizableSidebar({
   const { id } = useResizableSidebarContext()
 
   // we show bar once the store has hydrated, to ensure we get the correct initial size
-  const hydrated = useHydration(useSlideBarStore)
+  const hydrated = useStoreHydration(useSlideBarStore)
 
   const isUserDragging = useRef(false)
   const { size, sideLimits, setSize } = useSlideBar(id)

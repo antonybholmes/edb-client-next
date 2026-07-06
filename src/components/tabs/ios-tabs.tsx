@@ -31,15 +31,17 @@ interface IProps extends ITabMenu, VariantProps<typeof toggleGroupVariants> {
 export function IOSTabs({
   id = 'ios-tabs',
   maxNameLength = -1,
-  defaultWidth = '80px',
+  defaultWidth = '5rem',
 }: IProps) {
   const { tabs, selectedTab, selectedTabIndex, setTab } = useTabs(id)
   const { selectedPosition, setSelectedPosition } = useTabIndicators()
 
   const tabListRef = useRef<HTMLDivElement>(null)
 
-  const buttonsRef = useRef<HTMLButtonElement[]>([])
+  const buttonsRef = useRef<HTMLElement[]>([])
   const [focus, setFocus] = useState(false)
+
+  //const isHydrated = useHydrated()
 
   useEffect(() => {
     if (!buttonsRef.current[selectedTabIndex] || !tabListRef.current) {
@@ -52,26 +54,21 @@ export function IOSTabs({
 
     const clientRect = clientRef.getBoundingClientRect()
 
-    console.log(clientRect)
-
-    const h = clientRect.height
-
     setSelectedPosition({
       ...selectedPosition,
       x: clientRect.left - containerRect.left,
-      y: 1,
       w: clientRect.width,
-      h,
-
-      //scale: 0.6,
     })
   }, [selectedTabIndex])
 
   return (
     <Tabs
       value={selectedTab?.id ?? ''}
-      onValueChange={setTab}
+      onValueChange={(v) => {
+        setTab(v)
+      }}
       orientation="horizontal"
+      className="bg-muted/40 rounded-full p-0.5 text-xs"
     >
       <TabsList
         ref={tabListRef}
@@ -79,8 +76,8 @@ export function IOSTabs({
         data-focus={focus}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
-        className="relative"
-        variant="ios"
+        className="relative overflow-hidden rounded-full"
+        variant="default"
       >
         {tabs?.map((tab, ti) => {
           //const id = makeTabId(tab, ti)
@@ -100,24 +97,26 @@ export function IOSTabs({
               key={tab.id}
               data-checked={isSelected}
               ref={(el) => {
-                buttonsRef.current[ti] = el as HTMLButtonElement
+                if (el) {
+                  buttonsRef.current[ti] = el
+                }
               }}
               className={cn('z-30 data-[checked=true]:font-semibold h-8')}
               style={{ width: defaultWidth }}
-              // onMouseEnter={() => {
-              //   if (isSelected) {
-              //     setSelectedPosition({
-              //       scale: 0.6,
-              //     })
-              //   }
-              // }}
-              // onMouseLeave={() => {
-              //   if (isSelected) {
-              //     setSelectedPosition({
-              //       scale: 0.8,
-              //     })
-              //   }
-              // }}
+              onMouseEnter={() => {
+                if (isSelected) {
+                  setSelectedPosition({
+                    scale: 1.1,
+                  })
+                }
+              }}
+              onMouseLeave={() => {
+                if (isSelected) {
+                  setSelectedPosition({
+                    scale: 1,
+                  })
+                }
+              }}
             >
               {truncatedName}
             </TabsTrigger>
@@ -125,7 +124,7 @@ export function IOSTabs({
             // <TabsTrigger key={tab.id} value={tab.id}>{tab.id}</TabsTrigger>
           )
         })}
-        <TabIndicatorIosSelected />
+        <TabIndicatorIosSelected defaultWidth={defaultWidth} />
       </TabsList>
     </Tabs>
   )

@@ -17,12 +17,7 @@ const LINE_CLS =
  * @param param0
  * @returns
  */
-export function TabIndicatorSelectedV({
-  w = 2,
-}: {
-  groupId?: string
-  w?: number
-}) {
+export function TabIndicatorSelectedV({ w = 2 }: { w?: number }) {
   const { selectedPosition } = useTabIndicators() //groupId)
 
   // we use this to track transitions between 0 width and non-zero width
@@ -37,7 +32,8 @@ export function TabIndicatorSelectedV({
   const selectedTimelineRef = useRef<GSAPTimeline | null>(null)
 
   useEffect(() => {
-    if (!selectedLineRef.current) {
+    console.log('selectedPosition', selectedPosition)
+    if (!selectedLineRef.current || !selectedPosition) {
       return
     }
 
@@ -45,49 +41,23 @@ export function TabIndicatorSelectedV({
       selectedTimelineRef.current.kill()
     }
 
-    if (selectedPosition) {
-      if (previousSelectedPos.current) {
-        selectedTimelineRef.current = gsap
-          .timeline()
-          .to(selectedLineRef.current, {
-            y: selectedPosition.y,
-            height: selectedPosition.h,
-            duration: 0.5,
-            scaleY: selectedPosition.scale || 1,
-            ease: 'power3.out',
-          })
-      } else {
-        selectedTimelineRef.current = gsap
-          .timeline()
-          .set(selectedLineRef.current, {
-            y: selectedPosition.y,
-            height: selectedPosition.h,
-            width: w,
-            scaleY: selectedPosition.scale || 1,
-          })
-      }
-    } else {
-      selectedTimelineRef.current = gsap
-        .timeline()
-        .set(selectedLineRef.current, {
-          width: 0,
-        })
-    }
+    selectedTimelineRef.current = gsap.timeline().to(selectedLineRef.current, {
+      y: selectedPosition.y,
+      height: selectedPosition.h,
+      duration: 1,
+      scaleY: selectedPosition.scale || 1,
+      ease: 'back.out',
+    })
 
     previousSelectedPos.current = selectedPosition
-  }, [selectedPosition?.y, selectedPosition?.h, selectedPosition?.scale])
+  }, [selectedPosition])
 
   return (
     <span
       ref={selectedLineRef}
       className={cn(LINE_CLS, 'bg-app-theme z-10')}
-      // animate={{
-      //   x: tabIndicatorPos.x,
-      //   width: tabIndicatorPos.size,
-      // }}
+
       style={{ width: w }}
-      //initial={false}
-      //transition={{ ease: 'easeOut', duration: 0.25 }}
     />
   )
 }
