@@ -289,7 +289,7 @@ function _ResizableSidebar({
  */
 export function ResizableSidebar({
   id = OPTS_SIDEBAR_ID,
-  side = 'left',
+  side = 'right',
   showCloseButton = true,
   children,
 }: ISlideBarProps & { id?: string }) {

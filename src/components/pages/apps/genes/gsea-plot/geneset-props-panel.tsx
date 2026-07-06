@@ -27,9 +27,9 @@ function PlotItem({ report }: { report: IGseaPathway }) {
       {allowSelectAll && (
         <Checkbox
           checked={datasetsForUse[report.id] ?? false}
-          onCheckedChange={checked => {
+          onCheckedChange={(checked) => {
             setDatasetsForUse(
-              produce(datasetsForUse, draft => {
+              produce(datasetsForUse, (draft) => {
                 draft[report.id] = checked ?? false
               })
             )
@@ -54,7 +54,7 @@ export function GeneSetsPropsPanel() {
   } = useGsea()
 
   return (
-    <PropsPanel className="grow gap-y-1 pr-2 text-xs">
+    <PropsPanel className="gap-y-1 pr-2 text-xs">
       <VCenterRow className="justify-between pl-1 mr-5">
         <VCenterRow
           data-visible={allowSelectAll}
@@ -69,7 +69,7 @@ export function GeneSetsPropsPanel() {
               setDatasetsForUse(
                 Object.fromEntries(
                   reports.map(
-                    pathway => [pathway.id, selected] as [string, boolean]
+                    (pathway) => [pathway.id, selected] as [string, boolean]
                   )
                 )
               )
@@ -95,16 +95,16 @@ export function GeneSetsPropsPanel() {
           //onDragStart={event => setActiveId(event.active.id as string)}
           //for the moment do not allow to be re-arranged as it messes up
           //cluster color rendering
-          onDragEnd={event => {
+          onDragEnd={(event) => {
             const { active, over } = event
 
             if (over && active.id !== over?.id) {
               const oldIndex = reports.findIndex(
-                report => report.id === active.id
+                (report) => report.id === active.id
               )
 
               const newIndex = reports.findIndex(
-                report => report.id === over.id
+                (report) => report.id === over.id
               )
 
               const newOrder = arrayMove(reports, oldIndex, newIndex)
@@ -120,11 +120,11 @@ export function GeneSetsPropsPanel() {
           }}
         >
           <SortableContext
-            items={reports.map(p => p.id)}
+            items={reports.map((p) => p.id)}
             strategy={verticalListSortingStrategy}
           >
             <ul className="flex flex-col">
-              {reports.map(report => {
+              {reports.map((report) => {
                 return (
                   // <BaseSortableItem key={gs.id} id={gs.id}>
                   <PlotItem key={report.id} report={report} />

@@ -1,16 +1,14 @@
-import { TriangleRightIcon } from '@/components/icons/triangle-right-icon'
-import { VCenterCol } from '@/components/layout/v-center-col'
+import { BaseCol } from '@/components/layout/base-col'
 import { useDebounce } from '@/hooks/debounce'
 import { clamp } from '@/lib/math/clamp'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Input, type IInputProps } from './v2/input'
 
-const BUTTON_CLS = `w-4 flex h-4 flex-row justify-center items-center
-  data-[enabled=true]:stroke-foreground data-[enabled=false]:stroke-foreground/50 
-  data-[enabled=true]:fill-foreground data-[enabled=false]:fill-foreground/50 
-  data-[enabled=true]:hover:fill-app-theme data-[enabled=true]:focus-visible:fill-app-theme 
-  data-[enabled=true]:hover:stroke-app-theme data-[enabled=true]:focus-visible:stroke-app-theme
-  outline-hidden trans-color`
+const BUTTON_CLS = `w-4 flex h-1/2 min-h-0 overflow-hidden shrink-0 flex-row justify-center items-center
+  data-[enabled=true]:text-foreground/80 data-[enabled=false]:text-foreground/50 
+  data-[enabled=true]:hover:text-app-theme data-[enabled=true]:focus-visible:text-app-theme
+  outline-none trans-color`
 
 const UPDATE_INTERVAL_MS = 150
 
@@ -248,14 +246,12 @@ export function NumericalInput({
       onTextChange={setTextValue}
       placeholder={placeholder}
       rightChildren={
-        <VCenterCol className="shrink-0 -mr-1.5">
+        <BaseCol className="shrink-0 justify-between -mr-1.5 h-full">
           <button
             disabled={disabled}
             data-enabled={!disabled}
             className={BUTTON_CLS}
-            // onClick={() => {
-            //   _onNumChanged(_value.current + inc)
-            // }}
+
             onMouseDown={() => startUpdating(step)}
             onMouseUp={stopUpdating}
             onMouseLeave={stopUpdating}
@@ -263,25 +259,13 @@ export function NumericalInput({
             onKeyUp={handleKeyUp}
             aria-label="Increase value"
           >
-            <TriangleRightIcon
-              className="-rotate-90 -mb-0.5"
-              size="w-3"
-              stroke=""
-              fill=""
-              //strokeWidth={3}
-            />
+            <ChevronUp size={14} strokeWidth={3} />
           </button>
           <button
             disabled={disabled}
             data-enabled={!disabled}
             className={BUTTON_CLS}
-            // onClick={() => {
-            //   _onNumChanged(_numValue - inc)
-            // }}
 
-            // onClick={() => {
-            //   _onNumChanged(_value.current - inc)
-            // }}
             onMouseDown={() => startUpdating(-step)}
             onMouseUp={stopUpdating}
             onMouseLeave={stopUpdating}
@@ -289,15 +273,9 @@ export function NumericalInput({
             onKeyUp={handleKeyUp}
             aria-label="Decrease value"
           >
-            <TriangleRightIcon
-              className="rotate-90 mb-0.5"
-              size="w-3"
-              stroke=""
-              strokeWidth={0}
-              fill=""
-            />
+            <ChevronDown size={14} strokeWidth={3} />
           </button>
-        </VCenterCol>
+        </BaseCol>
       }
       aria-label={ariaLabel}
       title={title}

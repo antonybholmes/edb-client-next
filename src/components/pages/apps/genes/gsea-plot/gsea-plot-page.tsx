@@ -52,7 +52,7 @@ import { useZoom } from '@/providers/zoom-provider'
 import Fuse from 'fuse.js'
 import { produce } from 'immer'
 
-import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
+import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
@@ -64,6 +64,7 @@ import {
   useGseaPlotStore,
   type IGseaPathway,
 } from './gsea-plot-store'
+import { GseaPropsPanel } from './gsea-props-panel'
 import { useGseaSettings } from './gsea-settings-store'
 import { GseaSvg } from './gsea-svg'
 import APP_INFO from './manifest.json'
@@ -322,7 +323,7 @@ export function GseaPlotPage() {
           />
         </Toolbar>
 
-        <TabSlideBar side="right">
+        <ResizableSidebar>
           {rankedGenes.length > 0 ? (
             <FileDropZonePanel
               className="grow h-full"
@@ -380,8 +381,8 @@ export function GseaPlotPage() {
             </FileDropZonePanel>
           )}
 
-          {/* <GseaPropsPanel id={OPTS_SIDEBAR_ID} /> */}
-        </TabSlideBar>
+          <GseaPropsPanel />
+        </ResizableSidebar>
 
         <FooterPortal>
           <></>

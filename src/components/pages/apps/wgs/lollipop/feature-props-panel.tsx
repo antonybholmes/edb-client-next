@@ -2,7 +2,7 @@ import { BaseCol } from '@/components/layout/base-col'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import { useTabs } from '@/components/tabs/tab-provider'
 import { useEffect } from 'react'
-import { SidebarTabs } from '../../matcalc/data/sidebar-tabs'
+import { OutlookTabs } from '../../matcalc/data/outlook-tabs'
 import { DomainPropsPanel } from './domain-props-panel'
 import { LabelPropsPanel } from './label-props-panel'
 import { VariantPropsPanel } from './variant-props-panel'
@@ -60,7 +60,7 @@ export function FeaturePropsPanel() {
         </TabsList> */}
       </Tabs>
 
-      <SidebarTabs id="lollipop-feature-props-panel" />
+      <OutlookTabs id="lollipop-feature-props-panel" />
     </BaseCol>
   )
 }

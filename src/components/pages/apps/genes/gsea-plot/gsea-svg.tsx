@@ -17,7 +17,7 @@ import { useGseaSettings } from './gsea-settings-store'
 export function GseaSvg({ ref }: ISVGProps) {
   const { settings } = useGseaSettings()
 
-  const { phenotypes, rankedGenes, reports, resultsMap, datasetsForUse } =
+  let { phenotypes, rankedGenes, reports, resultsMap, datasetsForUse } =
     useGsea()
 
   // size of plot with padding
@@ -40,6 +40,10 @@ export function GseaSvg({ ref }: ISVGProps) {
       report.name in resultsMap
   )
 
+  if (settings.phenotypes.invert) {
+    phenotypes = phenotypes.slice().reverse()
+  }
+
   const rows = Math.ceil(pathways.flat().length / settings.page.columns)
 
   const pageSize = [
@@ -55,7 +59,7 @@ export function GseaSvg({ ref }: ISVGProps) {
     phenotypes.map((phen, i) => [phen, i])
   )
 
-  const plots = pathways.map((pathway) => {
+  const plots = pathways.map((pathway, pi) => {
     const col = ploti % settings.page.columns
     const row = Math.floor(ploti / settings.page.columns)
     const x =
@@ -75,57 +79,89 @@ export function GseaSvg({ ref }: ISVGProps) {
 
     xax = xax.setTicks(xax.ticks.slice(1))
 
-    let yMin = Math.min(...results.es.map((e) => e.score))
-    let yMax = Math.max(...results.es.map((e) => e.score))
+    const es = settings.phenotypes.invert
+      ? results.es
+          .map((e) => ({
+            ...e,
+            rank: rankedGenes.length - e.rank,
+            score: -e.score,
+          }))
+          .sort((a, b) => a.rank - b.rank)
+      : results.es
+
+    if (settings.phenotypes.invert) {
+      rankedGenes = rankedGenes
+        .map((e) => ({
+          ...e,
+          rank: rankedGenes.length - e.rank,
+          score: -e.score,
+        }))
+        .sort((a, b) => a.rank - b.rank)
+    }
+
+    const rankMid = rankedGenes.length / 2
+
+    let yMin = Math.min(...es.map((e) => e.score))
+    let yMax = Math.max(...es.map((e) => e.score))
 
     let yax = new YAxis()
       .autoDomain([yMin, yMax])
       //.setDomain([0, plot.dna.seq.length])
       .setLength(settings.es.axes.y.length)
 
-    const points = results.es.map((e) => [
-      xax.domainToRange(e.rank),
-      yax.domainToRange(e.score),
-    ])
+    const points = es.map((e) => ({
+      x: xax.domainToRange(e.rank - 1),
+      y: yax.domainToRange(e.score),
+    }))
 
     // fix starts and end
     let displayPoints = points
 
-    if (results.es[0]!.rank > 0) {
+    if (es[0]!.rank > 0) {
       displayPoints = [
-        [xax.domainToRange(0), yax.domainToRange(0)],
+        { x: xax.domainToRange(0), y: yax.domainToRange(0) },
         ...displayPoints,
       ]
     }
 
-    if (results.es[results.es.length - 1]!.rank < rankedGenes.length - 1) {
+    if (es[es.length - 1]!.rank < rankedGenes.length) {
       displayPoints = [
         ...displayPoints,
-        [xax.domainToRange(rankedGenes.length - 1), yax.domainToRange(0)],
+        {
+          x: xax.domainToRange(rankedGenes.length - 1),
+          y: yax.domainToRange(0),
+        },
       ]
     }
 
-    const leadingEdge = results.es.filter((e) => e.leading)
+    const leadingEdge = es.filter((e) => e.leading)
 
-    let leadingPoints = leadingEdge.map((e) => [
-      xax.domainToRange(e.rank),
-      yax.domainToRange(e.score),
-    ]) as [number, number][]
+    let leadingPoints = leadingEdge.map((e) => ({
+      x: xax.domainToRange(e.rank),
+      y: yax.domainToRange(e.score),
+    }))
 
     // fix starts and end
 
-    if (leadingEdge[0]!.score >= 0) {
+    // check if leading edge is on left or right half to decide how to fix start and end
+    if (leadingEdge[leadingEdge.length - 1].rank < rankMid) {
       // left
       leadingPoints = [
-        [xax.domainToRange(0), yax.domainToRange(0)],
+        { x: xax.domainToRange(0), y: yax.domainToRange(0) },
         ...leadingPoints,
-        [leadingPoints[leadingPoints.length - 1]![0]!, yax.domainToRange(0)],
+        {
+          x: leadingPoints[leadingPoints.length - 1]!.x,
+          y: yax.domainToRange(0),
+        },
       ]
     } else {
       leadingPoints = [
-        [leadingPoints[0]![0]!, yax.domainToRange(0)],
+        { x: leadingPoints[0]!.x, y: yax.domainToRange(0) },
         ...leadingPoints,
-        [xax.domainToRange(rankedGenes.length - 1), yax.domainToRange(0)],
+        {
+          x: xax.domainToRange(rankedGenes.length - 1),
+          y: yax.domainToRange(0),
+        },
       ]
     }
 
@@ -133,12 +169,14 @@ export function GseaSvg({ ref }: ISVGProps) {
 
     let plotY: number = 0
 
+    const nes = settings.phenotypes.invert ? -pathway.nes : pathway.nes
+
     if (settings.es.show) {
       esSvg = (
         <g>
           {settings.es.leadingEdge.show && (
             <polygon
-              points={leadingPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
+              points={leadingPoints.map((p) => `${p.x},${p.y}`).join(' ')}
               fill={settings.es.leadingEdge.fill.value}
               stroke="none"
               fillOpacity={settings.es.leadingEdge.fill.opacity}
@@ -146,7 +184,7 @@ export function GseaSvg({ ref }: ISVGProps) {
           )}
 
           <polyline
-            points={displayPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
+            points={displayPoints.map((p) => `${p.x},${p.y}`).join(' ')}
             fill="none"
             stroke={settings.es.line.value}
             opacity={settings.es.line.opacity}
@@ -186,9 +224,7 @@ export function GseaSvg({ ref }: ISVGProps) {
               transform={`translate(${phenotypei === 0 ? settings.axes.x.length - 70 : 10}, ${phenotypei === 0 ? 10 : settings.es.axes.y.length - 20})`}
               fontSize="small"
             >
-              <SvgText font={settings.es.labels}>
-                NES: {pathway.nes.toFixed(2)}
-              </SvgText>
+              <SvgText font={settings.es.labels}>NES: {nes.toFixed(2)}</SvgText>
 
               <g transform={`translate(0, 15)`}>
                 <SvgText font={settings.es.labels}>
@@ -259,16 +295,16 @@ export function GseaSvg({ ref }: ISVGProps) {
       const cmap2 = new ColorMap('neg', [c3, c4])
 
       const posPoints = points.filter(
-        (_, pi) => rankedGenes[results.es[pi]!.rank]!.score >= 0
+        (_, pi) => rankedGenes[es[pi]!.rank]!.score >= 0
       )
       const negPoints = points.filter(
-        (_, pi) => rankedGenes[results.es[pi]!.rank]!.score < 0
+        (_, pi) => rankedGenes[es[pi]!.rank]!.score < 0
       )
 
       genesSvg = (
         <g transform={`translate(0, ${plotY})`}>
           {posPoints.map((p, pi) => {
-            const pc = p[0]! / crossingX
+            const pc = p.x / crossingX
 
             const color = settings.genes.color.on
               ? settings.genes.gradient.on
@@ -278,8 +314,8 @@ export function GseaSvg({ ref }: ISVGProps) {
             return (
               <line
                 key={pi}
-                x1={p[0]}
-                x2={p[0]}
+                x1={p.x}
+                x2={p.x}
                 y1={0}
                 y2={settings.genes.height}
                 strokeWidth={settings.genes.pos.width}
@@ -289,7 +325,7 @@ export function GseaSvg({ ref }: ISVGProps) {
           })}
 
           {negPoints.map((p, pi) => {
-            const pc = (p[0]! - crossingX) / (xax.range[1] - crossingX)
+            const pc = (p.x - crossingX) / (xax.range[1] - crossingX)
 
             const color = settings.genes.color.on
               ? settings.genes.gradient.on
@@ -299,8 +335,8 @@ export function GseaSvg({ ref }: ISVGProps) {
             return (
               <line
                 key={posPoints.length + pi}
-                x1={p[0]}
-                x2={p[0]}
+                x1={p.x}
+                x2={p.x}
                 y1={0}
                 y2={settings.genes.height}
                 strokeWidth={settings.genes.neg.width}
@@ -325,28 +361,31 @@ export function GseaSvg({ ref }: ISVGProps) {
         //.setDomain([0, plot.dna.seq.length])
         .setLength(settings.ranking.axes.y.length)
 
-      const points = rankedGenes.map((e) => [
-        xax.domainToRange(e.rank),
-        yax.domainToRange(e.score),
-      ])
+      const points = rankedGenes.map((e) => ({
+        x: xax.domainToRange(e.rank),
+        y: yax.domainToRange(e.score),
+      }))
 
       // fix starts and end
       let displayPoints = points
 
       displayPoints = [
-        [xax.domainToRange(0), yax.domainToRange(0)],
+        { x: xax.domainToRange(0), y: yax.domainToRange(0) },
         ...displayPoints,
       ]
 
       displayPoints = [
         ...displayPoints,
-        [xax.domainToRange(rankedGenes.length - 1), yax.domainToRange(0)],
+        {
+          x: xax.domainToRange(rankedGenes.length - 1),
+          y: yax.domainToRange(0),
+        },
       ]
 
       rankingSvg = (
         <g transform={`translate(0, ${plotY})`}>
           <polygon
-            points={displayPoints.map((p) => `${p[0]},${p[1]}`).join(' ')}
+            points={displayPoints.map((p) => `${p.x},${p.y}`).join(' ')}
             fill={settings.ranking.fill.value}
             stroke="none"
             fillOpacity={settings.ranking.fill.opacity}

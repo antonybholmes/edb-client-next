@@ -1,7 +1,7 @@
 import { ICON_CLS, type IIconProps } from '@/interfaces/icon-props'
 import { cn } from '@/lib/shadcn-utils'
 
-export function TriangleRightIcon({
+export function TriangleUpIcon({
   size = 'w-4 h-4',
   stroke = 'stroke-foreground',
   fill = 'fill-foreground',
@@ -35,7 +35,7 @@ export function TriangleRightIcon({
         strokeWidth,
       }}
     >
-      <polygon points="7,5 15,14 7,22" />
+      <polygon points="4,16 16,8 24,16" />
     </svg>
   )
 }

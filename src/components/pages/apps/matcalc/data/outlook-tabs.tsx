@@ -22,7 +22,7 @@ interface IShortcutProps extends IClassProps {
   showLabels?: boolean
 }
 
-function _SidebarTabs({
+function _OutlookTabs({
   id = 'side-tabs',
   defaultHeight = 2,
   showIcons = true,
@@ -180,10 +180,10 @@ function _SidebarTabs({
   )
 }
 
-export function SidebarTabs(props: IShortcutProps) {
+export function OutlookTabs(props: IShortcutProps) {
   return (
     <TabIndicatorProvider>
-      <_SidebarTabs {...props} />
+      <_OutlookTabs {...props} />
     </TabIndicatorProvider>
   )
 }

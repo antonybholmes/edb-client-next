@@ -6,6 +6,7 @@ import { getTabName, useTabs, type ITab } from './tab-provider'
 
 import { cn } from '@/lib/shadcn-utils'
 import { truncate } from '@/lib/text/text'
+import { FOCUS_INSET_RING_CLS } from '@/theme'
 import { VariantProps } from 'class-variance-authority'
 import { toggleGroupVariants } from '../shadcn/ui/themed/v2/toggle-group'
 import { TabIndicatorIosSelected } from './tab-indicator-ios-selected'
@@ -92,6 +93,7 @@ export function IOSTabs({
           return (
             <TabsTrigger
               variant="none"
+              rounded="full"
               value={tab.id}
               id={tab.id}
               key={tab.id}
@@ -101,22 +103,25 @@ export function IOSTabs({
                   buttonsRef.current[ti] = el
                 }
               }}
-              className={cn('z-30 data-[checked=true]:font-semibold h-8')}
+              className={cn(
+                FOCUS_INSET_RING_CLS,
+                'z-30 data-[checked=true]:font-semibold h-8'
+              )}
               style={{ width: defaultWidth }}
-              onMouseEnter={() => {
-                if (isSelected) {
-                  setSelectedPosition({
-                    scale: 1.1,
-                  })
-                }
-              }}
-              onMouseLeave={() => {
-                if (isSelected) {
-                  setSelectedPosition({
-                    scale: 1,
-                  })
-                }
-              }}
+              // onMouseEnter={() => {
+              //   if (isSelected) {
+              //     setSelectedPosition({
+              //       scale: 1.1,
+              //     })
+              //   }
+              // }}
+              // onMouseLeave={() => {
+              //   if (isSelected) {
+              //     setSelectedPosition({
+              //       scale: 1,
+              //     })
+              //   }
+              // }}
             >
               {truncatedName}
             </TabsTrigger>

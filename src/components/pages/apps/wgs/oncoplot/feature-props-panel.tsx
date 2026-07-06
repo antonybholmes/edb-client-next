@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 
 import { BaseCol } from '@/components/layout/base-col'
 import { useTabs } from '@/components/tabs/tab-provider'
-import { SidebarTabs } from '../../matcalc/data/sidebar-tabs'
+import { OutlookTabs } from '../../matcalc/data/outlook-tabs'
 import { ClinicalPropsPanel } from './clinical-props-panel'
 import { GenePropsPanel } from './genes-props-panel'
 import { VariantPropsPanel } from './variant-props-panel'
@@ -60,7 +60,7 @@ export function FeaturePropsPanel() {
           </TabsTrigger>
         </TabsList> */}
       </Tabs>
-      <SidebarTabs id="oncoplot-feature-props-panel" />
+      <OutlookTabs id="oncoplot-feature-props-panel" />
     </BaseCol>
   )
 }

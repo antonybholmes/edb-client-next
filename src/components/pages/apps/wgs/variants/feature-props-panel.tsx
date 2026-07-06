@@ -3,7 +3,7 @@ import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import { BaseCol } from '@/components/layout/base-col'
 import { useTabs } from '@/components/tabs/tab-provider'
 import { useEffect } from 'react'
-import { SidebarTabs } from '../../matcalc/data/sidebar-tabs'
+import { OutlookTabs } from '../../matcalc/data/outlook-tabs'
 import { ColormapPropsPanel } from './colormap-props-panel'
 
 // const TAB_CLS =
@@ -38,7 +38,7 @@ export function FeaturePropsPanel() {
           </TabsTrigger>
         </TabsList> */}
       </Tabs>
-      <SidebarTabs id="wgs-variants-feature-props-panel" />
+      <OutlookTabs id="wgs-variants-feature-props-panel" />
     </BaseCol>
   )
 }

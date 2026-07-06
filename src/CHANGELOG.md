@@ -2,6 +2,10 @@
 
 ## 85.4 (Jul, 2026)
 
+### Added
+
+- GSEA plot now supports inverting plots.
+
 ### Changed
 
 - Bug fixes and updates.

@@ -96,7 +96,7 @@ TabsList.displayName = 'TabsList' //TabsPrimitive.List.displayName
 const triggerVariants = cva('relative', {
   variants: {
     variant: {
-      none: FOCUS_RING_CLS,
+      none: '',
       base: BASE_TRIGGER_CLS,
       default: TRIGGER_CLS,
       menu: MENU_CLS,
@@ -104,9 +104,14 @@ const triggerVariants = cva('relative', {
       underline: UNDERLINE_CLS,
       sidebar: SIDEBAR_CLS,
     },
+    rounded: {
+      none: '',
+      full: 'rounded-full',
+    },
   },
   defaultVariants: {
     variant: 'default',
+    rounded: 'none',
   },
 })
 
@@ -121,6 +126,7 @@ export function TabsTrigger({
   ref,
   className,
   variant,
+  rounded,
   hidden,
   selected = false,
   ...props
@@ -131,6 +137,7 @@ export function TabsTrigger({
       className={triggerVariants({
         className,
         variant,
+        rounded,
       })}
       data-checked={selected}
       {...props}

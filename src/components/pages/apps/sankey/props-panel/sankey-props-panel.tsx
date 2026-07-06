@@ -2,7 +2,7 @@ import { BaseCol } from '@/components/layout/base-col'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import { useTabs } from '@/components/tabs/tab-provider'
 import { useEffect } from 'react'
-import { SidebarTabs } from '../../matcalc/data/sidebar-tabs'
+import { OutlookTabs } from '../../matcalc/data/outlook-tabs'
 import { LinkPropsPanel } from './link-props-panel'
 import { NodePropsPanel } from './node-props-panel'
 import { PlotPropsPanel } from './plot-props-panel'
@@ -36,6 +36,7 @@ export function SankeyPropsPanel() {
         orientation="vertical"
         className="grow"
         value={selectedTab?.id ?? ''}
+        onValueChange={() => {}}
       >
         <TabsContent value="plot">
           <PlotPropsPanel />
@@ -60,7 +61,7 @@ export function SankeyPropsPanel() {
       </TabsList> */}
       </Tabs>
 
-      <SidebarTabs id="sankey-props-panel" />
+      <OutlookTabs id="sankey-props-panel" />
     </BaseCol>
   )
 }

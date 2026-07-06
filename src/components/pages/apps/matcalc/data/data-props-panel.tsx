@@ -4,7 +4,7 @@ import { useTabs } from '@/components/tabs/tab-provider'
 import { useEffect } from 'react'
 import { FilterPropsPanel } from './filter-props-panel'
 import { GroupingPropsPanel } from './grouping-props-panel'
-import { SidebarTabs } from './sidebar-tabs'
+import { OutlookTabs } from './outlook-tabs'
 
 // const TAB_CLS =
 //   'w-4.5 stroke-foreground/75 group-hover:stroke-foreground group-data-[selected=true]:stroke-foreground'
@@ -51,7 +51,7 @@ export function DataPropsPanel() {
           </TabsTrigger>
         </TabsList> */}
       </Tabs>
-      <SidebarTabs id="matcalc-data-props-panel" />
+      <OutlookTabs id="matcalc-data-props-panel" />
     </BaseCol>
   )
 }

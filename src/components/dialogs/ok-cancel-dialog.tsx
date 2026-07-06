@@ -21,6 +21,7 @@ import type { CSSProperties, ReactNode } from 'react'
 
 import { config } from '@/config'
 import type { UndefStr } from '@/lib/text/text'
+import { FOCUS_RING_CLS } from '@/theme'
 import type { VariantProps } from 'class-variance-authority'
 import { X } from 'lucide-react'
 import { osName } from 'react-device-detect'
@@ -59,8 +60,10 @@ export function OSButtonRow({
   )
 }
 
-export const DIALOG_HEADER_BUTTON_CLS =
-  'stroke-alt-foreground hover:stroke-foreground trans-color aspect-square focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none data-[variant=none]:bg-transparent data-[variant=none]:hover:bg-transparent data-[variant=none]:focus-visible:bg-transparent'
+export const DIALOG_HEADER_BUTTON_CLS = cn(
+  FOCUS_RING_CLS,
+  'stroke-alt-foreground hover:stroke-foreground trans-color aspect-square'
+)
 
 export function CloseButton({ ...props }: IButtonProps) {
   return (

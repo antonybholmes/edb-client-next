@@ -53,9 +53,9 @@
     "color": "#ffb366",
     "version": "21.6.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-03T14:46:20.326Z",
-    "hash": "7586d2ef46ddae0b9fe756301f69ebf84d13ef0b849f1b2376d444c01eab632c",
-    "build": 754
+    "modified": "2026-07-06T20:07:11.675Z",
+    "hash": "fd4523208aac3240d274c04ab89b5002de9ad0d0aefff3ef5e3061c86e106e4c",
+    "build": 756
   },
   {
     "name": "GSEA Web",
@@ -101,19 +101,19 @@
     "color": "#DA70D6",
     "version": "27.6.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-04T16:38:13.431Z",
-    "hash": "88694b40baca48bfff0dceb7bdd2befcb4ae99ef04dbdf50b8b6c5a2951708fe",
-    "build": 1070
+    "modified": "2026-07-06T20:07:11.680Z",
+    "hash": "d654d9da3fe2d4832dffabea0023cd1d8b727b1e3b467a82e7a61af7eb8ecda8",
+    "build": 1072
   },
   {
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "48.2.4",
+    "version": "48.2.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-06T01:28:44.398Z",
-    "hash": "184a6aa074e58fa07d44ae11582c64f7b2fdaed91dbfee689dc32360a2b5610d",
-    "build": 1758
+    "modified": "2026-07-06T20:07:11.679Z",
+    "hash": "3aa5f521521c9eec44b9cb6bfedc88bd4231365024497aee25e24bab3ae02a07",
+    "build": 1760
   },
   {
     "name": "Motifs",
@@ -131,9 +131,9 @@
     "color": "#ff99cc",
     "version": "28.8.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-04T18:51:53.574Z",
-    "hash": "0c322a2e3f52e118fa9aef6faeae7a27f300969c3301ff0d0ebe285cecfa4fda",
-    "build": 1072
+    "modified": "2026-07-06T20:07:11.680Z",
+    "hash": "997dd6d8e21338d62b42ce92f67682467c197d07e0120a6a8f28f9bc1ba251b6",
+    "build": 1074
   },
   {
     "name": "Overlap",
@@ -171,9 +171,9 @@
     "color": "#ff9900",
     "version": "1.0.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-04T18:51:53.571Z",
-    "hash": "a994c679ef3349b8698edd28d25e9b5c39bc52b0ec7f6428f5a61e0fe3ff20ee",
-    "build": 12
+    "modified": "2026-07-06T20:07:11.679Z",
+    "hash": "5096106013ce9c21c3f83d88396d0d7268601fe78ab19159557e419969c22bc5",
+    "build": 14
   },
   {
     "name": "Seq Browser",
@@ -220,9 +220,9 @@
     "color": "#FA8072",
     "version": "26.6.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-04T18:51:53.575Z",
-    "hash": "1ab501d70d96b989be50344a8440f0a8e5f7e009cb9acd06a61c1b6a1997226a",
-    "build": 990
+    "modified": "2026-07-06T20:07:11.680Z",
+    "hash": "bf7e0a9eb368abdb4be844466f6ae0ef290cfb98bfd8d2ec5592fa24bbebec8e",
+    "build": 992
   },
   {
     "name": "Venn",

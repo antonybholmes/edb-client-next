@@ -19,7 +19,7 @@ import { LinkButton } from '@/themed/link-button'
 import { NumericalInput } from '@/themed/numerical-input'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { ResizableSidebarHeaderPortal } from '@/components/sidebar/resizable-sidebar'
+import { VCenterRow } from '@/components/layout/v-center-row'
 import { produce } from 'immer'
 import { FontPopover } from '../../../../plot/font/font-popover'
 import { MarginPopover } from '../../../../plot/margin-popover'
@@ -46,8 +46,8 @@ export function GseaDisplayPropsPanel() {
   // }
 
   return (
-    <>
-      <ResizableSidebarHeaderPortal side="right">
+    <PropsPanel className="pr-1 gap-y-4">
+      <VCenterRow className="h-8">
         <LinkButton
           onClick={() => {
             openDialog({
@@ -69,366 +69,375 @@ export function GseaDisplayPropsPanel() {
         >
           {TEXT_RESET}
         </LinkButton>
-      </ResizableSidebarHeaderPortal>
-      <PropsPanel className="pr-1 gap-y-4">
-        <ScrollAccordion
-          value={[
-            'page',
-            'padding',
-            'enrichment-plot',
-            'genes-plot',
-            'rank-plot',
-          ]}
-        >
-          <AccordionItem value="page">
-            <AccordionTrigger
-              rightChildren={
-                <>
-                  <MarginPopover />
-                  <FontPopover
-                    fonts={[
-                      {
-                        title: 'Titles',
-                        textProps: settings.title,
-                        update: (f) =>
-                          updateSettings(
-                            produce(settings, (draft) => {
-                              draft.title.font = f.font
-                              draft.title.show = f.show
-                            })
-                          ),
-                      },
-                    ]}
-                  />
-                </>
+      </VCenterRow>
+      <ScrollAccordion
+        value={[
+          'page',
+          'padding',
+          'enrichment-plot',
+          'genes-plot',
+          'rank-plot',
+        ]}
+      >
+        <AccordionItem value="page">
+          <AccordionTrigger
+            rightChildren={
+              <>
+                <MarginPopover />
+                <FontPopover
+                  fonts={[
+                    {
+                      title: 'Titles',
+                      textProps: settings.title,
+                      update: (f) =>
+                        updateSettings(
+                          produce(settings, (draft) => {
+                            draft.title.font = f.font
+                            draft.title.show = f.show
+                          })
+                        ),
+                    },
+                  ]}
+                />
+              </>
+            }
+          >
+            Page
+          </AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Axes">
+              <FontPopover
+                fonts={[
+                  {
+                    title: 'Labels',
+                    textProps: settings.axes.labels,
+                    update: (f) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.axes.labels = f
+                        })
+                      ),
+                  },
+                  {
+                    title: 'Ticks',
+                    textProps: settings.axes.ticks,
+                    update: (f) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.axes.ticks = f
+                        })
+                      ),
+                  },
+                ]}
+              />
+            </PropRow>
+            <CheckPropRow
+              title="Invert X-axis"
+              checked={settings.phenotypes.invert}
+              onCheckedChange={(state) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.phenotypes.invert = state
+                  })
+                )
               }
-            >
-              Page
-            </AccordionTrigger>
-            <AccordionContent>
-              <PropRow title="Axes">
+            />
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="enrichment-plot">
+          <AccordionTrigger
+            rightChildren={
+              <>
                 <FontPopover
                   fonts={[
                     {
                       title: 'Labels',
-                      textProps: settings.axes.labels,
-                      update: (f) =>
+                      textProps: settings.es.labels,
+                      update: (f) => {
                         updateSettings(
                           produce(settings, (draft) => {
-                            draft.axes.labels = f
+                            draft.es.labels = f
                           })
-                        ),
+                        )
+                      },
                     },
                     {
-                      title: 'Ticks',
-                      textProps: settings.axes.ticks,
-                      update: (f) =>
+                      title: 'Phenotypes',
+                      textProps: settings.es.phenotypes,
+                      update: (f) => {
                         updateSettings(
                           produce(settings, (draft) => {
-                            draft.axes.ticks = f
-                          })
-                        ),
-                    },
-                  ]}
-                />
-              </PropRow>
-            </AccordionContent>
-          </AccordionItem>
-
-          <AccordionItem value="enrichment-plot">
-            <AccordionTrigger
-              rightChildren={
-                <>
-                  <FontPopover
-                    fonts={[
-                      {
-                        title: 'Labels',
-                        textProps: settings.es.labels,
-                        update: (f) => {
-                          updateSettings(
-                            produce(settings, (draft) => {
-                              draft.es.labels = f
-                            })
-                          )
-                        },
-                      },
-                      {
-                        title: 'Phenotypes',
-                        textProps: settings.es.phenotypes,
-                        update: (f) => {
-                          updateSettings(
-                            produce(settings, (draft) => {
-                              draft.es.phenotypes = f
-                            })
-                          )
-                        },
-                      },
-                    ]}
-                  />
-                  <Switch
-                    title="Show"
-                    checked={settings.es.show}
-                    onCheckedChange={(state) => {
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.es.show = state
-                        })
-                      )
-                    }}
-                  />
-                </>
-              }
-            >
-              Enrichment
-            </AccordionTrigger>
-            <AccordionContent>
-              <PropRow title="Line">
-                <ColorPickerButton
-                  colors={[
-                    {
-                      color: settings.es.line.value,
-                      opacity: settings.es.line.opacity,
-                      onColorChange: (color, alpha) => {
-                        updateSettings(
-                          produce(settings, (draft) => {
-                            draft.es.line.value = color
-                            draft.es.line.opacity = alpha
+                            draft.es.phenotypes = f
                           })
                         )
                       },
                     },
                   ]}
-                  className={SIMPLE_COLOR_EXT_CLS}
-                  title="Line color"
                 />
-              </PropRow>
-
-              <CheckPropRow
-                title="Leading Edge"
-                checked={settings.es.leadingEdge.show}
-                onCheckedChange={(state) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.es.leadingEdge.show = state
-                    })
-                  )
-                }}
-              >
-                <ColorPickerButton
-                  colors={[
-                    {
-                      color: settings.es.leadingEdge.fill.value,
-                      opacity: settings.es.leadingEdge.fill.opacity,
-                      onColorChange: (color, alpha) => {
-                        updateSettings(
-                          produce(settings, (draft) => {
-                            draft.es.leadingEdge.fill.value = color
-                            draft.es.leadingEdge.fill.opacity = alpha
-                          })
-                        )
-                      },
-                    },
-                  ]}
-                  className={SIMPLE_COLOR_EXT_CLS}
-                  title="Leading edge color"
-                />
-              </CheckPropRow>
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="genes-plot">
-            <AccordionTrigger
-              rightChildren={
                 <Switch
                   title="Show"
-                  checked={settings.genes.show}
+                  checked={settings.es.show}
                   onCheckedChange={(state) => {
                     updateSettings(
                       produce(settings, (draft) => {
-                        draft.genes.show = state
+                        draft.es.show = state
                       })
                     )
                   }}
                 />
-              }
-            >
-              Genes
-            </AccordionTrigger>
-            <AccordionContent>
-              <PropRow title="Height">
-                <NumericalInput
-                  value={settings.genes.height}
-                  disabled={!settings.genes.show}
-                  placeholder="Height"
-                  limit={[1, 100]}
-                  step={1}
-                  onNumChange={(v) => {
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.genes.height = v
-                      })
-                    )
-                  }}
-                  className="w-16 rounded-theme"
-                />
-              </PropRow>
-
-              <CheckPropRow
-                title="Colors"
-                checked={settings.genes.color.on}
-                onCheckedChange={(state) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.genes.color.on = state
-                    })
-                  )
-                }}
-              >
-                <ColorPickerButton
-                  disabled={!settings.genes.show}
-                  colors={[
-                    {
-                      title: 'Positive color',
-                      color: settings.genes.pos.value,
-                      opacity: settings.genes.pos.opacity,
-                      onColorChange: (color, alpha) => {
-                        updateSettings(
-                          produce(settings, (draft) => {
-                            draft.genes.pos.value = color
-                            draft.genes.pos.opacity = alpha
-                          })
-                        )
-                      },
-                    },
-
-                    {
-                      title: 'Negative color',
-                      color: settings.genes.neg.value,
-                      opacity: settings.genes.neg.opacity,
-                      onColorChange: (color, alpha) => {
-                        updateSettings(
-                          produce(settings, (draft) => {
-                            draft.genes.neg.value = color
-                            draft.genes.neg.opacity = alpha
-                          })
-                        )
-                      },
-                    },
-                  ]}
-                  className={SIMPLE_COLOR_EXT_CLS}
-                  title="Positive/negative color"
-                />
-              </CheckPropRow>
-
-              <CheckPropRow
-                title="Gradient"
-                checked={settings.genes.gradient.on}
-                onCheckedChange={(state) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.genes.gradient.on = state
-                    })
-                  )
-                }}
-                className="ml-2"
-                disabled={!settings.genes.color.on}
-              >
-                <NumericalInput
-                  value={settings.genes.gradient.alpha}
-                  disabled={!settings.genes.gradient.on}
-                  placeholder="Alpha"
-                  limit={[0, 1]}
-                  step={0.1}
-                  dp={1}
-                  onNumChange={(v) => {
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.genes.gradient.alpha = v
-                      })
-                    )
-                  }}
-                  className="w-16 rounded-theme"
-                  title="Opacity"
-                />
-              </CheckPropRow>
-            </AccordionContent>
-          </AccordionItem>
-
-          <AccordionItem value="rank-plot">
-            <AccordionTrigger
-              rightChildren={
-                <>
-                  <ColorPickerButton
-                    colors={[
-                      {
-                        color: settings.ranking.fill.value,
-                        opacity: settings.ranking.fill.opacity,
-                        onColorChange: (color, alpha) => {
-                          updateSettings(
-                            produce(settings, (draft) => {
-                              draft.ranking.fill.value = color
-                              draft.ranking.fill.opacity = alpha
-                            })
-                          )
-                        },
-                      },
-                    ]}
-                    disabled={!settings.ranking.show}
-                    className={SIMPLE_COLOR_EXT_CLS}
-                    title="Ranked genes color"
-                  />
-                  <Switch
-                    title="Show"
-                    checked={settings.ranking.show}
-                    onCheckedChange={(state) => {
+              </>
+            }
+          >
+            Enrichment
+          </AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Line">
+              <ColorPickerButton
+                colors={[
+                  {
+                    color: settings.es.line.value,
+                    opacity: settings.es.line.opacity,
+                    onColorChange: (color, alpha) => {
                       updateSettings(
                         produce(settings, (draft) => {
-                          draft.ranking.show = state
+                          draft.es.line.value = color
+                          draft.es.line.opacity = alpha
                         })
                       )
-                    }}
-                  />
-                </>
-              }
+                    },
+                  },
+                ]}
+                className={SIMPLE_COLOR_EXT_CLS}
+                title="Line color"
+              />
+            </PropRow>
+
+            <CheckPropRow
+              title="Leading Edge"
+              checked={settings.es.leadingEdge.show}
+              onCheckedChange={(state) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.es.leadingEdge.show = state
+                  })
+                )
+              }}
             >
-              Ranked Genes
-            </AccordionTrigger>
-            <AccordionContent>
-              <CheckPropRow
-                title="Zero crossing"
-                checked={settings.ranking.zeroCross.show}
-                disabled={!settings.ranking.show}
-                onCheckedChange={(state) =>
+              <ColorPickerButton
+                colors={[
+                  {
+                    color: settings.es.leadingEdge.fill.value,
+                    opacity: settings.es.leadingEdge.fill.opacity,
+                    onColorChange: (color, alpha) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.es.leadingEdge.fill.value = color
+                          draft.es.leadingEdge.fill.opacity = alpha
+                        })
+                      )
+                    },
+                  },
+                ]}
+                className={SIMPLE_COLOR_EXT_CLS}
+                title="Leading edge color"
+              />
+            </CheckPropRow>
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="genes-plot">
+          <AccordionTrigger
+            rightChildren={
+              <Switch
+                title="Show"
+                checked={settings.genes.show}
+                onCheckedChange={(state) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.ranking.zeroCross.show = state
+                      draft.genes.show = state
                     })
                   )
-                }
-              >
+                }}
+              />
+            }
+          >
+            Genes
+          </AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Height">
+              <NumericalInput
+                value={settings.genes.height}
+                disabled={!settings.genes.show}
+                placeholder="Height"
+                limit={[1, 100]}
+                step={1}
+                onNumChange={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.height = v
+                    })
+                  )
+                }}
+                className="w-16 rounded-theme"
+              />
+            </PropRow>
+
+            <CheckPropRow
+              title="Colors"
+              checked={settings.genes.color.on}
+              onCheckedChange={(state) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.genes.color.on = state
+                  })
+                )
+              }}
+            >
+              <ColorPickerButton
+                disabled={!settings.genes.show}
+                colors={[
+                  {
+                    title: 'Positive color',
+                    color: settings.genes.pos.value,
+                    opacity: settings.genes.pos.opacity,
+                    onColorChange: (color, alpha) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.genes.pos.value = color
+                          draft.genes.pos.opacity = alpha
+                        })
+                      )
+                    },
+                  },
+
+                  {
+                    title: 'Negative color',
+                    color: settings.genes.neg.value,
+                    opacity: settings.genes.neg.opacity,
+                    onColorChange: (color, alpha) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.genes.neg.value = color
+                          draft.genes.neg.opacity = alpha
+                        })
+                      )
+                    },
+                  },
+                ]}
+                className={SIMPLE_COLOR_EXT_CLS}
+                title="Positive/negative color"
+              />
+            </CheckPropRow>
+
+            <CheckPropRow
+              title="Gradient"
+              checked={settings.genes.gradient.on}
+              onCheckedChange={(state) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.genes.gradient.on = state
+                  })
+                )
+              }}
+              className="ml-2"
+              disabled={!settings.genes.color.on}
+            >
+              <NumericalInput
+                value={settings.genes.gradient.alpha}
+                disabled={!settings.genes.gradient.on}
+                placeholder="Alpha"
+                limit={[0, 1]}
+                step={0.1}
+                dp={1}
+                onNumChange={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.gradient.alpha = v
+                    })
+                  )
+                }}
+                className="w-16 rounded-theme"
+                title="Opacity"
+              />
+            </CheckPropRow>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="rank-plot">
+          <AccordionTrigger
+            rightChildren={
+              <>
                 <ColorPickerButton
-                  disabled={!settings.ranking.zeroCross.show}
                   colors={[
                     {
-                      color: settings.ranking.zeroCross.line.value,
-                      opacity: settings.ranking.zeroCross.line.opacity,
+                      color: settings.ranking.fill.value,
+                      opacity: settings.ranking.fill.opacity,
                       onColorChange: (color, alpha) => {
                         updateSettings(
                           produce(settings, (draft) => {
-                            draft.ranking.zeroCross.line.value = color
-                            draft.ranking.zeroCross.line.opacity = alpha
+                            draft.ranking.fill.value = color
+                            draft.ranking.fill.opacity = alpha
                           })
                         )
                       },
                     },
                   ]}
+                  disabled={!settings.ranking.show}
                   className={SIMPLE_COLOR_EXT_CLS}
-                  title="Zero crossing color"
+                  title="Ranked genes color"
                 />
-              </CheckPropRow>
-            </AccordionContent>
-          </AccordionItem>
-        </ScrollAccordion>
-      </PropsPanel>
-    </>
+                <Switch
+                  title="Show"
+                  checked={settings.ranking.show}
+                  onCheckedChange={(state) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.ranking.show = state
+                      })
+                    )
+                  }}
+                />
+              </>
+            }
+          >
+            Ranked Genes
+          </AccordionTrigger>
+          <AccordionContent>
+            <CheckPropRow
+              title="Zero crossing"
+              checked={settings.ranking.zeroCross.show}
+              disabled={!settings.ranking.show}
+              onCheckedChange={(state) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.ranking.zeroCross.show = state
+                  })
+                )
+              }
+            >
+              <ColorPickerButton
+                disabled={!settings.ranking.zeroCross.show}
+                colors={[
+                  {
+                    color: settings.ranking.zeroCross.line.value,
+                    opacity: settings.ranking.zeroCross.line.opacity,
+                    onColorChange: (color, alpha) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.ranking.zeroCross.line.value = color
+                          draft.ranking.zeroCross.line.opacity = alpha
+                        })
+                      )
+                    },
+                  },
+                ]}
+                className={SIMPLE_COLOR_EXT_CLS}
+                title="Zero crossing color"
+              />
+            </CheckPropRow>
+          </AccordionContent>
+        </AccordionItem>
+      </ScrollAccordion>
+    </PropsPanel>
   )
 }

@@ -2066,6 +2066,12 @@
           "msg": "Bug fixes and updates.",
           "date": "2026-07-05T01:29:49.434Z"
         }
+      ],
+      "Added": [
+        {
+          "msg": "GSEA plot now supports inverting plots",
+          "date": "2026-07-06T20:07:12.566Z"
+        }
       ]
     },
     "author": "Antony Holmes",

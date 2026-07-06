@@ -3,7 +3,7 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:gsea-settings-v30`
+const SETTINGS_KEY = `${config.appId}:gsea-settings-v32`
 
 import {
   DEFAULT_BOLD_FONT_PROPS,
@@ -26,6 +26,9 @@ import {
 } from '@/lib/color/color'
 
 export interface IGseaDisplayProps {
+  phenotypes: {
+    invert: boolean
+  }
   axes: {
     show: boolean
     labels: ITextProps
@@ -96,6 +99,9 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
   page: {
     columns: 3,
     scale: 1,
+  },
+  phenotypes: {
+    invert: false,
   },
 
   title: {
@@ -177,11 +183,11 @@ export interface IGseaSettingsStore extends IGseaDisplayProps {
 
 export const useGseaSettingsStore = create<IGseaSettingsStore>()(
   persist(
-    set => ({
+    (set) => ({
       ...DEFAULT_GSEA_DISPLAY_PROPS,
 
       updateSettings: (settings: Partial<IGseaDisplayProps>) => {
-        set(state => ({
+        set((state) => ({
           ...state,
           ...settings,
         }))
@@ -199,8 +205,8 @@ export function useGseaSettings(): {
   updateSettings: (settings: Partial<IGseaDisplayProps>) => void
   reset: () => void
 } {
-  const settings = useGseaSettingsStore(state => state)
-  const updateSettings = useGseaSettingsStore(state => state.updateSettings)
+  const settings = useGseaSettingsStore((state) => state)
+  const updateSettings = useGseaSettingsStore((state) => state.updateSettings)
 
   function reset() {
     updateSettings({ ...DEFAULT_GSEA_DISPLAY_PROPS })
