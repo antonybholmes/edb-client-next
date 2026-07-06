@@ -132,7 +132,7 @@ export function GseaDisplayPropsPanel() {
               />
             </PropRow>
             <CheckPropRow
-              title="Invert X-axis"
+              title="Invert Phenotypes"
               checked={settings.phenotypes.invert}
               onCheckedChange={(state) =>
                 updateSettings(
