@@ -83,8 +83,10 @@ export function GseaSvg({ ref }: ISVGProps) {
 
     const results = resultsMap[pathway.name]!
 
+    const maxRank = rankedGenes.length - 1
+
     let xax = new Axis()
-      .setDomain([0, rankedGenes.length - 1])
+      .setDomain([0, maxRank])
       .setLength(settings.axes.x.length)
 
     xax = xax.setTicks(xax.ticks.slice(1))
@@ -93,7 +95,7 @@ export function GseaSvg({ ref }: ISVGProps) {
       ? results.es
           .map((e) => ({
             ...e,
-            rank: rankedGenes.length - e.rank - 1,
+            rank: maxRank - e.rank,
             score: -e.score,
           }))
           .sort((a, b) => a.rank - b.rank)
@@ -103,13 +105,13 @@ export function GseaSvg({ ref }: ISVGProps) {
       rankedGenes = rankedGenes
         .map((e) => ({
           ...e,
-          rank: rankedGenes.length - e.rank - 1,
+          rank: maxRank - e.rank,
           score: -e.score,
         }))
         .sort((a, b) => a.rank - b.rank)
     }
 
-    const rankMid = rankedGenes.length / 2
+    const rankMid = maxRank / 2
 
     let yMin = Math.min(...es.map((e) => e.score))
     let yMax = Math.max(...es.map((e) => e.score))
@@ -305,10 +307,8 @@ export function GseaSvg({ ref }: ISVGProps) {
       const cmap2 = new ColorMap('neg', [c3, c4])
 
       //console.log(rankedGenes)
-      console.log(rankedGenes.length, points.length, es.length)
 
       const posPoints = points.filter((_, pi) => {
-        console.log(pi, es[pi])
         return rankedGenes[es[pi]!.rank]!.score >= 0
       })
       const negPoints = points.filter(
