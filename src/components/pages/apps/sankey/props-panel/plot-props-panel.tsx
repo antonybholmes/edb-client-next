@@ -305,7 +305,7 @@ export function PlotPropsPanel() {
                 step={0.05}
               />
             </PropRow>
-            <PropRow title="Gradient offset">
+            <PropRow title="Gradient Offset">
               <BarSlider
                 value={settings.links.gradientOffset}
                 min={0}

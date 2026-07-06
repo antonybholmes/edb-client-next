@@ -8,6 +8,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/shadcn/ui/themed/v2/tabs'
+import { TabIndicatorFollowV } from '@/components/tabs/tab-indicator-follow-v'
 import {
   TabIndicatorProvider,
   useTabIndicators,
@@ -91,12 +92,8 @@ function _OutlookTabs({
   }, [tabs])
 
   function _scale(index: number, isSelected: boolean) {
-    if (
-      !isSelected ||
-      !buttonsRef.current[index] ||
-      !tabListRef.current ||
-      !position
-    ) {
+    console.log('clientRect')
+    if (!buttonsRef.current[index] || !tabListRef.current) {
       return
     }
 
@@ -121,6 +118,9 @@ function _OutlookTabs({
       <TabsList
         className={cn('relative shrink-0 pl-2 gap-y-px', className)}
         ref={tabListRef}
+        onMouseLeave={() => {
+          setTabPosition(undefined)
+        }}
       >
         {tabs.map((tab, ti) => {
           const isSelected = selectedTab?.id === tab.id
@@ -144,7 +144,7 @@ function _OutlookTabs({
                     scale: 0.5,
                   })
                 }
-                _scale(selectedTabIndex || 0, isSelected)
+                _scale(ti || 0, isSelected)
               }}
               onMouseLeave={() => {
                 if (isSelected) {
@@ -174,7 +174,7 @@ function _OutlookTabs({
         })}
 
         <TabIndicatorSelectedV />
-        {/* <TabIndicatorFollowV /> */}
+        <TabIndicatorFollowV />
       </TabsList>
     </Tabs>
   )

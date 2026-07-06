@@ -1,13 +1,9 @@
-import { cn } from '@/lib/shadcn-utils'
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
-import {
-  useTabIndicators,
-  type ITabIndicatorPos,
-} from './tab-indicator-provider'
+import { useTabIndicators } from './tab-indicator-provider'
 
 const LINE_CLS =
-  'absolute left-0 top-0 pointer-events-none select-none shrink-0'
+  'absolute left-0 top-0 pointer-events-none select-none shrink-0 bg-muted rounded-full z-0'
 
 /**
  * A horizontal line that can be used to follow the mouse
@@ -21,7 +17,7 @@ export function TabIndicatorFollowV({
   w = 2,
 }: {
   groupId?: string
-  w?: number
+  w?: string | number
 }) {
   const { position } = useTabIndicators() //groupId)
 
@@ -30,14 +26,14 @@ export function TabIndicatorFollowV({
   // to set duration to 0 so it appears instantly rather than animating
   // from 0 width to full width which looks odd. Also, if the width is going
   // from non-zero to zero, we want to set duration to 0 so it disappears instantly.
-  const previousPos = useRef<ITabIndicatorPos | undefined>(undefined)
+  //const previousPos = useRef<ITabIndicatorPos | undefined>(undefined)
 
   const highlightLineRef = useRef<HTMLSpanElement>(null)
 
   const timelineRef = useRef<GSAPTimeline | null>(null)
 
   useEffect(() => {
-    if (!highlightLineRef.current) {
+    if (!highlightLineRef.current || !position) {
       return
     }
 
@@ -45,41 +41,34 @@ export function TabIndicatorFollowV({
       timelineRef.current.kill()
     }
 
-    if (position) {
-      if (previousPos.current) {
-        timelineRef.current = gsap.timeline().to(highlightLineRef.current, {
-          y: position.y,
-          height: position.h,
-          scaleY: position.scale || 1,
-          duration: 0.5,
-          ease: 'power3.out',
-        })
-      } else {
-        timelineRef.current = gsap.timeline().set(highlightLineRef.current, {
-          y: position.y,
-          height: position.h,
-          scaleY: position.scale || 1,
-          width: `${w}px`,
-        })
-      }
-    } else {
-      timelineRef.current = gsap.timeline().set(highlightLineRef.current, {
-        width: 0,
-      })
-    }
+    timelineRef.current = gsap.timeline().to(
+      highlightLineRef.current,
+      {
+        y: position.y,
+        height: position.h,
+        scaleY: position.scale || 1,
+        duration: 0.8,
+        ease: 'power3.out',
+      },
+      0
+    )
 
-    previousPos.current = position
-  }, [position?.y, position?.h])
+    //previousPos.current = position
+  }, [position])
+
+  if (!position) {
+    return null
+  }
 
   return (
     <span
       ref={highlightLineRef}
-      className={cn(LINE_CLS, 'bg-muted')}
+      className={LINE_CLS}
       // animate={{
       //   x: tabIndicatorPos.x,
       //   width: tabIndicatorPos.size,
       // }}
-      style={{ width: `${w}px` }}
+      style={{ width: w }}
       //initial={false}
       //transition={{ ease: 'easeOut', duration: 0.25 }}
     />

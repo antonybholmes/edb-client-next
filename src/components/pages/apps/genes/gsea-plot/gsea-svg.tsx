@@ -14,6 +14,14 @@ import { SvgText } from '../../../../plot/svg-text'
 import { useGsea } from './gsea-plot-store'
 import { useGseaSettings } from './gsea-settings-store'
 
+/**
+ * Create SVG for GSEA plot. We create separate SVG for each plot and then combine them in the main SVG.
+ * This allows us to have different y axes for ES and ranked genes, and to have different settings for each plot.
+ *
+ * Notes: Rank is 0-based in the results files.
+ * @param param0
+ * @returns
+ */
 export function GseaSvg({ ref }: ISVGProps) {
   const { settings } = useGseaSettings()
 
@@ -69,6 +77,8 @@ export function GseaSvg({ ref }: ISVGProps) {
       row *
       (plotSize[1]! + settings.plot.margin.top + settings.plot.margin.bottom)
 
+    //console.log('pathway', pathway)
+
     const phenotypei = phenIndexMap.get(pathway.phen)!
 
     const results = resultsMap[pathway.name]!
@@ -83,7 +93,7 @@ export function GseaSvg({ ref }: ISVGProps) {
       ? results.es
           .map((e) => ({
             ...e,
-            rank: rankedGenes.length - e.rank,
+            rank: rankedGenes.length - e.rank - 1,
             score: -e.score,
           }))
           .sort((a, b) => a.rank - b.rank)
@@ -93,7 +103,7 @@ export function GseaSvg({ ref }: ISVGProps) {
       rankedGenes = rankedGenes
         .map((e) => ({
           ...e,
-          rank: rankedGenes.length - e.rank,
+          rank: rankedGenes.length - e.rank - 1,
           score: -e.score,
         }))
         .sort((a, b) => a.rank - b.rank)
@@ -110,7 +120,7 @@ export function GseaSvg({ ref }: ISVGProps) {
       .setLength(settings.es.axes.y.length)
 
     const points = es.map((e) => ({
-      x: xax.domainToRange(e.rank - 1),
+      x: xax.domainToRange(e.rank),
       y: yax.domainToRange(e.score),
     }))
 
@@ -124,7 +134,7 @@ export function GseaSvg({ ref }: ISVGProps) {
       ]
     }
 
-    if (es[es.length - 1]!.rank < rankedGenes.length) {
+    if (es[es.length - 1]!.rank < rankedGenes.length - 1) {
       displayPoints = [
         ...displayPoints,
         {
@@ -294,9 +304,13 @@ export function GseaSvg({ ref }: ISVGProps) {
       const cmap1 = new ColorMap('pos', [c1, c2])
       const cmap2 = new ColorMap('neg', [c3, c4])
 
-      const posPoints = points.filter(
-        (_, pi) => rankedGenes[es[pi]!.rank]!.score >= 0
-      )
+      //console.log(rankedGenes)
+      console.log(rankedGenes.length, points.length, es.length)
+
+      const posPoints = points.filter((_, pi) => {
+        console.log(pi, es[pi])
+        return rankedGenes[es[pi]!.rank]!.score >= 0
+      })
       const negPoints = points.filter(
         (_, pi) => rankedGenes[es[pi]!.rank]!.score < 0
       )

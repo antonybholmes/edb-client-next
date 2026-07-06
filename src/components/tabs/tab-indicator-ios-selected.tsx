@@ -1,9 +1,6 @@
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
-import {
-  useTabIndicators,
-  type ITabIndicatorPos,
-} from './tab-indicator-provider'
+import { useTabIndicators } from './tab-indicator-provider'
 
 /**
  * A horizontal line that can be used to follow the mouse
@@ -26,7 +23,7 @@ export function TabIndicatorIosSelected({
   // from 0 width to full width which looks odd. Also, if the width is going
   // from non-zero to zero, we want to set duration to 0 so it disappears instantly.
 
-  const previousSelectedPos = useRef<ITabIndicatorPos | undefined>(undefined)
+  //const previousSelectedPos = useRef<ITabIndicatorPos | undefined>(undefined)
 
   const selectedLineRef = useRef<HTMLSpanElement>(null)
 
@@ -57,9 +54,13 @@ export function TabIndicatorIosSelected({
       )
     }
 
-    previousSelectedPos.current = selectedPosition
+    //  previousSelectedPos.current = selectedPosition
     isFirstRender.current = false
   }, [selectedPosition])
+
+  if (!selectedPosition) {
+    return null
+  }
 
   return (
     <span

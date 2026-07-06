@@ -65,14 +65,20 @@ export function TabIndicatorProvider({ children }: { children: ReactNode }) {
 
   const _setPosition = useCallback(
     (pos: Partial<ITabIndicatorPos> | undefined) => {
-      setPosition(prev => {
-        const newPos = pos
-          ? prev
-            ? { ...prev, ...pos }
-            : { ...DEFAULT_TAB, ...pos }
-          : undefined
-        if (!posChanged(prev, newPos)) return prev
-        return newPos
+      setPosition((prev) => {
+        if (!pos) {
+          setPosition(undefined)
+          return undefined
+        }
+
+        const newPos = prev ? { ...prev, ...pos } : { ...DEFAULT_TAB, ...pos }
+
+        if (posChanged(prev, newPos)) {
+          return newPos
+        }
+
+        // no change so we return previous state to avoid unnecessary re-renders
+        return prev
       })
     },
     []
@@ -80,7 +86,7 @@ export function TabIndicatorProvider({ children }: { children: ReactNode }) {
 
   const _setSelectedPosition = useCallback(
     (pos: Partial<ITabIndicatorPos> | undefined) => {
-      setSelectedPosition(prev => {
+      setSelectedPosition((prev) => {
         const newPos = pos
           ? prev
             ? { ...prev, ...pos }

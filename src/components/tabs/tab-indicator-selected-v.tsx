@@ -1,4 +1,3 @@
-import { cn } from '@/lib/shadcn-utils'
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
 import {
@@ -7,7 +6,7 @@ import {
 } from './tab-indicator-provider'
 
 const LINE_CLS =
-  'absolute left-0 top-0 pointer-events-none select-none shrink-0'
+  'absolute left-0 top-0 pointer-events-none select-none shrink-0 bg-app-theme z-10'
 
 /**
  * A horizontal line that can be used to follow the mouse
@@ -32,7 +31,6 @@ export function TabIndicatorSelectedV({ w = 2 }: { w?: number }) {
   const selectedTimelineRef = useRef<GSAPTimeline | null>(null)
 
   useEffect(() => {
-    console.log('selectedPosition', selectedPosition)
     if (!selectedLineRef.current || !selectedPosition) {
       return
     }
@@ -46,18 +44,13 @@ export function TabIndicatorSelectedV({ w = 2 }: { w?: number }) {
       height: selectedPosition.h,
       duration: 1,
       scaleY: selectedPosition.scale || 1,
-      ease: 'back.out',
+      ease: 'power3.out',
     })
 
     previousSelectedPos.current = selectedPosition
   }, [selectedPosition])
 
   return (
-    <span
-      ref={selectedLineRef}
-      className={cn(LINE_CLS, 'bg-app-theme z-10')}
-
-      style={{ width: w }}
-    />
+    <span ref={selectedLineRef} className={LINE_CLS} style={{ width: w }} />
   )
 }
