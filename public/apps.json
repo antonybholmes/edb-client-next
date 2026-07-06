@@ -51,11 +51,11 @@
     "name": "GSEA Plot",
     "description": "Format GSEA plots.",
     "color": "#ffb366",
-    "version": "21.6.6",
+    "version": "21.6.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-06T20:07:44.519Z",
-    "hash": "d829727c66eb53f3101d6fe4b1a8075c984c07224d659f68c016810905d0aaeb",
-    "build": 758
+    "modified": "2026-07-06T22:56:27.820Z",
+    "hash": "098cb61cb01f3df4cb05c260517b9ef719ff7ba0c294c4b0a76ca110c1f9c2a5",
+    "build": 760
   },
   {
     "name": "GSEA Web",
@@ -171,9 +171,9 @@
     "color": "#ff9900",
     "version": "1.0.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-06T20:07:11.679Z",
-    "hash": "5096106013ce9c21c3f83d88396d0d7268601fe78ab19159557e419969c22bc5",
-    "build": 14
+    "modified": "2026-07-06T22:56:27.829Z",
+    "hash": "1777522d5662de0ad5ed96da582208a0ac826aed1ab3b641dbf9a5559b3e52b2",
+    "build": 16
   },
   {
     "name": "Seq Browser",

@@ -128,22 +128,23 @@ export function GseaSvg({ ref }: ISVGProps) {
 
     const y0 = yax.domainToRange(0)
 
-    // fix starts and end
+    // fix starts and end by zeroing them
     let displayPoints = points
 
     //if (es[0]!.rank > 0) {
-    displayPoints = [{ x: xax.domainToRange(0), y: y0 }, ...displayPoints]
-    //}
+    if (displayPoints[0]!.y !== y0) {
+      displayPoints = [{ x: xax.domainToRange(0), y: y0 }, ...displayPoints]
+    }
 
-    //if (es[es.length - 1]!.rank < maxRank) {
-    displayPoints = [
-      ...displayPoints,
-      {
-        x: xax.domainToRange(maxRank),
-        y: y0,
-      },
-    ]
-    //}
+    if (displayPoints[displayPoints.length - 1]!.y !== y0) {
+      displayPoints = [
+        ...displayPoints,
+        {
+          x: xax.domainToRange(maxRank),
+          y: y0,
+        },
+      ]
+    }
 
     const leadingEdge = es.filter((e) => e.leading)
 
