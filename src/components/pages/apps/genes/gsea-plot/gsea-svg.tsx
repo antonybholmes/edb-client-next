@@ -126,25 +126,24 @@ export function GseaSvg({ ref }: ISVGProps) {
       y: yax.domainToRange(e.score),
     }))
 
+    const y0 = yax.domainToRange(0)
+
     // fix starts and end
     let displayPoints = points
 
-    if (es[0]!.rank > 0) {
-      displayPoints = [
-        { x: xax.domainToRange(0), y: yax.domainToRange(0) },
-        ...displayPoints,
-      ]
-    }
+    //if (es[0]!.rank > 0) {
+    displayPoints = [{ x: xax.domainToRange(0), y: y0 }, ...displayPoints]
+    //}
 
-    if (es[es.length - 1]!.rank < rankedGenes.length - 1) {
-      displayPoints = [
-        ...displayPoints,
-        {
-          x: xax.domainToRange(rankedGenes.length - 1),
-          y: yax.domainToRange(0),
-        },
-      ]
-    }
+    //if (es[es.length - 1]!.rank < maxRank) {
+    displayPoints = [
+      ...displayPoints,
+      {
+        x: xax.domainToRange(maxRank),
+        y: y0,
+      },
+    ]
+    //}
 
     const leadingEdge = es.filter((e) => e.leading)
 
@@ -159,20 +158,20 @@ export function GseaSvg({ ref }: ISVGProps) {
     if (leadingEdge[leadingEdge.length - 1].rank < rankMid) {
       // left
       leadingPoints = [
-        { x: xax.domainToRange(0), y: yax.domainToRange(0) },
+        { x: xax.domainToRange(0), y: y0 },
         ...leadingPoints,
         {
           x: leadingPoints[leadingPoints.length - 1]!.x,
-          y: yax.domainToRange(0),
+          y: y0,
         },
       ]
     } else {
       leadingPoints = [
-        { x: leadingPoints[0]!.x, y: yax.domainToRange(0) },
+        { x: leadingPoints[0]!.x, y: y0 },
         ...leadingPoints,
         {
-          x: xax.domainToRange(rankedGenes.length - 1),
-          y: yax.domainToRange(0),
+          x: xax.domainToRange(maxRank),
+          y: y0,
         },
       ]
     }
@@ -391,7 +390,7 @@ export function GseaSvg({ ref }: ISVGProps) {
       displayPoints = [
         ...displayPoints,
         {
-          x: xax.domainToRange(rankedGenes.length - 1),
+          x: xax.domainToRange(maxRank),
           y: yax.domainToRange(0),
         },
       ]
