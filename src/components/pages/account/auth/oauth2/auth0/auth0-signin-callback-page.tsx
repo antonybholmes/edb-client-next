@@ -94,7 +94,7 @@ export function CallbackPage() {
   //   }
   // }, [signinState])
 
-  console.log('signinState', redirectTarget)
+  //console.log('signinState', redirectTarget)
 
   return (
     <BaseSignInCallbackPage

@@ -205,8 +205,8 @@ export function ToolbarMenu({
           tabListCls="gap-x-3"
           //tabButtonProps={{ variant: TOOLBAR_TABS }}
         >
-          <TabIndicatorFollowH groupId={groupId} />
-          <TabIndicatorSelectedH groupId={groupId} />
+          <TabIndicatorFollowH  />
+          <TabIndicatorSelectedH   />
         </UnderlineTabs>
 
         {fileMenuShortcuts && (

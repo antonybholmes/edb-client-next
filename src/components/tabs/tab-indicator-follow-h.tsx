@@ -16,7 +16,6 @@ import {
 export function TabIndicatorFollowH({
   h = 2,
 }: {
-  groupId: string
   h?: number
 }) {
   const { position } = useTabIndicators() //groupId) //useContext(TabIndicatorContext)
