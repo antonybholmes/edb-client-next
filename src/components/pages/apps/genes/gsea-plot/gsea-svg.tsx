@@ -127,6 +127,7 @@ export function GseaSvg({ ref }: ISVGProps) {
     }))
 
     const y0 = yax.domainToRange(0)
+    const x1 = xax.domainToRange(maxRank)
 
     // fix starts and end by zeroing them
     let displayPoints = points
@@ -140,7 +141,7 @@ export function GseaSvg({ ref }: ISVGProps) {
       displayPoints = [
         ...displayPoints,
         {
-          x: xax.domainToRange(maxRank),
+          x: x1,
           y: y0,
         },
       ]
@@ -171,7 +172,7 @@ export function GseaSvg({ ref }: ISVGProps) {
         { x: leadingPoints[0]!.x, y: y0 },
         ...leadingPoints,
         {
-          x: xax.domainToRange(maxRank),
+          x: x1,
           y: y0,
         },
       ]
@@ -375,6 +376,8 @@ export function GseaSvg({ ref }: ISVGProps) {
         //.setDomain([0, plot.dna.seq.length])
         .setLength(settings.ranking.axes.y.length)
 
+      const y0 = yax.domainToRange(0)
+
       const points = rankedGenes.map((e) => ({
         x: xax.domainToRange(e.rank),
         y: yax.domainToRange(e.score),
@@ -383,16 +386,13 @@ export function GseaSvg({ ref }: ISVGProps) {
       // fix starts and end
       let displayPoints = points
 
-      displayPoints = [
-        { x: xax.domainToRange(0), y: yax.domainToRange(0) },
-        ...displayPoints,
-      ]
+      displayPoints = [{ x: xax.domainToRange(0), y: y0 }, ...displayPoints]
 
       displayPoints = [
         ...displayPoints,
         {
-          x: xax.domainToRange(maxRank),
-          y: yax.domainToRange(0),
+          x: x1,
+          y: y0,
         },
       ]
 
