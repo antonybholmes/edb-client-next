@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
         destination: '/apps/:path*',
         permanent: true,
       },
+      {
+        source: '/apps/genes/gsea',
+        destination: '/apps/genes/gsea-plot',
+        permanent: true,
+      },
     ]
   },
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
