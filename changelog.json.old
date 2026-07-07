@@ -2069,6 +2069,10 @@
         {
           "msg": "Now correctly checks for GSEA plot line endpoints finish at y0 and adds additional points if they do not",
           "date": "2026-07-06T22:56:28.766Z"
+        },
+        {
+          "msg": "Removal of more toasts. Side tab UI updated.",
+          "date": "2026-07-07T02:08:26.690Z"
         }
       ],
       "Added": [
