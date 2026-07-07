@@ -131,12 +131,13 @@ export function ColGroupsSettingsPanel() {
                 color: displayProps.groups.border.value,
                 width: displayProps.groups.border.width,
                 opacity: displayProps.groups.border.opacity,
-                onColorChange: (color, opacity, width) =>
+                onColorChange: ({ color, opacity, width }) =>
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.groups.border.value = color
                       draft.props.groups.border.opacity = opacity
-                      draft.props.groups.border.width = width
+                      draft.props.groups.border.width =
+                        width ?? displayProps.groups.border.width
                     })
                   ),
               },
