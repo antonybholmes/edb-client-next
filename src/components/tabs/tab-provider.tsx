@@ -126,7 +126,7 @@ export const DEFAULT_GROUP_ID = 'default'
 
 export interface ITabGroup {
   id: string
-  tabs: ITab[]
+  tabs: readonly ITab[]
   selectedTabIndex: number
 }
 
@@ -162,8 +162,8 @@ export interface ITabChange {
  * @param tab
  * @returns
  */
-export function getTabName(tab: ITab): string {
-  return tab?.name ?? tab.id ?? ''
+export function getTabName(tab: ITab | undefined): string {
+  return tab?.name ?? tab?.id ?? ''
 }
 
 /**
@@ -210,7 +210,7 @@ export function getTabFromValue(
 interface ITabsContext {
   tabs: Record<string, ITabGroup>
   getTabs: (id: string) => ITabGroup
-  setTabs: (id: string, tabs: ITab[]) => void
+  setTabs: (id: string, tabs: readonly ITab[]) => void
   setTab: (id: string, tab: number | string) => void
 }
 
@@ -245,7 +245,7 @@ export function useTabs(id: string) {
   )
 
   const setGroupsTab = useCallback(
-    (tabs: ITab[]) => {
+    (tabs: readonly ITab[]) => {
       setTabs(id, tabs)
     },
     [id, setTabs]
@@ -290,7 +290,7 @@ export function TabProvider({ children }: IChildrenProps) {
     [tabs]
   )
 
-  const _setTabs = useCallback((id: string, tabs: ITab[]) => {
+  const _setTabs = useCallback((id: string, tabs: readonly ITab[]) => {
     setTabs((prev) => {
       let currentTab = prev[id] ?? { ...DEFAULT_TAB_GROUP, id }
 

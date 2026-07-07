@@ -74,11 +74,11 @@ export const BED_TRACK_TYPES = new Set([
   'LocalBED',
 ])
 
-const DEFAULT_TRACKS: TrackPlot[] = [
+const DEFAULT_TRACKS: readonly TrackPlot[] = Object.freeze([
   {
     type: 'Location',
     name: 'Location',
-    id: makeUuid(),
+    id: '019f3a4b-661b-7ae0-b098-e0e35128b3bd',
     displayOptions: {
       ...DEFAULT_LOCATION_TRACK_DISPLAY_OPTIONS,
     },
@@ -86,7 +86,7 @@ const DEFAULT_TRACKS: TrackPlot[] = [
   {
     type: 'Cytobands',
     name: 'Cytobands',
-    id: makeUuid(),
+    id: '019f3a4b-886c-708b-890a-2666497b4af9',
     displayOptions: {
       ...DEFAULT_CYTOBANDS_TRACK_DISPLAY_OPTIONS,
     },
@@ -94,7 +94,7 @@ const DEFAULT_TRACKS: TrackPlot[] = [
   {
     type: 'Scale',
     name: 'Scale',
-    id: makeUuid(),
+    id: '019f3a4b-c260-71de-bf64-c508c9b07854',
     displayOptions: {
       ...DEFAULT_SCALE_TRACK_DISPLAY_OPTIONS,
     },
@@ -102,7 +102,7 @@ const DEFAULT_TRACKS: TrackPlot[] = [
   {
     type: 'Ruler',
     name: 'Ruler',
-    id: makeUuid(),
+    id: '019f3a4b-e700-787b-a2e4-add4d50eb822',
     displayOptions: {
       ...DEFAULT_RULER_TRACK_DISPLAY_OPTIONS,
     },
@@ -110,12 +110,12 @@ const DEFAULT_TRACKS: TrackPlot[] = [
   {
     type: 'Gene',
     name: 'Genes',
-    id: makeUuid(),
+    id: '019f3a4c-6abb-7255-aad2-5a29429021b9',
     displayOptions: {
       ...DEFAULT_GENE_TRACK_DISPLAY_OPTIONS,
     },
   },
-]
+])
 
 const DEFAULT_GROUPS = DEFAULT_TRACKS.map((t) => ({
   ...newTrackGroup([t]),

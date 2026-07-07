@@ -107,6 +107,7 @@ const triggerVariants = cva('relative', {
     rounded: {
       none: '',
       full: 'rounded-full',
+      theme: 'rounded-theme',
     },
   },
   defaultVariants: {

@@ -6,8 +6,12 @@ import {
   openFilesDialog,
 } from '@/components/pages/open-files'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
+
+import { ToolbarButton } from '@/components/toolbar/toolbar-button'
+import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
+import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
@@ -75,22 +79,40 @@ export function HomeToolbar() {
         />
       </ToolbarTabGroup>
 
-      <ToolbarTabGroup title="Columns">
-        <NumericalInput
-          value={settings.page.columns}
-          h="md"
-          placeholder="Opacity"
-          limit={[1, 100]}
-          step={1}
-          onNumChanged={(v) => {
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.page.columns = v
-              })
-            )
-          }}
-          className="w-16 rounded-theme"
-        />
+      <ToolbarTabGroup title="Options">
+        <ToolbarCol className="gap-x-1">
+          <ToolbarRow gap="gap-x-1">
+            Columns
+            <NumericalInput
+              value={settings.page.columns}
+              h="md"
+              placeholder="Opacity"
+              limit={[1, 100]}
+              step={1}
+              onNumChanged={(v) => {
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.page.columns = v
+                  })
+                )
+              }}
+              className="w-16 rounded-theme"
+            />
+          </ToolbarRow>
+
+          <ToolbarButton
+            checked={settings.phenotypes.invert}
+            onClick={() =>
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.phenotypes.invert = !draft.phenotypes.invert
+                })
+              )
+            }
+          >
+            Invert Phenotypes
+          </ToolbarButton>
+        </ToolbarCol>
       </ToolbarTabGroup>
     </>
   )

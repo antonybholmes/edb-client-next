@@ -8,16 +8,12 @@ import {
 } from '@/themed/v2/accordion'
 
 // import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/shadcn/ui/themed/v2/tabs'
+import { OutlookTabs } from '@/components/pages/apps/matcalc/data/outlook-tabs'
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import type { UndefStr } from '@/lib/text/text'
-import { useMemo, type ReactNode } from 'react'
-import { getTabName, renderTab, type ITab } from '../../tabs/tab-provider'
+import { useEffect, type ReactNode } from 'react'
+import { getTabName, renderTab, useTabs } from '../../tabs/tab-provider'
 import { GlassSideDialog } from '../glass-side-dialog'
 import type { IOKCancelDialogProps } from '../ok-cancel-dialog'
 import { useSettingsTabs } from './setting-tabs-store'
@@ -78,30 +74,35 @@ export function SettingsDialog({
   onOpenChange = () => {},
   onResponse = () => {},
 }: IOKCancelDialogProps) {
-  const { tabs, defaultTab, setDefaultTab } = useSettingsTabs()
+  const { tabs } = useSettingsTabs()
+  const { selectedTab, setTabs } = useTabs('settings-dialog-tabs')
 
-  let _tabs: ITab[] = useMemo(
-    () => [
-      ...tabs,
-      // general is reserved for the default tab,
-      // so we move it to the top and merge its children with the other tabs
-      //...tabs.filter((tab) => getTabName(tab).toLowerCase() !== 'general'),
-    ],
-    [tabs]
-  )
+  // let _tabs: ITab[] = useMemo(
+  //   () => [
+  //     ...tabs,
+  //     // general is reserved for the default tab,
+  //     // so we move it to the top and merge its children with the other tabs
+  //     //...tabs.filter((tab) => getTabName(tab).toLowerCase() !== 'general'),
+  //   ],
+  //   [tabs]
+  // )
+
+  useEffect(() => {
+    setTabs(tabs)
+  }, [tabs, setTabs])
 
   //const winSize = useWindowSize()
 
   return (
     <GlassSideDialog
-      title={defaultTab}
+      title={getTabName(selectedTab)}
       cols={4}
       onOpenChange={onOpenChange}
       onResponse={onResponse}
       overlayColor="trans"
     >
-      <Tabs
-        value={defaultTab}
+      {/* <Tabs
+        value={selectedTab?.id ?? ''}
         onValueChange={(v) => {
           setDefaultTab(v)
         }}
@@ -117,23 +118,26 @@ export function SettingsDialog({
                 key={ti}
                 className="grow"
                 variant="sidebar"
+                rounded="theme"
               >
                 {name}
               </TabsTrigger>
             )
           })}
         </TabsList>
-      </Tabs>
+      </Tabs> */}
+
+      <OutlookTabs id="settings-dialog-tabs" className="text-xs" />
 
       <VScrollPanel className="grow">
         <Tabs
-          value={defaultTab}
+          value={selectedTab?.id ?? ''}
           orientation="vertical"
           className="flex flex-col grow text-xs px-2"
         >
-          {_tabs.map((tab, ti) => {
+          {tabs.map((tab, ti) => {
             return (
-              <TabsContent value={getTabName(tab)} key={ti}>
+              <TabsContent value={tab.id} key={ti}>
                 {renderTab(tab)}
                 {tab.children && tab.children.length > 0 && (
                   <SettingsAccordionPanel tabs={tab.children} />

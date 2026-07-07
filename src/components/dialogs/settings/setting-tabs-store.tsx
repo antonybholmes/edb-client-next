@@ -5,21 +5,21 @@ import { useDialogs } from '../dialogs'
 import { SettingsGeneralPanel } from './settings-general-panel'
 
 // These tabs always appear in the UI
-const DEFAULT_TABS: ITab[] = [
+const DEFAULT_TABS: readonly ITab[] = Object.freeze([
   {
     id: '019f0ae9-18f6-730c-b7f5-6e619b5bbe4e',
     name: 'General',
-    icon: <SettingsIcon stroke="" size="w-4.5" strokeWidth={2} />,
+    icon: <SettingsIcon stroke="" size="w-4.5" strokeWidth={1.5} />,
     component: SettingsGeneralPanel,
   },
-]
+])
 
 interface ISettingsTabStore {
   defaultTab: string
-  tabs: ITab[]
+  tabs: readonly ITab[]
   visible: boolean
   setDefaultTab: (tab: string) => void
-  setSettingsTabs: (tabs: ITab[]) => void
+  setSettingsTabs: (tabs: readonly ITab[]) => void
   setVisible: (visible: boolean) => void
 }
 
@@ -34,7 +34,7 @@ export const useSettingsTabsStore = create<ISettingsTabStore>((set) => ({
       defaultTab: tab,
     })),
 
-  setSettingsTabs: (tabs: ITab[]) =>
+  setSettingsTabs: (tabs: readonly ITab[]) =>
     set((state) => ({
       ...state,
       tabs: [...DEFAULT_TABS, ...tabs],

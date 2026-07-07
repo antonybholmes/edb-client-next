@@ -52,7 +52,6 @@ import APP_INFO from './manifest.json'
 
 import { useSettingsTabs } from '@/dialogs/settings/setting-tabs-store'
 
-import { CubeIcon } from '@/icons/cube-icon'
 import { ExportIcon } from '@/icons/export-icon'
 
 import { DataPanel, MESSAGE_CHANNEL } from './data/data-panel'
@@ -78,7 +77,7 @@ import { OptsSidebarMenu } from './data/opts-sidebar-menu'
 import { useHistory } from './history/history-provider/history-provider'
 
 import { useTabs } from '@/components/tabs/tab-provider'
-import { makeUuid } from '@/lib/id'
+import { Box } from 'lucide-react'
 import { SankeyPanel } from '../sankey/sankey-panel'
 import { SankeyProvider } from '../sankey/sankey-provider'
 import { BoxPlotPanel } from './apps/boxplot/boxplot-panel'
@@ -225,9 +224,9 @@ export function MatcalcPage() {
   useEffect(() => {
     setSettingsTabs([
       {
-        id: makeUuid(),
+        id: '019f3a36-ee0d-7ac1-ad56-e92dbec44927',
         name: APP_INFO.name,
-        icon: <CubeIcon fill="" />,
+        icon: <Box strokeWidth={1.5} size={18} />,
         component: SettingsAppsPanel,
       },
     ])

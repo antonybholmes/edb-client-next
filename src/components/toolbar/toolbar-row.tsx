@@ -3,7 +3,7 @@ import { cn } from '@/lib/shadcn-utils'
 
 import { VCenterRow } from '../layout/v-center-row'
 
-export const TOOLBAR_ROW_CLS = 'h-toolbar-button shrink-0'
+export const TOOLBAR_ROW_CLS = 'min-h-toolbar-button shrink-0'
 
 /**
  * Shows vertically centered content in a row layout. This is used for rows of

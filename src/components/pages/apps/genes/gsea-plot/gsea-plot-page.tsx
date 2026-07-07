@@ -100,8 +100,6 @@ export function GseaPlotPage() {
   const [showFileMenu, setShowFileMenu] = useState(false)
   //const [selectAllDatasets, setSelectAllDatasets] = useState(true)
 
-  const [reportTabs, setReportTabs] = useState<string[]>([])
-
   const { svgRef } = useSVG()
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   //const { setTabs: setSideTabs } = useSideTabs()
@@ -131,10 +129,6 @@ export function GseaPlotPage() {
   //     },
   //   ])
   // }, [setSideTabs])
-
-  useEffect(() => {
-    setReportTabs(['gsea-results', ...phenotypes])
-  }, [phenotypes])
 
   useEffect(() => {
     updateSettings(

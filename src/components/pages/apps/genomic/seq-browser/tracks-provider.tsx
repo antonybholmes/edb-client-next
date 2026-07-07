@@ -603,7 +603,7 @@ export function trackReducer(
         {
           type: 'Location',
           name: 'Location',
-          id: makeUuid(),
+          id: '019f3a4f-556f-76c8-b1a4-958eb373073a',
           displayOptions: {
             ...DEFAULT_LOCATION_TRACK_DISPLAY_OPTIONS,
           },
@@ -611,7 +611,7 @@ export function trackReducer(
         {
           type: 'Cytobands',
           name: 'Cytobands',
-          id: makeUuid(),
+          id: '019f3a4f-726b-7eb8-8317-f8694d573d6c',
           displayOptions: {
             ...DEFAULT_CYTOBANDS_TRACK_DISPLAY_OPTIONS,
           },
@@ -619,7 +619,7 @@ export function trackReducer(
         {
           type: 'Scale',
           name: 'Scale',
-          id: makeUuid(),
+          id: '019f3a4f-8d13-77cb-9724-0d6f02f40ea9',
           displayOptions: {
             ...DEFAULT_SCALE_TRACK_DISPLAY_OPTIONS,
           },
@@ -627,7 +627,7 @@ export function trackReducer(
         {
           type: 'Ruler',
           name: 'Ruler',
-          id: makeUuid(),
+          id: '019f3a4f-b081-7256-a01f-97125e863be7',
           displayOptions: {
             ...DEFAULT_RULER_TRACK_DISPLAY_OPTIONS,
           },
@@ -636,7 +636,7 @@ export function trackReducer(
         {
           type: 'Gene',
           name: 'Genes',
-          id: makeUuid(),
+          id: '019f3a4f-cb93-70d5-8a3f-76f3b3a7e11c',
           displayOptions: {
             ...DEFAULT_GENE_TRACK_DISPLAY_OPTIONS,
           },

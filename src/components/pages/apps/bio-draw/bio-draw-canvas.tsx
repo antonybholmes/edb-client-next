@@ -11,10 +11,6 @@ export function BioDrawSvg() {
     Array.from({ length: 1 }, () => createRef())
   )
 
-  const handleExportAll = () => {
-    const allStates = childRefs.current.map((ref) => ref.current?.exportState())
-  }
-
   const lipid: ILipid = {
     id: makeUuid(),
     points: [],

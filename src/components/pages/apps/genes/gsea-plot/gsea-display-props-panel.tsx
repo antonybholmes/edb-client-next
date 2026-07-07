@@ -131,7 +131,7 @@ export function GseaDisplayPropsPanel() {
                 ]}
               />
             </PropRow>
-            <CheckPropRow
+            {/* <CheckPropRow
               title="Invert Phenotypes"
               checked={settings.phenotypes.invert}
               onCheckedChange={(state) =>
@@ -141,7 +141,7 @@ export function GseaDisplayPropsPanel() {
                   })
                 )
               }
-            />
+            /> */}
           </AccordionContent>
         </AccordionItem>
 

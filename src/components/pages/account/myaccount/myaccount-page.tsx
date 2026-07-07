@@ -47,13 +47,12 @@ import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
 import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
 import { CenterLayout } from '@/layouts/center-layout'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
 import {
   fetchCSRFTokenFromServer,
   getCSRFToken,
 } from '@/components/edb/auth/csrf'
-import { makeUuid } from '@/lib/id'
 import { IconButton } from '@/themed/icon-button'
-import { Toast } from '@base-ui/react/toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
@@ -114,7 +113,7 @@ export const UserFormSchema = z.object({
 export function MyAccountPage() {
   const btnRef = useRef<HTMLButtonElement>(null)
 
-  const { add: addToast } = Toast.useToastManager()
+  const { open: openDialog } = useDialogs()
 
   //const [account, setAccount] = useState<IAccount>({...DEFAULT_ACCOUNT})
   //const { token: csrf, fetchToken } = useCSRF()
@@ -209,18 +208,22 @@ export function MyAccountPage() {
       // force update
       refreshSession()
 
-      addToast({
-        id: makeUuid(),
-        title: 'Your account information was updated',
-        type: 'success',
-        description: 'You will receive a confirmation email shortly.',
+      openDialog({
+        type: 'alert',
+        payload: {
+          title: 'Account',
+          content:
+            'Your account information was updated.You will receive a confirmation email shortly.',
+        },
       })
     } catch (err) {
-      addToast({
-        id: makeUuid(),
-        title: 'Your account information could not be updated',
-        type: 'destructive',
-        description: 'Please try again later.',
+      openDialog({
+        type: 'alert',
+        payload: {
+          title: 'Your account information could not be updated',
+          type: 'warning',
+          content: 'Please try again later.',
+        },
       })
     }
   }

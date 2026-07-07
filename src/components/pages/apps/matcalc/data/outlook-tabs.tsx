@@ -153,7 +153,7 @@ function _OutlookTabs({
                   })
                 }
               }}
-              className="flex flex-row gap-x-1 items-center data-[selected=true]:font-semibold relative shrink-0 hover:bg-background rounded-theme group"
+              className="flex flex-row gap-x-1.5 items-center data-[selected=true]:font-semibold relative shrink-0 hover:bg-background rounded-theme group"
               style={{
                 height: `${defaultHeight}rem`,
                 minWidth: `${defaultHeight}rem`,

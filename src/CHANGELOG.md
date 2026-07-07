@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Removal of more toasts. Side tab UI updated.
 - Now correctly checks for GSEA plot line endpoints finish at y0 and adds additional points if they do not.
 - Bug fixes and updates.
 

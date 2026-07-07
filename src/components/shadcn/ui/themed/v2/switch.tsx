@@ -204,7 +204,7 @@ export function Switch({
     ret = (
       <Field.Root>
         <Field.Label
-          className={cn('flex flex-row items-center gap-x-2', className)}
+          className={cn('flex flex-row items-center gap-x-1.5', className)}
         >
           {side === 'left' && ret}
 
