@@ -10,7 +10,6 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
-import { VCenterRow } from '@/components/layout/v-center-row'
 import {
   ColorPickerButton,
   SIMPLE_COLOR_EXT_CLS,
@@ -19,6 +18,7 @@ import { FontPopover } from '@/components/plot/font/font-popover'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { BarSlider } from '@/components/shadcn/ui/themed/v2/bar-slider'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { TEXT_OK, TEXT_RESET } from '@/consts'
 import { produce } from 'immer'
 import { useSankeySettings } from '../sankey-settings-store'
@@ -30,7 +30,7 @@ export function PlotPropsPanel() {
 
   return (
     <PropsPanel>
-      <VCenterRow className="h-8">
+      <SideBarHeader>
         <LinkButton
           onClick={() => {
             openDialog({
@@ -51,7 +51,7 @@ export function PlotPropsPanel() {
         >
           {TEXT_RESET}
         </LinkButton>
-      </VCenterRow>
+      </SideBarHeader>
       <ScrollAccordion value={['plot', 'nodes', 'links']}>
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>

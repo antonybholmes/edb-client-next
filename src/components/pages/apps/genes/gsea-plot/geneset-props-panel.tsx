@@ -3,6 +3,7 @@ import { PropsPanel } from '@/components/props-panel'
 import { MultiSelectIcon } from '@/components/icons/multi-select-icon'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { SortableItem } from '@/components/sortable-item'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
@@ -19,12 +20,29 @@ import { produce } from 'immer'
 import { useState } from 'react'
 import { useGsea, type IGseaPathway } from './gsea-plot-store'
 
-function PlotItem({ report }: { report: IGseaPathway }) {
+function GseaReportItem({ report }: { report: IGseaPathway }) {
   const { datasetsForUse, allowSelectAll, setDatasetsForUse } = useGsea()
 
   return (
-    <SortableItem id={report.id} key={report.id}>
-      {allowSelectAll && (
+    <SortableItem
+      id={report.id}
+      key={report.id}
+      dragHandle={
+        allowSelectAll ? (
+          <Checkbox
+            checked={datasetsForUse[report.id] ?? false}
+            onCheckedChange={(checked) => {
+              setDatasetsForUse(
+                produce(datasetsForUse, (draft) => {
+                  draft[report.id] = checked ?? false
+                })
+              )
+            }}
+          />
+        ) : undefined
+      }
+    >
+      {/* {allowSelectAll && (
         <Checkbox
           checked={datasetsForUse[report.id] ?? false}
           onCheckedChange={(checked) => {
@@ -35,7 +53,7 @@ function PlotItem({ report }: { report: IGseaPathway }) {
             )
           }}
         />
-      )}
+      )} */}
 
       <TruncateSpan className="h-8 grow">{report.name}</TruncateSpan>
     </SortableItem>
@@ -55,10 +73,10 @@ export function GeneSetsPropsPanel() {
 
   return (
     <PropsPanel className="gap-y-1 text-xs">
-      <VCenterRow className="justify-between pl-1 mr-5">
+      <SideBarHeader>
         <VCenterRow
           data-visible={allowSelectAll}
-          className="data-[visible=false]:invisible px-6"
+          className="data-[visible=false]:invisible ml-1"
         >
           <Checkbox
             aria-label="Select all gene sets"
@@ -87,12 +105,12 @@ export function GeneSetsPropsPanel() {
         >
           <MultiSelectIcon checked={allowSelectAll} />
         </IconButton>
-      </VCenterRow>
+      </SideBarHeader>
 
-      <VScrollPanel className="   mb-2">
+      <VScrollPanel className="mb-2">
         <DndContext
           modifiers={[restrictToVerticalAxis]}
-          //onDragStart={event => setActiveId(event.active.id as string)}
+
           //for the moment do not allow to be re-arranged as it messes up
           //cluster color rendering
           onDragEnd={(event) => {
@@ -125,11 +143,7 @@ export function GeneSetsPropsPanel() {
           >
             <ul className="flex flex-col">
               {reports.map((report) => {
-                return (
-                  // <BaseSortableItem key={gs.id} id={gs.id}>
-                  <PlotItem key={report.id} report={report} />
-                  // </BaseSortableItem>
-                )
+                return <GseaReportItem key={report.id} report={report} />
               })}
             </ul>
           </SortableContext>

@@ -30,7 +30,6 @@ export function DataPropsPanel() {
     <BaseCol className="grow">
       <Tabs
         value={selectedTab?.id ?? ''}
-        //onValueChange={setTab}
         orientation="vertical"
         className="grow"
       >

@@ -19,7 +19,7 @@ import { LinkButton } from '@/themed/link-button'
 import { NumericalInput } from '@/themed/numerical-input'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { VCenterRow } from '@/components/layout/v-center-row'
+import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { produce } from 'immer'
 import { FontPopover } from '../../../../plot/font/font-popover'
 import { MarginPopover } from '../../../../plot/margin-popover'
@@ -46,8 +46,8 @@ export function GseaDisplayPropsPanel() {
   // }
 
   return (
-    <PropsPanel className="pr-1 gap-y-4">
-      <VCenterRow className="h-8">
+    <PropsPanel className="gap-y-2">
+      <SideBarHeader>
         <LinkButton
           onClick={() => {
             openDialog({
@@ -69,7 +69,7 @@ export function GseaDisplayPropsPanel() {
         >
           {TEXT_RESET}
         </LinkButton>
-      </VCenterRow>
+      </SideBarHeader>
       <ScrollAccordion
         value={[
           'page',
@@ -131,7 +131,7 @@ export function GseaDisplayPropsPanel() {
                 ]}
               />
             </PropRow>
-            {/* <CheckPropRow
+            <CheckPropRow
               title="Invert Phenotypes"
               checked={settings.phenotypes.invert}
               onCheckedChange={(state) =>
@@ -141,7 +141,7 @@ export function GseaDisplayPropsPanel() {
                   })
                 )
               }
-            /> */}
+            />
           </AccordionContent>
         </AccordionItem>
 

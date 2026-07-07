@@ -205,8 +205,8 @@ export function ToolbarMenu({
           tabListCls="gap-x-3"
           //tabButtonProps={{ variant: TOOLBAR_TABS }}
         >
-          <TabIndicatorFollowH  />
-          <TabIndicatorSelectedH   />
+          <TabIndicatorFollowH />
+          <TabIndicatorSelectedH />
         </UnderlineTabs>
 
         {fileMenuShortcuts && (
@@ -253,6 +253,7 @@ export function ToolbarTabContentPanel({
       groupId={groupId}
       className="group"
       contentCls="gap-x-1"
+      orientation="h"
     />
   )
 }

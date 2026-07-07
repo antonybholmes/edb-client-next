@@ -87,6 +87,7 @@ export function SortableItem<T extends ElementType = 'li'>({
   children,
   extChildren,
 }: SortableItemProps<T>) {
+  const dragCls = dragHandle ? 'hidden' : 'flex'
   return (
     <BaseSortableItem
       as={as ?? 'li'}
@@ -103,7 +104,10 @@ export function SortableItem<T extends ElementType = 'li'>({
           innerCls
         )}
       >
-        {dragHandle ? dragHandle : <DragHandle id={id} />}
+        {/* Hide the drag handle if a custom one is passed, to avoid confusion. 
+          The custom one is for things like a checkbox if we want to select items and momentarily turn off dragging */}
+        <DragHandle id={id} className={dragCls} />
+        {dragHandle && dragHandle}
         {children}
       </VCenterRow>
       {extChildren}

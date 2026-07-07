@@ -290,8 +290,8 @@ export function GseaPlotPage() {
           <ToolbarMenu
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
-            value={toolbarTab}
-            onValueChange={setToolbarTab}
+            //value={toolbarTab}
+            //onValueChange={setToolbarTab}
             fileMenuTabs={fileMenuTabs}
             leftShortcuts={<UndoShortcuts />}
             rightShortcuts={

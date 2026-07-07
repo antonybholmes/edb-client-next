@@ -4,30 +4,13 @@ import { textToTokens } from '@/lib/text/lines'
 import { unzipSync } from 'fflate'
 
 import { create } from 'zustand'
+import {
+  IGseaGeneRankScore,
+  IGseaPathway,
+  IGseaResult,
+} from '../gsea-plot/gsea-plot-store'
 
 export const PLOT_ZOOM_CHANNEL = 'gsea-plot-zoom'
-
-export interface IGseaPathway {
-  id: string
-  phen: string
-  name: string
-  size: number
-  nes: number
-  q: number
-  rank: number
-}
-
-export interface IGseaGeneRankScore {
-  gene: string
-  rank: number
-  score: number
-  leading: boolean
-}
-
-export interface IGseaResult {
-  name: string
-  es: IGseaGeneRankScore[]
-}
 
 export interface IGseaWebStore {
   phenotypes: string[]

@@ -36,6 +36,11 @@ export function makeCombinations<T>(items: T[]): T[][] {
     )
 }
 
+/**
+ * Return the last element of an array. Useful for chaining.
+ * @param data
+ * @returns
+ */
 export function end<T>(data: T[]): T {
   return data[data.length - 1]!
 }

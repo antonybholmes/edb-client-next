@@ -54,7 +54,7 @@ export function HistoryDrawer() {
       <h2 className="font-bold p-2 text-base">History</h2>
 
       <Tabs value={tab} className="flex flex-col grow">
-        <TabsContent value="list" className="grow flex flex-col">
+        <TabsContent value="list">
           <VScrollPanel className="grow">
             <HistoryTabs />
           </VScrollPanel>

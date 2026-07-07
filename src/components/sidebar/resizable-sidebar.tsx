@@ -27,6 +27,8 @@ import {
 import type { IButtonProps } from '../shadcn/ui/themed/v2/button'
 import type { LeftRightPos } from '../side'
 
+import { IDivProps } from '@/interfaces/div-props'
+import { VCenterRow } from '../layout/v-center-row'
 import { OPTS_SIDEBAR_ID } from '../tabs/tab-provider'
 import { useSlideBar, useSlideBarStore } from './slide-bar-store'
 
@@ -98,10 +100,6 @@ function ResizableSidebarProvider({
     <ResizableSidebarContext.Provider
       value={{
         id,
-        //left,
-        //center,
-        ///right,
-        //set,
       }}
     >
       {children}
@@ -151,36 +149,30 @@ export function SidePanel({
       collapsible={true}
       //className="flex flex-col relative gap-y-2"
     >
-      {/* Seems to need inner div to make overflow work properly, otherwise scrollbars appear */}
-      <PropsPanel className="flex flex-col gap-y-2 relative h-full">
-        {/* <VCenterRow className="gap-x-1 min-h-8 absolute w-full z-50">
-          <VCenterRow className="grow min-h-8">
-            <VCenterRow
-              id={`resizable-sidebar-header-left-${id}`}
-              className="gap-x-2 grow"
-            >
-              {left && left.render && left.render}
-            </VCenterRow>
-
-            <VCenterRow
-              id={`resizable-sidebar-header-right-${id}`}
-              className="gap-x-2 grow justify-end"
-            >
-              {right && right.render && right.render}
-            </VCenterRow>
-          </VCenterRow> */}
+      <PropsPanel className="gap-y-2 relative h-full">
         {showCloseButton && (
           <CloseButton
             onClick={() => setOpen(false)}
-            className="absolute right-0 top-0.5 z-100"
+            className="absolute right-0 top-1 z-100"
           />
         )}
-        {/* </VCenterRow> */}
 
         {children}
       </PropsPanel>
     </ResizablePanel>
   )
+}
+
+/**
+ * A header component for sidebars. It's just a row with some default styling, but
+ * is designed to prevent content overlapping the floating close button in the sidebar,
+ * by adding some right margin.
+ *
+ * @param param0
+ * @returns
+ */
+export function SideBarHeader({ className, ...props }: IDivProps) {
+  return <VCenterRow className={cn('h-8 gap-x-2 mr-8', className)} {...props} />
 }
 
 export interface ISlideBarProps extends IChildrenProps {

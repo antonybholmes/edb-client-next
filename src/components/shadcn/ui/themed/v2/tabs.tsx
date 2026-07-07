@@ -31,7 +31,7 @@ export const TRIGGER_CLS = cn(
 
 export const SIDEBAR_CLS = cn(
   BASE_TRIGGER_CLS,
-  'flex-row items-center px-3 h-9 data-active:bg-app-theme/15'
+  'flex-row items-center px-3 h-9 data-active:bg-app-theme/20'
 )
 
 export const PLAIN_CLS = cn(
@@ -148,13 +148,18 @@ export function TabsTrigger({
 
 export function TabsContent({
   ref,
+  orientation = 'v',
   className,
   ...props
-}: ComponentProps<typeof TabsPrimitive.Panel>) {
+}: ComponentProps<typeof TabsPrimitive.Panel> & { orientation?: 'v' | 'h' }) {
   return (
     <TabsPrimitive.Panel
       ref={ref}
-      className={cn('outline-none grow flex w-full h-full', className)}
+      className={cn(
+        'outline-none grow flex w-full h-full',
+        orientation === 'v' ? 'flex-col' : 'flex-row',
+        className
+      )}
       {...props}
     />
   )
@@ -208,6 +213,7 @@ interface ITabContentPanelsProps extends IDivProps {
   groupId?: string
   //tabs: ITab[]
   contentCls?: string
+  orientation?: 'v' | 'h'
 }
 
 /**
@@ -224,6 +230,7 @@ export function TabContentPanels({
   groupId = 'toolbar',
   className,
   contentCls,
+  orientation = 'v',
   ...props
 }: ITabContentPanelsProps) {
   const { selectedTab, tabs } = useTabs(groupId)
@@ -238,6 +245,7 @@ export function TabContentPanels({
               value={tab.id}
               key={ti}
               className={cn('h-full', contentCls)}
+              orientation={orientation}
             >
               {renderTab(tab)}
             </TabsContent>

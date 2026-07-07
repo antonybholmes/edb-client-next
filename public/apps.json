@@ -53,19 +53,19 @@
     "color": "#ffb366",
     "version": "21.6.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-07T02:08:24.567Z",
-    "hash": "c71b5107051d03f2de080f73696c79f08ac4a29b98f25542ddda92fb355869ee",
-    "build": 766
+    "modified": "2026-07-07T16:35:06.258Z",
+    "hash": "03858d09aa9bf4697953f8639ae26676a7c0720667ee025ee281df2ff832ec8f",
+    "build": 768
   },
   {
     "name": "GSEA Web",
     "description": "GSEA in a web app.",
     "color": "#4169E1",
-    "version": "3.2.8",
+    "version": "3.4.0",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-07-03T14:46:20.328Z",
-    "hash": "c3ec840cdaf626fa8ad27382b9a58f418da3365ba2a0616c17ef4d3e5337483e",
-    "build": 68
+    "modified": "2026-07-07T16:35:06.258Z",
+    "hash": "aafab70d29e466d9bc2a941569dcc228dacbe88303a5574c3a6c4b14547b7dd6",
+    "build": 70
   },
   {
     "name": "History Viewer",
@@ -111,9 +111,9 @@
     "color": "#40bf80",
     "version": "48.2.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-07T02:08:24.591Z",
-    "hash": "94d18cc179a477699d90d5f715999668608f3f90c3ed1445c231ee9ad25046bb",
-    "build": 1762
+    "modified": "2026-07-07T16:35:06.262Z",
+    "hash": "95ac3ea4da18942078287ecb20ff04ba8b41b2ede4f124e655db13c9c40fca3d",
+    "build": 1764
   },
   {
     "name": "Motifs",
@@ -171,9 +171,9 @@
     "color": "#ff9900",
     "version": "1.0.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-06T22:56:27.829Z",
-    "hash": "1777522d5662de0ad5ed96da582208a0ac826aed1ab3b641dbf9a5559b3e52b2",
-    "build": 16
+    "modified": "2026-07-07T16:35:06.262Z",
+    "hash": "38590024fc6db255777ce142f6ff88fd7d88229bc47ae46248e70842d52bceff",
+    "build": 18
   },
   {
     "name": "Seq Browser",

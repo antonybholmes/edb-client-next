@@ -91,8 +91,7 @@ function _OutlookTabs({
     setTab(tabs[0].id)
   }, [tabs])
 
-  function _scale(index: number, isSelected: boolean) {
-    console.log('clientRect')
+  function _scale(index: number) {
     if (!buttonsRef.current[index] || !tabListRef.current) {
       return
     }
@@ -144,7 +143,7 @@ function _OutlookTabs({
                     scale: 0.5,
                   })
                 }
-                _scale(ti || 0, isSelected)
+                _scale(ti || 0)
               }}
               onMouseLeave={() => {
                 if (isSelected) {

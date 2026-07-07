@@ -124,9 +124,6 @@ function _DevPanel() {
       <TabsContent value="actions">
         <ActionsDevPanel />
       </TabsContent>
-      {/* <TabsContent value="console" className="grow">
-        <div>Console</div>
-      </TabsContent> */}
     </Tabs>
   )
 }
