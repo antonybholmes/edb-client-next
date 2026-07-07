@@ -54,7 +54,7 @@ export function GeneSetsPropsPanel() {
   } = useGsea()
 
   return (
-    <PropsPanel className="gap-y-1 pr-2 text-xs">
+    <PropsPanel className="gap-y-1 text-xs">
       <VCenterRow className="justify-between pl-1 mr-5">
         <VCenterRow
           data-visible={allowSelectAll}
@@ -89,7 +89,7 @@ export function GeneSetsPropsPanel() {
         </IconButton>
       </VCenterRow>
 
-      <VScrollPanel>
+      <VScrollPanel className="   mb-2">
         <DndContext
           modifiers={[restrictToVerticalAxis]}
           //onDragStart={event => setActiveId(event.active.id as string)}

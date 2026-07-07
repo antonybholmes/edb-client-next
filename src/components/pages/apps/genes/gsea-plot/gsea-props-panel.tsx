@@ -46,7 +46,10 @@ export function GseaPropsPanel() {
       </TabsList> */}
       </Tabs>
 
-      <OutlookTabs id="gsea-plot-props-panel" />
+      <OutlookTabs
+        id="gsea-plot-props-panel"
+        className="border-t border-border/50 pt-2"
+      />
     </BaseCol>
   )
 }

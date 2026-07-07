@@ -15,7 +15,6 @@ import { UploadIcon } from '@/icons/upload-icon'
 
 import {
   DOCS_URL,
-  TEXT_DISPLAY,
   TEXT_DOWNLOAD_AS_PNG,
   TEXT_DOWNLOAD_AS_SVG,
   TEXT_EXPORT,
@@ -53,12 +52,10 @@ import Fuse from 'fuse.js'
 import { produce } from 'immer'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
-import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
+import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
-import { GeneSetsPropsPanel } from './geneset-props-panel'
-import { GseaDisplayPropsPanel } from './gsea-display-props-panel'
 import {
   PLOT_ZOOM_CHANNEL,
   useGseaPlotStore,
@@ -107,7 +104,7 @@ export function GseaPlotPage() {
 
   const { svgRef } = useSVG()
   const { setTabs: setToolbarTabs } = useToolbarTabs()
-  const { setTabs: setSideTabs } = useSideTabs()
+  //const { setTabs: setSideTabs } = useSideTabs()
 
   useEffect(() => {
     setAppInfo(APP_INFO)
@@ -122,18 +119,18 @@ export function GseaPlotPage() {
     ])
   }, [setToolbarTabs])
 
-  useEffect(() => {
-    setSideTabs([
-      {
-        id: 'Gene Sets',
-        component: GeneSetsPropsPanel,
-      },
-      {
-        id: TEXT_DISPLAY,
-        component: GseaDisplayPropsPanel,
-      },
-    ])
-  }, [setSideTabs])
+  // useEffect(() => {
+  //   setSideTabs([
+  //     {
+  //       id: 'Gene Sets',
+  //       component: GeneSetsPropsPanel,
+  //     },
+  //     {
+  //       id: TEXT_DISPLAY,
+  //       component: GseaDisplayPropsPanel,
+  //     },
+  //   ])
+  // }, [setSideTabs])
 
   useEffect(() => {
     setReportTabs(['gsea-results', ...phenotypes])
@@ -246,8 +243,6 @@ export function GseaPlotPage() {
 
   return (
     <>
-      {/* <DialogsRoot /> */}
-
       <HeaderPortal>
         <>
           <AppHeaderIcon />
