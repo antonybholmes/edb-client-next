@@ -104,6 +104,8 @@ export function GseaPlotPage() {
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   //const { setTabs: setSideTabs } = useSideTabs()
 
+  //const isHydrated = useStoreHydration(useGseaPlotStore)
+
   useEffect(() => {
     setAppInfo(APP_INFO)
   }, [setAppInfo])
@@ -117,20 +119,12 @@ export function GseaPlotPage() {
     ])
   }, [setToolbarTabs])
 
-  // useEffect(() => {
-  //   setSideTabs([
-  //     {
-  //       id: 'Gene Sets',
-  //       component: GeneSetsPropsPanel,
-  //     },
-  //     {
-  //       id: TEXT_DISPLAY,
-  //       component: GseaDisplayPropsPanel,
-  //     },
-  //   ])
-  // }, [setSideTabs])
-
   useEffect(() => {
+    // don't update if we don't have to
+    if (zoom === settings.page.scale) {
+      return
+    }
+
     updateSettings(
       produce(settings, (draft) => {
         draft.page.scale = zoom
@@ -290,8 +284,7 @@ export function GseaPlotPage() {
           <ToolbarMenu
             open={showFileMenu}
             onOpenChange={setShowFileMenu}
-            //value={toolbarTab}
-            //onValueChange={setToolbarTab}
+
             fileMenuTabs={fileMenuTabs}
             leftShortcuts={<UndoShortcuts />}
             rightShortcuts={

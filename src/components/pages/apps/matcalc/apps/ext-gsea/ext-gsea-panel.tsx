@@ -95,6 +95,11 @@ export function ExtGseaPanel() {
   }, [messages])
 
   useEffect(() => {
+    // don't update if we don't have to
+    if (zoom === plot?.props.page.scale) {
+      return
+    }
+
     updatePlot(
       produce(plot, (draft) => {
         draft.props.page.scale = zoom

@@ -73,6 +73,11 @@ function LollipopPanel() {
   }, [messages])
 
   useEffect(() => {
+    // don't update if we don't have to
+    if (zoom === displayProps.scale) {
+      return
+    }
+
     setDisplayProps(
       produce(displayProps, (draft) => {
         draft.scale = zoom

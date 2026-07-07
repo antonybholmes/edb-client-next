@@ -67,11 +67,10 @@ export function SankeyPanel() {
   }, [messages])
 
   useEffect(() => {
-    /*  plotsDispatch({
-      type: 'update-display',
-      id: plotId,
-      displayOptions: { ...displayProps, scale },
-    }) */
+    // don't update if we don't have to
+    if (zoom === settings.scale) {
+      return
+    }
 
     updateSettings(
       produce(settings, (draft) => {

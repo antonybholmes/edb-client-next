@@ -166,6 +166,11 @@ export function MotifsPage() {
   // }, [debouncedQ])
 
   useEffect(() => {
+    // don't update if we don't have to
+    if (zoom === settings.zoom) {
+      return
+    }
+
     updateSettings(
       produce(settings, (draft) => {
         draft.zoom = zoom

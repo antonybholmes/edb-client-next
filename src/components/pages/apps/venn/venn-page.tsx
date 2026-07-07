@@ -405,6 +405,11 @@ function VennPage() {
   }, [vennElemMap])
 
   useEffect(() => {
+    // don't update if we don't have to
+    if (zoom === settings.scale) {
+      return
+    }
+
     updateSettings({ scale: zoom })
   }, [zoom])
 

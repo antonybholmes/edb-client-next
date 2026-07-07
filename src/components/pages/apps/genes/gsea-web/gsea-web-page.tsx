@@ -140,6 +140,11 @@ export function GseaWebPage() {
   }, [phenotypes])
 
   useEffect(() => {
+    // don't update if we don't have to
+    if (zoom === settings.page.scale) {
+      return
+    }
+
     updateSettings(
       produce(settings, (draft) => {
         draft.page.scale = zoom

@@ -101,11 +101,10 @@ export function BoxPlotPanel() {
   }, [messages])
 
   useEffect(() => {
-    // plotsDispatch({
-    //   type: 'update-display',
-    //   id: plotId,
-    //   displayOptions: { ...displayOptions, scale },
-    // })
+    // don't update if we don't have to
+    if (zoom === plot?.props.page.scale) {
+      return
+    }
 
     updatePlot(
       produce(plot, (draft) => {

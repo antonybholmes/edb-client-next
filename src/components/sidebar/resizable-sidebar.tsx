@@ -191,7 +191,7 @@ function _ResizableSidebar({
   const { id } = useResizableSidebarContext()
 
   // we show bar once the store has hydrated, to ensure we get the correct initial size
-  const hydrated = useStoreHydration(useSlideBarStore)
+  const isHydrated = useStoreHydration(useSlideBarStore)
 
   const isUserDragging = useRef(false)
   const { size, sideLimits, setSize } = useSlideBar(id)
@@ -223,7 +223,7 @@ function _ResizableSidebar({
     window.addEventListener('pointercancel', stopDragging)
   }
 
-  if (!hydrated) {
+  if (!isHydrated) {
     return null
   }
 

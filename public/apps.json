@@ -14,9 +14,9 @@
     "description": "Biological diagrams",
     "version": "16.6.6",
     "copyright": "© 2025-2026 Antony Holmes",
-    "modified": "2026-07-07T19:35:09.109Z",
-    "hash": "b6f85f5ca6c49206d0be17d94b70b6134177fd18410c755df63c630b3b689446",
-    "build": 534
+    "modified": "2026-07-07T23:00:18.596Z",
+    "hash": "644c69fb34e3bb380e07715e05aad83a8cb9a73271b0143cfd91335736b8b544",
+    "build": 536
   },
   {
     "name": "Convert",
@@ -53,9 +53,9 @@
     "color": "#ffb366",
     "version": "21.8.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-07T22:22:44.468Z",
-    "hash": "05ad37db881a2cb5aaa4c55f4cbea7a50da7fedc7bdae929c74de4a2f696b7e2",
-    "build": 774
+    "modified": "2026-07-07T23:00:18.597Z",
+    "hash": "18c870eca3102faab1875a3662aad417ab8efd78e8ead9f87669157b668f4747",
+    "build": 776
   },
   {
     "name": "GSEA Web",
@@ -63,9 +63,9 @@
     "color": "#4169E1",
     "version": "3.4.0",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-07-07T22:22:44.468Z",
-    "hash": "306f4c8e9517d4510e0adffc2a28a47bd7d73a4b74d290b56347d7fb8a08ab79",
-    "build": 74
+    "modified": "2026-07-07T23:00:18.597Z",
+    "hash": "4d5af985c9b00dfb510d79ab55fdeed7eb5007ab73ab799c58f8c18c5e1b64ba",
+    "build": 76
   },
   {
     "name": "History Viewer",
@@ -111,19 +111,19 @@
     "color": "#40bf80",
     "version": "48.2.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-07T22:22:44.471Z",
-    "hash": "0aa40ee565f2246debe97439c99bf498646f1ba1b4fcf7f13da6dec456c47dcc",
-    "build": 1772
+    "modified": "2026-07-07T23:00:18.600Z",
+    "hash": "3bbb19e53465b9d6ccf1b6dcb91945702aed5c00e2a5602b6831534a127943e4",
+    "build": 1774
   },
   {
     "name": "Motifs",
     "description": "View motif logo plots.",
     "color": "#009933",
-    "version": "48.2.8",
+    "version": "48.4.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-07T22:22:44.468Z",
-    "hash": "e61d13b831c73f46ea12bcb05510aa1251de1269ddd9f1f7c4f1bfb916e70f4d",
-    "build": 968
+    "modified": "2026-07-07T23:00:18.597Z",
+    "hash": "7bb39ff1f1678a163aa71cdef606af4df77e70bae54a215c7b1c6b3c13731a4d",
+    "build": 970
   },
   {
     "name": "Oncoplot",
@@ -131,9 +131,9 @@
     "color": "#ff99cc",
     "version": "28.8.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-07T20:22:13.701Z",
-    "hash": "6056456f56ff98a99ad700eee71830c7e93fb332d7280a1261dc68b69d10cca5",
-    "build": 1076
+    "modified": "2026-07-07T23:00:18.602Z",
+    "hash": "744e147a52be1e9eb977b821d8713906d158c3b638bbf16a825a68edbc5037d8",
+    "build": 1078
   },
   {
     "name": "Overlap",
@@ -171,9 +171,9 @@
     "color": "#ff9900",
     "version": "1.0.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-07T20:22:13.700Z",
-    "hash": "6273630372354a1e058a650571caafa238c22d09e3462cff44e026d9a20fc1b5",
-    "build": 20
+    "modified": "2026-07-07T23:00:18.601Z",
+    "hash": "4018a109c42907ff19bd0464341f26e0002570809f2a0a66b39b9f4d833193a1",
+    "build": 22
   },
   {
     "name": "Seq Browser",
@@ -191,9 +191,9 @@
     "color": "#9966ff",
     "version": "26.4.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-07T20:22:13.700Z",
-    "hash": "0e0f3725c87fbad4f4e3b81738b9213e820d5510752b9c1afdb4f65985143f51",
-    "build": 816
+    "modified": "2026-07-07T23:00:18.601Z",
+    "hash": "8d3136d3edb35ca835208d0c40a3cd6c436a46a7509c6e8e9756c2509c0a4b6c",
+    "build": 818
   },
   {
     "name": "Table Viewer",
@@ -230,8 +230,8 @@
     "color": "#00008B",
     "version": "26.4.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-07T22:22:44.472Z",
-    "hash": "6f8990c04eee6673649af0fc2f106c1e50346ca2f2278a7b64a28da283430489",
-    "build": 870
+    "modified": "2026-07-07T23:00:18.601Z",
+    "hash": "f639fb10739066ec4f98810cb18f5f86e35ffc3cf876a1d611d841f28c4ccc35",
+    "build": 872
   }
 ]

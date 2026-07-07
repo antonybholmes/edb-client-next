@@ -194,6 +194,7 @@ export const useGseaSettingsStore = create<IGseaSettingsStore>()(
       ...DEFAULT_GSEA_DISPLAY_PROPS,
 
       updateSettings: (settings: Partial<IGseaDisplayProps>) => {
+        console.log('updating gsea settings', settings)
         set((state) => ({
           ...state,
           ...settings,
@@ -216,6 +217,7 @@ export function useGseaSettings(): {
   const updateSettings = useGseaSettingsStore((state) => state.updateSettings)
 
   function reset() {
+    console.log('resetting useGseaSettings to default')
     updateSettings({ ...DEFAULT_GSEA_DISPLAY_PROPS })
   }
 
