@@ -98,7 +98,8 @@ export function VennList({ vennList }: IProps) {
                   updateCircles(
                     produce(circles, (draft) => {
                       draft[vennList.id]!.fill.value = color
-                      draft[vennList.id]!.fill.opacity = opacity
+                      draft[vennList.id]!.fill.opacity =
+                        opacity ?? draft[vennList.id]!.fill.opacity
                     })
                   ),
               },
@@ -115,7 +116,8 @@ export function VennList({ vennList }: IProps) {
                   updateCircles(
                     produce(circles, (draft) => {
                       draft[vennList.id]!.stroke.value = color
-                      draft[vennList.id]!.stroke.opacity = opacity
+                      draft[vennList.id]!.stroke.opacity =
+                        opacity ?? draft[vennList.id]!.stroke.opacity
                     })
                   ),
               },

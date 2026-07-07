@@ -165,8 +165,10 @@ export function LegendSettingsPanel() {
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.legend.stroke.value = color
-                      draft.props.legend.stroke.opacity = opacity
-                      draft.props.legend.stroke.width = width ?? 1
+                      draft.props.legend.stroke.opacity =
+                        opacity ?? draft.props.legend.stroke.opacity
+                      draft.props.legend.stroke.width =
+                        width ?? draft.props.legend.stroke.width
                     })
                   ),
               },

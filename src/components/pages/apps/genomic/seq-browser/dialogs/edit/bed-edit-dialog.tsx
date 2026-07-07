@@ -136,7 +136,8 @@ export function BedEditDialog({ group, track, onResponse }: IProps) {
                   onColorChange: ({ color, opacity }) => {
                     const newTrack = produce(_track, (draft) => {
                       draft.displayOptions.fill.value = color
-                      draft.displayOptions.fill.opacity = opacity
+                      draft.displayOptions.fill.opacity =
+                        opacity ?? draft.displayOptions.fill.opacity
                     })
 
                     onResponse?.(TEXT_OK, { group, track: newTrack })

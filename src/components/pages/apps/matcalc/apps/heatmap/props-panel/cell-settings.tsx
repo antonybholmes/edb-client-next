@@ -149,7 +149,8 @@ export function CellSettingsPanel() {
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.cells.border.value = color
-                      draft.props.cells.border.opacity = opacity
+                      draft.props.cells.border.opacity =
+                        opacity ?? draft.props.cells.border.opacity
                       draft.props.cells.border.width =
                         width ?? displayProps.cells.border.width
                     })

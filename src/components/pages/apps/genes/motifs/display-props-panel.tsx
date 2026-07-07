@@ -186,7 +186,10 @@ export function DisplayPropsPanel() {
                               ]!.font.fill.value = color
                               draft.bases[
                                 base.toLowerCase() as DNABase
-                              ]!.font.fill.opacity = opacity
+                              ]!.font.fill.opacity =
+                                opacity ??
+                                draft.bases[base.toLowerCase() as DNABase]!.font
+                                  .fill.opacity
                             })
                           ),
                       },

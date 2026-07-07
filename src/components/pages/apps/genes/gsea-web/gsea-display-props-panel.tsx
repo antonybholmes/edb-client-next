@@ -197,7 +197,7 @@ export function GseaDisplayPropsPanel() {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.es.line.value = color
-                          draft.es.line.opacity = opacity
+                          draft.es.line.opacity = opacity ?? 1
                         })
                       )
                     },
@@ -228,7 +228,7 @@ export function GseaDisplayPropsPanel() {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.es.leadingEdge.fill.value = color
-                          draft.es.leadingEdge.fill.opacity = opacity
+                          draft.es.leadingEdge.fill.opacity = opacity ?? 1
                         })
                       )
                     },
@@ -299,7 +299,7 @@ export function GseaDisplayPropsPanel() {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.genes.pos.value = color
-                          draft.genes.pos.opacity = opacity
+                          draft.genes.pos.opacity = opacity ?? 1
                         })
                       )
                     },
@@ -313,7 +313,7 @@ export function GseaDisplayPropsPanel() {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.genes.neg.value = color
-                          draft.genes.neg.opacity = opacity
+                          draft.genes.neg.opacity = opacity ?? 1
                         })
                       )
                     },
@@ -371,7 +371,7 @@ export function GseaDisplayPropsPanel() {
                         updateSettings(
                           produce(settings, (draft) => {
                             draft.ranking.fill.value = color
-                            draft.ranking.fill.opacity = opacity
+                            draft.ranking.fill.opacity = opacity ?? 1
                           })
                         )
                       },
@@ -420,7 +420,7 @@ export function GseaDisplayPropsPanel() {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.ranking.zeroCross.line.value = color
-                          draft.ranking.zeroCross.line.opacity = opacity
+                          draft.ranking.zeroCross.line.opacity = opacity ?? 1
                         })
                       )
                     },

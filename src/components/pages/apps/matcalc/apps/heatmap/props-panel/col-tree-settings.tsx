@@ -45,7 +45,8 @@ export function ColTreeSettingsPanel() {
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.colTree.stroke.value = color
-                      draft.props.colTree.stroke.opacity = opacity
+                      draft.props.colTree.stroke.opacity =
+                        opacity ?? draft.props.colTree.stroke.opacity
                       draft.props.colTree.stroke.width =
                         width ?? displayProps.colTree.stroke.width
                     })

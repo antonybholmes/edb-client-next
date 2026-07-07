@@ -149,7 +149,7 @@ export function ThreeColorMenu({
               <ColorPickerUI
                 color={c.color}
                 onColorChange={({ color, opacity, width }) =>
-                  c.onColorChange(color, opacity, width ?? 1)
+                  c.onColorChange(color, opacity ?? 1, width ?? 1)
                 }
                 allowNoColor={allowNoColor}
                 showColor={true}

@@ -130,7 +130,8 @@ export function PlotSettingsPanel() {
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.grid.value = color
-                      draft.props.grid.opacity = opacity
+                      draft.props.grid.opacity =
+                        opacity ?? draft.props.grid.opacity
                       draft.props.grid.width = width ?? displayProps.grid.width
                     })
                   ),
@@ -179,7 +180,8 @@ export function PlotSettingsPanel() {
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.border.value = color
-                      draft.props.border.opacity = opacity
+                      draft.props.border.opacity =
+                        opacity ?? displayProps.border.opacity
                       draft.props.border.width =
                         width ?? displayProps.border.width
                     })

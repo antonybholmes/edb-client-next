@@ -82,7 +82,8 @@ export function ColGroupsSettingsPanel() {
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.groups.grid.value = color
-                      draft.props.groups.grid.opacity = opacity
+                      draft.props.groups.grid.opacity =
+                        opacity ?? draft.props.groups.grid.opacity
                       draft.props.groups.grid.width =
                         width ?? displayProps.groups.grid.width
                     })
@@ -135,7 +136,8 @@ export function ColGroupsSettingsPanel() {
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.groups.border.value = color
-                      draft.props.groups.border.opacity = opacity
+                      draft.props.groups.border.opacity =
+                        opacity ?? draft.props.groups.border.opacity
                       draft.props.groups.border.width =
                         width ?? displayProps.groups.border.width
                     })

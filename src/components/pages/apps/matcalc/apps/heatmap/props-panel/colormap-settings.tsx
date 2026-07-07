@@ -164,7 +164,8 @@ export function ColormapSettingsPanel() {
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.colorbar.stroke.value = color
-                      draft.props.colorbar.stroke.opacity = opacity
+                      draft.props.colorbar.stroke.opacity =
+                        opacity ?? draft.props.colorbar.stroke.opacity
                       draft.props.colorbar.stroke.width =
                         width ?? displayProps.colorbar.stroke.width
                     })

@@ -225,7 +225,8 @@ export function PileupPropsPanel({ ref }: IProps) {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.mafs.plot.fill.value = color
-                          draft.mafs.plot.fill.opacity = opacity
+                          draft.mafs.plot.fill.opacity =
+                            opacity ?? draft.mafs.plot.fill.opacity
                         })
                       ),
                     title: 'Fill Color',
