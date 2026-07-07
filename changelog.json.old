@@ -2081,6 +2081,10 @@
         {
           "msg": "Revised colorpicker api to use more optional params",
           "date": "2026-07-07T20:22:14.609Z"
+        },
+        {
+          "msg": "Zoom settings now check zoom has changed before broadcasting change to prevent race conditions when loading settings from localstorage.",
+          "date": "2026-07-07T23:00:19.472Z"
         }
       ],
       "Added": [
