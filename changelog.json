@@ -2077,6 +2077,10 @@
         {
           "msg": "GSEA plot renderer split to make more managable. UI tweaks",
           "date": "2026-07-07T16:35:07.167Z"
+        },
+        {
+          "msg": "Revised colorpicker api to use more optional params",
+          "date": "2026-07-07T20:22:14.609Z"
         }
       ],
       "Added": [

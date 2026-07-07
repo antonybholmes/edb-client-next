@@ -133,7 +133,7 @@ export function VariantPropsPanel({ ref }: IDivProps) {
                 {
                   color: displayProps.variants.plot.border.value,
                   allowNoColor: true,
-                  onColorChange: (color) =>
+                  onColorChange: ({ color }) =>
                     setDisplayProps(
                       produce(displayProps, (draft) => {
                         draft.variants.plot.border.value = color
@@ -202,7 +202,7 @@ export function VariantPropsPanel({ ref }: IDivProps) {
                               color:
                                 displayProps.variants.colorMap[mutation] ??
                                 DEFAULT_MUTATION_COLOR,
-                              onColorChange: (color) =>
+                              onColorChange: ({ color }) =>
                                 setDisplayProps(
                                   produce(displayProps, (draft) => {
                                     draft.variants.colorMap = {

@@ -244,7 +244,7 @@ export function PlotPropsPanel() {
                   {
                     color: settings.links.color,
 
-                    onColorChange: (color, alpha) => {
+                    onColorChange: ({ color }) => {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.links.color = color

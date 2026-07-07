@@ -206,10 +206,10 @@ export function VolcanoPropsPanel() {
                 colors={[
                   {
                     color: displayProps.dots.color,
-                    onColorChange: (v) =>
+                    onColorChange: ({ color }) =>
                       updatePlot(
                         produce(plot, (draft) => {
-                          draft.props.dots.color = v
+                          draft.props.dots.color = color
                         })
                       ),
                   },
@@ -233,10 +233,10 @@ export function VolcanoPropsPanel() {
                 colors={[
                   {
                     color: displayProps.border.value,
-                    onColorChange: (v) =>
+                    onColorChange: ({ color }) =>
                       updatePlot(
                         produce(plot, (draft) => {
-                          draft.props.border.value = v
+                          draft.props.border.value = color
                         })
                       ),
                   },
@@ -282,10 +282,10 @@ export function VolcanoPropsPanel() {
                 colors={[
                   {
                     color: displayProps.logFc.neg.color,
-                    onColorChange: (v) =>
+                    onColorChange: ({ color }) =>
                       updatePlot(
                         produce(plot, (draft) => {
-                          draft.props.logFc.neg.color = v
+                          draft.props.logFc.neg.color = color
                         })
                       ),
                   },
@@ -298,10 +298,10 @@ export function VolcanoPropsPanel() {
                 colors={[
                   {
                     color: displayProps.logFc.pos.color,
-                    onColorChange: (v) =>
+                    onColorChange: ({ color }) =>
                       updatePlot(
                         produce(plot, (draft) => {
-                          draft.props.logFc.pos.color = v
+                          draft.props.logFc.pos.color = color
                         })
                       ),
                   },

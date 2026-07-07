@@ -57,14 +57,14 @@ function SortableGeneElem({ color }: IGeneElemProps) {
         colors={[
           {
             color: color.color,
-            onColorChange: (v) => {
+            onColorChange: ({ color: newColor }) => {
               updateSettings(
                 produce(settings, (draft) => {
                   const colToUpdate = draft.variants.cmap.colors.find(
                     (c) => c.id === color.id
                   )
                   if (colToUpdate) {
-                    colToUpdate.color = v
+                    colToUpdate.color = newColor
                   }
 
                   // if this color is used in a predefined cmap, update the color there as well
@@ -78,7 +78,7 @@ function SortableGeneElem({ color }: IGeneElemProps) {
                     )
 
                     if (colToUpdateInCmap) {
-                      colToUpdateInCmap.color = v
+                      colToUpdateInCmap.color = newColor
                     }
                   }
                 })

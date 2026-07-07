@@ -62,7 +62,7 @@ export function ThreeColorPicker({
               onShowColor: (show) => onShowColor1?.(show),
               defaultColor: COLOR_TRANSPARENT,
               keepAlphaChannel: true,
-              onColorChange: (color) => onColor1Change?.(color),
+              onColorChange: ({ color }) => onColor1Change?.(color),
             },
           ]}
           onCancel={onCancel}
@@ -80,7 +80,7 @@ export function ThreeColorPicker({
               onShowColor: (show) => onShowColor2?.(show),
               defaultColor: COLOR_TRANSPARENT,
               keepAlphaChannel: true,
-              onColorChange: (color) => onColor2Change?.(color),
+              onColorChange: ({ color }) => onColor2Change?.(color),
             },
           ]}
           onCancel={onCancel}
@@ -98,7 +98,7 @@ export function ThreeColorPicker({
               onShowColor: (show) => onShowColor3?.(show),
               defaultColor: COLOR_TRANSPARENT,
               keepAlphaChannel: true,
-              onColorChange: (color) => onColor3Change?.(color),
+              onColorChange: ({ color }) => onColor3Change?.(color),
             },
           ]}
           onCancel={onCancel}

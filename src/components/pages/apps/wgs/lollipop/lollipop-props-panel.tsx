@@ -489,7 +489,7 @@ export function LollipopPropsPanel({ ref }: IDivProps) {
                                 colors={[
                                   {
                                     color: aaColor.scheme[aa]!,
-                                    onColorChange: (color) =>
+                                    onColorChange: ({ color }) =>
                                       setAAColor(
                                         produce(aaColor, (draft) => {
                                           draft.scheme[aa] = color

@@ -65,7 +65,7 @@ function MutationElem({ mutation, setDelMutation }: IMutationElemProps) {
         colors={[
           {
             color: mutation.color,
-            onColorChange: (color) => {
+            onColorChange: ({ color }) => {
               setMutations(
                 produce(mutations, (draft) => {
                   const mut = draft.find((m) => m.id === mutation.id)

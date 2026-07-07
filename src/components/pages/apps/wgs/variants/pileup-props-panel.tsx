@@ -47,7 +47,7 @@ export function PileupPropsPanel({ ref }: IProps) {
               payload: {
                 title: TEXT_RESET,
                 content: 'Are you sure you want to reset all settings?',
-                callback: r => {
+                callback: (r) => {
                   if (r === TEXT_OK) {
                     resetSettings()
                   }
@@ -70,9 +70,9 @@ export function PileupPropsPanel({ ref }: IProps) {
                     title: 'Bases',
                     textProps: settings.dna.text,
                     showAlign: false,
-                    update: textProps =>
+                    update: (textProps) =>
                       updateSettings(
-                        produce(settings, draft => {
+                        produce(settings, (draft) => {
                           draft.dna.text = textProps
                         })
                       ),
@@ -87,9 +87,9 @@ export function PileupPropsPanel({ ref }: IProps) {
             <CheckPropRow
               title="Add chr prefix"
               checked={settings.chrPrefix.show}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.chrPrefix.show = state
                   })
                 )
@@ -99,9 +99,9 @@ export function PileupPropsPanel({ ref }: IProps) {
             <CheckPropRow
               title="Prioritize variants"
               checked={settings.variants.prioritizeVariantTypeOrder}
-              onCheckedChange={state =>
+              onCheckedChange={(state) =>
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.variants.prioritizeVariantTypeOrder = state
                   })
                 )
@@ -116,16 +116,16 @@ export function PileupPropsPanel({ ref }: IProps) {
               <SelectList
                 items={SORT_ORDER}
                 value={settings.variants.sortOrder}
-                onValueChange={v => {
+                onValueChange={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.variants.sortOrder = v as SortOrder
                       draft.variants.colorBy = v as CMAPName
                     })
                   )
                 }}
               >
-                {SORT_ORDER.map(o => {
+                {SORT_ORDER.map((o) => {
                   return (
                     <SelectItem value={o.value} key={o.value}>
                       {o.label}
@@ -161,9 +161,9 @@ export function PileupPropsPanel({ ref }: IProps) {
             <CheckPropRow
               title="Tooltips"
               checked={settings.tooltips.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.tooltips.show = v
                   })
                 )
@@ -178,9 +178,9 @@ export function PileupPropsPanel({ ref }: IProps) {
             <CheckPropRow
               title="Line"
               checked={settings.mafs.plot.line.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.mafs.plot.line.show = v
                   })
                 )
@@ -191,9 +191,9 @@ export function PileupPropsPanel({ ref }: IProps) {
                   {
                     color: settings.mafs.plot.line.value,
                     opacity: 1,
-                    onColorChange: color =>
+                    onColorChange: ({ color }) =>
                       updateSettings(
-                        produce(settings, draft => {
+                        produce(settings, (draft) => {
                           draft.mafs.plot.line.value = color
                         })
                       ),
@@ -208,9 +208,9 @@ export function PileupPropsPanel({ ref }: IProps) {
             <CheckPropRow
               title="Fill"
               checked={settings.mafs.plot.fill.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.mafs.plot.fill.show = v
                   })
                 )
@@ -221,9 +221,9 @@ export function PileupPropsPanel({ ref }: IProps) {
                   {
                     color: settings.mafs.plot.fill.value,
                     opacity: settings.mafs.plot.fill.opacity,
-                    onColorChange: (color, opacity) =>
+                    onColorChange: ({ color, opacity }) =>
                       updateSettings(
-                        produce(settings, draft => {
+                        produce(settings, (draft) => {
                           draft.mafs.plot.fill.value = color
                           draft.mafs.plot.fill.opacity = opacity
                         })
@@ -243,9 +243,9 @@ export function PileupPropsPanel({ ref }: IProps) {
               <Switch
                 title={TEXT_SHOW}
                 checked={settings.dna.text.show}
-                onCheckedChange={state => {
+                onCheckedChange={(state) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.dna.text.show = state
                     })
                   )
@@ -259,9 +259,9 @@ export function PileupPropsPanel({ ref }: IProps) {
             <CheckPropRow
               title="Index"
               checked={settings.dna.index.text.show}
-              onCheckedChange={state => {
+              onCheckedChange={(state) => {
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.dna.index.text.show = state
                   })
                 )
@@ -271,9 +271,9 @@ export function PileupPropsPanel({ ref }: IProps) {
             <CheckPropRow
               title="Border"
               checked={settings.dna.border.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.dna.border.show = v
                   })
                 )
@@ -284,9 +284,9 @@ export function PileupPropsPanel({ ref }: IProps) {
                   {
                     color: settings.dna.border.value,
                     opacity: 1,
-                    onColorChange: color =>
+                    onColorChange: ({ color }) =>
                       updateSettings(
-                        produce(settings, draft => {
+                        produce(settings, (draft) => {
                           draft.dna.border.value = color
                         })
                       ),
@@ -301,9 +301,9 @@ export function PileupPropsPanel({ ref }: IProps) {
             <CheckPropRow
               title="Motifs"
               checked={settings.dna.motifs.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 updateSettings(
-                  produce(settings, draft => {
+                  produce(settings, (draft) => {
                     draft.dna.motifs.show = v
                   })
                 )
@@ -318,9 +318,9 @@ export function PileupPropsPanel({ ref }: IProps) {
               <Switch
                 title={TEXT_SHOW}
                 checked={settings.motifs.show}
-                onCheckedChange={v =>
+                onCheckedChange={(v) =>
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.motifs.show = v
                     })
                   )
@@ -337,11 +337,11 @@ export function PileupPropsPanel({ ref }: IProps) {
                   title={pattern.name}
                   key={pi}
                   checked={pattern.show}
-                  onCheckedChange={v =>
+                  onCheckedChange={(v) =>
                     updateSettings(
-                      produce(settings, draft => {
+                      produce(settings, (draft) => {
                         const motif = draft.motifs.patterns.find(
-                          x => x.name === pattern.name
+                          (x) => x.name === pattern.name
                         )
 
                         if (motif) {

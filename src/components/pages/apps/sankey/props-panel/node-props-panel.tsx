@@ -42,7 +42,7 @@ function NodeItem({ node }: { node: IOutputNode }) {
         colors={[
           {
             color: node.color,
-            onColorChange: (color) => updateNode({ ...node, color }),
+            onColorChange: ({ color }) => updateNode({ ...node, color }),
           },
         ]}
 

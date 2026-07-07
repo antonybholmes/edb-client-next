@@ -71,10 +71,10 @@ export function RowTreeSettingsPanel() {
             colors={[
               {
                 color: displayProps.rowTree.stroke.value,
-                onColorChange: (v) =>
+                onColorChange: ({ color }) =>
                   updatePlot(
                     produce(plot, (draft) => {
-                      draft.props.rowTree.stroke.value = v
+                      draft.props.rowTree.stroke.value = color
                     })
                   ),
               },

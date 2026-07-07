@@ -89,7 +89,7 @@ export function GroupDialog({ group, onResponse }: IProps) {
       //className="w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4"
       leftHeaderChildren={
         <ColorPickerButton
-          colors={[{ color, onColorChange: (color) => setColor(color) }]}
+          colors={[{ color, onColorChange: ({ color }) => setColor(color) }]}
           className={SIMPLE_COLOR_EXT_CLS}
         />
       }
@@ -110,7 +110,9 @@ export function GroupDialog({ group, onResponse }: IProps) {
           className="col-span-4"
           rightChildren={
             <ColorPickerButton
-              colors={[{ color, onColorChange: (color) => setColor(color) }]}
+              colors={[
+                { color, onColorChange: ({ color }) => setColor(color) },
+              ]}
               className={SIMPLE_COLOR_EXT_CLS}
             />
           }

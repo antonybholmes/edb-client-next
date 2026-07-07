@@ -137,7 +137,7 @@ function GroupItem({
         colors={[
           {
             color: group.color,
-            onColorChange: (color) => updateGroup({ ...group, color }),
+            onColorChange: ({ color }) => updateGroup({ ...group, color }),
           },
         ]}
         // onOpenChanged={open => {

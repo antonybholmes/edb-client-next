@@ -213,7 +213,7 @@ function FontStyleToggles({
           colors={[
             {
               color: font.fill.value,
-              onColorChange: (color) =>
+              onColorChange: ({ color }) =>
                 update?.({ ...font, fill: { ...font.fill, value: color } }),
             },
           ]}

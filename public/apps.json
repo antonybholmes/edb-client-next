@@ -101,19 +101,19 @@
     "color": "#DA70D6",
     "version": "27.6.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-06T20:07:11.680Z",
-    "hash": "d654d9da3fe2d4832dffabea0023cd1d8b727b1e3b467a82e7a61af7eb8ecda8",
-    "build": 1072
+    "modified": "2026-07-07T20:22:13.700Z",
+    "hash": "c367349a5c2394637c06503001b0258c8eee3a14113a010d28e95d41eecd9db3",
+    "build": 1074
   },
   {
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "48.2.6",
+    "version": "48.2.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-07T19:35:16.930Z",
-    "hash": "173e6510d62e156cb1999aab979b0bcae8b980c879bb729cd396ea6484760385",
-    "build": 1768
+    "modified": "2026-07-07T20:22:13.699Z",
+    "hash": "02eecad8120dee310fe6f9af5439e8b2f873b8f3f72c0b46bf20fcf693fa726c",
+    "build": 1770
   },
   {
     "name": "Motifs",
@@ -131,9 +131,9 @@
     "color": "#ff99cc",
     "version": "28.8.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-06T20:07:11.680Z",
-    "hash": "997dd6d8e21338d62b42ce92f67682467c197d07e0120a6a8f28f9bc1ba251b6",
-    "build": 1074
+    "modified": "2026-07-07T20:22:13.701Z",
+    "hash": "6056456f56ff98a99ad700eee71830c7e93fb332d7280a1261dc68b69d10cca5",
+    "build": 1076
   },
   {
     "name": "Overlap",
@@ -169,11 +169,11 @@
     "name": "Sankey",
     "description": "Create Sankey plots.",
     "color": "#ff9900",
-    "version": "1.0.2",
+    "version": "1.0.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-07T16:35:06.262Z",
-    "hash": "38590024fc6db255777ce142f6ff88fd7d88229bc47ae46248e70842d52bceff",
-    "build": 18
+    "modified": "2026-07-07T20:22:13.700Z",
+    "hash": "6273630372354a1e058a650571caafa238c22d09e3462cff44e026d9a20fc1b5",
+    "build": 20
   },
   {
     "name": "Seq Browser",
@@ -191,9 +191,9 @@
     "color": "#9966ff",
     "version": "26.4.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-03T14:46:20.350Z",
-    "hash": "9313ba4e9aa1be9db9ca11002415629c01ef6acb8bfd563bc350264b6e7fed19",
-    "build": 814
+    "modified": "2026-07-07T20:22:13.700Z",
+    "hash": "0e0f3725c87fbad4f4e3b81738b9213e820d5510752b9c1afdb4f65985143f51",
+    "build": 816
   },
   {
     "name": "Table Viewer",
@@ -220,9 +220,9 @@
     "color": "#FA8072",
     "version": "26.6.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-06T20:07:11.680Z",
-    "hash": "bf7e0a9eb368abdb4be844466f6ae0ef290cfb98bfd8d2ec5592fa24bbebec8e",
-    "build": 992
+    "modified": "2026-07-07T20:22:13.701Z",
+    "hash": "24e18bb2b7bff54e13a1427073d033eb296dbd4c88c6ca66e5ac017084251daa",
+    "build": 994
   },
   {
     "name": "Venn",
@@ -230,8 +230,8 @@
     "color": "#00008B",
     "version": "26.2.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-03T14:46:20.352Z",
-    "hash": "6b675c2b8c11f7151d19660b88982f4cabc2c533468f9366acf39ccc99383467",
-    "build": 866
+    "modified": "2026-07-07T20:22:13.700Z",
+    "hash": "13e188a06c7de988fc67cee25a883b5b49b6e686f9af316dd92d2d60b13fc66a",
+    "build": 868
   }
 ]

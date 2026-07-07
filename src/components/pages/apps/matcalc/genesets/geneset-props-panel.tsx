@@ -107,7 +107,7 @@ function GenesetItem({
         colors={[
           {
             color,
-            onColorChange: (color) => setColor(color),
+            onColorChange: ({ color }) => setColor(color),
           },
         ]}
         onOpenChanged={(open) => {

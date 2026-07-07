@@ -28,7 +28,10 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
 
   return (
     <PropsPanel ref={ref} className="pr-1">
-      <ScrollAccordion value={tabs} onValueChange={v => setTabs(v as string[])}>
+      <ScrollAccordion
+        value={tabs}
+        onValueChange={(v) => setTabs(v as string[])}
+      >
         <AccordionItem value="grid">
           <AccordionTrigger
             rightChildren={
@@ -37,9 +40,9 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
                   {
                     title: 'Title',
                     textProps: displayProps.title,
-                    update: font =>
+                    update: (font) =>
                       setDisplayProps(
-                        produce(displayProps, draft => {
+                        produce(displayProps, (draft) => {
                           draft.title = font
                         })
                       ),
@@ -48,9 +51,9 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
                   {
                     title: 'Labels',
                     textProps: displayProps.text,
-                    update: font =>
+                    update: (font) =>
                       setDisplayProps(
-                        produce(displayProps, draft => {
+                        produce(displayProps, (draft) => {
                           draft.text = font
                         })
                       ),
@@ -68,9 +71,9 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
                 id="w"
                 value={displayProps.legend.variants.label}
                 className="w-full rounded-theme"
-                onTextChange={v => {
+                onTextChange={(v) => {
                   setDisplayProps(
-                    produce(displayProps, draft => {
+                    produce(displayProps, (draft) => {
                       draft.legend.variants.label = v
                     })
                   )
@@ -83,16 +86,16 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
                 v1={displayProps.grid.cell.w}
                 v2={displayProps.grid.cell.h}
                 dp={0}
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   setDisplayProps(
-                    produce(displayProps, draft => {
+                    produce(displayProps, (draft) => {
                       draft.grid.cell.w = v
                     })
                   )
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   setDisplayProps(
-                    produce(displayProps, draft => {
+                    produce(displayProps, (draft) => {
                       draft.grid.cell.h = v
                     })
                   )
@@ -104,16 +107,16 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
                 v1={displayProps.grid.spacing.x}
                 v2={displayProps.grid.spacing.y}
                 dp={0}
-                onNumChanged1={v => {
+                onNumChanged1={(v) => {
                   setDisplayProps(
-                    produce(displayProps, draft => {
+                    produce(displayProps, (draft) => {
                       draft.grid.spacing.x = v
                     })
                   )
                 }}
-                onNumChanged2={v => {
+                onNumChanged2={(v) => {
                   setDisplayProps(
-                    produce(displayProps, draft => {
+                    produce(displayProps, (draft) => {
                       draft.grid.spacing.y = v
                     })
                   )
@@ -123,9 +126,9 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
             <CheckPropRow
               title="Border"
               checked={displayProps.border.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.border.show = v
                   })
                 )
@@ -135,9 +138,9 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
                 colors={[
                   {
                     color: displayProps.border.value,
-                    onColorChange: color =>
+                    onColorChange: ({ color }) =>
                       setDisplayProps(
-                        produce(displayProps, draft => {
+                        produce(displayProps, (draft) => {
                           draft.border.value = color
                         })
                       ),
@@ -149,9 +152,9 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
             <CheckPropRow
               title="Outline"
               checked={displayProps.grid.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.grid.show = v
                   })
                 )
@@ -161,9 +164,9 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
                 colors={[
                   {
                     color: displayProps.grid.value,
-                    onColorChange: color =>
+                    onColorChange: ({ color }) =>
                       setDisplayProps(
-                        produce(displayProps, draft => {
+                        produce(displayProps, (draft) => {
                           draft.grid.value = color
                         })
                       ),
@@ -181,9 +184,9 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
             <CheckPropRow
               title="Mutation graph"
               checked={displayProps.samples.graphs.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.samples.graphs.show = v
                   })
                 )
@@ -194,9 +197,9 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
                 id="w"
                 value={displayProps.samples.graphs.yaxis.label}
                 className="w-full rounded-theme"
-                onTextChange={v => {
+                onTextChange={(v) => {
                   setDisplayProps(
-                    produce(displayProps, draft => {
+                    produce(displayProps, (draft) => {
                       draft.samples.graphs.yaxis.label = v
                     })
                   )
@@ -208,9 +211,9 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
               title="Border"
               disabled={!displayProps.samples.graphs.show}
               checked={displayProps.samples.graphs.border.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.samples.graphs.border.show = v
                   })
                 )
@@ -220,9 +223,9 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
                 colors={[
                   {
                     color: displayProps.samples.graphs.border.value,
-                    onColorChange: color =>
+                    onColorChange: ({ color }) =>
                       setDisplayProps(
-                        produce(displayProps, draft => {
+                        produce(displayProps, (draft) => {
                           draft.samples.graphs.border.value = color
                         })
                       ),
@@ -240,9 +243,9 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
             <CheckPropRow
               title="Sample distribution graph"
               checked={displayProps.features.graphs.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.features.graphs.show = v
                   })
                 )
@@ -253,9 +256,9 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
               title="Border"
               disabled={!displayProps.features.graphs.show}
               checked={displayProps.features.graphs.border.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.features.graphs.border.show = v
                   })
                 )
@@ -265,9 +268,9 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
                 colors={[
                   {
                     color: displayProps.features.graphs.border.value,
-                    onColorChange: color =>
+                    onColorChange: ({ color }) =>
                       setDisplayProps(
-                        produce(displayProps, draft => {
+                        produce(displayProps, (draft) => {
                           draft.features.graphs.border.value = color
                         })
                       ),
@@ -281,9 +284,9 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
               title="Percentages"
               disabled={!displayProps.features.graphs.show}
               checked={displayProps.features.graphs.percentages.show}
-              onCheckedChange={v =>
+              onCheckedChange={(v) =>
                 setDisplayProps(
-                  produce(displayProps, draft => {
+                  produce(displayProps, (draft) => {
                     draft.features.graphs.percentages.show = v
                   })
                 )

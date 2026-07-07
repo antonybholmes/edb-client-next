@@ -291,7 +291,7 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                       colors={[
                         {
                           color: label.color,
-                          onColorChange: (color) =>
+                          onColorChange: ({ color }) =>
                             setLabels(
                               produce(labels, (draft) => {
                                 draft[li]!.color = color

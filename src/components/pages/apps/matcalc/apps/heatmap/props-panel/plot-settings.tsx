@@ -126,12 +126,12 @@ export function PlotSettingsPanel() {
                 color: displayProps.grid.value,
                 width: displayProps.grid.width,
                 opacity: displayProps.grid.opacity,
-                onColorChange: (color, opacity, width) =>
+                onColorChange: ({ color, opacity, width }) =>
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.grid.value = color
                       draft.props.grid.opacity = opacity
-                      draft.props.grid.width = width
+                      draft.props.grid.width = width ?? displayProps.grid.width
                     })
                   ),
               },
@@ -175,12 +175,13 @@ export function PlotSettingsPanel() {
                 color: displayProps.border.value,
                 width: displayProps.border.width,
                 opacity: displayProps.border.opacity,
-                onColorChange: (color, opacity, width) =>
+                onColorChange: ({ color, opacity, width }) =>
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.border.value = color
                       draft.props.border.opacity = opacity
-                      draft.props.border.width = width
+                      draft.props.border.width =
+                        width ?? displayProps.border.width
                     })
                   ),
               },

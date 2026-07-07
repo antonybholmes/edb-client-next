@@ -64,10 +64,10 @@ export function ClinicalPropsPanel({ ref }: IDivProps) {
             colors={[
               {
                 color: displayProps.clinical.border.value,
-                onColorChange: (v) =>
+                onColorChange: ({ color }) =>
                   setDisplayProps(
                     produce(displayProps, (draft) => {
-                      draft.clinical.border.value = v
+                      draft.clinical.border.value = color
                     })
                   ),
               },

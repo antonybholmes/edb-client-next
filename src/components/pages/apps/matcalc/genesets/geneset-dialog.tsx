@@ -51,7 +51,7 @@ export function GenesetDialog({ geneset, onResponse }: IProps) {
           {name.length > 0 ? `Edit ${name}` : 'New Gene Set'}
         </span>
       }
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onResponse?.(r, undefined)
         } else {
@@ -76,7 +76,7 @@ export function GenesetDialog({ geneset, onResponse }: IProps) {
           colors={[
             {
               color,
-              onColorChange: color => setColor(color),
+              onColorChange: ({ color }) => setColor(color),
             },
           ]}
           className={SIMPLE_COLOR_EXT_CLS}
@@ -93,7 +93,7 @@ export function GenesetDialog({ geneset, onResponse }: IProps) {
           <Input
             id="name"
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             placeholder={TEXT_NAME}
           />
         </PropRow>
@@ -105,7 +105,7 @@ export function GenesetDialog({ geneset, onResponse }: IProps) {
         <Textarea
           id="search"
           value={search}
-          onChange={e => setSearch(e.target.value)}
+          onChange={(e) => setSearch(e.target.value)}
           placeholder="List of genes (one per line)..."
           label="Genes"
           labelPos="left"

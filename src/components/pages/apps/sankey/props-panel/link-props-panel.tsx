@@ -57,7 +57,7 @@ function LinkItem({ link }: { link: IOutputLink }) {
         colors={[
           {
             color: link.color || settings.links.color,
-            onColorChange: (color) => updateLink({ ...link, color }),
+            onColorChange: ({ color }) => updateLink({ ...link, color }),
           },
         ]}
 

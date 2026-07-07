@@ -34,7 +34,7 @@ export function ClinicalDialog({
       open={true}
       title="Clinical Track Properties"
       buttons={[TEXT_OK]}
-      onResponse={r => onResponse?.(r)}
+      onResponse={(r) => onResponse?.(r)}
       //contentVariant="glass"
       //bodyVariant="card"
       bodyCls="gap-y-2"
@@ -47,10 +47,10 @@ export function ClinicalDialog({
                 color:
                   trackProps.categoryColors[category.toLowerCase()] ??
                   NO_ALTERATION_COLOR,
-                onColorChange: color => {
+                onColorChange: ({ color }) => {
                   const newTracksProps = produce(
                     displayProps.legend.clinical.tracks,
-                    draft => {
+                    (draft) => {
                       draft[track.name]!.categoryColors[
                         category.toLowerCase()
                       ] = color
@@ -58,7 +58,7 @@ export function ClinicalDialog({
                   )
 
                   setDisplayProps(
-                    produce(displayProps, draft => {
+                    produce(displayProps, (draft) => {
                       draft.legend.clinical.tracks = newTracksProps
                     })
                   )

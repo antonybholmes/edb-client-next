@@ -368,7 +368,7 @@ export function DisplayPropsPanel() {
                 colors={[
                   {
                     color: settings.dots.color,
-                    onColorChange: (color) =>
+                    onColorChange: ({ color }) =>
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.dots.color = color

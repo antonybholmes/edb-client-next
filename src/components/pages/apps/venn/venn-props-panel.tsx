@@ -193,7 +193,7 @@ export function VennPropsPanel() {
                 colors={[
                   {
                     color: settings.intersectionColor,
-                    onColorChange: (color) =>
+                    onColorChange: ({ color }) =>
                       updateSettings({
                         intersectionColor: color,
                       }),

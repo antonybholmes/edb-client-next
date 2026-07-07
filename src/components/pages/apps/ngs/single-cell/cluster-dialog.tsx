@@ -31,7 +31,7 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
       open={true}
       buttons={[TEXT_OK]}
       title={`Edit ${!cluster.name.toLowerCase().includes('cluster') ? 'Cluster ' : ''}${cluster.name}`}
-      onResponse={r => {
+      onResponse={(r) => {
         if (r === TEXT_OK) {
         }
 
@@ -53,8 +53,8 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
           colors={[
             {
               color: _cluster.color,
-              onColorChange: color => {
-                const newCluster = produce(_cluster, draft => {
+              onColorChange: ({ color }) => {
+                const newCluster = produce(_cluster, (draft) => {
                   draft.color = color
                 })
 
@@ -62,9 +62,9 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
 
                 if (clusterInfo) {
                   updateClusterInfo(
-                    produce(clusterInfo, draft => {
+                    produce(clusterInfo, (draft) => {
                       draft.clusters.find(
-                        c => c.label === _cluster.label
+                        (c) => c.label === _cluster.label
                       )!.color = color
                     })
                   )
@@ -89,14 +89,14 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
         title="Title"
         id="name"
         value={_cluster.name}
-        onTextChange={e => {
+        onTextChange={(e) => {
           if (!clusterInfo) {
             return
           }
 
           updateClusterInfo(
-            produce(clusterInfo, draft => {
-              draft.clusters = draft.clusters.map(g => {
+            produce(clusterInfo, (draft) => {
+              draft.clusters = draft.clusters.map((g) => {
                 if (g.label === _cluster.label) {
                   return { ...g, name: e }
                 }
@@ -113,8 +113,8 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
       <SwitchPropRow
         title="Show"
         checked={_cluster.show}
-        onCheckedChange={checked => {
-          const newCluster = produce(_cluster, draft => {
+        onCheckedChange={(checked) => {
+          const newCluster = produce(_cluster, (draft) => {
             draft.show = checked
           })
 
@@ -125,8 +125,8 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
           }
 
           updateClusterInfo(
-            produce(clusterInfo, draft => {
-              draft.clusters.find(c => c.label === _cluster.label)!.show =
+            produce(clusterInfo, (draft) => {
+              draft.clusters.find((c) => c.label === _cluster.label)!.show =
                 checked
             })
           )
@@ -136,8 +136,8 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
       <SwitchPropRow
         title="Label"
         checked={_cluster.display.label.show}
-        onCheckedChange={checked => {
-          const newCluster = produce(_cluster, draft => {
+        onCheckedChange={(checked) => {
+          const newCluster = produce(_cluster, (draft) => {
             draft.display.label.show = checked
           })
 
@@ -148,9 +148,9 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
           }
 
           updateClusterInfo(
-            produce(clusterInfo, draft => {
+            produce(clusterInfo, (draft) => {
               draft.clusters.find(
-                c => c.label === _cluster.label
+                (c) => c.label === _cluster.label
               )!.display.label.show = checked
             })
           )
@@ -160,8 +160,8 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
       <SwitchPropRow
         title="Roundel"
         checked={_cluster.display.label.roundel.show}
-        onCheckedChange={checked => {
-          const newCluster = produce(_cluster, draft => {
+        onCheckedChange={(checked) => {
+          const newCluster = produce(_cluster, (draft) => {
             draft.display.label.roundel.show = checked
           })
 
@@ -172,9 +172,9 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
           }
 
           updateClusterInfo(
-            produce(clusterInfo, draft => {
+            produce(clusterInfo, (draft) => {
               draft.clusters.find(
-                c => c.label === _cluster.label
+                (c) => c.label === _cluster.label
               )!.display.label.roundel.show = checked
             })
           )

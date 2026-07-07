@@ -180,7 +180,7 @@ export function getTabName(tab: ITab | undefined): string {
  */
 export function getTabFromValue(
   value: UndefStr,
-  tabs: ITab[]
+  tabs: readonly ITab[]
 ): ISelectedTab | null {
   // if no tabs {return undefined}
   if (tabs.length === 0) {

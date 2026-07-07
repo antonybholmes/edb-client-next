@@ -110,7 +110,7 @@ function SortableGeneElem({ gene }: IGeneElemProps) {
         colors={[
           {
             color: gene.color,
-            onColorChange: (color) => {
+            onColorChange: ({ color }) => {
               setGenes(
                 produce(genes, (draft) => {
                   const g = draft.find((m) => m.id === gene.id)

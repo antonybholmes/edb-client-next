@@ -39,7 +39,7 @@ export function FgBgColorPicker({
               color: fgColor,
               defaultColor: defaultFgColor,
               keepAlphaChannel: true,
-              onColorChange: (color) => onFgColorChange?.(color),
+              onColorChange: ({ color }) => onFgColorChange?.(color),
               allowNoColor: allowNoColor,
             },
           ]}
@@ -54,7 +54,7 @@ export function FgBgColorPicker({
               color: bgColor,
               defaultColor: defaultBgColor,
               keepAlphaChannel: true,
-              onColorChange: (color) => onBgColorChange?.(color),
+              onColorChange: ({ color }) => onBgColorChange?.(color),
               allowNoColor: allowNoColor,
             },
           ]}

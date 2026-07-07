@@ -41,12 +41,13 @@ export function ColTreeSettingsPanel() {
                 color: displayProps.colTree.stroke.value,
                 width: displayProps.colTree.stroke.width,
                 opacity: displayProps.colTree.stroke.opacity,
-                onColorChange: (color, opacity, width) =>
+                onColorChange: ({ color, opacity, width }) =>
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.colTree.stroke.value = color
                       draft.props.colTree.stroke.opacity = opacity
-                      draft.props.colTree.stroke.width = width
+                      draft.props.colTree.stroke.width =
+                        width ?? displayProps.colTree.stroke.width
                     })
                   ),
               },

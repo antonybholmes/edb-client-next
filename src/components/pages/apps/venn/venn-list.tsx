@@ -94,7 +94,7 @@ export function VennList({ vennList }: IProps) {
             colors={[
               {
                 color: circles[vennList.id]!.fill.value,
-                onColorChange: (color, opacity) =>
+                onColorChange: ({ color, opacity }) =>
                   updateCircles(
                     produce(circles, (draft) => {
                       draft[vennList.id]!.fill.value = color
@@ -111,7 +111,7 @@ export function VennList({ vennList }: IProps) {
               {
                 color: circles[vennList.id]!.stroke.value,
                 opacity: circles[vennList.id]!.stroke.opacity,
-                onColorChange: (color, opacity) =>
+                onColorChange: ({ color, opacity }) =>
                   updateCircles(
                     produce(circles, (draft) => {
                       draft[vennList.id]!.stroke.value = color
