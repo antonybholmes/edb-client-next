@@ -2087,6 +2087,10 @@
         {
           "msg": "GSEA plot now supports inverting plots",
           "date": "2026-07-06T20:07:12.566Z"
+        },
+        {
+          "msg": "New outline line dialog. GSEA supports single line for leading edge",
+          "date": "2026-07-07T22:03:31.821Z"
         }
       ]
     },

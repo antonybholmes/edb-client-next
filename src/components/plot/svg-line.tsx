@@ -12,6 +12,7 @@ interface ISvgLineProps extends SVGProps<SVGLineElement> {
  * @returns
  */
 export function SvgLine({
+  id,
   stroke,
   strokeWidth,
   strokeDasharray,
@@ -21,6 +22,7 @@ export function SvgLine({
 }: ISvgLineProps) {
   return (
     <line
+      id={id}
       stroke={stroke ?? s?.value}
       strokeWidth={strokeWidth ?? s?.width}
       strokeOpacity={opacity ?? s?.opacity}

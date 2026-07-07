@@ -228,13 +228,24 @@ export function GseaDisplayPropsPanel() {
               <OutlineButton
                 colors={[
                   {
-                    color: settings.es.leadingEdge.fill.value,
-                    opacity: settings.es.leadingEdge.fill.opacity,
-                    onColorChange: ({ color, opacity }) => {
+                    color: settings.es.leadingEdge.line.value,
+                    opacity: settings.es.leadingEdge.line.opacity,
+                    onColorChange: ({
+                      color,
+                      opacity,
+                      width,
+                      dasharray,
+                      show,
+                    }) => {
                       updateSettings(
                         produce(settings, (draft) => {
-                          draft.es.leadingEdge.fill.value = color
-                          draft.es.leadingEdge.fill.opacity = opacity
+                          draft.es.leadingEdge.line.show = show ?? true
+                          draft.es.leadingEdge.line.value = color
+                          draft.es.leadingEdge.line.opacity = opacity
+                          draft.es.leadingEdge.line.width =
+                            width ?? draft.es.leadingEdge.line.width
+                          draft.es.leadingEdge.line.dasharray =
+                            dasharray ?? draft.es.leadingEdge.line.dasharray
                         })
                       )
                     },

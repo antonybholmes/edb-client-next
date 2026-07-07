@@ -342,48 +342,16 @@ function EsSvg({
     ]
   }
 
-  const leadingEdge = es.filter((e) => e.leading)
-
-  let leadingPoints = leadingEdge.map((e) => ({
-    x: xax.domainToRange(e.rank),
-    y: yax.domainToRange(e.score),
-  }))
-
-  // To make the filled area under the leading edge curve,
-  // we need to add points at the start and end of the leading edge curve to ensure it is closed.
-  // We check if the leading edge is on the left or right half of the plot to determine
-  // where to add the points.
-
-  // check if leading edge is on left or right half to decide how to fix start and end
-  if (leadingEdge[leadingEdge.length - 1].rank < rankMid) {
-    // left
-    leadingPoints = [
-      { x: x0, y: y0 },
-      ...leadingPoints,
-      {
-        x: leadingPoints[leadingPoints.length - 1]!.x,
-        y: y0,
-      },
-    ]
-  } else {
-    leadingPoints = [
-      { x: leadingPoints[0]!.x, y: y0 },
-      ...leadingPoints,
-      {
-        x: x1,
-        y: y0,
-      },
-    ]
-  }
-
   return (
     <g>
       {settings.es.leadingEdge.show && (
-        <polygon
-          points={leadingPoints.map((p) => `${p.x},${p.y}`).join(' ')}
-          fill={settings.es.leadingEdge.fill.value}
-          stroke="none"
-          fillOpacity={settings.es.leadingEdge.fill.opacity}
+        <EsLeadingEdgeSvg
+          es={es}
+          rankMid={rankMid}
+          x0={x0}
+          x1={x1}
+          xax={xax}
+          yax={yax}
         />
       )}
 
@@ -472,6 +440,90 @@ function EsSvg({
             </SvgText>
           </g>
         </g>
+      )}
+    </g>
+  )
+}
+
+function EsLeadingEdgeSvg({
+  es,
+  rankMid,
+  x0,
+  x1,
+  xax,
+  yax,
+}: {
+  es: IGseaGeneRankScore[]
+
+  rankMid: number
+  x0: number
+  x1: number
+  xax: Axis
+  yax: YAxis
+}) {
+  const { settings } = useGseaSettings()
+
+  const y0 = yax.domainToRange(0)
+
+  const leadingEdge = es.filter((e) => e.leading)
+
+  const isLeft = leadingEdge[leadingEdge.length - 1]!.rank < rankMid
+
+  let leadingPoints = leadingEdge.map((e) => ({
+    x: xax.domainToRange(e.rank),
+    y: yax.domainToRange(e.score),
+  }))
+
+  // To make the filled area under the leading edge curve,
+  // we need to add points at the start and end of the leading edge curve to ensure it is closed.
+  // We check if the leading edge is on the left or right half of the plot to determine
+  // where to add the points.
+
+  let linePos: IPos = isLeft
+    ? leadingPoints[leadingPoints.length - 1]!
+    : leadingPoints[0]!
+
+  // check if leading edge is on left or right half to decide how to fix start and end
+  if (isLeft) {
+    // left
+    leadingPoints = [
+      { x: x0, y: y0 },
+      ...leadingPoints,
+      {
+        x: linePos!.x,
+        y: y0,
+      },
+    ]
+  } else {
+    leadingPoints = [
+      { x: leadingPoints[0]!.x, y: y0 },
+      ...leadingPoints,
+      {
+        x: linePos!.x,
+        y: y0,
+      },
+    ]
+  }
+
+  return (
+    <g id="leading-edge">
+      <polygon
+        id="leading-edge-area"
+        points={leadingPoints.map((p) => `${p.x},${p.y}`).join(' ')}
+        fill={settings.es.leadingEdge.fill.value}
+        stroke="none"
+        fillOpacity={settings.es.leadingEdge.fill.opacity}
+      />
+
+      {settings.es.leadingEdge.line.show && (
+        <SvgLine
+          id="leading-edge-line"
+          x1={linePos.x}
+          y1={linePos.y}
+          x2={linePos.x}
+          y2={y0}
+          s={settings.es.leadingEdge.line}
+        />
       )}
     </g>
   )

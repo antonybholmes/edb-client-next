@@ -115,7 +115,7 @@ export const SIMPLE_COLOR_EXT_CLS = cn(
 
 export interface IColorChangeProps {
   color: string
-  opacity: number
+  opacity?: number | undefined
   width?: number
   dasharray?: string
   show?: boolean

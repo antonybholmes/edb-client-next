@@ -5,6 +5,8 @@ import { makeUuid } from '@/lib/id'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import type { ComponentType, ReactNode, RefObject } from 'react'
 import { create } from 'zustand'
+import { ColorPickerDialog } from '../plot/color-picker-dialog'
+import { IColorChangeProps } from '../plot/color-picker-popover'
 import { renderTab } from '../tabs/tab-provider'
 import { BasicAlertDialog } from './basic-alert-dialog'
 import { OKCancelDialog, type ModalType } from './ok-cancel-dialog'
@@ -41,6 +43,11 @@ type DialogTypeMap = {
     name?: string
     fileTypes?: ISaveAsFileType[]
     callback?: (data: ISaveAsResponse) => void
+  }
+  color: {
+    title?: string
+    color: IColorChangeProps
+    callback?: (data: IColorChangeProps) => void
   }
   alert: {
     title?: string
@@ -231,6 +238,28 @@ function DialogRenderer({
           onResponse={(response, data) => {
             if (response !== TEXT_CANCEL && svgRef.current) {
               downloadSvgAutoFormat(svgRef, (data as ISaveAsResponse).name)
+            }
+            close(dialog.id)
+          }}
+        />
+      )
+    }
+    case 'color': {
+      const {
+        title,
+        color,
+
+        callback,
+      } = dialog.payload
+
+      return (
+        <ColorPickerDialog
+          title={title}
+          color={color}
+
+          onResponse={(response, data) => {
+            if (response !== TEXT_CANCEL) {
+              callback?.(data!)
             }
             close(dialog.id)
           }}

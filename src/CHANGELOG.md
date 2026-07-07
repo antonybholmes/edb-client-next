@@ -4,6 +4,7 @@
 
 ### Added
 
+- New outline line dialog. GSEA supports single line for leading edge.
 - GSEA plot now supports inverting plots.
 
 ### Changed
