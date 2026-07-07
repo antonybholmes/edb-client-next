@@ -19,6 +19,7 @@ import { LinkButton } from '@/themed/link-button'
 import { NumericalInput } from '@/themed/numerical-input'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
+import { OutlineButton } from '@/components/plot/outline-popover'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { produce } from 'immer'
 import { FontPopover } from '../../../../plot/font/font-popover'
@@ -198,11 +199,11 @@ export function GseaDisplayPropsPanel() {
                   {
                     color: settings.es.line.value,
                     opacity: settings.es.line.opacity,
-                    onColorChange: (color, alpha) => {
+                    onColorChange: ({ color, opacity }) => {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.es.line.value = color
-                          draft.es.line.opacity = alpha
+                          draft.es.line.opacity = opacity
                         })
                       )
                     },
@@ -224,16 +225,35 @@ export function GseaDisplayPropsPanel() {
                 )
               }}
             >
+              <OutlineButton
+                colors={[
+                  {
+                    color: settings.es.leadingEdge.fill.value,
+                    opacity: settings.es.leadingEdge.fill.opacity,
+                    onColorChange: ({ color, opacity }) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.es.leadingEdge.fill.value = color
+                          draft.es.leadingEdge.fill.opacity = opacity
+                        })
+                      )
+                    },
+                  },
+                ]}
+                className={SIMPLE_COLOR_EXT_CLS}
+                title="Leading edge color"
+              />
+
               <ColorPickerButton
                 colors={[
                   {
                     color: settings.es.leadingEdge.fill.value,
                     opacity: settings.es.leadingEdge.fill.opacity,
-                    onColorChange: (color, alpha) => {
+                    onColorChange: ({ color, opacity }) => {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.es.leadingEdge.fill.value = color
-                          draft.es.leadingEdge.fill.opacity = alpha
+                          draft.es.leadingEdge.fill.opacity = opacity
                         })
                       )
                     },
@@ -300,11 +320,11 @@ export function GseaDisplayPropsPanel() {
                     title: 'Positive color',
                     color: settings.genes.pos.value,
                     opacity: settings.genes.pos.opacity,
-                    onColorChange: (color, alpha) => {
+                    onColorChange: ({ color, opacity }) => {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.genes.pos.value = color
-                          draft.genes.pos.opacity = alpha
+                          draft.genes.pos.opacity = opacity
                         })
                       )
                     },
@@ -314,11 +334,11 @@ export function GseaDisplayPropsPanel() {
                     title: 'Negative color',
                     color: settings.genes.neg.value,
                     opacity: settings.genes.neg.opacity,
-                    onColorChange: (color, alpha) => {
+                    onColorChange: ({ color, opacity }) => {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.genes.neg.value = color
-                          draft.genes.neg.opacity = alpha
+                          draft.genes.neg.opacity = opacity
                         })
                       )
                     },
@@ -372,11 +392,11 @@ export function GseaDisplayPropsPanel() {
                     {
                       color: settings.ranking.fill.value,
                       opacity: settings.ranking.fill.opacity,
-                      onColorChange: (color, alpha) => {
+                      onColorChange: ({ color, opacity }) => {
                         updateSettings(
                           produce(settings, (draft) => {
                             draft.ranking.fill.value = color
-                            draft.ranking.fill.opacity = alpha
+                            draft.ranking.fill.opacity = opacity
                           })
                         )
                       },
@@ -421,11 +441,11 @@ export function GseaDisplayPropsPanel() {
                   {
                     color: settings.ranking.zeroCross.line.value,
                     opacity: settings.ranking.zeroCross.line.opacity,
-                    onColorChange: (color, alpha) => {
+                    onColorChange: ({ color, opacity }) => {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.ranking.zeroCross.line.value = color
-                          draft.ranking.zeroCross.line.opacity = alpha
+                          draft.ranking.zeroCross.line.opacity = opacity
                         })
                       )
                     },

@@ -68,7 +68,7 @@ export function DisplayPropsPanel() {
                       color: settings.baseColors[
                         base.toLowerCase() as DNABase
                       ] as string,
-                      onColorChange: (color) =>
+                      onColorChange: ({ color }) =>
                         updateSettings(
                           produce(settings, (draft) => {
                             draft.baseColors[base.toLowerCase() as DNABase] =

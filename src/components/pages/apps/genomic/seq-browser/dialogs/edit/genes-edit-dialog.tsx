@@ -112,10 +112,10 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 colors={[
                   {
                     color: settings.tracks.genes.stroke.value,
-                    onColorChange: (v) => {
+                    onColorChange: ({ color }) => {
                       updateSettings(
                         produce(settings, (draft) => {
-                          draft.tracks.genes.stroke.value = v
+                          draft.tracks.genes.stroke.value = color
                         })
                       )
                     },
@@ -159,10 +159,10 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 colors={[
                   {
                     color: settings.tracks.genes.exons.fill.value,
-                    onColorChange: (v) => {
+                    onColorChange: ({ color }) => {
                       updateSettings(
                         produce(settings, (draft) => {
-                          draft.tracks.genes.exons.fill.value = v
+                          draft.tracks.genes.exons.fill.value = color
                         })
                       )
                     },
@@ -206,10 +206,10 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 colors={[
                   {
                     color: settings.tracks.genes.cds.fill.value,
-                    onColorChange: (v) => {
+                    onColorChange: ({ color }) => {
                       updateSettings(
                         produce(settings, (draft) => {
-                          draft.tracks.genes.cds.fill.value = v
+                          draft.tracks.genes.cds.fill.value = color
                         })
                       )
                     },
@@ -253,10 +253,10 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 colors={[
                   {
                     color: settings.tracks.genes.utrs.fill.value,
-                    onColorChange: (v) => {
+                    onColorChange: ({ color }) => {
                       updateSettings(
                         produce(settings, (draft) => {
-                          draft.tracks.genes.utrs.fill.value = v
+                          draft.tracks.genes.utrs.fill.value = color
                         })
                       )
                     },
@@ -300,9 +300,9 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 colors={[
                   {
                     color: _track.displayOptions.arrows.stroke.value,
-                    onColorChange: (v) => {
+                    onColorChange: ({ color }) => {
                       const newTrack = produce(_track, (draft) => {
-                        draft.displayOptions.arrows.stroke.value = v
+                        draft.displayOptions.arrows.stroke.value = color
                       })
 
                       onResponse?.(TEXT_OK, { group, track: newTrack })
@@ -361,10 +361,10 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 colors={[
                   {
                     color: settings.tracks.genes.canonical.fill.value,
-                    onColorChange: (v) => {
+                    onColorChange: ({ color }) => {
                       updateSettings(
                         produce(settings, (draft) => {
-                          draft.tracks.genes.canonical.fill.value = v
+                          draft.tracks.genes.canonical.fill.value = color
                         })
                       )
                     },

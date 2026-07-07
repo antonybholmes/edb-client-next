@@ -1,8 +1,3 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/shadcn/ui/themed/v2/popover'
 import { BaseCol } from '@/layout/base-col'
 import { VCenterRow } from '@/layout/v-center-row'
 import { Button, type IButtonProps } from '@/themed/v2/button'
@@ -21,7 +16,7 @@ import { cn } from '@/lib/shadcn-utils'
 
 import { FOCUS_RING_CLS } from '@/theme'
 
-import type { UndefStr } from '@/lib/text/text'
+import { CircleSlash, SquarePen } from 'lucide-react'
 import { useState } from 'react'
 import {
   HexAlphaColorPicker,
@@ -30,9 +25,20 @@ import {
 } from 'react-colorful'
 import { CheckPropRow } from '../dialogs/check-prop-row'
 import { NumericalInput } from '../shadcn/ui/themed/numerical-input'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+  MenuSeparator,
+} from '../shadcn/ui/themed/v2/dropdown-menu'
 import { inputVariants } from '../shadcn/ui/themed/v2/input'
-import { FontUI } from './font/font-ui'
-import { type ITextProps } from './svg-props'
+import { IColorPickerProps } from './color-picker-popover'
+import { THEME_COLOR_GRID } from './theme'
 
 // export const PRESET_COLORS = [
 //   COLOR_WHITE,
@@ -113,42 +119,7 @@ export const SIMPLE_COLOR_EXT_CLS = cn(
   FOCUS_RING_CLS
 )
 
-export interface IColorChangeProps {
-  color: string
-  opacity: number
-  width?: number
-  dasharray?: string
-  show?: boolean
-}
-
-export interface IColorPickerProps {
-  title?: UndefStr
-
-  color: string
-  opacity?: number | undefined
-  width?: number | undefined
-  dasharray?: string | undefined
-  defaultColor?: UndefStr
-  autoBorder?: boolean | undefined
-  defaultBorderColor?: UndefStr
-  allowNoColor?: boolean | undefined
-  showPresets?: boolean | undefined
-  //allowAlpha?: boolean
-  keepAlphaChannel?: boolean | undefined
-  showColor?: boolean
-  showRgb?: boolean | undefined
-  font?: ITextProps | undefined
-
-  onColorChange?: ((props: IColorChangeProps) => void) | undefined
-
-  //onWidthChange?: ((width: number) => void) | undefined
-
-  onShowColor?: ((show: boolean) => void) | undefined
-
-  fontUpdate?: ((props: ITextProps) => void) | undefined
-}
-
-export type IColorPickerButtonProps = Omit<IButtonProps, 'font' | 'color'> & {
+export type IOutlineButtonProps = Omit<IButtonProps, 'font' | 'color'> & {
   colors: IColorPickerProps[]
   align?: 'start' | 'end'
   onCancel?: () => void
@@ -156,7 +127,7 @@ export type IColorPickerButtonProps = Omit<IButtonProps, 'font' | 'color'> & {
   onOpenChanged?: (open: boolean) => void
 }
 
-export function ColorPickerButton({
+export function OutlineButton({
   colors,
 
   align = 'start',
@@ -165,7 +136,7 @@ export function ColorPickerButton({
   'aria-label': ariaLabel,
   children,
   ...props
-}: IColorPickerButtonProps) {
+}: IOutlineButtonProps) {
   if (!colors || colors.length === 0) {
     return null
   }
@@ -201,53 +172,20 @@ export function ColorPickerButton({
   // }
 
   return (
-    <ColorPickerPopover
+    <OutlinePopover
       colors={colors}
       align={align}
       className={className}
       {...props}
     >
-      <PopoverTrigger
-        className={cn(
-          'relative overflow-hidden border flex flex-row items-center justify-center bg-background',
-          textColor,
-          border,
-          className
-        )}
-        aria-label={ariaLabel}
-        title={title}
-        style={{ backgroundColor: _color }}
-      >
-        {_color === COLOR_TRANSPARENT && (
-          <span className="absolute left-0 w-full bg-red-400 h-px top-1/2 -translate-y-1/2 -rotate-45" />
-        )}
-      </PopoverTrigger>
-
-      {/* <PopoverTrigger
-        className={cn(
-          'relative overflow-hidden flex flex-row items-center justify-center',
-          textColor,
-
-          className
-        )}
-        aria-label={ariaLabel}
-        title={title}
-      >
-        <Palette
-          size={20}
-          fill={_color}
-          className="stroke-foreground"
-          strokeWidth={1}
-        />
-        {_color === COLOR_TRANSPARENT && (
-          <span className="absolute left-0 w-full bg-red-400 h-px top-1/2 -translate-y-1/2 -rotate-45" />
-        )}
-      </PopoverTrigger> */}
-    </ColorPickerPopover>
+      <DropdownMenuTrigger>
+        <SquarePen size={20} strokeWidth={1.5} />
+      </DropdownMenuTrigger>
+    </OutlinePopover>
   )
 }
 
-export function ColorPickerPopover({
+export function OutlinePopover({
   colors,
 
   align = 'start',
@@ -256,7 +194,7 @@ export function ColorPickerPopover({
 
   children,
   ...props
-}: IColorPickerButtonProps) {
+}: IOutlineButtonProps) {
   const [_open, setOpen] = useState(false)
   const o = open ?? _open
 
@@ -280,41 +218,138 @@ export function ColorPickerPopover({
   //   button = <Tooltip content={tooltip}>{button}</Tooltip>
   // }
 
+  const color0 = colors[0]!
+
   return (
-    <Popover open={o} onOpenChange={(v) => _openChanged(v)}>
+    <DropdownMenu open={o} onOpenChange={(v) => _openChanged(v)}>
       {children}
 
-      <PopoverContent
+      <DropdownMenuContent
         //onEscapeKeyDown={() => setOpen(false)}
         //onInteractOutside={() => setOpen(false)}
         align={align}
         //className="text-xs flex flex-col gap-y-3"
         variant="content"
-        className="flex flex-row gap-x-4"
+        className="flex flex-col"
       >
-        {colors.map((color, ci) => (
-          <ColorPickerUI
-            key={ci}
-            title={color.title}
-            color={color.color}
-            opacity={color.opacity}
-            defaultColor={color.defaultColor}
-            //onColorChange={_onColorChange}
-            width={color.width}
-            //onWidthChange={onWidthChange}
-            keepAlphaChannel={color.keepAlphaChannel}
-            onColorChange={color.onColorChange}
-            onShowColor={color.onShowColor}
-            fontUpdate={color.fontUpdate}
-            {...props}
-          />
-        ))}
-      </PopoverContent>
-    </Popover>
+        <BaseCol className="gap-y-2 mb-2 mx-1.5">
+          <span className="text-xs font-semibold">Theme Colors</span>
+          <div className="grid grid-cols-10 items-center gap-x-2">
+            {THEME_COLOR_GRID.map((group, gi) => (
+              <BaseCol key={gi} className="gap-y-1">
+                {/* <span className="text-xs font-medium">{group.name}</span> */}
+
+                {group.colors.map((presetColor) => {
+                  const prgb = hexToRgba(presetColor)
+                  const ps = prgb[0] + prgb[1] + prgb[2]
+
+                  return (
+                    <button
+                      key={presetColor}
+                      className={cn(
+                        'w-4.5 rounded-full aspect-square border hover:scale-125 focus-visible:scale-125 transition-transform duration-300',
+                        color0.autoBorder && ps >= 750 && 'border-border',
+                        !color0.autoBorder ||
+                          (ps < 750 && 'border-transparent hover:border-white')
+                      )}
+                      style={{ background: presetColor }}
+                      onClick={() =>
+                        color0.onColorChange?.({
+                          color: presetColor,
+                          opacity: color0.opacity ?? 1,
+                          width: color0.width ?? 1,
+                          dasharray: color0.dasharray ?? '0',
+                        })
+                      }
+                      tabIndex={0}
+                    />
+                  )
+                })}
+              </BaseCol>
+            ))}
+          </div>
+        </BaseCol>
+
+        <MenuSeparator />
+        <BaseCol className="gap-y-2 mb-2 mx-1.5">
+          <span className="text-xs font-semibold">Standard Colors</span>
+          <div className="grid grid-cols-10 items-center gap-x-2 gap-y-1">
+            {PRESET_COLORS.map((presetColor, gi) => {
+              const prgb = hexToRgba(presetColor)
+              const ps = prgb[0] + prgb[1] + prgb[2]
+
+              return (
+                <button
+                  key={presetColor}
+                  className={cn(
+                    'w-4.5 rounded-full aspect-square border hover:scale-125 focus-visible:scale-125 transition-transform duration-300',
+                    color0.autoBorder && ps >= 750 && 'border-border',
+                    !color0.autoBorder ||
+                      (ps < 750 && 'border-transparent hover:border-white')
+                  )}
+                  style={{ background: presetColor }}
+                  onClick={() =>
+                    color0.onColorChange?.({
+                      color: presetColor,
+                      opacity: color0.opacity ?? 1,
+                      width: color0.width ?? 1,
+                      dasharray: color0.dasharray ?? '0',
+                    })
+                  }
+                  tabIndex={0}
+                />
+              )
+            })}
+          </div>
+        </BaseCol>
+
+        <DropdownMenuItem>
+          <CircleSlash size={20} strokeWidth={1.5} />
+          <span>No Outline</span>
+        </DropdownMenuItem>
+        <MenuSeparator />
+
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>Weight</DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem onClick={() => {}}>
+                <span>0.5 pt</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {}}>
+                <span>1 pt</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {}}>
+                <span>2 pt</span>
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>Dashes</DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem onClick={() => {}}>
+                <span className="w-3/5 h-0.5 bg-foreground  " />
+                <span>Solid</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {}}>
+                <span className="w-3/5 h-0 border-t-2 border-foreground border-dotted" />
+                <span>Round Dot</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {}}>
+                <span className="w-3/5 h-0 border-t-2 border-foreground border-dashed" />
+                <span>Dash</span>
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
-export function ColorPickerUI({
+export function OutlineUI({
   title,
   color,
   opacity,
@@ -327,9 +362,7 @@ export function ColorPickerUI({
   showRgb = false,
   onShowColor,
   width,
-
-  font,
-  fontUpdate,
+  dasharray,
 
   // we default to removing the alpha channel from the hex color
   // itself and instead returning it via the alpha parameter. This
@@ -369,14 +402,6 @@ export function ColorPickerUI({
   return (
     <BaseCol className="color-picker gap-y-2">
       {title && <span className="text-xs font-bold">{title}</span>}
-      {font && (
-        <FontUI
-          title=""
-          textProps={font}
-          update={fontUpdate}
-          showColor={false}
-        />
-      )}
 
       {opacity !== undefined ? (
         <HexAlphaColorPicker
@@ -384,7 +409,7 @@ export function ColorPickerUI({
           onChange={(v) => {
             const a = hexToRgba(v)[3]
 
-            _onColorChange(v, a, width ?? 1)
+            _onColorChange(v, a, width ?? 1, dasharray ?? '0')
           }}
         />
       ) : (

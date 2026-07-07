@@ -55,16 +55,13 @@ import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
 import { GeneSetsPropsPanel } from './gene-sets-props-panel'
 import { GseaDisplayPropsPanel } from './gsea-display-props-panel'
 import { useGseaSettings } from './gsea-settings-store'
-import {
-  PLOT_ZOOM_CHANNEL,
-  useGseaWebStore,
-  type IGseaPathway,
-} from './gsea-web-store'
+import { PLOT_ZOOM_CHANNEL, useGseaWebStore } from './gsea-web-store'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
+import { IGseaPathway } from '../gsea-plot/gsea-plot-store'
 import { GseaSvg } from '../gsea-plot/gsea-svg'
 import APP_INFO from './manifest.json'
 import { HomeToolbar } from './toolbars/home'

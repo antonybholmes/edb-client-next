@@ -42,7 +42,7 @@ export function BedEditDialog({ group, track, onResponse }: IProps) {
         <Input
           id="name"
           value={_track.name}
-          onChange={e => {
+          onChange={(e) => {
             const newTrack = {
               ...track,
               name: e.target.value,
@@ -80,9 +80,9 @@ export function BedEditDialog({ group, track, onResponse }: IProps) {
               colors={[
                 {
                   color: _track.displayOptions.stroke.value,
-                  onColorChange: v => {
-                    const newTrack = produce(_track, draft => {
-                      draft.displayOptions.stroke.value = v
+                  onColorChange: ({ color }) => {
+                    const newTrack = produce(_track, (draft) => {
+                      draft.displayOptions.stroke.value = color
                     })
 
                     onResponse?.(TEXT_OK, { group, track: newTrack })
@@ -98,8 +98,8 @@ export function BedEditDialog({ group, track, onResponse }: IProps) {
           </>
         }
         checked={_track.displayOptions.stroke.show}
-        onCheckedChange={state => {
-          const newTrack = produce(_track, draft => {
+        onCheckedChange={(state) => {
+          const newTrack = produce(_track, (draft) => {
             draft.displayOptions.stroke.show = state
           })
 
@@ -113,8 +113,8 @@ export function BedEditDialog({ group, track, onResponse }: IProps) {
             value={_track.displayOptions.stroke.width}
             disabled={!_track.displayOptions.stroke.show}
             placeholder="Stroke..."
-            onNumChange={v => {
-              const newTrack = produce(_track, draft => {
+            onNumChange={(v) => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.stroke.width = v
               })
 
@@ -132,10 +132,11 @@ export function BedEditDialog({ group, track, onResponse }: IProps) {
               colors={[
                 {
                   color: _track.displayOptions.fill.value,
-                  onColorChange: (v, alpha) => {
-                    const newTrack = produce(_track, draft => {
-                      draft.displayOptions.fill.value = v
-                      draft.displayOptions.fill.opacity = alpha
+                  opacity: _track.displayOptions.fill.opacity,
+                  onColorChange: ({ color, opacity }) => {
+                    const newTrack = produce(_track, (draft) => {
+                      draft.displayOptions.fill.value = color
+                      draft.displayOptions.fill.opacity = opacity
                     })
 
                     onResponse?.(TEXT_OK, { group, track: newTrack })
@@ -150,8 +151,8 @@ export function BedEditDialog({ group, track, onResponse }: IProps) {
           </>
         }
         checked={_track.displayOptions.fill.show}
-        onCheckedChange={state => {
-          const newTrack = produce(_track, draft => {
+        onCheckedChange={(state) => {
+          const newTrack = produce(_track, (draft) => {
             draft.displayOptions.fill.show = state
           })
 
@@ -167,8 +168,8 @@ export function BedEditDialog({ group, track, onResponse }: IProps) {
             limit={[0, 1]}
             step={0.1}
             dp={1}
-            onNumChange={v => {
-              const newTrack = produce(_track, draft => {
+            onNumChange={(v) => {
+              const newTrack = produce(_track, (draft) => {
                 draft.displayOptions.fill.opacity = v
               })
 

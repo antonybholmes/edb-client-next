@@ -340,7 +340,7 @@ export function MenuSeparator({
   return (
     <DropdownMenuPrimitive.Separator
       ref={ref}
-      className={cn('m-2 h-px bg-muted', className)}
+      className={cn('mx-1 my-2 h-px bg-muted', className)}
       {...props}
     />
   )

@@ -178,7 +178,7 @@ export function DisplayPropsPanel() {
                         opacity:
                           settings.bases[base.toLowerCase() as DNABase]!.font
                             .fill.opacity,
-                        onColorChange: (color, alpha) =>
+                        onColorChange: ({ color, opacity }) =>
                           updateSettings(
                             produce(settings, (draft) => {
                               draft.bases[
@@ -186,7 +186,7 @@ export function DisplayPropsPanel() {
                               ]!.font.fill.value = color
                               draft.bases[
                                 base.toLowerCase() as DNABase
-                              ]!.font.fill.opacity = alpha
+                              ]!.font.fill.opacity = opacity
                             })
                           ),
                       },

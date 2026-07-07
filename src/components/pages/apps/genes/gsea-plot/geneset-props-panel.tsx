@@ -73,7 +73,7 @@ export function GeneSetsPropsPanel() {
 
   return (
     <PropsPanel className="gap-y-1 text-xs">
-      <SideBarHeader>
+      <SideBarHeader className="justify-end">
         <VCenterRow
           data-visible={allowSelectAll}
           className="data-[visible=false]:invisible ml-1"

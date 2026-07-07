@@ -155,7 +155,7 @@ export function SeqEditDialog({ group, track, onResponse }: IProps) {
               {
                 color: _track.displayOptions.stroke.value,
 
-                onColorChange: (color) => {
+                onColorChange: ({ color }) => {
                   const newTrack = produce(_track, (draft) => {
                     draft.displayOptions.stroke.value = color
                   })
@@ -187,9 +187,9 @@ export function SeqEditDialog({ group, track, onResponse }: IProps) {
               {
                 color: _track.displayOptions.fill.value,
                 opacity: _track.displayOptions.fill.opacity,
-                onColorChange: (v, opacity) => {
+                onColorChange: ({ color, opacity }) => {
                   const newTrack = produce(_track, (draft) => {
-                    draft.displayOptions.fill.value = v
+                    draft.displayOptions.fill.value = color
                     draft.displayOptions.fill.opacity = opacity
                   })
 

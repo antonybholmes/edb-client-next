@@ -60,10 +60,10 @@ export function CellSettingsPanel() {
             colors={[
               {
                 color: displayProps.cells.values.color,
-                onColorChange: (v) =>
+                onColorChange: ({ color }) =>
                   updatePlot(
                     produce(plot, (draft) => {
-                      draft.props.cells.values.color = v
+                      draft.props.cells.values.color = color
                       draft.props.cells.values.autoColor.on = false
                     })
                   ),
@@ -145,12 +145,13 @@ export function CellSettingsPanel() {
                 color: displayProps.cells.border.value,
                 width: displayProps.cells.border.width,
                 opacity: displayProps.cells.border.opacity,
-                onColorChange: (color, opacity, width) =>
+                onColorChange: ({ color, opacity, width }) =>
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.cells.border.value = color
                       draft.props.cells.border.opacity = opacity
-                      draft.props.cells.border.width = width
+                      draft.props.cells.border.width =
+                        width ?? displayProps.cells.border.width
                     })
                   ),
               },

@@ -306,10 +306,10 @@ export function SettingsTracksPanel() {
           colors={[
             {
               color: settings.tracks.genes.endArrows.stroke.value,
-              onColorChange: (v) => {
+              onColorChange: ({ color }) => {
                 const newOptions = produce(settings, (draft) => {
-                  draft.tracks.genes.endArrows.stroke.value = v
-                  draft.tracks.genes.endArrows.fill.value = v
+                  draft.tracks.genes.endArrows.stroke.value = color
+                  draft.tracks.genes.endArrows.fill.value = color
                 })
 
                 updateSettings(newOptions)
@@ -375,9 +375,9 @@ export function SettingsTracksPanel() {
           colors={[
             {
               color: settings.tracks.genes.canonical.fill.value,
-              onColorChange: (v) => {
+              onColorChange: ({ color }) => {
                 const newOptions = produce(settings, (draft) => {
-                  draft.tracks.genes.canonical.fill.value = v
+                  draft.tracks.genes.canonical.fill.value = color
                 })
 
                 updateSettings(newOptions)

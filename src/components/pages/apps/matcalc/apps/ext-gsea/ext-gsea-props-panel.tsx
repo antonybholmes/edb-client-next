@@ -306,7 +306,7 @@ export function ExtGseaPropsPanel() {
                   {
                     color: displayOptions.ranking.fill.value,
 
-                    onColorChange: (color) =>
+                    onColorChange: ({ color }) =>
                       updatePlot(
                         produce(plot, (draft) => {
                           draft.props.ranking.fill.value = color

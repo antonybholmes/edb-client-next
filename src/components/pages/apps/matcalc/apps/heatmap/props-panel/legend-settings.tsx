@@ -161,12 +161,12 @@ export function LegendSettingsPanel() {
                 color: displayProps.legend.stroke.value,
                 width: displayProps.legend.stroke.width,
                 opacity: displayProps.legend.stroke.opacity,
-                onColorChange: (color, opacity, width) =>
+                onColorChange: ({ color, opacity, width }) =>
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.legend.stroke.value = color
                       draft.props.legend.stroke.opacity = opacity
-                      draft.props.legend.stroke.width = width
+                      draft.props.legend.stroke.width = width ?? 1
                     })
                   ),
               },

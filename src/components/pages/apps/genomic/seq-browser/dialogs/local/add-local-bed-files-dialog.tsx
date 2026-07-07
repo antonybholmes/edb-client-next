@@ -111,7 +111,9 @@ export function AddLocalBedFilesDialog({ callback, onCancel }: IProps) {
           colors={[
             {
               color,
-              onColorChange: setColor,
+              onColorChange: ({ color }) => {
+                setColor(color)
+              },
             },
           ]}
           className={SIMPLE_COLOR_EXT_CLS}

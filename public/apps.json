@@ -14,9 +14,9 @@
     "description": "Biological diagrams",
     "version": "16.6.6",
     "copyright": "© 2025-2026 Antony Holmes",
-    "modified": "2026-07-07T02:08:24.563Z",
-    "hash": "f9ef7f2905c5303f66a0c0c3c3efac1075818f37bd1b17e8768bcc0f4137947a",
-    "build": 532
+    "modified": "2026-07-07T19:35:09.109Z",
+    "hash": "b6f85f5ca6c49206d0be17d94b70b6134177fd18410c755df63c630b3b689446",
+    "build": 534
   },
   {
     "name": "Convert",
@@ -51,11 +51,11 @@
     "name": "GSEA Plot",
     "description": "Format GSEA plots.",
     "color": "#ffb366",
-    "version": "21.6.8",
+    "version": "21.8.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-07T16:35:06.258Z",
-    "hash": "03858d09aa9bf4697953f8639ae26676a7c0720667ee025ee281df2ff832ec8f",
-    "build": 768
+    "modified": "2026-07-07T19:35:09.109Z",
+    "hash": "defd9c93e224e690e26bc684c0870515f8f5d3d656e4d59c82e8435df31c6d66",
+    "build": 770
   },
   {
     "name": "GSEA Web",
@@ -63,9 +63,9 @@
     "color": "#4169E1",
     "version": "3.4.0",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-07-07T16:35:06.258Z",
-    "hash": "aafab70d29e466d9bc2a941569dcc228dacbe88303a5574c3a6c4b14547b7dd6",
-    "build": 70
+    "modified": "2026-07-07T19:35:09.110Z",
+    "hash": "8779d6d9a959ea4cc66ad0857aa75bee4634c0cb63a441e0bd20c2ad3dc1d72b",
+    "build": 72
   },
   {
     "name": "History Viewer",
@@ -111,9 +111,9 @@
     "color": "#40bf80",
     "version": "48.2.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-07T16:35:06.262Z",
-    "hash": "95ac3ea4da18942078287ecb20ff04ba8b41b2ede4f124e655db13c9c40fca3d",
-    "build": 1764
+    "modified": "2026-07-07T19:35:09.113Z",
+    "hash": "e28d80191308929bdd8d87aa3e087f2f4f4ae8ed7e37675d459722922b2e3522",
+    "build": 1766
   },
   {
     "name": "Motifs",
@@ -121,9 +121,9 @@
     "color": "#009933",
     "version": "48.2.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-03T14:46:20.329Z",
-    "hash": "b53e148ad45c7f4175bdc264dff45c4f950dc19961a3cd38554b2dbbf78d8134",
-    "build": 964
+    "modified": "2026-07-07T19:35:09.110Z",
+    "hash": "528dbfc2586b5e6facb585e5d13533e35f3fd7cacb733acdd4a358e9e5ef7e5c",
+    "build": 966
   },
   {
     "name": "Oncoplot",
@@ -181,9 +181,9 @@
     "color": "#FF0000",
     "version": "32.0.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-07T02:08:24.581Z",
-    "hash": "32ff72bf441d6294c2cfa79170dcbe1c61927a25964439bf869c15fbbfdac4ac",
-    "build": 1056
+    "modified": "2026-07-07T19:35:09.111Z",
+    "hash": "3db423a60e9b5da7bf4952ebfae02771152a6f57224b397d1c1594dcb23a4c47",
+    "build": 1058
   },
   {
     "name": "Single Cell",

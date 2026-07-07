@@ -75,9 +75,9 @@ export function ScaleEditDialog({ group, track, onResponse }: IProps) {
             colors={[
               {
                 color: _track.displayOptions.stroke.value,
-                onColorChange: (v) => {
+                onColorChange: ({ color }) => {
                   const newTrack = produce(_track, (draft) => {
-                    draft.displayOptions.stroke.value = v
+                    draft.displayOptions.stroke.value = color
                   })
 
                   onResponse?.(TEXT_OK, { group, track: newTrack })

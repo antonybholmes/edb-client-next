@@ -2073,6 +2073,10 @@
         {
           "msg": "Removal of more toasts. Side tab UI updated.",
           "date": "2026-07-07T02:08:26.690Z"
+        },
+        {
+          "msg": "GSEA plot renderer split to make more managable. UI tweaks",
+          "date": "2026-07-07T16:35:07.167Z"
         }
       ],
       "Added": [

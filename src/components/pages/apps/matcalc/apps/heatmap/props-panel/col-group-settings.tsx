@@ -78,12 +78,13 @@ export function ColGroupsSettingsPanel() {
                 color: displayProps.groups.grid.value,
                 width: displayProps.groups.grid.width,
                 opacity: displayProps.groups.grid.opacity,
-                onColorChange: (color, opacity, width) =>
+                onColorChange: ({ color, opacity, width }) =>
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.groups.grid.value = color
                       draft.props.groups.grid.opacity = opacity
-                      draft.props.groups.grid.width = width
+                      draft.props.groups.grid.width =
+                        width ?? displayProps.groups.grid.width
                     })
                   ),
               },
