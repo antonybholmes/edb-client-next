@@ -52,7 +52,7 @@ export function OutlineButton({
     ariaLabel = 'Choose color'
   }
 
-  const color0 = colors[0]!
+  const color0 = addStandardDefaultsToColorPickerProps(colors[0]!)
 
   return (
     <OutlineDropdownMenu
@@ -85,6 +85,34 @@ function OutlineIcon({ cp }: { cp: IColorPickerProps }) {
   )
 }
 
+/**
+ * Set defaults most UI systems will use. This is useful to avoid having to specify these options
+ * repeatedly for different plot types. Note defaults assume opacity support so you will need to
+ * set allowAlpha to false if your plot type does not support opacity.
+ *
+ * @param cp
+ * @param options
+ * @returns
+ */
+export function addStandardDefaultsToColorPickerProps(
+  cp: IColorPickerProps,
+  options?: {
+    showThemeColors?: boolean
+    allowAlpha?: boolean
+    allowNoColor?: boolean
+    showPresets?: boolean
+  }
+): IColorPickerProps {
+  return {
+    showThemeColors: true,
+    allowAlpha: true,
+    allowNoColor: true,
+    showPresets: true,
+    ...options,
+    ...cp,
+  }
+}
+
 export function OutlineDropdownMenu({
   colors,
   align = 'start',
@@ -94,7 +122,7 @@ export function OutlineDropdownMenu({
     return null
   }
 
-  const color0 = { allowNoColor: true, allowAlpha: true, ...colors[0]! }
+  const color0 = addStandardDefaultsToColorPickerProps(colors[0]!)
   const opacity = color0.opacity ?? 1
 
   return (
@@ -106,12 +134,19 @@ export function OutlineDropdownMenu({
         variant="content"
         className="flex flex-col"
       >
-        <ThemeColors cp={color0} />
-        <MenuSeparator />
+        {color0.showThemeColors && (
+          <>
+            <ThemeColors cp={color0} />
+            <MenuSeparator />
+          </>
+        )}
 
-        <StandardColors cp={color0} mode="outline" />
-
-        <MenuSeparator />
+        {color0.showPresets && (
+          <>
+            <StandardColors cp={color0} mode="outline" />
+            <MenuSeparator />
+          </>
+        )}
 
         <MoreColors cp={color0} />
         <MenuSeparator />

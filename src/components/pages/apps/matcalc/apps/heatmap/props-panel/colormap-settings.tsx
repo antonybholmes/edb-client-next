@@ -1,8 +1,4 @@
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
 import type { ColorBarPos } from '@/components/plot/svg-props'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import {
@@ -22,6 +18,7 @@ import { COLOR_MAPS } from '@/lib/color/colormap'
 import { produce } from 'immer'
 import { ColorMapMenu } from '../../../color-map-menu'
 
+import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
@@ -153,30 +150,33 @@ export function ColormapSettingsPanel() {
             )
           }}
         >
-          <ColorPickerButton
-            align="end"
+          <OutlineButton
             colors={[
               {
                 color: displayProps.colorbar.stroke.value,
-                width: displayProps.colorbar.stroke.width,
                 opacity: displayProps.colorbar.stroke.opacity,
-                onColorChange: ({ color, opacity, width }) =>
+                onColorChange: ({ color, opacity, width, dasharray, show }) => {
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.colorbar.stroke.value = color
-                      draft.props.colorbar.stroke.opacity =
-                        opacity ?? draft.props.colorbar.stroke.opacity
+                      draft.props.colorbar.stroke.opacity = opacity ?? 1
+                      draft.props.colorbar.stroke.show =
+                        show ?? draft.props.colorbar.stroke.show
                       draft.props.colorbar.stroke.width =
-                        width ?? displayProps.colorbar.stroke.width
+                        width ?? draft.props.colorbar.stroke.width
+                      draft.props.colorbar.stroke.dasharray =
+                        dasharray ?? draft.props.colorbar.stroke.dasharray
                     })
-                  ),
+                  )
+                },
               },
             ]}
+
+            title="Colorbar Outline"
+
             disabled={
-              !displayProps.legend.show || !displayProps.legend.stroke.show
+              !displayProps.colorbar.show || !displayProps.colorbar.stroke.show
             }
-            className={SIMPLE_COLOR_EXT_CLS}
-            title="Border Color"
           />
 
           {/* <NumericalInput

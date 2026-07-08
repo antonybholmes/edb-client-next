@@ -113,12 +113,8 @@ function GroupItem({
             DRAG_HANDLE_APPEAR_CLS,
             'stroke-foreground/50 hover:stroke-destructive focus-visible:stroke-destructive trans-color'
           )}
-          // style={{
-          //   stroke: group.color,
-          // }}
+
           title={`Delete ${group.name} group`}
-          //onMouseEnter={() => setDelHover(true)}
-          //onMouseLeave={() => setDelHover(false)}
         >
           <TrashIcon stroke="" className={DRAG_ICON_ANIM_CLS} />
         </button>
@@ -130,17 +126,6 @@ function GroupItem({
           updateGroup({ ...group, show: v })
         }}
       />
-      {/* <ColorPickerButton
-        colors={[
-          {
-            color: group.color,
-            onColorChange: ({ color }) => updateGroup({ ...group, color }),
-          },
-        ]}
-
-        className={SIMPLE_COLOR_EXT_CLS}
-        title="Set color"
-      /> */}
 
       <FillButton
         colors={[
@@ -148,6 +133,7 @@ function GroupItem({
             color: group.color,
 
             allowAlpha: false,
+            allowNoColor: false,
             onColorChange: ({ color }) => {
               updateGroup({ ...group, color })
             },
@@ -399,14 +385,11 @@ export function GroupPropsPanel() {
                 })
               }
               title="Open Groups"
-              //className="fill-foreground/50 hover:fill-foreground"
             >
               <UploadIcon />
             </IconButton>
 
             <IconButton
-              //rounded="full"
-              // ripple={false}
               onClick={() => {
                 openDialog({
                   type: 'save',
@@ -440,7 +423,6 @@ export function GroupPropsPanel() {
             <ToolbarSeparator />
 
             <IconButton
-              // ripple={false}
               onClick={() => addGroup()}
               title="New Group"
               checked={openGroupDialog !== undefined}

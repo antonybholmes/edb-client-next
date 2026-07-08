@@ -2103,6 +2103,10 @@
         {
           "msg": "Added custom colors",
           "date": "2026-07-08T03:35:36.912Z"
+        },
+        {
+          "msg": "Added fill and line prop buttons into UI to improve look and feel.",
+          "date": "2026-07-08T16:51:37.393Z"
         }
       ]
     },

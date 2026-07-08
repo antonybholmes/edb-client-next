@@ -40,7 +40,6 @@ export type IProps = IModalProps<IColorChangeProps> & {
   cp: IColorPickerProps
   keepAlphaChannel?: boolean
   showRgb?: boolean
-  showPresets?: boolean
 }
 
 export function ColorPickerDialog({
@@ -48,7 +47,7 @@ export function ColorPickerDialog({
   cp,
   keepAlphaChannel = false,
   showRgb = true,
-  showPresets = true,
+
   onResponse,
 }: IProps) {
   const { settings, addCustomColor } = useEdbSettings()
@@ -214,7 +213,7 @@ export function ColorPickerDialog({
           </>
         )}
       </VCenterRow>
-      {showPresets && (
+      {cp.showPresets && (
         <>
           <BaseRow className="gap-1 flex-wrap">
             {PRESET_COLORS.map((presetColor) => {

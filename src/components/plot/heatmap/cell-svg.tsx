@@ -7,6 +7,8 @@ import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { normalize } from '@/lib/math/normalize'
 import { range } from '@/lib/math/range'
 import { formatNumber } from '@/lib/text/text'
+import { SvgPath } from '../svg-path'
+import { SvgRect } from '../svg-rect'
 import type { IHeatMapDisplayOptions } from './heatmap-svg-props'
 
 // we want circles slightly smaller than box to allow for borders
@@ -264,7 +266,6 @@ interface IGridSvgProps {
 export function GridSvg({
   width,
   height,
-
   props,
   pos = { ...ZERO_POS },
 }: IGridSvgProps) {
@@ -282,31 +283,25 @@ export function GridSvg({
     <g transform={`translate(${pos.x}, ${pos.y})`}>
       {props.grid.show && (
         <>
-          <path
-            d={hlines}
-            stroke={props.grid.value}
-            strokeWidth={props.grid.width}
-            shapeRendering={SVG_CRISP_EDGES}
-          />
+          <SvgPath d={hlines} s={props.grid} shapeRendering={SVG_CRISP_EDGES} />
 
-          <path
+          <SvgPath
             d={vlines}
-            stroke={props.grid.value}
-            strokeWidth={props.grid.width}
+            s={props.grid}
+
             shapeRendering={SVG_CRISP_EDGES}
           />
         </>
       )}
 
       {props.border.show && (
-        <rect
+        <SvgRect
           x={0}
           y={0}
           width={width}
           height={height}
-          stroke={props.border.value}
-          strokeWidth={props.border.width}
-          fill="none"
+          sp={props.border}
+
           shapeRendering={SVG_CRISP_EDGES}
         />
       )}

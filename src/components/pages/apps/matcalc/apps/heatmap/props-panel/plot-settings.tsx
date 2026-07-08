@@ -1,8 +1,4 @@
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import type { IHeatMapDisplayOptions } from '@/components/plot/heatmap/heatmap-svg-props'
 import {
@@ -16,6 +12,8 @@ import { PropRow } from '@/dialogs/prop-row'
 import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
 
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { HeatMapPlot } from '../../../history/history-provider/history-types'
 import { useHeatmapContext } from '../heatmap-provider'
@@ -108,108 +106,72 @@ export function PlotSettingsPanel() {
           />
         </PropRow>
 
-        <CheckPropRow
-          title="Grid"
-          checked={displayProps.grid.show}
-          onCheckedChange={(v) =>
-            updatePlot(
-              produce(plot, (draft) => {
-                draft.props.grid.show = v
-              })
-            )
-          }
-        >
-          <ColorPickerButton
-            align="end"
-            colors={[
-              {
-                color: displayProps.grid.value,
-                width: displayProps.grid.width,
-                opacity: displayProps.grid.opacity,
-                onColorChange: ({ color, opacity, width }) =>
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.grid.value = color
-                      draft.props.grid.opacity =
-                        opacity ?? draft.props.grid.opacity
-                      draft.props.grid.width = width ?? displayProps.grid.width
-                    })
-                  ),
-              },
-            ]}
-            disabled={!displayProps.grid.show}
-            className={SIMPLE_COLOR_EXT_CLS}
-            title="Grid Lines Color"
-          />
-          {/* <NumericalInput
-                    id="col-tree-stroke-width"
-                    value={displayProps.grid.width}
-                    disabled={!displayProps.grid.show}
-                    placeholder="Stroke..."
-                    className="rounded-theme"
-                    onNumChanged={v => {
-                      updatePlot(
-                        produce(plot, draft => {
-                          draft.props.grid.width = v
-                        }),
-                        { file: plotAddr }
-                      )
-                    }}
-                  /> */}
-        </CheckPropRow>
+        <PropRow title="Grid">
+          <VCenterRow>
+            <OutlineButton
+              colors={[
+                {
+                  color: displayProps.grid.value,
+                  opacity: displayProps.grid.opacity,
+                  onColorChange: ({
+                    color,
+                    opacity,
+                    width,
+                    dasharray,
+                    show,
+                  }) => {
+                    updatePlot(
+                      produce(plot, (draft) => {
+                        draft.props.grid.value = color
+                        draft.props.grid.opacity = opacity ?? 1
+                        draft.props.grid.show = show ?? draft.props.grid.show
+                        draft.props.grid.width = width ?? draft.props.grid.width
+                        draft.props.grid.dasharray =
+                          dasharray ?? draft.props.grid.dasharray
+                      })
+                    )
+                  },
+                },
+              ]}
+
+              title="Grid Outline"
+            />
+
+            <OutlineButton
+              colors={[
+                {
+                  color: displayProps.border.value,
+                  opacity: displayProps.border.opacity,
+                  onColorChange: ({
+                    color,
+                    opacity,
+                    width,
+                    dasharray,
+                    show,
+                  }) => {
+                    updatePlot(
+                      produce(plot, (draft) => {
+                        draft.props.border.value = color
+                        draft.props.border.opacity = opacity ?? 1
+                        draft.props.border.show =
+                          show ?? draft.props.border.show
+                        draft.props.border.width =
+                          width ?? draft.props.border.width
+                        draft.props.border.dasharray =
+                          dasharray ?? draft.props.border.dasharray
+                      })
+                    )
+                  },
+                },
+              ]}
+
+              title="Border Outline"
+            />
+          </VCenterRow>
+        </PropRow>
 
         <CheckPropRow
-          title="Border"
-          checked={displayProps.border.show}
-          onCheckedChange={(v) =>
-            updatePlot(
-              produce(plot, (draft) => {
-                draft.props.border.show = v
-              })
-            )
-          }
-        >
-          <ColorPickerButton
-            align="end"
-            colors={[
-              {
-                color: displayProps.border.value,
-                width: displayProps.border.width,
-                opacity: displayProps.border.opacity,
-                onColorChange: ({ color, opacity, width }) =>
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.border.value = color
-                      draft.props.border.opacity =
-                        opacity ?? displayProps.border.opacity
-                      draft.props.border.width =
-                        width ?? displayProps.border.width
-                    })
-                  ),
-              },
-            ]}
-            className={SIMPLE_COLOR_EXT_CLS}
-            title="Border Color"
-          />
-          {/* <NumericalInput
-                      id="border-stroke-width"
-                      value={displayProps.border.width}
-                      disabled={!displayProps.border.show}
-                      placeholder="Stroke..."
-                      className="rounded-theme"
-                      onNumChanged={v => {
-                        updatePlot(
-                          produce(plot, draft => {
-                            draft.props.border.width = v
-                          }),
-                          { file: plotAddr }
-                        )
-                      }}
-                    /> */}
-        </CheckPropRow>
-
-        <CheckPropRow
-          title="Actions list"
+          title="Actions List"
           checked={displayProps.actions.show}
           onCheckedChange={(v) =>
             updatePlot(

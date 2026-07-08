@@ -11,6 +11,7 @@ import {
 import { ToolbarIconButton } from '../toolbar/toolbar-icon-button'
 import { IColorPickerProps } from './color-picker-popover'
 import {
+  addStandardDefaultsToColorPickerProps,
   MoreColors,
   StandardColors,
   ThemeColors,
@@ -45,7 +46,7 @@ export function FillButton({
     ariaLabel = 'Choose color'
   }
 
-  const color0 = { allowNoColor: true, allowAlpha: true, ...colors[0]! }
+  const color0 = addStandardDefaultsToColorPickerProps(colors[0]!)
 
   return (
     <FillDropdownMenu
@@ -87,7 +88,7 @@ export function FillDropdownMenu({
     return null
   }
 
-  const color0 = { allowNoColor: true, allowAlpha: true, ...colors[0]! }
+  const color0 = addStandardDefaultsToColorPickerProps(colors[0]!)
 
   return (
     <DropdownMenu>
@@ -98,12 +99,19 @@ export function FillDropdownMenu({
         variant="content"
         className="flex flex-col"
       >
-        <ThemeColors cp={color0} />
+        {color0.showThemeColors && (
+          <>
+            <ThemeColors cp={color0} />
+            <MenuSeparator />
+          </>
+        )}
 
-        <MenuSeparator />
-        <StandardColors cp={color0} mode="fill" />
-
-        <MenuSeparator />
+        {color0.showPresets && (
+          <>
+            <StandardColors cp={color0} mode="fill" />
+            <MenuSeparator />
+          </>
+        )}
 
         <MoreColors cp={color0} />
       </DropdownMenuContent>

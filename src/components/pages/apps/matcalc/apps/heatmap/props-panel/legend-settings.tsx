@@ -1,7 +1,3 @@
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import type { LegendPos } from '@/components/plot/svg-props'
 import {
@@ -20,6 +16,7 @@ import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
 import { produce } from 'immer'
 
+import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
@@ -154,30 +151,29 @@ export function LegendSettingsPanel() {
             )
           }}
         >
-          <ColorPickerButton
-            align="end"
+          <OutlineButton
             colors={[
               {
                 color: displayProps.legend.stroke.value,
-                width: displayProps.legend.stroke.width,
                 opacity: displayProps.legend.stroke.opacity,
-                onColorChange: ({ color, opacity, width }) =>
+                onColorChange: ({ color, opacity, width, dasharray, show }) => {
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.legend.stroke.value = color
-                      draft.props.legend.stroke.opacity =
-                        opacity ?? draft.props.legend.stroke.opacity
+                      draft.props.legend.stroke.opacity = opacity ?? 1
+                      draft.props.legend.stroke.show =
+                        show ?? draft.props.legend.stroke.show
                       draft.props.legend.stroke.width =
                         width ?? draft.props.legend.stroke.width
+                      draft.props.legend.stroke.dasharray =
+                        dasharray ?? draft.props.legend.stroke.dasharray
                     })
-                  ),
+                  )
+                },
               },
             ]}
-            disabled={
-              !displayProps.legend.show || !displayProps.legend.stroke.show
-            }
-            className={SIMPLE_COLOR_EXT_CLS}
-            title="Border Color"
+
+            title="Legend Outline"
           />
         </CheckPropRow>
       </AccordionContent>

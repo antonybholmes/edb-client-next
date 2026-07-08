@@ -114,7 +114,26 @@ export const SIMPLE_COLOR_EXT_CLS = cn(
 )
 
 export interface IColorChangeProps {
+  /**
+   * The selected color in hexadecimal format (e.g., #RRGGBB or #RRGGBBAA). You
+   * can leave the alpha channel in the hex color if you want, but it will typically
+   * be stripped out and returned via the separate opacity parameter.
+   * This is because this control is typically used for setting colors
+   * that will be used in SVG components and to play nicely, we use colors
+   * without the alpha channel and instead use fillOpacity and strokeOpacity to set
+   * the color opacity on the svg element.
+   */
   color: string
+
+  /**
+   * The opacity of the color, represented as a number between 0 and 1,
+   * where 0 is fully transparent and 1 is fully opaque.
+   * This parameter is especially relevant when the color includes an alpha channel
+   * or when the color picker allows users to adjust the opacity of the selected color.
+   * By providing the opacity as a separate parameter, it allows for more flexible handling of
+   * colors in the application, such as applying the opacity to SVG elements
+   * or CSS styles without needing to parse the alpha channel from the hex color string.
+   */
   opacity?: number | undefined
   width?: number
   dasharray?: string
@@ -127,9 +146,44 @@ export interface IColorPickerProps extends IColorChangeProps {
   defaultColor?: UndefStr
   autoBorder?: boolean | undefined
   defaultBorderColor?: UndefStr
+
+  /**
+   * Whether to allow user to select "no color" option, which typically sets the color to
+   * transparent or doesn't render the element at all. When using this option,
+   * it's important to ensure that your UI properly indicates when an element has no color,
+   * as this can sometimes be confused with a very light color or transparency.
+   */
   allowNoColor?: boolean | undefined
+
+  /**
+   * Whether to show theme colors in the color picker. Theme colors are 6x10 grid
+   * of colors similar to those in MS Office.
+   */
+  showThemeColors?: boolean | undefined
+
+  /**
+   * Whether to show the preset colors in the color picker.
+   * These are typically shown below the main color picker UI and allow users to quickly select from a set of
+   * commonly used colors.
+   */
   showPresets?: boolean | undefined
+
+  /**
+   * Whether to allow user to select a color with an alpha channel (i.e. semi-transparency).
+   * When this option is enabled, the color picker will typically provide a way for users to
+   * adjust the opacity of the color, and the onColorChange callback will receive the selected color
+   * with its alpha channel intact.
+   */
   allowAlpha?: boolean
+
+  /**
+   * Whether to keep the alpha channel in the hex color returned by onColorChange.
+   * By default, the alpha channel is removed from the hex color and instead returned via the opacity parameter.
+   * This is because this control is typically used for setting colors that will be used in SVG components
+   * and to play nicely, we use colors without the alpha channel and instead use fillOpacity and strokeOpacity
+   * to set the color opacity on the svg element. However, if keepAlphaChannel is true,
+   * the onColorChange callback will receive the full hex color with the alpha channel included.
+   */
   keepAlphaChannel?: boolean | undefined
   showColor?: boolean
   showRgb?: boolean | undefined
