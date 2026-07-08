@@ -31,8 +31,6 @@ import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { makeUuid } from '@/lib/id'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 
-import { PileupPropsPanel } from './pileup-props-panel'
-
 import { type ITab } from '@/components/tabs/tab-provider'
 
 import type { ISaveAsFileType, ISaveAsResponse } from '@/dialogs/save-as-dialog'
@@ -66,14 +64,10 @@ import {
   HistoryShowButton,
 } from '../../matcalc/history/history-layout'
 
-import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
+import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useFooter } from '@/providers/footer-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
-import {
-  useCurrentSheets,
-  useFiles,
-} from '../../matcalc/history/history-provider/history-contexts'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { useSave } from '../../matcalc/hooks/save'
 import { DatasetPanel } from './dataset-panel'
@@ -111,19 +105,15 @@ export function VariantsPage() {
 
   const { open: openDialog } = useDialogs()
 
-  const { openFile, goto } = useHistory()
+  const { openFile } = useHistory()
 
-  const { file } = useFiles()
-  const { sheets } = useCurrentSheets()
   const { setTabs: setToolbarTabs } = useToolbarTabs()
-  const { setTabs: setSideTabs } = useSideTabs()
+
   const { svgRef } = useSVG()
 
   const { save } = useSave()
 
   const { addDFSize } = useFooter()
-
-  const df = sheets[0] as AnnotationDataFrame
 
   useEffect(() => {
     setAppInfo(APP_INFO)
@@ -141,19 +131,6 @@ export function VariantsPage() {
       },
     ])
   }, [setToolbarTabs])
-
-  useEffect(() => {
-    setSideTabs([
-      {
-        id: 'Display',
-        component: PileupPropsPanel,
-      },
-      {
-        id: 'Features',
-        component: FeaturePropsPanel,
-      },
-    ])
-  }, [setSideTabs])
 
   useEffect(() => {
     let cmap: ICMAP = { ...CMAP_NONE }

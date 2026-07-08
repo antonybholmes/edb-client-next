@@ -2128,6 +2128,10 @@
         {
           "msg": "Now uses tinycolor2 for dealing with colors with alpha and swapping between hex and rgb",
           "date": "2026-07-08T20:28:10.117Z"
+        },
+        {
+          "msg": "Fixed Variants UI and added more Fill and Outline UI elements",
+          "date": "2026-07-08T21:49:50.323Z"
         }
       ]
     },

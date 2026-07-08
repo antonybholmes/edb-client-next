@@ -218,11 +218,11 @@
     "name": "Variants",
     "description": "WGS variant data explorer.",
     "color": "#FA8072",
-    "version": "26.6.4",
+    "version": "26.6.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-08T21:49:49.424Z",
-    "hash": "2dfdd5e99aace6d7214508121ca141414e91139cfdbc57113c514551e6bf3adf",
-    "build": 998
+    "modified": "2026-07-08T21:50:00.979Z",
+    "hash": "05a1a2d54973ee65a9aa08bb05adf01ee774a09cfec642a23f54e1890486e798",
+    "build": 1000
   },
   {
     "name": "Venn",
