@@ -46,7 +46,7 @@ type DialogTypeMap = {
   }
   color: {
     title?: string
-    color: IColorChangeProps
+    cp: IColorChangeProps
     callback?: (data: IColorChangeProps) => void
   }
   alert: {
@@ -247,7 +247,7 @@ function DialogRenderer({
     case 'color': {
       const {
         title,
-        color,
+        cp,
 
         callback,
       } = dialog.payload
@@ -255,7 +255,7 @@ function DialogRenderer({
       return (
         <ColorPickerDialog
           title={title}
-          color={color}
+          cp={cp}
 
           onResponse={(response, data) => {
             if (response !== TEXT_CANCEL) {

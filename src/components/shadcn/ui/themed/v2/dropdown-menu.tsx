@@ -51,8 +51,6 @@ const BASE_TRIGGER_CLS = 'data-[state=open]:bg-muted flex-row items-center'
 
 const DropdownMenu = DropdownMenuPrimitive.Root
 
-const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
-
 const DropdownMenuGroup = DropdownMenuPrimitive.Group
 
 const DropdownMenuPortal = DropdownMenuPrimitive.Portal
@@ -75,6 +73,24 @@ export const POPOVER_CLS = cn(
   'transition-[height,opacity,scale] duration-[0.3s] ease-out data-ending-style:scale-95',
   'data-ending-style:opacity-0 data-instant:transition-none data-starting-style:scale-95 data-starting-style:opacity-0'
 )
+
+export function DropdownMenuTrigger({
+  title,
+  'aria-label': ariaLabel,
+  ...props
+}: ComponentProps<typeof DropdownMenuPrimitive.Trigger>) {
+  if (!ariaLabel && typeof title === 'string') {
+    ariaLabel = title
+  }
+
+  return (
+    <DropdownMenuPrimitive.Trigger
+      title={title}
+      aria-label={ariaLabel}
+      {...props}
+    />
+  )
+}
 
 export const dropdownContentVariants = cva(DROPDOWN_MENU_CONTENT_CLS, {
   variants: {
@@ -483,5 +499,4 @@ export {
   DropdownMenuRadioItem,
   DropdownMenuShortcut,
   DropdownMenuSub,
-  DropdownMenuTrigger,
 }

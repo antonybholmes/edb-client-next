@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { TrashIcon } from '@/icons/trash-icon'
 import { UnLinkIcon } from '@/icons/unlink-icon'
 import { BaseCol } from '@/layout/base-col'
-import { hexColorWithoutAlpha } from '@/lib/color/color'
+import { removeAlphaFromHex } from '@/lib/color/color'
 import { cn } from '@/lib/shadcn-utils'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
@@ -54,7 +54,7 @@ export function DeleteTrackGroupButton({ group }: { group: ITrackGroup }) {
           type: 'warning',
           payload: {
             content: `Are you sure you want to remove the ${group.name} track? This action cannot be undone.`,
-            callback: response => {
+            callback: (response) => {
               if (response === TEXT_OK) {
                 dispatch({
                   type: 'remove-groups',
@@ -93,7 +93,7 @@ export function DeleteTrackButton({
           type: 'warning',
           payload: {
             content: `Are you sure you want to remove the ${group.name} track? This action cannot be undone.`,
-            callback: response => {
+            callback: (response) => {
               if (response === TEXT_OK) {
                 dispatch({
                   type: 'remove-tracks',
@@ -139,10 +139,10 @@ export function UngroupButton({ group }: { group: ITrackGroup }) {
           type: 'warning',
           payload: {
             content: 'Are you sure you want to ungroup the tracks?',
-            callback: response => {
+            callback: (response) => {
               if (response === TEXT_OK) {
                 // find current index of the group
-                const idx = where(groups, g => g.id === group.id)[0]!
+                const idx = where(groups, (g) => g.id === group.id)[0]!
 
                 dispatch({
                   type: 'set',
@@ -151,7 +151,7 @@ export function UngroupButton({ group }: { group: ITrackGroup }) {
                     ...groups.slice(0, idx),
 
                     // split each track into a separate group
-                    ...group.tracks.map(t => newTrackGroup([t])),
+                    ...group.tracks.map((t) => newTrackGroup([t])),
 
                     // add what comes after the group intact
                     ...groups.slice(idx + 1),
@@ -203,7 +203,7 @@ export function SeqTrackItem({
       {group.tracks.length > 1 && <UngroupButton group={group} />}
       <BaseCol className="grow overflow-hidden">
         {(group.tracks as ISeqTrack[]).map((t, ti) => {
-          const accentColor = hexColorWithoutAlpha(t.displayOptions.fill.value)
+          const accentColor = removeAlphaFromHex(t.displayOptions.fill.value)
           return (
             <VCenterRow
               key={t.id}
@@ -244,7 +244,7 @@ export function SeqTrackItem({
                         payload: {
                           group,
                           track,
-                          callback: data => {
+                          callback: (data) => {
                             dispatch({
                               type: 'update',
                               group,

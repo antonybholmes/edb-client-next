@@ -83,12 +83,19 @@ export function hexToRgba(hex: string): IRGBA {
   return ret
 }
 
+/**
+ * Add an alpha channel to a hex color, e.g. #ff0000 -> #ff000080 for 50% opacity.
+ *
+ * @param hex
+ * @param alpha
+ * @returns
+ */
 export function addAlphaToHex(hex: string, alpha: number = 1): string {
   const a = Math.round(255 * Math.max(0, Math.min(1, alpha)))
     .toString(16)
     .padStart(2, '0')
 
-  return hexColorWithoutAlpha(hex) + a
+  return removeAlphaFromHex(hex) + a
 }
 
 export function addAlphaToHexIfNotPresent(
@@ -108,7 +115,7 @@ export function addAlphaToHexIfNotPresent(
  * @param hex
  * @returns
  */
-export function hexColorWithoutAlpha(hex: string): string {
+export function removeAlphaFromHex(hex: string): string {
   return hex.slice(0, 7)
 }
 

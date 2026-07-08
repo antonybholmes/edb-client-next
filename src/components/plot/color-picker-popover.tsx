@@ -12,7 +12,7 @@ import {
   COLOR_BLACK,
   COLOR_TRANSPARENT,
   hexToRgba,
-  hexColorWithoutAlpha as removeAlphaFromHex,
+  removeAlphaFromHex,
   rgba2hex,
   textColorShouldBeDark,
   type IRGBA,
@@ -121,27 +121,21 @@ export interface IColorChangeProps {
   show?: boolean
 }
 
-export interface IColorPickerProps {
+export interface IColorPickerProps extends IColorChangeProps {
   title?: UndefStr
 
-  color: string
-  opacity?: number | undefined
-  width?: number | undefined
-  dasharray?: string | undefined
   defaultColor?: UndefStr
   autoBorder?: boolean | undefined
   defaultBorderColor?: UndefStr
   allowNoColor?: boolean | undefined
   showPresets?: boolean | undefined
-  //allowAlpha?: boolean
+  allowAlpha?: boolean
   keepAlphaChannel?: boolean | undefined
   showColor?: boolean
   showRgb?: boolean | undefined
   font?: ITextProps | undefined
 
   onColorChange?: ((props: IColorChangeProps) => void) | undefined
-
-  //onWidthChange?: ((width: number) => void) | undefined
 
   onShowColor?: ((show: boolean) => void) | undefined
 

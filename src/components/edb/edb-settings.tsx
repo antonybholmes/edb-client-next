@@ -1,4 +1,6 @@
 import { IChildrenProps } from '@/interfaces/children-props'
+import { makeUuid } from '@/lib/id'
+import { produce } from 'immer'
 import { createContext, useCallback, useContext, useState } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
@@ -48,8 +50,10 @@ export interface IEdbSettings {
   genomic: {
     assembly: string
   }
-  colors: {
-    custom: string[]
+  plots: {
+    colors: {
+      custom: { id: string; color: string; opacity: number }[]
+    }
   }
 }
 
@@ -95,7 +99,7 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
   genomic: {
     assembly: 'grch37',
   },
-  colors: { custom: [] },
+  plots: { colors: { custom: [] } },
 }
 
 export interface IEdbSettingsStore extends IEdbSettings {
@@ -123,7 +127,9 @@ export function useEdbSettings(): {
   settings: IEdbSettings
   updateSettings: (settings: Partial<IEdbSettings>) => void
   resetSettings: () => void
-  addCustomColor: (color: string) => void
+  addCustomColor: (color: string, opacity: number) => void
+  removeCustomColor: (color: string) => void
+  clearCustomColors: () => void
   toggleHistorySidebar: () => void
   historySidebarOpen: (open: boolean) => void
 } {
@@ -147,22 +153,46 @@ export function useEdbSettings(): {
    * the oldest color will be removed.
    *
    * @param color - The color to be added in hex format (e.g., '#FF5733').
+   * @param opacity - The opacity of the color (optional, default is 1).
    */
-  function addCustomColor(color: string) {
-    const newColors = [...settings.colors.custom]
-    if (!newColors.includes(color)) {
-      newColors.push(color)
+  function addCustomColor(color: string, opacity: number = 1) {
+    const newColors = [...settings.plots.colors.custom]
+    if (
+      !newColors.some(
+        (c) =>
+          c.color.toLowerCase() === color.toLowerCase() && c.opacity === opacity
+      )
+    ) {
+      newColors.push({ id: makeUuid(), color, opacity })
       if (newColors.length > MAX_CUSTOM_COLORS) {
         newColors.shift()
       }
 
-      updateSettings({
-        colors: {
-          ...settings.colors,
-          custom: newColors,
-        },
-      })
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.plots.colors.custom = newColors
+        })
+      )
     }
+  }
+
+  function removeCustomColor(color: string) {
+    const newColors = settings.plots.colors.custom.filter(
+      (c) => c.id == color || c.color.toLowerCase() !== color.toLowerCase()
+    )
+    updateSettings(
+      produce(settings, (draft) => {
+        draft.plots.colors.custom = newColors
+      })
+    )
+  }
+
+  function clearCustomColors() {
+    updateSettings(
+      produce(settings, (draft) => {
+        draft.plots.colors.custom = []
+      })
+    )
   }
 
   function historySidebarOpen(open: boolean) {
@@ -180,6 +210,8 @@ export function useEdbSettings(): {
     updateSettings,
     resetSettings,
     addCustomColor,
+    removeCustomColor,
+    clearCustomColors,
     toggleHistorySidebar,
     historySidebarOpen,
   }

@@ -5,6 +5,8 @@ import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import { SvgLine } from '@/components/plot/svg-line'
 import { SvgMargin } from '@/components/plot/svg-margin'
+import { SvgPolyLine } from '@/components/plot/svg-poly-line'
+import { SvgPolygon } from '@/components/plot/svg-polygon'
 import { IPos } from '@/interfaces/pos'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { addAlphaToHex, COLOR_BLACK } from '@/lib/color/color'
@@ -344,23 +346,18 @@ function EsSvg({
 
   return (
     <g>
-      {settings.es.leadingEdge.show && (
-        <EsLeadingEdgeSvg
-          es={es}
-          rankMid={rankMid}
-          x0={x0}
-          x1={x1}
-          xax={xax}
-          yax={yax}
-        />
-      )}
+      <EsLeadingEdgeSvg
+        es={es}
+        rankMid={rankMid}
+        x0={x0}
+        x1={x1}
+        xax={xax}
+        yax={yax}
+      />
 
-      <polyline
+      <SvgPolyLine
         points={displayPoints.map((p) => `${p.x},${p.y}`).join(' ')}
-        fill="none"
-        stroke={settings.es.line.value}
-        opacity={settings.es.line.opacity}
-        strokeWidth={settings.es.line.width}
+        s={settings.es.line}
       />
 
       {settings.axes.show && (
@@ -507,13 +504,15 @@ function EsLeadingEdgeSvg({
 
   return (
     <g id="leading-edge">
-      <polygon
-        id="leading-edge-area"
-        points={leadingPoints.map((p) => `${p.x},${p.y}`).join(' ')}
-        fill={settings.es.leadingEdge.fill.value}
-        stroke="none"
-        fillOpacity={settings.es.leadingEdge.fill.opacity}
-      />
+      {settings.es.leadingEdge.fill.show && (
+        <polygon
+          id="leading-edge-area"
+          points={leadingPoints.map((p) => `${p.x},${p.y}`).join(' ')}
+          fill={settings.es.leadingEdge.fill.value}
+          stroke="none"
+          fillOpacity={settings.es.leadingEdge.fill.opacity}
+        />
+      )}
 
       {settings.es.leadingEdge.line.show && (
         <SvgLine
@@ -671,13 +670,14 @@ function RankingSvg({
 
   return (
     <g transform={`translate(${pos.x}, ${pos.y})`}>
-      <polygon
-        points={displayPoints.map((p) => `${p.x},${p.y}`).join(' ')}
-        fill={settings.ranking.fill.value}
-        stroke="none"
-        fillOpacity={settings.ranking.fill.opacity}
-      />
-      {settings.ranking.zeroCross.show && (
+      {settings.ranking.fill.show && (
+        <SvgPolygon
+          points={displayPoints.map((p) => `${p.x},${p.y}`).join(' ')}
+          s={settings.ranking.fill}
+        />
+      )}
+
+      {settings.ranking.zeroCross.line.show && (
         <g transform={`translate(${crossing.x}, 0)`}>
           <SvgLine
             y2={settings.ranking.axes.y.length}

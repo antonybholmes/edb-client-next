@@ -9,11 +9,7 @@ import {
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
-import { DoubleNumericalInput } from '@/components/double-numerical-input'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
@@ -52,34 +48,7 @@ export function PlotPropsPanel() {
           {TEXT_RESET}
         </LinkButton>
       </SideBarHeader>
-      <ScrollAccordion value={['plot', 'nodes', 'links']}>
-        <AccordionItem value="plot">
-          <AccordionTrigger>Plot</AccordionTrigger>
-          <AccordionContent>
-            <PropRow title="Size">
-              <DoubleNumericalInput
-                v1={settings.width}
-                v2={settings.height}
-                onNumChange1={(v) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.width = v
-                    })
-                  )
-                }}
-                onNumChange2={(v) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.height = v
-                    })
-                  )
-                }}
-                dp={0}
-                limit={[100, 2000]}
-              />
-            </PropRow>
-          </AccordionContent>
-        </AccordionItem>
+      <ScrollAccordion value={['nodes', 'links']}>
         <AccordionItem value="nodes">
           <AccordionTrigger
             rightChildren={
@@ -238,29 +207,48 @@ export function PlotPropsPanel() {
         <AccordionItem value="links">
           <AccordionTrigger
             rightChildren={
-              <ColorPickerButton
+              // <ColorPickerButton
+              //   colors={[
+              //     {
+              //       color: settings.links.color,
+
+              //       onColorChange: ({ color }) => {
+              //         updateSettings(
+              //           produce(settings, (draft) => {
+              //             draft.links.color = color
+              //           })
+              //         )
+              //       },
+              //     },
+              //   ]}
+              //   className={SIMPLE_COLOR_EXT_CLS}
+              //   title="Set default color"
+              // />
+
+              <FillButton
                 colors={[
                   {
                     color: settings.links.color,
-
-                    onColorChange: ({ color }) => {
+                    opacity: settings.links.opacity,
+                    onColorChange: ({ color, opacity }) => {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.links.color = color
+                          draft.links.opacity = opacity ?? 1
                         })
                       )
                     },
                   },
                 ]}
-                className={SIMPLE_COLOR_EXT_CLS}
-                title="Set default color"
+
+                title="Links Fill"
               />
             }
           >
             Links
           </AccordionTrigger>
           <AccordionContent>
-            <PropRow title="Color mode">
+            <PropRow title="Color Mode">
               <SelectList
                 items={[
                   { value: 'gradient', label: 'Gradient' },

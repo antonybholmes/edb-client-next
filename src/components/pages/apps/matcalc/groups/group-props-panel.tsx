@@ -50,10 +50,7 @@ import { useDialogs } from '@/components/dialogs/dialogs'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { UploadIcon } from '@/components/icons/upload-icon'
 import { BaseCol } from '@/components/layout/base-col'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
@@ -133,25 +130,34 @@ function GroupItem({
           updateGroup({ ...group, show: v })
         }}
       />
-      <ColorPickerButton
+      {/* <ColorPickerButton
         colors={[
           {
             color: group.color,
             onColorChange: ({ color }) => updateGroup({ ...group, color }),
           },
         ]}
-        // onOpenChanged={open => {
-        //   if (!open) {
-        //     addGroups(groups.map(g => (g.id === group.id ? { ...g, color } : g)), pathJoin(app))
-        //   }
-        // }}
+
         className={SIMPLE_COLOR_EXT_CLS}
         title="Set color"
+      /> */}
+
+      <FillButton
+        colors={[
+          {
+            color: group.color,
+
+            allowAlpha: false,
+            onColorChange: ({ color }) => {
+              updateGroup({ ...group, color })
+            },
+          },
+        ]}
+
+        title="Set Group Color"
       />
-      <VCenterCol
-        className="overflow-hidden grow gap-y-1"
-        //style={{ color: group.color, fill: group.color }}
-      >
+
+      <VCenterCol className="overflow-hidden grow gap-y-1">
         <VCenterRow className="gap-x-1 h-4">
           <TruncateSpan
             className="grow h-full font-semibold text-xs"
@@ -190,8 +196,6 @@ export interface IGroupCallback {
 }
 
 export function GroupPropsPanel() {
-  //const [activeId, setActiveId] = useState<string | null>(null)
-
   const { open: openDialog } = useDialogs()
 
   const { addGroups, clearGroups, reorderGroups } = useHistory()

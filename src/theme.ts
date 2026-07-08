@@ -43,7 +43,8 @@ export const BUTTON_LG_W_CLS = 'w-10'
 export const BUTTON_XL_W_CLS = 'w-11'
 export const BUTTON_XL_H_CLS = 'h-11'
 
-export const BASE_ICON_BUTTON_CLS = 'shrink-0 grow-0 aspect-square'
+export const BASE_ICON_BUTTON_CLS =
+  'shrink-0 grow-0 aspect-square overflow-hidden'
 
 export const ICON_BUTTON_CLS = cn(
   BASE_ICON_BUTTON_CLS,

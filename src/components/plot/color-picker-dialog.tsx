@@ -4,7 +4,7 @@ import {
   addAlphaToHex,
   COLOR_BLACK,
   hexToRgba,
-  hexColorWithoutAlpha as removeAlphaFromHex,
+  removeAlphaFromHex,
   rgba2hex,
   type IRGBA,
 } from '@/lib/color/color'
@@ -13,17 +13,23 @@ import { cn } from '@/lib/shadcn-utils'
 import { FOCUS_RING_CLS } from '@/theme'
 
 import { TEXT_OK } from '@/consts'
-import { useEffect, useState } from 'react'
+import { ComponentProps, useEffect, useMemo, useState } from 'react'
 import {
   HexAlphaColorPicker,
   HexColorInput,
   HexColorPicker,
 } from 'react-colorful'
 import { IModalProps, OKCancelDialog } from '../dialogs/ok-cancel-dialog'
+import { useEdbSettings } from '../edb/edb-settings'
+import { BaseCol } from '../layout/base-col'
 import { BaseRow } from '../layout/base-row'
 import { NumericalInput } from '../shadcn/ui/themed/numerical-input'
 import { inputVariants } from '../shadcn/ui/themed/v2/input'
-import { IColorChangeProps, PRESET_COLORS } from './color-picker-popover'
+import {
+  IColorChangeProps,
+  IColorPickerProps,
+  PRESET_COLORS,
+} from './color-picker-popover'
 
 export const SIMPLE_COLOR_EXT_CLS = cn(
   'w-4.5 h-4.5 aspect-square rounded-sm shrink-0',
@@ -31,46 +37,66 @@ export const SIMPLE_COLOR_EXT_CLS = cn(
 )
 
 export type IProps = IModalProps<IColorChangeProps> & {
-  color: IColorChangeProps
+  cp: IColorPickerProps
   keepAlphaChannel?: boolean
   showRgb?: boolean
   showPresets?: boolean
 }
 
 export function ColorPickerDialog({
-  color,
+  title = 'Custom Colors',
+  cp,
   keepAlphaChannel = false,
-  showRgb = false,
+  showRgb = true,
   showPresets = true,
   onResponse,
 }: IProps) {
-  const [_colorWithAlpha, setColorWithAlpha] = useState(
-    addAlphaToHex(color.color, color.opacity ?? 1)
+  const { settings, addCustomColor } = useEdbSettings()
+
+  const [color, setColor] = useState(COLOR_BLACK)
+  const [opacity, setOpacity] = useState(1)
+
+  useEffect(() => {
+    setColor(removeAlphaFromHex(cp.color))
+  }, [cp.color])
+
+  useEffect(() => {
+    setOpacity(cp.opacity ?? 1)
+  }, [cp.opacity])
+
+  const colorWithAlpha = useMemo(
+    () => addAlphaToHex(color, opacity),
+    [color, opacity]
   )
-  const [_opacity, setOpacity] = useState(color.opacity ?? 1)
 
-  useEffect(() => {
-    setColorWithAlpha(addAlphaToHex(color.color, color.opacity ?? 1))
-  }, [color.color, color.opacity])
+  const rgba = useMemo(() => hexToRgba(color), [color])
 
-  useEffect(() => {
-    setOpacity(color.opacity ?? 1)
-  }, [color.opacity])
-
-  const _rgba = hexToRgba(_colorWithAlpha)
+  function handleColorChange(newColor: string, newOpacity: number = 1) {
+    setColor(newColor)
+    setOpacity(newOpacity)
+  }
 
   return (
     <OKCancelDialog
-      title="Color Picker"
-      w="w-100"
+      title={
+        <VCenterRow className="gap-x-2">
+          <span
+            className="border border-border h-6 w-6 rounded-full"
+            style={{ background: colorWithAlpha }}
+          />
+          <span>{title}</span>
+        </VCenterRow>
+      }
+      w="w-110"
       onResponse={(r) => {
         if (r === TEXT_OK) {
+          addCustomColor(color, opacity)
           onResponse?.(r, {
-            color: removeAlphaFromHex(_colorWithAlpha),
-            opacity: _opacity,
-            width: color.width,
-            dasharray: color.dasharray,
-            show: color.show,
+            color: cp.allowAlpha && keepAlphaChannel ? colorWithAlpha : color,
+            opacity: opacity,
+            width: cp.width,
+            dasharray: cp.dasharray,
+            show: true,
           })
         } else {
           onResponse?.(r, undefined)
@@ -78,143 +104,143 @@ export function ColorPickerDialog({
       }}
       bodyCls="gap-y-4 color-picker"
     >
-      {color.opacity !== undefined ? (
+      {cp.allowAlpha ? (
         <HexAlphaColorPicker
-          color={_colorWithAlpha}
+          color={colorWithAlpha}
           onChange={(v) => {
             const opacity = hexToRgba(v)[3]
-            setColorWithAlpha(v)
+            setColor(removeAlphaFromHex(v))
             setOpacity(opacity)
           }}
         />
       ) : (
         <HexColorPicker
-          color={color.color}
+          color={color}
           onChange={(v) => {
-            setColorWithAlpha(v)
+            setColor(removeAlphaFromHex(v))
           }}
         />
       )}
 
-      <VCenterRow className="gap-x-3 ">
-        <VCenterRow className="gap-x-1.5">
-          <span>Hex</span>
+      <VCenterRow className="gap-x-2.5">
+        <BaseCol className="gap-0.5">
+          <span className="text-xs font-medium">Hex</span>
           <HexColorInput
             id="hex"
-            color={_colorWithAlpha?.toUpperCase() ?? COLOR_BLACK}
-            alpha={true}
+            color={color?.toUpperCase() ?? COLOR_BLACK}
+            //alpha={true}
             prefixed={true}
             onChange={(v) => {
-              setColorWithAlpha(v)
+              setColor(v)
             }}
             className={inputVariants({
               variant: 'alt',
-              className: 'w-24  ',
+              className: 'w-20',
             })}
           />
-        </VCenterRow>
+        </BaseCol>
 
-        {color.opacity !== undefined && (
-          <VCenterRow className="gap-x-1.5">
-            <span>A</span>
+        {cp.allowAlpha && (
+          <BaseCol className="gap-0.5">
+            <span className="text-xs font-medium">Alpha</span>
             <NumericalInput
               dp={2}
-              value={color.opacity}
-              className="w-16"
+              value={opacity}
+              w="xs"
               onNumChanged={(v) => {
                 const a = Math.max(0, Math.min(1, v))
 
                 // if keepAlphaChannel is true, we need to reconstruct the color
                 // to include the new alpha, otherwise strip the alpha from the color
-                setColorWithAlpha(
-                  keepAlphaChannel
-                    ? addAlphaToHex(_colorWithAlpha, a)
-                    : removeAlphaFromHex(_colorWithAlpha)
-                )
+                setOpacity(a)
               }}
               limit={[0, 1]}
               step={0.1}
               variant="alt"
             />
-          </VCenterRow>
+          </BaseCol>
+        )}
+
+        {showRgb && (
+          <>
+            <BaseCol className="gap-0.5">
+              <span className="text-xs font-medium">Red</span>
+              <NumericalInput
+                value={rgba[0]}
+                onNumChange={(v) => {
+                  const newRgba: IRGBA = [...rgba]
+                  newRgba[0] = v
+                  setColor(rgba2hex(newRgba))
+                }}
+                min={0}
+                max={255}
+                step={1}
+                variant="alt"
+                w="xxs"
+              />
+            </BaseCol>
+            <BaseCol className="gap-0.5">
+              <span className="text-xs font-medium">Green</span>
+              <NumericalInput
+                value={rgba[1]}
+                onNumChange={(v) => {
+                  const newRgba: IRGBA = [...rgba]
+                  newRgba[1] = v
+                  setColor(rgba2hex(newRgba))
+                }}
+                min={0}
+                max={255}
+                step={1}
+                variant="alt"
+                w="xxs"
+              />
+            </BaseCol>
+            <BaseCol className="gap-0.5">
+              <span className="text-xs font-medium">Blue</span>
+              <NumericalInput
+                value={rgba[2]}
+                onNumChange={(v) => {
+                  const newRgba: IRGBA = [...rgba]
+                  newRgba[2] = v
+                  setColor(rgba2hex(newRgba))
+                }}
+                min={0}
+                max={255}
+                step={1}
+                variant="alt"
+                w="xxs"
+              />
+            </BaseCol>
+          </>
         )}
       </VCenterRow>
-      {showRgb && (
-        <VCenterRow className="gap-x-3">
-          <VCenterRow className="gap-x-1.5">
-            <span>R</span>
-            <NumericalInput
-              value={_rgba[0]}
-              onNumChange={(v) => {
-                const rgba: IRGBA = [..._rgba]
-                rgba[0] = v
-                setColorWithAlpha(rgba2hex(rgba))
-              }}
-              min={0}
-              max={255}
-              step={1}
-              variant="alt"
-              className="w-14"
-            />
-          </VCenterRow>
-          <VCenterRow className="gap-x-1.5">
-            <span>G</span>
-            <NumericalInput
-              value={_rgba[1]}
-              onNumChange={(v) => {
-                const rgba: IRGBA = [..._rgba]
-                rgba[1] = v
-                setColorWithAlpha(rgba2hex(rgba))
-              }}
-              min={0}
-              max={255}
-              step={1}
-              variant="alt"
-              className="w-14"
-            />
-          </VCenterRow>
-          <VCenterRow className="gap-x-1.5">
-            <span>B</span>
-            <NumericalInput
-              value={_rgba[2]}
-              onNumChange={(v) => {
-                const rgba: IRGBA = [..._rgba]
-                rgba[2] = v
-                setColorWithAlpha(rgba2hex(rgba))
-              }}
-              min={0}
-              max={255}
-              step={1}
-              variant="alt"
-              className="w-14"
-            />
-          </VCenterRow>
-        </VCenterRow>
-      )}
       {showPresets && (
-        <VCenterRow className="gap-x-2">
+        <>
           <BaseRow className="gap-1 flex-wrap">
             {PRESET_COLORS.map((presetColor) => {
-              const prgb = hexToRgba(presetColor)
-              const ps = prgb[0] + prgb[1] + prgb[2]
-
               return (
-                <button
+                <ColorButton
                   key={presetColor}
-                  className={cn(
-                    'w-5 h-5 aspect-square border hover:scale-125 focus-visible:scale-125 rounded-full transition-transform duration-300',
-                    ps >= 750
-                      ? 'border-border'
-                      : 'border-transparent hover:border-white'
-                  )}
-                  style={{ background: presetColor }}
-                  onClick={() => setColorWithAlpha(presetColor)}
-                  tabIndex={0}
+                  presetColor={presetColor}
+                  onClick={() => handleColorChange(presetColor)}
                 />
               )
             })}
           </BaseRow>
-        </VCenterRow>
+
+          <BaseRow className="gap-1 flex-wrap">
+            {settings.plots.colors.custom.map((c) => {
+              return (
+                <ColorButton
+                  key={c.id}
+                  presetColor={addAlphaToHex(c.color, c.opacity)}
+
+                  onClick={() => handleColorChange(c.color, c.opacity ?? 1)}
+                />
+              )
+            })}
+          </BaseRow>
+        </>
       )}
       {/* {(allowNoColor || defaultColor) && <MenuSeparator />} */}
       {/* {allowNoColor && (
@@ -234,5 +260,29 @@ export function ColorPickerDialog({
                    )}
               */}
     </OKCancelDialog>
+  )
+}
+
+export function ColorButton({
+  size = 'w-5',
+  presetColor,
+  ...props
+}: ComponentProps<'button'> & {
+  presetColor: string
+  size?: string
+}) {
+  const prgb = hexToRgba(presetColor)
+  const ps = prgb[0] + prgb[1] + prgb[2]
+
+  return (
+    <button
+      className={cn(
+        'rounded-full aspect-square border hover:scale-125 focus-visible:scale-125 transition-transform duration-300',
+        size,
+        ps >= 750 ? 'border-border' : 'border-transparent hover:border-white'
+      )}
+      style={{ background: presetColor }}
+      {...props}
+    />
   )
 }

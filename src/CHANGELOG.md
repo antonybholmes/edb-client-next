@@ -4,6 +4,7 @@
 
 ### Added
 
+- Added fill and line prop buttons into UI to improve look and feel.
 - Added custom colors.
 - New outline line dialog. GSEA supports single line for leading edge.
 - GSEA plot now supports inverting plots.
