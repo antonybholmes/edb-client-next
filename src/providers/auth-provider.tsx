@@ -8,17 +8,7 @@ const AUTH0_DOMAIN = process.env.NEXT_PUBLIC_AUTH0_DOMAIN!
 const AUTH0_CLIENT_ID = process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID!
 const AUTH0_AUDIENCE = process.env.NEXT_PUBLIC_AUTH0_AUDIENCE!
 
-// interface IProps extends IChildrenProps {
-//   callbackUrl?: string
-// }
-
 export function AuthProvider({ children }: IChildrenProps) {
-  // const [url, setUrl] = useState('')
-
-  // useEffect(() => {
-  //   setUrl(callbackUrl?callbackUrl:window.location.href)
-  // }, [callbackUrl])
-
   return (
     <Auth0Provider
       domain={AUTH0_DOMAIN}

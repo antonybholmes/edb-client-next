@@ -11,6 +11,7 @@
 
 ### Changed
 
+- Now uses tinycolor2 for dealing with colors with alpha and swapping between hex and rgb.
 - GSEA right leading edge now finishes at end of plot.
 - UI refinements.
 - Zoom settings now check zoom has changed before broadcasting change to prevent race conditions when loading settings from localstorage.

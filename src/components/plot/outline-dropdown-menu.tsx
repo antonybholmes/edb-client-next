@@ -18,7 +18,8 @@ import {
   MenuSeparator,
 } from '../shadcn/ui/themed/v2/dropdown-menu'
 import { ToolbarIconButton } from '../toolbar/toolbar-icon-button'
-import { ColorButton } from './color-picker-dialog'
+
+import { ColorButton } from './color-picker-button'
 import { IColorPickerProps, PRESET_COLORS } from './color-picker-popover'
 import { THEME_COLOR_GRID } from './theme'
 

@@ -21,6 +21,11 @@ export function randomHslColor(): string {
   return 'hsla(' + Math.random() * 360 + ', 100%, 50%, 1)'
 }
 
+/**
+ * Generate a random hex color string in the format #rrggbb. The alpha channel is not included.
+ *
+ * @returns
+ */
 export function randomHexColor(): string {
   return (
     '#' +
@@ -30,6 +35,11 @@ export function randomHexColor(): string {
   )
 }
 
+/**
+ * Generate a random RGBA color as an array [r, g, b, a], where r, g, b are integers in the range [0, 255]
+ * and a is a float in the range [0, 1].
+ * @returns
+ */
 export function randomRGBAColor(): IRGBA {
   return [...range(3).map(() => Math.floor(Math.random() * 256)), 1] as IRGBA
 }
@@ -44,6 +54,15 @@ export function rgb2float(rgba: IRGBA): IRGBA {
   return [rgba[0] / 255, rgba[1] / 255, rgba[2] / 255, rgba[3]]
 }
 
+/**
+ * Convert an RGBA array to a hex color string.
+ * The alpha channel is included as the last two digits in the hex string,
+ * e.g. [255, 0, 0, 0.5] -> #ff000080. Supports both RGB and RGBA input,
+ * with alpha defaulting to 1 if not provided.
+ *
+ * @param rgba
+ * @returns
+ */
 export function rgba2hex(rgba: IRGBA): string {
   let dig: string
   let hex = '#'
@@ -63,6 +82,13 @@ export function rgba2hex(rgba: IRGBA): string {
   return hex
 }
 
+/**
+ * Convert a hex color string to an RGBA array.
+ * Supports both 6-digit (#rrggbb) and 8-digit (#rrggbbaa) hex formats.
+ *
+ * @param hex
+ * @returns
+ */
 export function hexToRgba(hex: string): IRGBA {
   const ret: IRGBA = [...BASE_RGBA]
 
@@ -98,6 +124,14 @@ export function addAlphaToHex(hex: string, alpha: number = 1): string {
   return removeAlphaFromHex(hex) + a
 }
 
+/**
+ * Adds an alpha channel to a hex color if not already present.
+ * If the hex color already has an alpha channel, it is returned unchanged.
+ *
+ * @param hex
+ * @param alpha
+ * @returns
+ */
 export function addAlphaToHexIfNotPresent(
   hex: string,
   alpha: number = 1

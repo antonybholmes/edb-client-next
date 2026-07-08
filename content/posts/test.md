@@ -1,8 +1,10 @@
 ---
-Title: 'Cake'
+Title: 'Test'
 ---
 
-Cake
+# Test
+
+Test
 
 ```typescript
 const x = 42

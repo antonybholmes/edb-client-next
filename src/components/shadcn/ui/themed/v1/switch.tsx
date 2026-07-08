@@ -86,8 +86,6 @@ export function Switch({
   ...props
 }: ISwitchProps) {
   const thumbRef = useRef<HTMLSpanElement>(null)
-  //const highlightThumbRef = useRef<HTMLSpanElement>(null)
-  //const pressedThumbRef = useRef<HTMLSpanElement>(null)
 
   const [hover, setHover] = useState(false)
   const [pressed, setPressed] = useState(false)

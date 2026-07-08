@@ -1,30 +1,25 @@
 import { VCenterRow } from '@/layout/v-center-row'
 
-import {
-  addAlphaToHex,
-  COLOR_BLACK,
-  hexToRgba,
-  removeAlphaFromHex,
-  rgba2hex,
-  type IRGBA,
-} from '@/lib/color/color'
+import { addAlphaToHex, COLOR_BLACK } from '@/lib/color/color'
 import { cn } from '@/lib/shadcn-utils'
 
 import { FOCUS_RING_CLS } from '@/theme'
 
 import { TEXT_OK } from '@/consts'
-import { ComponentProps, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   HexAlphaColorPicker,
   HexColorInput,
   HexColorPicker,
 } from 'react-colorful'
+import tinycolor from 'tinycolor2'
 import { IModalProps, OKCancelDialog } from '../dialogs/ok-cancel-dialog'
 import { useEdbSettings } from '../edb/edb-settings'
 import { BaseCol } from '../layout/base-col'
 import { BaseRow } from '../layout/base-row'
 import { NumericalInput } from '../shadcn/ui/themed/numerical-input'
 import { inputVariants } from '../shadcn/ui/themed/v2/input'
+import { ColorButton, ColorIcon } from './color-picker-button'
 import {
   IColorChangeProps,
   IColorPickerProps,
@@ -35,6 +30,8 @@ export const SIMPLE_COLOR_EXT_CLS = cn(
   'w-4.5 h-4.5 aspect-square rounded-sm shrink-0',
   FOCUS_RING_CLS
 )
+
+const DEFAULT_COLOR: tinycolor.Instance = tinycolor(COLOR_BLACK)
 
 export type IProps = IModalProps<IColorChangeProps> & {
   cp: IColorPickerProps
@@ -52,26 +49,23 @@ export function ColorPickerDialog({
 }: IProps) {
   const { settings, addCustomColor } = useEdbSettings()
 
-  const [color, setColor] = useState(COLOR_BLACK)
+  const [color, setColor] = useState(DEFAULT_COLOR)
   const [opacity, setOpacity] = useState(1)
 
   useEffect(() => {
-    setColor(removeAlphaFromHex(cp.color))
-  }, [cp.color])
+    setColor(tinycolor(cp.color).setAlpha(cp.opacity ?? 1))
+  }, [cp.color, cp.opacity])
 
   useEffect(() => {
     setOpacity(cp.opacity ?? 1)
   }, [cp.opacity])
 
-  const colorWithAlpha = useMemo(
-    () => addAlphaToHex(color, opacity),
-    [color, opacity]
-  )
+  const rgba = useMemo(() => color.toRgb(), [color])
 
-  const rgba = useMemo(() => hexToRgba(color), [color])
+  console.log(rgba)
 
   function handleColorChange(newColor: string, newOpacity: number = 1) {
-    setColor(newColor)
+    setColor(tinycolor(newColor).setAlpha(newOpacity))
     setOpacity(newOpacity)
   }
 
@@ -79,19 +73,19 @@ export function ColorPickerDialog({
     <OKCancelDialog
       title={
         <VCenterRow className="gap-x-2">
-          <span
-            className="border border-border h-6 w-6 rounded-full"
-            style={{ background: colorWithAlpha }}
-          />
+          <ColorIcon presetColor={color.toHex8String()} size="w-5" />
           <span>{title}</span>
         </VCenterRow>
       }
       w="w-110"
       onResponse={(r) => {
         if (r === TEXT_OK) {
-          addCustomColor(color, opacity)
+          addCustomColor(color.toHexString(), opacity)
           onResponse?.(r, {
-            color: cp.allowAlpha && keepAlphaChannel ? colorWithAlpha : color,
+            color:
+              cp.allowAlpha && keepAlphaChannel
+                ? color.toHex8String()
+                : color.toHexString(),
             opacity: opacity,
             width: cp.width,
             dasharray: cp.dasharray,
@@ -105,19 +99,21 @@ export function ColorPickerDialog({
     >
       {cp.allowAlpha ? (
         <HexAlphaColorPicker
-          color={colorWithAlpha}
+          color={color.toHex8String()}
           onChange={(v) => {
-            const opacity = hexToRgba(v)[3]
-            setColor(removeAlphaFromHex(v))
-            setOpacity(opacity)
+            const newColor = tinycolor(v)
+            setColor(newColor)
+            setOpacity(newColor.getAlpha())
           }}
+          style={{ height: '15rem' }}
         />
       ) : (
         <HexColorPicker
-          color={color}
+          color={color.toHexString()}
           onChange={(v) => {
-            setColor(removeAlphaFromHex(v))
+            setColor(tinycolor(v))
           }}
+          style={{ height: '15rem' }}
         />
       )}
 
@@ -126,11 +122,11 @@ export function ColorPickerDialog({
           <span className="text-xs font-medium">Hex</span>
           <HexColorInput
             id="hex"
-            color={color?.toUpperCase() ?? COLOR_BLACK}
+            color={color.toHexString() ?? COLOR_BLACK}
             //alpha={true}
             prefixed={true}
             onChange={(v) => {
-              setColor(v)
+              setColor(tinycolor(v))
             }}
             className={inputVariants({
               variant: 'alt',
@@ -152,6 +148,7 @@ export function ColorPickerDialog({
                 // if keepAlphaChannel is true, we need to reconstruct the color
                 // to include the new alpha, otherwise strip the alpha from the color
                 setOpacity(a)
+                setColor(color.setAlpha(a))
               }}
               limit={[0, 1]}
               step={0.1}
@@ -165,11 +162,11 @@ export function ColorPickerDialog({
             <BaseCol className="gap-0.5">
               <span className="text-xs font-medium">Red</span>
               <NumericalInput
-                value={rgba[0]}
+                value={rgba.r}
                 onNumChange={(v) => {
-                  const newRgba: IRGBA = [...rgba]
-                  newRgba[0] = v
-                  setColor(rgba2hex(newRgba))
+                  const newRgba = { ...rgba }
+                  newRgba.r = v
+                  setColor(tinycolor(newRgba))
                 }}
                 min={0}
                 max={255}
@@ -181,11 +178,11 @@ export function ColorPickerDialog({
             <BaseCol className="gap-0.5">
               <span className="text-xs font-medium">Green</span>
               <NumericalInput
-                value={rgba[1]}
+                value={rgba.g}
                 onNumChange={(v) => {
-                  const newRgba: IRGBA = [...rgba]
-                  newRgba[1] = v
-                  setColor(rgba2hex(newRgba))
+                  const newRgba = { ...rgba }
+                  newRgba.g = v
+                  setColor(tinycolor(newRgba))
                 }}
                 min={0}
                 max={255}
@@ -197,11 +194,11 @@ export function ColorPickerDialog({
             <BaseCol className="gap-0.5">
               <span className="text-xs font-medium">Blue</span>
               <NumericalInput
-                value={rgba[2]}
+                value={rgba.b}
                 onNumChange={(v) => {
-                  const newRgba: IRGBA = [...rgba]
-                  newRgba[2] = v
-                  setColor(rgba2hex(newRgba))
+                  const newRgba = { ...rgba }
+                  newRgba.b = v
+                  setColor(tinycolor(newRgba))
                 }}
                 min={0}
                 max={255}
@@ -259,29 +256,5 @@ export function ColorPickerDialog({
                    )}
               */}
     </OKCancelDialog>
-  )
-}
-
-export function ColorButton({
-  size = 'w-5',
-  presetColor,
-  ...props
-}: ComponentProps<'button'> & {
-  presetColor: string
-  size?: string
-}) {
-  const prgb = hexToRgba(presetColor)
-  const ps = prgb[0] + prgb[1] + prgb[2]
-
-  return (
-    <button
-      className={cn(
-        'rounded-full aspect-square border hover:scale-125 focus-visible:scale-125 transition-transform duration-300',
-        size,
-        ps >= 750 ? 'border-border' : 'border-transparent hover:border-white'
-      )}
-      style={{ background: presetColor }}
-      {...props}
-    />
   )
 }
