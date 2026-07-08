@@ -21,6 +21,7 @@ import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { useSideTabs } from '@/components/tabs/tab-provider'
+import { useUpdateEffect } from '@/hooks/update-effect'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
@@ -100,12 +101,7 @@ export function BoxPlotPanel() {
     }
   }, [messages])
 
-  useEffect(() => {
-    // don't update if we don't have to
-    if (zoom === plot?.props.page.scale) {
-      return
-    }
-
+  useUpdateEffect(() => {
     updatePlot(
       produce(plot, (draft) => {
         draft.props.page.scale = zoom

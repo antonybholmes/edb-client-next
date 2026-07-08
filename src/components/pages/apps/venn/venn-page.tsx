@@ -74,6 +74,7 @@ import { ToolbarIconButton } from '@/toolbar/toolbar-icon-button'
 import { MonitorDown } from 'lucide-react'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 
+import { useUpdateEffect } from '@/hooks/update-effect'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import {
   useCurrentSheets,
@@ -404,12 +405,7 @@ function VennPage() {
     openFile(`Venn Sets`, { sheets: [df] })
   }, [vennElemMap])
 
-  useEffect(() => {
-    // don't update if we don't have to
-    if (zoom === settings.scale) {
-      return
-    }
-
+  useUpdateEffect(() => {
     updateSettings({ scale: zoom })
   }, [zoom])
 

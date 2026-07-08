@@ -60,6 +60,7 @@ import { PLOT_ZOOM_CHANNEL, useGseaWebStore } from './gsea-web-store'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
+import { useUpdateEffect } from '@/hooks/update-effect'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { IGseaPathway } from '../gsea-plot/gsea-plot-store'
 import { GseaSvg } from '../gsea-plot/gsea-svg'
@@ -139,12 +140,7 @@ export function GseaWebPage() {
     setReportTabs(['gsea-results', ...phenotypes])
   }, [phenotypes])
 
-  useEffect(() => {
-    // don't update if we don't have to
-    if (zoom === settings.page.scale) {
-      return
-    }
-
+  useUpdateEffect(() => {
     updateSettings(
       produce(settings, (draft) => {
         draft.page.scale = zoom

@@ -28,6 +28,7 @@ import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { useSideTabs } from '@/components/tabs/tab-provider'
+import { useUpdateEffect } from '@/hooks/update-effect'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
@@ -124,11 +125,7 @@ export function VolcanoPanel() {
     }
   }, [messages])
 
-  useEffect(() => {
-    // don't update if we don't have to
-    if (zoom === plot?.props.scale) {
-      return
-    }
+  useUpdateEffect(() => {
     updatePlot(
       produce(plot, (draft) => {
         draft.props.scale = zoom

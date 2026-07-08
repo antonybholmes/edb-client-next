@@ -36,7 +36,7 @@ export function ZoomSlider({
 
   return (
     <VCenterRow className={cn('gap-x-1', className)}>
-      <VCenterRow className="gap-x-2.5">
+      <VCenterRow className="gap-x-1">
         <ToolbarFooterButton
           aria-label="Zoom Out"
           onClick={() => decreaseZoom()}

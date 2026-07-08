@@ -66,6 +66,7 @@ import { BaseRow } from '@/components/layout/base-row'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
+import { useUpdateEffect } from '@/hooks/update-effect'
 import { useFooter } from '@/providers/footer-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { SelectItem, SelectList } from '@/themed/v2/select'
@@ -165,12 +166,7 @@ export function MotifsPage() {
   //   )
   // }, [debouncedQ])
 
-  useEffect(() => {
-    // don't update if we don't have to
-    if (zoom === settings.zoom) {
-      return
-    }
-
+  useUpdateEffect(() => {
     updateSettings(
       produce(settings, (draft) => {
         draft.zoom = zoom

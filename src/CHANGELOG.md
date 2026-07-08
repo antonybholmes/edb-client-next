@@ -9,6 +9,7 @@
 
 ### Changed
 
+- UI refinements.
 - Zoom settings now check zoom has changed before broadcasting change to prevent race conditions when loading settings from localstorage.
 - Revised colorpicker api to use more optional params.
 - GSEA plot renderer split to make more managable. UI tweaks.

@@ -55,6 +55,7 @@ import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 import { AssemblySelect } from '@/components/edb/assembly-select'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
+import { useUpdateEffect } from '@/hooks/update-effect'
 import { locStr } from '@/lib/genomic/genomic'
 import {
   parseGenomicLocation,
@@ -170,19 +171,16 @@ function SeqBrowserPage() {
 
   useEffect(() => {
     // set initial location
-
     setQuery(['chr3:187441954-187466041'])
   }, [setQuery])
 
-  useEffect(
-    () =>
-      updateSettings(
-        produce(settings, (draft) => {
-          draft.zoom = zoom
-        })
-      ),
-    [zoom]
-  )
+  useUpdateEffect(() => {
+    updateSettings(
+      produce(settings, (draft) => {
+        draft.zoom = zoom
+      })
+    )
+  }, [zoom])
 
   useEffect(() => {
     // When the genome changes, reset tracks and locations

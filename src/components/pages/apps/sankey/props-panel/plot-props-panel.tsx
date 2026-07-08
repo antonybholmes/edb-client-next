@@ -16,8 +16,8 @@ import {
 } from '@/components/plot/color-picker-popover'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
-import { BarSlider } from '@/components/shadcn/ui/themed/v2/bar-slider'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import { Slider } from '@/components/shadcn/ui/themed/v2/slider'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { TEXT_OK, TEXT_RESET } from '@/consts'
 import { produce } from 'immer'
@@ -167,11 +167,11 @@ export function PlotPropsPanel() {
             />
 
             <PropRow title="Rounding">
-              <BarSlider
+              <Slider
                 value={settings.nodes.rounding}
                 min={0}
                 max={100}
-                format={(v) => v.toString()}
+                //format={(v) => v.toString()}
                 onValueChange={(value: number | readonly number[]) => {
                   const newValue = Array.isArray(value) ? value[0]! : value
                   updateSettings(
@@ -188,11 +188,11 @@ export function PlotPropsPanel() {
               title="Oversize"
               tooltip="Allow nodes to be larger than their links"
             >
-              <BarSlider
+              <Slider
                 value={settings.nodes.oversize}
                 min={0}
                 max={100}
-                format={(v) => v.toString()}
+                //format={(v) => v.toString()}
                 onValueChange={(value: number | readonly number[]) => {
                   const newValue = Array.isArray(value) ? value[0]! : value
                   updateSettings(
@@ -218,11 +218,10 @@ export function PlotPropsPanel() {
             />
 
             <PropRow title="Opacity">
-              <BarSlider
+              <Slider
                 value={settings.nodes.opacity}
                 min={0}
                 max={1}
-
                 onValueChange={(value: number | readonly number[]) => {
                   const newValue = Array.isArray(value) ? value[0]! : value
                   updateSettings(
@@ -289,11 +288,10 @@ export function PlotPropsPanel() {
               </SelectList>
             </PropRow>
             <PropRow title="Opacity">
-              <BarSlider
+              <Slider
                 value={settings.links.opacity}
                 min={0}
                 max={1}
-
                 onValueChange={(value: number | readonly number[]) => {
                   const newValue = Array.isArray(value) ? value[0]! : value
                   updateSettings(
@@ -306,11 +304,10 @@ export function PlotPropsPanel() {
               />
             </PropRow>
             <PropRow title="Gradient Offset">
-              <BarSlider
+              <Slider
                 value={settings.links.gradientOffset}
                 min={0}
                 max={1}
-
                 onValueChange={(value: number | readonly number[]) => {
                   const newValue = Array.isArray(value) ? value[0]! : value
                   updateSettings(

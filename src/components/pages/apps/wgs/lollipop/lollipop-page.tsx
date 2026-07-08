@@ -56,6 +56,7 @@ import { useZoom } from '@/providers/zoom-provider'
 import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
+import { useUpdateEffect } from '@/hooks/update-effect'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import {
   useCurrentSheets,
@@ -251,7 +252,7 @@ function LollipopPage() {
     }
   }, [sheets, protein])
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     setDisplayProps(
       produce(displayProps, (draft) => {
         draft.scale = zoom

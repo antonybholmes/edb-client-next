@@ -53,6 +53,7 @@ import { produce } from 'immer'
 
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
+import { useUpdateEffect } from '@/hooks/update-effect'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
 import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
@@ -119,12 +120,7 @@ export function GseaPlotPage() {
     ])
   }, [setToolbarTabs])
 
-  useEffect(() => {
-    // don't update if we don't have to
-    if (zoom === settings.page.scale) {
-      return
-    }
-
+  useUpdateEffect(() => {
     updateSettings(
       produce(settings, (draft) => {
         draft.page.scale = zoom

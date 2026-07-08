@@ -73,6 +73,7 @@ import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { AppInfoButton } from '@/components/header/app-info-button'
 import { HeaderPortal } from '@/components/header/header-portal'
 import { useSideTabs } from '@/components/tabs/tab-provider'
+import { useUpdateEffect } from '@/hooks/update-effect'
 import {
   useCurrentSheets,
   useFiles,
@@ -130,12 +131,7 @@ export function BioDrawPage() {
     ])
   }, [setSideTabs])
 
-  useEffect(() => {
-    // don't update if we don't have to
-    if (zoom === settings.zoom) {
-      return
-    }
-
+  useUpdateEffect(() => {
     updateSettings(
       produce(settings, (draft) => {
         draft.zoom = zoom

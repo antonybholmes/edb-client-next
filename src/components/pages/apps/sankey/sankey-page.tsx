@@ -58,6 +58,7 @@ import { useHistory } from '../matcalc/history/history-provider/history-provider
 import { useSave } from '../matcalc/hooks/save'
 
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
+import { useUpdateEffect } from '@/hooks/update-effect'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 import { httpFetch } from '@/lib/http/http-fetch'
@@ -140,7 +141,7 @@ export function SankeyPage() {
   //   )
   // }, [debouncedQ])
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     updateSettings(
       produce(settings, (draft) => {
         draft.scale = zoom
