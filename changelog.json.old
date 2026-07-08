@@ -2093,6 +2093,10 @@
         {
           "msg": "GSEA right leading edge now finishes at end of plot",
           "date": "2026-07-08T17:55:14.284Z"
+        },
+        {
+          "msg": "Now uses tinycolor2 for dealing with colors with alpha and swapping between hex and rgb",
+          "date": "2026-07-08T20:27:55.260Z"
         }
       ],
       "Added": [

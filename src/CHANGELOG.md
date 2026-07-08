@@ -1,5 +1,12 @@
 # Changelog
 
+## 85.6 (Jul, 2026)
+
+### Changed
+
+- Now uses tinycolor2 for dealing with colors with alpha and swapping between hex and rgb.
+
+
 ## 85.4 (Jul, 2026)
 
 ### Added

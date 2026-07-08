@@ -2120,5 +2120,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-07-05T01:29:49.434Z"
+  },
+  {
+    "version": "85.6",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Now uses tinycolor2 for dealing with colors with alpha and swapping between hex and rgb",
+          "date": "2026-07-08T20:28:10.117Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-07-08T20:28:10.117Z"
   }
 ]
