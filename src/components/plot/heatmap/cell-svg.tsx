@@ -283,11 +283,15 @@ export function GridSvg({
     <g transform={`translate(${pos.x}, ${pos.y})`}>
       {props.grid.show && (
         <>
-          <SvgPath d={hlines} s={props.grid} shapeRendering={SVG_CRISP_EDGES} />
+          <SvgPath
+            d={hlines}
+            sp={props.grid}
+            shapeRendering={SVG_CRISP_EDGES}
+          />
 
           <SvgPath
             d={vlines}
-            s={props.grid}
+            sp={props.grid}
 
             shapeRendering={SVG_CRISP_EDGES}
           />

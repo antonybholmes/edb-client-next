@@ -1,3 +1,4 @@
+import { SvgLine } from '@/components/plot/svg-line'
 import { SvgText } from '@/components/plot/svg-text'
 import { ZERO_POS, type IPos } from '@/interfaces/pos'
 import { COLOR_BLACK } from '@/lib/color/color'
@@ -35,7 +36,7 @@ export function DNASvg({ pos = ZERO_POS }: { pos?: IPos }) {
         ]
 
         for (const match of matches) {
-          range(match[0].length).forEach(i => {
+          range(match[0].length).forEach((i) => {
             bgColors.set(match.index + i, motif.bgColor)
             fgColors.set(match.index + i, motif.color)
           })
@@ -98,21 +99,19 @@ export function DNASvg({ pos = ZERO_POS }: { pos?: IPos }) {
 
       {settings.dna.border.show && (
         <g transform={`translate(${-HALF_BASE_W}, 0)`}>
-          <line
+          <SvgLine
             x1={0}
             y1={-HALF_BASE_H}
             y2={-HALF_BASE_H}
             x2={innerWidth}
-            stroke={settings.dna.border.value}
-            strokeWidth={settings.dna.border.width}
+            s={settings.dna.border}
           />
-          <line
+          <SvgLine
             x1={0}
             y1={HALF_BASE_H}
             y2={HALF_BASE_H}
             x2={innerWidth}
-            stroke={settings.dna.border.value}
-            strokeWidth={settings.dna.border.width}
+            s={settings.dna.border}
           />
         </g>
       )}

@@ -4,10 +4,7 @@ import {
   TEXT_SELECT_ALL,
   TEXT_UNSELECT_ALL,
 } from '@/consts'
-import {
-  DIALOG_HEADER_BUTTON_CLS,
-  type IModalProps,
-} from '@/dialogs/ok-cancel-dialog'
+import { type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
 import { SearchBox } from '@/components/search-box'
 import {
@@ -44,6 +41,7 @@ import { useTracks } from '../tracks-store'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { normalizeAssemblyName } from '@/components/edb/genome'
+import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { appsConfig } from '@/config/apps'
 import { ArrowDownUp, ShoppingCart } from 'lucide-react'
 
@@ -174,9 +172,9 @@ export function SeqsDialog({
         {error && <span className="text-destructive text-wrap">{error}</span>}
 
         <VCenterRow className="gap-x-2 justify-between">
-          <VCenterRow>
-            <button
-              //variant="ios"
+          <VCenterRow className="gap-x-1">
+            <IconButton
+              variant="flat-app-theme"
 
               // ripple={false}
               onClick={() => {
@@ -189,17 +187,18 @@ export function SeqsDialog({
                 )
               }}
               title="Add to Cart"
-              className={DIALOG_HEADER_BUTTON_CLS}
+              //className={DIALOG_HEADER_BUTTON_CLS}
             >
-              <ShoppingCart size={20} strokeWidth={1.5} stroke="" />
-            </button>
+              <ShoppingCart size={20} strokeWidth={1.5} />
+            </IconButton>
+
+            <ToolbarSeparator />
 
             <DropdownMenu>
               <DropdownMenuTrigger
                 render={
                   <IconButton
-                    //variant="ios"
-                    // ripple={false}
+                    variant="flat-app-theme" // ripple={false}
                     /* onClick={() => {
                     setAddedMap(new Map<string, boolean>(selectedMap.entries()))
                   }} */
@@ -229,7 +228,7 @@ export function SeqsDialog({
           </VCenterRow>
 
           <IconButton
-            // ripple={false}
+            variant="flat-app-theme"
             //variant="flat"
             onClick={() => {
               setSelectedMap(
@@ -421,6 +420,21 @@ function ItemsInStore({
                       }}
                     />
 
+                    <button
+                      className="invisible group-hover:visible stroke-foreground/70 hover:stroke-foreground"
+                      onClick={() => {
+                        setAddedMap(
+                          new Map<string, boolean>([
+                            ...[...addedMap.entries()],
+                            [seq.id, true] as [string, boolean],
+                          ])
+                        )
+                      }}
+                      title="Add to Cart"
+                    >
+                      <PlusIcon stroke="" size={16} />
+                    </button>
+
                     <BaseCol className="grow overflow-hidden">
                       <p className="truncate">{seq.name}</p>
                       <p className="text-xs text-secondary-foreground truncate">
@@ -438,21 +452,6 @@ function ItemsInStore({
                         <ExternalLinkIcon strokeWidth={1.5} stroke="" />
                       </a>
                     )}
-
-                    <button
-                      className="invisible group-hover:visible stroke-foreground/70 hover:stroke-foreground"
-                      onClick={() => {
-                        setAddedMap(
-                          new Map<string, boolean>([
-                            ...[...addedMap.entries()],
-                            [seq.id, true] as [string, boolean],
-                          ])
-                        )
-                      }}
-                      title="Add to Cart"
-                    >
-                      <PlusIcon stroke="" />
-                    </button>
                   </li>
                 )
               })}

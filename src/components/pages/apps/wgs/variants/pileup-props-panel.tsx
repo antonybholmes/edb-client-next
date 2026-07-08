@@ -1,15 +1,14 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { VCenterRow } from '@/components/layout/v-center-row'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
+import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
+import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { TEXT_OK, TEXT_RESET, TEXT_SHOW } from '@/consts'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
@@ -39,7 +38,7 @@ export function PileupPropsPanel({ ref }: IProps) {
 
   return (
     <PropsPanel ref={ref} className="pr-2">
-      <VCenterRow className="justify-end">
+      <SideBarHeader>
         <LinkButton
           onClick={() => {
             openDialog({
@@ -59,7 +58,7 @@ export function PileupPropsPanel({ ref }: IProps) {
         >
           {TEXT_RESET}
         </LinkButton>
-      </VCenterRow>
+      </SideBarHeader>
       <ScrollAccordion value={['pileup', 'maf', 'dna', 'motifs']}>
         <AccordionItem value="pileup">
           <AccordionTrigger
@@ -97,7 +96,7 @@ export function PileupPropsPanel({ ref }: IProps) {
             />
 
             <CheckPropRow
-              title="Prioritize variants"
+              title="Prioritize Variants"
               checked={settings.variants.prioritizeVariantTypeOrder}
               onCheckedChange={(state) =>
                 updateSettings(
@@ -175,67 +174,65 @@ export function PileupPropsPanel({ ref }: IProps) {
         <AccordionItem value="maf">
           <AccordionTrigger>MAF</AccordionTrigger>
           <AccordionContent>
-            <CheckPropRow
-              title="Line"
-              checked={settings.mafs.plot.line.show}
-              onCheckedChange={(v) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.mafs.plot.line.show = v
-                  })
-                )
-              }
-            >
-              <ColorPickerButton
-                colors={[
-                  {
-                    color: settings.mafs.plot.line.value,
-                    opacity: 1,
-                    onColorChange: ({ color }) =>
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.mafs.plot.line.value = color
-                        })
-                      ),
-                    title: 'Line Color',
-                  },
-                ]}
-                className={SIMPLE_COLOR_EXT_CLS}
-                title="Line color"
-              />
-            </CheckPropRow>
+            <PropRow title="Line">
+              <VCenterRow>
+                <OutlineButton
+                  colors={[
+                    {
+                      color: settings.mafs.plot.line.value,
+                      opacity: settings.mafs.plot.line.opacity,
+                      show: settings.mafs.plot.line.show,
+                      onColorChange: ({
+                        color,
+                        opacity,
+                        width,
+                        dasharray,
+                        show,
+                      }) =>
+                        updateSettings(
+                          produce(settings, (draft) => {
+                            draft.mafs.plot.line.value = color
+                            draft.mafs.plot.line.opacity =
+                              opacity ?? draft.mafs.plot.line.opacity
+                            draft.mafs.plot.line.width =
+                              width ?? draft.mafs.plot.line.width
+                            draft.mafs.plot.line.dasharray =
+                              dasharray ?? draft.mafs.plot.line.dasharray
+                            draft.mafs.plot.line.show =
+                              show ?? draft.mafs.plot.line.show
+                          })
+                        ),
+                      title: 'Line Color',
+                    },
+                  ]}
 
-            <CheckPropRow
-              title="Fill"
-              checked={settings.mafs.plot.fill.show}
-              onCheckedChange={(v) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.mafs.plot.fill.show = v
-                  })
-                )
-              }
-            >
-              <ColorPickerButton
-                colors={[
-                  {
-                    color: settings.mafs.plot.fill.value,
-                    opacity: settings.mafs.plot.fill.opacity,
-                    onColorChange: ({ color, opacity }) =>
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.mafs.plot.fill.value = color
-                          draft.mafs.plot.fill.opacity =
-                            opacity ?? draft.mafs.plot.fill.opacity
-                        })
-                      ),
-                    title: 'Fill Color',
-                  },
-                ]}
-                className={SIMPLE_COLOR_EXT_CLS}
-                title="Fill color"
-              />
-            </CheckPropRow>
+                  title="MAF Outline"
+                />
+
+                <FillButton
+                  colors={[
+                    {
+                      color: settings.mafs.plot.fill.value,
+                      opacity: settings.mafs.plot.fill.opacity,
+                      show: settings.mafs.plot.fill.show,
+                      onColorChange: ({ color, opacity, show }) =>
+                        updateSettings(
+                          produce(settings, (draft) => {
+                            draft.mafs.plot.fill.value = color
+                            draft.mafs.plot.fill.opacity =
+                              opacity ?? draft.mafs.plot.fill.opacity
+                            draft.mafs.plot.fill.show =
+                              show ?? draft.mafs.plot.fill.show
+                          })
+                        ),
+                      title: 'Fill Color',
+                    },
+                  ]}
+
+                  title="MAF Fill"
+                />
+              </VCenterRow>
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="dna">
@@ -269,35 +266,38 @@ export function PileupPropsPanel({ ref }: IProps) {
               }}
             />
 
-            <CheckPropRow
-              title="Border"
-              checked={settings.dna.border.show}
-              onCheckedChange={(v) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.dna.border.show = v
-                  })
-                )
-              }
-            >
-              <ColorPickerButton
+            <PropRow title="Border">
+              <OutlineButton
                 colors={[
                   {
                     color: settings.dna.border.value,
-                    opacity: 1,
-                    onColorChange: ({ color }) =>
+                    opacity: settings.dna.border.opacity,
+                    show: settings.dna.border.show,
+                    onColorChange: ({
+                      color,
+                      opacity,
+                      width,
+                      dasharray,
+                      show,
+                    }) =>
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.dna.border.value = color
+                          draft.dna.border.opacity =
+                            opacity ?? draft.dna.border.opacity
+                          draft.dna.border.width =
+                            width ?? draft.dna.border.width
+                          draft.dna.border.dasharray =
+                            dasharray ?? draft.dna.border.dasharray
+                          draft.dna.border.show = show ?? draft.dna.border.show
                         })
                       ),
-                    title: 'Border Color',
                   },
                 ]}
-                className={SIMPLE_COLOR_EXT_CLS}
-                title="Border color"
+
+                title="DNA Border"
               />
-            </CheckPropRow>
+            </PropRow>
 
             <CheckPropRow
               title="Motifs"

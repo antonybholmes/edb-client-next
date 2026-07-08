@@ -1,5 +1,4 @@
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
-import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import { FontUI } from '@/components/plot/font/font-ui'
 import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
 import { LabelContainer } from '@/components/shadcn/ui/themed/v2/label'
@@ -112,16 +111,18 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 colors={[
                   {
                     color: settings.tracks.genes.stroke.value,
-                    onColorChange: ({ color }) => {
+                    show: settings.tracks.genes.stroke.show,
+                    onColorChange: ({ color, show }) => {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.tracks.genes.stroke.value = color
+                          draft.tracks.genes.stroke.show =
+                            show ?? settings.tracks.genes.stroke.show
                         })
                       )
                     },
                   },
                 ]}
-                className={SIMPLE_COLOR_EXT_CLS}
               />
             }
           >
@@ -159,16 +160,18 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 colors={[
                   {
                     color: settings.tracks.genes.exons.fill.value,
-                    onColorChange: ({ color }) => {
+                    show: settings.tracks.genes.exons.show,
+                    onColorChange: ({ color, show }) => {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.tracks.genes.exons.fill.value = color
+                          draft.tracks.genes.exons.show =
+                            show ?? draft.tracks.genes.exons.show
                         })
                       )
                     },
                   },
                 ]}
-                className={SIMPLE_COLOR_EXT_CLS}
               />
             }
           >
@@ -206,16 +209,18 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 colors={[
                   {
                     color: settings.tracks.genes.cds.fill.value,
-                    onColorChange: ({ color }) => {
+                    show: settings.tracks.genes.cds.show,
+                    onColorChange: ({ color, show }) => {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.tracks.genes.cds.fill.value = color
+                          draft.tracks.genes.cds.show =
+                            show ?? draft.tracks.genes.cds.show
                         })
                       )
                     },
                   },
                 ]}
-                className={SIMPLE_COLOR_EXT_CLS}
               />
             }
           >
@@ -253,16 +258,18 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 colors={[
                   {
                     color: settings.tracks.genes.utrs.fill.value,
-                    onColorChange: ({ color }) => {
+                    show: settings.tracks.genes.utrs.show,
+                    onColorChange: ({ color, show }) => {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.tracks.genes.utrs.fill.value = color
+                          draft.tracks.genes.utrs.show =
+                            show ?? draft.tracks.genes.utrs.show
                         })
                       )
                     },
                   },
                 ]}
-                className={SIMPLE_COLOR_EXT_CLS}
               />
             }
           >
@@ -300,9 +307,12 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 colors={[
                   {
                     color: _track.displayOptions.arrows.stroke.value,
-                    onColorChange: ({ color }) => {
+                    show: settings.tracks.genes.arrows.show,
+                    onColorChange: ({ color, show }) => {
                       const newTrack = produce(_track, (draft) => {
                         draft.displayOptions.arrows.stroke.value = color
+                        draft.displayOptions.arrows.show =
+                          show ?? draft.displayOptions.arrows.show
                       })
 
                       onResponse?.(TEXT_OK, { group, track: newTrack })
@@ -310,7 +320,6 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                     },
                   },
                 ]}
-                className={SIMPLE_COLOR_EXT_CLS}
               />
             }
           >
@@ -361,16 +370,19 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 colors={[
                   {
                     color: settings.tracks.genes.canonical.fill.value,
-                    onColorChange: ({ color }) => {
+                    show: settings.tracks.genes.canonical.isColored,
+                    onColorChange: ({ color, show }) => {
                       updateSettings(
                         produce(settings, (draft) => {
                           draft.tracks.genes.canonical.fill.value = color
+                          draft.tracks.genes.canonical.isColored =
+                            show ?? settings.tracks.genes.canonical.isColored
                         })
                       )
                     },
                   },
                 ]}
-                className={SIMPLE_COLOR_EXT_CLS}
+                //className={SIMPLE_COLOR_EXT_CLS}
               />
             }
           />
@@ -440,12 +452,13 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 updateSettings(newSettings)
               }}
               size="toolbar"
-              className="rounded-theme overflow-hidden gap-x-px"
+              className="rounded-full p-0.5 overflow-hidden gap-x-px bg-muted/50 text-xs"
+              variant="ios"
             >
-              <GroupToggle value="transcript" className="w-24" rounded="none">
+              <GroupToggle value="transcript" className="w-22" rounded="full">
                 Transcripts
               </GroupToggle>
-              <GroupToggle value="features" className="w-24" rounded="none">
+              <GroupToggle value="features" className="w-22" rounded="full">
                 Features
               </GroupToggle>
             </ToggleGroup>

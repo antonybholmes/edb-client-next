@@ -5,6 +5,7 @@ import { useTabs } from '@/components/tabs/tab-provider'
 import { useEffect } from 'react'
 import { OutlookTabs } from '../../matcalc/data/outlook-tabs'
 import { ColormapPropsPanel } from './colormap-props-panel'
+import { PileupPropsPanel } from './pileup-props-panel'
 
 // const TAB_CLS =
 //   'w-4.5 stroke-foreground/75 group-hover:stroke-foreground group-data-[selected=true]:stroke-foreground'
@@ -14,6 +15,10 @@ export function FeaturePropsPanel() {
 
   useEffect(() => {
     setTabs([
+      {
+        id: 'features',
+        name: 'Features',
+      },
       {
         id: 'colormap',
         name: 'Colormap',
@@ -28,6 +33,10 @@ export function FeaturePropsPanel() {
         value={selectedTab?.id ?? ''}
         className="grow"
       >
+        <TabsContent value="features">
+          <PileupPropsPanel />
+        </TabsContent>
+
         <TabsContent value="colormap">
           <ColormapPropsPanel />
         </TabsContent>

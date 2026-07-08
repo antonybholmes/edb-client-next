@@ -1,8 +1,9 @@
-import type { IStrokeProps } from '@/components/plot/svg-props'
+import type { IPaintProps, IStrokeProps } from '@/components/plot/svg-props'
 import type { SVGProps } from 'react'
 
 interface IProps extends SVGProps<SVGPathElement> {
-  s?: IStrokeProps | undefined
+  sp?: IStrokeProps | undefined
+  fp?: IPaintProps | undefined
 }
 
 /**
@@ -17,16 +18,19 @@ export function SvgPath({
   strokeWidth,
   strokeDasharray,
   opacity,
-  s,
+  sp,
+  fp,
   ...props
 }: IProps) {
   return (
     <path
       id={id}
-      stroke={stroke ?? s?.value}
-      strokeWidth={strokeWidth ?? s?.width}
-      strokeOpacity={opacity ?? s?.opacity}
-      strokeDasharray={strokeDasharray ?? s?.dasharray}
+      stroke={stroke ?? sp?.value ?? 'none'}
+      strokeWidth={strokeWidth ?? sp?.width}
+      strokeOpacity={opacity ?? sp?.opacity}
+      strokeDasharray={strokeDasharray ?? sp?.dasharray}
+      fill={props.fill ?? fp?.value ?? 'none'}
+      fillOpacity={props.fillOpacity ?? fp?.opacity}
       {...props}
     />
   )

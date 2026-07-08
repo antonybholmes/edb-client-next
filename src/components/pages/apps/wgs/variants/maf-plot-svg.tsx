@@ -1,6 +1,8 @@
 import { Axis, YAxis } from '@/components/plot/axis'
 import { AxisBottomSvg, AxisLeftSvg } from '@/components/plot/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
+import { SvgPath } from '@/components/plot/svg-path'
+import { SvgText } from '@/components/plot/svg-text'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { useDNAQuery } from '@/lib/genomic/dna'
 import { locStr } from '@/lib/genomic/genomic'
@@ -125,7 +127,7 @@ export function MAFPlotSVG({ ref }: ISVGProps) {
       <g
         transform={`translate(${MARGIN.left + innerWidth * 0.5}, ${MARGIN.top * 0.5})`}
       >
-        <text
+        <SvgText
           textAnchor="middle"
           alignmentBaseline="middle"
           fontSize="small"
@@ -133,26 +135,15 @@ export function MAFPlotSVG({ ref }: ISVGProps) {
         >
           {locStr(settings.location)} (
           {(results?.alleles ?? 0).toLocaleString()} alleles)
-        </text>
+        </SvgText>
       </g>
 
       <g transform={`translate(${MARGIN.left}, ${MARGIN.top})`}>
         {settings.mafs.plot.fill.show && fillPathD && (
-          <path
-            d={fillPathD}
-            fill={settings.mafs.plot.fill.value}
-            fillOpacity={settings.mafs.plot.fill.opacity}
-            stroke="none"
-          />
+          <SvgPath d={fillPathD} fp={settings.mafs.plot.fill} />
         )}
         {settings.mafs.plot.line.show && pathD && (
-          <path
-            d={pathD}
-            stroke={settings.mafs.plot.line.value}
-            strokeOpacity={settings.mafs.plot.line.opacity}
-            strokeWidth={settings.mafs.plot.line.width}
-            fill="none"
-          />
+          <SvgPath d={pathD} sp={settings.mafs.plot.line} />
         )}
       </g>
 

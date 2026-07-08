@@ -71,10 +71,12 @@ function FillIcon({ cp }: { cp: IColorPickerProps }) {
     <CenterRow className="flex flex-row items-center justify-center  relative h-6  w-5 grow-0 shrink-0">
       <PaintBucket size={16} strokeWidth={1.5} className="z-10" />
 
-      <span
-        className="absolute bottom-0 h-1.5 w-full z-0 rounded-xs"
-        style={{ backgroundColor: cp.color, opacity: cp.opacity }}
-      />
+      {(cp.show === undefined || cp.show) && (
+        <span
+          className="absolute bottom-0 h-1.5 w-full z-0 rounded-xs"
+          style={{ backgroundColor: cp.color, opacity: cp.opacity }}
+        />
+      )}
     </CenterRow>
   )
 }

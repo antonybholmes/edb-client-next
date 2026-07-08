@@ -2,12 +2,7 @@
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 
-import {
-  ShowOptionsMenu,
-  Toolbar,
-  ToolbarMenu,
-  ToolbarPanel,
-} from '@/toolbar/toolbar'
+import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
 import {
   TEXT_DOWNLOAD_AS_CSV,
@@ -16,7 +11,6 @@ import {
   TEXT_DOWNLOAD_AS_TXT,
   TEXT_SAVE_AS,
 } from '@/consts'
-import { getDataFrameInfo } from '@/lib/dataframe/dataframe-utils'
 
 import { locStr } from '@/lib/genomic/genomic'
 import { useEffect, useState } from 'react'
@@ -33,7 +27,6 @@ import {
 } from '@/themed/resizable'
 
 import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
-import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { ShortcutLayout } from '@/layouts/shortcut-layout'
 import { makeUuid } from '@/lib/id'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
@@ -54,7 +47,7 @@ import { CoreProviders } from '@/providers/core-providers'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { AssemblySelect } from '@/components/edb/assembly-select'
-import { useAppInfo } from '@/components/edb/edb-settings'
+import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { BaseCol } from '@/components/layout/base-col'
@@ -74,7 +67,9 @@ import {
 } from '../../matcalc/history/history-layout'
 
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
+import { useFooter } from '@/providers/footer-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
+import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 import {
   useCurrentSheets,
   useFiles,
@@ -110,7 +105,7 @@ export function VariantsPage() {
 
   const { open, setOpen } = useSlideBar('variants-folders')
 
-  const [showSideBar, setShowSideBar] = useState(true)
+  const { settings: edbSettings } = useEdbSettings()
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 
@@ -126,11 +121,17 @@ export function VariantsPage() {
 
   const { save } = useSave()
 
+  const { addDFSize } = useFooter()
+
   const df = sheets[0] as AnnotationDataFrame
 
   useEffect(() => {
     setAppInfo(APP_INFO)
   }, [setAppInfo])
+
+  useEffect(() => {
+    addDFSize()
+  }, [addDFSize])
 
   useEffect(() => {
     setToolbarTabs([
@@ -417,22 +418,13 @@ export function VariantsPage() {
           />
           <ToolbarPanel
             tabShortcutMenu={
-              <ShowOptionsMenu
-                show={showSideBar}
-                onClick={() => {
-                  setShowSideBar(!showSideBar)
-                }}
-              />
+              <OptsSidebarMenu open={edbSettings.sidebar.show} />
             }
           />
         </Toolbar>
         <HistoryLayout>
           <ResizableSidebar id="variants-folders" side="left" className="grow">
-            <TabSlideBar
-              side="right"
-              open={showSideBar}
-              onOpenChange={setShowSideBar}
-            >
+            <ResizableSidebar side="right">
               <ResizablePanelGroup orientation="vertical">
                 <ResizablePanel
                   defaultSize="50%"
@@ -504,13 +496,15 @@ export function VariantsPage() {
                   </BaseRow>
                 </ResizablePanel>
               </ResizablePanelGroup>
-            </TabSlideBar>
+
+              <FeaturePropsPanel />
+            </ResizableSidebar>
 
             <DatasetPanel />
           </ResizableSidebar>
         </HistoryLayout>
         <FooterPortal className="justify-between">
-          <div>{getDataFrameInfo(df)}</div>
+          <> </>
           <></>
           <ZoomSlider />
         </FooterPortal>

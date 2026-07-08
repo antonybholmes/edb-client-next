@@ -36,6 +36,7 @@ import {
   SIMPLE_COLOR_EXT_CLS,
 } from '@/components/plot/color-picker-popover'
 import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import {
   useVariantSettings,
@@ -142,7 +143,7 @@ export function ColormapPropsPanel() {
 
   return (
     <PropsPanel className="gap-y-2 pr-1">
-      <VCenterRow className="justify-between gap-x-2">
+      <SideBarHeader className="justify-between gap-x-2">
         <VCenterRow>
           <IconButton
             onClick={() => {
@@ -190,7 +191,7 @@ export function ColormapPropsPanel() {
               <PlusIcon fill="stroke-foreground" />
             </IconButton> */}
         </VCenterRow>
-      </VCenterRow>
+      </SideBarHeader>
 
       <MenuSeparator />
 

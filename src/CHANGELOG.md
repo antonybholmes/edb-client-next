@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Fixed Variants UI and added more Fill and Outline UI elements.
 - Now uses tinycolor2 for dealing with colors with alpha and swapping between hex and rgb.
 
 

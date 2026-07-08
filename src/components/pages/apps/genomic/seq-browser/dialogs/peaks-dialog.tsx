@@ -47,6 +47,7 @@ import { IconButton } from '@/themed/icon-button'
 import { API_BEDS_URL } from '@/components/edb/edb'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { DialogTitle } from '@/components/shadcn/ui/themed/v2/dialog'
+import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { ArrowDownUp, ShoppingCart } from 'lucide-react'
 import type { IBedDBDataTrack, IBedDBTrack } from '../tracks-provider'
 
@@ -179,12 +180,12 @@ export function PeaksDialog({
       }
       cols={3}
     >
-      <BaseCol className="grow text-xs gap-y-2">
+      <BaseCol className="grow text-xs gap-y-4">
         {error && <span className="text-destructive">{error}</span>}
         <VCenterRow className="gap-x-2 justify-between">
-          <VCenterRow>
+          <VCenterRow className="gap-x-1">
             <IconButton
-              //variant="ios"
+              variant="flat-app-theme"
               //size="icon"
               // ripple={false}
               onClick={() => {
@@ -200,12 +201,13 @@ export function PeaksDialog({
               /> */}
             </IconButton>
 
+            <ToolbarSeparator />
+
             <DropdownMenu>
               <DropdownMenuTrigger
                 render={
                   <IconButton
-                    //variant="ios"
-                    // ripple={false}
+                    variant="flat-app-theme"
                     onClick={() => {
                       setAddedMap(
                         new Map<string, boolean>(selectedMap.entries())
@@ -233,8 +235,7 @@ export function PeaksDialog({
           </VCenterRow>
 
           <IconButton
-            //variant="ios"
-            // ripple={false}
+            variant="flat-app-theme"
 
             onClick={() => {
               setSelectedMap(
@@ -430,13 +431,6 @@ function StoreItems({
                       }}
                     />
 
-                    <BaseCol className="grow overflow-hidden">
-                      <p className="truncate">{seq.name}</p>
-                      <p className="text-xs text-secondary-foreground truncate">
-                        {`${seq.technology}, ${seq.assembly}${seq.type === 'BED' ? `(${seq.regions!.toLocaleString()} regions)` : ''}`}
-                      </p>
-                    </BaseCol>
-
                     <button
                       className="invisible group-hover:visible stroke-foreground/70 hover:stroke-foreground"
                       onClick={() => {
@@ -449,8 +443,15 @@ function StoreItems({
                       }}
                       title="Add to Cart"
                     >
-                      <PlusIcon stroke="" />
+                      <PlusIcon stroke="" size={16} />
                     </button>
+
+                    <BaseCol className="grow overflow-hidden">
+                      <p className="truncate">{seq.name}</p>
+                      <p className="text-xs text-secondary-foreground truncate">
+                        {`${seq.technology}, ${seq.assembly}${seq.type === 'BED' ? `(${seq.regions!.toLocaleString()} regions)` : ''}`}
+                      </p>
+                    </BaseCol>
                   </li>
                 )
               })}
