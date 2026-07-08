@@ -2085,6 +2085,10 @@
         {
           "msg": "Zoom settings now check zoom has changed before broadcasting change to prevent race conditions when loading settings from localstorage.",
           "date": "2026-07-07T23:00:19.472Z"
+        },
+        {
+          "msg": "UI refinements",
+          "date": "2026-07-08T02:28:46.409Z"
         }
       ],
       "Added": [

@@ -1,10 +1,8 @@
 import type { LeftRightPos } from '@/components/side'
 import { cn } from '@/lib/shadcn-utils'
-import { FOCUS_RING_CLS } from '@/theme'
 import { Field } from '@base-ui/react/field'
 import { Switch as SwitchPrimitives } from '@base-ui/react/switch'
 import gsap from 'gsap'
-import { Check } from 'lucide-react'
 import {
   useEffect,
   useRef,
@@ -36,10 +34,10 @@ import {
 // export { Switch }
 
 const TOGGLE_CLS = cn(
-  FOCUS_RING_CLS,
-  'relative shrink-0 rounded-full cursor-pointer group',
-  'data-[enabled=true]:data-[checked]:bg-app-theme/80',
+  'relative shrink-0 rounded-full cursor-pointer group outline-none',
+  'data-[enabled=true]:data-[checked]:bg-app-theme/70',
   'data-[enabled=true]:data-[checked]:hover:bg-app-theme',
+  'data-[enabled=true]:data-[checked]:focus-visible:bg-app-theme',
   'data-[enabled=true]:data-[unchecked]:bg-muted',
   'data-[enabled=true]:data-[unchecked]:hover:bg-muted',
   'data-[enabled=false]:bg-muted trans-color'
@@ -57,10 +55,9 @@ const TOGGLE_CLS = cn(
 // )
 
 const THUMB_CLS = cn(
-  'absolute pointer-events-none aspect-square shrink-0',
-  'cursor-pointer rounded-full bg-white z-30 left-[2px]',
-  'top-1/2 -translate-y-1/2 data-[checked=false]:left-[2px] data-[checked=true]:right-[2px]',
-  'flex flex-row justify-center items-center'
+  'absolute pointer-events-none shrink-0',
+  'cursor-pointer rounded-full bg-white z-30',
+  'top-1/2 -translate-y-1/2 flex flex-row justify-center items-center'
 )
 
 // const HIGHLIGHT_THUMB_CLS = cn(
@@ -116,9 +113,9 @@ export function Switch({
 
         //left: hover ? 2 : 8,
         //scaleX: hover ? 1.5 : 1,
-        transform: checked ? 'translate(10px, -50%)' : 'translate(0, -50%)',
+        transform: checked ? 'translate(10px, -50%)' : 'translate(2px, -50%)',
         duration,
-        ease: 'power3.out',
+        ease: 'back.out',
       },
       0
     )
@@ -134,7 +131,7 @@ export function Switch({
       data-enabled={!disabled}
       //onCheckedChange={_onClick}
       className={TOGGLE_CLS}
-      style={{ height: 20, width: 30 }}
+      style={{ height: 20, width: 32 }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       onMouseDown={() => setPressed(true)}
@@ -152,16 +149,16 @@ export function Switch({
         ref={thumbRef}
         data-enabled={!disabled}
         data-checked={checked}
-        style={{ height: 16, width: 16 }}
+        style={{ height: 16, width: 20 }}
       >
-        {checked && (
+        {/* {checked && (
           <Check
             data-hover={hover}
             strokeWidth={3}
             size={10}
             className="text-app-theme/50 data-[hover=true]:text-app-theme/80 trans-color"
           />
-        )}
+        )} */}
       </span>
       {/* {!disabled && (
         <>

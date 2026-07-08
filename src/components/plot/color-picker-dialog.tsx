@@ -62,7 +62,7 @@ export function ColorPickerDialog({
   return (
     <OKCancelDialog
       title="Color Picker"
-
+      w="w-100"
       onResponse={(r) => {
         if (r === TEXT_OK) {
           onResponse?.(r, {
@@ -139,7 +139,6 @@ export function ColorPickerDialog({
           </VCenterRow>
         )}
       </VCenterRow>
-
       {showRgb && (
         <VCenterRow className="gap-x-3">
           <VCenterRow className="gap-x-1.5">
@@ -192,7 +191,6 @@ export function ColorPickerDialog({
           </VCenterRow>
         </VCenterRow>
       )}
-
       {showPresets && (
         <VCenterRow className="gap-x-2">
           <BaseRow className="gap-1 flex-wrap">
@@ -204,7 +202,7 @@ export function ColorPickerDialog({
                 <button
                   key={presetColor}
                   className={cn(
-                    'w-5.5 aspect-square border hover:scale-125 focus-visible:scale-125 rounded-xs transition-transform duration-300',
+                    'w-5 h-5 aspect-square border hover:scale-125 focus-visible:scale-125 rounded-full transition-transform duration-300',
                     ps >= 750
                       ? 'border-border'
                       : 'border-transparent hover:border-white'
@@ -218,9 +216,7 @@ export function ColorPickerDialog({
           </BaseRow>
         </VCenterRow>
       )}
-
       {/* {(allowNoColor || defaultColor) && <MenuSeparator />} */}
-
       {/* {allowNoColor && (
                      <Button
                        variant="flat"

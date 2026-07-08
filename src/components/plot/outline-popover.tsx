@@ -8,6 +8,7 @@ import { FOCUS_RING_CLS } from '@/theme'
 
 import { CircleSlash, Palette, SquarePen } from 'lucide-react'
 import { useDialogs } from '../dialogs/dialogs'
+import { useEdbSettings } from '../edb/edb-settings'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -163,6 +164,7 @@ export function OutlinePopover({
   //const o = open ?? _open
 
   const { open: openDialog } = useDialogs()
+  const { settings, addCustomColor } = useEdbSettings()
 
   if (!colors || colors.length === 0) {
     return null
@@ -257,6 +259,34 @@ export function OutlinePopover({
               }
             )}
           </div>
+          {settings.colors.custom.length > 0 && (
+            <div className="grid grid-cols-10 items-center gap-x-2 gap-y-1">
+              {settings.colors.custom.map((presetColor, pi) => {
+                const prgb = hexToRgba(presetColor)
+                const ps = prgb[0] + prgb[1] + prgb[2]
+
+                return (
+                  <button
+                    key={`${presetColor}-${pi}`}
+                    className={cn(
+                      'w-4.5 rounded-full aspect-square border hover:scale-125 focus-visible:scale-125 transition-transform duration-300',
+                      color0.autoBorder && ps >= 750 && 'border-border',
+                      !color0.autoBorder ||
+                        (ps < 750 && 'border-transparent hover:border-white')
+                    )}
+                    style={{ background: presetColor }}
+                    onClick={() =>
+                      color0.onColorChange?.({
+                        color: presetColor,
+                        opacity,
+                      })
+                    }
+                    tabIndex={0}
+                  />
+                )
+              })}
+            </div>
+          )}
         </BaseCol>
 
         <DropdownMenuItem
@@ -281,6 +311,7 @@ export function OutlinePopover({
                 color: color0,
 
                 callback: (color) => {
+                  addCustomColor(color.color)
                   color0.onColorChange?.({
                     color: color.color,
                     opacity: color.opacity,

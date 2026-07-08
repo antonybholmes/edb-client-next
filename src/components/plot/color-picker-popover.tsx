@@ -109,7 +109,7 @@ export const PRESET_COLORS = [
 //export const BASE_SIMPLE_COLOR_EXT_CLS = cn(XS_ICON_BUTTON_CLS, FOCUS_RING_CLS)
 
 export const SIMPLE_COLOR_EXT_CLS = cn(
-  'w-4.5 h-4.5 aspect-square rounded-sm shrink-0',
+  'w-4.5 h-4.5 aspect-square rounded-full shrink-0',
   FOCUS_RING_CLS
 )
 

@@ -7,9 +7,11 @@ import type { IAppInfo } from '../../lib/app-info'
 import type { IBasicEdbUser } from './edb'
 import { useTheme } from './theme'
 
-const SETTINGS_KEY = `${config.appId}:settings:v40`
+const SETTINGS_KEY = `${config.appId}:settings:v42`
 
 export type ToolbarStyle = 'classic' | 'single'
+
+export const MAX_CUSTOM_COLORS = 10
 
 export const TOOLBAR_STYLE_MAP: Record<ToolbarStyle, string> = {
   classic: 'Classic',
@@ -45,6 +47,9 @@ export interface IEdbSettings {
   }
   genomic: {
     assembly: string
+  }
+  colors: {
+    custom: string[]
   }
 }
 
@@ -90,6 +95,7 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
   genomic: {
     assembly: 'grch37',
   },
+  colors: { custom: [] },
 }
 
 export interface IEdbSettingsStore extends IEdbSettings {
@@ -117,6 +123,7 @@ export function useEdbSettings(): {
   settings: IEdbSettings
   updateSettings: (settings: Partial<IEdbSettings>) => void
   resetSettings: () => void
+  addCustomColor: (color: string) => void
   toggleHistorySidebar: () => void
   historySidebarOpen: (open: boolean) => void
 } {
@@ -133,6 +140,31 @@ export function useEdbSettings(): {
     historySidebarOpen(!settings.history.sidebar.show)
   }
 
+  /**
+   * Add a custom color to the list of custom colors in the settings.
+   * If the color already exists, it won't be added again.
+   * If the list exceeds the maximum allowed custom colors,
+   * the oldest color will be removed.
+   *
+   * @param color - The color to be added in hex format (e.g., '#FF5733').
+   */
+  function addCustomColor(color: string) {
+    const newColors = [...settings.colors.custom]
+    if (!newColors.includes(color)) {
+      newColors.push(color)
+      if (newColors.length > MAX_CUSTOM_COLORS) {
+        newColors.shift()
+      }
+
+      updateSettings({
+        colors: {
+          ...settings.colors,
+          custom: newColors,
+        },
+      })
+    }
+  }
+
   function historySidebarOpen(open: boolean) {
     updateSettings({
       history: {
@@ -147,6 +179,7 @@ export function useEdbSettings(): {
     settings,
     updateSettings,
     resetSettings,
+    addCustomColor,
     toggleHistorySidebar,
     historySidebarOpen,
   }
