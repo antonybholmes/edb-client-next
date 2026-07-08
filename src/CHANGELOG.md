@@ -11,6 +11,7 @@
 
 ### Changed
 
+- GSEA right leading edge now finishes at end of plot.
 - UI refinements.
 - Zoom settings now check zoom has changed before broadcasting change to prevent race conditions when loading settings from localstorage.
 - Revised colorpicker api to use more optional params.

@@ -2089,6 +2089,10 @@
         {
           "msg": "UI refinements",
           "date": "2026-07-08T02:28:46.409Z"
+        },
+        {
+          "msg": "GSEA right leading edge now finishes at end of plot",
+          "date": "2026-07-08T17:55:14.284Z"
         }
       ],
       "Added": [

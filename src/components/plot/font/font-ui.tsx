@@ -1,13 +1,10 @@
 import { FontColorIcon } from '@/components/icons/font-color-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
-import {
-  ColorPickerPopover,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import type { IFontProps, ITextProps } from '@/components/plot/svg-props'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
-import { PopoverTrigger } from '@/components/shadcn/ui/themed/v2/popover'
+import { DropdownMenuTrigger } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { TEXT_SHOW } from '@/consts'
@@ -31,6 +28,7 @@ import {
   ToggleGroup,
 } from '../../shadcn/ui/themed/v2/toggle-group'
 import { ToolbarSeparator } from '../../toolbar/toolbar-separator'
+import { FillDropdownMenu } from '../fill-dropdown-menu'
 import { FONTS } from '../svg-base'
 
 const FONT_SIZES = [
@@ -209,24 +207,25 @@ function FontStyleToggles({
         <Underline size={16} />
       </ToolbarIconButton>
       {showColor && (
-        <ColorPickerPopover
+        <FillDropdownMenu
           colors={[
             {
               color: font.fill.value,
+              allowNoColor: false,
               onColorChange: ({ color }) =>
                 update?.({ ...font, fill: { ...font.fill, value: color } }),
             },
           ]}
           className={SIMPLE_COLOR_EXT_CLS}
         >
-          <PopoverTrigger
+          <DropdownMenuTrigger
             render={
               <ToolbarIconButton title="Font Color">
                 <FontColorIcon color={font.fill.value} />
               </ToolbarIconButton>
             }
           />
-        </ColorPickerPopover>
+        </FillDropdownMenu>
       )}
     </VCenterRow>
   )

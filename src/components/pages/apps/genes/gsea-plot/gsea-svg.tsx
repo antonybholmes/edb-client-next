@@ -351,6 +351,7 @@ function EsSvg({
         rankMid={rankMid}
         x0={x0}
         x1={x1}
+        y0={y0}
         xax={xax}
         yax={yax}
       />
@@ -447,6 +448,7 @@ function EsLeadingEdgeSvg({
   rankMid,
   x0,
   x1,
+  y0,
   xax,
   yax,
 }: {
@@ -455,12 +457,11 @@ function EsLeadingEdgeSvg({
   rankMid: number
   x0: number
   x1: number
+  y0: number
   xax: Axis
   yax: YAxis
 }) {
   const { settings } = useGseaSettings()
-
-  const y0 = yax.domainToRange(0)
 
   const leadingEdge = es.filter((e) => e.leading)
 
@@ -496,7 +497,7 @@ function EsLeadingEdgeSvg({
       { x: leadingPoints[0]!.x, y: y0 },
       ...leadingPoints,
       {
-        x: linePos!.x,
+        x: x1,
         y: y0,
       },
     ]
