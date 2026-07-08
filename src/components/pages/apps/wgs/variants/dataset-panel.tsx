@@ -17,6 +17,7 @@ import {
   DropdownSortOrderGroup,
 } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { SkeletonRows } from '@/components/shadcn/ui/themed/v2/skeleton'
+import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import type { ITab } from '@/components/tabs/tab-provider'
 import { V_SCROLL_CHILD_CLS, VScrollPanel } from '@/components/v-scroll-panel'
 import { appsConfig } from '@/config/apps'
@@ -61,18 +62,18 @@ export function DatasetPanel() {
 
     const institutions = [
       ...[...instituteMap.keys()]
-        .filter(inst => inst === appsConfig.wgs.defaultInstitution)
+        .filter((inst) => inst === appsConfig.wgs.defaultInstitution)
         .sort(),
 
       ...[...instituteMap.keys()]
-        .filter(inst => inst !== appsConfig.wgs.defaultInstitution)
+        .filter((inst) => inst !== appsConfig.wgs.defaultInstitution)
         .sort(),
     ]
 
-    const children: ITab[] = institutions.map(inst => {
+    const children: ITab[] = institutions.map((inst) => {
       const children = sortedDatasets
-        .filter(dataset => dataset.institution === inst)
-        .map(dataset => {
+        .filter((dataset) => dataset.institution === inst)
+        .map((dataset) => {
           return {
             id: dataset.id,
             name: dataset.name,
@@ -137,13 +138,13 @@ export function DatasetPanel() {
           <SkeletonRows className="w-3/4 mx-auto" />
         ) : (
           <>
-            <VCenterRow className="justify-end">
+            <SideBarHeader className="justify-end">
               <IconButton
                 title="Select"
                 onClick={() => {
                   setDatasetsInUse(
                     Object.fromEntries(
-                      datasets.map(dataset => [dataset.id, !selectAll])
+                      datasets.map((dataset) => [dataset.id, !selectAll])
                     )
                   )
 
@@ -169,9 +170,9 @@ export function DatasetPanel() {
                 <DropdownMenuContent align="start">
                   <DropdownSortOrderGroup
                     asc={settings.datasets.sort.asc}
-                    setAsc={v =>
+                    setAsc={(v) =>
                       updateSettings(
-                        produce(settings, draft => {
+                        produce(settings, (draft) => {
                           draft.datasets.sort.asc = v
                         })
                       )
@@ -179,7 +180,7 @@ export function DatasetPanel() {
                   />
                 </DropdownMenuContent>
               </DropdownMenu>
-            </VCenterRow>
+            </SideBarHeader>
             <VScrollPanel>
               <CollapseTree
                 tab={foldersTab}

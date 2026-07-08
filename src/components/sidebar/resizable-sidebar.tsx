@@ -172,7 +172,7 @@ export function SidePanel({
  * @returns
  */
 export function SideBarHeader({ className, ...props }: IDivProps) {
-  return <VCenterRow className={cn('h-8 gap-x-2 mr-8', className)} {...props} />
+  return <VCenterRow className={cn('h-8  mr-8', className)} {...props} />
 }
 
 export interface ISlideBarProps extends IChildrenProps {

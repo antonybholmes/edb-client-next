@@ -438,7 +438,7 @@ export function DomainPropsPanel({ ref }: IDivProps) {
             }
           />
 
-          <PropRow title="All feature colors">
+          <PropRow title="All Feature Colors">
             <ThreeColorMenu
               colors={[
                 {

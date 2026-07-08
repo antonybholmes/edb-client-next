@@ -2,6 +2,7 @@ import type { IChildrenProps } from '@/interfaces/children-props'
 import { COLOR_TRANSPARENT } from '@/lib/color/color'
 import { useState, type ReactNode } from 'react'
 import { ColorPickerUI } from './plot/color-picker-popover'
+import { FillIcon } from './plot/fill-dropdown-menu'
 import type { ITextProps } from './plot/svg-props'
 import {
   Popover,
@@ -103,11 +104,16 @@ export function ThreeColorMenu({
     button = (
       <PopoverTrigger
         className="rounded-full shrink-0 aspect-square w-5 h-5 overflow-hidden border border-foreground"
-        style={{
-          background: `linear-gradient(to right, ${colors[0]!.color}, ${colors[1]!.color}, ${colors[2]!.color})`,
-        }}
+
         title="Change colors"
-      />
+      >
+        <FillIcon
+          cp={{
+            color: colors[0]!.color,
+            opacity: colors[0]!.opacity ?? 1,
+          }}
+        />
+      </PopoverTrigger>
     )
   }
 

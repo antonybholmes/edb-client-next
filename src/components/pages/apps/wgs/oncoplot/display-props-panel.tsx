@@ -10,11 +10,9 @@ import {
   ScrollAccordion,
 } from '@/themed/v2/accordion'
 
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import { FontPopover } from '@/components/plot/font/font-popover'
+import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import type { IDivProps } from '@/interfaces/div-props'
 import { produce } from 'immer'
@@ -123,58 +121,42 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
                 }}
               />
             </PropRow>
-            <CheckPropRow
-              title="Border"
-              checked={displayProps.border.show}
-              onCheckedChange={(v) =>
-                setDisplayProps(
-                  produce(displayProps, (draft) => {
-                    draft.border.show = v
-                  })
-                )
-              }
-            >
-              <ColorPickerButton
+            <PropRow title="Border">
+              <OutlineButton
                 colors={[
                   {
                     color: displayProps.border.value,
-                    onColorChange: ({ color }) =>
+                    show: displayProps.border.show,
+                    onColorChange: ({ color, show }) =>
                       setDisplayProps(
                         produce(displayProps, (draft) => {
                           draft.border.value = color
+                          draft.border.show = show ?? displayProps.border.show
                         })
                       ),
                   },
                 ]}
-                className={SIMPLE_COLOR_EXT_CLS}
+                title="Border Outline"
               />
-            </CheckPropRow>
-            <CheckPropRow
-              title="Outline"
-              checked={displayProps.grid.show}
-              onCheckedChange={(v) =>
-                setDisplayProps(
-                  produce(displayProps, (draft) => {
-                    draft.grid.show = v
-                  })
-                )
-              }
-            >
-              <ColorPickerButton
+            </PropRow>
+            <PropRow title="Outline">
+              <OutlineButton
                 colors={[
                   {
                     color: displayProps.grid.value,
-                    onColorChange: ({ color }) =>
+                    show: displayProps.grid.show,
+                    onColorChange: ({ color, show }) =>
                       setDisplayProps(
                         produce(displayProps, (draft) => {
                           draft.grid.value = color
+                          draft.grid.show = show ?? displayProps.grid.show
                         })
                       ),
                   },
                 ]}
-                className={SIMPLE_COLOR_EXT_CLS}
+                title="Grid Outline"
               />
-            </CheckPropRow>
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
 
@@ -182,7 +164,7 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
           <AccordionTrigger>Samples</AccordionTrigger>
           <AccordionContent>
             <CheckPropRow
-              title="Mutation graph"
+              title="Mutation Graph"
               checked={displayProps.samples.graphs.show}
               onCheckedChange={(v) =>
                 setDisplayProps(
@@ -207,33 +189,25 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
               />
             </PropRow>
 
-            <CheckPropRow
-              title="Border"
-              disabled={!displayProps.samples.graphs.show}
-              checked={displayProps.samples.graphs.border.show}
-              onCheckedChange={(v) =>
-                setDisplayProps(
-                  produce(displayProps, (draft) => {
-                    draft.samples.graphs.border.show = v
-                  })
-                )
-              }
-            >
-              <ColorPickerButton
+            <PropRow title="Border">
+              <OutlineButton
                 colors={[
                   {
                     color: displayProps.samples.graphs.border.value,
-                    onColorChange: ({ color }) =>
+                    show: displayProps.samples.graphs.border.show,
+                    onColorChange: ({ color, show }) =>
                       setDisplayProps(
                         produce(displayProps, (draft) => {
                           draft.samples.graphs.border.value = color
+                          draft.samples.graphs.border.show =
+                            show ?? displayProps.samples.graphs.border.show
                         })
                       ),
                   },
                 ]}
-                className={SIMPLE_COLOR_EXT_CLS}
+                title="TMB Outline"
               />
-            </CheckPropRow>
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
 
@@ -250,28 +224,18 @@ export function DisplayPropsPanel({ ref }: IDivProps) {
                   })
                 )
               }
-            />
-
-            <CheckPropRow
-              title="Border"
-              disabled={!displayProps.features.graphs.show}
-              checked={displayProps.features.graphs.border.show}
-              onCheckedChange={(v) =>
-                setDisplayProps(
-                  produce(displayProps, (draft) => {
-                    draft.features.graphs.border.show = v
-                  })
-                )
-              }
             >
-              <ColorPickerButton
+              <OutlineButton
                 colors={[
                   {
                     color: displayProps.features.graphs.border.value,
-                    onColorChange: ({ color }) =>
+                    show: displayProps.features.graphs.border.show,
+                    onColorChange: ({ color, show }) =>
                       setDisplayProps(
                         produce(displayProps, (draft) => {
                           draft.features.graphs.border.value = color
+                          draft.features.graphs.border.show =
+                            show ?? displayProps.features.graphs.border.show
                         })
                       ),
                   },

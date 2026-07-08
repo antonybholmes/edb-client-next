@@ -66,7 +66,7 @@ export function FillButton({
   )
 }
 
-function FillIcon({ cp }: { cp: IColorPickerProps }) {
+export function FillIcon({ cp }: { cp: IColorPickerProps }) {
   return (
     <CenterRow className="flex flex-row items-center justify-center  relative h-6  w-5 grow-0 shrink-0">
       <PaintBucket size={16} strokeWidth={1.5} className="z-10" />
