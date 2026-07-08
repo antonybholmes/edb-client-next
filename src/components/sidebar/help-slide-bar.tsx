@@ -12,9 +12,9 @@ interface IHelpFrameProps {
 function HelpIFrame({ helpUrl }: IHelpFrameProps) {
   const { data } = useQuery({
     queryKey: ['help'],
-    queryFn: async () => {
+    queryFn: async () => 
       await httpFetch.get(helpUrl)
-    },
+    ,
   })
 
   if (!data) {

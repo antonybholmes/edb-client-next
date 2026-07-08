@@ -277,7 +277,7 @@ export function MyAccountPage() {
           <Form {...form}>
             <form
               className="flex flex-col gap-y-4 text-xs"
-              onSubmit={form.handleSubmit(onSubmit)}
+              //onSubmit={form.handleSubmit(onSubmit)}
             >
               <div className="grid grid-cols-1 md:grid-cols-4 gap-2 items-center">
                 <Label className="font-medium" htmlFor="name">

@@ -2,9 +2,9 @@
   "name": "edb-client-astro",
   "description": "The EDB Client Astro is a web application built with the Astro framework. It serves as a client interface for the EDB (Example Database) system, providing users with access to various features and functionalities related to data management, visualization, and analysis. The application is designed to be user-friendly and responsive, allowing users to interact with their data efficiently. It includes features such as data browsing, querying, and visualization tools, making it a powerful tool for users who need to work with data stored in the EDB system.",
   "copyright": "Copyright (c) ${START_YEAR:2022} Antony Holmes. All rights reserved.",
-  "version": "85.6.0",
-  "build": 3258,
-  "hash": "186a5852d9a38f54d7387565534aa3d8e7bdf6860ad91af23900ea2650b24f35",
+  "version": "85.6.2",
+  "build": 3260,
+  "hash": "b980f329fc9f270d0947648063971b13ddbbd07a69806dafc3c308fbef6b1737",
   "updated": "Jun 17, 2026",
-  "modified": "2026-07-08T22:14:21.615Z"
+  "modified": "2026-07-08T22:47:06.327Z"
 }

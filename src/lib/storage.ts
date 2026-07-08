@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai'
-import { atomWithStorage, createJSONStorage } from 'jotai/utils'
+import { atomWithStorage } from 'jotai/utils'
 import { useMemo } from 'react'
 import { makeUuid } from './id'
 
@@ -78,21 +78,21 @@ export function useStorageAtom<T>(id: string, initialValue: T) {
   return useAtom(atom)
 }
 
-export function useSessionAtom<T>(id: string, initialValue: T) {
-  // const widthAtom = useMemo(() => {
-  //   return storageAtom(key, initialValue)
-  // }, [key])
+// export function useSessionAtom<T>(id: string, initialValue: T) {
+//   // const widthAtom = useMemo(() => {
+//   //   return storageAtom(key, initialValue)
+//   // }, [key])
 
-  // return useAtom(widthAtom)
+//   // return useAtom(widthAtom)
 
-  const atom = useMemo(
-    () =>
-      atomWithStorage<T>(
-        id,
-        initialValue,
-        createJSONStorage(() => sessionStorage)
-      ),
-    [id]
-  )
-  return useAtom(atom)
-}
+//   const atom = useMemo(
+//     () =>
+//       atomWithStorage<T>(
+//         id,
+//         initialValue,
+//         createJSONStorage(() => sessionStorage)
+//       ),
+//     [id]
+//   )
+//   return useAtom(atom)
+// }

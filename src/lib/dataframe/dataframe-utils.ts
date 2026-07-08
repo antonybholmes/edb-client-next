@@ -84,8 +84,8 @@ export function zip(...cols: SeriesData[][]): SeriesData[][] {
  */
 
 export function rowSums(df: BaseDataFrame): number[] {
-  return df.rowMap((row: SeriesData[]) =>
-    row.reduce((a: number, b: SeriesData) => a + (b as number), 0)
+  return df.rowMap((row: number[]) =>
+    row.reduce((a: number, b: number) => a + b, 0)
   )
 
   // return range(df.shape[0]).map(row =>
