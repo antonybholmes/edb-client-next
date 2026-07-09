@@ -7,7 +7,7 @@ import APP_INFO from '../manifest.json'
 import type { Species } from '@/lib/gene/geneconv'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v60`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v62`
 
 export interface IMatcalcSettings {
   dot: { size: { useOriginalValuesForSizes: boolean } }
@@ -122,7 +122,7 @@ export const DEFAULT_SETTINGS: IMatcalcSettings = {
     topRows: 200,
     rowFilterMethod: 'Stdev',
     applyTranspose: false,
-    applyLog2: true,
+    applyLog2: false,
     applyRowZscore: true,
   },
 

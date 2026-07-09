@@ -113,7 +113,7 @@ export function InfoPage({ children }: IChildrenProps) {
             )}
 
             <LineSeparator />
-            <BaseCol className="gap-y-2">
+            <BaseCol className="gap-y-1">
               <p className="font-semibold">{config.name}</p>
               <p>{formatString(config.copyright)}</p>
               <CenterRow className="gap-x-4 mt-4">
@@ -150,11 +150,7 @@ export function InfoPage({ children }: IChildrenProps) {
               ).map((link, li) => {
                 return (
                   <li key={li}>
-                    <ThemeLink
-                      href={link.url}
-                      aria-label="View tool"
-                      //data-underline={true}
-                    >
+                    <ThemeLink href={link.url} aria-label="View tool">
                       {link.name}
                     </ThemeLink>
                   </li>

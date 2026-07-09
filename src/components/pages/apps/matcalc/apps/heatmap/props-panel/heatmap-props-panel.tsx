@@ -16,6 +16,7 @@ import { produce } from 'immer'
 
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { useHistory } from '../../../history/history-provider/history-provider'
+import APP_INFO from '../../../manifest.json'
 import { useHeatmapContext } from '../heatmap-provider'
 import { CellSettingsPanel } from './cell-settings'
 import { ColGroupsSettingsPanel } from './col-group-settings'
@@ -62,8 +63,8 @@ export function HeatmapPropsPanel() {
             openDialog({
               type: 'warning',
               payload: {
-                title: 'Reset to default',
-                content: 'Are you sure you want to reset all settings?',
+                title: APP_INFO.name,
+                content: 'Are you sure you want to reset all heatmap settings?',
                 callback: (response) => {
                   if (response === TEXT_OK) {
                     reset()

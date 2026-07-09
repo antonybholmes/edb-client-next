@@ -144,7 +144,12 @@ export function OKCancelDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={cn('text-sm flex flex-col p-4 gap-y-4', w, h, className)}
+        className={cn(
+          'text-sm flex flex-col p-4 pt-2 gap-y-4',
+          w,
+          h,
+          className
+        )}
         {...props}
       >
         <DialogHeader

@@ -8,6 +8,7 @@ import {
 } from '@/themed/v2/accordion'
 
 // import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { BaseCol } from '@/components/layout/base-col'
 import { OutlookTabs } from '@/components/pages/apps/matcalc/data/outlook-tabs'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import { VScrollPanel } from '@/components/v-scroll-panel'
@@ -159,7 +160,9 @@ export function SettingsDialog({
         </TabsList>
       </Tabs> */}
 
-      <OutlookTabs id="settings-dialog-tabs" className="text-xs" />
+      <BaseCol className="p-2 py-4">
+        <OutlookTabs id="settings-dialog-tabs" className="text-xs" />
+      </BaseCol>
 
       <VScrollPanel className="grow">
         <Tabs

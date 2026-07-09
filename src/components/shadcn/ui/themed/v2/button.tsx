@@ -57,9 +57,9 @@ export const BASE_ALT_CLS = cn(
 )
 
 export const BASE_FLAT_BUTTON_CLS = cn(
-  'hover:bg-muted/50 data-[checked=false]:hover:bg-muted/50',
-  'data-[checked=true]:bg-muted/50 data-[state=open]:bg-muted/50',
-  'aria-[expanded=true]:bg-muted/50 data-popup-open:bg-muted/50'
+  'hover:bg-muted/60 data-[checked=false]:hover:bg-muted/60',
+  'data-[checked=true]:bg-muted/60 data-[state=open]:bg-muted/60',
+  'aria-[expanded=true]:bg-muted/60 data-popup-open:bg-muted/60'
 )
 
 export const BASE_FLAT_ALT_BUTTON_CLS = cn(

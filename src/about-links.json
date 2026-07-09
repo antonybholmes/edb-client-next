@@ -1,5 +1,5 @@
 [
-  { "name": "Astro", "url": "https://astro.build/" },
+  { "name": "Next.js", "url": "https://nextjs.org/" },
   { "name": "React", "url": "https://reactjs.org" },
   { "name": "Tailwind", "url": "https://tailwindcss.com/" },
   { "name": "Lucide", "url": "https://lucide.dev/" },

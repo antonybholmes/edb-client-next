@@ -562,7 +562,7 @@ function GradientOpacityControl() {
     settings.genes.gradient.opacity
   )
   const debouncedGradientOpacity = useDebounce(gradientOpacity, {
-    delayMs: 300,
+    delayMs: 500,
   })
 
   useEffect(() => {

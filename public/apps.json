@@ -53,9 +53,9 @@
     "color": "#ffb366",
     "version": "21.8.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-09T17:59:04.791Z",
-    "hash": "1ecce7d6225dba094d66b9681da55cfec257e83fae30b53c06c61062db9f4458",
-    "build": 786
+    "modified": "2026-07-09T20:39:46.428Z",
+    "hash": "b084e99f67d646d6dbf581ed119adc26e7f1854c863ad362ac583c9a20f61ecd",
+    "build": 788
   },
   {
     "name": "GSEA Web",
@@ -91,9 +91,9 @@
     "description": "Information about Experiments web client.",
     "version": "3.4.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-01T16:18:39.048Z",
-    "hash": "57f4f6966a0f3dcf3f6a907dfad63a80b36648d92a678460dedd7991e64af325",
-    "build": 92
+    "modified": "2026-07-09T20:39:46.430Z",
+    "hash": "48fe8afbc11e8dea1729ef9aee54492e0819cf7ae1b98bca71665792cc2cea7b",
+    "build": 94
   },
   {
     "name": "Lollipop",
@@ -109,11 +109,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "48.4.0",
+    "version": "48.4.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-09T20:16:18.543Z",
-    "hash": "e8dddd971acadc35cbc613122d1b3fb908927bb9dfadb708891282cfbe672e73",
-    "build": 1788
+    "modified": "2026-07-09T20:39:46.432Z",
+    "hash": "7a59384d2cb6cf7b8fc7ee1ad2340bc925c2b81d4f853235a1fe1b9190864fd1",
+    "build": 1790
   },
   {
     "name": "Motifs",
