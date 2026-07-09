@@ -2,6 +2,10 @@
 
 ## 85.6 (Jul, 2026)
 
+### Added
+
+- Added ios toggles with animation.
+
 ### Changed
 
 - Bug fixes and updates.

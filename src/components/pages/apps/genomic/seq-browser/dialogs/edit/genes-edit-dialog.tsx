@@ -1,11 +1,14 @@
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
+import { VCenterRow } from '@/components/layout/v-center-row'
 import { FontUI } from '@/components/plot/font/font-ui'
 import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
 import { LabelContainer } from '@/components/shadcn/ui/themed/v2/label'
 import {
-  GroupToggle,
+  GroupIndicatorToggle,
   ToggleGroup,
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
+import { TabIndicatorIosSelected } from '@/components/tabs/tab-indicator-ios-selected'
+import { TabIndicatorProvider } from '@/components/tabs/tab-indicator-provider'
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { ColorPropRow } from '@/dialogs/color-prop-row'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
@@ -427,41 +430,45 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
             </SelectList>
           </PropRow>
           <PropRow title="View" className="items-start">
-            {/* <RadioGroup
-              value={settings.tracks.genes.view}
-              onValueChange={v => {
-                const newSettings = produce(settings, draft => {
-                  draft.tracks.genes.view = v as GeneView
-                })
+            <VCenterRow className="rounded-full p-0.5 overflow-hidden bg-muted/50 text-xs relative">
+              <TabIndicatorProvider>
+                <ToggleGroup
+                  value={[settings.tracks.genes.view]}
+                  onValueChange={(v, e) => {
+                    if (!v || v.length === 0) {
+                      return
+                    }
+                    const newSettings = produce(settings, (draft) => {
+                      draft.tracks.genes.view = v[0] as GeneView
+                    })
 
-                updateSettings(newSettings)
-              }}
-              className="text-xs flex flex-col gap-y-2"
-            >
-              <RadioGroupItem value="transcript">Transcripts</RadioGroupItem>
-              <RadioGroupItem value="features">Features</RadioGroupItem>
-            </RadioGroup> */}
+                    updateSettings(newSettings)
+                  }}
+                  size="toolbar"
+                  className="rounded-full overflow-hidden gap-x-px relative"
+                  variant="ios"
+                >
+                  <GroupIndicatorToggle
+                    isSelected={settings.tracks.genes.view === 'transcript'}
+                    value="transcript"
+                    className="w-22"
+                    rounded="full"
+                  >
+                    Transcripts
+                  </GroupIndicatorToggle>
+                  <GroupIndicatorToggle
+                    isSelected={settings.tracks.genes.view === 'features'}
+                    value="features"
+                    className="w-22"
+                    rounded="full"
+                  >
+                    Features
+                  </GroupIndicatorToggle>
 
-            <ToggleGroup
-              value={[settings.tracks.genes.view]}
-              onValueChange={(v) => {
-                const newSettings = produce(settings, (draft) => {
-                  draft.tracks.genes.view = v[0] as GeneView
-                })
-
-                updateSettings(newSettings)
-              }}
-              size="toolbar"
-              className="rounded-full p-0.5 overflow-hidden gap-x-px bg-muted/50 text-xs"
-              variant="ios"
-            >
-              <GroupToggle value="transcript" className="w-22" rounded="full">
-                Transcripts
-              </GroupToggle>
-              <GroupToggle value="features" className="w-22" rounded="full">
-                Features
-              </GroupToggle>
-            </ToggleGroup>
+                  <TabIndicatorIosSelected defaultWidth="5.5rem" />
+                </ToggleGroup>
+              </TabIndicatorProvider>
+            </VCenterRow>
           </PropRow>
         </SettingsAccordionItem>
       </ScrollAccordion>

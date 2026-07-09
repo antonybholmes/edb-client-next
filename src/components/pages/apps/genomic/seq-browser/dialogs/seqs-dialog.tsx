@@ -96,12 +96,20 @@ export function SeqsDialog({
   >(new Map<string, boolean>())
 
   useEffect(() => {
+    if (seqs.length === 0) {
+      return
+    }
+
     setSelectedMap(
       new Map<string, boolean>(seqs.map((track) => [track.id, false]))
     )
   }, [seqs])
 
   useEffect(() => {
+    if (seqs.length === 0) {
+      return
+    }
+
     if (search === '') {
       setSearchedDb(seqs)
     } else {
@@ -369,14 +377,16 @@ function ItemsInStore({
       searchDatasets = searchDatasets.toReversed()
     }
 
-    setSearchDatasets(searchDatasets)
+    if (searchDatasets.length > 0) {
+      setSearchDatasets(searchDatasets)
 
-    setAccordionValues(
-      searchedDb.length < 50
-        ? searchDatasets.map((dataset) => getAccordionId(dataset))
-        : []
-    )
-  }, [searchedDb, asc])
+      setAccordionValues(
+        searchedDb.length < 50
+          ? searchDatasets.map((dataset) => getAccordionId(dataset))
+          : []
+      )
+    }
+  }, [searchedDb, asc, setSearchDatasets, setAccordionValues])
 
   const displayDatasets: ISeqDBTrack[][] = searchDatasetNames.map((dataset) => {
     let ret = searchedDb.filter((track) => track.dataset === dataset)

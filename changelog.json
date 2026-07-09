@@ -2137,6 +2137,12 @@
           "msg": "Bug fixes and updates.",
           "date": "2026-07-08T22:14:21.759Z"
         }
+      ],
+      "Added": [
+        {
+          "msg": "Added ios toggles with animation",
+          "date": "2026-07-09T03:15:01.404Z"
+        }
       ]
     },
     "author": "Antony Holmes",

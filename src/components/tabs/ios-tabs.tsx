@@ -42,8 +42,6 @@ export function IOSTabs({
   const buttonsRef = useRef<HTMLElement[]>([])
   const [focus, setFocus] = useState(false)
 
-  //const isHydrated = useHydrated()
-
   useEffect(() => {
     if (!buttonsRef.current[selectedTabIndex] || !tabListRef.current) {
       return
@@ -108,25 +106,9 @@ export function IOSTabs({
                 'z-30 data-[checked=true]:font-semibold h-8'
               )}
               style={{ width: defaultWidth }}
-              // onMouseEnter={() => {
-              //   if (isSelected) {
-              //     setSelectedPosition({
-              //       scale: 1.1,
-              //     })
-              //   }
-              // }}
-              // onMouseLeave={() => {
-              //   if (isSelected) {
-              //     setSelectedPosition({
-              //       scale: 1,
-              //     })
-              //   }
-              // }}
             >
               {truncatedName}
             </TabsTrigger>
-
-            // <TabsTrigger key={tab.id} value={tab.id}>{tab.id}</TabsTrigger>
           )
         })}
         <TabIndicatorIosSelected defaultWidth={defaultWidth} />

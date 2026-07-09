@@ -1,5 +1,6 @@
+import { useUpdateEffect } from '@/hooks/update-effect'
 import gsap from 'gsap'
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { useTabIndicators } from './tab-indicator-provider'
 
 /**
@@ -29,9 +30,7 @@ export function TabIndicatorIosSelected({
 
   const selectedTimelineRef = useRef<GSAPTimeline | null>(null)
 
-  const isFirstRender = useRef(true)
-
-  useEffect(() => {
+  useUpdateEffect(() => {
     if (!selectedLineRef.current || !selectedPosition) {
       return
     }
@@ -40,27 +39,22 @@ export function TabIndicatorIosSelected({
       selectedTimelineRef.current.kill()
     }
 
-    if (!isFirstRender.current) {
-      selectedTimelineRef.current = gsap.timeline().to(
-        selectedLineRef.current,
-        {
-          x: selectedPosition.x,
-          width: selectedPosition.w,
-          scale: selectedPosition.scale || 1,
-          duration: 0.8,
-          ease: 'back.out',
-        },
-        0
-      )
-    }
+    console.log('animating tab indicator to', selectedPosition)
 
-    //  previousSelectedPos.current = selectedPosition
-    isFirstRender.current = false
+    selectedTimelineRef.current = gsap.timeline().to(
+      selectedLineRef.current,
+      {
+        x: selectedPosition.x,
+        //y: selectedPosition.y,
+        width: selectedPosition.w,
+        //height: selectedPosition.h,
+        scale: selectedPosition.scale || 1,
+        duration: 0.8,
+        ease: 'back.out',
+      },
+      0
+    )
   }, [selectedPosition])
-
-  if (!selectedPosition) {
-    return null
-  }
 
   return (
     <span
@@ -74,6 +68,6 @@ export function TabIndicatorIosSelected({
       //   //top: selectedPosition?.y,
       //   backgroundColor: color,
       // }}
-    />
+    ></span>
   )
 }
