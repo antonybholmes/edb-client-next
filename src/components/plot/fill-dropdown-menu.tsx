@@ -98,7 +98,7 @@ export function FillDropdownMenu({
 
       <DropdownMenuContent
         align={align}
-        variant="content"
+        //variant="content"
         className="flex flex-col"
       >
         {color0.showThemeColors && (

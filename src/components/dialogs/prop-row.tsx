@@ -3,8 +3,8 @@ import { type ReactNode } from 'react'
 import type { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
 import { H2_CLS } from '@/theme'
-import { Field } from '@base-ui/react/field'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { BaseRow } from '../layout/base-row'
 import { VCenterRow } from '../layout/v-center-row'
 import { InfoHoverCard } from '../shadcn/ui/themed/v2/hover-card'
 
@@ -33,7 +33,7 @@ export const labelVariants = cva('truncate items-center flex flex-row', {
   },
 })
 
-export const propRowVariants = cva('flex flex-row ', {
+export const propRowVariants = cva('', {
   variants: {
     align: {
       start: 'items-start',
@@ -83,29 +83,27 @@ export function PropRow({
   children,
 }: IProps) {
   return (
-    <Field.Root>
-      <Field.Label className={propRowVariants({ align, gap, className })}>
-        {side === 'right' && (
-          <VCenterRow className="gap-x-1.5">
-            <span className={labelVariants({ labelW, h })} title={tooltip}>
-              {title && title}
-            </span>
-            {info && <InfoHoverCard>{info}</InfoHoverCard>}
-          </VCenterRow>
-        )}
-        <VCenterRow
-          className={cn(
-            'overflow-hidden grow',
-            { 'justify-end': side === 'right' },
-            contentCls
-          )}
-        >
-          {children}
+    <BaseRow className={propRowVariants({ align, gap, className })}>
+      {side === 'right' && (
+        <VCenterRow className="gap-x-1.5">
+          <span className={labelVariants({ labelW, h })} title={tooltip}>
+            {title && title}
+          </span>
+          {info && <InfoHoverCard>{info}</InfoHoverCard>}
         </VCenterRow>
-        {side === 'left' && (
-          <span className={labelVariants({ labelW })}>{title && title}</span>
+      )}
+      <VCenterRow
+        className={cn(
+          'overflow-hidden grow',
+          { 'justify-end': side === 'right' },
+          contentCls
         )}
-      </Field.Label>
-    </Field.Root>
+      >
+        {children}
+      </VCenterRow>
+      {side === 'left' && (
+        <span className={labelVariants({ labelW })}>{title && title}</span>
+      )}
+    </BaseRow>
   )
 }

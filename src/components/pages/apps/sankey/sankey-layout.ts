@@ -1,3 +1,4 @@
+import { DEFAULT_COLOR_PROPS, IPaintProps } from '@/components/plot/svg-props'
 import { TAB10_PALETTE } from '@/lib/color/palette'
 import { sankey, SankeyLink, SankeyNode } from 'd3-sankey'
 import { ISankey, ISankeyLink, ISankeyNode } from './sankey-provider'
@@ -9,7 +10,7 @@ export type IOutputNode = SankeyNode<ISankeyNode, ISankeyLink> & {
   y0: number
   y1: number
   height: number
-  color: string
+  fill?: IPaintProps
 }
 export type IOutputLink = SankeyLink<ISankeyNode, ISankeyLink> & {
   source: IOutputNode
@@ -195,7 +196,12 @@ export function useSankeyLayout() {
 
     const nodes = sp.nodes.map((n) => ({
       ...n,
-      color: n.color ?? TAB10_PALETTE[n.column % TAB10_PALETTE.length],
+      fill: n.fill
+        ? n.fill
+        : {
+            ...DEFAULT_COLOR_PROPS,
+            value: TAB10_PALETTE[n.column % TAB10_PALETTE.length],
+          },
     }))
 
     let layout = sankey<ISankeyNode, ISankeyLink>()

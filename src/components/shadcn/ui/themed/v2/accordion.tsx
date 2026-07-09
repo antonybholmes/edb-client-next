@@ -264,7 +264,7 @@ export const accordionContentVariants = cva('flex flex-col', {
     variant: {
       default: 'py-1 gap-y-1',
       settings: 'gap-y-2 pb-2',
-      sidebar: 'gap-y-1 p-1 pl-3',
+      sidebar: 'gap-y-1 p-1 pl-3 pr-1.5',
     },
   },
   defaultVariants: {

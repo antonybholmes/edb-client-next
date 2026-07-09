@@ -1,8 +1,4 @@
-import { cn } from '@/lib/shadcn-utils'
 import { formatAsPercent } from '@/lib/text/format-string'
-import { H2_CLS } from '@/theme'
-
-export const PROPS_TITLE_CLS = cn(H2_CLS, 'py-2')
 
 /**
  * Renders a percentage value with optional digit formatting.

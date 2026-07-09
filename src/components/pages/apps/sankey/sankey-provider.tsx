@@ -1,3 +1,4 @@
+import { IPaintProps } from '@/components/plot/svg-props'
 import { IDBEntity } from '@/interfaces/db-entity'
 import { makeUuid } from '@/lib/id'
 import {
@@ -20,7 +21,7 @@ export interface ISankeyNode {
   id: string
   label: string
   column: number
-  color?: string
+  fill?: IPaintProps
 }
 
 // export interface ILayoutNode extends ISankeyNode {
@@ -38,14 +39,14 @@ export interface ISankeyLink {
   source: string
   target: string
   value: number
-  color?: string
+  fill?: IPaintProps
 }
 
 export interface ILayoutLink {
   source: { id: string }
   target: { id: string }
   value: number
-  color?: string
+  fill?: IPaintProps
   y0: number
   y1: number
   width: number

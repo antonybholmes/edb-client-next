@@ -57,7 +57,6 @@ export function ZoomSlider({
   const debounceIndex = useDebounce(_index, { delayMs: 300 })
 
   useEffect(() => {
-    console.log('Debounced zoom level:', debounceIndex, 'Actual index:', _index)
     if (
       debounceIndex.index >= 0 &&
       debounceIndex.index < levels.length &&
@@ -74,7 +73,6 @@ export function ZoomSlider({
           aria-label="Zoom Out"
           onClick={() => decreaseZoom()}
           size="icon-sm"
-          //variant="theme-muted"
         >
           <Minus className="w-4 h-4" strokeWidth={2} />
         </ToolbarFooterButton>
@@ -114,7 +112,6 @@ export function ZoomSelect({
   const { zoom, levels, setZoom } = useZoom(channel)
 
   function _setValue(value: number) {
-    console.log('Setting zoom to:', value)
     setZoom(value)
     setOpen(false)
   }

@@ -15,16 +15,14 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { Input } from '@/components/shadcn/ui/themed/v2/input'
 import { SortableItem } from '@/components/sortable-item'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { IOutputNode } from '../sankey-layout'
 import { useSankey } from '../sankey-provider'
+import { DEFAULT_NODE_COLOR } from '../sankey-settings-store'
 
 export const GROUP_CLS = `group rounded-theme group gap-x-1 opacity-80 py-1 px-2
 hover:opacity-100 trans-opacity hover:bg-muted/60 data-[focus=true]:bg-muted/60`
@@ -38,16 +36,16 @@ function NodeItem({ node }: { node: IOutputNode }) {
 
   return (
     <SortableItem id={node.id} key={node.id}>
-      <ColorPickerButton
+      <FillButton
         colors={[
           {
-            color: node.color,
-            onColorChange: ({ color }) => updateNode({ ...node, color }),
+            color: node.fill?.value ?? DEFAULT_NODE_COLOR,
+            onColorChange: ({ color }) =>
+              updateNode({ ...node, fill: { ...node.fill, value: color } }),
           },
         ]}
 
-        className={SIMPLE_COLOR_EXT_CLS}
-        title="Set color"
+        title="Node Fill"
       />
       <VCenterCol className="overflow-hidden grow gap-y-1">
         <Input

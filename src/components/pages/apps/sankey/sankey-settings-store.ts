@@ -1,7 +1,9 @@
 import {
+  DEFAULT_COLOR_PROPS,
   DEFAULT_MARGIN,
   DEFAULT_TEXT_PROPS,
   IMarginProps,
+  IPaintProps,
   ITextProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
@@ -10,7 +12,9 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:matcalc:sankey:v2`
+const SETTINGS_KEY = `${config.appId}:app:matcalc:sankey:v4`
+
+export const DEFAULT_NODE_COLOR = '#4F46E5'
 
 export interface ISankeySettings {
   //padding: number
@@ -20,8 +24,7 @@ export interface ISankeySettings {
   margin: IMarginProps
   links: {
     colorMode: 'gradient' | 'source' | 'target' | 'static'
-    color: string
-    opacity: number
+    fill: IPaintProps
     gradientOffset: number
   }
   nodes: {
@@ -54,8 +57,7 @@ const DEFAULT_SETTINGS: ISankeySettings = {
   margin: { ...DEFAULT_MARGIN },
   links: {
     colorMode: 'gradient',
-    color: '#4F46E5',
-    opacity: 0.5,
+    fill: { ...DEFAULT_COLOR_PROPS, value: DEFAULT_NODE_COLOR, opacity: 0.5 },
     gradientOffset: 0.2,
   },
   nodes: {

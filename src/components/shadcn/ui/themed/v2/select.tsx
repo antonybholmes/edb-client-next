@@ -283,7 +283,7 @@ export function SelectList({
 }: ISelectListProps) {
   return (
     <Select multiple={multiple} {...props}>
-      <SelectTrigger w={w} variant={variant} className={className}>
+      <SelectTrigger w={w} variant={variant}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>{children}</SelectContent>

@@ -1,3 +1,4 @@
+import { DEFAULT_COLOR_PROPS } from '@/components/plot/svg-props'
 import { BaseDataFrame, findCol } from '@/lib/dataframe/base-dataframe'
 import { cellNum, cellStr } from '@/lib/dataframe/cell'
 import { makeUuid } from '@/lib/id'
@@ -92,7 +93,9 @@ export function DFToSankeyGraph(
         id: makeUuid(),
         label: source,
         column: sourceColumn,
-        color: sourceColor || undefined,
+        fill: sourceColor
+          ? { ...DEFAULT_COLOR_PROPS, value: sourceColor }
+          : undefined,
       }
     }
 
@@ -101,7 +104,9 @@ export function DFToSankeyGraph(
         id: makeUuid(),
         label: target,
         column: targetColumn,
-        color: targetColor || undefined,
+        fill: targetColor
+          ? { ...DEFAULT_COLOR_PROPS, value: targetColor }
+          : undefined,
       }
     }
 
@@ -109,7 +114,9 @@ export function DFToSankeyGraph(
       source: nodesMap[source].id,
       target: nodesMap[target].id,
       value,
-      color: linkColor || undefined,
+      fill: linkColor
+        ? { ...DEFAULT_COLOR_PROPS, value: linkColor, opacity: 0.5 }
+        : undefined,
     })
   }
 

@@ -1,6 +1,5 @@
 import { type IClusterGroup } from '@/lib/cluster-group'
 
-import { VCenterCol } from '@/layout/v-center-col'
 import {
   DndContext,
   KeyboardSensor,
@@ -15,15 +14,14 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { SortableItem } from '@/components/sortable-item'
-import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
-import { IOutputLink, IOutputNode } from '../sankey-layout'
+import { MoveRight } from 'lucide-react'
+import { IOutputLink } from '../sankey-layout'
 import { useSankey } from '../sankey-provider'
 import { useSankeySettings } from '../sankey-settings-store'
 
@@ -34,17 +32,6 @@ export const GROUP_CONTENT_CLS = `flex flex-row items-center grow relative
   w-full overflow-hidden py-2 pl-1 pr-2 gap-x-2 rounded-theme 
   group-hover:bg-muted group-data-[focus=true]:bg-muted`
 
-function linkName(link: IOutputLink, nodes: Map<string, IOutputNode>) {
-  const source = nodes.get(link.source.id)
-  const target = nodes.get(link.target.id)
-
-  if (!source || !target) {
-    return ''
-  }
-
-  return `${source.label} → ${target.label}`
-}
-
 function LinkItem({ link }: { link: IOutputLink }) {
   const { updateLink } = useSankey()
   const { settings } = useSankeySettings()
@@ -53,22 +40,25 @@ function LinkItem({ link }: { link: IOutputLink }) {
 
   return (
     <SortableItem id={linkId} key={linkId}>
-      <ColorPickerButton
+      <FillButton
         colors={[
           {
-            color: link.color || settings.links.color,
-            onColorChange: ({ color }) => updateLink({ ...link, color }),
+            color: link.fill?.value ?? settings.links.fill.value,
+            opacity: link.fill?.opacity ?? settings.links.fill.opacity,
+            onColorChange: ({ color, opacity }) =>
+              updateLink({
+                ...link,
+                fill: { ...link.fill, value: color, opacity },
+              }),
           },
         ]}
 
         className={SIMPLE_COLOR_EXT_CLS}
         title="Set color"
       />
-      <VCenterCol className="overflow-hidden grow gap-y-1">
-        <TruncateSpan className="h-8">
-          {link.source.label} → {link.target.label}
-        </TruncateSpan>
-      </VCenterCol>
+      <VCenterRow className="overflow-hidden grow gap-x-2">
+        {link.source.label} <MoveRight size={16} /> {link.target.label}
+      </VCenterRow>
     </SortableItem>
   )
 }

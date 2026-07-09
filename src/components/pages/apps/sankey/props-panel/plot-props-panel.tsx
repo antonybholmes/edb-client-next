@@ -12,12 +12,13 @@ import { PropRow } from '@/components/dialogs/prop-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
+import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
-import { Slider } from '@/components/shadcn/ui/themed/v2/slider'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { TEXT_OK, TEXT_RESET } from '@/consts'
 import { produce } from 'immer'
+import APP_INFO from '../manifest.json'
 import { useSankeySettings } from '../sankey-settings-store'
 
 export function PlotPropsPanel() {
@@ -33,7 +34,7 @@ export function PlotPropsPanel() {
             openDialog({
               type: 'warning',
               payload: {
-                title: 'Reset settings',
+                title: APP_INFO.name,
                 content: 'Are you sure you want to reset all Sankey settings?',
                 callback: (response) => {
                   if (response === TEXT_OK) {
@@ -123,25 +124,27 @@ export function PlotPropsPanel() {
                 <SelectItem value="circle">Circle</SelectItem>
               </SelectList>
             </PropRow>
-            <NumericalPropRow
-              title="Width"
-              limit={[1, 1000]}
-              value={settings.nodes.width}
-              onNumChange={(value) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.nodes.width = value
-                  })
-                )
-              }}
-            />
+
+            <PropRow title="Width">
+              <NumSlider
+                value={settings.nodes.width}
+                min={1}
+                max={1000}
+                //format={(v) => v.toString()}
+                onValueChange={(value: number | readonly number[]) => {
+                  const newValue = Array.isArray(value) ? value[0]! : value
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.nodes.width = newValue
+                    })
+                  )
+                }}
+                step={1}
+              />
+            </PropRow>
 
             <PropRow title="Rounding">
-              {' '}
-              <span className="text-alt-foreground">
-                {settings.nodes.rounding}
-              </span>
-              <Slider
+              <NumSlider
                 value={settings.nodes.rounding}
                 min={0}
                 max={100}
@@ -155,17 +158,13 @@ export function PlotPropsPanel() {
                   )
                 }}
                 step={1}
-                //className="w-20"
               />
             </PropRow>
             <PropRow
               title="Oversize"
               tooltip="Allow nodes to be larger than their links"
             >
-              <span className="text-alt-foreground">
-                {settings.nodes.oversize}
-              </span>
-              <Slider
+              <NumSlider
                 value={settings.nodes.oversize}
                 min={0}
                 max={100}
@@ -213,18 +212,19 @@ export function PlotPropsPanel() {
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="links">
-          <AccordionTrigger
-            rightChildren={
+          <AccordionTrigger>Links</AccordionTrigger>
+          <AccordionContent>
+            <PropRow title="Color Mode">
               <FillButton
                 colors={[
                   {
-                    color: settings.links.color,
-                    opacity: settings.links.opacity,
+                    color: settings.links.fill.value,
+                    opacity: settings.links.fill.opacity,
                     onColorChange: ({ color, opacity }) => {
                       updateSettings(
                         produce(settings, (draft) => {
-                          draft.links.color = color
-                          draft.links.opacity = opacity ?? 1
+                          draft.links.fill.value = color
+                          draft.links.fill.opacity = opacity ?? 1
                         })
                       )
                     },
@@ -233,12 +233,6 @@ export function PlotPropsPanel() {
 
                 title="Links Fill"
               />
-            }
-          >
-            Links
-          </AccordionTrigger>
-          <AccordionContent>
-            <PropRow title="Color Mode">
               <SelectList
                 items={[
                   { value: 'gradient', label: 'Gradient' },
@@ -267,14 +261,14 @@ export function PlotPropsPanel() {
             </PropRow>
             <PropRow title="Opacity">
               <PercentSlider
-                value={settings.links.opacity}
+                value={settings.links.fill.opacity}
                 min={0}
                 max={1}
                 onValueChange={(value: number | readonly number[]) => {
                   const newValue = Array.isArray(value) ? value[0]! : value
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.links.opacity = newValue
+                      draft.links.fill.opacity = newValue
                     })
                   )
                 }}

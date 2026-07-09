@@ -2148,6 +2148,10 @@
         {
           "msg": "Added debounce to zoom slider as well as a user check to prevent race condition between slider and zoom menu",
           "date": "2026-07-09T21:32:19.791Z"
+        },
+        {
+          "msg": "Sankey now has proper fill properties for nodes and links and we can color all links and nodes independently",
+          "date": "2026-07-09T22:35:25.281Z"
         }
       ],
       "Added": [

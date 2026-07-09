@@ -161,7 +161,7 @@ export function SankeySvg({ ref }: ISVGProps) {
             width={settings.nodes.width}
             height={h}
             rx={settings.nodes.rounding}
-            fill={node.color ?? DEFAULT_NODE_COLOR}
+            fill={node.fill?.value ?? DEFAULT_NODE_COLOR}
             fillOpacity={settings.nodes.opacity}
           />
         )}
@@ -170,7 +170,7 @@ export function SankeySvg({ ref }: ISVGProps) {
             cx={node.x0}
             cy={node.y0 + (node.y1 - node.y0 + settings.nodes.oversize) / 2}
             r={(Math.max(w, h) + settings.nodes.oversize) / 2}
-            fill={node.color ?? DEFAULT_NODE_COLOR}
+            fill={node.fill?.value ?? DEFAULT_NODE_COLOR}
             fillOpacity={settings.nodes.opacity}
             //onPointerDown={handlePointerDown}
           />
@@ -279,11 +279,11 @@ function gradientDefs(
           >
             <stop
               offset={`${settings.links.gradientOffset * 100}%`}
-              stopColor={source.color}
+              stopColor={source.fill?.value ?? settings.links.fill.value}
             />
             <stop
               offset={`${100 - settings.links.gradientOffset * 100}%`}
-              stopColor={target.color}
+              stopColor={target.fill?.value ?? settings.links.fill.value}
             />
           </linearGradient>
         )
@@ -343,20 +343,20 @@ function linkPaths(
           C ${cx} ${y0}, ${cx} ${y1}, ${x1} ${y1}
         `
 
-        let color = settings.links.color
+        let color = settings.links.fill.value
 
         switch (settings.links.colorMode) {
           case 'gradient':
             color = `url(#${gradientId})`
             break
           case 'source':
-            color = source.color || settings.links.color
+            color = source.fill?.value ?? settings.links.fill.value
             break
           case 'target':
-            color = target.color || settings.links.color
+            color = target.fill?.value ?? settings.links.fill.value
             break
           default:
-            color = link.color || settings.links.color
+            color = link.fill?.value ?? settings.links.fill.value
             break
         }
 
@@ -368,7 +368,7 @@ function linkPaths(
             //stroke={link.color ?? '#5B8FF9'}
             stroke={color}
             strokeWidth={link.width}
-            strokeOpacity={settings.links.opacity}
+            strokeOpacity={link.fill?.opacity ?? settings.links.fill.opacity}
           />
         )
       })}

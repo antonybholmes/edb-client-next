@@ -2144,6 +2144,10 @@
         {
           "msg": "UI tweaks",
           "date": "2026-07-09T20:16:19.363Z"
+        },
+        {
+          "msg": "Added debounce to zoom slider as well as a user check to prevent race condition between slider and zoom menu",
+          "date": "2026-07-09T21:32:19.791Z"
         }
       ],
       "Added": [
