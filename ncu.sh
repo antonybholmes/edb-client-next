@@ -5,6 +5,8 @@ pnpm install --no-frozen-lockfile
 pnpm clean --lockfile
 pnpm install --no-frozen-lockfile
 
+pnpm install typescript@6
+
 #pnpm install tailwindcss@3
 #pnpm install react@18
 #pnpm install react-dom@18

@@ -14,13 +14,13 @@ import {
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { RadioPropRow } from '@/dialogs/radio-prop-row'
 import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
- 
 
 import { produce } from 'immer'
 import { ExternalLinkIcon } from 'lucide-react'
 
 import { RadioGroup } from '@/components/shadcn/ui/themed/v2/radio-group'
 import { SkeletonRows } from '@/components/shadcn/ui/themed/v2/skeleton'
+import { storeItem } from '@/lib/storage'
 import { useEffect, useState } from 'react'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import type { IGexDataset } from './gex-store'
@@ -96,9 +96,9 @@ export function GexDialogSidePanel({
                 //variant="outline"
 
                 value={[settings.apps.gex.genome]}
-                onValueChange={v => {
+                onValueChange={(v) => {
                   updateSettings(
-                    produce(settings, draft => {
+                    produce(settings, (draft) => {
                       draft.apps.gex.genome = v[0] ?? ''
                     })
                   )
@@ -106,7 +106,7 @@ export function GexDialogSidePanel({
                 rounded="none"
                 className="border border-border/50 rounded-theme overflow-hidden"
               >
-                {GENOMES.map(s => (
+                {GENOMES.map((s) => (
                   <GroupToggle
                     key={s}
                     value={s}
@@ -131,7 +131,7 @@ export function GexDialogSidePanel({
                       className="w-full text-left"
                       onClick={() => {
                         updateSettings(
-                          produce(settings, draft => {
+                          produce(settings, (draft) => {
                             draft.apps.gex.technology = t
                           })
                         )
@@ -151,14 +151,14 @@ export function GexDialogSidePanel({
       <RadioGroup
         className="flex flex-col grow relative"
         value={dataset?.id}
-        onValueChange={v => {
+        onValueChange={(v) => {
           const ds = datasetMap.get(v)
 
           if (ds) {
             setDataset(ds)
 
             updateSettings(
-              produce(settings, draft => {
+              produce(settings, (draft) => {
                 draft.apps.gex.selectedDatasets = [ds.id]
               })
             )
@@ -170,7 +170,7 @@ export function GexDialogSidePanel({
           //onValueChange={setAccordionValues}
           variant="settings"
         >
-          {institutions.map(institution => {
+          {institutions.map((institution) => {
             return (
               <SettingsAccordionItem
                 title={institution}
@@ -178,7 +178,7 @@ export function GexDialogSidePanel({
                 key={institution}
               >
                 <ul className="flex flex-col">
-                  {instituteMap.get(institution)?.map(ds => {
+                  {instituteMap.get(institution)?.map((ds) => {
                     return (
                       <li
                         key={ds.id}

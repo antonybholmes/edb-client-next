@@ -130,6 +130,6 @@
     "prettier-plugin-organize-imports": "^4.3.0",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tailwindcss": "^4.3.2",
-    "typescript": "^6"
+    "typescript": "^6.0.3"
   }
 }
