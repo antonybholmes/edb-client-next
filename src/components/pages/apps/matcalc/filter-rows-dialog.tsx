@@ -1,6 +1,6 @@
 import { HCenterRow } from '@/components/layout/h-center-row'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
-import { IOSTabs } from '@/components/tabs/ios-tabs'
+import { IosTabs } from '@/components/tabs/ios-tabs'
 import { TabIndicatorProvider } from '@/components/tabs/tab-indicator-provider'
 import { useTabs } from '@/components/tabs/tab-provider'
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
@@ -193,7 +193,7 @@ export function FilterRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
       }}
       centerHeaderChildren={
         <TabIndicatorProvider>
-          <IOSTabs id="matcalc-top-rows" />
+          <IosTabs id="matcalc-top-rows" />
         </TabIndicatorProvider>
       }
       h="h-56"

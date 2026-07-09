@@ -26,13 +26,13 @@ interface IProps extends ITabMenu, VariantProps<typeof toggleGroupVariants> {
   id?: string
   buttonClassName?: string
   maxNameLength?: number
-  defaultWidth?: string
+  defaultWidth?: number
 }
 
-export function IOSTabs({
+export function IosTabs({
   id = 'ios-tabs',
   maxNameLength = -1,
-  defaultWidth = '5rem',
+  defaultWidth = 5,
 }: IProps) {
   const { tabs, selectedTab, selectedTabIndex, setTab } = useTabs(id)
   const { selectedPosition, setSelectedPosition } = useTabIndicators()
@@ -43,20 +43,26 @@ export function IOSTabs({
   const [focus, setFocus] = useState(false)
 
   useEffect(() => {
-    if (!buttonsRef.current[selectedTabIndex] || !tabListRef.current) {
-      return
-    }
+    // if (!buttonsRef.current[selectedTabIndex] || !tabListRef.current) {
+    //   return
+    // }
 
-    const containerRect = tabListRef.current!.getBoundingClientRect()
+    // const idx = tabs.findIndex((t) => t.id === selectedTab?.id)
 
-    const clientRef = buttonsRef.current[selectedTabIndex]!
+    // if (idx === -1) {
+    //   return
+    // }
 
-    const clientRect = clientRef.getBoundingClientRect()
+    // const containerRect = tabListRef.current!.getBoundingClientRect()
+
+    //const clientRef = buttonsRef.current[selectedTabIndex]!
+
+    //const clientRect = clientRef.getBoundingClientRect()
 
     setSelectedPosition({
       ...selectedPosition,
-      x: clientRect.left - containerRect.left,
-      w: clientRect.width,
+      x: `${selectedTabIndex * defaultWidth}rem`,
+      w: `${defaultWidth}rem`,
     })
   }, [selectedTabIndex])
 
@@ -67,7 +73,7 @@ export function IOSTabs({
         setTab(v)
       }}
       orientation="horizontal"
-      className="bg-muted/40 rounded-full p-0.5 text-xs"
+      className="bg-muted/40 rounded-full p-0.5 border border-border/30 text-xs"
     >
       <TabsList
         ref={tabListRef}
@@ -103,15 +109,15 @@ export function IOSTabs({
               }}
               className={cn(
                 FOCUS_INSET_RING_CLS,
-                'z-30 data-[checked=true]:font-semibold h-8'
+                'z-30 data-[checked=true]:font-semibold h-7'
               )}
-              style={{ width: defaultWidth }}
+              style={{ width: `${defaultWidth}rem` }}
             >
               {truncatedName}
             </TabsTrigger>
           )
         })}
-        <TabIndicatorIosSelected defaultWidth={defaultWidth} />
+        <TabIndicatorIosSelected />
       </TabsList>
     </Tabs>
   )

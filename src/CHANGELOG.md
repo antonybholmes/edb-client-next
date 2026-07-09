@@ -8,6 +8,7 @@
 
 ### Changed
 
+- IOS slider UI simplified. More use of sliders. GSEA plot using more debounce to keep UI response when showing a lot of plots.
 - Bug fixes and updates.
 - Fixed Variants UI and added more Fill and Outline UI elements.
 - Now uses tinycolor2 for dealing with colors with alpha and swapping between hex and rgb.

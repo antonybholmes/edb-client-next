@@ -9,6 +9,7 @@ import {
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
+import { Percent } from '@/components/percent'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
@@ -136,6 +137,10 @@ export function PlotPropsPanel() {
             />
 
             <PropRow title="Rounding">
+              {' '}
+              <span className="text-alt-foreground">
+                {settings.nodes.rounding}
+              </span>
               <Slider
                 value={settings.nodes.rounding}
                 min={0}
@@ -157,6 +162,9 @@ export function PlotPropsPanel() {
               title="Oversize"
               tooltip="Allow nodes to be larger than their links"
             >
+              <span className="text-alt-foreground">
+                {settings.nodes.oversize}
+              </span>
               <Slider
                 value={settings.nodes.oversize}
                 min={0}
@@ -187,6 +195,7 @@ export function PlotPropsPanel() {
             />
 
             <PropRow title="Opacity">
+              <Percent v={settings.nodes.opacity} />
               <Slider
                 value={settings.nodes.opacity}
                 min={0}
@@ -207,24 +216,6 @@ export function PlotPropsPanel() {
         <AccordionItem value="links">
           <AccordionTrigger
             rightChildren={
-              // <ColorPickerButton
-              //   colors={[
-              //     {
-              //       color: settings.links.color,
-
-              //       onColorChange: ({ color }) => {
-              //         updateSettings(
-              //           produce(settings, (draft) => {
-              //             draft.links.color = color
-              //           })
-              //         )
-              //       },
-              //     },
-              //   ]}
-              //   className={SIMPLE_COLOR_EXT_CLS}
-              //   title="Set default color"
-              // />
-
               <FillButton
                 colors={[
                   {
@@ -276,6 +267,8 @@ export function PlotPropsPanel() {
               </SelectList>
             </PropRow>
             <PropRow title="Opacity">
+              <Percent v={settings.links.opacity} />
+
               <Slider
                 value={settings.links.opacity}
                 min={0}
@@ -292,6 +285,8 @@ export function PlotPropsPanel() {
               />
             </PropRow>
             <PropRow title="Gradient Offset">
+              <Percent v={settings.links.gradientOffset} />
+
               <Slider
                 value={settings.links.gradientOffset}
                 min={0}

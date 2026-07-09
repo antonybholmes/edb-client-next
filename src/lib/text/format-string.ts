@@ -33,3 +33,14 @@ export function formatString(text: string): string {
 
   return text
 }
+
+/**
+ * Formats a number as a percentage string with the given number of decimal places.
+ *
+ * @param value
+ * @param decimals
+ * @returns
+ */
+export function formatAsPercent(value: number, decimals = 0): string {
+  return `${(value * 100).toFixed(decimals)}%`
+}

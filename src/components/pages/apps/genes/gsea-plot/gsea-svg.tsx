@@ -551,11 +551,11 @@ function GenesSvg({
   const c1 = settings.genes.pos.value
   const c2 = addAlphaToHex(
     settings.genes.pos.value,
-    settings.genes.gradient.alpha
+    settings.genes.gradient.opacity
   )
   const c3 = addAlphaToHex(
     settings.genes.neg.value,
-    settings.genes.gradient.alpha
+    settings.genes.gradient.opacity
   )
   const c4 = settings.genes.neg.value
   const cmap1 = new ColorMap('pos', [c1, c2])

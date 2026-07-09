@@ -269,7 +269,7 @@ export const accordionContentVariants = cva('flex flex-col', {
   variants: {
     variant: {
       default: 'py-1 gap-y-1',
-      settings: 'gap-y-2',
+      settings: 'gap-y-2 pb-2',
       sidebar: 'gap-y-1 pt-1 pb-2 mb-1 px-1.5 border-b border-border/50',
     },
   },

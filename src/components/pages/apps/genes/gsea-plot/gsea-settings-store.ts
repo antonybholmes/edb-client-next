@@ -3,7 +3,7 @@ import { config } from '@/config'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:gsea-settings-v34`
+const SETTINGS_KEY = `${config.appId}:gsea-settings-v36`
 
 import {
   DEFAULT_BOLD_FONT_PROPS,
@@ -48,7 +48,7 @@ export interface IGseaDisplayProps {
     }
     pos: IStrokeProps
     neg: IStrokeProps
-    gradient: { alpha: number; on: boolean }
+    gradient: { opacity: number; on: boolean }
     height: number
     //line: IStrokeProps
   }
@@ -166,7 +166,7 @@ export const DEFAULT_GSEA_DISPLAY_PROPS: IGseaDisplayProps = {
     neg: { ...DEFAULT_STROKE_PROPS, value: COLOR_BLUE, width: 1 },
 
     show: true,
-    gradient: { alpha: 0.2, on: true },
+    gradient: { opacity: 0.2, on: true },
     //line: { ...DEFAULT_STROKE_PROPS, width: 2 },
   },
   ranking: {

@@ -16,10 +16,14 @@ import { NumericalInput } from '@/themed/numerical-input'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { VCenterRow } from '@/components/layout/v-center-row'
+import { Percent } from '@/components/percent'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { Slider } from '@/components/shadcn/ui/themed/v2/slider'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
+import { useDebounce } from '@/hooks/debounce'
 import { produce } from 'immer'
+import { useEffect, useState } from 'react'
 import { FontPopover } from '../../../../plot/font/font-popover'
 import { MarginPopover } from '../../../../plot/margin-popover'
 import { useGseaSettings } from './gsea-settings-store'
@@ -421,37 +425,7 @@ export function GseaDisplayPropsPanel() {
               /> */}
             </CheckPropRow>
 
-            <CheckPropRow
-              title="Gradient"
-              checked={settings.genes.gradient.on}
-              onCheckedChange={(state) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.genes.gradient.on = state
-                  })
-                )
-              }}
-              className="ml-2"
-              disabled={!settings.genes.color.on}
-            >
-              <NumericalInput
-                value={settings.genes.gradient.alpha}
-                disabled={!settings.genes.gradient.on}
-                placeholder="Alpha"
-                limit={[0, 1]}
-                step={0.1}
-                dp={1}
-                onNumChange={(v) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.genes.gradient.alpha = v
-                    })
-                  )
-                }}
-                w="xxs"
-                title="Opacity"
-              />
-            </CheckPropRow>
+            <GradientOpacityControl />
           </AccordionContent>
         </AccordionItem>
 
@@ -571,5 +545,82 @@ export function GseaDisplayPropsPanel() {
         </AccordionItem>
       </ScrollAccordion>
     </PropsPanel>
+  )
+}
+
+/**
+ * A control component for adjusting the opacity of the gene color gradient.
+ * It includes a switch to toggle the gradient on and off,
+ * a slider to adjust the opacity, and a percentage display of the current
+ * opacity value. It requires debouncing to prevent excessive updates
+ * while the slider is being adjusted.
+ * @returns
+ */
+function GradientOpacityControl() {
+  const { settings, updateSettings } = useGseaSettings()
+
+  const [gradientOpacity, setGradientOpacity] = useState(
+    settings.genes.gradient.opacity
+  )
+  const debouncedGradientOpacity = useDebounce(gradientOpacity, {
+    delayMs: 300,
+  })
+
+  useEffect(() => {
+    setGradientOpacity(settings.genes.gradient.opacity)
+  }, [settings.genes.gradient.opacity])
+
+  useEffect(() => {
+    updateSettings(
+      produce(settings, (draft) => {
+        draft.genes.gradient.opacity = debouncedGradientOpacity
+      })
+    )
+  }, [debouncedGradientOpacity])
+
+  return (
+    <CheckPropRow
+      title="Gradient"
+      checked={settings.genes.gradient.on}
+      onCheckedChange={(state) => {
+        updateSettings(
+          produce(settings, (draft) => {
+            draft.genes.gradient.on = state
+          })
+        )
+      }}
+      className="ml-2"
+      disabled={!settings.genes.color.on}
+    >
+      {/* <NumericalInput
+                value={settings.genes.gradient.alpha}
+                disabled={!settings.genes.gradient.on}
+                placeholder="Alpha"
+                limit={[0, 1]}
+                step={0.1}
+                dp={1}
+                onNumChange={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.gradient.alpha = v
+                    })
+                  )
+                }}
+                w="xxs"
+                title="Opacity"
+              /> */}
+
+      <Percent v={gradientOpacity} />
+      <Slider
+        value={gradientOpacity}
+        min={0}
+        max={1}
+        onValueChange={(value: number | readonly number[]) => {
+          const newValue = Array.isArray(value) ? value[0]! : value
+          setGradientOpacity(newValue)
+        }}
+        step={0.05}
+      />
+    </CheckPropRow>
   )
 }

@@ -1,8 +1,8 @@
-import { type IRect } from '@/interfaces/rect'
 import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useState,
   type ReactNode,
 } from 'react'
@@ -11,7 +11,11 @@ import {
 //   rect: IRect
 // }
 
-export interface ITabIndicatorPos extends IRect {
+export interface ITabIndicatorPos {
+  x: number | string
+  y: number | string
+  w: number | string
+  h: number | string
   animate: boolean
   scale: number
   index: number
@@ -55,13 +59,27 @@ const TabIndicatorContext = createContext<ITabIndicatorContext | undefined>(
   undefined
 )
 
-export function TabIndicatorProvider({ children }: { children: ReactNode }) {
+export function TabIndicatorProvider({
+  defaultWidth,
+  children,
+}: {
+  defaultWidth?: string | number
+  children: ReactNode
+}) {
   const [position, setPosition] = useState<ITabIndicatorPos | undefined>(
     undefined
   )
   const [selectedPosition, setSelectedPosition] = useState<
     ITabIndicatorPos | undefined
   >(undefined)
+
+  useEffect(() => {
+    if (!defaultWidth) {
+      return
+    }
+
+    setPosition({ ...DEFAULT_TAB, w: defaultWidth })
+  }, [defaultWidth])
 
   const _setPosition = useCallback(
     (pos: Partial<ITabIndicatorPos> | undefined) => {
@@ -92,6 +110,7 @@ export function TabIndicatorProvider({ children }: { children: ReactNode }) {
             ? { ...prev, ...pos }
             : { ...DEFAULT_TAB, ...pos }
           : undefined
+
         if (!posChanged(prev, newPos)) return prev
         return newPos
       })

@@ -1,12 +1,11 @@
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { cn } from '@/lib/shadcn-utils'
 import { Slider as SliderPrimitive } from '@base-ui/react/slider'
-
-import { useState, type ComponentProps } from 'react'
+import { useRef, useState, type ComponentProps } from 'react'
 
 const THUMB_CLS = cn(
-  'h-4 w-5 aspect-square shrink-0 rounded-full shadow-lg border border-border/50 group-hover:border-border',
-  'data-[focus=true]:border-border bg-background select-none disabled:pointer-events-none disabled:opacity-50 cursor-pointer trans-color'
+  'h-4 w-5 aspect-square shrink-0 rounded-full  trans-color border border-border/70 group-hover:border-border trans-color',
+  'data-[focus=true]:border-border bg-background select-none disabled:pointer-events-none disabled:opacity-50 cursor-pointer'
 )
 
 export function Slider({
@@ -14,9 +13,31 @@ export function Slider({
   ...props
 }: ComponentProps<typeof SliderPrimitive.Root>) {
   const [focus, setFocus] = useState(false)
+  const [hover, setHover] = useState(false)
+
+  const ref = useRef<HTMLDivElement | null>(null)
+
+  // useEffect(() => {
+  //   if (!ref.current) {
+  //     return
+  //   }
+
+  //   gsap.to(ref.current, {
+  //     scale: hover ? 1.2 : 1,
+  //     ease: 'power2.out',
+  //     duration: 0.3,
+  //   })
+  // }, [hover])
 
   return (
-    <SliderPrimitive.Root thumbAlignment="edge" {...props}>
+    <SliderPrimitive.Root
+      thumbAlignment="edge"
+      {...props}
+      onFocus={() => setFocus(true)}
+      onBlur={() => setFocus(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
       <SliderPrimitive.Control
         className={cn(
           'relative flex touch-none select-none flex-row items-center group min-h-5 shrink-0 min-w-20',
@@ -33,11 +54,11 @@ export function Slider({
           />
 
           <SliderPrimitive.Thumb
+            ref={ref}
+
             data-focus={focus}
             className={THUMB_CLS}
             aria-label="Slider control"
-            onFocus={() => setFocus(true)}
-            onBlur={() => setFocus(false)}
           />
         </SliderPrimitive.Track>
       </SliderPrimitive.Control>

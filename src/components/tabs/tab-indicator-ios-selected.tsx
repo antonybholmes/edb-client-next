@@ -1,6 +1,5 @@
-import { useUpdateEffect } from '@/hooks/update-effect'
 import gsap from 'gsap'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useTabIndicators } from './tab-indicator-provider'
 
 /**
@@ -11,11 +10,7 @@ import { useTabIndicators } from './tab-indicator-provider'
  * @param param0
  * @returns
  */
-export function TabIndicatorIosSelected({
-  defaultWidth = '80px',
-}: {
-  defaultWidth?: string
-}) {
+export function TabIndicatorIosSelected() {
   const { selectedPosition } = useTabIndicators() //groupId) //useContext(TabIndicatorContext)
 
   // we use this to track transitions between 0 width and non-zero width
@@ -30,7 +25,7 @@ export function TabIndicatorIosSelected({
 
   const selectedTimelineRef = useRef<GSAPTimeline | null>(null)
 
-  useUpdateEffect(() => {
+  useEffect(() => {
     if (!selectedLineRef.current || !selectedPosition) {
       return
     }
@@ -38,8 +33,6 @@ export function TabIndicatorIosSelected({
     if (selectedTimelineRef.current) {
       selectedTimelineRef.current.kill()
     }
-
-    console.log('animating tab indicator to', selectedPosition)
 
     selectedTimelineRef.current = gsap.timeline().to(
       selectedLineRef.current,
@@ -49,7 +42,7 @@ export function TabIndicatorIosSelected({
         width: selectedPosition.w,
         //height: selectedPosition.h,
         scale: selectedPosition.scale || 1,
-        duration: 0.8,
+        duration: 0.6,
         ease: 'back.out',
       },
       0
@@ -59,10 +52,10 @@ export function TabIndicatorIosSelected({
   return (
     <span
       ref={selectedLineRef}
-      className="absolute left-0 top-0 z-20 h-full bg-background rounded-full pointer-events-none select-none"
-      style={{
-        width: defaultWidth,
-      }}
+      className="absolute left-0 top-0 z-20 h-full bg-muted/90 rounded-full pointer-events-none select-none"
+      // style={{
+      //   width: defaultWidth,
+      // }}
       // style={{
       //   //height: selectedPosition?.h,
       //   //top: selectedPosition?.y,

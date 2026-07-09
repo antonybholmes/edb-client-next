@@ -20,6 +20,8 @@ import { LinkButton } from '@/themed/link-button'
 import { NumericalInput } from '@/themed/numerical-input'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
+import { Percent } from '@/components/percent'
+import { Slider } from '@/components/shadcn/ui/themed/v2/slider'
 import { produce } from 'immer'
 import { FontPopover } from '../../../../plot/font/font-popover'
 import { MarginPopover } from '../../../../plot/margin-popover'
@@ -353,6 +355,22 @@ export function GseaDisplayPropsPanel() {
                 }}
                 className="w-16 rounded-theme"
                 title="Opacity"
+              />
+
+              <Percent v={settings.genes.gradient.alpha} />
+              <Slider
+                value={settings.genes.gradient.alpha}
+                min={0}
+                max={1}
+                onValueChange={(value: number | readonly number[]) => {
+                  const newValue = Array.isArray(value) ? value[0]! : value
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.gradient.alpha = newValue
+                    })
+                  )
+                }}
+                step={0.05}
               />
             </CheckPropRow>
           </AccordionContent>
