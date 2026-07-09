@@ -45,6 +45,7 @@ function LinkItem({ link }: { link: IOutputLink }) {
           {
             color: link.fill?.value ?? settings.links.fill.value,
             opacity: link.fill?.opacity ?? settings.links.fill.opacity,
+            allowNoColor: false,
             onColorChange: ({ color, opacity }) =>
               updateLink({
                 ...link,

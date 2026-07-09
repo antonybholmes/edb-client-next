@@ -220,6 +220,7 @@ export function PlotPropsPanel() {
                   {
                     color: settings.links.fill.value,
                     opacity: settings.links.fill.opacity,
+                    allowNoColor: false,
                     onColorChange: ({ color, opacity }) => {
                       updateSettings(
                         produce(settings, (draft) => {

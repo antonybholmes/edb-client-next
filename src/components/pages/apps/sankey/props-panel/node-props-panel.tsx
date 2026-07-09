@@ -40,6 +40,7 @@ function NodeItem({ node }: { node: IOutputNode }) {
         colors={[
           {
             color: node.fill?.value ?? DEFAULT_NODE_COLOR,
+            allowNoColor: false,
             onColorChange: ({ color }) =>
               updateNode({ ...node, fill: { ...node.fill, value: color } }),
           },

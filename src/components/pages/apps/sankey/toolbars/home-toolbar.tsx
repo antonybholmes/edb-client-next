@@ -137,13 +137,14 @@ export function HomeToolbar() {
         <FillButton
           colors={[
             {
-              color: settings.links.color,
-              opacity: settings.links.opacity,
+              color: settings.links.fill.value,
+              opacity: settings.links.fill.opacity,
+              allowNoColor: false,
               onColorChange: ({ color, opacity }) => {
                 updateSettings(
                   produce(settings, (draft) => {
-                    draft.links.color = color
-                    draft.links.opacity = opacity ?? 1
+                    draft.links.fill.value = color
+                    draft.links.fill.opacity = opacity ?? 1
                   })
                 )
               },
