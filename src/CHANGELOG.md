@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Added debounce to zoom slider as well as a user check to prevent race condition between slider and zoom menu.
 - UI tweaks.
 - IOS slider UI simplified. More use of sliders. GSEA plot using more debounce to keep UI response when showing a lot of plots.
 - Bug fixes and updates.

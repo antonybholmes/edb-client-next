@@ -9,11 +9,12 @@ import {
   SelectGroup,
   SelectItem,
 } from '@/themed/v2/select'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 // import { Slider } from "../toolbar/slider"
 import { DEFAULT_ZOOM_CHANNEL_NAME, useZoom } from '@/providers/zoom-provider'
 import { Slider } from '@/themed/v2/slider'
 
+import { useDebounce } from '@/hooks/debounce'
 import { ChevronDown, Minus, Plus } from 'lucide-react'
 import { VCenterRow } from '../layout/v-center-row'
 import { Input } from '../shadcn/ui/themed/v2/input'
@@ -34,6 +35,38 @@ export function ZoomSlider({
   const { index, levels, setZoom, increaseZoom, decreaseZoom } =
     useZoom(channel)
 
+  // We need to distinguish between user-initiated changes
+  // to the slider and programmatic changes that occur when the zoom level
+  // is updated from elsewhere in the app. To do this, we can keep track of
+  // whether the slider change was initiated by the user or not.
+  // When the slider value changes, we set a flag to indicate that
+  // it was a user-initiated change. We then use a debounced effect
+  // to update the zoom level after a short delay, but only if
+  // the change was initiated by the user. If the zoom level is updated
+  // programmatically (e.g., from another component), we reset the flag
+  // so that it doesn't trigger an unnecessary zoom update.
+  const [_index, _setIndex] = useState<{
+    index: number
+    userInitiated: boolean
+  }>({ index, userInitiated: false })
+
+  useEffect(() => {
+    _setIndex({ index, userInitiated: false })
+  }, [index])
+
+  const debounceIndex = useDebounce(_index, { delayMs: 300 })
+
+  useEffect(() => {
+    console.log('Debounced zoom level:', debounceIndex, 'Actual index:', _index)
+    if (
+      debounceIndex.index >= 0 &&
+      debounceIndex.index < levels.length &&
+      debounceIndex.userInitiated
+    ) {
+      setZoom(levels[debounceIndex.index])
+    }
+  }, [debounceIndex, setZoom, levels])
+
   return (
     <VCenterRow className={cn('gap-x-1', className)}>
       <VCenterRow className="gap-x-1">
@@ -47,11 +80,13 @@ export function ZoomSlider({
         </ToolbarFooterButton>
 
         <Slider
-          value={index}
+          value={_index.index}
           min={0}
           max={levels.length - 1}
-          onValueChange={(value: number | readonly number[]) => {
-            setZoom(Array.isArray(value) ? value[0]! : value)
+          onValueChange={(v) => {
+            const l = Array.isArray(v) ? v[0]! : v
+
+            _setIndex({ index: l, userInitiated: true })
           }}
           step={1}
           className="w-20"
@@ -79,6 +114,7 @@ export function ZoomSelect({
   const { zoom, levels, setZoom } = useZoom(channel)
 
   function _setValue(value: number) {
+    console.log('Setting zoom to:', value)
     setZoom(value)
     setOpen(false)
   }
@@ -106,6 +142,7 @@ export function ZoomSelect({
         value={zoom}
         onValueChange={(value) => {
           if (value !== null) {
+            console.log('Selected zoom level:', value)
             _setValue(value)
           }
         }}
