@@ -9,10 +9,10 @@ import {
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
-import { Percent } from '@/components/percent'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
+import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { Slider } from '@/components/shadcn/ui/themed/v2/slider'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
@@ -195,8 +195,7 @@ export function PlotPropsPanel() {
             />
 
             <PropRow title="Opacity">
-              <Percent v={settings.nodes.opacity} />
-              <Slider
+              <PercentSlider
                 value={settings.nodes.opacity}
                 min={0}
                 max={1}
@@ -267,9 +266,7 @@ export function PlotPropsPanel() {
               </SelectList>
             </PropRow>
             <PropRow title="Opacity">
-              <Percent v={settings.links.opacity} />
-
-              <Slider
+              <PercentSlider
                 value={settings.links.opacity}
                 min={0}
                 max={1}
@@ -285,9 +282,7 @@ export function PlotPropsPanel() {
               />
             </PropRow>
             <PropRow title="Gradient Offset">
-              <Percent v={settings.links.gradientOffset} />
-
-              <Slider
+              <PercentSlider
                 value={settings.links.gradientOffset}
                 min={0}
                 max={1}

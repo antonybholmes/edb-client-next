@@ -53,9 +53,9 @@
     "color": "#ffb366",
     "version": "21.8.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-09T17:44:35.089Z",
-    "hash": "29dced1559ce9a465006e37c50f3ecfffeb0b6fe8631d9c630ff500a17eaee77",
-    "build": 784
+    "modified": "2026-07-09T17:59:04.791Z",
+    "hash": "1ecce7d6225dba094d66b9681da55cfec257e83fae30b53c06c61062db9f4458",
+    "build": 786
   },
   {
     "name": "GSEA Web",
@@ -169,11 +169,11 @@
     "name": "Sankey",
     "description": "Create Sankey plots.",
     "color": "#ff9900",
-    "version": "1.0.4",
+    "version": "1.0.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-09T17:44:35.093Z",
-    "hash": "c8fca6ec5b720364e72753adde4f6840d0908e98a067f14cb305ef56fe284072",
-    "build": 28
+    "modified": "2026-07-09T17:59:04.796Z",
+    "hash": "5fcadc7839c4fef9f07fd3adda6e65adb5d77615696f465907e15570a920496e",
+    "build": 30
   },
   {
     "name": "Seq Browser",

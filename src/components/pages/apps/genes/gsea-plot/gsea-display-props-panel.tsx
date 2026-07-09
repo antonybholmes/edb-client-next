@@ -16,10 +16,9 @@ import { NumericalInput } from '@/themed/numerical-input'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { VCenterRow } from '@/components/layout/v-center-row'
-import { Percent } from '@/components/percent'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
-import { Slider } from '@/components/shadcn/ui/themed/v2/slider'
+import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { useDebounce } from '@/hooks/debounce'
 import { produce } from 'immer'
@@ -610,8 +609,7 @@ function GradientOpacityControl() {
                 title="Opacity"
               /> */}
 
-      <Percent v={gradientOpacity} />
-      <Slider
+      <PercentSlider
         value={gradientOpacity}
         min={0}
         max={1}
