@@ -17,6 +17,7 @@ import { CheckPropRow } from '@/dialogs/check-prop-row'
 import {
   getAccordionId,
   SettingsAccordionItem,
+  SideAccordionItem,
 } from '@/dialogs/settings/settings-dialog'
 import { MultiSelectIcon } from '@/icons/multi-select-icon'
 import { BaseCol } from '@/layout/base-col'
@@ -69,7 +70,7 @@ export function SeqsDialog({
   const [searchSelectAll, setSearchSelectAll] = useState(false)
   const [addedSelectAll, setAddedSelectAll] = useState(false)
   const [combine, setCombine] = useState(false)
-  const [asc, setAsc] = useState(true)
+
   const [searchedDb, setSearchedDb] = useState<ISeqDBTrack[]>([])
 
   const seqs = useMemo(
@@ -83,10 +84,6 @@ export function SeqsDialog({
     [trackDb, settings.genomic.assembly, technology]
   )
 
-  const [selectedMap, setSelectedMap] = useState<Map<string, boolean>>(
-    new Map<string, boolean>()
-  )
-
   const [addedMap, setAddedMap] = useState<Map<string, boolean>>(
     new Map<string, boolean>()
   )
@@ -94,16 +91,6 @@ export function SeqsDialog({
   const [addedSelectedMap, setAddedSelectedMap] = useState<
     Map<string, boolean>
   >(new Map<string, boolean>())
-
-  useEffect(() => {
-    if (seqs.length === 0) {
-      return
-    }
-
-    setSelectedMap(
-      new Map<string, boolean>(seqs.map((track) => [track.id, false]))
-    )
-  }, [seqs])
 
   useEffect(() => {
     if (seqs.length === 0) {
@@ -176,96 +163,14 @@ export function SeqsDialog({
       }
       cols={3}
     >
-      <BaseCol className="grow text-xs gap-y-2">
-        {error && <span className="text-destructive text-wrap">{error}</span>}
-
-        <VCenterRow className="gap-x-2 justify-between">
-          <VCenterRow className="gap-x-1">
-            <IconButton
-              variant="flat-app-theme"
-
-              // ripple={false}
-              onClick={() => {
-                setAddedMap(
-                  new Map<string, boolean>([
-                    ...[...addedMap.entries()],
-                    // only add the positive ones we selected
-                    ...[...selectedMap.entries()].filter((e) => e[1]),
-                  ])
-                )
-              }}
-              title="Add to Cart"
-              //className={DIALOG_HEADER_BUTTON_CLS}
-            >
-              <ShoppingCart size={20} strokeWidth={1.5} />
-            </IconButton>
-
-            <ToolbarSeparator />
-
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <IconButton
-                    variant="flat-app-theme" // ripple={false}
-                    /* onClick={() => {
-                    setAddedMap(new Map<string, boolean>(selectedMap.entries()))
-                  }} */
-                    title="Sort Items"
-                  >
-                    <ArrowDownUp size={20} strokeWidth={1.5} />
-                  </IconButton>
-                }
-              />
-              <DropdownMenuContent
-                //side="right"
-                // onEscapeKeyDown={() => {
-                //   setMenuOpen(false)
-                // }}
-                // onInteractOutside={() => {
-                //   setMenuOpen(false)
-                // }}
-                // onPointerDownOutside={() => {
-                //   setMenuOpen(false)
-                // }}
-                align="start"
-                //className="fill-foreground"
-              >
-                <DropdownSortOrderGroup asc={asc} setAsc={setAsc} />
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </VCenterRow>
-
-          <IconButton
-            variant="flat-app-theme"
-            //variant="flat"
-            onClick={() => {
-              setSelectedMap(
-                new Map<string, boolean>([
-                  ...[...selectedMap.entries()],
-                  ...searchedDb.map(
-                    (t) => [t.id, !searchSelectAll] as [string, boolean]
-                  ),
-                ])
-              )
-
-              setSearchSelectAll(!searchSelectAll)
-            }}
-            title={searchSelectAll ? TEXT_UNSELECT_ALL : TEXT_SELECT_ALL}
-          >
-            <MultiSelectIcon checked={!searchSelectAll} />
-          </IconButton>
-        </VCenterRow>
-
-        <ItemsInStore
-          searchedDb={searchedDb}
-          addedMap={addedMap}
-          setAddedMap={setAddedMap}
-          selectedMap={selectedMap}
-          setSelectedMap={setSelectedMap}
-          asc={asc}
-        />
-      </BaseCol>
-
+      <SideItems
+        seqs={seqs}
+        searchedDb={searchedDb}
+        addedMap={addedMap}
+        setAddedMap={setAddedMap}
+        searchSelectAll={searchSelectAll}
+        setSearchSelectAll={setSearchSelectAll}
+      />
       <BaseCol className="grow gap-y-2">
         <VCenterRow className="gap-x-2 justify-between">
           <VCenterRow className="gap-x-2">
@@ -274,9 +179,6 @@ export function SeqsDialog({
 
           <VCenterRow className="justify-end text-xs">
             <IconButton
-              //variant="accent"
-
-              // ripple={false}
               onClick={() => {
                 setAddedSelectedMap(
                   new Map<string, boolean>([
@@ -295,9 +197,6 @@ export function SeqsDialog({
             </IconButton>
 
             <IconButton
-              //variant="accent"
-
-              // ripple={false}
               title={TEXT_REMOVE_FROM_CART}
               onClick={() => {
                 const keys = new Set(addedSelectedMap.keys())
@@ -323,10 +222,119 @@ export function SeqsDialog({
           setAddedMap={setAddedMap}
           selectedMap={addedSelectedMap}
           setSelectedMap={setAddedSelectedMap}
-          asc={asc}
+          asc={true}
         />
       </BaseCol>
     </GlassSideDialog>
+  )
+}
+
+function SideItems({
+  seqs,
+  searchedDb,
+  addedMap,
+  searchSelectAll,
+  setAddedMap,
+  setSearchSelectAll,
+}: {
+  seqs: ISeqDBTrack[]
+  searchedDb: ISeqDBTrack[]
+  addedMap: Map<string, boolean>
+  searchSelectAll: boolean
+  setAddedMap: (selected: Map<string, boolean>) => void
+  setSearchSelectAll: (selectAll: boolean) => void
+}) {
+  const [asc, setAsc] = useState(true)
+  const [error, setError] = useState('')
+  const [selectedMap, setSelectedMap] = useState<Map<string, boolean>>(
+    new Map<string, boolean>()
+  )
+
+  useEffect(() => {
+    if (seqs.length === 0) {
+      return
+    }
+
+    setSelectedMap(
+      new Map<string, boolean>(seqs.map((track) => [track.id, false]))
+    )
+  }, [seqs])
+
+  return (
+    <BaseCol className="grow text-xs gap-y-2 p-1">
+      {error && <span className="text-destructive text-wrap">{error}</span>}
+
+      <VCenterRow className="gap-x-2 justify-between p-1">
+        <VCenterRow className="gap-x-1">
+          <IconButton
+            variant="flat-alt"
+
+            // ripple={false}
+            onClick={() => {
+              setAddedMap(
+                new Map<string, boolean>([
+                  ...[...addedMap.entries()],
+                  // only add the positive ones we selected
+                  ...[...selectedMap.entries()].filter((e) => e[1]),
+                ])
+              )
+            }}
+            title="Add to Cart"
+            //className={DIALOG_HEADER_BUTTON_CLS}
+          >
+            <ShoppingCart size={20} strokeWidth={1.5} />
+          </IconButton>
+
+          <ToolbarSeparator />
+
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <IconButton
+                  variant="flat-alt"
+
+                  title="Sort Items"
+                >
+                  <ArrowDownUp size={20} strokeWidth={1.5} />
+                </IconButton>
+              }
+            />
+            <DropdownMenuContent align="start">
+              <DropdownSortOrderGroup asc={asc} setAsc={setAsc} />
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </VCenterRow>
+
+        <IconButton
+          variant="flat-alt"
+          //variant="flat"
+          onClick={() => {
+            setSelectedMap(
+              new Map<string, boolean>([
+                ...[...selectedMap.entries()],
+                ...searchedDb.map(
+                  (t) => [t.id, !searchSelectAll] as [string, boolean]
+                ),
+              ])
+            )
+
+            setSearchSelectAll(!searchSelectAll)
+          }}
+          title={searchSelectAll ? TEXT_UNSELECT_ALL : TEXT_SELECT_ALL}
+        >
+          <MultiSelectIcon checked={!searchSelectAll} />
+        </IconButton>
+      </VCenterRow>
+
+      <ItemsInStore
+        searchedDb={searchedDb}
+        addedMap={addedMap}
+        setAddedMap={setAddedMap}
+        selectedMap={selectedMap}
+        setSelectedMap={setSelectedMap}
+        asc={asc}
+      />
+    </BaseCol>
   )
 }
 
@@ -402,14 +410,15 @@ function ItemsInStore({
     <ScrollAccordion
       value={accordionValues}
       onValueChange={(v) => setAccordionValues(v as string[])}
-      variant="settings"
+      variant="sidebar"
     >
       {searchDatasetNames.map((dataset, dataseti) => {
         return (
-          <SettingsAccordionItem
+          <SideAccordionItem
             title={`${dataset} (${displayDatasets[dataseti]!.length})`}
             value={dataset}
             key={dataseti}
+            showBorder={dataseti > 0}
           >
             <ul className="flex flex-col text-sm">
               {displayDatasets[dataseti]!.map((seq, ti) => {
@@ -466,7 +475,7 @@ function ItemsInStore({
                 )
               })}
             </ul>
-          </SettingsAccordionItem>
+          </SideAccordionItem>
         )
       })}
     </ScrollAccordion>

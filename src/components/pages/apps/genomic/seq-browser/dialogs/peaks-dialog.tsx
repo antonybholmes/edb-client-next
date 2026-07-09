@@ -34,6 +34,7 @@ import {
 import {
   getAccordionId,
   SettingsAccordionItem,
+  SideAccordionItem,
 } from '@/dialogs/settings/settings-dialog'
 import { ScrollAccordion } from '@/themed/v2/accordion'
 
@@ -180,12 +181,12 @@ export function PeaksDialog({
       }
       cols={3}
     >
-      <BaseCol className="grow text-xs gap-y-4">
+      <BaseCol className="grow text-xs gap-y-4 p-1">
         {error && <span className="text-destructive">{error}</span>}
-        <VCenterRow className="gap-x-2 justify-between">
+        <VCenterRow className="gap-x-2 justify-between p-1">
           <VCenterRow className="gap-x-1">
             <IconButton
-              variant="flat-app-theme"
+              variant="flat-alt"
               //size="icon"
               // ripple={false}
               onClick={() => {
@@ -207,7 +208,7 @@ export function PeaksDialog({
               <DropdownMenuTrigger
                 render={
                   <IconButton
-                    variant="flat-app-theme"
+                    variant="flat-alt"
                     onClick={() => {
                       setAddedMap(
                         new Map<string, boolean>(selectedMap.entries())
@@ -235,7 +236,7 @@ export function PeaksDialog({
           </VCenterRow>
 
           <IconButton
-            variant="flat-app-theme"
+            variant="flat-alt"
 
             onClick={() => {
               setSelectedMap(
@@ -404,10 +405,11 @@ function StoreItems({
     <ScrollAccordion
       value={accordionValues}
       onValueChange={(v) => setAccordionValues(v as string[])}
+      variant="sidebar"
     >
       {searchDatasetNames.map((dataset, dataseti) => {
         return (
-          <SettingsAccordionItem
+          <SideAccordionItem
             title={`${dataset} (${displayDatasets[dataseti]!.length})`}
             value={dataset}
             key={dataseti}
@@ -456,7 +458,7 @@ function StoreItems({
                 )
               })}
             </ul>
-          </SettingsAccordionItem>
+          </SideAccordionItem>
         )
       })}
     </ScrollAccordion>

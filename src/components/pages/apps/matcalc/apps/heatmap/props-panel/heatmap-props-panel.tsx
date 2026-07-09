@@ -14,7 +14,7 @@ import { LinkButton } from '@/themed/link-button'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { produce } from 'immer'
 
-import { ResizableSidebarHeaderPortal } from '@/components/sidebar/resizable-sidebar'
+import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 import { CellSettingsPanel } from './cell-settings'
@@ -55,8 +55,8 @@ export function HeatmapPropsPanel() {
   }
 
   return (
-    <>
-      <ResizableSidebarHeaderPortal side="right">
+    <PropsPanel className="pr-1 gap-y-2">
+      <SideBarHeader>
         <LinkButton
           onClick={() => {
             openDialog({
@@ -77,26 +77,23 @@ export function HeatmapPropsPanel() {
         >
           {TEXT_RESET}
         </LinkButton>
-      </ResizableSidebarHeaderPortal>
-
-      <PropsPanel className="pr-1 gap-y-2">
-        <ScrollAccordion
-          value={openTabs}
-          onValueChange={(v) => setOpenTabs(v as string[])}
-          //multiple={false}
-        >
-          <PlotSettingsPanel />
-          <CellSettingsPanel />
-          <LegendSettingsPanel />
-          {plot.style === 'dot' && <DotLegendSettingsPanel />}
-          <ColormapSettingsPanel />
-          <RowLabelsSettingsPanel />
-          {cf?.rowTree && <RowTreeSettingsPanel />}
-          <ColLabelsSettingsPanel />
-          <ColGroupsSettingsPanel />
-          {cf?.colTree && <ColTreeSettingsPanel />}
-        </ScrollAccordion>
-      </PropsPanel>
-    </>
+      </SideBarHeader>
+      <ScrollAccordion
+        value={openTabs}
+        onValueChange={(v) => setOpenTabs(v as string[])}
+        //multiple={false}
+      >
+        <PlotSettingsPanel />
+        <CellSettingsPanel />
+        <LegendSettingsPanel />
+        {plot.style === 'dot' && <DotLegendSettingsPanel />}
+        <ColormapSettingsPanel />
+        <RowLabelsSettingsPanel />
+        {cf?.rowTree && <RowTreeSettingsPanel />}
+        <ColLabelsSettingsPanel />
+        <ColGroupsSettingsPanel />
+        {cf?.colTree && <ColTreeSettingsPanel />}
+      </ScrollAccordion>
+    </PropsPanel>
   )
 }

@@ -79,7 +79,7 @@ export function GexDialogSidePanel({
     <>
       <HCenterRow>
         <Popover>
-          <PopoverTrigger className="font-bold text-xs flex flex-row items-center gap-x-4 w-48 justify-between hover:bg-muted/75 data-popup-open:bg-muted/75 rounded-theme p-2.5 trans-color">
+          <PopoverTrigger className="font-bold text-xs flex flex-row items-center gap-x-4 w-48 justify-between hover:bg-muted/70 data-popup-open:bg-muted/70 rounded-theme p-2.5 trans-color">
             <span>{`${settings.apps.gex.genome} ${technology ?? ''}`}</span>
             <ChevronUpDownIcon />
           </PopoverTrigger>

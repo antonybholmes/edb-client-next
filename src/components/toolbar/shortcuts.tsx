@@ -43,11 +43,11 @@ export function ShortcutContent({
   const pressed = useRef(false)
 
   function _scale(index: number, scale: number) {
-    const s = (position?.h || 0) * scale
+    const s = ((position?.h as number) ?? 0) * scale
 
     setTabIndicatorPos({
       ...EMPTY_RECT,
-      y: index * gap + (index + 0.5) * (position?.h || 0) - s * 0.5,
+      y: index * gap + (index + 0.5) * ((position?.h as number) ?? 0) - s * 0.5,
       h: s,
       //transform: `scaleX(${ 1})`, //`scaleX(${scale > 1 ? trueScale : 1})`,
     })
@@ -57,7 +57,7 @@ export function ShortcutContent({
     _scale(selectedTabIndex, pressed.current ? 0.6 : 0.4)
   }, [selectedTabIndex])
 
-  const w = `${position?.h || 0}rem`
+  const w = `${((position?.h as number) ?? 0)}rem`
 
   return (
     <Tabs

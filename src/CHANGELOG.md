@@ -8,6 +8,7 @@
 
 ### Changed
 
+- UI tweaks.
 - IOS slider UI simplified. More use of sliders. GSEA plot using more debounce to keep UI response when showing a lot of plots.
 - Bug fixes and updates.
 - Fixed Variants UI and added more Fill and Outline UI elements.

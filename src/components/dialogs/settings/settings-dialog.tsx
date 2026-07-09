@@ -55,6 +55,38 @@ export function SettingsAccordionItem({
   )
 }
 
+export function SideAccordionItem({
+  title,
+  value,
+  description,
+  showBorder = true,
+  rightChildren,
+  children,
+}: IChildrenProps & {
+  title: string
+  value?: string
+  description?: UndefStr
+  showBorder?: boolean
+  rightChildren?: ReactNode
+}) {
+  return (
+    <AccordionItem value={getAccordionId(value ?? title)} variant="sidebar">
+      <AccordionTrigger
+        variant="sidebar"
+        side="right"
+        data-show-border={showBorder}
+        rightChildren={rightChildren}
+      >
+        {title}
+      </AccordionTrigger>
+      {description && (
+        <div className="text-sm text-foreground/50">{description}</div>
+      )}
+      <AccordionContent variant="sidebar">{children}</AccordionContent>
+    </AccordionItem>
+  )
+}
+
 // export function SettingsDialogBlock({
 //   title,
 //   children,

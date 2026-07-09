@@ -62,7 +62,7 @@ export function BaseGlassSideDialog({
         overlayColor={overlayColor}
       >
         <BaseCol
-          className="p-3 gap-y-4"
+          className="gap-y-4"
           style={{ gridColumn: `span ${span} / span ${span}` }}
         >
           {c[0]!}

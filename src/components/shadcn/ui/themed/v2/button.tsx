@@ -62,6 +62,12 @@ export const BASE_FLAT_BUTTON_CLS = cn(
   'aria-[expanded=true]:bg-muted/50 data-popup-open:bg-muted/50'
 )
 
+export const BASE_FLAT_ALT_BUTTON_CLS = cn(
+  'hover:bg-muted/70 data-[checked=false]:hover:bg-muted/70',
+  'data-[checked=true]:bg-muted/70 data-[state=open]:bg-muted/70',
+  'aria-[expanded=true]:bg-muted/70 data-popup-open:bg-muted/70'
+)
+
 export const BASE_FLAT_APP_THEME_BUTTON_CLS = cn(
   'hover:bg-app-theme/20 data-[checked=false]:hover:bg-app-theme/20',
   'data-[checked=true]:bg-app-theme/20 data-[state=open]:bg-app-theme/20',
@@ -152,10 +158,10 @@ export const buttonVariants = cva(BASE_BUTTON_CLS, {
       secondary: BASE_SECONDARY_CLS,
       //alt: BASE_ALT_CLS,
       //ghost: BASE_GHOST_CLS,
-      ios: BASE_IOS_CLS,
+      //ios: BASE_IOS_CLS,
       input: BASE_OUTLINE_CLS,
       flat: BASE_FLAT_BUTTON_CLS,
-      'flat-app-theme': BASE_FLAT_APP_THEME_BUTTON_CLS,
+      'flat-alt': BASE_FLAT_ALT_BUTTON_CLS,
       'muted-light': BASE_MUTED_LIGHT_CLS,
       'theme-muted': THEME_MUTED_CLS,
       //accent: BASE_ACCENT_CLS,
