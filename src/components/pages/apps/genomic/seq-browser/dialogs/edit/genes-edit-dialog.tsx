@@ -1,18 +1,22 @@
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { FontUI } from '@/components/plot/font/font-ui'
-import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
 import { LabelContainer } from '@/components/shadcn/ui/themed/v2/label'
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { ColorPropRow } from '@/dialogs/color-prop-row'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { PropRow } from '@/dialogs/prop-row'
-import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
 import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { NumericalInput } from '@/themed/numerical-input'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 import { produce } from 'immer'
 import { useState } from 'react'
 
+import {
+  DialogCard,
+  DialogCardContent,
+  DialogCardHeader,
+} from '@/components/dialogs/card/dialog-card'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { IosGroupToggle } from '@/components/shadcn/ui/themed/v2/ios-group-toggle'
 import {
   GENE_DISPLAY_OPTIONS,
@@ -44,17 +48,11 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
       //contentVariant="glass"
       //bodyVariant="card"
       //overlayColor="trans"
+      bodyCls="gap-y-3"
     >
-      <ScrollAccordion
-        value={['labels', 'appearance', 'canonical-genes', 'display-density']}
-        variant="settings"
-        className="h-80"
-      >
-        <SettingsAccordionItem
-          title="Labels"
-          description="Configure how genes are labelled"
-          showBorder={false}
-        >
+      <DialogCard>
+        <DialogCardHeader title="Labels" />
+        <DialogCardContent>
           <PropRow title="Font" side="right">
             <FontUI
               title="Gene Labels"
@@ -86,12 +84,12 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
             }}
             className="grow ml-3"
           />
-        </SettingsAccordionItem>
+        </DialogCardContent>
+      </DialogCard>
 
-        <SettingsAccordionItem
-          title="Appearance"
-          description="Customize the appearance of genes."
-        >
+      <DialogCard>
+        <DialogCardHeader title="Appearance" />
+        <DialogCardContent>
           <SwitchPropRow
             checked={settings.tracks.genes.stroke.show}
             onCheckedChange={(v) => {
@@ -345,12 +343,12 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
               }}
             />
           </SwitchPropRow>
-        </SettingsAccordionItem>
+        </DialogCardContent>
+      </DialogCard>
 
-        <SettingsAccordionItem
-          title="Canonical genes"
-          description="Canonical genes can be displayed differently to other genes."
-        >
+      <DialogCard>
+        <DialogCardHeader title="Canonical Genes" />
+        <DialogCardContent>
           <SwitchPropRow
             checked={settings.tracks.genes.canonical.isColored}
             onCheckedChange={(v) => {
@@ -360,30 +358,28 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
 
               updateSettings(newSettings)
             }}
-            side="right"
-            title={
-              <ColorPropRow
-                title="Highlight canonical genes"
-                side="left"
-                colors={[
-                  {
-                    color: settings.tracks.genes.canonical.fill.value,
-                    show: settings.tracks.genes.canonical.isColored,
-                    onColorChange: ({ color, show }) => {
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.tracks.genes.canonical.fill.value = color
-                          draft.tracks.genes.canonical.isColored =
-                            show ?? settings.tracks.genes.canonical.isColored
-                        })
-                      )
-                    },
+
+            title="Highlight canonical genes"
+          >
+            <FillButton
+              colors={[
+                {
+                  color: settings.tracks.genes.canonical.fill.value,
+                  show: settings.tracks.genes.canonical.isColored,
+                  onColorChange: ({ color, show }) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.tracks.genes.canonical.fill.value = color
+                        draft.tracks.genes.canonical.isColored =
+                          show ?? settings.tracks.genes.canonical.isColored
+                      })
+                    )
                   },
-                ]}
-                //className={SIMPLE_COLOR_EXT_CLS}
-              />
-            }
-          />
+                },
+              ]}
+              //className={SIMPLE_COLOR_EXT_CLS}
+            />
+          </SwitchPropRow>
 
           <SwitchPropRow
             checked={settings.tracks.genes.canonical.only}
@@ -394,16 +390,16 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
 
               updateSettings(newSettings)
             }}
-            title="Only show canonical genes"
+            title="Show canonical genes only"
             side="right"
             className="ml-4"
           />
-        </SettingsAccordionItem>
+        </DialogCardContent>
+      </DialogCard>
 
-        <SettingsAccordionItem
-          title="Display Density"
-          description="Control the appearance of genes to affect the display density."
-        >
+      <DialogCard>
+        <DialogCardHeader title="Display Density" />
+        <DialogCardContent>
           <PropRow title="Display">
             <SelectList
               value={settings.tracks.genes.display}
@@ -444,8 +440,8 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
               }}
             />
           </PropRow>
-        </SettingsAccordionItem>
-      </ScrollAccordion>
+        </DialogCardContent>
+      </DialogCard>
     </OKCancelDialog>
   )
 }

@@ -154,11 +154,15 @@ export function OKCancelDialog({
       >
         <DialogHeader
           style={headerStyle}
-          className="h-8" //dialogHeaderVariants({ headerVariant })}
+          className="h-8 gap-x-4" //dialogHeaderVariants({ headerVariant })}
         >
-          <VCenterRow className="gap-x-2">
+          <VCenterRow className="gap-x-2 grow">
             {leftHeaderChildren && leftHeaderChildren}
-            <DialogTitle>{title}</DialogTitle>
+            {typeof title === 'string' ? (
+              <DialogTitle>{title}</DialogTitle>
+            ) : (
+              title
+            )}
             {headerChildren && headerChildren}
           </VCenterRow>
           <VCenterRow className="gap-x-2">

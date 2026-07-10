@@ -18,7 +18,6 @@ import { appsConfig } from '@/config/apps'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { bearerHeaders } from '@/lib/http/urls'
 import { BoolSearchQuery } from '@/lib/search'
-import { cn } from '@/lib/shadcn-utils'
 import { Checkbox } from '@/themed/v2/check-box'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
@@ -33,7 +32,6 @@ import {
 } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import {
   getAccordionId,
-  SettingsAccordionItem,
   SideAccordionItem,
 } from '@/dialogs/settings/settings-dialog'
 import { ScrollAccordion } from '@/themed/v2/accordion'
@@ -181,9 +179,9 @@ export function PeaksDialog({
       }
       cols={3}
     >
-      <BaseCol className="grow text-xs gap-y-4 p-1">
+      <BaseCol className="grow text-xs gap-y-4 p-3">
         {error && <span className="text-destructive">{error}</span>}
-        <VCenterRow className="gap-x-2 justify-between p-1">
+        <VCenterRow className="gap-x-2 justify-between">
           <VCenterRow className="gap-x-1">
             <IconButton
               variant="flat-alt"
@@ -414,12 +412,12 @@ function StoreItems({
             value={dataset}
             key={dataseti}
           >
-            <ul className="flex flex-col">
+            <ul className="flex flex-col gap-y-2">
               {displayDatasets[dataseti]!.map((seq, ti) => {
                 return (
                   <li
                     key={ti}
-                    className="flex flex-row justify-between gap-x-2 gap-y-0.5 p-2 hover:bg-muted overflow-hidden rounded-theme group"
+                    className="flex flex-row justify-between gap-x-2 gap-y-0.5 pr-2 border-r-2 border-transparent hover:border-app-theme overflow-hidden group"
                   >
                     <Checkbox
                       checked={selectedMap.get(seq.id) ?? false}
@@ -432,6 +430,13 @@ function StoreItems({
                         )
                       }}
                     />
+
+                    <BaseCol className="grow overflow-hidden">
+                      <p className="truncate">{seq.name}</p>
+                      <p className="text-xs text-secondary-foreground truncate">
+                        {`${seq.technology}, ${seq.assembly}${seq.type === 'BED' ? `(${seq.regions!.toLocaleString()} regions)` : ''}`}
+                      </p>
+                    </BaseCol>
 
                     <button
                       className="invisible group-hover:visible stroke-foreground/70 hover:stroke-foreground"
@@ -447,13 +452,6 @@ function StoreItems({
                     >
                       <PlusIcon stroke="" size={16} />
                     </button>
-
-                    <BaseCol className="grow overflow-hidden">
-                      <p className="truncate">{seq.name}</p>
-                      <p className="text-xs text-secondary-foreground truncate">
-                        {`${seq.technology}, ${seq.assembly}${seq.type === 'BED' ? `(${seq.regions!.toLocaleString()} regions)` : ''}`}
-                      </p>
-                    </BaseCol>
                   </li>
                 )
               })}
@@ -502,7 +500,7 @@ function CartItems({
     <ScrollAccordion value={datasets.map((dataset) => getAccordionId(dataset))}>
       {datasets.map((dataset, dataseti) => {
         return (
-          <SettingsAccordionItem title={dataset} key={dataseti}>
+          <SideAccordionItem title={dataset} key={dataseti}>
             <ul className="flex flex-col ">
               {allDatasets[dataseti]!.map((seq, ti) => {
                 return (
@@ -510,12 +508,8 @@ function CartItems({
                     key={ti}
                     className="flex flex-row gap-y-0.5 gap-x-2 group"
                   >
-                    <VCenterRow className="p-2.5 gap-x-2 grow group-hover:bg-muted overflow-hidden rounded-theme">
+                    <VCenterRow className="px-2 py-1 gap-x-2 grow group-hover:bg-muted/50 overflow-hidden rounded-theme">
                       <Checkbox
-                        className={cn([
-                          !selectedMap.get(seq.id),
-                          'invisible group-hover:visible',
-                        ])}
                         checked={selectedMap.get(seq.id) ?? false}
                         onCheckedChange={(state) => {
                           setSelectedMap(
@@ -552,7 +546,7 @@ function CartItems({
                 )
               })}
             </ul>
-          </SettingsAccordionItem>
+          </SideAccordionItem>
         )
       })}
     </ScrollAccordion>

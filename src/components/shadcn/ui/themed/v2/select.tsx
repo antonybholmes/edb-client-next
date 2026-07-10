@@ -274,16 +274,16 @@ interface ISelectListProps
 }
 
 export function SelectList({
-  className = '',
   variant,
   w = 'md',
   multiple = false,
+  className = '',
   children,
   ...props
 }: ISelectListProps) {
   return (
     <Select multiple={multiple} {...props}>
-      <SelectTrigger w={w} variant={variant}>
+      <SelectTrigger w={w} variant={variant} className={className}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>{children}</SelectContent>

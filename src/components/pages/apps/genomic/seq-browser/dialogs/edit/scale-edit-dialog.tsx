@@ -1,10 +1,9 @@
+import { PropRow } from '@/components/dialogs/prop-row'
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
-import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
-import { ColorPropRow } from '@/dialogs/color-prop-row'
 import { type IModalProps, OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
-import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
 import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
@@ -35,119 +34,107 @@ export function ScaleEditDialog({ group, track, onResponse }: IProps) {
         onResponse?.(TEXT_CANCEL)
       }}
     >
-      <ScrollAccordion
-        value={['style', 'size']}
-        variant="settings"
-        className="h-50"
-      >
-        <SettingsAccordionItem
-          title="Style"
-          description="Configure how the scale bar is displayed."
-          showBorder={false}
-          rightChildren={
-            <FontPopover
-              fonts={[
-                {
-                  title: 'Scale Labels',
-                  textProps: _track.displayOptions.text,
-                  update: (textProps) => {
-                    const newTrack = produce(_track, (draft) => {
-                      draft.displayOptions.text = textProps
-                    })
-
-                    //onResponse?.(TEXT_OK, { group, track: newTrack })
-                    setTrack(newTrack)
-
-                    dispatch({
-                      type: 'update',
-                      group,
-                      track: newTrack,
-                    })
-                  },
-                },
-              ]}
-            />
-          }
-        >
-          <ColorPropRow
-            title="Color"
-            //side="left"
-            colors={[
-              {
-                color: _track.displayOptions.stroke.value,
-                onColorChange: ({ color }) => {
-                  const newTrack = produce(_track, (draft) => {
-                    draft.displayOptions.stroke.value = color
-                  })
-
-                  onResponse?.(TEXT_OK, { group, track: newTrack })
-                  setTrack(newTrack)
-                },
-              },
-            ]}
-            className={SIMPLE_COLOR_EXT_CLS}
-          />
-
-          <SwitchPropRow
-            title="Caps"
-            side="right"
-            checked={_track.displayOptions.caps.show}
-            onCheckedChange={(v) => {
-              const newTrack = produce(_track, (draft) => {
-                draft.displayOptions.caps.show = v
-              })
-
-              onResponse?.(TEXT_OK, { group, track: newTrack })
-              setTrack(newTrack)
-            }}
-          >
-            <NumericalInput
-              value={_track.displayOptions.caps.height}
-              placeholder="height"
-              limit={[1, 1000]}
-              onNumChange={(v) => {
+      <PropRow title="Appearance">
+        <FontPopover
+          fonts={[
+            {
+              title: 'Labels',
+              textProps: _track.displayOptions.text,
+              update: (textProps) => {
                 const newTrack = produce(_track, (draft) => {
-                  draft.displayOptions.caps.height = v
+                  draft.displayOptions.text = textProps
+                })
+
+                //onResponse?.(TEXT_OK, { group, track: newTrack })
+                setTrack(newTrack)
+
+                dispatch({
+                  type: 'update',
+                  group,
+                  track: newTrack,
+                })
+              },
+            },
+          ]}
+        />
+        <FillButton
+          title="Color"
+          //side="left"
+          colors={[
+            {
+              color: _track.displayOptions.stroke.value,
+              onColorChange: ({ color }) => {
+                const newTrack = produce(_track, (draft) => {
+                  draft.displayOptions.stroke.value = color
                 })
 
                 onResponse?.(TEXT_OK, { group, track: newTrack })
                 setTrack(newTrack)
-              }}
-              w="sm"
-            />
-          </SwitchPropRow>
+              },
+            },
+          ]}
+          className={SIMPLE_COLOR_EXT_CLS}
+        />
+      </PropRow>
 
-          <SwitchPropRow
-            title="Auto size (bp)"
-            side="right"
-            checked={settings.tracks.scale.autoSize}
-            onCheckedChange={(v) => {
-              const newOptions = produce(settings, (draft) => {
-                draft.tracks.scale.autoSize = v
-              })
+      <SwitchPropRow
+        title="Caps"
+        side="right"
+        checked={_track.displayOptions.caps.show}
+        onCheckedChange={(v) => {
+          const newTrack = produce(_track, (draft) => {
+            draft.displayOptions.caps.show = v
+          })
 
-              updateSettings(newOptions)
-            }}
-          >
-            <NumericalInput
-              limit={[1, 1000000]}
-              step={1000}
-              value={settings.tracks.scale.bp}
-              disabled={settings.tracks.scale.autoSize}
-              placeholder="BP"
-              className="rounded-theme"
-              w="sm"
-              onNumChanged={(v) => {
-                const newOptions = produce(settings, (draft) => {
-                  draft.tracks.scale.bp = v
-                })
+          onResponse?.(TEXT_OK, { group, track: newTrack })
+          setTrack(newTrack)
+        }}
+      >
+        <NumericalInput
+          value={_track.displayOptions.caps.height}
+          placeholder="height"
+          limit={[1, 1000]}
+          onNumChange={(v) => {
+            const newTrack = produce(_track, (draft) => {
+              draft.displayOptions.caps.height = v
+            })
 
-                updateSettings(newOptions)
-              }}
-            />
-          </SwitchPropRow>
-        </SettingsAccordionItem>
-      </ScrollAccordion>
+            onResponse?.(TEXT_OK, { group, track: newTrack })
+            setTrack(newTrack)
+          }}
+          w="sm"
+        />
+      </SwitchPropRow>
+
+      <SwitchPropRow
+        title="Auto size (bp)"
+        side="right"
+        checked={settings.tracks.scale.autoSize}
+        onCheckedChange={(v) => {
+          const newOptions = produce(settings, (draft) => {
+            draft.tracks.scale.autoSize = v
+          })
+
+          updateSettings(newOptions)
+        }}
+      >
+        <NumericalInput
+          limit={[1, 1000000]}
+          step={1000}
+          value={settings.tracks.scale.bp}
+          disabled={settings.tracks.scale.autoSize}
+          placeholder="BP"
+          className="rounded-theme"
+          w="sm"
+          onNumChanged={(v) => {
+            const newOptions = produce(settings, (draft) => {
+              draft.tracks.scale.bp = v
+            })
+
+            updateSettings(newOptions)
+          }}
+        />
+      </SwitchPropRow>
     </OKCancelDialog>
   )
 }

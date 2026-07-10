@@ -16,7 +16,6 @@ import {
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import {
   getAccordionId,
-  SettingsAccordionItem,
   SideAccordionItem,
 } from '@/dialogs/settings/settings-dialog'
 import { MultiSelectIcon } from '@/icons/multi-select-icon'
@@ -261,10 +260,10 @@ function SideItems({
   }, [seqs])
 
   return (
-    <BaseCol className="grow text-xs gap-y-2 p-1">
+    <BaseCol className="grow text-xs gap-y-2 p-3">
       {error && <span className="text-destructive text-wrap">{error}</span>}
 
-      <VCenterRow className="gap-x-2 justify-between p-1">
+      <VCenterRow className="gap-x-2 justify-between ">
         <VCenterRow className="gap-x-1">
           <IconButton
             variant="flat-alt"
@@ -420,12 +419,12 @@ function ItemsInStore({
             key={dataseti}
             showBorder={dataseti > 0}
           >
-            <ul className="flex flex-col text-sm">
+            <ul className="flex flex-col gap-y-2 text-sm">
               {displayDatasets[dataseti]!.map((seq, ti) => {
                 return (
                   <li
                     key={ti}
-                    className="flex flex-row items-center justify-between gap-y-0.5 gap-x-2 p-2 hover:bg-muted overflow-hidden rounded-theme group"
+                    className="flex flex-row items-center justify-between gap-y-0.5 gap-x-2 pr-2 border-r-2 border-transparent hover:border-app-theme overflow-hidden  group"
                   >
                     <Checkbox
                       checked={selectedMap.get(seq.id) ?? false}
@@ -438,6 +437,13 @@ function ItemsInStore({
                         )
                       }}
                     />
+
+                    <BaseCol className="grow overflow-hidden">
+                      <p className="truncate text-xs font-medium">{seq.name}</p>
+                      <p className="text-xs text-secondary-foreground truncate">
+                        {`${seq.technology}, ${seq.assembly}${seq.type === 'Seq' ? ` (${seq.reads!.toLocaleString()} reads)` : ''}`}
+                      </p>
+                    </BaseCol>
 
                     <button
                       className="invisible group-hover:visible stroke-foreground/70 hover:stroke-foreground"
@@ -453,13 +459,6 @@ function ItemsInStore({
                     >
                       <PlusIcon stroke="" size={16} />
                     </button>
-
-                    <BaseCol className="grow overflow-hidden">
-                      <p className="truncate">{seq.name}</p>
-                      <p className="text-xs text-secondary-foreground truncate">
-                        {`${seq.technology}, ${seq.assembly}${seq.type === 'Seq' ? ` (${seq.reads!.toLocaleString()} reads)` : ''}`}
-                      </p>
-                    </BaseCol>
 
                     {seq.url && (
                       <a
@@ -519,7 +518,7 @@ function CartItems({
     <ScrollAccordion value={datasets.map((dataset) => getAccordionId(dataset))}>
       {datasets.map((dataset, dataseti) => {
         return (
-          <SettingsAccordionItem title={dataset} key={dataseti}>
+          <SideAccordionItem title={dataset} key={dataseti}>
             <ul className="flex flex-col ">
               {allDatasets[dataseti]!.map((track, ti) => {
                 return (
@@ -527,12 +526,8 @@ function CartItems({
                     key={ti}
                     className="flex flex-row gap-y-0.5 gap-x-2 group"
                   >
-                    <VCenterRow className="p-2.5 gap-x-2 grow group-hover:bg-muted overflow-hidden rounded-theme">
+                    <VCenterRow className="px-2 py-1 gap-x-2 grow group-hover:bg-muted/50 overflow-hidden rounded-theme">
                       <Checkbox
-                        className={cn([
-                          !selectedMap.get(track.id),
-                          'invisible group-hover:visible',
-                        ])}
                         checked={selectedMap.get(track.id) ?? false}
                         onCheckedChange={(state) => {
                           setSelectedMap(
@@ -544,7 +539,9 @@ function CartItems({
                         }}
                       />
                       <BaseCol>
-                        <span className="truncate">{track.name}</span>
+                        <span className="truncate font-medium">
+                          {track.name}
+                        </span>
                         <span className="text-xs text-secondary-foreground">
                           {track.type === 'Seq'
                             ? `${track.reads!.toLocaleString()} reads,`
@@ -571,7 +568,7 @@ function CartItems({
                 )
               })}
             </ul>
-          </SettingsAccordionItem>
+          </SideAccordionItem>
         )
       })}
     </ScrollAccordion>

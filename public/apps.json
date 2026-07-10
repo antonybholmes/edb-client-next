@@ -111,9 +111,9 @@
     "color": "#40bf80",
     "version": "48.4.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-10T15:54:45.373Z",
-    "hash": "a6804051cbafcd482f647a813aee1cbdbc66724373f4ac6124c4c3c45c21c77f",
-    "build": 1794
+    "modified": "2026-07-10T17:04:05.018Z",
+    "hash": "abeea5e8d939d18e84fde988d10a07a59997b67a938d5c6db11dd0d3fa53b8ef",
+    "build": 1796
   },
   {
     "name": "Motifs",
@@ -181,9 +181,9 @@
     "color": "#FF0000",
     "version": "32.2.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-10T15:54:45.371Z",
-    "hash": "e30e186fb8b5541519951f11f6fecda945d108cf1c26e3a370ca2976e49832b4",
-    "build": 1076
+    "modified": "2026-07-10T17:04:05.014Z",
+    "hash": "cb5957915d6bfb5b5bf732b978e42f8c6334e66992b82a3cb61004b54344db2a",
+    "build": 1078
   },
   {
     "name": "Single Cell",
@@ -191,9 +191,9 @@
     "color": "#9966ff",
     "version": "26.4.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-08T02:28:44.151Z",
-    "hash": "aace965dd41cddd18154f51d8ab0a702e4765971dee667fc3592331348b1038e",
-    "build": 820
+    "modified": "2026-07-10T17:04:05.018Z",
+    "hash": "91f2f9cc221312e9e074d7ea8e30e245c6083dfc2febbd0103c10d35805b4a58",
+    "build": 822
   },
   {
     "name": "Table Viewer",

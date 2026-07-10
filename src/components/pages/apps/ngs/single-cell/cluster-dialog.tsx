@@ -3,12 +3,9 @@ import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { produce } from 'immer'
 
 import { PropRow } from '@/components/dialogs/prop-row'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
+import { Input } from '@/components/shadcn/ui/themed/v2/input'
 import { SwitchPropRow } from '@/dialogs/switch-prop-row'
-import { TextPropRow } from '@/dialogs/text-prop-row'
 import { useEffect, useState } from 'react'
 import { usePlotGrid, type IScrnaCluster } from './plot-grid-store'
 
@@ -30,7 +27,33 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
     <OKCancelDialog
       open={true}
       buttons={[TEXT_OK]}
-      title={`Edit ${!cluster.name.toLowerCase().includes('cluster') ? 'Cluster ' : ''}${cluster.name}`}
+      title={
+        <Input
+          title="Title"
+          id="name"
+          value={_cluster.name}
+          onTextChange={(e) => {
+            if (!clusterInfo) {
+              return
+            }
+
+            updateClusterInfo(
+              produce(clusterInfo, (draft) => {
+                draft.clusters = draft.clusters.map((g) => {
+                  if (g.label === _cluster.label) {
+                    return { ...g, name: e }
+                  }
+                  return g
+                })
+              })
+            )
+          }}
+          placeholder="Title..."
+          //variant="dialog"
+          h="lg"
+          //w="full"
+        />
+      }
       onResponse={(r) => {
         if (r === TEXT_OK) {
         }
@@ -38,6 +61,13 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
         onResponse?.(r)
       }}
       showClose={true}
+      leftFooterChildren={
+        IS_DEV_MODE ? (
+          <PropRow title="Cluster Id">
+            <span className="text-foreground/50">{cluster.id}</span>
+          </PropRow>
+        ) : undefined
+      }
       //className="w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4"
 
       //headerStyle={{ color }}
@@ -49,10 +79,12 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
       // }
 
       leftHeaderChildren={
-        <ColorPickerButton
+        <FillButton
+          title="Color"
           colors={[
             {
               color: _cluster.color,
+              allowNoColor: false,
               onColorChange: ({ color }) => {
                 const newCluster = produce(_cluster, (draft) => {
                   draft.color = color
@@ -72,7 +104,6 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
               },
             },
           ]}
-          className={SIMPLE_COLOR_EXT_CLS}
         />
       }
       // leftFooterChildren={
@@ -83,9 +114,8 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
       //headerVariant="opaque"
       //bodyVariant="default"
       //footerVariant="default"
-      bodyCls="gap-y-2"
     >
-      <TextPropRow
+      {/* <TextPropRow
         title="Title"
         id="name"
         value={_cluster.name}
@@ -108,7 +138,7 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
         placeholder="Title..."
         //variant="dialog"
         h="lg"
-      />
+      /> */}
 
       <SwitchPropRow
         title="Show"
@@ -180,11 +210,6 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
           )
         }}
       />
-      {IS_DEV_MODE && (
-        <PropRow title="Cluster Id">
-          <span className="text-foreground/50">{cluster.id}</span>
-        </PropRow>
-      )}
     </OKCancelDialog>
   )
 }

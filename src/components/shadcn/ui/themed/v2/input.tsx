@@ -56,6 +56,7 @@ export const inputVariants = cva(PLACEHOLDER_CLS, {
       lg: 'w-48',
       xl: 'w-64',
       grow: 'grow',
+      full: 'w-full',
       '1/2': 'w-1/2',
     },
     gap: {

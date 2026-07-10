@@ -87,11 +87,20 @@ function _IosGroupToggle({ w, value, tabs, ...props }: IProps) {
       >
         {tabs.map((t) => {
           const isSelected = t.id === v || t.name === v
+
+          const content = t.render ? (
+            t.render
+          ) : (
+            <span className="pointer-events-none select-none">
+              {getTabName(t)}
+            </span>
+          )
+
           return (
             <GroupToggle
               key={t.id}
               value={t.id}
-              className="z-50"
+              className="z-50 text-center items-center flex flex-row"
               rounded="full"
               style={{
                 width: `${w}rem`,
@@ -115,7 +124,7 @@ function _IosGroupToggle({ w, value, tabs, ...props }: IProps) {
                 }
               }}
             >
-              {getTabName(t)}
+              {content}
             </GroupToggle>
           )
         })}

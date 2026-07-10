@@ -20,10 +20,7 @@ import { ColorMapMenu } from '../../matcalc/color-map-menu'
 import { getColorMap } from '@/lib/color/colormap'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { NumericalInput } from '@/themed/numerical-input'
 import {
   Select,
@@ -364,10 +361,12 @@ export function DisplayPropsPanel() {
               title="Default dot color"
               tooltip="The default color for dots when no gene expression or cluster is mapped"
             >
-              <ColorPickerButton
+              <FillButton
+                title="Color"
                 colors={[
                   {
                     color: settings.dots.color,
+                    allowNoColor: false,
                     onColorChange: ({ color }) =>
                       updateSettings(
                         produce(settings, (draft) => {
@@ -376,7 +375,6 @@ export function DisplayPropsPanel() {
                       ),
                   },
                 ]}
-                className={SIMPLE_COLOR_EXT_CLS}
               />
             </PropRow>
           </AccordionContent>
