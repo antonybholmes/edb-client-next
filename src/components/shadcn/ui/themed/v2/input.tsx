@@ -128,7 +128,7 @@ export function Input({
   onTextChange,
   onTextChanged,
   className,
-  'aria-label': ariaLabel,
+  //'aria-label': ariaLabel,
   ...props
 }: IInputProps) {
   //const _id = id ?? useStableId('input')

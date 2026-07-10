@@ -9,6 +9,7 @@
 
 ### Changed
 
+- Fix lighthouse issues.
 - UI refinements.
 - Sankey now has proper fill properties for nodes and links and we can color all links and nodes independently.
 - Added debounce to zoom slider as well as a user check to prevent race condition between slider and zoom menu.

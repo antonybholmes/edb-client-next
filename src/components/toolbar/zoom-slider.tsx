@@ -123,6 +123,7 @@ export function ZoomSelect({
     >
       <Input
         variant="plain"
+        aria-label="Zoom level"
         value={formatZoom(zoom)}
         onTextChanged={(v) => {
           const parsed = parseInt(v.replace('%', ''))

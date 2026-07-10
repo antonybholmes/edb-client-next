@@ -9,9 +9,12 @@ import { ToolbarColButton } from './toolbar-col-button'
 //   multiple?: boolean
 // }
 
-export function ToolbarOpenFile({ ...props }: ComponentProps<'button'>) {
+export function ToolbarOpenFile({
+  title = 'Open File',
+  ...props
+}: ComponentProps<'button'>) {
   return (
-    <ToolbarColButton icon={<UploadIcon />} {...props}>
+    <ToolbarColButton icon={<UploadIcon />} title={title} {...props}>
       <UploadIcon size={24} strokeWidth={1} />
       {TEXT_OPEN}
     </ToolbarColButton>

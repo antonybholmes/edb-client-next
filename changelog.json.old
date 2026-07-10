@@ -2152,6 +2152,10 @@
         {
           "msg": "Sankey now has proper fill properties for nodes and links and we can color all links and nodes independently",
           "date": "2026-07-09T22:35:25.281Z"
+        },
+        {
+          "msg": "UI refinements",
+          "date": "2026-07-10T17:04:06.005Z"
         }
       ],
       "Added": [
