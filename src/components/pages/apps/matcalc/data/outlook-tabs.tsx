@@ -143,6 +143,7 @@ function _OutlookTabs({
                     scale: 0.5,
                   })
                 }
+
                 _scale(ti || 0)
               }}
               onMouseLeave={() => {
@@ -161,7 +162,7 @@ function _OutlookTabs({
             >
               {showIcons && tab.icon && (
                 <span
-                  className="w-4.5 fill-foreground stroke-foreground data-[selected=true]:fill-app-theme data-[selected=true]:stroke-app-theme"
+                  className="w-4.5 fill-foreground stroke-foreground"
                   data-selected={tab.id === selectedTab?.id}
                 >
                   {tab.icon}

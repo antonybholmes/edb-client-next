@@ -1,8 +1,8 @@
 import { cn } from '@/lib/shadcn-utils'
 import {
-  CENTERED_ROW_CLS,
-  FOCUS_INSET_RING_CLS,
-  ICON_BUTTON_CLS,
+    CENTERED_ROW_CLS,
+    FOCUS_INSET_RING_CLS,
+    ICON_BUTTON_CLS,
 } from '@/theme'
 import * as TogglePrimitive from '@radix-ui/react-toggle'
 import { cva, type VariantProps } from 'class-variance-authority'
@@ -18,7 +18,7 @@ export const toggleVariants = cva(TOGGLE_CLS, {
     variant: {
       default: cn(
         CENTERED_ROW_CLS,
-        'hover:bg-muted/60 data-[state=on]:bg-muted border border-transparent data-[state=on]:border-border/50'
+        'hover:bg-muted/50 data-[state=on]:bg-muted border border-transparent data-[state=on]:border-border/50'
       ),
       outline:
         'border border-transparent bg-transparent data-[state=on]:font-semibold text-xs data-[state=on]:bg-background data-[state=on]:shadow-xs data-[state=on]:border-border/75 rounded-theme overflow-hidden',
@@ -27,7 +27,7 @@ export const toggleVariants = cva(TOGGLE_CLS, {
       colorful:
         'flex flex-col gap-y-2 items-center p-2 border-2 border-border border-transparent hover:border-theme/25 data-[state=on]:shadow-xs data-[state=on]:border-theme/50 data-[state=on]:bg-theme/10',
       group:
-        'hover:bg-muted/60 data-[state=on]:text-theme focus-visible:z-10 focus:z-10 outline-2 -outline-offset-2 outline-transparent focus-visible:outline-ring border border-border data-[state=on]:font-semibold',
+        'hover:bg-muted/50 data-[state=on]:text-theme focus-visible:z-10 focus:z-10 outline-2 -outline-offset-2 outline-transparent focus-visible:outline-ring border border-border data-[state=on]:font-semibold',
     },
     size: {
       sm: 'h-7',

@@ -1,8 +1,5 @@
 import { VCenterRow } from '@/components/layout/v-center-row'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
 import { IS_DEV_MODE, TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
@@ -14,6 +11,7 @@ import { Input } from '@/themed/v2/input'
 import { produce } from 'immer'
 import { useEffect, useState } from 'react'
 
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { useCurrentSheets } from '../history/history-provider/history-contexts'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
 
@@ -88,8 +86,14 @@ export function GroupDialog({ group, onResponse }: IProps) {
       showClose={true}
       //className="w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4"
       leftHeaderChildren={
-        <ColorPickerButton
-          colors={[{ color, onColorChange: ({ color }) => setColor(color) }]}
+        <FillButton
+          colors={[
+            {
+              color,
+              allowNoColor: false,
+              onColorChange: ({ color }) => setColor(color),
+            },
+          ]}
           className={SIMPLE_COLOR_EXT_CLS}
         />
       }
@@ -104,24 +108,25 @@ export function GroupDialog({ group, onResponse }: IProps) {
         <span>Name</span>
         <Input
           id="name"
+          h="lg"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Group Name"
           className="col-span-4"
-          rightChildren={
-            <ColorPickerButton
-              colors={[
-                { color, onColorChange: ({ color }) => setColor(color) },
-              ]}
-              className={SIMPLE_COLOR_EXT_CLS}
-            />
-          }
+          // rightChildren={
+          //   <FillButton
+          //     colors={[
+          //       { color, onColorChange: ({ color }) => setColor(color) },
+          //     ]}
+          //   />
+          // }
         />
 
         <span>Match</span>
 
         <Input
           id="search"
+          h="lg"
           value={search}
           onTextChange={(e) => setSearch(e)}
           placeholder="Matches..."

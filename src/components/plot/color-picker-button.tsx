@@ -53,7 +53,6 @@ export function ColorIcon({
   return (
     <span
       ref={ref}
-
       className={cn(
         'block rounded-full aspect-square border shrink-0 pointer-events-none',
         size,

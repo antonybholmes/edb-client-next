@@ -1,8 +1,8 @@
 import { cn } from '@/lib/shadcn-utils'
 import {
-  CENTERED_ROW_CLS,
-  FOCUS_INSET_RING_CLS,
-  ICON_BUTTON_CLS,
+    CENTERED_ROW_CLS,
+    FOCUS_INSET_RING_CLS,
+    ICON_BUTTON_CLS,
 } from '@/theme'
 import { Toggle as TogglePrimitive } from '@base-ui/react/toggle'
 import { cva, type VariantProps } from 'class-variance-authority'
@@ -27,7 +27,7 @@ export const toggleVariants = cva(TOGGLE_CLS, {
       'app-theme':
         'flex flex-col gap-y-2 items-center p-2 border-2 border-border border-transparent hover:border-app-theme/25 data-pressed:shadow-xs data-pressed:border-app-theme/50 data-pressed:bg-app-theme/10',
       group:
-        'hover:bg-muted/60 data-pressed:text-theme focus-visible:z-10 focus:z-10 outline-2 -outline-offset-2 outline-transparent focus-visible:outline-ring border border-border data-pressed:font-semibold',
+        'hover:bg-muted/50 data-pressed:text-theme focus-visible:z-10 focus:z-10 outline-2 -outline-offset-2 outline-transparent focus-visible:outline-ring border border-border data-pressed:font-semibold',
       ios: 'data-pressed:font-semibold',
     },
     size: {

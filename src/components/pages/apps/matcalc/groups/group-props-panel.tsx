@@ -53,7 +53,7 @@ import { BaseCol } from '@/components/layout/base-col'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
-import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
+import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { PlusIcon } from '@/icons/plus-icon'
@@ -69,7 +69,7 @@ import {
 import { useHistory } from '../history/history-provider/history-provider'
 
 export const GROUP_CLS = `group rounded-theme group gap-x-1 opacity-80 py-1 px-2
-hover:opacity-100 trans-opacity hover:bg-muted/60 data-[focus=true]:bg-muted/60`
+hover:opacity-100 trans-opacity hover:bg-muted/50 data-[focus=true]:bg-muted/50`
 
 export const GROUP_CONTENT_CLS = `flex flex-row items-center grow relative 
   w-full overflow-hidden py-2 pl-1 pr-2 gap-x-2 rounded-theme 
@@ -120,7 +120,7 @@ function GroupItem({
         </button>
       }
     >
-      <Switch
+      <Checkbox
         checked={group.show}
         onCheckedChange={(v) => {
           updateGroup({ ...group, show: v })

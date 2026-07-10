@@ -2,17 +2,17 @@ import { type IClusterGroup } from '@/lib/cluster-group'
 
 import { VCenterCol } from '@/layout/v-center-col'
 import {
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
+    DndContext,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
 } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
@@ -25,7 +25,7 @@ import { useSankey } from '../sankey-provider'
 import { DEFAULT_NODE_COLOR } from '../sankey-settings-store'
 
 export const GROUP_CLS = `group rounded-theme group gap-x-1 opacity-80 py-1 px-2
-hover:opacity-100 trans-opacity hover:bg-muted/60 data-[focus=true]:bg-muted/60`
+hover:opacity-100 trans-opacity hover:bg-muted/50 data-[focus=true]:bg-muted/50`
 
 export const GROUP_CONTENT_CLS = `flex flex-row items-center grow relative 
   w-full overflow-hidden py-2 pl-1 pr-2 gap-x-2 rounded-theme 

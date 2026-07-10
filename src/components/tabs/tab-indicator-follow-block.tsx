@@ -3,8 +3,8 @@ import { cn } from '@/lib/shadcn-utils'
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
 import {
-  useTabIndicators,
-  type ITabIndicatorPos,
+    useTabIndicators,
+    type ITabIndicatorPos,
 } from './tab-indicator-provider'
 
 const ROUNDED_FIRST = {
@@ -49,7 +49,7 @@ interface IProps extends IClassProps {
 }
 
 export function TabIndicatorFollowBlock({
-  color = 'bg-muted/60',
+  color = 'bg-muted/50',
   rounded = true,
   className,
 }: IProps) {

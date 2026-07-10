@@ -1,9 +1,9 @@
 import { cn } from '@/lib/shadcn-utils'
 import {
-  forwardRef,
-  type HTMLAttributes,
-  type TdHTMLAttributes,
-  type ThHTMLAttributes,
+    forwardRef,
+    type HTMLAttributes,
+    type TdHTMLAttributes,
+    type ThHTMLAttributes,
 } from 'react'
 
 const Table = forwardRef<HTMLTableElement, HTMLAttributes<HTMLTableElement>>(
@@ -65,7 +65,7 @@ const TableRow = forwardRef<
   <tr
     ref={ref}
     className={cn(
-      'border-b border-border trans-colors hover:bg-muted/60 data-[state=selected]:bg-muted/60',
+      'border-b border-border trans-colors hover:bg-muted/50 data-[state=selected]:bg-muted/50',
       className
     )}
     {...props}
@@ -116,12 +116,13 @@ const TableCaption = forwardRef<
 TableCaption.displayName = 'TableCaption'
 
 export {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableFooter,
+    TableHead,
+    TableHeader,
+    TableRow
 }
+

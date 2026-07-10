@@ -157,7 +157,7 @@ const TreeNode = ({
     <li id={currentPath}>
       <VCenterRow
         data-selected={selectedId === currentPath}
-        className="gap-x-1 hover:bg-muted/60 data-[selected=true]:bg-muted/60 rounded-md px-2"
+        className="gap-x-1 hover:bg-muted/50 data-[selected=true]:bg-muted/50 rounded-md px-2"
       >
         <button
           onClick={() => {

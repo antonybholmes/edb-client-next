@@ -10,13 +10,10 @@ import { Button } from '@/themed/v2/button'
 import { Input } from '@/themed/v2/input'
 
 import { TEXT_CLEAR } from '@/consts'
-import { cn } from '@/lib/shadcn-utils'
 
 import { useVennSettings } from '@/components/pages/apps/venn/venn-settings-store'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
+import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { DEFAULT_DEBOUNCE_DELAY_MS, useDebounce } from '@/hooks/debounce'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
@@ -89,41 +86,46 @@ export function VennList({ vennList }: IProps) {
           className="w-0 grow rounded-theme"
           placeholder={`List ${vennList.id} name...`}
         />
-        <VCenterRow className={cn('shrink-0 gap-x-1 pr-1')}>
-          <ColorPickerButton
+        <VCenterRow className="shrink-0">
+          <FillButton
             colors={[
               {
                 color: circles[vennList.id]!.fill.value,
-                onColorChange: ({ color, opacity }) =>
+                opacity: circles[vennList.id]!.fill.opacity,
+                show: circles[vennList.id]!.fill.show,
+                onColorChange: ({ color, opacity, show }) =>
                   updateCircles(
                     produce(circles, (draft) => {
                       draft[vennList.id]!.fill.value = color
                       draft[vennList.id]!.fill.opacity =
                         opacity ?? draft[vennList.id]!.fill.opacity
+                      draft[vennList.id]!.fill.show =
+                        show ?? draft[vennList.id]!.fill.show
                     })
                   ),
               },
             ]}
-            title="Fill color"
-            className={SIMPLE_COLOR_EXT_CLS}
+            title="Fill"
           />
-          <ColorPickerButton
+          <OutlineButton
             colors={[
               {
                 color: circles[vennList.id]!.stroke.value,
                 opacity: circles[vennList.id]!.stroke.opacity,
-                onColorChange: ({ color, opacity }) =>
+                show: circles[vennList.id]!.stroke.show,
+                onColorChange: ({ color, opacity, show }) =>
                   updateCircles(
                     produce(circles, (draft) => {
                       draft[vennList.id]!.stroke.value = color
                       draft[vennList.id]!.stroke.opacity =
                         opacity ?? draft[vennList.id]!.stroke.opacity
+                      draft[vennList.id]!.stroke.show =
+                        show ?? draft[vennList.id]!.stroke.show
                     })
                   ),
               },
             ]}
-            title="Line color"
-            className={SIMPLE_COLOR_EXT_CLS}
+            title="Outline"
           />
 
           {/* <ColorPickerButton
@@ -169,8 +171,8 @@ export function VennList({ vennList }: IProps) {
 
         <Button
           variant="link"
-          //size="sm"
-          // ripple={false}
+          pad="none"
+
           onClick={() => {
             setText('')
             updateVennListFromText(vennList.id, '')

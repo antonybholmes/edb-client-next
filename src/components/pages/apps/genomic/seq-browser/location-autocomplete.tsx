@@ -16,7 +16,7 @@ import { IGenomicLocation } from '@/lib/genomic/genomic-location'
 import { cn } from '@/lib/shadcn-utils'
 
 const LI_CLS = cn(
-  'h-button-md hover:bg-muted/60 outline-none focus-visible:bg-muted/60 flex flex-row',
+  'h-button-md hover:bg-muted/50 outline-none focus-visible:bg-muted/50 flex flex-row',
   'justify-start items-center px-3 gap-x-2 w-full'
 )
 

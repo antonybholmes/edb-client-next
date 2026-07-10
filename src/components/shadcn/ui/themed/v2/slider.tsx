@@ -4,7 +4,7 @@ import { Slider as SliderPrimitive } from '@base-ui/react/slider'
 import { useRef, useState, type ComponentProps } from 'react'
 
 const THUMB_CLS = cn(
-  'h-4 w-5 aspect-square shrink-0 rounded-full  trans-color border border-border/70 group-hover:border-border trans-color',
+  'h-4 w-5 aspect-square shrink-0 rounded-full group-hover:bg-background/50 trans-color border border-border/70 group-hover:border-border trans-color',
   'data-[focus=true]:border-border bg-background select-none disabled:pointer-events-none disabled:opacity-50 cursor-pointer'
 )
 

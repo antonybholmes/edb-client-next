@@ -7,11 +7,11 @@ import type { UndefStr } from '@/lib/text/text'
 import { BUTTON_XL_H_CLS, FOCUS_INSET_RING_CLS } from '@/theme'
 import { cva, type VariantProps } from 'class-variance-authority'
 import {
-  useEffect,
-  useState,
-  type ComponentProps,
-  type CSSProperties,
-  type ReactNode,
+    useEffect,
+    useState,
+    type ComponentProps,
+    type CSSProperties,
+    type ReactNode,
 } from 'react'
 
 export const PLACEHOLDER_CLS = cn(
@@ -34,7 +34,7 @@ export const inputVariants = cva(PLACEHOLDER_CLS, {
         hover:bg-background hover:shadow-xs hover:border-border
         data-[focus=true]:bg-background data-[focus=true]:shadow-xs data-[focus=true]:border-border
         trans-color`,
-      alt: 'bg-muted/60 hover:bg-muted/80 px-2 stroke-foreground rounded-theme border-2 border-transparent data-[focus=true]:border-ring',
+      alt: 'bg-muted/50 hover:bg-muted/80 px-2 stroke-foreground rounded-theme border-2 border-transparent data-[focus=true]:border-ring',
       underline: 'bg-background border-b border-border hover:border-ring px-1',
     },
     h: {

@@ -107,7 +107,7 @@ function _HelpTreeNode({ level, node }: { level: number; node: ITopicTree }) {
         <VCenterRow
           className={cn(
             'justify-between items-center grow shrink-0 rounded-theme h-full gap-x-2',
-            [isSelected, 'bg-muted/70 font-bold', 'hover:bg-muted/60']
+            [isSelected, 'bg-muted/70 font-bold', 'hover:bg-muted/50']
           )}
         >
           {isValidSlug && (

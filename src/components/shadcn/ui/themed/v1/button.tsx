@@ -3,23 +3,23 @@ import type { IPos } from '@/interfaces/pos'
 import type { ITooltipSide } from '@/interfaces/tooltip-side-props'
 import { cn } from '@/lib/shadcn-utils'
 import {
-  BASE_BUTTON_CLS,
-  BASE_ICON_BUTTON_CLS,
-  BUTTON_XL_H_CLS,
-  BUTTON_XS_H_CLS,
-  CENTERED_ROW_CLS,
-  CORE_PRIMARY_BUTTON_CLS,
-  CORE_THEME_BUTTON_CLS,
-  DESTRUCTIVE_CLS,
-  DROPDOWN_BUTTON_CLS,
-  DROPDOWN_WITH_ICON_BUTTON_CLS,
-  FOCUS_RING_CLS,
-  ICON_BUTTON_CLS,
-  LARGE_ICON_BUTTON_CLS,
-  SM_ICON_BUTTON_CLS,
-  TOOLBAR_DROPDOWN_BUTTON_CLS,
-  TRANS_COLOR_CLS,
-  XL_ICON_BUTTON_CLS,
+    BASE_BUTTON_CLS,
+    BASE_ICON_BUTTON_CLS,
+    BUTTON_XL_H_CLS,
+    BUTTON_XS_H_CLS,
+    CENTERED_ROW_CLS,
+    CORE_PRIMARY_BUTTON_CLS,
+    CORE_THEME_BUTTON_CLS,
+    DESTRUCTIVE_CLS,
+    DROPDOWN_BUTTON_CLS,
+    DROPDOWN_WITH_ICON_BUTTON_CLS,
+    FOCUS_RING_CLS,
+    ICON_BUTTON_CLS,
+    LARGE_ICON_BUTTON_CLS,
+    SM_ICON_BUTTON_CLS,
+    TOOLBAR_DROPDOWN_BUTTON_CLS,
+    TRANS_COLOR_CLS,
+    XL_ICON_BUTTON_CLS,
 } from '@/theme'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
@@ -53,15 +53,15 @@ export const BASE_ALT_CLS = cn(
 )
 
 export const BASE_FLAT_BUTTON_CLS = cn(
-  'hover:bg-muted/60 data-[checked=false]:hover:bg-muted/60',
-  'data-[checked=true]:bg-muted/60 data-[state=open]:bg-muted/60',
-  'aria-[expanded=true]:bg-muted/60'
+  'hover:bg-muted/50 data-[checked=false]:hover:bg-muted/50',
+  'data-[checked=true]:bg-muted/50 data-[state=open]:bg-muted/50',
+  'aria-[expanded=true]:bg-muted/50'
   //'border border-transparent data-[checked=true]:border-border/60 data-[state=open]:border-border/60'
 )
 
 export const BASE_MUTED_LIGHT_CLS = cn(
-  'border border-transparent data-[checked=false]:hover:bg-muted/60',
-  'data-[checked=true]:bg-muted/60 data-[state=open]:bg-muted/60'
+  'border border-transparent data-[checked=false]:hover:bg-muted/50',
+  'data-[checked=true]:bg-muted/50 data-[state=open]:bg-muted/50'
 )
 
 export const THEME_MUTED_CLS = cn(
@@ -74,8 +74,8 @@ export const THEME_MUTED_CLS = cn(
 //   'data-[mode=flat]:bg-accent data-[mode=flat]:hover:bg-accent hover:bg-accent'
 
 // export const BASE_TOOLBAR_CLS = cn(
-//   'border border-transparent data-[checked=false]:hover:bg-muted/60',
-//   'data-[checked=true]:bg-muted/60 data-[state=open]:bg-muted/60'
+//   'border border-transparent data-[checked=false]:hover:bg-muted/50',
+//   'data-[checked=true]:bg-muted/50 data-[state=open]:bg-muted/50'
 // )
 
 // export const BASE_MUTED_THEME_CLS = cn(
@@ -91,8 +91,8 @@ export const BASE_MENU_CLS = cn(
   'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
   'fill-foreground stroke-foreground px-1',
   'hover:bg-muted'
-  //'data-[checked=true]:bg-muted/60 data-[checked=true]:border-border',
-  //'data-[state=checked]:bg-muted/60 data-[state=checked]:border-border'
+  //'data-[checked=true]:bg-muted/50 data-[checked=true]:border-border',
+  //'data-[state=checked]:bg-muted/50 data-[state=checked]:border-border'
 )
 
 export const THEME_MENU_CLS = cn(

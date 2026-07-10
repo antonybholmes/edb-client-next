@@ -57,9 +57,9 @@ export const BASE_ALT_CLS = cn(
 )
 
 export const BASE_FLAT_BUTTON_CLS = cn(
-  'hover:bg-muted/60 data-[checked=false]:hover:bg-muted/60',
-  'data-[checked=true]:bg-muted/60 data-[state=open]:bg-muted/60',
-  'aria-[expanded=true]:bg-muted/60 data-popup-open:bg-muted/60'
+  'hover:bg-muted/50 data-[checked=false]:hover:bg-muted/50',
+  'data-[checked=true]:bg-muted/50 data-[state=open]:bg-muted/50',
+  'aria-[expanded=true]:bg-muted/50 data-popup-open:bg-muted/50'
 )
 
 export const BASE_FLAT_ALT_BUTTON_CLS = cn(
@@ -75,8 +75,8 @@ export const BASE_FLAT_APP_THEME_BUTTON_CLS = cn(
 )
 
 export const BASE_MUTED_LIGHT_CLS = cn(
-  'border border-transparent data-[checked=false]:hover:bg-muted/60',
-  'data-[checked=true]:bg-muted/60 data-[state=open]:bg-muted/60'
+  'border border-transparent data-[checked=false]:hover:bg-muted/50',
+  'data-[checked=true]:bg-muted/50 data-[state=open]:bg-muted/50'
 )
 
 export const THEME_MUTED_CLS = cn(
@@ -89,8 +89,8 @@ export const THEME_MUTED_CLS = cn(
 //   'data-[mode=flat]:bg-accent data-[mode=flat]:hover:bg-accent hover:bg-accent'
 
 // export const BASE_TOOLBAR_CLS = cn(
-//   'border border-transparent data-[checked=false]:hover:bg-muted/60',
-//   'data-[checked=true]:bg-muted/60 data-[state=open]:bg-muted/60'
+//   'border border-transparent data-[checked=false]:hover:bg-muted/50',
+//   'data-[checked=true]:bg-muted/50 data-[state=open]:bg-muted/50'
 // )
 
 // export const BASE_MUTED_THEME_CLS = cn(
@@ -106,8 +106,8 @@ export const BASE_MENU_CLS = cn(
   'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
   'fill-foreground stroke-foreground',
   'hover:bg-muted'
-  //'data-[checked=true]:bg-muted/60 data-[checked=true]:border-border',
-  //'data-[state=checked]:bg-muted/60 data-[state=checked]:border-border'
+  //'data-[checked=true]:bg-muted/50 data-[checked=true]:border-border',
+  //'data-[state=checked]:bg-muted/50 data-[state=checked]:border-border'
 )
 
 export const BASE_THEME_MENU_CLS = cn(

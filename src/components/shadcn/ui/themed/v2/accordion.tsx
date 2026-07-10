@@ -16,7 +16,8 @@ import {
   type ReactNode,
 } from 'react'
 
-//const Accordion = AccordionPrimitive.Root
+export const ACCORDION_PANEL_CLS = "h-(--accordion-panel-height) overflow-hidden transition-[height] duration-300 ease-[ease-in-out] data-ending-style:h-0 data-starting-style:h-0"
+
 
 export const accordionVariants = cva('flex flex-col w-full', {
   variants: {
@@ -159,7 +160,7 @@ export function AccordionItem({
 const TRIGGER_CLS = cn(
   'group relative outline-2 outline-transparent',
   'focus-visible:outline-ring data-[focus=true]:outline-ring -outline-offset-2',
-  'flex flex-row grow items-center font-medium'
+  'flex flex-row grow items-center font-semibold'
 )
 
 //  [&>div]:pl-2
@@ -172,7 +173,7 @@ export const accordionHeaderVariants = cva(
         settings:
           'text-base data-[show-border=true]:pt-4 data-[show-border=true]:border-t data-[show-border=true]:border-border/50',
         sidebar:
-          'text-sm h-7 rounded-theme overflow-hidden data-open:bg-muted/60 data-closed:data-[hover=true]:bg-muted/50 text-xs trans-color pr-1.5',
+          'h-7 rounded-theme overflow-hidden hover:bg-muted/50 text-xs trans-color pr-1.5',
         none: '',
       },
     },
@@ -272,6 +273,7 @@ export const accordionContentVariants = cva('flex flex-col', {
   },
 })
 
+
 export function AccordionContent({
   ref,
   variant,
@@ -286,7 +288,7 @@ export function AccordionContent({
     innerStyle?: CSSProperties
   }) {
   return (
-    <AccordionPrimitive.Panel ref={ref} className={className} {...props}>
+    <AccordionPrimitive.Panel ref={ref} className={cn(ACCORDION_PANEL_CLS, className)} {...props}>
       <div
         className={accordionContentVariants({
           variant,

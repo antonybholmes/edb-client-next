@@ -49,7 +49,7 @@ interface IProps extends IClassProps {
 
 export function TabIndicatorSelectedBlock({
   groupId,
-  color = 'bg-muted/60',
+  color = 'bg-muted/50',
 
   rounded = true,
   className,

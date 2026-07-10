@@ -160,7 +160,7 @@ export function SettingsDialog({
         </TabsList>
       </Tabs> */}
 
-      <BaseCol className="p-2 py-4">
+      <BaseCol className="p-3 py-4">
         <OutlookTabs id="settings-dialog-tabs" className="text-xs" />
       </BaseCol>
 
