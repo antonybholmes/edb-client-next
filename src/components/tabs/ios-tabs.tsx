@@ -10,7 +10,10 @@ import { FOCUS_INSET_RING_CLS } from '@/theme'
 import { VariantProps } from 'class-variance-authority'
 import { toggleGroupVariants } from '../shadcn/ui/themed/v2/toggle-group'
 import { TabIndicatorIosSelected } from './tab-indicator-ios-selected'
-import { useTabIndicators } from './tab-indicator-provider'
+import {
+  TabIndicatorProvider,
+  useTabIndicators,
+} from './tab-indicator-provider'
 
 export interface IMenuAction {
   action: string
@@ -29,7 +32,7 @@ interface IProps extends ITabMenu, VariantProps<typeof toggleGroupVariants> {
   defaultWidth?: number
 }
 
-export function IosTabs({
+function _IosTabs({
   id = 'ios-tabs',
   maxNameLength = -1,
   defaultWidth = 5,
@@ -120,5 +123,13 @@ export function IosTabs({
         <TabIndicatorIosSelected />
       </TabsList>
     </Tabs>
+  )
+}
+
+export function IosTabs(props: IProps) {
+  return (
+    <TabIndicatorProvider>
+      <_IosTabs {...props} />
+    </TabIndicatorProvider>
   )
 }

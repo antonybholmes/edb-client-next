@@ -13,11 +13,12 @@ import {
   ToggleGroup,
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { RadioPropRow } from '@/dialogs/radio-prop-row'
-import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
+import { SideAccordionItem } from '@/dialogs/settings/settings-dialog'
 
 import { produce } from 'immer'
 import { ExternalLinkIcon } from 'lucide-react'
 
+import { BaseCol } from '@/components/layout/base-col'
 import { RadioGroup } from '@/components/shadcn/ui/themed/v2/radio-group'
 import { SkeletonRows } from '@/components/shadcn/ui/themed/v2/skeleton'
 import { storeItem } from '@/lib/storage'
@@ -76,7 +77,7 @@ export function GexDialogSidePanel({
   }
 
   return (
-    <>
+    <BaseCol className="p-3 grow gap-y-3">
       <HCenterRow>
         <Popover>
           <PopoverTrigger className="font-bold text-xs flex flex-row items-center gap-x-4 w-48 justify-between hover:bg-muted/70 data-popup-open:bg-muted/70 rounded-theme p-2.5 trans-color">
@@ -168,11 +169,11 @@ export function GexDialogSidePanel({
         <ScrollAccordion
           value={accordionValues}
           //onValueChange={setAccordionValues}
-          variant="settings"
+          variant="sidebar"
         >
           {institutions.map((institution) => {
             return (
-              <SettingsAccordionItem
+              <SideAccordionItem
                 title={institution}
                 value={institution}
                 key={institution}
@@ -202,18 +203,18 @@ export function GexDialogSidePanel({
                             }}
                             className="opacity-30 hover:opacity-70"
                           >
-                            <ExternalLinkIcon size={20} />
+                            <ExternalLinkIcon size={16} />
                           </button>
                         </RadioPropRow>
                       </li>
                     )
                   })}
                 </ul>
-              </SettingsAccordionItem>
+              </SideAccordionItem>
             )
           })}
         </ScrollAccordion>
       </RadioGroup>
-    </>
+    </BaseCol>
   )
 }

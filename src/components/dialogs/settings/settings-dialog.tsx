@@ -74,7 +74,7 @@ export function SideAccordionItem({
     <AccordionItem value={getAccordionId(value ?? title)} variant="sidebar">
       <AccordionTrigger
         variant="sidebar"
-        side="right"
+        //side="right"
         data-show-border={showBorder}
         rightChildren={rightChildren}
       >

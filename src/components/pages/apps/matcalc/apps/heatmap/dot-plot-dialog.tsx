@@ -6,9 +6,7 @@ import {
 } from '@/components/plot/heatmap/heatmap-svg-props'
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
-import { Accordion } from '@/themed/v2/accordion'
 
-import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import {
   getColIdxFromGroup,
@@ -26,15 +24,22 @@ import { useEffect, useState } from 'react'
 import { WarningIcon } from '@/components/icons/warning-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
-import { VScrollPanel } from '@/components/v-scroll-panel'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeUuid } from '@/lib/id'
 import { cumulativeSteps } from '@/lib/math/quartile'
 import { formatNumber } from '@/lib/text/text'
-import { GroupToggle, ToggleGroup } from '@/themed/v2/toggle-group'
 import { produce } from 'immer'
 
+import { useTabs } from '@/components/tabs/tab-provider'
+
+import {
+  DialogCard,
+  DialogCardContent,
+  DialogCardHeader,
+  DialogCardInfo,
+} from '@/components/dialogs/card/dialog-card'
+import { IosGroupToggle } from '@/components/shadcn/ui/themed/v2/ios-group-toggle'
 import {
   useCurrentGroups,
   useCurrentSheets,
@@ -43,6 +48,11 @@ import { newHeatMapPlot } from '../../history/history-provider/history-factories
 import { HistoryPlot } from '../../history/history-provider/history-types'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { MAX_CLUSTER_ITEMS, MAX_HEATMAP_DIM } from './heatmap-dialog'
+
+const TABS = [
+  { id: 'size', name: 'Size' },
+  { id: 'groups', name: 'Groups' },
+]
 
 export interface IProps extends IModalProps<HistoryPlot> {
   open?: boolean
@@ -63,6 +73,12 @@ export function DotPlotDialog({
 
   const { sheets } = useCurrentSheets()
   const { groups } = useCurrentGroups()
+
+  const { selectedTab, setTabs } = useTabs('matcalc-dot-plot')
+
+  useEffect(() => {
+    setTabs(TABS.map((t) => ({ ...t })))
+  }, [setTabs])
 
   useEffect(() => {
     // In cluster mode, force column clustering
@@ -320,37 +336,17 @@ export function DotPlotDialog({
         }
       }}
       bodyCls="gap-y-4"
-      className="h-128"
-      centerHeaderChildren={
-        <ToggleGroup
-          variant="ios"
-          size="sm"
-          value={[dotplotMode]}
-          onValueChange={(v) => setDotPlotMode(v[0] as DotPlotMode)}
-          //className="overflow-hidden rounded-theme flex flex-row border border-border"
-          //rounded="none"
-          className="rounded-lg gap-x-0.5 overflow-hidden text-xs bg-muted/50 p-0.5"
-        >
-          <GroupToggle
-            key="size"
-            value="size"
-            className="w-20"
-            //data-is-first={true}
-            // data-is-last={false}
-          >
-            Size
-          </GroupToggle>
+      className="h-105"
 
-          <GroupToggle
-            key="groups"
-            value="groups"
-            className="w-20"
-            //data-is-first={false}
-            //data-is-last={true}
-          >
-            Groups
-          </GroupToggle>
-        </ToggleGroup>
+      centerHeaderChildren={
+        <IosGroupToggle
+          w={4}
+          tabs={TABS}
+          value={[dotplotMode]}
+          onValueChange={(v) => {
+            setDotPlotMode(v[0] as DotPlotMode)
+          }}
+        />
       }
     >
       {error && (
@@ -360,91 +356,93 @@ export function DotPlotDialog({
         </VCenterRow>
       )}
 
-      <VScrollPanel className="grow h-72" innerCls="flex flex-col gap-y-4">
-        {dotplotMode === 'size' && (
-          <VCenterRow className="gap-x-1">
-            <CheckPropRow
-              title="Use original data for sizes"
-              checked={settings.dot.size.useOriginalValuesForSizes}
-              onCheckedChange={(v) => {
-                const newSettings = produce(settings, (draft) => {
-                  draft.dot.size.useOriginalValuesForSizes = v
-                })
+      {dotplotMode === 'size' && (
+        <VCenterRow className="gap-x-1">
+          <CheckPropRow
+            title="Use original data for sizes"
+            checked={settings.dot.size.useOriginalValuesForSizes}
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
+                draft.dot.size.useOriginalValuesForSizes = v
+              })
 
-                updateSettings(newSettings)
-              }}
-            />
-            <InfoHoverCard>
-              Label dot sizes with original data values. This is useful if you
-              do not want to interpret log values.
-            </InfoHoverCard>
-          </VCenterRow>
-        )}
+              updateSettings(newSettings)
+            }}
+          />
+          <InfoHoverCard>
+            Label dot sizes with original data values. This is useful if you do
+            not want to interpret log values.
+          </InfoHoverCard>
+        </VCenterRow>
+      )}
 
-        <Accordion
-          multiple={true}
-          defaultValue={['transform', 'cluster']}
-          variant="settings"
-        >
-          <SettingsAccordionItem
-            title="Transform"
-            description="Modify data before plotting for improved contrast."
-          >
-            <CheckPropRow
-              title="Log2(data + 1)"
-              checked={settings.heatmap.applyLog2}
-              onCheckedChange={(value) => {
-                const newSettings = produce(settings, (draft) => {
-                  draft.heatmap.applyLog2 = value
-                })
+      <DialogCard>
+        <DialogCardHeader title="Transform">
+          <DialogCardInfo>
+            Modify data before plotting for improved contrast.
+          </DialogCardInfo>
+        </DialogCardHeader>
 
-                updateSettings(newSettings)
-              }}
-            />
+        <DialogCardContent>
+          <CheckPropRow
+            title="Log2(data + 1)"
+            checked={settings.heatmap.applyLog2}
+            onCheckedChange={(value) => {
+              const newSettings = produce(settings, (draft) => {
+                draft.heatmap.applyLog2 = value
+              })
 
-            <CheckPropRow
-              title="Z-score rows"
-              checked={settings.heatmap.applyRowZscore}
-              onCheckedChange={(value) => {
-                const newSettings = produce(settings, (draft) => {
-                  draft.heatmap.applyRowZscore = value
-                })
+              updateSettings(newSettings)
+            }}
+          />
 
-                updateSettings(newSettings)
-              }}
-            />
-          </SettingsAccordionItem>
+          <CheckPropRow
+            title="Z-score rows"
+            checked={settings.heatmap.applyRowZscore}
+            onCheckedChange={(value) => {
+              const newSettings = produce(settings, (draft) => {
+                draft.heatmap.applyRowZscore = value
+              })
 
-          <SettingsAccordionItem
-            title="Cluster"
-            description="Apply hierarchical row/column clustering to data."
-          >
-            <CheckPropRow
-              title="Rows"
-              checked={settings.heatmap.clusterRows}
-              onCheckedChange={(value) => {
-                const newSettings = produce(settings, (draft) => {
-                  draft.heatmap.clusterRows = value
-                })
+              updateSettings(newSettings)
+            }}
+          />
+        </DialogCardContent>
+      </DialogCard>
 
-                updateSettings(newSettings)
-              }}
-            />
+      <DialogCard>
+        <DialogCardHeader title="Cluster">
+          <DialogCardInfo>
+            Apply hierarchical row/column clustering.
+          </DialogCardInfo>
+        </DialogCardHeader>
 
-            <CheckPropRow
-              title="Columns"
-              checked={settings.heatmap.clusterCols}
-              onCheckedChange={(value) => {
-                const newSettings = produce(settings, (draft) => {
-                  draft.heatmap.clusterCols = value
-                })
+        <DialogCardContent>
+          <CheckPropRow
+            title="Rows"
+            checked={settings.heatmap.clusterRows}
+            onCheckedChange={(value) => {
+              const newSettings = produce(settings, (draft) => {
+                draft.heatmap.clusterRows = value
+              })
 
-                updateSettings(newSettings)
-              }}
-            />
-          </SettingsAccordionItem>
-        </Accordion>
-      </VScrollPanel>
+              updateSettings(newSettings)
+            }}
+          />
+
+          <CheckPropRow
+            title="Columns"
+            checked={settings.heatmap.clusterCols}
+            onCheckedChange={(value) => {
+              const newSettings = produce(settings, (draft) => {
+                draft.heatmap.clusterCols = value
+              })
+
+              updateSettings(newSettings)
+            }}
+          />
+        </DialogCardContent>
+      </DialogCard>
     </OKCancelDialog>
   )
 }

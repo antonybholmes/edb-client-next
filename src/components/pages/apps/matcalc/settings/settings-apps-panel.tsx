@@ -1,14 +1,15 @@
-import { NumericalPropRow } from '@/dialogs/numerical-prop-row'
 import {
-  getAccordionId,
-  SettingsAccordionItem,
-} from '@/dialogs/settings/settings-dialog'
+  DialogCard,
+  DialogCardContent,
+  DialogCardHeader,
+} from '@/components/dialogs/card/dialog-card'
+import { BaseCol } from '@/components/layout/base-col'
+import { NumericalPropRow } from '@/dialogs/numerical-prop-row'
 import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { TextPropRow } from '@/dialogs/text-prop-row'
 import { TextareaPropRow } from '@/dialogs/textarea-prop-row'
 import { capitalCase } from '@/lib/text/capital-case'
 import { isStringArray, splitOnCapitalLetters } from '@/lib/text/text'
-import { Accordion } from '@/themed/v2/accordion'
 import { produce } from 'immer'
 import { useMatcalcSettings } from './matcalc-settings'
 
@@ -24,28 +25,24 @@ export function SettingsAppsPanel() {
   )
 
   return (
-    <>
-      <Accordion
-        defaultValue={friendlyAppNames.map((n) => getAccordionId(n))}
-        multiple={true}
-        variant="settings"
-        className="w-full"
-      >
-        {friendlyAppNames.map((appName, appI) => {
-          const appKey = appKeys[appI]!
+    <BaseCol className="gap-y-3">
+      {friendlyAppNames.map((appName, appI) => {
+        const appKey = appKeys[appI]!
 
-          const appSettings = settings.apps[appKey]!
+        const appSettings = settings.apps[appKey]!
 
-          const settingKeys = Object.keys(
-            appSettings
-          ).sort() as (keyof typeof appSettings)[]
+        const settingKeys = Object.keys(
+          appSettings
+        ).sort() as (keyof typeof appSettings)[]
 
-          const friendlySettingsNames = settingKeys.map((k) =>
-            capitalCase(splitOnCapitalLetters(k))
-          )
+        const friendlySettingsNames = settingKeys.map((k) =>
+          capitalCase(splitOnCapitalLetters(k))
+        )
 
-          return (
-            <SettingsAccordionItem title={appName} key={appName}>
+        return (
+          <DialogCard key={appName}>
+            <DialogCardHeader title={appName}></DialogCardHeader>
+            <DialogCardContent>
               {friendlySettingsNames.map((settingName, settingI) => {
                 const settingKey = settingKeys[settingI]!
 
@@ -127,10 +124,10 @@ export function SettingsAppsPanel() {
                   return <span key={settingName}>{settingName}</span>
                 }
               })}
-            </SettingsAccordionItem>
-          )
-        })}
-      </Accordion>
-    </>
+            </DialogCardContent>
+          </DialogCard>
+        )
+      })}
+    </BaseCol>
   )
 }

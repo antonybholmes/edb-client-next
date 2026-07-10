@@ -2158,6 +2158,10 @@
         {
           "msg": "Added ios toggles with animation",
           "date": "2026-07-09T03:15:01.404Z"
+        },
+        {
+          "msg": "Added new card layout for dialogs which looks nicer than the settings accordion.",
+          "date": "2026-07-10T15:54:46.353Z"
         }
       ]
     },

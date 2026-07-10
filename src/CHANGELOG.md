@@ -4,6 +4,7 @@
 
 ### Added
 
+- Added new card layout for dialogs which looks nicer than the settings accordion.
 - Added ios toggles with animation.
 
 ### Changed

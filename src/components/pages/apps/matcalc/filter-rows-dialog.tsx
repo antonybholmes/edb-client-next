@@ -1,7 +1,7 @@
 import { HCenterRow } from '@/components/layout/h-center-row'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
+import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import { IosTabs } from '@/components/tabs/ios-tabs'
-import { TabIndicatorProvider } from '@/components/tabs/tab-indicator-provider'
 import { useTabs } from '@/components/tabs/tab-provider'
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
@@ -170,14 +170,17 @@ export function XInYPanel({
   )
 }
 
-export function FilterRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
-  const { selectedTab, setTabs } = useTabs('matcalc-top-rows')
+const TABS_ID = 'matcalc-filter-rows'
 
-  const ref = useRef<IRef | null>(null)
+export function FilterRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
+  const { selectedTab, setTabs } = useTabs(TABS_ID)
 
   useEffect(() => {
     setTabs(TABS.map((t) => ({ ...t })))
   }, [setTabs])
+
+  const topRowRef = useRef<IRef | null>(null)
+  const xInYRef = useRef<IRef | null>(null)
 
   console.log('FilterRowsDialog selectedTab', selectedTab)
 
@@ -186,24 +189,26 @@ export function FilterRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
       title={TABS.find((t) => t.id === selectedTab?.id)?.name}
       onResponse={(r) => {
         if (r === TEXT_OK) {
-          ref.current?.applyFilter()
+          if (selectedTab?.id === 'top-rows') {
+            topRowRef.current?.applyFilter()
+          } else {
+            xInYRef.current?.applyFilter()
+          }
         } else {
           onResponse?.(TEXT_CANCEL)
         }
       }}
-      centerHeaderChildren={
-        <TabIndicatorProvider>
-          <IosTabs id="matcalc-top-rows" />
-        </TabIndicatorProvider>
-      }
+      centerHeaderChildren={<IosTabs id={TABS_ID} />}
       h="h-56"
     >
-      {selectedTab?.id === 'top-rows' && (
-        <TopRowsPanel ref={ref} onResponse={onResponse} />
-      )}
-      {selectedTab?.id === 'x-in-y' && (
-        <XInYPanel ref={ref} onResponse={onResponse} />
-      )}
+      <Tabs value={selectedTab?.id ?? ''} onValueChange={() => {}}>
+        <TabsContent value="top-rows">
+          <TopRowsPanel ref={topRowRef} onResponse={onResponse} />
+        </TabsContent>
+        <TabsContent value="x-in-y">
+          <XInYPanel ref={xInYRef} onResponse={onResponse} />
+        </TabsContent>
+      </Tabs>
     </OKCancelDialog>
   )
 }

@@ -4,7 +4,10 @@ import {
   ToggleGroup,
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { TabIndicatorIosSelected } from '@/components/tabs/tab-indicator-ios-selected'
-import { useTabIndicators } from '@/components/tabs/tab-indicator-provider'
+import {
+  TabIndicatorProvider,
+  useTabIndicators,
+} from '@/components/tabs/tab-indicator-provider'
 import { getTabName, ITab } from '@/components/tabs/tab-provider'
 import { ComponentProps, useEffect, useMemo, useRef } from 'react'
 
@@ -16,7 +19,7 @@ interface IProps extends ComponentProps<typeof ToggleGroup> {
   tabs: ITab[]
 }
 
-export function IosGroupToggle({ w, value, tabs, ...props }: IProps) {
+function _IosGroupToggle({ w, value, tabs, ...props }: IProps) {
   const { setSelectedPosition, selectedPosition } = useTabIndicators()
 
   const currentValue = useRef<string>(null)
@@ -74,11 +77,11 @@ export function IosGroupToggle({ w, value, tabs, ...props }: IProps) {
   }, [v])
 
   return (
-    <VCenterRow className="rounded-full p-0.5 overflow-hidden bg-muted/40 border border-border/30 text-xs relative">
+    <VCenterRow className="rounded-full p-0.5 overflow-hidden bg-muted/40 border border-border/20 text-xs relative">
       <ToggleGroup
         value={value}
         {...props}
-        size="sm"
+        size="xs"
         className="rounded-full overflow-hidden gap-x-px relative"
         variant="ios"
       >
@@ -120,5 +123,13 @@ export function IosGroupToggle({ w, value, tabs, ...props }: IProps) {
         <TabIndicatorIosSelected />
       </ToggleGroup>
     </VCenterRow>
+  )
+}
+
+export function IosGroupToggle(props: ComponentProps<typeof _IosGroupToggle>) {
+  return (
+    <TabIndicatorProvider>
+      <_IosGroupToggle {...props} />
+    </TabIndicatorProvider>
   )
 }

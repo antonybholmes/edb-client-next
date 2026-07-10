@@ -1,11 +1,13 @@
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { cn } from '@/lib/shadcn-utils'
 import { Slider as SliderPrimitive } from '@base-ui/react/slider'
-import { useRef, useState, type ComponentProps } from 'react'
+import { gsap } from 'gsap'
+import { useEffect, useRef, useState, type ComponentProps } from 'react'
 
 const THUMB_CLS = cn(
-  'h-4 w-5 aspect-square shrink-0 rounded-full group-hover:bg-background/50 trans-color border border-border/70 group-hover:border-border trans-color',
-  'data-[focus=true]:border-border bg-background select-none disabled:pointer-events-none disabled:opacity-50 cursor-pointer'
+  'h-4 w-5 shrink-0 rounded-full',
+  'border border-border/80 bg-background select-none',
+  'disabled:pointer-events-none disabled:opacity-50 cursor-pointer'
 )
 
 export function Slider({
@@ -17,26 +19,29 @@ export function Slider({
 
   const ref = useRef<HTMLDivElement | null>(null)
 
-  // useEffect(() => {
-  //   if (!ref.current) {
-  //     return
-  //   }
+  useEffect(() => {
+    if (!ref.current) {
+      return
+    }
 
-  //   gsap.to(ref.current, {
-  //     scale: hover ? 1.2 : 1,
-  //     ease: 'power2.out',
-  //     duration: 0.3,
-  //   })
-  // }, [hover])
+    gsap.to(ref.current, {
+      scale: hover ? 1.2 : 1,
+      opacity: hover ? 0.6 : 1,
+      ease: 'power2.out',
+      duration: 0.3,
+    })
+  }, [hover])
 
   return (
     <SliderPrimitive.Root
-      thumbAlignment="edge"
+      //thumbAlignment="edge"
       {...props}
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
+      // allow space on right side of slider for thumb to move fully to the end without being cut off
+      className="px-3"
     >
       <SliderPrimitive.Control
         className={cn(
@@ -46,7 +51,7 @@ export function Slider({
       >
         <SliderPrimitive.Track
           data-focus={focus}
-          className="relative h-1 grow rounded-full bg-muted data-[focus=true]:bg-border group-hover:bg-border trans-color"
+          className="relative h-1 grow rounded-full bg-muted/70 data-[focus=true]:bg-muted group-hover:bg-muted trans-color"
         >
           <SliderPrimitive.Indicator
             data-focus={focus}
@@ -55,7 +60,6 @@ export function Slider({
 
           <SliderPrimitive.Thumb
             ref={ref}
-
             data-focus={focus}
             className={THUMB_CLS}
             aria-label="Slider control"

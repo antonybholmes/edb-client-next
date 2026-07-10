@@ -147,14 +147,12 @@ export function TabsTrigger({
 }
 
 export function TabsContent({
-  ref,
   orientation = 'v',
   className,
   ...props
 }: ComponentProps<typeof TabsPrimitive.Panel> & { orientation?: 'v' | 'h' }) {
   return (
     <TabsPrimitive.Panel
-      ref={ref}
       className={cn(
         'outline-none grow flex w-full h-full',
         orientation === 'v' ? 'flex-col' : 'flex-row',

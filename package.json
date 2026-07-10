@@ -16,7 +16,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@auth0/auth0-react": "^2.20.0",
+    "@auth0/auth0-react": "^2.21.0",
     "@auth0/nextjs-auth0": "^4.25.0",
     "@base-ui/react": "^1.6.0",
     "@clerk/react": "^6.12.2",

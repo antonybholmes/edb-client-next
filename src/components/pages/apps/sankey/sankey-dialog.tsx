@@ -1,11 +1,14 @@
 import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
+import {
+  DialogCard,
+  DialogCardContent,
+  DialogCardHeader,
+} from '@/components/dialogs/card/dialog-card'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { PropRow } from '@/components/dialogs/prop-row'
-import { SettingsAccordionItem } from '@/components/dialogs/settings/settings-dialog'
-import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { produce } from 'immer'
 import { useState } from 'react'
@@ -88,28 +91,12 @@ export function SankeyDialog({
           onResponse?.(r, undefined)
         }
       }}
-      bodyCls="gap-y-4"
+      bodyCls="gap-y-3"
     >
-      <NumericalPropRow
-        title="Node gap"
-        limit={[0, 1000]}
-        value={settings.nodes.gap}
-        onNumChange={(value) => {
-          updateSettings(
-            produce(settings, (draft) => {
-              draft.nodes.gap = value
-            })
-          )
-        }}
-      />
+      <DialogCard>
+        <DialogCardHeader title="Required headings"></DialogCardHeader>
 
-      <ScrollAccordion
-        value={accordionValues}
-        onValueChange={(v) => setAccordionValues(v as string[])}
-        variant="settings"
-        className="h-64"
-      >
-        <SettingsAccordionItem title={`Required headings`} value="required">
+        <DialogCardContent>
           <PropRow title="Source">
             <DFColSelect
               df={sheet as BaseDataFrame}
@@ -145,8 +132,13 @@ export function SankeyDialog({
               onChange={({ value }) => setValueCol(value)}
             />
           </PropRow>
-        </SettingsAccordionItem>
-        <SettingsAccordionItem title={`Optional headings`} value="optional">
+        </DialogCardContent>
+      </DialogCard>
+
+      <DialogCard>
+        <DialogCardHeader title="Optional headings"></DialogCardHeader>
+
+        <DialogCardContent>
           <PropRow title="Source color">
             <DFColSelect
               df={sheet as BaseDataFrame}
@@ -168,8 +160,21 @@ export function SankeyDialog({
               onChange={({ value }) => setLinkColorCol(value)}
             />
           </PropRow>
-        </SettingsAccordionItem>
-      </ScrollAccordion>
+        </DialogCardContent>
+      </DialogCard>
+
+      <NumericalPropRow
+        title="Node gap"
+        limit={[0, 1000]}
+        value={settings.nodes.gap}
+        onNumChange={(value) => {
+          updateSettings(
+            produce(settings, (draft) => {
+              draft.nodes.gap = value
+            })
+          )
+        }}
+      />
     </OKCancelDialog>
   )
 }

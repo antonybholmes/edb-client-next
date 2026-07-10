@@ -16,8 +16,8 @@ import {
   type ReactNode,
 } from 'react'
 
-export const ACCORDION_PANEL_CLS = "h-(--accordion-panel-height) overflow-hidden transition-[height] duration-300 ease-[ease-in-out] data-ending-style:h-0 data-starting-style:h-0"
-
+export const ACCORDION_PANEL_CLS =
+  'h-(--accordion-panel-height) overflow-hidden transition-[height] duration-300 ease-[ease-in-out] data-ending-style:h-0 data-starting-style:h-0'
 
 export const accordionVariants = cva('flex flex-col w-full', {
   variants: {
@@ -265,14 +265,13 @@ export const accordionContentVariants = cva('flex flex-col', {
     variant: {
       default: 'py-1 gap-y-1',
       settings: 'gap-y-2 pb-2',
-      sidebar: 'gap-y-1 p-1 pl-3 pr-1.5',
+      sidebar: 'gap-y-1 p-1 pl-2.5 px-1.5',
     },
   },
   defaultVariants: {
     variant: 'sidebar',
   },
 })
-
 
 export function AccordionContent({
   ref,
@@ -288,7 +287,11 @@ export function AccordionContent({
     innerStyle?: CSSProperties
   }) {
   return (
-    <AccordionPrimitive.Panel ref={ref} className={cn(ACCORDION_PANEL_CLS, className)} {...props}>
+    <AccordionPrimitive.Panel
+      ref={ref}
+      className={cn(ACCORDION_PANEL_CLS, className)}
+      {...props}
+    >
       <div
         className={accordionContentVariants({
           variant,

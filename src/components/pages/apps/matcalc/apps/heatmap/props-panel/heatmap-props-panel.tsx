@@ -57,7 +57,7 @@ export function HeatmapPropsPanel() {
 
   return (
     <PropsPanel className="pr-1 gap-y-2">
-      <SideBarHeader>
+      <SideBarHeader className="justify-end">
         <LinkButton
           onClick={() => {
             openDialog({
@@ -82,7 +82,6 @@ export function HeatmapPropsPanel() {
       <ScrollAccordion
         value={openTabs}
         onValueChange={(v) => setOpenTabs(v as string[])}
-        //multiple={false}
       >
         <PlotSettingsPanel />
         <CellSettingsPanel />

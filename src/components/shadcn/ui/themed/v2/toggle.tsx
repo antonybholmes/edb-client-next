@@ -1,8 +1,8 @@
 import { cn } from '@/lib/shadcn-utils'
 import {
-    CENTERED_ROW_CLS,
-    FOCUS_INSET_RING_CLS,
-    ICON_BUTTON_CLS,
+  CENTERED_ROW_CLS,
+  FOCUS_INSET_RING_CLS,
+  ICON_BUTTON_CLS,
 } from '@/theme'
 import { Toggle as TogglePrimitive } from '@base-ui/react/toggle'
 import { cva, type VariantProps } from 'class-variance-authority'
@@ -31,6 +31,7 @@ export const toggleVariants = cva(TOGGLE_CLS, {
       ios: 'data-pressed:font-semibold',
     },
     size: {
+      xs: 'h-6',
       sm: 'h-7',
       md: 'h-button-md',
       lg: 'h-9',

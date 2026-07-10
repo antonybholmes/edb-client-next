@@ -13,7 +13,6 @@ import {
 
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
-import { SettingsAccordionItem } from '@/dialogs/settings/settings-dialog'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import {
   kmeans,
@@ -25,10 +24,16 @@ import {
 } from '@/lib/dataframe/dataframe-utils'
 import { argsort } from '@/lib/math/argsort'
 import { NumericalInput } from '@/themed/numerical-input'
-import { ScrollAccordion } from '@/themed/v2/accordion'
 import { Checkbox } from '@/themed/v2/check-box'
 import { produce } from 'immer'
 
+import {
+  DialogCard,
+  DialogCardContent,
+  DialogCardHeader,
+  DialogCardInfo,
+} from '@/components/dialogs/card/dialog-card'
+import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
@@ -165,14 +170,16 @@ export function KmeansDialog({
       }}
       //className="w-3/4 md:w-1/2 lg:w-1/3 3xl:w-1/4"
       //contentVariant="glass"
+      bodyCls="gap-y-3"
     >
       {error && <span className="text-destructive">{error}</span>}
-      <ScrollAccordion
-        value={['filter', 'transform', 'cluster']}
-        variant="settings"
-        className="h-72"
-      >
-        <SettingsAccordionItem title="Filter">
+
+      <DialogCard>
+        <DialogCardHeader title="Filter">
+          <DialogCardInfo>Filter table before clustering.</DialogCardInfo>
+        </DialogCardHeader>
+
+        <DialogCardContent>
           <VCenterRow className="gap-x-2">
             <Checkbox
               checked={settings.apps.kmeans.filterRows}
@@ -218,9 +225,15 @@ export function KmeansDialog({
               <SelectItem value="Median">Median</SelectItem>
             </SelectList>
           </VCenterRow>
-        </SettingsAccordionItem>
+        </DialogCardContent>
 
-        <SettingsAccordionItem title="Transform">
+        <MenuSeparator />
+
+        <DialogCardHeader title="Transform">
+          <DialogCardInfo>Transform table before clustering.</DialogCardInfo>
+        </DialogCardHeader>
+
+        <DialogCardContent>
           <CheckPropRow
             title="Log2(data+1)"
             checked={settings.apps.kmeans.applyLog2}
@@ -244,9 +257,13 @@ export function KmeansDialog({
               updateSettings(newSettings)
             }}
           />
-        </SettingsAccordionItem>
+        </DialogCardContent>
+      </DialogCard>
 
-        <SettingsAccordionItem title="Cluster">
+      <DialogCard>
+        <DialogCardHeader title="Cluster"></DialogCardHeader>
+
+        <DialogCardContent>
           <PropRow title="K">
             <NumericalInput
               value={settings.apps.kmeans.clusters}
@@ -331,8 +348,8 @@ export function KmeansDialog({
               updateSettings(newSettings)
             }}
           />
-        </SettingsAccordionItem>
-      </ScrollAccordion>
+        </DialogCardContent>
+      </DialogCard>
     </OKCancelDialog>
   )
 }
