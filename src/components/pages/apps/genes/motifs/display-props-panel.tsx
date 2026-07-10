@@ -163,7 +163,7 @@ export function DisplayPropsPanel() {
         <AccordionItem value="colors">
           <AccordionTrigger>Base Colors</AccordionTrigger>
           <AccordionContent>
-            <VCenterRow className="gap-x-3">
+            <VCenterRow className="gap-x-3 justify-center">
               {BASE_IDS.map((base) => (
                 <FillDropdownMenu
                   key={base}
@@ -195,7 +195,7 @@ export function DisplayPropsPanel() {
                   //allowAlpha={true}
                   className={cn(PILL_BUTTON_CLS, FOCUS_RING_CLS)}
                 >
-                  <DropdownMenuTrigger className="bg-background rounded-full aspect-square w-10 flex flex-row justify-center items-center border border-border/30 shadow-lg trans-color">
+                  <DropdownMenuTrigger className="bg-background rounded-full aspect-square w-10 flex flex-row justify-center items-center border border-border/50 trans-color">
                     <span
                       className="font-bold text-xl"
                       style={{

@@ -5,6 +5,7 @@ pnpm install --no-frozen-lockfile
 pnpm clean --lockfile
 pnpm install --no-frozen-lockfile
 
+# needed until nextjs supports typescript 7
 pnpm install typescript@6
 
 #pnpm install tailwindcss@3

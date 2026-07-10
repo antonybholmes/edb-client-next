@@ -79,7 +79,7 @@ export function Autocomplete({
       <VCenterRow
         data-open={_isOpen}
         data-has-right-children={hasRightChildren}
-        className={`z-20 data-[open=true]:z-40 ml-3 mr-3 data-[has-right-children=true]:mr-2 h-10 border-b gap-x-1
+        className={`z-20 data-[open=true]:z-40 ml-3 mr-3 data-[has-right-children=true]:mr-2 h-10 border-b gap-x-2
           data-[open=true]:border-border/50 
           data-[open=false]:border-transparent`}
         onFocus={() => {
@@ -104,7 +104,7 @@ export function Autocomplete({
         />
 
         {rightChildren && (
-          <VCenterRow className="gap-x-1">
+          <VCenterRow className="gap-x-2">
             <ToolbarSeparator />
             {rightChildren}
           </VCenterRow>
