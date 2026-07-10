@@ -96,7 +96,7 @@ export const dropdownContentVariants = cva(DROPDOWN_MENU_CONTENT_CLS, {
   variants: {
     variant: {
       none: 'bg-background',
-      default: 'bg-background px-1 py-1.5 min-w-50',
+      default: 'bg-background p-1.5 min-w-50',
       content: 'bg-background p-2',
       header: 'bg-background p-4',
       glass: cn(GLASS_CLS, 'p-2'),
@@ -148,24 +148,31 @@ export const dropdownMenuItemVariants = cva(DROPDOWN_MENU_ITEM_CLS, {
       'app-theme': APP_ACCENT_MENU_CLS,
     },
     rounded: {
-      default: 'rounded-theme',
+      sm: 'rounded-sm',
+      theme: 'rounded-theme',
     },
     defaultVariants: {
       variant: 'default',
-      rounded: 'default',
+      rounded: 'sm',
     },
   },
 })
 
 export function BaseDropdownMenuItem({
   ref,
-  variant = 'default',
-  rounded = 'default',
+  variant,
+  rounded = 'theme',
   className,
   children,
   ...props
 }: ComponentProps<typeof DropdownMenuPrimitiveItem> &
   VariantProps<typeof dropdownMenuItemVariants>) {
+  console.log(
+    'BaseDropdownMenuItem render',
+    rounded,
+    dropdownMenuItemVariants({ variant, rounded, className })
+  )
+
   return (
     <DropdownMenuPrimitiveItem
       ref={ref}
@@ -199,6 +206,7 @@ export function DropdownMenuItemContent({ children }: IChildrenProps) {
 export function DropdownMenuItem({
   ref,
   variant = 'app-theme',
+  rounded = 'theme',
   className,
   children,
   ...props
@@ -208,6 +216,7 @@ export function DropdownMenuItem({
     <BaseDropdownMenuItem
       ref={ref}
       variant={variant}
+      rounded={rounded}
       className={cn('flex-row', className)}
       {...props}
     >
@@ -219,8 +228,8 @@ export function DropdownMenuItem({
 export function DropdownMenuAnchorItem({
   ref,
   href,
-  variant = 'theme',
-  rounded = 'default',
+  variant,
+  rounded = 'theme',
   className,
   children,
   ...props
@@ -253,8 +262,8 @@ export function DropdownMenuAnchorItem({
 export function DropdownMenuCheckboxItem({
   ref,
   variant = 'app-theme',
-  rounded = 'default',
-  className = '',
+  rounded = 'theme',
+  className,
   children,
   checked = false,
   ...props
@@ -275,10 +284,6 @@ export function DropdownMenuCheckboxItem({
           render={<Check size={16} strokeWidth={2} />}
         />
       </span>
-
-      {/* <span className={DROPDOWN_MENU_ICON_CONTAINER_CLS}>
-        {c.length > 1 && c[0]}
-      </span> */}
 
       <span className="grow">{c[0]}</span>
 
@@ -401,7 +406,7 @@ DropdownMenuShortcut.displayName = 'DropdownMenuShortcut'
 export function DropdownMenuSubTrigger({
   ref,
   variant = 'app-theme',
-  rounded = 'default',
+  rounded = 'theme',
   className,
   inset,
   children,

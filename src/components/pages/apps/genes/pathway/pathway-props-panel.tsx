@@ -17,8 +17,8 @@ import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
 import { useEffect, useMemo, useState } from 'react'
 
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { SelectAll } from '@/components/select-all'
+import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import {
   usePathways,
   type ICollectionInfo,
@@ -50,7 +50,7 @@ export function PathwayPropsPanel() {
 
   return (
     <PropsPanel className="gap-y-2 pr-1 text-xs">
-      <VCenterRow className="gap-x-2">
+      <SideBarHeader className="gap-x-2">
         <span>Genes</span>
 
         <NumericalInput
@@ -64,10 +64,10 @@ export function PathwayPropsPanel() {
         <InfoHoverCard>
           The background set of genes used for the hypergeometric test.
         </InfoHoverCard>
-      </VCenterRow>
+      </SideBarHeader>
 
       <SelectAll
-        className="pl-1.5"
+        className="pl-2.5"
         setSelectAll={(v) => {
           setSelectAllCollections(v)
         }}

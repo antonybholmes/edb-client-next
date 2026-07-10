@@ -31,10 +31,7 @@ import {
   openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { VScrollPanel } from '@/components/v-scroll-panel'
@@ -53,11 +50,11 @@ function SortableGeneElem({ color }: IGeneElemProps) {
   const { settings, updateSettings } = useVariantSettings()
   return (
     <SortableItem key={color.id} id={color.id}>
-      <ColorPickerButton
-        className={SIMPLE_COLOR_EXT_CLS}
+      <FillButton
         colors={[
           {
             color: color.color,
+            allowNoColor: false,
             onColorChange: ({ color: newColor }) => {
               updateSettings(
                 produce(settings, (draft) => {

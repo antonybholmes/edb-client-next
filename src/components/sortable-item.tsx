@@ -100,7 +100,7 @@ export function SortableItem<T extends ElementType = 'li'>({
     >
       <VCenterRow
         className={cn(
-          'gap-x-2 pl-1 pr-1.5 py-1 h-full hover:bg-muted/30 grow rounded-theme min-h-10',
+          'gap-x-1 pl-1 pr-1.5 py-1 h-full hover:bg-muted/30 grow rounded-theme min-h-10',
           innerCls
         )}
       >

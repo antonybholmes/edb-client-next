@@ -8,10 +8,10 @@ import * as ResizablePrimitive from 'react-resizable-panels'
 //   'group flex shrink-0 grow-0 flex-row items-center justify-center outline-hidden group'
 
 const THIN_H_RESIZE_HANDLE_CLS =
-  'group w-2 flex shrink-0 grow-0 cursor-ew-resize flex-row items-center justify-center outline-hidden relative'
+  'group w-3 flex shrink-0 grow-0 cursor-ew-resize flex-row items-center justify-center outline-hidden relative'
 
 const THIN_V_RESIZE_HANDLE_CLS =
-  'group flex shrink-0 grow-0 flex-row items-center justify-center outline-hidden h-2 group relative cursor-ns-resize'
+  'group flex shrink-0 grow-0 flex-row items-center justify-center outline-hidden h-3 group relative cursor-ns-resize'
 
 export const INNER_HANDLE_CLS = cn(
   'grow items-center justify-center rounded-full bg-ring trans-opacity pointer-events-none',

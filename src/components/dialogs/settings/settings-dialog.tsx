@@ -168,7 +168,7 @@ export function SettingsDialog({
         <Tabs
           value={selectedTab?.id ?? ''}
           orientation="vertical"
-          className="flex flex-col grow text-xs px-2"
+          className="flex flex-col grow text-xs"
         >
           {tabs.map((tab, ti) => {
             return (

@@ -38,7 +38,7 @@ export function PileupPropsPanel({ ref }: IProps) {
 
   return (
     <PropsPanel ref={ref} className="pr-2">
-      <SideBarHeader>
+      <SideBarHeader className="justify-end">
         <LinkButton
           onClick={() => {
             openDialog({

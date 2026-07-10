@@ -462,14 +462,7 @@ export function VariantsPage() {
                       </IconButton>
                     </BaseCol>
 
-                    <TabbedDataFrames
-                      key="tabbed-data-frames"
-                      //selectedSheet={sheet?.id ?? ''}
-                      //dataFrames=sheets.map((s) => s as AnnotationDataFrame)}
-                      // onTabChange={(selectedTab) => {
-                      //   goto({ file, sheet: selectedTab.tab })
-                      // }}
-                    />
+                    <TabbedDataFrames key="tabbed-data-frames" />
                   </BaseRow>
                 </ResizablePanel>
               </ResizablePanelGroup>
@@ -481,7 +474,7 @@ export function VariantsPage() {
           </ResizableSidebar>
         </HistoryLayout>
         <FooterPortal className="justify-between">
-          <> </>
+          <></>
           <></>
           <ZoomSlider />
         </FooterPortal>

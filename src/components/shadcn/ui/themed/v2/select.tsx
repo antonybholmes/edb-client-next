@@ -223,7 +223,7 @@ export function SelectLabel({
 export function SelectItem({
   ref,
   variant = 'app-theme',
-  rounded = 'default',
+  rounded = 'theme',
   className,
   children,
   ...props

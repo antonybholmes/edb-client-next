@@ -45,7 +45,7 @@ export function DialogCardContent({
 export function DialogCard({ className, children, ...props }: IDivProps) {
   return (
     <BaseCol
-      className={cn('gap-y-2 bg-muted/30 rounded-xl p-3', className)}
+      className={cn('gap-y-2 bg-muted/25 rounded-xl p-3', className)}
       {...props}
     >
       {children}

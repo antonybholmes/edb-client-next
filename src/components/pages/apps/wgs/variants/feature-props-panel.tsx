@@ -47,7 +47,7 @@ export function FeaturePropsPanel() {
           </TabsTrigger>
         </TabsList> */}
       </Tabs>
-      <OutlookTabs id="wgs-variants-feature-props-panel" />
+      <OutlookTabs id="wgs-variants-feature-props-panel" className="pb-1" />
     </BaseCol>
   )
 }

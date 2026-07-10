@@ -127,7 +127,7 @@ export const THEME_MENU_CLS = cn(
 
 export const APP_ACCENT_MENU_CLS = cn(
   BASE_THEME_MENU_CLS,
-  'focus:bg-app-theme/30 hover:bg-app-theme/30 data-[popup-open]:bg-app-theme/30'
+  'focus:bg-app-theme/25 hover:bg-app-theme/25 data-[popup-open]:bg-app-theme/25'
 )
 
 export const DROPDOWN_MENU_ICON_CONTAINER_CLS =

@@ -151,9 +151,9 @@
     "color": "#6495ED",
     "version": "36.2.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-03T14:46:20.330Z",
-    "hash": "9b1ccac925bbc5a435c1af99c06c0cd9480a91e0dc3db0ec30f15126d1c5556a",
-    "build": 886
+    "modified": "2026-07-10T22:53:15.526Z",
+    "hash": "81e9a4e135a5cafb5322f735d008843e55c1fab6855c85f0db5228228a01afd8",
+    "build": 888
   },
   {
     "name": "Rev Comp",
@@ -220,9 +220,9 @@
     "color": "#FA8072",
     "version": "26.6.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-08T22:14:20.860Z",
-    "hash": "30d77c53e8233cf27e7ae6b92f64a138828bf76dad38c9fd69972d58a23b2e71",
-    "build": 1002
+    "modified": "2026-07-10T22:53:15.530Z",
+    "hash": "aa21defeb45d67ed6dd14b0a041b3c5916974e7d494dcefa05813fd29d299cf1",
+    "build": 1004
   },
   {
     "name": "Venn",
