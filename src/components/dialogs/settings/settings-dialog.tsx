@@ -7,7 +7,6 @@ import {
   AccordionTrigger,
 } from '@/themed/v2/accordion'
 
-// import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { BaseCol } from '@/components/layout/base-col'
 import { OutlookTabs } from '@/components/pages/apps/matcalc/data/outlook-tabs'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
@@ -18,7 +17,7 @@ import { getTabName, renderTab, useTabs } from '../../tabs/tab-provider'
 import { GlassSideDialog } from '../glass-side-dialog'
 import type { IOKCancelDialogProps } from '../ok-cancel-dialog'
 import { useSettingsTabs } from './setting-tabs-store'
-import { SettingsAccordionPanel } from './settings-accordion-panel'
+import { SettingsCardsPanel } from './settings-general-panel'
 
 export function getAccordionId(name: string): string {
   return name.toLowerCase().replaceAll(' ', '-')
@@ -88,37 +87,12 @@ export function SideAccordionItem({
   )
 }
 
-// export function SettingsDialogBlock({
-//   title,
-//   children,
-// }: IChildrenProps & { title: string }) {
-//   return (
-//     <BaseCol
-//       className="mx-2 py-6 gap-y-4 border-b border-border/50"
-//       key={title}
-//     >
-//       <h2 className="font-semibold text-sm">{title}</h2>
-//       <BaseCol className="gap-y-0.5">{children}</BaseCol>
-//     </BaseCol>
-//   )
-// }
-
 export function SettingsDialog({
   onOpenChange = () => {},
   onResponse = () => {},
 }: IOKCancelDialogProps) {
   const { tabs } = useSettingsTabs()
   const { selectedTab, setTabs } = useTabs('settings-dialog-tabs')
-
-  // let _tabs: ITab[] = useMemo(
-  //   () => [
-  //     ...tabs,
-  //     // general is reserved for the default tab,
-  //     // so we move it to the top and merge its children with the other tabs
-  //     //...tabs.filter((tab) => getTabName(tab).toLowerCase() !== 'general'),
-  //   ],
-  //   [tabs]
-  // )
 
   useEffect(() => {
     setTabs(tabs)
@@ -134,32 +108,6 @@ export function SettingsDialog({
       onResponse={onResponse}
       overlayColor="trans"
     >
-      {/* <Tabs
-        value={selectedTab?.id ?? ''}
-        onValueChange={(v) => {
-          setDefaultTab(v)
-        }}
-        orientation="vertical"
-        className="flex flex-col grow text-xs pr-1"
-      >
-        <TabsList className="py-1 gap-y-px">
-          {_tabs.map((tab, ti) => {
-            const name = getTabName(tab)
-            return (
-              <TabsTrigger
-                value={name}
-                key={ti}
-                className="grow"
-                variant="sidebar"
-                rounded="theme"
-              >
-                {name}
-              </TabsTrigger>
-            )
-          })}
-        </TabsList>
-      </Tabs> */}
-
       <BaseCol className="p-3 py-4">
         <OutlookTabs id="settings-dialog-tabs" className="text-xs" />
       </BaseCol>
@@ -175,7 +123,7 @@ export function SettingsDialog({
               <TabsContent value={tab.id} key={ti}>
                 {renderTab(tab)}
                 {tab.children && tab.children.length > 0 && (
-                  <SettingsAccordionPanel tabs={tab.children} />
+                  <SettingsCardsPanel tabs={tab.children} />
                 )}
               </TabsContent>
             )

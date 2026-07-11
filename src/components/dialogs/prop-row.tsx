@@ -4,9 +4,9 @@ import type { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
 import { H2_CLS } from '@/theme'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { BaseCol } from '../layout/base-col'
 import { BaseRow } from '../layout/base-row'
 import { VCenterRow } from '../layout/v-center-row'
-import { InfoHoverCard } from '../shadcn/ui/themed/v2/hover-card'
 
 export const PROPS_TITLE_CLS = cn(H2_CLS, 'py-2')
 
@@ -71,7 +71,7 @@ interface IProps
 
 export function PropRow({
   title,
-  labelW = 'auto',
+
   align,
   gap,
   contentCls = 'gap-x-1.5',
@@ -83,14 +83,18 @@ export function PropRow({
   children,
 }: IProps) {
   return (
-    <BaseRow className={propRowVariants({ align, gap, className })}>
+    <BaseRow
+      className={propRowVariants({
+        align,
+        gap,
+        className: cn(info ? 'items-start pb-1' : 'items-center', className),
+      })}
+    >
       {side === 'right' && (
-        <VCenterRow className="gap-x-1.5">
-          <span className={labelVariants({ labelW, h })} title={tooltip}>
-            {title && title}
-          </span>
-          {info && <InfoHoverCard>{info}</InfoHoverCard>}
-        </VCenterRow>
+        <BaseCol className="gap-y-px max-w-2/3">
+          <span className={cn('truncate shrink-0 font-medium')}>{title}</span>
+          {info && <span className="text-xs opacity-60">{info}</span>}
+        </BaseCol>
       )}
       <VCenterRow
         className={cn(
@@ -101,9 +105,9 @@ export function PropRow({
       >
         {children}
       </VCenterRow>
-      {side === 'left' && (
+      {/* {side === 'left' && (
         <span className={labelVariants({ labelW })}>{title && title}</span>
-      )}
+      )} */}
     </BaseRow>
   )
 }

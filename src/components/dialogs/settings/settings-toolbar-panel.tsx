@@ -3,6 +3,7 @@ import {
   useEdbSettings,
   type ToolbarStyle,
 } from '@/components/edb/edb-settings'
+import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { capitalCase } from '@/lib/text/capital-case'
 import {
   Select,
@@ -19,7 +20,10 @@ export function SettingsToolbarPanel() {
 
   return (
     <>
-      <PropRow title="Group Labels">
+      <PropRow
+        title="Group Labels"
+        info="Choose whether to show a label below toolbar groups."
+      >
         <Select
           value={settings.toolbars.groups.labels.mode}
           onValueChange={(v) => {
@@ -43,7 +47,12 @@ export function SettingsToolbarPanel() {
         </Select>
       </PropRow>
 
-      <PropRow title="Ribbon style">
+      <LineSeparator />
+
+      <PropRow
+        title="Ribbon style"
+        info="Choose the style of the ribbon toolbar. Classic style shows all tools in a multi-row layout, while Single Line style shows tools in a single row with overflow menu."
+      >
         <Select
           value={settings.toolbars.ribbon.style}
           onValueChange={(v) => {

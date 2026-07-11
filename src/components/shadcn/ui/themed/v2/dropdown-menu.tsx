@@ -343,11 +343,11 @@ export function LineSeparator({
   ref,
   className,
   ...props
-}: ComponentProps<typeof DropdownMenuPrimitive.Separator>) {
+}: ComponentProps<'span'>) {
   return (
-    <DropdownMenuPrimitive.Separator
+    <span
       ref={ref}
-      className={cn('my-1 h-px bg-border/50', className)}
+      className={cn('my-2 h-px bg-border/50', className)}
       {...props}
     />
   )

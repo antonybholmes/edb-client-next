@@ -1,5 +1,4 @@
 import { BaseCol } from '@/components/layout/base-col'
-import { BaseRow } from '@/components/layout/base-row'
 import { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
 import { ComponentProps } from 'react'
@@ -16,6 +15,19 @@ export function DialogCardInfo({
   )
 }
 
+export function DialogCardGroup({
+  title,
+  className,
+  children,
+  ...props
+}: IDivProps) {
+  return (
+    <BaseCol className={cn('gap-y-2', className)} {...props}>
+      {children}
+    </BaseCol>
+  )
+}
+
 export function DialogCardHeader({
   title,
   className,
@@ -23,10 +35,10 @@ export function DialogCardHeader({
   ...props
 }: IDivProps & { title: string }) {
   return (
-    <BaseRow className={cn('gap-x-1 justify-between', className)} {...props}>
-      <h2 className="text-sm font-semibold">{title}</h2>
+    <BaseCol className={cn('gap-y-1', className)} {...props}>
+      <h2 className="text-sm font-medium">{title}</h2>
       {children}
-    </BaseRow>
+    </BaseCol>
   )
 }
 

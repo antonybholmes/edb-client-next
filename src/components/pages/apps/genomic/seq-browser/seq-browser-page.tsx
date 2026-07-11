@@ -132,14 +132,13 @@ function SeqBrowserPage() {
           },
           {
             id: 'Cytobands',
-            description: 'Cytoband display settings.',
+
             icon: <LayersIcon />,
             component: SettingsCytobandPanel,
           },
         ],
       },
     ])
-    //setDefaultSettingsTab(APP_INFO.name)
   }, [setSettingsTabs, setDefaultSettingsTab])
 
   useEffect(() => {
@@ -161,11 +160,6 @@ function SeqBrowserPage() {
         id: 'Locations',
         component: LocationsPropsPanel,
       },
-      // {
-      //   id: TEXT_ACCOUNT,
-      //   icon: <SlidersIcon />,
-      //   content: ()=> <AccountPropsPanel />,
-      // },
     ])
   }, [setSideTabs])
 

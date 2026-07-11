@@ -111,9 +111,9 @@
     "color": "#40bf80",
     "version": "48.4.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-10T17:04:05.018Z",
-    "hash": "abeea5e8d939d18e84fde988d10a07a59997b67a938d5c6db11dd0d3fa53b8ef",
-    "build": 1796
+    "modified": "2026-07-11T04:59:46.858Z",
+    "hash": "c25eaad7b16679c3c2c3b6a2773af17e1c3e915397dcf42e4081598f6fa473bd",
+    "build": 1798
   },
   {
     "name": "Motifs",
@@ -179,11 +179,11 @@
     "name": "Seq Browser",
     "description": "Plot NGS data and make figures.",
     "color": "#FF0000",
-    "version": "32.2.0",
+    "version": "32.2.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-10T17:04:05.014Z",
-    "hash": "cb5957915d6bfb5b5bf732b978e42f8c6334e66992b82a3cb61004b54344db2a",
-    "build": 1078
+    "modified": "2026-07-11T04:59:46.853Z",
+    "hash": "860f39b2eb5dd3424fb9aa7a11551912f6b3542e9c57b5ae5d8745d615dfbaae",
+    "build": 1080
   },
   {
     "name": "Single Cell",

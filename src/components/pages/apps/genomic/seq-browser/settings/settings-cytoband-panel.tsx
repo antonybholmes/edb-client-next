@@ -1,5 +1,3 @@
-import { VCenterRow } from '@/components/layout/v-center-row'
-import { BasicHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
 import {
   GroupToggle,
   ToggleGroup,
@@ -19,9 +17,6 @@ export function SettingsCytobandPanel() {
     <>
       <PropRow title="Style">
         <ToggleGroup
-          direction="row"
-          className="overflow-hidden rounded-theme"
-          rounded="none"
           value={[settings.tracks.cytobands.style]}
           onValueChange={(v) => {
             const newOptions = produce(settings, (draft) => {
@@ -30,29 +25,18 @@ export function SettingsCytobandPanel() {
 
             updateSettings(newOptions)
           }}
+          className="gap-x-0.5"
+          variant="outline"
+          pad="none"
         >
-          <GroupToggle value="rounded" className="px-2" title="Rounded">
+          <GroupToggle value="rounded" title="Rounded">
             <Circle size={16} />
           </GroupToggle>
 
-          <GroupToggle value="square" className="px-2" title="Square">
+          <GroupToggle value="square" title="Square">
             <Square size={16} />
           </GroupToggle>
         </ToggleGroup>
-
-        {/* <SelectList
-              value={settings.tracks.cytobands.style}
-              onValueChange={v => {
-                const newOptions = produce(settings, draft => {
-                  draft.tracks.cytobands.style = v as BandStyle
-                })
-
-                updateSettings(newOptions)
-              }}
-            >
-              <SelectItem value="Rounded">Rounded</SelectItem>
-              <SelectItem value="Square">Square</SelectItem>
-            </SelectList> */}
       </PropRow>
 
       <PropRow title="Height">
@@ -83,16 +67,9 @@ export function SettingsCytobandPanel() {
         }}
       />
       <SwitchPropRow
-        title={
-          <VCenterRow className="gap-x-1">
-            <span>Reduce labels</span>
-            <BasicHoverCard>
-              Reduces the number of labels shown to make figures look less
-              clustered.
-            </BasicHoverCard>
-          </VCenterRow>
-        }
-        className="ml-4"
+        title="Reduce labels"
+        info="Reduces the number of labels shown to make figures look less clustered."
+
         disabled={!settings.tracks.cytobands.labels.text.show}
         checked={settings.tracks.cytobands.labels.skip.on}
         onCheckedChange={(v) => {

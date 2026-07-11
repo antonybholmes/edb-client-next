@@ -21,7 +21,7 @@ export const toggleVariants = cva(TOGGLE_CLS, {
         'hover:bg-muted/50 data-pressed:bg-muted/50'
       ),
       outline:
-        'border border-transparent bg-transparent data-pressed:font-semibold text-xs data-pressed:bg-background data-pressed:shadow-xs data-pressed:border-border/75 rounded-theme',
+        'border-2 border-transparent data-pressed:font-semibold text-xs data-pressed:border-app-theme/50 hover:border-app-theme/25 rounded-theme aspect-square items-center justify-center flex flex-row',
       gray: 'border border-transparent bg-transparent data-[state=off]:hover:bg-faint data-pressed:font-semibold text-xs data-pressed:bg-faint data-pressed:border-border',
       tab: 'overflow-hidden text-xs rounded-theme data-[state=off]:hover:bg-faint data-pressed:bg-theme/25 data-pressed:font-semibold',
       'app-theme':
@@ -64,7 +64,7 @@ export const toggleVariants = cva(TOGGLE_CLS, {
     size: 'md',
     rounded: 'default',
     justify: 'center',
-    pad: 'md',
+    pad: 'none',
     aspect: 'auto',
   },
 })

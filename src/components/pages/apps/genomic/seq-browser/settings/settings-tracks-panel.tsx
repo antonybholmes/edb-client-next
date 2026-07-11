@@ -1,8 +1,6 @@
 import { VCenterRow } from '@/components/layout/v-center-row'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
+import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { BasicHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
 import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import {
@@ -45,7 +43,7 @@ export function SettingsTracksPanel() {
 
           updateSettings(newOptions)
         }}
-      ></SwitchPropRow>
+      />
 
       <SwitchPropRow
         title="Auto"
@@ -76,14 +74,8 @@ export function SettingsTracksPanel() {
       </SwitchPropRow>
 
       <PropRow
-        title={
-          <VCenterRow className="gap-x-1">
-            <span>Read scale mode</span>
-            <BasicHoverCard>
-              Determines the unit for the Y axis of signal tracks.
-            </BasicHoverCard>
-          </VCenterRow>
-        }
+        title="Read Scale Mode"
+        info="Determines the unit for the Y axis of signal tracks."
       >
         <SelectList
           w="sm"
@@ -157,12 +149,6 @@ export function SettingsTracksPanel() {
             updateSettings(newOptions)
           }}
         >
-          {/* <SelectItem value="16">16</SelectItem>
-                <SelectItem value="64">64</SelectItem>
-                <SelectItem value="256">256</SelectItem>
-                <SelectItem value="1024">1024</SelectItem>
-                <SelectItem value="4096">4096</SelectItem>
-                <SelectItem value="16384">16384</SelectItem> */}
           <SelectItem value="50">50</SelectItem>
           <SelectItem value="100">100</SelectItem>
           <SelectItem value="1000">1000</SelectItem>
@@ -173,8 +159,7 @@ export function SettingsTracksPanel() {
       <PropRow title="Style">
         <ToggleGroup
           direction="row"
-          className="overflow-hidden rounded-theme"
-          rounded="none"
+
           value={[settings.tracks.beds.style]}
           onValueChange={(v) => {
             const newOptions = produce(settings, (draft) => {
@@ -183,12 +168,13 @@ export function SettingsTracksPanel() {
 
             updateSettings(newOptions)
           }}
+          variant="outline"
         >
-          <GroupToggle value="rounded" className="px-2" title="Rounded">
+          <GroupToggle value="rounded" title="Rounded">
             <Circle size={16} />
           </GroupToggle>
 
-          <GroupToggle value="square" className="px-2" title="Square">
+          <GroupToggle value="square" title="Square">
             <Square size={16} />
           </GroupToggle>
         </ToggleGroup>
@@ -302,7 +288,7 @@ export function SettingsTracksPanel() {
           First transcript only
         </Switch>
 
-        <ColorPickerButton
+        <OutlineButton
           colors={[
             {
               color: settings.tracks.genes.endArrows.stroke.value,
@@ -316,8 +302,8 @@ export function SettingsTracksPanel() {
               },
             },
           ]}
-          className={SIMPLE_COLOR_EXT_CLS}
-          title="Stroke color"
+
+          title="End Arrow Outline"
         />
       </SwitchPropRow>
 
@@ -334,15 +320,8 @@ export function SettingsTracksPanel() {
       />
 
       <SwitchPropRow
-        title={
-          <VCenterRow className="gap-x-1">
-            <span>Canonical transcripts</span>
-
-            <BasicHoverCard>
-              Shows only the primary, canonical transcript to reduce space.
-            </BasicHoverCard>
-          </VCenterRow>
-        }
+        title="Canonical Transcripts Only"
+        info="Shows only the primary, canonical transcript to reduce space."
         checked={settings.tracks.genes.canonical.only}
         onCheckedChange={(v) => {
           const newOptions = produce(settings, (draft) => {
@@ -354,14 +333,8 @@ export function SettingsTracksPanel() {
       />
 
       <SwitchPropRow
-        title={
-          <VCenterRow className="gap-x-1">
-            <span>Canonical transcript color</span>
-            <BasicHoverCard>
-              Canonical transcripts can be colored separately to highlight them.
-            </BasicHoverCard>
-          </VCenterRow>
-        }
+        title="Canonical Transcript Color"
+        info="Canonical transcripts can be colored separately to highlight them."
         checked={settings.tracks.genes.canonical.isColored}
         onCheckedChange={(v) => {
           const newOptions = produce(settings, (draft) => {
@@ -371,10 +344,11 @@ export function SettingsTracksPanel() {
           updateSettings(newOptions)
         }}
       >
-        <ColorPickerButton
+        <FillButton
           colors={[
             {
               color: settings.tracks.genes.canonical.fill.value,
+              allowNoColor: false,
               onColorChange: ({ color }) => {
                 const newOptions = produce(settings, (draft) => {
                   draft.tracks.genes.canonical.fill.value = color
@@ -384,8 +358,8 @@ export function SettingsTracksPanel() {
               },
             },
           ]}
-          className={SIMPLE_COLOR_EXT_CLS}
-          title="Canonical color"
+
+          title="Canonical Fill"
         />
       </SwitchPropRow>
 

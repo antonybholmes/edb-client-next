@@ -85,7 +85,6 @@ import { BoxPlotProvider } from './apps/boxplot/boxplot-provider'
 import { ExtGseaPanel } from './apps/ext-gsea/ext-gsea-panel'
 import { ExtGseaProvider } from './apps/ext-gsea/ext-gsea-provider'
 import {
-  useCurrentPlots,
   useCurrentSelections,
   useCurrentSheets,
   useFiles,
@@ -188,8 +187,6 @@ export function MatcalcPage() {
   const { openDataFrames } = useOpenFiles()
 
   const { sheets } = useCurrentSheets()
-
-  const { plots } = useCurrentPlots()
 
   const { selection: currentSelection } = useCurrentSelections()
   //const plots = usePlots()

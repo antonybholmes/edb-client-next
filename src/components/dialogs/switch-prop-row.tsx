@@ -3,6 +3,8 @@ import { type ReactNode } from 'react'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { cn } from '@/lib/shadcn-utils'
 import { H2_CLS } from '@/theme'
+import { BaseCol } from '../layout/base-col'
+import { BaseRow } from '../layout/base-row'
 import { VCenterRow } from '../layout/v-center-row'
 import type { ICheckboxProps } from '../shadcn/ui/themed/v2/check-box'
 import { Switch } from '../shadcn/ui/themed/v2/switch'
@@ -15,12 +17,14 @@ interface IProps extends Omit<ICheckboxProps, 'title'> {
   leftChildren?: ReactNode
   rightChildren?: ReactNode
   breakpoint?: number
+  info?: string
   side?: 'left' | 'right'
   h?: string
 }
 
 export function SwitchPropRow({
   title = '',
+  info,
   checked = false,
   onCheckedChange = () => {},
   disabled = false,
@@ -31,11 +35,18 @@ export function SwitchPropRow({
 }: IProps) {
   // if title is string, wrap it in span with labelVariants
   if (typeof title === 'string') {
-    title = <span className="truncate shrink-0">{title}</span>
+    title = <span className={cn('truncate shrink-0 font-medium')}>{title}</span>
   }
 
   return (
-    <VCenterRow className={cn('gap-x-4', h, className)}>
+    <BaseRow
+      className={cn(
+        'gap-x-4',
+        info ? 'items-start pb-1' : 'items-center',
+        h,
+        className
+      )}
+    >
       {side == 'left' && (
         <Switch
           checked={checked}
@@ -46,7 +57,12 @@ export function SwitchPropRow({
         </Switch>
       )}
 
-      {side == 'right' && title}
+      {side == 'right' && (
+        <BaseCol className="gap-y-px">
+          {title}
+          {info && <span className="text-xs opacity-60">{info}</span>}
+        </BaseCol>
+      )}
 
       <VCenterRow className="gap-x-1.5 justify-end grow overflow-hidden">
         {children && children}
@@ -59,7 +75,7 @@ export function SwitchPropRow({
           />
         )}
       </VCenterRow>
-    </VCenterRow>
+    </BaseRow>
   )
 }
 

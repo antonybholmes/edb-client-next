@@ -3,6 +3,7 @@ import { getTabName, ITab, renderTab } from '@/components/tabs/tab-provider'
 import {
   DialogCard,
   DialogCardContent,
+  DialogCardGroup,
   DialogCardHeader,
   DialogCardInfo,
 } from '../card/dialog-card'
@@ -19,12 +20,12 @@ const TABS = [
   },
   {
     id: 'Toolbars',
-    description: 'Customize toolbar settings.',
+    //description: 'Customize toolbar settings.',
     component: SettingsToolbarPanel,
   },
   {
     id: 'Apps',
-    description: 'Manage and configure apps.',
+    //description: 'Configure how apps behave.',
     component: AppsToolbarPanel,
   },
 ]
@@ -35,16 +36,18 @@ export function SettingsGeneralPanel() {
 
 export function SettingsCardsPanel({ tabs }: { tabs: ITab[] }) {
   return (
-    <BaseCol className="gap-y-3">
+    <BaseCol className="gap-y-4">
       {tabs.map((tab) => {
         return (
-          <DialogCard key={tab.id}>
-            <DialogCardHeader title={getTabName(tab)}>
-              <DialogCardInfo>{tab.description}</DialogCardInfo>
-            </DialogCardHeader>
-
-            <DialogCardContent>{renderTab(tab)}</DialogCardContent>
-          </DialogCard>
+          <DialogCardGroup key={tab.id}>
+            <DialogCardHeader title={getTabName(tab)}></DialogCardHeader>
+            <DialogCard key={tab.id}>
+              {tab.description && (
+                <DialogCardInfo>{tab.description}</DialogCardInfo>
+              )}
+              <DialogCardContent>{renderTab(tab)}</DialogCardContent>
+            </DialogCard>
+          </DialogCardGroup>
         )
       })}
     </BaseCol>
