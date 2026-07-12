@@ -213,7 +213,7 @@ export function PlotPropsPanel() {
         </AccordionItem>
         <AccordionItem value="links">
           <AccordionTrigger>Links</AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent innerCls="gap-y-1">
             <PropRow title="Color Mode">
               <FillButton
                 colors={[

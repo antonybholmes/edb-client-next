@@ -71,14 +71,12 @@ interface IProps
 
 export function PropRow({
   title,
-
   align,
   gap,
   contentCls = 'gap-x-1.5',
   side = 'right',
-  h,
   info,
-  tooltip,
+  h,
   className,
   children,
 }: IProps) {
@@ -87,12 +85,19 @@ export function PropRow({
       className={propRowVariants({
         align,
         gap,
-        className: cn(info ? 'items-start pb-1' : 'items-center', className),
+
+        className: cn(
+          'min-h-6',
+          info ? 'items-start pb-1' : 'items-center',
+          className
+        ),
       })}
     >
       {side === 'right' && (
         <BaseCol className="gap-y-px max-w-2/3">
-          <span className={cn('truncate shrink-0 font-medium')}>{title}</span>
+          <span className={cn('truncate shrink-0', info && 'font-medium')}>
+            {title}
+          </span>
           {info && <span className="text-xs opacity-60">{info}</span>}
         </BaseCol>
       )}
@@ -105,9 +110,6 @@ export function PropRow({
       >
         {children}
       </VCenterRow>
-      {/* {side === 'left' && (
-        <span className={labelVariants({ labelW })}>{title && title}</span>
-      )} */}
     </BaseRow>
   )
 }
