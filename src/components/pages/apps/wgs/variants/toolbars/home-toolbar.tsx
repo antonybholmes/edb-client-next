@@ -49,13 +49,17 @@ export function HomeToolbar() {
             }
           }}
           size="toolbar"
-          justify="start"
+          //justify="start"
           direction="toolbar"
           //multiple={true}
         >
-          <GroupToggle value="pileup">Pileup</GroupToggle>
+          <GroupToggle value="pileup" className="w-12">
+            Pileup
+          </GroupToggle>
 
-          <GroupToggle value="maf">MAF</GroupToggle>
+          <GroupToggle value="maf" className="w-12">
+            MAF
+          </GroupToggle>
         </ToggleGroup>
       </ToolbarTabGroup>
     </>

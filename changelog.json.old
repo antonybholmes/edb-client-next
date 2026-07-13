@@ -2187,6 +2187,10 @@
         {
           "msg": "Matcalc group name edit now works correctly. Exact match is now tied to group rather than global setting",
           "date": "2026-07-13T20:47:53.402Z"
+        },
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-07-13T22:08:39.442Z"
         }
       ]
     },

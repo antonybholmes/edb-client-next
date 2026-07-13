@@ -17,6 +17,7 @@ import {
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarCol } from '@/components/toolbar/toolbar-col'
+import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { useMessages } from '@/providers/message-provider'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
@@ -84,30 +85,37 @@ export function HomeToolbar() {
         className="gap-x-4"
         style={{ alignItems: 'flex-start' }}
       >
-        <ToggleGroup
-          value={[
-            displayProps.sort.sortGenes ? ['rows'] : [],
-            displayProps.sort.sortSamples ? ['columns'] : [],
-          ].flat()}
-          onValueChange={(v) => {
-            const newSettings = produce(displayProps, (draft) => {
-              draft.sort.sortGenes = v.includes('rows')
+        <ToolbarRow className="gap-x-1">
+          Sort
+          <ToggleGroup
+            value={[
+              displayProps.sort.sortGenes ? ['rows'] : [],
+              displayProps.sort.sortSamples ? ['columns'] : [],
+            ].flat()}
+            onValueChange={(v) => {
+              const newSettings = produce(displayProps, (draft) => {
+                draft.sort.sortGenes = v.includes('rows')
 
-              draft.sort.sortSamples = v.includes('columns')
-            })
+                draft.sort.sortSamples = v.includes('columns')
+              })
 
-            setDisplayProps(newSettings)
-          }}
-          size="toolbar"
-          justify="start"
-          direction="toolbar"
-          multiple={true}
-          className="gap-x-0.5"
-        >
-          <GroupToggle value="rows">Sort rows</GroupToggle>
+              setDisplayProps(newSettings)
+            }}
+            size="toolbar"
+            //justify="start"
+            //direction="toolbar"
+            multiple={true}
+            className="gap-x-px"
+          >
+            <GroupToggle value="rows" className="w-14">
+              Rows
+            </GroupToggle>
 
-          <GroupToggle value="columns">Sort columns</GroupToggle>
-        </ToggleGroup>
+            <GroupToggle value="columns" className="w-14">
+              Columns
+            </GroupToggle>
+          </ToggleGroup>
+        </ToolbarRow>
 
         <ToolbarCol>
           <Select
