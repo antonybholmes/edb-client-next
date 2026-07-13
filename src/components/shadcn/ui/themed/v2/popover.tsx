@@ -123,7 +123,7 @@ export function PopoverSpeechArrow() {
 export function PopoverMenuItem({
   ref,
   variant = 'default',
-  rounded = 'default',
+  rounded = 'theme',
   checked,
   className,
   children,

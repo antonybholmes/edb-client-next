@@ -100,10 +100,6 @@ export function renderTab(
       return tab.render
     }
 
-    if ('icon' in tab && tab.icon) {
-      return tab.icon
-    }
-
     // Ideally tabs should use the component property with a
     // self contained component reference, but for quick one off cases,
     // render can be used to directly render JSX content.
@@ -111,6 +107,10 @@ export function renderTab(
     // component will be ignored.
     if ('component' in tab) {
       return renderTab(tab.component)
+    }
+
+    if ('icon' in tab && tab.icon) {
+      return tab.icon
     }
   }
 

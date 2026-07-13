@@ -25,7 +25,7 @@ export function Slider({
     }
 
     gsap.to(ref.current, {
-      scale: hover ? 1.2 : 1,
+      scale: hover ? 1.1 : 1,
       opacity: hover ? 0.6 : 1,
       ease: 'power2.out',
       duration: 0.3,

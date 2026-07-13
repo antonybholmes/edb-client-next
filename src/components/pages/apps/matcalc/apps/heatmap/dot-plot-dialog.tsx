@@ -40,6 +40,7 @@ import {
   DialogCardInfo,
 } from '@/components/dialogs/card/dialog-card'
 import { SafariTabs } from '@/components/tabs/safari-tabs'
+import { useStableId } from '@/hooks/stable-id'
 import { Group, PencilRuler } from 'lucide-react'
 import {
   useCurrentGroups,
@@ -67,6 +68,7 @@ export function DotPlotDialog({
   minThreshold = 0,
   onResponse,
 }: IProps) {
+  const tabsId = useStableId('matcalc-dot-plot')
   //const [zscore, setZscore] = useState(true)
   const { settings, updateSettings } = useMatcalcSettings()
 
@@ -75,7 +77,7 @@ export function DotPlotDialog({
   const { sheets } = useCurrentSheets()
   const { groups } = useCurrentGroups()
 
-  const { selectedTab, setTabs } = useTabs('matcalc-dot-plot')
+  const { selectedTab, setTabs } = useTabs(tabsId)
 
   useEffect(() => {
     setTabs(TABS.map((t) => ({ ...t })))
@@ -331,19 +333,17 @@ export function DotPlotDialog({
       title="Dot Plot"
       onResponse={(r) => {
         if (r === TEXT_CANCEL) {
-          onResponse?.(r, undefined)
+          onResponse?.(r)
         } else {
           makeDotPlot()
         }
       }}
       bodyCls="gap-y-2"
       className="h-110"
-      centerHeaderChildren={
-        <SafariTabs id="matcalc-dot-plot" defaultWidth={4} />
-      }
+      centerHeaderChildren={<SafariTabs id={tabsId} defaultWidth={4} />}
     >
       {error && (
-        <VCenterRow className="text-destructive gap-x-2  rounded-theme p-2 bg-destructive/10">
+        <VCenterRow className="text-destructive gap-x-2 rounded-theme p-2 bg-destructive/10">
           <WarningIcon stroke="stroke-destructive" size="w-5" />
           <span>{error}</span>
         </VCenterRow>

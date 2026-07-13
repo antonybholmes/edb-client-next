@@ -6,6 +6,7 @@ import type { ITab } from '@/components/tabs/tab-provider'
 import { useTabs } from '@/components/tabs/tab-provider'
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
+import { useStableId } from '@/hooks/stable-id'
 import { VCenterRow } from '@/layout/v-center-row'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import {
@@ -176,10 +177,10 @@ export function XInYPanel({
   )
 }
 
-const TABS_ID = 'matcalc-filter-rows'
-
 export function FilterRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
-  const { selectedTab, setTabs } = useTabs(TABS_ID)
+  const tabsId = useStableId('matcalc-filter-rows')
+
+  const { selectedTab, setTabs } = useTabs(tabsId)
 
   useEffect(() => {
     setTabs(TABS.map((t) => ({ ...t })))
@@ -203,7 +204,7 @@ export function FilterRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
         }
       }}
       centerHeaderChildren={
-        <SafariTabs id={TABS_ID} defaultWidth={4.5} className="mt-2" />
+        <SafariTabs id={tabsId} defaultWidth={4.5} className="mt-2" />
       }
       h="h-56"
       bodyCls="mt-2"

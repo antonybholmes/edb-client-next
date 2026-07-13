@@ -133,7 +133,7 @@ export function ContextMenuContent({
 export function ContextMenuItem({
   className,
   variant = 'theme',
-  rounded = 'default',
+  rounded = 'theme',
   children,
   ...props
 }: ComponentProps<typeof ContextMenuPrimitive.Item> &

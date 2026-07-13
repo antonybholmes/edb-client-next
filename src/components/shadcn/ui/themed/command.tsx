@@ -122,7 +122,7 @@ CommandSeparator.displayName = CommandPrimitive.Separator.displayName
 export function CommandItem({
   ref,
   variant = 'theme',
-  rounded = 'default',
+  rounded = 'theme',
   className,
   children,
   ...props

@@ -31,5 +31,5 @@ import { useId } from 'react'
  */
 export function useStableId(prefix = 'id'): string {
   const reactId = useId()
-  return prefix ? `${prefix}:${reactId}` : reactId
+  return prefix ? `${prefix}-${reactId}` : reactId
 }
