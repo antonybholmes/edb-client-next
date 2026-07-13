@@ -1,7 +1,7 @@
 import { renderTab, useTabs } from '@/components/tabs/tab-provider'
 import type { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
-import { FOCUS_RING_CLS } from '@/theme'
+import { FOCUS_INSET_RING_CLS, FOCUS_RING_CLS } from '@/theme'
 import { Tabs as TabsPrimitive } from '@base-ui/react/tabs'
 import { cva, type VariantProps } from 'class-variance-authority'
 
@@ -19,14 +19,23 @@ export const TRIGGER_SELECTED_CLS =
 
 export const BASE_TRIGGER_CLS = cn(
   FOCUS_RING_CLS,
-  'flex disabled:opacity-50 hover:bg-muted/50',
-  'data-active:font-medium overflow-hidden'
+  'flex disabled:opacity-50 hover:bg-muted/30',
+  'overflow-hidden'
 )
 
 export const TRIGGER_CLS = cn(
   FOCUS_RING_CLS,
   BASE_TRIGGER_CLS,
-  'flex-row h-button-md data-active:bg-muted/50 items-center'
+  'h-button-md data-active:font-medium data-active:bg-muted/50 items-center'
+)
+
+export const SAFARI_CLS = cn(
+  FOCUS_RING_CLS,
+  BASE_TRIGGER_CLS,
+  FOCUS_INSET_RING_CLS,
+  'text-alt-foreground data-active:text-theme font-semibold',
+  'flex-col gap-y-1 min-h-11 data-active:bg-muted/30',
+  'items-center justify-center text-xs'
 )
 
 export const SIDEBAR_CLS = cn(
@@ -103,6 +112,7 @@ const triggerVariants = cva('relative', {
       plain: PLAIN_CLS,
       underline: UNDERLINE_CLS,
       sidebar: SIDEBAR_CLS,
+      safari: SAFARI_CLS,
     },
     rounded: {
       none: '',

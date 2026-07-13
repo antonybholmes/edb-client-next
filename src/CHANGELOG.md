@@ -9,6 +9,7 @@
 
 ### Changed
 
+- Add safari tabs.
 - Fix lighthouse issues.
 - UI refinements.
 - Sankey now has proper fill properties for nodes and links and we can color all links and nodes independently.

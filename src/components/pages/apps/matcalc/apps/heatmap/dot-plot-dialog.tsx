@@ -31,7 +31,7 @@ import { cumulativeSteps } from '@/lib/math/quartile'
 import { formatNumber } from '@/lib/text/text'
 import { produce } from 'immer'
 
-import { useTabs } from '@/components/tabs/tab-provider'
+import { getTabName, useTabs } from '@/components/tabs/tab-provider'
 
 import {
   DialogCard,
@@ -39,7 +39,8 @@ import {
   DialogCardHeader,
   DialogCardInfo,
 } from '@/components/dialogs/card/dialog-card'
-import { IosGroupToggle } from '@/components/shadcn/ui/themed/v2/ios-group-toggle'
+import { SafariTabs } from '@/components/tabs/safari-tabs'
+import { Group, PencilRuler } from 'lucide-react'
 import {
   useCurrentGroups,
   useCurrentSheets,
@@ -50,8 +51,8 @@ import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { MAX_CLUSTER_ITEMS, MAX_HEATMAP_DIM } from './heatmap-dialog'
 
 const TABS = [
-  { id: 'size', name: 'Size' },
-  { id: 'groups', name: 'Groups' },
+  { id: 'size', name: 'Size', icon: <PencilRuler size={16} strokeWidth={3} /> },
+  { id: 'groups', name: 'Groups', icon: <Group size={16} strokeWidth={3} /> },
 ]
 
 export interface IProps extends IModalProps<HistoryPlot> {
@@ -68,7 +69,7 @@ export function DotPlotDialog({
 }: IProps) {
   //const [zscore, setZscore] = useState(true)
   const { settings, updateSettings } = useMatcalcSettings()
-  const [dotplotMode, setDotPlotMode] = useState<DotPlotMode>('size')
+
   const [error, setError] = useState('')
 
   const { sheets } = useCurrentSheets()
@@ -98,7 +99,7 @@ export function DotPlotDialog({
       return
     }
 
-    if (dotplotMode === 'groups') {
+    if (selectedTab?.id === 'groups') {
       makeGroupDotPlot()
     } else {
       makeSizeDotPlot()
@@ -297,7 +298,7 @@ export function DotPlotDialog({
       dot: {
         ...DEFAULT_HEATMAP_PROPS.dot,
         useOriginalValuesForSizes: settings.dot.size.useOriginalValuesForSizes,
-        mode: dotplotMode,
+        mode: getTabName(selectedTab) as DotPlotMode,
         sizes: sizes.map((s, si) => ({
           size: (si + 1) / 4,
           value: formatNumber(s, { dp: DEFAULT_HEATMAP_PROPS.cells.values.dp }),
@@ -335,18 +336,10 @@ export function DotPlotDialog({
           makeDotPlot()
         }
       }}
-      bodyCls="gap-y-4"
-      className="h-105"
-
+      bodyCls="gap-y-2"
+      className="h-110"
       centerHeaderChildren={
-        <IosGroupToggle
-          w={4}
-          tabs={TABS}
-          value={[dotplotMode]}
-          onValueChange={(v) => {
-            setDotPlotMode(v[0] as DotPlotMode)
-          }}
-        />
+        <SafariTabs id="matcalc-dot-plot" defaultWidth={4} />
       }
     >
       {error && (
@@ -356,7 +349,7 @@ export function DotPlotDialog({
         </VCenterRow>
       )}
 
-      {dotplotMode === 'size' && (
+      {selectedTab?.id === 'size' && (
         <VCenterRow className="gap-x-1">
           <CheckPropRow
             title="Use original data for sizes"
@@ -376,12 +369,12 @@ export function DotPlotDialog({
         </VCenterRow>
       )}
 
+      <DialogCardHeader title="Transform"></DialogCardHeader>
+
       <DialogCard>
-        <DialogCardHeader title="Transform">
-          <DialogCardInfo>
-            Modify data before plotting for improved contrast.
-          </DialogCardInfo>
-        </DialogCardHeader>
+        <DialogCardInfo>
+          Modify data before plotting for improved contrast.
+        </DialogCardInfo>
 
         <DialogCardContent>
           <CheckPropRow
@@ -410,13 +403,11 @@ export function DotPlotDialog({
         </DialogCardContent>
       </DialogCard>
 
+      <DialogCardHeader title="Cluster"></DialogCardHeader>
       <DialogCard>
-        <DialogCardHeader title="Cluster">
-          <DialogCardInfo>
-            Apply hierarchical row/column clustering.
-          </DialogCardInfo>
-        </DialogCardHeader>
-
+        <DialogCardInfo>
+          Apply hierarchical row/column clustering.
+        </DialogCardInfo>
         <DialogCardContent>
           <CheckPropRow
             title="Rows"

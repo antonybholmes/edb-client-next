@@ -1,7 +1,8 @@
 import { HCenterRow } from '@/components/layout/h-center-row'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
-import { IosTabs } from '@/components/tabs/ios-tabs'
+import { SafariTabs } from '@/components/tabs/safari-tabs'
+import type { ITab } from '@/components/tabs/tab-provider'
 import { useTabs } from '@/components/tabs/tab-provider'
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
@@ -14,6 +15,7 @@ import {
   xInY,
 } from '@/lib/dataframe/dataframe-utils'
 import { SelectItem, SelectList } from '@/themed/v2/select'
+import { Blend, ListFilterPlus } from 'lucide-react'
 import {
   RefObject,
   useEffect,
@@ -24,9 +26,13 @@ import {
 import { useCurrentSheets } from './history/history-provider/history-contexts'
 import { useHistory } from './history/history-provider/history-provider'
 
-const TABS = [
-  { id: 'top-rows', name: 'Top Rows' },
-  { id: 'x-in-y', name: 'X in Y' },
+const TABS: ITab[] = [
+  {
+    id: 'top-rows',
+    name: 'Top Rows',
+    icon: <ListFilterPlus size={16} strokeWidth={3} />,
+  },
+  { id: 'x-in-y', name: 'X in Y', icon: <Blend size={16} strokeWidth={3} /> },
 ]
 
 type IRef = { applyFilter: () => void }
@@ -182,8 +188,6 @@ export function FilterRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
   const topRowRef = useRef<IRef | null>(null)
   const xInYRef = useRef<IRef | null>(null)
 
-  console.log('FilterRowsDialog selectedTab', selectedTab)
-
   return (
     <OKCancelDialog
       title={TABS.find((t) => t.id === selectedTab?.id)?.name}
@@ -198,8 +202,11 @@ export function FilterRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
           onResponse?.(TEXT_CANCEL)
         }
       }}
-      centerHeaderChildren={<IosTabs id={TABS_ID} />}
+      centerHeaderChildren={
+        <SafariTabs id={TABS_ID} defaultWidth={4.5} className="mt-2" />
+      }
       h="h-56"
+      bodyCls="mt-2"
     >
       <Tabs value={selectedTab?.id ?? ''} onValueChange={() => {}}>
         <TabsContent value="top-rows">
