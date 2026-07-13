@@ -9,7 +9,6 @@ import {
 import { type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
 import { SearchBox } from '@/components/search-box'
-import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { MultiSelectIcon } from '@/icons/multi-select-icon'
 import { VCenterRow } from '@/layout/v-center-row'
 
@@ -46,6 +45,7 @@ import { IconButton } from '@/themed/icon-button'
 import { API_BEDS_URL } from '@/components/edb/edb'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { DialogTitle } from '@/components/shadcn/ui/themed/v2/dialog'
+import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { ArrowDownUp, ShoppingCart } from 'lucide-react'
 import type { IBedDBDataTrack, IBedDBTrack } from '../tracks-provider'
@@ -165,11 +165,10 @@ export function PeaksDialog({
       className={className}
       leftFooterChildren={
         <VCenterRow className="gap-x-2">
-          <CheckPropRow
-            title="Overlay tracks"
-            checked={combine}
-            onCheckedChange={setCombine}
-          />
+          <Switch checked={combine} onCheckedChange={setCombine}>
+            Overlay tracks
+          </Switch>
+
           <InfoHoverCard>
             When enabled, the selected tracks will be overlaid on top of each
             other in the same view. This is useful for comparing multiple

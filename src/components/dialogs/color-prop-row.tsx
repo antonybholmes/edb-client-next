@@ -16,7 +16,7 @@ interface IProps extends Omit<IColorPickerButtonProps, 'title'> {
 
 export function ColorPropRow({ title, side = 'right', ...props }: IProps) {
   return (
-    <PropRow title={title} side={side}>
+    <PropRow title={title}>
       {/* <ColorPickerButton className={SIMPLE_COLOR_EXT_CLS} {...props} /> */}
 
       <FillButton

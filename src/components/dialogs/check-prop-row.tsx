@@ -49,7 +49,7 @@ export function CheckPropRow({
         {info && <DialogCardInfo>{info}</DialogCardInfo>}
       </DialogCardLabel>
 
-      <VCenterRow className="gap-x-1.5 justify-end grow overflow-hidden">
+      <VCenterRow className="gap-x-1.5 justify-end grow">
         {children && children}
 
         <Switch

@@ -2179,5 +2179,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-07-08T20:28:10.117Z"
+  },
+  {
+    "version": "85.8",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Matcalc group name edit now works correctly. Exact match is now tied to group rather than global setting",
+          "date": "2026-07-13T20:47:53.402Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-07-13T20:47:53.402Z"
   }
 ]

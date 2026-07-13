@@ -9,7 +9,7 @@ export function DialogCardInfo({
   ...props
 }: ComponentProps<'span'>) {
   return (
-    <span className={cn('text-xs opacity-70', className)} {...props}>
+    <span className={cn('text-xs text-alt-foreground', className)} {...props}>
       {children}
     </span>
   )
@@ -55,7 +55,7 @@ export function DialogCardLabel({
 }: Omit<IDivProps, 'title'> & { title: ReactNode; info?: string }) {
   return (
     <BaseCol className={className} {...props}>
-      {typeof title === 'string' ? <h3 className="text-sm">{title}</h3> : title}
+      {typeof title === 'string' ? <h3>{title}</h3> : title}
 
       {children}
     </BaseCol>

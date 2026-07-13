@@ -56,7 +56,7 @@ export function HeatmapPropsPanel() {
   }
 
   return (
-    <PropsPanel className="pr-1 gap-y-2">
+    <PropsPanel className="pr-1 gap-y-2 text-xs">
       <SideBarHeader className="justify-end">
         <LinkButton
           onClick={() => {

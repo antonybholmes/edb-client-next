@@ -13,7 +13,6 @@ import {
   DropdownMenuTrigger,
   DropdownSortOrderGroup,
 } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { CheckPropRow } from '@/dialogs/check-prop-row'
 import {
   getAccordionId,
   SideAccordionItem,
@@ -41,6 +40,7 @@ import { useTracks } from '../tracks-store'
 
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { normalizeAssemblyName } from '@/components/edb/genome'
+import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { appsConfig } from '@/config/apps'
 import { ArrowDownUp, ShoppingCart } from 'lucide-react'
@@ -147,11 +147,9 @@ export function SeqsDialog({
       buttons={[TEXT_OK]}
       leftFooterChildren={
         <VCenterRow className="gap-x-2">
-          <CheckPropRow
-            title="Overlay tracks"
-            checked={combine}
-            onCheckedChange={setCombine}
-          />
+          <Switch checked={combine} onCheckedChange={setCombine}>
+            Overlay tracks
+          </Switch>
 
           <InfoHoverCard>
             When enabled, the selected tracks will be overlaid on top of each

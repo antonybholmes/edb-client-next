@@ -37,10 +37,8 @@ import { FileDropZonePanel } from '@/components/file-dropzone-panel'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { UploadIcon } from '@/components/icons/upload-icon'
 import { BaseCol } from '@/components/layout/base-col'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { TruncateSpan } from '@/components/truncate-span'
@@ -103,10 +101,11 @@ function GenesetItem({
         </button>
       }
     >
-      <ColorPickerButton
+      <FillButton
         colors={[
           {
             color,
+            allowNoColor: false,
             onColorChange: ({ color }) => setColor(color),
           },
         ]}

@@ -232,9 +232,13 @@ export function HomeToolbar() {
           direction="toolbar"
           multiple={true}
         >
-          <GroupToggle value="canonical">Canonical</GroupToggle>
+          <GroupToggle value="canonical" className="w-24">
+            Canonical
+          </GroupToggle>
 
-          <GroupToggle value="protein-coding">Protein coding</GroupToggle>
+          <GroupToggle value="protein-coding" className="w-24">
+            Protein coding
+          </GroupToggle>
         </ToggleGroup>
       </ToolbarTabGroup>
 

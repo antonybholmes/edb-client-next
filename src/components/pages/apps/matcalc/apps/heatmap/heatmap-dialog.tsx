@@ -41,8 +41,7 @@ import { produce } from 'immer'
 import {
   DialogCard,
   DialogCardContent,
-  DialogCardInfo,
-  DialogCardLabel,
+  DialogCardHeader,
 } from '@/components/dialogs/card/dialog-card'
 import {
   useCurrentGroups,
@@ -266,12 +265,13 @@ export function HeatMapDialog({
       leftFooterChildren={<HelpButton url="/help/apps/matcalc/heatmap" />}
       bodyCls="gap-y-3"
     >
-      <DialogCardLabel title="Filter"></DialogCardLabel>
-
       <DialogCard>
+        <DialogCardHeader title="Filter" />
+
         <DialogCardContent>
           <CheckPropRow
             title="Top"
+            info="Filter to top N most variable rows by the method you choose."
             checked={settings.heatmap.filterRows}
             onCheckedChange={(v) => {
               const newSettings = produce(settings, (draft) => {
@@ -341,13 +341,13 @@ export function HeatMapDialog({
               <SelectItem value="ignore">Remove</SelectItem>
             </SelectList>
           </PropRow>
+          {/* <DialogCardInfo>Filter table before plotting.</DialogCardInfo> */}
         </DialogCardContent>
-        <DialogCardInfo>Filter table before plotting.</DialogCardInfo>
       </DialogCard>
 
-      <DialogCardLabel title="Transform"></DialogCardLabel>
-
       <DialogCard>
+        <DialogCardHeader title="Transform" />
+
         <DialogCardContent>
           <Checkbox
             checked={settings.heatmap.applyLog2}
@@ -387,16 +387,16 @@ export function HeatMapDialog({
           >
             Transpose
           </Checkbox>
-        </DialogCardContent>
 
-        <DialogCardInfo>
-          Apply transformations to data before plotting.
-        </DialogCardInfo>
+          {/* <DialogCardInfo>
+            Apply transformations to data before plotting.
+          </DialogCardInfo> */}
+        </DialogCardContent>
       </DialogCard>
 
-      <DialogCardLabel title="Clustering"></DialogCardLabel>
-
       <DialogCard>
+        <DialogCardHeader title="Clustering" />
+
         <DialogCardContent>
           <Checkbox
             checked={settings.heatmap.clusterRows}
@@ -463,10 +463,11 @@ export function HeatMapDialog({
               <SelectItem value="Euclidean">Euclidean</SelectItem>
             </SelectList>
           </PropRow>
+
+          {/* <DialogCardInfo>
+            Apply hierarchical row/column clustering.
+          </DialogCardInfo> */}
         </DialogCardContent>
-        <DialogCardInfo>
-          Apply hierarchical row/column clustering.
-        </DialogCardInfo>
       </DialogCard>
     </OKCancelDialog>
   )

@@ -1,11 +1,13 @@
 import { FontPopover } from '@/components/plot/font/font-popover'
-import { BasicHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
-import { IosGroupToggle } from '@/components/shadcn/ui/themed/v2/ios-group-toggle'
+import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
+import {
+  GroupToggle,
+  ToggleGroup,
+} from '@/components/shadcn/ui/themed/v2/toggle-group'
 import { TEXT_OK } from '@/consts'
 import { type IModalProps, OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
 import { PropRow } from '@/dialogs/prop-row'
 import { SwitchPropRow } from '@/dialogs/switch-prop-row'
-import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
 import { Circle, Square } from 'lucide-react'
 import { useSeqBrowserSettings } from '../../seq-browser-settings'
@@ -59,7 +61,7 @@ export function CytobandsEditDialog({ onResponse }: IModalProps) {
           </GroupToggle>
         </ToggleGroup> */}
 
-        <IosGroupToggle
+        {/* <IosGroupToggle
           w={2.5}
           tabs={[
             { id: 'rounded', name: 'Rounded', render: <Circle size={16} /> },
@@ -73,7 +75,29 @@ export function CytobandsEditDialog({ onResponse }: IModalProps) {
 
             updateSettings(newOptions)
           }}
-        />
+        /> */}
+
+        <ToggleGroup
+          direction="row"
+
+          value={[settings.tracks.beds.style]}
+          onValueChange={(v) => {
+            const newOptions = produce(settings, (draft) => {
+              draft.tracks.beds.style = v[0] as BandStyle
+            })
+
+            updateSettings(newOptions)
+          }}
+          variant="outline"
+        >
+          <GroupToggle value="rounded" title="Rounded">
+            <Circle size={16} />
+          </GroupToggle>
+
+          <GroupToggle value="square" title="Square">
+            <Square size={16} />
+          </GroupToggle>
+        </ToggleGroup>
 
         {/* <Select
               value={settings.tracks.cytobands.style}
@@ -96,7 +120,7 @@ export function CytobandsEditDialog({ onResponse }: IModalProps) {
       </PropRow>
 
       <PropRow title="Height">
-        <NumericalInput
+        {/* <NumericalInput
           value={settings.tracks.cytobands.band.height}
           placeholder="height"
           limit={[1, 1000]}
@@ -108,11 +132,27 @@ export function CytobandsEditDialog({ onResponse }: IModalProps) {
             updateSettings(newOptions)
           }}
           w="sm"
+        /> */}
+        <NumSlider
+          min={1}
+          max={100}
+          step={1}
+          value={settings.tracks.cytobands.band.height}
+          onValueChange={(values) => {
+            const v = Array.isArray(values) ? values[0] : values
+            const newOptions = produce(settings, (draft) => {
+              draft.tracks.cytobands.band.height = v
+            })
+
+            updateSettings(newOptions)
+          }}
         />
       </PropRow>
 
       <SwitchPropRow
         title="Reduced labels"
+        info="Reduces the number of labels shown to make figures look less cluttered."
+
         side="right"
         disabled={!settings.tracks.cytobands.labels.text.show}
         checked={settings.tracks.cytobands.labels.skip.on}
@@ -123,12 +163,7 @@ export function CytobandsEditDialog({ onResponse }: IModalProps) {
 
           updateSettings(newOptions)
         }}
-      >
-        <BasicHoverCard>
-          Reduces the number of labels shown to make figures look less
-          cluttered.
-        </BasicHoverCard>
-      </SwitchPropRow>
+      ></SwitchPropRow>
     </OKCancelDialog>
   )
 }

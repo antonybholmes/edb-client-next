@@ -31,6 +31,7 @@ export function SwitchPropRow({
   side = 'right',
   h = H_CLS,
   className,
+  leftChildren,
   children,
 }: IProps) {
   return (
