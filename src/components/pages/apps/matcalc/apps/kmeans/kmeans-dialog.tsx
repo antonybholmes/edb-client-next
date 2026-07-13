@@ -30,8 +30,8 @@ import { produce } from 'immer'
 import {
   DialogCard,
   DialogCardContent,
-  DialogCardHeader,
   DialogCardInfo,
+  DialogCardLabel,
 } from '@/components/dialogs/card/dialog-card'
 import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
@@ -175,9 +175,9 @@ export function KmeansDialog({
       {error && <span className="text-destructive">{error}</span>}
 
       <DialogCard>
-        <DialogCardHeader title="Filter">
+        <DialogCardLabel title="Filter">
           <DialogCardInfo>Filter table before clustering.</DialogCardInfo>
-        </DialogCardHeader>
+        </DialogCardLabel>
 
         <DialogCardContent>
           <VCenterRow className="gap-x-2">
@@ -229,9 +229,9 @@ export function KmeansDialog({
 
         <MenuSeparator />
 
-        <DialogCardHeader title="Transform">
+        <DialogCardLabel title="Transform">
           <DialogCardInfo>Transform table before clustering.</DialogCardInfo>
-        </DialogCardHeader>
+        </DialogCardLabel>
 
         <DialogCardContent>
           <CheckPropRow
@@ -261,7 +261,7 @@ export function KmeansDialog({
       </DialogCard>
 
       <DialogCard>
-        <DialogCardHeader title="Cluster"></DialogCardHeader>
+        <DialogCardLabel title="Cluster"></DialogCardLabel>
 
         <DialogCardContent>
           <PropRow title="K">

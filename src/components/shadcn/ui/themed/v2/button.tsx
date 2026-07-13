@@ -114,12 +114,13 @@ export const BASE_THEME_MENU_CLS = cn(
   'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
   'fill-foreground stroke-foreground',
   'border border-transparent',
-  'data-[selected=true]:bg-muted/50 data-[selected=true]:border-border/50',
+
   'data-[selected=true]:text-foreground data-[selected=true]:stroke-foreground'
 )
 
 export const THEME_MENU_CLS = cn(
   BASE_THEME_MENU_CLS,
+  'data-[selected=true]:bg-muted/50 data-[selected=true]:border-border/50',
   'focus:text-white focus:fill-white focus:stroke-white',
   'hover:text-white hover:fill-white hover:stroke-white',
   'focus:bg-theme/50 hover:bg-theme/50 data-[popup-open]:bg-theme/50'

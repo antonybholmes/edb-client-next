@@ -184,7 +184,7 @@ export interface IGroupCallback {
 export function GroupPropsPanel() {
   const { open: openDialog } = useDialogs()
 
-  const { addGroups, clearGroups, reorderGroups } = useHistory()
+  const { addGroups, updateGroup, clearGroups, reorderGroups } = useHistory()
 
   const { groups, groupsName } = useCurrentGroups()
 
@@ -298,10 +298,11 @@ export function GroupPropsPanel() {
         if (groups.some((g) => g.id === group.id)) {
           // we modified and existing group so clone list, but replace existing
           // group with new group when they have the same id
-          addGroups(groups.map((g) => (g.id === group.id ? group : g)))
+
+          updateGroup(group)
         } else {
           // append new group
-          addGroups([...groups, group])
+          addGroups([group])
         }
 
         setOpenGroupDialog(undefined)

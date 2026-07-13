@@ -1,7 +1,6 @@
 import {
   DialogCard,
   DialogCardContent,
-  DialogCardGroup,
   DialogCardHeader,
 } from '@/components/dialogs/card/dialog-card'
 import { BaseCol } from '@/components/layout/base-col'
@@ -41,94 +40,93 @@ export function SettingsAppsPanel() {
         )
 
         return (
-          <DialogCardGroup key={appName}>
-            <DialogCardHeader title={appName}></DialogCardHeader>
-            <DialogCard key={appName}>
-              <DialogCardContent>
-                {friendlySettingsNames.map((settingName, settingI) => {
-                  const settingKey = settingKeys[settingI]!
+          <DialogCard key={appName}>
+            <DialogCardHeader title={appName} />
 
-                  const setting = appSettings[settingKey]!
+            <DialogCardContent>
+              {friendlySettingsNames.map((settingName, settingI) => {
+                const settingKey = settingKeys[settingI]!
 
-                  if (typeof setting === 'string') {
-                    return (
-                      <TextPropRow
-                        key={settingName}
-                        title={settingName}
-                        value={setting}
-                        onTextChange={(v) => {
-                          const newOptions = produce(settings, (draft) => {
-                            // the compiler refuses to get the correct type so we have to
-                            // force it to behave
-                            draft.apps[appKey][settingKey] = v as never
-                          })
+                const setting = appSettings[settingKey]!
 
-                          updateSettings(newOptions)
-                        }}
-                        w="lg"
-                      />
-                    )
-                  }
-                  if (typeof setting === 'number') {
-                    return (
-                      <NumericalPropRow
-                        key={settingName}
-                        title={settingName}
-                        value={setting}
-                        onNumChange={(v) => {
-                          const newOptions = produce(settings, (draft) => {
-                            // the compiler refuses to get the correct type so we have to
-                            // force it to behave
-                            draft.apps[appKey][settingKey] = v as never
-                          })
+                if (typeof setting === 'string') {
+                  return (
+                    <TextPropRow
+                      key={settingName}
+                      title={settingName}
+                      value={setting}
+                      onTextChange={(v) => {
+                        const newOptions = produce(settings, (draft) => {
+                          // the compiler refuses to get the correct type so we have to
+                          // force it to behave
+                          draft.apps[appKey][settingKey] = v as never
+                        })
 
-                          updateSettings(newOptions)
-                        }}
-                        w="lg"
-                      />
-                    )
-                  } else if (typeof setting === 'boolean') {
-                    return (
-                      <SwitchPropRow
-                        key={settingName}
-                        title={settingName}
-                        checked={setting}
-                        onCheckedChange={(v) => {
-                          const newOptions = produce(settings, (draft) => {
-                            // the compiler refuses to get the correct type so we have to
-                            // force it to behave
-                            draft.apps[appKey][settingKey] = v as never
-                          })
+                        updateSettings(newOptions)
+                      }}
+                      w="lg"
+                    />
+                  )
+                }
+                if (typeof setting === 'number') {
+                  return (
+                    <NumericalPropRow
+                      key={settingName}
+                      title={settingName}
+                      value={setting}
+                      onNumChange={(v) => {
+                        const newOptions = produce(settings, (draft) => {
+                          // the compiler refuses to get the correct type so we have to
+                          // force it to behave
+                          draft.apps[appKey][settingKey] = v as never
+                        })
 
-                          updateSettings(newOptions)
-                        }}
-                      />
-                    )
-                  } else if (isStringArray(setting)) {
-                    return (
-                      <TextareaPropRow
-                        key={settingName}
-                        title={settingName}
-                        lines={setting}
-                        onLinesChange={(v) => {
-                          const newOptions = produce(settings, (draft) => {
-                            // the compiler refuses to get the correct type so we have to
-                            // force it to behave
-                            draft.apps[appKey][settingKey] = v as never
-                          })
+                        updateSettings(newOptions)
+                      }}
+                      w="lg"
+                    />
+                  )
+                } else if (typeof setting === 'boolean') {
+                  return (
+                    <SwitchPropRow
+                      key={settingName}
+                      title={settingName}
+                      checked={setting}
+                      onCheckedChange={(v) => {
+                        const newOptions = produce(settings, (draft) => {
+                          // the compiler refuses to get the correct type so we have to
+                          // force it to behave
+                          draft.apps[appKey][settingKey] = v as never
+                        })
 
-                          updateSettings(newOptions)
-                        }}
-                        w="lg"
-                      />
-                    )
-                  } else {
-                    return <span key={settingName}>{settingName}</span>
-                  }
-                })}
-              </DialogCardContent>
-            </DialogCard>
-          </DialogCardGroup>
+                        updateSettings(newOptions)
+                      }}
+                    />
+                  )
+                } else if (isStringArray(setting)) {
+                  return (
+                    <TextareaPropRow
+                      key={settingName}
+                      title={settingName}
+                      lines={setting}
+                      onLinesChange={(v) => {
+                        const newOptions = produce(settings, (draft) => {
+                          // the compiler refuses to get the correct type so we have to
+                          // force it to behave
+                          draft.apps[appKey][settingKey] = v as never
+                        })
+
+                        updateSettings(newOptions)
+                      }}
+                      w="lg"
+                    />
+                  )
+                } else {
+                  return <span key={settingName}>{settingName}</span>
+                }
+              })}
+            </DialogCardContent>
+          </DialogCard>
         )
       })}
     </BaseCol>

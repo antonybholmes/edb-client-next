@@ -111,9 +111,9 @@
     "color": "#40bf80",
     "version": "48.4.4",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-13T16:06:28.477Z",
-    "hash": "bff7d8e7ac8a019285ff82a46f9211e96550c80db705b3ce3c2041835003b367",
-    "build": 1802
+    "modified": "2026-07-13T20:47:52.330Z",
+    "hash": "b15a2c695204976f8e47f64c3fa449895fe0abfaa7c42f720a0d90c618e2f364",
+    "build": 1804
   },
   {
     "name": "Motifs",
@@ -171,9 +171,9 @@
     "color": "#ff9900",
     "version": "1.0.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-12T03:12:47.924Z",
-    "hash": "74f43c25474b24936d6eb704cbb0303178e4a4042cfbd0f1051a0e7c9c481dd8",
-    "build": 40
+    "modified": "2026-07-13T20:47:52.330Z",
+    "hash": "29001589781fb896c94e752d6d1d47e6fd903516049e86cfb59f02e100a8dbd6",
+    "build": 42
   },
   {
     "name": "Seq Browser",
@@ -181,9 +181,9 @@
     "color": "#FF0000",
     "version": "32.2.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-11T04:59:46.853Z",
-    "hash": "860f39b2eb5dd3424fb9aa7a11551912f6b3542e9c57b5ae5d8745d615dfbaae",
-    "build": 1080
+    "modified": "2026-07-13T20:47:52.328Z",
+    "hash": "d0847f0c8819ee92b5a65ca6e6d696a94f125a031cdd49c51533e04015974f95",
+    "build": 1082
   },
   {
     "name": "Single Cell",

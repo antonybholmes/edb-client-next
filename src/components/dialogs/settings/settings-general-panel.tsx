@@ -3,7 +3,6 @@ import { getTabName, ITab, renderTab } from '@/components/tabs/tab-provider'
 import {
   DialogCard,
   DialogCardContent,
-  DialogCardGroup,
   DialogCardHeader,
   DialogCardInfo,
 } from '../card/dialog-card'
@@ -39,15 +38,14 @@ export function SettingsCardsPanel({ tabs }: { tabs: ITab[] }) {
     <BaseCol className="gap-y-4">
       {tabs.map((tab) => {
         return (
-          <DialogCardGroup key={tab.id}>
-            <DialogCardHeader title={getTabName(tab)}></DialogCardHeader>
-            <DialogCard key={tab.id}>
+          <DialogCard key={tab.id}>
+            <DialogCardHeader title={getTabName(tab)}>
               {tab.description && (
                 <DialogCardInfo>{tab.description}</DialogCardInfo>
               )}
-              <DialogCardContent>{renderTab(tab)}</DialogCardContent>
-            </DialogCard>
-          </DialogCardGroup>
+            </DialogCardHeader>
+            <DialogCardContent>{renderTab(tab)}</DialogCardContent>
+          </DialogCard>
         )
       })}
     </BaseCol>

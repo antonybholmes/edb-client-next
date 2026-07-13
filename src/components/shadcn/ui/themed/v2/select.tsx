@@ -98,7 +98,12 @@ export function SelectTrigger({
   return (
     <SelectPrimitive.Trigger
       ref={ref}
-      className={triggerVariants({ variant, w, h, className })}
+      className={triggerVariants({
+        variant,
+        w,
+        h,
+        className: cn('shrink-0', className),
+      })}
       title={title}
       {...props}
     >

@@ -4,9 +4,9 @@ import type { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
 import { H2_CLS } from '@/theme'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { BaseCol } from '../layout/base-col'
 import { BaseRow } from '../layout/base-row'
 import { VCenterRow } from '../layout/v-center-row'
+import { DialogCardInfo, DialogCardLabel } from './card/dialog-card'
 
 export const PROPS_TITLE_CLS = cn(H2_CLS, 'py-2')
 
@@ -76,7 +76,6 @@ export function PropRow({
   contentCls = 'gap-x-1.5',
   side = 'right',
   info,
-  h,
   className,
   children,
 }: IProps) {
@@ -85,26 +84,22 @@ export function PropRow({
       className={propRowVariants({
         align,
         gap,
-
         className: cn(
-          'min-h-6',
+          'min-h-6 gap-x-16',
           info ? 'items-start pb-1' : 'items-center',
           className
         ),
       })}
     >
       {side === 'right' && (
-        <BaseCol className="gap-y-px max-w-2/3">
-          <span className={cn('truncate shrink-0', info && 'font-medium')}>
-            {title}
-          </span>
-          {info && <span className="text-xs opacity-60">{info}</span>}
-        </BaseCol>
+        <DialogCardLabel title={title}>
+          {info && <DialogCardInfo>{info}</DialogCardInfo>}
+        </DialogCardLabel>
       )}
       <VCenterRow
         className={cn(
-          'overflow-hidden grow',
-          { 'justify-end': side === 'right' },
+          'grow shrink-0',
+          side === 'right' && 'justify-end',
           contentCls
         )}
       >

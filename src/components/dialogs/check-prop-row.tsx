@@ -1,9 +1,10 @@
 import { cn } from '@/lib/shadcn-utils'
 import type { ReactNode } from 'react'
+import { BaseRow } from '../layout/base-row'
 import { VCenterRow } from '../layout/v-center-row'
 import { type ICheckboxProps } from '../shadcn/ui/themed/v2/check-box'
-import { InfoHoverCard } from '../shadcn/ui/themed/v2/hover-card'
 import { Switch } from '../shadcn/ui/themed/v2/switch'
+import { DialogCardInfo, DialogCardLabel } from './card/dialog-card'
 
 interface IProps extends Omit<ICheckboxProps, 'title'> {
   title: ReactNode
@@ -24,7 +25,14 @@ export function CheckPropRow({
   children,
 }: IProps) {
   return (
-    <VCenterRow className={cn('gap-x-2 justify-between', h, className)}>
+    <BaseRow
+      className={cn(
+        'gap-x-16 justify-between',
+        info ? 'items-start pb-1' : 'items-center',
+        h,
+        className
+      )}
+    >
       {/* <Checkbox
         checked={checked}
         onCheckedChange={onCheckedChange}
@@ -37,11 +45,9 @@ export function CheckPropRow({
         {info && <InfoHoverCard>{info}</InfoHoverCard>}
       </Checkbox> */}
 
-      <VCenterRow className="gap-x-2  ">
-        {title}
-
-        {info && <InfoHoverCard>{info}</InfoHoverCard>}
-      </VCenterRow>
+      <DialogCardLabel title={title}>
+        {info && <DialogCardInfo>{info}</DialogCardInfo>}
+      </DialogCardLabel>
 
       <VCenterRow className="gap-x-1.5 justify-end grow overflow-hidden">
         {children && children}
@@ -54,6 +60,6 @@ export function CheckPropRow({
           title={tooltip}
         />
       </VCenterRow>
-    </VCenterRow>
+    </BaseRow>
   )
 }

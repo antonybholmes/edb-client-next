@@ -36,8 +36,8 @@ import { getTabName, useTabs } from '@/components/tabs/tab-provider'
 import {
   DialogCard,
   DialogCardContent,
-  DialogCardHeader,
   DialogCardInfo,
+  DialogCardLabel,
 } from '@/components/dialogs/card/dialog-card'
 import { SafariTabs } from '@/components/tabs/safari-tabs'
 import { useStableId } from '@/hooks/stable-id'
@@ -369,7 +369,7 @@ export function DotPlotDialog({
         </VCenterRow>
       )}
 
-      <DialogCardHeader title="Transform"></DialogCardHeader>
+      <DialogCardLabel title="Transform"></DialogCardLabel>
 
       <DialogCard>
         <DialogCardInfo>
@@ -403,7 +403,7 @@ export function DotPlotDialog({
         </DialogCardContent>
       </DialogCard>
 
-      <DialogCardHeader title="Cluster"></DialogCardHeader>
+      <DialogCardLabel title="Cluster"></DialogCardLabel>
       <DialogCard>
         <DialogCardInfo>
           Apply hierarchical row/column clustering.

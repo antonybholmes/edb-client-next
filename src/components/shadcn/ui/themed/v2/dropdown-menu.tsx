@@ -167,12 +167,6 @@ export function BaseDropdownMenuItem({
   ...props
 }: ComponentProps<typeof DropdownMenuPrimitiveItem> &
   VariantProps<typeof dropdownMenuItemVariants>) {
-  console.log(
-    'BaseDropdownMenuItem render',
-    rounded,
-    dropdownMenuItemVariants({ variant, rounded, className })
-  )
-
   return (
     <DropdownMenuPrimitiveItem
       ref={ref}
@@ -347,7 +341,7 @@ export function LineSeparator({
   return (
     <span
       ref={ref}
-      className={cn('my-2 h-px bg-border/50', className)}
+      className={cn('my-2 border-b h-0 border-border/50', className)}
       {...props}
     />
   )
@@ -357,13 +351,9 @@ export function MenuSeparator({
   ref,
   className,
   ...props
-}: ComponentProps<typeof DropdownMenuPrimitive.Separator>) {
+}: ComponentProps<typeof LineSeparator>) {
   return (
-    <DropdownMenuPrimitive.Separator
-      ref={ref}
-      className={cn('mx-1 my-2 h-px bg-muted', className)}
-      {...props}
-    />
+    <LineSeparator ref={ref} className={cn('mx-1', className)} {...props} />
   )
 }
 

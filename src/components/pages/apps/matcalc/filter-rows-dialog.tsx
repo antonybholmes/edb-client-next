@@ -191,7 +191,7 @@ export function FilterRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
 
   return (
     <OKCancelDialog
-      title={TABS.find((t) => t.id === selectedTab?.id)?.name}
+      title={`Filter ${TABS.find((t) => t.id === selectedTab?.id)?.name}`}
       onResponse={(r) => {
         if (r === TEXT_OK) {
           if (selectedTab?.id === 'top-rows') {

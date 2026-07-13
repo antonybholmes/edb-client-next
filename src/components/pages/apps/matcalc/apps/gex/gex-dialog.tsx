@@ -31,6 +31,11 @@ import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import type { IGexDataset, IGexSearchResult } from './gex-store'
 import { SampleDataTypeCombo } from './sample-datatype-combo'
 
+import {
+  DialogCard,
+  DialogCardContent,
+} from '@/components/dialogs/card/dialog-card'
+import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { appsConfig } from '@/config/apps'
 import type { UndefStr } from '@/lib/text/text'
 import { useQuery } from '@tanstack/react-query'
@@ -663,7 +668,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
               label="Genes"
               value={text}
               onChange={(e) => setText(e.target.value)}
-              className="grow h-50" // rounded-theme border border-border overflow-hidden outline-hidden placeholder:text-muted-foreground"
+              className="grow h-42" // rounded-theme border border-border overflow-hidden outline-hidden placeholder:text-muted-foreground"
               // labelChildren={
               //   <InfoHoverCard title="Genes">
               //     Enter a list of genes to search for, one per line.
@@ -672,115 +677,125 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
             />
           </BaseCol>
 
-          <PropRow title="Expression">
-            <SelectList
-              w="lg"
-              value={exprType}
-              onValueChange={(value) => {
-                if (dataset) {
-                  const matches = dataset.exprTypes.filter(
-                    (t) => t.name === value
-                  )
+          <DialogCard>
+            <DialogCardContent>
+              <PropRow title="Expression">
+                <SelectList
+                  w="lg"
+                  value={exprType}
+                  onValueChange={(value) => {
+                    if (dataset) {
+                      const matches = dataset.exprTypes.filter(
+                        (t) => t.name === value
+                      )
 
-                  if (matches.length > 0) {
-                    setExprType(matches[0]!.name)
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.apps.gex.gexType = matches[0]!.name
-                      })
+                      if (matches.length > 0) {
+                        setExprType(matches[0]!.name)
+                        updateSettings(
+                          produce(settings, (draft) => {
+                            draft.apps.gex.gexType = matches[0]!.name
+                          })
+                        )
+                      }
+                    }
+                  }}
+                >
+                  {dataset && (
+                    <>
+                      {dataset.exprTypes.map((t, ti) => (
+                        <SelectItem value={t.name} key={ti}>
+                          {t.name}
+                        </SelectItem>
+                      ))}
+                    </>
+                  )}
+                </SelectList>
+              </PropRow>
+
+              <LineSeparator />
+
+              <PropRow title="Sample Info">
+                <SampleDataTypeCombo
+                  selectedValues={sampleDataTypes.filter(
+                    (t) => sampleDataTypeUseMap.get(t) ?? false
+                  )}
+                  values={sampleDataTypes}
+                  setValue={(value, selected) => {
+                    setSampleDataTypeUseMap(
+                      new Map<string, boolean>([
+                        ...[...sampleDataTypeUseMap.entries()],
+                        [value, selected],
+                      ])
                     )
-                  }
-                }
-              }}
-            >
-              {dataset && (
-                <>
-                  {dataset.exprTypes.map((t, ti) => (
-                    <SelectItem value={t.name} key={ti}>
-                      {t.name}
-                    </SelectItem>
-                  ))}
-                </>
-              )}
-            </SelectList>
-          </PropRow>
+                  }}
+                  w="lg"
+                />
+              </PropRow>
 
-          <PropRow title="Sample Info">
-            <SampleDataTypeCombo
-              selectedValues={sampleDataTypes.filter(
-                (t) => sampleDataTypeUseMap.get(t) ?? false
-              )}
-              values={sampleDataTypes}
-              setValue={(value, selected) => {
-                setSampleDataTypeUseMap(
-                  new Map<string, boolean>([
-                    ...[...sampleDataTypeUseMap.entries()],
-                    [value, selected],
-                  ])
-                )
-              }}
-              w="lg"
-            />
-          </PropRow>
+              <CheckPropRow
+                title="Add sample info to column names"
+                checked={settings.apps.gex.addSampleMetadataToColumns}
+                onCheckedChange={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.apps.gex.addSampleMetadataToColumns = v
+                    })
+                  )
+                }}
+              />
 
-          <CheckPropRow
-            title="Create groups"
-            checked={settings.apps.gex.addGroup}
-            onCheckedChange={(v) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.apps.gex.addGroup = v
-                })
-              )
-            }}
-            info="Creates groups of samples for the unique data types."
-          >
-            <SampleDataTypeCombo
-              selectedValues={groupSampleDataType}
-              values={sampleDataTypes}
-              setValue={(value) => {
-                setGroupSampleDataType([value])
-              }}
-              className="w-48"
-            />
-          </CheckPropRow>
+              <CheckPropRow
+                title="Add alternative names to columns"
+                checked={settings.apps.gex.addAltNames}
+                onCheckedChange={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.apps.gex.addAltNames = v
+                    })
+                  )
+                }}
+              />
 
-          <CheckPropRow
-            title="Use official gene symbol"
-            info="Use the official gene symbol in place of the original symbol if available."
-            checked={settings.apps.gex.useOfficialGeneSymbol}
-            onCheckedChange={(v) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.apps.gex.useOfficialGeneSymbol = v
-                })
-              )
-            }}
-          />
+              <LineSeparator />
 
-          <CheckPropRow
-            title="Add sample info to column names"
-            checked={settings.apps.gex.addSampleMetadataToColumns}
-            onCheckedChange={(v) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.apps.gex.addSampleMetadataToColumns = v
-                })
-              )
-            }}
-          />
+              <CheckPropRow
+                title="Create groups"
+                checked={settings.apps.gex.addGroup}
+                onCheckedChange={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.apps.gex.addGroup = v
+                    })
+                  )
+                }}
+                info="Creates groups of samples for the unique data types."
+              >
+                <SampleDataTypeCombo
+                  selectedValues={groupSampleDataType}
+                  values={sampleDataTypes}
+                  setValue={(value) => {
+                    setGroupSampleDataType([value])
+                  }}
+                  className="w-48"
+                />
+              </CheckPropRow>
 
-          <CheckPropRow
-            title="Add alternative names to columns"
-            checked={settings.apps.gex.addAltNames}
-            onCheckedChange={(v) => {
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.apps.gex.addAltNames = v
-                })
-              )
-            }}
-          />
+              <LineSeparator />
+
+              <CheckPropRow
+                title="Use official gene symbol"
+                info="Use the official gene symbol in place of the original symbol if available."
+                checked={settings.apps.gex.useOfficialGeneSymbol}
+                onCheckedChange={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.apps.gex.useOfficialGeneSymbol = v
+                    })
+                  )
+                }}
+              />
+            </DialogCardContent>
+          </DialogCard>
         </BaseCol>
       </>
     </GlassSideDialog>

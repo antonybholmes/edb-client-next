@@ -41,8 +41,8 @@ import { produce } from 'immer'
 import {
   DialogCard,
   DialogCardContent,
-  DialogCardHeader,
   DialogCardInfo,
+  DialogCardLabel,
 } from '@/components/dialogs/card/dialog-card'
 import {
   useCurrentGroups,
@@ -266,11 +266,9 @@ export function HeatMapDialog({
       leftFooterChildren={<HelpButton url="/help/apps/matcalc/heatmap" />}
       bodyCls="gap-y-3"
     >
-      <DialogCard>
-        <DialogCardHeader title="Filter">
-          <DialogCardInfo>Filter table before plotting.</DialogCardInfo>
-        </DialogCardHeader>
+      <DialogCardLabel title="Filter"></DialogCardLabel>
 
+      <DialogCard>
         <DialogCardContent>
           <CheckPropRow
             title="Top"
@@ -344,15 +342,12 @@ export function HeatMapDialog({
             </SelectList>
           </PropRow>
         </DialogCardContent>
+        <DialogCardInfo>Filter table before plotting.</DialogCardInfo>
       </DialogCard>
 
-      <DialogCard>
-        <DialogCardHeader title="Transform">
-          <DialogCardInfo>
-            Apply transformations to data before plotting.
-          </DialogCardInfo>
-        </DialogCardHeader>
+      <DialogCardLabel title="Transform"></DialogCardLabel>
 
+      <DialogCard>
         <DialogCardContent>
           <Checkbox
             checked={settings.heatmap.applyLog2}
@@ -393,15 +388,15 @@ export function HeatMapDialog({
             Transpose
           </Checkbox>
         </DialogCardContent>
+
+        <DialogCardInfo>
+          Apply transformations to data before plotting.
+        </DialogCardInfo>
       </DialogCard>
 
-      <DialogCard>
-        <DialogCardHeader title="Clustering">
-          <DialogCardInfo>
-            Apply hierarchical row/column clustering.
-          </DialogCardInfo>
-        </DialogCardHeader>
+      <DialogCardLabel title="Clustering"></DialogCardLabel>
 
+      <DialogCard>
         <DialogCardContent>
           <Checkbox
             checked={settings.heatmap.clusterRows}
@@ -469,6 +464,9 @@ export function HeatMapDialog({
             </SelectList>
           </PropRow>
         </DialogCardContent>
+        <DialogCardInfo>
+          Apply hierarchical row/column clustering.
+        </DialogCardInfo>
       </DialogCard>
     </OKCancelDialog>
   )

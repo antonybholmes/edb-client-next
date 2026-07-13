@@ -31,6 +31,12 @@ export function GroupDialog({ group, onResponse }: IProps) {
 
   const [color, setColor] = useState('#6495ED') //`#${Math.floor(Math.random() * 16777215).toString(16)}`,
 
+  const [exactMatch, setExactMatch] = useState(false)
+
+  useEffect(() => {
+    setExactMatch(group?.exactMatch ?? settings.groups.match.exact)
+  }, [group, settings.groups.match.exact])
+
   useEffect(() => {
     // if group provided, set defaults
 
@@ -51,30 +57,32 @@ export function GroupDialog({ group, onResponse }: IProps) {
       name,
       search: search.split(',').map((x) => x.trim().toLowerCase()),
 
-      exactMatch: settings.groups.match.exact,
+      exactMatch,
     }
 
     setCols(getColNamesFromGroup(sheets[0] as AnnotationDataFrame, g))
-  }, [name, search, settings.groups.match.exact])
+  }, [name, search, exactMatch])
 
   function makeGroup() {
-    // return modified group
-    onResponse?.(TEXT_OK, {
+    const newGroup = {
       ...group,
       name,
       search: search.split(',').map((x) => x.trim().toLowerCase()),
       color,
-      exactMatch: settings.groups.match.exact,
-    })
+      exactMatch,
+    }
+
+    // return modified group
+    onResponse?.(TEXT_OK, newGroup)
   }
 
   return (
     <OKCancelDialog
-      title={
-        <span style={{ color }}>
-          {name.length > 0 ? `Edit ${name}` : 'New group'}
-        </span>
-      }
+      // title={
+      //   <span style={{ color }}>
+      //     {name.length > 0 ? `Edit ${name}` : 'New group'}
+      //   </span>
+      // }
       onResponse={(r) => {
         console.log('GroupDialog onResponse', r, name, search, color)
         if (r === TEXT_CANCEL) {
@@ -85,17 +93,35 @@ export function GroupDialog({ group, onResponse }: IProps) {
       }}
       showClose={true}
       //className="w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4"
-      leftHeaderChildren={
-        <FillButton
-          colors={[
-            {
-              color,
-              allowNoColor: false,
-              onColorChange: ({ color }) => setColor(color),
-            },
-          ]}
-          className={SIMPLE_COLOR_EXT_CLS}
-        />
+      title={
+        <>
+          <FillButton
+            colors={[
+              {
+                color,
+                allowNoColor: false,
+                onColorChange: ({ color }) => setColor(color),
+              },
+            ]}
+            className={SIMPLE_COLOR_EXT_CLS}
+          />
+
+          <Input
+            id="name"
+            h="lg"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Group Name"
+            className="col-span-4"
+            // rightChildren={
+            //   <FillButton
+            //     colors={[
+            //       { color, onColorChange: ({ color }) => setColor(color) },
+            //     ]}
+            //   />
+            // }
+          />
+        </>
       }
       leftFooterChildren={
         IS_DEV_MODE ? (
@@ -104,24 +130,7 @@ export function GroupDialog({ group, onResponse }: IProps) {
       }
       bodyCls="gap-y-2"
     >
-      <div className="grid grid-cols-5 items-center gap-2">
-        <span>Name</span>
-        <Input
-          id="name"
-          h="lg"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Group Name"
-          className="col-span-4"
-          // rightChildren={
-          //   <FillButton
-          //     colors={[
-          //       { color, onColorChange: ({ color }) => setColor(color) },
-          //     ]}
-          //   />
-          // }
-        />
-
+      <div className="grid grid-cols-6 items-center gap-2">
         <span>Match</span>
 
         <Input
@@ -136,13 +145,18 @@ export function GroupDialog({ group, onResponse }: IProps) {
               names. All matching columns will belong to the group.
             </InfoHoverCard>
           }
-          className="col-span-4"
+          className="col-span-5"
         />
         <span></span>
-        <VCenterRow className="col-span-4">
+        <VCenterRow className="col-span-5">
           <Checkbox
-            checked={settings.groups.match.exact}
+            checked={exactMatch}
             onCheckedChange={(v) => {
+              setExactMatch(v)
+              // Store setting for exact match in global settings
+              // so that it can be default for new groups and
+              // remembered across sessions. We can still override it for
+              // individual groups if needed.
               updateSettings(
                 produce(settings, (draft) => {
                   draft.groups.match.exact = v
@@ -155,8 +169,16 @@ export function GroupDialog({ group, onResponse }: IProps) {
         </VCenterRow>
 
         <span></span>
-        <VCenterRow className="col-span-4 text-xs">
+        {/* <VCenterRow className="col-span-4 text-xs text-alt-foreground">
           {cols.length > 0 && cols.join(', ')}
+        </VCenterRow> */}
+
+        <VCenterRow className="col-span-4 text-xs text-alt-foreground flex-wrap gap-1.5">
+          {cols.map((c) => (
+            <span key={c} className="bg-muted/50 p-1 px-2 rounded-full">
+              {c}
+            </span>
+          ))}
         </VCenterRow>
       </div>
 

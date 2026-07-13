@@ -1,5 +1,12 @@
 # Changelog
 
+## 85.8 (Jul, 2026)
+
+### Changed
+
+- Matcalc group name edit now works correctly. Exact match is now tied to group rather than global setting.
+
+
 ## 85.6 (Jul, 2026)
 
 ### Added

@@ -14,7 +14,7 @@ import { useState } from 'react'
 import {
   DialogCard,
   DialogCardContent,
-  DialogCardHeader,
+  DialogCardLabel,
 } from '@/components/dialogs/card/dialog-card'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { IosGroupToggle } from '@/components/shadcn/ui/themed/v2/ios-group-toggle'
@@ -51,7 +51,7 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
       bodyCls="gap-y-3"
     >
       <DialogCard>
-        <DialogCardHeader title="Labels" />
+        <DialogCardLabel title="Labels" />
         <DialogCardContent>
           <PropRow title="Font" side="right">
             <FontUI
@@ -88,7 +88,7 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
       </DialogCard>
 
       <DialogCard>
-        <DialogCardHeader title="Appearance" />
+        <DialogCardLabel title="Appearance" />
         <DialogCardContent>
           <SwitchPropRow
             checked={settings.tracks.genes.stroke.show}
@@ -347,7 +347,7 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
       </DialogCard>
 
       <DialogCard>
-        <DialogCardHeader title="Canonical Genes" />
+        <DialogCardLabel title="Canonical Genes" />
         <DialogCardContent>
           <SwitchPropRow
             checked={settings.tracks.genes.canonical.isColored}
@@ -398,7 +398,7 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
       </DialogCard>
 
       <DialogCard>
-        <DialogCardHeader title="Display Density" />
+        <DialogCardLabel title="Display Density" />
         <DialogCardContent>
           <PropRow title="Display">
             <SelectList

@@ -5,7 +5,8 @@
     "search": ["het"],
     "color": "#ff0000",
     "indices": [0, 1, 2],
-    "show": true
+    "show": true,
+    "exactMatch": false
   },
   {
     "id": "019cc39f-f386-7b36-9716-26484f101633",
@@ -13,7 +14,8 @@
     "search": ["ko"],
     "color": "#0070ff",
     "indices": [3, 4, 5, 6],
-    "show": true
+    "show": true,
+    "exactMatch": false
   },
   {
     "id": "019cc3a0-000a-7453-b04f-0d340f7a4fdc",
@@ -21,6 +23,7 @@
     "search": ["wt"],
     "color": "#1ecf6b",
     "indices": [7, 8, 9, 10],
-    "show": true
+    "show": true,
+    "exactMatch": false
   }
 ]

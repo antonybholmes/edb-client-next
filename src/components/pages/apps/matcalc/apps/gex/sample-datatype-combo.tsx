@@ -18,7 +18,7 @@ import type { VariantProps } from 'class-variance-authority'
 import { useState } from 'react'
 
 const CLS = `flex flex-row items-center gap-x-4 justify-between border border-border/50 
-  hover:border-ring data-popup-open:border-ring trans-color h-9 pl-2 pr-1 rounded-theme`
+  hover:border-ring data-popup-open:border-ring trans-color h-8 bg-background pl-2 pr-1 rounded-theme`
 
 interface IProp extends IDivProps, VariantProps<typeof triggerVariants> {
   selectedValues: string[]

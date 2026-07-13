@@ -94,7 +94,7 @@ export function SankeyDialog({
       bodyCls="gap-y-3"
     >
       <DialogCard>
-        <DialogCardHeader title="Required headings"></DialogCardHeader>
+        <DialogCardHeader title="Required headings" />
 
         <DialogCardContent>
           <PropRow title="Source">
@@ -136,7 +136,7 @@ export function SankeyDialog({
       </DialogCard>
 
       <DialogCard>
-        <DialogCardHeader title="Optional headings"></DialogCardHeader>
+        <DialogCardHeader title="Optional headings" />
 
         <DialogCardContent>
           <PropRow title="Source color">

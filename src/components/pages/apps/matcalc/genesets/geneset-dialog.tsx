@@ -1,13 +1,9 @@
 import { BaseCol } from '@/layout/base-col'
 
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
-import { TEXT_CANCEL, TEXT_NAME, TEXT_OK } from '@/consts'
+import { IS_DEV_MODE, TEXT_CANCEL, TEXT_NAME, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
-import { PropRow } from '@/dialogs/prop-row'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import type { IGeneSet } from '@/lib/gsea/geneset'
 import { textToLines } from '@/lib/text/lines'
 import { Textarea } from '@/themed/textarea'
@@ -45,12 +41,6 @@ export function GenesetDialog({ geneset, onResponse }: IProps) {
 
   return (
     <OKCancelDialog
-      open={true}
-      title={
-        <span style={{ color }}>
-          {name.length > 0 ? `Edit ${name}` : 'New Gene Set'}
-        </span>
-      }
       onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onResponse?.(r, undefined)
@@ -64,23 +54,37 @@ export function GenesetDialog({ geneset, onResponse }: IProps) {
       //bodyVariant="default"
       //footerVariant="default"
       //className="w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4"
-      leftHeaderChildren={
+      leftFooterChildren={
+        IS_DEV_MODE ? (
+          <span className="text-foreground/50">{geneset.id}</span>
+        ) : undefined
+      }
+      title={
         // <ColorPickerButton
         //   color={color}
         //   onColorChange={setColor}
         //   className={cn(XS_ICON_BUTTON_CLS, 'rounded-full')}
         //   title="Set color"
         // />
+        <>
+          <FillButton
+            colors={[
+              {
+                color,
+                allowNoColor: false,
+                onColorChange: ({ color }) => setColor(color),
+              },
+            ]}
+          />
 
-        <ColorPickerButton
-          colors={[
-            {
-              color,
-              onColorChange: ({ color }) => setColor(color),
-            },
-          ]}
-          className={SIMPLE_COLOR_EXT_CLS}
-        />
+          <Input
+            id="name"
+            value={name}
+            h="lg"
+            onChange={(e) => setName(e.target.value)}
+            placeholder={TEXT_NAME}
+          />
+        </>
       }
       // leftFooterChildren={
       //   <span className="text-foreground/50" title="Gene Set Id">
@@ -89,19 +93,6 @@ export function GenesetDialog({ geneset, onResponse }: IProps) {
       // }
     >
       <BaseCol className="gap-y-2">
-        <PropRow title="Name">
-          <Input
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder={TEXT_NAME}
-          />
-        </PropRow>
-
-        <PropRow title="Id">
-          <Input readOnly value={geneset?.id} />
-        </PropRow>
-
         <Textarea
           id="search"
           value={search}

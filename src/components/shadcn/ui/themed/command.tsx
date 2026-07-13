@@ -121,7 +121,7 @@ CommandSeparator.displayName = CommandPrimitive.Separator.displayName
 
 export function CommandItem({
   ref,
-  variant = 'theme',
+  variant = 'app-theme',
   rounded = 'theme',
   className,
   children,
@@ -129,6 +129,17 @@ export function CommandItem({
 }: ComponentProps<typeof CommandPrimitive.Item> &
   VariantProps<typeof dropdownMenuItemVariants>) {
   const c = Children.toArray(children)
+
+  console.log(
+    dropdownMenuItemVariants({
+      variant,
+      rounded,
+      className: cn(
+        '[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+        className
+      ),
+    })
+  )
 
   return (
     <CommandPrimitive.Item
@@ -157,12 +168,14 @@ export function CommandItem({
 }
 
 export function CheckedCommandItem({
+  variant = 'app-theme',
+  rounded = 'theme',
   checked = false,
   children,
   ...props
 }: ComponentProps<typeof CommandItem> & { checked?: boolean }) {
   return (
-    <CommandItem {...props}>
+    <CommandItem variant={variant} rounded={rounded} {...props}>
       {checked && <Check size={16} strokeWidth={2} />}
       {children}
     </CommandItem>

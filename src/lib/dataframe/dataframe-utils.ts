@@ -689,7 +689,7 @@ export function getColIdxFromGroup(
     ? g.search
     : g.search.map((s) => s.toLowerCase())
 
-  return df.columns
+  const cols = df.columns
     .map((col, ci) => ({ col: ci, name: col.toLowerCase() }))
     .filter((c) => {
       if (g.columns && g.columns.length > 0) {
@@ -734,6 +734,8 @@ export function getColIdxFromGroup(
       return false
     })
     .map((c) => c.col)
+
+  return cols
 }
 
 /**

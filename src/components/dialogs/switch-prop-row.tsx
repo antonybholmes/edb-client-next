@@ -3,11 +3,11 @@ import { type ReactNode } from 'react'
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { cn } from '@/lib/shadcn-utils'
 import { H2_CLS } from '@/theme'
-import { BaseCol } from '../layout/base-col'
 import { BaseRow } from '../layout/base-row'
 import { VCenterRow } from '../layout/v-center-row'
 import type { ICheckboxProps } from '../shadcn/ui/themed/v2/check-box'
 import { Switch } from '../shadcn/ui/themed/v2/switch'
+import { DialogCardInfo, DialogCardLabel } from './card/dialog-card'
 import { H_CLS } from './prop-row'
 
 export const PROPS_TITLE_CLS = cn(H2_CLS, 'py-1')
@@ -33,15 +33,10 @@ export function SwitchPropRow({
   className,
   children,
 }: IProps) {
-  // if title is string, wrap it in span with labelVariants
-  if (typeof title === 'string') {
-    title = <span className={cn('truncate shrink-0 font-medium')}>{title}</span>
-  }
-
   return (
     <BaseRow
       className={cn(
-        'gap-x-4',
+        'gap-x-16 justify-between',
         info ? 'items-start pb-1' : 'items-center',
         h,
         className
@@ -58,10 +53,9 @@ export function SwitchPropRow({
       )}
 
       {side == 'right' && (
-        <BaseCol className="gap-y-px">
-          {title}
-          {info && <span className="text-xs opacity-60">{info}</span>}
-        </BaseCol>
+        <DialogCardLabel title={title}>
+          {info && <DialogCardInfo>{info}</DialogCardInfo>}
+        </DialogCardLabel>
       )}
 
       <VCenterRow className="gap-x-1.5 justify-end grow overflow-hidden">
