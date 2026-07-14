@@ -78,11 +78,11 @@ export function GroupDialog({ group, onResponse }: IProps) {
 
   return (
     <OKCancelDialog
-      // title={
-      //   <span style={{ color }}>
-      //     {name.length > 0 ? `Edit ${name}` : 'New group'}
-      //   </span>
-      // }
+      title={
+        <h2 style={{ color }} className="font-semibold">
+          {name.length > 0 ? `Edit ${name}` : 'New group'}
+        </h2>
+      }
       onResponse={(r) => {
         console.log('GroupDialog onResponse', r, name, search, color)
         if (r === TEXT_CANCEL) {
@@ -93,35 +93,17 @@ export function GroupDialog({ group, onResponse }: IProps) {
       }}
       showClose={true}
       //className="w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4"
-      title={
-        <>
-          <FillButton
-            colors={[
-              {
-                color,
-                allowNoColor: false,
-                onColorChange: ({ color }) => setColor(color),
-              },
-            ]}
-            className={SIMPLE_COLOR_EXT_CLS}
-          />
-
-          <Input
-            id="name"
-            h="lg"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Group Name"
-            className="col-span-4"
-            // rightChildren={
-            //   <FillButton
-            //     colors={[
-            //       { color, onColorChange: ({ color }) => setColor(color) },
-            //     ]}
-            //   />
-            // }
-          />
-        </>
+      leftHeaderChildren={
+        <FillButton
+          colors={[
+            {
+              color,
+              allowNoColor: false,
+              onColorChange: ({ color }) => setColor(color),
+            },
+          ]}
+          className={SIMPLE_COLOR_EXT_CLS}
+        />
       }
       leftFooterChildren={
         IS_DEV_MODE ? (
@@ -130,8 +112,18 @@ export function GroupDialog({ group, onResponse }: IProps) {
       }
       bodyCls="gap-y-2"
     >
-      <div className="grid grid-cols-6 items-center gap-2">
-        <span>Match</span>
+      <div className="grid grid-cols-7 items-center gap-x-4 gap-y-2">
+        <span className="text-alt-foreground text-right">Name</span>
+        <Input
+          id="name"
+          h="lg"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Group Name"
+          className="col-span-5"
+        />
+        <span></span>
+        <span className="text-alt-foreground text-right">Match</span>
 
         <Input
           id="search"
@@ -147,6 +139,7 @@ export function GroupDialog({ group, onResponse }: IProps) {
           }
           className="col-span-5"
         />
+        <span></span>
         <span></span>
         <VCenterRow className="col-span-5">
           <Checkbox
@@ -167,7 +160,7 @@ export function GroupDialog({ group, onResponse }: IProps) {
             Exact match
           </Checkbox>
         </VCenterRow>
-
+        <span></span>
         <span></span>
         {/* <VCenterRow className="col-span-4 text-xs text-alt-foreground">
           {cols.length > 0 && cols.join(', ')}

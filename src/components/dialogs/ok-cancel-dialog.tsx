@@ -62,7 +62,8 @@ export function OSButtonRow({
 
 export const DIALOG_HEADER_BUTTON_CLS = cn(
   FOCUS_RING_CLS,
-  'stroke-alt-foreground hover:stroke-foreground trans-color aspect-square'
+  'stroke-alt-foreground hover:stroke-foreground',
+  'trans-color aspect-square -mr-1'
 )
 
 export function CloseButton({ ...props }: IButtonProps) {
@@ -145,7 +146,7 @@ export function OKCancelDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          'text-sm flex flex-col p-4 pt-2 gap-y-4',
+          'text-sm flex flex-col p-4 pt-3 gap-y-4',
           w,
           h,
           className
@@ -251,7 +252,7 @@ export function DialogButtons({
       <Button
         variant="app-theme"
         onClick={() => onResponse?.(buttons[0]!)}
-        className="w-24"
+        className="w-23"
         size="lg"
         ripple={true}
       >
@@ -262,7 +263,7 @@ export function DialogButtons({
         <Button
           key={bi}
           onClick={() => onResponse?.(button)}
-          className="w-24"
+          className="w-23"
           size="lg"
           variant="secondary"
         >

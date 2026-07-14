@@ -198,7 +198,7 @@ const DialogHeader = ({
   ...props
 }: HTMLAttributes<HTMLDivElement>) => (
   <VCenterRow
-    className={cn('relative min-h-10 justify-between', className)}
+    className={cn('relative min-h-8 justify-between', className)}
     {...props}
   />
 )
