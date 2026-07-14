@@ -1,9 +1,7 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { useGenomes } from '@/components/edb/genome'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
-import { VCenterRow } from '@/components/layout/v-center-row'
 import { openFilesDialog } from '@/components/pages/open-files'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
@@ -106,32 +104,52 @@ export function HomeToolbar() {
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="TSS" className="gap-x-2">
-        <DoubleNumericalInput
-          h="sm"
-          v1={settings.tss.prom5p}
-          v2={settings.tss.prom3p}
-          limit={[0, 1000000]}
-          dp={0}
-          inc={1000}
-          onNumChange1={(value) =>
-            updateSettings({
-              ...settings,
-              tss: { ...settings.tss, prom5p: value },
-            })
-          }
-          onNumChange2={(value) =>
-            updateSettings({
-              ...settings,
-              tss: { ...settings.tss, prom3p: value },
-            })
-          }
-        />
+        <ToolbarCol gap="gap-x-2">
+          <ToolbarRow gap="gap-x-1">
+            <span>5'</span>
+            <NumericalInput
+              h="sm"
+              value={settings.tss.prom5p}
+
+              limit={[0, 1000000]}
+              dp={0}
+              step={1000}
+              onNumChange={(value) =>
+                updateSettings({
+                  ...settings,
+                  tss: { ...settings.tss, prom5p: value },
+                })
+              }
+
+              w="xs"
+            />
+          </ToolbarRow>
+          <ToolbarRow gap="gap-x-1">
+            <span>3'</span>
+            <NumericalInput
+              h="sm"
+
+              value={settings.tss.prom3p}
+              limit={[0, 1000000]}
+              dp={0}
+              step={1000}
+
+              onNumChange={(value) =>
+                updateSettings({
+                  ...settings,
+                  tss: { ...settings.tss, prom3p: value },
+                })
+              }
+              w="xs"
+            />
+          </ToolbarRow>
+        </ToolbarCol>
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Options" className="gap-x-2">
         <ToolbarCol gap="gap-x-2">
-          <VCenterRow className="gap-x-1">
-            <span>Closest genes:</span>
+          <ToolbarRow gap="gap-x-1">
+            <span>Closest genes</span>
             <NumericalInput
               h="sm"
               value={settings.closest}
@@ -142,7 +160,7 @@ export function HomeToolbar() {
               dp={0}
               step={1}
             />
-          </VCenterRow>
+          </ToolbarRow>
           <ToolbarRow>
             <Checkbox
               checked={settings.useOfficialGenes}

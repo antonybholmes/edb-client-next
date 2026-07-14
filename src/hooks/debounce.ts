@@ -2,6 +2,15 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 export const DEFAULT_DEBOUNCE_DELAY_MS = 100
 
+export function NUM_EQUALITY_FN(a: number, b: number) {
+  return Math.abs(a - b) < 0.001
+}
+
+export function TO_NUMBER_FN(x: any) {
+  const n = Number(x)
+  return isNaN(n) ? 0 : n
+}
+
 export interface IDebounceOptions<T> {
   delayMs?: number
   // apply an additional function to the value before setting it. Useful for things like clamping or
@@ -60,6 +69,40 @@ export function useDebounce<T>(value: T, opts: IDebounceOptions<T> = {}): T {
       clearTimeout(handler)
     }
   }, [value, delayMs, equalityFn])
+
+  return debouncedValue
+}
+
+export function useNumDebounce(
+  value: number,
+  opts: IDebounceOptions<number> = {}
+) {
+  const { delayMs = DEFAULT_DEBOUNCE_DELAY_MS, fn = TO_NUMBER_FN } = opts
+
+  const [debouncedValue, setDebouncedValue] = useState<number>(value)
+
+  const latestFnRef = useRef(fn)
+  const prevValueRef = useRef(value)
+
+  useEffect(() => {
+    latestFnRef.current = fn
+  }, [fn])
+
+  useEffect(() => {
+    if (NUM_EQUALITY_FN(prevValueRef.current, value)) {
+      return
+    }
+
+    prevValueRef.current = value
+
+    const handler = setTimeout(() => {
+      setDebouncedValue(latestFnRef.current(value))
+    }, delayMs)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [value, delayMs])
 
   return debouncedValue
 }

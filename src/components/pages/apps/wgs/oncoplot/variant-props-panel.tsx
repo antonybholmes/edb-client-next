@@ -41,10 +41,7 @@ import {
   openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { randomHexColor } from '@/lib/color/color'
 import { useOncoplotSettings } from './oncoplot-settings-store'
@@ -60,11 +57,11 @@ function MutationElem({ mutation, setDelMutation }: IMutationElemProps) {
 
   return (
     <SortableItem key={mutation.id} id={mutation.id}>
-      <ColorPickerButton
-        className={SIMPLE_COLOR_EXT_CLS}
+      <FillButton
         colors={[
           {
             color: mutation.color,
+            allowNoColor: false,
             onColorChange: ({ color }) => {
               setMutations(
                 produce(mutations, (draft) => {
@@ -199,7 +196,7 @@ export function VariantPropsPanel({ ref }: IDivProps) {
                   })
                 )
               }
-              title="Add mutation"
+              title="Add Mutation"
             >
               <PlusIcon fill="stroke-foreground" />
             </IconButton>

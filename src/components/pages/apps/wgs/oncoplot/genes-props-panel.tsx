@@ -35,10 +35,7 @@ import {
   openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
@@ -105,11 +102,11 @@ function SortableGeneElem({ gene }: IGeneElemProps) {
         }
       />
 
-      <ColorPickerButton
-        className={SIMPLE_COLOR_EXT_CLS}
+      <FillButton
         colors={[
           {
             color: gene.color,
+            allowNoColor: false,
             onColorChange: ({ color }) => {
               setGenes(
                 produce(genes, (draft) => {

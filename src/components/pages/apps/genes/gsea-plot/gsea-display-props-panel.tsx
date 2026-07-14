@@ -12,12 +12,12 @@ import { TEXT_OK, TEXT_RESET } from '@/consts'
 
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { LinkButton } from '@/themed/link-button'
-import { NumericalInput } from '@/themed/numerical-input'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { useDebounce } from '@/hooks/debounce'
@@ -34,7 +34,7 @@ export function GseaDisplayPropsPanel() {
 
   return (
     <PropsPanel className="gap-y-2">
-      <SideBarHeader>
+      <SideBarHeader className="justify-end">
         <LinkButton
           onClick={() => {
             openDialog({
@@ -305,20 +305,20 @@ export function GseaDisplayPropsPanel() {
           </AccordionTrigger>
           <AccordionContent>
             <PropRow title="Height">
-              <NumericalInput
+              <NumSlider
                 value={settings.genes.height}
                 disabled={!settings.genes.show}
-                placeholder="Height"
-                limit={[1, 100]}
+
+                min={1}
+                max={100}
                 step={1}
-                onNumChange={(v) => {
+                onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
                       draft.genes.height = v
                     })
                   )
                 }}
-                w="xxs"
               />
             </PropRow>
 
@@ -597,9 +597,8 @@ function GradientOpacityControl() {
         value={gradientOpacity}
         min={0}
         max={1}
-        onValueChange={(value: number | readonly number[]) => {
-          const newValue = Array.isArray(value) ? value[0]! : value
-          setGradientOpacity(newValue)
+        onNumChanged={(v) => {
+          setGradientOpacity(v)
         }}
         step={0.05}
       />

@@ -15,13 +15,13 @@ import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { TEXT_OK, TEXT_RESET } from '@/consts'
 
 import { CheckPropRow } from '@/dialogs/check-prop-row'
-import { VCenterRow } from '@/layout/v-center-row'
 import { LinkButton } from '@/themed/link-button'
 import { NumericalInput } from '@/themed/numerical-input'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { Percent } from '@/components/percent'
 import { Slider } from '@/components/shadcn/ui/themed/v2/slider'
+import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { produce } from 'immer'
 import { FontPopover } from '../../../../plot/font/font-popover'
 import { MarginPopover } from '../../../../plot/margin-popover'
@@ -49,7 +49,7 @@ export function GseaDisplayPropsPanel() {
 
   return (
     <PropsPanel className="pr-1 gap-y-4">
-      <VCenterRow className="justify-end px-1">
+      <SideBarHeader className="justify-end">
         {/* <LinkButton
             onClick={() => reset()}
             title="Reset Properties to Defaults"
@@ -77,7 +77,7 @@ export function GseaDisplayPropsPanel() {
         >
           {TEXT_RESET}
         </LinkButton>
-      </VCenterRow>
+      </SideBarHeader>
       <ScrollAccordion
         value={[
           'page',

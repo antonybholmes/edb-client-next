@@ -2,10 +2,14 @@ import { IS_DEV_MODE, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { produce } from 'immer'
 
-import { PropRow } from '@/components/dialogs/prop-row'
+import {
+  ActionDialogCard,
+  ActionDialogCardContent,
+  ActionDialogRow,
+  ActionSwitchRow,
+} from '@/components/dialogs/card/action-dialog-card'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { Input } from '@/components/shadcn/ui/themed/v2/input'
-import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { useEffect, useState } from 'react'
 import { usePlotGrid, type IScrnaCluster } from './plot-grid-store'
 
@@ -27,33 +31,7 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
     <OKCancelDialog
       open={true}
       buttons={[TEXT_OK]}
-      title={
-        <Input
-          title="Title"
-          id="name"
-          value={_cluster.name}
-          onTextChange={(e) => {
-            if (!clusterInfo) {
-              return
-            }
-
-            updateClusterInfo(
-              produce(clusterInfo, (draft) => {
-                draft.clusters = draft.clusters.map((g) => {
-                  if (g.label === _cluster.label) {
-                    return { ...g, name: e }
-                  }
-                  return g
-                })
-              })
-            )
-          }}
-          placeholder="Title..."
-          //variant="dialog"
-          h="lg"
-          //w="full"
-        />
-      }
+      title={cluster.name || `Cluster ${cluster.label}`}
       onResponse={(r) => {
         if (r === TEXT_OK) {
         }
@@ -63,9 +41,7 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
       showClose={true}
       leftFooterChildren={
         IS_DEV_MODE ? (
-          <PropRow title="Cluster Id">
-            <span className="text-foreground/50">{cluster.id}</span>
-          </PropRow>
+          <span className="text-foreground/50">{cluster.id}</span>
         ) : undefined
       }
       //className="w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4"
@@ -140,76 +116,108 @@ export function ClusterDialog({ cluster, onResponse }: IProps) {
         h="lg"
       /> */}
 
-      <SwitchPropRow
-        title="Show"
-        checked={_cluster.show}
-        onCheckedChange={(checked) => {
-          const newCluster = produce(_cluster, (draft) => {
-            draft.show = checked
-          })
+      <ActionDialogCard>
+        <ActionDialogCardContent>
+          <ActionDialogRow title="Name">
+            <Input
+              title="Title"
+              id="name"
+              value={_cluster.name}
+              onTextChange={(e) => {
+                if (!clusterInfo) {
+                  return
+                }
 
-          setCluster(newCluster)
+                updateClusterInfo(
+                  produce(clusterInfo, (draft) => {
+                    draft.clusters = draft.clusters.map((g) => {
+                      if (g.label === _cluster.label) {
+                        return { ...g, name: e }
+                      }
+                      return g
+                    })
+                  })
+                )
+              }}
+              placeholder="Title..."
+              //variant="dialog"
+              h="lg"
+              //w="full"
+            />
+          </ActionDialogRow>
 
-          if (!clusterInfo) {
-            return
-          }
+          <ActionSwitchRow
+            title="Show"
+            checked={_cluster.show}
+            onCheckedChange={(checked) => {
+              const newCluster = produce(_cluster, (draft) => {
+                draft.show = checked
+              })
 
-          updateClusterInfo(
-            produce(clusterInfo, (draft) => {
-              draft.clusters.find((c) => c.label === _cluster.label)!.show =
-                checked
-            })
-          )
-        }}
-      />
+              setCluster(newCluster)
 
-      <SwitchPropRow
-        title="Label"
-        checked={_cluster.display.label.show}
-        onCheckedChange={(checked) => {
-          const newCluster = produce(_cluster, (draft) => {
-            draft.display.label.show = checked
-          })
+              if (!clusterInfo) {
+                return
+              }
 
-          setCluster(newCluster)
+              updateClusterInfo(
+                produce(clusterInfo, (draft) => {
+                  draft.clusters.find((c) => c.label === _cluster.label)!.show =
+                    checked
+                })
+              )
+            }}
+          />
 
-          if (!clusterInfo) {
-            return
-          }
+          <ActionSwitchRow
+            title="Label"
+            checked={_cluster.display.label.show}
+            onCheckedChange={(checked) => {
+              const newCluster = produce(_cluster, (draft) => {
+                draft.display.label.show = checked
+              })
 
-          updateClusterInfo(
-            produce(clusterInfo, (draft) => {
-              draft.clusters.find(
-                (c) => c.label === _cluster.label
-              )!.display.label.show = checked
-            })
-          )
-        }}
-      />
+              setCluster(newCluster)
 
-      <SwitchPropRow
-        title="Roundel"
-        checked={_cluster.display.label.roundel.show}
-        onCheckedChange={(checked) => {
-          const newCluster = produce(_cluster, (draft) => {
-            draft.display.label.roundel.show = checked
-          })
+              if (!clusterInfo) {
+                return
+              }
 
-          setCluster(newCluster)
+              updateClusterInfo(
+                produce(clusterInfo, (draft) => {
+                  draft.clusters.find(
+                    (c) => c.label === _cluster.label
+                  )!.display.label.show = checked
+                })
+              )
+            }}
+          />
 
-          if (!clusterInfo) {
-            return
-          }
+          <ActionSwitchRow
+            title="Roundel"
+            checked={_cluster.display.label.roundel.show}
+            onCheckedChange={(checked) => {
+              const newCluster = produce(_cluster, (draft) => {
+                draft.display.label.roundel.show = checked
+              })
 
-          updateClusterInfo(
-            produce(clusterInfo, (draft) => {
-              draft.clusters.find(
-                (c) => c.label === _cluster.label
-              )!.display.label.roundel.show = checked
-            })
-          )
-        }}
-      />
+              setCluster(newCluster)
+
+              if (!clusterInfo) {
+                return
+              }
+
+              updateClusterInfo(
+                produce(clusterInfo, (draft) => {
+                  draft.clusters.find(
+                    (c) => c.label === _cluster.label
+                  )!.display.label.roundel.show = checked
+                })
+              )
+            }}
+          />
+        </ActionDialogCardContent>
+      </ActionDialogCard>
     </OKCancelDialog>
   )
 }

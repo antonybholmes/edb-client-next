@@ -1,21 +1,13 @@
-import { VCenterRow } from '@/components/layout/v-center-row'
-import { Percent } from '@/components/percent'
-import { Slider as SliderPrimitive } from '@base-ui/react/slider'
-
-import { type ComponentProps } from 'react'
-import { Slider } from './slider'
+import { formatAsPercent } from '@/lib/text/format-string'
+import { useCallback, type ComponentProps } from 'react'
+import { NumSlider } from './num-slider'
 
 export function PercentSlider({
   value,
-
+  dp = 0,
   ...props
-}: ComponentProps<typeof SliderPrimitive.Root>) {
-  const v = Array.isArray(value) ? value[0] : value
+}: ComponentProps<typeof NumSlider>) {
+  const f = useCallback((v: number) => formatAsPercent(v, dp), [dp])
 
-  return (
-    <VCenterRow className="gap-x-2">
-      <Percent v={v} />
-      <Slider value={value} {...props} />
-    </VCenterRow>
-  )
+  return <NumSlider value={value} format={f} {...props} />
 }

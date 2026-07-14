@@ -24,7 +24,6 @@ export function SvgRect({
   fp,
   ...props
 }: IProps) {
-  console.log('SvgRect props:', sp)
   return (
     <rect
       stroke={stroke ?? sp?.value ?? 'none'}

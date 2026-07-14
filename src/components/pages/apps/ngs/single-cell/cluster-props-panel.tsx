@@ -3,7 +3,6 @@ import { VCenterRow } from '@/layout/v-center-row'
 //import { faFloppyDisk, faTrash } from "@fortawesome/free-solid-svg-icons"
 //import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
-import { ColorPickerButton } from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
 import { DRAG_ICON_ANIM_CLS, SortableItem } from '@/components/sortable-item'
 import { TEXT_RESET } from '@/consts'
@@ -14,6 +13,7 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { produce } from 'immer'
 import { useEffect, useState } from 'react'
 
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
@@ -77,10 +77,11 @@ function ClusterItem({
         }}
       />
 
-      <ColorPickerButton
+      <FillButton
         colors={[
           {
             color,
+            allowNoColor: false,
             onColorChange: ({ color }) => setColor(color),
           },
         ]}

@@ -50,7 +50,7 @@ export const inputVariants = cva(PLACEHOLDER_CLS, {
       none: '',
 
       xxs: 'w-12',
-      xs: 'w-16',
+      xs: 'w-14',
       sm: 'w-20',
       md: 'w-32',
       lg: 'w-48',

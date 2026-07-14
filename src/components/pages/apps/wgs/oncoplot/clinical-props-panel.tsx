@@ -1,11 +1,9 @@
 import { BaseCol } from '@/components/layout/base-col'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import {
   DRAG_HANDLE_APPEAR_CLS,
   SortableItem,
@@ -14,7 +12,6 @@ import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import type { IDivProps } from '@/interfaces/div-props'
-import { NumericalInput } from '@/themed/numerical-input'
 import { DndContext } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import {
@@ -60,27 +57,35 @@ export function ClinicalPropsPanel({ ref }: IDivProps) {
             )
           }
         >
-          <ColorPickerButton
+          <OutlineButton
             colors={[
               {
                 color: displayProps.clinical.border.value,
-                onColorChange: ({ color }) =>
+                opacity: displayProps.clinical.border.opacity,
+                show: displayProps.clinical.border.show,
+                onColorChange: ({ color, opacity, width, dasharray, show }) =>
                   setDisplayProps(
                     produce(displayProps, (draft) => {
                       draft.clinical.border.value = color
+                      draft.clinical.border.opacity = opacity
+                      draft.clinical.border.show = show
+                      draft.clinical.border.width = width
+                      draft.clinical.border.dasharray = dasharray
                     })
                   ),
               },
             ]}
-            className={SIMPLE_COLOR_EXT_CLS}
           />
         </CheckPropRow>
 
         <CheckPropRow title="Height">
-          <NumericalInput
+          <NumSlider
             id="y"
             value={displayProps.clinical.height}
             className="w-16 rounded-theme"
+            min={1}
+            max={100}
+            step={1}
             onNumChanged={(v) => {
               setDisplayProps(
                 produce(displayProps, (draft) => {

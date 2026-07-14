@@ -1,5 +1,7 @@
 import { YAxis, type Axis } from '@/components/plot/axis'
 import type { IBlock } from '@/components/plot/heatmap/heatmap-svg-props'
+import { SvgLine } from '@/components/plot/svg-line'
+import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { SVG_CRISP_EDGES } from '@/consts'
 import type { IPos } from '@/interfaces/pos'
@@ -49,7 +51,7 @@ function numberTrackSvg(
           const x = si * (blockSize.w + spacing.x)
 
           return (
-            <rect
+            <SvgRect
               key={si}
               x={x}
               y={y}
@@ -57,13 +59,8 @@ function numberTrackSvg(
               height={height}
               //stroke={color}
               fill={color}
-              stroke={displayProps.clinical.border.value}
-              strokeOpacity={displayProps.clinical.border.opacity}
-              strokeWidth={
-                displayProps.clinical.border.show
-                  ? displayProps.clinical.border.width
-                  : 0
-              }
+              sp={displayProps.clinical.border}
+
               shapeRendering={SVG_CRISP_EDGES}
             />
           )
@@ -105,20 +102,15 @@ function categoryTrackSvg(
 
           if (color) {
             return (
-              <rect
+              <SvgRect
                 key={si}
                 x={si * (blockSize.w + spacing.x)}
                 width={blockSize.w}
                 height={displayProps.clinical.height}
                 //stroke={color}
                 fill={color}
-                stroke={displayProps.clinical.border.value}
-                strokeOpacity={displayProps.clinical.border.opacity}
-                strokeWidth={
-                  displayProps.clinical.border.show
-                    ? displayProps.clinical.border.width
-                    : 0
-                }
+                sp={displayProps.clinical.border}
+
                 shapeRendering={SVG_CRISP_EDGES}
               />
             )
@@ -127,7 +119,7 @@ function categoryTrackSvg(
             const y = 0.5 * displayProps.clinical.height
 
             return (
-              <line
+              <SvgLine
                 key={si}
                 x1={x + 0.5}
                 x2={x + blockSize.w - 1}
@@ -198,7 +190,7 @@ function distTrackSvg(
                 NO_ALTERATION_COLOR //displayProps.legend.mutations.noAlterationColor
 
               return (
-                <rect
+                <SvgRect
                   key={ci}
                   x={x}
                   y={yax.domainToRange(coords[ci + 1]!)}
@@ -206,13 +198,8 @@ function distTrackSvg(
                   height={h}
                   //stroke={color}
                   fill={color}
-                  stroke={displayProps.clinical.border.value}
-                  strokeOpacity={displayProps.clinical.border.opacity}
-                  strokeWidth={
-                    displayProps.clinical.border.show
-                      ? displayProps.clinical.border.width
-                      : 0
-                  }
+                  sp={displayProps.clinical.border}
+
                   shapeRendering={SVG_CRISP_EDGES}
                 />
               )

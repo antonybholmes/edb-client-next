@@ -28,7 +28,7 @@ export function PlotPropsPanel() {
 
   return (
     <PropsPanel>
-      <SideBarHeader>
+      <SideBarHeader className="justify-end">
         <LinkButton
           onClick={() => {
             openDialog({
@@ -129,13 +129,12 @@ export function PlotPropsPanel() {
               <NumSlider
                 value={settings.nodes.width}
                 min={1}
-                max={1000}
-                //format={(v) => v.toString()}
-                onValueChange={(value: number | readonly number[]) => {
-                  const newValue = Array.isArray(value) ? value[0]! : value
+                max={100}
+
+                onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.nodes.width = newValue
+                      draft.nodes.width = v
                     })
                   )
                 }}
@@ -148,12 +147,11 @@ export function PlotPropsPanel() {
                 value={settings.nodes.rounding}
                 min={0}
                 max={100}
-                //format={(v) => v.toString()}
-                onValueChange={(value: number | readonly number[]) => {
-                  const newValue = Array.isArray(value) ? value[0]! : value
+                dp={1}
+                onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.nodes.rounding = newValue
+                      draft.nodes.rounding = v
                     })
                   )
                 }}
@@ -168,12 +166,11 @@ export function PlotPropsPanel() {
                 value={settings.nodes.oversize}
                 min={0}
                 max={100}
-                //format={(v) => v.toString()}
-                onValueChange={(value: number | readonly number[]) => {
-                  const newValue = Array.isArray(value) ? value[0]! : value
+                dp={1}
+                onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.nodes.oversize = newValue
+                      draft.nodes.oversize = v
                     })
                   )
                 }}
@@ -198,11 +195,10 @@ export function PlotPropsPanel() {
                 value={settings.nodes.opacity}
                 min={0}
                 max={1}
-                onValueChange={(value: number | readonly number[]) => {
-                  const newValue = Array.isArray(value) ? value[0]! : value
+                onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.nodes.opacity = newValue
+                      draft.nodes.opacity = v
                     })
                   )
                 }}
@@ -265,11 +261,10 @@ export function PlotPropsPanel() {
                 value={settings.links.fill.opacity}
                 min={0}
                 max={1}
-                onValueChange={(value: number | readonly number[]) => {
-                  const newValue = Array.isArray(value) ? value[0]! : value
+                onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.links.fill.opacity = newValue
+                      draft.links.fill.opacity = v
                     })
                   )
                 }}
@@ -281,11 +276,10 @@ export function PlotPropsPanel() {
                 value={settings.links.gradientOffset}
                 min={0}
                 max={1}
-                onValueChange={(value: number | readonly number[]) => {
-                  const newValue = Array.isArray(value) ? value[0]! : value
+                onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.links.gradientOffset = newValue
+                      draft.links.gradientOffset = v
                     })
                   )
                 }}

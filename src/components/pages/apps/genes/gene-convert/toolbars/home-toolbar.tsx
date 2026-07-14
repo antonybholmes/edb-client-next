@@ -119,7 +119,7 @@ export function HomeToolbar() {
           direction="toolbar"
         >
           {speciesTabs.map((tab) => (
-            <GroupToggle key={tab.id} value={tab.id}>
+            <GroupToggle key={tab.id} value={tab.id} className="w-14">
               {tab.name}
             </GroupToggle>
           ))}
@@ -136,7 +136,7 @@ export function HomeToolbar() {
           direction="toolbar"
         >
           {speciesTabs.map((tab) => (
-            <GroupToggle key={tab.id} value={tab.id}>
+            <GroupToggle key={tab.id} value={tab.id} className="w-14">
               {tab.name}
             </GroupToggle>
           ))}

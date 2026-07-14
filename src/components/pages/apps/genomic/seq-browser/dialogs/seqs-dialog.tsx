@@ -422,7 +422,7 @@ function ItemsInStore({
                 return (
                   <li
                     key={ti}
-                    className="flex flex-row items-center justify-between gap-y-0.5 gap-x-2 pr-2 border-r-2 border-transparent hover:border-app-theme overflow-hidden  group"
+                    className="flex flex-row items-center justify-between gap-y-0.5 gap-x-2 pl-2 border-l-2 border-transparent hover:border-app-theme overflow-hidden  group"
                   >
                     <Checkbox
                       checked={selectedMap.get(seq.id) ?? false}

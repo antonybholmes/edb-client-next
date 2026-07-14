@@ -2,8 +2,6 @@ import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { Input } from '@/themed/v2/input'
 import { produce } from 'immer'
 
-import { LabelContainer } from '@/components/shadcn/ui/themed/v2/label'
-import { PropRow } from '@/dialogs/prop-row'
 import {
   Select,
   SelectContent,
@@ -13,8 +11,18 @@ import {
 } from '@/themed/v2/select'
 import { useEffect, useState } from 'react'
 
+import {
+  ActionDialogCard,
+  ActionDialogCardContent,
+  ActionDialogRow,
+} from '@/components/dialogs/card/action-dialog-card'
 import { TEXT_OK } from '@/consts'
 import { useSingleCellSettings, type IGeneSet } from './single-cell-settings'
+
+const ITEMS = [
+  { label: 'Global GEX', value: 'global-gex' },
+  { label: 'GEX', value: 'gex' },
+]
 
 export interface IProps extends IModalProps {
   geneset: IGeneSet
@@ -54,70 +62,73 @@ export function PlotEditDialog({ geneset, onResponse }: IProps) {
       //footerVariant="default"
       bodyCls="gap-y-4"
     >
-      <LabelContainer label="Title">
-        <Input
-          id="name"
-          value={_geneset.name}
-          onTextChange={(e) => {
-            //updatePlot({ ..._geneset, name: e })
+      <ActionDialogCard>
+        <ActionDialogCardContent>
+          <ActionDialogRow title="Title">
+            <Input
+              id="name"
+              value={_geneset.name}
+              onTextChange={(e) => {
+                //updatePlot({ ..._geneset, name: e })
 
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.genesets = draft.genesets.map((g) => {
-                  if (g.id === _geneset.id) {
-                    return { ...g, name: e }
-                  }
-                  return g
-                })
-              })
-            )
-          }}
-          placeholder="Title..."
-          //variant="dialog"
-          h="lg"
-        />
-      </LabelContainer>
-
-      {_geneset.mode !== 'clusters' && (
-        <PropRow title="Mode">
-          <Select
-            value={_geneset.mode}
-            onValueChange={(v) => {
-              const newGeneSet = produce(_geneset, (draft) => {
-                draft.mode = v as 'global-gex' | 'gex' | 'clusters'
-
-                if (draft.mode === 'clusters') {
-                  draft.name = 'Clusters'
-                }
-              })
-
-              setGeneSet(newGeneSet)
-
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.genesets = draft.genesets.map((g) => {
-                    if (g.id === _geneset.id) {
-                      return { ...newGeneSet }
-                    }
-                    return g
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.genesets = draft.genesets.map((g) => {
+                      if (g.id === _geneset.id) {
+                        return { ...g, name: e }
+                      }
+                      return g
+                    })
                   })
-                })
-              )
-            }}
-          >
-            <SelectTrigger className="w-42">
-              <SelectValue data-placeholder="Plot mode" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="global-gex">Global GEX</SelectItem>
-              <SelectItem value="gex">GEX</SelectItem>
-              {/* <SelectItem value="clusters">Cluster</SelectItem> */}
-            </SelectContent>
-          </Select>
-        </PropRow>
-      )}
+                )
+              }}
+              placeholder="Title..."
+              //variant="dialog"
+              h="lg"
+            />
+          </ActionDialogRow>
 
-      {/* <LabelBlock title="Clusters">
+          {_geneset.mode !== 'clusters' && (
+            <ActionDialogRow title="Mode">
+              <Select
+                value={_geneset.mode}
+                onValueChange={(v) => {
+                  const newGeneSet = produce(_geneset, (draft) => {
+                    draft.mode = v as 'global-gex' | 'gex' | 'clusters'
+
+                    if (draft.mode === 'clusters') {
+                      draft.name = 'Clusters'
+                    }
+                  })
+
+                  setGeneSet(newGeneSet)
+
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genesets = draft.genesets.map((g) => {
+                        if (g.id === _geneset.id) {
+                          return { ...newGeneSet }
+                        }
+                        return g
+                      })
+                    })
+                  )
+                }}
+                items={ITEMS}
+              >
+                <SelectTrigger className="w-42">
+                  <SelectValue data-placeholder="Plot mode" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="global-gex">Global GEX</SelectItem>
+                  <SelectItem value="gex">GEX</SelectItem>
+                  {/* <SelectItem value="clusters">Cluster</SelectItem> */}
+                </SelectContent>
+              </Select>
+            </ActionDialogRow>
+          )}
+
+          {/* <LabelBlock title="Clusters">
         <Checkbox
           checked={selectAll}
           onCheckedChange={v => {
@@ -179,7 +190,7 @@ export function PlotEditDialog({ geneset, onResponse }: IProps) {
         </VScrollPanel>
       </LabelBlock> */}
 
-      {/* <Input
+          {/* <Input
         id="search"
         value={search}
         onTextChange={e => setSearch(e)}
@@ -202,6 +213,8 @@ export function PlotEditDialog({ geneset, onResponse }: IProps) {
         h="dialog"
         className="grow"
       /> */}
+        </ActionDialogCardContent>
+      </ActionDialogCard>
     </OKCancelDialog>
   )
 }
