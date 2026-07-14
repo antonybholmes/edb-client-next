@@ -3,7 +3,12 @@ import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
 import type { UndefStr } from '@/lib/text/text'
 import { useState } from 'react'
-import { TextPropRow } from './text-prop-row'
+import { Input } from '../shadcn/ui/themed/v2/input'
+import {
+  ActionDialogCard,
+  ActionDialogCardContent,
+  ActionDialogRow,
+} from './card/action-dialog-card'
 
 export interface ISaveAsFileType {
   name: string
@@ -51,14 +56,20 @@ export function SaveAsDialog({
         }
       }}
     >
-      <TextPropRow
-        title={TEXT_NAME}
-        value={text}
-        placeholder="Save as..."
-        onTextChange={(e) => {
-          setText(e)
-        }}
-      />
+      <ActionDialogCard>
+        <ActionDialogCardContent>
+          <ActionDialogRow title={TEXT_NAME}>
+            <Input
+              value={text}
+              placeholder="Save as..."
+              onTextChange={(e) => {
+                setText(e)
+              }}
+              h="lg"
+            />
+          </ActionDialogRow>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
 
       {children && children}
     </OKCancelDialog>

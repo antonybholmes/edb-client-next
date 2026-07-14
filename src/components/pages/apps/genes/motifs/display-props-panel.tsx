@@ -175,6 +175,7 @@ export function DisplayPropsPanel() {
                       opacity:
                         settings.bases[base.toLowerCase() as DNABase]!.font.fill
                           .opacity,
+                      allowNoColor: false,
                       onColorChange: ({ color, opacity }) =>
                         updateSettings(
                           produce(settings, (draft) => {

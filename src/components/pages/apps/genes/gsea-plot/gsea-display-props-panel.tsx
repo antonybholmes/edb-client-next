@@ -32,21 +32,6 @@ export function GseaDisplayPropsPanel() {
   const { settings, updateSettings, reset } = useGseaSettings()
   const { open: openDialog } = useDialogs()
 
-  // const [text, setText] = useState<string>(
-  //   process.env.NODE_ENV === 'development' ? 'BCL6\nPRDM1\nKMT2D' : ''
-  // )
-
-  // function setProps(dataset: IGexDataset, props: IGexPlotDisplayProps) {
-  //   updateGexPlotSettings(
-  //     Object.fromEntries([
-  //       ...Object.entries(gexPlotSettings).filter(
-  //         ([id, _]) => id !== dataset.id.toString()
-  //       ),
-  //       [dataset.id.toString(), props],
-  //     ])
-  //   )
-  // }
-
   return (
     <PropsPanel className="gap-y-2">
       <SideBarHeader>
@@ -56,7 +41,6 @@ export function GseaDisplayPropsPanel() {
               type: 'warning',
               payload: {
                 title: APP_INFO.name,
-
                 content: 'Are you sure you want to reset all settings?',
                 callback: (response) => {
                   if (response === TEXT_OK) {

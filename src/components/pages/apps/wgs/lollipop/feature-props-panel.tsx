@@ -3,6 +3,7 @@ import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import { useTabs } from '@/components/tabs/tab-provider'
 import { useEffect } from 'react'
 import { OutlookTabs } from '../../matcalc/data/outlook-tabs'
+import { DatasetsPropsPanel } from './dataseet-props-panel'
 import { DomainPropsPanel } from './domain-props-panel'
 import { LabelPropsPanel } from './label-props-panel'
 import { VariantPropsPanel } from './variant-props-panel'
@@ -15,6 +16,10 @@ export function FeaturePropsPanel() {
 
   useEffect(() => {
     setTabs([
+      {
+        id: 'datasets',
+        name: 'Datasets',
+      },
       {
         id: 'domains',
         name: 'Domains',
@@ -37,6 +42,9 @@ export function FeaturePropsPanel() {
         orientation="vertical"
         className="grow"
       >
+        <TabsContent value="datasets">
+          <DatasetsPropsPanel />
+        </TabsContent>
         <TabsContent value="domains">
           <DomainPropsPanel />
         </TabsContent>

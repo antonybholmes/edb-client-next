@@ -53,15 +53,15 @@ export function MarginPopover() {
         //alignOffset={4}
         //onEscapeKeyDown={() => setOpen(false)}
         //onInteractOutside={() => setOpen(false)}
-        className="gap-y-1 flex-col w-36"
+        className="gap-y-1 flex-col w-42"
         variant="content"
       >
         <NumericalPropRow
           title="Top"
           value={settings.plot.margin.top}
-          onNumChanged={v =>
+          onNumChanged={(v) =>
             updateSettings(
-              produce(settings, draft => {
+              produce(settings, (draft) => {
                 draft.plot.margin.top = v
               })
             )
@@ -70,9 +70,9 @@ export function MarginPopover() {
         <NumericalPropRow
           title="Left"
           value={settings.plot.margin.left}
-          onNumChanged={v =>
+          onNumChanged={(v) =>
             updateSettings(
-              produce(settings, draft => {
+              produce(settings, (draft) => {
                 draft.plot.margin.left = v
               })
             )
@@ -81,9 +81,9 @@ export function MarginPopover() {
         <NumericalPropRow
           title="Bottom"
           value={settings.plot.margin.bottom}
-          onNumChanged={v =>
+          onNumChanged={(v) =>
             updateSettings(
-              produce(settings, draft => {
+              produce(settings, (draft) => {
                 draft.plot.margin.bottom = v
               })
             )
@@ -92,9 +92,9 @@ export function MarginPopover() {
         <NumericalPropRow
           title="Right"
           value={settings.plot.margin.right}
-          onNumChanged={v =>
+          onNumChanged={(v) =>
             updateSettings(
-              produce(settings, draft => {
+              produce(settings, (draft) => {
                 draft.plot.margin.right = v
               })
             )

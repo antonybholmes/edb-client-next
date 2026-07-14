@@ -1,8 +1,4 @@
 import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
-import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
@@ -14,6 +10,8 @@ import { ExtTitle } from '@/dialogs/switch-prop-row'
 import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
 
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
+import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
 
@@ -54,12 +52,12 @@ export function CellSettingsPanel() {
           <span>dp</span>
         </CheckPropRow>
         <PropRow title={<ExtTitle title="Color"></ExtTitle>}>
-          <ColorPickerButton
-            align="end"
+          <FillButton
             disabled={!displayProps.cells.values.show}
             colors={[
               {
                 color: displayProps.cells.values.color,
+                allowNoColor: true,
                 onColorChange: ({ color }) =>
                   updatePlot(
                     produce(plot, (draft) => {
@@ -69,7 +67,7 @@ export function CellSettingsPanel() {
                   ),
               },
             ]}
-            className={SIMPLE_COLOR_EXT_CLS}
+
             title="Change value color"
           />
         </PropRow>
@@ -138,7 +136,7 @@ export function CellSettingsPanel() {
             )
           }}
         >
-          <ColorPickerButton
+          <OutlineButton
             align="end"
             colors={[
               {
@@ -157,7 +155,7 @@ export function CellSettingsPanel() {
                   ),
               },
             ]}
-            className={SIMPLE_COLOR_EXT_CLS}
+
             title="Border Color"
           />
           {/* <NumericalInput

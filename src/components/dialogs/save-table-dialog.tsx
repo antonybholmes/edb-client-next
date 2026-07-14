@@ -3,12 +3,16 @@ import { TEXT_CANCEL, TEXT_NAME } from '@/consts'
 import { UndefStr } from '@/lib/text/text'
 import { produce } from 'immer'
 import { useEffect, useState } from 'react'
-import { BaseCol } from '../layout/base-col'
-import { Checkbox } from '../shadcn/ui/themed/v2/check-box'
+import { Input } from '../shadcn/ui/themed/v2/input'
+import {
+  ActionCheckRow,
+  ActionDialogCard,
+  ActionDialogCardContent,
+  ActionDialogRow,
+} from './card/action-dialog-card'
 import { IModalProps, OKCancelDialog } from './ok-cancel-dialog'
 import { ISaveAsResponse, type ISaveAsFileType } from './save-as-dialog'
 import { TXT_FILE_FORMATS } from './save-txt-dialog'
-import { TextPropRow } from './text-prop-row'
 
 export const FILE_FORMAT_JSON = { name: 'JSON', ext: 'json' }
 export const TAB_DELIMITED_FORMAT = { name: 'Tab Delimited', ext: 'txt' }
@@ -64,70 +68,46 @@ export function SaveTableDialog({
       }}
       bodyCls="gap-y-4"
     >
-      <TextPropRow
-        title={TEXT_NAME}
-        value={text}
-        placeholder="Save as..."
-        onTextChange={(e) => {
-          setText(e)
-        }}
-      />
+      <ActionDialogCard>
+        <ActionDialogCardContent>
+          <ActionDialogRow title={TEXT_NAME}>
+            <Input
+              h="lg"
+              value={text}
+              placeholder="Save as..."
+              onTextChange={(e) => {
+                setText(e)
+              }}
+            />
+          </ActionDialogRow>
 
-      <BaseCol className="gap-y-2 ml-14">
-        <Checkbox
-          checked={hasHeader}
-          onCheckedChange={(e) => {
-            setHasHeader(e)
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.save.table.hasHeader = e
-              })
-            )
-          }}
-        >
-          Has header
-        </Checkbox>
+          <ActionCheckRow
+            title="Has Header"
+            checked={hasHeader}
+            onCheckedChange={(e) => {
+              setHasHeader(e)
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.save.table.hasHeader = e
+                })
+              )
+            }}
+          />
 
-        <Checkbox
-          checked={hasIndex}
-          onCheckedChange={(e) => {
-            setHasIndex(e)
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.save.table.hasIndex = e
-              })
-            )
-          }}
-        >
-          Has index
-        </Checkbox>
-      </BaseCol>
-
-      {/* <CheckPropRow
-        title="Has header"
-        checked={hasHeader}
-        onCheckedChange={(e) => {
-          setHasHeader(e)
-          updateSettings(
-            produce(settings, (draft) => {
-              draft.save.table.hasHeader = e
-            })
-          )
-        }}
-      />
-
-      <CheckPropRow
-        title="Has index"
-        checked={hasIndex}
-        onCheckedChange={(e) => {
-          setHasIndex(e)
-          updateSettings(
-            produce(settings, (draft) => {
-              draft.save.table.hasIndex = e
-            })
-          )
-        }}
-      /> */}
+          <ActionCheckRow
+            title="Has Index"
+            checked={hasIndex}
+            onCheckedChange={(e) => {
+              setHasIndex(e)
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.save.table.hasIndex = e
+                })
+              )
+            }}
+          />
+        </ActionDialogCardContent>
+      </ActionDialogCard>
     </OKCancelDialog>
   )
 }

@@ -19,6 +19,8 @@ import type { IRect } from '@/interfaces/rect'
 import type { ISVGProps } from '@/interfaces/svg-props'
 import { COLOR_WHITE } from '@/lib/color/color'
 
+import { SvgCircle } from '@/components/plot/svg-circle'
+import { SvgRect } from '@/components/plot/svg-rect'
 import { SvgText } from '@/components/plot/svg-text'
 import { Label } from '@/components/shadcn/ui/themed/v2/label'
 import { gsap } from 'gsap'
@@ -215,7 +217,7 @@ function ColGraphsSvg({
             data-id={ei}
             transform={`translate(${entry.rect.x}, ${dy})`}
           >
-            <circle
+            <SvgCircle
               //cx={entry.rect.x} //pi * blockSize.w + 0.5 * blockSize.w}
               //cy={y}
               r={0.5 * blockSize.w}
@@ -223,17 +225,10 @@ function ColGraphsSvg({
                 displayProps.variants.colorMap[mutType!] ??
                 DEFAULT_MUTATION_COLOR
               }
-              stroke={displayProps.variants.plot.border.value}
-              strokeOpacity={displayProps.variants.plot.border.opacity}
+              sp={displayProps.variants.plot.border}
+
               opacity={displayProps.variants.plot.opacity}
-              strokeWidth={
-                displayProps.variants.plot.border.show
-                  ? displayProps.variants.plot.border.width
-                  : 0
-              }
-            >
-              {/* <title>{tooltip}</title> */}
-            </circle>
+            ></SvgCircle>
           </g>
         )
       })}
@@ -264,7 +259,7 @@ export function seqSvg(
         return (
           <g id={`aa-${aai}`} key={aai} transform={`translate(${x}, 0)`}>
             {aaColor.invert && (
-              <rect
+              <SvgRect
                 x={-0.5 * blockSize.w}
                 y={-0.5 * blockSize.h}
                 width={blockSize.w}
@@ -276,12 +271,12 @@ export function seqSvg(
                 shapeRendering="crispEdges"
               >
                 <title>{`Position ${aai + 1}: ${aa}`}</title>
-              </rect>
+              </SvgRect>
             )}
 
             <SvgText
               fill={textColor}
-              dominantBaseline="central"
+
               textAnchor="middle"
               font={displayProps.seq.text}
             >

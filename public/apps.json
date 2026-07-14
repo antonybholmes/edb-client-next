@@ -51,11 +51,11 @@
     "name": "GSEA Plot",
     "description": "Format GSEA plots.",
     "color": "#ffb366",
-    "version": "21.8.2",
+    "version": "21.8.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-09T20:39:46.428Z",
-    "hash": "b084e99f67d646d6dbf581ed119adc26e7f1854c863ad362ac583c9a20f61ecd",
-    "build": 788
+    "modified": "2026-07-14T17:59:14.307Z",
+    "hash": "2fdf33eb05bc12731e995e47cfd8855ffcbb64586bf8cdd5dfd7b313526a246e",
+    "build": 790
   },
   {
     "name": "GSEA Web",
@@ -99,11 +99,11 @@
     "name": "Lollipop",
     "description": "Create lollipop plots.",
     "color": "#DA70D6",
-    "version": "27.6.4",
+    "version": "27.6.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-08T22:14:20.860Z",
-    "hash": "5353cadae5c57fa8eba5c4eedd436159e729cf540ef07f56714e45a9ca2afc57",
-    "build": 1078
+    "modified": "2026-07-14T17:59:14.313Z",
+    "hash": "3ee93d73049ddb4f5f90b5b4dabab44a82e2a3ea5afc81883ce222c812485ce8",
+    "build": 1080
   },
   {
     "name": "Matcalc",
@@ -111,9 +111,9 @@
     "color": "#40bf80",
     "version": "48.4.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-14T16:09:47.946Z",
-    "hash": "9e90716f0f75a5a94e73a319e6044f26288f58eaf3635fccc2c8d18cca615399",
-    "build": 1812
+    "modified": "2026-07-14T17:59:14.312Z",
+    "hash": "cf1cb7842f9bb7dd78e36fb1acf6782b8599ea842d1d27ece61258ff5a932bde",
+    "build": 1814
   },
   {
     "name": "Motifs",
@@ -121,9 +121,9 @@
     "color": "#009933",
     "version": "48.4.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-10T17:26:06.221Z",
-    "hash": "3e1fd9f3ca3e0c950862b2ac9bf543e693e1c72b5c2a9867d09776a0b3579a01",
-    "build": 976
+    "modified": "2026-07-14T17:59:14.308Z",
+    "hash": "aca72ff65394e597c7bfc733fb05d06784cf4c1fcd96a40723f264b39a0e5313",
+    "build": 978
   },
   {
     "name": "Oncoplot",

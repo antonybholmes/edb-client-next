@@ -2195,6 +2195,10 @@
         {
           "msg": "Added action dialog layout for a mac like style for action dialogs. Ext gsea now works with contexts",
           "date": "2026-07-14T16:06:28.461Z"
+        },
+        {
+          "msg": "Motif to gene now works without selecting a column beforehand.",
+          "date": "2026-07-14T16:09:48.916Z"
         }
       ]
     },

@@ -85,7 +85,7 @@ export function PropRow({
         align,
         gap,
         className: cn(
-          'min-h-6 gap-x-16',
+          'min-h-6 gap-x-8',
           info ? 'items-start pb-1' : 'items-center',
           className
         ),
