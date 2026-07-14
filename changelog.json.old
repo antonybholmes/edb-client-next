@@ -2191,6 +2191,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2026-07-13T22:08:39.442Z"
+        },
+        {
+          "msg": "Added action dialog layout for a mac like style for action dialogs. Ext gsea now works with contexts",
+          "date": "2026-07-14T16:06:28.461Z"
         }
       ]
     },

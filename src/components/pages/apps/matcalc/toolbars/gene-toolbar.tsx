@@ -190,14 +190,12 @@ export function GeneToolbar() {
           <ToolbarButton
             title="Convert Motifs to Gene Symbols"
             onClick={() => {
-              if (selection) {
-                openMatcalcDialog({
-                  type: 'motif-to-gene',
-                  payload: {
-                    selection,
-                  },
-                })
-              }
+              openMatcalcDialog({
+                type: 'motif-to-gene',
+                payload: {
+                  selection,
+                },
+              })
             }}
           >
             Motif To Gene

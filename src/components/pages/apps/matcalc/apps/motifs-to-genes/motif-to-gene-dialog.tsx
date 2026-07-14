@@ -1,5 +1,3 @@
-import { BaseCol } from '@/layout/base-col'
-
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import type { ISelectionRange } from '@/providers/selection-range-provider'
@@ -10,12 +8,16 @@ import { useEffect, useState } from 'react'
 
 import { RunningIndicator } from '@/components/toolbar/running-indicator'
 
-import { PropRow } from '@/components/dialogs/prop-row'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import type { SeriesData } from '@/lib/dataframe/series-data'
 import { DFColSelect } from '../../df-col-select'
 
+import {
+  ActionDialogCard,
+  ActionDialogCardContent,
+  ActionDialogRow,
+} from '@/components/dialogs/card/action-dialog-card'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useMotifsToGenesWorker } from './motifs-to-genes-worker'
@@ -94,15 +96,17 @@ export function MotifToGeneDialog({ selection, onResponse }: IProps) {
       }}
       leftFooterChildren={<RunningIndicator message={indicatorMessage} />}
     >
-      <BaseCol className="gap-y-2 text-sm">
-        <PropRow title="Motif column">
-          <DFColSelect
-            df={sheets[0] as DataFrame}
-            value={col}
-            onChange={({ index }) => setCol(index)}
-          />
-        </PropRow>
-      </BaseCol>
+      <ActionDialogCard>
+        <ActionDialogCardContent>
+          <ActionDialogRow title="Motif column">
+            <DFColSelect
+              df={sheets[0] as DataFrame}
+              value={col}
+              onChange={({ index }) => setCol(index)}
+            />
+          </ActionDialogRow>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
     </OKCancelDialog>
   )
 }
