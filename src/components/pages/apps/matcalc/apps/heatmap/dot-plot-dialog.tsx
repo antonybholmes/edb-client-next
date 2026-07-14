@@ -24,7 +24,6 @@ import { useEffect, useState } from 'react'
 import { WarningIcon } from '@/components/icons/warning-icon'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
-import { CheckPropRow } from '@/dialogs/check-prop-row'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { makeUuid } from '@/lib/id'
 import { cumulativeSteps } from '@/lib/math/quartile'
@@ -34,11 +33,15 @@ import { produce } from 'immer'
 import { getTabName, useTabs } from '@/components/tabs/tab-provider'
 
 import {
-  DialogCard,
-  DialogCardContent,
+  ActionDialogCard,
+  ActionDialogCardContent,
+  ActionDialogRow,
+} from '@/components/dialogs/card/action-dialog-card'
+import {
   DialogCardHeader,
   DialogCardInfo,
 } from '@/components/dialogs/card/dialog-card'
+import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { SafariTabs } from '@/components/tabs/safari-tabs'
 import { useStableId } from '@/hooks/stable-id'
 import { Group, PencilRuler } from 'lucide-react'
@@ -338,8 +341,8 @@ export function DotPlotDialog({
           makeDotPlot()
         }
       }}
-      bodyCls="gap-y-2"
-      className="h-110"
+      bodyCls="gap-y-2 mt-4"
+      className="h-96"
       centerHeaderChildren={<SafariTabs id={tabsId} defaultWidth={4} />}
     >
       {error && (
@@ -350,91 +353,107 @@ export function DotPlotDialog({
       )}
 
       {selectedTab?.id === 'size' && (
-        <VCenterRow className="gap-x-1">
-          <CheckPropRow
-            title="Use original data for sizes"
-            checked={settings.dot.size.useOriginalValuesForSizes}
-            onCheckedChange={(v) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.dot.size.useOriginalValuesForSizes = v
-              })
+        <ActionDialogCard>
+          <ActionDialogCardContent>
+            <ActionDialogRow>
+              <Checkbox
+                checked={settings.dot.size.useOriginalValuesForSizes}
+                onCheckedChange={(v) => {
+                  const newSettings = produce(settings, (draft) => {
+                    draft.dot.size.useOriginalValuesForSizes = v
+                  })
 
-              updateSettings(newSettings)
-            }}
-          />
-          <InfoHoverCard>
-            Label dot sizes with original data values. This is useful if you do
-            not want to interpret log values.
-          </InfoHoverCard>
-        </VCenterRow>
+                  updateSettings(newSettings)
+                }}
+              >
+                Use original data for sizes
+              </Checkbox>
+              <InfoHoverCard>
+                Label dot sizes with original data values. This is useful if you
+                do not want to interpret log values.
+              </InfoHoverCard>
+            </ActionDialogRow>
+          </ActionDialogCardContent>
+        </ActionDialogCard>
       )}
 
-      <DialogCard>
+      <ActionDialogCard>
         <DialogCardHeader title="Transform">
           <DialogCardInfo>
             Modify data before plotting for improved contrast.
           </DialogCardInfo>
         </DialogCardHeader>
 
-        <DialogCardContent>
-          <CheckPropRow
-            title="Log2(data + 1)"
-            checked={settings.heatmap.applyLog2}
-            onCheckedChange={(value) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.heatmap.applyLog2 = value
-              })
+        <ActionDialogCardContent>
+          <ActionDialogRow>
+            <Checkbox
+              checked={settings.heatmap.applyLog2}
+              onCheckedChange={(value) => {
+                const newSettings = produce(settings, (draft) => {
+                  draft.heatmap.applyLog2 = value
+                })
 
-              updateSettings(newSettings)
-            }}
-          />
+                updateSettings(newSettings)
+              }}
+            >
+              Log2(data + 1)
+            </Checkbox>
+          </ActionDialogRow>
+          <ActionDialogRow>
+            <Checkbox
+              checked={settings.heatmap.applyRowZscore}
+              onCheckedChange={(value) => {
+                const newSettings = produce(settings, (draft) => {
+                  draft.heatmap.applyRowZscore = value
+                })
 
-          <CheckPropRow
-            title="Z-score rows"
-            checked={settings.heatmap.applyRowZscore}
-            onCheckedChange={(value) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.heatmap.applyRowZscore = value
-              })
+                updateSettings(newSettings)
+              }}
+            >
+              Z-score rows
+            </Checkbox>
+          </ActionDialogRow>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
 
-              updateSettings(newSettings)
-            }}
-          />
-        </DialogCardContent>
-      </DialogCard>
-
-      <DialogCard>
+      <ActionDialogCard>
         <DialogCardHeader title="Cluster">
           <DialogCardInfo>
             Apply hierarchical row/column clustering.
           </DialogCardInfo>
         </DialogCardHeader>
-        <DialogCardContent>
-          <CheckPropRow
-            title="Rows"
-            checked={settings.heatmap.clusterRows}
-            onCheckedChange={(value) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.heatmap.clusterRows = value
-              })
+        <ActionDialogCardContent>
+          <ActionDialogRow>
+            <Checkbox
+              checked={settings.heatmap.clusterRows}
+              onCheckedChange={(value) => {
+                const newSettings = produce(settings, (draft) => {
+                  draft.heatmap.clusterRows = value
+                })
 
-              updateSettings(newSettings)
-            }}
-          />
+                updateSettings(newSettings)
+              }}
+            >
+              Rows
+            </Checkbox>
+          </ActionDialogRow>
 
-          <CheckPropRow
-            title="Columns"
-            checked={settings.heatmap.clusterCols}
-            onCheckedChange={(value) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.heatmap.clusterCols = value
-              })
+          <ActionDialogRow>
+            <Checkbox
+              checked={settings.heatmap.clusterCols}
+              onCheckedChange={(value) => {
+                const newSettings = produce(settings, (draft) => {
+                  draft.heatmap.clusterCols = value
+                })
 
-              updateSettings(newSettings)
-            }}
-          />
-        </DialogCardContent>
-      </DialogCard>
+                updateSettings(newSettings)
+              }}
+            >
+              Columns
+            </Checkbox>
+          </ActionDialogRow>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
     </OKCancelDialog>
   )
 }

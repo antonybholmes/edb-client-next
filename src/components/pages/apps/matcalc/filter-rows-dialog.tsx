@@ -1,4 +1,8 @@
-import { HCenterRow } from '@/components/layout/h-center-row'
+import {
+  ActionDialogCard,
+  ActionDialogCardContent,
+  ActionDialogRow,
+} from '@/components/dialogs/card/action-dialog-card'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import { SafariTabs } from '@/components/tabs/safari-tabs'
@@ -7,7 +11,6 @@ import { useTabs } from '@/components/tabs/tab-provider'
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { useStableId } from '@/hooks/stable-id'
-import { VCenterRow } from '@/layout/v-center-row'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import {
   meanFilter,
@@ -85,33 +88,34 @@ export function TopRowsPanel({
   }))
 
   return (
-    <HCenterRow className="gap-x-3">
-      <VCenterRow className="gap-x-3">
-        <span>Keep top</span>
-        <NumericalInput
-          id="top-rows"
-          value={topRows}
-          limit={[1, Number.MAX_SAFE_INTEGER]}
-          step={1}
-          onChange={(e) => setTopRows(Number.parseInt(e.target.value))}
-          w="xs"
-          placeholder="Top rows..."
-        />
-        <span>rows using row</span>
-        <SelectList
-          value={method}
-          onValueChange={(v) => {
-            if (v) {
-              setMethod(v as string)
-            }
-          }}
-        >
-          <SelectItem value="Stdev">Stdev</SelectItem>
-          <SelectItem value="Mean">Mean</SelectItem>
-          <SelectItem value="Median">Median</SelectItem>
-        </SelectList>
-      </VCenterRow>
-    </HCenterRow>
+    <ActionDialogCard>
+      <ActionDialogCardContent>
+        <ActionDialogRow title="Keep">
+          <NumericalInput
+            id="top-rows"
+            value={topRows}
+            limit={[1, Number.MAX_SAFE_INTEGER]}
+            step={1}
+            onChange={(e) => setTopRows(Number.parseInt(e.target.value))}
+            w="xs"
+            placeholder="Top rows..."
+          />
+          <span>rows using row</span>
+          <SelectList
+            value={method}
+            onValueChange={(v) => {
+              if (v) {
+                setMethod(v as string)
+              }
+            }}
+          >
+            <SelectItem value="Stdev">Stdev</SelectItem>
+            <SelectItem value="Mean">Mean</SelectItem>
+            <SelectItem value="Median">Median</SelectItem>
+          </SelectList>
+        </ActionDialogRow>
+      </ActionDialogCardContent>
+    </ActionDialogCard>
   )
 }
 
@@ -150,30 +154,31 @@ export function XInYPanel({
   }))
 
   return (
-    <HCenterRow className="gap-x-3">
-      <VCenterRow className="gap-x-3">
-        <span>Expression</span>
-        <NumericalInput
-          value={exp}
-          limit={[1, Number.MAX_SAFE_INTEGER]}
-          step={1}
-          dp={1}
-          onChange={(e) => setExp(Number.parseFloat(e.target.value))}
-          w="xs"
-          placeholder="Expression..."
-        />
-        <span>in</span>
-        <NumericalInput
-          value={samples}
-          limit={[1, Number.MAX_SAFE_INTEGER]}
-          step={1}
-          onChange={(e) => setSamples(Number.parseInt(e.target.value))}
-          w="xs"
-          placeholder="Samples..."
-        />
-        <span>samples.</span>
-      </VCenterRow>
-    </HCenterRow>
+    <ActionDialogCard>
+      <ActionDialogCardContent>
+        <ActionDialogRow title="Expression">
+          <NumericalInput
+            value={exp}
+            limit={[1, Number.MAX_SAFE_INTEGER]}
+            step={1}
+            dp={1}
+            onChange={(e) => setExp(Number.parseFloat(e.target.value))}
+            w="xs"
+            placeholder="Expression..."
+          />
+          <span>in</span>
+          <NumericalInput
+            value={samples}
+            limit={[1, Number.MAX_SAFE_INTEGER]}
+            step={1}
+            onChange={(e) => setSamples(Number.parseInt(e.target.value))}
+            w="xs"
+            placeholder="Samples..."
+          />
+          <span>samples.</span>
+        </ActionDialogRow>
+      </ActionDialogCardContent>
+    </ActionDialogCard>
   )
 }
 
@@ -207,7 +212,7 @@ export function FilterRowsDialog({ onResponse }: IModalProps<BaseDataFrame>) {
         <SafariTabs id={tabsId} defaultWidth={4.5} className="mt-2" />
       }
       h="h-56"
-      bodyCls="mt-2"
+      bodyCls="mt-4"
     >
       <Tabs value={selectedTab?.id ?? ''} onValueChange={() => {}}>
         <TabsContent value="top-rows">

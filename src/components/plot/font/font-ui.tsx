@@ -362,7 +362,15 @@ export function FontUI({
         </VCenterRow>
       )}
 
-      <VCenterRow className="gap-x-1">
+      <VCenterRow className="gap-x-2">
+        {view === 'compact' && showEnabled && (
+          <Switch
+            checked={textProps.show}
+            onCheckedChange={(state) => update?.({ ...textProps, show: state })}
+            className="font-bold"
+          />
+        )}
+
         {view === 'compact' && fontFamilyNode}
 
         {showStyle && (
@@ -402,14 +410,6 @@ export function FontUI({
                 })
               )
             }
-          />
-        )}
-
-        {view === 'compact' && showEnabled && (
-          <Switch
-            checked={textProps.show}
-            onCheckedChange={(state) => update?.({ ...textProps, show: state })}
-            className="font-bold"
           />
         )}
       </VCenterRow>

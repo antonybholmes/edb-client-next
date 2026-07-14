@@ -2,13 +2,13 @@ import { TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
 import {
-  DialogCard,
-  DialogCardContent,
-  DialogCardHeader,
-} from '@/components/dialogs/card/dialog-card'
+  ActionDialogCard,
+  ActionDialogCardContent,
+  ActionDialogRow,
+} from '@/components/dialogs/card/action-dialog-card'
+import { DialogCardHeader } from '@/components/dialogs/card/dialog-card'
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
-import { PropRow } from '@/components/dialogs/prop-row'
+import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { produce } from 'immer'
 import { useState } from 'react'
@@ -93,88 +93,89 @@ export function SankeyDialog({
       }}
       bodyCls="gap-y-3"
     >
-      <DialogCard>
-        <DialogCardHeader title="Required headings" />
+      <ActionDialogCard>
+        <DialogCardHeader title="Required Headings" />
 
-        <DialogCardContent>
-          <PropRow title="Source">
+        <ActionDialogCardContent>
+          <ActionDialogRow title="Source">
             <DFColSelect
               df={sheet as BaseDataFrame}
               value={sourceCol}
               onChange={({ value }) => setSourceCol(value)}
             />
-          </PropRow>
-          <PropRow title="Source column">
+          </ActionDialogRow>
+          <ActionDialogRow title="Source column">
             <DFColSelect
               df={sheet as BaseDataFrame}
               value={sourceColCol}
               onChange={({ value }) => setSourceColCol(value)}
             />
-          </PropRow>
-          <PropRow title="Target">
+          </ActionDialogRow>
+          <ActionDialogRow title="Target">
             <DFColSelect
               df={sheet as BaseDataFrame}
               value={targetCol}
               onChange={({ value }) => setTargetCol(value)}
             />
-          </PropRow>
-          <PropRow title="Target column">
+          </ActionDialogRow>
+          <ActionDialogRow title="Target column">
             <DFColSelect
               df={sheet as BaseDataFrame}
               value={targetColCol}
               onChange={({ value }) => setTargetColCol(value)}
             />
-          </PropRow>
-          <PropRow title="Value">
+          </ActionDialogRow>
+          <ActionDialogRow title="Value">
             <DFColSelect
               df={sheet as BaseDataFrame}
               value={valueCol}
               onChange={({ value }) => setValueCol(value)}
             />
-          </PropRow>
-        </DialogCardContent>
-      </DialogCard>
+          </ActionDialogRow>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
 
-      <DialogCard>
+      <ActionDialogCard>
         <DialogCardHeader title="Optional headings" />
 
-        <DialogCardContent>
-          <PropRow title="Source color">
+        <ActionDialogCardContent>
+          <ActionDialogRow title="Source color">
             <DFColSelect
               df={sheet as BaseDataFrame}
               value={sourceColorCol}
               onChange={({ value }) => setSourceColorCol(value)}
             />
-          </PropRow>
-          <PropRow title="Target color">
+          </ActionDialogRow>
+          <ActionDialogRow title="Target color">
             <DFColSelect
               df={sheet as BaseDataFrame}
               value={targetColorCol}
               onChange={({ value }) => setTargetColorCol(value)}
             />
-          </PropRow>
-          <PropRow title="Link color">
+          </ActionDialogRow>
+          <ActionDialogRow title="Link color">
             <DFColSelect
               df={sheet as BaseDataFrame}
               value={linkColorCol}
               onChange={({ value }) => setLinkColorCol(value)}
             />
-          </PropRow>
-        </DialogCardContent>
-      </DialogCard>
+          </ActionDialogRow>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
 
-      <NumericalPropRow
-        title="Node gap"
-        limit={[0, 1000]}
-        value={settings.nodes.gap}
-        onNumChange={(value) => {
-          updateSettings(
-            produce(settings, (draft) => {
-              draft.nodes.gap = value
-            })
-          )
-        }}
-      />
+      <ActionDialogRow title="Node gap">
+        <NumericalInput
+          limit={[0, 1000]}
+          value={settings.nodes.gap}
+          onNumChange={(value) => {
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.nodes.gap = value
+              })
+            )
+          }}
+        />
+      </ActionDialogRow>
     </OKCancelDialog>
   )
 }

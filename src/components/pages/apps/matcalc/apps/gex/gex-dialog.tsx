@@ -16,9 +16,7 @@ import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { textToLines } from '@/lib/text/lines'
 import { produce } from 'immer'
 
-import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { GlassSideDialog } from '@/dialogs/glass-side-dialog'
-import { PropRow } from '@/dialogs/prop-row'
 import { DataFrame } from '@/lib/dataframe/dataframe'
 
 import { Textarea } from '@/themed/textarea'
@@ -32,10 +30,12 @@ import type { IGexDataset, IGexSearchResult } from './gex-store'
 import { SampleDataTypeCombo } from './sample-datatype-combo'
 
 import {
-  DialogCard,
-  DialogCardContent,
-} from '@/components/dialogs/card/dialog-card'
-import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+  ActionCheckRow,
+  ActionDialogCard,
+  ActionDialogCardContent,
+  ActionDialogRow,
+} from '@/components/dialogs/card/action-dialog-card'
+import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { appsConfig } from '@/config/apps'
 import type { UndefStr } from '@/lib/text/text'
 import { useQuery } from '@tanstack/react-query'
@@ -669,17 +669,12 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
               value={text}
               onChange={(e) => setText(e.target.value)}
               className="grow h-42" // rounded-theme border border-border overflow-hidden outline-hidden placeholder:text-muted-foreground"
-              // labelChildren={
-              //   <InfoHoverCard title="Genes">
-              //     Enter a list of genes to search for, one per line.
-              //   </InfoHoverCard>
-              // }
             />
           </BaseCol>
 
-          <DialogCard>
-            <DialogCardContent>
-              <PropRow title="Expression">
+          <ActionDialogCard>
+            <ActionDialogCardContent>
+              <ActionDialogRow title="Expression">
                 <SelectList
                   w="lg"
                   value={exprType}
@@ -710,11 +705,9 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
                     </>
                   )}
                 </SelectList>
-              </PropRow>
+              </ActionDialogRow>
 
-              <LineSeparator />
-
-              <PropRow title="Sample Info">
+              <ActionDialogRow title="Sample Info">
                 <SampleDataTypeCombo
                   selectedValues={sampleDataTypes.filter(
                     (t) => sampleDataTypeUseMap.get(t) ?? false
@@ -730,9 +723,9 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
                   }}
                   w="lg"
                 />
-              </PropRow>
+              </ActionDialogRow>
 
-              <CheckPropRow
+              <ActionCheckRow
                 title="Add sample info to column names"
                 checked={settings.apps.gex.addSampleMetadataToColumns}
                 onCheckedChange={(v) => {
@@ -744,7 +737,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
                 }}
               />
 
-              <CheckPropRow
+              <ActionCheckRow
                 title="Add alternative names to columns"
                 checked={settings.apps.gex.addAltNames}
                 onCheckedChange={(v) => {
@@ -756,20 +749,23 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
                 }}
               />
 
-              <LineSeparator />
+              <ActionDialogRow
+                title="Groups"
 
-              <CheckPropRow
-                title="Create groups"
-                checked={settings.apps.gex.addGroup}
-                onCheckedChange={(v) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.apps.gex.addGroup = v
-                    })
-                  )
-                }}
-                info="Creates groups of samples for the unique data types."
+                //info="Creates groups of samples for the unique data types."
               >
+                <Checkbox
+                  checked={settings.apps.gex.addGroup}
+                  onCheckedChange={(v) => {
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.apps.gex.addGroup = v
+                      })
+                    )
+                  }}
+                >
+                  Create groups
+                </Checkbox>
                 <SampleDataTypeCombo
                   selectedValues={groupSampleDataType}
                   values={sampleDataTypes}
@@ -778,11 +774,9 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
                   }}
                   className="w-48"
                 />
-              </CheckPropRow>
+              </ActionDialogRow>
 
-              <LineSeparator />
-
-              <CheckPropRow
+              <ActionCheckRow
                 title="Use official gene symbol"
                 info="Use the official gene symbol in place of the original symbol if available."
                 checked={settings.apps.gex.useOfficialGeneSymbol}
@@ -794,174 +788,10 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
                   )
                 }}
               />
-            </DialogCardContent>
-          </DialogCard>
+            </ActionDialogCardContent>
+          </ActionDialogCard>
         </BaseCol>
       </>
     </GlassSideDialog>
   )
 }
-
-// function Side({
-//   dataset,
-//   datasetMap,
-//   setDataset,
-//   technology,
-//   setTechnology,
-//   accordionValues,
-//   institutions,
-//   instituteMap,
-// }: {
-//   dataset: IGexDataset | undefined
-//   datasetMap: Map<string, IGexDataset>
-//   setDataset: (dataset: IGexDataset) => void
-//   technology: string
-//   setTechnology: (tech: string) => void
-//   accordionValues: string[]
-//   institutions: string[]
-//   instituteMap: Map<string, IGexDataset[]>
-// }) {
-//   const { settings, updateSettings } = useMatcalcSettings()
-
-//   return (
-//     <>
-//       <HCenterRow>
-//         <Popover>
-//           <PopoverTrigger className="font-bold text-xs flex flex-row items-center gap-x-4 w-48 justify-between hover:bg-muted/75 data-popup-open:bg-muted/75 rounded-theme p-2.5 trans-color">
-//             <span>{`${settings.apps.gex.genome} ${technology ?? ''}`}</span>
-//             <ChevronUpDownIcon />
-//           </PopoverTrigger>
-//           <PopoverContent
-//             //variant="content"
-//             className="w-48 flex flex-col gap-y-4 relative"
-//             sideOffset={12}
-//             align="center"
-//           >
-//             <PopoverSpeechArrow />
-
-//             <HCenterRow className="pt-2">
-//               <ToggleGroup
-//                 //variant="outline"
-
-//                 value={[settings.apps.gex.genome]}
-//                 onValueChange={v => {
-//                   updateSettings(
-//                     produce(settings, draft => {
-//                       draft.apps.gex.genome = v[0] ?? ''
-//                     })
-//                   )
-//                 }}
-//                 rounded="none"
-//                 className="border border-border/50 rounded-theme overflow-hidden"
-//               >
-//                 {GENOMES.map(s => (
-//                   <GroupToggle
-//                     key={s}
-//                     value={s}
-//                     className="w-16"
-//                     aria-label="Filter rows"
-//                   >
-//                     {s}
-//                   </GroupToggle>
-//                 ))}
-//               </ToggleGroup>
-//             </HCenterRow>
-//             <ul className="flex flex-col">
-//               {TECHNOLOGIES.map((t, tid) => {
-//                 return (
-//                   <li key={tid}>
-//                     <PopoverMenuItem
-//                       checked={t === technology}
-//                       variant="theme"
-//                       animation="none"
-//                       // ripple={false}
-//                       className="w-full text-left"
-//                       onClick={() => {
-//                         updateSettings(
-//                           produce(settings, draft => {
-//                             draft.apps.gex.technology = t
-//                           })
-//                         )
-//                         setTechnology(t)
-//                       }}
-//                     >
-//                       {t}
-//                     </PopoverMenuItem>
-//                   </li>
-//                 )
-//               })}
-//             </ul>
-//           </PopoverContent>
-//         </Popover>
-//       </HCenterRow>
-//       {dataset && (
-//         <RadioGroup
-//           className="flex flex-col grow relative"
-//           value={dataset?.id}
-//           onValueChange={v => {
-//             const ds = datasetMap.get(v)
-
-//             if (ds) {
-//               setDataset(ds)
-
-//               updateSettings(
-//                 produce(settings, draft => {
-//                   draft.apps.gex.selectedDatasets = [ds.id]
-//                 })
-//               )
-//             }
-//           }}
-//         >
-//           <ScrollAccordion
-//             value={accordionValues}
-//             //onValueChange={setAccordionValues}
-//             variant="settings"
-//           >
-//             {institutions.map(institution => {
-//               return (
-//                 <SettingsAccordionItem
-//                   title={institution}
-//                   value={institution}
-//                   key={institution}
-//                 >
-//                   <ul className="flex flex-col">
-//                     {instituteMap.get(institution)?.map(ds => {
-//                       return (
-//                         <li
-//                           key={ds.id}
-//                           className="flex flex-row items-center justify-between gap-x-2"
-//                         >
-//                           <RadioPropRow title={ds.name} value={ds.id}>
-//                             <button
-//                               title={`View metadata of ${ds.name}`}
-//                               onClick={() => {
-//                                 const id = storeItem(
-//                                   'table-viewer',
-//                                   'data',
-//                                   JSON.stringify(metadataToShared(ds))
-//                                 )
-
-//                                 window.open(
-//                                   `/apps/table-viewer?key=${id}`,
-//                                   '_blank',
-//                                   'width=800,height=600'
-//                                 )
-//                               }}
-//                               className="opacity-30 hover:opacity-70"
-//                             >
-//                               <ExternalLinkIcon />
-//                             </button>
-//                           </RadioPropRow>
-//                         </li>
-//                       )
-//                     })}
-//                   </ul>
-//                 </SettingsAccordionItem>
-//               )
-//             })}
-//           </ScrollAccordion>
-//         </RadioGroup>
-//       )}
-//     </>
-//   )
-// }

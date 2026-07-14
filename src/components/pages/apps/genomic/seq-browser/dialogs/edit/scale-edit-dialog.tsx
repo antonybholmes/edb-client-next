@@ -1,14 +1,14 @@
 import {
-  DialogCard,
-  DialogCardContent,
-} from '@/components/dialogs/card/dialog-card'
-import { PropRow } from '@/components/dialogs/prop-row'
+  ActionDialogCard,
+  ActionDialogCardContent,
+  ActionDialogRow,
+  ActionSwitchRow,
+} from '@/components/dialogs/card/action-dialog-card'
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { FontPopover } from '@/components/plot/font/font-popover'
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { type IModalProps, OKCancelDialog } from '@/dialogs/ok-cancel-dialog'
-import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
 import { useState } from 'react'
@@ -38,54 +38,54 @@ export function ScaleEditDialog({ group, track, onResponse }: IProps) {
         onResponse?.(TEXT_CANCEL)
       }}
     >
-      <PropRow title="Appearance">
-        <FillButton
-          title="Color"
-          //side="left"
-          colors={[
-            {
-              color: _track.displayOptions.stroke.value,
-              onColorChange: ({ color }) => {
-                const newTrack = produce(_track, (draft) => {
-                  draft.displayOptions.stroke.value = color
-                })
+      <ActionDialogCard>
+        <ActionDialogCardContent>
+          <ActionDialogRow title="Appearance">
+            <FillButton
+              title="Color"
+              //side="left"
+              colors={[
+                {
+                  color: _track.displayOptions.stroke.value,
+                  onColorChange: ({ color }) => {
+                    const newTrack = produce(_track, (draft) => {
+                      draft.displayOptions.stroke.value = color
+                    })
 
-                onResponse?.(TEXT_OK, { group, track: newTrack })
-                setTrack(newTrack)
-              },
-            },
-          ]}
-          className={SIMPLE_COLOR_EXT_CLS}
-        />
-        <FontPopover
-          fonts={[
-            {
-              title: 'Labels',
-              textProps: _track.displayOptions.text,
-              update: (textProps) => {
-                const newTrack = produce(_track, (draft) => {
-                  draft.displayOptions.text = textProps
-                })
+                    onResponse?.(TEXT_OK, { group, track: newTrack })
+                    setTrack(newTrack)
+                  },
+                },
+              ]}
+              className={SIMPLE_COLOR_EXT_CLS}
+            />
+            <FontPopover
+              fonts={[
+                {
+                  title: 'Labels',
+                  textProps: _track.displayOptions.text,
+                  update: (textProps) => {
+                    const newTrack = produce(_track, (draft) => {
+                      draft.displayOptions.text = textProps
+                    })
 
-                //onResponse?.(TEXT_OK, { group, track: newTrack })
-                setTrack(newTrack)
+                    //onResponse?.(TEXT_OK, { group, track: newTrack })
+                    setTrack(newTrack)
 
-                dispatch({
-                  type: 'update',
-                  group,
-                  track: newTrack,
-                })
-              },
-            },
-          ]}
-        />
-      </PropRow>
+                    dispatch({
+                      type: 'update',
+                      group,
+                      track: newTrack,
+                    })
+                  },
+                },
+              ]}
+            />
+          </ActionDialogRow>
 
-      <DialogCard>
-        <DialogCardContent>
-          <SwitchPropRow
+          <ActionSwitchRow
             title="Caps"
-            side="right"
+
             checked={_track.displayOptions.caps.show}
             onCheckedChange={(v) => {
               const newTrack = produce(_track, (draft) => {
@@ -95,6 +95,7 @@ export function ScaleEditDialog({ group, track, onResponse }: IProps) {
               onResponse?.(TEXT_OK, { group, track: newTrack })
               setTrack(newTrack)
             }}
+            switchCls="w-32"
           >
             <NumericalInput
               value={_track.displayOptions.caps.height}
@@ -110,11 +111,11 @@ export function ScaleEditDialog({ group, track, onResponse }: IProps) {
               }}
               w="sm"
             />
-          </SwitchPropRow>
+          </ActionSwitchRow>
 
-          <SwitchPropRow
+          <ActionSwitchRow
             title="Auto size (bp)"
-            side="right"
+
             checked={settings.tracks.scale.autoSize}
             onCheckedChange={(v) => {
               const newOptions = produce(settings, (draft) => {
@@ -123,6 +124,7 @@ export function ScaleEditDialog({ group, track, onResponse }: IProps) {
 
               updateSettings(newOptions)
             }}
+            switchCls="w-32"
           >
             <NumericalInput
               limit={[1, 1000000]}
@@ -140,9 +142,9 @@ export function ScaleEditDialog({ group, track, onResponse }: IProps) {
                 updateSettings(newOptions)
               }}
             />
-          </SwitchPropRow>
-        </DialogCardContent>
-      </DialogCard>
+          </ActionSwitchRow>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
     </OKCancelDialog>
   )
 }

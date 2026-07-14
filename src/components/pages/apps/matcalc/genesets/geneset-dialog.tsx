@@ -1,9 +1,13 @@
-import { BaseCol } from '@/layout/base-col'
-
 import { IS_DEV_MODE, TEXT_CANCEL, TEXT_NAME, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
+import {
+  ActionDialogCard,
+  ActionDialogCardContent,
+  ActionDialogRow,
+} from '@/components/dialogs/card/action-dialog-card'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
+import { DialogTitle } from '@/components/shadcn/ui/themed/v2/dialog'
 import type { IGeneSet } from '@/lib/gsea/geneset'
 import { textToLines } from '@/lib/text/lines'
 import { Textarea } from '@/themed/textarea'
@@ -60,57 +64,55 @@ export function GenesetDialog({ geneset, onResponse }: IProps) {
         ) : undefined
       }
       title={
-        // <ColorPickerButton
-        //   color={color}
-        //   onColorChange={setColor}
-        //   className={cn(XS_ICON_BUTTON_CLS, 'rounded-full')}
-        //   title="Set color"
-        // />
-        <>
-          <FillButton
-            colors={[
-              {
-                color,
-                allowNoColor: false,
-                onColorChange: ({ color }) => setColor(color),
-              },
-            ]}
-          />
-
-          <Input
-            id="name"
-            value={name}
-            h="lg"
-            onChange={(e) => setName(e.target.value)}
-            placeholder={TEXT_NAME}
-          />
-        </>
+        <DialogTitle style={{ color }}>
+          {name.length > 0 ? `Edit ${name}` : 'New group'}
+        </DialogTitle>
       }
-      // leftFooterChildren={
-      //   <span className="text-foreground/50" title="Gene Set Id">
-      //     {geneset?.id}
-      //   </span>
-      // }
-    >
-      <BaseCol className="gap-y-2">
-        <Textarea
-          id="search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="List of genes (one per line)..."
-          label="Genes"
-          labelPos="left"
-          //variant="dialog"
-          className="grow h-48"
+      leftHeaderChildren={
+        <FillButton
+          colors={[
+            {
+              color,
+              allowNoColor: false,
+              onColorChange: ({ color }) => setColor(color),
+            },
+          ]}
         />
+      }
+    >
+      <ActionDialogCard>
+        <ActionDialogCardContent>
+          <ActionDialogRow title="Name">
+            <Input
+              id="name"
+              value={name}
+              h="lg"
+              onChange={(e) => setName(e.target.value)}
+              placeholder={TEXT_NAME}
+            />
+          </ActionDialogRow>
 
-        {/* <VCenterRow className="gap-x-1 mt-2">
+          <ActionDialogRow title="Genes" align="start">
+            <Textarea
+              id="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="List of genes (one per line)..."
+              label="Genes"
+              labelPos="left"
+              //variant="dialog"
+              className="grow h-48"
+            />
+          </ActionDialogRow>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
+      {/* <VCenterRow className="gap-x-1 mt-2">
           <span className="text-nowrap shrink-0  text-xs font-bold">
             Id {geneset?.id}
           </span>
         </VCenterRow> */}
 
-        {/* <VCenterRow>
+      {/* <VCenterRow>
           <span className="w-24 shrink-0">Color</span>
           <ColorPickerButton
             color={color}
@@ -119,8 +121,7 @@ export function GenesetDialog({ geneset, onResponse }: IProps) {
           />
         </VCenterRow> */}
 
-        {/* <span>Color</span> */}
-      </BaseCol>
+      {/* <span>Color</span> */}
     </OKCancelDialog>
   )
 }

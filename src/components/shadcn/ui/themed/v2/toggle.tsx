@@ -36,7 +36,7 @@ export const toggleVariants = cva(TOGGLE_CLS, {
       md: 'h-button-md',
       lg: 'h-9',
       toolbar: 'h-toolbar-button',
-      colorful: 'h-16 w-24',
+      colorful: 'h-16 w-22',
       icon: ICON_BUTTON_CLS,
     },
     aspect: {

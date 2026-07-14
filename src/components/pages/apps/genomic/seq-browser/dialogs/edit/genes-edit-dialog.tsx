@@ -2,20 +2,22 @@ import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { FontUI } from '@/components/plot/font/font-ui'
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
-import { PropRow } from '@/dialogs/prop-row'
-import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 import { produce } from 'immer'
 import { useState } from 'react'
 
 import {
-  DialogCard,
-  DialogCardContent,
-  DialogCardHeader,
-} from '@/components/dialogs/card/dialog-card'
+  ActionDialogCard,
+  ActionDialogCardContent,
+  ActionDialogRow,
+  ActionSwitchRow,
+} from '@/components/dialogs/card/action-dialog-card'
+import { DialogCardHeader } from '@/components/dialogs/card/dialog-card'
+import { VCenterRow } from '@/components/layout/v-center-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { IosGroupToggle } from '@/components/shadcn/ui/themed/v2/ios-group-toggle'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
+import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import {
   GENE_DISPLAY_OPTIONS,
   useSeqBrowserSettings,
@@ -48,10 +50,10 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
       //overlayColor="trans"
       bodyCls="gap-y-3"
     >
-      <DialogCard>
+      <ActionDialogCard>
         <DialogCardHeader title="Labels" />
-        <DialogCardContent>
-          <PropRow title="Font" side="right">
+        <ActionDialogCardContent>
+          <ActionDialogRow title="Font">
             <FontUI
               title="Gene Labels"
               view="compact"
@@ -66,11 +68,11 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 updateSettings(newSettings)
               }}
             />
-          </PropRow>
+          </ActionDialogRow>
 
-          <SwitchPropRow
+          <ActionSwitchRow
             title="Add gene Id"
-            side="right"
+
             disabled={!settings.tracks.genes.labels.text.show}
             checked={settings.tracks.genes.labels.showGeneId}
             onCheckedChange={(v) => {
@@ -82,281 +84,302 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
             }}
             className="grow ml-3"
           />
-        </DialogCardContent>
-      </DialogCard>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
 
-      <DialogCard>
+      <ActionDialogCard>
         <DialogCardHeader title="Appearance" />
-        <DialogCardContent>
-          <SwitchPropRow
-            title="Stroke"
-            checked={settings.tracks.genes.stroke.show}
-            onCheckedChange={(v) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.tracks.genes.stroke.show = v
-              })
+        <ActionDialogCardContent>
+          <ActionDialogRow>
+            <VCenterRow className="gap-x-3">
+              <Switch
+                checked={settings.tracks.genes.stroke.show}
+                onCheckedChange={(v) => {
+                  const newSettings = produce(settings, (draft) => {
+                    draft.tracks.genes.stroke.show = v
+                  })
 
-              updateSettings(newSettings)
-            }}
-            side="right"
-          >
-            <NumSlider
-              value={settings.tracks.genes.stroke.width}
-              disabled={!settings.tracks.genes.stroke.show}
-              min={1}
-              max={100}
-              step={1}
+                  updateSettings(newSettings)
+                }}
+                className="w-24"
+              >
+                Stroke
+              </Switch>
+              <FillButton
+                colors={[
+                  {
+                    color: settings.tracks.genes.stroke.value,
+                    show: settings.tracks.genes.stroke.show,
 
-              onValueChange={(values) => {
-                const v = Array.isArray(values) ? values[0] : values
+                    onColorChange: ({ color, show }) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.tracks.genes.stroke.value = color
+                          draft.tracks.genes.stroke.show =
+                            show ?? settings.tracks.genes.stroke.show
+                        })
+                      )
+                    },
+                  },
+                ]}
+              />
+              <NumSlider
+                value={settings.tracks.genes.stroke.width}
+                disabled={!settings.tracks.genes.stroke.show}
+                min={1}
+                max={100}
+                step={1}
 
-                const newSettings = produce(settings, (draft) => {
-                  draft.tracks.genes.stroke.width = v
-                })
+                onValueChange={(values) => {
+                  const v = Array.isArray(values) ? values[0] : values
 
-                updateSettings(newSettings)
-              }}
-            />
-            <FillButton
-              colors={[
-                {
-                  color: settings.tracks.genes.stroke.value,
-                  show: settings.tracks.genes.stroke.show,
+                  const newSettings = produce(settings, (draft) => {
+                    draft.tracks.genes.stroke.width = v
+                  })
 
-                  onColorChange: ({ color, show }) => {
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.tracks.genes.stroke.value = color
-                        draft.tracks.genes.stroke.show =
-                          show ?? settings.tracks.genes.stroke.show
+                  updateSettings(newSettings)
+                }}
+              />
+            </VCenterRow>
+          </ActionDialogRow>
+
+          <ActionDialogRow>
+            <VCenterRow className="gap-x-3">
+              <Switch
+                checked={settings.tracks.genes.exons.show}
+                onCheckedChange={(v) => {
+                  const newSettings = produce(settings, (draft) => {
+                    draft.tracks.genes.exons.show = v
+                  })
+
+                  updateSettings(newSettings)
+                }}
+
+                className="w-24"
+              >
+                Exons
+              </Switch>
+              <FillButton
+                colors={[
+                  {
+                    color: settings.tracks.genes.exons.fill.value,
+                    show: settings.tracks.genes.exons.show,
+
+                    onColorChange: ({ color, show }) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.tracks.genes.exons.fill.value = color
+                          draft.tracks.genes.exons.show =
+                            show ?? draft.tracks.genes.exons.show
+                        })
+                      )
+                    },
+                  },
+                ]}
+              />
+              <NumSlider
+                value={settings.tracks.genes.exons.height}
+                disabled={!settings.tracks.genes.exons.show}
+                min={1}
+                max={100}
+                step={1}
+
+                onValueChange={(values) => {
+                  const v = Array.isArray(values) ? values[0] : values
+
+                  const newSettings = produce(settings, (draft) => {
+                    draft.tracks.genes.exons.height = v
+                  })
+
+                  updateSettings(newSettings)
+                }}
+              />
+            </VCenterRow>
+          </ActionDialogRow>
+
+          <ActionDialogRow>
+            <VCenterRow className="gap-x-3">
+              <Switch
+                checked={settings.tracks.genes.cds.show}
+                onCheckedChange={(v) => {
+                  const newSettings = produce(settings, (draft) => {
+                    draft.tracks.genes.cds.show = v
+                  })
+
+                  updateSettings(newSettings)
+                }}
+
+                className="w-24"
+              >
+                CDs
+              </Switch>
+              <FillButton
+                colors={[
+                  {
+                    color: settings.tracks.genes.cds.fill.value,
+                    show: settings.tracks.genes.cds.show,
+                    onColorChange: ({ color, show }) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.tracks.genes.cds.fill.value = color
+                          draft.tracks.genes.cds.show =
+                            show ?? draft.tracks.genes.cds.show
+                        })
+                      )
+                    },
+                  },
+                ]}
+              />
+              <NumSlider
+                value={settings.tracks.genes.cds.height}
+                disabled={!settings.tracks.genes.cds.show}
+                min={1}
+                max={100}
+                step={1}
+
+                onValueChange={(values) => {
+                  const v = Array.isArray(values) ? values[0] : values
+
+                  const newSettings = produce(settings, (draft) => {
+                    draft.tracks.genes.cds.height = v
+                  })
+
+                  updateSettings(newSettings)
+                }}
+              />
+            </VCenterRow>
+          </ActionDialogRow>
+
+          <ActionDialogRow>
+            <VCenterRow className="gap-x-3">
+              <Switch
+                checked={settings.tracks.genes.utrs.show}
+                onCheckedChange={(v) => {
+                  const newSettings = produce(settings, (draft) => {
+                    draft.tracks.genes.utrs.show = v
+                  })
+
+                  updateSettings(newSettings)
+                }}
+                className="w-24"
+              >
+                UTRs
+              </Switch>
+              <FillButton
+                colors={[
+                  {
+                    color: settings.tracks.genes.utrs.fill.value,
+                    show: settings.tracks.genes.utrs.show,
+                    onColorChange: ({ color, show }) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.tracks.genes.utrs.fill.value = color
+                          draft.tracks.genes.utrs.show =
+                            show ?? draft.tracks.genes.utrs.show
+                        })
+                      )
+                    },
+                  },
+                ]}
+              />
+              <NumSlider
+                value={settings.tracks.genes.utrs.height}
+                disabled={!settings.tracks.genes.utrs.show}
+                min={1}
+                max={100}
+                step={1}
+
+                onValueChange={(values) => {
+                  const v = Array.isArray(values) ? values[0] : values
+
+                  const newSettings = produce(settings, (draft) => {
+                    draft.tracks.genes.utrs.height = v
+                  })
+
+                  updateSettings(newSettings)
+                }}
+              />
+            </VCenterRow>
+          </ActionDialogRow>
+
+          <ActionDialogRow>
+            <VCenterRow className="gap-x-3">
+              <Switch
+                checked={settings.tracks.genes.arrows.show}
+                onCheckedChange={(v) => {
+                  const newSettings = produce(settings, (draft) => {
+                    draft.tracks.genes.arrows.show = v
+                  })
+
+                  updateSettings(newSettings)
+                }}
+                className="w-24"
+              >
+                Arrows
+              </Switch>
+              <FillButton
+                colors={[
+                  {
+                    color: _track.displayOptions.arrows.stroke.value,
+                    show: settings.tracks.genes.arrows.show,
+                    onColorChange: ({ color, show }) => {
+                      const newTrack = produce(_track, (draft) => {
+                        draft.displayOptions.arrows.stroke.value = color
+                        draft.displayOptions.arrows.show =
+                          show ?? draft.displayOptions.arrows.show
                       })
-                    )
+
+                      onResponse?.(TEXT_OK, { group, track: newTrack })
+                      setTrack(newTrack)
+                    },
                   },
-                },
-              ]}
-            />
-          </SwitchPropRow>
+                ]}
+              />
+              <DoubleNumericalInput
+                v1={_track.displayOptions.arrows.x}
+                v2={_track.displayOptions.arrows.y}
+                placeholder="Width..."
+                dp={0}
+                w="xxs"
+                onNumChange1={(v) => {
+                  const newTrack = produce(_track, (draft) => {
+                    draft.displayOptions.arrows.x = v
+                  })
 
-          <SwitchPropRow
-            checked={settings.tracks.genes.exons.show}
-            onCheckedChange={(v) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.tracks.genes.exons.show = v
-              })
+                  onResponse?.(TEXT_OK, { group, track: newTrack })
+                  setTrack(newTrack)
+                }}
+                onNumChange2={(v) => {
+                  const newTrack = produce(_track, (draft) => {
+                    draft.displayOptions.arrows.y = v
+                  })
 
-              updateSettings(newSettings)
-            }}
-            side="right"
-            title="Exons"
-          >
-            <NumSlider
-              value={settings.tracks.genes.exons.height}
-              disabled={!settings.tracks.genes.exons.show}
-              min={1}
-              max={100}
-              step={1}
+                  onResponse?.(TEXT_OK, { group, track: newTrack })
+                  setTrack(newTrack)
+                }}
+              />
+            </VCenterRow>
+          </ActionDialogRow>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
 
-              onValueChange={(values) => {
-                const v = Array.isArray(values) ? values[0] : values
-
-                const newSettings = produce(settings, (draft) => {
-                  draft.tracks.genes.exons.height = v
-                })
-
-                updateSettings(newSettings)
-              }}
-            />
-
-            <FillButton
-              colors={[
-                {
-                  color: settings.tracks.genes.exons.fill.value,
-                  show: settings.tracks.genes.exons.show,
-
-                  onColorChange: ({ color, show }) => {
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.tracks.genes.exons.fill.value = color
-                        draft.tracks.genes.exons.show =
-                          show ?? draft.tracks.genes.exons.show
-                      })
-                    )
-                  },
-                },
-              ]}
-            />
-          </SwitchPropRow>
-
-          <SwitchPropRow
-            checked={settings.tracks.genes.cds.show}
-            onCheckedChange={(v) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.tracks.genes.cds.show = v
-              })
-
-              updateSettings(newSettings)
-            }}
-            side="right"
-            title="CDS"
-          >
-            <NumSlider
-              value={settings.tracks.genes.cds.height}
-              disabled={!settings.tracks.genes.cds.show}
-              min={1}
-              max={100}
-              step={1}
-
-              onValueChange={(values) => {
-                const v = Array.isArray(values) ? values[0] : values
-
-                const newSettings = produce(settings, (draft) => {
-                  draft.tracks.genes.cds.height = v
-                })
-
-                updateSettings(newSettings)
-              }}
-            />
-
-            <FillButton
-              colors={[
-                {
-                  color: settings.tracks.genes.cds.fill.value,
-                  show: settings.tracks.genes.cds.show,
-                  onColorChange: ({ color, show }) => {
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.tracks.genes.cds.fill.value = color
-                        draft.tracks.genes.cds.show =
-                          show ?? draft.tracks.genes.cds.show
-                      })
-                    )
-                  },
-                },
-              ]}
-            />
-          </SwitchPropRow>
-
-          <SwitchPropRow
-            checked={settings.tracks.genes.utrs.show}
-            onCheckedChange={(v) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.tracks.genes.utrs.show = v
-              })
-
-              updateSettings(newSettings)
-            }}
-            side="right"
-            title="UTRs"
-          >
-            <NumSlider
-              value={settings.tracks.genes.utrs.height}
-              disabled={!settings.tracks.genes.utrs.show}
-              min={1}
-              max={100}
-              step={1}
-
-              onValueChange={(values) => {
-                const v = Array.isArray(values) ? values[0] : values
-
-                const newSettings = produce(settings, (draft) => {
-                  draft.tracks.genes.utrs.height = v
-                })
-
-                updateSettings(newSettings)
-              }}
-            />
-
-            <FillButton
-              colors={[
-                {
-                  color: settings.tracks.genes.utrs.fill.value,
-                  show: settings.tracks.genes.utrs.show,
-                  onColorChange: ({ color, show }) => {
-                    updateSettings(
-                      produce(settings, (draft) => {
-                        draft.tracks.genes.utrs.fill.value = color
-                        draft.tracks.genes.utrs.show =
-                          show ?? draft.tracks.genes.utrs.show
-                      })
-                    )
-                  },
-                },
-              ]}
-            />
-          </SwitchPropRow>
-
-          <SwitchPropRow
-            checked={settings.tracks.genes.arrows.show}
-            onCheckedChange={(v) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.tracks.genes.arrows.show = v
-              })
-
-              updateSettings(newSettings)
-            }}
-            side="right"
-            title="Arrows"
-          >
-            <DoubleNumericalInput
-              v1={_track.displayOptions.arrows.x}
-              v2={_track.displayOptions.arrows.y}
-              placeholder="Width..."
-              dp={0}
-              w="xxs"
-              onNumChange1={(v) => {
-                const newTrack = produce(_track, (draft) => {
-                  draft.displayOptions.arrows.x = v
-                })
-
-                onResponse?.(TEXT_OK, { group, track: newTrack })
-                setTrack(newTrack)
-              }}
-              onNumChange2={(v) => {
-                const newTrack = produce(_track, (draft) => {
-                  draft.displayOptions.arrows.y = v
-                })
-
-                onResponse?.(TEXT_OK, { group, track: newTrack })
-                setTrack(newTrack)
-              }}
-            />
-            <FillButton
-              colors={[
-                {
-                  color: _track.displayOptions.arrows.stroke.value,
-                  show: settings.tracks.genes.arrows.show,
-                  onColorChange: ({ color, show }) => {
-                    const newTrack = produce(_track, (draft) => {
-                      draft.displayOptions.arrows.stroke.value = color
-                      draft.displayOptions.arrows.show =
-                        show ?? draft.displayOptions.arrows.show
-                    })
-
-                    onResponse?.(TEXT_OK, { group, track: newTrack })
-                    setTrack(newTrack)
-                  },
-                },
-              ]}
-            />
-          </SwitchPropRow>
-        </DialogCardContent>
-      </DialogCard>
-
-      <DialogCard>
+      <ActionDialogCard>
         <DialogCardHeader title="Canonical Genes" />
-        <DialogCardContent>
-          <SwitchPropRow
-            checked={settings.tracks.genes.canonical.isColored}
-            onCheckedChange={(v) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.tracks.genes.canonical.isColored = v
-              })
+        <ActionDialogCardContent>
+          <ActionDialogRow>
+            <Switch
+              checked={settings.tracks.genes.canonical.isColored}
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
+                  draft.tracks.genes.canonical.isColored = v
+                })
 
-              updateSettings(newSettings)
-            }}
-
-            title="Highlight canonical genes"
-          >
+                updateSettings(newSettings)
+              }}
+              className="w-24"
+            >
+              Highlight
+            </Switch>
             <FillButton
               colors={[
                 {
@@ -375,28 +398,28 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
               ]}
               //className={SIMPLE_COLOR_EXT_CLS}
             />
-          </SwitchPropRow>
+          </ActionDialogRow>
+          <ActionDialogRow>
+            <Switch
+              checked={settings.tracks.genes.canonical.only}
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
+                  draft.tracks.genes.canonical.only = v
+                })
 
-          <SwitchPropRow
-            checked={settings.tracks.genes.canonical.only}
-            onCheckedChange={(v) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.tracks.genes.canonical.only = v
-              })
+                updateSettings(newSettings)
+              }}
+            >
+              Show canonical genes only
+            </Switch>
+          </ActionDialogRow>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
 
-              updateSettings(newSettings)
-            }}
-            title="Show canonical genes only"
-            side="right"
-            className="ml-3"
-          />
-        </DialogCardContent>
-      </DialogCard>
-
-      <DialogCard>
+      <ActionDialogCard>
         <DialogCardHeader title="Display Density" />
-        <DialogCardContent>
-          <PropRow title="Display">
+        <ActionDialogCardContent>
+          <ActionDialogRow title="Display">
             <SelectList
               value={settings.tracks.genes.display}
               onValueChange={(v) => {
@@ -415,8 +438,8 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 </SelectItem>
               ))}
             </SelectList>
-          </PropRow>
-          <PropRow title="View" className="items-start">
+          </ActionDialogRow>
+          <ActionDialogRow title="View" className="items-start">
             <IosGroupToggle
               w={5.5}
               tabs={[
@@ -435,9 +458,9 @@ export function GenesEditDialog({ group, track, onResponse }: IProps) {
                 updateSettings(newSettings)
               }}
             />
-          </PropRow>
-        </DialogCardContent>
-      </DialogCard>
+          </ActionDialogRow>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
     </OKCancelDialog>
   )
 }

@@ -1,5 +1,3 @@
-import { BaseCol } from '@/layout/base-col'
-
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
@@ -8,24 +6,22 @@ import { useSelectionRange } from '@/providers/selection-range-provider'
 
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 
-import { HCenterRow } from '@/components/layout/h-center-row'
 import {
   GroupToggle,
   ToggleGroup,
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { createGeneConvTable, type Species } from '@/lib/gene/geneconv'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/themed/v2/accordion'
-import { Checkbox } from '@/themed/v2/check-box'
 import { produce } from 'immer'
 import { Rat, User } from 'lucide-react'
 import { useEffect } from 'react'
 
+import {
+  ActionCheckRow,
+  ActionDialogCard,
+  ActionDialogCardContent,
+  ActionDialogRow,
+} from '@/components/dialogs/card/action-dialog-card'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
@@ -181,161 +177,120 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
       //contentVariant="glass"
       //bodyVariant="card"
     >
-      <Accordion multiple={true} defaultValue={['species', 'output', 'input']}>
-        <AccordionItem
-          value="species"
-          //className="bg-background p-2 rounded-lg mb-4"
-        >
-          <AccordionTrigger variant="settings">Species</AccordionTrigger>
-          <AccordionContent innerCls="flex flex-col gap-y-2">
-            <HCenterRow className="gap-x-6">
-              <VCenterRow className="gap-x-3">
-                <h2 className="font-semibold text-center">From</h2>
-                <VCenterRow className="gap-x-2">
-                  <ToggleGroup
-                    className="gap-x-1"
-                    value={[settings.apps.geneconv.fromSpecies]}
-                    onValueChange={(value) =>
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.apps.geneconv.fromSpecies = value[0]! as Species
-                        })
-                      )
-                    }
-                    variant="app-theme"
-                    rounded="lg"
+      <ActionDialogCard>
+        <ActionDialogCardContent>
+          <ActionDialogRow title="Species">
+            <VCenterRow className="gap-x-3">
+              <VCenterRow className="gap-x-2">
+                <ToggleGroup
+                  className="gap-x-1"
+                  value={[settings.apps.geneconv.fromSpecies]}
+                  onValueChange={(value) =>
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.apps.geneconv.fromSpecies = value[0]! as Species
+                      })
+                    )
+                  }
+                  variant="app-theme"
+                  rounded="lg"
+                >
+                  <GroupToggle
+                    value="human"
+                    aria-label="Toggle human"
+                    //className="flex flex-col gap-y-2 items-center"
+                    size="colorful"
                   >
-                    <GroupToggle
-                      value="human"
-                      aria-label="Toggle human"
-                      //className="flex flex-col gap-y-2 items-center"
-                      size="colorful"
-                    >
-                      <User
-                        className="w-6 h-6 aspect-square shrink-0"
-                        strokeWidth={1.5}
-                      />
-                      <span>Human</span>
-                    </GroupToggle>
-                    <GroupToggle
-                      value="mouse"
-                      aria-label="Toggle mouse"
-                      size="colorful"
-                    >
-                      <Rat
-                        className="w-6 h-6 aspect-square shrink-0"
-                        strokeWidth={1.5}
-                      />
-                      <span>Mouse</span>
-                    </GroupToggle>
-                  </ToggleGroup>
-                </VCenterRow>
-              </VCenterRow>
-
-              <VCenterRow className="gap-x-3">
-                <h2 className="font-semibold text-center">To</h2>
-                <VCenterRow className="gap-x-2">
-                  <ToggleGroup
-                    className="gap-x-1"
-                    value={[settings.apps.geneconv.toSpecies]}
-                    onValueChange={(value) =>
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.apps.geneconv.toSpecies = value[0]! as Species
-                        })
-                      )
-                    }
-                    variant="app-theme"
-                    rounded="lg"
+                    <User
+                      className="w-6 h-6 aspect-square shrink-0"
+                      strokeWidth={1.5}
+                    />
+                    <span>Human</span>
+                  </GroupToggle>
+                  <GroupToggle
+                    value="mouse"
+                    aria-label="Toggle mouse"
+                    size="colorful"
                   >
-                    <GroupToggle
-                      value="human"
-                      aria-label="Toggle human"
-                      //className="flex flex-col gap-y-2 items-center"
-                      size="colorful"
-                    >
-                      <User
-                        className="w-6 h-6 aspect-square shrink-0"
-                        strokeWidth={1.5}
-                      />
-                      <span>Human</span>
-                    </GroupToggle>
-                    <GroupToggle
-                      value="mouse"
-                      aria-label="Toggle mouse"
-                      size="colorful"
-                    >
-                      <Rat
-                        className="w-6 h-6 aspect-square shrink-0"
-                        strokeWidth={1.5}
-                      />
-                      <span>Mouse</span>
-                    </GroupToggle>
-                  </ToggleGroup>
-                </VCenterRow>
+                    <Rat
+                      className="w-6 h-6 aspect-square shrink-0"
+                      strokeWidth={1.5}
+                    />
+                    <span>Mouse</span>
+                  </GroupToggle>
+                </ToggleGroup>
               </VCenterRow>
-            </HCenterRow>
-          </AccordionContent>
-        </AccordionItem>
+            </VCenterRow>
 
-        {/* <AccordionItem value="output">
-          <AccordionTrigger variant="settings">Output</AccordionTrigger>
-          <AccordionContent innerCls="flex flex-col gap-y-2">
-            <RadioGroup
-              value={settings.apps.geneconv.outputSymbols}
-              onValueChange={v => {
-                updateSettings(
-                  produce(settings, draft => {
-                    draft.apps.geneconv.outputSymbols = v as string
-                  })
-                )
-              }}
-              className="flex flex-col gap-y-1"
-            >
-              {OUTPUT_TYPES.map((tab, ti) => (
-                <VCenterRow key={ti} className="gap-x-1.5">
-                  <RadioGroupItem
-                    value={tab.name}
-                    //onClick={() => setAssembly(assembly)}
-                  />
-                  <Label htmlFor={tab.name}>{tab.name}</Label>
-                </VCenterRow>
-              ))}
-            </RadioGroup>
-          </AccordionContent>
-        </AccordionItem> */}
+            <VCenterRow className="gap-x-3">
+              <h2 className="font-semibold text-center">To</h2>
+              <VCenterRow className="gap-x-2">
+                <ToggleGroup
+                  className="gap-x-1"
+                  value={[settings.apps.geneconv.toSpecies]}
+                  onValueChange={(value) =>
+                    updateSettings(
+                      produce(settings, (draft) => {
+                        draft.apps.geneconv.toSpecies = value[0]! as Species
+                      })
+                    )
+                  }
+                  variant="app-theme"
+                  rounded="lg"
+                >
+                  <GroupToggle
+                    value="human"
+                    aria-label="Toggle human"
+                    //className="flex flex-col gap-y-2 items-center"
+                    size="colorful"
+                  >
+                    <User
+                      className="w-6 h-6 aspect-square shrink-0"
+                      strokeWidth={1.5}
+                    />
+                    <span>Human</span>
+                  </GroupToggle>
+                  <GroupToggle
+                    value="mouse"
+                    aria-label="Toggle mouse"
+                    size="colorful"
+                  >
+                    <Rat
+                      className="w-6 h-6 aspect-square shrink-0"
+                      strokeWidth={1.5}
+                    />
+                    <span>Mouse</span>
+                  </GroupToggle>
+                </ToggleGroup>
+              </VCenterRow>
+            </VCenterRow>
+          </ActionDialogRow>
 
-        <AccordionItem value="input">
-          <AccordionTrigger variant="settings">Input</AccordionTrigger>
-          <AccordionContent innerCls="flex flex-col gap-y-2">
-            <BaseCol className="gap-y-1">
-              <Checkbox
-                checked={settings.apps.geneconv.convertIndex}
-                onCheckedChange={(v) =>
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.apps.geneconv.convertIndex = v
-                    })
-                  )
-                }
-              >
-                Convert index
-              </Checkbox>
+          <ActionCheckRow
+            checked={settings.apps.geneconv.convertIndex}
+            onCheckedChange={(v) =>
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.apps.geneconv.convertIndex = v
+                })
+              )
+            }
+            title="Convert index"
+          />
 
-              <Checkbox
-                checked={settings.apps.geneconv.useSelectedColumns}
-                onCheckedChange={(v) =>
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.apps.geneconv.useSelectedColumns = v
-                    })
-                  )
-                }
-              >
-                Convert selected column
-              </Checkbox>
+          <ActionCheckRow
+            checked={settings.apps.geneconv.useSelectedColumns}
+            onCheckedChange={(v) =>
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.apps.geneconv.useSelectedColumns = v
+                })
+              )
+            }
+            title="Convert selected columns only"
+          />
 
-              {/* <Checkbox
+          {/* <Checkbox
                 checked={settings.apps.geneconv.duplicateRows}
                 onCheckedChange={v =>
                   updateSettings(
@@ -347,10 +302,8 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
               >
                 Duplicate rows for multiple conversions
               </Checkbox> */}
-            </BaseCol>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
     </OKCancelDialog>
   )
 }

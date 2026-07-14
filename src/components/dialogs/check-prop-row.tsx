@@ -7,7 +7,7 @@ import { Switch } from '../shadcn/ui/themed/v2/switch'
 import { DialogCardInfo, DialogCardLabel } from './card/dialog-card'
 
 interface IProps extends Omit<ICheckboxProps, 'title'> {
-  title: ReactNode
+  title?: ReactNode
   labelClassName?: string
   h?: string
   info?: string
@@ -45,9 +45,11 @@ export function CheckPropRow({
         {info && <InfoHoverCard>{info}</InfoHoverCard>}
       </Checkbox> */}
 
-      <DialogCardLabel title={title}>
-        {info && <DialogCardInfo>{info}</DialogCardInfo>}
-      </DialogCardLabel>
+      {title && (
+        <DialogCardLabel title={title}>
+          {info && <DialogCardInfo>{info}</DialogCardInfo>}
+        </DialogCardLabel>
+      )}
 
       <VCenterRow className="gap-x-1.5 justify-end grow">
         {children && children}

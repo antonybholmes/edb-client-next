@@ -20,8 +20,6 @@ import {
 } from '@/lib/math/distance'
 
 import { DEFAULT_HEATMAP_PROPS } from '@/components/plot/heatmap/heatmap-svg-props'
-import { CheckPropRow } from '@/dialogs/check-prop-row'
-import { PropRow } from '@/dialogs/prop-row'
 import { HelpButton } from '@/help/help-button'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
@@ -39,10 +37,13 @@ import { Checkbox } from '@/themed/v2/check-box'
 import { produce } from 'immer'
 
 import {
-  DialogCard,
-  DialogCardContent,
-  DialogCardHeader,
-} from '@/components/dialogs/card/dialog-card'
+  ActionDialogCard,
+  ActionDialogCardContent,
+  ActionDialogRow,
+} from '@/components/dialogs/card/action-dialog-card'
+import { DialogCardHeader } from '@/components/dialogs/card/dialog-card'
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import {
   useCurrentGroups,
   useCurrentSheets,
@@ -265,59 +266,57 @@ export function HeatMapDialog({
       leftFooterChildren={<HelpButton url="/help/apps/matcalc/heatmap" />}
       bodyCls="gap-y-3"
     >
-      <DialogCard>
+      <ActionDialogCard>
         <DialogCardHeader title="Filter" />
-
-        <DialogCardContent>
-          <CheckPropRow
-            title="Top"
-            info="Filter to top N most variable rows by the method you choose."
-            checked={settings.heatmap.filterRows}
-            onCheckedChange={(v) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.heatmap.filterRows = v
-              })
-
-              updateSettings(newSettings)
-            }}
-          >
-            <NumericalInput
-              id="top-rows"
-              limit={[0, 5000]}
-              value={settings.heatmap.topRows}
-              onNumChange={(v) => {
-                const newSettings = produce(settings, (draft) => {
-                  draft.heatmap.topRows = v
-                })
-
-                updateSettings(newSettings)
-              }}
-              w="xs"
-            />
-            <span className="shrink-0">rows using</span>
-            <SelectList
-              value={settings.heatmap.rowFilterMethod}
-              onValueChange={(v) => {
-                if (v) {
+        <ActionDialogCardContent>
+          <ActionDialogRow title="Top">
+            <VCenterRow className="gap-x-2">
+              <NumericalInput
+                id="top-rows"
+                limit={[0, 5000]}
+                value={settings.heatmap.topRows}
+                onNumChange={(v) => {
                   const newSettings = produce(settings, (draft) => {
-                    draft.heatmap.rowFilterMethod = v as string
+                    draft.heatmap.topRows = v
                   })
 
                   updateSettings(newSettings)
-                }
-              }}
-              w="sm"
-            >
-              <SelectItem value="Stdev">Stdev</SelectItem>
-              <SelectItem value="Mean">Mean</SelectItem>
-              <SelectItem value="Median">Median</SelectItem>
-            </SelectList>
-          </CheckPropRow>
+                }}
+                w="xs"
+              />
+              <span className="shrink-0">rows using</span>
+              <SelectList
+                value={settings.heatmap.rowFilterMethod}
+                onValueChange={(v) => {
+                  if (v) {
+                    const newSettings = produce(settings, (draft) => {
+                      draft.heatmap.rowFilterMethod = v as string
+                    })
 
-          <PropRow
-            title="Unselected Groups"
-            info="Hide will not affect your original data. Remove will affect your analysis."
-          >
+                    updateSettings(newSettings)
+                  }
+                }}
+                w="sm"
+              >
+                <SelectItem value="Stdev">Stdev</SelectItem>
+                <SelectItem value="Mean">Mean</SelectItem>
+                <SelectItem value="Median">Median</SelectItem>
+              </SelectList>
+              <Switch
+                //title="Top"
+                //info="Filter to top N most variable rows by the method you choose."
+                checked={settings.heatmap.filterRows}
+                onCheckedChange={(v) => {
+                  const newSettings = produce(settings, (draft) => {
+                    draft.heatmap.filterRows = v
+                  })
+
+                  updateSettings(newSettings)
+                }}
+              />
+            </VCenterRow>
+          </ActionDialogRow>
+          <ActionDialogRow title="Unselected Groups">
             <SelectList
               value={settings.groups.filter.mode}
               onValueChange={(v) => {
@@ -340,91 +339,93 @@ export function HeatMapDialog({
               <SelectItem value="hide">Hide</SelectItem>
               <SelectItem value="ignore">Remove</SelectItem>
             </SelectList>
-          </PropRow>
-          {/* <DialogCardInfo>Filter table before plotting.</DialogCardInfo> */}
-        </DialogCardContent>
-      </DialogCard>
+          </ActionDialogRow>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
 
-      <DialogCard>
+      <ActionDialogCard>
         <DialogCardHeader title="Transform" />
 
-        <DialogCardContent>
-          <Checkbox
-            checked={settings.heatmap.applyLog2}
-            onCheckedChange={(v) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.heatmap.applyLog2 = v
-              })
+        <ActionDialogCardContent>
+          <ActionDialogRow>
+            <Checkbox
+              checked={settings.heatmap.applyLog2}
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
+                  draft.heatmap.applyLog2 = v
+                })
 
-              updateSettings(newSettings)
-            }}
-          >
-            Log2(data+1)
-          </Checkbox>
+                updateSettings(newSettings)
+              }}
+            >
+              Log2(data+1)
+            </Checkbox>
+          </ActionDialogRow>
+          <ActionDialogRow>
+            <Checkbox
+              checked={settings.heatmap.applyRowZscore}
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
+                  draft.heatmap.applyRowZscore = v
+                })
 
-          <Checkbox
-            checked={settings.heatmap.applyRowZscore}
-            onCheckedChange={(v) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.heatmap.applyRowZscore = v
-              })
+                updateSettings(newSettings)
+              }}
+            >
+              Z-score rows
+            </Checkbox>
+          </ActionDialogRow>
+          <ActionDialogRow>
+            <Checkbox
+              checked={settings.heatmap.applyTranspose}
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
+                  draft.heatmap.applyTranspose = v
+                })
 
-              updateSettings(newSettings)
-            }}
-          >
-            Z-score rows
-          </Checkbox>
+                updateSettings(newSettings)
+              }}
+            >
+              Transpose
+            </Checkbox>
+          </ActionDialogRow>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
 
-          <Checkbox
-            checked={settings.heatmap.applyTranspose}
-            onCheckedChange={(v) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.heatmap.applyTranspose = v
-              })
-
-              updateSettings(newSettings)
-            }}
-          >
-            Transpose
-          </Checkbox>
-
-          {/* <DialogCardInfo>
-            Apply transformations to data before plotting.
-          </DialogCardInfo> */}
-        </DialogCardContent>
-      </DialogCard>
-
-      <DialogCard>
+      <ActionDialogCard>
         <DialogCardHeader title="Clustering" />
 
-        <DialogCardContent>
-          <Checkbox
-            checked={settings.heatmap.clusterRows}
-            onCheckedChange={(v) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.heatmap.clusterRows = v
-              })
+        <ActionDialogCardContent>
+          <ActionDialogRow>
+            <Checkbox
+              checked={settings.heatmap.clusterRows}
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
+                  draft.heatmap.clusterRows = v
+                })
 
-              updateSettings(newSettings)
-            }}
-          >
-            Rows
-          </Checkbox>
+                updateSettings(newSettings)
+              }}
+            >
+              Rows
+            </Checkbox>
+          </ActionDialogRow>
+          <ActionDialogRow>
+            <Checkbox
+              checked={settings.heatmap.clusterCols}
+              onCheckedChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
+                  draft.heatmap.clusterCols = v
+                })
 
-          <Checkbox
-            checked={settings.heatmap.clusterCols}
-            onCheckedChange={(v) => {
-              const newSettings = produce(settings, (draft) => {
-                draft.heatmap.clusterCols = v
-              })
+                updateSettings(newSettings)
+              }}
+            >
+              Columns
+            </Checkbox>
+          </ActionDialogRow>
 
-              updateSettings(newSettings)
-            }}
-          >
-            Columns
-          </Checkbox>
-
-          <PropRow title="Linkage">
+          <ActionDialogRow title="Linkage">
             <SelectList
               value={settings.heatmap.linkage}
               onValueChange={(v) => {
@@ -442,9 +443,9 @@ export function HeatMapDialog({
 
               <SelectItem value="Single">Single</SelectItem>
             </SelectList>
-          </PropRow>
+          </ActionDialogRow>
 
-          <PropRow title="Distance">
+          <ActionDialogRow title="Distance">
             <SelectList
               value={settings.heatmap.distance}
               onValueChange={(v) => {
@@ -462,13 +463,13 @@ export function HeatMapDialog({
 
               <SelectItem value="Euclidean">Euclidean</SelectItem>
             </SelectList>
-          </PropRow>
+          </ActionDialogRow>
 
           {/* <DialogCardInfo>
             Apply hierarchical row/column clustering.
           </DialogCardInfo> */}
-        </DialogCardContent>
-      </DialogCard>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
     </OKCancelDialog>
   )
 }

@@ -11,8 +11,6 @@ import {
   DEFAULT_STROKE_PROPS,
   WHITE_FILL_PROPS,
 } from '@/components/plot/svg-props'
-import { CheckPropRow } from '@/dialogs/check-prop-row'
-import { PropRow } from '@/dialogs/prop-row'
 import { TAB10_PALETTE } from '@/lib/color/palette'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { DataFrame } from '@/lib/dataframe/dataframe'
@@ -20,6 +18,8 @@ import { range } from '@/lib/math/range'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
 
+import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
+import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
 import { newBoxPlot } from '../../history/history-provider/history-factories'
 import { HistoryPlot } from '../../history/history-provider/history-types'
@@ -203,11 +203,14 @@ export function BoxWhiskersDialog({
             control={form.control}
             name="columnMode"
             render={({ field }) => (
-              <CheckPropRow
-                title="Column Mode"
-                onCheckedChange={field.onChange}
-                checked={field.value}
-              />
+              <ActionDialogRow>
+                <Checkbox
+                  onCheckedChange={field.onChange}
+                  checked={field.value}
+                >
+                  Column Mode
+                </Checkbox>
+              </ActionDialogRow>
             )}
           />
 
@@ -215,7 +218,7 @@ export function BoxWhiskersDialog({
             control={form.control}
             name="xCol"
             render={({ field }) => (
-              <PropRow title="X">
+              <ActionDialogRow title="X">
                 <SelectList
                   onValueChange={field.onChange}
                   value={field.value}
@@ -227,7 +230,7 @@ export function BoxWhiskersDialog({
                     </SelectItem>
                   ))}
                 </SelectList>
-              </PropRow>
+              </ActionDialogRow>
             )}
           />
 
@@ -235,7 +238,7 @@ export function BoxWhiskersDialog({
             control={form.control}
             name="yCol"
             render={({ field }) => (
-              <PropRow title="X">
+              <ActionDialogRow title="Y">
                 <SelectList
                   onValueChange={field.onChange}
                   value={field.value}
@@ -247,7 +250,7 @@ export function BoxWhiskersDialog({
                     </SelectItem>
                   ))}
                 </SelectList>
-              </PropRow>
+              </ActionDialogRow>
             )}
           />
 
@@ -255,7 +258,7 @@ export function BoxWhiskersDialog({
             control={form.control}
             name="hueCol"
             render={({ field }) => (
-              <PropRow title="Hue">
+              <ActionDialogRow title="Hue">
                 <SelectList
                   onValueChange={field.onChange}
                   value={field.value}
@@ -271,7 +274,7 @@ export function BoxWhiskersDialog({
                     </SelectItem>
                   ))}
                 </SelectList>
-              </PropRow>
+              </ActionDialogRow>
             )}
           />
 

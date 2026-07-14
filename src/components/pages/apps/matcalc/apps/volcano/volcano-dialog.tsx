@@ -8,9 +8,10 @@ import { DataFrame } from '@/lib/dataframe/dataframe'
 import { filterNA, subset, zip } from '@/lib/dataframe/dataframe-utils'
 import { range } from '@/lib/math/range'
 
-import { CheckPropRow } from '@/dialogs/check-prop-row'
-import { PropRow } from '@/dialogs/prop-row'
-
+import {
+  ActionCheckRow,
+  ActionDialogRow,
+} from '@/components/dialogs/card/action-dialog-card'
 import { SeriesData } from '@/lib/dataframe/series-data'
 import { produce } from 'immer'
 import { useRef, type BaseSyntheticEvent } from 'react'
@@ -186,14 +187,14 @@ export function VolcanoDialog({
     >
       <Form {...form}>
         <form
-          className="flex flex-col gap-y-1"
+          className="flex flex-col gap-y-2"
           onSubmit={form.handleSubmit(onSubmit)}
         >
           <FormField
             control={form.control}
             name="foldChangeCol"
             render={({ field }) => (
-              <PropRow title="Fold Change">
+              <ActionDialogRow title="Fold Change">
                 <SelectList
                   onValueChange={field.onChange}
                   value={field.value}
@@ -208,7 +209,7 @@ export function VolcanoDialog({
                       </SelectItem>
                     ))}
                 </SelectList>
-              </PropRow>
+              </ActionDialogRow>
             )}
           />
 
@@ -216,7 +217,7 @@ export function VolcanoDialog({
             control={form.control}
             name="pValueCol"
             render={({ field }) => (
-              <PropRow title="P-value">
+              <ActionDialogRow title="P-value">
                 <SelectList
                   onValueChange={field.onChange}
                   value={field.value}
@@ -231,7 +232,7 @@ export function VolcanoDialog({
                       </SelectItem>
                     ))}
                 </SelectList>
-              </PropRow>
+              </ActionDialogRow>
             )}
           />
 
@@ -239,7 +240,7 @@ export function VolcanoDialog({
             control={form.control}
             name="applyLog2ToFoldChange"
             render={({ field }) => (
-              <CheckPropRow
+              <ActionCheckRow
                 title="Apply log2 to fold change"
                 checked={field.value}
                 onCheckedChange={field.onChange}
@@ -251,7 +252,7 @@ export function VolcanoDialog({
             control={form.control}
             name="applyLog10ToPValue"
             render={({ field }) => (
-              <CheckPropRow
+              <ActionCheckRow
                 title="Apply log10 to p-value"
                 checked={field.value}
                 onCheckedChange={field.onChange}

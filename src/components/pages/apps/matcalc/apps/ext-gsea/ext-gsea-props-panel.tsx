@@ -13,15 +13,13 @@ import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { TEXT_RESET } from '@/consts'
 import { PropRow } from '@/dialogs/prop-row'
 import { SwitchPropRow } from '@/dialogs/switch-prop-row'
-import { VCenterRow } from '@/layout/v-center-row'
 import { LinkButton } from '@/themed/link-button'
 import { NumericalInput } from '@/themed/numerical-input'
 import { produce } from 'immer'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '../../../../../plot/color-picker-popover'
+import { SIMPLE_COLOR_EXT_CLS } from '../../../../../plot/color-picker-popover'
 
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
+import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useExtGseaContext } from './ext-gsea-provider'
 import { DEFAULT_EXT_GSEA_PROPS } from './ext-gsea-store'
@@ -52,7 +50,7 @@ export function ExtGseaPropsPanel() {
 
   return (
     <PropsPanel className="pr-1">
-      <VCenterRow className="justify-end pb-2">
+      <SideBarHeader className="justify-end">
         <LinkButton
           onClick={() =>
             updatePlot(
@@ -65,7 +63,7 @@ export function ExtGseaPropsPanel() {
         >
           {TEXT_RESET}
         </LinkButton>
-      </VCenterRow>
+      </SideBarHeader>
       <ScrollAccordion
         value={openTabs}
         onValueChange={(v) => setOpenTabs(v as string[])}
@@ -283,33 +281,17 @@ export function ExtGseaPropsPanel() {
           </AccordionTrigger>
           <AccordionContent>
             <PropRow title="Color" className="ml-2">
-              <NumericalInput
-                value={displayOptions.ranking.fill.opacity}
-                disabled={!displayOptions.ranking.show}
-                placeholder="Opacity"
-                title="Opacity"
-                limit={[0, 1]}
-                step={0.1}
-                dp={1}
-                onNumChanged={(v) =>
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.ranking.fill.opacity = v
-                    })
-                  )
-                }
-                className="w-16 rounded-theme"
-              />
-
-              <ColorPickerButton
+              <FillButton
                 colors={[
                   {
                     color: displayOptions.ranking.fill.value,
-
-                    onColorChange: ({ color }) =>
+                    opacity: displayOptions.ranking.fill.opacity,
+                    allowNoColor: false,
+                    onColorChange: ({ color, opacity }) =>
                       updatePlot(
                         produce(plot, (draft) => {
                           draft.props.ranking.fill.value = color
+                          draft.props.ranking.fill.opacity = opacity
                         })
                       ),
                   },
@@ -317,6 +299,22 @@ export function ExtGseaPropsPanel() {
                 disabled={!displayOptions.ranking.show}
                 className={SIMPLE_COLOR_EXT_CLS}
               />
+
+              {/* <PercentSlider
+                value={displayOptions.ranking.fill.opacity}
+                disabled={!displayOptions.ranking.show}
+
+                title="Opacity"
+
+                onValueChange={(value) => {
+                  const v = Array.isArray(value) ? value[0] : value
+                  updatePlot(
+                    produce(plot, (draft) => {
+                      draft.props.ranking.fill.opacity = v
+                    })
+                  )
+                }}
+              /> */}
             </PropRow>
 
             <SwitchPropRow

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
@@ -9,7 +8,7 @@ import {
   DEFAULT_HEATMAP_PROPS,
   type IHeatMapDisplayOptions,
 } from '@/components/plot/heatmap/heatmap-svg-props'
-import { TEXT_CANCEL, TEXT_DISPLAY } from '@/consts'
+import { TEXT_CANCEL } from '@/consts'
 import { SaveImageDialog } from '@/dialogs/save-image-dialog'
 
 import {
@@ -17,19 +16,17 @@ import {
   useMessages,
 } from '@/providers/message-provider'
 import { useZoom } from '@/providers/zoom-provider'
-import { Card } from '@/themed/card'
 import { produce } from 'immer'
 
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
-import { useSideTabs } from '@/components/tabs/tab-provider'
+import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
+import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { useHistory } from '../../history/history-provider/history-provider'
-import { useMatcalcSettings } from '../../settings/matcalc-settings'
-import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
+import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { ExtGseaPropsPanel } from './ext-gsea-props-panel'
 import { useExtGseaContext } from './ext-gsea-provider'
-import { IExtGseaDisplayOptions } from './ext-gsea-store'
 import { ExtGseaSvg } from './ext-gsea-svg'
 
 export function makeDefaultHeatmapProps(mode: string): IHeatMapDisplayOptions {
@@ -51,7 +48,6 @@ export function ExtGseaPanel() {
   const { updatePlot } = useHistory()
 
   const { plot } = useExtGseaContext()
-  const displayProps: IExtGseaDisplayOptions = plot.props
 
   //const sheet = plot!.dataframes['main']! as AnnotationDataFrame
 
@@ -61,18 +57,6 @@ export function ExtGseaPanel() {
 
   const [showSave, setShowSave] = useState(false)
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'ext-gsea')
-  const { settings, updateSettings } = useMatcalcSettings()
-
-  const { setTabs: setSideTabs } = useSideTabs()
-
-  useEffect(() => {
-    setSideTabs([
-      {
-        id: TEXT_DISPLAY,
-        component: ExtGseaPropsPanel,
-      },
-    ])
-  }, [])
 
   useEffect(() => {
     const filteredMessages = messages.filter(
@@ -155,31 +139,12 @@ export function ExtGseaPanel() {
           </ResizablePanel>
         </ResizablePanelGroup> */}
 
-      <TabSlideBar
-        side="right"
-        //tabs={plotRightTabs}
-        //onValueChange={setSelectedTab}
-        //value={selectedTab}
-        open={settings.sidebar.show}
-        onOpenChange={(v) => {
-          const newSettings = produce(settings, (draft) => {
-            draft.sidebar.show = v
-          })
-
-          updateSettings(newSettings)
-        }}
-      >
-        <Card variant="content" className="mx-2 mb-2 grow">
-          <div className={PLOT_CLS}>
-            <ExtGseaSvg
-              ref={svgRef}
-
-              //extGsea={extGsea}
-              //displayOptions={displayOptions}
-            />
-          </div>
-        </Card>
-      </TabSlideBar>
+      <ResizableSidebar side="right">
+        <ExtScrollCard>
+          <ExtGseaSvg ref={svgRef} />
+        </ExtScrollCard>
+        <ExtGseaPropsPanel />
+      </ResizableSidebar>
 
       <FooterPortal className="shrink-0 grow-0 ">
         <></>

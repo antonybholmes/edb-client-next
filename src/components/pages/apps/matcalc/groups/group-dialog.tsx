@@ -11,7 +11,13 @@ import { Input } from '@/themed/v2/input'
 import { produce } from 'immer'
 import { useEffect, useState } from 'react'
 
+import {
+  ActionDialogCard,
+  ActionDialogCardContent,
+  ActionDialogRow,
+} from '@/components/dialogs/card/action-dialog-card'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
+import { DialogTitle } from '@/components/shadcn/ui/themed/v2/dialog'
 import { useCurrentSheets } from '../history/history-provider/history-contexts'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
 
@@ -79,9 +85,9 @@ export function GroupDialog({ group, onResponse }: IProps) {
   return (
     <OKCancelDialog
       title={
-        <h2 style={{ color }} className="font-semibold">
+        <DialogTitle style={{ color }}>
           {name.length > 0 ? `Edit ${name}` : 'New group'}
-        </h2>
+        </DialogTitle>
       }
       onResponse={(r) => {
         console.log('GroupDialog onResponse', r, name, search, color)
@@ -92,7 +98,12 @@ export function GroupDialog({ group, onResponse }: IProps) {
         }
       }}
       showClose={true}
-      //className="w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4"
+
+      leftFooterChildren={
+        IS_DEV_MODE ? (
+          <span className="text-foreground/50">{group.id}</span>
+        ) : undefined
+      }
       leftHeaderChildren={
         <FillButton
           colors={[
@@ -105,75 +116,67 @@ export function GroupDialog({ group, onResponse }: IProps) {
           className={SIMPLE_COLOR_EXT_CLS}
         />
       }
-      leftFooterChildren={
-        IS_DEV_MODE ? (
-          <span className="text-foreground/50">{group.id}</span>
-        ) : undefined
-      }
       bodyCls="gap-y-2"
     >
-      <div className="grid grid-cols-7 items-center gap-x-4 gap-y-2">
-        <span className="text-alt-foreground text-right">Name</span>
-        <Input
-          id="name"
-          h="lg"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Group Name"
-          className="col-span-5"
-        />
-        <span></span>
-        <span className="text-alt-foreground text-right">Match</span>
+      <ActionDialogCard>
+        <ActionDialogCardContent>
+          <ActionDialogRow title="Name">
+            <Input
+              id="name"
+              h="lg"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Group Name"
+              className="col-span-5"
+            />
+          </ActionDialogRow>
 
-        <Input
-          id="search"
-          h="lg"
-          value={search}
-          onTextChange={(e) => setSearch(e)}
-          placeholder="Matches..."
-          rightChildren={
-            <InfoHoverCard>
-              A comma separated list of words or partial words that match column
-              names. All matching columns will belong to the group.
-            </InfoHoverCard>
-          }
-          className="col-span-5"
-        />
-        <span></span>
-        <span></span>
-        <VCenterRow className="col-span-5">
-          <Checkbox
-            checked={exactMatch}
-            onCheckedChange={(v) => {
-              setExactMatch(v)
-              // Store setting for exact match in global settings
-              // so that it can be default for new groups and
-              // remembered across sessions. We can still override it for
-              // individual groups if needed.
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.groups.match.exact = v
-                })
-              )
-            }}
-          >
-            Exact match
-          </Checkbox>
-        </VCenterRow>
-        <span></span>
-        <span></span>
-        {/* <VCenterRow className="col-span-4 text-xs text-alt-foreground">
-          {cols.length > 0 && cols.join(', ')}
-        </VCenterRow> */}
-
-        <VCenterRow className="col-span-4 text-xs text-alt-foreground flex-wrap gap-1.5">
-          {cols.map((c) => (
-            <span key={c} className="bg-muted/50 p-1 px-2 rounded-full">
-              {c}
-            </span>
-          ))}
-        </VCenterRow>
-      </div>
+          <ActionDialogRow title="Match">
+            <Input
+              id="search"
+              h="lg"
+              value={search}
+              onTextChange={(e) => setSearch(e)}
+              placeholder="Matches..."
+              rightChildren={
+                <InfoHoverCard>
+                  A comma separated list of words or partial words that match
+                  column names. All matching columns will belong to the group.
+                </InfoHoverCard>
+              }
+              className="col-span-5"
+            />
+          </ActionDialogRow>
+          <ActionDialogRow>
+            <Checkbox
+              checked={exactMatch}
+              onCheckedChange={(v) => {
+                setExactMatch(v)
+                // Store setting for exact match in global settings
+                // so that it can be default for new groups and
+                // remembered across sessions. We can still override it for
+                // individual groups if needed.
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.groups.match.exact = v
+                  })
+                )
+              }}
+            >
+              Exact match
+            </Checkbox>
+          </ActionDialogRow>
+          <ActionDialogRow>
+            <VCenterRow className="col-span-4 text-xs text-alt-foreground flex-wrap gap-1.5">
+              {cols.map((c) => (
+                <span key={c} className="bg-muted/50 p-1 px-2 rounded-full">
+                  {c}
+                </span>
+              ))}
+            </VCenterRow>
+          </ActionDialogRow>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
 
       {/* {IS_DEV_MODE && (
         <PropRow title="Id">

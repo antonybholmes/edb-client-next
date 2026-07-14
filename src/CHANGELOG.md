@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added action dialog layout for a mac like style for action dialogs. Ext gsea now works with contexts.
 - Bug fixes and updates.
 - Matcalc group name edit now works correctly. Exact match is now tied to group rather than global setting.
 
