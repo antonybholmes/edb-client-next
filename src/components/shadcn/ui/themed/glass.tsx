@@ -7,10 +7,7 @@ export const BASE_GLASS_CLS = 'backdrop-blur-lg'
 //   BASE_GLASS_CLS
 // )
 
-export const GLASS_CLS = cn(
-  'bg-gray-100/50 dark:bg-gray-800/50',
-  BASE_GLASS_CLS
-)
+export const GLASS_CLS = cn('bg-muted/10 dark:bg-gray-800/50', BASE_GLASS_CLS)
 
 export function Glass({ ref, className, children, ...props }: IDivProps) {
   return (

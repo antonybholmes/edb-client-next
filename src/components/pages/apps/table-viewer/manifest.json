@@ -2,9 +2,9 @@
   "name": "Table Viewer",
   "description": "A basic viewer for tabular data.",
   "version": "14.6.8",
-  "color": "#c0c0c0",
+  "color": "#000000",
   "copyright": "(C) ${START_YEAR:2024} Antony Holmes",
-  "modified": "2026-07-03T14:46:20.351Z",
-  "hash": "b38c0340fde7d1f77390947369d908862c0037e2aac2f1d448a5818e60a271a0",
-  "build": 476
+  "modified": "2026-07-15T21:00:34.753Z",
+  "hash": "6842ee7df3dc22d492a3921cad23db630e8b762e7ab7dfb40ebb1da1d3df1aac",
+  "build": 478
 }

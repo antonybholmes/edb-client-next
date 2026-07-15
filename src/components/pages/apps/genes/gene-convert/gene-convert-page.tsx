@@ -209,11 +209,7 @@ export function GeneConvPage() {
             onOpenChange={setShowFileMenu}
             fileMenuTabs={fileMenuTabs}
             leftShortcuts={<UndoShortcuts />}
-            rightShortcuts={
-              <>
-                <HistoryShowButton />
-              </>
-            }
+            rightShortcuts={<HistoryShowButton />}
           />
           <ToolbarPanel />
         </Toolbar>

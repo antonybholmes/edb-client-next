@@ -24,9 +24,9 @@
     "color": "#20B2AA",
     "version": "20.0.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-14T21:43:25.677Z",
-    "hash": "347c7a083b1f74baaf46098c62c34e8390974b95e43003719f4c9c3e6251eb0c",
-    "build": 806
+    "modified": "2026-07-15T21:00:34.749Z",
+    "hash": "4ce2d3bcb7834409c3a962df1878b3cfd7f71d8b431cbc4a176306b21764ef75",
+    "build": 808
   },
   {
     "name": "DNA",
@@ -53,9 +53,9 @@
     "color": "#ffb366",
     "version": "21.8.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-14T21:43:25.679Z",
-    "hash": "1128b9a969aa3382b636f03abe9e2165836ee993d0c97ecd435b3611a8c9ff59",
-    "build": 792
+    "modified": "2026-07-15T21:00:34.749Z",
+    "hash": "3188bf0ea3e634bc408b2cda8e41a4448a8a244f8b0bffa3efc6eb504cc80a73",
+    "build": 794
   },
   {
     "name": "GSEA Web",
@@ -63,9 +63,9 @@
     "color": "#4169E1",
     "version": "3.4.2",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-07-14T21:43:25.679Z",
-    "hash": "3770cecca0974e873888f6300f174af35831675f19a19bdc23a8bc6f3da695a7",
-    "build": 82
+    "modified": "2026-07-15T21:00:34.749Z",
+    "hash": "1f24b1d5375de83241b9552a84b73f17a592b331f29db71bc8540d89423835bb",
+    "build": 84
   },
   {
     "name": "History Viewer",
@@ -111,9 +111,9 @@
     "color": "#40bf80",
     "version": "48.4.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-15T02:10:17.258Z",
-    "hash": "6d48a5b0409e6f554f1d3176d704e959874d581850049e8352d5e6b2ec7e9c33",
-    "build": 1816
+    "modified": "2026-07-15T21:00:34.752Z",
+    "hash": "d5a4c7cf899b19c195dd01a5c32c8abf6f07ebe79dab77f288df5371eb4b0ce5",
+    "build": 1818
   },
   {
     "name": "Motifs",
@@ -179,11 +179,11 @@
     "name": "Seq Browser",
     "description": "Plot NGS data and make figures.",
     "color": "#FF0000",
-    "version": "32.2.2",
+    "version": "32.2.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-14T21:43:25.680Z",
-    "hash": "c97d61fbcfa83baf268ee729e072db32a67e6c1c4b12f9279023b79cab875285",
-    "build": 1088
+    "modified": "2026-07-15T21:00:34.750Z",
+    "hash": "9e59e2b66cf0bd30eabf6bd0bb55de8a832fb5b10cae90b6cc965c8de76dda8a",
+    "build": 1090
   },
   {
     "name": "Single Cell",
@@ -199,11 +199,11 @@
     "name": "Table Viewer",
     "description": "A basic viewer for tabular data.",
     "version": "14.6.8",
-    "color": "#c0c0c0",
+    "color": "#000000",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-03T14:46:20.351Z",
-    "hash": "b38c0340fde7d1f77390947369d908862c0037e2aac2f1d448a5818e60a271a0",
-    "build": 476
+    "modified": "2026-07-15T21:00:34.753Z",
+    "hash": "6842ee7df3dc22d492a3921cad23db630e8b762e7ab7dfb40ebb1da1d3df1aac",
+    "build": 478
   },
   {
     "name": "Users",

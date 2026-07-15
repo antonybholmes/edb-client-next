@@ -17,11 +17,15 @@ export function ActionDialogCard({ className, children, ...props }: IDivProps) {
 export function ActionDialogRow({
   title,
   align = 'center',
+  justify = 'between',
   className,
   children,
-
   ...props
-}: IDivProps & { title?: ReactNode; align?: 'start' | 'center' | 'end' }) {
+}: IDivProps & {
+  title?: ReactNode
+  align?: 'start' | 'center' | 'end'
+  justify?: 'start' | 'center' | 'end' | 'between'
+}) {
   return (
     <div
       className={cn('grid grid-cols-4 gap-x-3 gap-y-2', className)}
@@ -39,7 +43,11 @@ export function ActionDialogRow({
       </BaseRow>
       <BaseRow
         className={cn(
-          'col-span-2 gap-x-2 justify-between',
+          'col-span-2 gap-x-2',
+          justify === 'start' && 'justify-start',
+          justify === 'center' && 'justify-center',
+          justify === 'end' && 'justify-end',
+          justify === 'between' && 'justify-between',
           align === 'start' && 'items-start',
           align === 'center' && 'items-center',
           align === 'end' && 'items-end'

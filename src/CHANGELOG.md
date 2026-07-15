@@ -4,6 +4,7 @@
 
 ### Changed
 
+- UI refinments. Table viewer cleaned up.
 - ts6 check moved to pnpm-workspace.yaml.
 - Motif to gene now works without selecting a column beforehand.
 - Added action dialog layout for a mac like style for action dialogs. Ext gsea now works with contexts.

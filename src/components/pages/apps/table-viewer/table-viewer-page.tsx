@@ -11,10 +11,7 @@ import {
   ToolbarPanel,
 } from '@/toolbar/toolbar'
 
-import {
-  downloadDataFrame,
-  getFormattedShape,
-} from '@/lib/dataframe/dataframe-utils'
+import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
 
 import { useEffect, useState } from 'react'
 
@@ -25,7 +22,6 @@ import {
 } from '@/consts'
 
 import { DropdownMenuItem } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
-import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 
 import { FileIcon } from '@/icons/file-icon'
 import {
@@ -47,6 +43,11 @@ import { BaseCol } from '@/components/layout/base-col'
 import { useAppInfo } from '@/components/edb/edb-settings'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { formatString } from '@/lib/text/format-string'
+import { useFooter } from '@/providers/footer-provider'
+import {
+  HistoryLayout,
+  HistoryShowButton,
+} from '../matcalc/history/history-layout'
 import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import APP_INFO from './manifest.json'
@@ -62,10 +63,15 @@ export function TableViewerPage() {
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
+  const { addDFSize } = useFooter()
 
   useEffect(() => {
     setAppInfo(APP_INFO)
   }, [setAppInfo])
+
+  useEffect(() => {
+    addDFSize()
+  }, [addDFSize])
 
   useEffect(() => {
     setToolbarTabs([
@@ -181,6 +187,7 @@ export function TableViewerPage() {
               </DropdownMenuItem>
             ),
           }}
+          rightShortcuts={<HistoryShowButton />}
         />
         <ToolbarPanel
           tabShortcutMenu={
@@ -194,23 +201,12 @@ export function TableViewerPage() {
         />
       </Toolbar>
 
-      <TabSlideBar
-        side="right"
-        open={showSideBar}
-        onOpenChange={setShowSideBar}
-      >
-        <TabbedDataFrames
-          //selectedSheet={sheets[0]?.id}
-          //dataFrames=[sheets[0] as AnnotationDataFrame]}
-          //onTabChange={(selectedTab) => {
-          //  goto({ file, sheet: selectedTab.tab })
-          //}}
-          className="mx-2 mt-2"
-        />
-      </TabSlideBar>
+      <HistoryLayout>
+        <TabbedDataFrames className="mx-2" />
+      </HistoryLayout>
 
       <FooterPortal className="justify-end">
-        <span>{getFormattedShape(sheets[0] as AnnotationDataFrame)}</span>
+        <></>
         <></>
         <ZoomSlider />
       </FooterPortal>

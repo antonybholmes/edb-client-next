@@ -22,19 +22,23 @@ export const PLACEHOLDER_CLS = cn(
 export const inputVariants = cva(PLACEHOLDER_CLS, {
   variants: {
     variant: {
-      default:
-        'bg-background border border-border/60 rounded-theme hover:border-border px-2',
+      default: 'bg-background border border-border/60 hover:border-border px-2',
       dialog: cn(
-        'bg-background border border-border rounded-theme hover:border-ring shadow-sm px-3',
+        'bg-background border border-border hover:border-ring shadow-sm px-3',
         FOCUS_INSET_RING_CLS
       ),
       plain: '',
       trans: 'bg-white/20 hover:bg-white/30 text-white fill-white',
-      header: `border border-transparent bg-muted/75 stroke-foreground rounded-theme px-2
-        hover:bg-background hover:shadow-xs hover:border-border
-        data-[focus=true]:bg-background data-[focus=true]:shadow-xs data-[focus=true]:border-border
-        trans-color`,
-      alt: 'bg-muted/50 hover:bg-muted/70 px-2 stroke-foreground rounded-theme border-2 border-transparent data-[focus=true]:border-ring',
+      header: cn(
+        'border border-transparent bg-muted/75 stroke-foreground px-2',
+        'hover:bg-background hover:shadow-xs hover:border-border',
+        'data-[focus=true]:bg-background data-[focus=true]:shadow-xs',
+        'data-[focus=true]:border-border trans-color'
+      ),
+      alt: cn(
+        'bg-muted/50 hover:bg-muted/70 px-2 stroke-foreground border-2',
+        'border-transparent data-[focus=true]:border-ring'
+      ),
       underline: 'bg-background border-b border-border hover:border-ring px-1',
     },
     h: {
@@ -48,7 +52,6 @@ export const inputVariants = cva(PLACEHOLDER_CLS, {
     },
     w: {
       none: '',
-
       xxs: 'w-12',
       xs: 'w-14',
       sm: 'w-20',
@@ -64,12 +67,22 @@ export const inputVariants = cva(PLACEHOLDER_CLS, {
       md: 'gap-x-2',
       lg: 'gap-x-4',
     },
+    rounded: {
+      none: '',
+      sm: 'rounded-sm',
+      md: 'rounded-md',
+      lg: 'rounded-lg',
+      xl: 'rounded-xl',
+      full: 'rounded-full',
+      theme: 'rounded-theme',
+    },
   },
   defaultVariants: {
     variant: 'default',
     h: 'md',
     gap: 'sm',
     w: 'grow',
+    rounded: 'theme',
   },
 })
 
@@ -122,6 +135,7 @@ export function Input({
   w,
   h = 'md',
   gap = 'sm',
+  rounded = 'theme',
   disabled,
   readOnly = false,
   onChange,
@@ -150,6 +164,7 @@ export function Input({
         h,
         w,
         gap,
+        rounded,
         className,
       })}
       data-enabled={!disabled}

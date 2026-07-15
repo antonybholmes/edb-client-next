@@ -6,7 +6,11 @@ import {
   TEXT_SELECT_ALL,
   TEXT_UNSELECT_ALL,
 } from '@/consts'
-import { type IModalProps } from '@/dialogs/ok-cancel-dialog'
+import {
+  DialogFloatingToolbar,
+  DialogToolbar,
+  type IModalProps,
+} from '@/dialogs/ok-cancel-dialog'
 
 import { SearchBox } from '@/components/search-box'
 import { MultiSelectIcon } from '@/icons/multi-select-icon'
@@ -37,7 +41,6 @@ import { ScrollAccordion } from '@/themed/v2/accordion'
 
 import { PlusIcon } from '@/components/icons/plus-icon'
 import { TrashIcon } from '@/components/icons/trash-icon'
-import { CenterCol } from '@/components/layout/center-col'
 import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
 import { GlassSideDialog } from '@/dialogs/glass-side-dialog'
 import { IconButton } from '@/themed/icon-button'
@@ -134,15 +137,16 @@ export function PeaksDialog({
   return (
     <GlassSideDialog
       title={
-        <CenterCol className="gap-x-2 grow">
+        <DialogFloatingToolbar>
           <SearchBox
             id="search"
             value={search}
             onTextChange={(v) => setSearch(v)}
             placeholder="Search samples..."
-            className="w-3/5"
+            className="w-72"
+            rounded="full"
           />
-        </CenterCol>
+        </DialogFloatingToolbar>
       }
       open={open}
       onOpenChange={onOpenChange}
@@ -178,9 +182,9 @@ export function PeaksDialog({
       }
       cols={3}
     >
-      <BaseCol className="grow text-xs gap-y-4 p-3">
+      <BaseCol className="grow text-xs gap-y-4 mx-1 mt-4">
         {error && <span className="text-destructive">{error}</span>}
-        <VCenterRow className="gap-x-2 justify-between">
+        <DialogToolbar className="mx-1">
           <VCenterRow className="gap-x-1">
             <IconButton
               variant="flat-alt"
@@ -251,7 +255,7 @@ export function PeaksDialog({
           >
             <MultiSelectIcon checked={!searchSelectAll} />
           </IconButton>
-        </VCenterRow>
+        </DialogToolbar>
 
         <StoreItems
           searchedDb={searchedDb}

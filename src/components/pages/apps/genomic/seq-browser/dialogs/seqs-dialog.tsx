@@ -4,7 +4,11 @@ import {
   TEXT_SELECT_ALL,
   TEXT_UNSELECT_ALL,
 } from '@/consts'
-import { type IModalProps } from '@/dialogs/ok-cancel-dialog'
+import {
+  DialogFloatingToolbar,
+  DialogToolbar,
+  type IModalProps,
+} from '@/dialogs/ok-cancel-dialog'
 
 import { SearchBox } from '@/components/search-box'
 import {
@@ -26,7 +30,6 @@ import { Checkbox } from '@/themed/v2/check-box'
 import { ExternalLinkIcon } from '@/components/icons/external-link'
 import { PlusIcon } from '@/components/icons/plus-icon'
 import { TrashIcon } from '@/components/icons/trash-icon'
-import { CenterCol } from '@/components/layout/center-col'
 import { InfoHoverCard } from '@/components/shadcn/ui/themed/v2/hover-card'
 import { GlassSideDialog } from '@/dialogs/glass-side-dialog'
 import { BoolSearchQuery } from '@/lib/search'
@@ -110,20 +113,17 @@ export function SeqsDialog({
   return (
     <GlassSideDialog
       title={
-        // <VCenterRow className="gap-x-2">
-        //   <CartIcon />
-        //   <DialogTitle>{`${platform.replaceAll('_', ' ').replaceAll('And', '&')} Cart`}</DialogTitle>
-        // </VCenterRow>
-
-        <CenterCol className="grow">
+        <DialogFloatingToolbar>
           <SearchBox
             id="search"
             value={search}
             onTextChange={(v) => setSearch(v)}
             placeholder="Search samples..."
-            className="w-3/5"
+            className="w-72"
+            rounded="full"
+            clear={() => setSearch('')}
           />
-        </CenterCol>
+        </DialogFloatingToolbar>
       }
       //size="large"
       open={open}
@@ -258,10 +258,10 @@ function SideItems({
   }, [seqs])
 
   return (
-    <BaseCol className="grow text-xs gap-y-2 p-3">
+    <BaseCol className="grow text-xs gap-y-2 mt-4 mx-1">
       {error && <span className="text-destructive text-wrap">{error}</span>}
 
-      <VCenterRow className="gap-x-2 justify-between ">
+      <DialogToolbar className="mx-1">
         <VCenterRow className="gap-x-1">
           <IconButton
             variant="flat-alt"
@@ -321,7 +321,7 @@ function SideItems({
         >
           <MultiSelectIcon checked={!searchSelectAll} />
         </IconButton>
-      </VCenterRow>
+      </DialogToolbar>
 
       <ItemsInStore
         searchedDb={searchedDb}

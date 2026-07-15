@@ -2203,6 +2203,10 @@
         {
           "msg": "ts6 check moved to pnpm-workspace.yaml",
           "date": "2026-07-15T13:49:35.183Z"
+        },
+        {
+          "msg": "UI refinments. Table viewer cleaned up",
+          "date": "2026-07-15T21:00:35.749Z"
         }
       ]
     },

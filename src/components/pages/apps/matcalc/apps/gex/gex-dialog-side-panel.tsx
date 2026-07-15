@@ -18,6 +18,7 @@ import { SideAccordionItem } from '@/dialogs/settings/settings-dialog'
 import { produce } from 'immer'
 import { ExternalLinkIcon } from 'lucide-react'
 
+import { DialogToolbar } from '@/components/dialogs/ok-cancel-dialog'
 import { BaseCol } from '@/components/layout/base-col'
 import { RadioGroup } from '@/components/shadcn/ui/themed/v2/radio-group'
 import { SkeletonRows } from '@/components/shadcn/ui/themed/v2/skeleton'
@@ -77,8 +78,8 @@ export function GexDialogSidePanel({
   }
 
   return (
-    <BaseCol className="p-3 grow gap-y-3">
-      <HCenterRow>
+    <BaseCol className="m-1 mt-4 grow gap-y-3">
+      <DialogToolbar justify="center">
         <Popover>
           <PopoverTrigger className="font-bold text-xs flex flex-row items-center gap-x-4 w-48 justify-between hover:bg-muted/70 data-popup-open:bg-muted/70 rounded-theme p-2.5 trans-color">
             <span>{`${settings.apps.gex.genome} ${technology ?? ''}`}</span>
@@ -147,7 +148,7 @@ export function GexDialogSidePanel({
             </ul>
           </PopoverContent>
         </Popover>
-      </HCenterRow>
+      </DialogToolbar>
 
       <RadioGroup
         className="flex flex-col grow relative"

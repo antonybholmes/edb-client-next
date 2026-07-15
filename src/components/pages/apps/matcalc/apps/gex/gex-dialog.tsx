@@ -764,7 +764,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
                     )
                   }}
                 >
-                  Create groups
+                  Create
                 </Checkbox>
                 <SampleDataTypeCombo
                   selectedValues={groupSampleDataType}

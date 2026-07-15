@@ -90,7 +90,7 @@ export function TopRowsPanel({
   return (
     <ActionDialogCard>
       <ActionDialogCardContent>
-        <ActionDialogRow title="Keep">
+        <ActionDialogRow title="Keep" justify="start">
           <NumericalInput
             id="top-rows"
             value={topRows}
@@ -156,7 +156,7 @@ export function XInYPanel({
   return (
     <ActionDialogCard>
       <ActionDialogCardContent>
-        <ActionDialogRow title="Expression">
+        <ActionDialogRow title="Expression" justify="start">
           <NumericalInput
             value={exp}
             limit={[1, Number.MAX_SAFE_INTEGER]}

@@ -17,9 +17,10 @@ import { type IChildrenProps } from '@/interfaces/children-props'
 import { type IOpenChange } from '@/interfaces/open-change'
 import { VCenterRow } from '@/layout/v-center-row'
 import { cn } from '@/lib/shadcn-utils'
-import type { CSSProperties, ReactNode } from 'react'
+import type { ComponentProps, CSSProperties, ReactNode } from 'react'
 
 import { config } from '@/config'
+import { IDivProps } from '@/interfaces/div-props'
 import type { UndefStr } from '@/lib/text/text'
 import { FOCUS_RING_CLS } from '@/theme'
 import type { VariantProps } from 'class-variance-authority'
@@ -27,7 +28,6 @@ import { X } from 'lucide-react'
 import { osName } from 'react-device-detect'
 import { ErrorIcon } from '../icons/error-icon'
 import { WarningIcon } from '../icons/warning-icon'
-import { HCenterRow } from '../layout/h-center-row'
 // Try to determine the operating system
 const OS = osName
 
@@ -37,7 +37,23 @@ interface IOSButtonRowProps extends IChildrenProps {
   buttonOrder?: ButtonOrder
 }
 
-//export type DialogResponse = (response: string, data?: unknown) => void
+export type ModalType = 'default' | 'warning' | 'error'
+export type ModalResponse<T = unknown> = (
+  response: string,
+  data?: T | undefined
+) => void
+
+export interface IModalProps<T = unknown> extends IOpenChange, IChildrenProps {
+  title?: ReactNode
+  description?: string
+  onResponse?: ModalResponse<T> | undefined
+  buttons?: string[]
+  buttonOrder?: 'auto' | 'primary-first' | 'primary-last'
+  modalType?: ModalType | undefined
+  bodyCls?: UndefStr
+  w?: string | number
+  h?: string | number
+}
 
 export function OSButtonRow({
   buttonOrder = 'auto',
@@ -79,22 +95,66 @@ export function CloseButton({ ...props }: IButtonProps) {
   )
 }
 
-export type ModalType = 'default' | 'warning' | 'error'
-export type ModalResponse<T = unknown> = (
-  response: string,
-  data?: T | undefined
-) => void
-
-export interface IModalProps<T = unknown> extends IOpenChange, IChildrenProps {
-  title?: ReactNode
-  description?: string
+interface IDialogToolbarProps<T = unknown> extends IDivProps {
   onResponse?: ModalResponse<T> | undefined
-  buttons?: string[]
-  buttonOrder?: 'auto' | 'primary-first' | 'primary-last'
-  modalType?: ModalType | undefined
-  bodyCls?: UndefStr
-  w?: string | number
-  h?: string | number
+  side?: 'left' | 'right'
+  justify?: 'start' | 'center' | 'end' | 'between'
+}
+
+export function DialogToolbar<T = unknown>({
+  onResponse,
+  side = 'right',
+  justify = 'between',
+  className,
+  children,
+  ...props
+}: IDialogToolbarProps<T>) {
+  return (
+    <DialogHeader
+      className={cn(
+        'flex flex-row items-center h-8 gap-x-4 relative',
+
+        className
+      )} //dialogHeaderVariants({ headerVariant })}
+      {...props}
+    >
+      {side === 'left' && onResponse && (
+        <CloseButton onClick={() => onResponse(TEXT_CANCEL)} />
+      )}
+
+      <VCenterRow
+        className={cn(
+          'grow gap-x-2',
+          justify === 'start' && 'justify-start',
+          justify === 'center' && 'justify-center',
+          justify === 'end' && 'justify-end',
+          justify === 'between' && 'justify-between'
+        )}
+      >
+        {children}
+      </VCenterRow>
+
+      {side === 'right' && onResponse && (
+        <CloseButton onClick={() => onResponse(TEXT_CANCEL)} />
+      )}
+    </DialogHeader>
+  )
+}
+
+export function DialogFloatingToolbar({
+  onResponse,
+  children,
+  ...props
+}: ComponentProps<typeof DialogToolbar>) {
+  return (
+    <DialogToolbar
+      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
+      onResponse={onResponse}
+      {...props}
+    >
+      {children}
+    </DialogToolbar>
+  )
 }
 
 export interface IOKCancelDialogProps<T = unknown>
@@ -153,9 +213,9 @@ export function OKCancelDialog({
         )}
         {...props}
       >
-        <DialogHeader
+        <DialogToolbar
           style={headerStyle}
-          className="h-8 gap-x-4" //dialogHeaderVariants({ headerVariant })}
+          onResponse={showClose ? _resp : undefined}
         >
           <VCenterRow className="gap-x-2 grow">
             {leftHeaderChildren && leftHeaderChildren}
@@ -166,21 +226,15 @@ export function OKCancelDialog({
             )}
             {headerChildren && headerChildren}
           </VCenterRow>
-          <VCenterRow className="gap-x-2">
-            {rightHeaderChildren && rightHeaderChildren}
-            {showClose && (
-              <CloseButton
-                onClick={() => _resp(TEXT_CANCEL)}
-                //className="-mr-3"
-              />
-            )}
-          </VCenterRow>
+
+          {rightHeaderChildren && rightHeaderChildren}
+
           {centerHeaderChildren && (
-            <HCenterRow className="left-1/2 top-1/2 -translate-1/2 absolute">
+            <DialogFloatingToolbar>
               {centerHeaderChildren}
-            </HCenterRow>
+            </DialogFloatingToolbar>
           )}
-        </DialogHeader>
+        </DialogToolbar>
 
         {modalType === 'error' && (
           <VCenterRow className={cn('gap-x-4 grow')}>

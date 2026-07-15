@@ -23,9 +23,15 @@ const BUTTON_CLS = cn(
 
 export interface ISearchBoxProps
   extends IInputProps, VariantProps<typeof inputVariants> {
-  //showClear?: boolean
   searchLabel?: string
   deleteLabel?: string
+  /**
+   * Called if the user clicks the clear button. This is useful if you want to control the
+   * value of the search box from outside. If a function is supplied, a clear button will
+   * be shown when the search box has a value.
+   *
+   * @returns
+   */
   clear?: () => void
 }
 
@@ -92,7 +98,7 @@ export function SearchBox({
             className={BUTTON_CLS}
             title={deleteLabel}
           >
-            <CloseIcon />
+            <CloseIcon size={16} />
           </button>
         ) : null
       }
