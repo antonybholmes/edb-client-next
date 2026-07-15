@@ -201,21 +201,6 @@ export function BoxWhiskersDialog({
         >
           <FormField
             control={form.control}
-            name="columnMode"
-            render={({ field }) => (
-              <ActionDialogRow>
-                <Checkbox
-                  onCheckedChange={field.onChange}
-                  checked={field.value}
-                >
-                  Column Mode
-                </Checkbox>
-              </ActionDialogRow>
-            )}
-          />
-
-          <FormField
-            control={form.control}
             name="xCol"
             render={({ field }) => (
               <ActionDialogRow title="X">
@@ -274,6 +259,21 @@ export function BoxWhiskersDialog({
                     </SelectItem>
                   ))}
                 </SelectList>
+              </ActionDialogRow>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="columnMode"
+            render={({ field }) => (
+              <ActionDialogRow>
+                <Checkbox
+                  onCheckedChange={field.onChange}
+                  checked={field.value}
+                >
+                  Column Mode
+                </Checkbox>
               </ActionDialogRow>
             )}
           />
