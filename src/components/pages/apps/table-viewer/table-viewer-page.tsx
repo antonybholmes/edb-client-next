@@ -4,12 +4,7 @@ import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-datafra
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 
-import {
-  ShowOptionsMenu,
-  Toolbar,
-  ToolbarMenu,
-  ToolbarPanel,
-} from '@/toolbar/toolbar'
+import { Toolbar, ToolbarMenu, ToolbarPanel } from '@/toolbar/toolbar'
 
 import { downloadDataFrame } from '@/lib/dataframe/dataframe-utils'
 
@@ -44,10 +39,6 @@ import { useAppInfo } from '@/components/edb/edb-settings'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { formatString } from '@/lib/text/format-string'
 import { useFooter } from '@/providers/footer-provider'
-import {
-  HistoryLayout,
-  HistoryShowButton,
-} from '../matcalc/history/history-layout'
 import { useCurrentSheets } from '../matcalc/history/history-provider/history-contexts'
 import { useHistory } from '../matcalc/history/history-provider/history-provider'
 import APP_INFO from './manifest.json'
@@ -187,23 +178,14 @@ export function TableViewerPage() {
               </DropdownMenuItem>
             ),
           }}
-          rightShortcuts={<HistoryShowButton />}
+          //rightShortcuts={<HistoryShowButton />}
         />
-        <ToolbarPanel
-          tabShortcutMenu={
-            <ShowOptionsMenu
-              show={showSideBar}
-              onClick={() => {
-                setShowSideBar(!showSideBar)
-              }}
-            />
-          }
-        />
+        <ToolbarPanel />
       </Toolbar>
 
-      <HistoryLayout>
-        <TabbedDataFrames className="mx-2" />
-      </HistoryLayout>
+      {/* <HistoryLayout> */}
+      <TabbedDataFrames className="mx-2" />
+      {/* </HistoryLayout> */}
 
       <FooterPortal className="justify-end">
         <></>

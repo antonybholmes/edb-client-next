@@ -233,8 +233,6 @@ export function GeneConvPage() {
             // }}
             className="mx-2"
           />
-
-          {/* </TabSlideBar> */}
         </HistoryLayout>
         <FooterPortal className="justify-end">
           <> </>

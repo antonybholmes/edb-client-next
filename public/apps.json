@@ -22,11 +22,11 @@
     "name": "Convert",
     "description": "Convert gene symbols.",
     "color": "#20B2AA",
-    "version": "20.0.4",
+    "version": "20.0.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-15T21:00:34.749Z",
-    "hash": "4ce2d3bcb7834409c3a962df1878b3cfd7f71d8b431cbc4a176306b21764ef75",
-    "build": 808
+    "modified": "2026-07-15T21:52:36.785Z",
+    "hash": "665184056057154cc1be12460d3081cd654051880531292152e50f8260f5f5d6",
+    "build": 810
   },
   {
     "name": "DNA",
@@ -198,12 +198,12 @@
   {
     "name": "Table Viewer",
     "description": "A basic viewer for tabular data.",
-    "version": "14.6.8",
+    "version": "14.8.0",
     "color": "#000000",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-15T21:00:34.753Z",
-    "hash": "6842ee7df3dc22d492a3921cad23db630e8b762e7ab7dfb40ebb1da1d3df1aac",
-    "build": 478
+    "modified": "2026-07-15T21:52:36.789Z",
+    "hash": "9bbcb09f7c1c309ca5956424f57a5aabb4f54a6f0714ab1f6d32b64535520a31",
+    "build": 480
   },
   {
     "name": "Users",
