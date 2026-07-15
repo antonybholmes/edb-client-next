@@ -192,7 +192,7 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
                       })
                     )
                   }
-                  variant="app-theme"
+                  variant="outline"
                   rounded="lg"
                 >
                   <GroupToggle
@@ -200,6 +200,7 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
                     aria-label="Toggle human"
                     //className="flex flex-col gap-y-2 items-center"
                     size="colorful"
+                    className="flex-col"
                   >
                     <User
                       className="w-6 h-6 aspect-square shrink-0"
@@ -211,6 +212,7 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
                     value="mouse"
                     aria-label="Toggle mouse"
                     size="colorful"
+                    className="flex-col"
                   >
                     <Rat
                       className="w-6 h-6 aspect-square shrink-0"
@@ -235,7 +237,7 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
                       })
                     )
                   }
-                  variant="app-theme"
+                  variant="outline"
                   rounded="lg"
                 >
                   <GroupToggle
@@ -243,6 +245,7 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
                     aria-label="Toggle human"
                     //className="flex flex-col gap-y-2 items-center"
                     size="colorful"
+                    className="flex-col"
                   >
                     <User
                       className="w-6 h-6 aspect-square shrink-0"
@@ -254,6 +257,7 @@ export function GeneConvertDialog({ onResponse }: IModalProps<BaseDataFrame>) {
                     value="mouse"
                     aria-label="Toggle mouse"
                     size="colorful"
+                    className="flex-col"
                   >
                     <Rat
                       className="w-6 h-6 aspect-square shrink-0"

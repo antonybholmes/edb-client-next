@@ -20,9 +20,7 @@ import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
-import { useDebounce } from '@/hooks/debounce'
 import { produce } from 'immer'
-import { useEffect, useState } from 'react'
 import { FontPopover } from '../../../../plot/font/font-popover'
 import { MarginPopover } from '../../../../plot/margin-popover'
 import { useGseaSettings } from './gsea-settings-store'
@@ -542,39 +540,8 @@ export function GseaDisplayPropsPanel() {
 function GradientOpacityControl() {
   const { settings, updateSettings } = useGseaSettings()
 
-  const [gradientOpacity, setGradientOpacity] = useState(
-    settings.genes.gradient.opacity
-  )
-  const debouncedGradientOpacity = useDebounce(gradientOpacity, {
-    delayMs: 500,
-  })
-
-  useEffect(() => {
-    setGradientOpacity(settings.genes.gradient.opacity)
-  }, [settings.genes.gradient.opacity])
-
-  useEffect(() => {
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.genes.gradient.opacity = debouncedGradientOpacity
-      })
-    )
-  }, [debouncedGradientOpacity])
-
   return (
-    <CheckPropRow
-      title="Gradient"
-      checked={settings.genes.gradient.on}
-      onCheckedChange={(state) => {
-        updateSettings(
-          produce(settings, (draft) => {
-            draft.genes.gradient.on = state
-          })
-        )
-      }}
-      className="ml-2"
-      disabled={!settings.genes.color.on}
-    >
+    <PropRow title="Gradient">
       {/* <NumericalInput
                 value={settings.genes.gradient.alpha}
                 disabled={!settings.genes.gradient.on}
@@ -594,14 +561,18 @@ function GradientOpacityControl() {
               /> */}
 
       <PercentSlider
-        value={gradientOpacity}
+        value={1 - settings.genes.gradient.opacity}
         min={0}
         max={1}
         onNumChanged={(v) => {
-          setGradientOpacity(v)
+          updateSettings(
+            produce(settings, (draft) => {
+              draft.genes.gradient.opacity = 1 - v
+            })
+          )
         }}
         step={0.05}
       />
-    </CheckPropRow>
+    </PropRow>
   )
 }

@@ -24,12 +24,12 @@ export function ActionDialogRow({
 }: IDivProps & { title?: ReactNode; align?: 'start' | 'center' | 'end' }) {
   return (
     <div
-      className={cn('grid grid-cols-10 gap-x-4 gap-y-2', className)}
+      className={cn('grid grid-cols-4 gap-x-3 gap-y-2', className)}
       {...props}
     >
       <BaseRow
         className={cn(
-          'text-alt-foreground text-right col-span-3 text-sm justify-end',
+          'text-alt-foreground text-right text-sm justify-end',
           align === 'start' && 'items-start',
           align === 'center' && 'items-center',
           align === 'end' && 'items-end'
@@ -39,7 +39,7 @@ export function ActionDialogRow({
       </BaseRow>
       <BaseRow
         className={cn(
-          'col-span-7 gap-x-3',
+          'col-span-2 gap-x-2 justify-between',
           align === 'start' && 'items-start',
           align === 'center' && 'items-center',
           align === 'end' && 'items-end'
@@ -57,7 +57,7 @@ export function ActionDialogCardContent({
   ...props
 }: IDivProps) {
   return (
-    <BaseCol className={cn('gap-y-2', className)} {...props}>
+    <BaseCol className={cn('gap-y-1.5', className)} {...props}>
       {children}
     </BaseCol>
   )
@@ -69,6 +69,7 @@ export function ActionCheckRow({
   checked = false,
   onCheckedChange = () => {},
   disabled = false,
+  children,
 }: ComponentProps<typeof ActionDialogRow> &
   ComponentProps<typeof Checkbox> & { info?: ReactNode }) {
   return (
@@ -82,6 +83,7 @@ export function ActionCheckRow({
       >
         {title}
       </Checkbox>
+      {children}
     </ActionDialogRow>
   )
 }

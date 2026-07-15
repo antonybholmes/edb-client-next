@@ -25,25 +25,25 @@ export function CytobandsEditDialog({ onResponse }: IModalProps) {
       buttons={[TEXT_OK]}
       title="Cytobands"
       onResponse={onResponse}
+      leftHeaderChildren={
+        <FontPopover
+          fonts={[
+            {
+              textProps: settings.tracks.cytobands.labels.text,
+              update: (textProps) => {
+                const newOptions = produce(settings, (draft) => {
+                  draft.tracks.cytobands.labels.text = textProps
+                })
+
+                updateSettings(newOptions)
+              },
+            },
+          ]}
+        />
+      }
     >
       <ActionDialogCard>
         <ActionDialogCardContent>
-          <ActionDialogRow title="Font">
-            <FontPopover
-              fonts={[
-                {
-                  textProps: settings.tracks.cytobands.labels.text,
-                  update: (textProps) => {
-                    const newOptions = produce(settings, (draft) => {
-                      draft.tracks.cytobands.labels.text = textProps
-                    })
-
-                    updateSettings(newOptions)
-                  },
-                },
-              ]}
-            />
-          </ActionDialogRow>
           <ActionDialogRow title="Shape">
             <ToggleGroup
               direction="row"

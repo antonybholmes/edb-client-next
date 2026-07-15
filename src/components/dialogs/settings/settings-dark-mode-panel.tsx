@@ -15,7 +15,7 @@ export function SettingsDarkModePanel() {
       onValueChange={(value) =>
         setTheme(value[0] as 'dark' | 'light' | 'automatic')
       }
-      variant="app-theme"
+      variant="outline"
       rounded="lg"
     >
       <GroupToggle
@@ -23,6 +23,7 @@ export function SettingsDarkModePanel() {
         aria-label="Toggle dark mode"
         //className="flex flex-col gap-y-2 items-center"
         size="colorful"
+        className="flex-col"
       >
         <MoonStar
           className="w-6 h-6 aspect-square shrink-0"
@@ -30,7 +31,12 @@ export function SettingsDarkModePanel() {
         />
         <span>Dark</span>
       </GroupToggle>
-      <GroupToggle value="light" aria-label="Toggle light mode" size="colorful">
+      <GroupToggle
+        value="light"
+        aria-label="Toggle light mode"
+        size="colorful"
+        className="flex-col"
+      >
         <Sun className="w-6 h-6 aspect-square shrink-0" strokeWidth={1.5} />
         <span>Light</span>
       </GroupToggle>
@@ -38,6 +44,7 @@ export function SettingsDarkModePanel() {
         value="automatic"
         aria-label="Toggle automatic mode"
         size="colorful"
+        className="flex-col"
       >
         <Monitor className="w-6 h-6 aspect-square shrink-0" strokeWidth={1.5} />
         <span>Automatic</span>

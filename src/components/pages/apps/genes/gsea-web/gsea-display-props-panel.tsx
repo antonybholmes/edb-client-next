@@ -339,7 +339,7 @@ export function GseaDisplayPropsPanel() {
               className="ml-2"
               disabled={!settings.genes.color.on}
             >
-              <NumericalInput
+              {/* <NumericalInput
                 value={settings.genes.gradient.alpha}
                 disabled={!settings.genes.gradient.on}
                 placeholder="Alpha"
@@ -355,7 +355,7 @@ export function GseaDisplayPropsPanel() {
                 }}
                 className="w-16 rounded-theme"
                 title="Opacity"
-              />
+              /> */}
 
               <Percent v={settings.genes.gradient.alpha} />
               <Slider

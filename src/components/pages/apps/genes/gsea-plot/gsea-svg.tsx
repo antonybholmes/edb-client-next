@@ -580,9 +580,7 @@ function GenesSvg({
         const pc = p.x / crossing.x
 
         const color = settings.genes.color.on
-          ? settings.genes.gradient.on
-            ? cmap1.getHexColor(pc)
-            : settings.genes.pos.value
+          ? cmap1.getHexColor(pc)
           : COLOR_BLACK
         return (
           <line
@@ -601,9 +599,7 @@ function GenesSvg({
         const pc = (p.x - crossing.x) / (xax.range[1] - crossing.x)
 
         const color = settings.genes.color.on
-          ? settings.genes.gradient.on
-            ? cmap2.getHexColor(pc)
-            : settings.genes.neg.value
+          ? cmap2.getHexColor(pc)
           : COLOR_BLACK
         return (
           <line
