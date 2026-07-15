@@ -3,3 +3,6 @@ allowBuilds:
   browser-tabs-lock: true
   sharp: true
   unrs-resolver: true
+  
+overrides:
+  typescript: "^6"

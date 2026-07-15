@@ -2199,6 +2199,10 @@
         {
           "msg": "Motif to gene now works without selecting a column beforehand.",
           "date": "2026-07-14T16:09:48.916Z"
+        },
+        {
+          "msg": "ts6 check moved to pnpm-workspace.yaml",
+          "date": "2026-07-15T13:49:35.183Z"
         }
       ]
     },
