@@ -1,6 +1,5 @@
 import { TEXT_CANCEL, TEXT_OK } from '@/consts'
 import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
-import { VCenterRow } from '@/layout/v-center-row'
 import { type IDistFunc } from '@/lib/math/hcluster'
 import { useState } from 'react'
 
@@ -11,8 +10,6 @@ import {
   pearsond as pearsonDist,
 } from '@/lib/math/distance'
 
-import { CheckPropRow } from '@/dialogs/check-prop-row'
-import { PropRow } from '@/dialogs/prop-row'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import {
   kmeans,
@@ -24,16 +21,18 @@ import {
 } from '@/lib/dataframe/dataframe-utils'
 import { argsort } from '@/lib/math/argsort'
 import { NumericalInput } from '@/themed/numerical-input'
-import { Checkbox } from '@/themed/v2/check-box'
 import { produce } from 'immer'
 
 import {
-  DialogCard,
-  DialogCardContent,
+  ActionCheckRow,
+  ActionDialogCard,
+  ActionDialogCardContent,
+  ActionDialogRow,
+} from '@/components/dialogs/card/action-dialog-card'
+import {
+  DialogCardHeader,
   DialogCardInfo,
-  DialogCardLabel,
 } from '@/components/dialogs/card/dialog-card'
-import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
@@ -174,24 +173,24 @@ export function KmeansDialog({
     >
       {error && <span className="text-destructive">{error}</span>}
 
-      <DialogCard>
-        <DialogCardLabel title="Filter">
+      <ActionDialogCard>
+        <DialogCardHeader title="Filter">
           <DialogCardInfo>Filter table before clustering.</DialogCardInfo>
-        </DialogCardLabel>
+        </DialogCardHeader>
 
-        <DialogCardContent>
-          <VCenterRow className="gap-x-2">
-            <Checkbox
-              checked={settings.apps.kmeans.filterRows}
-              onCheckedChange={(v) => {
-                const newSettings = produce(settings, (draft) => {
-                  draft.apps.kmeans.filterRows = v
-                })
+        <ActionDialogCardContent>
+          <ActionCheckRow
+            title="Top"
+            checked={settings.apps.kmeans.filterRows}
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
+                draft.apps.kmeans.filterRows = v
+              })
 
-                updateSettings(newSettings)
-              }}
-            />
-            <span>Top</span>
+              updateSettings(newSettings)
+            }}
+            justify="start"
+          >
             <NumericalInput
               id="top-rows"
               value={settings.apps.kmeans.topRows}
@@ -204,7 +203,7 @@ export function KmeansDialog({
 
                 updateSettings(newSettings)
               }}
-              className="w-20 rounded-theme"
+              w="xs"
             />
             <span className="shrink-0">rows using</span>
             <SelectList
@@ -224,17 +223,17 @@ export function KmeansDialog({
               <SelectItem value="Mean">Mean</SelectItem>
               <SelectItem value="Median">Median</SelectItem>
             </SelectList>
-          </VCenterRow>
-        </DialogCardContent>
+          </ActionCheckRow>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
 
-        <MenuSeparator />
-
-        <DialogCardLabel title="Transform">
+      <ActionDialogCard>
+        <DialogCardHeader title="Transform">
           <DialogCardInfo>Transform table before clustering.</DialogCardInfo>
-        </DialogCardLabel>
+        </DialogCardHeader>
 
-        <DialogCardContent>
-          <CheckPropRow
+        <ActionDialogCardContent>
+          <ActionCheckRow
             title="Log2(data+1)"
             checked={settings.apps.kmeans.applyLog2}
             onCheckedChange={(v) => {
@@ -246,7 +245,7 @@ export function KmeansDialog({
             }}
           />
 
-          <CheckPropRow
+          <ActionCheckRow
             title="Z-score"
             checked={settings.apps.kmeans.applyZscore}
             onCheckedChange={(v) => {
@@ -257,14 +256,14 @@ export function KmeansDialog({
               updateSettings(newSettings)
             }}
           />
-        </DialogCardContent>
-      </DialogCard>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
 
-      <DialogCard>
-        <DialogCardLabel title="Cluster"></DialogCardLabel>
+      <ActionDialogCard>
+        <DialogCardHeader title="Cluster" />
 
-        <DialogCardContent>
-          <PropRow title="K">
+        <ActionDialogCardContent>
+          <ActionDialogRow title="K">
             <NumericalInput
               value={settings.apps.kmeans.clusters}
               limit={[0, 1000]}
@@ -276,11 +275,10 @@ export function KmeansDialog({
 
                 updateSettings(newSettings)
               }}
-              className="w-16 rounded-theme"
             />
-          </PropRow>
+          </ActionDialogRow>
 
-          <PropRow title="Distance">
+          <ActionDialogRow title="Distance">
             <SelectList
               value={settings.apps.kmeans.distance}
               onValueChange={(v) => {
@@ -292,12 +290,11 @@ export function KmeansDialog({
                   updateSettings(newSettings)
                 }
               }}
-              className="w-40"
             >
               <SelectItem value="Correlation">Correlation</SelectItem>
               <SelectItem value="Euclidean">Euclidean</SelectItem>
             </SelectList>
-          </PropRow>
+          </ActionDialogRow>
 
           {/* <Checkbox
             checked={settings.modules.kmeans.clusterRows}
@@ -325,7 +322,7 @@ export function KmeansDialog({
             Columns
           </Checkbox> */}
 
-          <CheckPropRow
+          <ActionCheckRow
             title="Sort by cluster"
             checked={settings.apps.kmeans.sortByCluster}
             onCheckedChange={(v) => {
@@ -337,7 +334,7 @@ export function KmeansDialog({
             }}
           />
 
-          <CheckPropRow
+          <ActionCheckRow
             title="Show heatmap"
             checked={settings.apps.kmeans.showHeatmap}
             onCheckedChange={(v) => {
@@ -348,8 +345,8 @@ export function KmeansDialog({
               updateSettings(newSettings)
             }}
           />
-        </DialogCardContent>
-      </DialogCard>
+        </ActionDialogCardContent>
+      </ActionDialogCard>
     </OKCancelDialog>
   )
 }

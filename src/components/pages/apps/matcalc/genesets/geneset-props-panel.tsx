@@ -251,7 +251,7 @@ export function GenesetPropsPanel() {
 
       <PropsPanel className="gap-y-1 w-full">
         <StretchRow className="gap-x-1 justify-between w-full">
-          <VCenterRow className="gap-x-1">
+          <VCenterRow>
             <IconButton
               //rounded="full"
               // ripple={false}

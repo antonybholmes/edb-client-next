@@ -27,7 +27,7 @@ export function DataPropsPanel() {
   }, [setTabs])
 
   return (
-    <BaseCol className="grow">
+    <BaseCol className="grow mb-2">
       <Tabs
         value={selectedTab?.id ?? ''}
         orientation="vertical"

@@ -90,7 +90,7 @@ export function TopRowsPanel({
   return (
     <ActionDialogCard>
       <ActionDialogCardContent>
-        <ActionDialogRow title="Keep" justify="start">
+        <ActionDialogRow title="Top" justify="start">
           <NumericalInput
             id="top-rows"
             value={topRows}
@@ -100,7 +100,7 @@ export function TopRowsPanel({
             w="xs"
             placeholder="Top rows..."
           />
-          <span>rows using row</span>
+          <span>rows by</span>
           <SelectList
             value={method}
             onValueChange={(v) => {

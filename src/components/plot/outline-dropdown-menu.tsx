@@ -291,22 +291,25 @@ export function StandardColors({
     <>
       <BaseCol className="gap-y-2 mb-2 mx-1.5">
         <span className="text-xs font-semibold">Standard Colors</span>
-        <div className="grid grid-cols-10 items-center gap-x-2 gap-y-1">
-          {PRESET_COLORS.slice(0, 10).map((presetColor, pi) => {
-            return (
-              <ColorButton
-                key={`${presetColor}-${pi}`}
 
-                presetColor={presetColor}
-                onClick={() => {
-                  cp.onColorChange?.({
-                    color: presetColor,
-                    opacity: 1,
-                    show: true,
-                  })
-                }}
-              />
-            )
+        <div className="grid grid-cols-10 items-center gap-x-2 gap-y-1">
+          {PRESET_COLORS.map((row, ri) => {
+            return row.map((presetColor, pi) => {
+              return (
+                <ColorButton
+                  key={`${presetColor}-${pi}`}
+
+                  presetColor={presetColor}
+                  onClick={() => {
+                    cp.onColorChange?.({
+                      color: presetColor,
+                      opacity: 1,
+                      show: true,
+                    })
+                  }}
+                />
+              )
+            })
           })}
         </div>
         {settings.plots.colors.custom.length > 0 && (

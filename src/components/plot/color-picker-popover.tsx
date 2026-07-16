@@ -75,29 +75,33 @@ import { type ITextProps } from './svg-props'
 //   '#4B0082', // Indigo
 // ]
 
-export const PRESET_COLORS = [
-  '#000000', // Black
-  '#FFFFFF', // White
-  '#1E88E5', // blue
-  '#009688', // teal
-  '#43A047', // green
-  '#C0CA33', // lime
-  '#FFB300', // amber
-  '#FB8C00', // orange
-  '#E53935', // red
-  '#D81B60', // pink
-  '#8E24AA', // purple
-  '#3949AB', // indigo
-  '#607D8B', // gray
-  '#263238', // charcoal
-  '#00B8D4', // bright cyan
-  '#FF6D00', // vivid orange
-  '#AD1457', // deep magenta
-  '#6D4C41', // brown
-  '#2E7D32', // forest green
-  '#FDD835', // golden yellow
-  //'#3F51B5', // denim blue
-  //'#00897B', // emerald teal
+export const PRESET_COLORS: string[][] = [
+  [
+    '#000000', // Black
+    '#FFFFFF', // White
+    '#1E88E5', // blue
+    '#009688', // teal
+    '#43A047', // green
+    '#C0CA33', // lime
+    '#FFB300', // amber
+    '#FB8C00', // orange
+    '#E53935', // red
+    '#D81B60', // pink
+  ],
+  [
+    '#8E24AA', // purple
+    '#3949AB', // indigo
+    '#607D8B', // gray
+    '#263238', // charcoal
+    '#00B8D4', // bright cyan
+    '#FF6D00', // vivid orange
+    '#AD1457', // deep magenta
+    '#6D4C41', // brown
+    '#2E7D32', // forest green
+    '#FDD835', // golden yellow
+    //'#3F51B5', // denim blue
+    //'#00897B', // emerald teal
+  ],
 ]
 
 // export const SIMPLE_COLOR_EXT_CLS = cn(
@@ -539,9 +543,9 @@ export function ColorPickerUI({
       )}
 
       {showPresets && (
-        <VCenterRow className="gap-x-2">
-          <div className="grid grid-cols-10 gap-1 items-center justify-center">
-            {PRESET_COLORS.map((presetColor) => {
+        <div className="grid grid-cols-10 gap-1 items-center justify-center">
+          {PRESET_COLORS.map((row) => {
+            return row.map((presetColor) => {
               const prgb = hexToRgba(presetColor)
               const ps = prgb[0] + prgb[1] + prgb[2]
 
@@ -559,9 +563,9 @@ export function ColorPickerUI({
                   tabIndex={0}
                 />
               )
-            })}
-          </div>
-        </VCenterRow>
+            })
+          })}
+        </div>
       )}
 
       {/* {(allowNoColor || defaultColor) && <MenuSeparator />} */}

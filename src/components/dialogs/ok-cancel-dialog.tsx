@@ -143,12 +143,16 @@ export function DialogToolbar<T = unknown>({
 
 export function DialogFloatingToolbar({
   onResponse,
+  className,
   children,
   ...props
 }: ComponentProps<typeof DialogToolbar>) {
   return (
     <DialogToolbar
-      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
+      className={cn(
+        'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10',
+        className
+      )}
       onResponse={onResponse}
       {...props}
     >

@@ -153,7 +153,7 @@ export function SidePanel({
         {showCloseButton && (
           <CloseButton
             onClick={() => setOpen(false)}
-            className="absolute right-0 top-1 z-100"
+            className="absolute right-0 top-0.5 z-100"
           />
         )}
 
@@ -172,7 +172,7 @@ export function SidePanel({
  * @returns
  */
 export function SideBarHeader({ className, ...props }: IDivProps) {
-  return <VCenterRow className={cn('h-8  mr-8', className)} {...props} />
+  return <VCenterRow className={cn('h-8 mr-8', className)} {...props} />
 }
 
 export interface ISlideBarProps extends IChildrenProps {

@@ -68,7 +68,7 @@ export const LARGE_ICON_BUTTON_CLS = cn(BASE_ICON_BUTTON_CLS, BUTTON_LG_W_CLS)
 
 export const XL_ICON_BUTTON_CLS = cn(BASE_ICON_BUTTON_CLS, BUTTON_XL_W_CLS)
 
-export const V_CENTERED_ROW_CLS = 'flex flex-row items-center'
+export const V_CENTERED_ROW_CLS = 'flex flex-row items-center relative'
 
 export const CENTERED_ROW_CLS = 'flex flex-row items-center justify-center'
 

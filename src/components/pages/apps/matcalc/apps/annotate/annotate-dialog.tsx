@@ -6,13 +6,17 @@ import { DataFrame } from '@/lib/dataframe/dataframe'
 
 import { useState } from 'react'
 
-import { CheckPropRow } from '@/components/dialogs/check-prop-row'
+import {
+  ActionCheckRow,
+  ActionDialogCard,
+  ActionDialogCardContent,
+  ActionDialogRow,
+} from '@/components/dialogs/card/action-dialog-card'
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
-import { PropRow } from '@/components/dialogs/prop-row'
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { AssemblySelect } from '@/components/edb/assembly-select'
 import { useEdbSettings } from '@/components/edb/edb-settings'
+import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { RunningIndicator } from '@/components/toolbar/running-indicator'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import type { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
@@ -90,11 +94,7 @@ export function AnnotateDialog({ selection, onResponse }: IProps) {
 
   return (
     <OKCancelDialog
-      title={
-        <RunningIndicator message={indicatorMessage}>
-          Annotate Locations
-        </RunningIndicator>
-      }
+      title="Annotate Locations"
       onResponse={(r) => {
         if (r === TEXT_CANCEL) {
           onResponse?.(TEXT_CANCEL)
@@ -102,66 +102,75 @@ export function AnnotateDialog({ selection, onResponse }: IProps) {
           annotate()
         }
       }}
-      //leftFooterChildren={<RunningIndicator message={indicatorMessage} />}
+      leftFooterChildren={<RunningIndicator message={indicatorMessage} />}
     >
-      <PropRow title="Location column">
-        <DFColSelect
-          df={df}
-          value={col}
-          onChange={({ index }) => setCol(index)}
-        />
-      </PropRow>
-      <PropRow title="Assembly">
-        <AssemblySelect variant="default" />
-      </PropRow>
+      <ActionDialogCard>
+        <ActionDialogCardContent>
+          <ActionDialogRow title="Location column">
+            <DFColSelect
+              df={df}
+              value={col}
+              onChange={({ index }) => setCol(index)}
+            />
+          </ActionDialogRow>
+          <ActionDialogRow title="Assembly">
+            <AssemblySelect variant="default" />
+          </ActionDialogRow>
 
-      <NumericalPropRow
-        title="Closest genes"
-        value={annotationSettings.closest}
-        onNumChange={(value) =>
-          updateAnnotationSettings({ ...annotationSettings, closest: value })
-        }
-        limit={[0, 10]}
-        dp={0}
-        step={1}
-        w="xs"
-        className="text-xs"
-      />
+          <ActionDialogRow title="Closest genes" justify="start">
+            <NumericalInput
+              value={annotationSettings.closest}
+              onNumChange={(value) =>
+                updateAnnotationSettings({
+                  ...annotationSettings,
+                  closest: value,
+                })
+              }
+              limit={[0, 10]}
+              dp={0}
+              step={1}
+              w="xs"
+              className="text-xs"
+            />
+          </ActionDialogRow>
 
-      <PropRow title="Promoter region (TSS)">
-        <DoubleNumericalInput
-          limit={[0, 100000]}
-          step={100}
-          dp={0}
-          v1={annotationSettings.tss.prom3p}
-          w="xs"
-          onNumChange1={(value) =>
-            updateAnnotationSettings({
-              ...annotationSettings,
-              tss: { ...annotationSettings.tss, prom5p: value },
-            })
-          }
-          v2={annotationSettings.tss.prom3p}
-          onNumChange2={(value) =>
-            updateAnnotationSettings({
-              ...annotationSettings,
-              tss: { ...annotationSettings.tss, prom3p: value },
-            })
-          }
-          inputCls="text-xs"
-        />
-      </PropRow>
+          <ActionDialogRow title="Promoter region (TSS)">
+            <DoubleNumericalInput
+              limit={[0, 100000]}
+              step={100}
+              dp={0}
+              v1={annotationSettings.tss.prom3p}
+              w="xs"
+              onNumChange1={(value) =>
+                updateAnnotationSettings({
+                  ...annotationSettings,
+                  tss: { ...annotationSettings.tss, prom5p: value },
+                })
+              }
+              v2={annotationSettings.tss.prom3p}
+              onNumChange2={(value) =>
+                updateAnnotationSettings({
+                  ...annotationSettings,
+                  tss: { ...annotationSettings.tss, prom3p: value },
+                })
+              }
+              inputCls="text-xs"
+            />
+          </ActionDialogRow>
 
-      <CheckPropRow
-        title="Use official gene symbols"
-        checked={annotationSettings.useOfficialGenes}
-        onCheckedChange={(value) =>
-          updateAnnotationSettings({
-            ...annotationSettings,
-            useOfficialGenes: value,
-          })
-        }
-      />
+          <ActionCheckRow
+            id="use-official-genes"
+            title="Use official gene symbols"
+            checked={annotationSettings.useOfficialGenes}
+            onCheckedChange={(value) =>
+              updateAnnotationSettings({
+                ...annotationSettings,
+                useOfficialGenes: value,
+              })
+            }
+          />
+        </ActionDialogCardContent>
+      </ActionDialogCard>
     </OKCancelDialog>
   )
 }

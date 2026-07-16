@@ -1,5 +1,3 @@
-import { VCenterRow } from '@/layout/v-center-row'
-
 import { addAlphaToHex, COLOR_BLACK } from '@/lib/color/color'
 import { cn } from '@/lib/shadcn-utils'
 
@@ -13,10 +11,15 @@ import {
   HexColorPicker,
 } from 'react-colorful'
 import tinycolor from 'tinycolor2'
+import {
+  ActionDialogCard,
+  ActionDialogRow,
+} from '../dialogs/card/action-dialog-card'
 import { IModalProps, OKCancelDialog } from '../dialogs/ok-cancel-dialog'
 import { useEdbSettings } from '../edb/edb-settings'
 import { BaseCol } from '../layout/base-col'
 import { BaseRow } from '../layout/base-row'
+import { CenterRow } from '../layout/center-row'
 import { NumericalInput } from '../shadcn/ui/themed/numerical-input'
 import { inputVariants } from '../shadcn/ui/themed/v2/input'
 import { ColorButton, ColorIcon } from './color-picker-button'
@@ -71,11 +74,9 @@ export function ColorPickerDialog({
 
   return (
     <OKCancelDialog
-      title={
-        <VCenterRow className="gap-x-2">
-          <ColorIcon presetColor={color.toHex8String()} size="w-5" />
-          <span>{title}</span>
-        </VCenterRow>
+      title={title}
+      leftHeaderChildren={
+        <ColorIcon presetColor={color.toHex8String()} size="w-5" />
       }
       w="w-110"
       onResponse={(r) => {
@@ -117,7 +118,7 @@ export function ColorPickerDialog({
         />
       )}
 
-      <VCenterRow className="gap-x-2.5">
+      <CenterRow className="gap-x-2.5">
         <BaseCol className="gap-0.5">
           <span className="text-xs font-medium">Hex</span>
           <HexColorInput
@@ -209,52 +210,44 @@ export function ColorPickerDialog({
             </BaseCol>
           </>
         )}
-      </VCenterRow>
+      </CenterRow>
       {cp.showPresets && (
-        <>
-          <BaseRow className="gap-1 flex-wrap">
-            {PRESET_COLORS.map((presetColor) => {
-              return (
-                <ColorButton
-                  key={presetColor}
-                  presetColor={presetColor}
-                  onClick={() => handleColorChange(presetColor)}
-                />
-              )
-            })}
-          </BaseRow>
+        <ActionDialogCard>
+          <ActionDialogRow title="Presets" justify="start" items="start">
+            <BaseCol className="gap-y-1">
+              {PRESET_COLORS.map((row, ri) => {
+                return (
+                  <BaseRow key={ri} className="gap-1 flex-wrap">
+                    {row.map((presetColor) => {
+                      return (
+                        <ColorButton
+                          key={presetColor}
+                          presetColor={presetColor}
+                          onClick={() => handleColorChange(presetColor)}
+                        />
+                      )
+                    })}
+                  </BaseRow>
+                )
+              })}
+            </BaseCol>
+          </ActionDialogRow>
+          <ActionDialogRow title="User" justify="start" items="start">
+            <BaseRow className="gap-1 flex-wrap">
+              {settings.plots.colors.custom.map((c) => {
+                return (
+                  <ColorButton
+                    key={c.id}
+                    presetColor={addAlphaToHex(c.color, c.opacity)}
 
-          <BaseRow className="gap-1 flex-wrap">
-            {settings.plots.colors.custom.map((c) => {
-              return (
-                <ColorButton
-                  key={c.id}
-                  presetColor={addAlphaToHex(c.color, c.opacity)}
-
-                  onClick={() => handleColorChange(c.color, c.opacity ?? 1)}
-                />
-              )
-            })}
-          </BaseRow>
-        </>
+                    onClick={() => handleColorChange(c.color, c.opacity ?? 1)}
+                  />
+                )
+              })}
+            </BaseRow>
+          </ActionDialogRow>
+        </ActionDialogCard>
       )}
-      {/* {(allowNoColor || defaultColor) && <MenuSeparator />} */}
-      {/* {allowNoColor && (
-                     <Button
-                       variant="flat"
-                       className="w-full"
-                       justify="start"
-                       rounded="md"
-                       onClick={() => _onColorChange(COLOR_TRANSPARENT)}
-                     >
-                       <span className="relative aspect-square w-5 border border-border bg-background rounded-xs">
-                         <span className="absolute left-0 w-full bg-red-400 h-px top-1/2 -translate-y-1/2 -rotate-45" />
-                       </span>
-             
-                       <span>No color</span>
-                     </Button>
-                   )}
-              */}
     </OKCancelDialog>
   )
 }

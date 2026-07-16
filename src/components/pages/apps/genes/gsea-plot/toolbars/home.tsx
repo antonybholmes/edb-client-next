@@ -109,6 +109,7 @@ export function HomeToolbar() {
                 })
               )
             }
+            title="Switch the phenotypes to be plotted on the left and right side of the plot."
           >
             Invert Phenotypes
           </ToolbarButton>

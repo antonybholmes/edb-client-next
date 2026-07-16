@@ -752,7 +752,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
               <ActionDialogRow
                 title="Groups"
 
-                //info="Creates groups of samples for the unique data types."
+                justify="start"
               >
                 <Checkbox
                   checked={settings.apps.gex.addGroup}

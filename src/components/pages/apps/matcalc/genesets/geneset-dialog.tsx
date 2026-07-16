@@ -92,7 +92,7 @@ export function GenesetDialog({ geneset, onResponse }: IProps) {
             />
           </ActionDialogRow>
 
-          <ActionDialogRow title="Genes" align="start">
+          <ActionDialogRow title="Genes" items="start">
             <Textarea
               id="search"
               value={search}

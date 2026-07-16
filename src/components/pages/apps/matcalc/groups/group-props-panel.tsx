@@ -371,7 +371,7 @@ export function GroupPropsPanel() {
 
       <PropsPanel className="gap-y-1">
         <StretchRow className="gap-x-1 justify-between">
-          <VCenterRow className="gap-x-1">
+          <VCenterRow>
             <IconButton
               //rounded="full"
               // ripple={false}
@@ -439,7 +439,6 @@ export function GroupPropsPanel() {
                   content: 'Are you sure you want to clear all groups?',
                   callback: (response) => {
                     if (response === TEXT_OK) {
-                      console.log('Clearing groups')
                       clearGroups()
                     }
                   },
