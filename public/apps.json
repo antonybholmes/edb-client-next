@@ -53,9 +53,9 @@
     "color": "#ffb366",
     "version": "21.8.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-15T21:00:34.749Z",
-    "hash": "3188bf0ea3e634bc408b2cda8e41a4448a8a244f8b0bffa3efc6eb504cc80a73",
-    "build": 794
+    "modified": "2026-07-16T18:01:28.901Z",
+    "hash": "d9d27eb47ad09c95bbffd7892271812e9336b57314ac96f241a311b283123dc9",
+    "build": 796
   },
   {
     "name": "GSEA Web",
@@ -101,19 +101,19 @@
     "color": "#DA70D6",
     "version": "27.6.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-14T17:59:14.313Z",
-    "hash": "3ee93d73049ddb4f5f90b5b4dabab44a82e2a3ea5afc81883ce222c812485ce8",
-    "build": 1080
+    "modified": "2026-07-16T18:01:28.906Z",
+    "hash": "e9eef6a13ebeaf56d2f3becd24e8a19f085ae109f9df44e6b59c7004f6d0eeba",
+    "build": 1082
   },
   {
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "48.4.6",
+    "version": "48.4.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-15T21:00:34.752Z",
-    "hash": "d5a4c7cf899b19c195dd01a5c32c8abf6f07ebe79dab77f288df5371eb4b0ce5",
-    "build": 1818
+    "modified": "2026-07-16T18:01:28.905Z",
+    "hash": "1970dc7933b1389758b20290adc0de7488bb326a6f967ec5a7de22001ba07b8d",
+    "build": 1820
   },
   {
     "name": "Motifs",

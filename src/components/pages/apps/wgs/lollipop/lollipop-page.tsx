@@ -58,12 +58,10 @@ import { PLOT_CLS } from '../../matcalc/apps/heatmap/heatmap-panel'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
-import {
-  useCurrentSheets,
-  useFiles,
-} from '../../matcalc/history/history-provider/history-contexts'
+import { useCurrentSheets } from '../../matcalc/history/history-provider/history-contexts'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
+import { DatasetMenu } from './dataset-menu'
 import { FeaturePropsPanel } from './feature-props-panel'
 import { LollipopPropsPanel } from './lollipop-props-panel'
 import { LollipopSingleSvg } from './lollipop-single-svg'
@@ -76,9 +74,8 @@ import { HomeToolbar } from './toolbars/home-toolbar'
 import { useOpen } from './use-open'
 
 function LollipopPage() {
-  const { goto, openFile, addSheets, undo } = useHistory()
+  const { openFile, addSheets, undo } = useHistory()
 
-  const { file } = useFiles()
   const { sheets } = useCurrentSheets()
 
   const { setAppInfo } = useAppInfo()
@@ -423,6 +420,7 @@ function LollipopPage() {
           <AppInfoButton />
         </>
         <ProteinAutocomplete />
+        <DatasetMenu />
       </HeaderPortal>
 
       <ShortcutLayout signinRequired={false}>

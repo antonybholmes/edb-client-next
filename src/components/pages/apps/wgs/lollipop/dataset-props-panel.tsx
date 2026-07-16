@@ -13,7 +13,6 @@ export function DatasetsPropsPanel({ ref }: IDivProps) {
 
   return (
     <PropsPanel ref={ref} className="gap-y-2 text-xs">
-      <h3 className="font-semibold">Datasets</h3>
       <ul className="flex flex-col gap-y-1">
         {datasets.map((db, di) => {
           return (
