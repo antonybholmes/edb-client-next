@@ -1,7 +1,7 @@
 import { Checkbox as CheckboxPrimitive } from '@base-ui/react/checkbox'
 
 import { cn } from '@/lib/shadcn-utils'
-import { CENTERED_ROW_CLS, FOCUS_INSET_RING_CLS } from '@/theme'
+import { FOCUS_RING_CLS } from '@/theme'
 import { Field } from '@base-ui/react/field'
 import { Check } from 'lucide-react'
 import { useState, type ComponentProps, type ReactNode } from 'react'
@@ -16,19 +16,15 @@ export interface ICheckboxProps extends ComponentProps<
   onCheckedChange?: ICheckedChange
 }
 
-export const CHECK_CLS = `flex flex-row 
-  shrink-0 cursor-pointer whitespace-nowrap 
-  text-left items-center outline-hidden 
-  gap-x-1.5 p-0 m-0 group`
-
-export const TICK_CLS = cn(
-  FOCUS_INSET_RING_CLS,
-  CENTERED_ROW_CLS,
+export const CHECK_CLS = cn(
+  FOCUS_RING_CLS,
+  'flex flex-row items-center justify-center shrink-0 cursor-pointer',
+  'whitespace-nowrap gap-x-1.5 p-0 m-0 group',
   'rounded-sm aspect-square w-4.5 h-4.5 shrink-0 border trans-color',
-  'group-data-unchecked:bg-background group-data-unchecked:border-border/70',
-  'group-data-unchecked:data-[hover=true]:border-app-theme/30',
-  'group-data-checked:bg-app-theme/80 group-data-checked:border-transparent',
-  'group-data-checked:data-[hover=true]:bg-app-theme'
+  'data-unchecked:bg-background data-unchecked:border-border/70',
+  'data-unchecked:data-[hover=true]:border-app-theme/30',
+  'data-checked:bg-app-theme/80 data-checked:border-transparent',
+  'data-checked:data-[hover=true]:bg-app-theme'
 )
 
 export function Checkbox({
@@ -55,23 +51,9 @@ export function Checkbox({
       id={id}
       {...props}
     >
-      <span
-        className={TICK_CLS}
-        data-checked={checked}
-        data-enabled={!disabled}
-        data-hover={hover}
-      >
-        {checked ? (
-          <Check className="stroke-white" size={14} strokeWidth={3} />
-        ) : (
-          <Check
-            data-hover={hover}
-            className="stroke-app-theme/30 mt-px data-[hover=true]:visible invisible"
-            size={14}
-            strokeWidth={3}
-          />
-        )}
-      </span>
+      <CheckboxPrimitive.Indicator className="data-unchecked:hidden">
+        <Check className="stroke-white" size={14} strokeWidth={3} />
+      </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   )
 

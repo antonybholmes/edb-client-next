@@ -836,7 +836,7 @@ export function makeOncoPlot(
   columns: IOncoColumns,
   multi: MultiMode,
   sort: IOncoplotSort,
-  removeEmpty: boolean,
+  removeEmptySamples: boolean,
   genes: IOncoGene[],
   clinicalTracks: ClinicalDataTrack[]
 ): OncoplotResult {
@@ -905,7 +905,7 @@ export function makeOncoPlot(
 
   createMarginals(oncotable, geneMarginalStats, sampleMarginalStats, multi)
 
-  if (removeEmpty) {
+  if (removeEmptySamples) {
     // keep only samples that have an event i.e are associated with a region
 
     const keepSamples = new Set<number>(

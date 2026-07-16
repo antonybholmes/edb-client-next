@@ -145,7 +145,9 @@ export function HomeToolbar() {
           </Select>
 
           <ToolbarButton
-            checked={displayProps.removeEmptySamples}
+            title="Keep samples with no events"
+            // invert the logic to match the checkbox label
+            checked={!displayProps.removeEmptySamples}
             onClick={() => {
               setDisplayProps(
                 produce(displayProps, (draft) => {
@@ -154,7 +156,7 @@ export function HomeToolbar() {
               )
             }}
           >
-            No empty samples
+            Empty samples
           </ToolbarButton>
         </ToolbarCol>
       </ToolbarTabGroup>

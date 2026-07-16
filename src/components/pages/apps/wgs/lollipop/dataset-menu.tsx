@@ -1,12 +1,12 @@
+import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/shadcn/ui/themed/v2/popover'
+import { HeaderIconButton } from '@/layouts/header-icon-button'
 import { DatabaseCheck } from 'lucide-react'
+import { useState } from 'react'
 import { useLollipopStore } from './lollipop-store'
 
 export function DatasetMenu() {
@@ -17,31 +17,41 @@ export function DatasetMenu() {
     setDatasetsForUse,
   } = useLollipopStore()
 
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger title="Select datasets for use in the lollipop plot">
-        <DatabaseCheck strokeWidth={1.5} size={20} />
-      </DropdownMenuTrigger>
+  const [open, setOpen] = useState(false)
 
-      <DropdownMenuContent>
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>Datasets</DropdownMenuLabel>
-          {datasets.map((db) => (
-            <DropdownMenuCheckboxItem
-              key={db}
-              checked={datasetsForUse[db] ?? false}
-              onCheckedChange={(v) =>
-                setDatasetsForUse({
-                  ...datasetsForUse,
-                  [db]: v,
-                })
-              }
-            >
-              {db}
-            </DropdownMenuCheckboxItem>
-          ))}
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+  if (datasets.length === 0) {
+    return null
+  }
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger
+        title="Select datasets for use in the lollipop plot"
+
+        render={
+          <HeaderIconButton checked={open}>
+            <DatabaseCheck strokeWidth={1.5} size={20} />
+          </HeaderIconButton>
+        }
+      />
+
+      <PopoverContent variant="header" className="gap-y-2 text-xs w-64">
+        <h2 className="font-medium">Datasets</h2>
+        {datasets.map((db) => (
+          <Checkbox
+            key={db}
+            checked={datasetsForUse[db] ?? false}
+            onCheckedChange={(v) =>
+              setDatasetsForUse({
+                ...datasetsForUse,
+                [db]: v,
+              })
+            }
+          >
+            {db}
+          </Checkbox>
+        ))}
+      </PopoverContent>
+    </Popover>
   )
 }

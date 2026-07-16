@@ -3,8 +3,8 @@ import { cn } from '@/lib/shadcn-utils'
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
 import {
-    useTabIndicators,
-    type ITabIndicatorPos,
+  useTabIndicators,
+  type ITabIndicatorPos,
 } from './tab-indicator-provider'
 
 const ROUNDED_FIRST = {
@@ -75,11 +75,13 @@ export function TabIndicatorFollowBlock({
 
       const roundedStyle = getRoundedStyle(rounded, first, last)
 
+      const h = position.h
+
       if (previousPos.current && (position.animate ?? true)) {
         timelineRef.current = gsap.timeline().to(blockRef.current, {
           x: position.x,
           width: position.w,
-          height: position.h,
+          height: h,
           ...roundedStyle,
           duration: 0.5,
           ease: 'power3.out',
@@ -90,7 +92,7 @@ export function TabIndicatorFollowBlock({
           .set(blockRef.current, {
             x: position.x,
             width: position.w,
-            height: position.h,
+            height: h,
             //opacity: 0,
             ...roundedStyle,
           })
@@ -114,7 +116,11 @@ export function TabIndicatorFollowBlock({
   return (
     <span
       ref={blockRef}
-      className={cn(`absolute left-0 z-0 opacity-0`, color, className)}
+      className={cn(
+        `absolute left-0 z-0 opacity-0 rounded-sm`,
+        color,
+        className
+      )}
     />
   )
 }

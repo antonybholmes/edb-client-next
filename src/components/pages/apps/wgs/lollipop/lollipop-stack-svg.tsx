@@ -184,7 +184,8 @@ function ColGraphsSvg({
     if (
       !circlesRef.current ||
       circlesRef.current.length === 0 ||
-      !flattenedPileups
+      !flattenedPileups ||
+      flattenedPileups.length === 0
     ) {
       return
     }
