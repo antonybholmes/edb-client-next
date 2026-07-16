@@ -101,9 +101,9 @@
     "color": "#DA70D6",
     "version": "27.6.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-16T18:01:28.906Z",
-    "hash": "e9eef6a13ebeaf56d2f3becd24e8a19f085ae109f9df44e6b59c7004f6d0eeba",
-    "build": 1082
+    "modified": "2026-07-16T22:48:16.658Z",
+    "hash": "9fe9a889405162da24b50584ed378a22933ece12fcb8a3cab33eeeeba7d81660",
+    "build": 1084
   },
   {
     "name": "Matcalc",
@@ -131,9 +131,9 @@
     "color": "#ff99cc",
     "version": "30.0.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-14T21:43:25.683Z",
-    "hash": "79369e8ef04975e9fbdff59d1b1371290e217b47d23dec6da25796367ae519a3",
-    "build": 1086
+    "modified": "2026-07-16T22:48:16.659Z",
+    "hash": "8c68b9b9d1757c88d78bc9b2f23478b496e978cac81ccb882d4210a3109f1161",
+    "build": 1088
   },
   {
     "name": "Overlap",
