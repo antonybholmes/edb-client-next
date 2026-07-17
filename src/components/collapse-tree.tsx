@@ -204,9 +204,7 @@ function CollapseTreeNode({
   const {
     value,
     isOpen: globalIsOpen,
-    //value: selectedTab,
-    //selectedId,
-    //setSelectedId,
+
     setValue,
     onValueChange,
     onCheckedChange,
@@ -220,14 +218,12 @@ function CollapseTreeNode({
 
   const [hover, setHover] = useState<boolean>(false)
   const [focus, setFocus] = useState<boolean>(false)
-  //const [buttonHover, setButtonHover] = useState(false) //level === 0 || (tab.isOpen??true))
-  //const [buttonFocus, setButtonFocus] = useState(false)
+
   const [menuHover, setMenuHover] = useState<boolean>(false)
-  //const [secondaryFocus, setSecondaryFocus] = useState(false) //level === 0 || (tab.isOpen??true))
+
   const arrowIconRef = useRef<SVGSVGElement>(null)
   const contentRef = useRef<HTMLUListElement>(null)
-  //const openIconRef = useRef<SVGSVGElement>(null)
-  //const closeIconRef = useRef<SVGSVGElement>(null)
+
   const containerRef = useRef<HTMLLIElement>(null)
   const [menuOpen, setMenuOpen] = useState<boolean>(false)
 

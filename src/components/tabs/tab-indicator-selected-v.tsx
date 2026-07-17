@@ -42,9 +42,9 @@ export function TabIndicatorSelectedV({ w = 2 }: { w?: number }) {
     selectedTimelineRef.current = gsap.timeline().to(selectedLineRef.current, {
       y: selectedPosition.y,
       height: selectedPosition.h,
-      duration: 1,
+      duration: 0.6,
       scaleY: selectedPosition.scale || 1,
-      ease: 'power3.out',
+      ease: 'power2.out',
     })
 
     previousSelectedPos.current = selectedPosition

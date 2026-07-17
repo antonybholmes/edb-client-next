@@ -23,8 +23,6 @@ import { Textarea } from '@/themed/textarea'
 
 import { getAccordionId } from '@/dialogs/settings/settings-dialog'
 import { HelpButton } from '@/help/help-button'
-import { makeUuid } from '@/lib/id'
-import { Toast } from '@base-ui/react/toast'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import type { IGexDataset, IGexSearchResult } from './gex-store'
 import { SampleDataTypeCombo } from './sample-datatype-combo'
@@ -35,15 +33,13 @@ import {
   ActionDialogCardContent,
   ActionDialogRow,
 } from '@/components/dialogs/card/action-dialog-card'
+import { useDialogs } from '@/components/dialogs/dialogs'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { appsConfig } from '@/config/apps'
 import type { UndefStr } from '@/lib/text/text'
 import { useQuery } from '@tanstack/react-query'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { GexDialogSidePanel, TECHNOLOGIES } from './gex-dialog-side-panel'
-// const DEFAULT_SAMPLE_DATA_TYPES = ['COO', 'Lymphgen']
-
-// const STANDARD_SAMPLE_DATA_TYPE_REGEX = /(coo|lymphgen)/i
 
 const COO_COLORMAP: Readonly<Record<string, string>> = Object.freeze({
   abc: '#6495ED', // cornflowerblue
@@ -76,7 +72,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
   )
   const [accordionValues, setAccordionValues] = useState<string[]>([])
 
-  const { add: addToast } = Toast.useToastManager()
+  const { open: openDialog } = useDialogs()
 
   //const [addAltNames, setAddAltNames] = useState(false)
 
@@ -295,11 +291,12 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
 
   async function fetchGex() {
     if (!technology) {
-      addToast({
-        id: makeUuid(),
-        title: appsConfig.matcalc.apps.gex.title,
-        description: 'You must select a platform.',
-        type: 'destructive',
+      openDialog({
+        type: 'warning',
+        payload: {
+          title: appsConfig.matcalc.apps.gex.title,
+          content: 'You must select a platform.',
+        },
       })
 
       return
@@ -308,13 +305,13 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
     const genes = textToLines(text, { trim: true })
 
     if (genes.length === 0) {
-      addToast({
-        id: makeUuid(),
-        title: 'Gene Expression',
-        description: 'You must enter some genes to search for.',
-        type: 'destructive',
+      openDialog({
+        type: 'warning',
+        payload: {
+          title: appsConfig.matcalc.apps.gex.title,
+          content: 'You must enter some gene names.',
+        },
       })
-
       return
     }
 
@@ -325,11 +322,12 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
     const selectedDatasets = [dataset]
 
     if (selectedDatasets.length === 0) {
-      addToast({
-        id: makeUuid(),
-        title: 'Gene Expression',
-        description: 'You must select a dataset.',
-        type: 'destructive',
+      openDialog({
+        type: 'alert',
+        payload: {
+          title: appsConfig.matcalc.apps.gex.title,
+          content: 'You must select a dataset.',
+        },
       })
 
       return
@@ -339,12 +337,13 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
       const accessToken = await fetchAccessToken()
 
       if (!accessToken) {
-        addToast({
-          id: makeUuid(),
-          title: appsConfig.matcalc.apps.gex.title,
-          description:
-            'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
-          type: 'destructive',
+        openDialog({
+          type: 'alert',
+          payload: {
+            title: appsConfig.matcalc.apps.gex.title,
+            content:
+              'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
+          },
         })
 
         return
@@ -614,12 +613,14 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
       onResponse?.(TEXT_OK)
     } catch (e) {
       console.error(e)
-      addToast({
-        id: makeUuid(),
-        title: 'Gene Expression',
-        description:
-          'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
-        type: 'destructive',
+
+      openDialog({
+        type: 'warning',
+        payload: {
+          title: appsConfig.matcalc.apps.gex.title,
+          content:
+            'You do not have permission to download data from this module. Please contact your adminstrator to get access.',
+        },
       })
     }
   }
@@ -665,6 +666,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
             <Textarea
               id="Genes"
               aria-label="Genes"
+              placeholder="Enter gene names, one per line..."
               label="Genes"
               value={text}
               onChange={(e) => setText(e.target.value)}

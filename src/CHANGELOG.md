@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Gene expression now uses collapse tree.
 - Improved parsing of clinical data for oncoplots.
 - UI refinments. Table viewer cleaned up.
 - ts6 check moved to pnpm-workspace.yaml.

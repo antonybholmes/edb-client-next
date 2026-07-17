@@ -51,11 +51,11 @@
     "name": "GSEA Plot",
     "description": "Format GSEA plots.",
     "color": "#ffb366",
-    "version": "21.8.4",
+    "version": "21.8.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-17T15:12:39.106Z",
-    "hash": "e56266a81db376e8f58ebe96889ff00902b88cc78f53392ace0b68ceaa897720",
-    "build": 798
+    "modified": "2026-07-17T20:54:27.469Z",
+    "hash": "ed7b60c4cf75f58805ee269115c42adb2000021bb822034df98170f55dd91d09",
+    "build": 800
   },
   {
     "name": "GSEA Web",
@@ -111,9 +111,9 @@
     "color": "#40bf80",
     "version": "48.4.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-17T15:12:39.109Z",
-    "hash": "e5234991005f0dcb32200950783267a1e90ad1ceab8cbc279dcbb926bdf3c06b",
-    "build": 1822
+    "modified": "2026-07-17T20:54:27.474Z",
+    "hash": "7fa5b45460accf79aa3e68ec41d225605f6aa7a92554ed034e34c0424683fd3d",
+    "build": 1824
   },
   {
     "name": "Motifs",
@@ -149,11 +149,11 @@
     "name": "Pathway",
     "description": "Pathway enrichment",
     "color": "#6495ED",
-    "version": "36.2.2",
+    "version": "36.2.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-10T22:53:15.526Z",
-    "hash": "81e9a4e135a5cafb5322f735d008843e55c1fab6855c85f0db5228228a01afd8",
-    "build": 888
+    "modified": "2026-07-17T20:54:27.470Z",
+    "hash": "ec6f30f0c5489d46ab88b6f6aaa6546c4768b18323fec60af7f1a9bf9b0c80d7",
+    "build": 890
   },
   {
     "name": "Rev Comp",

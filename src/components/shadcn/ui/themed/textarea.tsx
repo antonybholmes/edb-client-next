@@ -36,7 +36,7 @@ export const textareaVariants = cva(TEXTAREA_GROUP_CLS, {
   },
 })
 
-export const TEXT_CLS = `h-full text-foreground disabled:cursor-not-allowed disabled:opacity-50 p-1
+export const TEXT_CLS = `h-full  placeholder:opacity-50  disabled:cursor-not-allowed disabled:opacity-50 p-1
   outline-hidden ring-none read-only:opacity-50 w-full grow custom-scrollbar resize-none bg-transparent`
 
 export interface ITextAreaProps

@@ -99,7 +99,7 @@ export function PopoverSpeechArrow() {
       width="100"
       height="50"
       viewBox="0 0 100 50"
-      className="absolute -top-4.5 w-6 h-3 left-1/2 -translate-x-1/2"
+      className="absolute -top-3  w-6 h-3 left-1/2 -translate-x-1/2"
     >
       <path
         d="M0,50 L50,0 L100,50 Z"

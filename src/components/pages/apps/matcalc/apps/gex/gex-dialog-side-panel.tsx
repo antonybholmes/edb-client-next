@@ -1,10 +1,7 @@
 import { ChevronUpDownIcon } from '@/components/icons/chevron-up-down-icon'
-import { HCenterRow } from '@/components/layout/h-center-row'
-import { ScrollAccordion } from '@/components/shadcn/ui/themed/v2/accordion'
 import {
   Popover,
   PopoverContent,
-  PopoverMenuItem,
   PopoverSpeechArrow,
   PopoverTrigger,
 } from '@/components/shadcn/ui/themed/v2/popover'
@@ -12,23 +9,29 @@ import {
   GroupToggle,
   ToggleGroup,
 } from '@/components/shadcn/ui/themed/v2/toggle-group'
-import { RadioPropRow } from '@/dialogs/radio-prop-row'
-import { SideAccordionItem } from '@/dialogs/settings/settings-dialog'
 
 import { produce } from 'immer'
-import { ExternalLinkIcon } from 'lucide-react'
 
+import { CollapseTree, ROOT_NODE } from '@/components/collapse-tree'
 import { DialogToolbar } from '@/components/dialogs/ok-cancel-dialog'
 import { BaseCol } from '@/components/layout/base-col'
-import { RadioGroup } from '@/components/shadcn/ui/themed/v2/radio-group'
+import { CenterRow } from '@/components/layout/center-row'
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from '@/components/shadcn/ui/themed/v2/radio-group'
 import { SkeletonRows } from '@/components/shadcn/ui/themed/v2/skeleton'
-import { storeItem } from '@/lib/storage'
-import { useEffect, useState } from 'react'
+import { ITab } from '@/components/tabs/tab-provider'
+import { VScrollPanel } from '@/components/v-scroll-panel'
+import { HardDrive } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import type { IGexDataset } from './gex-store'
-import { metadataToShared } from './gex-utils'
 
-export const GENOMES = Object.freeze(['Human', 'Mouse'])
+export const GENOMES: readonly ITab[] = Object.freeze([
+  { id: 'Human', name: 'Human' },
+  { id: 'Mouse', name: 'Mouse' },
+])
 
 export const TECHNOLOGIES = Object.freeze([
   'RNA-seq',
@@ -73,6 +76,68 @@ export function GexDialogSidePanel({
     return () => clearTimeout(timer)
   }, [institutions])
 
+  const treeRootTab = useMemo(() => {
+    //const lastHistoryAction = historyActions[historyActions.length - 1]!
+
+    const nodes: ITab[] = []
+
+    for (const institution of institutions) {
+      const datasets = instituteMap.get(institution) ?? []
+
+      if (datasets.length === 0) {
+        continue
+      }
+
+      const fileNode: ITab = {
+        id: institution,
+        name: institution, //'Sheet', //sheet?.name ?? `File ${fi + 1}`,
+        //icon: <FileSpreadsheet strokeWidth={1.5} size={18} />,
+        children: [],
+        // onClick: () => {
+        //   setSelectedPanelTab(sheet.id)
+
+        //   goto({ file, sheet })
+        // },
+
+        // onDelete: () => {
+        //   removeFiles([{ file }]) //file.id], 'file')
+        // },
+        //type: 'file',
+      }
+
+      for (const [di, dataset] of datasets.entries()) {
+        const datasetNode: ITab = {
+          id: dataset.id,
+          name: dataset.name ?? `Dataset ${di + 1}`,
+          icon: (
+            <HardDrive
+              strokeWidth={1.5}
+              size={18}
+              className="group-data-[selected=true]:stroke-app-theme"
+            />
+          ),
+          onClick: () => {
+            setDataset(dataset)
+
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.apps.gex.selectedDatasets = [dataset.id]
+              })
+            )
+          },
+        }
+
+        fileNode.children.push(datasetNode)
+      }
+      nodes.push(fileNode)
+    }
+
+    return {
+      ...ROOT_NODE,
+      children: nodes,
+    }
+  }, [institutions, instituteMap])
+
   if (showSkeleton) {
     return <SkeletonRows className="w-7/10 mx-auto" />
   }
@@ -87,15 +152,15 @@ export function GexDialogSidePanel({
           </PopoverTrigger>
           <PopoverContent
             //variant="content"
-            className="w-48 flex flex-col gap-y-4 relative"
+            className="w-48 flex flex-col gap-y-4 relative p-4"
             sideOffset={12}
             align="center"
           >
             <PopoverSpeechArrow />
 
-            <HCenterRow className="pt-2">
+            <CenterRow>
               <ToggleGroup
-                //variant="outline"
+                variant="outline"
 
                 value={[settings.apps.gex.genome]}
                 onValueChange={(v) => {
@@ -105,52 +170,54 @@ export function GexDialogSidePanel({
                     })
                   )
                 }}
-                rounded="none"
-                className="border border-border/50 rounded-theme overflow-hidden"
+                className="gap-x-px"
               >
                 {GENOMES.map((s) => (
                   <GroupToggle
-                    key={s}
-                    value={s}
+                    key={s.id}
+                    value={s.id}
                     className="w-20"
                     aria-label="Filter rows"
                   >
-                    {s}
+                    {s.name}
                   </GroupToggle>
                 ))}
               </ToggleGroup>
-            </HCenterRow>
-            <ul className="flex flex-col">
+            </CenterRow>
+            <RadioGroup
+              className="flex flex-col gap-y-2"
+              value={technology}
+              onValueChange={(v) => {
+                setTechnology(v)
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.apps.gex.technology = v ?? ''
+                  })
+                )
+              }}
+            >
               {TECHNOLOGIES.map((t, tid) => {
                 return (
-                  <li key={tid}>
-                    <PopoverMenuItem
-                      checked={t === technology}
-                      data-selected={t === technology}
-                      variant="theme"
-                      animation="none"
-                      // ripple={false}
-                      className="w-full text-left"
-                      onClick={() => {
-                        updateSettings(
-                          produce(settings, (draft) => {
-                            draft.apps.gex.technology = t
-                          })
-                        )
-                        setTechnology(t)
-                      }}
-                    >
-                      {t}
-                    </PopoverMenuItem>
-                  </li>
+                  <RadioGroupItem
+                    key={tid}
+                    value={t}
+                    data-selected={t === technology}
+                    className="w-full text-left"
+                  >
+                    {t}
+                  </RadioGroupItem>
                 )
               })}
-            </ul>
+            </RadioGroup>
           </PopoverContent>
         </Popover>
       </DialogToolbar>
 
-      <RadioGroup
+      <VScrollPanel className="grow">
+        <CollapseTree tab={treeRootTab} value={dataset?.id} showRoot={false} />
+      </VScrollPanel>
+
+      {/* <RadioGroup
         className="flex flex-col grow relative"
         value={dataset?.id}
         onValueChange={(v) => {
@@ -169,7 +236,7 @@ export function GexDialogSidePanel({
       >
         <ScrollAccordion
           value={accordionValues}
-          //onValueChange={setAccordionValues}
+
           variant="sidebar"
         >
           {institutions.map((institution) => {
@@ -215,7 +282,7 @@ export function GexDialogSidePanel({
             )
           })}
         </ScrollAccordion>
-      </RadioGroup>
+      </RadioGroup> */}
     </BaseCol>
   )
 }

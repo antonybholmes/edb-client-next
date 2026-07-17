@@ -63,10 +63,14 @@ type DialogTypeMap = {
     type?: ModalType
     callback?: (response: string) => void
   }
+  error: {
+    title?: string
+    content?: ReactNode
+    callback?: (response: string) => void
+  }
   warning: {
     title?: string
     content?: ReactNode
-
     callback?: (response: string) => void
   }
   settings: { callback?: (response: string) => void }
@@ -310,6 +314,21 @@ function DialogRenderer({
         <OKCancelDialog
           title={title}
           modalType="warning"
+          onResponse={(response) => {
+            close(dialog.id)
+            callback?.(response)
+          }}
+        >
+          {content}
+        </OKCancelDialog>
+      )
+    }
+    case 'error': {
+      const { title, content, callback } = dialog.payload
+      return (
+        <OKCancelDialog
+          title={title}
+          modalType="error"
           onResponse={(response) => {
             close(dialog.id)
             callback?.(response)

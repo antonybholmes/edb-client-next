@@ -17,7 +17,7 @@ const RADIO_BUTTON_CLS = cn(
   'aspect-square h-4.5 w-4.5 rounded-full bg-background border',
   'data-unchecked:border-border hover:data-unchecked:border-ring',
   'group-hover:data-unchecked:border-ring',
-  'data-checked:border-transparent data-checked:bg-app-theme/90',
+  'data-checked:border-transparent data-checked:bg-app-theme/80',
   'data-checked:hover:bg-app-theme shrink-0'
 )
 
@@ -32,7 +32,7 @@ export function RadioGroupItem({
 }: ComponentProps<typeof Radio>) {
   let ret: ReactNode = (
     <Radio className={RADIO_BUTTON_CLS} {...props}>
-      <RadioPrimitive.Indicator className="aspect-square h-2 w-2 rounded-full bg-white" />
+      <RadioPrimitive.Indicator className="aspect-square h-1.5 w-1.5 rounded-full bg-white" />
     </Radio>
   )
 
