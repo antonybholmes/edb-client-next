@@ -13,11 +13,7 @@ import {
  * @param param0
  * @returns
  */
-export function TabIndicatorFollowH({
-  h = 2,
-}: {
-  h?: number
-}) {
+export function TabIndicatorFollowH({ h = 2 }: { h?: number }) {
   const { position } = useTabIndicators() //groupId) //useContext(TabIndicatorContext)
 
   // we use this to track transitions between 0 width and non-zero width

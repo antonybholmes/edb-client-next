@@ -6,7 +6,7 @@ import {
 } from './tab-indicator-provider'
 
 const LINE_CLS =
-  'absolute left-0 top-0 pointer-events-none select-none shrink-0 bg-app-theme z-10'
+  'absolute left-0 top-0 pointer-events-none select-none shrink-0 bg-app-theme z-10 rounded-full'
 
 /**
  * A horizontal line that can be used to follow the mouse

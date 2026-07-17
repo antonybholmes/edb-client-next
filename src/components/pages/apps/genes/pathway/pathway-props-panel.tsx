@@ -49,7 +49,7 @@ export function PathwayPropsPanel() {
   }, [filteredDatasets])
 
   return (
-    <PropsPanel className="gap-y-2 pr-1 text-xs">
+    <PropsPanel className="gap-y-2 text-xs">
       <SideBarHeader className="gap-x-2">
         <span>Genes</span>
 
@@ -86,7 +86,7 @@ export function PathwayPropsPanel() {
             >
               <AccordionTrigger>{dataset.name}</AccordionTrigger>
               <AccordionContent>
-                <ul className="flex flex-col gap-y-1.5">
+                <ul className="flex flex-col gap-y-2">
                   {dataset.collections.map(
                     (collection: ICollectionInfo, di: number) => (
                       <li key={di}>

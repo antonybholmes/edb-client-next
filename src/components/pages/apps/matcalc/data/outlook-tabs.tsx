@@ -8,7 +8,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/shadcn/ui/themed/v2/tabs'
-import { TabIndicatorFollowV } from '@/components/tabs/tab-indicator-follow-v'
 import {
   TabIndicatorProvider,
   useTabIndicators,
@@ -173,8 +172,8 @@ function _OutlookTabs({
           )
         })}
 
-        <TabIndicatorSelectedV />
-        <TabIndicatorFollowV />
+        <TabIndicatorSelectedV w={3} />
+        {/* <TabIndicatorFollowV /> */}
       </TabsList>
     </Tabs>
   )
