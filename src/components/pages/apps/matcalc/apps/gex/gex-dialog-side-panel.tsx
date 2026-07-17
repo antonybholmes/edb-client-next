@@ -12,7 +12,7 @@ import {
 
 import { produce } from 'immer'
 
-import { CollapseTree, ROOT_NODE } from '@/components/collapse-tree'
+import { ROOT_NODE } from '@/components/collapse-tree'
 import { DialogToolbar } from '@/components/dialogs/ok-cancel-dialog'
 import { BaseCol } from '@/components/layout/base-col'
 import { CenterRow } from '@/components/layout/center-row'
@@ -22,7 +22,6 @@ import {
 } from '@/components/shadcn/ui/themed/v2/radio-group'
 import { SkeletonRows } from '@/components/shadcn/ui/themed/v2/skeleton'
 import { ITab } from '@/components/tabs/tab-provider'
-import { VScrollPanel } from '@/components/v-scroll-panel'
 import { HardDrive } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
@@ -213,9 +212,61 @@ export function GexDialogSidePanel({
         </Popover>
       </DialogToolbar>
 
-      <VScrollPanel className="grow">
+      {/* <VScrollPanel className="grow">
         <CollapseTree tab={treeRootTab} value={dataset?.id} showRoot={false} />
-      </VScrollPanel>
+      </VScrollPanel> */}
+
+      <ToggleGroup
+        value={[dataset?.id ?? '']}
+        onValueChange={(value) => {
+          const v = value[0]
+
+          const ds = datasetMap.get(v)
+
+          if (ds) {
+            setDataset(ds)
+
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.apps.gex.selectedDatasets = [ds.id]
+              })
+            )
+          }
+        }}
+        className="w-full gap-y-2 text-xs"
+        orientation="vertical"
+        direction="column"
+        //variant="outline"
+        size="lg"
+      >
+        {institutions.map((institution) => {
+          return (
+            <BaseCol key={institution} className="gap-y-1">
+              <h3 className="font-semibold text-xs mx-1">{institution}</h3>
+              <BaseCol key={institution}>
+                {instituteMap.get(institution)?.map((ds) => {
+                  return (
+                    <GroupToggle
+                      key={ds.id}
+                      value={ds.id}
+                      className="w-full px-2 gap-x-2 group data-[selected=true]:font-medium"
+                      justify="start"
+                      data-selected={ds.id === dataset?.id}
+                    >
+                      <HardDrive
+                        size={20}
+                        strokeWidth={1.5}
+                        className="group-data-[selected=true]:stroke-app-theme"
+                      />
+                      <span>{ds.name}</span>
+                    </GroupToggle>
+                  )
+                })}
+              </BaseCol>
+            </BaseCol>
+          )
+        })}
+      </ToggleGroup>
 
       {/* <RadioGroup
         className="flex flex-col grow relative"

@@ -2211,6 +2211,10 @@
         {
           "msg": "Improved parsing of clinical data for oncoplots",
           "date": "2026-07-17T15:12:40.225Z"
+        },
+        {
+          "msg": "Gene expression now uses collapse tree",
+          "date": "2026-07-17T20:54:28.506Z"
         }
       ]
     },

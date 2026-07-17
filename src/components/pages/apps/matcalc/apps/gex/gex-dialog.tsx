@@ -634,7 +634,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
   return (
     <GlassSideDialog
       cols={3}
-      title={appsConfig.matcalc.apps.gex.title}
+      title={`${appsConfig.matcalc.apps.gex.title} in ${dataset?.name ?? ''} (${technology})`}
       open={open}
       onResponse={(response, data) => {
         if (response === TEXT_OK) {

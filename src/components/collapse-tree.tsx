@@ -118,7 +118,7 @@ const OUTER_CONTAINER_CLS = cn(
 
 const INNER_CONTAINER_CLS = `grow gap-x-2 h-full 
   data-[root=false]:data-[selected=true]:font-medium
-  data-[mode=selected]:bg-muted/50`
+  data-[mode=selected]:bg-muted/60`
 
 const NODE_BUTTON_CLS = `flex flex-row items-center 
   text-left justify-start gap-x-1.5 grow h-full relative`
@@ -135,8 +135,8 @@ const MENU_BUTTON_CLS = cn(
   FOCUS_INSET_RING_CLS,
   'w-8.5 h-8.5 aspect-square shrink-0 grow-0 flex flex-row',
   'items-center justify-center outline-hidden group',
-  'data-[mode=selected]:bg-muted/50 data-[mode=menu-selected]:bg-muted/50',
-  'hover:rounded-l-theme hover:bg-muted/50'
+  'data-[mode=selected]:bg-muted/60 data-[mode=menu-selected]:bg-muted/60',
+  'hover:rounded-l-theme hover:bg-muted/60'
 )
 
 const LIST_CLS = 'flex flex-col gap-y-px overflow-hidden'
