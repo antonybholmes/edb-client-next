@@ -11,10 +11,8 @@ import {
   openFilesDialog,
   type ITextFileOpen,
 } from '@/components/pages/open-files'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
+import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
 import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
@@ -287,10 +285,11 @@ export function LabelPropsPanel({ ref }: IDivProps) {
                       }
                     />
 
-                    <ColorPickerButton
+                    <FillButton
                       colors={[
                         {
                           color: label.color,
+                          allowNoColor: false,
                           onColorChange: ({ color }) =>
                             setLabels(
                               produce(labels, (draft) => {

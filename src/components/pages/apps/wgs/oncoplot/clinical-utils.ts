@@ -167,15 +167,25 @@ export function makeClinicalTracks(
     const tokens = header.split(':')
 
     const name: string = tokens[0]!.trim()
-    const type: ClinicalDataType =
-      (tokens[1]?.trim().toLowerCase() as ClinicalDataType) ?? 'category'
 
+    let type: ClinicalDataType = 'category'
     const opts: Record<string, string> = {}
 
-    if (tokens.length > 2) {
-      for (const kv of tokens[2]!.split(',')) {
-        const [key, value] = kv.split('=')
-        opts[key!.trim().toLowerCase()] = value!.trim()
+    if (tokens.length > 1) {
+      const typeInfo = tokens[1]!.trim().slice(1, -1).split(',')
+
+      for (const kv of typeInfo) {
+        let [key, value] = kv.split('=')
+
+        key = key!.trim().toLowerCase()
+
+        //console.log(`Clinical track ${name} key=${key} value=${value}`)
+
+        if (key === 'type') {
+          type = value!.trim() as ClinicalDataType
+        } else {
+          opts[key] = value!.trim()
+        }
       }
     }
 
@@ -183,7 +193,11 @@ export function makeClinicalTracks(
 
     const categories: IClinicalCategory[] = []
 
-    const multi = header.toLowerCase().includes('multi=t')
+    // see if we are using multi option or not. The multi option groups
+    // multiple dist groups as one rather than separating them.
+    const multi =
+      'multi' in opts &&
+      (opts['multi'].toLowerCase().startsWith('t') || opts['multi'] === '1')
 
     //const colorMap: Record<string, string> = {}
 

@@ -25,7 +25,7 @@ interface IShortcutProps extends IClassProps {
 
 function _OutlookTabs({
   id = 'side-tabs',
-  defaultHeight = 2,
+  defaultHeight = 2.25,
   showIcons = true,
   showLabels = true,
   className,
@@ -60,7 +60,7 @@ function _OutlookTabs({
       y,
       h,
       animate,
-      scale: 0.7,
+      scale: 0.6,
     })
   }
 
@@ -149,11 +149,11 @@ function _OutlookTabs({
               onMouseLeave={() => {
                 if (isSelected) {
                   setSelectedTabPosition({
-                    scale: 0.7,
+                    scale: 0.6,
                   })
                 }
               }}
-              className="flex flex-row gap-x-1.5 items-center data-[selected=true]:font-semibold relative shrink-0 hover:bg-background rounded-theme group"
+              className="flex flex-row gap-x-2 items-center text-foreground/70 data-active:text-foreground data-active:font-medium relative shrink-0 hover:bg-muted/20 rounded-theme group"
               style={{
                 height: `${defaultHeight}rem`,
                 minWidth: `${defaultHeight}rem`,
@@ -162,7 +162,7 @@ function _OutlookTabs({
             >
               {showIcons && tab.icon && (
                 <span
-                  className="w-4.5 fill-foreground stroke-foreground"
+                  className="w-4.5 group-data-active:text-app-theme group-data-active:stroke-app-theme"
                   data-selected={tab.id === selectedTab?.id}
                 >
                   {tab.icon}

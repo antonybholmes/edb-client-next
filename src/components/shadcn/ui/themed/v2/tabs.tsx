@@ -33,14 +33,14 @@ export const SAFARI_CLS = cn(
   FOCUS_RING_CLS,
   BASE_TRIGGER_CLS,
   FOCUS_INSET_RING_CLS,
-  'text-alt-foreground data-active:text-app-theme font-semibold',
-  'flex-col gap-y-1 min-h-11 data-active:bg-muted/30',
+  'text-alt-foreground data-active:text-app-theme font-medium',
+  'flex-col gap-y-1 min-h-11 data-active:bg-muted/50',
   'items-center justify-center text-xs trans-color'
 )
 
 export const SIDEBAR_CLS = cn(
   BASE_TRIGGER_CLS,
-  'flex-row items-center px-2 h-9 data-active:bg-app-theme/25'
+  'flex-row items-center px-2 h-10 data-active:bg-muted/30'
 )
 
 export const PLAIN_CLS = cn(

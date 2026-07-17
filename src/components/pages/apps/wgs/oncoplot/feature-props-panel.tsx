@@ -60,7 +60,10 @@ export function FeaturePropsPanel() {
           </TabsTrigger>
         </TabsList> */}
       </Tabs>
-      <OutlookTabs id="oncoplot-feature-props-panel" />
+      <OutlookTabs
+        id="oncoplot-feature-props-panel"
+        className="border-t border-border/50 py-2"
+      />
     </BaseCol>
   )
 }

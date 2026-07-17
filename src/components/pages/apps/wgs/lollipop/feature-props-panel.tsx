@@ -1,6 +1,7 @@
 import { BaseCol } from '@/components/layout/base-col'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import { useTabs } from '@/components/tabs/tab-provider'
+import { CirclePile, LayoutTemplate, Tags } from 'lucide-react'
 import { useEffect } from 'react'
 import { OutlookTabs } from '../../matcalc/data/outlook-tabs'
 import { DatasetsPropsPanel } from './dataset-props-panel'
@@ -23,14 +24,17 @@ export function FeaturePropsPanel() {
       {
         id: 'domains',
         name: 'Domains',
+        icon: <LayoutTemplate strokeWidth={2} size={18} />,
       },
       {
         id: 'variants',
         name: 'Variants',
+        icon: <CirclePile strokeWidth={2} size={18} />,
       },
       {
         id: 'labels',
         name: 'Labels',
+        icon: <Tags strokeWidth={2} size={18} />,
       },
     ])
   }, [setTabs])
@@ -68,7 +72,10 @@ export function FeaturePropsPanel() {
         </TabsList> */}
       </Tabs>
 
-      <OutlookTabs id="lollipop-feature-props-panel" />
+      <OutlookTabs
+        id="lollipop-feature-props-panel"
+        className="border-t border-border/50 py-2"
+      />
     </BaseCol>
   )
 }

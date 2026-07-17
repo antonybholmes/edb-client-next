@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Improved parsing of clinical data for oncoplots.
 - UI refinments. Table viewer cleaned up.
 - ts6 check moved to pnpm-workspace.yaml.
 - Motif to gene now works without selecting a column beforehand.

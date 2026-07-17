@@ -81,7 +81,7 @@ function OncoplotPage() {
 
   //const [search] = useState<string[]>([])
 
-  const { setClinicalTracks, setGenesFromTable } = useOncoplot()
+  const { setGenesFromTable } = useOncoplot()
 
   //const [locations, setLocations] = useState<GenomicLocation[]>([])
 

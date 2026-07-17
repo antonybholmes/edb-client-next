@@ -1,6 +1,7 @@
 import { BaseCol } from '@/components/layout/base-col'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import { useTabs } from '@/components/tabs/tab-provider'
+import { List, SlidersHorizontal } from 'lucide-react'
 import { useEffect } from 'react'
 import { OutlookTabs } from '../../matcalc/data/outlook-tabs'
 import { GeneSetsPropsPanel } from './geneset-props-panel'
@@ -14,10 +15,12 @@ export function GseaPropsPanel() {
       {
         id: 'genesets',
         name: ' Gene Sets',
+        icon: <List strokeWidth={2} size={18} />,
       },
       {
         id: 'display',
         name: 'Display',
+        icon: <SlidersHorizontal strokeWidth={2} size={18} />,
       },
     ])
   }, [setTabs])

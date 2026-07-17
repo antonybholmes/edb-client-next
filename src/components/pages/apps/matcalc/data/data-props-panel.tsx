@@ -1,6 +1,7 @@
 import { BaseCol } from '@/components/layout/base-col'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import { useTabs } from '@/components/tabs/tab-provider'
+import { Filter, Group } from 'lucide-react'
 import { useEffect } from 'react'
 import { FilterPropsPanel } from './filter-props-panel'
 import { GroupingPropsPanel } from './grouping-props-panel'
@@ -18,10 +19,12 @@ export function DataPropsPanel() {
       {
         id: 'groups',
         name: 'Groups',
+        icon: <Group strokeWidth={2} size={18} />,
       },
       {
         id: 'filter',
         name: 'Filter',
+        icon: <Filter strokeWidth={2} size={18} />,
       },
     ])
   }, [setTabs])
