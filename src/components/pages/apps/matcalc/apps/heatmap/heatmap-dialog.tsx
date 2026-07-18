@@ -37,13 +37,12 @@ import { Checkbox } from '@/themed/v2/check-box'
 import { produce } from 'immer'
 
 import {
+  ActionCheckRow,
   ActionDialogCard,
   ActionDialogCardContent,
   ActionDialogRow,
 } from '@/components/dialogs/card/action-dialog-card'
 import { DialogCardHeader } from '@/components/dialogs/card/dialog-card'
-import { VCenterRow } from '@/components/layout/v-center-row'
-import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import {
   useCurrentGroups,
   useCurrentSheets,
@@ -269,53 +268,51 @@ export function HeatMapDialog({
       <ActionDialogCard>
         <DialogCardHeader title="Filter" />
         <ActionDialogCardContent>
-          <ActionDialogRow title="Top">
-            <VCenterRow className="gap-x-2">
-              <NumericalInput
-                id="top-rows"
-                limit={[0, 5000]}
-                value={settings.heatmap.topRows}
-                onNumChange={(v) => {
+          <ActionCheckRow
+            title="Top" //title="Top"
+            //info="Filter to top N most variable rows by the method you choose."
+            checked={settings.heatmap.filterRows}
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
+                draft.heatmap.filterRows = v
+              })
+
+              updateSettings(newSettings)
+            }}
+            justify="start"
+          >
+            <NumericalInput
+              id="top-rows"
+              limit={[0, 5000]}
+              value={settings.heatmap.topRows}
+              onNumChange={(v) => {
+                const newSettings = produce(settings, (draft) => {
+                  draft.heatmap.topRows = v
+                })
+
+                updateSettings(newSettings)
+              }}
+              w="xs"
+            />
+            <span className="shrink-0">rows using</span>
+            <SelectList
+              value={settings.heatmap.rowFilterMethod}
+              onValueChange={(v) => {
+                if (v) {
                   const newSettings = produce(settings, (draft) => {
-                    draft.heatmap.topRows = v
+                    draft.heatmap.rowFilterMethod = v as string
                   })
 
                   updateSettings(newSettings)
-                }}
-                w="xs"
-              />
-              <span className="shrink-0">rows using</span>
-              <SelectList
-                value={settings.heatmap.rowFilterMethod}
-                onValueChange={(v) => {
-                  if (v) {
-                    const newSettings = produce(settings, (draft) => {
-                      draft.heatmap.rowFilterMethod = v as string
-                    })
-
-                    updateSettings(newSettings)
-                  }
-                }}
-                w="sm"
-              >
-                <SelectItem value="Stdev">Stdev</SelectItem>
-                <SelectItem value="Mean">Mean</SelectItem>
-                <SelectItem value="Median">Median</SelectItem>
-              </SelectList>
-              <Switch
-                //title="Top"
-                //info="Filter to top N most variable rows by the method you choose."
-                checked={settings.heatmap.filterRows}
-                onCheckedChange={(v) => {
-                  const newSettings = produce(settings, (draft) => {
-                    draft.heatmap.filterRows = v
-                  })
-
-                  updateSettings(newSettings)
-                }}
-              />
-            </VCenterRow>
-          </ActionDialogRow>
+                }
+              }}
+              w="sm"
+            >
+              <SelectItem value="Stdev">Stdev</SelectItem>
+              <SelectItem value="Mean">Mean</SelectItem>
+              <SelectItem value="Median">Median</SelectItem>
+            </SelectList>
+          </ActionCheckRow>
           <ActionDialogRow title="Unselected Groups">
             <SelectList
               value={settings.groups.filter.mode}
