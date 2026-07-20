@@ -24,7 +24,8 @@ export const CHECK_CLS = cn(
   'data-unchecked:bg-background data-unchecked:border-border/70',
   'data-unchecked:data-[hover=true]:border-app-theme/30',
   'data-checked:bg-app-theme/80 data-checked:border-transparent',
-  'data-checked:data-[hover=true]:bg-app-theme'
+  'data-checked:data-[hover=true]:bg-app-theme',
+  'data-disabled:cursor-not-allowed data-disabled:opacity-60'
 )
 
 export function Checkbox({

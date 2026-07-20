@@ -26,12 +26,13 @@ export function TabIndicatorSelectedV({ w = 2 }: { w?: number }) {
   // from non-zero to zero, we want to set duration to 0 so it disappears instantly.
   const previousSelectedPos = useRef<ITabIndicatorPos | undefined>(undefined)
 
-  const selectedLineRef = useRef<HTMLSpanElement>(null)
+  const selectedLineRef1 = useRef<HTMLSpanElement>(null)
+  const selectedLineRef2 = useRef<HTMLSpanElement>(null)
 
   const selectedTimelineRef = useRef<GSAPTimeline | null>(null)
 
   useEffect(() => {
-    if (!selectedLineRef.current || !selectedPosition) {
+    if (!selectedLineRef1.current || !selectedPosition) {
       return
     }
 
@@ -39,18 +40,24 @@ export function TabIndicatorSelectedV({ w = 2 }: { w?: number }) {
       selectedTimelineRef.current.kill()
     }
 
-    selectedTimelineRef.current = gsap.timeline().to(selectedLineRef.current, {
-      y: selectedPosition.y,
-      height: selectedPosition.h,
-      duration: 0.6,
-      scaleY: selectedPosition.scale || 1,
-      ease: 'power2.out',
-    })
+    selectedTimelineRef.current = gsap
+      .timeline()
+      .to([selectedLineRef1.current, selectedLineRef2.current], {
+        y: selectedPosition.y,
+        height: selectedPosition.h,
+        duration: 0.5,
+        scaleY: selectedPosition.scale || 1,
+        stagger: 0.1,
+        ease: 'power2.out',
+      })
 
     previousSelectedPos.current = selectedPosition
   }, [selectedPosition])
 
   return (
-    <span ref={selectedLineRef} className={LINE_CLS} style={{ width: w }} />
+    <>
+      <span ref={selectedLineRef1} className={LINE_CLS} style={{ width: w }} />
+      <span ref={selectedLineRef2} className={LINE_CLS} style={{ width: w }} />
+    </>
   )
 }

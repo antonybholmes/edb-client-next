@@ -93,20 +93,29 @@ export function KmeansDialog({
           //dfMean(df, historyDispatch)
 
           //df = dfMeanFilter(df, historyDispatch, settings.heatmap.topRows)
-          df = meanFilter(df, settings.heatmap.topRows) as AnnotationDataFrame
+          df = meanFilter(
+            df,
+            settings.heatmap.filters.rows.top
+          ) as AnnotationDataFrame
           break
         case 'Median':
           //dfMedian(df, historyDispatch)
 
           //df = dfMedianFilter(df, historyDispatch, settings.heatmap.topRows)
-          df = medianFilter(df, settings.heatmap.topRows) as AnnotationDataFrame
+          df = medianFilter(
+            df,
+            settings.heatmap.filters.rows.top
+          ) as AnnotationDataFrame
           break
         default:
           // stdev
           //dfStdev(df, historyDispatch)
 
           //df = dfStdevFilter(df, historyDispatch, settings.heatmap.topRows)
-          df = stdevFilter(df, settings.heatmap.topRows) as AnnotationDataFrame
+          df = stdevFilter(
+            df,
+            settings.heatmap.filters.rows.top
+          ) as AnnotationDataFrame
           break
       }
     }

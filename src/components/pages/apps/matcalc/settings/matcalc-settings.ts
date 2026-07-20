@@ -7,21 +7,32 @@ import APP_INFO from '../manifest.json'
 import type { Species } from '@/lib/gene/geneconv'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v62`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v64`
 
 export interface IMatcalcSettings {
   dot: { size: { useOriginalValuesForSizes: boolean } }
   heatmap: {
-    applyTranspose: boolean
-    applyRowZscore: boolean
-    applyLog2: boolean
-    rowFilterMethod: string
-    topRows: number
-    distance: string
-    linkage: string
-    clusterRows: boolean
-    clusterCols: boolean
-    filterRows: boolean
+    transforms: {
+      apply: boolean
+      transpose: boolean
+      rowZscore: boolean
+      log2: boolean
+    }
+
+    filters: {
+      rows: {
+        apply: boolean
+        top: number
+        method: string
+      }
+    }
+    cluster: {
+      apply: boolean
+      distance: string
+      linkage: string
+      rows: boolean
+      cols: boolean
+    }
   }
   apps: {
     geneconv: {
@@ -114,16 +125,26 @@ export interface IMatcalcSettings {
 
 export const DEFAULT_SETTINGS: IMatcalcSettings = {
   heatmap: {
-    filterRows: false,
-    clusterCols: false,
-    clusterRows: false,
-    linkage: 'Average',
-    distance: 'Correlation',
-    topRows: 200,
-    rowFilterMethod: 'Stdev',
-    applyTranspose: false,
-    applyLog2: false,
-    applyRowZscore: true,
+    transforms: {
+      apply: true,
+      transpose: false,
+      rowZscore: true,
+      log2: false,
+    },
+    filters: {
+      rows: {
+        apply: false,
+        top: 200,
+        method: 'Stdev',
+      },
+    },
+    cluster: {
+      apply: false,
+      distance: 'Correlation',
+      linkage: 'Average',
+      rows: false,
+      cols: false,
+    },
   },
 
   sortByRow: {

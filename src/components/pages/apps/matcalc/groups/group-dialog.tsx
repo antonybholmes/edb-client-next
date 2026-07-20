@@ -127,7 +127,6 @@ export function GroupDialog({ group, onResponse }: IProps) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Group Name"
-              className="col-span-5"
             />
           </ActionDialogRow>
 
@@ -144,7 +143,6 @@ export function GroupDialog({ group, onResponse }: IProps) {
                   column names. All matching columns will belong to the group.
                 </InfoHoverCard>
               }
-              className="col-span-5"
             />
           </ActionDialogRow>
           <ActionDialogRow>

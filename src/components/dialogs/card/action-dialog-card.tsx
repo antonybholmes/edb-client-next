@@ -28,12 +28,12 @@ export function ActionDialogRow({
 }) {
   return (
     <div
-      className={cn('grid grid-cols-10 gap-x-3 gap-y-2', className)}
+      className={cn('grid grid-cols-20 gap-x-3 gap-y-2', className)}
       {...props}
     >
       <BaseRow
         className={cn(
-          'text-alt-foreground text-right text-sm justify-end col-span-3',
+          'text-alt-foreground text-right text-sm justify-end col-span-5',
           items === 'start' && 'items-start',
           items === 'center' && 'items-center',
           items === 'end' && 'items-end'
@@ -43,7 +43,7 @@ export function ActionDialogRow({
       </BaseRow>
       <BaseRow
         className={cn(
-          'col-span-7 gap-x-2',
+          'col-span-10 gap-x-2',
           justify === 'start' && 'justify-start',
           justify === 'center' && 'justify-center',
           justify === 'end' && 'justify-end',

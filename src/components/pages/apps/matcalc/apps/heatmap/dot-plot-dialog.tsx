@@ -89,10 +89,11 @@ export function DotPlotDialog({
   useEffect(() => {
     // In cluster mode, force column clustering
     if (isClusterMap) {
-      updateSettings({
-        ...settings,
-        heatmap: { ...settings.heatmap, clusterCols: isClusterMap },
-      })
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.heatmap.cluster.cols = isClusterMap
+        })
+      )
     }
   }, [isClusterMap])
 
@@ -164,9 +165,10 @@ export function DotPlotDialog({
     //   sheets: [groupMeanDf, groupPercentDf],
     // })
 
-    const dfZ = settings.heatmap.applyRowZscore
-      ? rowZScore(groupMeanDf)
-      : groupMeanDf
+    const dfZ =
+      settings.heatmap.transforms.apply && settings.heatmap.transforms.rowZscore
+        ? rowZScore(groupMeanDf)
+        : groupMeanDf
 
     if (!dfZ) {
       onResponse?.(TEXT_CANCEL, undefined)
@@ -178,11 +180,11 @@ export function DotPlotDialog({
     let rowC: IClusterTree | undefined = undefined
     let colC: IClusterTree | undefined = undefined
 
-    if (settings.heatmap.clusterRows && dfZ.shape[0] < MAX_CLUSTER_ITEMS) {
+    if (settings.heatmap.cluster.rows && dfZ.shape[0] < MAX_CLUSTER_ITEMS) {
       rowC = hc.run(dfZ)
     }
 
-    if (settings.heatmap.clusterCols && dfZ.shape[1] < MAX_CLUSTER_ITEMS) {
+    if (settings.heatmap.cluster.cols && dfZ.shape[1] < MAX_CLUSTER_ITEMS) {
       colC = hc.run(dfZ.t)
     }
 
@@ -232,7 +234,10 @@ export function DotPlotDialog({
 
     const df = sheets[0] as BaseDataFrame
 
-    const dfLog = settings.heatmap.applyLog2 ? log2(df, 1) : df
+    const dfLog =
+      settings.heatmap.transforms.apply && settings.heatmap.transforms.log2
+        ? log2(df, 1)
+        : df
 
     // based sizes on log data
     let min = dfLog.min()
@@ -250,7 +255,10 @@ export function DotPlotDialog({
 
     // now z-score
 
-    const dfZ = settings.heatmap.applyRowZscore ? rowZScore(dfLog) : dfLog
+    const dfZ =
+      settings.heatmap.transforms.apply && settings.heatmap.transforms.rowZscore
+        ? rowZScore(dfLog)
+        : dfLog
 
     if (!dfZ) {
       onResponse?.(TEXT_CANCEL, undefined)
@@ -270,7 +278,8 @@ export function DotPlotDialog({
     // original values for sizes, then convert back
     if (
       settings.dot.size.useOriginalValuesForSizes &&
-      settings.heatmap.applyLog2
+      settings.heatmap.transforms.apply &&
+      settings.heatmap.transforms.log2
     ) {
       sizes = sizes.map((s) => Math.round(Math.pow(2, s)))
     }
@@ -280,11 +289,11 @@ export function DotPlotDialog({
     let rowC: IClusterTree | undefined = undefined
     let colC: IClusterTree | undefined = undefined
 
-    if (settings.heatmap.clusterRows && dfZ.shape[0] < MAX_CLUSTER_ITEMS) {
+    if (settings.heatmap.cluster.rows && dfZ.shape[0] < MAX_CLUSTER_ITEMS) {
       rowC = hc.run(dfZ)
     }
 
-    if (settings.heatmap.clusterCols && dfZ.shape[1] < MAX_CLUSTER_ITEMS) {
+    if (settings.heatmap.cluster.cols && dfZ.shape[1] < MAX_CLUSTER_ITEMS) {
       colC = hc.run(dfZ.t)
     }
 
@@ -387,10 +396,14 @@ export function DotPlotDialog({
         <ActionDialogCardContent>
           <ActionDialogRow>
             <Checkbox
-              checked={settings.heatmap.applyLog2}
+              checked={
+                settings.heatmap.transforms.apply &&
+                settings.heatmap.transforms.log2
+              }
               onCheckedChange={(value) => {
                 const newSettings = produce(settings, (draft) => {
-                  draft.heatmap.applyLog2 = value
+                  draft.heatmap.transforms.apply = true
+                  draft.heatmap.transforms.log2 = value
                 })
 
                 updateSettings(newSettings)
@@ -401,10 +414,14 @@ export function DotPlotDialog({
           </ActionDialogRow>
           <ActionDialogRow>
             <Checkbox
-              checked={settings.heatmap.applyRowZscore}
+              checked={
+                settings.heatmap.transforms.apply &&
+                settings.heatmap.transforms.rowZscore
+              }
               onCheckedChange={(value) => {
                 const newSettings = produce(settings, (draft) => {
-                  draft.heatmap.applyRowZscore = value
+                  draft.heatmap.transforms.apply = true
+                  draft.heatmap.transforms.rowZscore = value
                 })
 
                 updateSettings(newSettings)
@@ -425,10 +442,10 @@ export function DotPlotDialog({
         <ActionDialogCardContent>
           <ActionDialogRow>
             <Checkbox
-              checked={settings.heatmap.clusterRows}
+              checked={settings.heatmap.cluster.rows}
               onCheckedChange={(value) => {
                 const newSettings = produce(settings, (draft) => {
-                  draft.heatmap.clusterRows = value
+                  draft.heatmap.cluster.rows = value
                 })
 
                 updateSettings(newSettings)
@@ -440,10 +457,10 @@ export function DotPlotDialog({
 
           <ActionDialogRow>
             <Checkbox
-              checked={settings.heatmap.clusterCols}
+              checked={settings.heatmap.cluster.cols}
               onCheckedChange={(value) => {
                 const newSettings = produce(settings, (draft) => {
-                  draft.heatmap.clusterCols = value
+                  draft.heatmap.cluster.cols = value
                 })
 
                 updateSettings(newSettings)

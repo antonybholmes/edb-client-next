@@ -37,7 +37,6 @@ import { Checkbox } from '@/themed/v2/check-box'
 import { produce } from 'immer'
 
 import {
-  ActionCheckRow,
   ActionDialogCard,
   ActionDialogCardContent,
   ActionDialogRow,
@@ -96,7 +95,7 @@ export function HeatMapDialog({
     if (isClusterMap) {
       updateSettings(
         produce(settings, (draft) => {
-          draft.heatmap.clusterCols = isClusterMap
+          draft.heatmap.cluster.cols = isClusterMap
         })
       )
     }
@@ -124,26 +123,26 @@ export function HeatMapDialog({
       dfToPlot = dfToPlot.iloc({ cols: idx })
     }
 
-    if (settings.heatmap.filterRows) {
-      switch (settings.heatmap.rowFilterMethod) {
+    if (settings.heatmap.filters.rows.apply) {
+      switch (settings.heatmap.filters.rows.method) {
         case 'Mean':
           //dfMean(df, historyDispatch)
 
           //df = dfMeanFilter(df, historyDispatch, settings.heatmap.topRows)
-          dfToPlot = meanFilter(dfToPlot, settings.heatmap.topRows)
+          dfToPlot = meanFilter(dfToPlot, settings.heatmap.filters.rows.top)
           break
         case 'Median':
           //dfMedian(df, historyDispatch)
 
           //df = dfMedianFilter(df, historyDispatch, settings.heatmap.topRows)
-          dfToPlot = medianFilter(dfToPlot, settings.heatmap.topRows)
+          dfToPlot = medianFilter(dfToPlot, settings.heatmap.filters.rows.top)
           break
         default:
           // stdev
           //dfStdev(df, historyDispatch)
 
           //df = dfStdevFilter(df, historyDispatch, settings.heatmap.topRows)
-          dfToPlot = stdevFilter(dfToPlot, settings.heatmap.topRows)
+          dfToPlot = stdevFilter(dfToPlot, settings.heatmap.filters.rows.top)
           break
       }
 
@@ -154,28 +153,28 @@ export function HeatMapDialog({
     }
 
     // stop user trying to cluster something excessive
-    if (settings.heatmap.clusterRows && df.shape[0] > MAX_CLUSTER_ITEMS) {
+    if (settings.heatmap.cluster.rows && df.shape[0] > MAX_CLUSTER_ITEMS) {
       setError(
         `You can cluster ${MAX_CLUSTER_ITEMS.toLocaleString()} rows. Please reduce the number of rows in your table.`
       )
       return
     }
 
-    if (!settings.heatmap.clusterRows && df.shape[0] > MAX_HEATMAP_DIM) {
+    if (!settings.heatmap.cluster.rows && df.shape[0] > MAX_HEATMAP_DIM) {
       setError(
         `You can plot up to ${MAX_HEATMAP_DIM.toLocaleString()} rows. Please reduce the number of rows in your table.`
       )
       return
     }
 
-    if (settings.heatmap.clusterCols && df.shape[1] > MAX_CLUSTER_ITEMS) {
+    if (settings.heatmap.cluster.cols && df.shape[1] > MAX_CLUSTER_ITEMS) {
       setError(
         `You can cluster ${MAX_CLUSTER_ITEMS.toLocaleString()} columns. Please reduce the number of columns in your table.`
       )
       return
     }
 
-    if (!settings.heatmap.clusterCols && df.shape[1] > MAX_HEATMAP_DIM) {
+    if (!settings.heatmap.cluster.cols && df.shape[1] > MAX_HEATMAP_DIM) {
       setError(
         `You can plot up to ${MAX_HEATMAP_DIM.toLocaleString()} columns. Please reduce the number of columns in your table.`
       )
@@ -184,17 +183,23 @@ export function HeatMapDialog({
 
     const actions: string[] = []
 
-    if (settings.heatmap.applyLog2) {
+    if (settings.heatmap.transforms.apply && settings.heatmap.transforms.log2) {
       dfToPlot = log(dfToPlot, 2, 1)
       actions.push('Log2')
     }
 
-    if (settings.heatmap.applyRowZscore) {
+    if (
+      settings.heatmap.transforms.apply &&
+      settings.heatmap.transforms.rowZscore
+    ) {
       dfToPlot = rowZScore(dfToPlot!) //dfRowZScore(df, historyDispatch)
       actions.push('Row z-score')
     }
 
-    if (settings.heatmap.applyTranspose) {
+    if (
+      settings.heatmap.transforms.apply &&
+      settings.heatmap.transforms.transpose
+    ) {
       dfToPlot = dfToPlot!.t //dfTranspose(df, historyDispatch)
       actions.push('Transpose')
     }
@@ -204,20 +209,21 @@ export function HeatMapDialog({
       return
     }
 
-    const linkageFunc: ILinkage = LINKAGE_MAP[settings.heatmap.linkage]!
-    const distFunc: IDistFunc = DISTANCE_METRIC_MAP[settings.heatmap.distance]!
+    const linkageFunc: ILinkage = LINKAGE_MAP[settings.heatmap.cluster.linkage]!
+    const distFunc: IDistFunc =
+      DISTANCE_METRIC_MAP[settings.heatmap.cluster.distance]!
 
     const hc = new HCluster(linkageFunc, distFunc)
 
     let rowC: IClusterTree | undefined = undefined
     let colC: IClusterTree | undefined = undefined
 
-    if (settings.heatmap.clusterRows && df.shape[0] <= MAX_CLUSTER_ITEMS) {
+    if (settings.heatmap.cluster.rows && df.shape[0] <= MAX_CLUSTER_ITEMS) {
       rowC = hc.run(dfToPlot)
       actions.push('Cluster rows')
     }
 
-    if (settings.heatmap.clusterCols && df.shape[1] <= MAX_CLUSTER_ITEMS) {
+    if (settings.heatmap.cluster.cols && df.shape[1] <= MAX_CLUSTER_ITEMS) {
       colC = hc.run(dfToPlot.t)
       actions.push('Cluster columns')
     }
@@ -265,42 +271,45 @@ export function HeatMapDialog({
       leftFooterChildren={<HelpButton url="/help/apps/matcalc/heatmap" />}
       bodyCls="gap-y-3"
     >
-      <ActionDialogCard>
-        <DialogCardHeader title="Filter" />
-        <ActionDialogCardContent>
-          <ActionCheckRow
-            title="Top" //title="Top"
-            //info="Filter to top N most variable rows by the method you choose."
-            checked={settings.heatmap.filterRows}
+      <ActionDialogCard className="bg-muted/25 p-3 rounded-xl">
+        <DialogCardHeader>
+          <Checkbox
+            checked={settings.heatmap.filters.rows.apply}
             onCheckedChange={(v) => {
               const newSettings = produce(settings, (draft) => {
-                draft.heatmap.filterRows = v
+                draft.heatmap.filters.rows.apply = v
               })
 
               updateSettings(newSettings)
             }}
-            justify="start"
           >
+            Filter
+          </Checkbox>
+        </DialogCardHeader>
+        <ActionDialogCardContent>
+          <ActionDialogRow title="Top" justify="start">
             <NumericalInput
               id="top-rows"
               limit={[0, 5000]}
-              value={settings.heatmap.topRows}
+              value={settings.heatmap.filters.rows.top}
               onNumChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
-                  draft.heatmap.topRows = v
+                  draft.heatmap.filters.rows.top = v
                 })
 
                 updateSettings(newSettings)
               }}
+              disabled={!settings.heatmap.filters.rows.apply}
               w="xs"
             />
             <span className="shrink-0">rows using</span>
             <SelectList
-              value={settings.heatmap.rowFilterMethod}
+              value={settings.heatmap.filters.rows.method}
+              disabled={!settings.heatmap.filters.rows.apply}
               onValueChange={(v) => {
                 if (v) {
                   const newSettings = produce(settings, (draft) => {
-                    draft.heatmap.rowFilterMethod = v as string
+                    draft.heatmap.filters.rows.method = v as string
                   })
 
                   updateSettings(newSettings)
@@ -312,10 +321,11 @@ export function HeatMapDialog({
               <SelectItem value="Mean">Mean</SelectItem>
               <SelectItem value="Median">Median</SelectItem>
             </SelectList>
-          </ActionCheckRow>
+          </ActionDialogRow>
           <ActionDialogRow title="Unselected Groups">
             <SelectList
               value={settings.groups.filter.mode}
+              disabled={!settings.heatmap.filters.rows.apply}
               onValueChange={(v) => {
                 if (v) {
                   const newSettings = produce(settings, (draft) => {
@@ -340,16 +350,30 @@ export function HeatMapDialog({
         </ActionDialogCardContent>
       </ActionDialogCard>
 
-      <ActionDialogCard>
-        <DialogCardHeader title="Transform" />
+      <ActionDialogCard className="bg-muted/25 p-3 rounded-xl">
+        <DialogCardHeader>
+          <Checkbox
+            checked={settings.heatmap.transforms.apply}
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
+                draft.heatmap.transforms.apply = v
+              })
+
+              updateSettings(newSettings)
+            }}
+          >
+            Transform
+          </Checkbox>
+        </DialogCardHeader>
 
         <ActionDialogCardContent>
           <ActionDialogRow>
             <Checkbox
-              checked={settings.heatmap.applyLog2}
+              checked={settings.heatmap.transforms.log2}
+              disabled={!settings.heatmap.transforms.apply}
               onCheckedChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
-                  draft.heatmap.applyLog2 = v
+                  draft.heatmap.transforms.log2 = v
                 })
 
                 updateSettings(newSettings)
@@ -360,10 +384,11 @@ export function HeatMapDialog({
           </ActionDialogRow>
           <ActionDialogRow>
             <Checkbox
-              checked={settings.heatmap.applyRowZscore}
+              checked={settings.heatmap.transforms.rowZscore}
+              disabled={!settings.heatmap.transforms.apply}
               onCheckedChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
-                  draft.heatmap.applyRowZscore = v
+                  draft.heatmap.transforms.rowZscore = v
                 })
 
                 updateSettings(newSettings)
@@ -374,10 +399,11 @@ export function HeatMapDialog({
           </ActionDialogRow>
           <ActionDialogRow>
             <Checkbox
-              checked={settings.heatmap.applyTranspose}
+              checked={settings.heatmap.transforms.transpose}
+              disabled={!settings.heatmap.transforms.apply}
               onCheckedChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
-                  draft.heatmap.applyTranspose = v
+                  draft.heatmap.transforms.transpose = v
                 })
 
                 updateSettings(newSettings)
@@ -389,16 +415,31 @@ export function HeatMapDialog({
         </ActionDialogCardContent>
       </ActionDialogCard>
 
-      <ActionDialogCard>
-        <DialogCardHeader title="Clustering" />
+      <ActionDialogCard className="bg-muted/25 p-3 rounded-xl">
+        <DialogCardHeader>
+          <Checkbox
+            checked={settings.heatmap.cluster.apply}
+            disabled={!settings.heatmap.transforms.apply}
+            onCheckedChange={(v) => {
+              const newSettings = produce(settings, (draft) => {
+                draft.heatmap.cluster.apply = v
+              })
+
+              updateSettings(newSettings)
+            }}
+          >
+            Clustering
+          </Checkbox>
+        </DialogCardHeader>
 
         <ActionDialogCardContent>
           <ActionDialogRow>
             <Checkbox
-              checked={settings.heatmap.clusterRows}
+              disabled={!settings.heatmap.cluster.apply}
+              checked={settings.heatmap.cluster.rows}
               onCheckedChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
-                  draft.heatmap.clusterRows = v
+                  draft.heatmap.cluster.rows = v
                 })
 
                 updateSettings(newSettings)
@@ -409,10 +450,11 @@ export function HeatMapDialog({
           </ActionDialogRow>
           <ActionDialogRow>
             <Checkbox
-              checked={settings.heatmap.clusterCols}
+              disabled={!settings.heatmap.cluster.apply}
+              checked={settings.heatmap.cluster.cols}
               onCheckedChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
-                  draft.heatmap.clusterCols = v
+                  draft.heatmap.cluster.cols = v
                 })
 
                 updateSettings(newSettings)
@@ -424,11 +466,12 @@ export function HeatMapDialog({
 
           <ActionDialogRow title="Linkage">
             <SelectList
-              value={settings.heatmap.linkage}
+              disabled={!settings.heatmap.cluster.apply}
+              value={settings.heatmap.cluster.linkage}
               onValueChange={(v) => {
                 if (v) {
                   const newSettings = produce(settings, (draft) => {
-                    draft.heatmap.linkage = v as string
+                    draft.heatmap.cluster.linkage = v as string
                   })
 
                   updateSettings(newSettings)
@@ -444,11 +487,12 @@ export function HeatMapDialog({
 
           <ActionDialogRow title="Distance">
             <SelectList
-              value={settings.heatmap.distance}
+              disabled={!settings.heatmap.cluster.apply}
+              value={settings.heatmap.cluster.distance}
               onValueChange={(v) => {
                 if (v) {
                   const newSettings = produce(settings, (draft) => {
-                    draft.heatmap.distance = v as string
+                    draft.heatmap.cluster.distance = v as string
                   })
 
                   updateSettings(newSettings)

@@ -5,6 +5,9 @@ import {
   type ITabIndicatorPos,
 } from './tab-indicator-provider'
 
+const LINE_CLS =
+  'absolute left-0 bottom-0 z-10 bg-app-theme pointer-events-none select-none shrink-0 rounded-full'
+
 /**
  * A horizontal line that can be used to follow the mouse
  * over tabs with animation both moving and resizing to the
@@ -15,7 +18,6 @@ import {
  */
 export function TabIndicatorSelectedH({
   h = 2,
-  color = undefined,
 }: {
   h?: number
   color?: string | undefined
@@ -30,12 +32,13 @@ export function TabIndicatorSelectedH({
 
   const previousSelectedPos = useRef<ITabIndicatorPos | undefined>(undefined)
 
-  const selectedLineRef = useRef<HTMLSpanElement>(null)
+  const selectedLineRef1 = useRef<HTMLSpanElement>(null)
+  const selectedLineRef2 = useRef<HTMLSpanElement>(null)
 
   const selectedTimelineRef = useRef<GSAPTimeline | null>(null)
 
   useEffect(() => {
-    if (!selectedLineRef.current) {
+    if (!selectedLineRef1.current || !selectedLineRef2.current) {
       return
     }
 
@@ -45,19 +48,46 @@ export function TabIndicatorSelectedH({
 
     if (selectedPosition) {
       if (previousSelectedPos.current && (selectedPosition.animate ?? true)) {
+        const fromLeft = previousSelectedPos.current.x < selectedPosition.x
+
+        let x =
+          1.5 *
+          (fromLeft
+            ? (selectedPosition.x as number) - (selectedPosition.w as number)
+            : (selectedPosition.x as number) + (selectedPosition.w as number))
+
+        if (
+          Math.abs(
+            (previousSelectedPos.current.x as number) -
+              (selectedPosition.x as number)
+          ) < Math.abs((x - (selectedPosition.x as number)) as number)
+        ) {
+          x = previousSelectedPos.current.x as number
+        }
+
+        // immediate move to close by to the element so animation
+        // does not have to jump large distances
         selectedTimelineRef.current = gsap
           .timeline()
-          .to(selectedLineRef.current, {
+          .set([selectedLineRef1.current, selectedLineRef2.current], {
+            x,
+            width: selectedPosition.w,
+          })
+
+        selectedTimelineRef.current = gsap
+          .timeline()
+          .to([selectedLineRef1.current, selectedLineRef2.current], {
             x: selectedPosition.x,
             width: selectedPosition.w,
             duration: 0.5,
             scaleX: selectedPosition.scale ?? 1,
+            stagger: 0.1,
             ease: 'power3.out',
           })
       } else {
         selectedTimelineRef.current = gsap
           .timeline()
-          .set(selectedLineRef.current, {
+          .set([selectedLineRef1.current, selectedLineRef2.current], {
             x: selectedPosition.x,
             width: selectedPosition.w,
 
@@ -67,7 +97,7 @@ export function TabIndicatorSelectedH({
     } else {
       selectedTimelineRef.current = gsap
         .timeline()
-        .set(selectedLineRef.current, {
+        .set([selectedLineRef1.current, selectedLineRef2.current], {
           width: 0,
         })
     }
@@ -76,14 +106,21 @@ export function TabIndicatorSelectedH({
   }, [selectedPosition?.x, selectedPosition?.w, selectedPosition?.scale])
 
   return (
-    <span
-      ref={selectedLineRef}
-      className="absolute left-0 bottom-0 z-10 bg-app-theme pointer-events-none select-none"
-
-      style={{
-        height: h,
-        backgroundColor: color,
-      }}
-    />
+    <>
+      <span
+        ref={selectedLineRef1}
+        className={LINE_CLS}
+        style={{
+          height: h,
+        }}
+      />
+      <span
+        ref={selectedLineRef2}
+        className={LINE_CLS}
+        style={{
+          height: h,
+        }}
+      />
+    </>
   )
 }
