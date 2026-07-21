@@ -270,9 +270,9 @@ export function HeatMapDialog({
       //contentVariant="glass"
       //bodyVariant="card"
       leftFooterChildren={<HelpButton url="/help/apps/matcalc/heatmap" />}
-      bodyCls="gap-y-3"
+      bodyCls="gap-y-2"
     >
-      <ActionDialogCard  >
+      <ActionDialogCard>
         <DialogCardHeader>
           <Checkbox
             checked={settings.heatmap.filters.rows.apply}
@@ -351,9 +351,9 @@ export function HeatMapDialog({
         </ActionDialogCardContent>
       </ActionDialogCard>
 
-      <LineSeparator/>
+      <LineSeparator />
 
-      <ActionDialogCard  >
+      <ActionDialogCard>
         <DialogCardHeader>
           <Checkbox
             checked={settings.heatmap.transforms.apply}
@@ -418,9 +418,9 @@ export function HeatMapDialog({
         </ActionDialogCardContent>
       </ActionDialogCard>
 
-      <LineSeparator/>
+      <LineSeparator />
 
-      <ActionDialogCard  >
+      <ActionDialogCard>
         <DialogCardHeader>
           <Checkbox
             checked={settings.heatmap.cluster.apply}

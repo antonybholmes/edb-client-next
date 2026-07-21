@@ -44,7 +44,7 @@ export function PileupPlotSvg({ ref }: ISVGProps) {
   const { settings } = useVariantSettings()
   let { variants: results, dna } = useVariants()
 
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const timeoutRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const [toolTipInfo, setToolTipInfo] = useState<ITooltip | null>(null)
 

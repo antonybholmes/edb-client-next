@@ -68,7 +68,7 @@ export function HeatMapSvg({ ref }: IProps) {
   const innerRef = useRef<SVGSVGElement>(null)
   const setRefs = useMergeRefs(innerRef, ref)
 
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const timeoutRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const tooltipRef = useRef<HTMLDivElement>(null)
   const highlightRef = useRef<HTMLSpanElement>(null)

@@ -92,7 +92,6 @@
 //   //const [scrollLeft, setScrollLeft] = useState(0)
 //   const [visibleRows, setVisibleRows] = useState<number[]>([])
 //   const [visibleCols, setVisibleCols] = useState<number[]>([])
-//   const loopRef = useRef<NodeJS.Timeout>(null) // To store the interval reference
 
 //   //const ignoreScroll = useRef(false)
 //   const [visibleItems, setVisibleItems] = useState<{

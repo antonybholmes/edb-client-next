@@ -517,9 +517,21 @@ input[type='search']::-webkit-search-results-decoration {
 }
 
 .virtual-dataframe-cell[data-num='true'] {
-  justify-content: flex-end;
+  @apply justify-end;
 }
 
 .virtual-dataframe-cell[data-num='false'] {
-  justify-content: flex-start;
+  @apply justify-start;
+}
+
+.virtual-dataframe-row-index {
+  @apply border-border relative z-20 truncate border-r px-2 py-1;
+}
+
+.virtual-dataframe-row-index[data-num='true'] {
+  @apply justify-end;
+}
+
+.virtual-dataframe-row-index[data-num='false'] {
+  @apply justify-start;
 }

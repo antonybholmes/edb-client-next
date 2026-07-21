@@ -26,7 +26,6 @@ function RowIndex({ row }: { row: VirtualItem }) {
     scaledCell,
     dp,
     commas,
-
     tableDataRef,
     rowVirtualizer,
     scrollOffset,
@@ -89,6 +88,7 @@ function RowIndex({ row }: { row: VirtualItem }) {
       style={{
         height: scaledCell.h,
         transform: `translate3d(0, ${row.start - scrollOffset.top}px, 0)`,
+        fontSize,
       }}
     >
       {range(df.rowObs.shape[1]).map((col) => {
@@ -97,12 +97,12 @@ function RowIndex({ row }: { row: VirtualItem }) {
         return (
           <CenterRow
             key={col}
-            className="px-2 py-1 truncate relative z-20 border-border border-r"
+            className="virtual-dataframe-row-index"
             style={{
               width: scaledCell.w,
               height: scaledCell.h,
-              fontSize,
-              justifyContent: df.rowObs.shape[1] > 2 ? 'center' : 'end',
+
+              justifyContent: df.rowObs.shape[1] > 1 ? 'center' : 'end',
               //color: inSelection ? accent : undefined,
             }}
           >

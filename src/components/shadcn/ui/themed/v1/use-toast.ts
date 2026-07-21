@@ -40,7 +40,10 @@ interface State {
   toasts: IToast[]
 }
 
-const toastTimeouts = new Map<string | number, ReturnType<typeof setTimeout>>()
+const toastTimeouts = new Map<
+  string | number,
+  ReturnType<typeof setTimeout> | null
+>()
 
 const addToRemoveQueue = (toastId: string | number) => {
   if (toastTimeouts.has(toastId)) {
@@ -69,7 +72,7 @@ export const reducer = (state: State, action: Action): State => {
     case 'UPDATE_TOAST':
       return {
         ...state,
-        toasts: state.toasts.map(t =>
+        toasts: state.toasts.map((t) =>
           t.id === action.toast.id ? { ...t, ...action.toast } : t
         ),
       }
@@ -82,14 +85,14 @@ export const reducer = (state: State, action: Action): State => {
       if (toastId) {
         addToRemoveQueue(toastId)
       } else {
-        state.toasts.forEach(toast => {
+        state.toasts.forEach((toast) => {
           addToRemoveQueue(toast.id)
         })
       }
 
       return {
         ...state,
-        toasts: state.toasts.map(t =>
+        toasts: state.toasts.map((t) =>
           t.id === toastId || toastId === undefined
             ? {
                 ...t,
@@ -107,7 +110,7 @@ export const reducer = (state: State, action: Action): State => {
       }
       return {
         ...state,
-        toasts: state.toasts.filter(t => t.id !== action.toastId),
+        toasts: state.toasts.filter((t) => t.id !== action.toastId),
       }
   }
 }
@@ -118,7 +121,7 @@ let memoryState: State = { toasts: [] }
 
 export function dispatch(action: Action) {
   memoryState = reducer(memoryState, action)
-  listeners.forEach(listener => {
+  listeners.forEach((listener) => {
     listener(memoryState)
   })
 }

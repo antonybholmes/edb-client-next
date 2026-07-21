@@ -136,7 +136,7 @@ export function TableData() {
 
   useWindowListener('mousedown', handleMouseDown)
 
-  const loopRef = useRef<NodeJS.Timeout>(null) // To store the interval reference
+  const loopRef = useRef<ReturnType<typeof setInterval> | null>(null) // To store the interval reference
   const colIndexes = useMemo(() => range(df.shape[1]), [df.shape[1]])
 
   useEffect(() => {
@@ -348,7 +348,7 @@ export function TableData() {
     document.addEventListener('mouseup', onMouseUp)
   }
 
-  function onDataKeyDown(e: KeyboardEvent | React.KeyboardEvent) {
+  function onDataKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     const d = tableDataRef.current
 
     if (!d) {

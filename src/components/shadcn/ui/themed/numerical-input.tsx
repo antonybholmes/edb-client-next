@@ -52,8 +52,7 @@ export function NumericalInput({
 }: INumericalInputProps) {
   //const _id = id ?? useStableId('numerical-input')
 
-  //const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const timeoutRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // To allow ui to respond to spinner buttons without waiting for debounce,
   // we keep an internal value that updates immediately as user types or clicks
