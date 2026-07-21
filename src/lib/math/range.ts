@@ -56,34 +56,27 @@ export function rangeMap<T>(
   stop?: number,
   step: number = 1
 ): T[] {
-  if (!stop) {
-    if (step > 0) {
-      stop = start
-      start = 0
-    } else {
-      stop = 0
-    }
+  if (stop === undefined) {
+    stop = start
+    start = 0
   }
 
   // step cannot be 0
   if (step === 0) {
-    step = 1
+    throw new Error('step cannot be 0')
   }
-
-  // if (!step) {
-  //   step = 1
-  // }
 
   // we want to end on the index before the stop,
   // e.g. stop = 5 -> [0,1,2,3,4]
 
-  if (step > 0) {
-    --stop
-  } else {
-    ++stop
+  const length = Math.max(0, Math.ceil((stop - start) / step))
+
+  const result = new Array<T>(length)
+
+  for (let i = 0; i < length; i++) {
+    result[i] = f(start)
+    start += step
   }
 
-  return Array.from({ length: Math.floor((stop - start) / step) + 1 }, (_, i) =>
-    f(start + i * step)
-  )
+  return result
 }

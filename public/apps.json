@@ -111,9 +111,9 @@
     "color": "#40bf80",
     "version": "48.6.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-21T16:05:28.425Z",
-    "hash": "56cdb09ef52b0f2501e07f2f1e45d2bd484d116e2c89e47ce3179113ed0bc92a",
-    "build": 1832
+    "modified": "2026-07-21T19:34:53.018Z",
+    "hash": "ee6611c6af11dba1ed295cfffdc13b21aa183efcb91fdde8ebb693c0dd9db249",
+    "build": 1834
   },
   {
     "name": "Motifs",
@@ -220,9 +220,9 @@
     "color": "#FA8072",
     "version": "26.6.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-13T22:21:16.160Z",
-    "hash": "60b9c84f7b0121df0d595ba5e9a133faf57e3fb42d044c7a7190341b0c448398",
-    "build": 1006
+    "modified": "2026-07-21T19:34:53.021Z",
+    "hash": "ddc80ca384c357847597a2359449bec9a30dc66f3b7e19078cd3b3bf13050245",
+    "build": 1008
   },
   {
     "name": "Venn",

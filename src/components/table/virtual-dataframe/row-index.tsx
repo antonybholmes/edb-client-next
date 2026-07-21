@@ -5,7 +5,7 @@ import { CenterRow } from '@/components/layout/center-row'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { cellStr } from '@/lib/dataframe/cell'
 import { DEFAULT_INDEX_NAME } from '@/lib/dataframe/series'
-import { range } from '@/lib/math/range'
+import { rangeMap } from '@/lib/math/range'
 import { cn } from '@/lib/shadcn-utils'
 import { useSelectionRange } from '@/providers/selection-range-provider'
 import type { VirtualItem } from '@tanstack/react-virtual'
@@ -15,9 +15,9 @@ import { useVirtualDataFrameContext } from './virtual-dataframe-provider'
 
 const INDEX_CLS = cn(
   'border-b border-border justify-center overflow-hidden absolute',
-  'data-[in-selection=true]:data-[row-selected=false]:bg-theme/10',
+  'data-[in-selection=true]:data-[row-selected=false]:bg-theme/20',
   'data-[row-selected=true]:bg-theme/50 data-[row-selected=true]:text-white',
-  'data-[row-selected=false]:data-[in-selection=true]:bg-app-theme/10 data-[row-selected=true]:bg-app-theme/80'
+  'data-[row-selected=false]:data-[in-selection=true]:bg-app-theme/20 data-[row-selected=true]:bg-app-theme/80'
 )
 
 function RowIndex({ row }: { row: VirtualItem }) {
@@ -91,7 +91,7 @@ function RowIndex({ row }: { row: VirtualItem }) {
         fontSize,
       }}
     >
-      {range(df.rowObs.shape[1]).map((col) => {
+      {rangeMap((col) => {
         const v = df.rowObs.get(row.index, col)
 
         return (
@@ -109,7 +109,7 @@ function RowIndex({ row }: { row: VirtualItem }) {
             {cellStr(v, { dp, commas })}
           </CenterRow>
         )
-      })}
+      }, df.rowObs.shape[1])}
 
       {/* {inSelection && (
         <span

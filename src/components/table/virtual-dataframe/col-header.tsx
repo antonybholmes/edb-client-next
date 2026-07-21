@@ -4,7 +4,7 @@ import { CenterRow } from '@/components/layout/center-row'
 import { HCenterCol } from '@/components/layout/h-center-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { cellStr } from '@/lib/dataframe/cell'
-import { range } from '@/lib/math/range'
+import { rangeMap } from '@/lib/math/range'
 import { cn } from '@/lib/shadcn-utils'
 import { useSelectionRange } from '@/providers/selection-range-provider'
 import type { VirtualItem } from '@tanstack/react-virtual'
@@ -18,7 +18,7 @@ const MIN_CELL_WIDTH = 25
 const HEADER_CLS = cn(
   'border-border border-r justify-center absolute',
   'data-[col-selected=true]:text-white',
-  'data-[col-selected=false]:data-[in-selection=true]:bg-app-theme/10 data-[col-selected=true]:bg-app-theme/80'
+  'data-[col-selected=false]:data-[in-selection=true]:bg-app-theme/20 data-[col-selected=true]:bg-app-theme/80'
 )
 
 const RESIZE_CLS = `absolute w-2 top-0 right-0 bottom-0 cursor-col-resize 
@@ -128,8 +128,6 @@ export function ColHeader({ col }: { col: VirtualItem }) {
       document.removeEventListener('mouseup', onMouseUp)
     }
 
-    //document.body.style.cursor = 'col-resize'
-
     // Add event listeners for mousemove and mouseup
     document.addEventListener('mousemove', onMouseMove)
     document.addEventListener('mouseup', onMouseUp)
@@ -162,11 +160,7 @@ export function ColHeader({ col }: { col: VirtualItem }) {
       }}
       onMouseDown={() => handleHeaderMouseDown(col.index)}
     >
-      {range(df.colVars.shape[1]).map((metaDataCol) => {
-        // const v = (df.colMetaData as DataFrame)._data[col.index]![
-        //   metaDataCol
-        // ]!
-
+      {rangeMap((metaDataCol) => {
         const v = df.colVars.get(col.index, metaDataCol)
 
         return (
@@ -181,7 +175,7 @@ export function ColHeader({ col }: { col: VirtualItem }) {
             {cellStr(v)}
           </CenterRow>
         )
-      })}
+      }, df.colVars.shape[1])}
 
       <VCenterRow
         className={RESIZE_CLS}

@@ -266,9 +266,6 @@ export function HeatMapDialog({
           makeCluster()
         }
       }}
-      //className="w-3/4 md:w-1/2 lg:w-1/3 3xl:w-1/4"
-      //contentVariant="glass"
-      //bodyVariant="card"
       leftFooterChildren={<HelpButton url="/help/apps/matcalc/heatmap" />}
       bodyCls="gap-y-2"
     >

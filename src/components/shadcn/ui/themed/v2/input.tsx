@@ -14,12 +14,12 @@ import {
   type ReactNode,
 } from 'react'
 
-export const PLACEHOLDER_CLS = cn(
+export const CONTAINER_CLS = cn(
   'min-w-0 flex flex-row items-center',
-  'disabled:cursor-not-allowed data-[readonly=true]:bg-muted/40 overflow-hidden'
+  'disabled:cursor-not-allowed data-[readonly=true]:bg-muted/30 overflow-hidden'
 )
 
-export const inputVariants = cva(PLACEHOLDER_CLS, {
+export const inputVariants = cva(CONTAINER_CLS, {
   variants: {
     variant: {
       default: 'bg-background border border-border/60 hover:border-border px-2',
@@ -87,8 +87,8 @@ export const inputVariants = cva(PLACEHOLDER_CLS, {
 })
 
 export const INPUT_CLS = cn(
-  'disabled:cursor-not-allowed disabled:opacity-50 read-only:opacity-50 placeholder:opacity-60',
-  'outline-hidden border-none ring-none min-w-0 grow'
+  'disabled:cursor-not-allowed disabled:opacity-50 placeholder:opacity-60',
+  'outline-hidden border-none ring-none min-w-0 grow read-only:opacity-50'
 )
 
 export interface IPlaceholderProps extends IDivProps {
@@ -106,6 +106,7 @@ export interface IInputProps
     VariantProps<typeof inputVariants> {
   error?: boolean
   inputCls?: string
+
   inputStyle?: CSSProperties
   leftChildren?: ReactNode
   rightChildren?: ReactNode
@@ -138,6 +139,7 @@ export function Input({
   rounded = 'theme',
   disabled,
   readOnly = false,
+
   onChange,
   onTextChange,
   onTextChanged,
@@ -205,6 +207,7 @@ export function Input({
             onTextChanged?.(e.currentTarget.value)
           }
         }}
+        defaultValue={'dsdd'}
         {...props}
       />
 

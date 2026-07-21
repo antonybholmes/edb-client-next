@@ -1,5 +1,5 @@
 import { useExtScrollContext } from '@/components/ext-scroll-card/ext-scroll-provider'
-import { CenterRow } from '@/components/layout/center-row'
+import { VCenterRow } from '@/components/layout/v-center-row'
 import { useWindowListener } from '@/hooks/window-listener'
 import type { ICell } from '@/interfaces/cell'
 import { cellStr } from '@/lib/dataframe/cell'
@@ -552,7 +552,7 @@ export function TableData() {
           }
 
           return (
-            <CenterRow
+            <VCenterRow
               data-highlight={highlight}
               data-num={isNum}
               className="virtual-dataframe-cell data-[highlight=true]:bg-app-theme/10"
@@ -560,7 +560,7 @@ export function TableData() {
               style={style}
             >
               {cellStr(v, { dp, commas })}
-            </CenterRow>
+            </VCenterRow>
           )
         })
       })}

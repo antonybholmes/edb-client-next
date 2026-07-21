@@ -123,7 +123,9 @@ function VirtualDataFrameContent({ editable = false }: IVirtualDataFrameProps) {
           id="cell-address"
           value={selText}
           w="sm"
-          className="rounded-theme"
+          // Make background consistent with the table cells for
+          // a more Excel like look instead of graying it out
+          className="bg-background!"
           readOnly
           aria-label="Cell address"
         />
