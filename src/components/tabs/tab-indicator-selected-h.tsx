@@ -38,7 +38,11 @@ export function TabIndicatorSelectedH({
   const selectedTimelineRef = useRef<GSAPTimeline | null>(null)
 
   useEffect(() => {
-    if (!selectedLineRef1.current || !selectedLineRef2.current) {
+    if (
+      !selectedLineRef1.current ||
+      !selectedLineRef2.current ||
+      !selectedPosition
+    ) {
       return
     }
 
@@ -46,59 +50,49 @@ export function TabIndicatorSelectedH({
       selectedTimelineRef.current.kill()
     }
 
-    if (selectedPosition) {
-      if (previousSelectedPos.current && (selectedPosition.animate ?? true)) {
-        const fromLeft = previousSelectedPos.current.x < selectedPosition.x
+    if (previousSelectedPos.current) {
+      const fromLeft = previousSelectedPos.current.x < selectedPosition.x
 
-        let x =
-          1.5 *
-          (fromLeft
-            ? (selectedPosition.x as number) - (selectedPosition.w as number)
-            : (selectedPosition.x as number) + (selectedPosition.w as number))
+      let x = fromLeft
+        ? (selectedPosition.x as number) - 1.5 * (selectedPosition.w as number)
+        : (selectedPosition.x as number) + 1.5 * (selectedPosition.w as number)
 
-        if (
-          Math.abs(
-            (previousSelectedPos.current.x as number) -
-              (selectedPosition.x as number)
-          ) < Math.abs((x - (selectedPosition.x as number)) as number)
-        ) {
-          x = previousSelectedPos.current.x as number
-        }
-
-        // immediate move to close by to the element so animation
-        // does not have to jump large distances
-        selectedTimelineRef.current = gsap
-          .timeline()
-          .set([selectedLineRef1.current, selectedLineRef2.current], {
-            x,
-            width: selectedPosition.w,
-          })
-
-        selectedTimelineRef.current = gsap
-          .timeline()
-          .to([selectedLineRef1.current, selectedLineRef2.current], {
-            x: selectedPosition.x,
-            width: selectedPosition.w,
-            duration: 0.5,
-            scaleX: selectedPosition.scale ?? 1,
-            stagger: 0.1,
-            ease: 'power3.out',
-          })
-      } else {
-        selectedTimelineRef.current = gsap
-          .timeline()
-          .set([selectedLineRef1.current, selectedLineRef2.current], {
-            x: selectedPosition.x,
-            width: selectedPosition.w,
-
-            scaleX: selectedPosition.scale ?? 1,
-          })
+      if (
+        Math.abs(
+          (previousSelectedPos.current.x as number) -
+            (selectedPosition.x as number)
+        ) < Math.abs((x - (selectedPosition.x as number)) as number)
+      ) {
+        x = previousSelectedPos.current.x as number
       }
+
+      // immediate move to close by to the element so animation
+      // does not have to jump large distances
+      selectedTimelineRef.current = gsap
+        .timeline()
+        .set([selectedLineRef1.current, selectedLineRef2.current], {
+          x,
+          width: selectedPosition.w,
+        })
+
+      selectedTimelineRef.current = gsap
+        .timeline()
+        .to([selectedLineRef1.current, selectedLineRef2.current], {
+          x: selectedPosition.x,
+          width: selectedPosition.w,
+          duration: 0.5,
+          scaleX: selectedPosition.scale ?? 1,
+          stagger: 0.1,
+          ease: 'power2.out',
+        })
     } else {
       selectedTimelineRef.current = gsap
         .timeline()
         .set([selectedLineRef1.current, selectedLineRef2.current], {
-          width: 0,
+          x: selectedPosition.x,
+          width: selectedPosition.w,
+
+          scaleX: selectedPosition.scale ?? 1,
         })
     }
 

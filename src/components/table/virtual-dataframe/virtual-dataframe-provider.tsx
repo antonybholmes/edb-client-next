@@ -9,7 +9,9 @@ import {
   DATAFRAME_100x26,
   type AnnotationDataFrame,
 } from '@/lib/dataframe/annotation-dataframe'
+import { cellStr } from '@/lib/dataframe/cell'
 import { range } from '@/lib/math/range'
+import { useSelectionRange } from '@/providers/selection-range-provider'
 import { useVirtualizer, Virtualizer } from '@tanstack/react-virtual'
 import {
   createContext,
@@ -48,6 +50,7 @@ interface VirtualDataFrameContextProps {
   getColX: (col: number) => { x: number; w: number }
   getColWidth: (index: number) => number
   setColWidth: (index: number, width: number) => void
+  copyToClipboard: () => void
 }
 
 const VirtualDataFrameContext = createContext<VirtualDataFrameContextProps>({
@@ -75,6 +78,7 @@ const VirtualDataFrameContext = createContext<VirtualDataFrameContextProps>({
   getColX: () => ({ x: 0, w: 0 }),
   getColWidth: () => 0,
   setColWidth: () => {},
+  copyToClipboard: () => {},
 })
 
 export function useVirtualDataFrameContext() {
@@ -110,6 +114,8 @@ export function VirtualDataFrameProvider({
     useExtScrollContext()
 
   const [colWidths, setColWidths] = useState<Record<number, number>>({})
+
+  const { selection, clear: clearSelection } = useSelectionRange()
 
   const tableDataRef = useRef<HTMLDivElement>(null)
   const editRef = useRef<HTMLInputElement | null>(null)
@@ -165,6 +171,40 @@ export function VirtualDataFrameProvider({
     return {
       x: range(col).reduce((a, b) => a + getColWidth(b), 0),
       w: getColWidth(col),
+    }
+  }
+
+  function copyToClipboard() {
+    if (selection) {
+      const cols = selection.cols
+        ? range(selection.cols.start, selection.cols.end + 1)
+        : range(df.shape[1])
+      const indexCols = range(df.rowObs.columns.length)
+      const rows = selection.rows
+        ? range(selection.rows.start, selection.rows.end + 1)
+        : range(df.shape[0])
+
+      // first the headings
+      const out: string[][] = [
+        [...df.rowObs.columns, ...cols.map((col) => df.columns[col]!)],
+
+        // now add the selected rows
+        ...rows.map((row) => [
+          ...indexCols.map((col) =>
+            cellStr(df.rowObs.get(row, col), { dp, commas })
+          ),
+          ...cols.map((col) =>
+            cellStr(df.get(row, col), {
+              dp,
+              commas,
+            })
+          ),
+        ]),
+      ]
+
+      const s = out.map((r) => r.join('\t')).join('\n')
+
+      navigator.clipboard.writeText(s)
     }
   }
 
@@ -238,6 +278,7 @@ export function VirtualDataFrameProvider({
         setColWidth,
         getColX,
         getColWidth,
+        copyToClipboard,
       }}
     >
       {children}

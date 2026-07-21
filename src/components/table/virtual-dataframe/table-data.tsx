@@ -91,7 +91,7 @@ function SelectionRect({
           height: selectionPos.h + 2,
           //borderColor: accent,
         }}
-        className="border-2 border-app-theme absolute z-20"
+        className="border-2 border-app-theme absolute z-20 pointer-events-none"
       />
       <span
         id="cell-selection-rect"
@@ -137,7 +137,7 @@ export function TableData() {
   useWindowListener('mousedown', handleMouseDown)
 
   const loopRef = useRef<NodeJS.Timeout>(null) // To store the interval reference
-  const colIndexes = useMemo(() => range(df.shape[1]), [df])
+  const colIndexes = useMemo(() => range(df.shape[1]), [df.shape[1]])
 
   useEffect(() => {
     if (currentCell) {
@@ -491,7 +491,7 @@ export function TableData() {
         row: Math.max(
           0,
           Math.min(
-            df.shape[1],
+            df.shape[0],
             currentCell.row < df.shape[0] - 1
               ? currentCell.row + 1
               : currentCell.row - 1
@@ -516,7 +516,7 @@ export function TableData() {
       id="table-data"
       className="relative grow overflow-hidden bg-background outline-none"
       ref={tableDataRef}
- 
+
       onKeyDown={onDataKeyDown}
       onWheel={(e) => {
         if (vScrollRef.current) {
@@ -524,6 +524,9 @@ export function TableData() {
         }
       }}
       tabIndex={0}
+      style={{
+        fontSize,
+      }}
     >
       {rowVirtualizer.getVirtualItems().map((row) => {
         const ry = row.start - scrollOffset.top
@@ -542,18 +545,19 @@ export function TableData() {
             currentCell
           )
 
+          const style = {
+            transform: `translate3d(${rx}px, ${ry}px, 0)`,
+            width: col.size,
+            height: scaledCell.h,
+          }
+
           return (
             <CenterRow
               data-highlight={highlight}
-              className="border-border border-b border-r select-none overflow-hidden truncate px-2 py-1 absolute data-[highlight=true]:bg-app-theme/10"
+              data-num={isNum}
+              className="virtual-dataframe-cell data-[highlight=true]:bg-app-theme/10"
               key={`${row.key}:${col.key}`}
-              style={{
-                transform: `translate3d(${rx}px, ${ry}px, 0)`,
-                width: col.size,
-                height: scaledCell.h,
-                fontSize,
-                justifyContent: isNum ? 'end' : 'start',
-              }}
+              style={style}
             >
               {cellStr(v, { dp, commas })}
             </CenterRow>
@@ -589,7 +593,7 @@ export function TableData() {
             e.stopPropagation()
           }}
           onKeyDown={handleCellKeyDown}
- 
+
           ref={editRef}
         />
       )}

@@ -42,6 +42,7 @@ import {
   ActionDialogRow,
 } from '@/components/dialogs/card/action-dialog-card'
 import { DialogCardHeader } from '@/components/dialogs/card/dialog-card'
+import { LineSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import {
   useCurrentGroups,
   useCurrentSheets,
@@ -271,7 +272,7 @@ export function HeatMapDialog({
       leftFooterChildren={<HelpButton url="/help/apps/matcalc/heatmap" />}
       bodyCls="gap-y-3"
     >
-      <ActionDialogCard className="bg-muted/25 p-3 rounded-xl">
+      <ActionDialogCard  >
         <DialogCardHeader>
           <Checkbox
             checked={settings.heatmap.filters.rows.apply}
@@ -350,7 +351,9 @@ export function HeatMapDialog({
         </ActionDialogCardContent>
       </ActionDialogCard>
 
-      <ActionDialogCard className="bg-muted/25 p-3 rounded-xl">
+      <LineSeparator/>
+
+      <ActionDialogCard  >
         <DialogCardHeader>
           <Checkbox
             checked={settings.heatmap.transforms.apply}
@@ -415,7 +418,9 @@ export function HeatMapDialog({
         </ActionDialogCardContent>
       </ActionDialogCard>
 
-      <ActionDialogCard className="bg-muted/25 p-3 rounded-xl">
+      <LineSeparator/>
+
+      <ActionDialogCard  >
         <DialogCardHeader>
           <Checkbox
             checked={settings.heatmap.cluster.apply}

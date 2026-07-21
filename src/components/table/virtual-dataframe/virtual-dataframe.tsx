@@ -5,9 +5,7 @@ import {
 } from '@/components/ext-scroll-card/ext-scrollbars'
 import type { IDim } from '@/interfaces/dim'
 import { type AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { cellStr } from '@/lib/dataframe/cell'
-import { range } from '@/lib/math/range'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useSelectionRange } from '../../../providers/selection-range-provider'
 import { BaseCol } from '../../layout/base-col'
 import { BaseRow } from '../../layout/base-row'
@@ -42,18 +40,23 @@ interface IVirtualDataFrameProps {
   commas?: boolean | undefined
 }
 
-function _VirtualDataFrame({ editable = false }: IVirtualDataFrameProps) {
+function VirtualDataFrameContent({ editable = false }: IVirtualDataFrameProps) {
   const tableRef = useRef<HTMLDivElement>(null)
 
-  const { selection, clear: clearSelection } = useSelectionRange()
+  const { clear: clearSelection } = useSelectionRange()
 
-  const [selText, setSelectedCellRefText] = useState('')
+  //const [selText, setSelectedCellRefText] = useState('')
 
-  const { df, dp, commas, scaledCell } = useVirtualDataFrameContext()
+  const { df, scaledCell, copyToClipboard } = useVirtualDataFrameContext()
 
   const { currentCell } = useSelectionContext()
 
   const { editText, onEditChange, onEditKeyDown } = useEditContext()
+
+  const selText = useMemo(() => {
+    if (!currentCell) return ''
+    return `${currentCell.row + 1}R x ${currentCell.col + 1}C`
+  }, [currentCell, df.id])
 
   // keep track of the offset that the components should
   // be moved to. We use this to calculate where on the
@@ -82,55 +85,25 @@ function _VirtualDataFrame({ editable = false }: IVirtualDataFrameProps) {
     clearSelection()
   }, [df.id])
 
-  useEffect(() => {
-    if (currentCell) {
-      setSelectedCellRefText(
-        `${currentCell.row + 1}R x ${currentCell.col + 1}C`
-      )
-    } else {
-      setSelectedCellRefText('')
-    }
-  }, [currentCell, df, dp, commas])
+  // useEffect(() => {
+  //   if (currentCell) {
+  //     setSelectedCellRefText(
+  //       `${currentCell.row + 1}R x ${currentCell.col + 1}C`
+  //     )
+  //   } else {
+  //     setSelectedCellRefText('')
+  //   }
+  // }, [currentCell])
 
   // useEffect(() => {
   //   selectionRef.current = selection
   // }, [selection])
 
-  function onKeyDown(e: KeyboardEvent | React.KeyboardEvent) {
+  function onKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     switch (e.code) {
       case 'KeyC':
-        if (e.ctrlKey) {
-          if (selection) {
-            const cols = selection.cols
-              ? range(selection.cols.start, selection.cols.end + 1)
-              : range(df.shape[1])
-            const indexCols = range(df.rowObs.columns.length)
-            const rows = selection.rows
-              ? range(selection.rows.start, selection.rows.end + 1)
-              : range(df.shape[0])
-
-            // first the headings
-            const out: string[][] = [
-              [...df.rowObs.columns, ...cols.map((col) => df.columns[col]!)],
-
-              // now add the selected rows
-              ...rows.map((row) => [
-                ...indexCols.map((col) =>
-                  cellStr(df.rowObs.get(row, col), { dp, commas })
-                ),
-                ...cols.map((col) =>
-                  cellStr(df.get(row, col), {
-                    dp,
-                    commas,
-                  })
-                ),
-              ]),
-            ]
-
-            const s = out.map((r) => r.join('\t')).join('\n')
-
-            navigator.clipboard.writeText(s)
-          }
+        if (e.ctrlKey || e.metaKey) {
+          copyToClipboard()
         }
         break
     }
@@ -151,7 +124,7 @@ function _VirtualDataFrame({ editable = false }: IVirtualDataFrameProps) {
           value={selText}
           w="sm"
           className="rounded-theme"
-          //readOnly
+          readOnly
           aria-label="Cell address"
         />
         <label htmlFor="cell-edit-input" className="sr-only">
@@ -223,7 +196,7 @@ export function VirtualDataFrame({
       >
         <SelectionProvider>
           <EditProvider>
-            <_VirtualDataFrame df={df} />
+            <VirtualDataFrameContent df={df} />
           </EditProvider>
         </SelectionProvider>
       </VirtualDataFrameProvider>

@@ -509,3 +509,17 @@ input[type='search']::-webkit-search-results-decoration {
     @apply bg-background text-foreground;
   }
 }
+
+/* For dataframe cells */
+
+.virtual-dataframe-cell {
+  @apply border-border absolute truncate overflow-hidden border-r border-b px-2 py-1 select-none;
+}
+
+.virtual-dataframe-cell[data-num='true'] {
+  justify-content: flex-end;
+}
+
+.virtual-dataframe-cell[data-num='false'] {
+  justify-content: flex-start;
+}

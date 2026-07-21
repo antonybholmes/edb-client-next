@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Refined tab selector animations. Refined virtual dataframe rendering.
 - Gex now uses toggles to select datasets since radio buttons look ugly and dated most of the time.
 - Gene expression now uses collapse tree.
 - Improved parsing of clinical data for oncoplots.

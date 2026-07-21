@@ -2219,6 +2219,10 @@
         {
           "msg": "Gex now uses toggles to select datasets since radio buttons look ugly and dated most of the time.",
           "date": "2026-07-17T22:13:50.362Z"
+        },
+        {
+          "msg": "Refined tab selector animations. Refined virtual dataframe rendering",
+          "date": "2026-07-21T16:05:29.404Z"
         }
       ]
     },

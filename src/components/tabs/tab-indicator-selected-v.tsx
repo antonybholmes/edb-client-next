@@ -32,7 +32,11 @@ export function TabIndicatorSelectedV({ w = 2 }: { w?: number }) {
   const selectedTimelineRef = useRef<GSAPTimeline | null>(null)
 
   useEffect(() => {
-    if (!selectedLineRef1.current || !selectedPosition) {
+    if (
+      !selectedLineRef1.current ||
+      !selectedLineRef2.current ||
+      !selectedPosition
+    ) {
       return
     }
 
@@ -40,19 +44,51 @@ export function TabIndicatorSelectedV({ w = 2 }: { w?: number }) {
       selectedTimelineRef.current.kill()
     }
 
-    selectedTimelineRef.current = gsap
-      .timeline()
-      .to([selectedLineRef1.current, selectedLineRef2.current], {
-        y: selectedPosition.y,
-        height: selectedPosition.h,
-        duration: 0.5,
-        scaleY: selectedPosition.scale || 1,
-        stagger: 0.1,
-        ease: 'power2.out',
-      })
+    if (previousSelectedPos.current) {
+      const fromTop = previousSelectedPos.current.y < selectedPosition.y
+
+      let y = fromTop
+        ? (selectedPosition.y as number) - 1.5 * (selectedPosition.h as number)
+        : (selectedPosition.y as number) + 1.5 * (selectedPosition.h as number)
+
+      if (
+        Math.abs(
+          (previousSelectedPos.current.y as number) -
+            (selectedPosition.y as number)
+        ) < Math.abs((y - (selectedPosition.y as number)) as number)
+      ) {
+        y = previousSelectedPos.current.y as number
+      }
+
+      selectedTimelineRef.current = gsap
+        .timeline()
+        .set([selectedLineRef1.current, selectedLineRef2.current], {
+          y,
+          height: selectedPosition.h,
+        })
+
+      selectedTimelineRef.current = gsap
+        .timeline()
+        .to([selectedLineRef1.current, selectedLineRef2.current], {
+          y: selectedPosition.y,
+          height: selectedPosition.h,
+          duration: 0.5,
+          scaleY: selectedPosition.scale || 1,
+          stagger: 0.1,
+          ease: 'power2.out',
+        })
+    } else {
+      selectedTimelineRef.current = gsap
+        .timeline()
+        .set([selectedLineRef1.current, selectedLineRef2.current], {
+          y: selectedPosition.y,
+          height: selectedPosition.h,
+          scaleY: selectedPosition.scale ?? 1,
+        })
+    }
 
     previousSelectedPos.current = selectedPosition
-  }, [selectedPosition])
+  }, [selectedPosition?.y, selectedPosition?.h, selectedPosition?.scale])
 
   return (
     <>
