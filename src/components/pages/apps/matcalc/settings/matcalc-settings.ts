@@ -7,7 +7,7 @@ import APP_INFO from '../manifest.json'
 import type { Species } from '@/lib/gene/geneconv'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v64`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v68`
 
 export interface IMatcalcSettings {
   dot: { size: { useOriginalValuesForSizes: boolean } }
@@ -80,21 +80,22 @@ export interface IMatcalcSettings {
     log2FC: boolean
     log10P: boolean
   }
-  openFile: {
-    trimWhitespace: boolean
-    skipRows: number
-    firstRowIsHeader: boolean
+  files: {
+    open: {
+      trimWhitespace: boolean
+      skipRows: number
+      firstRowIsHeader: boolean
 
-    index: {
-      hasIndex: boolean
-      cols: number
+      index: {
+        hasIndex: boolean
+        cols: number
+      }
+      delimiter: HumanReadableDelimiter
+      keepDefaultNA: boolean
+      // whether to show multiple files when opened
+      multiFileView: boolean
     }
-    delimiter: HumanReadableDelimiter
-    keepDefaultNA: boolean
-    // whether to show multiple files when opened
-    multiFileView: boolean
   }
-
   view: {
     dp: number
     commas: boolean
@@ -155,18 +156,20 @@ export const DEFAULT_SETTINGS: IMatcalcSettings = {
     log10P: true,
     log2FC: false,
   },
-  openFile: {
-    firstRowIsHeader: true,
+  files: {
+    open: {
+      firstRowIsHeader: true,
 
-    delimiter: '<tab>',
-    keepDefaultNA: false,
-    index: {
-      hasIndex: true,
-      cols: 1,
+      delimiter: '<tab>',
+      keepDefaultNA: false,
+      index: {
+        hasIndex: true,
+        cols: 1,
+      },
+      skipRows: 0,
+      multiFileView: true,
+      trimWhitespace: true,
     },
-    skipRows: 0,
-    multiFileView: true,
-    trimWhitespace: true,
   },
 
   sidebar: {

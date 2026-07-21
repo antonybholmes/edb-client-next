@@ -9,7 +9,10 @@ export function DialogCardInfo({
   ...props
 }: ComponentProps<'span'>) {
   return (
-    <span className={cn('text-xs text-alt-foreground', className)} {...props}>
+    <span
+      className={cn('text-xs text-alt-foreground font-normal', className)}
+      {...props}
+    >
       {children}
     </span>
   )

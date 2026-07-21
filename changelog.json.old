@@ -2223,6 +2223,10 @@
         {
           "msg": "Refined tab selector animations. Refined virtual dataframe rendering",
           "date": "2026-07-21T16:05:29.404Z"
+        },
+        {
+          "msg": "Import table dialog updated",
+          "date": "2026-07-21T19:34:53.977Z"
         }
       ]
     },

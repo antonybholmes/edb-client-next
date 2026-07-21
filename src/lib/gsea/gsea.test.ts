@@ -1,3 +1,5 @@
+import { describe, expect, it, vi } from 'vitest'
+
 vi.mock('../math/shuffle', () => ({
   fisherYatesShuffle: <T>(arr: T[]) => [...arr],
 }))

@@ -41,13 +41,11 @@ export function OpenTableDialog({ files, openFiles, onCancel }: IProps) {
     if (files.length > 0) {
       const file = files[0]!
 
-      updateSettings({
-        ...settings,
-        openFile: {
-          ...settings.openFile,
-          delimiter: getHumanReadableDelimiter(file),
-        },
-      })
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.files.open.delimiter = getHumanReadableDelimiter(file)
+        })
+      )
     }
   }, [files])
 
@@ -59,16 +57,16 @@ export function OpenTableDialog({ files, openFiles, onCancel }: IProps) {
       onResponse={(resp) => {
         if (resp === TEXT_OK) {
           openFiles(files, {
-            colNames: settings.openFile.firstRowIsHeader ? 1 : 0,
-            indexCols: settings.openFile.index.hasIndex
-              ? settings.openFile.index.cols
+            colNames: settings.files.open.firstRowIsHeader ? 1 : 0,
+            indexCols: settings.files.open.index.hasIndex
+              ? settings.files.open.index.cols
               : 0,
-            skipRows: settings.openFile.skipRows,
+            skipRows: settings.files.open.skipRows,
             delimiter: humanReadableDelimiterToDelimiter(
-              parseHumanReadableDelimiter(settings.openFile.delimiter)
+              parseHumanReadableDelimiter(settings.files.open.delimiter)
             ),
-            trimWhitespace: settings.openFile.trimWhitespace,
-            keepDefaultNA: settings.openFile.keepDefaultNA,
+            trimWhitespace: settings.files.open.trimWhitespace,
+            keepDefaultNA: settings.files.open.keepDefaultNA,
           })
         } else {
           onCancel()
@@ -82,33 +80,33 @@ export function OpenTableDialog({ files, openFiles, onCancel }: IProps) {
         </ActionDialogRow>
         <ActionCheckRow
           title="Header"
-          checked={settings.openFile.firstRowIsHeader}
+          checked={settings.files.open.firstRowIsHeader}
           onCheckedChange={(v) => {
             const newSettings = produce(settings, (draft) => {
-              draft.openFile.firstRowIsHeader = v
+              draft.files.open.firstRowIsHeader = v
             })
             updateSettings(newSettings)
           }}
         />
         <ActionCheckRow
           title="Row index"
-          checked={settings.openFile.index.hasIndex}
+          checked={settings.files.open.index.hasIndex}
           onCheckedChange={(v) => {
             const newSettings = produce(settings, (draft) => {
-              draft.openFile.index.hasIndex = v
+              draft.files.open.index.hasIndex = v
             })
             updateSettings(newSettings)
           }}
           justify="start"
         >
           <NumericalInput
-            value={settings.openFile.index.cols}
-            disabled={!settings.openFile.index.hasIndex}
+            value={settings.files.open.index.cols}
+            disabled={!settings.files.open.index.hasIndex}
             placeholder="Columns..."
             className="w-16 rounded-theme"
             onNumChange={(v) => {
               const newSettings = produce(settings, (draft) => {
-                draft.openFile.index.cols = v
+                draft.files.open.index.cols = v
               })
 
               updateSettings(newSettings)
@@ -120,13 +118,13 @@ export function OpenTableDialog({ files, openFiles, onCancel }: IProps) {
         <ActionDialogRow className="gap-x-2" title="Skip">
           <VCenterRow className="w-28 gap-x-2">
             <NumericalInput
-              value={settings.openFile.skipRows}
+              value={settings.files.open.skipRows}
               limit={[0, 1000]}
               placeholder="Rows..."
               className="w-16 rounded-theme"
               onNumChange={(v) => {
                 const newSettings = produce(settings, (draft) => {
-                  draft.openFile.skipRows = v
+                  draft.files.open.skipRows = v
                 })
 
                 updateSettings(newSettings)
@@ -152,10 +150,10 @@ export function OpenTableDialog({ files, openFiles, onCancel }: IProps) {
             /> */}
 
           <Select
-            defaultValue={settings.openFile.delimiter}
+            defaultValue={settings.files.open.delimiter}
             onValueChange={(v) => {
               const newSettings = produce(settings, (draft) => {
-                draft.openFile.delimiter = v as HumanReadableDelimiter
+                draft.files.open.delimiter = v as HumanReadableDelimiter
               })
               updateSettings(newSettings)
             }}
@@ -174,10 +172,10 @@ export function OpenTableDialog({ files, openFiles, onCancel }: IProps) {
         <ActionCheckRow
           title="Trim spaces"
           tooltip="If enabled, leading and trailing whitespace will be removed from each cell."
-          checked={settings.openFile.trimWhitespace}
+          checked={settings.files.open.trimWhitespace}
           onCheckedChange={(v) => {
             const newSettings = produce(settings, (draft) => {
-              draft.openFile.trimWhitespace = v
+              draft.files.open.trimWhitespace = v
             })
             updateSettings(newSettings)
           }}
@@ -185,10 +183,10 @@ export function OpenTableDialog({ files, openFiles, onCancel }: IProps) {
 
         <ActionCheckRow
           title="Keep default NA"
-          checked={settings.openFile.keepDefaultNA}
+          checked={settings.files.open.keepDefaultNA}
           onCheckedChange={(v) => {
             const newSettings = produce(settings, (draft) => {
-              draft.openFile.keepDefaultNA = v
+              draft.files.open.keepDefaultNA = v
             })
             updateSettings(newSettings)
           }}

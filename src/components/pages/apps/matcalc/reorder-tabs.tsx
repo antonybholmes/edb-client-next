@@ -6,7 +6,7 @@ import { getTabName } from '../../../tabs/tab-provider'
 
 import { useIsMounted } from '@/hooks/mounted'
 import { IChildrenProps } from '@/interfaces/children-props'
-import { type NullStr } from '@/lib/text/text'
+import { truncate, type NullStr } from '@/lib/text/text'
 import { DndContext } from '@dnd-kit/core'
 import { restrictToHorizontalAxis } from '@dnd-kit/modifiers'
 import {
@@ -125,6 +125,8 @@ function SheetItem({
     initial.current = false
   }, [ref.current, labelRef.current, hover])
 
+  const label = truncate(name, { length: 16 })
+
   let content: ReactNode = (
     <BaseSortableItem as="div" key={sheet.id} id={sheet.id}>
       <TabsTrigger
@@ -153,14 +155,14 @@ function SheetItem({
         <span
           ref={labelRef}
           data-checked={checked}
-          aria-label={name}
+          aria-label={label}
           className={UNDERLINE_LABEL_CLS}
           // ref={(el) => {
           //   itemsRef.current.set(sheet.id, el!)
           // }}
           title={name}
         >
-          {name}
+          {label}
         </span>
       </TabsTrigger>
       {checked && (
@@ -208,12 +210,9 @@ interface IProps
 
 export function ReorderTabs({
   variant,
-  className,
   menuCallback = () => {},
   menuActions = [],
-
   allowReorder = true,
-  children,
 }: IProps) {
   const { goto, reorderSheets } = useHistory()
   const { file } = useFiles()

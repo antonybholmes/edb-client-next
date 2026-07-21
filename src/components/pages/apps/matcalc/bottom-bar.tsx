@@ -78,7 +78,6 @@ export function BottomBar({
           <ToolbarIconButton
             title="Next Sheet"
             size="icon-sm"
-            //rounded="full"
             onClick={() => {
               const selectedTabIndex = sheets
                 .map((t, ti) => ({ tab: t, index: ti }))

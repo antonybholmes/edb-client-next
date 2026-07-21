@@ -22,7 +22,7 @@ export function useOpenFiles() {
       onSuccess: (tables) => {
         if (tables.length > 0) {
           openFile(tables[0]!.name, {
-            mode: settings.openFile.multiFileView ? 'append' : 'set',
+            mode: settings.files.open.multiFileView ? 'append' : 'set',
             sheets: tables,
           })
         }
