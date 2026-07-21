@@ -30,6 +30,7 @@ export function ThemeProvider({ children }: IChildrenProps) {
     const isDark =
       theme === 'dark' ||
       (theme === 'automatic' &&
+        window &&
         window.matchMedia('(prefers-color-scheme: dark)').matches)
 
     document.documentElement.dataset.theme = theme
