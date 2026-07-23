@@ -1,38 +1,25 @@
 import { type IClusterGroup } from '@/lib/cluster-group'
 
-import {
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
-
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { SIMPLE_COLOR_EXT_CLS } from '@/components/plot/color-picker-popover'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { SortableItem } from '@/components/sortable-item'
 import { VScrollPanel } from '@/components/v-scroll-panel'
+import { DragDropProvider } from '@dnd-kit/react'
 import { MoveRight } from 'lucide-react'
 import { IOutputLink } from '../sankey-layout'
 import { useSankey } from '../sankey-provider'
 import { useSankeySettings } from '../sankey-settings-store'
 
-function LinkItem({ link }: { link: IOutputLink }) {
+function LinkItem({ link, index }: { link: IOutputLink; index: number }) {
   const { updateLink } = useSankey()
   const { settings } = useSankeySettings()
 
   const linkId = `${link.source.id}-${link.target.id}`
 
   return (
-    <SortableItem id={linkId} key={linkId}>
+    <SortableItem id={linkId} index={index} key={linkId}>
       <FillButton
         colors={[
           {
@@ -66,12 +53,12 @@ export interface IGroupCallback {
 export function LinkPropsPanel() {
   const { graph } = useSankey()
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
+  // const sensors = useSensors(
+  //   useSensor(PointerSensor),
+  //   useSensor(KeyboardSensor, {
+  //     coordinateGetter: sortableKeyboardCoordinates,
+  //   })
+  // )
 
   const links =
     graph?.links.sort((a, b) => {
@@ -86,13 +73,12 @@ export function LinkPropsPanel() {
 
   return (
     <PropsPanel className="gap-y-1 mt-8">
-      <DndContext
-        sensors={sensors}
-        modifiers={[restrictToVerticalAxis]}
+      <DragDropProvider
+        //sensors={sensors}
+        //modifiers={[restrictToVerticalAxis]}
         // onDragStart={event => setActiveId(event.active.id as string)}
         onDragEnd={(event) => {
-          const { active, over } = event
-
+          //const { active, over } = event
           // if (over && active.id !== over?.id) {
           //   const oldIndex = groups.findIndex(
           //     (group) => group.id === (active.id as string)
@@ -105,26 +91,19 @@ export function LinkPropsPanel() {
           //     oldIndex,
           //     newIndex
           //   )
-
           //   reorderGroups(newOrder)
           // }
-
           //setActiveId(null)
         }}
       >
-        <SortableContext
-          items={links.map((link) => `${link.source.id}-${link.target.id}`)}
-          strategy={verticalListSortingStrategy}
-        >
-          <VScrollPanel className="grow">
-            <ul className="flex flex-col">
-              {links.map((link) => {
-                const linkId = `${link.source.id}-${link.target.id}`
-                return <LinkItem link={link} key={linkId} />
-              })}
-            </ul>
-          </VScrollPanel>
-        </SortableContext>
+        <VScrollPanel className="grow">
+          <ul className="flex flex-col">
+            {links.map((link, li) => {
+              const linkId = `${link.source.id}-${link.target.id}`
+              return <LinkItem link={link} index={li} key={linkId} />
+            })}
+          </ul>
+        </VScrollPanel>
 
         {/* <DragOverlay>
               {activeId ? (
@@ -134,7 +113,7 @@ export function LinkPropsPanel() {
                 />
               ) : null}
             </DragOverlay> */}
-      </DndContext>
+      </DragDropProvider>
     </PropsPanel>
   )
 }

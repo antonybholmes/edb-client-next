@@ -1,4 +1,4 @@
-import { IClusterGroup } from '@/lib/cluster-group'
+import { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'
 import { IGeneSet } from '@/lib/gsea/geneset'
 import { useHistory } from './history-provider'
 import {
@@ -69,21 +69,29 @@ export function getPlots(
 
 export function getGroups(
   present: IHistoryState,
-  groups: Record<string, IClusterGroup>,
   opts: { file?: OptStrOrIdObj } = {}
 ): IClusterGroup[] {
   const fid = getFileId(present, opts)
-  return (present.groupOrder[fid] || []).map((id) => groups[id]!)
+  return (present.groupRows[fid] || []).flatMap((row) => row.groups)
 }
 
-export function getGroupsName(
+export function getGroupRows(
   present: IHistoryState,
-  groupNames: Record<string, string>,
+
   opts: { file?: OptStrOrIdObj } = {}
-): string {
+): IClusterGroupRow[] {
   const fid = getFileId(present, opts)
-  return groupNames[fid] || ''
+  return present.groupRows[fid] || []
 }
+
+// export function getGroupsName(
+//   present: IHistoryState,
+//   groupNames: Record<string, string>,
+//   opts: { file?: OptStrOrIdObj } = {}
+// ): string {
+//   const fid = getFileId(present, opts)
+//   return groupNames[fid] || ''
+// }
 
 export function getGenesets(
   present: IHistoryState,

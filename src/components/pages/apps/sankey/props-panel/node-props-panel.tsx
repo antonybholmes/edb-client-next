@@ -1,34 +1,22 @@
 import { type IClusterGroup } from '@/lib/cluster-group'
 
 import { VCenterCol } from '@/layout/v-center-col'
-import {
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
 
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { Input } from '@/components/shadcn/ui/themed/v2/input'
 import { SortableItem } from '@/components/sortable-item'
 import { VScrollPanel } from '@/components/v-scroll-panel'
+import { DragDropProvider } from '@dnd-kit/react'
 import { IOutputNode } from '../sankey-layout'
 import { useSankey } from '../sankey-provider'
 import { DEFAULT_NODE_COLOR } from '../sankey-settings-store'
 
-function NodeItem({ node }: { node: IOutputNode }) {
+function NodeItem({ node, index }: { node: IOutputNode; index: number }) {
   const { updateNode } = useSankey()
 
   return (
-    <SortableItem id={node.id} key={node.id}>
+    <SortableItem id={node.id} index={index} key={node.id}>
       <FillButton
         colors={[
           {
@@ -60,12 +48,12 @@ export interface IGroupCallback {
 export function NodePropsPanel() {
   const { graph } = useSankey()
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
+  // const sensors = useSensors(
+  //   useSensor(PointerSensor),
+  //   useSensor(KeyboardSensor, {
+  //     coordinateGetter: sortableKeyboardCoordinates,
+  //   })
+  // )
 
   const nodes = Array.from(graph?.nodes.values() || []).sort((a, b) =>
     a.label.localeCompare(b.label)
@@ -73,157 +61,12 @@ export function NodePropsPanel() {
 
   return (
     <PropsPanel className="mt-8 gap-y-1">
-      {/* <PropRow title="Shape">
-          <SelectList
-            items={[
-              { value: 'rect', label: 'Rectangle' },
-              { value: 'circle', label: 'Circle' },
-            ]}
-            value={settings.nodes.shape}
-            onValueChange={(value) => {
-              const shape = value as 'rect' | 'circle'
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.nodes.shape = shape
-                })
-              )
-            }}
-            w="sm"
-          >
-            <SelectItem value="rect">Rectangle</SelectItem>
-            <SelectItem value="circle">Circle</SelectItem>
-          </SelectList>
-        </PropRow>
-        <NumericalPropRow
-          title="Width"
-          limit={[1, 1000]}
-          value={settings.nodes.width}
-          onNumChange={(value) => {
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.nodes.width = value
-              })
-            )
-          }}
-        />
-
-        <PropRow title="Rounding">
-          <BarSlider
-            value={settings.nodes.rounding}
-            min={0}
-            max={100}
-            format={(v) => v.toString()}
-            onValueChange={(value: number | readonly number[]) => {
-              const newValue = Array.isArray(value) ? value[0]! : value
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.nodes.rounding = newValue
-                })
-              )
-            }}
-            step={1}
-            //className="w-20"
-          />
-        </PropRow>
-        <PropRow title="Oversize">
-          <BarSlider
-            value={settings.nodes.oversize}
-            min={0}
-            max={100}
-            format={(v) => v.toString()}
-            onValueChange={(value: number | readonly number[]) => {
-              const newValue = Array.isArray(value) ? value[0]! : value
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.nodes.oversize = newValue
-                })
-              )
-            }}
-            step={1}
-          />
-        </PropRow>
-        <NumericalPropRow
-          title="Gap"
-          limit={[0, 1000]}
-          value={settings.nodes.gap}
-          onNumChange={(value) => {
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.nodes.gap = value
-              })
-            )
-          }}
-        />
-
-        <PropRow title="Opacity">
-          <BarSlider
-            value={settings.nodes.opacity}
-            min={0}
-            max={1}
-
-            onValueChange={(value: number | readonly number[]) => {
-              const newValue = Array.isArray(value) ? value[0]! : value
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.nodes.opacity = newValue
-                })
-              )
-            }}
-            step={0.05}
-          />
-        </PropRow>
-        <PropRow title="Labels">
-          <FontPopover
-            fonts={[
-              {
-                textProps: settings.nodes.labels.font,
-                showRotation: true,
-                update: (f) =>
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.nodes.labels.font = f
-                    })
-                  ),
-              },
-            ]}
-          />
-          <SelectList
-            items={[
-              { value: 'left', label: 'Left' },
-              { value: 'right', label: 'Right' },
-              { value: 'center', label: 'Center' },
-              { value: 'top', label: 'Top' },
-              { value: 'bottom', label: 'Bottom' },
-            ]}
-            value={settings.nodes.labels.position}
-            onValueChange={(value) => {
-              const position = value as
-                'left' | 'right' | 'center' | 'top' | 'bottom'
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.nodes.labels.position = position
-                })
-              )
-            }}
-            w="xs"
-          >
-            <SelectItem value="left">Left</SelectItem>
-            <SelectItem value="right">Right</SelectItem>
-            <SelectItem value="center">Center</SelectItem>
-            <SelectItem value="top">Top</SelectItem>
-            <SelectItem value="bottom">Bottom</SelectItem>
-          </SelectList>
-        </PropRow>
-
-        <LineSeparator /> */}
-
-      <DndContext
-        sensors={sensors}
-        modifiers={[restrictToVerticalAxis]}
+      <DragDropProvider
+        //sensors={sensors}
+        //modifiers={[restrictToVerticalAxis]}
         // onDragStart={event => setActiveId(event.active.id as string)}
         onDragEnd={(event) => {
-          const { active, over } = event
-
+          //const { active, over } = event
           // if (over && active.id !== over?.id) {
           //   const oldIndex = groups.findIndex(
           //     (group) => group.id === (active.id as string)
@@ -236,25 +79,18 @@ export function NodePropsPanel() {
           //     oldIndex,
           //     newIndex
           //   )
-
           //   reorderGroups(newOrder)
           // }
-
           //setActiveId(null)
         }}
       >
-        <SortableContext
-          items={nodes.map((node) => node.id)}
-          strategy={verticalListSortingStrategy}
-        >
-          <VScrollPanel className="grow">
-            <ul className="flex flex-col">
-              {nodes.map((node) => {
-                return <NodeItem node={node} key={node.id} />
-              })}
-            </ul>
-          </VScrollPanel>
-        </SortableContext>
+        <VScrollPanel className="grow">
+          <ul className="flex flex-col">
+            {nodes.map((node, ni) => {
+              return <NodeItem node={node} index={ni} key={node.id} />
+            })}
+          </ul>
+        </VScrollPanel>
 
         {/* <DragOverlay>
               {activeId ? (
@@ -264,7 +100,7 @@ export function NodePropsPanel() {
                 />
               ) : null}
             </DragOverlay> */}
-      </DndContext>
+      </DragDropProvider>
     </PropsPanel>
   )
 }

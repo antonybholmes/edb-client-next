@@ -23,6 +23,7 @@ import { useSettingsTabs } from '../dialogs/settings/setting-tabs-store'
 import { CookieIcon } from '../icons/cookie-icon'
 
 import { useAppInfo } from '@/components/edb/edb-settings'
+import { present } from '@/lib/dom-utils'
 import { format } from 'date-fns'
 import { Globe } from 'lucide-react'
 import type { ReactNode } from 'react'
@@ -107,14 +108,14 @@ export function FileMenu({
       <DropdownMenuTrigger
         render={
           <Button
-            data-checked={open}
+            data-checked={present(open)}
             aria-label="Open File Menu"
             //title="Open File Menu"
             size="xs"
             pad="sm"
             onClick={() => onOpenChange?.(true)}
           >
-            <span data-checked={open} aria-label={TEXT_FILE}>
+            <span data-checked={present(open)} aria-label={TEXT_FILE}>
               {TEXT_FILE}
             </span>
           </Button>

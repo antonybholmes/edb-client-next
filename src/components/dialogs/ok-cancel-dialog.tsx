@@ -21,6 +21,7 @@ import type { ComponentProps, CSSProperties, ReactNode } from 'react'
 
 import { config } from '@/config'
 import { IDivProps } from '@/interfaces/div-props'
+import { present } from '@/lib/dom-utils'
 import type { UndefStr } from '@/lib/text/text'
 import { FOCUS_RING_CLS } from '@/theme'
 import type { VariantProps } from 'class-variance-authority'
@@ -62,12 +63,12 @@ export function OSButtonRow({
 }: IOSButtonRowProps) {
   return (
     <VCenterRow
-      data-rev={
+      data-rev={present(
         (buttonOrder === 'auto' && OS !== 'Windows') ||
-        buttonOrder === 'primary-last'
-      }
+          buttonOrder === 'primary-last'
+      )}
       className={cn(
-        'gap-x-2.5 data-[rev=true]:flex-row-reverse data-[rev=true]:justify-start data-[rev=false]:justify-end',
+        'gap-x-2.5 justify-end data-rev:flex-row-reverse data-rev:justify-start',
         className
       )}
     >

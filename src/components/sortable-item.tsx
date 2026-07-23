@@ -1,16 +1,15 @@
 import type { IDivProps } from '@/interfaces/div-props'
 import { VCenterRow } from '@/layout/v-center-row'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
+import { useSortable } from '@dnd-kit/react/sortable'
 
 import type { IClassProps } from '@/interfaces/class-props'
 import { cn } from '@/lib/shadcn-utils'
+import { RestrictToVerticalAxis } from '@dnd-kit/abstract/modifiers'
 import { Ellipsis, EllipsisVertical } from 'lucide-react'
-import type {
-  ComponentPropsWithoutRef,
-  CSSProperties,
-  ElementType,
-  ReactNode,
+import {
+  type ComponentPropsWithoutRef,
+  type ElementType,
+  type ReactNode,
 } from 'react'
 import { VerticalGripIcon } from './icons/vertical-grip-icon'
 import { HCenterRow } from './layout/h-center-row'
@@ -41,18 +40,23 @@ type BaseSortableItemProps<T extends ElementType = 'li'> = {
 
 export function BaseSortableItem<T extends ElementType = 'li'>({
   id,
+  index,
   as,
   className,
   style,
   children,
 }: BaseSortableItemProps<T>) {
-  const { isDragging, setNodeRef, transform, transition } = useSortable({ id })
+  const { isDragging, ref } = useSortable({
+    id,
+    index,
+    modifiers: [RestrictToVerticalAxis],
+  })
 
-  const dragStyle: CSSProperties = {
-    opacity: isDragging ? 0.4 : undefined,
-    transform: CSS.Translate.toString(transform),
-    transition,
-  }
+  // const dragStyle: CSSProperties = {
+  //   opacity: isDragging ? 0.4 : undefined,
+  //   transform: CSS.Translate.toString(transform),
+  //   transition,
+  // }
 
   const Component = as ?? 'li'
 
@@ -61,8 +65,8 @@ export function BaseSortableItem<T extends ElementType = 'li'>({
     <Component
       id={id}
       className={cn('group relative', className)}
-      ref={setNodeRef}
-      style={{ ...style, ...dragStyle }}
+      ref={ref}
+      //style={{ ...style, ...dragStyle }}
       //role="tab"
     >
       {children}
@@ -73,6 +77,7 @@ export function BaseSortableItem<T extends ElementType = 'li'>({
 
 type SortableItemProps<T extends ElementType = 'li'> =
   BaseSortableItemProps<T> & {
+    index: number
     //we can optionally pass a custom drag handle instead of the default one rendered inside SortableItem
     dragHandle?: ReactNode
     innerCls?: string
@@ -81,6 +86,7 @@ type SortableItemProps<T extends ElementType = 'li'> =
 export function SortableItem<T extends ElementType = 'li'>({
   as,
   id,
+  index,
   dragHandle,
   innerCls,
   className,
@@ -106,7 +112,7 @@ export function SortableItem<T extends ElementType = 'li'>({
       >
         {/* Hide the drag handle if a custom one is passed, to avoid confusion. 
           The custom one is for things like a checkbox if we want to select items and momentarily turn off dragging */}
-        <DragHandle id={id} className={dragCls} />
+        <DragHandle id={id} index={index} className={dragCls} />
         {dragHandle && dragHandle}
         {children}
       </VCenterRow>
@@ -117,20 +123,25 @@ export function SortableItem<T extends ElementType = 'li'>({
 
 export function DragHandle({
   id,
+  index,
   className,
 
   style,
   ...props
-}: IClassProps & { id: string }) {
-  //const { id } = useContext(SortableItemContext)
-  const { attributes, listeners, isDragging } = useSortable({ id })
+}: IClassProps & { id: string; index: number }) {
+  const { ref, isDragging } = useSortable({
+    id,
+
+    index,
+    modifiers: [RestrictToVerticalAxis],
+  })
 
   return (
     <VCenterRow
+      ref={ref}
       className={cn('group cursor-ns-resize w-4 justify-start', className)}
       data-dragging={isDragging}
-      {...listeners}
-      {...attributes}
+
       {...props}
     >
       <VerticalGripIcon
@@ -144,18 +155,17 @@ export function DragHandle({
 
 export function SmallDragHandle({
   id,
+  index,
   className,
   ...props
-}: IClassProps & { id: string }) {
+}: IClassProps & { id: string; index: number }) {
   //const { id } = useContext(SortableItemContext)
-  const { attributes, listeners } = useSortable({ id })
+  const { ref } = useSortable({ id, index })
 
   return (
     <VCenterRow
+      ref={ref}
       className={cn('justify-center overflow-hidden', className)}
-      {...listeners}
-      {...attributes}
-      {...props}
     >
       <EllipsisVertical size={16} className="shrink-0 pointer-events-none" />
     </VCenterRow>
@@ -164,20 +174,16 @@ export function SmallDragHandle({
 
 export function HDragHandle({
   id,
+  index,
   className = 'cursor-ew-resize',
   style,
   ...props
-}: IDivProps & { id: string }) {
+}: IDivProps & { id: string; index: number }) {
   //const { id } = useContext(SortableItemContext)
-  const { attributes, listeners } = useSortable({ id })
+  const { ref } = useSortable({ id, index })
 
   return (
-    <HCenterRow
-      className="h-2 relative w-full"
-      {...listeners}
-      {...attributes}
-      {...props}
-    >
+    <HCenterRow className="h-2 relative w-full" ref={ref}>
       <Ellipsis
         className={cn('absolute -translate-y-1/2 top-1/2', className)}
         style={style}

@@ -38,49 +38,6 @@ export const ResizablePanelGroup = ({
 
 export const ResizablePanel = ResizablePrimitive.Panel
 
-// export function LineVResizeHandle({
-//   id,
-//   ...props
-// }: ComponentProps<typeof ResizablePrimitive.Separator>) {
-//   const _id = id ?? useStableId('line-v-resize-handle')
-
-//   return (
-//     <ResizablePrimitive.Separator
-//       id={_id}
-//       className={LINE_V_RESIZE_HANDLE_CLS}
-//       {...props}
-//     >
-//       <span className="trans-color w-full h-px bg-border group-data-[separator=hover]:bg-app-theme/50 group-data-[separator=active]:bg-app-theme/50" />
-//     </ResizablePrimitive.Separator>
-//   )
-// }
-
-// const THIN_V_LINE_HANDLE_CLS = cn(
-//   'absolute left-0 right-0 top-1/2 -translate-y-1/2 trans-color rounded-full h-1 group-data-[separator=hover]:bg-ring group-data-[separator=active]:bg-ring'
-// )
-
-// export function ThinVLineHandle({
-//   id,
-//   autoHide = true,
-//   ...props
-// }: IResizeHandleProps) {
-//   const _id = id ?? useStableId('thin-v-line-handle')
-
-//   return (
-//     <ResizablePrimitive.Separator
-//       id={_id}
-//       data-auto-hide={autoHide}
-//       className={cn('w-full h-px group relative cursor-ns-resize', {
-//         'bg-border/50 hover:bg-border/70': !autoHide,
-//       })}
-//       {...props}
-//     >
-//       {/* <span className="w-full h-px border-t border-transparent group-data-[auto-hide=false]:border-border/50 absolute left-0 top-1/2 -translate-y-1/2" /> */}
-//       <span className={THIN_V_LINE_HANDLE_CLS} />
-//     </ResizablePrimitive.Separator>
-//   )
-// }
-
 interface IResizeHandleProps extends ComponentProps<
   typeof ResizablePrimitive.Separator
 > {
@@ -101,13 +58,10 @@ export function ThinHResizeHandle({
 
   return (
     <ResizablePrimitive.Separator
-      //id={_id}
       data-auto-hide={autoHide}
       className={THIN_H_RESIZE_HANDLE_CLS}
       {...props}
     >
-      {/* <span className="h-full w-px border-l border-transparent group-data-[auto-hide=false]:border-border/50 absolute top-0 left-1/2 -translate-x-1/2" /> */}
-
       <span className={THIN_H_LINE_HANDLE_CLS} />
     </ResizablePrimitive.Separator>
   )
@@ -123,35 +77,16 @@ export function ThinVResizeHandle({
   autoHide = true,
   ...props
 }: IResizeHandleProps) {
-  //const _id = id ?? useStableId('thin-v-resize-handle')
-
   return (
     <ResizablePrimitive.Separator
-      // id={_id}
       data-auto-hide={autoHide}
       className={THIN_V_RESIZE_HANDLE_CLS}
       {...props}
     >
-      {/* <span className="w-full h-px border-t border-transparent group-data-[auto-hide=false]:border-border/50 absolute left-0 top-1/2 -translate-y-1/2" /> */}
       <span className={THIN_V_LINE_HANDLE_CLS} />
     </ResizablePrimitive.Separator>
   )
 }
-
-// const ResizableHandle = ({
-//   withHandle = false,
-//   className,
-//   ...props
-// }: ComponentProps<typeof ResizablePrimitive.ResizablePrimitive.Separator> & {
-//   withHandle?: boolean
-// }) => (
-//   <ResizablePrimitive.ResizablePrimitive.Separator
-//     className={cn(HANDLE_CLS, className)}
-//     {...props}
-//   >
-//     <InnerHandle withHandle={withHandle} />
-//   </ResizablePrimitive.ResizablePrimitive.Separator>
-// )
 
 export function DragHandle() {
   return (

@@ -276,6 +276,8 @@ export function MatcalcPage() {
       '/data/test/groups.json'
     )
 
+    console.log(resg)
+
     openFile(`Z Test`, {
       //mode: 'append',
       groups: resg,

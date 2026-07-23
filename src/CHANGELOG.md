@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bug fixes and updates.
 - Simplified data-attributes that are conditional.
 
 

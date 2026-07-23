@@ -1,10 +1,9 @@
 import {
   onTextFileChange,
   openFilesDialog,
-  type ITextFileOpen,
 } from '@/components/pages/open-files'
 
-import { makeNewGroup, type IClusterGroup } from '@/lib/cluster-group'
+import { IClusterGroupRow, type IClusterGroup } from '@/lib/cluster-group'
 
 import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
@@ -18,28 +17,15 @@ import { GroupDialog } from './group-dialog'
 import { FileDropZonePanel } from '@/components/file-dropzone-panel'
 import { TrashIcon } from '@/icons/trash-icon'
 import { VCenterCol } from '@/layout/v-center-col'
-import { randomHexColor } from '@/lib/color/color'
 import {
   getColIdxFromGroup,
   getColNamesFromGroup,
 } from '@/lib/dataframe/dataframe-utils'
-import { textToLines } from '@/lib/text/lines'
 import { IconButton } from '@/themed/icon-button'
 import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
-import {
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+
+import { DragDropProvider } from '@dnd-kit/react'
+
 import {
   DRAG_HANDLE_APPEAR_CLS,
   DRAG_ICON_ANIM_CLS,
@@ -59,8 +45,9 @@ import { VScrollPanel } from '@/components/v-scroll-panel'
 import { PlusIcon } from '@/icons/plus-icon'
 import { StretchRow } from '@/layout/stretch-row'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
+import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
-import { Input } from '@/themed/v2/input'
+import { produce } from 'immer'
 import { Settings2 } from 'lucide-react'
 import {
   useCurrentGroups,
@@ -76,11 +63,19 @@ export const GROUP_CONTENT_CLS = `flex flex-row items-center grow relative
   group-hover:bg-muted group-data-[focus=true]:bg-muted`
 
 function GroupItem({
+  index,
+  groupRow,
   group,
   editGroup,
 }: {
+  index: number
+  groupRow: IClusterGroupRow
   group: IClusterGroup
-  editGroup: (group: IClusterGroup, title?: string) => void
+  editGroup: (
+    groupRow: IClusterGroupRow,
+    ggroup: IClusterGroup,
+    title?: string
+  ) => void
 }) {
   const { removeGroups, updateGroup } = useHistory()
 
@@ -93,6 +88,7 @@ function GroupItem({
   return (
     <SortableItem
       id={group.id}
+      index={index}
       key={group.id}
       extChildren={
         <button
@@ -165,7 +161,7 @@ function GroupItem({
         <button
           title={`Edit ${group.name} group`}
           //className="text-foreground/50 focus-visible:text-foreground hover:text-foreground trans-color"
-          onClick={() => editGroup(group)}
+          onClick={() => editGroup(groupRow, group)}
         >
           {/* <SettingsIcon style={{ stroke: group.color }} /> */}
           <Settings2 className={cn('w-4', DRAG_ICON_ANIM_CLS)} />
@@ -177,27 +173,28 @@ function GroupItem({
 
 export interface IGroupCallback {
   title?: string
+  groupRow: IClusterGroupRow
   group: IClusterGroup
-  callback?: (group: IClusterGroup) => void
+  callback?: (groupRow: IClusterGroupRow, group: IClusterGroup) => void
 }
 
 export function GroupPropsPanel() {
   const { open: openDialog } = useDialogs()
 
-  const { addGroups, updateGroup, clearGroups, reorderGroups } = useHistory()
+  const { addGroups, clearGroups, openGroupFiles } = useHistory()
 
-  const { groups, groupsName } = useCurrentGroups()
+  const { groupRows } = useCurrentGroups()
 
   const { sheets } = useCurrentSheets()
 
   const { selection } = useSelectionRange()
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
+  // const sensors = useSensors(
+  //   useSensor(PointerSensor),
+  //   useSensor(KeyboardSensor, {
+  //     coordinateGetter: sortableKeyboardCoordinates,
+  //   })
+  // )
 
   const [openGroupDialog, setOpenGroupDialog] = useState<
     IGroupCallback | undefined
@@ -211,75 +208,15 @@ export function GroupPropsPanel() {
   //   ))
   // }, [groupState.groups])
 
-  function openGroupFiles(files: ITextFileOpen[]) {
-    if (files.length === 0) {
-      return
-    }
-    const file = files[0]!
+  // function addGroup() {
+  //   editGroup(makeNewGroup(), 'New group')
+  // }
 
-    if (file.ext === 'json') {
-      const g = JSON.parse(file.text)
-
-      if (Array.isArray(g)) {
-        addGroups(g, { mode: 'set' })
-      }
-    } else {
-      // open cls
-      const lines = textToLines(file.text)
-
-      if (lines.length < 3) {
-        return
-      }
-
-      const names = lines[1]?.split(' ').slice(1)
-
-      if (!names) {
-        return
-      }
-
-      //const indexMap = new Map<string, number[]>()
-
-      // store lowercase for case insensitive searching
-      const columnNames = lines[2]?.split(/[ \t]/).map((x) => x.toLowerCase())
-
-      if (!columnNames) {
-        return
-      }
-
-      // for (const [index, column] of columns.entries()) {
-      //   if (!indexMap.has(column)) {
-      //     indexMap.set(column, [])
-      //   }
-
-      //   indexMap.get(column)!.push(index)
-      // }
-
-      const groups: IClusterGroup[] = []
-
-      for (const name of names) {
-        //const cols = indexMap.get(name)!
-
-        //const matches = cols.map(col => df.colNames[col]!)
-
-        groups.push(
-          makeNewGroup({
-            name,
-            search: [name.toLowerCase()],
-            color: randomHexColor(),
-            columnNames,
-          })
-        )
-      }
-
-      addGroups(groups, { mode: 'set' })
-    }
-  }
-
-  function addGroup() {
-    editGroup(makeNewGroup(), 'New group')
-  }
-
-  function editGroup(group: IClusterGroup, title: string = 'Edit Group') {
+  function editGroup(
+    groupRow: IClusterGroupRow,
+    group: IClusterGroup,
+    title: string = 'Edit Group'
+  ) {
     // if a column is selected, suggest its name as what the user wants to
     // to group
 
@@ -291,19 +228,37 @@ export function GroupPropsPanel() {
 
     setOpenGroupDialog({
       title,
+      groupRow,
       group,
-      callback: (group: IClusterGroup) => {
+
+      callback: (groupRow: IClusterGroupRow, group: IClusterGroup) => {
         //const indices = getColIdxFromGroup(df, group)
 
-        if (groups.some((g) => g.id === group.id)) {
-          // we modified and existing group so clone list, but replace existing
-          // group with new group when they have the same id
+        addGroups(
+          produce(groupRows, (draft) => {
+            for (let gr of draft) {
+              if (gr.id !== groupRow.id) {
+                continue
+              }
 
-          updateGroup(group)
-        } else {
-          // append new group
-          addGroups([group])
-        }
+              for (let i = 0; i < gr.groups.length; i++) {
+                if (gr.groups[i].id === group.id) {
+                  gr.groups[i] = group
+                }
+              }
+            }
+          })
+        )
+
+        // if (groupRows.some((gr) => gr.groups.some((g) => g.id === group.id))) {
+        //   // we modified and existing group so clone list, but replace existing
+        //   // group with new group when they have the same id
+
+        //   updateGroup(group)
+        // } else {
+        //   // append new group
+        //   addGroups([group])
+        // }
 
         setOpenGroupDialog(undefined)
       },
@@ -311,12 +266,13 @@ export function GroupPropsPanel() {
   }
 
   function downloadCls(name: string) {
-    if (groups.length < 1) {
+    if (groupRows.length < 1) {
       return
     }
 
     const groupMap = Object.fromEntries(
-      groups
+      groupRows
+        .flatMap((gr) => gr.groups)
         .map((group) => {
           return getColIdxFromGroup(
             sheets[0] as AnnotationDataFrame,
@@ -325,13 +281,6 @@ export function GroupPropsPanel() {
         })
         .flat()
     )
-
-    // const groupMap = Object.fromEntries(
-    //   groups.map(group => {
-    //       return getColIdxFromGroup(df, group).map(col => [col, group.name])
-    //     })
-    //     .flat()
-    // )
 
     const names: string[] = []
     const used: string[] = []
@@ -345,13 +294,15 @@ export function GroupPropsPanel() {
     })
 
     const text: string = [
-      `${(sheets[0] as AnnotationDataFrame).shape[1]} ${groups.length} 1`,
+      `${(sheets[0] as AnnotationDataFrame).shape[1]} ${groupRows.length} 1`,
       `# ${used.join(' ')}`,
       `${names.join(' ')}`,
     ].join('\n')
 
     download(text, name)
   }
+
+  console.log(groupRows)
 
   return (
     <>
@@ -361,7 +312,7 @@ export function GroupPropsPanel() {
           group={openGroupDialog?.group}
           onResponse={(response, group) => {
             if (response === TEXT_OK && group) {
-              openGroupDialog?.callback?.(group)
+              openGroupDialog?.callback?.(openGroupDialog.groupRow, group)
             } else {
               setOpenGroupDialog(undefined)
             }
@@ -373,8 +324,6 @@ export function GroupPropsPanel() {
         <StretchRow className="gap-x-1 justify-between">
           <VCenterRow>
             <IconButton
-              //rounded="full"
-              // ripple={false}
               onClick={() =>
                 openFilesDialog({
                   fileTypes: ['json', 'cls'],
@@ -404,7 +353,7 @@ export function GroupPropsPanel() {
                     callback: (data) => {
                       switch (data.format.ext) {
                         case 'json':
-                          downloadJson(groups, data.name)
+                          downloadJson(groupRows, data.name)
                           break
                         case 'cls':
                           downloadCls(data.name)
@@ -424,9 +373,11 @@ export function GroupPropsPanel() {
             <ToolbarSeparator />
 
             <IconButton
-              onClick={() => addGroup()}
+              onClick={() => {
+                //addGroup()
+              }}
               title="New Group"
-              checked={openGroupDialog !== undefined}
+              checked={present(openGroupDialog !== undefined)}
             >
               <PlusIcon />
             </IconButton>
@@ -452,12 +403,12 @@ export function GroupPropsPanel() {
           </LinkButton>
         </StretchRow>
 
-        <Input
+        {/* <Input
           placeholder="Groups..."
           value={groupsName}
           onTextChange={(v) => addGroups(groups, { name: v })}
           className="max-h-8 text-xs"
-        />
+        /> */}
 
         <FileDropZonePanel
           className="grow h-full"
@@ -468,50 +419,58 @@ export function GroupPropsPanel() {
           }}
         >
           {/* <VScrollPanel> */}
-          <DndContext
-            sensors={sensors}
-            modifiers={[restrictToVerticalAxis]}
+          <DragDropProvider
+            //sensors={sensors}
+            //modifiers={[RestrictToVerticalAxis]}
             // onDragStart={event => setActiveId(event.active.id as string)}
             onDragEnd={(event) => {
-              const { active, over } = event
-
-              if (over && active.id !== over?.id) {
-                const oldIndex = groups.findIndex(
-                  (group) => group.id === (active.id as string)
-                )
-                const newIndex = groups.findIndex(
-                  (group) => group.id === (over.id as string)
-                )
-                const newOrder = arrayMove(
-                  groups.map((group) => group.id),
-                  oldIndex,
-                  newIndex
-                )
-
-                reorderGroups(newOrder)
+              if (event.canceled) {
+                return
               }
 
-              //setActiveId(null)
+              console.log(event.operation)
+
+              // const newOrder = move(
+              //   groups.map((group) => group.id),
+              //   event
+              // )
+
+              // const { active, over } = event
+
+              // if (over && active.id !== over?.id) {
+              //   const oldIndex = groups.findIndex(
+              //     (group) => group.id === (active.id as string)
+              //   )
+              //   const newIndex = groups.findIndex(
+              //     (group) => group.id === (over.id as string)
+              //   )
+              //   const newOrder = arrayMove(
+              //     groups.map((group) => group.id),
+              //     oldIndex,
+              //     newIndex
+              //   )
+
+              //   reorderGroups(newOrder)
+              // }
             }}
           >
-            <SortableContext
-              items={groups.map((group) => group.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <VScrollPanel className="grow">
-                <ul className="flex flex-col">
-                  {groups.map((group) => {
+            <VScrollPanel className="grow">
+              {groupRows.map((groupRow, gri) => (
+                <ul className="flex flex-col" key={gri}>
+                  {groupRow.groups.map((group, gi) => {
                     return (
                       <GroupItem
                         group={group}
+                        groupRow={groupRow}
                         key={group.id}
+                        index={gi}
                         editGroup={editGroup}
                       />
                     )
                   })}
                 </ul>
-              </VScrollPanel>
-            </SortableContext>
+              ))}
+            </VScrollPanel>
 
             {/* <DragOverlay>
               {activeId ? (
@@ -521,7 +480,7 @@ export function GroupPropsPanel() {
                 />
               ) : null}
             </DragOverlay> */}
-          </DndContext>
+          </DragDropProvider>
           {/* </VScrollPanel> */}
         </FileDropZonePanel>
       </PropsPanel>

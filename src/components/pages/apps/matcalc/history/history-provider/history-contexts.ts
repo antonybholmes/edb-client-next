@@ -1,4 +1,4 @@
-import { IClusterGroup } from '@/lib/cluster-group'
+import { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'
 
 import { IGeneSet } from '@/lib/gsea/geneset'
 import { createContext, useContext } from 'react'
@@ -57,9 +57,8 @@ export function useCurrentPlots(): IPlotsContext {
 }
 
 export type IGroupsContext = {
+  groupRows: IClusterGroupRow[]
   groups: IClusterGroup[]
-
-  groupsName: string
 }
 
 export const GroupsContext = createContext<IGroupsContext | undefined>(

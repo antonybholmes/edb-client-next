@@ -23,8 +23,8 @@ export function resetStore(): IHistoryDataStore {
     files: { [DEFAULT_FILE.id]: DEFAULT_FILE },
     sheets: { [DEFAULT_SHEET.id]: DEFAULT_SHEET },
     plots: {},
-    groups: {},
-    groupNames: { [DEFAULT_FILE.id]: 'Groups' },
+    //groupRows: {},
+    //groupNames: { [DEFAULT_FILE.id]: 'Groups' },
     genesets: {},
   }
 }
@@ -63,7 +63,7 @@ export function initState(): Omit<IHistoryState, 'id' | 'name' | 'createdAt'> {
     fileOrder: [DEFAULT_FILE.id],
     sheetOrder: { [DEFAULT_FILE.id]: [DEFAULT_SHEET.id] },
     plotOrder: { [DEFAULT_FILE.id]: [] },
-    groupOrder: { [DEFAULT_FILE.id]: [] },
+    groupRows: { [DEFAULT_FILE.id]: [] },
     genesetOrder: { [DEFAULT_FILE.id]: [] },
 
     currentFile: DEFAULT_FILE.id,

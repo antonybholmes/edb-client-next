@@ -1,6 +1,7 @@
+import { ITextFileOpen } from '@/components/pages/open-files'
 import { IHeatMapDisplayOptions } from '@/components/plot/heatmap/heatmap-svg-props'
 import { IDBEntity } from '@/interfaces/db-entity'
-import { IClusterGroup } from '@/lib/cluster-group'
+import { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { IExtGseaResult, IGseaResult } from '@/lib/gsea/ext-gsea'
@@ -138,9 +139,10 @@ export interface IHistorySlice {
 }
 
 export interface IGroupSlice {
-  addGroups: (groups: IClusterGroup[], opts?: IGroupOps) => void
+  openGroupFiles: (files: ITextFileOpen[]) => void
+  addGroups: (groupRows: IClusterGroupRow[], opts?: IGroupOps) => void
   clearGroups: () => void
-  reorderGroups: (ids: string[], opts?: IGroupOps) => void
+  //reorderGroups: (ids: string[], opts?: IGroupOps) => void
   removeGroups: (ids: string[], opts?: IGroupOps) => void
   updateGroup: (group: IClusterGroup, opts?: IGroupOps) => void
 }
@@ -167,8 +169,8 @@ export interface IFileOps {
 
   sheets?: BaseDataFrame[]
   plots?: HistoryPlot[]
-  groupsName?: string
-  groups?: IClusterGroup[]
+  //groupsName?: string
+  groupRows?: IClusterGroupRow[]
   genesets?: IGeneSet[]
 }
 
@@ -192,7 +194,8 @@ export interface IHistoryState extends IDBEntity {
   fileOrder: string[] // appId -> file IDs
   sheetOrder: Record<string, string[]> // fileId -> sheet IDs
   plotOrder: Record<string, string[]> // fileId -> plot IDs
-  groupOrder: Record<string, string[]> // fileId -> group IDs
+  //groupOrder: Record<string, string[]> // fileId -> group IDs
+  groupRows: Record<string, IClusterGroupRow[]>
   genesetOrder: Record<string, string[]> // fileId -> geneset IDs
 
   currentFile: string
@@ -206,8 +209,8 @@ export interface IHistoryDataStore {
   files: Record<string, IDBEntity>
   sheets: Record<string, DataFrameType>
   plots: Record<string, HistoryPlot>
-  groupNames: Record<string, string>
-  groups: Record<string, IClusterGroup>
+  //groupNames: Record<string, string>
+  //groups: Record<string, IClusterGroup>
   genesets: Record<string, IGeneSet>
 }
 

@@ -15,7 +15,7 @@ export function ModuleButtonLink({
       items="start"
       className={cn(
         BASE_FLAT_BUTTON_CLS,
-        'h-full justify-start gap-x-2 py-2 data-[checked=true]:bg-muted data-[checked=false]:hover:bg-muted',
+        'h-full justify-start gap-x-2 py-2 data-checked:bg-muted hover:bg-muted',
         className
       )}
       {...props}

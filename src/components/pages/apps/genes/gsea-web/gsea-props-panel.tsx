@@ -9,6 +9,7 @@ import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { TEXT_SELECT, TEXT_SELECT_ALL } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
+import { present } from '@/lib/dom-utils'
 import { DndContext } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import {
@@ -98,8 +99,8 @@ export function GseaPropsPanel() {
       </PropRow> */}
       <VCenterRow className="justify-between px-1">
         <VCenterRow
-          data-visible={allowSelectAll}
-          className="data-[visible=false]:invisible px-6"
+          data-invisible={present(!allowSelectAll)}
+          className="data-invisible:invisible px-6"
         >
           <Checkbox
             aria-label="Select all gene sets"

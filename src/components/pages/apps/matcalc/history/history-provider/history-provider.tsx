@@ -1,7 +1,7 @@
 import { enablePatches } from 'immer'
 
 import { IChildrenProps } from '@/interfaces/children-props'
-import type { IClusterGroup } from '@/lib/cluster-group'
+import type { IClusterGroup, IClusterGroupRow } from '@/lib/cluster-group'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import type { IGeneSet } from '@/lib/gsea/geneset'
 import {
@@ -14,6 +14,7 @@ import {
 
 enablePatches()
 
+import { ITextFileOpen } from '@/components/pages/open-files'
 import { historyReducer } from './history-actions'
 import {
   FilesContext,
@@ -80,8 +81,8 @@ export function HistoryProvider({ children }: IChildrenProps) {
         sheets = [DEFAULT_SHEET],
         plots = [],
         mode = 'append',
-        groupsName = '',
-        groups = [],
+        //groupsName = '',
+        groupRows = [],
         genesets = [],
       } = opts
 
@@ -99,9 +100,9 @@ export function HistoryProvider({ children }: IChildrenProps) {
         file,
         sheets,
         plots,
-        groups,
+        groupRows,
         genesets,
-        groupsName,
+        //groupsName,
         mode,
       })
     },
@@ -158,8 +159,8 @@ export function HistoryProvider({ children }: IChildrenProps) {
   )
 
   const addGroups = useCallback(
-    (groups: IClusterGroup[], opts: IGroupOps = {}) => {
-      dispatch({ type: 'addGroups', groups, opts })
+    (groupRows: IClusterGroupRow[], opts: IGroupOps = {}) => {
+      dispatch({ type: 'addGroups', groupRows, opts })
     },
     [dispatch]
   )
@@ -185,9 +186,9 @@ export function HistoryProvider({ children }: IChildrenProps) {
     [dispatch]
   )
 
-  const reorderGroups = useCallback(
-    (ids: string[], opts: IGroupOps = {}) => {
-      dispatch({ type: 'reorderGroups', ids, opts })
+  const openGroupFiles = useCallback(
+    (files: ITextFileOpen[], opts: IGroupOps = {}) => {
+      dispatch({ type: 'openGroupFiles', files, opts })
     },
     [dispatch]
   )
@@ -275,16 +276,16 @@ export function HistoryProvider({ children }: IChildrenProps) {
     ]
   )
 
-  const groupsContextValue = useMemo(
-    () => ({
-      groups: (state.present.groupOrder[state.present.currentFile] || []).map(
-        (id) => state.groups[id]!
-      ),
+  const groupsContextValue = useMemo(() => {
+    const groupRows = state.present.groupRows[state.present.currentFile] || []
 
-      groupsName: state.groupNames[state.present.currentFile] || '',
-    }),
-    [state.present.currentFile, state.present.groupOrder, state.groups]
-  )
+    const groups = groupRows.map((row) => row.groups).flat()
+
+    return {
+      groupRows,
+      groups,
+    }
+  }, [state.present.currentFile, state.present.groupRows])
 
   const genesetsContextValue = useMemo(
     () => ({
@@ -323,7 +324,7 @@ export function HistoryProvider({ children }: IChildrenProps) {
       updatePlot,
       addGroups,
       clearGroups,
-      reorderGroups,
+      openGroupFiles,
       removeGroups,
       updateGroup,
       addGenesets,
@@ -348,7 +349,7 @@ export function HistoryProvider({ children }: IChildrenProps) {
       reorderPlots,
       updatePlot,
       addGroups,
-      reorderGroups,
+      //reorderGroups,
       removeGroups,
       updateGroup,
       addGenesets,

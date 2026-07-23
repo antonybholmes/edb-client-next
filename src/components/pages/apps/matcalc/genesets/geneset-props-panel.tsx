@@ -23,13 +23,7 @@ import { makeNewGeneset, type IGeneSet } from '@/lib/gsea/geneset'
 import { range } from '@/lib/math/range'
 import { textToLines } from '@/lib/text/lines'
 import { IconButton } from '@/themed/icon-button'
-import { DndContext } from '@dnd-kit/core'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+
 import { GenesetDialog } from './geneset-dialog'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
@@ -48,14 +42,18 @@ import { StretchRow } from '@/layout/stretch-row'
 import { randomHexColor } from '@/lib/color/color'
 import { cn } from '@/lib/shadcn-utils'
 import type { UndefStr } from '@/lib/text/text'
+import { move } from '@dnd-kit/helpers'
+import { DragDropProvider } from '@dnd-kit/react'
 import { Settings2 } from 'lucide-react'
 import { useCurrentGenesets } from '../history/history-provider/history-contexts'
 import { useHistory } from '../history/history-provider/history-provider'
 
 function GenesetItem({
+  index,
   geneset,
   editGeneset,
 }: {
+  index: number
   geneset: IGeneSet
   active?: string | null
   editGeneset: (geneset: IGeneSet) => void
@@ -73,6 +71,7 @@ function GenesetItem({
   return (
     <SortableItem
       id={geneset.id}
+      index={index}
       extChildren={
         <button
           onClick={() => {
@@ -320,48 +319,49 @@ export function GenesetPropsPanel() {
             }
           }}
         >
-          <DndContext
-            modifiers={[restrictToVerticalAxis]}
+          <DragDropProvider
+            //modifiers={[restrictToVerticalAxis]}
 
             onDragEnd={(event) => {
-              const { active, over } = event
+              //const { active, over } = event
 
-              if (over && active.id !== over?.id) {
-                const oldIndex = genesets.findIndex(
-                  (g) => g.id === (active.id as string)
-                )
+              const newOrder = move(
+                genesets.map((g) => g.id),
+                event
+              )
 
-                const newIndex = genesets.findIndex(
-                  (g) => g.id === (over.id as string)
-                )
-                const newOrder = arrayMove(
-                  genesets.map((g) => g.id),
-                  oldIndex,
-                  newIndex
-                )
+              // if (over && active.id !== over?.id) {
+              //   const oldIndex = genesets.findIndex(
+              //     (g) => g.id === (active.id as string)
+              //   )
 
-                reorderGenesets(newOrder)
-              }
+              //   const newIndex = genesets.findIndex(
+              //     (g) => g.id === (over.id as string)
+              //   )
+              //   const newOrder = move(
+              //     genesets.map((g) => g.id),
+              //     oldIndex,
+              //     newIndex
+              //   )
+
+              reorderGenesets(newOrder)
+              //}
             }}
           >
-            <SortableContext
-              items={genesets.map((g) => g.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <VScrollPanel className="grow h-full">
-                <ul className="flex flex-col">
-                  {genesets.map((geneset) => {
-                    return (
-                      <GenesetItem
-                        geneset={geneset}
-                        key={geneset.id}
-                        editGeneset={editGeneset}
-                      />
-                    )
-                  })}
-                </ul>
-              </VScrollPanel>
-            </SortableContext>
+            <VScrollPanel className="grow h-full">
+              <ul className="flex flex-col">
+                {genesets.map((geneset, gi) => {
+                  return (
+                    <GenesetItem
+                      index={gi}
+                      geneset={geneset}
+                      key={geneset.id}
+                      editGeneset={editGeneset}
+                    />
+                  )
+                })}
+              </ul>
+            </VScrollPanel>
 
             {/* <DragOverlay>
               {activeId ? (
@@ -371,7 +371,7 @@ export function GenesetPropsPanel() {
                 />
               ) : null}
             </DragOverlay> */}
-          </DndContext>
+          </DragDropProvider>
         </FileDropZonePanel>
       </PropsPanel>
       {/* <ScrollAccordion

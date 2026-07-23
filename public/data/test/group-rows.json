@@ -1,0 +1,40 @@
+{
+  "id": "019f90dc-b956-71e8-ac99-c51c81ecaf62",
+  "name": " Group Rows",
+  "version": 2,
+  "groupRows": [
+    {
+      "id": "019f90da-a106-7ea3-8e0a-9c89908b07b1",
+      "name": "Groups",
+      "groups": [
+        {
+          "id": "019cc39f-d84c-7bba-aff6-314feca20a23",
+          "name": "het",
+          "search": ["het"],
+          "color": "#ff0000",
+          "indices": [0, 1, 2],
+          "show": true,
+          "exactMatch": false
+        },
+        {
+          "id": "019cc39f-f386-7b36-9716-26484f101633",
+          "name": "ko",
+          "search": ["ko"],
+          "color": "#0070ff",
+          "indices": [3, 4, 5, 6],
+          "show": true,
+          "exactMatch": false
+        },
+        {
+          "id": "019cc3a0-000a-7453-b04f-0d340f7a4fdc",
+          "name": "wt",
+          "search": ["wt"],
+          "color": "#1ecf6b",
+          "indices": [7, 8, 9, 10],
+          "show": true,
+          "exactMatch": false
+        }
+      ]
+    }
+  ]
+}

@@ -18,6 +18,10 @@ export interface IClusterGroup extends IDBEntity {
   show: boolean
 }
 
+export interface IClusterGroupRow extends IDBEntity {
+  groups: IClusterGroup[]
+}
+
 interface IGroupProps {
   name: string
   search?: string[]

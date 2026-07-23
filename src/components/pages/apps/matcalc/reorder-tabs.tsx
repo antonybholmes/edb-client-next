@@ -7,14 +7,10 @@ import { getTabName } from '../../../tabs/tab-provider'
 import { useIsMounted } from '@/hooks/mounted'
 import { IChildrenProps } from '@/interfaces/children-props'
 import { truncate, type NullStr } from '@/lib/text/text'
-import { DndContext } from '@dnd-kit/core'
-import { restrictToHorizontalAxis } from '@dnd-kit/modifiers'
-import {
-  arrayMove,
-  horizontalListSortingStrategy,
-  SortableContext,
-  useSortable,
-} from '@dnd-kit/sortable'
+
+import { move } from '@dnd-kit/helpers'
+import { DragDropProvider } from '@dnd-kit/react'
+import { useSortable } from '@dnd-kit/react/sortable'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { gsap } from 'gsap'
 import {
@@ -64,6 +60,7 @@ export const tabButtonVariants = cva('group', {
 
 interface ITabSortableItemProps
   extends ITabMenu, VariantProps<typeof tabVariants> {
+  index: number
   sheet: DataFrameType
   checked: boolean
   active?: NullStr
@@ -71,6 +68,7 @@ interface ITabSortableItemProps
 }
 
 function SheetItem({
+  index,
   sheet,
   checked,
   allowReorder,
@@ -78,16 +76,18 @@ function SheetItem({
   menuCallback,
   variant,
 }: ITabSortableItemProps) {
+  const ref = useRef<HTMLElement | null>(null)
+
   const {
     isDragging,
-    setNodeRef,
+    //ref,
     //setActivatorNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: sheet.id })
+    //transform,
+    //transition,
+  } = useSortable({ id: sheet.id, index, handle: ref })
 
   const labelRef = useRef<HTMLSpanElement>(null)
-  const ref = useRef<HTMLElement | null>(null)
+
   const lineRef = useRef<HTMLSpanElement>(null)
   const initial = useRef(true)
 
@@ -130,10 +130,7 @@ function SheetItem({
   let content: ReactNode = (
     <BaseSortableItem as="div" key={sheet.id} id={sheet.id}>
       <TabsTrigger
-        ref={(el) => {
-          ref.current = el as HTMLButtonElement
-          setNodeRef(el as HTMLButtonElement)
-        }}
+        ref={ref}
         id={sheet.id}
         value={sheet.id}
         key={sheet.id}
@@ -148,6 +145,7 @@ function SheetItem({
         onMouseLeave={() => setHover(false)}
       >
         <SmallDragHandle
+          index={index}
           id={sheet.id}
           className="w-4 h-6 cursor-ew-resize opacity-0 group-hover:opacity-100 trans-opacity"
           aria-label="Drag sheet to move"
@@ -233,16 +231,18 @@ export function ReorderTabs({
   }
 
   return (
-    <DndContext
-      modifiers={[restrictToHorizontalAxis]}
-      onDragStart={(event) => setActiveId(event.active.id as string)}
+    <DragDropProvider
+      //modifiers={[restrictToHorizontalAxis]}
+      onDragStart={(event) => setActiveId(event.operation.source.id as string)}
       onDragEnd={(event) => {
-        const { active, over } = event
+        //const { active, over } = event
 
-        if (allowReorder && over && active.id !== over?.id) {
-          const oldIndex = tabIds.indexOf(active.id as string) //where(tabs ?? [], tab => tab.id === (active.id as string))[0]!
-          const newIndex = tabIds.indexOf(over.id as string) //where(tabs ?? [], (tab) => tab.id === over.id)[0]! //genesetState.order.indexOf(over.id as string)
-          const newOrder = arrayMove(tabIds, oldIndex, newIndex)
+        if (allowReorder) {
+          const newOrder = move(tabIds, event)
+
+          //const oldIndex = tabIds.indexOf(active.id as string) //where(tabs ?? [], tab => tab.id === (active.id as string))[0]!
+          //const newIndex = tabIds.indexOf(over.id as string) //where(tabs ?? [], (tab) => tab.id === over.id)[0]! //genesetState.order.indexOf(over.id as string)
+          //const newOrder = arrayMove(tabIds, oldIndex, newIndex)
 
           // const orderMap = Object.fromEntries(
           //   newOrder.map((id, i) => [id, i])
@@ -270,28 +270,25 @@ export function ReorderTabs({
         className="overflow-hidden grow"
       >
         <TabsList className="text-xs overflow-hidden" ref={tabListRef}>
-          <SortableContext
-            items={tabIds}
-            strategy={horizontalListSortingStrategy}
-          >
-            {sheets.map((s) => {
-              const selected = s.id === sheet?.id
+          {sheets.map((s, si) => {
+            const selected = s.id === sheet?.id
 
-              return (
-                <SheetItem
-                  sheet={s}
-                  key={s.id}
-                  checked={selected}
-                  active={activeId}
-                  variant={variant}
-                  allowReorder={allowReorder}
-                  menuActions={menuActions}
-                  menuCallback={menuCallback}
-                />
-              )
-            })}
+            return (
+              <SheetItem
+                index={si}
+                sheet={s}
+                key={s.id}
+                checked={selected}
+                active={activeId}
+                variant={variant}
+                allowReorder={allowReorder}
+                menuActions={menuActions}
+                menuCallback={menuCallback}
+              />
+            )
+          })}
 
-            {/* <DragOverlay>
+          {/* <DragOverlay>
               {activeId ? (
                 <TabItem
                   tab={tabs.filter((tab) => tab.id === activeId)[0]!}
@@ -300,9 +297,8 @@ export function ReorderTabs({
                 />
               ) : null}
             </DragOverlay> */}
-          </SortableContext>
         </TabsList>
       </Tabs>
-    </DndContext>
+    </DragDropProvider>
   )
 }

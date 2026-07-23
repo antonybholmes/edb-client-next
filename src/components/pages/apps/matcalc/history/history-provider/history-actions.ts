@@ -1,5 +1,11 @@
+import { ITextFileOpen } from '@/components/pages/open-files'
 import { IDBEntity } from '@/interfaces/db-entity'
-import type { IClusterGroup } from '@/lib/cluster-group'
+import {
+  makeNewGroup,
+  type IClusterGroup,
+  type IClusterGroupRow,
+} from '@/lib/cluster-group'
+import { randomHexColor } from '@/lib/color/color'
 import { type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import {
   getFormattedShape,
@@ -7,6 +13,8 @@ import {
 } from '@/lib/dataframe/dataframe-utils'
 import type { IGeneSet } from '@/lib/gsea/geneset'
 import { PATH_SEP } from '@/lib/http/urls'
+import { makeUuid } from '@/lib/id'
+import { textToLines } from '@/lib/text/lines'
 import { formattedList, UndefNullStr } from '@/lib/text/text'
 import { HistoryManager } from '../history-manager'
 import { DEFAULT_FILE, DEFAULT_SHEET, init } from './history-init'
@@ -35,9 +43,9 @@ export type HistoryAction =
       file: IDBEntity
       sheets: BaseDataFrame[]
       plots: HistoryPlot[]
-      groups: IClusterGroup[]
+      groupRows: IClusterGroupRow[]
       genesets: IGeneSet[]
-      groupsName: string
+      //groupsName: string
       mode: AppendMode
     }
   | { type: 'addSheets'; sheets: BaseDataFrame[]; opts: ISheetOps }
@@ -47,11 +55,11 @@ export type HistoryAction =
   | { type: 'reorderSheets'; ids: string[]; opts: ISheetOps }
   | { type: 'reorderPlots'; ids: string[]; opts: ISheetOps }
   | { type: 'updatePlot'; plot: HistoryPlot }
-  | { type: 'addGroups'; groups: IClusterGroup[]; opts: IGroupOps }
+  | { type: 'addGroups'; groupRows: IClusterGroupRow[]; opts: IGroupOps }
   | { type: 'clearGroups'; opts: IGroupOps }
   | { type: 'updateGroup'; group: IClusterGroup; opts: IGroupOps }
   | { type: 'removeGroups'; ids: string[]; opts: IGroupOps }
-  | { type: 'reorderGroups'; ids: string[]; opts: IGroupOps }
+  | { type: 'openGroupFiles'; files: ITextFileOpen[]; opts: IGroupOps }
   | { type: 'addGenesets'; genesets: IGeneSet[]; opts: IGroupOps }
   | { type: 'clearGenesets'; opts: IGroupOps }
   | { type: 'updateGeneset'; geneset: IGeneSet }
@@ -66,8 +74,9 @@ export function dataStoreView(state: IHistoryData): IHistoryDataStore {
     files: state.files,
     sheets: state.sheets,
     plots: state.plots,
-    groupNames: state.groupNames,
-    groups: state.groups,
+    //groupNames: state.groupNames,
+    //groups: state.groups,
+    //groupRows: state.groupRows,
     genesets: state.genesets,
   }
 }
@@ -142,7 +151,7 @@ function removeFile(state: IHistoryState, p: PathId) {
 
   delete state.sheetOrder[p.file]
   delete state.plotOrder[p.file]
-  delete state.groupOrder[p.file]
+  delete state.groupRows[p.file]
   delete state.genesetOrder[p.file]
 
   if (state.fileOrder.length === 0) {
@@ -198,9 +207,10 @@ function removePlot(state: IHistoryState, p: PathId) {
 }
 
 function removeGroup(state: IHistoryState, p: PathId) {
-  state.groupOrder[p.file] = state.groupOrder[p.file]!.filter(
-    (id) => id !== p.group
-  )
+  state.groupRows[p.file] = state.groupRows[p.file]!.map((row) => {
+    row.groups = row.groups.filter((g) => g.id !== p.group)
+    return row
+  })
 }
 
 function removeGeneset(state: IHistoryState, p: PathId) {
@@ -262,7 +272,7 @@ function handleOpenFile(
 
       draft.sheetOrder[action.file.id] = action.sheets.map((s) => s.id)
       draft.plotOrder[action.file.id] = action.plots.map((p) => p.id)
-      draft.groupOrder[action.file.id] = action.groups.map((g) => g.id)
+      draft.groupRows[action.file.id] = action.groupRows //.map((g) => g.id)
       draft.genesetOrder[action.file.id] = action.genesets.map((g) => g.id)
 
       draft.currentFile = action.file.id
@@ -279,15 +289,15 @@ function handleOpenFile(
       for (const plot of action.plots) {
         store.plots[plot.id] = plot
       }
-      for (const group of action.groups) {
-        store.groups[group.id] = group
-      }
+      // for (const group of action.groups) {
+      //   store.groups[group.id] = group
+      // }
       for (const geneset of action.genesets) {
         store.genesets[geneset.id] = geneset
       }
-      if (action.groupsName) {
-        store.groupNames[action.file.id] = action.groupsName
-      }
+      // if (action.groupsName) {
+      //   store.groupNames[action.file.id] = action.groupsName
+      // }
     }
   )
 }
@@ -495,35 +505,35 @@ function handleAddGroups(
   state: IHistoryData,
   action: Extract<HistoryAction, { type: 'addGroups' }>
 ): IHistoryData {
-  const { groups, opts } = action
-  const { mode = 'append', name = '', file = state.present.currentFile } = opts
+  const { groupRows, opts } = action
+  const { file = state.present.currentFile } = opts
 
   // cannot add groups to default file and empty groups array does not require update
-  if (groups.length === 0 || file === DEFAULT_FILE.id) {
+  if (groupRows.length === 0 || file === DEFAULT_FILE.id) {
     return state
   }
 
   return applyHistoryUpdate(
     state,
-    `Add ${formattedList(groups.map((gs) => gs.name))} group${
-      groups.length > 1 ? 's' : ''
+    `Add ${formattedList(groupRows.map((gs) => gs.name))} group${
+      groupRows.length > 1 ? 's' : ''
     }`,
     '',
     (draft: IHistoryState) => {
-      if (mode === 'append') {
-        draft.groupOrder[file]?.push(...groups.map((g) => g.id))
-      } else {
-        draft.groupOrder[file] = groups.map((g) => g.id)
-      }
-    },
-    (store: IHistoryDataStore) => {
-      for (const group of groups) {
-        store.groups[group.id] = group
-      }
-      if (name) {
-        store.groupNames[file] = name
-      }
+      //if (mode === 'append') {
+      //  draft.groupRows[file]?.push(...groupRows)
+      //} else {
+      draft.groupRows[file] = groupRows
+      //}
     }
+    // (store: IHistoryDataStore) => {
+    //   for (const group of groupRows) {
+    //     store.groups[group.id] = group
+    //   }
+    //   if (name) {
+    //     store.groupNames[file] = name
+    //   }
+    // }
   )
 }
 
@@ -544,23 +554,113 @@ function handleClearGroups(
     'Clear groups',
     '',
     (draft: IHistoryState) => {
-      draft.groupOrder[file] = []
+      draft.groupRows[file] = []
     }
   )
 }
 
-function handleUpdateGroup(
+function handleOpenGroupFiles(
   state: IHistoryData,
-  action: Extract<HistoryAction, { type: 'updateGroup' }>
-): IHistoryData {
-  return {
-    ...state,
-    groups: {
-      ...state.groups,
-      [action.group.id]: action.group,
-    },
+  action: Extract<HistoryAction, { type: 'openGroupFiles' }>
+) {
+  const { files, opts } = action
+  const { file = state.present.currentFile } = opts
+
+  if (files.length === 0) {
+    return
   }
+  const f0 = files[0]!
+
+  console.log(f0)
+
+  let groupRows: IClusterGroupRow[] = []
+
+  if (f0.ext === 'json') {
+    const g = JSON.parse(f0.text)
+
+    console.log(g)
+
+    // v1
+    if (Array.isArray(g)) {
+      groupRows = g
+    } else {
+      console.log(g)
+      // v2 for storing group rows
+      groupRows = g.groupRows
+    }
+  } else {
+    // open cls
+    const lines = textToLines(f0.text)
+
+    if (lines.length < 3) {
+      return
+    }
+
+    const names = lines[1]?.split(' ').slice(1)
+
+    if (!names) {
+      return
+    }
+
+    // store lowercase for case insensitive searching
+    const columnNames = lines[2]?.split(/[ \t]/).map((x) => x.toLowerCase())
+
+    if (!columnNames) {
+      return
+    }
+
+    const groups: IClusterGroup[] = []
+
+    for (const name of names) {
+      groups.push(
+        makeNewGroup({
+          name,
+          search: [name.toLowerCase()],
+          color: randomHexColor(),
+          columnNames,
+        })
+      )
+    }
+
+    groupRows = [{ id: makeUuid(), name: 'Groups', groups }]
+  }
+
+  if (groupRows.length === 0) {
+    return state
+  }
+
+  return applyHistoryUpdate(
+    state,
+    'Clear groups',
+    '',
+    (draft: IHistoryState) => {
+      draft.groupRows[file] = groupRows
+    }
+  )
 }
+
+// function handleUpdateGroup(
+//   state: IHistoryData,
+//   action: Extract<HistoryAction, { type: 'updateGroup' }>
+// ): IHistoryData {
+//   const { group, opts } = action
+//   const { file = state.present.currentFile } = opts
+
+//   return applyHistoryUpdate(
+//     state,
+//     'Update group',
+//     '',
+//     (draft: IHistoryState) => {
+//       for (let gr of draft.groupRows[file] ?? []) {
+//         for (let i = 0; i < gr.groups.length; i++) {
+//           if (gr.groups[i].id === group.id) {
+//             gr.groups[i] = group
+//           }
+//         }
+//       }
+//     }
+//   )
+// }
 
 function handleRemoveGroups(
   state: IHistoryData,
@@ -574,28 +674,28 @@ function handleRemoveGroups(
   }
 
   return applyHistoryUpdate(state, 'Remove groups', '', (draft) => {
-    draft.groupOrder[file] = draft.groupOrder[file]!.filter(
-      (id) => !ids.includes(id)
-    )
+    for (let gr of draft.groupRows[file] ?? []) {
+      gr.groups = gr.groups.filter((g) => !ids.includes(g.id))
+    }
   })
 }
 
-function handleReorderGroups(
-  state: IHistoryData,
-  action: Extract<HistoryAction, { type: 'reorderGroups' }>
-): IHistoryData {
-  const { ids, opts } = action
-  const { file = state.present.currentFile } = opts
+// function handleReorderGroups(
+//   state: IHistoryData,
+//   action: Extract<HistoryAction, { type: 'reorderGroups' }>
+// ): IHistoryData {
+//   const { ids, opts } = action
+//   const { file = state.present.currentFile } = opts
 
-  // default file cannot be reordered
-  if (ids.length === 0 || file === DEFAULT_FILE.id) {
-    return state
-  }
+//   // default file cannot be reordered
+//   if (ids.length === 0 || file === DEFAULT_FILE.id) {
+//     return state
+//   }
 
-  return applyHistoryUpdate(state, 'Reorder groups', '', (draft) => {
-    draft.groupOrder[file] = ids
-  })
-}
+//   return applyHistoryUpdate(state, 'Reorder groups', '', (draft) => {
+//     draft.groupOrder[file] = ids
+//   })
+// }
 
 function handleAddGenesets(
   state: IHistoryData,
@@ -786,12 +886,12 @@ export function historyReducer(
       return handleAddGroups(state, action)
     case 'clearGroups':
       return handleClearGroups(state, action)
-    case 'updateGroup':
-      return handleUpdateGroup(state, action)
+    case 'openGroupFiles':
+      return handleOpenGroupFiles(state, action)
     case 'removeGroups':
       return handleRemoveGroups(state, action)
-    case 'reorderGroups':
-      return handleReorderGroups(state, action)
+    //case 'reorderGroups':
+    //  return handleReorderGroups(state, action)
     case 'addGenesets':
       return handleAddGenesets(state, action)
     case 'clearGenesets':

@@ -4,6 +4,7 @@ import { type IButtonProps } from '@/themed/v2/button'
 import { useAppInfo } from '@/components/edb/edb-settings'
 import { IS_DEV_MODE } from '@/consts'
 import { HeaderButton } from '@/layouts/header-button'
+import { present } from '@/lib/dom-utils'
 import { formatString } from '@/lib/text/format-string'
 import { format } from 'date-fns'
 import { useState } from 'react'
@@ -50,7 +51,7 @@ export function AppInfoButton({
   return (
     <HeaderButton
       ref={ref}
-      data-checked={modalVisible}
+      data-checked={present(modalVisible)}
       className={cn('hidden md:flex font-medium text-sm', className)}
       onClick={() => {
         setModalVisible(true)
