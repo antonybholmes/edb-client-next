@@ -1,3 +1,4 @@
+import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
 import { ChevronRight } from 'lucide-react'
 import { useState, type ComponentProps, type ReactNode } from 'react'
@@ -6,11 +7,11 @@ import { ResizablePanel } from './shadcn/ui/themed/resizable'
 
 const CLS = `flex flex-row items-center gap-x-0.5 w-full px-0.5
   shrink-0 grow-0 h-7 border-t border-b border-transparent
-  data-[collapsed=false]:hover:bg-muted/25  
-  data-[collapsed=false]:border-b-border/50 
-  data-[collapsed=false]:hover:border-b-border/70
-  data-[first=true]:border-t-border/50 
-  data-[first=true]:hover-border-t-border/70 
+  data-open:hover:bg-muted/25  
+  data-open:border-b-border/50 
+  data-open:hover:border-b-border/70
+  data-first:border-t-border/50 
+  data-first:hover:border-t-border/70 
   trans-color`
 
 export function SidebarResizablePanel({
@@ -50,14 +51,14 @@ export function SidebarResizablePanel({
       {...props}
     >
       <button
-        data-collapsed={collapsed}
-        data-first={isFirst}
+        data-open={present(!collapsed)}
+        data-first={present(isFirst)}
         onClick={toggle}
         className={CLS}
       >
         <ChevronRight
           className={cn('trans-300 transition-transform', {
-            'rotate-90': !ref.current?.isCollapsed(),
+            'rotate-90': !collapsed,
           })}
           size={16}
         />

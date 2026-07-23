@@ -1,5 +1,6 @@
 import type { IChildrenProps } from '@/interfaces/children-props'
 import type { IClassProps } from '@/interfaces/class-props'
+import { present } from '@/lib/dom-utils'
 import { File, FolderOpen, SquareMinus, SquarePlus } from 'lucide-react'
 import { createContext, useContext, useState, type ReactNode } from 'react'
 import { ChevronRightIcon } from './icons/chevron-right-icon'
@@ -156,8 +157,8 @@ const TreeNode = ({
   return (
     <li id={currentPath}>
       <VCenterRow
-        data-selected={selectedId === currentPath}
-        className="gap-x-1 hover:bg-muted/50 data-[selected=true]:bg-muted/50 rounded-md px-2"
+        data-selected={present(selectedId === currentPath)}
+        className="gap-x-1 hover:bg-muted/50 data-selected:bg-muted/50 rounded-md px-2"
       >
         <button
           onClick={() => {

@@ -1,6 +1,7 @@
 import { WarningIcon } from '@/icons/warning-icon'
 import type { IDivProps } from '@/interfaces/div-props'
 import { VCenterRow } from '@/layout/v-center-row'
+import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
 import type { UndefStr } from '@/lib/text/text'
 import { BUTTON_XL_H_CLS, FOCUS_INSET_RING_CLS } from '@/theme'
@@ -16,7 +17,7 @@ import {
 
 export const CONTAINER_CLS = cn(
   'min-w-0 flex flex-row items-center',
-  'disabled:cursor-not-allowed data-[readonly=true]:bg-muted/30 overflow-hidden'
+  'disabled:cursor-not-allowed data-readonly:bg-muted/30 overflow-hidden'
 )
 
 export const inputVariants = cva(CONTAINER_CLS, {
@@ -32,12 +33,12 @@ export const inputVariants = cva(CONTAINER_CLS, {
       header: cn(
         'border border-transparent bg-muted/75 stroke-foreground px-2',
         'hover:bg-background hover:shadow-xs hover:border-border',
-        'data-[focus=true]:bg-background data-[focus=true]:shadow-xs',
-        'data-[focus=true]:border-border trans-color'
+        'data-focus:bg-background data-focus:shadow-xs',
+        'data-focus:border-border trans-color'
       ),
       alt: cn(
         'bg-muted/50 hover:bg-muted/70 px-2 stroke-foreground border-2',
-        'border-transparent data-[focus=true]:border-ring'
+        'border-transparent data-focus:border-ring'
       ),
       underline: 'bg-background border-b border-border hover:border-ring px-1',
     },
@@ -169,12 +170,12 @@ export function Input({
         rounded,
         className,
       })}
-      data-enabled={!disabled}
-      data-readonly={readOnly}
-      data-error={error}
+
+      data-readonly={present(readOnly)}
+      data-error={present(error)}
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
-      data-focus={focus}
+      data-focus={present(focus)}
     >
       {leftChildren && leftChildren}
 

@@ -1,5 +1,6 @@
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import type { IChildrenProps } from '@/interfaces/children-props'
+import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
 import {
   Accordion as AccordionPrimitive,
@@ -159,7 +160,7 @@ export function AccordionItem({
 
 const TRIGGER_CLS = cn(
   'group relative outline-2 outline-transparent',
-  'focus-visible:outline-ring data-[focus=true]:outline-ring -outline-offset-2',
+  'focus-visible:outline-ring data-focus:outline-ring -outline-offset-2',
   'flex flex-row grow items-center font-semibold'
 )
 
@@ -171,7 +172,7 @@ export const accordionHeaderVariants = cva(
       variant: {
         default: '',
         settings:
-          'text-base data-[show-border=true]:pt-4 data-[show-border=true]:border-t data-[show-border=true]:border-border/50',
+          'text-base data-show-border:pt-4 data-show-border:border-t data-show-border:border-border/50',
         sidebar:
           'h-7 rounded-theme overflow-hidden hover:bg-muted/50 text-xs trans-color pr-1.5',
         none: '',
@@ -226,9 +227,9 @@ export function AccordionTrigger({
 
   return (
     <AccordionPrimitive.Header
-      data-show-border={showBorder}
-      data-is-first={isFirst}
-      data-hover={hover}
+      data-show-border={present(showBorder)}
+      //data-is-first={present(isFirst)}
+      //data-hover={hover}
       className={accordionHeaderVariants({
         className: cn(TRIGGER_CLS, className),
         variant,
@@ -239,7 +240,7 @@ export function AccordionTrigger({
       <AccordionPrimitive.Trigger
         ref={ref}
         className={accordionTriggerVariants({ variant })}
-        data-hover={hover}
+        //data-hover={hover}
 
         onMouseOver={() => setHover(true)}
         onMouseOut={() => setHover(false)}

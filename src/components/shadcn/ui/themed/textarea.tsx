@@ -94,7 +94,7 @@ export function Textarea({
         w,
         className,
       })}
-      data-enabled={!disabled}
+
       data-readonly={readOnly}
       data-focus={focus}
       onFocus={() => {

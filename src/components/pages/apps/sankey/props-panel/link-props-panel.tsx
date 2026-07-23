@@ -1,17 +1,17 @@
 import { type IClusterGroup } from '@/lib/cluster-group'
 
 import {
-    DndContext,
-    KeyboardSensor,
-    PointerSensor,
-    useSensor,
-    useSensors,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
 } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import {
-    SortableContext,
-    sortableKeyboardCoordinates,
-    verticalListSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 
 import { VCenterRow } from '@/components/layout/v-center-row'
@@ -24,13 +24,6 @@ import { MoveRight } from 'lucide-react'
 import { IOutputLink } from '../sankey-layout'
 import { useSankey } from '../sankey-provider'
 import { useSankeySettings } from '../sankey-settings-store'
-
-export const GROUP_CLS = `group rounded-theme group gap-x-1 opacity-80 py-1 px-2
-hover:opacity-100 trans-opacity hover:bg-muted/50 data-[focus=true]:bg-muted/50`
-
-export const GROUP_CONTENT_CLS = `flex flex-row items-center grow relative 
-  w-full overflow-hidden py-2 pl-1 pr-2 gap-x-2 rounded-theme 
-  group-hover:bg-muted group-data-[focus=true]:bg-muted`
 
 function LinkItem({ link }: { link: IOutputLink }) {
   const { updateLink } = useSankey()

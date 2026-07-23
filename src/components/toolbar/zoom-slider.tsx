@@ -119,7 +119,7 @@ export function ZoomSelect({
   return (
     <VCenterRow
       data-open={open}
-      className="gap-x-1 border border-border/50 rounded-theme bg-background h-6 pl-1.5 overflow-hidden focus-within:border-border hover:border-border data-[open=true]:border-border"
+      className="gap-x-1 border border-border/50 rounded-theme bg-background h-6 pl-1.5 overflow-hidden focus-within:border-border hover:border-border data-open:border-border"
     >
       <Input
         variant="plain"
@@ -146,7 +146,7 @@ export function ZoomSelect({
         }}
       >
         <BaseSelectTrigger
-          className="flex flex-col items-center justify-center data-popup-open:bg-app-theme/30 w-5 h-6 data-[expanded=true]:bg-app-theme/30"
+          className="flex flex-col items-center justify-center data-popup-open:bg-app-theme/30 w-5 h-6"
           aria-label="Show zoom levels"
         >
           <ChevronDown size={16} />

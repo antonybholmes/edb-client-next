@@ -7,11 +7,11 @@ import type { UndefStr } from '@/lib/text/text'
 import { BUTTON_XL_H_CLS, FOCUS_INSET_RING_CLS } from '@/theme'
 import { cva, type VariantProps } from 'class-variance-authority'
 import {
-    useEffect,
-    useState,
-    type ComponentProps,
-    type CSSProperties,
-    type ReactNode,
+  useEffect,
+  useState,
+  type ComponentProps,
+  type CSSProperties,
+  type ReactNode,
 } from 'react'
 
 export const PLACEHOLDER_CLS = cn(
@@ -81,9 +81,7 @@ export interface IInputProps
   leftChildren?: ReactNode
   rightChildren?: ReactNode
   otherChildren?: ReactNode
-  //label?: UndefStr
-  //labelPos?: 'left' | 'top'
-  //labelW?: string
+
   w?: string
   onTextChange?: (v: string) => void
   onTextChanged?: (v: string) => void

@@ -38,11 +38,11 @@ import * as SwitchPrimitives from './v2/switch'
 const TOGGLE_CLS = cn(
   FOCUS_RING_CLS,
   'relative h-[22px] shrink-0 w-[38px] rounded-full',
-  'data-[enabled=true]:data-[state=checked]:bg-theme/75',
-  'data-[enabled=true]:data-[state=checked]:hover:bg-theme',
-  'data-[enabled=true]:data-[state=unchecked]:bg-muted',
-  'data-[enabled=true]:data-[state=unchecked]:hover:bg-muted',
-  'data-[enabled=false]:bg-muted trans-color'
+  'enabled:data-[state=checked]:bg-theme/75',
+  'enabled:data-[state=checked]:hover:bg-theme',
+  'enabled:data-[state=unchecked]:bg-muted',
+  'enabled:data-[state=unchecked]:hover:bg-muted',
+  'disabled:bg-muted trans-color'
 )
 
 // const TOGGLE_ENABLED_CLS = cn(
@@ -129,7 +129,7 @@ export const PillSwitch = forwardRef<
       ref={ref}
       checked={checked}
       disabled={disabled}
-      data-enabled={!disabled}
+
       //onCheckedChange={_onClick}
       className={TOGGLE_CLS}
       onMouseEnter={() => setHover(true)}
@@ -145,7 +145,7 @@ export const PillSwitch = forwardRef<
         data-hover={hover}
         className={THUMB_CLS}
         ref={thumbRef}
-        data-enabled={!disabled}
+
         data-checked={checked}
       />
     </SwitchPrimitives.Switch>

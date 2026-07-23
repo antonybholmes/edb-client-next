@@ -23,7 +23,7 @@ const BG_CLS = cn(
   'data-open:animate-in data-closed:animate-out',
   'data-closed:fade-out-0 data-open:fade-in-0',
   'data-starting-style:fade-out-0 data-ending-style:fade-in-0',
-  'flex flex-row items-center justifiy-center'
+  'flex flex-row items-center justify-center'
 )
 
 export const overlayVariants = cva(BG_CLS, {

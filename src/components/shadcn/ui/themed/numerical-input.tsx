@@ -7,8 +7,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Input, type IInputProps } from './v2/input'
 
 const BUTTON_CLS = `w-4 flex h-3 min-h-0 overflow-hidden shrink-0 flex-row justify-center items-center
-  data-[enabled=true]:text-foreground/80 data-[enabled=false]:text-foreground/50 
-  data-[enabled=true]:hover:text-app-theme data-[enabled=true]:focus-visible:text-app-theme
+  enabled:text-foreground/80 disabled:text-foreground/50 
+  enabled:hover:text-app-theme enabled:focus-visible:text-app-theme
   outline-none trans-color`
 
 const UPDATE_INTERVAL_MS = 150
@@ -253,7 +253,7 @@ export function NumericalInput({
       <VCenterCol>
         <button
           disabled={disabled}
-          data-enabled={!disabled}
+
           className={BUTTON_CLS}
 
           onMouseDown={() => startUpdating(step)}
@@ -267,7 +267,7 @@ export function NumericalInput({
         </button>
         <button
           disabled={disabled}
-          data-enabled={!disabled}
+
           className={BUTTON_CLS}
 
           onMouseDown={() => startUpdating(-step)}

@@ -22,6 +22,7 @@ import { cn } from '@/lib/shadcn-utils'
 import gsap from 'gsap'
 
 import { useStableId } from '@/hooks/stable-id'
+import { present } from '@/lib/dom-utils'
 import type { ILim } from '@/lib/math/math'
 import { HANDLE_CLS, InnerHandle } from '../shadcn/ui/themed/resizable'
 import type { LeftRightPos } from '../side'
@@ -473,8 +474,8 @@ export function SlideBar({
     return (
       <BaseCol
         ref={sidebarContentRef}
-        className="gap-y-1 overflow-hidden data-[drag=true]:pointer-events-none grow"
-        data-drag={dragDir !== ''}
+        className="gap-y-1 overflow-hidden data-drag:pointer-events-none grow"
+        data-drag={present(dragDir !== '')}
       >
         {title && (
           <VCenterRow className="justify-between pr-1">

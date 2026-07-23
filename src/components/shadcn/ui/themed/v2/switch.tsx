@@ -1,4 +1,5 @@
 import type { LeftRightPos } from '@/components/side'
+import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
 import { Field } from '@base-ui/react/field'
 import { Switch as SwitchPrimitives } from '@base-ui/react/switch'
@@ -35,42 +36,19 @@ import {
 
 const TOGGLE_CLS = cn(
   'relative shrink-0 rounded-full cursor-pointer group outline-none',
-  'data-[enabled=true]:data-[checked]:bg-app-theme/70',
-  'data-[enabled=true]:data-[checked]:hover:bg-app-theme',
-  'data-[enabled=true]:data-[checked]:focus-visible:bg-app-theme',
-  'data-[enabled=true]:data-[unchecked]:bg-muted',
-  'data-[enabled=true]:data-[unchecked]:hover:bg-muted',
-  'data-[enabled=false]:bg-muted trans-color'
-  //'data-[checked=false]:justify-start data-[checked=true]:justify-end'
+  'data-enabled:data-checked:bg-app-theme/70',
+  'data-enabled:data-checked:hover:bg-app-theme',
+  'data-enabled:data-checked:focus-visible:bg-app-theme',
+  'data-enabled:data-unchecked:bg-muted',
+  'data-enabled:data-unchecked:hover:bg-muted',
+  'disabled:bg-muted trans-color'
 )
-
-// const TOGGLE_ENABLED_CLS = cn(
-//   "data-[state=checked]:bg-theme data-[state=checked]:hover:bg-theme-hover",
-//   "data-[state=unchecked]:bg-muted data-[state=unchecked]:hover:bg-muted",
-// )
-
-// const TOGGLE_DISABLED_CLS = cn(
-//   "data-[state=checked]:bg-muted/25",
-//   "data-[state=unchecked]:bg-muted/25",
-// )
 
 const THUMB_CLS = cn(
   'absolute pointer-events-none shrink-0',
   'cursor-pointer rounded-full bg-white z-30',
   'top-1/2 -translate-y-1/2 flex flex-row justify-center items-center'
 )
-
-// const HIGHLIGHT_THUMB_CLS = cn(
-//   'absolute pointer-events-none aspect-square w-[20px] h-[20px]',
-//   'rounded-full shrink-0 z-10 left-[1px] top-1/2 -translate-y-1/2',
-//   'data-[checked=true]:bg-theme/10 data-[checked=false]:bg-foreground/5'
-// )
-
-// const PRESSED_THUMB_CLS = cn(
-//   'absolute pointer-events-none aspect-square w-4.5 rounded-full shrink-0 z-20',
-//   'data-[checked=true]:bg-theme/20 data-[checked=false]:bg-foreground/10',
-//   'top-0.5 data-[checked=false]:left-0.5 data-[checked=true]:right-0.5'
-// )
 
 export interface ISwitchProps extends ComponentProps<
   typeof SwitchPrimitives.Root
@@ -128,8 +106,7 @@ export function Switch({
       ref={ref}
       checked={checked}
       disabled={disabled}
-      data-enabled={!disabled}
-      //onCheckedChange={_onClick}
+      data-enabled={present(!disabled)}
       className={TOGGLE_CLS}
       style={{ height: 20, width: 32 }}
       onMouseEnter={() => setHover(true)}
@@ -141,61 +118,15 @@ export function Switch({
       {...props}
     >
       <span
-        //layout
-        //initial={false}
-
         data-hover={hover}
         className={THUMB_CLS}
         ref={thumbRef}
         data-enabled={!disabled}
         data-checked={checked}
         style={{ height: 16, width: 20 }}
-      >
-        {/* {checked && (
-          <Check
-            data-hover={hover}
-            strokeWidth={3}
-            size={10}
-            className="text-app-theme/50 data-[hover=true]:text-app-theme/80 trans-color"
-          />
-        )} */}
-      </span>
-      {/* {!disabled && (
-        <>
-          <span
-            data-checked={checked}
-            data-hover={true}
-            //layout
-            //animate={{ scale: hover || pressed ? 1.8 : 1 }}
-            // initial={false}
-            className={HIGHLIGHT_THUMB_CLS}
-            ref={highlightThumbRef}
-          />
-           <motion.span
-            data-checked={checked}
-            data-hover={true}
-            layout
-            animate={{ scale: hover && pressed ? 2 : 1 }}
-            initial={false}
-            className={PRESSED_THUMB_CLS}
-            ref={pressedThumbRef}
-          />  
-        </>
-      )} */}
+      ></span>
     </SwitchPrimitives.Root>
   )
-
-  // if (children) {
-  //   return (
-  //     <VCenterRow className={cn('gap-x-1', className)}>
-  //       {side === 'left' && button}
-  //       <VCenterRow className="gap-x-1">{children}</VCenterRow>
-  //       {side === 'right' && button}
-  //     </VCenterRow>
-  //   )
-  // } else {
-  //   return button
-  // }
 
   if (children) {
     ret = (

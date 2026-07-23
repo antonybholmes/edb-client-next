@@ -89,7 +89,7 @@ function SeqBrowserPage() {
   const { setTabs: setToolbarTabs } = useToolbarTabs()
   const { setTabs: setSideTabs } = useSideTabs()
 
-  const { query, setQuery } = useSearch()
+  const { query, setQuery, resetQuery } = useSearch()
 
   const [showFileMenu, setShowFileMenu] = useState(false)
 
@@ -266,7 +266,8 @@ function SeqBrowserPage() {
                 setQuery([v])
               }}
               clear={() => {
-                setQuery([])
+                console.log('Clearing query', query.toString())
+                resetQuery()
               }}
               onTextChanged={(v) => {
                 const tokens = v.split(',').map((s) => s.trim())

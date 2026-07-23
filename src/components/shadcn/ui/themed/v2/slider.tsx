@@ -1,5 +1,6 @@
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { useNumDebounce } from '@/hooks/debounce'
+import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
 import {
   Slider as SliderPrimitive,
@@ -107,17 +108,17 @@ export function Slider({
         )}
       >
         <SliderPrimitive.Track
-          data-focus={focus}
-          className="relative h-1 grow rounded-full bg-muted/70 data-[focus=true]:bg-muted group-hover:bg-muted trans-color"
+          data-focus={present(focus)}
+          className="relative h-1 grow rounded-full bg-muted/70 data-focus:bg-muted group-hover:bg-muted trans-color"
         >
           <SliderPrimitive.Indicator
-            data-focus={focus}
-            className="h-1 bg-app-theme/70 rounded-full data-[focus=true]:bg-app-theme group-hover:bg-app-theme trans-color"
+            data-focus={present(focus)}
+            className="h-1 bg-app-theme/70 rounded-full data-focus:bg-app-theme group-hover:bg-app-theme trans-color"
           />
 
           <SliderPrimitive.Thumb
             ref={ref}
-            data-focus={focus}
+            data-focus={present(focus)}
             className={THUMB_CLS}
             aria-label="Slider control"
           />

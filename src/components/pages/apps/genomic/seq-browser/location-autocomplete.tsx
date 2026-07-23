@@ -67,9 +67,9 @@ export function LocationAutocomplete({
   }, [geneData])
 
   useEffect(() => {
-    if (value) {
-      setQuery(value?.toString())
-    }
+    //if (value) {
+    setQuery(value?.toString())
+    //}
   }, [value])
 
   return (

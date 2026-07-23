@@ -8,6 +8,7 @@ import { getTabName, useTabs, type ITab } from './tab-provider'
 
 import { cva, type VariantProps } from 'class-variance-authority'
 
+import { present } from '@/lib/dom-utils'
 import { truncate } from '@/lib/text/text'
 import { remToPx } from '../utils'
 import {
@@ -16,11 +17,11 @@ import {
   type ITabIndicatorPos,
 } from './tab-indicator-provider'
 
-export const UNDERLINE_LABEL_CLS = `boldable-text-tab data-[checked=true]:font-medium data-[hover=true]:text-foreground
-data-[checked=true]:text-foreground text-alt-foreground truncate relative pointer-events-none select-none`
+export const UNDERLINE_LABEL_CLS = `boldable-text-tab data-checked:font-medium data-hover:text-foreground
+data-checked:text-foreground text-alt-foreground truncate relative pointer-events-none select-none`
 
-export const UNDERLINE_HOVER_LABEL_CLS = `z-40 opacity-0 font-medium data-[hover=true]:opacity-100
-data-[checked=true]:opacity-100 group-focus-visible:opacity-100 trans-opacity absolute 
+export const UNDERLINE_HOVER_LABEL_CLS = `z-40 opacity-0 font-medium data-hover:opacity-100
+data-checked:opacity-100 group-focus-visible:opacity-100 trans-opacity absolute 
 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 truncate pointer-events-none select-none`
 
 export const tabButtonVariants = cva('group overflow-hidden', {
@@ -30,7 +31,7 @@ export const tabButtonVariants = cva('group overflow-hidden', {
       default: 'h-8 px-2',
       toolbar: 'h-8',
       sheet:
-        'py-1.5 px-3 w-16 flex flex-row justify-center focus-visible:bg-muted hover:bg-muted data-[checked=true]:bg-muted',
+        'py-1.5 px-3 w-16 flex flex-row justify-center focus-visible:bg-muted hover:bg-muted data-checked:bg-muted',
       tab: 'border',
     },
   },
@@ -168,7 +169,7 @@ function Trigger({
 
   return (
     <span
-      data-selected={selected}
+      data-selected={present(selected)}
       ref={(el) => {
         ref.current = el
         buttonsRef.current[ti] = el!
@@ -182,7 +183,7 @@ function Trigger({
       })}
     >
       <span
-        data-checked={selected}
+        data-checked={present(selected)}
         aria-label={truncatedName}
         className={UNDERLINE_LABEL_CLS}
       >
@@ -205,7 +206,6 @@ export function _UnderlineTabs({
   groupId = 'toolbar',
   maxNameLength = -1,
   tabButtonProps = { variant: 'toolbar' },
-  //onTabChange,
   tabListCls,
   className,
   children,

@@ -87,7 +87,7 @@ export function ActionCheckRow({
         checked={checked}
         onCheckedChange={onCheckedChange}
         disabled={disabled}
-        data-enabled={!disabled}
+
         title={tooltip}
       >
         {title}
@@ -114,7 +114,7 @@ export function ActionSwitchRow({
         checked={checked}
         onCheckedChange={onCheckedChange}
         disabled={disabled}
-        data-enabled={!disabled}
+
         title={tooltip}
         className={switchCls}
       >

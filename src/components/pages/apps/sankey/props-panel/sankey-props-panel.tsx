@@ -7,9 +7,6 @@ import { LinkPropsPanel } from './link-props-panel'
 import { NodePropsPanel } from './node-props-panel'
 import { PlotPropsPanel } from './plot-props-panel'
 
-// const TAB_CLS =
-//   'w-4.5 stroke-foreground/75 group-hover:stroke-foreground group-data-[selected=true]:stroke-foreground'
-
 export function SankeyPropsPanel() {
   const { selectedTab, setTabs } = useTabs('sankey-props-panel')
 

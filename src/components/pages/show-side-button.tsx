@@ -32,10 +32,7 @@ export function ShowSideButton({
 
       <ChevronRightIcon
         data-open={open} //rotate-180
-        className={cn(
-          'group-data-[open=true]:rotate-180',
-          ICON_TRANSITION_TO_CLS
-        )}
+        className={cn('group-data-open:rotate-180', ICON_TRANSITION_TO_CLS)}
       />
     </IconButton>
   )

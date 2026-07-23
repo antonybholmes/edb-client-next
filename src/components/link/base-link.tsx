@@ -1,6 +1,7 @@
 import { type ILinkProps } from '@/interfaces/link-props'
 import { BASE_COMPONENT_CLS, FOCUS_RING_CLS } from '@/theme'
 
+import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
 import Link from 'next/link'
 
@@ -42,7 +43,7 @@ export function BaseLink({
         ref={ref}
         href={href}
         title={title}
-        data-checked={selected}
+        data-checked={present(selected)}
         className={cn(LINK_CLS, className)}
         target={target}
         {...props}
@@ -57,7 +58,7 @@ export function BaseLink({
       ref={ref}
       href={href}
       title={title}
-      data-checked={selected}
+      data-checked={present(selected)}
       className={cn(LINK_CLS, className)}
       target={target}
       {...props}

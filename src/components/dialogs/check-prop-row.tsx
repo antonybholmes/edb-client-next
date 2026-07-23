@@ -37,7 +37,7 @@ export function CheckPropRow({
         checked={checked}
         onCheckedChange={onCheckedChange}
         disabled={disabled}
-        data-enabled={!disabled}
+ 
         title={tooltip}
       >
         {title}
@@ -58,7 +58,7 @@ export function CheckPropRow({
           checked={checked}
           onCheckedChange={onCheckedChange}
           disabled={disabled}
-          data-enabled={!disabled}
+
           title={tooltip}
         />
       </VCenterRow>

@@ -4,6 +4,7 @@ import { CenterRow } from '@/components/layout/center-row'
 import { HCenterCol } from '@/components/layout/h-center-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { cellStr } from '@/lib/dataframe/cell'
+import { present } from '@/lib/dom-utils'
 import { rangeMap } from '@/lib/math/range'
 import { cn } from '@/lib/shadcn-utils'
 import { useSelectionRange } from '@/providers/selection-range-provider'
@@ -18,12 +19,12 @@ const MIN_CELL_WIDTH = 25
 const HEADER_CLS = cn(
   'border-border border-r justify-center absolute',
   'data-[col-selected=true]:text-white',
-  'data-[col-selected=false]:data-[in-selection=true]:bg-app-theme/20 data-[col-selected=true]:bg-app-theme/80'
+  'data-[col-selected=false]:data-in-selection:bg-app-theme/20 data-[col-selected=true]:bg-app-theme/80'
 )
 
 const RESIZE_CLS = `absolute w-2 top-0 right-0 bottom-0 cursor-col-resize 
   justify-center translate-x-1/2 opacity-0 hover:opacity-100 
-  data-[resize=true]:opacity-100 z-30`
+  data-resize:opacity-100 z-30`
 
 const RESIZE_HANDLE_CLS =
   'h-4/5 w-1.5 rounded-full bg-background border-foreground border pointer-events-none z-50'
@@ -150,7 +151,7 @@ export function ColHeader({ col }: { col: VirtualItem }) {
     <HCenterCol
       id={`table-header-${col.index}`}
       key={col.key}
-      data-in-selection={inSelection}
+      data-in-selection={present(inSelection)}
       data-col-selected={colSelected}
       className={HEADER_CLS}
       style={{
@@ -185,7 +186,7 @@ export function ColHeader({ col }: { col: VirtualItem }) {
           e.preventDefault()
           handleResizeMouseDown(col.index, e)
         }}
-        data-resize={col.index === resizenMouseDown}
+        data-resize={present(col.index === resizenMouseDown)}
       >
         <span className={RESIZE_HANDLE_CLS} />
       </VCenterRow>

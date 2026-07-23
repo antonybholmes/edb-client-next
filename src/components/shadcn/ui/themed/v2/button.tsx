@@ -5,6 +5,7 @@ import {
 } from '@base-ui/react/button'
 
 import type { ITooltipSide } from '@/interfaces/tooltip-side-props'
+import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
 import {
   BASE_BUTTON_CLS,
@@ -30,58 +31,58 @@ import { gsap } from 'gsap'
 import { useEffect, useRef, useState, type ComponentProps } from 'react'
 
 // const BASE_GHOST_CLS =
-//   'border border-transparent bg-muted hover:bg-accent data-[checked=true]:bg-accent'
+//   'border border-transparent bg-muted hover:bg-accent data-checked:bg-accent'
 
 export const BASE_OUTLINE_CLS = cn(
   FOCUS_RING_CLS,
   'focus:border-ring hover:border-ring bg-background',
-  'border border-border data-[checked=true]:border-ring'
+  'border border-border data-checked:border-ring'
 )
 
 export const BASE_IOS_CLS = cn(
   'border border-transparent hover:border-border/25 hover:bg-background/75',
-  'data-[checked=true]:bg-background/75 data-[checked=true]:border-border/75',
+  'data-checked:bg-background/75 data-checked:border-border/75',
   'data-popup-open:bg-background/75 data-popup-open:border-border/75'
 )
 
 export const BASE_SECONDARY_CLS = cn(
   FOCUS_RING_CLS,
   'bg-background border border-border data-[checked=false]:hover:bg-faint',
-  'data-[checked=true]:bg-faint data-[state=open]:bg-faint'
+  'data-checked:bg-faint data-[state=open]:bg-faint'
 )
 
 export const BASE_ALT_CLS = cn(
   FOCUS_RING_CLS,
   'bg-faint data-[checked=false]:hover:bg-muted',
-  'data-[checked=true]:bg-muted data-[state=open]:bg-muted'
+  'data-checked:bg-muted data-[state=open]:bg-muted'
 )
 
 export const BASE_FLAT_BUTTON_CLS = cn(
   'hover:bg-muted/50 data-[checked=false]:hover:bg-muted/50',
-  'data-[checked=true]:bg-muted/50 data-[state=open]:bg-muted/50',
+  'data-checked:bg-muted/50 data-[state=open]:bg-muted/50',
   'aria-[expanded=true]:bg-muted/50 data-popup-open:bg-muted/50'
 )
 
 export const BASE_FLAT_ALT_BUTTON_CLS = cn(
   'hover:bg-muted/70 data-[checked=false]:hover:bg-muted/70',
-  'data-[checked=true]:bg-muted/70 data-[state=open]:bg-muted/70',
+  'data-checked:bg-muted/70 data-[state=open]:bg-muted/70',
   'aria-[expanded=true]:bg-muted/70 data-popup-open:bg-muted/70'
 )
 
 export const BASE_FLAT_APP_THEME_BUTTON_CLS = cn(
   'hover:bg-app-theme/20 data-[checked=false]:hover:bg-app-theme/20',
-  'data-[checked=true]:bg-app-theme/20 data-[state=open]:bg-app-theme/20',
+  'data-checked:bg-app-theme/20 data-[state=open]:bg-app-theme/20',
   'aria-[expanded=true]:bg-app-theme/20 data-popup-open:bg-app-theme/20'
 )
 
 export const BASE_MUTED_LIGHT_CLS = cn(
   'border border-transparent data-[checked=false]:hover:bg-muted/50',
-  'data-[checked=true]:bg-muted/50 data-[state=open]:bg-muted/50'
+  'data-checked:bg-muted/50 data-[state=open]:bg-muted/50'
 )
 
 export const THEME_MUTED_CLS = cn(
   'border border-transparent hover:bg-theme/25',
-  'data-[checked=true]:bg-theme/25 data-[state=open]:bg-theme/25',
+  'data-checked:bg-theme/25 data-[state=open]:bg-theme/25',
   'aria-[expanded=true]:bg-theme/25'
 )
 
@@ -90,23 +91,23 @@ export const THEME_MUTED_CLS = cn(
 
 // export const BASE_TOOLBAR_CLS = cn(
 //   'border border-transparent data-[checked=false]:hover:bg-muted/50',
-//   'data-[checked=true]:bg-muted/50 data-[state=open]:bg-muted/50'
+//   'data-checked:bg-muted/50 data-[state=open]:bg-muted/50'
 // )
 
 // export const BASE_MUTED_THEME_CLS = cn(
 //   'border border-transparent hover:bg-theme-muted data-[checked=false]:hover:bg-theme-muted',
-//   'data-[checked=true]:bg-theme-muted data-[state=open]:bg-theme-muted'
+//   'data-checked:bg-theme-muted data-[state=open]:bg-theme-muted'
 // )
 
 // const BASE_ACCENT_CLS =
-//   'hover:bg-muted/30 data-[checked=true]:bg-muted/30 data-[state=open]:bg-muted/30'
+//   'hover:bg-muted/30 data-checked:bg-muted/30 data-[state=open]:bg-muted/30'
 
 export const BASE_MENU_CLS = cn(
   'focus:bg-muted',
   'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
   'fill-foreground stroke-foreground',
   'hover:bg-muted'
-  //'data-[checked=true]:bg-muted/50 data-[checked=true]:border-border',
+  //'data-checked:bg-muted/50 data-checked:border-border',
   //'data-[state=checked]:bg-muted/50 data-[state=checked]:border-border'
 )
 
@@ -155,7 +156,7 @@ export const buttonVariants = cva(BASE_BUTTON_CLS, {
       theme: CORE_THEME_BUTTON_CLS,
       'app-theme': CORE_APP_ACCENT_BUTTON_CLS,
       destructive: DESTRUCTIVE_CLS,
-      trans: 'hover:bg-white/20 data-[checked=true]:bg-white/20',
+      trans: 'hover:bg-white/20 data-checked:bg-white/20',
       secondary: BASE_SECONDARY_CLS,
       //alt: BASE_ALT_CLS,
       //ghost: BASE_GHOST_CLS,
@@ -170,7 +171,7 @@ export const buttonVariants = cva(BASE_BUTTON_CLS, {
       menu: BASE_MENU_CLS,
       link: LINK_CLS,
       'red-link': RED_LINK_CLS,
-      footer: 'hover:bg-primary/20 data-[checked=true]:bg-primary/20',
+      footer: 'hover:bg-primary/20 data-checked:bg-primary/20',
     },
     flow: {
       row: 'flex row',
@@ -419,7 +420,7 @@ export function Button({
         className: cn('relative text-nowrap group shrink-0', className),
       })}
       ref={ref}
-      data-checked={checked}
+      data-checked={present(checked)}
       data-state={open ? 'open' : 'closed'}
       disabled={disabled}
       onMouseDown={_onMouseDown}

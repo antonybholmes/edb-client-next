@@ -31,11 +31,11 @@ import { useEffect, useRef, useState, type ComponentProps } from 'react'
 const TOGGLE_CLS = cn(
   FOCUS_RING_CLS,
   'relative shrink-0 rounded-full',
-  'data-[enabled=true]:data-[state=checked]:bg-theme/80',
-  'data-[enabled=true]:data-[state=checked]:hover:bg-theme',
-  'data-[enabled=true]:data-[state=unchecked]:bg-muted',
-  'data-[enabled=true]:data-[state=unchecked]:hover:bg-muted',
-  'data-[enabled=false]:bg-muted trans-color'
+  'enabled:data-[state=checked]:bg-theme/80',
+  'enabled:data-[state=checked]:hover:bg-theme',
+  'enabled:data-[state=unchecked]:bg-muted',
+  'enabled:data-[state=unchecked]:hover:bg-muted',
+  'disabled:bg-muted trans-color'
   //'data-[checked=false]:justify-start data-[checked=true]:justify-end'
 )
 
@@ -150,7 +150,7 @@ export function Switch({
       ref={ref}
       checked={checked}
       disabled={disabled}
-      data-enabled={!disabled}
+
       //onCheckedChange={_onClick}
       className={TOGGLE_CLS}
       style={{ height: 'calc(1rem + 4px)', width: 'calc(1.75rem + 4px)' }}

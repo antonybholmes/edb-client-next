@@ -94,7 +94,7 @@ export function SideRadioGroupItem({
       ref={ref}
       value={value}
       disabled={disabled}
-      data-enabled={!disabled}
+
       data-state={value === currentValue ? 'checked' : 'unchecked'}
       {...props}
       className={cn(

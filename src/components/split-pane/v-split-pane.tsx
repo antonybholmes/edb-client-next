@@ -2,6 +2,7 @@ import { useMouseMoveListener } from '@/hooks/mousemove-listener'
 import { useMouseUpListener } from '@/hooks/mouseup-listener'
 import { useStableId } from '@/hooks/stable-id'
 import { type IDivProps } from '@/interfaces/div-props'
+import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
 import { TRANS_COLOR_CLS } from '@/theme'
 import {
@@ -154,10 +155,10 @@ export function VSplitPane({
     <div
       ref={ref}
       className={cn(
-        'flex flex-col overflow-hidden grow',
-        [isDrag, 'cursor-ns-resize'],
+        'flex flex-col overflow-hidden grow data-is-drag:cursor-ns-resize',
         className
       )}
+      data-is-drag={present(isDrag)}
     >
       <div
         ref={refC1}
@@ -177,13 +178,13 @@ export function VSplitPane({
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(true)}
         onKeyDown={onKeyDown}
-        data-is-drag={isDrag}
+        //data-is-drag={present(isDrag)}
         tabIndex={0}
       >
         <div
           id="divider"
-          className="pointer-events-none group-hover:bg-ring group-focus-visible:bg-ring data-[is-drag=true]:bg-ring h-0.5 trans-color grow"
-          data-is-drag={isDrag}
+          className="pointer-events-none group-hover:bg-ring group-focus-visible:bg-ring data-is-drag:bg-ring h-0.5 trans-color grow"
+          data-is-drag={present(isDrag)}
         />
       </BaseCol>
       <div

@@ -2236,5 +2236,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-07-13T20:47:53.402Z"
+  },
+  {
+    "version": "87.0",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Simplified data-attributes that are conditional",
+          "date": "2026-07-23T16:28:52.384Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-07-23T16:28:52.384Z"
   }
 ]

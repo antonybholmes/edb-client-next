@@ -34,6 +34,7 @@ import { Button } from '../shadcn/ui/themed/v2/button'
 import { LineSeparator } from '../shadcn/ui/themed/v2/dropdown-menu'
 import { VScrollPanel } from '../v-scroll-panel'
 
+import { present } from '@/lib/dom-utils'
 import { AppIcon } from './app-icon'
 import type { IHeaderLinksProps } from './header-menu'
 
@@ -52,7 +53,7 @@ export const BASE_MUTED_THEME_CLS = cn(
 const MODULE_BG_CLS = cn(
   'absolute rounded-2xl w-full h-full duration-300 ease-out transition-all bg-background',
   'pointer-events-none origin-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-  'data-[hover=true]:scale-105 data-[hover=true]:bg-muted/50 rounded-xl'
+  'data-hover:scale-105 data-hover:bg-muted/50 rounded-xl'
 )
 
 const ICON_CLS = `flex w-9 h-9 aspect-square shrink-0 flex-row  
@@ -72,7 +73,7 @@ export function ModuleButtonLink({
       onMouseLeave={() => setHover(false)}
       {...props}
     >
-      <span className={MODULE_BG_CLS} data-hover={hover} />
+      <span className={MODULE_BG_CLS} data-hover={present(hover)} />
       <CenterCol className="grow w-full h-full z-10 relative gap-3">
         {children}
       </CenterCol>

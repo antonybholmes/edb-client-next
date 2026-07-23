@@ -4,6 +4,7 @@ import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
 
 import { getTabName, useTabs, type ITab } from './tab-provider'
 
+import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
 import { truncate } from '@/lib/text/text'
 import { FOCUS_INSET_RING_CLS } from '@/theme'
@@ -104,7 +105,7 @@ function _IosTabs({
               value={tab.id}
               id={tab.id}
               key={tab.id}
-              data-checked={isSelected}
+              data-checked={present(isSelected)}
               ref={(el) => {
                 if (el) {
                   buttonsRef.current[ti] = el
@@ -112,7 +113,7 @@ function _IosTabs({
               }}
               className={cn(
                 FOCUS_INSET_RING_CLS,
-                'z-30 data-[checked=true]:font-semibold h-7'
+                'z-30 data-checked:font-semibold h-7'
               )}
               style={{ width: `${defaultWidth}rem` }}
             >

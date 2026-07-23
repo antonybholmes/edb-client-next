@@ -1,5 +1,12 @@
 # Changelog
 
+## 87.0 (Jul, 2026)
+
+### Changed
+
+- Simplified data-attributes that are conditional.
+
+
 ## 85.8 (Jul, 2026)
 
 ### Changed

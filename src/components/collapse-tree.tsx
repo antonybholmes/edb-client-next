@@ -21,6 +21,7 @@ import {
 import { TrashIcon } from './icons/trash-icon'
 
 import { TEXT_DELETE, TEXT_OK } from '@/consts'
+import { present } from '@/lib/dom-utils'
 import { FOCUS_INSET_RING_CLS } from '@/theme'
 import { gsap } from 'gsap'
 import { Ellipsis, File, Folder, FolderOpen } from 'lucide-react'
@@ -113,11 +114,11 @@ const OUTER_CONTAINER_CLS = cn(
   FOCUS_INSET_RING_CLS,
   'flex flex-row items-center  shrink-0 rounded-theme',
   'relative h-8.5 overflow-hidden cursor-pointer text-xs',
-  'group data-[root=true]:font-medium'
+  'group data-root:font-medium'
 )
 
 const INNER_CONTAINER_CLS = `grow gap-x-2 h-full 
-  data-[root=false]:data-[selected=true]:font-medium
+  data-selected:font-medium
   data-[mode=selected]:bg-muted/60`
 
 const NODE_BUTTON_CLS = `flex flex-row items-center 
@@ -327,9 +328,9 @@ function CollapseTreeNode({
     >
       <VCenterRow
         className={OUTER_CONTAINER_CLS}
-        data-selected={isSelected}
-        data-root={level === 0}
-        data-focus={focus}
+        data-selected={present(isSelected)}
+        data-root={present(level === 0)}
+        data-focus={present(focus)}
         onClick={() => {
           setFocus(true)
         }}
@@ -358,8 +359,8 @@ function CollapseTreeNode({
           }}
           data-root={level === 0}
           data-mode={mode}
-          data-focus={focus}
-          data-selected={isSelected}
+          data-focus={present(focus)}
+          data-selected={present(isSelected)}
           onMouseEnter={() => {
             setHover(true)
           }}
@@ -373,9 +374,9 @@ function CollapseTreeNode({
                 onClick={() => {
                   setIsOpen(!isOpen)
                 }}
-                data-root={level === 0}
-                data-selected={isSelected}
-                data-focus={focus}
+                data-root={present(level === 0)}
+                data-selected={present(isSelected)}
+                data-focus={present(focus)}
                 aria-label={tab.id}
               >
                 <ChevronRightIcon
@@ -422,15 +423,15 @@ function CollapseTreeNode({
               onMouseLeave={() => setMenuHover(false)}
               name={`Delete ${tab.name}`}
               aria-label={`Delete ${tab.name}`}
-              data-focus={focus}
+              data-focus={present(focus)}
               //data-hover={hover}
               data-mode={mode}
             >
               <Ellipsis
                 size={14}
-                className="invisible group-focus:visible data-[focus=true]:visible group-hover:visible data-[menu=open]:visible"
-                data-focus={focus}
-                data-menu={dataMenu}
+                className="invisible group-focus:visible data-focus:visible group-hover:visible data-menu-open:visible"
+                data-focus={present(focus)}
+                data-menu-open={present(dataMenu)}
               />
             </DropdownMenuTrigger>
             <DropdownMenuContent side="right" align="start">

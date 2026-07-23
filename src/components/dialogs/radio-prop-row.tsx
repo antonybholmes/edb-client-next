@@ -19,12 +19,7 @@ export function RadioPropRow({
 }) {
   return (
     <VCenterRow className={cn('gap-x-2 justify-between w-full', h)}>
-      <RadioGroupItem
-        id={id}
-        value={value}
-        disabled={disabled}
-        data-enabled={!disabled}
-      >
+      <RadioGroupItem id={id} value={value} disabled={disabled}>
         {title}
       </RadioGroupItem>
 

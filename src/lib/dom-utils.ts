@@ -37,3 +37,14 @@ export function removeScrollListener(
 ) {
   return target.removeEventListener('scroll', listener)
 }
+
+/**
+ * Converts a value to a presentable form suitable for use in JSX attributes
+ * such as data-show. This ensures that only truthy values are rendered, while falsy values are omitted.
+ *
+ * @param value The boolean value to be converted to a presentable form.
+ * @returns `true` if the value is `true`, otherwise `undefined`.
+ */
+export function present<T>(value: T): T | undefined {
+  return value || undefined
+}

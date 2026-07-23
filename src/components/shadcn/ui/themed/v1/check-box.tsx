@@ -24,7 +24,7 @@ export const TICK_CLS = cn(
   'data-[checked=false]:bg-background data-[checked=false]:border-border data-[checked=false]:group-hover:border-ring',
   'data-[checked=true]:bg-theme/80 data-[checked=true]:border-theme/0',
   'data-[checked=true]:hover:bg-theme data-[checked=true]:hover:border-theme',
-  'data-[enabled=false]:data-[checked=true]:bg-muted'
+  'disabled:data-[checked=true]:bg-muted'
 )
 
 export function Checkbox({
@@ -40,7 +40,7 @@ export function Checkbox({
       ref={ref}
       checked={checked}
       //defaultChecked={checked}
-      onCheckedChange={state =>
+      onCheckedChange={(state) =>
         onCheckedChange?.(state === 'indeterminate' ? false : state)
       }
       className={cn(CHECK_CLS, className)}

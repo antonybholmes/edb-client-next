@@ -37,13 +37,6 @@ export function SettingsButton() {
       title={TEXT_SETTINGS}
       checked={visible}
       onClick={() => openSettings()}
-      // onMouseOver={() => {
-      //   setHover(true)
-      // }}
-      // onMouseOut={() => {
-      //   setHover(false)
-      // }}
-      //className="opacity-70 hover:opacity-100 data-[selected=true]:opacity-100 trans-color"
     >
       <SettingsIcon isAnimated={true} />
     </HeaderIconButton>

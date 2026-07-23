@@ -90,19 +90,13 @@ export const SideRadioGroupItem = forwardRef<
       ref={ref}
       value={value}
       disabled={disabled}
-      data-enabled={!disabled}
+
       data-state={value === currentValue ? 'checked' : 'unchecked'}
       {...props}
       className={cn(SIDE_BUTTON_CLS, BORDER_MAP[value], className)}
       aria-label={title ?? value}
       title={title ?? value}
     >
-      {/* <span
-        data-state={value === currentValue ? 'checked' : 'unchecked'}
-        data-enabled={!disabled}
-        className={BORDER_CLS}
-      /> */}
-
       {value !== 'Off' && (
         <span
           data-state={value === currentValue ? 'checked' : 'unchecked'}
