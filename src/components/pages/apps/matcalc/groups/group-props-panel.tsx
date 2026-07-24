@@ -58,6 +58,7 @@ import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
 import { move } from '@dnd-kit/helpers'
 import { isSortable } from '@dnd-kit/react/sortable'
+import { group } from 'd3'
 import { produce } from 'immer'
 import { Settings2 } from 'lucide-react'
 import {
@@ -80,10 +81,12 @@ function GroupRowItem({
   index: number
   groupRow: IClusterGroupRow
 }) {
-  const { addGroups } = useHistory()
+  const { addGroups, removeGroups } = useHistory()
   const { groupRows } = useCurrentGroups()
   const { selection } = useSelectionRange()
   const { sheets } = useCurrentSheets()
+  const { open: openDialog } = useDialogs()
+  const [hover, setHover] = useState(false)
 
   const [openGroupDialog, setOpenGroupDialog] = useState<
     IGroupCallback | undefined
@@ -170,6 +173,7 @@ function GroupRowItem({
           }}
         />
       )}
+
       <BaseSortableItem
         as="li"
         id={groupRow.id}
@@ -180,7 +184,11 @@ function GroupRowItem({
         className={'flex flex-col gap-y-1 py-1 border-t border-border/50'}
         style={{ minWidth: 0 }}
       >
-        <VCenterRow className="gap-x-1 pl-1 pr-1.5 h-full min-h-8">
+        <VCenterRow
+          className="gap-x-1 pl-1 h-full min-h-8"
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+        >
           {/* Hide the drag handle if a custom one is passed, to avoid confusion. 
               The custom one is for things like a checkbox if we want to select items and momentarily turn off dragging */}
           <DragHandle id={groupRow.id} index={index} />
@@ -209,6 +217,31 @@ function GroupRowItem({
           >
             <PlusIcon />
           </IconButton>
+
+          <button
+            onClick={() =>
+              openDialog({
+                type: 'warning',
+                payload: {
+                  content: `Are you sure you want to delete the ${groupRow.name} group?`,
+                  callback: (response) => {
+                    if (response === TEXT_OK) {
+                      removeGroups([groupRow!.id])
+                    }
+                  },
+                },
+              })
+            }
+            data-hover={present(hover)}
+            className={cn(
+              DRAG_HANDLE_APPEAR_CLS,
+              'group stroke-foreground/50 hover:stroke-destructive focus-visible:stroke-destructive trans-color'
+            )}
+
+            title={`Delete ${group.name} group`}
+          >
+            <TrashIcon stroke="" className={DRAG_ICON_ANIM_CLS} />
+          </button>
         </VCenterRow>
 
         <DragDropProvider
@@ -230,7 +263,7 @@ function GroupRowItem({
             )
           }}
         >
-          <ul className="flex flex-col ml-2">
+          <ul className="flex flex-col ml-3">
             {groupRow.groups.map((group, gi) => {
               return (
                 <GroupItem
@@ -280,6 +313,7 @@ function GroupItem({
       group={groupRow.id}
       type="group"
       accept="group"
+      className="group"
       extChildren={
         <button
           onClick={() =>

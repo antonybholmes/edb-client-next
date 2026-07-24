@@ -713,6 +713,11 @@ function handleRemoveGroups(
   }
 
   return applyHistoryUpdate(state, 'Remove groups', '', (draft) => {
+    // remove grouprows matching these ids
+    draft.groupRows[file] = draft.groupRows[file]?.filter(
+      (gr) => !ids.includes(gr.id)
+    )
+
     for (let gr of draft.groupRows[file] ?? []) {
       gr.groups = gr.groups.filter((g) => !ids.includes(g.id))
     }

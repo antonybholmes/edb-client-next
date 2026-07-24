@@ -38,15 +38,17 @@ const PLOTS_TAB: ITab = Object.freeze({
 export function MatcalcFileTree() {
   const { present, sheets, plots, version, goto, remove, removeFiles } =
     useHistory()
-  //const [treeRootTab, setTreeRootTab] = useState<ITab>(TREE_ROOT_TAB)
+
   const [selectedPanelTab, setSelectedPanelTab] = useState<string>('')
 
   const { selection: currentSelection } = useCurrentSelections()
 
   const { files } = useFiles()
 
-  console.log('Rendering MatcalcFileTree', files, sheets, plots, version)
-
+  // Check if version updates. It turns out objects such as plots
+  // are not reliable for detecting changes because the ref doesn't
+  // change when the actual content changes. Using the version number
+  // is more reliable.
   const treeRootTab = useMemo(() => {
     console.log('replot', plots)
 

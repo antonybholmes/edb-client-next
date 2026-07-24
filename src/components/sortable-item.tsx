@@ -15,13 +15,20 @@ import { VerticalGripIcon } from './icons/vertical-grip-icon'
 import { HCenterRow } from './layout/h-center-row'
 
 // Will make items fade in when hovering over a drag item
-export const DRAG_HANDLE_APPEAR_CLS = `opacity-0 group-data-[focus=true]:opacity-50 
-  group-hover:opacity-50 hover:opacity-100 focus-visible:opacity-100 trans-opacity`
+export const DRAG_HANDLE_APPEAR_CLS = `opacity-0 
+  group-data-focus:opacity-100 
+  group-hover:opacity-100
+  hover:opacity-100
+  data-hover:opacity-100 
+  focus-visible:opacity-100 
+  trans-opacity`
 
 export const DRAG_ICON_ANIM_CLS = `opacity-50 
-  group-data-[focus=true]:opacity-100 
-  group-data-[dragging=true]:opacity-100
-  group-hover:opacity-100 
+  group-data-focus:opacity-100 
+  group-data-dragging:opacity-100
+  group-hover:opacity-100
+  data-hover:opacity-100
+  group-data-hover:opacity-100
   trans-opacity`
 
 // interface Context {
@@ -53,6 +60,7 @@ export function BaseSortableItem<T extends ElementType = 'li'>({
   group,
   accept,
   orientation = 'vertical',
+  ...props
 }: BaseSortableItemProps<T>) {
   const { isDragging, ref } = useSortable({
     id,
@@ -77,7 +85,12 @@ export function BaseSortableItem<T extends ElementType = 'li'>({
   const Component = as ?? 'li'
 
   return (
-    <Component id={id} className={cn('group relative', className)} ref={ref}>
+    <Component
+      id={id}
+      className={cn('relative', className)}
+      ref={ref}
+      {...props}
+    >
       {children}
     </Component>
   )

@@ -30,7 +30,8 @@ export interface IUndoState<T> {
   history: IHistoryEntry<T>[]
   cursor: number
   /**
-   * The current version of the history state which is a monotonically increasing number.
+   * The current version of the history state which is a monotonically increasing number
+   * and can be used to detect changes in the history state.
    */
   version: number
 }
