@@ -113,9 +113,7 @@ export interface IHeatMapDisplayOptions {
     position: LegendPos
     width: number
     stroke: IStrokeProps
-    title: {
-      show: boolean
-      font: IFontProps
+    title: ITextProps & {
       text: string
     }
     icon: {
@@ -142,6 +140,7 @@ export interface IHeatMapDisplayOptions {
     height: number
     grid: IStrokeProps
     border: IStrokeProps
+    labels: ITextProps
   }
   padding: number
   zoom: number
@@ -191,6 +190,7 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
       ...DEFAULT_STROKE_PROPS,
       show: false,
     },
+    labels: { ...DEFAULT_TEXT_PROPS },
   },
   legend: {
     position: 'upper-right',

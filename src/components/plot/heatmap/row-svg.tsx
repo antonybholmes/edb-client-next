@@ -1,6 +1,8 @@
+import { useHeatmapContext } from '@/components/pages/apps/matcalc/apps/heatmap/heatmap-provider'
 import type { LeftRightPos } from '@/components/side'
 import { SVG_CRISP_EDGES } from '@/consts'
 import { ZERO_POS } from '@/interfaces/pos'
+import { IClusterFrame } from '@/lib/math/hcluster'
 import { range } from 'd3'
 import { SvgText } from '../svg-text'
 import type { IColLabelsSvgProps, ITreeSvgProps } from './col-svg'
@@ -19,7 +21,7 @@ export function RowTreeSvg({
       shapeRendering={SVG_CRISP_EDGES}
     >
       {tree.coords.map((coords, ri) => {
-        const p = range(4).map(i => ({
+        const p = range(4).map((i) => ({
           y: coords[i]!.x * width,
           x:
             mode === 'left'
@@ -44,11 +46,15 @@ export function RowTreeSvg({
 }
 
 export function RowLabelsSvg({
-  df,
   leaves,
-  props,
+
   pos = { ...ZERO_POS },
 }: IColLabelsSvgProps) {
+  const { plot } = useHeatmapContext()
+  const props = plot.props
+
+  const df = (plot.dataframes['main'] as IClusterFrame).df
+
   const blockSize = props.blockSize
   const halfH = blockSize.h / 2
   const rowMetaN = range(
@@ -70,7 +76,7 @@ export function RowLabelsSvg({
             dominantBaseline="central"
             textAnchor={isLeft ? 'end' : 'start'}
           >
-            {rowMetaN.map(rmi => df.rowObs.str(row, rmi)).join(', ')}
+            {rowMetaN.map((rmi) => df.rowObs.str(row, rmi)).join(', ')}
           </SvgText>
         )
       })}

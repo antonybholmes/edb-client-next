@@ -106,24 +106,6 @@ export function DataPanel() {
     }
   }, [messages])
 
-  // const rightTabs: ITab[] = [
-  //   {
-  //     id: 'Labels',
-  //     icon: <LayersIcon />,
-  //     content: ()=> <DataPropsPanel />,
-  //   },
-  //   {
-  //     id: 'Filter',
-  //     icon: <FilterIcon />,
-
-  //     content: ()=>(
-  //       <PropsPanel className="gap-y-2">
-  //         <FilterPropsPanel />
-  //       </PropsPanel>
-  //     ),
-  //   },
-  // ]
-
   function openFiles(files: ITextFileOpen[], options: IParseOptions) {
     filesToDataFrames(files, {
       parseOpts: options,
@@ -150,11 +132,6 @@ export function DataPanel() {
     <>
       <ResizableSidebar side="right">
         <TabbedDataFrames
-          //selectedSheet={sheet?.id ?? ''}
-          ////dataFrames=sheets as AnnotationDataFrame[]}
-          // onTabChange={(selectedTab: ISelectedTab) => {
-          //   goto({ file, sheet: selectedTab.tab }) //, 'sheet')
-          // }}
           onFileDrop={(files) => {
             if (files.length > 0) {
               onTextFileChange('Open from drag', files, (files) => {
@@ -169,7 +146,6 @@ export function DataPanel() {
             }
           }}
           className="relative"
-
           allowReorder={true}
           menuActions={[
             { action: TEXT_DELETE, icon: <DeleteIcon stroke="" /> },
@@ -184,7 +160,6 @@ export function DataPanel() {
                   callback: (response) => {
                     if (response === TEXT_OK) {
                       if (sheets.length > 1) {
-                        //remove(tab.id, 'sheet')
                         remove([{ file: file.id, sheet: tab.id }])
                       } else {
                         // if user is removing the only remaining sheet, load an empty

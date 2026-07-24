@@ -29,10 +29,11 @@ import { X } from 'lucide-react'
 import { osName } from 'react-device-detect'
 import { ErrorIcon } from '../icons/error-icon'
 import { WarningIcon } from '../icons/warning-icon'
+import { HCenterCol } from '../layout/h-center-col'
 // Try to determine the operating system
 const OS = osName
 
-type ButtonOrder = 'auto' | 'primary-first' | 'primary-last'
+type ButtonOrder = 'auto' | 'primary-first' | 'primary-last' | 'vertical'
 
 interface IOSButtonRowProps extends IChildrenProps {
   buttonOrder?: ButtonOrder
@@ -49,7 +50,7 @@ export interface IModalProps<T = unknown> extends IOpenChange, IChildrenProps {
   description?: string
   onResponse?: ModalResponse<T> | undefined
   buttons?: string[]
-  buttonOrder?: 'auto' | 'primary-first' | 'primary-last'
+  buttonOrder?: ButtonOrder
   modalType?: ModalType | undefined
   bodyCls?: UndefStr
   w?: string | number
@@ -259,16 +260,26 @@ export function OKCancelDialog({
           <BaseCol className={cn('grow', bodyCls)}>{children}</BaseCol>
         )}
 
-        <DialogFooter>
-          <VCenterRow className="grow">
-            {leftFooterChildren && leftFooterChildren}
-          </VCenterRow>
+        <DialogFooter
+          className={cn(buttonOrder === 'vertical' && 'flex-col gap-y-2')}
+        >
+          {buttonOrder !== 'vertical' && (
+            <VCenterRow className="grow">
+              {leftFooterChildren && leftFooterChildren}
+            </VCenterRow>
+          )}
 
           <DialogButtons
             buttons={buttons}
             buttonOrder={buttonOrder}
             onResponse={_resp}
           />
+
+          {buttonOrder === 'vertical' && (
+            <VCenterRow className="grow">
+              {leftFooterChildren && leftFooterChildren}
+            </VCenterRow>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -306,12 +317,40 @@ export function DialogButtons({
     return null
   }
 
+  if (buttonOrder === 'vertical') {
+    return (
+      <HCenterCol className="gap-y-2  ">
+        <Button
+          variant="app-theme"
+          onClick={() => onResponse?.(buttons[0]!)}
+          className="w-full"
+          size="lg"
+          ripple={true}
+        >
+          {buttons[0]}
+        </Button>
+
+        {buttons.slice(1).map((button, bi) => (
+          <Button
+            key={bi}
+            onClick={() => onResponse?.(button)}
+            className="w-full"
+            size="lg"
+            variant="secondary"
+          >
+            {button}
+          </Button>
+        ))}
+      </HCenterCol>
+    )
+  }
+
   return (
     <OSButtonRow buttonOrder={buttonOrder}>
       <Button
         variant="app-theme"
         onClick={() => onResponse?.(buttons[0]!)}
-        className="w-23"
+        className="min-w-23"
         size="lg"
         ripple={true}
       >
@@ -322,7 +361,7 @@ export function DialogButtons({
         <Button
           key={bi}
           onClick={() => onResponse?.(button)}
-          className="w-23"
+          className="min-w-23"
           size="lg"
           variant="secondary"
         >

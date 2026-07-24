@@ -506,7 +506,9 @@ function handleAddGroups(
   action: Extract<HistoryAction, { type: 'addGroups' }>
 ): IHistoryData {
   const { groupRows, opts } = action
-  const { file = state.present.currentFile } = opts
+  const { file = state.present.currentFile, mode = 'set' } = opts
+
+  console.log('Adding groups with mode:', mode, 'to file:', file)
 
   // cannot add groups to default file and empty groups array does not require update
   if (groupRows.length === 0 || file === DEFAULT_FILE.id) {
@@ -520,11 +522,11 @@ function handleAddGroups(
     }`,
     '',
     (draft: IHistoryState) => {
-      //if (mode === 'append') {
-      //  draft.groupRows[file]?.push(...groupRows)
-      //} else {
-      draft.groupRows[file] = groupRows
-      //}
+      if (mode === 'append') {
+        draft.groupRows[file]?.push(...groupRows)
+      } else {
+        draft.groupRows[file] = groupRows
+      }
     }
     // (store: IHistoryDataStore) => {
     //   for (const group of groupRows) {

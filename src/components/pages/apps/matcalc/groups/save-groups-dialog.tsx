@@ -7,7 +7,7 @@ import { FILE_FORMAT_JSON } from '@/dialogs/save-txt-dialog'
 
 const GROUP_FILE_FORMATS: ISaveAsFileType[] = [
   FILE_FORMAT_JSON,
-  { name: 'GSEA cls', ext: 'cls' },
+  { name: 'GSEA CLS', ext: 'cls' },
 ]
 
 export function SaveGroupsDialog({

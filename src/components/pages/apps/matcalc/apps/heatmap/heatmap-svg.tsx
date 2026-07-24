@@ -52,7 +52,9 @@ export function HeatMapSvg({ ref }: IProps) {
 
   const cf = plot.dataframes['main'] as IClusterFrame
 
-  const groups = plot.groupRows[0].groups || []
+  const groupRows = plot.groupRows || []
+  const groups0 = groupRows[0]?.groups || []
+  //const groups = plot.groupRows[0].groups || []
 
   //const groups = groups.filter(g => g.show|| settings.groups.filter.mode === 'keep')
 
@@ -125,8 +127,9 @@ export function HeatMapSvg({ ref }: IProps) {
       displayOptions.colLabels.position === 'top'
         ? displayOptions.colLabels.width + displayOptions.padding
         : 0) +
-      (displayOptions.groups.show && groups.length > 0
-        ? displayOptions.groups.height + displayOptions.padding
+      (displayOptions.groups.show && groupRows.length > 0
+        ? groupRows.length *
+          (displayOptions.groups.height + displayOptions.padding)
         : 0)
 
     const bottom =
@@ -197,11 +200,11 @@ export function HeatMapSvg({ ref }: IProps) {
 
     if (cf.colTree) {
       colLeaves = cf.colTree.leaves
-    } else if (groups.length > 0) {
+    } else if (groups0.length > 0) {
       // if we are not clustering columns, but have groups,
       // order by groups
 
-      colLeaves = groups
+      colLeaves = groups0
         .map((group) => getColIdxFromGroup(dfMain, group))
         .flat()
 
@@ -218,14 +221,19 @@ export function HeatMapSvg({ ref }: IProps) {
       colLeaves = range(s[1])
     }
 
-    const colColorMap = new Map<number, string>(
-      groups
-        .map((group) =>
-          getColIdxFromGroup(dfMain, group).map(
-            (c) => [c, group.color] as [number, string]
-          )
-        )
-        .flat()
+    const colColorMap = new Map<string, Map<number, string>>(
+      groupRows.map((gr) => [
+        gr.id,
+        new Map<number, string>(
+          gr.groups
+            .map((group) =>
+              getColIdxFromGroup(dfMain, group).map(
+                (c) => [c, group.color] as [number, string]
+              )
+            )
+            .flat()
+        ),
+      ])
     )
 
     const innerWidth = colLeaves.length * blockSize.w
@@ -270,7 +278,7 @@ export function HeatMapSvg({ ref }: IProps) {
         y:
           legendTop +
           (displayOptions.legend.show && displayOptions.groups.show
-            ? (legendBlockSize + displayOptions.padding) * (groups.length + 1)
+            ? (legendBlockSize + displayOptions.padding) * (groups0.length + 1)
             : 0),
       }
     }
@@ -299,27 +307,24 @@ export function HeatMapSvg({ ref }: IProps) {
             />
           )}
 
-        {displayOptions.groups.show && groups.length > 0 && (
+        {displayOptions.groups.show && groupRows.length > 0 && (
           <ColGroupsSvg
-            df={dfMain}
             colorMap={colColorMap}
             pos={{
               x: margin.left,
               y:
                 margin.top -
-                displayOptions.padding -
-                displayOptions.groups.height,
+                groupRows.length *
+                  (displayOptions.groups.height + displayOptions.padding),
             }}
             leaves={colLeaves}
-            props={displayOptions}
           />
         )}
 
         {displayOptions.colLabels.show && (
           <ColLabelsSvg
-            df={dfMain}
             leaves={colLeaves}
-            props={displayOptions}
+
             colorMap={colColorMap}
             pos={{
               x: margin.left,
@@ -327,8 +332,9 @@ export function HeatMapSvg({ ref }: IProps) {
                 displayOptions.colLabels.position === 'top'
                   ? margin.top -
                     displayOptions.padding -
-                    (displayOptions.groups.show && groups.length > 0
-                      ? displayOptions.groups.height + displayOptions.padding
+                    (displayOptions.groups.show && groupRows.length > 0
+                      ? groupRows.length *
+                        (displayOptions.groups.height + displayOptions.padding)
                       : 0)
                   : margin.top + innerHeight + displayOptions.padding,
             }}
@@ -374,9 +380,8 @@ export function HeatMapSvg({ ref }: IProps) {
 
         {displayOptions.rowLabels.show && (
           <RowLabelsSvg
-            df={dfMain}
             leaves={rowLeaves}
-            props={displayOptions}
+
             pos={{
               x:
                 displayOptions.rowLabels.position === 'left'
@@ -484,16 +489,16 @@ export function HeatMapSvg({ ref }: IProps) {
         {/* Plot the legend */}
 
         {displayOptions.groups.show &&
-          groups.length > 0 &&
+          groupRows.length > 0 &&
           displayOptions.legend.show &&
           displayOptions.legend.position.includes('right') && (
-            <LegendRightSvg pos={legendPos} groups={groups} />
+            <LegendRightSvg pos={legendPos} groupRows={groupRows} />
           )}
 
         {/* Legend on bottom */}
 
         {displayOptions.groups.show &&
-          groups.length > 0 &&
+          groupRows.length > 0 &&
           displayOptions.legend.show &&
           displayOptions.legend.position === 'bottom' && (
             <LegendBottomSvg
@@ -508,7 +513,7 @@ export function HeatMapSvg({ ref }: IProps) {
                     ? displayOptions.colLabels.width + displayOptions.padding
                     : 0),
               }}
-              groups={groups}
+              groupRows={groupRows}
             />
           )}
 
@@ -517,7 +522,7 @@ export function HeatMapSvg({ ref }: IProps) {
         {displayOptions.mode === 'dot' &&
           displayOptions.legend.position.includes('right') &&
           displayOptions.dot.legend.show && (
-            <DotLegend pos={dotLegendPos} groups={groups} />
+            <DotLegend pos={dotLegendPos} groupRows={groupRows} />
           )}
 
         {/* Show a list of transforms to create heatmap */}
@@ -552,7 +557,7 @@ export function HeatMapSvg({ ref }: IProps) {
     )
 
     return { svg, width, height }
-  }, [cf, displayOptions, groups])
+  }, [cf, displayOptions, groupRows])
 
   // function onMouseMove(e: { pageX: number; pageY: number }) {
   //   if (!innerRef.current) {

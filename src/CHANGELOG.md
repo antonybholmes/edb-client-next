@@ -2,6 +2,10 @@
 
 ## 87.0 (Jul, 2026)
 
+### Added
+
+- Added support for multiple column row groups to svg to display multiple tracks.
+
 ### Changed
 
 - Fully replaced dndkit with newer version. Groups now supports multiple rows.

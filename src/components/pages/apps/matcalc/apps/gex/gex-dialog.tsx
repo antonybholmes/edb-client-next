@@ -13,7 +13,7 @@ import { SelectItem, SelectList } from '@/themed/v2/select'
 
 import {
   makeNewGroup,
-  makeNewGroupRow,
+  newGroupRow,
   type IClusterGroup,
 } from '@/lib/cluster-group'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
@@ -602,7 +602,7 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
       openFile(df.name + ' GEX', {
         sheets: [df],
         groupRows: [
-          makeNewGroupRow(groups, { name: groupSampleDataType[0] ?? 'GEX' }),
+          newGroupRow({ groups, name: groupSampleDataType[0] ?? 'GEX' }),
         ],
       })
 

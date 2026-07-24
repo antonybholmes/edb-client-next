@@ -3,7 +3,13 @@ import {
   openFilesDialog,
 } from '@/components/pages/open-files'
 
-import { IClusterGroupRow, type IClusterGroup } from '@/lib/cluster-group'
+import {
+  IClusterGroupRow,
+  makeClusterFile,
+  makeNewGroup,
+  newGroupRow,
+  type IClusterGroup,
+} from '@/lib/cluster-group'
 
 import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
@@ -70,53 +76,142 @@ export const GROUP_CONTENT_CLS = `flex flex-row items-center grow relative
 function GroupRowItem({
   index,
   groupRow,
-  editGroup,
 }: {
   index: number
   groupRow: IClusterGroupRow
-  editGroup: (
-    groupRow: IClusterGroupRow,
-    ggroup: IClusterGroup,
-    title?: string
-  ) => void
 }) {
-  const { open: openDialog } = useDialogs()
   const { addGroups } = useHistory()
   const { groupRows } = useCurrentGroups()
+  const { selection } = useSelectionRange()
+  const { sheets } = useCurrentSheets()
+
+  const [openGroupDialog, setOpenGroupDialog] = useState<
+    IGroupCallback | undefined
+  >(undefined)
+
+  function addGroup() {
+    editGroup(groupRow, makeNewGroup(), 'New group')
+  }
+
+  function editGroup(
+    groupRow: IClusterGroupRow,
+    group: IClusterGroup,
+    title: string = 'Edit Group'
+  ) {
+    // if a column is selected, suggest its name as what the user wants to
+    // to group
+
+    if (selection && selection.cols) {
+      group.search = range(selection.cols.start, selection.cols.end + 1).map(
+        (i) => (sheets[0] as AnnotationDataFrame).colName(i)
+      )
+    }
+
+    setOpenGroupDialog({
+      title,
+      groupRow,
+      group,
+
+      callback: (groupRow: IClusterGroupRow, group: IClusterGroup) => {
+        //const indices = getColIdxFromGroup(df, group)
+
+        addGroups(
+          produce(groupRows, (draft) => {
+            for (let gr of draft) {
+              if (gr.id !== groupRow.id) {
+                continue
+              }
+
+              let exists = false
+
+              for (let g of gr.groups) {
+                if (g.id === group.id) {
+                  g = group
+                  exists = true
+                  break
+                }
+              }
+
+              // new group so append
+              if (!exists) {
+                gr.groups.push(group)
+              }
+            }
+          })
+        )
+
+        // if (groupRows.some((gr) => gr.groups.some((g) => g.id === group.id))) {
+        //   // we modified and existing group so clone list, but replace existing
+        //   // group with new group when they have the same id
+
+        //   updateGroup(group)
+        // } else {
+        //   // append new group
+        //   addGroups([group])
+        // }
+
+        setOpenGroupDialog(undefined)
+      },
+    })
+  }
 
   return (
-    <BaseSortableItem
-      as="li"
-      id={groupRow.id}
-      index={index}
-      group="group-rows"
-      type="group-row"
-      accept="group-row"
-      className={cn('flex flex-col gap-y-1')}
-      style={{ minWidth: 0 }}
-    >
-      <VCenterRow className="gap-x-1 pl-1 pr-1.5 py-1 h-full min-h-8 border-b border-border/30">
-        {/* Hide the drag handle if a custom one is passed, to avoid confusion. 
-              The custom one is for things like a checkbox if we want to select items and momentarily turn off dragging */}
-        <DragHandle id={groupRow.id} index={index} />
-
-        <Input
-          value={groupRow.name}
-          onTextChange={(v) => {
-            addGroups(
-              produce(groupRows, (draft) => {
-                for (let gr of draft) {
-                  if (gr.id === groupRow.id) {
-                    gr.name = v
-                  }
-                }
-              })
-            )
+    <>
+      {openGroupDialog?.callback && (
+        <GroupDialog
+          title={openGroupDialog?.title}
+          group={openGroupDialog?.group}
+          onResponse={(response, group) => {
+            if (response === TEXT_OK && group) {
+              openGroupDialog?.callback?.(openGroupDialog.groupRow, group)
+            } else {
+              setOpenGroupDialog(undefined)
+            }
           }}
         />
-      </VCenterRow>
+      )}
+      <BaseSortableItem
+        as="li"
+        id={groupRow.id}
+        index={index}
+        group="group-rows"
+        type="group-row"
+        accept="group-row"
+        className={'flex flex-col gap-y-1 py-1 border-t border-border/50'}
+        style={{ minWidth: 0 }}
+      >
+        <VCenterRow className="gap-x-1 pl-1 pr-1.5 h-full min-h-8">
+          {/* Hide the drag handle if a custom one is passed, to avoid confusion. 
+              The custom one is for things like a checkbox if we want to select items and momentarily turn off dragging */}
+          <DragHandle id={groupRow.id} index={index} />
 
-      {/* <DragDropProvider
+          <Input
+            value={groupRow.name}
+            onTextChange={(v) => {
+              addGroups(
+                produce(groupRows, (draft) => {
+                  for (let gr of draft) {
+                    if (gr.id === groupRow.id) {
+                      gr.name = v
+                    }
+                  }
+                })
+              )
+            }}
+          />
+
+          <IconButton
+            onClick={() => {
+              addGroup()
+            }}
+            title="New Group"
+            checked={present(openGroupDialog !== undefined)}
+          >
+            <PlusIcon />
+          </IconButton>
+        </VCenterRow>
+
+        <DragDropProvider
           onDragEnd={(event) => {
             const newOrder = move(groupRow.groups, event)
 
@@ -134,22 +229,23 @@ function GroupRowItem({
               })
             )
           }}
-        > */}
-      <ul className="flex flex-col ml-2">
-        {groupRow.groups.map((group, gi) => {
-          return (
-            <GroupItem
-              group={group}
-              groupRow={groupRow}
-              key={group.id}
-              index={gi}
-              editGroup={editGroup}
-            />
-          )
-        })}
-      </ul>
-      {/* </DragDropProvider> */}
-    </BaseSortableItem>
+        >
+          <ul className="flex flex-col ml-2">
+            {groupRow.groups.map((group, gi) => {
+              return (
+                <GroupItem
+                  group={group}
+                  groupRow={groupRow}
+                  key={group.id}
+                  index={gi}
+                  editGroup={editGroup}
+                />
+              )
+            })}
+          </ul>
+        </DragDropProvider>
+      </BaseSortableItem>
+    </>
   )
 }
 
@@ -290,10 +386,6 @@ export function GroupPropsPanel() {
   //   })
   // )
 
-  const [openGroupDialog, setOpenGroupDialog] = useState<
-    IGroupCallback | undefined
-  >(undefined)
-
   // cache the group items so that when dragging, they are
   // not re-rendered so that on drag effects work
   // const items = useMemo(() => {
@@ -302,71 +394,15 @@ export function GroupPropsPanel() {
   //   ))
   // }, [groupState.groups])
 
-  // function addGroup() {
-  //   editGroup(makeNewGroup(), 'New group')
-  // }
-
-  function editGroup(
-    groupRow: IClusterGroupRow,
-    group: IClusterGroup,
-    title: string = 'Edit Group'
-  ) {
-    // if a column is selected, suggest its name as what the user wants to
-    // to group
-
-    if (selection && selection.cols) {
-      group.search = range(selection.cols.start, selection.cols.end + 1).map(
-        (i) => (sheets[0] as AnnotationDataFrame).colName(i)
-      )
-    }
-
-    setOpenGroupDialog({
-      title,
-      groupRow,
-      group,
-
-      callback: (groupRow: IClusterGroupRow, group: IClusterGroup) => {
-        //const indices = getColIdxFromGroup(df, group)
-
-        addGroups(
-          produce(groupRows, (draft) => {
-            for (let gr of draft) {
-              if (gr.id !== groupRow.id) {
-                continue
-              }
-
-              for (let i = 0; i < gr.groups.length; i++) {
-                if (gr.groups[i].id === group.id) {
-                  gr.groups[i] = group
-                }
-              }
-            }
-          })
-        )
-
-        // if (groupRows.some((gr) => gr.groups.some((g) => g.id === group.id))) {
-        //   // we modified and existing group so clone list, but replace existing
-        //   // group with new group when they have the same id
-
-        //   updateGroup(group)
-        // } else {
-        //   // append new group
-        //   addGroups([group])
-        // }
-
-        setOpenGroupDialog(undefined)
-      },
-    })
-  }
-
   function downloadCls(name: string) {
     if (groupRows.length < 1) {
       return
     }
 
+    const groups = groupRows[0].groups
+
     const groupMap = Object.fromEntries(
-      groupRows
-        .flatMap((gr) => gr.groups)
+      groups
         .map((group) => {
           return getColIdxFromGroup(
             sheets[0] as AnnotationDataFrame,
@@ -388,7 +424,7 @@ export function GroupPropsPanel() {
     })
 
     const text: string = [
-      `${(sheets[0] as AnnotationDataFrame).shape[1]} ${groupRows.length} 1`,
+      `${(sheets[0] as AnnotationDataFrame).shape[1]} ${groups.length} 1`,
       `# ${used.join(' ')}`,
       `${names.join(' ')}`,
     ].join('\n')
@@ -396,24 +432,8 @@ export function GroupPropsPanel() {
     download(text, name)
   }
 
-  console.log(groupRows)
-
   return (
     <>
-      {openGroupDialog?.callback && (
-        <GroupDialog
-          title={openGroupDialog?.title}
-          group={openGroupDialog?.group}
-          onResponse={(response, group) => {
-            if (response === TEXT_OK && group) {
-              openGroupDialog?.callback?.(openGroupDialog.groupRow, group)
-            } else {
-              setOpenGroupDialog(undefined)
-            }
-          }}
-        />
-      )}
-
       <PropsPanel className="gap-y-1">
         <StretchRow className="gap-x-1 justify-between">
           <VCenterRow>
@@ -442,12 +462,12 @@ export function GroupPropsPanel() {
                     name: 'groups',
                     fileTypes: [
                       { ext: 'json', name: 'JSON' },
-                      { ext: 'cls', name: 'CLS' },
+                      { ext: 'cls', name: 'GSEA CLS' },
                     ],
                     callback: (data) => {
                       switch (data.format.ext) {
                         case 'json':
-                          downloadJson(groupRows, data.name)
+                          downloadJson(makeClusterFile(groupRows), data.name)
                           break
                         case 'cls':
                           downloadCls(data.name)
@@ -468,10 +488,9 @@ export function GroupPropsPanel() {
 
             <IconButton
               onClick={() => {
-                //addGroup()
+                addGroups([newGroupRow()], { mode: 'append' })
               }}
               title="New Group"
-              checked={present(openGroupDialog !== undefined)}
             >
               <PlusIcon />
             </IconButton>
@@ -514,31 +533,31 @@ export function GroupPropsPanel() {
         >
           {/* <VScrollPanel> */}
           <DragDropProvider
-            onDragOver={(event) => {
-              const { source } = event.operation
+            // onDragOver={(event) => {
+            //   const { source } = event.operation
 
-              if (source?.type !== 'group') {
-                event.preventDefault()
-                return
-              }
+            //   if (source?.type !== 'group') {
+            //     event.preventDefault()
+            //     return
+            //   }
 
-              if (isSortable(source)) {
-                const { initialIndex, index, initialGroup, group } = source
+            //   if (isSortable(source)) {
+            //     const { initialIndex, index, initialGroup, group } = source
 
-                console.log('cheese', initialIndex, index, initialGroup, group)
+            //     console.log('cheese', initialIndex, index, initialGroup, group)
 
-                const groupRowIndex = groupRows.findIndex(
-                  (gr) => gr.id === group
-                )
-                const newOrder = move(groupRows[groupRowIndex].groups, event)
+            //     const groupRowIndex = groupRows.findIndex(
+            //       (gr) => gr.id === group
+            //     )
+            //     const newOrder = move(groupRows[groupRowIndex].groups, event)
 
-                addGroups(
-                  produce(groupRows, (draft) => {
-                    draft[groupRowIndex].groups = newOrder
-                  })
-                )
-              }
-            }}
+            //     addGroups(
+            //       produce(groupRows, (draft) => {
+            //         draft[groupRowIndex].groups = newOrder
+            //       })
+            //     )
+            //   }
+            // }}
             //sensors={sensors}
             //modifiers={[RestrictToVerticalAxis]}
             // onDragStart={event => setActiveId(event.active.id as string)}
@@ -548,12 +567,6 @@ export function GroupPropsPanel() {
               }
 
               const { source } = event.operation
-
-              if (source?.type !== 'group-row') {
-                return
-              }
-
-              console.log('target', source?.type)
 
               if (isSortable(source)) {
                 const { initialIndex, index, initialGroup, group } = source
@@ -592,14 +605,7 @@ export function GroupPropsPanel() {
             <VScrollPanel className="grow">
               <ul className="flex flex-col">
                 {groupRows.map((gr, gri) => {
-                  return (
-                    <GroupRowItem
-                      index={gri}
-                      groupRow={gr}
-                      key={gr.id}
-                      editGroup={editGroup}
-                    />
-                  )
+                  return <GroupRowItem index={gri} groupRow={gr} key={gr.id} />
                 })}
               </ul>
             </VScrollPanel>

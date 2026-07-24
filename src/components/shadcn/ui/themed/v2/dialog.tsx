@@ -208,7 +208,7 @@ const DialogFooter = ({
   className,
   ...props
 }: HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('flex flex-row', className)} {...props} />
+  <div className={cn('flex', className)} {...props} />
 )
 DialogFooter.displayName = 'DialogFooter'
 

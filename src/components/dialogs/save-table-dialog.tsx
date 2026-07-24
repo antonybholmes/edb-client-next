@@ -14,9 +14,9 @@ import { IModalProps, OKCancelDialog } from './ok-cancel-dialog'
 import { ISaveAsResponse, type ISaveAsFileType } from './save-as-dialog'
 import { TXT_FILE_FORMATS } from './save-txt-dialog'
 
-export const FILE_FORMAT_JSON = { name: 'JSON', ext: 'json' }
-export const TAB_DELIMITED_FORMAT = { name: 'Tab Delimited', ext: 'txt' }
-export const CSV_FORMAT = { name: 'Comma Separated', ext: 'csv' }
+// export const FILE_FORMAT_JSON = { name: 'JSON', ext: 'json' }
+// export const TAB_DELIMITED_FORMAT = { name: 'Tab Delimited', ext: 'txt' }
+// export const CSV_FORMAT = { name: 'Comma Separated', ext: 'csv' }
 
 export interface ISaveTableResponse extends ISaveAsResponse {
   hasHeader: boolean
@@ -49,7 +49,10 @@ export function SaveTableDialog({
     <OKCancelDialog
       open={open}
       title={title}
-      buttons={fileTypes.map((format) => format.ext.toUpperCase())}
+      buttons={fileTypes.map(
+        (format) => format.name || format.ext.toUpperCase()
+      )}
+      buttonOrder="vertical"
       onResponse={(response) => {
         if (response !== TEXT_CANCEL) {
           const format = fileTypes.filter(

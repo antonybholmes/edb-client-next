@@ -77,13 +77,16 @@ function OutlineIcon({ cp }: { cp: IColorPickerProps }) {
   return (
     <CenterRow className="flex flex-row items-center justify-center  relative h-6 w-5 grow-0 shrink-0">
       <Pencil size={16} strokeWidth={1.5} className="z-10 fill-white" />
-      <span className="absolute top-1.25 left-0 h-2.5 w-3/5 z-0 border border-foreground rounded-xs" />
-      {(cp.show === undefined || cp.show) && (
-        <span
-          className="absolute bottom-0 h-1.5 w-full z-0 rounded-xs"
-          style={{ backgroundColor: cp.color, opacity: cp.opacity }}
-        />
-      )}
+      <span className="absolute top-1.25 left-0 h-2.5 w-3/5 z-0 border border-foreground rounded-xs"></span>
+
+      <span
+        className="absolute bottom-0 h-1.5 w-full z-0 border border-foreground rounded-xs"
+        style={{
+          backgroundColor:
+            cp.show === undefined || cp.show ? cp.color : 'transparent',
+          opacity: cp.opacity,
+        }}
+      />
     </CenterRow>
   )
 }

@@ -64,12 +64,12 @@ export function makeNewGroup(
 }
 
 interface IGroupRowProps {
-  name: string
+  name?: string
+  groups?: IClusterGroup[]
 }
 
-export function makeNewGroupRow(
-  groups: IClusterGroup[],
-  { name = 'Groups' } = {} as IGroupRowProps
+export function newGroupRow(
+  { groups = [], name = 'Groups' } = {} as IGroupRowProps
 ): IClusterGroupRow {
   return {
     id: makeUuid(),
@@ -79,13 +79,13 @@ export function makeNewGroupRow(
 }
 
 export function makeClusterFile(
-  groupRows: IClusterGroupRow,
+  groupRows: IClusterGroupRow[],
   name: string = 'Group Rows'
 ): IClusterGroupRowFile {
   return {
     version: 2,
     id: makeUuid(),
     name,
-    groupRows: [groupRows],
+    groupRows,
   }
 }

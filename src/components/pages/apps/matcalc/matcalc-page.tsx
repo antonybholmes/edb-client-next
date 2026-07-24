@@ -61,7 +61,7 @@ import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useSlideBar } from '@/components/sidebar/slide-bar-store'
 import { HeaderButton } from '@/layouts/header-button'
-import type { IClusterGroup, IClusterGroupRowFile } from '@/lib/cluster-group'
+import { newGroupRow, type IClusterGroup } from '@/lib/cluster-group'
 import type { IGeneSet } from '@/lib/gsea/geneset'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { CoreProviders } from '@/providers/core-providers'
@@ -277,17 +277,15 @@ export function MatcalcPage() {
       '/data/test/groups.json'
     )
 
-    console.log(resg)
+    //const groupRows2 = await httpFetch.getJson<IClusterGroupRowFile>(
+    //  '/data/test/group-rows.json'
+    //)
 
-    const groupRows2 = await httpFetch.getJson<IClusterGroupRowFile>(
-      '/data/test/group-rows.json'
-    )
-
-    const groupRows = [{ id: makeUuid(), name: 'Groups', groups: resg }]
+    const groupRows = [newGroupRow({ groups: resg })]
 
     openFile(`Z Test`, {
       //mode: 'append',
-      groupRows: groupRows2.groupRows,
+      groupRows,
       sheets: [table.setName('Z Test') as AnnotationDataFrame],
     })
   }
@@ -362,9 +360,9 @@ export function MatcalcPage() {
       '/data/test/extgsea/groups.json'
     )
 
-    const groupRows2 = await httpFetch.getJson<IClusterGroupRowFile>(
-      '/data/test/extgsea/group-rows.json'
-    )
+    // const groupRows2 = await httpFetch.getJson<IClusterGroupRowFile>(
+    //   '/data/test/extgsea/group-rows.json'
+    // )
 
     const genesets = await httpFetch.getJson<IGeneSet[]>(
       '/data/test/extgsea/genesets.json'
@@ -372,10 +370,8 @@ export function MatcalcPage() {
 
     const groupRows = [{ id: makeUuid(), name: 'Groups', groups }]
 
-    console.log(groupRows2)
-
     openFile(`Ext GSEA Test`, {
-      groupRows: groupRows2.groupRows,
+      groupRows,
       genesets,
       sheets: [table.setName('Ext GSEA Test') as AnnotationDataFrame],
     })

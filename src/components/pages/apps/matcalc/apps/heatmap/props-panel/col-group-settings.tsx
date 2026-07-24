@@ -9,6 +9,7 @@ import { TEXT_BORDER, TEXT_HEIGHT, TEXT_SHOW } from '@/consts'
 import { PropRow } from '@/dialogs/prop-row'
 import { produce } from 'immer'
 
+import { CheckPropRow } from '@/components/dialogs/check-prop-row'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { useHistory } from '../../../history/history-provider/history-provider'
 import { useHeatmapContext } from '../heatmap-provider'
@@ -61,6 +62,7 @@ export function ColGroupsSettingsPanel() {
               {
                 color: displayProps.groups.grid.value,
                 opacity: displayProps.groups.grid.opacity,
+                show: displayProps.groups.grid.show,
                 onColorChange: ({ color, opacity, width, dasharray, show }) => {
                   updatePlot(
                     produce(plot, (draft) => {
@@ -108,6 +110,17 @@ export function ColGroupsSettingsPanel() {
             title="Group Border Outline"
           />
         </PropRow>
+        <CheckPropRow
+          title="Show Labels"
+          checked={displayProps.groups.labels.show}
+          onCheckedChange={(v) =>
+            updatePlot(
+              produce(plot, (draft) => {
+                draft.props.groups.labels.show = v
+              })
+            )
+          }
+        />
       </AccordionContent>
     </AccordionItem>
   )
