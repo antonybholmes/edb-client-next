@@ -360,6 +360,8 @@ export function HistoryProvider({ children }: IChildrenProps) {
     ]
   )
 
+  console.log('Rendering HistoryProvider', state.plots)
+
   return (
     <FilesContext.Provider value={filesContextValue}>
       <SheetsContext.Provider value={sheetsContextValue}>

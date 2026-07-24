@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Added version to history to make tracking updates faster.
 - Fully replaced dndkit with newer version. Groups now supports multiple rows.
 - Replacing dndkit legacy with new version.
 - Bug fixes and updates.

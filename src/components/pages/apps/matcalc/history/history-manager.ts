@@ -29,6 +29,10 @@ export interface IUndoState<T> {
   present: T
   history: IHistoryEntry<T>[]
   cursor: number
+  /**
+   * The current version of the history state which is a monotonically increasing number.
+   */
+  version: number
 }
 
 function createHistoryEntry<T>(
@@ -68,7 +72,7 @@ export class HistoryManager<T extends object> {
     const start = history.length - this._maxItems
     const snapshotIndex = findIndexEx(
       history,
-      h => h.type === 'snapshot',
+      (h) => h.type === 'snapshot',
       start
     )
     return snapshotIndex !== -1
@@ -109,6 +113,7 @@ export class HistoryManager<T extends object> {
       present: next,
       history,
       cursor: history.length - 1,
+      version: state.version + 1,
     }
   }
 
@@ -239,5 +244,5 @@ export function findHistoryEntry<T>(
 
   const lid = step.toLowerCase()
 
-  return history.findIndex(s => s.id === step || s.name.toLowerCase() === lid)
+  return history.findIndex((s) => s.id === step || s.name.toLowerCase() === lid)
 }

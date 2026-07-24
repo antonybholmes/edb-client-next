@@ -36,7 +36,8 @@ const PLOTS_TAB: ITab = Object.freeze({
 })
 
 export function MatcalcFileTree() {
-  const { present, sheets, plots, goto, remove, removeFiles } = useHistory()
+  const { present, sheets, plots, version, goto, remove, removeFiles } =
+    useHistory()
   //const [treeRootTab, setTreeRootTab] = useState<ITab>(TREE_ROOT_TAB)
   const [selectedPanelTab, setSelectedPanelTab] = useState<string>('')
 
@@ -44,8 +45,10 @@ export function MatcalcFileTree() {
 
   const { files } = useFiles()
 
+  console.log('Rendering MatcalcFileTree', files, sheets, plots, version)
+
   const treeRootTab = useMemo(() => {
-    //const lastHistoryAction = historyActions[historyActions.length - 1]!
+    console.log('replot', plots)
 
     const tableChildrenTabs: ITab[] = []
     const plotChildrenTabs: ITab[] = []
@@ -91,6 +94,7 @@ export function MatcalcFileTree() {
             goto({ file, sheet, plot })
           },
           onDelete: () => {
+            console.log('Deleting plot:', plot)
             remove([{ file, plot }])
           },
         }
@@ -131,7 +135,7 @@ export function MatcalcFileTree() {
         { ...PLOTS_TAB, children: plotChildrenTabs },
       ],
     }
-  }, [files, plots])
+  }, [version])
 
   // decide what to highlight in tree
   useEffect(() => {

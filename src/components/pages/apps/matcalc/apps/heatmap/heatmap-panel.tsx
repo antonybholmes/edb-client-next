@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
-import { getFormattedShape } from '@/lib/dataframe/dataframe-utils'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
@@ -97,7 +96,7 @@ export function HeatmapPanel() {
       </ResizableSidebar>
 
       <FooterPortal className="shrink-0 grow-0 ">
-        <span>{getFormattedShape(cf.df)} </span>
+        <></>
         <></>
         <>
           <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />

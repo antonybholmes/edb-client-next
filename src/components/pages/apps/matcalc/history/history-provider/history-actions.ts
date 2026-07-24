@@ -84,13 +84,13 @@ export function dataStoreView(state: IHistoryData): IHistoryDataStore {
 function getPathType(
   path: PathId
 ): 'file' | 'sheet' | 'plot' | 'group' | 'geneset' {
-  if ('group' in path) {
-    return 'group'
-  } else if ('geneset' in path) {
+  if (path.geneset) {
     return 'geneset'
-  } else if ('plot' in path) {
+  } else if (path.plot) {
     return 'plot'
-  } else if ('sheet' in path) {
+  } else if (path.group) {
+    return 'group'
+  } else if (path.sheet) {
     return 'sheet'
   } else {
     return 'file'
@@ -188,9 +188,12 @@ function removeSheet(state: IHistoryState, p: PathId) {
 }
 
 function removePlot(state: IHistoryState, p: PathId) {
+  console.log('Removing plot x:', p, [...state.plotOrder[p.file]])
   state.plotOrder[p.file] = state.plotOrder[p.file]!.filter(
     (id) => id !== p.plot
   )
+
+  console.log('Removing plot x2:', p, [...state.plotOrder[p.file]])
 
   if (state.plotOrder[p.file]!.length > 0) {
     // if there are still plots left, select the previous one
@@ -203,7 +206,14 @@ function removePlot(state: IHistoryState, p: PathId) {
     state.currentPlot = undefined
     state.currentSheet = sheets[0]!
     state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]
+
+    console.log('Removing plot x3:', p, [...state.plotOrder[p.file]])
   }
+}
+
+function removeStorePlot(store: IHistoryDataStore, p: PathId) {
+  console.log('Removing store plot:', p)
+  delete store.plots[p.plot]
 }
 
 function removeGroup(state: IHistoryState, p: PathId) {
@@ -393,6 +403,13 @@ function handleRemove(
   }
 
   const pathIds = action.paths.map(toPathId)
+
+  console.log(
+    'Removing paths:',
+    pathIds,
+    pathIds.map((p) => getPathType(p))
+  )
+
   return applyHistoryUpdate(
     state,
     `Remove objects`,
@@ -415,6 +432,19 @@ function handleRemove(
           case 'geneset':
             removeGeneset(draft, p)
             break
+          default:
+            console.warn(`Unknown path type for ${p}`)
+            break
+        }
+      }
+    },
+    (draft: IHistoryDataStore) => {
+      for (const p of pathIds) {
+        switch (getPathType(p)) {
+          case 'plot':
+            removeStorePlot(draft, p)
+            break
+
           default:
             console.warn(`Unknown path type for ${p}`)
             break

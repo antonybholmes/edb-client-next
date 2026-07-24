@@ -55,6 +55,7 @@ export function init(): IHistoryData {
     present: state,
     history: [historyEntry],
     cursor: 0,
+    version: 0,
   }
 }
 
