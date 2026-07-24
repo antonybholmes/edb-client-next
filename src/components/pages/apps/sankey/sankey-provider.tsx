@@ -110,7 +110,7 @@ export function newSankeyPlot(
   links: ISankeyLink[] = [],
   opts: Partial<ISankeyPlot> = {}
 ): ISankeyPlot {
-  const { actions = [], groups = [] } = opts
+  const { actions = [], groupRows: groups = [] } = opts
 
   // Add sankey to name if not already present for better file naming when saving images
   if (!name.toLowerCase().includes('sankey')) {
@@ -123,7 +123,7 @@ export function newSankeyPlot(
     name,
     nodes,
     links,
-    groups,
+    groupRows: groups,
     actions,
     type: 'plot',
     createdAt: new Date().toISOString(),

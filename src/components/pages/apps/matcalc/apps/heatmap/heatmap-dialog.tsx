@@ -81,7 +81,7 @@ export function HeatMapDialog({
 }: IProps) {
   //const file = useFile()
 
-  const { groups, groupsName } = useCurrentGroups()
+  const { groupRows } = useCurrentGroups()
   const { sheets } = useCurrentSheets()
 
   //const [topRows, setTopRows] = useState(1000)
@@ -110,9 +110,14 @@ export function HeatMapDialog({
 
     let dfToPlot = df
 
-    const groupsToPlot = groups.filter(
-      (g) => g.show || settings.groups.filter.mode === 'keep'
-    )
+    const groupRowsToPlot = groupRows.map((gr) => ({
+      ...gr,
+      groups: gr.groups.filter(
+        (g) => g.show || settings.groups.filter.mode === 'keep'
+      ),
+    }))
+
+    const groupsToPlot = groupRowsToPlot[0].groups
 
     if (groupsToPlot.length > 0 && settings.groups.filter.mode === 'ignore') {
       const idx = groupsToPlot
@@ -238,7 +243,7 @@ export function HeatMapDialog({
     }
 
     const displayOptions = produce(DEFAULT_HEATMAP_PROPS, (draft) => {
-      draft.legend.title.text = groupsName
+      draft.legend.title.text = groupRows[0]?.name ?? 'Groups'
     })
 
     const plot: HistoryPlot = newHeatMapPlot(
@@ -246,7 +251,7 @@ export function HeatMapDialog({
       { main: cf },
       {
         style: 'heatmap',
-        groups: groupsToPlot,
+        groupRows: groupRowsToPlot,
         props: displayOptions,
         actions,
       }

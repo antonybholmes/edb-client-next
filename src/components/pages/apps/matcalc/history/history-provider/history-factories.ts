@@ -26,7 +26,7 @@ export function newHeatMapPlot(
     style = 'heatmap',
     props = { ...DEFAULT_HEATMAP_PROPS },
     actions = [],
-    groups = [],
+    groupRows: groups = [],
   } = opts
 
   return {
@@ -34,7 +34,7 @@ export function newHeatMapPlot(
     style,
     name,
     dataframes,
-    groups,
+    groupRows: groups,
     props,
     actions,
     type: 'plot',
@@ -51,7 +51,7 @@ export function newBoxPlot(
     style = 'box',
     props = { ...DEFAULT_BOX_PLOT_DISPLAY_PROPS },
     actions = [],
-    groups = [],
+    groupRows: groups = [],
     x = '',
     y = '',
     hue = '',
@@ -66,7 +66,7 @@ export function newBoxPlot(
     style,
     name,
     dataframes,
-    groups,
+    groupRows: groups,
     props,
     actions,
     x,
@@ -90,7 +90,7 @@ export function newVolcanoPlot(
     style = 'volcano',
     props = { ...DEFAULT_VOLCANO_PROPS },
     actions = [],
-    groups = [],
+    groupRows: groups = [],
   } = opts
 
   return {
@@ -99,7 +99,7 @@ export function newVolcanoPlot(
     style,
     name,
     dataframes,
-    groups,
+    groupRows: groups,
     props,
     actions,
     type: 'plot',
@@ -114,7 +114,7 @@ export function newExtGseaPlot(
 ): ExtGseaPlot {
   const {
     actions = [],
-    groups = [],
+    groupRows: groups = [],
     extGseaRes = {} as IExtGseaResult,
     gseaRes1 = {} as IGseaResult,
     gseaRes2 = {} as IGseaResult,
@@ -130,7 +130,7 @@ export function newExtGseaPlot(
     style: 'ext-gsea',
     name,
     //dataframes,
-    groups,
+    groupRows: groups,
     extGseaRes,
     gseaRes1,
     gseaRes2,

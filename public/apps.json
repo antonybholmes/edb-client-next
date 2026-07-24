@@ -109,11 +109,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "48.6.0",
+    "version": "48.6.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-23T22:54:08.540Z",
-    "hash": "6d57fdbc4190703fad2bc19a2b92c8541232f6597b4996e38897a881b154b820",
-    "build": 1838
+    "modified": "2026-07-24T02:36:23.850Z",
+    "hash": "75aefd15433cbc5426ae765ce3101152954c7f95b14f76eee9794c46d4106504",
+    "build": 1840
   },
   {
     "name": "Motifs",
@@ -171,9 +171,9 @@
     "color": "#ff9900",
     "version": "1.2.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-23T22:54:08.545Z",
-    "hash": "c13503e28b59586d55bc9c7faec86a6c36f45a367bd550329b578b88a7f098d5",
-    "build": 50
+    "modified": "2026-07-24T02:36:23.851Z",
+    "hash": "af30d49982d0a1814c1d689ccc47177199e0c3ccfa8bb3aa17efbb6e75675e61",
+    "build": 52
   },
   {
     "name": "Seq Browser",

@@ -77,6 +77,7 @@ import { OptsSidebarMenu } from './data/opts-sidebar-menu'
 import { useHistory } from './history/history-provider/history-provider'
 
 import { useTabs } from '@/components/tabs/tab-provider'
+import { makeUuid } from '@/lib/id'
 import { Box } from 'lucide-react'
 import { SankeyPanel } from '../sankey/sankey-panel'
 import { SankeyProvider } from '../sankey/sankey-provider'
@@ -278,9 +279,11 @@ export function MatcalcPage() {
 
     console.log(resg)
 
+    const groupRows = [{ id: makeUuid(), name: 'Groups', groups: resg }]
+
     openFile(`Z Test`, {
       //mode: 'append',
-      groups: resg,
+      groupRows,
       sheets: [table.setName('Z Test') as AnnotationDataFrame],
     })
   }
@@ -365,8 +368,10 @@ export function MatcalcPage() {
       '/data/test/extgsea/genesets.json'
     )
 
+    const groupRows = [{ id: makeUuid(), name: 'Groups', groups }]
+
     openFile(`Ext GSEA Test`, {
-      groups,
+      groupRows,
       genesets,
       sheets: [table.setName('Ext GSEA Test') as AnnotationDataFrame],
     })

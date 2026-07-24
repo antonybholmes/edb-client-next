@@ -31,7 +31,7 @@ export interface BasePlot extends IDBEntity {
   // groups to make plots so that they are independent
   // of history such that if user moves groups around
   // it won't affect any plots generated
-  groups: IClusterGroup[]
+  groupRows: IClusterGroupRow[]
   actions: string[]
   type: 'plot'
 }

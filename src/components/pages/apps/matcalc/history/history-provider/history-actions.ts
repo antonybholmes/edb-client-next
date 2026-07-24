@@ -566,9 +566,27 @@ function handleOpenGroupFiles(
   const { files, opts } = action
   const { file = state.present.currentFile } = opts
 
-  if (files.length === 0) {
-    return
+  const groupRows: IClusterGroupRow[] = openGroupFiles(files)
+
+  if (groupRows.length === 0) {
+    return state
   }
+
+  return applyHistoryUpdate(
+    state,
+    'Clear groups',
+    '',
+    (draft: IHistoryState) => {
+      draft.groupRows[file] = groupRows
+    }
+  )
+}
+
+export function openGroupFiles(files: ITextFileOpen[]): IClusterGroupRow[] {
+  if (files.length === 0) {
+    return []
+  }
+
   const f0 = files[0]!
 
   console.log(f0)
@@ -625,18 +643,7 @@ function handleOpenGroupFiles(
     groupRows = [{ id: makeUuid(), name: 'Groups', groups }]
   }
 
-  if (groupRows.length === 0) {
-    return state
-  }
-
-  return applyHistoryUpdate(
-    state,
-    'Clear groups',
-    '',
-    (draft: IHistoryState) => {
-      draft.groupRows[file] = groupRows
-    }
-  )
+  return groupRows
 }
 
 // function handleUpdateGroup(

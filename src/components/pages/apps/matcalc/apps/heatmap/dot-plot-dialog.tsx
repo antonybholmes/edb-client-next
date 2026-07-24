@@ -78,7 +78,7 @@ export function DotPlotDialog({
   const [error, setError] = useState('')
 
   const { sheets } = useCurrentSheets()
-  const { groups } = useCurrentGroups()
+  const { groupRows } = useCurrentGroups()
 
   const { selectedTab, setTabs } = useTabs(tabsId)
 
@@ -113,7 +113,7 @@ export function DotPlotDialog({
   }
 
   function makeGroupDotPlot() {
-    if (groups.length === 0) {
+    if (groupRows.length === 0 || groupRows[0].groups.length === 0) {
       setError('You must create some groups. Exit this dialog to do so.')
       return
     }
@@ -123,9 +123,14 @@ export function DotPlotDialog({
     // get group means
     const means: number[][] = []
     const percents: number[][] = []
-    const groupsToPlot = groups.filter(
-      (g) => g.show || settings.groups.filter.mode === 'keep'
-    )
+    const groupRowsToPlot = groupRows.map((gr) => ({
+      ...gr,
+      groups: gr.groups.filter(
+        (g) => g.show || settings.groups.filter.mode === 'keep'
+      ),
+    }))
+
+    const groupsToPlot = groupRowsToPlot[0].groups
 
     for (const group of groupsToPlot) {
       const colIdx = getColIdxFromGroup(df, group)
@@ -327,7 +332,7 @@ export function DotPlotDialog({
       { main: cf, raw: df, size: sizeDf },
       {
         style: 'dot',
-        groups,
+        groupRows,
         props: displayOptions,
       }
     )

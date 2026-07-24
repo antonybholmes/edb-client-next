@@ -27,8 +27,10 @@ import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 import { DragDropProvider } from '@dnd-kit/react'
 
 import {
+  BaseSortableItem,
   DRAG_HANDLE_APPEAR_CLS,
   DRAG_ICON_ANIM_CLS,
+  DragHandle,
   SortableItem,
 } from '../../../../sortable-item'
 
@@ -40,6 +42,7 @@ import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { PropsPanel } from '@/components/props-panel'
 import { LinkButton } from '@/components/shadcn/ui/themed/link-button'
 import { Checkbox } from '@/components/shadcn/ui/themed/v2/check-box'
+import { Input } from '@/components/shadcn/ui/themed/v2/input'
 import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { PlusIcon } from '@/icons/plus-icon'
@@ -47,6 +50,7 @@ import { StretchRow } from '@/layout/stretch-row'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
+import { move } from '@dnd-kit/helpers'
 import { produce } from 'immer'
 import { Settings2 } from 'lucide-react'
 import {
@@ -61,6 +65,95 @@ hover:opacity-100 trans-opacity hover:bg-muted/50 data-[focus=true]:bg-muted/50`
 export const GROUP_CONTENT_CLS = `flex flex-row items-center grow relative 
   w-full overflow-hidden py-2 pl-1 pr-2 gap-x-2 rounded-theme 
   group-hover:bg-muted group-data-[focus=true]:bg-muted`
+
+function GroupRowItem({
+  index,
+  groupRow,
+  editGroup,
+}: {
+  index: number
+  groupRow: IClusterGroupRow
+  editGroup: (
+    groupRow: IClusterGroupRow,
+    ggroup: IClusterGroup,
+    title?: string
+  ) => void
+}) {
+  const { open: openDialog } = useDialogs()
+  const { addGroups } = useHistory()
+  const { groupRows } = useCurrentGroups()
+
+  return (
+    <BaseSortableItem
+      as={'li'}
+      id={groupRow.id}
+      className={cn('flex flex-col gap-y-1')}
+      style={{ minWidth: 0 }}
+    >
+      <VCenterRow className="gap-x-1 pl-1 pr-1.5 py-1 h-full min-h-8 border-b border-border/30">
+        {/* Hide the drag handle if a custom one is passed, to avoid confusion. 
+              The custom one is for things like a checkbox if we want to select items and momentarily turn off dragging */}
+        <DragHandle id={groupRow.id} index={index} />
+
+        <Input
+          value={groupRow.name}
+          onTextChange={(v) => {
+            addGroups(
+              produce(groupRows, (draft) => {
+                for (let gr of draft) {
+                  if (gr.id === groupRow.id) {
+                    gr.name = v
+                  }
+                }
+              })
+            )
+          }}
+        />
+      </VCenterRow>
+
+      <DragDropProvider
+        // onDragOver={(event) => {
+        //   // Prevent the default behavior
+        //   //event.preventDefault()
+        // }}
+        //sensors={sensors}
+        //modifiers={[RestrictToVerticalAxis]}
+        // onDragStart={event => setActiveId(event.active.id as string)}
+        onDragEnd={(event) => {
+          const newOrder = move(groupRow.groups, event)
+
+          const newGroupRow = produce(groupRow, (draft) => {
+            draft.groups = newOrder
+          })
+
+          addGroups(
+            produce(groupRows, (draft) => {
+              for (let gr of draft) {
+                if (gr.id === groupRow.id) {
+                  gr.groups = newGroupRow.groups
+                }
+              }
+            })
+          )
+        }}
+      >
+        <ul className="flex flex-col ml-2">
+          {groupRow.groups.map((group, gi) => {
+            return (
+              <GroupItem
+                group={group}
+                groupRow={groupRow}
+                key={group.id}
+                index={gi}
+                editGroup={editGroup}
+              />
+            )
+          })}
+        </ul>
+      </DragDropProvider>
+    </BaseSortableItem>
+  )
+}
 
 function GroupItem({
   index,
@@ -420,6 +513,10 @@ export function GroupPropsPanel() {
         >
           {/* <VScrollPanel> */}
           <DragDropProvider
+            onDragOver={(event) => {
+              // Prevent the default behavior
+              event.preventDefault()
+            }}
             //sensors={sensors}
             //modifiers={[RestrictToVerticalAxis]}
             // onDragStart={event => setActiveId(event.active.id as string)}
@@ -428,7 +525,7 @@ export function GroupPropsPanel() {
                 return
               }
 
-              console.log(event.operation)
+              console.log('cheese', event.operation, event.operation.source.id)
 
               // const newOrder = move(
               //   groups.map((group) => group.id),
@@ -455,21 +552,18 @@ export function GroupPropsPanel() {
             }}
           >
             <VScrollPanel className="grow">
-              {groupRows.map((groupRow, gri) => (
-                <ul className="flex flex-col" key={gri}>
-                  {groupRow.groups.map((group, gi) => {
-                    return (
-                      <GroupItem
-                        group={group}
-                        groupRow={groupRow}
-                        key={group.id}
-                        index={gi}
-                        editGroup={editGroup}
-                      />
-                    )
-                  })}
-                </ul>
-              ))}
+              <ul className="flex flex-col">
+                {groupRows.map((gr, gri) => {
+                  return (
+                    <GroupRowItem
+                      index={gri}
+                      groupRow={gr}
+                      key={gr.id}
+                      editGroup={editGroup}
+                    />
+                  )
+                })}
+              </ul>
             </VScrollPanel>
 
             {/* <DragOverlay>
