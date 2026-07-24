@@ -16,17 +16,12 @@ import { TrashIcon } from '@/icons/trash-icon'
 import { indexBed } from '@/lib/genomic/bed'
 import { makeUuid } from '@/lib/id'
 import { textToLines } from '@/lib/text/lines'
-import { DndContext } from '@dnd-kit/core'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { SelectAll } from '@/components/select-all'
+import { move } from '@dnd-kit/helpers'
+import { DragDropProvider } from '@dnd-kit/react'
 import { BigBed, BigWig } from '@gmod/bbi'
 import { BlobFile } from 'generic-filehandle2'
 import { useState } from 'react'
@@ -314,45 +309,26 @@ export function TracksPropsPanel() {
           }
         }}
       >
-        <DndContext
-          modifiers={[restrictToVerticalAxis]}
-          //onDragStart={event => setActiveId(event.active.id as string)}
-          onDragEnd={(event) => {
-            const { active, over } = event
-
-            if (over && active.id !== over?.id) {
-              const oldIndex = groups.findIndex((g) => g.id === active.id)
-              const newIndex = groups.findIndex((g) => g.id === over.id)
-              const newOrder = arrayMove(groups, oldIndex, newIndex)
+        <VScrollPanel>
+          <DragDropProvider
+            onDragEnd={(event) => {
+              const newOrder = move(groups, event)
 
               dispatch({
                 type: 'set',
                 tracks: newOrder,
               })
-            }
-
-            //setActiveId(null)
-          }}
-        >
-          <SortableContext
-            items={groups}
-            strategy={verticalListSortingStrategy}
+            }}
           >
-            <VScrollPanel>
-              <ul className="flex flex-col">
-                {groups.map((tg) => {
-                  return (
-                    <TrackItem
-                      multiselect={multiselect}
-                      group={tg}
-                      key={tg.id}
-                    />
-                  )
-                })}
-              </ul>
-            </VScrollPanel>
-          </SortableContext>
-        </DndContext>
+            <ul className="flex flex-col">
+              {groups.map((tg) => {
+                return (
+                  <TrackItem multiselect={multiselect} group={tg} key={tg.id} />
+                )
+              })}
+            </ul>
+          </DragDropProvider>
+        </VScrollPanel>
       </FileDropZonePanel>
     </PropsPanel>
   )

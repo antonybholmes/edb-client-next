@@ -22,6 +22,10 @@ export interface IClusterGroupRow extends IDBEntity {
   groups: IClusterGroup[]
 }
 
+export interface IClusterGroupRowFile extends IDBEntity {
+  groupRows: IClusterGroupRow[]
+}
+
 interface IGroupProps {
   name: string
   search?: string[]

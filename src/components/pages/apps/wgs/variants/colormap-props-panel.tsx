@@ -7,23 +7,9 @@ import { Input } from '@/themed/v2/input'
 
 import { SortableItem } from '@/components/sortable-item'
 import { IconButton } from '@/themed/icon-button'
-import {
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+
 import { produce } from 'immer'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { UploadIcon } from '@/components/icons/upload-icon'
 import {
@@ -35,6 +21,8 @@ import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { VScrollPanel } from '@/components/v-scroll-panel'
+import { move } from '@dnd-kit/helpers'
+import { DragDropProvider } from '@dnd-kit/react'
 import {
   useVariantSettings,
   type ICMAP,
@@ -46,10 +34,13 @@ interface IGeneElemProps {
   color: ICMAPColor
 }
 
-function SortableGeneElem({ color }: IGeneElemProps) {
+function SortableGeneElem({
+  color,
+  index,
+}: IGeneElemProps & { index: number }) {
   const { settings, updateSettings } = useVariantSettings()
   return (
-    <SortableItem key={color.id} id={color.id}>
+    <SortableItem key={color.id} id={color.id} index={index}>
       <FillButton
         colors={[
           {
@@ -112,14 +103,14 @@ export function ColormapPropsPanel() {
 
   const { settings, updateSettings } = useVariantSettings()
 
-  const { open: openDialog } = useDialogs()
+  // const { open: openDialog } = useDialogs()
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
+  // const sensors = useSensors(
+  //   useSensor(PointerSensor),
+  //   useSensor(KeyboardSensor, {
+  //     coordinateGetter: sortableKeyboardCoordinates,
+  //   })
+  // )
 
   function openFeatureFiles(files: ITextFileOpen[]) {
     if (files.length === 0) {
@@ -193,45 +184,25 @@ export function ColormapPropsPanel() {
       <MenuSeparator />
 
       <VScrollPanel>
-        <DndContext
-          sensors={sensors}
-          modifiers={[restrictToVerticalAxis]}
-          //onDragStart={event => setActiveId(event.active.id as string)}
+        <DragDropProvider
           onDragEnd={(event) => {
-            const { active, over } = event
+            const newOrder = move(settings.variants.cmap.colors, event)
 
-            if (over && active.id !== over?.id) {
-              const oldIndex = settings.variants.cmap.colors.findIndex(
-                (c) => c.id === active.id
-              )
-              const newIndex = settings.variants.cmap.colors.findIndex(
-                (c) => c.id === over.id
-              )
-              const newOrder = arrayMove(
-                settings.variants.cmap.colors,
-                oldIndex,
-                newIndex
-              )
-
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.variants.cmap.colors = newOrder
-                })
-              )
-            }
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.variants.cmap.colors = newOrder
+              })
+            )
           }}
         >
-          <SortableContext
-            items={settings.variants.cmap.colors.map((color) => color.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            <ul className="flex flex-col  ">
-              {settings.variants.cmap.colors.map((color) => {
-                return <SortableGeneElem key={color.id} color={color} />
-              })}
-            </ul>
-          </SortableContext>
-        </DndContext>
+          <ul className="flex flex-col  ">
+            {settings.variants.cmap.colors.map((color, ci) => {
+              return (
+                <SortableGeneElem key={color.id} color={color} index={ci} />
+              )
+            })}
+          </ul>
+        </DragDropProvider>
       </VScrollPanel>
     </PropsPanel>
   )

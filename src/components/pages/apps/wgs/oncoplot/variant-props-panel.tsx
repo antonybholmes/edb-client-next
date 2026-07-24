@@ -17,20 +17,7 @@ import {
 } from '@/components/sortable-item'
 import type { IDivProps } from '@/interfaces/div-props'
 import { IconButton } from '@/themed/icon-button'
-import {
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+
 import { produce } from 'immer'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
@@ -44,6 +31,8 @@ import {
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { randomHexColor } from '@/lib/color/color'
+import { move } from '@dnd-kit/helpers'
+import { DragDropProvider } from '@dnd-kit/react'
 import { useOncoplotSettings } from './oncoplot-settings-store'
 import { DEFAULT_MUTATIONS, type IMutation } from './oncoplot-utils'
 
@@ -52,11 +41,15 @@ interface IMutationElemProps {
   setDelMutation?: (mutation: IMutation) => void
 }
 
-function MutationElem({ mutation, setDelMutation }: IMutationElemProps) {
+function MutationElem({
+  mutation,
+  setDelMutation,
+  index,
+}: IMutationElemProps & { index: number }) {
   const { mutations, setMutations } = useOncoplotSettings()
 
   return (
-    <SortableItem key={mutation.id} id={mutation.id}>
+    <SortableItem key={mutation.id} id={mutation.id} index={index}>
       <FillButton
         colors={[
           {
@@ -92,20 +85,6 @@ function MutationElem({ mutation, setDelMutation }: IMutationElemProps) {
         }
       />
 
-      {/* <Switch
-        checked={mutation.show}
-        onCheckedChange={v =>
-          setMutations(
-            produce(mutations, draft => {
-              const mut = draft.find(m => m.id === mutation.id)
-              if (mut) {
-                mut.show = v
-              }
-            })
-          )
-        }
-      /> */}
-
       <VCenterRow className={DRAG_HANDLE_APPEAR_CLS}>
         <button
           className={cn(
@@ -123,18 +102,9 @@ function MutationElem({ mutation, setDelMutation }: IMutationElemProps) {
 }
 
 export function VariantPropsPanel({ ref }: IDivProps) {
-  //const [delFeature, setDelFeature] = useState<IProteinFeature | null>(null)
-
   const { open: openDialog } = useDialogs()
 
   const { mutations, setMutations } = useOncoplotSettings()
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
 
   function openFeatureFiles(files: ITextFileOpen[]) {
     if (files.length === 0) {
@@ -174,7 +144,6 @@ export function VariantPropsPanel({ ref }: IDivProps) {
             </IconButton>
 
             <IconButton
-              // ripple={false}
               onClick={() => downloadJson(mutations, 'variants.json')}
               title="Save variants"
             >
@@ -182,7 +151,6 @@ export function VariantPropsPanel({ ref }: IDivProps) {
             </IconButton>
 
             <IconButton
-              // ripple={false}
               onClick={() =>
                 setMutations(
                   produce(mutations, (draft) => {
@@ -204,8 +172,7 @@ export function VariantPropsPanel({ ref }: IDivProps) {
 
           <Button
             variant="link"
-            //size="sm"
-            // ripple={false}
+
             onClick={() => {
               openDialog({
                 type: 'warning',
@@ -227,55 +194,41 @@ export function VariantPropsPanel({ ref }: IDivProps) {
         </VCenterRow>
 
         <VScrollPanel>
-          <DndContext
-            sensors={sensors}
-            modifiers={[restrictToVerticalAxis]}
-            //onDragStart={event => setActiveId(event.active.id as string)}
+          <DragDropProvider
             onDragEnd={(event) => {
-              const { active, over } = event
-
-              if (over && active.id !== over?.id) {
-                const oldIndex = mutations.findIndex((t) => t.id === active.id)
-                const newIndex = mutations.findIndex((t) => t.id === over.id)
-                const newOrder = arrayMove(mutations, oldIndex, newIndex)
-
-                setMutations(newOrder)
-              }
+              const newOrder = move(mutations, event)
+              setMutations(newOrder)
             }}
           >
-            <SortableContext
-              items={mutations.map((mutation) => mutation.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <ul className="flex flex-col  ">
-                {mutations.map((mutation) => {
-                  return (
-                    <MutationElem
-                      key={mutation.id}
-                      mutation={mutation}
-                      setDelMutation={(mutation) => {
-                        openDialog({
-                          type: 'warning',
-                          payload: {
-                            content: `Are you sure you want to delete the ${
-                              mutation.name ? mutation.name : TEXT_UNLABELLED
-                            } mutation?`,
-                            callback: (response) => {
-                              if (response === TEXT_OK) {
-                                setMutations(
-                                  mutations.filter((m) => m.id !== mutation.id)
-                                )
-                              }
-                            },
+            <ul className="flex flex-col  ">
+              {mutations.map((mutation, mi) => {
+                return (
+                  <MutationElem
+                    key={mutation.id}
+                    index={mi}
+                    mutation={mutation}
+                    setDelMutation={(mutation) => {
+                      openDialog({
+                        type: 'warning',
+                        payload: {
+                          content: `Are you sure you want to delete the ${
+                            mutation.name ? mutation.name : TEXT_UNLABELLED
+                          } mutation?`,
+                          callback: (response) => {
+                            if (response === TEXT_OK) {
+                              setMutations(
+                                mutations.filter((m) => m.id !== mutation.id)
+                              )
+                            }
                           },
-                        })
-                      }}
-                    />
-                  )
-                })}
-              </ul>
-            </SortableContext>
-          </DndContext>
+                        },
+                      })
+                    }}
+                  />
+                )
+              })}
+            </ul>
+          </DragDropProvider>
         </VScrollPanel>
       </PropsPanel>
     </>

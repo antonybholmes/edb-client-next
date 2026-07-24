@@ -10,20 +10,7 @@ import { Input } from '@/themed/v2/input'
 import { SortableItem } from '@/components/sortable-item'
 import type { IDivProps } from '@/interfaces/div-props'
 import { IconButton } from '@/themed/icon-button'
-import {
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+
 import { produce } from 'immer'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
@@ -43,17 +30,19 @@ import { VScrollPanel } from '@/components/v-scroll-panel'
 import { randomHexColor } from '@/lib/color/color'
 import { cn } from '@/lib/shadcn-utils'
 import { TRANS_COLOR_CLS } from '@/theme'
+import { move } from '@dnd-kit/helpers'
+import { DragDropProvider } from '@dnd-kit/react'
 import { TRACK_ITEM_BUTTONS_CLS } from '../../genomic/seq-browser/track-items/seq-track-item'
 import { useOncoplot } from './oncoplot-store'
 import { type IOncoGene } from './oncoplot-utils'
 
 interface IGeneElemProps {
   gene: IOncoGene
-
+  index: number
   setDelGene?: (gene: IOncoGene) => void
 }
 
-function SortableGeneElem({ gene }: IGeneElemProps) {
+function SortableGeneElem({ gene, index }: IGeneElemProps) {
   const { genes, setGenes } = useOncoplot()
   const { open: openDialog } = useDialogs()
 
@@ -61,6 +50,7 @@ function SortableGeneElem({ gene }: IGeneElemProps) {
     <SortableItem
       key={gene.id}
       id={gene.id}
+      index={index}
       extChildren={
         <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
           <button
@@ -145,14 +135,14 @@ export function GenePropsPanel({ ref }: IDivProps) {
 
   const { genes, setGenes } = useOncoplot()
 
-  const { open: openDialog } = useDialogs()
+  // const { open: openDialog } = useDialogs()
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
+  // const sensors = useSensors(
+  //   useSensor(PointerSensor),
+  //   useSensor(KeyboardSensor, {
+  //     coordinateGetter: sortableKeyboardCoordinates,
+  //   })
+  // )
 
   function openFeatureFiles(files: ITextFileOpen[]) {
     if (files.length === 0) {
@@ -222,33 +212,19 @@ export function GenePropsPanel({ ref }: IDivProps) {
       <MenuSeparator />
 
       <VScrollPanel>
-        <DndContext
-          sensors={sensors}
-          modifiers={[restrictToVerticalAxis]}
-          //onDragStart={event => setActiveId(event.active.id as string)}
+        <DragDropProvider
           onDragEnd={(event) => {
-            const { active, over } = event
+            const newOrder = move(genes, event)
 
-            if (over && active.id !== over?.id) {
-              const oldIndex = genes.findIndex((t) => t.id === active.id)
-              const newIndex = genes.findIndex((t) => t.id === over.id)
-              const newOrder = arrayMove(genes, oldIndex, newIndex)
-
-              setGenes(newOrder)
-            }
+            setGenes(newOrder)
           }}
         >
-          <SortableContext
-            items={genes.map((gene) => gene.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            <ul className="flex flex-col  ">
-              {genes.map((gene) => {
-                return <SortableGeneElem key={gene.id} gene={gene} />
-              })}
-            </ul>
-          </SortableContext>
-        </DndContext>
+          <ul className="flex flex-col  ">
+            {genes.map((gene, gi) => {
+              return <SortableGeneElem key={gene.id} gene={gene} index={gi} />
+            })}
+          </ul>
+        </DragDropProvider>
       </VScrollPanel>
     </PropsPanel>
   )

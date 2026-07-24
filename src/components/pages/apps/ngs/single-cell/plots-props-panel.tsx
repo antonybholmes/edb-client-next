@@ -13,13 +13,7 @@ import {
 } from '@/components/sortable-item'
 import { TEXT_CLEAR, TEXT_OK } from '@/consts'
 import { LinkButton } from '@/themed/link-button'
-import { DndContext } from '@dnd-kit/core'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+
 import { produce } from 'immer'
 
 import { PlusIcon } from '@/components/icons/plus-icon'
@@ -35,6 +29,8 @@ import { Settings2 } from 'lucide-react'
 import { TRACK_ITEM_BUTTONS_CLS } from '../../genomic/seq-browser/track-items/seq-track-item'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
+import { move } from '@dnd-kit/helpers'
+import { DragDropProvider } from '@dnd-kit/react'
 import { useSingleCellDialogs } from './single-cell-dialogs'
 import { useSingleCellSettings, type IGeneSet } from './single-cell-settings'
 
@@ -44,7 +40,7 @@ export const GROUP_CLS = `flex flex-row items-center grow relative
   w-full overflow-hidden py-2 pl-1 pr-2 gap-x-2 rounded-theme 
   data-[hover=true]:bg-muted data-[drag=true]:shadow-md group`
 
-function PlotItem({ geneset }: { geneset: IGeneSet }) {
+function PlotItem({ geneset, index }: { geneset: IGeneSet; index: number }) {
   const { open: openDialog } = useDialogs()
   const { open: openSingleCellDialog } = useSingleCellDialogs()
   const { updateSettings, settings } = useSingleCellSettings()
@@ -52,6 +48,7 @@ function PlotItem({ geneset }: { geneset: IGeneSet }) {
   return (
     <SortableItem
       id={geneset.id}
+      index={index}
       key={geneset.id}
       extChildren={
         <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
@@ -178,59 +175,24 @@ export function PlotsPropsPanel() {
       </VCenterRow>
 
       <VScrollPanel>
-        <DndContext
-          modifiers={[restrictToVerticalAxis]}
-          //onDragStart={event => setActiveId(event.active.id as string)}
-          //for the moment do not allow to be re-arranged as it messes up
-          //cluster color rendering
+        <DragDropProvider
           onDragEnd={(event) => {
-            const { active, over } = event
+            const newOrder = move(genesets, event)
 
-            if (over && active.id !== over?.id) {
-              const oldIndex = genesets.findIndex(
-                (plot) => plot.id === active.id
-              )
+            updateSettings(
+              produce(settings, (draft) => {
+                draft.genesets = newOrder
 
-              const newIndex = genesets.findIndex((plot) => plot.id === over.id)
-
-              const newOrder = arrayMove(
-                genesets.map((plot) => plot.id),
-                oldIndex,
-                newIndex
-              )
-
-              // setPlots(
-              //   newOrder.map(id => plots.find(plot => plot.id === id)!)
-              // )
-
-              updateSettings(
-                produce(settings, (draft) => {
-                  draft.genesets = newOrder.map(
-                    (id) => settings.genesets.find((g) => g.id === id)!
-                  )
-
-                  console.error('draft.genesets', draft.genesets)
-                })
-              )
-            }
-
-            //setActiveId(null)
+                console.error('draft.genesets', draft.genesets)
+              })
+            )
           }}
         >
-          <SortableContext
-            items={genesets.map((p) => p.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            <ul className="flex flex-col">
-              {genesets.map((gs) => {
-                return (
-                  // <BaseSortableItem key={gs.id} id={gs.id}>
-                  <PlotItem key={gs.id} geneset={gs} />
-                  // </BaseSortableItem>
-                )
-              })}
-            </ul>
-          </SortableContext>
+          <ul className="flex flex-col">
+            {genesets.map((gs, gi) => {
+              return <PlotItem key={gs.id} geneset={gs} index={gi} />
+            })}
+          </ul>
 
           {/* <DragOverlay>
                 {activeId ? (
@@ -242,7 +204,7 @@ export function PlotsPropsPanel() {
                   />
                 ) : null}
               </DragOverlay> */}
-        </DndContext>
+        </DragDropProvider>
       </VScrollPanel>
     </PropsPanel>
   )

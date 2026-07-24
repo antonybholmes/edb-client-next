@@ -51,6 +51,7 @@ import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
 import { move } from '@dnd-kit/helpers'
+import { isSortable } from '@dnd-kit/react/sortable'
 import { produce } from 'immer'
 import { Settings2 } from 'lucide-react'
 import {
@@ -85,8 +86,12 @@ function GroupRowItem({
 
   return (
     <BaseSortableItem
-      as={'li'}
+      as="li"
       id={groupRow.id}
+      index={index}
+      group="group-rows"
+      type="group-row"
+      accept="group-row"
       className={cn('flex flex-col gap-y-1')}
       style={{ minWidth: 0 }}
     >
@@ -111,46 +116,39 @@ function GroupRowItem({
         />
       </VCenterRow>
 
-      <DragDropProvider
-        // onDragOver={(event) => {
-        //   // Prevent the default behavior
-        //   //event.preventDefault()
-        // }}
-        //sensors={sensors}
-        //modifiers={[RestrictToVerticalAxis]}
-        // onDragStart={event => setActiveId(event.active.id as string)}
-        onDragEnd={(event) => {
-          const newOrder = move(groupRow.groups, event)
+      {/* <DragDropProvider
+          onDragEnd={(event) => {
+            const newOrder = move(groupRow.groups, event)
 
-          const newGroupRow = produce(groupRow, (draft) => {
-            draft.groups = newOrder
-          })
-
-          addGroups(
-            produce(groupRows, (draft) => {
-              for (let gr of draft) {
-                if (gr.id === groupRow.id) {
-                  gr.groups = newGroupRow.groups
-                }
-              }
+            const newGroupRow = produce(groupRow, (draft) => {
+              draft.groups = newOrder
             })
-          )
-        }}
-      >
-        <ul className="flex flex-col ml-2">
-          {groupRow.groups.map((group, gi) => {
-            return (
-              <GroupItem
-                group={group}
-                groupRow={groupRow}
-                key={group.id}
-                index={gi}
-                editGroup={editGroup}
-              />
+
+            addGroups(
+              produce(groupRows, (draft) => {
+                for (let gr of draft) {
+                  if (gr.id === groupRow.id) {
+                    gr.groups = newGroupRow.groups
+                  }
+                }
+              })
             )
-          })}
-        </ul>
-      </DragDropProvider>
+          }}
+        > */}
+      <ul className="flex flex-col ml-2">
+        {groupRow.groups.map((group, gi) => {
+          return (
+            <GroupItem
+              group={group}
+              groupRow={groupRow}
+              key={group.id}
+              index={gi}
+              editGroup={editGroup}
+            />
+          )
+        })}
+      </ul>
+      {/* </DragDropProvider> */}
     </BaseSortableItem>
   )
 }
@@ -183,6 +181,9 @@ function GroupItem({
       id={group.id}
       index={index}
       key={group.id}
+      group={groupRow.id}
+      type="group"
+      accept="group"
       extChildren={
         <button
           onClick={() =>
@@ -514,8 +515,29 @@ export function GroupPropsPanel() {
           {/* <VScrollPanel> */}
           <DragDropProvider
             onDragOver={(event) => {
-              // Prevent the default behavior
-              event.preventDefault()
+              const { source } = event.operation
+
+              if (source?.type !== 'group') {
+                event.preventDefault()
+                return
+              }
+
+              if (isSortable(source)) {
+                const { initialIndex, index, initialGroup, group } = source
+
+                console.log('cheese', initialIndex, index, initialGroup, group)
+
+                const groupRowIndex = groupRows.findIndex(
+                  (gr) => gr.id === group
+                )
+                const newOrder = move(groupRows[groupRowIndex].groups, event)
+
+                addGroups(
+                  produce(groupRows, (draft) => {
+                    draft[groupRowIndex].groups = newOrder
+                  })
+                )
+              }
             }}
             //sensors={sensors}
             //modifiers={[RestrictToVerticalAxis]}
@@ -525,8 +547,24 @@ export function GroupPropsPanel() {
                 return
               }
 
-              console.log('cheese', event.operation, event.operation.source.id)
+              const { source } = event.operation
 
+              if (source?.type !== 'group-row') {
+                return
+              }
+
+              console.log('target', source?.type)
+
+              if (isSortable(source)) {
+                const { initialIndex, index, initialGroup, group } = source
+
+                console.log('toast', initialIndex, index, initialGroup, group)
+
+                const newOrder = move(groupRows, event)
+
+                console.log('newOrder', newOrder)
+                addGroups(newOrder)
+              }
               // const newOrder = move(
               //   groups.map((group) => group.id),
               //   event

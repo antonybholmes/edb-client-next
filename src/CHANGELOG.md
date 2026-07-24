@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Replacing dndkit legacy with new version.
 - Bug fixes and updates.
 - Simplified data-attributes that are conditional.
 

@@ -73,12 +73,9 @@ const LI_CLS =
   'border border-border/25 p-4 rounded-lg bg-background shadow-xs hover:shadow-lg trans-shadow'
 
 export function GseaWebPage() {
-  //const _id = useStableId('gsea-page')
-
   const { settings: edbSettings } = useEdbSettings()
   const { settings, updateSettings } = useGseaSettings()
 
-  const [rightTab, setRightTab] = useState('Gene Sets')
   const [showSideBar, setShowSideBar] = useState(true)
   const { setAppInfo } = useAppInfo()
 

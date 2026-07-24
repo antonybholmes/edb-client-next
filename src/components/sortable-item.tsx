@@ -4,13 +4,13 @@ import { useSortable } from '@dnd-kit/react/sortable'
 
 import type { IClassProps } from '@/interfaces/class-props'
 import { cn } from '@/lib/shadcn-utils'
-import { RestrictToVerticalAxis } from '@dnd-kit/abstract/modifiers'
-import { Ellipsis, EllipsisVertical } from 'lucide-react'
+import { CollisionPriority } from '@dnd-kit/abstract'
 import {
-  type ComponentPropsWithoutRef,
-  type ElementType,
-  type ReactNode,
-} from 'react'
+  RestrictToHorizontalAxis,
+  RestrictToVerticalAxis,
+} from '@dnd-kit/abstract/modifiers'
+import { Ellipsis, EllipsisVertical } from 'lucide-react'
+import { ComponentProps, type ElementType, type ReactNode } from 'react'
 import { VerticalGripIcon } from './icons/vertical-grip-icon'
 import { HCenterRow } from './layout/h-center-row'
 
@@ -34,9 +34,13 @@ export const DRAG_ICON_ANIM_CLS = `opacity-50
 
 type BaseSortableItemProps<T extends ElementType = 'li'> = {
   as?: T
+  type?: string | undefined
+  group?: string | undefined
+  accept?: string | string[] | undefined
+  orientation?: 'vertical' | 'horizontal'
   children?: ReactNode
   extChildren?: ReactNode
-} & ComponentPropsWithoutRef<T>
+} & ComponentProps<T>
 
 export function BaseSortableItem<T extends ElementType = 'li'>({
   id,
@@ -45,11 +49,23 @@ export function BaseSortableItem<T extends ElementType = 'li'>({
   className,
   style,
   children,
+  type,
+  group,
+  accept,
+  orientation = 'vertical',
 }: BaseSortableItemProps<T>) {
   const { isDragging, ref } = useSortable({
     id,
     index,
-    modifiers: [RestrictToVerticalAxis],
+    type,
+    group,
+    accept,
+    modifiers: [
+      orientation === 'vertical'
+        ? RestrictToVerticalAxis
+        : RestrictToHorizontalAxis,
+    ],
+    collisionPriority: CollisionPriority.Low,
   })
 
   // const dragStyle: CSSProperties = {
@@ -61,17 +77,9 @@ export function BaseSortableItem<T extends ElementType = 'li'>({
   const Component = as ?? 'li'
 
   return (
-    // <SortableItemContext.Provider value={{ id }}>
-    <Component
-      id={id}
-      className={cn('group relative', className)}
-      ref={ref}
-      //style={{ ...style, ...dragStyle }}
-      //role="tab"
-    >
+    <Component id={id} className={cn('group relative', className)} ref={ref}>
       {children}
     </Component>
-    // </SortableItemContext.Provider>
   )
 }
 
@@ -89,6 +97,10 @@ export function SortableItem<T extends ElementType = 'li'>({
   index,
   dragHandle,
   innerCls,
+  type,
+  group,
+  accept,
+  orientation,
   className,
   children,
   extChildren,
@@ -102,6 +114,11 @@ export function SortableItem<T extends ElementType = 'li'>({
         'flex flex-row items-center gap-x-1.5 grow min-w-0',
         className
       )}
+      index={index}
+      type={type}
+      group={group}
+      accept={accept}
+      orientation={orientation}
       style={{ minWidth: 0 }}
     >
       <VCenterRow

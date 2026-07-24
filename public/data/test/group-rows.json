@@ -35,6 +35,21 @@
           "exactMatch": false
         }
       ]
+    },
+    {
+      "id": "019f9466-f4f7-7221-9ca3-0be24264ff05",
+      "name": "Groups 2",
+      "groups": [
+        {
+          "id": "019f9467-2b6b-7215-8cd8-af5f09d65d8c",
+          "name": "het",
+          "search": ["het"],
+          "color": "#ff0000",
+          "indices": [0, 1, 2],
+          "show": true,
+          "exactMatch": false
+        }
+      ]
     }
   ]
 }

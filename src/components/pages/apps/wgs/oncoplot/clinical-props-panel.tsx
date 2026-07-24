@@ -12,13 +12,9 @@ import { TruncateSpan } from '@/components/truncate-span'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import type { IDivProps } from '@/interfaces/div-props'
-import { DndContext } from '@dnd-kit/core'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+
+import { move } from '@dnd-kit/helpers'
+import { DragDropProvider } from '@dnd-kit/react'
 import { produce } from 'immer'
 import { Settings2 } from 'lucide-react'
 import { useOncoplotDialogs } from './oncoplot-dialogs'
@@ -98,89 +94,80 @@ export function ClinicalPropsPanel({ ref }: IDivProps) {
       </BaseCol>
 
       <LineSeparator />
+      <VScrollPanel>
+        <DragDropProvider
+          onDragEnd={(event) => {
+            const ids = clinicalTracks.map((c) => c.name)
 
-      <DndContext
-        modifiers={[restrictToVerticalAxis]}
-        //onDragStart={(event) => setActiveId(event.active.id as string)}
-        onDragEnd={(event) => {
-          const { active, over } = event
-
-          if (over && active.id !== over?.id) {
-            const oldIndex = clinicalTracks.findIndex(
-              (c) => c.name === active.id
+            const trackMap = Object.fromEntries(
+              clinicalTracks.map((c) => [c.name, c])
             )
-            const newIndex = clinicalTracks.findIndex((c) => c.name === over.id) //clinicalTracks.findIndex(c=>c.name === over.id)
-            const newOrder = arrayMove(clinicalTracks, oldIndex, newIndex)
 
-            setClinicalTracks(newOrder)
-          }
-        }}
-      >
-        <SortableContext
-          items={clinicalTracks.map((track) => track.name)}
-          strategy={verticalListSortingStrategy}
+            const newOrder = move(ids, event)
+
+            const newTracks = newOrder.map((id) => trackMap[id])
+
+            setClinicalTracks(newTracks)
+          }}
         >
-          <VScrollPanel>
-            <ul>
-              {clinicalTracks.map((track, ti) => {
-                //const track = clinicalTracks[name]!
-                const trackProps =
-                  displayProps.legend.clinical.tracks[track.name]!
+          <ul>
+            {clinicalTracks.map((track, ti) => {
+              //const track = clinicalTracks[name]!
+              const trackProps =
+                displayProps.legend.clinical.tracks[track.name]!
 
-                return (
-                  <SortableItem key={track.name} id={track.name}>
-                    <Checkbox
-                      title={track.name}
-                      key={ti}
-                      checked={trackProps.show}
-                      onCheckedChange={(state) => {
-                        const newTracksProps = produce(
-                          displayProps.legend.clinical.tracks,
-                          (draft) => {
-                            draft[track.name]!.show = state
-                          }
-                        )
-
-                        setDisplayProps(
-                          produce(displayProps, (draft) => {
-                            draft.legend.clinical.tracks = newTracksProps
-                          })
-                        )
-                      }}
-                    />
-
-                    <TruncateSpan className="w-full h-8">
-                      {track.name}
-                    </TruncateSpan>
-
-                    {(track.type === 'category' || track.type === 'dist') && (
-                      <button
-                        title={`Edit ${track.name}`}
-                        className="opacity-50 hover:opacity-100 focus-visible:opacity-100 shrink-0"
-                        onClick={() =>
-                          openOncoDialog({
-                            type: 'track',
-                            payload: {
-                              track,
-                            },
-                          })
+              return (
+                <SortableItem key={track.name} id={track.name} index={ti}>
+                  <Checkbox
+                    title={track.name}
+                    key={ti}
+                    checked={trackProps.show}
+                    onCheckedChange={(state) => {
+                      const newTracksProps = produce(
+                        displayProps.legend.clinical.tracks,
+                        (draft) => {
+                          draft[track.name]!.show = state
                         }
-                      >
-                        <Settings2
-                          size={20}
-                          strokeWidth={1.5}
-                          className={DRAG_HANDLE_APPEAR_CLS}
-                        />
-                      </button>
-                    )}
-                  </SortableItem>
-                )
-              })}
-            </ul>
-          </VScrollPanel>
-        </SortableContext>
+                      )
 
-        {/* <DragOverlay>
+                      setDisplayProps(
+                        produce(displayProps, (draft) => {
+                          draft.legend.clinical.tracks = newTracksProps
+                        })
+                      )
+                    }}
+                  />
+
+                  <TruncateSpan className="w-full h-8">
+                    {track.name}
+                  </TruncateSpan>
+
+                  {(track.type === 'category' || track.type === 'dist') && (
+                    <button
+                      title={`Edit ${track.name}`}
+                      className="opacity-50 hover:opacity-100 focus-visible:opacity-100 shrink-0"
+                      onClick={() =>
+                        openOncoDialog({
+                          type: 'track',
+                          payload: {
+                            track,
+                          },
+                        })
+                      }
+                    >
+                      <Settings2
+                        size={20}
+                        strokeWidth={1.5}
+                        className={DRAG_HANDLE_APPEAR_CLS}
+                      />
+                    </button>
+                  )}
+                </SortableItem>
+              )
+            })}
+          </ul>
+
+          {/* <DragOverlay>
           {activeId ? (
             <TrackItem
               index={-1}
@@ -190,7 +177,8 @@ export function ClinicalPropsPanel({ ref }: IDivProps) {
             />
           ) : null}
         </DragOverlay> */}
-      </DndContext>
+        </DragDropProvider>
+      </VScrollPanel>
     </PropsPanel>
   )
 }

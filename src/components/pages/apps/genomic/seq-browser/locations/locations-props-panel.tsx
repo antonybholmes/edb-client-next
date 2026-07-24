@@ -24,14 +24,9 @@ import {
   parseGenomicLocation,
   type IGenomicLocation,
 } from '@/lib/genomic/genomic-location'
-import { where } from '@/lib/math/where'
-import { DndContext } from '@dnd-kit/core'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+
+import { move } from '@dnd-kit/helpers'
+import { DragDropProvider } from '@dnd-kit/react'
 import { LocationAutocomplete } from '../location-autocomplete'
 import APP_INFO from '../manifest.json'
 import { TRACK_ITEM_BUTTONS_CLS } from '../track-items/seq-track-item'
@@ -76,6 +71,7 @@ function TrackItem({
   return (
     <SortableItem
       id={location.id}
+      index={index}
       extChildren={
         <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
           <button
@@ -185,43 +181,21 @@ export function LocationsPropsPanel() {
           }
         }}
       >
-        <DndContext
-          modifiers={[restrictToVerticalAxis]}
-          onDragEnd={(event) => {
-            const { active, over } = event
-
-            if (over && active.id !== over?.id) {
-              const oldIndex = where(locations, (l) => l.id === active.id)[0]! // locations.indexOf(active.id as string)
-              const newIndex = where(locations, (l) => l.id === over.id)[0]! //locations.indexOf(over.id as string)
-              const newOrder = arrayMove(locations, oldIndex, newIndex)
+        <VScrollPanel className="grow h-full">
+          <DragDropProvider
+            onDragEnd={(event) => {
+              const newOrder = move(locations, event)
 
               setLocations(newOrder) //newOrder.map(l => parseLocation(l)))
-            }
-          }}
-        >
-          <SortableContext
-            items={locations.map((l) => l.id)}
-            strategy={verticalListSortingStrategy}
+            }}
           >
-            <VScrollPanel className="grow h-full">
-              <ul className="flex flex-col">
-                {locations.map((l, li) => {
-                  return <TrackItem location={l} index={li} key={l.id} />
-                })}
-              </ul>
-            </VScrollPanel>
-          </SortableContext>
-
-          {/* <DragOverlay>
-                {activeId ? (
-                  <TrackItem
-                    index={-1}
-                    location={locations.filter(l => l.id === activeId)[0]!}
-                    key={activeId}
-                  />
-                ) : null}
-              </DragOverlay> */}
-        </DndContext>
+            <ul className="flex flex-col">
+              {locations.map((l, li) => {
+                return <TrackItem location={l} index={li} key={l.id} />
+              })}
+            </ul>
+          </DragDropProvider>
+        </VScrollPanel>
       </FileDropZonePanel>
     </PropsPanel>
   )

@@ -23,20 +23,7 @@ import { ThreeColorMenu } from '@/components/three-color-menu'
 import type { IDivProps } from '@/interfaces/div-props'
 import { IconButton } from '@/themed/icon-button'
 import { NumericalInput } from '@/themed/numerical-input'
-import {
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+
 import { produce } from 'immer'
 
 import { useLollipopSettings } from './lollipop-settings-store'
@@ -56,6 +43,8 @@ import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { VScrollPanel } from '@/components/v-scroll-panel'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
+import { move } from '@dnd-kit/helpers'
+import { DragDropProvider } from '@dnd-kit/react'
 import { TRACK_ITEM_BUTTONS_CLS } from '../../genomic/seq-browser/track-items/seq-track-item'
 import { useLollipopStore } from './lollipop-store'
 import { type IDomain } from './lollipop-utils'
@@ -78,10 +67,11 @@ function Trigger({ domain }: { domain: IDomain }) {
 
 interface IDomainProps {
   domain: IDomain
+  index: number
   setDelDomain: (domain: IDomain | null) => void
 }
 
-function DomainElem({ domain, setDelDomain }: IDomainProps) {
+function DomainElem({ domain, setDelDomain, index }: IDomainProps) {
   const { aaStats, setDomain: setDomain } = useLollipopStore()
   const {
     protein,
@@ -95,6 +85,7 @@ function DomainElem({ domain, setDelDomain }: IDomainProps) {
   return (
     <SortableItem
       key={domain.id}
+      index={index}
       id={domain.id}
       extChildren={
         <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
@@ -314,12 +305,12 @@ export function DomainPropsPanel({ ref }: IDivProps) {
     setDisplayProps,
   } = useLollipopSettings()
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
+  // const sensors = useSensors(
+  //   useSensor(PointerSensor),
+  //   useSensor(KeyboardSensor, {
+  //     coordinateGetter: sortableKeyboardCoordinates,
+  //   })
+  // )
 
   function openFeatureFiles(files: ITextFileOpen[]) {
     if (files.length === 0) {
@@ -525,61 +516,48 @@ export function DomainPropsPanel({ ref }: IDivProps) {
           </PropRow>
         </BaseCol>
         <LineSeparator />
-
-        <DndContext
-          sensors={sensors}
-          modifiers={[restrictToVerticalAxis]}
-          //onDragStart={event => setActiveId(event.active.id as string)}
-          onDragEnd={(event) => {
-            const { active, over } = event
-
-            if (over && active.id !== over?.id) {
-              const oldIndex = features.findIndex((t) => t.id === active.id)
-              const newIndex = features.findIndex((t) => t.id === over.id)
-              const newOrder = arrayMove(features, oldIndex, newIndex)
+        <VScrollPanel className="grow h-full">
+          <DragDropProvider
+            //onDragStart={event => setActiveId(event.active.id as string)}
+            onDragEnd={(event) => {
+              const newOrder = move(features, event)
 
               setFeatures(newOrder)
-            }
-          }}
-        >
-          <SortableContext
-            items={features}
-            strategy={verticalListSortingStrategy}
+            }}
           >
-            <VScrollPanel className="grow h-full">
-              <ul className="flex flex-col">
-                {features.map((feature) => {
-                  return (
-                    <DomainElem
-                      key={feature.id}
-                      domain={feature}
-                      setDelDomain={(fd) => {
-                        if (!fd) {
-                          return
-                        }
-                        openDialog({
-                          type: 'warning',
-                          payload: {
-                            content: `Are you sure you want to delete the ${
-                              fd.name ? fd.name : TEXT_UNLABELLED
-                            } domain?`,
-                            callback: (response) => {
-                              if (response === TEXT_OK) {
-                                setFeatures(
-                                  features.filter((f) => f.id !== fd.id)
-                                )
-                              }
-                            },
+            <ul className="flex flex-col">
+              {features.map((feature, fi) => {
+                return (
+                  <DomainElem
+                    key={feature.id}
+                    index={fi}
+                    domain={feature}
+                    setDelDomain={(fd) => {
+                      if (!fd) {
+                        return
+                      }
+                      openDialog({
+                        type: 'warning',
+                        payload: {
+                          content: `Are you sure you want to delete the ${
+                            fd.name ? fd.name : TEXT_UNLABELLED
+                          } domain?`,
+                          callback: (response) => {
+                            if (response === TEXT_OK) {
+                              setFeatures(
+                                features.filter((f) => f.id !== fd.id)
+                              )
+                            }
                           },
-                        })
-                      }}
-                    />
-                  )
-                })}
-              </ul>
-            </VScrollPanel>
-          </SortableContext>
-        </DndContext>
+                        },
+                      })
+                    }}
+                  />
+                )
+              })}
+            </ul>
+          </DragDropProvider>
+        </VScrollPanel>
       </PropsPanel>
     </>
   )

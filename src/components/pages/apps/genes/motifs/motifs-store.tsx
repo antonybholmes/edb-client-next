@@ -9,9 +9,10 @@ import APP_INFO from './manifest.json'
 import { config } from '@/config'
 import { getAppName } from '@/lib/app-info'
 
-import { useEffect } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { create } from 'zustand'
 
+import { TIME_5_MINUTES_MS } from '@/consts'
 import { DEFAULT_DEBOUNCE_DELAY_MS, useDebounce } from '@/hooks/debounce'
 import type { IDBEntity } from '@/interfaces/db-entity'
 import { createJSONStorage, persist } from 'zustand/middleware'
@@ -123,10 +124,18 @@ export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> {
     delayMs: DEFAULT_DEBOUNCE_DELAY_MS,
   })
 
-  const datasetInUseKey = JSON.stringify(debouncedDatasetsInUse)
+  const datasetInUseKey = useMemo(
+    () => JSON.stringify(debouncedDatasetsInUse),
+    [debouncedDatasetsInUse]
+  )
 
-  const { data: datasetData, isSuccess: isDatasetSuccess } = useQuery({
+  const {
+    data: datasetData,
+    isSuccess: isDatasetSuccess,
+    dataUpdatedAt: datasetDataUpdatedAt,
+  } = useQuery({
     queryKey: ['datasets'],
+    staleTime: TIME_5_MINUTES_MS,
     queryFn: async () => {
       console.log(API_MOTIF_DATASETS_URL)
       const res = await httpFetch.getJson<{ data: IDataset[] }>(
@@ -149,7 +158,7 @@ export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> {
     )
 
     setDatasetsInUse(newDatasetsInUse)
-  }, [isDatasetSuccess, datasetData])
+  }, [datasetDataUpdatedAt])
 
   const { data: searchData, isSuccess: isSearchSuccess } = useQuery({
     queryKey: [
@@ -160,8 +169,9 @@ export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> {
       search.mode,
       datasetInUseKey,
     ],
+    staleTime: TIME_5_MINUTES_MS,
     queryFn: async () => {
-      console.log(API_MOTIF_DATASETS_URL)
+      console.log('motif search ran', API_MOTIF_DATASETS_URL)
 
       let queryParam: string = debouncedQuery.trim()
 
@@ -182,7 +192,6 @@ export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> {
         .sort()
 
       const res = await httpFetch.postJson<{ data: IMotifSearchResult }>(
-        //`${API_MOTIF_SEARCH_URL}?q=${encodeURIComponent(queryParam)}&page=${settings.search.page}&pageSize=${settings.search.pageSize}&searchMode=${settings.search.mode}`,
         `${API_MOTIF_SEARCH_URL}`,
         {
           body: {
@@ -199,107 +208,47 @@ export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> {
     },
   })
 
+  const motifsInUseRef = useRef(motifsInUse)
+  const prevSearchDataRef = useRef<IMotifSearchResult | undefined>(undefined)
+  const prevSortKeyRef = useRef<string>('')
+
+  useEffect(() => {
+    motifsInUseRef.current = motifsInUse
+  }, [motifsInUse])
+
   useEffect(() => {
     if (!isSearchSuccess || !searchData) {
       return
     }
 
-    //let motifs: IMotif[] = searchData.motifs
+    const sortKey = `${settings.sort.by}:${settings.sort.asc}`
+    const dataChanged = prevSearchDataRef.current !== searchData
+    const sortChanged = prevSortKeyRef.current !== sortKey
 
-    //motifs = motifs.filter(motif => datasetsInUse[motif.dataset] ?? true)
-
-    // sort
-
-    const sortBy = settings.sort.by + ',' + settings.sort.asc
-
-    switch (settings.sort.by + ',' + (settings.sort.asc ? 'asc' : 'desc')) {
-      case 'motif-id,asc':
-        searchData.motifs.sort((a, b) => {
-          const aid = a.motifId.toLowerCase()
-          const bid = b.motifId.toLowerCase()
-
-          const c = aid.localeCompare(bid)
-          if (c !== 0) {
-            return c
-          }
-
-          // name not good enough, sort by dataset
-          const ad = a.dataset.name.toLowerCase()
-          const bd = b.dataset.name.toLowerCase()
-
-          return ad.localeCompare(bd)
-        })
-        break
-      case 'motif-id,desc':
-        searchData.motifs.sort((a, b) => {
-          const aid = a.motifId.toLowerCase()
-          const bid = b.motifId.toLowerCase()
-
-          const c = bid.localeCompare(aid)
-          if (c !== 0) {
-            return c
-          }
-
-          // name not good enough, sort by dataset
-          const ad = a.dataset.name.toLowerCase()
-          const bd = b.dataset.name.toLowerCase()
-
-          return bd.localeCompare(ad)
-        })
-        break
-      case 'dataset,motif-id,desc':
-        searchData.motifs.sort((a, b) => {
-          const ad = a.dataset.name.toLowerCase()
-          const bd = b.dataset.name.toLowerCase()
-
-          const c = bd.localeCompare(ad)
-          if (c !== 0) {
-            return c
-          }
-
-          const aid = a.motifId.toLowerCase()
-          const bid = b.motifId.toLowerCase()
-
-          return bid.localeCompare(aid)
-        })
-        break
-      default:
-        searchData.motifs.sort((a, b) => {
-          const ad = a.dataset.name.toLowerCase()
-          const bd = b.dataset.name.toLowerCase()
-
-          const c = ad.localeCompare(bd)
-          if (c !== 0) {
-            return c
-          }
-
-          const aid = a.motifId.toLowerCase()
-          const bid = b.motifId.toLowerCase()
-
-          return aid.localeCompare(bid)
-        })
-        break
+    if (!dataChanged && !sortChanged) {
+      return
     }
 
-    //motifs = motifs.slice(0, MAX_MOTIFS)
+    prevSearchDataRef.current = searchData
+    prevSortKeyRef.current = sortKey
 
-    setSearchResult(searchData)
+    const sortedData = {
+      ...searchData,
+      motifs: [...searchData.motifs],
+    }
 
-    const newMotifsInUse: Record<string, boolean> = Object.fromEntries(
-      searchData.motifs.map((motif) => [
-        motif.id,
-        motifsInUse[motif.id] ?? true,
-      ])
+    sortResults(sortedData, settings)
+    setSearchResult(sortedData)
+
+    setMotifsInUse(
+      Object.fromEntries(
+        sortedData.motifs.map((motif) => [
+          motif.id,
+          motifsInUseRef.current[motif.id] ?? true,
+        ])
+      )
     )
-
-    setMotifsInUse(newMotifsInUse)
-  }, [
-    searchData,
-    isSearchSuccess,
-    datasetInUseKey,
-    settings.sort.by,
-    settings.sort.asc,
-  ])
+  }, [isSearchSuccess, searchData, settings.sort.by, settings.sort.asc])
 
   return {
     search,
@@ -313,5 +262,84 @@ export function useMotifs(): Omit<IMotifStore, 'setDatasetMap'> {
     setSearchResult,
     setMotifsInUse,
     setDatasetsInUse,
+  }
+}
+
+function sortResults(
+  searchData: IMotifSearchResult,
+  settings: { sort: { by: string; asc: boolean } }
+) {
+  if (!searchData) {
+    return
+  }
+
+  console.log('sorting results with settings:', searchData)
+  switch (settings.sort.by + ',' + (settings.sort.asc ? 'asc' : 'desc')) {
+    case 'motif-id,asc':
+      searchData.motifs.sort((a, b) => {
+        const aid = a.motifId.toLowerCase()
+        const bid = b.motifId.toLowerCase()
+
+        const c = aid.localeCompare(bid)
+        if (c !== 0) {
+          return c
+        }
+
+        // name not good enough, sort by dataset
+        const ad = a.dataset.name.toLowerCase()
+        const bd = b.dataset.name.toLowerCase()
+
+        return ad.localeCompare(bd)
+      })
+      break
+    case 'motif-id,desc':
+      searchData.motifs.sort((a, b) => {
+        const aid = a.motifId.toLowerCase()
+        const bid = b.motifId.toLowerCase()
+
+        const c = bid.localeCompare(aid)
+        if (c !== 0) {
+          return c
+        }
+
+        // name not good enough, sort by dataset
+        const ad = a.dataset.name.toLowerCase()
+        const bd = b.dataset.name.toLowerCase()
+
+        return bd.localeCompare(ad)
+      })
+      break
+    case 'dataset,motif-id,desc':
+      searchData.motifs.sort((a, b) => {
+        const ad = a.dataset.name.toLowerCase()
+        const bd = b.dataset.name.toLowerCase()
+
+        const c = bd.localeCompare(ad)
+        if (c !== 0) {
+          return c
+        }
+
+        const aid = a.motifId.toLowerCase()
+        const bid = b.motifId.toLowerCase()
+
+        return bid.localeCompare(aid)
+      })
+      break
+    default:
+      searchData.motifs.sort((a, b) => {
+        const ad = a.dataset.name.toLowerCase()
+        const bd = b.dataset.name.toLowerCase()
+
+        const c = ad.localeCompare(bd)
+        if (c !== 0) {
+          return c
+        }
+
+        const aid = a.motifId.toLowerCase()
+        const bid = b.motifId.toLowerCase()
+
+        return aid.localeCompare(bid)
+      })
+      break
   }
 }

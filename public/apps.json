@@ -63,9 +63,9 @@
     "color": "#4169E1",
     "version": "3.4.2",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-07-23T22:54:08.514Z",
-    "hash": "fd5559587d8115e15c2211b84e7e80c62c880d0a71c351db214b2b2009b9a463",
-    "build": 86
+    "modified": "2026-07-24T18:02:16.205Z",
+    "hash": "e7cacdd5d7a23d0752f92a0b1ec7c4d0276690b93ba52999e72cb9a5d1670830",
+    "build": 88
   },
   {
     "name": "History Viewer",
@@ -101,9 +101,9 @@
     "color": "#DA70D6",
     "version": "27.6.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-17T15:12:39.110Z",
-    "hash": "1ac29975c66f9a49a85fbe440fe1c5f4f15ad186a2252834340868cb62f5d0b8",
-    "build": 1086
+    "modified": "2026-07-24T18:02:16.216Z",
+    "hash": "f8ffbb4e502786346831ff802f2daeb413e7c5e828d76da3cdc348d71a631f23",
+    "build": 1088
   },
   {
     "name": "Matcalc",
@@ -111,19 +111,19 @@
     "color": "#40bf80",
     "version": "48.6.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-24T02:36:23.850Z",
-    "hash": "75aefd15433cbc5426ae765ce3101152954c7f95b14f76eee9794c46d4106504",
-    "build": 1840
+    "modified": "2026-07-24T18:02:16.215Z",
+    "hash": "abac4f87c4ea939a95d206e0e353959ba8072db7943fbf4afba32695a8455291",
+    "build": 1842
   },
   {
     "name": "Motifs",
     "description": "View motif logo plots.",
     "color": "#009933",
-    "version": "48.4.0",
+    "version": "48.4.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-14T17:59:14.308Z",
-    "hash": "aca72ff65394e597c7bfc733fb05d06784cf4c1fcd96a40723f264b39a0e5313",
-    "build": 978
+    "modified": "2026-07-24T18:02:16.207Z",
+    "hash": "e3571e92210527921352f2e58d7f4c6ea9e29b3d9aa22b31fc44162c014ff91f",
+    "build": 980
   },
   {
     "name": "Oncoplot",
@@ -131,19 +131,19 @@
     "color": "#ff99cc",
     "version": "30.0.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-17T15:12:39.110Z",
-    "hash": "85471e75a9cbae40e9f6c71eb9e76e9c69b3aa96e2064ff84382bfadd085485b",
-    "build": 1090
+    "modified": "2026-07-24T18:02:16.217Z",
+    "hash": "be164509818ba63e984c59f078c9f76f71e669ec2c2ffc1f38402924b91f39c7",
+    "build": 1092
   },
   {
     "name": "Overlap",
     "description": "Overlap sets of genomic coordinates.",
     "color": "#008080",
-    "version": "18.6.6",
+    "version": "18.6.8",
     "copyright": "© 2025-2026 Antony Holmes",
-    "modified": "2026-07-03T14:46:20.332Z",
-    "hash": "b5c181f058cb44c13a83b2080665fa04cfa41bb24ef5198736e776a4705d939b",
-    "build": 548
+    "modified": "2026-07-24T18:02:16.209Z",
+    "hash": "f601eebd929e56db6164db9db5f8dd2c4c69fac0eb6efd856e32c968c1dba753",
+    "build": 550
   },
   {
     "name": "Pathway",
@@ -181,9 +181,9 @@
     "color": "#FF0000",
     "version": "32.2.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-23T16:28:51.452Z",
-    "hash": "f66a559541b8333a71faa43745aa32e0b31f53964c1a66f41b213d1d90533f02",
-    "build": 1092
+    "modified": "2026-07-24T18:02:16.210Z",
+    "hash": "f355bf00cbd1c386543a2021b821f0111d8e99f7487756c41d573d2a1d2b44d9",
+    "build": 1094
   },
   {
     "name": "Single Cell",
@@ -191,9 +191,9 @@
     "color": "#9966ff",
     "version": "26.4.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-14T21:43:25.682Z",
-    "hash": "0f292be1246e34245716706312c3e335ac8814eeae2ac7bc5bbc427fd3ec6d53",
-    "build": 824
+    "modified": "2026-07-24T18:02:16.215Z",
+    "hash": "b64682ae28e7b315c8364ca2d6fed04c8c6c9fd550b2c0d53d8ea52d9072d507",
+    "build": 826
   },
   {
     "name": "Table Viewer",
@@ -218,11 +218,11 @@
     "name": "Variants",
     "description": "WGS variant data explorer.",
     "color": "#FA8072",
-    "version": "26.6.6",
+    "version": "26.6.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-21T19:34:53.021Z",
-    "hash": "ddc80ca384c357847597a2359449bec9a30dc66f3b7e19078cd3b3bf13050245",
-    "build": 1008
+    "modified": "2026-07-24T18:02:16.218Z",
+    "hash": "36fc0e32822252409fa44b6e07e15bd0730a5f12452bc4d642e3fd5ce3973eb3",
+    "build": 1010
   },
   {
     "name": "Venn",

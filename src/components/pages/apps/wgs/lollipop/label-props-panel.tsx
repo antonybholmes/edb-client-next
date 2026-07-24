@@ -35,19 +35,8 @@ import { IconButton } from '@/themed/icon-button'
 import { NumericalInput } from '@/themed/numerical-input'
 import { Button } from '@/themed/v2/button'
 import { Input } from '@/themed/v2/input'
-import {
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+
+import { DragDropProvider } from '@dnd-kit/react'
 import { produce } from 'immer'
 import { useLollipopSettings } from './lollipop-settings-store'
 import { useLollipopStore } from './lollipop-store'
@@ -65,12 +54,12 @@ export function LabelPropsPanel({ ref }: IDivProps) {
   //const [confirmClear, setConfirmClear] = useState(false)
   const [positions, setPositions] = useState('')
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
+  // const sensors = useSensors(
+  //   useSensor(PointerSensor),
+  //   useSensor(KeyboardSensor, {
+  //     coordinateGetter: sortableKeyboardCoordinates,
+  //   })
+  // )
 
   function openLabelFiles(files: ITextFileOpen[]) {
     if (files.length === 0) {
@@ -215,10 +204,9 @@ export function LabelPropsPanel({ ref }: IDivProps) {
       </VCenterRow>
 
       <LineSeparator />
+      <VScrollPanel>
+        <DragDropProvider
 
-      <DndContext
-        sensors={sensors}
-        modifiers={[restrictToVerticalAxis]}
         //onDragStart={event => setActiveId(event.active.id as string)}
         // onDragEnd={event => {
         //   const { active, over } = event
@@ -231,115 +219,110 @@ export function LabelPropsPanel({ ref }: IDivProps) {
         //     setFeatures(newOrder)
         //   }
         // }}
-      >
-        <SortableContext
-          items={labels.map((label, li) => `label-${label}-${li}`)}
-          strategy={verticalListSortingStrategy}
         >
-          <VScrollPanel>
-            <ul className="flex flex-col">
-              {labels.map((label, li) => {
-                const id = `label-${label}-${li}`
-                return (
-                  <SortableItem
-                    key={id}
-                    id={id}
-                    extChildren={
-                      <VCenterRow className={DRAG_HANDLE_APPEAR_CLS}>
-                        <button
-                          className={cn(
-                            TRANS_COLOR_CLS,
-                            'stroke-foreground/50 hover:stroke-red-400'
-                          )}
-                          onClick={() => {
-                            openDialog({
-                              type: 'warning',
-                              payload: {
-                                content:
-                                  'Are you sure you want to delete this label?',
-                                callback: (response) => {
-                                  if (response === TEXT_OK) {
-                                    setLabels(
-                                      labels.filter((l) => l.id !== label.id)
-                                    )
-                                  }
-                                },
+          <ul className="flex flex-col">
+            {labels.map((label, li) => {
+              const id = `label-${label}-${li}`
+              return (
+                <SortableItem
+                  key={id}
+                  id={id}
+                  index={li}
+                  extChildren={
+                    <VCenterRow className={DRAG_HANDLE_APPEAR_CLS}>
+                      <button
+                        className={cn(
+                          TRANS_COLOR_CLS,
+                          'stroke-foreground/50 hover:stroke-red-400'
+                        )}
+                        onClick={() => {
+                          openDialog({
+                            type: 'warning',
+                            payload: {
+                              content:
+                                'Are you sure you want to delete this label?',
+                              callback: (response) => {
+                                if (response === TEXT_OK) {
+                                  setLabels(
+                                    labels.filter((l) => l.id !== label.id)
+                                  )
+                                }
                               },
-                            })
-                          }}
-                          title="Delete label"
-                        >
-                          <TrashIcon stroke="" />
-                        </button>
-                      </VCenterRow>
-                    }
-                  >
-                    <Checkbox
-                      checked={label.show}
-                      onCheckedChange={(state) =>
-                        setLabels(
-                          produce(labels, (draft) => {
-                            draft[li]!.show = state
+                            },
                           })
-                        )
-                      }
-                    />
+                        }}
+                        title="Delete label"
+                      >
+                        <TrashIcon stroke="" />
+                      </button>
+                    </VCenterRow>
+                  }
+                >
+                  <Checkbox
+                    checked={label.show}
+                    onCheckedChange={(state) =>
+                      setLabels(
+                        produce(labels, (draft) => {
+                          draft[li]!.show = state
+                        })
+                      )
+                    }
+                  />
 
-                    <FillButton
-                      colors={[
-                        {
-                          color: label.color,
-                          allowNoColor: false,
-                          onColorChange: ({ color }) =>
-                            setLabels(
-                              produce(labels, (draft) => {
-                                draft[li]!.color = color
-                              })
-                            ),
-                        },
-                      ]}
-                      className={SIMPLE_COLOR_EXT_CLS}
-                      title="Label color"
-                    />
-                    <BaseCol className="gap-y-1 grow">
-                      <Input
-                        id={li.toString()}
-                        placeholder={TEXT_NAME}
-                        value={label.name}
-                        w="grow"
-                        onTextChange={(v) => {
+                  <FillButton
+                    colors={[
+                      {
+                        color: label.color,
+                        allowNoColor: false,
+                        onColorChange: ({ color }) =>
                           setLabels(
                             produce(labels, (draft) => {
-                              draft[li]!.name = v
+                              draft[li]!.color = color
+                            })
+                          ),
+                      },
+                    ]}
+                    className={SIMPLE_COLOR_EXT_CLS}
+                    title="Label color"
+                  />
+                  <BaseCol className="gap-y-1 grow">
+                    <Input
+                      id={li.toString()}
+                      placeholder={TEXT_NAME}
+                      value={label.name}
+                      w="grow"
+                      onTextChange={(v) => {
+                        setLabels(
+                          produce(labels, (draft) => {
+                            draft[li]!.name = v
+                          })
+                        )
+                      }}
+                    />
+
+                    <VCenterRow className="gap-x-2">
+                      <NumericalInput
+                        value={label.start}
+                        placeholder="Start"
+                        onNumChange={(v) => {
+                          setLabels(
+                            produce(labels, (draft) => {
+                              draft[li]!.start = Math.max(
+                                1,
+                                Math.min(v, aaStats.length)
+                              )
                             })
                           )
                         }}
                       />
-
-                      <VCenterRow className="gap-x-2">
-                        <NumericalInput
-                          value={label.start}
-                          placeholder="Start"
-                          onNumChange={(v) => {
-                            setLabels(
-                              produce(labels, (draft) => {
-                                draft[li]!.start = Math.max(
-                                  1,
-                                  Math.min(v, aaStats.length)
-                                )
-                              })
-                            )
-                          }}
-                        />
-                      </VCenterRow>
-                    </BaseCol>
-                  </SortableItem>
-                )
-              })}
-            </ul>
-          </VScrollPanel>
-        </SortableContext>
-      </DndContext>
+                    </VCenterRow>
+                  </BaseCol>
+                </SortableItem>
+              )
+            })}
+          </ul>
+        </DragDropProvider>
+      </VScrollPanel>
     </PropsPanel>
   )
 }

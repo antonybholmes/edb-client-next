@@ -1,20 +1,23 @@
 import { PropsPanel } from '@/components/props-panel'
 import { SortableItem } from '@/components/sortable-item'
 import { VScrollPanel } from '@/components/v-scroll-panel'
-import { where } from '@/lib/math/where'
-import { DndContext } from '@dnd-kit/core'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+
+import { move } from '@dnd-kit/helpers'
+import { DragDropProvider } from '@dnd-kit/react'
 import { useContext } from 'react'
 import { OverlapContext } from './overlap-provider'
 
-function FileItem({ value, name }: { value: string; name: string }) {
+function FileItem({
+  value,
+  name,
+  index,
+}: {
+  value: string
+  name: string
+  index: number
+}) {
   return (
-    <SortableItem value={value} key={value} id={value}>
+    <SortableItem value={value} key={value} id={value} index={index}>
       <span>{name}</span>
     </SortableItem>
   )
@@ -26,41 +29,29 @@ export function FilesPropsPanel() {
   return (
     <>
       <PropsPanel className="pr-2">
-        <DndContext
-          modifiers={[restrictToVerticalAxis]}
-          //onDragStart={event => setActiveId(event.active.id as string)}
-          onDragEnd={(event) => {
-            const { active, over } = event
-
-            if (over && active.id !== over?.id) {
-              const oldIndex = where(
-                dfs,
-                (df) => df.id === (active.id as string)
-              )[0]!
-              const newIndex = where(
-                dfs,
-                (df) => df.id === (over.id as string)
-              )[0]!
-              //const oldIndex =    genesetState.order.indexOf(over.id as string)
-              const newOrder = arrayMove(dfs, oldIndex, newIndex)
+        <VScrollPanel>
+          <DragDropProvider
+            //onDragStart={event => setActiveId(event.active.id as string)}
+            onDragEnd={(event) => {
+              const newOrder = move(dfs, event)
 
               setDfs(newOrder)
-            }
-          }}
-        >
-          <SortableContext
-            items={dfs.map((df) => df.id)}
-            strategy={verticalListSortingStrategy}
+            }}
           >
-            <VScrollPanel>
-              <ul className="flex flex-col">
-                {dfs.map((df) => {
-                  return <FileItem value={df.id} name={df.name} key={df.id} />
-                })}
-              </ul>
-            </VScrollPanel>
-          </SortableContext>
-        </DndContext>
+            <ul className="flex flex-col">
+              {dfs.map((df, di) => {
+                return (
+                  <FileItem
+                    value={df.id}
+                    name={df.name}
+                    key={df.id}
+                    index={di}
+                  />
+                )
+              })}
+            </ul>
+          </DragDropProvider>
+        </VScrollPanel>
       </PropsPanel>
     </>
   )

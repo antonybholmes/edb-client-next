@@ -61,7 +61,7 @@ import { HeaderSlotPortal } from '@/components/header/header-portal'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useSlideBar } from '@/components/sidebar/slide-bar-store'
 import { HeaderButton } from '@/layouts/header-button'
-import type { IClusterGroup } from '@/lib/cluster-group'
+import type { IClusterGroup, IClusterGroupRowFile } from '@/lib/cluster-group'
 import type { IGeneSet } from '@/lib/gsea/geneset'
 import { httpFetch } from '@/lib/http/http-fetch'
 import { CoreProviders } from '@/providers/core-providers'
@@ -279,11 +279,15 @@ export function MatcalcPage() {
 
     console.log(resg)
 
+    const groupRows2 = await httpFetch.getJson<IClusterGroupRowFile>(
+      '/data/test/group-rows.json'
+    )
+
     const groupRows = [{ id: makeUuid(), name: 'Groups', groups: resg }]
 
     openFile(`Z Test`, {
       //mode: 'append',
-      groupRows,
+      groupRows: groupRows2.groupRows,
       sheets: [table.setName('Z Test') as AnnotationDataFrame],
     })
   }
@@ -354,14 +358,12 @@ export function MatcalcPage() {
 
     const table = new DataFrameReader().indexCols(1).read(lines)
 
-    //resolve({ ...table, name: file.name })
-
-    // openBranch(`Load "Ext GSEA Test"`, [
-    //   table.setName('Ext GSEA Test') as AnnotationDataFrame,
-    // ])
-
     const groups = await httpFetch.getJson<IClusterGroup[]>(
       '/data/test/extgsea/groups.json'
+    )
+
+    const groupRows2 = await httpFetch.getJson<IClusterGroupRowFile>(
+      '/data/test/extgsea/group-rows.json'
     )
 
     const genesets = await httpFetch.getJson<IGeneSet[]>(
@@ -370,8 +372,10 @@ export function MatcalcPage() {
 
     const groupRows = [{ id: makeUuid(), name: 'Groups', groups }]
 
+    console.log(groupRows2)
+
     openFile(`Ext GSEA Test`, {
-      groupRows,
+      groupRows: groupRows2.groupRows,
       genesets,
       sheets: [table.setName('Ext GSEA Test') as AnnotationDataFrame],
     })

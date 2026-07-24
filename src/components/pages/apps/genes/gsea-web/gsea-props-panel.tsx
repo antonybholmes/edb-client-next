@@ -10,23 +10,19 @@ import { VScrollPanel } from '@/components/v-scroll-panel'
 import { TEXT_SELECT, TEXT_SELECT_ALL } from '@/consts'
 import { VCenterRow } from '@/layout/v-center-row'
 import { present } from '@/lib/dom-utils'
-import { DndContext } from '@dnd-kit/core'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+
+import { move } from '@dnd-kit/helpers'
+import { DragDropProvider } from '@dnd-kit/react'
 import { produce } from 'immer'
 import { useState } from 'react'
 import { IGseaPathway } from '../gsea-plot/gsea-plot-store'
 import { useGsea } from './gsea-web-store'
 
-function PlotItem({ report }: { report: IGseaPathway }) {
+function PlotItem({ report, index }: { report: IGseaPathway; index: number }) {
   const { datasetsForUse, allowSelectAll, setDatasetsForUse } = useGsea()
 
   return (
-    <SortableItem id={report.id} key={report.id}>
+    <SortableItem id={report.id} key={report.id} index={index}>
       {allowSelectAll && (
         <Checkbox
           checked={datasetsForUse[report.id] ?? false}
@@ -133,49 +129,27 @@ export function GseaPropsPanel() {
       <LineSeparator />
 
       <VScrollPanel>
-        <DndContext
-          modifiers={[restrictToVerticalAxis]}
+        <DragDropProvider
           //onDragStart={event => setActiveId(event.active.id as string)}
           //for the moment do not allow to be re-arranged as it messes up
           //cluster color rendering
           onDragEnd={(event) => {
-            const { active, over } = event
+            const newOrder = move(reports, event)
 
-            if (over && active.id !== over?.id) {
-              const oldIndex = reports.findIndex(
-                (report) => report.id === active.id
-              )
-
-              const newIndex = reports.findIndex(
-                (report) => report.id === over.id
-              )
-
-              const newOrder = arrayMove(reports, oldIndex, newIndex)
-
-              // setPlots(
-              //   newOrder.map(id => plots.find(plot => plot.id === id)!)
-              // )
-
-              setReports(newOrder)
-            }
+            setReports(newOrder)
 
             //setActiveId(null)
           }}
         >
-          <SortableContext
-            items={reports.map((p) => p.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            <ul className="flex flex-col">
-              {reports.map((report) => {
-                return (
-                  // <BaseSortableItem key={gs.id} id={gs.id}>
-                  <PlotItem key={report.id} report={report} />
-                  // </BaseSortableItem>
-                )
-              })}
-            </ul>
-          </SortableContext>
+          <ul className="flex flex-col">
+            {reports.map((report, ri) => {
+              return (
+                // <BaseSortableItem key={gs.id} id={gs.id}>
+                <PlotItem key={report.id} report={report} index={ri} />
+                // </BaseSortableItem>
+              )
+            })}
+          </ul>
 
           {/* <DragOverlay>
                       {activeId ? (
@@ -187,7 +161,7 @@ export function GseaPropsPanel() {
                         />
                       ) : null}
                     </DragOverlay> */}
-        </DndContext>
+        </DragDropProvider>
       </VScrollPanel>
     </PropsPanel>
   )
