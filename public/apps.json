@@ -99,11 +99,11 @@
     "name": "Lollipop",
     "description": "Create lollipop plots.",
     "color": "#DA70D6",
-    "version": "27.6.6",
+    "version": "27.6.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-24T18:02:16.216Z",
-    "hash": "f8ffbb4e502786346831ff802f2daeb413e7c5e828d76da3cdc348d71a631f23",
-    "build": 1088
+    "modified": "2026-07-24T19:09:48.768Z",
+    "hash": "f276f01f5658897988931d5157975923d6b2c2e1c42c6683368e26358cc3f64f",
+    "build": 1090
   },
   {
     "name": "Matcalc",
@@ -111,9 +111,9 @@
     "color": "#40bf80",
     "version": "48.6.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-24T18:02:16.215Z",
-    "hash": "abac4f87c4ea939a95d206e0e353959ba8072db7943fbf4afba32695a8455291",
-    "build": 1842
+    "modified": "2026-07-24T19:09:48.767Z",
+    "hash": "e8e30924f9a90a5fdaf4a1f9ce540304e784ef995427963ea29a50562624a482",
+    "build": 1844
   },
   {
     "name": "Motifs",
@@ -121,9 +121,9 @@
     "color": "#009933",
     "version": "48.4.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-24T18:02:16.207Z",
-    "hash": "e3571e92210527921352f2e58d7f4c6ea9e29b3d9aa22b31fc44162c014ff91f",
-    "build": 980
+    "modified": "2026-07-24T19:09:48.764Z",
+    "hash": "0948ab112a9b74bf56a96ebc3164d5809c578926bc35fed0200ebc73533cc0b1",
+    "build": 982
   },
   {
     "name": "Oncoplot",
@@ -181,9 +181,9 @@
     "color": "#FF0000",
     "version": "32.2.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-24T18:02:16.210Z",
-    "hash": "f355bf00cbd1c386543a2021b821f0111d8e99f7487756c41d573d2a1d2b44d9",
-    "build": 1094
+    "modified": "2026-07-24T19:09:48.765Z",
+    "hash": "de178eabd3b3701e975df52053dd3e29fb08127cd57d8c82f9f35bce8172ce67",
+    "build": 1096
   },
   {
     "name": "Single Cell",

@@ -2252,6 +2252,10 @@
         {
           "msg": "Replacing dndkit legacy with new version",
           "date": "2026-07-24T18:02:17.120Z"
+        },
+        {
+          "msg": "Fully replaced dndkit with newer version. Groups now supports multiple rows",
+          "date": "2026-07-24T19:09:49.688Z"
         }
       ]
     },

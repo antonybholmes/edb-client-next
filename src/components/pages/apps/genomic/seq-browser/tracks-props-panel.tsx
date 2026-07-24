@@ -48,10 +48,12 @@ import {
 import { useTracks } from './tracks-store'
 
 function TrackItem({
+  index,
   multiselect,
   group,
   active = null,
 }: {
+  index: number
   multiselect: boolean
   group: ITrackGroup
   active?: string | null
@@ -64,18 +66,29 @@ function TrackItem({
     case 'RemoteBigWig':
     case 'LocalBigWig':
       return (
-        <SeqTrackItem group={group} active={active} multiselect={multiselect} />
+        <SeqTrackItem
+          index={index}
+          group={group}
+          active={active}
+          multiselect={multiselect}
+        />
       )
     case 'BED':
     case 'LocalBED':
     case 'RemoteBigBed':
     case 'LocalBigBed':
       return (
-        <BedTrackItem group={group} active={active} multiselect={multiselect} />
+        <BedTrackItem
+          index={index}
+          group={group}
+          active={active}
+          multiselect={multiselect}
+        />
       )
     case 'Gene':
       return (
         <GenesTrackItem
+          index={index}
           group={group}
           active={active}
           multiselect={multiselect}
@@ -84,6 +97,7 @@ function TrackItem({
     case 'Cytobands':
       return (
         <CytobandsTrackItem
+          index={index}
           multiselect={multiselect}
           group={group}
           active={active}
@@ -92,6 +106,7 @@ function TrackItem({
     case 'Scale':
       return (
         <ScaleTrackItem
+          index={index}
           multiselect={multiselect}
           group={group}
           active={active}
@@ -100,6 +115,7 @@ function TrackItem({
     default:
       return (
         <BasicTrackItem
+          index={index}
           multiselect={multiselect}
           group={group}
           active={active}
@@ -321,9 +337,14 @@ export function TracksPropsPanel() {
             }}
           >
             <ul className="flex flex-col">
-              {groups.map((tg) => {
+              {groups.map((tg, tgi) => {
                 return (
-                  <TrackItem multiselect={multiselect} group={tg} key={tg.id} />
+                  <TrackItem
+                    index={tgi}
+                    multiselect={multiselect}
+                    group={tg}
+                    key={tg.id}
+                  />
                 )
               })}
             </ul>

@@ -14,16 +14,21 @@ import { ListFilter } from 'lucide-react'
 import { useState } from 'react'
 import { useMotifs, type IDataset, type IMotif } from './motifs-store'
 
-function DatasetItem({ dataset }: { dataset: IDataset }) {
+function DatasetItem({ dataset, index }: { dataset: IDataset; index: number }) {
   const { datasetsInUse, setDatasetsInUse } = useMotifs()
 
   return (
-    <SortableItem key={dataset.id} id={dataset.id} className="h-8 gap-x-2">
+    <SortableItem
+      key={dataset.id}
+      id={dataset.id}
+      index={index}
+      className="h-8 gap-x-2"
+    >
       <Checkbox
         checked={datasetsInUse[dataset.id] ?? true}
-        onCheckedChange={v => {
+        onCheckedChange={(v) => {
           setDatasetsInUse(
-            produce(datasetsInUse, draft => {
+            produce(datasetsInUse, (draft) => {
               draft[dataset.id] = v
             })
           )
@@ -35,7 +40,7 @@ function DatasetItem({ dataset }: { dataset: IDataset }) {
   )
 }
 
-function MotifItem({ motif }: { motif: IMotif }) {
+function MotifItem({ motif, index }: { motif: IMotif; index: number }) {
   const { motifsInUse, setMotifsInUse } = useMotifs()
 
   const name =
@@ -44,12 +49,17 @@ function MotifItem({ motif }: { motif: IMotif }) {
       : `${motif.name} (${motif.motifId})`
 
   return (
-    <SortableItem key={motif.id} id={motif.id} className="h-8 gap-x-2">
+    <SortableItem
+      key={motif.id}
+      id={motif.id}
+      index={index}
+      className="h-8 gap-x-2"
+    >
       <Checkbox
         checked={motifsInUse[motif.id] ?? true}
-        onCheckedChange={v => {
+        onCheckedChange={(v) => {
           setMotifsInUse(
-            produce(motifsInUse, draft => {
+            produce(motifsInUse, (draft) => {
               draft[motif.id] = v
             })
           )
@@ -86,11 +96,11 @@ export function DatasetFilter() {
         <h2 className="font-bold text-xs">Datasets</h2>
         <Checkbox
           checked={selectAll}
-          onCheckedChange={v => {
+          onCheckedChange={(v) => {
             setSelectAll(v)
             setDatasetsInUse(
-              produce(datasetsInUse, draft => {
-                Object.keys(draft).forEach(key => {
+              produce(datasetsInUse, (draft) => {
+                Object.keys(draft).forEach((key) => {
                   draft[key] = v
                 })
               })
@@ -101,14 +111,14 @@ export function DatasetFilter() {
         </Checkbox>
         <LineSeparator />
         <ul className="flex flex-col gap-y-2.5">
-          {datasets.map(dataset => {
+          {datasets.map((dataset) => {
             return (
               <li key={dataset.id}>
                 <Checkbox
                   checked={datasetsInUse[dataset.id] ?? true}
-                  onCheckedChange={v => {
+                  onCheckedChange={(v) => {
                     setDatasetsInUse(
-                      produce(datasetsInUse, draft => {
+                      produce(datasetsInUse, (draft) => {
                         draft[dataset.id] = v
                       })
                     )

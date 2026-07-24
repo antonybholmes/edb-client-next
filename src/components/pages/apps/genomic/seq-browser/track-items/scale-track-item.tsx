@@ -10,10 +10,12 @@ import {
 } from './seq-track-item'
 
 export function ScaleTrackItem({
+  index,
   group,
   active,
   multiselect,
 }: {
+  index: number
   group: ITrackGroup
   active: NullStr
   multiselect: boolean
@@ -24,6 +26,7 @@ export function ScaleTrackItem({
 
   return (
     <BaseTrackItem
+      index={index}
       active={active}
       group={group}
       multiselect={multiselect}

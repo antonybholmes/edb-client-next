@@ -174,10 +174,12 @@ export function UngroupButton({ group }: { group: ITrackGroup }) {
 }
 
 export function SeqTrackItem({
+  index,
   group,
   active,
   multiselect,
 }: {
+  index: number
   group: ITrackGroup
   active: string | null
   multiselect: boolean
@@ -194,6 +196,7 @@ export function SeqTrackItem({
 
   return (
     <BaseTrackItem
+      index={index}
       group={group}
       active={active}
       multiselect={multiselect}

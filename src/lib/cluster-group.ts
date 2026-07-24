@@ -23,6 +23,7 @@ export interface IClusterGroupRow extends IDBEntity {
 }
 
 export interface IClusterGroupRowFile extends IDBEntity {
+  version: number
   groupRows: IClusterGroupRow[]
 }
 
@@ -59,5 +60,32 @@ export function makeNewGroup(
     columns: columnNames,
     type: 'cluster-group',
     show: true,
+  }
+}
+
+interface IGroupRowProps {
+  name: string
+}
+
+export function makeNewGroupRow(
+  groups: IClusterGroup[],
+  { name = 'Groups' } = {} as IGroupRowProps
+): IClusterGroupRow {
+  return {
+    id: makeUuid(),
+    name,
+    groups,
+  }
+}
+
+export function makeClusterFile(
+  groupRows: IClusterGroupRow,
+  name: string = 'Group Rows'
+): IClusterGroupRowFile {
+  return {
+    version: 2,
+    id: makeUuid(),
+    name,
+    groupRows: [groupRows],
   }
 }

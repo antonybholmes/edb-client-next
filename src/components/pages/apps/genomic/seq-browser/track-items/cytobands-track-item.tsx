@@ -10,10 +10,12 @@ import {
 } from './seq-track-item'
 
 export function CytobandsTrackItem({
+  index,
   group,
   active,
   multiselect,
 }: {
+  index: number
   group: ITrackGroup
   active: string | null
   multiselect: boolean
@@ -23,6 +25,7 @@ export function CytobandsTrackItem({
 
   return (
     <BaseTrackItem
+      index={index}
       active={active}
       group={group}
       multiselect={multiselect}

@@ -11,20 +11,9 @@ import { TEXT_BORDER, TEXT_OK, TEXT_RESET } from '@/consts'
 import { PropRow } from '@/dialogs/prop-row'
 import type { IDivProps } from '@/interfaces/div-props'
 import { LinkButton } from '@/themed/link-button'
-import {
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+
+import { move } from '@dnd-kit/helpers'
+import { DragDropProvider } from '@dnd-kit/react'
 import { produce } from 'immer'
 import { useLollipopSettings } from './lollipop-settings-store'
 import { useLollipopStore } from './lollipop-store'
@@ -44,12 +33,12 @@ export function VariantPropsPanel({ ref }: IDivProps) {
 
   const { displayProps, setDisplayProps } = useLollipopSettings()
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
+  // const sensors = useSensors(
+  //   useSensor(PointerSensor),
+  //   useSensor(KeyboardSensor, {
+  //     coordinateGetter: sortableKeyboardCoordinates,
+  //   })
+  // )
 
   const { open: openDialog } = useDialogs()
 
@@ -110,81 +99,58 @@ export function VariantPropsPanel({ ref }: IDivProps) {
       </PropRow>
 
       <LineSeparator />
-
-      <DndContext
-        sensors={sensors}
-        modifiers={[restrictToVerticalAxis]}
-        //onDragStart={event => setActiveId(event.active.id as string)}
-        onDragEnd={(event) => {
-          const { active, over } = event
-
-          if (over && active.id !== over?.id) {
-            const oldIndex = displayProps.variants.types.findIndex(
-              (t) => t === (active.id as string)
-            )
-            const newIndex = displayProps.variants.types.findIndex(
-              (t) => t === (over.id as string)
-            )
-            const newOrder = arrayMove(
-              displayProps.variants.types,
-              oldIndex,
-              newIndex
-            )
+      <VScrollPanel className="grow h-full">
+        <DragDropProvider
+          onDragEnd={(event) => {
+            const newOrder = move(displayProps.variants.types, event)
 
             setDisplayProps(
               produce(displayProps, (draft) => {
                 draft.variants.types = newOrder
               })
             )
-          }
-        }}
-      >
-        <SortableContext
-          items={displayProps.variants.types}
-          strategy={verticalListSortingStrategy}
+          }}
         >
-          <VScrollPanel className="grow h-full">
-            <ul className="flex flex-col">
-              {displayProps.variants.types.map((mutation) => {
-                const id = mutation
-                return (
-                  <SortableItem key={id} id={id}>
-                    <Checkbox
-                      checked={mutationsForUse[mutation] ?? false}
-                      onCheckedChange={(v) =>
-                        setMutationsForUse({
-                          ...mutationsForUse,
-                          [mutation]: v,
-                        })
-                      }
-                    />
-                    <FillButton
-                      colors={[
-                        {
-                          color:
-                            displayProps.variants.colorMap[mutation] ??
-                            DEFAULT_MUTATION_COLOR,
-                          allowNoColor: false,
-                          onColorChange: ({ color }) =>
-                            setDisplayProps(
-                              produce(displayProps, (draft) => {
-                                draft.variants.colorMap = {
-                                  ...draft.variants.colorMap,
-                                  [mutation]: color,
-                                }
-                              })
-                            ),
-                        },
-                      ]}
-                    />
-                    <TruncateSpan className="grow h-8">{mutation}</TruncateSpan>
-                  </SortableItem>
-                )
-              })}
-            </ul>
-          </VScrollPanel>
-        </SortableContext>
-      </DndContext>
+          <ul className="flex flex-col">
+            {displayProps.variants.types.map((mutation, mi) => {
+              const id = mutation
+              return (
+                <SortableItem key={id} id={id} index={mi}>
+                  <Checkbox
+                    checked={mutationsForUse[mutation] ?? false}
+                    onCheckedChange={(v) =>
+                      setMutationsForUse({
+                        ...mutationsForUse,
+                        [mutation]: v,
+                      })
+                    }
+                  />
+                  <FillButton
+                    colors={[
+                      {
+                        color:
+                          displayProps.variants.colorMap[mutation] ??
+                          DEFAULT_MUTATION_COLOR,
+                        allowNoColor: false,
+                        onColorChange: ({ color }) =>
+                          setDisplayProps(
+                            produce(displayProps, (draft) => {
+                              draft.variants.colorMap = {
+                                ...draft.variants.colorMap,
+                                [mutation]: color,
+                              }
+                            })
+                          ),
+                      },
+                    ]}
+                  />
+                  <TruncateSpan className="grow h-8">{mutation}</TruncateSpan>
+                </SortableItem>
+              )
+            })}
+          </ul>
+        </DragDropProvider>
+      </VScrollPanel>
     </PropsPanel>
   )
 }

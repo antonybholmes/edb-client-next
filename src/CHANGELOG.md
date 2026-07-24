@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Fully replaced dndkit with newer version. Groups now supports multiple rows.
 - Replacing dndkit legacy with new version.
 - Bug fixes and updates.
 - Simplified data-attributes that are conditional.

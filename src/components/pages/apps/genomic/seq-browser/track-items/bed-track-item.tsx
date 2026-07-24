@@ -17,6 +17,7 @@ import {
 } from './seq-track-item'
 
 export function BedTrackItem({
+  index,
   group,
   active,
   multiselect,
@@ -24,6 +25,7 @@ export function BedTrackItem({
   group: ITrackGroup
   active: string | null
   multiselect: boolean
+  index: number
 }) {
   //const [drag, setDrag] = useState(false)
 
@@ -33,6 +35,7 @@ export function BedTrackItem({
 
   return (
     <BaseTrackItem
+      index={index}
       active={active}
       group={group}
       multiselect={multiselect}

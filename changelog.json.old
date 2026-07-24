@@ -2248,6 +2248,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2026-07-23T22:54:09.652Z"
+        },
+        {
+          "msg": "Replacing dndkit legacy with new version",
+          "date": "2026-07-24T18:02:17.120Z"
         }
       ]
     },

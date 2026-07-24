@@ -9,6 +9,7 @@ import { type ITrackGroup } from '../tracks-provider'
 import { useTracks } from '../tracks-store'
 
 export function BaseTrackItem({
+  index,
   group,
   multiselect,
   style,
@@ -19,6 +20,7 @@ export function BaseTrackItem({
   extChildren,
   ...props
 }: IDivProps & {
+  index: number
   group: ITrackGroup
   multiselect: boolean
   active: NullStr
@@ -41,6 +43,7 @@ export function BaseTrackItem({
   return (
     <SortableItem
       id={group.id}
+      index={index}
       extChildren={extChildren}
       style={style}
       dragHandle={

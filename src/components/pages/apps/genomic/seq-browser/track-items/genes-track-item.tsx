@@ -10,6 +10,7 @@ import {
 } from './seq-track-item'
 
 export function GenesTrackItem({
+  index,
   group,
   active,
   multiselect,
@@ -17,6 +18,7 @@ export function GenesTrackItem({
   group: ITrackGroup
   active: string | null
   multiselect: boolean
+  index: number
 }) {
   const { open: openDialog } = useSeqBrowserDialogs()
   const { dispatch } = useTracks()
@@ -25,6 +27,7 @@ export function GenesTrackItem({
 
   return (
     <BaseTrackItem
+      index={index}
       active={active}
       group={group}
       multiselect={multiselect}
@@ -48,7 +51,7 @@ export function GenesTrackItem({
               payload: {
                 group,
                 track,
-                callback: data => {
+                callback: (data) => {
                   dispatch({
                     type: 'update',
                     group,

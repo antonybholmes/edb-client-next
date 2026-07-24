@@ -11,7 +11,11 @@ import { BaseCol } from '@/layout/base-col'
 import { DEFAULT_PALETTE } from '@/lib/color/palette'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 
-import { makeNewGroup, type IClusterGroup } from '@/lib/cluster-group'
+import {
+  makeNewGroup,
+  makeNewGroupRow,
+  type IClusterGroup,
+} from '@/lib/cluster-group'
 import { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { textToLines } from '@/lib/text/lines'
 import { produce } from 'immer'
@@ -597,9 +601,9 @@ export function GexDialog({ open = true, onResponse = undefined }: IProps) {
 
       openFile(df.name + ' GEX', {
         sheets: [df],
-        groups,
-
-        groupsName: groupSampleDataType[0] ?? 'GEX',
+        groupRows: [
+          makeNewGroupRow(groups, { name: groupSampleDataType[0] ?? 'GEX' }),
+        ],
       })
 
       // cache the genes so user doesn't have to keep re-entering them
