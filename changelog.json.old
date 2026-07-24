@@ -2260,6 +2260,10 @@
         {
           "msg": "Added version to history to make tracking updates faster",
           "date": "2026-07-24T22:25:51.956Z"
+        },
+        {
+          "msg": "Groups rows can now be deleted through ui",
+          "date": "2026-07-24T22:53:07.737Z"
         }
       ],
       "Added": [
