@@ -17,7 +17,7 @@ import { useSelectionRange } from '@/providers/selection-range-provider'
 
 import { download, downloadJson } from '@/lib/download-utils'
 import { range } from '@/lib/math/range'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { GroupDialog } from './group-dialog'
 
 import { FileDropZonePanel } from '@/components/file-dropzone-panel'
@@ -33,10 +33,9 @@ import { ToolbarSeparator } from '@/toolbar/toolbar-separator'
 import { DragDropProvider } from '@dnd-kit/react'
 
 import {
-  BaseSortableItem,
+  BaseDragHandle,
   DRAG_HANDLE_APPEAR_CLS,
   DRAG_ICON_ANIM_CLS,
-  DragHandle,
   SortableItem,
 } from '../../../../sortable-item'
 
@@ -56,8 +55,9 @@ import { StretchRow } from '@/layout/stretch-row'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
+import { RestrictToVerticalAxis } from '@dnd-kit/abstract/modifiers'
 import { move } from '@dnd-kit/helpers'
-import { isSortable } from '@dnd-kit/react/sortable'
+import { useSortable } from '@dnd-kit/react/sortable'
 import { group } from 'd3'
 import { produce } from 'immer'
 import { Settings2 } from 'lucide-react'
@@ -87,6 +87,19 @@ function GroupRowItem({
   const { sheets } = useCurrentSheets()
   const { open: openDialog } = useDialogs()
   const [hover, setHover] = useState(false)
+  const [element, setElement] = useState<Element | null>(null)
+  const handleRef = useRef<HTMLDivElement | null>(null)
+
+  const { isDragging } = useSortable({
+    id: groupRow.id,
+    index,
+    type: 'group-row',
+    group: 'group-rows',
+    accept: 'group-row',
+    modifiers: [RestrictToVerticalAxis],
+    element,
+    handle: handleRef, // Pass the ref to the handle
+  })
 
   const [openGroupDialog, setOpenGroupDialog] = useState<
     IGroupCallback | undefined
@@ -174,14 +187,20 @@ function GroupRowItem({
         />
       )}
 
-      <BaseSortableItem
+      {/* <BaseSortableItem
         as="li"
         id={groupRow.id}
         index={index}
         group="group-rows"
         type="group-row"
         accept="group-row"
-        className={'flex flex-col gap-y-1 py-1 border-t border-border/50'}
+        className={'flex flex-col gap-y-1 p-2 rounded-lg bg-muted/20'}
+        style={{ minWidth: 0 }}
+      > */}
+      <li
+        id={groupRow.id}
+        ref={setElement}
+        className={'flex flex-col gap-y-1 p-2 rounded-lg bg-muted/20'}
         style={{ minWidth: 0 }}
       >
         <VCenterRow
@@ -191,7 +210,7 @@ function GroupRowItem({
         >
           {/* Hide the drag handle if a custom one is passed, to avoid confusion. 
               The custom one is for things like a checkbox if we want to select items and momentarily turn off dragging */}
-          <DragHandle id={groupRow.id} index={index} />
+          <BaseDragHandle id={groupRow.id} ref={handleRef} />
 
           <Input
             value={groupRow.name}
@@ -244,8 +263,15 @@ function GroupRowItem({
           </button>
         </VCenterRow>
 
-        <DragDropProvider
+        {/* <DragDropProvider
+         
           onDragEnd={(event) => {
+            const { source } = event.operation
+
+            if (source?.type !== 'group') {
+              return
+            }
+
             const newOrder = move(groupRow.groups, event)
 
             const newGroupRow = produce(groupRow, (draft) => {
@@ -262,22 +288,26 @@ function GroupRowItem({
               })
             )
           }}
+        > */}
+        <ul
+          data-is-dragging={isDragging}
+          className="flex flex-col ml-2 data-is-dragging:pointer-events-none"
         >
-          <ul className="flex flex-col ml-3">
-            {groupRow.groups.map((group, gi) => {
-              return (
-                <GroupItem
-                  group={group}
-                  groupRow={groupRow}
-                  key={group.id}
-                  index={gi}
-                  editGroup={editGroup}
-                />
-              )
-            })}
-          </ul>
-        </DragDropProvider>
-      </BaseSortableItem>
+          {groupRow.groups.map((group, gi) => {
+            return (
+              <GroupItem
+                group={group}
+                groupRow={groupRow}
+                key={group.id}
+                index={gi}
+                editGroup={editGroup}
+              />
+            )
+          })}
+        </ul>
+        {/* </DragDropProvider> */}
+        {/* </BaseSortableItem> */}
+      </li>
     </>
   )
 }
@@ -565,86 +595,83 @@ export function GroupPropsPanel() {
             }
           }}
         >
-          {/* <VScrollPanel> */}
-          <DragDropProvider
-            // onDragOver={(event) => {
-            //   const { source } = event.operation
+          <VScrollPanel className="grow">
+            {/* <VScrollPanel> */}
+            <DragDropProvider
+              // onDragOver={(event) => {
+              //   const { source } = event.operation
 
-            //   if (source?.type !== 'group') {
-            //     event.preventDefault()
-            //     return
-            //   }
+              //   if (source?.type !== 'group') {
+              //     event.preventDefault()
+              //     return
+              //   }
 
-            //   if (isSortable(source)) {
-            //     const { initialIndex, index, initialGroup, group } = source
+              //   if (isSortable(source)) {
+              //     const { initialIndex, index, initialGroup, group } = source
 
-            //     console.log('cheese', initialIndex, index, initialGroup, group)
+              //     console.log('cheese', initialIndex, index, initialGroup, group)
 
-            //     const groupRowIndex = groupRows.findIndex(
-            //       (gr) => gr.id === group
-            //     )
-            //     const newOrder = move(groupRows[groupRowIndex].groups, event)
+              //     const groupRowIndex = groupRows.findIndex(
+              //       (gr) => gr.id === group
+              //     )
+              //     const newOrder = move(groupRows[groupRowIndex].groups, event)
 
-            //     addGroups(
-            //       produce(groupRows, (draft) => {
-            //         draft[groupRowIndex].groups = newOrder
-            //       })
-            //     )
-            //   }
-            // }}
-            //sensors={sensors}
-            //modifiers={[RestrictToVerticalAxis]}
-            // onDragStart={event => setActiveId(event.active.id as string)}
-            onDragEnd={(event) => {
-              if (event.canceled) {
-                return
-              }
+              //     addGroups(
+              //       produce(groupRows, (draft) => {
+              //         draft[groupRowIndex].groups = newOrder
+              //       })
+              //     )
+              //   }
+              // }}
+              //sensors={sensors}
+              //modifiers={[RestrictToVerticalAxis]}
+              // onDragStart={event => setActiveId(event.active.id as string)}
+              // onDragOver={(event) => {
+              //   event.preventDefault()
+              // }}
 
-              const { source } = event.operation
+              onDragEnd={(event) => {
+                if (event.canceled) {
+                  return
+                }
 
-              if (isSortable(source)) {
-                const { initialIndex, index, initialGroup, group } = source
-
-                console.log('toast', initialIndex, index, initialGroup, group)
+                console.log('drag end', event)
 
                 const newOrder = move(groupRows, event)
 
-                console.log('newOrder', newOrder)
                 addGroups(newOrder)
-              }
-              // const newOrder = move(
-              //   groups.map((group) => group.id),
-              //   event
-              // )
 
-              // const { active, over } = event
+                // const newOrder = move(
+                //   groups.map((group) => group.id),
+                //   event
+                // )
 
-              // if (over && active.id !== over?.id) {
-              //   const oldIndex = groups.findIndex(
-              //     (group) => group.id === (active.id as string)
-              //   )
-              //   const newIndex = groups.findIndex(
-              //     (group) => group.id === (over.id as string)
-              //   )
-              //   const newOrder = arrayMove(
-              //     groups.map((group) => group.id),
-              //     oldIndex,
-              //     newIndex
-              //   )
+                // const { active, over } = event
 
-              //   reorderGroups(newOrder)
-              // }
-            }}
-          >
-            <VScrollPanel className="grow">
-              <ul className="flex flex-col">
+                // if (over && active.id !== over?.id) {
+                //   const oldIndex = groups.findIndex(
+                //     (group) => group.id === (active.id as string)
+                //   )
+                //   const newIndex = groups.findIndex(
+                //     (group) => group.id === (over.id as string)
+                //   )
+                //   const newOrder = arrayMove(
+                //     groups.map((group) => group.id),
+                //     oldIndex,
+                //     newIndex
+                //   )
+
+                //   reorderGroups(newOrder)
+                // }
+              }}
+            >
+              <ul className="flex flex-col gap-y-1 border">
                 {groupRows.map((gr, gri) => {
                   return <GroupRowItem index={gri} groupRow={gr} key={gr.id} />
                 })}
               </ul>
-            </VScrollPanel>
 
-            {/* <DragOverlay>
+              {/* <DragOverlay>
               {activeId ? (
                 <GroupItem
                   group={groups.find(group => group.id === activeId)!.group}
@@ -652,7 +679,8 @@ export function GroupPropsPanel() {
                 />
               ) : null}
             </DragOverlay> */}
-          </DragDropProvider>
+            </DragDropProvider>
+          </VScrollPanel>
           {/* </VScrollPanel> */}
         </FileDropZonePanel>
       </PropsPanel>

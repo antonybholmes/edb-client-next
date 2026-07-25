@@ -167,10 +167,27 @@ export function DragHandle({
   })
 
   return (
-    <VCenterRow
+    <BaseDragHandle
       ref={ref}
-      className={cn('group cursor-ns-resize w-4 justify-start', className)}
+
       data-dragging={isDragging}
+
+      {...props}
+    />
+  )
+}
+
+export function BaseDragHandle({
+  id,
+
+  className,
+
+  style,
+  ...props
+}: IDivProps) {
+  return (
+    <VCenterRow
+      className={cn('group cursor-ns-resize w-4 justify-start', className)}
 
       {...props}
     >
