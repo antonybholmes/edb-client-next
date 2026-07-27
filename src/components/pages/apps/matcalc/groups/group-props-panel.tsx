@@ -55,9 +55,10 @@ import { StretchRow } from '@/layout/stretch-row'
 import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
 import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
+import { CollisionPriority } from '@dnd-kit/abstract'
 import { RestrictToVerticalAxis } from '@dnd-kit/abstract/modifiers'
 import { move } from '@dnd-kit/helpers'
-import { useSortable } from '@dnd-kit/react/sortable'
+import { isSortable, useSortable } from '@dnd-kit/react/sortable'
 import { group } from 'd3'
 import { produce } from 'immer'
 import { Settings2 } from 'lucide-react'
@@ -87,17 +88,17 @@ function GroupRowItem({
   const { sheets } = useCurrentSheets()
   const { open: openDialog } = useDialogs()
   const [hover, setHover] = useState(false)
-  const [element, setElement] = useState<Element | null>(null)
   const handleRef = useRef<HTMLDivElement | null>(null)
 
-  const { isDragging } = useSortable({
+  const { ref } = useSortable({
     id: groupRow.id,
     index,
     type: 'group-row',
-    group: 'group-rows',
+    group: 'group-row',
     accept: 'group-row',
     modifiers: [RestrictToVerticalAxis],
-    element,
+    collisionPriority: CollisionPriority.Low,
+    //element,
     handle: handleRef, // Pass the ref to the handle
   })
 
@@ -199,12 +200,14 @@ function GroupRowItem({
       > */}
       <li
         id={groupRow.id}
-        ref={setElement}
-        className={'flex flex-col gap-y-1 p-2 rounded-lg bg-muted/20'}
+        data-type="group-row"
+        ref={ref}
+        className="flex flex-col gap-y-1"
         style={{ minWidth: 0 }}
       >
         <VCenterRow
-          className="gap-x-1 pl-1 h-full min-h-8"
+          data-hover={present(hover)}
+          className="gap-x-1 p-1 h-full min-h-8 data-hover:bg-muted/20"
           onMouseEnter={() => setHover(true)}
           onMouseLeave={() => setHover(false)}
         >
@@ -263,35 +266,9 @@ function GroupRowItem({
           </button>
         </VCenterRow>
 
-        {/* <DragDropProvider
-         
-          onDragEnd={(event) => {
-            const { source } = event.operation
-
-            if (source?.type !== 'group') {
-              return
-            }
-
-            const newOrder = move(groupRow.groups, event)
-
-            const newGroupRow = produce(groupRow, (draft) => {
-              draft.groups = newOrder
-            })
-
-            addGroups(
-              produce(groupRows, (draft) => {
-                for (let gr of draft) {
-                  if (gr.id === groupRow.id) {
-                    gr.groups = newGroupRow.groups
-                  }
-                }
-              })
-            )
-          }}
-        > */}
         <ul
-          data-is-dragging={isDragging}
-          className="flex flex-col ml-2 data-is-dragging:pointer-events-none"
+          //data-is-dragging={present(isDragging)}
+          className="flex flex-col data-is-dragging:pointer-events-none"
         >
           {groupRow.groups.map((group, gi) => {
             return (
@@ -301,12 +278,11 @@ function GroupRowItem({
                 key={group.id}
                 index={gi}
                 editGroup={editGroup}
+                //disabled={isDragging}
               />
             )
           })}
         </ul>
-        {/* </DragDropProvider> */}
-        {/* </BaseSortableItem> */}
       </li>
     </>
   )
@@ -317,6 +293,7 @@ function GroupItem({
   groupRow,
   group,
   editGroup,
+  disabled = false,
 }: {
   index: number
   groupRow: IClusterGroupRow
@@ -326,13 +303,11 @@ function GroupItem({
     ggroup: IClusterGroup,
     title?: string
   ) => void
+  disabled?: boolean
 }) {
   const { removeGroups, updateGroup } = useHistory()
-
   const { open: openDialog } = useDialogs()
-
   const { sheets } = useCurrentSheets()
-
   const cols = getColNamesFromGroup(sheets[0] as AnnotationDataFrame, group)
 
   return (
@@ -341,6 +316,7 @@ function GroupItem({
       index={index}
       key={group.id}
       group={groupRow.id}
+      disabled={disabled}
       type="group"
       accept="group"
       className="group"
@@ -373,6 +349,7 @@ function GroupItem({
       <Checkbox
         checked={group.show}
         onCheckedChange={(v) => {
+          console.log('Checkbox changed:', v)
           updateGroup({ ...group, show: v })
         }}
       />
@@ -440,8 +417,6 @@ export function GroupPropsPanel() {
   const { groupRows } = useCurrentGroups()
 
   const { sheets } = useCurrentSheets()
-
-  const { selection } = useSelectionRange()
 
   // const sensors = useSensors(
   //   useSensor(PointerSensor),
@@ -580,13 +555,6 @@ export function GroupPropsPanel() {
           </LinkButton>
         </StretchRow>
 
-        {/* <Input
-          placeholder="Groups..."
-          value={groupsName}
-          onTextChange={(v) => addGroups(groups, { name: v })}
-          className="max-h-8 text-xs"
-        /> */}
-
         <FileDropZonePanel
           className="grow h-full"
           onFileDrop={(files) => {
@@ -596,46 +564,40 @@ export function GroupPropsPanel() {
           }}
         >
           <VScrollPanel className="grow">
-            {/* <VScrollPanel> */}
             <DragDropProvider
-              // onDragOver={(event) => {
-              //   const { source } = event.operation
+              onDragOver={(event) => {
+                const { source } = event.operation
 
-              //   if (source?.type !== 'group') {
-              //     event.preventDefault()
-              //     return
-              //   }
-
-              //   if (isSortable(source)) {
-              //     const { initialIndex, index, initialGroup, group } = source
-
-              //     console.log('cheese', initialIndex, index, initialGroup, group)
-
-              //     const groupRowIndex = groupRows.findIndex(
-              //       (gr) => gr.id === group
-              //     )
-              //     const newOrder = move(groupRows[groupRowIndex].groups, event)
-
-              //     addGroups(
-              //       produce(groupRows, (draft) => {
-              //         draft[groupRowIndex].groups = newOrder
-              //       })
-              //     )
-              //   }
-              // }}
-              //sensors={sensors}
-              //modifiers={[RestrictToVerticalAxis]}
-              // onDragStart={event => setActiveId(event.active.id as string)}
-              // onDragOver={(event) => {
-              //   event.preventDefault()
-              // }}
-
-              onDragEnd={(event) => {
-                if (event.canceled) {
+                if (source?.type !== 'group') {
+                  // event.preventDefault()
                   return
                 }
 
-                console.log('drag end', event)
+                if (isSortable(source)) {
+                  const { initialIndex, index, initialGroup, group } = source
+
+                  console.log('test', initialIndex, index, initialGroup, group)
+
+                  const groupRowIndex = groupRows.findIndex(
+                    (gr) => gr.id === group
+                  )
+
+                  const newOrder = move(groupRows[groupRowIndex].groups, event)
+
+                  addGroups(
+                    produce(groupRows, (draft) => {
+                      draft[groupRowIndex].groups = newOrder
+                    })
+                  )
+                }
+              }}
+
+              onDragEnd={(event) => {
+                const { source } = event.operation
+
+                if (event.canceled || source.type !== 'group-row') {
+                  return
+                }
 
                 const newOrder = move(groupRows, event)
 
@@ -665,7 +627,7 @@ export function GroupPropsPanel() {
                 // }
               }}
             >
-              <ul className="flex flex-col gap-y-1 border">
+              <ul className="flex flex-col gap-y-1">
                 {groupRows.map((gr, gri) => {
                   return <GroupRowItem index={gri} groupRow={gr} key={gr.id} />
                 })}

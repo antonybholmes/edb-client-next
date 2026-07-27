@@ -50,8 +50,6 @@ export function MatcalcFileTree() {
   // change when the actual content changes. Using the version number
   // is more reliable.
   const treeRootTab = useMemo(() => {
-    console.log('replot', plots)
-
     const tableChildrenTabs: ITab[] = []
     const plotChildrenTabs: ITab[] = []
 
@@ -137,7 +135,15 @@ export function MatcalcFileTree() {
         { ...PLOTS_TAB, children: plotChildrenTabs },
       ],
     }
-  }, [version])
+  }, [
+    version,
+    files,
+    present,
+    sheets,
+    plots,
+    currentSelection,
+    selectedPanelTab,
+  ])
 
   // decide what to highlight in tree
   useEffect(() => {

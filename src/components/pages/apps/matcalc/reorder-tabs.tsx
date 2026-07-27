@@ -128,7 +128,12 @@ function SheetItem({
   const label = truncate(name, { length: 16 })
 
   let content: ReactNode = (
-    <BaseSortableItem as="div" key={sheet.id} id={sheet.id}>
+    <BaseSortableItem
+      as="div"
+      key={sheet.id}
+      id={sheet.id}
+      orientation="horizontal"
+    >
       <TabsTrigger
         ref={ref}
         id={sheet.id}

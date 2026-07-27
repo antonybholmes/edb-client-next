@@ -10,7 +10,7 @@ import {
   RestrictToVerticalAxis,
 } from '@dnd-kit/abstract/modifiers'
 import { Ellipsis, EllipsisVertical } from 'lucide-react'
-import { ComponentProps, type ElementType, type ReactNode } from 'react'
+import { ComponentProps, useRef, type ElementType, type ReactNode } from 'react'
 import { VerticalGripIcon } from './icons/vertical-grip-icon'
 import { HCenterRow } from './layout/h-center-row'
 
@@ -50,6 +50,7 @@ type BaseSortableItemProps<T extends ElementType = 'li'> = {
 } & ComponentProps<T>
 
 export function BaseSortableItem<T extends ElementType = 'li'>({
+  disabled = false,
   id,
   index,
   as,
@@ -68,6 +69,7 @@ export function BaseSortableItem<T extends ElementType = 'li'>({
     type,
     group,
     accept,
+    disabled,
     modifiers: [
       orientation === 'vertical'
         ? RestrictToVerticalAxis
@@ -99,6 +101,7 @@ export function BaseSortableItem<T extends ElementType = 'li'>({
 type SortableItemProps<T extends ElementType = 'li'> =
   BaseSortableItemProps<T> & {
     index: number
+    disabled?: boolean
     //we can optionally pass a custom drag handle instead of the default one rendered inside SortableItem
     dragHandle?: ReactNode
     innerCls?: string
@@ -108,31 +111,48 @@ export function SortableItem<T extends ElementType = 'li'>({
   as,
   id,
   index,
+  disabled = false,
   dragHandle,
   innerCls,
   type,
   group,
   accept,
-  orientation,
+  orientation = 'vertical',
   className,
   children,
   extChildren,
 }: SortableItemProps<T>) {
+  const handleRef = useRef<HTMLDivElement | null>(null)
+
+  const { ref } = useSortable({
+    id,
+    index,
+    type,
+    group,
+    accept,
+    disabled,
+    modifiers: [
+      orientation === 'vertical'
+        ? RestrictToVerticalAxis
+        : RestrictToHorizontalAxis,
+    ],
+    //collisionPriority: CollisionPriority.Low,
+    handle: handleRef,
+  })
+
   const dragCls = dragHandle ? 'hidden' : 'flex'
+
+  const Component = as ?? 'li'
+
   return (
-    <BaseSortableItem
-      as={as ?? 'li'}
+    <Component
       id={id}
+      data-group={group}
+      ref={ref}
       className={cn(
         'flex flex-row items-center gap-x-1.5 grow min-w-0',
         className
       )}
-      index={index}
-      type={type}
-      group={group}
-      accept={accept}
-      orientation={orientation}
-      style={{ minWidth: 0 }}
     >
       <VCenterRow
         className={cn(
@@ -142,12 +162,14 @@ export function SortableItem<T extends ElementType = 'li'>({
       >
         {/* Hide the drag handle if a custom one is passed, to avoid confusion. 
           The custom one is for things like a checkbox if we want to select items and momentarily turn off dragging */}
-        <DragHandle id={id} index={index} className={dragCls} />
+        {!dragHandle && (
+          <BaseDragHandle id={id} className={dragCls} ref={handleRef} />
+        )}
         {dragHandle && dragHandle}
         {children}
       </VCenterRow>
       {extChildren}
-    </BaseSortableItem>
+    </Component>
   )
 }
 
@@ -155,26 +177,16 @@ export function DragHandle({
   id,
   index,
   className,
-
   style,
   ...props
 }: IClassProps & { id: string; index: number }) {
   const { ref, isDragging } = useSortable({
     id,
-
     index,
     modifiers: [RestrictToVerticalAxis],
   })
 
-  return (
-    <BaseDragHandle
-      ref={ref}
-
-      data-dragging={isDragging}
-
-      {...props}
-    />
-  )
+  return <BaseDragHandle ref={ref} data-dragging={isDragging} {...props} />
 }
 
 export function BaseDragHandle({
@@ -188,7 +200,6 @@ export function BaseDragHandle({
   return (
     <VCenterRow
       className={cn('group cursor-ns-resize w-4 justify-start', className)}
-
       {...props}
     >
       <VerticalGripIcon

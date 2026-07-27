@@ -538,7 +538,7 @@ function handleAddGroups(
   const { groupRows, opts } = action
   const { file = state.present.currentFile, mode = 'set' } = opts
 
-  console.log('Adding groups with mode:', mode, 'to file:', file)
+  //console.log('Adding groups with mode:', mode, 'to file:', file)
 
   // cannot add groups to default file and empty groups array does not require update
   if (groupRows.length === 0 || file === DEFAULT_FILE.id) {
@@ -678,28 +678,28 @@ export function openGroupFiles(files: ITextFileOpen[]): IClusterGroupRow[] {
   return groupRows
 }
 
-// function handleUpdateGroup(
-//   state: IHistoryData,
-//   action: Extract<HistoryAction, { type: 'updateGroup' }>
-// ): IHistoryData {
-//   const { group, opts } = action
-//   const { file = state.present.currentFile } = opts
+function handleUpdateGroup(
+  state: IHistoryData,
+  action: Extract<HistoryAction, { type: 'updateGroup' }>
+): IHistoryData {
+  const { group, opts } = action
+  const { file = state.present.currentFile } = opts
 
-//   return applyHistoryUpdate(
-//     state,
-//     'Update group',
-//     '',
-//     (draft: IHistoryState) => {
-//       for (let gr of draft.groupRows[file] ?? []) {
-//         for (let i = 0; i < gr.groups.length; i++) {
-//           if (gr.groups[i].id === group.id) {
-//             gr.groups[i] = group
-//           }
-//         }
-//       }
-//     }
-//   )
-// }
+  return applyHistoryUpdate(
+    state,
+    'Update group',
+    '',
+    (draft: IHistoryState) => {
+      for (let gr of draft.groupRows[file] ?? []) {
+        for (let i = 0; i < gr.groups.length; i++) {
+          if (gr.groups[i].id === group.id) {
+            gr.groups[i] = group
+          }
+        }
+      }
+    }
+  )
+}
 
 function handleRemoveGroups(
   state: IHistoryData,
@@ -713,11 +713,12 @@ function handleRemoveGroups(
   }
 
   return applyHistoryUpdate(state, 'Remove groups', '', (draft) => {
-    // remove grouprows matching these ids
+    // remove group rows matching these ids
     draft.groupRows[file] = draft.groupRows[file]?.filter(
       (gr) => !ids.includes(gr.id)
     )
 
+    // remove any groups matching the ids
     for (let gr of draft.groupRows[file] ?? []) {
       gr.groups = gr.groups.filter((g) => !ids.includes(g.id))
     }
@@ -928,6 +929,8 @@ export function historyReducer(
       return handleUpdatePlot(state, action)
     case 'addGroups':
       return handleAddGroups(state, action)
+    case 'updateGroup':
+      return handleUpdateGroup(state, action)
     case 'clearGroups':
       return handleClearGroups(state, action)
     case 'openGroupFiles':
