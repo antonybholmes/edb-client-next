@@ -58,7 +58,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { CollisionPriority } from '@dnd-kit/abstract'
 import { RestrictToVerticalAxis } from '@dnd-kit/abstract/modifiers'
 import { move } from '@dnd-kit/helpers'
-import { isSortable, useSortable } from '@dnd-kit/react/sortable'
+import { useSortable } from '@dnd-kit/react/sortable'
 import { group } from 'd3'
 import { produce } from 'immer'
 import { LayersPlus, Settings2 } from 'lucide-react'
@@ -207,7 +207,7 @@ function GroupRowItem({
       >
         <VCenterRow
           data-hover={present(hover)}
-          className="gap-x-1 p-1 h-full min-h-8 data-hover:bg-muted/20"
+          className="gap-x-1 p-1 h-full min-h-8 data-hover:bg-muted/20 rounded-theme"
           onMouseEnter={() => setHover(true)}
           onMouseLeave={() => setHover(false)}
         >
@@ -268,7 +268,7 @@ function GroupRowItem({
 
         <ul
           //data-is-dragging={present(isDragging)}
-          className="flex flex-col data-is-dragging:pointer-events-none"
+          className="flex flex-col data-is-dragging:pointer-events-none ml-3"
         >
           {groupRow.groups.map((group, gi) => {
             return (
@@ -577,31 +577,28 @@ export function GroupPropsPanel() {
                   return
                 }
 
-                if (isSortable(source)) {
-                  if (source.type === 'group' && target.type === 'group') {
-                    const { initialIndex, index, initialGroup, group } = source
+                //if (isSortable(source)) {
+                //const { initialIndex, index, initialGroup, group } = source
 
-                    const items = Object.fromEntries(
-                      groupRows.map((row) => [row.id, row.groups])
-                    )
-                    const nextItems = move(items, event)
-                    const nextRows = groupRows.map((row) => ({
-                      ...row,
-                      groups: nextItems[row.id] ?? row.groups,
-                    }))
+                const items = Object.fromEntries(
+                  groupRows.map((row) => [row.id, row.groups])
+                )
+                const nextItems = move(items, event)
+                const nextRows = groupRows.map((row) => ({
+                  ...row,
+                  groups: nextItems[row.id] ?? row.groups,
+                }))
 
-                    // const groupRowIndex = groupRows.findIndex((gr) =>
-                    //   gr.groups.some((g) => g.id === target.id)
-                    // )
+                // const groupRowIndex = groupRows.findIndex((gr) =>
+                //   gr.groups.some((g) => g.id === target.id)
+                // )
 
-                    // const newOrder = move(
-                    //   groupRows[groupRowIndex].groups,
-                    //   event
-                    // )
+                // const newOrder = move(
+                //   groupRows[groupRowIndex].groups,
+                //   event
+                // )
 
-                    addGroups(nextRows)
-                  }
-                }
+                addGroups(nextRows)
               }}
 
               onDragEnd={(event) => {
