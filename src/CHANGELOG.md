@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Sort ordering for groups is more robust.
 - Groups rows can now be deleted through ui.
 - Added version to history to make tracking updates faster.
 - Fully replaced dndkit with newer version. Groups now supports multiple rows.

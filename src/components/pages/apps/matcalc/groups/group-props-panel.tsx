@@ -61,7 +61,7 @@ import { move } from '@dnd-kit/helpers'
 import { isSortable, useSortable } from '@dnd-kit/react/sortable'
 import { group } from 'd3'
 import { produce } from 'immer'
-import { Settings2 } from 'lucide-react'
+import { LayersPlus, Settings2 } from 'lucide-react'
 import {
   useCurrentGroups,
   useCurrentSheets,
@@ -527,11 +527,16 @@ export function GroupPropsPanel() {
 
             <IconButton
               onClick={() => {
-                addGroups([newGroupRow()], { mode: 'append' })
+                addGroups(
+                  [newGroupRow({ name: `Groups ${groupRows.length + 1}` })],
+                  {
+                    mode: 'append',
+                  }
+                )
               }}
-              title="New Group"
+              title="New Group Set"
             >
-              <PlusIcon />
+              <LayersPlus size={20} strokeWidth={1.5} />
             </IconButton>
           </VCenterRow>
           <LinkButton
@@ -566,29 +571,36 @@ export function GroupPropsPanel() {
           <VScrollPanel className="grow">
             <DragDropProvider
               onDragOver={(event) => {
-                const { source } = event.operation
+                const { source, target } = event.operation
 
                 if (source?.type !== 'group') {
-                  // event.preventDefault()
                   return
                 }
 
                 if (isSortable(source)) {
-                  const { initialIndex, index, initialGroup, group } = source
+                  if (source.type === 'group' && target.type === 'group') {
+                    const { initialIndex, index, initialGroup, group } = source
 
-                  console.log('test', initialIndex, index, initialGroup, group)
+                    const items = Object.fromEntries(
+                      groupRows.map((row) => [row.id, row.groups])
+                    )
+                    const nextItems = move(items, event)
+                    const nextRows = groupRows.map((row) => ({
+                      ...row,
+                      groups: nextItems[row.id] ?? row.groups,
+                    }))
 
-                  const groupRowIndex = groupRows.findIndex(
-                    (gr) => gr.id === group
-                  )
+                    // const groupRowIndex = groupRows.findIndex((gr) =>
+                    //   gr.groups.some((g) => g.id === target.id)
+                    // )
 
-                  const newOrder = move(groupRows[groupRowIndex].groups, event)
+                    // const newOrder = move(
+                    //   groupRows[groupRowIndex].groups,
+                    //   event
+                    // )
 
-                  addGroups(
-                    produce(groupRows, (draft) => {
-                      draft[groupRowIndex].groups = newOrder
-                    })
-                  )
+                    addGroups(nextRows)
+                  }
                 }
               }}
 

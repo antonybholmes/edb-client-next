@@ -136,6 +136,9 @@ export function SortableItem<T extends ElementType = 'li'>({
         ? RestrictToVerticalAxis
         : RestrictToHorizontalAxis,
     ],
+    data: {
+      group,
+    },
     //collisionPriority: CollisionPriority.Low,
     handle: handleRef,
   })
