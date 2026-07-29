@@ -4,7 +4,7 @@ import { type IDivProps } from '@/interfaces/div-props'
 
 import { Axis, YAxis } from '@/components/plot/axis'
 import {
-  DEFAULT_COLOR_PROPS,
+  DEFAULT_FILL_PROPS,
   DEFAULT_STROKE_PROPS,
   type IPaintProps,
   type IStrokeProps,
@@ -12,6 +12,7 @@ import {
 import { KDE } from '@/lib/math/kde'
 import { linspace } from '@/lib/math/linspace'
 import { zip } from '@/lib/utils'
+import { SvgPolygon } from '../svg-polygon'
 import type { IBoxWhiskerMode } from './box-whisker-plot-svg'
 
 interface IProps extends IDivProps {
@@ -37,7 +38,7 @@ export function ViolinPlotSvg({
   yax,
   width = 50,
   height = 500,
-  fill = DEFAULT_COLOR_PROPS,
+  fill = DEFAULT_FILL_PROPS,
   stroke = DEFAULT_STROKE_PROPS,
   mode = 'full',
 }: IProps) {
@@ -107,15 +108,7 @@ export function ViolinPlotSvg({
 
     // matching is case insensitive
 
-    return (
-      <polygon
-        points={points}
-        fill={fill?.value ?? 'none'}
-        stroke={stroke?.value ?? 'none'}
-        strokeWidth={stroke?.width ?? 0}
-        fillOpacity={fill?.opacity ?? 0}
-      />
-    )
+    return <SvgPolygon points={points} sp={stroke} fp={fill} />
   }, [data, globalXMax, xsmooth, ysmooth, yax])
 
   return (

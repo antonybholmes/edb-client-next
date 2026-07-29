@@ -22,7 +22,6 @@ export function SideBarTabs() {
 
   return (
     <BaseCol className="gap-y-2 h-full grow">
-      {/* <ResizableSidebarHeaderPortal> */}
       <UnderlineTabs
         groupId={id}
         selectedMouseOverSize={getSelectedMouseOverSize}
@@ -38,7 +37,6 @@ export function SideBarTabs() {
         />
         <TabIndicatorSelectedH />
       </UnderlineTabs>
-      {/* </ResizableSidebarHeaderPortal> */}
 
       <TabContentPanels groupId={id} className="grow" />
     </BaseCol>

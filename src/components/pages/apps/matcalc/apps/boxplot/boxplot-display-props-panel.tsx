@@ -14,7 +14,7 @@ import { produce } from 'immer'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useBoxPlotContext } from './boxplot-provider'
 
-export function BoxPlotPropsPanel() {
+export function BoxPlotDisplayPropsPanel() {
   //const { plotsState, historyDispatch } = useContext(PlotsContext)
 
   const { updatePlot } = useHistory()
@@ -22,7 +22,7 @@ export function BoxPlotPropsPanel() {
 
   return (
     <PropsPanel>
-      <ScrollAccordion value={['plot']}>
+      <ScrollAccordion value={['plot', 'violin', 'box', 'swarm']}>
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
           <AccordionContent>

@@ -98,9 +98,8 @@ export function HeatmapPanel() {
       <FooterPortal className="shrink-0 grow-0 ">
         <></>
         <></>
-        <>
-          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
-        </>
+
+        <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
       </FooterPortal>
     </>
   )

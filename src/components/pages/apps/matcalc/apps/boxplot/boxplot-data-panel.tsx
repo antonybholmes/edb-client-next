@@ -5,9 +5,9 @@ import {
 import type { IPaintProps, IStrokeProps } from '@/components/plot/svg-props'
 import { PropsPanel } from '@/components/props-panel'
 import { MenuSeparator } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
+import { SortableItem } from '@/components/sortable-item'
 import { PropRow } from '@/dialogs/prop-row'
-import { VerticalGripIcon } from '@/icons/vertical-grip-icon'
-import { VCenterRow } from '@/layout/v-center-row'
 import { capitalCase } from '@/lib/text/capital-case'
 import {
   AccordionContent,
@@ -15,8 +15,9 @@ import {
   AccordionTrigger,
   SubAccordion,
 } from '@/themed/v2/accordion'
+import { move } from '@dnd-kit/helpers'
+import { DragDropProvider } from '@dnd-kit/react'
 import { produce } from 'immer'
-import { Reorder } from 'motion/react'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useBoxPlotContext } from './boxplot-provider'
 
@@ -45,8 +46,33 @@ export function BoxPlotDataPanel() {
 
   return (
     <PropsPanel>
-      <p className="font-semibold py-1">X-Axis Order</p>
-      <Reorder.Group
+      <SideBarHeader>
+        <p className="font-semibold py-1">X-Axis Order</p>
+      </SideBarHeader>
+
+      <DragDropProvider
+        onDragEnd={(event) => {
+          const newOrder = move(xOrder, event)
+
+          updatePlot(
+            produce(plot, (draft) => {
+              draft.xOrder = newOrder
+            })
+          )
+        }}
+      >
+        <ul className="flex flex-col">
+          {xOrder.map((item, mi) => {
+            return (
+              <SortableItem id={item} key={item} index={mi}>
+                {item}
+              </SortableItem>
+            )
+          })}
+        </ul>
+      </DragDropProvider>
+
+      {/* <Reorder.Group
         axis="y"
         values={xOrder}
         onReorder={(order: unknown) => {
@@ -70,14 +96,37 @@ export function BoxPlotDataPanel() {
             <span>{item}</span>
           </Reorder.Item>
         ))}
-      </Reorder.Group>
+      </Reorder.Group> */}
 
       <MenuSeparator />
 
       {hueOrder.length > 1 && (
         <>
           <p className="font-semibold py-1">Hue Order</p>
-          <Reorder.Group
+
+          <DragDropProvider
+            onDragEnd={(event) => {
+              const newOrder = move(hueOrder, event)
+
+              updatePlot(
+                produce(plot, (draft) => {
+                  draft.hueOrder = newOrder
+                })
+              )
+            }}
+          >
+            <ul className="flex flex-col">
+              {hueOrder.map((item, mi) => {
+                return (
+                  <SortableItem id={item} key={item} index={mi}>
+                    {item}
+                  </SortableItem>
+                )
+              })}
+            </ul>
+          </DragDropProvider>
+
+          {/* <Reorder.Group
             axis="y"
             values={hueOrder}
             onReorder={(order: unknown) => {
@@ -101,7 +150,7 @@ export function BoxPlotDataPanel() {
                 <span className="grow">{item}</span>
               </Reorder.Item>
             ))}
-          </Reorder.Group>
+          </Reorder.Group> */}
           <MenuSeparator />
         </>
       )}

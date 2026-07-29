@@ -2268,6 +2268,10 @@
         {
           "msg": "Sort ordering for groups is more robust",
           "date": "2026-07-28T22:25:39.178Z"
+        },
+        {
+          "msg": "Fixed boxplot. Remove motion.",
+          "date": "2026-07-29T16:15:49.888Z"
         }
       ],
       "Added": [

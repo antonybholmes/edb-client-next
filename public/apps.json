@@ -53,9 +53,9 @@
     "color": "#ffb366",
     "version": "21.8.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-23T22:54:08.512Z",
-    "hash": "f83c3610baf96943eaf43ec5ef34488810fff6e5edc65c52f0e59c306135c90e",
-    "build": 802
+    "modified": "2026-07-29T16:15:48.914Z",
+    "hash": "9be2eedfcde95397be1494b4e8123c7a00a7d3206db3d8096517836f096ff789",
+    "build": 804
   },
   {
     "name": "GSEA Web",
@@ -109,11 +109,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "48.6.4",
+    "version": "48.6.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-28T22:41:56.092Z",
-    "hash": "53cf19d5d3faa6e181316eedea2daf94d1c112ae4540755b8e81f1175d1e97c2",
-    "build": 1858
+    "modified": "2026-07-29T16:15:48.918Z",
+    "hash": "23ce9d00d672852ba21ac88d79f9fd0cc625f05abea72083ad3223a08c270f68",
+    "build": 1860
   },
   {
     "name": "Motifs",

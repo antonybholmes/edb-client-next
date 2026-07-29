@@ -94,6 +94,7 @@ export function VolcanoPanel() {
 
   const { settings, updateSettings } = useMatcalcSettings()
   const { setTabs: setSideTabs } = useSideTabs()
+
   useEffect(() => {
     setSideTabs([
       {

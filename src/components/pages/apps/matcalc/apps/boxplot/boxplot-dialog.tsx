@@ -8,6 +8,7 @@ import { SelectItem, SelectList } from '@/themed/v2/select'
 
 import {
   DEFAULT_COLOR_PROPS,
+  DEFAULT_FILL_PROPS,
   DEFAULT_STROKE_PROPS,
   WHITE_FILL_PROPS,
 } from '@/components/plot/svg-props'
@@ -124,19 +125,19 @@ export function BoxWhiskersDialog({
               hue,
               {
                 box: {
-                  stroke: { ...DEFAULT_STROKE_PROPS, color },
+                  stroke: { ...DEFAULT_STROKE_PROPS, value: color },
                   fill: { ...WHITE_FILL_PROPS },
                   median: {
-                    stroke: { ...DEFAULT_STROKE_PROPS, color },
+                    stroke: { ...DEFAULT_STROKE_PROPS, value: color },
                   },
                 },
                 violin: {
-                  stroke: { ...DEFAULT_STROKE_PROPS, color },
-                  fill: { ...DEFAULT_COLOR_PROPS, color },
+                  stroke: { ...DEFAULT_STROKE_PROPS, value: color },
+                  fill: { ...DEFAULT_FILL_PROPS, value: color },
                 },
                 swarm: {
-                  stroke: { ...DEFAULT_STROKE_PROPS, color },
-                  fill: { ...DEFAULT_COLOR_PROPS, color },
+                  stroke: { ...DEFAULT_STROKE_PROPS, value: color },
+                  fill: { ...DEFAULT_COLOR_PROPS, value: color },
                 },
               },
             ]

@@ -1,8 +1,9 @@
-import type { IPaintProps } from '@/components/plot/svg-props'
+import type { IPaintProps, IStrokeProps } from '@/components/plot/svg-props'
 import type { SVGProps } from 'react'
 
 interface IProps extends SVGProps<SVGPolygonElement> {
-  s?: IPaintProps | undefined
+  sp?: IStrokeProps | undefined
+  fp?: IPaintProps | undefined
 }
 
 /**
@@ -15,16 +16,23 @@ interface IProps extends SVGProps<SVGPolygonElement> {
 export function SvgPolygon({
   fill,
   fillOpacity,
-  stroke = 'none',
-  s,
+  stroke,
+  strokeWidth,
+  strokeOpacity,
+  strokeDasharray,
+  sp,
+  fp,
   ...props
 }: IProps) {
+  console.log(fp)
   return (
     <polygon
-      stroke={stroke}
-
-      fill={fill ?? s?.value}
-      fillOpacity={fillOpacity ?? s?.opacity}
+      stroke={stroke ?? sp?.value ?? 'none'}
+      strokeWidth={strokeWidth ?? sp?.width}
+      strokeOpacity={strokeOpacity ?? sp?.opacity}
+      strokeDasharray={strokeDasharray ?? sp?.dasharray}
+      fill={fill ?? fp?.value ?? 'none'}
+      fillOpacity={fillOpacity ?? fp?.opacity}
       {...props}
     />
   )

@@ -21,6 +21,7 @@ import { range } from '@/lib/math/range'
 import { BoxWhiskerPlotSvg } from '../../../../../plot/box-whisker/box-whisker-plot-svg'
 import {
   DEFAULT_COLOR_PROPS,
+  DEFAULT_FILL_PROPS,
   DEFAULT_MARGIN,
   DEFAULT_STROKE_PROPS,
   type IMarginProps,
@@ -29,7 +30,6 @@ import {
   type LegendPos,
 } from '../../../../../plot/svg-props'
 
-import { useHistory } from '../../history/history-provider/history-provider'
 import { useBoxPlotContext } from './boxplot-provider'
 
 /**
@@ -91,7 +91,7 @@ export const DEFAULT_BOX_PLOT_DISPLAY_PROPS: IBoxPlotDisplayOptions = {
   },
   violin: {
     stroke: { ...DEFAULT_STROKE_PROPS },
-    fill: { ...DEFAULT_COLOR_PROPS },
+    fill: { ...DEFAULT_FILL_PROPS },
     show: true,
   },
   swarm: {
@@ -133,7 +133,7 @@ interface IProps extends ISVGProps {
 
 export function BoxPlotSvg({ ref }: ISVGProps) {
   //const { plotsState } = useContext(PlotsContext)
-  const { present, plots } = useHistory()
+
   const { plot, displayProps } = useBoxPlotContext()
 
   const singlePlotDisplayOptions = plot.singlePlotDisplayOptions as {
@@ -304,35 +304,38 @@ export function BoxPlotSvg({ ref }: ISVGProps) {
 
                   const plotOptions = singlePlotDisplayOptions[x]![hue]!
 
-                  const violinStroke = {
+                  const violinStroke: IStrokeProps = {
                     ...displayProps.violin.stroke,
-                    color: plotOptions.violin!.stroke.value,
-                  }
-                  const violinFill = {
-                    ...displayProps.violin.fill,
-                    color: plotOptions.violin!.fill.value,
+                    value: plotOptions.violin!.stroke.value,
                   }
 
-                  const boxStroke = {
-                    ...displayProps.box.stroke,
-                    color: plotOptions.box!.stroke.value,
+                  console.log('eh', displayProps.violin.fill)
+
+                  const violinFill: IPaintProps = {
+                    ...displayProps.violin.fill,
+                    value: plotOptions.violin!.fill.value,
                   }
-                  const boxFill = {
+
+                  const boxStroke: IStrokeProps = {
+                    ...displayProps.box.stroke,
+                    value: plotOptions.box!.stroke.value,
+                  }
+                  const boxFill: IPaintProps = {
                     ...displayProps.box.fill,
-                    color: plotOptions.box!.fill.value,
+                    value: plotOptions.box!.fill.value,
                   }
                   // const boxMedianStroke = {
                   //   ...displayProps.box.median.stroke,
                   //   color: plotOptions.box!.median.stroke.value,
                   // }
 
-                  const swarmStroke = {
+                  const swarmStroke: IStrokeProps = {
                     ...displayProps.swarm.stroke,
-                    color: plotOptions.swarm!.stroke.value,
+                    value: plotOptions.swarm!.stroke.value,
                   }
-                  const swarmFill = {
+                  const swarmFill: IPaintProps = {
                     ...displayProps.swarm.fill,
-                    color: plotOptions.swarm!.fill.value,
+                    value: plotOptions.swarm!.fill.value,
                   }
 
                   return (

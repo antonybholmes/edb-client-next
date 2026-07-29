@@ -670,7 +670,7 @@ function RankingSvg({
       {settings.ranking.fill.show && (
         <SvgPolygon
           points={displayPoints.map((p) => `${p.x},${p.y}`).join(' ')}
-          s={settings.ranking.fill}
+          fp={settings.ranking.fill}
         />
       )}
 

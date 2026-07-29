@@ -1,10 +1,6 @@
-import { SlidersIcon } from '@/icons/sliders-icon'
-
 import { useEffect, useRef, useState } from 'react'
 
-import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
-import { BaseCol } from '@/layout/base-col'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
 
@@ -15,19 +11,17 @@ import {
 import { useZoom } from '@/providers/zoom-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import type { AnnotationDataFrame } from '@/lib/dataframe/annotation-dataframe'
-import { Card } from '@/themed/card'
 import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
-import { useSideTabs } from '@/components/tabs/tab-provider'
+import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
+import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
 import { useHistory } from '../../history/history-provider/history-provider'
-import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
-import { BoxPlotDataPanel } from './boxplot-data-panel'
+import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
+import { BoxPlotPropsPanel } from './box-plot-props-panel'
 import { BoxPlotSvg } from './boxplot-plot-svg'
-import { BoxPlotPropsPanel } from './boxplot-props-panel'
 import { useBoxPlotContext } from './boxplot-provider'
 
 export const VOLCANO_X = 'Log2 fold change'
@@ -49,26 +43,6 @@ export function BoxPlotPanel() {
   const { open: openDialog } = useDialogs()
 
   const [showSideBar, setShowSideBar] = useState(true)
-
-  const df = sheets[0] as AnnotationDataFrame
-
-  const { setTabs: setSideTabs } = useSideTabs()
-
-  //const {addDFSize} = useFooter()
-
-  useEffect(() => {
-    setSideTabs([
-      {
-        id: 'Display',
-        component: BoxPlotPropsPanel,
-      },
-      {
-        id: 'Data',
-        icon: <SlidersIcon />,
-        component: BoxPlotDataPanel,
-      },
-    ])
-  }, [])
 
   useEffect(() => {
     //const filteredMessages = messages.filter(m => m.target === plot?.id)
@@ -111,7 +85,7 @@ export function BoxPlotPanel() {
 
   return (
     <>
-      <BaseCol className="h-full overflow-hidden grow">
+      {/* <BaseCol className="h-full overflow-hidden grow">
         <TabSlideBar
           side="right"
 
@@ -123,14 +97,20 @@ export function BoxPlotPanel() {
               <BoxPlotSvg ref={svgRef} />
             </div>
           </Card>
-        </TabSlideBar>
+        </TabSlideBar> */}
 
-        <FooterPortal className="shrink-0 grow-0 justify-end">
-          <></>
-          <></>
-          <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
-        </FooterPortal>
-      </BaseCol>
+      <ResizableSidebar side="right">
+        <ExtScrollCard>
+          <BoxPlotSvg ref={svgRef} />
+        </ExtScrollCard>
+        <BoxPlotPropsPanel />
+      </ResizableSidebar>
+
+      <FooterPortal className="shrink-0 grow-0 justify-end">
+        <></>
+        <></>
+        <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
+      </FooterPortal>
     </>
   )
 }

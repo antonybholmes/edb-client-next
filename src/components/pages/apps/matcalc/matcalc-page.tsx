@@ -204,18 +204,9 @@ export function MatcalcPage() {
 
   const { open, setOpen } = useSlideBar(FOLDER_ID) //) //'matcalc') //useContext(MessageContext)
 
-  //const extGseaWorkerRef = useRef<Worker | null>(null)
-
-  //const {setTab: setToolbarTab} = useTabs(TOOLBAR_GROUP_ID)
-
-  //const branch = searchForBranch(branch?.id??'', history)[0]
-  //const step = currentStep(branch)[0]
-  //const sheet = currentSheet(step)[0]
-  //const sheets = step?.sheets
-
   useEffect(() => {
     // open a dedicated history app for this module
-    //openApp(APP_INFO.name)
+
     setAppInfo(APP_INFO)
   }, [setAppInfo])
 
@@ -304,8 +295,6 @@ export function MatcalcPage() {
     // ])
 
     openFile(`Deseq Test`, {
-      //mode: 'append',
-
       sheets: [table.setName('Deseq Test') as AnnotationDataFrame],
     })
   }
@@ -318,8 +307,6 @@ export function MatcalcPage() {
     const table = new DataFrameReader().read(lines)
 
     openFile(`Sankey Test`, {
-      //mode: 'append',
-
       sheets: [table.setName('Sankey Test') as AnnotationDataFrame],
     })
   }
@@ -344,8 +331,19 @@ export function MatcalcPage() {
     const table = new DataFrameReader().read(lines)
 
     openFile(`Gene Test`, {
-      //mode: 'append',
       sheets: [table.setName('Gene Test') as AnnotationDataFrame],
+    })
+  }
+
+  async function loadBoxTestData() {
+    const res = await httpFetch.getText('/data/test/titanic.tsv')
+
+    const lines = textToLines(res)
+
+    const table = new DataFrameReader().read(lines)
+
+    openFile(`Box Test`, {
+      sheets: [table.setName('Box Test') as AnnotationDataFrame],
     })
   }
 
@@ -544,6 +542,9 @@ export function MatcalcPage() {
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => loadSankeyTestData()}>
               Sankey
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => loadBoxTestData()}>
+              Box
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
