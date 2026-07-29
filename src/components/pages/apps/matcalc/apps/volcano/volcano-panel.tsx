@@ -6,9 +6,7 @@ import {
   type IVolcanoDisplayOptions,
 } from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
 import { autoLim } from '@/components/plot/axis'
-import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
 import { FooterPortal } from '@/components/toolbar/footer-portal'
-import { BaseCol } from '@/layout/base-col'
 import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { getNumCol } from '@/lib/dataframe/dataframe-utils'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
@@ -23,15 +21,14 @@ import {
 import { useZoom } from '@/providers/zoom-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { Card } from '@/themed/card'
 import { produce } from 'immer'
 import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
-import { useSideTabs } from '@/components/tabs/tab-provider'
+import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
+import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { useHistory } from '../../history/history-provider/history-provider'
-import { useMatcalcSettings } from '../../settings/matcalc-settings'
-import { PLOT_CLS, PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
+import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { VolcanoPropsPanel } from './volcano-props-panel'
 import { useVolcanoContext } from './volcano-provider'
 
@@ -84,25 +81,12 @@ export function VolcanoPanel() {
   const { updatePlot } = useHistory()
   const { plot } = useVolcanoContext()
   const displayProps: IVolcanoDisplayOptions = plot.props
-  const sheet = plot?.dataframes['main'] as BaseDataFrame
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
 
   const svgRef = useRef<SVGSVGElement>(null)
 
   const { open: openDialog } = useDialogs()
-
-  const { settings, updateSettings } = useMatcalcSettings()
-  const { setTabs: setSideTabs } = useSideTabs()
-
-  useEffect(() => {
-    setSideTabs([
-      {
-        id: 'Display',
-        component: VolcanoPropsPanel,
-      },
-    ])
-  }, [])
 
   useEffect(() => {
     //const filteredMessage = messages.filter(m => m.target === plot?.id)
@@ -135,8 +119,8 @@ export function VolcanoPanel() {
   }, [zoom])
 
   return (
-    <BaseCol className="h-full overflow-hidden grow">
-      <TabSlideBar
+    <>
+      {/* <TabSlideBar
         side="right"
         open={settings.sidebar.show}
         onOpenChange={(v) => {
@@ -157,13 +141,25 @@ export function VolcanoPanel() {
             />
           </div>
         </Card>
-      </TabSlideBar>
+      </TabSlideBar> */}
+
+      <ResizableSidebar side="right">
+        <ExtScrollCard>
+          <VolcanoPlotSvg
+            ref={svgRef}
+            //displayProps={displayOptions}
+            x={displayProps.axes.xaxis.name}
+            y={displayProps.axes.yaxis.name}
+          />
+        </ExtScrollCard>
+        <VolcanoPropsPanel />
+      </ResizableSidebar>
 
       <FooterPortal className="shrink-0 grow-0 justify-end">
         <></>
         <></>
         <ZoomSlider channel={PLOT_ZOOM_CHANNEL} />
       </FooterPortal>
-    </BaseCol>
+    </>
   )
 }

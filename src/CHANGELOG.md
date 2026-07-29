@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Fixed volcano not showing.
 - Fixed boxplot. Remove motion.
 - Sort ordering for groups is more robust.
 - Groups rows can now be deleted through ui.

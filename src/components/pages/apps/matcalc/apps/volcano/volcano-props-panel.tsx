@@ -3,10 +3,6 @@ import { VCenterRow } from '@/layout/v-center-row'
 
 import { DoubleNumericalInput } from '@/components/double-numerical-input'
 import { type IVolcanoDisplayOptions } from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
 import { PropsPanel } from '@/components/props-panel'
 import { TEXT_CLEAR } from '@/consts'
 import { PropRow } from '@/dialogs/prop-row'
@@ -24,6 +20,7 @@ import {
 import { Button } from '@/themed/v2/button'
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { getNumCol } from '@/lib/dataframe/dataframe-utils'
 import { range } from '@/lib/math/range'
 import { IconButton } from '@/themed/icon-button'
@@ -202,7 +199,7 @@ export function VolcanoPropsPanel() {
                 }}
               />
 
-              <ColorPickerButton
+              <FillButton
                 colors={[
                   {
                     color: displayProps.dots.color,
@@ -214,7 +211,6 @@ export function VolcanoPropsPanel() {
                       ),
                   },
                 ]}
-                className={SIMPLE_COLOR_EXT_CLS}
               />
             </PropRow>
 
@@ -229,7 +225,7 @@ export function VolcanoPropsPanel() {
                 )
               }}
             >
-              <ColorPickerButton
+              <FillButton
                 colors={[
                   {
                     color: displayProps.border.value,
@@ -241,7 +237,6 @@ export function VolcanoPropsPanel() {
                       ),
                   },
                 ]}
-                className={SIMPLE_COLOR_EXT_CLS}
               />
             </SwitchPropRow>
           </AccordionContent>
@@ -278,7 +273,7 @@ export function VolcanoPropsPanel() {
             </SwitchPropRow>
 
             <PropRow title="Highlight">
-              <ColorPickerButton
+              <FillButton
                 colors={[
                   {
                     color: displayProps.logFc.neg.color,
@@ -290,11 +285,11 @@ export function VolcanoPropsPanel() {
                       ),
                   },
                 ]}
-                className={SIMPLE_COLOR_EXT_CLS}
+
                 title="Points &lt; 0"
               />
 
-              <ColorPickerButton
+              <FillButton
                 colors={[
                   {
                     color: displayProps.logFc.pos.color,
@@ -306,7 +301,7 @@ export function VolcanoPropsPanel() {
                       ),
                   },
                 ]}
-                className={SIMPLE_COLOR_EXT_CLS}
+
                 title="Points &ge; 0"
               />
             </PropRow>
