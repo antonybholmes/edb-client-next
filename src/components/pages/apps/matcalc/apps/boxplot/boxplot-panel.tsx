@@ -30,8 +30,7 @@ export const VOLCANO_Y = '-log10 p-value'
 export function BoxPlotPanel() {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
   const { updatePlot } = useHistory()
-  const { sheets } = useCurrentSheets()
-
+  
   const { plot } = useBoxPlotContext()
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'box-plot')

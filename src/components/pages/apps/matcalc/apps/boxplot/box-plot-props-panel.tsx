@@ -1,7 +1,7 @@
 import { BaseCol } from '@/components/layout/base-col'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
 import { useTabs } from '@/components/tabs/tab-provider'
-import { Filter, Group } from 'lucide-react'
+import { Filter, SlidersHorizontal } from 'lucide-react'
 import { useEffect } from 'react'
 import { OutlookTabs } from '../../data/outlook-tabs'
 import { BoxPlotDataPanel } from './boxplot-data-panel'
@@ -19,7 +19,7 @@ export function BoxPlotPropsPanel() {
       {
         id: 'display',
         name: 'Display',
-        icon: <Group strokeWidth={2} size={18} />,
+        icon: <SlidersHorizontal strokeWidth={2} size={18} />,
       },
       {
         id: 'data',

@@ -3,6 +3,7 @@ import { VCenterRow } from '@/layout/v-center-row'
 import { useSortable } from '@dnd-kit/react/sortable'
 
 import type { IClassProps } from '@/interfaces/class-props'
+import { present } from '@/lib/dom-utils'
 import { cn } from '@/lib/shadcn-utils'
 import { CollisionPriority } from '@dnd-kit/abstract'
 import {
@@ -124,7 +125,7 @@ export function SortableItem<T extends ElementType = 'li'>({
 }: SortableItemProps<T>) {
   const handleRef = useRef<HTMLDivElement | null>(null)
 
-  const { ref } = useSortable({
+  const { ref, isDragging } = useSortable({
     id,
     index,
     type,
@@ -158,8 +159,9 @@ export function SortableItem<T extends ElementType = 'li'>({
       )}
     >
       <VCenterRow
+        data-is-dragging={present(isDragging)}
         className={cn(
-          'gap-x-1 pl-1 pr-1.5 py-1 h-full hover:bg-muted/30 grow rounded-theme min-h-10',
+          'gap-x-1 pl-1 pr-1.5 py-1.5 h-full border border-transparent hover:bg-muted/30 data-is-dragging:bg-background data-is-dragging:border-border/20 data-is-dragging:shadow-lg grow rounded-theme min-h-10',
           innerCls
         )}
       >

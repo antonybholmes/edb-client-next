@@ -90,7 +90,7 @@ function GroupRowItem({
   const [hover, setHover] = useState(false)
   const handleRef = useRef<HTMLDivElement | null>(null)
 
-  const { ref } = useSortable({
+  const { ref, isDragging } = useSortable({
     id: groupRow.id,
     index,
     type: 'group-row',
@@ -201,13 +201,14 @@ function GroupRowItem({
       <li
         id={groupRow.id}
         data-type="group-row"
+        data-is-dragging={present(isDragging)}
         ref={ref}
-        className="flex flex-col gap-y-1"
+        className="flex flex-col gap-y-1  data-is-dragging:bg-background data-is-dragging:shadow-lg rounded-lg overflow-hidden"
         style={{ minWidth: 0 }}
       >
         <VCenterRow
           data-hover={present(hover)}
-          className="gap-x-1 p-1 h-full min-h-8 data-hover:bg-muted/20 rounded-theme"
+          className="gap-x-1 px-1 py-2 h-full min-h-8 data-hover:bg-muted/20 rounded-theme"
           onMouseEnter={() => setHover(true)}
           onMouseLeave={() => setHover(false)}
         >
@@ -266,23 +267,25 @@ function GroupRowItem({
           </button>
         </VCenterRow>
 
-        <ul
-          //data-is-dragging={present(isDragging)}
-          className="flex flex-col data-is-dragging:pointer-events-none ml-3"
-        >
-          {groupRow.groups.map((group, gi) => {
-            return (
-              <GroupItem
-                group={group}
-                groupRow={groupRow}
-                key={group.id}
-                index={gi}
-                editGroup={editGroup}
-                //disabled={isDragging}
-              />
-            )
-          })}
-        </ul>
+        {groupRow.groups.length > 0 && (
+          <ul
+            //data-is-dragging={present(isDragging)}
+            className="flex flex-col data-is-dragging:pointer-events-none ml-3 pb-2"
+          >
+            {groupRow.groups.map((group, gi) => {
+              return (
+                <GroupItem
+                  group={group}
+                  groupRow={groupRow}
+                  key={group.id}
+                  index={gi}
+                  editGroup={editGroup}
+                  //disabled={isDragging}
+                />
+              )
+            })}
+          </ul>
+        )}
       </li>
     </>
   )
@@ -293,7 +296,7 @@ function GroupItem({
   groupRow,
   group,
   editGroup,
-  disabled = false,
+  disabled,
 }: {
   index: number
   groupRow: IClusterGroupRow
