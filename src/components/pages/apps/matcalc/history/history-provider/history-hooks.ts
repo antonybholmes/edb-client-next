@@ -77,7 +77,6 @@ export function getGroups(
 
 export function getGroupRows(
   present: IHistoryState,
-
   opts: { file?: OptStrOrIdObj } = {}
 ): IClusterGroupRow[] {
   const fid = getFileId(present, opts)
@@ -95,11 +94,10 @@ export function getGroupRows(
 
 export function getGenesets(
   present: IHistoryState,
-  genesets: Record<string, IGeneSet>,
   opts: { file?: OptStrOrIdObj } = {}
 ): IGeneSet[] {
   const fid = getFileId(present, opts)
-  return (present.genesetOrder[fid] || []).map((id) => genesets[id]!)
+  return present.genesets[fid] || []
 }
 
 export function findSheet(

@@ -208,8 +208,8 @@ export function HistoryProvider({ children }: IChildrenProps) {
   )
 
   const updateGeneset = useCallback(
-    (geneset: IGeneSet) => {
-      dispatch({ type: 'updateGeneset', geneset })
+    (geneset: IGeneSet, opts: IGroupOps = {}) => {
+      dispatch({ type: 'updateGeneset', geneset, opts })
     },
     [dispatch]
   )
@@ -221,12 +221,12 @@ export function HistoryProvider({ children }: IChildrenProps) {
     [dispatch]
   )
 
-  const reorderGenesets = useCallback(
-    (ids: string[], opts: IGroupOps = {}) => {
-      dispatch({ type: 'reorderGenesets', ids, opts })
-    },
-    [dispatch]
-  )
+  // const reorderGenesets = useCallback(
+  //   (ids: string[], opts: IGroupOps = {}) => {
+  //     dispatch({ type: 'reorderGenesets', ids, opts })
+  //   },
+  //   [dispatch]
+  // )
 
   const goto = useCallback(
     (path: HistoryPath) => {
@@ -289,11 +289,9 @@ export function HistoryProvider({ children }: IChildrenProps) {
 
   const genesetsContextValue = useMemo(
     () => ({
-      genesets: (
-        state.present.genesetOrder[state.present.currentFile] || []
-      ).map((id) => state.genesets[id]!),
+      genesets: state.present.genesets[state.present.currentFile] || [],
     }),
-    [state.present.currentFile, state.present.genesetOrder, state.genesets]
+    [state.present.currentFile, state.present.genesets]
   )
 
   const selectionsContextValue = useMemo(
@@ -329,7 +327,7 @@ export function HistoryProvider({ children }: IChildrenProps) {
       updateGroup,
       addGenesets,
       clearGenesets,
-      reorderGenesets,
+      //reorderGenesets,
       removeGenesets,
       updateGeneset,
       goto,
@@ -353,7 +351,7 @@ export function HistoryProvider({ children }: IChildrenProps) {
       removeGroups,
       updateGroup,
       addGenesets,
-      reorderGenesets,
+      //reorderGenesets,
       removeGenesets,
       updateGeneset,
       goto,

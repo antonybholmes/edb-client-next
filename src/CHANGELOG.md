@@ -8,6 +8,7 @@
 
 ### Changed
 
+- genesets now part of trackable history.
 - Fixed volcano not showing.
 - Fixed boxplot. Remove motion.
 - Sort ordering for groups is more robust.

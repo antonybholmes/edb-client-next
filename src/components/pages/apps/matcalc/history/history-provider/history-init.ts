@@ -25,7 +25,7 @@ export function resetStore(): IHistoryDataStore {
     plots: {},
     //groupRows: {},
     //groupNames: { [DEFAULT_FILE.id]: 'Groups' },
-    genesets: {},
+    //genesets: {},
   }
 }
 
@@ -65,7 +65,7 @@ export function initState(): Omit<IHistoryState, 'id' | 'name' | 'createdAt'> {
     sheetOrder: { [DEFAULT_FILE.id]: [DEFAULT_SHEET.id] },
     plotOrder: { [DEFAULT_FILE.id]: [] },
     groupRows: { [DEFAULT_FILE.id]: [] },
-    genesetOrder: { [DEFAULT_FILE.id]: [] },
+    genesets: { [DEFAULT_FILE.id]: [] },
 
     currentFile: DEFAULT_FILE.id,
     currentSheet: DEFAULT_SHEET.id,

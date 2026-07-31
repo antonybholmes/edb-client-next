@@ -2276,6 +2276,10 @@
         {
           "msg": "Fixed volcano not showing",
           "date": "2026-07-29T16:19:30.462Z"
+        },
+        {
+          "msg": "genesets now part of trackable history",
+          "date": "2026-07-31T14:05:33.061Z"
         }
       ],
       "Added": [

@@ -72,6 +72,7 @@ function GenesetItem({
     <SortableItem
       id={geneset.id}
       index={index}
+      className="group"
       extChildren={
         <button
           onClick={() => {
@@ -157,8 +158,7 @@ export interface IGenesetCallback {
 export function GenesetPropsPanel() {
   //const [activeId, setActiveId] = useState<string | null>(null)
 
-  const { addGenesets, updateGeneset, clearGenesets, reorderGenesets } =
-    useHistory()
+  const { addGenesets, updateGeneset, clearGenesets } = useHistory()
 
   const { genesets } = useCurrentGenesets()
 
@@ -325,27 +325,9 @@ export function GenesetPropsPanel() {
             onDragEnd={(event) => {
               //const { active, over } = event
 
-              const newOrder = move(
-                genesets.map((g) => g.id),
-                event
-              )
+              const newOrder = move(genesets, event)
 
-              // if (over && active.id !== over?.id) {
-              //   const oldIndex = genesets.findIndex(
-              //     (g) => g.id === (active.id as string)
-              //   )
-
-              //   const newIndex = genesets.findIndex(
-              //     (g) => g.id === (over.id as string)
-              //   )
-              //   const newOrder = move(
-              //     genesets.map((g) => g.id),
-              //     oldIndex,
-              //     newIndex
-              //   )
-
-              reorderGenesets(newOrder)
-              //}
+              addGenesets(newOrder)
             }}
           >
             <VScrollPanel className="grow h-full">

@@ -150,7 +150,7 @@ export interface IGroupSlice {
 export interface IGenesetSlice {
   addGenesets: (genesets: IGeneSet[], opts?: IGroupOps) => void
   clearGenesets: () => void
-  reorderGenesets: (ids: string[], opts?: IGroupOps) => void
+  //reorderGenesets: (ids: string[], opts?: IGroupOps) => void
   removeGenesets: (ids: string[], opts?: IGroupOps) => void
   updateGeneset: (geneset: IGeneSet) => void
 }
@@ -196,7 +196,7 @@ export interface IHistoryState extends IDBEntity {
   plotOrder: Record<string, string[]> // fileId -> plot IDs
   //groupOrder: Record<string, string[]> // fileId -> group IDs
   groupRows: Record<string, IClusterGroupRow[]>
-  genesetOrder: Record<string, string[]> // fileId -> geneset IDs
+  genesets: Record<string, IGeneSet[]> // fileId -> geneset IDs
 
   currentFile: string
   currentSheet: string
@@ -211,7 +211,7 @@ export interface IHistoryDataStore {
   plots: Record<string, HistoryPlot>
   //groupNames: Record<string, string>
   //groups: Record<string, IClusterGroup>
-  genesets: Record<string, IGeneSet>
+  //genesets: Record<string, IGeneSet>
 }
 
 export type IHistoryData = IUndoState<IHistoryState> & IHistoryDataStore

@@ -62,9 +62,9 @@ export type HistoryAction =
   | { type: 'openGroupFiles'; files: ITextFileOpen[]; opts: IGroupOps }
   | { type: 'addGenesets'; genesets: IGeneSet[]; opts: IGroupOps }
   | { type: 'clearGenesets'; opts: IGroupOps }
-  | { type: 'updateGeneset'; geneset: IGeneSet }
+  | { type: 'updateGeneset'; geneset: IGeneSet; opts: IGroupOps }
   | { type: 'removeGenesets'; ids: string[]; opts: IGroupOps }
-  | { type: 'reorderGenesets'; ids: string[]; opts: IGroupOps }
+  //| { type: 'reorderGenesets'; ids: string[]; opts: IGroupOps }
   | { type: 'goto'; path: HistoryPath }
 
 const historyManager = new HistoryManager<IHistoryState>()
@@ -77,7 +77,7 @@ export function dataStoreView(state: IHistoryData): IHistoryDataStore {
     //groupNames: state.groupNames,
     //groups: state.groups,
     //groupRows: state.groupRows,
-    genesets: state.genesets,
+    //genesets: state.genesets,
   }
 }
 
@@ -152,7 +152,7 @@ function removeFile(state: IHistoryState, p: PathId) {
   delete state.sheetOrder[p.file]
   delete state.plotOrder[p.file]
   delete state.groupRows[p.file]
-  delete state.genesetOrder[p.file]
+  delete state.genesets[p.file]
 
   if (state.fileOrder.length === 0) {
     // if there are no files left, reset to initial state
@@ -224,8 +224,8 @@ function removeGroup(state: IHistoryState, p: PathId) {
 }
 
 function removeGeneset(state: IHistoryState, p: PathId) {
-  state.genesetOrder[p.file] = state.genesetOrder[p.file]!.filter(
-    (id) => id !== p.geneset
+  state.genesets[p.file] = state.genesets[p.file]!.filter(
+    (gs) => gs.id !== p.geneset
   )
 }
 
@@ -283,7 +283,7 @@ function handleOpenFile(
       draft.sheetOrder[action.file.id] = action.sheets.map((s) => s.id)
       draft.plotOrder[action.file.id] = action.plots.map((p) => p.id)
       draft.groupRows[action.file.id] = action.groupRows //.map((g) => g.id)
-      draft.genesetOrder[action.file.id] = action.genesets.map((g) => g.id)
+      draft.genesets[action.file.id] = action.genesets
 
       draft.currentFile = action.file.id
       draft.currentSheet = action.sheets[0]!.id
@@ -302,9 +302,9 @@ function handleOpenFile(
       // for (const group of action.groups) {
       //   store.groups[group.id] = group
       // }
-      for (const geneset of action.genesets) {
-        store.genesets[geneset.id] = geneset
-      }
+      // for (const geneset of action.genesets) {
+      //   //store.genesets[geneset.id] = geneset
+      // }
       // if (action.groupsName) {
       //   store.groupNames[action.file.id] = action.groupsName
       // }
@@ -747,7 +747,7 @@ function handleAddGenesets(
   action: Extract<HistoryAction, { type: 'addGenesets' }>
 ): IHistoryData {
   const { genesets, opts } = action
-  const { mode = 'append', file = state.present.currentFile } = opts
+  const { mode = 'set', file = state.present.currentFile } = opts
 
   // cannot add genesets to default file and empty genesets array does not require update
   if (file === DEFAULT_FILE.id) {
@@ -762,16 +762,16 @@ function handleAddGenesets(
     '',
     (draft: IHistoryState) => {
       if (mode === 'append') {
-        draft.genesetOrder[file]?.push(...genesets.map((g) => g.id))
+        draft.genesets[file]?.push(...genesets)
       } else {
-        draft.genesetOrder[file] = genesets.map((g) => g.id)
-      }
-    },
-    (store: IHistoryDataStore) => {
-      for (const geneset of genesets) {
-        store.genesets[geneset.id] = geneset
+        draft.genesets[file] = genesets
       }
     }
+    // (store: IHistoryDataStore) => {
+    //   for (const geneset of genesets) {
+    //     store.genesets[geneset.id] = geneset
+    //   }
+    // }
   )
 }
 
@@ -779,13 +779,32 @@ function handleUpdateGeneset(
   state: IHistoryData,
   action: Extract<HistoryAction, { type: 'updateGeneset' }>
 ): IHistoryData {
-  return {
-    ...state,
-    genesets: {
-      ...state.genesets,
-      [action.geneset.id]: action.geneset,
-    },
-  }
+  const { geneset, opts } = action
+  const { file = state.present.currentFile } = opts
+
+  return applyHistoryUpdate(
+    state,
+    'Update geneset',
+    '',
+    (draft: IHistoryState) => {
+      // update geneset at specific index in the genesets array for the current file
+      const index = draft.genesets[file]?.findIndex(
+        (gs) => gs.id === geneset.id
+      )
+
+      if (index !== undefined && index !== -1) {
+        draft.genesets[file]![index] = geneset
+      }
+    }
+  )
+
+  // return {
+  //   ...state,
+  //   genesets: {
+  //     ...state.genesets,
+  //     [action.geneset.id]: action.geneset,
+  //   },
+  // }
 }
 
 function handleClearGenesets(
@@ -805,7 +824,7 @@ function handleClearGenesets(
     'Clear genesets',
     '',
     (draft: IHistoryState) => {
-      draft.genesetOrder[file] = []
+      draft.genesets[file] = []
     }
   )
 }
@@ -826,33 +845,33 @@ function handleRemoveGenesets(
     `Remove ${ids.join(', ')} geneset${ids.length > 1 ? 's' : ''}`,
     '',
     (draft: IHistoryState) => {
-      draft.genesetOrder[file] = draft.genesetOrder[file]!.filter(
-        (id) => !ids.includes(id)
+      draft.genesets[file] = draft.genesets[file]!.filter(
+        (gs) => !ids.includes(gs.id)
       )
     }
   )
 }
 
-function handleReorderGenesets(
-  state: IHistoryData,
-  action: Extract<HistoryAction, { type: 'reorderGenesets' }>
-): IHistoryData {
-  const { ids, opts } = action
-  const { file = state.present.currentFile } = opts
-  // default file cannot be reordered and empty ids array does not require update
-  if (ids.length === 0 || file === DEFAULT_FILE.id) {
-    return state
-  }
+// function handleReorderGenesets(
+//   state: IHistoryData,
+//   action: Extract<HistoryAction, { type: 'reorderGenesets' }>
+// ): IHistoryData {
+//   const { ids, opts } = action
+//   const { file = state.present.currentFile } = opts
+//   // default file cannot be reordered and empty ids array does not require update
+//   if (ids.length === 0 || file === DEFAULT_FILE.id) {
+//     return state
+//   }
 
-  return applyHistoryUpdate(
-    state,
-    `Reorder ${ids.join(', ')} geneset${ids.length > 1 ? 's' : ''}`,
-    '',
-    (draft: IHistoryState) => {
-      draft.genesetOrder[file] = ids
-    }
-  )
-}
+//   return applyHistoryUpdate(
+//     state,
+//     `Reorder ${ids.join(', ')} geneset${ids.length > 1 ? 's' : ''}`,
+//     '',
+//     (draft: IHistoryState) => {
+//       draft.genesetOrder[file] = ids
+//     }
+//   )
+// }
 
 function handleGoto(
   state: IHistoryData,
@@ -947,8 +966,8 @@ export function historyReducer(
       return handleUpdateGeneset(state, action)
     case 'removeGenesets':
       return handleRemoveGenesets(state, action)
-    case 'reorderGenesets':
-      return handleReorderGenesets(state, action)
+    //case 'reorderGenesets':
+    //  return handleReorderGenesets(state, action)
     case 'goto':
       return handleGoto(state, action)
     default:

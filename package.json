@@ -73,6 +73,7 @@
     "generic-filehandle2": "^2.2.1",
     "gray-matter": "^4.0.3",
     "gsap": "^3.15.0",
+    "idb": "^8.0.3",
     "immer": "^11.1.15",
     "jotai": "^2.20.2",
     "js-cookie": "^3.0.8",
