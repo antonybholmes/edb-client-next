@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Added hub store for storing user data in indexdb.
 - genesets now part of trackable history.
 - Fixed volcano not showing.
 - Fixed boxplot. Remove motion.
