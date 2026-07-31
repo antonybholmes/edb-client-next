@@ -75,16 +75,15 @@ export function SeqsDialog({
 
   const [searchedDb, setSearchedDb] = useState<ISeqDBTrack[]>([])
 
-  const seqs = useMemo(
-    () =>
-      (trackDb ?? []).filter(
-        (t) =>
-          normalizeAssemblyName(t.assembly) ===
-            normalizeAssemblyName(settings.genomic.assembly) &&
-          t.technology === technology
-      ) as ISeqDBTrack[],
-    [trackDb, settings.genomic.assembly, technology]
-  )
+  const seqs = useMemo(() => {
+    console.log('tech', technology)
+    return (trackDb ?? []).filter(
+      (t) =>
+        normalizeAssemblyName(t.assembly) ===
+          normalizeAssemblyName(settings.genomic.assembly) &&
+        t.technology === technology
+    ) as ISeqDBTrack[]
+  }, [trackDb, settings.genomic.assembly, technology])
 
   const [addedMap, setAddedMap] = useState<Map<string, boolean>>(
     new Map<string, boolean>()

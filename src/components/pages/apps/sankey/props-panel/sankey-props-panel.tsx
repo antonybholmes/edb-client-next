@@ -58,7 +58,10 @@ export function SankeyPropsPanel() {
       </TabsList> */}
       </Tabs>
 
-      <OutlookTabs id="sankey-props-panel" />
+      <OutlookTabs
+        id="sankey-props-panel"
+        className="border-t border-border/50 py-2"
+      />
     </BaseCol>
   )
 }

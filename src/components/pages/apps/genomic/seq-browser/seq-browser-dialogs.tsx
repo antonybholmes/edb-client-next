@@ -32,8 +32,8 @@ import { BigWigReader } from './readers/seq/bigwig-reader'
 import {
   DEFAULT_BED_TRACK_DISPLAY_OPTIONS,
   DEFAULT_SEQ_TRACK_DISPLAY_OPTIONS,
+  IBedDBDataTrackDisplay,
   newTrackGroup,
-  type IBedDBDataTrack,
   type IBedDBTrack,
   type IBigWigTrack,
   type IGeneTrack,
@@ -56,11 +56,11 @@ type DialogTypeMap = {
   }
   'edit-bed': {
     group: ITrackGroup
-    track: IBedDBDataTrack | ILocalBedTrack
+    track: IBedDBDataTrackDisplay | ILocalBedTrack
 
     callback?: (data: {
       group: ITrackGroup
-      track: IBedDBDataTrack | ILocalBedTrack
+      track: IBedDBDataTrackDisplay | ILocalBedTrack
     }) => void
   }
   'edit-genes': {

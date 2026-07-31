@@ -36,7 +36,9 @@ export const DEFAULT_ASSEMBLIES = [
 ]
 
 /**
- * Standardize genome assembly names to a common format. This is useful for mapping user input or different data sources to the correct GTF annotations.
+ * Standardize genome assembly names to a common format. This is useful for mapping user input or
+ * different data sources to the correct GTF annotations. For example, hg19 is normalized to grch37.
+ *
  * @param name
  * @returns
  */

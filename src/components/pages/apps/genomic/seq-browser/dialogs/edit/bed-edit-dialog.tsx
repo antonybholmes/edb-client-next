@@ -12,17 +12,17 @@ import { Input } from '@/themed/v2/input'
 import { produce } from 'immer'
 import { useState } from 'react'
 import type {
-  IBedDBDataTrack,
+  IBedDBDataTrackDisplay,
   ILocalBedTrack,
   ITrackGroup,
 } from '../../tracks-provider'
 
 export interface IProps extends IModalProps<{
   group: ITrackGroup
-  track: IBedDBDataTrack | ILocalBedTrack
+  track: IBedDBDataTrackDisplay | ILocalBedTrack
 }> {
   group: ITrackGroup
-  track: IBedDBDataTrack | ILocalBedTrack
+  track: IBedDBDataTrackDisplay | ILocalBedTrack
 }
 
 export function BedEditDialog({ group, track, onResponse }: IProps) {

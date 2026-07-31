@@ -51,7 +51,12 @@ import { DialogTitle } from '@/components/shadcn/ui/themed/v2/dialog'
 import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
 import { ArrowDownUp, ShoppingCart } from 'lucide-react'
-import type { IBedDBDataTrack, IBedDBTrack } from '../tracks-provider'
+import {
+  DEFAULT_BED_TRACK_DISPLAY_OPTIONS,
+  type IBedDBDataTrack,
+  type IBedDBDataTrackDisplay,
+  type IBedDBTrack,
+} from '../tracks-provider'
 
 export interface IProps extends IModalProps<{
   tracks: IBedDBTrack[]
@@ -71,7 +76,7 @@ export function PeaksDialog({
   const [combine, setCombine] = useState(false)
   const [search, setSearch] = useState('')
   const [error, setError] = useState('')
-  const [trackDb, setTrackDb] = useState<IBedDBDataTrack[]>([])
+  const [trackDb, setTrackDb] = useState<IBedDBDataTrackDisplay[]>([])
   const [searchedDb, setSearchedDb] = useState<IBedDBDataTrack[]>([])
   const [searchSelectAll, setSearchSelectAll] = useState(false)
   const [addedSelectAll, setAddedSelectAll] = useState(false)
@@ -102,15 +107,20 @@ export function PeaksDialog({
         }
       )
 
+      console.log(res)
+
       return res.data
     },
   })
 
   useEffect(() => {
     if (data) {
-      let beds: IBedDBDataTrack[] = data
-
-      beds = beds.filter((bed) => bed.technology === technology)
+      const beds: IBedDBDataTrackDisplay[] = data
+        .filter((bed) => bed.technology === technology)
+        .map((b) => ({
+          ...b,
+          displayOptions: { ...DEFAULT_BED_TRACK_DISPLAY_OPTIONS },
+        }))
 
       setTrackDb(beds)
 

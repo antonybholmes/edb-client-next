@@ -335,7 +335,6 @@ export const useTracksStore = create<ITracksStore>()((set) => ({
         set((state) =>
           produce(state, (draft) => {
             draft.groups = [...DEFAULT_GROUPS]
-
             draft.selectedGroups = {}
           })
         )
@@ -445,7 +444,7 @@ export function useTracks() {
   )
 
   // tracks that can be returned from the Seq API
-  const seqDBDataTracks = useMemo(
+  const seqDBDataTracks: ISeqDBDataTrack[] = useMemo(
     () =>
       tracks.filter(
         (t) => t.type === 'Seq' || t.type === 'BigWig'

@@ -5,7 +5,7 @@ import { cn } from '@/lib/shadcn-utils'
 import { Settings2 } from 'lucide-react'
 import { useSeqBrowserDialogs } from '../seq-browser-dialogs'
 import type {
-  IBedDBDataTrack,
+  IBedDBDataTrackDisplay,
   ILocalBedTrack,
   ITrackGroup,
 } from '../tracks-provider'
@@ -48,57 +48,59 @@ export function BedTrackItem({
     >
       {group.tracks.length > 1 && <UngroupButton group={group} />}
       <BaseCol className="grow overflow-hidden">
-        {(group.tracks as (IBedDBDataTrack | ILocalBedTrack)[]).map((t, ti) => {
-          return (
-            <VCenterRow
-              key={t.id}
-              id={t.name}
-              style={{
-                color: t.displayOptions.fill.value,
-                fill: t.displayOptions.fill.value,
-              }}
-              className="gap-x-1"
-            >
+        {(group.tracks as (IBedDBDataTrackDisplay | ILocalBedTrack)[]).map(
+          (t, ti) => {
+            return (
               <VCenterRow
-                data-pos={
-                  group.tracks.length === 1
-                    ? 'normal'
-                    : ti === 0
-                      ? 'start'
-                      : ti === group.tracks.length - 1
-                        ? 'end'
-                        : 'middle'
-                }
-                className={cn(
-                  'grow overflow-hidden h-9 data-[pos=normal]:rounded-theme data-[pos=start]:rounded-t-theme data-[pos=end]:rounded-b-theme',
-                  { 'pl-4': ti > 0 }
-                )}
+                key={t.id}
+                id={t.name}
+                style={{
+                  color: t.displayOptions.fill.value,
+                  fill: t.displayOptions.fill.value,
+                }}
+                className="gap-x-1"
               >
-                <TruncateSpan className="h-9 w-full font-semibold">
-                  {t.name}
-                </TruncateSpan>
+                <VCenterRow
+                  data-pos={
+                    group.tracks.length === 1
+                      ? 'normal'
+                      : ti === 0
+                        ? 'start'
+                        : ti === group.tracks.length - 1
+                          ? 'end'
+                          : 'middle'
+                  }
+                  className={cn(
+                    'grow overflow-hidden h-9 data-[pos=normal]:rounded-theme data-[pos=start]:rounded-t-theme data-[pos=end]:rounded-b-theme',
+                    { 'pl-4': ti > 0 }
+                  )}
+                >
+                  <TruncateSpan className="h-9 w-full font-semibold">
+                    {t.name}
+                  </TruncateSpan>
 
-                <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
-                  <button
-                    title={`Edit ${t.name}`}
-                    className="opacity-50 hover:opacity-100 trans-opacity"
-                    onClick={() => {
-                      openDialog({
-                        type: 'edit-bed',
-                        payload: {
-                          group,
-                          track: t,
-                        },
-                      })
-                    }}
-                  >
-                    <Settings2 size={20} strokeWidth={1.5} />
-                  </button>
+                  <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
+                    <button
+                      title={`Edit ${t.name}`}
+                      className="opacity-50 hover:opacity-100 trans-opacity"
+                      onClick={() => {
+                        openDialog({
+                          type: 'edit-bed',
+                          payload: {
+                            group,
+                            track: t,
+                          },
+                        })
+                      }}
+                    >
+                      <Settings2 size={20} strokeWidth={1.5} />
+                    </button>
+                  </VCenterRow>
                 </VCenterRow>
               </VCenterRow>
-            </VCenterRow>
-          )
-        })}
+            )
+          }
+        )}
       </BaseCol>
     </BaseTrackItem>
   )

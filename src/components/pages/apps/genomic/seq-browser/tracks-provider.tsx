@@ -41,14 +41,6 @@ export const DEFAULT_GENOMIC_LOCATION = parseGenomicLocation(
 
 export const MIN_Y = 1
 
-export interface ITrack {
-  /** A randomly assigned id for the track */
-  id: string
-
-  /** A human readable name for the track, e.g. Ruler */
-  name: string
-}
-
 export interface ITag {
   name: string
   value: string
@@ -65,16 +57,14 @@ export interface ISeqTrackDisplayOptions {
   height: number
 }
 
-export interface IDBTrack extends ITrack {
-  /** A database identifier */
-  id: string
+export interface IDBTrack extends IDBEntity {
   //genome: string
   assembly: string
   technology: string
   institution: string
   dataset: string
   reads?: number
-  type: string
+  //type: string
   url?: string
   tags: ITag[]
 }
@@ -121,7 +111,7 @@ export interface IRemoteBigWigTrack extends IDBTrack, IBaseRemoteBigWigTrack {
   type: 'RemoteBigWig'
 }
 
-export interface ILocalBigWigTrack extends ITrack, IBaseRemoteBigWigTrack {
+export interface ILocalBigWigTrack extends IDBEntity, IBaseRemoteBigWigTrack {
   type: 'LocalBigWig'
 }
 
@@ -137,7 +127,7 @@ export type ISeqDBTrack = ISeqDBDataTrack | IRemoteBigWigTrack
 export type SignalTrack = ISeqDBTrack | ILocalBigWigTrack
 
 // The peak tracks that the peak db app can return
-export type IBedDBTrack = IBedDBDataTrack | IRemoteBigBedTrack
+export type IBedDBTrack = IBedDBDataTrackDisplay | IRemoteBigBedTrack
 
 // All the peak track types including being able to load from local files
 export type IPeakTrack = IBedDBTrack | ILocalBigBedTrack | ILocalBedTrack
@@ -158,7 +148,7 @@ export const DEFAULT_SEQ_TRACK_DISPLAY_OPTIONS: ISeqTrackDisplayOptions = {
   smooth: true,
 }
 
-export interface IGeneTrack extends ITrack {
+export interface IGeneTrack extends IDBEntity {
   type: 'Gene'
   displayOptions: IGeneTrackDisplayOptions
 }
@@ -233,7 +223,7 @@ export const DEFAULT_GENE_TRACK_DISPLAY_OPTIONS: IGeneTrackDisplayOptions = {
   },
 }
 
-export interface IScaleTrack extends ITrack {
+export interface IScaleTrack extends IDBEntity {
   type: 'Scale'
   displayOptions: IScaleTrackDisplayOptions
 }
@@ -262,7 +252,7 @@ export const DEFAULT_SCALE_TRACK_DISPLAY_OPTIONS: IScaleTrackDisplayOptions = {
   bp: 10000,
 }
 
-export interface IRulerTrack extends ITrack {
+export interface IRulerTrack extends IDBEntity {
   type: 'Ruler'
   displayOptions: IRulerTrackDisplayOptions
 }
@@ -299,7 +289,7 @@ export const DEFAULT_RULER_TRACK_DISPLAY_OPTIONS: IRulerTrackDisplayOptions = {
   bp: 10000,
 }
 
-export interface ILocationTrack extends ITrack {
+export interface ILocationTrack extends IDBEntity {
   type: 'Location'
   displayOptions: ILocationTrackDisplayOptions
 }
@@ -318,7 +308,7 @@ export const DEFAULT_LOCATION_TRACK_DISPLAY_OPTIONS: ILocationTrackDisplayOption
     } as ITextProps,
   }
 
-export interface ICytobandsTrack extends ITrack {
+export interface ICytobandsTrack extends IDBEntity {
   type: 'Cytobands'
   displayOptions: ICytobandsTrackDisplayOptions
 }
@@ -373,10 +363,14 @@ export const DEFAULT_CYTOBANDS_TRACK_DISPLAY_OPTIONS: ICytobandsTrackDisplayOpti
 export interface IBedDBDataTrack extends IDBTrack {
   type: 'BED' | 'BigBed'
   regions?: number
+  //displayOptions: IBedTrackDisplayOptions
+}
+
+export interface IBedDBDataTrackDisplay extends IBedDBDataTrack {
   displayOptions: IBedTrackDisplayOptions
 }
 
-export interface IBaseBedTrack extends ITrack {
+export interface IBaseBedTrack extends IDBEntity {
   reader: BaseBedReader
   displayOptions: IBedTrackDisplayOptions
 }

@@ -23,7 +23,6 @@ export function LocationDialog({
 
   return (
     <OKCancelDialog
-      //buttons={[TEXT_OK]}
       title="New Location"
       onResponse={(e) => {
         if (e === TEXT_OK) {
@@ -32,19 +31,13 @@ export function LocationDialog({
           onCancel()
         }
       }}
-      //contentVariant="glass"
-      //bodyVariant="card"
-      //bodyCls="flex flex-row items-center gap-x-4"
     >
       <LabelContainer label="Location or gene">
         <LocationAutocomplete
           id="location"
-          //variant="dialog"
-          //h="dialog"
           value={text}
-          placeholder="height"
+          placeholder="Location or gene"
           onTextChange={(v) => setText(v)}
-          //className="rounded-theme grow"
         />
       </LabelContainer>
 

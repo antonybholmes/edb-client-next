@@ -171,9 +171,9 @@
     "color": "#ff9900",
     "version": "1.2.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-24T02:36:23.851Z",
-    "hash": "af30d49982d0a1814c1d689ccc47177199e0c3ccfa8bb3aa17efbb6e75675e61",
-    "build": 52
+    "modified": "2026-07-31T20:28:40.248Z",
+    "hash": "37bab40866cc05f2fbff1435ce7bc859c36ad3750b182d2f587736b627149ae7",
+    "build": 54
   },
   {
     "name": "Seq Browser",
@@ -181,9 +181,9 @@
     "color": "#FF0000",
     "version": "32.2.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-24T19:09:48.765Z",
-    "hash": "de178eabd3b3701e975df52053dd3e29fb08127cd57d8c82f9f35bce8172ce67",
-    "build": 1096
+    "modified": "2026-07-31T20:28:40.244Z",
+    "hash": "0148f01ba1560a07fafee2a5d4da50dca47196e6a808996a1bbdc15f5a608c71",
+    "build": 1098
   },
   {
     "name": "Single Cell",
