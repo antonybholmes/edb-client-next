@@ -1,20 +1,31 @@
 import { useEffect } from 'react'
 
 import { create } from 'zustand'
-import { IRemoteBigWigTrack, type ISeqTrack } from './tracks-provider'
+import { IRemoteBigWigTrack, type ISeqTrack } from '../tracks-provider'
 
-import { openDB } from 'idb'
+import { IDBPDatabase, openDB } from 'idb'
 
-export const dbPromise = openDB('hub-db', 1, {
-  upgrade(db) {
-    const hubs = db.createObjectStore('hubs', {
-      keyPath: 'id',
+let dbPromise: Promise<IDBPDatabase> | undefined
+
+export function getDB() {
+  if (typeof window === 'undefined') {
+    return undefined
+  }
+
+  if (!dbPromise) {
+    dbPromise = openDB('hub-db', 1, {
+      upgrade(db) {
+        const hubs = db.createObjectStore('hubs', {
+          keyPath: 'id',
+        })
+
+        hubs.createIndex('name', 'name')
+      },
     })
+  }
 
-    hubs.createIndex('name', 'name')
-    //hubs.createIndex("type", "type");
-  },
-})
+  return dbPromise
+}
 
 interface IHub {
   id: string
@@ -39,7 +50,12 @@ export const useHubStore = create<IHubStore>()((set, get) => ({
       return
     }
 
-    const db = await dbPromise
+    const db = await getDB()
+
+    if (!db) {
+      return
+    }
+
     const hubs = await db.getAll('hubs')
 
     set({ hubs, loaded: true })

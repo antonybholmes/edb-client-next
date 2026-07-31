@@ -68,7 +68,7 @@ export function NewTrackMenu() {
       title="Add Track"
       onMainClick={() =>
         openSeqBrowserDialog({
-          type: 'add-seqs',
+          type: 'add-hubs',
           payload: { technology: 'chip-seq' },
         })
       }
@@ -84,7 +84,7 @@ export function NewTrackMenu() {
                 aria-label="ChIP-seq"
                 onClick={() =>
                   openSeqBrowserDialog({
-                    type: 'add-seqs',
+                    type: 'add-hubs',
                     payload: { technology: 'chip-seq' },
                   })
                 }
@@ -96,7 +96,7 @@ export function NewTrackMenu() {
                 aria-label="RNA-seq"
                 onClick={() =>
                   openSeqBrowserDialog({
-                    type: 'add-seqs',
+                    type: 'add-hubs',
                     payload: { technology: 'rna-seq' },
                   })
                 }
@@ -108,7 +108,7 @@ export function NewTrackMenu() {
                 aria-label="Cut & Run"
                 onClick={() =>
                   openSeqBrowserDialog({
-                    type: 'add-seqs',
+                    type: 'add-hubs',
                     payload: { technology: 'cut-and-run' },
                   })
                 }

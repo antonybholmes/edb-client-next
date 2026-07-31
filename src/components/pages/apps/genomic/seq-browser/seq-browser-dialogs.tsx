@@ -26,6 +26,7 @@ import { AddLocalFilesDialog } from './dialogs/local/add-local-files-dialog'
 import { PeaksDialog } from './dialogs/peaks-dialog'
 import { SeqsDialog } from './dialogs/seqs-dialog'
 import { TrackInfoDialog } from './dialogs/track-info-dialog'
+import { HubsDialog } from './hubs/hubs-dialog'
 import { BigBedReader } from './readers/bed/bigbed-reader'
 import { LocalBedReader } from './readers/bed/local-bed-reader'
 import { BigWigReader } from './readers/seq/bigwig-reader'
@@ -81,6 +82,9 @@ type DialogTypeMap = {
     track: ISeqTrack | IBigWigTrack | IRemoteBigWigTrack
   }
   'add-seqs': {
+    technology: string
+  }
+  'add-hubs': {
     technology: string
   }
   'add-peaks': {}
@@ -261,6 +265,83 @@ function TrackInfoDialogRenderer({
   const { track } = dialog.payload
 
   return <TrackInfoDialog track={track} onCancel={() => close(dialog.id)} />
+}
+
+function AddHubsDialogRenderer({ dialog, close }: IDialogRenderer<'add-hubs'>) {
+  const { dispatch } = useTracks()
+  let { technology } = dialog.payload
+
+  technology = technology.includes('chip-seq')
+    ? 'ChIP-seq'
+    : technology.includes('rna-seq')
+      ? 'RNA-seq'
+      : 'Cut&Run'
+
+  return (
+    <HubsDialog
+      technology={technology}
+      onResponse={(response, data) => {
+        if (response === TEXT_OK && data) {
+          const signals: ISeqDBTrack[] = data.tracks.map((track, ti) => {
+            const displayOptions: ISeqTrackDisplayOptions = produce(
+              DEFAULT_SEQ_TRACK_DISPLAY_OPTIONS,
+              (draft) => {
+                draft.stroke.value =
+                  DEFAULT_PALETTE[ti % DEFAULT_PALETTE.length]!
+                draft.fill.value = DEFAULT_PALETTE[ti % DEFAULT_PALETTE.length]!
+              }
+            )
+
+            switch (track.type) {
+              case 'RemoteBigWig':
+                // remote bigwig add reader so data can be read
+                // from track
+                return {
+                  ...track,
+                  type: 'RemoteBigWig',
+                  scale: track.tags.some((x) => x.value.includes('BPM'))
+                    ? 'BPM'
+                    : 'Count',
+                  displayOptions,
+                  reader: new BigWigReader(
+                    new BigWig({
+                      url: track.url!,
+                    })
+                  ),
+                }
+              case 'BigWig':
+                return {
+                  ...track,
+                  type: 'BigWig',
+                  scale: track.tags.some((x) => x.value.includes('BPM'))
+                    ? 'BPM'
+                    : 'Count',
+                  displayOptions,
+                }
+              default:
+                return {
+                  ...track,
+                  type: 'Seq',
+                  displayOptions,
+                }
+            }
+          })
+
+          let displayTracks: ITrackGroup[] = []
+
+          if (data.combine) {
+            displayTracks = [newTrackGroup(signals)]
+          } else {
+            displayTracks = signals.map((s) => newTrackGroup([s]))
+          }
+
+          dispatch({ type: 'add', tracks: displayTracks })
+        }
+
+        close(dialog.id)
+      }}
+    />
+  )
 }
 
 function AddSeqsDialogRenderer({ dialog, close }: IDialogRenderer<'add-seqs'>) {
@@ -453,6 +534,8 @@ function DialogRenderer({
       return <AddPeaksDialogRenderer dialog={dialog} close={close} />
     case 'add-local-files':
       return <AddLocalFilesDialogRenderer dialog={dialog} close={close} />
+    case 'add-hubs':
+      return <AddHubsDialogRenderer dialog={dialog} close={close} />
     default:
       return null
   }
