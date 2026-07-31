@@ -2284,6 +2284,10 @@
         {
           "msg": "Added hub store for storing user data in indexdb",
           "date": "2026-07-31T20:51:35.717Z"
+        },
+        {
+          "msg": "seqs dialog replaced with hubs dialog which will become a hub centric dialog",
+          "date": "2026-07-31T21:23:45.413Z"
         }
       ],
       "Added": [

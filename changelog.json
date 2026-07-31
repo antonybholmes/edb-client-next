@@ -2288,6 +2288,10 @@
         {
           "msg": "seqs dialog replaced with hubs dialog which will become a hub centric dialog",
           "date": "2026-07-31T21:23:45.413Z"
+        },
+        {
+          "msg": "Added hub edit ability to hubs-dialog",
+          "date": "2026-07-31T22:22:09.279Z"
         }
       ],
       "Added": [

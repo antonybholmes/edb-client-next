@@ -41,13 +41,20 @@ import { useEffect, useMemo, useState } from 'react'
 import { type ISeqDBTrack } from '../tracks-provider'
 import { useTracks } from '../tracks-store'
 
+import { useDialogs } from '@/components/dialogs/dialogs'
 import { useEdbSettings } from '@/components/edb/edb-settings'
 import { normalizeAssemblyName } from '@/components/edb/genome'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
+import { SortableItem } from '@/components/sortable-item'
 import { ToolbarSeparator } from '@/components/toolbar/toolbar-separator'
+import { TruncateSpan } from '@/components/truncate-span'
 import { appsConfig } from '@/config/apps'
-import { ArrowDownUp, ShoppingCart } from 'lucide-react'
-import { useHubs } from './hub-store'
+import { DragDropProvider } from '@dnd-kit/react'
+import { ArrowDownUp, CirclePlus, ShoppingCart } from 'lucide-react'
+import { TRACK_ITEM_BUTTONS_CLS } from '../track-items/seq-track-item'
+import { HubDialog } from './hub-dialog'
+import { IHub, makeNewHub, useHubs } from './hub-store'
 
 function makeUcscUrl(seq: ISeqDBTrack): string {
   return `https://genome.ucsc.edu/cgi-bin/hgTracks?db=${seq.assembly}&hgct_customText=track%20type=bigWig%20name=%22${seq.name}%22%20visibility=full%20bigDataUrl=${seq.url}`
@@ -233,6 +240,169 @@ export function HubsDialog({
   )
 }
 
+export interface IHubCallback {
+  hub: IHub
+  callback?: (hub: IHub) => void
+}
+
+function HubItems() {
+  const [asc, setAsc] = useState(true)
+
+  const [selectedMap, setSelectedMap] = useState<Map<string, boolean>>(
+    new Map<string, boolean>()
+  )
+
+  const { open: openDialog } = useDialogs()
+
+  const { hubs, addHub, removeHub, updateHub } = useHubs()
+
+  const [openGroupDialog, setOpenGroupDialog] = useState<
+    IHubCallback | undefined
+  >(undefined)
+
+  function _addHub() {
+    editHub(makeNewHub())
+  }
+
+  function editHub(hub: IHub) {
+    // if a column is selected, suggest its name as what the user wants to
+    // to group
+
+    setOpenGroupDialog({
+      hub,
+
+      callback: (hub: IHub) => {
+        //const indices = getColIdxFromGroup(df, group)
+
+        addHub(hub)
+
+        setOpenGroupDialog(undefined)
+      },
+    })
+  }
+
+  return (
+    <>
+      {openGroupDialog?.callback && (
+        <HubDialog
+          hub={openGroupDialog?.hub}
+          onResponse={(response, hub) => {
+            if (response === TEXT_OK && hub) {
+              openGroupDialog?.callback?.(hub)
+            } else {
+              setOpenGroupDialog(undefined)
+            }
+          }}
+        />
+      )}
+      <BaseCol className="text-xs gap-y-2 pb-2 border-b border-border/50">
+        <h2 className="font-semibold">Hubs</h2>
+        <VCenterRow className="mx-1">
+          <VCenterRow className="gap-x-1">
+            <IconButton
+              variant="flat-alt"
+
+              // ripple={false}
+              onClick={() => {
+                _addHub()
+              }}
+              title="Add Hub"
+              //className={DIALOG_HEADER_BUTTON_CLS}
+            >
+              <CirclePlus size={20} strokeWidth={1.5} />
+            </IconButton>
+
+            <ToolbarSeparator />
+
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <IconButton
+                    variant="flat-alt"
+
+                    title="Sort Items"
+                  >
+                    <ArrowDownUp size={20} strokeWidth={1.5} />
+                  </IconButton>
+                }
+              />
+              <DropdownMenuContent align="start">
+                <DropdownSortOrderGroup asc={asc} setAsc={setAsc} />
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </VCenterRow>
+
+          <IconButton
+            variant="flat-alt"
+            //variant="flat"
+            onClick={() => {}}
+          >
+            <MultiSelectIcon />
+          </IconButton>
+        </VCenterRow>
+
+        <DragDropProvider
+        //onDragStart={event => setActiveId(event.active.id as string)}
+        // onDragEnd={(event) => {
+        //   const newOrder = move(dfs, event)
+
+        //   setDfs(newOrder)
+        // }}
+        >
+          <ul>
+            {hubs.map((hub, hi) => (
+              <li key={hub.id} className="flex flex-row items-center gap-x-1">
+                <SortableItem
+                  key={hub.id}
+                  id={hub.id}
+                  index={hi}
+                  className="group"
+                  extChildren={
+                    <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
+                      <button
+                        className="text-foreground/50 hover:text-destructive trans-color"
+                        onClick={() => {
+                          openDialog({
+                            type: 'warning',
+                            payload: {
+                              content: `Are you sure you want to delete the "${hub.name}" hub?`,
+                              callback: (response) => {
+                                if (response === TEXT_OK) {
+                                  removeHub(hub.id)
+                                }
+                              },
+                            },
+                          })
+                        }}
+                      >
+                        <TrashIcon />
+                      </button>
+                    </VCenterRow>
+                  }
+                >
+                  <TruncateSpan className="h-8 grow">{hub.name}</TruncateSpan>
+                  <FillButton
+                    title="Hub color"
+                    button="simple"
+                    colors={[
+                      {
+                        color: hub.color,
+                        allowNoColor: false,
+                        onColorChange: ({ color }) =>
+                          updateHub({ ...hub, color }),
+                      },
+                    ]}
+                  />
+                </SortableItem>
+              </li>
+            ))}
+          </ul>
+        </DragDropProvider>
+      </BaseCol>
+    </>
+  )
+}
+
 function SideItems({
   seqs,
   searchedDb,
@@ -253,8 +423,6 @@ function SideItems({
   const [selectedMap, setSelectedMap] = useState<Map<string, boolean>>(
     new Map<string, boolean>()
   )
-
-  const { hubs } = useHubs()
 
   useEffect(() => {
     if (seqs.length === 0) {
@@ -332,9 +500,7 @@ function SideItems({
         </IconButton>
       </DialogToolbar>
 
-      {hubs.map((hub) => (
-        <div key={hub.id}>{hub.name}</div>
-      ))}
+      <HubItems />
 
       <ItemsInStore
         searchedDb={searchedDb}

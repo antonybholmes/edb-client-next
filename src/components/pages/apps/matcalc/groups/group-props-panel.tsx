@@ -574,14 +574,11 @@ export function GroupPropsPanel() {
           <VScrollPanel className="grow">
             <DragDropProvider
               onDragOver={(event) => {
-                const { source, target } = event.operation
+                const { source } = event.operation
 
                 if (source?.type !== 'group') {
                   return
                 }
-
-                //if (isSortable(source)) {
-                //const { initialIndex, index, initialGroup, group } = source
 
                 const items = Object.fromEntries(
                   groupRows.map((row) => [row.id, row.groups])
@@ -591,15 +588,6 @@ export function GroupPropsPanel() {
                   ...row,
                   groups: nextItems[row.id] ?? row.groups,
                 }))
-
-                // const groupRowIndex = groupRows.findIndex((gr) =>
-                //   gr.groups.some((g) => g.id === target.id)
-                // )
-
-                // const newOrder = move(
-                //   groupRows[groupRowIndex].groups,
-                //   event
-                // )
 
                 addGroups(nextRows)
               }}
@@ -614,29 +602,6 @@ export function GroupPropsPanel() {
                 const newOrder = move(groupRows, event)
 
                 addGroups(newOrder)
-
-                // const newOrder = move(
-                //   groups.map((group) => group.id),
-                //   event
-                // )
-
-                // const { active, over } = event
-
-                // if (over && active.id !== over?.id) {
-                //   const oldIndex = groups.findIndex(
-                //     (group) => group.id === (active.id as string)
-                //   )
-                //   const newIndex = groups.findIndex(
-                //     (group) => group.id === (over.id as string)
-                //   )
-                //   const newOrder = arrayMove(
-                //     groups.map((group) => group.id),
-                //     oldIndex,
-                //     newIndex
-                //   )
-
-                //   reorderGroups(newOrder)
-                // }
               }}
             >
               <ul className="flex flex-col gap-y-1">

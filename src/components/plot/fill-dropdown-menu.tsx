@@ -1,6 +1,7 @@
 import { type IButtonProps } from '@/themed/v2/button'
 
 import { PaintBucket } from 'lucide-react'
+import { ReactNode } from 'react'
 import { CenterRow } from '../layout/center-row'
 import {
   DropdownMenu,
@@ -20,6 +21,11 @@ import {
 export type IOutlineButtonProps = Omit<IButtonProps, 'font' | 'color'> & {
   colors: IColorPickerProps[]
   align?: 'start' | 'end'
+  /**
+   * Whether to render as a flat, clickable button, or a simple icon button
+   * with no ui effects
+   */
+  button?: 'flat' | 'simple'
   onCancel?: () => void
   open?: boolean
   onOpenChanged?: (open: boolean) => void
@@ -30,6 +36,7 @@ export function FillButton({
   align = 'start',
   className = '',
   title,
+  button = 'flat',
   'aria-label': ariaLabel,
   children,
   ...props
@@ -48,13 +55,8 @@ export function FillButton({
 
   const color0 = addStandardDefaultsToColorPickerProps(colors[0]!)
 
-  return (
-    <FillDropdownMenu
-      colors={colors}
-      align={align}
-      className={className}
-      {...props}
-    >
+  const trigger: ReactNode =
+    button === 'flat' ? (
       <DropdownMenuTrigger
         render={
           <ToolbarIconButton title={title}>
@@ -62,6 +64,20 @@ export function FillButton({
           </ToolbarIconButton>
         }
       />
+    ) : (
+      <DropdownMenuTrigger title={title}>
+        <FillIcon cp={color0} />
+      </DropdownMenuTrigger>
+    )
+
+  return (
+    <FillDropdownMenu
+      colors={colors}
+      align={align}
+      className={className}
+      {...props}
+    >
+      {trigger}
     </FillDropdownMenu>
   )
 }
