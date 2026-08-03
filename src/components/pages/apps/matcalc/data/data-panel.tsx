@@ -92,6 +92,7 @@ export function DataPanel() {
             type: 'save-table',
             payload: {
               callback: (data) => {
+                console.log(data)
                 save(data.name, data.format.ext)
               },
             },

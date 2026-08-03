@@ -351,50 +351,48 @@ function HubItems() {
         >
           <ul>
             {hubs.map((hub, hi) => (
-              <li key={hub.id} className="flex flex-row items-center gap-x-1">
-                <SortableItem
-                  key={hub.id}
-                  id={hub.id}
-                  index={hi}
-                  className="group"
-                  extChildren={
-                    <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
-                      <button
-                        className="text-foreground/50 hover:text-destructive trans-color"
-                        onClick={() => {
-                          openDialog({
-                            type: 'warning',
-                            payload: {
-                              content: `Are you sure you want to delete the "${hub.name}" hub?`,
-                              callback: (response) => {
-                                if (response === TEXT_OK) {
-                                  removeHub(hub.id)
-                                }
-                              },
+              <SortableItem
+                key={hub.id}
+                id={hub.id}
+                index={hi}
+                className="group"
+                extChildren={
+                  <VCenterRow className={TRACK_ITEM_BUTTONS_CLS}>
+                    <button
+                      className="text-foreground/50 hover:text-destructive trans-color"
+                      onClick={() => {
+                        openDialog({
+                          type: 'warning',
+                          payload: {
+                            content: `Are you sure you want to delete the "${hub.name}" hub?`,
+                            callback: (response) => {
+                              if (response === TEXT_OK) {
+                                removeHub(hub.id)
+                              }
                             },
-                          })
-                        }}
-                      >
-                        <TrashIcon />
-                      </button>
-                    </VCenterRow>
-                  }
-                >
-                  <TruncateSpan className="h-8 grow">{hub.name}</TruncateSpan>
-                  <FillButton
-                    title="Hub color"
-                    button="simple"
-                    colors={[
-                      {
-                        color: hub.color,
-                        allowNoColor: false,
-                        onColorChange: ({ color }) =>
-                          updateHub({ ...hub, color }),
-                      },
-                    ]}
-                  />
-                </SortableItem>
-              </li>
+                          },
+                        })
+                      }}
+                    >
+                      <TrashIcon />
+                    </button>
+                  </VCenterRow>
+                }
+              >
+                <TruncateSpan className="h-8 grow">{hub.name}</TruncateSpan>
+                <FillButton
+                  title="Hub color"
+                  button="simple"
+                  colors={[
+                    {
+                      color: hub.color,
+                      allowNoColor: false,
+                      onColorChange: ({ color }) =>
+                        updateHub({ ...hub, color }),
+                    },
+                  ]}
+                />
+              </SortableItem>
             ))}
           </ul>
         </DragDropProvider>
@@ -500,7 +498,7 @@ function SideItems({
         </IconButton>
       </DialogToolbar>
 
-      <HubItems />
+      {/* <HubItems /> */}
 
       <ItemsInStore
         searchedDb={searchedDb}

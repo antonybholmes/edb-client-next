@@ -56,11 +56,11 @@ export function SaveTableDialog({
       onResponse={(response) => {
         if (response !== TEXT_CANCEL) {
           const format = fileTypes.filter(
-            (f) => f.ext.toUpperCase() === response
+            (f) => f.ext.toUpperCase() === response || f.name === response
           )[0]!
 
           onResponse?.(response, {
-            name: `${text.split('.')[0]}.${response.toLowerCase()}`,
+            name: `${text.split('.')[0]}.${response.split(' ')[0].toLowerCase()}`,
             format,
             hasHeader,
             hasIndex,
