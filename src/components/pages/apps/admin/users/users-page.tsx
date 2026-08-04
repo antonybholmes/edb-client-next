@@ -34,8 +34,8 @@ import { Button } from '@/themed/v2/button'
 import {
   createColumnHelper,
   flexRender,
-  getCoreRowModel,
-  useReactTable,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table'
 
 import { CenterCol } from '@/components/layout/center-col'
@@ -184,7 +184,9 @@ export function AdminUsersPage() {
   //   })
   // }, [user])
 
-  const columnHelper = createColumnHelper<IEdbUser>()
+  const features = tableFeatures({})
+
+  const columnHelper = createColumnHelper<typeof features, IEdbUser>()
 
   const columns = [
     columnHelper.accessor((row) => row, {
@@ -294,10 +296,10 @@ export function AdminUsersPage() {
     }),
   ]
 
-  const table = useReactTable({
-    columns,
+  const table = useTable({
+    features,
     data: users,
-    getCoreRowModel: getCoreRowModel(),
+    columns,
   })
 
   const smallColumns = [
@@ -362,10 +364,10 @@ export function AdminUsersPage() {
     }),
   ]
 
-  const smallTable = useReactTable({
+  const smallTable = useTable({
+    features,
     columns: smallColumns,
     data: users,
-    getCoreRowModel: getCoreRowModel(),
   })
 
   async function newUser(user: INewUser) {
@@ -503,7 +505,7 @@ export function AdminUsersPage() {
                   <TableBody>
                     {table.getRowModel().rows.map((row) => (
                       <TableRow key={row.id}>
-                        {row.getVisibleCells().map((cell) => (
+                        {row.getAllCells().map((cell) => (
                           <TableCell key={cell.id} className="text-xs">
                             {flexRender(
                               cell.column.columnDef.cell,
@@ -538,7 +540,7 @@ export function AdminUsersPage() {
                   <TableBody>
                     {smallTable.getRowModel().rows.map((row) => (
                       <TableRow key={row.id}>
-                        {row.getVisibleCells().map((cell) => (
+                        {row.getAllCells().map((cell) => (
                           <TableCell key={cell.id}>
                             {flexRender(
                               cell.column.columnDef.cell,

@@ -109,11 +109,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "48.6.6",
+    "version": "48.6.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-31T22:22:08.252Z",
-    "hash": "876e4d7a2cb42dde241331a4ba53737c9dff859e115c3ccead432f7e3f8a53d4",
-    "build": 1868
+    "modified": "2026-08-04T15:51:44.124Z",
+    "hash": "6ff326c6d1d691f708a17a29b6a6bd292a1312943c39fd880463dc4df1953e5c",
+    "build": 1870
   },
   {
     "name": "Motifs",
@@ -181,9 +181,9 @@
     "color": "#FF0000",
     "version": "32.2.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-31T22:22:08.250Z",
-    "hash": "017657de7e2cb578792b729d3ba3d6b05fa9b2ca25a246ff91a36af5fef51d55",
-    "build": 1104
+    "modified": "2026-08-04T15:51:44.122Z",
+    "hash": "a5b6046b6b2ec19f562d3900793887f200c52be5f6eccbb158c00ddf3713b982",
+    "build": 1106
   },
   {
     "name": "Single Cell",
@@ -210,9 +210,9 @@
     "description": "User dashboard for admins.",
     "version": "1.0.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-01T16:18:39.045Z",
-    "hash": "559dda47bfa245abc3bffbaee851d29e611b50bbe6735d00bf8496af79ed875f",
-    "build": 14
+    "modified": "2026-08-04T15:51:44.120Z",
+    "hash": "7ce5dd549a0922c8988eeca404614bb34f4849d3599ce9cb3f8c9258cd0874e9",
+    "build": 16
   },
   {
     "name": "Variants",

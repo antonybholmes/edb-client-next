@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Switched to ts 7.
 - Added hub edit ability to hubs-dialog.
 - seqs dialog replaced with hubs dialog which will become a hub centric dialog.
 - Added hub store for storing user data in indexdb.
