@@ -2307,5 +2307,18 @@
     },
     "author": "Antony Holmes",
     "date": "2026-07-23T16:28:52.384Z"
+  },
+  {
+    "version": "87.2",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Revised save table dialog",
+          "date": "2026-08-04T20:41:33.794Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-08-04T20:41:33.794Z"
   }
 ]
