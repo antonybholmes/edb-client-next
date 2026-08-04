@@ -49,18 +49,20 @@ export function SaveTableDialog({
     <OKCancelDialog
       open={open}
       title={title}
-      buttons={fileTypes.map(
-        (format) => format.name || format.ext.toUpperCase()
-      )}
-      buttonOrder="vertical"
+      buttons={fileTypes.map((ft) => ({
+        name: ft.name,
+        value: ft.ext.toLowerCase(),
+      }))}
+      //buttonOrder="vertical"
       onResponse={(response) => {
+        console.log(response)
         if (response !== TEXT_CANCEL) {
           const format = fileTypes.filter(
-            (f) => f.ext.toUpperCase() === response || f.name === response
+            (f) => f.ext.toLowerCase() === response || f.name === response
           )[0]!
 
           onResponse?.(response, {
-            name: `${text.split('.')[0]}.${response.split(' ')[0].toLowerCase()}`,
+            name: `${text.split('.')[0].trim()}.${format.ext}`,
             format,
             hasHeader,
             hasIndex,

@@ -1,5 +1,12 @@
 # Changelog
 
+## 87.2 (Aug, 2026)
+
+### Changed
+
+- Revised save table dialog.
+
+
 ## 87.0 (Jul, 2026)
 
 ### Added

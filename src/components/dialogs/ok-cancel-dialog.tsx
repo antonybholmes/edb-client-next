@@ -49,7 +49,7 @@ export interface IModalProps<T = unknown> extends IOpenChange, IChildrenProps {
   title?: ReactNode
   description?: string
   onResponse?: ModalResponse<T> | undefined
-  buttons?: string[]
+  buttons?: (string | { name: string; value: string })[]
   buttonOrder?: ButtonOrder
   modalType?: ModalType | undefined
   bodyCls?: UndefStr
@@ -309,7 +309,7 @@ export function DialogButtons({
   buttonOrder = 'auto',
   onResponse = () => {},
 }: {
-  buttons?: string[]
+  buttons?: (string | { name: string; value: string })[]
   buttonOrder?: ButtonOrder
   onResponse?: (response: string) => void
 }) {
@@ -322,23 +322,29 @@ export function DialogButtons({
       <HCenterCol className="gap-y-2  ">
         <Button
           variant="app-theme"
-          onClick={() => onResponse?.(buttons[0]!)}
+          onClick={() =>
+            onResponse?.(
+              typeof buttons[0] === 'string' ? buttons[0]! : buttons[0]!.value
+            )
+          }
           className="w-full"
           size="lg"
           ripple={true}
         >
-          {buttons[0]}
+          {typeof buttons[0] === 'string' ? buttons[0] : buttons[0]!.name}
         </Button>
 
         {buttons.slice(1).map((button, bi) => (
           <Button
             key={bi}
-            onClick={() => onResponse?.(button)}
+            onClick={() =>
+              onResponse?.(typeof button === 'string' ? button : button.value)
+            }
             className="w-full"
             size="lg"
             variant="secondary"
           >
-            {button}
+            {typeof button === 'string' ? button : button.name}
           </Button>
         ))}
       </HCenterCol>
@@ -349,23 +355,29 @@ export function DialogButtons({
     <OSButtonRow buttonOrder={buttonOrder}>
       <Button
         variant="app-theme"
-        onClick={() => onResponse?.(buttons[0]!)}
+        onClick={() =>
+          onResponse?.(
+            typeof buttons[0] === 'string' ? buttons[0]! : buttons[0]!.value
+          )
+        }
         className="min-w-23"
         size="lg"
         ripple={true}
       >
-        {buttons[0]}
+        {typeof buttons[0] === 'string' ? buttons[0] : buttons[0]!.name}
       </Button>
 
       {buttons.slice(1).map((button, bi) => (
         <Button
           key={bi}
-          onClick={() => onResponse?.(button)}
+          onClick={() =>
+            onResponse?.(typeof button === 'string' ? button : button.value)
+          }
           className="min-w-23"
           size="lg"
           variant="secondary"
         >
-          {button}
+          {typeof button === 'string' ? button : button.name}
         </Button>
       ))}
     </OSButtonRow>

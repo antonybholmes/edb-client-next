@@ -115,7 +115,7 @@ export function VirtualDataFrameProvider({
 
   const [colWidths, setColWidths] = useState<Record<number, number>>({})
 
-  const { selection, clear: clearSelection } = useSelectionRange()
+  const { selection } = useSelectionRange()
 
   const tableDataRef = useRef<HTMLDivElement>(null)
   const editRef = useRef<HTMLInputElement | null>(null)

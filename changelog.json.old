@@ -2292,6 +2292,10 @@
         {
           "msg": "Added hub edit ability to hubs-dialog",
           "date": "2026-07-31T22:22:09.279Z"
+        },
+        {
+          "msg": "Switched to ts 7.",
+          "date": "2026-08-04T15:51:44.995Z"
         }
       ],
       "Added": [
