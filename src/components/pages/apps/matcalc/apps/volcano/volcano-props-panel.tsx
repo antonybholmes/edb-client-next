@@ -329,7 +329,7 @@ export function VolcanoPropsPanel() {
                 onTextChange={(v) => setText(v)}
                 placeholder="Label points on plot..."
                 className="h-48"
-                disabled={settings.volcano.labels.auto}
+                //disabled={settings.volcano.labels.auto}
               />
 
               <VCenterRow className="justify-between">

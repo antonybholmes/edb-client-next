@@ -111,9 +111,9 @@
     "color": "#40bf80",
     "version": "48.8.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-08-05T17:05:01.745Z",
-    "hash": "12a70448144d2255802b68a1a772159d3dea00f967a731a1d2b12223bd570b41",
-    "build": 1880
+    "modified": "2026-08-05T20:19:31.121Z",
+    "hash": "884988dc5845786d06d8e5b9c623ec7434d19f1908664993f3fd17c1a614bbed",
+    "build": 1882
   },
   {
     "name": "Motifs",
@@ -151,9 +151,9 @@
     "color": "#6495ED",
     "version": "36.2.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-05T17:05:01.742Z",
-    "hash": "6e37a38e15f05ea7ae17944332821dd37663f1964ee43e8141b582b686a9950b",
-    "build": 892
+    "modified": "2026-08-05T20:19:31.118Z",
+    "hash": "17cc4a75c4f9418bc5956360c37b29c732f60989d7540ef53dba3e2b22f46725",
+    "build": 894
   },
   {
     "name": "Rev Comp",

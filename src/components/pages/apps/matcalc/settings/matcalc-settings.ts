@@ -252,6 +252,8 @@ export const DEFAULT_SETTINGS: IMatcalcSettings = {
 }
 
 export interface IMatcalcStore extends IMatcalcSettings {
+  hasHydrated: boolean
+  setHasHydrated: (hasHydrated: boolean) => void
   update: (settings: IMatcalcSettings) => void
 }
 
@@ -259,13 +261,26 @@ export const useMatcalcStore = create<IMatcalcStore>()(
   persist(
     (set) => ({
       ...DEFAULT_SETTINGS,
+      hasHydrated: false,
+      setHasHydrated: (hasHydrated: boolean) => {
+        set(() => ({
+          hasHydrated,
+        }))
+      },
       update: (settings: IMatcalcSettings) => {
-        set((state) => ({ ...state, ...settings }))
+        console.trace('ajha', settings)
+        set((state) => ({
+          ...state,
+          ...settings,
+        }))
       },
     }),
     {
       name: SETTINGS_KEY, // name in localStorage
       storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true)
+      },
     }
   )
 )
@@ -290,13 +305,15 @@ export const useMatcalcStore = create<IMatcalcStore>()(
 // }
 
 export function useMatcalcSettings(): {
+  hasHydrated: boolean
   settings: IMatcalcSettings
   updateSettings: (settings: Partial<IMatcalcSettings>) => void
   resetSettings: () => void
 } {
   const settings = useMatcalcStore((state) => state)
-  const update = useMatcalcStore((state) => state.update)
-  const resetSettings = () => update({ ...DEFAULT_SETTINGS })
+  const hasHydrated = useMatcalcStore((state) => state.hasHydrated)
+  const updateSettings = useMatcalcStore((state) => state.update)
+  const resetSettings = () => updateSettings({ ...DEFAULT_SETTINGS })
 
-  return { settings, updateSettings: update, resetSettings }
+  return { hasHydrated, settings, updateSettings, resetSettings }
 }

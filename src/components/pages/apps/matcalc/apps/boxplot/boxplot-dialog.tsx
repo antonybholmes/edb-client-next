@@ -46,8 +46,6 @@ export function BoxWhiskersDialog({
 }: IProps) {
   const { sheets } = useCurrentSheets()
 
-  //const branch = findBranch(branchAddr, history)[0]
-  //const step = currentStep(branch)[0]
   let df = sheets[0] as AnnotationDataFrame
 
   function _resp(resp: string) {
@@ -159,23 +157,6 @@ export function BoxWhiskersDialog({
         singlePlotDisplayOptions,
       }
     )
-
-    //addPlots([plot])
-
-    // plotsDispatch({
-    //   type: 'add',
-    //   customProps: {
-    //     df,
-    //     x,
-    //     y,
-    //     hue,
-    //     xOrder,
-    //     hueOrder,
-    //     displayOptions: { ...DEFAULT_BOX_WHISKER_DISPLAY_PROPS },
-    //     singlePlotDisplayOptions,
-    //   },
-    //   style: 'Box Plot Plot',
-    // })
 
     onResponse?.(TEXT_OK, plot)
   }
