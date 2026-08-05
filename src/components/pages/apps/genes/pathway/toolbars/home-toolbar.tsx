@@ -188,7 +188,7 @@ export function HomeToolbar() {
       return
     }
 
-    const iid = addIndicator('Calculating pathway enrichment...')
+    const iid = addIndicator('Calculating enrichment...')
 
     runPathway(
       { genesets, collections: fullCollections, genesInUniverse },
