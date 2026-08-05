@@ -53,6 +53,7 @@ export function HomeToolbar() {
         filesToDataFrames(files, {
           parseOpts: {
             ...DEFAULT_PARSE_OPTS,
+            indexCols: 0,
             colNames: files[0]!.name.includes('gmx') ? 0 : 1,
             skipRows: files[0]!.name.includes('gmx') ? 1 : 0,
           },

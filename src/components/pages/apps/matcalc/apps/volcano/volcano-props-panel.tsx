@@ -22,6 +22,7 @@ import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
 import { useEffect, useState } from 'react'
 import { useHistory } from '../../history/history-provider/history-provider'
+import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { useVolcanoContext } from './volcano-provider'
 
 export function VolcanoPropsPanel() {
@@ -36,6 +37,7 @@ export function VolcanoPropsPanel() {
   const { updatePlot } = useHistory()
 
   const { plot, displayLabels, setLabels } = useVolcanoContext()
+  const { settings, updateSettings } = useMatcalcSettings()
 
   const displayProps: IVolcanoDisplayOptions = plot.props
 
@@ -50,10 +52,10 @@ export function VolcanoPropsPanel() {
   }
 
   useEffect(() => {
-    if (displayProps.labels.auto) {
+    if (settings.volcano.labels.auto) {
       setText(displayLabels.join('\n'))
     }
-  }, [displayProps.labels.auto, displayLabels])
+  }, [settings.volcano.labels.auto, displayLabels])
 
   return (
     <PropsPanel>
@@ -311,11 +313,11 @@ export function VolcanoPropsPanel() {
             <BaseCol className="gap-y-1">
               <SwitchPropRow
                 title="Auto label"
-                checked={displayProps.labels.auto}
+                checked={settings.volcano.labels.auto}
                 onCheckedChange={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.labels.auto = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.volcano.labels.auto = v
                     })
                   )
                 }}
@@ -327,7 +329,7 @@ export function VolcanoPropsPanel() {
                 onTextChange={(v) => setText(v)}
                 placeholder="Label points on plot..."
                 className="h-48"
-                disabled={displayProps.labels.auto}
+                disabled={settings.volcano.labels.auto}
               />
 
               <VCenterRow className="justify-between">

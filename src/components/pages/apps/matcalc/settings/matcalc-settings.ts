@@ -7,7 +7,7 @@ import APP_INFO from '../manifest.json'
 import type { Species } from '@/lib/gene/geneconv'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v68`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v70`
 
 export interface IMatcalcSettings {
   dot: { size: { useOriginalValuesForSizes: boolean } }
@@ -77,8 +77,13 @@ export interface IMatcalcSettings {
   }
 
   volcano: {
-    log2FC: boolean
-    log10P: boolean
+    preprocess: {
+      applyLog2FC: boolean
+      applyMinusLog10P: boolean
+    }
+    labels: {
+      auto: boolean
+    }
   }
   files: {
     open: {
@@ -153,8 +158,13 @@ export const DEFAULT_SETTINGS: IMatcalcSettings = {
     sortWithinGroups: false,
   },
   volcano: {
-    log10P: true,
-    log2FC: false,
+    preprocess: {
+      applyLog2FC: false,
+      applyMinusLog10P: true,
+    },
+    labels: {
+      auto: true,
+    },
   },
   files: {
     open: {
@@ -242,14 +252,14 @@ export const DEFAULT_SETTINGS: IMatcalcSettings = {
 }
 
 export interface IMatcalcStore extends IMatcalcSettings {
-  update: (settings: Partial<IMatcalcSettings>) => void
+  update: (settings: IMatcalcSettings) => void
 }
 
 export const useMatcalcStore = create<IMatcalcStore>()(
   persist(
     (set) => ({
       ...DEFAULT_SETTINGS,
-      update: (settings: Partial<IMatcalcSettings>) => {
+      update: (settings: IMatcalcSettings) => {
         set((state) => ({ ...state, ...settings }))
       },
     }),

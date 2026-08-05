@@ -86,8 +86,8 @@ export function VolcanoDialog({
     defaultValues: {
       foldChangeCol: findFoldChangeCol(df)!,
       pValueCol: findPValueCol(df)!,
-      applyLog2ToFoldChange: settings.volcano.log2FC,
-      applyLog10ToPValue: settings.volcano.log10P,
+      applyLog2ToFoldChange: settings.volcano.preprocess.applyLog2FC,
+      applyLog10ToPValue: settings.volcano.preprocess.applyMinusLog10P,
     },
   })
 
@@ -161,8 +161,8 @@ export function VolcanoDialog({
 
     updateSettings(
       produce(settings, (draft) => {
-        draft.volcano.log2FC = settings.volcano.log2FC
-        draft.volcano.log10P = data.applyLog10ToPValue
+        draft.volcano.preprocess.applyLog2FC = data.applyLog2ToFoldChange
+        draft.volcano.preprocess.applyMinusLog10P = data.applyLog10ToPValue
       })
     )
 
@@ -256,7 +256,7 @@ export function VolcanoDialog({
             name="applyLog10ToPValue"
             render={({ field }) => (
               <ActionCheckRow
-                title="Apply log10 to p-value"
+                title="Apply -log10(p-value)"
                 checked={field.value}
                 onCheckedChange={field.onChange}
               />
