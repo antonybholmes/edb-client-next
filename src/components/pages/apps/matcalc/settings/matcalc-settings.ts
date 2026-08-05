@@ -283,17 +283,6 @@ export const useMatcalcStore = create<IMatcalcStore>()(
   )
 )
 
-// const settingsAtom = persistentAtom<IMatcalcSettings>(
-//   KEY,
-//   {
-//     ...DEFAULT_SETTINGS,
-//   },
-//   {
-//     encode: JSON.stringify,
-//     decode: JSON.parse,
-//   }
-// )
-
 export function useMatcalcSettings(): {
   hasHydrated: boolean
   settings: IMatcalcSettings
