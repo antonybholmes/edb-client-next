@@ -2327,6 +2327,10 @@
         {
           "msg": "Gsea plot now loads preranked data",
           "date": "2026-08-05T15:34:20.125Z"
+        },
+        {
+          "msg": "Auto label points on volcano plot",
+          "date": "2026-08-05T16:21:00.818Z"
         }
       ]
     },

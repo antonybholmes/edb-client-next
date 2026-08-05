@@ -24,6 +24,7 @@ import { useMatcalcSettings } from '../../settings/matcalc-settings'
 const MAX_COLS = 10
 const FOLD_REGEX = /fold/
 const P_REGEX = /(?:padj|fdr)/
+const MAX_NEG_LOG10_P = 50
 
 interface IFormInput {
   foldChangeCol: string
@@ -140,7 +141,9 @@ export function VolcanoDialog({
     }
 
     const logpvalues = data.applyLog10ToPValue
-      ? pvalues.map((v) => -Math.log10(v as number))
+      ? (pvalues as number[]).map((v) =>
+          v > 0 ? Math.min(-Math.log10(v), MAX_NEG_LOG10_P) : MAX_NEG_LOG10_P
+        )
       : pvalues
 
     const vdf = new DataFrame({

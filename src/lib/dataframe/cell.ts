@@ -36,7 +36,7 @@ export function makeCell(
 
   // convert NA and N/A to nan
   if (keepDefaultNA) {
-    if (v === 'NA' || v === 'N/A' || v === '#N/A') {
+    if (v === '' || v === 'NA' || v === 'N/A' || v === '#N/A') {
       return NaN
     }
   }
@@ -45,6 +45,10 @@ export function makeCell(
 
   // see if value is a number
   const n = Number(v)
+
+  if (n === Infinity || n === -Infinity) {
+    console.log('parse Infinity encountered, converting to NaN', v, n)
+  }
 
   if (!Number.isNaN(n)) {
     return n
@@ -63,7 +67,7 @@ export function makeCell(
 }
 
 export function makeCells(...args: SeriesData[]): SeriesData[] {
-  return args.map(arg => makeCell(arg))
+  return args.map((arg) => makeCell(arg))
 }
 
 interface ICellStrOpts extends IFormatNumOpts {
@@ -109,21 +113,34 @@ export function cellStr(cell: SeriesData, options: ICellStrOpts = {}): string {
 export function cellNum(cell: SeriesData): number {
   const t = typeof cell
 
+  let ret: number = NaN
+
   switch (t) {
     case 'number':
-      return cell as number
+      ret = cell as number
+      break
     case 'boolean':
-      return cell ? 1 : 0
+      ret = cell ? 1 : 0
+      break
     case 'string':
       // empty strings are treated as nan
       if ((cell as string).length > 0) {
-        return Number(cell)
+        ret = Number(cell)
       } else {
-        return NaN
+        ret = NaN
       }
+      break
     default:
-      return Number(cell)
+      ret = Number(cell)
+      break
   }
+
+  if (ret === Infinity || ret === -Infinity) {
+    console.log('Infinity encountered, converting to NaN', cell, ret)
+    ret = NaN
+  }
+
+  return ret
 }
 
 /**

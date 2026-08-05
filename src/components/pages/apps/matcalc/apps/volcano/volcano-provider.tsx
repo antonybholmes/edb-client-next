@@ -59,6 +59,7 @@ export function VolcanoProvider({
   const data = useMemo(() => {
     const xdata = getNumCol(sheet, findCol(sheet, plot.props.axes.xaxis.name))
     const ydata = getNumCol(sheet, findCol(sheet, displayProps.axes.yaxis.name))
+
     return { x: xdata, y: ydata }
   }, [sheet, plot.props.axes.xaxis.name, displayProps.axes.yaxis.name])
 
@@ -93,13 +94,7 @@ export function VolcanoProvider({
     const values = labels.filter((_v, i) => idx.has(i)).map((l) => l.toString())
 
     return values
-  }, [
-    data.x,
-    data.y,
-    displayProps.axes.xaxis.name,
-    displayProps.axes.yaxis.name,
-    labels,
-  ])
+  }, [data.x, data.y, displayProps, labels])
 
   const displayLabels = useMemo(
     () => (displayProps.labels.auto ? highlightedLabels : manualLabels),
