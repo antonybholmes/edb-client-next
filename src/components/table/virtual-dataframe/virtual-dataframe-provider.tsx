@@ -1,10 +1,10 @@
 import {
-  useExtScrollContext,
+  useExtScrollRefsContext,
+  useExtScrollStateContext,
   type IScrollOffset,
 } from '@/components/ext-scroll-card/ext-scroll-provider'
 import { useSizeObserver } from '@/hooks/resize-observer'
 import type { IDim } from '@/interfaces/dim'
-import type { IPos } from '@/interfaces/pos'
 import {
   DATAFRAME_100x26,
   type AnnotationDataFrame,
@@ -35,9 +35,7 @@ interface VirtualDataFrameContextProps {
   commas: boolean
   rowVirtualizer: Virtualizer<HTMLDivElement, Element>
   columnVirtualizer: Virtualizer<HTMLDivElement, Element>
-  // keep track of where mouse is pressed
-  startPos: RefObject<IPos>
-  startWidth: RefObject<number>
+
   tableDataRef: RefObject<HTMLDivElement | null>
 
   editRef: RefObject<HTMLInputElement | null>
@@ -62,8 +60,6 @@ const VirtualDataFrameContext = createContext<VirtualDataFrameContextProps>({
   dp: 4,
   editable: true,
   commas: true,
-  startPos: { current: { x: -1, y: -1 } },
-  startWidth: { current: 0 },
   tableDataRef: { current: null },
 
   editRef: { current: null },
@@ -110,8 +106,8 @@ export function VirtualDataFrameProvider({
   editable = false,
   children,
 }: VirtualDataFrameProviderProps) {
-  const { hScrollRef, vScrollRef, scrollLeft, scrollTop, setSize } =
-    useExtScrollContext()
+  const { hScrollRef, vScrollRef } = useExtScrollRefsContext()
+  const { scrollLeft, scrollTop, setSize } = useExtScrollStateContext()
 
   const [colWidths, setColWidths] = useState<Record<number, number>>({})
 
@@ -119,9 +115,6 @@ export function VirtualDataFrameProvider({
 
   const tableDataRef = useRef<HTMLDivElement>(null)
   const editRef = useRef<HTMLInputElement | null>(null)
-
-  const startPos = useRef<IPos>({ x: -1, y: -1 })
-  const startWidth = useRef(0)
 
   const [tableScrollableSize, setTableScrollableSize] = useState<IDim>({
     w: 0,
@@ -267,8 +260,7 @@ export function VirtualDataFrameProvider({
         editable,
         rowVirtualizer,
         columnVirtualizer,
-        startPos,
-        startWidth,
+
         tableDataRef,
         editRef,
         headerHeight,

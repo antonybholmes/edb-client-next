@@ -45,8 +45,6 @@ function VirtualDataFrameContent({ editable = false }: IVirtualDataFrameProps) {
 
   const { clear: clearSelection } = useSelectionRange()
 
-  //const [selText, setSelectedCellRefText] = useState('')
-
   const { df, scaledCell, copyToClipboard } = useVirtualDataFrameContext()
 
   const { currentCell } = useSelectionContext()
@@ -54,7 +52,10 @@ function VirtualDataFrameContent({ editable = false }: IVirtualDataFrameProps) {
   const { editText, onEditChange, onEditKeyDown } = useEditContext()
 
   const selText = useMemo(() => {
-    if (!currentCell) return ''
+    if (!currentCell) {
+      return ''
+    }
+
     return `${currentCell.row + 1}R x ${currentCell.col + 1}C`
   }, [currentCell, df.id])
 

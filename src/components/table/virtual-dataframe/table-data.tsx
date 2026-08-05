@@ -1,7 +1,8 @@
-import { useExtScrollContext } from '@/components/ext-scroll-card/ext-scroll-provider'
+import { useExtScrollRefsContext } from '@/components/ext-scroll-card/ext-scroll-provider'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { useWindowListener } from '@/hooks/window-listener'
 import type { ICell } from '@/interfaces/cell'
+import type { IPos } from '@/interfaces/pos'
 import { cellStr } from '@/lib/dataframe/cell'
 import { clamp } from '@/lib/math/clamp'
 import { range } from '@/lib/math/range'
@@ -114,14 +115,13 @@ export function TableData() {
     scaledCell,
     dp,
     commas,
-    startPos,
     editable,
     scrollOffset,
     getColWidth,
     getColX,
   } = useVirtualDataFrameContext()
 
-  const { hScrollRef, vScrollRef } = useExtScrollContext()
+  const { hScrollRef, vScrollRef } = useExtScrollRefsContext()
 
   const { currentCell, currentCellPos, selectionPos, setCurrentCell } =
     useSelectionContext()
@@ -137,6 +137,7 @@ export function TableData() {
   useWindowListener('mousedown', handleMouseDown)
 
   const loopRef = useRef<ReturnType<typeof setInterval> | null>(null) // To store the interval reference
+  const startPos = useRef<IPos>({ x: -1, y: -1 })
   const colIndexes = useMemo(() => range(df.shape[1]), [df.shape[1]])
 
   useEffect(() => {

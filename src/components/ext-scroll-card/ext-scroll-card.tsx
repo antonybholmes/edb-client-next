@@ -7,7 +7,11 @@ import { useSizeObserver } from '@/hooks/resize-observer'
 import type { IDim } from '@/interfaces/dim'
 import { cn } from '@/lib/shadcn-utils'
 import { useRef, useState, type ComponentProps } from 'react'
-import { ExtScrollProvider, useExtScrollContext } from './ext-scroll-provider'
+import {
+  ExtScrollProvider,
+  useExtScrollRefsContext,
+  useExtScrollStateContext,
+} from './ext-scroll-provider'
 import { ExtHScroll, ExtVScroll } from './ext-scrollbars'
 
 interface ExtScrollCardProps extends ComponentProps<typeof Card> {
@@ -22,8 +26,8 @@ function _ExtScrollCard({
   children,
   className,
 }: ExtScrollCardProps) {
-  const { size, scrollLeft, scrollTop, vScrollRef, setSize } =
-    useExtScrollContext()
+  const { vScrollRef } = useExtScrollRefsContext()
+  const { size, scrollLeft, scrollTop, setSize } = useExtScrollStateContext()
 
   const [scrollableArea, setScrollableArea] = useState<IDim>({ w: 0, h: 0 })
   const ref = useRef<HTMLDivElement>(null)

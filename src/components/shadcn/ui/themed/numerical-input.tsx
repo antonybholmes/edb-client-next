@@ -35,7 +35,7 @@ export function NumericalInput({
   id,
   name,
   value = 0,
-  limit,
+  limit = [0, 100],
   step = 1,
   dp = 0,
   placeholder,

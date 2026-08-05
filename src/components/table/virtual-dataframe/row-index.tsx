@@ -1,4 +1,4 @@
-import { useExtScrollContext } from '@/components/ext-scroll-card/ext-scroll-provider'
+import { useExtScrollRefsContext } from '@/components/ext-scroll-card/ext-scroll-provider'
 import { BaseCol } from '@/components/layout/base-col'
 import { BaseRow } from '@/components/layout/base-row'
 import { CenterRow } from '@/components/layout/center-row'
@@ -132,7 +132,7 @@ export function RowIndexContainer() {
     scrollOffset,
   } = useVirtualDataFrameContext()
 
-  const { vScrollRef } = useExtScrollContext()
+  const { vScrollRef } = useExtScrollRefsContext()
 
   const { selectionPos } = useSelectionContext()
 

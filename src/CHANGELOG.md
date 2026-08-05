@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Fixed p-value and threshold filter on volcano by adding proper bounds and removing unneccessary log conversion.
 - Bug fixes and updates.
 - Revised save table dialog.
 

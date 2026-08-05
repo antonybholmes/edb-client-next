@@ -15,10 +15,12 @@ export interface IScrollOffset {
   top: number
 }
 
-interface ExtScrollCardContextProps {
+interface ExtScrollRefsContextProps {
   vScrollRef: RefObject<HTMLDivElement | null>
   hScrollRef: RefObject<HTMLDivElement | null>
+}
 
+interface ExtScrollStateContextProps {
   size: IDim
   scrollLeft: IScrollPosition
   scrollTop: IScrollPosition
@@ -28,10 +30,12 @@ interface ExtScrollCardContextProps {
   setScrollTop: (p: IScrollPosition) => void
 }
 
-const ExtScrollContext = createContext<ExtScrollCardContextProps>({
+const ExtScrollRefsContext = createContext<ExtScrollRefsContextProps>({
   vScrollRef: { current: null },
   hScrollRef: { current: null },
+})
 
+const ExtScrollStateContext = createContext<ExtScrollStateContextProps>({
   size: { w: 0, h: 0 },
   scrollLeft: { p: 0, normalized: 0 },
   scrollTop: { p: 0, normalized: 0 },
@@ -42,15 +46,32 @@ const ExtScrollContext = createContext<ExtScrollCardContextProps>({
   setScrollTop: () => {},
 })
 
-export function useExtScrollContext() {
-  const ctx = useContext(ExtScrollContext)
+export function useExtScrollRefsContext() {
+  const ctx = useContext(ExtScrollRefsContext)
   if (!ctx) {
     throw new Error(
-      'useExtScrollContext must be used within a ExtScrollProvider'
+      'useExtScrollRefsContext must be used within a ExtScrollProvider'
     )
   }
   return ctx
 }
+
+export function useExtScrollStateContext() {
+  const ctx = useContext(ExtScrollStateContext)
+  if (!ctx) {
+    throw new Error(
+      'useExtScrollStateContext must be used within a ExtScrollProvider'
+    )
+  }
+  return ctx
+}
+
+// export function useExtScrollContext() {
+//   return {
+//     ...useExtScrollRefsContext(),
+//     ...useExtScrollStateContext(),
+//   }
+// }
 
 export function ExtScrollProvider({ children }: IChildrenProps) {
   const hScrollRef = useRef<HTMLDivElement>(null)
@@ -75,23 +96,30 @@ export function ExtScrollProvider({ children }: IChildrenProps) {
     }
   }, [scrollLeft, scrollTop, size])
 
+  const refsValue = useMemo<ExtScrollRefsContextProps>(() => {
+    return {
+      vScrollRef,
+      hScrollRef,
+    }
+  }, [])
+
+  const stateValue = useMemo<ExtScrollStateContextProps>(() => {
+    return {
+      scrollLeft,
+      scrollTop,
+      scrollOffset,
+      size,
+      setSize,
+      setScrollTop,
+      setScrollLeft,
+    }
+  }, [scrollLeft, scrollTop, scrollOffset, size])
+
   return (
-    <ExtScrollContext.Provider
-      value={{
-        vScrollRef,
-        hScrollRef,
-
-        scrollLeft,
-        scrollTop,
-        scrollOffset,
-        size,
-
-        setSize,
-        setScrollTop,
-        setScrollLeft,
-      }}
-    >
-      {children}
-    </ExtScrollContext.Provider>
+    <ExtScrollRefsContext.Provider value={refsValue}>
+      <ExtScrollStateContext.Provider value={stateValue}>
+        {children}
+      </ExtScrollStateContext.Provider>
+    </ExtScrollRefsContext.Provider>
   )
 }

@@ -1,15 +1,19 @@
-import { useExtScrollContext } from '@/components/ext-scroll-card/ext-scroll-provider'
+ import {
+  useExtScrollRefsContext,
+  useExtScrollStateContext,
+} from '@/components/ext-scroll-card/ext-scroll-provider'
 import { BaseRow } from '@/components/layout/base-row'
 import { CenterRow } from '@/components/layout/center-row'
 import { HCenterCol } from '@/components/layout/h-center-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
+import { IPos } from '@/interfaces/pos'
 import { cellStr } from '@/lib/dataframe/cell'
 import { present } from '@/lib/dom-utils'
 import { rangeMap } from '@/lib/math/range'
 import { cn } from '@/lib/shadcn-utils'
 import { useSelectionRange } from '@/providers/selection-range-provider'
 import type { VirtualItem } from '@tanstack/react-virtual'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useEditContext } from './edit-provider'
 import { useSelectionContext } from './selection-provider'
 import { useVirtualDataFrameContext } from './virtual-dataframe-provider'
@@ -35,12 +39,16 @@ export function ColHeader({ col }: { col: VirtualItem }) {
     scaledCell,
     columnVirtualizer,
     tableDataRef,
-    startPos,
-    startWidth,
+    //startPos,
+    //startWidth,
     scrollOffset,
     getColWidth,
     setColWidth,
   } = useVirtualDataFrameContext()
+
+  // keep track of where mouse is pressed
+  const startPos = useRef<IPos>({ x: -1, y: -1 })
+  const startWidth = useRef(0)
 
   const { fontSize } = useEditContext()
 
@@ -113,16 +121,12 @@ export function ColHeader({ col }: { col: VirtualItem }) {
       }
     }
 
-    //setSelectionMouseDown(true)
-
     updateSelection({
       rows: undefined,
       cols: { start: index, end: index },
     })
 
     function onMouseUp() {
-      //setSelectionMouseDown(false)
-
       //document.body.style.cursor = 'default'
       // Remove the event listeners when mouse is released
       document.removeEventListener('mousemove', onMouseMove)
@@ -204,7 +208,8 @@ export function ColHeader({ col }: { col: VirtualItem }) {
 export function ColHeaderContainer() {
   const { columnVirtualizer, headerHeight } = useVirtualDataFrameContext()
 
-  const { hScrollRef, scrollOffset } = useExtScrollContext()
+  const { hScrollRef } = useExtScrollRefsContext()
+  const { scrollOffset } = useExtScrollStateContext()
 
   const { selectionPos } = useSelectionContext()
 

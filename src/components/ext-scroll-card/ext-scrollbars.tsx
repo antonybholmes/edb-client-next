@@ -1,9 +1,11 @@
 import type { IDivProps } from '@/interfaces/div-props'
 import { cn } from '@/lib/shadcn-utils'
-import { useExtScrollContext } from './ext-scroll-provider'
+import {
+  useExtScrollRefsContext,
+  useExtScrollStateContext,
+} from './ext-scroll-provider'
 
 export const SIZER_CLS = 'invisible bg-black h-px w-px absolute top-0 left-0'
-//const DRAG_MULTIPLIER = 4
 
 export interface IScrollPosition {
   p: number
@@ -11,53 +13,8 @@ export interface IScrollPosition {
 }
 
 export function ExtVScroll({ style, className }: IDivProps) {
-  const { size, vScrollRef, setScrollTop } = useExtScrollContext()
-
-  // const dragStatus = useRef({
-  //   isDown: false,
-  //   startY: 0,
-  //   scrollTop: 0,
-  // })
-
-  // useEffect(() => {
-  //   // 2. This runs ONLY during an active drag operation
-  //   function onMouseMove(e: MouseEvent) {
-  //     e.preventDefault()
-
-  //     const y = e.pageY - vScrollRef.current!.offsetTop
-  //     const walkY = (y - dragStatus.current.startY) * DRAG_MULTIPLIER //(x - dragStatus.current.startX) * 1.5
-
-  //     vScrollRef.current!.scrollTop = walkY - dragStatus.current.scrollTop
-  //   }
-
-  //   // 3. This tears down listeners the moment the user lets go anywhere
-  //   function onMouseUp() {
-  //     vScrollRef.current?.classList.remove('grabbing')
-
-  //     // Remove listeners from window immediately
-  //     window.removeEventListener('mousemove', onMouseMove)
-  //     window.removeEventListener('mouseup', onMouseUp)
-  //   }
-
-  //   // 1. Initial entry point attached to the container
-  //   function onMouseDown(e: MouseEvent) {
-  //     vScrollRef.current?.classList.add('grabbing')
-
-  //     dragStatus.current.startY = e.pageY - vScrollRef.current!.offsetTop
-  //     dragStatus.current.scrollTop = vScrollRef.current!.scrollTop
-
-  //     // Attach temporary tracking events to global window
-  //     window.addEventListener('mousemove', onMouseMove, { passive: false })
-  //     window.addEventListener('mouseup', onMouseUp)
-  //   }
-
-  //   vScrollRef.current?.addEventListener('mousedown', onMouseDown)
-
-  //   // Initial cleanup if component unmounts mid-render loop
-  //   return () => {
-  //     vScrollRef.current?.removeEventListener('mousedown', onMouseDown)
-  //   }
-  // }, [])
+  const { vScrollRef } = useExtScrollRefsContext()
+  const { size, setScrollTop } = useExtScrollStateContext()
 
   return (
     <div
@@ -68,7 +25,7 @@ export function ExtVScroll({ style, className }: IDivProps) {
       )}
       style={style}
       ref={vScrollRef}
-      onScroll={e => {
+      onScroll={(e) => {
         const { scrollTop, scrollHeight, clientHeight } = e.currentTarget
         const maxScrollTop = scrollHeight - clientHeight
         const normalizedScroll = maxScrollTop > 0 ? scrollTop / maxScrollTop : 0
@@ -87,7 +44,8 @@ export function ExtVScroll({ style, className }: IDivProps) {
 }
 
 export function ExtHScroll({ style, className }: IDivProps) {
-  const { size, hScrollRef, setScrollLeft } = useExtScrollContext()
+  const { hScrollRef } = useExtScrollRefsContext()
+  const { size, setScrollLeft } = useExtScrollStateContext()
 
   // const dragStatus = useRef({
   //   isDown: false,
@@ -146,7 +104,7 @@ export function ExtHScroll({ style, className }: IDivProps) {
       )}
       style={style}
       ref={hScrollRef}
-      onScroll={e => {
+      onScroll={(e) => {
         const { scrollLeft, scrollWidth, clientWidth } = e.currentTarget
         const maxScrollLeft = scrollWidth - clientWidth
         const normalizedScroll =
@@ -156,7 +114,7 @@ export function ExtHScroll({ style, className }: IDivProps) {
         // we can update the table reactively
         setScrollLeft({ p: scrollLeft, normalized: normalizedScroll })
       }}
-      onWheel={e => {
+      onWheel={(e) => {
         // allow horizontal scrolling with mouse wheel + shift
         e.currentTarget.scrollLeft += e.deltaY
       }}

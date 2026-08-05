@@ -258,11 +258,12 @@ export function VolcanoPropsPanel() {
             >
               <NumericalInput
                 id="max"
-                value={Math.pow(2, displayProps.logFc.threshold)}
+                value={displayProps.logFc.threshold} //Math.pow(2, displayProps.logFc.threshold)}
                 dp={2}
                 placeholder="Max..."
                 className="w-16 rounded-theme"
                 onNumChanged={(v) => {
+                  console.log(v)
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.logFc.threshold = v
@@ -326,6 +327,8 @@ export function VolcanoPropsPanel() {
                 id="max"
                 value={Math.pow(10, -displayProps.logP.threshold)}
                 dp={2}
+                step={0.01}
+                limit={[0, 1]}
                 placeholder="Max..."
                 className="w-16 rounded-theme"
                 onNumChanged={(v) => {
