@@ -46,10 +46,6 @@ export function makeCell(
   // see if value is a number
   const n = Number(v)
 
-  if (n === Infinity || n === -Infinity) {
-    console.log('parse Infinity encountered, converting to NaN', v, n)
-  }
-
   if (!Number.isNaN(n)) {
     return n
   }
@@ -136,7 +132,7 @@ export function cellNum(cell: SeriesData): number {
   }
 
   if (ret === Infinity || ret === -Infinity) {
-    console.log('Infinity encountered, converting to NaN', cell, ret)
+    //console.log('Infinity encountered, converting to NaN', cell, ret)
     ret = NaN
   }
 
