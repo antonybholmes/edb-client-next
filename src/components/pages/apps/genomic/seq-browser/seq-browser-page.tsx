@@ -361,7 +361,7 @@ function SeqBrowserPage() {
                 variant="footer"
                 showIcon={false}
                 w="auto"
-                h="full"
+
                 className="px-1"
               >
                 {settings.tracks.seqs.bins.autoSize
