@@ -4,11 +4,14 @@ import { intersect1d } from '../../collections'
 import type { ICollection, IGeneSet } from '../../gsea/geneset'
 import { argsort } from '../../math/argsort'
 
+import { minusLog10 } from '@/lib/math/logs'
 import { Hypergeometric } from '../../math/hypgeometric'
 import { range } from '../../math/range'
 import { sum } from '../../math/sum'
 
 export const GENES_IN_UNIVERSE = 42577 //45956
+
+export const MAX_LOG10_P = 50
 
 // export const PATHWAY_TABLE_COLS = [
 //   "Geneset",
@@ -38,7 +41,7 @@ export const PATHWAY_TABLE_COLS = [
   '# Genes in Universe',
   'p',
   'q',
-  '-log10q',
+  'minus_log10_q',
   'Ratio k/K',
   'Genes',
 ]
@@ -175,7 +178,9 @@ export class PathwayOverlap {
 
       range(data.length).forEach((i) => {
         // log10 of q
-        data[i]![10] = -Math.log10(<number>data[i]![9])
+        const v = <number>data[i]![9]
+
+        data[i]![10] = minusLog10(v, MAX_LOG10_P)
       })
 
       allData = allData.concat(data)

@@ -126,12 +126,12 @@ export function HomeToolbar() {
     const genes = await getValidGenes()
 
     // only keep genes in approved list
-    const genesets: IGeneSet[] = range(df.shape[1]).map(() => {
+    const genesets: IGeneSet[] = range(df.shape[1]).map((col) => {
       return {
         id: makeUuid(),
-        name: df.col(0).name.toString(),
+        name: df.col(col).name.toString(),
         genes: df
-          .col(0)
+          .col(col)
           .strs.filter((v) => v !== '' && genes.has(v.toLowerCase())),
         color: randomHexColor(),
         type: 'geneset',
@@ -189,6 +189,8 @@ export function HomeToolbar() {
     }
 
     const iid = addIndicator('Calculating enrichment...')
+
+    //console.log(genesets)
 
     runPathway(
       { genesets, collections: fullCollections, genesInUniverse },
