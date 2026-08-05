@@ -40,17 +40,18 @@ export function SaveAsDialog({
       open={open}
       title={title}
       //buttons={[...formats.map(format => format.ext), TEXT_CANCEL]}
-      buttons={fileTypes.map(
-        (format) => format.name || format.ext.toUpperCase()
-      )}
+      buttons={fileTypes.map((f) => ({
+        name: f.name,
+        value: f.ext.toLowerCase(),
+      }))}
       onResponse={(response) => {
         if (response !== TEXT_CANCEL) {
           const format = fileTypes.filter(
-            (f) => f.ext.toUpperCase() === response
+            (f) => f.ext.toLowerCase() === response
           )[0]!
 
           onResponse?.(response, {
-            name: `${text.split('.')[0]}.${response.toLowerCase()}`,
+            name: `${text.split('.')[0]}.${format.ext}`,
             format,
           })
         } else {
