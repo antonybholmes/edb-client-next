@@ -286,7 +286,6 @@ export const useMatcalcStore = create<IMatcalcStore>()(
 export function useMatcalcSettings(): {
   hasHydrated: boolean
   settings: IMatcalcSettings
-  hasHydrated: boolean
   updateSettings: (settings: Partial<IMatcalcSettings>) => void
   resetSettings: () => void
 } {
