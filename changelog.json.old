@@ -2319,6 +2319,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2026-08-04T23:34:49.309Z"
+        },
+        {
+          "msg": "Fixed p-value and threshold filter on volcano by adding proper bounds and removing unneccessary log conversion",
+          "date": "2026-08-05T14:40:57.983Z"
         }
       ]
     },

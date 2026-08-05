@@ -24,7 +24,6 @@ export function SvgPolygon({
   fp,
   ...props
 }: IProps) {
-  console.log(fp)
   return (
     <polygon
       stroke={stroke ?? sp?.value ?? 'none'}

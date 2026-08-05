@@ -306,6 +306,7 @@ export function GseaPlotPage() {
             <FileDropZonePanel
               className="grow h-full"
               onFileDrop={(files) => {
+                console.log('asdasdasd', files)
                 if (files.length > 0) {
                   onBinaryFileChange('Open zip', files, loadGseaZip)
                 }

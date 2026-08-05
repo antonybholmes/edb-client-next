@@ -263,7 +263,6 @@ export function VolcanoPropsPanel() {
                 placeholder="Max..."
                 className="w-16 rounded-theme"
                 onNumChanged={(v) => {
-                  console.log(v)
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.logFc.threshold = v
@@ -363,8 +362,8 @@ export function VolcanoPropsPanel() {
                 id="labels"
                 aria-label="Labels"
                 value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder="List data labels to highlight"
+                onTextChange={(v) => setText(v)}
+                placeholder="Label points on plot..."
                 className="h-48"
               />
 

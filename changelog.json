@@ -2323,6 +2323,10 @@
         {
           "msg": "Fixed p-value and threshold filter on volcano by adding proper bounds and removing unneccessary log conversion",
           "date": "2026-08-05T14:40:57.983Z"
+        },
+        {
+          "msg": "Gsea plot now loads preranked data",
+          "date": "2026-08-05T15:34:20.125Z"
         }
       ]
     },

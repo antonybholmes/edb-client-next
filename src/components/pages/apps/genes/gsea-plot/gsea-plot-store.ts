@@ -63,6 +63,7 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
   setAllowSelectAll: (allowSelectAll: boolean) => set({ allowSelectAll }),
 
   loadGseaZip: async (files: IBinaryFileOpen[]) => {
+    console.log('load zip', files)
     if (files.length === 0) {
       return
     }
@@ -84,8 +85,22 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
       const headings = lines[0]!
       const rows = lines.slice(1).filter((tokens) => tokens.length > 0)
 
+      //console.log('Processing file:', filename)
+
       if (filename.includes('ranked_gene_list')) {
         // Check if the entry is a file, not a directory
+
+        const matcher = filename.match(
+          /.*ranked_gene_list_(.+)_versus_(.+)_\d+\.(?:tsv|xls)/
+        )
+
+        // determine phenotypes from the filename which is
+        // useful for preranked
+        if (matcher && phenotypes.length === 0) {
+          const phen = matcher[1]!
+          const phen2 = matcher[2]!
+          phenotypes = [phen, phen2]
+        }
 
         let geneIdx = headings.findIndex((h) => h === 'NAME')
 
@@ -103,7 +118,8 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
         }))
       }
 
-      if (filename.endsWith('rpt')) {
+      // alternative method of determining phenotypes
+      if (filename.endsWith('rpt') && phenotypes.length === 0) {
         // Check if the entry is a file, not a directory
 
         lines = lines.filter((tokens) => tokens.includes('cls'))
@@ -149,6 +165,8 @@ export const useGseaPlotStore = create<IGseaPlotStore>()((set) => ({
             q: Number(tokens[qIdx]!),
             rank: Number(tokens[rankIdx]!),
           }
+
+          //console.log('report', report)
 
           reportsMap[phen]!.push(report)
         }
