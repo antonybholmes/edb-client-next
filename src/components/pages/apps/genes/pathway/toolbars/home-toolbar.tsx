@@ -35,7 +35,7 @@ import { usePathwayWorker } from '../pathway-worker'
 
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
-  const { save } = useSave()
+  const { basicSave } = useSave()
   const { sheets } = useCurrentSheets()
 
   const { openFile, addSheets } = useHistory()
@@ -224,7 +224,7 @@ export function HomeToolbar() {
               type: 'save',
               payload: {
                 callback: (data) => {
-                  save(data.name, data.format.ext!)
+                  basicSave(data.name, data.format.ext!)
                 },
               },
             })

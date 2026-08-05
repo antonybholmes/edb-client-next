@@ -8,14 +8,21 @@ import {
 } from './save-as-dialog'
 
 export const FILE_FORMAT_JSON = { name: 'JSON', ext: 'json' }
-export const TAB_DELIMITED_FORMAT = {
-  name: 'TSV (Tab delimited) (*.txt)',
+
+export const TXT_FORMAT = {
+  name: 'Text (Tab delimited) (*.txt)',
   ext: 'txt',
+}
+
+export const TAB_DELIMITED_FORMAT = {
+  name: 'TSV (Tab delimited) (*.tsv)',
+  ext: 'tsv',
 }
 export const CSV_FORMAT = { name: 'CSV (Comma delimited) (*.csv)', ext: 'csv' }
 
 export const TXT_FILE_FORMATS: ISaveAsFileType[] = [
   TAB_DELIMITED_FORMAT,
+  TXT_FORMAT,
   CSV_FORMAT,
 ]
 

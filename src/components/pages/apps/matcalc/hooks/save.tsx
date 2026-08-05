@@ -37,8 +37,24 @@ export function useSave() {
     })
   }
 
+  function basicSave(name: string, format: string) {
+    name = friendlyFilename(name)
+
+    const sep = format === 'csv' ? ',' : '\t'
+
+    downloadDataFrame(sheets[0] as AnnotationDataFrame, {
+      hasHeader: true,
+      hasIndex: false,
+      file: name,
+      sep,
+      dp: settings.view.dp,
+      commas: settings.view.commas,
+    })
+  }
+
   return {
     save,
+    basicSave,
   }
 }
 

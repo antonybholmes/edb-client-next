@@ -4,6 +4,7 @@ import { UndefStr } from '@/lib/text/text'
 import { produce } from 'immer'
 import { useEffect, useState } from 'react'
 import { Input } from '../shadcn/ui/themed/v2/input'
+import { SelectItem, SelectList } from '../shadcn/ui/themed/v2/select'
 import {
   ActionCheckRow,
   ActionDialogCard,
@@ -39,27 +40,34 @@ export function SaveTableDialog({
   const [hasHeader, setHasHeader] = useState(true)
   const [hasIndex, setHasIndex] = useState(true)
   const { settings, updateSettings } = useEdbSettings()
+  const [format, setFormat] = useState<ISaveAsFileType>(
+    fileTypes[0] ?? { name: '', ext: '' }
+  )
 
   useEffect(() => {
     setHasHeader(settings.save.table.hasHeader)
     setHasIndex(settings.save.table.hasIndex)
   }, [settings])
 
+  useEffect(() => {
+    setFormat(fileTypes[0] ?? { name: '', ext: '' })
+  }, [fileTypes])
+
   return (
     <OKCancelDialog
       open={open}
       title={title}
-      buttons={fileTypes.map((ft) => ({
-        name: ft.name,
-        value: ft.ext.toLowerCase(),
-      }))}
+      // buttons={fileTypes.map((ft) => ({
+      //   name: ft.name,
+      //   value: ft.ext.toLowerCase(),
+      // }))}
       //buttonOrder="vertical"
       onResponse={(response) => {
         console.log(response)
         if (response !== TEXT_CANCEL) {
-          const format = fileTypes.filter(
-            (f) => f.ext.toLowerCase() === response || f.name === response
-          )[0]!
+          // const format = fileTypes.filter(
+          //   (f) => f.ext.toLowerCase() === response || f.name === response
+          // )[0]!
 
           onResponse?.(response, {
             name: `${text.split('.')[0].trim()}.${format.ext}`,
@@ -84,6 +92,33 @@ export function SaveTableDialog({
                 setText(e)
               }}
             />
+          </ActionDialogRow>
+          <ActionDialogRow title="Save as type">
+            <SelectList
+              value={format.ext}
+              items={fileTypes.map((f) => ({
+                label: f.name,
+                value: f.ext.toLowerCase(),
+              }))}
+              onValueChange={(v) => {
+                setFormat(
+                  fileTypes.filter((f) => f.ext.toLowerCase() === v)[0]!
+                )
+              }}
+              className="w-60 h-9"
+
+              //h="lg"
+            >
+              {fileTypes.map((f) => (
+                <SelectItem
+                  key={f.ext}
+                  value={f.ext.toLowerCase()}
+                  className="w-64"
+                >
+                  {f.name}
+                </SelectItem>
+              ))}
+            </SelectList>
           </ActionDialogRow>
 
           <ActionCheckRow

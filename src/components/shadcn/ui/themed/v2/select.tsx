@@ -34,23 +34,25 @@ export const triggerVariants = cva(
     variants: {
       variant: {
         default: cn(
-          'bg-background  pl-2 pr-1 stroke-foreground border border-border/50 hover:border-app-theme/50',
-          'data-[popup-open]:border-app-theme/50 placeholder:text-foreground/50 rounded-theme'
+          'bg-background pl-2 pr-1 stroke-foreground border border-border/50 hover:border-app-theme/50',
+          'data-[popup-open]:border-app-theme/50 placeholder:text-foreground/50 rounded-theme min-h-8'
         ),
         toolbar: cn(
           'h-toolbar-button rounded-theme border border-transparent focus:border-app-theme/50 pl-2 pr-1',
           'hover:border-border/60 data-[popup-open]:border-border/60 aria-[expanded=true]:border-border/60'
         ),
         button: cn(BASE_FLAT_BUTTON_CLS, 'h-button rounded-theme'),
+
         footer: cn(BASE_FLAT_BUTTON_CLS, BUTTON_XS_H_CLS),
         header: cn(BASE_FLAT_BUTTON_CLS, 'h-button-lg px-2 pl-3 rounded-theme'),
         glass: '',
       },
-      h: {
-        footer: 'h-6',
-        default: 'h-8',
-        full: 'h-full',
-      },
+      // h: {
+      //   footer: 'h-6',
+      //   md: 'h-8',
+      //   lg: 'h-10',
+      //   full: 'h-full',
+      // },
       w: {
         auto: '',
         xxxxs: 'w-12',
@@ -67,7 +69,7 @@ export const triggerVariants = cva(
     defaultVariants: {
       variant: 'default',
       w: 'auto',
-      h: 'default',
+      //h: 'md',
     },
   }
 )
@@ -76,7 +78,7 @@ export function SelectTrigger({
   ref,
   variant,
   w,
-  h,
+  // h,
   title,
   showIcon = true,
   className,
@@ -101,7 +103,7 @@ export function SelectTrigger({
       className={triggerVariants({
         variant,
         w,
-        h,
+        //h,
         className: cn('shrink-0', className),
       })}
       title={title}
