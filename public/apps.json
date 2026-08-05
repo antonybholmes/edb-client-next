@@ -109,11 +109,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "48.6.8",
+    "version": "48.8.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-08-05T16:49:29.080Z",
-    "hash": "a7281cae90c575a80df0f4ab7b61868cad4a64a9f6ee2aa4edec3e1a5187810e",
-    "build": 1878
+    "modified": "2026-08-05T17:05:01.745Z",
+    "hash": "12a70448144d2255802b68a1a772159d3dea00f967a731a1d2b12223bd570b41",
+    "build": 1880
   },
   {
     "name": "Motifs",
@@ -151,9 +151,9 @@
     "color": "#6495ED",
     "version": "36.2.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-17T20:54:27.470Z",
-    "hash": "ec6f30f0c5489d46ab88b6f6aaa6546c4768b18323fec60af7f1a9bf9b0c80d7",
-    "build": 890
+    "modified": "2026-08-05T17:05:01.742Z",
+    "hash": "6e37a38e15f05ea7ae17944332821dd37663f1964ee43e8141b582b686a9950b",
+    "build": 892
   },
   {
     "name": "Rev Comp",

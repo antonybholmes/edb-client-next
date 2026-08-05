@@ -16,12 +16,11 @@ import {
   ScrollAccordion,
 } from '@/themed/v2/accordion'
 import { Button } from '@/themed/v2/button'
-import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useVolcanoContext } from './volcano-provider'
 
@@ -36,7 +35,7 @@ export function VolcanoPropsPanel() {
 
   const { updatePlot } = useHistory()
 
-  const { plot, setLabels } = useVolcanoContext()
+  const { plot, displayLabels, setLabels } = useVolcanoContext()
 
   const displayProps: IVolcanoDisplayOptions = plot.props
 
@@ -49,6 +48,12 @@ export function VolcanoPropsPanel() {
 
     setLabels(values)
   }
+
+  useEffect(() => {
+    if (displayProps.labels.auto) {
+      setText(displayLabels.join('\n'))
+    }
+  }, [displayProps.labels.auto, displayLabels])
 
   return (
     <PropsPanel>
@@ -271,8 +276,8 @@ export function VolcanoPropsPanel() {
               <NumericalInput
                 id="max"
                 value={Math.pow(10, -displayProps.logP.threshold)}
-                dp={2}
-                step={0.01}
+                dp={3}
+                step={0.001}
                 limit={[0, 1]}
                 placeholder="Max..."
                 className="w-16 rounded-theme"
@@ -305,7 +310,7 @@ export function VolcanoPropsPanel() {
           <AccordionContent>
             <BaseCol className="gap-y-1">
               <SwitchPropRow
-                title="Auto label highlight"
+                title="Auto label"
                 checked={displayProps.labels.auto}
                 onCheckedChange={(v) => {
                   updatePlot(
@@ -322,26 +327,17 @@ export function VolcanoPropsPanel() {
                 onTextChange={(v) => setText(v)}
                 placeholder="Label points on plot..."
                 className="h-48"
+                disabled={displayProps.labels.auto}
               />
 
               <VCenterRow className="justify-between">
-                <ToolbarTabGroup className="gap-x-1">
-                  <Button
-                    variant="app-theme"
-                    aria-label="Add labels to plot"
-                    onClick={() => addLabels()}
-                  >
-                    Add labels to plot
-                  </Button>
-                  {/* <Button
-                    variant="app-theme"
-                    aria-label="Load highlighted labels"
-                    onClick={() => loadHighlightedLabels()}
-                    title="Load highlighted labels from plot"
-                  >
-                    Label highlighted data points
-                  </Button> */}
-                </ToolbarTabGroup>
+                <Button
+                  variant="app-theme"
+                  aria-label="Add labels to plot"
+                  onClick={() => addLabels()}
+                >
+                  Add labels to plot
+                </Button>
 
                 <Button
                   variant="link"
@@ -349,11 +345,7 @@ export function VolcanoPropsPanel() {
                   onClick={() => {
                     setText('')
 
-                    updatePlot(
-                      produce(plot, (draft) => {
-                        draft.props.labels.values = []
-                      })
-                    )
+                    setLabels([])
                   }}
                 >
                   {TEXT_CLEAR}

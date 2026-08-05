@@ -2335,6 +2335,10 @@
         {
           "msg": "Volcano now deals with missing p-values by clamping them",
           "date": "2026-08-05T16:49:30.078Z"
+        },
+        {
+          "msg": "Increase debounce on numerical input to make typing easier. Volcano now loads auto labels into label box so user can customize",
+          "date": "2026-08-05T17:05:02.696Z"
         }
       ]
     },

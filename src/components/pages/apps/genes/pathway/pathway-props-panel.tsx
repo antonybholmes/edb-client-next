@@ -51,7 +51,7 @@ export function PathwayPropsPanel() {
   return (
     <PropsPanel className="gap-y-2 text-xs">
       <SideBarHeader className="gap-x-2">
-        <span>Genes</span>
+        <span>Genes in universe</span>
 
         <NumericalInput
           value={genesInUniverse}

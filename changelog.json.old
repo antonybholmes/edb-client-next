@@ -2331,6 +2331,10 @@
         {
           "msg": "Auto label points on volcano plot",
           "date": "2026-08-05T16:21:00.818Z"
+        },
+        {
+          "msg": "Volcano now deals with missing p-values by clamping them",
+          "date": "2026-08-05T16:49:30.078Z"
         }
       ]
     },

@@ -65,7 +65,7 @@ export function NumericalInput({
 
   // debounce the text value, so we don't call onNumChange too frequently as user types
   const debouncedTextValue = useDebounce(textValue, {
-    delayMs: 500,
+    delayMs: 1000,
   })
 
   // const debouncedNumValue = useDebounce(numValue, {
