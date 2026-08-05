@@ -263,9 +263,7 @@ export const useMatcalcStore = create<IMatcalcStore>()(
       ...DEFAULT_SETTINGS,
       hasHydrated: false,
       setHasHydrated: (hasHydrated: boolean) => {
-        set(() => ({
-          hasHydrated,
-        }))
+        set({ hasHydrated })
       },
       update: (settings: IMatcalcSettings) => {
         console.trace('ajha', settings)
@@ -307,6 +305,7 @@ export const useMatcalcStore = create<IMatcalcStore>()(
 export function useMatcalcSettings(): {
   hasHydrated: boolean
   settings: IMatcalcSettings
+  hasHydrated: boolean
   updateSettings: (settings: Partial<IMatcalcSettings>) => void
   resetSettings: () => void
 } {
@@ -315,5 +314,5 @@ export function useMatcalcSettings(): {
   const updateSettings = useMatcalcStore((state) => state.update)
   const resetSettings = () => updateSettings({ ...DEFAULT_SETTINGS })
 
-  return { hasHydrated, settings, updateSettings, resetSettings }
+  return { settings, hasHydrated, updateSettings, resetSettings }
 }

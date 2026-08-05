@@ -103,6 +103,8 @@ export const DEFAULT_EDB_SETTINGS: IEdbSettings = {
 }
 
 export interface IEdbSettingsStore extends IEdbSettings {
+  hasHydrated: boolean
+  setHasHydrated: (hasHydrated: boolean) => void
   updateSettings: (settings: Partial<IEdbSettings>) => void
 }
 
@@ -110,6 +112,10 @@ export const useEdbSettingsStore = create<IEdbSettingsStore>()(
   persist(
     (set) => ({
       ...DEFAULT_EDB_SETTINGS,
+      hasHydrated: false,
+      setHasHydrated: (hasHydrated: boolean) => {
+        set({ hasHydrated })
+      },
       updateSettings: (settings: Partial<IEdbSettings>) => {
         set({
           ...settings,
@@ -119,12 +125,16 @@ export const useEdbSettingsStore = create<IEdbSettingsStore>()(
     {
       name: SETTINGS_KEY, // name in localStorage
       storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true)
+      },
     }
   )
 )
 
 export function useEdbSettings(): {
   settings: IEdbSettings
+  hasHydrated: boolean
   updateSettings: (settings: Partial<IEdbSettings>) => void
   resetSettings: () => void
   addCustomColor: (color: string, opacity: number) => void
@@ -134,6 +144,7 @@ export function useEdbSettings(): {
   historySidebarOpen: (open: boolean) => void
 } {
   const settings = useEdbSettingsStore((state) => state)
+  const hasHydrated = useEdbSettingsStore((state) => state.hasHydrated)
   const updateSettings = useEdbSettingsStore((state) => state.updateSettings)
   const { resetTheme } = useTheme()
 
@@ -207,6 +218,7 @@ export function useEdbSettings(): {
 
   return {
     settings,
+    hasHydrated,
     updateSettings,
     resetSettings,
     addCustomColor,

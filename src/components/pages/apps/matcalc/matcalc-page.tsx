@@ -177,7 +177,7 @@ export function MatcalcPage() {
 
   const { setAppInfo } = useAppInfo()
 
-  const { hasHydrated, settings, updateSettings } = useMatcalcSettings()
+  const { settings, hasHydrated, updateSettings } = useMatcalcSettings()
 
   const { sendMessage } = useMessages(MESSAGE_CHANNEL)
 
@@ -248,19 +248,14 @@ export function MatcalcPage() {
   }, [setToolbarTabs])
 
   useEffect(() => {
-    if (!hasHydrated || !currentSelection?.id) {
-      return
+    if (currentSelection?.id && hasHydrated) {
+      updateSettings(
+        produce(settings, (draft) => {
+          draft.view.panels.tab = currentSelection.id
+        })
+      )
     }
-
-    if (settings.view.panels.tab === currentSelection.id) {
-      return
-    }
-    updateSettings(
-      produce(settings, (draft) => {
-        draft.view.panels.tab = currentSelection.id
-      })
-    )
-  }, [currentSelection, hasHydrated, settings, updateSettings])
+  }, [currentSelection, hasHydrated])
 
   async function loadZTestData() {
     let res = await httpFetch.getText('/data/test/z_table.txt')

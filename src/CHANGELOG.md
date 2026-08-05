@@ -4,7 +4,7 @@
 
 ### Changed
 
-- Added hydration check to matcalc settings to stop getting out of sync.
+- Change output to remove commas to stop locale issues such as France.
 - Increase debounce on numerical input to make typing easier. Volcano now loads auto labels into label box so user can customize.
 - Volcano now deals with missing p-values by clamping them.
 - Auto label points on volcano plot.

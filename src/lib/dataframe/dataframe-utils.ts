@@ -659,7 +659,13 @@ export function downloadDataFrame(
 
   //const f = new DataFrameWriter({ sep, hasHeader, hasIndex }).toString(df)
 
-  const f = new DataFrameWriter({ sep, hasHeader, hasIndex, dp }).toString(df)
+  const f = new DataFrameWriter({
+    sep,
+    hasHeader,
+    hasIndex,
+    dp,
+    commas: false,
+  }).toString(df)
 
   if (!f) {
     return

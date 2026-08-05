@@ -2341,8 +2341,8 @@
           "date": "2026-08-05T17:05:02.696Z"
         },
         {
-          "msg": "Added hydration check to matcalc settings to stop getting out of sync",
-          "date": "2026-08-05T20:19:32.054Z"
+          "msg": "Change output to remove commas to stop locale issues such as France",
+          "date": "2026-08-05T22:08:09.162Z"
         }
       ]
     },
