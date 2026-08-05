@@ -1,3 +1,4 @@
+import { useVolcanoContext } from '@/components/pages/apps/matcalc/apps/volcano/volcano-provider'
 import { useMemo } from 'react'
 
 import { BWR_CMAP_V2, COLOR_MAPS, ColorMap } from '@/lib/color/colormap'
@@ -10,7 +11,6 @@ import { COLOR_BLACK } from '@/lib/color/color'
 
 import type { SeriesData } from '@/lib/dataframe/series-data'
 import type { ILim } from '@/lib/math/math'
-import { range } from '@/lib/math/range'
 import { Axis, YAxis } from '../axis'
 import { AxisBottomSvg, AxisLeftSvg } from '../svg-axis'
 
@@ -63,6 +63,7 @@ export interface IScatterDisplayOptions {
       opacity: number
     }
     values: string[]
+    auto: boolean
   }
 }
 
@@ -87,6 +88,7 @@ export const DEFAULT_SCATTER_PROPS: IScatterDisplayOptions = {
       opacity: 0.25,
     },
     values: [''],
+    auto: false,
   },
 }
 
@@ -141,14 +143,16 @@ export function ScatterPlotSvg({
     ...displayProps,
   }
 
+  const { data } = useVolcanoContext()
+
   const svg = useMemo(() => {
     if (!df) {
       return null
     }
 
-    const xdata = getNumCol(df, findCol(df, x))
+    //const xdata = getNumCol(df, findCol(df, x))
 
-    const ydata = y ? getNumCol(df, findCol(df, y)) : range(df.shape[0])
+    //const ydata = y ? getNumCol(df, findCol(df, y)) : range(df.shape[0])
 
     // give y a default name
     if (!y) {
@@ -205,9 +209,9 @@ export function ScatterPlotSvg({
         />
 
         <g transform={`translate(${margin.left}, ${margin.top})`}>
-          {xdata.map((x, xi) => {
+          {data.x.map((x, xi) => {
             const x1 = xax!.domainToRange(x)
-            const y1 = yax!.domainToRange(ydata[xi]!)
+            const y1 = yax!.domainToRange(data.y[xi]!)
             const r =
               sizedata.length > 0
                 ? sizeFunc(sizedata[xi]!)
@@ -220,8 +224,8 @@ export function ScatterPlotSvg({
 
         <g transform={`translate(${margin.left}, ${margin.top})`}>
           {labelIdx.map((i) => {
-            const x1 = xax!.domainToRange(xdata[i]!)
-            const y1 = yax!.domainToRange(ydata[i]!)
+            const x1 = xax!.domainToRange(data.x[i]!)
+            const y1 = yax!.domainToRange(data.y[i]!)
 
             return (
               <text x={x1} y={y1} key={i}>

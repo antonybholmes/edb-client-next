@@ -133,6 +133,7 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
       opacity: 0.25,
     },
     values: [],
+    auto: true,
   },
   border: { ...DEFAULT_STROKE_PROPS, width: 2, show: false },
 }
@@ -186,14 +187,16 @@ export function VolcanoPlotSvg({
 
   const [toolTipInfo, setToolTipInfo] = useState<ITooltip | null>(null)
 
-  const _xdata = getNumCol(sheet, findCol(sheet, x))
+  const { data, labels, displayLabels } = useVolcanoContext()
 
-  const _ydata = getNumCol(sheet, findCol(sheet, y))
-
-  const points = _xdata.map((x, i) => ({
-    x,
-    y: _ydata[i]!,
-  }))
+  const points = useMemo(
+    () =>
+      data.x.map((x, i) => ({
+        x,
+        y: data.y[i]!,
+      })),
+    [data.x, data.y]
+  )
 
   const svg = useMemo(() => {
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
@@ -215,10 +218,8 @@ export function VolcanoPlotSvg({
     const height = innerHeight + MARGIN.top + MARGIN.bottom
 
     // matching is case insensitive
-    const labelSet = new Set<string>(
-      displayOptions.labels.values.map((x) => x.toLowerCase())
-    )
-    const labelIdx = sheet.index.values
+    const labelSet = new Set<string>(displayLabels.map((x) => x.toLowerCase()))
+    const labelIdx = labels
       .map((v, vi) => [v, vi] as [SeriesData, number])
       .filter((v) => labelSet.has((v[0] as string).toLowerCase()))
       .map((v) => v[1])
@@ -353,7 +354,7 @@ export function VolcanoPlotSvg({
         />
       </SvgBase>
     )
-  }, [sheet, y, displayOptions, sizeFunc])
+  }, [sheet, y, displayOptions, labels, displayLabels, sizeFunc])
 
   // useEffect(() => {
   //   //if (dataFiles.length > 0) {

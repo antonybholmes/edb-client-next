@@ -7,8 +7,6 @@ import { PropsPanel } from '@/components/props-panel'
 import { TEXT_CLEAR } from '@/consts'
 import { PropRow } from '@/dialogs/prop-row'
 import { SwitchPropRow } from '@/dialogs/switch-prop-row'
-import { TagIcon } from '@/icons/tag-icon'
-import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { textToLines } from '@/lib/text/lines'
 import { NumericalInput } from '@/themed/numerical-input'
 import {
@@ -21,9 +19,6 @@ import { Button } from '@/themed/v2/button'
 import { ToolbarTabGroup } from '@/toolbar/toolbar-tab-group'
 
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { getNumCol } from '@/lib/dataframe/dataframe-utils'
-import { range } from '@/lib/math/range'
-import { IconButton } from '@/themed/icon-button'
 import { Textarea } from '@/themed/textarea'
 import { produce } from 'immer'
 import { useState } from 'react'
@@ -41,9 +36,7 @@ export function VolcanoPropsPanel() {
 
   const { updatePlot } = useHistory()
 
-  const { plot } = useVolcanoContext()
-
-  const sheet = plot!.dataframes['main'] as BaseDataFrame
+  const { plot, setLabels } = useVolcanoContext()
 
   const displayProps: IVolcanoDisplayOptions = plot.props
 
@@ -54,54 +47,7 @@ export function VolcanoPropsPanel() {
   function addLabels() {
     const values: string[] = textToLines(text, { trim: true })
 
-    updatePlot(
-      produce(plot, (draft) => {
-        draft.props.labels.values = values
-      })
-    )
-  }
-
-  function getShouldLabel(logFc: number, logP: number): boolean {
-    if (displayProps!.logP.show && displayProps!.logFc.show) {
-      if (
-        logP > displayProps!.logP.threshold &&
-        Math.abs(logFc) > displayProps!.logFc.threshold
-      ) {
-        return true
-      }
-    } else {
-      if (
-        (displayProps!.logP.show && logP > displayProps!.logP.threshold) ||
-        (displayProps!.logFc.show &&
-          Math.abs(logFc) > displayProps!.logFc.threshold)
-      ) {
-        return true
-      }
-    }
-
-    return false
-  }
-
-  function loadHighlightedLabels() {
-    const xdata = getNumCol(sheet, findCol(sheet, displayProps.axes.xaxis.name))
-
-    const ydata = getNumCol(sheet, findCol(sheet, displayProps.axes.yaxis.name))
-
-    const idx = new Set(
-      range(sheet.shape[0]).filter((i) => getShouldLabel(xdata[i]!, ydata[i]!))
-    )
-
-    const values = sheet.index.values
-      .filter((_v, i) => idx.has(i))
-      .map((l) => l.toString())
-
-    setText(values.join('\n'))
-
-    updatePlot(
-      produce(plot, (draft) => {
-        draft.props.labels.values = values
-      })
-    )
+    setLabels(values)
   }
 
   return (
@@ -358,6 +304,17 @@ export function VolcanoPropsPanel() {
           <AccordionTrigger>Labels</AccordionTrigger>
           <AccordionContent>
             <BaseCol className="gap-y-1">
+              <SwitchPropRow
+                title="Auto label highlight"
+                checked={displayProps.labels.auto}
+                onCheckedChange={(v) => {
+                  updatePlot(
+                    produce(plot, (draft) => {
+                      draft.props.labels.auto = v
+                    })
+                  )
+                }}
+              />
               <Textarea
                 id="labels"
                 aria-label="Labels"
@@ -370,19 +327,20 @@ export function VolcanoPropsPanel() {
               <VCenterRow className="justify-between">
                 <ToolbarTabGroup className="gap-x-1">
                   <Button
-                    variant="theme"
+                    variant="app-theme"
                     aria-label="Add labels to plot"
                     onClick={() => addLabels()}
                   >
                     Add labels to plot
                   </Button>
-                  <IconButton
+                  {/* <Button
+                    variant="app-theme"
                     aria-label="Load highlighted labels"
                     onClick={() => loadHighlightedLabels()}
                     title="Load highlighted labels from plot"
                   >
-                    <TagIcon />
-                  </IconButton>
+                    Label highlighted data points
+                  </Button> */}
                 </ToolbarTabGroup>
 
                 <Button
