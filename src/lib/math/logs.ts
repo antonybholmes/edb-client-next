@@ -35,3 +35,7 @@ export function ln(x: number): number {
     return Math.log(x)
   }
 }
+
+export function minusLog10(x: number, defaultValue: number = 1): number {
+  return x > 0 ? -Math.log10(x) : defaultValue
+}

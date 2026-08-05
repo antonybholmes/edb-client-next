@@ -32,8 +32,8 @@ export function useSave() {
       hasIndex,
       file: name,
       sep,
-      dp: settings.view.dp,
-      commas: settings.view.commas,
+      //dp: settings.view.dp,
+      //commas: settings.view.commas,
     })
   }
 
@@ -47,8 +47,8 @@ export function useSave() {
       hasIndex: false,
       file: name,
       sep,
-      dp: settings.view.dp,
-      commas: settings.view.commas,
+      //dp: settings.view.dp,
+      //commas: settings.view.commas,
     })
   }
 

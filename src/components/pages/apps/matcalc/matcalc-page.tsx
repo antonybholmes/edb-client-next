@@ -240,10 +240,6 @@ export function MatcalcPage() {
         id: 'Genomic',
         component: GenomicToolbar,
       },
-      // {
-      //   id: 'Help',
-      //   render: () => <ToolbarHelpTabGroup url={HELP_URL} />,
-      // },
     ])
   }, [setToolbarTabs])
 
