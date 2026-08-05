@@ -2339,6 +2339,10 @@
         {
           "msg": "Increase debounce on numerical input to make typing easier. Volcano now loads auto labels into label box so user can customize",
           "date": "2026-08-05T17:05:02.696Z"
+        },
+        {
+          "msg": "Change output to remove commas to stop locale issues such as France",
+          "date": "2026-08-05T22:08:09.162Z"
         }
       ]
     },
