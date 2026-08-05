@@ -294,14 +294,6 @@ export const useMatcalcStore = create<IMatcalcStore>()(
 //   }
 // )
 
-// function updateSettings(settings: IMatcalcSettings) {
-//   settingsAtom.set(settings)
-// }
-
-// function resetSettings() {
-//   updateSettings({ ...DEFAULT_SETTINGS })
-// }
-
 export function useMatcalcSettings(): {
   hasHydrated: boolean
   settings: IMatcalcSettings
