@@ -80,6 +80,34 @@ export function SaveTableDialog({
         }
       }}
       bodyCls="gap-y-4"
+      // leftFooterChildren={
+      //   <VCenterRow className="gap-x-2">
+      //     <span>Save as type</span>
+      //     <SelectList
+      //       value={format.ext}
+      //       items={fileTypes.map((f) => ({
+      //         label: f.name,
+      //         value: f.ext.toLowerCase(),
+      //       }))}
+      //       onValueChange={(v) => {
+      //         setFormat(fileTypes.filter((f) => f.ext.toLowerCase() === v)[0]!)
+      //       }}
+      //       className="w-60 h-9"
+
+      //       //h="lg"
+      //     >
+      //       {fileTypes.map((f) => (
+      //         <SelectItem
+      //           key={f.ext}
+      //           value={f.ext.toLowerCase()}
+      //           className="w-64"
+      //         >
+      //           {f.name}
+      //         </SelectItem>
+      //       ))}
+      //     </SelectList>
+      //   </VCenterRow>
+      // }
     >
       <ActionDialogCard>
         <ActionDialogCardContent>
@@ -92,33 +120,6 @@ export function SaveTableDialog({
                 setText(e)
               }}
             />
-          </ActionDialogRow>
-          <ActionDialogRow title="Save as type">
-            <SelectList
-              value={format.ext}
-              items={fileTypes.map((f) => ({
-                label: f.name,
-                value: f.ext.toLowerCase(),
-              }))}
-              onValueChange={(v) => {
-                setFormat(
-                  fileTypes.filter((f) => f.ext.toLowerCase() === v)[0]!
-                )
-              }}
-              className="w-60 h-9"
-
-              //h="lg"
-            >
-              {fileTypes.map((f) => (
-                <SelectItem
-                  key={f.ext}
-                  value={f.ext.toLowerCase()}
-                  className="w-64"
-                >
-                  {f.name}
-                </SelectItem>
-              ))}
-            </SelectList>
           </ActionDialogRow>
 
           <ActionCheckRow
@@ -146,6 +147,34 @@ export function SaveTableDialog({
               )
             }}
           />
+
+          <ActionDialogRow title="Save as type">
+            <SelectList
+              value={format.ext}
+              items={fileTypes.map((f) => ({
+                label: f.name,
+                value: f.ext.toLowerCase(),
+              }))}
+              onValueChange={(v) => {
+                setFormat(
+                  fileTypes.filter((f) => f.ext.toLowerCase() === v)[0]!
+                )
+              }}
+              className="w-60 h-9"
+
+              //h="lg"
+            >
+              {fileTypes.map((f) => (
+                <SelectItem
+                  key={f.ext}
+                  value={f.ext.toLowerCase()}
+                  className="w-64"
+                >
+                  {f.name}
+                </SelectItem>
+              ))}
+            </SelectList>
+          </ActionDialogRow>
         </ActionDialogCardContent>
       </ActionDialogCard>
     </OKCancelDialog>
