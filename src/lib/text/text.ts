@@ -159,7 +159,7 @@ export function formattedList(
  * @returns
  */
 export function isStringArray(value: unknown): value is string[] {
-  return Array.isArray(value) && value.every(item => typeof item === 'string')
+  return Array.isArray(value) && value.every((item) => typeof item === 'string')
 }
 
 export function splitOnCapitalLetters(str: string): string {
@@ -191,7 +191,7 @@ export function formatNumber(x: number, options: IFormatNumOpts = {}): string {
   }
 
   if (Number.isInteger(x) || dp === -1) {
-    return commas ? x.toLocaleString() : x.toString()
+    return commas ? x.toLocaleString(locale) : x.toString()
   }
 
   return commas
