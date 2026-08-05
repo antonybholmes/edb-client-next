@@ -654,7 +654,7 @@ export function downloadDataFrame(
     sep = '\t',
     hasHeader = true,
     hasIndex = true,
-    dp = 4,
+    dp = -1,
   } = options
 
   //const f = new DataFrameWriter({ sep, hasHeader, hasIndex }).toString(df)

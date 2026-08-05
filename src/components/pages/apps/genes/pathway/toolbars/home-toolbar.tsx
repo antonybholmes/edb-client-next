@@ -190,7 +190,7 @@ export function HomeToolbar() {
 
     const iid = addIndicator('Calculating enrichment...')
 
-    console.log(genesets)
+    //console.log(genesets)
 
     runPathway(
       { genesets, collections: fullCollections, genesInUniverse },
