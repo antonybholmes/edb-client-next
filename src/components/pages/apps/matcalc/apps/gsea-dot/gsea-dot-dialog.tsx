@@ -140,9 +140,9 @@ export function GseaDotDialog({
     const ids = df.index.strs
 
     const plot = newGseaDotPlot('GSEA Dot Plot', {
-      nes,
-      sizes,
-      log10pvalues,
+      nes: { values: nes, label: nesCol },
+      sizes: { values: sizes, label: sizeCol },
+      log10pvalues: { values: log10pvalues, label: pValueCol },
       ids,
     })
 

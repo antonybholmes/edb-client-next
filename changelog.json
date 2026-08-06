@@ -2355,6 +2355,10 @@
         {
           "msg": "Added GSEA dot plot tool",
           "date": "2026-08-06T17:26:29.734Z"
+        },
+        {
+          "msg": "GSEA dot now has refined tooltips",
+          "date": "2026-08-06T21:44:30.855Z"
         }
       ]
     },

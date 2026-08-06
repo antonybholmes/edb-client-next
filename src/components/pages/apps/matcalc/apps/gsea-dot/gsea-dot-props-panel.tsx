@@ -89,7 +89,9 @@ export function GseaDotPropsPanel() {
                     })
                   )
                 }}
-              />
+              >
+                -
+              </DoubleNumericalInput>
             </PropRow>
 
             <PropRow title="Border">
@@ -131,7 +133,7 @@ export function GseaDotPropsPanel() {
         <AccordionItem value="p-value">
           <AccordionTrigger>P-value</AccordionTrigger>
           <AccordionContent>
-            <TextPropRow
+            {/* <TextPropRow
               title="Label"
               value={displayProps.p.label}
               onTextChange={(v) => {
@@ -142,7 +144,7 @@ export function GseaDotPropsPanel() {
                 )
               }}
               w="md"
-            />
+            /> */}
 
             <PropRow title="Max">
               <NumericalInput
@@ -182,7 +184,7 @@ export function GseaDotPropsPanel() {
         <AccordionItem value="size">
           <AccordionTrigger>Size</AccordionTrigger>
           <AccordionContent>
-            <TextPropRow
+            {/* <TextPropRow
               title="Label"
               value={displayProps.size.label}
               onTextChange={(v) => {
@@ -193,7 +195,7 @@ export function GseaDotPropsPanel() {
                 )
               }}
               w="md"
-            />
+            /> */}
 
             <PropRow title="Dot Radius">
               <NumericalInput

@@ -11,9 +11,9 @@ import {
 
 export interface IGseaDot {
   ids: string[]
-  nes: number[]
-  log10pvalues: number[]
-  sizes: number[]
+  nes: { values: number[]; label: string }
+  log10pvalues: { values: number[]; label: string }
+  sizes: { values: number[]; label: string }
 }
 
 export interface IGseaDotPlot extends IBasePlot {
@@ -47,10 +47,12 @@ export function newGseaDotPlot(
   opts: Partial<IGseaDotPlot> = {}
 ): IGseaDotPlot {
   const maxNes = Math.ceil(
-    Math.max(...gseaDot.nes.filter((v) => v >= 0).map((v) => Math.abs(v)))
+    Math.max(
+      ...gseaDot.nes.values.filter((v) => v >= 0).map((v) => Math.abs(v))
+    )
   )
 
-  const negNes = gseaDot.nes.filter((v) => v < 0)
+  const negNes = gseaDot.nes.values.filter((v) => v < 0)
 
   const minNes =
     negNes.length > 0
