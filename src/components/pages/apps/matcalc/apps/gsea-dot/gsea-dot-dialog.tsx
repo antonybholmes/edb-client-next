@@ -146,7 +146,6 @@ export function GseaDotDialog({
       open={open}
       title="GSEA Dot Plot"
       onResponse={(r) => {
-        console.log(r)
         if (r === TEXT_OK) {
           submit()
         } else {
