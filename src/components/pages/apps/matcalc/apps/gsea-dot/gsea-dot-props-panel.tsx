@@ -109,6 +109,22 @@ export function GseaDotPropsPanel() {
                 ]}
               />
             </PropRow>
+
+            <PropRow title="Left Margin">
+              <NumericalInput
+                value={displayProps.margin.left}
+
+                limit={[1, 1000]}
+                dp={0}
+                onNumChanged={(v) => {
+                  updatePlot(
+                    produce(plot, (draft) => {
+                      draft.props.margin.left = v
+                    })
+                  )
+                }}
+              />
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
 

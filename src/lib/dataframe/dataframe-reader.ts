@@ -149,8 +149,6 @@ export class DataFrameReader {
       colNames = tokens.slice(this._indexCols)
     }
 
-    console.log('col names', colNames)
-
     const index: string[][] = []
     const data: SeriesData[][] = []
     const defaultCellValue = makeCell('', this._keepDefaultNA)

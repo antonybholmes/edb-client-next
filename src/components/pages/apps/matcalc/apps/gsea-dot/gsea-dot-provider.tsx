@@ -2,6 +2,7 @@ import { createContext, useContext, type ReactNode } from 'react'
 
 import { makeUuid } from '@/lib/id'
 
+import { produce } from 'immer'
 import { IBasePlot } from '../../history/history-provider/plot'
 import {
   DEFAULT_GSEA_DOT_PROPS,
@@ -45,11 +46,28 @@ export function newGseaDotPlot(
   gseaDot: IGseaDot,
   opts: Partial<IGseaDotPlot> = {}
 ): IGseaDotPlot {
-  const {
+  const maxNes = Math.ceil(
+    Math.max(...gseaDot.nes.filter((v) => v >= 0).map((v) => Math.abs(v)))
+  )
+
+  const negNes = gseaDot.nes.filter((v) => v < 0)
+
+  const minNes =
+    negNes.length > 0
+      ? Math.ceil(Math.max(...negNes.map((v) => Math.abs(v))))
+      : 0
+
+  console.log('maxNes:', maxNes, 'minNes:', minNes)
+
+  let {
     style = 'gsea-dot-plot',
     props = { ...DEFAULT_GSEA_DOT_PROPS },
     actions = [],
   } = opts
+
+  props = produce(props, (draft) => {
+    draft.axes.xaxis.domain = [-minNes, maxNes]
+  })
 
   return {
     id: makeUuid(),
