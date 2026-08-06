@@ -4,6 +4,7 @@
 
 ### Changed
 
+- GSEA dot now has refined tooltips.
 - Added GSEA dot plot tool.
 - Sped up hypergeometric using revised lnbinomial function.
 - Pathway now works with multiple gene sets.

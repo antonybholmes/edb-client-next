@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 
 import { COLOR_BLACK } from '@/lib/color/color'
 
@@ -162,17 +162,19 @@ export function GseaDotPlotSvg({
 
   const [toolTipInfo, setToolTipInfo] = useState<ITooltip | null>(null)
 
+  const timeoutRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
   const points = useMemo(
     () =>
-      plot.gseaDot.nes.map((x, i) => {
-        const size = plot.gseaDot.sizes[i]!
+      plot.gseaDot.nes.values.map((x, i) => {
+        const size = plot.gseaDot.sizes.values[i]!
         const sizeF = Math.min(size / displayOptions.size.maxSize, 1)
         return {
           x,
           y: i + 1,
-          p: plot.gseaDot.log10pvalues[i]!,
+          p: plot.gseaDot.log10pvalues.values[i]!,
           color: getColor(
-            plot.gseaDot.log10pvalues[i]!,
+            plot.gseaDot.log10pvalues.values[i]!,
             displayOptions.p.range[1],
             getColorMap(displayOptions.p.cmap)
           ),
@@ -182,13 +184,39 @@ export function GseaDotPlotSvg({
         }
       }),
     [
-      plot.gseaDot.nes,
-      plot.gseaDot.sizes,
+      plot.gseaDot.nes.values,
+      plot.gseaDot.sizes.values,
       displayOptions.size.maxSize,
       displayOptions.dots.size,
       displayOptions.p,
     ]
   )
+
+  const handleVariantEnter = useCallback(
+    (row: number, x1: number, y1: number) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+
+      setToolTipInfo({
+        ...toolTipInfo,
+        pos: {
+          x: x1 + displayOptions.margin.left + TOOLTIP_OFFSET,
+          y: y1 + displayOptions.margin.top + TOOLTIP_OFFSET,
+        },
+        cell: { row: row, col: 0 },
+      })
+    },
+    []
+  )
+
+  const handleVariantLeave = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+
+    timeoutRef.current = setTimeout(() => setToolTipInfo(null), 300)
+  }, [])
 
   const svg = useMemo(() => {
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
@@ -200,7 +228,7 @@ export function GseaDotPlotSvg({
 
     const innerWidth = xax.length
     const innerHeight =
-      displayOptions.axes.yaxis.rowHeight * (plot.gseaDot.nes.length + 1)
+      displayOptions.axes.yaxis.rowHeight * (plot.gseaDot.nes.values.length + 1)
     const width =
       innerWidth + displayOptions.margin.left + displayOptions.margin.right
     const height =
@@ -255,16 +283,9 @@ export function GseaDotPlotSvg({
                 fill={p.color}
                 opacity={displayOptions.dots.opacity}
                 key={xi}
-                onMouseLeave={() => setToolTipInfo(null)}
+                onMouseLeave={handleVariantLeave}
                 onMouseEnter={() => {
-                  setToolTipInfo({
-                    ...toolTipInfo,
-                    pos: {
-                      x: x1 + displayOptions.margin.left + TOOLTIP_OFFSET,
-                      y: y1 + displayOptions.margin.top + TOOLTIP_OFFSET,
-                    },
-                    cell: { row: xi, col: 0 },
-                  })
+                  handleVariantEnter(xi, x1, y1)
                 }}
               />
             )
@@ -305,14 +326,14 @@ export function GseaDotPlotSvg({
           }}
           tickSize={displayOptions.axes.xaxis.tickSize}
           strokeWidth={displayOptions.axes.xaxis.strokeWidth}
-          title={'NES'}
+          title={plot.gseaDot.nes.label}
           color={displayOptions.axes.xaxis.color}
         />
 
         {displayOptions.colorbar.show &&
           displayOptions.colorbar.position.includes('right') && (
             <g
-              transform={`translate(${displayOptions.margin.left + innerWidth + displayOptions.padding * 4}, ${displayOptions.margin.top})`}
+              transform={`translate(${displayOptions.margin.left + innerWidth + displayOptions.padding * 5}, ${displayOptions.margin.top})`}
             >
               <g id="p-legend">
                 <SvgText
@@ -320,7 +341,7 @@ export function GseaDotPlotSvg({
                   y={0}
                   textAnchor="middle"
                 >
-                  {displayOptions.p.label}
+                  {`-log10(${plot.gseaDot.log10pvalues.label})`}
                 </SvgText>
                 <g transform={`translate(0, ${displayOptions.padding * 2})`}>
                   <VColorBarSvg
@@ -346,7 +367,7 @@ export function GseaDotPlotSvg({
                   y={0}
                   textAnchor="middle"
                 >
-                  {displayOptions.size.label}
+                  {plot.gseaDot.sizes.label}
                 </SvgText>
                 <g
                   transform={`translate(0, ${displayOptions.padding + displayOptions.dots.size})`}
@@ -584,8 +605,9 @@ export function GseaDotPlotSvg({
           }}
         >
           <p className="font-semibold">{`${points[toolTipInfo.cell.row]!.label}`}</p>
-          <p>{`-log10(p): ${points[toolTipInfo.cell.row]!.p.toFixed(2)}`}</p>
-          <p>{`Size: ${plot.gseaDot.sizes[toolTipInfo.cell.row]!}`}</p>
+          <p>{`${plot.gseaDot.nes.label}: ${plot.gseaDot.nes.values[toolTipInfo.cell.row]!.toFixed(2)}`}</p>
+          <p>{`-log10(${plot.gseaDot.log10pvalues.label}): ${points[toolTipInfo.cell.row]!.p.toFixed(2)}`}</p>
+          <p>{`${plot.gseaDot.sizes.label}: ${plot.gseaDot.sizes.values[toolTipInfo.cell.row]!}`}</p>
         </div>
       )}
     </>

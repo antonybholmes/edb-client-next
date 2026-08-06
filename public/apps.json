@@ -111,9 +111,9 @@
     "color": "#40bf80",
     "version": "48.8.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-08-06T17:26:28.664Z",
-    "hash": "a2f6e3ae3e9b24a1381a0ae2d9d8db0c8fecfa79452ed28bb0e75a058d21a6be",
-    "build": 1890
+    "modified": "2026-08-06T21:44:29.892Z",
+    "hash": "8d62fb6cf72d9030043867f460b6dd4d7d469f94a48ef05f0510c0e4cbea0f9f",
+    "build": 1892
   },
   {
     "name": "Motifs",
@@ -171,9 +171,9 @@
     "color": "#ff9900",
     "version": "1.2.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-06T17:26:28.666Z",
-    "hash": "86232be87a433473758b2dd23ecc90376d88c86168927771151d0dd19d853bde",
-    "build": 56
+    "modified": "2026-08-06T21:44:29.893Z",
+    "hash": "5a70e689eac69c47c03a46f76f8afde3e1f784309884ea1ce5543ca861697a13",
+    "build": 58
   },
   {
     "name": "Seq Browser",
