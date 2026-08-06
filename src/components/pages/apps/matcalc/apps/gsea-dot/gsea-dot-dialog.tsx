@@ -4,10 +4,11 @@ import { findCols, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 
 import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useCurrentSheets } from '../../history/history-provider/history-contexts'
-import { newGseaDotPlot } from '../../history/history-provider/history-factories'
+
 import { HistoryPlot } from '../../history/history-provider/history-types'
+import { newGseaDotPlot } from './gsea-dot-provider'
 
 const MAX_COLS = 10
 
@@ -24,6 +25,8 @@ function findNESCol(df: BaseDataFrame) {
   if (!df) {
     return 'NES'
   }
+
+  console.log('Finding NES column in dataframe:', df.columns)
 
   const cols = df.columns.filter((c) => c.toUpperCase().includes('NES'))
 
@@ -94,10 +97,15 @@ export function GseaDotDialog({
   //const step = currentStep(branch)[0]
   let df = sheets[0] as BaseDataFrame //currentSheet(step)[0] as AnnotationDataFrame
 
-  const [nesCol, setNESCol] = useState(findNESCol(df))
-  const [sizeCol, setSizeCol] = useState(findSizeCol(df))
-  const [pValueCol, setPValueCol] = useState(findPValueCol(df))
-  const [idCol, setIdCol] = useState(findIdCol(df))
+  const [nesCol, setNESCol] = useState<string>('')
+  const [sizeCol, setSizeCol] = useState<string>('')
+  const [pValueCol, setPValueCol] = useState<string>('')
+
+  useEffect(() => {
+    setNESCol(findNESCol(df))
+    setSizeCol(findSizeCol(df))
+    setPValueCol(findPValueCol(df))
+  }, [df])
 
   async function submit() {
     let idx = findCols(df, nesCol)

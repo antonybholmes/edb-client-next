@@ -10,9 +10,10 @@ import { IClusterFrame } from '@/lib/math/hcluster'
 import { ISankeyPlot } from '../../../sankey/sankey-provider'
 import { IBoxPlotDisplayOptions } from '../../apps/boxplot/boxplot-plot-svg'
 import { IExtGseaDisplayOptions } from '../../apps/ext-gsea/ext-gsea-store'
-import { IGseaDotDisplayOptions } from '../../apps/gsea-dot/gsea-dot-plot-svg'
+import { IGseaDotPlot } from '../../apps/gsea-dot/gsea-dot-provider'
 import { IVolcanoDisplayOptions } from '../../apps/volcano/volcano-plot-svg'
 import { IUndoState } from '../history-manager'
+import { IBasePlot } from './plot'
 
 export type NodeType = 'app' | 'branch' | 'sheet' | 'plot'
 
@@ -26,16 +27,6 @@ export interface ISelectionPath {
 //export interface IHistoryComp extends IDBEntity {}
 
 export type DataFrameType = BaseDataFrame | AnnotationDataFrame | IClusterFrame
-
-export interface IBasePlot extends IDBEntity {
-  //style: PlotStyle
-  // groups to make plots so that they are independent
-  // of history such that if user moves groups around
-  // it won't affect any plots generated
-  groupRows: IClusterGroupRow[]
-  actions: string[]
-  type: 'plot'
-}
 
 export interface HeatMapPlot extends IBasePlot {
   style: 'heatmap' | 'dot'
@@ -54,19 +45,6 @@ export interface IVolcanoPlot extends IBasePlot {
   style: 'volcano'
   volcano: IVolcano
   props: IVolcanoDisplayOptions
-}
-
-export interface IGseaDot {
-  ids: string[]
-  nes: number[]
-  log10pvalues: number[]
-  sizes: number[]
-}
-
-export interface IGseaDotPlot extends IBasePlot {
-  style: 'gsea-dot-plot'
-  gseaDot: IGseaDot
-  props: IGseaDotDisplayOptions
 }
 
 export interface BoxPlot extends IBasePlot {

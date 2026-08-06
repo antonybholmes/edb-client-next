@@ -62,6 +62,7 @@ export function HColorBarSvg({
   if (ticks) {
     //axis = axis.setTicks([domain[0], 0.5 * (domain[0] + domain[1]), domain[1]])
     //axis = axis.autoDomain(domain)
+    console.log('ticks:', ticks)
     axis.setTicks(ticks)
   } else {
     const dx = (domain[1] - domain[0]) / 4
@@ -186,17 +187,11 @@ export function VColorBarSvg({
   let start = domain[0] - inc
   let colorStart = 1 + colorStep
 
-  let axis = new YAxis().setDomain(domain).setLength(size.w) //.setTicks(ticks)
-
-  if (ticks) {
-    //axis = axis.setTicks([domain[0], 0.5 * (domain[0] + domain[1]), domain[1]])
-    //axis = axis.autoDomain(domain)
-    axis.setTicks(ticks)
-  } else {
-    const dx = (domain[1] - domain[0]) / 4
-
-    axis = axis.setTicks(range(0, 5).map((x) => domain[0] + x * dx))
-  }
+  const dx = (domain[1] - domain[0]) / 4
+  let axis = new YAxis()
+    .setDomain(domain)
+    .setLength(size.w)
+    .setTicks(ticks ? ticks : range(0, 5).map((x) => domain[0] + x * dx))
 
   return (
     <g
