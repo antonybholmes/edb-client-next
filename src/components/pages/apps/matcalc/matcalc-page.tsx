@@ -85,6 +85,8 @@ import { BoxPlotPanel } from './apps/boxplot/boxplot-panel'
 import { BoxPlotProvider } from './apps/boxplot/boxplot-provider'
 import { ExtGseaPanel } from './apps/ext-gsea/ext-gsea-panel'
 import { ExtGseaProvider } from './apps/ext-gsea/ext-gsea-provider'
+import { GseaDotPanel } from './apps/gsea-dot/gsea-dot-panel'
+import { GseaDotProvider } from './apps/gsea-dot/gsea-dot-provider'
 import {
   useCurrentSelections,
   useCurrentSheets,
@@ -147,6 +149,12 @@ function plotElem(plot: HistoryPlot): ReactElement {
         <VolcanoProvider plot={plot}>
           <VolcanoPanel />
         </VolcanoProvider>
+      )
+    case 'gsea-dot-plot':
+      return (
+        <GseaDotProvider plot={plot}>
+          <GseaDotPanel />
+        </GseaDotProvider>
       )
     case 'box':
       return (
@@ -292,6 +300,24 @@ export function MatcalcPage() {
 
     openFile(`Deseq Test`, {
       sheets: [table.setName('Deseq Test') as AnnotationDataFrame],
+    })
+  }
+
+  async function loadGseaDotTestData() {
+    const res = await httpFetch.getText('/data/test/gsea/gsea-report.txt')
+
+    const lines = textToLines(res)
+
+    const table = new DataFrameReader().indexCols(1).read(lines)
+
+    //resolve({ ...table, name: file.name })
+
+    // openBranch(`Load "Deseq Test"`, [
+    //   table.setName('Deseq Test') as AnnotationDataFrame,
+    // ])
+
+    openFile(`GSEA Dot Test`, {
+      sheets: [table.setName('GSEA Dot Test') as AnnotationDataFrame],
     })
   }
 
@@ -541,6 +567,9 @@ export function MatcalcPage() {
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => loadBoxTestData()}>
               Box
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => loadGseaDotTestData()}>
+              GSEA Dot
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

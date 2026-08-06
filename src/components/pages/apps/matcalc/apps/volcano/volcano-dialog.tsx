@@ -12,7 +12,6 @@ import {
   ActionCheckRow,
   ActionDialogRow,
 } from '@/components/dialogs/card/action-dialog-card'
-import { SeriesData } from '@/lib/dataframe/series-data'
 import { produce } from 'immer'
 import { useRef, type BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
@@ -100,7 +99,7 @@ export function VolcanoDialog({
       return
     }
 
-    let foldChanges: SeriesData[] = df.col(idx[0]!)!.values
+    let foldChanges: number[] = df.col(idx[0]!)!.nums
 
     idx = findCols(df, data.pValueCol)
 
@@ -108,7 +107,7 @@ export function VolcanoDialog({
       return
     }
 
-    let pvalues: SeriesData[] = df.col(idx[0]!)!.values
+    let pvalues: number[] = df.col(idx[0]!)!.nums
 
     // remove na
     idx = filterNA(pvalues)
@@ -140,9 +139,11 @@ export function VolcanoDialog({
       labels[i] = 0
     }
 
+    const ids = subset(df.index.strs, idx)
+
     const logpvalues = data.applyLog10ToPValue
       ? (pvalues as number[]).map((v) =>
-          v > 0 ? Math.min(-Math.log10(v), MAX_NEG_LOG10_P) : MAX_NEG_LOG10_P
+          v > 0 ? -Math.log10(v) : MAX_NEG_LOG10_P
         )
       : pvalues
 
@@ -166,7 +167,11 @@ export function VolcanoDialog({
       })
     )
 
-    const plot = newVolcanoPlot('Volcano', { main: vdf })
+    const plot = newVolcanoPlot('Volcano', {
+      ids,
+      log2foldChanges,
+      logpvalues,
+    })
 
     //addPlots([plot])
 

@@ -1,8 +1,23 @@
-import { factorialBigInt, factorialLn as lnFactorial } from './factorial'
+import { factorialBigInt } from './factorial'
 import { MAX_SAFE_INTEGER } from './math'
 
 export function lnBinomial(n: number, k: number): number {
-  return lnFactorial(n) - lnFactorial(k) - lnFactorial(n - k)
+  //return lnFactorial(n) - lnFactorial(k) - lnFactorial(n - k)
+
+  // faster implementation than using lnFactorial
+
+  if (k < 0 || k > n) {
+    return -Infinity
+  }
+
+  k = Math.min(k, n - k)
+
+  let log = 0
+  for (let i = 1; i <= k; i++) {
+    log += Math.log(n - k + i) - Math.log(i)
+  }
+
+  return log
 }
 
 export function binomialBigInt(n: number, k: number): bigint {

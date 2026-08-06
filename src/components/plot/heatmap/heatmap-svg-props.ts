@@ -1,5 +1,5 @@
 import type { IDim } from '@/interfaces/dim'
-import { COLOR_MAPS } from '@/lib/color/colormap'
+import { ColorMapName } from '@/lib/color/colormap'
 
 import type { LeftRightPos } from '@/components/side'
 import { COLOR_BLACK } from '@/lib/color/color'
@@ -144,7 +144,7 @@ export interface IHeatMapDisplayOptions {
   }
   padding: number
   zoom: number
-  cmap: keyof typeof COLOR_MAPS
+  cmap: ColorMapName
   tooltip: {
     show: boolean
   }
@@ -233,7 +233,7 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
   },
   padding: 10,
   zoom: 1,
-  cmap: 'BWR v2',
+  cmap: 'BWRv2',
   cells: {
     values: {
       show: false,

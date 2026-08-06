@@ -6,20 +6,14 @@ import {
   type ReactNode,
 } from 'react'
 
-import { BaseDataFrame, findCol } from '@/lib/dataframe/base-dataframe'
-import { getNumCol } from '@/lib/dataframe/dataframe-utils'
 import { range } from '@/lib/math/range'
-import { VolcanoPlot } from '../../history/history-provider/history-types'
+import { IVolcanoPlot } from '../../history/history-provider/history-types'
 import type { IVolcanoDisplayOptions } from './volcano-plot-svg'
 
 export interface VolcanoPropsContextType {
   displayProps: IVolcanoDisplayOptions
-  plot: VolcanoPlot
-  data: {
-    x: number[]
-    y: number[]
-  }
-  labels: string[]
+  plot: IVolcanoPlot
+
   highlightedLabels: string[]
   displayLabels: string[]
   setLabels(labels: string[]): void
@@ -43,25 +37,26 @@ export function VolcanoProvider({
   plot,
   children,
 }: {
-  plot: VolcanoPlot
+  plot: IVolcanoPlot
   children: ReactNode
 }) {
   const [manualLabels, setManualLabels] = useState<string[]>([])
 
+  const volcano = plot.volcano
   const displayProps = useMemo(() => plot.props, [plot.props])
-  const sheet = useMemo(
-    () => plot!.dataframes['main'] as BaseDataFrame,
-    [plot!.dataframes['main']]
-  )
+  // const sheet = useMemo(
+  //   () => plot!.dataframes['main'] as BaseDataFrame,
+  //   [plot!.dataframes['main']]
+  // )
 
-  const labels = useMemo(() => sheet.index.strs, [sheet])
+  // const labels = useMemo(() => sheet.index.strs, [sheet])
 
-  const data = useMemo(() => {
-    const xdata = getNumCol(sheet, findCol(sheet, plot.props.axes.xaxis.name))
-    const ydata = getNumCol(sheet, findCol(sheet, displayProps.axes.yaxis.name))
+  // const data = useMemo(() => {
+  //   const xdata = getNumCol(sheet, findCol(sheet, plot.props.axes.xaxis.name))
+  //   const ydata = getNumCol(sheet, findCol(sheet, displayProps.axes.yaxis.name))
 
-    return { x: xdata, y: ydata }
-  }, [sheet, plot.props.axes.xaxis.name, displayProps.axes.yaxis.name])
+  //   return { x: xdata, y: ydata }
+  // }, [sheet, plot.props.axes.xaxis.name, displayProps.axes.yaxis.name])
 
   function getShouldLabel(logFc: number, logP: number): boolean {
     if (displayProps!.logP.show && displayProps!.logFc.show) {
@@ -86,15 +81,17 @@ export function VolcanoProvider({
 
   const highlightedLabels = useMemo(() => {
     const idx = new Set(
-      range(sheet.shape[0]).filter((i) =>
-        getShouldLabel(data.x[i]!, data.y[i]!)
+      range(volcano.ids.length).filter((i) =>
+        getShouldLabel(volcano.log2foldChanges[i]!, volcano.logpvalues[i]!)
       )
     )
 
-    const values = labels.filter((_v, i) => idx.has(i)).map((l) => l.toString())
+    const values = volcano.ids
+      .filter((_v, i) => idx.has(i))
+      .map((l) => l.toString())
 
     return values
-  }, [data.x, data.y, displayProps, labels])
+  }, [volcano.log2foldChanges, volcano.logpvalues, displayProps, volcano.ids])
 
   const displayLabels = useMemo(
     () => (displayProps.labels.auto ? highlightedLabels : manualLabels),
@@ -114,8 +111,7 @@ export function VolcanoProvider({
       value={{
         displayProps: plot.props,
         plot,
-        data,
-        labels,
+
         highlightedLabels,
         displayLabels,
         setLabels,

@@ -37,8 +37,8 @@ export function ColorMapMenu({
       <PopoverTrigger title="Change colormap" onClick={() => setOpen(true)}>
         <ColorMapIcon
           cmap={cmap}
-          aspect="aspect-3/1"
-          className="w-14 border border-foreground rounded-sm"
+          aspect="aspect-5/2"
+          className="w-12 border border-foreground rounded-sm"
         />
       </PopoverTrigger>
 

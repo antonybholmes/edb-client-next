@@ -1,9 +1,5 @@
 import { DEFAULT_COLORBAR_SIZE } from '@/components/plot/heatmap/heatmap-svg-props'
-import {
-  DEFAULT_SCATTER_PROPS,
-  type IDisplayAxis,
-  type IScatterDisplayOptions,
-} from '@/components/plot/scatter/scatter-plot-svg'
+
 import {
   DEFAULT_COLOR_PROPS,
   DEFAULT_MARGIN,
@@ -20,6 +16,11 @@ import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import type { ILim } from '@/lib/math/math'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import {
+  DEFAULT_SCATTER_PROPS,
+  IDisplayAxis,
+  IScatterDisplayOptions,
+} from '../../matcalc/apps/volcano/volcano-plot-svg'
 import APP_INFO from './manifest.json'
 
 interface IGenome {
@@ -200,7 +201,7 @@ export const DEFAULT_SETTINGS: ISingleCellSettings = {
   },
   //globalGexRange: [0, 10],
 
-  cmap: 'BWR v2',
+  cmap: 'BWRv2',
   //mode: 'clusters',
   umap: {
     clusters: {

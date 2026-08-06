@@ -9,11 +9,12 @@ import {
 
 import { Axis, YAxis } from '@/components/plot/axis'
 import { VColorBarSvg } from '@/components/plot/color-bar-svg'
-import { type IDrawScatterOptions } from '@/components/plot/scatter/scatter-plot-canvas'
+
 import { SvgBase } from '@/components/plot/svg-base'
 import type { IDim } from '@/interfaces/dim'
 import { normalize } from '@/lib/math/normalize'
 
+import { IDrawScatterOptions } from '@/components/plot/scatter/scatter-plot-canvas'
 import type { IPos } from '@/interfaces/pos'
 import { COLOR_MAPS } from '@/lib/color/colormap'
 import type { ILim } from '@/lib/math/math'

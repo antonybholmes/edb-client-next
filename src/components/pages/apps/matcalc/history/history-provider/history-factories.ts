@@ -7,14 +7,18 @@ import { makeUuid } from '@/lib/id'
 import { produce } from 'immer'
 import { DEFAULT_BOX_PLOT_DISPLAY_PROPS } from '../../apps/boxplot/boxplot-plot-svg'
 import { DEFAULT_EXT_GSEA_PROPS } from '../../apps/ext-gsea/ext-gsea-store'
+import { DEFAULT_GSEA_DOT_PROPS } from '../../apps/gsea-dot/gsea-dot-plot-svg'
 import { DEFAULT_VOLCANO_PROPS } from '../../apps/volcano/volcano-plot-svg'
 import {
   BoxPlot,
   DataFrameType,
   ExtGseaPlot,
   HeatMapPlot,
+  IGseaDot,
+  IGseaDotPlot,
   IHistoryApp,
-  VolcanoPlot,
+  IVolcano,
+  IVolcanoPlot,
 } from './history-types'
 
 export function newHeatMapPlot(
@@ -82,10 +86,9 @@ export function newBoxPlot(
 
 export function newVolcanoPlot(
   name: string,
-  dataframes: Record<string, BaseDataFrame> = {},
-
-  opts: Partial<VolcanoPlot> = {}
-): VolcanoPlot {
+  volcano: IVolcano,
+  opts: Partial<IVolcanoPlot> = {}
+): IVolcanoPlot {
   const {
     style = 'volcano',
     props = { ...DEFAULT_VOLCANO_PROPS },
@@ -95,11 +98,34 @@ export function newVolcanoPlot(
 
   return {
     id: makeUuid(),
-    ////path: '',
     style,
     name,
-    dataframes,
+    volcano,
     groupRows: groups,
+    props,
+    actions,
+    type: 'plot',
+    createdAt: new Date().toISOString(),
+  }
+}
+
+export function newGseaDotPlot(
+  name: string,
+  gseaDot: IGseaDot,
+  opts: Partial<IGseaDotPlot> = {}
+): IGseaDotPlot {
+  const {
+    style = 'gsea-dot-plot',
+    props = { ...DEFAULT_GSEA_DOT_PROPS },
+    actions = [],
+  } = opts
+
+  return {
+    id: makeUuid(),
+    style,
+    name,
+    gseaDot,
+    groupRows: [],
     props,
     actions,
     type: 'plot',

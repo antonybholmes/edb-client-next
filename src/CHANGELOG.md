@@ -4,6 +4,8 @@
 
 ### Changed
 
+- Added GSEA dot plot tool.
+- Sped up hypergeometric using revised lnbinomial function.
 - Pathway now works with multiple gene sets.
 - Change output to remove commas to stop locale issues such as France.
 - Increase debounce on numerical input to make typing easier. Volcano now loads auto labels into label box so user can customize.
