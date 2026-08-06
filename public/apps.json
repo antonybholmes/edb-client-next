@@ -59,6 +59,16 @@
   },
   {
     "name": "GSEA Web",
+    "description": "GSEA bubble plots.",
+    "color": "#4169E1",
+    "version": "1.0.0",
+    "copyright": "© 2026 Antony Holmes",
+    "modified": "2026-08-06T23:10:43.978Z",
+    "hash": "95426e06e4569b131109499317449ee9da761dca9c64f22e0c19aa4063ac927d",
+    "build": 4
+  },
+  {
+    "name": "GSEA Web",
     "description": "GSEA in a web app.",
     "color": "#4169E1",
     "version": "3.4.2",
@@ -111,9 +121,9 @@
     "color": "#40bf80",
     "version": "48.8.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-08-06T22:43:28.061Z",
-    "hash": "ecbce878516d0d03283b660b03a0959e20ff22b8e59ec94d7d0a533f9db84fbc",
-    "build": 1894
+    "modified": "2026-08-06T23:10:43.982Z",
+    "hash": "f0408c7c6a32649c4ca5c97f7edf5b02fea739dd970d4c1167d8a423af9b1a40",
+    "build": 1896
   },
   {
     "name": "Motifs",

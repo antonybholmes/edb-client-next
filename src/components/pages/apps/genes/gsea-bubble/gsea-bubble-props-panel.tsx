@@ -16,14 +16,14 @@ import { getColorMap } from '@/lib/color/colormap'
 import { numSort } from '@/lib/math/math'
 import { round } from '@/lib/math/round'
 import { produce } from 'immer'
-import { ColorMapMenu } from '../../color-map-menu'
-import { useHistory } from '../../history/history-provider/history-provider'
-import { useGseaDotContext } from './gsea-dot-provider'
+import { ColorMapMenu } from '../../matcalc/color-map-menu'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
+import { useGseaBubbleContext } from './gsea-bubble-provider'
 
-export function GseaDotPropsPanel() {
+export function GseaBubblePropsPanel() {
   const { updatePlot } = useHistory()
 
-  const { plot } = useGseaDotContext()
+  const { plot } = useGseaBubbleContext()
 
   const displayProps = plot.props
 

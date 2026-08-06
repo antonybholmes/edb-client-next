@@ -1,0 +1,10 @@
+{
+  "name": "GSEA Web",
+  "description": "GSEA bubble plots.",
+  "color": "#4169E1",
+  "version": "1.0.0",
+  "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
+  "modified": "2026-08-06T23:10:43.978Z",
+  "hash": "95426e06e4569b131109499317449ee9da761dca9c64f22e0c19aa4063ac927d",
+  "build": 4
+}

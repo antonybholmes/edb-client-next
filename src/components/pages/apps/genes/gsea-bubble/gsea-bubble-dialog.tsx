@@ -5,10 +5,10 @@ import { SelectItem, SelectList } from '@/themed/v2/select'
 
 import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
 import { useEffect, useState } from 'react'
-import { useCurrentSheets } from '../../history/history-provider/history-contexts'
+import { useCurrentSheets } from '../../matcalc/history/history-provider/history-contexts'
 
-import { HistoryPlot } from '../../history/history-provider/history-types'
-import { newGseaDotPlot } from './gsea-dot-provider'
+import { HistoryPlot } from '../../matcalc/history/history-provider/history-types'
+import { newGseaBubblePlot } from './gsea-bubble-provider'
 
 const MAX_COLS = 10
 
@@ -139,7 +139,7 @@ export function GseaDotDialog({
 
     const ids = df.index.strs
 
-    const plot = newGseaDotPlot('GSEA Dot Plot', {
+    const plot = newGseaBubblePlot('GSEA Dot Plot', {
       nes: { values: nes, label: nesCol },
       sizes: { values: sizes, label: sizeCol },
       log10pvalues: { values: log10pvalues, label: pValueCol },

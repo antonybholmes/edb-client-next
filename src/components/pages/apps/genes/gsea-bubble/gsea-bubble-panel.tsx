@@ -12,16 +12,16 @@ import { useZoom } from '@/providers/zoom-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { produce } from 'immer'
-import { MESSAGE_CHANNEL } from '../../data/data-panel'
+import { MESSAGE_CHANNEL } from '../../matcalc/data/data-panel'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useUpdateEffect } from '@/hooks/update-effect'
-import { useHistory } from '../../history/history-provider/history-provider'
-import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
-import { GseaDotPlotSvg } from './gsea-dot-plot-svg'
-import { GseaDotPropsPanel } from './gsea-dot-props-panel'
-import { useGseaDotContext } from './gsea-dot-provider'
+import { PLOT_ZOOM_CHANNEL } from '../../matcalc/apps/heatmap/heatmap-panel'
+import { useHistory } from '../../matcalc/history/history-provider/history-provider'
+import { GseaBubblePropsPanel } from './gsea-bubble-props-panel'
+import { useGseaBubbleContext } from './gsea-bubble-provider'
+import { GseaBubblePlotSvg } from './gsea-bubble-svg'
 
 export function GseaDotPanel() {
   // const { plotsState, plotsDispatch } = useContext(PlotsContext)
@@ -35,7 +35,7 @@ export function GseaDotPanel() {
   const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
 
   const { updatePlot } = useHistory()
-  const { plot } = useGseaDotContext()
+  const { plot } = useGseaBubbleContext()
   const displayProps = plot.props
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
@@ -101,13 +101,13 @@ export function GseaDotPanel() {
 
       <ResizableSidebar side="right">
         <ExtScrollCard>
-          <GseaDotPlotSvg
+          <GseaBubblePlotSvg
             ref={svgRef}
             //displayProps={displayOptions}
             x={displayProps.axes.xaxis.name}
           />
         </ExtScrollCard>
-        <GseaDotPropsPanel />
+        <GseaBubblePropsPanel />
       </ResizableSidebar>
 
       <FooterPortal className="shrink-0 grow-0 justify-end">

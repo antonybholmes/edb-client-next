@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Moved gsea bubble into own app.
 - GSEA dot now has refined tooltips.
 - Added GSEA dot plot tool.
 - Sped up hypergeometric using revised lnbinomial function.

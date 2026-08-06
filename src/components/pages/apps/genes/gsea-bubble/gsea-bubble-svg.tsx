@@ -2,8 +2,8 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 
 import { COLOR_BLACK } from '@/lib/color/color'
 
-import { Axis } from '../../../../../plot/axis'
-import { AxisBottomSvg } from '../../../../../plot/svg-axis'
+import { Axis } from '../../../../plot/axis'
+import { AxisBottomSvg } from '../../../../plot/svg-axis'
 
 import { SvgBase } from '@/components/plot/svg-base'
 import type { ISVGProps } from '@/interfaces/svg-props'
@@ -28,9 +28,9 @@ import {
 import { linspace } from '@/lib/math/linspace'
 import { ILim } from '@/lib/math/math'
 
-import type { ITooltip } from '../heatmap/heatmap-svg'
-import { IDisplayAxis } from '../volcano/volcano-plot-svg'
-import { IGseaDotPlot, useGseaDotContext } from './gsea-dot-provider'
+import type { ITooltip } from '../../matcalc/apps/heatmap/heatmap-svg'
+import { IDisplayAxis } from '../../matcalc/apps/volcano/volcano-plot-svg'
+import { IGseaBubblePlot, useGseaBubbleContext } from './gsea-bubble-provider'
 
 const MARGIN = { top: 10, right: 200, bottom: 100, left: 400 }
 
@@ -149,14 +149,15 @@ interface IProps extends ISVGProps {
   //displayOptions?: IVolcanoDisplayOptions
 }
 
-export function GseaDotPlotSvg({
+export function GseaBubblePlotSvg({
   ref,
 
   sizeFunc = (x: number) => x,
 }: IProps) {
-  const { plot } = useGseaDotContext()
+  const { plot } = useGseaBubbleContext()
 
-  const displayOptions: IGseaDotDisplayOptions = (plot! as IGseaDotPlot).props
+  const displayOptions: IGseaDotDisplayOptions = (plot! as IGseaBubblePlot)
+    .props
 
   const tooltipRef = useRef<HTMLDivElement>(null)
 

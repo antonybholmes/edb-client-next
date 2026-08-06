@@ -79,14 +79,14 @@ import { useHistory } from './history/history-provider/history-provider'
 import { useTabs } from '@/components/tabs/tab-provider'
 import { makeUuid } from '@/lib/id'
 import { Box } from 'lucide-react'
+import { GseaDotPanel } from '../genes/gsea-bubble/gsea-bubble-panel'
+import { GseaBubbleProvider } from '../genes/gsea-bubble/gsea-bubble-provider'
 import { SankeyPanel } from '../sankey/sankey-panel'
 import { SankeyProvider } from '../sankey/sankey-provider'
 import { BoxPlotPanel } from './apps/boxplot/boxplot-panel'
 import { BoxPlotProvider } from './apps/boxplot/boxplot-provider'
 import { ExtGseaPanel } from './apps/ext-gsea/ext-gsea-panel'
 import { ExtGseaProvider } from './apps/ext-gsea/ext-gsea-provider'
-import { GseaDotPanel } from './apps/gsea-dot/gsea-dot-panel'
-import { GseaDotProvider } from './apps/gsea-dot/gsea-dot-provider'
 import {
   useCurrentSelections,
   useCurrentSheets,
@@ -152,9 +152,9 @@ function plotElem(plot: HistoryPlot): ReactElement {
       )
     case 'gsea-dot-plot':
       return (
-        <GseaDotProvider plot={plot}>
+        <GseaBubbleProvider plot={plot}>
           <GseaDotPanel />
-        </GseaDotProvider>
+        </GseaBubbleProvider>
       )
     case 'box':
       return (

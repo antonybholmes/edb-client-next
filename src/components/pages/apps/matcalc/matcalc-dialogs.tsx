@@ -21,9 +21,9 @@ import { KmeansDialog } from './apps/kmeans/kmeans-dialog'
 import { MotifToGeneDialog } from './apps/motifs-to-genes/motif-to-gene-dialog'
 import { VolcanoDialog } from './apps/volcano/volcano-dialog'
 
+import { GseaDotDialog } from '../genes/gsea-bubble/gsea-bubble-dialog'
 import { SankeyDialog } from '../sankey/sankey-dialog'
 import { ISankeyPlot } from '../sankey/sankey-provider'
-import { GseaDotDialog } from './apps/gsea-dot/gsea-dot-dialog'
 import { FilterRowsDialog } from './filter-rows-dialog'
 import {
   DataFrameType,

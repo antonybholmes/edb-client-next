@@ -1,51 +1,57 @@
-import { createContext, useContext, type ReactNode } from 'react'
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from 'react'
 
 import { makeUuid } from '@/lib/id'
 
 import { produce } from 'immer'
-import { IBasePlot } from '../../history/history-provider/plot'
+import { IBasePlot } from '../../matcalc/history/history-provider/plot'
 import {
   DEFAULT_GSEA_DOT_PROPS,
   type IGseaDotDisplayOptions,
-} from './gsea-dot-plot-svg'
+} from './gsea-bubble-svg'
 
-export interface IGseaDot {
+export interface IGseaBubble {
   ids: string[]
   nes: { values: number[]; label: string }
   log10pvalues: { values: number[]; label: string }
   sizes: { values: number[]; label: string }
 }
 
-export interface IGseaDotPlot extends IBasePlot {
+export interface IGseaBubblePlot extends IBasePlot {
   style: 'gsea-dot-plot'
-  gseaDot: IGseaDot
+  gseaDot: IGseaBubble
   props: IGseaDotDisplayOptions
 }
 
-export interface GseaDotPropsContextType {
+export interface GseaBubblePropsContextType {
   displayProps: IGseaDotDisplayOptions
-  plot: IGseaDotPlot
+  plot: IGseaBubblePlot
 }
 
-export const GseaDotContext = createContext<
-  GseaDotPropsContextType | undefined
+export const GseaBubbleContext = createContext<
+  GseaBubblePropsContextType | undefined
 >(undefined)
 
-export function useGseaDotContext() {
-  const ctx = useContext(GseaDotContext)
+export function useGseaBubbleContext() {
+  const ctx = useContext(GseaBubbleContext)
 
   if (!ctx)
     throw new Error(
-      'useGseaDotContext must be used within a GseaDotContext.Provider'
+      'useGseaBubbleContext must be used within a GseaBubbleContext.Provider'
     )
   return ctx
 }
 
-export function newGseaDotPlot(
+export function newGseaBubblePlot(
   name: string,
-  gseaDot: IGseaDot,
-  opts: Partial<IGseaDotPlot> = {}
-): IGseaDotPlot {
+  gseaDot: IGseaBubble,
+  opts: Partial<IGseaBubblePlot> = {}
+): IGseaBubblePlot {
   const maxNes = Math.ceil(
     Math.max(
       ...gseaDot.nes.values.filter((v) => v >= 0).map((v) => Math.abs(v))
@@ -84,21 +90,27 @@ export function newGseaDotPlot(
   }
 }
 
-export function GseaDotProvider({
+export function GseaBubbleProvider({
   plot,
   children,
 }: {
-  plot: IGseaDotPlot
+  plot?: IGseaBubblePlot
   children: ReactNode
 }) {
+  const [_plot, setPlot] = useState<IGseaBubblePlot | undefined>(plot)
+
+  useEffect(() => {
+    setPlot(plot)
+  }, [plot])
+
   return (
-    <GseaDotContext.Provider
+    <GseaBubbleContext.Provider
       value={{
-        displayProps: plot.props,
-        plot,
+        displayProps: _plot?.props ?? DEFAULT_GSEA_DOT_PROPS,
+        plot: _plot,
       }}
     >
       {children}
-    </GseaDotContext.Provider>
+    </GseaBubbleContext.Provider>
   )
 }
