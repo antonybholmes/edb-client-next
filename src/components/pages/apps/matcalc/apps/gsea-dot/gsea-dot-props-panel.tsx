@@ -13,6 +13,7 @@ import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { TextPropRow } from '@/components/dialogs/text-prop-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { getColorMap } from '@/lib/color/colormap'
+import { numSort } from '@/lib/math/math'
 import { produce } from 'immer'
 import { ColorMapMenu } from '../../color-map-menu'
 import { useHistory } from '../../history/history-provider/history-provider'
@@ -160,7 +161,7 @@ export function GseaDotPropsPanel() {
               w="md"
             />
 
-            <PropRow title="Dots">
+            <PropRow title="Dot Radius">
               <NumericalInput
                 id="size"
                 value={displayProps.dots.size}
@@ -208,6 +209,21 @@ export function GseaDotPropsPanel() {
                 }}
               />
             </PropRow>
+
+            <TextPropRow
+              title="Legend"
+              value={displayProps.legend.dots.sizes.join(', ')}
+              onTextChanged={(v) => {
+                updatePlot(
+                  produce(plot, (draft) => {
+                    draft.props.legend.dots.sizes = numSort(
+                      v.split(',').map((x) => parseFloat(x.trim()))
+                    )
+                  })
+                )
+              }}
+              w="md"
+            />
 
             {/* <PropRow title="Colorbar">
               <RadioGroup

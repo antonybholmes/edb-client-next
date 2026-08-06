@@ -72,6 +72,12 @@ export interface IGseaDotDisplayOptions {
     position: ColorBarPos
     size: IDim
   }
+  legend: {
+    dots: {
+      n: number
+      sizes: number[]
+    }
+  }
   margin: IMarginProps
 }
 
@@ -117,6 +123,12 @@ export const DEFAULT_GSEA_DOT_PROPS: IGseaDotDisplayOptions = {
     position: 'right',
     size: { ...DEFAULT_COLORBAR_SIZE },
   },
+  legend: {
+    dots: {
+      n: 3,
+      sizes: [25, 50, 75, 100],
+    },
+  },
   margin: { ...MARGIN },
 }
 
@@ -142,8 +154,6 @@ interface IProps extends ISVGProps {
 export function GseaDotPlotSvg({
   ref,
 
-  size,
-  //displayOptions = { ...DEFAULT_GSEA_DOT_PROPS },
   sizeFunc = (x: number) => x,
 }: IProps) {
   const { plot } = useGseaDotContext()
@@ -201,17 +211,30 @@ export function GseaDotPlotSvg({
 
     //console.log('innerWidth:', innerWidth, 'innerHeight:', innerHeight)
 
-    // skip 0
-    const legendDots = linspace(0, displayOptions.size.maxSize, 5).slice(1)
+    let sizes = displayOptions.legend.dots.sizes
+
+    if (sizes.length === 0) {
+      // skip 0
+      sizes = linspace(0, displayOptions.size.maxSize, 5).slice(1)
+    }
 
     const dotLegendPos = []
 
     let y = 0
 
-    for (const d of legendDots) {
-      const r = (d / displayOptions.size.maxSize) * displayOptions.dots.size
-      dotLegendPos.push({ label: d, r, y })
-      y += 2 * r + displayOptions.padding
+    for (const [si, s] of sizes.entries()) {
+      const d = Math.min(s, displayOptions.size.maxSize)
+      const r1 =
+        Math.min(d / displayOptions.size.maxSize, 1) * displayOptions.dots.size
+
+      dotLegendPos.push({ label: d.toFixed(0), r: r1, y })
+
+      if (si < sizes.length - 1) {
+        const r2 =
+          Math.min(sizes[si + 1]! / displayOptions.size.maxSize, 1) *
+          displayOptions.dots.size
+        y += r1 + r2 + displayOptions.padding
+      }
     }
 
     return (
@@ -322,7 +345,9 @@ export function GseaDotPlotSvg({
                 >
                   {displayOptions.size.label}
                 </SvgText>
-                <g transform={`translate(0, ${displayOptions.padding * 2})`}>
+                <g
+                  transform={`translate(0, ${displayOptions.padding + displayOptions.dots.size})`}
+                >
                   {dotLegendPos.map((d, di) => (
                     <g key={di}>
                       <SvgCircle
@@ -546,7 +571,7 @@ export function GseaDotPlotSvg({
     <>
       {svg}
 
-      {/* {toolTipInfo && (
+      {toolTipInfo && (
         <div
           ref={tooltipRef}
           className="absolute z-50 rounded-theme bg-black/60 p-3 text-xs text-white opacity-100"
@@ -555,14 +580,11 @@ export function GseaDotPlotSvg({
             top: toolTipInfo.pos.y,
           }}
         >
-          <p className="font-semibold">{`${sheet.rowName(
-            toolTipInfo.cell.row
-          )}`}</p>
-          <p>{`x: ${cellStr(points[toolTipInfo.cell.row]!.x)}, y: ${cellStr(
-            points[toolTipInfo.cell.row]!.y
-          )}`}</p>
+          <p className="font-semibold">{`${points[toolTipInfo.cell.row]!.label}`}</p>
+          <p>{`-log10(p): ${points[toolTipInfo.cell.row]!.p.toFixed(2)}`}</p>
+          <p>{`Size: ${plot.gseaDot.sizes[toolTipInfo.cell.row]!}`}</p>
         </div>
-      )} */}
+      )}
     </>
   )
 }

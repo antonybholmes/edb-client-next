@@ -73,7 +73,7 @@ export interface IScatterDisplayOptions {
     offset: number
     line: IStrokeProps
     values: string[]
-    auto: boolean
+    //auto: boolean
   }
 }
 
@@ -95,7 +95,7 @@ export const DEFAULT_SCATTER_PROPS: IScatterDisplayOptions = {
     offset: 15,
     line: { ...DEFAULT_STROKE_PROPS, opacity: 0.25 },
     values: [''],
-    auto: false,
+    //auto: false,
   },
 }
 
@@ -217,7 +217,7 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
       opacity: 0.25,
     },
     values: [],
-    auto: true,
+    //auto: true,
   },
   border: { ...DEFAULT_STROKE_PROPS, width: 2, show: false },
 }

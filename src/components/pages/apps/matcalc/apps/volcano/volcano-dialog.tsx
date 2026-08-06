@@ -85,8 +85,8 @@ export function VolcanoDialog({
     defaultValues: {
       foldChangeCol: findFoldChangeCol(df)!,
       pValueCol: findPValueCol(df)!,
-      applyLog2ToFoldChange: settings.volcano.preprocess.applyLog2FC,
-      applyLog10ToPValue: settings.volcano.preprocess.applyMinusLog10P,
+      applyLog2ToFoldChange: settings.apps.volcano.preprocess.applyLog2FC,
+      applyLog10ToPValue: settings.apps.volcano.preprocess.applyMinusLog10P,
     },
   })
 
@@ -162,8 +162,8 @@ export function VolcanoDialog({
 
     updateSettings(
       produce(settings, (draft) => {
-        draft.volcano.preprocess.applyLog2FC = data.applyLog2ToFoldChange
-        draft.volcano.preprocess.applyMinusLog10P = data.applyLog10ToPValue
+        draft.apps.volcano.preprocess.applyLog2FC = data.applyLog2ToFoldChange
+        draft.apps.volcano.preprocess.applyMinusLog10P = data.applyLog10ToPValue
       })
     )
 

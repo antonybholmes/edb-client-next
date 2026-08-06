@@ -5,6 +5,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
+import { useMatcalcSettings } from '../../settings/matcalc-settings'
 
 import { range } from '@/lib/math/range'
 import { IVolcanoPlot } from '../../history/history-provider/history-types'
@@ -44,6 +45,7 @@ export function VolcanoProvider({
 
   const volcano = plot.volcano
   const displayProps = useMemo(() => plot.props, [plot.props])
+  const { settings } = useMatcalcSettings()
   // const sheet = useMemo(
   //   () => plot!.dataframes['main'] as BaseDataFrame,
   //   [plot!.dataframes['main']]
@@ -94,15 +96,17 @@ export function VolcanoProvider({
   }, [volcano.log2foldChanges, volcano.logpvalues, displayProps, volcano.ids])
 
   const displayLabels = useMemo(
-    () => (displayProps.labels.auto ? highlightedLabels : manualLabels),
-    [displayProps.labels.auto, highlightedLabels, manualLabels]
+    () =>
+      settings.apps.volcano.labels.auto ? highlightedLabels : manualLabels,
+    [settings.apps.volcano.labels.auto, highlightedLabels, manualLabels]
   )
 
   const setLabels = (labels: string[]) => {
-    if (displayProps.labels.auto) {
+    if (settings.apps.volcano.labels.auto) {
       return
     }
 
+    console.log(labels)
     setManualLabels(labels)
   }
 
