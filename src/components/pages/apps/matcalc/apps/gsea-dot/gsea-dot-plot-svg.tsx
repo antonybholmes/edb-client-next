@@ -176,6 +176,7 @@ export function GseaDotPlotSvg({
     [
       plot.gseaDot.nes,
       plot.gseaDot.sizes,
+      displayOptions.size.maxSize,
       displayOptions.dots.size,
       displayOptions.p.cmap,
     ]
