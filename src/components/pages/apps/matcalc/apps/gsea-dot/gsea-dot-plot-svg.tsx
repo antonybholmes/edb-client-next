@@ -215,6 +215,9 @@ export function GseaDotPlotSvg({
       clearTimeout(timeoutRef.current)
     }
 
+    // wait before removing. if we re-enter quickly, the tooltip won't flicker
+    // as this timeout will be cancelled so the tooltip won't disappear
+    // and will be moved to next location
     timeoutRef.current = setTimeout(() => setToolTipInfo(null), 300)
   }, [])
 

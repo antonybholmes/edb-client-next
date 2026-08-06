@@ -14,6 +14,7 @@ import { TextPropRow } from '@/components/dialogs/text-prop-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { getColorMap } from '@/lib/color/colormap'
 import { numSort } from '@/lib/math/math'
+import { round } from '@/lib/math/round'
 import { produce } from 'immer'
 import { ColorMapMenu } from '../../color-map-menu'
 import { useHistory } from '../../history/history-provider/history-provider'
@@ -66,7 +67,7 @@ export function GseaDotPropsPanel() {
                 v1={displayProps.axes.xaxis.domain[0]}
                 v2={displayProps.axes.xaxis.domain[1]}
                 placeholder="Limit..."
-                dp={0}
+                dp={1}
                 limit={[-10000, 10000]}
                 w="xxs"
                 onNumChanged1={(v) => {
@@ -74,7 +75,7 @@ export function GseaDotPropsPanel() {
                     produce(plot, (draft) => {
                       draft.props.axes.xaxis.domain = [
                         v,
-                        draft.props.axes.xaxis.domain[1],
+                        round(displayProps.axes.xaxis.domain[1], 1),
                       ]
                     })
                   )
@@ -83,7 +84,7 @@ export function GseaDotPropsPanel() {
                   updatePlot(
                     produce(plot, (draft) => {
                       draft.props.axes.xaxis.domain = [
-                        draft.props.axes.xaxis.domain[0],
+                        round(draft.props.axes.xaxis.domain[0], 1),
                         v,
                       ]
                     })
