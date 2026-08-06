@@ -8,7 +8,8 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { IBasePlot } from '../matcalc/history/history-provider/history-types'
+
+import { IBasePlot } from '../matcalc/history/history-provider/plot'
 import {
   IOutputGraph,
   IOutputLink,

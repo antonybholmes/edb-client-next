@@ -111,6 +111,28 @@ export class DataFrameReader {
     return ret
   }
 
+  private _parseLine(line: string): string[] {
+    let value = line.trimEnd()
+
+    // get rid of quotes
+    if (value.includes('"')) {
+      value = value.replaceAll('"', '')
+    }
+
+    // remove trailing delimiter if present
+    if (value.endsWith(this._delimiter)) {
+      value = value.slice(0, -this._delimiter.length)
+    }
+
+    let tokens = value.split(this._delimiter)
+
+    if (this._trimWhitespace) {
+      tokens = tokens.map((t) => t.trim())
+    }
+
+    return tokens
+  }
+
   read(lines: string[]): AnnotationDataFrame {
     let tokens: string[]
 
@@ -118,24 +140,16 @@ export class DataFrameReader {
 
     let colNames: string[] = []
 
-    tokens = lines[this._skipRows]!.trimEnd()
-      .replaceAll('"', '')
-      .split(this._delimiter)
-
-    if (this._trimWhitespace) {
-      tokens = tokens.map((t) => t.trim())
-    }
+    tokens = this._parseLine(lines[this._skipRows])
 
     // how many columns are in the file
     const columns = tokens.length - this._indexCols
 
     if (this._colNames > 0) {
-      // if (this._indexCols > 0) {
-      //   rowIndexName = tokens[0]!
-      // }
-
       colNames = tokens.slice(this._indexCols)
     }
+
+    console.log('col names', colNames)
 
     const index: string[][] = []
     const data: SeriesData[][] = []
@@ -143,9 +157,10 @@ export class DataFrameReader {
 
     let indexNames =
       this._colNames > 0
-        ? lines[this._skipRows + this._colNames - 1]!.replaceAll('"', '')
-            .split(this._delimiter)
-            .slice(0, this._indexCols)
+        ? this._parseLine(lines[this._skipRows + this._colNames - 1]!).slice(
+            0,
+            this._indexCols
+          )
         : []
 
     if (this._trimWhitespace) {
@@ -157,11 +172,7 @@ export class DataFrameReader {
       .entries()) {
       // only parse rows we are not ignoring
       if (!this._ignoreRows.has(li)) {
-        tokens = line.replaceAll('"', '').split(this._delimiter)
-
-        if (this._trimWhitespace) {
-          tokens = tokens.map((t) => t.trim())
-        }
+        tokens = this._parseLine(line)
 
         if (tokens.length > 0) {
           if (this._indexCols > 0) {

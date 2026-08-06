@@ -319,6 +319,7 @@ export function findRows(
   row: IndexId,
   caseInsensitive: boolean = true
 ): number[] {
+  //console.log('find row', row, df.shape, caseInsensitive)
   if (typeof row === 'number') {
     return row > -1 && row < df.shape[0] ? [row] : []
   }

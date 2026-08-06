@@ -8,8 +8,7 @@ import { AxisBottomSvg } from '../../../../../plot/svg-axis'
 import { SvgBase } from '@/components/plot/svg-base'
 import type { ISVGProps } from '@/interfaces/svg-props'
 
-import { HColorBarSvg, VColorBarSvg } from '@/components/plot/color-bar-svg'
-import { DEFAULT_COLORBAR_SIZE } from '@/components/plot/heatmap/heatmap-svg-props'
+import { VColorBarSvg } from '@/components/plot/color-bar-svg'
 import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import {
@@ -29,10 +28,9 @@ import {
 import { linspace } from '@/lib/math/linspace'
 import { ILim } from '@/lib/math/math'
 
-import { IGseaDotPlot } from '../../history/history-provider/history-types'
 import type { ITooltip } from '../heatmap/heatmap-svg'
 import { IDisplayAxis } from '../volcano/volcano-plot-svg'
-import { useGseaDotContext } from './gsea-dot-provider'
+import { IGseaDotPlot, useGseaDotContext } from './gsea-dot-provider'
 
 const MARGIN = { top: 10, right: 200, bottom: 100, left: 200 }
 
@@ -121,7 +119,7 @@ export const DEFAULT_GSEA_DOT_PROPS: IGseaDotDisplayOptions = {
   colorbar: {
     show: true,
     position: 'right',
-    size: { ...DEFAULT_COLORBAR_SIZE },
+    size: { w: 100, h: 14 },
   },
   legend: {
     dots: {
@@ -188,7 +186,7 @@ export function GseaDotPlotSvg({
       plot.gseaDot.sizes,
       displayOptions.size.maxSize,
       displayOptions.dots.size,
-      displayOptions.p.cmap,
+      displayOptions.p,
     ]
   )
 
@@ -329,6 +327,11 @@ export function GseaDotPlotSvg({
                     domain={displayOptions.p.range}
                     cmap={cmap}
                     size={displayOptions.colorbar.size}
+                    ticks={[
+                      displayOptions.p.range[0],
+                      displayOptions.p.range[1] / 2,
+                      displayOptions.p.range[1],
+                    ]}
                     //stroke={displayOptions.colorbar.stroke}
                     //font={displayOptions.legend}
                   />
@@ -376,7 +379,7 @@ export function GseaDotPlotSvg({
             </g>
           )}
 
-        {displayOptions.colorbar.show &&
+        {/* {displayOptions.colorbar.show &&
           displayOptions.colorbar.position.includes('bottom') && (
             <g
               transform={`translate(${displayOptions.margin.left}, ${displayOptions.margin.top + innerHeight + 100})`}
@@ -389,7 +392,7 @@ export function GseaDotPlotSvg({
                 //font={displayOptions.legend}
               />
             </g>
-          )}
+          )} */}
       </SvgBase>
     )
   }, [plot, points, displayOptions])

@@ -128,6 +128,24 @@ export function GseaDotPropsPanel() {
               w="md"
             />
 
+            <PropRow title="Max">
+              <NumericalInput
+                id="size"
+                value={displayProps.p.range[1]}
+                placeholder="Size..."
+                dp={0}
+                limit={[1, 1000]}
+                className="w-16 rounded-theme"
+                onNumChanged={(v) => {
+                  updatePlot(
+                    produce(plot, (draft) => {
+                      draft.props.p.range[1] = v
+                    })
+                  )
+                }}
+              />
+            </PropRow>
+
             <PropRow title="Colormap">
               <ColorMapMenu
                 align="end"
