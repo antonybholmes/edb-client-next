@@ -32,7 +32,7 @@ import type { ITooltip } from '../heatmap/heatmap-svg'
 import { IDisplayAxis } from '../volcano/volcano-plot-svg'
 import { IGseaDotPlot, useGseaDotContext } from './gsea-dot-provider'
 
-const MARGIN = { top: 10, right: 200, bottom: 100, left: 200 }
+const MARGIN = { top: 10, right: 200, bottom: 100, left: 400 }
 
 const TOOLTIP_OFFSET = 10
 
@@ -94,7 +94,7 @@ export const DEFAULT_GSEA_DOT_PROPS: IGseaDotDisplayOptions = {
     },
     yaxis: {
       length: 500,
-      rowHeight: 50,
+      rowHeight: 24,
     },
   },
 
@@ -109,7 +109,7 @@ export const DEFAULT_GSEA_DOT_PROPS: IGseaDotDisplayOptions = {
     maxSize: 100,
   },
   dots: {
-    size: 16,
+    size: 10,
     color: '#000000',
     opacity: 0.75,
   },
