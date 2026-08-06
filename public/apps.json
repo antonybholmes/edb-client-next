@@ -109,11 +109,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "48.8.0",
+    "version": "48.8.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-08-05T22:56:50.321Z",
-    "hash": "d3be4970b5015de6f8e0a144ca29e22121bad4813445e480229a38225df4c793",
-    "build": 1888
+    "modified": "2026-08-06T17:26:28.664Z",
+    "hash": "a2f6e3ae3e9b24a1381a0ae2d9d8db0c8fecfa79452ed28bb0e75a058d21a6be",
+    "build": 1890
   },
   {
     "name": "Motifs",
@@ -171,9 +171,9 @@
     "color": "#ff9900",
     "version": "1.2.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-31T20:28:40.248Z",
-    "hash": "37bab40866cc05f2fbff1435ce7bc859c36ad3750b182d2f587736b627149ae7",
-    "build": 54
+    "modified": "2026-08-06T17:26:28.666Z",
+    "hash": "86232be87a433473758b2dd23ecc90376d88c86168927771151d0dd19d853bde",
+    "build": 56
   },
   {
     "name": "Seq Browser",
@@ -191,9 +191,9 @@
     "color": "#9966ff",
     "version": "26.4.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-24T18:02:16.215Z",
-    "hash": "b64682ae28e7b315c8364ca2d6fed04c8c6c9fd550b2c0d53d8ea52d9072d507",
-    "build": 826
+    "modified": "2026-08-06T17:26:28.666Z",
+    "hash": "e8db04022888a078069575d07b2f13ae71e8e8c55eb24e48908f5b019f10cc3f",
+    "build": 828
   },
   {
     "name": "Table Viewer",
@@ -220,9 +220,9 @@
     "color": "#FA8072",
     "version": "26.6.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-24T18:02:16.218Z",
-    "hash": "36fc0e32822252409fa44b6e07e15bd0730a5f12452bc4d642e3fd5ce3973eb3",
-    "build": 1010
+    "modified": "2026-08-06T17:26:28.667Z",
+    "hash": "f6ea166e460cb897017cb677c6cc81196b1421df7dd4750af2d8aac8a274aa63",
+    "build": 1012
   },
   {
     "name": "Venn",

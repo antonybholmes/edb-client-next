@@ -23,6 +23,7 @@ import { VolcanoDialog } from './apps/volcano/volcano-dialog'
 
 import { SankeyDialog } from '../sankey/sankey-dialog'
 import { ISankeyPlot } from '../sankey/sankey-provider'
+import { GseaDotDialog } from './apps/gsea-dot/gsea-dot-dialog'
 import { FilterRowsDialog } from './filter-rows-dialog'
 import {
   DataFrameType,
@@ -46,6 +47,9 @@ type DialogTypeMap = {
     callback: (plot: HistoryPlot) => void
   }
   'volcano-plot': {
+    callback: (plot: HistoryPlot) => void
+  }
+  'gsea-dot-plot': {
     callback: (plot: HistoryPlot) => void
   }
   'box-whiskers': {
@@ -229,6 +233,23 @@ function VolcanoPlotDialogRenderer({
   )
 }
 
+function GseaDotPlotDialogRenderer({
+  dialog,
+  close,
+}: IDialogRenderer<'gsea-dot-plot'>) {
+  const { callback } = dialog.payload
+  return (
+    <GseaDotDialog
+      onResponse={(response, data) => {
+        if (response === TEXT_OK && data) {
+          callback(data)
+        }
+        close(dialog.id)
+      }}
+    />
+  )
+}
+
 function SankeyPlotDialogRenderer({
   dialog,
   close,
@@ -393,6 +414,8 @@ function DialogRenderer({
       return <DotPlotDialogRenderer dialog={dialog} close={close} />
     case 'volcano-plot':
       return <VolcanoPlotDialogRenderer dialog={dialog} close={close} />
+    case 'gsea-dot-plot':
+      return <GseaDotPlotDialogRenderer dialog={dialog} close={close} />
     case 'sankey-plot':
       return <SankeyPlotDialogRenderer dialog={dialog} close={close} />
     case 'box-whiskers':

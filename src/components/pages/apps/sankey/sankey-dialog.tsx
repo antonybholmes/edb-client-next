@@ -50,11 +50,6 @@ export function SankeyDialog({
   const [targetColorCol, setTargetColorCol] = useState('target color')
   const [linkColorCol, setLinkColorCol] = useState('link color')
 
-  const [accordionValues, setAccordionValues] = useState<string[]>([
-    'required',
-    'optional',
-  ])
-
   function makeSankeyPlot() {
     try {
       const plot = DFToSankeyGraph(sheet as BaseDataFrame, {

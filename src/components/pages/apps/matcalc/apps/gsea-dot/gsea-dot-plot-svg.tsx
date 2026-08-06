@@ -1,163 +1,87 @@
 import { useMemo, useRef, useState } from 'react'
 
 import { COLOR_BLACK } from '@/lib/color/color'
-import { cellStr } from '@/lib/dataframe/cell'
 
-import { Axis, YAxis } from '../../../../../plot/axis'
-import { AxisBottomSvg, AxisLeftSvg } from '../../../../../plot/svg-axis'
+import { Axis } from '../../../../../plot/axis'
+import { AxisBottomSvg } from '../../../../../plot/svg-axis'
 
 import { SvgBase } from '@/components/plot/svg-base'
-import {
-  DEFAULT_STROKE_PROPS,
-  type IStrokeProps,
-} from '@/components/plot/svg-props'
 import type { ISVGProps } from '@/interfaces/svg-props'
 
-import { SvgLine } from '@/components/plot/svg-line'
+import { HColorBarSvg, VColorBarSvg } from '@/components/plot/color-bar-svg'
+import { DEFAULT_COLORBAR_SIZE } from '@/components/plot/heatmap/heatmap-svg-props'
+import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgMargin } from '@/components/plot/svg-margin'
-import type { SeriesData } from '@/lib/dataframe/series-data'
-
-import { ColorMapName } from '@/lib/color/colormap'
+import {
+  ColorBarPos,
+  DEFAULT_STROKE_PROPS,
+  IMarginProps,
+  IStrokeProps,
+} from '@/components/plot/svg-props'
+import { SvgText } from '@/components/plot/svg-text'
+import { IDim } from '@/interfaces/dim'
+import {
+  COLOR_MAPS,
+  ColorMap,
+  ColorMapName,
+  getColorMap,
+} from '@/lib/color/colormap'
+import { linspace } from '@/lib/math/linspace'
 import { ILim } from '@/lib/math/math'
-import { IVolcanoPlot } from '../../history/history-provider/history-types'
-import type { ITooltip } from '../heatmap/heatmap-svg'
-import { useVolcanoContext } from './volcano-provider'
 
-const MARGIN = { top: 100, right: 100, bottom: 100, left: 100 }
+import { IGseaDotPlot } from '../../history/history-provider/history-types'
+import type { ITooltip } from '../heatmap/heatmap-svg'
+import { IDisplayAxis } from '../volcano/volcano-plot-svg'
+import { useGseaDotContext } from './gsea-dot-provider'
+
+const MARGIN = { top: 10, right: 200, bottom: 100, left: 200 }
 
 const TOOLTIP_OFFSET = 10
 
-const margin = { top: 100, right: 100, bottom: 100, left: 100 }
+// export const COLOR_MAP = new ColorMap('Volcano', [
+//   '#3366cc',
+//   '#cccccc',
+//   '#e62e00',
+// ])
 
-export interface IDisplayAxis {
-  name: string
-  domain: ILim
-  length: number
-  ticks: number[]
-  tickLabels: string[]
-  tickSize: number
-  strokeWidth: number
-  color: string
-}
-
-export const DEFAULT_AXIS_PROPS: IDisplayAxis = {
-  name: '',
-  domain: [-20, 20],
-  length: 600,
-  ticks: [],
-  tickLabels: [],
-  tickSize: 4,
-  strokeWidth: 2,
-  color: COLOR_BLACK,
-}
-
-export interface IScatterDisplayOptions {
+export interface IGseaDotDisplayOptions {
   axes: {
     xaxis: IDisplayAxis
-    yaxis: IDisplayAxis
+    yaxis: { length: number; rowHeight: number }
   }
-
-  padding: number
-
-  cmap: ColorMapName
-  scale: number
-
   dots: {
-    color: string
     size: number
+    color: string
     opacity: number
   }
-
-  labels: {
-    color: string
-    offset: number
-    line: IStrokeProps
-    values: string[]
-    auto: boolean
+  p: {
+    range: ILim
+    label: string
+    cmap: ColorMapName
   }
-}
-
-export const DEFAULT_SCATTER_PROPS: IScatterDisplayOptions = {
-  axes: {
-    xaxis: { ...DEFAULT_AXIS_PROPS },
-    yaxis: { ...DEFAULT_AXIS_PROPS },
-  },
-  padding: 10,
-  dots: {
-    size: 2,
-    color: COLOR_BLACK,
-    opacity: 0.75,
-  },
-  cmap: 'BWR v2',
-  scale: 1,
-  labels: {
-    color: COLOR_BLACK,
-    offset: 15,
-    line: { ...DEFAULT_STROKE_PROPS, opacity: 0.25 },
-    values: [''],
-    auto: false,
-  },
-}
-
-export function makeDefaultScatterProps(
-  xlim: ILim,
-  ylim: ILim
-): IScatterDisplayOptions {
-  let props: IScatterDisplayOptions = { ...DEFAULT_SCATTER_PROPS }
-
-  props = {
-    ...props,
-    axes: {
-      ...props.axes,
-      xaxis: {
-        ...props.axes.xaxis,
-        domain: xlim,
-      },
-      yaxis: {
-        ...props.axes.yaxis,
-        domain: ylim,
-      },
-    },
+  size: {
+    label: string
+    maxSize: number
   }
+  scale: number
 
-  return props
-}
-
-export interface IVolcanoDisplayOptions extends IScatterDisplayOptions {
   border: IStrokeProps
-  logP: {
+  padding: number
+  colorbar: {
     show: boolean
-    threshold: number
-    line: IStrokeProps
-    neg: {
-      color: string
-    }
-    pos: {
-      color: string
-    }
+    position: ColorBarPos
+    size: IDim
   }
-  logFc: {
-    show: boolean
-    threshold: number
-
-    neg: {
-      color: string
-    }
-    pos: {
-      color: string
-    }
-  }
+  margin: IMarginProps
 }
 
-export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
-  ...DEFAULT_SCATTER_PROPS,
-  padding: 10,
+export const DEFAULT_GSEA_DOT_PROPS: IGseaDotDisplayOptions = {
   axes: {
     xaxis: {
       name: 'Log2 fold change',
 
-      domain: [-20, 20],
-      length: 500,
+      domain: [-2, 2],
+      length: 300,
       ticks: [],
       tickLabels: [],
       tickSize: 4,
@@ -165,105 +89,66 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
       color: COLOR_BLACK,
     },
     yaxis: {
-      name: '-log10 p-value',
-      domain: [0, 10],
-      length: 400,
-      ticks: [],
-      tickLabels: [],
-      tickSize: 4,
-      strokeWidth: 1,
-      color: COLOR_BLACK,
+      length: 500,
+      rowHeight: 50,
     },
   },
 
   scale: 1,
+  p: {
+    range: [0, 10],
+    label: '-log10(p)',
+    cmap: 'BWRv2',
+  },
+  size: {
+    label: 'Size',
+    maxSize: 100,
+  },
   dots: {
-    size: 3,
-    color: '#d9d9d9',
+    size: 16,
+    color: '#000000',
     opacity: 0.75,
   },
-  logP: {
-    threshold: 1.30102999566398,
-    show: true,
-    line: {
-      ...DEFAULT_STROKE_PROPS,
-      show: true,
 
-      dasharray: '4',
-    },
-    neg: {
-      color: '#3366cc',
-    },
-    pos: {
-      color: '#e62e00',
-    },
-  },
-
-  logFc: {
-    threshold: 1,
+  border: { ...DEFAULT_STROKE_PROPS },
+  padding: 10,
+  colorbar: {
     show: true,
-    neg: {
-      color: '#3366cc',
-    },
-    pos: {
-      color: '#e62e00',
-    },
+    position: 'right',
+    size: { ...DEFAULT_COLORBAR_SIZE },
   },
-  labels: {
-    color: COLOR_BLACK,
-    offset: 15,
-    line: {
-      ...DEFAULT_STROKE_PROPS,
-      opacity: 0.25,
-    },
-    values: [],
-    auto: true,
-  },
-  border: { ...DEFAULT_STROKE_PROPS, width: 2, show: false },
+  margin: { ...MARGIN },
 }
 
-function getColor(logFc: number, logP: number, props: IVolcanoDisplayOptions) {
-  let color = props.dots.color
+function getColor(
+  log10pvalue: number,
+  maxlog10pvalue: number,
+  colorMap: ColorMap
+) {
+  const f = Math.min(log10pvalue / maxlog10pvalue, 1)
 
-  if (props.logP.show && props.logFc.show) {
-    if (
-      logP > props.logP.threshold &&
-      Math.abs(logFc) > props.logFc.threshold
-    ) {
-      color = logFc < 0 ? props.logFc.neg.color : props.logFc.pos.color
-    }
-  } else {
-    if (
-      (props.logP.show && logP > props.logP.threshold) ||
-      (props.logFc.show && Math.abs(logFc) > props.logFc.threshold)
-    ) {
-      color = logFc < 0 ? props.logFc.neg.color : props.logFc.pos.color
-    }
-  }
+  const color = colorMap.getHexColor(f)
 
   return color
 }
 
 interface IProps extends ISVGProps {
-  x: string
-  y: string
   size?: string
   sizeFunc?: (x: number) => number
 
   //displayOptions?: IVolcanoDisplayOptions
 }
 
-export function VolcanoPlotSvg({
+export function GseaDotPlotSvg({
   ref,
-  x,
-  y,
+
   size,
-  //displayOptions = { ...DEFAULT_VOLCANO_PROPS },
+  //displayOptions = { ...DEFAULT_GSEA_DOT_PROPS },
   sizeFunc = (x: number) => x,
 }: IProps) {
-  const { plot, displayLabels } = useVolcanoContext()
+  const { plot } = useGseaDotContext()
 
-  const displayOptions: IVolcanoDisplayOptions = (plot! as IVolcanoPlot).props
+  const displayOptions: IGseaDotDisplayOptions = (plot! as IGseaDotPlot).props
 
   const tooltipRef = useRef<HTMLDivElement>(null)
 
@@ -271,38 +156,62 @@ export function VolcanoPlotSvg({
 
   const points = useMemo(
     () =>
-      plot.volcano.log2foldChanges.map((x, i) => ({
-        x,
-        y: plot.volcano.logpvalues[i]!,
-      })),
-    [plot.volcano.log2foldChanges, plot.volcano.logpvalues]
+      plot.gseaDot.nes.map((x, i) => {
+        const size = plot.gseaDot.sizes[i]!
+        const sizeF = Math.min(size / displayOptions.size.maxSize, 1)
+        return {
+          x,
+          y: i + 1,
+          p: plot.gseaDot.log10pvalues[i]!,
+          color: getColor(
+            plot.gseaDot.log10pvalues[i]!,
+            displayOptions.p.range[1],
+            getColorMap(displayOptions.p.cmap)
+          ),
+          size: sizeF,
+          r: sizeF * displayOptions.dots.size,
+          label: plot.gseaDot.ids[i]!,
+        }
+      }),
+    [
+      plot.gseaDot.nes,
+      plot.gseaDot.sizes,
+      displayOptions.dots.size,
+      displayOptions.p.cmap,
+    ]
   )
 
   const svg = useMemo(() => {
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
-    //const sizedata = size ? getNumCol(sheet, findCol(sheet, size)) : []
 
     const xax = new Axis()
       .autoDomain(displayOptions.axes.xaxis.domain)
       //.setDomain(displayOptions.xdomain)
       .setLength(displayOptions.axes.xaxis.length)
 
-    const yax = new YAxis()
-      .autoDomain(displayOptions.axes.yaxis.domain)
-      //.setDomain(displayOptions.ydomain)
-      .setLength(displayOptions.axes.yaxis.length)
-
     const innerWidth = xax.length
-    const innerHeight = yax.length
-    const width = innerWidth + MARGIN.left + MARGIN.right
-    const height = innerHeight + MARGIN.top + MARGIN.bottom
+    const innerHeight =
+      displayOptions.axes.yaxis.rowHeight * (plot.gseaDot.nes.length + 1)
+    const width =
+      innerWidth + displayOptions.margin.left + displayOptions.margin.right
+    const height =
+      innerHeight + displayOptions.margin.top + displayOptions.margin.bottom
+    const cmap = COLOR_MAPS[displayOptions.p.cmap]!
 
-    // matching is case insensitive
-    const labelSet = new Set<string>(displayLabels.map((x) => x.toLowerCase()))
-    const labelIdx = plot.volcano.ids
-      .map((v, vi) => [v, vi] as [SeriesData, number])
-      .filter((v) => labelSet.has((v[0] as string).toLowerCase()))
-      .map((v) => v[1])
+    //console.log('innerWidth:', innerWidth, 'innerHeight:', innerHeight)
+
+    // skip 0
+    const legendDots = linspace(0, displayOptions.size.maxSize, 5).slice(1)
+
+    const dotLegendPos = []
+
+    let y = 0
+
+    for (const d of legendDots) {
+      const r = (d / displayOptions.size.maxSize) * displayOptions.dots.size
+      dotLegendPos.push({ label: d, r, y })
+      y += 2 * r + displayOptions.padding
+    }
 
     return (
       <SvgBase
@@ -310,25 +219,18 @@ export function VolcanoPlotSvg({
         width={width}
         height={height}
         scale={displayOptions.scale}
-        //shapeRendering={SVG_CRISP_EDGES}
-        className="absolute"
       >
-        <SvgMargin margin={MARGIN}>
+        <SvgMargin margin={displayOptions.margin}>
           {points.map((p, xi) => {
             const x1 = xax!.domainToRange(p.x)
-            const y1 = yax!.domainToRange(p.y)
-            const r = plot.volcano.sizes
-              ? sizeFunc(plot.volcano.sizes[xi]!)
-              : displayOptions.dots.size
-
-            const color = getColor(p.x, p.y, displayOptions)
+            const y1 = p.y * displayOptions.axes.yaxis.rowHeight
 
             return (
               <circle
                 cx={x1}
                 cy={y1}
-                r={r}
-                fill={color}
+                r={p.r}
+                fill={p.color}
                 opacity={displayOptions.dots.opacity}
                 key={xi}
                 onMouseLeave={() => setToolTipInfo(null)}
@@ -336,8 +238,8 @@ export function VolcanoPlotSvg({
                   setToolTipInfo({
                     ...toolTipInfo,
                     pos: {
-                      x: x1 + MARGIN.left + TOOLTIP_OFFSET,
-                      y: y1 + MARGIN.top + TOOLTIP_OFFSET,
+                      x: x1 + displayOptions.margin.left + TOOLTIP_OFFSET,
+                      y: y1 + displayOptions.margin.top + TOOLTIP_OFFSET,
                     },
                     cell: { row: xi, col: 0 },
                   })
@@ -347,61 +249,22 @@ export function VolcanoPlotSvg({
           })}
         </SvgMargin>
 
-        <SvgMargin margin={MARGIN}>
-          {labelIdx.map((i) => {
-            const p = points[i]!
-            const x1 = xax!.domainToRange(p.x)
-            const y1 = yax!.domainToRange(p.y)
-            const r = plot.volcano.sizes
-              ? sizeFunc(plot.volcano.sizes[i]!)
-              : displayOptions.dots.size
+        <g
+          transform={`translate(${displayOptions.margin.left - displayOptions.padding}, ${displayOptions.margin.top})`}
+        >
+          {points.map((p, xi) => {
+            const y1 = p.y * displayOptions.axes.yaxis.rowHeight
 
             return (
-              <g key={i}>
-                <SvgLine
-                  x1={x1 + (p.x >= 0 ? r + 1 : -(r + 1))}
-                  y1={y1 - r - 1}
-                  x2={
-                    x1 +
-                    (p.x >= 0
-                      ? r + displayOptions.labels.offset - 1
-                      : -(r + displayOptions.labels.offset - 1))
-                  }
-                  y2={y1 - r - displayOptions.labels.offset + 1}
-                  s={displayOptions.labels.line}
-                />
-                <text
-                  x={
-                    x1 +
-                    (p.x >= 0
-                      ? r + displayOptions.labels.offset
-                      : -(r + displayOptions.labels.offset))
-                  }
-                  y={y1 - r - displayOptions.labels.offset}
-                  fill={displayOptions.labels.color}
-                  textAnchor={p.x >= 0 ? 'start' : 'end'}
-                >
-                  {plot.volcano.ids[i]!}
-                </text>
-              </g>
+              <SvgText key={xi} y={y1} textAnchor="end">
+                {p.label}
+              </SvgText>
             )
           })}
-        </SvgMargin>
-
-        {displayOptions.logP.line.show && (
-          <SvgMargin margin={MARGIN}>
-            <SvgLine
-              x1={xax!.domainToRange(xax!.domain[0])}
-              y1={yax!.domainToRange(displayOptions.logP.threshold)}
-              x2={xax!.domainToRange(xax!.domain[1])}
-              y2={yax!.domainToRange(displayOptions.logP.threshold)}
-              s={displayOptions.logP.line}
-            />
-          </SvgMargin>
-        )}
+        </g>
 
         {displayOptions.border.show && (
-          <SvgMargin margin={MARGIN}>
+          <SvgMargin margin={displayOptions.margin}>
             <rect
               width={innerWidth}
               height={innerHeight}
@@ -412,25 +275,98 @@ export function VolcanoPlotSvg({
           </SvgMargin>
         )}
 
-        <AxisLeftSvg
-          ax={yax}
-          pos={{ x: MARGIN.left, y: MARGIN.top }}
-          tickSize={displayOptions.axes.yaxis.tickSize}
-          strokeWidth={displayOptions.axes.yaxis.strokeWidth}
-          title={y}
-          color={displayOptions.axes.yaxis.color}
-        />
         <AxisBottomSvg
           ax={xax}
-          pos={{ x: MARGIN.left, y: MARGIN.top + innerHeight }}
+          pos={{
+            x: displayOptions.margin.left,
+            y: displayOptions.margin.top + innerHeight,
+          }}
           tickSize={displayOptions.axes.xaxis.tickSize}
           strokeWidth={displayOptions.axes.xaxis.strokeWidth}
-          title={x}
+          title={'NES'}
           color={displayOptions.axes.xaxis.color}
         />
+
+        {displayOptions.colorbar.show &&
+          displayOptions.colorbar.position.includes('right') && (
+            <g
+              transform={`translate(${displayOptions.margin.left + innerWidth + displayOptions.padding * 4}, ${displayOptions.margin.top})`}
+            >
+              <g id="p-legend">
+                <SvgText
+                  x={displayOptions.colorbar.size.h / 2}
+                  y={0}
+                  textAnchor="middle"
+                >
+                  {displayOptions.p.label}
+                </SvgText>
+                <g transform={`translate(0, ${displayOptions.padding * 2})`}>
+                  <VColorBarSvg
+                    domain={displayOptions.p.range}
+                    cmap={cmap}
+                    size={displayOptions.colorbar.size}
+                    //stroke={displayOptions.colorbar.stroke}
+                    //font={displayOptions.legend}
+                  />
+                </g>
+              </g>
+              <g
+                id="dot-legend"
+                transform={`translate(0, ${displayOptions.colorbar.size.w + displayOptions.padding * 5})`}
+              >
+                <SvgText
+                  x={displayOptions.colorbar.size.h / 2}
+                  y={0}
+                  textAnchor="middle"
+                >
+                  {displayOptions.size.label}
+                </SvgText>
+                <g transform={`translate(0, ${displayOptions.padding * 2})`}>
+                  {dotLegendPos.map((d, di) => (
+                    <g key={di}>
+                      <SvgCircle
+                        key={di}
+                        cx={displayOptions.colorbar.size.h / 2}
+                        cy={d.y}
+                        r={d.r}
+                        stroke="black"
+                      />
+                      <SvgText
+                        x={
+                          displayOptions.colorbar.size.h / 2 +
+                          displayOptions.dots.size +
+                          displayOptions.padding
+                        }
+                        y={d.y}
+                        //textAnchor="start"
+                        //dominantBaseline="central"
+                      >
+                        {d.label}
+                      </SvgText>
+                    </g>
+                  ))}
+                </g>
+              </g>
+            </g>
+          )}
+
+        {displayOptions.colorbar.show &&
+          displayOptions.colorbar.position.includes('bottom') && (
+            <g
+              transform={`translate(${displayOptions.margin.left}, ${displayOptions.margin.top + innerHeight + 100})`}
+            >
+              <HColorBarSvg
+                domain={displayOptions.p.range}
+                cmap={cmap}
+                size={displayOptions.colorbar.size}
+                //stroke={displayOptions.colorbar.stroke}
+                //font={displayOptions.legend}
+              />
+            </g>
+          )}
       </SvgBase>
     )
-  }, [plot, y, displayOptions, displayLabels, sizeFunc])
+  }, [plot, points, displayOptions])
 
   // useEffect(() => {
   //   //if (dataFiles.length > 0) {
@@ -609,7 +545,7 @@ export function VolcanoPlotSvg({
     <>
       {svg}
 
-      {toolTipInfo && (
+      {/* {toolTipInfo && (
         <div
           ref={tooltipRef}
           className="absolute z-50 rounded-theme bg-black/60 p-3 text-xs text-white opacity-100"
@@ -618,12 +554,14 @@ export function VolcanoPlotSvg({
             top: toolTipInfo.pos.y,
           }}
         >
-          <p className="font-semibold">{`${plot.volcano.ids[toolTipInfo.cell.row]!}`}</p>
+          <p className="font-semibold">{`${sheet.rowName(
+            toolTipInfo.cell.row
+          )}`}</p>
           <p>{`x: ${cellStr(points[toolTipInfo.cell.row]!.x)}, y: ${cellStr(
             points[toolTipInfo.cell.row]!.y
           )}`}</p>
         </div>
-      )}
+      )} */}
     </>
   )
 }

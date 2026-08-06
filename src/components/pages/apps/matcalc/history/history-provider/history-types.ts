@@ -10,6 +10,7 @@ import { IClusterFrame } from '@/lib/math/hcluster'
 import { ISankeyPlot } from '../../../sankey/sankey-provider'
 import { IBoxPlotDisplayOptions } from '../../apps/boxplot/boxplot-plot-svg'
 import { IExtGseaDisplayOptions } from '../../apps/ext-gsea/ext-gsea-store'
+import { IGseaDotDisplayOptions } from '../../apps/gsea-dot/gsea-dot-plot-svg'
 import { IVolcanoDisplayOptions } from '../../apps/volcano/volcano-plot-svg'
 import { IUndoState } from '../history-manager'
 
@@ -26,7 +27,7 @@ export interface ISelectionPath {
 
 export type DataFrameType = BaseDataFrame | AnnotationDataFrame | IClusterFrame
 
-export interface BasePlot extends IDBEntity {
+export interface IBasePlot extends IDBEntity {
   //style: PlotStyle
   // groups to make plots so that they are independent
   // of history such that if user moves groups around
@@ -36,19 +37,39 @@ export interface BasePlot extends IDBEntity {
   type: 'plot'
 }
 
-export interface HeatMapPlot extends BasePlot {
+export interface HeatMapPlot extends IBasePlot {
   style: 'heatmap' | 'dot'
   dataframes: Record<string, DataFrameType>
   props: IHeatMapDisplayOptions
 }
 
-export interface VolcanoPlot extends BasePlot {
+export interface IVolcano {
+  ids: string[]
+  log2foldChanges: number[]
+  logpvalues: number[]
+  sizes?: number[]
+}
+
+export interface IVolcanoPlot extends IBasePlot {
   style: 'volcano'
-  dataframes: Record<string, BaseDataFrame>
+  volcano: IVolcano
   props: IVolcanoDisplayOptions
 }
 
-export interface BoxPlot extends BasePlot {
+export interface IGseaDot {
+  ids: string[]
+  nes: number[]
+  log10pvalues: number[]
+  sizes: number[]
+}
+
+export interface IGseaDotPlot extends IBasePlot {
+  style: 'gsea-dot-plot'
+  gseaDot: IGseaDot
+  props: IGseaDotDisplayOptions
+}
+
+export interface BoxPlot extends IBasePlot {
   style: 'box'
   dataframes: Record<string, BaseDataFrame>
   props: IBoxPlotDisplayOptions
@@ -61,11 +82,11 @@ export interface BoxPlot extends BasePlot {
   singlePlotDisplayOptions: object
 }
 
-export interface LollipopPlot extends BasePlot {
+export interface LollipopPlot extends IBasePlot {
   style: 'lollipop'
 }
 
-export interface ExtGseaPlot extends BasePlot {
+export interface ExtGseaPlot extends IBasePlot {
   style: 'ext-gsea'
   props: IExtGseaDisplayOptions
   rankedGenes: IRankedGenes
@@ -77,7 +98,12 @@ export interface ExtGseaPlot extends BasePlot {
 }
 
 export type HistoryPlot =
-  HeatMapPlot | VolcanoPlot | ExtGseaPlot | BoxPlot | ISankeyPlot
+  | HeatMapPlot
+  | IVolcanoPlot
+  | IGseaDotPlot
+  | ExtGseaPlot
+  | BoxPlot
+  | ISankeyPlot
 
 export type HistoryNode = IHistoryApp | HistoryPlot
 

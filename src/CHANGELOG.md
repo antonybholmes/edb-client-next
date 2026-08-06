@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added GSEA dot plot tool.
 - Sped up hypergeometric using revised lnbinomial function.
 - Pathway now works with multiple gene sets.
 - Change output to remove commas to stop locale issues such as France.

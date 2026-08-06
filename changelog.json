@@ -2351,6 +2351,10 @@
         {
           "msg": "Sped up hypergeometric using revised lnbinomial function",
           "date": "2026-08-06T13:58:38.290Z"
+        },
+        {
+          "msg": "Added GSEA dot plot tool",
+          "date": "2026-08-06T17:26:29.734Z"
         }
       ]
     },

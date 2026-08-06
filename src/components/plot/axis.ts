@@ -145,7 +145,7 @@ export class Axis {
     if (ticks.every((item) => typeof item === 'number')) {
       if (!a._format) {
         // auto format the ticks if not set
-        a._format = this._scale.tickFormat(ticks.length)! //  d3.format('.2f')
+        a._format = this._scale.tickFormat(ticks.length, '.1f')! //  d3.format('.2f')
       }
 
       // if ticks are just numbers, convert to TickItem

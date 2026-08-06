@@ -1,7 +1,6 @@
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 
-import { useDialogs } from '@/components/dialogs/dialogs'
 import { CommaIcon } from '@/components/icons/comma-icon'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import {
@@ -26,7 +25,6 @@ import { TEXT_DOT_PLOT, TEXT_HEATMAP } from '../matcalc-page'
 import { useMatcalcSettings } from '../settings/matcalc-settings'
 
 export function HomeToolbar() {
-  const { open: openDialog } = useDialogs()
   const { open: openMatcalcDialog } = useMatcalcDialogs()
   const { file } = useFiles()
   const { sendMessage } = useMessages(MESSAGE_CHANNEL)
@@ -161,6 +159,20 @@ export function HomeToolbar() {
             }}
           >
             Sankey
+          </ToolbarButton>
+
+          <ToolbarButton
+            title="GSEA Dot Plot"
+            onClick={() => {
+              openMatcalcDialog({
+                type: 'gsea-dot-plot',
+                payload: {
+                  callback: (plot) => _addPlots([plot]),
+                },
+              })
+            }}
+          >
+            GSEA Dot
           </ToolbarButton>
         </ToolbarCol>
       </ToolbarTabGroup>

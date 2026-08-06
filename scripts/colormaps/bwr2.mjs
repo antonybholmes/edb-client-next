@@ -11,7 +11,7 @@ function generateColormap(steps = 31) {
   //   })
 
   //https://cssgradient.io/shades-of-red/
-  const scale = chroma.scale(['#2D68C4', '#ffffff', '#E80000']) 
+  const scale = chroma.scale(['#2D68C4', '#ffffff', '#E80000'])
 
   const colors = Array.from({ length: steps }, (_, i) => {
     const t = i / (steps - 1) //Math.pow(i / (steps - 1), skew) // skew towards red
@@ -22,4 +22,10 @@ function generateColormap(steps = 31) {
 }
 
 // Example usage:
-console.log('export const BWR_CMAP_V2: ColorMap = new ColorMap("BWR v2", ['+generateColormap().map(x=>'\"'+x+'\"').join(',') +'])')
+console.log(
+  'export const BWR_CMAP_V2: ColorMap = new ColorMap("BWRv2", [' +
+    generateColormap()
+      .map((x) => '\"' + x + '\"')
+      .join(',') +
+    '])'
+)

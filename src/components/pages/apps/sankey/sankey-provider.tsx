@@ -8,7 +8,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { BasePlot } from '../matcalc/history/history-provider/history-types'
+import { IBasePlot } from '../matcalc/history/history-provider/history-types'
 import {
   IOutputGraph,
   IOutputLink,
@@ -65,7 +65,7 @@ export interface ISankey extends IDBEntity {
 //   scale: 1,
 // }
 
-export interface ISankeyPlot extends BasePlot, ISankey {
+export interface ISankeyPlot extends IBasePlot, ISankey {
   style: 'sankey'
 
   //props: ISankeyDisplayOptions

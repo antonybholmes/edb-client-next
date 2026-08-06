@@ -218,7 +218,7 @@ export const BWR_CMAP: ColorMap = new ColorMap('BWR', [
   '#ff0000',
 ])
 
-export const BWR_CMAP_V2: ColorMap = new ColorMap('BWR v2', [
+export const BWR_CMAP_V2: ColorMap = new ColorMap('BWRv2', [
   '#2d68c4',
   '#3b72c8',
   '#497ccc',
@@ -552,7 +552,7 @@ export const GRAY_RED_CMAP = new ColorMap('Gray Red', [
 
 export const COLOR_MAPS: Record<string, ColorMap> = {
   BWR: BWR_CMAP,
-  'BWR v2': BWR_CMAP_V2,
+  BWRv2: BWR_CMAP_V2,
   Viridis: VIRIDIS_CMAP,
   Jet: JET_CMAP,
   Blues: BLUES_CMAP,
@@ -565,6 +565,8 @@ export const COLOR_MAPS: Record<string, ColorMap> = {
   Plasma: PLASMA_CMAP,
   Magma: MAGMA_CMAP,
 }
+
+export type ColorMapName = keyof typeof COLOR_MAPS
 
 export function getColorMap(name: string): ColorMap {
   return name in COLOR_MAPS ? COLOR_MAPS[name]! : BWR_CMAP_V2

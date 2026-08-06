@@ -99,18 +99,7 @@ function SortableGeneElem({
 }
 
 export function ColormapPropsPanel() {
-  //const [delFeature, setDelFeature] = useState<IProteinFeature | null>(null)
-
   const { settings, updateSettings } = useVariantSettings()
-
-  // const { open: openDialog } = useDialogs()
-
-  // const sensors = useSensors(
-  //   useSensor(PointerSensor),
-  //   useSensor(KeyboardSensor, {
-  //     coordinateGetter: sortableKeyboardCoordinates,
-  //   })
-  // )
 
   function openFeatureFiles(files: ITextFileOpen[]) {
     if (files.length === 0) {

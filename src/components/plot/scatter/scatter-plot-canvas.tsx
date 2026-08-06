@@ -5,16 +5,16 @@ import {
   type ComponentProps,
 } from 'react'
 
+import {
+  DEFAULT_SCATTER_PROPS,
+  IScatterDisplayOptions,
+} from '@/components/pages/apps/matcalc/apps/volcano/volcano-plot-svg'
 import type { IPos } from '@/interfaces/pos'
 import { resizeAndScaleCanvas } from '@/lib/canvas'
 import { COLOR_BLACK, COLOR_WHITE } from '@/lib/color/color'
 import { BWR_CMAP_V2, ColorMap } from '@/lib/color/colormap'
 import type { ILim } from '@/lib/math/math'
 import { Axis, YAxis } from '../axis'
-import {
-  DEFAULT_SCATTER_PROPS,
-  type IScatterDisplayOptions,
-} from './scatter-plot-svg'
 
 const margin = { top: 100, right: 100, bottom: 100, left: 100 }
 
