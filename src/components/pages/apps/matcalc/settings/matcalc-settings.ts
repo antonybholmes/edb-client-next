@@ -7,7 +7,7 @@ import APP_INFO from '../manifest.json'
 import type { Species } from '@/lib/gene/geneconv'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v70`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:settings:v72`
 
 export interface IMatcalcSettings {
   dot: { size: { useOriginalValuesForSizes: boolean } }
@@ -69,6 +69,16 @@ export interface IMatcalcSettings {
       genes: string[]
       selectedDatasets: string[]
     }
+
+    volcano: {
+      preprocess: {
+        applyLog2FC: boolean
+        applyMinusLog10P: boolean
+      }
+      labels: {
+        auto: boolean
+      }
+    }
   }
 
   sortByRow: {
@@ -76,15 +86,6 @@ export interface IMatcalcSettings {
     text: string
   }
 
-  volcano: {
-    preprocess: {
-      applyLog2FC: boolean
-      applyMinusLog10P: boolean
-    }
-    labels: {
-      auto: boolean
-    }
-  }
   files: {
     open: {
       trimWhitespace: boolean
@@ -157,15 +158,7 @@ export const DEFAULT_SETTINGS: IMatcalcSettings = {
     text: '',
     sortWithinGroups: false,
   },
-  volcano: {
-    preprocess: {
-      applyLog2FC: false,
-      applyMinusLog10P: true,
-    },
-    labels: {
-      auto: true,
-    },
-  },
+
   files: {
     open: {
       firstRowIsHeader: true,
@@ -219,6 +212,15 @@ export const DEFAULT_SETTINGS: IMatcalcSettings = {
       genes: [],
       genome: 'Human',
       selectedDatasets: [],
+    },
+    volcano: {
+      preprocess: {
+        applyLog2FC: false,
+        applyMinusLog10P: true,
+      },
+      labels: {
+        auto: true,
+      },
     },
   },
   dot: {

@@ -48,14 +48,15 @@ export function VolcanoPropsPanel() {
   function addLabels() {
     const values: string[] = textToLines(text, { trim: true })
 
+    //console.log(values)
     setLabels(values)
   }
 
   useEffect(() => {
-    if (settings.volcano.labels.auto) {
+    if (settings.apps.volcano.labels.auto) {
       setText(displayLabels.join('\n'))
     }
-  }, [settings.volcano.labels.auto, displayLabels])
+  }, [settings.apps.volcano.labels.auto, displayLabels])
 
   return (
     <PropsPanel>
@@ -313,11 +314,11 @@ export function VolcanoPropsPanel() {
             <BaseCol className="gap-y-1">
               <SwitchPropRow
                 title="Auto label"
-                checked={settings.volcano.labels.auto}
+                checked={settings.apps.volcano.labels.auto}
                 onCheckedChange={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.volcano.labels.auto = v
+                      draft.apps.volcano.labels.auto = v
                     })
                   )
                 }}
@@ -329,7 +330,7 @@ export function VolcanoPropsPanel() {
                 onTextChange={(v) => setText(v)}
                 placeholder="Label points on plot..."
                 className="h-48"
-                disabled={settings.volcano.labels.auto}
+                //disabled={settings.volcano.labels.auto}
               />
 
               <VCenterRow className="justify-between">
