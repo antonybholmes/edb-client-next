@@ -12,7 +12,7 @@ export function HistoryAppTree({
 }: {
   onTabChange: (tab: ITab) => void
 }) {
-  const { present, sheets, plots } = useHistory()
+  const { present, sheets } = useHistory()
   const { files } = useFiles()
 
   const tree: ITab = useMemo(() => {
@@ -62,7 +62,7 @@ export function HistoryAppTree({
         sheetsTab.children!.push(sheetTab)
       }
 
-      for (const plot of getPlots(present, plots, { file })) {
+      for (const plot of getPlots(present, { file })) {
         const plotTab: ITab = {
           id: plot.id,
           path: pathJoin(file, plot),
@@ -80,7 +80,7 @@ export function HistoryAppTree({
     }
 
     return filesTab
-  }, [present, files, sheets, plots])
+  }, [present, files, sheets])
 
   return (
     <FileTree

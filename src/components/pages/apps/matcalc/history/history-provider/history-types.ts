@@ -7,7 +7,7 @@ import { BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { IExtGseaResult, IGseaResult } from '@/lib/gsea/ext-gsea'
 import { IGeneSet, IRankedGenes } from '@/lib/gsea/geneset'
 import { IClusterFrame } from '@/lib/math/hcluster'
-import { IGseaDotPlot } from '../../../genes/gsea-bubble/gsea-bubble-provider'
+import { IGseaBubblePlot } from '../../../genes/gsea/bubble/gsea-bubble-provider'
 import { ISankeyPlot } from '../../../sankey/sankey-provider'
 import { IBoxPlotDisplayOptions } from '../../apps/boxplot/boxplot-plot-svg'
 import { IExtGseaDisplayOptions } from '../../apps/ext-gsea/ext-gsea-store'
@@ -78,7 +78,7 @@ export interface ExtGseaPlot extends IBasePlot {
 export type HistoryPlot =
   | HeatMapPlot
   | IVolcanoPlot
-  | IGseaDotPlot
+  | IGseaBubblePlot
   | ExtGseaPlot
   | BoxPlot
   | ISankeyPlot
@@ -110,7 +110,7 @@ interface IFileSlice {
 
 export interface IPlotSlice {
   addPlots: (plot: HistoryPlot[], opts?: ISheetOps) => void
-  reorderPlots: (plotIds: string[], opts?: ISheetOps) => void
+  //reorderPlots: (plotIds: string[], opts?: ISheetOps) => void
   updatePlot: (plot: HistoryPlot, opts?: ISheetOps) => void
 }
 
@@ -197,14 +197,15 @@ export interface IHistoryState extends IDBEntity {
 
   fileOrder: string[] // appId -> file IDs
   sheetOrder: Record<string, string[]> // fileId -> sheet IDs
-  plotOrder: Record<string, string[]> // fileId -> plot IDs
+  ///plotOrder: Record<string, string[]> // fileId -> plot IDs
   //groupOrder: Record<string, string[]> // fileId -> group IDs
   groupRows: Record<string, IClusterGroupRow[]>
+  plots: Record<string, HistoryPlot[]>
   genesets: Record<string, IGeneSet[]> // fileId -> geneset IDs
 
   currentFile: string
   currentSheet: string
-  currentPlot: string | undefined
+  currentPlot: HistoryPlot | undefined
   currentSelections: ISelectionPath[]
 }
 
@@ -212,7 +213,7 @@ export interface IHistoryState extends IDBEntity {
 export interface IHistoryDataStore {
   files: Record<string, IDBEntity>
   sheets: Record<string, DataFrameType>
-  plots: Record<string, HistoryPlot>
+  //plots: Record<string, HistoryPlot>
   //groupNames: Record<string, string>
   //groups: Record<string, IClusterGroup>
   //genesets: Record<string, IGeneSet>

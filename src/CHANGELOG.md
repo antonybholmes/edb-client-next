@@ -4,6 +4,7 @@
 
 ### Changed
 
+- GSEA bubble now has own app.
 - Moved gsea bubble into own app.
 - GSEA dot now has refined tooltips.
 - Added GSEA dot plot tool.

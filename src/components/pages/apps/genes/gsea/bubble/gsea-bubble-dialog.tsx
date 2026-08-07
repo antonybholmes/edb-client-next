@@ -5,9 +5,9 @@ import { SelectItem, SelectList } from '@/themed/v2/select'
 
 import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
 import { useEffect, useState } from 'react'
-import { useCurrentSheets } from '../../matcalc/history/history-provider/history-contexts'
+import { useCurrentSheets } from '../../../matcalc/history/history-provider/history-contexts'
 
-import { HistoryPlot } from '../../matcalc/history/history-provider/history-types'
+import { HistoryPlot } from '../../../matcalc/history/history-provider/history-types'
 import { newGseaBubblePlot } from './gsea-bubble-provider'
 
 const MAX_COLS = 10
@@ -86,7 +86,7 @@ export interface IProps extends IModalProps<HistoryPlot> {
   minThreshold?: number
 }
 
-export function GseaDotDialog({
+export function GseaBubbleDialog({
   open = true,
   //df,
   onResponse,

@@ -98,9 +98,9 @@ export function SankeyPage() {
     addDFSize()
   }, [addDFSize])
 
-  useEffect(() => {
-    openFile('Motifs')
-  }, [openFile])
+  // useEffect(() => {
+  //   openFile('Motifs')
+  // }, [openFile])
 
   // useEffect(() => {
   //   if (dfTab?.id) {

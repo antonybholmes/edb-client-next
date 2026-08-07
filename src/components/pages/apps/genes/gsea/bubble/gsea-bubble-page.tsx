@@ -1,6 +1,7 @@
 'use client'
 
 import { TabbedDataFrames } from '@/components/pages/apps/matcalc/tabbed-dataframes'
+import { useGseaBubbleContext } from './gsea-bubble-provider'
 
 import { FooterPortal } from '@/components/toolbar/footer-portal'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
@@ -61,11 +62,13 @@ import { textToLines } from '@/lib/text/lines'
 
 import { GseaBubbleProvider } from './gsea-bubble-provider'
 
-import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
-import { useHistory } from '../../matcalc/history/history-provider/history-provider'
-import { useSave } from '../../matcalc/hooks/save'
-import { MatcalcDialogsRoot } from '../../matcalc/matcalc-dialogs'
+import { produce } from 'immer'
+import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
+import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
+import { useSave } from '../../../matcalc/hooks/save'
+import { MatcalcDialogsRoot } from '../../../matcalc/matcalc-dialogs'
 import { GseaBubblePropsPanel } from './gsea-bubble-props-panel'
+import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 import { GseaBubblePlotSvg } from './gsea-bubble-svg'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
@@ -78,9 +81,12 @@ export function GseaBubblePage() {
 
   const { open: openDialog } = useDialogs()
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL) //Ctx()
+  const { zoom, setZoom } = useZoom(PLOT_ZOOM_CHANNEL)
 
   const { settings: edbSettings } = useEdbSettings()
+
+  const { plot } = useGseaBubbleContext()
+  const { settings, updateSettings } = useGseaBubbleSettings()
 
   const { openFile } = useHistory()
 
@@ -95,9 +101,9 @@ export function GseaBubblePage() {
     addDFSize()
   }, [addDFSize])
 
-  useEffect(() => {
-    openFile('Motifs')
-  }, [openFile])
+  // useEffect(() => {
+  //   openFile('Motifs')
+  // }, [openFile])
 
   // useEffect(() => {
   //   if (dfTab?.id) {
@@ -138,13 +144,22 @@ export function GseaBubblePage() {
   //   )
   // }, [debouncedQ])
 
-  // useUpdateEffect(() => {
-  //   updateSettings(
-  //     produce(settings, (draft) => {
-  //       draft.scale = zoom
-  //     })
-  //   )
-  // }, [zoom])
+  // load saved zoom from settings
+  useEffect(() => {
+    setZoom(settings.scale)
+  }, [settings.scale])
+
+  useEffect(() => {
+    if (!plot || settings.scale === zoom) {
+      return
+    }
+
+    updateSettings(
+      produce(settings, (draft) => {
+        draft.scale = zoom
+      })
+    )
+  }, [plot, zoom])
 
   const fileMenuTabs: ITab[] = [
     {
@@ -154,7 +169,7 @@ export function GseaBubblePage() {
           <DropdownMenuItem
             aria-label="Download as TXT"
             onClick={() => {
-              save('sankey.txt', 'txt')
+              save('gsea-bubble.txt', 'txt')
             }}
           >
             <FileIcon stroke="" />
@@ -163,7 +178,7 @@ export function GseaBubblePage() {
           <DropdownMenuItem
             aria-label="Download as CSV"
             onClick={() => {
-              save('sankey.csv', 'csv')
+              save('gsea-bubble.csv', 'csv')
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_CSV}</span>
@@ -179,7 +194,7 @@ export function GseaBubblePage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_PNG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `motifs.png`)
+              downloadSvgAutoFormat(svgRef, `gsea-bubble.png`)
             }}
           >
             <FileImageIcon stroke="" />
@@ -188,7 +203,7 @@ export function GseaBubblePage() {
           <DropdownMenuItem
             aria-label={TEXT_DOWNLOAD_AS_SVG}
             onClick={() => {
-              downloadSvgAutoFormat(svgRef, `motifs.svg`)
+              downloadSvgAutoFormat(svgRef, `gsea-bubble.svg`)
             }}
           >
             <span>{TEXT_DOWNLOAD_AS_SVG}</span>
@@ -199,14 +214,14 @@ export function GseaBubblePage() {
   ]
 
   async function loadTestData() {
-    const res = await httpFetch.getText('/data/test/sankey.txt')
+    const res = await httpFetch.getText('/data/test/gsea/gsea-report.txt')
 
     const lines = textToLines(res)
 
-    const table = new DataFrameReader().indexCols(0).read(lines)
+    const table = new DataFrameReader().indexCols(1).read(lines)
 
-    openFile(`Sankey Test`, {
-      sheets: [table.setName('Sankey Test') as AnnotationDataFrame],
+    openFile(`GSEA Test`, {
+      sheets: [table.setName('GSEA Test') as AnnotationDataFrame],
     })
   }
 
@@ -259,11 +274,7 @@ export function GseaBubblePage() {
               collapsible={true}
             >
               <ExtScrollCard>
-                <GseaBubblePlotSvg
-                  ref={svgRef}
-                  //dfs={plotFrames}
-                  //className="absolute"
-                />
+                {plot && <GseaBubblePlotSvg ref={svgRef} />}
               </ExtScrollCard>
             </ResizablePanel>
             <ThinVResizeHandle />
@@ -282,7 +293,7 @@ export function GseaBubblePage() {
                       openDialog({
                         type: 'save',
                         payload: {
-                          name: 'motifs',
+                          name: 'gsea',
                           callback: (data) => {
                             save(data.name, data.format.ext)
                           },

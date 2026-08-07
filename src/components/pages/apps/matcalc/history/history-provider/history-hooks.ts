@@ -9,13 +9,13 @@ import {
 } from './history-types'
 
 export function useAllPlots(): HistoryPlot[] {
-  const { present, plots } = useHistory()
+  const { present } = useHistory()
 
-  const plotIds = present.fileOrder.flatMap(
-    (fileId) => present.plotOrder[fileId] || []
+  const plots = present.fileOrder.flatMap(
+    (fileId) => present.plots[fileId] || []
   )
 
-  return plotIds.map((id) => plots[id]!)
+  return plots
 }
 
 /**
@@ -45,12 +45,13 @@ export function getSheets(
 
 export function getPlots(
   present: IHistoryState,
-  plots: Record<string, HistoryPlot>,
   opts: { file?: OptStrOrIdObj } = {}
 ): HistoryPlot[] {
   const fid = getFileId(present, opts)
 
-  return (present.plotOrder[fid] || []).map((id) => plots[id]!)
+  //console.log('Getting plots for file ID:', fid)
+
+  return present.plots[fid] || []
 }
 
 // export function getPlot(

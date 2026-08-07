@@ -53,8 +53,8 @@ export type HistoryAction =
   | { type: 'remove'; paths: HistoryPath[] }
   | { type: 'removeFiles'; paths: FilePath[] }
   | { type: 'reorderSheets'; ids: string[]; opts: ISheetOps }
-  | { type: 'reorderPlots'; ids: string[]; opts: ISheetOps }
-  | { type: 'updatePlot'; plot: HistoryPlot }
+  //| { type: 'reorderPlots'; ids: string[]; opts: ISheetOps }
+  | { type: 'updatePlot'; plot: HistoryPlot; opts: ISheetOps }
   | { type: 'addGroups'; groupRows: IClusterGroupRow[]; opts: IGroupOps }
   | { type: 'clearGroups'; opts: IGroupOps }
   | { type: 'updateGroup'; group: IClusterGroup; opts: IGroupOps }
@@ -73,7 +73,7 @@ export function dataStoreView(state: IHistoryData): IHistoryDataStore {
   return {
     files: state.files,
     sheets: state.sheets,
-    plots: state.plots,
+    //plots: state.plots,
     //groupNames: state.groupNames,
     //groups: state.groups,
     //groupRows: state.groupRows,
@@ -150,7 +150,7 @@ function removeFile(state: IHistoryState, p: PathId) {
   state.fileOrder = state.fileOrder.filter((fileId) => fileId !== p.file)
 
   delete state.sheetOrder[p.file]
-  delete state.plotOrder[p.file]
+  delete state.plots[p.file]
   delete state.groupRows[p.file]
   delete state.genesets[p.file]
 
@@ -166,8 +166,8 @@ function removeFile(state: IHistoryState, p: PathId) {
   state.currentFile = lastFile
   const sheets = state.sheetOrder[lastFile]!
   state.currentSheet = sheets[0]!
-  const plots = state.plotOrder[lastFile]!
-  state.currentPlot = plots[0]!
+  //const plots = state.plots[lastFile]!
+  //state.currentPlot = plots[0]!
   state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]
 }
 
@@ -188,18 +188,16 @@ function removeSheet(state: IHistoryState, p: PathId) {
 }
 
 function removePlot(state: IHistoryState, p: PathId) {
-  console.log('Removing plot x:', p, [...state.plotOrder[p.file]])
-  state.plotOrder[p.file] = state.plotOrder[p.file]!.filter(
-    (id) => id !== p.plot
+  console.log('Removing plot x:', p, [...state.plots[p.file]])
+  state.plots[p.file] = state.plots[p.file]!.filter(
+    (plot) => plot.id !== p.plot
   )
 
-  console.log('Removing plot x2:', p, [...state.plotOrder[p.file]])
-
-  if (state.plotOrder[p.file]!.length > 0) {
+  if (state.plots[p.file]!.length > 0) {
     // if there are still plots left, select the previous one
-    const plots = state.plotOrder[p.file]!
+    const plots = state.plots[p.file]!
     state.currentPlot = plots[0]!
-    state.currentSelections = [{ type: 'plot', id: state.currentPlot }]
+    state.currentSelections = [{ type: 'plot', id: state.currentPlot.id }]
   } else {
     // otherwise select the last sheet
     const sheets = state.sheetOrder[p.file]!
@@ -207,14 +205,14 @@ function removePlot(state: IHistoryState, p: PathId) {
     state.currentSheet = sheets[0]!
     state.currentSelections = [{ type: 'sheet', id: state.currentSheet }]
 
-    console.log('Removing plot x3:', p, [...state.plotOrder[p.file]])
+    console.log('Removing plot x3:', p, [...state.plots[p.file]])
   }
 }
 
-function removeStorePlot(store: IHistoryDataStore, p: PathId) {
-  console.log('Removing store plot:', p)
-  delete store.plots[p.plot]
-}
+// function removeStorePlot(store: IHistoryDataStore, p: PathId) {
+//   console.log('Removing store plot:', p)
+//   delete store.plots[p.plot]
+// }
 
 function removeGroup(state: IHistoryState, p: PathId) {
   state.groupRows[p.file] = state.groupRows[p.file]!.map((row) => {
@@ -281,14 +279,13 @@ function handleOpenFile(
       }
 
       draft.sheetOrder[action.file.id] = action.sheets.map((s) => s.id)
-      draft.plotOrder[action.file.id] = action.plots.map((p) => p.id)
+      draft.plots[action.file.id] = action.plots
       draft.groupRows[action.file.id] = action.groupRows //.map((g) => g.id)
       draft.genesets[action.file.id] = action.genesets
 
       draft.currentFile = action.file.id
       draft.currentSheet = action.sheets[0]!.id
-      draft.currentPlot =
-        action.plots.length > 0 ? action.plots[0]!.id : undefined
+      draft.currentPlot = action.plots.length > 0 ? action.plots[0]! : undefined
       draft.currentSelections = [{ type: 'sheet', id: action.sheets[0]!.id }]
     },
     (store: IHistoryDataStore) => {
@@ -296,9 +293,9 @@ function handleOpenFile(
       for (const sheet of action.sheets) {
         store.sheets[sheet.id] = sheet
       }
-      for (const plot of action.plots) {
-        store.plots[plot.id] = plot
-      }
+      // for (const plot of action.plots) {
+      //   store.plots[plot.id] = plot
+      // }
       // for (const group of action.groups) {
       //   store.groups[group.id] = group
       // }
@@ -378,19 +375,19 @@ function handleAddPlots(
     '',
     (draft: IHistoryState) => {
       if (mode === 'append') {
-        draft.plotOrder[file]?.push(...plots.map((p) => p.id))
+        draft.plots[file]?.push(...plots)
       } else {
-        draft.plotOrder[file] = plots.map((p) => p.id)
+        draft.plots[file] = plots
       }
 
-      draft.currentPlot = plots[0]!.id
+      draft.currentPlot = plots[0]!
       draft.currentSelections = [{ type: 'plot', id: plots[0]!.id }]
-    },
-    (store: IHistoryDataStore) => {
-      for (const plot of plots) {
-        store.plots[plot.id] = plot
-      }
     }
+    // (store: IHistoryDataStore) => {
+    //   for (const plot of plots) {
+    //     store.plots[plot.id] = plot
+    //   }
+    // }
   )
 }
 
@@ -437,20 +434,20 @@ function handleRemove(
             break
         }
       }
-    },
-    (draft: IHistoryDataStore) => {
-      for (const p of pathIds) {
-        switch (getPathType(p)) {
-          case 'plot':
-            removeStorePlot(draft, p)
-            break
-
-          default:
-            console.warn(`Unknown path type for ${p}`)
-            break
-        }
-      }
     }
+    // (draft: IHistoryDataStore) => {
+    //   for (const p of pathIds) {
+    //     switch (getPathType(p)) {
+    //       case 'plot':
+    //         removeStorePlot(draft, p)
+    //         break
+
+    //       default:
+    //         console.warn(`Unknown path type for ${p}`)
+    //         break
+    //     }
+    //   }
+    // }
   )
 }
 
@@ -501,34 +498,59 @@ function handleReorderSheets(
   })
 }
 
-function handleReorderPlots(
-  state: IHistoryData,
-  action: Extract<HistoryAction, { type: 'reorderPlots' }>
-): IHistoryData {
-  const { ids, opts } = action
-  const { file = state.present.currentFile } = opts
+// function handleReorderPlots(
+//   state: IHistoryData,
+//   action: Extract<HistoryAction, { type: 'reorderPlots' }>
+// ): IHistoryData {
+//   const { ids, opts } = action
+//   const { file = state.present.currentFile } = opts
 
-  // default file cannot be reordered
-  if (ids.length === 0 || file === DEFAULT_FILE.id) {
-    return state
-  }
+//   // default file cannot be reordered
+//   if (ids.length === 0 || file === DEFAULT_FILE.id) {
+//     return state
+//   }
 
-  return applyHistoryUpdate(state, 'Reorder plots', '', (draft) => {
-    draft.plotOrder[file] = ids
-  })
-}
+//   return applyHistoryUpdate(state, 'Reorder plots', '', (draft) => {
+//     draft.plotOrder[file] = ids
+//   })
+// }
+
+// function handleUpdatePlot(
+//   state: IHistoryData,
+//   action: Extract<HistoryAction, { type: 'updatePlot' }>
+// ): IHistoryData {
+//   return {
+//     ...state,
+//     plots: {
+//       ...state.plots,
+//       [action.plot.id]: action.plot,
+//     },
+//   }
+// }
 
 function handleUpdatePlot(
   state: IHistoryData,
   action: Extract<HistoryAction, { type: 'updatePlot' }>
 ): IHistoryData {
-  return {
-    ...state,
-    plots: {
-      ...state.plots,
-      [action.plot.id]: action.plot,
-    },
-  }
+  const { plot, opts } = action
+  const { file = state.present.currentFile } = opts
+
+  return applyHistoryUpdate(
+    state,
+    'Update group',
+    '',
+    (draft: IHistoryState) => {
+      console.log('Updating plot with id:', plot.id, plot)
+      const filePlots = draft.plots[file] ?? []
+
+      for (let i = 0; i < filePlots.length; i++) {
+        if (filePlots![i].id === plot.id) {
+          console.log('Found plot at index', i)
+          filePlots![i] = plot
+        }
+      }
+    }
+  )
 }
 
 function handleAddGroups(
@@ -900,10 +922,10 @@ function handleGoto(
         draft.currentSelections = [{ type: 'sheet', id: sheet }]
       }
 
-      if (plot in store.plots) {
-        draft.currentPlot = plot
-        draft.currentSelections = [{ type: 'plot', id: plot }]
-      }
+      // if (plot in store.plots) {
+      //   draft.currentPlot = plot
+      //   draft.currentSelections = [{ type: 'plot', id: plot }]
+      // }
     }
   )
 }
@@ -942,8 +964,8 @@ export function historyReducer(
       return handleRemoveFiles(state, action)
     case 'reorderSheets':
       return handleReorderSheets(state, action)
-    case 'reorderPlots':
-      return handleReorderPlots(state, action)
+    //case 'reorderPlots':
+    //  return handleReorderPlots(state, action)
     case 'updatePlot':
       return handleUpdatePlot(state, action)
     case 'addGroups':

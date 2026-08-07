@@ -26,7 +26,7 @@ export function SvgCircle({
 }: IProps) {
   return (
     <circle
-      stroke={stroke ?? sp?.value ?? 'none'}
+      stroke={stroke ?? (sp?.show ? sp?.value : 'none')}
       strokeWidth={strokeWidth ?? sp?.width}
       strokeOpacity={strokeOpacity ?? sp?.opacity}
       strokeDasharray={strokeDasharray ?? sp?.dasharray}

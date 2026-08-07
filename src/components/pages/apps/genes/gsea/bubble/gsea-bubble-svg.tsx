@@ -1,9 +1,10 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
+import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 
 import { COLOR_BLACK } from '@/lib/color/color'
 
-import { Axis } from '../../../../plot/axis'
-import { AxisBottomSvg } from '../../../../plot/svg-axis'
+import { Axis } from '../../../../../plot/axis'
+import { AxisBottomSvg } from '../../../../../plot/svg-axis'
 
 import { SvgBase } from '@/components/plot/svg-base'
 import type { ISVGProps } from '@/interfaces/svg-props'
@@ -11,28 +12,13 @@ import type { ISVGProps } from '@/interfaces/svg-props'
 import { VColorBarSvg } from '@/components/plot/color-bar-svg'
 import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgMargin } from '@/components/plot/svg-margin'
-import {
-  ColorBarPos,
-  DEFAULT_STROKE_PROPS,
-  IMarginProps,
-  IStrokeProps,
-} from '@/components/plot/svg-props'
 import { SvgText } from '@/components/plot/svg-text'
-import { IDim } from '@/interfaces/dim'
-import {
-  COLOR_MAPS,
-  ColorMap,
-  ColorMapName,
-  getColorMap,
-} from '@/lib/color/colormap'
+import { COLOR_MAPS, ColorMap, getColorMap } from '@/lib/color/colormap'
 import { linspace } from '@/lib/math/linspace'
-import { ILim } from '@/lib/math/math'
 
-import type { ITooltip } from '../../matcalc/apps/heatmap/heatmap-svg'
-import { IDisplayAxis } from '../../matcalc/apps/volcano/volcano-plot-svg'
-import { IGseaBubblePlot, useGseaBubbleContext } from './gsea-bubble-provider'
-
-const MARGIN = { top: 10, right: 200, bottom: 100, left: 400 }
+import type { ITooltip } from '../../../matcalc/apps/heatmap/heatmap-svg'
+import { IDisplayAxis } from '../../../matcalc/apps/volcano/volcano-plot-svg'
+import { useGseaBubbleContext } from './gsea-bubble-provider'
 
 const TOOLTIP_OFFSET = 10
 
@@ -42,44 +28,15 @@ const TOOLTIP_OFFSET = 10
 //   '#e62e00',
 // ])
 
-export interface IGseaDotDisplayOptions {
+export interface IGseaBubbleDisplayOptions {
   axes: {
     xaxis: IDisplayAxis
-    yaxis: { length: number; rowHeight: number }
   }
-  dots: {
-    size: number
-    color: string
-    opacity: number
-  }
-  p: {
-    range: ILim
-    label: string
-    cmap: ColorMapName
-  }
-  size: {
-    label: string
-    maxSize: number
-  }
-  scale: number
 
-  border: IStrokeProps
-  padding: number
-  colorbar: {
-    show: boolean
-    position: ColorBarPos
-    size: IDim
-  }
-  legend: {
-    dots: {
-      n: number
-      sizes: number[]
-    }
-  }
-  margin: IMarginProps
+  scale: number
 }
 
-export const DEFAULT_GSEA_DOT_PROPS: IGseaDotDisplayOptions = {
+export const DEFAULT_GSEA_DOT_PROPS: IGseaBubbleDisplayOptions = {
   axes: {
     xaxis: {
       name: 'Log2 fold change',
@@ -92,42 +49,9 @@ export const DEFAULT_GSEA_DOT_PROPS: IGseaDotDisplayOptions = {
       strokeWidth: 1,
       color: COLOR_BLACK,
     },
-    yaxis: {
-      length: 500,
-      rowHeight: 24,
-    },
   },
 
   scale: 1,
-  p: {
-    range: [0, 10],
-    label: '-log10(p)',
-    cmap: 'BWRv2',
-  },
-  size: {
-    label: 'Size',
-    maxSize: 100,
-  },
-  dots: {
-    size: 10,
-    color: '#000000',
-    opacity: 0.75,
-  },
-
-  border: { ...DEFAULT_STROKE_PROPS },
-  padding: 10,
-  colorbar: {
-    show: true,
-    position: 'right',
-    size: { w: 100, h: 14 },
-  },
-  legend: {
-    dots: {
-      n: 3,
-      sizes: [25, 50, 75, 100],
-    },
-  },
-  margin: { ...MARGIN },
 }
 
 function getColor(
@@ -146,7 +70,7 @@ interface IProps extends ISVGProps {
   size?: string
   sizeFunc?: (x: number) => number
 
-  //displayOptions?: IVolcanoDisplayOptions
+  //displayProps?: IVolcanodisplayProps
 }
 
 export function GseaBubblePlotSvg({
@@ -154,10 +78,9 @@ export function GseaBubblePlotSvg({
 
   sizeFunc = (x: number) => x,
 }: IProps) {
-  const { plot } = useGseaBubbleContext()
+  const { plot, displayProps } = useGseaBubbleContext()
 
-  const displayOptions: IGseaDotDisplayOptions = (plot! as IGseaBubblePlot)
-    .props
+  const { settings } = useGseaBubbleSettings()
 
   const tooltipRef = useRef<HTMLDivElement>(null)
 
@@ -169,27 +92,33 @@ export function GseaBubblePlotSvg({
     () =>
       plot.gseaDot.nes.values.map((x, i) => {
         const size = plot.gseaDot.sizes.values[i]!
-        const sizeF = Math.min(size / displayOptions.size.maxSize, 1)
+        const sizeF = Math.min(size / settings.size.maxSize, 1)
         return {
           x,
           y: i + 1,
           p: plot.gseaDot.log10pvalues.values[i]!,
           color: getColor(
             plot.gseaDot.log10pvalues.values[i]!,
-            displayOptions.p.range[1],
-            getColorMap(displayOptions.p.cmap)
+            settings.p.range[1],
+            getColorMap(settings.p.cmap)
           ),
           size: sizeF,
-          r: sizeF * displayOptions.dots.size,
+          r: sizeF * settings.bubbles.size,
           label: plot.gseaDot.ids[i]!,
         }
       }),
     [
       plot.gseaDot.nes.values,
       plot.gseaDot.sizes.values,
-      displayOptions.size.maxSize,
-      displayOptions.dots.size,
-      displayOptions.p,
+      settings.size.maxSize,
+      settings.bubbles.size,
+      settings.p,
+      settings.margin,
+      settings.padding,
+      settings.legend,
+      settings.border,
+      settings.axes,
+      settings.bubbles,
     ]
   )
 
@@ -202,8 +131,8 @@ export function GseaBubblePlotSvg({
       setToolTipInfo({
         ...toolTipInfo,
         pos: {
-          x: x1 + displayOptions.margin.left + TOOLTIP_OFFSET,
-          y: y1 + displayOptions.margin.top + TOOLTIP_OFFSET,
+          x: x1 + settings.margin.left + TOOLTIP_OFFSET,
+          y: y1 + settings.margin.top + TOOLTIP_OFFSET,
         },
         cell: { row: row, col: 0 },
       })
@@ -226,26 +155,24 @@ export function GseaBubblePlotSvg({
     //const huedata = hue ? getNumCol(df, findCol(df, hue)) : []
 
     const xax = new Axis()
-      .autoDomain(displayOptions.axes.xaxis.domain)
-      //.setDomain(displayOptions.xdomain)
-      .setLength(displayOptions.axes.xaxis.length)
+      .autoDomain(displayProps.axes.xaxis.domain)
+      //.setDomain(displayProps.xdomain)
+      .setLength(settings.axes.x.length)
 
     const innerWidth = xax.length
     const innerHeight =
-      displayOptions.axes.yaxis.rowHeight * (plot.gseaDot.nes.values.length + 1)
-    const width =
-      innerWidth + displayOptions.margin.left + displayOptions.margin.right
-    const height =
-      innerHeight + displayOptions.margin.top + displayOptions.margin.bottom
-    const cmap = COLOR_MAPS[displayOptions.p.cmap]!
+      settings.axes.y.rowHeight * (plot.gseaDot.nes.values.length + 1)
+    const width = innerWidth + settings.margin.left + settings.margin.right
+    const height = innerHeight + settings.margin.top + settings.margin.bottom
+    const cmap = COLOR_MAPS[settings.p.cmap]!
 
     //console.log('innerWidth:', innerWidth, 'innerHeight:', innerHeight)
 
-    let sizes = displayOptions.legend.dots.sizes
+    let sizes = settings.legend.dots.sizes
 
     if (sizes.length === 0) {
       // skip 0
-      sizes = linspace(0, displayOptions.size.maxSize, 5).slice(1)
+      sizes = linspace(0, settings.size.maxSize, 5).slice(1)
     }
 
     const dotLegendPos = []
@@ -253,39 +180,34 @@ export function GseaBubblePlotSvg({
     let y = 0
 
     for (const [si, s] of sizes.entries()) {
-      const d = Math.min(s, displayOptions.size.maxSize)
-      const r1 =
-        Math.min(d / displayOptions.size.maxSize, 1) * displayOptions.dots.size
+      const d = Math.min(s, settings.size.maxSize)
 
+      const r1 = Math.min(d / settings.size.maxSize, 1) * settings.bubbles.size
       dotLegendPos.push({ label: d.toFixed(0), r: r1, y })
 
       if (si < sizes.length - 1) {
         const r2 =
-          Math.min(sizes[si + 1]! / displayOptions.size.maxSize, 1) *
-          displayOptions.dots.size
-        y += r1 + r2 + displayOptions.padding
+          Math.min(sizes[si + 1]! / settings.size.maxSize, 1) *
+          settings.bubbles.size
+        y += r1 + r2 + settings.padding
       }
     }
 
     return (
-      <SvgBase
-        ref={ref}
-        width={width}
-        height={height}
-        scale={displayOptions.scale}
-      >
-        <SvgMargin margin={displayOptions.margin}>
+      <SvgBase ref={ref} width={width} height={height} scale={settings.scale}>
+        <SvgMargin margin={settings.margin}>
           {points.map((p, xi) => {
             const x1 = xax!.domainToRange(p.x)
-            const y1 = p.y * displayOptions.axes.yaxis.rowHeight
+            const y1 = p.y * settings.axes.y.rowHeight
 
             return (
-              <circle
+              <SvgCircle
                 cx={x1}
                 cy={y1}
                 r={p.r}
                 fill={p.color}
-                opacity={displayOptions.dots.opacity}
+                fp={settings.bubbles.fill}
+                sp={settings.bubbles.stroke}
                 key={xi}
                 onMouseLeave={handleVariantLeave}
                 onMouseEnter={() => {
@@ -297,10 +219,10 @@ export function GseaBubblePlotSvg({
         </SvgMargin>
 
         <g
-          transform={`translate(${displayOptions.margin.left - displayOptions.padding}, ${displayOptions.margin.top})`}
+          transform={`translate(${settings.margin.left - settings.padding}, ${settings.margin.top})`}
         >
           {points.map((p, xi) => {
-            const y1 = p.y * displayOptions.axes.yaxis.rowHeight
+            const y1 = p.y * settings.axes.y.rowHeight
 
             return (
               <SvgText key={xi} y={y1} textAnchor="end">
@@ -310,13 +232,13 @@ export function GseaBubblePlotSvg({
           })}
         </g>
 
-        {displayOptions.border.show && (
-          <SvgMargin margin={displayOptions.margin}>
+        {settings.border.show && (
+          <SvgMargin margin={settings.margin}>
             <rect
               width={innerWidth}
               height={innerHeight}
-              stroke={displayOptions.border.value}
-              strokeWidth={displayOptions.border.width}
+              stroke={settings.border.value}
+              strokeWidth={settings.border.width}
               fill="none"
             />
           </SvgMargin>
@@ -325,71 +247,71 @@ export function GseaBubblePlotSvg({
         <AxisBottomSvg
           ax={xax}
           pos={{
-            x: displayOptions.margin.left,
-            y: displayOptions.margin.top + innerHeight,
+            x: settings.margin.left,
+            y: settings.margin.top + innerHeight,
           }}
-          tickSize={displayOptions.axes.xaxis.tickSize}
-          strokeWidth={displayOptions.axes.xaxis.strokeWidth}
+          tickSize={displayProps.axes.xaxis.tickSize}
+          strokeWidth={displayProps.axes.xaxis.strokeWidth}
           title={plot.gseaDot.nes.label}
-          color={displayOptions.axes.xaxis.color}
+          color={displayProps.axes.xaxis.color}
         />
 
-        {displayOptions.colorbar.show &&
-          displayOptions.colorbar.position.includes('right') && (
+        {settings.colorbar.show &&
+          settings.colorbar.position.includes('right') && (
             <g
-              transform={`translate(${displayOptions.margin.left + innerWidth + displayOptions.padding * 5}, ${displayOptions.margin.top})`}
+              transform={`translate(${settings.margin.left + innerWidth + settings.padding * 5}, ${settings.margin.top})`}
             >
               <g id="p-legend">
                 <SvgText
-                  x={displayOptions.colorbar.size.h / 2}
+                  x={settings.colorbar.size.h / 2}
                   y={0}
                   textAnchor="middle"
                 >
                   {`-log10(${plot.gseaDot.log10pvalues.label})`}
                 </SvgText>
-                <g transform={`translate(0, ${displayOptions.padding * 2})`}>
+                <g transform={`translate(0, ${settings.padding * 2})`}>
                   <VColorBarSvg
-                    domain={displayOptions.p.range}
+                    domain={settings.p.range}
                     cmap={cmap}
-                    size={displayOptions.colorbar.size}
+                    size={settings.colorbar.size}
                     ticks={[
-                      displayOptions.p.range[0],
-                      displayOptions.p.range[1] / 2,
-                      displayOptions.p.range[1],
+                      settings.p.range[0],
+                      settings.p.range[1] / 2,
+                      settings.p.range[1],
                     ]}
-                    //stroke={displayOptions.colorbar.stroke}
-                    //font={displayOptions.legend}
+                    //stroke={displayProps.colorbar.stroke}
+                    //font={displayProps.legend}
                   />
                 </g>
               </g>
               <g
                 id="dot-legend"
-                transform={`translate(0, ${displayOptions.colorbar.size.w + displayOptions.padding * 5})`}
+                transform={`translate(0, ${settings.colorbar.size.w + settings.padding * 5})`}
               >
                 <SvgText
-                  x={displayOptions.colorbar.size.h / 2}
+                  x={settings.colorbar.size.h / 2}
                   y={0}
                   textAnchor="middle"
                 >
                   {plot.gseaDot.sizes.label}
                 </SvgText>
                 <g
-                  transform={`translate(0, ${displayOptions.padding + displayOptions.dots.size})`}
+                  transform={`translate(0, ${settings.padding + settings.bubbles.size})`}
                 >
                   {dotLegendPos.map((d, di) => (
                     <g key={di}>
                       <SvgCircle
                         key={di}
-                        cx={displayOptions.colorbar.size.h / 2}
+                        cx={settings.colorbar.size.h / 2}
                         cy={d.y}
                         r={d.r}
                         stroke="black"
                       />
                       <SvgText
                         x={
-                          displayOptions.colorbar.size.h / 2 +
-                          displayOptions.dots.size +
-                          displayOptions.padding
+                          settings.colorbar.size.h / 2 +
+                          settings.bubbles.size +
+                          settings.padding
                         }
                         y={d.y}
                         //textAnchor="start"
@@ -404,23 +326,23 @@ export function GseaBubblePlotSvg({
             </g>
           )}
 
-        {/* {displayOptions.colorbar.show &&
-          displayOptions.colorbar.position.includes('bottom') && (
+        {/* {displayProps.colorbar.show &&
+          displayProps.colorbar.position.includes('bottom') && (
             <g
-              transform={`translate(${displayOptions.margin.left}, ${displayOptions.margin.top + innerHeight + 100})`}
+              transform={`translate(${displayProps.margin.left}, ${displayProps.margin.top + innerHeight + 100})`}
             >
               <HColorBarSvg
-                domain={displayOptions.p.range}
+                domain={displayProps.p.range}
                 cmap={cmap}
-                size={displayOptions.colorbar.size}
-                //stroke={displayOptions.colorbar.stroke}
-                //font={displayOptions.legend}
+                size={displayProps.colorbar.size}
+                //stroke={displayProps.colorbar.stroke}
+                //font={displayProps.legend}
               />
             </g>
           )} */}
       </SvgBase>
     )
-  }, [plot, points, displayOptions])
+  }, [plot, points, displayProps, settings])
 
   // useEffect(() => {
   //   //if (dataFiles.length > 0) {

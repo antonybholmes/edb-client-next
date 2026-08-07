@@ -165,7 +165,7 @@ export function HomeToolbar() {
             title="GSEA Dot Plot"
             onClick={() => {
               openMatcalcDialog({
-                type: 'gsea-dot-plot',
+                type: 'gsea-bubble-plot',
                 payload: {
                   callback: (plot) => _addPlots([plot]),
                 },

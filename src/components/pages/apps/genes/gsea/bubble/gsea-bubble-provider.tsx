@@ -1,18 +1,12 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from 'react'
+import { createContext, useContext, useState, type ReactNode } from 'react'
 
 import { makeUuid } from '@/lib/id'
 
 import { produce } from 'immer'
-import { IBasePlot } from '../../matcalc/history/history-provider/plot'
+import { IBasePlot } from '../../../matcalc/history/history-provider/plot'
 import {
   DEFAULT_GSEA_DOT_PROPS,
-  type IGseaDotDisplayOptions,
+  type IGseaBubbleDisplayOptions,
 } from './gsea-bubble-svg'
 
 export interface IGseaBubble {
@@ -23,14 +17,15 @@ export interface IGseaBubble {
 }
 
 export interface IGseaBubblePlot extends IBasePlot {
-  style: 'gsea-dot-plot'
+  style: 'gsea-bubble-plot'
   gseaDot: IGseaBubble
-  props: IGseaDotDisplayOptions
+  props: IGseaBubbleDisplayOptions
 }
 
 export interface GseaBubblePropsContextType {
-  displayProps: IGseaDotDisplayOptions
+  displayProps: IGseaBubbleDisplayOptions
   plot: IGseaBubblePlot
+  setPlot: (plot: IGseaBubblePlot) => void
 }
 
 export const GseaBubbleContext = createContext<
@@ -68,7 +63,7 @@ export function newGseaBubblePlot(
   console.log('maxNes:', maxNes, 'minNes:', minNes)
 
   let {
-    style = 'gsea-dot-plot',
+    style = 'gsea-bubble-plot',
     props = { ...DEFAULT_GSEA_DOT_PROPS },
     actions = [],
   } = opts
@@ -95,19 +90,17 @@ export function GseaBubbleProvider({
   children,
 }: {
   plot?: IGseaBubblePlot
+
   children: ReactNode
 }) {
   const [_plot, setPlot] = useState<IGseaBubblePlot | undefined>(plot)
 
-  useEffect(() => {
-    setPlot(plot)
-  }, [plot])
-
   return (
     <GseaBubbleContext.Provider
       value={{
-        displayProps: _plot?.props ?? DEFAULT_GSEA_DOT_PROPS,
         plot: _plot,
+        displayProps: _plot?.props ?? DEFAULT_GSEA_DOT_PROPS,
+        setPlot,
       }}
     >
       {children}

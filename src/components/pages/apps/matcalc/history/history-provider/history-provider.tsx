@@ -144,16 +144,16 @@ export function HistoryProvider({ children }: IChildrenProps) {
     [dispatch]
   )
 
-  const reorderPlots = useCallback(
-    (ids: string[], opts: ISheetOps = {}) => {
-      dispatch({ type: 'reorderPlots', ids, opts })
-    },
-    [dispatch]
-  )
+  // const reorderPlots = useCallback(
+  //   (ids: string[], opts: ISheetOps = {}) => {
+  //     dispatch({ type: 'reorderPlots', ids, opts })
+  //   },
+  //   [dispatch]
+  // )
 
   const updatePlot = useCallback(
-    (plot: HistoryPlot) => {
-      dispatch({ type: 'updatePlot', plot })
+    (plot: HistoryPlot, opts: ISheetOps = {}) => {
+      dispatch({ type: 'updatePlot', plot, opts })
     },
     [dispatch]
   )
@@ -260,20 +260,11 @@ export function HistoryProvider({ children }: IChildrenProps) {
 
   const plotsContextValue = useMemo(
     () => ({
-      plot: state.present.currentPlot
-        ? state.plots[state.present.currentPlot]
-        : undefined,
+      plot: state.present.currentPlot,
 
-      plots: state.present.plotOrder[state.present.currentFile].map(
-        (id) => state.plots[id]!
-      ),
+      plots: state.present.plots[state.present.currentFile] || [],
     }),
-    [
-      state.present.currentPlot,
-      state.present.plotOrder,
-      state.present.currentFile,
-      state.plots,
-    ]
+    [state.present.currentPlot, state.present.currentFile]
   )
 
   const groupsContextValue = useMemo(() => {
@@ -318,7 +309,7 @@ export function HistoryProvider({ children }: IChildrenProps) {
       addSheets,
       reorderSheets,
       addPlots,
-      reorderPlots,
+
       updatePlot,
       addGroups,
       clearGroups,
@@ -344,7 +335,7 @@ export function HistoryProvider({ children }: IChildrenProps) {
       addSheets,
       reorderSheets,
       addPlots,
-      reorderPlots,
+
       updatePlot,
       addGroups,
       //reorderGroups,
