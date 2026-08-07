@@ -48,7 +48,7 @@
     "build": 698
   },
   {
-    "name": "GSEA Bubble",
+    "name": "GSEA Bubble Plot",
     "description": "GSEA bubble plots.",
     "color": "#4169E1",
     "version": "1.0.0",

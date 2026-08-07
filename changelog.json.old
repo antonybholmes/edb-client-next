@@ -2367,6 +2367,10 @@
         {
           "msg": "GSEA bubble now has own app",
           "date": "2026-08-07T21:41:06.367Z"
+        },
+        {
+          "msg": "Added sort options to GSEA bubble",
+          "date": "2026-08-07T22:29:39.313Z"
         }
       ]
     },
