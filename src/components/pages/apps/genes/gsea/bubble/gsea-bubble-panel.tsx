@@ -57,7 +57,7 @@ export function GseaBubblePanel() {
         } else {
           openDialog({
             type: 'save-image',
-            payload: { svgRef, name: `volcano` },
+            payload: { svgRef, name: `gsea-bubble` },
           })
         }
       }

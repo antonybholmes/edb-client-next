@@ -220,8 +220,8 @@ export function GseaBubblePage() {
 
     const table = new DataFrameReader().indexCols(1).read(lines)
 
-    openFile(`GSEA Test`, {
-      sheets: [table.setName('GSEA Test') as AnnotationDataFrame],
+    openFile(`GSEA Bubble Test`, {
+      sheets: [table.setName('GSEA Bubble Test') as AnnotationDataFrame],
     })
   }
 
@@ -293,7 +293,7 @@ export function GseaBubblePage() {
                       openDialog({
                         type: 'save',
                         payload: {
-                          name: 'gsea',
+                          name: 'gsea-bubble',
                           callback: (data) => {
                             save(data.name, data.format.ext)
                           },

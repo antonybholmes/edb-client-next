@@ -47,7 +47,7 @@ export function HomeToolbar() {
             openDialog({
               type: 'save-image',
               payload: {
-                name: 'gsea',
+                name: 'gsea-bubble',
                 svgRef,
               },
             })

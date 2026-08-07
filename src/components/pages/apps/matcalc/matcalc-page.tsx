@@ -316,8 +316,8 @@ export function MatcalcPage() {
     //   table.setName('Deseq Test') as AnnotationDataFrame,
     // ])
 
-    openFile(`GSEA Dot Test`, {
-      sheets: [table.setName('GSEA Dot Test') as AnnotationDataFrame],
+    openFile(`GSEA Bubble`, {
+      sheets: [table.setName('GSEA Bubble') as AnnotationDataFrame],
     })
   }
 
@@ -569,7 +569,7 @@ export function MatcalcPage() {
               Box
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => loadGseaDotTestData()}>
-              GSEA Dot
+              GSEA Bubble
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

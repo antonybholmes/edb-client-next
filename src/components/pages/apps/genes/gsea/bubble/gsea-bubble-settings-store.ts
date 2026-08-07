@@ -19,7 +19,10 @@ const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v4`
 
 const MARGIN = { top: 10, right: 200, bottom: 100, left: 400 }
 
+export type SortBy = 'none' | 'nes' | 'size' | 'pvalue'
+
 export interface IGseaBubbleSettings {
+  sortBy: SortBy
   axes: {
     x: { length: number }
     y: { rowHeight: number }
@@ -57,6 +60,7 @@ export interface IGseaBubbleSettings {
 }
 
 const DEFAULT_SETTINGS: IGseaBubbleSettings = {
+  sortBy: 'none',
   axes: {
     x: {
       length: 300,
