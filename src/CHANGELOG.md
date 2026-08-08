@@ -1,5 +1,12 @@
 # Changelog
 
+## 87.4 (Aug, 2026)
+
+### Changed
+
+- Bug fixes and updates.
+
+
 ## 87.2 (Aug, 2026)
 
 ### Changed

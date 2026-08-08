@@ -101,7 +101,7 @@ export function GseaBubblePropsPanel() {
                   )
                 }}
               >
-                -
+                <span>to</span>
               </DoubleNumericalInput>
             </PropRow>
 
@@ -166,7 +166,6 @@ export function GseaBubblePropsPanel() {
                 placeholder="Size..."
                 dp={0}
                 limit={[1, 1000]}
-                className="w-16 rounded-theme"
                 onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
@@ -203,7 +202,7 @@ export function GseaBubblePropsPanel() {
                 value={settings.bubbles.size}
                 placeholder="Size..."
                 dp={0}
-                className="w-16 rounded-theme"
+
                 onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
@@ -262,7 +261,7 @@ export function GseaBubblePropsPanel() {
                 placeholder="Size..."
                 dp={0}
                 limit={[1, 1000]}
-                className="w-16 rounded-theme"
+
                 onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
