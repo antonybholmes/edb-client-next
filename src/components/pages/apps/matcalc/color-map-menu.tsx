@@ -1,17 +1,22 @@
+import { VCenterRow } from '@/components/layout/v-center-row'
 import { ColorMapIcon } from '@/components/plot/color-map-icon'
-
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/shadcn/ui/themed/v2/popover'
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+
 import { BWR_CMAP_V2, COLOR_MAPS, ColorMap } from '@/lib/color/colormap'
 import { cn } from '@/lib/shadcn-utils'
 import { useState } from 'react'
 
 export const BUTTON_CLS = cn(
-  'relative border-2 border-transparent rounded-xs p-[2px]',
-  'data-[checked=true]:border-foreground/50 data-[checked=false]:hover:border-border data-[checked=false]:focus-visible:border-border'
+  'relative border border-transparent rounded-md aspect-square w-8 h-8',
+  'data-[checked=true]:border-app-theme data-[checked=false]:hover:border-border/50',
+  'data-[checked=false]:hover:scale-110 data-[checked=false]:hover:shadow-md trans-all',
+  'data-[checked=true]:scale-110 data-[checked=false]:focus-visible:scale-110',
+  'data-[checked=false]:focus-visible:border-border group flex items-center justify-center'
 )
 
 interface IProps {
@@ -28,51 +33,88 @@ export function ColorMapMenu({
   const [open, setOpen] = useState(false)
 
   function _onChange(cmap: ColorMap) {
-    setOpen(false)
+    //setOpen(false)
     onChange?.(cmap)
   }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger title="Change colormap" onClick={() => setOpen(true)}>
+    // <Popover open={open} onOpenChange={setOpen}>
+    //   <PopoverTrigger title="Change colormap" onClick={() => setOpen(true)}>
+    //     <ColorMapIcon
+    //       cmap={cmap}
+    //       aspect="aspect-3/2"
+    //       className="w-8 border border-foreground/70 rounded-sm"
+    //     />
+    //   </PopoverTrigger>
+
+    //   <PopoverContent
+    //     align={align}
+
+    //     className="fill-foreground"
+    //     variant="content"
+    //   >
+    //     <div className="grid grid-cols-4 gap-1">
+    //       {Object.keys(COLOR_MAPS)
+    //         .sort()
+    //         .map((c, ci) => {
+    //           const cm = COLOR_MAPS[c]!
+    //           return (
+    //             <button
+    //               onClick={() => _onChange(cm)}
+    //               key={ci}
+    //               data-checked={cm.id === cmap.id}
+    //               title={cm.name}
+    //               className={BUTTON_CLS}
+    //             >
+    //               <ColorMapIcon
+    //                 cmap={cm}
+    //                 data-checked={cm.name === cmap.name}
+    //                 aspect="aspect-4/3"
+    //                 className="w-6 rounded-sm border border-foreground/70"
+    //               />
+    //             </button>
+    //           )
+    //         })}
+    //     </div>
+    //   </PopoverContent>
+    // </Popover>
+
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger
+        title="Change colormap"
+        onClick={() => setOpen(true)}
+      >
         <ColorMapIcon
           cmap={cmap}
-          aspect="aspect-2/1"
-          className="w-10 border border-foreground/80 shadow-md rounded-sm"
+          aspect="aspect-3/2"
+          className="w-8 border border-foreground/80 rounded-sm"
         />
-      </PopoverTrigger>
-
-      <PopoverContent
-        align={align}
-        //onEscapeKeyDown={() => setOpen(false)}
-        //onInteractOutside={() => setOpen(false)}
-        className="fill-foreground"
-        variant="content"
-      >
-        <div className="grid grid-cols-5 gap-0.5">
-          {Object.keys(COLOR_MAPS)
-            .sort()
-            .map((c, ci) => {
-              const cm = COLOR_MAPS[c]!
-              return (
-                <button
-                  onClick={() => _onChange(cm)}
-                  key={ci}
-                  data-checked={cm.name === cmap.name}
-                  title={cm.name}
-                  className={BUTTON_CLS}
-                >
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        {Object.keys(COLOR_MAPS)
+          .sort()
+          .map((c, ci) => {
+            const cm = COLOR_MAPS[c]!
+            return (
+              <DropdownMenuCheckboxItem
+                key={cm.id}
+                onClick={() => {
+                  _onChange(cm)
+                }}
+                checked={cm.id === cmap.id}
+              >
+                <VCenterRow className="gap-x-2">
                   <ColorMapIcon
                     cmap={cm}
-                    data-checked={cm.name === cmap.name}
-                    aspect="aspect-square"
-                    className="w-6 rounded-xs"
+                    aspect="aspect-5/4"
+                    className="w-6 border border-foreground/70 rounded-sm"
                   />
-                </button>
-              )
-            })}
-        </div>
-      </PopoverContent>
-    </Popover>
+                  <span>{cm.name}</span>
+                </VCenterRow>
+              </DropdownMenuCheckboxItem>
+            )
+          })}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

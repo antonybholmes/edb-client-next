@@ -43,7 +43,7 @@ export function ActionDialogRow({
       </BaseRow>
       <BaseRow
         className={cn(
-          'col-span-15 gap-x-2',
+          'col-span-10 gap-x-2',
           justify === 'start' && 'justify-start',
           justify === 'center' && 'justify-center',
           justify === 'end' && 'justify-end',

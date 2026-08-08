@@ -78,7 +78,7 @@ export function ColorPickerDialog({
       leftHeaderChildren={
         <ColorIcon presetColor={color.toHex8String()} size="w-5" />
       }
-      w="w-110"
+      w="w-132"
       onResponse={(r) => {
         if (r === TEXT_OK) {
           addCustomColor(color.toHexString(), opacity)

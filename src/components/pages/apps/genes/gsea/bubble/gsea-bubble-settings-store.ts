@@ -73,7 +73,7 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
   p: {
     range: [0, 10],
     label: '-log10(p)',
-    cmap: 'BWRv2',
+    cmap: 'bwr-v2',
   },
   size: {
     label: 'Size',

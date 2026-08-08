@@ -50,8 +50,10 @@ export class ColorMap {
   private _cmap: IRGBA[]
   private _maxIndex: number
   private _name: string
+  private _id: string
 
-  constructor(name: string, cmap: (string | IRGBA)[]) {
+  constructor(id: string, name: string, cmap: (string | IRGBA)[]) {
+    this._id = id
     this._name = name
     this._cmap = cmap.map((c) => {
       if (typeof c === 'string') {
@@ -62,6 +64,10 @@ export class ColorMap {
     })
 
     this._maxIndex = this._cmap.length - 1
+  }
+
+  get id(): string {
+    return this._id
   }
 
   get name(): string {
@@ -184,7 +190,7 @@ export class ColorMap {
 
 //export const BWR_CMAP = createColorMap({ cmap: COLORMAPS['bwr']! })
 
-export const BWR_CMAP: ColorMap = new ColorMap('BWR', [
+export const BWR_CMAP: ColorMap = new ColorMap('bwr', 'Blue White Red', [
   '#0000ff',
   '#1111ff',
   '#2222ff',
@@ -218,41 +224,45 @@ export const BWR_CMAP: ColorMap = new ColorMap('BWR', [
   '#ff0000',
 ])
 
-export const BWR_CMAP_V2: ColorMap = new ColorMap('BWRv2', [
-  '#2d68c4',
-  '#3b72c8',
-  '#497ccc',
-  '#5786d0',
-  '#6590d4',
-  '#739ad8',
-  '#81a4dc',
-  '#8faee0',
-  '#9db9e3',
-  '#abc3e7',
-  '#b9cdeb',
-  '#c7d7ef',
-  '#d5e1f3',
-  '#e3ebf7',
-  '#f1f5fb',
-  '#ffffff',
-  '#fdeeee',
-  '#fcdddd',
-  '#facccc',
-  '#f9bbbb',
-  '#f7aaaa',
-  '#f69999',
-  '#f48888',
-  '#f37777',
-  '#f16666',
-  '#f05555',
-  '#ee4444',
-  '#ed3333',
-  '#eb2222',
-  '#ea1111',
-  '#e80000',
-])
+export const BWR_CMAP_V2: ColorMap = new ColorMap(
+  'bwr-v2',
+  'Blue White Red v2',
+  [
+    '#2d68c4',
+    '#3b72c8',
+    '#497ccc',
+    '#5786d0',
+    '#6590d4',
+    '#739ad8',
+    '#81a4dc',
+    '#8faee0',
+    '#9db9e3',
+    '#abc3e7',
+    '#b9cdeb',
+    '#c7d7ef',
+    '#d5e1f3',
+    '#e3ebf7',
+    '#f1f5fb',
+    '#ffffff',
+    '#fdeeee',
+    '#fcdddd',
+    '#facccc',
+    '#f9bbbb',
+    '#f7aaaa',
+    '#f69999',
+    '#f48888',
+    '#f37777',
+    '#f16666',
+    '#f05555',
+    '#ee4444',
+    '#ed3333',
+    '#eb2222',
+    '#ea1111',
+    '#e80000',
+  ]
+)
 
-export const JET_CMAP: ColorMap = new ColorMap('Jet', [
+export const JET_CMAP: ColorMap = new ColorMap('jet', 'Jet', [
   '#00007f',
   '#0000a1',
   '#0000c3',
@@ -291,7 +301,7 @@ export const JET_CMAP: ColorMap = new ColorMap('Jet', [
 //})
 
 //https://hauselin.github.io/colorpalettejs/
-export const VIRIDIS_CMAP: ColorMap = new ColorMap('Viridis', [
+export const VIRIDIS_CMAP: ColorMap = new ColorMap('viridis', 'Viridis', [
   '#440154',
   '#470d60',
   '#481a6c',
@@ -325,7 +335,7 @@ export const VIRIDIS_CMAP: ColorMap = new ColorMap('Viridis', [
   '#fde725',
 ])
 
-export const INFERNO_CMAP: ColorMap = new ColorMap('Inferno', [
+export const INFERNO_CMAP: ColorMap = new ColorMap('inferno', 'Inferno', [
   '#000004',
   '#040312',
   '#0c0826',
@@ -359,7 +369,7 @@ export const INFERNO_CMAP: ColorMap = new ColorMap('Inferno', [
   '#fcffa4',
 ])
 
-export const PLASMA_CMAP: ColorMap = new ColorMap('Plasma', [
+export const PLASMA_CMAP: ColorMap = new ColorMap('plasma', 'Plasma', [
   '#0d0887',
   '#220690',
   '#330597',
@@ -393,7 +403,7 @@ export const PLASMA_CMAP: ColorMap = new ColorMap('Plasma', [
   '#f0f921',
 ])
 
-export const MAGMA_CMAP: ColorMap = new ColorMap('Magma', [
+export const MAGMA_CMAP: ColorMap = new ColorMap('magma', 'Magma', [
   '#000004',
   '#030312',
   '#0b0924',
@@ -430,7 +440,7 @@ export const MAGMA_CMAP: ColorMap = new ColorMap('Magma', [
 //  cmap: COLORMAPS_SPECS['viridis']!,
 //})
 
-export const BLUES_CMAP: ColorMap = new ColorMap('Blues', [
+export const BLUES_CMAP: ColorMap = new ColorMap('blues', 'Blues', [
   '#deebf7',
   '#d4e4f3',
   '#cadcef',
@@ -464,7 +474,7 @@ export const BLUES_CMAP: ColorMap = new ColorMap('Blues', [
   '#08306b',
 ])
 
-export const REDS_CMAP: ColorMap = new ColorMap('Reds', [
+export const REDS_CMAP: ColorMap = new ColorMap('reds', 'Reds', [
   '#ffe5e5',
   '#ffdfdd',
   '#ffd9d5',
@@ -515,7 +525,7 @@ export const REDS_CMAP: ColorMap = new ColorMap('Reds', [
 //   BRIGHT_20_PALETTE
 // )
 
-export const GRAY_RED_CMAP = new ColorMap('Gray Red', [
+export const GRAY_RED_CMAP = new ColorMap('gray-red', 'Gray Red', [
   '#f0f0f0',
   '#f2dedc',
   '#f3ccc7',
@@ -551,22 +561,32 @@ export const GRAY_RED_CMAP = new ColorMap('Gray Red', [
 ])
 
 export const COLOR_MAPS: Record<string, ColorMap> = {
-  BWR: BWR_CMAP,
-  BWRv2: BWR_CMAP_V2,
-  Viridis: VIRIDIS_CMAP,
-  Jet: JET_CMAP,
-  Blues: BLUES_CMAP,
-  Reds: REDS_CMAP,
+  [BWR_CMAP.id]: BWR_CMAP,
+  [BWR_CMAP_V2.id]: BWR_CMAP_V2,
+  [VIRIDIS_CMAP.id]: VIRIDIS_CMAP,
+  [JET_CMAP.id]: JET_CMAP,
+  [BLUES_CMAP.id]: BLUES_CMAP,
+  [REDS_CMAP.id]: REDS_CMAP,
   //Tab10: TAB10_CMAP,
   //Tableu20: TABLEAU_20_CMAP,
   //Bright20: BRIGHT_20_CMAP,
-  'Gray Red': GRAY_RED_CMAP,
-  Inferno: INFERNO_CMAP,
-  Plasma: PLASMA_CMAP,
-  Magma: MAGMA_CMAP,
+  [GRAY_RED_CMAP.id]: GRAY_RED_CMAP,
+  [INFERNO_CMAP.id]: INFERNO_CMAP,
+  [PLASMA_CMAP.id]: PLASMA_CMAP,
+  [MAGMA_CMAP.id]: MAGMA_CMAP,
 }
 
-export type ColorMapName = keyof typeof COLOR_MAPS
+export type ColorMapName =
+  | 'bwr'
+  | 'bwr-v2'
+  | 'viridis'
+  | 'jet'
+  | 'blues'
+  | 'reds'
+  | 'gray-red'
+  | 'inferno'
+  | 'plasma'
+  | 'magma'
 
 export function getColorMap(name: string): ColorMap {
   return name in COLOR_MAPS ? COLOR_MAPS[name]! : BWR_CMAP_V2

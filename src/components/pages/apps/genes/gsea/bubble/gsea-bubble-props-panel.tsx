@@ -14,7 +14,7 @@ import { TextPropRow } from '@/components/dialogs/text-prop-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
-import { getColorMap } from '@/lib/color/colormap'
+import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { numSort } from '@/lib/math/math'
 import { round } from '@/lib/math/round'
 import { produce } from 'immer'
@@ -185,7 +185,7 @@ export function GseaBubblePropsPanel() {
                   // store the cmap the user likes
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.p.cmap = cmap.name
+                      draft.p.cmap = cmap.id as ColorMapName
                     })
                   )
                 }}

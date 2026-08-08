@@ -51,11 +51,11 @@
     "name": "GSEA Bubble Plot",
     "description": "GSEA bubble plots.",
     "color": "#4169E1",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-08-07T22:29:38.364Z",
-    "hash": "3ebe6bb137bc4e9d8a56c40f8fe01e26e0399addc8599012fdcd9232a5eb3a1e",
-    "build": 8
+    "modified": "2026-08-08T04:17:38.291Z",
+    "hash": "f9a0d70145dfb6790f67c69a825bf84f429accfbbabc33bbaaa779c499654a1e",
+    "build": 10
   },
   {
     "name": "GSEA Plot",
@@ -121,9 +121,9 @@
     "color": "#40bf80",
     "version": "48.8.4",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-08-07T22:29:38.368Z",
-    "hash": "bed8dcfb7d6c6907cc60e423e2d81d87c3e2be18db2762167fe19fefe31e3c5c",
-    "build": 1900
+    "modified": "2026-08-08T04:17:38.304Z",
+    "hash": "99c3796bacd4234af6075498937036ce17a39bc87dcbae4b9c317cfad58a4f6d",
+    "build": 1902
   },
   {
     "name": "Motifs",
@@ -199,11 +199,11 @@
     "name": "Single Cell",
     "description": "Explore Single Cell data.",
     "color": "#9966ff",
-    "version": "26.4.8",
+    "version": "26.6.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-06T17:26:28.666Z",
-    "hash": "e8db04022888a078069575d07b2f13ae71e8e8c55eb24e48908f5b019f10cc3f",
-    "build": 828
+    "modified": "2026-08-08T04:17:38.305Z",
+    "hash": "0c7b9c6465b840cb11cbfcb0893dcd954e01719e587c50eefd72dc5d18746faa",
+    "build": 830
   },
   {
     "name": "Table Viewer",

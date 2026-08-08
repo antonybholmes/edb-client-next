@@ -88,7 +88,7 @@ export const DEFAULT_SCATTER_PROPS: IScatterDisplayOptions = {
     color: COLOR_BLACK,
     opacity: 0.75,
   },
-  cmap: 'BWR v2',
+  cmap: 'bwr-v2',
   scale: 1,
   labels: {
     color: COLOR_BLACK,
