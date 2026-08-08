@@ -1,3 +1,4 @@
+import { HCenterCol } from '@/components/layout/h-center-col'
 import { VCenterRow } from '@/components/layout/v-center-row'
 import { ColorMapIcon } from '@/components/plot/color-map-icon'
 import {
@@ -9,6 +10,7 @@ import {
 
 import { BWR_CMAP_V2, COLOR_MAPS, ColorMap } from '@/lib/color/colormap'
 import { cn } from '@/lib/shadcn-utils'
+import { SwatchBook } from 'lucide-react'
 import { useState } from 'react'
 
 export const BUTTON_CLS = cn(
@@ -84,11 +86,14 @@ export function ColorMapMenu({
         title="Change colormap"
         onClick={() => setOpen(true)}
       >
-        <ColorMapIcon
-          cmap={cmap}
-          aspect="aspect-3/2"
-          className="w-8 border border-foreground/80 rounded-sm"
-        />
+        <HCenterCol className="relative w-6 h-6 aspect-square">
+          <SwatchBook className="relative z-10" size={16} strokeWidth={1.5} />
+          <ColorMapIcon
+            cmap={cmap}
+            aspect="aspect-3/1"
+            className="absolute bottom-0 w-5 border border-foreground/80 rounded-xs"
+          />
+        </HCenterCol>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         {Object.keys(COLOR_MAPS)

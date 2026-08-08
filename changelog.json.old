@@ -2371,6 +2371,10 @@
         {
           "msg": "Added sort options to GSEA bubble",
           "date": "2026-08-07T22:29:39.313Z"
+        },
+        {
+          "msg": "Colormaps now have id",
+          "date": "2026-08-08T04:17:40.681Z"
         }
       ]
     },

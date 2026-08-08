@@ -2375,6 +2375,10 @@
         {
           "msg": "Colormaps now have id",
           "date": "2026-08-08T04:17:40.681Z"
+        },
+        {
+          "msg": "new color map icon",
+          "date": "2026-08-08T04:26:31.603Z"
         }
       ]
     },
