@@ -2396,6 +2396,10 @@
         {
           "msg": "Bubble plot now supports add-hoc sorting",
           "date": "2026-08-09T00:41:28.348Z"
+        },
+        {
+          "msg": "Color map menu now nested",
+          "date": "2026-08-09T01:47:06.764Z"
         }
       ]
     },

@@ -5,10 +5,13 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
 
-import { BWR_CMAP_V2, COLOR_MAPS, ColorMap } from '@/lib/color/colormap'
+import { BWR_CMAP_V2, COLOR_MAP_MENU, ColorMap } from '@/lib/color/colormap'
 import { cn } from '@/lib/shadcn-utils'
 import { SwatchBook } from 'lucide-react'
 import { useState } from 'react'
@@ -96,7 +99,7 @@ export function ColorMapMenu({
         </HCenterCol>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        {Object.keys(COLOR_MAPS)
+        {/* {Object.keys(COLOR_MAPS)
           .sort()
           .map((c, ci) => {
             const cm = COLOR_MAPS[c]!
@@ -118,7 +121,35 @@ export function ColorMapMenu({
                 </VCenterRow>
               </DropdownMenuCheckboxItem>
             )
-          })}
+          })} */}
+
+        {COLOR_MAP_MENU.map((group) => (
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>{group.label}</DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuContent side="right">
+                {group.cmaps.map((cm) => (
+                  <DropdownMenuCheckboxItem
+                    key={cm.id}
+                    onClick={() => {
+                      _onChange(cm)
+                    }}
+                    checked={cm.id === cmap.id}
+                  >
+                    <VCenterRow className="gap-x-2">
+                      <ColorMapIcon
+                        cmap={cm}
+                        aspect="aspect-5/4"
+                        className="w-6 border border-foreground/70 rounded-sm"
+                      />
+                      <span>{cm.name}</span>
+                    </VCenterRow>
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   )

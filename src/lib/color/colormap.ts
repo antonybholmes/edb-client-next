@@ -576,6 +576,22 @@ export const COLOR_MAPS: Record<string, ColorMap> = {
   [MAGMA_CMAP.id]: MAGMA_CMAP,
 }
 
+export const COLOR_MAP_MENU = [
+  {
+    label: 'Sequential',
+    cmaps: [
+      VIRIDIS_CMAP,
+      PLASMA_CMAP,
+      INFERNO_CMAP,
+      MAGMA_CMAP,
+      BLUES_CMAP,
+      REDS_CMAP,
+    ],
+  },
+  { label: 'Diverging', cmaps: [BWR_CMAP, BWR_CMAP_V2, GRAY_RED_CMAP] },
+  { label: 'Qualitative', cmaps: [JET_CMAP] },
+]
+
 export type ColorMapName =
   | 'bwr'
   | 'bwr-v2'

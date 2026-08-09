@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Color map menu now nested.
 - Bubble plot now supports add-hoc sorting.
 - Bug fixes and updates.
 
