@@ -50,9 +50,9 @@ export class ColorMap {
   private _cmap: IRGBA[]
   private _maxIndex: number
   private _name: string
-  private _id: string
+  private _id: ColorMapName
 
-  constructor(id: string, name: string, cmap: (string | IRGBA)[]) {
+  constructor(id: ColorMapName, name: string, cmap: (string | IRGBA)[]) {
     this._id = id
     this._name = name
     this._cmap = cmap.map((c) => {
@@ -66,7 +66,7 @@ export class ColorMap {
     this._maxIndex = this._cmap.length - 1
   }
 
-  get id(): string {
+  get id(): ColorMapName {
     return this._id
   }
 
@@ -588,6 +588,6 @@ export type ColorMapName =
   | 'plasma'
   | 'magma'
 
-export function getColorMap(name: string): ColorMap {
+export function getColorMap(name: ColorMapName): ColorMap {
   return name in COLOR_MAPS ? COLOR_MAPS[name]! : BWR_CMAP_V2
 }

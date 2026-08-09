@@ -274,11 +274,11 @@ export function GseaBubblePropsPanel() {
 
             <TextPropRow
               title="Legend"
-              value={settings.legend.dots.sizes.join(', ')}
+              value={settings.legend.bubbles.sizes.join(', ')}
               onTextChanged={(v) => {
                 updateSettings(
                   produce(settings, (draft) => {
-                    draft.legend.dots.sizes = numSort(
+                    draft.legend.bubbles.sizes = numSort(
                       v.split(',').map((x) => parseFloat(x.trim()))
                     )
                   })

@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Bubble plot now supports add-hoc sorting.
 - Bug fixes and updates.
 
 

@@ -8,15 +8,18 @@ import {
   openFilesDialog,
 } from '@/components/pages/open-files'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
+import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
 import { ToolbarButton } from '@/components/toolbar/toolbar-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
+import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { TEXT_SAVE_IMAGE } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
+import { SORT_BY_ITEMS } from '../gsea-bubble-dialog'
 import { IGseaBubblePlot, useGseaBubbleContext } from '../gsea-bubble-provider'
-import { useGseaBubbleSettings } from '../gsea-bubble-settings-store'
+import { SortBy, useGseaBubbleSettings } from '../gsea-bubble-settings-store'
 
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
@@ -76,38 +79,61 @@ export function HomeToolbar() {
         </ToolbarButton>
       </ToolbarTabGroup>
 
-      <ToolbarTabGroup title="Plot Width">
-        <NumericalInput
-          h="md"
-          value={settings.axes.x.length}
-          placeholder="Width"
-          limit={[1, 1000]}
-          dp={0}
-          onNumChange={(v) => {
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.axes.x.length = v
-              })
-            )
-          }}
-        />
+      <ToolbarTabGroup title="Plot Size" className="gap-x-2">
+        <ToolbarRow title="Width">
+          <NumericalInput
+            h="md"
+            value={settings.axes.x.length}
+            placeholder="Width"
+            limit={[1, 1000]}
+            dp={0}
+            onNumChange={(v) => {
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.axes.x.length = v
+                })
+              )
+            }}
+          />
+        </ToolbarRow>
+        <ToolbarRow title="Row Height">
+          <NumericalInput
+            h="md"
+            value={settings.axes.y.rowHeight}
+            placeholder="Row Height"
+            limit={[1, 1000]}
+            dp={0}
+            onNumChange={(v) => {
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.axes.y.rowHeight = v
+                })
+              )
+            }}
+          />
+        </ToolbarRow>
       </ToolbarTabGroup>
-
-      <ToolbarTabGroup title="Row Height">
-        <NumericalInput
-          h="md"
-          value={settings.axes.y.rowHeight}
-          placeholder="Row Height"
-          limit={[1, 1000]}
-          dp={0}
-          onNumChange={(v) => {
-            updateSettings(
-              produce(settings, (draft) => {
-                draft.axes.y.rowHeight = v
-              })
-            )
-          }}
-        />
+      <ToolbarTabGroup title="Sort By" className="gap-x-2">
+        <ToolbarRow title="Sort By">
+          <SelectList
+            items={SORT_BY_ITEMS}
+            onValueChange={(v) =>
+              updateSettings(
+                produce(settings, (draft) => {
+                  draft.sortBy = v as SortBy
+                })
+              )
+            }
+            value={settings.sortBy}
+            //w="lg"
+          >
+            {SORT_BY_ITEMS.map((item) => (
+              <SelectItem value={item.value} key={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectList>
+        </ToolbarRow>
       </ToolbarTabGroup>
     </>
   )

@@ -13,7 +13,7 @@ import { VColorBarSvg } from '@/components/plot/color-bar-svg'
 import { SvgCircle } from '@/components/plot/svg-circle'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import { SvgText } from '@/components/plot/svg-text'
-import { COLOR_MAPS, ColorMap, getColorMap } from '@/lib/color/colormap'
+import { COLOR_MAPS } from '@/lib/color/colormap'
 import { linspace } from '@/lib/math/linspace'
 
 import type { ITooltip } from '../../../matcalc/apps/heatmap/heatmap-svg'
@@ -54,18 +54,6 @@ export const DEFAULT_GSEA_DOT_PROPS: IGseaBubbleDisplayOptions = {
   scale: 1,
 }
 
-function getColor(
-  log10pvalue: number,
-  maxlog10pvalue: number,
-  colorMap: ColorMap
-) {
-  const f = Math.min(log10pvalue / maxlog10pvalue, 1)
-
-  const color = colorMap.getHexColor(f)
-
-  return color
-}
-
 interface IProps extends ISVGProps {
   size?: string
   sizeFunc?: (x: number) => number
@@ -78,7 +66,7 @@ export function GseaBubblePlotSvg({
 
   sizeFunc = (x: number) => x,
 }: IProps) {
-  const { plot, displayProps } = useGseaBubbleContext()
+  const { plot, points, displayProps } = useGseaBubbleContext()
 
   const { settings } = useGseaBubbleSettings()
 
@@ -87,40 +75,6 @@ export function GseaBubblePlotSvg({
   const [toolTipInfo, setToolTipInfo] = useState<ITooltip | null>(null)
 
   const timeoutRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
-  const points = useMemo(
-    () =>
-      plot.gseaDot.nes.values.map((x, i) => {
-        const size = plot.gseaDot.sizes.values[i]!
-        const sizeF = Math.min(size / settings.size.maxSize, 1)
-        return {
-          x,
-          y: i + 1,
-          p: plot.gseaDot.log10pvalues.values[i]!,
-          color: getColor(
-            plot.gseaDot.log10pvalues.values[i]!,
-            settings.p.range[1],
-            getColorMap(settings.p.cmap)
-          ),
-          size: sizeF,
-          r: sizeF * settings.bubbles.size,
-          label: plot.gseaDot.ids[i]!,
-        }
-      }),
-    [
-      plot.gseaDot.nes.values,
-      plot.gseaDot.sizes.values,
-      settings.size.maxSize,
-      settings.bubbles.size,
-      settings.p,
-      settings.margin,
-      settings.padding,
-      settings.legend,
-      settings.border,
-      settings.axes,
-      settings.bubbles,
-    ]
-  )
 
   const handleVariantEnter = useCallback(
     (row: number, x1: number, y1: number) => {
@@ -161,14 +115,14 @@ export function GseaBubblePlotSvg({
 
     const innerWidth = xax.length
     const innerHeight =
-      settings.axes.y.rowHeight * (plot.gseaDot.nes.values.length + 1)
+      settings.axes.y.rowHeight * (plot.gseaBubble.nes.values.length + 1)
     const width = innerWidth + settings.margin.left + settings.margin.right
     const height = innerHeight + settings.margin.top + settings.margin.bottom
     const cmap = COLOR_MAPS[settings.p.cmap]!
 
     //console.log('innerWidth:', innerWidth, 'innerHeight:', innerHeight)
 
-    let sizes = settings.legend.dots.sizes
+    let sizes = settings.legend.bubbles.sizes
 
     if (sizes.length === 0) {
       // skip 0
@@ -252,7 +206,7 @@ export function GseaBubblePlotSvg({
           }}
           tickSize={displayProps.axes.xaxis.tickSize}
           strokeWidth={displayProps.axes.xaxis.strokeWidth}
-          title={plot.gseaDot.nes.label}
+          title={plot.gseaBubble.nes.label}
           color={displayProps.axes.xaxis.color}
         />
 
@@ -267,7 +221,7 @@ export function GseaBubblePlotSvg({
                   y={0}
                   textAnchor="middle"
                 >
-                  {`-log10(${plot.gseaDot.log10pvalues.label})`}
+                  {`-log10(${plot.gseaBubble.log10pvalues.label})`}
                 </SvgText>
                 <g transform={`translate(0, ${settings.padding * 2})`}>
                   <VColorBarSvg
@@ -293,7 +247,7 @@ export function GseaBubblePlotSvg({
                   y={0}
                   textAnchor="middle"
                 >
-                  {plot.gseaDot.sizes.label}
+                  {plot.gseaBubble.sizes.label}
                 </SvgText>
                 <g
                   transform={`translate(0, ${settings.padding + settings.bubbles.size})`}
@@ -531,9 +485,9 @@ export function GseaBubblePlotSvg({
           }}
         >
           <p className="font-semibold">{`${points[toolTipInfo.cell.row]!.label}`}</p>
-          <p>{`${plot.gseaDot.nes.label}: ${plot.gseaDot.nes.values[toolTipInfo.cell.row]!.toFixed(2)}`}</p>
-          <p>{`-log10(${plot.gseaDot.log10pvalues.label}): ${points[toolTipInfo.cell.row]!.p.toFixed(2)}`}</p>
-          <p>{`${plot.gseaDot.sizes.label}: ${plot.gseaDot.sizes.values[toolTipInfo.cell.row]!}`}</p>
+          <p>{`${plot.gseaBubble.nes.label}: ${plot.gseaBubble.nes.values[toolTipInfo.cell.row]!.toFixed(2)}`}</p>
+          <p>{`-log10(${plot.gseaBubble.log10pvalues.label}): ${points[toolTipInfo.cell.row]!.p.toFixed(2)}`}</p>
+          <p>{`${plot.gseaBubble.sizes.label}: ${plot.gseaBubble.sizes.values[toolTipInfo.cell.row]!}`}</p>
         </div>
       )}
     </>

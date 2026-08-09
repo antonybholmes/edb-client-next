@@ -3,24 +3,20 @@ import { OKCancelDialog, type IModalProps } from '@/dialogs/ok-cancel-dialog'
 import { findCols, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { SelectItem, SelectList } from '@/themed/v2/select'
 
-import {
-  ActionDialogRow,
-  ActionDialogSeparator,
-} from '@/components/dialogs/card/action-dialog-card'
+import { ActionDialogRow } from '@/components/dialogs/card/action-dialog-card'
 import { useEffect, useState } from 'react'
 import { useCurrentSheets } from '../../../matcalc/history/history-provider/history-contexts'
 
 import { argsort } from '@/lib/math/argsort'
-import { produce } from 'immer'
 import { HistoryPlot } from '../../../matcalc/history/history-provider/history-types'
 import { newGseaBubblePlot } from './gsea-bubble-provider'
-import { SortBy, useGseaBubbleSettings } from './gsea-bubble-settings-store'
+import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
 
 const MAX_COLS = 10
 
 const MAX_NEG_LOG10_P = 50
 
-const SORT_BY_ITEMS = [
+export const SORT_BY_ITEMS = [
   { value: 'none', label: 'None' },
   { value: 'nes', label: 'NES' },
   { value: 'size', label: 'Size' },
@@ -246,7 +242,7 @@ export function GseaBubbleDialog({
         </SelectList>
       </ActionDialogRow>
 
-      <ActionDialogSeparator />
+      {/* <ActionDialogSeparator />
 
       <ActionDialogRow title="Sort">
         <SelectList
@@ -267,7 +263,7 @@ export function GseaBubbleDialog({
             </SelectItem>
           ))}
         </SelectList>
-      </ActionDialogRow>
+      </ActionDialogRow> */}
     </OKCancelDialog>
   )
 }
