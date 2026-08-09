@@ -14,14 +14,17 @@ import { TextPropRow } from '@/components/dialogs/text-prop-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
 import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
 import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
+import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import { TEXT_SORT_BY } from '@/consts'
 import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { numSort } from '@/lib/math/math'
 import { round } from '@/lib/math/round'
 import { produce } from 'immer'
 import { ColorMapMenu } from '../../../matcalc/color-map-menu'
 import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
+import { SORT_BY_ITEMS } from './gsea-bubble-dialog'
 import { useGseaBubbleContext } from './gsea-bubble-provider'
-import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
+import { SortBy, useGseaBubbleSettings } from './gsea-bubble-settings-store'
 import { MarginPopover } from './margin-popover'
 
 export function GseaBubblePropsPanel() {
@@ -196,6 +199,26 @@ export function GseaBubblePropsPanel() {
         <AccordionItem value="bubble">
           <AccordionTrigger>Bubbles</AccordionTrigger>
           <AccordionContent>
+            <PropRow title={TEXT_SORT_BY}>
+              <SelectList
+                items={SORT_BY_ITEMS}
+                onValueChange={(v) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.sortBy = v as SortBy
+                    })
+                  )
+                }
+                value={settings.sortBy}
+                w="sm"
+              >
+                {SORT_BY_ITEMS.map((item) => (
+                  <SelectItem value={item.value} key={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectList>
+            </PropRow>
             <PropRow title="Radius">
               <NumericalInput
                 id="size"

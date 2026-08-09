@@ -2392,6 +2392,10 @@
         {
           "msg": "Bug fixes and updates.",
           "date": "2026-08-08T04:33:33.325Z"
+        },
+        {
+          "msg": "Bubble plot now supports add-hoc sorting",
+          "date": "2026-08-09T00:41:28.348Z"
         }
       ]
     },

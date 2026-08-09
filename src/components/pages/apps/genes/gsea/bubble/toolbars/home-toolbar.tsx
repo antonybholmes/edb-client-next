@@ -9,12 +9,17 @@ import {
 } from '@/components/pages/open-files'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
-import { ToolbarButton } from '@/components/toolbar/toolbar-button'
+import { ToolbarColButton } from '@/components/toolbar/toolbar-col-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
 import { ToolbarRow } from '@/components/toolbar/toolbar-row'
 import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
-import { TEXT_SAVE_IMAGE } from '@/consts'
+import {
+  TEXT_OPTIONS,
+  TEXT_PLOT,
+  TEXT_SAVE_IMAGE,
+  TEXT_SORT_BY,
+} from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 import { SORT_BY_ITEMS } from '../gsea-bubble-dialog'
@@ -60,9 +65,10 @@ export function HomeToolbar() {
         </ToolbarIconButton>
       </ToolbarTabGroup>
 
-      <ToolbarTabGroup title-="GSEA Bubble">
-        <ToolbarButton
-          title="GSEA Bubble"
+      <ToolbarTabGroup title="Bubble">
+        <ToolbarColButton
+          icon={<PlayIcon variant="app-theme" />}
+          title={TEXT_PLOT}
           onClick={() => {
             openMatcalcDialog({
               type: 'gsea-bubble-plot',
@@ -75,8 +81,9 @@ export function HomeToolbar() {
             })
           }}
         >
-          <PlayIcon variant="app-theme" /> Plot
-        </ToolbarButton>
+          <PlayIcon variant="app-theme" />
+          {TEXT_PLOT}
+        </ToolbarColButton>
       </ToolbarTabGroup>
 
       <ToolbarTabGroup title="Plot Size" className="gap-x-2">
@@ -113,8 +120,8 @@ export function HomeToolbar() {
           />
         </ToolbarRow>
       </ToolbarTabGroup>
-      <ToolbarTabGroup title="Sort By" className="gap-x-2">
-        <ToolbarRow title="Sort By">
+      <ToolbarTabGroup title={TEXT_OPTIONS} className="gap-x-2">
+        <ToolbarRow title={TEXT_SORT_BY}>
           <SelectList
             items={SORT_BY_ITEMS}
             onValueChange={(v) =>
@@ -125,7 +132,7 @@ export function HomeToolbar() {
               )
             }
             value={settings.sortBy}
-            //w="lg"
+            w="sm"
           >
             {SORT_BY_ITEMS.map((item) => (
               <SelectItem value={item.value} key={item.value}>
