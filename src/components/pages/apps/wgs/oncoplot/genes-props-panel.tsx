@@ -167,8 +167,11 @@ export function GenePropsPanel({ ref }: IDivProps) {
             onClick={() => {
               openFilesDialog({
                 fileTypes: ['json'],
-                onFileChange: (message, files) =>
-                  onTextFileChange(message, files, (files) => {
+                onFileChange: (files) =>
+                  onTextFileChange(files, ({ success, files }) => {
+                    if (!success) {
+                      return
+                    }
                     openFeatureFiles(files)
                   }),
               })

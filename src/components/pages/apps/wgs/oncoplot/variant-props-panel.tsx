@@ -131,8 +131,11 @@ export function VariantPropsPanel({ ref }: IDivProps) {
                 openFilesDialog({
                   message: 'Select mutation file to open',
                   fileTypes: ['json'],
-                  onFileChange: (message, files) => {
-                    onTextFileChange(message, files, (files) => {
+                  onFileChange: (files) => {
+                    onTextFileChange(files, ({ success, files }) => {
+                      if (!success) {
+                        return
+                      }
                       openFeatureFiles(files)
                     })
                   },

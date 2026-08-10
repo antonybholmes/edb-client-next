@@ -318,9 +318,14 @@ export function TracksPropsPanel() {
             }
 
             onTextFileChange(
-              'Open dropped file',
               files.filter((file) => file.name.endsWith('.json')),
-              openTrackFiles
+              ({ success, files }) => {
+                if (!success) {
+                  return
+                }
+
+                openTrackFiles(files)
+              }
             )
           }
         }}

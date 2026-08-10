@@ -445,7 +445,7 @@ export function DisplayPropsPanel() {
                   // store the cmap the user likes
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.cmap = cmap.name
+                      draft.cmap = cmap.id
                     })
                   )
 

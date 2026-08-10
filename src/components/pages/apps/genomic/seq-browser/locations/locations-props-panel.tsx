@@ -144,8 +144,13 @@ export function LocationsPropsPanel() {
           onClick={() => {
             openFilesDialog({
               fileTypes: ['json'],
-              onFileChange: (message, files) =>
-                onTextFileChange(message, files, openLocationFiles),
+              onFileChange: (files) =>
+                onTextFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
+                  openLocationFiles(files)
+                }),
             })
           }}
           title="Open Locations"

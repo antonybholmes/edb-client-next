@@ -297,6 +297,15 @@ export async function onTextFileChange(
   result({ success: true, message: '', files: ret })
 }
 
+/**
+ * Handle pasted text as a text file. The easiest way to integrate pasted text
+ * into the file handling system is to treat it as a text file and pass it through
+ * the same processing pipeline as other text files.
+ *
+ * @param text
+ * @param result
+ * @returns
+ */
 export async function onTextFilePaste(
   text: string,
   result: (res: TextFileResult) => void
@@ -315,14 +324,18 @@ export async function onTextFilePaste(
   result({ success: true, message: '', files: [file] })
 }
 
+type BinaryFileResult = {
+  success: boolean
+  message?: string
+  files: IBinaryFileOpen[]
+}
+
 export function onBinaryFileChange(
-  _message: string,
   files: File[] | FileList | null,
-  onSuccess: (files: IBinaryFileOpen[]) => void,
-  onFailure?: (message: string, files: File[] | FileList | null) => void
+  result: (res: BinaryFileResult) => void
 ) {
   if (!files || files.length === 0) {
-    onFailure?.('no files', files)
+    result({ success: false, message: 'no files', files: [] })
     return
   }
 
@@ -333,25 +346,28 @@ export function onBinaryFileChange(
     const fileReader = new FileReader()
 
     fileReader.onload = (e) => {
-      const result = e.target?.result
+      const bufferRes = e.target?.result
 
-      if (result) {
+      if (bufferRes) {
         // since this seems to block rendering, delay by a second so that the
         // animation has time to start to indicate something is happening and
         // then finish processing the file
 
-        const buffer: ArrayBuffer = result as ArrayBuffer
+        const buffer: ArrayBuffer = bufferRes as ArrayBuffer
 
         const data = arrayBufferToBytes(buffer)
 
-        onSuccess([{ name, data, ext: name.split('.').pop() || '' }])
+        result({
+          success: true,
+          files: [{ name, data, ext: name.split('.').pop() || '' }],
+        })
       }
     }
 
     fileReader.readAsArrayBuffer(file)
   } catch (err) {
     if (err instanceof Error) {
-      onFailure?.(err.message, files)
+      result({ success: false, message: err.message, files: [] })
     }
   }
 }
