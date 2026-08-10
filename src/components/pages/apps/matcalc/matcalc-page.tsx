@@ -78,7 +78,7 @@ import { OptsSidebarMenu } from './data/opts-sidebar-menu'
 import { useHistory } from './history/history-provider/history-provider'
 
 import { useTabs } from '@/components/tabs/tab-provider'
-import { usePaste } from '@/hooks/paste'
+import { usePasteText } from '@/hooks/paste-text'
 import { makeUuid } from '@/lib/id'
 import { Box } from 'lucide-react'
 import { GseaBubblePanel } from '../genes/gsea/bubble/gsea-bubble-panel'
@@ -399,7 +399,7 @@ export function MatcalcPage() {
     })
   }
 
-  usePaste((text) => {
+  usePasteText((text) => {
     console.log('Pasted text:', text)
 
     onTextFilePaste(text, ({ success, files }) => {

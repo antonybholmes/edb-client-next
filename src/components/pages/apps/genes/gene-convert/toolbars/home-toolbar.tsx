@@ -112,8 +112,6 @@ export function HomeToolbar() {
 
       <ToolbarTabGroup className="gap-x-2 mr-1" title="From">
         <ToggleGroup
-          //variant="outline"
-
           value={[fromSpecies]}
           onValueChange={(v) => {
             setFromSpecies(v[0]! as Species)

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-export function usePaste(
+export function usePasteText(
   callback: (text: string, event: ClipboardEvent) => void
 ) {
   const callbackRef = useRef(callback)

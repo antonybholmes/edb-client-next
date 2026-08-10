@@ -11,9 +11,7 @@ import {
 export function useAllPlots(): HistoryPlot[] {
   const { present } = useHistory()
 
-  const plots = present.fileOrder.flatMap(
-    (fileId) => present.plots[fileId] || []
-  )
+  const plots = present.files.flatMap((file) => present.plots[file.id] || [])
 
   return plots
 }
@@ -30,17 +28,16 @@ export function getFileId(
   opts: { file?: OptStrOrIdObj } = {}
 ): string {
   const { file } = opts
-  return (typeof file === 'string' ? file : file?.id) || present.currentFile
+  return (typeof file === 'string' ? file : file?.id) || present.currentFile.id
 }
 
 export function getSheets(
   present: IHistoryState,
-  sheets: Record<string, DataFrameType>,
   opts: { file?: OptStrOrIdObj } = {}
 ): DataFrameType[] {
   const fid = getFileId(present, opts)
 
-  return (present.sheetOrder[fid] || []).map((id) => sheets[id]!)
+  return present.sheets[fid] || []
 }
 
 export function getPlots(
@@ -103,7 +100,6 @@ export function getGenesets(
 
 export function findSheet(
   present: IHistoryState,
-  sheets: Record<string, DataFrameType>,
   q: string,
   opts: { file?: OptStrOrIdObj } = {}
 ): DataFrameType | undefined {
@@ -111,7 +107,7 @@ export function findSheet(
 
   const lid = q.toLowerCase()
 
-  return (present.sheetOrder[fid] || [])
-    .map((id) => sheets[id]!)
-    .find((s) => s.id === q || s.name.toLowerCase() === lid)
+  return (present.sheets[fid] || []).find(
+    (s) => s.id === q || s.name.toLowerCase() === lid
+  )
 }

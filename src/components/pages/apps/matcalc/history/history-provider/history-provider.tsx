@@ -138,8 +138,8 @@ export function HistoryProvider({ children }: IChildrenProps) {
   )
 
   const reorderSheets = useCallback(
-    (ids: string[], opts: ISheetOps = {}) => {
-      dispatch({ type: 'reorderSheets', ids, opts })
+    (sheets: BaseDataFrame[], opts: ISheetOps = {}) => {
+      dispatch({ type: 'reorderSheets', sheets, opts })
     },
     [dispatch]
   )
@@ -237,24 +237,21 @@ export function HistoryProvider({ children }: IChildrenProps) {
 
   const filesContextValue = useMemo(
     () => ({
-      file: state.files[state.present.currentFile]!,
-      files: state.present.fileOrder.map((id) => state.files[id]!),
+      file: state.present.currentFile,
+      files: state.present.files,
     }),
-    [state.present.currentFile, state.present.fileOrder, state.files]
+    [state.present.currentFile, state.present.files]
   )
 
   const sheetsContextValue = useMemo(
     () => ({
-      sheet: state.sheets[state.present.currentSheet]!,
-      sheets: state.present.sheetOrder[state.present.currentFile].map(
-        (id) => state.sheets[id]!
-      ),
+      sheet: state.present.currentSheet,
+      sheets: state.present.sheets[state.present.currentFile.id] || [],
     }),
     [
       state.present.currentSheet,
-      state.present.sheetOrder,
       state.present.currentFile,
-      state.sheets,
+      state.present.sheets,
     ]
   )
 
@@ -262,13 +259,14 @@ export function HistoryProvider({ children }: IChildrenProps) {
     () => ({
       plot: state.present.currentPlot,
 
-      plots: state.present.plots[state.present.currentFile] || [],
+      plots: state.present.plots[state.present.currentFile.id] || [],
     }),
     [state.present.currentPlot, state.present.currentFile]
   )
 
   const groupsContextValue = useMemo(() => {
-    const groupRows = state.present.groupRows[state.present.currentFile] || []
+    const groupRows =
+      state.present.groupRows[state.present.currentFile.id] || []
 
     const groups = groupRows.map((row) => row.groups).flat()
 
@@ -280,7 +278,7 @@ export function HistoryProvider({ children }: IChildrenProps) {
 
   const genesetsContextValue = useMemo(
     () => ({
-      genesets: state.present.genesets[state.present.currentFile] || [],
+      genesets: state.present.genesets[state.present.currentFile.id] || [],
     }),
     [state.present.currentFile, state.present.genesets]
   )

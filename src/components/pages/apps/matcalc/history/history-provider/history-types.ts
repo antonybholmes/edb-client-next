@@ -21,6 +21,7 @@ export type GotoType = NodeType | 'path'
 
 export interface ISelectionPath {
   type: NodeType
+  //file: string
   id: string
 }
 
@@ -160,12 +161,12 @@ export interface IGenesetSlice {
 }
 
 export interface ISheetSlice {
-  addSheets: (sheets: BaseDataFrame[], opts?: ISheetOps) => void
-  reorderSheets: (
-    sheets: string[],
+  addSheets: (sheets: DataFrameType[], opts?: ISheetOps) => void
+  // reorderSheets: (
+  //   sheets: string[],
 
-    opts?: ISheetOps
-  ) => void
+  //   opts?: ISheetOps
+  // ) => void
 }
 
 export interface IFileOps {
@@ -195,31 +196,32 @@ export interface ISheetOps {
 export interface IHistoryState extends IDBEntity {
   // order maps to preserve hierarchy
 
-  fileOrder: string[] // appId -> file IDs
-  sheetOrder: Record<string, string[]> // fileId -> sheet IDs
+  files: IDBEntity[] // appId -> file IDs
+  //sheetOrder: Record<string, string[]> // fileId -> sheet IDs
+  sheets: Record<string, DataFrameType[]>
   ///plotOrder: Record<string, string[]> // fileId -> plot IDs
   //groupOrder: Record<string, string[]> // fileId -> group IDs
   groupRows: Record<string, IClusterGroupRow[]>
   plots: Record<string, HistoryPlot[]>
   genesets: Record<string, IGeneSet[]> // fileId -> geneset IDs
 
-  currentFile: string
-  currentSheet: string
+  currentFile: IDBEntity | undefined
+  currentSheet: DataFrameType | undefined
   currentPlot: HistoryPlot | undefined
   currentSelections: ISelectionPath[]
 }
 
 // Stores all objects by ID for easy access and immutability
-export interface IHistoryDataStore {
-  files: Record<string, IDBEntity>
-  sheets: Record<string, DataFrameType>
-  //plots: Record<string, HistoryPlot>
-  //groupNames: Record<string, string>
-  //groups: Record<string, IClusterGroup>
-  //genesets: Record<string, IGeneSet>
-}
+// export interface IHistoryDataStore {
+//   //files: Record<string, IDBEntity>
+//   //sheets: Record<string, DataFrameType>
+//   //plots: Record<string, HistoryPlot>
+//   //groupNames: Record<string, string>
+//   //groups: Record<string, IClusterGroup>
+//   //genesets: Record<string, IGeneSet>
+// }
 
-export type IHistoryData = IUndoState<IHistoryState> & IHistoryDataStore
+export type IHistoryData = IUndoState<IHistoryState>
 
 export interface IHistoryStore
   extends

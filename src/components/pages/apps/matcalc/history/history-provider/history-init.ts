@@ -4,7 +4,7 @@ import { IDBEntity } from '@/interfaces/db-entity'
 import { DATAFRAME_100x26 } from '@/lib/dataframe/annotation-dataframe'
 import { makeUuid } from '@/lib/id'
 import { IHistoryEntry } from '../history-manager'
-import { IHistoryData, IHistoryDataStore, IHistoryState } from './history-types'
+import { IHistoryData, IHistoryState } from './history-types'
 
 // The history store is initialized with a default file and
 // sheet to ensure that there is always a valid current file and sheet,
@@ -18,16 +18,16 @@ export const DEFAULT_FILE: IDBEntity = {
 
 export const DEFAULT_SHEET = DATAFRAME_100x26
 
-export function resetStore(): IHistoryDataStore {
-  return {
-    files: { [DEFAULT_FILE.id]: DEFAULT_FILE },
-    sheets: { [DEFAULT_SHEET.id]: DEFAULT_SHEET },
-    //plots: { [DEFAULT_SHEET.id]: DEFAULT_SHEET },
-    //groupRows: {},
-    //groupNames: { [DEFAULT_FILE.id]: 'Groups' },
-    //genesets: {},
-  }
-}
+// export function resetStore(): IHistoryDataStore {
+//   return {
+//     files: { [DEFAULT_FILE.id]: DEFAULT_FILE },
+//     sheets: { [DEFAULT_SHEET.id]: DEFAULT_SHEET },
+//     //plots: { [DEFAULT_SHEET.id]: DEFAULT_SHEET },
+//     //groupRows: {},
+//     //groupNames: { [DEFAULT_FILE.id]: 'Groups' },
+//     //genesets: {},
+//   }
+// }
 
 // that stores IHistoryState snapshots and patches for undo/redo functionality.
 export function init(): IHistoryData {
@@ -50,7 +50,7 @@ export function init(): IHistoryData {
   }
 
   return {
-    ...resetStore(),
+    //...resetStore(),
 
     present: state,
     history: [historyEntry],
@@ -61,14 +61,14 @@ export function init(): IHistoryData {
 
 export function initState(): Omit<IHistoryState, 'id' | 'name' | 'createdAt'> {
   return {
-    fileOrder: [DEFAULT_FILE.id],
-    sheetOrder: { [DEFAULT_FILE.id]: [DEFAULT_SHEET.id] },
+    files: [DEFAULT_FILE],
+    sheets: { [DEFAULT_FILE.id]: [DEFAULT_SHEET] },
     plots: { [DEFAULT_FILE.id]: [] },
     groupRows: { [DEFAULT_FILE.id]: [] },
     genesets: { [DEFAULT_FILE.id]: [] },
 
-    currentFile: DEFAULT_FILE.id,
-    currentSheet: DEFAULT_SHEET.id,
+    currentFile: DEFAULT_FILE,
+    currentSheet: DEFAULT_SHEET,
     currentPlot: undefined,
     currentSelections: [{ type: 'sheet', id: DEFAULT_SHEET.id }],
   }

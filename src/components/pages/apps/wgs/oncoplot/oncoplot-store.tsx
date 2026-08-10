@@ -88,7 +88,7 @@ export function useOncoplot(): IOncoplotStore {
   const setVariantsInUse = useOncoplotStore((state) => state.setVariantsInUse)
 
   const { mutations, displayProps, setMutations } = useOncoplotSettings()
-  const { present, sheets } = useHistory()
+  const { present } = useHistory()
   const { file } = useFiles()
 
   useEffect(() => {
@@ -98,7 +98,7 @@ export function useOncoplot(): IOncoplotStore {
       }
 
       // Assume first sheet is
-      const sheet = findSheet(present, sheets, 'Variants', { file })
+      const sheet = findSheet(present, 'Variants', { file })
 
       if (!sheet) {
         return
