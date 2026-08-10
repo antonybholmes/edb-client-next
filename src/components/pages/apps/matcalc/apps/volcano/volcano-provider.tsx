@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from 'react'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
+import { useVolcanoSettings } from './volcano-settings-store'
 
 import { range } from '@/lib/math/range'
 import { IVolcanoPlot } from '../../history/history-provider/history-types'
@@ -45,7 +46,8 @@ export function VolcanoProvider({
 
   const volcano = plot.volcano
   const displayProps = useMemo(() => plot.props, [plot.props])
-  const { settings } = useMatcalcSettings()
+  const { settings } = useVolcanoSettings()
+  const { settings: matcalcSettings } = useMatcalcSettings()
   // const sheet = useMemo(
   //   () => plot!.dataframes['main'] as BaseDataFrame,
   //   [plot!.dataframes['main']]
@@ -61,18 +63,17 @@ export function VolcanoProvider({
   // }, [sheet, plot.props.axes.xaxis.name, displayProps.axes.yaxis.name])
 
   function getShouldLabel(logFc: number, logP: number): boolean {
-    if (displayProps!.logP.show && displayProps!.logFc.show) {
+    if (displayProps!.logP.show && settings!.logFc.show) {
       if (
         logP > displayProps!.logP.threshold &&
-        Math.abs(logFc) > displayProps!.logFc.threshold
+        Math.abs(logFc) > settings!.logFc.threshold
       ) {
         return true
       }
     } else {
       if (
         (displayProps!.logP.show && logP > displayProps!.logP.threshold) ||
-        (displayProps!.logFc.show &&
-          Math.abs(logFc) > displayProps!.logFc.threshold)
+        (settings!.logFc.show && Math.abs(logFc) > settings!.logFc.threshold)
       ) {
         return true
       }
@@ -96,13 +97,12 @@ export function VolcanoProvider({
   }, [volcano.log2foldChanges, volcano.logpvalues, displayProps, volcano.ids])
 
   const displayLabels = useMemo(
-    () =>
-      settings.apps.volcano.labels.auto ? highlightedLabels : manualLabels,
-    [settings.apps.volcano.labels.auto, highlightedLabels, manualLabels]
+    () => (settings.labels.auto ? highlightedLabels : manualLabels),
+    [settings.labels.auto, highlightedLabels, manualLabels]
   )
 
   const setLabels = (labels: string[]) => {
-    if (settings.apps.volcano.labels.auto) {
+    if (settings.labels.auto) {
       return
     }
 

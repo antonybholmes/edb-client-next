@@ -69,16 +69,6 @@ export interface IMatcalcSettings {
       genes: string[]
       selectedDatasets: string[]
     }
-
-    volcano: {
-      preprocess: {
-        applyLog2FC: boolean
-        applyMinusLog10P: boolean
-      }
-      labels: {
-        auto: boolean
-      }
-    }
   }
 
   sortByRow: {
@@ -213,15 +203,15 @@ export const DEFAULT_SETTINGS: IMatcalcSettings = {
       genome: 'Human',
       selectedDatasets: [],
     },
-    volcano: {
-      preprocess: {
-        applyLog2FC: false,
-        applyMinusLog10P: true,
-      },
-      labels: {
-        auto: true,
-      },
-    },
+    // volcano: {
+    //   preprocess: {
+    //     applyLog2FC: false,
+    //     applyMinusLog10P: true,
+    //   },
+    //   labels: {
+    //     auto: true,
+    //   },
+    // },
   },
   dot: {
     size: {

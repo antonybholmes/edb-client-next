@@ -24,9 +24,9 @@
     "color": "#20B2AA",
     "version": "20.0.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-10T17:36:24.124Z",
-    "hash": "f32f82bdc94eb44e6c5f602170764dd643df344ce2aa3087ab5f3e6e842ce1d2",
-    "build": 812
+    "modified": "2026-08-10T23:03:48.301Z",
+    "hash": "9b0c8a15934c610a06cd5395667e775adc559bd774d7a74bd8c0cac20da404d4",
+    "build": 814
   },
   {
     "name": "DNA",
@@ -121,9 +121,9 @@
     "color": "#40bf80",
     "version": "48.8.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-08-10T17:36:24.129Z",
-    "hash": "c7bd0ad943379521b94676a784491136765c964f254127619e7c6fc63901d5e0",
-    "build": 1914
+    "modified": "2026-08-10T23:03:48.305Z",
+    "hash": "afff79c2eb8c8918d3cf7e663bf0e9c40af60756041e446ea379f43bfec14914",
+    "build": 1916
   },
   {
     "name": "Motifs",
@@ -141,9 +141,9 @@
     "color": "#ff99cc",
     "version": "30.0.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-10T17:28:24.295Z",
-    "hash": "8b286d39521eaf442fd4ac52c68309b55195f06dff5232b99cef600e96d30973",
-    "build": 1094
+    "modified": "2026-08-10T23:03:48.306Z",
+    "hash": "5e9704c015ee34e1c4b6fa4eebe4dd2e089781ef0ea8d071762577cb3309a3aa",
+    "build": 1096
   },
   {
     "name": "Overlap",

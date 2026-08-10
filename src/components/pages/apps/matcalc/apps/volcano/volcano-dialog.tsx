@@ -19,6 +19,7 @@ import { useCurrentSheets } from '../../history/history-provider/history-context
 import { newVolcanoPlot } from '../../history/history-provider/history-factories'
 import { HistoryPlot } from '../../history/history-provider/history-types'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
+import { useVolcanoSettings } from './volcano-settings-store'
 
 const MAX_COLS = 10
 const FOLD_REGEX = /fold/
@@ -72,7 +73,9 @@ export function VolcanoDialog({
   //df,
   onResponse,
 }: IProps) {
-  const { settings, updateSettings } = useMatcalcSettings()
+  const { settings, updateSettings } = useVolcanoSettings() // Assuming there is a custom hook for volcano settings
+  const { settings: matcalcSettings, updateSettings: updateMatcalcSettings } =
+    useMatcalcSettings()
   const { sheets } = useCurrentSheets()
 
   const btnRef = useRef<HTMLButtonElement>(null)
@@ -85,8 +88,8 @@ export function VolcanoDialog({
     defaultValues: {
       foldChangeCol: findFoldChangeCol(df)!,
       pValueCol: findPValueCol(df)!,
-      applyLog2ToFoldChange: settings.apps.volcano.preprocess.applyLog2FC,
-      applyLog10ToPValue: settings.apps.volcano.preprocess.applyMinusLog10P,
+      applyLog2ToFoldChange: settings.preprocess.applyLog2FC,
+      applyLog10ToPValue: settings.preprocess.applyMinusLog10P,
     },
   })
 
@@ -162,8 +165,8 @@ export function VolcanoDialog({
 
     updateSettings(
       produce(settings, (draft) => {
-        draft.apps.volcano.preprocess.applyLog2FC = data.applyLog2ToFoldChange
-        draft.apps.volcano.preprocess.applyMinusLog10P = data.applyLog10ToPValue
+        draft.preprocess.applyLog2FC = data.applyLog2ToFoldChange
+        draft.preprocess.applyMinusLog10P = data.applyLog10ToPValue
       })
     )
 

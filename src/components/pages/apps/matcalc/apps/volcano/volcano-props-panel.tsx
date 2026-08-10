@@ -24,6 +24,7 @@ import { useEffect, useState } from 'react'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { useVolcanoContext } from './volcano-provider'
+import { useVolcanoSettings } from './volcano-settings-store'
 
 export function VolcanoPropsPanel() {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
@@ -37,7 +38,9 @@ export function VolcanoPropsPanel() {
   const { updatePlot } = useHistory()
 
   const { plot, displayLabels, setLabels } = useVolcanoContext()
-  const { settings, updateSettings } = useMatcalcSettings()
+  const { settings, updateSettings } = useVolcanoSettings()
+  const { settings: matcalcSettings, updateSettings: updateMatcalcSettings } =
+    useMatcalcSettings()
 
   const displayProps: IVolcanoDisplayOptions = plot.props
 
@@ -53,10 +56,10 @@ export function VolcanoPropsPanel() {
   }
 
   useEffect(() => {
-    if (settings.apps.volcano.labels.auto) {
+    if (settings.labels.auto) {
       setText(displayLabels.join('\n'))
     }
-  }, [settings.apps.volcano.labels.auto, displayLabels])
+  }, [settings.labels.auto, displayLabels])
 
   return (
     <PropsPanel>
@@ -201,25 +204,25 @@ export function VolcanoPropsPanel() {
           <AccordionContent>
             <SwitchPropRow
               title="Filter"
-              checked={displayProps.logFc.show}
+              checked={settings.logFc.show}
               onCheckedChange={(v) => {
-                updatePlot(
-                  produce(plot, (draft) => {
-                    draft.props.logFc.show = v
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.logFc.show = v
                   })
                 )
               }}
             >
               <NumericalInput
                 id="max"
-                value={displayProps.logFc.threshold} //Math.pow(2, displayProps.logFc.threshold)}
+                value={settings.logFc.threshold} //Math.pow(2, displayProps.logFc.threshold)}
                 dp={2}
                 placeholder="Max..."
                 className="w-16 rounded-theme"
                 onNumChanged={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.logFc.threshold = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.logFc.threshold = v
                     })
                   )
                 }}
@@ -230,11 +233,11 @@ export function VolcanoPropsPanel() {
               <FillButton
                 colors={[
                   {
-                    color: displayProps.logFc.neg.color,
+                    color: settings.logFc.neg.fill.value,
                     onColorChange: ({ color }) =>
-                      updatePlot(
-                        produce(plot, (draft) => {
-                          draft.props.logFc.neg.color = color
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.logFc.neg.fill.value = color
                         })
                       ),
                   },
@@ -246,11 +249,11 @@ export function VolcanoPropsPanel() {
               <FillButton
                 colors={[
                   {
-                    color: displayProps.logFc.pos.color,
+                    color: settings.logFc.pos.fill.value,
                     onColorChange: ({ color }) =>
-                      updatePlot(
-                        produce(plot, (draft) => {
-                          draft.props.logFc.pos.color = color
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.logFc.pos.fill.value = color
                         })
                       ),
                   },
@@ -314,11 +317,11 @@ export function VolcanoPropsPanel() {
             <BaseCol className="gap-y-1">
               <SwitchPropRow
                 title="Auto label"
-                checked={settings.apps.volcano.labels.auto}
+                checked={settings.labels.auto}
                 onCheckedChange={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.apps.volcano.labels.auto = v
+                      draft.labels.auto = v
                     })
                   )
                 }}

@@ -22,6 +22,7 @@ import { ILim } from '@/lib/math/math'
 import { IVolcanoPlot } from '../../history/history-provider/history-types'
 import type { ITooltip } from '../heatmap/heatmap-svg'
 import { useVolcanoContext } from './volcano-provider'
+import { useVolcanoSettings } from './volcano-settings-store'
 
 const MARGIN = { top: 100, right: 100, bottom: 100, left: 100 }
 
@@ -136,17 +137,17 @@ export interface IVolcanoDisplayOptions extends IScatterDisplayOptions {
       color: string
     }
   }
-  logFc: {
-    show: boolean
-    threshold: number
+  // logFc: {
+  //   show: boolean
+  //   threshold: number
 
-    neg: {
-      color: string
-    }
-    pos: {
-      color: string
-    }
-  }
+  //   neg: {
+  //     color: string
+  //   }
+  //   pos: {
+  //     color: string
+  //   }
+  // }
 }
 
 export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
@@ -199,16 +200,16 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
     },
   },
 
-  logFc: {
-    threshold: 1,
-    show: true,
-    neg: {
-      color: '#3366cc',
-    },
-    pos: {
-      color: '#e62e00',
-    },
-  },
+  // logFc: {
+  //   threshold: 1,
+  //   show: true,
+  //   neg: {
+  //     color: '#3366cc',
+  //   },
+  //   pos: {
+  //     color: '#e62e00',
+  //   },
+  // },
   labels: {
     color: COLOR_BLACK,
     offset: 15,
@@ -220,28 +221,6 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
     //auto: true,
   },
   border: { ...DEFAULT_STROKE_PROPS, width: 2, show: false },
-}
-
-function getColor(logFc: number, logP: number, props: IVolcanoDisplayOptions) {
-  let color = props.dots.color
-
-  if (props.logP.show && props.logFc.show) {
-    if (
-      logP > props.logP.threshold &&
-      Math.abs(logFc) > props.logFc.threshold
-    ) {
-      color = logFc < 0 ? props.logFc.neg.color : props.logFc.pos.color
-    }
-  } else {
-    if (
-      (props.logP.show && logP > props.logP.threshold) ||
-      (props.logFc.show && Math.abs(logFc) > props.logFc.threshold)
-    ) {
-      color = logFc < 0 ? props.logFc.neg.color : props.logFc.pos.color
-    }
-  }
-
-  return color
 }
 
 interface IProps extends ISVGProps {
@@ -263,11 +242,45 @@ export function VolcanoPlotSvg({
 }: IProps) {
   const { plot, displayLabels } = useVolcanoContext()
 
+  const { settings } = useVolcanoSettings()
+
   const displayOptions: IVolcanoDisplayOptions = (plot! as IVolcanoPlot).props
 
   const tooltipRef = useRef<HTMLDivElement>(null)
 
   const [toolTipInfo, setToolTipInfo] = useState<ITooltip | null>(null)
+
+  function getColor(
+    logFc: number,
+    logP: number,
+    props: IVolcanoDisplayOptions
+  ) {
+    let color = props.dots.color
+
+    if (props.logP.show && settings.logFc.show) {
+      if (
+        logP > props.logP.threshold &&
+        Math.abs(logFc) > settings.logFc.threshold
+      ) {
+        color =
+          logFc < 0
+            ? settings.logFc.neg.fill.value
+            : settings.logFc.pos.fill.value
+      }
+    } else {
+      if (
+        (props.logP.show && logP > props.logP.threshold) ||
+        (settings.logFc.show && Math.abs(logFc) > settings.logFc.threshold)
+      ) {
+        color =
+          logFc < 0
+            ? settings.logFc.neg.fill.value
+            : settings.logFc.pos.fill.value
+      }
+    }
+
+    return color
+  }
 
   const points = useMemo(
     () =>
