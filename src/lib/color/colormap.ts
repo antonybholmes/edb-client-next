@@ -508,6 +508,40 @@ export const REDS_CMAP: ColorMap = new ColorMap('reds', 'Reds', [
   '#cc0000',
 ])
 
+export const GREENS_CMAP: ColorMap = new ColorMap('greens', 'Greens', [
+  '#f7fcf5',
+  '#edf7e9',
+  '#e5f5e0',
+  '#dcefd6',
+  '#d3eccd',
+  '#c9e9c3',
+  '#c7e9c0',
+  '#b8e2b2',
+  '#a9dba3',
+  '#a1d99b',
+  '#94d391',
+  '#87cd86',
+  '#7ac77b',
+  '#74c476',
+  '#66bd6e',
+  '#58b666',
+  '#4aaf5f',
+  '#41ab5d',
+  '#36a356',
+  '#2f9b50',
+  '#2a934b',
+  '#238b45',
+  '#1d833f',
+  '#16783a',
+  '#0f6f35',
+  '#006d2c',
+  '#006328',
+  '#005a25',
+  '#005020',
+  '#00491d',
+  '#00441b',
+])
+
 //createColorMap({
 //  cmap: [
 //    { index: 0, rgba: [255, 255, 255, 1] },
@@ -567,6 +601,7 @@ export const COLOR_MAPS: Record<string, ColorMap> = {
   [JET_CMAP.id]: JET_CMAP,
   [BLUES_CMAP.id]: BLUES_CMAP,
   [REDS_CMAP.id]: REDS_CMAP,
+  [GREENS_CMAP.id]: GREENS_CMAP,
   //Tab10: TAB10_CMAP,
   //Tableu20: TABLEAU_20_CMAP,
   //Bright20: BRIGHT_20_CMAP,
@@ -584,8 +619,9 @@ export const COLOR_MAP_MENU = [
       PLASMA_CMAP,
       INFERNO_CMAP,
       MAGMA_CMAP,
-      BLUES_CMAP,
       REDS_CMAP,
+      BLUES_CMAP,
+      GREENS_CMAP,
     ],
   },
   { label: 'Diverging', cmaps: [BWR_CMAP, BWR_CMAP_V2, GRAY_RED_CMAP] },
@@ -599,6 +635,7 @@ export type ColorMapName =
   | 'jet'
   | 'blues'
   | 'reds'
+  | 'greens'
   | 'gray-red'
   | 'inferno'
   | 'plasma'

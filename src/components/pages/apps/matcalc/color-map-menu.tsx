@@ -10,6 +10,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/themed/v2/dropdown-menu'
+import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 
 import { BWR_CMAP_V2, COLOR_MAP_MENU, ColorMap } from '@/lib/color/colormap'
 import { cn } from '@/lib/shadcn-utils'
@@ -23,6 +24,83 @@ export const BUTTON_CLS = cn(
   'data-[checked=true]:scale-110 data-[checked=false]:focus-visible:scale-110',
   'data-[checked=false]:focus-visible:border-border group flex items-center justify-center'
 )
+
+export function ColorMapMenuIcon({ cmap }: { cmap: ColorMap }) {
+  return (
+    <HCenterCol className="relative w-6 h-6 aspect-square">
+      <SwatchBook className="relative z-10" size={16} strokeWidth={1.5} />
+      <ColorMapIcon
+        cmap={cmap}
+        aspect="aspect-3/1"
+        className="absolute bottom-0 w-5 border border-foreground/80 rounded-xs"
+      />
+    </HCenterCol>
+  )
+}
+
+export function ColorMapMenuContent({
+  cmap,
+  onChange,
+}: {
+  cmap: ColorMap
+  onChange?: (cmap: ColorMap) => void
+}) {
+  return (
+    <DropdownMenuContent>
+      {/* {Object.keys(COLOR_MAPS)
+          .sort()
+          .map((c, ci) => {
+            const cm = COLOR_MAPS[c]!
+            return (
+              <DropdownMenuCheckboxItem
+                key={cm.id}
+                onClick={() => {
+                  _onChange(cm)
+                }}
+                checked={cm.id === cmap.id}
+              >
+                <VCenterRow className="gap-x-2">
+                  <ColorMapIcon
+                    cmap={cm}
+                    aspect="aspect-5/4"
+                    className="w-6 border border-foreground/70 rounded-sm"
+                  />
+                  <span>{cm.name}</span>
+                </VCenterRow>
+              </DropdownMenuCheckboxItem>
+            )
+          })} */}
+
+      {COLOR_MAP_MENU.map((group) => (
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>{group.label}</DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuContent side="right">
+              {group.cmaps.map((cm) => (
+                <DropdownMenuCheckboxItem
+                  key={cm.id}
+                  onClick={() => {
+                    onChange(cm)
+                  }}
+                  checked={cm.id === cmap.id}
+                >
+                  <VCenterRow className="gap-x-2">
+                    <ColorMapIcon
+                      cmap={cm}
+                      aspect="aspect-5/4"
+                      className="w-6 border border-foreground/70 rounded-sm"
+                    />
+                    <span>{cm.name}</span>
+                  </VCenterRow>
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
+      ))}
+    </DropdownMenuContent>
+  )
+}
 
 interface IProps {
   cmap: ColorMap
@@ -89,68 +167,38 @@ export function ColorMapMenu({
         title="Change colormap"
         onClick={() => setOpen(true)}
       >
-        <HCenterCol className="relative w-6 h-6 aspect-square">
-          <SwatchBook className="relative z-10" size={16} strokeWidth={1.5} />
-          <ColorMapIcon
-            cmap={cmap}
-            aspect="aspect-3/1"
-            className="absolute bottom-0 w-5 border border-foreground/80 rounded-xs"
-          />
-        </HCenterCol>
+        <ColorMapMenuIcon cmap={cmap} />
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        {/* {Object.keys(COLOR_MAPS)
-          .sort()
-          .map((c, ci) => {
-            const cm = COLOR_MAPS[c]!
-            return (
-              <DropdownMenuCheckboxItem
-                key={cm.id}
-                onClick={() => {
-                  _onChange(cm)
-                }}
-                checked={cm.id === cmap.id}
-              >
-                <VCenterRow className="gap-x-2">
-                  <ColorMapIcon
-                    cmap={cm}
-                    aspect="aspect-5/4"
-                    className="w-6 border border-foreground/70 rounded-sm"
-                  />
-                  <span>{cm.name}</span>
-                </VCenterRow>
-              </DropdownMenuCheckboxItem>
-            )
-          })} */}
+      <ColorMapMenuContent cmap={cmap} onChange={_onChange} />
+    </DropdownMenu>
+  )
+}
 
-        {COLOR_MAP_MENU.map((group) => (
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>{group.label}</DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuContent side="right">
-                {group.cmaps.map((cm) => (
-                  <DropdownMenuCheckboxItem
-                    key={cm.id}
-                    onClick={() => {
-                      _onChange(cm)
-                    }}
-                    checked={cm.id === cmap.id}
-                  >
-                    <VCenterRow className="gap-x-2">
-                      <ColorMapIcon
-                        cmap={cm}
-                        aspect="aspect-5/4"
-                        className="w-6 border border-foreground/70 rounded-sm"
-                      />
-                      <span>{cm.name}</span>
-                    </VCenterRow>
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
-        ))}
-      </DropdownMenuContent>
+export function ColorMapToolbarMenu({
+  cmap = BWR_CMAP_V2,
+  align = 'start',
+  onChange,
+}: IProps) {
+  const [open, setOpen] = useState(false)
+
+  function _onChange(cmap: ColorMap) {
+    //setOpen(false)
+    onChange?.(cmap)
+  }
+
+  return (
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger
+        title="Change colormap"
+        onClick={() => setOpen(true)}
+        render={
+          <ToolbarIconButton>
+            <ColorMapMenuIcon cmap={cmap} />
+          </ToolbarIconButton>
+        }
+      />
+
+      <ColorMapMenuContent cmap={cmap} onChange={_onChange} />
     </DropdownMenu>
   )
 }

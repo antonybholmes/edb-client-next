@@ -1,6 +1,7 @@
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { DownloadIcon } from '@/components/icons/download-icon'
 import { PlayIcon } from '@/components/icons/play-icon'
+import { ColorMapToolbarMenu } from '@/components/pages/apps/matcalc/color-map-menu'
 import { useOpenFiles } from '@/components/pages/apps/matcalc/hooks/open'
 import { useMatcalcDialogs } from '@/components/pages/apps/matcalc/matcalc-dialogs'
 import {
@@ -9,6 +10,7 @@ import {
 } from '@/components/pages/open-files'
 import { NumericalInput } from '@/components/shadcn/ui/themed/numerical-input'
 import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import { ToolbarCol } from '@/components/toolbar/toolbar-col'
 import { ToolbarColButton } from '@/components/toolbar/toolbar-col-button'
 import { ToolbarIconButton } from '@/components/toolbar/toolbar-icon-button'
 import { ToolbarOpenFile } from '@/components/toolbar/toolbar-open-files'
@@ -20,6 +22,7 @@ import {
   TEXT_SAVE_IMAGE,
   TEXT_SORT_BY,
 } from '@/consts'
+import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
 import { SORT_BY_ITEMS } from '../gsea-bubble-dialog'
@@ -121,26 +124,38 @@ export function HomeToolbar() {
         </ToolbarRow>
       </ToolbarTabGroup>
       <ToolbarTabGroup title={TEXT_OPTIONS} className="gap-x-2">
-        <ToolbarRow title={TEXT_SORT_BY}>
-          <SelectList
-            items={SORT_BY_ITEMS}
-            onValueChange={(v) =>
+        <ToolbarCol>
+          <ToolbarRow title={TEXT_SORT_BY}>
+            <SelectList
+              items={SORT_BY_ITEMS}
+              onValueChange={(v) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.sortBy = v as SortBy
+                  })
+                )
+              }
+              value={settings.sortBy}
+              w="sm"
+            >
+              {SORT_BY_ITEMS.map((item) => (
+                <SelectItem value={item.value} key={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectList>
+          </ToolbarRow>
+          <ColorMapToolbarMenu
+            cmap={getColorMap(settings.p.cmap)}
+            onChange={(cmap) => {
               updateSettings(
                 produce(settings, (draft) => {
-                  draft.sortBy = v as SortBy
+                  draft.p.cmap = cmap.id as ColorMapName
                 })
               )
-            }
-            value={settings.sortBy}
-            w="sm"
-          >
-            {SORT_BY_ITEMS.map((item) => (
-              <SelectItem value={item.value} key={item.value}>
-                {item.label}
-              </SelectItem>
-            ))}
-          </SelectList>
-        </ToolbarRow>
+            }}
+          />
+        </ToolbarCol>
       </ToolbarTabGroup>
     </>
   )
