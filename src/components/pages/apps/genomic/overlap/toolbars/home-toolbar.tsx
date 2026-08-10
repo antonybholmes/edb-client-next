@@ -52,8 +52,13 @@ export function HomeToolbar() {
         <ToolbarOpenFile
           onClick={() => {
             openFilesDialog({
-              onFileChange: (message, files) => {
-                onTextFileChange(message, files, openOverlapFiles)
+              onFileChange: (files) => {
+                onTextFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
+                  openOverlapFiles(files)
+                })
               },
             })
           }}

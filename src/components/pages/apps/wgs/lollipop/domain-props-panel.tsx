@@ -337,8 +337,13 @@ export function DomainPropsPanel({ ref }: IDivProps) {
               onClick={() =>
                 openFilesDialog({
                   fileTypes: ['json'],
-                  onFileChange: (message, files) =>
-                    onTextFileChange(message, files, openFeatureFiles),
+                  onFileChange: (files) =>
+                    onTextFileChange(files, ({ success, files }) => {
+                      if (!success) {
+                        return
+                      }
+                      openFeatureFiles(files)
+                    }),
                 })
               }
               title="Open features"

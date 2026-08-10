@@ -110,8 +110,13 @@ export function useOpen() {
   function open(message: string) {
     openFilesDialog({
       message,
-      onFileChange: (message, files) => {
-        onTextFileChange(message, files, (files) => parseFiles(message, files))
+      onFileChange: (files) => {
+        onTextFileChange(files, ({ success, files }) => {
+          if (!success) {
+            return
+          }
+          parseFiles(message, files)
+        })
       },
     })
   }

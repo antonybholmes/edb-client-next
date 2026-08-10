@@ -6,7 +6,7 @@ import { useHistory } from '../../matcalc/history/history-provider/history-provi
 export function useOpen() {
   const { openFile } = useHistory()
 
-  function onFileChange(_message: string, files: FileList | []) {
+  function onFileChange(files: FileList | []) {
     if (files.length === 0) {
       return
     }

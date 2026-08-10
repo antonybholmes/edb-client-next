@@ -15,7 +15,7 @@ export function HistoryTree({
   onTabChange: (tab: ITab) => void
 }) {
   const isMounted = useIsMounted()
-  const { present, sheets, plots } = useHistory()
+  const { present } = useHistory()
   const { files } = useFiles()
   const { appInfo } = useAppInfo()
 
@@ -59,7 +59,7 @@ export function HistoryTree({
         children: [],
       }
 
-      for (const sheet of getSheets(present, sheets, { file })) {
+      for (const sheet of getSheets(present, { file })) {
         const sheetTab: ITab = {
           id: sheet.id,
 
@@ -73,7 +73,7 @@ export function HistoryTree({
         sheetsTab.children!.push(sheetTab)
       }
 
-      for (const plot of getPlots(present, plots, { file })) {
+      for (const plot of getPlots(present, { file })) {
         const plotTab: ITab = {
           id: plot.id,
           path: pathJoin(file, plot),
@@ -94,7 +94,7 @@ export function HistoryTree({
     appTab.children!.push(filesTab)
 
     return appTab
-  }, [files, sheets, plots, appInfo])
+  }, [files, appInfo])
 
   if (!isMounted) {
     return null

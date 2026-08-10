@@ -217,7 +217,7 @@ export function ReorderTabs({
   menuActions = [],
   allowReorder = true,
 }: IProps) {
-  const { goto, reorderSheets } = useHistory()
+  const { goto, addSheets } = useHistory()
   const { file } = useFiles()
 
   const { sheet, sheets } = useCurrentSheets()
@@ -226,7 +226,7 @@ export function ReorderTabs({
 
   const [activeId, setActiveId] = useState<string | null>(null)
 
-  const tabIds = sheets.map((sheet) => sheet.id)
+  //const tabIds = sheets.map((sheet) => sheet.id)
 
   // stops nextjs complaint about hydration mismatch due to dnd kit using document in useSortable
   const isMounted = useIsMounted()
@@ -243,7 +243,7 @@ export function ReorderTabs({
         //const { active, over } = event
 
         if (allowReorder) {
-          const newOrder = move(tabIds, event)
+          const newOrder = move(sheets, event)
 
           //const oldIndex = tabIds.indexOf(active.id as string) //where(tabs ?? [], tab => tab.id === (active.id as string))[0]!
           //const newIndex = tabIds.indexOf(over.id as string) //where(tabs ?? [], (tab) => tab.id === over.id)[0]! //genesetState.order.indexOf(over.id as string)
@@ -261,7 +261,7 @@ export function ReorderTabs({
           //   return aOrder - bOrder
           // })
 
-          reorderSheets(newOrder)
+          addSheets(newOrder)
         }
 
         setActiveId(null)

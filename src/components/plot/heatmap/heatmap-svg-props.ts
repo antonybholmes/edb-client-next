@@ -233,7 +233,7 @@ export const DEFAULT_HEATMAP_PROPS: IHeatMapDisplayOptions = {
   },
   padding: 10,
   zoom: 1,
-  cmap: 'BWRv2',
+  cmap: 'bwr-v2',
   cells: {
     values: {
       show: false,

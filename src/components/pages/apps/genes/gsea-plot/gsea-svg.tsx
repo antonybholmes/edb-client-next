@@ -558,8 +558,8 @@ function GenesSvg({
     settings.genes.gradient.opacity
   )
   const c4 = settings.genes.neg.value
-  const cmap1 = new ColorMap('pos', [c1, c2])
-  const cmap2 = new ColorMap('neg', [c3, c4])
+  const cmap1 = new ColorMap('pos', 'pos', [c1, c2])
+  const cmap2 = new ColorMap('neg', 'neg', [c3, c4])
 
   //console.log(sortedRankedGenes)
 

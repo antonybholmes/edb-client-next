@@ -135,8 +135,13 @@ function OverlapPage() {
           aria-label={TEXT_OPEN_FILE}
           onClick={() =>
             openFilesDialog({
-              onFileChange: (message, files) => {
-                onTextFileChange(message, files, openFiles)
+              onFileChange: (files) => {
+                onTextFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
+                  openFiles(files)
+                })
               },
             })
           }
@@ -248,7 +253,12 @@ function OverlapPage() {
               allowReorder={true}
               onFileDrop={(files) => {
                 if (files.length > 0) {
-                  onTextFileChange('Open dropped file', files, openOverlapFiles)
+                  onTextFileChange(files, ({ success, files }) => {
+                    if (!success) {
+                      return
+                    }
+                    openOverlapFiles(files)
+                  })
                 }
               }}
             />

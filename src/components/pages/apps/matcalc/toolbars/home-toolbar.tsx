@@ -71,8 +71,11 @@ export function HomeToolbar() {
         <ToolbarOpenFile
           onClick={() => {
             openFilesDialog({
-              onFileChange: (message, files) => {
-                onTextFileChange(message, files, (files) => {
+              onFileChange: (files) => {
+                onTextFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
                   openMatcalcDialog({
                     type: 'open-table-file',
                     payload: { files, callback: openDataFrames },
@@ -162,17 +165,17 @@ export function HomeToolbar() {
           </ToolbarButton>
 
           <ToolbarButton
-            title="GSEA Dot Plot"
+            title="GSEA Bubble Plot"
             onClick={() => {
               openMatcalcDialog({
-                type: 'gsea-dot-plot',
+                type: 'gsea-bubble-plot',
                 payload: {
                   callback: (plot) => _addPlots([plot]),
                 },
               })
             }}
           >
-            GSEA Dot
+            GSEA Bubble
           </ToolbarButton>
         </ToolbarCol>
       </ToolbarTabGroup>

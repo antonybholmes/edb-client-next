@@ -36,8 +36,7 @@ const PLOTS_TAB: ITab = Object.freeze({
 })
 
 export function MatcalcFileTree() {
-  const { present, sheets, plots, version, goto, remove, removeFiles } =
-    useHistory()
+  const { present, version, goto, remove, removeFiles } = useHistory()
 
   const [selectedPanelTab, setSelectedPanelTab] = useState<string>('')
 
@@ -56,7 +55,7 @@ export function MatcalcFileTree() {
     const allPlots: HistoryPlot[] = []
 
     for (const [fi, file] of files.entries()) {
-      const s = getSheets(present, sheets, { file })
+      const s = getSheets(present, { file })
 
       // a file must have at least one sheet
       const sheet = s.length > 1 ? s[1]! : s[0]! // history.sheetMap[step.sheets[0]!]!
@@ -78,7 +77,7 @@ export function MatcalcFileTree() {
         type: 'file',
       }
 
-      const p = getPlots(present, plots, { file })
+      const p = getPlots(present, { file })
       const plotNodes: ITab[] = []
 
       for (const [pi, plot] of p.entries()) {
@@ -91,6 +90,7 @@ export function MatcalcFileTree() {
           onClick: () => {
             setSelectedPanelTab(plot.id)
 
+            console.log('tap plot', { file, sheet, plot })
             goto({ file, sheet, plot })
           },
           onDelete: () => {
@@ -125,7 +125,7 @@ export function MatcalcFileTree() {
 
       tableChildrenTabs.push(fileNode)
 
-      allPlots.push(...getPlots(present, plots, { file }))
+      allPlots.push(...getPlots(present, { file }))
     }
 
     return {
@@ -135,15 +135,7 @@ export function MatcalcFileTree() {
         { ...PLOTS_TAB, children: plotChildrenTabs },
       ],
     }
-  }, [
-    version,
-    files,
-    present,
-    sheets,
-    plots,
-    currentSelection,
-    selectedPanelTab,
-  ])
+  }, [version, files, present, currentSelection, selectedPanelTab])
 
   // decide what to highlight in tree
   useEffect(() => {

@@ -135,7 +135,10 @@ export function DataPanel() {
         <TabbedDataFrames
           onFileDrop={(files) => {
             if (files.length > 0) {
-              onTextFileChange('Open from drag', files, (files) => {
+              onTextFileChange(files, ({ success, files }) => {
+                if (!success) {
+                  return
+                }
                 openMatcalcDialog({
                   type: 'open-table-file',
                   payload: {

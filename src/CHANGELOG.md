@@ -1,9 +1,24 @@
 # Changelog
 
+## 87.4 (Aug, 2026)
+
+### Changed
+
+- Added paste table option to matcalc. Added paste hook.
+- Color map menu now nested.
+- Bubble plot now supports add-hoc sorting.
+- Bug fixes and updates.
+
+
 ## 87.2 (Aug, 2026)
 
 ### Changed
 
+- new color map icon.
+- Colormaps now have id.
+- Added sort options to GSEA bubble.
+- GSEA bubble now has own app.
+- Moved gsea bubble into own app.
 - GSEA dot now has refined tooltips.
 - Added GSEA dot plot tool.
 - Sped up hypergeometric using revised lnbinomial function.

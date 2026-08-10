@@ -205,7 +205,10 @@ export function AnnotationPage() {
             zoom={zoom}
             onFileDrop={(files) => {
               if (files.length > 0) {
-                onTextFileChange('Open from drag', files, (files) => {
+                onTextFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
                   filesToDataFrames(files, {
                     parseOpts: { indexCols: 0 },
                     onSuccess: (tables) => {

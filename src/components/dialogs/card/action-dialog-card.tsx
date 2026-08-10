@@ -59,6 +59,14 @@ export function ActionDialogRow({
   )
 }
 
+export function ActionDialogSeparator() {
+  return (
+    <ActionDialogRow>
+      <div className="border-t border-border w-full my-2" />
+    </ActionDialogRow>
+  )
+}
+
 export function ActionDialogCardContent({
   className,
   children,

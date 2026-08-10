@@ -12,18 +12,17 @@ import { useZoom } from '@/providers/zoom-provider'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { produce } from 'immer'
-import { MESSAGE_CHANNEL } from '../../data/data-panel'
+import { MESSAGE_CHANNEL } from '../../../matcalc/data/data-panel'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
-import { useUpdateEffect } from '@/hooks/update-effect'
-import { useHistory } from '../../history/history-provider/history-provider'
-import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
-import { GseaDotPlotSvg } from './gsea-dot-plot-svg'
-import { GseaDotPropsPanel } from './gsea-dot-props-panel'
-import { useGseaDotContext } from './gsea-dot-provider'
+import { PLOT_ZOOM_CHANNEL } from '../../../matcalc/apps/heatmap/heatmap-panel'
+import { GseaBubblePropsPanel } from './gsea-bubble-props-panel'
+import { useGseaBubbleContext } from './gsea-bubble-provider'
+import { useGseaBubbleSettings } from './gsea-bubble-settings-store'
+import { GseaBubblePlotSvg } from './gsea-bubble-svg'
 
-export function GseaDotPanel() {
+export function GseaBubblePanel() {
   // const { plotsState, plotsDispatch } = useContext(PlotsContext)
 
   // const plot = plotsState.plotMap[plotId]
@@ -32,10 +31,11 @@ export function GseaDotPanel() {
   //   return null
   // }
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
+  const { settings, updateSettings } = useGseaBubbleSettings()
 
-  const { updatePlot } = useHistory()
-  const { plot } = useGseaDotContext()
+  const { zoom, setZoom } = useZoom(PLOT_ZOOM_CHANNEL)
+
+  const { plot } = useGseaBubbleContext()
   const displayProps = plot.props
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
@@ -57,7 +57,7 @@ export function GseaDotPanel() {
         } else {
           openDialog({
             type: 'save-image',
-            payload: { svgRef, name: `volcano` },
+            payload: { svgRef, name: `gsea-bubble` },
           })
         }
       }
@@ -66,10 +66,21 @@ export function GseaDotPanel() {
     }
   }, [messages])
 
-  useUpdateEffect(() => {
-    updatePlot(
-      produce(plot, (draft) => {
-        draft.props.scale = zoom
+  // load saved zoom from settings
+  useEffect(() => {
+    setZoom(settings.scale)
+  }, [settings.scale])
+
+  // when the zoom changes, update the settings
+  useEffect(() => {
+    if (zoom === settings.scale) {
+      return
+    }
+
+    updateSettings(
+      produce(settings, (draft) => {
+        //console.log('Updating plot with zoom:', zoom)
+        draft.scale = zoom
       })
     )
   }, [zoom])
@@ -100,14 +111,14 @@ export function GseaDotPanel() {
       </TabSlideBar> */}
 
       <ResizableSidebar side="right">
-        <ExtScrollCard>
-          <GseaDotPlotSvg
+        <ExtScrollCard className="pb-2">
+          <GseaBubblePlotSvg
             ref={svgRef}
             //displayProps={displayOptions}
             x={displayProps.axes.xaxis.name}
           />
         </ExtScrollCard>
-        <GseaDotPropsPanel />
+        <GseaBubblePropsPanel />
       </ResizableSidebar>
 
       <FooterPortal className="shrink-0 grow-0 justify-end">

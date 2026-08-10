@@ -162,8 +162,13 @@ export function GseaWebPage() {
           onClick={() => {
             openFilesDialog({
               message: TEXT_OPEN_FILE,
-              onFileChange: (message, files) => {
-                onBinaryFileChange(message, files, loadGseaZip)
+              onFileChange: (files) => {
+                onBinaryFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
+                  loadGseaZip(files)
+                })
               },
             })
           }}
@@ -335,7 +340,12 @@ export function GseaWebPage() {
               className="grow h-full"
               onFileDrop={(files) => {
                 if (files.length > 0) {
-                  onBinaryFileChange('Open zip', files, loadGseaZip)
+                  onBinaryFileChange(files, ({ success, files }) => {
+                    if (!success) {
+                      return
+                    }
+                    loadGseaZip(files)
+                  })
                 }
               }}
             >
@@ -348,7 +358,12 @@ export function GseaWebPage() {
               className="grow h-full"
               onFileDrop={(files) => {
                 if (files.length > 0) {
-                  onBinaryFileChange('Open zip', files, loadGseaZip)
+                  onBinaryFileChange(files, ({ success, files }) => {
+                    if (!success) {
+                      return
+                    }
+                    loadGseaZip(files)
+                  })
                 }
               }}
             >

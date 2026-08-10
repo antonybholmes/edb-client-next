@@ -21,9 +21,9 @@ import { KmeansDialog } from './apps/kmeans/kmeans-dialog'
 import { MotifToGeneDialog } from './apps/motifs-to-genes/motif-to-gene-dialog'
 import { VolcanoDialog } from './apps/volcano/volcano-dialog'
 
+import { GseaBubbleDialog } from '../genes/gsea/bubble/gsea-bubble-dialog'
 import { SankeyDialog } from '../sankey/sankey-dialog'
 import { ISankeyPlot } from '../sankey/sankey-provider'
-import { GseaDotDialog } from './apps/gsea-dot/gsea-dot-dialog'
 import { FilterRowsDialog } from './filter-rows-dialog'
 import {
   DataFrameType,
@@ -49,7 +49,7 @@ type DialogTypeMap = {
   'volcano-plot': {
     callback: (plot: HistoryPlot) => void
   }
-  'gsea-dot-plot': {
+  'gsea-bubble-plot': {
     callback: (plot: HistoryPlot) => void
   }
   'box-whiskers': {
@@ -233,13 +233,13 @@ function VolcanoPlotDialogRenderer({
   )
 }
 
-function GseaDotPlotDialogRenderer({
+function GseaBubblePlotDialogRenderer({
   dialog,
   close,
-}: IDialogRenderer<'gsea-dot-plot'>) {
+}: IDialogRenderer<'gsea-bubble-plot'>) {
   const { callback } = dialog.payload
   return (
-    <GseaDotDialog
+    <GseaBubbleDialog
       onResponse={(response, data) => {
         if (response === TEXT_OK && data) {
           callback(data)
@@ -414,8 +414,8 @@ function DialogRenderer({
       return <DotPlotDialogRenderer dialog={dialog} close={close} />
     case 'volcano-plot':
       return <VolcanoPlotDialogRenderer dialog={dialog} close={close} />
-    case 'gsea-dot-plot':
-      return <GseaDotPlotDialogRenderer dialog={dialog} close={close} />
+    case 'gsea-bubble-plot':
+      return <GseaBubblePlotDialogRenderer dialog={dialog} close={close} />
     case 'sankey-plot':
       return <SankeyPlotDialogRenderer dialog={dialog} close={close} />
     case 'box-whiskers':

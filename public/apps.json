@@ -5,9 +5,9 @@
     "color": "#FA8072",
     "version": "20.6.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-14T21:43:25.679Z",
-    "hash": "73413fd3cc9dd4cd189138a867fa28d50efd7f253e5ce84cea465efbac48e963",
-    "build": 850
+    "modified": "2026-08-10T17:36:24.125Z",
+    "hash": "d072b7775666db7e7934c9c15d07d82c62b9f6bd78c0b8d8c1a1f0a32df20bdb",
+    "build": 852
   },
   {
     "name": "Bio Draw",
@@ -24,9 +24,9 @@
     "color": "#20B2AA",
     "version": "20.0.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-15T21:52:36.785Z",
-    "hash": "665184056057154cc1be12460d3081cd654051880531292152e50f8260f5f5d6",
-    "build": 810
+    "modified": "2026-08-10T17:36:24.124Z",
+    "hash": "f32f82bdc94eb44e6c5f602170764dd643df344ce2aa3087ab5f3e6e842ce1d2",
+    "build": 812
   },
   {
     "name": "DNA",
@@ -34,18 +34,28 @@
     "color": "#FF4500",
     "version": "20.6.4",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-02T21:25:15.022Z",
-    "hash": "023a4126873e23c6d6e22c362193b337de58d890b2683dbf549c7fbd9fad7fb0",
-    "build": 820
+    "modified": "2026-08-10T17:36:24.126Z",
+    "hash": "f23f8fa86c2baf4fdcf4fbd715b5c4a312ddf3b61bbd51b79a757e8a458cbc41",
+    "build": 822
   },
   {
     "name": "Get DNA",
     "description": "Get DNA for genomic locations.",
-    "version": "19.0.6",
+    "version": "19.0.8",
     "copyright": "© 2022-2026 Antony Holmes",
-    "modified": "2026-07-01T16:18:39.047Z",
-    "hash": "b88a4bfdfd1a16c380aeaf30d608606b21e12ac16aea682f9dd536c098cb406c",
-    "build": 698
+    "modified": "2026-08-10T17:36:24.126Z",
+    "hash": "e07945cbe6beb4aa73e5a4cfb3fcb3de591e8278a20f999b28430ca92eac6113",
+    "build": 700
+  },
+  {
+    "name": "GSEA Bubble Plot",
+    "description": "GSEA bubble plots.",
+    "color": "#4169E1",
+    "version": "1.0.4",
+    "copyright": "© 2026 Antony Holmes",
+    "modified": "2026-08-10T17:11:30.459Z",
+    "hash": "4c24ac3b1ca5a5933a5b3860e7a7122b45298384290881a2a2211c80aceaa777",
+    "build": 20
   },
   {
     "name": "GSEA Plot",
@@ -53,19 +63,19 @@
     "color": "#ffb366",
     "version": "21.8.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-05T15:34:19.028Z",
-    "hash": "1db12dd8742b23bd63414627a8e34ee159f4d1315b52e8b96ad6582bb3612ee2",
-    "build": 806
+    "modified": "2026-08-10T17:36:24.125Z",
+    "hash": "6087f1641b356aa59c0f905edffb4a3a0d5ee66179e13d0a9922dda995457056",
+    "build": 808
   },
   {
     "name": "GSEA Web",
     "description": "GSEA in a web app.",
     "color": "#4169E1",
-    "version": "3.4.2",
+    "version": "3.4.4",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-07-24T18:02:16.205Z",
-    "hash": "e7cacdd5d7a23d0752f92a0b1ec7c4d0276690b93ba52999e72cb9a5d1670830",
-    "build": 88
+    "modified": "2026-08-10T17:36:24.125Z",
+    "hash": "23d352302f6a6db621c07b8635667c9ad8f1a9244bb00ad200db9d5b34c48cd7",
+    "build": 90
   },
   {
     "name": "History Viewer",
@@ -101,19 +111,19 @@
     "color": "#DA70D6",
     "version": "27.6.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-24T19:09:48.768Z",
-    "hash": "f276f01f5658897988931d5157975923d6b2c2e1c42c6683368e26358cc3f64f",
-    "build": 1090
+    "modified": "2026-08-10T17:28:24.295Z",
+    "hash": "d4239be937d4f9a5e728a1cfeafd0c96cffb735b59dac17f82bf113dff9bf662",
+    "build": 1092
   },
   {
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "48.8.2",
+    "version": "48.8.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-08-06T21:44:29.892Z",
-    "hash": "8d62fb6cf72d9030043867f460b6dd4d7d469f94a48ef05f0510c0e4cbea0f9f",
-    "build": 1892
+    "modified": "2026-08-10T17:36:24.129Z",
+    "hash": "c7bd0ad943379521b94676a784491136765c964f254127619e7c6fc63901d5e0",
+    "build": 1914
   },
   {
     "name": "Motifs",
@@ -131,9 +141,9 @@
     "color": "#ff99cc",
     "version": "30.0.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-24T18:02:16.217Z",
-    "hash": "be164509818ba63e984c59f078c9f76f71e669ec2c2ffc1f38402924b91f39c7",
-    "build": 1092
+    "modified": "2026-08-10T17:28:24.295Z",
+    "hash": "8b286d39521eaf442fd4ac52c68309b55195f06dff5232b99cef600e96d30973",
+    "build": 1094
   },
   {
     "name": "Overlap",
@@ -141,19 +151,19 @@
     "color": "#008080",
     "version": "18.6.8",
     "copyright": "© 2025-2026 Antony Holmes",
-    "modified": "2026-07-24T18:02:16.209Z",
-    "hash": "f601eebd929e56db6164db9db5f8dd2c4c69fac0eb6efd856e32c968c1dba753",
-    "build": 550
+    "modified": "2026-08-10T17:36:24.126Z",
+    "hash": "a9f1ff1aca0106b368f8c6ac0ac88a259ace57a0d19c578395a6a03f41d63c0c",
+    "build": 552
   },
   {
     "name": "Pathway",
     "description": "Pathway enrichment",
     "color": "#6495ED",
-    "version": "36.2.4",
+    "version": "36.2.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-06T13:58:37.420Z",
-    "hash": "ac20197069c1b6461f14ad4b159f7bf1febf30bed565db75d6e9c6d68fed4058",
-    "build": 898
+    "modified": "2026-08-10T17:36:24.125Z",
+    "hash": "7e25a5ce5e090f8832363931179a88c0a9abd476c8ecd04ff69086d3e28e0ca5",
+    "build": 900
   },
   {
     "name": "Rev Comp",
@@ -161,39 +171,39 @@
     "color": "#808080",
     "version": "19.0.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-07-02T21:25:15.022Z",
-    "hash": "d1286ce86b3b8866f6341b7f429a20b7c5400e7e77efb9de84644776d76be20e",
-    "build": 620
+    "modified": "2026-08-10T17:36:24.126Z",
+    "hash": "7ffbf8e1b5c60674a254be156a00a269fe336af847426f12faebd5ae522799a1",
+    "build": 622
   },
   {
     "name": "Sankey",
     "description": "Create Sankey plots.",
     "color": "#ff9900",
-    "version": "1.2.0",
+    "version": "1.2.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-06T21:44:29.893Z",
-    "hash": "5a70e689eac69c47c03a46f76f8afde3e1f784309884ea1ce5543ca861697a13",
-    "build": 58
+    "modified": "2026-08-10T17:28:24.285Z",
+    "hash": "c3c61c762a9b87e73a5134b718eafc22c01d370df5d7f1f94628b4d3eaf447aa",
+    "build": 62
   },
   {
     "name": "Seq Browser",
     "description": "Plot NGS data and make figures.",
     "color": "#FF0000",
-    "version": "32.2.6",
+    "version": "32.2.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-05T22:22:54.925Z",
-    "hash": "7c045cd646d524c2ed8c67c4dcce5137643aaa44770a3c6859d935a92e69d284",
-    "build": 1108
+    "modified": "2026-08-10T17:36:24.127Z",
+    "hash": "8583d9a2735d3f3cde64276cff60104ce70894884236a49cabe2a60eebdf2a41",
+    "build": 1114
   },
   {
     "name": "Single Cell",
     "description": "Explore Single Cell data.",
     "color": "#9966ff",
-    "version": "26.4.8",
+    "version": "26.6.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-06T17:26:28.666Z",
-    "hash": "e8db04022888a078069575d07b2f13ae71e8e8c55eb24e48908f5b019f10cc3f",
-    "build": 828
+    "modified": "2026-08-10T17:36:24.129Z",
+    "hash": "697049fa5944b28c3f33419427e4b9a0f2523607606614f61ba6fa02470369d6",
+    "build": 834
   },
   {
     "name": "Table Viewer",
@@ -220,18 +230,18 @@
     "color": "#FA8072",
     "version": "26.6.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-06T17:26:28.667Z",
-    "hash": "f6ea166e460cb897017cb677c6cc81196b1421df7dd4750af2d8aac8a274aa63",
-    "build": 1012
+    "modified": "2026-08-10T17:28:24.296Z",
+    "hash": "833d3a983bd005e0439ce36151ea129716ef35505897ae7e32fa66811274e4b0",
+    "build": 1014
   },
   {
     "name": "Venn",
     "description": "Make Venn diagrams.",
     "color": "#00008B",
-    "version": "26.4.0",
+    "version": "26.4.2",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-10T02:35:53.177Z",
-    "hash": "09d3cacb29492993ce3fceb0a4c57c476c3ba2e129079c8d8ed0522a43bbc7b9",
-    "build": 876
+    "modified": "2026-08-10T17:28:24.294Z",
+    "hash": "dd43562f823251a6c1f4aa04e838959b9164ffb1aac6b8b6c9a76f5951ced156",
+    "build": 880
   }
 ]

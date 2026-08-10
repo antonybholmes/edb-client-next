@@ -2359,10 +2359,55 @@
         {
           "msg": "GSEA dot now has refined tooltips",
           "date": "2026-08-06T21:44:30.855Z"
+        },
+        {
+          "msg": "Moved gsea bubble into own app",
+          "date": "2026-08-06T23:10:44.866Z"
+        },
+        {
+          "msg": "GSEA bubble now has own app",
+          "date": "2026-08-07T21:41:06.367Z"
+        },
+        {
+          "msg": "Added sort options to GSEA bubble",
+          "date": "2026-08-07T22:29:39.313Z"
+        },
+        {
+          "msg": "Colormaps now have id",
+          "date": "2026-08-08T04:17:40.681Z"
+        },
+        {
+          "msg": "new color map icon",
+          "date": "2026-08-08T04:26:31.603Z"
         }
       ]
     },
     "author": "Antony Holmes",
     "date": "2026-08-04T20:41:33.794Z"
+  },
+  {
+    "version": "87.4",
+    "messages": {
+      "Changed": [
+        {
+          "msg": "Bug fixes and updates.",
+          "date": "2026-08-08T04:33:33.325Z"
+        },
+        {
+          "msg": "Bubble plot now supports add-hoc sorting",
+          "date": "2026-08-09T00:41:28.348Z"
+        },
+        {
+          "msg": "Color map menu now nested",
+          "date": "2026-08-09T01:47:06.764Z"
+        },
+        {
+          "msg": "Added paste table option to matcalc. Added paste hook",
+          "date": "2026-08-10T17:11:31.821Z"
+        }
+      ]
+    },
+    "author": "Antony Holmes",
+    "date": "2026-08-08T04:33:33.325Z"
   }
 ]

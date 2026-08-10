@@ -127,8 +127,12 @@ export function ColormapPropsPanel() {
               openFilesDialog({
                 message: 'Select colormap file to open',
                 fileTypes: ['json'],
-                onFileChange: (message, files) => {
-                  onTextFileChange(message, files, (files) => {
+                onFileChange: (files) => {
+                  onTextFileChange(files, ({ success, files }) => {
+                    if (!success) {
+                      return
+                    }
+
                     openFeatureFiles(files)
                   })
                 },

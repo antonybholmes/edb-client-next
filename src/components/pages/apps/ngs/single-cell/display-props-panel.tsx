@@ -17,7 +17,7 @@ import { SwitchPropRow } from '@/dialogs/switch-prop-row'
 import { produce } from 'immer'
 import { ColorMapMenu } from '../../matcalc/color-map-menu'
 
-import { getColorMap } from '@/lib/color/colormap'
+import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
@@ -445,7 +445,7 @@ export function DisplayPropsPanel() {
                   // store the cmap the user likes
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.cmap = cmap.name
+                      draft.cmap = cmap.id as ColorMapName
                     })
                   )
 

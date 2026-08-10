@@ -71,10 +71,13 @@ export function HomeToolbar() {
         <ToolbarOpenFile
           onClick={() => {
             openFilesDialog({
-              onFileChange: (message, files) => {
-                onTextFileChange(message, files, (files) =>
+              onFileChange: (files) => {
+                onTextFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
                   openDataFrames(files)
-                )
+                })
               },
             })
           }}
@@ -109,8 +112,6 @@ export function HomeToolbar() {
 
       <ToolbarTabGroup className="gap-x-2 mr-1" title="From">
         <ToggleGroup
-          //variant="outline"
-
           value={[fromSpecies]}
           onValueChange={(v) => {
             setFromSpecies(v[0]! as Species)

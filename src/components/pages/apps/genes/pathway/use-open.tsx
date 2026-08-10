@@ -9,8 +9,12 @@ import { useHistory } from '../../matcalc/history/history-provider/history-provi
 export function useOpen() {
   const { openFile } = useHistory()
 
-  function open(message: string, files: FileList | []) {
-    onTextFileChange(message, files, (files) => {
+  function open(files: FileList | []) {
+    onTextFileChange(files, ({ success, files }) => {
+      if (!success) {
+        return
+      }
+
       if (files.length > 0) {
         filesToDataFrames(files, {
           parseOpts: {

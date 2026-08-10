@@ -14,7 +14,7 @@ import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { TEXT_BORDER } from '@/consts'
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { PropRow } from '@/dialogs/prop-row'
-import { COLOR_MAPS } from '@/lib/color/colormap'
+import { COLOR_MAPS, ColorMapName } from '@/lib/color/colormap'
 import { produce } from 'immer'
 import { ColorMapMenu } from '../../../color-map-menu'
 
@@ -52,7 +52,7 @@ export function ColormapSettingsPanel() {
             onChange={(cmap) =>
               updatePlot(
                 produce(plot, (draft) => {
-                  draft.props.cmap = cmap.name
+                  draft.props.cmap = cmap.id as ColorMapName
                 })
               )
             }

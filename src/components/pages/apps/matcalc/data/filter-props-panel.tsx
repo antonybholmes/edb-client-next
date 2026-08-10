@@ -187,7 +187,10 @@ export function FilterPropsPanel() {
             className="grow h-full"
             onFileDrop={(files) => {
               if (files.length > 0) {
-                onTextFileChange('Open filter list', files, (files) => {
+                onTextFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
                   if (files.length > 0) {
                     setText(files[0]!.text)
                   }
@@ -220,8 +223,11 @@ export function FilterPropsPanel() {
               // ripple={false}
               onClick={() =>
                 openFilesDialog({
-                  onFileChange: (message, files) => {
-                    onTextFileChange(message, files, (files) => {
+                  onFileChange: (files) => {
+                    onTextFileChange(files, ({ success, files }) => {
+                      if (!success) {
+                        return
+                      }
                       if (files.length > 0) {
                         setText(files[0]!.text)
                       }

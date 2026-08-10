@@ -12,37 +12,50 @@ import {
 import { NumericalPropRow } from '@/components/dialogs/numerical-prop-row'
 import { TextPropRow } from '@/components/dialogs/text-prop-row'
 import { FillButton } from '@/components/plot/fill-dropdown-menu'
-import { getColorMap } from '@/lib/color/colormap'
+import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
+import { SelectItem, SelectList } from '@/components/shadcn/ui/themed/v2/select'
+import { TEXT_SORT_BY } from '@/consts'
+import { ColorMapName, getColorMap } from '@/lib/color/colormap'
 import { numSort } from '@/lib/math/math'
 import { round } from '@/lib/math/round'
 import { produce } from 'immer'
-import { ColorMapMenu } from '../../color-map-menu'
-import { useHistory } from '../../history/history-provider/history-provider'
-import { useGseaDotContext } from './gsea-dot-provider'
+import { ColorMapMenu } from '../../../matcalc/color-map-menu'
+import { useHistory } from '../../../matcalc/history/history-provider/history-provider'
+import { SORT_BY_ITEMS } from './gsea-bubble-dialog'
+import { useGseaBubbleContext } from './gsea-bubble-provider'
+import { SortBy, useGseaBubbleSettings } from './gsea-bubble-settings-store'
+import { MarginPopover } from './margin-popover'
 
-export function GseaDotPropsPanel() {
+export function GseaBubblePropsPanel() {
   const { updatePlot } = useHistory()
+  const { settings, updateSettings } = useGseaBubbleSettings()
 
-  const { plot } = useGseaDotContext()
+  const { plot } = useGseaBubbleContext()
+
+  if (!plot) {
+    return null
+  }
 
   const displayProps = plot.props
 
   return (
     <PropsPanel>
-      <ScrollAccordion value={['plot', 'p-value', 'size']}>
+      <ScrollAccordion value={['plot', 'p-value', 'bubble', 'size']}>
         <AccordionItem value="plot">
           <AccordionTrigger>Plot</AccordionTrigger>
           <AccordionContent>
             <PropRow title="Width">
               <NumericalInput
-                value={displayProps.axes.xaxis.length}
+                value={settings.axes.x.length}
 
                 limit={[1, 1000]}
                 dp={0}
                 onNumChanged={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.axes.xaxis.length = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      console.log('Updating x-axis length to', v)
+                      draft.axes.x.length = v
                     })
                   )
                 }}
@@ -51,11 +64,11 @@ export function GseaDotPropsPanel() {
 
             <NumericalPropRow
               title="Row Height"
-              value={displayProps.axes.yaxis.rowHeight}
+              value={settings.axes.y.rowHeight}
               onNumChanged={(v) => {
-                updatePlot(
-                  produce(plot, (draft) => {
-                    draft.props.axes.yaxis.rowHeight = v
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.axes.y.rowHeight = v
                   })
                 )
               }}
@@ -91,7 +104,7 @@ export function GseaDotPropsPanel() {
                   )
                 }}
               >
-                -
+                <span>to</span>
               </DoubleNumericalInput>
             </PropRow>
 
@@ -99,13 +112,13 @@ export function GseaDotPropsPanel() {
               <FillButton
                 colors={[
                   {
-                    color: displayProps.border.value,
-                    show: displayProps.border.show,
+                    color: settings.border.value,
+                    show: settings.border.show,
                     onColorChange: ({ color, show }) =>
-                      updatePlot(
-                        produce(plot, (draft) => {
-                          draft.props.border.value = color
-                          draft.props.border.show = show
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.border.value = color
+                          draft.border.show = show
                         })
                       ),
                   },
@@ -113,20 +126,22 @@ export function GseaDotPropsPanel() {
               />
             </PropRow>
 
-            <PropRow title="Left Margin">
-              <NumericalInput
-                value={displayProps.margin.left}
+            <PropRow title="Margins">
+              {/* <NumericalInput
+                value={settings.margin.left}
 
                 limit={[1, 1000]}
                 dp={0}
                 onNumChanged={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.margin.left = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.margin.left = v
                     })
                   )
                 }}
-              />
+              /> */}
+
+              <MarginPopover />
             </PropRow>
           </AccordionContent>
         </AccordionItem>
@@ -150,15 +165,14 @@ export function GseaDotPropsPanel() {
             <PropRow title="Max">
               <NumericalInput
                 id="size"
-                value={displayProps.p.range[1]}
+                value={settings.p.range[1]}
                 placeholder="Size..."
                 dp={0}
                 limit={[1, 1000]}
-                className="w-16 rounded-theme"
                 onNumChanged={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.p.range[1] = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.p.range[1] = v
                     })
                   )
                 }}
@@ -168,12 +182,12 @@ export function GseaDotPropsPanel() {
             <PropRow title="Colormap">
               <ColorMapMenu
                 align="end"
-                cmap={getColorMap(displayProps.p.cmap)} // COLOR_MAPS[settings.cmap]!}
+                cmap={getColorMap(settings.p.cmap)} // COLOR_MAPS[settings.cmap]!}
                 onChange={(cmap) => {
                   // store the cmap the user likes
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.p.cmap = cmap.name
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.p.cmap = cmap.id as ColorMapName
                     })
                   )
                 }}
@@ -182,65 +196,99 @@ export function GseaDotPropsPanel() {
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="size">
-          <AccordionTrigger>Size</AccordionTrigger>
+        <AccordionItem value="bubble">
+          <AccordionTrigger>Bubbles</AccordionTrigger>
           <AccordionContent>
-            {/* <TextPropRow
-              title="Label"
-              value={displayProps.size.label}
-              onTextChange={(v) => {
-                updatePlot(
-                  produce(plot, (draft) => {
-                    draft.props.size.label = v
-                  })
-                )
-              }}
-              w="md"
-            /> */}
-
-            <PropRow title="Dot Radius">
+            <PropRow title={TEXT_SORT_BY}>
+              <SelectList
+                items={SORT_BY_ITEMS}
+                onValueChange={(v) =>
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.sortBy = v as SortBy
+                    })
+                  )
+                }
+                value={settings.sortBy}
+                w="sm"
+              >
+                {SORT_BY_ITEMS.map((item) => (
+                  <SelectItem value={item.value} key={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectList>
+            </PropRow>
+            <PropRow title="Radius">
               <NumericalInput
                 id="size"
-                value={displayProps.dots.size}
+                value={settings.bubbles.size}
                 placeholder="Size..."
                 dp={0}
-                className="w-16 rounded-theme"
+
                 onNumChanged={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.dots.size = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.bubbles.size = v
                     })
                   )
                 }}
               />
+            </PropRow>
+            <PropRow title="Opacity">
+              <PercentSlider
+                value={settings.bubbles.fill.opacity}
+                disabled={false}
+                min={0}
+                max={1}
+                step={0.05}
 
-              {/* <FillButton
+                onValueChange={(values) => {
+                  const v = Array.isArray(values) ? values[0] : values
+
+                  const newSettings = produce(settings, (draft) => {
+                    draft.bubbles.fill.opacity = v
+                  })
+
+                  updateSettings(newSettings)
+                }}
+              />
+            </PropRow>
+            <PropRow title="Border">
+              <OutlineButton
                 colors={[
                   {
-                    color: displayProps.dots.color,
-                    onColorChange: ({ color }) =>
-                      updatePlot(
-                        produce(plot, (draft) => {
-                          draft.props.dots.color = color
+                    color: settings.bubbles.stroke.value,
+                    show: settings.bubbles.stroke.show,
+                    onColorChange: ({ color, show }) =>
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.bubbles.stroke.value = color
+                          draft.bubbles.stroke.show = show
                         })
                       ),
                   },
                 ]}
-              /> */}
+              />
             </PropRow>
+          </AccordionContent>
+        </AccordionItem>
 
+        <AccordionItem value="size">
+          <AccordionTrigger>Size</AccordionTrigger>
+          <AccordionContent>
             <PropRow title="Max">
               <NumericalInput
                 id="size"
-                value={displayProps.size.maxSize}
+                value={settings.size.maxSize}
                 placeholder="Size..."
                 dp={0}
                 limit={[1, 1000]}
-                className="w-16 rounded-theme"
+
                 onNumChanged={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.size.maxSize = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.size.maxSize = v
                     })
                   )
                 }}
@@ -249,11 +297,11 @@ export function GseaDotPropsPanel() {
 
             <TextPropRow
               title="Legend"
-              value={displayProps.legend.dots.sizes.join(', ')}
+              value={settings.legend.bubbles.sizes.join(', ')}
               onTextChanged={(v) => {
-                updatePlot(
-                  produce(plot, (draft) => {
-                    draft.props.legend.dots.sizes = numSort(
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.legend.bubbles.sizes = numSort(
                       v.split(',').map((x) => parseFloat(x.trim()))
                     )
                   })

@@ -483,8 +483,11 @@ export function GroupPropsPanel() {
               onClick={() =>
                 openFilesDialog({
                   fileTypes: ['json', 'cls'],
-                  onFileChange: (message, files) => {
-                    onTextFileChange(message, files, (files) => {
+                  onFileChange: (files) => {
+                    onTextFileChange(files, ({ success, files }) => {
+                      if (!success) {
+                        return
+                      }
                       openGroupFiles(files)
                     })
                   },
@@ -567,7 +570,12 @@ export function GroupPropsPanel() {
           className="grow h-full"
           onFileDrop={(files) => {
             if (files.length > 0) {
-              onTextFileChange('Open dropped file', files, openGroupFiles)
+              onTextFileChange(files, ({ success, files }) => {
+                if (!success) {
+                  return
+                }
+                openGroupFiles(files)
+              })
             }
           }}
         >

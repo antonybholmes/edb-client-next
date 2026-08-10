@@ -297,7 +297,12 @@ export function PathwayPage() {
               //}}
               onFileDrop={(files) => {
                 if (files.length > 0) {
-                  onTextFileChange('Open dropped file', files, openFiles)
+                  onTextFileChange(files, ({ success, files }) => {
+                    if (!success) {
+                      return
+                    }
+                    openFiles(files)
+                  })
                 }
               }}
               className="mx-2"

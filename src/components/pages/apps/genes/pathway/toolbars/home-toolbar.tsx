@@ -47,8 +47,11 @@ export function HomeToolbar() {
 
   const df = sheets[0] as AnnotationDataFrame
 
-  function _open(message: string, files: FileList | []) {
-    onTextFileChange(message, files, (files) => {
+  function _open(files: FileList | []) {
+    onTextFileChange(files, ({ success, files }) => {
+      if (!success) {
+        return
+      }
       if (files.length > 0) {
         filesToDataFrames(files, {
           parseOpts: {

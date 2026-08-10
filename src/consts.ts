@@ -95,6 +95,7 @@ export const TEXT_SAVE_IMAGE = 'Save Image'
 export const TEXT_SAVE_TABLE = 'Save Table'
 export const TEXT_REMOVE_FROM_CART = 'Remove from Cart'
 export const TEXT_SORT_BY = 'Sort By'
+export const TEXT_PLOT = 'Plot'
 
 export const SVG_CRISP_EDGES = 'crispEdges'
 

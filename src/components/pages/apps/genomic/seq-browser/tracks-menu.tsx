@@ -159,8 +159,11 @@ export function NewTrackMenu() {
         onClick={() => {
           openFilesDialog({
             fileTypes: ['json'],
-            onFileChange: (message, files) =>
-              onTextFileChange(message, files, (files) => {
+            onFileChange: (files) =>
+              onTextFileChange(files, ({ success, files }) => {
+                if (!success) {
+                  return
+                }
                 openTrackFiles(files)
               }),
           })

@@ -31,8 +31,13 @@ export function HomeToolbar() {
         <ToolbarOpenFile
           onClick={() => {
             openFilesDialog({
-              onFileChange: (message, files) => {
-                onBinaryFileChange(message, files, loadGseaZip)
+              onFileChange: (files) => {
+                onBinaryFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
+                  loadGseaZip(files)
+                })
               },
             })
           }}

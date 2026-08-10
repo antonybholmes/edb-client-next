@@ -144,8 +144,13 @@ export function LocationsPropsPanel() {
           onClick={() => {
             openFilesDialog({
               fileTypes: ['json'],
-              onFileChange: (message, files) =>
-                onTextFileChange(message, files, openLocationFiles),
+              onFileChange: (files) =>
+                onTextFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
+                  openLocationFiles(files)
+                }),
             })
           }}
           title="Open Locations"
@@ -177,7 +182,12 @@ export function LocationsPropsPanel() {
         className="grow h-full"
         onFileDrop={(files) => {
           if (files.length > 0) {
-            onTextFileChange('Open dropped file', files, openLocationFiles)
+            onTextFileChange(files, ({ success, files }) => {
+              if (!success) {
+                return
+              }
+              openLocationFiles(files)
+            })
           }
         }}
       >

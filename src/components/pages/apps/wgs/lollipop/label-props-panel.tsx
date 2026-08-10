@@ -87,8 +87,11 @@ export function LabelPropsPanel({ ref }: IDivProps) {
               onClick={() => {
                 openFilesDialog({
                   fileTypes: ['json'],
-                  onFileChange: (message, files) =>
-                    onTextFileChange(message, files, (files) => {
+                  onFileChange: (files) =>
+                    onTextFileChange(files, ({ success, files }) => {
+                      if (!success) {
+                        return
+                      }
                       openLabelFiles(files)
                     }),
                 })

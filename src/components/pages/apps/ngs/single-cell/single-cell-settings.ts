@@ -53,7 +53,7 @@ export interface IGeneSet extends IDBEntity {
   genes: IScrnaGene[]
 }
 
-const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:v30`
+const SETTINGS_KEY = `${config.appId}:app:${getAppName(APP_INFO.name)}:v32`
 
 // GEX - each plot use its own scale, Global GEX - all plots use the same scale, Cluster - draw clusters rather than GEX
 
@@ -201,7 +201,7 @@ export const DEFAULT_SETTINGS: ISingleCellSettings = {
   },
   //globalGexRange: [0, 10],
 
-  cmap: 'BWRv2',
+  cmap: 'bwr-v2',
   //mode: 'clusters',
   umap: {
     clusters: {

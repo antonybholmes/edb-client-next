@@ -258,8 +258,11 @@ export function GenesetPropsPanel() {
                 openFilesDialog({
                   message: 'Select gene set file to open',
                   fileTypes: ['json', 'tsv', 'txt', 'gmx', 'gmt'],
-                  onFileChange: (message, files) => {
-                    onTextFileChange(message, files, (files) => {
+                  onFileChange: (files) => {
+                    onTextFileChange(files, ({ success, files }) => {
+                      if (!success) {
+                        return
+                      }
                       openGenesetFiles(files)
                     })
                   },
@@ -315,7 +318,12 @@ export function GenesetPropsPanel() {
           className="grow h-full"
           onFileDrop={(files) => {
             if (files.length > 0) {
-              onTextFileChange('Open dropped file', files, openGenesetFiles)
+              onTextFileChange(files, ({ success, files }) => {
+                if (!success) {
+                  return
+                }
+                openGenesetFiles(files)
+              })
             }
           }}
         >

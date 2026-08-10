@@ -154,8 +154,13 @@ export function DNAPage() {
           aria-label={TEXT_OPEN_FILE}
           onClick={() => {
             openFilesDialog({
-              onFileChange: (message, files) => {
-                onTextFileChange(message, files, openFiles)
+              onFileChange: (files) => {
+                onTextFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
+                  openFiles(files)
+                })
               },
             })
           }}

@@ -113,7 +113,7 @@ export function arrayBufferToBase64(buffer: ArrayBuffer): string {
 interface IProps {
   message?: string
   //onOpenChange?: (message: string) => void
-  onFileChange?: (message: string, files: FileList | []) => void
+  onFileChange?: (files: FileList | [], message: string) => void
   dirMode?: boolean
   multiple?: boolean
   fileTypes?: string[] | undefined
@@ -144,12 +144,12 @@ export function openFilesDialog({
   input.accept = !dirMode ? getFileTypes(fileTypes) : ''
 
   input.onchange = () => {
-    onFileChange?.(message, input.files ?? [])
+    onFileChange?.(input.files ?? [], message)
     input.remove()
   }
 
   input.oncancel = () => {
-    onFileChange?.(message, [])
+    onFileChange?.([], message)
     input.remove()
   }
 
@@ -268,14 +268,18 @@ export async function readFiles(files: FileList | File[]): Promise<string[]> {
   return fileContents // Return an array with all file contents
 }
 
+type TextFileResult = {
+  success: boolean
+  message?: string
+  files: ITextFileOpen[]
+}
+
 export async function onTextFileChange(
-  _message: string,
   files: File[] | FileList | null,
-  onSuccess: (files: ITextFileOpen[]) => void,
-  onFailure?: (message: string, files: File[] | FileList | null) => void
+  result: (res: TextFileResult) => void
 ) {
   if (!files || files.length === 0) {
-    onFailure?.('no files', files)
+    result({ success: false, message: 'no files', files: [] })
     return
   }
 
@@ -290,17 +294,48 @@ export async function onTextFileChange(
     ext: file.name.split('.').pop() || '',
   }))
 
-  onSuccess(ret)
+  result({ success: true, message: '', files: ret })
+}
+
+/**
+ * Handle pasted text as a text file. The easiest way to integrate pasted text
+ * into the file handling system is to treat it as a text file and pass it through
+ * the same processing pipeline as other text files.
+ *
+ * @param text
+ * @param result
+ * @returns
+ */
+export async function onTextFilePaste(
+  text: string,
+  result: (res: TextFileResult) => void
+) {
+  if (!text) {
+    result({ success: false, message: 'no files', files: [] })
+    return
+  }
+
+  const file = {
+    name: 'pasted.txt',
+    text,
+    ext: 'txt',
+  }
+
+  result({ success: true, message: '', files: [file] })
+}
+
+type BinaryFileResult = {
+  success: boolean
+  message?: string
+  files: IBinaryFileOpen[]
 }
 
 export function onBinaryFileChange(
-  _message: string,
   files: File[] | FileList | null,
-  onSuccess: (files: IBinaryFileOpen[]) => void,
-  onFailure?: (message: string, files: File[] | FileList | null) => void
+  result: (res: BinaryFileResult) => void
 ) {
   if (!files || files.length === 0) {
-    onFailure?.('no files', files)
+    result({ success: false, message: 'no files', files: [] })
     return
   }
 
@@ -311,25 +346,28 @@ export function onBinaryFileChange(
     const fileReader = new FileReader()
 
     fileReader.onload = (e) => {
-      const result = e.target?.result
+      const bufferRes = e.target?.result
 
-      if (result) {
+      if (bufferRes) {
         // since this seems to block rendering, delay by a second so that the
         // animation has time to start to indicate something is happening and
         // then finish processing the file
 
-        const buffer: ArrayBuffer = result as ArrayBuffer
+        const buffer: ArrayBuffer = bufferRes as ArrayBuffer
 
         const data = arrayBufferToBytes(buffer)
 
-        onSuccess([{ name, data, ext: name.split('.').pop() || '' }])
+        result({
+          success: true,
+          files: [{ name, data, ext: name.split('.').pop() || '' }],
+        })
       }
     }
 
     fileReader.readAsArrayBuffer(file)
   } catch (err) {
     if (err instanceof Error) {
-      onFailure?.(err.message, files)
+      result({ success: false, message: err.message, files: [] })
     }
   }
 }

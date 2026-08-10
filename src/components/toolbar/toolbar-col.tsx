@@ -17,7 +17,7 @@ export const TOOLBAR_COL_CLS = `flex justify-start
 export function ToolbarCol({
   ref,
   className,
-  gap = 'gap-x-0.5',
+  gap = 'gap-x-1',
   children,
   ...props
 }: IDivProps & { gap?: string }) {

@@ -6,6 +6,7 @@ import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 
 import {
   onTextFileChange,
+  onTextFilePaste,
   openFilesDialog,
 } from '@/components/pages/open-files'
 import {
@@ -77,16 +78,17 @@ import { OptsSidebarMenu } from './data/opts-sidebar-menu'
 import { useHistory } from './history/history-provider/history-provider'
 
 import { useTabs } from '@/components/tabs/tab-provider'
+import { usePasteText } from '@/hooks/paste-text'
 import { makeUuid } from '@/lib/id'
 import { Box } from 'lucide-react'
+import { GseaBubblePanel } from '../genes/gsea/bubble/gsea-bubble-panel'
+import { GseaBubbleProvider } from '../genes/gsea/bubble/gsea-bubble-provider'
 import { SankeyPanel } from '../sankey/sankey-panel'
 import { SankeyProvider } from '../sankey/sankey-provider'
 import { BoxPlotPanel } from './apps/boxplot/boxplot-panel'
 import { BoxPlotProvider } from './apps/boxplot/boxplot-provider'
 import { ExtGseaPanel } from './apps/ext-gsea/ext-gsea-panel'
 import { ExtGseaProvider } from './apps/ext-gsea/ext-gsea-provider'
-import { GseaDotPanel } from './apps/gsea-dot/gsea-dot-panel'
-import { GseaDotProvider } from './apps/gsea-dot/gsea-dot-provider'
 import {
   useCurrentSelections,
   useCurrentSheets,
@@ -150,11 +152,11 @@ function plotElem(plot: HistoryPlot): ReactElement {
           <VolcanoPanel />
         </VolcanoProvider>
       )
-    case 'gsea-dot-plot':
+    case 'gsea-bubble-plot':
       return (
-        <GseaDotProvider plot={plot}>
-          <GseaDotPanel />
-        </GseaDotProvider>
+        <GseaBubbleProvider plot={plot}>
+          <GseaBubblePanel />
+        </GseaBubbleProvider>
       )
     case 'box':
       return (
@@ -316,8 +318,8 @@ export function MatcalcPage() {
     //   table.setName('Deseq Test') as AnnotationDataFrame,
     // ])
 
-    openFile(`GSEA Dot Test`, {
-      sheets: [table.setName('GSEA Dot Test') as AnnotationDataFrame],
+    openFile(`GSEA Bubble`, {
+      sheets: [table.setName('GSEA Bubble') as AnnotationDataFrame],
     })
   }
 
@@ -397,13 +399,20 @@ export function MatcalcPage() {
     })
   }
 
-  // function makeLollipop() {
-  //   const plot = newLollipopPlot('Lollipop', {
-  //     main: sheet!.df as AnnotationDataFrame,
-  //   })
+  usePasteText((text) => {
+    console.log('Pasted text:', text)
 
-  //   _addPlots([plot])
-  // }
+    onTextFilePaste(text, ({ success, files }) => {
+      if (!success) {
+        return
+      }
+
+      openMatcalcDialog({
+        type: 'open-table-file',
+        payload: { files, callback: openDataFrames },
+      })
+    })
+  })
 
   const fileMenuTabs: ITab[] = [
     {
@@ -415,8 +424,12 @@ export function MatcalcPage() {
           onClick={() => {
             openFilesDialog({
               fileTypes: ['json', 'cls'],
-              onFileChange: (message, files) => {
-                onTextFileChange(message, files, (files) => {
+              onFileChange: (files) => {
+                onTextFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
+
                   openMatcalcDialog({
                     type: 'open-table-file',
                     payload: { files, callback: openDataFrames },
@@ -569,7 +582,7 @@ export function MatcalcPage() {
               Box
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => loadGseaDotTestData()}>
-              GSEA Dot
+              GSEA Bubble
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
