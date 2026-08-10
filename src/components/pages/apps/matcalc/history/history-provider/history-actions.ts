@@ -916,6 +916,8 @@ function handleGoto(
         draft.currentFile = draft.files.find((f) => f.id === file)!
       }
 
+      //console.log('aha', sheet, 'file', file)
+
       if (plot) {
         if (draft.plots[file].some((p) => p.id === plot)) {
           draft.currentPlot = draft.plots[file].filter((p) => p.id === plot)[0]
@@ -923,7 +925,9 @@ function handleGoto(
         }
       } else {
         if (draft.sheets[file]?.some((s) => s.id === sheet)) {
-          //draft.currentSheet = sheet
+          draft.currentSheet = draft.sheets[file].filter(
+            (s) => s.id === sheet
+          )[0]
           draft.currentSelections = [{ type: 'sheet', id: sheet }]
         }
       }
