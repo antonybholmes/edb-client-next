@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Added paste table option to matcalc. Added paste hook.
 - Color map menu now nested.
 - Bubble plot now supports add-hoc sorting.
 - Bug fixes and updates.

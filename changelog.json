@@ -2400,6 +2400,10 @@
         {
           "msg": "Color map menu now nested",
           "date": "2026-08-09T01:47:06.764Z"
+        },
+        {
+          "msg": "Added paste table option to matcalc. Added paste hook",
+          "date": "2026-08-10T17:11:31.821Z"
         }
       ]
     },

@@ -72,7 +72,7 @@ export function ColorMapMenuContent({
           })} */}
 
       {COLOR_MAP_MENU.map((group) => (
-        <DropdownMenuSub>
+        <DropdownMenuSub key={group.label}>
           <DropdownMenuSubTrigger>{group.label}</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuContent side="right">

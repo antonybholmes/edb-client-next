@@ -51,11 +51,11 @@
     "name": "GSEA Bubble Plot",
     "description": "GSEA bubble plots.",
     "color": "#4169E1",
-    "version": "1.0.2",
+    "version": "1.0.4",
     "copyright": "© 2026 Antony Holmes",
-    "modified": "2026-08-10T03:41:55.652Z",
-    "hash": "b8df96a1c388994178b2a009397d35d53db1ed1094ec94ccc33152ce18f9a1ca",
-    "build": 18
+    "modified": "2026-08-10T17:11:30.459Z",
+    "hash": "4c24ac3b1ca5a5933a5b3860e7a7122b45298384290881a2a2211c80aceaa777",
+    "build": 20
   },
   {
     "name": "GSEA Plot",
@@ -119,11 +119,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "48.8.4",
+    "version": "48.8.6",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-08-10T03:41:55.661Z",
-    "hash": "934a952602055bcaee6ff302929e38c532e5aca4f9b05011c358622232acf20f",
-    "build": 1908
+    "modified": "2026-08-10T17:11:30.463Z",
+    "hash": "a4d29d1cd7af8ed3def462a58ee535a8147c61e129bf3a07d37ea6a7f3b19ebd",
+    "build": 1910
   },
   {
     "name": "Motifs",
@@ -189,11 +189,11 @@
     "name": "Seq Browser",
     "description": "Plot NGS data and make figures.",
     "color": "#FF0000",
-    "version": "32.2.6",
+    "version": "32.2.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-05T22:22:54.925Z",
-    "hash": "7c045cd646d524c2ed8c67c4dcce5137643aaa44770a3c6859d935a92e69d284",
-    "build": 1108
+    "modified": "2026-08-10T17:11:30.461Z",
+    "hash": "aa5a3f76622325af9f5c4a290add05c38b66ac6e3d97182135a43830841e11a2",
+    "build": 1110
   },
   {
     "name": "Single Cell",
@@ -240,8 +240,8 @@
     "color": "#00008B",
     "version": "26.4.0",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-07-10T02:35:53.177Z",
-    "hash": "09d3cacb29492993ce3fceb0a4c57c476c3ba2e129079c8d8ed0522a43bbc7b9",
-    "build": 876
+    "modified": "2026-08-10T17:11:30.464Z",
+    "hash": "ccdb2fcbf7a14aae9f77ea9d4fe8599bfd4937c72c1ec946456d154bbded061b",
+    "build": 878
   }
 ]

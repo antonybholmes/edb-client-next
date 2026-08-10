@@ -2,9 +2,9 @@
   "name": "GSEA Bubble Plot",
   "description": "GSEA bubble plots.",
   "color": "#4169E1",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
-  "modified": "2026-08-10T03:41:55.652Z",
-  "hash": "b8df96a1c388994178b2a009397d35d53db1ed1094ec94ccc33152ce18f9a1ca",
-  "build": 18
+  "modified": "2026-08-10T17:11:30.459Z",
+  "hash": "4c24ac3b1ca5a5933a5b3860e7a7122b45298384290881a2a2211c80aceaa777",
+  "build": 20
 }

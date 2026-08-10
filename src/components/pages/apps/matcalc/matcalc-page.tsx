@@ -6,6 +6,7 @@ import { DataFrameReader } from '@/lib/dataframe/dataframe-reader'
 
 import {
   onTextFileChange,
+  onTextFilePaste,
   openFilesDialog,
 } from '@/components/pages/open-files'
 import {
@@ -77,6 +78,7 @@ import { OptsSidebarMenu } from './data/opts-sidebar-menu'
 import { useHistory } from './history/history-provider/history-provider'
 
 import { useTabs } from '@/components/tabs/tab-provider'
+import { usePaste } from '@/hooks/paste'
 import { makeUuid } from '@/lib/id'
 import { Box } from 'lucide-react'
 import { GseaBubblePanel } from '../genes/gsea/bubble/gsea-bubble-panel'
@@ -397,13 +399,20 @@ export function MatcalcPage() {
     })
   }
 
-  // function makeLollipop() {
-  //   const plot = newLollipopPlot('Lollipop', {
-  //     main: sheet!.df as AnnotationDataFrame,
-  //   })
+  usePaste((text) => {
+    console.log('Pasted text:', text)
 
-  //   _addPlots([plot])
-  // }
+    onTextFilePaste(text, ({ success, files }) => {
+      if (!success) {
+        return
+      }
+
+      openMatcalcDialog({
+        type: 'open-table-file',
+        payload: { files, callback: openDataFrames },
+      })
+    })
+  })
 
   const fileMenuTabs: ITab[] = [
     {
@@ -415,8 +424,12 @@ export function MatcalcPage() {
           onClick={() => {
             openFilesDialog({
               fileTypes: ['json', 'cls'],
-              onFileChange: (message, files) => {
-                onTextFileChange(message, files, (files) => {
+              onFileChange: (files) => {
+                onTextFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
+
                   openMatcalcDialog({
                     type: 'open-table-file',
                     payload: { files, callback: openDataFrames },

@@ -447,8 +447,13 @@ function VennPage() {
           aria-label="Open file on your computer"
           onClick={() => {
             openFilesDialog({
-              onFileChange: (message, files) =>
-                onTextFileChange(message, files, openFiles),
+              onFileChange: (files) =>
+                onTextFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
+                  openFiles(files)
+                }),
             })
           }}
         >
