@@ -136,7 +136,10 @@ export function AddLocalBedFilesDialog({ callback, onCancel }: IProps) {
         className="grow h-full"
         onFileDrop={(files) => {
           if (files.length > 0) {
-            onTextFileChange('Open filter list', files, (files) => {
+            onTextFileChange(files, ({ success, files }) => {
+              if (!success) {
+                return
+              }
               if (files.length > 0) {
                 setName(files.map((f) => f.name).join(', '))
                 setLines(files.map((f) => textToLines(f.text)))

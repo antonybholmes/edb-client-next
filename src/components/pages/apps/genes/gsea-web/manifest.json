@@ -2,9 +2,9 @@
   "name": "GSEA Web",
   "description": "GSEA in a web app.",
   "color": "#4169E1",
-  "version": "3.4.2",
+  "version": "3.4.4",
   "copyright": "(C) ${START_YEAR:2026} Antony Holmes",
-  "modified": "2026-07-24T18:02:16.205Z",
-  "hash": "e7cacdd5d7a23d0752f92a0b1ec7c4d0276690b93ba52999e72cb9a5d1670830",
-  "build": 88
+  "modified": "2026-08-10T17:36:24.125Z",
+  "hash": "23d352302f6a6db621c07b8635667c9ad8f1a9244bb00ad200db9d5b34c48cd7",
+  "build": 90
 }

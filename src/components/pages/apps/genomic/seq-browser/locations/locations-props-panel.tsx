@@ -182,7 +182,12 @@ export function LocationsPropsPanel() {
         className="grow h-full"
         onFileDrop={(files) => {
           if (files.length > 0) {
-            onTextFileChange('Open dropped file', files, openLocationFiles)
+            onTextFileChange(files, ({ success, files }) => {
+              if (!success) {
+                return
+              }
+              openLocationFiles(files)
+            })
           }
         }}
       >

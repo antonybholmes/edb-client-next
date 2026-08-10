@@ -66,8 +66,11 @@ export function HomeToolbar() {
         <ToolbarOpenFile
           onClick={() => {
             openFilesDialog({
-              onFileChange: (message, files) => {
-                onTextFileChange(message, files, (files) => {
+              onFileChange: (files) => {
+                onTextFileChange(files, ({ success, files }) => {
+                  if (!success) {
+                    return
+                  }
                   updateSettings(
                     produce(settings, (draft) => {
                       draft.text = files[0]!.text
