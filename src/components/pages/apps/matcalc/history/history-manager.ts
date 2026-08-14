@@ -228,13 +228,6 @@ export function findNearestSnapshot<T>(
   }
 }
 
-/**
- * Finds the index of a history entry by its index, id or name.
- *
- * @param history The history array.
- * @param step The index, id, or name of the history entry to find.
- * @returns The index of the history entry, or -1 if not found.
- */
 export function findHistoryEntry<T>(
   history: IHistoryEntry<T>[],
   step: number | string

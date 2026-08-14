@@ -111,9 +111,7 @@ export interface ISingleCellSettings extends IScatterDisplayOptions {
     axes: { xaxis: { length: number }; yaxis: { length: number } }
   }
   umap: { clusters: { show: boolean; roundel: IScrnaClusterRoundel } }
-  //mode: PlotMode
-
-  //globalGexRange: ILim
+  cmap: string
   legend: ILegend
   axes: {
     xaxis: IDisplayAxis
@@ -235,6 +233,7 @@ export const DEFAULT_SETTINGS: ISingleCellSettings = {
   },
   genome: { ...GENOMES[0]! },
   search: '',
+  scale: 1,
 }
 
 export interface ISingleCellSettingsStore extends ISingleCellSettings {
