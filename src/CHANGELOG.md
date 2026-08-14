@@ -4,6 +4,7 @@
 
 ### Changed
 
+- volcano now uses p-value thresholds in normal scale, but converts between linear and log space for user.
 - Added paste table option to matcalc. Added paste hook.
 - Color map menu now nested.
 - Bubble plot now supports add-hoc sorting.

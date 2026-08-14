@@ -62,17 +62,18 @@ export function VolcanoProvider({
   //   return { x: xdata, y: ydata }
   // }, [sheet, plot.props.axes.xaxis.name, displayProps.axes.yaxis.name])
 
+  const thresholdLogP = settings.preprocess.applyMinusLog10P
+    ? -Math.log10(displayProps.pvalue.threshold)
+    : displayProps.pvalue.threshold
+
   function getShouldLabel(logFc: number, logP: number): boolean {
-    if (displayProps!.logP.show && settings!.logFc.show) {
-      if (
-        logP > displayProps!.logP.threshold &&
-        Math.abs(logFc) > settings!.logFc.threshold
-      ) {
+    if (displayProps!.pvalue.show && settings!.logFc.show) {
+      if (logP > thresholdLogP && Math.abs(logFc) > settings!.logFc.threshold) {
         return true
       }
     } else {
       if (
-        (displayProps!.logP.show && logP > displayProps!.logP.threshold) ||
+        (displayProps!.pvalue.show && logP > thresholdLogP) ||
         (settings!.logFc.show && Math.abs(logFc) > settings!.logFc.threshold)
       ) {
         return true
@@ -94,7 +95,13 @@ export function VolcanoProvider({
       .map((l) => l.toString())
 
     return values
-  }, [volcano.log2foldChanges, volcano.logpvalues, displayProps, volcano.ids])
+  }, [
+    volcano.log2foldChanges,
+    volcano.logpvalues,
+    displayProps,
+    volcano.ids,
+    thresholdLogP,
+  ])
 
   const displayLabels = useMemo(
     () => (settings.labels.auto ? highlightedLabels : manualLabels),

@@ -1,5 +1,3 @@
-import { useEffect, useRef } from 'react'
-
 import {
   DEFAULT_VOLCANO_PROPS,
   VolcanoPlotSvg,
@@ -11,6 +9,8 @@ import { findCol, type BaseDataFrame } from '@/lib/dataframe/base-dataframe'
 import { getNumCol } from '@/lib/dataframe/dataframe-utils'
 import { downloadSvgAutoFormat } from '@/lib/image-utils'
 import { ZoomSlider } from '@/toolbar/zoom-slider'
+import { useEffect, useRef } from 'react'
+import { useVolcanoSettings } from './volcano-settings-store'
 
 import { range } from '@/lib/math/range'
 
@@ -26,8 +26,6 @@ import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { ExtScrollCard } from '@/components/ext-scroll-card/ext-scroll-card'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
-import { useUpdateEffect } from '@/hooks/update-effect'
-import { useHistory } from '../../history/history-provider/history-provider'
 import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 import { VolcanoPropsPanel } from './volcano-props-panel'
 import { useVolcanoContext } from './volcano-provider'
@@ -76,10 +74,10 @@ export function VolcanoPanel() {
   //   return null
   // }
 
-  const { zoom } = useZoom(PLOT_ZOOM_CHANNEL)
+  const { zoom, setZoom } = useZoom(PLOT_ZOOM_CHANNEL)
 
-  const { updatePlot } = useHistory()
   const { plot } = useVolcanoContext()
+  const { settings, updateSettings } = useVolcanoSettings()
   const displayProps: IVolcanoDisplayOptions = plot.props
 
   const { messages, removeMessage } = useMessages(MESSAGE_CHANNEL) //'volcano')
@@ -110,10 +108,14 @@ export function VolcanoPanel() {
     }
   }, [messages])
 
-  useUpdateEffect(() => {
-    updatePlot(
-      produce(plot, (draft) => {
-        draft.props.scale = zoom
+  useEffect(() => {
+    setZoom(zoom)
+  }, [settings.scale])
+
+  useEffect(() => {
+    updateSettings(
+      produce(settings, (draft) => {
+        draft.scale = zoom
       })
     )
   }, [zoom])

@@ -17,7 +17,6 @@ import { SvgLine } from '@/components/plot/svg-line'
 import { SvgMargin } from '@/components/plot/svg-margin'
 import type { SeriesData } from '@/lib/dataframe/series-data'
 
-import { ColorMapName } from '@/lib/color/colormap'
 import { ILim } from '@/lib/math/math'
 import { IVolcanoPlot } from '../../history/history-provider/history-types'
 import type { ITooltip } from '../heatmap/heatmap-svg'
@@ -60,8 +59,8 @@ export interface IScatterDisplayOptions {
 
   padding: number
 
-  cmap: ColorMapName
-  scale: number
+  //cmap: ColorMapName
+  //scale: number
 
   dots: {
     color: string
@@ -89,8 +88,8 @@ export const DEFAULT_SCATTER_PROPS: IScatterDisplayOptions = {
     color: COLOR_BLACK,
     opacity: 0.75,
   },
-  cmap: 'bwr-v2',
-  scale: 1,
+  //cmap: 'bwr-v2',
+  //scale: 1,
   labels: {
     color: COLOR_BLACK,
     offset: 15,
@@ -126,7 +125,7 @@ export function makeDefaultScatterProps(
 
 export interface IVolcanoDisplayOptions extends IScatterDisplayOptions {
   border: IStrokeProps
-  logP: {
+  pvalue: {
     show: boolean
     threshold: number
     line: IStrokeProps
@@ -177,14 +176,14 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
     },
   },
 
-  scale: 1,
+  //scale: 1,
   dots: {
     size: 3,
     color: '#d9d9d9',
     opacity: 0.75,
   },
-  logP: {
-    threshold: 1.30102999566398,
+  pvalue: {
+    threshold: 0.05, // p-0.05
     show: true,
     line: {
       ...DEFAULT_STROKE_PROPS,
@@ -250,6 +249,10 @@ export function VolcanoPlotSvg({
 
   const [toolTipInfo, setToolTipInfo] = useState<ITooltip | null>(null)
 
+  const thresholdLogP = settings.preprocess.applyMinusLog10P
+    ? -Math.log10(displayOptions.pvalue.threshold)
+    : displayOptions.pvalue.threshold
+
   function getColor(
     logFc: number,
     logP: number,
@@ -257,11 +260,8 @@ export function VolcanoPlotSvg({
   ) {
     let color = props.dots.color
 
-    if (props.logP.show && settings.logFc.show) {
-      if (
-        logP > props.logP.threshold &&
-        Math.abs(logFc) > settings.logFc.threshold
-      ) {
+    if (props.pvalue.show && settings.logFc.show) {
+      if (logP > thresholdLogP && Math.abs(logFc) > settings.logFc.threshold) {
         color =
           logFc < 0
             ? settings.logFc.neg.fill.value
@@ -269,7 +269,7 @@ export function VolcanoPlotSvg({
       }
     } else {
       if (
-        (props.logP.show && logP > props.logP.threshold) ||
+        (props.pvalue.show && logP > thresholdLogP) ||
         (settings.logFc.show && Math.abs(logFc) > settings.logFc.threshold)
       ) {
         color =
@@ -317,12 +317,14 @@ export function VolcanoPlotSvg({
       .filter((v) => labelSet.has((v[0] as string).toLowerCase()))
       .map((v) => v[1])
 
+    const yThreshold = yax!.domainToRange(thresholdLogP)
+
     return (
       <SvgBase
         ref={ref}
         width={width}
         height={height}
-        scale={displayOptions.scale}
+        scale={settings.scale}
         //shapeRendering={SVG_CRISP_EDGES}
         className="absolute"
       >
@@ -401,14 +403,14 @@ export function VolcanoPlotSvg({
           })}
         </SvgMargin>
 
-        {displayOptions.logP.line.show && (
+        {displayOptions.pvalue.line.show && (
           <SvgMargin margin={MARGIN}>
             <SvgLine
               x1={xax!.domainToRange(xax!.domain[0])}
-              y1={yax!.domainToRange(displayOptions.logP.threshold)}
+              y1={yThreshold}
               x2={xax!.domainToRange(xax!.domain[1])}
-              y2={yax!.domainToRange(displayOptions.logP.threshold)}
-              s={displayOptions.logP.line}
+              y2={yThreshold}
+              s={displayOptions.pvalue.line}
             />
           </SvgMargin>
         )}
@@ -443,7 +445,15 @@ export function VolcanoPlotSvg({
         />
       </SvgBase>
     )
-  }, [plot, y, displayOptions, displayLabels, sizeFunc])
+  }, [
+    plot,
+    y,
+    thresholdLogP,
+    displayOptions,
+    displayLabels,
+    sizeFunc,
+    settings,
+  ])
 
   // useEffect(() => {
   //   //if (dataFiles.length > 0) {

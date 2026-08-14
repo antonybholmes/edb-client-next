@@ -269,19 +269,19 @@ export function VolcanoPropsPanel() {
           <AccordionTrigger>P-value</AccordionTrigger>
           <AccordionContent>
             <SwitchPropRow
-              title="Filter"
-              checked={displayProps.logP.show}
+              title="Threshold"
+              checked={displayProps.pvalue.show}
               onCheckedChange={(v) => {
                 updatePlot(
                   produce(plot, (draft) => {
-                    draft.props.logP.show = v
+                    draft.props.pvalue.show = v
                   })
                 )
               }}
             >
               <NumericalInput
                 id="max"
-                value={Math.pow(10, -displayProps.logP.threshold)}
+                value={displayProps.pvalue.threshold} //Math.pow(10, -displayProps.logP.threshold)}
                 dp={3}
                 step={0.001}
                 limit={[0, 1]}
@@ -290,20 +290,34 @@ export function VolcanoPropsPanel() {
                 onNumChanged={(v) => {
                   updatePlot(
                     produce(plot, (draft) => {
-                      draft.props.logP.threshold = -Math.log10(v)
+                      draft.props.pvalue.threshold = v // -Math.log10(v)
                     })
                   )
                 }}
               />
+
+              {/* <SelectList
+                value={displayProps.pvalue.threshold.toString()}
+                onValueChange={(v) => {
+                  updatePlot(
+                    produce(plot, (draft) => {
+                      draft.props.pvalue.threshold = parseInt(v as string)
+                    })
+                  )
+                }}
+                w="lg"
+              >
+                <SelectItem value={5}>5%</SelectItem>
+              </SelectList> */}
             </SwitchPropRow>
 
             <SwitchPropRow
               title="Line"
-              checked={displayProps.logP.line.show}
+              checked={displayProps.pvalue.line.show}
               onCheckedChange={(v) => {
                 updatePlot(
                   produce(plot, (draft) => {
-                    draft.props.logP.line.show = v
+                    draft.props.pvalue.line.show = v
                   })
                 )
               }}
