@@ -125,17 +125,17 @@ export function makeDefaultScatterProps(
 
 export interface IVolcanoDisplayOptions extends IScatterDisplayOptions {
   border: IStrokeProps
-  pvalue: {
-    show: boolean
-    threshold: number
-    line: IStrokeProps
-    neg: {
-      color: string
-    }
-    pos: {
-      color: string
-    }
-  }
+  // pvalue: {
+  //   show: boolean
+  //   threshold: number
+  //   line: IStrokeProps
+  //   // neg: {
+  //   //   color: string
+  //   // }
+  //   // pos: {
+  //   //   color: string
+  //   // }
+  // }
   // logFc: {
   //   show: boolean
   //   threshold: number
@@ -182,22 +182,22 @@ export const DEFAULT_VOLCANO_PROPS: IVolcanoDisplayOptions = {
     color: '#d9d9d9',
     opacity: 0.75,
   },
-  pvalue: {
-    threshold: 0.05, // p-0.05
-    show: true,
-    line: {
-      ...DEFAULT_STROKE_PROPS,
-      show: true,
+  // pvalue: {
+  //   threshold: 0.05, // p-0.05
+  //   show: true,
+  //   line: {
+  //     ...DEFAULT_STROKE_PROPS,
+  //     show: true,
 
-      dasharray: '4',
-    },
-    neg: {
-      color: '#3366cc',
-    },
-    pos: {
-      color: '#e62e00',
-    },
-  },
+  //     dasharray: '4',
+  //   },
+  // neg: {
+  //   color: '#3366cc',
+  // },
+  // pos: {
+  //   color: '#e62e00',
+  // },
+  //},
 
   // logFc: {
   //   threshold: 1,
@@ -250,8 +250,8 @@ export function VolcanoPlotSvg({
   const [toolTipInfo, setToolTipInfo] = useState<ITooltip | null>(null)
 
   const thresholdLogP = settings.preprocess.applyMinusLog10P
-    ? -Math.log10(displayOptions.pvalue.threshold)
-    : displayOptions.pvalue.threshold
+    ? -Math.log10(settings.pvalue.threshold)
+    : settings.pvalue.threshold
 
   function getColor(
     logFc: number,
@@ -260,7 +260,7 @@ export function VolcanoPlotSvg({
   ) {
     let color = props.dots.color
 
-    if (props.pvalue.show && settings.logFc.show) {
+    if (settings.pvalue.show && settings.logFc.show) {
       if (logP > thresholdLogP && Math.abs(logFc) > settings.logFc.threshold) {
         color =
           logFc < 0
@@ -269,7 +269,7 @@ export function VolcanoPlotSvg({
       }
     } else {
       if (
-        (props.pvalue.show && logP > thresholdLogP) ||
+        (settings.pvalue.show && logP > thresholdLogP) ||
         (settings.logFc.show && Math.abs(logFc) > settings.logFc.threshold)
       ) {
         color =
@@ -403,14 +403,14 @@ export function VolcanoPlotSvg({
           })}
         </SvgMargin>
 
-        {displayOptions.pvalue.line.show && (
+        {settings.pvalue.line.show && (
           <SvgMargin margin={MARGIN}>
             <SvgLine
               x1={xax!.domainToRange(xax!.domain[0])}
               y1={yThreshold}
               x2={xax!.domainToRange(xax!.domain[1])}
               y2={yThreshold}
-              s={displayOptions.pvalue.line}
+              s={settings.pvalue.line}
             />
           </SvgMargin>
         )}

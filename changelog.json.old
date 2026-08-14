@@ -2404,6 +2404,10 @@
         {
           "msg": "Added paste table option to matcalc. Added paste hook",
           "date": "2026-08-10T17:11:31.821Z"
+        },
+        {
+          "msg": "volcano now uses p-value thresholds in normal scale, but converts between linear and log space for user",
+          "date": "2026-08-14T22:56:59.463Z"
         }
       ]
     },

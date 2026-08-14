@@ -1,7 +1,9 @@
 import {
   DEFAULT_FILL_PROPS,
+  DEFAULT_STROKE_PROPS,
   IMarginProps,
   IPaintProps,
+  IStrokeProps,
 } from '@/components/plot/svg-props'
 import { config } from '@/config'
 import { useCallback } from 'react'
@@ -9,13 +11,18 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:matcalc:volcano:v2`
+const SETTINGS_KEY = `${config.appId}:app:matcalc:volcano:v4`
 
 const MARGIN = { top: 10, right: 200, bottom: 100, left: 400 }
 
 export type SortBy = 'none' | 'nes' | 'size' | 'pvalue'
 
 export interface IVolcanoSettings {
+  pvalue: {
+    show: boolean
+    threshold: number
+    line: IStrokeProps
+  }
   logFc: {
     show: boolean
     threshold: number
@@ -40,6 +47,11 @@ export interface IVolcanoSettings {
 }
 
 const DEFAULT_SETTINGS: IVolcanoSettings = {
+  pvalue: {
+    show: true,
+    threshold: 0.05,
+    line: { ...DEFAULT_STROKE_PROPS, show: true },
+  },
   logFc: {
     show: true,
     threshold: 1,

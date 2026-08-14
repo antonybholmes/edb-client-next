@@ -5,7 +5,6 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { useVolcanoSettings } from './volcano-settings-store'
 
 import { range } from '@/lib/math/range'
@@ -47,7 +46,7 @@ export function VolcanoProvider({
   const volcano = plot.volcano
   const displayProps = useMemo(() => plot.props, [plot.props])
   const { settings } = useVolcanoSettings()
-  const { settings: matcalcSettings } = useMatcalcSettings()
+
   // const sheet = useMemo(
   //   () => plot!.dataframes['main'] as BaseDataFrame,
   //   [plot!.dataframes['main']]
@@ -63,17 +62,17 @@ export function VolcanoProvider({
   // }, [sheet, plot.props.axes.xaxis.name, displayProps.axes.yaxis.name])
 
   const thresholdLogP = settings.preprocess.applyMinusLog10P
-    ? -Math.log10(displayProps.pvalue.threshold)
-    : displayProps.pvalue.threshold
+    ? -Math.log10(settings.pvalue.threshold)
+    : settings.pvalue.threshold
 
   function getShouldLabel(logFc: number, logP: number): boolean {
-    if (displayProps!.pvalue.show && settings!.logFc.show) {
+    if (settings.pvalue.show && settings!.logFc.show) {
       if (logP > thresholdLogP && Math.abs(logFc) > settings!.logFc.threshold) {
         return true
       }
     } else {
       if (
-        (displayProps!.pvalue.show && logP > thresholdLogP) ||
+        (settings.pvalue.show && logP > thresholdLogP) ||
         (settings!.logFc.show && Math.abs(logFc) > settings!.logFc.threshold)
       ) {
         return true

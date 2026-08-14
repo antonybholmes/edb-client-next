@@ -270,27 +270,27 @@ export function VolcanoPropsPanel() {
           <AccordionContent>
             <SwitchPropRow
               title="Threshold"
-              checked={displayProps.pvalue.show}
+              checked={settings.pvalue.show}
               onCheckedChange={(v) => {
-                updatePlot(
-                  produce(plot, (draft) => {
-                    draft.props.pvalue.show = v
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.pvalue.show = v
                   })
                 )
               }}
             >
               <NumericalInput
                 id="max"
-                value={displayProps.pvalue.threshold} //Math.pow(10, -displayProps.logP.threshold)}
+                value={settings.pvalue.threshold} //Math.pow(10, -displayProps.logP.threshold)}
                 dp={3}
                 step={0.001}
                 limit={[0, 1]}
                 placeholder="Max..."
                 className="w-16 rounded-theme"
                 onNumChanged={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.pvalue.threshold = v // -Math.log10(v)
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.pvalue.threshold = v // -Math.log10(v)
                     })
                   )
                 }}
@@ -313,11 +313,11 @@ export function VolcanoPropsPanel() {
 
             <SwitchPropRow
               title="Line"
-              checked={displayProps.pvalue.line.show}
+              checked={settings.pvalue.line.show}
               onCheckedChange={(v) => {
-                updatePlot(
-                  produce(plot, (draft) => {
-                    draft.props.pvalue.line.show = v
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.pvalue.line.show = v
                   })
                 )
               }}
