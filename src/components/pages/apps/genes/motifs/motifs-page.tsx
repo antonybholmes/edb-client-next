@@ -65,7 +65,7 @@ import { BaseCol } from '@/components/layout/base-col'
 import { BaseRow } from '@/components/layout/base-row'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
 import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
-import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
+import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { useFooter } from '@/providers/footer-provider'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
@@ -75,11 +75,9 @@ import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
 import { useHistory } from '../../matcalc/history/history-provider/history-provider'
 import { useSave } from '../../matcalc/hooks/save'
 import { DatasetFilter } from './dataset-filter'
-import { DisplayPropsPanel } from './display-props-panel'
 import { MotifsPropsPanel } from './motifs-props-panel'
 import { useMotifSettings } from './motifs-settings'
 import { useMotifs } from './motifs-store'
-import { MotifsTrackPropsPanel } from './motifs-track-props-panel'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
 const PLOT_ZOOM_CHANNEL = 'motifs-plot-zoom'
@@ -101,7 +99,7 @@ export function MotifsPage() {
   const { openFile, addSheets } = useHistory()
 
   const { setTabs: setToolbarTabs } = useToolbarTabs()
-  const { setTabs: setSideTabs } = useSideTabs()
+
   const { svgRef } = useSVG()
 
   const { save } = useSave()
@@ -140,18 +138,18 @@ export function MotifsPage() {
     ])
   }, [setToolbarTabs])
 
-  useEffect(() => {
-    setSideTabs([
-      {
-        id: 'Tracks',
-        component: MotifsTrackPropsPanel,
-      },
-      {
-        id: 'Display',
-        component: DisplayPropsPanel,
-      },
-    ])
-  }, [setSideTabs])
+  // useEffect(() => {
+  //   setSideTabs([
+  //     {
+  //       id: 'Tracks',
+  //       component: MotifsTrackPropsPanel,
+  //     },
+  //     {
+  //       id: 'Display',
+  //       component: DisplayPropsPanel,
+  //     },
+  //   ])
+  // }, [setSideTabs])
 
   // // sync local query state when the global search query changes
   // useEffect(() => {

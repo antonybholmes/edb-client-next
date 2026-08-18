@@ -2412,6 +2412,10 @@
         {
           "msg": "GSEA plot now works with affymetrix data",
           "date": "2026-08-18T14:24:57.203Z"
+        },
+        {
+          "msg": "Simplified sidebars to stop context problems on hot loading",
+          "date": "2026-08-18T22:08:54.959Z"
         }
       ]
     },
