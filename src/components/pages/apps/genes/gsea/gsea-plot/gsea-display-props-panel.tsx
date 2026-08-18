@@ -348,7 +348,7 @@ export function GseaDisplayPropsPanel() {
                       },
                     },
                   ]}
-                  title="Positive Genes Fill"
+                  title="Positive Gene Color"
                 />
 
                 <FillButton
@@ -367,7 +367,7 @@ export function GseaDisplayPropsPanel() {
                     },
                   ]}
 
-                  title="Negative Genes Fill"
+                  title="Negative Gene Color"
                 />
               </VCenterRow>
 

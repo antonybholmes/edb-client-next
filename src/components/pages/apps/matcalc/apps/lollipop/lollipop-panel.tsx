@@ -27,7 +27,6 @@ import { MESSAGE_CHANNEL } from '../../data/data-panel'
 
 import { useSideTabs } from '@/components/tabs/tab-provider'
 //import { getPlot } from '../../history/history-provider/history-hooks'
-import { useUpdateEffect } from '@/hooks/update-effect'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { PLOT_ZOOM_CHANNEL } from '../heatmap/heatmap-panel'
 
@@ -73,7 +72,7 @@ function LollipopPanel() {
     }
   }, [messages])
 
-  useUpdateEffect(() => {
+  useEffect(() => {
     setDisplayProps(
       produce(displayProps, (draft) => {
         draft.scale = zoom

@@ -65,7 +65,6 @@ import { useAppInfo, useEdbSettings } from '@/components/edb/edb-settings'
 import { AppHeaderIcon } from '@/components/header/app-header-icon'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useStableId } from '@/hooks/stable-id'
-import { useUpdateEffect } from '@/hooks/update-effect'
 import { CoreProviders } from '@/providers/core-providers'
 import { useFooter } from '@/providers/footer-provider'
 import { SVGProvider } from '@/providers/svg-provider'
@@ -196,7 +195,7 @@ export function SingleCellPage() {
     ])
   }, [setSideTabs])
 
-  useUpdateEffect(() => {
+  useEffect(() => {
     updateSettings(
       produce(settings, (draft) => {
         draft.scale = zoom
