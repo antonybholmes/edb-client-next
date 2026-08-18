@@ -2416,6 +2416,10 @@
         {
           "msg": "Simplified sidebars to stop context problems on hot loading",
           "date": "2026-08-18T22:08:54.959Z"
+        },
+        {
+          "msg": "Added hydrated effect for loading stores without sync issues",
+          "date": "2026-08-18T23:14:01.563Z"
         }
       ]
     },
