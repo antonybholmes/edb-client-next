@@ -1,4 +1,10 @@
-import { useEffect, useRef, type ReactNode, type RefObject } from 'react'
+import {
+  ComponentProps,
+  useEffect,
+  useRef,
+  type ReactNode,
+  type RefObject,
+} from 'react'
 
 import type { IChildrenProps } from '@/interfaces/children-props'
 import { Tabs, TabsList, TabsTrigger } from '../shadcn/ui/themed/v2/tabs'
@@ -10,6 +16,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 
 import { present } from '@/lib/dom-utils'
 import { truncate } from '@/lib/text/text'
+import { BoldableSpan } from '../boldable-span'
 import { remToPx } from '../utils'
 import {
   TabIndicatorProvider,
@@ -17,7 +24,7 @@ import {
   type ITabIndicatorPos,
 } from './tab-indicator-provider'
 
-export const UNDERLINE_LABEL_CLS = `boldable-text-tab data-checked:font-medium data-hover:text-foreground
+export const UNDERLINE_LABEL_CLS = `data-checked:font-medium data-hover:text-foreground
 data-checked:text-foreground text-alt-foreground truncate relative pointer-events-none select-none`
 
 export const UNDERLINE_HOVER_LABEL_CLS = `z-40 opacity-0 font-medium data-hover:opacity-100
@@ -45,6 +52,15 @@ type SelectedMouseOverSize = (
   buttonRef: HTMLElement,
   animate: boolean
 ) => ITabIndicatorPos
+
+export function UnderlineSpan({
+  className,
+  ...props
+}: ComponentProps<typeof BoldableSpan>) {
+  return (
+    <BoldableSpan className={cn(UNDERLINE_LABEL_CLS, className)} {...props} />
+  )
+}
 
 export function getSelectedMouseOverSize(
   index: number,
@@ -123,7 +139,7 @@ interface ITriggerProps extends VariantProps<typeof tabButtonVariants> {
   tabs: number
 }
 
-function Trigger({
+function UnderlineTrigger({
   variant,
   tab,
   ti,
@@ -182,13 +198,9 @@ function Trigger({
         className: 'flex flex-row items-center justify-center',
       })}
     >
-      <span
-        data-checked={present(selected)}
-        aria-label={truncatedName}
-        className={UNDERLINE_LABEL_CLS}
-      >
+      <UnderlineSpan data-checked={present(selected)}>
         {truncatedName}
-      </span>
+      </UnderlineSpan>
     </span>
   )
 }
@@ -318,7 +330,7 @@ export function _UnderlineTabs({
               id={tab.id}
               className="z-30"
             >
-              <Trigger
+              <UnderlineTrigger
                 tab={tab!}
                 ti={ti}
                 key={tab.id}

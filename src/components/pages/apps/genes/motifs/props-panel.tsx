@@ -5,7 +5,7 @@ import {
   TabsTrigger,
 } from '@/components/shadcn/ui/themed/v2/tabs'
 import { DisplayPropsPanel } from './display-props-panel'
-import { MotifsPropsPanel } from './motifs-props-panel'
+import { MotifsTrackPropsPanel } from './motifs-track-props-panel'
 
 // const TAB_CLS =
 //   'w-4.5 stroke-foreground/75 group-hover:stroke-foreground group-data-[selected=true]:stroke-foreground'
@@ -14,7 +14,7 @@ export function PropsPanel() {
   return (
     <Tabs orientation="vertical" className="flex flex-col grow text-xs pr-1">
       <TabsContent value="motifs">
-        <MotifsPropsPanel />
+        <MotifsTrackPropsPanel />
       </TabsContent>
       <TabsContent value="display">
         <DisplayPropsPanel />

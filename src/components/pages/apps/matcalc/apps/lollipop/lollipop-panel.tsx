@@ -18,7 +18,7 @@ import { useZoom } from '@/providers/zoom-provider'
 import { useDialogs } from '@/components/dialogs/dialogs'
 import { DomainPropsPanel } from '../../../wgs/lollipop/domain-props-panel'
 import { LabelPropsPanel } from '../../../wgs/lollipop/label-props-panel'
-import { LollipopPropsPanel } from '../../../wgs/lollipop/lollipop-props-panel'
+import { LollipopDisplayPropsPanel } from '../../../wgs/lollipop/lollipop-display-props-panel'
 import { useLollipopSettings } from '../../../wgs/lollipop/lollipop-settings-store'
 import { LollipopStackSvg } from '../../../wgs/lollipop/lollipop-stack-svg'
 import { useLollipopStore } from '../../../wgs/lollipop/lollipop-store'
@@ -97,7 +97,7 @@ function LollipopPanel() {
       // },
       {
         id: 'Display',
-        component: LollipopPropsPanel,
+        component: LollipopDisplayPropsPanel,
       },
       {
         id: 'Databases',

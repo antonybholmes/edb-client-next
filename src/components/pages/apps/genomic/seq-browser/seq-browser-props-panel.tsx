@@ -1,50 +1,34 @@
-import { useEffect } from 'react'
-
 import { BaseCol } from '@/components/layout/base-col'
 import { Tabs, TabsContent } from '@/components/shadcn/ui/themed/v2/tabs'
-import { useResizableSidebarContext } from '@/components/sidebar/resizable-sidebar'
 import { TabIndicatorFollowH } from '@/components/tabs/tab-indicator-follow-h'
 import { TabIndicatorSelectedH } from '@/components/tabs/tab-indicator-selected-h'
 import { useTabs } from '@/components/tabs/tab-provider'
 import { UnderlineTabs } from '@/components/tabs/underline-tabs'
-import { GenesetPropsPanel } from '../genesets/geneset-props-panel'
-import { GroupPropsPanel } from '../groups/group-props-panel'
+import { useEffect } from 'react'
+import { LocationsPropsPanel } from './locations/locations-props-panel'
+import { TracksPropsPanel } from './tracks-props-panel'
 
-// export function GroupingPropsPanel() {
-//   const { id } = useResizableSidebarContext()
+const ID = 'seq-browser-props-panel'
 
-//   const { setTabs } = useTabs(id)
-
-//   useEffect(() => {
-//     setTabs([
-//       {
-//         id: 'Groups',
-//         component: GroupPropsPanel,
-//       },
-//       { id: 'Gene Sets', component: GenesetPropsPanel },
-//     ])
-//   }, [setTabs])
-
-//   return <SideBarTabs />
-// }
-
-export function GroupingPropsPanel() {
-  const { id } = useResizableSidebarContext()
-  const { selectedTab, setTabs } = useTabs(id)
+export function SeqBrowserPropsPanel() {
+  const { selectedTab, setTabs } = useTabs(ID)
 
   useEffect(() => {
     setTabs([
       {
-        id: 'groups',
-        name: 'Groups',
+        id: 'tracks',
+        name: 'Tracks',
       },
-      { id: 'gene-sets', name: 'Gene Sets' },
+      {
+        id: 'locations',
+        name: 'Locations',
+      },
     ])
   }, [setTabs])
 
   return (
     <BaseCol className="grow gap-y-2">
-      <UnderlineTabs groupId={id} tabListCls="gap-x-3" className="text-xs">
+      <UnderlineTabs groupId={ID} tabListCls="gap-x-3" className="text-xs">
         <TabIndicatorFollowH />
         <TabIndicatorSelectedH />
       </UnderlineTabs>
@@ -55,11 +39,11 @@ export function GroupingPropsPanel() {
         onValueChange={() => {}}
         className="grow"
       >
-        <TabsContent value="groups">
-          <GroupPropsPanel />
+        <TabsContent value="tracks">
+          <TracksPropsPanel />
         </TabsContent>
-        <TabsContent value="gene-sets">
-          <GenesetPropsPanel />
+        <TabsContent value="locations">
+          <LocationsPropsPanel />
         </TabsContent>
         {/* <TabsList className="py-1">
         <TabsTrigger value="genesets" className="grow" variant="sidebar">

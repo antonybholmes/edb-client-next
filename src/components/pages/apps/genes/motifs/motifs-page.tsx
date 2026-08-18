@@ -64,7 +64,7 @@ import { DownloadIcon } from '@/components/icons/download-icon'
 import { BaseCol } from '@/components/layout/base-col'
 import { BaseRow } from '@/components/layout/base-row'
 import { IconButton } from '@/components/shadcn/ui/themed/icon-button'
-import { TabSlideBar } from '@/components/sidebar/tab-slide-bar'
+import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useSideTabs, useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { useFooter } from '@/providers/footer-provider'
@@ -79,6 +79,7 @@ import { DisplayPropsPanel } from './display-props-panel'
 import { MotifsPropsPanel } from './motifs-props-panel'
 import { useMotifSettings } from './motifs-settings'
 import { useMotifs } from './motifs-store'
+import { MotifsTrackPropsPanel } from './motifs-track-props-panel'
 import { HomeToolbar } from './toolbars/home-toolbar'
 
 const PLOT_ZOOM_CHANNEL = 'motifs-plot-zoom'
@@ -143,7 +144,7 @@ export function MotifsPage() {
     setSideTabs([
       {
         id: 'Tracks',
-        component: MotifsPropsPanel,
+        component: MotifsTrackPropsPanel,
       },
       {
         id: 'Display',
@@ -476,7 +477,7 @@ export function MotifsPage() {
           />
         </Toolbar>
 
-        <TabSlideBar side="right">
+        <ResizableSidebar side="right">
           <ResizablePanelGroup
             orientation="vertical"
             className="px-2 h-full"
@@ -528,7 +529,9 @@ export function MotifsPage() {
               </BaseRow>
             </ResizablePanel>
           </ResizablePanelGroup>
-        </TabSlideBar>
+
+          <MotifsPropsPanel />
+        </ResizableSidebar>
 
         <FooterPortal className="justify-between">
           <></>

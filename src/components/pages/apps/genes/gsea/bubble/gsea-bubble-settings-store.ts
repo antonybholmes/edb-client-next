@@ -15,7 +15,7 @@ import { useCallback } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v6`
+const SETTINGS_KEY = `${config.appId}:app:genes:gsea:bubble:v8`
 
 const MARGIN = { top: 10, right: 200, bottom: 100, left: 400 }
 
@@ -82,7 +82,7 @@ const DEFAULT_SETTINGS: IGseaBubbleSettings = {
   bubbles: {
     size: 10,
     fill: { ...DEFAULT_COLOR_PROPS },
-    stroke: { ...DEFAULT_STROKE_PROPS, show: false },
+    stroke: { ...DEFAULT_STROKE_PROPS },
   },
 
   border: { ...DEFAULT_STROKE_PROPS },

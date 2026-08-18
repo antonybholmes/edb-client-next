@@ -55,8 +55,9 @@ import { ResizableSidebar } from '@/components/sidebar/resizable-sidebar'
 import { useToolbarTabs } from '@/components/tabs/tab-provider'
 import { useUpdateEffect } from '@/hooks/update-effect'
 import { SVGProvider, useSVG } from '@/providers/svg-provider'
-import { OptsSidebarMenu } from '../../matcalc/data/opts-sidebar-menu'
-import { UndoShortcuts } from '../../matcalc/history/undo-shortcuts'
+
+import { OptsSidebarMenu } from '../../../matcalc/data/opts-sidebar-menu'
+import { UndoShortcuts } from '../../../matcalc/history/undo-shortcuts'
 import {
   PLOT_ZOOM_CHANNEL,
   useGsea,

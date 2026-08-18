@@ -20,10 +20,7 @@ import {
   ContextMenuTrigger,
 } from '../../../shadcn/ui/themed/v2/context-menu'
 import { BaseSortableItem, SmallDragHandle } from '../../../sortable-item'
-import {
-  UNDERLINE_LABEL_CLS,
-  type ITabMenu,
-} from '../../../tabs/underline-tabs'
+import { UnderlineSpan, type ITabMenu } from '../../../tabs/underline-tabs'
 import {
   useCurrentSheets,
   useFiles,
@@ -155,18 +152,14 @@ function SheetItem({
           className="w-4 h-6 cursor-ew-resize opacity-0 group-hover:opacity-100 trans-opacity"
           aria-label="Drag sheet to move"
         />
-        <span
+        <UnderlineSpan
           ref={labelRef}
           data-checked={checked}
-          aria-label={label}
-          className={UNDERLINE_LABEL_CLS}
-          // ref={(el) => {
-          //   itemsRef.current.set(sheet.id, el!)
-          // }}
+
           title={name}
         >
           {label}
-        </span>
+        </UnderlineSpan>
       </TabsTrigger>
       {checked && (
         <span

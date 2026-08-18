@@ -6,8 +6,8 @@ import {
 import { NumericalPropRow } from '@/dialogs/numerical-prop-row'
 
 import { produce } from 'immer'
-import { MarginIcon } from '../icons/margin-icon'
-import { useGseaSettings } from '../pages/apps/genes/gsea-plot/gsea-settings-store'
+import { MarginIcon } from '../../../../../icons/margin-icon'
+import { useGseaSettings } from './gsea-settings-store'
 
 export function MarginPopover() {
   const { settings, updateSettings } = useGseaSettings()

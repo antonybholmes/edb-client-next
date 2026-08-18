@@ -132,7 +132,6 @@ export const DEFAULT_STROKE_PROPS: IStrokeProps = {
  */
 export const DEFAULT_DASH_PROPS: IStrokeProps = {
   ...DEFAULT_STROKE_PROPS,
-
   dasharray: '5',
 }
 

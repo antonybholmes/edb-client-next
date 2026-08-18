@@ -7,24 +7,23 @@ import {
   ScrollAccordion,
 } from '@/themed/v2/accordion'
 
-import {
-  ColorPickerButton,
-  SIMPLE_COLOR_EXT_CLS,
-} from '@/components/plot/color-picker-popover'
 import { Switch } from '@/components/shadcn/ui/themed/v2/switch'
 import { TEXT_OK, TEXT_RESET } from '@/consts'
 
 import { CheckPropRow } from '@/dialogs/check-prop-row'
 import { LinkButton } from '@/themed/link-button'
-import { NumericalInput } from '@/themed/numerical-input'
 
 import { useDialogs } from '@/components/dialogs/dialogs'
-import { Percent } from '@/components/percent'
-import { Slider } from '@/components/shadcn/ui/themed/v2/slider'
+import { VCenterRow } from '@/components/layout/v-center-row'
+import { FillButton } from '@/components/plot/fill-dropdown-menu'
+import { OutlineButton } from '@/components/plot/outline-dropdown-menu'
+import { NumSlider } from '@/components/shadcn/ui/themed/v2/num-slider'
+import { PercentSlider } from '@/components/shadcn/ui/themed/v2/percent-slider'
 import { SideBarHeader } from '@/components/sidebar/resizable-sidebar'
 import { produce } from 'immer'
-import { FontPopover } from '../../../../plot/font/font-popover'
-import { MarginPopover } from '../../../../plot/margin-popover'
+
+import { MarginPopover } from '@/components/pages/apps/genes/gsea/gsea-plot/margin-popover'
+import { FontPopover } from '@/components/plot/font/font-popover'
 import { useGseaSettings } from './gsea-settings-store'
 import APP_INFO from './manifest.json'
 
@@ -32,38 +31,15 @@ export function GseaDisplayPropsPanel() {
   const { settings, updateSettings, reset } = useGseaSettings()
   const { open: openDialog } = useDialogs()
 
-  // const [text, setText] = useState<string>(
-  //   process.env.NODE_ENV === 'development' ? 'BCL6\nPRDM1\nKMT2D' : ''
-  // )
-
-  // function setProps(dataset: IGexDataset, props: IGexPlotDisplayProps) {
-  //   updateGexPlotSettings(
-  //     Object.fromEntries([
-  //       ...Object.entries(gexPlotSettings).filter(
-  //         ([id, _]) => id !== dataset.id.toString()
-  //       ),
-  //       [dataset.id.toString(), props],
-  //     ])
-  //   )
-  // }
-
   return (
-    <PropsPanel className="pr-1 gap-y-4">
+    <PropsPanel className="gap-y-2">
       <SideBarHeader className="justify-end">
-        {/* <LinkButton
-            onClick={() => reset()}
-            title="Reset Properties to Defaults"
-          >
-            {TEXT_RESET}
-          </LinkButton> */}
-
         <LinkButton
           onClick={() => {
             openDialog({
               type: 'warning',
               payload: {
                 title: APP_INFO.name,
-
                 content: 'Are you sure you want to reset all settings?',
                 callback: (response) => {
                   if (response === TEXT_OK) {
@@ -74,6 +50,7 @@ export function GseaDisplayPropsPanel() {
             })
           }}
           title="Reset settings to default"
+          className="text-xs"
         >
           {TEXT_RESET}
         </LinkButton>
@@ -139,6 +116,17 @@ export function GseaDisplayPropsPanel() {
                 ]}
               />
             </PropRow>
+            <CheckPropRow
+              title="Invert Phenotypes"
+              checked={settings.phenotypes.invert}
+              onCheckedChange={(state) =>
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.phenotypes.invert = state
+                  })
+                )
+              }
+            />
           </AccordionContent>
         </AccordionItem>
 
@@ -190,7 +178,36 @@ export function GseaDisplayPropsPanel() {
           </AccordionTrigger>
           <AccordionContent>
             <PropRow title="Line">
-              <ColorPickerButton
+              <OutlineButton
+                colors={[
+                  {
+                    color: settings.es.line.value,
+                    opacity: settings.es.line.opacity,
+                    onColorChange: ({
+                      color,
+                      opacity,
+                      width,
+                      dasharray,
+                      show,
+                    }) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.es.line.show = show ?? draft.es.line.show
+
+                          draft.es.line.value = color
+                          draft.es.line.opacity = opacity ?? 1
+                          draft.es.line.width = width ?? draft.es.line.width
+                          draft.es.line.dasharray =
+                            dasharray ?? draft.es.line.dasharray
+                        })
+                      )
+                    },
+                  },
+                ]}
+                title="Line Outline"
+              />
+
+              {/* <ColorPickerButton
                 colors={[
                   {
                     color: settings.es.line.value,
@@ -207,39 +224,64 @@ export function GseaDisplayPropsPanel() {
                 ]}
                 className={SIMPLE_COLOR_EXT_CLS}
                 title="Line color"
-              />
+              /> */}
             </PropRow>
 
-            <CheckPropRow
-              title="Leading Edge"
-              checked={settings.es.leadingEdge.show}
-              onCheckedChange={(state) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.es.leadingEdge.show = state
-                  })
-                )
-              }}
-            >
-              <ColorPickerButton
-                colors={[
-                  {
-                    color: settings.es.leadingEdge.fill.value,
-                    opacity: settings.es.leadingEdge.fill.opacity,
-                    onColorChange: ({ color, opacity }) => {
-                      updateSettings(
-                        produce(settings, (draft) => {
-                          draft.es.leadingEdge.fill.value = color
-                          draft.es.leadingEdge.fill.opacity = opacity ?? 1
-                        })
-                      )
+            <PropRow title="Leading Edge">
+              <VCenterRow>
+                <OutlineButton
+                  colors={[
+                    {
+                      color: settings.es.leadingEdge.line.value,
+                      opacity: settings.es.leadingEdge.line.opacity,
+                      onColorChange: ({
+                        color,
+                        opacity,
+                        width,
+                        dasharray,
+                        show,
+                      }) => {
+                        updateSettings(
+                          produce(settings, (draft) => {
+                            draft.es.leadingEdge.line.show =
+                              show ?? draft.es.leadingEdge.line.show
+
+                            draft.es.leadingEdge.line.value = color
+                            draft.es.leadingEdge.line.opacity = opacity ?? 1
+                            draft.es.leadingEdge.line.width =
+                              width ?? draft.es.leadingEdge.line.width
+                            draft.es.leadingEdge.line.dasharray =
+                              dasharray ?? draft.es.leadingEdge.line.dasharray
+                          })
+                        )
+                      },
                     },
-                  },
-                ]}
-                className={SIMPLE_COLOR_EXT_CLS}
-                title="Leading edge color"
-              />
-            </CheckPropRow>
+                  ]}
+                  title="Leading Edge Outline"
+                />
+
+                <FillButton
+                  colors={[
+                    {
+                      color: settings.es.leadingEdge.fill.value,
+                      opacity: settings.es.leadingEdge.fill.opacity,
+                      onColorChange: ({ color, opacity, show }) => {
+                        updateSettings(
+                          produce(settings, (draft) => {
+                            draft.es.leadingEdge.fill.show =
+                              show ?? draft.es.leadingEdge.fill.show
+
+                            draft.es.leadingEdge.fill.value = color
+                            draft.es.leadingEdge.fill.opacity = opacity ?? 1
+                          })
+                        )
+                      },
+                    },
+                  ]}
+                  title="Leading Edge Fill"
+                />
+              </VCenterRow>
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="genes-plot">
@@ -262,20 +304,20 @@ export function GseaDisplayPropsPanel() {
           </AccordionTrigger>
           <AccordionContent>
             <PropRow title="Height">
-              <NumericalInput
+              <NumSlider
                 value={settings.genes.height}
                 disabled={!settings.genes.show}
-                placeholder="Height"
-                limit={[1, 100]}
+
+                min={1}
+                max={100}
                 step={1}
-                onNumChange={(v) => {
+                onNumChanged={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
                       draft.genes.height = v
                     })
                   )
                 }}
-                className="w-16 rounded-theme"
               />
             </PropRow>
 
@@ -290,7 +332,46 @@ export function GseaDisplayPropsPanel() {
                 )
               }}
             >
-              <ColorPickerButton
+              <VCenterRow>
+                <FillButton
+                  colors={[
+                    {
+                      color: settings.genes.pos.value,
+                      opacity: settings.genes.pos.opacity,
+                      onColorChange: ({ color, opacity }) => {
+                        updateSettings(
+                          produce(settings, (draft) => {
+                            draft.genes.pos.value = color
+                            draft.genes.pos.opacity = opacity ?? 1
+                          })
+                        )
+                      },
+                    },
+                  ]}
+                  title="Positive Genes Fill"
+                />
+
+                <FillButton
+                  colors={[
+                    {
+                      color: settings.genes.neg.value,
+                      opacity: settings.genes.neg.opacity,
+                      onColorChange: ({ color, opacity }) => {
+                        updateSettings(
+                          produce(settings, (draft) => {
+                            draft.genes.neg.value = color
+                            draft.genes.neg.opacity = opacity ?? 1
+                          })
+                        )
+                      },
+                    },
+                  ]}
+
+                  title="Negative Genes Fill"
+                />
+              </VCenterRow>
+
+              {/* <ColorPickerButton
                 disabled={!settings.genes.show}
                 colors={[
                   {
@@ -323,56 +404,10 @@ export function GseaDisplayPropsPanel() {
                 ]}
                 className={SIMPLE_COLOR_EXT_CLS}
                 title="Positive/negative color"
-              />
-            </CheckPropRow>
-
-            <CheckPropRow
-              title="Gradient"
-              checked={settings.genes.gradient.on}
-              onCheckedChange={(state) => {
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.genes.gradient.on = state
-                  })
-                )
-              }}
-              className="ml-2"
-              disabled={!settings.genes.color.on}
-            >
-              {/* <NumericalInput
-                value={settings.genes.gradient.alpha}
-                disabled={!settings.genes.gradient.on}
-                placeholder="Alpha"
-                limit={[0, 1]}
-                step={0.1}
-                dp={1}
-                onNumChange={(v) => {
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.genes.gradient.alpha = v
-                    })
-                  )
-                }}
-                className="w-16 rounded-theme"
-                title="Opacity"
               /> */}
-
-              <Percent v={settings.genes.gradient.alpha} />
-              <Slider
-                value={settings.genes.gradient.alpha}
-                min={0}
-                max={1}
-                onValueChange={(value: number | readonly number[]) => {
-                  const newValue = Array.isArray(value) ? value[0]! : value
-                  updateSettings(
-                    produce(settings, (draft) => {
-                      draft.genes.gradient.alpha = newValue
-                    })
-                  )
-                }}
-                step={0.05}
-              />
             </CheckPropRow>
+
+            <GradientOpacityControl />
           </AccordionContent>
         </AccordionItem>
 
@@ -380,7 +415,7 @@ export function GseaDisplayPropsPanel() {
           <AccordionTrigger
             rightChildren={
               <>
-                <ColorPickerButton
+                {/* <ColorPickerButton
                   colors={[
                     {
                       color: settings.ranking.fill.value,
@@ -398,6 +433,26 @@ export function GseaDisplayPropsPanel() {
                   disabled={!settings.ranking.show}
                   className={SIMPLE_COLOR_EXT_CLS}
                   title="Ranked genes color"
+                /> */}
+                <FillButton
+                  colors={[
+                    {
+                      color: settings.ranking.fill.value,
+                      opacity: settings.ranking.fill.opacity,
+                      onColorChange: ({ color, opacity, show }) => {
+                        updateSettings(
+                          produce(settings, (draft) => {
+                            draft.ranking.fill.value = color
+                            draft.ranking.fill.opacity = opacity ?? 1
+                            draft.ranking.fill.show =
+                              show ?? draft.ranking.fill.show
+                          })
+                        )
+                      },
+                    },
+                  ]}
+
+                  title="Ranked Genes Fill"
                 />
                 <Switch
                   title="Show"
@@ -416,19 +471,39 @@ export function GseaDisplayPropsPanel() {
             Ranked Genes
           </AccordionTrigger>
           <AccordionContent>
-            <CheckPropRow
-              title="Zero crossing"
-              checked={settings.ranking.zeroCross.show}
-              disabled={!settings.ranking.show}
-              onCheckedChange={(state) =>
-                updateSettings(
-                  produce(settings, (draft) => {
-                    draft.ranking.zeroCross.show = state
-                  })
-                )
-              }
-            >
-              <ColorPickerButton
+            <PropRow title="Zero Crossing">
+              <OutlineButton
+                colors={[
+                  {
+                    color: settings.ranking.zeroCross.line.value,
+                    opacity: settings.ranking.zeroCross.line.opacity,
+                    onColorChange: ({
+                      color,
+                      opacity,
+                      width,
+                      dasharray,
+                      show,
+                    }) => {
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.ranking.zeroCross.line.show =
+                            show ?? draft.ranking.zeroCross.line.show
+
+                          draft.ranking.zeroCross.line.value = color
+                          draft.ranking.zeroCross.line.opacity = opacity ?? 1
+                          draft.ranking.zeroCross.line.width =
+                            width ?? draft.ranking.zeroCross.line.width
+                          draft.ranking.zeroCross.line.dasharray =
+                            dasharray ?? draft.ranking.zeroCross.line.dasharray
+                        })
+                      )
+                    },
+                  },
+                ]}
+                title="Zero Crossing Outline"
+              />
+
+              {/* <ColorPickerButton
                 disabled={!settings.ranking.zeroCross.show}
                 colors={[
                   {
@@ -446,11 +521,59 @@ export function GseaDisplayPropsPanel() {
                 ]}
                 className={SIMPLE_COLOR_EXT_CLS}
                 title="Zero crossing color"
-              />
-            </CheckPropRow>
+              /> */}
+            </PropRow>
           </AccordionContent>
         </AccordionItem>
       </ScrollAccordion>
     </PropsPanel>
+  )
+}
+
+/**
+ * A control component for adjusting the opacity of the gene color gradient.
+ * It includes a switch to toggle the gradient on and off,
+ * a slider to adjust the opacity, and a percentage display of the current
+ * opacity value. It requires debouncing to prevent excessive updates
+ * while the slider is being adjusted.
+ * @returns
+ */
+function GradientOpacityControl() {
+  const { settings, updateSettings } = useGseaSettings()
+
+  return (
+    <PropRow title="Gradient">
+      {/* <NumericalInput
+                value={settings.genes.gradient.alpha}
+                disabled={!settings.genes.gradient.on}
+                placeholder="Alpha"
+                limit={[0, 1]}
+                step={0.1}
+                dp={1}
+                onNumChange={(v) => {
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.genes.gradient.alpha = v
+                    })
+                  )
+                }}
+                w="xxs"
+                title="Opacity"
+              /> */}
+
+      <PercentSlider
+        value={1 - settings.genes.gradient.opacity}
+        min={0}
+        max={1}
+        onNumChanged={(v) => {
+          updateSettings(
+            produce(settings, (draft) => {
+              draft.genes.gradient.opacity = 1 - v
+            })
+          )
+        }}
+        step={0.05}
+      />
+    </PropRow>
   )
 }

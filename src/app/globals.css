@@ -269,7 +269,7 @@ input[type='search']::-webkit-search-cancel-button {
 }
 
 .boldable-text-tab {
-  @apply text-nowrap;
+  @apply overflow-hidden text-nowrap;
 }
 
 /* // we use this on text tabs to keep the width fixed
@@ -282,7 +282,7 @@ input[type='search']::-webkit-search-cancel-button {
 // but keeps its width
 // https://css-tricks.com/bold-on-hover-without-the-layout-shift/  */
 .boldable-text-tab::after {
-  @apply pointer-events-none invisible flex h-0 flex-col overflow-hidden font-bold select-none;
+  @apply pointer-events-none invisible flex h-0 overflow-hidden font-bold select-none;
   content: attr(aria-label);
 }
 

@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Simplified sidebars to stop context problems on hot loading.
 - GSEA plot now works with affymetrix data.
 - volcano now uses p-value thresholds in normal scale, but converts between linear and log space for user.
 - Added paste table option to matcalc. Added paste hook.
