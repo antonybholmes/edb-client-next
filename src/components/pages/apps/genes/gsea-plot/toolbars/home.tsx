@@ -16,13 +16,13 @@ import { ToolbarTabGroup } from '@/components/toolbar/toolbar-tab-group'
 import { TEXT_FILE, TEXT_SAVE_IMAGE } from '@/consts'
 import { useSVG } from '@/providers/svg-provider'
 import { produce } from 'immer'
-import { useGseaPlotStore } from '../gsea-plot-store'
+import { useGsea } from '../gsea-plot-store'
 import { useGseaSettings } from '../gsea-settings-store'
 
 export function HomeToolbar() {
   const { open: openDialog } = useDialogs()
   const { settings, updateSettings } = useGseaSettings()
-  const { loadGseaZip } = useGseaPlotStore()
+  const { loadGseaZipWithErrorHandling } = useGsea()
   const { svgRef } = useSVG()
 
   return (
@@ -36,7 +36,7 @@ export function HomeToolbar() {
                   if (!success) {
                     return
                   }
-                  loadGseaZip(files)
+                  loadGseaZipWithErrorHandling(files)
                 })
               },
             })

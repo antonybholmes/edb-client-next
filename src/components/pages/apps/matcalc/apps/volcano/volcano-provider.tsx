@@ -5,7 +5,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { useMatcalcSettings } from '../../settings/matcalc-settings'
+import { useVolcanoSettings } from './volcano-settings-store'
 
 import { range } from '@/lib/math/range'
 import { IVolcanoPlot } from '../../history/history-provider/history-types'
@@ -45,7 +45,8 @@ export function VolcanoProvider({
 
   const volcano = plot.volcano
   const displayProps = useMemo(() => plot.props, [plot.props])
-  const { settings } = useMatcalcSettings()
+  const { settings } = useVolcanoSettings()
+
   // const sheet = useMemo(
   //   () => plot!.dataframes['main'] as BaseDataFrame,
   //   [plot!.dataframes['main']]
@@ -60,19 +61,19 @@ export function VolcanoProvider({
   //   return { x: xdata, y: ydata }
   // }, [sheet, plot.props.axes.xaxis.name, displayProps.axes.yaxis.name])
 
+  const thresholdLogP = settings.preprocess.applyMinusLog10P
+    ? -Math.log10(settings.pvalue.threshold)
+    : settings.pvalue.threshold
+
   function getShouldLabel(logFc: number, logP: number): boolean {
-    if (displayProps!.logP.show && displayProps!.logFc.show) {
-      if (
-        logP > displayProps!.logP.threshold &&
-        Math.abs(logFc) > displayProps!.logFc.threshold
-      ) {
+    if (settings.pvalue.show && settings!.logFc.show) {
+      if (logP > thresholdLogP && Math.abs(logFc) > settings!.logFc.threshold) {
         return true
       }
     } else {
       if (
-        (displayProps!.logP.show && logP > displayProps!.logP.threshold) ||
-        (displayProps!.logFc.show &&
-          Math.abs(logFc) > displayProps!.logFc.threshold)
+        (settings.pvalue.show && logP > thresholdLogP) ||
+        (settings!.logFc.show && Math.abs(logFc) > settings!.logFc.threshold)
       ) {
         return true
       }
@@ -93,16 +94,21 @@ export function VolcanoProvider({
       .map((l) => l.toString())
 
     return values
-  }, [volcano.log2foldChanges, volcano.logpvalues, displayProps, volcano.ids])
+  }, [
+    volcano.log2foldChanges,
+    volcano.logpvalues,
+    displayProps,
+    volcano.ids,
+    thresholdLogP,
+  ])
 
   const displayLabels = useMemo(
-    () =>
-      settings.apps.volcano.labels.auto ? highlightedLabels : manualLabels,
-    [settings.apps.volcano.labels.auto, highlightedLabels, manualLabels]
+    () => (settings.labels.auto ? highlightedLabels : manualLabels),
+    [settings.labels.auto, highlightedLabels, manualLabels]
   )
 
   const setLabels = (labels: string[]) => {
-    if (settings.apps.volcano.labels.auto) {
+    if (settings.labels.auto) {
       return
     }
 

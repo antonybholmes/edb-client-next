@@ -67,7 +67,7 @@ export function drawScatter(
     //canvas.style.width = `${width}px`
     //canvas.style.height = `${height}px`
 
-    resizeAndScaleCanvas(canvas, width, height, displayProps.scale)
+    resizeAndScaleCanvas(canvas, width, height, 1)
 
     const ctx = canvas.getContext('2d', { alpha: false })
 

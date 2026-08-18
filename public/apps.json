@@ -24,9 +24,9 @@
     "color": "#20B2AA",
     "version": "20.0.6",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-10T17:36:24.124Z",
-    "hash": "f32f82bdc94eb44e6c5f602170764dd643df344ce2aa3087ab5f3e6e842ce1d2",
-    "build": 812
+    "modified": "2026-08-10T23:03:48.301Z",
+    "hash": "9b0c8a15934c610a06cd5395667e775adc559bd774d7a74bd8c0cac20da404d4",
+    "build": 814
   },
   {
     "name": "DNA",
@@ -61,11 +61,11 @@
     "name": "GSEA Plot",
     "description": "Format GSEA plots.",
     "color": "#ffb366",
-    "version": "21.8.6",
+    "version": "21.8.8",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-10T17:36:24.125Z",
-    "hash": "6087f1641b356aa59c0f905edffb4a3a0d5ee66179e13d0a9922dda995457056",
-    "build": 808
+    "modified": "2026-08-18T14:24:56.070Z",
+    "hash": "db333dae3d6af71380672bb8045cccea4d1e5f009ffdef074cd9a25d19f08747",
+    "build": 810
   },
   {
     "name": "GSEA Web",
@@ -119,11 +119,11 @@
     "name": "Matcalc",
     "description": "Tabular data analysis.",
     "color": "#40bf80",
-    "version": "48.8.6",
+    "version": "48.8.8",
     "copyright": "© 2023-2026 Antony Holmes",
-    "modified": "2026-08-10T17:36:24.129Z",
-    "hash": "c7bd0ad943379521b94676a784491136765c964f254127619e7c6fc63901d5e0",
-    "build": 1914
+    "modified": "2026-08-18T14:24:56.074Z",
+    "hash": "0691d0b89b3ddf87b97020ea090ffb235bf894d2643f9ab9f2e71e9c5055f882",
+    "build": 1924
   },
   {
     "name": "Motifs",
@@ -141,9 +141,9 @@
     "color": "#ff99cc",
     "version": "30.0.2",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-10T17:28:24.295Z",
-    "hash": "8b286d39521eaf442fd4ac52c68309b55195f06dff5232b99cef600e96d30973",
-    "build": 1094
+    "modified": "2026-08-10T23:03:48.306Z",
+    "hash": "5e9704c015ee34e1c4b6fa4eebe4dd2e089781ef0ea8d071762577cb3309a3aa",
+    "build": 1096
   },
   {
     "name": "Overlap",
@@ -201,9 +201,9 @@
     "color": "#9966ff",
     "version": "26.6.0",
     "copyright": "© 2024-2026 Antony Holmes",
-    "modified": "2026-08-10T17:36:24.129Z",
-    "hash": "697049fa5944b28c3f33419427e4b9a0f2523607606614f61ba6fa02470369d6",
-    "build": 834
+    "modified": "2026-08-14T23:12:38.505Z",
+    "hash": "ae334a5e5fa3997f08dd6aca4c6007e2c5b43fcb3c7871c5c0f16ca9619b769e",
+    "build": 836
   },
   {
     "name": "Table Viewer",

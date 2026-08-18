@@ -641,6 +641,6 @@ export type ColorMapName =
   | 'plasma'
   | 'magma'
 
-export function getColorMap(name: ColorMapName): ColorMap {
+export function getColorMap(name: string): ColorMap {
   return name in COLOR_MAPS ? COLOR_MAPS[name]! : BWR_CMAP_V2
 }

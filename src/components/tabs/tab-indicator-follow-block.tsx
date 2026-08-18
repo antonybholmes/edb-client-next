@@ -73,7 +73,7 @@ export function TabIndicatorFollowBlock({
       const first = position.index === 0
       const last = position.index === position.tabs - 1
 
-      const roundedStyle = getRoundedStyle(rounded, first, last)
+      //const roundedStyle = getRoundedStyle(rounded, first, last)
 
       const h = position.h
 
@@ -81,8 +81,8 @@ export function TabIndicatorFollowBlock({
         timelineRef.current = gsap.timeline().to(blockRef.current, {
           x: position.x,
           width: position.w,
-          height: h,
-          ...roundedStyle,
+          //height: h,
+          //...roundedStyle,
           duration: 0.5,
           ease: 'power3.out',
         })
@@ -92,9 +92,9 @@ export function TabIndicatorFollowBlock({
           .set(blockRef.current, {
             x: position.x,
             width: position.w,
-            height: h,
+            //height: h,
             //opacity: 0,
-            ...roundedStyle,
+            //...roundedStyle,
           })
           .to(blockRef.current, {
             opacity: 1,
@@ -117,7 +117,7 @@ export function TabIndicatorFollowBlock({
     <span
       ref={blockRef}
       className={cn(
-        `absolute left-0 z-0 opacity-0 rounded-sm`,
+        `absolute left-0 top-0 bottom-0  z-0 opacity-0`,
         color,
         className
       )}

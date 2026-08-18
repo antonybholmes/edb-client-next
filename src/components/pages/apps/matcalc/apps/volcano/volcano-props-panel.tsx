@@ -24,6 +24,7 @@ import { useEffect, useState } from 'react'
 import { useHistory } from '../../history/history-provider/history-provider'
 import { useMatcalcSettings } from '../../settings/matcalc-settings'
 import { useVolcanoContext } from './volcano-provider'
+import { useVolcanoSettings } from './volcano-settings-store'
 
 export function VolcanoPropsPanel() {
   //const { plotsState, plotsDispatch } = useContext(PlotsContext)
@@ -37,7 +38,9 @@ export function VolcanoPropsPanel() {
   const { updatePlot } = useHistory()
 
   const { plot, displayLabels, setLabels } = useVolcanoContext()
-  const { settings, updateSettings } = useMatcalcSettings()
+  const { settings, updateSettings } = useVolcanoSettings()
+  const { settings: matcalcSettings, updateSettings: updateMatcalcSettings } =
+    useMatcalcSettings()
 
   const displayProps: IVolcanoDisplayOptions = plot.props
 
@@ -53,10 +56,10 @@ export function VolcanoPropsPanel() {
   }
 
   useEffect(() => {
-    if (settings.apps.volcano.labels.auto) {
+    if (settings.labels.auto) {
       setText(displayLabels.join('\n'))
     }
-  }, [settings.apps.volcano.labels.auto, displayLabels])
+  }, [settings.labels.auto, displayLabels])
 
   return (
     <PropsPanel>
@@ -201,25 +204,25 @@ export function VolcanoPropsPanel() {
           <AccordionContent>
             <SwitchPropRow
               title="Filter"
-              checked={displayProps.logFc.show}
+              checked={settings.logFc.show}
               onCheckedChange={(v) => {
-                updatePlot(
-                  produce(plot, (draft) => {
-                    draft.props.logFc.show = v
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.logFc.show = v
                   })
                 )
               }}
             >
               <NumericalInput
                 id="max"
-                value={displayProps.logFc.threshold} //Math.pow(2, displayProps.logFc.threshold)}
+                value={settings.logFc.threshold} //Math.pow(2, displayProps.logFc.threshold)}
                 dp={2}
                 placeholder="Max..."
                 className="w-16 rounded-theme"
                 onNumChanged={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.logFc.threshold = v
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.logFc.threshold = v
                     })
                   )
                 }}
@@ -230,11 +233,11 @@ export function VolcanoPropsPanel() {
               <FillButton
                 colors={[
                   {
-                    color: displayProps.logFc.neg.color,
+                    color: settings.logFc.neg.fill.value,
                     onColorChange: ({ color }) =>
-                      updatePlot(
-                        produce(plot, (draft) => {
-                          draft.props.logFc.neg.color = color
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.logFc.neg.fill.value = color
                         })
                       ),
                   },
@@ -246,11 +249,11 @@ export function VolcanoPropsPanel() {
               <FillButton
                 colors={[
                   {
-                    color: displayProps.logFc.pos.color,
+                    color: settings.logFc.pos.fill.value,
                     onColorChange: ({ color }) =>
-                      updatePlot(
-                        produce(plot, (draft) => {
-                          draft.props.logFc.pos.color = color
+                      updateSettings(
+                        produce(settings, (draft) => {
+                          draft.logFc.pos.fill.value = color
                         })
                       ),
                   },
@@ -266,41 +269,55 @@ export function VolcanoPropsPanel() {
           <AccordionTrigger>P-value</AccordionTrigger>
           <AccordionContent>
             <SwitchPropRow
-              title="Filter"
-              checked={displayProps.logP.show}
+              title="Threshold"
+              checked={settings.pvalue.show}
               onCheckedChange={(v) => {
-                updatePlot(
-                  produce(plot, (draft) => {
-                    draft.props.logP.show = v
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.pvalue.show = v
                   })
                 )
               }}
             >
               <NumericalInput
                 id="max"
-                value={Math.pow(10, -displayProps.logP.threshold)}
+                value={settings.pvalue.threshold} //Math.pow(10, -displayProps.logP.threshold)}
                 dp={3}
                 step={0.001}
                 limit={[0, 1]}
                 placeholder="Max..."
                 className="w-16 rounded-theme"
                 onNumChanged={(v) => {
-                  updatePlot(
-                    produce(plot, (draft) => {
-                      draft.props.logP.threshold = -Math.log10(v)
+                  updateSettings(
+                    produce(settings, (draft) => {
+                      draft.pvalue.threshold = v // -Math.log10(v)
                     })
                   )
                 }}
               />
+
+              {/* <SelectList
+                value={displayProps.pvalue.threshold.toString()}
+                onValueChange={(v) => {
+                  updatePlot(
+                    produce(plot, (draft) => {
+                      draft.props.pvalue.threshold = parseInt(v as string)
+                    })
+                  )
+                }}
+                w="lg"
+              >
+                <SelectItem value={5}>5%</SelectItem>
+              </SelectList> */}
             </SwitchPropRow>
 
             <SwitchPropRow
               title="Line"
-              checked={displayProps.logP.line.show}
+              checked={settings.pvalue.line.show}
               onCheckedChange={(v) => {
-                updatePlot(
-                  produce(plot, (draft) => {
-                    draft.props.logP.line.show = v
+                updateSettings(
+                  produce(settings, (draft) => {
+                    draft.pvalue.line.show = v
                   })
                 )
               }}
@@ -314,11 +331,11 @@ export function VolcanoPropsPanel() {
             <BaseCol className="gap-y-1">
               <SwitchPropRow
                 title="Auto label"
-                checked={settings.apps.volcano.labels.auto}
+                checked={settings.labels.auto}
                 onCheckedChange={(v) => {
                   updateSettings(
                     produce(settings, (draft) => {
-                      draft.apps.volcano.labels.auto = v
+                      draft.labels.auto = v
                     })
                   )
                 }}
